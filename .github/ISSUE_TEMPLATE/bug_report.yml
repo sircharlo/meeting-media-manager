@@ -97,5 +97,5 @@ body:
           required: true
         - label: I confirm that I have searched through the existing discussions to make sure my bug report is not a duplicate.
           required: true
-        - label: If I am using macOS, I confirm that I have completed the <a href="https://sircharlo.github.io/meeting-media-manager/fr/using-at-a-kingdom-hall#additional-steps-for-macos-users">additional steps for macOS users</a> found on the documentation website.
+        - label: If I am using macOS, I confirm that I have completed the <a href="https://sircharlo.github.io/meeting-media-manager/fr/using-at-a-kingdom-hall#additional-steps-for-macos-users" target="_blank">additional steps for macOS users</a> found on the documentation website.
           required: true
