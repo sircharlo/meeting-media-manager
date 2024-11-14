@@ -28,7 +28,7 @@ Ta del velja samo za uporabnike sistema macOS.
 
 Zaradi Applovih varnostnih ukrepov je za zagon nameščene aplikacije M³ v sodobnih sistemih macOS potrebnih nekaj dodatnih korakov.
 
-V terminalu zaženi naslednja dva ukaza in po potrebi spremeni pot do M³:
+V terminalu zaženi naslednja ukaza in po potrebi spremeni pot do M³:
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
@@ -43,9 +43,9 @@ Kot uporabnik sistema macOS boš moral te korake opraviti vsakič, ko boš names
 
 :::info Pojasnilo
 
-Prvi ukaz _podpiše kodo aplikacije_. To je potrebno, da se prepreči, da bi bil M³ zaznan kot zlonameren program neznanega razvijalca.
+Prvi ukaz _podpiše kodo aplikacije_. To je treba narediti zato, da se prepreči, da bi bil M³ zaznan kot zlonameren program neznanega razvijalca.
 
-Drugi ukaz _odstrani zastavico karantene_ iz aplikacije. Zastava karantene se uporablja za opozarjanje uporabnikov na potencialno zlonamerne programe, ki so bili preneseni z interneta.
+Drugi ukaz iz aplikacije _odstrani zastavico karantene_. Zastava karantene se uporablja za opozarjanje uporabnikov na potencialno zlonamerne programe, ki so bili preneseni z interneta.
 
 :::
 
@@ -74,17 +74,17 @@ Nekateri uporabniki sistema macOS so poročali, da predstavitev spletne strani p
 Če je po posodobitvi M³ medijsko okno, v katerem naj bi bilo prikazano spletno mesto, črno, poskusi izvesti naslednje korake:
 
 1. Odpri sistemske nastavitve macOS **Privacy & Security**.
-2. Pojdi na **Snemanje zaslona**.
+2. Pojdi na **Screen Recording** (Snemanje zaslona).
 3. Na seznamu izberi M³.
 4. Klikni na gumb `-` (minus), da ga odstraniš.
-5. Click the `+` (plus) button and select M³ from the Applications folder.
-6. You may be prompted to relaunch M³ to apply the change.
+5. Klikni na gumb `+` (plus) in v mapi Applications (Aplikacije) izberi M³.
+6. Morda boš moral ponovno zagnati M³, da se bodo spremembe upoštevale.
 
-After these steps, screen sharing should function as expected once again.
+Po teh korakih bi moralo deljenje zaslona spet delovati kot običajno.
 
 :::tip Namig
 
-These steps are optional and can be skipped if you do not plan to use the website presentation feature. On the other hand, if you do plan to use the website presentation feature, it is recommended to follow these steps after every update to ensure the feature works as expected.
+Ti koraki niso obvezni in jih lahko preskočite, če ne nameravate uporabljati funkcije za predstavitev spletnega mesta. Če pa to funkcijo nameravate uporabljati, je priporočljivo, da po vsaki posodobitvi upoštevate te korake in zagotovite, da bo funkcija delovala po pričakovanjih.
 
 :::
 
