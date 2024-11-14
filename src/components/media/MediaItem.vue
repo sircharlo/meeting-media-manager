@@ -236,7 +236,7 @@
                 </q-chip>
               </div>
               <div
-                v-else-if="media.song"
+                v-else-if="media.song && media.song !== 'false'"
                 :class="{
                   'q-pl-md': $q.screen.gt.xs,
                   'q-pr-none': $q.screen.gt.xs,
@@ -253,7 +253,7 @@
                   text-color="white"
                 >
                   <q-icon class="q-mr-xs" name="mmm-music-note" />
-                  {{ media.song.toString() }}
+                  {{ media.song?.toString() }}
                 </q-chip>
               </div>
               <div class="q-px-md col">
