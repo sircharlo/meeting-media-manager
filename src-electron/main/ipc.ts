@@ -16,12 +16,7 @@ import {
   shell,
 } from 'electron';
 
-import {
-  askForMediaAccess,
-  getAppVersion,
-  getUserDataPath,
-  isSelf,
-} from './../utils';
+import { askForMediaAccess, getAppVersion, isSelf } from './../utils';
 import { downloadFile, isDownloadErrorExpected } from './downloads';
 import {
   openFileDialog,
@@ -171,7 +166,7 @@ function handleIpcInvoke<T = unknown>(
 
 handleIpcInvoke('getVersion', async () => getAppVersion());
 handleIpcInvoke('getAppDataPath', async () => app.getPath('appData'));
-handleIpcInvoke('getUserDataPath', async () => getUserDataPath());
+handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
 
 handleIpcInvoke('getAllScreens', async () => getAllScreens());
 
