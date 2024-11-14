@@ -265,9 +265,12 @@ const remainingTimeBeforeMeetingStart = () => {
   }
 };
 
-const friendlyDayToJsDay = (day: number) => {
+const friendlyDayToJsDay = (day?: number) => {
   try {
-    return day === 6 ? 0 : parseInt(day.toString()) + 1;
+    if (!day) day = -1;
+    const firstDay = day === 6 ? 0 : parseInt(day.toString()) + 1;
+    const correctedFirstDay = firstDay > 7 ? firstDay - 7 : firstDay;
+    return correctedFirstDay;
   } catch (error) {
     errorCatcher(error);
     return 0;

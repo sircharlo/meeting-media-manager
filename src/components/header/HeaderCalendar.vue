@@ -175,9 +175,7 @@
         v-model="selectedDate"
         :event-color="getEventDayColor"
         :events="getEventDates()"
-        :first-day-of-week="
-          friendlyDayToJsDay(currentSettings?.firstDayOfWeek || 7)
-        "
+        :first-day-of-week="friendlyDayToJsDay(currentSettings?.firstDayOfWeek)"
         :locale="dateLocale"
         :navigation-max-year-month="maxDate()"
         :navigation-min-year-month="minDate()"
