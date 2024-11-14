@@ -105,6 +105,11 @@ const setWindowPosition = (
     if (fullscreen) {
       if (displayNr === currentDisplayNr && mediaWindow.isAlwaysOnTop()) return;
 
+      // On macOS, windows can't be moved if they're in fullscreen mode
+      if (PLATFORM === 'darwin') {
+        mediaWindow.setFullScreen(false);
+      }
+
       mediaWindow.setPosition(targetScreenBounds.x, targetScreenBounds.y);
 
       // macOS doesn't play nice when trying to share a fullscreen window in Zoom if it's set to always be on top
