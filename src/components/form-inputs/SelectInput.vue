@@ -50,7 +50,15 @@ const props = defineProps<{
   useInput?: boolean;
 }>();
 
-const model = defineModel<null | string>({ required: true });
+const model = defineModel<null | number | string>({
+  get: (value) => {
+    if (typeof value === 'number') {
+      return String(value);
+    }
+    return value;
+  },
+  required: true,
+});
 
 const filteredJwLanguages = ref(jwLanguages.value?.list || []);
 const filteredLocaleAppLang = ref(localeOptions);
