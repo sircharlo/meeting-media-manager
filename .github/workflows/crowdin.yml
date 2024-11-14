@@ -9,6 +9,10 @@ on:
       - src/i18n/*.json
   workflow_dispatch:
 
+concurrency:
+  group: crowdin
+  cancel-in-progress: true
+
 jobs:
   crowdin-translations-progress:
     runs-on: ubuntu-latest
