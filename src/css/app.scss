@@ -453,6 +453,13 @@ body.body--dark {
   width: 300px;
 }
 
+.q-dialog .medium-overlay,
+.q-menu .medium-overlay {
+  width: 50vw;
+  max-width: 50vw;
+  min-width: 450px;
+}
+
 .q-dialog .large-overlay,
 .q-menu .large-overlay {
   width: 80vw;
