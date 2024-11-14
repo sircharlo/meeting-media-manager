@@ -1752,7 +1752,18 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
     jwStore.urlVariables.pubMedia = '';
   };
 
-  if (!baseUrl) {
+  const isValidUrlBasePart = (basePart?: string) => {
+    if (!basePart) return false;
+    const basePartWithoutPath = basePart.split('/')[0];
+    if (!basePartWithoutPath) return false;
+    const domainSegments = basePartWithoutPath.split('.');
+    const eachSegmentIsAtLeastTwoChars = domainSegments.every(
+      (segment) => segment.length >= 2,
+    );
+    return eachSegmentIsAtLeastTwoChars;
+  };
+
+  if (!baseUrl || !isValidUrlBasePart(baseUrl)) {
     resetUrlVariables(true);
     return;
   }
