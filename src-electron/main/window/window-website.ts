@@ -35,6 +35,8 @@ export async function createWebsiteWindow(lang?: string) {
     lang,
   );
 
+  websiteWindow.center();
+
   websiteWindow.webContents.setVisualZoomLevelLimits(1, 5);
   websiteWindow.webContents.on('zoom-changed', (_, direction) => {
     zoomWebsiteWindow(direction);
