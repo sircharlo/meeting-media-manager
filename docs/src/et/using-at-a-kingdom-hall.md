@@ -18,17 +18,17 @@ This guide will walk you through the process of downloading, installing, and set
 4. Launch M³.
 5. Go through the configuration wizard.
 
-### macOS only: Additional installation steps {#additional-steps-for-macos-users}
+### macOS ainult: lisasammud rakenduse installimiseks {#additional-steps-for-macos-users}
 
 :::warning Hoiatus
 
-This section only applies to macOS users.
+Järgnev juhis on mõeldud macOS kasutajatele.
 
 :::
 
-Due to Apple's security measures, a few additional steps are required to run the installed M³ app on modern macOS systems.
+Apple turvameetmete tõttu on vajalik teha mõned lisasammud, et kasutada M³ rakendust uuemates macOS arvutites.
 
-Run the following two commands in Terminal, modifying the path to M³ as needed:
+Kirjuta järgmised kaks käsku "Terminal" rakenduses, et muuta M³-e paigaldamise asukohta:
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
@@ -37,13 +37,13 @@ sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 
 :::warning Hoiatus
 
-As a macOS user, you will need to follow these steps every time you install or update M³.
+MacOS kasutajana on sul vaja järgida neid kahte sammu iga kord, kui paigaldad või uuendad M³ rakendust.
 
 :::
 
 :::info Explanation
 
-The first command _signs the application's code_. This is required to prevent M³ from being detected as a malicious application from an unknown developer.
+Esimene käsk nö. allkirjastab rakenduse lähtekoodi. This is required to prevent M³ from being detected as a malicious application from an unknown developer.
 
 The second command _removes the quarantine flag_ from the application. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
 
@@ -65,7 +65,7 @@ If you still have issues after following all these steps, please [open an issue 
 
 :::warning Hoiatus
 
-This section only applies to macOS users.
+Järgnev juhis on mõeldud macOS kasutajatele.
 
 :::
 
