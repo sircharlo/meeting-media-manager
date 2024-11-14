@@ -364,5 +364,6 @@
   "yes": "Yes",
   "zoom-in": "Zoom in",
   "zoom-out": "Zoom out",
-  "pause-to-adjust-time": "To enable scrubbing, the video must be paused"
+  "pause-to-adjust-time": "To enable scrubbing, the video must be paused",
+  "search-by-title-or-number": "Search by title or number"
 }
