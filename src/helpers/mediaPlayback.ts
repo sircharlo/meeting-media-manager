@@ -177,7 +177,7 @@ const decompressJwpub = async (
       }
     }
     if (!currentState.extractedFiles[outputPath] || force) {
-      currentState.extractedFiles[outputPath] = jwpubDecompressor(
+      currentState.extractedFiles[outputPath] = await jwpubDecompressor(
         jwpubPath,
         outputPath,
       );
