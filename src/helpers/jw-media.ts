@@ -853,6 +853,7 @@ const watchedItemMapper: (
       thumbnailUrl,
       title: path.basename(watchedItemPath),
       uniqueId,
+      watched: true,
     };
   } catch (e) {
     errorCatcher(e);

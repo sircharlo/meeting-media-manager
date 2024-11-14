@@ -64,7 +64,7 @@ body:
       label: What platform are you seeing the problem on?
       options:
         - Windows
-        - MacOS
+        - macOS
         - Linux
     validations:
       required: true
@@ -74,7 +74,7 @@ body:
       label: Relevant log output
       description: |
         Please copy and paste any relevant log output.
-        To open the inspector, hit <kbd>Ctrl</kbd> <kbd>⇧ Shift</kbd> <kbd>I</kbd> (<kbd>⌘ Command</kbd> <kbd>⌥ Option</kbd> <kbd>I</kbd> for Mac) when the app is starting up.
+        To open the inspector, hit <kbd>Ctrl</kbd> <kbd>⇧ Shift</kbd> <kbd>I</kbd> (<kbd>⌘ Command</kbd> <kbd>⌥ Option</kbd> <kbd>I</kbd> for macOS) when the app is starting up.
       render: shell
   - type: textarea
     id: screenshots
@@ -96,4 +96,6 @@ body:
         - label: I confirm that I have searched through the existing issues to make sure my bug report is not a duplicate.
           required: true
         - label: I confirm that I have searched through the existing discussions to make sure my bug report is not a duplicate.
+          required: true
+        - label: If I am using macOS, I confirm that I have executed the Terminal commands found in the <a href="https://sircharlo.github.io/meeting-media-manager/fr/using-at-a-kingdom-hall#additional-steps-for-macos-users" target="_blank">additional steps for macOS users</a> found on the documentation website before submitting this bug report.
           required: true

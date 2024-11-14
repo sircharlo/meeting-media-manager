@@ -173,8 +173,12 @@ export const useJwStore = defineStore('jw-store', {
     },
     showCurrentDayHiddenMedia() {
       const currentState = useCurrentStateStore();
-      const { currentCongregation, selectedDate, selectedDateObject } =
-        currentState;
+      const {
+        currentCongregation,
+        selectedDate,
+        selectedDateObject,
+        watchFolderMedia,
+      } = currentState;
       if (!currentCongregation || !selectedDateObject?.date || !selectedDate)
         return;
       this.lookupPeriod?.[currentCongregation]
@@ -182,14 +186,20 @@ export const useJwStore = defineStore('jw-store', {
           (day) =>
             getDateDiff(day.date, selectedDateObject?.date, 'days') === 0,
         )
-        ?.dynamicMedia?.forEach((media) => {
+        ?.dynamicMedia?.filter((media) => media.hidden)
+        ?.forEach((media) => {
           media.hidden = false;
         });
-      this.additionalMediaMaps?.[currentCongregation]?.[selectedDate]?.forEach(
-        (media) => {
+      this.additionalMediaMaps?.[currentCongregation]?.[selectedDate]
+        ?.filter((media) => media.hidden)
+        ?.forEach((media) => {
           media.hidden = false;
-        },
-      );
+        });
+      watchFolderMedia?.[selectedDate]
+        ?.filter((media) => media.hidden)
+        ?.forEach((media) => {
+          media.hidden = false;
+        });
     },
     async updateJwLanguages() {
       try {

@@ -2,12 +2,12 @@
   <q-page
     :class="
       !(
-        sortableAdditionalMediaItems?.length ||
-        sortableWtMediaItems?.length ||
-        sortableTgwMediaItems?.length ||
-        sortableAyfmMediaItems?.length ||
-        sortableLacMediaItems?.length ||
-        sortableCircuitOverseerMediaItems?.length
+        sortableAdditionalMediaItems?.filter((m) => !m.hidden).length ||
+        sortableWtMediaItems?.filter((m) => !m.hidden).length ||
+        sortableTgwMediaItems?.filter((m) => !m.hidden).length ||
+        sortableAyfmMediaItems?.filter((m) => !m.hidden).length ||
+        sortableLacMediaItems?.filter((m) => !m.hidden).length ||
+        sortableCircuitOverseerMediaItems?.filter((m) => !m.hidden).length
       )
         ? 'flex'
         : ''
@@ -43,16 +43,18 @@
       <div
         v-if="
           (currentSettings?.disableMediaFetching &&
-            sortableAdditionalMediaItems?.length < 1) ||
+            sortableAdditionalMediaItems?.filter((m) => !m.hidden).length <
+              1) ||
           (!currentSettings?.disableMediaFetching &&
             ((selectedDateObject?.meeting && !selectedDateObject?.complete) ||
               !(
-                sortableAdditionalMediaItems?.length ||
-                sortableWtMediaItems?.length ||
-                sortableTgwMediaItems?.length ||
-                sortableAyfmMediaItems?.length ||
-                sortableLacMediaItems?.length ||
-                sortableCircuitOverseerMediaItems?.length
+                sortableAdditionalMediaItems?.filter((m) => !m.hidden).length ||
+                sortableWtMediaItems?.filter((m) => !m.hidden).length ||
+                sortableTgwMediaItems?.filter((m) => !m.hidden).length ||
+                sortableAyfmMediaItems?.filter((m) => !m.hidden).length ||
+                sortableLacMediaItems?.filter((m) => !m.hidden).length ||
+                sortableCircuitOverseerMediaItems?.filter((m) => !m.hidden)
+                  .length
               )))
         "
         class="row"
@@ -61,7 +63,7 @@
           <div
             v-if="
               !currentSettings?.disableMediaFetching ||
-              sortableAdditionalMediaItems?.length < 1
+              sortableAdditionalMediaItems?.filter((m) => !m.hidden).length < 1
             "
             class="row justify-center"
           >
@@ -138,7 +140,7 @@
     </div>
     <q-list
       v-show="
-        sortableAdditionalMediaItems?.length ||
+        sortableAdditionalMediaItems?.filter((m) => !m.hidden).length ||
         (selectedDateObject &&
           selectedDateObject.complete &&
           isWeMeetingDay(selectedDateObject?.date))
@@ -171,7 +173,8 @@
         <q-item-section
           v-if="
             isWeMeetingDay(selectedDateObject.date) &&
-            !sortableAdditionalMediaItems.length
+            !sortableAdditionalMediaItems.filter((m) => !m.hidden && !m.watched)
+              .length
           "
           side
         >
@@ -195,7 +198,7 @@
         />
         <div
           v-if="
-            !sortableAdditionalMediaItems?.length &&
+            !sortableAdditionalMediaItems.filter((m) => !m.hidden).length &&
             selectedDateObject &&
             isWeMeetingDay(selectedDateObject?.date)
           "
@@ -377,22 +380,26 @@
         </q-item-section>
         <q-item-section side>
           <q-btn
-            :flat="!!sortableCircuitOverseerMediaItems.length"
+            :flat="
+              !!sortableCircuitOverseerMediaItems.filter((m) => !m.hidden)
+                .length
+            "
             :icon="
-              sortableCircuitOverseerMediaItems.length
+              sortableCircuitOverseerMediaItems.filter((m) => !m.hidden).length
                 ? 'mmm-import-media'
                 : 'mmm-music-note'
             "
             :label="
               $t(
-                sortableCircuitOverseerMediaItems.length
+                sortableCircuitOverseerMediaItems.filter((m) => !m.hidden)
+                  .length
                   ? 'add-extra-media'
                   : 'add-a-closing-song',
               )
             "
             color="additional"
             @click="
-              sortableCircuitOverseerMediaItems.length
+              sortableCircuitOverseerMediaItems.filter((m) => !m.hidden).length
                 ? openImportMenu('circuitOverseer')
                 : addSong('circuitOverseer')
             "
@@ -408,7 +415,12 @@
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
         />
-        <div v-if="sortableCircuitOverseerMediaItems.length === 0">
+        <div
+          v-if="
+            sortableCircuitOverseerMediaItems.filter((m) => !m.hidden)
+              .length === 0
+          "
+        >
           <q-item>
             <q-item-section
               class="align-center text-secondary text-grey text-subtitle2"
@@ -1256,25 +1268,28 @@ const addToAdditionMediaMapFromPath = async (
           getFileUrl(additionalFilePath),
       );
     }
-    addToAdditionMediaMap([
-      {
-        duration,
-        fileUrl: getFileUrl(additionalFilePath),
-        isAdditional: true,
-        isAudio: isAudioFile,
-        isImage: isImage(additionalFilePath),
-        isVideo: isVideoFile,
-        section,
-        sectionOriginal: section,
-        song: stream?.song,
-        streamUrl: stream?.url,
-        thumbnailUrl:
-          stream?.thumbnailUrl ??
-          (await getThumbnailUrl(additionalFilePath, true)),
-        title: stream?.title ?? path.basename(additionalFilePath),
-        uniqueId,
-      },
-    ]);
+    addToAdditionMediaMap(
+      [
+        {
+          duration,
+          fileUrl: getFileUrl(additionalFilePath),
+          isAdditional: true,
+          isAudio: isAudioFile,
+          isImage: isImage(additionalFilePath),
+          isVideo: isVideoFile,
+          section,
+          sectionOriginal: section,
+          song: stream?.song,
+          streamUrl: stream?.url,
+          thumbnailUrl:
+            stream?.thumbnailUrl ??
+            (await getThumbnailUrl(additionalFilePath, true)),
+          title: stream?.title ?? path.basename(additionalFilePath),
+          uniqueId,
+        },
+      ],
+      section,
+    );
   } catch (error) {
     errorCatcher(error, {
       contexts: {
