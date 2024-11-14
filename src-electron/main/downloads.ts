@@ -84,7 +84,7 @@ async function processQueue() {
     return; // No downloads to process
   }
 
-  if (!download) return;
+  if (!download || !mainWindow || cancelAll) return;
   const { destFilename, saveDir, url } = download;
   activeDownloadIds.push(url + saveDir);
 
