@@ -35,6 +35,8 @@ export async function createWebsiteWindow(lang?: string) {
     lang,
   );
 
+  websiteWindow.center();
+
   websiteWindow.webContents.on('did-finish-load', () => {
     websiteWindow?.webContents.insertCSS(`
     .cursor {

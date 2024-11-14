@@ -7,12 +7,10 @@ import {
   app,
   BrowserWindow,
   type BrowserWindowConstructorOptions,
-  screen,
 } from 'electron';
 import { join, resolve } from 'path';
 
 import { urlVariables } from '../session';
-import { mainWindow } from './window-main';
 import { StatefulBrowserWindow } from './window-state';
 
 /**
@@ -62,14 +60,6 @@ export function createWindow(
           configFilePath: join(app.getPath('appData'), pkg.productName),
           ...opts,
         }).win;
-
-  if (name === 'website' && mainWindow) {
-    const mainWindowScreen = screen.getDisplayMatching(mainWindow.getBounds());
-    mainWindowScreen.workArea.width = defaultSize.width;
-    mainWindowScreen.workArea.height = defaultSize.height;
-    win.setBounds(mainWindowScreen.workArea);
-    win.center();
-  }
 
   // Show the window when it's ready
   win.on('ready-to-show', () => {
