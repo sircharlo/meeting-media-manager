@@ -36,6 +36,7 @@ export async function createWebsiteWindow(lang?: string) {
   );
 
   websiteWindow.center();
+  websiteWindow.setAspectRatio(16 / 9);
 
   websiteWindow.webContents.setVisualZoomLevelLimits(1, 5);
   websiteWindow.webContents.on('zoom-changed', (_, direction) => {
