@@ -18,15 +18,15 @@ Mwongozo huu utakuelekeza kwenye hatua za kupakua na kuanzisha Meeting Media Man
 4. Fungua M³.
 5. Pitia programu ya usanidi.
 
-### macOS only: Additional installation steps {#additional-steps-for-macos-users}
+### macOS only: Hatua za ziada za kusakinisha {#additional-steps-for-macos-users}
 
 :::warning Onyo
 
-This section only applies to macOS users.
+Sehemu hii inatumika tu kwa watumiaji wa macOS.
 
 :::
 
-Due to Apple's security measures, a few additional steps are required to run the installed M³ app on modern macOS systems.
+Kutokana na hatua za usalama za mfumo wa Apple, hatua za ziada zitahitajika ili kutumia programu M³ iliyopakuliwa kwenye mifumo za hivi karibuni za macOS.
 
 Run the following two commands in Terminal, modifying the path to M³ as needed:
 
@@ -65,7 +65,7 @@ Ikiwa bado ukona tatizo hata baada ya kufuata hatua hizo, tafadhali [fungua tati
 
 :::warning Onyo
 
-This section only applies to macOS users.
+Sehemu hii inatumika tu kwa watumiaji wa macOS.
 
 :::
 

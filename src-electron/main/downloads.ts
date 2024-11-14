@@ -22,6 +22,8 @@ let cancelAll = false;
 
 export async function cancelAllDownloads() {
   cancelAll = true;
+  downloadQueue.length = 0;
+  lowPriorityQueue.length = 0;
   activeDownloadIds.forEach((id) => {
     manager.cancelDownload(id);
   });
@@ -82,7 +84,7 @@ async function processQueue() {
     return; // No downloads to process
   }
 
-  if (!download) return;
+  if (!download || !mainWindow || cancelAll) return;
   const { destFilename, saveDir, url } = download;
   activeDownloadIds.push(url + saveDir);
 

@@ -5,13 +5,10 @@
   height: 100vh;
 }
 
-@font-face {
-  font-family: 'NotoSerif';
-  src: url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@100..900&display=swap');
-}
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@100..900&display=swap');
 
 #yeartext {
-  font-family: 'WT-ClearText-Bold', 'NotoSerif', serif;
+  font-family: 'WT-ClearText-Bold', 'Noto Serif', serif;
   align-content: center;
   text-align: center;
   color: white !important;

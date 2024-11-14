@@ -1,0 +1,24 @@
+name: Close inactive issues/prs
+on:
+  schedule:
+    - cron: '30 1 * * *'
+
+jobs:
+  close-issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/stale@v5
+        with:
+          days-before-stale: 30
+          days-before-close: 7
+          stale-issue-label: 'abandoned'
+          exempt-issue-labels: 'in-progress,help wanted,awaiting-release'
+          stale-issue-message: 'This issue is stale because it has been open for 30 days with no activity.'
+          close-issue-message: 'This issue was closed because it has been inactive for 7 days since being marked as stale.'
+          stale-pr-label: 'abandoned'
+          exempt-draft-pr: true
+          stale-pr-message: 'This pull request is stale because it has been open for 30 days with no activity.'
+          close-pr-message: 'This pull request was closed because it has been inactive for 7 days since being marked as stale.'
