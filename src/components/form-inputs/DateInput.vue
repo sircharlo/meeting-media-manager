@@ -21,9 +21,7 @@
     >
       <q-date
         v-model="model"
-        :first-day-of-week="
-          friendlyDayToJsDay(currentSettings?.firstDayOfWeek || 7)
-        "
+        :first-day-of-week="friendlyDayToJsDay(currentSettings?.firstDayOfWeek)"
         :locale="dateLocale"
         :options="getDateOptions(options)"
         :rules="rules"
