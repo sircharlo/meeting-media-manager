@@ -32,7 +32,7 @@
                     'bg-accent-100': hoveredMediaItem === mediaItem.id,
                   }"
                   flat
-                  @click="addResource(mediaItem.resource)"
+                  @click="addStudyBibleMedia(mediaItem)"
                   @mouseout="hoveredMediaItem = 0"
                   @mouseover="hoveredMediaItem = mediaItem.id"
                 >
@@ -118,7 +118,7 @@
             :label="$t('back')"
             color="primary"
             flat
-            @click="resetBibleBook"
+            @click="resetBibleBook()"
           />
           <q-btn v-close-popup :label="$t('cancel')" color="negative" flat />
         </div>
@@ -135,17 +135,22 @@ import { ref } from 'vue';
 import { useScrollbar } from 'src/composables/useScrollbar';
 
 // Helpers
-import { getBestImageUrl } from 'src/helpers/jw-media';
+import {
+  downloadAdditionalRemoteVideo,
+  getBestImageUrl,
+  getJwMediaInfo,
+  getPubMediaLinks,
+} from 'src/helpers/jw-media';
 
 // Types
 import type {
   BibleBook,
   BibleBookImage,
   BibleBookMedia,
-  BibleBookResource,
   BibleBooksResult,
   ImageTypeSizes,
   MediaSection,
+  PublicationFetcher,
 } from 'src/types';
 
 import { whenever } from '@vueuse/core';
@@ -162,7 +167,7 @@ const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
 
 // Props
-defineProps<{
+const props = defineProps<{
   section?: MediaSection;
 }>();
 
@@ -205,9 +210,10 @@ const getBibleBooks = async () => {
   }
 };
 
-const resetBibleBook = () => {
+const resetBibleBook = (close = false) => {
   bibleBook.value = 0;
   bibleBookMedia.value = [];
+  if (close) open.value = false;
 };
 
 const getBibleBookMedia = async (book: number) => {
@@ -238,19 +244,69 @@ const getBibleBookMedia = async (book: number) => {
   }
 };
 
-const addResource = async (resource: BibleBookResource) => {
+const addStudyBibleMedia = async (mediaItem: BibleBookMedia) => {
   try {
-    console.log('addResource', resource);
-    if (typeof resource.src == 'string') {
-      console.log('image', getBestImageUrl({ sqr: resource.sizes }, 'md'));
+    let fetcher: PublicationFetcher | undefined;
+    if (typeof mediaItem.resource.src == 'string') {
+      const src =
+        getBestImageUrl({ sqr: mediaItem.resource.sizes }, 'md') ||
+        mediaItem.resource.src;
+      window.dispatchEvent(
+        new CustomEvent<{
+          files: { filename?: string; filetype?: string; path: string }[];
+          section?: MediaSection;
+        }>('localFiles-browsed', {
+          detail: {
+            files: [
+              {
+                filename:
+                  mediaItem.label + window.electronApi.path.extname(src),
+                path: src,
+              },
+            ],
+            section: props.section,
+          },
+        }),
+      );
     } else {
-      const src = resource.src[0];
+      const src = mediaItem.resource.src[0];
       if (typeof src === 'string') {
-        console.log('video cdn url', src);
+        const searchParams = new URLSearchParams(src);
+        const { docid, issue, pub, track } = Object.fromEntries(searchParams);
+        fetcher = {
+          docid: docid ? parseInt(docid) : undefined,
+          fileformat: 'MP4',
+          issue,
+          langwritten: currentSettings.value?.lang || 'E',
+          pub,
+          track: track ? parseInt(track) : undefined,
+        };
       } else {
-        console.log('video object', src);
+        fetcher = {
+          docid: src.docid ? parseInt(src.docid) : undefined,
+          fileformat: 'MP4',
+          langwritten: currentSettings.value?.lang || 'E',
+          pub: src.pub,
+          track: src.track ? parseInt(src.track) : undefined,
+        };
+      }
+
+      if (fetcher) {
+        const [mediaLinks, { thumbnail, title }] = await Promise.all([
+          getPubMediaLinks(fetcher),
+          getJwMediaInfo(fetcher),
+        ]);
+        await downloadAdditionalRemoteVideo(
+          mediaLinks?.files?.[currentSettings.value?.lang || 'E']?.['MP4'] ||
+            [],
+          thumbnail,
+          false,
+          title,
+          props.section,
+        );
       }
     }
+    resetBibleBook(true);
   } catch (error) {
     errorCatcher(error);
   }
