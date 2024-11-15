@@ -218,6 +218,7 @@ whenever(open, () => {
 });
 
 const getLocaleData = async () => {
+  if (localeSymbol.value === 'en') return;
   try {
     const html = await fetchRaw(baseUrl.value)
       .then((response) => {
@@ -235,13 +236,11 @@ const getLocaleData = async () => {
     )[0];
     localeUrl.value = locale?.attribs?.href || '';
 
-    console.log('localeUrl', localeUrl.value);
     if (!localeUrl.value) return;
 
     const result = await fetchJson<BibleBooksResult>(
       `${localeUrl.value}/json/data`,
     );
-    console.log('result', result);
     localeBibleBooks.value = result?.editionData.books || {};
   } catch (e) {
     errorCatcher(e);
