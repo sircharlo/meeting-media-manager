@@ -116,6 +116,7 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
+import { storeToRefs } from 'pinia';
 // Packages
 import { computed, ref } from 'vue';
 
@@ -130,12 +131,27 @@ import {
 import { formatTime } from 'src/helpers/mediaPlayback';
 
 // Types
-import type { MediaItemsMediatorItem, MediaSection } from 'src/types';
+import type {
+  JwVideoCategory,
+  MediaItemsMediatorItem,
+  MediaSection,
+} from 'src/types';
+
+import { whenever } from '@vueuse/core';
+import { fetchJson } from 'src/helpers/api';
+import { errorCatcher } from 'src/helpers/error-catcher';
+import { useCurrentStateStore } from 'src/stores/current-state';
+import { useJwStore } from 'src/stores/jw';
+
+// Stores
+const jwStore = useJwStore();
+const { urlVariables } = storeToRefs(jwStore);
+
+const currentState = useCurrentStateStore();
+const { currentSettings } = storeToRefs(currentState);
 
 // Props
-const props = defineProps<{
-  remoteVideos: MediaItemsMediatorItem[];
-  remoteVideosLoadingProgress: number;
+defineProps<{
   section?: MediaSection;
 }>();
 
@@ -143,13 +159,15 @@ const open = defineModel<boolean>({ default: false });
 
 const { barStyle, thumbStyle } = useScrollbar();
 
+const remoteVideos = ref<MediaItemsMediatorItem[]>([]);
+const remoteVideosLoadingProgress = ref<number>(0);
 const remoteVideoFilter = ref('');
 const remoteVideosIncludeAudioDescription = ref(false);
 const hoveredRemoteVideo = ref('');
 
 const remoteVideosFiltered = computed(() => {
   const useableVideos = ref(
-    props.remoteVideos.filter(
+    remoteVideos.value.filter(
       (v) =>
         remoteVideosIncludeAudioDescription.value ||
         !v.primaryCategory.endsWith('AD'),
@@ -161,4 +179,68 @@ const remoteVideosFiltered = computed(() => {
     );
   return useableVideos.value.slice(0, 50);
 });
+
+whenever(open, () => {
+  getJwVideos();
+});
+
+const getJwVideos = async () => {
+  try {
+    if (!currentSettings.value) return;
+    if (remoteVideosLoadingProgress.value < 1) {
+      const getSubcategories = async (category: string) => {
+        if (!category) return null;
+        return await fetchJson<JwVideoCategory>(
+          `${urlVariables.value.mediator}/v1/categories/${
+            currentSettings.value?.lang
+          }/${category}?detailed=1&mediaLimit=0&clientType=www`,
+        );
+      };
+      const subcategories: {
+        key: string;
+        parentCategory: string;
+      }[] = [{ key: 'LatestVideos', parentCategory: '' }];
+      const subcategoriesRequest = await getSubcategories('VideoOnDemand');
+      const subcategoriesFirstLevel =
+        subcategoriesRequest?.category?.subcategories?.map((s) => s.key) || [];
+      for (const subcategoryFirstLevel of subcategoriesFirstLevel) {
+        subcategories.push(
+          ...((
+            await getSubcategories(subcategoryFirstLevel)
+          )?.category.subcategories.map((s) => {
+            return { key: s.key, parentCategory: subcategoryFirstLevel };
+          }) || []),
+        );
+      }
+      let index = 0;
+      for (const category of subcategories) {
+        if (!category?.key) continue;
+        const request = await fetchJson<JwVideoCategory>(
+          `${urlVariables.value.mediator}/v1/categories/${
+            currentSettings.value?.lang
+          }/${category.key}?detailed=0&clientType=www`,
+        );
+        remoteVideos.value = remoteVideos.value
+          .concat(request?.category?.media || [])
+          .reduce((accumulator: MediaItemsMediatorItem[], current) => {
+            const guids = new Set(accumulator.map((item) => item.guid));
+            if (!guids.has(current.guid)) {
+              accumulator.push(current);
+            }
+            return accumulator;
+          }, [])
+          .sort((a, b) => {
+            return (
+              new Date(b.firstPublished).getTime() -
+              new Date(a.firstPublished).getTime()
+            );
+          });
+        index++;
+        remoteVideosLoadingProgress.value = index / subcategories.length;
+      }
+    }
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
 </script>
