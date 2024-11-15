@@ -13,10 +13,16 @@ import {
 } from 'electron';
 
 import { PLATFORM } from './constants';
+import { cancelAllDownloads } from './main/downloads';
 import { initScreenListeners } from './main/screen';
 import { initSessionListeners } from './main/session';
 import { initUpdater } from './main/updater';
-import { createMainWindow } from './main/window/window-main';
+import { closeOtherWindows, sendToWindow } from './main/window/window-base';
+import {
+  authorizedClose,
+  createMainWindow,
+  mainWindow,
+} from './main/window/window-main';
 import { errorCatcher } from './utils';
 
 initSentry({
@@ -35,6 +41,19 @@ initSessionListeners();
 // macOS default behavior is to keep the app running even after all windows are closed
 app.on('window-all-closed', () => {
   if (PLATFORM !== 'darwin') app.quit();
+});
+
+app.on('before-quit', (e) => {
+  if (PLATFORM === 'darwin' && mainWindow) {
+    if (authorizedClose) {
+      cancelAllDownloads();
+      closeOtherWindows(mainWindow);
+      mainWindow?.close();
+    } else {
+      e.preventDefault();
+      sendToWindow(mainWindow, 'attemptedClose');
+    }
+  }
 });
 
 app.on('activate', () => {
