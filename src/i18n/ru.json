@@ -278,6 +278,8 @@
   "scene-not-found": "Возникла проблема при активации сцены в OBS Studio.",
   "scene-not-found-explain": "Пожалуйста, проверьте настроенные сцены в настройках.",
   "scene-selection": "Выбор сцены OBS Studio",
+  "screen-access-required": "Screen recording permissions are required for this feature",
+  "screen-access-required-explain": "Please restart the app when screen recording permissions have been granted in System Settings.",
   "search": "Поиск",
   "search-by-title-or-number": "Search by title or number",
   "select-a-congregation-to-enable": "Сначала выберите профиль",

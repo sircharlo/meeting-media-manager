@@ -278,6 +278,8 @@
   "scene-not-found": "Probléma lépett fel egy jelenet aktiválásakor az OBS Studio-ban.",
   "scene-not-found-explain": "Kérjük, ellenőrizze a konfigurált jeleneteket a beállításokban.",
   "scene-selection": "OBS Jelenet kiválasztása",
+  "screen-access-required": "Screen recording permissions are required for this feature",
+  "screen-access-required-explain": "Please restart the app when screen recording permissions have been granted in System Settings.",
   "search": "Keresés",
   "search-by-title-or-number": "Search by title or number",
   "select-a-congregation-to-enable": "Először válasszon ki egy profilt",

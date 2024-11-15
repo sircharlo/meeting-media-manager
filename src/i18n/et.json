@@ -278,6 +278,8 @@
   "scene-not-found": "Tekkis probleem OBS Studio stseeni aktiveerimisel.",
   "scene-not-found-explain": "Palun kontrolli seadistatud stseenide sätteid.",
   "scene-selection": "OBS stseenide valikud",
+  "screen-access-required": "Screen recording permissions are required for this feature",
+  "screen-access-required-explain": "Please restart the app when screen recording permissions have been granted in System Settings.",
   "search": "Otsi",
   "search-by-title-or-number": "Search by title or number",
   "select-a-congregation-to-enable": "Vali kõigepealt profiil",
