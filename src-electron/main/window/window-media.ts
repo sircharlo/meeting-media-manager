@@ -105,20 +105,26 @@ const setWindowPosition = (
     if (fullscreen) {
       if (displayNr === currentDisplayNr && mediaWindow.isAlwaysOnTop()) return;
 
-      // On macOS, windows can't be moved if they're in fullscreen mode
-      if (PLATFORM === 'darwin') {
+      const setWindowPosition = () => {
+        if (!mediaWindow) return;
+        mediaWindow.setBounds(targetScreenBounds);
+        // macOS doesn't play nice when trying to share a fullscreen window in Zoom if it's set to always be on top
+        if (PLATFORM !== 'darwin' && !mediaWindow.isAlwaysOnTop()) {
+          mediaWindow.setAlwaysOnTop(true);
+        }
+        if (!mediaWindow.isFullScreen()) {
+          mediaWindow.setFullScreen(true);
+        }
+      };
+
+      // On macOS, fullscreen transitions take place asynchronously, so we need to wait for the leave-full-screen event before moving the window
+      if (PLATFORM === 'darwin' && mediaWindow.isFullScreen()) {
+        mediaWindow.once('leave-full-screen', function () {
+          setWindowPosition();
+        });
         mediaWindow.setFullScreen(false);
-      }
-
-      mediaWindow.setPosition(targetScreenBounds.x, targetScreenBounds.y);
-
-      // macOS doesn't play nice when trying to share a fullscreen window in Zoom if it's set to always be on top
-      if (PLATFORM !== 'darwin' && !mediaWindow.isAlwaysOnTop()) {
-        mediaWindow.setAlwaysOnTop(true);
-      }
-      // On macOS, fullscreen transitions take place asynchronously. Let's not check for isFullScreen() if we're on that platform
-      if (PLATFORM === 'darwin' || !mediaWindow.isFullScreen()) {
-        mediaWindow.setFullScreen(true);
+      } else {
+        setWindowPosition();
       }
     } else {
       const newBounds = {
@@ -128,15 +134,18 @@ const setWindowPosition = (
         y: targetScreenBounds.y + 50,
       };
 
-      if (
-        mediaWindow.isAlwaysOnTop() ||
-        // On macOS, fullscreen transitions take place asynchronously. Let's not check for isFullScreen() if we're on that platform
-        PLATFORM === 'darwin' ||
-        mediaWindow.isFullScreen()
-      ) {
-        // macOS doesn't play nice when trying to share a fullscreen window in Zoom if it's set to always be on top
-        if (PLATFORM !== 'darwin') mediaWindow.setAlwaysOnTop(false);
+      if (mediaWindow.isAlwaysOnTop()) {
+        mediaWindow.setAlwaysOnTop(false);
+      }
+
+      if (mediaWindow.isFullScreen()) {
+        // On macOS, fullscreen transitions take place asynchronously, so we need to wait for the leave-full-screen event before moving the window
+        mediaWindow.once('leave-full-screen', function () {
+          if (!mediaWindow) return;
+          mediaWindow.setBounds(newBounds);
+        });
         mediaWindow.setFullScreen(false);
+      } else {
         mediaWindow.setBounds(newBounds);
       }
 
