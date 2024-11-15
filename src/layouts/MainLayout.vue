@@ -319,6 +319,10 @@ const updateWatchFolderRef = async ({
       if (watchedItemMap) {
         watchFolderMedia.value[day].push(watchedItemMap);
 
+        watchFolderMedia.value[day].sort((a, b) =>
+          a.title.localeCompare(b.title),
+        );
+
         if (jwStore.mediaSort[currentCongregation.value]?.[day]?.length) {
           jwStore.mediaSort[currentCongregation.value]?.[day]?.push(
             watchedItemMap?.uniqueId,
