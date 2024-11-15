@@ -335,9 +335,12 @@ export const useJwStore = defineStore('jw-store', {
         ? new URL(urlVariables.mediator).hostname
         : '';
       return {
-        'JW-Icons': `https://wol.${urlVariables.base}/assets/fonts/jw-icons-external-1970474.woff`,
-        'WT-ClearText-Bold': `https://${mediatorBaseUrl}/fonts/wt-clear-text/1.019/Wt-ClearText-Bold.woff2`,
-        // 'NotoSerif': 'https://fonts.googleapis.com/css2?family=Noto+Serif:wght@100..900&display=swap',
+        'JW-Icons': urlVariables.base
+          ? `https://wol.${urlVariables.base}/assets/fonts/jw-icons-external-1970474.woff`
+          : '',
+        'WT-ClearText-Bold': mediatorBaseUrl
+          ? `https://${mediatorBaseUrl}/fonts/wt-clear-text/1.019/Wt-ClearText-Bold.woff2`
+          : '',
       };
     },
     yeartext: (state) => {

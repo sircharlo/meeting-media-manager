@@ -107,11 +107,16 @@ const { currentSettings } = storeToRefs(currentState);
 const filter = ref('');
 const publicTalks = ref<DocumentItem[]>([]);
 const filteredPublicTalks = computed((): DocumentItem[] => {
-  return filter.value
-    ? publicTalks.value.filter((s) =>
-        s.Title.toLowerCase().includes(filter.value.toLowerCase()),
-      )
-    : publicTalks.value;
+  if (filter.value) {
+    const searchTerms = filter.value
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((term) => term);
+    return publicTalks.value.filter((s) =>
+      searchTerms.every((term) => s.Title.toLowerCase().includes(term)),
+    );
+  }
+  return publicTalks.value;
 });
 
 const s34mpBasename = ref<string | undefined>();
