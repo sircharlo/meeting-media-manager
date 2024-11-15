@@ -1,6 +1,8 @@
 <template>
   <SongPicker v-model="chooseSong" :section="section" />
   <PublicTalkMediaPicker v-model="publicTalkMediaPopup" />
+  <DialogRemoteVideo v-model="remoteVideoPopup" :section="section" />
+  <DialogStudyBible v-model="studyBiblePopup" :section="section" />
   <q-btn
     :disable="mediaPlaying || !mediaSortForDay"
     color="white-transparent"
@@ -72,6 +74,20 @@
           <q-item-section>
             <q-item-label>{{ $t('public-talk-media') }}</q-item-label>
             <q-item-label caption>{{ $t('media-from-s34mp') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item
+          v-close-popup
+          :disable="!online"
+          clickable
+          @click="studyBiblePopup = true"
+        >
+          <q-item-section avatar>
+            <q-icon color="primary" name="mmm-guide" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('study-bible') }}</q-item-label>
+            <q-item-label caption>{{ $t('study-bible-media') }}</q-item-label>
           </q-item-section>
         </q-item>
         <q-item-label header>{{ $t('from-local-computer') }}</q-item-label>
@@ -185,7 +201,6 @@
       <!-- </q-date> -->
     </q-popup-proxy>
   </q-btn>
-  <DialogRemoteVideo v-model="remoteVideoPopup" :section="section" />
 </template>
 <script setup lang="ts">
 // Packages
@@ -213,6 +228,8 @@ import { useJwStore } from 'src/stores/jw';
 // Types
 import type { MediaSection } from 'src/types';
 
+import DialogStudyBible from '../dialog/DialogStudyBible.vue';
+
 const { formatDate, getDateDiff, getMaxDate, getMinDate } = date;
 
 const jwStore = useJwStore();
@@ -236,6 +253,7 @@ const section = ref<MediaSection | undefined>();
 const publicTalkMediaPopup = ref(false);
 const datePickerActive = ref(false);
 const remoteVideoPopup = ref(false);
+const studyBiblePopup = ref(false);
 
 const openDragAndDropper = () => {
   window.dispatchEvent(
