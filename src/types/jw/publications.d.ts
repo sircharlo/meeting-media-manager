@@ -96,10 +96,12 @@ export interface MediaItemsMediator {
 }
 
 export interface PublicationFiles {
+  '3GP'?: MediaItemsMediatorFile[] | MediaLink[];
   BRL?: MediaItemsMediatorFile[] | MediaLink[];
   DAISY?: MediaItemsMediatorFile[] | MediaLink[];
   EPUB?: MediaItemsMediatorFile[] | MediaLink[];
   JWPUB?: MediaItemsMediatorFile[] | MediaLink[];
+  M4V?: MediaItemsMediatorFile[] | MediaLink[];
   MP3?: MediaItemsMediatorFile[] | MediaLink[];
   MP4?: MediaItemsMediatorFile[] | MediaLink[];
   PDF?: MediaItemsMediatorFile[] | MediaLink[];
@@ -146,17 +148,21 @@ export interface PublicationFetcher {
 }
 
 export interface ImageSizes {
-  lg: string;
-  md: string;
-  sm: string;
-  xl: string;
+  lg?: string;
+  md?: string;
+  sm?: string;
+  xl?: string;
+  xs?: string;
 }
 
 export interface ImageTypeSizes {
-  lsr: ImageSizes;
-  pnr: ImageSizes;
-  sqr: ImageSizes;
-  wss: ImageSizes;
+  lsr?: ImageSizes;
+  lss?: ImageSizes;
+  pnr?: ImageSizes;
+  sqr?: ImageSizes;
+  sqs?: ImageSizes;
+  wsr?: ImageSizes;
+  wss?: ImageSizes;
 }
 
 export interface JwVideoCategoryListings {
