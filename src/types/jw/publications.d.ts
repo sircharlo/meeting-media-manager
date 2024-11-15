@@ -148,17 +148,21 @@ export interface PublicationFetcher {
 }
 
 export interface ImageSizes {
-  lg: string;
-  md: string;
-  sm: string;
-  xl: string;
+  lg?: string;
+  md?: string;
+  sm?: string;
+  xl?: string;
+  xs?: string;
 }
 
 export interface ImageTypeSizes {
-  lsr: ImageSizes;
-  pnr: ImageSizes;
-  sqr: ImageSizes;
-  wss: ImageSizes;
+  lsr?: ImageSizes;
+  lss?: ImageSizes;
+  pnr?: ImageSizes;
+  sqr?: ImageSizes;
+  sqs?: ImageSizes;
+  wsr?: ImageSizes;
+  wss?: ImageSizes;
 }
 
 export interface JwVideoCategoryListings {
