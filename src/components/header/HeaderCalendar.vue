@@ -83,7 +83,7 @@
           @click="studyBiblePopup = true"
         >
           <q-item-section avatar>
-            <q-icon color="primary" name="mmm-guide" />
+            <q-icon color="primary" name="mmm-bible" />
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ $t('study-bible') }}</q-item-label>
