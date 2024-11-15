@@ -278,6 +278,8 @@
   "scene-not-found": "Ocorreu um problema ao ativar uma cena no OBS Studio.",
   "scene-not-found-explain": "Por favor, valide as cenas configuradas nas configurações.",
   "scene-selection": "Seleção de cena no OBS",
+  "screen-access-required": "Screen recording permissions are required for this feature",
+  "screen-access-required-explain": "Please restart the app when screen recording permissions have been granted in System Settings.",
   "search": "Pesquisar",
   "search-by-title-or-number": "Search by title or number",
   "select-a-congregation-to-enable": "Selecione um perfil primeiro",
