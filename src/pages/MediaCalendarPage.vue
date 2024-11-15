@@ -973,7 +973,6 @@ useEventListener<
     section?: MediaSection;
   }>
 >(window, 'localFiles-browsed', (event) => {
-  console.log('localFiles-browsed', event.detail);
   sectionToAddTo.value = event.detail?.section;
   addToFiles(event.detail?.files ?? []).catch((error) => {
     errorCatcher(error);

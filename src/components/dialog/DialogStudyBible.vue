@@ -245,6 +245,7 @@ const getBibleBookMedia = async (book: number) => {
 };
 
 const addStudyBibleMedia = async (mediaItem: BibleBookMedia) => {
+  console.log('mediaItem', mediaItem);
   try {
     let fetcher: PublicationFetcher | undefined;
     if (typeof mediaItem.resource.src == 'string') {
@@ -271,8 +272,9 @@ const addStudyBibleMedia = async (mediaItem: BibleBookMedia) => {
     } else {
       const src = mediaItem.resource.src[0];
       if (typeof src === 'string') {
-        const searchParams = new URLSearchParams(src);
-        const { docid, issue, pub, track } = Object.fromEntries(searchParams);
+        const { docid, issue, pub, track } = Object.fromEntries(
+          new URL(src).searchParams,
+        );
         fetcher = {
           docid: docid ? parseInt(docid) : undefined,
           fileformat: 'MP4',
