@@ -49,6 +49,7 @@ const electronApi: ElectronApi = {
   getAppVersion: () => invoke('getVersion'),
   getLocalPathFromFileObject: (fo) => webUtils.getPathForFile(fo),
   getNrOfPdfPages,
+  getScreenAccessStatus: () => invoke('getScreenAccessStatus'),
   getUserDataPath: () => invoke('getUserDataPath'),
   getVideoDuration,
   isFileUrl,
