@@ -27,17 +27,6 @@
           </q-input>
         </div>
       </div>
-      <div
-        v-if="
-          !!(
-            remoteVideosLoadingProgress < 1 &&
-            (remoteVideosFiltered.length === 0 || remoteVideoFilter)
-          )
-        "
-        class="text-center row items-center justify-center"
-      >
-        <q-spinner color="primary" size="md" />
-      </div>
       <div class="row">
         <q-scroll-area
           :bar-style="barStyle"
@@ -45,7 +34,13 @@
           style="width: 100vw; height: 40vh"
         >
           <div class="row q-col-gutter-md">
-            <template v-for="video in remoteVideosFiltered" :key="video.guid">
+            <template
+              v-for="video in remoteVideosFiltered.slice(
+                (currentPage - 1) * videosPerPage,
+                currentPage * videosPerPage,
+              )"
+              :key="video.guid"
+            >
               <div class="col-xs-6 col-sm-4 col-md-3 col-lg-3 col-xl-2">
                 <div
                   v-ripple
@@ -99,8 +94,20 @@
           </div>
         </q-scroll-area>
       </div>
+      <div class="row items-center justify-center">
+        <q-pagination
+          v-model="currentPage"
+          :max="Math.ceil(remoteVideosFiltered.length / videosPerPage)"
+          :max-pages="10"
+          active-color="primary"
+          color="grey"
+          direction-links
+          flat
+        />
+      </div>
       <div class="row items-center">
         <div class="col">
+          <q-spinner v-if="videosAreLoading" color="primary" size="md" />
           <q-toggle
             v-model="remoteVideosIncludeAudioDescription"
             :label="$t('include-audio-description')"
@@ -160,7 +167,6 @@ const open = defineModel<boolean>({ default: false });
 const { barStyle, thumbStyle } = useScrollbar();
 
 const remoteVideos = ref<MediaItemsMediatorItem[]>([]);
-const remoteVideosLoadingProgress = ref<number>(0);
 const remoteVideoFilter = ref('');
 const remoteVideosIncludeAudioDescription = ref(false);
 const hoveredRemoteVideo = ref('');
@@ -173,12 +179,25 @@ const remoteVideosFiltered = computed(() => {
         !v.primaryCategory.endsWith('AD'),
     ),
   );
-  if (remoteVideoFilter.value?.length > 2)
+
+  if (remoteVideoFilter.value?.length > 2) {
+    // Split the filter string into terms (space-separated)
+    const searchTerms = remoteVideoFilter.value
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((term) => term); // Remove empty terms
+
+    // Check if all search terms are present
     useableVideos.value = useableVideos.value.filter((video) =>
-      video.title.toLowerCase().includes(remoteVideoFilter.value.toLowerCase()),
+      searchTerms.every((term) => video.title.toLowerCase().includes(term)),
     );
-  return useableVideos.value.slice(0, 50);
+  }
+
+  return useableVideos.value;
 });
+const videosAreLoading = ref(false);
+const currentPage = ref(1);
+const videosPerPage = ref(20);
 
 whenever(open, () => {
   getJwVideos();
@@ -187,58 +206,49 @@ whenever(open, () => {
 const getJwVideos = async () => {
   try {
     if (!currentSettings.value) return;
-    if (remoteVideosLoadingProgress.value < 1) {
-      const getSubcategories = async (category: string) => {
-        if (!category) return null;
-        return await fetchJson<JwVideoCategory>(
-          `${urlVariables.value.mediator}/v1/categories/${
-            currentSettings.value?.lang
-          }/${category}?detailed=1&mediaLimit=0&clientType=www`,
-        );
-      };
-      const subcategories: {
-        key: string;
-        parentCategory: string;
-      }[] = [{ key: 'LatestVideos', parentCategory: '' }];
-      const subcategoriesRequest = await getSubcategories('VideoOnDemand');
-      const subcategoriesFirstLevel =
-        subcategoriesRequest?.category?.subcategories?.map((s) => s.key) || [];
-      for (const subcategoryFirstLevel of subcategoriesFirstLevel) {
-        subcategories.push(
-          ...((
-            await getSubcategories(subcategoryFirstLevel)
-          )?.category.subcategories.map((s) => {
-            return { key: s.key, parentCategory: subcategoryFirstLevel };
-          }) || []),
-        );
-      }
-      let index = 0;
-      for (const category of subcategories) {
-        if (!category?.key) continue;
-        const request = await fetchJson<JwVideoCategory>(
-          `${urlVariables.value.mediator}/v1/categories/${
-            currentSettings.value?.lang
-          }/${category.key}?detailed=0&clientType=www`,
-        );
-        remoteVideos.value = remoteVideos.value
-          .concat(request?.category?.media || [])
-          .reduce((accumulator: MediaItemsMediatorItem[], current) => {
-            const guids = new Set(accumulator.map((item) => item.guid));
-            if (!guids.has(current.guid)) {
-              accumulator.push(current);
-            }
-            return accumulator;
-          }, [])
-          .sort((a, b) => {
-            return (
-              new Date(b.firstPublished).getTime() -
-              new Date(a.firstPublished).getTime()
-            );
-          });
-        index++;
-        remoteVideosLoadingProgress.value = index / subcategories.length;
-      }
+
+    videosAreLoading.value = true;
+
+    const getSubcategories = async (category: string) => {
+      if (!category) return null;
+      return await fetchJson<JwVideoCategory>(
+        `${urlVariables.value.mediator}/v1/categories/${
+          currentSettings.value?.lang
+        }/${category}?detailed=1&mediaLimit=0&clientType=www`,
+      );
+    };
+    const subcategories: {
+      key: string;
+      parentCategory: string;
+    }[] = [{ key: 'LatestVideos', parentCategory: '' }];
+    const subcategoriesRequest = await getSubcategories('VideoOnDemand');
+    const subcategoriesFirstLevel =
+      subcategoriesRequest?.category?.subcategories?.map((s) => s.key) || [];
+    for (const subcategoryFirstLevel of subcategoriesFirstLevel) {
+      subcategories.push(
+        ...((
+          await getSubcategories(subcategoryFirstLevel)
+        )?.category.subcategories.map((s) => {
+          return { key: s.key, parentCategory: subcategoryFirstLevel };
+        }) || []),
+      );
     }
+    for (const category of subcategories) {
+      if (!category?.key) continue;
+      const request = await fetchJson<JwVideoCategory>(
+        `${urlVariables.value.mediator}/v1/categories/${
+          currentSettings.value?.lang
+        }/${category.key}?detailed=0&clientType=www`,
+      );
+      const newVideos = (request?.category?.media || []).filter(
+        (video) => !remoteVideos.value.find((v) => v.guid === video.guid),
+      );
+      remoteVideos.value.push(...newVideos);
+      remoteVideos.value.sort((a, b) =>
+        b.firstPublished.localeCompare(a.firstPublished),
+      );
+    }
+    videosAreLoading.value = false;
   } catch (error) {
     errorCatcher(error);
   }
