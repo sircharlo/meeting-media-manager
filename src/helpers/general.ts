@@ -39,3 +39,8 @@ export const isVersionValid = (
 
   return true;
 };
+
+export const sorter = new Intl.Collator(undefined, {
+  numeric: true,
+  sensitivity: 'base',
+});

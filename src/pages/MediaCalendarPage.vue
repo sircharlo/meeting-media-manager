@@ -491,6 +491,7 @@ import {
   getTempDirectory,
   getThumbnailUrl,
 } from 'src/helpers/fs';
+import { sorter } from 'src/helpers/general';
 import {
   addJwpubDocumentMediaToFiles,
   downloadFileIfNeeded,
@@ -1544,12 +1545,7 @@ const dropEnd = (event: DragEvent) => {
             type: file.type,
           };
         })
-        .sort((a, b) =>
-          a?.path?.localeCompare(b?.path, undefined, {
-            numeric: true,
-            sensitivity: 'base',
-          }),
-        );
+        .sort((a, b) => sorter.compare(a?.path, b?.path));
       let noLocalDroppedFiles =
         droppedStuff.filter((file) => file.path).length === 0;
       if (noLocalDroppedFiles && droppedStuff.length > 0) {
