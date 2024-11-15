@@ -222,8 +222,8 @@ whenever(
 
 watchDebounced(
   () => [currentSettings.value?.baseUrl, currentCongregation.value],
-  async ([newBaseUrl, newCongregation], [oldBaseUrl, oldCongregation]) => {
-    if (newBaseUrl !== oldBaseUrl && newCongregation === oldCongregation) {
+  async ([newBaseUrl, newCongregation], [oldBaseUrl]) => {
+    if (!!newCongregation && newBaseUrl !== oldBaseUrl) {
       await setUrlVariables(newBaseUrl);
       setElementFont('JW-Icons');
     }
@@ -443,7 +443,6 @@ const removeListeners = () => {
 onMounted(() => {
   document.title = 'Meeting Media Manager';
   if (!currentSettings.value) navigateToCongregationSelector();
-  // add overflow hidden to body
   document.body.style.overflow = 'hidden';
   setElementFont('JW-Icons');
   initListeners();
