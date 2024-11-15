@@ -25,7 +25,7 @@ export async function createWebsiteWindow(lang?: string) {
   websiteWindow = createWindow(
     'website',
     {
-      alwaysOnTop: PLATFORM !== 'darwin', // On macOS, the permission dialog should appear on top of this window
+      alwaysOnTop: true,
       height: 720,
       show: true,
       title: 'Website Stream',

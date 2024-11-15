@@ -33,6 +33,7 @@ export interface ElectronApi {
   getAppVersion: () => Promise<string>;
   getLocalPathFromFileObject: (fileObject: File) => string;
   getNrOfPdfPages: (pdfPath: string) => Promise<number>;
+  getScreenAccessStatus: () => Promise<string>;
   getUserDataPath: () => Promise<string>;
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
   isFileUrl: (url: string) => boolean;
@@ -130,6 +131,7 @@ export type ElectronIpcInvokeKey =
   | 'downloadFile'
   | 'getAllScreens'
   | 'getAppDataPath'
+  | 'getScreenAccessStatus'
   | 'getUserDataPath'
   | 'getVersion'
   | 'openFileDialog'

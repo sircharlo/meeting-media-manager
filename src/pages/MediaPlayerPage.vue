@@ -89,6 +89,9 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { computed, ref, useTemplateRef, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const currentState = useCurrentStateStore();
 const {
@@ -239,33 +242,61 @@ const { data: webStreamData } = useBroadcastChannel<boolean, boolean>({
 
 watch(
   () => webStreamData.value,
-  (newWebStreamData) => {
+  async (newWebStreamData) => {
     videoStreaming.value = newWebStreamData;
     if (newWebStreamData) {
-      navigator.mediaDevices
-        .getDisplayMedia({ audio: false, video: true })
-        .then(async (stream) => {
-          let timeouts = 0;
-          while (!mediaElement.value) {
-            await new Promise((resolve) => {
-              setTimeout(resolve, 100);
-            });
-            if (++timeouts > 10) break;
-          }
-          if (!mediaElement.value) return;
-          mediaElement.value.srcObject = stream;
-          mediaElement.value.play().catch((error: Error) => {
-            if (
-              !(
-                error.message.includes('removed from the document') ||
-                error.message.includes('new load request') ||
-                error.message.includes('interrupted by a call to pause')
-              )
-            )
-              errorCatcher(error);
+      const screenAccessStatus =
+        await window.electronApi.getScreenAccessStatus();
+      if (!screenAccessStatus || screenAccessStatus !== 'granted') {
+        await navigator.mediaDevices.getDisplayMedia({
+          audio: false,
+          video: true,
+        });
+        const screenAccessStatusSecondTry =
+          await window.electronApi.getScreenAccessStatus();
+        if (
+          !screenAccessStatusSecondTry ||
+          screenAccessStatusSecondTry !== 'granted'
+        ) {
+          createTemporaryNotification({
+            caption: t('screen-access-required-explain'),
+            message: t('screen-access-required'),
+            noClose: true,
+            timeout: 10000,
+            type: 'negative',
           });
-        })
+          videoStreaming.value = false;
+          return;
+        }
+      }
+      const stream = await navigator.mediaDevices
+        .getDisplayMedia({ audio: false, video: true })
         .catch((e) => errorCatcher(e));
+      let timeouts = 0;
+      while (!mediaElement.value) {
+        await new Promise((resolve) => {
+          setTimeout(resolve, 100);
+        });
+        if (++timeouts > 10) break;
+      }
+      if (!mediaElement.value || !stream) {
+        videoStreaming.value = false;
+        mediaPlayingAction.value = '';
+        mediaElement?.value?.pause();
+        if (mediaElement?.value?.srcObject) mediaElement.value.srcObject = null;
+        return;
+      }
+      mediaElement.value.srcObject = stream;
+      mediaElement.value.play().catch((error: Error) => {
+        if (
+          !(
+            error.message.includes('removed from the document') ||
+            error.message.includes('new load request') ||
+            error.message.includes('interrupted by a call to pause')
+          )
+        )
+          errorCatcher(error);
+      });
     } else {
       if (!mediaElement.value) return;
       mediaElement.value.pause();
@@ -357,28 +388,20 @@ const $q = useQuasar();
 
 $q.iconMapFn = (iconName) => {
   if (iconName.startsWith('chevron_')) {
-    return {
-      cls: iconName.replace('chevron_', 'mmm-'),
-    };
+    iconName = iconName.replace('chevron_', 'mmm-');
+  } else if (iconName.startsWith('keyboard_arrow_')) {
+    iconName = iconName.replace('keyboard_arrow_', 'mmm-');
+  } else if (iconName.startsWith('arrow_drop_')) {
+    iconName = 'mmm-dropdown-arrow';
+  } else if (iconName === 'cancel' || iconName === 'close') {
+    iconName = 'clear';
   }
-  if (iconName.startsWith('keyboard_arrow_')) {
-    return {
-      cls: iconName.replace('keyboard_arrow_', 'mmm-'),
-    };
+  if (!iconName.startsWith('mmm-')) {
+    iconName = 'mmm-' + iconName;
   }
-  if (iconName.startsWith('arrow_drop_')) {
-    return {
-      cls: 'mmm-dropdown-arrow',
-    };
-  }
-  if (iconName.startsWith('mmm-') === true) {
-    // we strip the "app:" part
-    // const name = iconName.substring(4)
-
-    return {
-      cls: iconName,
-    };
-  }
+  return {
+    cls: iconName,
+  };
 };
 
 watchImmediate(
