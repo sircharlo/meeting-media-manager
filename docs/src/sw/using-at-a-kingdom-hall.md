@@ -76,15 +76,15 @@ Ikiwa kidirisha cha midia ni nyeusi unapowasilisha tovuti baada ya kusasisha M³
 1. Kufungua mipangilio ya **Privacy & Security** kwenye mfumo wako wa macOS.
 2. Nenda kwenye **Screen Recording**.
 3. Chagua M³ kwenye orodha.
-4. Click the `-` (minus) button to remove it.
-5. Click the `+` (plus) button and select M³ from the Applications folder.
-6. You may be prompted to relaunch M³ to apply the change.
+4. Bonyeza kitufe cha `-` (minus) ili kuiondoa.
+5. Bonyeza kitufe cha `+` (plus) na uchague M³ kutoka kwa folder ya Programu.
+6. Unaweza ombwa kufungua M³ kwa upya ili mabadiliko yafanye kazi.
 
-After these steps, screen sharing should function as expected once again.
+Baada ya hatua hizi, screen sharing inafaa kufanya kazi kama inavyotakikana.
 
 :::tip Kidokezo
 
-These steps are optional and can be skipped if you do not plan to use the website presentation feature. On the other hand, if you do plan to use the website presentation feature, it is recommended to follow these steps after every update to ensure the feature works as expected.
+Unaweza kupuuza hatua hizi ikiwa haupangi kutumia kipengele cha kuwasilisha tovuti. Kwa upande mwingine, ikiwa unapanga kutumia kipengele cha uwasilishaji wa tovuti, inashauriwa kufuata hatua hizi baada ya kila sasisho ili kuhakikisha kuwa kipengele kinafanya kazi inavyotarajiwa.
 
 :::
 
