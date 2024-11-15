@@ -6,7 +6,11 @@
       <div class="text-h6 row">{{ $t('add-media-study-bible') }}</div>
       <div class="row">{{ $t('add-media-study-bible-explain') }}</div>
       <div v-if="bibleBook" class="text-h6 row">
-        {{ $t('media-gallery') }} - {{ bibleBooks[bibleBook].standardName }}
+        {{ $t('media-gallery') }} -
+        {{
+          localeBibleBooks[bibleBook]?.standardName ||
+          bibleBooks[bibleBook].standardName
+        }}
       </div>
       <div
         v-if="!!(loadingProgress < 1 && Object.keys(bibleBooks).length === 0)"
@@ -101,7 +105,10 @@
                   </q-card-section>
                   <q-card-section class="q-pa-sm">
                     <div class="text-subtitle2 q-mb-xs">
-                      {{ book.standardName }}
+                      {{
+                        localeBibleBooks[+bookNr]?.standardName ||
+                        book.standardName
+                      }}
                     </div>
                   </q-card-section>
                 </div>
@@ -129,7 +136,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 // Packages
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 // Composables
 import { useScrollbar } from 'src/composables/useScrollbar';
@@ -154,10 +161,12 @@ import type {
 } from 'src/types';
 
 import { whenever } from '@vueuse/core';
-import { fetchJson } from 'src/helpers/api';
+import { fetchJson, fetchRaw } from 'src/helpers/api';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { camelToKebabCase } from 'src/helpers/general';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+import { useI18n } from 'vue-i18n';
 
 // Stores
 const jwStore = useJwStore();
@@ -182,9 +191,62 @@ const loadingProgress = ref<number>(0);
 const hoveredBibleBook = ref('');
 const hoveredMediaItem = ref(0);
 
+const localeUrl = ref('');
+const localeBibleBooks = ref<Record<number, BibleBook>>({});
+
+const i18n = useI18n();
+
+const baseUrl = computed(() => {
+  return `https://www.${urlVariables.value.base}/en/library/bible/study-bible/books`;
+});
+
+const localeSymbol = computed(() => {
+  return (
+    jwStore.jwLanguages.list.find(
+      (lang) => lang.langcode === currentSettings.value?.lang,
+    )?.symbol ??
+    jwStore.jwLanguages.list.find(
+      (lang) => lang.langcode === currentSettings.value?.langFallback,
+    )?.symbol ??
+    camelToKebabCase(i18n.locale.value)
+  );
+});
+
 whenever(open, () => {
+  getLocaleData();
   getBibleBooks();
 });
+
+const getLocaleData = async () => {
+  try {
+    const html = await fetchRaw(baseUrl.value)
+      .then((response) => {
+        if (!response.ok) return null;
+        return response.text();
+      })
+      .catch(() => null);
+
+    if (!html) return;
+
+    const { load } = await import('cheerio');
+    const $ = load(html);
+    const locale = $(
+      `link[rel="alternate"][hreflang=${localeSymbol.value}]`,
+    )[0];
+    localeUrl.value = locale?.attribs?.href || '';
+
+    console.log('localeUrl', localeUrl.value);
+    if (!localeUrl.value) return;
+
+    const result = await fetchJson<BibleBooksResult>(
+      `${localeUrl.value}/json/data`,
+    );
+    console.log('result', result);
+    localeBibleBooks.value = result?.editionData.books || {};
+  } catch (e) {
+    errorCatcher(e);
+  }
+};
 
 const bibleBookImagesToImageTypeSizes = (
   images: BibleBookImage[],
@@ -198,9 +260,8 @@ const bibleBookImagesToImageTypeSizes = (
 
 const getBibleBooks = async () => {
   try {
-    if (!currentSettings.value) return;
     const result = await fetchJson<BibleBooksResult>(
-      `https://www.${urlVariables.value.base}/en/library/bible/study-bible/books/json/data`,
+      `${baseUrl.value}/json/data`,
     );
     bibleBooks.value = result?.editionData.books || {};
   } catch (error) {
@@ -222,7 +283,7 @@ const getBibleBookMedia = async (book: number) => {
 
   try {
     const result = await fetchJson<BibleBooksResult>(
-      `https://www.${urlVariables.value.base}/en/library/bible/study-bible/books/json/multimedia/${book}`,
+      `${baseUrl.value}/json/multimedia/${book}`,
     );
     if (!result) {
       resetBibleBook();

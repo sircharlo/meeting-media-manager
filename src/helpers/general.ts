@@ -1,3 +1,6 @@
+export const camelToKebabCase = (str: string) =>
+  str.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+
 export const parseVersion = (version: string) => {
   const [major, minor, patch] = version.split('.').map((v) => parseInt(v, 10));
   return { major, minor, patch };
