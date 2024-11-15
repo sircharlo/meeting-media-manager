@@ -8,7 +8,7 @@
       <div class="row">
         <div class="col-grow">
           <q-input
-            v-model="congregationName"
+            v-model="congregationFilter"
             clearable
             dense
             outlined
@@ -32,13 +32,13 @@
               <q-item-section>
                 <q-item-label
                   >{{
-                    congregationName?.length > 2
+                    congregationFilter?.length > 2
                       ? $t('no-results')
                       : $t('no-results-short')
                   }}
                 </q-item-label>
                 <q-item-label caption>{{
-                  congregationName?.length > 2
+                  congregationFilter?.length > 2
                     ? $t('no-results-explain')
                     : $t('no-results-short-explain')
                 }}</q-item-label>
@@ -91,16 +91,9 @@
       </div>
       <div class="row">
         <div class="col text-right">
-          <q-btn
-            v-close-popup
-            color="negative"
-            flat
-            @click="
-              congregationName = '';
-              results = [];
-            "
-            >{{ $t('cancel') }}</q-btn
-          >
+          <q-btn v-close-popup color="negative" flat @click="dismissPopup">{{
+            $t('cancel')
+          }}</q-btn>
         </div>
       </div>
     </div>
@@ -129,23 +122,23 @@ const { dateLocale } = useLocale();
 const { barStyle, thumbStyle } = useScrollbar();
 
 const open = defineModel<boolean>({ default: false });
-const congregationName = ref('');
+const congregationFilter = ref('');
 const results = ref<GeoRecord[]>([]);
 
 whenever(open, () => {
-  congregationName.value = currentSettings.value?.congregationName || '';
+  congregationFilter.value = currentSettings.value?.congregationName || '';
   results.value = [];
   lookupCongregation();
 });
 
 const lookupCongregation = async () => {
   try {
-    if (congregationName.value?.length > 2) {
+    if (congregationFilter.value?.length > 2) {
       await fetchJson<{ geoLocationList: GeoRecord[] }>(
         `https://apps.${urlVariables.value.base}/api/public/meeting-search/weekly-meetings`,
         new URLSearchParams({
           includeSuggestions: 'true',
-          keywords: congregationName.value,
+          keywords: congregationFilter.value,
           latitude: '0',
           longitude: '0',
           searchLanguageCode: '',
@@ -226,8 +219,12 @@ const selectCongregation = (congregation: GeoRecord) => {
   } catch (error) {
     errorCatcher(error);
   }
+  dismissPopup();
+};
+
+const dismissPopup = () => {
   open.value = false;
   results.value = [];
-  congregationName.value = '';
+  congregationFilter.value = '';
 };
 </script>
