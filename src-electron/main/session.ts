@@ -51,7 +51,7 @@ export const initSessionListeners = () => {
           'base-uri': "'none'",
           'connect-src': "'self' https: ws: devtools:",
           'default-src': "'self'",
-          'font-src': `'self' ${trustedDomains} https://fonts.gstatic.com file:`,
+          'font-src': "'self' https: https://fonts.gstatic.com file:",
           'frame-src': "'self'",
           'img-src': `'self' ${trustedDomains} file: data: blob:`,
           'media-src': `'self' ${trustedDomains} file: data:`,

@@ -18,17 +18,17 @@
 4. 启动 M³。
 5. 通过配置向导。
 
-### macOS only: Additional installation steps {#additional-steps-for-macos-users}
+### 仅限macOS ：附加安装步骤 {#additional-steps-for-macos-users}
 
 :::warning 小贴士
 
-This section only applies to macOS users.
+本节仅适用于macOS 用户。
 
 :::
 
-Due to Apple's security measures, a few additional steps are required to run the installed M³ app on modern macOS systems.
+由于苹果的安全措施，需要采取一些额外步骤在现代macOS 系统上运行已安装的M3 应用程序。
 
-Run the following two commands in Terminal, modifying the path to M³ as needed:
+在终端中运行以下两个命令，根据需要修改到 M3 的路径：
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
@@ -37,21 +37,21 @@ sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 
 :::warning 提示
 
-As a macOS user, you will need to follow these steps every time you install or update M³.
+作为macOS 用户，每次安装或更新 M3时，您都需要遵循这些步骤。
 
 :::
 
 :::info 说明
 
-The first command _signs the application's code_. This is required to prevent M³ from being detected as a malicious application from an unknown developer.
+第一个命令_签署应用程序的代码_。 这是防止未知开发者发现M3恶意应用程序所必需的。
 
-The second command _removes the quarantine flag_ from the application. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
+第二个命令 _move 从应用程序中移除监管标志 _。 监管标志被用来警告用户从因特网下载的潜在恶意应用程序。
 
 :::
 
-#### Alternative method {#alternative-method-for-macos-users}
+#### 替代方法 {#alternative-method-for-macos-users}
 
-If you are still unable to launch M³ after entering the two commands from the previous section, please try the following:
+如果您在从上一节输入两个命令后仍然无法启动 M3，请尝试以下操作：
 
 1. 打开 macOS 系统 **隐私与安全** 设置。
 2. 查找M3的条目，然后点击按钮**随时打开**。
@@ -61,30 +61,30 @@ If you are still unable to launch M³ after entering the two commands from the p
 
 如果您在关注所有这些步骤后仍然有问题，请[在GitHub上打开一个问题](https://github.com/sircharlo/meeting-media-manager/issues/new)。 我们会尽力提供帮助。
 
-### macOS only: Re-enabling website presentation after updates {#screen-sharing-issues}
+### 仅限macOS ：更新后的 {#screen-sharing-issues} 后重新启用网站
 
 :::warning 提示
 
-This section only applies to macOS users.
+本节仅适用于macOS 用户。
 
 :::
 
-Some macOS users have reported that website presentation no longer works after installing updates to M³.
+一些macOS 用户报告说，网站展示在安装更新到 M3 后不再起作用。
 
-If the media window is black when presenting the website after updating M³, try the following steps:
+如果媒体窗口在更新 M3 后显示网站时是黑色的，请尝试以下步骤：
 
 1. 打开 macOS 系统 **隐私与安全** 设置。
-2. Go to **Screen Recording**.
-3. Select M³ in the list.
-4. Click the `-` (minus) button to remove it.
-5. Click the `+` (plus) button and select M³ from the Applications folder.
-6. You may be prompted to relaunch M³ to apply the change.
+2. 转到**屏幕录制**。
+3. 在列表中选择 M3。
+4. 点击 "-" (最小) 按钮来删除它。
+5. 点击 "+" (附加) 按钮，从应用程序文件夹中选择 M3。
+6. 您可能会被提示重启M3来应用更改。
 
-After these steps, screen sharing should function as expected once again.
+在这些步骤之后，屏幕共享应再次按预期运行。
 
 :::tip 小贴士
 
-These steps are optional and can be skipped if you do not plan to use the website presentation feature. On the other hand, if you do plan to use the website presentation feature, it is recommended to follow these steps after every update to ensure the feature works as expected.
+这些步骤是可选的，如果您不打算使用网站演示功能，可以跳过。 另一方面，如果您确实计划使用网站演示功能， 建议在每次更新后跟进这些步骤，以确保功能能够如预期的那样工作。
 
 :::
 

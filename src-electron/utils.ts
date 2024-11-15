@@ -5,7 +5,6 @@ import { version } from 'app/package.json';
 import { app, systemPreferences } from 'electron';
 
 import { IS_DEV, JW_DOMAINS, PLATFORM, TRUSTED_DOMAINS } from './constants';
-import { isDownloadErrorExpected } from './main/downloads';
 import { urlVariables } from './main/session';
 import { logToWindow } from './main/window/window-base';
 import { mainWindow } from './main/window/window-main';
@@ -90,24 +89,7 @@ export function isSelf(url?: string): boolean {
 
 export const fetchRaw = async (url: string, init?: RequestInit) => {
   console.debug('fetchRaw', { init, url });
-  try {
-    return fetch(url, init);
-  } catch (e) {
-    errorCatcher(e, {
-      contexts: {
-        fn: {
-          isDownloadErrorExpected: await isDownloadErrorExpected(),
-          name: 'src-electron/utils fetchRaw',
-          params: init,
-          url,
-        },
-      },
-    });
-    return {
-      ok: false,
-      status: 400,
-    } as Response;
-  }
+  return fetch(url, init);
 };
 
 export const fetchJson = async <T>(
@@ -122,11 +104,16 @@ export const fetchJson = async <T>(
     if (response.ok) {
       return await response.json();
     } else if (![400, 404].includes(response.status)) {
-      errorCatcher(response, {
+      errorCatcher(new Error('Failed to fetch json!'), {
         contexts: {
           fn: {
+            headers: response.headers,
             name: 'fetchJson',
             params: Object.fromEntries(params || []),
+            responseUrl: response.url,
+            status: response.status,
+            statusText: response.statusText,
+            type: response.type,
             url,
           },
         },

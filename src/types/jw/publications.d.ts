@@ -96,10 +96,12 @@ export interface MediaItemsMediator {
 }
 
 export interface PublicationFiles {
+  '3GP'?: MediaItemsMediatorFile[] | MediaLink[];
   BRL?: MediaItemsMediatorFile[] | MediaLink[];
   DAISY?: MediaItemsMediatorFile[] | MediaLink[];
   EPUB?: MediaItemsMediatorFile[] | MediaLink[];
   JWPUB?: MediaItemsMediatorFile[] | MediaLink[];
+  M4V?: MediaItemsMediatorFile[] | MediaLink[];
   MP3?: MediaItemsMediatorFile[] | MediaLink[];
   MP4?: MediaItemsMediatorFile[] | MediaLink[];
   PDF?: MediaItemsMediatorFile[] | MediaLink[];

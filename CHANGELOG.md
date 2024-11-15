@@ -2,6 +2,54 @@
 
 # Changelog
 
+## 24.11.3
+
+### New features
+
+- 🖱️ Added **mouse cursor indicator** and **click animation** during website presentation.
+
+### Fixes
+
+- 📅 Fixed **calendar day labels** to display accurately based on user settings.
+- 🎶 Ensure the the requested **section** was used when adding extra media for the midweek meeting.
+- 🎵 Updated **opening song button** to ignore watched media.
+- 🔢 Fixed an issue where **incorrect values** would show up in some menus.
+- 🔗 Added **base URL validation** for improved setup accuracy.
+- 🌐 Cleared up **language inconsistencies** across the interface.
+- 🗄️ Improved **user data folder** management.
+
+## 24.11.2
+
+### New features
+
+- 📂 Added **folder watcher feature** to monitor a specified folder for new media, useful for syncing media from a cloud folder.
+- ➕ Added feature to **add media to specific meeting sections** using a new button on the Public Talk, Circuit Overseer, and Living as Christians headers.
+- 🎬 **OBS Studio scenes** can now be activated either immediately, or after media has stopped playing.
+
+### User interface
+
+- 🖼️ Improved **audio file management** to show thumbnails and enable time slider and custom durations.
+- 📅 Added **first day of the week setting** to customize the starting day in calendar views.
+- 🎶 Changed **"concluding song" label** to "closing song".
+
+### macOS improvements
+
+- 🔒 Added prompt to **request media access** for website presentations on macOS.
+- 🌐 Adjusted **website window behavior** to avoid forced-on-top setting when presenting a website.
+
+### Fixes and improvements
+
+- 📋 Improved handling of **long filenames**
+- 🖥️ Fixed handling of **multiple monitors** on Windows
+- 🔗 Fixed **URL handling** to correctly process `urlVariables` errors.
+- 🌍 Fixed **JWPUB import** (such as S-34) for certain languages.
+- 🛠️ Fixed **initial congregation selection** issue.
+- 🖼️ Cache **extracted thumbnails** intelligently to prevent having to extract them repeatedly.
+- 🧩 Improved **performance** by replacing adm-zip with decompress.
+- 🛠️ Improved **error handling** and Sentry capturing.
+- 🔐 Enhanced **type safety** and IPC code **cleanup**.
+- 🛑 Updated to **cancel pending downloads** before closing the app.
+
 ## 24.11.1
 
 ### User Interface
@@ -524,7 +572,7 @@ Managing media is now **a breeze**! We've eliminated all those tricky steps like
 
 - 🚀 New field which allows selecting the date of the next visit of the circuit overseer; when that week comes, the midweek meeting will change to Tuesday automatically and unnecessary media (closing songs and CBS media) will be skipped as well
 - Added a loading indicator while files are being renamed
-- Improved app icon for MacOS (thanks [@advenimus](https://github.com/advenimus)!)
+- Improved app icon for macOS (thanks [@advenimus](https://github.com/advenimus)!)
 - Improved media prefixes for weekend meetings (reserve `01` for public talk opening song, and `02` for public talk images)
 
 ### Bug fixes

@@ -53,10 +53,7 @@
           v-close-popup
           :disable="!online"
           clickable
-          @click="
-            remoteVideoPopup = true;
-            getJwVideos();
-          "
+          @click="remoteVideoPopup = true"
         >
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-movie" />
@@ -188,12 +185,7 @@
       <!-- </q-date> -->
     </q-popup-proxy>
   </q-btn>
-  <DialogRemoteVideo
-    v-model="remoteVideoPopup"
-    :remote-videos="remoteVideos"
-    :remote-videos-loading-progress="remoteVideosLoadingProgress"
-    :section="section"
-  />
+  <DialogRemoteVideo v-model="remoteVideoPopup" :section="section" />
 </template>
 <script setup lang="ts">
 // Packages
@@ -211,7 +203,6 @@ import PublicTalkMediaPicker from 'src/components/media/PublicTalkMediaPicker.vu
 import SongPicker from 'src/components/media/SongPicker.vue';
 
 // Helpers
-import { fetchJson } from 'src/helpers/api';
 import { friendlyDayToJsDay, getLocalDate } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 
@@ -220,19 +211,14 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 
 // Types
-import type {
-  JwVideoCategory,
-  MediaItemsMediatorItem,
-  MediaSection,
-} from 'src/types';
+import type { MediaSection } from 'src/types';
 
 const { formatDate, getDateDiff, getMaxDate, getMinDate } = date;
 
 const jwStore = useJwStore();
 const { clearCurrentDayAdditionalMedia, resetSort, showCurrentDayHiddenMedia } =
   jwStore;
-const { additionalMediaMaps, lookupPeriod, mediaSort, urlVariables } =
-  storeToRefs(jwStore);
+const { additionalMediaMaps, lookupPeriod, mediaSort } = storeToRefs(jwStore);
 
 const { dateLocale } = useLocale();
 
@@ -250,8 +236,6 @@ const section = ref<MediaSection | undefined>();
 const publicTalkMediaPopup = ref(false);
 const datePickerActive = ref(false);
 const remoteVideoPopup = ref(false);
-const remoteVideosLoadingProgress = ref(0);
-const remoteVideos = ref<MediaItemsMediatorItem[]>([]);
 
 const openDragAndDropper = () => {
   window.dispatchEvent(
@@ -373,66 +357,6 @@ const dateOptions = (lookupDate: string) => {
   } catch (error) {
     errorCatcher(error);
     return true;
-  }
-};
-
-const getJwVideos = async () => {
-  try {
-    if (!currentSettings.value) return;
-    if (remoteVideosLoadingProgress.value < 1) {
-      const getSubcategories = async (category: string) => {
-        if (!category) return null;
-        return await fetchJson<JwVideoCategory>(
-          `${urlVariables.value.mediator}/v1/categories/${
-            currentSettings.value?.lang
-          }/${category}?detailed=1&mediaLimit=0&clientType=www`,
-        );
-      };
-      const subcategories: {
-        key: string;
-        parentCategory: string;
-      }[] = [{ key: 'LatestVideos', parentCategory: '' }];
-      const subcategoriesRequest = await getSubcategories('VideoOnDemand');
-      const subcategoriesFirstLevel =
-        subcategoriesRequest?.category?.subcategories?.map((s) => s.key) || [];
-      for (const subcategoryFirstLevel of subcategoriesFirstLevel) {
-        subcategories.push(
-          ...((
-            await getSubcategories(subcategoryFirstLevel)
-          )?.category.subcategories.map((s) => {
-            return { key: s.key, parentCategory: subcategoryFirstLevel };
-          }) || []),
-        );
-      }
-      let index = 0;
-      for (const category of subcategories) {
-        if (!category?.key) continue;
-        const request = await fetchJson<JwVideoCategory>(
-          `${urlVariables.value.mediator}/v1/categories/${
-            currentSettings.value?.lang
-          }/${category.key}?detailed=0&clientType=www`,
-        );
-        remoteVideos.value = remoteVideos.value
-          .concat(request?.category?.media || [])
-          .reduce((accumulator: MediaItemsMediatorItem[], current) => {
-            const guids = new Set(accumulator.map((item) => item.guid));
-            if (!guids.has(current.guid)) {
-              accumulator.push(current);
-            }
-            return accumulator;
-          }, [])
-          .sort((a, b) => {
-            return (
-              new Date(b.firstPublished).getTime() -
-              new Date(a.firstPublished).getTime()
-            );
-          });
-        index++;
-        remoteVideosLoadingProgress.value = index / subcategories.length;
-      }
-    }
-  } catch (error) {
-    errorCatcher(error);
   }
 };
 
