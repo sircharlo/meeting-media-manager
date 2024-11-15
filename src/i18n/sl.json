@@ -278,6 +278,8 @@
   "scene-not-found": "Med aktiviranjem prizora v programu OBS Studio je prišlo do težave.",
   "scene-not-found-explain": "V nastavitvah potrdi nastavljene prizore.",
   "scene-selection": "Izbira OBS prizora",
+  "screen-access-required": "Screen recording permissions are required for this feature",
+  "screen-access-required-explain": "Please restart the app when screen recording permissions have been granted in System Settings.",
   "search": "Išči",
   "search-by-title-or-number": "Search by title or number",
   "select-a-congregation-to-enable": "Najprej izberi profil",
