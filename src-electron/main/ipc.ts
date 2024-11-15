@@ -17,7 +17,7 @@ import {
 } from 'electron';
 
 import { askForMediaAccess, getAppVersion, isSelf } from './../utils';
-import { downloadFile, isDownloadErrorExpected } from './downloads';
+import { downloadFile } from './downloads';
 import {
   openFileDialog,
   openFolderDialog,
@@ -200,7 +200,3 @@ handleIpcInvoke(
 );
 
 handleIpcInvoke('openFolderDialog', async () => openFolderDialog());
-
-handleIpcInvoke('downloadErrorIsExpected', async () => {
-  return await isDownloadErrorExpected();
-});
