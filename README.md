@@ -10,6 +10,15 @@
 
 It features support for managing regular and custom meeting media, and support for multiple congregations and/or groups using the same computer account.
 
+## Why Choose M³? Key Benefits at a Glance
+
+- **Effortless Media Presentation**: Open M³ and present meeting media with ease — no complex actions needed, everything just works.
+- **Support for Multiple Congregations**: Manage separate settings for each congregation or group, all from a single app.
+- **Advanced Features**: Benefit from OBS Studio integration, custom media imports, and automatic video demonstration into Zoom meetings.
+- **Optimized, Cross-Platform Performance**: Delivers a high-quality user experience on Windows, macOS, and Linux — and doesn't require a high-end computer to work fast and reliably.
+- **Stable Performance**: Designed to assist with your duties at all times. Even when a bug is found, simply report it, and it will be fixed as quickly as possible.
+
+
 ## What can M³ do?
 
 In short, M³ allows you to easily and automatically download, synchronize, share and present all meeting media.
