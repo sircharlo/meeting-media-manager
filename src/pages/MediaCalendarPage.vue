@@ -778,7 +778,11 @@ const generateMediaList = () => {
   const combinedMediaItems = [
     ...datedAdditionalMediaMap.value,
     ...(selectedDateObject.value?.dynamicMedia ?? []),
-    ...(watchFolderMedia.value?.[selectedDate.value] ?? []),
+    ...(watchFolderMedia.value?.[selectedDate.value] ?? []).sort((a, b) => {
+      const numA = parseInt(a.title.split(' - ')[0], 10);
+      const numB = parseInt(b.title.split(' - ')[0], 10);
+      return numA - numB;
+    }),
   ];
   if (combinedMediaItems && currentCongregation.value) {
     mediaSort.value[currentCongregation.value] ??= {};
@@ -1583,5 +1587,6 @@ const resetDragging = () => {
   currentFile.value = 0;
   totalFiles.value = 0;
   sectionToAddTo.value = undefined;
+  generateMediaList(); // Restore the numerical order on reset
 };
 </script>
