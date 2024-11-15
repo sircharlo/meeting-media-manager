@@ -26,7 +26,9 @@ export const setElementFont = async (fontName: FontName) => {
     );
     await fontFace.load();
     document.fonts.add(fontFace);
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: { fn: { fontName, name: 'setElementFont' } },
+    });
   }
 };
 
@@ -61,7 +63,9 @@ const getLocalFontPath = async (fontName: FontName) => {
       method: 'GET',
     });
     if (!response.ok) {
-      throw new Error(`Failed to download font: ${response.statusText}`);
+      throw new Error(
+        `Failed to download font: ${response.statusText || response.status}`,
+      );
     }
     const blob = await response.blob();
     const buffer = await blob.arrayBuffer();

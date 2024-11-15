@@ -19,7 +19,6 @@ export interface ElectronApi {
     outputFolder: string,
   ) => Promise<string[]>;
   decompress: typeof decompress;
-  downloadErrorIsExpected: () => Promise<boolean>;
   downloadFile: (
     url: string,
     saveDir: string,
@@ -128,7 +127,6 @@ export type ElectronIpcSendKey =
 
 // ipcMain.handle / ipcRenderer.invoke channels
 export type ElectronIpcInvokeKey =
-  | 'downloadErrorIsExpected'
   | 'downloadFile'
   | 'getAllScreens'
   | 'getAppDataPath'

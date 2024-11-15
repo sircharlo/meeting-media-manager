@@ -40,7 +40,6 @@ const electronApi: ElectronApi = {
   convertHeic,
   convertPdfToImages,
   decompress,
-  downloadErrorIsExpected: () => invoke('downloadErrorIsExpected'),
   downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
   executeQuery,
   fileUrlToPath,

@@ -119,11 +119,6 @@ const downloadFileIfNeeded = async ({
     size ||
     (await fetchRaw(url, { method: 'HEAD' })
       .then((response) => {
-        if (!response || !response.ok) {
-          throw new Error(
-            `Failed to fetchJson: ${response.status} ${response.statusText}`,
-          );
-        }
         return +(response?.headers?.get('content-length') || 0);
       })
       .catch(() => 0));
