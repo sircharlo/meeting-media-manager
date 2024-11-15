@@ -29,7 +29,7 @@ export async function createWebsiteWindow(lang?: string) {
       height: 720,
       show: true,
       title: 'Website Stream',
-      useContentSize: true,
+      useContentSize: PLATFORM !== 'darwin',
       width: 1280,
     },
     lang,
@@ -102,8 +102,15 @@ export async function createWebsiteWindow(lang?: string) {
     return { action: 'deny' };
   });
 
-  setAspectRatio();
-  websiteWindow.on('resize', setAspectRatio);
+  if (PLATFORM === 'darwin') {
+    websiteWindow.setAspectRatio(16 / 9, {
+      height: websiteWindow.getSize()[1] - websiteWindow.getContentSize()[1],
+      width: 0,
+    });
+  } else {
+    setAspectRatio();
+    websiteWindow.on('resize', setAspectRatio);
+  }
 
   const video: Video = {
     id: websiteWindow.getMediaSourceId(),
