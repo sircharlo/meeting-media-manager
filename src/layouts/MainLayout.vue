@@ -316,7 +316,19 @@ const updateWatchFolderRef = async ({
     } else if (event === 'add') {
       watchFolderMedia.value[day] ??= [];
       const watchedItemMap = await watchedItemMapper(day, changedPath);
-      if (watchedItemMap) watchFolderMedia.value[day].push(watchedItemMap);
+      if (watchedItemMap) {
+        watchFolderMedia.value[day].push(watchedItemMap);
+
+        watchFolderMedia.value[day].sort((a, b) =>
+          a.title.localeCompare(b.title),
+        );
+
+        if (jwStore.mediaSort[currentCongregation.value]?.[day]?.length) {
+          jwStore.mediaSort[currentCongregation.value]?.[day]?.push(
+            watchedItemMap?.uniqueId,
+          );
+        }
+      }
     } else if (event === 'unlink') {
       watchFolderMedia.value[day] = watchFolderMedia.value[day]?.filter(
         (dM) => dM.fileUrl !== getFileUrl(changedPath),

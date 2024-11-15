@@ -1,14 +1,14 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="items-center q-pb-lg q-px-lg q-gutter-y-lg bg-secondary-contrast"
+      class="items-center q-pb-lg q-px-sm q-gutter-y-lg bg-secondary-contrast medium-overlay"
     >
-      <div class="text-h6 row">{{ $t('choose-a-song') }}</div>
-      <div class="row">{{ $t('add-a-song') }}</div>
-      <div class="row">
+      <div class="text-h6 row q-px-md">{{ $t('choose-a-song') }}</div>
+      <div class="row q-px-md">{{ $t('add-a-song') }}</div>
+      <div class="row q-px-md">
         <q-input
           v-model="filter"
-          :label="$t('search')"
+          :label="$t('search-by-title-or-number')"
           class="col"
           clearable
           debounce="100"
@@ -21,29 +21,30 @@
           </template>
         </q-input>
       </div>
-      <div class="row">
-        <div v-if="filteredSongs?.length === 0" class="col-grow text-center">
-          <q-spinner color="primary" size="2em" />
-        </div>
-        <q-scroll-area
-          v-else
-          :bar-style="barStyle"
-          :thumb-style="thumbStyle"
-          style="height: 40vh; width: -webkit-fill-available"
-        >
-          <template v-for="song in filteredSongs" :key="song.url">
-            <q-item
-              v-ripple
-              :disable="loading"
-              class="items-center"
-              clickable
-              @click="addSong(song.track)"
-            >
+
+      <q-scroll-area
+        :bar-style="barStyle"
+        :thumb-style="thumbStyle"
+        style="height: 40vh; width: -webkit-fill-available"
+      >
+        <div class="q-px-md">
+          <q-btn
+            v-for="song in filteredSongs"
+            :key="song.track"
+            :disable="loading"
+            :label="song.track"
+            class="rounded-borders-sm q-mr-xs q-mb-xs"
+            color="primary"
+            style="width: 3em; height: 3em"
+            unelevated
+            @click="addSong(song.track)"
+          >
+            <q-tooltip v-if="!loading" class="bg-black text-white">
               {{ song.title }}
-            </q-item>
-          </template>
-        </q-scroll-area>
-      </div>
+            </q-tooltip>
+          </q-btn>
+        </div>
+      </q-scroll-area>
       <div class="row">
         <div class="col">
           <q-spinner
