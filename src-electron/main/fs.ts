@@ -98,7 +98,6 @@ export async function watchFolder(folderPath: string) {
       })
       .on('all', (event, changedPath, stats) => {
         try {
-          // console.log(event, changedPath);
           if (!changedPath || (!stats && !event.includes('unlink'))) return; // Don't do anything if no stats are available or if no path is available
           const dirPath = toUnix(
             stats?.isDirectory() || event === 'unlinkDir'

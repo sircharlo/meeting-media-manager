@@ -352,7 +352,6 @@ const removeEmptyDirs = async (rootDir: string) => {
       .sort((a, b) => b.length - a.length);
     for (const dir of dirs) {
       if (await isEmptyDir(dir)) {
-        console.log(`Removing empty directory: ${dir}`);
         await fs.remove(dir);
       }
     }

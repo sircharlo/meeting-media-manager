@@ -65,6 +65,7 @@ import {
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setElementFont } from 'src/helpers/fonts';
 import { getFileUrl, watchExternalFolder } from 'src/helpers/fs';
+import { sorter } from 'src/helpers/general';
 import {
   downloadBackgroundMusic,
   downloadSongbookVideos,
@@ -320,7 +321,7 @@ const updateWatchFolderRef = async ({
         watchFolderMedia.value[day].push(watchedItemMap);
 
         watchFolderMedia.value[day].sort((a, b) =>
-          a.title.localeCompare(b.title),
+          sorter.compare(a.title, b.title),
         );
 
         if (jwStore.mediaSort[currentCongregation.value]?.[day]?.length) {

@@ -94,6 +94,7 @@ import type { DownloadProgressItems } from 'src/types';
 import { watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useScrollbar } from 'src/composables/useScrollbar';
+import { sorter } from 'src/helpers/general';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useTemplateRef } from 'vue';
 
@@ -108,7 +109,7 @@ const { downloadProgress } = storeToRefs(currentState);
 const filteredDownloads = (status: 'complete' | 'error' | 'loaded') =>
   Object.entries(downloadProgress.value || {})
     .filter(([, item]) => item[status])
-    .sort((a, b) => a[1].filename.localeCompare(b[1].filename))
+    .sort((a, b) => sorter.compare(a[1].filename, b[1].filename))
     .map(([, item]) => item);
 
 const downloadPopup = useTemplateRef<QMenu>('downloadPopup');
