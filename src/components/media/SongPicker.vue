@@ -8,6 +8,7 @@
       <div class="row q-px-md">
         <q-input
           v-model="filter"
+          :disable="loading"
           :label="$t('search-by-title-or-number')"
           class="col"
           clearable
@@ -21,7 +22,11 @@
           </template>
         </q-input>
       </div>
-
+      <q-slide-transition>
+        <div v-if="loading" class="row items-center justify-center">
+          <q-spinner color="primary" size="lg" />
+        </div>
+      </q-slide-transition>
       <q-scroll-area
         :bar-style="barStyle"
         :thumb-style="thumbStyle"
