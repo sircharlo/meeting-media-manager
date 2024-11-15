@@ -177,7 +177,7 @@ const decompressJwpub = async (
       }
     }
     if (!currentState.extractedFiles[outputPath] || force) {
-      currentState.extractedFiles[outputPath] = jwpubDecompressor(
+      currentState.extractedFiles[outputPath] = await jwpubDecompressor(
         jwpubPath,
         outputPath,
       );
@@ -251,8 +251,11 @@ const getMediaFromJwPlaylist = async (
     );
     const playlistMediaItems: MultimediaItem[] = await Promise.all(
       playlistItems.map(async (item) => {
-        item.ThumbnailFilePath = path.join(outputPath, item.ThumbnailFilePath);
+        item.ThumbnailFilePath = item.ThumbnailFilePath
+          ? path.join(outputPath, item.ThumbnailFilePath)
+          : '';
         if (
+          item.ThumbnailFilePath &&
           (await fs.pathExists(item.ThumbnailFilePath)) &&
           !item.ThumbnailFilePath.includes('.jpg')
         ) {

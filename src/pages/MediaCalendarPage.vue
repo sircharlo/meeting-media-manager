@@ -438,8 +438,8 @@
   <DragAndDropper
     v-model="dragging"
     v-model:jwpub-db="jwpubImportDb"
+    v-model:jwpub-documents="jwpubImportDocuments"
     :current-file="currentFile"
-    :jwpub-documents="jwpubImportDocuments"
     :section="sectionToAddTo"
     :total-files="totalFiles"
     @drop="dropEnd"
@@ -1309,9 +1309,26 @@ const addToFiles = async (
 ) => {
   if (!files) return;
   totalFiles.value = files.length;
-  // eslint-disable-next-line @typescript-eslint/prefer-for-of
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
+  if (!Array.isArray(files)) files = Array.from(files);
+  if (files.length > 1) {
+    const jwPubFile = files.find((f) => isJwpub(f.path));
+    if (jwPubFile) {
+      files = [jwPubFile];
+      createTemporaryNotification({
+        caption: t('jwpub-file-found'),
+        message: t('processing') + ' ' + path.basename(files[0].path),
+      });
+    }
+    const archiveFile = files.find((f) => isArchive(f.path));
+    if (archiveFile) {
+      files = [archiveFile];
+      createTemporaryNotification({
+        caption: t('archive-file-found'),
+        message: t('processing') + ' ' + path.basename(files[0].path),
+      });
+    }
+  }
+  for (const file of files) {
     let filepath = file?.path;
     try {
       if (!filepath) continue;
@@ -1342,8 +1359,8 @@ const addToFiles = async (
         ).map((path) => {
           return { path };
         });
-        resetDragging();
-        await addToFiles(convertedImages);
+        // await addToFiles(convertedImages);
+        files.push(...convertedImages);
       } else if (isJwpub(filepath)) {
         // First, only decompress the db in memory to get the publication info and derive the destination path
         const tempJwpubContents = await decompress(filepath);
@@ -1483,8 +1500,9 @@ const addToFiles = async (
       });
       errorCatcher(error);
     }
-    currentFile.value = i + 1;
+    currentFile.value++;
   }
+  if (!isJwpub(files[0].path)) resetDragging();
 };
 
 const addSong = (section?: MediaSection) => {

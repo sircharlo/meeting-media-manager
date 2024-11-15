@@ -2,7 +2,7 @@ import type { BrowserWindow, Video } from 'electron';
 import type { NavigateWebsiteAction } from 'src/types';
 
 import { PLATFORM } from 'app/src-electron/constants';
-import { askForMediaAccess } from 'app/src-electron/utils';
+import { askForMediaAccess, errorCatcher } from 'app/src-electron/utils';
 
 import { createWindow, sendToWindow } from './window-base';
 import { mainWindow } from './window-main';
@@ -29,7 +29,7 @@ export async function createWebsiteWindow(lang?: string) {
       height: 720,
       show: true,
       title: 'Website Stream',
-      useContentSize: true,
+      useContentSize: PLATFORM !== 'darwin',
       width: 1280,
     },
     lang,
@@ -38,7 +38,8 @@ export async function createWebsiteWindow(lang?: string) {
   websiteWindow.center();
 
   websiteWindow.webContents.on('did-finish-load', () => {
-    websiteWindow?.webContents.insertCSS(`
+    try {
+      websiteWindow?.webContents.insertCSS(`
       .cursor {
         position: fixed;
         border-radius: 50%;
@@ -60,7 +61,7 @@ export async function createWebsiteWindow(lang?: string) {
       }
     `);
 
-    websiteWindow?.webContents.executeJavaScript(`
+      websiteWindow?.webContents.executeJavaScript(`
       const cursor = document.createElement('div');
       cursor.className = 'cursor';
       document.body.appendChild(cursor);
@@ -89,6 +90,11 @@ export async function createWebsiteWindow(lang?: string) {
       document.body.removeEventListener('mouseup', onMouseUp);
       document.body.addEventListener('mouseup', onMouseUp);
     `);
+    } catch (e) {
+      errorCatcher(e, {
+        contexts: { fn: { name: 'createWebsiteWindow cursor indicator' } },
+      });
+    }
   });
 
   websiteWindow.webContents.setVisualZoomLevelLimits(1, 5);
@@ -102,8 +108,15 @@ export async function createWebsiteWindow(lang?: string) {
     return { action: 'deny' };
   });
 
-  setAspectRatio();
-  websiteWindow.on('resize', setAspectRatio);
+  if (PLATFORM === 'darwin') {
+    websiteWindow.setAspectRatio(16 / 9, {
+      height: websiteWindow.getSize()[1] - websiteWindow.getContentSize()[1],
+      width: 0,
+    });
+  } else {
+    setAspectRatio();
+    websiteWindow.on('resize', setAspectRatio);
+  }
 
   const video: Video = {
     id: websiteWindow.getMediaSourceId(),

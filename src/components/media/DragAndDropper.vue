@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="open">
+  <q-dialog v-model="open" persistent>
     <div
       class="items-center q-pb-lg q-px-lg q-gutter-y-lg bg-secondary-contrast"
     >
@@ -30,8 +30,7 @@
                     jwpubDb,
                     jwpubImportDocument,
                   ).then((errors) => {
-                    open = false;
-                    jwpubLoading = false;
+                    resetModal();
                     if (errors?.length)
                       errors.forEach((e) =>
                         createTemporaryNotification({
@@ -129,7 +128,7 @@
           :label="$t('cancel')"
           color="negative"
           flat
-          @click="jwpubDb = ''"
+          @click="resetModal()"
         />
       </div>
     </div>
@@ -156,7 +155,6 @@ const { barStyle, thumbStyle } = useScrollbar();
 
 const props = defineProps<{
   currentFile: number;
-  jwpubDocuments: DocumentItem[];
   section?: MediaSection;
   totalFiles: number;
 }>();
@@ -165,12 +163,22 @@ const jwpubLoading = ref(false);
 
 const open = defineModel<boolean>({ required: true });
 const jwpubDb = defineModel<string>('jwpubDb', { required: true });
+const jwpubDocuments = defineModel<DocumentItem[]>('jwpubDocuments', {
+  required: true,
+});
 
 const percentValue = computed(() => {
   return props.currentFile && props.totalFiles
     ? props.currentFile / props.totalFiles
     : 0;
 });
+
+const resetModal = () => {
+  open.value = false;
+  jwpubDb.value = '';
+  jwpubLoading.value = false;
+  jwpubDocuments.value = [];
+};
 
 const getLocalFiles = async () => {
   openFileDialog()
