@@ -14,6 +14,7 @@ import {
   type IpcMainEvent,
   type IpcMainInvokeEvent,
   shell,
+  systemPreferences,
 } from 'electron';
 
 import { askForMediaAccess, getAppVersion, isSelf } from './../utils';
@@ -167,6 +168,10 @@ function handleIpcInvoke<T = unknown>(
 handleIpcInvoke('getVersion', async () => getAppVersion());
 handleIpcInvoke('getAppDataPath', async () => app.getPath('appData'));
 handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
+
+handleIpcInvoke('getScreenAccessStatus', async () =>
+  systemPreferences.getMediaAccessStatus('screen'),
+);
 
 handleIpcInvoke('getAllScreens', async () => getAllScreens());
 

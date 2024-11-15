@@ -118,11 +118,16 @@ const loading = ref(false);
 
 const filter = ref('');
 const filteredSongs = computed((): MediaLink[] => {
-  return filter.value
-    ? currentSongs.value?.filter((s) =>
-        s.title.toLowerCase().includes(filter.value.toLowerCase()),
-      )
-    : currentSongs.value;
+  if (filter.value) {
+    const searchTerms = filter.value
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((term) => term);
+    return currentSongs.value?.filter((s) =>
+      searchTerms.every((term) => s.title.toLowerCase().includes(term)),
+    );
+  }
+  return currentSongs.value;
 });
 
 const dismissPopup = () => {
