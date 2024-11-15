@@ -524,7 +524,7 @@ Managing media is now **a breeze**! We've eliminated all those tricky steps like
 
 - 🚀 New field which allows selecting the date of the next visit of the circuit overseer; when that week comes, the midweek meeting will change to Tuesday automatically and unnecessary media (closing songs and CBS media) will be skipped as well
 - Added a loading indicator while files are being renamed
-- Improved app icon for MacOS (thanks [@advenimus](https://github.com/advenimus)!)
+- Improved app icon for macOS (thanks [@advenimus](https://github.com/advenimus)!)
 - Improved media prefixes for weekend meetings (reserve `01` for public talk opening song, and `02` for public talk images)
 
 ### Bug fixes
