@@ -1763,6 +1763,13 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
     return;
   }
 
+  if (
+    baseUrl === jwStore.urlVariables.base &&
+    jwStore.urlVariables.mediator &&
+    jwStore.urlVariables.pubMedia
+  )
+    return;
+
   try {
     resetUrlVariables();
     jwStore.urlVariables.base = baseUrl;
