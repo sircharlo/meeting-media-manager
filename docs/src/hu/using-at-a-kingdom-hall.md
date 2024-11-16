@@ -1,19 +1,25 @@
+<!-- markdownlint-disable no-inline-html -->
+
 # Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
 
-Ez az útmutató végigvezeti Önt a **Meeting Media Manager (M³)** letöltésének, telepítésének és beállításának folyamatán egy Királyság-teremben. Kövesse ezeket a lépéseket, hogy zökkenőmentesen tudja a médiaanyagokat kezelni a gyülekezeti összejövetelek során.
+This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
 
 ## 1. Download and install {#download-and-install}
 
-1. Látogasson el az [M³ letöltési oldalra](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Download the appropriate version for your operating system:
+<script setup>
+  import { data } from './../../data/version.data.mts'
+</script>
+
+1. Download the appropriate version for your operating system:
    - **Windows:**
-     - For most Windows systems, download `meeting-media-manager-[VERSION]-x64.exe`.
-     - For older 32-bit Windows systems, download `meeting-media-manager-[VERSION]-ia32.exe`.
+     - For most Windows systems, download <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
+     - For older 32-bit Windows systems, download <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
    - **macOS:**
-     - **M-series (Apple Silicon)**: Download `meeting-media-manager-[VERSION]-arm64.dmg`.
-     - **Intel-based Macs**: Download `meeting-media-manager-[VERSION]-x64.dmg`.
+     - **M-series (Apple Silicon)**: Download <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
+     - **Intel-based Macs**: Download <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
    - **Linux:**
-     - Download `meeting-media-manager-[VERSION]-x86_64.AppImage`.
+     - Download <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
+2. If the download links do not work, visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and download the correct version manually.
 3. Nyissa meg a telepítőt, és kövesse a képernyőn megjelenő utasításokat az M³ telepítéséhez.
 4. Indítsa el az M³ programot.
 5. Menjen végig a konfigurációs varázslón.
