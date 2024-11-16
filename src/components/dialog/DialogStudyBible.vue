@@ -197,7 +197,7 @@ const localeBibleBooks = ref<Record<number, BibleBook>>({});
 const i18n = useI18n();
 
 const baseUrl = computed(() => {
-  return `https://www.${urlVariables.value.base}/en/library/bible/study-bible/books`;
+  return `https://www.${urlVariables.value.base}/en/library/bible/study-bible/books/`;
 });
 
 whenever(open, () => {
@@ -234,10 +234,10 @@ const getLocaleData = async () => {
         ?.href ||
       $(`link[rel="alternate"][hreflang=${appLocale}]`)[0]?.attribs?.href;
 
-    if (!localeUrl.value || localeUrl.value.startsWith(baseUrl.value)) return;
+    if (!localeUrl.value || localeUrl.value === baseUrl.value) return;
 
     const result = await fetchJson<BibleBooksResult>(
-      `${localeUrl.value}/json/data`,
+      `${localeUrl.value}json/data`,
     );
     localeBibleBooks.value = result?.editionData.books || {};
   } catch (e) {
@@ -259,7 +259,7 @@ const getBibleBooks = async () => {
   if (Object.keys(bibleBooks.value).length) return;
   try {
     const result = await fetchJson<BibleBooksResult>(
-      `${baseUrl.value}/json/data`,
+      `${baseUrl.value}json/data`,
     );
     bibleBooks.value = result?.editionData.books || {};
   } catch (error) {
