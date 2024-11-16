@@ -215,7 +215,8 @@ const getLocaleData = async () => {
   )?.symbol;
   const appLocale = camelToKebabCase(i18n.locale.value);
 
-  if (primaryLocale === 'en') return;
+  const currentLocale = localeBibleBooks.value[40]?.url.split('/')[1];
+  if (primaryLocale === 'en' || primaryLocale === currentLocale) return;
   try {
     const html = await fetchRaw(baseUrl.value)
       .then((response) => {
@@ -234,7 +235,14 @@ const getLocaleData = async () => {
         ?.href ||
       $(`link[rel="alternate"][hreflang=${appLocale}]`)[0]?.attribs?.href;
 
-    if (!localeUrl.value || localeUrl.value === baseUrl.value) return;
+    if (
+      !localeUrl.value ||
+      localeUrl.value === baseUrl.value ||
+      localeUrl.value.startsWith(
+        `https://www.${urlVariables.value.base}/${currentLocale}/`,
+      )
+    )
+      return;
 
     const result = await fetchJson<BibleBooksResult>(
       `${localeUrl.value}json/data`,
