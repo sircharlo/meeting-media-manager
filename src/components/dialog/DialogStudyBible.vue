@@ -200,25 +200,22 @@ const baseUrl = computed(() => {
   return `https://www.${urlVariables.value.base}/en/library/bible/study-bible/books`;
 });
 
-const localeSymbol = computed(() => {
-  return (
-    jwStore.jwLanguages.list.find(
-      (lang) => lang.langcode === currentSettings.value?.lang,
-    )?.symbol ??
-    jwStore.jwLanguages.list.find(
-      (lang) => lang.langcode === currentSettings.value?.langFallback,
-    )?.symbol ??
-    camelToKebabCase(i18n.locale.value)
-  );
-});
-
 whenever(open, () => {
   getLocaleData();
   getBibleBooks();
 });
 
 const getLocaleData = async () => {
-  if (localeSymbol.value === 'en') return;
+  const primaryLocale = jwStore.jwLanguages.list.find(
+    (lang) => lang.langcode === currentSettings.value?.lang,
+  )?.symbol;
+
+  const fallbackLocale = jwStore.jwLanguages.list.find(
+    (lang) => lang.langcode === currentSettings.value?.langFallback,
+  )?.symbol;
+  const appLocale = camelToKebabCase(i18n.locale.value);
+
+  if (primaryLocale === 'en') return;
   try {
     const html = await fetchRaw(baseUrl.value)
       .then((response) => {
@@ -231,12 +228,13 @@ const getLocaleData = async () => {
 
     const { load } = await import('cheerio');
     const $ = load(html);
-    const locale = $(
-      `link[rel="alternate"][hreflang=${localeSymbol.value}]`,
-    )[0];
-    localeUrl.value = locale?.attribs?.href || '';
+    localeUrl.value =
+      $(`link[rel="alternate"][hreflang=${primaryLocale}]`)[0]?.attribs?.href ||
+      $(`link[rel="alternate"][hreflang=${fallbackLocale}]`)[0]?.attribs
+        ?.href ||
+      $(`link[rel="alternate"][hreflang=${appLocale}]`)[0]?.attribs?.href;
 
-    if (!localeUrl.value) return;
+    if (!localeUrl.value || localeUrl.value.startsWith(baseUrl.value)) return;
 
     const result = await fetchJson<BibleBooksResult>(
       `${localeUrl.value}/json/data`,
@@ -258,6 +256,7 @@ const bibleBookImagesToImageTypeSizes = (
 };
 
 const getBibleBooks = async () => {
+  if (Object.keys(bibleBooks.value).length) return;
   try {
     const result = await fetchJson<BibleBooksResult>(
       `${baseUrl.value}/json/data`,
