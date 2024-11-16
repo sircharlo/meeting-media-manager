@@ -10,14 +10,26 @@
 
 It features support for managing regular and custom meeting media, and support for multiple congregations and/or groups using the same computer account.
 
-## Why Choose M³? Key Benefits at a Glance
+## Why choose M³?
 
-- **Effortless Media Presentation**: Open M³ and present meeting media with ease — no complex actions needed, everything just works.
-- **Support for Multiple Congregations**: Manage separate settings for each congregation or group, all from a single app.
-- **Advanced Features**: Benefit from OBS Studio integration, custom media imports, and automatic video demonstration into Zoom meetings.
-- **Optimized, Cross-Platform Performance**: Delivers a high-quality user experience on Windows, macOS, and Linux — and doesn't require a high-end computer to work fast and reliably.
-- **Stable Performance**: Designed to assist with your duties at all times. Even when a bug is found, simply report it, and it will be fixed as quickly as possible.
+M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms.
 
+### Key benefits
+
+- **Effortless media presentation**  
+  Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
+
+- **Multi-congregation support**  
+  Manage settings for multiple congregations or groups easily within a single application.
+
+- **Advanced features**  
+  Easily add extra media, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+
+- **Optimized cross-platform performance**  
+  Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
+
+- **Reliable and stable**  
+  Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
 
 ## What can M³ do?
 
@@ -50,7 +62,6 @@ In addition, M³ itself has been translated into several languages by many volun
 <!-- markdownlint-disable -->
 <!-- prettier-ignore-start -->
 <!-- CROWDIN-TRANSLATIONS-PROGRESS-ACTION-START -->
-
 
 #### Available
 
