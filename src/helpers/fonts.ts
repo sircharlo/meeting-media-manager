@@ -54,7 +54,11 @@ const getLocalFontPath = async (fontName: FontName) => {
       mustDownload = true;
     }
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: {
+        fn: { fontName, name: 'getLocalFontPath', url: fontUrls[fontName] },
+      },
+    });
     mustDownload = true;
   }
   if (mustDownload) {

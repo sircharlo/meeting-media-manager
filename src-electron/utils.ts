@@ -60,13 +60,17 @@ export function isTrustedDomain(url: string): boolean {
  * @returns Wether the url is a JW domain
  */
 export function isJwDomain(url: string): boolean {
-  const parsedUrl = new URL(url);
-  if (parsedUrl.protocol !== 'https:') return false;
-  return JW_DOMAINS.concat(
-    [urlVariables?.base]
-      .filter((d): d is string => !!d)
-      .map((d) => new URL(`https://${d}/`).hostname),
-  ).some((domain) => parsedUrl.hostname.endsWith(domain));
+  try {
+    const parsedUrl = new URL(url);
+    if (parsedUrl.protocol !== 'https:') return false;
+    return JW_DOMAINS.concat(
+      [urlVariables?.base]
+        .filter((d): d is string => !!d)
+        .map((d) => new URL(`https://${d}/`).hostname),
+    ).some((domain) => parsedUrl.hostname.endsWith(domain));
+  } catch (e) {
+    return false;
+  }
 }
 
 /**
@@ -75,17 +79,30 @@ export function isJwDomain(url: string): boolean {
  * @returns Wether the url is the same as the current app url
  */
 export function isSelf(url?: string): boolean {
-  if (!url) return false;
-  const parsedUrl = new URL(url);
-  const parsedAppUrl = new URL(process.env.APP_URL);
+  try {
+    if (!url) return false;
+    const parsedUrl = new URL(url);
+    const parsedAppUrl = new URL(process.env.APP_URL);
 
-  return (
-    (!!process.env.DEV && parsedUrl.origin === process.env.APP_URL) ||
-    (!process.env.DEV &&
-      parsedUrl.protocol === 'file:' &&
-      parsedUrl.pathname === parsedAppUrl.pathname)
-  );
+    return (
+      (!!process.env.DEV && parsedUrl.origin === process.env.APP_URL) ||
+      (!process.env.DEV &&
+        parsedUrl.protocol === 'file:' &&
+        parsedUrl.pathname === parsedAppUrl.pathname)
+    );
+  } catch (e) {
+    return false;
+  }
 }
+
+export const isValidUrl = (url: string): boolean => {
+  try {
+    new URL(url);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
 
 export const fetchRaw = async (url: string, init?: RequestInit) => {
   console.debug('fetchRaw', { init, url });

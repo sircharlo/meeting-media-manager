@@ -4,7 +4,13 @@ import { app, session } from 'electron';
 
 import { TRUSTED_DOMAINS } from '../constants';
 //import { JW_DOMAINS, TRUSTED_DOMAINS } from '../constants';
-import { getAppVersion, isJwDomain, isSelf, isTrustedDomain } from './../utils';
+import {
+  getAppVersion,
+  isJwDomain,
+  isSelf,
+  isTrustedDomain,
+  isValidUrl,
+} from './../utils';
 
 export let urlVariables: undefined | UrlVariables;
 
@@ -42,7 +48,7 @@ export const initSessionListeners = () => {
             urlVariables?.pubMedia,
             urlVariables?.base ? `https://${urlVariables.base}/` : undefined,
           ]
-            .filter((d): d is string => !!d)
+            .filter((d): d is string => !!d && isValidUrl(d))
             .map((d) => new URL(d).hostname),
         )
           .map((d) => `https://*.${d}`)
@@ -85,8 +91,11 @@ export const initSessionListeners = () => {
         if (
           referrer.hostname === url.hostname ||
           (url.hostname !==
-            new URL(urlVariables?.mediator || 'https://www.b.jw-cdn.org/')
-              .hostname &&
+            new URL(
+              urlVariables && isValidUrl(urlVariables.mediator)
+                ? urlVariables.mediator
+                : 'https://www.b.jw-cdn.org/',
+            ).hostname &&
             url.hostname !== `apps.${urlVariables?.base || 'jw.org'}` &&
             url.hostname !== `donate.${urlVariables?.base || 'jw.org'}` &&
             url.hostname !== `hub.${urlVariables?.base || 'jw.org'}` &&
