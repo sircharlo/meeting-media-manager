@@ -183,7 +183,7 @@
         "npm:vue-i18n@^10.0.4",
         "npm:vue-router@^4.4.5",
         "npm:vue-tsc@^2.1.10",
-        "npm:vue@^3.5.12"
+        "npm:vue@^3.5.13"
       ]
     }
   }
