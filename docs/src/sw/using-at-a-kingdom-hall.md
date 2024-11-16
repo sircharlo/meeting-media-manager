@@ -1,19 +1,25 @@
-# Kutumia M³ kwenye Jumba la ufalme {#using-m3-at-a-kingdom-hall}
+<!-- markdownlint-disable no-inline-html -->
 
-Mwongozo huu utakuelekeza kwenye hatua za kupakua na kuanzisha Meeting Media Manager (M³) kwenye Jumba La Ufalme. Fuata hatua ili kuhakikisha usanidi mzuri wa kusimamia media wakati wa mikutano ya kutaniko.
+# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
 
-## 1. Pakua na usakinishe {#download-and-install}
+This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
 
-1. Tembelea [M³ ukurasa wa kupakua](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Pakua aina ambayo inafaa mfumo wa kopyuta yako:
+## 1. Download and install {#download-and-install}
+
+<script setup>
+  import { data } from './../../data/version.data.mts'
+</script>
+
+1. Download the appropriate version for your operating system:
    - **Windows:**
-     - Kwa mifumo mingi ya Windows, pakua `meeting-media-manager-[VERSION]-x64.exe`.
-     - Kwa mifumo ya kitambo ya 32-bit Windows, pakua `meeting-media-manager-[VERSION]-ia32.exe`.
+     - For most Windows systems, download <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
+     - For older 32-bit Windows systems, download <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
    - **macOS:**
-     - **M-series (Apple Silicon)**: Pakua `meeting-media-manager-[VERSION]-arm64.dmg`.
-     - **Intel-based Macs**: Pakua `meeting-media-manager-[VERSION]-x64.dmg`.
+     - **M-series (Apple Silicon)**: Download <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
+     - **Intel-based Macs**: Download <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
    - **Linux:**
-     - Pakua `meeting-media-manager-[VERSION]-x86_64.AppImage`.
+     - Download <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
+2. If the download links do not work, visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and download the correct version manually.
 3. Fungua mfumo wa kupakua na ufuate maagizo ya kupakua M³ kwenye scrini.
 4. Fungua M³.
 5. Pitia programu ya usanidi.
