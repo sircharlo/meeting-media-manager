@@ -1,19 +1,25 @@
-# Использование M³ в Зале Царства {#using-m3-at-a-kingdom-hall}
+<!-- markdownlint-disable no-inline-html -->
 
-Это пособие поможет вам загрузить, установить и настроить **Meeting Media Manager (M³)** в Зале Царства. Следуйте этим шагам, чтобы добиться бесперебойной работы с медиа во время встреч собрания.
+# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
 
-## 1. Скачать и установить {#download-and-install}
+This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
 
-1. Посетите [страницу скачивания M³](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Загрузите соответствующую версию для вашей операционной системы:
+## 1. Download and install {#download-and-install}
+
+<script setup>
+  import { data } from './../../data/version.data.mts'
+</script>
+
+1. Download the appropriate version for your operating system:
    - **Windows:**
-     - Для большинства систем Windows, скачайте `meeting-media-manager-[VERSION]-x64.exe`.
-     - Для старых 32-битных систем Windows, скачайте `meeting-media-manager-[VERSION]-ia32.exe`.
+     - For most Windows systems, download <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
+     - For older 32-bit Windows systems, download <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
    - **macOS:**
-     - **Компьютеры Mac с чипом Apple**: Скачать `meeting-media-manager-[VERSION]-arm64.dmg`.
-     - **Компьютеры Mac с чипом Intel**: Скачать `meeting-media-manager-[VERSION]-x64.dmg`.
+     - **M-series (Apple Silicon)**: Download <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
+     - **Intel-based Macs**: Download <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
    - **Linux:**
-     - Скачайте `meeting-media-manager-[VERSION]-x86_64.AppImage`.
+     - Download <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
+2. If the download links do not work, visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and download the correct version manually.
 3. Откройте установщик и следуйте инструкциям установки M³.
 4. Запустите M³.
 5. Пройдите через мастер настройки.
