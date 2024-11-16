@@ -252,9 +252,7 @@ const getThumbnailFromVideoPath = async (
     videoRef.addEventListener('error', (err) => {
       // Cleanup in case of error
       videoRef.remove();
-      reject(
-        new Error('Error loading video: ' + err.message + ' ' + videoPath),
-      );
+      reject(err);
     });
   });
 };
