@@ -143,7 +143,7 @@ export const zoomWebsiteWindow = (direction: 'in' | 'out') => {
   if (direction === 'in') {
     websiteWindow.webContents.setZoomFactor(currentZoom + 0.2);
   } else if (direction === 'out') {
-    websiteWindow.webContents.zoomFactor = currentZoom - 0.2;
+    websiteWindow.webContents.zoomFactor = Math.max(0, currentZoom - 0.2);
   }
 };
 
