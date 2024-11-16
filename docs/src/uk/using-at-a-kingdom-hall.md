@@ -1,19 +1,25 @@
-# Використання M³ в Залі Царства {#using-m3-at-a-kingdom-hall}
+<!-- markdownlint-disable no-inline-html -->
 
-Цей посібник проведе вас через процес завантаження, встановлення та налаштування Meeting Media Manager (M³) у Залі Царства. Дотримуйтесь цих кроків, щоб забезпечити безперебійне налаштування для управління медіа під час зібрань.
+# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
 
-## 1. Завантажити та встановити {#download-and-install}
+This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
 
-1. Відвідайте [сторінку завантаження M³](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Download the appropriate version for your operating system:
+## 1. Download and install {#download-and-install}
+
+<script setup>
+  import { data } from './../../data/version.data.mts'
+</script>
+
+1. Download the appropriate version for your operating system:
    - **Windows:**
-     - For most Windows systems, download `meeting-media-manager-[VERSION]-x64.exe`.
-     - For older 32-bit Windows systems, download `meeting-media-manager-[VERSION]-ia32.exe`.
+     - For most Windows systems, download <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
+     - For older 32-bit Windows systems, download <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
    - **macOS:**
-     - **M-series (Apple Silicon)**: Download `meeting-media-manager-[VERSION]-arm64.dmg`.
-     - **Intel-based Macs**: Download `meeting-media-manager-[VERSION]-x64.dmg`.
+     - **M-series (Apple Silicon)**: Download <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
+     - **Intel-based Macs**: Download <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
    - **Linux:**
-     - Download `meeting-media-manager-[VERSION]-x86_64.AppImage`.
+     - Download <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
+2. If the download links do not work, visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and download the correct version manually.
 3. Відкрийте інсталятор та дотримуйтесь екранних інструкцій для встановлення M³.
 4. Запустіть M³.
 5. Пройдіть через майстер настройки.
