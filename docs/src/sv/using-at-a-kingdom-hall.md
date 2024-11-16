@@ -1,19 +1,25 @@
-# Att använda M³ i Rikets sal {#using-m3-at-a-kingdom-hall}
+<!-- markdownlint-disable no-inline-html -->
 
-Denna guide kommer att gå igenom processen för nedladdning och installation av **Meeting Media Manager (M³)** i Rikets sal. Följ stegen för att säkerställa en smidig installation för att hantera media.
+# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
 
-## 1. Ladda ner och installera {#download-and-install}
+This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
 
-1. Besök [M³ nedladdningssida](https://github.com/sircharlo/meeting-media-manager/releases/latest)
-2. Ladda ner lämplig version för ditt operativsystem:
+## 1. Download and install {#download-and-install}
+
+<script setup>
+  import { data } from './../../data/version.data.mts'
+</script>
+
+1. Download the appropriate version for your operating system:
    - **Windows:**
-     - För de flesta Windows-system, ladda ner `meeting-media-manager-[VERSION]-x64.exe`.
-     - För äldre 32-bitars Windows-system, ladda ner `meeting-media-manager-[VERSION]-ia32.exe`.
+     - For most Windows systems, download <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
+     - For older 32-bit Windows systems, download <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
    - **macOS:**
-     - **M-serien (Apple Silicon)**: Ladda ner `meeting-media-manager-[VERSION]-arm64.dmg`.
-     - **Intel-baserad Mac**: Ladda ner `meeting-media-manager-[VERSION]-x64.dmg`.
+     - **M-series (Apple Silicon)**: Download <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
+     - **Intel-based Macs**: Download <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
    - **Linux:**
-     - Ladda ner `meeting-media-manager-[VERSION]-x86_64.AppImage`.
+     - Download <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
+2. If the download links do not work, visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and download the correct version manually.
 3. Öppna installationsprogrammet och följ instruktionerna på skärmen för att installera M³.
 4. Starta M³.
 5. Gå igenom konfigurationsguiden.
