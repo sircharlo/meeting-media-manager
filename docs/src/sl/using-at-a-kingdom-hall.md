@@ -1,25 +1,25 @@
 <!-- markdownlint-disable no-inline-html -->
 
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# Uporaba M³ v kraljestveni dvorani {#using-m3-at-a-kingdom-hall}
 
-This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
+Ta vodnik ti bo pomagal prenesti, namestiti in nastaviti **Meeting Media Manager (M³)** v kraljestveni dvorani. Za nemoteno nastavitev aplikacije za upravljanje multimedijske vsebine med občinskimi shodi sledi spodnjim korakom.
 
-## 1. Download and install {#download-and-install}
+## 1. Prenesi in namesti {#download-and-install}
 
 <script setup>
   import { data } from './../../data/version.data.mts'
 </script>
 
-1. Download the appropriate version for your operating system:
+1. Prenesi ustrezno različico za vaš operacijski sistem:
    - **Windows:**
-     - For most Windows systems, download <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
-     - For older 32-bit Windows systems, download <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
+     - Za večino sistemov Windows prenesi <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
+     - Za starejše 32-bitne sisteme Windows prenesi <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
    - **macOS:**
-     - **M-series (Apple Silicon)**: Download <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
-     - **Intel-based Macs**: Download <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
+     - **Serija M (Apple Silicon)**: Prenesi <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
+     - **Maci z Intelom**: prenesi <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
    - **Linux:**
-     - Download <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
-2. If the download links do not work, visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and download the correct version manually.
+     - Prenesi <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
+2. Če povezave za prenos ne delujejo, obišči [stran za prenos M³](https://github.com/sircharlo/meeting-media-manager/releases/latest) in pravilno različico prenesi ročno.
 3. Odpri namestitveni program in sledi navodilom na zaslonu za namestitev programa M³.
 4. Zaženi M³.
 5. Sledi navodilom čarovnika za nastavitev.
