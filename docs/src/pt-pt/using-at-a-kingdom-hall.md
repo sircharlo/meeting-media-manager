@@ -1,18 +1,18 @@
 <!-- markdownlint-disable no-inline-html -->
 
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# Utilizar o M³ no Salão do Reino {#using-m3-at-a-kingdom-hall}
 
-This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
+Este guia irá orientá-lo no processo de download, instalação e configuração do **Meeting Media Manager (M³)** no Salão do Reino. Siga os passos para uma configuração simples e eficiente na gestão de multimédia durante as reuniões congregacionais.
 
-## 1. Download and install {#download-and-install}
+## 1. Descarregar e instalar {#download-and-install}
 
 <script setup>
   import { data } from './../../data/version.data.mts'
 </script>
 
-1. Download the appropriate version for your operating system:
+1. Descarregue a versão apropriada para o seu sistema operativo:
    - **Windows:**
-     - For most Windows systems, download <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
+     - Para a maioria dos sistemas Windows, descarregue <a :href="data.win64">meeting-media-manager-[VERSÃO]-x64.exe</a>.
      - For older 32-bit Windows systems, download <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
    - **macOS:**
      - **M-series (Apple Silicon)**: Download <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
