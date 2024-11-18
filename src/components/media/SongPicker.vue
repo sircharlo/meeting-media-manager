@@ -23,7 +23,10 @@
         </q-input>
       </div>
       <q-slide-transition>
-        <div v-if="loading" class="row items-center justify-center">
+        <div
+          v-if="loading && filteredSongs?.length === 0"
+          class="row items-center justify-center"
+        >
           <q-spinner color="primary" size="lg" />
         </div>
       </q-slide-transition>
