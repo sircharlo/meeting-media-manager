@@ -36,6 +36,7 @@
 <script setup lang="ts">
 import type { Announcement } from 'src/types';
 
+import { whenever } from '@vueuse/core';
 import { useQuasar } from 'quasar';
 import { fetchAnnouncements, fetchLatestVersion } from 'src/helpers/api';
 import { isVersionValid, parseVersion } from 'src/helpers/general';
@@ -59,14 +60,25 @@ const loadAppVersion = async () => {
 };
 
 const loadLatestVersion = async () => {
+  if (latestVersion.value) return;
   latestVersion.value = (await fetchLatestVersion()) || '';
 };
 
 onMounted(() => {
   loadAppVersion();
-  loadLatestVersion();
-  loadAnnouncements();
+  if (currentStateStore.online) {
+    loadLatestVersion();
+    loadAnnouncements();
+  }
 });
+
+whenever(
+  () => currentStateStore.online,
+  () => {
+    loadLatestVersion();
+    loadAnnouncements();
+  },
+);
 
 const dismissed = ref<Set<string>>(new Set());
 
@@ -92,6 +104,7 @@ const bgColor = (type?: 'error' | 'info' | 'warning') => {
 const announcements = ref<Announcement[]>([]);
 
 const loadAnnouncements = async () => {
+  if (announcements.value.length) return;
   announcements.value = await fetchAnnouncements();
 };
 

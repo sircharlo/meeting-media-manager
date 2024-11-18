@@ -108,7 +108,7 @@ const open = defineModel<boolean>({ required: true });
 // Setup logic
 const { barStyle, thumbStyle } = useScrollbar();
 const currentState = useCurrentStateStore();
-const { currentSettings, currentSongbook, currentSongs } =
+const { currentSettings, currentSongbook, currentSongs, online } =
   storeToRefs(currentState);
 
 const jwStore = useJwStore();
@@ -166,6 +166,6 @@ const addSong = async (songTrack: number) => {
 };
 
 whenever(open, () => {
-  updateJwSongs();
+  if (online) updateJwSongs();
 });
 </script>

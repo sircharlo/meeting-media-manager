@@ -94,7 +94,8 @@ export const useCurrentStateStore = defineStore('current-state', {
         ] of settingDefinitionEntries) {
           if (settingsDefinition.rules?.includes('notEmpty')) {
             if (
-              (settingsDefinitionId === 'baseUrl' && !urlVariables?.mediator) ||
+              (settingsDefinitionId === 'baseUrl' &&
+                !(urlVariables?.base && urlVariables?.mediator)) ||
               (!congregationSettingsStore.congregations[congregation]?.[
                 settingsDefinitionId
               ]?.toString() &&

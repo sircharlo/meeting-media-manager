@@ -6,6 +6,7 @@ import type {
 } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { useCurrentStateStore } from 'src/stores/current-state';
 
 export const fetchRaw = async (url: string, init?: RequestInit) => {
   console.debug('fetchRaw', { init, url });
@@ -40,15 +41,17 @@ export const fetchJson = async <T>(
       });
     }
   } catch (e) {
-    errorCatcher(e, {
-      contexts: {
-        fn: {
-          name: 'fetchJson',
-          params: Object.fromEntries(params || []),
-          url,
+    if (useCurrentStateStore().online) {
+      errorCatcher(e, {
+        contexts: {
+          fn: {
+            name: 'fetchJson',
+            params: Object.fromEntries(params || []),
+            url,
+          },
         },
-      },
-    });
+      });
+    }
   }
   return null;
 };

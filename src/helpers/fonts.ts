@@ -1,6 +1,7 @@
 import type { FontName } from 'src/types';
 
 import { Buffer } from 'buffer';
+import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 
 import { fetchRaw } from './api';
@@ -54,11 +55,13 @@ const getLocalFontPath = async (fontName: FontName) => {
       mustDownload = true;
     }
   } catch (error) {
-    errorCatcher(error, {
-      contexts: {
-        fn: { fontName, name: 'getLocalFontPath', url: fontUrls[fontName] },
-      },
-    });
+    if (useCurrentStateStore().online) {
+      errorCatcher(error, {
+        contexts: {
+          fn: { fontName, name: 'getLocalFontPath', url: fontUrls[fontName] },
+        },
+      });
+    }
     mustDownload = true;
   }
   if (mustDownload) {

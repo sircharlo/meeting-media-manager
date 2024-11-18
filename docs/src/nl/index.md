@@ -7,7 +7,8 @@ hero:
   actions:
     - theme: brand
       text: Installeer M³
-      link: https://github.com/sircharlo/meeting-media-manager/releases/latest
+      target: _blank
+      link: https://sircharlo.github.io/meeting-media-manager/using-at-a-kingdom-hall#download-and-install
     - theme: alt
       text: Gebruik in de Koninkrijkszaal
       link: /nl/using-at-a-kingdom-hall

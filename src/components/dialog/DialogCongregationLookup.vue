@@ -135,7 +135,7 @@ const lookupCongregation = async () => {
   try {
     if (congregationFilter.value?.length > 2) {
       await fetchJson<{ geoLocationList: GeoRecord[] }>(
-        `https://apps.${urlVariables.value.base}/api/public/meeting-search/weekly-meetings`,
+        `https://apps.${urlVariables.value.base || 'jw.org'}/api/public/meeting-search/weekly-meetings`,
         new URLSearchParams({
           includeSuggestions: 'true',
           keywords: congregationFilter.value,
@@ -168,7 +168,7 @@ const lookupCongregation = async () => {
 
 const congregationLookupLanguages = ref<CongregationLanguage[]>([]);
 fetchJson<CongregationLanguage[]>(
-  `https://apps.${urlVariables.value.base}/api/public/meeting-search/languages`,
+  `https://apps.${urlVariables.value.base || 'jw.org'}/api/public/meeting-search/languages`,
 )
   .then((response) => {
     congregationLookupLanguages.value = response || [];

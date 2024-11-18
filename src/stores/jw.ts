@@ -202,6 +202,7 @@ export const useJwStore = defineStore('jw-store', {
         });
     },
     async updateJwLanguages() {
+      if (!useCurrentStateStore().online) return;
       try {
         if (shouldUpdateList(this.jwLanguages, 3)) {
           const result = await fetchJwLanguages(this.urlVariables.base);
@@ -216,6 +217,7 @@ export const useJwStore = defineStore('jw-store', {
     async updateJwSongs(force = false) {
       try {
         const currentState = useCurrentStateStore();
+        if (!currentState.online) return;
         if (
           !currentState.currentSettings?.lang ||
           !currentState.currentSongbook?.pub
@@ -284,7 +286,7 @@ export const useJwStore = defineStore('jw-store', {
     async updateYeartext() {
       try {
         const currentState = useCurrentStateStore();
-        if (!currentState.currentSettings) return;
+        if (!currentState.currentSettings || !currentState.online) return;
 
         const year = new Date().getFullYear();
         const promises: Promise<{ wtlocale: JwLangCode; yeartext?: string }>[] =
