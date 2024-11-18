@@ -168,6 +168,10 @@ const { data: mediaUniqueId } = useBroadcastChannel<string, string>({
   name: 'unique-id',
 });
 
+const { data: mediaRepeat } = useBroadcastChannel<string, boolean>({
+  name: 'repeat',
+});
+
 const { data: mediaPlayingUrl } = useBroadcastChannel<string, string>({
   name: 'media-url',
 });
@@ -186,16 +190,7 @@ whenever(
     if (newMediaAction === 'pause') {
       mediaElement.value?.pause();
     } else if (newMediaAction === 'play') {
-      mediaElement.value?.play().catch((error: Error) => {
-        if (
-          !(
-            error.message.includes('removed from the document') ||
-            error.message.includes('new load request') ||
-            error.message.includes('interrupted by a call to pause')
-          )
-        )
-          errorCatcher(error);
-      });
+      playMediaElement();
     }
   },
 );
@@ -287,16 +282,7 @@ watch(
         return;
       }
       mediaElement.value.srcObject = stream;
-      mediaElement.value.play().catch((error: Error) => {
-        if (
-          !(
-            error.message.includes('removed from the document') ||
-            error.message.includes('new load request') ||
-            error.message.includes('interrupted by a call to pause')
-          )
-        )
-          errorCatcher(error);
-      });
+      playMediaElement();
     } else {
       if (!mediaElement.value) return;
       mediaElement.value.pause();
@@ -305,6 +291,19 @@ watch(
     }
   },
 );
+
+const playMediaElement = () => {
+  mediaElement.value?.play().catch((error: Error) => {
+    if (
+      !(
+        error.message.includes('removed from the document') ||
+        error.message.includes('new load request') ||
+        error.message.includes('interrupted by a call to pause')
+      )
+    )
+      errorCatcher(error);
+  });
+};
 
 watch(currentCongregation, (newCongregation) => {
   if (!newCongregation) showMediaWindow(false);
@@ -321,7 +320,14 @@ const playMedia = () => {
     }
 
     mediaElement.value.onended = () => {
-      postMediaState('ended');
+      if (!mediaRepeat.value || mediaRepeat.value !== mediaUniqueId.value) {
+        postMediaState('ended');
+      } else {
+        if (mediaElement.value) {
+          mediaElement.value.currentTime = 0;
+          playMediaElement();
+        }
+      }
     };
 
     mediaElement.value.onpause = () => {
@@ -354,16 +360,7 @@ const playMedia = () => {
         selectedDate.value
       ]?.[mediaUniqueId.value]?.min ?? 0;
     mediaElement.value.currentTime = customStart;
-    mediaElement.value.play().catch((error: Error) => {
-      if (
-        !(
-          error.message.includes('removed from the document') ||
-          error.message.includes('new load request') ||
-          error.message.includes('interrupted by a call to pause')
-        )
-      )
-        errorCatcher(error);
-    });
+    playMediaElement();
   } catch (e) {
     errorCatcher(e);
   }

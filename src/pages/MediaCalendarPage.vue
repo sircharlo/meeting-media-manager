@@ -566,6 +566,7 @@ const {
   mediaPlayingSubtitlesUrl,
   mediaPlayingUniqueId,
   mediaPlayingUrl,
+  mediaRepeat,
   selectedDate,
   selectedDateObject,
   watchFolderMedia,
@@ -590,6 +591,14 @@ watch(
     const { post } = useBroadcastChannel<string, string>({ name: 'unique-id' });
     post(newMediaUniqueId);
     if (newMediaUniqueId) lastPlayedMediaUniqueId.value = newMediaUniqueId;
+  },
+);
+
+watch(
+  () => mediaRepeat.value,
+  (newMediaRepeat) => {
+    const { post } = useBroadcastChannel<string, boolean>({ name: 'repeat' });
+    post(newMediaRepeat);
   },
 );
 
