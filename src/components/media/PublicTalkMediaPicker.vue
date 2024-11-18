@@ -1,11 +1,13 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="items-center q-pb-lg q-px-lg q-gutter-y-lg bg-secondary-contrast"
+      class="items-center q-pb-lg q-px-sm q-gutter-y-lg bg-secondary-contrast"
     >
-      <div class="text-h6 row">{{ $t('import-media-from-s34mp') }}</div>
-      <div class="row">{{ $t('select-s34mp-to-add-public-talk-media') }}</div>
-      <div class="row items-center q-gutter-x-md">
+      <div class="text-h6 row q-px-md">{{ $t('import-media-from-s34mp') }}</div>
+      <div class="row q-px-md">
+        {{ $t('select-s34mp-to-add-public-talk-media') }}
+      </div>
+      <div class="row items-center q-gutter-x-md q-px-md">
         <q-icon name="mmm-file" size="md" />
         <div class="col text-subtitle2">
           {{
@@ -28,7 +30,7 @@
         </q-btn>
       </div>
       <template v-if="s34mpDb">
-        <div class="row">
+        <div class="row q-px-md">
           <q-input
             v-model="filter"
             :label="$t('search')"
@@ -56,7 +58,7 @@
             >
               <q-item
                 v-ripple
-                class="items-center"
+                class="items-center q-mx-md"
                 clickable
                 @click="addPublicTalkMedia(publicTalk)"
               >
@@ -66,7 +68,7 @@
           </q-scroll-area>
         </div>
       </template>
-      <div class="row justify-end">
+      <div class="row justify-end q-px-md">
         <q-btn
           :label="$t('cancel')"
           color="negative"
