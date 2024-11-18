@@ -384,6 +384,7 @@ const resetBibleBook = (close = false) => {
   bibleBook.value = 0;
   bibleBookChapter.value = 0;
   bibleBookMedia.value = [];
+  localeBibleBookMedia.value = [];
   selectedMediaItems.value = [];
   if (close) open.value = false;
 };
