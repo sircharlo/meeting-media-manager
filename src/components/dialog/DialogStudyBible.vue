@@ -214,11 +214,12 @@
           <q-btn
             v-if="selectedMediaItems.length"
             v-close-popup
-            :label="$t('add')"
+            :label="$t('add') + ' (' + selectedMediaItems.length + ')'"
             color="primary"
             @click="addSelectedMediaItems()"
           />
           <q-btn
+            v-else
             v-close-popup
             :label="$t('cancel')"
             color="negative"
