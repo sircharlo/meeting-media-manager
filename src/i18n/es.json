@@ -376,5 +376,7 @@
   "yeartext": "Texto del año",
   "yes": "Sí",
   "zoom-in": "Ampliar",
-  "zoom-out": "Reducir"
+  "zoom-out": "Reducir",
+  "repeat": "Video will repeat continuously",
+  "repeat-off": "Video will play only once"
 }

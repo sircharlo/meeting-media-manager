@@ -376,5 +376,7 @@
   "yeartext": "Годовой текст",
   "yes": "Да",
   "zoom-in": "Увеличить",
-  "zoom-out": "Уменьшить"
+  "zoom-out": "Уменьшить",
+  "repeat": "Video will repeat continuously",
+  "repeat-off": "Video will play only once"
 }

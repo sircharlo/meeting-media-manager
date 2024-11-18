@@ -376,5 +376,7 @@
   "yeartext": "Letni stavek",
   "yes": "Da",
   "zoom-in": "Približaj",
-  "zoom-out": "Pomanjšaj"
+  "zoom-out": "Pomanjšaj",
+  "repeat": "Video will repeat continuously",
+  "repeat-off": "Video will play only once"
 }

@@ -376,5 +376,7 @@
   "yeartext": "Річний вірш",
   "yes": "Так",
   "zoom-in": "Приблизити",
-  "zoom-out": "Віддалити"
+  "zoom-out": "Віддалити",
+  "repeat": "Video will repeat continuously",
+  "repeat-off": "Video will play only once"
 }
