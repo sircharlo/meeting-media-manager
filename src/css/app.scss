@@ -541,3 +541,23 @@ a {
   width: max-content;
   background-color: transparent;
 }
+
+.study-bible-item {
+  border: 0.25em solid transparent;
+  border-radius: 8px;
+}
+
+.study-bible-item img {
+  border-radius: unset;
+}
+
+.study-bible-item-selected {
+  border-color: $primary;
+}
+
+.study-bible-item-selected .q-checkbox {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: transparent;
+}

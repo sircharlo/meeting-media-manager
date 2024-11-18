@@ -4,6 +4,7 @@ export * from './electron';
 export * from './fs';
 export * from './general';
 export * from './github';
+export * from './jw/bible';
 export * from './jw/lang';
 export * from './jw/publications';
 export * from './jw/sqlite';

@@ -105,8 +105,8 @@ const isSong = (multimediaItem: MultimediaItem) => {
 };
 
 const isRemoteFile = (
-  file: { filetype?: string; path: string } | File,
-): file is { filetype?: string; path: string } => {
+  file: { filename?: string; filetype?: string; path: string } | File,
+): file is { filename?: string; filetype?: string; path: string } => {
   if (!file.path) return false;
   return file.path.startsWith('http://') || file.path.startsWith('https://');
 };
