@@ -67,18 +67,29 @@
                         'rounded-borders-lg': true,
                         'full-height': true,
                         'bg-accent-100': hoveredMediaItem === mediaItem.id,
+                        'study-bible-item': true,
+                        'study-bible-item-selected':
+                          selectedMediaItems.includes(mediaItem),
+                        'relative-position': true,
                       }"
                       flat
                       @click="
-                        addStudyBibleMedia(
-                          localeBibleBookMedia.find(
-                            (m) => m.docID === mediaItem.docID,
-                          ) ?? mediaItem,
-                        )
+                        selectedMediaItems.includes(mediaItem)
+                          ? selectedMediaItems.splice(
+                              selectedMediaItems.indexOf(mediaItem),
+                              1,
+                            )
+                          : selectedMediaItems.push(mediaItem)
                       "
                       @mouseout="hoveredMediaItem = 0"
                       @mouseover="hoveredMediaItem = mediaItem.id"
                     >
+                      <q-checkbox
+                        v-if="selectedMediaItems.includes(mediaItem)"
+                        v-model="selectedMediaItems"
+                        :val="mediaItem"
+                        color="primary"
+                      />
                       <q-card-section class="q-pa-sm">
                         <q-img
                           :src="
@@ -192,13 +203,20 @@
       </div>
       <div class="row items-center">
         <div class="col"></div>
-        <div class="col text-right">
+        <div class="col text-right q-gutter-x-sm">
           <q-btn
             v-if="bibleBook"
             :label="$t('back')"
             color="primary"
             flat
             @click="resetBibleBook()"
+          />
+          <q-btn
+            v-if="selectedMediaItems.length"
+            v-close-popup
+            :label="$t('add')"
+            color="primary"
+            @click="addSelectedMediaItems()"
           />
           <q-btn
             v-close-popup
@@ -270,6 +288,8 @@ const bibleBooks = ref<Record<number, BibleBook>>({});
 const loadingProgress = ref<number>(0);
 const hoveredBibleBook = ref('');
 const hoveredMediaItem = ref(0);
+
+const selectedMediaItems = ref<BibleBookMedia[]>([]);
 
 const localeUrl = ref('');
 const localeBibleBooks = ref<Record<number, BibleBook>>({});
@@ -364,6 +384,7 @@ const resetBibleBook = (close = false) => {
   bibleBook.value = 0;
   bibleBookChapter.value = 0;
   bibleBookMedia.value = [];
+  selectedMediaItems.value = [];
   if (close) open.value = false;
 };
 
@@ -436,6 +457,13 @@ const bibleBookChapters = computed(() => {
   });
   return Array.from(chapters).sort();
 });
+
+const addSelectedMediaItems = async () => {
+  for (const mediaItem of selectedMediaItems.value) {
+    await addStudyBibleMedia(mediaItem);
+  }
+  resetBibleBook(true);
+};
 
 const addStudyBibleMedia = async (mediaItem: BibleBookMedia) => {
   try {
@@ -512,7 +540,6 @@ const addStudyBibleMedia = async (mediaItem: BibleBookMedia) => {
         );
       }
     }
-    resetBibleBook(true);
   } catch (error) {
     errorCatcher(error);
   }
