@@ -36,7 +36,13 @@
                     'bg-accent-100': hoveredMediaItem === mediaItem.id,
                   }"
                   flat
-                  @click="addStudyBibleMedia(mediaItem)"
+                  @click="
+                    addStudyBibleMedia(
+                      localeBibleBookMedia.find(
+                        (m) => m.docID === mediaItem.docID,
+                      ) ?? mediaItem,
+                    )
+                  "
                   @mouseout="hoveredMediaItem = 0"
                   @mouseover="hoveredMediaItem = mediaItem.id"
                 >
@@ -44,7 +50,12 @@
                     <q-img
                       :src="
                         getBestImageUrl(
-                          { sqr: mediaItem.thumbnail.sizes },
+                          {
+                            sqr:
+                              localeBibleBookMedia.find(
+                                (m) => m.docID === mediaItem.docID,
+                              )?.thumbnail.sizes ?? mediaItem.thumbnail.sizes,
+                          },
                           'md',
                         )
                       "
@@ -62,7 +73,11 @@
                   </q-card-section>
                   <q-card-section class="q-pa-sm">
                     <div class="text-subtitle2 q-mb-xs">
-                      {{ mediaItem.label }}
+                      {{
+                        localeBibleBookMedia.find(
+                          (m) => m.docID === mediaItem.docID,
+                        )?.label || mediaItem.label
+                      }}
                     </div>
                   </q-card-section>
                 </div>
@@ -193,6 +208,7 @@ const hoveredMediaItem = ref(0);
 
 const localeUrl = ref('');
 const localeBibleBooks = ref<Record<number, BibleBook>>({});
+const localeBibleBookMedia = ref<BibleBookMedia[]>([]);
 
 const i18n = useI18n();
 
@@ -241,8 +257,9 @@ const getLocaleData = async () => {
       localeUrl.value.startsWith(
         `https://www.${urlVariables.value.base}/${currentLocale}/`,
       )
-    )
+    ) {
       return;
+    }
 
     const result = await fetchJson<BibleBooksResult>(
       `${localeUrl.value}json/data`,
@@ -283,7 +300,26 @@ const resetBibleBook = (close = false) => {
   if (close) open.value = false;
 };
 
+const getLocaleBibleBookMedia = async (book: number) => {
+  if (!localeUrl.value) return;
+
+  try {
+    const result = await fetchJson<BibleBooksResult>(
+      `${localeUrl.value}/json/multimedia/${book}`,
+    );
+    if (!result) return;
+
+    const key = Object.keys(result.ranges)[0];
+    if (!key) return;
+
+    localeBibleBookMedia.value = result.ranges[key].multimedia;
+  } catch (e) {
+    // Fallback to English
+  }
+};
+
 const getBibleBookMedia = async (book: number) => {
+  getLocaleBibleBookMedia(book);
   bibleBook.value = book;
   loadingProgress.value = 0;
 
@@ -312,7 +348,6 @@ const getBibleBookMedia = async (book: number) => {
 };
 
 const addStudyBibleMedia = async (mediaItem: BibleBookMedia) => {
-  console.log('mediaItem', mediaItem);
   try {
     let fetcher: PublicationFetcher | undefined;
     if (typeof mediaItem.resource.src == 'string') {
