@@ -125,8 +125,14 @@
             </template>
           </template>
           <div v-else-if="bibleBook" class="row">
+            <q-spinner
+              v-if="!bibleBookChapters.length"
+              color="primary"
+              size="md"
+            />
             <q-btn
               v-for="chapter in bibleBookChapters"
+              v-else
               :key="chapter"
               :label="parseInt(chapter)"
               class="rounded-borders-sm q-mr-xs q-mb-xs"
