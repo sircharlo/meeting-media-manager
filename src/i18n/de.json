@@ -376,5 +376,7 @@
   "yeartext": "Jahrestext",
   "yes": "Ja",
   "zoom-in": "Hineinzoomen",
-  "zoom-out": "Herauszoomen"
+  "zoom-out": "Herauszoomen",
+  "repeat": "Video will repeat continuously",
+  "repeat-off": "Video will play only once"
 }
