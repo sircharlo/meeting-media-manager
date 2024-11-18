@@ -376,5 +376,7 @@
   "yeartext": "Aastatekst",
   "yes": "Jah",
   "zoom-in": "Suurenda",
-  "zoom-out": "Vaata kaugemalt"
+  "zoom-out": "Vaata kaugemalt",
+  "repeat": "Video will repeat continuously",
+  "repeat-off": "Video will play only once"
 }
