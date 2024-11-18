@@ -597,7 +597,7 @@ watch(
 watch(
   () => mediaRepeat.value,
   (newMediaRepeat) => {
-    const { post } = useBroadcastChannel<string, boolean>({ name: 'repeat' });
+    const { post } = useBroadcastChannel<string, string>({ name: 'repeat' });
     post(newMediaRepeat);
   },
 );
