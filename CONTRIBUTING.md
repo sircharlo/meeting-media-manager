@@ -80,9 +80,29 @@ The UI process is made using [Vue.js](https://vuejs.org/). Vue.js is framework f
 
 The UI components are made from [Quasar](https://quasar.dev/docs) components.
 
+### Naming Conventions
+
+Please follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification when creating branches, commits and Pull Requests. This will help to automatically generate the changelog and versioning of the application.
+
+#### Branches
+
+Branches should be named according to the following pattern: `type/description` (e.g. `feat/add-new-feature` or `fix/some-bug-fix`).
+
+#### Commits
+
+Commits should be named according to the following pattern: `type(scope?): description` (e.g. `refactor: optimize some code` or `chore(deps): update deps`).
+
+#### Pull Requests
+
+Pull Requests titles should be named according to the following pattern: `type(scope?): description` (e.g. `ci(build): fix build script` or `style: fix linting issues`).
+
+### Code Style
+
+This project uses [ESLint](https://eslint.org/) and [Prettier](https://prettier.io/) to enforce a consistent code style. These tools are integrated into the development workflow and will automatically check and format the code.
+
 ### Release Procedure
 
-To release a new version of the application, a draft release must be created on GitHub. Then, the [package.json](package.json) version must be updated to the desired version and the changes committed with the message `chore(release): vx.x.x` (e.g. `chore(release): v26.3.1`). Afterwards, the build/release workflow will be executed automatically and will add the necessary executable files to the release draft. After adding a description of the release (features, bug fixes, etc.), it can now be published.
+To release a new version of the application, a draft release must be created on GitHub. The [package.json](package.json) version must be updated to the desired version and the changes committed with the message `chore(release): vx.x.x` (e.g. `chore(release): v26.3.1`). Afterwards, the build/release workflow will be executed automatically and will add the necessary executable files to the release draft. After adding a description of the release (features, bug fixes, etc.), it can be published.
 
 ### Contribute to the documentation site
 
@@ -101,9 +121,12 @@ yarn docs:build
 # Preview the production build locally
 yarn docs:preview
 
+# Format all files
+yarn format
+
 # Lint all JS/TS/Vue files
 yarn lint
 
-# Format all files
-yarn format
+# Check for type errors
+yarn type-check
 ```

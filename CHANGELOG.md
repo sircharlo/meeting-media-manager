@@ -2,6 +2,37 @@
 
 # Changelog
 
+## 24.11.4
+
+### New Features
+
+- 🎼 Added **song grid view** to replace the song list for easier navigation and selection.
+
+### Fixes and Improvements
+
+- ✏️ **Minor rephrasing** of various UI text for better clarity.
+- 🛑 Implemented **quit verification logic** for macOS `Cmd-Q` to prevent accidental exits.
+- 🎵 Added **loading indicator to song picker** when refreshing songs for a smoother experience.
+- 🎶 Improved **search and filters** in public talk media and song pickers to allow for partial text matches.
+- 🌐 Adjusted **website aspect ratio on macOS** for better display (#3283).
+- 🖼️ Fixed **thumbnail file path errors** that caused media thumbnails to fail in some cases.
+- 📜 Properly reset **media import progress and drag-and-dropper**.
+- 🎬 Ensured **new watched media** is added to the bottom of the list when sorted.
+- 🖋️ Improved **fetch error handling** for more robust error messages.
+- 🌐 Fixed **font URLs** to default to empty when `urlVariables` are missing.
+- 🔗 Fixed **base URL checks** to skip unnecessary fetches when everything is already configured properly.
+- 🎶 Improved **font-src CSP** for dynamic font loading.
+- 🖼️ Fixed **cursor indicator errors** during website presentation.
+- 📂 Caught **folder watcher errors** to prevent unexpected app behavior.
+- 🌐 Request **media permissions on macOS** before showing the website window.
+
+### Chores and Refactors
+
+- 🚀 Greatly improved **performance responsiveness** on remote video popup and added pagination for better UX.
+- 🌍 Moved from **localeCompare to Intl.Collator** for enhanced sorting and locale handling.
+- 🛠️ Improved **types** for better type safety across the app.
+- 🗂️ Added **missing publication file types** for better compatibility.
+
 ## 24.11.3
 
 ### New features
