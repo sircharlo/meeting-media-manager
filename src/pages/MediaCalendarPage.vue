@@ -551,6 +551,7 @@ const {
   customDurations,
   lookupPeriod,
   mediaSort,
+  urlVariables,
   watchedMediaSections,
 } = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
@@ -1026,9 +1027,20 @@ onMounted(() => {
   }
 
   sendObsSceneEvent('camera');
-  fetchMedia();
+  if (urlVariables.value.base && urlVariables.value.mediator) {
+    fetchMedia();
+  } else {
+    router.push('/settings');
+  }
   checkCoDate();
 });
+
+watch(
+  () => urlVariables.value.mediator,
+  () => {
+    fetchMedia();
+  },
+);
 
 const [tgwList, sortableTgwMediaItems] = useDragAndDrop<DynamicMediaObject>(
   [],
