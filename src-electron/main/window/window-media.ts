@@ -78,7 +78,6 @@ export const moveMediaWindow = (
     }
 
     setWindowPosition(displayNr, fullscreen, noEvent);
-    sendToWindow(mainWindow, 'screenChange');
   } catch (e) {
     errorCatcher(e);
   }
@@ -95,37 +94,50 @@ const setWindowPosition = (
     const screens = getAllScreens();
     const currentDisplayNr = getWindowScreen(mediaWindow);
     const targetDisplay = screens[displayNr ?? 0];
-
     if (!targetDisplay) return;
 
     const targetScreenBounds = targetDisplay.bounds;
 
-    if (!targetScreenBounds) return;
+    const boundsChanged = (
+      current: Electron.Rectangle,
+      target: Electron.Rectangle,
+    ) =>
+      ['height', 'width', 'x', 'y'].some(
+        (prop) =>
+          current[prop as keyof Electron.Rectangle] !==
+          target[prop as keyof Electron.Rectangle],
+      );
+
+    const setWindowBounds = (
+      bounds: Partial<Electron.Rectangle>,
+      alwaysOnTop = false,
+      fullScreen = false,
+    ) => {
+      if (!mediaWindow) return;
+      mediaWindow.setBounds(bounds);
+      if (mediaWindow.isAlwaysOnTop() !== alwaysOnTop) {
+        mediaWindow.setAlwaysOnTop(alwaysOnTop);
+      }
+      if (mediaWindow.isFullScreen() !== fullScreen) {
+        mediaWindow.setFullScreen(fullScreen);
+      }
+      sendToWindow(mainWindow, 'screenChange');
+    };
+
+    const handleMacFullScreenTransition = (callback: () => void) => {
+      if (PLATFORM === 'darwin' && mediaWindow && mediaWindow.isFullScreen()) {
+        mediaWindow.once('leave-full-screen', callback);
+        mediaWindow.setFullScreen(false);
+      } else {
+        callback();
+      }
+    };
 
     if (fullscreen) {
       if (displayNr === currentDisplayNr && mediaWindow.isAlwaysOnTop()) return;
-
-      const setWindowPosition = () => {
-        if (!mediaWindow) return;
-        mediaWindow.setBounds(targetScreenBounds);
-        // macOS doesn't play nice when trying to share a fullscreen window in Zoom if it's set to always be on top
-        if (PLATFORM !== 'darwin' && !mediaWindow.isAlwaysOnTop()) {
-          mediaWindow.setAlwaysOnTop(true);
-        }
-        if (!mediaWindow.isFullScreen()) {
-          mediaWindow.setFullScreen(true);
-        }
-      };
-
-      // On macOS, fullscreen transitions take place asynchronously, so we need to wait for the leave-full-screen event before moving the window
-      if (PLATFORM === 'darwin' && mediaWindow.isFullScreen()) {
-        mediaWindow.once('leave-full-screen', function () {
-          setWindowPosition();
-        });
-        mediaWindow.setFullScreen(false);
-      } else {
-        setWindowPosition();
-      }
+      handleMacFullScreenTransition(() => {
+        setWindowBounds(targetScreenBounds, PLATFORM !== 'darwin', true);
+      });
     } else {
       const newBounds = {
         height: 720,
@@ -133,41 +145,23 @@ const setWindowPosition = (
         x: targetScreenBounds.x + 50,
         y: targetScreenBounds.y + 50,
       };
-
-      if (mediaWindow.isAlwaysOnTop()) {
-        mediaWindow.setAlwaysOnTop(false);
-      }
-
-      if (mediaWindow.isFullScreen()) {
-        // On macOS, fullscreen transitions take place asynchronously, so we need to wait for the leave-full-screen event before moving the window
-        mediaWindow.once('leave-full-screen', function () {
-          if (!mediaWindow) return;
-          mediaWindow.setBounds(newBounds);
-        });
-        mediaWindow.setFullScreen(false);
-      } else {
-        mediaWindow.setBounds(newBounds);
-      }
-
-      if (displayNr === currentDisplayNr) return;
-
-      const currentBounds = mediaWindow.getBounds();
       if (
-        currentBounds.height !== newBounds.height ||
-        currentBounds.width !== newBounds.width ||
-        currentBounds.x !== newBounds.x ||
-        currentBounds.y !== newBounds.y
+        displayNr !== currentDisplayNr &&
+        boundsChanged(mediaWindow.getBounds(), newBounds)
       ) {
-        mediaWindow.setBounds(newBounds);
+        setWindowBounds(newBounds, false, false);
+      } else {
+        handleMacFullScreenTransition(() => {
+          setWindowBounds(newBounds, false, false);
+        });
       }
     }
 
     if (!noEvent) {
-      const prefs: ScreenPreferences = {
+      sendToWindow(mainWindow, 'screenPrefsChange', {
         preferredScreenNumber: displayNr ?? 0,
         preferWindowed: !fullscreen,
-      };
-      sendToWindow(mainWindow, 'screenPrefsChange', prefs);
+      } as ScreenPreferences);
     }
   } catch (err) {
     errorCatcher(err);
