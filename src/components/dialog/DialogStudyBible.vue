@@ -396,10 +396,22 @@ const addStudyBibleMedia = async (mediaItem: BibleBookMedia) => {
       }
 
       if (fetcher) {
-        const [mediaLinks, { thumbnail, title }] = await Promise.all([
+        let [mediaLinks, { thumbnail, title }] = await Promise.all([
           getPubMediaLinks(fetcher),
           getJwMediaInfo(fetcher),
         ]);
+        if (!mediaLinks) {
+          [mediaLinks, { thumbnail, title }] = await Promise.all([
+            getPubMediaLinks({
+              ...fetcher,
+              langwritten: currentSettings.value?.langFallback || 'E',
+            }),
+            getJwMediaInfo({
+              ...fetcher,
+              langwritten: currentSettings.value?.langFallback || 'E',
+            }),
+          ]);
+        }
         await downloadAdditionalRemoteVideo(
           mediaLinks?.files?.[currentSettings.value?.lang || 'E']?.['MP4'] ||
             [],
