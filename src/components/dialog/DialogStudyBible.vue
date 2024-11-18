@@ -67,9 +67,6 @@
                         'rounded-borders-lg': true,
                         'full-height': true,
                         'bg-accent-100': hoveredMediaItem === mediaItem.id,
-                        'study-bible-item': true,
-                        'study-bible-item-selected':
-                          selectedMediaItems.includes(mediaItem),
                         'relative-position': true,
                       }"
                       flat
@@ -84,14 +81,17 @@
                       @mouseout="hoveredMediaItem = 0"
                       @mouseover="hoveredMediaItem = mediaItem.id"
                     >
-                      <q-checkbox
-                        v-if="selectedMediaItems.includes(mediaItem)"
-                        v-model="selectedMediaItems"
-                        :val="mediaItem"
-                        color="primary"
-                      />
-                      <q-card-section class="q-pa-sm">
+                      <q-card-section
+                        :class="{
+                          'q-pa-sm': true,
+                        }"
+                      >
                         <q-img
+                          :class="{
+                            'study-bible-item': true,
+                            'study-bible-item-selected':
+                              selectedMediaItems.includes(mediaItem),
+                          }"
                           :src="
                             getBestImageUrl(
                               {
@@ -104,7 +104,6 @@
                               'md',
                             )
                           "
-                          class="rounded-borders"
                         >
                           <q-badge
                             v-if="mediaItem.type === 'video'"
@@ -118,6 +117,12 @@
                             />
                             {{ $t('video') }}
                           </q-badge>
+                          <q-checkbox
+                            v-if="selectedMediaItems.includes(mediaItem)"
+                            v-model="selectedMediaItems"
+                            :val="mediaItem"
+                            color="primary"
+                          />
                         </q-img>
                       </q-card-section>
                       <q-card-section class="q-pa-sm">
