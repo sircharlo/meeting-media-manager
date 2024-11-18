@@ -174,6 +174,8 @@ watch(online, (isNowOnline) => {
     if (isNowOnline) {
       // downloadQueue?.start();
       meetingQueue?.start();
+      jwStore.updateYeartext();
+      jwStore.updateJwLanguages();
     } else {
       // downloadQueue?.pause();
       meetingQueue?.pause();

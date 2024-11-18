@@ -1,25 +1,25 @@
 <!-- markdownlint-disable no-inline-html -->
 
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# 在王国聚会所使用M³ {#using-m3-at-a-kingdom-hall}
 
-This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
+本指南将带你在王国聚会所下载、安装和设置\*\*Meeting Media Manager (M³)\*\*的过程。 遵循步骤以确保在会众聚会期间管理媒体的顺利设置。
 
-## 1. Download and install {#download-and-install}
+## 1. 下载并安装 {#download-and-install}
 
 <script setup>
   import { data } from './../../data/version.data.mts'
 </script>
 
-1. Download the appropriate version for your operating system:
+1. 下载您操作系统的适当版本：
    - **Windows:**
-     - For most Windows systems, download <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
-     - For older 32-bit Windows systems, download <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
-   - **macOS:**
-     - **M-series (Apple Silicon)**: Download <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
-     - **Intel-based Macs**: Download <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
+     - 对于大多数Windows系统，下载 <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
+     - 对于较旧的32位Windows系统，请下载 <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>。
+   - **MacOS:**
+     - **M系列(Apple Silicon)**: 下载 <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>。
+     - **Intel系列 Mac**：下载 <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>。
    - **Linux:**
-     - Download <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
-2. If the download links do not work, visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and download the correct version manually.
+     - 下载 <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>。
+2. 如果下载链接无法正常工作，请访问[M3下载页面](https://github.com/sircharlo/meeting-media-manager/releases/latest)并手动下载正确的版本。
 3. 打开安装程序并按照屏幕上的说明安装M³。
 4. 启动 M³。
 5. 通过配置向导。

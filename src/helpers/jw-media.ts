@@ -172,6 +172,11 @@ const fetchMedia = async () => {
     }
 
     const jwStore = useJwStore();
+
+    if (!jwStore.urlVariables.base || !jwStore.urlVariables.mediator) {
+      return;
+    }
+
     const meetingsToFetch = (
       await Promise.all(
         jwStore.lookupPeriod[currentStateStore.currentCongregation]?.map(
