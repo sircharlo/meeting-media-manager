@@ -1,11 +1,11 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="items-center q-pb-lg q-px-lg q-gutter-y-lg bg-secondary-contrast large-overlay"
+      class="items-center q-pb-lg q-px-sm q-gutter-y-lg bg-secondary-contrast large-overlay"
     >
-      <div class="text-h6 row">{{ $t('add-media-study-bible') }}</div>
-      <div class="row">{{ $t('add-media-study-bible-explain') }}</div>
-      <div v-if="bibleBook" class="text-h6 row">
+      <div class="text-h6 row q-px-md">{{ $t('add-media-study-bible') }}</div>
+      <div class="row q-px-md">{{ $t('add-media-study-bible-explain') }}</div>
+      <div v-if="bibleBook" class="text-h6 row q-px-md">
         {{ $t('media-gallery') }} -
         {{
           localeBibleBooks[bibleBook]?.standardName ||
@@ -14,7 +14,7 @@
       </div>
       <div
         v-if="!!(loadingProgress < 1 && Object.keys(bibleBooks).length === 0)"
-        class="text-center row items-center justify-center"
+        class="text-center row items-center justify-center q-px-md"
       >
         <q-spinner color="primary" size="md" />
       </div>
@@ -36,7 +36,7 @@
                 .sort()"
               :key="bibleBookChapterVerseId"
             >
-              <div class="text-h6 row">
+              <div class="text-h6 row q-px-md">
                 {{ bibleBookChapter }}:{{
                   parseInt(bibleBookChapterVerseId.slice(5) ?? '')
                 }}{{
@@ -50,7 +50,7 @@
                     : ''
                 }}
               </div>
-              <div class="row">
+              <div class="row q-px-md">
                 <template
                   v-for="mediaItem in bibleBookMedia.filter((m) =>
                     m.source
@@ -135,7 +135,7 @@
               </div>
             </template>
           </template>
-          <div v-else-if="bibleBook" class="row">
+          <div v-else-if="bibleBook" class="row q-px-md">
             <q-spinner
               v-if="!bibleBookChapters.length"
               color="primary"
@@ -153,7 +153,7 @@
               @click="bibleBookChapter = parseInt(chapter)"
             />
           </div>
-          <div v-else class="row q-col-gutter-md">
+          <div v-else class="row q-col-gutter-md q-px-md">
             <template
               v-for="[bookNr, book] in Object.entries(bibleBooks)"
               :key="bookNr"
@@ -201,7 +201,7 @@
           </div>
         </q-scroll-area>
       </div>
-      <div class="row items-center">
+      <div class="row items-center q-px-md">
         <div class="col"></div>
         <div class="col text-right q-gutter-x-sm">
           <q-btn
