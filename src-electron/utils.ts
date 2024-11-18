@@ -137,15 +137,19 @@ export const fetchJson = async <T>(
       });
     }
   } catch (e) {
-    errorCatcher(e, {
-      contexts: {
-        fn: {
-          name: 'fetchJson',
-          params: Object.fromEntries(params || []),
-          url,
+    const { default: isOnline } = await import('is-online');
+    const online = await isOnline();
+    if (online) {
+      errorCatcher(e, {
+        contexts: {
+          fn: {
+            name: 'fetchJson',
+            params: Object.fromEntries(params || []),
+            url,
+          },
         },
-      },
-    });
+      });
+    }
   }
   return null;
 };

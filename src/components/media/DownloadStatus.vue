@@ -64,7 +64,7 @@ setInterval(() => {
   updateOnline();
 }, 10000);
 
-onMounted(async () => {
+onMounted(() => {
   updateOnline();
 });
 </script>
