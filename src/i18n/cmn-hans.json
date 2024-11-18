@@ -376,5 +376,7 @@
   "yeartext": "全年经文",
   "yes": "是",
   "zoom-in": "放大",
-  "zoom-out": "缩小"
+  "zoom-out": "缩小",
+  "repeat": "Video will repeat continuously",
+  "repeat-off": "Video will play only once"
 }
