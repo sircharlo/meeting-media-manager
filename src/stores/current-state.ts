@@ -228,7 +228,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       musicStopping: false,
       online: true,
       onlyShowInvalidSettings: false,
-      selectedDate: date.formatDate(new Date(), 'YYYY/MM/DD'),
+      selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
       timeRemainingBeforeMusicStop: 0,
       watchFolderMedia: {},
     };
