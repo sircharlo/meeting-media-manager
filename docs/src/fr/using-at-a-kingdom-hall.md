@@ -1,25 +1,25 @@
 <!-- markdownlint-disable no-inline-html -->
 
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# Utilisation de M³ dans une salle du Royaume {#using-m3-at-a-kingdom-hall}
 
-This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
+Ce guide vous guidera dans le processus de téléchargement, d'installation et de configuration de **Meeting Media Manager (M³)** dans une salle du Royaume. Suivez les étapes suivantes pour assurer une configuration optimale pour la gestion des médias pendant les réunions de l'assemblée locale.
 
-## 1. Download and install {#download-and-install}
+## 1. Téléchargement et installation {#download-and-install}
 
 <script setup>
   import { data } from './../../data/version.data.mts'
 </script>
 
-1. Download the appropriate version for your operating system:
+1. Téléchargez la version appropriée pour votre système d'exploitation :
    - **Windows:**
-     - For most Windows systems, download <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
-     - For older 32-bit Windows systems, download <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
+     - Pour la plupart des systèmes Windows, téléchargez <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
+     - Pour les systèmes Windows 32 bits plus anciens, téléchargez <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
    - **macOS:**
-     - **M-series (Apple Silicon)**: Download <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
-     - **Intel-based Macs**: Download <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
+     - **Série M (Puce Apple)** : Téléchargez <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
+     - **Macs à processeur Intel**: Téléchargez <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
    - **Linux:**
-     - Download <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
-2. If the download links do not work, visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and download the correct version manually.
+     - Téléchargez <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
+2. Si les liens de téléchargement ne fonctionnent pas, visitez la [page de téléchargement M³](https://github.com/sircharlo/meeting-media-manager/releases/latest) et téléchargez la bonne version manuellement.
 3. Ouvrez le programme d'installation et suivez les instructions à l'écran pour installer M³.
 4. Lancez M³.
 5. Parcourez l'assistant de configuration.
