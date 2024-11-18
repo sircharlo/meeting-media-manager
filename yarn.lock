@@ -1838,9 +1838,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/app-vite@npm:^1.10.2":
-  version: 1.10.2
-  resolution: "@quasar/app-vite@npm:1.10.2"
+"@quasar/app-vite@npm:^1.11.0":
+  version: 1.11.0
+  resolution: "@quasar/app-vite@npm:1.11.0"
   dependencies:
     "@quasar/render-ssr-error": "npm:^1.0.3"
     "@quasar/vite-plugin": "npm:^1.7.0"
@@ -1904,7 +1904,7 @@ __metadata:
       optional: true
   bin:
     quasar: bin/quasar
-  checksum: 10c0/acbc31991a2f4c9f277921602f7f700017c9541ceef3ad36e5237a75c1d65a611098ed6ae480abb16ad946a0b440002bb6d88334e64fd67d1695cad66ba55616
+  checksum: 10c0/acb7aa9cd8cbd117dc861af89091259aa0aaf7bb1140051dc6760d3ae98f34a261b03972811b17d41c78e7b08b2170506de84b850631d4ce2924e7f7d13bef99
   languageName: node
   linkType: hard
 
@@ -10062,7 +10062,7 @@ __metadata:
     "@intlify/vite-plugin-vue-i18n": "npm:^7.0.0"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@panzoom/panzoom": "npm:^4.5.1"
-    "@quasar/app-vite": "npm:^1.10.2"
+    "@quasar/app-vite": "npm:^1.11.0"
     "@quasar/cli": "npm:^2.4.1"
     "@quasar/extras": "npm:^1.16.13"
     "@rollup/plugin-inject": "npm:^5.0.5"
