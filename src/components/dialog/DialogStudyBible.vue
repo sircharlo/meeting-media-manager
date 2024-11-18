@@ -460,7 +460,10 @@ const bibleBookChapters = computed(() => {
 
 const addSelectedMediaItems = async () => {
   for (const mediaItem of selectedMediaItems.value) {
-    await addStudyBibleMedia(mediaItem);
+    await addStudyBibleMedia(
+      localeBibleBookMedia.value.find((m) => m.docID === mediaItem.docID) ??
+        mediaItem,
+    );
   }
   resetBibleBook(true);
 };
