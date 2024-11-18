@@ -25,7 +25,10 @@
           style="width: 100vw; height: 40vh"
         >
           <div v-if="bibleBook" class="row q-col-gutter-md">
-            <template v-for="mediaItem in bibleBookMedia" :key="mediaItem.id">
+            <template
+              v-for="mediaItem in bibleBookMedia"
+              :key="mediaItem.docID"
+            >
               <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2 col-xl-1">
                 <div
                   v-ripple
