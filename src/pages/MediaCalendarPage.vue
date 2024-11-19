@@ -566,6 +566,7 @@ const {
   mediaPlayingSubtitlesUrl,
   mediaPlayingUniqueId,
   mediaPlayingUrl,
+  mediaRepeat,
   selectedDate,
   selectedDateObject,
   watchFolderMedia,
@@ -590,6 +591,14 @@ watch(
     const { post } = useBroadcastChannel<string, string>({ name: 'unique-id' });
     post(newMediaUniqueId);
     if (newMediaUniqueId) lastPlayedMediaUniqueId.value = newMediaUniqueId;
+  },
+);
+
+watch(
+  () => mediaRepeat.value,
+  (newMediaRepeat) => {
+    const { post } = useBroadcastChannel<string, string>({ name: 'repeat' });
+    post(newMediaRepeat);
   },
 );
 
@@ -970,7 +979,7 @@ useEventListener<CustomEvent<{ section?: MediaSection }>>(
 );
 useEventListener<
   CustomEvent<{
-    files: { path: string }[];
+    files: { filename?: string; filetype?: string; path: string }[];
     section?: MediaSection;
   }>
 >(window, 'localFiles-browsed', (event) => {
@@ -1318,7 +1327,7 @@ const addToAdditionMediaMapFromPath = async (
 };
 
 const addToFiles = async (
-  files: { filetype?: string; path: string }[] | FileList,
+  files: { filename?: string; filetype?: string; path: string }[] | FileList,
 ) => {
   if (!files) return;
   totalFiles.value = files.length;
@@ -1351,7 +1360,10 @@ const addToFiles = async (
         filepath = (
           await downloadFileIfNeeded({
             dir: await getTempDirectory(),
-            filename: inferExtension(baseFileName, file.filetype),
+            filename: inferExtension(
+              file.filename || baseFileName,
+              file.filetype,
+            ),
             url: filepath,
           })
         ).path;
@@ -1549,8 +1561,8 @@ const dropEnd = (event: DragEvent) => {
       const droppedStuff = Array.from(event.dataTransfer.files)
         .map((file) => {
           return {
+            filetype: file.type,
             path: getLocalPathFromFileObject(file),
-            type: file.type,
           };
         })
         .sort((a, b) => sorter.compare(a?.path, b?.path));
@@ -1562,11 +1574,11 @@ const dropEnd = (event: DragEvent) => {
         let src = new DOMParser()
           .parseFromString(sanitizedHtml, 'text/html')
           .querySelector('img')?.src;
-        const type =
+        const filetype =
           Array.from(event.dataTransfer.items).find(
             (item) => item.kind === 'file',
           )?.type ?? '';
-        if (src) droppedStuff[0] = { path: src, type };
+        if (src) droppedStuff[0] = { filetype, path: src };
       }
       addToFiles(droppedStuff).catch((error) => {
         errorCatcher(error);

@@ -59,6 +59,7 @@
 <script setup lang="ts">
 // Packages
 import { storeToRefs } from 'pinia';
+import { camelToKebabCase } from 'src/helpers/general';
 import { sendObsSceneEvent } from 'src/helpers/obs';
 // Stores
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -71,9 +72,6 @@ const {
   openWebsiteWindow,
   zoomWebsiteWindow,
 } = window.electronApi;
-
-const camelToKebabCase = (str: string) =>
-  str.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
 
 const i18n = useI18n();
 

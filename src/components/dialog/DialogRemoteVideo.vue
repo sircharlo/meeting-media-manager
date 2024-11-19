@@ -1,17 +1,11 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="items-center q-pb-lg q-px-lg q-gutter-y-lg bg-secondary-contrast large-overlay"
+      class="items-center q-pb-lg q-px-sm q-gutter-y-lg bg-secondary-contrast large-overlay"
     >
-      <div class="text-h6 row">{{ $t('add-video-jw-org') }}</div>
-      <div class="row">{{ $t('add-a-video-explain') }}</div>
-      <!-- <div class="row">
-        <q-linear-progress
-          :value="remoteVideosLoadingProgress"
-          class="q-mt-md"
-        />
-      </div> -->
-      <div class="row">
+      <div class="text-h6 row q-px-md">{{ $t('add-video-jw-org') }}</div>
+      <div class="row q-px-md">{{ $t('add-a-video-explain') }}</div>
+      <div class="row q-px-md">
         <div class="col-grow">
           <q-input
             v-model="remoteVideoFilter"
@@ -33,7 +27,7 @@
           :thumb-style="thumbStyle"
           style="width: 100vw; height: 40vh"
         >
-          <div class="row q-col-gutter-md">
+          <div class="row q-col-gutter-md q-px-md">
             <template
               v-for="video in remoteVideosFiltered.slice(
                 (currentPage - 1) * videosPerPage,
@@ -94,7 +88,7 @@
           </div>
         </q-scroll-area>
       </div>
-      <div class="row items-center justify-center">
+      <div class="row items-center justify-center q-px-md">
         <q-pagination
           v-model="currentPage"
           :max="Math.ceil(remoteVideosFiltered.length / videosPerPage)"
@@ -105,7 +99,7 @@
           flat
         />
       </div>
-      <div class="row items-center">
+      <div class="row items-center q-px-md">
         <div class="col">
           <q-spinner v-if="videosAreLoading" color="primary" size="md" />
           <q-toggle

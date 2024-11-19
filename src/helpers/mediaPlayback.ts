@@ -27,18 +27,6 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 
 import { errorCatcher } from './error-catcher';
 
-const {
-  convertHeic,
-  convertPdfToImages,
-  decompress,
-  executeQuery,
-  fs,
-  getNrOfPdfPages,
-  path,
-  readdir,
-  toggleMediaWindow,
-} = window.electronApi;
-
 const formatTime = (time: number) => {
   try {
     if (!time) return '00:00';
@@ -58,7 +46,10 @@ const formatTime = (time: number) => {
 const isFileOfType = (filepath: string, validExtensions: string[]) => {
   try {
     if (!filepath) return false;
-    const fileExtension = path.parse(filepath).ext.toLowerCase().slice(1);
+    const fileExtension = window.electronApi.path
+      .parse(filepath)
+      .ext.toLowerCase()
+      .slice(1);
     return validExtensions.includes(fileExtension);
   } catch (error) {
     errorCatcher(error);
@@ -114,8 +105,8 @@ const isSong = (multimediaItem: MultimediaItem) => {
 };
 
 const isRemoteFile = (
-  file: { filetype?: string; path: string } | File,
-): file is { filetype?: string; path: string } => {
+  file: { filename?: string; filetype?: string; path: string } | File,
+): file is { filename?: string; filetype?: string; path: string } => {
   if (!file.path) return false;
   return file.path.startsWith('http://') || file.path.startsWith('https://');
 };
@@ -144,8 +135,11 @@ const isImageString = (url: string) => {
 
 const jwpubDecompressor = async (jwpubPath: string, outputPath: string) => {
   try {
-    await decompress(jwpubPath, outputPath);
-    await decompress(path.join(outputPath, 'contents'), outputPath);
+    await window.electronApi.decompress(jwpubPath, outputPath);
+    await window.electronApi.decompress(
+      window.electronApi.path.join(outputPath, 'contents'),
+      outputPath,
+    );
     return outputPath;
   } catch (error) {
     errorCatcher(error);
@@ -162,16 +156,16 @@ const decompressJwpub = async (
     const currentState = useCurrentStateStore();
     if (!isJwpub(jwpubPath)) return jwpubPath;
     if (!outputPath) {
-      outputPath = path.join(
+      outputPath = window.electronApi.path.join(
         await getTempDirectory(),
-        path.basename(jwpubPath),
+        window.electronApi.path.basename(jwpubPath),
       );
     }
 
     // If force, clear the output directory before filling it
     if (force) {
       try {
-        await fs.remove(outputPath);
+        await window.electronApi.fs.remove(outputPath);
       } catch (e) {
         errorCatcher(e);
       }
@@ -196,23 +190,27 @@ const getMediaFromJwPlaylist = async (
 ) => {
   try {
     if (!jwPlaylistPath) return [];
-    const outputPath = path.join(destPath, path.basename(jwPlaylistPath));
-    await decompress(jwPlaylistPath, outputPath);
+    const outputPath = window.electronApi.path.join(
+      destPath,
+      window.electronApi.path.basename(jwPlaylistPath),
+    );
+    await window.electronApi.decompress(jwPlaylistPath, outputPath);
     const dbFile = await findDb(outputPath);
     if (!dbFile) return [];
     let playlistName = '';
     try {
-      const playlistNameQuery = executeQuery<PlaylistTagItem>(
-        dbFile,
-        'SELECT Name FROM Tag ORDER BY TagId ASC LIMIT 1;',
-      );
+      const playlistNameQuery =
+        window.electronApi.executeQuery<PlaylistTagItem>(
+          dbFile,
+          'SELECT Name FROM Tag ORDER BY TagId ASC LIMIT 1;',
+        );
       if (playlistNameQuery.length) {
         playlistName = playlistNameQuery[0].Name + ' - ';
       }
     } catch (error) {
       errorCatcher(error);
     }
-    const playlistItems = executeQuery<JwPlaylistItem>(
+    const playlistItems = window.electronApi.executeQuery<JwPlaylistItem>(
       dbFile,
       `SELECT
         pi.PlaylistItemId,
@@ -252,14 +250,14 @@ const getMediaFromJwPlaylist = async (
     const playlistMediaItems: MultimediaItem[] = await Promise.all(
       playlistItems.map(async (item) => {
         item.ThumbnailFilePath = item.ThumbnailFilePath
-          ? path.join(outputPath, item.ThumbnailFilePath)
+          ? window.electronApi.path.join(outputPath, item.ThumbnailFilePath)
           : '';
         if (
           item.ThumbnailFilePath &&
-          (await fs.pathExists(item.ThumbnailFilePath)) &&
+          (await window.electronApi.fs.pathExists(item.ThumbnailFilePath)) &&
           !item.ThumbnailFilePath.includes('.jpg')
         ) {
-          await fs.rename(
+          await window.electronApi.fs.rename(
             item.ThumbnailFilePath,
             item.ThumbnailFilePath + '.jpg',
           );
@@ -286,7 +284,10 @@ const getMediaFromJwPlaylist = async (
           DocumentId: 0,
           EndTime: EndTime ?? undefined,
           FilePath: item.IndependentMediaFilePath
-            ? path.join(outputPath, item.IndependentMediaFilePath)
+            ? window.electronApi.path.join(
+                outputPath,
+                item.IndependentMediaFilePath,
+              )
             : '',
           IssueTagNumber: item.IssueTagNumber,
           KeySymbol: item.KeySymbol,
@@ -320,10 +321,13 @@ const getMediaFromJwPlaylist = async (
 const findDb = async (publicationDirectory: string | undefined) => {
   if (!publicationDirectory) return undefined;
   try {
-    if (!(await fs.pathExists(publicationDirectory))) return undefined;
-    const files = await readdir(publicationDirectory);
+    if (!(await window.electronApi.fs.pathExists(publicationDirectory)))
+      return undefined;
+    const files = await window.electronApi.readdir(publicationDirectory);
     return files
-      .map((file) => path.join(publicationDirectory, file.name))
+      .map((file) =>
+        window.electronApi.path.join(publicationDirectory, file.name),
+      )
       .find((filename) => filename.includes('.db'));
   } catch (error) {
     errorCatcher(error);
@@ -334,11 +338,14 @@ const findDb = async (publicationDirectory: string | undefined) => {
 const convertHeicToJpg = async (filepath: string) => {
   if (!isHeic(filepath)) return filepath;
   try {
-    const buffer = await fs.readFile(filepath);
-    const output = await convertHeic({ buffer, format: 'JPEG' });
-    const existingPath = path.parse(filepath);
+    const buffer = await window.electronApi.fs.readFile(filepath);
+    const output = await window.electronApi.convertHeic({
+      buffer,
+      format: 'JPEG',
+    });
+    const existingPath = window.electronApi.path.parse(filepath);
     const newPath = `${existingPath.dir}/${existingPath.name}.jpg`;
-    await fs.writeFile(newPath, Buffer.from(output));
+    await window.electronApi.fs.writeFile(newPath, Buffer.from(output));
     return newPath;
   } catch (error) {
     errorCatcher(error);
@@ -378,10 +385,10 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         const outputImg = canvas.toDataURL('image/png');
-        const existingPath = path.parse(filepath);
+        const existingPath = window.electronApi.path.parse(filepath);
         const newPath = `${existingPath.dir}/${existingPath.name}.png`;
         try {
-          await fs.writeFile(
+          await window.electronApi.fs.writeFile(
             newPath,
             Buffer.from(outputImg.split(',')[1], 'base64'),
           );
@@ -407,9 +414,9 @@ const convertImageIfNeeded = async (filepath: string) => {
   } else if (isSvg(filepath)) {
     return await convertSvgToJpg(filepath);
   } else if (isPdf(filepath)) {
-    const nrOfPages = await getNrOfPdfPages(filepath);
+    const nrOfPages = await window.electronApi.getNrOfPdfPages(filepath);
     if (nrOfPages === 1) {
-      const converted = await convertPdfToImages(
+      const converted = await window.electronApi.convertPdfToImages(
         filepath,
         await getTempDirectory(),
       );
@@ -426,7 +433,7 @@ const showMediaWindow = (state?: boolean) => {
       state = !currentState.mediaWindowVisible;
     }
     currentState.mediaWindowVisible = state;
-    toggleMediaWindow(state);
+    window.electronApi.toggleMediaWindow(state);
   } catch (error) {
     errorCatcher(error);
   }

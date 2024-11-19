@@ -1,9 +1,12 @@
 {
+  "add": "添加",
   "add-a-closing-song": "添加结束的歌曲",
   "add-a-song": "从我们的歌曲添加一首歌曲到聚会媒体列表。",
   "add-a-video-explain": "将耶和华见证人官方网站上的一个视频添加到媒体名单中。 最新视频显示在这里，但您也可以在需要时通过所有视频搜索。",
   "add-an-opening-song": "添加开始歌曲",
   "add-extra-media": "添加额外媒体",
+  "add-media-study-bible": "从《学生经》添加媒体",
+  "add-media-study-bible-explain": "选择特定的圣经书卷和章节来查看学习材料列表，如图像、视频、地图和历史参考文献。",
   "add-video-jw-org": "添加视频",
   "additional-scenes": "附加场景",
   "advanced": "高级",
@@ -185,6 +188,7 @@
   "media-display": "媒体显示",
   "media-display-settings": "媒体显示设置",
   "media-from-s34mp": "来自 S-34mp 的媒体",
+  "media-gallery": "媒体库",
   "media-only": "仅媒体",
   "media-playback": "媒体播放",
   "media-sync": "媒体同步",
@@ -325,6 +329,8 @@
   "stop-music": "停止音乐",
   "stop-playing-media-first": "要导航到不同的页面，请先停止媒体播放。",
   "stop-playing-media-first-explain": "在显示媒体时，页面导航已被禁用。",
+  "study-bible": "研读本圣经",
+  "study-bible-media": "图片、视频、地图",
   "subtitles": "字幕",
   "successfully-migrated-from-the-previous-version": "已成功从上一个版本迁移。",
   "sureStopVideo": "您确定要停止视频吗？",
@@ -370,5 +376,7 @@
   "yeartext": "全年经文",
   "yes": "是",
   "zoom-in": "放大",
-  "zoom-out": "缩小"
+  "zoom-out": "缩小",
+  "repeat": "视频将持续重复",
+  "repeat-off": "视频只播放一次"
 }

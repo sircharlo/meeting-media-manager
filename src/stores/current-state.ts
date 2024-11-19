@@ -36,6 +36,7 @@ interface Store {
   mediaPlayingSubtitlesUrl: string;
   mediaPlayingUniqueId: string;
   mediaPlayingUrl: string;
+  mediaRepeat: string;
   mediaWindowCustomBackground: string;
   mediaWindowVisible: boolean;
   meetingDay: boolean;
@@ -220,6 +221,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       mediaPlayingSubtitlesUrl: '',
       mediaPlayingUniqueId: '',
       mediaPlayingUrl: '',
+      mediaRepeat: '',
       mediaWindowCustomBackground: '',
       mediaWindowVisible: true,
       meetingDay: false,

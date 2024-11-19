@@ -1,9 +1,12 @@
 {
+  "add": "Ajouter",
   "add-a-closing-song": "Ajouter un cantique de clôture",
   "add-a-song": "Ajoutez un cantique à la liste des médias pour cette réunion.",
   "add-a-video-explain": "Ajoutez l'une des vidéos du site officiel des Témoins de Jéhovah à la liste des médias. Les dernières vidéos sont affichées ici, mais vous pouvez également rechercher toutes les vidéos si nécessaire.",
   "add-an-opening-song": "Ajouter un cantique d'ouverture",
   "add-extra-media": "Ajouter des médias supplémentaires",
+  "add-media-study-bible": "Ajouter des médias à partir de l'édition d'étude de la Bible",
+  "add-media-study-bible-explain": "Sélectionnez un livre de la Bible et un chapitre spécifique pour afficher une liste de supports d'étude tels que des images, des vidéos, des cartes et des références historiques.",
   "add-video-jw-org": "Ajouter une vidéo",
   "additional-scenes": "Scènes supplémentaires",
   "advanced": "Avancé",
@@ -185,6 +188,7 @@
   "media-display": "Affichage multimédia",
   "media-display-settings": "Paramètres d'affichage des médias",
   "media-from-s34mp": "Médias du S-34mp",
+  "media-gallery": "Galerie des médias",
   "media-only": "Médias uniquement",
   "media-playback": "Lecture multimédia",
   "media-sync": "Synchronisation des médias",
@@ -325,6 +329,8 @@
   "stop-music": "Arrêter la musique",
   "stop-playing-media-first": "Pour accéder à une page différente, veuillez tout d'abord arrêter la lecture des médias.",
   "stop-playing-media-first-explain": "La navigation est désactivée lorsque des médias sont en cours de présentation.",
+  "study-bible": "Edition d'étude de la Bible",
+  "study-bible-media": "Images, vidéos, cartes",
   "subtitles": "Sous-titres",
   "successfully-migrated-from-the-previous-version": "Migré avec succès depuis la version précédente",
   "sureStopVideo": "Êtes-vous sûr de vouloir arrêter la vidéo ?",
@@ -370,5 +376,7 @@
   "yeartext": "Texte de l'année",
   "yes": "Oui",
   "zoom-in": "Agrandir",
-  "zoom-out": "Réduire"
+  "zoom-out": "Réduire",
+  "repeat": "La vidéo se répétera en continu",
+  "repeat-off": "La vidéo sera jouée jusqu'à la fin et s'arrêtera"
 }

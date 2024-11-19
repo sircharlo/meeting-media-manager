@@ -1,9 +1,12 @@
 {
+  "add": "Add",
   "add-a-closing-song": "Dodaj sklepno pesem",
   "add-a-song": "Na seznam multimedijske vsebine dodaj pesem iz naše pesmarice.",
   "add-a-video-explain": "Na seznam multimedijske vsebine dodaj enega od videoposnetkov z uradnega spletnega mesta Jehovovih prič. Tu so sicer prikazani samo najnovejši videoposnetki, vendar lahko po potrebi poiščeš tudi katerega koli drugega.",
   "add-an-opening-song": "Dodaj uvodno pesem",
   "add-extra-media": "Dodaj dodatno multimedijsko vsebino",
+  "add-media-study-bible": "Add media from the Study Bible",
+  "add-media-study-bible-explain": "Select a specific Bible book and chapter to view a list of study materials like images, videos, maps and historical references.",
   "add-video-jw-org": "Dodaj videoposnetek",
   "additional-scenes": "Dodatni prizori",
   "advanced": "Napredno",
@@ -185,6 +188,7 @@
   "media-display": "Zaslon multimedijske vsebine",
   "media-display-settings": "Nastavitve zaslona multimedijske vsebine",
   "media-from-s34mp": "Multimedijska vsebina iz S-34mp",
+  "media-gallery": "Media gallery",
   "media-only": "Samo multimedijska vsebina",
   "media-playback": "Predvajanje multimedijske vsebine",
   "media-sync": "Sinhronizacija multimedijske vsebine",
@@ -325,6 +329,8 @@
   "stop-music": "Ustavi predvajanje glasbe",
   "stop-playing-media-first": "Če želiš iti na drugo stran, najprej zaustavi predvajanje multimedijske vsebine.",
   "stop-playing-media-first-explain": "Navigacija po strani je med predvajanjem multimedijske vsebine onemogočena.",
+  "study-bible": "Study Bible",
+  "study-bible-media": "Images, videos, maps",
   "subtitles": "Podnapisi",
   "successfully-migrated-from-the-previous-version": "Uspešna migracija iz prejšnje različice",
   "sureStopVideo": "Ali si prepričan, da želiš ustaviti predvajanje videoposnetka?",
@@ -370,5 +376,7 @@
   "yeartext": "Letni stavek",
   "yes": "Da",
   "zoom-in": "Približaj",
-  "zoom-out": "Pomanjšaj"
+  "zoom-out": "Pomanjšaj",
+  "repeat": "Video will repeat continuously",
+  "repeat-off": "Video will play only once"
 }

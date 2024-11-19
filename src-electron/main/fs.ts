@@ -79,6 +79,7 @@ export async function watchFolder(folderPath: string) {
   watchers.add(
     filesystemWatch(folderPath, {
       atomic: false,
+      awaitWriteFinish: true,
       ignored: (fp: string, stats?: Stats) => {
         try {
           if (toUnix(folderPath) === fp) return false; // Don't ignore the root folder itself

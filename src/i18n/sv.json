@@ -1,9 +1,12 @@
 {
+  "add": "Lägg till",
   "add-a-closing-song": "Lägg till en avslutande sång",
   "add-a-song": "Lägg till en sång från sångboken till medialistan.",
   "add-a-video-explain": "Lägg till en video från den officiella hemsidan av Jehovas vittnen till medialistan. Senaste videon visas här men du kan också söka efter alla videos.",
   "add-an-opening-song": "Lägg till inledande sång",
   "add-extra-media": "Lägg till extra media",
+  "add-media-study-bible": "Lägg till media från studiebibeln",
+  "add-media-study-bible-explain": "Välj en specifik bibelbok och kapitel för att se en lista över studiematerial som bilder, videor, kartor och historiska referenser.",
   "add-video-jw-org": "Lägg till en video",
   "additional-scenes": "Ytterligare scener",
   "advanced": "Avancerat",
@@ -185,6 +188,7 @@
   "media-display": "Mediavisning",
   "media-display-settings": "Inställningar för media",
   "media-from-s34mp": "Media från S-34mp",
+  "media-gallery": "Mediagalleri",
   "media-only": "Endast media",
   "media-playback": "Mediauppspelning",
   "media-sync": "Media synkronisering",
@@ -325,6 +329,8 @@
   "stop-music": "Stoppa musik",
   "stop-playing-media-first": "För att navigera till en annan sida, vänligen stoppa uppspelningen av media först.",
   "stop-playing-media-first-explain": "Sidnavigering är inaktiverad medan media presenteras.",
+  "study-bible": "Studiebibel",
+  "study-bible-media": "Bilder, videor, kartor",
   "subtitles": "Undertexter",
   "successfully-migrated-from-the-previous-version": "Framgångsrikt överförd från föregående version",
   "sureStopVideo": "Är du säker på att du vill stoppa videon?",
@@ -370,5 +376,7 @@
   "yeartext": "Årstext",
   "yes": "Ja",
   "zoom-in": "Zooma in",
-  "zoom-out": "Zooma ut"
+  "zoom-out": "Zooma ut",
+  "repeat": "Video will repeat continuously",
+  "repeat-off": "Video will play only once"
 }

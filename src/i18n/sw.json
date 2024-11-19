@@ -1,9 +1,12 @@
 {
+  "add": "Ongeza",
   "add-a-closing-song": "Ongeza wimbo wa kufunga",
   "add-a-song": "Ongeza wimbo kutoka kitabu cha wimbo kwenye orodha.",
   "add-a-video-explain": "Ongeza video kutoka kwa tovuti rasmi ya Mashahidi wa Yehova kwenye orodha ya media. Video za hivi karibuni zinaonyeshwa hapa, lakini unaweza pia kutafuta video zote ikiwa inahitajika.",
   "add-an-opening-song": "Ongeza wimbo wa kwanza",
   "add-extra-media": "Ongeza midia maalum",
+  "add-media-study-bible": "Ongeza midia kutoka kwa Toleo la Funzo la Biblia",
+  "add-media-study-bible-explain": "Chagua kitabu cha Biblia hususa na sura ili kuona orodha ya habari za utafiti kama picha, video, ramani na habari za kihistoria.",
   "add-video-jw-org": "Ongeza Video",
   "additional-scenes": "Sehemu za ziada",
   "advanced": "Hali ya juu",
@@ -185,6 +188,7 @@
   "media-display": "Kuonyesha Media",
   "media-display-settings": "Mipangilio ya kuonyesha midia",
   "media-from-s34mp": "Midia za S-34mp",
+  "media-gallery": "Kipengele cha Picha na Video",
   "media-only": "Midia pekee",
   "media-playback": "Uchezaji wa midia",
   "media-sync": "Kusawazisha midia",
@@ -325,6 +329,8 @@
   "stop-music": "Acha kucheza muziki",
   "stop-playing-media-first": "Ili kwenda kwenye ukurasa tofauti, tafadhali acha uchezaji wa midia kwanza.",
   "stop-playing-media-first-explain": "Ubadilishaji wa ukurasa umezimwa wakati midia inawasilishwa.",
+  "study-bible": "Toleo la Funzo la Biblia",
+  "study-bible-media": "Picha, video, ramani",
   "subtitles": "Manukuu",
   "successfully-migrated-from-the-previous-version": "Imefaulu kuhamishwa kutoka kwa toleo la awali",
   "sureStopVideo": "Je, uko hakika unataka kusitisha video?",
@@ -370,5 +376,7 @@
   "yeartext": "Andiko la Mwaka",
   "yes": "Ndio",
   "zoom-in": "Vuta karibu",
-  "zoom-out": "Kuza nje"
+  "zoom-out": "Kuza nje",
+  "repeat": "Video itajirudia tena na tena",
+  "repeat-off": "Video itacheza mara moja tu"
 }

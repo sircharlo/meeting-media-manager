@@ -1,9 +1,12 @@
 {
+  "add": "Add",
   "add-a-closing-song": "Voeg een slotlied toe",
   "add-a-song": "Voeg een koninkrijkslied toe aan de medialijst.",
   "add-a-video-explain": "Voeg een video van jw.org toe aan de medialijst. De nieuwste filmpjes worden standaard getoond, maar je kan ook de zoekfunctie gebruiken.",
   "add-an-opening-song": "Voeg een openingslied toe",
   "add-extra-media": "Extra media toevoegen",
+  "add-media-study-bible": "Add media from the Study Bible",
+  "add-media-study-bible-explain": "Select a specific Bible book and chapter to view a list of study materials like images, videos, maps and historical references.",
   "add-video-jw-org": "Een video toevoegen",
   "additional-scenes": "Extra scènes",
   "advanced": "Geavanceerd",
@@ -185,6 +188,7 @@
   "media-display": "Mediaweergave",
   "media-display-settings": "Instellingen voor mediaweergave",
   "media-from-s34mp": "Media van de S-34mp",
+  "media-gallery": "Media gallery",
   "media-only": "Alleen media",
   "media-playback": "Media afspelen",
   "media-sync": "Media synchronisatie",
@@ -325,6 +329,8 @@
   "stop-music": "Stop muziek",
   "stop-playing-media-first": "Stop eerst het afspelen van de media om naar een andere pagina te navigeren.",
   "stop-playing-media-first-explain": "Pagina navigatie is uitgeschakeld als media wordt gepresenteerd.",
+  "study-bible": "Study Bible",
+  "study-bible-media": "Images, videos, maps",
   "subtitles": "Ondertitels",
   "successfully-migrated-from-the-previous-version": "Succesvol gemigreerd van de vorige versie",
   "sureStopVideo": "Weet je zeker dat je de video wilt stoppen?",
@@ -370,5 +376,7 @@
   "yeartext": "Jaartekst",
   "yes": "Ja",
   "zoom-in": "Inzoomen",
-  "zoom-out": "Uitzoomen"
+  "zoom-out": "Uitzoomen",
+  "repeat": "Video will repeat continuously",
+  "repeat-off": "Video will play only once"
 }

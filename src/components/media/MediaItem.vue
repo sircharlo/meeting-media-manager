@@ -30,17 +30,7 @@
             v-if="media.isVideo || media.isAudio"
             :class="
               'q-mt-sm q-ml-sm cursor-pointer rounded-borders-sm ' +
-              (customDurations[currentCongregation]?.[selectedDate]?.[
-                media.uniqueId
-              ] &&
-              ((customDurations[currentCongregation]?.[selectedDate]?.[
-                media.uniqueId
-              ]?.min ?? 0) > 0 ||
-                (customDurations[currentCongregation]?.[selectedDate]?.[
-                  media.uniqueId
-                ]?.max ?? media.duration) < media.duration)
-                ? 'bg-semi-negative'
-                : 'bg-semi-black')
+              (customDurationIsSet ? 'bg-semi-negative' : 'bg-semi-black')
             "
             style="padding: 5px !important"
             @click="showMediaDurationPopup(media)"
@@ -60,29 +50,9 @@
               color="white"
             />
             {{
-              customDurations[currentCongregation]?.[selectedDate]?.[
-                media.uniqueId
-              ] &&
-              ((customDurations[currentCongregation]?.[selectedDate]?.[
-                media.uniqueId
-              ].min ?? 0) > 0 ||
-                (customDurations[currentCongregation]?.[selectedDate]?.[
-                  media.uniqueId
-                ]?.max ?? media.duration) < media.duration)
-                ? formatTime(
-                    customDurations[currentCongregation]?.[selectedDate]?.[
-                      media.uniqueId
-                    ]?.min ?? 0,
-                  ) + ' - '
-                : ''
+              customDurationIsSet ? formatTime(customDurationMin) + ' - ' : ''
             }}
-            {{
-              formatTime(
-                customDurations[currentCongregation]?.[selectedDate]?.[
-                  media.uniqueId
-                ]?.max ?? media.duration,
-              )
-            }}
+            {{ formatTime(customDurationMax) }}
           </q-badge>
           <q-dialog v-model="mediaDurationPopups[media.uniqueId]">
             <q-card>
@@ -111,22 +81,10 @@
                           media.uniqueId
                         ]
                       "
-                      :left-label-value="
-                        formatTime(
-                          customDurations[currentCongregation]?.[
-                            selectedDate
-                          ]?.[media.uniqueId]?.min ?? 0,
-                        )
-                      "
+                      :left-label-value="formatTime(customDurationMin)"
                       :max="media.duration"
                       :min="0"
-                      :right-label-value="
-                        formatTime(
-                          customDurations[currentCongregation]?.[
-                            selectedDate
-                          ]?.[media.uniqueId]?.max ?? media.duration,
-                        )
-                      "
+                      :right-label-value="formatTime(customDurationMax)"
                       :step="0.1"
                       label
                       label-always
@@ -293,16 +251,8 @@
               >
                 <q-slider
                   v-model="mediaPlayingCurrentPosition"
-                  :inner-max="
-                    customDurations?.[currentCongregation]?.[selectedDate]?.[
-                      media.uniqueId
-                    ]?.max ?? media.duration
-                  "
-                  :inner-min="
-                    customDurations?.[currentCongregation]?.[selectedDate]?.[
-                      media.uniqueId
-                    ]?.min ?? 0
-                  "
+                  :inner-max="customDurationMax"
+                  :inner-min="customDurationMin"
                   :label-always="mediaPlayingAction === 'pause'"
                   :label-color="
                     mediaPlayingAction === 'pause' ? undefined : 'accent-400'
@@ -383,6 +333,35 @@
           </div>
           <template v-else>
             <div class="col-shrink items-center justify-center flex">
+              <q-btn
+                v-if="
+                  currentSettings?.disableMediaFetching &&
+                  media.isVideo &&
+                  !customDurationIsSet
+                "
+                ref="repeatButton"
+                :color="
+                  mediaRepeat === media.uniqueId ? 'primary' : 'accent-400'
+                "
+                :flat="mediaRepeat !== media.uniqueId"
+                :icon="
+                  mediaRepeat === media.uniqueId
+                    ? 'mmm-repeat'
+                    : 'mmm-repeat-off'
+                "
+                :outline="mediaRepeat === media.uniqueId"
+                class="q-mx-sm"
+                round
+                size="sm"
+                @click="
+                  mediaRepeat =
+                    mediaRepeat === media.uniqueId ? '' : media.uniqueId
+                "
+              >
+                <q-tooltip :delay="1000">{{
+                  mediaRepeat ? $t('repeat') : $t('repeat-off')
+                }}</q-tooltip>
+              </q-btn>
               <q-btn
                 v-if="
                   isImage(mediaPlayingUrl) && obsConnectionState === 'connected'
@@ -565,12 +544,14 @@ import { computed, onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
 const currentState = useCurrentStateStore();
 const {
   currentCongregation,
+  currentSettings,
   mediaPlayingAction,
   mediaPlayingCurrentPosition,
   mediaPlayingPanzoom,
   mediaPlayingSubtitlesUrl,
   mediaPlayingUniqueId,
   mediaPlayingUrl,
+  mediaRepeat,
   selectedDate,
 } = storeToRefs(currentState);
 
@@ -615,6 +596,32 @@ const resetMediaTitle = () => {
     mediaTitle.value = '';
   }
 };
+
+const customDurationIsSet = computed(() => {
+  return (
+    customDurations.value[currentCongregation.value]?.[selectedDate.value]?.[
+      props.media.uniqueId
+    ] &&
+    (customDurationMin.value > 0 ||
+      customDurationMax.value < props.media.duration)
+  );
+});
+
+const customDurationMin = computed(() => {
+  return (
+    customDurations.value[currentCongregation.value]?.[selectedDate.value]?.[
+      props.media.uniqueId
+    ]?.min ?? 0
+  );
+});
+
+const customDurationMax = computed(() => {
+  return (
+    customDurations.value[currentCongregation.value]?.[selectedDate.value]?.[
+      props.media.uniqueId
+    ]?.max ?? props.media.duration
+  );
+});
 
 const setMediaPlaying = async (
   media: DynamicMediaObject,
