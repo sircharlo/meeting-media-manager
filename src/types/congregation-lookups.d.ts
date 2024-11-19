@@ -1,11 +1,17 @@
-interface GeoLocation {
-  latitude: number;
-  longitude: number;
+export interface CongregationLanguage {
+  isSignLanguage: boolean;
+  languageCode: string;
+  languageName: string;
+  scriptDirection: 'ltr' | 'rtl'; // Left-to-right or right-to-left script
+  writtenLanguageCode: string[];
 }
 
-interface Schedule {
-  time: string;
-  weekday: number;
+export interface GeoRecord {
+  geoId: string;
+  isPrimary: boolean;
+  location: GeoLocation;
+  properties: Properties;
+  type: string;
 }
 
 interface CurrentSchedule {
@@ -13,10 +19,9 @@ interface CurrentSchedule {
   weekend: Schedule;
 }
 
-interface ScheduleDetails {
-  changeStamp: null | string;
-  current: CurrentSchedule;
-  futureDate: null | string;
+interface GeoLocation {
+  latitude: number;
+  longitude: number;
 }
 
 interface PhoneDetails {
@@ -40,18 +45,13 @@ interface Properties {
   transliteratedAddress: string;
 }
 
-export interface GeoRecord {
-  geoId: string;
-  isPrimary: boolean;
-  location: GeoLocation;
-  properties: Properties;
-  type: string;
+interface Schedule {
+  time: string;
+  weekday: number;
 }
 
-export interface CongregationLanguage {
-  isSignLanguage: boolean;
-  languageCode: string;
-  languageName: string;
-  scriptDirection: 'ltr' | 'rtl'; // Left-to-right or right-to-left script
-  writtenLanguageCode: string[];
+interface ScheduleDetails {
+  changeStamp: null | string;
+  current: CurrentSchedule;
+  futureDate: null | string;
 }

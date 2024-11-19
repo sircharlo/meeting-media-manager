@@ -15,10 +15,10 @@
       <q-img
         v-if="isImage(mediaPlayingUrl)"
         id="mediaImage"
-        :src="mediaPlayingUrl"
         class="fitSnugly"
         fit="contain"
         no-spinner
+        :src="mediaPlayingUrl"
         @load="initiatePanzoom()"
       />
       <video
@@ -31,9 +31,9 @@
         <source :src="mediaPlayingUrl" />
         <track
           v-if="mediaPlayerSubtitlesUrl && subtitlesVisible"
-          :src="mediaPlayerSubtitlesUrl"
           default
           kind="subtitles"
+          :src="mediaPlayerSubtitlesUrl"
         />
       </video>
       <div v-else>
@@ -47,10 +47,10 @@
         </audio>
         <template v-if="mediaPlayerCustomBackground">
           <q-img
-            :src="mediaPlayerCustomBackground"
             class="fitSnugly"
             fit="contain"
             no-spinner
+            :src="mediaPlayerCustomBackground"
           />
         </template>
         <template v-else>

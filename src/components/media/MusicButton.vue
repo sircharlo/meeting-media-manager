@@ -1,6 +1,7 @@
 <template>
   <q-btn
     v-if="currentSettings?.enableMusicButton"
+    class="super-rounded"
     :color="
       musicPopup
         ? 'white'
@@ -8,6 +9,8 @@
           ? 'white-transparent'
           : 'negative'
     "
+    no-caps
+    rounded
     :style="musicPlaying ? 'min-width: 110px;' : ''"
     :text-color="
       musicPopup
@@ -16,9 +19,6 @@
           : 'negative'
         : ''
     "
-    class="super-rounded"
-    no-caps
-    rounded
     unelevated
     @click="musicPopup = !musicPopup"
   >

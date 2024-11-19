@@ -1,5 +1,87 @@
 import type { JwLangCode } from './lang';
 
+export interface ImageSizes {
+  lg?: string;
+  md?: string;
+  sm?: string;
+  xl?: string;
+  xs?: string;
+}
+
+export interface ImageTypeSizes {
+  lsr?: ImageSizes;
+  lss?: ImageSizes;
+  pnr?: ImageSizes;
+  sqr?: ImageSizes;
+  sqs?: ImageSizes;
+  wsr?: ImageSizes;
+  wss?: ImageSizes;
+}
+
+export interface JwVideoCategory {
+  category: JwVideoCategoryListing;
+}
+export interface JwVideoCategoryListing {
+  description: string;
+  images: ImageTypeSizes;
+  key: string;
+  media: MediaItemsMediatorItem[];
+  name: string;
+  parentCategory: JwVideoCategoryListing;
+  subcategories: JwVideoCategoryListing[];
+  tags: string[];
+  type: string;
+}
+
+export interface JwVideoCategoryListings {
+  categories: JwVideoCategoryListing[];
+}
+
+export interface MediaItemsMediator {
+  media: MediaItemsMediatorItem[];
+}
+
+export interface MediaItemsMediatorFile {
+  bitRate: number;
+  checksum: string;
+  duration: number;
+  filesize: number;
+  frameHeight: number;
+  frameRate: number;
+  frameWidth: number;
+  label: string;
+  mimetype: string;
+  modifiedDatetime: string;
+  progressiveDownloadURL: string;
+  subtitled: boolean;
+  subtitles: {
+    checksum: string;
+    modifiedDatetime: string;
+    url: string;
+  };
+}
+
+export interface MediaItemsMediatorItem {
+  availableLanguages: JwLangCode[];
+  description: string;
+  duration: number;
+  durationFormattedHHMM: string;
+  durationFormattedMinSec: string;
+  files: MediaItemsMediatorFile[];
+  firstPublished: string;
+  guid: string;
+  images: ImageTypeSizes;
+  key: string;
+  languageAgnosticNaturalKey: string;
+  name: string;
+  naturalKey: string;
+  primaryCategory: string;
+  printReferences: string[];
+  tags: string[];
+  title: string;
+  type: string;
+}
+
 export interface MediaLink {
   bitRate: number;
   booknum: number;
@@ -51,63 +133,6 @@ export interface MediaLink {
   };
 }
 
-export interface MediaItemsMediatorFile {
-  bitRate: number;
-  checksum: string;
-  duration: number;
-  filesize: number;
-  frameHeight: number;
-  frameRate: number;
-  frameWidth: number;
-  label: string;
-  mimetype: string;
-  modifiedDatetime: string;
-  progressiveDownloadURL: string;
-  subtitled: boolean;
-  subtitles: {
-    checksum: string;
-    modifiedDatetime: string;
-    url: string;
-  };
-}
-
-export interface MediaItemsMediatorItem {
-  availableLanguages: JwLangCode[];
-  description: string;
-  duration: number;
-  durationFormattedHHMM: string;
-  durationFormattedMinSec: string;
-  files: MediaItemsMediatorFile[];
-  firstPublished: string;
-  guid: string;
-  images: ImageTypeSizes;
-  key: string;
-  languageAgnosticNaturalKey: string;
-  name: string;
-  naturalKey: string;
-  primaryCategory: string;
-  printReferences: string[];
-  tags: string[];
-  title: string;
-  type: string;
-}
-export interface MediaItemsMediator {
-  media: MediaItemsMediatorItem[];
-}
-
-export interface PublicationFiles {
-  '3GP'?: MediaItemsMediatorFile[] | MediaLink[];
-  BRL?: MediaItemsMediatorFile[] | MediaLink[];
-  DAISY?: MediaItemsMediatorFile[] | MediaLink[];
-  EPUB?: MediaItemsMediatorFile[] | MediaLink[];
-  JWPUB?: MediaItemsMediatorFile[] | MediaLink[];
-  M4V?: MediaItemsMediatorFile[] | MediaLink[];
-  MP3?: MediaItemsMediatorFile[] | MediaLink[];
-  MP4?: MediaItemsMediatorFile[] | MediaLink[];
-  PDF?: MediaItemsMediatorFile[] | MediaLink[];
-  RTF?: MediaItemsMediatorFile[] | MediaLink[];
-}
-
 export interface Publication {
   booknum: null | number;
   fileformat: string[];
@@ -147,40 +172,15 @@ export interface PublicationFetcher {
   track?: number;
 }
 
-export interface ImageSizes {
-  lg?: string;
-  md?: string;
-  sm?: string;
-  xl?: string;
-  xs?: string;
-}
-
-export interface ImageTypeSizes {
-  lsr?: ImageSizes;
-  lss?: ImageSizes;
-  pnr?: ImageSizes;
-  sqr?: ImageSizes;
-  sqs?: ImageSizes;
-  wsr?: ImageSizes;
-  wss?: ImageSizes;
-}
-
-export interface JwVideoCategoryListings {
-  categories: JwVideoCategoryListing[];
-}
-
-export interface JwVideoCategoryListing {
-  description: string;
-  images: ImageTypeSizes;
-  key: string;
-  media: MediaItemsMediatorItem[];
-  name: string;
-  parentCategory: JwVideoCategoryListing;
-  subcategories: JwVideoCategoryListing[];
-  tags: string[];
-  type: string;
-}
-
-export interface JwVideoCategory {
-  category: JwVideoCategoryListing;
+export interface PublicationFiles {
+  '3GP'?: MediaItemsMediatorFile[] | MediaLink[];
+  BRL?: MediaItemsMediatorFile[] | MediaLink[];
+  DAISY?: MediaItemsMediatorFile[] | MediaLink[];
+  EPUB?: MediaItemsMediatorFile[] | MediaLink[];
+  JWPUB?: MediaItemsMediatorFile[] | MediaLink[];
+  M4V?: MediaItemsMediatorFile[] | MediaLink[];
+  MP3?: MediaItemsMediatorFile[] | MediaLink[];
+  MP4?: MediaItemsMediatorFile[] | MediaLink[];
+  PDF?: MediaItemsMediatorFile[] | MediaLink[];
+  RTF?: MediaItemsMediatorFile[] | MediaLink[];
 }

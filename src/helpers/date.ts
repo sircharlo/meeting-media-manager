@@ -104,6 +104,16 @@ const getWeekDay = (lookupDate: Date) => {
   }
 };
 
+function datesAreSame(date1: Date, date2: Date) {
+  try {
+    if (!date1 || !date2) throw new Error('Missing date for comparison');
+    return date1.toDateString() === date2.toDateString();
+  } catch (error) {
+    errorCatcher(error);
+    return false;
+  }
+}
+
 function getSpecificWeekday(lookupDate: Date | string, desiredWeekday: number) {
   try {
     if (!lookupDate) return new Date();
@@ -118,16 +128,6 @@ function getSpecificWeekday(lookupDate: Date | string, desiredWeekday: number) {
   } catch (error) {
     errorCatcher(error);
     return new Date();
-  }
-}
-
-function datesAreSame(date1: Date, date2: Date) {
-  try {
-    if (!date1 || !date2) throw new Error('Missing date for comparison');
-    return date1.toDateString() === date2.toDateString();
-  } catch (error) {
-    errorCatcher(error);
-    return false;
   }
 }
 

@@ -1,5 +1,27 @@
 import type { ImageSizes, ImageTypeSizes } from './publications';
 
+export interface BibleBook {
+  additionalPages: BibleBookAdditionalPage[];
+  bookDisplayTitle: string;
+  chapterCount: string;
+  chapterDisplayTitle: string;
+  hasAudio: boolean;
+  hasMultimedia: boolean;
+  hasStudyNotes: boolean;
+  images: BibleBookImage[];
+  officialAbbreviation: string;
+  officialPluralAbbreviation: string;
+  officialSingularAbbreviation: string;
+  standardAbbreviation: string;
+  standardName: string;
+  standardPluralAbbreviation: string;
+  standardPluralBookName: string;
+  standardSingularAbbreviation: string;
+  standardSingularBookName: string;
+  url: string;
+  urlSegment: string;
+}
+
 export interface BibleBookAdditionalPage {
   abbreviatedTitle: string;
   articleCSSCLassNames: string;
@@ -24,48 +46,15 @@ export interface BibleBookImage {
   type: keyof ImageTypeSizes;
 }
 
-export interface BibleBook {
-  additionalPages: BibleBookAdditionalPage[];
-  bookDisplayTitle: string;
-  chapterCount: string;
-  chapterDisplayTitle: string;
-  hasAudio: boolean;
-  hasMultimedia: boolean;
-  hasStudyNotes: boolean;
-  images: BibleBookImage[];
-  officialAbbreviation: string;
-  officialPluralAbbreviation: string;
-  officialSingularAbbreviation: string;
-  standardAbbreviation: string;
-  standardName: string;
-  standardPluralAbbreviation: string;
-  standardPluralBookName: string;
-  standardSingularAbbreviation: string;
-  standardSingularBookName: string;
-  url: string;
-  urlSegment: string;
-}
-
-export interface BibleBookResource {
-  sizes?: ImageSizes;
-  src:
-    | (
-        | { docid?: string; pub?: string; style: string; track: string }
-        | string
-      )[]
-    | string;
-  zoom?: string;
-}
-
 export interface BibleBookMedia {
   caption: null | string;
   docID: string;
   id: number;
-  keyframe: {
+  keyframe: null | {
     sizes: ImageSizes;
     src: string;
     zoom: string;
-  } | null;
+  };
   label: string;
   pictureCredit: null | string;
   resource: BibleBookResource;
@@ -81,6 +70,17 @@ export interface BibleBookMedia {
     zoom: string;
   };
   type: 'image' | 'video';
+}
+
+export interface BibleBookResource {
+  sizes?: ImageSizes;
+  src:
+    | (
+        | string
+        | { docid?: string; pub?: string; style: string; track: string }
+      )[]
+    | string;
+  zoom?: string;
 }
 
 export interface BibleBooksRange {

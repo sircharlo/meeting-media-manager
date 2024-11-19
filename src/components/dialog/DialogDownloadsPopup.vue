@@ -2,9 +2,9 @@
   <q-menu
     ref="downloadPopup"
     v-model="open"
-    :offset="[0, 8]"
     anchor="bottom middle"
     no-parent-event
+    :offset="[0, 8]"
     self="top middle"
     transition-hide="jump-down"
     transition-show="jump-up"
@@ -28,8 +28,8 @@
           <template v-else>
             <q-scroll-area
               :bar-style="barStyle"
-              :thumb-style="thumbStyle"
               style="height: 40vh; width: -webkit-fill-available"
+              :thumb-style="thumbStyle"
             >
               <template
                 v-for="statusObject in statusConfig"
@@ -63,10 +63,10 @@
                       </q-icon>
                       <q-circular-progress
                         v-else-if="showProgress(item)"
-                        :thickness="0.3"
-                        :value="progressValue(item)"
                         color="primary"
                         size="sm"
+                        :thickness="0.3"
+                        :value="progressValue(item)"
                       />
                     </div>
                   </div>

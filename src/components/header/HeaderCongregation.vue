@@ -1,8 +1,8 @@
 <template>
   <q-btn
-    :label="$t('new-profile')"
     color="white-transparent"
     icon="mmm-plus"
+    :label="$t('new-profile')"
     unelevated
     @click="createNewCongregation"
   />

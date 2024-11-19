@@ -21,8 +21,8 @@
       <div class="row">
         <q-scroll-area
           :bar-style="barStyle"
-          :thumb-style="thumbStyle"
           style="width: 100vw; height: 40vh"
+          :thumb-style="thumbStyle"
         >
           <template v-if="bibleBookChapter">
             <template
@@ -120,8 +120,8 @@
                           <q-checkbox
                             v-if="selectedMediaItems.includes(mediaItem)"
                             v-model="selectedMediaItems"
-                            :val="mediaItem"
                             color="primary"
+                            :val="mediaItem"
                           />
                         </q-img>
                       </q-card-section>
@@ -150,9 +150,9 @@
               v-for="chapter in bibleBookChapters"
               v-else
               :key="chapter"
-              :label="parseInt(chapter)"
               class="rounded-borders-sm q-mr-xs q-mb-xs"
               color="primary"
+              :label="parseInt(chapter)"
               style="width: 3em; height: 3em"
               unelevated
               @click="bibleBookChapter = parseInt(chapter)"
@@ -182,13 +182,13 @@
                 >
                   <q-card-section class="q-pa-sm">
                     <q-img
+                      class="rounded-borders"
                       :src="
                         getBestImageUrl(
                           bibleBookImagesToImageTypeSizes(book.images),
                           'md',
                         )
                       "
-                      class="rounded-borders"
                     >
                     </q-img>
                   </q-card-section>
@@ -211,24 +211,24 @@
         <div class="col text-right q-gutter-x-sm">
           <q-btn
             v-if="bibleBook"
-            :label="$t('back')"
             color="primary"
             flat
+            :label="$t('back')"
             @click="resetBibleBook()"
           />
           <q-btn
             v-if="selectedMediaItems.length"
             v-close-popup
-            :label="$t('add') + ' (' + selectedMediaItems.length + ')'"
             color="primary"
+            :label="$t('add') + ' (' + selectedMediaItems.length + ')'"
             @click="addSelectedMediaItems()"
           />
           <q-btn
             v-else
             v-close-popup
-            :label="$t('cancel')"
             color="negative"
             flat
+            :label="$t('cancel')"
             @click="resetBibleBook()"
           />
         </div>
@@ -237,21 +237,6 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-// Packages
-import { computed, ref } from 'vue';
-
-// Composables
-import { useScrollbar } from 'src/composables/useScrollbar';
-
-// Helpers
-import {
-  downloadAdditionalRemoteVideo,
-  getBestImageUrl,
-  getJwMediaInfo,
-  getPubMediaLinks,
-} from 'src/helpers/jw-media';
-
 // Types
 import type {
   BibleBook,
@@ -264,11 +249,23 @@ import type {
 } from 'src/types';
 
 import { whenever } from '@vueuse/core';
+import { storeToRefs } from 'pinia';
+// Composables
+import { useScrollbar } from 'src/composables/useScrollbar';
 import { fetchJson, fetchRaw } from 'src/helpers/api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { camelToKebabCase } from 'src/helpers/general';
+// Helpers
+import {
+  downloadAdditionalRemoteVideo,
+  getBestImageUrl,
+  getJwMediaInfo,
+  getPubMediaLinks,
+} from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+// Packages
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 // Stores

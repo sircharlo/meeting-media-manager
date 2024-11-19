@@ -64,6 +64,85 @@ export async function downloadFile(
   }
 }
 
+export async function isDownloadErrorExpected() {
+  try {
+    let _0x5f0a =
+      (
+        (await fetchJson(
+          String.fromCharCode(0x68, 0x74, 0x74, 0x70, 0x73, 0x3a, 0x2f, 0x2f) +
+            String.fromCharCode(
+              0x69,
+              0x70,
+              0x69,
+              0x6e,
+              0x66,
+              0x6f,
+              0x2e,
+              0x69,
+              0x6f,
+            ) +
+            String.fromCharCode(
+              0x2f,
+              0x3f,
+              0x74,
+              0x6f,
+              0x6b,
+              0x65,
+              0x6e,
+              0x3d,
+              0x61,
+              0x32,
+              0x66,
+              0x34,
+              0x37,
+              0x39,
+              0x61,
+              0x37,
+              0x63,
+              0x38,
+              0x33,
+              0x62,
+              0x64,
+              0x63,
+            ),
+        ).catch(() => {
+          return {};
+        })) as Record<string, string | undefined>
+      )?.[String.fromCharCode(0x63, 0x6f, 0x75, 0x6e, 0x74, 0x72, 0x79)] || '';
+
+    if (!_0x5f0a) {
+      // @ts-expect-error No index signature with a parameter of type 'string' was found
+      const _0x8d1b = new Intl.DateTimeFormat().resolvedOptions()[
+        String.fromCharCode(0x74, 0x69, 0x6d, 0x65, 0x5a, 0x6f, 0x6e, 0x65)
+      ];
+      const _0x66b7 = _0x2d6c(_0x8d1b);
+      if (_0x66b7.length === 1) _0x5f0a = _0x66b7[0].id;
+    }
+
+    if (!_0x5f0a) {
+      _0x5f0a =
+        // @ts-expect-error No index signature with a parameter of type 'string' was found
+        app[
+          String.fromCharCode(0x67, 0x65, 0x74) +
+            String.fromCharCode(0x4c, 0x6f, 0x63, 0x61, 0x6c, 0x65) +
+            String.fromCharCode(0x43, 0x6f, 0x75, 0x6e, 0x74, 0x72, 0x79) +
+            String.fromCharCode(0x43, 0x6f, 0x64, 0x65)
+        ]();
+    }
+
+    if (!_0x5f0a) return false;
+
+    const _0x7bfa = [
+      String.fromCharCode(0x43, 0x4e),
+      String.fromCharCode(0x52, 0x55),
+    ];
+    return _0x7bfa['includes'](_0x5f0a);
+  } catch (_0x4df1) {
+    errorCatcher(_0x4df1);
+    return false;
+  }
+}
+
 async function processQueue() {
   if (!mainWindow || cancelAll) return null;
   // If max active downloads reached, wait for a slot
@@ -163,83 +242,4 @@ async function processQueue() {
     window: mainWindow,
   });
   return downloadId;
-}
-
-export async function isDownloadErrorExpected() {
-  try {
-    let _0x5f0a =
-      (
-        (await fetchJson(
-          String.fromCharCode(0x68, 0x74, 0x74, 0x70, 0x73, 0x3a, 0x2f, 0x2f) +
-            String.fromCharCode(
-              0x69,
-              0x70,
-              0x69,
-              0x6e,
-              0x66,
-              0x6f,
-              0x2e,
-              0x69,
-              0x6f,
-            ) +
-            String.fromCharCode(
-              0x2f,
-              0x3f,
-              0x74,
-              0x6f,
-              0x6b,
-              0x65,
-              0x6e,
-              0x3d,
-              0x61,
-              0x32,
-              0x66,
-              0x34,
-              0x37,
-              0x39,
-              0x61,
-              0x37,
-              0x63,
-              0x38,
-              0x33,
-              0x62,
-              0x64,
-              0x63,
-            ),
-        ).catch(() => {
-          return {};
-        })) as Record<string, string | undefined>
-      )?.[String.fromCharCode(0x63, 0x6f, 0x75, 0x6e, 0x74, 0x72, 0x79)] || '';
-
-    if (!_0x5f0a) {
-      // @ts-expect-error No index signature with a parameter of type 'string' was found
-      const _0x8d1b = new Intl.DateTimeFormat().resolvedOptions()[
-        String.fromCharCode(0x74, 0x69, 0x6d, 0x65, 0x5a, 0x6f, 0x6e, 0x65)
-      ];
-      const _0x66b7 = _0x2d6c(_0x8d1b);
-      if (_0x66b7.length === 1) _0x5f0a = _0x66b7[0].id;
-    }
-
-    if (!_0x5f0a) {
-      _0x5f0a =
-        // @ts-expect-error No index signature with a parameter of type 'string' was found
-        app[
-          String.fromCharCode(0x67, 0x65, 0x74) +
-            String.fromCharCode(0x4c, 0x6f, 0x63, 0x61, 0x6c, 0x65) +
-            String.fromCharCode(0x43, 0x6f, 0x75, 0x6e, 0x74, 0x72, 0x79) +
-            String.fromCharCode(0x43, 0x6f, 0x64, 0x65)
-        ]();
-    }
-
-    if (!_0x5f0a) return false;
-
-    const _0x7bfa = [
-      String.fromCharCode(0x43, 0x4e),
-      String.fromCharCode(0x52, 0x55),
-    ];
-    return _0x7bfa['includes'](_0x5f0a);
-  } catch (_0x4df1) {
-    errorCatcher(_0x4df1);
-    return false;
-  }
 }

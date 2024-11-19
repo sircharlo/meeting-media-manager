@@ -1,6 +1,7 @@
 <template>
   <q-btn
     v-if="currentSettings?.obsEnable"
+    class="super-rounded"
     :color="
       obsPopup
         ? 'white'
@@ -11,6 +12,7 @@
             : 'warning'
     "
     :disable="obsConnectionState !== 'connected'"
+    rounded
     :text-color="
       obsPopup
         ? obsConnectionState === 'connected'
@@ -20,8 +22,6 @@
             : 'warning'
         : ''
     "
-    class="super-rounded"
-    rounded
     unelevated
     @click="obsPopup = !obsPopup"
     @mouseenter="

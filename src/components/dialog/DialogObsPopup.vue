@@ -1,9 +1,9 @@
 <template>
   <q-menu
     v-model="open"
-    :offset="[0, 8]"
     anchor="top middle"
     no-parent-event
+    :offset="[0, 8]"
     self="bottom middle"
     transition-hide="jump-down"
     transition-show="jump-up"
@@ -33,6 +33,7 @@
               "
             >
               <q-btn
+                class="full-width"
                 :color="sceneExists(scene) ? 'primary' : 'negative'"
                 :icon="
                   scene === currentSettings?.obsCameraScene
@@ -58,7 +59,6 @@
                     ? previousScene
                     : currentScene)
                 "
-                class="full-width"
                 size="sm"
                 stack
                 unelevated

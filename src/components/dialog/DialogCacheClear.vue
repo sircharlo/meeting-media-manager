@@ -17,11 +17,11 @@
         }}
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
-        <q-btn :label="$t('cancel')" flat @click="open = false" />
+        <q-btn flat :label="$t('cancel')" @click="open = false" />
         <q-btn
-          :label="$t('delete')"
           color="negative"
           flat
+          :label="$t('delete')"
           @click="deleteCacheFiles(cacheClearType)"
         />
       </q-card-actions>
@@ -29,25 +29,22 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
+// Types
+import type { CacheFile } from 'src/types';
+
 // Packages
 // import PQueue from 'p-queue';
 import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
-
 // Globals
 // import { queues } from 'src/boot/globals';
-
 // Helpers
 import { updateLookupPeriod } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { removeEmptyDirs } from 'src/helpers/fs';
-
 // Stores
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-
-// Types
-import type { CacheFile } from 'src/types';
+import { ref } from 'vue';
 
 // Props
 const props = defineProps<{

@@ -22,9 +22,9 @@
           "
           v-model="expansionState[groupId]"
           :caption="$t(description)"
+          class="media-section text-subtitle2 text-weight-medium q-pr-md"
           :icon="icon"
           :label="$t(name)"
-          class="media-section text-subtitle2 text-weight-medium q-pr-md"
         >
           <div>
             <template

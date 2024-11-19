@@ -1,12 +1,28 @@
 import type { VideoMarker } from './jw/sqlite';
 
-export type MediaSection =
-  | 'additional'
-  | 'ayfm'
-  | 'circuitOverseer'
-  | 'lac'
-  | 'tgw'
-  | 'wt';
+export interface CacheFile {
+  orphaned: boolean;
+  parentPath: string;
+  path: string;
+  size: number;
+}
+
+export interface DownloadedFile {
+  error?: boolean;
+  new?: boolean;
+  path: string;
+}
+
+export type DownloadProgressItems = Record<
+  string,
+  {
+    complete?: boolean;
+    error?: boolean;
+    filename: string;
+    loaded?: number;
+    total?: number;
+  }
+>;
 
 export interface DynamicMediaObject {
   customDuration?: { max: number; min: number };
@@ -32,23 +48,6 @@ export interface DynamicMediaObject {
   watched?: boolean;
 }
 
-export interface DownloadedFile {
-  error?: boolean;
-  new?: boolean;
-  path: string;
-}
-
-export type DownloadProgressItems = Record<
-  string,
-  {
-    complete?: boolean;
-    error?: boolean;
-    filename: string;
-    loaded?: number;
-    total?: number;
-  }
->;
-
 export interface FileDownloader {
   dir: string;
   filename?: string;
@@ -58,12 +57,13 @@ export interface FileDownloader {
   url: string;
 }
 
-export interface CacheFile {
-  orphaned: boolean;
-  parentPath: string;
-  path: string;
-  size: number;
-}
+export type MediaSection =
+  | 'additional'
+  | 'ayfm'
+  | 'circuitOverseer'
+  | 'lac'
+  | 'tgw'
+  | 'wt';
 
 export interface SongItem {
   duration?: number; // or the correct type for duration
