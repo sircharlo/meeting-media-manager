@@ -1,22 +1,17 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-env node */
-
-/*
- * This file runs in a Node context (it's NOT transpiled by Babel), so use only
- * the ES6 features that are supported by your Node version. https://node.green/
- */
 
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
-const { sentryEsbuildPlugin } = require('@sentry/esbuild-plugin');
-const { sentryVitePlugin } = require('@sentry/vite-plugin');
-const path = require('path');
-const { configure } = require('quasar/wrappers');
-const { mergeConfig } = require('vite'); // use mergeConfig helper to avoid overwriting the default config
 
-const { repository, version } = require('./package.json');
+import { defineConfig } from '#q-app/wrappers';
+import { sentryEsbuildPlugin } from '@sentry/esbuild-plugin';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
+import { fileURLToPath } from 'node:url';
+import { mergeConfig } from 'vite'; // use mergeConfig helper to avoid overwriting the default config
 
-module.exports = configure(function (ctx) {
+import { repository, version } from './package.json';
+
+export default defineConfig(function (ctx) {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
@@ -33,7 +28,7 @@ module.exports = configure(function (ctx) {
         repository: repository.url.replace('.git', ''),
       },
       extendViteConf(viteConf) {
-        viteConf.optimizeDeps = mergeConfig(viteConf, {
+        viteConf.optimizeDeps = mergeConfig(viteConf.optimizeDeps ?? {}, {
           esbuildOptions: {
             define: {
               global: 'window',
@@ -41,31 +36,35 @@ module.exports = configure(function (ctx) {
           },
         });
         if (ctx.prod && !ctx.debug) {
-          viteConf.build = mergeConfig(viteConf.build, {
+          viteConf.build = mergeConfig(viteConf.build ?? {}, {
             sourcemap: true,
           });
           if (!viteConf.plugins) viteConf.plugins = [];
-          viteConf.plugins.push(
-            sentryVitePlugin({
-              authToken: process.env.SENTRY_AUTH_TOKEN,
-              org: 'jw-projects',
-              project: 'mmm-v2',
-              release: {
-                name: version,
-              },
-              telemetry: false,
-            }),
-          );
+          if (process.env.SENTRY_AUTH_TOKEN) {
+            viteConf.plugins.push(
+              sentryVitePlugin({
+                authToken: process.env.SENTRY_AUTH_TOKEN,
+                org: 'jw-projects',
+                project: 'mmm-v2',
+                release: {
+                  name: version,
+                },
+                telemetry: false,
+              }),
+            );
+          }
         }
       },
       sourcemap: true,
       // See: https://www.electronjs.org/docs/latest/tutorial/electron-timelines#timeline
       target: { browser: ['chrome130'], node: 'node20' },
+      typescript: { strict: true, vueShim: true },
       vitePlugins: [
         [
-          '@intlify/vite-plugin-vue-i18n',
+          '@intlify/unplugin-vue-i18n/vite',
           {
-            include: path.resolve(__dirname, './src/i18n/**'),
+            include: [fileURLToPath(new URL('./src/i18n', import.meta.url))],
+            ssr: ctx.modeName === 'ssr',
           },
         ],
       ],
@@ -130,7 +129,7 @@ module.exports = configure(function (ctx) {
           icon: 'icons/icon.ico',
           publish: ['github'],
           target: [
-            { arch: ctx.debug ? undefined : ['x64', 'ia32'], target: 'nsis' },
+            { arch: ctx.debug ? 'x64' : ['x64', 'ia32'], target: 'nsis' },
           ],
         },
       },
@@ -139,34 +138,38 @@ module.exports = configure(function (ctx) {
         if (ctx.prod && !ctx.debug) {
           esbuildConf.sourcemap = true;
           if (!esbuildConf.plugins) esbuildConf.plugins = [];
-          esbuildConf.plugins.push(
-            sentryEsbuildPlugin({
-              authToken: process.env.SENTRY_AUTH_TOKEN,
-              org: 'jw-projects',
-              project: 'mmm-v2',
-              release: {
-                name: version,
-              },
-              telemetry: false,
-            }),
-          );
+          if (process.env.SENTRY_AUTH_TOKEN) {
+            esbuildConf.plugins.push(
+              sentryEsbuildPlugin({
+                authToken: process.env.SENTRY_AUTH_TOKEN,
+                org: 'jw-projects',
+                project: 'mmm-v2',
+                release: {
+                  name: version,
+                },
+                telemetry: false,
+              }),
+            );
+          }
         }
       },
       extendElectronPreloadConf: (esbuildConf) => {
         if (ctx.prod && !ctx.debug) {
           esbuildConf.sourcemap = true;
           if (!esbuildConf.plugins) esbuildConf.plugins = [];
-          esbuildConf.plugins.push(
-            sentryEsbuildPlugin({
-              authToken: process.env.SENTRY_AUTH_TOKEN,
-              org: 'jw-projects',
-              project: 'mmm-v2',
-              release: {
-                name: version,
-              },
-              telemetry: false,
-            }),
-          );
+          if (process.env.SENTRY_AUTH_TOKEN) {
+            esbuildConf.plugins.push(
+              sentryEsbuildPlugin({
+                authToken: process.env.SENTRY_AUTH_TOKEN,
+                org: 'jw-projects',
+                project: 'mmm-v2',
+                release: {
+                  name: version,
+                },
+                telemetry: false,
+              }),
+            );
+          }
         }
       },
       extendPackageJson(pkg) {
@@ -198,6 +201,7 @@ module.exports = configure(function (ctx) {
         });
       },
       inspectPort: 5858,
+      preloadScripts: ['electron-preload'],
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework

@@ -6,7 +6,7 @@ import {
   type Rectangle,
   screen,
 } from 'electron';
-import { ensureDirSync, readJsonSync, writeJsonSync } from 'fs-extra';
+import { ensureDirSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
 import { dirname, join } from 'path';
 
 interface ExtraOptions {
