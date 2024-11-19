@@ -15,12 +15,12 @@
         <q-img
           :id="media.uniqueId"
           ref="mediaImage"
+          fit="contain"
           :ratio="16 / 9"
           :src="
             thumbnailFromMetadata ||
             (media.isImage ? media.fileUrl : media.thumbnailUrl)
           "
-          fit="contain"
           width="150px"
           @error="imageLoadingError"
           @mouseenter="setHoveredBadge(media.uniqueId, true)"
@@ -36,6 +36,8 @@
             @click="showMediaDurationPopup(media)"
           >
             <q-icon
+              class="q-mr-xs"
+              color="white"
               :name="
                 !!hoveredBadges[media.uniqueId] ||
                 customDurations[currentCongregation]?.[selectedDate]?.[
@@ -46,8 +48,6 @@
                     ? 'mmm-music-note'
                     : 'mmm-play'
               "
-              class="q-mr-xs"
-              color="white"
             />
             {{
               customDurationIsSet ? formatTime(customDurationMin) + ' - ' : ''
@@ -81,13 +81,13 @@
                           media.uniqueId
                         ]
                       "
+                      label
+                      label-always
                       :left-label-value="formatTime(customDurationMin)"
                       :max="media.duration"
                       :min="0"
                       :right-label-value="formatTime(customDurationMax)"
                       :step="0.1"
-                      label
-                      label-always
                     />
                   </div>
                   <div class="col-shrink q-pl-md time-duration">
@@ -97,15 +97,15 @@
               </q-card-section>
               <q-card-actions align="right">
                 <q-btn
-                  :label="$t('reset')"
                   color="negative"
                   flat
+                  :label="$t('reset')"
                   @click="resetMediaDuration(media)"
                 />
                 <q-btn
-                  :label="$t('save')"
                   color="primary"
                   flat
+                  :label="$t('save')"
                   @click="mediaDurationPopups[media.uniqueId] = false"
                 />
               </q-card-actions>
@@ -137,8 +137,8 @@
               </template>
               <div class="bg-semi-black row rounded-borders">
                 <q-badge
-                  :disabled="mediaPanzoom?.scale < 1.01 || undefined"
                   color="transparent"
+                  :disabled="mediaPanzoom?.scale < 1.01 || undefined"
                   style="padding: 5px !important; cursor: pointer"
                   @click="zoomOut()"
                 >
@@ -146,8 +146,8 @@
                 </q-badge>
                 <q-separator class="bg-grey-8 q-my-xs" vertical />
                 <q-badge
-                  :disabled="mediaPanzoom?.scale > 4.99 || undefined"
                   color="transparent"
+                  :disabled="mediaPanzoom?.scale > 4.99 || undefined"
                   style="padding: 5px !important; cursor: pointer"
                   @click="zoomIn()"
                 >
@@ -179,6 +179,7 @@
                   :text-color="media.song ? 'white' : undefined"
                 >
                   <q-icon
+                    class="q-mr-xs"
                     :name="
                       media.paragraph
                         ? media.paragraph !== 9999
@@ -186,7 +187,6 @@
                           : 'mmm-footnote'
                         : 'mmm-music-note'
                     "
-                    class="q-mr-xs"
                   />
                   {{
                     media.paragraph
@@ -258,6 +258,8 @@
                   v-model="mediaPlayingCurrentPosition"
                   :inner-max="customDurationMax"
                   :inner-min="customDurationMin"
+                  inner-track-color="accent-400"
+                  label
                   :label-always="mediaPlayingAction === 'pause'"
                   :label-color="
                     mediaPlayingAction === 'pause' ? undefined : 'accent-400'
@@ -274,8 +276,6 @@
                   :thumb-size="
                     mediaPlayingAction === 'pause' ? undefined : '10px'
                   "
-                  inner-track-color="accent-400"
-                  label
                   track-color="negative"
                   @update:model-value="seekTo"
                 />
@@ -295,11 +295,11 @@
             <template v-if="!media.markers || media.markers.length === 0">
               <q-btn
                 ref="playButton"
+                color="primary"
                 :disable="
                   mediaPlayingUrl !== '' &&
                   (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))
                 "
-                color="primary"
                 icon="mmm-play"
                 rounded
                 @click="setMediaPlaying(media)"
@@ -308,11 +308,11 @@
             <template v-else>
               <q-btn
                 ref="playButton"
+                color="primary"
                 :disable="
                   mediaPlayingUrl !== '' &&
                   (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))
                 "
-                color="primary"
                 icon="mmm-play-sign-language"
                 push
                 rounded
@@ -483,12 +483,12 @@
       <q-card-actions align="right" class="text-primary">
         <q-btn
           v-close-popup
-          :label="$t('reset')"
           color="negative"
           flat
+          :label="$t('reset')"
           @click="resetMediaTitle()"
         />
-        <q-btn v-close-popup :label="$t('save')" flat />
+        <q-btn v-close-popup flat :label="$t('save')" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -497,23 +497,23 @@
       <q-card-section class="items-center">
         <q-option-group
           v-model="tag.type"
-          :options="tagTypes"
           color="primary"
           inline
           name="tagType"
+          :options="tagTypes"
           @update:model-value="emit('update:tag', tag)"
         />
         <q-input
           v-model="tag.value"
-          :disable="tag.type === ''"
           dense
+          :disable="tag.type === ''"
           focused
           outlined
           @update:model-value="emit('update:tag', tag)"
         />
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
-        <q-btn v-close-popup :label="$t('dismiss')" flat />
+        <q-btn v-close-popup flat :label="$t('dismiss')" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -529,12 +529,12 @@
         {{ $t('sureStopVideo') }}
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
-        <q-btn :label="$t('cancel')" flat @click="mediaToStop = ''" />
+        <q-btn flat :label="$t('cancel')" @click="mediaToStop = ''" />
         <q-btn
           ref="stopButton"
-          :label="$t('stop')"
           color="negative"
           flat
+          :label="$t('stop')"
           @click="stopMedia()"
         />
       </q-card-actions>
@@ -563,11 +563,11 @@
         }}
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
-        <q-btn :label="$t('cancel')" flat @click="mediaToDelete = ''" />
+        <q-btn flat :label="$t('cancel')" @click="mediaToDelete = ''" />
         <q-btn
-          :label="$t('delete')"
           color="negative"
           flat
+          :label="$t('delete')"
           @click="deleteMedia()"
         />
       </q-card-actions>

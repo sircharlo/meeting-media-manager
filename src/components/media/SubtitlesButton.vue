@@ -1,9 +1,9 @@
 <template>
   <q-btn
     v-if="currentSettings?.enableSubtitles"
+    class="super-rounded"
     :color="!subtitlesVisible ? 'negative' : 'white-transparent'"
     :icon="subtitlesVisible ? 'mmm-subtitles' : 'mmm-subtitles-off'"
-    class="super-rounded"
     rounded
     unelevated
     @click="subtitlesVisible = !subtitlesVisible"

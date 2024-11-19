@@ -1,10 +1,10 @@
 <template>
   <q-toggle
     v-model="model"
-    :disable="customDisabled"
-    :disabled="customDisabled"
     checked-icon="mmm-check"
     color="primary"
+    :disable="customDisabled"
+    :disabled="customDisabled"
   />
 </template>
 

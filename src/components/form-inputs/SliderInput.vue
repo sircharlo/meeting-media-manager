@@ -1,12 +1,12 @@
 <template>
   <q-slider
     v-model="model"
-    :max="max"
-    :min="min"
-    :step="step"
     class="q-pb-none q-mr-md"
     dense
     filled
+    :max="max"
+    :min="min"
+    :step="step"
     style="width: 240px"
   />
 </template>

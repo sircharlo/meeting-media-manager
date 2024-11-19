@@ -21,6 +21,12 @@ import { useJwStore } from 'src/stores/jw';
 const { formatDate, getDateDiff } = date;
 const { fs, path } = window.electronApi;
 
+interface Songbook {
+  fileformat: 'MP3' | 'MP4';
+  pub: 'sjj' | 'sjjm';
+  signLanguage: boolean;
+}
+
 interface Store {
   currentCongregation: string;
   currentSongRemainingTime: string;
@@ -47,12 +53,6 @@ interface Store {
   selectedDate: string;
   timeRemainingBeforeMusicStop: number;
   watchFolderMedia: Record<string, DynamicMediaObject[]>;
-}
-
-interface Songbook {
-  fileformat: 'MP3' | 'MP4';
-  pub: 'sjj' | 'sjjm';
-  signLanguage: boolean;
 }
 
 const settingDefinitionEntries = Object.entries(settingsDefinitions) as [

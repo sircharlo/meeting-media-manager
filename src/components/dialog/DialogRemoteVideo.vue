@@ -9,9 +9,9 @@
         <div class="col-grow">
           <q-input
             v-model="remoteVideoFilter"
-            :label="$t('search')"
             clearable
             dense
+            :label="$t('search')"
             outlined
             spellcheck="false"
           >
@@ -24,8 +24,8 @@
       <div class="row">
         <q-scroll-area
           :bar-style="barStyle"
-          :thumb-style="thumbStyle"
           style="width: 100vw; height: 40vh"
+          :thumb-style="thumbStyle"
         >
           <div class="row q-col-gutter-md q-px-md">
             <template
@@ -60,8 +60,8 @@
                 >
                   <q-card-section class="q-pa-sm">
                     <q-img
-                      :src="getBestImageUrl(video.images, 'md')"
                       class="rounded-borders"
+                      :src="getBestImageUrl(video.images, 'md')"
                     >
                       <q-badge
                         class="q-mt-sm q-ml-sm bg-semi-black rounded-borders-sm"
@@ -91,12 +91,12 @@
       <div class="row items-center justify-center q-px-md">
         <q-pagination
           v-model="currentPage"
-          :max="Math.ceil(remoteVideosFiltered.length / videosPerPage)"
-          :max-pages="10"
           active-color="primary"
           color="grey"
           direction-links
           flat
+          :max="Math.ceil(remoteVideosFiltered.length / videosPerPage)"
+          :max-pages="10"
         />
       </div>
       <div class="row items-center q-px-md">
@@ -104,33 +104,19 @@
           <q-spinner v-if="videosAreLoading" color="primary" size="md" />
           <q-toggle
             v-model="remoteVideosIncludeAudioDescription"
-            :label="$t('include-audio-description')"
             checked-icon="mmm-check"
             color="primary"
+            :label="$t('include-audio-description')"
           />
         </div>
         <div class="col text-right">
-          <q-btn v-close-popup :label="$t('cancel')" color="negative" flat />
+          <q-btn v-close-popup color="negative" flat :label="$t('cancel')" />
         </div>
       </div>
     </div>
   </q-dialog>
 </template>
 <script setup lang="ts">
-import { storeToRefs } from 'pinia';
-// Packages
-import { computed, ref } from 'vue';
-
-// Composables
-import { useScrollbar } from 'src/composables/useScrollbar';
-
-// Helpers
-import {
-  downloadAdditionalRemoteVideo,
-  getBestImageUrl,
-} from 'src/helpers/jw-media';
-import { formatTime } from 'src/helpers/mediaPlayback';
-
 // Types
 import type {
   JwVideoCategory,
@@ -139,10 +125,21 @@ import type {
 } from 'src/types';
 
 import { whenever } from '@vueuse/core';
+import { storeToRefs } from 'pinia';
+// Composables
+import { useScrollbar } from 'src/composables/useScrollbar';
 import { fetchJson } from 'src/helpers/api';
 import { errorCatcher } from 'src/helpers/error-catcher';
+// Helpers
+import {
+  downloadAdditionalRemoteVideo,
+  getBestImageUrl,
+} from 'src/helpers/jw-media';
+import { formatTime } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+// Packages
+import { computed, ref } from 'vue';
 
 // Stores
 const jwStore = useJwStore();

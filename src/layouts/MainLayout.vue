@@ -9,8 +9,8 @@
     <!-- Main content -->
     <q-scroll-area
       :bar-style="barStyle"
-      :thumb-style="thumbStyle"
       style="flex: 1 1 1px"
+      :thumb-style="thumbStyle"
     >
       <q-page-container class="main-bg">
         <AnnouncementBanner />
@@ -24,10 +24,10 @@
         currentSettings?.enableMediaDisplayButton ||
         currentSettings?.enableMusicButton
       "
+      class="q-pb-sm"
       :style="
         'left: calc(50% + ' + (miniState ? '28' : '150') + 'px) !important'
       "
-      class="q-pb-sm"
     >
       <ActionIsland />
     </q-footer>
@@ -41,12 +41,8 @@ import { watchDebounced, watchImmediate, whenever } from '@vueuse/core';
 // Packages
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
-import { useRoute, useRouter } from 'vue-router';
 // Globals
 import { queues } from 'src/boot/globals';
-import { localeOptions } from 'src/i18n';
 // Components
 import HeaderBase from 'src/components/header/HeaderBase.vue';
 import ActionIsland from 'src/components/ui/ActionIsland.vue';
@@ -79,9 +75,13 @@ import {
 } from 'src/helpers/keyboardShortcuts';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import { localeOptions } from 'src/i18n';
 // Stores
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+import { useRoute, useRouter } from 'vue-router';
 
 const { barStyle, thumbStyle } = useScrollbar();
 

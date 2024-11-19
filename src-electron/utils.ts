@@ -9,10 +9,6 @@ import { urlVariables } from './main/session';
 import { logToWindow } from './main/window/window-base';
 import { mainWindow } from './main/window/window-main';
 
-export function getAppVersion() {
-  return IS_DEV ? version : app.getVersion();
-}
-
 export async function askForMediaAccess() {
   if (PLATFORM !== 'darwin') return;
   const types = ['camera', 'microphone'] as const;
@@ -31,27 +27,8 @@ export async function askForMediaAccess() {
   }
 }
 
-/**
- * Check if a given url is a trusted domain
- * @param url The url to check
- * @returns Wether the url is a trusted domain
- */
-export function isTrustedDomain(url: string): boolean {
-  try {
-    const parsedUrl = new URL(url);
-    if (parsedUrl.protocol !== 'https:') return false;
-    return TRUSTED_DOMAINS.concat(
-      [
-        urlVariables?.mediator,
-        urlVariables?.pubMedia,
-        urlVariables?.base ? `https://${urlVariables.base}/` : undefined,
-      ]
-        .filter((d): d is string => !!d)
-        .map((d) => new URL(d).hostname),
-    ).some((domain) => parsedUrl.hostname.endsWith(domain));
-  } catch (e) {
-    return false;
-  }
+export function getAppVersion() {
+  return IS_DEV ? version : app.getVersion();
 }
 
 /**
@@ -90,6 +67,29 @@ export function isSelf(url?: string): boolean {
         parsedUrl.protocol === 'file:' &&
         parsedUrl.pathname === parsedAppUrl.pathname)
     );
+  } catch (e) {
+    return false;
+  }
+}
+
+/**
+ * Check if a given url is a trusted domain
+ * @param url The url to check
+ * @returns Wether the url is a trusted domain
+ */
+export function isTrustedDomain(url: string): boolean {
+  try {
+    const parsedUrl = new URL(url);
+    if (parsedUrl.protocol !== 'https:') return false;
+    return TRUSTED_DOMAINS.concat(
+      [
+        urlVariables?.mediator,
+        urlVariables?.pubMedia,
+        urlVariables?.base ? `https://${urlVariables.base}/` : undefined,
+      ]
+        .filter((d): d is string => !!d)
+        .map((d) => new URL(d).hostname),
+    ).some((domain) => parsedUrl.hostname.endsWith(domain));
   } catch (e) {
     return false;
   }

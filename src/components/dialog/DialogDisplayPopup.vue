@@ -1,9 +1,9 @@
 <template>
   <q-menu
     v-model="open"
-    :offset="[0, 8]"
     anchor="top middle"
     no-parent-event
+    :offset="[0, 8]"
     self="bottom middle"
     transition-hide="jump-down"
     transition-show="jump-up"
@@ -26,19 +26,19 @@
               <template v-for="(screen, index) in screenList" :key="screen.id">
                 <div class="col">
                   <q-btn
-                    :disable="screen.mainWindow"
-                    :outline="screen.mainWindow || !screen.mediaWindow"
                     class="full-width"
                     color="primary"
+                    :disable="screen.mainWindow"
+                    :outline="screen.mainWindow || !screen.mediaWindow"
                     @click="screenPreferences.preferredScreenNumber = index"
                   >
                     <q-icon
+                      class="q-mr-sm"
                       :name="
                         screen.mainWindow
                           ? 'mmm-display-current'
                           : 'mmm-media-display-active'
                       "
-                      class="q-mr-sm"
                       size="xs"
                     />
                     {{
@@ -60,12 +60,12 @@
           <div class="row items-center q-col-gutter-sm q-mb-md">
             <div class="col-6">
               <q-btn
+                class="full-width"
+                color="primary"
                 :disable="screenList.length < 2"
                 :outline="
                   screenList.length < 2 || screenPreferences.preferWindowed
                 "
-                class="full-width"
-                color="primary"
                 unelevated
                 @click="screenPreferences.preferWindowed = false"
               >
@@ -75,6 +75,8 @@
             </div>
             <div class="col-6">
               <q-btn
+                class="full-width"
+                color="primary"
                 :disable="screenList.length < 2"
                 :outline="
                   !(screenList.length < 2 || screenPreferences.preferWindowed)
@@ -84,8 +86,6 @@
                     ? ''
                     : 'primary'
                 "
-                class="full-width"
-                color="primary"
                 unelevated
                 @click="screenPreferences.preferWindowed = true"
               >
@@ -103,18 +103,18 @@
         </div>
         <div class="col q-mb-md">
           <q-btn
-            :outline="!mediaWindowCustomBackground"
             class="full-width"
             color="primary"
+            :outline="!mediaWindowCustomBackground"
             unelevated
             @click="chooseCustomBackground(!!mediaWindowCustomBackground)"
           >
             <q-icon
+              class="q-mr-sm"
               :name="
                 'mmm-background' +
                 (mediaWindowCustomBackground ? '-remove' : '')
               "
-              class="q-mr-sm"
               size="xs"
             />
             {{
@@ -172,8 +172,8 @@
       </div>
       <q-scroll-area
         :bar-style="barStyle"
-        :thumb-style="thumbStyle"
         style="height: 40vh; width: -webkit-fill-available"
+        :thumb-style="thumbStyle"
       >
         <template
           v-for="(jwpubImage, index) in jwpubImages"
@@ -187,9 +187,9 @@
               <div class="col-shrink">
                 <q-img
                   v-ripple
-                  :src="pathToFileURL(jwpubImage.FilePath)"
                   class="rounded-borders"
                   fit="contain"
+                  :src="pathToFileURL(jwpubImage.FilePath)"
                   style="width: 150px"
                 />
               </div>

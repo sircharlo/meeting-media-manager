@@ -12,6 +12,17 @@ import { join, resolve } from 'path';
 import { urlVariables } from '../session';
 import { StatefulBrowserWindow } from './window-state';
 
+export function closeOtherWindows(source: BrowserWindow) {
+  try {
+    const windows = BrowserWindow.getAllWindows();
+    for (const win of windows) {
+      if (win !== source) win.close();
+    }
+  } catch (e) {
+    errorCatcher(e);
+  }
+}
+
 /**
  * Creates a new browser window
  * @param name The name of the window
@@ -97,14 +108,6 @@ export function createWindow(
   return win;
 }
 
-export function sendToWindow(
-  win: BrowserWindow | null,
-  channel: ElectronIpcListenKey,
-  ...args: unknown[]
-) {
-  win?.webContents.send(channel, ...args);
-}
-
 export function logToWindow(
   win: BrowserWindow | null,
   msg: string,
@@ -114,13 +117,10 @@ export function logToWindow(
   if (level === 'debug' && !process.env.DEBUGGING) return;
   sendToWindow(win, 'log', { ctx, level, msg });
 }
-export function closeOtherWindows(source: BrowserWindow) {
-  try {
-    const windows = BrowserWindow.getAllWindows();
-    for (const win of windows) {
-      if (win !== source) win.close();
-    }
-  } catch (e) {
-    errorCatcher(e);
-  }
+export function sendToWindow(
+  win: BrowserWindow | null,
+  channel: ElectronIpcListenKey,
+  ...args: unknown[]
+) {
+  win?.webContents.send(channel, ...args);
 }

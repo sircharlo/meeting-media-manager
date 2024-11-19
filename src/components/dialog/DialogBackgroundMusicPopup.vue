@@ -2,9 +2,9 @@
   <q-menu
     ref="musicPopup"
     v-model="open"
-    :offset="[0, 8]"
     anchor="top middle"
     no-parent-event
+    :offset="[0, 8]"
     self="bottom middle"
     transition-hide="jump-down"
     transition-show="jump-up"
@@ -35,8 +35,8 @@
                 </p>
                 <q-scroll-area
                   :bar-style="barStyle"
-                  :thumb-style="thumbStyle"
                   style="height: 100px; max-width: 100%"
+                  :thumb-style="thumbStyle"
                 >
                   <template v-for="(song, i) in songList" :key="i">
                     <div class="row q-my-sm q-px-md">
@@ -80,18 +80,18 @@
           <div class="col-grow">
             <q-btn
               v-if="!musicPlaying"
-              :disable="mediaPlaying || musicStarting"
               class="full-width"
               color="primary"
+              :disable="mediaPlaying || musicStarting"
               unelevated
               @click="playMusic"
               >{{ $t('play-music') }}</q-btn
             >
             <q-btn
               v-else
-              :disable="musicStopping"
               class="full-width"
               color="primary"
+              :disable="musicStopping"
               unelevated
               @click="stopMusic"
               >{{ $t('stop-music') }}</q-btn
