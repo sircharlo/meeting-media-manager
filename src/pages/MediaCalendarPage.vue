@@ -195,6 +195,7 @@
           :media="media"
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
+          @update:repeat="media.repeat = !!$event"
         />
         <div
           v-if="
@@ -236,6 +237,7 @@
           :media="media"
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
+          @update:repeat="media.repeat = !!$event"
         />
         <div v-if="sortableTgwMediaItems.filter((m) => !m.hidden).length === 0">
           <q-item>
@@ -271,6 +273,7 @@
           :media="media"
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
+          @update:repeat="media.repeat = !!$event"
         />
         <div
           v-if="sortableAyfmMediaItems.filter((m) => !m.hidden).length === 0"
@@ -317,6 +320,7 @@
           :media="media"
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
+          @update:repeat="media.repeat = !!$event"
         />
         <div v-if="sortableLacMediaItems.filter((m) => !m.hidden).length === 0">
           <q-item>
@@ -352,6 +356,7 @@
           :media="media"
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
+          @update:repeat="media.repeat = !!$event"
         />
         <div v-if="sortableWtMediaItems.filter((m) => !m.hidden).length === 0">
           <q-item>
@@ -414,6 +419,7 @@
           :media="media"
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
+          @update:repeat="media.repeat = !!$event"
         />
         <div
           v-if="
@@ -566,7 +572,6 @@ const {
   mediaPlayingSubtitlesUrl,
   mediaPlayingUniqueId,
   mediaPlayingUrl,
-  mediaRepeat,
   selectedDate,
   selectedDateObject,
   watchFolderMedia,
@@ -591,14 +596,6 @@ watch(
     const { post } = useBroadcastChannel<string, string>({ name: 'unique-id' });
     post(newMediaUniqueId);
     if (newMediaUniqueId) lastPlayedMediaUniqueId.value = newMediaUniqueId;
-  },
-);
-
-watch(
-  () => mediaRepeat.value,
-  (newMediaRepeat) => {
-    const { post } = useBroadcastChannel<string, string>({ name: 'repeat' });
-    post(newMediaRepeat);
   },
 );
 
