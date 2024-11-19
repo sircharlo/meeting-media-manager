@@ -4,6 +4,7 @@
     padding
     style="align-content: center; height: 100vh"
   >
+    {{ mediaRepeat }}
     <q-resize-observer debounce="50" @resize="onResize" />
     <transition
       appear
@@ -320,7 +321,7 @@ const playMedia = () => {
     }
 
     mediaElement.value.onended = () => {
-      if (!mediaRepeat.value || mediaRepeat.value !== mediaUniqueId.value) {
+      if (!mediaRepeat.value) {
         postMediaState('ended');
       } else {
         if (mediaElement.value) {
