@@ -6,7 +6,7 @@
     dense
     rounded
   >
-    {{ t(announcement.message) }}
+    (Platform: {{ $q.platform.is.platform }}) {{ t(announcement.message) }}
     <template #avatar>
       <q-icon :name="`mmm-${announcement.type}`" />
     </template>
@@ -116,7 +116,6 @@ const newUpdateAnnouncement = computed((): Announcement => {
     maxVersion: `${major}.${patch ? minor : minor - 1}.${patch ? patch - 1 : 99}`,
     message: 'update-available',
     persistent: true,
-    platform: ['mac'],
   };
 });
 
