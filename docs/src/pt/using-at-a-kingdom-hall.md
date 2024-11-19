@@ -16,7 +16,7 @@ Este guia o ajudará no processo de download, instalação e configuração do *
      - Para sistemas Windows mais antigos, de 32 bits, baixe <a :href="data.win32">meeting-media-manager-[VERSÃO]-ia32.exe</a>.
    - **macOS:**
      - **M-series (Apple Silicon)**: Baixe <a :href="data.macArm">meeting-media-manager-[VERSÃO]-arm64.dmg</a>.
-     - **Macs baseados em Intel**: Baixe <a :href="data.macIntel">meeting-media-manager-[VERSÃO]-x64.dmg</a>.
+     - **Macs com chip Intel**: Baixe <a :href="data.macIntel">meeting-media-manager-[VERSÃO]-x64.dmg</a>.
    - **Linux:**
      - Baixe <a :href="data.linux">meeting-media-manager-[VERSÃO]-x86_64.AppImage</a>.
 2. Se os links de download não funcionarem, visite a [página de download do M³](https://github.com/sircharlo/meeting-media-manager/releases/latest) e baixe a versão correta manualmente.
