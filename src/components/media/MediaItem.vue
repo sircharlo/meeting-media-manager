@@ -165,53 +165,36 @@
           <div class="col">
             <div class="row items-center">
               <div
-                v-if="media.paragraph"
-                :class="{
-                  'q-pl-md': $q.screen.gt.xs,
-                  'q-pr-none': $q.screen.gt.xs,
-                  'col-shrink': $q.screen.gt.xs,
-                  'col-12': !$q.screen.gt.xs,
-                  'q-px-md': !$q.screen.gt.xs,
-                }"
+                v-if="media.paragraph || (media.song && media.song !== 'false')"
+                :class="mediaTagClasses"
                 side
               >
                 <q-chip
+                  :class="[
+                    'media-tag full-width',
+                    media.paragraph ? 'bg-accent-200' : 'bg-accent-400',
+                  ]"
                   :clickable="false"
                   :ripple="false"
-                  class="media-tag bg-accent-200 full-width"
+                  :text-color="media.song ? 'white' : undefined"
                 >
                   <q-icon
                     :name="
-                      media.paragraph !== 9999
-                        ? 'mmm-paragraph'
-                        : 'mmm-footnote'
+                      media.paragraph
+                        ? media.paragraph !== 9999
+                          ? 'mmm-paragraph'
+                          : 'mmm-footnote'
+                        : 'mmm-music-note'
                     "
                     class="q-mr-xs"
                   />
                   {{
-                    media.paragraph !== 9999 ? media.paragraph : $t('footnote')
+                    media.paragraph
+                      ? media.paragraph !== 9999
+                        ? media.paragraph
+                        : $t('footnote')
+                      : media.song?.toString()
                   }}
-                </q-chip>
-              </div>
-              <div
-                v-else-if="media.song && media.song !== 'false'"
-                :class="{
-                  'q-pl-md': $q.screen.gt.xs,
-                  'q-pr-none': $q.screen.gt.xs,
-                  'col-shrink': $q.screen.gt.xs,
-                  'col-12': !$q.screen.gt.xs,
-                  'q-px-md': !$q.screen.gt.xs,
-                }"
-                side
-              >
-                <q-chip
-                  :clickable="false"
-                  :ripple="false"
-                  class="media-tag bg-accent-400 full-width"
-                  text-color="white"
-                >
-                  <q-icon class="q-mr-xs" name="mmm-music-note" />
-                  {{ media.song?.toString() }}
                 </q-chip>
               </div>
               <div class="q-px-md col">
@@ -222,17 +205,39 @@
                   {{ mediaTitle }}
                 </div>
               </div>
-              <div
-                v-if="media.isAdditional && mediaPlayingUrl !== media.fileUrl"
-              >
-                <q-btn
-                  class="q-mr-md"
-                  color="negative"
-                  flat
-                  icon="mmm-delete"
-                  rounded
-                  @click="mediaToDelete = media.uniqueId"
-                />
+              <div class="col-shrink">
+                <div class="row q-gutter-sm items-center q-mr-md">
+                  <q-icon
+                    v-if="media.repeat"
+                    color="warning"
+                    name="mmm-repeat"
+                    size="sm"
+                  >
+                    <q-tooltip :delay="500">{{
+                      media.repeat ? $t('repeat') : $t('repeat-off')
+                    }}</q-tooltip>
+                  </q-icon>
+                  <q-icon
+                    v-if="media.watched"
+                    color="accent-300"
+                    name="mmm-watched-media"
+                    size="sm"
+                  >
+                    <q-tooltip :delay="500">{{
+                      $t('watched-media-item-explain')
+                    }}</q-tooltip>
+                  </q-icon>
+                  <q-icon
+                    v-else-if="media.isAdditional"
+                    color="accent-300"
+                    name="mmm-extra-media"
+                    size="sm"
+                  >
+                    <q-tooltip :delay="1000">{{
+                      $t('extra-media-item-explain')
+                    }}</q-tooltip>
+                  </q-icon>
+                </div>
               </div>
             </div>
             <transition
@@ -335,35 +340,6 @@
             <div class="col-shrink items-center justify-center flex">
               <q-btn
                 v-if="
-                  currentSettings?.disableMediaFetching &&
-                  media.isVideo &&
-                  !customDurationIsSet
-                "
-                ref="repeatButton"
-                :color="
-                  mediaRepeat === media.uniqueId ? 'primary' : 'accent-400'
-                "
-                :flat="mediaRepeat !== media.uniqueId"
-                :icon="
-                  mediaRepeat === media.uniqueId
-                    ? 'mmm-repeat'
-                    : 'mmm-repeat-off'
-                "
-                :outline="mediaRepeat === media.uniqueId"
-                class="q-mx-sm"
-                round
-                size="sm"
-                @click="
-                  mediaRepeat =
-                    mediaRepeat === media.uniqueId ? '' : media.uniqueId
-                "
-              >
-                <q-tooltip :delay="1000">{{
-                  mediaRepeat ? $t('repeat') : $t('repeat-off')
-                }}</q-tooltip>
-              </q-btn>
-              <q-btn
-                v-if="
                   isImage(mediaPlayingUrl) && obsConnectionState === 'connected'
                 "
                 :color="currentSceneType === 'media' ? 'negative' : 'primary'"
@@ -425,6 +401,9 @@
         <q-list>
           <q-item-label header>{{ media.title }}</q-item-label>
           <q-item v-close-popup clickable @click="emit('update:hidden', true)">
+            <q-item-section avatar>
+              <q-icon name="mmm-file-hidden" />
+            </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t('hide-from-list') }}</q-item-label>
               <q-item-label caption>{{
@@ -433,9 +412,63 @@
             </q-item-section>
           </q-item>
           <q-item v-close-popup clickable @click="mediaEditTitleDialog = true">
+            <q-item-section avatar>
+              <q-icon name="mmm-edit" />
+            </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t('rename') }}</q-item-label>
               <q-item-label caption>{{ $t('rename-explain') }}</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item v-close-popup clickable @click="mediaEditTagDialog = true">
+            <q-item-section avatar>
+              <q-icon name="mmm-tag" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ $t('change-tag') }}</q-item-label>
+              <q-item-label caption>{{
+                $t('change-tag-explain')
+              }}</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            v-if="media.isVideo || media.isAudio"
+            clickable
+            @click="emit('update:repeat', !media.repeat)"
+          >
+            <q-item-section avatar>
+              <q-icon :name="media.repeat ? 'mmm-repeat-off' : 'mmm-repeat'" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{
+                media.repeat
+                  ? $t('stop-repeat-media-item')
+                  : $t('repeat-media-item')
+              }}</q-item-label>
+              <q-item-label caption>{{
+                media.repeat
+                  ? $t('repeat-media-item-explain')
+                  : $t('stop-repeat-media-item-explain')
+              }}</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            v-if="
+              media.isAdditional &&
+              mediaPlayingUrl !== (media.fileUrl || media.streamUrl)
+            "
+            v-close-popup
+            clickable
+            @click="mediaToDelete = media.uniqueId"
+          >
+            <q-item-section avatar>
+              <q-icon color="negative" name="mmm-delete" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ $t('delete-media') }}</q-item-label>
+              <q-item-label caption>
+                {{ $t('delete-media-explain') }}</q-item-label
+              >
             </q-item-section>
           </q-item>
         </q-list>
@@ -456,6 +489,31 @@
           @click="resetMediaTitle()"
         />
         <q-btn v-close-popup :label="$t('save')" flat />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+  <q-dialog v-model="mediaEditTagDialog">
+    <q-card class="modal-confirm">
+      <q-card-section class="items-center">
+        <q-option-group
+          v-model="tag.type"
+          :options="tagTypes"
+          color="primary"
+          inline
+          name="tagType"
+          @update:model-value="emit('update:tag', tag)"
+        />
+        <q-input
+          v-model="tag.value"
+          :disable="tag.type === ''"
+          dense
+          focused
+          outlined
+          @update:model-value="emit('update:tag', tag)"
+        />
+      </q-card-section>
+      <q-card-actions align="right" class="text-primary">
+        <q-btn v-close-popup :label="$t('dismiss')" flat />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -524,9 +582,13 @@ import Panzoom, {
   type PanzoomObject,
   type PanzoomOptions,
 } from '@panzoom/panzoom';
-import { useBroadcastChannel, useEventListener } from '@vueuse/core';
+import {
+  useBroadcastChannel,
+  useEventListener,
+  watchImmediate,
+} from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { debounce, type QBtn, type QImg } from 'quasar';
+import { debounce, type QBtn, type QImg, useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
 import {
@@ -540,18 +602,17 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { useObsStateStore } from 'src/stores/obs-state';
 import { computed, onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
 const {
   currentCongregation,
-  currentSettings,
   mediaPlayingAction,
   mediaPlayingCurrentPosition,
   mediaPlayingPanzoom,
   mediaPlayingSubtitlesUrl,
   mediaPlayingUniqueId,
   mediaPlayingUrl,
-  mediaRepeat,
   selectedDate,
 } = storeToRefs(currentState);
 
@@ -582,10 +643,42 @@ const props = defineProps<{
   playState: string;
 }>();
 
-const emit = defineEmits(['update:hidden']);
+const emit = defineEmits(['update:hidden', 'update:repeat', 'update:tag']);
 
 const mediaEditTitleDialog = ref(false);
 const mediaTitle = ref('');
+
+const mediaEditTagDialog = ref(false);
+const { t } = useI18n();
+const tag = ref({
+  type: props.media.song ? 'song' : props.media.paragraph ? 'paragraph' : '',
+  value: (props.media.song || props.media.paragraph || '') as string,
+});
+const tagTypes = [
+  {
+    label: t('none'),
+    value: '',
+  },
+  {
+    label: t('song'),
+    value: 'song',
+  },
+  {
+    label: t('paragraph'),
+    value: 'paragraph',
+  },
+];
+
+const $q = useQuasar();
+const mediaTagClasses = computed(() => {
+  return {
+    'col-12': !$q.screen.gt.xs,
+    'col-shrink': $q.screen.gt.xs,
+    'q-pl-md': $q.screen.gt.xs,
+    'q-pr-none': $q.screen.gt.xs,
+    'q-px-md': !$q.screen.gt.xs,
+  };
+});
 
 const resetMediaTitle = () => {
   if (props?.media) {
@@ -665,6 +758,15 @@ const setMediaPlaying = async (
   mediaPlayingUniqueId.value = media.uniqueId;
   mediaPlayingSubtitlesUrl.value = media.subtitlesUrl ?? '';
 };
+
+watchImmediate(
+  () => [props.media.repeat, mediaPlayingUniqueId.value],
+  ([newMediaRepeat, newMediaPlayingUniqueId]) => {
+    if (newMediaPlayingUniqueId !== props.media.uniqueId) return;
+    const { post } = useBroadcastChannel<string, boolean>({ name: 'repeat' });
+    post(!!newMediaRepeat);
+  },
+);
 
 resetMediaTitle();
 
