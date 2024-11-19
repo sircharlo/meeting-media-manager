@@ -20,6 +20,7 @@ export interface DynamicMediaObject {
   isVideo: boolean;
   markers?: VideoMarker[];
   paragraph?: number | string;
+  repeat?: boolean;
   section: MediaSection;
   sectionOriginal: MediaSection;
   song?: boolean | string;

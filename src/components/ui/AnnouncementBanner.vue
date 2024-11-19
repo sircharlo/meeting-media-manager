@@ -109,7 +109,7 @@ const loadAnnouncements = async () => {
 };
 
 const newUpdateAnnouncement = computed((): Announcement => {
-  const { major, minor, patch } = parseVersion(latestVersion.value || '0.0.0');
+  const { major, minor, patch } = parseVersion(latestVersion.value || '1.1.0');
   return {
     actions: ['update'],
     id: 'new-update',

@@ -784,6 +784,7 @@ const dynamicMediaMapper = async (
             m.TargetParagraphNumberLabel,
             m.Caption,
           ),
+          repeat: !!m.Repeat,
           section, // if is we: wt; else, if >= middle song: LAC; >= (middle song - 8???): AYFM; else: TGW
           sectionOriginal: section, // to enable restoring the original section after custom sorting
           song: mediaIsSong,
