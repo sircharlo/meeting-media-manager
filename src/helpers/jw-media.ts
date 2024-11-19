@@ -1316,13 +1316,6 @@ const getPubMediaLinks = async (publication: PublicationFetcher) => {
   }
 };
 
-export function isMediaLink(
-  item: MediaItemsMediatorFile | MediaLink | null,
-): item is MediaLink {
-  if (!item) return false;
-  return !('progressiveDownloadURL' in item);
-}
-
 export function findBestResolution(
   mediaLinks?: MediaItemsMediatorFile[] | MediaLink[],
 ) {
@@ -1356,6 +1349,13 @@ export function findBestResolution(
     errorCatcher(e);
     return mediaLinks?.length ? mediaLinks[mediaLinks.length - 1] : null;
   }
+}
+
+export function isMediaLink(
+  item: MediaItemsMediatorFile | MediaLink | null,
+): item is MediaLink {
+  if (!item) return false;
+  return !('progressiveDownloadURL' in item);
 }
 
 const downloadMissingMedia = async (publication: PublicationFetcher) => {

@@ -17,8 +17,8 @@
         <div class="col-shrink items-center">
           <q-icon
             v-if="route.meta.icon"
-            :name="route.meta.icon.toString()"
             class="q-mr-md"
+            :name="route.meta.icon.toString()"
             size="md"
           />
         </div>
@@ -59,21 +59,19 @@
 <script setup lang="ts">
 // Packages
 import { storeToRefs } from 'pinia';
-import { ref } from 'vue';
-import { useRoute } from 'vue-router';
-
 // Components
 import DialogAbout from 'src/components/dialog/DialogAbout.vue';
+// Stores
+import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
+import { useCurrentStateStore } from 'src/stores/current-state';
+import { ref } from 'vue';
+import { useRoute } from 'vue-router';
 
 // Sub-components
 import HeaderCalendar from './HeaderCalendar.vue';
 import HeaderCongregation from './HeaderCongregation.vue';
 import HeaderSettings from './HeaderSettings.vue';
 import HeaderWebsite from './HeaderWebsite.vue';
-
-// Stores
-import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
-import { useCurrentStateStore } from 'src/stores/current-state';
 
 const route = useRoute();
 

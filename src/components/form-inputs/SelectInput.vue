@@ -1,24 +1,24 @@
 <template>
   <q-select
     v-model="model"
+    class="bg-accent-100"
     :clearable="!rules || !rules.includes('notEmpty')"
+    dense
     :disable="customDisabled"
     :disabled="customDisabled"
-    :fill-input="useInput"
-    :hide-selected="useInput"
-    :options="listOptions"
-    :rules="getRules(rules)"
-    :use-input="useInput"
-    class="bg-accent-100"
-    dense
     emit-value
+    :fill-input="useInput"
     hide-bottom-space
+    :hide-selected="useInput"
     input-debounce="0"
     map-options
+    :options="listOptions"
     outlined
+    :rules="getRules(rules)"
     v-bind="{ label: label || undefined }"
     spellcheck="false"
     style="width: 240px"
+    :use-input="useInput"
     @filter="filterFn"
   >
   </q-select>

@@ -1,12 +1,12 @@
 <template>
   <q-input
     v-model="model"
-    :rules="getRules(rules)"
     class="q-pb-none bg-accent-100 date-time-input"
     dense
     hide-bottom-space
     mask="date"
     outlined
+    :rules="getRules(rules)"
     style="width: 240px"
     v-bind="{ label: label || undefined }"
     @focus="focusHandler"
@@ -21,22 +21,22 @@
     >
       <q-date
         v-model="model"
+        dense
         :first-day-of-week="friendlyDayToJsDay(currentSettings?.firstDayOfWeek)"
         :locale="dateLocale"
+        minimal
         :options="getDateOptions(options)"
         :rules="rules"
-        dense
-        minimal
       >
         <div class="row items-center justify-end q-gutter-sm">
           <q-btn
             v-close-popup
-            :label="$t('clear')"
             color="negative"
             flat
+            :label="$t('clear')"
             @click="clearDate"
           />
-          <q-btn v-close-popup :label="$t('save')" color="primary" flat />
+          <q-btn v-close-popup color="primary" flat :label="$t('save')" />
         </div>
       </q-date>
     </q-popup-proxy>

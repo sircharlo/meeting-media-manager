@@ -1,12 +1,12 @@
 <template>
   <q-input
     v-model="model"
-    :error="customError"
-    :rules="getRules(rules)"
     class="q-pb-none bg-accent-100 error"
     dense
+    :error="customError"
     hide-bottom-space
     outlined
+    :rules="getRules(rules)"
     spellcheck="false"
     v-bind="{ label: label || undefined }"
     style="width: 240px"

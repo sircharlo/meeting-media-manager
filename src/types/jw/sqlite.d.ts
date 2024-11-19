@@ -15,13 +15,10 @@ export interface DatedTextItem {
   Link: string;
 }
 
-export interface MultimediaItemsFetcher {
-  BeginParagraphOrdinal?: number;
-  db: string;
-  docId?: number;
-  EndParagraphOrdinal?: number;
-  lang?: string;
-  mepsId?: number;
+export interface DocumentItem {
+  DocumentId: number;
+  FeatureTitle: string;
+  Title: string;
 }
 
 export interface JwPlaylistItem {
@@ -48,6 +45,27 @@ export interface JwPlaylistItem {
   Title: string;
   Track: number;
   Type: number;
+}
+
+export interface MultimediaExtractItem {
+  BeginParagraphOrdinal: number;
+  DocumentId: number;
+  EndParagraphOrdinal: number;
+  FilePath?: string;
+  IssueTagNumber: string;
+  Lang: JwLangCode;
+  Link: string;
+  RefBeginParagraphOrdinal: null | number;
+  RefEndParagraphOrdinal: null | number;
+  RefMepsDocumentId: number;
+  RefPublicationId: number;
+  UniqueEnglishSymbol: string;
+}
+
+export interface MultimediaExtractRefItem {
+  BeginParagraphOrdinal: number;
+  DocumentId: number;
+  SourceDocumentId: number;
 }
 
 export interface MultimediaItem {
@@ -99,6 +117,57 @@ export interface MultimediaItem {
   Width?: null | number;
 }
 
+export interface MultimediaItemsFetcher {
+  BeginParagraphOrdinal?: number;
+  db: string;
+  docId?: number;
+  EndParagraphOrdinal?: number;
+  lang?: string;
+  mepsId?: number;
+}
+
+export interface PlaylistTagItem {
+  Name: string;
+}
+
+export interface PublicationInfo {
+  VersionNumber: number;
+  Year: number;
+}
+
+export interface PublicationIssuePropertyItem {
+  Title: string;
+}
+
+export interface PublicationItem {
+  IssueTagNumber: number;
+  MepsLanguageIndex: number;
+  UndatedSymbol: string;
+  UniqueEnglishSymbol: string;
+}
+
+export type QueryResponseItem =
+  | DatedTextItem
+  | DocumentItem
+  | JwPlaylistItem
+  | MultimediaExtractItem
+  | MultimediaExtractRefItem
+  | MultimediaItem
+  | PlaylistTagItem
+  | PublicationInfo
+  | PublicationItem
+  | TableItem
+  | TableItemCount
+  | VideoMarker;
+
+export interface TableItem {
+  name: string;
+}
+
+export interface TableItemCount {
+  count: number;
+}
+
 export interface VideoMarker {
   BaseDurationTicks?: number;
   BeginTransitionDurationTicks: number;
@@ -118,72 +187,3 @@ export interface VideoMarker {
   Style: string;
   VideoMarkerId: number;
 }
-
-export interface MultimediaExtractItem {
-  BeginParagraphOrdinal: number;
-  DocumentId: number;
-  EndParagraphOrdinal: number;
-  FilePath?: string;
-  IssueTagNumber: string;
-  Lang: JwLangCode;
-  Link: string;
-  RefBeginParagraphOrdinal: null | number;
-  RefEndParagraphOrdinal: null | number;
-  RefMepsDocumentId: number;
-  RefPublicationId: number;
-  UniqueEnglishSymbol: string;
-}
-
-export interface DocumentItem {
-  DocumentId: number;
-  FeatureTitle: string;
-  Title: string;
-}
-
-export interface PublicationItem {
-  IssueTagNumber: number;
-  MepsLanguageIndex: number;
-  UndatedSymbol: string;
-  UniqueEnglishSymbol: string;
-}
-
-export interface PublicationInfo {
-  VersionNumber: number;
-  Year: number;
-}
-
-export interface PublicationIssuePropertyItem {
-  Title: string;
-}
-
-export interface MultimediaExtractRefItem {
-  BeginParagraphOrdinal: number;
-  DocumentId: number;
-  SourceDocumentId: number;
-}
-
-export interface TableItem {
-  name: string;
-}
-
-export interface TableItemCount {
-  count: number;
-}
-
-export interface PlaylistTagItem {
-  Name: string;
-}
-
-export type QueryResponseItem =
-  | DatedTextItem
-  | DocumentItem
-  | JwPlaylistItem
-  | MultimediaExtractItem
-  | MultimediaExtractRefItem
-  | MultimediaItem
-  | PlaylistTagItem
-  | PublicationInfo
-  | PublicationItem
-  | TableItem
-  | TableItemCount
-  | VideoMarker;

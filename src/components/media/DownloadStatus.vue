@@ -1,9 +1,9 @@
 <template>
   <q-btn
-    :color="downloadPopup ? 'white' : online ? 'white-transparent' : 'negative'"
-    :text-color="downloadPopup ? (online ? 'primary' : 'negative') : ''"
     class="super-rounded position-relative"
+    :color="downloadPopup ? 'white' : online ? 'white-transparent' : 'negative'"
     rounded
+    :text-color="downloadPopup ? (online ? 'primary' : 'negative') : ''"
     unelevated
     @click="downloadPopup = !downloadPopup"
   >
@@ -23,16 +23,16 @@
       v-if="
         Object.values(downloadProgress).filter((item) => item.loaded).length > 0
       "
-      :color="downloadPopup ? 'white' : 'primary'"
       class="absolute"
+      :color="downloadPopup ? 'white' : 'primary'"
       size="8px"
       style="top: 14"
     />
     <q-tooltip
       v-if="!downloadPopup"
+      anchor="bottom left"
       :delay="1000"
       :offset="[14, 22]"
-      anchor="bottom left"
       self="top left"
     >
       {{ $t('download-status') }}

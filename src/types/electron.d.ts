@@ -10,6 +10,11 @@ import type {
 } from 'src/types';
 import type Path from 'upath';
 
+export type Display = Electron.Display & {
+  mainWindow?: boolean;
+  mediaWindow?: boolean;
+};
+
 export interface ElectronApi {
   askForMediaAccess: () => void;
   closeWebsiteWindow: () => void;
@@ -109,23 +114,6 @@ export interface ElectronApi {
   zoomWebsiteWindow: (direction: 'in' | 'out') => void;
 }
 
-// ipcMain.on / ipcRenderer.send channels
-export type ElectronIpcSendKey =
-  | 'askForMediaAccess'
-  | 'authorizedClose'
-  | 'moveMediaWindow'
-  | 'navigateWebsiteWindow'
-  | 'openExternal'
-  | 'setScreenPreferences'
-  | 'setUrlVariables'
-  | 'toggleMediaWindow'
-  | 'toggleOpenAtLogin'
-  | 'toggleWebsiteWindow'
-  | 'unregisterShortcut'
-  | 'unwatchFolders'
-  | 'watchFolder'
-  | 'zoomWebsiteWindow';
-
 // ipcMain.handle / ipcRenderer.invoke channels
 export type ElectronIpcInvokeKey =
   | 'downloadFile'
@@ -154,15 +142,27 @@ export type ElectronIpcListenKey =
   | 'watchFolderUpdate'
   | 'websiteWindowClosed';
 
+// ipcMain.on / ipcRenderer.send channels
+export type ElectronIpcSendKey =
+  | 'askForMediaAccess'
+  | 'authorizedClose'
+  | 'moveMediaWindow'
+  | 'navigateWebsiteWindow'
+  | 'openExternal'
+  | 'setScreenPreferences'
+  | 'setUrlVariables'
+  | 'toggleMediaWindow'
+  | 'toggleOpenAtLogin'
+  | 'toggleWebsiteWindow'
+  | 'unregisterShortcut'
+  | 'unwatchFolders'
+  | 'watchFolder'
+  | 'zoomWebsiteWindow';
 export type ExternalWebsite = 'docs' | 'latestRelease' | 'repo';
-export type NavigateWebsiteAction = 'back' | 'forward' | 'refresh';
 export type FileDialogFilter =
   | 'image'
   | 'image+pdf'
   | 'jwpub'
   | 'jwpub+image'
   | 'jwpub+image+pdf';
-export type Display = {
-  mainWindow?: boolean;
-  mediaWindow?: boolean;
-} & Electron.Display;
+export type NavigateWebsiteAction = 'back' | 'forward' | 'refresh';

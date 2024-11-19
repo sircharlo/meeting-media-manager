@@ -149,8 +149,8 @@
     >
       <q-item v-if="selectedDateObject" class="text-additional items-center">
         <q-avatar
-          :size="isWeMeetingDay(selectedDateObject.date) ? 'lg' : 'md'"
           class="text-white bg-additional jw-icon"
+          :size="isWeMeetingDay(selectedDateObject.date) ? 'lg' : 'md'"
         >
           <template v-if="isWeMeetingDay(selectedDateObject.date)">
             
@@ -305,10 +305,10 @@
         </q-item-section>
         <q-item-section side>
           <q-btn
-            :label="$t('add-extra-media')"
             color="lac"
             flat
             icon="mmm-import-media"
+            :label="$t('add-extra-media')"
             @click="openImportMenu('lac')"
           />
         </q-item-section>
@@ -386,6 +386,7 @@
         </q-item-section>
         <q-item-section side>
           <q-btn
+            color="additional"
             :flat="
               !!sortableCircuitOverseerMediaItems.filter((m) => !m.hidden)
                 .length
@@ -403,7 +404,6 @@
                   : 'add-a-closing-song',
               )
             "
-            color="additional"
             @click="
               sortableCircuitOverseerMediaItems.filter((m) => !m.hidden).length
                 ? openImportMenu('circuitOverseer')
@@ -1325,7 +1325,7 @@ const addToAdditionMediaMapFromPath = async (
 };
 
 const addToFiles = async (
-  files: { filename?: string; filetype?: string; path: string }[] | FileList,
+  files: FileList | { filename?: string; filetype?: string; path: string }[],
 ) => {
   if (!files) return;
   totalFiles.value = files.length;
