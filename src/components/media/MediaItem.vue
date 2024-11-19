@@ -165,53 +165,36 @@
           <div class="col">
             <div class="row items-center">
               <div
-                v-if="media.paragraph"
-                :class="{
-                  'q-pl-md': $q.screen.gt.xs,
-                  'q-pr-none': $q.screen.gt.xs,
-                  'col-shrink': $q.screen.gt.xs,
-                  'col-12': !$q.screen.gt.xs,
-                  'q-px-md': !$q.screen.gt.xs,
-                }"
+                v-if="media.paragraph || (media.song && media.song !== 'false')"
+                :class="mediaTagClasses"
                 side
               >
                 <q-chip
+                  :class="[
+                    'media-tag full-width',
+                    media.paragraph ? 'bg-accent-200' : 'bg-accent-400',
+                  ]"
                   :clickable="false"
                   :ripple="false"
-                  class="media-tag bg-accent-200 full-width"
+                  :text-color="media.song ? 'white' : undefined"
                 >
                   <q-icon
                     :name="
-                      media.paragraph !== 9999
-                        ? 'mmm-paragraph'
-                        : 'mmm-footnote'
+                      media.paragraph
+                        ? media.paragraph !== 9999
+                          ? 'mmm-paragraph'
+                          : 'mmm-footnote'
+                        : 'mmm-music-note'
                     "
                     class="q-mr-xs"
                   />
                   {{
-                    media.paragraph !== 9999 ? media.paragraph : $t('footnote')
+                    media.paragraph
+                      ? media.paragraph !== 9999
+                        ? media.paragraph
+                        : $t('footnote')
+                      : media.song?.toString()
                   }}
-                </q-chip>
-              </div>
-              <div
-                v-else-if="media.song && media.song !== 'false'"
-                :class="{
-                  'q-pl-md': $q.screen.gt.xs,
-                  'q-pr-none': $q.screen.gt.xs,
-                  'col-shrink': $q.screen.gt.xs,
-                  'col-12': !$q.screen.gt.xs,
-                  'q-px-md': !$q.screen.gt.xs,
-                }"
-                side
-              >
-                <q-chip
-                  :clickable="false"
-                  :ripple="false"
-                  class="media-tag bg-accent-400 full-width"
-                  text-color="white"
-                >
-                  <q-icon class="q-mr-xs" name="mmm-music-note" />
-                  {{ media.song?.toString() }}
                 </q-chip>
               </div>
               <div class="q-px-md col">
@@ -437,6 +420,17 @@
               <q-item-label caption>{{ $t('rename-explain') }}</q-item-label>
             </q-item-section>
           </q-item>
+          <q-item v-close-popup clickable @click="mediaEditTagDialog = true">
+            <q-item-section avatar>
+              <q-icon name="mmm-tag" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ $t('change-tag') }}</q-item-label>
+              <q-item-label caption>{{
+                $t('change-tag-explain')
+              }}</q-item-label>
+            </q-item-section>
+          </q-item>
           <q-item
             v-if="media.isVideo || media.isAudio"
             clickable
@@ -458,16 +452,6 @@
               }}</q-item-label>
             </q-item-section>
           </q-item>
-          <!-- <q-btn
-                    v-if="
-                      media.isAdditional && mediaPlayingUrl !== media.fileUrl
-                    "
-                    color="negative"
-                    flat
-                    icon="mmm-delete"
-                    round
-                    @click="mediaToDelete = media.uniqueId"
-                  /> -->
           <q-item
             v-if="
               media.isAdditional &&
@@ -505,6 +489,31 @@
           @click="resetMediaTitle()"
         />
         <q-btn v-close-popup :label="$t('save')" flat />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+  <q-dialog v-model="mediaEditTagDialog">
+    <q-card class="modal-confirm">
+      <q-card-section class="items-center">
+        <q-option-group
+          v-model="tag.type"
+          :options="tagTypes"
+          color="primary"
+          inline
+          name="tagType"
+          @update:model-value="emit('update:tag', tag)"
+        />
+        <q-input
+          v-model="tag.value"
+          :disable="tag.type === ''"
+          dense
+          focused
+          outlined
+          @update:model-value="emit('update:tag', tag)"
+        />
+      </q-card-section>
+      <q-card-actions align="right" class="text-primary">
+        <q-btn v-close-popup :label="$t('dismiss')" flat />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -579,7 +588,7 @@ import {
   watchImmediate,
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { debounce, type QBtn, type QImg } from 'quasar';
+import { debounce, type QBtn, type QImg, useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
 import {
@@ -593,6 +602,7 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { useObsStateStore } from 'src/stores/obs-state';
 import { computed, onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
 const {
@@ -633,10 +643,42 @@ const props = defineProps<{
   playState: string;
 }>();
 
-const emit = defineEmits(['update:hidden', 'update:repeat']);
+const emit = defineEmits(['update:hidden', 'update:repeat', 'update:tag']);
 
 const mediaEditTitleDialog = ref(false);
 const mediaTitle = ref('');
+
+const mediaEditTagDialog = ref(false);
+const { t } = useI18n();
+const tag = ref({
+  type: props.media.song ? 'song' : props.media.paragraph ? 'paragraph' : '',
+  value: (props.media.song || props.media.paragraph || '') as string,
+});
+const tagTypes = [
+  {
+    label: t('none'),
+    value: '',
+  },
+  {
+    label: t('song'),
+    value: 'song',
+  },
+  {
+    label: t('paragraph'),
+    value: 'paragraph',
+  },
+];
+
+const $q = useQuasar();
+const mediaTagClasses = computed(() => {
+  return {
+    'col-12': !$q.screen.gt.xs,
+    'col-shrink': $q.screen.gt.xs,
+    'q-pl-md': $q.screen.gt.xs,
+    'q-pr-none': $q.screen.gt.xs,
+    'q-px-md': !$q.screen.gt.xs,
+  };
+});
 
 const resetMediaTitle = () => {
   if (props?.media) {
