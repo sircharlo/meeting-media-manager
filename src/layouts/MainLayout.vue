@@ -318,18 +318,18 @@ const updateWatchFolderRef = async ({
       watchFolderMedia.value[day] = [];
     } else if (event === 'add') {
       watchFolderMedia.value[day] ??= [];
-      const watchedItemMap = await watchedItemMapper(day, changedPath);
-      if (watchedItemMap) {
-        watchFolderMedia.value[day].push(watchedItemMap);
-
-        watchFolderMedia.value[day].sort((a, b) =>
-          sorter.compare(a.title, b.title),
-        );
-
-        if (jwStore.mediaSort[currentCongregation.value]?.[day]?.length) {
-          jwStore.mediaSort[currentCongregation.value]?.[day]?.push(
-            watchedItemMap?.uniqueId,
+      const watchedItemMapItems = await watchedItemMapper(day, changedPath);
+      if (watchedItemMapItems?.length) {
+        for (const watchedItemMap of watchedItemMapItems) {
+          watchFolderMedia.value[day].push(watchedItemMap);
+          watchFolderMedia.value[day].sort((a, b) =>
+            sorter.compare(a.title, b.title),
           );
+          if (jwStore.mediaSort[currentCongregation.value]?.[day]?.length) {
+            jwStore.mediaSort[currentCongregation.value]?.[day]?.push(
+              watchedItemMap?.uniqueId,
+            );
+          }
         }
       }
     } else if (event === 'unlink') {
