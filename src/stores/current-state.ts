@@ -62,11 +62,12 @@ const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
 
 export const useCurrentStateStore = defineStore('current-state', {
   actions: {
-    async getDatedAdditionalMediaDirectory() {
+    async getDatedAdditionalMediaDirectory(destDate?: string) {
       try {
-        if (!this.selectedDate) return '';
+        if (!destDate) destDate = this.selectedDate;
+        if (!destDate) return '';
         const additionalMediaPath = await getAdditionalMediaPath();
-        const dateString = formatDate(new Date(this.selectedDate), 'YYYYMMDD');
+        const dateString = formatDate(new Date(destDate), 'YYYYMMDD');
         const datedAdditionalMediaDirectory = path.join(
           additionalMediaPath,
           this.currentCongregation,

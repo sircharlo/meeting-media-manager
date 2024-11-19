@@ -47,8 +47,10 @@ import {
   convertImageIfNeeded,
   decompressJwpub,
   findDb,
+  getMediaFromJwPlaylist,
   isAudio,
   isImage,
+  isJwPlaylist,
   isSong,
   isVideo,
 } from 'src/helpers/mediaPlayback';
@@ -810,12 +812,16 @@ const dynamicMediaMapper = async (
 const watchedItemMapper: (
   parentDate: string,
   watchedItemPath: string,
-) => Promise<DynamicMediaObject | undefined> = async (
+) => Promise<DynamicMediaObject[] | undefined> = async (
   parentDate,
   watchedItemPath,
 ) => {
   try {
+    const currentStateStore = useCurrentStateStore();
+    const jwStore = useJwStore();
     if (!parentDate || !watchedItemPath) return undefined;
+
+    const dateString = parentDate.replace(/-/g, '');
 
     const fileUrl = getFileUrl(watchedItemPath);
 
@@ -823,7 +829,33 @@ const watchedItemMapper: (
     const audio = isAudio(watchedItemPath);
     const image = isImage(watchedItemPath);
 
-    if (!(video || audio || image)) return undefined;
+    if (!(video || audio || image)) {
+      if (isJwPlaylist(watchedItemPath)) {
+        const additionalMedia = await getMediaFromJwPlaylist(
+          watchedItemPath,
+          dateFromString(parentDate),
+          await currentStateStore.getDatedAdditionalMediaDirectory(dateString),
+        ).catch((error) => {
+          throw error;
+        });
+        additionalMedia
+          .filter(
+            (m) =>
+              m.customDuration &&
+              (m.customDuration.max || m.customDuration.min),
+          )
+          .forEach((m) => {
+            const { max, min } = m.customDuration ?? { max: 0, min: 0 };
+            const congregation = (jwStore.customDurations[
+              currentStateStore.currentCongregation
+            ] ??= {});
+            const dateDurations = (congregation[dateString] ??= {});
+            dateDurations[m.uniqueId] = { max, min };
+          });
+        return additionalMedia;
+      }
+      return undefined;
+    }
 
     const duration =
       (video || audio) && (await fs.exists(watchedItemPath))
@@ -834,8 +866,6 @@ const watchedItemMapper: (
       formatDate(parentDate, 'YYYYMMDD') + '-' + fileUrl,
     );
 
-    const jwStore = useJwStore();
-    const currentStateStore = useCurrentStateStore();
     const section =
       jwStore.watchedMediaSections?.[currentStateStore.currentCongregation]?.[
         parentDate
@@ -843,19 +873,21 @@ const watchedItemMapper: (
 
     const thumbnailUrl = await getThumbnailUrl(watchedItemPath);
 
-    return {
-      duration,
-      fileUrl,
-      isAudio: audio,
-      isImage: image,
-      isVideo: video,
-      section,
-      sectionOriginal: 'additional', // to enable restoring the original section after custom sorting
-      thumbnailUrl,
-      title: path.basename(watchedItemPath),
-      uniqueId,
-      watched: true,
-    };
+    return [
+      {
+        duration,
+        fileUrl,
+        isAudio: audio,
+        isImage: image,
+        isVideo: video,
+        section,
+        sectionOriginal: 'additional', // to enable restoring the original section after custom sorting
+        thumbnailUrl,
+        title: path.basename(watchedItemPath),
+        uniqueId,
+        watched: true,
+      },
+    ];
   } catch (e) {
     errorCatcher(e);
     return undefined;
