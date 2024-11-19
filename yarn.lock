@@ -6628,16 +6628,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-perfectionist@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "eslint-plugin-perfectionist@npm:4.0.1"
+"eslint-plugin-perfectionist@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "eslint-plugin-perfectionist@npm:4.0.2"
   dependencies:
     "@typescript-eslint/types": "npm:^8.15.0"
     "@typescript-eslint/utils": "npm:^8.15.0"
     natural-orderby: "npm:^5.0.0"
   peerDependencies:
     eslint: ">=8.0.0"
-  checksum: 10c0/9b2b0ebf08ad52beae4605c25de09246a8386a9550b0171b58ee71d2a3f3fd92f65a67ec6250faf87249a92dd21eef5c3c4c378cf5185bf7702bf93bd32c3234
+  checksum: 10c0/719704432877e3831d713176d3dd28a8d042d3d9fea9255f3495d8208f690c481dd867e5c1a91bcec451761b15cff804c4b243c37a3b1e676b4447ca71fced08
   languageName: node
   linkType: hard
 
@@ -9512,7 +9512,7 @@ __metadata:
     electron-updater: "npm:^6.3.9"
     eslint: "npm:^8.57.1"
     eslint-config-prettier: "npm:^9.1.0"
-    eslint-plugin-perfectionist: "npm:^4.0.1"
+    eslint-plugin-perfectionist: "npm:^4.0.2"
     eslint-plugin-vue: "npm:^9.31.0"
     fs-extra: "npm:^11.2.0"
     heic-convert: "npm:^2.1.0"
