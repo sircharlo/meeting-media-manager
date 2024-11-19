@@ -31,7 +31,7 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@formkit/drag-and-drop": "^0.1.6",
+    "@formkit/drag-and-drop": "^0.2.5",
     "@numairawan/video-duration": "^1.0.0",
     "@panzoom/panzoom": "^4.5.1",
     "@quasar/extras": "^1.16.13",
