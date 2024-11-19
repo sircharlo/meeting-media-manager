@@ -126,7 +126,7 @@ Selleks kasutage koguduse nime lahtri kõrval olevat nuppu **Koguduse otsing** j
 
 Kui õige kogudus on leitud ja valitud, täidab M³ eelnevalt kogu olemasoleva teabe, nagu teie koguduse **nimi**, **koosolekute keel** ja **koosolekute päevad ja kellaajad**.
 
-:::info Note
+:::info Märkus
 
 See otsing kasutab Jehoova tunnistajate ametliku veebisaidi avalikult kättesaadavaid andmeid.
 
@@ -138,31 +138,31 @@ Kui automaatne otsing ei leia teie kogudust, võite muidugi vajaliku teabe käsi
 
 ### Laulude videote vahemällu salvestamine {#caching-videos-from-the-songbook}
 
-You will also be given the option of **caching all videos from the songbook**. This option pre-downloads all the songbook videos, reducing the time it takes to fetch media for meetings in the future.
+Sulle antakse ka võimalus **salvestada kõik laulude videod**. See valik laeb eelnevalt alla kõik laulude videod, mis vähendab aega, mis kulub meediakanalite kättesaamiseks koosolekute jaoks tulevikus.
 
-- **Pros:** Meeting media will be available much faster.
-- **Cons:** The size of the media cache will increase significantly, by approximately 5GB.
-
-:::tip Nõuanne
-
-If your Kingdom Hall has sufficient storage space, it’s recommended to **enable** this option for efficiency and perceived performance.
-
-:::
-
-### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
-
-If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Zoom, M³ can automatically integrate with that program. During setup, you can configure the integration with OBS Studio by entering the following:
-
-- **Port:** The port number used to connect to the OBS Studio Websocket plugin.
-- **Password:** The password used to connect to the OBS Studio Websocket plugin.
-- **Scenes:** The OBS scenes that will be used during media presentations. You'll need one scene that captures the media window or screen, and one that shows the stage.
+- **Plussid:** Koosolekumeedia on palju kiiremini kättesaadav.
+- **Miinused:** Meedia vahemälu suurus suureneb märkimisväärselt, umbes 5 Gb võrra.
 
 :::tip Nõuanne
 
-If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
+Kui teie kuningriigi saalis on piisavalt salvestusruumi, on soovitatav **lülitada** see valik tõhususe ja tajutava jõudluse huvides.
 
 :::
 
-## 3. Enjoy using M³ {#enjoy-using-m3}
+### OBS Studio seadistamine (valikuline) {#obs-studio-integration-configuration}
 
-Once the setup wizard is complete, M³ is ready to help manage and present media for congregation meetings. Enjoy using the app! :tada:
+Kui teie kuningriigisaal kasutab **OBS Studio** hübriidkoosolekute edastamiseks Zoomi kaudu, saab M³ selle programmiga automaatselt teha koostööd. Seadistamise ajal saate seadistada koostöö OBS Studio'ga, sisestades järgmised andmed:
+
+- **Port:** Pordi number, mida kasutatakse OBS Studio Websocket pluginaga ühenduse loomiseks.
+- **Parool:** Parool, mida kasutatakse OBS Studio Websocket pluginaga ühendamiseks.
+- **Stseenid:** OBSi stseenid, mida kasutatakse meediaesitluste ajal. Sul on vaja ühte stseeni, mis jäädvustab meediaakna või ekraani, ja ühte, mis näitab lava.
+
+:::tip Nõuanne
+
+Kui teie kogudus korraldab regulaarselt hübriidkoosolekuid, on **vägagi** soovitatav lubada koostöö OBS Studio'ga.
+
+:::
+
+## 3. Naudi M³ kasutamist {#enjoy-using-m3}
+
+Kui seadistamisviisard on lõpule viidud, on M³ valmis aitama hallata ja esitada koguduse koosolekute meediat. Naudi rakenduse kasutamist! :tada:
