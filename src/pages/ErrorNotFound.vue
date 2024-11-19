@@ -10,9 +10,9 @@
       </div>
 
       <q-btn
-        :label="$t('go-home')"
         class="q-mt-xl"
         color="white"
+        :label="$t('go-home')"
         no-caps
         text-color="blue"
         to="/"

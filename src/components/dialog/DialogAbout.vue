@@ -21,9 +21,9 @@
             >
               <q-toggle
                 v-model="updatesEnabled"
-                :label="$t('auto-updates')"
                 checked-icon="mmm-check"
                 dense
+                :label="$t('auto-updates')"
                 left-label
                 unchecked-icon="mmm-clear"
               />

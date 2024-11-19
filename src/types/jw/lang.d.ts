@@ -1,22 +1,3 @@
-export interface JwLanguageResult {
-  languages: JwLanguage[];
-  localizedCount: string;
-  status: number;
-}
-
-export interface JwLanguage {
-  altSpellings: string[];
-  direction: 'ltr' | 'rtl';
-  hasWebContent: boolean;
-  isCounted: boolean;
-  isSignLanguage: boolean;
-  langcode: JwLangCode;
-  name: string;
-  script: string;
-  symbol: JwLangSymbol;
-  vernacularName: string;
-}
-
 export type JwLangCode =
   | 'A'
   | 'AA'
@@ -2301,3 +2282,22 @@ export type JwLangSymbol =
   | 'zpr'
   | 'ztp'
   | 'zu';
+
+export interface JwLanguage {
+  altSpellings: string[];
+  direction: 'ltr' | 'rtl';
+  hasWebContent: boolean;
+  isCounted: boolean;
+  isSignLanguage: boolean;
+  langcode: JwLangCode;
+  name: string;
+  script: string;
+  symbol: JwLangSymbol;
+  vernacularName: string;
+}
+
+export interface JwLanguageResult {
+  languages: JwLanguage[];
+  localizedCount: string;
+  status: number;
+}

@@ -107,9 +107,6 @@ module.exports = configure(function (ctx) {
         },
         mac: {
           extendInfo: {
-            //'com.apple.security.cs.allow-jit': true,
-            //'com.apple.security.cs.allow-unsigned-executable-memory': true,
-            //'com.apple.security.cs.disable-library-validation': true,
             'com.apple.security.device.audio-input': true,
             'com.apple.security.device.camera': true,
             'com.apple.security.device.microphone': true,
@@ -118,19 +115,23 @@ module.exports = configure(function (ctx) {
             NSMicrophoneUsageDescription:
               "Microphone access is required in order to use the website mirroring feature, as screen recording is treated as camera and microphone access. Please note that your device's microphone will never be accessed or used in any way by this app.",
           },
-          //hardenedRuntime: false,
           icon: 'icons/icon.icns',
           minimumSystemVersion: '10.15',
           publish: ['github'],
           target: { target: 'default' },
         },
         nsis: { oneClick: false },
+        portable: {
+          // eslint-disable-next-line no-template-curly-in-string
+          artifactName: 'meeting-media-manager-${version}-portable.${ext}',
+        },
         productName: 'Meeting Media Manager',
         win: {
           icon: 'icons/icon.ico',
           publish: ['github'],
           target: [
             { arch: ctx.debug ? undefined : ['x64', 'ia32'], target: 'nsis' },
+            'portable',
           ],
         },
       },

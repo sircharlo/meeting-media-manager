@@ -1,10 +1,10 @@
 <template>
   <q-drawer
     v-model="drawer"
-    :breakpoint="5"
-    :mini="miniState"
     bordered
+    :breakpoint="5"
     class="column justify-between no-wrap bg-secondary-contrast text-weight-medium text-dark-grey"
+    :mini="miniState"
   >
     <q-item
       v-if="$q.screen.gt.xs"
@@ -14,8 +14,8 @@
     >
       <q-tooltip
         v-if="miniState"
-        :delay="1000"
         anchor="center right"
+        :delay="1000"
         self="center left"
       >
         {{ $t('expand-sidebar') }}
@@ -28,16 +28,16 @@
     <q-item
       v-ripple
       :class="route.path.startsWith('/media-calendar') ? navActiveClass : ''"
+      clickable
       :disable="!currentSettings || invalidSettings()"
       :disabled="mediaPlaying || undefined"
       :to="mediaPlaying ? undefined : { path: '/media-calendar' }"
-      clickable
       @click="stopPlayingMediaFirst()"
     >
       <q-tooltip
         v-if="miniState"
-        :delay="1000"
         anchor="center right"
+        :delay="1000"
         self="center left"
       >
         {{
@@ -54,16 +54,16 @@
     <q-item
       v-ripple
       :class="route.path.startsWith('/present-website') ? navActiveClass : ''"
+      clickable
       :disable="!currentSettings || invalidSettings()"
       :disabled="mediaPlaying || undefined"
       :to="mediaPlaying ? undefined : { path: '/present-website' }"
-      clickable
       @click="stopPlayingMediaFirst()"
     >
       <q-tooltip
         v-if="miniState && !mediaPlaying"
-        :delay="1000"
         anchor="center right"
+        :delay="1000"
         self="center left"
       >
         {{ $t('titles.presentWebsite') }}
@@ -78,15 +78,15 @@
       :class="
         route.path.startsWith('/congregation-selector') ? navActiveClass : ''
       "
+      clickable
       :disabled="mediaPlaying || undefined"
       :to="mediaPlaying ? undefined : { path: '/congregation-selector' }"
-      clickable
       @click="stopPlayingMediaFirst()"
     >
       <q-tooltip
         v-if="miniState && !mediaPlaying"
-        :delay="1000"
         anchor="center right"
+        :delay="1000"
         self="center left"
       >
         {{ $t('titles.profileSelection') }}
@@ -102,16 +102,16 @@
     <q-item
       v-ripple
       :class="route.path.startsWith('/settings') ? navActiveClass : ''"
+      clickable
       :disable="!currentSettings || route.fullPath.includes('wizard')"
       :disabled="mediaPlaying || undefined"
       :to="mediaPlaying ? undefined : { path: '/settings' }"
-      clickable
       @click="stopPlayingMediaFirst()"
     >
       <q-tooltip
         v-if="miniState && !mediaPlaying"
-        :delay="1000"
         anchor="center right"
+        :delay="1000"
         self="center left"
       >
         {{ $t('titles.settings') }}
@@ -134,11 +134,11 @@ import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { computed, ref } from 'vue';
-import { useRoute } from 'vue-router';
 // Stores
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useRoute } from 'vue-router';
 
 const currentState = useCurrentStateStore();
 const { invalidSettings } = currentState;

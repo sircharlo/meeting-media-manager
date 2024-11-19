@@ -1,9 +1,9 @@
 <template>
   <q-btn
-    :no-caps="!!model"
     color="primary"
     hide-bottom-space
     icon="mmm-folder-multiple-image"
+    :no-caps="!!model"
     outline
     style="max-width: 240px"
     @click="showFolderPicker"

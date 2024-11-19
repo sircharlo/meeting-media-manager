@@ -11,6 +11,7 @@ import {
   type MenuItemConstructorOptions,
   shell,
 } from 'electron';
+import { join } from 'upath';
 
 import { PLATFORM } from './constants';
 import { cancelAllDownloads } from './main/downloads';
@@ -24,6 +25,17 @@ import {
   mainWindow,
 } from './main/window/window-main';
 import { errorCatcher } from './utils';
+
+if (process.env.PORTABLE_EXECUTABLE_DIR) {
+  app.setPath('appData', process.env.PORTABLE_EXECUTABLE_DIR);
+  app.setPath(
+    'userData',
+    join(
+      process.env.PORTABLE_EXECUTABLE_DIR,
+      'Meeting Media Manager - User Data',
+    ),
+  );
+}
 
 initSentry({
   debug: true,

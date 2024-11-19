@@ -11,23 +11,23 @@
       <q-icon :name="`mmm-${announcement.type}`" />
     </template>
     <template #action>
-      <q-btn :label="t('dismiss')" flat @click="dismiss(announcement.id)" />
+      <q-btn flat :label="t('dismiss')" @click="dismiss(announcement.id)" />
       <q-btn
         v-if="announcement.actions?.includes('docs')"
-        :label="t('user-guide')"
         flat
+        :label="t('user-guide')"
         @click="openExternal('docs')"
       />
       <q-btn
         v-if="announcement.actions?.includes('repo')"
-        :label="t('github-repo')"
         flat
+        :label="t('github-repo')"
         @click="openExternal('repo')"
       />
       <q-btn
         v-if="announcement.actions?.includes('update')"
-        :label="t('update')"
         flat
+        :label="t('update')"
         @click="openExternal('latestRelease')"
       />
     </template>

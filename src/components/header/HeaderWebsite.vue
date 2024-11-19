@@ -44,8 +44,8 @@
   </template>
   <q-btn
     v-else
-    :disable="mediaPlaying"
     color="white-transparent"
+    :disable="mediaPlaying"
     unelevated
     @click="
       openWebsiteWindow(locale);

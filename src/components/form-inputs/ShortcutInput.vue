@@ -8,9 +8,9 @@
         <div :class="'col ' + (index > 0 ? 'q-ml-sm' : '')">
           <q-btn
             :key="keyboardKey"
-            :label="keyboardKey"
             class="full-width text-smaller"
             color="primary"
+            :label="keyboardKey"
             unelevated
           />
         </div>
@@ -18,9 +18,9 @@
     </template>
     <q-btn
       v-else
-      :label="$t('enter-key-combination')"
       class="full-width col-12 text-smaller"
       color="primary"
+      :label="$t('enter-key-combination')"
       outline
       @click="shortcutPicker = true"
     />
@@ -57,12 +57,12 @@
       <q-card-actions align="right" class="text-primary">
         <q-btn
           v-close-popup
-          :label="$t('clear')"
           color="negative"
           flat
+          :label="$t('clear')"
           @click="localValue = ''"
         />
-        <q-btn v-close-popup :label="$t('confirm')" flat />
+        <q-btn v-close-popup flat :label="$t('confirm')" />
       </q-card-actions>
     </q-card>
   </q-dialog>

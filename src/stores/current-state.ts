@@ -21,6 +21,12 @@ import { useJwStore } from 'src/stores/jw';
 const { formatDate, getDateDiff } = date;
 const { fs, path } = window.electronApi;
 
+interface Songbook {
+  fileformat: 'MP3' | 'MP4';
+  pub: 'sjj' | 'sjjm';
+  signLanguage: boolean;
+}
+
 interface Store {
   currentCongregation: string;
   currentSongRemainingTime: string;
@@ -49,12 +55,6 @@ interface Store {
   watchFolderMedia: Record<string, DynamicMediaObject[]>;
 }
 
-interface Songbook {
-  fileformat: 'MP3' | 'MP4';
-  pub: 'sjj' | 'sjjm';
-  signLanguage: boolean;
-}
-
 const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
   keyof SettingsItems,
   SettingsItem,
@@ -62,11 +62,12 @@ const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
 
 export const useCurrentStateStore = defineStore('current-state', {
   actions: {
-    async getDatedAdditionalMediaDirectory() {
+    async getDatedAdditionalMediaDirectory(destDate?: string) {
       try {
-        if (!this.selectedDate) return '';
+        if (!destDate) destDate = this.selectedDate;
+        if (!destDate) return '';
         const additionalMediaPath = await getAdditionalMediaPath();
-        const dateString = formatDate(new Date(this.selectedDate), 'YYYYMMDD');
+        const dateString = formatDate(new Date(destDate), 'YYYYMMDD');
         const datedAdditionalMediaDirectory = path.join(
           additionalMediaPath,
           this.currentCongregation,

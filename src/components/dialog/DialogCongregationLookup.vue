@@ -24,8 +24,8 @@
       <div class="row">
         <q-scroll-area
           :bar-style="barStyle"
-          :thumb-style="thumbStyle"
           style="height: 25vh; width: -webkit-fill-available"
+          :thumb-style="thumbStyle"
         >
           <q-list class="full-width q-px-md" padding separator>
             <q-item v-if="!results?.length">
