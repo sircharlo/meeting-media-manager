@@ -222,17 +222,39 @@
                   {{ mediaTitle }}
                 </div>
               </div>
-              <div
-                v-if="media.isAdditional && mediaPlayingUrl !== media.fileUrl"
-              >
-                <q-btn
-                  class="q-mr-md"
-                  color="negative"
-                  flat
-                  icon="mmm-delete"
-                  rounded
-                  @click="mediaToDelete = media.uniqueId"
-                />
+              <div class="col-shrink">
+                <div class="row q-gutter-sm items-center q-mr-md">
+                  <q-icon
+                    v-if="media.repeat"
+                    color="warning"
+                    name="mmm-repeat"
+                    size="sm"
+                  >
+                    <q-tooltip :delay="500">{{
+                      media.repeat ? $t('repeat') : $t('repeat-off')
+                    }}</q-tooltip>
+                  </q-icon>
+                  <q-icon
+                    v-if="media.watched"
+                    color="accent-300"
+                    name="mmm-watched-media"
+                    size="sm"
+                  >
+                    <q-tooltip :delay="500">{{
+                      $t('watched-media-item-explain')
+                    }}</q-tooltip>
+                  </q-icon>
+                  <q-icon
+                    v-else-if="media.isAdditional"
+                    color="accent-300"
+                    name="mmm-extra-media"
+                    size="sm"
+                  >
+                    <q-tooltip :delay="1000">{{
+                      $t('extra-media-item-explain')
+                    }}</q-tooltip>
+                  </q-icon>
+                </div>
               </div>
             </div>
             <transition
@@ -335,35 +357,6 @@
             <div class="col-shrink items-center justify-center flex">
               <q-btn
                 v-if="
-                  currentSettings?.disableMediaFetching &&
-                  media.isVideo &&
-                  !customDurationIsSet
-                "
-                ref="repeatButton"
-                :color="
-                  mediaRepeat === media.uniqueId ? 'primary' : 'accent-400'
-                "
-                :flat="mediaRepeat !== media.uniqueId"
-                :icon="
-                  mediaRepeat === media.uniqueId
-                    ? 'mmm-repeat'
-                    : 'mmm-repeat-off'
-                "
-                :outline="mediaRepeat === media.uniqueId"
-                class="q-mx-sm"
-                round
-                size="sm"
-                @click="
-                  mediaRepeat =
-                    mediaRepeat === media.uniqueId ? '' : media.uniqueId
-                "
-              >
-                <q-tooltip :delay="1000">{{
-                  mediaRepeat ? $t('repeat') : $t('repeat-off')
-                }}</q-tooltip>
-              </q-btn>
-              <q-btn
-                v-if="
                   isImage(mediaPlayingUrl) && obsConnectionState === 'connected'
                 "
                 :color="currentSceneType === 'media' ? 'negative' : 'primary'"
@@ -425,6 +418,9 @@
         <q-list>
           <q-item-label header>{{ media.title }}</q-item-label>
           <q-item v-close-popup clickable @click="emit('update:hidden', true)">
+            <q-item-section avatar>
+              <q-icon name="mmm-file-hidden" />
+            </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t('hide-from-list') }}</q-item-label>
               <q-item-label caption>{{
@@ -433,9 +429,62 @@
             </q-item-section>
           </q-item>
           <q-item v-close-popup clickable @click="mediaEditTitleDialog = true">
+            <q-item-section avatar>
+              <q-icon name="mmm-edit" />
+            </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t('rename') }}</q-item-label>
               <q-item-label caption>{{ $t('rename-explain') }}</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            v-if="media.isVideo || media.isAudio"
+            clickable
+            @click="emit('update:repeat', !media.repeat)"
+          >
+            <q-item-section avatar>
+              <q-icon :name="media.repeat ? 'mmm-repeat-off' : 'mmm-repeat'" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{
+                media.repeat
+                  ? $t('stop-repeat-media-item')
+                  : $t('repeat-media-item')
+              }}</q-item-label>
+              <q-item-label caption>{{
+                media.repeat
+                  ? $t('repeat-media-item-explain')
+                  : $t('stop-repeat-media-item-explain')
+              }}</q-item-label>
+            </q-item-section>
+          </q-item>
+          <!-- <q-btn
+                    v-if="
+                      media.isAdditional && mediaPlayingUrl !== media.fileUrl
+                    "
+                    color="negative"
+                    flat
+                    icon="mmm-delete"
+                    round
+                    @click="mediaToDelete = media.uniqueId"
+                  /> -->
+          <q-item
+            v-if="
+              media.isAdditional &&
+              mediaPlayingUrl !== (media.fileUrl || media.streamUrl)
+            "
+            v-close-popup
+            clickable
+            @click="mediaToDelete = media.uniqueId"
+          >
+            <q-item-section avatar>
+              <q-icon color="negative" name="mmm-delete" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ $t('delete-media') }}</q-item-label>
+              <q-item-label caption>
+                {{ $t('delete-media-explain') }}</q-item-label
+              >
             </q-item-section>
           </q-item>
         </q-list>
@@ -524,7 +573,11 @@ import Panzoom, {
   type PanzoomObject,
   type PanzoomOptions,
 } from '@panzoom/panzoom';
-import { useBroadcastChannel, useEventListener } from '@vueuse/core';
+import {
+  useBroadcastChannel,
+  useEventListener,
+  watchImmediate,
+} from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { debounce, type QBtn, type QImg } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -544,14 +597,12 @@ import { computed, onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
 const currentState = useCurrentStateStore();
 const {
   currentCongregation,
-  currentSettings,
   mediaPlayingAction,
   mediaPlayingCurrentPosition,
   mediaPlayingPanzoom,
   mediaPlayingSubtitlesUrl,
   mediaPlayingUniqueId,
   mediaPlayingUrl,
-  mediaRepeat,
   selectedDate,
 } = storeToRefs(currentState);
 
@@ -582,7 +633,7 @@ const props = defineProps<{
   playState: string;
 }>();
 
-const emit = defineEmits(['update:hidden']);
+const emit = defineEmits(['update:hidden', 'update:repeat']);
 
 const mediaEditTitleDialog = ref(false);
 const mediaTitle = ref('');
@@ -665,6 +716,15 @@ const setMediaPlaying = async (
   mediaPlayingUniqueId.value = media.uniqueId;
   mediaPlayingSubtitlesUrl.value = media.subtitlesUrl ?? '';
 };
+
+watchImmediate(
+  () => [props.media.repeat, mediaPlayingUniqueId.value],
+  ([newMediaRepeat, newMediaPlayingUniqueId]) => {
+    if (newMediaPlayingUniqueId !== props.media.uniqueId) return;
+    const { post } = useBroadcastChannel<string, boolean>({ name: 'repeat' });
+    post(!!newMediaRepeat);
+  },
+);
 
 resetMediaTitle();
 

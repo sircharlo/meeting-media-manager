@@ -296,6 +296,7 @@ const getMediaFromJwPlaylist = async (
           MepsLanguageIndex: item.MepsLanguage,
           MimeType: item.MimeType,
           MultimediaId: 0,
+          Repeat: item.EndAction === 3,
           StartTime: StartTime ?? undefined,
           TargetParagraphNumberLabel: 0,
           ThumbnailFilePath: item.ThumbnailFilePath || '',
