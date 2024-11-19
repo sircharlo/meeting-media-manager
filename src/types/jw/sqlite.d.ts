@@ -85,6 +85,7 @@ export interface MultimediaItem {
   MultimediaId: number;
   Multimeps?: null | number;
   NextParagraphOrdinal?: number;
+  Repeat?: boolean;
   SizeConstraint?: null | number;
   StartTime?: number;
   StreamUrl?: string;
