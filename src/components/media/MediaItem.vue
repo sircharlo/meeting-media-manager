@@ -603,7 +603,6 @@ const {
   mediaPlayingSubtitlesUrl,
   mediaPlayingUniqueId,
   mediaPlayingUrl,
-  mediaRepeat,
   selectedDate,
 } = storeToRefs(currentState);
 
@@ -716,7 +715,6 @@ const setMediaPlaying = async (
     : (media.streamUrl ?? media.fileUrl);
   mediaPlayingUniqueId.value = media.uniqueId;
   mediaPlayingSubtitlesUrl.value = media.subtitlesUrl ?? '';
-  mediaRepeat.value = !!media.repeat;
 };
 
 watchImmediate(

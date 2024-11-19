@@ -4,7 +4,6 @@
     padding
     style="align-content: center; height: 100vh"
   >
-    {{ mediaRepeat }}
     <q-resize-observer debounce="50" @resize="onResize" />
     <transition
       appear
@@ -314,6 +313,31 @@ const { post: postMediaState } = useBroadcastChannel<'ended', 'ended'>({
   name: 'media-state',
 });
 
+const customMin = computed(() => {
+  return (
+    customDurations?.value?.[currentCongregation.value]?.[selectedDate.value]?.[
+      mediaUniqueId.value
+    ]?.min || 0
+  );
+});
+
+const customMax = computed(() => {
+  return customDurations?.value?.[currentCongregation.value]?.[
+    selectedDate.value
+  ]?.[mediaUniqueId.value]?.max;
+});
+
+const endOrLoop = () => {
+  if (!mediaRepeat.value) {
+    postMediaState('ended');
+  } else {
+    if (mediaElement.value) {
+      mediaElement.value.currentTime = customMin.value;
+      playMediaElement();
+    }
+  }
+};
+
 const playMedia = () => {
   try {
     if (!mediaElement.value) {
@@ -321,14 +345,7 @@ const playMedia = () => {
     }
 
     mediaElement.value.onended = () => {
-      if (!mediaRepeat.value) {
-        postMediaState('ended');
-      } else {
-        if (mediaElement.value) {
-          mediaElement.value.currentTime = 0;
-          playMediaElement();
-        }
-      }
+      endOrLoop();
     };
 
     mediaElement.value.onpause = () => {
@@ -344,23 +361,15 @@ const playMedia = () => {
             selectedDate.value
           ]?.[mediaUniqueId.value]
         ) {
-          const customStop =
-            customDurations?.value?.[currentCongregation.value]?.[
-              selectedDate.value
-            ]?.[mediaUniqueId.value]?.max;
-          if (customStop && currentTime >= customStop) {
-            postMediaState('ended');
+          if (customMax.value && currentTime >= customMax.value) {
+            endOrLoop();
           }
         }
       } catch (e) {
         errorCatcher(e);
       }
     };
-    const customStart =
-      customDurations?.value?.[currentCongregation.value]?.[
-        selectedDate.value
-      ]?.[mediaUniqueId.value]?.min ?? 0;
-    mediaElement.value.currentTime = customStart;
+    mediaElement.value.currentTime = customMin.value;
     playMediaElement();
   } catch (e) {
     errorCatcher(e);
