@@ -1,41 +1,41 @@
-# Frequently Asked Questions {#frequently-asked-questions}
+# Korduma kippuvad küsimused {#frequently-asked-questions}
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content? {#external-dependencies}
+## :earth_americas: Kas see rakendus kasutab väljaannete ja koosolekute meedia allalaadimiseks väliseid saite, allikaid või "kuraatoreid"? {#external-dependencies}
 
-**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
+\*\*Ei. See rakendus töötab sarnaselt JW Library rakendusele. Väljaanded ja meedia laetakse alla Jw. org ametlikult lehelt ja serveritest. Rakendus määrab automaatselt kindlaks, mida on vaja alla laadida ja millal varem alla laaditud sisu ei ole enam ajakohane ja tuleks uuesti alla laadida.
 
-:::info Note
+:::info Märkus
 
-The source code for this app is available for all to examine and verify what goes on under the hood.
+Selle rakenduse lähtekood on kõigile kättesaadav, et uurida ja kontrollida, mis toimub nö. kapoti all.
 
 :::
 
-## :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses? {#terms-of-use}
+## :thinking: Kas see rakendus rikub Jehoova tunnistajate ametliku veebisaidi kasutustingimusi? {#terms-of-use}
 
-**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
+**Ei.** Jehoova tunnistajate ametliku veebisaidi [kasutustingimused] (https://www.jw.org/finder?docid=1011511&prefer=content) tegelikult lubavad selgesõnaliselt sellist kasutamist, mida me teeme. Siin on väljavõte nendest mõtetest (tsiteeritult):
 
-> You may not:
+> Te ei tohi:
 >
-> Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)
+> Luua levitamise eesmärgil tarkvararakendusi, tööriistu või muid tehnilisi lahendusi, mis võimaldavad koguda, kaasa arvatud scraping ja harvesting, kopeerida, alla laadida või lahti pakkida andmeid, HTML-i, pilte või teksti sellelt saidilt. (Keeld **ei kehti** tasuta, mitteärilistel eesmärkidel loodud rakenduste kohta, mille eesmärk on võimaldada alla laadida elektroonilisi faile, näiteks EPUB-, PDF-, MP3- ja MP4-vormingus faile selle saidi avalikust osast.)
 
-## :radioactive: How do I report an issue? {#how-do-i-report-an-issue}
+## :radioactive: Kuidas teatada probleemist? {#how-do-i-report-an-issue}
 
-Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
+Palun [esitage probleem](https://github.com/sircharlo/meeting-media-manager/issues) ametlikus GitHubi keskkonnas.
 
-## :new: How can I request a new feature or enhancement? {#how-can-i-request-a-new-feature-or-enhancement}
+## :new: Kuidas ma saan taotleda uut funktsiooni või täiustust? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
+Palun [ava arutelu](https://github.com/sircharlo/meeting-media-manager/discussions) ametlikus GitHubi keskkonnas.
 
-## :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
+## :handshake: Kuidas ma saan anda oma panuse lähtekoodi? {#how-can-i-contribute-some-code}
 
-Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+Palun [vaata juhendmaterjali](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) ametlikus GitHubi keskkonnas.
 
-## :x: Can I make a donation to the project? {#can-i-make-a-donation-to-the-project}
+## :x: Kas ma saan teha projektile annetuse? {#can-i-make-a-donation-to-the-project}
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+Täname teid huvi eest projekti toetamise vastu! Seega, Matteuse 10:8 vaimus, annetusi **ei võeta vastu** ja ei võeta ka edaspidi. See rakendus on loodud armastusest ja vabast ajast. Palun naudi! :tada:
 
-:::tip :book: Matthew 10:8
+:::tip :book: Matteuse 10:8
 
-"You received free, give free."
+„Tasuta olete saanud, tasuta andke“
 
 :::

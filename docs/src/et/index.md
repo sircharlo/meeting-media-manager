@@ -1,37 +1,37 @@
 ---
 layout: home
 hero:
-  name: M³ documentation
-  text: Help to set up and use Meeting Media Manager
+  name: M³ dokumentatsioon
+  text: Abi Meeting Media Manageri seadistamisel ja kasutamisel
   image: /icon.png
   actions:
     - theme: brand
-      text: Install M³
+      text: Paigalda M³
       target: _blank
       link: https://sircharlo.github.io/meeting-media-manager/using-at-a-kingdom-hall#download-and-install
     - theme: alt
-      text: Using at a Kingdom Hall
+      text: Kuningriigisaalis kasutamiseks
       link: /et/using-at-a-kingdom-hall
     - theme: alt
-      text: About
+      text: Info
       link: /et/about
 features:
   - icon: 🚀
-    title: Automatic media downloads
-    details: Automatically downloads pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
+    title: Automaatne meedia allalaadimine
+    details: Laadib automaatselt alla pildid ja videod koguduse koosolekute jaoks mis tahes keeles, mis on saadaval Jehoova tunnistajate ametlikul veebisaidil.
   - icon: 🎦
-    title: Media presenting
-    details: Allows to easily share media during hybrid or in-person meetings.
+    title: Meedia esitamine
+    details: Võimaldab hõlpsasti jagada meediat hübriid- või kontaktkoosolekute ajal.
   - icon: 🎵
     title: Taustamuusika
-    details: Plays background music automatically. Stops playback before the meeting starts. Background music can be restarted in one click after the meeting.
+    details: Mängib automaatselt taustamuusikat. Peatab taasesituse enne koosoleku algust. Taustamuusika saab pärast koosolekut ühe klõpsuga taaskäivitada.
   - icon: 🖥️
-    title: External monitor support
-    details: Automatically detects and manages external monitors for smooth media presentations.
+    title: Toetab lisamonitore
+    details: Automaatselt tuvastab ja haldab lisamonitore sujuva meediaesituse jaoks.
   - icon: 🌐
-    title: Multiple languages
-    details: Download meeting media in hundreds of languages and use M³'s interface in any of the many available languages.
+    title: Mitmes keeles
+    details: Laadige koosolekute meediat sadades keeltes ja kasutage M³ kasutajaliidest ükskõik millises olemasolevatest keeltest.
   - icon: 🧩
-    title: OBS Studio Integration
-    details: Integrates with OBS Studio for enhanced media management and presenting capabilities.
+    title: Koostöö OBS Studio-ga
+    details: Teeb koostööd OBS Studio'ga, et täiustada meediakorraldust ja esitlusvõimalusi.
 ---
