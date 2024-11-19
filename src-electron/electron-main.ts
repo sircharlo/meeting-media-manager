@@ -30,7 +30,10 @@ if (process.env.PORTABLE_EXECUTABLE_DIR) {
   app.setPath('appData', process.env.PORTABLE_EXECUTABLE_DIR);
   app.setPath(
     'userData',
-    join(process.env.PORTABLE_EXECUTABLE_DIR, 'User Data'),
+    join(
+      process.env.PORTABLE_EXECUTABLE_DIR,
+      'Meeting Media Manager - User Data',
+    ),
   );
 }
 
