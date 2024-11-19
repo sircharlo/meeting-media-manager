@@ -94,7 +94,7 @@ Commits should be named according to the following pattern: `type(scope?): descr
 
 #### Pull Requests
 
-Pull Requests titles should be named according to the following pattern: `type(scope?): description` (e.g. `ci(build): fix build script` or `style: fix linting issues`).
+Pull Requests titles should be named according to the following pattern: `type(scope?): description` (e.g. `ci(build): improve build script` or `docs: add some documentation`).
 
 ### Code Style
 
