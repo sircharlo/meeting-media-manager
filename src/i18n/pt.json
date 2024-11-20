@@ -86,7 +86,7 @@
   "delete-media": "Excluir mídia",
   "delete-media-explain": "Excluir a mídia selecionada.",
   "disableMediaFetching": "Disable features for regular meetings and automatic media fetching",
-  "disableMediaFetching-explain": "This setting should remain disabled in almost all cases to ensure that regular meeting media is downloaded automatically. Enabling this setting will require all media to be added manually. This setting should only be enabled in profiles that will be used exclusively for special events such as theocratic schools, assemblies, or conventions.",
+  "disableMediaFetching-explain": "Essa configuração deve permanecer desativada na maioria dos casos para garantir que as mídias das reuniões congregacionais sejam baixadas automaticamente. Ao ativar essa opção, todas as mídias terão que ser adicionadas manualmente. Ela deve ser ativada apenas em perfis utilizados exclusivamente para eventos especiais, como escolas teocráticas, assembleias ou congressos.",
   "dismiss": "Ignorar",
   "display": "Tela",
   "does-your-kingdom-hall-use-a-program-called-obs-studio": "Vocês usam um programa chamado OBS Studio?",
