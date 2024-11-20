@@ -310,14 +310,7 @@ async function addFullFilePathToMultimediaItem(
           await getPublicationDirectory(publication),
           multimediaItem.FilePath,
         )
-      : ([publication.pub, publication.issue, publication.track].filter(Boolean)
-          .length
-          ? [publication.pub, publication.issue, publication.track]
-          : [publication.docid]
-        )
-          .concat([publication.langwritten, publication.fileformat])
-          .filter(Boolean)
-          .join('_');
+      : undefined;
     const fullLinkedPreviewFilePath = multimediaItem.LinkedPreviewFilePath
       ? path.join(
           await getPublicationDirectory(publication),
