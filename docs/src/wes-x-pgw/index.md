@@ -11,10 +11,10 @@ hero:
       link: https://sircharlo.github.io/meeting-media-manager/using-at-a-kingdom-hall#download-and-install
     - theme: alt
       text: Using at a Kingdom Hall
-      link: /wes-x-pgw/using-at-a-kingdom-hall
+      link: /using-at-a-kingdom-hall
     - theme: alt
       text: About
-      link: /wes-x-pgw/about
+      link: /about
 features:
   - icon: 🚀
     title: Automatic media downloads
