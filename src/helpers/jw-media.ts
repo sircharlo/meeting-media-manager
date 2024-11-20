@@ -84,8 +84,7 @@ const addJwpubDocumentMediaToFiles = async (
         publication,
       );
     }
-    console.log('multimediaItems', multimediaItems);
-    /*const errors =*/ await processMissingMediaInfo(multimediaItems);
+    await processMissingMediaInfo(multimediaItems);
     const dynamicMediaItems = currentStateStore.selectedDateObject
       ? await dynamicMediaMapper(
           multimediaItems,
@@ -94,26 +93,7 @@ const addJwpubDocumentMediaToFiles = async (
           section,
         )
       : [];
-    console.log('dynamicMediaItems', dynamicMediaItems);
     addToAdditionMediaMap(dynamicMediaItems, section);
-    // if (errors?.length) {
-    //   currentStateStore.missingMedia.push(
-    //     ...errors.filter(
-    //       (value, index, self) =>
-    //         index ===
-    //         self.findIndex(
-    //           (t) =>
-    //             t.docid === value.docid &&
-    //             t.fileformat === value.fileformat &&
-    //             t.issue === value.issue &&
-    //             t.langwritten === value.langwritten &&
-    //             t.pub === value.pub &&
-    //             t.track === value.track,
-    //         ),
-    //     ),
-    //   );
-    //   return errors;
-    // }
   } catch (e) {
     errorCatcher(e);
   }
@@ -338,7 +318,6 @@ async function addFullFilePathToMultimediaItem(
           .concat([publication.langwritten, publication.fileformat])
           .filter(Boolean)
           .join('_');
-    console.log('fullFilePath', fullFilePath);
     const fullLinkedPreviewFilePath = multimediaItem.LinkedPreviewFilePath
       ? path.join(
           await getPublicationDirectory(publication),
@@ -507,7 +486,6 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
     if (suppressZoomExists) {
       where += ' AND Multimedia.SuppressZoom <> 1';
     }
-    console.log('query', `${select} ${from} ${where} ${groupAndSort}`);
     const items = executeQuery<MultimediaItem>(
       source.db,
       `${select} ${from} ${where} ${groupAndSort}`,

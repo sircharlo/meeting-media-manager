@@ -26,18 +26,16 @@
           rounded
         >
           {{ $t('some-media-items-are-missing') }}
-          <q-list>
-            <q-item v-for="media in missingMedia" :key="media.fileUrl">
-              <q-item-section>
-                {{ media.fileUrl }}
-              </q-item-section>
-              <q-tooltip>
+          <ul>
+            <li v-for="media in missingMedia" :key="media.fileUrl">
+              {{ media.fileUrl }}
+              <!-- <q-tooltip>
                 <q-item-section side>
                   <pre class="text-white">{{ media }}</pre>
                 </q-item-section>
-              </q-tooltip>
-            </q-item>
-          </q-list>
+              </q-tooltip> -->
+            </li>
+          </ul>
           <template #avatar>
             <q-avatar class="bg-white text-warning" size="lg">
               <q-icon name="mmm-file-missing" size="sm" />
@@ -1229,7 +1227,7 @@ const playState = (id: string) => {
 };
 
 const copyToDatedAdditionalMedia = async (
-  files: string[],
+  filepathToCopy: string,
   section?: MediaSection,
 ) => {
   const datedAdditionalMediaDir = await getDatedAdditionalMediaDirectory();
@@ -1254,35 +1252,35 @@ const copyToDatedAdditionalMedia = async (
     }
     return filepath;
   };
-  for (const filepathToCopy of files) {
-    try {
-      if (!filepathToCopy || !(await fs.exists(filepathToCopy))) continue;
-      let datedAdditionalMediaPath = path.join(
-        datedAdditionalMediaDir,
-        path.basename(filepathToCopy),
-      );
-      datedAdditionalMediaPath = trimFilepathAsNeeded(datedAdditionalMediaPath);
-      const uniqueId = sanitizeId(
-        formatDate(selectedDate.value, 'YYYYMMDD') +
-          '-' +
-          getFileUrl(datedAdditionalMediaPath),
-      );
-      if (await fs.exists(datedAdditionalMediaPath)) {
-        if (filepathToCopy !== datedAdditionalMediaPath) {
-          await fs.remove(datedAdditionalMediaPath);
-          removeFromAdditionMediaMap(uniqueId);
-        }
+  try {
+    if (!filepathToCopy || !(await fs.exists(filepathToCopy))) return '';
+    let datedAdditionalMediaPath = path.join(
+      datedAdditionalMediaDir,
+      path.basename(filepathToCopy),
+    );
+    datedAdditionalMediaPath = trimFilepathAsNeeded(datedAdditionalMediaPath);
+    const uniqueId = sanitizeId(
+      formatDate(selectedDate.value, 'YYYYMMDD') +
+        '-' +
+        getFileUrl(datedAdditionalMediaPath),
+    );
+    if (await fs.exists(datedAdditionalMediaPath)) {
+      if (filepathToCopy !== datedAdditionalMediaPath) {
+        await fs.remove(datedAdditionalMediaPath);
+        removeFromAdditionMediaMap(uniqueId);
       }
-      if (filepathToCopy !== datedAdditionalMediaPath)
-        await fs.copy(filepathToCopy, datedAdditionalMediaPath);
-      await addToAdditionMediaMapFromPath(
-        datedAdditionalMediaPath,
-        section,
-        uniqueId,
-      );
-    } catch (error) {
-      errorCatcher(error);
     }
+    if (filepathToCopy !== datedAdditionalMediaPath)
+      await fs.copy(filepathToCopy, datedAdditionalMediaPath);
+    await addToAdditionMediaMapFromPath(
+      datedAdditionalMediaPath,
+      section,
+      uniqueId,
+    );
+    return datedAdditionalMediaPath;
+  } catch (error) {
+    errorCatcher(error);
+    return '';
   }
 };
 
@@ -1401,8 +1399,32 @@ const addToFiles = async (
         filepath = tempFilepath;
       }
       filepath = await convertImageIfNeeded(filepath);
-      if (isImage(filepath) || isVideo(filepath) || isAudio(filepath)) {
-        await copyToDatedAdditionalMedia([filepath], sectionToAddTo.value);
+      if (isImage(filepath)) {
+        await copyToDatedAdditionalMedia(filepath, sectionToAddTo.value);
+      } else if (isVideo(filepath) || isAudio(filepath)) {
+        const detectedPubMediaInfo = path
+          .parse(filepath)
+          .name.split('_')
+          .filter((item) => !/^r\d+P$/.test(item));
+        const normalizeArray = (arr: (number | string)[]) =>
+          arr.map((item) => {
+            if (Number.isFinite(item)) return item;
+            if (typeof item === 'string') return parseInt(item, 10).toString();
+            return item;
+          });
+        const matchingMissingItem = missingMedia.value.find((media) => {
+          return (
+            JSON.stringify(normalizeArray(media.fileUrl.split('_'))) ===
+            JSON.stringify(normalizeArray(detectedPubMediaInfo))
+          );
+        });
+        const destPath = await copyToDatedAdditionalMedia(
+          filepath,
+          sectionToAddTo.value,
+        );
+        if (matchingMissingItem)
+          matchingMissingItem.fileUrl =
+            window.electronApi.pathToFileURL(destPath);
       } else if (isPdf(filepath)) {
         const convertedImages = (
           await convertPdfToImages(filepath, await getTempDirectory())
