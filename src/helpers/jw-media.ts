@@ -435,7 +435,7 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
 
     // let select = 'SELECT Multimedia.DocumentId, Multimedia.MultimediaId, ';
     const select =
-      'SELECT Multimedia.*, DocumentParagraph.BeginPosition, LinkedMultimedia.FilePath AS LinkedPreviewFilePath';
+      'SELECT Multimedia.*, LinkedMultimedia.FilePath AS LinkedPreviewFilePath';
     let from = 'FROM Multimedia';
     if (mmTable === 'DocumentMultimedia') {
       from +=
