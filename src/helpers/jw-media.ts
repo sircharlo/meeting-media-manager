@@ -1270,9 +1270,15 @@ async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
         };
         try {
           if (!media.FilePath || !(await fs.pathExists(media.FilePath))) {
-            const { FilePath, StreamDuration, StreamThumbnailUrl, StreamUrl } =
-              await downloadMissingMedia(publicationFetcher);
+            const {
+              FilePath,
+              Label,
+              StreamDuration,
+              StreamThumbnailUrl,
+              StreamUrl,
+            } = await downloadMissingMedia(publicationFetcher);
             media.FilePath = FilePath ?? media.FilePath;
+            media.Label = Label || media.Label;
             media.StreamUrl = StreamUrl ?? media.StreamUrl;
             media.Duration = StreamDuration ?? media.Duration;
             media.ThumbnailUrl = StreamThumbnailUrl ?? media.ThumbnailUrl;
@@ -1477,6 +1483,7 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
     }
     return {
       FilePath: path.join(pubDir, path.basename(bestItem.file.url)),
+      Label: bestItem.title,
       StreamDuration: bestItem.duration,
       StreamThumbnailUrl: jwMediaInfo.thumbnail,
       StreamUrl: bestItem.file.url,
@@ -1617,6 +1624,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
     if (!publication.fileformat) return;
     if (!publicationInfo?.files) {
       const downloadId = [
+        publication.docid,
         publication.pub,
         publication.langwritten,
         publication.issue,
@@ -1723,6 +1731,7 @@ const downloadJwpub = async (
     publication.fileformat = 'JWPUB';
     const handleDownloadError = () => {
       const downloadId = [
+        publication.docid,
         publication.pub,
         publication.langwritten,
         publication.issue,
