@@ -440,16 +440,20 @@
               <q-icon :name="media.repeat ? 'mmm-repeat-off' : 'mmm-repeat'" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>{{
-                media.repeat
-                  ? $t('stop-repeat-media-item')
-                  : $t('repeat-media-item')
-              }}</q-item-label>
-              <q-item-label caption>{{
-                media.repeat
-                  ? $t('repeat-media-item-explain')
-                  : $t('stop-repeat-media-item-explain')
-              }}</q-item-label>
+              <q-item-label>
+                {{
+                  media.repeat
+                    ? $t('stop-repeat-media-item')
+                    : $t('repeat-media-item')
+                }}
+              </q-item-label>
+              <q-item-label caption>
+                {{
+                  media.repeat
+                    ? $t('stop-repeat-media-item-explain')
+                    : $t('repeat-media-item-explain')
+                }}
+              </q-item-label>
             </q-item-section>
           </q-item>
           <q-item
