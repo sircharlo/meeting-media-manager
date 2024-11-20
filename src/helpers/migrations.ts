@@ -1,7 +1,10 @@
+import type { LanguageValue } from 'src/constants/locales';
 import type { OldAppConfig, SettingsValues } from 'src/types';
 
 import { defaultSettings } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
+
+import { kebabToCamelCase } from './general';
 
 const { fs, path, readdir } = window.electronApi;
 const { readJSON } = fs;
@@ -74,9 +77,9 @@ const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       langFallback: oldPrefs.media?.langFallback || null,
       langSubtitles: oldPrefs.media?.langSubs || null,
       localAppLang:
-        (oldPrefs.app?.localAppLang?.includes('-')
-          ? oldPrefs.app?.localAppLang.split('-')[0]
-          : oldPrefs.app?.localAppLang) || 'en',
+        ((oldPrefs.app?.localAppLang?.includes('-')
+          ? kebabToCamelCase(oldPrefs.app?.localAppLang)
+          : oldPrefs.app?.localAppLang) as LanguageValue) || 'en',
       maxRes: oldPrefs.media?.maxRes || '720p',
       musicVolume: oldPrefs.meeting?.musicVolume || 100,
       mwDay: oldPrefs.meeting?.mwDay?.toString() || '',

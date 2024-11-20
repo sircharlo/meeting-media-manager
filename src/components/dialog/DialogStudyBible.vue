@@ -311,9 +311,7 @@ whenever(open, () => {
 });
 
 const getLocaleData = async () => {
-  const primaryLocale = jwStore.jwLanguages.list.find(
-    (lang) => lang.langcode === currentSettings.value?.lang,
-  )?.symbol;
+  const primaryLocale = currentState.currentLangSymbol;
 
   const fallbackLocale = jwStore.jwLanguages.list.find(
     (lang) => lang.langcode === currentSettings.value?.langFallback,

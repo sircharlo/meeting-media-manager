@@ -1,4 +1,5 @@
 import type { MessageSchema } from 'src/boot/i18n';
+import type { LanguageValue } from 'src/constants/locales';
 import type { RESOLUTIONS } from 'src/constants/settings';
 
 import type { JwLangCode } from './jw/lang';
@@ -123,7 +124,7 @@ export interface SettingsItem {
   depends?: (keyof SettingsValues)[] | keyof SettingsValues;
   group: SettingsGroupKey;
   icon?: string;
-  list?: string;
+  list?: SettingsItemListKey;
   max?: number;
   min?: number;
   options?: SettingsItemOption[];
@@ -135,6 +136,15 @@ export interface SettingsItem {
 }
 
 export type SettingsItemAction = 'obsConnect' | 'setBackgroundMusicVolume';
+
+export type SettingsItemListKey =
+  | 'appLanguages'
+  | 'darkModes'
+  | 'days'
+  | 'jwLanguages'
+  | 'obsAllScenes'
+  | 'obsScenes'
+  | 'resolutions';
 
 export type SettingsItemOption = 'coTuesdays' | 'meetingTime';
 export type SettingsItemRule = 'notEmpty' | 'portNumber' | 'regular';
@@ -176,7 +186,7 @@ export interface SettingsValues {
   lang: JwLangCode;
   langFallback: JwLangCode | null;
   langSubtitles: JwLangCode | null;
-  localAppLang: string;
+  localAppLang: LanguageValue;
   maxRes: MaxRes;
   musicVolume: number;
   mwDay: null | string;
