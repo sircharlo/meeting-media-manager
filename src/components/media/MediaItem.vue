@@ -240,7 +240,10 @@
                     }}</q-tooltip>
                   </q-icon>
                   <q-icon
-                    v-else-if="media.isAdditional"
+                    v-else-if="
+                      media.isAdditional &&
+                      !currentSettings?.disableMediaFetching
+                    "
                     color="accent-300"
                     name="mmm-extra-media"
                     size="sm"
@@ -630,6 +633,7 @@ import { useI18n } from 'vue-i18n';
 const currentState = useCurrentStateStore();
 const {
   currentCongregation,
+  currentSettings,
   mediaPlayingAction,
   mediaPlayingCurrentPosition,
   mediaPlayingPanzoom,

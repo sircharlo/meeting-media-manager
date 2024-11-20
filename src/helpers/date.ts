@@ -152,9 +152,10 @@ function isCoWeek(lookupDate: Date) {
 
 const isMwMeetingDay = (lookupDate: Date) => {
   try {
-    if (!lookupDate) return false;
-    lookupDate = dateFromString(lookupDate);
     const currentState = useCurrentStateStore();
+    if (!lookupDate || currentState.currentSettings?.disableMediaFetching)
+      return false;
+    lookupDate = dateFromString(lookupDate);
     const coWeek = isCoWeek(lookupDate);
     if (coWeek) {
       const coWeekTuesday = dateFromString(
@@ -172,9 +173,10 @@ const isMwMeetingDay = (lookupDate: Date) => {
 
 const isWeMeetingDay = (lookupDate: Date) => {
   try {
-    if (!lookupDate) return false;
-    lookupDate = dateFromString(lookupDate);
     const currentState = useCurrentStateStore();
+    if (!lookupDate || currentState.currentSettings?.disableMediaFetching)
+      return false;
+    lookupDate = dateFromString(lookupDate);
     return currentState.currentSettings?.weDay === getWeekDay(lookupDate);
   } catch (error) {
     errorCatcher(error);
