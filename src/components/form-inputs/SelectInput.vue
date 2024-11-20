@@ -1,31 +1,51 @@
 <template>
   <q-select
     v-model="model"
+    class="bg-accent-100"
     :clearable="!rules || !rules.includes('notEmpty')"
+    dense
     :disable="customDisabled"
     :disabled="customDisabled"
-    :fill-input="useInput"
-    :hide-selected="useInput"
-    :options="listOptions"
-    :rules="getRules(rules)"
-    :use-input="useInput"
-    class="bg-accent-100"
-    dense
     emit-value
+    :fill-input="useInput"
     hide-bottom-space
+    :hide-selected="useInput"
     input-debounce="0"
+    :label="label"
     map-options
+    :options="listOptions"
     outlined
-    v-bind="{ label: label || undefined }"
+    :rules="getRules(rules)"
     spellcheck="false"
     style="width: 240px"
+    :use-input="useInput"
     @filter="filterFn"
   >
+    <template
+      v-if="listOptions.some((o) => !!o.description || !!o.icon)"
+      #option="scope"
+    >
+      <q-item v-bind="scope.itemProps">
+        <q-item-section v-if="scope.opt.icon" avatar>
+          <q-icon :name="scope.opt.icon" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>{{ scope.opt.label }}</q-item-label>
+          <q-item-label v-if="scope.opt.description" caption>
+            {{ scope.opt.description }}
+          </q-item-label>
+        </q-item-section>
+      </q-item>
+    </template>
   </q-select>
 </template>
 
 <script setup lang="ts">
-import type { SettingsItemRule, SettingsValues } from 'src/types';
+import type {
+  SettingsItemListKey,
+  SettingsItemRule,
+  SettingsValues,
+} from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
@@ -44,8 +64,8 @@ const jwStore = useJwStore();
 const { jwLanguages } = storeToRefs(jwStore);
 
 const props = defineProps<{
-  label?: null | string;
-  list?: string;
+  label?: string;
+  list?: SettingsItemListKey;
   rules?: SettingsItemRule[] | undefined;
   settingId?: keyof SettingsValues;
   useInput?: boolean;
@@ -110,57 +130,62 @@ const filterFn = (
   }
 };
 
-const listOptions = computed(() => {
-  try {
-    if (props.list === 'jwLanguages') {
-      return filteredJwLanguages.value.map((language) => {
-        return {
-          label: `${language.vernacularName} (${language.name})`,
-          value: language.langcode,
-        };
-      });
-    } else if (props.list === 'appLanguages') {
-      return [...filteredLocaleAppLang.value]
-        .sort((a, b) => sorter.compare(a.englishName, b.englishName))
-        .map((language) => {
+const listOptions = computed(
+  (): {
+    description?: string;
+    icon?: string;
+    label: string;
+    value: boolean | string;
+  }[] => {
+    try {
+      if (props.list === 'jwLanguages') {
+        return filteredJwLanguages.value.map((language) => {
           return {
-            label:
-              language.label +
-              (language.englishName !== language.label
-                ? ` (${language.englishName})`
-                : ''),
-            value: language.value,
+            description: language.name,
+            label: language.vernacularName,
+            value: language.langcode,
           };
         });
-    } else if (props.list === 'darkModes') {
-      return [
-        { label: t('automatic'), value: 'auto' },
-        { label: t('dark'), value: true },
-        { label: t('light'), value: false },
-      ];
-    } else if (props.list === 'resolutions') {
-      return RESOLUTIONS.map((r) => ({ label: r, value: r }));
-    } else if (props.list === 'days') {
-      return Array.from({ length: 7 }, (_, i) => ({
-        label: dateLocale.value.days[i === 6 ? 0 : i + 1],
-        value: String(i),
-      }));
-    } else if (props.list?.startsWith('obs')) {
-      return scenes.value?.map((scene) => {
-        return {
-          label: scene.sceneName,
-          value:
-            configuredScenesAreAllUUIDs() && scene.sceneUuid
-              ? scene.sceneUuid
-              : scene.sceneName,
-        };
-      });
-    } else {
-      throw new Error('List not found: ' + props.list);
+      } else if (props.list === 'appLanguages') {
+        return [...filteredLocaleAppLang.value]
+          .sort((a, b) => sorter.compare(a.englishName, b.englishName))
+          .map((language) => {
+            return {
+              description: language.englishName,
+              label: language.label,
+              value: language.value,
+            };
+          });
+      } else if (props.list === 'darkModes') {
+        return [
+          { label: t('automatic'), value: 'auto' },
+          { label: t('dark'), value: true },
+          { label: t('light'), value: false },
+        ];
+      } else if (props.list === 'resolutions') {
+        return RESOLUTIONS.map((r) => ({ label: r, value: r }));
+      } else if (props.list === 'days') {
+        return Array.from({ length: 7 }, (_, i) => ({
+          label: dateLocale.value.days[i === 6 ? 0 : i + 1],
+          value: String(i),
+        }));
+      } else if (props.list?.startsWith('obs')) {
+        return scenes.value?.map((scene) => {
+          return {
+            label: scene.sceneName?.toString() ?? 'Unknown scene',
+            value:
+              configuredScenesAreAllUUIDs() && scene.sceneUuid
+                ? scene.sceneUuid.toString()
+                : (scene.sceneName?.toString() ?? 'Unknown scene'),
+          };
+        });
+      } else {
+        throw new Error('List not found: ' + props.list);
+      }
+    } catch (error) {
+      errorCatcher(error);
+      return [];
     }
-  } catch (error) {
-    errorCatcher(error);
-    return [];
-  }
-});
+  },
+);
 </script>

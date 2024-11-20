@@ -1,0 +1,254 @@
+import type { JwLangCode } from 'src/types';
+
+export type LanguageValue =
+  | 'af'
+  | 'am'
+  | 'cmnHans'
+  | 'de'
+  | 'el'
+  | 'en'
+  | 'es'
+  | 'et'
+  | 'fi'
+  | 'fr'
+  | 'hu'
+  | 'ilo'
+  | 'it'
+  | 'mg'
+  | 'nl'
+  | 'pag'
+  | 'pt'
+  | 'ptPt'
+  | 'rmnXRmg'
+  | 'ro'
+  | 'ru'
+  | 'sk'
+  | 'sl'
+  | 'sv'
+  | 'sw'
+  | 'ta'
+  | 'tl'
+  | 'uk'
+  | 'wesXPgw';
+
+// As a sort of rule, let's only enable a language once it's reached a threshold of 50% translated in Crowdin.
+// Modify this file along with src/i18n/index.ts to enable a language both on the docs website and in the app.
+
+export const enabled: LanguageValue[] = [
+  'cmnHans',
+  'de',
+  'en',
+  'es',
+  'et',
+  'fr',
+  'hu',
+  'nl',
+  'pt',
+  'ptPt',
+  'ru',
+  'sl',
+  'sv',
+  'sw',
+  'uk',
+];
+
+export const locales: {
+  englishName: string;
+  label: string;
+  langcode: JwLangCode;
+  signLangCodes?: JwLangCode[];
+  value: LanguageValue;
+}[] = [
+  {
+    englishName: 'Afrikaans',
+    label: 'Afrikaans',
+    langcode: 'AF',
+    value: 'af',
+  },
+  {
+    englishName: 'Amharic',
+    label: 'አማርኛ',
+    langcode: 'AM',
+    value: 'am',
+  },
+  {
+    englishName: 'Chinese Mandarin (Simplified)',
+    label: '中文简体（普通话）',
+    langcode: 'CHS',
+    signLangCodes: ['CSL'],
+    value: 'cmnHans',
+  },
+  {
+    englishName: 'German',
+    label: 'Deutsch',
+    langcode: 'X',
+    signLangCodes: ['DGS'],
+    value: 'de',
+  },
+  {
+    englishName: 'Greek',
+    label: 'Ελληνική',
+    langcode: 'G',
+    signLangCodes: ['GSL'],
+    value: 'el',
+  },
+  {
+    englishName: 'English',
+    label: 'English',
+    langcode: 'E',
+    signLangCodes: ['ASL', 'BSL'],
+    value: 'en',
+  },
+  {
+    englishName: 'Spanish',
+    label: 'español',
+    langcode: 'S',
+    signLangCodes: ['LSE'],
+    value: 'es',
+  },
+  {
+    englishName: 'Estonian',
+    label: 'eesti',
+    langcode: 'ST',
+    signLangCodes: ['STD'],
+    value: 'et',
+  },
+  {
+    englishName: 'Finnish',
+    label: 'suomi',
+    langcode: 'FI',
+    signLangCodes: ['FID'],
+    value: 'fi',
+  },
+  {
+    englishName: 'French',
+    label: 'Français',
+    langcode: 'F',
+    signLangCodes: ['LSF'],
+    value: 'fr',
+  },
+  {
+    englishName: 'Hungarian',
+    label: 'magyar',
+    langcode: 'H',
+    signLangCodes: ['HDF'],
+    value: 'hu',
+  },
+  {
+    englishName: 'Iloko',
+    label: 'Iloko',
+    langcode: 'IL',
+    value: 'ilo',
+  },
+  {
+    englishName: 'Italian',
+    label: 'Italiano',
+    langcode: 'I',
+    signLangCodes: ['ISL'],
+    value: 'it',
+  },
+  {
+    englishName: 'Malagasy',
+    label: 'Malagasy',
+    langcode: 'MG',
+    value: 'mg',
+  },
+  {
+    englishName: 'Dutch',
+    label: 'Nederlands',
+    langcode: 'O',
+    signLangCodes: ['NGT'],
+    value: 'nl',
+  },
+  {
+    englishName: 'Pangasinan',
+    label: 'Pangasinan',
+    langcode: 'PN',
+    value: 'pag',
+  },
+  {
+    englishName: 'Portuguese (Portugal)',
+    label: 'Português (Portugal)',
+    langcode: 'TPO',
+    signLangCodes: ['LGP'],
+    value: 'ptPt',
+  },
+  {
+    englishName: 'Portuguese (Brazil)',
+    label: 'Português (Brasil)',
+    langcode: 'T',
+    signLangCodes: ['LSB'],
+    value: 'pt',
+  },
+  {
+    englishName: 'Romany (Southern Greece)',
+    label: 'Ρομανί (Νότια Ελλάδα)',
+    langcode: 'RMG',
+    value: 'rmnXRmg',
+  },
+  {
+    englishName: 'Romanian',
+    label: 'Română',
+    langcode: 'M',
+    signLangCodes: ['LMG'],
+    value: 'ro',
+  },
+  {
+    englishName: 'Russian',
+    label: 'русский',
+    langcode: 'U',
+    signLangCodes: ['RSL'],
+    value: 'ru',
+  },
+  {
+    englishName: 'Slovak',
+    label: 'slovenčina',
+    langcode: 'V',
+    signLangCodes: ['VSL'],
+    value: 'sk',
+  },
+  {
+    englishName: 'Slovenian',
+    label: 'slovenščina',
+    langcode: 'SV',
+    signLangCodes: ['SZJ'],
+    value: 'sl',
+  },
+  {
+    englishName: 'Swedish',
+    label: 'Svenska',
+    langcode: 'Z',
+    signLangCodes: ['SSL'],
+    value: 'sv',
+  },
+  {
+    englishName: 'Swahili',
+    label: 'Kiswahili',
+    langcode: 'SW',
+    value: 'sw',
+  },
+  {
+    englishName: 'Tamil',
+    label: 'தமிழ்',
+    langcode: 'TL',
+    value: 'ta',
+  },
+  {
+    englishName: 'Tagalog',
+    label: 'Tagalog',
+    langcode: 'TG',
+    value: 'tl',
+  },
+  {
+    englishName: 'Ukrainian',
+    label: 'українська',
+    langcode: 'K',
+    value: 'uk',
+  },
+  {
+    englishName: 'Pidgin (West Africa)',
+    label: 'Pidgin (West Africa)',
+    langcode: 'PGW',
+    value: 'wesXPgw',
+  },
+];

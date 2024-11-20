@@ -20,6 +20,11 @@ export const setUrlVariables = (variables: UrlVariables) => {
 
 export const initSessionListeners = () => {
   app.on('ready', () => {
+    const currentUserAgent = session.defaultSession.getUserAgent();
+    session.defaultSession.setUserAgent(
+      currentUserAgent.replace(/Electron[/\d.\s]*/g, ''),
+    );
+
     session.defaultSession.webRequest.onBeforeSendHeaders(
       (details, callback) => {
         if (isTrustedDomain(details.url) && details.requestHeaders) {
@@ -27,13 +32,7 @@ export const initSessionListeners = () => {
           const baseUrl = `${url.protocol}//${url.hostname}`;
           details.requestHeaders['Referer'] = baseUrl;
           details.requestHeaders['Origin'] = baseUrl;
-          if (details.requestHeaders['User-Agent']) {
-            details.requestHeaders['User-Agent'] = details.requestHeaders[
-              'User-Agent'
-            ].replace('Electron', '');
-          }
         }
-
         callback({ requestHeaders: details.requestHeaders });
       },
     );

@@ -113,7 +113,7 @@ export default defineConfig({
               hreflang: lang,
               href: (!isEnglish
                 ? canonicalUrl.replace(`/${pageLang}/`, `/${lang}/`)
-                : `${CANONICAL_URL}${lang}/${pageData.relativePath}`
+                : `${CANONICAL_URL}${lang}/${pageData.relativePath.replace('index.md', '').replace('.md', '')}`
               ).replace('/en/', '/'),
             },
           ];

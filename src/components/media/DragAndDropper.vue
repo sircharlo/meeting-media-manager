@@ -16,8 +16,8 @@
         <div class="row">
           <q-scroll-area
             :bar-style="barStyle"
-            :thumb-style="thumbStyle"
             style="height: 40vh; width: -webkit-fill-available"
+            :thumb-style="thumbStyle"
           >
             <q-list class="full-width">
               <q-item
@@ -96,18 +96,18 @@
           >
             <template v-if="totalFiles || (!!jwpubDb && jwpubLoading)">
               <q-linear-progress
-                :indeterminate="totalFiles === 1"
-                :value="percentValue"
                 class="full-height"
                 color="primary"
+                :indeterminate="totalFiles === 1"
+                :value="percentValue"
               >
                 <div
                   v-if="totalFiles > 1"
                   class="absolute-full flex flex-center"
                 >
                   <q-badge
-                    :label="(percentValue * 100).toFixed(0) + '%'"
                     color="white"
+                    :label="(percentValue * 100).toFixed(0) + '%'"
                     text-color="primary"
                   />
                 </div>
@@ -125,9 +125,9 @@
       <div class="row justify-end">
         <q-btn
           v-close-popup
-          :label="$t('cancel')"
           color="negative"
           flat
+          :label="$t('cancel')"
           @click="resetModal()"
         />
       </div>

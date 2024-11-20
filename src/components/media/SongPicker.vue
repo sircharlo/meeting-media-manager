@@ -8,12 +8,12 @@
       <div class="row q-px-md">
         <q-input
           v-model="filter"
-          :disable="loading"
-          :label="$t('search-by-title-or-number')"
           class="col"
           clearable
           debounce="100"
           dense
+          :disable="loading"
+          :label="$t('search-by-title-or-number')"
           outlined
           spellcheck="false"
         >
@@ -32,17 +32,17 @@
       </q-slide-transition>
       <q-scroll-area
         :bar-style="barStyle"
-        :thumb-style="thumbStyle"
         style="height: 40vh; width: -webkit-fill-available"
+        :thumb-style="thumbStyle"
       >
         <div class="q-px-md">
           <q-btn
             v-for="song in filteredSongs"
             :key="song.track"
-            :disable="loading"
-            :label="song.track"
             class="rounded-borders-sm q-mr-xs q-mb-xs"
             color="primary"
+            :disable="loading"
+            :label="song.track"
             style="width: 3em; height: 3em"
             unelevated
             @click="addSong(song.track)"
@@ -74,9 +74,9 @@
         </div>
         <div class="col text-right">
           <q-btn
-            :label="$t('cancel')"
             color="negative"
             flat
+            :label="$t('cancel')"
             @click="dismissPopup"
           />
         </div>

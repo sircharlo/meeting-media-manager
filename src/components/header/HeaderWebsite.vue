@@ -44,11 +44,11 @@
   </template>
   <q-btn
     v-else
-    :disable="mediaPlaying"
     color="white-transparent"
+    :disable="mediaPlaying"
     unelevated
     @click="
-      openWebsiteWindow(locale);
+      openWebsiteWindow(currentState.currentLangSymbol);
       mediaPlayingAction = 'website';
     "
   >
@@ -59,12 +59,10 @@
 <script setup lang="ts">
 // Packages
 import { storeToRefs } from 'pinia';
-import { camelToKebabCase } from 'src/helpers/general';
 import { sendObsSceneEvent } from 'src/helpers/obs';
 // Stores
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { computed, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { watch } from 'vue';
 
 const {
   closeWebsiteWindow,
@@ -72,12 +70,6 @@ const {
   openWebsiteWindow,
   zoomWebsiteWindow,
 } = window.electronApi;
-
-const i18n = useI18n();
-
-const locale = computed(() => {
-  return camelToKebabCase(i18n.locale.value);
-});
 
 const currentState = useCurrentStateStore();
 const { mediaPlaying, mediaPlayingAction } = storeToRefs(currentState);

@@ -18,10 +18,10 @@ const mapLocale = (
   lang: string,
   label: string,
   msg: MessageSchema,
-): {
+): LocaleSpecificConfig<DefaultTheme.Config> & {
   label: string;
   link?: string;
-} & LocaleSpecificConfig<DefaultTheme.Config> => ({
+} => ({
   description: msg.description,
   head: [
     ['meta', { content: msg.title, property: 'og:site_name' }],

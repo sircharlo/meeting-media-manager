@@ -5,6 +5,7 @@ import fse from 'fs-extra';
 const { exists } = fse;
 import { join } from 'path';
 
+import { PLATFORM } from './../constants';
 import { errorCatcher } from './../utils';
 
 export async function initUpdater() {
@@ -15,7 +16,7 @@ export async function initUpdater() {
   const disabled = await exists(
     join(app.getPath('userData'), 'Global Preferences', 'disable-updates'),
   );
-  if (!disabled) triggerUpdateCheck();
+  if (!disabled && PLATFORM !== 'darwin') triggerUpdateCheck();
 }
 
 const triggerUpdateCheck = async (attempt = 1) => {

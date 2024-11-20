@@ -47,8 +47,8 @@
         <q-item-label header>{{ $t('cache') }}</q-item-label>
         <q-item
           v-close-popup
-          :disable="calculatingCacheSize"
           clickable
+          :disable="calculatingCacheSize"
           @click="confirmDeleteCacheFiles('smart')"
         >
           <q-item-section avatar>
@@ -61,8 +61,8 @@
         </q-item>
         <q-item
           v-close-popup
-          :disable="calculatingCacheSize"
           clickable
+          :disable="calculatingCacheSize"
           @click="confirmDeleteCacheFiles('all')"
         >
           <q-item-section avatar>
@@ -78,14 +78,14 @@
   </q-btn>
 </template>
 <script setup lang="ts">
+// Types
+import type { CacheFile, JwLangCode } from 'src/types';
+
 // Packages
 import { storeToRefs } from 'pinia';
 import prettyBytes from 'pretty-bytes';
-import { computed, ref, type Ref, watchEffect } from 'vue';
-
 // Components
 import DialogCacheClear from 'src/components/dialog/DialogCacheClear.vue';
-
 // Helpers
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
@@ -95,13 +95,10 @@ import {
   getPublicationsPath,
   getTempDirectory,
 } from 'src/helpers/fs';
-
 // Stores
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-
-// Types
-import type { CacheFile, JwLangCode } from 'src/types';
+import { computed, ref, type Ref, watchEffect } from 'vue';
 
 const { fs, path, pathToFileURL, readdir } = window.electronApi;
 

@@ -45,11 +45,6 @@ module.exports = {
     // https://eslint.vuejs.org/user-guide/#why-doesn-t-it-work-on-vue-files
     // required to lint *.vue files
     'vue',
-
-    // https://github.com/typescript-eslint/typescript-eslint/issues/389#issuecomment-509292674
-    // Prettier has not been included as plugin to avoid performance impact
-    // add it as an extension for your IDE
-    'perfectionist',
   ],
 
   globals: {
@@ -87,6 +82,7 @@ module.exports = {
     'vue/define-props-declaration': 'error',
     'vue/enforce-style-attribute': 'error',
     'vue/no-boolean-default': 'error',
+    'vue/attributes-order': ['error', { alphabetical: true }],
     'vue/prefer-true-attribute-shorthand': 'error',
 
     // typescript-eslint rules
@@ -108,46 +104,5 @@ module.exports = {
 
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'perfectionist/sort-vue-attributes': [
-      'error',
-      {
-        // Based on: https://eslint.vuejs.org/rules/attributes-order.html
-        // Note: I think this matches on attribute strings for everything that comes BEFORE the equal sign (=), if there is one. This makes some things impossible to match.
-        // See issue: https://github.com/azat-io/eslint-plugin-perfectionist/issues/112
-        // See guide on extended glob matching: https://www.linuxjournal.com/content/bash-extended-globbing
-        customGroups: {
-          /* eslint-disable perfectionist/sort-objects */
-          DEFINITION: '@(is|v-is)',
-          LIST_RENDERING: 'v-for',
-          CONDITIONALS: 'v-@(if|else-if|else|show|cloak)',
-          RENDER_MODIFIERS: 'v-@(pre|once)',
-          GLOBAL: '@(id|:id)',
-          UNIQUE: '@(ref|:ref|key|:key)',
-          SLOT: '@(v-slot|slot|#*)',
-          TWO_WAY_BINDING: '@(v-model|v-model:*)',
-          OTHER_DIRECTIVES: '@(v-!(on|bind|html|text))', // Matches all "v-" directives except v-on, v-bind, v-html, v-text (these are defined separately below, which are lower in the order of operations)
-          ATTR_DYNAMIC: '@(v-bind:*|:*)', // For dynamic bindings, like v-bind:prop or :prop.
-          // ATTR_STATIC: "", // For normal props, like prop="example". No glob patterns possible since we are matching on everything BEFORE the equal sign (=), if there is one. Therefore we can't differentiate boolean props from static props.
-          // ATTR_SHORTHAND_BOOL: "", // For boolean props, like custom-prop. No glob patterns possible since we are matching on everything BEFORE the equal sign (=), if there is one. Therefore we can't differentiate boolean props from static props.
-          EVENTS: '@(v-on|@*)',
-          CONTENT: 'v-@(html|text)',
-          /* eslint-enable perfectionist/sort-objects */
-        },
-        groups: [
-          'DEFINITION',
-          'LIST_RENDERING',
-          'CONDITIONALS',
-          'RENDER_MODIFIERS',
-          'GLOBAL',
-          ['UNIQUE', 'SLOT'],
-          'TWO_WAY_BINDING',
-          'OTHER_DIRECTIVES',
-          ['ATTR_DYNAMIC', 'unknown', 'multiline', 'shorthand'], // 'unknown' is a workaround because perfectionist/sort-vue-attributes cannot match on ATTR_STATIC or ATTR_SHORTHAND_BOOL
-          'EVENTS',
-          'CONTENT',
-        ],
-        type: 'natural',
-      },
-    ],
   },
 };

@@ -61,10 +61,10 @@
               :class="
                 (hoveredCongregation !== id ? 'invisible' : '') + ' q-mr-lg'
               "
-              :label="$t('delete')"
               color="negative"
               flat
               icon="mmm-delete"
+              :label="$t('delete')"
               size="md"
               @click.stop="congToDelete = id"
             />
@@ -100,11 +100,11 @@
         }}
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
-        <q-btn :label="$t('cancel')" flat @click="congToDelete = ''" />
+        <q-btn flat :label="$t('cancel')" @click="congToDelete = ''" />
         <q-btn
-          :label="$t('delete')"
           color="negative"
           flat
+          :label="$t('delete')"
           @click="
             deleteCongregation(congToDelete);
             congToDelete = '';

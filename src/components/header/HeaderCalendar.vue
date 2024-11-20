@@ -4,8 +4,8 @@
   <DialogRemoteVideo v-model="remoteVideoPopup" :section="section" />
   <DialogStudyBible v-model="studyBiblePopup" :section="section" />
   <q-btn
-    :disable="mediaPlaying || !mediaSortForDay"
     color="white-transparent"
+    :disable="mediaPlaying || !mediaSortForDay"
     unelevated
     @click="resetSort"
   >
@@ -34,13 +34,13 @@
     <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
       {{ $t('extra-media') }}
     </q-tooltip>
-    <q-menu ref="importMenu" :offset="[0, 11]" class="top-menu">
+    <q-menu ref="importMenu" class="top-menu" :offset="[0, 11]">
       <q-list style="min-width: 100px">
         <q-item-label header>{{ $t('from-jw-org') }}</q-item-label>
         <q-item
           v-close-popup
-          :disable="!online"
           clickable
+          :disable="!online"
           @click="chooseSong = true"
         >
           <q-item-section avatar>
@@ -53,8 +53,8 @@
         </q-item>
         <q-item
           v-close-popup
-          :disable="!online"
           clickable
+          :disable="!online"
           @click="remoteVideoPopup = true"
         >
           <q-item-section avatar>
@@ -78,8 +78,8 @@
         </q-item>
         <q-item
           v-close-popup
-          :disable="!online"
           clickable
+          :disable="!online"
           @click="studyBiblePopup = true"
         >
           <q-item-section avatar>
@@ -101,7 +101,7 @@
         >
           <q-item v-close-popup clickable @click="openDragAndDropper">
             <q-item-section avatar>
-              <q-icon :name="icon" color="primary" />
+              <q-icon color="primary" :name="icon" />
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t(name) }}</q-item-label>
@@ -161,18 +161,18 @@
         {{ $t('are-you-sure-delete-all') }}
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
-        <q-btn v-close-popup :label="$t('cancel')" flat />
+        <q-btn v-close-popup flat :label="$t('cancel')" />
         <q-btn
           v-close-popup
-          :label="$t('delete')"
           color="negative"
           flat
+          :label="$t('delete')"
           @click="clearCurrentDayAdditionalMedia()"
         />
       </q-card-actions>
     </q-card>
   </q-dialog>
-  <q-btn :disable="mediaPlaying" color="white-transparent" unelevated>
+  <q-btn color="white-transparent" :disable="mediaPlaying" unelevated>
     <q-icon
       :class="{ 'q-mr-sm': $q.screen.gt.xs }"
       name="mmm-calendar-month"
@@ -190,10 +190,10 @@
         :events="getEventDates()"
         :first-day-of-week="friendlyDayToJsDay(currentSettings?.firstDayOfWeek)"
         :locale="dateLocale"
+        minimal
         :navigation-max-year-month="maxDate()"
         :navigation-min-year-month="minDate()"
         :options="dateOptions"
-        minimal
       />
       <!-- <div class="row items-center justify-end q-gutter-sm">
           <q-btn v-close-popup :label="$t('close')" color="primary" outline />
@@ -203,30 +203,26 @@
   </q-btn>
 </template>
 <script setup lang="ts">
+// Types
+import type { MediaSection } from 'src/types';
+
 // Packages
 import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { date, type QMenu } from 'quasar';
-import { computed, ref, useTemplateRef } from 'vue';
-
-// Composables
-import { useLocale } from 'src/composables/useLocale';
-
 // Components
 import DialogRemoteVideo from 'src/components/dialog/DialogRemoteVideo.vue';
 import PublicTalkMediaPicker from 'src/components/media/PublicTalkMediaPicker.vue';
 import SongPicker from 'src/components/media/SongPicker.vue';
-
+// Composables
+import { useLocale } from 'src/composables/useLocale';
 // Helpers
 import { friendlyDayToJsDay, getLocalDate } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-
 // Stores
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-
-// Types
-import type { MediaSection } from 'src/types';
+import { computed, ref, useTemplateRef } from 'vue';
 
 import DialogStudyBible from '../dialog/DialogStudyBible.vue';
 

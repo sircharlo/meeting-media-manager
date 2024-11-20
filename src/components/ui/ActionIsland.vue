@@ -1,9 +1,9 @@
 <template>
   <div id="actionIsland" class="flex" style="justify-content: center">
     <q-chip
-      :ripple="false"
       class="action-island"
       color="primary"
+      :ripple="false"
       rounded
       size="xl"
     >

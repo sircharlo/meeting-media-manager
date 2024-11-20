@@ -33,11 +33,11 @@
         <div class="row q-px-md">
           <q-input
             v-model="filter"
-            :label="$t('search')"
             class="col"
             clearable
             debounce="100"
             dense
+            :label="$t('search')"
             outlined
             spellcheck="false"
           >
@@ -49,8 +49,8 @@
         <div class="row">
           <q-scroll-area
             :bar-style="barStyle"
-            :thumb-style="thumbStyle"
             style="height: 30vh; width: -webkit-fill-available"
+            :thumb-style="thumbStyle"
           >
             <template
               v-for="publicTalk in filteredPublicTalks"
@@ -70,9 +70,9 @@
       </template>
       <div class="row justify-end q-px-md">
         <q-btn
-          :label="$t('cancel')"
           color="negative"
           flat
+          :label="$t('cancel')"
           @click="dismissPopup"
         />
       </div>

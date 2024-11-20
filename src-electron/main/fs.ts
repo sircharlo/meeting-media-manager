@@ -16,13 +16,6 @@ import { errorCatcher } from '../utils';
 import { sendToWindow } from './window/window-base';
 import { mainWindow } from './window/window-main';
 
-export async function openFolderDialog() {
-  if (!mainWindow) return;
-  return dialog.showOpenDialog(mainWindow, {
-    properties: ['openDirectory'],
-  });
-}
-
 export async function openFileDialog(
   single: boolean,
   filter: FileDialogFilter,
@@ -63,8 +56,29 @@ export async function openFileDialog(
   });
 }
 
+export async function openFolderDialog() {
+  if (!mainWindow) return;
+  return dialog.showOpenDialog(mainWindow, {
+    properties: ['openDirectory'],
+  });
+}
+
 const watchers = new Set<FSWatcher>();
 const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
+
+export async function readDirectory(
+  dir: string,
+  withSizes?: boolean,
+  recursive?: boolean,
+) {
+  try {
+    if (!(await exists(dir))) return [];
+    return await readDirRecursive(dir, withSizes, recursive);
+  } catch (error) {
+    errorCatcher(error);
+    return [];
+  }
+}
 
 export async function unwatchFolders() {
   for (const watcher of watchers) {
@@ -119,20 +133,6 @@ export async function watchFolder(folderPath: string) {
         }
       }),
   );
-}
-
-export async function readDirectory(
-  dir: string,
-  withSizes?: boolean,
-  recursive?: boolean,
-) {
-  try {
-    if (!(await exists(dir))) return [];
-    return await readDirRecursive(dir, withSizes, recursive);
-  } catch (error) {
-    errorCatcher(error);
-    return [];
-  }
 }
 
 async function readDirRecursive(
