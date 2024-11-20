@@ -221,6 +221,7 @@
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
           @update:tag="updateMediaItemTag(media, $event)"
+          @update:title="media.title = $event"
         />
         <div
           v-if="
@@ -263,6 +264,7 @@
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:title="media.title = $event"
         />
         <div v-if="sortableTgwMediaItems.filter((m) => !m.hidden).length === 0">
           <q-item>
@@ -299,6 +301,7 @@
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:title="media.title = $event"
         />
         <div
           v-if="sortableAyfmMediaItems.filter((m) => !m.hidden).length === 0"
@@ -346,6 +349,7 @@
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:title="media.title = $event"
         />
         <div v-if="sortableLacMediaItems.filter((m) => !m.hidden).length === 0">
           <q-item>
@@ -382,6 +386,7 @@
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:title="media.title = $event"
         />
         <div v-if="sortableWtMediaItems.filter((m) => !m.hidden).length === 0">
           <q-item>
@@ -445,6 +450,7 @@
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:title="media.title = $event"
         />
         <div
           v-if="
@@ -518,6 +524,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   getDurationFromMediaPath,
   getFileUrl,
+  getMetadataFromMediaPath,
   getPublicationDirectory,
   getTempDirectory,
   getThumbnailUrl,
@@ -828,9 +835,10 @@ const generateMediaList = () => {
         ),
       )
       .filter((m) => {
-        if (m.fileUrl && !seenFileUrls.has(m.fileUrl)) {
-          seenFileUrls.add(m.fileUrl);
+        if (!m.fileUrl || seenFileUrls.has(m.fileUrl)) {
+          return false;
         }
+        seenFileUrls.add(m.fileUrl);
         return true;
       });
   }
@@ -1421,9 +1429,16 @@ const addToFiles = async (
           filepath,
           sectionToAddTo.value,
         );
-        if (matchingMissingItem)
+        if (matchingMissingItem) {
+          const metadata = await getMetadataFromMediaPath(destPath);
+          matchingMissingItem.duration = metadata.format.duration || 0;
+          matchingMissingItem.title =
+            metadata.common.title || window.electronApi.path.basename(destPath);
+          matchingMissingItem.isVideo = isVideo(filepath);
+          matchingMissingItem.isAudio = isAudio(filepath);
           matchingMissingItem.fileUrl =
             window.electronApi.pathToFileURL(destPath);
+        }
       } else if (isPdf(filepath)) {
         const convertedImages = (
           await convertPdfToImages(filepath, await getTempDirectory())
