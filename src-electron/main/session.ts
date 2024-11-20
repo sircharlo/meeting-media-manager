@@ -21,9 +21,8 @@ export const setUrlVariables = (variables: UrlVariables) => {
 export const initSessionListeners = () => {
   app.on('ready', () => {
     const currentUserAgent = session.defaultSession.getUserAgent();
-    const electronRegex = new RegExp(/Electron[/\d.\s]*/g);
     session.defaultSession.setUserAgent(
-      currentUserAgent.replace(electronRegex, ''),
+      currentUserAgent.replace(/Electron[/\d.\s]*/g, ''),
     );
 
     session.defaultSession.webRequest.onBeforeSendHeaders(
