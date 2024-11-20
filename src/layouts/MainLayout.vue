@@ -35,6 +35,7 @@
 </template>
 
 <script setup lang="ts">
+import type { LanguageValue } from 'src/constants/locales';
 import type { ElectronIpcListenKey } from 'src/types';
 
 import { watchDebounced, watchImmediate, whenever } from '@vueuse/core';
@@ -61,7 +62,7 @@ import {
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setElementFont } from 'src/helpers/fonts';
 import { getFileUrl, watchExternalFolder } from 'src/helpers/fs';
-import { sorter } from 'src/helpers/general';
+import { kebabToCamelCase, sorter } from 'src/helpers/general';
 import {
   downloadBackgroundMusic,
   downloadSongbookVideos,
@@ -210,7 +211,11 @@ watchImmediate(
 whenever(
   () => currentSettings.value?.localAppLang,
   (newAppLang) => {
-    if (newAppLang.includes('-')) newAppLang = newAppLang.split('-')[0];
+    // Migrate old language format to new format
+    if (newAppLang.includes('-')) {
+      newAppLang = kebabToCamelCase(newAppLang) as LanguageValue;
+    }
+
     if (
       currentSettings.value &&
       !localeOptions?.map((option) => option.value).includes(newAppLang)

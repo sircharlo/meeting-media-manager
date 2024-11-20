@@ -1,4 +1,5 @@
 import type { MessageSchema } from 'src/boot/i18n';
+import type { LanguageValue } from 'src/constants/locales';
 import type { RESOLUTIONS } from 'src/constants/settings';
 
 import type { JwLangCode } from './jw/lang';
@@ -176,7 +177,7 @@ export interface SettingsValues {
   lang: JwLangCode;
   langFallback: JwLangCode | null;
   langSubtitles: JwLangCode | null;
-  localAppLang: string;
+  localAppLang: LanguageValue;
   maxRes: MaxRes;
   musicVolume: number;
   mwDay: null | string;
