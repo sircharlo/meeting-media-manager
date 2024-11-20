@@ -522,7 +522,6 @@ import {
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
-  getDurationFromMediaPath,
   getFileUrl,
   getMetadataFromMediaPath,
   getPublicationDirectory,
@@ -1307,14 +1306,19 @@ const addToAdditionMediaMapFromPath = async (
 ) => {
   try {
     if (!additionalFilePath) return;
-    const isVideoFile = isVideo(additionalFilePath);
-    const isAudioFile = isAudio(additionalFilePath);
-    let duration = 0;
-    if (isVideoFile || isAudioFile) {
-      duration =
-        stream?.duration ??
-        (await getDurationFromMediaPath(additionalFilePath));
-    }
+    const video = isVideo(additionalFilePath);
+    const audio = isAudio(additionalFilePath);
+    const metadata =
+      video || audio
+        ? await getMetadataFromMediaPath(additionalFilePath)
+        : undefined;
+
+    const duration = stream?.duration || metadata?.format.duration || 0;
+    const title =
+      stream?.title ||
+      metadata?.common.title ||
+      path.basename(additionalFilePath);
+
     if (!uniqueId) {
       uniqueId = sanitizeId(
         formatDate(selectedDate.value, 'YYYYMMDD') +
@@ -1328,9 +1332,9 @@ const addToAdditionMediaMapFromPath = async (
           duration,
           fileUrl: getFileUrl(additionalFilePath),
           isAdditional: true,
-          isAudio: isAudioFile,
+          isAudio: audio,
           isImage: isImage(additionalFilePath),
-          isVideo: isVideoFile,
+          isVideo: video,
           section,
           sectionOriginal: section,
           song: stream?.song,
@@ -1338,7 +1342,7 @@ const addToAdditionMediaMapFromPath = async (
           thumbnailUrl:
             stream?.thumbnailUrl ??
             (await getThumbnailUrl(additionalFilePath, true)),
-          title: stream?.title ?? path.basename(additionalFilePath),
+          title,
           uniqueId,
         },
       ],

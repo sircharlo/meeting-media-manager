@@ -37,8 +37,8 @@ import {
   isMwMeetingDay,
 } from 'src/helpers/date';
 import {
-  getDurationFromMediaPath,
   getFileUrl,
+  getMetadataFromMediaPath,
   getPublicationDirectory,
   getSubtitlesUrl,
   getThumbnailUrl,
@@ -756,7 +756,9 @@ const dynamicMediaMapper = async (
           if (m.Duration) {
             duration = m.Duration;
           } else if (await fs.exists(m.FilePath)) {
-            duration = await getDurationFromMediaPath(m.FilePath);
+            duration =
+              (await getMetadataFromMediaPath(m.FilePath))?.format.duration ||
+              0;
           }
           if (duration === 0 && m.KeySymbol) {
             const lang = currentSettings?.lang || currentSettings?.langFallback;
@@ -881,10 +883,13 @@ const watchedItemMapper: (
       return undefined;
     }
 
-    const duration =
-      (video || audio) && (await fs.exists(watchedItemPath))
-        ? await getDurationFromMediaPath(watchedItemPath)
-        : 0;
+    const metadata =
+      video || audio
+        ? await getMetadataFromMediaPath(watchedItemPath)
+        : undefined;
+
+    const duration = metadata?.format.duration || 0;
+    const title = metadata?.common.title || path.basename(watchedItemPath);
 
     const uniqueId = sanitizeId(
       formatDate(parentDate, 'YYYYMMDD') + '-' + fileUrl,
@@ -907,7 +912,7 @@ const watchedItemMapper: (
         section,
         sectionOriginal: 'additional', // to enable restoring the original section after custom sorting
         thumbnailUrl,
-        title: path.basename(watchedItemPath),
+        title,
         uniqueId,
         watched: true,
       },
