@@ -83,107 +83,87 @@ export const moveMediaWindow = (
   }
 };
 
-/**
- * Sets the position and display of the media window.
- * @param displayNr {number} [optional] Target display number. Defaults to the primary screen if not provided.
- * @param fullscreenDesired {boolean} [optional] Indicates if fullscreen mode is desired. Defaults to `true`.
- * @param noEvent {boolean} [optional] If true, suppresses sending preference change events. Defaults to `false`.
- */
 const setWindowPosition = (
   displayNr?: number,
-  fullscreenDesired = true,
+  fullscreen = true,
   noEvent?: boolean,
 ) => {
   try {
-    if (!mediaWindow) return; // Exit if the media window is not initialized.
+    if (!mediaWindow) return;
 
-    // Retrieve all screens and determine the current display of the media window.
     const screens = getAllScreens();
     const currentDisplayNr = getWindowScreen(mediaWindow);
-    const targetDisplay = screens[displayNr ?? 0]; // Use specified display or default to the primary screen.
-    if (!targetDisplay) return; // Exit if the target display does not exist.
+    const targetDisplay = screens[displayNr ?? 0];
+    if (!targetDisplay) return;
 
-    const targetScreenBounds = targetDisplay.bounds; // Bounds of the target display.
+    const targetScreenBounds = targetDisplay.bounds;
 
-    // Function to set the window bounds and manage fullscreen transitions.
-    const setWindowBounds = (bounds: Partial<Electron.Rectangle>) => {
-      if (
-        !mediaWindow || // Ensure the media window exists.
-        (displayNr === currentDisplayNr && // Check if already on the correct display.
-          fullscreenDesired === mediaWindow.isFullScreen()) // Check if fullscreen state matches the desired state.
-      ) {
-        return; // Exit if no changes are needed.
+    const boundsChanged = (
+      current: Electron.Rectangle,
+      target: Electron.Rectangle,
+    ) =>
+      ['height', 'width', 'x', 'y'].some(
+        (prop) =>
+          current[prop as keyof Electron.Rectangle] !==
+          target[prop as keyof Electron.Rectangle],
+      );
+
+    const setWindowBounds = (
+      bounds: Partial<Electron.Rectangle>,
+      alwaysOnTop = false,
+      fullScreen = false,
+    ) => {
+      if (!mediaWindow) return;
+      mediaWindow.setBounds(bounds);
+      if (mediaWindow.isAlwaysOnTop() !== alwaysOnTop) {
+        mediaWindow.setAlwaysOnTop(alwaysOnTop);
       }
-
-      // Set "always on top" for non-macOS systems when fullscreen is desired.
-      mediaWindow.setAlwaysOnTop(PLATFORM !== 'darwin' && fullscreenDesired);
-
-      // Handle screen change events for fullscreen transitions.
-      const handleScreenChange = () => {
-        if (!fullscreenDesired) mediaWindow?.setBounds(bounds); // Update bounds in windowed mode.
-
-        // Notify the main window of updated screen preferences, unless suppressed.
-        if (!noEvent) {
-          sendToWindow(mainWindow, 'screenPrefsChange', {
-            preferredScreenNumber: displayNr ?? 0, // Save the target display number.
-            preferWindowed: !fullscreenDesired, // Save the desired windowed/fullscreen preference.
-          } as ScreenPreferences);
-        }
-      };
-
-      if (fullscreenDesired === mediaWindow.isFullScreen()) {
-        handleScreenChange();
-      } else {
-        // Attach appropriate event listeners for fullscreen transitions.
-        if (fullscreenDesired) {
-          mediaWindow.once('enter-full-screen', handleScreenChange);
-          mediaWindow.setBounds(bounds); // Set window bounds before entering fullscreen.
-        } else {
-          mediaWindow.once('leave-full-screen', handleScreenChange);
-        }
-
-        // Toggle fullscreen state.
-        mediaWindow.setFullScreen(fullscreenDesired);
+      if (mediaWindow.isFullScreen() !== fullScreen) {
+        mediaWindow.setFullScreen(fullScreen);
       }
+      sendToWindow(mainWindow, 'screenChange');
     };
 
-    // Function to handle macOS-specific fullscreen transition quirks.
     const handleMacFullScreenTransition = (callback: () => void) => {
-      if (!mediaWindow || PLATFORM !== 'darwin') {
-        callback(); // Proceed immediately if not on macOS.
+      if (PLATFORM === 'darwin' && mediaWindow && mediaWindow.isFullScreen()) {
+        mediaWindow.once('leave-full-screen', callback);
+        mediaWindow.setFullScreen(false);
       } else {
-        // Handle macOS fullscreen exit when moving to a different display.
-        if (mediaWindow.isFullScreen() && displayNr !== currentDisplayNr) {
-          mediaWindow.once('leave-full-screen', callback); // Wait for fullscreen exit before setting window bounds.
-          mediaWindow.setFullScreen(false); // Exit fullscreen.
-        } else {
-          callback(); // Proceed immediately if no transition is needed.
-        }
+        callback();
       }
     };
 
-    // If fullscreen mode is desired, handle fullscreen transition.
-    if (fullscreenDesired) {
+    if (fullscreen) {
+      if (displayNr === currentDisplayNr && mediaWindow.isAlwaysOnTop()) return;
       handleMacFullScreenTransition(() => {
-        setWindowBounds(targetScreenBounds); // Set bounds to target screen.
+        setWindowBounds(targetScreenBounds, PLATFORM !== 'darwin', true);
       });
     } else {
-      // Set bounds for windowed mode.
       const newBounds = {
         height: 720,
         width: 1280,
-        x: targetScreenBounds.x + 50, // Offset for aesthetics.
+        x: targetScreenBounds.x + 50,
         y: targetScreenBounds.y + 50,
       };
-
-      // Check if the new bounds are targeting a different display.
-      if (displayNr !== currentDisplayNr || mediaWindow.isFullScreen()) {
+      if (
+        displayNr !== currentDisplayNr &&
+        boundsChanged(mediaWindow.getBounds(), newBounds)
+      ) {
+        setWindowBounds(newBounds, false, false);
+      } else {
         handleMacFullScreenTransition(() => {
-          setWindowBounds(newBounds); // Apply new bounds after transition.
+          setWindowBounds(newBounds, false, false);
         });
       }
     }
+
+    if (!noEvent) {
+      sendToWindow(mainWindow, 'screenPrefsChange', {
+        preferredScreenNumber: displayNr ?? 0,
+        preferWindowed: !fullscreen,
+      } as ScreenPreferences);
+    }
   } catch (err) {
-    errorCatcher(err); // Catch and log any errors.
+    errorCatcher(err);
   }
 };
