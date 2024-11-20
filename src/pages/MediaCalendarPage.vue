@@ -30,14 +30,13 @@
             <q-item
               v-for="media in missingMedia"
               :key="
-                [
-                  media.pub,
-                  media.issue,
-                  media.track,
-                  media.langwritten,
-                  media.fileformat,
-                  media.docid,
-                ].join('-')
+                ([media.pub, media.issue, media.track].filter(Boolean).length
+                  ? [media.pub, media.issue, media.track]
+                  : [media.docid]
+                )
+                  .concat([media.langwritten, media.fileformat])
+                  .filter(Boolean)
+                  .join('_')
               "
             >
               <q-item-section>
@@ -47,7 +46,8 @@
                     : [media.docid]
                   )
                     .concat([media.langwritten, media.fileformat])
-                    .join('-')
+                    .filter(Boolean)
+                    .join('_')
                 }}
               </q-item-section>
               <q-item-section side>
@@ -847,10 +847,10 @@ const generateMediaList = () => {
         ),
       )
       .filter((m) => {
-        if (!m.fileUrl || seenFileUrls.has(m.fileUrl)) {
-          return false;
+        if (m.fileUrl && seenFileUrls.has(m.fileUrl)) {
+          // return false;
+          seenFileUrls.add(m.fileUrl);
         }
-        seenFileUrls.add(m.fileUrl);
         return true;
       });
   }

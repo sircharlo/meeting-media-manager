@@ -84,6 +84,7 @@ const addJwpubDocumentMediaToFiles = async (
         publication,
       );
     }
+    console.log('multimediaItems', multimediaItems);
     const errors = await processMissingMediaInfo(multimediaItems);
     const dynamicMediaItems = currentStateStore.selectedDateObject
       ? await dynamicMediaMapper(
@@ -93,6 +94,7 @@ const addJwpubDocumentMediaToFiles = async (
           section,
         )
       : [];
+    console.log('dynamicMediaItems', dynamicMediaItems);
     addToAdditionMediaMap(dynamicMediaItems, section);
     if (errors?.length) {
       currentStateStore.missingMedia.push(
@@ -328,10 +330,27 @@ async function addFullFilePathToMultimediaItem(
           await getPublicationDirectory(publication),
           multimediaItem.FilePath,
         )
+      : ([publication.pub, publication.issue, publication.track].filter(Boolean)
+          .length
+          ? [publication.pub, publication.issue, publication.track]
+          : [publication.docid]
+        )
+          .concat([publication.langwritten, publication.fileformat])
+          .filter(Boolean)
+          .join('_');
+    console.log('fullFilePath', fullFilePath);
+    const fullLinkedPreviewFilePath = multimediaItem.LinkedPreviewFilePath
+      ? path.join(
+          await getPublicationDirectory(publication),
+          multimediaItem.LinkedPreviewFilePath,
+        )
       : undefined;
     return {
       ...multimediaItem,
       ...(fullFilePath ? { FilePath: fullFilePath } : {}),
+      ...(fullLinkedPreviewFilePath
+        ? { LinkedPreviewFilePath: fullLinkedPreviewFilePath }
+        : {}),
     };
   } catch (error) {
     errorCatcher(error);
@@ -443,7 +462,8 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
       .includes('SuppressZoom');
 
     // let select = 'SELECT Multimedia.DocumentId, Multimedia.MultimediaId, ';
-    const select = 'SELECT *';
+    const select =
+      'SELECT Multimedia.*, DocumentParagraph.BeginPosition, LinkedMultimedia.FilePath AS LinkedPreviewFilePath';
     let from = 'FROM Multimedia';
     if (mmTable === 'DocumentMultimedia') {
       from +=
@@ -451,7 +471,8 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
       from += ` LEFT JOIN DocumentParagraph ON ${mmTable}.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex`;
     }
     from += ` INNER JOIN Document ON ${mmTable}.DocumentId = Document.DocumentId`;
-
+    from +=
+      ' LEFT JOIN Multimedia AS LinkedMultimedia ON Multimedia.LinkMultimediaId = LinkedMultimedia.MultimediaId';
     let where = `WHERE ${
       source.docId || source.docId === 0
         ? `Document.DocumentId = ${source.docId}`
@@ -486,6 +507,7 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
     if (suppressZoomExists) {
       where += ' AND Multimedia.SuppressZoom <> 1';
     }
+    console.log('query', `${select} ${from} ${where} ${groupAndSort}`);
     const items = executeQuery<MultimediaItem>(
       source.db,
       `${select} ${from} ${where} ${groupAndSort}`,
@@ -737,10 +759,24 @@ const dynamicMediaMapper = async (
     const mediaPromises = allMedia.map(
       async (m): Promise<DynamicMediaObject> => {
         m.FilePath = await convertImageIfNeeded(m.FilePath);
-        const fileUrl = getFileUrl(m.FilePath);
+        const fileUrl = m.FilePath
+          ? getFileUrl(m.FilePath)
+          : ([m.KeySymbol, m.IssueTagNumber].filter(Boolean).length
+              ? [m.KeySymbol, m.IssueTagNumber]
+              : [m.MepsDocumentId]
+            )
+              .concat([
+                (m.MepsLanguageIndex !== undefined &&
+                  mepslangs[m.MepsLanguageIndex]) ||
+                  '',
+                m.Track,
+              ])
+              .filter(Boolean)
+              .join('_');
         const mediaIsSong = isSong(m);
         const thumbnailUrl =
           m.ThumbnailUrl ??
+          window.electronApi.pathToFileURL(m.LinkedPreviewFilePath || '') ??
           (await getThumbnailUrl(m.ThumbnailFilePath || m.FilePath));
         const video = isVideo(m.FilePath);
         const audio = isAudio(m.FilePath);
