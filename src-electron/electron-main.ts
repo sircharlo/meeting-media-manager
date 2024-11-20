@@ -35,6 +35,13 @@ if (process.env.PORTABLE_EXECUTABLE_DIR) {
       'Meeting Media Manager - User Data',
     ),
   );
+  app.setPath(
+    'temp',
+    join(
+      process.env.PORTABLE_EXECUTABLE_DIR,
+      'Meeting Media Manager - Temporary Files',
+    ),
+  );
 }
 
 initSentry({
