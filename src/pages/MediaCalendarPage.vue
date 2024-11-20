@@ -828,8 +828,7 @@ const generateMediaList = () => {
         ),
       )
       .filter((m) => {
-        if (m.fileUrl && seenFileUrls.has(m.fileUrl)) {
-          // return false;
+        if (m.fileUrl && !seenFileUrls.has(m.fileUrl)) {
           seenFileUrls.add(m.fileUrl);
         }
         return true;
