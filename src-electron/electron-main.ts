@@ -35,6 +35,13 @@ if (process.env.PORTABLE_EXECUTABLE_DIR) {
       'Meeting Media Manager - User Data',
     ),
   );
+  app.setPath(
+    'temp',
+    join(
+      process.env.PORTABLE_EXECUTABLE_DIR,
+      'Meeting Media Manager - Temporary Files',
+    ),
+  );
 }
 
 initSentry({
@@ -87,7 +94,18 @@ function createApplicationMenu() {
     ...(PLATFORM === 'darwin' ? [appMenu] : []),
     { role: 'fileMenu' },
     { role: 'editMenu' },
-    { role: 'viewMenu' },
+    {
+      label: 'View',
+      submenu: [
+        { role: 'toggleDevTools' },
+        { type: 'separator' },
+        { role: 'resetZoom' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' },
+      ],
+    },
     { role: 'windowMenu' },
     {
       role: 'help',
@@ -121,6 +139,6 @@ function createApplicationMenu() {
       ],
     },
   ];
-
+  template.find((item) => item.role === 'viewMenu');
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
