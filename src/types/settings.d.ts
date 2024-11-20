@@ -124,7 +124,7 @@ export interface SettingsItem {
   depends?: (keyof SettingsValues)[] | keyof SettingsValues;
   group: SettingsGroupKey;
   icon?: string;
-  list?: string;
+  list?: SettingsItemListKey;
   max?: number;
   min?: number;
   options?: SettingsItemOption[];
@@ -136,6 +136,15 @@ export interface SettingsItem {
 }
 
 export type SettingsItemAction = 'obsConnect' | 'setBackgroundMusicVolume';
+
+export type SettingsItemListKey =
+  | 'appLanguages'
+  | 'darkModes'
+  | 'days'
+  | 'jwLanguages'
+  | 'obsAllScenes'
+  | 'obsScenes'
+  | 'resolutions';
 
 export type SettingsItemOption = 'coTuesdays' | 'meetingTime';
 export type SettingsItemRule = 'notEmpty' | 'portNumber' | 'regular';
