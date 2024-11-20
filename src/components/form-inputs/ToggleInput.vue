@@ -2,7 +2,7 @@
   <q-toggle
     v-model="model"
     checked-icon="mmm-check"
-    color="primary"
+    :color="settingId === 'disableMediaFetching' ? 'negative' : 'primary'"
     :disable="customDisabled"
     :disabled="customDisabled"
   />
