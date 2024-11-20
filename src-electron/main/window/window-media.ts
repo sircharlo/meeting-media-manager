@@ -149,8 +149,6 @@ const setWindowPosition = (
         displayNr !== currentDisplayNr &&
         boundsChanged(mediaWindow.getBounds(), newBounds)
       ) {
-        setWindowBounds(newBounds, false, false);
-      } else {
         handleMacFullScreenTransition(() => {
           setWindowBounds(newBounds, false, false);
         });
