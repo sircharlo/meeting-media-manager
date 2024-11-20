@@ -133,8 +133,7 @@ const setWindowPosition = (
 
       if (fullscreenDesired === mediaWindow.isFullScreen()) {
         handleScreenChange();
-      }
-      {
+      } else {
         // Attach appropriate event listeners for fullscreen transitions.
         if (fullscreenDesired) {
           mediaWindow.once('enter-full-screen', handleScreenChange);
