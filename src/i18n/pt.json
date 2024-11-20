@@ -85,7 +85,7 @@
   "delete-all-additional-media": "Excluir todas as mídias adicionadas",
   "delete-media": "Excluir mídia",
   "delete-media-explain": "Excluir a mídia selecionada.",
-  "disableMediaFetching": "Disable features for regular meetings and automatic media fetching",
+  "disableMediaFetching": "Desativar recursos utilizados nas reuniões congregacionais e o download automático de mídias",
   "disableMediaFetching-explain": "Essa configuração deve permanecer desativada na maioria dos casos para garantir que as mídias das reuniões congregacionais sejam baixadas automaticamente. Ao ativar essa opção, todas as mídias terão que ser adicionadas manualmente. Ela deve ser ativada apenas em perfis utilizados exclusivamente para eventos especiais, como escolas teocráticas, assembleias ou congressos.",
   "dismiss": "Ignorar",
   "display": "Tela",
