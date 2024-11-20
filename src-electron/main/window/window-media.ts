@@ -177,7 +177,7 @@ const setWindowPosition = (
       };
 
       // Check if the new bounds are targeting a different display.
-      if (displayNr !== currentDisplayNr) {
+      if (displayNr !== currentDisplayNr || mediaWindow.isFullScreen()) {
         handleMacFullScreenTransition(() => {
           setWindowBounds(newBounds); // Apply new bounds after transition.
         });
