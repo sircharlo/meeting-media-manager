@@ -30,6 +30,12 @@
         :label="t('update')"
         @click="openExternal('latestRelease')"
       />
+      <q-btn
+        v-if="announcement.actions?.includes('translate')"
+        flat
+        :label="t('help-translate')"
+        @click="openTranslateDiscussion"
+      />
     </template>
   </q-banner>
 </template>
@@ -38,8 +44,13 @@ import type { Announcement } from 'src/types';
 
 import { whenever } from '@vueuse/core';
 import { useQuasar } from 'quasar';
+import { useLocale } from 'src/composables/useLocale';
 import { fetchAnnouncements, fetchLatestVersion } from 'src/helpers/api';
-import { isVersionValid, parseVersion } from 'src/helpers/general';
+import {
+  camelToKebabCase,
+  isVersionValid,
+  parseVersion,
+} from 'src/helpers/general';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, onMounted, ref } from 'vue';
@@ -50,7 +61,7 @@ const { t } = useI18n();
 const currentStateStore = useCurrentStateStore();
 const congregationStore = useCongregationSettingsStore();
 
-const { getAppVersion, openExternal } = window.electronApi;
+const { getAppVersion, openDiscussion, openExternal } = window.electronApi;
 
 const version = ref('');
 const latestVersion = ref('');
@@ -120,9 +131,30 @@ const newUpdateAnnouncement = computed((): Announcement => {
   };
 });
 
+const { localeObject } = useLocale();
+
+const translatorAnnouncement = computed((): Announcement => {
+  return {
+    actions: ['translate'],
+    id: `translator-wanted-${localeObject.value?.langcode}`,
+    message: 'translator-wanted',
+  };
+});
+
+const openTranslateDiscussion = () => {
+  if (!localeObject.value) return;
+  openDiscussion(
+    'translations',
+    `New translation in ${localeObject.value.englishName}`,
+    JSON.stringify({
+      language: `I would like to help translate M³ into a language I speak: ${localeObject.value.label}/${localeObject.value.englishName} - ${localeObject.value.langcode}/${camelToKebabCase(localeObject.value.value)}`,
+    }),
+  );
+};
+
 const activeAnnouncements = computed(() => {
   return announcements.value
-    .concat([newUpdateAnnouncement.value])
+    .concat([newUpdateAnnouncement.value, translatorAnnouncement.value])
     .filter((a) => {
       if (!currentStateStore.currentCongregation) return false;
       if (a.persistent && dismissed.value.has(a.id)) return false;

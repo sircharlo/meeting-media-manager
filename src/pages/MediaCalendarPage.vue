@@ -527,7 +527,6 @@ import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { computed, onMounted, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
 const { formatDate, getDateDiff } = date;
@@ -536,7 +535,7 @@ const dragging = ref(false);
 const jwpubImportDb = ref('');
 const jwpubImportDocuments = ref<DocumentItem[]>([]);
 
-const { dateLocale } = useLocale();
+const { dateLocale, t } = useLocale();
 
 watch(
   () => [jwpubImportDb.value, jwpubImportDocuments.value],
@@ -547,7 +546,6 @@ watch(
   },
 );
 
-const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 
