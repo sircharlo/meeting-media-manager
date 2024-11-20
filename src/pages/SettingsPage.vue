@@ -28,11 +28,22 @@
         >
           <div>
             <template
-              v-for="(
-                [settingId, item], index
-              ) in settingDefinitionEntries.filter(
-                ([settingId, item]) => item.group === groupId,
-              )"
+              v-for="([settingId, item], index) in settingDefinitionEntries
+                .filter(
+                  ([settingId, item]) =>
+                    (!item.depends ||
+                      (Array.isArray(item.depends)
+                        ? item.depends.every((dep) => currentSettings?.[dep])
+                        : currentSettings?.[item.depends])) &&
+                    (!onlyShowInvalidSettings ||
+                      !invalidSettingsLength ||
+                      invalidSettings.includes(settingId)) &&
+                    (!item.unless ||
+                      (Array.isArray(item.unless)
+                        ? item.unless.every((dep) => !currentSettings?.[dep])
+                        : !currentSettings?.[item.unless])),
+                )
+                .filter(([settingId, item]) => item.group === groupId)"
               :key="settingId"
             >
               <template
@@ -40,9 +51,28 @@
                   item.subgroup &&
                   (index === 0 ||
                     item.subgroup !==
-                      settingDefinitionEntries.filter(
-                        ([settingId, item]) => item.group === groupId,
-                      )[index - 1]?.[1].subgroup)
+                      settingDefinitionEntries
+                        .filter(
+                          ([settingId, item]) =>
+                            (!item.depends ||
+                              (Array.isArray(item.depends)
+                                ? item.depends.every(
+                                    (dep) => currentSettings?.[dep],
+                                  )
+                                : currentSettings?.[item.depends])) &&
+                            (!onlyShowInvalidSettings ||
+                              !invalidSettingsLength ||
+                              invalidSettings.includes(settingId)) &&
+                            (!item.unless ||
+                              (Array.isArray(item.unless)
+                                ? item.unless.every(
+                                    (dep) => !currentSettings?.[dep],
+                                  )
+                                : !currentSettings?.[item.unless])),
+                        )
+                        .filter(([settingId, item]) => item.group === groupId)[
+                        index - 1
+                      ]?.[1].subgroup)
                 "
               >
                 <q-separator class="bg-accent-200" spaced />
@@ -65,7 +95,11 @@
                       : currentSettings[item.depends])) &&
                   (!onlyShowInvalidSettings ||
                     !invalidSettingsLength ||
-                    invalidSettings.includes(settingId))
+                    invalidSettings.includes(settingId)) &&
+                  (!item.unless ||
+                    (Array.isArray(item.unless)
+                      ? item.unless.every((dep) => !currentSettings?.[dep])
+                      : !currentSettings[item.unless]))
                 "
                 :id="settingId"
                 :class="{
