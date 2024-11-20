@@ -85,7 +85,7 @@ const addJwpubDocumentMediaToFiles = async (
       );
     }
     console.log('multimediaItems', multimediaItems);
-    const errors = await processMissingMediaInfo(multimediaItems);
+    /*const errors =*/ await processMissingMediaInfo(multimediaItems);
     const dynamicMediaItems = currentStateStore.selectedDateObject
       ? await dynamicMediaMapper(
           multimediaItems,
@@ -96,24 +96,24 @@ const addJwpubDocumentMediaToFiles = async (
       : [];
     console.log('dynamicMediaItems', dynamicMediaItems);
     addToAdditionMediaMap(dynamicMediaItems, section);
-    if (errors?.length) {
-      currentStateStore.missingMedia.push(
-        ...errors.filter(
-          (value, index, self) =>
-            index ===
-            self.findIndex(
-              (t) =>
-                t.docid === value.docid &&
-                t.fileformat === value.fileformat &&
-                t.issue === value.issue &&
-                t.langwritten === value.langwritten &&
-                t.pub === value.pub &&
-                t.track === value.track,
-            ),
-        ),
-      );
-      return errors;
-    }
+    // if (errors?.length) {
+    //   currentStateStore.missingMedia.push(
+    //     ...errors.filter(
+    //       (value, index, self) =>
+    //         index ===
+    //         self.findIndex(
+    //           (t) =>
+    //             t.docid === value.docid &&
+    //             t.fileformat === value.fileformat &&
+    //             t.issue === value.issue &&
+    //             t.langwritten === value.langwritten &&
+    //             t.pub === value.pub &&
+    //             t.track === value.track,
+    //         ),
+    //     ),
+    //   );
+    //   return errors;
+    // }
   } catch (e) {
     errorCatcher(e);
   }

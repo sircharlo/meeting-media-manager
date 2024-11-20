@@ -5,7 +5,6 @@ import type {
   DynamicMediaObject,
   JwLangSymbol,
   MediaLink,
-  PublicationFetcher,
   SettingsItem,
   SettingsItems,
   SettingsValues,
@@ -47,7 +46,6 @@ interface Store {
   mediaWindowCustomBackground: string;
   mediaWindowVisible: boolean;
   meetingDay: boolean;
-  missingMedia: PublicationFetcher[];
   musicPlaying: boolean;
   musicStarting: boolean;
   musicStopping: boolean;
@@ -233,7 +231,6 @@ export const useCurrentStateStore = defineStore('current-state', {
       mediaWindowCustomBackground: '',
       mediaWindowVisible: true,
       meetingDay: false,
-      missingMedia: [],
       musicPlaying: false,
       musicStarting: false,
       musicStopping: false,

@@ -218,7 +218,17 @@
                     }}</q-tooltip>
                   </q-icon>
                   <q-icon
-                    v-if="media.watched"
+                    v-if="!isFileUrl(media.fileUrl)"
+                    color="negative"
+                    name="mmm-file-missing"
+                    size="sm"
+                  >
+                    <q-tooltip :delay="500">{{
+                      $t('media-item-missing-explain')
+                    }}</q-tooltip>
+                  </q-icon>
+                  <q-icon
+                    v-else-if="media.watched"
                     color="accent-300"
                     name="mmm-watched-media"
                     size="sm"
@@ -295,10 +305,11 @@
             <template v-if="!media.markers || media.markers.length === 0">
               <q-btn
                 ref="playButton"
-                color="primary"
+                :color="isFileUrl(media.fileUrl) ? 'primary' : 'negative'"
                 :disable="
-                  mediaPlayingUrl !== '' &&
-                  (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))
+                  (mediaPlayingUrl !== '' &&
+                    (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))) ||
+                  !isFileUrl(media.fileUrl)
                 "
                 icon="mmm-play"
                 rounded
@@ -632,7 +643,7 @@ const setHoveredBadge = debounce((key: string, value: boolean) => {
 const obsState = useObsStateStore();
 const { currentSceneType, obsConnectionState } = storeToRefs(obsState);
 
-const { fileUrlToPath, fs, path } = window.electronApi;
+const { fileUrlToPath, fs, isFileUrl, path } = window.electronApi;
 
 const mediaDurationPopups = ref<Record<string, boolean>>({});
 const panzooms: Record<string, PanzoomObject> = {};
