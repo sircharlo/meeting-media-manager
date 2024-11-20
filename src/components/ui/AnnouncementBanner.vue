@@ -87,13 +87,6 @@ whenever(
   },
 );
 
-whenever(
-  () => currentStateStore.currentSettings?.lang,
-  () => {
-    console.log([currentStateStore.currentSettings?.lang, currentJwLang.value]);
-  },
-);
-
 const dismissed = ref<Set<string>>(new Set());
 
 const dismiss = (id: string) => {
