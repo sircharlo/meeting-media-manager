@@ -34,7 +34,8 @@
                     if (errors?.length)
                       errors.forEach((e) =>
                         createTemporaryNotification({
-                          message: [
+                          caption: [
+                            e.docid,
                             e.pub,
                             e.issue,
                             e.track,
@@ -44,7 +45,17 @@
                             .filter(Boolean)
                             .join('_'),
                           icon: 'mmm-error',
-                          caption: $t('file-not-available'),
+                          group: [
+                            e.docid,
+                            e.pub,
+                            e.issue,
+                            e.track,
+                            e.langwritten,
+                            e.fileformat,
+                          ]
+                            .filter(Boolean)
+                            .join('_'),
+                          message: $t('file-not-available'),
                           type: 'negative',
                           timeout: 15000,
                         }),
