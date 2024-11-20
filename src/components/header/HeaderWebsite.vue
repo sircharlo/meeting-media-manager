@@ -48,7 +48,7 @@
     :disable="mediaPlaying"
     unelevated
     @click="
-      openWebsiteWindow(currentState.currentLangSymbol);
+      openWebsiteWindow(currentState.currentLangObject?.symbol);
       mediaPlayingAction = 'website';
     "
   >

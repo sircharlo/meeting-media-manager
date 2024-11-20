@@ -141,6 +141,8 @@
   "github-repo": "GitHub repo",
   "go-home": "Go Home",
   "go-to-settings": "Go to Settings",
+  "help-translate": "Help translate",
+  "help-translate-new": "The media language currently configured is not yet available as a display language for M³. Would you like to help translate M³ for users who speak your language?",
   "hide-from-list": "Hide from media list",
   "hide-from-list-explain": "Hidden files can be restored at any time using the 'Add media' menu.",
   "hide-image-for-zoom-participants": "Hide image for Zoom participants",

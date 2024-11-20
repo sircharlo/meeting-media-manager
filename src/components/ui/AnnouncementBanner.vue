@@ -2,7 +2,7 @@
   <q-banner
     v-for="announcement in activeAnnouncements"
     :key="announcement.id"
-    :class="`q-ma-sm ${bgColor(announcement.type)}`"
+    :class="`q-ma-md ${bgColor(announcement.type)}`"
     dense
     rounded
   >
@@ -44,13 +44,9 @@ import type { Announcement } from 'src/types';
 
 import { whenever } from '@vueuse/core';
 import { useQuasar } from 'quasar';
-import { useLocale } from 'src/composables/useLocale';
 import { fetchAnnouncements, fetchLatestVersion } from 'src/helpers/api';
-import {
-  camelToKebabCase,
-  isVersionValid,
-  parseVersion,
-} from 'src/helpers/general';
+import { isVersionValid, parseVersion } from 'src/helpers/general';
+import { localeOptions } from 'src/i18n';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, onMounted, ref } from 'vue';
@@ -88,6 +84,13 @@ whenever(
   () => {
     loadLatestVersion();
     loadAnnouncements();
+  },
+);
+
+whenever(
+  () => currentStateStore.currentSettings?.lang,
+  () => {
+    console.log([currentStateStore.currentSettings?.lang, currentJwLang.value]);
   },
 );
 
@@ -131,30 +134,40 @@ const newUpdateAnnouncement = computed((): Announcement => {
   };
 });
 
-const { localeObject } = useLocale();
+const currentJwLang = computed(() => currentStateStore.currentLangObject);
+const langIsSupported = computed(() => {
+  if (!currentJwLang.value) return true;
+  return localeOptions.some(
+    (l) =>
+      l.langcode === currentJwLang.value?.langcode ||
+      (currentJwLang.value &&
+        l.signLangCodes?.includes(currentJwLang.value.langcode)),
+  );
+});
 
-const translatorAnnouncement = computed((): Announcement => {
+const untranslatedAnnouncement = computed((): Announcement => {
   return {
     actions: ['translate'],
-    id: `translator-wanted-${localeObject.value?.langcode}`,
-    message: 'translator-wanted',
+    id: `untranslated-${currentJwLang.value?.langcode}}`,
+    message: 'help-translate-new',
   };
 });
 
 const openTranslateDiscussion = () => {
-  if (!localeObject.value) return;
+  if (!currentJwLang.value) return;
   openDiscussion(
     'translations',
-    `New translation in ${localeObject.value.englishName}`,
+    `New translation in ${currentJwLang.value?.name}`,
     JSON.stringify({
-      language: `I would like to help translate M³ into a language I speak: ${localeObject.value.label}/${localeObject.value.englishName} - ${localeObject.value.langcode}/${camelToKebabCase(localeObject.value.value)}`,
+      language: `I would like to help translate M³ into a language I speak: ${currentJwLang.value?.vernacularName}/${currentJwLang.value.name}} - ${currentJwLang.value.langcode}/${currentJwLang.value.symbol}`,
     }),
   );
 };
 
 const activeAnnouncements = computed(() => {
   return announcements.value
-    .concat([newUpdateAnnouncement.value, translatorAnnouncement.value])
+    .concat([newUpdateAnnouncement.value])
+    .concat(langIsSupported.value ? [] : [untranslatedAnnouncement.value])
     .filter((a) => {
       if (!currentStateStore.currentCongregation) return false;
       if (a.persistent && dismissed.value.has(a.id)) return false;
