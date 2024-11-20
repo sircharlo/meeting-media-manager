@@ -1236,6 +1236,7 @@ const playState = (id: string) => {
 const copyToDatedAdditionalMedia = async (
   filepathToCopy: string,
   section?: MediaSection,
+  addToAdditionMediaMap?: boolean,
 ) => {
   const datedAdditionalMediaDir = await getDatedAdditionalMediaDirectory();
   const trimFilepathAsNeeded = (filepath: string) => {
@@ -1279,11 +1280,12 @@ const copyToDatedAdditionalMedia = async (
     }
     if (filepathToCopy !== datedAdditionalMediaPath)
       await fs.copy(filepathToCopy, datedAdditionalMediaPath);
-    await addToAdditionMediaMapFromPath(
-      datedAdditionalMediaPath,
-      section,
-      uniqueId,
-    );
+    if (addToAdditionMediaMap)
+      await addToAdditionMediaMapFromPath(
+        datedAdditionalMediaPath,
+        section,
+        uniqueId,
+      );
     return datedAdditionalMediaPath;
   } catch (error) {
     errorCatcher(error);
@@ -1407,7 +1409,7 @@ const addToFiles = async (
       }
       filepath = await convertImageIfNeeded(filepath);
       if (isImage(filepath)) {
-        await copyToDatedAdditionalMedia(filepath, sectionToAddTo.value);
+        await copyToDatedAdditionalMedia(filepath, sectionToAddTo.value, true);
       } else if (isVideo(filepath) || isAudio(filepath)) {
         const detectedPubMediaInfo = path
           .parse(filepath)
@@ -1428,16 +1430,17 @@ const addToFiles = async (
         const destPath = await copyToDatedAdditionalMedia(
           filepath,
           sectionToAddTo.value,
+          !matchingMissingItem,
         );
         if (matchingMissingItem) {
           const metadata = await getMetadataFromMediaPath(destPath);
+          matchingMissingItem.fileUrl =
+            window.electronApi.pathToFileURL(destPath);
           matchingMissingItem.duration = metadata.format.duration || 0;
           matchingMissingItem.title =
             metadata.common.title || window.electronApi.path.basename(destPath);
           matchingMissingItem.isVideo = isVideo(filepath);
           matchingMissingItem.isAudio = isAudio(filepath);
-          matchingMissingItem.fileUrl =
-            window.electronApi.pathToFileURL(destPath);
         }
       } else if (isPdf(filepath)) {
         const convertedImages = (
