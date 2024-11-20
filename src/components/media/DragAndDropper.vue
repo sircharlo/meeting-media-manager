@@ -29,38 +29,7 @@
                   addJwpubDocumentMediaToFiles(
                     jwpubDb,
                     jwpubImportDocument,
-                  ).then((errors) => {
-                    resetModal();
-                    if (errors?.length)
-                      errors.forEach((e) =>
-                        createTemporaryNotification({
-                          caption: [
-                            e.docid,
-                            e.pub,
-                            e.issue,
-                            e.track,
-                            e.langwritten,
-                            e.fileformat,
-                          ]
-                            .filter(Boolean)
-                            .join('_'),
-                          icon: 'mmm-error',
-                          group: [
-                            e.docid,
-                            e.pub,
-                            e.issue,
-                            e.track,
-                            e.langwritten,
-                            e.fileformat,
-                          ]
-                            .filter(Boolean)
-                            .join('_'),
-                          message: $t('file-not-available'),
-                          type: 'negative',
-                          timeout: 15000,
-                        }),
-                      );
-                  });
+                  ).then(resetModal);
                 "
               >
                 <q-item-section class="no-wrap">
@@ -158,7 +127,6 @@ import {
 } from 'src/constants/fs';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
-import { createTemporaryNotification } from 'src/helpers/notifications';
 import { computed, ref } from 'vue';
 
 const { openFileDialog } = window.electronApi;

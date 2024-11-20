@@ -1488,42 +1488,13 @@ const addToFiles = async (
             `SELECT DISTINCT Document.DocumentId, Title FROM Document JOIN ${mmTable} ON Document.DocumentId = ${mmTable}.DocumentId;`,
           );
           if (jwpubImportDocuments.value.length === 1) {
-            /*const errors =*/ await addJwpubDocumentMediaToFiles(
+            await addJwpubDocumentMediaToFiles(
               jwpubImportDb.value,
               jwpubImportDocuments.value[0],
               sectionToAddTo.value,
             );
             jwpubImportDb.value = '';
             jwpubImportDocuments.value = [];
-            // if (errors?.length)
-            //   errors.forEach((e) =>
-            //     createTemporaryNotification({
-            //       caption: [
-            //         e.docid,
-            //         e.pub,
-            //         e.issue,
-            //         e.track,
-            //         e.langwritten,
-            //         e.fileformat,
-            //       ]
-            //         .filter(Boolean)
-            //         .join('_'),
-            //       group: [
-            //         e.docid,
-            //         e.pub,
-            //         e.issue,
-            //         e.track,
-            //         e.langwritten,
-            //         e.fileformat,
-            //       ]
-            //         .filter(Boolean)
-            //         .join('_'),
-            //       icon: 'mmm-error',
-            //       message: t('file-not-available'),
-            //       timeout: 15000,
-            //       type: 'negative',
-            //     }),
-            //   );
             resetDragging();
           }
         }
