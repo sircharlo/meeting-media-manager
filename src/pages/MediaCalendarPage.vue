@@ -1450,9 +1450,8 @@ const addToFiles = async (
             if (errors?.length)
               errors.forEach((e) =>
                 createTemporaryNotification({
-                  caption: t('file-not-available'),
-                  icon: 'mmm-error',
-                  message: [
+                  caption: [
+                    e.docid,
                     e.pub,
                     e.issue,
                     e.track,
@@ -1461,6 +1460,18 @@ const addToFiles = async (
                   ]
                     .filter(Boolean)
                     .join('_'),
+                  group: [
+                    e.docid,
+                    e.pub,
+                    e.issue,
+                    e.track,
+                    e.langwritten,
+                    e.fileformat,
+                  ]
+                    .filter(Boolean)
+                    .join('_'),
+                  icon: 'mmm-error',
+                  message: t('file-not-available'),
                   timeout: 15000,
                   type: 'negative',
                 }),
