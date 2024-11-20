@@ -389,5 +389,6 @@
   "yeartext": "Yeartext",
   "yes": "Yes",
   "zoom-in": "Zoom in",
-  "zoom-out": "Zoom out"
+  "zoom-out": "Zoom out",
+  "some-media-items-are-missing": "Some media items could not be downloaded automatically. Please ensure that you add the missing files as needed."
 }

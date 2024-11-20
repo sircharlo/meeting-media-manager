@@ -19,6 +19,49 @@
     @drop="dropEnd"
   >
     <div class="col">
+      <div v-if="missingMedia.length" class="row">
+        <q-banner
+          class="bg-warning text-white full-width"
+          inline-actions
+          rounded
+        >
+          {{ $t('some-media-items-are-missing') }}
+          <q-list>
+            <q-item
+              v-for="media in missingMedia"
+              :key="
+                [
+                  media.pub,
+                  media.issue,
+                  media.track,
+                  media.langwritten,
+                  media.fileformat,
+                  media.docid,
+                ].join('-')
+              "
+            >
+              <q-item-section>
+                {{
+                  ([media.pub, media.issue, media.track].filter(Boolean).length
+                    ? [media.pub, media.issue, media.track]
+                    : [media.docid]
+                  )
+                    .concat([media.langwritten, media.fileformat])
+                    .join('-')
+                }}
+              </q-item-section>
+              <q-item-section side>
+                <pre>{{ media }}</pre>
+              </q-item-section>
+            </q-item>
+          </q-list>
+          <template #avatar>
+            <q-avatar class="bg-white text-warning" size="lg">
+              <q-icon name="mmm-file-missing" size="sm" />
+            </q-avatar>
+          </template>
+        </q-banner>
+      </div>
       <div
         v-if="
           [...sortableAdditionalMediaItems, ...sortableMediaItems].some(
@@ -573,6 +616,7 @@ const {
   mediaPlayingSubtitlesUrl,
   mediaPlayingUniqueId,
   mediaPlayingUrl,
+  missingMedia,
   selectedDate,
   selectedDateObject,
   watchFolderMedia,
