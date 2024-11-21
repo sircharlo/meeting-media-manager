@@ -426,6 +426,11 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
         'SELECT COUNT(*) FROM Question',
       )[0]?.count;
 
+    const LinkMultimediaIdExists = executeQuery<TableItem>(
+      source.db,
+      "PRAGMA table_info('Multimedia')",
+    ).some((item) => item.name === 'LinkMultimediaId');
+
     const suppressZoomExists = executeQuery<TableItem>(
       source.db,
       "PRAGMA table_info('Multimedia')",
@@ -433,18 +438,22 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
       .map((item) => item.name)
       .includes('SuppressZoom');
 
-    // let select = 'SELECT Multimedia.DocumentId, Multimedia.MultimediaId, ';
-    const select =
-      'SELECT Multimedia.*, LinkedMultimedia.FilePath AS LinkedPreviewFilePath';
-    let from = 'FROM Multimedia';
+    let select = 'SELECT Multimedia.*';
+    select += mmTable === 'DocumentMultimedia' ? ', DocumentMultimedia.*' : '';
+    select += ParagraphColumnsExist ? ', DocumentParagraph.BeginPosition' : '';
+    select += LinkMultimediaIdExists
+      ? ', LinkedMultimedia.FilePath AS LinkedPreviewFilePath'
+      : '';
+    let from = ' FROM Multimedia';
     if (mmTable === 'DocumentMultimedia') {
       from +=
         ' INNER JOIN DocumentMultimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId';
       from += ` LEFT JOIN DocumentParagraph ON ${mmTable}.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex`;
     }
     from += ` INNER JOIN Document ON ${mmTable}.DocumentId = Document.DocumentId`;
-    from +=
-      ' LEFT JOIN Multimedia AS LinkedMultimedia ON Multimedia.LinkMultimediaId = LinkedMultimedia.MultimediaId';
+    if (LinkMultimediaIdExists)
+      from +=
+        ' LEFT JOIN Multimedia AS LinkedMultimedia ON Multimedia.LinkMultimediaId = LinkedMultimedia.MultimediaId';
     let where = `WHERE ${
       source.docId || source.docId === 0
         ? `Document.DocumentId = ${source.docId}`
@@ -708,12 +717,7 @@ const dynamicMediaMapper = async (
 ): Promise<DynamicMediaObject[]> => {
   const { currentSettings } = useCurrentStateStore();
   try {
-    let middleSongParagraphOrdinal = 0;
     if (!additional) {
-      const songs = allMedia.filter((m) => isSong(m));
-      if (songs.length === 3) {
-        middleSongParagraphOrdinal = songs[1].BeginParagraphOrdinal;
-      }
       if (isCoWeek(lookupDate)) {
         // The last songs for both MW and WE meeting get replaced during the CO visit
         const lastParagraphOrdinal =
@@ -777,6 +781,9 @@ const dynamicMediaMapper = async (
           }
         }
         let section: MediaSection = additional ? additionalSection : 'wt';
+        const songs = allMedia.filter((m) => isSong(m));
+        const middleSongParagraphOrdinal =
+          songs.length === 3 ? songs[1].BeginParagraphOrdinal : 0;
         if (middleSongParagraphOrdinal > 0) {
           //this is a meeting with 3 songs
           if (m.BeginParagraphOrdinal >= middleSongParagraphOrdinal) {
