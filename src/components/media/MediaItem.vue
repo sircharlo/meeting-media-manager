@@ -191,7 +191,7 @@
                   :text-color="media.song ? 'white' : undefined"
                 >
                   <q-icon
-                    class="q-mr-xs"
+                    :class="{ 'q-mr-xs': media.song || media.paragraph }"
                     :name="
                       media.watched
                         ? 'mmm-watched-media'
