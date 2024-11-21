@@ -717,7 +717,11 @@ const dynamicMediaMapper = async (
 ): Promise<DynamicMediaObject[]> => {
   const { currentSettings } = useCurrentStateStore();
   try {
+    let middleSongParagraphOrdinal = 0;
     if (!additional) {
+      const songs = allMedia.filter((m) => isSong(m));
+      middleSongParagraphOrdinal =
+        songs.length === 3 ? songs[1].BeginParagraphOrdinal : 0;
       if (isCoWeek(lookupDate)) {
         // The last songs for both MW and WE meeting get replaced during the CO visit
         const lastParagraphOrdinal =
@@ -781,9 +785,6 @@ const dynamicMediaMapper = async (
           }
         }
         let section: MediaSection = additional ? additionalSection : 'wt';
-        const songs = allMedia.filter((m) => isSong(m));
-        const middleSongParagraphOrdinal =
-          songs.length === 3 ? songs[1].BeginParagraphOrdinal : 0;
         if (middleSongParagraphOrdinal > 0) {
           //this is a meeting with 3 songs
           if (m.BeginParagraphOrdinal >= middleSongParagraphOrdinal) {
