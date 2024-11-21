@@ -140,6 +140,8 @@
   "github-repo": "GitHub repo",
   "go-home": "Nenda mwanzo",
   "go-to-settings": "Nenda kwenye mipangilio",
+  "help-translate": "Help translate",
+  "help-translate-new": "The current media language is not available as a display language in M³. Would you like to help translate M³ for users who speak this language?",
   "hide-from-list": "Ficha kutoka kwa orodha ya midia",
   "hide-from-list-explain": "Faili zilizofichwa zinawezwa kurudishwa wakati wowote kwa kutumia menyu ya 'Midia ya Ongeza Midia'.",
   "hide-image-for-zoom-participants": "Ficha picha kwenye zoom",
