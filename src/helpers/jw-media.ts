@@ -1250,11 +1250,13 @@ async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
 
     for (const { media } of mediaToProcess) {
       const langsWritten = [
-        media.MepsLanguageIndex !== undefined &&
-          mepslangs[media.MepsLanguageIndex],
-        media.AlternativeLanguage,
-        currentStateStore.currentSettings?.lang,
-        currentStateStore.currentSettings?.langFallback,
+        ...new Set([
+          currentStateStore.currentSettings?.lang,
+          currentStateStore.currentSettings?.langFallback,
+          media.AlternativeLanguage,
+          media.MepsLanguageIndex !== undefined &&
+            mepslangs[media.MepsLanguageIndex],
+        ]),
       ];
       for (const langwritten of langsWritten) {
         if (!langwritten || !(media.KeySymbol || media.MepsDocumentId)) {
