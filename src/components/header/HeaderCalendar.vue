@@ -27,7 +27,7 @@
   >
     <q-icon
       :class="{ 'q-mr-sm': $q.screen.gt.xs }"
-      name="mmm-import-media"
+      name="mmm-add-media"
       size="xs"
     />
     {{ $q.screen.gt.xs ? $t('extra-media') : '' }}
