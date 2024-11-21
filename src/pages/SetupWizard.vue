@@ -87,8 +87,8 @@
           <div class="q-gutter-sm row">
             <TextInput v-model="currentSettings.congregationName" />
             <q-btn
+              v-if="regularProfile"
               color="primary"
-              :disable="!regularProfile"
               icon="mmm-search"
               :label="$t('congregation-lookup')"
               outline
@@ -156,6 +156,7 @@
         </q-step>
 
         <q-step
+          v-if="regularProfile"
           :disable="!regularProfile"
           :done="step > 6"
           icon="mmm-calendar-month"
@@ -205,6 +206,7 @@
           </q-stepper-navigation>
         </q-step>
         <q-step
+          v-if="regularProfile"
           :disable="!regularProfile"
           :done="step > 7"
           icon="mmm-download"
@@ -231,6 +233,7 @@
           </q-stepper-navigation>
         </q-step>
         <q-step
+          v-if="regularProfile"
           :disable="!regularProfile"
           :done="step > 8"
           icon="mmm-almost-done"
@@ -258,6 +261,7 @@
           </q-stepper-navigation>
         </q-step>
         <q-step
+          v-if="regularProfile"
           :disable="!regularProfile"
           :done="step > 101"
           icon="mmm-stream-now"
@@ -299,6 +303,7 @@
           </q-stepper-navigation>
         </q-step>
         <q-step
+          v-if="regularProfile"
           :disable="!regularProfile"
           :done="step > 102"
           icon="mmm-music-note"
@@ -363,6 +368,7 @@
           </q-stepper-navigation>
         </q-step>
         <q-step
+          v-if="obsUsed"
           :disable="!obsUsed"
           :done="step > 104"
           icon="mmm-obs-studio"
@@ -407,6 +413,7 @@
           </q-stepper-navigation>
         </q-step>
         <q-step
+          v-if="obsUsed && obsIntegrate"
           :disable="!obsUsed || !obsIntegrate"
           :done="step > 105"
           icon="mmm-obs-password"
@@ -423,6 +430,7 @@
           <TextInput
             v-model="currentSettings.obsPort"
             :actions="['obsConnect']"
+            class="q-mb-md"
             :label="$t('obsPort')"
           />
           <TextInput
@@ -443,6 +451,7 @@
           </q-stepper-navigation>
         </q-step>
         <q-step
+          v-if="obsUsed && obsIntegrate"
           :disable="!obsUsed || !obsIntegrate"
           :done="step > 106"
           icon="mmm-lectern"
@@ -471,6 +480,7 @@
           </q-stepper-navigation>
         </q-step>
         <q-step
+          v-if="obsUsed && obsIntegrate"
           :disable="!obsUsed || !obsIntegrate"
           :done="step > 107"
           icon="mmm-media"
