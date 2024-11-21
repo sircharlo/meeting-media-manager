@@ -102,10 +102,20 @@
         </div>
         <div class="row">
           <div
-            class="col cursor-pointer rounded-borders dashed-border items-center justify-center flex"
-            :class="{ 'bg-accent-100': hovering }"
+            class="col rounded-borders dashed-border items-center justify-center flex"
+            :class="{
+              'cursor-pointer': !totalFiles && !(!!jwpubDb || jwpubLoading),
+              'bg-accent-100':
+                hovering && !totalFiles && !(!!jwpubDb || jwpubLoading),
+            }"
             style="height: 20vh"
-            @click="getLocalFiles()"
+            @click="
+              () => {
+                if (!totalFiles && !(!!jwpubDb || jwpubLoading)) {
+                  getLocalFiles();
+                }
+              }
+            "
             @mouseenter="hovering = true"
             @mouseleave="hovering = false"
           >
