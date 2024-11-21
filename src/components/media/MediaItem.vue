@@ -201,6 +201,15 @@
                             : 'mmm-extra-media'
                     "
                   />
+                  <q-tooltip
+                    v-if="
+                      media.isAdditional &&
+                      !currentSettings?.disableMediaFetching
+                    "
+                    :delay="1000"
+                  >
+                    {{ $t('extra-media-item-explain') }}
+                  </q-tooltip>
                   <template v-if="media.paragraph || media.song">
                     {{
                       media.paragraph
