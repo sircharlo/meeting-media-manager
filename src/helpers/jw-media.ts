@@ -162,6 +162,77 @@ const downloadFileIfNeeded = async ({
   return result;
 };
 
+const exportDayToFolder = async (
+  destDate: Date,
+  dayMediaItems: DynamicMediaObject[],
+) => {
+  const currentStateStore = useCurrentStateStore();
+  if (!destDate || !currentStateStore.currentSettings?.mediaAutoExportFolder)
+    return;
+
+  const dayMediaLength = dayMediaItems.length;
+  const destFolder = path.join(
+    currentStateStore.currentSettings.mediaAutoExportFolder,
+    formatDate(destDate, 'YYYY-MM-DD'),
+  );
+
+  try {
+    await fs.ensureDir(destFolder);
+  } catch (error) {
+    errorCatcher(error);
+    return; // Exit early if we can't create the folder
+  }
+
+  const expectedFiles = new Set<string>();
+
+  for (let i = 0; i < dayMediaLength; i++) {
+    try {
+      const m = dayMediaItems[i];
+      const sourceFilePath = window.electronApi.fileUrlToPath(m.fileUrl);
+      if (!sourceFilePath || !(await fs.exists(sourceFilePath))) continue;
+
+      const fileBaseName =
+        (i + 1).toString().padStart(dayMediaLength > 99 ? 3 : 2, '0') +
+        ' ' +
+        path.basename(m.fileUrl);
+
+      const destFilePath = path.join(destFolder, fileBaseName);
+
+      // Check if destination file exists and matches size
+      if (await fs.exists(destFilePath)) {
+        const sourceStats = await fs.stat(sourceFilePath);
+        const destStats = await fs.stat(destFilePath);
+
+        if (sourceStats.size === destStats.size) {
+          expectedFiles.add(fileBaseName); // Mark as expected without copying
+          continue;
+        }
+      }
+
+      // Copy file if it doesn't exist or size doesn't match
+      expectedFiles.add(fileBaseName);
+      await fs.copy(sourceFilePath, destFilePath);
+    } catch (error) {
+      errorCatcher(error);
+    }
+  }
+
+  try {
+    const filesInDestFolder = await fs.readdir(destFolder);
+    for (const file of filesInDestFolder) {
+      try {
+        if (!expectedFiles.has(file)) {
+          await fs.remove(path.join(destFolder, file));
+        }
+      } catch (error) {
+        errorCatcher(error);
+      }
+    }
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
 const fetchMedia = async () => {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -204,7 +275,6 @@ const fetchMedia = async () => {
       )
     ).filter((day) => !!day);
 
-    if (meetingsToFetch.length === 0) return;
     meetingsToFetch.forEach((day) => {
       day.error = false;
       day.complete = false;
@@ -253,6 +323,20 @@ const fetchMedia = async () => {
       }
     }
     await queue.onIdle();
+
+    const daysToExport =
+      jwStore.lookupPeriod[currentStateStore.currentCongregation]?.filter(
+        (d) => d.dynamicMedia.length,
+      ) || [];
+    console.log('daysToExport', daysToExport);
+
+    // TODO: add other media here too (additionalMedia, watched)
+    // TODO: apply sort order before exporting
+
+    for (const day of daysToExport) {
+      console.log('day', day);
+      await exportDayToFolder(day.date, day.dynamicMedia);
+    }
   } catch (error) {
     errorCatcher(error);
   }

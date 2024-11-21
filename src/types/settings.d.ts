@@ -174,6 +174,7 @@ export interface SettingsValues {
   enableExtraCache: boolean;
   enableFolderWatcher: boolean;
   enableKeyboardShortcuts: boolean;
+  enableMediaAutoExport: boolean;
   // disableHardwareAcceleration: boolean;
   enableMediaDisplayButton: boolean;
   enableMusicButton: boolean;
@@ -189,6 +190,7 @@ export interface SettingsValues {
   langSubtitles: JwLangCode | null;
   localAppLang: LanguageValue;
   maxRes: MaxRes;
+  mediaAutoExportFolder: string;
   musicVolume: number;
   mwDay: null | string;
   mwStartTime: null | string;
