@@ -172,7 +172,8 @@
               <div
                 v-if="
                   (media.isAdditional &&
-                    !currentSettings?.disableMediaFetching) ||
+                    !currentSettings?.disableMediaFetching &&
+                    isFileUrl(media.fileUrl)) ||
                   media.paragraph ||
                   media.song ||
                   media.watched
@@ -198,7 +199,8 @@
                           : 'mmm-footnote'
                         : media.song &&
                             media.isAdditional &&
-                            !currentSettings?.disableMediaFetching
+                            !currentSettings?.disableMediaFetching &&
+                            isFileUrl(media.fileUrl)
                           ? 'mmm-extra-song'
                           : media.song
                             ? 'mmm-music-note'
@@ -213,7 +215,8 @@
                   <q-tooltip
                     v-if="
                       media.isAdditional &&
-                      !currentSettings?.disableMediaFetching
+                      !currentSettings?.disableMediaFetching &&
+                      isFileUrl(media.fileUrl)
                     "
                     :delay="1000"
                   >
