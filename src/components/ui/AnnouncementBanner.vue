@@ -9,7 +9,9 @@
     >
       {{ t(announcement.message) }}
       <template #avatar>
-        <q-icon :name="`mmm-${announcement.icon || announcement.type}`" />
+        <q-icon
+          :name="`mmm-${announcement.icon || announcement.type || 'info'}`"
+        />
       </template>
       <template #action>
         <q-btn flat :label="t('dismiss')" @click="dismiss(announcement.id)" />
@@ -146,7 +148,6 @@ const untranslatedAnnouncement = computed((): Announcement => {
     icon: 'ui-language',
     id: `untranslated-${currentJwLang.value?.langcode}}`,
     message: 'help-translate-new',
-    type: 'info',
   };
 });
 
