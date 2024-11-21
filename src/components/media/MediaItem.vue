@@ -11,6 +11,7 @@
     <div class="q-pr-none rounded-borders">
       <div
         class="q-pr-none rounded-borders overflow-hidden relative-position bg-black"
+        :style="{ opacity: isFileUrl(media.fileUrl) ? undefined : 0.2 }"
       >
         <q-img
           :id="media.uniqueId"
@@ -199,12 +200,21 @@
                   }}
                 </q-chip>
               </div>
-              <div class="q-px-md col">
+              <div
+                :class="{
+                  'q-px-md': true,
+                  col: true,
+                  'text-grey': !isFileUrl(media.fileUrl),
+                }"
+              >
                 <div
-                  class="ellipsis-3-lines"
+                  class="ellipsis-3-lines row"
                   @dblclick="mediaEditTitleDialog = true"
                 >
                   {{ displayMediaTitle }}
+                </div>
+                <div v-if="!isFileUrl(media.fileUrl)" class="text-caption">
+                  {{ $t('media-item-missing-explain') }}
                 </div>
               </div>
               <div class="col-shrink">
@@ -220,17 +230,7 @@
                     }}</q-tooltip>
                   </q-icon>
                   <q-icon
-                    v-if="!isFileUrl(media.fileUrl)"
-                    color="negative"
-                    name="mmm-file-missing"
-                    size="sm"
-                  >
-                    <q-tooltip :delay="500">{{
-                      $t('media-item-missing-explain')
-                    }}</q-tooltip>
-                  </q-icon>
-                  <q-icon
-                    v-else-if="media.watched"
+                    v-if="media.watched"
                     color="accent-300"
                     name="mmm-watched-media"
                     size="sm"
@@ -242,7 +242,8 @@
                   <q-icon
                     v-else-if="
                       media.isAdditional &&
-                      !currentSettings?.disableMediaFetching
+                      !currentSettings?.disableMediaFetching &&
+                      isFileUrl(media.fileUrl)
                     "
                     color="accent-300"
                     name="mmm-extra-media"
@@ -310,7 +311,7 @@
             <template v-if="!media.markers || media.markers.length === 0">
               <q-btn
                 ref="playButton"
-                :color="isFileUrl(media.fileUrl) ? 'primary' : 'negative'"
+                :color="isFileUrl(media.fileUrl) ? 'primary' : 'grey'"
                 :disable="
                   (mediaPlayingUrl !== '' &&
                     (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))) ||
@@ -318,6 +319,7 @@
                 "
                 icon="mmm-play"
                 rounded
+                :unelevated="!isFileUrl(media.fileUrl)"
                 @click="setMediaPlaying(media)"
               />
             </template>
