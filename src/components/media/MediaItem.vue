@@ -193,20 +193,17 @@
                   <q-icon
                     class="q-mr-xs"
                     :name="
-                      media.paragraph
-                        ? media.paragraph !== 9999
-                          ? 'mmm-paragraph'
-                          : 'mmm-footnote'
-                        : media.song &&
-                            media.isAdditional &&
+                      media.watched
+                        ? 'mmm-watched-media'
+                        : media.isAdditional &&
                             !currentSettings?.disableMediaFetching &&
                             isFileUrl(media.fileUrl)
-                          ? 'mmm-extra-song'
-                          : media.song
-                            ? 'mmm-music-note'
-                            : media.watched
-                              ? 'mmm-watched-media'
-                              : 'mmm-extra-media'
+                          ? 'mmm-extra-media'
+                          : media.paragraph
+                            ? media.paragraph !== 9999
+                              ? 'mmm-paragraph'
+                              : 'mmm-footnote'
+                            : 'mmm-music-note'
                     "
                   />
                   <q-tooltip v-if="media.watched" :delay="500">
