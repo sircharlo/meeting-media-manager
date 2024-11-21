@@ -7,6 +7,8 @@
       'bg-accent-100-transparent': playState === 'current',
       'bg-accent-100': mediaPlayingUniqueId === '' && playState === 'current',
     }"
+    @mouseenter="hovering = true"
+    @mouseleave="hovering = false"
   >
     <div class="q-pr-none rounded-borders">
       <div
@@ -159,12 +161,7 @@
         </transition>
       </div>
     </div>
-    <div
-      class="row"
-      style="flex-grow: 1; align-content: center"
-      @mouseenter="hovering = true"
-      @mouseleave="hovering = false"
-    >
+    <div class="row" style="flex-grow: 1; align-content: center">
       <div class="col-12">
         <div class="row items-center">
           <div class="col">
@@ -301,7 +298,7 @@
             style="align-content: center"
           >
             <q-btn
-              v-if="hovering"
+              v-if="hovering || contextMenu"
               ref="moreButton"
               class="q-mr-xs"
               color="accent-400"
@@ -310,7 +307,7 @@
               round
               @click="
                 () => {
-                  menuTarget = moreButton?.target;
+                  menuTarget = moreButton?.$el;
                   contextMenu = true;
                 }
               "
