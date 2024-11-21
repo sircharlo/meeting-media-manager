@@ -186,31 +186,22 @@
                   :text-color="media.song ? 'white' : undefined"
                 >
                   <q-icon
-                    v-if="
-                      media.isAdditional &&
-                      !currentSettings?.disableMediaFetching
+                    class="q-mr-xs"
+                    :name="
+                      media.paragraph
+                        ? media.paragraph !== 9999
+                          ? 'mmm-paragraph'
+                          : 'mmm-footnote'
+                        : media.song &&
+                            media.isAdditional &&
+                            !currentSettings?.disableMediaFetching
+                          ? 'mmm-extra-song'
+                          : media.song
+                            ? 'mmm-music-note'
+                            : 'mmm-extra-media'
                     "
-                    :class="{
-                      'q-mr-xs': media.paragraph || media.song,
-                    }"
-                    name="mmm-extra-media"
-                    :size="media.paragraph || media.song ? undefined : 'sm'"
-                  >
-                    <q-tooltip :delay="1000">
-                      {{ $t('extra-media-item-explain') }}
-                    </q-tooltip>
-                  </q-icon>
+                  />
                   <template v-if="media.paragraph || media.song">
-                    <q-icon
-                      class="q-mr-xs"
-                      :name="
-                        media.paragraph
-                          ? media.paragraph !== 9999
-                            ? 'mmm-paragraph'
-                            : 'mmm-footnote'
-                          : 'mmm-music-note'
-                      "
-                    />
                     {{
                       media.paragraph
                         ? media.paragraph !== 9999
