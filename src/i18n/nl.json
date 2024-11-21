@@ -93,7 +93,7 @@
   "dont-forget-add-missing-media": "Vergeet niet ontbrekende liederen en/of media toe te voegen.",
   "dont-forget-to-add-circuit-overseer-date": "Voor de beste resultaten voeg je de datum van het bezoek van de kringopziener toe aan de \"{ congregationMeetings }\" sectie in { settings }.",
   "download-status": "Downloadstatus",
-  "drag-and-drop-or-click-to-browse": "Drag and drop files here or click to browse.",
+  "drag-and-drop-or-click-to-browse": "Sleep bestanden hierheen of klik om te bladeren.",
   "enableExtraCache": "Download alle koninkrijksliederen",
   "enableExtraCache-explain": "Download alle koninkrijksliederen om prestaties te verbeteren. Let op: dit vergroot de grootte van de media cache.",
   "enableFolderWatcher": "Extra media folder inschakelen",
