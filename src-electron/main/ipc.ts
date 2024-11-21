@@ -1,4 +1,5 @@
 import type {
+  DiscussionCategory,
   ElectronIpcInvokeKey,
   ElectronIpcSendKey,
   ExternalWebsite,
@@ -133,6 +134,21 @@ handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
 
   if (url) shell.openExternal(url);
 });
+
+handleIpcSend(
+  'openDiscussion',
+  (_e, category: DiscussionCategory, title: string, params = '{}') => {
+    const search = new URLSearchParams({
+      category,
+      title,
+      ...JSON.parse(params),
+    }).toString();
+    console.log('search', search);
+    shell.openExternal(
+      `${repository.url.replace('.git', '/discussions/new')}?${search}`,
+    );
+  },
+);
 
 handleIpcSend('unwatchFolders', () => unwatchFolders());
 handleIpcSend('watchFolder', (_e, folderPath: string) =>
