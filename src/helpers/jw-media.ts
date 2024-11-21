@@ -831,13 +831,15 @@ const watchedItemMapper: (
 
     if (!(video || audio || image)) {
       if (isJwPlaylist(watchedItemPath)) {
-        const additionalMedia = await getMediaFromJwPlaylist(
-          watchedItemPath,
-          dateFromString(parentDate),
-          await currentStateStore.getDatedAdditionalMediaDirectory(dateString),
-        ).catch((error) => {
-          throw error;
-        });
+        const additionalMedia = (
+          await getMediaFromJwPlaylist(
+            watchedItemPath,
+            dateFromString(parentDate),
+            await currentStateStore.getDatedAdditionalMediaDirectory(
+              dateString,
+            ),
+          )
+        ).map((m) => ({ ...m, isAdditional: false, watched: watchedItemPath }));
         additionalMedia
           .filter(
             (m) =>

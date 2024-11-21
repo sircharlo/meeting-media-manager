@@ -339,7 +339,8 @@ const updateWatchFolderRef = async ({
       }
     } else if (event === 'unlink') {
       watchFolderMedia.value[day] = watchFolderMedia.value[day]?.filter(
-        (dM) => dM.fileUrl !== getFileUrl(changedPath),
+        (dM) =>
+          dM.fileUrl !== getFileUrl(changedPath) && dM.watched !== changedPath,
       );
     }
   } catch (error) {

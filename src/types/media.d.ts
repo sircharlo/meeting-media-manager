@@ -45,7 +45,7 @@ export interface DynamicMediaObject {
   thumbnailUrl: string;
   title: string;
   uniqueId: string;
-  watched?: boolean;
+  watched?: string | true;
 }
 
 export interface FileDownloader {
