@@ -170,36 +170,57 @@
           <div class="col">
             <div class="row items-center">
               <div
-                v-if="media.paragraph || (media.song && media.song !== 'false')"
+                v-if="
+                  (media.isAdditional &&
+                    !currentSettings?.disableMediaFetching) ||
+                  media.paragraph ||
+                  media.song
+                "
                 :class="mediaTagClasses"
                 side
               >
                 <q-chip
                   :class="[
                     'media-tag full-width',
-                    media.paragraph ? 'bg-accent-200' : 'bg-accent-400',
+                    media.song ? 'bg-accent-400' : 'bg-accent-200',
                   ]"
                   :clickable="false"
                   :ripple="false"
                   :text-color="media.song ? 'white' : undefined"
                 >
                   <q-icon
-                    class="q-mr-xs"
-                    :name="
+                    v-if="
+                      media.isAdditional &&
+                      !currentSettings?.disableMediaFetching
+                    "
+                    :class="{
+                      'q-mr-xs': media.paragraph || media.song,
+                    }"
+                    name="mmm-extra-media"
+                  >
+                    <q-tooltip :delay="1000">
+                      {{ $t('extra-media-item-explain') }}
+                    </q-tooltip>
+                  </q-icon>
+                  <template v-if="media.paragraph || media.song">
+                    <q-icon
+                      class="q-mr-xs"
+                      :name="
+                        media.paragraph
+                          ? media.paragraph !== 9999
+                            ? 'mmm-paragraph'
+                            : 'mmm-footnote'
+                          : 'mmm-music-note'
+                      "
+                    />
+                    {{
                       media.paragraph
                         ? media.paragraph !== 9999
-                          ? 'mmm-paragraph'
-                          : 'mmm-footnote'
-                        : 'mmm-music-note'
-                    "
-                  />
-                  {{
-                    media.paragraph
-                      ? media.paragraph !== 9999
-                        ? media.paragraph
-                        : $t('footnote')
-                      : media.song?.toString()
-                  }}
+                          ? media.paragraph
+                          : $t('footnote')
+                        : media.song?.toString()
+                    }}
+                  </template>
                 </q-chip>
               </div>
               <div class="q-px-md col">
@@ -231,19 +252,6 @@
                     <q-tooltip :delay="500">{{
                       $t('watched-media-item-explain')
                     }}</q-tooltip>
-                  </q-icon>
-                  <q-icon
-                    v-else-if="
-                      media.isAdditional &&
-                      !currentSettings?.disableMediaFetching
-                    "
-                    color="accent-400"
-                    name="mmm-extra-media"
-                    size="sm"
-                  >
-                    <q-tooltip :delay="1000">
-                      {{ $t('extra-media-item-explain') }}
-                    </q-tooltip>
                   </q-icon>
                 </div>
               </div>
