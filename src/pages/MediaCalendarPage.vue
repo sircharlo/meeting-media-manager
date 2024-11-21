@@ -19,30 +19,6 @@
     @drop="dropEnd"
   >
     <div class="col">
-      <div v-if="missingMedia.length" class="row">
-        <q-banner
-          class="bg-warning text-white full-width"
-          inline-actions
-          rounded
-        >
-          {{ $t('some-media-items-are-missing') }}
-          <ul>
-            <li v-for="media in missingMedia" :key="media.fileUrl">
-              {{ media.fileUrl }}
-              <!-- <q-tooltip>
-                <q-item-section side>
-                  <pre class="text-white">{{ media }}</pre>
-                </q-item-section>
-              </q-tooltip> -->
-            </li>
-          </ul>
-          <template #avatar>
-            <q-avatar class="bg-white text-warning" size="lg">
-              <q-icon name="mmm-file-missing" size="sm" />
-            </q-avatar>
-          </template>
-        </q-banner>
-      </div>
       <div
         v-if="
           [...sortableAdditionalMediaItems, ...sortableMediaItems].some(
@@ -925,6 +901,49 @@ watch(
     });
   },
 );
+
+watch(
+  () => missingMedia.value.map((m) => m.fileUrl).filter((f) => f),
+  (missingFileUrls) => {
+    missingFileUrls?.forEach((missingFileUrl) => {
+      if (seenErrors.has(currentCongregation + missingFileUrl)) return;
+      createTemporaryNotification({
+        caption: t('some-media-items-are-missing-explain'),
+        color: 'warning',
+        group: 'missingMeetingMedia',
+        icon: 'mmm-file-missing',
+        message: t('some-media-items-are-missing'),
+        timeout: 15000,
+      });
+      seenErrors.add(currentCongregation + missingFileUrl);
+    });
+  },
+);
+
+// <div v-if="missingMedia.length" class="row">
+//         <q-banner
+//           class="bg-warning text-white full-width"
+//           inline-actions
+//           rounded
+//         >
+//           {{ $t('some-media-items-are-missing') }}
+//           <ul>
+//             <li v-for="media in missingMedia" :key="media.fileUrl">
+//               {{ media.fileUrl }}
+//               <!-- <q-tooltip>
+//                 <q-item-section side>
+//                   <pre class="text-white">{{ media }}</pre>
+//                 </q-item-section>
+//               </q-tooltip> -->
+//             </li>
+//           </ul>
+//           <template #avatar>
+//             <q-avatar class="bg-white text-warning" size="lg">
+//               <q-icon name="mmm-file-missing" size="sm" />
+//             </q-avatar>
+//           </template>
+//         </q-banner>
+//       </div>
 
 const goToNextDayWithMedia = () => {
   try {
