@@ -26,6 +26,9 @@ updates:
         update-types: ['version-update:semver-major']
       - dependency-name: 'eslint'
         update-types: ['version-update:semver-major']
+      - dependency-name: '@sentry/vue'
+        update-types:
+          ['version-update:semver-major', 'version-update:semver-minor']
       - dependency-name: 'typescript'
         update-types:
           ['version-update:semver-major', 'version-update:semver-minor']

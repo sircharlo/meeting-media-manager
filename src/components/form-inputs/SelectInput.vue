@@ -70,7 +70,7 @@ const props = defineProps<{
   useInput?: boolean;
 }>();
 
-const model = defineModel<null | number | string>({
+const model = defineModel<boolean | null | number | string>({
   get: (value) => {
     if (typeof value === 'number') {
       return String(value);

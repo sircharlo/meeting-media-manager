@@ -7,6 +7,8 @@
       'bg-accent-100-transparent': playState === 'current',
       'bg-accent-100': mediaPlayingUniqueId === '' && playState === 'current',
     }"
+    @mouseenter="hovering = true"
+    @mouseleave="hovering = false"
   >
     <div class="q-pr-none rounded-borders">
       <div
@@ -213,9 +215,9 @@
                     name="mmm-repeat"
                     size="sm"
                   >
-                    <q-tooltip :delay="500">{{
-                      media.repeat ? $t('repeat') : $t('repeat-off')
-                    }}</q-tooltip>
+                    <q-tooltip :delay="500">
+                      {{ media.repeat ? $t('repeat') : $t('repeat-off') }}
+                    </q-tooltip>
                   </q-icon>
                   <q-icon
                     v-if="media.watched"
@@ -223,19 +225,22 @@
                     name="mmm-watched-media"
                     size="sm"
                   >
-                    <q-tooltip :delay="500">{{
-                      $t('watched-media-item-explain')
-                    }}</q-tooltip>
+                    <q-tooltip :delay="500">
+                      {{ $t('watched-media-item-explain') }}
+                    </q-tooltip>
                   </q-icon>
                   <q-icon
-                    v-else-if="media.isAdditional"
-                    color="accent-300"
+                    v-else-if="
+                      media.isAdditional &&
+                      !currentSettings?.disableMediaFetching
+                    "
+                    color="accent-400"
                     name="mmm-extra-media"
                     size="sm"
                   >
-                    <q-tooltip :delay="1000">{{
-                      $t('extra-media-item-explain')
-                    }}</q-tooltip>
+                    <q-tooltip :delay="1000">
+                      {{ $t('extra-media-item-explain') }}
+                    </q-tooltip>
                   </q-icon>
                 </div>
               </div>
@@ -292,6 +297,21 @@
             class="col-shrink"
             style="align-content: center"
           >
+            <q-btn
+              v-if="hovering || contextMenu"
+              ref="moreButton"
+              class="q-mr-xs"
+              color="accent-400"
+              flat
+              icon="mmm-dots"
+              round
+              @click="
+                () => {
+                  menuTarget = moreButton?.$el;
+                  contextMenu = true;
+                }
+              "
+            />
             <template v-if="!media.markers || media.markers.length === 0">
               <q-btn
                 ref="playButton"
@@ -353,13 +373,15 @@
                   )
                 "
               >
-                <q-tooltip :delay="1000">{{
-                  $t(
-                    currentSceneType === 'media'
-                      ? 'hide-image-for-zoom-participants'
-                      : 'show-image-for-zoom-participants',
-                  )
-                }}</q-tooltip>
+                <q-tooltip :delay="1000">
+                  {{
+                    $t(
+                      currentSceneType === 'media'
+                        ? 'hide-image-for-zoom-participants'
+                        : 'show-image-for-zoom-participants',
+                    )
+                  }}
+                </q-tooltip>
               </q-btn>
               <q-btn
                 v-if="mediaPlayingAction === 'pause'"
@@ -397,7 +419,12 @@
           </template>
         </div>
       </div>
-      <q-menu context-menu touch-position>
+      <q-menu
+        v-model="contextMenu"
+        context-menu
+        :target="menuTarget"
+        touch-position
+      >
         <q-list>
           <q-item-label header>{{ media.title }}</q-item-label>
           <q-item v-close-popup clickable @click="emit('update:hidden', true)">
@@ -406,9 +433,9 @@
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t('hide-from-list') }}</q-item-label>
-              <q-item-label caption>{{
-                $t('hide-from-list-explain')
-              }}</q-item-label>
+              <q-item-label caption>
+                {{ $t('hide-from-list-explain') }}
+              </q-item-label>
             </q-item-section>
           </q-item>
           <q-item v-close-popup clickable @click="mediaEditTitleDialog = true">
@@ -426,9 +453,9 @@
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t('change-tag') }}</q-item-label>
-              <q-item-label caption>{{
-                $t('change-tag-explain')
-              }}</q-item-label>
+              <q-item-label caption>
+                {{ $t('change-tag-explain') }}
+              </q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -605,12 +632,20 @@ import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { useObsStateStore } from 'src/stores/obs-state';
-import { computed, onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
+import {
+  computed,
+  onMounted,
+  onUnmounted,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
 const {
   currentCongregation,
+  currentSettings,
   mediaPlayingAction,
   mediaPlayingCurrentPosition,
   mediaPlayingPanzoom,
@@ -648,6 +683,15 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['update:hidden', 'update:repeat', 'update:tag']);
+
+const hovering = ref(false);
+const moreButton = useTemplateRef<QBtn>('moreButton');
+const contextMenu = ref(false);
+const menuTarget = ref<boolean | string | undefined>(true);
+
+watch(contextMenu, (val) => {
+  if (!val) menuTarget.value = true;
+});
 
 const mediaEditTitleDialog = ref(false);
 const mediaTitle = ref('');

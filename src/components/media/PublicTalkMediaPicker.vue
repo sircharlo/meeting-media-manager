@@ -166,7 +166,17 @@ const addPublicTalkMedia = (publicTalkDocId: DocumentItem) => {
     if (errors?.length) {
       errors.forEach((e) =>
         createTemporaryNotification({
-          caption: [e.pub, e.issue, e.track, e.langwritten, e.fileformat]
+          caption: [
+            e.docid,
+            e.pub,
+            e.issue,
+            e.track,
+            e.langwritten,
+            e.fileformat,
+          ]
+            .filter(Boolean)
+            .join('_'),
+          group: [e.docid, e.pub, e.issue, e.track, e.langwritten, e.fileformat]
             .filter(Boolean)
             .join('_'),
           icon: 'mmm-error',

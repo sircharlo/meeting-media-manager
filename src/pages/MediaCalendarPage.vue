@@ -989,7 +989,7 @@ useEventListener<
     duration: number;
     path: string;
     section?: MediaSection;
-    song: boolean | number | string;
+    song: false | number | string;
     thumbnailUrl: string;
     title?: string;
     url: string;
@@ -1001,7 +1001,8 @@ useEventListener<
     undefined,
     {
       duration: event.detail.duration,
-      song: event.detail.song?.toString(),
+      song:
+        event.detail.song === false ? undefined : event.detail.song?.toString(),
       thumbnailUrl: event.detail.thumbnailUrl,
       title: event.detail.title,
       url: event.detail.url,
@@ -1448,9 +1449,8 @@ const addToFiles = async (
             if (errors?.length)
               errors.forEach((e) =>
                 createTemporaryNotification({
-                  caption: t('file-not-available'),
-                  icon: 'mmm-error',
-                  message: [
+                  caption: [
+                    e.docid,
                     e.pub,
                     e.issue,
                     e.track,
@@ -1459,6 +1459,18 @@ const addToFiles = async (
                   ]
                     .filter(Boolean)
                     .join('_'),
+                  group: [
+                    e.docid,
+                    e.pub,
+                    e.issue,
+                    e.track,
+                    e.langwritten,
+                    e.fileformat,
+                  ]
+                    .filter(Boolean)
+                    .join('_'),
+                  icon: 'mmm-error',
+                  message: t('file-not-available'),
                   timeout: 15000,
                   type: 'negative',
                 }),

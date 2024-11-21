@@ -83,29 +83,34 @@ export const settingsDefinitions: SettingsItems = {
     list: 'days',
     rules: ['notEmpty', 'regular'],
     type: 'list',
+    unless: 'disableMediaFetching',
   },
   mwStartTime: {
     group: 'congregationMeetings',
     options: ['meetingTime'],
     rules: ['notEmpty', 'regular'],
     type: 'time',
+    unless: 'disableMediaFetching',
   },
   weDay: {
     group: 'congregationMeetings',
     list: 'days',
     rules: ['notEmpty', 'regular'],
     type: 'list',
+    unless: 'disableMediaFetching',
   },
   weStartTime: {
     group: 'congregationMeetings',
     options: ['meetingTime'],
     rules: ['notEmpty', 'regular'],
     type: 'time',
+    unless: 'disableMediaFetching',
   },
   coWeek: {
     group: 'congregationMeetings',
     options: ['coTuesdays'],
     type: 'date',
+    unless: 'disableMediaFetching',
   },
   // Media Retrieval and Playback
   enableMediaDisplayButton: {
@@ -122,12 +127,14 @@ export const settingsDefinitions: SettingsItems = {
     group: 'mediaRetrievalPlayback',
     subgroup: 'setupWizard.backgroundMusic',
     type: 'toggle',
+    unless: 'disableMediaFetching',
   },
   enableExtraCache: {
     depends: 'enableMediaDisplayButton',
     group: 'mediaRetrievalPlayback',
     subgroup: 'cache',
     type: 'toggle',
+    unless: 'disableMediaFetching',
   },
   enableFolderWatcher: {
     depends: 'enableMediaDisplayButton',

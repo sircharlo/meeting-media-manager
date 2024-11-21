@@ -1,8 +1,8 @@
 <template>
   <q-page-container
-    class="q-electron-drag vertical-middle overflow-hidden"
+    class="vertical-middle overflow-hidden"
     padding
-    style="align-content: center; height: 100vh"
+    style="align-content: center; height: 100vh; -webkit-app-region: drag"
   >
     <q-resize-observer debounce="50" @resize="onResize" />
     <transition

@@ -133,6 +133,7 @@ export interface SettingsItem {
   step?: number;
   subgroup?: string;
   type: SettingsItemType;
+  unless?: (keyof SettingsValues)[] | keyof SettingsValues;
 }
 
 export type SettingsItemAction = 'obsConnect' | 'setBackgroundMusicVolume';
