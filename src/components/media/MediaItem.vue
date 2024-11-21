@@ -162,7 +162,12 @@
         </transition>
       </div>
     </div>
-    <div class="row" style="flex-grow: 1; align-content: center">
+    <div
+      class="row"
+      style="flex-grow: 1; align-content: center"
+      @mouseenter="hovering = true"
+      @mouseleave="hovering = false"
+    >
       <div class="col-12">
         <div class="row items-center">
           <div class="col">
@@ -245,13 +250,13 @@
                       !currentSettings?.disableMediaFetching &&
                       isFileUrl(media.fileUrl)
                     "
-                    color="accent-300"
+                    color="accent-400"
                     name="mmm-extra-media"
                     size="sm"
                   >
-                    <q-tooltip :delay="1000">{{
-                      $t('extra-media-item-explain')
-                    }}</q-tooltip>
+                    <q-tooltip :delay="1000">
+                      {{ $t('extra-media-item-explain') }}
+                    </q-tooltip>
                   </q-icon>
                 </div>
               </div>
@@ -308,6 +313,21 @@
             class="col-shrink"
             style="align-content: center"
           >
+            <q-btn
+              v-if="hovering"
+              ref="moreButton"
+              class="q-mr-xs"
+              color="accent-400"
+              flat
+              icon="mmm-dots"
+              round
+              @click="
+                () => {
+                  menuTarget = moreButton?.target;
+                  contextMenu = true;
+                }
+              "
+            />
             <template v-if="!media.markers || media.markers.length === 0">
               <q-btn
                 ref="playButton"
@@ -371,13 +391,15 @@
                   )
                 "
               >
-                <q-tooltip :delay="1000">{{
-                  $t(
-                    currentSceneType === 'media'
-                      ? 'hide-image-for-zoom-participants'
-                      : 'show-image-for-zoom-participants',
-                  )
-                }}</q-tooltip>
+                <q-tooltip :delay="1000">
+                  {{
+                    $t(
+                      currentSceneType === 'media'
+                        ? 'hide-image-for-zoom-participants'
+                        : 'show-image-for-zoom-participants',
+                    )
+                  }}
+                </q-tooltip>
               </q-btn>
               <q-btn
                 v-if="mediaPlayingAction === 'pause'"
@@ -415,7 +437,12 @@
           </template>
         </div>
       </div>
-      <q-menu context-menu touch-position>
+      <q-menu
+        v-model="contextMenu"
+        context-menu
+        :target="menuTarget"
+        touch-position
+      >
         <q-list>
           <q-item-label header>{{ displayMediaTitle }}</q-item-label>
           <q-item v-close-popup clickable @click="emit('update:hidden', true)">
@@ -629,7 +656,14 @@ import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { useObsStateStore } from 'src/stores/obs-state';
-import { computed, onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
+import {
+  computed,
+  onMounted,
+  onUnmounted,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
@@ -678,6 +712,15 @@ const emit = defineEmits([
   'update:tag',
   'update:title',
 ]);
+
+const hovering = ref(false);
+const moreButton = useTemplateRef<QBtn>('moreButton');
+const contextMenu = ref(false);
+const menuTarget = ref<boolean | string | undefined>(true);
+
+watch(contextMenu, (val) => {
+  if (!val) menuTarget.value = true;
+});
 
 const mediaEditTitleDialog = ref(false);
 const mediaTitle = ref(props.media.title);

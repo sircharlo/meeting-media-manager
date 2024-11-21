@@ -1526,7 +1526,7 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
 const downloadAdditionalRemoteVideo = async (
   mediaItemLinks: MediaItemsMediatorFile[] | MediaLink[],
   thumbnailUrl?: string,
-  song: boolean | number | string = false,
+  song: false | number | string = false,
   title?: string,
   section?: MediaSection,
 ) => {
@@ -1543,7 +1543,7 @@ const downloadAdditionalRemoteVideo = async (
           duration: number;
           path: string;
           section?: MediaSection;
-          song: boolean | number | string;
+          song: false | number | string;
           thumbnailUrl: string;
           title?: string;
           url: string;

@@ -43,10 +43,10 @@
       <template v-else>
         <div class="row">
           <p>{{ $t('local-media-explain-1') }}</p>
-          <a
-            >{{ $t('local-media-explain-2') }}
-            <q-tooltip
-              ><div class="row">
+          <a>
+            {{ $t('local-media-explain-2') }}
+            <q-tooltip>
+              <div class="row">
                 <strong>{{ $t('images:') }}</strong
                 >&nbsp;
                 {{ IMG_EXTENSIONS.sort().join(', ') }}
@@ -72,7 +72,21 @@
         <div class="row">
           <div
             class="col rounded-borders dashed-border items-center justify-center flex"
+            :class="{
+              'cursor-pointer': !totalFiles && !(!!jwpubDb || jwpubLoading),
+              'bg-accent-100':
+                hovering && !totalFiles && !(!!jwpubDb || jwpubLoading),
+            }"
             style="height: 20vh"
+            @click="
+              () => {
+                if (!totalFiles && !(!!jwpubDb || jwpubLoading)) {
+                  getLocalFiles();
+                }
+              }
+            "
+            @mouseenter="hovering = true"
+            @mouseleave="hovering = false"
           >
             <template v-if="totalFiles || (!!jwpubDb && jwpubLoading)">
               <q-linear-progress
@@ -95,9 +109,7 @@
             </template>
             <template v-else>
               <q-icon class="q-mr-sm" name="mmm-drag-n-drop" size="lg" />
-              {{ $t('drag-and-drop-or ') }}&nbsp;
-              <a @click="getLocalFiles()"> {{ $t('browse for files') }}</a
-              >.
+              {{ $t('drag-and-drop-or-click-to-browse') }}
             </template>
           </div>
         </div>
@@ -138,13 +150,14 @@ const props = defineProps<{
   totalFiles: number;
 }>();
 
-const jwpubLoading = ref(false);
-
 const open = defineModel<boolean>({ required: true });
 const jwpubDb = defineModel<string>('jwpubDb', { required: true });
 const jwpubDocuments = defineModel<DocumentItem[]>('jwpubDocuments', {
   required: true,
 });
+
+const hovering = ref(false);
+const jwpubLoading = ref(false);
 
 const percentValue = computed(() => {
   return props.currentFile && props.totalFiles
