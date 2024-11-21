@@ -37,8 +37,8 @@ import {
   isMwMeetingDay,
 } from 'src/helpers/date';
 import {
-  getDurationFromMediaPath,
   getFileUrl,
+  getMetadataFromMediaPath,
   getPublicationDirectory,
   getSubtitlesUrl,
   getThumbnailUrl,
@@ -84,7 +84,7 @@ const addJwpubDocumentMediaToFiles = async (
         publication,
       );
     }
-    const errors = await processMissingMediaInfo(multimediaItems);
+    await processMissingMediaInfo(multimediaItems);
     const dynamicMediaItems = currentStateStore.selectedDateObject
       ? await dynamicMediaMapper(
           multimediaItems,
@@ -94,7 +94,6 @@ const addJwpubDocumentMediaToFiles = async (
         )
       : [];
     addToAdditionMediaMap(dynamicMediaItems, section);
-    if (errors?.length) return errors;
   } catch (e) {
     errorCatcher(e);
   }
@@ -312,9 +311,18 @@ async function addFullFilePathToMultimediaItem(
           multimediaItem.FilePath,
         )
       : undefined;
+    const fullLinkedPreviewFilePath = multimediaItem.LinkedPreviewFilePath
+      ? path.join(
+          await getPublicationDirectory(publication),
+          multimediaItem.LinkedPreviewFilePath,
+        )
+      : undefined;
     return {
       ...multimediaItem,
       ...(fullFilePath ? { FilePath: fullFilePath } : {}),
+      ...(fullLinkedPreviewFilePath
+        ? { LinkedPreviewFilePath: fullLinkedPreviewFilePath }
+        : {}),
     };
   } catch (error) {
     errorCatcher(error);
@@ -426,7 +434,8 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
       .includes('SuppressZoom');
 
     // let select = 'SELECT Multimedia.DocumentId, Multimedia.MultimediaId, ';
-    const select = 'SELECT *';
+    const select =
+      'SELECT Multimedia.*, LinkedMultimedia.FilePath AS LinkedPreviewFilePath';
     let from = 'FROM Multimedia';
     if (mmTable === 'DocumentMultimedia') {
       from +=
@@ -434,7 +443,8 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
       from += ` LEFT JOIN DocumentParagraph ON ${mmTable}.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex`;
     }
     from += ` INNER JOIN Document ON ${mmTable}.DocumentId = Document.DocumentId`;
-
+    from +=
+      ' LEFT JOIN Multimedia AS LinkedMultimedia ON Multimedia.LinkMultimediaId = LinkedMultimedia.MultimediaId';
     let where = `WHERE ${
       source.docId || source.docId === 0
         ? `Document.DocumentId = ${source.docId}`
@@ -720,10 +730,24 @@ const dynamicMediaMapper = async (
     const mediaPromises = allMedia.map(
       async (m): Promise<DynamicMediaObject> => {
         m.FilePath = await convertImageIfNeeded(m.FilePath);
-        const fileUrl = getFileUrl(m.FilePath);
+        const fileUrl = m.FilePath
+          ? getFileUrl(m.FilePath)
+          : ([m.KeySymbol, m.IssueTagNumber].filter(Boolean).length
+              ? [m.KeySymbol, m.IssueTagNumber]
+              : [m.MepsDocumentId]
+            )
+              .concat([
+                (m.MepsLanguageIndex !== undefined &&
+                  mepslangs[m.MepsLanguageIndex]) ||
+                  '',
+                m.Track,
+              ])
+              .filter(Boolean)
+              .join('_');
         const mediaIsSong = isSong(m);
         const thumbnailUrl =
           m.ThumbnailUrl ??
+          window.electronApi.pathToFileURL(m.LinkedPreviewFilePath || '') ??
           (await getThumbnailUrl(m.ThumbnailFilePath || m.FilePath));
         const video = isVideo(m.FilePath);
         const audio = isAudio(m.FilePath);
@@ -732,7 +756,9 @@ const dynamicMediaMapper = async (
           if (m.Duration) {
             duration = m.Duration;
           } else if (await fs.exists(m.FilePath)) {
-            duration = await getDurationFromMediaPath(m.FilePath);
+            duration =
+              (await getMetadataFromMediaPath(m.FilePath))?.format.duration ||
+              0;
           }
           if (duration === 0 && m.KeySymbol) {
             const lang = currentSettings?.lang || currentSettings?.langFallback;
@@ -859,10 +885,13 @@ const watchedItemMapper: (
       return undefined;
     }
 
-    const duration =
-      (video || audio) && (await fs.exists(watchedItemPath))
-        ? await getDurationFromMediaPath(watchedItemPath)
-        : 0;
+    const metadata =
+      video || audio
+        ? await getMetadataFromMediaPath(watchedItemPath)
+        : undefined;
+
+    const duration = metadata?.format.duration || 0;
+    const title = metadata?.common.title || path.basename(watchedItemPath);
 
     const uniqueId = sanitizeId(
       formatDate(parentDate, 'YYYYMMDD') + '-' + fileUrl,
@@ -885,7 +914,7 @@ const watchedItemMapper: (
         section,
         sectionOriginal: 'additional', // to enable restoring the original section after custom sorting
         thumbnailUrl,
-        title: path.basename(watchedItemPath),
+        title,
         uniqueId,
         watched: true,
       },

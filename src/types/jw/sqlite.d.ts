@@ -93,6 +93,7 @@ export interface MultimediaItem {
   Label: string;
   LabelRich?: null | string;
   Link?: null | string;
+  LinkedPreviewFilePath?: string;
   LinkMultimediaId?: null | number;
   LocalPath?: string;
   MajorType: number;

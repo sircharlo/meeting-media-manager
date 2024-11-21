@@ -13,6 +13,7 @@
     <div class="q-pr-none rounded-borders">
       <div
         class="q-pr-none rounded-borders overflow-hidden relative-position bg-black"
+        :style="{ opacity: isFileUrl(media.fileUrl) ? undefined : 0.64 }"
       >
         <q-img
           :id="media.uniqueId"
@@ -29,7 +30,7 @@
           @mouseleave="setHoveredBadge(media.uniqueId, false)"
         >
           <q-badge
-            v-if="media.isVideo || media.isAudio"
+            v-if="media.duration"
             :class="
               'q-mt-sm q-ml-sm cursor-pointer rounded-borders-sm ' +
               (customDurationIsSet ? 'bg-semi-negative' : 'bg-semi-black')
@@ -71,7 +72,9 @@
                 }}
               </q-card-section>
               <q-card-section>
-                <div class="text-subtitle1 q-pb-sm">{{ mediaTitle }}</div>
+                <div class="text-subtitle1 q-pb-sm">
+                  {{ displayMediaTitle }}
+                </div>
                 <div class="row items-center q-mt-lg">
                   <div class="col-shrink q-pr-md time-duration">
                     {{ formatTime(0) }}
@@ -199,12 +202,21 @@
                   }}
                 </q-chip>
               </div>
-              <div class="q-px-md col">
+              <div
+                :class="{
+                  'q-px-md': true,
+                  col: true,
+                  'text-grey': !isFileUrl(media.fileUrl),
+                }"
+              >
                 <div
-                  class="ellipsis-3-lines"
+                  class="ellipsis-3-lines row"
                   @dblclick="mediaEditTitleDialog = true"
                 >
-                  {{ mediaTitle }}
+                  {{ displayMediaTitle }}
+                </div>
+                <div v-if="!isFileUrl(media.fileUrl)" class="text-caption">
+                  {{ $t('media-item-missing-explain') }}
                 </div>
               </div>
               <div class="col-shrink">
@@ -232,7 +244,8 @@
                   <q-icon
                     v-else-if="
                       media.isAdditional &&
-                      !currentSettings?.disableMediaFetching
+                      !currentSettings?.disableMediaFetching &&
+                      isFileUrl(media.fileUrl)
                     "
                     color="accent-400"
                     name="mmm-extra-media"
@@ -255,7 +268,7 @@
               <div
                 v-if="
                   [media.fileUrl, media.streamUrl].includes(mediaPlayingUrl) &&
-                  (media.isVideo || media.isAudio)
+                  media.duration
                 "
                 class="absolute duration-slider"
               >
@@ -315,13 +328,15 @@
             <template v-if="!media.markers || media.markers.length === 0">
               <q-btn
                 ref="playButton"
-                color="primary"
+                :color="isFileUrl(media.fileUrl) ? 'primary' : 'grey'"
                 :disable="
-                  mediaPlayingUrl !== '' &&
-                  (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))
+                  (mediaPlayingUrl !== '' &&
+                    (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))) ||
+                  !isFileUrl(media.fileUrl)
                 "
                 icon="mmm-play"
                 rounded
+                :unelevated="!isFileUrl(media.fileUrl)"
                 @click="setMediaPlaying(media)"
               />
             </template>
@@ -394,7 +409,7 @@
               />
               <q-btn
                 v-else-if="
-                  (media.isVideo || media.isAudio) &&
+                  media.duration &&
                   (mediaPlayingAction === 'play' || !mediaPlayingAction)
                 "
                 ref="pauseResumeButton"
@@ -426,7 +441,7 @@
         touch-position
       >
         <q-list>
-          <q-item-label header>{{ media.title }}</q-item-label>
+          <q-item-label header>{{ displayMediaTitle }}</q-item-label>
           <q-item v-close-popup clickable @click="emit('update:hidden', true)">
             <q-item-section avatar>
               <q-icon name="mmm-file-hidden" />
@@ -459,7 +474,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            v-if="media.isVideo || media.isAudio"
+            v-if="media.duration"
             clickable
             @click="emit('update:repeat', !media.repeat)"
           >
@@ -509,7 +524,13 @@
   <q-dialog v-model="mediaEditTitleDialog">
     <q-card class="modal-confirm">
       <q-card-section class="items-center">
-        <q-input v-model="mediaTitle" focused outlined type="textarea" />
+        <q-input
+          v-model="mediaTitle"
+          focused
+          outlined
+          type="textarea"
+          @update:model-value="emit('update:title', mediaTitle)"
+        />
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
         <q-btn
@@ -667,7 +688,7 @@ const setHoveredBadge = debounce((key: string, value: boolean) => {
 const obsState = useObsStateStore();
 const { currentSceneType, obsConnectionState } = storeToRefs(obsState);
 
-const { fileUrlToPath, fs, path } = window.electronApi;
+const { fileUrlToPath, fs, isFileUrl, path } = window.electronApi;
 
 const mediaDurationPopups = ref<Record<string, boolean>>({});
 const panzooms: Record<string, PanzoomObject> = {};
@@ -682,7 +703,12 @@ const props = defineProps<{
   playState: string;
 }>();
 
-const emit = defineEmits(['update:hidden', 'update:repeat', 'update:tag']);
+const emit = defineEmits([
+  'update:hidden',
+  'update:repeat',
+  'update:tag',
+  'update:title',
+]);
 
 const hovering = ref(false);
 const moreButton = useTemplateRef<QBtn>('moreButton');
@@ -694,7 +720,12 @@ watch(contextMenu, (val) => {
 });
 
 const mediaEditTitleDialog = ref(false);
-const mediaTitle = ref('');
+const mediaTitle = ref(props.media.title);
+const initialMediaTitle = ref(mediaTitle.value);
+
+const displayMediaTitle = computed(() => {
+  return props.media.title || path.basename(props.media.fileUrl);
+});
 
 const mediaEditTagDialog = ref(false);
 const { t } = useI18n();
@@ -729,13 +760,7 @@ const mediaTagClasses = computed(() => {
 });
 
 const resetMediaTitle = () => {
-  if (props?.media) {
-    mediaTitle.value =
-      props.media.title ||
-      (props.media.fileUrl ? path.basename(props.media.fileUrl) : '');
-  } else {
-    mediaTitle.value = '';
-  }
+  emit('update:title', initialMediaTitle.value);
 };
 
 const customDurationIsSet = computed(() => {
@@ -816,8 +841,6 @@ watchImmediate(
   },
 );
 
-resetMediaTitle();
-
 const thumbnailFromMetadata = ref('');
 
 const imageLoadingError = () => {
@@ -842,8 +865,7 @@ async function findThumbnailUrl() {
   await runThumbnailCheck();
 }
 
-if ((props.media.isVideo || props.media.isAudio) && !props.media.thumbnailUrl)
-  findThumbnailUrl();
+if (props.media.duration && !props.media.thumbnailUrl) findThumbnailUrl();
 
 const showMediaDurationPopup = (media: DynamicMediaObject) => {
   try {
