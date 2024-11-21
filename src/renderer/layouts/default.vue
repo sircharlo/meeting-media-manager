@@ -104,7 +104,7 @@ export default defineComponent({
       else {
         const username = (await getUsername()) ?? userInfo().username
         const match = congs.find(
-          (c) => c.name?.toLowerCase().trim() === username.toLowerCase().trim()
+          (c) => c.name?.toLowerCase().trim() === username.toLowerCase().trim(),
         )
         if (match) {
           this.initPrefs(basename(match.path, '.json'))
@@ -143,7 +143,7 @@ export default defineComponent({
       if (this.$store.state.present.mediaScreenInit) {
         ipcRenderer.send(
           'showMediaWindow',
-          await this.$getMediaWindowDestination()
+          await this.$getMediaWindowDestination(),
         )
       }
     })
@@ -182,11 +182,11 @@ export default defineComponent({
     ipcRenderer.on('macUpdate', async (_e, version) => {
       try {
         const latestRelease = (await this.$ghApi.$get(
-          `releases/tags/v${version}`
+          `releases/tags/v${version}`,
         )) as Release
 
         const macDownload = latestRelease.assets.find(({ name }) =>
-          name.includes('dmg')
+          name.includes('dmg'),
         ) as Asset
 
         this.$notify('updateDownloading', {
@@ -195,7 +195,7 @@ export default defineComponent({
 
         const downloadsPath = join(
           (await ipcRenderer.invoke('downloads')) as string,
-          macDownload.name
+          macDownload.name,
         )
 
         // Download the latest release
@@ -205,15 +205,15 @@ export default defineComponent({
             new Uint8Array(
               await this.$axios.$get(macDownload.browser_download_url, {
                 responseType: 'arraybuffer',
-              })
-            )
-          )
+              }),
+            ),
+          ),
         )
 
         // Open the downloaded file
         ipcRenderer.send(
           'openPath',
-          fileURLToPath(pathToFileURL(downloadsPath).href)
+          fileURLToPath(pathToFileURL(downloadsPath).href),
         )
       } catch (e: unknown) {
         this.$error('updateNotDownloaded', e)
@@ -356,10 +356,10 @@ export default defineComponent({
       // Check if the app is available in the current media lang
       const langs = (await this.$getJWLangs()) as ShortJWLang[]
       const mediaLang = langs.find(
-        (l) => l.langcode === this.$getPrefs('media.lang')
+        (l) => l.langcode === this.$getPrefs('media.lang'),
       )
       const appLang = langs.find(
-        (l) => l.symbol === this.$getPrefs('app.localAppLang')
+        (l) => l.symbol === this.$getPrefs('app.localAppLang'),
       )
 
       if (
@@ -398,12 +398,17 @@ export default defineComponent({
       // Set auto updater prefs
       ipcRenderer.send(
         'toggleAutoUpdate',
-        !this.$getPrefs('app.disableAutoUpdate')
+        !this.$getPrefs('app.disableAutoUpdate'),
       )
 
-      ipcRenderer.send('toggleUpdateChannel', this.$getPrefs('app.betaUpdates'))
-      if (this.online && !this.$getPrefs('app.disableUpdateCheck')) {
-        ipcRenderer.send('checkForUpdates')
+      if (!this.$getPrefs('app.disableUpdateCheck')) {
+        ipcRenderer.send(
+          'toggleUpdateChannel',
+          this.$getPrefs('app.betaUpdates'),
+        )
+        if (this.online) {
+          ipcRenderer.send('checkForUpdates')
+        }
       }
 
       // Set music shuffle shortcut if enabled
@@ -411,7 +416,7 @@ export default defineComponent({
         await this.$setShortcut(
           this.$getPrefs('meeting.shuffleShortcut') as string,
           'toggleMusicShuffle',
-          'music'
+          'music',
         )
       }
 
@@ -419,7 +424,7 @@ export default defineComponent({
       this.$store.commit('cong/clear')
       if (!this.$getPrefs('app.offline')) {
         const { server, user, password, dir } = this.$getPrefs(
-          'cong'
+          'cong',
         ) as CongPrefs
         if (server && user && password && dir) {
           const error = await this.$connect(server, user, password, dir)
