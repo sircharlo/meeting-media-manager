@@ -991,7 +991,7 @@ useEventListener<
     duration: number;
     path: string;
     section?: MediaSection;
-    song: boolean | number | string;
+    song: false | number | string;
     thumbnailUrl: string;
     title?: string;
     url: string;
@@ -1003,7 +1003,8 @@ useEventListener<
     undefined,
     {
       duration: event.detail.duration,
-      song: event.detail.song?.toString(),
+      song:
+        event.detail.song === false ? undefined : event.detail.song?.toString(),
       thumbnailUrl: event.detail.thumbnailUrl,
       title: event.detail.title,
       url: event.detail.url,
