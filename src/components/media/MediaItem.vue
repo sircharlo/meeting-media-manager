@@ -1,14 +1,13 @@
 <template>
   <q-item
     v-show="!media.hidden"
+    ref="mediaItem"
     :class="{
       'items-center': true,
       'justify-center': true,
       'bg-accent-100-transparent': playState === 'current',
       'bg-accent-100': mediaPlayingUniqueId === '' && playState === 'current',
     }"
-    @mouseenter="hovering = true"
-    @mouseleave="hovering = false"
   >
     <div class="q-pr-none rounded-borders">
       <div
@@ -311,7 +310,7 @@
             style="align-content: center"
           >
             <q-btn
-              v-if="hovering || contextMenu"
+              v-if="hoveringMediaItem || contextMenu"
               ref="moreButton"
               class="q-mr-xs"
               color="accent-400"
@@ -636,6 +635,7 @@ import Panzoom, {
 } from '@panzoom/panzoom';
 import {
   useBroadcastChannel,
+  useElementHover,
   useEventListener,
   watchImmediate,
 } from '@vueuse/core';
@@ -710,7 +710,9 @@ const emit = defineEmits([
   'update:title',
 ]);
 
-const hovering = ref(false);
+const mediaItem = useTemplateRef<HTMLDivElement>('mediaItem');
+const hoveringMediaItem = useElementHover(mediaItem);
+
 const moreButton = useTemplateRef<QBtn>('moreButton');
 const contextMenu = ref(false);
 const menuTarget = ref<boolean | string | undefined>(true);

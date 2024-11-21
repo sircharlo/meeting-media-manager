@@ -67,6 +67,7 @@
         </div>
         <div class="row">
           <div
+            ref="dropArea"
             class="col rounded-borders dashed-border items-center justify-center flex"
             :class="{
               'cursor-pointer': !totalFiles && !(!!jwpubDb || jwpubLoading),
@@ -81,8 +82,6 @@
                 }
               }
             "
-            @mouseenter="hovering = true"
-            @mouseleave="hovering = false"
           >
             <template v-if="totalFiles || (!!jwpubDb && jwpubLoading)">
               <q-linear-progress
@@ -126,6 +125,7 @@
 <script setup lang="ts">
 import type { DocumentItem, MediaSection } from 'src/types';
 
+import { useElementHover } from '@vueuse/core';
 import { useScrollbar } from 'src/composables/useScrollbar';
 import {
   AUDIO_EXTENSIONS,
@@ -135,7 +135,7 @@ import {
 } from 'src/constants/fs';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
-import { computed, ref } from 'vue';
+import { computed, ref, useTemplateRef } from 'vue';
 
 const { openFileDialog } = window.electronApi;
 const { barStyle, thumbStyle } = useScrollbar();
@@ -152,7 +152,8 @@ const jwpubDocuments = defineModel<DocumentItem[]>('jwpubDocuments', {
   required: true,
 });
 
-const hovering = ref(false);
+const dropArea = useTemplateRef('dropArea');
+const hovering = useElementHover(dropArea);
 const jwpubLoading = ref(false);
 
 const percentValue = computed(() => {
