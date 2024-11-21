@@ -13,7 +13,7 @@
     <div class="q-pr-none rounded-borders">
       <div
         class="q-pr-none rounded-borders overflow-hidden relative-position bg-black"
-        :style="{ opacity: isFileUrl(media.fileUrl) ? undefined : 0.2 }"
+        :style="{ opacity: isFileUrl(media.fileUrl) ? undefined : 0.64 }"
       >
         <q-img
           :id="media.uniqueId"
