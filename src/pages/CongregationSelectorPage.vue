@@ -51,9 +51,9 @@
                 }}
                 {{ congregations[id]?.weStartTime }}
               </template>
-              <template v-else-if="invalidSettings(id)">{{
-                $t('incomplete-configuration')
-              }}</template>
+              <template v-else-if="invalidSettings(id)">
+                {{ $t('incomplete-configuration') }}
+              </template>
             </div>
           </div>
           <div class="col-shrink">

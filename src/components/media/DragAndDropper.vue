@@ -47,23 +47,19 @@
             {{ $t('local-media-explain-2') }}
             <q-tooltip>
               <div class="row">
-                <strong>{{ $t('images:') }}</strong
-                >&nbsp;
+                <strong>{{ $t('images:') }}&nbsp;</strong>
                 {{ IMG_EXTENSIONS.sort().join(', ') }}
               </div>
               <div class="row">
-                <strong>{{ $t('videos:') }}</strong
-                >&nbsp;
+                <strong>{{ $t('videos:') }}&nbsp;</strong>
                 {{ VIDEO_EXTENSIONS.sort().join(', ') }}
               </div>
               <div class="row">
-                <strong>{{ $t('audio:') }}</strong
-                >&nbsp;
+                <strong>{{ $t('audio:') }}&nbsp;</strong>
                 {{ AUDIO_EXTENSIONS.sort().join(', ') }}
               </div>
               <div class="row">
-                <strong>{{ $t('other:') }}</strong
-                >&nbsp;
+                <strong>{{ $t('other:') }}&nbsp;</strong>
                 {{ OTHER_EXTENSIONS.sort().join(', ') }}
               </div>
             </q-tooltip>

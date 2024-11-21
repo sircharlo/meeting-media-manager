@@ -113,9 +113,9 @@
               >
                 <q-item-section>
                   <q-item-label>{{ $t(settingId) }}</q-item-label>
-                  <q-item-label caption>{{
-                    $t(settingId + '-explain')
-                  }}</q-item-label>
+                  <q-item-label caption>
+                    {{ $t(settingId + '-explain') }}
+                  </q-item-label>
                 </q-item-section>
                 <q-item-section side style="align-items: end">
                   <BaseInput
