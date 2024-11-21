@@ -147,16 +147,18 @@
               color="primary"
               unelevated
               @click="showMediaWindow(false)"
-              >{{ $t('hide-media-display') }}</q-btn
             >
+              {{ $t('hide-media-display') }}
+            </q-btn>
             <q-btn
               v-else
               class="full-width"
               color="primary"
               unelevated
               @click="showMediaWindow(true)"
-              >{{ $t('show-media-display') }}</q-btn
             >
+              {{ $t('show-media-display') }}
+            </q-btn>
           </div>
         </div>
       </q-card-section>
@@ -215,8 +217,9 @@
             jwpubImportFilePath = '';
             jwpubImages = [];
           "
-          >{{ $t('cancel') }}</q-btn
         >
+          {{ $t('cancel') }}
+        </q-btn>
       </div>
     </div>
   </q-dialog>

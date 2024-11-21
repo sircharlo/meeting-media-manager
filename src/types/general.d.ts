@@ -1,5 +1,6 @@
 export interface Announcement {
   actions?: AnnouncementAction[];
+  icon?: string;
   id: string;
   maxVersion?: string;
   message: string;
@@ -8,7 +9,7 @@ export interface Announcement {
   platform?: ('linux' | 'mac' | 'win')[];
   type?: 'error' | 'info' | 'warning';
 }
-export type AnnouncementAction = 'docs' | 'repo' | 'update';
+export type AnnouncementAction = 'docs' | 'repo' | 'translate' | 'update';
 
 export interface CacheList<T = unknown> {
   list: T[];

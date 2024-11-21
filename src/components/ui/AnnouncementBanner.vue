@@ -1,37 +1,47 @@
 <template>
-  <q-banner
-    v-for="announcement in activeAnnouncements"
-    :key="announcement.id"
-    :class="`q-ma-sm ${bgColor(announcement.type)}`"
-    dense
-    rounded
-  >
-    {{ t(announcement.message) }}
-    <template #avatar>
-      <q-icon :name="`mmm-${announcement.type}`" />
-    </template>
-    <template #action>
-      <q-btn flat :label="t('dismiss')" @click="dismiss(announcement.id)" />
-      <q-btn
-        v-if="announcement.actions?.includes('docs')"
-        flat
-        :label="t('user-guide')"
-        @click="openExternal('docs')"
-      />
-      <q-btn
-        v-if="announcement.actions?.includes('repo')"
-        flat
-        :label="t('github-repo')"
-        @click="openExternal('repo')"
-      />
-      <q-btn
-        v-if="announcement.actions?.includes('update')"
-        flat
-        :label="t('update')"
-        @click="openExternal('latestRelease')"
-      />
-    </template>
-  </q-banner>
+  <q-slide-transition>
+    <q-banner
+      v-for="announcement in activeAnnouncements"
+      :key="announcement.id"
+      :class="`q-ma-md ${bgColor(announcement.type)}`"
+      dense
+      rounded
+    >
+      {{ t(announcement.message) }}
+      <template #avatar>
+        <q-icon
+          :name="`mmm-${announcement.icon || announcement.type || 'info'}`"
+        />
+      </template>
+      <template #action>
+        <q-btn flat :label="t('dismiss')" @click="dismiss(announcement.id)" />
+        <q-btn
+          v-if="announcement.actions?.includes('docs')"
+          flat
+          :label="t('user-guide')"
+          @click="openExternal('docs')"
+        />
+        <q-btn
+          v-if="announcement.actions?.includes('repo')"
+          flat
+          :label="t('github-repo')"
+          @click="openExternal('repo')"
+        />
+        <q-btn
+          v-if="announcement.actions?.includes('update')"
+          flat
+          :label="t('update')"
+          @click="openExternal('latestRelease')"
+        />
+        <q-btn
+          v-if="announcement.actions?.includes('translate')"
+          flat
+          :label="t('help-translate')"
+          @click="openTranslateDiscussion"
+        />
+      </template>
+    </q-banner>
+  </q-slide-transition>
 </template>
 <script setup lang="ts">
 import type { Announcement } from 'src/types';
@@ -40,6 +50,7 @@ import { whenever } from '@vueuse/core';
 import { useQuasar } from 'quasar';
 import { fetchAnnouncements, fetchLatestVersion } from 'src/helpers/api';
 import { isVersionValid, parseVersion } from 'src/helpers/general';
+import { localeOptions } from 'src/i18n';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, onMounted, ref } from 'vue';
@@ -50,7 +61,7 @@ const { t } = useI18n();
 const currentStateStore = useCurrentStateStore();
 const congregationStore = useCongregationSettingsStore();
 
-const { getAppVersion, openExternal } = window.electronApi;
+const { getAppVersion, openDiscussion, openExternal } = window.electronApi;
 
 const version = ref('');
 const latestVersion = ref('');
@@ -120,9 +131,41 @@ const newUpdateAnnouncement = computed((): Announcement => {
   };
 });
 
+const currentJwLang = computed(() => currentStateStore.currentLangObject);
+const langIsSupported = computed(() => {
+  if (!currentJwLang.value) return true;
+  return localeOptions.some(
+    (l) =>
+      l.langcode === currentJwLang.value?.langcode ||
+      (currentJwLang.value &&
+        l.signLangCodes?.includes(currentJwLang.value.langcode)),
+  );
+});
+
+const untranslatedAnnouncement = computed((): Announcement => {
+  return {
+    actions: ['translate'],
+    icon: 'ui-language',
+    id: `untranslated-${currentJwLang.value?.langcode}}`,
+    message: 'help-translate-new',
+  };
+});
+
+const openTranslateDiscussion = () => {
+  if (!currentJwLang.value) return;
+  openDiscussion(
+    'translations',
+    `New translation in ${currentJwLang.value?.name}`,
+    JSON.stringify({
+      language: `I would like to help translate M³ into a language I speak: ${currentJwLang.value?.vernacularName}/${currentJwLang.value.name}} - ${currentJwLang.value.langcode}/${currentJwLang.value.symbol}`,
+    }),
+  );
+};
+
 const activeAnnouncements = computed(() => {
   return announcements.value
     .concat([newUpdateAnnouncement.value])
+    .concat(langIsSupported.value ? [] : [untranslatedAnnouncement.value])
     .filter((a) => {
       if (!currentStateStore.currentCongregation) return false;
       if (a.persistent && dismissed.value.has(a.id)) return false;

@@ -34,8 +34,8 @@
               />
             </q-item-section>
             <q-item-section>
-              <q-item-label
-                >{{
+              <q-item-label>
+                {{
                   onlyShowInvalidSettings
                     ? $t('show-all-settings')
                     : $t('only-show-settings-that-are-not-valid')
