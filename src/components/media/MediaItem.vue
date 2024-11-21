@@ -171,7 +171,8 @@
                   (media.isAdditional &&
                     !currentSettings?.disableMediaFetching) ||
                   media.paragraph ||
-                  media.song
+                  media.song ||
+                  media.watched
                 "
                 :class="mediaTagClasses"
                 side
@@ -198,9 +199,14 @@
                           ? 'mmm-extra-song'
                           : media.song
                             ? 'mmm-music-note'
-                            : 'mmm-extra-media'
+                            : media.watched
+                              ? 'mmm-watched-media'
+                              : 'mmm-extra-media'
                     "
                   />
+                  <q-tooltip v-if="media.watched" :delay="500">
+                    {{ $t('watched-media-item-explain') }}
+                  </q-tooltip>
                   <q-tooltip
                     v-if="
                       media.isAdditional &&
@@ -239,16 +245,6 @@
                   >
                     <q-tooltip :delay="500">
                       {{ media.repeat ? $t('repeat') : $t('repeat-off') }}
-                    </q-tooltip>
-                  </q-icon>
-                  <q-icon
-                    v-if="media.watched"
-                    color="accent-300"
-                    name="mmm-watched-media"
-                    size="sm"
-                  >
-                    <q-tooltip :delay="500">
-                      {{ $t('watched-media-item-explain') }}
                     </q-tooltip>
                   </q-icon>
                 </div>
