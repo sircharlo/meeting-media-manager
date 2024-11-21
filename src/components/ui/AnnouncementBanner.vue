@@ -1,43 +1,45 @@
 <template>
-  <q-banner
-    v-for="announcement in activeAnnouncements"
-    :key="announcement.id"
-    :class="`q-ma-md ${bgColor(announcement.type)}`"
-    dense
-    rounded
-  >
-    {{ t(announcement.message) }}
-    <template #avatar>
-      <q-icon :name="`mmm-${announcement.type}`" />
-    </template>
-    <template #action>
-      <q-btn flat :label="t('dismiss')" @click="dismiss(announcement.id)" />
-      <q-btn
-        v-if="announcement.actions?.includes('docs')"
-        flat
-        :label="t('user-guide')"
-        @click="openExternal('docs')"
-      />
-      <q-btn
-        v-if="announcement.actions?.includes('repo')"
-        flat
-        :label="t('github-repo')"
-        @click="openExternal('repo')"
-      />
-      <q-btn
-        v-if="announcement.actions?.includes('update')"
-        flat
-        :label="t('update')"
-        @click="openExternal('latestRelease')"
-      />
-      <q-btn
-        v-if="announcement.actions?.includes('translate')"
-        flat
-        :label="t('help-translate')"
-        @click="openTranslateDiscussion"
-      />
-    </template>
-  </q-banner>
+  <q-slide-transition>
+    <q-banner
+      v-for="announcement in activeAnnouncements"
+      :key="announcement.id"
+      :class="`q-ma-md ${bgColor(announcement.type)}`"
+      dense
+      rounded
+    >
+      {{ t(announcement.message) }}
+      <template #avatar>
+        <q-icon :name="`mmm-${announcement.icon || announcement.type}`" />
+      </template>
+      <template #action>
+        <q-btn flat :label="t('dismiss')" @click="dismiss(announcement.id)" />
+        <q-btn
+          v-if="announcement.actions?.includes('docs')"
+          flat
+          :label="t('user-guide')"
+          @click="openExternal('docs')"
+        />
+        <q-btn
+          v-if="announcement.actions?.includes('repo')"
+          flat
+          :label="t('github-repo')"
+          @click="openExternal('repo')"
+        />
+        <q-btn
+          v-if="announcement.actions?.includes('update')"
+          flat
+          :label="t('update')"
+          @click="openExternal('latestRelease')"
+        />
+        <q-btn
+          v-if="announcement.actions?.includes('translate')"
+          flat
+          :label="t('help-translate')"
+          @click="openTranslateDiscussion"
+        />
+      </template>
+    </q-banner>
+  </q-slide-transition>
 </template>
 <script setup lang="ts">
 import type { Announcement } from 'src/types';
@@ -141,8 +143,10 @@ const langIsSupported = computed(() => {
 const untranslatedAnnouncement = computed((): Announcement => {
   return {
     actions: ['translate'],
+    icon: 'ui-language',
     id: `untranslated-${currentJwLang.value?.langcode}}`,
     message: 'help-translate-new',
+    type: 'info',
   };
 });
 

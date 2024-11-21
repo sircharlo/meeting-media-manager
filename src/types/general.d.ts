@@ -1,5 +1,6 @@
 export interface Announcement {
   actions?: AnnouncementAction[];
+  icon?: string;
   id: string;
   maxVersion?: string;
   message: string;
