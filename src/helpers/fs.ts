@@ -184,6 +184,13 @@ const getThumbnailFromVideoPath = async (
     throw new Error('Invalid video path');
   }
 
+  const currentState = useCurrentStateStore();
+  const watcherEnabled =
+    currentState.currentSettings?.enableFolderWatcher || false;
+  const watchDir = currentState.currentSettings?.folderToWatch
+    ? path.resolve(currentState.currentSettings?.folderToWatch)
+    : null;
+
   const videoFileUrl = videoPath;
   videoPath = fileUrlToPath(videoPath);
   thumbnailPath = fileUrlToPath(thumbnailPath);
@@ -211,30 +218,45 @@ const getThumbnailFromVideoPath = async (
           canvas.height = FULL_HD.height;
 
           const ctx = canvas.getContext('2d');
+
+          const cleanup = () => {
+            canvas.remove();
+            videoRef.remove();
+          };
+
           if (ctx) {
             ctx.drawImage(videoRef, 0, 0, canvas.width, canvas.height);
             const imageUrl = canvas.toDataURL('image/jpeg');
-            try {
-              // Save image asynchronously
-              await fs.writeFile(
-                thumbnailPath,
-                Buffer.from(imageUrl.split(',')[1], 'base64'),
-              );
+            const imageData = Buffer.from(imageUrl.split(',')[1], 'base64');
 
-              // Cleanup
-              canvas.remove();
-              videoRef.remove();
-              resolve(thumbnailPath);
+            const saveImage = async () => {
+              await fs.writeFile(thumbnailPath, imageData);
+              return thumbnailPath;
+            };
+
+            const generateBlobURL = () => {
+              return URL.createObjectURL(
+                new Blob([imageData], { type: 'image/jpeg' }),
+              );
+            };
+
+            try {
+              if (
+                !watcherEnabled ||
+                !watchDir ||
+                !path.dirname(thumbnailPath).startsWith(watchDir)
+              ) {
+                resolve(await saveImage());
+              } else {
+                resolve(generateBlobURL());
+              }
+              cleanup();
             } catch (error) {
-              // Cleanup in case of error
-              canvas.remove();
-              videoRef.remove();
+              cleanup();
               reject(error);
             }
           } else {
-            // Cleanup in case of error
-            canvas.remove();
-            videoRef.remove();
+            cleanup();
             reject(new Error('Failed to get canvas context'));
           }
         },
