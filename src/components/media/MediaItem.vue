@@ -197,6 +197,7 @@
                       'q-mr-xs': media.paragraph || media.song,
                     }"
                     name="mmm-extra-media"
+                    :size="media.paragraph || media.song ? undefined : 'sm'"
                   >
                     <q-tooltip :delay="1000">
                       {{ $t('extra-media-item-explain') }}
