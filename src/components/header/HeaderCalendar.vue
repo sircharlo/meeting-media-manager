@@ -34,7 +34,7 @@
     <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
       {{ $t('extra-media') }}
     </q-tooltip>
-    <q-menu ref="importMenu" class="top-menu" :offset="[0, 11]">
+    <q-menu ref="importMenu" :offset="[0, 11]">
       <q-list style="min-width: 100px">
         <q-item-label header>{{ $t('from-jw-org') }}</q-item-label>
         <q-item
@@ -212,6 +212,7 @@ import { storeToRefs } from 'pinia';
 import { date, type QMenu } from 'quasar';
 // Components
 import DialogRemoteVideo from 'src/components/dialog/DialogRemoteVideo.vue';
+import DialogStudyBible from 'src/components/dialog/DialogStudyBible.vue';
 import PublicTalkMediaPicker from 'src/components/media/PublicTalkMediaPicker.vue';
 import SongPicker from 'src/components/media/SongPicker.vue';
 // Composables
@@ -223,8 +224,6 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { computed, ref, useTemplateRef } from 'vue';
-
-import DialogStudyBible from '../dialog/DialogStudyBible.vue';
 
 const { formatDate, getDateDiff, getMaxDate, getMinDate } = date;
 

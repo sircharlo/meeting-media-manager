@@ -237,13 +237,13 @@
                       media.isAdditional &&
                       !currentSettings?.disableMediaFetching
                     "
-                    color="accent-300"
+                    color="accent-400"
                     name="mmm-extra-media"
                     size="sm"
                   >
-                    <q-tooltip :delay="1000">{{
-                      $t('extra-media-item-explain')
-                    }}</q-tooltip>
+                    <q-tooltip :delay="1000">
+                      {{ $t('extra-media-item-explain') }}
+                    </q-tooltip>
                   </q-icon>
                 </div>
               </div>
