@@ -77,9 +77,9 @@
                       {{ video.title }}
                     </div>
                     <div>
-                      <span class="text-caption text-dark-grey">{{
-                        video.naturalKey
-                      }}</span>
+                      <span class="text-caption text-dark-grey">
+                        {{ video.naturalKey }}
+                      </span>
                     </div>
                   </q-card-section>
                 </div>

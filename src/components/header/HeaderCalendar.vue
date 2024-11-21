@@ -62,9 +62,9 @@
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ $t('video') }}</q-item-label>
-            <q-item-label caption>{{
-              $t('latest-videos-from-jw-org')
-            }}</q-item-label>
+            <q-item-label caption>
+              {{ $t('latest-videos-from-jw-org') }}
+            </q-item-label>
           </q-item-section>
         </q-item>
         <q-item v-close-popup clickable @click="publicTalkMediaPopup = true">
@@ -122,9 +122,9 @@
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t('show-hidden-media') }}</q-item-label>
-              <q-item-label caption>{{
-                $t('show-hidden-media-explain')
-              }}</q-item-label>
+              <q-item-label caption>
+                {{ $t('show-hidden-media-explain') }}
+              </q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -137,12 +137,12 @@
               <q-icon color="negative" name="mmm-delete" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>{{
-                $t('delete-all-additional-media')
-              }}</q-item-label>
-              <q-item-label caption>{{
-                $t('this-will-only-delete-media-for-this-day')
-              }}</q-item-label>
+              <q-item-label>
+                {{ $t('delete-all-additional-media') }}
+              </q-item-label>
+              <q-item-label caption>
+                {{ $t('this-will-only-delete-media-for-this-day') }}
+              </q-item-label>
             </q-item-section>
           </q-item>
         </template>

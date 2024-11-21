@@ -85,8 +85,9 @@
               :disable="mediaPlaying || musicStarting"
               unelevated
               @click="playMusic"
-              >{{ $t('play-music') }}</q-btn
             >
+              {{ $t('play-music') }}
+            </q-btn>
             <q-btn
               v-else
               class="full-width"
@@ -94,8 +95,9 @@
               :disable="musicStopping"
               unelevated
               @click="stopMusic"
-              >{{ $t('stop-music') }}</q-btn
             >
+              {{ $t('stop-music') }}
+            </q-btn>
           </div>
         </div>
       </q-card-section>

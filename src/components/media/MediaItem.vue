@@ -218,9 +218,9 @@
                     name="mmm-repeat"
                     size="sm"
                   >
-                    <q-tooltip :delay="500">{{
-                      media.repeat ? $t('repeat') : $t('repeat-off')
-                    }}</q-tooltip>
+                    <q-tooltip :delay="500">
+                      {{ media.repeat ? $t('repeat') : $t('repeat-off') }}
+                    </q-tooltip>
                   </q-icon>
                   <q-icon
                     v-if="media.watched"
@@ -228,9 +228,9 @@
                     name="mmm-watched-media"
                     size="sm"
                   >
-                    <q-tooltip :delay="500">{{
-                      $t('watched-media-item-explain')
-                    }}</q-tooltip>
+                    <q-tooltip :delay="500">
+                      {{ $t('watched-media-item-explain') }}
+                    </q-tooltip>
                   </q-icon>
                   <q-icon
                     v-else-if="
@@ -436,9 +436,9 @@
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t('hide-from-list') }}</q-item-label>
-              <q-item-label caption>{{
-                $t('hide-from-list-explain')
-              }}</q-item-label>
+              <q-item-label caption>
+                {{ $t('hide-from-list-explain') }}
+              </q-item-label>
             </q-item-section>
           </q-item>
           <q-item v-close-popup clickable @click="mediaEditTitleDialog = true">
@@ -456,9 +456,9 @@
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t('change-tag') }}</q-item-label>
-              <q-item-label caption>{{
-                $t('change-tag-explain')
-              }}</q-item-label>
+              <q-item-label caption>
+                {{ $t('change-tag-explain') }}
+              </q-item-label>
             </q-item-section>
           </q-item>
           <q-item
