@@ -95,11 +95,6 @@ const getFileUrl = (path: string) => {
   return pathToFileURL(path);
 };
 
-const getDurationFromMediaPath = async (mediaPath: string) => {
-  const metadata = await getMetadataFromMediaPath(mediaPath);
-  return metadata?.format?.duration || 0;
-};
-
 const getMetadataFromMediaPath = async (
   mediaPath: string,
 ): Promise<IAudioMetadata> => {
@@ -395,7 +390,6 @@ export {
   disableUpdates,
   enableUpdates,
   getAdditionalMediaPath,
-  getDurationFromMediaPath,
   getFileUrl,
   getFontsPath,
   getMetadataFromMediaPath,
