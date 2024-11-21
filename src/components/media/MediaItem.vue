@@ -198,7 +198,7 @@
                         : media.isAdditional &&
                             !currentSettings?.disableMediaFetching &&
                             isFileUrl(media.fileUrl)
-                          ? 'mmm-extra-media'
+                          ? 'mmm-add-media'
                           : media.paragraph
                             ? media.paragraph !== 9999
                               ? 'mmm-paragraph'

@@ -129,7 +129,7 @@
                   color="primary"
                   @click="openImportMenu()"
                 >
-                  <q-icon class="q-mr-sm" name="mmm-import-media" size="xs" />
+                  <q-icon class="q-mr-sm" name="mmm-add-media" size="xs" />
                   {{ $t('add-extra-media') }}
                 </q-btn>
               </div>
@@ -310,7 +310,7 @@
           <q-btn
             color="lac"
             flat
-            icon="mmm-import-media"
+            icon="mmm-add-media"
             :label="$t('add-extra-media')"
             @click="openImportMenu('lac')"
           />
@@ -398,7 +398,7 @@
             "
             :icon="
               sortableCircuitOverseerMediaItems.filter((m) => !m.hidden).length
-                ? 'mmm-import-media'
+                ? 'mmm-add-media'
                 : 'mmm-music-note'
             "
             :label="
