@@ -20,15 +20,15 @@ O M³ é a ferramenta mais completa para gerenciar as mídias das reuniões, ofe
 
 ### Principais benefícios {#key-benefits}
 
-- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. Não são necessárias configurações complexas ou etapas extras.
+- **Apresentação de mídia sem esforço**: A melhor forma de apresentar mídias — apenas abra o M³ e está tudo pronto. Não são necessárias configurações complexas ou etapas extras.
 
-- **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
+- **Suporte para várias congregações**: Gerencie facilmente configurações para diversas congregações ou grupos dentro de um único aplicativo.
 
-- **Advanced features**: Easily add extra media, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Recursos avançados**: Adicione facilmente mídias extras e compartilhe automaticamente o que acontece no Salão do Reino com os participantes no Zoom.
 
-- **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
+- **Desempenho otimizado em várias plataformas**: Desfrute de uma experiência suave e responsiva no Windows, macOS e Linux, mesmo em sistemas antigos ou computadores com recursos limitados.
 
-- **Reliable and stable**: Built to perform when you need it most. Encontrou um problema? Reporte-o e ele será tratado rapidamente.
+- **Confiável e estável**: Feito para funcionar bem quando você mais precisa. Encontrou um problema? Reporte-o e ele será tratado rapidamente.
 
 ## O que o M³ faz? {#what-can-m3-do}
 
@@ -41,11 +41,11 @@ Em reuniões híbridas ou presenciais, o modo de exibição de mídias integrado
 - Reprodução de cânticos de fundo, com parada automática antes do início das reuniões
 - Reconhecimento automático de telas externas e gerenciamento delas
 - Integração com o OBS Studio com mudança automática de cena ao apresentar as mídias
-- Presenting the official website of Jehovah's Witnesses website on an external monitor
-- Import JWPUB files, JWLPLAYLIST files, videos from the official website of Jehovah's Witnesses, and media for public talks from the S-34 file in a few clicks.
-- Custom videos, pictures, audio files and even PDF files can be easily imported too!
+- Exibição do site oficial das Testemunhas de Jeová em uma segunda tela
+- Importe arquivos JWPUB, arquivos JWLPLAYLIST, vídeos do site oficial das Testemunhas de Jeová e mídias para discursos públicos a partir do arquivo S-34 com poucos cliques.
+- Outros vídeos, imagens, arquivos de áudio e até mesmo arquivos PDF também podem ser facilmente importados!
 
-**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
+**Experimente hoje o M³ e veja com os próprios olhos o que ele pode fazer! A exibição de mídias nas reuniões congregacionais nunca foi tão fácil.**
 
 ![M³ preview](./../assets/m3-preview.png)
 
