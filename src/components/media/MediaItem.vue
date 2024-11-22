@@ -247,14 +247,15 @@
                 </div>
               </div>
               <div class="col-shrink">
-                <div class="row q-gutter-sm items-center q-mr-md">
+                <div class="row q-gutter-sm items-center q-mr-sm">
                   <q-btn
-                    v-if="hoveringMediaItem || contextMenu"
                     ref="moreButton"
                     color="accent-400"
                     flat
                     icon="mmm-dots"
                     round
+                    size="sm"
+                    :style="`visibility: ${hoveringMediaItem || contextMenu ? 'visible' : 'hidden'}`"
                     @click="
                       () => {
                         menuTarget = moreButton?.$el;
