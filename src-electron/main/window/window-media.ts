@@ -42,6 +42,10 @@ export function createMediaWindow() {
   });
 }
 
+const mediaWindowIsFullScreen = (parentScreenBounds: Electron.Rectangle) =>
+  boundsAreSame(mediaWindow?.getBounds(), parentScreenBounds) ||
+  mediaWindow?.isFullScreen();
+
 export const moveMediaWindow = (
   displayNr?: number,
   fullscreen?: boolean,
@@ -72,9 +76,7 @@ export const moveMediaWindow = (
       }
       if (displayNr === undefined) return;
       fullscreen =
-        fullscreen ??
-        (mediaWindow.getBounds() === screens[displayNr].bounds ||
-          mediaWindow.isFullScreen());
+        fullscreen ?? mediaWindowIsFullScreen(screens[displayNr].bounds);
     } else {
       displayNr = 0;
       fullscreen = false;
@@ -113,10 +115,6 @@ const setWindowPosition = (
 
     const targetScreenBounds = targetDisplay.bounds;
 
-    const mediaWindowIsFullScreen = () =>
-      boundsAreSame(mediaWindow?.getBounds(), targetScreenBounds) ||
-      mediaWindow?.isFullScreen();
-
     const updateScreenAndPrefs = () => {
       sendToWindow(mainWindow, 'screenChange');
       if (!noEvent) {
@@ -133,7 +131,7 @@ const setWindowPosition = (
     ) => {
       const alwaysOnTop = PLATFORM !== 'darwin' && fullScreen;
       if (!mediaWindow) return;
-      if (mediaWindowIsFullScreen()) {
+      if (mediaWindowIsFullScreen(targetScreenBounds)) {
         // We need to set the fullscreen state before changing the bounds in the case of a window that is already fullscreen
         mediaWindow.setFullScreen(fullScreen);
       }
@@ -145,7 +143,10 @@ const setWindowPosition = (
     };
 
     const handleMacFullScreenTransition = (callback: () => void) => {
-      if (PLATFORM === 'darwin' && mediaWindowIsFullScreen()) {
+      if (
+        PLATFORM === 'darwin' &&
+        mediaWindowIsFullScreen(targetScreenBounds)
+      ) {
         mediaWindow?.once('leave-full-screen', callback);
         mediaWindow?.setFullScreen(false);
       } else {
@@ -154,7 +155,10 @@ const setWindowPosition = (
     };
 
     if (fullscreen) {
-      if (displayNr === currentDisplayNr && mediaWindowIsFullScreen()) {
+      if (
+        displayNr === currentDisplayNr &&
+        mediaWindowIsFullScreen(targetScreenBounds)
+      ) {
         mediaWindow.setAlwaysOnTop(PLATFORM !== 'darwin');
         updateScreenAndPrefs();
         return;
@@ -169,7 +173,10 @@ const setWindowPosition = (
         x: targetScreenBounds.x + 50,
         y: targetScreenBounds.y + 50,
       };
-      if (displayNr !== currentDisplayNr || mediaWindowIsFullScreen()) {
+      if (
+        displayNr !== currentDisplayNr ||
+        mediaWindowIsFullScreen(targetScreenBounds)
+      ) {
         handleMacFullScreenTransition(() => {
           setWindowBounds(newBounds, false);
         });
