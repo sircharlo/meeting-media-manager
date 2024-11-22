@@ -72,6 +72,15 @@ export default defineConfig({
       'meta',
       { name: 'apple-mobile-web-app-status-bar-style', content: 'black' },
     ],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    [
+      'meta',
+      { content: `${CANONICAL_URL}m3-project-cover.png`, property: 'og:image' },
+    ],
+    ['meta', { content: 'image/png', property: 'og:image:type' }],
+    ['meta', { content: '1442', property: 'og:image:width' }],
+    ['meta', { content: '865', property: 'og:image:height' }],
+    ['meta', { content: 'M³ project cover', property: 'og:image:alt' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { content: `${CANONICAL_URL}icon.png`, property: 'og:image' }],
     ['meta', { content: 'image/png', property: 'og:image:type' }],
@@ -86,14 +95,6 @@ export default defineConfig({
     ['meta', { content: '1280', property: 'og:image:width' }],
     ['meta', { content: '640', property: 'og:image:height' }],
     ['meta', { content: 'M³ repo preview banner', property: 'og:image:alt' }],
-    [
-      'meta',
-      { content: `${CANONICAL_URL}m3-project-cover.png`, property: 'og:image' },
-    ],
-    ['meta', { content: 'image/png', property: 'og:image:type' }],
-    ['meta', { content: '1442', property: 'og:image:width' }],
-    ['meta', { content: '865', property: 'og:image:height' }],
-    ['meta', { content: 'M³ project cover', property: 'og:image:alt' }],
   ],
   transformPageData(pageData) {
     const canonicalUrl = `${CANONICAL_URL}${pageData.relativePath}`
