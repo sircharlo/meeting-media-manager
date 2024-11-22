@@ -184,8 +184,12 @@ const setWindowPosition = (
         fullScreen,
       });
       if (!mediaWindow) return;
-      mediaWindow.setBounds(bounds);
+      if (mediaWindowIsFullScreen()) {
+        // We need to set the fullscreen state before changing the bounds in the case of a window that is already fullscreen
+        mediaWindow.setFullScreen(fullScreen);
+      }
       mediaWindow.setAlwaysOnTop(alwaysOnTop);
+      mediaWindow.setBounds(bounds);
       mediaWindow.setFullScreen(fullScreen);
       updateScreenAndPrefs();
     };
