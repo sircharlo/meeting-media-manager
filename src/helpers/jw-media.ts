@@ -522,9 +522,9 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
       .map((item) => item.name)
       .includes('SuppressZoom');
 
-    let select = 'SELECT Multimedia.*';
+    let select = 'SELECT Multimedia.*, Document.*';
     select += mmTable === 'DocumentMultimedia' ? ', DocumentMultimedia.*' : '';
-    select += ParagraphColumnsExist ? ', DocumentParagraph.BeginPosition' : '';
+    select += ParagraphColumnsExist ? ', DocumentParagraph.*' : '';
     select += LinkMultimediaIdExists
       ? ', LinkedMultimedia.FilePath AS LinkedPreviewFilePath'
       : '';

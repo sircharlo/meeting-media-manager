@@ -247,7 +247,22 @@
                 </div>
               </div>
               <div class="col-shrink">
-                <div class="row q-gutter-sm items-center q-mr-md">
+                <div class="row q-gutter-sm items-center q-mr-sm">
+                  <q-btn
+                    ref="moreButton"
+                    color="accent-400"
+                    flat
+                    icon="mmm-dots"
+                    round
+                    size="sm"
+                    :style="`visibility: ${hoveringMediaItem || contextMenu ? 'visible' : 'hidden'}`"
+                    @click="
+                      () => {
+                        menuTarget = moreButton?.$el;
+                        contextMenu = true;
+                      }
+                    "
+                  />
                   <q-icon
                     v-if="media.repeat"
                     color="warning"
@@ -313,21 +328,6 @@
             class="col-shrink"
             style="align-content: center"
           >
-            <q-btn
-              v-if="hoveringMediaItem || contextMenu"
-              ref="moreButton"
-              class="q-mr-xs"
-              color="accent-400"
-              flat
-              icon="mmm-dots"
-              round
-              @click="
-                () => {
-                  menuTarget = moreButton?.$el;
-                  contextMenu = true;
-                }
-              "
-            />
             <template v-if="!media.markers || media.markers.length === 0">
               <q-btn
                 ref="playButton"
@@ -445,7 +445,15 @@
       >
         <q-list>
           <q-item-label header>{{ displayMediaTitle }}</q-item-label>
-          <q-item v-close-popup clickable @click="emit('update:hidden', true)">
+          <q-item
+            v-close-popup
+            clickable
+            :disable="
+              mediaPlayingUrl === media.fileUrl ||
+              mediaPlayingUrl === media.streamUrl
+            "
+            @click="emit('update:hidden', true)"
+          >
             <q-item-section avatar>
               <q-icon name="mmm-file-hidden" />
             </q-item-section>
@@ -456,7 +464,15 @@
               </q-item-label>
             </q-item-section>
           </q-item>
-          <q-item v-close-popup clickable @click="mediaEditTitleDialog = true">
+          <q-item
+            v-close-popup
+            clickable
+            :disable="
+              mediaPlayingUrl === media.fileUrl ||
+              mediaPlayingUrl === media.streamUrl
+            "
+            @click="mediaEditTitleDialog = true"
+          >
             <q-item-section avatar>
               <q-icon name="mmm-edit" />
             </q-item-section>
@@ -502,12 +518,13 @@
             </q-item-section>
           </q-item>
           <q-item
-            v-if="
-              media.isAdditional &&
-              mediaPlayingUrl !== (media.fileUrl || media.streamUrl)
-            "
+            v-if="media.isAdditional"
             v-close-popup
             clickable
+            :disable="
+              mediaPlayingUrl === media.fileUrl ||
+              mediaPlayingUrl === media.streamUrl
+            "
             @click="mediaToDelete = media.uniqueId"
           >
             <q-item-section avatar>
@@ -516,8 +533,8 @@
             <q-item-section>
               <q-item-label>{{ $t('delete-media') }}</q-item-label>
               <q-item-label caption>
-                {{ $t('delete-media-explain') }}</q-item-label
-              >
+                {{ $t('delete-media-explain') }}
+              </q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
