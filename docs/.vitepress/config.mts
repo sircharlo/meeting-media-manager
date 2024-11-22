@@ -73,6 +73,7 @@ export default defineConfig({
       { name: 'apple-mobile-web-app-status-bar-style', content: 'black' },
     ],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:image:alt', content: 'M³ project cover' }],
     [
       'meta',
       { content: `${CANONICAL_URL}m3-project-cover.png`, property: 'og:image' },
