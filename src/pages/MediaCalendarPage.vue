@@ -508,8 +508,10 @@ import { sorter } from 'src/helpers/general';
 import {
   addJwpubDocumentMediaToFiles,
   downloadFileIfNeeded,
+  // exportAllDays,
   fetchMedia,
   getPublicationInfoFromDb,
+  mapOrder,
   sanitizeId,
 } from 'src/helpers/jw-media';
 import {
@@ -696,19 +698,6 @@ watch(
     mediaPlayingCurrentPosition.value = newCurrentTime;
   },
 );
-
-const mapOrder =
-  (sortOrder: string | string[] | undefined) =>
-  (a: DynamicMediaObject, b: DynamicMediaObject) => {
-    try {
-      const key = 'uniqueId';
-      if (!sortOrder || sortOrder.length === 0) return 0;
-      return sortOrder.indexOf(a[key]) > sortOrder.indexOf(b[key]) ? 1 : -1;
-    } catch (e) {
-      errorCatcher(e);
-      return 0;
-    }
-  };
 
 const updateMediaSortPlugin: DNDPlugin = (parent) => {
   const parentData = parents.get(parent);
@@ -1222,6 +1211,15 @@ const sortedMediaIds = computed(() => {
     ...sortableMediaItems.value.filter((m) => !m.hidden),
   ].map((m) => m.uniqueId);
 });
+
+// const arraysAreIdentical = (a: string[], b: string[]) =>
+//   a.length === b.length && a.every((element, index) => element === b[index]);
+
+// watch(sortedMediaIds, (newSortedMediaIds, oldSortedMediaIds) => {
+//   if (arraysAreIdentical(newSortedMediaIds, oldSortedMediaIds)) return;
+//   console.log('sortedMediaIds', newSortedMediaIds);
+//   exportAllDays();
+// });
 
 const lastPlayedMediaUniqueId = ref<string>('');
 

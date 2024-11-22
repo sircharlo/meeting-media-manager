@@ -233,6 +233,82 @@ const exportDayToFolder = async (
   }
 };
 
+export const mapOrder =
+  (sortOrder: string | string[] | undefined) =>
+  (a: DynamicMediaObject, b: DynamicMediaObject) => {
+    try {
+      const key = 'uniqueId';
+      if (!sortOrder || sortOrder.length === 0) return 0;
+      return sortOrder.indexOf(a[key]) > sortOrder.indexOf(b[key]) ? 1 : -1;
+    } catch (e) {
+      errorCatcher(e);
+      return 0;
+    }
+  };
+
+export const exportAllDays = async () => {
+  try {
+    const jwStore = useJwStore();
+    const currentStateStore = useCurrentStateStore();
+    if (
+      !currentStateStore.currentSettings?.enableMediaAutoExport ||
+      !currentStateStore.currentSettings?.mediaAutoExportFolder
+    )
+      return;
+    const daysToExport = (
+      jwStore.lookupPeriod[currentStateStore.currentCongregation] || []
+    ).map((d) => {
+      return {
+        date: d.date,
+        dynamicMedia: d.dynamicMedia,
+      };
+    });
+    for (const day of daysToExport) {
+      const dateString = formatDate(day.date, 'YYYY/MM/DD');
+      day.dynamicMedia.push(
+        ...((jwStore.additionalMediaMaps[dateString] ||
+          []) as DynamicMediaObject[]),
+      );
+      day.dynamicMedia.push(
+        ...((currentStateStore.watchFolderMedia[dateString] ||
+          []) as DynamicMediaObject[]),
+      );
+      const seenFileUrls = new Set();
+      day.dynamicMedia = day.dynamicMedia
+        .filter((m) => {
+          if (!m.fileUrl || seenFileUrls.has(m.fileUrl)) {
+            return false;
+          }
+          seenFileUrls.add(m.fileUrl);
+          return true;
+        })
+        .sort(
+          mapOrder(
+            jwStore.mediaSort[currentStateStore.currentCongregation]?.[
+              dateString
+            ] || [],
+          ),
+        )
+        .sort((a, b) => {
+          const sectionOrder = [
+            'additional',
+            'tgw',
+            'ayfm',
+            'lac',
+            'wt',
+            'circuitOverseer',
+          ];
+          return (
+            sectionOrder.indexOf(a.section) - sectionOrder.indexOf(b.section)
+          );
+        });
+      await exportDayToFolder(day.date, day.dynamicMedia);
+    }
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
 const fetchMedia = async () => {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -323,20 +399,7 @@ const fetchMedia = async () => {
       }
     }
     await queue.onIdle();
-
-    const daysToExport =
-      jwStore.lookupPeriod[currentStateStore.currentCongregation]?.filter(
-        (d) => d.dynamicMedia.length,
-      ) || [];
-    console.log('daysToExport', daysToExport);
-
-    // TODO: add other media here too (additionalMedia, watched)
-    // TODO: apply sort order before exporting
-
-    for (const day of daysToExport) {
-      console.log('day', day);
-      await exportDayToFolder(day.date, day.dynamicMedia);
-    }
+    exportAllDays();
   } catch (error) {
     errorCatcher(error);
   }
