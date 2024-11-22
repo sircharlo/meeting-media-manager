@@ -108,6 +108,16 @@ const setWindowPosition = (
           target[prop as keyof Electron.Rectangle],
       );
 
+    const updateScreenAndPrefs = () => {
+      sendToWindow(mainWindow, 'screenChange');
+      if (!noEvent) {
+        sendToWindow(mainWindow, 'screenPrefsChange', {
+          preferredScreenNumber: displayNr ?? 0,
+          preferWindowed: !fullscreen,
+        } as ScreenPreferences);
+      }
+    };
+
     const setWindowBounds = (
       bounds: Partial<Electron.Rectangle>,
       alwaysOnTop = false,
@@ -121,7 +131,7 @@ const setWindowPosition = (
       if (mediaWindow.isFullScreen() !== fullScreen) {
         mediaWindow.setFullScreen(fullScreen);
       }
-      sendToWindow(mainWindow, 'screenChange');
+      updateScreenAndPrefs();
     };
 
     const handleMacFullScreenTransition = (callback: () => void) => {
@@ -152,14 +162,9 @@ const setWindowPosition = (
         handleMacFullScreenTransition(() => {
           setWindowBounds(newBounds, false, false);
         });
+      } else {
+        updateScreenAndPrefs();
       }
-    }
-
-    if (!noEvent) {
-      sendToWindow(mainWindow, 'screenPrefsChange', {
-        preferredScreenNumber: displayNr ?? 0,
-        preferWindowed: !fullscreen,
-      } as ScreenPreferences);
     }
   } catch (err) {
     errorCatcher(err);
