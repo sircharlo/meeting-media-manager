@@ -98,15 +98,15 @@ const setWindowPosition = (
 
     const targetScreenBounds = targetDisplay.bounds;
 
-    const boundsChanged = (
-      current: Electron.Rectangle,
-      target: Electron.Rectangle,
-    ) =>
-      ['height', 'width', 'x', 'y'].some(
-        (prop) =>
-          current[prop as keyof Electron.Rectangle] !==
-          target[prop as keyof Electron.Rectangle],
-      );
+    // const boundsChanged = (
+    //   current: Electron.Rectangle,
+    //   target: Electron.Rectangle,
+    // ) =>
+    //   ['height', 'width', 'x', 'y'].some(
+    //     (prop) =>
+    //       current[prop as keyof Electron.Rectangle] !==
+    //       target[prop as keyof Electron.Rectangle],
+    //   );
 
     const updateScreenAndPrefs = () => {
       sendToWindow(mainWindow, 'screenChange');
@@ -155,10 +155,7 @@ const setWindowPosition = (
         x: targetScreenBounds.x + 50,
         y: targetScreenBounds.y + 50,
       };
-      if (
-        displayNr !== currentDisplayNr ||
-        boundsChanged(mediaWindow.getBounds(), newBounds)
-      ) {
+      if (displayNr !== currentDisplayNr || mediaWindow.isFullScreen()) {
         handleMacFullScreenTransition(() => {
           setWindowBounds(newBounds, false, false);
         });
