@@ -6,6 +6,8 @@ import {
   app,
   BrowserWindow,
   type BrowserWindowConstructorOptions,
+  type Display,
+  type Rectangle,
 } from 'electron';
 import { join, resolve } from 'path';
 
@@ -117,7 +119,14 @@ export function createWindow(
 export function logToWindow(
   win: BrowserWindow | null,
   msg: string,
-  ctx: boolean | number | Record<string, unknown> | string = {},
+  ctx:
+    | boolean
+    | Display
+    | Display[]
+    | number
+    | Record<string, unknown>
+    | Rectangle
+    | string = {},
   level: 'debug' | 'error' | 'info' | 'warn' = 'info',
 ) {
   if (level === 'debug' && !process.env.DEBUGGING) return;

@@ -6,7 +6,7 @@ import { errorCatcher } from 'app/src-electron/utils';
 import { join, resolve } from 'path';
 
 import { getAllScreens, getWindowScreen, screenPreferences } from '../screen';
-import { createWindow, sendToWindow } from './window-base';
+import { createWindow, logToWindow, sendToWindow } from './window-base';
 import { mainWindow } from './window-main';
 
 export let mediaWindow: BrowserWindow | null = null;
@@ -88,7 +88,11 @@ const setWindowPosition = (
   fullscreen = true,
   noEvent?: boolean,
 ) => {
-  console.log('setWindowPosition', { displayNr, fullscreen, noEvent });
+  logToWindow(mainWindow, 'setWindowPosition', {
+    displayNr,
+    fullscreen,
+    noEvent,
+  });
   try {
     if (!mediaWindow) return;
 
@@ -99,10 +103,10 @@ const setWindowPosition = (
 
     const targetScreenBounds = targetDisplay.bounds;
 
-    console.log('targetScreenBounds', targetScreenBounds);
-    console.log('targetDisplay', targetDisplay);
-    console.log('currentDisplayNr', currentDisplayNr);
-    console.log('screens', screens);
+    logToWindow(mainWindow, 'targetScreenBounds', targetScreenBounds);
+    logToWindow(mainWindow, 'targetDisplay', targetDisplay);
+    logToWindow(mainWindow, 'currentDisplayNr', currentDisplayNr);
+    logToWindow(mainWindow, 'screens', screens);
 
     // const boundsChanged = (
     //   current: Electron.Rectangle,
@@ -115,15 +119,15 @@ const setWindowPosition = (
     //   );
 
     const updateScreenAndPrefs = () => {
-      console.log('updateScreenAndPrefs');
+      logToWindow(mainWindow, 'updateScreenAndPrefs');
       sendToWindow(mainWindow, 'screenChange');
-      console.log('sent screenChange event');
+      logToWindow(mainWindow, 'sent screenChange event');
       if (!noEvent) {
         sendToWindow(mainWindow, 'screenPrefsChange', {
           preferredScreenNumber: displayNr ?? 0,
           preferWindowed: !fullscreen,
         } as ScreenPreferences);
-        console.log('sent screenPrefsChange event', {
+        logToWindow(mainWindow, 'sent screenPrefsChange event', {
           preferredScreenNumber: displayNr ?? 0,
           preferWindowed: !fullscreen,
         });
@@ -135,7 +139,7 @@ const setWindowPosition = (
       alwaysOnTop = false,
       fullScreen = false,
     ) => {
-      console.log('setWindowBounds', {
+      logToWindow(mainWindow, 'setWindowBounds', {
         alwaysOnTop,
         bounds,
         fullScreen,
@@ -152,11 +156,10 @@ const setWindowPosition = (
     };
 
     const handleMacFullScreenTransition = (callback: () => void) => {
-      console.log(
-        'handleMacFullScreenTransition',
+      logToWindow(mainWindow, 'handleMacFullScreenTransition', {
+        mediaWindowIsFullScreen: mediaWindow?.isFullScreen(),
         PLATFORM,
-        mediaWindow?.isFullScreen(),
-      );
+      });
       if (PLATFORM === 'darwin' && mediaWindow && mediaWindow.isFullScreen()) {
         mediaWindow.once('leave-full-screen', callback);
         mediaWindow.setFullScreen(false);
@@ -166,12 +169,11 @@ const setWindowPosition = (
     };
 
     if (fullscreen) {
-      console.log(
-        'displayNr === currentDisplayNr',
-        displayNr === currentDisplayNr,
-        'mediaWindow.isAlwaysOnTop()',
-        mediaWindow.isAlwaysOnTop(),
-      );
+      logToWindow(mainWindow, 'fullscreen', {
+        currentDisplayNr,
+        displayNr,
+        mediaWindowIsAlwaysOnTop: mediaWindow.isAlwaysOnTop(),
+      });
       if (displayNr === currentDisplayNr && mediaWindow.isAlwaysOnTop()) return;
       handleMacFullScreenTransition(() => {
         setWindowBounds(targetScreenBounds, PLATFORM !== 'darwin', true);
@@ -183,14 +185,12 @@ const setWindowPosition = (
         x: targetScreenBounds.x + 50,
         y: targetScreenBounds.y + 50,
       };
-      console.log(
-        'displayNr !== currentDisplayNr',
-        displayNr !== currentDisplayNr,
-        'mediaWindow.isFullScreen()',
-        mediaWindow.isFullScreen(),
-        'newBounds',
+      logToWindow(mainWindow, 'not fullscreen', {
+        currentDisplayNr,
+        displayNr,
+        mediaWindowIsFullScreen: mediaWindow.isFullScreen(),
         newBounds,
-      );
+      });
       if (displayNr !== currentDisplayNr || mediaWindow.isFullScreen()) {
         handleMacFullScreenTransition(() => {
           setWindowBounds(newBounds, false, false);
