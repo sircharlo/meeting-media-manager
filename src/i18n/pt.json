@@ -14,7 +14,7 @@
   "almost-done": "Quase pronto!",
   "also-look-for-this-button-in-m-s-footer": "Procure por este botão no rodapé do M³:",
   "app-description": "O Meeting Media Manager é um aplicativo multiplataforma projetado para exibir mídias em reuniões congregacionais das Testemunhas de Jeová. Ele se integra ao OBS Studio para exibição de mídia com um único clique, tanto no Salão do Reino quanto no Zoom. Com sua interface intuitiva e recursos abrangentes, o M³ facilita o trabalho dos operadores de áudio e vídeo. Ele suporta todos os formatos de arquivo, incluindo PDFs e arquivos de mídia, podendo complementar ou até mesmo substituir o JW Library, conforme as necessidades da congregação.",
-  "app-issues": "Se você estiver enfrentando algum problema ou encontrou um bug, por favor, abra uma issue na página do nosso repositório no GitHub ou entre em contato conosco através do GitHub, descrevendo o problema detalhadamente. Entraremos em contato com você o mais rápido possível.",
+  "app-issues": "Se você tiver algum problema ou identificar um erro, registre uma issue na página do nosso repositório no GitHub ou entre em contato diretamente por lá, descrevendo o problema com detalhes. Faremos o possível para responder o mais rápido possível.",
   "applicationConfiguration": "Configuração do aplicativo",
   "applicationConfigurationDescription": "Personalizar o comportamento e a aparência",
   "archive-file-found": "Arquivos compactados devem ser processados separadamente.",
