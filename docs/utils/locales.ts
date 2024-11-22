@@ -24,8 +24,8 @@ const mapLocale = (
 } => ({
   description: msg.description,
   head: [
-    ['meta', { content: msg.title, property: 'application-name' }],
-    ['meta', { content: msg.title, property: 'apple-mobile-web-app-title' }],
+    ['meta', { content: msg.title, name: 'application-name' }],
+    ['meta', { content: msg.title, name: 'apple-mobile-web-app-title' }],
     ['meta', { content: msg.title, property: 'og:site_name' }],
     ['meta', { content: msg.description, property: 'og:description' }],
     ['meta', { content: lang, property: 'og:locale' }],
