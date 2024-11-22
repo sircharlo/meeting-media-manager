@@ -20,20 +20,15 @@ O M³ é a ferramenta mais completa para gerenciar as mídias das reuniões, ofe
 
 ### Principais benefícios {#key-benefits}
 
-- **Apresentação de mídia sem esforço**\
-  A melhor forma de apresentar mídias — apenas abra o M³ e está tudo pronto. Não são necessárias configurações complexas ou etapas extras.
+- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. Não são necessárias configurações complexas ou etapas extras.
 
-- **Suporte para várias congregações**\
-  Gerencie configurações para diversas congregações ou grupos facilmente dentro de um único aplicativo.
+- **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
 
-- **Recursos avançados**\
-  Adicione facilmente mídias extras e compartilhe automaticamente o que acontece no Salão do Reino com os participantes no Zoom.
+- **Advanced features**: Easily add extra media, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
 
-- **Desempenho otimizado em várias plataformas**\
-  Desfrute de uma experiência suave e responsiva no Windows, macOS e Linux, mesmo em sistemas antigos ou computadores com recursos limitados.
+- **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
 
-- **Confiável e estável**\
-  Feito para funcionar bem quando você mais precisa. Encontrou um problema? Reporte-o e ele será tratado rapidamente.
+- **Reliable and stable**: Built to perform when you need it most. Encontrou um problema? Reporte-o e ele será tratado rapidamente.
 
 ## O que o M³ faz? {#what-can-m3-do}
 
@@ -45,7 +40,7 @@ Em reuniões híbridas ou presenciais, o modo de exibição de mídias integrado
 - Botões de pausar/reproduzir/parar fáceis de usar para controlar a reprodução de mídias
 - Reprodução de cânticos de fundo, com parada automática antes do início das reuniões
 - Reconhecimento automático de telas externas e gerenciamento delas
-- OBS Studio integration with automatic scene switching during media presentation
+- Integração com o OBS Studio com mudança automática de cena ao apresentar as mídias
 - Presenting the official website of Jehovah's Witnesses website on an external monitor
 - Import JWPUB files, JWLPLAYLIST files, videos from the official website of Jehovah's Witnesses, and media for public talks from the S-34 file in a few clicks.
 - Custom videos, pictures, audio files and even PDF files can be easily imported too!
