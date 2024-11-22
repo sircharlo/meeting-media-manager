@@ -20,15 +20,15 @@ M³ is de ultieme tool om vergadering media te beheren en biedt een naadloos, be
 
 ### Belangrijke voordelen {#key-benefits}
 
-- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. Geen complexe set-up of extra stappen vereist.
+- **Eenvoudige mediapresentatie**: Presentatie media op zijn toppunt - open M³ en alles werkt. Geen complexe set-up of extra stappen vereist.
 
-- **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
+- **Ondersteuning voor meerdere gemeenten**: Beheer instellingen voor meerdere gemeenten of groepen binnen een enkele applicatie.
 
-- **Advanced features**: Easily add extra media, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Geavanceerde functies**: Voeg eenvoudig extra media toe en deel automatisch wat er gebeurt in de Koninkrijkszaal met de deelnemers in Zoom.
 
-- **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
+- **Geoptimaliseerde cross-platform prestaties**: Geniet van een soepele en responsieve ervaring op Windows, macOS en Linux, zelfs op oudere systemen of computers met beperkte capaciteiten.
 
-- **Reliable and stable**: Built to perform when you need it most. Een fout gevonden? Rapporteer het en het zal snel worden aangepakt.
+- **Betrouwbaar en stabiel**: Gebouwd om te werken wanneer je het het hardst nodig hebt. Een fout gevonden? Rapporteer het en het zal snel worden aangepakt.
 
 ## Wat kan M³? {#what-can-m3-do}
 
