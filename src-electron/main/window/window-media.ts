@@ -48,8 +48,8 @@ export const moveMediaWindow = (
   noEvent?: boolean,
 ) => {
   try {
-    const allScreens = getAllScreens();
-    const otherScreens = allScreens.filter((screen) => !screen.mainWindow);
+    const screens = getAllScreens();
+    const otherScreens = screens.filter((screen) => !screen.mainWindow);
 
     if (!mediaWindow || !mainWindow) return;
 
@@ -59,19 +59,30 @@ export const moveMediaWindow = (
     }
 
     if (otherScreens.length > 0) {
-      fullscreen = fullscreen ?? mediaWindow.isFullScreen();
-
       if (displayNr === undefined || otherScreens.length >= 1) {
         if (otherScreens.length === 1) {
-          displayNr = allScreens.findIndex((s) => !s.mainWindow);
+          displayNr = screens.findIndex((s) => !s.mainWindow);
         } else {
-          const mainWindowScreen = allScreens.findIndex((s) => s.mainWindow);
+          const mainWindowScreen = screens.findIndex((s) => s.mainWindow);
           displayNr =
             displayNr !== mainWindowScreen
               ? displayNr
-              : allScreens.findIndex((s) => !s.mainWindow);
+              : screens.findIndex((s) => !s.mainWindow);
         }
       }
+      logToWindow(mainWindow, 'fullscreen info', {
+        displayNr,
+        fullscreen,
+        'mediaWindow.getBounds()': mediaWindow.getBounds(),
+        'mediaWindow.getBounds() === screens[displayNr].bounds':
+          mediaWindow.getBounds() === screens[displayNr].bounds,
+        'mediaWindow.isFullScreen()': mediaWindow.isFullScreen(),
+        'screens[displayNr].bounds': screens[displayNr].bounds,
+      });
+      fullscreen =
+        fullscreen ??
+        (mediaWindow.getBounds() === screens[displayNr].bounds ||
+          mediaWindow.isFullScreen());
     } else {
       displayNr = 0;
       fullscreen = false;
@@ -102,6 +113,10 @@ const setWindowPosition = (
     if (!targetDisplay) return;
 
     const targetScreenBounds = targetDisplay.bounds;
+
+    const mediaWindowIsFullScreen = () =>
+      mediaWindow?.getBounds() === targetDisplay.bounds ||
+      mediaWindow?.isFullScreen();
 
     logToWindow(mainWindow, 'targetScreenBounds', targetScreenBounds);
     logToWindow(mainWindow, 'targetDisplay', targetDisplay);
@@ -146,35 +161,31 @@ const setWindowPosition = (
       });
       if (!mediaWindow) return;
       mediaWindow.setBounds(bounds);
-      // if (mediaWindow.isAlwaysOnTop() !== alwaysOnTop) {
       mediaWindow.setAlwaysOnTop(alwaysOnTop);
-      // }
-      // if (mediaWindow.isFullScreen() !== fullScreen) {
       mediaWindow.setFullScreen(fullScreen);
-      // }
       updateScreenAndPrefs();
     };
 
     const handleMacFullScreenTransition = (callback: () => void) => {
       logToWindow(mainWindow, 'handleMacFullScreenTransition', {
-        mediaWindowIsFullScreen: mediaWindow?.isFullScreen(),
+        mediaWindowIsFullScreen: mediaWindowIsFullScreen(),
         PLATFORM,
       });
-      if (PLATFORM === 'darwin' && mediaWindow && mediaWindow.isFullScreen()) {
-        mediaWindow.once('leave-full-screen', callback);
-        mediaWindow.setFullScreen(false);
+      if (PLATFORM === 'darwin' && mediaWindowIsFullScreen()) {
+        mediaWindow?.once('leave-full-screen', callback);
+        mediaWindow?.setFullScreen(false);
       } else {
         callback();
       }
     };
 
     if (fullscreen) {
-      logToWindow(mainWindow, 'fullscreen', {
+      logToWindow(mainWindow, 'set to fullscreen', {
         currentDisplayNr,
         displayNr,
-        mediaWindowIsFullScreen: mediaWindow.isFullScreen(),
+        mediaWindowIsFullScreen: mediaWindowIsFullScreen(),
       });
-      if (displayNr === currentDisplayNr && mediaWindow.isFullScreen()) {
+      if (displayNr === currentDisplayNr && mediaWindowIsFullScreen()) {
         updateScreenAndPrefs();
         return;
       }
@@ -188,13 +199,13 @@ const setWindowPosition = (
         x: targetScreenBounds.x + 50,
         y: targetScreenBounds.y + 50,
       };
-      logToWindow(mainWindow, 'not fullscreen', {
+      logToWindow(mainWindow, 'set to windowed', {
         currentDisplayNr,
         displayNr,
-        mediaWindowIsFullScreen: mediaWindow.isFullScreen(),
+        mediaWindowIsFullScreen: mediaWindowIsFullScreen(),
         newBounds,
       });
-      if (displayNr !== currentDisplayNr || mediaWindow.isFullScreen()) {
+      if (displayNr !== currentDisplayNr || mediaWindowIsFullScreen()) {
         handleMacFullScreenTransition(() => {
           setWindowBounds(newBounds, false);
         });
