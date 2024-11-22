@@ -14,26 +14,21 @@ M³ stond bekend als JWMMF (JW Meeting Media Fetcher), maar werd hernoemd in mei
 
 :::
 
-## Why choose M³? {#why-choose-m3}
+## Waarom M³? {#why-choose-m3}
 
-M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms.
+M³ is de ultieme tool om vergadering media te beheren en biedt een naadloos, betrouwbaar en veelzijdige ervaring op verschillende platformen.
 
-### Key benefits {#key-benefits}
+### Belangrijke voordelen {#key-benefits}
 
-- **Effortless media presentation**\
-  Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
+- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. Geen complexe set-up of extra stappen vereist.
 
-- **Multi-congregation support**\
-  Manage settings for multiple congregations or groups easily within a single application.
+- **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
 
-- **Advanced features**\
-  Easily add extra media, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Advanced features**: Easily add extra media, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
 
-- **Optimized cross-platform performance**\
-  Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
+- **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
 
-- **Reliable and stable**\
-  Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
+- **Reliable and stable**: Built to perform when you need it most. Een fout gevonden? Rapporteer het en het zal snel worden aangepakt.
 
 ## Wat kan M³? {#what-can-m3-do}
 
@@ -41,16 +36,16 @@ M³ stelt je in staat om makkelijk en automatisch media voor alle vergaderingen 
 
 Voor **hybride** of **fysieke** gemeente vergaderingen, heeft de media presentatie modus alle nodige functies om de taak van media delen zo simpel mogelijk te maken. Deze functies zijn onder andere:
 
-- Media thumbnails with the ability to zoom and pan, as well as set custom start and end times for media
+- Media miniaturen met de mogelijkheid om in te zoomen en slepen, evenals aangepaste begin- en eindtijden voor media instellen
 - Makkelijk te gebruiken pauze, spelen en stop knoppen om het afspelen van media te controleren
 - Makkelijk achtergrond muziek afspelen, die automatisch kan stoppen voor de vergadering begint
 - Automatische herkenning en beheer van externe schermen
-- OBS Studio integration with automatic scene switching during media presentation
-- Presenting the official website of Jehovah's Witnesses website on an external monitor
-- Import JWPUB files, JWLPLAYLIST files, videos from the official website of Jehovah's Witnesses, and media for public talks from the S-34 file in a few clicks.
-- Custom videos, pictures, audio files and even PDF files can be easily imported too!
+- OBS Studio integratie met automatische scène wisselen tijdens media presentatie
+- De officiële website van Jehovah's Getuigen website op een externe monitor presenteren
+- Importeer JWPUB bestanden, JWLPLAYLIST bestanden, video's van de officiële website van Jehovah's Getuigen, en media voor openbare lezingen uit het S34-bestand in een paar muisklikken.
+- Aangepaste video's, afbeeldingen, audiobestanden en zelfs PDF-bestanden kunnen ook gemakkelijk worden geïmporteerd!
 
-**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
+**Probeer M³ vandaag nog en kijk zelf wat het kan doen! Het is nog nooit zo eenvoudig geweest om media te presenteren bij vergaderingen.**
 
 ![M³ preview](./../assets/m3-preview.png)
 
