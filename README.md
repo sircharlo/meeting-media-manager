@@ -2,7 +2,7 @@
 
 # About Meeting Media Manager (M³)
 
-<img width="1056" alt="M3-GitHub-top-banner-v4" src="https://github.com/user-attachments/assets/8f5692ad-b766-4107-b699-d3f324db1ba6">
+![M³ banner](./docs/src/assets/m3-banner.png)
 
 ## What is this app?
 
@@ -43,12 +43,12 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - Automatic external monitor recognition and management
 - OBS Studio integration with automatic scene switching during media presentation
 - Presenting the official website of Jehovah's Witnesses website on an external monitor
-- Import JWPUB files, JWLPLAYLIST files, videos from the official website of Jehovah's Witnesses, and media for public talks from the S-34 in a few clicks.
+- Import JWPUB files, JWLPLAYLIST files, videos from the official website of Jehovah's Witnesses, and media for public talks from the S-34 file in a few clicks.
 - Custom videos, pictures, audio files and even PDF files can be easily imported too!
 
 **Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
 
-![m3-preview](https://github.com/user-attachments/assets/e7055844-e0b1-4430-9526-38fed62aa446)
+![M³ preview](./docs/src/assets/m3-preview.png)
 
 ## Does M³ work in my language?
 
@@ -62,7 +62,6 @@ In addition, M³ itself has been translated into several languages by many volun
 <!-- markdownlint-disable -->
 <!-- prettier-ignore-start -->
 <!-- CROWDIN-TRANSLATIONS-PROGRESS-ACTION-START -->
-
 
 #### Available
 
