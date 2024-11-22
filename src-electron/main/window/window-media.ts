@@ -174,7 +174,10 @@ const setWindowPosition = (
         displayNr,
         mediaWindowIsFullScreen: mediaWindow.isFullScreen(),
       });
-      if (displayNr === currentDisplayNr && mediaWindow.isFullScreen()) return;
+      if (displayNr === currentDisplayNr && mediaWindow.isFullScreen()) {
+        updateScreenAndPrefs();
+        return;
+      }
       handleMacFullScreenTransition(() => {
         setWindowBounds(targetScreenBounds, true);
       });
@@ -197,6 +200,7 @@ const setWindowPosition = (
         });
       } else {
         updateScreenAndPrefs();
+        return;
       }
     }
   } catch (err) {
