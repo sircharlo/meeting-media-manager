@@ -14,11 +14,11 @@ M³ ilikuwa ikijulikana kama JWMMF (JW Meeting Media Fetcher), lakini ilibadilis
 
 :::
 
-## Why choose M³? {#why-choose-m3}
+## Mbona uchague M³? {#why-choose-m3}
 
-M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms.
+M³ ni zana ya hali ya juu kwa wale wanaosimamia midia ya mkutano, ikiandaa utumiaji mkamilifu, unaotegemewa na wenye vipengele vingi kwenye mifumo mbalimbali.
 
-### Key benefits {#key-benefits}
+### Faida muhimu {#key-benefits}
 
 - **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
 
