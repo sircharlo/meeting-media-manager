@@ -1,40 +1,40 @@
 <!-- markdownlint-disable no-inline-html -->
 
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# Використання M³ у Залі Царства
 
-This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
+Цей посібник проведе вас через процес завантаження, встановлення та налаштування **Meeting Media Manager (M³)** у Залі Царства. Слідуйте цим крокам, щоб забезпечити правильне налаштування для управління медіа під час зібрань збору.
 
-## 1. Download and install {#download-and-install}
+## 1. Завантаження та встановлення {#download-and-install}
 
 <script setup>
   import { data } from './../../data/version.data.mts'
 </script>
 
-1. Download the appropriate version for your operating system:
+1. Завантажте відповідну версію для вашої операційної системи:
    - **Windows:**
-     - For most Windows systems, download <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
-     - For older 32-bit Windows systems, download <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
+     - Для більшості систем Windows завантажте <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
+     - Для старих 32-бітних систем Windows завантажте <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
    - **macOS:**
-     - **M-series (Apple Silicon)**: Download <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
-     - **Intel-based Macs**: Download <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
+     - **M-серія (Apple Silicon)**: Завантажте <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
+     - **Mac на базі Intel**: Завантажте <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
    - **Linux:**
-     - Download <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
-2. If the download links do not work, visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and download the correct version manually.
-3. Відкрийте інсталятор та дотримуйтесь екранних інструкцій для встановлення M³.
+     - Завантажте <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
+2. Якщо посилання для завантаження не працюють, відвідайте [сторінку завантаження M³] (https://github.com/sircharlo/meeting-media-manager/releases/latest) і завантажте правильну версію вручну.
+3. Відкрийте інсталятор та дотримуйтесь інструкцій на екрані для встановлення M³.
 4. Запустіть M³.
-5. Пройдіть через майстер настройки.
+5. Пройдіть через майстер налаштування.
 
-### macOS only: Additional installation steps {#additional-steps-for-macos-users}
+### Тільки для macOS: Додаткові кроки встановлення {#additional-steps-for-macos-users}
 
 :::warning Увага
 
-This section only applies to macOS users.
+Цей розділ стосується тільки користувачів macOS.
 
 :::
 
-Due to Apple's security measures, a few additional steps are required to run the installed M³ app on modern macOS systems.
+Через заходи безпеки Apple, для запуску встановленого додатка M³ на сучасних системах macOS потрібно виконати кілька додаткових кроків.
 
-Run the following two commands in Terminal, modifying the path to M³ as needed:
+Виконайте наступні дві команди в Терміналі, змінюючи шлях до M³ за необхідності:
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
@@ -43,13 +43,13 @@ sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 
 :::warning Увага
 
-As a macOS user, you will need to follow these steps every time you install or update M³.
+Як користувач macOS, вам потрібно буде виконати ці кроки кожного разу, коли ви встановлюєте або оновлюєте M³.
 
 :::
 
 :::info Пояснення
 
-The first command _signs the application's code_. This is required to prevent M³ from being detected as a malicious application from an unknown developer.
+Перша команда _підписує код програми_. This is required to prevent M³ from being detected as a malicious application from an unknown developer.
 
 The second command _removes the quarantine flag_ from the application. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
 
@@ -71,7 +71,7 @@ If you still have issues after following all these steps, please [open an issue 
 
 :::warning Увага
 
-This section only applies to macOS users.
+Цей розділ стосується тільки користувачів macOS.
 
 :::
 
