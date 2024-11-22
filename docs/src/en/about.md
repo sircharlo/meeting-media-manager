@@ -20,19 +20,19 @@ M³ is the ultimate tool for managing meeting media, offering a seamless, reliab
 
 ### Key benefits {#key-benefits}
 
-- **Effortless media presentation**  
+- **Effortless media presentation**
   Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
 
-- **Multi-congregation support**  
+- **Multi-congregation support**
   Manage settings for multiple congregations or groups easily within a single application.
 
-- **Advanced features**  
+- **Advanced features**
   Easily add extra media, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
 
-- **Optimized cross-platform performance**  
+- **Optimized cross-platform performance**
   Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
 
-- **Reliable and stable**  
+- **Reliable and stable**
   Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
 
 ## What can M³ do? {#what-can-m3-do}
