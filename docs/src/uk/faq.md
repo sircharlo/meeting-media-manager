@@ -2,7 +2,7 @@
 
 ## :earth_americas: Чи залежить ця програма від зовнішніх сайтів, джерел або "кураторів" для завантаження публікацій, медіа для зібрань та іншого контенту? {#external-dependencies}
 
-**Ні.** Додаток поводиться аналогічно як JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. Додаток автоматично визначає, що потрібно завантажити, та коли раніше завантажений контент більше не є актуальним і повинен бути завантажений заново.
+**Ні.** Додаток поводиться аналогічно як JW Library. Він завантажує публікації, медіа та інший контент безпосередньо з офіційного вебсайту Свідків Єгови та їх мережі надсилання контенту. Додаток автоматично визначає, що потрібно завантажити, та коли раніше завантажений контент більше не є актуальним і повинен бути завантажений заново.
 
 :::info Примітка
 
@@ -12,7 +12,7 @@
 
 ## :thinking: Чи цей додаток порушує Умови Використання офіційного сайту Свідків Єгови? {#terms-of-use}
 
-**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
+**Ні.** [Умови використання](https://www.jw.org/finder?docid=1011511\&prefer=content) офіційного вебсайту Свідків Єгови насправді прямо дозволяють таке використання, яке ми здійснюємо. Ось відповідний уривок з цих умов (з виділенням):
 
 > Ви не можете:
 >
@@ -20,15 +20,15 @@
 
 ## :radioactive: Як я можу повідомити про проблему? {#how-do-i-report-an-issue}
 
-Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
+Будь ласка, [подайте проблему](https://github.com/sircharlo/meeting-media-manager/issues) на офіційному репозиторії GitHub.
 
 ## :new: Як я можу запропонувати нову функцію або покращення? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
+Будь ласка, [відкрийте обговорення](https://github.com/sircharlo/meeting-media-manager/discussions) на офіційному репозиторії GitHub.
 
 ## :handshake: Чи можу я зробити свій внесок у код? {#how-can-i-contribute-some-code}
 
-Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+Будь ласка, ознайомтесь з [посібником для контриб’юторів](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) на офіційному репозиторії GitHub.
 
 ## :x: Чи можу я зробити пожертву на проект? {#can-i-make-a-donation-to-the-project}
 
