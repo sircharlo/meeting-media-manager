@@ -94,6 +94,22 @@ export const moveMediaWindow = (
   }
 };
 
+const boundsChanged = (
+  current?: Electron.Rectangle,
+  target?: Electron.Rectangle,
+) => {
+  if (!current || !target) return false;
+  logToWindow(mainWindow, 'boundsChanged', {
+    current,
+    target,
+  });
+  return ['height', 'width', 'x', 'y'].some(
+    (prop) =>
+      current[prop as keyof Electron.Rectangle] !==
+      target[prop as keyof Electron.Rectangle],
+  );
+};
+
 const setWindowPosition = (
   displayNr?: number,
   fullscreen = true,
@@ -114,9 +130,17 @@ const setWindowPosition = (
 
     const targetScreenBounds = targetDisplay.bounds;
 
-    const mediaWindowIsFullScreen = () =>
-      mediaWindow?.getBounds() === targetDisplay.bounds ||
-      mediaWindow?.isFullScreen();
+    const mediaWindowIsFullScreen = () => {
+      logToWindow(mainWindow, 'mediaWindowIsFullScreen()', {
+        'boundsChanged(mediaWindow?.getBounds(), targetScreenBounds)':
+          boundsChanged(mediaWindow?.getBounds(), targetScreenBounds),
+        'mediaWindow.isFullScreen()': mediaWindow?.isFullScreen(),
+      });
+      return (
+        !boundsChanged(mediaWindow?.getBounds(), targetScreenBounds) ||
+        mediaWindow?.isFullScreen()
+      );
+    };
 
     logToWindow(mainWindow, 'targetScreenBounds', targetScreenBounds);
     logToWindow(mainWindow, 'targetDisplay', targetDisplay);
