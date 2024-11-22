@@ -14,21 +14,21 @@ M³ je bil znan kot JWMMF (JW Meeting Media Fetcher), vendar je bil maja 2022 pr
 
 :::
 
-## Why choose M³? {#why-choose-m3}
+## Zakaj izbrati M³? {#why-choose-m3}
 
-M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms.
+M³ je najboljše orodje za upravljanje multimedijske vsebine za shode, saj ponuja veliko funkcij ter brezhibno in zanesljivo izkušnjo na vseh platformah.
 
-### Key benefits {#key-benefits}
+### Ključne prednosti {#key-benefits}
 
-- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
+- **Nezahtevno predvajanje multimedijske vsebine**: Enostavno zaženi M³ in vse deluje. Ni potrebno zahtevno nastavljanje ali dodatni koraki.
 
-- **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
+- **Podpora za več občin**: V eni sami aplikaciji enostavno upravljajte nastavitve za več občin ali skupin.
 
-- **Advanced features**: Easily add extra media, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Napredne funkcije**: Zlahka dodajte dodatno multimedijsko vsebino in samodejno delite dogajanje v kraljestveni dvorani kraljestva z udeleženci na Zoomu.
 
-- **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
+- **Optimizirano delovanje na različnih platformah**: Uživajte v gladki in odzivni izkušnji v operacijskih sistemih Windows, macOS in Linux, tudi na starejših sistemih ali računalnikih z omejenimi viri.
 
-- **Reliable and stable**: Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
+- **Zanesljiv in stabilen**: Ustvarjen za delovanje, ko ga najbolj potrebujete. Ste naleteli na napako? Prijavite jo, pa jo bomo nemudoma obravnavali.
 
 ## Kaj zmore M³? {#what-can-m3-do}
 
@@ -36,16 +36,16 @@ Na kratko, M³ omogoča enostavno in samodejno prenašanje, sinhroniziranje, sou
 
 Za **hibridne** občinske shode ali za shode **v živo** ima integrirani način predstavitve multimedijske vsebine vse potrebne funkcije za poenostavitev predvajanja multimedijske vsebine, med drugim:
 
-- Media thumbnails with the ability to zoom and pan, as well as set custom start and end times for media
+- multimedijske sličice z možnostjo povečave in pomikanja ter nastavitve začetnega in končnega časa za predvajanje multimedijske vsebine,
 - gumbe za začasno prekinitev/predvajanje/zaustavitev multimedijskih datotek,
 - enostavno predvajanje glasbe v ozadju s samodejno zaustavitvijo pred začetkom redno načrtovanih shodov,
 - samodejno prepoznavanje in upravljanje zunanjih monitorjev,
-- OBS Studio integration with automatic scene switching during media presentation
-- Presenting the official website of Jehovah's Witnesses website on an external monitor
-- Import JWPUB files, JWLPLAYLIST files, videos from the official website of Jehovah's Witnesses, and media for public talks from the S-34 file in a few clicks.
-- Custom videos, pictures, audio files and even PDF files can be easily imported too!
+- integracija programa OBS Studio s samodejnim preklapljanjem prizorov med predvajanjem multimedijskih vsebin,
+- prikaz uradnega spletnega mesta Jehovovih prič na zunanjem monitorju,
+- uvažanje datotek JWPUB, datotek JWLPLAYLIST, videoposnetkov z uradnega spletnega mesta Jehovovih prič in multimedijske vsebine za javne govore iz datoteke S-34 z le nekaj kliki,
+- enostavno lahko uvozite tudi svoje videoposnetke, slike, zvočne datoteke in celo datoteke PDF!
 
-**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
+**Preizkusite M³ še danes in se prepričajte, kaj vse zmore! Predvajanje multimedijske vsebina na občinskih shodih ni bilo še nikoli tako enostavno.**
 
 ![M³ preview](./../assets/m3-preview.png)
 

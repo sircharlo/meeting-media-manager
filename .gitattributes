@@ -15,6 +15,7 @@
 # Images as binary
 *.gif           binary
 *.png           binary
+*.jpg           binary
 *.ico           binary
 *.icns          binary
 *.xcf           binary
