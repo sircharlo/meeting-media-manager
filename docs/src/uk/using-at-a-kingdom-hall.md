@@ -19,7 +19,7 @@
      - **Mac на базі Intel**: Завантажте <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
    - **Linux:**
      - Завантажте <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
-2. Якщо посилання для завантаження не працюють, відвідайте [сторінку завантаження M³] (https://github.com/sircharlo/meeting-media-manager/releases/latest) і завантажте правильну версію вручну.
+2. Якщо посилання для завантаження не працюють, відвідайте [сторінку завантаження M³](https://github.com/sircharlo/meeting-media-manager/releases/latest) і завантажте правильну версію вручну.
 3. Відкрийте інсталятор та дотримуйтесь інструкцій на екрані для встановлення M³.
 4. Запустіть M³.
 5. Пройдіть через майстер налаштування.
@@ -49,25 +49,25 @@ sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 
 :::info Пояснення
 
-Перша команда _підписує код програми_. This is required to prevent M³ from being detected as a malicious application from an unknown developer.
+Перша команда _підписує код програми_. Це необхідно, щоб запобігти виявленню M³ як шкідливої програми від невідомого розробника.
 
-The second command _removes the quarantine flag_ from the application. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
+Друга команда _знімає відмітку карантину з програми_. Відмітка карантину використовується для попередження користувачів про потенційно шкідливі програми, що були завантажені з інтернету.
 
 :::
 
-#### Alternative method {#alternative-method-for-macos-users}
+#### Альтернативний метод {#alternative-method-for-macos-users}
 
-If you are still unable to launch M³ after entering the two commands from the previous section, please try the following:
+Якщо вам все ще не вдається запустити M³ після введення двох команд з попереднього розділу, спробуйте наступне:
 
 1. Відкрийте налаштування macOS системи **Конфіденційність та безпека**.
-2. Find the entry for M³ and click the button to **Open Anyway**.
-3. You will then be warned again, and given the advice to not "open this unless you are certain it is from a trustworthy source." Click **Open Anyway**.
+2. Знайдіть запис для M³ і натисніть кнопку **Все одно відкрити**.
+3. Вас знову попередять і нададуть пораду не “відкривати це, якщо ви не впевнені, що це з надійного джерела.” Натисніть **Все одно відкрити**
 4. Ще одне попередження з’явиться, де вам потрібно буде автентифікуватись для запуску додатку.
 5. M³ тепер повинен успішно запуститися.
 
-If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). Ми зробимо все можливе, щоб допомогти.
+Якщо ви все ще маєте проблеми після виконання всіх цих кроків, будь ласка, [створіть issue на GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). Ми зробимо все можливе, щоб допомогти.
 
-### macOS only: Re-enabling website presentation after updates {#screen-sharing-issues}
+### Тільки для macOS: Відновлення трансляції вебсайту після оновлень {#screen-sharing-issues}
 
 :::warning Увага
 
@@ -75,22 +75,22 @@ If you still have issues after following all these steps, please [open an issue 
 
 :::
 
-Some macOS users have reported that website presentation no longer works after installing updates to M³.
+Деякі користувачі macOS повідомили, що трансляція вебсайту більше не працює після встановлення оновлень для M³.
 
-If the media window is black when presenting the website after updating M³, try the following steps:
+Якщо медіавікно чорне під час трансляції вебсайту після оновлення M³, спробуйте наступні кроки:
 
 1. Відкрийте налаштування macOS системи **Конфіденційність та безпека**.
-2. Go to **Screen Recording**.
-3. Select M³ in the list.
-4. Click the `-` (minus) button to remove it.
-5. Click the `+` (plus) button and select M³ from the Applications folder.
-6. You may be prompted to relaunch M³ to apply the change.
+2. Перейдіть до **Запис екрану**.
+3. Виберіть M³ у списку.
+4. Натисніть кнопку - (мінус), щоб видалити його.
+5. Натисніть кнопку + (плюс) і виберіть M³ з папки “Програми”.
+6. Можливо, вам буде запропоновано перезапустити M³, щоб застосувати зміни.
 
-After these steps, screen sharing should function as expected once again.
+Після виконання цих кроків трансляція екрану має працювати як очікується.
 
 :::tip Порада
 
-These steps are optional and can be skipped if you do not plan to use the website presentation feature. On the other hand, if you do plan to use the website presentation feature, it is recommended to follow these steps after every update to ensure the feature works as expected.
+Ці кроки є необов’язковими і можуть бути пропущені, якщо ви не плануєте використовувати функцію трансляції вебсайту. З іншого боку, якщо ви плануєте використовувати функцію трансляції вебсайту, рекомендується виконувати ці кроки після кожного оновлення, щоб забезпечити її правильну роботу.
 
 :::
 
@@ -132,7 +132,7 @@ M³ може спробувати автоматично знайти графі
 
 :::
 
-### Manual entry of congregation information {#manual-entry-of-congregation-information}
+### Ручне введення інформації про збір {#manual-entry-of-congregation-information}
 
 Якщо автоматичний пошук не знайде вашого збору, то ви можете вручну ввести необхідну інформацію. Майстер налаштування дозволить вам переглянути та/або ввести **назву** вашого збору, **мову зібрань** та **дні і час зібрань**.
 
