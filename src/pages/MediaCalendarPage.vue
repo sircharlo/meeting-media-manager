@@ -129,7 +129,7 @@
                   color="primary"
                   @click="openImportMenu()"
                 >
-                  <q-icon class="q-mr-sm" name="mmm-import-media" size="xs" />
+                  <q-icon class="q-mr-sm" name="mmm-add-media" size="xs" />
                   {{ $t('add-extra-media') }}
                 </q-btn>
               </div>
@@ -197,6 +197,7 @@
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
           @update:tag="updateMediaItemTag(media, $event)"
+          @update:title="media.title = $event"
         />
         <div
           v-if="
@@ -239,6 +240,7 @@
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:title="media.title = $event"
         />
         <div v-if="sortableTgwMediaItems.filter((m) => !m.hidden).length === 0">
           <q-item>
@@ -275,6 +277,7 @@
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:title="media.title = $event"
         />
         <div
           v-if="sortableAyfmMediaItems.filter((m) => !m.hidden).length === 0"
@@ -307,7 +310,7 @@
           <q-btn
             color="lac"
             flat
-            icon="mmm-import-media"
+            icon="mmm-add-media"
             :label="$t('add-extra-media')"
             @click="openImportMenu('lac')"
           />
@@ -322,6 +325,7 @@
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:title="media.title = $event"
         />
         <div v-if="sortableLacMediaItems.filter((m) => !m.hidden).length === 0">
           <q-item>
@@ -358,6 +362,7 @@
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:title="media.title = $event"
         />
         <div v-if="sortableWtMediaItems.filter((m) => !m.hidden).length === 0">
           <q-item>
@@ -393,7 +398,7 @@
             "
             :icon="
               sortableCircuitOverseerMediaItems.filter((m) => !m.hidden).length
-                ? 'mmm-import-media'
+                ? 'mmm-add-media'
                 : 'mmm-music-note'
             "
             :label="
@@ -421,6 +426,7 @@
           :play-state="playState(media.uniqueId)"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:title="media.title = $event"
         />
         <div
           v-if="
@@ -492,8 +498,8 @@ import {
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
-  getDurationFromMediaPath,
   getFileUrl,
+  getMetadataFromMediaPath,
   getPublicationDirectory,
   getTempDirectory,
   getThumbnailUrl,
@@ -527,7 +533,6 @@ import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { computed, onMounted, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
 const { formatDate, getDateDiff } = date;
@@ -536,7 +541,7 @@ const dragging = ref(false);
 const jwpubImportDb = ref('');
 const jwpubImportDocuments = ref<DocumentItem[]>([]);
 
-const { dateLocale } = useLocale();
+const { dateLocale, t } = useLocale();
 
 watch(
   () => [jwpubImportDb.value, jwpubImportDocuments.value],
@@ -547,7 +552,6 @@ watch(
   },
 );
 
-const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 
@@ -558,6 +562,7 @@ const {
   customDurations,
   lookupPeriod,
   mediaSort,
+  missingMedia,
   urlVariables,
   watchedMediaSections,
 } = storeToRefs(jwStore);
@@ -895,6 +900,49 @@ watch(
   },
 );
 
+watch(
+  () => missingMedia.value.map((m) => m.fileUrl).filter((f) => f),
+  (missingFileUrls) => {
+    missingFileUrls?.forEach((missingFileUrl) => {
+      if (seenErrors.has(currentCongregation + missingFileUrl)) return;
+      createTemporaryNotification({
+        caption: t('some-media-items-are-missing-explain'),
+        color: 'warning',
+        group: 'missingMeetingMedia',
+        icon: 'mmm-file-missing',
+        message: t('some-media-items-are-missing'),
+        timeout: 15000,
+      });
+      seenErrors.add(currentCongregation + missingFileUrl);
+    });
+  },
+);
+
+// <div v-if="missingMedia.length" class="row">
+//         <q-banner
+//           class="bg-warning text-white full-width"
+//           inline-actions
+//           rounded
+//         >
+//           {{ $t('some-media-items-are-missing') }}
+//           <ul>
+//             <li v-for="media in missingMedia" :key="media.fileUrl">
+//               {{ media.fileUrl }}
+//               <!-- <q-tooltip>
+//                 <q-item-section side>
+//                   <pre class="text-white">{{ media }}</pre>
+//                 </q-item-section>
+//               </q-tooltip> -->
+//             </li>
+//           </ul>
+//           <template #avatar>
+//             <q-avatar class="bg-white text-warning" size="lg">
+//               <q-icon name="mmm-file-missing" size="sm" />
+//             </q-avatar>
+//           </template>
+//         </q-banner>
+//       </div>
+
 const goToNextDayWithMedia = () => {
   try {
     if (
@@ -991,7 +1039,7 @@ useEventListener<
     duration: number;
     path: string;
     section?: MediaSection;
-    song: boolean | number | string;
+    song: false | number | string;
     thumbnailUrl: string;
     title?: string;
     url: string;
@@ -1003,7 +1051,8 @@ useEventListener<
     undefined,
     {
       duration: event.detail.duration,
-      song: event.detail.song?.toString(),
+      song:
+        event.detail.song === false ? undefined : event.detail.song?.toString(),
       thumbnailUrl: event.detail.thumbnailUrl,
       title: event.detail.title,
       url: event.detail.url,
@@ -1202,8 +1251,9 @@ const playState = (id: string) => {
 };
 
 const copyToDatedAdditionalMedia = async (
-  files: string[],
+  filepathToCopy: string,
   section?: MediaSection,
+  addToAdditionMediaMap?: boolean,
 ) => {
   const datedAdditionalMediaDir = await getDatedAdditionalMediaDirectory();
   const trimFilepathAsNeeded = (filepath: string) => {
@@ -1227,35 +1277,36 @@ const copyToDatedAdditionalMedia = async (
     }
     return filepath;
   };
-  for (const filepathToCopy of files) {
-    try {
-      if (!filepathToCopy || !(await fs.exists(filepathToCopy))) continue;
-      let datedAdditionalMediaPath = path.join(
-        datedAdditionalMediaDir,
-        path.basename(filepathToCopy),
-      );
-      datedAdditionalMediaPath = trimFilepathAsNeeded(datedAdditionalMediaPath);
-      const uniqueId = sanitizeId(
-        formatDate(selectedDate.value, 'YYYYMMDD') +
-          '-' +
-          getFileUrl(datedAdditionalMediaPath),
-      );
-      if (await fs.exists(datedAdditionalMediaPath)) {
-        if (filepathToCopy !== datedAdditionalMediaPath) {
-          await fs.remove(datedAdditionalMediaPath);
-          removeFromAdditionMediaMap(uniqueId);
-        }
+  try {
+    if (!filepathToCopy || !(await fs.exists(filepathToCopy))) return '';
+    let datedAdditionalMediaPath = path.join(
+      datedAdditionalMediaDir,
+      path.basename(filepathToCopy),
+    );
+    datedAdditionalMediaPath = trimFilepathAsNeeded(datedAdditionalMediaPath);
+    const uniqueId = sanitizeId(
+      formatDate(selectedDate.value, 'YYYYMMDD') +
+        '-' +
+        getFileUrl(datedAdditionalMediaPath),
+    );
+    if (await fs.exists(datedAdditionalMediaPath)) {
+      if (filepathToCopy !== datedAdditionalMediaPath) {
+        await fs.remove(datedAdditionalMediaPath);
+        removeFromAdditionMediaMap(uniqueId);
       }
-      if (filepathToCopy !== datedAdditionalMediaPath)
-        await fs.copy(filepathToCopy, datedAdditionalMediaPath);
+    }
+    if (filepathToCopy !== datedAdditionalMediaPath)
+      await fs.copy(filepathToCopy, datedAdditionalMediaPath);
+    if (addToAdditionMediaMap)
       await addToAdditionMediaMapFromPath(
         datedAdditionalMediaPath,
         section,
         uniqueId,
       );
-    } catch (error) {
-      errorCatcher(error);
-    }
+    return datedAdditionalMediaPath;
+  } catch (error) {
+    errorCatcher(error);
+    return '';
   }
 };
 
@@ -1273,14 +1324,19 @@ const addToAdditionMediaMapFromPath = async (
 ) => {
   try {
     if (!additionalFilePath) return;
-    const isVideoFile = isVideo(additionalFilePath);
-    const isAudioFile = isAudio(additionalFilePath);
-    let duration = 0;
-    if (isVideoFile || isAudioFile) {
-      duration =
-        stream?.duration ??
-        (await getDurationFromMediaPath(additionalFilePath));
-    }
+    const video = isVideo(additionalFilePath);
+    const audio = isAudio(additionalFilePath);
+    const metadata =
+      video || audio
+        ? await getMetadataFromMediaPath(additionalFilePath)
+        : undefined;
+
+    const duration = stream?.duration || metadata?.format.duration || 0;
+    const title =
+      stream?.title ||
+      metadata?.common.title ||
+      path.basename(additionalFilePath);
+
     if (!uniqueId) {
       uniqueId = sanitizeId(
         formatDate(selectedDate.value, 'YYYYMMDD') +
@@ -1294,9 +1350,9 @@ const addToAdditionMediaMapFromPath = async (
           duration,
           fileUrl: getFileUrl(additionalFilePath),
           isAdditional: true,
-          isAudio: isAudioFile,
+          isAudio: audio,
           isImage: isImage(additionalFilePath),
-          isVideo: isVideoFile,
+          isVideo: video,
           section,
           sectionOriginal: section,
           song: stream?.song,
@@ -1304,7 +1360,7 @@ const addToAdditionMediaMapFromPath = async (
           thumbnailUrl:
             stream?.thumbnailUrl ??
             (await getThumbnailUrl(additionalFilePath, true)),
-          title: stream?.title ?? path.basename(additionalFilePath),
+          title,
           uniqueId,
         },
       ],
@@ -1374,8 +1430,40 @@ const addToFiles = async (
         filepath = tempFilepath;
       }
       filepath = await convertImageIfNeeded(filepath);
-      if (isImage(filepath) || isVideo(filepath) || isAudio(filepath)) {
-        await copyToDatedAdditionalMedia([filepath], sectionToAddTo.value);
+      if (isImage(filepath)) {
+        await copyToDatedAdditionalMedia(filepath, sectionToAddTo.value, true);
+      } else if (isVideo(filepath) || isAudio(filepath)) {
+        const detectedPubMediaInfo = path
+          .parse(filepath)
+          .name.split('_')
+          .filter((item) => !/^r\d+P$/.test(item));
+        const normalizeArray = (arr: (number | string)[]) =>
+          arr.map((item) => {
+            if (Number.isFinite(item)) return item;
+            if (typeof item === 'string') return parseInt(item, 10).toString();
+            return item;
+          });
+        const matchingMissingItem = missingMedia.value.find((media) => {
+          return (
+            JSON.stringify(normalizeArray(media.fileUrl.split('_'))) ===
+            JSON.stringify(normalizeArray(detectedPubMediaInfo))
+          );
+        });
+        const destPath = await copyToDatedAdditionalMedia(
+          filepath,
+          sectionToAddTo.value,
+          !matchingMissingItem,
+        );
+        if (matchingMissingItem) {
+          const metadata = await getMetadataFromMediaPath(destPath);
+          matchingMissingItem.fileUrl =
+            window.electronApi.pathToFileURL(destPath);
+          matchingMissingItem.duration = metadata.format.duration || 0;
+          matchingMissingItem.title =
+            metadata.common.title || window.electronApi.path.basename(destPath);
+          matchingMissingItem.isVideo = isVideo(filepath);
+          matchingMissingItem.isAudio = isAudio(filepath);
+        }
       } else if (isPdf(filepath)) {
         const convertedImages = (
           await convertPdfToImages(filepath, await getTempDirectory())
@@ -1440,31 +1528,13 @@ const addToFiles = async (
             `SELECT DISTINCT Document.DocumentId, Title FROM Document JOIN ${mmTable} ON Document.DocumentId = ${mmTable}.DocumentId;`,
           );
           if (jwpubImportDocuments.value.length === 1) {
-            const errors = await addJwpubDocumentMediaToFiles(
+            await addJwpubDocumentMediaToFiles(
               jwpubImportDb.value,
               jwpubImportDocuments.value[0],
               sectionToAddTo.value,
             );
             jwpubImportDb.value = '';
             jwpubImportDocuments.value = [];
-            if (errors?.length)
-              errors.forEach((e) =>
-                createTemporaryNotification({
-                  caption: t('file-not-available'),
-                  icon: 'mmm-error',
-                  message: [
-                    e.pub,
-                    e.issue,
-                    e.track,
-                    e.langwritten,
-                    e.fileformat,
-                  ]
-                    .filter(Boolean)
-                    .join('_'),
-                  timeout: 15000,
-                  type: 'negative',
-                }),
-              );
             resetDragging();
           }
         }

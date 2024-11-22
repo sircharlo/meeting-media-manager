@@ -10,6 +10,13 @@ import type {
 } from 'src/types';
 import type Path from 'upath';
 
+export type DiscussionCategory =
+  | 'general'
+  | 'ideas'
+  | 'polls'
+  | 'q-a'
+  | 'translations';
+
 export type Display = Electron.Display & {
   mainWindow?: boolean;
   mediaWindow?: boolean;
@@ -84,6 +91,11 @@ export interface ElectronApi {
       event: string;
     }) => void,
   ) => void;
+  openDiscussion: (
+    category: DiscussionCategory,
+    title: string,
+    params?: string,
+  ) => void;
   openExternal: (website: ExternalWebsite) => void;
   openFileDialog: (
     single?: boolean,
@@ -141,13 +153,13 @@ export type ElectronIpcListenKey =
   | 'shortcut'
   | 'watchFolderUpdate'
   | 'websiteWindowClosed';
-
 // ipcMain.on / ipcRenderer.send channels
 export type ElectronIpcSendKey =
   | 'askForMediaAccess'
   | 'authorizedClose'
   | 'moveMediaWindow'
   | 'navigateWebsiteWindow'
+  | 'openDiscussion'
   | 'openExternal'
   | 'setScreenPreferences'
   | 'setUrlVariables'

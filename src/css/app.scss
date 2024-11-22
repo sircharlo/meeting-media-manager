@@ -83,6 +83,10 @@ body.body--light {
     color: $dark-grey;
   }
 
+  .text-accent-200 {
+    color: $accent-200;
+  }
+
   .text-accent-300 {
     color: $accent-300;
   }
@@ -141,6 +145,18 @@ body.body--dark {
 
   .text-dark-grey {
     color: $dark-grey-dark;
+  }
+
+  .text-accent-200 {
+    color: $accent-200-dark;
+  }
+
+  .text-accent-300 {
+    color: $accent-300-dark;
+  }
+
+  .text-accent-400 {
+    color: $accent-100-dark;
   }
 
   .text-secondary {

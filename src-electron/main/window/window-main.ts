@@ -1,5 +1,6 @@
 import type { BrowserWindow } from 'electron';
 
+import { PLATFORM } from 'app/src-electron/constants';
 import { throttle } from 'app/src-electron/utils';
 
 import { cancelAllDownloads } from '../downloads';
@@ -26,6 +27,8 @@ export function createMainWindow() {
     'move',
     throttle(() => moveMediaWindow(), 100),
   );
+
+  if (PLATFORM !== 'darwin') mainWindow.on('moved', moveMediaWindow); // On macOS, the 'moved' event is just an alias for 'move'
 
   mainWindow.on('close', (e) => {
     if (mainWindow && authorizedClose) {

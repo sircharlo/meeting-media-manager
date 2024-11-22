@@ -1,6 +1,7 @@
 <template>
   <q-item
     v-show="!media.hidden"
+    ref="mediaItem"
     :class="{
       'items-center': true,
       'justify-center': true,
@@ -11,6 +12,7 @@
     <div class="q-pr-none rounded-borders">
       <div
         class="q-pr-none rounded-borders overflow-hidden relative-position bg-black"
+        :style="{ opacity: isFileUrl(media.fileUrl) ? undefined : 0.64 }"
       >
         <q-img
           :id="media.uniqueId"
@@ -27,7 +29,7 @@
           @mouseleave="setHoveredBadge(media.uniqueId, false)"
         >
           <q-badge
-            v-if="media.isVideo || media.isAudio"
+            v-if="media.duration"
             :class="
               'q-mt-sm q-ml-sm cursor-pointer rounded-borders-sm ' +
               (customDurationIsSet ? 'bg-semi-negative' : 'bg-semi-black')
@@ -69,7 +71,9 @@
                 }}
               </q-card-section>
               <q-card-section>
-                <div class="text-subtitle1 q-pb-sm">{{ mediaTitle }}</div>
+                <div class="text-subtitle1 q-pb-sm">
+                  {{ displayMediaTitle }}
+                </div>
                 <div class="row items-center q-mt-lg">
                   <div class="col-shrink q-pr-md time-duration">
                     {{ formatTime(0) }}
@@ -165,77 +169,108 @@
           <div class="col">
             <div class="row items-center">
               <div
-                v-if="media.paragraph || (media.song && media.song !== 'false')"
+                v-if="
+                  (media.isAdditional &&
+                    !currentSettings?.disableMediaFetching &&
+                    isFileUrl(media.fileUrl)) ||
+                  media.paragraph ||
+                  media.song ||
+                  media.watched
+                "
                 :class="mediaTagClasses"
                 side
               >
                 <q-chip
                   :class="[
                     'media-tag full-width',
-                    media.paragraph ? 'bg-accent-200' : 'bg-accent-400',
+                    media.song ? 'bg-accent-400' : 'bg-accent-200',
                   ]"
                   :clickable="false"
                   :ripple="false"
                   :text-color="media.song ? 'white' : undefined"
                 >
                   <q-icon
-                    class="q-mr-xs"
+                    :class="{ 'q-mr-xs': media.song || media.paragraph }"
                     :name="
-                      media.paragraph
-                        ? media.paragraph !== 9999
-                          ? 'mmm-paragraph'
-                          : 'mmm-footnote'
-                        : 'mmm-music-note'
+                      media.watched
+                        ? 'mmm-watched-media'
+                        : media.isAdditional &&
+                            !currentSettings?.disableMediaFetching &&
+                            isFileUrl(media.fileUrl)
+                          ? 'mmm-add-media'
+                          : media.paragraph
+                            ? media.paragraph !== 9999
+                              ? 'mmm-paragraph'
+                              : 'mmm-footnote'
+                            : 'mmm-music-note'
                     "
                   />
-                  {{
-                    media.paragraph
-                      ? media.paragraph !== 9999
-                        ? media.paragraph
-                        : $t('footnote')
-                      : media.song?.toString()
-                  }}
+                  <q-tooltip v-if="media.watched" :delay="500">
+                    {{ $t('watched-media-item-explain') }}
+                  </q-tooltip>
+                  <q-tooltip
+                    v-if="
+                      media.isAdditional &&
+                      !currentSettings?.disableMediaFetching &&
+                      isFileUrl(media.fileUrl)
+                    "
+                    :delay="1000"
+                  >
+                    {{ $t('extra-media-item-explain') }}
+                  </q-tooltip>
+                  <template v-if="media.paragraph || media.song">
+                    {{
+                      media.paragraph
+                        ? media.paragraph !== 9999
+                          ? media.paragraph
+                          : $t('footnote')
+                        : media.song?.toString()
+                    }}
+                  </template>
                 </q-chip>
               </div>
-              <div class="q-px-md col">
+              <div
+                :class="{
+                  'q-px-md': true,
+                  col: true,
+                  'text-grey': !isFileUrl(media.fileUrl),
+                }"
+              >
                 <div
-                  class="ellipsis-3-lines"
+                  class="ellipsis-3-lines row"
                   @dblclick="mediaEditTitleDialog = true"
                 >
-                  {{ mediaTitle }}
+                  {{ displayMediaTitle }}
+                </div>
+                <div v-if="!isFileUrl(media.fileUrl)" class="text-caption">
+                  {{ $t('media-item-missing-explain') }}
                 </div>
               </div>
               <div class="col-shrink">
                 <div class="row q-gutter-sm items-center q-mr-md">
+                  <q-btn
+                    v-if="hoveringMediaItem || contextMenu"
+                    ref="moreButton"
+                    color="accent-400"
+                    flat
+                    icon="mmm-dots"
+                    round
+                    @click="
+                      () => {
+                        menuTarget = moreButton?.$el;
+                        contextMenu = true;
+                      }
+                    "
+                  />
                   <q-icon
                     v-if="media.repeat"
                     color="warning"
                     name="mmm-repeat"
                     size="sm"
                   >
-                    <q-tooltip :delay="500">{{
-                      media.repeat ? $t('repeat') : $t('repeat-off')
-                    }}</q-tooltip>
-                  </q-icon>
-                  <q-icon
-                    v-if="media.watched"
-                    color="accent-300"
-                    name="mmm-watched-media"
-                    size="sm"
-                  >
-                    <q-tooltip :delay="500">{{
-                      $t('watched-media-item-explain')
-                    }}</q-tooltip>
-                  </q-icon>
-                  <q-icon
-                    v-else-if="media.isAdditional"
-                    color="accent-300"
-                    name="mmm-extra-media"
-                    size="sm"
-                  >
-                    <q-tooltip :delay="1000">{{
-                      $t('extra-media-item-explain')
-                    }}</q-tooltip>
+                    <q-tooltip :delay="500">
+                      {{ media.repeat ? $t('repeat') : $t('repeat-off') }}
+                    </q-tooltip>
                   </q-icon>
                 </div>
               </div>
@@ -250,7 +285,7 @@
               <div
                 v-if="
                   [media.fileUrl, media.streamUrl].includes(mediaPlayingUrl) &&
-                  (media.isVideo || media.isAudio)
+                  media.duration
                 "
                 class="absolute duration-slider"
               >
@@ -295,13 +330,15 @@
             <template v-if="!media.markers || media.markers.length === 0">
               <q-btn
                 ref="playButton"
-                color="primary"
+                :color="isFileUrl(media.fileUrl) ? 'primary' : 'grey'"
                 :disable="
-                  mediaPlayingUrl !== '' &&
-                  (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))
+                  (mediaPlayingUrl !== '' &&
+                    (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))) ||
+                  !isFileUrl(media.fileUrl)
                 "
                 icon="mmm-play"
                 rounded
+                :unelevated="!isFileUrl(media.fileUrl)"
                 @click="setMediaPlaying(media)"
               />
             </template>
@@ -353,13 +390,15 @@
                   )
                 "
               >
-                <q-tooltip :delay="1000">{{
-                  $t(
-                    currentSceneType === 'media'
-                      ? 'hide-image-for-zoom-participants'
-                      : 'show-image-for-zoom-participants',
-                  )
-                }}</q-tooltip>
+                <q-tooltip :delay="1000">
+                  {{
+                    $t(
+                      currentSceneType === 'media'
+                        ? 'hide-image-for-zoom-participants'
+                        : 'show-image-for-zoom-participants',
+                    )
+                  }}
+                </q-tooltip>
               </q-btn>
               <q-btn
                 v-if="mediaPlayingAction === 'pause'"
@@ -372,7 +411,7 @@
               />
               <q-btn
                 v-else-if="
-                  (media.isVideo || media.isAudio) &&
+                  media.duration &&
                   (mediaPlayingAction === 'play' || !mediaPlayingAction)
                 "
                 ref="pauseResumeButton"
@@ -397,21 +436,42 @@
           </template>
         </div>
       </div>
-      <q-menu context-menu touch-position>
+      <q-menu
+        v-model="contextMenu"
+        context-menu
+        :target="menuTarget"
+        touch-position
+      >
         <q-list>
-          <q-item-label header>{{ media.title }}</q-item-label>
-          <q-item v-close-popup clickable @click="emit('update:hidden', true)">
+          <q-item-label header>{{ displayMediaTitle }}</q-item-label>
+          <q-item
+            v-close-popup
+            clickable
+            :disable="
+              mediaPlayingUrl === media.fileUrl ||
+              mediaPlayingUrl === media.streamUrl
+            "
+            @click="emit('update:hidden', true)"
+          >
             <q-item-section avatar>
               <q-icon name="mmm-file-hidden" />
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t('hide-from-list') }}</q-item-label>
-              <q-item-label caption>{{
-                $t('hide-from-list-explain')
-              }}</q-item-label>
+              <q-item-label caption>
+                {{ $t('hide-from-list-explain') }}
+              </q-item-label>
             </q-item-section>
           </q-item>
-          <q-item v-close-popup clickable @click="mediaEditTitleDialog = true">
+          <q-item
+            v-close-popup
+            clickable
+            :disable="
+              mediaPlayingUrl === media.fileUrl ||
+              mediaPlayingUrl === media.streamUrl
+            "
+            @click="mediaEditTitleDialog = true"
+          >
             <q-item-section avatar>
               <q-icon name="mmm-edit" />
             </q-item-section>
@@ -426,13 +486,13 @@
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t('change-tag') }}</q-item-label>
-              <q-item-label caption>{{
-                $t('change-tag-explain')
-              }}</q-item-label>
+              <q-item-label caption>
+                {{ $t('change-tag-explain') }}
+              </q-item-label>
             </q-item-section>
           </q-item>
           <q-item
-            v-if="media.isVideo || media.isAudio"
+            v-if="media.duration"
             clickable
             @click="emit('update:repeat', !media.repeat)"
           >
@@ -457,12 +517,13 @@
             </q-item-section>
           </q-item>
           <q-item
-            v-if="
-              media.isAdditional &&
-              mediaPlayingUrl !== (media.fileUrl || media.streamUrl)
-            "
+            v-if="media.isAdditional"
             v-close-popup
             clickable
+            :disable="
+              mediaPlayingUrl === media.fileUrl ||
+              mediaPlayingUrl === media.streamUrl
+            "
             @click="mediaToDelete = media.uniqueId"
           >
             <q-item-section avatar>
@@ -471,8 +532,8 @@
             <q-item-section>
               <q-item-label>{{ $t('delete-media') }}</q-item-label>
               <q-item-label caption>
-                {{ $t('delete-media-explain') }}</q-item-label
-              >
+                {{ $t('delete-media-explain') }}
+              </q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -482,7 +543,13 @@
   <q-dialog v-model="mediaEditTitleDialog">
     <q-card class="modal-confirm">
       <q-card-section class="items-center">
-        <q-input v-model="mediaTitle" focused outlined type="textarea" />
+        <q-input
+          v-model="mediaTitle"
+          focused
+          outlined
+          type="textarea"
+          @update:model-value="emit('update:title', mediaTitle)"
+        />
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
         <q-btn
@@ -588,6 +655,7 @@ import Panzoom, {
 } from '@panzoom/panzoom';
 import {
   useBroadcastChannel,
+  useElementHover,
   useEventListener,
   watchImmediate,
 } from '@vueuse/core';
@@ -605,12 +673,20 @@ import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { useObsStateStore } from 'src/stores/obs-state';
-import { computed, onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
+import {
+  computed,
+  onMounted,
+  onUnmounted,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
 const {
   currentCongregation,
+  currentSettings,
   mediaPlayingAction,
   mediaPlayingCurrentPosition,
   mediaPlayingPanzoom,
@@ -632,7 +708,7 @@ const setHoveredBadge = debounce((key: string, value: boolean) => {
 const obsState = useObsStateStore();
 const { currentSceneType, obsConnectionState } = storeToRefs(obsState);
 
-const { fileUrlToPath, fs, path } = window.electronApi;
+const { fileUrlToPath, fs, isFileUrl, path } = window.electronApi;
 
 const mediaDurationPopups = ref<Record<string, boolean>>({});
 const panzooms: Record<string, PanzoomObject> = {};
@@ -647,10 +723,31 @@ const props = defineProps<{
   playState: string;
 }>();
 
-const emit = defineEmits(['update:hidden', 'update:repeat', 'update:tag']);
+const emit = defineEmits([
+  'update:hidden',
+  'update:repeat',
+  'update:tag',
+  'update:title',
+]);
+
+const mediaItem = useTemplateRef<HTMLDivElement>('mediaItem');
+const hoveringMediaItem = useElementHover(mediaItem);
+
+const moreButton = useTemplateRef<QBtn>('moreButton');
+const contextMenu = ref(false);
+const menuTarget = ref<boolean | string | undefined>(true);
+
+watch(contextMenu, (val) => {
+  if (!val) menuTarget.value = true;
+});
 
 const mediaEditTitleDialog = ref(false);
-const mediaTitle = ref('');
+const mediaTitle = ref(props.media.title);
+const initialMediaTitle = ref(mediaTitle.value);
+
+const displayMediaTitle = computed(() => {
+  return props.media.title || path.basename(props.media.fileUrl);
+});
 
 const mediaEditTagDialog = ref(false);
 const { t } = useI18n();
@@ -685,13 +782,7 @@ const mediaTagClasses = computed(() => {
 });
 
 const resetMediaTitle = () => {
-  if (props?.media) {
-    mediaTitle.value =
-      props.media.title ||
-      (props.media.fileUrl ? path.basename(props.media.fileUrl) : '');
-  } else {
-    mediaTitle.value = '';
-  }
+  emit('update:title', initialMediaTitle.value);
 };
 
 const customDurationIsSet = computed(() => {
@@ -772,8 +863,6 @@ watchImmediate(
   },
 );
 
-resetMediaTitle();
-
 const thumbnailFromMetadata = ref('');
 
 const imageLoadingError = () => {
@@ -798,8 +887,7 @@ async function findThumbnailUrl() {
   await runThumbnailCheck();
 }
 
-if ((props.media.isVideo || props.media.isAudio) && !props.media.thumbnailUrl)
-  findThumbnailUrl();
+if (props.media.duration && !props.media.thumbnailUrl) findThumbnailUrl();
 
 const showMediaDurationPopup = (media: DynamicMediaObject) => {
   try {

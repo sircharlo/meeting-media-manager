@@ -29,27 +29,7 @@
                   addJwpubDocumentMediaToFiles(
                     jwpubDb,
                     jwpubImportDocument,
-                  ).then((errors) => {
-                    resetModal();
-                    if (errors?.length)
-                      errors.forEach((e) =>
-                        createTemporaryNotification({
-                          message: [
-                            e.pub,
-                            e.issue,
-                            e.track,
-                            e.langwritten,
-                            e.fileformat,
-                          ]
-                            .filter(Boolean)
-                            .join('_'),
-                          icon: 'mmm-error',
-                          caption: $t('file-not-available'),
-                          type: 'negative',
-                          timeout: 15000,
-                        }),
-                      );
-                  });
+                  ).then(resetModal);
                 "
               >
                 <q-item-section class="no-wrap">
@@ -63,27 +43,23 @@
       <template v-else>
         <div class="row">
           <p>{{ $t('local-media-explain-1') }}</p>
-          <a
-            >{{ $t('local-media-explain-2') }}
-            <q-tooltip
-              ><div class="row">
-                <strong>{{ $t('images:') }}</strong
-                >&nbsp;
+          <a>
+            {{ $t('local-media-explain-2') }}
+            <q-tooltip>
+              <div class="row">
+                <strong>{{ $t('images:') }}&nbsp;</strong>
                 {{ IMG_EXTENSIONS.sort().join(', ') }}
               </div>
               <div class="row">
-                <strong>{{ $t('videos:') }}</strong
-                >&nbsp;
+                <strong>{{ $t('videos:') }}&nbsp;</strong>
                 {{ VIDEO_EXTENSIONS.sort().join(', ') }}
               </div>
               <div class="row">
-                <strong>{{ $t('audio:') }}</strong
-                >&nbsp;
+                <strong>{{ $t('audio:') }}&nbsp;</strong>
                 {{ AUDIO_EXTENSIONS.sort().join(', ') }}
               </div>
               <div class="row">
-                <strong>{{ $t('other:') }}</strong
-                >&nbsp;
+                <strong>{{ $t('other:') }}&nbsp;</strong>
                 {{ OTHER_EXTENSIONS.sort().join(', ') }}
               </div>
             </q-tooltip>
@@ -91,8 +67,21 @@
         </div>
         <div class="row">
           <div
+            ref="dropArea"
             class="col rounded-borders dashed-border items-center justify-center flex"
+            :class="{
+              'cursor-pointer': !totalFiles && !(!!jwpubDb || jwpubLoading),
+              'bg-accent-100':
+                hovering && !totalFiles && !(!!jwpubDb || jwpubLoading),
+            }"
             style="height: 20vh"
+            @click="
+              () => {
+                if (!totalFiles && !(!!jwpubDb || jwpubLoading)) {
+                  getLocalFiles();
+                }
+              }
+            "
           >
             <template v-if="totalFiles || (!!jwpubDb && jwpubLoading)">
               <q-linear-progress
@@ -115,9 +104,7 @@
             </template>
             <template v-else>
               <q-icon class="q-mr-sm" name="mmm-drag-n-drop" size="lg" />
-              {{ $t('drag-and-drop-or ') }}&nbsp;
-              <a @click="getLocalFiles()"> {{ $t('browse for files') }}</a
-              >.
+              {{ $t('drag-and-drop-or-click-to-browse') }}
             </template>
           </div>
         </div>
@@ -138,6 +125,7 @@
 <script setup lang="ts">
 import type { DocumentItem, MediaSection } from 'src/types';
 
+import { useElementHover } from '@vueuse/core';
 import { useScrollbar } from 'src/composables/useScrollbar';
 import {
   AUDIO_EXTENSIONS,
@@ -147,8 +135,7 @@ import {
 } from 'src/constants/fs';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
-import { createTemporaryNotification } from 'src/helpers/notifications';
-import { computed, ref } from 'vue';
+import { computed, ref, useTemplateRef } from 'vue';
 
 const { openFileDialog } = window.electronApi;
 const { barStyle, thumbStyle } = useScrollbar();
@@ -159,13 +146,15 @@ const props = defineProps<{
   totalFiles: number;
 }>();
 
-const jwpubLoading = ref(false);
-
 const open = defineModel<boolean>({ required: true });
 const jwpubDb = defineModel<string>('jwpubDb', { required: true });
 const jwpubDocuments = defineModel<DocumentItem[]>('jwpubDocuments', {
   required: true,
 });
+
+const dropArea = useTemplateRef('dropArea');
+const hovering = useElementHover(dropArea);
+const jwpubLoading = ref(false);
 
 const percentValue = computed(() => {
   return props.currentFile && props.totalFiles

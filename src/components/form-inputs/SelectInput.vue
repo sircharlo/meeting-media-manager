@@ -58,7 +58,6 @@ import { localeOptions } from 'src/i18n';
 import { useJwStore } from 'src/stores/jw';
 import { useObsStateStore } from 'src/stores/obs-state';
 import { computed, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
 
 const jwStore = useJwStore();
 const { jwLanguages } = storeToRefs(jwStore);
@@ -71,7 +70,7 @@ const props = defineProps<{
   useInput?: boolean;
 }>();
 
-const model = defineModel<null | number | string>({
+const model = defineModel<boolean | null | number | string>({
   get: (value) => {
     if (typeof value === 'number') {
       return String(value);
@@ -85,8 +84,7 @@ const filteredJwLanguages = ref(jwLanguages.value?.list || []);
 const filteredLocaleAppLang = ref(localeOptions);
 const obsState = useObsStateStore();
 const { obsConnectionState, scenes } = storeToRefs(obsState);
-const { dateLocale } = useLocale();
-const { t } = useI18n();
+const { dateLocale, t } = useLocale();
 
 const customDisabled = computed(() => {
   return (

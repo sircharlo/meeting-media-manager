@@ -30,26 +30,28 @@
           <q-list class="full-width q-px-md" padding separator>
             <q-item v-if="!results?.length">
               <q-item-section>
-                <q-item-label
-                  >{{
+                <q-item-label>
+                  {{
                     congregationFilter?.length > 2
                       ? $t('no-results')
                       : $t('no-results-short')
                   }}
                 </q-item-label>
-                <q-item-label caption>{{
-                  congregationFilter?.length > 2
-                    ? $t('no-results-explain')
-                    : $t('no-results-short-explain')
-                }}</q-item-label>
+                <q-item-label caption>
+                  {{
+                    congregationFilter?.length > 2
+                      ? $t('no-results-explain')
+                      : $t('no-results-short-explain')
+                  }}
+                </q-item-label>
               </q-item-section>
             </q-item>
             <template v-for="congregation in results" :key="congregation">
               <q-item clickable @click="selectCongregation(congregation)">
                 <q-item-section>
-                  <q-item-label>{{
-                    congregation.properties.orgName
-                  }}</q-item-label>
+                  <q-item-label>
+                    {{ congregation.properties.orgName }}
+                  </q-item-label>
                   <q-item-label caption>
                     {{
                       dateLocale.days[
@@ -71,18 +73,18 @@
                               .weekday
                       ]
                     }}
-                    {{
-                      congregation.properties.schedule.current.weekend.time
-                    }}</q-item-label
-                  >
+                    {{ congregation.properties.schedule.current.weekend.time }}
+                  </q-item-label>
                 </q-item-section>
                 <q-item-section side top>
-                  <q-item-label caption>{{
-                    jwLanguages.list?.find(
-                      (l) =>
-                        l.langcode === congregation?.properties?.languageCode,
-                    )?.vernacularName
-                  }}</q-item-label>
+                  <q-item-label caption>
+                    {{
+                      jwLanguages.list?.find(
+                        (l) =>
+                          l.langcode === congregation?.properties?.languageCode,
+                      )?.vernacularName
+                    }}
+                  </q-item-label>
                 </q-item-section>
               </q-item>
             </template>
@@ -91,9 +93,9 @@
       </div>
       <div class="row q-px-md">
         <div class="col text-right">
-          <q-btn v-close-popup color="negative" flat @click="dismissPopup">{{
-            $t('cancel')
-          }}</q-btn>
+          <q-btn v-close-popup color="negative" flat @click="dismissPopup">
+            {{ $t('cancel') }}
+          </q-btn>
         </div>
       </div>
     </div>

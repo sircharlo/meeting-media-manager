@@ -37,8 +37,8 @@ import {
   isMwMeetingDay,
 } from 'src/helpers/date';
 import {
-  getDurationFromMediaPath,
   getFileUrl,
+  getMetadataFromMediaPath,
   getPublicationDirectory,
   getSubtitlesUrl,
   getThumbnailUrl,
@@ -84,7 +84,7 @@ const addJwpubDocumentMediaToFiles = async (
         publication,
       );
     }
-    const errors = await processMissingMediaInfo(multimediaItems);
+    await processMissingMediaInfo(multimediaItems);
     const dynamicMediaItems = currentStateStore.selectedDateObject
       ? await dynamicMediaMapper(
           multimediaItems,
@@ -94,7 +94,6 @@ const addJwpubDocumentMediaToFiles = async (
         )
       : [];
     addToAdditionMediaMap(dynamicMediaItems, section);
-    if (errors?.length) return errors;
   } catch (e) {
     errorCatcher(e);
   }
@@ -312,9 +311,18 @@ async function addFullFilePathToMultimediaItem(
           multimediaItem.FilePath,
         )
       : undefined;
+    const fullLinkedPreviewFilePath = multimediaItem.LinkedPreviewFilePath
+      ? path.join(
+          await getPublicationDirectory(publication),
+          multimediaItem.LinkedPreviewFilePath,
+        )
+      : undefined;
     return {
       ...multimediaItem,
       ...(fullFilePath ? { FilePath: fullFilePath } : {}),
+      ...(fullLinkedPreviewFilePath
+        ? { LinkedPreviewFilePath: fullLinkedPreviewFilePath }
+        : {}),
     };
   } catch (error) {
     errorCatcher(error);
@@ -418,6 +426,11 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
         'SELECT COUNT(*) FROM Question',
       )[0]?.count;
 
+    const LinkMultimediaIdExists = executeQuery<TableItem>(
+      source.db,
+      "PRAGMA table_info('Multimedia')",
+    ).some((item) => item.name === 'LinkMultimediaId');
+
     const suppressZoomExists = executeQuery<TableItem>(
       source.db,
       "PRAGMA table_info('Multimedia')",
@@ -425,16 +438,22 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
       .map((item) => item.name)
       .includes('SuppressZoom');
 
-    // let select = 'SELECT Multimedia.DocumentId, Multimedia.MultimediaId, ';
-    const select = 'SELECT *';
-    let from = 'FROM Multimedia';
+    let select = 'SELECT Multimedia.*, Document.*';
+    select += mmTable === 'DocumentMultimedia' ? ', DocumentMultimedia.*' : '';
+    select += ParagraphColumnsExist ? ', DocumentParagraph.*' : '';
+    select += LinkMultimediaIdExists
+      ? ', LinkedMultimedia.FilePath AS LinkedPreviewFilePath'
+      : '';
+    let from = ' FROM Multimedia';
     if (mmTable === 'DocumentMultimedia') {
       from +=
         ' INNER JOIN DocumentMultimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId';
       from += ` LEFT JOIN DocumentParagraph ON ${mmTable}.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex`;
     }
     from += ` INNER JOIN Document ON ${mmTable}.DocumentId = Document.DocumentId`;
-
+    if (LinkMultimediaIdExists)
+      from +=
+        ' LEFT JOIN Multimedia AS LinkedMultimedia ON Multimedia.LinkMultimediaId = LinkedMultimedia.MultimediaId';
     let where = `WHERE ${
       source.docId || source.docId === 0
         ? `Document.DocumentId = ${source.docId}`
@@ -701,9 +720,8 @@ const dynamicMediaMapper = async (
     let middleSongParagraphOrdinal = 0;
     if (!additional) {
       const songs = allMedia.filter((m) => isSong(m));
-      if (songs.length === 3) {
-        middleSongParagraphOrdinal = songs[1].BeginParagraphOrdinal;
-      }
+      middleSongParagraphOrdinal =
+        songs.length === 3 ? songs[1].BeginParagraphOrdinal : 0;
       if (isCoWeek(lookupDate)) {
         // The last songs for both MW and WE meeting get replaced during the CO visit
         const lastParagraphOrdinal =
@@ -720,10 +738,24 @@ const dynamicMediaMapper = async (
     const mediaPromises = allMedia.map(
       async (m): Promise<DynamicMediaObject> => {
         m.FilePath = await convertImageIfNeeded(m.FilePath);
-        const fileUrl = getFileUrl(m.FilePath);
+        const fileUrl = m.FilePath
+          ? getFileUrl(m.FilePath)
+          : ([m.KeySymbol, m.IssueTagNumber].filter(Boolean).length
+              ? [m.KeySymbol, m.IssueTagNumber]
+              : [m.MepsDocumentId]
+            )
+              .concat([
+                (m.MepsLanguageIndex !== undefined &&
+                  mepslangs[m.MepsLanguageIndex]) ||
+                  '',
+                m.Track,
+              ])
+              .filter(Boolean)
+              .join('_');
         const mediaIsSong = isSong(m);
         const thumbnailUrl =
           m.ThumbnailUrl ??
+          window.electronApi.pathToFileURL(m.LinkedPreviewFilePath || '') ??
           (await getThumbnailUrl(m.ThumbnailFilePath || m.FilePath));
         const video = isVideo(m.FilePath);
         const audio = isAudio(m.FilePath);
@@ -732,7 +764,9 @@ const dynamicMediaMapper = async (
           if (m.Duration) {
             duration = m.Duration;
           } else if (await fs.exists(m.FilePath)) {
-            duration = await getDurationFromMediaPath(m.FilePath);
+            duration =
+              (await getMetadataFromMediaPath(m.FilePath))?.format.duration ||
+              0;
           }
           if (duration === 0 && m.KeySymbol) {
             const lang = currentSettings?.lang || currentSettings?.langFallback;
@@ -831,13 +865,15 @@ const watchedItemMapper: (
 
     if (!(video || audio || image)) {
       if (isJwPlaylist(watchedItemPath)) {
-        const additionalMedia = await getMediaFromJwPlaylist(
-          watchedItemPath,
-          dateFromString(parentDate),
-          await currentStateStore.getDatedAdditionalMediaDirectory(dateString),
-        ).catch((error) => {
-          throw error;
-        });
+        const additionalMedia = (
+          await getMediaFromJwPlaylist(
+            watchedItemPath,
+            dateFromString(parentDate),
+            await currentStateStore.getDatedAdditionalMediaDirectory(
+              dateString,
+            ),
+          )
+        ).map((m) => ({ ...m, isAdditional: false, watched: watchedItemPath }));
         additionalMedia
           .filter(
             (m) =>
@@ -857,10 +893,13 @@ const watchedItemMapper: (
       return undefined;
     }
 
-    const duration =
-      (video || audio) && (await fs.exists(watchedItemPath))
-        ? await getDurationFromMediaPath(watchedItemPath)
-        : 0;
+    const metadata =
+      video || audio
+        ? await getMetadataFromMediaPath(watchedItemPath)
+        : undefined;
+
+    const duration = metadata?.format.duration || 0;
+    const title = metadata?.common.title || path.basename(watchedItemPath);
 
     const uniqueId = sanitizeId(
       formatDate(parentDate, 'YYYYMMDD') + '-' + fileUrl,
@@ -883,7 +922,7 @@ const watchedItemMapper: (
         section,
         sectionOriginal: 'additional', // to enable restoring the original section after custom sorting
         thumbnailUrl,
-        title: path.basename(watchedItemPath),
+        title,
         uniqueId,
         watched: true,
       },
@@ -1248,11 +1287,13 @@ async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
 
     for (const { media } of mediaToProcess) {
       const langsWritten = [
-        media.MepsLanguageIndex !== undefined &&
-          mepslangs[media.MepsLanguageIndex],
-        media.AlternativeLanguage,
-        currentStateStore.currentSettings?.lang,
-        currentStateStore.currentSettings?.langFallback,
+        ...new Set([
+          currentStateStore.currentSettings?.lang,
+          currentStateStore.currentSettings?.langFallback,
+          media.AlternativeLanguage,
+          media.MepsLanguageIndex !== undefined &&
+            mepslangs[media.MepsLanguageIndex],
+        ]),
       ];
       for (const langwritten of langsWritten) {
         if (!langwritten || !(media.KeySymbol || media.MepsDocumentId)) {
@@ -1270,9 +1311,15 @@ async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
         };
         try {
           if (!media.FilePath || !(await fs.pathExists(media.FilePath))) {
-            const { FilePath, StreamDuration, StreamThumbnailUrl, StreamUrl } =
-              await downloadMissingMedia(publicationFetcher);
+            const {
+              FilePath,
+              Label,
+              StreamDuration,
+              StreamThumbnailUrl,
+              StreamUrl,
+            } = await downloadMissingMedia(publicationFetcher);
             media.FilePath = FilePath ?? media.FilePath;
+            media.Label = Label || media.Label;
             media.StreamUrl = StreamUrl ?? media.StreamUrl;
             media.Duration = StreamDuration ?? media.Duration;
             media.ThumbnailUrl = StreamThumbnailUrl ?? media.ThumbnailUrl;
@@ -1477,6 +1524,7 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
     }
     return {
       FilePath: path.join(pubDir, path.basename(bestItem.file.url)),
+      Label: bestItem.title,
       StreamDuration: bestItem.duration,
       StreamThumbnailUrl: jwMediaInfo.thumbnail,
       StreamUrl: bestItem.file.url,
@@ -1490,7 +1538,7 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
 const downloadAdditionalRemoteVideo = async (
   mediaItemLinks: MediaItemsMediatorFile[] | MediaLink[],
   thumbnailUrl?: string,
-  song: boolean | number | string = false,
+  song: false | number | string = false,
   title?: string,
   section?: MediaSection,
 ) => {
@@ -1507,7 +1555,7 @@ const downloadAdditionalRemoteVideo = async (
           duration: number;
           path: string;
           section?: MediaSection;
-          song: boolean | number | string;
+          song: false | number | string;
           thumbnailUrl: string;
           title?: string;
           url: string;
@@ -1617,6 +1665,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
     if (!publication.fileformat) return;
     if (!publicationInfo?.files) {
       const downloadId = [
+        publication.docid,
         publication.pub,
         publication.langwritten,
         publication.issue,
@@ -1723,6 +1772,7 @@ const downloadJwpub = async (
     publication.fileformat = 'JWPUB';
     const handleDownloadError = () => {
       const downloadId = [
+        publication.docid,
         publication.pub,
         publication.langwritten,
         publication.issue,

@@ -3,7 +3,7 @@ import type {
   DownloadedFile,
   DownloadProgressItems,
   DynamicMediaObject,
-  JwLangSymbol,
+  JwLanguage,
   MediaLink,
   SettingsItem,
   SettingsItems,
@@ -130,11 +130,11 @@ export const useCurrentStateStore = defineStore('current-state', {
     congregationIsSelected: (state) => {
       return state.currentCongregation;
     },
-    currentLangSymbol(): JwLangSymbol | undefined {
+    currentLangObject(): JwLanguage | undefined {
       const jwStore = useJwStore();
       return jwStore.jwLanguages.list.find(
         (l) => l.langcode === this.currentSettings?.lang,
-      )?.symbol;
+      );
     },
     currentSettings: (state) => {
       const congregationSettingsStore = useCongregationSettingsStore();

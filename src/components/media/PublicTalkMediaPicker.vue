@@ -88,10 +88,8 @@ import { useScrollbar } from 'src/composables/useScrollbar';
 import { getPublicationsPath } from 'src/helpers/fs';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { decompressJwpub, findDb } from 'src/helpers/mediaPlayback';
-import { createTemporaryNotification } from 'src/helpers/notifications';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
 
 const { executeQuery, fs, openFileDialog, path } = window.electronApi;
 
@@ -154,30 +152,13 @@ const dismissPopup = () => {
   open.value = false;
 };
 
-const { t } = useI18n();
-
 const addPublicTalkMedia = (publicTalkDocId: DocumentItem) => {
   if (!s34mpDb.value || !publicTalkDocId) return;
   addJwpubDocumentMediaToFiles(
     s34mpDb.value,
     publicTalkDocId,
     props.section,
-  ).then((errors) => {
-    if (errors?.length) {
-      errors.forEach((e) =>
-        createTemporaryNotification({
-          caption: [e.pub, e.issue, e.track, e.langwritten, e.fileformat]
-            .filter(Boolean)
-            .join('_'),
-          icon: 'mmm-error',
-          message: t('file-not-available'),
-          timeout: 15000,
-          type: 'negative',
-        }),
-      );
-    }
-  });
-  dismissPopup();
+  ).then(dismissPopup);
 };
 
 const setS34mp = async () => {

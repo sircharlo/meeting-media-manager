@@ -90,11 +90,11 @@ Branches should be named according to the following pattern: `type/description` 
 
 #### Commits
 
-Commits should be named according to the following pattern: `type(scope?): description` (e.g. `refactor: optimize some code` or `chore(deps): update deps`).
+Commit messages should be written according to the following pattern: `type(scope?): description` (e.g. `refactor: optimize some code` or `chore(deps): update deps`).
 
 #### Pull Requests
 
-Pull Requests titles should be named according to the following pattern: `type(scope?): description` (e.g. `ci(build): improve build script` or `docs: add some documentation`).
+Pull Requests are merged by squashing the commits into a single commit with the title of the Pull Request, so the PR should be named according to the following pattern: `type(scope?): description` (e.g. `ci(build): improve build script` or `docs: add some documentation`).
 
 ### Code Style
 

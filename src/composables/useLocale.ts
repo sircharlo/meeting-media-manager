@@ -1,11 +1,16 @@
 import type { DateLocale } from 'quasar';
 
+import { localeOptions } from 'src/i18n';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 export function useLocale() {
   const i18n = useI18n();
   const { t } = i18n;
+
+  const localeObject = computed(() => {
+    return localeOptions.find((l) => l.value === i18n.locale.value);
+  });
 
   const dateLocale = computed((): Required<DateLocale> => {
     return {
@@ -27,5 +32,5 @@ export function useLocale() {
       : dateLocale.value;
   };
 
-  return { dateLocale, getDateLocale };
+  return { dateLocale, getDateLocale, localeObject, t };
 }

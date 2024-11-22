@@ -137,6 +137,7 @@
     "tada",
     "themify",
     "tibt",
+    "togglefullscreen",
     "unregistering",
     "upath",
     "Uuids",
@@ -169,7 +170,7 @@
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "i18n-ally.extract.autoDetect": true,
+  "i18n-ally.extract.autoDetect": false,
   "i18n-ally.extract.ignoredByFiles": {
     "src\\layouts\\MediaPlayerLayout.vue": ["Media Player Window"]
   },

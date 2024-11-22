@@ -2,6 +2,45 @@
 
 # Changelog
 
+## 24.11.5
+
+### New Features
+
+- 🌐 Added a notification to **offer translation help** for missing translations (#3426).
+- 🖼️ Implemented **extra media indicators** and improved visual feedback for media items (#3452).
+- 🎤 Added support for **missing media from JW playlist files** and ensured they are added correctly from the watched folder.
+- 📚 Added support for **Study Bible media**.
+- 🖋️ Added **context menu button** for easy access to media actions in the media list.
+- 🎧 Added a **portable Windows version** of the app for easier use on portable setups when needed.
+- 🎶 Ensured **JW playlist item repeat settings** are honored.
+
+### Fixes
+
+- 🖼️ Fixed **hover effects** to work across the entire media item and properly set the menu target.
+- 🎤 Resolved **incorrect song attributes** by setting the default to `false`.
+- 🎬 Correctly handled **watched playlist files** to prevent issues with media management.
+- 🖥️ Fixed **duplicate fetch calls** to optimize media fetching logic.
+- 📅 Corrected **calendar day labels** that were appearing incorrectly in certain scenarios.
+- 🎧 Fixed **media permission prompts on macOS** to only appear when needed.
+- 📝 Fixed **CSP font-src issues** and ensured fonts are correctly handled.
+- 📜 Prevented **duplicate error messages** from being shown during media fetch.
+- 🖼️ Fixed **thumbnail file handling** by preventing unnecessary writes to watched folders.
+- 🛑 **Prevented excessive window jumping** on macOS by adjusting fullscreen logic.
+- 🧭 Fixed **congregation finder scroll positioning** to ensure correct navigation in modals.
+- 🌍 Corrected **URL search params parsing** to fix incorrect URL behavior.
+
+### Chores and Refactors
+
+- ⚙️ Improved **code readability** across the app to make the codebase cleaner and more maintainable.
+- ⚡ Optimized **performance of Quasar imports** for faster app startup and reduced bundle size.
+- 📜 Updated **contributing guidelines** for clearer instructions on how to contribute.
+- 🛠️ Refactored **locale handling** to make it more efficient and reliable when migrating locales.
+
+### Documentation
+
+- 📚 Added **direct download links** in the docs for easier access to required files.
+- 🖥️ Updated the **installation documentation** for clarity and ease of access.
+
 ## 24.11.4
 
 ### New Features

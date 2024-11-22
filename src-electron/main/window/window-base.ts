@@ -111,12 +111,18 @@ export function createWindow(
   }
 
   // Devtools
+  let devToolsOpenedCount = 0; // Track the number of times the devtools-opened event is fired
   if (process.env.DEBUGGING) {
     win.webContents.openDevTools(); // I like having dev tools open for all windows in dev
   } else {
-    // Prevent devtools from being opened in production
+    // Prevent devtools from being opened in production unless it's attempted more than twice
     win.webContents.on('devtools-opened', () => {
-      win?.webContents.closeDevTools();
+      devToolsOpenedCount += 1; // Increment the counter
+      if (devToolsOpenedCount <= 2) {
+        win?.webContents.closeDevTools(); // Close devtools for the first two attempts
+      } else {
+        console.debug('DevTools opened after 2 attempts'); // Log for debugging
+      }
     });
   }
 

@@ -345,6 +345,24 @@ export const useJwStore = defineStore('jw-store', {
           : '',
       };
     },
+    missingMedia: (state) => {
+      const { currentCongregation, selectedDate, selectedDateObject } =
+        useCurrentStateStore();
+      if (!currentCongregation || !selectedDate || !selectedDateObject) {
+        return [];
+      }
+      const allMediaItems = (
+        state.lookupPeriod?.[currentCongregation]?.find(
+          (day) =>
+            getDateDiff(day.date, selectedDateObject?.date, 'days') === 0,
+        )?.dynamicMedia || []
+      ).concat(
+        state.additionalMediaMaps?.[currentCongregation]?.[selectedDate] || [],
+      );
+      return allMediaItems.filter(
+        (media) => !window.electronApi.isFileUrl(media.fileUrl),
+      );
+    },
     yeartext: (state) => {
       const year = new Date().getFullYear();
       if (!state.yeartexts[year]) return;

@@ -65,6 +65,7 @@ const electronApi: Partial<ElectronApi> = {
   onLog: (cb) => listen('log', cb),
   onShortcut: (cb) => listen('shortcut', cb),
   onWatchFolderUpdate: (cb) => listen('watchFolderUpdate', cb),
+  openDiscussion: (c, t, p) => send('openDiscussion', c, t, p),
   openExternal: (w) => send('openExternal', w),
   openFileDialog: (s, f) => invoke('openFileDialog', s, f),
   openFolderDialog: () => invoke('openFolderDialog'),

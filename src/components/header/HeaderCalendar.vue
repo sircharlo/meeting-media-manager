@@ -27,14 +27,14 @@
   >
     <q-icon
       :class="{ 'q-mr-sm': $q.screen.gt.xs }"
-      name="mmm-import-media"
+      name="mmm-add-media"
       size="xs"
     />
     {{ $q.screen.gt.xs ? $t('extra-media') : '' }}
     <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
       {{ $t('extra-media') }}
     </q-tooltip>
-    <q-menu ref="importMenu" class="top-menu" :offset="[0, 11]">
+    <q-menu ref="importMenu" :offset="[0, 11]">
       <q-list style="min-width: 100px">
         <q-item-label header>{{ $t('from-jw-org') }}</q-item-label>
         <q-item
@@ -62,9 +62,9 @@
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ $t('video') }}</q-item-label>
-            <q-item-label caption>{{
-              $t('latest-videos-from-jw-org')
-            }}</q-item-label>
+            <q-item-label caption>
+              {{ $t('latest-videos-from-jw-org') }}
+            </q-item-label>
           </q-item-section>
         </q-item>
         <q-item v-close-popup clickable @click="publicTalkMediaPopup = true">
@@ -122,9 +122,9 @@
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t('show-hidden-media') }}</q-item-label>
-              <q-item-label caption>{{
-                $t('show-hidden-media-explain')
-              }}</q-item-label>
+              <q-item-label caption>
+                {{ $t('show-hidden-media-explain') }}
+              </q-item-label>
             </q-item-section>
           </q-item>
           <q-item
@@ -137,12 +137,12 @@
               <q-icon color="negative" name="mmm-delete" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>{{
-                $t('delete-all-additional-media')
-              }}</q-item-label>
-              <q-item-label caption>{{
-                $t('this-will-only-delete-media-for-this-day')
-              }}</q-item-label>
+              <q-item-label>
+                {{ $t('delete-all-additional-media') }}
+              </q-item-label>
+              <q-item-label caption>
+                {{ $t('this-will-only-delete-media-for-this-day') }}
+              </q-item-label>
             </q-item-section>
           </q-item>
         </template>
@@ -212,6 +212,7 @@ import { storeToRefs } from 'pinia';
 import { date, type QMenu } from 'quasar';
 // Components
 import DialogRemoteVideo from 'src/components/dialog/DialogRemoteVideo.vue';
+import DialogStudyBible from 'src/components/dialog/DialogStudyBible.vue';
 import PublicTalkMediaPicker from 'src/components/media/PublicTalkMediaPicker.vue';
 import SongPicker from 'src/components/media/SongPicker.vue';
 // Composables
@@ -223,8 +224,6 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { computed, ref, useTemplateRef } from 'vue';
-
-import DialogStudyBible from '../dialog/DialogStudyBible.vue';
 
 const { formatDate, getDateDiff, getMaxDate, getMinDate } = date;
 
