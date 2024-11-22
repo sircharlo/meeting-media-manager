@@ -506,9 +506,9 @@ import {
 } from 'src/helpers/fs';
 import { sorter } from 'src/helpers/general';
 import {
+  addDayToExportQueue,
   addJwpubDocumentMediaToFiles,
   downloadFileIfNeeded,
-  // exportAllDays,
   fetchMedia,
   getPublicationInfoFromDb,
   mapOrder,
@@ -761,6 +761,7 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
       ...sortableCircuitOverseerMediaItems.value,
     ].map((item: DynamicMediaObject) => item.uniqueId);
     generateMediaList();
+    addDayToExportQueue(selectedDateObject.value?.date);
   }
 
   return {
@@ -785,8 +786,11 @@ const generateMediaList = () => {
   ];
   if (combinedMediaItems && currentCongregation.value) {
     mediaSort.value[currentCongregation.value] ??= {};
-    const seenFileUrls = new Set();
     sortableMediaItems.value = combinedMediaItems
+      .filter(
+        (item, index, self) =>
+          index === self.findIndex((i) => i.fileUrl === item.fileUrl),
+      )
       .sort(
         mapOrder(
           selectedDate.value
@@ -795,14 +799,7 @@ const generateMediaList = () => {
               ] || []
             : [],
         ),
-      )
-      .filter((m) => {
-        if (!m.fileUrl || seenFileUrls.has(m.fileUrl)) {
-          return false;
-        }
-        seenFileUrls.add(m.fileUrl);
-        return true;
-      });
+      );
   }
 };
 
@@ -846,8 +843,9 @@ watch(
   () => mediaSort.value?.[currentCongregation.value]?.[selectedDate.value],
   (newMediaSort) => {
     try {
-      if (newMediaSort && newMediaSort.length === 0) {
+      if (newMediaSort?.length === 0) {
         generateMediaList();
+        addDayToExportQueue(selectedDateObject.value?.date);
       }
     } catch (e) {
       errorCatcher(e);
@@ -1212,14 +1210,31 @@ const sortedMediaIds = computed(() => {
   ].map((m) => m.uniqueId);
 });
 
-// const arraysAreIdentical = (a: string[], b: string[]) =>
-//   a.length === b.length && a.every((element, index) => element === b[index]);
+const arraysAreIdentical = (a: string[], b: string[]) =>
+  a.length === b.length && a.every((element, index) => element === b[index]);
 
-// watch(sortedMediaIds, (newSortedMediaIds, oldSortedMediaIds) => {
-//   if (arraysAreIdentical(newSortedMediaIds, oldSortedMediaIds)) return;
-//   console.log('sortedMediaIds', newSortedMediaIds);
-//   exportAllDays();
-// });
+const sortedMediaFileUrls = computed(() =>
+  [...sortableAdditionalMediaItems.value, ...sortableMediaItems.value]
+    .filter((m) => !m.hidden && !!m.fileUrl)
+    .map((m) => m.fileUrl)
+    .filter((fileUrl, index, self) => self.indexOf(fileUrl) === index),
+);
+
+watch(
+  () => sortedMediaFileUrls.value,
+  (newSortedMediaFileUrls, oldSortedMediaFileUrls) => {
+    if (
+      selectedDateObject.value?.date &&
+      !arraysAreIdentical(newSortedMediaFileUrls, oldSortedMediaFileUrls)
+    ) {
+      try {
+        addDayToExportQueue(selectedDateObject.value.date);
+      } catch (e) {
+        errorCatcher(e);
+      }
+    }
+  },
+);
 
 const lastPlayedMediaUniqueId = ref<string>('');
 

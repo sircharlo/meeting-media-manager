@@ -32,6 +32,7 @@ import mepslangs from 'src/constants/mepslangs';
 import { fetchJson, fetchRaw } from 'src/helpers/api';
 import {
   dateFromString,
+  datesAreSame,
   getSpecificWeekday,
   isCoWeek,
   isMwMeetingDay,
@@ -162,18 +163,61 @@ const downloadFileIfNeeded = async ({
   return result;
 };
 
-const exportDayToFolder = async (
-  destDate: Date,
-  dayMediaItems: DynamicMediaObject[],
-) => {
+export const addDayToExportQueue = async (targetDate?: Date) => {
+  folderExportQueue.add(() => exportDayToFolder(targetDate));
+};
+
+const exportDayToFolder = async (targetDate?: Date) => {
   const currentStateStore = useCurrentStateStore();
-  if (!destDate || !currentStateStore.currentSettings?.mediaAutoExportFolder)
+  const jwStore = useJwStore();
+
+  if (
+    !targetDate ||
+    !currentStateStore?.currentCongregation ||
+    !currentStateStore.currentSettings?.mediaAutoExportFolder
+  )
     return;
 
-  const dayMediaLength = dayMediaItems.length;
+  const dateString = formatDate(targetDate, 'YYYY/MM/DD');
+  const dateFolderName = formatDate(targetDate, 'YYYY-MM-DD');
+
+  const dynamicMedia = [
+    ...(jwStore.lookupPeriod?.[currentStateStore.currentCongregation]?.find(
+      (d) => datesAreSame(d.date, targetDate),
+    )?.dynamicMedia || []),
+    ...(jwStore.additionalMediaMaps?.[currentStateStore.currentCongregation]?.[
+      dateString
+    ] || []),
+    ...(currentStateStore.watchFolderMedia[dateString] || []),
+  ];
+
+  const dynamicMediaFiltered = Array.from(
+    new Map(dynamicMedia.map((item) => [item.fileUrl, item])).values(),
+  )
+    .sort(
+      mapOrder(
+        jwStore.mediaSort[currentStateStore.currentCongregation]?.[
+          dateString
+        ] || [],
+      ),
+    )
+    .sort((a, b) => {
+      const sectionOrder = [
+        'additional',
+        'tgw',
+        'ayfm',
+        'lac',
+        'wt',
+        'circuitOverseer',
+      ];
+      return sectionOrder.indexOf(a.section) - sectionOrder.indexOf(b.section);
+    });
+
+  const dayMediaLength = dynamicMediaFiltered.length;
+
   const destFolder = path.join(
     currentStateStore.currentSettings.mediaAutoExportFolder,
-    formatDate(destDate, 'YYYY-MM-DD'),
+    dateFolderName,
   );
 
   try {
@@ -187,7 +231,7 @@ const exportDayToFolder = async (
 
   for (let i = 0; i < dayMediaLength; i++) {
     try {
-      const m = dayMediaItems[i];
+      const m = dynamicMediaFiltered[i];
       const sourceFilePath = window.electronApi.fileUrlToPath(m.fileUrl);
       if (!sourceFilePath || !(await fs.exists(sourceFilePath))) continue;
 
@@ -246,6 +290,8 @@ export const mapOrder =
     }
   };
 
+const folderExportQueue = new PQueue({ concurrency: 1 });
+
 export const exportAllDays = async () => {
   try {
     const jwStore = useJwStore();
@@ -257,53 +303,10 @@ export const exportAllDays = async () => {
       return;
     const daysToExport = (
       jwStore.lookupPeriod[currentStateStore.currentCongregation] || []
-    ).map((d) => {
-      return {
-        date: d.date,
-        dynamicMedia: d.dynamicMedia,
-      };
-    });
-    for (const day of daysToExport) {
-      const dateString = formatDate(day.date, 'YYYY/MM/DD');
-      day.dynamicMedia.push(
-        ...((jwStore.additionalMediaMaps[dateString] ||
-          []) as DynamicMediaObject[]),
-      );
-      day.dynamicMedia.push(
-        ...((currentStateStore.watchFolderMedia[dateString] ||
-          []) as DynamicMediaObject[]),
-      );
-      const seenFileUrls = new Set();
-      day.dynamicMedia = day.dynamicMedia
-        .filter((m) => {
-          if (!m.fileUrl || seenFileUrls.has(m.fileUrl)) {
-            return false;
-          }
-          seenFileUrls.add(m.fileUrl);
-          return true;
-        })
-        .sort(
-          mapOrder(
-            jwStore.mediaSort[currentStateStore.currentCongregation]?.[
-              dateString
-            ] || [],
-          ),
-        )
-        .sort((a, b) => {
-          const sectionOrder = [
-            'additional',
-            'tgw',
-            'ayfm',
-            'lac',
-            'wt',
-            'circuitOverseer',
-          ];
-          return (
-            sectionOrder.indexOf(a.section) - sectionOrder.indexOf(b.section)
-          );
-        });
-      await exportDayToFolder(day.date, day.dynamicMedia);
-    }
+    ).map((d) => d.date);
+    await folderExportQueue.addAll(
+      daysToExport.map((day) => () => exportDayToFolder(day)),
+    );
   } catch (error) {
     errorCatcher(error);
   }

@@ -66,6 +66,7 @@ import { kebabToCamelCase, sorter } from 'src/helpers/general';
 import {
   downloadBackgroundMusic,
   downloadSongbookVideos,
+  exportAllDays,
   setUrlVariables,
   watchedItemMapper,
 } from 'src/helpers/jw-media';
@@ -205,6 +206,17 @@ watchImmediate(
   () => currentSettings.value?.darkMode,
   (newDarkMode) => {
     $q.dark.set(newDarkMode ?? 'auto');
+  },
+);
+
+watch(
+  () => [
+    currentCongregation.value,
+    currentSettings.value?.enableMediaAutoExport,
+    currentSettings.value?.mediaAutoExportFolder,
+  ],
+  ([newMediaAutoExport, newMediaAutoExportFolder]) => {
+    if (!!newMediaAutoExport && !!newMediaAutoExportFolder) exportAllDays();
   },
 );
 
