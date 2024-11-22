@@ -88,6 +88,7 @@ const setWindowPosition = (
   fullscreen = true,
   noEvent?: boolean,
 ) => {
+  console.log('setWindowPosition', { displayNr, fullscreen, noEvent });
   try {
     if (!mediaWindow) return;
 
@@ -97,6 +98,11 @@ const setWindowPosition = (
     if (!targetDisplay) return;
 
     const targetScreenBounds = targetDisplay.bounds;
+
+    console.log('targetScreenBounds', targetScreenBounds);
+    console.log('targetDisplay', targetDisplay);
+    console.log('currentDisplayNr', currentDisplayNr);
+    console.log('screens', screens);
 
     // const boundsChanged = (
     //   current: Electron.Rectangle,
@@ -109,12 +115,18 @@ const setWindowPosition = (
     //   );
 
     const updateScreenAndPrefs = () => {
+      console.log('updateScreenAndPrefs');
       sendToWindow(mainWindow, 'screenChange');
+      console.log('sent screenChange event');
       if (!noEvent) {
         sendToWindow(mainWindow, 'screenPrefsChange', {
           preferredScreenNumber: displayNr ?? 0,
           preferWindowed: !fullscreen,
         } as ScreenPreferences);
+        console.log('sent screenPrefsChange event', {
+          preferredScreenNumber: displayNr ?? 0,
+          preferWindowed: !fullscreen,
+        });
       }
     };
 
@@ -123,6 +135,11 @@ const setWindowPosition = (
       alwaysOnTop = false,
       fullScreen = false,
     ) => {
+      console.log('setWindowBounds', {
+        alwaysOnTop,
+        bounds,
+        fullScreen,
+      });
       if (!mediaWindow) return;
       mediaWindow.setBounds(bounds);
       if (mediaWindow.isAlwaysOnTop() !== alwaysOnTop) {
@@ -135,6 +152,11 @@ const setWindowPosition = (
     };
 
     const handleMacFullScreenTransition = (callback: () => void) => {
+      console.log(
+        'handleMacFullScreenTransition',
+        PLATFORM,
+        mediaWindow?.isFullScreen(),
+      );
       if (PLATFORM === 'darwin' && mediaWindow && mediaWindow.isFullScreen()) {
         mediaWindow.once('leave-full-screen', callback);
         mediaWindow.setFullScreen(false);
@@ -144,6 +166,12 @@ const setWindowPosition = (
     };
 
     if (fullscreen) {
+      console.log(
+        'displayNr === currentDisplayNr',
+        displayNr === currentDisplayNr,
+        'mediaWindow.isAlwaysOnTop()',
+        mediaWindow.isAlwaysOnTop(),
+      );
       if (displayNr === currentDisplayNr && mediaWindow.isAlwaysOnTop()) return;
       handleMacFullScreenTransition(() => {
         setWindowBounds(targetScreenBounds, PLATFORM !== 'darwin', true);
@@ -155,6 +183,14 @@ const setWindowPosition = (
         x: targetScreenBounds.x + 50,
         y: targetScreenBounds.y + 50,
       };
+      console.log(
+        'displayNr !== currentDisplayNr',
+        displayNr !== currentDisplayNr,
+        'mediaWindow.isFullScreen()',
+        mediaWindow.isFullScreen(),
+        'newBounds',
+        newBounds,
+      );
       if (displayNr !== currentDisplayNr || mediaWindow.isFullScreen()) {
         handleMacFullScreenTransition(() => {
           setWindowBounds(newBounds, false, false);
