@@ -14,26 +14,26 @@ Nota: O M³ era conhecido como JWMMF (JW Meeting Media Fetcher), mas seu nome fo
 
 :::
 
-## Why choose M³? {#why-choose-m3}
+## Por que escolher o M³? {#why-choose-m3}
 
-M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms.
+O M³ é a ferramenta mais completa para gerenciar as mídias das reuniões, oferecendo uma experiência suave, confiável e com muitos recursos em diversas plataformas.
 
-### Key benefits {#key-benefits}
+### Principais benefícios {#key-benefits}
 
-- **Effortless media presentation**\
-  Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
+- **Apresentação de mídia sem esforço**\
+  A melhor forma de apresentar mídias — apenas abra o M³ e está tudo pronto. Não são necessárias configurações complexas ou etapas extras.
 
-- **Multi-congregation support**\
-  Manage settings for multiple congregations or groups easily within a single application.
+- **Suporte para várias congregações**\
+  Gerencie configurações para diversas congregações ou grupos facilmente dentro de um único aplicativo.
 
-- **Advanced features**\
-  Easily add extra media, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Recursos avançados**\
+  Adicione facilmente mídias extras e compartilhe automaticamente o que acontece no Salão do Reino com os participantes no Zoom.
 
-- **Optimized cross-platform performance**\
-  Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
+- **Desempenho otimizado em várias plataformas**\
+  Desfrute de uma experiência suave e responsiva no Windows, macOS e Linux, mesmo em sistemas antigos ou computadores com recursos limitados.
 
-- **Reliable and stable**\
-  Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
+- **Confiável e estável**\
+  Feito para funcionar bem quando você mais precisa. Encontrou um problema? Reporte-o e ele será tratado rapidamente.
 
 ## O que o M³ faz? {#what-can-m3-do}
 
@@ -41,7 +41,7 @@ O M³ permite que você baixe e exiba todas as mídias da reunião de forma simp
 
 Em reuniões híbridas ou presenciais, o modo de exibição de mídias integrado tem todos os recursos necessários para simplificar o compartilhamento ou exibição das mídias nas reuniões, incluindo:
 
-- Media thumbnails with the ability to zoom and pan, as well as set custom start and end times for media
+- Miniaturas de mídia com as funcionalidades de redimensionar e reposicionar, bem como de definir os pontos de início e fim da mídia apresentada
 - Botões de pausar/reproduzir/parar fáceis de usar para controlar a reprodução de mídias
 - Reprodução de cânticos de fundo, com parada automática antes do início das reuniões
 - Reconhecimento automático de telas externas e gerenciamento delas
