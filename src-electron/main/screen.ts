@@ -7,8 +7,8 @@ import { mainWindow } from './window/window-main';
 import { mediaWindow, moveMediaWindow } from './window/window-media';
 
 export let screenPreferences: ScreenPreferences = {
-  preferredScreenNumber: 0,
-  preferWindowed: false,
+  preferredScreenNumber: undefined,
+  preferWindowed: undefined,
 };
 
 export const setScreenPreferences = (prefs: ScreenPreferences) => {

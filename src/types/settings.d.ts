@@ -100,8 +100,8 @@ export interface OldAppConfig {
 }
 
 export interface ScreenPreferences {
-  preferredScreenNumber: number;
-  preferWindowed: boolean;
+  preferredScreenNumber: number | undefined;
+  preferWindowed: boolean | undefined;
 }
 
 export interface SettingsGroup {

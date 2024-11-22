@@ -6,7 +6,7 @@ import { errorCatcher } from 'app/src-electron/utils';
 import { join, resolve } from 'path';
 
 import { getAllScreens, getWindowScreen, screenPreferences } from '../screen';
-import { createWindow, logToWindow, sendToWindow } from './window-base';
+import { createWindow, sendToWindow } from './window-base';
 import { mainWindow } from './window-main';
 
 export let mediaWindow: BrowserWindow | null = null;
@@ -70,15 +70,7 @@ export const moveMediaWindow = (
               : screens.findIndex((s) => !s.mainWindow);
         }
       }
-      logToWindow(mainWindow, 'fullscreen info', {
-        displayNr,
-        fullscreen,
-        'mediaWindow.getBounds()': mediaWindow.getBounds(),
-        'mediaWindow.getBounds() === screens[displayNr].bounds':
-          mediaWindow.getBounds() === screens[displayNr].bounds,
-        'mediaWindow.isFullScreen()': mediaWindow.isFullScreen(),
-        'screens[displayNr].bounds': screens[displayNr].bounds,
-      });
+      if (displayNr === undefined) return;
       fullscreen =
         fullscreen ??
         (mediaWindow.getBounds() === screens[displayNr].bounds ||
@@ -94,18 +86,14 @@ export const moveMediaWindow = (
   }
 };
 
-const boundsChanged = (
+const boundsAreSame = (
   current?: Electron.Rectangle,
   target?: Electron.Rectangle,
 ) => {
   if (!current || !target) return false;
-  logToWindow(mainWindow, 'boundsChanged', {
-    current,
-    target,
-  });
-  return ['height', 'width', 'x', 'y'].some(
+  return ['height', 'width', 'x', 'y'].every(
     (prop) =>
-      current[prop as keyof Electron.Rectangle] !==
+      current[prop as keyof Electron.Rectangle] ===
       target[prop as keyof Electron.Rectangle],
   );
 };
@@ -115,11 +103,6 @@ const setWindowPosition = (
   fullscreen = true,
   noEvent?: boolean,
 ) => {
-  logToWindow(mainWindow, 'setWindowPosition', {
-    displayNr,
-    fullscreen,
-    noEvent,
-  });
   try {
     if (!mediaWindow) return;
 
@@ -130,46 +113,17 @@ const setWindowPosition = (
 
     const targetScreenBounds = targetDisplay.bounds;
 
-    const mediaWindowIsFullScreen = () => {
-      logToWindow(mainWindow, 'mediaWindowIsFullScreen()', {
-        'boundsChanged(mediaWindow?.getBounds(), targetScreenBounds)':
-          boundsChanged(mediaWindow?.getBounds(), targetScreenBounds),
-        'mediaWindow.isFullScreen()': mediaWindow?.isFullScreen(),
-      });
-      return (
-        !boundsChanged(mediaWindow?.getBounds(), targetScreenBounds) ||
-        mediaWindow?.isFullScreen()
-      );
-    };
-
-    logToWindow(mainWindow, 'targetScreenBounds', targetScreenBounds);
-    logToWindow(mainWindow, 'targetDisplay', targetDisplay);
-    logToWindow(mainWindow, 'currentDisplayNr', currentDisplayNr);
-    logToWindow(mainWindow, 'screens', screens);
-
-    // const boundsChanged = (
-    //   current: Electron.Rectangle,
-    //   target: Electron.Rectangle,
-    // ) =>
-    //   ['height', 'width', 'x', 'y'].some(
-    //     (prop) =>
-    //       current[prop as keyof Electron.Rectangle] !==
-    //       target[prop as keyof Electron.Rectangle],
-    //   );
+    const mediaWindowIsFullScreen = () =>
+      boundsAreSame(mediaWindow?.getBounds(), targetScreenBounds) ||
+      mediaWindow?.isFullScreen();
 
     const updateScreenAndPrefs = () => {
-      logToWindow(mainWindow, 'updateScreenAndPrefs');
       sendToWindow(mainWindow, 'screenChange');
-      logToWindow(mainWindow, 'sent screenChange event');
       if (!noEvent) {
         sendToWindow(mainWindow, 'screenPrefsChange', {
           preferredScreenNumber: displayNr ?? 0,
           preferWindowed: !fullscreen,
         } as ScreenPreferences);
-        logToWindow(mainWindow, 'sent screenPrefsChange event', {
-          preferredScreenNumber: displayNr ?? 0,
-          preferWindowed: !fullscreen,
-        });
       }
     };
 
@@ -178,11 +132,6 @@ const setWindowPosition = (
       fullScreen = false,
     ) => {
       const alwaysOnTop = PLATFORM !== 'darwin' && fullScreen;
-      logToWindow(mainWindow, 'setWindowBounds', {
-        alwaysOnTop,
-        bounds,
-        fullScreen,
-      });
       if (!mediaWindow) return;
       if (mediaWindowIsFullScreen()) {
         // We need to set the fullscreen state before changing the bounds in the case of a window that is already fullscreen
@@ -191,14 +140,11 @@ const setWindowPosition = (
       mediaWindow.setAlwaysOnTop(alwaysOnTop);
       mediaWindow.setBounds(bounds);
       mediaWindow.setFullScreen(fullScreen);
+      mediaWindow.setBounds(bounds);
       updateScreenAndPrefs();
     };
 
     const handleMacFullScreenTransition = (callback: () => void) => {
-      logToWindow(mainWindow, 'handleMacFullScreenTransition', {
-        mediaWindowIsFullScreen: mediaWindowIsFullScreen(),
-        PLATFORM,
-      });
       if (PLATFORM === 'darwin' && mediaWindowIsFullScreen()) {
         mediaWindow?.once('leave-full-screen', callback);
         mediaWindow?.setFullScreen(false);
@@ -208,12 +154,8 @@ const setWindowPosition = (
     };
 
     if (fullscreen) {
-      logToWindow(mainWindow, 'set to fullscreen', {
-        currentDisplayNr,
-        displayNr,
-        mediaWindowIsFullScreen: mediaWindowIsFullScreen(),
-      });
       if (displayNr === currentDisplayNr && mediaWindowIsFullScreen()) {
+        mediaWindow.setAlwaysOnTop(PLATFORM !== 'darwin');
         updateScreenAndPrefs();
         return;
       }
@@ -227,12 +169,6 @@ const setWindowPosition = (
         x: targetScreenBounds.x + 50,
         y: targetScreenBounds.y + 50,
       };
-      logToWindow(mainWindow, 'set to windowed', {
-        currentDisplayNr,
-        displayNr,
-        mediaWindowIsFullScreen: mediaWindowIsFullScreen(),
-        newBounds,
-      });
       if (displayNr !== currentDisplayNr || mediaWindowIsFullScreen()) {
         handleMacFullScreenTransition(() => {
           setWindowBounds(newBounds, false);
