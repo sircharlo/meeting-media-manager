@@ -455,7 +455,7 @@
             @click="emit('update:hidden', true)"
           >
             <q-item-section avatar>
-              <q-icon name="mmm-file-hidden" />
+              <q-icon color="accent-400" name="mmm-file-hidden" />
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t('hide-from-list') }}</q-item-label>
@@ -474,7 +474,7 @@
             @click="mediaEditTitleDialog = true"
           >
             <q-item-section avatar>
-              <q-icon name="mmm-edit" />
+              <q-icon color="accent-400" name="mmm-edit" />
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t('rename') }}</q-item-label>
@@ -483,7 +483,7 @@
           </q-item>
           <q-item v-close-popup clickable @click="mediaEditTagDialog = true">
             <q-item-section avatar>
-              <q-icon name="mmm-tag" />
+              <q-icon color="accent-400" name="mmm-tag" />
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t('change-tag') }}</q-item-label>
@@ -498,7 +498,10 @@
             @click="emit('update:repeat', !media.repeat)"
           >
             <q-item-section avatar>
-              <q-icon :name="media.repeat ? 'mmm-repeat-off' : 'mmm-repeat'" />
+              <q-icon
+                color="accent-400"
+                :name="media.repeat ? 'mmm-repeat-off' : 'mmm-repeat'"
+              />
             </q-item-section>
             <q-item-section>
               <q-item-label>
