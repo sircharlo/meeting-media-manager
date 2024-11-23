@@ -42,10 +42,10 @@ Kwa **mikutano ya zoom na ana kwa ana** au **ana kwa ana pekee**, hali iliyojumu
 - Utambuzi na usimamizi wa kiotomatiki wa scrini ya kando
 - Kuwezeshwa kwa utumiaji wa OBS Studio pamoja na kubadilisha scene wakati wa kuwasilisha midia
 - Kuwasilisha tovuti rasmi ya Mashahidi wa Yehova kwenye runinga nyingine
-- Import JWPUB files, JWLPLAYLIST files, videos from the official website of Jehovah's Witnesses, and media for public talks from the S-34 file in a few clicks.
-- Custom videos, pictures, audio files and even PDF files can be easily imported too!
+- Ingiza faili za JWPUB, faili za JWLPLAYLIST, video kutoka tovuti rasmi ya Mashahidi wa Yehova, na midia kwa ajili ya hotuba za watu wote kutoka kwa faili ya S-34 kwa kibofyo kimoja.
+- Video maalum, picha, faili za sauti na hata faili za PDF zinaweza kuingizwa kwa urahisi pia!
 
-**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
+**Jaribu M³ leo na ujionee vile itakavyofanya kazi! Kuwasilisha midia kwenye mikutano ya kutaniko hakujawahi kuwa rahisi hivi.**
 
 ![M³ preview](./../assets/m3-preview.png)
 
