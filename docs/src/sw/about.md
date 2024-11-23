@@ -20,7 +20,7 @@ M³ ni zana ya hali ya juu kwa wale wanaosimamia midia ya mkutano, ikiandaa utum
 
 ### Faida muhimu {#key-benefits}
 
-- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
+- **Uwasilishaji wa media bila kuchoka**: Kuwasilisha media kwa hali ya juu - fungua M³ na kila kitu kitafanya kazi. No complex setup or extra steps required.
 
 - **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
 
