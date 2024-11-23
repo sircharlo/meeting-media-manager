@@ -292,6 +292,9 @@
               >
                 <q-slider
                   v-model="mediaPlayingCurrentPosition"
+                  :color="
+                    mediaPlayingAction === 'pause' ? 'primary' : 'accent-400'
+                  "
                   :inner-max="customDurationMax"
                   :inner-min="customDurationMin"
                   inner-track-color="accent-400"
@@ -309,9 +312,6 @@
                   :min="0"
                   :readonly="mediaPlayingAction !== 'pause'"
                   :step="0.1"
-                  :thumb-size="
-                    mediaPlayingAction === 'pause' ? undefined : '10px'
-                  "
                   track-color="negative"
                   @update:model-value="seekTo"
                 />
