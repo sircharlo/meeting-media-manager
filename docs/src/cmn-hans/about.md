@@ -20,15 +20,15 @@ M3是管理聚会媒体的最终工具，为各平台提供无缝、可靠和丰
 
 ### 主要功能 {#key-benefits}
 
-- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. 不需要复杂的设置或额外的步骤。
+- \*\*非常轻松地播放媒体：\*\*以最好的方式播放媒体——只要打开M3，一切都顺利进行。 不需要复杂的设置或额外的步骤。
 
-- **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
+- **支持多会众操作：** 在单个应用程序内管理多个会众或小组的设置。
 
-- **Advanced features**: Easily add extra media, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **高级功能：** 轻松添加额外的媒体，并且自动在Zoom上与参与者分享王国聚会所的情况。
 
-- **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
+- \*\*优化跨平台性能：\*\*即使在资源有限的旧系统或计算机上，也享受Windows、 macOS和Linux的顺畅和响应性体验。
 
-- **Reliable and stable**: Built to perform when you need it most. 遇到了一个 bug 吗？ 请报告，问题将迅速予以处理。
+- \*\*可靠和稳定：\*\*非常可靠和稳定，选择它就不会有错。 遇到了问题吗？ 请报告，问题将迅速予以处理。
 
 ## M³能做什么？ {#what-can-m3-do}
 
