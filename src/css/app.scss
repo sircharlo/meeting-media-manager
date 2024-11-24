@@ -1,6 +1,6 @@
 // app global css in SCSS form
 
-.fitSnugly {
+.fit-snugly {
   width: 100vw;
   height: 100vh;
 }
@@ -50,6 +50,31 @@
   #yeartextLogo {
     margin: -2.5vh -2vh;
   }
+}
+
+.q-pr-scroll {
+  padding-right: 10px;
+}
+
+.custom-scroll {
+  overflow: auto;
+}
+
+.custom-scroll::-webkit-scrollbar {
+  width: 0.5em;
+  border-radius: 1em;
+}
+.custom-scroll::-webkit-scrollbar-thumb {
+  border-radius: 1em;
+}
+
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 1em;
+}
+
+.custom-scroll:hover::-webkit-scrollbar-thumb {
+  cursor: grab;
 }
 
 body.body--light {
@@ -114,10 +139,12 @@ body.body--light {
     background-color: $secondary-contrast;
   }
 
-  // .q-hoverable:hover > .q-focus-helper {
-  //   background-color: #87afff;
-  //   opacity: 0.15;
-  // }
+  .custom-scroll:hover::-webkit-scrollbar-track {
+    background: $scrollbar-track;
+  }
+  .custom-scroll:hover::-webkit-scrollbar-thumb {
+    background: $scrollbar-thumb;
+  }
 }
 
 body.body--dark {
@@ -182,6 +209,12 @@ body.body--dark {
 
   & .q-item.selected-to-drag {
     background-color: $accent-300-dark;
+  }
+  .custom-scroll::-webkit-scrollbar-track {
+    background: $scrollbar-track-dark;
+  }
+  .custom-scroll::-webkit-scrollbar-thumb {
+    background: $scrollbar-thumb-dark;
   }
 }
 

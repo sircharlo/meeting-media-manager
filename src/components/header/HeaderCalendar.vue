@@ -34,8 +34,8 @@
     <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
       {{ $t('extra-media') }}
     </q-tooltip>
-    <q-menu ref="importMenu" :offset="[0, 11]">
-      <q-list style="min-width: 100px">
+    <q-menu ref="importMenu" class="custom-scroll" :offset="[0, 11]">
+      <q-list>
         <q-item-label header>{{ $t('from-jw-org') }}</q-item-label>
         <q-item
           v-close-popup

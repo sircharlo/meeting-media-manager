@@ -22,74 +22,73 @@
         </div>
       </div>
       <div class="row">
-        <q-scroll-area
-          :bar-style="barStyle"
-          style="height: 25vh; width: -webkit-fill-available"
-          :thumb-style="thumbStyle"
+        <q-list
+          class="full-width q-px-scroll custom-scroll"
+          padding
+          separator
+          style="max-height: 20vh"
         >
-          <q-list class="full-width q-px-md" padding separator>
-            <q-item v-if="!results?.length">
+          <q-item v-if="!results?.length">
+            <q-item-section>
+              <q-item-label>
+                {{
+                  congregationFilter?.length > 2
+                    ? $t('no-results')
+                    : $t('no-results-short')
+                }}
+              </q-item-label>
+              <q-item-label caption>
+                {{
+                  congregationFilter?.length > 2
+                    ? $t('no-results-explain')
+                    : $t('no-results-short-explain')
+                }}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+          <template v-for="congregation in results" :key="congregation">
+            <q-item clickable @click="selectCongregation(congregation)">
               <q-item-section>
                 <q-item-label>
-                  {{
-                    congregationFilter?.length > 2
-                      ? $t('no-results')
-                      : $t('no-results-short')
-                  }}
+                  {{ congregation.properties.orgName }}
                 </q-item-label>
                 <q-item-label caption>
                   {{
-                    congregationFilter?.length > 2
-                      ? $t('no-results-explain')
-                      : $t('no-results-short-explain')
+                    dateLocale.days[
+                      congregation.properties.schedule.current.midweek
+                        .weekday === 7
+                        ? 0
+                        : congregation.properties.schedule.current.midweek
+                            .weekday
+                    ]
+                  }}
+                  {{ congregation.properties.schedule.current.midweek.time }}
+                  |
+                  {{
+                    dateLocale.days[
+                      congregation.properties.schedule.current.weekend
+                        .weekday === 7
+                        ? 0
+                        : congregation.properties.schedule.current.weekend
+                            .weekday
+                    ]
+                  }}
+                  {{ congregation.properties.schedule.current.weekend.time }}
+                </q-item-label>
+              </q-item-section>
+              <q-item-section side top>
+                <q-item-label caption>
+                  {{
+                    jwLanguages.list?.find(
+                      (l) =>
+                        l.langcode === congregation?.properties?.languageCode,
+                    )?.vernacularName
                   }}
                 </q-item-label>
               </q-item-section>
             </q-item>
-            <template v-for="congregation in results" :key="congregation">
-              <q-item clickable @click="selectCongregation(congregation)">
-                <q-item-section>
-                  <q-item-label>
-                    {{ congregation.properties.orgName }}
-                  </q-item-label>
-                  <q-item-label caption>
-                    {{
-                      dateLocale.days[
-                        congregation.properties.schedule.current.midweek
-                          .weekday === 7
-                          ? 0
-                          : congregation.properties.schedule.current.midweek
-                              .weekday
-                      ]
-                    }}
-                    {{ congregation.properties.schedule.current.midweek.time }}
-                    |
-                    {{
-                      dateLocale.days[
-                        congregation.properties.schedule.current.weekend
-                          .weekday === 7
-                          ? 0
-                          : congregation.properties.schedule.current.weekend
-                              .weekday
-                      ]
-                    }}
-                    {{ congregation.properties.schedule.current.weekend.time }}
-                  </q-item-label>
-                </q-item-section>
-                <q-item-section side top>
-                  <q-item-label caption>
-                    {{
-                      jwLanguages.list?.find(
-                        (l) =>
-                          l.langcode === congregation?.properties?.languageCode,
-                      )?.vernacularName
-                    }}
-                  </q-item-label>
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-list>
-        </q-scroll-area>
+          </template>
+        </q-list>
       </div>
       <div class="row q-px-md">
         <div class="col text-right">
@@ -107,7 +106,6 @@ import type { CongregationLanguage, GeoRecord } from 'src/types';
 import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
-import { useScrollbar } from 'src/composables/useScrollbar';
 import { fetchJson } from 'src/helpers/api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -121,7 +119,6 @@ const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
 
 const { dateLocale } = useLocale();
-const { barStyle, thumbStyle } = useScrollbar();
 
 const open = defineModel<boolean>({ default: false });
 const congregationFilter = ref('');

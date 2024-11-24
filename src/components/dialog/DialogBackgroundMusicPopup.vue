@@ -33,13 +33,9 @@
                 <p class="card-section-title text-dark-grey q-px-md">
                   {{ $t('upcoming-songs') }}
                 </p>
-                <q-scroll-area
-                  :bar-style="barStyle"
-                  style="height: 100px; max-width: 100%"
-                  :thumb-style="thumbStyle"
-                >
+                <div class="custom-scroll" style="max-height: 10vh">
                   <template v-for="(song, i) in songList" :key="i">
-                    <div class="row q-my-sm q-px-md">
+                    <div class="row q-my-sm q-pl-md q-pr-scroll">
                       <div class="col text-weight-medium">
                         {{ song.title }}
                       </div>
@@ -48,7 +44,7 @@
                       </div>
                     </div>
                   </template>
-                </q-scroll-area>
+                </div>
               </div>
             </div>
             <q-separator class="bg-accent-200 q-mb-md" />
@@ -122,7 +118,6 @@ import {
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { date, type QMenu } from 'quasar';
-import { useScrollbar } from 'src/composables/useScrollbar';
 import { remainingTimeBeforeMeetingStart } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
@@ -141,8 +136,6 @@ const open = defineModel<boolean>({ default: false });
 const { getDateDiff } = date;
 
 const { fileUrlToPath, parseMediaFile, path } = window.electronApi;
-
-const { barStyle, thumbStyle } = useScrollbar();
 
 const currentState = useCurrentStateStore();
 const {

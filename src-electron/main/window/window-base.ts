@@ -45,7 +45,7 @@ export function createWindow(
     icon: resolve(
       join(__dirname, 'icons', `icon.${PLATFORM === 'win32' ? 'ico' : 'png'}`),
     ),
-    minHeight: 400,
+    minHeight: 450,
     minWidth: 500,
     show: false,
     title: 'Meeting Media Manager',
