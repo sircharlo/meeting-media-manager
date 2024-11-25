@@ -1,8 +1,8 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="items-center q-pb-lg q-px-sm q-gutter-y-lg bg-secondary-contrast large-overlay"
-      style="max-height: 80vh"
+      class="custom-scroll items-center q-pb-lg q-px-sm q-gutter-y-lg bg-secondary-contrast large-overlay"
+      style="max-height: 90vh"
     >
       <div class="text-h6 row q-px-md">{{ $t('add-video-jw-org') }}</div>
       <div class="row q-px-md">{{ $t('add-a-video-explain') }}</div>
@@ -23,7 +23,10 @@
         </div>
       </div>
       <div class="row">
-        <div class="row q-col-gutter-md q-px-md">
+        <div
+          class="custom-scroll row q-col-gutter-md q-px-md"
+          style="max-height: 30vh"
+        >
           <template
             v-for="video in remoteVideosFiltered.slice(
               (currentPage - 1) * videosPerPage,

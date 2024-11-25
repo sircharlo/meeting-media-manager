@@ -13,6 +13,7 @@
       {{ $t('tools') }}
     </q-tooltip>
     <q-menu
+      class="custom-scroll"
       :offset="[0, 11]"
       @before-hide="moreOptionsMenuActive = false"
       @show="
