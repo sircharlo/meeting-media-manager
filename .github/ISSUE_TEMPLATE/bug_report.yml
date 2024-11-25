@@ -12,7 +12,9 @@ body:
         ### Please read the following:
         Thanks for taking the time to fill out this bug report!
 
-        Before submitting a bug report, please make sure you have read the [documentation website](https://sircharlo.github.io/meeting-media-manager/) and searched through the existing [issues](https://github.com/sircharlo/meeting-media-manager/issues) and [discussions](https://github.com/sircharlo/meeting-media-manager/discussions) to make sure your bug report is not a duplicate. If you're using macOS, please also make sure you have executed the Terminal commands found in the [additional steps for macOS users](https://sircharlo.github.io/meeting-media-manager/using-at-a-kingdom-hall#additional-steps-for-macos-users) section the documentation website.
+        Before submitting a bug report, please make sure you have read the [documentation website](https://sircharlo.github.io/meeting-media-manager/) and searched through the existing [issues](https://github.com/sircharlo/meeting-media-manager/issues) and [discussions](https://github.com/sircharlo/meeting-media-manager/discussions) to make sure your bug report is not a duplicate.
+
+        If you're using macOS, please also make sure you have executed the Terminal commands found in the [additional steps for macOS users](https://sircharlo.github.io/meeting-media-manager/using-at-a-kingdom-hall#additional-steps-for-macos-users) section the documentation website.
 
         If your bug report is still valid, please change the title of this issue to reflect your bug report and fill out the fields below.
   - type: textarea
