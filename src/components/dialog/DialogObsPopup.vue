@@ -14,11 +14,6 @@
         <div class="card-title">
           {{ $t('scene-selection') }}
         </div>
-        <!-- <div>
-          <p class="card-section-title text-dark-grey">
-            {{ $t('main-scenes') }}
-          </p>
-        </div> -->
         <div class="row items-center q-col-gutter-sm">
           <template v-for="scene in sceneList" :key="scene">
             <div
@@ -83,43 +78,6 @@
             </div>
           </template>
         </div>
-        <!-- <template v-if="additionalScenes.length > 0">
-          <q-separator class="bg-accent-200 q-my-md" />
-          <div>
-            <p class="card-section-title text-dark-grey">
-              {{ $t('additional-scenes') }}
-            </p>
-          </div>
-          <div class="row items-center q-col-gutter-sm q-mb-md">
-            <template v-for="scene in additionalScenes" :key="scene">
-              <div
-                :class="
-                  additionalScenes.length === 1
-                    ? 'col-12'
-                    : additionalScenes.length === 2
-                      ? 'col-6'
-                      : 'col-4'
-                "
-              >
-                <q-btn
-                  :outline="scene !== currentScene"
-                  class="full-width"
-                  color="primary"
-                  unelevated
-                  @click="setObsScene(undefined, scene)"
-                >
-                  <div class="ellipsis">
-                    {{
-                      isUUID(scene)
-                        ? scenes.find((s) => s.sceneUuid === scene)?.sceneName
-                        : scene
-                    }}
-                  </div>
-                </q-btn>
-              </div>
-            </template>
-          </div>
-        </template> -->
       </q-card-section>
     </q-card>
   </q-menu>

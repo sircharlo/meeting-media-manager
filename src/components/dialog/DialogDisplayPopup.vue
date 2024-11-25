@@ -160,47 +160,46 @@
     </div>
   </q-menu>
   <q-dialog v-model="showCustomBackgroundPicker">
-    <div
-      class="items-center col q-pb-lg q-px-lg q-gutter-y-md bg-secondary-contrast"
-    >
-      <div class="text-h6 row">{{ $t('choose-an-image') }}</div>
-      <div class="row">
+    <div class="bg-secondary-contrast column fit-snugly q-px-none">
+      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
+        {{ $t('choose-an-image') }}
+      </div>
+      <div class="col-shrink full-width q-px-md q-py-md">
         {{ $t('select-a-custom-background') }}
       </div>
-      <div class="custom-scroll" style="height: 40vh">
+      <div class="q-px-md overflow-auto col full-width flex">
         <template
           v-for="(jwpubImage, index) in jwpubImages"
           :key="jwpubImage.FilePath"
         >
-          <div class="col items-center q-pb-md">
-            <div
-              class="row cursor-pointer items-center q-gutter-x-md"
-              @click="setMediaBackground(jwpubImage.FilePath)"
-            >
-              <div class="col-shrink">
-                <q-img
-                  v-ripple
-                  class="rounded-borders"
-                  fit="contain"
-                  :src="pathToFileURL(jwpubImage.FilePath)"
-                  style="width: 150px"
-                />
-              </div>
-              <div class="col">
-                <div class="row">{{ path.basename(jwpubImage.FilePath) }}</div>
-              </div>
+          <q-item
+            class="row items-center full-width"
+            clickable
+            @click="setMediaBackground(jwpubImage.FilePath)"
+          >
+            <div class="col-shrink q-mr-md">
+              <q-img
+                v-ripple
+                class="rounded-borders"
+                fit="contain"
+                :src="pathToFileURL(jwpubImage.FilePath)"
+                style="width: 150px"
+              />
             </div>
-            <q-separator
-              v-if="index < jwpubImages.length - 1"
-              class="bg-accent-200 q-mt-md"
-            />
-          </div>
+            <div class="col">
+              <div class="row">{{ path.basename(jwpubImage.FilePath) }}</div>
+            </div>
+          </q-item>
+          <q-separator
+            v-if="index < jwpubImages.length - 1"
+            class="bg-accent-200 q-mt-md"
+          />
         </template>
         <q-inner-loading
           :showing="!!jwpubImportFilePath && !jwpubImages.length"
         />
       </div>
-      <div class="row justify-end">
+      <div class="row q-px-md q-py-md col-shrink full-width justify-end">
         <q-btn
           color="negative"
           flat
