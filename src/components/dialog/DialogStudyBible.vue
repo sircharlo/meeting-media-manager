@@ -1,11 +1,18 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="custom-scroll items-center q-pb-lg q-px-sm q-gutter-y-lg bg-secondary-contrast large-overlay"
+      class="bg-secondary-contrast column fit-snugly large-overlay q-px-none"
     >
-      <div class="text-h6 row q-px-md">{{ $t('add-media-study-bible') }}</div>
-      <div class="row q-px-md">{{ $t('add-media-study-bible-explain') }}</div>
-      <div v-if="bibleBook" class="text-h6 row q-px-md">
+      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
+        {{ $t('add-media-study-bible') }}
+      </div>
+      <div class="col-shrink full-width q-px-md q-py-md">
+        {{ $t('add-media-study-bible-explain') }}
+      </div>
+      <div
+        v-if="bibleBook"
+        class="text-h6 col-shrink full-width q-px-md q-py-md"
+      >
         {{ $t('media-gallery') }} -
         {{
           localeBibleBooks[bibleBook]?.standardName ||
@@ -14,11 +21,11 @@
       </div>
       <div
         v-if="!!(loadingProgress < 1 && Object.keys(bibleBooks).length === 0)"
-        class="text-center row items-center justify-center q-px-md"
+        class="col-shrink full-width q-px-md q-pb-md row justify-center"
       >
         <q-spinner color="primary" size="md" />
       </div>
-      <div class="row custom-scroll" style="max-height: 40vh">
+      <div class="q-px-md overflow-auto col full-width flex items-start">
         <template v-if="bibleBookChapter">
           <template
             v-for="bibleBookChapterVerseId in bibleBookChapterVerseIds
@@ -199,7 +206,7 @@
           </template>
         </div>
       </div>
-      <div class="row items-center q-px-md">
+      <div class="row q-px-md q-py-md col-shrink full-width">
         <div class="col"></div>
         <div class="col text-right q-gutter-x-sm">
           <q-btn
