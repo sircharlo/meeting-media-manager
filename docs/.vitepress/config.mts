@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress';
 import messages, { localeOptions, enabled } from './../locales';
 import { mapLocales, mapSearch } from './../utils/locales';
 import { CANONICAL_URL, GH_REPO, GH_REPO_URL } from './../utils/constants';
-import { camelToKebabCase } from './../utils/general';
+import { camelToKebabCase, kebabToCamelCase } from './../utils/general';
 import type { LanguageValue } from '../../src/constants/locales';
 
 const base = `/${GH_REPO}/`;
@@ -103,7 +103,8 @@ export default defineConfig({
       .replace(/index\.md$/, '')
       .replace(/\.md$/, '');
 
-    const pageLang = pageData.relativePath.split('/')[0] as LanguageValue;
+    const pageLang = pageData.relativePath.split('/')[0];
+    const messageLocale = kebabToCamelCase(pageLang) as LanguageValue;
     const isEnglish = pageData.relativePath.split('/').length === 1;
 
     pageData.frontmatter.head ??= [];
@@ -118,7 +119,7 @@ export default defineConfig({
             pageData.frontmatter.layout === 'home'
               ? isEnglish
                 ? messages['en'].title
-                : messages[pageLang].title
+                : messages[messageLocale].title
               : `${pageData.title} | M³ docs`,
         },
       ],
