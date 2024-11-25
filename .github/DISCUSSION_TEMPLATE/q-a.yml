@@ -7,7 +7,7 @@ body:
         ### Please read the following:
         Thanks for taking the time to fill out this question form!
 
-        Before submitting a question, please make sure you have read the <a href="https://sircharlo.github.io/meeting-media-manager/" target="_blank">documentation website</a> and searched through the existing <a href="https://github.com/sircharlo/meeting-media-manager/issues" target="_blank">issues</a> and <a href="https://github.com/sircharlo/meeting-media-manager/discussions" target="_blank">discussions</a> to make sure your question is not a duplicate.
+        Before submitting a question, please make sure you have read the [documentation website](https://sircharlo.github.io/meeting-media-manager/) and searched through the existing [issues](https://github.com/sircharlo/meeting-media-manager/issues) and [discussions](https://github.com/sircharlo/meeting-media-manager/discussions) to make sure your question is not a duplicate.
 
         If your question is still valid, please change the title of this discussion to reflect your question and fill out the fields below.
   - type: textarea

@@ -12,7 +12,7 @@ body:
     attributes:
       label: What language do you speak?
       description: |
-        Try to include the native name, English name, JW code and lang code. <a href="https://www.jw.org/en/languages" target="_blank">See full list of JW languages</a>.
+        Try to include the native name, English name, JW code and lang code. [See full list of JW languages](https://www.jw.org/en/languages).
         For example: Nederlands/Dutch - O/nl
       placeholder: I would like to help translate M³ into ...
       value: I would like to help translate M³ into ...
