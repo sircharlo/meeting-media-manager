@@ -1,14 +1,20 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="items-center q-pb-lg q-px-sm q-gutter-y-lg bg-secondary-contrast"
+      class="bg-secondary-contrast column fit-snugly medium-overlay q-px-none"
     >
-      <div class="text-h6 row q-px-md">{{ $t('import-media-from-s34mp') }}</div>
-      <div class="row q-px-md">
+      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
+        {{ $t('import-media-from-s34mp') }}
+      </div>
+      <div class="col-shrink full-width q-px-md q-pt-md">
         {{ $t('select-s34mp-to-add-public-talk-media') }}
       </div>
-      <div class="row items-center q-gutter-x-md q-px-md">
-        <q-icon name="mmm-file" size="md" />
+      <div
+        class="col-shrink full-width q-px-md q-pt-md row items-center q-gutter-x-sm"
+      >
+        <div class="col-shrink">
+          <q-icon name="mmm-file" size="md" />
+        </div>
         <div class="col text-subtitle2">
           {{
             s34mpDb
@@ -30,7 +36,7 @@
         </q-btn>
       </div>
       <template v-if="s34mpDb">
-        <div class="row q-px-md">
+        <div class="col-shrink full-width q-px-md q-pt-md">
           <q-input
             v-model="filter"
             class="col"
@@ -46,7 +52,7 @@
             </template>
           </q-input>
         </div>
-        <div class="row custom-scroll" style="max-height: 30vh">
+        <div class="col full-width q-px-md q-pt-md overflow-auto">
           <template v-for="publicTalk in filteredPublicTalks" :key="publicTalk">
             <q-item
               v-ripple
@@ -59,7 +65,7 @@
           </template>
         </div>
       </template>
-      <div class="row justify-end q-px-md">
+      <div class="row q-px-md q-py-md col-shrink full-width justify-end">
         <q-btn
           color="negative"
           flat
