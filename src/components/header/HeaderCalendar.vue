@@ -35,7 +35,7 @@
       {{ $t('extra-media') }}
     </q-tooltip>
     <q-menu ref="importMenu" :offset="[0, 11]">
-      <q-list class="list-primary" style="min-width: 100px">
+      <q-list class="list-primary">
         <q-item-label header>{{ $t('from-jw-org') }}</q-item-label>
         <q-item
           v-close-popup

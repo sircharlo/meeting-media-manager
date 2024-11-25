@@ -1,5 +1,5 @@
 <template>
-  <div class="no-scroll fitSnugly">
+  <div class="no-scroll fit-snugly">
     <q-layout class="bg-black text-white" style="align-content: center">
       <!-- This is where pages get injected -->
       <router-view />

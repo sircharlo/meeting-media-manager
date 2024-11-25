@@ -78,13 +78,6 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
 
         currentScene.value = current;
 
-        if (
-          current !== currentSettings.value?.obsMediaScene &&
-          current !== currentSettings.value?.obsImageScene
-        ) {
-          previousScene.value = current;
-        }
-
         [
           currentSettings.value?.obsCameraScene,
           currentSettings.value?.obsMediaScene,

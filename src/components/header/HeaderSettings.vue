@@ -13,14 +13,11 @@
       {{ $t('tools') }}
     </q-tooltip>
     <q-menu
+      v-model="moreOptionsMenuActive"
       :offset="[0, 11]"
-      @before-hide="moreOptionsMenuActive = false"
-      @show="
-        moreOptionsMenuActive = true;
-        calculateCacheSize();
-      "
+      @show="calculateCacheSize()"
     >
-      <q-list style="min-width: 100px">
+      <q-list>
         <template v-if="invalidSettings()">
           <q-item-label header>{{ $t('invalid-settings') }}</q-item-label>
           <q-item

@@ -1,9 +1,9 @@
 <template>
   <q-dialog v-model="open" persistent>
     <div
-      class="items-center q-pb-lg q-px-lg q-gutter-y-lg bg-secondary-contrast"
+      class="bg-secondary-contrast column fit-snugly medium-overlay q-px-none"
     >
-      <div class="text-h6 row">
+      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg q-pb-md">
         {{
           $t(
             jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)
@@ -13,35 +13,28 @@
         }}
       </div>
       <template v-if="jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)">
-        <div class="row">
-          <q-scroll-area
-            :bar-style="barStyle"
-            style="height: 40vh; width: -webkit-fill-available"
-            :thumb-style="thumbStyle"
-          >
-            <q-list class="full-width">
-              <q-item
-                v-for="jwpubImportDocument in jwpubDocuments"
-                :key="jwpubImportDocument.DocumentId"
-                clickable
-                @click="
-                  jwpubLoading = true;
-                  addJwpubDocumentMediaToFiles(
-                    jwpubDb,
-                    jwpubImportDocument,
-                  ).then(resetModal);
-                "
-              >
-                <q-item-section class="no-wrap">
-                  {{ jwpubImportDocument.Title }}
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-scroll-area>
+        <div class="row q-px-md col full-width overflow-auto">
+          <q-list class="full-width">
+            <q-item
+              v-for="jwpubImportDocument in jwpubDocuments"
+              :key="jwpubImportDocument.DocumentId"
+              clickable
+              @click="
+                jwpubLoading = true;
+                addJwpubDocumentMediaToFiles(jwpubDb, jwpubImportDocument).then(
+                  resetModal,
+                );
+              "
+            >
+              <q-item-section class="no-wrap">
+                {{ jwpubImportDocument.Title }}
+              </q-item-section>
+            </q-item>
+          </q-list>
         </div>
       </template>
       <template v-else>
-        <div class="row">
+        <div class="col-shrink full-width q-px-md">
           <p>{{ $t('local-media-explain-1') }}</p>
           <a>
             {{ $t('local-media-explain-2') }}
@@ -65,7 +58,7 @@
             </q-tooltip>
           </a>
         </div>
-        <div class="row">
+        <div class="col full-width q-px-md q-pt-md">
           <div
             ref="dropArea"
             class="col rounded-borders dashed-border items-center justify-center flex"
@@ -73,8 +66,8 @@
               'cursor-pointer': !totalFiles && !(!!jwpubDb || jwpubLoading),
               'bg-accent-100':
                 hovering && !totalFiles && !(!!jwpubDb || jwpubLoading),
+              'full-height': true,
             }"
-            style="height: 20vh"
             @click="
               () => {
                 if (!totalFiles && !(!!jwpubDb || jwpubLoading)) {
@@ -109,7 +102,7 @@
           </div>
         </div>
       </template>
-      <div class="row justify-end">
+      <div class="row q-px-md q-py-md col-shrink full-width justify-end">
         <q-btn
           v-close-popup
           color="negative"
@@ -126,7 +119,6 @@
 import type { DocumentItem, MediaSection } from 'src/types';
 
 import { useElementHover } from '@vueuse/core';
-import { useScrollbar } from 'src/composables/useScrollbar';
 import {
   AUDIO_EXTENSIONS,
   IMG_EXTENSIONS,
@@ -138,7 +130,6 @@ import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { computed, ref, useTemplateRef } from 'vue';
 
 const { openFileDialog } = window.electronApi;
-const { barStyle, thumbStyle } = useScrollbar();
 
 const props = defineProps<{
   currentFile: number;
