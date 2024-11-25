@@ -82,6 +82,15 @@
           </q-item-section>
         </q-item>
         <q-item-label header>{{ $t('from-local-computer') }}</q-item-label>
+        <q-item v-close-popup clickable @click="publicTalkMediaPopup = true">
+          <q-item-section avatar>
+            <q-icon color="accent-400" name="mmm-lectern" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('public-talk-media') }}</q-item-label>
+            <q-item-label caption>{{ $t('media-from-s34mp') }}</q-item-label>
+          </q-item-section>
+        </q-item>
         <template
           v-for="[icon, name] in [
             ['mmm-local-media', 'images-videos'],
@@ -100,15 +109,6 @@
             </q-item-section>
           </q-item>
         </template>
-        <q-item v-close-popup clickable @click="publicTalkMediaPopup = true">
-          <q-item-section avatar>
-            <q-icon color="accent-400" name="mmm-lectern" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ $t('public-talk-media') }}</q-item-label>
-            <q-item-label caption>{{ $t('media-from-s34mp') }}</q-item-label>
-          </q-item-section>
-        </q-item>
         <template v-if="additionalMediaForDay || hiddenMediaForDay">
           <q-item-label header>{{ $t('dangerZone') }}</q-item-label>
           <q-item
