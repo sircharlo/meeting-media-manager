@@ -2,20 +2,26 @@
   <q-menu
     v-model="open"
     anchor="top middle"
-    class="custom-scroll"
     no-parent-event
     :offset="[0, 8]"
     self="bottom middle"
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <q-card flat style="min-width: 50vw">
-      <q-card-section>
-        <div class="card-title">
-          {{ $t('scene-selection') }}
-        </div>
-        <div class="row items-center q-col-gutter-sm">
-          <template v-for="scene in sceneList" :key="scene">
+    <div
+      :class="{
+        column: true,
+        'action-popup': true,
+        'fit-snugly': sceneList.length > 28, // hacky for now
+        'q-py-md': true,
+      }"
+    >
+      <div class="card-title col-shrink full-width q-px-md q-mb-none">
+        {{ $t('scene-selection') }}
+      </div>
+      <div class="overflow-auto col full-width q-px-md">
+        <div class="row q-col-gutter-xs">
+          <template v-for="scene in sceneList.concat([])" :key="scene">
             <div
               :class="
                 'col-' +
@@ -78,8 +84,8 @@
             </div>
           </template>
         </div>
-      </q-card-section>
-    </q-card>
+      </div>
+    </div>
   </q-menu>
 </template>
 
@@ -168,7 +174,7 @@ const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
             sceneName: newProgramScene,
           }),
         });
-        open.value = false;
+        // open.value = false;
       } else {
         notifySceneNotFound();
       }
