@@ -14,5 +14,6 @@ jobs:
         if: github.event.discussion.category.name == 'Translations' && startsWith(github.event.discussion.title, 'New translation in')
         uses: wesleyscholl/discussion-auto-responder@v1.0.8
         with:
+          delay_milliseconds: 0
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           comment_body: 'Thank you for your willing spirit! Please [sign in to Crowdin](https://crowdin.com/project/meeting-media-manager) using your GitHub account and request to join our translation project. Let us know in this discussion when you have done so, or if you have any questions.'
