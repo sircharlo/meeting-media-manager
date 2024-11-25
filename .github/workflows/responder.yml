@@ -2,7 +2,7 @@ name: Auto responder
 
 on:
   discussion:
-    types: [created, edited]
+    types: [created]
 
 jobs:
   respond-to-discussions:
