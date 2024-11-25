@@ -53,7 +53,7 @@
   "coWeek": "Naslednji načrtovani obisk okrajnega nadzornika",
   "coWeek-explain": "Če ta datum vpisan, bo M³ shod sredi tedna samodejno prestavil na torek v tem tednu. Prav tako bo preskočil multimedijsko vsebino za Občinsko preučevanje Bibije ter sklepne pesmi za shod med tednom in ob koncu tedna.",
   "collapse-sidebar": "Strni stransko vrstico",
-  "complete": "Dokončaj",
+  "complete": "Končano",
   "configure-a-scene-in-obs-studio-to-capture-the-media-window": "V programu OBS Studio nastavi prizor za zajem multimedijskega okna.",
   "configure-a-scene-in-obs-studio-to-show-a-stage-wide-shot": "V programu OBS Studio nastavi prizor za prikaz širokega posnetka odra.",
   "configure-the-websocket-plugin-in-obs-studio-the-virtual-camera-plugin-is-also-required-so-make-sure-its-installed-and-configured-as-well": "V programu OBS Studio je treba nastaviti vtičnik Websocket. Potreben je tudi vtičnik Virtual Camera, zato je treba tudi tega namestiti in nastaviti.",

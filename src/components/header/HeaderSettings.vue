@@ -29,7 +29,7 @@
           >
             <q-item-section avatar>
               <q-icon
-                :color="onlyShowInvalidSettings ? 'primary' : 'negative'"
+                :color="onlyShowInvalidSettings ? 'accent-400' : 'negative'"
                 :name="onlyShowInvalidSettings ? 'mmm-menu' : 'mmm-error'"
               />
             </q-item-section>
@@ -52,7 +52,7 @@
           @click="confirmDeleteCacheFiles('smart')"
         >
           <q-item-section avatar>
-            <q-icon color="primary" name="mmm-delete-smart" />
+            <q-icon color="accent-400" name="mmm-delete-smart" />
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ $t('remove-unused-cache') }} </q-item-label>
@@ -66,7 +66,7 @@
           @click="confirmDeleteCacheFiles('all')"
         >
           <q-item-section avatar>
-            <q-icon color="primary" name="mmm-delete-all" />
+            <q-icon color="accent-400" name="mmm-delete-all" />
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ $t('remove-all-cache') }} </q-item-label>

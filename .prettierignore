@@ -43,12 +43,6 @@ yarn-error.log*
 # Yarn files
 .pnp.*
 .yarn/*
-!.yarn/patches
-!.yarn/plugins
-!.yarn/releases
-!.yarn/sdks
-!.yarn/versions
-.yarn/install-state.gz
 
 # VitePress
 docs/.vitepress/dist

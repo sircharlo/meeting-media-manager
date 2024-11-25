@@ -9,7 +9,7 @@ body:
         ### Please read the following:
         Thanks for taking the time to fill out this feature request!
 
-        Before submitting a feature request, please make sure you have read the [documentation website](https://sircharlo.github.io/meeting-media-manager/) and searched through the existing [issues](https://github.com/sircharlo/meeting-media-manager/issues) and [discussions](https://github.com/sircharlo/meeting-media-manager/discussions) to make sure your feature request is not a duplicate.
+        Before submitting a feature request, please make sure you have read the [documentation website](https://sircharlo.github.io/meeting-media-manager/) and searched through the existing [issues](https://github.com/sircharlo/meeting-media-manager/issues?q=is%3Aissue+label%3Aenhancement) and [discussions](https://github.com/sircharlo/meeting-media-manager/discussions?discussions_q=label%3Aenhancement) to make sure your feature request is not a duplicate.
 
         If your feature request is still valid, please change the title of this issue to reflect your feature request and fill out the fields below.
   - type: textarea

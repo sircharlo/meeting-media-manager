@@ -1,4 +1,5 @@
 name: Cleanup cache
+
 on:
   push:
     paths:

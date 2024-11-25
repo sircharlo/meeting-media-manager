@@ -20,15 +20,15 @@ M³ ni zana ya hali ya juu kwa wale wanaosimamia midia ya mkutano, ikiandaa utum
 
 ### Faida muhimu {#key-benefits}
 
-- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
+- **Uwasilishaji wa media bila kuchoka**: Kuwasilisha media kwa hali ya juu - fungua M³ na kila kitu kitafanya kazi. Hakuna kusanidi kugumu au hatua za ziada.
 
-- **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
+- **Unaweza kutumika na makutaniko mengi**: Dhibiti mipangilio ya makutaniko au vikundi kadhaa kwa urahisi ndani ya programu moja.
 
-- **Advanced features**: Easily add extra media, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Vipengele vya hali ya juu**: Ongeza midia ya ziada, na pia shiriki kiotomatiki vyote vinavyoendelea katika Jumba La Ufalme na walio kwenye Zoom.
 
-- **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
+- **Utendaji ulioboreshwa kwa mifumo kadhaa**: Furahia matumizi laini na yenye kutegemeka kwenye Windows, macOS na Linux, hata kwenye mifumo ya zamani au kompyuta zilizo na rasilimali chache.
 
-- **Reliable and stable**: Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
+- **Inategemewa na thabiti**: Imeundwa ili kufanya kazi vyema unapoihitaji zaidi. Je, umekabili tatizo? Tafadhali ripoti, nayo itashughulikiwa ipasavyo.
 
 ## M³ inaweza kukusaidia aje? {#what-can-m3-do}
 
@@ -36,16 +36,16 @@ Kwa ufupi, M³ hukuruhusu kupakua, kusawazisha, kushiriki na kuwasilisha midia k
 
 Kwa **mikutano ya zoom na ana kwa ana** au **ana kwa ana pekee**, hali iliyojumuishwa ya uwasilishaji wa media ina vipengele vyote vinavyohitajika ili kurahisisha kazi ya kushiriki midia na kutaniko, ikiwamo:
 
-- Media thumbnails with the ability to zoom and pan, as well as set custom start and end times for media
+- Vijipicha vya media vilivyo na uwezo wa kukuzwa na kugeuzwa, na pia kuweka nyakati maalum za kuchezwa na kusitishwa kwa midia
 - Vitufe vya kusitisha/kucheza/kusimamisha vilivyo rahisi kutumia ili kudhibiti uchezaji wa faili za midia
 - Uchezaji rahisi wa muziki wa usuli, na kusimama kiotomatiki kabla ya kuanza kwa mikutano iliyoratibiwa
 - Utambuzi na usimamizi wa kiotomatiki wa scrini ya kando
-- OBS Studio integration with automatic scene switching during media presentation
-- Presenting the official website of Jehovah's Witnesses website on an external monitor
-- Import JWPUB files, JWLPLAYLIST files, videos from the official website of Jehovah's Witnesses, and media for public talks from the S-34 file in a few clicks.
-- Custom videos, pictures, audio files and even PDF files can be easily imported too!
+- Kuwezeshwa kwa utumiaji wa OBS Studio pamoja na kubadilisha scene wakati wa kuwasilisha midia
+- Kuwasilisha tovuti rasmi ya Mashahidi wa Yehova kwenye runinga nyingine
+- Ingiza faili za JWPUB, faili za JWLPLAYLIST, video kutoka tovuti rasmi ya Mashahidi wa Yehova, na midia kwa ajili ya hotuba za watu wote kutoka kwa faili ya S-34 kwa kibofyo kimoja.
+- Video maalum, picha, faili za sauti na hata faili za PDF zinaweza kuingizwa kwa urahisi pia!
 
-**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
+**Jaribu M³ leo na ujionee vile itakavyofanya kazi! Kuwasilisha midia kwenye mikutano ya kutaniko hakujawahi kuwa rahisi hivi.**
 
 ![M³ preview](./../assets/m3-preview.png)
 

@@ -46,6 +46,25 @@ const mediaWindowIsFullScreen = (parentScreenBounds: Electron.Rectangle) =>
   boundsAreSame(mediaWindow?.getBounds(), parentScreenBounds) ||
   mediaWindow?.isFullScreen();
 
+const mediaWindowIsOffscreen = (parentScreenBounds: Electron.Rectangle) => {
+  const mediaWindowBounds = mediaWindow?.getBounds();
+  if (!mediaWindowBounds) return true;
+
+  const visibleWidth =
+    Math.min(
+      mediaWindowBounds.x + mediaWindowBounds.width,
+      parentScreenBounds.x + parentScreenBounds.width,
+    ) - Math.max(mediaWindowBounds.x, parentScreenBounds.x);
+
+  const visibleHeight =
+    Math.min(
+      mediaWindowBounds.y + mediaWindowBounds.height,
+      parentScreenBounds.y + parentScreenBounds.height,
+    ) - Math.max(mediaWindowBounds.y, parentScreenBounds.y);
+
+  return visibleWidth <= 100 || visibleHeight <= 100;
+};
+
 export const moveMediaWindow = (
   displayNr?: number,
   fullscreen?: boolean,
@@ -175,7 +194,8 @@ const setWindowPosition = (
       };
       if (
         displayNr !== currentDisplayNr ||
-        mediaWindowIsFullScreen(targetScreenBounds)
+        mediaWindowIsFullScreen(targetScreenBounds) ||
+        mediaWindowIsOffscreen(targetScreenBounds)
       ) {
         handleMacFullScreenTransition(() => {
           setWindowBounds(newBounds, false);

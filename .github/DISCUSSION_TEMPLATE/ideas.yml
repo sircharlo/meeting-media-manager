@@ -7,7 +7,7 @@ body:
         ### Please read the following:
         Thanks for taking the time to fill out this idea form!
 
-        Before submitting an idea, please make sure you have read the [documentation website](https://sircharlo.github.io/meeting-media-manager/) and searched through the existing [issues](https://github.com/sircharlo/meeting-media-manager/issues) and [discussions](https://github.com/sircharlo/meeting-media-manager/discussions) to make sure your idea is not a duplicate.
+        Before submitting an idea, please make sure you have read the [documentation website](https://sircharlo.github.io/meeting-media-manager/) and searched through the existing [issues](https://github.com/sircharlo/meeting-media-manager/issues?q=is%3Aissue+label%3Aenhancement) and [discussions](https://github.com/sircharlo/meeting-media-manager/discussions/categories/ideas?discussions_q=) to make sure your idea is not a duplicate.
 
         If your idea is still valid, please change the title of this discussion to reflect your idea and fill out the fields below.
   - type: textarea

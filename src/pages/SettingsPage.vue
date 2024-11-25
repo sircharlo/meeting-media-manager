@@ -16,7 +16,7 @@
             !invalidSettingsLength ||
             !onlyShowInvalidSettings ||
             settingDefinitionEntries
-              .filter(([settingId, item]) => item.group === groupId)
+              .filter(([, item]) => item.group === groupId)
               .map(([settingId, _]) => settingId)
               .some((settingId) => invalidSettings.includes(settingId))
           "
@@ -43,7 +43,7 @@
                         ? item.unless.every((dep) => !currentSettings?.[dep])
                         : !currentSettings?.[item.unless])),
                 )
-                .filter(([settingId, item]) => item.group === groupId)"
+                .filter(([, item]) => item.group === groupId)"
               :key="settingId"
             >
               <template
