@@ -16,4 +16,4 @@ jobs:
         with:
           delay_milliseconds: 0
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          comment_body: 'Thank you for your willing spirit! Please [sign in to Crowdin](https://crowdin.com/project/meeting-media-manager) using your GitHub account and request to join our translation project. Let us know in this discussion when you have done so, or if you have any questions.'
+          comment_body: 'Thank you for your willing spirit! Please [sign in to Crowdin](https://crowdin.com/project/meeting-media-manager) using your GitHub account and request to join our translation project. Let us know in this discussion when you have done so, or if you have any questions. You can find more information in our [contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md#help-translate-this-application).'
