@@ -44,7 +44,7 @@
           @click="chooseSong = true"
         >
           <q-item-section avatar>
-            <q-icon color="primary" name="mmm-music-note" />
+            <q-icon color="accent-400" name="mmm-music-note" />
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ $t('song') }}</q-item-label>
@@ -58,22 +58,13 @@
           @click="remoteVideoPopup = true"
         >
           <q-item-section avatar>
-            <q-icon color="primary" name="mmm-movie" />
+            <q-icon color="accent-400" name="mmm-movie" />
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ $t('video') }}</q-item-label>
             <q-item-label caption>
               {{ $t('latest-videos-from-jw-org') }}
             </q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item v-close-popup clickable @click="publicTalkMediaPopup = true">
-          <q-item-section avatar>
-            <q-icon color="primary" name="mmm-lectern" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ $t('public-talk-media') }}</q-item-label>
-            <q-item-label caption>{{ $t('media-from-s34mp') }}</q-item-label>
           </q-item-section>
         </q-item>
         <q-item
@@ -83,7 +74,7 @@
           @click="studyBiblePopup = true"
         >
           <q-item-section avatar>
-            <q-icon color="primary" name="mmm-bible" />
+            <q-icon color="accent-400" name="mmm-bible" />
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ $t('study-bible') }}</q-item-label>
@@ -101,7 +92,7 @@
         >
           <q-item v-close-popup clickable @click="openDragAndDropper">
             <q-item-section avatar>
-              <q-icon color="primary" :name="icon" />
+              <q-icon color="accent-400" :name="icon" />
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t(name) }}</q-item-label>
@@ -109,6 +100,15 @@
             </q-item-section>
           </q-item>
         </template>
+        <q-item v-close-popup clickable @click="publicTalkMediaPopup = true">
+          <q-item-section avatar>
+            <q-icon color="accent-400" name="mmm-lectern" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('public-talk-media') }}</q-item-label>
+            <q-item-label caption>{{ $t('media-from-s34mp') }}</q-item-label>
+          </q-item-section>
+        </q-item>
         <template v-if="additionalMediaForDay || hiddenMediaForDay">
           <q-item-label header>{{ $t('dangerZone') }}</q-item-label>
           <q-item
@@ -118,7 +118,7 @@
             @click="showCurrentDayHiddenMedia()"
           >
             <q-item-section avatar>
-              <q-icon color="primary" name="mmm-eye" />
+              <q-icon color="accent-400" name="mmm-eye" />
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t('show-hidden-media') }}</q-item-label>
@@ -195,10 +195,6 @@
         :navigation-min-year-month="minDate()"
         :options="dateOptions"
       />
-      <!-- <div class="row items-center justify-end q-gutter-sm">
-          <q-btn v-close-popup :label="$t('close')" color="primary" outline />
-        </div> -->
-      <!-- </q-date> -->
     </q-popup-proxy>
   </q-btn>
 </template>

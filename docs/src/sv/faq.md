@@ -20,15 +20,15 @@ Källkoden för denna app är tillgänglig för alla att undersöka och verifier
 
 ## :radioactive: Hur rapporterar jag ett problem? {#how-do-i-report-an-issue}
 
-Vänligen skicka in en [issue](https://github.com/sircharlo/meeting-media-manager/issues) på det officiella GitHub-repository.
+Vänligen skicka in en [issue](https://github.com/sircharlo/meeting-media-manager/issues) på det officiella GitHub-repositoriet.
 
 ## :new: Hur kan jag önska en ny funktion eller förbättring? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Vänligen öppna en [discussion](https://github.com/sircharlo/meeting-media-manager/diskussioner) på det officiella GitHub-repository.
+Vänligen öppna en [discussion](https://github.com/sircharlo/meeting-media-manager/diskussioner) på det officiella GitHub-repositoriet.
 
 ## :handshake: Hur kan jag bidra med kodning? {#how-can-i-contribute-some-code}
 
-Se [contributing guide] (https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) på det officiella GitHub-repository.
+[Se hur du kan bidra på] (https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) på det officiella GitHub-repositoriet.
 
 ## :x: Kan jag donera till projektet? {#can-i-make-a-donation-to-the-project}
 

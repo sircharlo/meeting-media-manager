@@ -45,6 +45,7 @@ export default store((/* { ssrContext } */) => {
 
   pinia.use(
     createSentryPiniaPlugin({
+      attachPiniaState: false, // Until https://github.com/getsentry/sentry-javascript/issues/14441 is fixed
       stateTransformer: (state) => {
         // Transform the state to remove unneeded information that only takes up space
         const transformedState = {
