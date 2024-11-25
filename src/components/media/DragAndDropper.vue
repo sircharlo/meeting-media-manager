@@ -3,7 +3,7 @@
     <div
       class="bg-secondary-contrast column fit-snugly medium-overlay q-px-none"
     >
-      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
+      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg q-pb-md">
         {{
           $t(
             jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)
@@ -13,7 +13,7 @@
         }}
       </div>
       <template v-if="jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)">
-        <div class="row" style="max-height: 40vh">
+        <div class="row q-px-md col full-width overflow-auto">
           <q-list class="full-width">
             <q-item
               v-for="jwpubImportDocument in jwpubDocuments"
@@ -34,7 +34,7 @@
         </div>
       </template>
       <template v-else>
-        <div class="col-shrink full-width q-px-md q-pt-md">
+        <div class="col-shrink full-width q-px-md">
           <p>{{ $t('local-media-explain-1') }}</p>
           <a>
             {{ $t('local-media-explain-2') }}
