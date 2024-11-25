@@ -43,6 +43,7 @@ import {
   getPublicationDirectory,
   getSubtitlesUrl,
   getThumbnailUrl,
+  trimFilepathAsNeeded,
 } from 'src/helpers/fs';
 import {
   convertImageIfNeeded,
@@ -236,15 +237,19 @@ const exportDayToFolder = async (targetDate?: Date) => {
       const sourceFilePath = window.electronApi.fileUrlToPath(m.fileUrl);
       if (!sourceFilePath || !(await fs.exists(sourceFilePath))) continue;
 
-      const fileBaseName =
-        (i + 1).toString().padStart(dayMediaLength > 99 ? 3 : 2, '0') +
-        ' ' +
-        (m.title
-          ? sanitize(m.title.replace(path.extname(m.fileUrl), '')) +
-            path.extname(m.fileUrl)
-          : path.basename(m.fileUrl));
+      const destFilePath = trimFilepathAsNeeded(
+        path.join(
+          destFolder,
 
-      const destFilePath = path.join(destFolder, fileBaseName);
+          (i + 1).toString().padStart(dayMediaLength > 99 ? 3 : 2, '0') +
+            ' ' +
+            (m.title
+              ? sanitize(m.title.replace(path.extname(m.fileUrl), '')) +
+                path.extname(m.fileUrl)
+              : path.basename(m.fileUrl)),
+        ),
+      );
+      const fileBaseName = path.basename(destFilePath);
 
       // Check if destination file exists and matches size
       if (await fs.exists(destFilePath)) {

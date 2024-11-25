@@ -503,6 +503,7 @@ import {
   getPublicationDirectory,
   getTempDirectory,
   getThumbnailUrl,
+  trimFilepathAsNeeded,
 } from 'src/helpers/fs';
 import { sorter } from 'src/helpers/general';
 import {
@@ -1269,27 +1270,7 @@ const copyToDatedAdditionalMedia = async (
   addToAdditionMediaMap?: boolean,
 ) => {
   const datedAdditionalMediaDir = await getDatedAdditionalMediaDirectory();
-  const trimFilepathAsNeeded = (filepath: string) => {
-    let filepathSize = new Blob([filepath]).size;
-    while (filepathSize > 230) {
-      const uniqueId =
-        '_' +
-        Math.floor(Math.random() * Date.now())
-          .toString(16)
-          .slice(0, 4);
-      const overBy = filepathSize - 230 + uniqueId.length;
-      const baseName = path
-        .basename(filepath)
-        .slice(0, -path.extname(filepath).length);
-      const newBaseName = baseName.slice(0, -overBy) + uniqueId;
-      filepath = path.join(
-        datedAdditionalMediaDir,
-        newBaseName + path.extname(filepath),
-      );
-      filepathSize = new Blob([filepath]).size;
-    }
-    return filepath;
-  };
+
   try {
     if (!filepathToCopy || !(await fs.exists(filepathToCopy))) return '';
     let datedAdditionalMediaPath = path.join(
