@@ -35,7 +35,7 @@
       {{ $t('extra-media') }}
     </q-tooltip>
     <q-menu ref="importMenu" :offset="[0, 11]">
-      <q-list style="min-width: 100px">
+      <q-list class="list-primary" style="min-width: 100px">
         <q-item-label header>{{ $t('from-jw-org') }}</q-item-label>
         <q-item
           v-close-popup
@@ -44,7 +44,7 @@
           @click="chooseSong = true"
         >
           <q-item-section avatar>
-            <q-icon color="accent-400" name="mmm-music-note" />
+            <q-icon color="primary" name="mmm-music-note" />
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ $t('song') }}</q-item-label>
@@ -58,7 +58,7 @@
           @click="remoteVideoPopup = true"
         >
           <q-item-section avatar>
-            <q-icon color="accent-400" name="mmm-movie" />
+            <q-icon color="primary" name="mmm-movie" />
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ $t('video') }}</q-item-label>
@@ -74,7 +74,7 @@
           @click="studyBiblePopup = true"
         >
           <q-item-section avatar>
-            <q-icon color="accent-400" name="mmm-bible" />
+            <q-icon color="primary" name="mmm-bible" />
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ $t('study-bible') }}</q-item-label>
@@ -84,7 +84,7 @@
         <q-item-label header>{{ $t('from-local-computer') }}</q-item-label>
         <q-item v-close-popup clickable @click="publicTalkMediaPopup = true">
           <q-item-section avatar>
-            <q-icon color="accent-400" name="mmm-lectern" />
+            <q-icon color="primary" name="mmm-lectern" />
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ $t('public-talk-media') }}</q-item-label>
@@ -101,7 +101,7 @@
         >
           <q-item v-close-popup clickable @click="openDragAndDropper">
             <q-item-section avatar>
-              <q-icon color="accent-400" :name="icon" />
+              <q-icon color="primary" :name="icon" />
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t(name) }}</q-item-label>
@@ -118,7 +118,7 @@
             @click="showCurrentDayHiddenMedia()"
           >
             <q-item-section avatar>
-              <q-icon color="accent-400" name="mmm-eye" />
+              <q-icon color="primary" name="mmm-eye" />
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ $t('show-hidden-media') }}</q-item-label>
