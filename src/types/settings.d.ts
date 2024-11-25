@@ -170,10 +170,10 @@ export interface SettingsValues {
   coWeek: null | string;
   darkMode: 'auto' | boolean;
   disableMediaFetching: boolean;
-  // enablePp: boolean;
   enableExtraCache: boolean;
   enableFolderWatcher: boolean;
   enableKeyboardShortcuts: boolean;
+  enableMediaAutoExport: boolean;
   // disableHardwareAcceleration: boolean;
   enableMediaDisplayButton: boolean;
   enableMusicButton: boolean;
@@ -189,6 +189,7 @@ export interface SettingsValues {
   langSubtitles: JwLangCode | null;
   localAppLang: LanguageValue;
   maxRes: MaxRes;
+  mediaAutoExportFolder: string;
   musicVolume: number;
   mwDay: null | string;
   mwStartTime: null | string;

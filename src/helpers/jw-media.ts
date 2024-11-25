@@ -32,6 +32,7 @@ import mepslangs from 'src/constants/mepslangs';
 import { fetchJson, fetchRaw } from 'src/helpers/api';
 import {
   dateFromString,
+  datesAreSame,
   getSpecificWeekday,
   isCoWeek,
   isMwMeetingDay,
@@ -42,6 +43,7 @@ import {
   getPublicationDirectory,
   getSubtitlesUrl,
   getThumbnailUrl,
+  trimFilepathAsNeeded,
 } from 'src/helpers/fs';
 import {
   convertImageIfNeeded,
@@ -162,6 +164,172 @@ const downloadFileIfNeeded = async ({
   return result;
 };
 
+export const addDayToExportQueue = async (targetDate?: Date) => {
+  folderExportQueue.add(() => exportDayToFolder(targetDate));
+};
+
+const exportDayToFolder = async (targetDate?: Date) => {
+  const currentStateStore = useCurrentStateStore();
+  const jwStore = useJwStore();
+
+  if (
+    !targetDate ||
+    !currentStateStore?.currentCongregation ||
+    !currentStateStore.currentSettings?.mediaAutoExportFolder
+  ) {
+    return;
+  }
+
+  const dateString = formatDate(targetDate, 'YYYY/MM/DD');
+  const dateFolderName = formatDate(targetDate, 'YYYY-MM-DD');
+
+  const dynamicMedia = [
+    ...(jwStore.lookupPeriod?.[currentStateStore.currentCongregation]?.find(
+      (d) => datesAreSame(d.date, targetDate),
+    )?.dynamicMedia || []),
+    ...(jwStore.additionalMediaMaps?.[currentStateStore.currentCongregation]?.[
+      dateString
+    ] || []),
+    ...(currentStateStore.watchFolderMedia[dateString] || []),
+  ];
+
+  const dynamicMediaFiltered = Array.from(
+    new Map(dynamicMedia.map((item) => [item.fileUrl, item])).values(),
+  )
+    .sort(
+      mapOrder(
+        jwStore.mediaSort[currentStateStore.currentCongregation]?.[
+          dateString
+        ] || [],
+      ),
+    )
+    .sort((a, b) => {
+      const sectionOrder: MediaSection[] = [
+        'additional',
+        'tgw',
+        'ayfm',
+        'lac',
+        'wt',
+        'circuitOverseer',
+      ];
+      return sectionOrder.indexOf(a.section) - sectionOrder.indexOf(b.section);
+    });
+
+  const dayMediaLength = dynamicMediaFiltered.length;
+
+  const destFolder = path.join(
+    currentStateStore.currentSettings.mediaAutoExportFolder,
+    dateFolderName,
+  );
+
+  try {
+    await fs.ensureDir(destFolder);
+  } catch (error) {
+    errorCatcher(error);
+    return; // Exit early if we can't create the folder
+  }
+
+  const expectedFiles = new Set<string>();
+
+  const sections: Partial<Record<MediaSection, number>> = {}; // Object to store dynamic section prefixes
+  for (let i = 0; i < dayMediaLength; i++) {
+    try {
+      const m = dynamicMediaFiltered[i];
+      const sourceFilePath = window.electronApi.fileUrlToPath(m.fileUrl);
+      if (!sourceFilePath || !(await fs.exists(sourceFilePath))) continue;
+
+      if (!sections[m.section]) {
+        sections[m.section] = Object.keys(sections).length + 1;
+      }
+      const sectionPrefix = (sections[m.section] || 0)
+        .toString()
+        .padStart(2, '0');
+
+      const destFilePath = trimFilepathAsNeeded(
+        path.join(
+          destFolder,
+          sectionPrefix +
+            '-' +
+            (i + 1).toString().padStart(dayMediaLength > 99 ? 3 : 2, '0') +
+            ' ' +
+            (m.title
+              ? sanitize(m.title.replace(path.extname(m.fileUrl), '')) +
+                path.extname(m.fileUrl)
+              : path.basename(m.fileUrl)),
+        ),
+      );
+      const fileBaseName = path.basename(destFilePath);
+
+      // Check if destination file exists and matches size
+      if (await fs.exists(destFilePath)) {
+        const sourceStats = await fs.stat(sourceFilePath);
+        const destStats = await fs.stat(destFilePath);
+
+        if (sourceStats.size === destStats.size) {
+          expectedFiles.add(fileBaseName); // Mark as expected without copying
+          continue;
+        }
+      }
+
+      // Copy file if it doesn't exist or size doesn't match
+      expectedFiles.add(fileBaseName);
+      await fs.copy(sourceFilePath, destFilePath);
+    } catch (error) {
+      errorCatcher(error);
+    }
+  }
+
+  try {
+    const filesInDestFolder = await fs.readdir(destFolder);
+    for (const file of filesInDestFolder) {
+      try {
+        if (!expectedFiles.has(file)) {
+          await fs.remove(path.join(destFolder, file));
+        }
+      } catch (error) {
+        errorCatcher(error);
+      }
+    }
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
+export const mapOrder =
+  (sortOrder: string | string[] | undefined) =>
+  (a: DynamicMediaObject, b: DynamicMediaObject) => {
+    try {
+      const key = 'uniqueId';
+      if (!sortOrder || sortOrder.length === 0) return 0;
+      return sortOrder.indexOf(a[key]) > sortOrder.indexOf(b[key]) ? 1 : -1;
+    } catch (e) {
+      errorCatcher(e);
+      return 0;
+    }
+  };
+
+const folderExportQueue = new PQueue({ concurrency: 1 });
+
+export const exportAllDays = async () => {
+  try {
+    const jwStore = useJwStore();
+    const currentStateStore = useCurrentStateStore();
+    if (
+      !currentStateStore.currentSettings?.enableMediaAutoExport ||
+      !currentStateStore.currentSettings?.mediaAutoExportFolder
+    )
+      return;
+    const daysToExport = (
+      jwStore.lookupPeriod[currentStateStore.currentCongregation] || []
+    ).map((d) => d.date);
+    await folderExportQueue.addAll(
+      daysToExport.map((day) => () => exportDayToFolder(day)),
+    );
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
 const fetchMedia = async () => {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -204,7 +372,6 @@ const fetchMedia = async () => {
       )
     ).filter((day) => !!day);
 
-    if (meetingsToFetch.length === 0) return;
     meetingsToFetch.forEach((day) => {
       day.error = false;
       day.complete = false;
@@ -253,6 +420,7 @@ const fetchMedia = async () => {
       }
     }
     await queue.onIdle();
+    exportAllDays();
   } catch (error) {
     errorCatcher(error);
   }
@@ -1579,6 +1747,15 @@ const downloadAdditionalRemoteVideo = async (
         size: bestItem.filesize,
         url: bestItemUrl,
       });
+      window.dispatchEvent(
+        new CustomEvent<{
+          targetDate: Date | undefined;
+        }>('remote-video-loaded', {
+          detail: {
+            targetDate: currentStateStore?.selectedDateObject?.date,
+          },
+        }),
+      );
     }
   } catch (e) {
     errorCatcher(e);
