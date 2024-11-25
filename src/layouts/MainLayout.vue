@@ -1,5 +1,5 @@
 <template>
-  <q-layout class="non-selectable column no-wrap fit-snugly" view="hHh LpR lFr">
+  <q-layout class="non-selectable column no-wrap" view="hHh LpR lFr">
     <!-- Top bar -->
     <HeaderBase />
 
@@ -7,7 +7,7 @@
     <NavDrawer v-model="miniState" />
 
     <!-- Main content -->
-    <q-page-container class="main-bg custom-scroll">
+    <q-page-container class="main-bg fit-snugly custom-scroll">
       <AnnouncementBanner />
       <router-view />
     </q-page-container>
