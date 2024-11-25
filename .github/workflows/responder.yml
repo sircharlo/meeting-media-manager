@@ -1,11 +1,11 @@
-name: Auto responder
+name: Auto Responder
 
 on:
   discussion:
     types: [created]
 
 jobs:
-  respond-to-discussions:
+  respond-to-discussion:
     permissions:
       discussions: write
     runs-on: ubuntu-latest
