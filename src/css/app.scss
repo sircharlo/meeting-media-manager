@@ -56,24 +56,20 @@
   padding-right: 10px;
 }
 
-.custom-scroll {
-  overflow: auto;
-}
-
-.custom-scroll::-webkit-scrollbar {
+::-webkit-scrollbar {
   width: 0.5em;
   border-radius: 1em;
 }
-.custom-scroll::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb {
   border-radius: 1em;
 }
 
-.custom-scroll::-webkit-scrollbar-track {
+::-webkit-scrollbar-track {
   background: transparent;
   border-radius: 1em;
 }
 
-.custom-scroll:hover::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-thumb:hover {
   cursor: grab;
 }
 
@@ -143,10 +139,11 @@ body.body--light {
     background-color: $secondary-contrast;
   }
 
-  .custom-scroll:hover::-webkit-scrollbar-track {
+  ::-webkit-scrollbar-track {
     background: $scrollbar-track;
   }
-  .custom-scroll:hover::-webkit-scrollbar-thumb {
+
+  ::-webkit-scrollbar-thumb {
     background: $scrollbar-thumb;
   }
 }
@@ -218,10 +215,12 @@ body.body--dark {
   & .q-item.selected-to-drag {
     background-color: $accent-300-dark;
   }
-  .custom-scroll::-webkit-scrollbar-track {
+
+  ::-webkit-scrollbar-track {
     background: $scrollbar-track-dark;
   }
-  .custom-scroll::-webkit-scrollbar-thumb {
+
+  ::-webkit-scrollbar-thumb {
     background: $scrollbar-thumb-dark;
   }
 }
@@ -505,12 +504,6 @@ body.body--dark {
   outline: none;
 }
 
-.q-dialog .q-card,
-.q-menu .q-card {
-  width: 400px;
-  max-height: 75vh;
-}
-
 .q-dialog .q-list,
 .q-menu .q-list {
   width: 300px;
@@ -527,6 +520,11 @@ body.body--dark {
 .q-menu .large-overlay {
   width: 80vw;
   max-width: 80vw;
+}
+
+.q-dialog .q-dialog__inner > div,
+.q-menu .q-menu__inner >  div {
+  max-height: 75vh;
 }
 
 .dashed-border {
@@ -623,4 +621,8 @@ a {
   top: 0;
   right: 0;
   background: transparent;
+}
+
+.grid-margin {
+  margin: 2px;
 }

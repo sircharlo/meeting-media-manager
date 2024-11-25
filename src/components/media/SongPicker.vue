@@ -1,11 +1,15 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="items-center q-pb-lg q-px-none q-gutter-y-lg bg-secondary-contrast medium-overlay"
+      class="bg-secondary-contrast column fit-snugly medium-overlay q-px-none medium-overlay"
     >
-      <div class="text-h6 row q-px-md">{{ $t('choose-a-song') }}</div>
-      <div class="row q-px-md">{{ $t('add-a-song') }}</div>
-      <div class="row q-px-md">
+      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
+        {{ $t('choose-a-song') }}
+      </div>
+      <div class="col-shrink full-width q-px-md q-pt-md">
+        {{ $t('add-a-song') }}
+      </div>
+      <div class="col-shrink full-width q-px-md q-py-md">
         <q-input
           v-model="filter"
           class="col"
@@ -25,16 +29,18 @@
       <q-slide-transition>
         <div
           v-if="loading && filteredSongs?.length === 0"
-          class="row items-center justify-center"
+          class="col-shrink q-pb-md full-width"
         >
-          <q-spinner color="primary" size="lg" />
+          <div class="row justify-center">
+            <q-spinner color="primary" size="lg" />
+          </div>
         </div>
       </q-slide-transition>
-      <div class="q-pl-md q-pr-scroll custom-scroll" style="max-height: 40vh">
+      <div class="q-px-md overflow-auto col full-width flex">
         <q-btn
           v-for="song in filteredSongs"
           :key="song.track"
-          class="rounded-borders-sm q-mr-xs q-mb-xs"
+          class="rounded-borders-sm col-shrink grid-margin"
           color="primary"
           :disable="loading"
           :label="song.track"
@@ -47,7 +53,7 @@
           </q-tooltip>
         </q-btn>
       </div>
-      <div class="row q-px-md">
+      <div class="row q-px-md q-py-md col-shrink full-width">
         <div class="col">
           <q-spinner
             v-if="loading || filteredSongs?.length === 0"
