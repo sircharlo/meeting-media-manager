@@ -170,7 +170,6 @@ export interface SettingsValues {
   coWeek: null | string;
   darkMode: 'auto' | boolean;
   disableMediaFetching: boolean;
-  // enablePp: boolean;
   enableExtraCache: boolean;
   enableFolderWatcher: boolean;
   enableKeyboardShortcuts: boolean;

@@ -1048,6 +1048,17 @@ useEventListener<
   );
 });
 
+useEventListener<
+  CustomEvent<{
+    targetDate: Date;
+  }>
+>(window, 'remote-video-loaded', (event) => {
+  if (!event.detail.targetDate) {
+    return;
+  }
+  addDayToExportQueue(event.detail.targetDate);
+});
+
 watchImmediate(selectedDate, (newVal) => {
   try {
     if (!currentCongregation.value || !newVal) {
@@ -1224,6 +1235,12 @@ const sortedMediaFileUrls = computed(() =>
 watch(
   () => sortedMediaFileUrls.value,
   (newSortedMediaFileUrls, oldSortedMediaFileUrls) => {
+    console.log(
+      'sortedMediaFileUrls changed',
+      newSortedMediaFileUrls,
+      oldSortedMediaFileUrls,
+      arraysAreIdentical(newSortedMediaFileUrls, oldSortedMediaFileUrls),
+    );
     if (
       selectedDateObject.value?.date &&
       !arraysAreIdentical(newSortedMediaFileUrls, oldSortedMediaFileUrls)

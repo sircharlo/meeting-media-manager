@@ -231,17 +231,26 @@ const exportDayToFolder = async (targetDate?: Date) => {
 
   const expectedFiles = new Set<string>();
 
+  const sections: Partial<Record<MediaSection, number>> = {}; // Object to store dynamic section prefixes
   for (let i = 0; i < dayMediaLength; i++) {
     try {
       const m = dynamicMediaFiltered[i];
       const sourceFilePath = window.electronApi.fileUrlToPath(m.fileUrl);
       if (!sourceFilePath || !(await fs.exists(sourceFilePath))) continue;
 
+      if (!sections[m.section]) {
+        sections[m.section] = Object.keys(sections).length + 1;
+      }
+      const sectionPrefix = (sections[m.section] || 0)
+        .toString()
+        .padStart(2, '0');
+
       const destFilePath = trimFilepathAsNeeded(
         path.join(
           destFolder,
-
-          (i + 1).toString().padStart(dayMediaLength > 99 ? 3 : 2, '0') +
+          sectionPrefix +
+            '-' +
+            (i + 1).toString().padStart(dayMediaLength > 99 ? 3 : 2, '0') +
             ' ' +
             (m.title
               ? sanitize(m.title.replace(path.extname(m.fileUrl), '')) +
@@ -1738,6 +1747,15 @@ const downloadAdditionalRemoteVideo = async (
         size: bestItem.filesize,
         url: bestItemUrl,
       });
+      window.dispatchEvent(
+        new CustomEvent<{
+          targetDate: Date | undefined;
+        }>('remote-video-loaded', {
+          detail: {
+            targetDate: currentStateStore?.selectedDateObject?.date,
+          },
+        }),
+      );
     }
   } catch (e) {
     errorCatcher(e);
