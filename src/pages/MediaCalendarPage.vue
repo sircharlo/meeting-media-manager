@@ -1348,7 +1348,9 @@ const addToAdditionMediaMapFromPath = async (
     const title =
       stream?.title ||
       metadata?.common.title ||
-      path.basename(additionalFilePath);
+      path
+        .basename(additionalFilePath)
+        .replace(path.extname(additionalFilePath), '');
 
     if (!uniqueId) {
       uniqueId = sanitizeId(

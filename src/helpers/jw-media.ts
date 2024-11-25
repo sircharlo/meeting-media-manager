@@ -175,8 +175,9 @@ const exportDayToFolder = async (targetDate?: Date) => {
     !targetDate ||
     !currentStateStore?.currentCongregation ||
     !currentStateStore.currentSettings?.mediaAutoExportFolder
-  )
+  ) {
     return;
+  }
 
   const dateString = formatDate(targetDate, 'YYYY/MM/DD');
   const dateFolderName = formatDate(targetDate, 'YYYY-MM-DD');
@@ -238,7 +239,10 @@ const exportDayToFolder = async (targetDate?: Date) => {
       const fileBaseName =
         (i + 1).toString().padStart(dayMediaLength > 99 ? 3 : 2, '0') +
         ' ' +
-        path.basename(m.fileUrl);
+        (m.title
+          ? sanitize(m.title.replace(path.extname(m.fileUrl), '')) +
+            path.extname(m.fileUrl)
+          : path.basename(m.fileUrl));
 
       const destFilePath = path.join(destFolder, fileBaseName);
 
