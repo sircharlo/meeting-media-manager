@@ -355,7 +355,7 @@
                 push
                 rounded
               >
-                <q-menu class="custom-scroll">
+                <q-menu>
                   <q-list style="min-width: 100px">
                     <q-item clickable @click="setMediaPlaying(media, true)">
                       <q-item-section>{{ $t('entireFile') }}</q-item-section>
@@ -439,7 +439,6 @@
       </div>
       <q-menu
         v-model="contextMenu"
-        class="custom-scroll"
         context-menu
         style="overflow-x: hidden"
         :target="menuTarget"
