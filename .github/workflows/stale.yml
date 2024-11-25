@@ -1,4 +1,5 @@
 name: Close stale items
+
 on:
   schedule:
     - cron: '3 0 * * *'
@@ -27,6 +28,8 @@ jobs:
 
   close-stale-q-a-discussions:
     runs-on: ubuntu-latest
+    permissions:
+      discussions: write
     steps:
       - name: Close stale Q&A discussions
         uses: steffen-karlsson/stalesweeper@v1.1.1
@@ -40,6 +43,8 @@ jobs:
 
   close-stale-ideas-discussions:
     runs-on: ubuntu-latest
+    permissions:
+      discussions: write
     steps:
       - name: Close stale Ideas discussions
         uses: steffen-karlsson/stalesweeper@v1.1.1

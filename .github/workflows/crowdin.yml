@@ -1,4 +1,5 @@
 name: Crowdin translations progress
+
 on:
   push:
     branches:
