@@ -116,7 +116,9 @@ export default defineConfig({
           property: 'og:title',
           content:
             pageData.frontmatter.layout === 'home'
-              ? messages[pageLang].title
+              ? isEnglish
+                ? messages['en'].title
+                : messages[pageLang].title
               : `${pageData.title} | M³ docs`,
         },
       ],
