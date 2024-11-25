@@ -181,7 +181,7 @@ const remoteVideosFiltered = computed(() => {
 });
 const videosAreLoading = ref(false);
 const currentPage = ref(1);
-const videosPerPage = ref(20);
+const videosPerPage = ref(24);
 
 whenever(open, () => {
   getJwVideos();
