@@ -120,6 +120,10 @@ body.body--light {
     color: $accent-400;
   }
 
+  .list-primary .q-hoverable:hover {
+    background: $accent-100 !important;
+  }
+
   .media-section {
     background: white;
     border-color: $accent-300;
@@ -190,6 +194,10 @@ body.body--dark {
     color: $secondary-contrast !important;
   }
 
+  .list-primary .q-hoverable:hover {
+    background: $accent-300-dark !important;
+  }
+
   .media-section {
     background: $dark;
     border-color: $accent-100-dark;
@@ -220,6 +228,12 @@ body.body--dark {
 
 .list-droppable {
   min-height: 3em;
+}
+
+.list-primary .q-hoverable:hover {
+  > .q-focus-helper {
+    opacity: 0 !important;
+  }
 }
 
 .q-banner {

@@ -12,7 +12,9 @@ body:
         ### Please read the following:
         Thanks for taking the time to fill out this bug report!
 
-        Before submitting a bug report, please make sure you have read the [documentation website](https://sircharlo.github.io/meeting-media-manager/) and searched through the existing [issues](https://github.com/sircharlo/meeting-media-manager/issues) and [discussions](https://github.com/sircharlo/meeting-media-manager/discussions) to make sure your bug report is not a duplicate.
+        Before submitting a bug report, please make sure you have read the [documentation website](https://sircharlo.github.io/meeting-media-manager/) and searched through the existing [issues](https://github.com/sircharlo/meeting-media-manager/issues?q=is%3Aissue+label%3Abug) and [discussions](https://github.com/sircharlo/meeting-media-manager/discussions?discussions_q=label%3Abug) to make sure your bug report is not a duplicate.
+
+        If you're using macOS, please also make sure you have executed the Terminal commands found in the [macOS only: Additional installation steps](https://sircharlo.github.io/meeting-media-manager/using-at-a-kingdom-hall#additional-steps-for-macos-users) section the documentation website.
 
         If your bug report is still valid, please change the title of this issue to reflect your bug report and fill out the fields below.
   - type: textarea
@@ -96,6 +98,4 @@ body:
         - label: I confirm that I have searched through the existing issues to make sure my bug report is not a duplicate.
           required: true
         - label: I confirm that I have searched through the existing discussions to make sure my bug report is not a duplicate.
-          required: true
-        - label: If I am using macOS, I confirm that I have executed the Terminal commands found in the <a href="https://sircharlo.github.io/meeting-media-manager/fr/using-at-a-kingdom-hall#additional-steps-for-macos-users" target="_blank">additional steps for macOS users</a> found on the documentation website before submitting this bug report.
           required: true
