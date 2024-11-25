@@ -1,9 +1,9 @@
 <template>
   <q-dialog v-model="open" persistent>
     <div
-      class="items-center q-pb-lg q-px-lg q-gutter-y-lg bg-secondary-contrast"
+      class="bg-secondary-contrast column fit-snugly medium-overlay q-px-none"
     >
-      <div class="text-h6 row">
+      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
         {{
           $t(
             jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)
@@ -13,7 +13,7 @@
         }}
       </div>
       <template v-if="jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)">
-        <div class="row custom-scroll" style="max-height: 40vh">
+        <div class="row" style="max-height: 40vh">
           <q-list class="full-width">
             <q-item
               v-for="jwpubImportDocument in jwpubDocuments"
@@ -34,7 +34,7 @@
         </div>
       </template>
       <template v-else>
-        <div class="row">
+        <div class="col-shrink full-width q-px-md q-pt-md">
           <p>{{ $t('local-media-explain-1') }}</p>
           <a>
             {{ $t('local-media-explain-2') }}
@@ -58,7 +58,7 @@
             </q-tooltip>
           </a>
         </div>
-        <div class="row">
+        <div class="col full-width q-px-md q-pt-md">
           <div
             ref="dropArea"
             class="col rounded-borders dashed-border items-center justify-center flex"
@@ -66,8 +66,8 @@
               'cursor-pointer': !totalFiles && !(!!jwpubDb || jwpubLoading),
               'bg-accent-100':
                 hovering && !totalFiles && !(!!jwpubDb || jwpubLoading),
+              'full-height': true,
             }"
-            style="height: 20vh"
             @click="
               () => {
                 if (!totalFiles && !(!!jwpubDb || jwpubLoading)) {
@@ -102,7 +102,7 @@
           </div>
         </div>
       </template>
-      <div class="row justify-end">
+      <div class="row q-px-md q-py-md col-shrink full-width justify-end">
         <q-btn
           v-close-popup
           color="negative"

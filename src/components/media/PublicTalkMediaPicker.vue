@@ -36,7 +36,7 @@
         </q-btn>
       </div>
       <template v-if="s34mpDb">
-        <div class="col-shrink full-width q-px-md q-pt-md">
+        <div class="col-shrink full-width q-px-md q-py-md">
           <q-input
             v-model="filter"
             class="col"
@@ -52,7 +52,7 @@
             </template>
           </q-input>
         </div>
-        <div class="col full-width q-px-md q-pt-md overflow-auto">
+        <div class="col full-width q-px-md overflow-auto">
           <template v-for="publicTalk in filteredPublicTalks" :key="publicTalk">
             <q-item
               v-ripple
