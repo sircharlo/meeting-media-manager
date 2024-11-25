@@ -46,26 +46,17 @@
             </template>
           </q-input>
         </div>
-        <div class="row">
-          <q-scroll-area
-            :bar-style="barStyle"
-            style="height: 30vh; width: -webkit-fill-available"
-            :thumb-style="thumbStyle"
-          >
-            <template
-              v-for="publicTalk in filteredPublicTalks"
-              :key="publicTalk"
+        <div class="row custom-scroll" style="max-height: 30vh">
+          <template v-for="publicTalk in filteredPublicTalks" :key="publicTalk">
+            <q-item
+              v-ripple
+              class="items-center q-mx-md"
+              clickable
+              @click="addPublicTalkMedia(publicTalk)"
             >
-              <q-item
-                v-ripple
-                class="items-center q-mx-md"
-                clickable
-                @click="addPublicTalkMedia(publicTalk)"
-              >
-                {{ publicTalk.Title }}
-              </q-item>
-            </template>
-          </q-scroll-area>
+              {{ publicTalk.Title }}
+            </q-item>
+          </template>
         </div>
       </template>
       <div class="row justify-end q-px-md">
@@ -84,7 +75,6 @@
 import type { DocumentItem, MediaSection, PublicationInfo } from 'src/types';
 
 import { storeToRefs } from 'pinia';
-import { useScrollbar } from 'src/composables/useScrollbar';
 import { getPublicationsPath } from 'src/helpers/fs';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { decompressJwpub, findDb } from 'src/helpers/mediaPlayback';
@@ -92,8 +82,6 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, ref, watch } from 'vue';
 
 const { executeQuery, fs, openFileDialog, path } = window.electronApi;
-
-const { barStyle, thumbStyle } = useScrollbar();
 
 const props = defineProps<{
   section?: MediaSection;

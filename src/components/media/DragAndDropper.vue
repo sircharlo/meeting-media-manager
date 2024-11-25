@@ -13,31 +13,24 @@
         }}
       </div>
       <template v-if="jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)">
-        <div class="row">
-          <q-scroll-area
-            :bar-style="barStyle"
-            style="height: 40vh; width: -webkit-fill-available"
-            :thumb-style="thumbStyle"
-          >
-            <q-list class="full-width">
-              <q-item
-                v-for="jwpubImportDocument in jwpubDocuments"
-                :key="jwpubImportDocument.DocumentId"
-                clickable
-                @click="
-                  jwpubLoading = true;
-                  addJwpubDocumentMediaToFiles(
-                    jwpubDb,
-                    jwpubImportDocument,
-                  ).then(resetModal);
-                "
-              >
-                <q-item-section class="no-wrap">
-                  {{ jwpubImportDocument.Title }}
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-scroll-area>
+        <div class="row custom-scroll" style="max-height: 40vh">
+          <q-list class="full-width">
+            <q-item
+              v-for="jwpubImportDocument in jwpubDocuments"
+              :key="jwpubImportDocument.DocumentId"
+              clickable
+              @click="
+                jwpubLoading = true;
+                addJwpubDocumentMediaToFiles(jwpubDb, jwpubImportDocument).then(
+                  resetModal,
+                );
+              "
+            >
+              <q-item-section class="no-wrap">
+                {{ jwpubImportDocument.Title }}
+              </q-item-section>
+            </q-item>
+          </q-list>
         </div>
       </template>
       <template v-else>
@@ -126,7 +119,6 @@
 import type { DocumentItem, MediaSection } from 'src/types';
 
 import { useElementHover } from '@vueuse/core';
-import { useScrollbar } from 'src/composables/useScrollbar';
 import {
   AUDIO_EXTENSIONS,
   IMG_EXTENSIONS,
@@ -138,7 +130,6 @@ import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { computed, ref, useTemplateRef } from 'vue';
 
 const { openFileDialog } = window.electronApi;
-const { barStyle, thumbStyle } = useScrollbar();
 
 const props = defineProps<{
   currentFile: number;

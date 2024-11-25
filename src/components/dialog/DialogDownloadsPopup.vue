@@ -3,6 +3,7 @@
     ref="downloadPopup"
     v-model="open"
     anchor="bottom middle"
+    class="custom-scroll"
     no-parent-event
     :offset="[0, 8]"
     self="top middle"
@@ -25,62 +26,56 @@
               </div>
             </div>
           </template>
-          <template v-else>
-            <q-scroll-area
-              :bar-style="barStyle"
-              style="height: 40vh; width: -webkit-fill-available"
-              :thumb-style="thumbStyle"
+          <div v-else class="custom-scroll" style="max-height: 40vh">
+            <template
+              v-for="statusObject in statusConfig"
+              :key="statusObject.status"
             >
-              <template
-                v-for="statusObject in statusConfig"
-                :key="statusObject.status"
+              <p
+                v-if="hasStatus(downloadProgress, statusObject.status)"
+                class="card-section-title text-dark-grey q-mt-md q-px-md"
               >
-                <p
-                  v-if="hasStatus(downloadProgress, statusObject.status)"
-                  class="card-section-title text-dark-grey q-mt-md q-px-md"
-                >
-                  {{ $t(statusObject.label) }}
-                </p>
-                <template
-                  v-for="(item, id) in filteredDownloads(statusObject.status)"
-                  :key="id"
-                >
-                  <div class="row items-center q-py-sm q-px-md">
-                    <div class="col text-weight-medium text-dark-grey">
-                      {{ item.filename && path.basename(item.filename) }}
-                    </div>
-                    <div class="col-shrink">
-                      <q-icon
-                        v-if="statusObject.icon"
-                        :color="statusColor(statusObject.status)"
-                        :name="statusObject.icon"
-                        size="sm"
-                      >
-                        <q-tooltip v-if="statusObject.status === 'error'">
-                          {{ $t('errorDownloadingMeetingMedia') }}.
-                          {{ $t('tryConfiguringFallbackLanguage') }}.
-                        </q-tooltip>
-                      </q-icon>
-                      <q-circular-progress
-                        v-else-if="showProgress(item)"
-                        color="primary"
-                        size="sm"
-                        :thickness="0.3"
-                        :value="progressValue(item)"
-                      />
-                    </div>
+                {{ $t(statusObject.label) }}
+              </p>
+              <template
+                v-for="(item, id) in filteredDownloads(statusObject.status)"
+                :key="id"
+              >
+                <div class="row items-center q-py-sm q-px-md">
+                  <div class="col text-weight-medium text-dark-grey">
+                    {{ item.filename && path.basename(item.filename) }}
                   </div>
-                  <q-separator
-                    v-if="
-                      Object.keys(filteredDownloads(statusObject.status) || {})
-                        ?.length > 1
-                    "
-                    class="bg-accent-200"
-                  />
-                </template>
+                  <div class="col-shrink">
+                    <q-icon
+                      v-if="statusObject.icon"
+                      :color="statusColor(statusObject.status)"
+                      :name="statusObject.icon"
+                      size="sm"
+                    >
+                      <q-tooltip v-if="statusObject.status === 'error'">
+                        {{ $t('errorDownloadingMeetingMedia') }}.
+                        {{ $t('tryConfiguringFallbackLanguage') }}.
+                      </q-tooltip>
+                    </q-icon>
+                    <q-circular-progress
+                      v-else-if="showProgress(item)"
+                      color="primary"
+                      size="sm"
+                      :thickness="0.3"
+                      :value="progressValue(item)"
+                    />
+                  </div>
+                </div>
+                <q-separator
+                  v-if="
+                    Object.keys(filteredDownloads(statusObject.status) || {})
+                      ?.length > 1
+                  "
+                  class="bg-accent-200"
+                />
               </template>
-            </q-scroll-area>
-          </template>
+            </template>
+          </div>
         </div>
       </q-card-section>
     </q-card>
@@ -93,7 +88,6 @@ import type { DownloadProgressItems } from 'src/types';
 
 import { watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { useScrollbar } from 'src/composables/useScrollbar';
 import { sorter } from 'src/helpers/general';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useTemplateRef } from 'vue';
@@ -102,7 +96,6 @@ const { path } = window.electronApi;
 
 const open = defineModel<boolean>({ default: false });
 
-const { barStyle, thumbStyle } = useScrollbar();
 const currentState = useCurrentStateStore();
 const { downloadProgress } = storeToRefs(currentState);
 

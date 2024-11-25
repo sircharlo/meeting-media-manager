@@ -3,6 +3,7 @@
     ref="musicPopup"
     v-model="open"
     anchor="top middle"
+    class="custom-scroll"
     no-parent-event
     :offset="[0, 8]"
     self="bottom middle"

@@ -2,6 +2,7 @@
   <q-menu
     v-model="open"
     anchor="top middle"
+    class="custom-scroll"
     no-parent-event
     :offset="[0, 8]"
     self="bottom middle"
@@ -172,11 +173,7 @@
       <div class="row">
         {{ $t('select-a-custom-background') }}
       </div>
-      <q-scroll-area
-        :bar-style="barStyle"
-        style="height: 40vh; width: -webkit-fill-available"
-        :thumb-style="thumbStyle"
-      >
+      <div class="custom-scroll" style="height: 40vh">
         <template
           v-for="(jwpubImage, index) in jwpubImages"
           :key="jwpubImage.FilePath"
@@ -208,7 +205,7 @@
         <q-inner-loading
           :showing="!!jwpubImportFilePath && !jwpubImages.length"
         />
-      </q-scroll-area>
+      </div>
       <div class="row justify-end">
         <q-btn
           color="negative"
@@ -233,7 +230,6 @@ import {
   watchImmediate,
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { useScrollbar } from 'src/composables/useScrollbar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getTempDirectory } from 'src/helpers/fs';
 import {
@@ -262,7 +258,6 @@ const {
 } = window.electronApi;
 
 const { t } = useI18n();
-const { barStyle, thumbStyle } = useScrollbar();
 
 const screenList = ref<Display[]>([]);
 
