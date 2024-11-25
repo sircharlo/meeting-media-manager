@@ -7,16 +7,10 @@
     <NavDrawer v-model="miniState" />
 
     <!-- Main content -->
-    <q-scroll-area
-      :bar-style="barStyle"
-      style="flex: 1 1 1px"
-      :thumb-style="thumbStyle"
-    >
-      <q-page-container class="main-bg">
-        <AnnouncementBanner />
-        <router-view />
-      </q-page-container>
-    </q-scroll-area>
+    <q-page-container class="main-bg fit-snugly overflow-auto">
+      <AnnouncementBanner />
+      <router-view />
+    </q-page-container>
 
     <!-- Footer -->
     <q-footer
@@ -49,7 +43,6 @@ import HeaderBase from 'src/components/header/HeaderBase.vue';
 import ActionIsland from 'src/components/ui/ActionIsland.vue';
 import AnnouncementBanner from 'src/components/ui/AnnouncementBanner.vue';
 import NavDrawer from 'src/components/ui/NavDrawer.vue';
-import { useScrollbar } from 'src/composables/useScrollbar';
 // Helpers
 import {
   cleanAdditionalMediaFolder,
@@ -84,8 +77,6 @@ import { useJwStore } from 'src/stores/jw';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
-
-const { barStyle, thumbStyle } = useScrollbar();
 
 // Local state
 const miniState = ref(true);
@@ -463,7 +454,6 @@ const removeListeners = () => {
 onMounted(() => {
   document.title = 'Meeting Media Manager';
   if (!currentSettings.value) navigateToCongregationSelector();
-  document.body.style.overflow = 'hidden';
   setElementFont('JW-Icons');
   initListeners();
 });

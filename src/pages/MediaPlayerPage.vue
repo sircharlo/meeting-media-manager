@@ -15,7 +15,7 @@
       <q-img
         v-if="isImage(mediaPlayingUrl)"
         id="mediaImage"
-        class="fitSnugly"
+        class="fit-snugly"
         fit="contain"
         no-spinner
         :src="mediaPlayingUrl"
@@ -24,7 +24,7 @@
       <video
         v-else-if="isVideo(mediaPlayingUrl) || videoStreaming"
         ref="mediaElement"
-        class="fitSnugly"
+        class="fit-snugly"
         preload="metadata"
         @animationstart="playMedia()"
       >
@@ -47,7 +47,7 @@
         </audio>
         <template v-if="mediaPlayerCustomBackground">
           <q-img
-            class="fitSnugly"
+            class="fit-snugly"
             fit="contain"
             no-spinner
             :src="mediaPlayerCustomBackground"

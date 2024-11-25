@@ -8,18 +8,20 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <q-card flat style="min-width: 50vw">
-      <q-card-section>
-        <div class="card-title">
-          {{ $t('scene-selection') }}
-        </div>
-        <!-- <div>
-          <p class="card-section-title text-dark-grey">
-            {{ $t('main-scenes') }}
-          </p>
-        </div> -->
-        <div class="row items-center q-col-gutter-sm">
-          <template v-for="scene in sceneList" :key="scene">
+    <div
+      :class="{
+        column: true,
+        'action-popup': true,
+        'fit-snugly': sceneList.length > 28, // hacky for now
+        'q-py-md': true,
+      }"
+    >
+      <div class="card-title col-shrink full-width q-px-md q-mb-none">
+        {{ $t('scene-selection') }}
+      </div>
+      <div class="overflow-auto col full-width q-px-md">
+        <div class="row q-col-gutter-xs">
+          <template v-for="scene in sceneList.concat([])" :key="scene">
             <div
               :class="
                 'col-' +
@@ -82,45 +84,8 @@
             </div>
           </template>
         </div>
-        <!-- <template v-if="additionalScenes.length > 0">
-          <q-separator class="bg-accent-200 q-my-md" />
-          <div>
-            <p class="card-section-title text-dark-grey">
-              {{ $t('additional-scenes') }}
-            </p>
-          </div>
-          <div class="row items-center q-col-gutter-sm q-mb-md">
-            <template v-for="scene in additionalScenes" :key="scene">
-              <div
-                :class="
-                  additionalScenes.length === 1
-                    ? 'col-12'
-                    : additionalScenes.length === 2
-                      ? 'col-6'
-                      : 'col-4'
-                "
-              >
-                <q-btn
-                  :outline="scene !== currentScene"
-                  class="full-width"
-                  color="primary"
-                  unelevated
-                  @click="setObsScene(undefined, scene)"
-                >
-                  <div class="ellipsis">
-                    {{
-                      isUUID(scene)
-                        ? scenes.find((s) => s.sceneUuid === scene)?.sceneName
-                        : scene
-                    }}
-                  </div>
-                </q-btn>
-              </div>
-            </template>
-          </div>
-        </template> -->
-      </q-card-section>
-    </q-card>
+      </div>
+    </div>
   </q-menu>
 </template>
 
@@ -209,7 +174,7 @@ const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
             sceneName: newProgramScene,
           }),
         });
-        open.value = false;
+        // open.value = false;
       } else {
         notifySceneNotFound();
       }

@@ -1,14 +1,20 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="items-center q-pb-lg q-px-sm q-gutter-y-lg bg-secondary-contrast"
+      class="bg-secondary-contrast column fit-snugly medium-overlay q-px-none"
     >
-      <div class="text-h6 row q-px-md">{{ $t('import-media-from-s34mp') }}</div>
-      <div class="row q-px-md">
+      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
+        {{ $t('import-media-from-s34mp') }}
+      </div>
+      <div class="col-shrink full-width q-px-md q-pt-md">
         {{ $t('select-s34mp-to-add-public-talk-media') }}
       </div>
-      <div class="row items-center q-gutter-x-md q-px-md">
-        <q-icon name="mmm-file" size="md" />
+      <div
+        class="col-shrink full-width q-px-md q-pt-md row items-center q-gutter-x-sm"
+      >
+        <div class="col-shrink">
+          <q-icon name="mmm-file" size="md" />
+        </div>
         <div class="col text-subtitle2">
           {{
             s34mpDb
@@ -30,7 +36,7 @@
         </q-btn>
       </div>
       <template v-if="s34mpDb">
-        <div class="row q-px-md">
+        <div class="col-shrink full-width q-px-md q-py-md">
           <q-input
             v-model="filter"
             class="col"
@@ -46,29 +52,20 @@
             </template>
           </q-input>
         </div>
-        <div class="row">
-          <q-scroll-area
-            :bar-style="barStyle"
-            style="height: 30vh; width: -webkit-fill-available"
-            :thumb-style="thumbStyle"
-          >
-            <template
-              v-for="publicTalk in filteredPublicTalks"
-              :key="publicTalk"
+        <div class="col full-width q-px-md overflow-auto">
+          <template v-for="publicTalk in filteredPublicTalks" :key="publicTalk">
+            <q-item
+              v-ripple
+              class="items-center q-mx-md"
+              clickable
+              @click="addPublicTalkMedia(publicTalk)"
             >
-              <q-item
-                v-ripple
-                class="items-center q-mx-md"
-                clickable
-                @click="addPublicTalkMedia(publicTalk)"
-              >
-                {{ publicTalk.Title }}
-              </q-item>
-            </template>
-          </q-scroll-area>
+              {{ publicTalk.Title }}
+            </q-item>
+          </template>
         </div>
       </template>
-      <div class="row justify-end q-px-md">
+      <div class="row q-px-md q-py-md col-shrink full-width justify-end">
         <q-btn
           color="negative"
           flat
@@ -84,7 +81,6 @@
 import type { DocumentItem, MediaSection, PublicationInfo } from 'src/types';
 
 import { storeToRefs } from 'pinia';
-import { useScrollbar } from 'src/composables/useScrollbar';
 import { getPublicationsPath } from 'src/helpers/fs';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { decompressJwpub, findDb } from 'src/helpers/mediaPlayback';
@@ -92,8 +88,6 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, ref, watch } from 'vue';
 
 const { executeQuery, fs, openFileDialog, path } = window.electronApi;
-
-const { barStyle, thumbStyle } = useScrollbar();
 
 const props = defineProps<{
   section?: MediaSection;

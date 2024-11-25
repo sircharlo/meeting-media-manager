@@ -64,7 +64,7 @@
     "upath": "^2.0.1",
     "vue": "^3.5.13",
     "vue-i18n": "^10.0.4",
-    "vue-router": "^4.4.5"
+    "vue-router": "^4.5.0"
   },
   "devDependencies": {
     "@daipeng7/rollup-plugin-iconfont": "^3.0.6",
@@ -79,7 +79,7 @@
     "@types/dompurify": "^3.2.0",
     "@types/fs-extra": "^11.0.4",
     "@types/heic-convert": "^2.1.0",
-    "@types/node": "^20.17.6",
+    "@types/node": "^20.17.7",
     "@types/pretty-bytes": "^5.2.0",
     "@types/sanitize-html": "^2.13.0",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
