@@ -641,3 +641,11 @@ a {
 .grid-margin {
   margin: 2px;
 }
+
+.gradient-transparent-to-black {
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0) 100%
+  ) !important;
+}

@@ -25,7 +25,7 @@
       >
         <q-spinner color="primary" size="md" />
       </div>
-      <div class="q-px-md overflow-auto col full-width flex items-start">
+      <div class="q-pr-scroll overflow-auto col full-width flex items-start">
         <template v-if="bibleBookChapter">
           <template
             v-for="bibleBookChapterVerseId in bibleBookChapterVerseIds
@@ -159,14 +159,14 @@
             @click="bibleBookChapter = parseInt(chapter)"
           />
         </div>
-        <div v-else class="row q-col-gutter-md q-px-md">
+        <div v-else class="row q-col-gutter-md full-width">
           <template
             v-for="[bookNr, book] in Object.entries(bibleBooks)"
             :key="bookNr"
           >
             <div
               v-if="book.hasMultimedia"
-              class="col-xs-4 col-sm-3 col-md-2 col-lg-2 col-xl-1"
+              class="col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-1"
             >
               <div
                 v-ripple
@@ -181,26 +181,24 @@
                 @mouseout="hoveredBibleBook = ''"
                 @mouseover="hoveredBibleBook = bookNr"
               >
-                <q-card-section class="q-pa-sm">
-                  <q-img
-                    class="rounded-borders"
-                    :src="
-                      getBestImageUrl(
-                        bibleBookImagesToImageTypeSizes(book.images),
-                        'md',
-                      )
-                    "
+                <q-img
+                  class="rounded-borders"
+                  :src="
+                    getBestImageUrl(
+                      bibleBookImagesToImageTypeSizes(book.images),
+                      'md',
+                    )
+                  "
+                >
+                  <div
+                    class="absolute-bottom text-subtitle2 gradient-transparent-to-black"
                   >
-                  </q-img>
-                </q-card-section>
-                <q-card-section class="q-pa-sm">
-                  <div class="text-subtitle2 q-mb-xs">
                     {{
                       localeBibleBooks[+bookNr]?.standardName ||
                       book.standardName
                     }}
                   </div>
-                </q-card-section>
+                </q-img>
               </div>
             </div>
           </template>
