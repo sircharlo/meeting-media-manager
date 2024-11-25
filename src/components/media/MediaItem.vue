@@ -356,7 +356,7 @@
                 rounded
               >
                 <q-menu>
-                  <q-list style="min-width: 100px">
+                  <q-list>
                     <q-item clickable @click="setMediaPlaying(media, true)">
                       <q-item-section>{{ $t('entireFile') }}</q-item-section>
                     </q-item>
