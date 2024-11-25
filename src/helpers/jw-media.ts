@@ -202,7 +202,7 @@ const exportDayToFolder = async (targetDate?: Date) => {
       ),
     )
     .sort((a, b) => {
-      const sectionOrder = [
+      const sectionOrder: MediaSection[] = [
         'additional',
         'tgw',
         'ayfm',
