@@ -1,12 +1,15 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="custom-scroll items-center q-pb-lg q-px-sm q-gutter-y-lg bg-secondary-contrast large-overlay"
-      style="max-height: 90vh"
+      class="bg-secondary-contrast column fit-snugly large-overlay q-px-none medium-overlay"
     >
-      <div class="text-h6 row q-px-md">{{ $t('add-video-jw-org') }}</div>
-      <div class="row q-px-md">{{ $t('add-a-video-explain') }}</div>
-      <div class="row q-px-md">
+      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
+        {{ $t('add-video-jw-org') }}
+      </div>
+      <div class="col-shrink full-width q-px-md q-pt-md">
+        {{ $t('add-a-video-explain') }}
+      </div>
+      <div class="col-shrink full-width q-px-md q-py-md">
         <div class="col-grow">
           <q-input
             v-model="remoteVideoFilter"
@@ -22,71 +25,66 @@
           </q-input>
         </div>
       </div>
-      <div class="row">
-        <div
-          class="custom-scroll row q-col-gutter-md q-px-md"
-          style="max-height: 30vh"
+      <div class="q-px-md overflow-auto col full-width row">
+        <template
+          v-for="video in remoteVideosFiltered.slice(
+            (currentPage - 1) * videosPerPage,
+            currentPage * videosPerPage,
+          )"
+          :key="video.guid"
         >
-          <template
-            v-for="video in remoteVideosFiltered.slice(
-              (currentPage - 1) * videosPerPage,
-              currentPage * videosPerPage,
-            )"
-            :key="video.guid"
-          >
-            <div class="col-xs-6 col-sm-4 col-md-3 col-lg-3 col-xl-2">
-              <div
-                v-ripple
-                :class="{
-                  'cursor-pointer': true,
-                  'rounded-borders-lg': true,
-                  'full-height': true,
-                  'bg-accent-100': hoveredRemoteVideo === video.guid,
-                }"
-                flat
-                @click="
-                  downloadAdditionalRemoteVideo(
-                    video.files,
-                    getBestImageUrl(video.images, 'md'),
-                    false,
-                    video.title,
-                    section,
-                  );
-                  open = false;
-                "
-                @mouseout="hoveredRemoteVideo = ''"
-                @mouseover="hoveredRemoteVideo = video.guid"
-              >
-                <q-card-section class="q-pa-sm">
-                  <q-img
-                    class="rounded-borders"
-                    :src="getBestImageUrl(video.images, 'md')"
+          <div class="col-xs-6 col-sm-4 col-md-3 col-lg-3 col-xl-2">
+            <div
+              v-ripple
+              :class="{
+                'cursor-pointer': true,
+                'rounded-borders-lg': true,
+                'full-height': true,
+                'bg-accent-100': hoveredRemoteVideo === video.guid,
+              }"
+              flat
+              @click="
+                downloadAdditionalRemoteVideo(
+                  video.files,
+                  getBestImageUrl(video.images, 'md'),
+                  false,
+                  video.title,
+                  section,
+                );
+                open = false;
+              "
+              @mouseout="hoveredRemoteVideo = ''"
+              @mouseover="hoveredRemoteVideo = video.guid"
+            >
+              <q-card-section class="q-pa-sm">
+                <q-img
+                  class="rounded-borders"
+                  :src="getBestImageUrl(video.images, 'md')"
+                >
+                  <q-badge
+                    class="q-mt-sm q-ml-sm bg-semi-black rounded-borders-sm"
+                    style="padding: 5px !important"
                   >
-                    <q-badge
-                      class="q-mt-sm q-ml-sm bg-semi-black rounded-borders-sm"
-                      style="padding: 5px !important"
-                    >
-                      <q-icon class="q-mr-xs" color="white" name="mmm-play" />
-                      {{ formatTime(video.duration) }}
-                    </q-badge>
-                  </q-img>
-                </q-card-section>
-                <q-card-section class="q-pa-sm">
-                  <div class="text-subtitle2 q-mb-xs">
-                    {{ video.title }}
-                  </div>
-                  <div>
-                    <span class="text-caption text-dark-grey">
-                      {{ video.naturalKey }}
-                    </span>
-                  </div>
-                </q-card-section>
-              </div>
+                    <q-icon class="q-mr-xs" color="white" name="mmm-play" />
+                    {{ formatTime(video.duration) }}
+                  </q-badge>
+                </q-img>
+              </q-card-section>
+              <q-card-section class="q-pa-sm">
+                <div class="text-subtitle2 q-mb-xs">
+                  {{ video.title }}
+                </div>
+                <div>
+                  <span class="text-caption text-dark-grey">
+                    {{ video.naturalKey }}
+                  </span>
+                </div>
+              </q-card-section>
             </div>
-          </template>
-        </div>
+          </div>
+        </template>
       </div>
-      <div class="row items-center justify-center q-px-md">
+      <div class="row q-px-md q-py-md col-shrink full-width justify-center">
         <q-pagination
           v-model="currentPage"
           active-color="primary"
@@ -97,7 +95,7 @@
           :max-pages="10"
         />
       </div>
-      <div class="row items-center q-px-md">
+      <div class="row q-px-md q-py-md col-shrink full-width">
         <div class="col">
           <q-spinner v-if="videosAreLoading" color="primary" size="md" />
           <q-toggle
