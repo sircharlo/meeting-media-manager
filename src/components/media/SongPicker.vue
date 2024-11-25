@@ -1,7 +1,7 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="bg-secondary-contrast column fit-snugly medium-overlay q-px-none medium-overlay"
+      class="bg-secondary-contrast column fit-snugly medium-overlay q-px-none"
     >
       <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
         {{ $t('choose-a-song') }}

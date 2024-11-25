@@ -3,102 +3,110 @@
     ref="musicPopup"
     v-model="open"
     anchor="top middle"
-    class="custom-scroll"
     no-parent-event
     :offset="[0, 8]"
     self="bottom middle"
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <q-card flat>
-      <q-card-section class="q-px-none">
-        <div class="card-title q-px-md">
-          {{ $t('setupWizard.backgroundMusic') }}
+    <div
+      :class="{
+        column: true,
+        'action-popup': true,
+        'fit-snugly': musicPlaying && !musicStopping,
+      }"
+    >
+      <div class="card-title col-shrink full-width q-px-md q-pt-md">
+        {{ $t('setupWizard.backgroundMusic') }}
+      </div>
+      <template v-if="musicPlaying">
+        <p
+          class="card-section-title text-dark-grey col-shrink full-width q-px-md q-pt-sm"
+        >
+          {{ $t('current-song') }}
+        </p>
+        <div class="col-shrink full-width q-px-md q-pt-xs row">
+          <div class="col text-weight-medium">
+            {{ musicPlayingTitle }}
+          </div>
+          <div class="col-shrink text-grey">
+            {{ currentSongRemainingTime }}
+          </div>
         </div>
-        <q-slide-transition>
-          <div v-if="musicPlaying">
-            <div>
-              <p class="card-section-title text-dark-grey q-px-md">
-                {{ $t('current-song') }}
-              </p>
-              <div class="row q-my-sm q-px-md">
+        <div class="col-shrink full-width q-px-md q-pt-sm">
+          <q-separator class="bg-accent-200 full-width" />
+        </div>
+        <template v-if="!musicStopping">
+          <p
+            class="col-shrink card-section-title text-dark-grey q-px-md q-pt-sm"
+          >
+            {{ $t('upcoming-songs') }}
+          </p>
+          <div class="overflow-auto col full-width flex">
+            <template v-for="(song, i) in songList" :key="i">
+              <div class="row q-my-xs q-pl-md full-width q-pr-scroll">
                 <div class="col text-weight-medium">
-                  {{ musicPlayingTitle }}
+                  {{ song.title }}
                 </div>
                 <div class="col-shrink text-grey">
-                  {{ currentSongRemainingTime }}
+                  {{ formatTime(song.duration ?? 0) }}
                 </div>
               </div>
-              <q-separator class="bg-accent-200 q-mb-md" />
-              <div>
-                <p class="card-section-title text-dark-grey q-px-md">
-                  {{ $t('upcoming-songs') }}
-                </p>
-                <div class="custom-scroll" style="max-height: 10vh">
-                  <template v-for="(song, i) in songList" :key="i">
-                    <div class="row q-my-sm q-pl-md q-pr-scroll">
-                      <div class="col text-weight-medium">
-                        {{ song.title }}
-                      </div>
-                      <div class="col-shrink text-grey">
-                        {{ formatTime(song.duration ?? 0) }}
-                      </div>
-                    </div>
-                  </template>
-                </div>
-              </div>
-            </div>
-            <q-separator class="bg-accent-200 q-mb-md" />
+            </template>
           </div>
-        </q-slide-transition>
-        <div class="row items-center q-px-md">
-          <div class="col">
-            <div class="row text-subtitle1 text-weight-medium">
-              {{
-                musicPlaying || musicStarting
-                  ? musicRemainingTime.includes('music.')
-                    ? $t(musicRemainingTime)
-                    : musicRemainingTime
-                  : $t('not-playing')
-              }}
-            </div>
-            <div
-              v-if="
-                musicPlaying &&
-                !musicStopping &&
-                meetingDay &&
-                timeRemainingBeforeMusicStop > 0
-              "
-              class="row text-dark-grey"
-            >
-              {{ $t('until-meeting-starts') }}
-            </div>
+          <div class="col-shrink full-width q-px-md q-pt-sm">
+            <q-separator class="bg-accent-200 full-width" />
           </div>
-          <div class="col-grow">
-            <q-btn
-              v-if="!musicPlaying"
-              class="full-width"
-              color="primary"
-              :disable="mediaPlaying || musicStarting"
-              unelevated
-              @click="playMusic"
-            >
-              {{ $t('play-music') }}
-            </q-btn>
-            <q-btn
-              v-else
-              class="full-width"
-              color="primary"
-              :disable="musicStopping"
-              unelevated
-              @click="stopMusic"
-            >
-              {{ $t('stop-music') }}
-            </q-btn>
+        </template>
+      </template>
+      <div class="col-shrink full-width q-px-md q-py-md row">
+        <div class="col">
+          <div class="row text-subtitle1 text-weight-medium">
+            {{
+              musicPlaying || musicStarting
+                ? musicRemainingTime.includes('music.')
+                  ? $t(musicRemainingTime)
+                  : musicRemainingTime
+                : $t('not-playing')
+            }}
+          </div>
+          <div
+            v-if="
+              musicPlaying &&
+              !musicStopping &&
+              meetingDay &&
+              timeRemainingBeforeMusicStop > 0
+            "
+            class="row text-dark-grey"
+          >
+            {{ $t('until-meeting-starts') }}
           </div>
         </div>
-      </q-card-section>
-    </q-card>
+        <div class="col-grow">
+          <q-btn
+            v-if="!musicPlaying"
+            class="full-width"
+            color="primary"
+            :disable="mediaPlaying || musicStarting"
+            unelevated
+            @click="playMusic"
+          >
+            {{ $t('play-music') }}
+          </q-btn>
+          <q-btn
+            v-else
+            class="full-width"
+            color="primary"
+            :disable="musicStopping"
+            unelevated
+            @click="stopMusic"
+          >
+            {{ $t('stop-music') }}
+          </q-btn>
+        </div>
+      </div>
+      <!-- </q-card-section> -->
+    </div>
   </q-menu>
   <audio
     ref="musicPlayer"
@@ -214,14 +222,6 @@ async function playMusic() {
       .then(() => {
         musicPlaying.value = true;
         fadeToVolumeLevel((currentSettings.value?.musicVolume ?? 100) / 100, 1);
-        if (musicPopup.value) {
-          const intervalId = setInterval(() => {
-            if (musicPopup.value) musicPopup.value.updatePosition();
-          }, 10);
-          setTimeout(() => {
-            clearInterval(intervalId);
-          }, 2000);
-        }
       })
       .catch((error: Error) => {
         if (
@@ -436,14 +436,6 @@ const fadeToVolumeLevel = (targetVolume: number, fadeOutSeconds: number) => {
         } else {
           if (musicPlayer.value.volume === 0) {
             musicPlayer.value.pause();
-            if (musicPopup.value) {
-              const intervalId = setInterval(() => {
-                if (musicPopup.value) musicPopup.value.updatePosition();
-              }, 10);
-              setTimeout(() => {
-                clearInterval(intervalId);
-              }, 2000);
-            }
             musicPlaying.value = false;
             musicStopping.value = false;
           }
@@ -461,6 +453,17 @@ const fadeToVolumeLevel = (targetVolume: number, fadeOutSeconds: number) => {
     // musicStopping.value = musicPlayer.value.volume === 0;
   }
 };
+
+watch(
+  () => [musicStopping.value, musicPlaying.value, songList.value.length],
+  () => {
+    setTimeout(() => {
+      if (musicPopup.value) {
+        musicPopup.value.updatePosition();
+      }
+    }, 10);
+  },
+);
 
 useEventListener(window, 'toggleMusic', toggleMusicListener);
 const { data: volumeData } = useBroadcastChannel<number, number>({
