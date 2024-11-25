@@ -12,8 +12,8 @@ body:
     attributes:
       label: What language do you speak?
       description: |
-        Try to include the native name, English name, JW code and lang code. [See full list of JW languages](https://www.jw.org/en/languages).
-        For example: Nederlands/Dutch - O/nl
+        Try to include the native name, English name, JW language code and language symbol. [See full list of JW languages](https://www.jw.org/en/languages).
+        For example: Nederlands/Dutch - O/nl or Español/Spanish - S/es
       placeholder: I would like to help translate M³ into ...
       value: I would like to help translate M³ into ...
     validations:
