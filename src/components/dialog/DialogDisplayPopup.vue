@@ -2,28 +2,25 @@
   <q-menu
     v-model="open"
     anchor="top middle"
-    class="custom-scroll"
     no-parent-event
     :offset="[0, 8]"
     self="bottom middle"
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <q-card flat>
-      <q-card-section>
-        <div class="card-title">
-          {{ $t('media-display-settings') }}
-        </div>
-        <template v-if="screenList.length > 1">
-          <template
-            v-if="!screenPreferences.preferWindowed && screenList.length > 2"
-          >
-            <div>
-              <p class="card-section-title text-dark-grey">
-                {{ $t('display') }}
-              </p>
-            </div>
-            <div class="row items-center q-col-gutter-sm q-mb-md">
+    <div class="column action-popup">
+      <div class="card-title col-shrink full-width q-px-md q-pt-md">
+        {{ $t('media-display-settings') }}
+      </div>
+      <template v-if="screenList.length > 1">
+        <template
+          v-if="!screenPreferences.preferWindowed && screenList.length > 2"
+        >
+          <div class="card-section-title col-shrink full-width q-px-md">
+            {{ $t('display') }}
+          </div>
+          <div class="col-shrink full-width q-px-md q-pb-sm">
+            <div class="row q-col-gutter-sm">
               <template v-for="(screen, index) in screenList" :key="screen.id">
                 <div class="col">
                   <q-btn
@@ -51,14 +48,14 @@
                 </div>
               </template>
             </div>
-            <q-separator class="bg-accent-200 q-mb-md" />
-          </template>
-          <div>
-            <p class="card-section-title text-dark-grey">
-              {{ $t('window-type') }}
-            </p>
           </div>
-          <div class="row items-center q-col-gutter-sm q-mb-md">
+          <q-separator class="bg-accent-200 q-mb-md" />
+        </template>
+        <div class="card-section-title col-shrink full-width q-px-md">
+          {{ $t('window-type') }}
+        </div>
+        <div class="col-shrink full-width q-px-md q-pb-sm">
+          <div class="row q-col-gutter-sm">
             <div class="col-6">
               <q-btn
                 class="full-width"
@@ -95,75 +92,72 @@
               </q-btn>
             </div>
           </div>
-          <q-separator class="bg-accent-200 q-mb-md" />
-        </template>
-        <div>
-          <p class="card-section-title text-dark-grey">
-            {{ $t('custom-background') }}
-          </p>
-        </div>
-        <div class="col q-mb-md">
-          <q-btn
-            class="full-width"
-            color="primary"
-            :outline="!mediaWindowCustomBackground"
-            unelevated
-            @click="chooseCustomBackground(!!mediaWindowCustomBackground)"
-          >
-            <q-icon
-              class="q-mr-sm"
-              :name="
-                'mmm-background' +
-                (mediaWindowCustomBackground ? '-remove' : '')
-              "
-              size="xs"
-            />
-            {{
-              mediaWindowCustomBackground
-                ? $t('reset-custom-background')
-                : $t('set-custom-background')
-            }}
-          </q-btn>
         </div>
         <q-separator class="bg-accent-200 q-mb-md" />
-        <div class="row items-center">
-          <div class="col">
-            <div class="row text-subtitle1 text-weight-medium">
-              {{ mediaWindowVisible ? $t('projecting') : $t('inactive') }}
-            </div>
-            <div class="row text-dark-grey">
-              {{
-                $t(
-                  screenList.length < 2 || screenPreferences.preferWindowed
-                    ? 'windowed'
-                    : 'external-screen',
-                )
-              }}
-            </div>
+      </template>
+      <div class="card-section-title col-shrink full-width q-px-md q-pb-sm">
+        {{ $t('custom-background') }}
+      </div>
+      <div class="col-shrink full-width q-px-md q-pb-sm">
+        <q-btn
+          class="full-width"
+          color="primary"
+          :outline="!mediaWindowCustomBackground"
+          unelevated
+          @click="chooseCustomBackground(!!mediaWindowCustomBackground)"
+        >
+          <q-icon
+            class="q-mr-sm"
+            :name="
+              'mmm-background' + (mediaWindowCustomBackground ? '-remove' : '')
+            "
+            size="xs"
+          />
+          {{
+            mediaWindowCustomBackground
+              ? $t('reset-custom-background')
+              : $t('set-custom-background')
+          }}
+        </q-btn>
+      </div>
+      <q-separator class="bg-accent-200 q-mb-md" />
+      <div class="col-shrink full-width q-px-md q-py-md row">
+        <div class="col">
+          <div class="row text-subtitle1 text-weight-medium">
+            {{ mediaWindowVisible ? $t('projecting') : $t('inactive') }}
           </div>
-          <div class="col-grow">
-            <q-btn
-              v-if="mediaWindowVisible"
-              class="full-width"
-              color="primary"
-              unelevated
-              @click="showMediaWindow(false)"
-            >
-              {{ $t('hide-media-display') }}
-            </q-btn>
-            <q-btn
-              v-else
-              class="full-width"
-              color="primary"
-              unelevated
-              @click="showMediaWindow(true)"
-            >
-              {{ $t('show-media-display') }}
-            </q-btn>
+          <div class="row text-dark-grey">
+            {{
+              $t(
+                screenList.length < 2 || screenPreferences.preferWindowed
+                  ? 'windowed'
+                  : 'external-screen',
+              )
+            }}
           </div>
         </div>
-      </q-card-section>
-    </q-card>
+        <div class="col-grow">
+          <q-btn
+            v-if="mediaWindowVisible"
+            class="full-width"
+            color="primary"
+            unelevated
+            @click="showMediaWindow(false)"
+          >
+            {{ $t('hide-media-display') }}
+          </q-btn>
+          <q-btn
+            v-else
+            class="full-width"
+            color="primary"
+            unelevated
+            @click="showMediaWindow(true)"
+          >
+            {{ $t('show-media-display') }}
+          </q-btn>
+        </div>
+      </div>
+    </div>
   </q-menu>
   <q-dialog v-model="showCustomBackgroundPicker">
     <div
