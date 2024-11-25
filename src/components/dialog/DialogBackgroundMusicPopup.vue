@@ -14,9 +14,10 @@
         column: true,
         'action-popup': true,
         'fit-snugly': musicPlaying && !musicStopping,
+        'q-py-md': true,
       }"
     >
-      <div class="card-title col-shrink full-width q-px-md q-pt-md">
+      <div class="card-title col-shrink full-width q-px-md q-mb-none">
         {{ $t('setupWizard.backgroundMusic') }}
       </div>
       <template v-if="musicPlaying">
@@ -59,7 +60,7 @@
           </div>
         </template>
       </template>
-      <div class="col-shrink full-width q-px-md q-py-md row">
+      <div class="col-shrink full-width q-px-md q-pt-md row">
         <div class="col">
           <div class="row text-subtitle1 text-weight-medium">
             {{

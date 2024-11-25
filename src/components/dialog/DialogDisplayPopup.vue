@@ -8,8 +8,8 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div class="column action-popup">
-      <div class="card-title col-shrink full-width q-px-md q-pt-md">
+    <div class="column action-popup q-py-md">
+      <div class="card-title col-shrink full-width q-px-md q-mb-none">
         {{ $t('media-display-settings') }}
       </div>
       <template v-if="screenList.length > 1">
@@ -120,8 +120,7 @@
           }}
         </q-btn>
       </div>
-      <q-separator class="bg-accent-200 q-mb-md" />
-      <div class="col-shrink full-width q-px-md q-py-md row">
+      <div class="col-shrink full-width q-px-md q-pt-md row">
         <div class="col">
           <div class="row text-subtitle1 text-weight-medium">
             {{ mediaWindowVisible ? $t('projecting') : $t('inactive') }}

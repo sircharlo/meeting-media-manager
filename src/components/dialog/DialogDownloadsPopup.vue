@@ -3,82 +3,90 @@
     ref="downloadPopup"
     v-model="open"
     anchor="bottom middle"
-    class="custom-scroll"
     no-parent-event
     :offset="[0, 8]"
     self="top middle"
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <q-card flat>
-      <q-card-section class="q-px-none">
-        <div class="card-title q-px-md">
-          {{ $t('media-sync') }}
-        </div>
-        <div>
-          <template v-if="Object.values(downloadProgress).length === 0">
-            <div class="row items-center q-px-md">
-              <div class="col text-weight-medium text-dark-grey">
-                {{ $t('noDownloadsInProgress') }}
-              </div>
-              <div class="col-shrink">
-                <q-icon color="positive" name="mmm-cloud-done" size="sm" />
-              </div>
-            </div>
-          </template>
-          <div v-else class="custom-scroll" style="max-height: 40vh">
-            <template
-              v-for="statusObject in statusConfig"
-              :key="statusObject.status"
-            >
-              <p
-                v-if="hasStatus(downloadProgress, statusObject.status)"
-                class="card-section-title text-dark-grey q-mt-md q-px-md"
-              >
-                {{ $t(statusObject.label) }}
-              </p>
-              <template
-                v-for="(item, id) in filteredDownloads(statusObject.status)"
-                :key="id"
-              >
-                <div class="row items-center q-py-sm q-px-md">
-                  <div class="col text-weight-medium text-dark-grey">
-                    {{ item.filename && path.basename(item.filename) }}
-                  </div>
-                  <div class="col-shrink">
-                    <q-icon
-                      v-if="statusObject.icon"
-                      :color="statusColor(statusObject.status)"
-                      :name="statusObject.icon"
-                      size="sm"
-                    >
-                      <q-tooltip v-if="statusObject.status === 'error'">
-                        {{ $t('errorDownloadingMeetingMedia') }}.
-                        {{ $t('tryConfiguringFallbackLanguage') }}.
-                      </q-tooltip>
-                    </q-icon>
-                    <q-circular-progress
-                      v-else-if="showProgress(item)"
-                      color="primary"
-                      size="sm"
-                      :thickness="0.3"
-                      :value="progressValue(item)"
-                    />
-                  </div>
-                </div>
-                <q-separator
-                  v-if="
-                    Object.keys(filteredDownloads(statusObject.status) || {})
-                      ?.length > 1
-                  "
-                  class="bg-accent-200"
-                />
-              </template>
-            </template>
+    <div
+      :class="{
+        column: true,
+        'action-popup': true,
+        // 'fit-snugly': true,
+        'q-py-md': true,
+      }"
+    >
+      <div class="card-title col-shrink full-width q-px-md q-mb-none">
+        {{ $t('media-sync') }}
+      </div>
+      <template v-if="Object.values(downloadProgress).length === 0">
+        <div class="col-shrink full-width q-px-md q-pt-xs row">
+          <div class="col text-weight-medium text-dark-grey">
+            {{ $t('noDownloadsInProgress') }}
+          </div>
+          <div class="col-shrink">
+            <q-icon color="positive" name="mmm-cloud-done" size="sm" />
           </div>
         </div>
-      </q-card-section>
-    </q-card>
+      </template>
+      <template v-else>
+        <template
+          v-for="statusObject in statusConfig"
+          :key="statusObject.status"
+        >
+          <p
+            v-if="hasStatus(downloadProgress, statusObject.status)"
+            class="card-section-title text-dark-grey col-shrink full-width q-px-md q-pt-sm"
+          >
+            {{ $t(statusObject.label) }}
+          </p>
+          <template
+            v-for="(item, id) in filteredDownloads(statusObject.status)"
+            :key="id"
+          >
+            <div class="col-shrink full-width q-px-md q-pt-xs row">
+              <div class="col text-weight-medium text-dark-grey">
+                {{ item.filename && path.basename(item.filename) }}
+              </div>
+              <div class="col-shrink">
+                <q-icon
+                  v-if="statusObject.icon"
+                  :color="statusColor(statusObject.status)"
+                  :name="statusObject.icon"
+                  size="sm"
+                >
+                  <q-tooltip v-if="statusObject.status === 'error'">
+                    {{ $t('errorDownloadingMeetingMedia') }}.
+                    {{ $t('tryConfiguringFallbackLanguage') }}.
+                  </q-tooltip>
+                </q-icon>
+                <q-circular-progress
+                  v-else-if="showProgress(item)"
+                  color="primary"
+                  size="sm"
+                  :thickness="0.3"
+                  :value="progressValue(item)"
+                />
+              </div>
+            </div>
+            <div class="col-shrink full-width q-px-md">
+              <q-separator
+                v-if="
+                  Object.keys(filteredDownloads(statusObject.status) || {})
+                    ?.length > 1 &&
+                  id <
+                    Object.keys(filteredDownloads(statusObject.status) || {})
+                      ?.length -
+                      1
+                "
+                class="bg-accent-200"
+              />
+            </div>
+          </template>
+        </template>
+      </template>
+    </div>
   </q-menu>
 </template>
 
@@ -108,18 +116,18 @@ const filteredDownloads = (status: 'complete' | 'error' | 'loaded') =>
 const downloadPopup = useTemplateRef<QMenu>('downloadPopup');
 
 watchImmediate(
-  () => filteredDownloads,
+  () => [
+    filteredDownloads('complete').length,
+    filteredDownloads('error').length,
+    filteredDownloads('loaded').length,
+  ],
   () => {
     if (downloadPopup.value) {
-      const intervalId = setInterval(() => {
+      setTimeout(() => {
         if (downloadPopup.value) downloadPopup.value.updatePosition();
       }, 10);
-      setTimeout(() => {
-        clearInterval(intervalId);
-      }, 2000);
     }
   },
-  { deep: true },
 );
 
 const hasStatus = (
