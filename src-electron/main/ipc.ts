@@ -18,6 +18,7 @@ import {
   systemPreferences,
 } from 'electron';
 
+import { PLATFORM } from '../constants';
 import { askForMediaAccess, getAppVersion, isSelf } from './../utils';
 import { downloadFile } from './downloads';
 import {
@@ -186,7 +187,9 @@ handleIpcInvoke('getAppDataPath', async () => app.getPath('appData'));
 handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
 
 handleIpcInvoke('getScreenAccessStatus', async () =>
-  systemPreferences.getMediaAccessStatus('screen'),
+  PLATFORM === 'linux'
+    ? 'granted'
+    : systemPreferences.getMediaAccessStatus('screen'),
 );
 
 handleIpcInvoke('getAllScreens', async () => getAllScreens());
