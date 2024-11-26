@@ -471,26 +471,25 @@ const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
 async function addFullFilePathToMultimediaItem(
   multimediaItem: MultimediaItem,
   publication: PublicationFetcher,
-) {
+): Promise<MultimediaItem> {
   try {
-    const fullFilePath = multimediaItem.FilePath
-      ? path.join(
-          await getPublicationDirectory(publication),
-          multimediaItem.FilePath,
-        )
-      : undefined;
-    const fullLinkedPreviewFilePath = multimediaItem.LinkedPreviewFilePath
-      ? path.join(
-          await getPublicationDirectory(publication),
-          multimediaItem.LinkedPreviewFilePath,
-        )
-      : undefined;
+    const paths: (keyof MultimediaItem)[] = [
+      'FilePath',
+      'LinkedPreviewFilePath',
+      'CoverPictureFilePath',
+    ];
+    const baseDir = await getPublicationDirectory(publication);
+
+    const resolvedPaths = Object.fromEntries(
+      paths.map((key) =>
+        multimediaItem[key]
+          ? [key, path.join(baseDir, multimediaItem[key])]
+          : [],
+      ),
+    );
     return {
       ...multimediaItem,
-      ...(fullFilePath ? { FilePath: fullFilePath } : {}),
-      ...(fullLinkedPreviewFilePath
-        ? { LinkedPreviewFilePath: fullLinkedPreviewFilePath }
-        : {}),
+      ...resolvedPaths,
     };
   } catch (error) {
     errorCatcher(error);
@@ -783,6 +782,153 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
     return allExtractItems;
   } catch (e: unknown) {
     errorCatcher(e);
+    return [];
+  }
+};
+
+const getStudyBible = async () => {
+  try {
+    const currentStateStore = useCurrentStateStore();
+    const languages = [
+      currentStateStore.currentSettings?.lang,
+      currentStateStore.currentSettings?.langFallback,
+      'E',
+    ]
+      .filter(Boolean)
+      .filter(
+        (item, index, self) => index === self.findIndex((i) => i === item),
+      ) as JwLangCode[];
+    let db: null | string = null;
+    let publication: null | PublicationFetcher = null;
+    for (const langwritten of languages) {
+      console.log('retrieving langwritten', langwritten);
+      if (!langwritten) continue;
+      publication = {
+        fileformat: 'JWPUB',
+        langwritten,
+        pub: 'nwtsty',
+      };
+      db = await getDbFromJWPUB(publication);
+      if (db) break;
+    }
+    if (!db)
+      throw new Error(
+        'No study bible file found for languages: ' + languages.join(', '),
+      );
+    console.log('study bible db found', db);
+    return { db, publication };
+  } catch (error) {
+    errorCatcher(error);
+    return { db: null, publication: null };
+  }
+};
+const getStudyBibleBooks = async () => {
+  try {
+    const { db, publication } = await getStudyBible();
+    if (!db || !publication) {
+      return {};
+    }
+    console.log('biblebook db', db);
+    const bibleBookItems = window.electronApi.executeQuery<MultimediaItem>(
+      db,
+      ` 
+      SELECT DISTINCT
+          Document.*, 
+          BibleBook.*, 
+          SummaryDocument.DocumentId AS SummaryDocumentId,
+        CoverMultimedia.FilePath AS CoverPictureFilePath
+      FROM 
+          Document
+      INNER JOIN 
+          BibleBook ON BibleBook.BookDocumentId = Document.DocumentId
+      LEFT JOIN 
+          Document AS SummaryDocument ON SummaryDocument.DocumentId = BibleBook.IntroDocumentId
+      LEFT JOIN 
+          DocumentMultimedia ON 
+              DocumentMultimedia.DocumentId IN (Document.DocumentId, SummaryDocument.DocumentId)
+      INNER JOIN 
+          Multimedia AS CoverMultimedia ON 
+              CoverMultimedia.CategoryType = 9 AND CoverMultimedia.MultimediaId = DocumentMultimedia.MultimediaId
+      WHERE 
+          Document.Type = 2;
+        `,
+    );
+
+    console.log('bibleBookItems', bibleBookItems);
+    const bibleBooksObject: Record<number, MultimediaItem> = {};
+    for (const bibleBook of bibleBookItems) {
+      if (!bibleBook.BibleBookId) continue;
+      bibleBooksObject[bibleBook.BibleBookId] =
+        await addFullFilePathToMultimediaItem(bibleBook, publication);
+    }
+    return bibleBooksObject;
+  } catch (error) {
+    errorCatcher(error);
+    return {};
+  }
+};
+
+const getStudyBibleMedia = async () => {
+  try {
+    const { db, publication } = await getStudyBible();
+    if (!db || !publication) {
+      return [];
+    }
+    console.log('biblebook db', db);
+    const bibleMediaItems = window.electronApi.executeQuery<MultimediaItem>(
+      db,
+      ` 
+      SELECT 
+          vmm.MultimediaId,
+          bc.BookNumber,
+          bc.ChapterNumber,
+          bv.Label AS VerseLabel,
+          m.*,
+          CoverMultimedia.FilePath AS CoverPictureFilePath
+      FROM 
+          VerseMultimediaMap vmm
+      INNER JOIN 
+          BibleChapter bc
+      ON 
+          vmm.BibleVerseId BETWEEN bc.FirstVerseId AND bc.LastVerseId
+      INNER JOIN 
+          BibleVerse bv
+      ON 
+          vmm.BibleVerseId = bv.BibleVerseId
+      INNER JOIN 
+          Multimedia m
+      ON 
+          vmm.MultimediaId = m.MultimediaId
+      INNER JOIN 
+          Multimedia AS CoverMultimedia 
+      ON 
+          CoverMultimedia.LinkMultimediaId = m.MultimediaId;
+        `,
+    );
+
+    // console.log('bibleMediaItems', bibleMediaItems);
+    // const bibleMediaArray: MultimediaItem[] = [];
+    // for (const bibleMediaItem of bibleMediaItems) {
+    //   if (!bibleMediaItem.BookNumber || !bibleMediaItem.ChapterNumber) continue;
+    //   bibleBookChaptersObject[bibleMediaItem.BookNumber] ??= {};
+    //   bibleBookChaptersObject[bibleMediaItem.BookNumber][
+    //     bibleMediaItem.ChapterNumber
+    //   ] = await addFullFilePathToMultimediaItem(bibleMediaItem, publication);
+    // }
+
+    console.log('bibleMediaItems', bibleMediaItems);
+    for (let i = 0; i < bibleMediaItems.length; i++) {
+      bibleMediaItems[i] = await addFullFilePathToMultimediaItem(
+        bibleMediaItems[i],
+        publication,
+      );
+      bibleMediaItems[i].VerseNumber = parseInt(
+        bibleMediaItems[i].VerseLabel?.match(/>(\d+)</)?.[1] || '',
+      );
+    }
+    return bibleMediaItems;
+  } catch (error) {
+    errorCatcher(error);
     return [];
   }
 };
@@ -2107,6 +2253,8 @@ export {
   getMwMedia,
   getPublicationInfoFromDb,
   getPubMediaLinks,
+  getStudyBibleBooks,
+  getStudyBibleMedia,
   getWeMedia,
   processMissingMediaInfo,
   sanitizeId,
