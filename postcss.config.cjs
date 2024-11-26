@@ -4,7 +4,7 @@
 module.exports = {
   plugins: [
     // https://github.com/postcss/autoprefixer
-    require('autoprefixer')({ overrideBrowserslist: ['Electron >= 32'] }),
+    require('autoprefixer')({ overrideBrowserslist: ['Electron >= 33'] }),
 
     // https://github.com/elchininet/postcss-rtlcss
     // If you want to support RTL css, then
