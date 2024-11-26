@@ -1235,12 +1235,6 @@ const sortedMediaFileUrls = computed(() =>
 watch(
   () => sortedMediaFileUrls.value,
   (newSortedMediaFileUrls, oldSortedMediaFileUrls) => {
-    console.log(
-      'sortedMediaFileUrls changed',
-      newSortedMediaFileUrls,
-      oldSortedMediaFileUrls,
-      arraysAreIdentical(newSortedMediaFileUrls, oldSortedMediaFileUrls),
-    );
     if (
       selectedDateObject.value?.date &&
       !arraysAreIdentical(newSortedMediaFileUrls, oldSortedMediaFileUrls)
