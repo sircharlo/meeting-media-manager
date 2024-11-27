@@ -73,7 +73,6 @@ export interface MultimediaItem {
   BeginParagraphOrdinal: number;
   BeginPosition?: number;
   BibleBookId?: number;
-  BookDisplayTitle?: string;
   BookNumber?: number;
   Caption: string;
   CaptionContent?: null | string;
@@ -120,6 +119,7 @@ export interface MultimediaItem {
   TargetParagraphNumberLabel: number;
   ThumbnailFilePath?: string;
   ThumbnailUrl?: string;
+  Title?: string;
   Track?: null | number;
   VerseLabel?: string;
   VerseNumber?: number;

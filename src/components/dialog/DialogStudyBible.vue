@@ -9,7 +9,7 @@
         </template>
         <template v-else>
           {{ $t('media-gallery') }} -
-          {{ bibleBooks[bibleBook].BookDisplayTitle }}
+          {{ bibleBooks[bibleBook].Title }}
         </template>
       </div>
       <div class="col-shrink full-width q-px-md q-py-md">
@@ -18,7 +18,7 @@
         </template>
         <template v-else>
           <div class="text-subtitle1">
-            {{ bibleBooks[bibleBook].BookDisplayTitle }} - {{ $t('chapter') }}
+            {{ bibleBooks[bibleBook].Title }} - {{ $t('chapter') }}
             {{ bibleBookChapter }}
           </div>
         </template>
@@ -145,7 +145,7 @@
                   <div
                     class="absolute-bottom text-subtitle2 gradient-transparent-to-black"
                   >
-                    {{ book.BookDisplayTitle }}
+                    {{ book.Title }}
                   </div>
                 </q-img>
               </div>
@@ -186,6 +186,7 @@
 <script setup lang="ts">
 // Types
 import type {
+  JwLangCode,
   MediaSection,
   MultimediaItem,
   PublicationFetcher,
@@ -358,22 +359,43 @@ const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
       docid: mediaItem.MepsDocumentId,
       fileformat: 'MP4',
       issue: mediaItem.IssueTagNumber || undefined,
-      langwritten: currentSettings.value?.lang || 'E',
+      langwritten: '',
       pub: mediaItem.KeySymbol,
       track: mediaItem.Track || undefined,
     };
-    const [mediaItemFiles, { thumbnail, title }] = await Promise.all([
-      getPubMediaLinks(mediaLookup),
-      getJwMediaInfo(mediaLookup),
-    ]);
-    downloadAdditionalRemoteVideo(
-      mediaItemFiles?.files?.[currentSettings.value?.lang || 'E']?.['MP4'] ||
-        [],
-      thumbnail,
-      false,
-      title.replace(/^\d+\.\s*/, ''),
-      props.section,
-    );
+
+    const langsToTry = [
+      currentSettings.value?.lang,
+      currentSettings.value?.langFallback,
+      'E',
+    ].filter((l) => l !== undefined && l !== null);
+    let mediaInfo, mediaItemFiles;
+    for (const lang of langsToTry) {
+      if (!lang) continue;
+      mediaLookup.langwritten = lang as JwLangCode;
+      try {
+        [mediaItemFiles, mediaInfo] = await Promise.all([
+          getPubMediaLinks(mediaLookup),
+          getJwMediaInfo(mediaLookup),
+        ]);
+        if (mediaItemFiles && mediaInfo) break; // Exit loop if successful
+      } catch {
+        // Continue to the next language on failure
+      }
+    }
+
+    if (mediaItemFiles && mediaInfo && mediaLookup.langwritten) {
+      const { thumbnail, title } = mediaInfo;
+      downloadAdditionalRemoteVideo(
+        mediaItemFiles?.files?.[mediaLookup.langwritten]?.['MP4'] || [],
+        thumbnail,
+        false,
+        title.replace(/^\d+\.\s*/, ''),
+        props.section,
+      );
+    } else {
+      console.error('Failed to fetch media for all languages.');
+    }
   }
 };
 
