@@ -82,8 +82,13 @@
                       >
                         <q-badge
                           v-if="mediaItem.CategoryType < 0"
-                          class="q-mt-sm q-ml-sm q-pa-xs bg-semi-black rounded-borders-sm"
+                          class="q-mt-sm q-ml-sm bg-semi-black rounded-borders-sm"
                         >
+                          <q-icon
+                            class="q-mr-xs"
+                            color="white"
+                            name="mmm-play"
+                          />
                           {{ $t('video') }}
                         </q-badge>
                         <q-checkbox
