@@ -65,6 +65,123 @@ const { formatDate, subtractFromDate } = date;
 
 const { executeQuery, fileUrlToPath, fs, path, readdir } = window.electronApi;
 
+const copyToDatedAdditionalMedia = async (
+  filepathToCopy: string,
+  section?: MediaSection,
+  addToAdditionMediaMap?: boolean,
+) => {
+  const currentStateStore = useCurrentStateStore();
+  const jwStore = useJwStore();
+  const datedAdditionalMediaDir =
+    await currentStateStore.getDatedAdditionalMediaDirectory();
+
+  try {
+    if (!filepathToCopy || !(await fs.exists(filepathToCopy))) return '';
+    let datedAdditionalMediaPath = path.join(
+      datedAdditionalMediaDir,
+      path.basename(filepathToCopy),
+    );
+    datedAdditionalMediaPath = trimFilepathAsNeeded(datedAdditionalMediaPath);
+    const uniqueId = sanitizeId(
+      formatDate(currentStateStore.selectedDate, 'YYYYMMDD') +
+        '-' +
+        getFileUrl(datedAdditionalMediaPath),
+    );
+    if (await fs.exists(datedAdditionalMediaPath)) {
+      if (filepathToCopy !== datedAdditionalMediaPath) {
+        await fs.remove(datedAdditionalMediaPath);
+        jwStore.removeFromAdditionMediaMap(uniqueId);
+      }
+    }
+    if (filepathToCopy !== datedAdditionalMediaPath)
+      await fs.copy(filepathToCopy, datedAdditionalMediaPath);
+    if (addToAdditionMediaMap)
+      await addToAdditionMediaMapFromPath(
+        datedAdditionalMediaPath,
+        section,
+        uniqueId,
+      );
+    return datedAdditionalMediaPath;
+  } catch (error) {
+    errorCatcher(error);
+    return '';
+  }
+};
+
+const addToAdditionMediaMapFromPath = async (
+  additionalFilePath: string,
+  section: MediaSection = 'additional',
+  uniqueId?: string,
+  stream?: {
+    duration: number;
+    song?: string;
+    thumbnailUrl: string;
+    title?: string;
+    url: string;
+  },
+) => {
+  try {
+    if (!additionalFilePath) return;
+    const currentStateStore = useCurrentStateStore();
+    const jwStore = useJwStore();
+    const video = isVideo(additionalFilePath);
+    const audio = isAudio(additionalFilePath);
+    const metadata =
+      video || audio
+        ? await getMetadataFromMediaPath(additionalFilePath)
+        : undefined;
+
+    const duration = stream?.duration || metadata?.format.duration || 0;
+    const title =
+      stream?.title ||
+      metadata?.common.title ||
+      path
+        .basename(additionalFilePath)
+        .replace(path.extname(additionalFilePath), '');
+
+    if (!uniqueId) {
+      uniqueId = sanitizeId(
+        formatDate(currentStateStore.selectedDate, 'YYYYMMDD') +
+          '-' +
+          getFileUrl(additionalFilePath),
+      );
+    }
+    jwStore.addToAdditionMediaMap(
+      [
+        {
+          duration,
+          fileUrl: getFileUrl(additionalFilePath),
+          isAdditional: true,
+          isAudio: audio,
+          isImage: isImage(additionalFilePath),
+          isVideo: video,
+          section,
+          sectionOriginal: section,
+          song: stream?.song,
+          streamUrl: stream?.url,
+          thumbnailUrl:
+            stream?.thumbnailUrl ??
+            (await getThumbnailUrl(additionalFilePath, true)),
+          title,
+          uniqueId,
+        },
+      ],
+      section,
+    );
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          additionalFilePath,
+          name: 'addToAdditionMediaMapFromPath',
+          stream,
+          uniqueId,
+        },
+      },
+    });
+  }
+};
+
 const addJwpubDocumentMediaToFiles = async (
   dbPath: string,
   document: DocumentItem,
@@ -2239,6 +2356,8 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
 
 export {
   addJwpubDocumentMediaToFiles,
+  addToAdditionMediaMapFromPath,
+  copyToDatedAdditionalMedia,
   downloadAdditionalRemoteVideo,
   downloadBackgroundMusic,
   downloadFileIfNeeded,

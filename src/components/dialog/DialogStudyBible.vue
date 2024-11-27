@@ -99,13 +99,6 @@
                         </div>
                       </q-img>
                     </q-card-section>
-                    <!-- <q-card-section class="q-pa-sm">
-                      <div class="text-subtitle2 q-mb-xs">
-                        {{
-                          mediaItem.Label
-                        }}
-                      </div>
-                    </q-card-section> -->
                   </div>
                 </div>
               </template>
@@ -187,10 +180,7 @@
 </template>
 <script setup lang="ts">
 // Types
-import type {
-  // MediaSection,
-  MultimediaItem,
-} from 'src/types';
+import type { MediaSection, MultimediaItem } from 'src/types';
 
 import { whenever } from '@vueuse/core';
 // import { storeToRefs } from 'pinia';
@@ -202,6 +192,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 // import { camelToKebabCase } from 'src/helpers/general';
 // Helpers
 import {
+  addToAdditionMediaMapFromPath,
   // addFullFilePathToMultimediaItem,
   // downloadAdditionalRemoteVideo,
   // getBestImageUrl,
@@ -225,9 +216,9 @@ import { computed, ref } from 'vue';
 // const { currentSettings } = storeToRefs(currentState);
 
 // Props
-// const props = defineProps<{
-//   section?: MediaSection;
-// }>();
+const props = defineProps<{
+  section?: MediaSection;
+}>();
 
 const open = defineModel<boolean>({ default: false });
 
@@ -354,6 +345,9 @@ const addSelectedMediaItems = async () => {
 
 const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
   console.log('addStudyBibleMedia', mediaItem);
+  if (mediaItem.MimeType.includes('image')) {
+    await addToAdditionMediaMapFromPath(mediaItem.FilePath, props.section);
+  }
 };
 
 const resetBibleBook = (close = false) => {
