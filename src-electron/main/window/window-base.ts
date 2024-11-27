@@ -49,7 +49,7 @@ export function createWindow(
         `icon.${PLATFORM === 'win32' ? 'ico' : 'png'}`,
       ),
     ),
-    minHeight: 400,
+    minHeight: 450,
     minWidth: 500,
     show: false,
     title: 'Meeting Media Manager',

@@ -1,11 +1,15 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="items-center q-pb-lg q-px-sm q-gutter-y-lg bg-secondary-contrast medium-overlay"
+      class="bg-secondary-contrast column fit-snugly medium-overlay q-px-none"
     >
-      <div class="text-h6 row q-px-md">{{ $t('choose-a-song') }}</div>
-      <div class="row q-px-md">{{ $t('add-a-song') }}</div>
-      <div class="row q-px-md">
+      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
+        {{ $t('choose-a-song') }}
+      </div>
+      <div class="col-shrink full-width q-px-md q-pt-md">
+        {{ $t('add-a-song') }}
+      </div>
+      <div class="col-shrink full-width q-px-md q-py-md">
         <q-input
           v-model="filter"
           class="col"
@@ -25,35 +29,31 @@
       <q-slide-transition>
         <div
           v-if="loading && filteredSongs?.length === 0"
-          class="row items-center justify-center"
+          class="col-shrink q-pb-md full-width"
         >
-          <q-spinner color="primary" size="lg" />
+          <div class="row justify-center">
+            <q-spinner color="primary" size="lg" />
+          </div>
         </div>
       </q-slide-transition>
-      <q-scroll-area
-        :bar-style="barStyle"
-        style="height: 40vh; width: -webkit-fill-available"
-        :thumb-style="thumbStyle"
-      >
-        <div class="q-px-md">
-          <q-btn
-            v-for="song in filteredSongs"
-            :key="song.track"
-            class="rounded-borders-sm q-mr-xs q-mb-xs"
-            color="primary"
-            :disable="loading"
-            :label="song.track"
-            style="width: 3em; height: 3em"
-            unelevated
-            @click="addSong(song.track)"
-          >
-            <q-tooltip v-if="!loading" class="bg-black text-white">
-              {{ song.title }}
-            </q-tooltip>
-          </q-btn>
-        </div>
-      </q-scroll-area>
-      <div class="row">
+      <div class="q-px-md overflow-auto col full-width flex">
+        <q-btn
+          v-for="song in filteredSongs"
+          :key="song.track"
+          class="rounded-borders-sm col-shrink grid-margin"
+          color="primary"
+          :disable="loading"
+          :label="song.track"
+          style="width: 3em; height: 3em"
+          unelevated
+          @click="addSong(song.track)"
+        >
+          <q-tooltip v-if="!loading" class="bg-black text-white">
+            {{ song.title }}
+          </q-tooltip>
+        </q-btn>
+      </div>
+      <div class="row q-px-md q-py-md col-shrink full-width">
         <div class="col">
           <q-spinner
             v-if="loading || filteredSongs?.length === 0"
@@ -90,7 +90,6 @@ import type { MediaLink, MediaSection, PublicationFetcher } from 'src/types';
 
 import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { useScrollbar } from 'src/composables/useScrollbar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   downloadAdditionalRemoteVideo,
@@ -109,7 +108,6 @@ const props = defineProps<{
 const open = defineModel<boolean>({ required: true });
 
 // Setup logic
-const { barStyle, thumbStyle } = useScrollbar();
 const currentState = useCurrentStateStore();
 const { currentSettings, currentSongbook, currentSongs, online } =
   storeToRefs(currentState);

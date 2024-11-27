@@ -6,7 +6,7 @@ hero:
   image: /icon.png
   actions:
     - theme: brand
-      text: Install M³
+      text: Встановлення M³
       target: _blank
       link: https://sircharlo.github.io/meeting-media-manager/using-at-a-kingdom-hall#download-and-install
     - theme: alt
@@ -18,7 +18,7 @@ hero:
 features:
   - icon: 🚀
     title: Автозавантаження медіа
-    details: Automatically downloads pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
+    details: Автоматично завантажує зображення та відео для зібрань зборів будь-якою мовою, доступною на офіційному вебсайті Свідків Єгови.
   - icon: 🎦
     title: Демонстрація медіа
     details: Дозволяє легко показувати медіа під час гібридних або звичайних зібрань.

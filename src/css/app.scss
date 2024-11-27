@@ -1,8 +1,16 @@
 // app global css in SCSS form
 
-.fitSnugly {
-  width: 100vw;
+.one-hundred-vh {
   height: 100vh;
+}
+
+.one-hundred-vw {
+  width: 100vw;
+}
+
+.fit-snugly {
+  @extend .one-hundred-vh;
+  @extend .one-hundred-vw;
 }
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Serif:wght@100..900&display=swap');
@@ -52,6 +60,27 @@
   }
 }
 
+.q-pr-scroll {
+  padding-right: 10px;
+}
+
+::-webkit-scrollbar {
+  width: 0.5em;
+  border-radius: 1em;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 1em;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 1em;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  cursor: grab;
+}
+
 body.body--light {
   background: $primary-bg;
 
@@ -95,6 +124,10 @@ body.body--light {
     color: $accent-400;
   }
 
+  .list-primary .q-hoverable:hover {
+    background: $accent-100 !important;
+  }
+
   .media-section {
     background: white;
     border-color: $accent-300;
@@ -114,10 +147,13 @@ body.body--light {
     background-color: $secondary-contrast;
   }
 
-  // .q-hoverable:hover > .q-focus-helper {
-  //   background-color: #87afff;
-  //   opacity: 0.15;
-  // }
+  ::-webkit-scrollbar-track {
+    background: $scrollbar-track;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: $scrollbar-thumb;
+  }
 }
 
 body.body--dark {
@@ -163,6 +199,10 @@ body.body--dark {
     color: $secondary-contrast !important;
   }
 
+  .list-primary .q-hoverable:hover {
+    background: $accent-300-dark !important;
+  }
+
   .media-section {
     background: $dark;
     border-color: $accent-100-dark;
@@ -183,10 +223,24 @@ body.body--dark {
   & .q-item.selected-to-drag {
     background-color: $accent-300-dark;
   }
+
+  ::-webkit-scrollbar-track {
+    background: $scrollbar-track-dark;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: $scrollbar-thumb-dark;
+  }
 }
 
 .list-droppable {
   min-height: 3em;
+}
+
+.list-primary .q-hoverable:hover {
+  > .q-focus-helper {
+    opacity: 0 !important;
+  }
 }
 
 .q-banner {
@@ -458,12 +512,6 @@ body.body--dark {
   outline: none;
 }
 
-.q-dialog .q-card,
-.q-menu .q-card {
-  width: 400px;
-  max-height: 75vh;
-}
-
 .q-dialog .q-list,
 .q-menu .q-list {
   width: 300px;
@@ -482,6 +530,11 @@ body.body--dark {
   max-width: 80vw;
 }
 
+.q-dialog .q-dialog__inner > div,
+.q-menu .q-menu__inner >  div {
+  max-height: 75vh;
+}
+
 .dashed-border {
   border: 2px dashed $primary;
 }
@@ -496,6 +549,13 @@ a {
   padding: 32px 16px;
   transition: width 0.5s ease;
   box-shadow: 0px 4px 24px 0px rgba(48, 117, 242, 0.4);
+}
+
+.action-popup {
+  max-width: 450px;
+  width: 50vw;
+  min-width: 400px;
+  max-height: 400px;
 }
 
 .media-tag {
@@ -576,4 +636,16 @@ a {
   top: 0;
   right: 0;
   background: transparent;
+}
+
+.grid-margin {
+  margin: 2px;
+}
+
+.gradient-transparent-to-black {
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0) 100%
+  ) !important;
 }

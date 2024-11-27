@@ -18,6 +18,7 @@ import {
   systemPreferences,
 } from 'electron';
 
+import { PLATFORM } from '../constants';
 import { askForMediaAccess, getAppVersion, isSelf } from './../utils';
 import { downloadFile } from './downloads';
 import {
@@ -29,7 +30,11 @@ import {
 } from './fs';
 import { getAllScreens, setScreenPreferences } from './screen';
 import { setUrlVariables } from './session';
-import { registerShortcut, unregisterShortcut } from './shortcuts';
+import {
+  registerShortcut,
+  unregisterAllShortcuts,
+  unregisterShortcut,
+} from './shortcuts';
 import { logToWindow } from './window/window-base';
 import { mainWindow, toggleAuthorizedClose } from './window/window-main';
 import { mediaWindow, moveMediaWindow } from './window/window-media';
@@ -113,6 +118,10 @@ handleIpcSend('unregisterShortcut', (_e, keySequence: string) => {
   unregisterShortcut(keySequence);
 });
 
+handleIpcSend('unregisterAllShortcuts', () => {
+  unregisterAllShortcuts();
+});
+
 handleIpcSend('moveMediaWindow', (_e, displayNr, fullscreen, noEvent) => {
   moveMediaWindow(displayNr, fullscreen, noEvent);
 });
@@ -186,7 +195,9 @@ handleIpcInvoke('getAppDataPath', async () => app.getPath('appData'));
 handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
 
 handleIpcInvoke('getScreenAccessStatus', async () =>
-  systemPreferences.getMediaAccessStatus('screen'),
+  PLATFORM === 'linux'
+    ? 'granted'
+    : systemPreferences.getMediaAccessStatus('screen'),
 );
 
 handleIpcInvoke('getAllScreens', async () => getAllScreens());

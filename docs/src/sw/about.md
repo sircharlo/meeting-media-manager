@@ -1,5 +1,7 @@
 # Kuhusu Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
 
+![M³ banner](./../assets/m3-banner.png)
+
 ## Programu hii ni nini? {#what-is-this-app}
 
 **Meeting Media Manager**, au **M³** kwa ufupi, ni mfumo kwa programu za Windows, macOS na Linux, ambayo hupakua kiotomatiki picha na video ambazo zitatumika kwenye mikutano ya kutaniko ya Mashahidi wa Yehova, kwa lugha yoyote kwenye tovuti rasmi ya Mashahidi wa Yehova.
@@ -12,21 +14,40 @@ M³ ilikuwa ikijulikana kama JWMMF (JW Meeting Media Fetcher), lakini ilibadilis
 
 :::
 
+## Mbona uchague M³? {#why-choose-m3}
+
+M³ ni zana ya hali ya juu kwa wale wanaosimamia midia ya mkutano, ikiandaa utumiaji mkamilifu, unaotegemewa na wenye vipengele vingi kwenye mifumo mbalimbali.
+
+### Faida muhimu {#key-benefits}
+
+- **Uwasilishaji wa media bila kuchoka**: Kuwasilisha media kwa hali ya juu - fungua M³ na kila kitu kitafanya kazi. Hakuna kusanidi kugumu au hatua za ziada.
+
+- **Unaweza kutumika na makutaniko mengi**: Dhibiti mipangilio ya makutaniko au vikundi kadhaa kwa urahisi ndani ya programu moja.
+
+- **Vipengele vya hali ya juu**: Ongeza midia ya ziada, na pia shiriki kiotomatiki vyote vinavyoendelea katika Jumba La Ufalme na walio kwenye Zoom.
+
+- **Utendaji ulioboreshwa kwa mifumo kadhaa**: Furahia matumizi laini na yenye kutegemeka kwenye Windows, macOS na Linux, hata kwenye mifumo ya zamani au kompyuta zilizo na rasilimali chache.
+
+- **Inategemewa na thabiti**: Imeundwa ili kufanya kazi vyema unapoihitaji zaidi. Je, umekabili tatizo? Tafadhali ripoti, nayo itashughulikiwa ipasavyo.
+
 ## M³ inaweza kukusaidia aje? {#what-can-m3-do}
 
 Kwa ufupi, M³ hukuruhusu kupakua, kusawazisha, kushiriki na kuwasilisha midia kwa urahisi na kiotomatiki.
 
 Kwa **mikutano ya zoom na ana kwa ana** au **ana kwa ana pekee**, hali iliyojumuishwa ya uwasilishaji wa media ina vipengele vyote vinavyohitajika ili kurahisisha kazi ya kushiriki midia na kutaniko, ikiwamo:
 
-- Vijipicha vya midia
+- Vijipicha vya media vilivyo na uwezo wa kukuzwa na kugeuzwa, na pia kuweka nyakati maalum za kuchezwa na kusitishwa kwa midia
 - Vitufe vya kusitisha/kucheza/kusimamisha vilivyo rahisi kutumia ili kudhibiti uchezaji wa faili za midia
 - Uchezaji rahisi wa muziki wa usuli, na kusimama kiotomatiki kabla ya kuanza kwa mikutano iliyoratibiwa
 - Utambuzi na usimamizi wa kiotomatiki wa scrini ya kando
-- Utumiaji wa OBS na M3
+- Kuwezeshwa kwa utumiaji wa OBS Studio pamoja na kubadilisha scene wakati wa kuwasilisha midia
+- Kuwasilisha tovuti rasmi ya Mashahidi wa Yehova kwenye runinga nyingine
+- Ingiza faili za JWPUB, faili za JWLPLAYLIST, video kutoka tovuti rasmi ya Mashahidi wa Yehova, na midia kwa ajili ya hotuba za watu wote kutoka kwa faili ya S-34 kwa kibofyo kimoja.
+- Video maalum, picha, faili za sauti na hata faili za PDF zinaweza kuingizwa kwa urahisi pia!
 
-<!-- As for fully **remote** congregation Zoom meetings, the inbuilt MP4 conversion feature in M³ enables you to share media files of all types easily, using Zoom's native MP4 sharing feature. -->
+**Jaribu M³ leo na ujionee vile itakavyofanya kazi! Kuwasilisha midia kwenye mikutano ya kutaniko hakujawahi kuwa rahisi hivi.**
 
-Jaribu M³ leo ili ujionee kenye inaweza kufanya! Kuonyesha midia kwenye mikutano ya kutaniko haijawai kuwa rahisi hivi.
+![M³ preview](./../assets/m3-preview.png)
 
 ## Je, M³ inafanya kazi kwa lugha yangu? {#does-m3-work-in-my-language}
 

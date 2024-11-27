@@ -15,6 +15,7 @@ import { date } from 'quasar';
 import { settingsDefinitions } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getAdditionalMediaPath } from 'src/helpers/fs';
+import { isEmpty } from 'src/helpers/general';
 import { formatTime } from 'src/helpers/mediaPlayback';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useJwStore } from 'src/stores/jw';
@@ -98,9 +99,11 @@ export const useCurrentStateStore = defineStore('current-state', {
             if (
               (settingsDefinitionId === 'baseUrl' &&
                 !(urlVariables?.base && urlVariables?.mediator)) ||
-              (!congregationSettingsStore.congregations[congregation]?.[
-                settingsDefinitionId
-              ]?.toString() &&
+              (isEmpty(
+                congregationSettingsStore.congregations[congregation]?.[
+                  settingsDefinitionId
+                ],
+              ) &&
                 (!settingsDefinition.rules?.includes('regular') ||
                   !congregationSettingsStore.congregations[congregation]
                     ?.disableMediaFetching))

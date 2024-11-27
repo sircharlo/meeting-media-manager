@@ -247,14 +247,15 @@
                 </div>
               </div>
               <div class="col-shrink">
-                <div class="row q-gutter-sm items-center q-mr-md">
+                <div class="row q-gutter-sm items-center q-mr-sm">
                   <q-btn
-                    v-if="hoveringMediaItem || contextMenu"
                     ref="moreButton"
                     color="accent-400"
                     flat
                     icon="mmm-dots"
                     round
+                    size="sm"
+                    :style="`visibility: ${hoveringMediaItem || contextMenu ? 'visible' : 'hidden'}`"
                     @click="
                       () => {
                         menuTarget = moreButton?.$el;
@@ -291,6 +292,9 @@
               >
                 <q-slider
                   v-model="mediaPlayingCurrentPosition"
+                  :color="
+                    mediaPlayingAction === 'pause' ? 'primary' : 'accent-400'
+                  "
                   :inner-max="customDurationMax"
                   :inner-min="customDurationMin"
                   inner-track-color="accent-400"
@@ -308,9 +312,6 @@
                   :min="0"
                   :readonly="mediaPlayingAction !== 'pause'"
                   :step="0.1"
-                  :thumb-size="
-                    mediaPlayingAction === 'pause' ? undefined : '10px'
-                  "
                   track-color="negative"
                   @update:model-value="seekTo"
                 />
@@ -355,7 +356,7 @@
                 rounded
               >
                 <q-menu>
-                  <q-list style="min-width: 100px">
+                  <q-list>
                     <q-item clickable @click="setMediaPlaying(media, true)">
                       <q-item-section>{{ $t('entireFile') }}</q-item-section>
                     </q-item>
@@ -439,6 +440,7 @@
       <q-menu
         v-model="contextMenu"
         context-menu
+        style="overflow-x: hidden"
         :target="menuTarget"
         touch-position
       >

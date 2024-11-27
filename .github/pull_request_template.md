@@ -1,5 +1,3 @@
-<!-- markdownlint-disable-next-line first-line-heading -->
-
 ## Proposed Changes
 
 A clear and concise description of the changes in this pull request.

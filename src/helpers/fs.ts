@@ -95,6 +95,26 @@ const getFileUrl = (path: string) => {
   return pathToFileURL(path);
 };
 
+const trimFilepathAsNeeded = (filepath: string) => {
+  const fileDir = path.dirname(filepath);
+  let filepathSize = new Blob([filepath]).size;
+  while (filepathSize > 230) {
+    const uniqueId =
+      '_' +
+      Math.floor(Math.random() * Date.now())
+        .toString(16)
+        .slice(0, 4);
+    const overBy = filepathSize - 230 + uniqueId.length;
+    const baseName = path
+      .basename(filepath)
+      .slice(0, -path.extname(filepath).length);
+    const newBaseName = baseName.slice(0, -overBy) + uniqueId;
+    filepath = path.join(fileDir, newBaseName + path.extname(filepath));
+    filepathSize = new Blob([filepath]).size;
+  }
+  return filepath;
+};
+
 const getMetadataFromMediaPath = async (
   mediaPath: string,
 ): Promise<IAudioMetadata> => {
@@ -423,6 +443,7 @@ export {
   getTempDirectory,
   getThumbnailUrl,
   removeEmptyDirs,
+  trimFilepathAsNeeded,
   updatesDisabled,
   watchExternalFolder,
 };

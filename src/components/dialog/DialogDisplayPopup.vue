@@ -8,21 +8,19 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <q-card flat>
-      <q-card-section>
-        <div class="card-title">
-          {{ $t('media-display-settings') }}
-        </div>
-        <template v-if="screenList.length > 1">
-          <template
-            v-if="!screenPreferences.preferWindowed && screenList.length > 2"
-          >
-            <div>
-              <p class="card-section-title text-dark-grey">
-                {{ $t('display') }}
-              </p>
-            </div>
-            <div class="row items-center q-col-gutter-sm q-mb-md">
+    <div class="column action-popup q-py-md">
+      <div class="card-title col-shrink full-width q-px-md q-mb-none">
+        {{ $t('media-display-settings') }}
+      </div>
+      <template v-if="screenList.length > 1">
+        <template
+          v-if="!screenPreferences.preferWindowed && screenList.length > 2"
+        >
+          <div class="card-section-title col-shrink full-width q-px-md">
+            {{ $t('display') }}
+          </div>
+          <div class="col-shrink full-width q-px-md q-pb-sm">
+            <div class="row q-col-gutter-sm">
               <template v-for="(screen, index) in screenList" :key="screen.id">
                 <div class="col">
                   <q-btn
@@ -50,14 +48,14 @@
                 </div>
               </template>
             </div>
-            <q-separator class="bg-accent-200 q-mb-md" />
-          </template>
-          <div>
-            <p class="card-section-title text-dark-grey">
-              {{ $t('window-type') }}
-            </p>
           </div>
-          <div class="row items-center q-col-gutter-sm q-mb-md">
+          <q-separator class="bg-accent-200 q-mb-md" />
+        </template>
+        <div class="card-section-title col-shrink full-width q-px-md">
+          {{ $t('window-type') }}
+        </div>
+        <div class="col-shrink full-width q-px-md q-pb-sm">
+          <div class="row q-col-gutter-sm">
             <div class="col-6">
               <q-btn
                 class="full-width"
@@ -94,122 +92,113 @@
               </q-btn>
             </div>
           </div>
-          <q-separator class="bg-accent-200 q-mb-md" />
-        </template>
-        <div>
-          <p class="card-section-title text-dark-grey">
-            {{ $t('custom-background') }}
-          </p>
-        </div>
-        <div class="col q-mb-md">
-          <q-btn
-            class="full-width"
-            color="primary"
-            :outline="!mediaWindowCustomBackground"
-            unelevated
-            @click="chooseCustomBackground(!!mediaWindowCustomBackground)"
-          >
-            <q-icon
-              class="q-mr-sm"
-              :name="
-                'mmm-background' +
-                (mediaWindowCustomBackground ? '-remove' : '')
-              "
-              size="xs"
-            />
-            {{
-              mediaWindowCustomBackground
-                ? $t('reset-custom-background')
-                : $t('set-custom-background')
-            }}
-          </q-btn>
         </div>
         <q-separator class="bg-accent-200 q-mb-md" />
-        <div class="row items-center">
-          <div class="col">
-            <div class="row text-subtitle1 text-weight-medium">
-              {{ mediaWindowVisible ? $t('projecting') : $t('inactive') }}
-            </div>
-            <div class="row text-dark-grey">
-              {{
-                $t(
-                  screenList.length < 2 || screenPreferences.preferWindowed
-                    ? 'windowed'
-                    : 'external-screen',
-                )
-              }}
-            </div>
+      </template>
+      <div class="card-section-title col-shrink full-width q-px-md q-pb-sm">
+        {{ $t('custom-background') }}
+      </div>
+      <div class="col-shrink full-width q-px-md q-pb-sm">
+        <q-btn
+          class="full-width"
+          color="primary"
+          :outline="!mediaWindowCustomBackground"
+          unelevated
+          @click="chooseCustomBackground(!!mediaWindowCustomBackground)"
+        >
+          <q-icon
+            class="q-mr-sm"
+            :name="
+              'mmm-background' + (mediaWindowCustomBackground ? '-remove' : '')
+            "
+            size="xs"
+          />
+          {{
+            mediaWindowCustomBackground
+              ? $t('reset-custom-background')
+              : $t('set-custom-background')
+          }}
+        </q-btn>
+      </div>
+      <div class="col-shrink full-width q-px-md q-pt-md row">
+        <div class="col">
+          <div class="row text-subtitle1 text-weight-medium">
+            {{ mediaWindowVisible ? $t('projecting') : $t('inactive') }}
           </div>
-          <div class="col-grow">
-            <q-btn
-              v-if="mediaWindowVisible"
-              class="full-width"
-              color="primary"
-              unelevated
-              @click="showMediaWindow(false)"
-            >
-              {{ $t('hide-media-display') }}
-            </q-btn>
-            <q-btn
-              v-else
-              class="full-width"
-              color="primary"
-              unelevated
-              @click="showMediaWindow(true)"
-            >
-              {{ $t('show-media-display') }}
-            </q-btn>
+          <div class="row text-dark-grey">
+            {{
+              $t(
+                screenList.length < 2 || screenPreferences.preferWindowed
+                  ? 'windowed'
+                  : 'external-screen',
+              )
+            }}
           </div>
         </div>
-      </q-card-section>
-    </q-card>
+        <div class="col-grow">
+          <q-btn
+            v-if="mediaWindowVisible"
+            class="full-width"
+            color="primary"
+            unelevated
+            @click="showMediaWindow(false)"
+          >
+            {{ $t('hide-media-display') }}
+          </q-btn>
+          <q-btn
+            v-else
+            class="full-width"
+            color="primary"
+            unelevated
+            @click="showMediaWindow(true)"
+          >
+            {{ $t('show-media-display') }}
+          </q-btn>
+        </div>
+      </div>
+    </div>
   </q-menu>
   <q-dialog v-model="showCustomBackgroundPicker">
-    <div
-      class="items-center col q-pb-lg q-px-lg q-gutter-y-md bg-secondary-contrast"
-    >
-      <div class="text-h6 row">{{ $t('choose-an-image') }}</div>
-      <div class="row">
+    <div class="bg-secondary-contrast column fit-snugly q-px-none">
+      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
+        {{ $t('choose-an-image') }}
+      </div>
+      <div class="col-shrink full-width q-px-md q-py-md">
         {{ $t('select-a-custom-background') }}
       </div>
-      <q-scroll-area
-        :bar-style="barStyle"
-        style="height: 40vh; width: -webkit-fill-available"
-        :thumb-style="thumbStyle"
-      >
+      <div class="q-px-md overflow-auto col full-width flex">
         <template
           v-for="(jwpubImage, index) in jwpubImages"
           :key="jwpubImage.FilePath"
         >
-          <div class="col items-center q-pb-md">
-            <div
-              class="row cursor-pointer items-center q-gutter-x-md"
-              @click="setMediaBackground(jwpubImage.FilePath)"
-            >
-              <div class="col-shrink">
-                <q-img
-                  v-ripple
-                  class="rounded-borders"
-                  fit="contain"
-                  :src="pathToFileURL(jwpubImage.FilePath)"
-                  style="width: 150px"
-                />
-              </div>
-              <div class="col">
-                <div class="row">{{ path.basename(jwpubImage.FilePath) }}</div>
-              </div>
+          <q-item
+            class="row items-center full-width"
+            clickable
+            @click="setMediaBackground(jwpubImage.FilePath)"
+          >
+            <div class="col-shrink q-mr-md">
+              <q-img
+                v-ripple
+                class="rounded-borders"
+                fit="contain"
+                :src="pathToFileURL(jwpubImage.FilePath)"
+                style="width: 150px"
+              />
             </div>
-            <q-separator
-              v-if="index < jwpubImages.length - 1"
-              class="bg-accent-200 q-mt-md"
-            />
-          </div>
+            <div class="col">
+              <div class="row">{{ path.basename(jwpubImage.FilePath) }}</div>
+            </div>
+          </q-item>
+          <q-separator
+            v-if="index < jwpubImages.length - 1"
+            class="bg-accent-200 q-mt-md"
+          />
         </template>
         <q-inner-loading
           :showing="!!jwpubImportFilePath && !jwpubImages.length"
         />
-      </q-scroll-area>
-      <div class="row justify-end">
+      </div>
+      <div class="row q-px-md q-py-md col-shrink full-width justify-end">
         <q-btn
           color="negative"
           flat
@@ -233,7 +222,6 @@ import {
   watchImmediate,
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { useScrollbar } from 'src/composables/useScrollbar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getTempDirectory } from 'src/helpers/fs';
 import {
@@ -262,7 +250,6 @@ const {
 } = window.electronApi;
 
 const { t } = useI18n();
-const { barStyle, thumbStyle } = useScrollbar();
 
 const screenList = ref<Display[]>([]);
 

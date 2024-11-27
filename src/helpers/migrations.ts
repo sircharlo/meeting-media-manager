@@ -62,6 +62,7 @@ const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
         oldPrefs.meeting?.shuffleShortcut
           ? true
           : false,
+      enableMediaAutoExport: false,
       enableMediaDisplayButton:
         oldPrefs.media?.enableMediaDisplayButton || true,
       enableMusicButton: oldPrefs.meeting?.enableMusicButton || true,
@@ -81,6 +82,7 @@ const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
           ? kebabToCamelCase(oldPrefs.app?.localAppLang)
           : oldPrefs.app?.localAppLang) as LanguageValue) || 'en',
       maxRes: oldPrefs.media?.maxRes || '720p',
+      mediaAutoExportFolder: '',
       musicVolume: oldPrefs.meeting?.musicVolume || 100,
       mwDay: oldPrefs.meeting?.mwDay?.toString() || '',
       mwStartTime: oldPrefs.meeting?.mwStartTime?.toString() || '',

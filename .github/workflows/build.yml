@@ -26,25 +26,20 @@ concurrency:
 jobs:
   version_checker:
     runs-on: ubuntu-latest
-
     outputs:
       VERSION_MATCH: ${{ steps.compare-versions.outputs.VERSION_MATCH }}
-
     #    permissions:
     #      contents: write
     #      pull-requests: write
     #      repository-projects: write
-
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Read package version
         uses: ZvonimirSun/read-package-version-actions@v2
         id: package-version
-
       - name: Get Latest Release Version
         id: get-latest-release
         uses: pozetroninc/github-action-get-latest-release@v0.8.0
@@ -56,7 +51,6 @@ jobs:
         # with:
         #   myToken: ${{ secrets.GITHUB_TOKEN }}
         #   exclude_types: 'draft'
-
       - name: Compare versions and increment if needed
         id: compare-versions
         run: |
@@ -75,7 +69,6 @@ jobs:
           echo "VERSION_MATCH=${VERSION_MATCH}" >> $GITHUB_ENV
           echo "VERSION_MATCH=${VERSION_MATCH}" >> $GITHUB_OUTPUT
           exit 0
-
       - name: Create a pull request with version bump if needed
         if: ${{ steps.compare-versions.outputs.VERSION_MATCH == 'true' }}
         uses: r7kamura/bump-request@v0.5.0
@@ -85,64 +78,27 @@ jobs:
   release:
     needs: version_checker
     runs-on: ${{ matrix.os }}
-
     strategy:
       matrix:
         os: [ubuntu-latest, macos-13, macos-latest, windows-latest]
-
     steps:
-      - name: Setup target Node.js to enable Corepack
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - run: |
-          corepack enable
-          yarn -v
-        if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
-
       - name: Check out Git repository
         uses: actions/checkout@v4
         if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
-
-      - name: Install Node.js, NPM and Yarn
+      - name: Setup Node
         uses: actions/setup-node@v4
         if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
         with:
-          node-version: 22
+          node-version: 20
           cache: 'yarn'
-
-      - run: |
-          yarn -v
-        if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
-
-      # - uses: actions/setup-python@v5
-      #   if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
-      #   with:
-      #     python-version: '3.9'
-
-      # - run: |
-      #     pip install setuptools
-      #   if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
-
-      # - name: Install dependencies on Ubuntu
-      #   if: matrix.os == 'ubuntu-latest'
-      #   run: sudo apt-get update && sudo apt-get install libsdl-pango-dev
-
-      # - name: Install dependencies on macOS
-      #   if: matrix.os == 'macos-latest'
-      #   run: brew install pkg-config cairo pango libpng jpeg giflib
-
       - name: Install dependencies
         run: yarn install
         if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
-
       - name: Lint files
         run: |
           yarn lint
           yarn type-check
         if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
-
       - name: Build and Publish Electron App
         run: |
           yarn icons
@@ -151,7 +107,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-
       - name: Upload artifacts
         if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
         uses: actions/upload-artifact@v4

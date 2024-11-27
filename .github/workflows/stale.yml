@@ -1,16 +1,19 @@
-name: Close inactive issues/prs
+name: Close stale items
+
 on:
   schedule:
-    - cron: '30 1 * * *'
+    - cron: '3 0 * * *'
+  workflow_dispatch:
 
 jobs:
-  close-issues:
+  close-stale-issues-prs:
     runs-on: ubuntu-latest
     permissions:
       issues: write
       pull-requests: write
     steps:
-      - uses: actions/stale@v9
+      - name: Close stale issues and pull requests
+        uses: actions/stale@v9
         with:
           days-before-stale: 30
           days-before-close: 7
@@ -22,3 +25,33 @@ jobs:
           exempt-draft-pr: true
           stale-pr-message: 'This pull request is stale because it has been open for 30 days with no activity.'
           close-pr-message: 'This pull request was closed because it has been inactive for 7 days since being marked as stale.'
+
+  close-stale-q-a-discussions:
+    runs-on: ubuntu-latest
+    permissions:
+      discussions: write
+    steps:
+      - name: Close stale Q&A discussions
+        uses: steffen-karlsson/stalesweeper@v1.1.1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          message: 'This discussion has automatically been closed due to inactivity. If this is still relevant, please open a new discussion.'
+          days-before-close: '30'
+          close-unanswered: 'true'
+          category: 'q-a'
+          close-reason: 'OUTDATED'
+
+  close-stale-ideas-discussions:
+    runs-on: ubuntu-latest
+    permissions:
+      discussions: write
+    steps:
+      - name: Close stale Ideas discussions
+        uses: steffen-karlsson/stalesweeper@v1.1.1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          message: 'This discussion has automatically been closed due to inactivity. If this is still relevant, please open a new discussion.'
+          days-before-close: '30'
+          close-unanswered: 'true'
+          category: 'ideas'
+          close-reason: 'OUTDATED'

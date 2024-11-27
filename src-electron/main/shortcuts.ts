@@ -31,3 +31,11 @@ export const unregisterShortcut = (keySequence: string) => {
     errorCatcher(e);
   }
 };
+
+export const unregisterAllShortcuts = () => {
+  try {
+    globalShortcut.unregisterAll();
+  } catch (e) {
+    errorCatcher(e);
+  }
+};

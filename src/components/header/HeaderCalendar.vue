@@ -35,7 +35,7 @@
       {{ $t('extra-media') }}
     </q-tooltip>
     <q-menu ref="importMenu" :offset="[0, 11]">
-      <q-list style="min-width: 100px">
+      <q-list class="list-primary">
         <q-item-label header>{{ $t('from-jw-org') }}</q-item-label>
         <q-item
           v-close-popup
@@ -67,15 +67,6 @@
             </q-item-label>
           </q-item-section>
         </q-item>
-        <q-item v-close-popup clickable @click="publicTalkMediaPopup = true">
-          <q-item-section avatar>
-            <q-icon color="primary" name="mmm-lectern" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ $t('public-talk-media') }}</q-item-label>
-            <q-item-label caption>{{ $t('media-from-s34mp') }}</q-item-label>
-          </q-item-section>
-        </q-item>
         <q-item
           v-close-popup
           clickable
@@ -91,6 +82,15 @@
           </q-item-section>
         </q-item>
         <q-item-label header>{{ $t('from-local-computer') }}</q-item-label>
+        <q-item v-close-popup clickable @click="publicTalkMediaPopup = true">
+          <q-item-section avatar>
+            <q-icon color="primary" name="mmm-lectern" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('public-talk-media') }}</q-item-label>
+            <q-item-label caption>{{ $t('media-from-s34mp') }}</q-item-label>
+          </q-item-section>
+        </q-item>
         <template
           v-for="[icon, name] in [
             ['mmm-local-media', 'images-videos'],
@@ -195,10 +195,6 @@
         :navigation-min-year-month="minDate()"
         :options="dateOptions"
       />
-      <!-- <div class="row items-center justify-end q-gutter-sm">
-          <q-btn v-close-popup :label="$t('close')" color="primary" outline />
-        </div> -->
-      <!-- </q-date> -->
     </q-popup-proxy>
   </q-btn>
 </template>

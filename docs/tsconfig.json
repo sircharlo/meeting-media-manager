@@ -21,6 +21,7 @@
   "include": [
     ".vitepress/config.mts",
     ".vitepress/theme/index.ts",
+    "./data/*.mts",
     "./utils/*.ts",
     "./src/**/*.md"
   ],

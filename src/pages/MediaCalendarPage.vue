@@ -503,13 +503,16 @@ import {
   getPublicationDirectory,
   getTempDirectory,
   getThumbnailUrl,
+  trimFilepathAsNeeded,
 } from 'src/helpers/fs';
 import { sorter } from 'src/helpers/general';
 import {
+  addDayToExportQueue,
   addJwpubDocumentMediaToFiles,
   downloadFileIfNeeded,
   fetchMedia,
   getPublicationInfoFromDb,
+  mapOrder,
   sanitizeId,
 } from 'src/helpers/jw-media';
 import {
@@ -697,19 +700,6 @@ watch(
   },
 );
 
-const mapOrder =
-  (sortOrder: string | string[] | undefined) =>
-  (a: DynamicMediaObject, b: DynamicMediaObject) => {
-    try {
-      const key = 'uniqueId';
-      if (!sortOrder || sortOrder.length === 0) return 0;
-      return sortOrder.indexOf(a[key]) > sortOrder.indexOf(b[key]) ? 1 : -1;
-    } catch (e) {
-      errorCatcher(e);
-      return 0;
-    }
-  };
-
 const updateMediaSortPlugin: DNDPlugin = (parent) => {
   const parentData = parents.get(parent);
   if (!parentData) return;
@@ -772,6 +762,7 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
       ...sortableCircuitOverseerMediaItems.value,
     ].map((item: DynamicMediaObject) => item.uniqueId);
     generateMediaList();
+    addDayToExportQueue(selectedDateObject.value?.date);
   }
 
   return {
@@ -796,8 +787,11 @@ const generateMediaList = () => {
   ];
   if (combinedMediaItems && currentCongregation.value) {
     mediaSort.value[currentCongregation.value] ??= {};
-    const seenFileUrls = new Set();
     sortableMediaItems.value = combinedMediaItems
+      .filter(
+        (item, index, self) =>
+          index === self.findIndex((i) => i.fileUrl === item.fileUrl),
+      )
       .sort(
         mapOrder(
           selectedDate.value
@@ -806,14 +800,7 @@ const generateMediaList = () => {
               ] || []
             : [],
         ),
-      )
-      .filter((m) => {
-        if (!m.fileUrl || seenFileUrls.has(m.fileUrl)) {
-          return false;
-        }
-        seenFileUrls.add(m.fileUrl);
-        return true;
-      });
+      );
   }
 };
 
@@ -857,8 +844,9 @@ watch(
   () => mediaSort.value?.[currentCongregation.value]?.[selectedDate.value],
   (newMediaSort) => {
     try {
-      if (newMediaSort && newMediaSort.length === 0) {
+      if (newMediaSort?.length === 0) {
         generateMediaList();
+        addDayToExportQueue(selectedDateObject.value?.date);
       }
     } catch (e) {
       errorCatcher(e);
@@ -1060,6 +1048,17 @@ useEventListener<
   );
 });
 
+useEventListener<
+  CustomEvent<{
+    targetDate: Date;
+  }>
+>(window, 'remote-video-loaded', (event) => {
+  if (!event.detail.targetDate) {
+    return;
+  }
+  addDayToExportQueue(event.detail.targetDate);
+});
+
 watchImmediate(selectedDate, (newVal) => {
   try {
     if (!currentCongregation.value || !newVal) {
@@ -1223,6 +1222,32 @@ const sortedMediaIds = computed(() => {
   ].map((m) => m.uniqueId);
 });
 
+const arraysAreIdentical = (a: string[], b: string[]) =>
+  a.length === b.length && a.every((element, index) => element === b[index]);
+
+const sortedMediaFileUrls = computed(() =>
+  [...sortableAdditionalMediaItems.value, ...sortableMediaItems.value]
+    .filter((m) => !m.hidden && !!m.fileUrl)
+    .map((m) => m.fileUrl)
+    .filter((fileUrl, index, self) => self.indexOf(fileUrl) === index),
+);
+
+watch(
+  () => sortedMediaFileUrls.value,
+  (newSortedMediaFileUrls, oldSortedMediaFileUrls) => {
+    if (
+      selectedDateObject.value?.date &&
+      !arraysAreIdentical(newSortedMediaFileUrls, oldSortedMediaFileUrls)
+    ) {
+      try {
+        addDayToExportQueue(selectedDateObject.value.date);
+      } catch (e) {
+        errorCatcher(e);
+      }
+    }
+  },
+);
+
 const lastPlayedMediaUniqueId = ref<string>('');
 
 const nextMediaUniqueId = computed(() => {
@@ -1256,27 +1281,7 @@ const copyToDatedAdditionalMedia = async (
   addToAdditionMediaMap?: boolean,
 ) => {
   const datedAdditionalMediaDir = await getDatedAdditionalMediaDirectory();
-  const trimFilepathAsNeeded = (filepath: string) => {
-    let filepathSize = new Blob([filepath]).size;
-    while (filepathSize > 230) {
-      const uniqueId =
-        '_' +
-        Math.floor(Math.random() * Date.now())
-          .toString(16)
-          .slice(0, 4);
-      const overBy = filepathSize - 230 + uniqueId.length;
-      const baseName = path
-        .basename(filepath)
-        .slice(0, -path.extname(filepath).length);
-      const newBaseName = baseName.slice(0, -overBy) + uniqueId;
-      filepath = path.join(
-        datedAdditionalMediaDir,
-        newBaseName + path.extname(filepath),
-      );
-      filepathSize = new Blob([filepath]).size;
-    }
-    return filepath;
-  };
+
   try {
     if (!filepathToCopy || !(await fs.exists(filepathToCopy))) return '';
     let datedAdditionalMediaPath = path.join(
@@ -1335,7 +1340,9 @@ const addToAdditionMediaMapFromPath = async (
     const title =
       stream?.title ||
       metadata?.common.title ||
-      path.basename(additionalFilePath);
+      path
+        .basename(additionalFilePath)
+        .replace(path.extname(additionalFilePath), '');
 
     if (!uniqueId) {
       uniqueId = sanitizeId(

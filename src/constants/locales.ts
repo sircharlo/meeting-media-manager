@@ -1,5 +1,7 @@
 import type { JwLangCode } from 'src/types';
 
+// When adding a new language (enabled or not), add the language below and add the messages import statement in src/i18n/index.ts and docs/locales/index.ts.
+
 export type LanguageValue =
   | 'af'
   | 'am'
