@@ -14,21 +14,21 @@ O M³ costumava ser conhecido como JWMMF (JW Meeting Media Fetcher), mas foi ren
 
 :::
 
-## Why choose M³? {#why-choose-m3}
+## Porquê escolher o M³? {#why-choose-m3}
 
-M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms.
+O M³ é a ferramenta ideal para gerir a multimédia das reuniões, oferecendo uma experiência fluída, fiável e repleta de funcionalidades em várias plataformas.
 
-### Key benefits {#key-benefits}
+### Principais benefícios {#key-benefits}
 
-- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
+- Apresentação de multimédia sem esforço: Apresente multimédia da melhor forma — basta abrir o M³ e tudo funciona. Sem configurações complexas ou etapas desnecessárias.
 
-- **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
+- **Suporte para múltiplas congregações**: Gerir configurações para várias congregações ou grupos de forma fácil dentro de uma única aplicação.
 
-- **Advanced features**: Easily add extra media, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Funcionalidades avançadas**: Adicione facilmente multimédia extra e partilhe automaticamente o que acontece no Salão do Reino com os participantes no Zoom.
 
-- **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
+- **Desempenho otimizado em várias plataformas**: Desfrute de uma experiência fluida e responsiva no Windows, macOS e Linux, mesmo em sistemas mais antigos ou computadores com recursos limitados.
 
-- **Reliable and stable**: Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
+- **Fiável e estável**: Desenvolvido para funcionar quando mais precisar. Encontrou um bug? Relate-o e será resolvido rapidamente.
 
 ## O que o M³ pode fazer? {#what-can-m3-do}
 
@@ -36,16 +36,16 @@ Em resumo, o M³ permite descarregar, sincronizar, partilhar e apresentar facilm
 
 Para reuniões de congregação **híbridas** ou **presenciais**, o modo de apresentação de multimédia integrado possui todas as funcionalidades necessárias para simplificar a tarefa de partilhar multimédia com a congregação, incluindo:
 
-- Media thumbnails with the ability to zoom and pan, as well as set custom start and end times for media
+- Miniaturas de multimédia com capacidade para ampliar e mover, bem como definir tempos de início e fim personalizados para o conteúdo
 - Botões de pausar/reproduzir/parar para gerir a reprodução de ficheiros multimédia
 - Fácil reprodução de música de fundo, com paragem automática antes do início de reuniões programadas
 - Gestão e reconhecimento automático de monitores externos
-- OBS Studio integration with automatic scene switching during media presentation
-- Presenting the official website of Jehovah's Witnesses website on an external monitor
-- Import JWPUB files, JWLPLAYLIST files, videos from the official website of Jehovah's Witnesses, and media for public talks from the S-34 file in a few clicks.
-- Custom videos, pictures, audio files and even PDF files can be easily imported too!
+- Integração com o OBS Studio, com troca automática de cenas durante a apresentação de multimédia
+- Apresentação do site oficial das Testemunhas de Jeová num monitor externo
+- Importe ficheiros JWPUB, ficheiros JWLPLAYLIST, vídeos do site oficial das Testemunhas de Jeová e multimédia para discursos públicos a partir do ficheiro S-34 com apenas alguns cliques.
+- Vídeos, imagens, ficheiros de áudio e até ficheiros PDF personalizados podem ser facilmente importados também!
 
-**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
+**Experimente o M³ hoje e veja por si mesmo o que ele pode fazer! A apresentação de multimédia nas reuniões da congregação nunca foi tão fácil.**
 
 ![M³ preview](./../assets/m3-preview.png)
 
