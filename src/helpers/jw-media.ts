@@ -790,14 +790,12 @@ const getStudyBible = async () => {
   try {
     const currentStateStore = useCurrentStateStore();
     const languages = [
-      currentStateStore.currentSettings?.lang,
-      currentStateStore.currentSettings?.langFallback,
-      'E',
-    ]
-      .filter(Boolean)
-      .filter(
-        (item, index, self) => index === self.findIndex((i) => i === item),
-      ) as JwLangCode[];
+      ...new Set([
+        currentStateStore.currentSettings?.lang,
+        currentStateStore.currentSettings?.langFallback,
+        'E',
+      ]),
+    ].filter((l): l is JwLangCode => !!l);
     let db: null | string = null;
     let publication: null | PublicationFetcher = null;
     for (const langwritten of languages) {
