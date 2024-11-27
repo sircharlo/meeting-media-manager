@@ -8,7 +8,7 @@
       <div
         class="row justify-center cursor-pointer"
         style="width: 56px"
-        @click="aboutModal = true"
+        @click="(aboutModal = true)"
       >
         <img src="logo-no-background.svg" />
       </div>

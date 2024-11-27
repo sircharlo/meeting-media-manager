@@ -28,7 +28,7 @@
                     color="primary"
                     :disable="screen.mainWindow"
                     :outline="screen.mainWindow || !screen.mediaWindow"
-                    @click="screenPreferences.preferredScreenNumber = index"
+                    @click="(screenPreferences.preferredScreenNumber = index)"
                   >
                     <q-icon
                       class="q-mr-sm"
@@ -65,7 +65,7 @@
                   screenList.length < 2 || screenPreferences.preferWindowed
                 "
                 unelevated
-                @click="screenPreferences.preferWindowed = false"
+                @click="(screenPreferences.preferWindowed = false)"
               >
                 <q-icon class="q-mr-sm" name="mmm-fullscreen" size="xs" />
                 {{ $t('full-screen') }}
@@ -85,7 +85,7 @@
                     : 'primary'
                 "
                 unelevated
-                @click="screenPreferences.preferWindowed = true"
+                @click="(screenPreferences.preferWindowed = true)"
               >
                 <q-icon class="q-mr-sm" name="mmm-window" size="xs" />
                 {{ $t('windowed') }}

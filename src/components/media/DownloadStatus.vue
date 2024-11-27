@@ -5,7 +5,7 @@
     rounded
     :text-color="downloadPopup ? (online ? 'primary' : 'negative') : ''"
     unelevated
-    @click="downloadPopup = !downloadPopup"
+    @click="(downloadPopup = !downloadPopup)"
   >
     <q-icon
       :name="

@@ -80,8 +80,8 @@
                           )
                         : selectedMediaItems.push(mediaItem)
                     "
-                    @mouseout="hoveredMediaItem = 0"
-                    @mouseover="hoveredMediaItem = mediaItem.id"
+                    @mouseout="(hoveredMediaItem = 0)"
+                    @mouseover="(hoveredMediaItem = mediaItem.id)"
                   >
                     <q-card-section
                       :class="{
@@ -156,7 +156,7 @@
             :label="parseInt(chapter)"
             style="width: 3em; height: 3em"
             unelevated
-            @click="bibleBookChapter = parseInt(chapter)"
+            @click="(bibleBookChapter = parseInt(chapter))"
           />
         </div>
         <div v-else class="row q-col-gutter-md full-width">
@@ -178,8 +178,8 @@
                 }"
                 flat
                 @click="getBibleBookMedia(+bookNr)"
-                @mouseout="hoveredBibleBook = ''"
-                @mouseover="hoveredBibleBook = bookNr"
+                @mouseout="(hoveredBibleBook = '')"
+                @mouseover="(hoveredBibleBook = bookNr)"
               >
                 <q-img
                   class="rounded-borders"
