@@ -180,40 +180,32 @@
 </template>
 <script setup lang="ts">
 // Types
-import type { MediaSection, MultimediaItem } from 'src/types';
+import type {
+  MediaSection,
+  MultimediaItem,
+  PublicationFetcher,
+} from 'src/types';
 
 import { whenever } from '@vueuse/core';
-// import { storeToRefs } from 'pinia';
+import { storeToRefs } from 'pinia';
 // Composables
-// import { fetchJson } from 'src/helpers/api';
-// import { fetchJson, fetchRaw } from 'src/helpers/api';
 import { errorCatcher } from 'src/helpers/error-catcher';
-// import { sorter } from 'src/helpers/general';
-// import { camelToKebabCase } from 'src/helpers/general';
 // Helpers
 import {
   addToAdditionMediaMapFromPath,
-  // addFullFilePathToMultimediaItem,
-  // downloadAdditionalRemoteVideo,
-  // getBestImageUrl,
-  // getJwMediaInfo,
-  // getPubMediaLinks,
-  // getStudyBible,
+  downloadAdditionalRemoteVideo,
+  getJwMediaInfo,
+  getPubMediaLinks,
   getStudyBibleBooks,
   getStudyBibleMedia,
 } from 'src/helpers/jw-media';
-// import { useCurrentStateStore } from 'src/stores/current-state';
-// import { useJwStore } from 'src/stores/jw';
+import { useCurrentStateStore } from 'src/stores/current-state';
 // Packages
 import { computed, ref } from 'vue';
-// import { useI18n } from 'vue-i18n';
 
 // Stores
-// const jwStore = useJwStore();
-// const { urlVariables } = storeToRefs(jwStore);
-
-// const currentState = useCurrentStateStore();
-// const { currentSettings } = storeToRefs(currentState);
+const currentState = useCurrentStateStore();
+const { currentSettings } = storeToRefs(currentState);
 
 // Props
 const props = defineProps<{
@@ -229,12 +221,15 @@ const bibleBookMedia = ref<MultimediaItem[]>([]);
 const bibleBooks = ref<Record<number, MultimediaItem>>({});
 
 const selectedBookChapters = computed(() => {
-  return bibleBook.value
-    ? bibleBookMedia.value
-        .filter((item) => item.BookNumber === bibleBook.value)
-        ?.map((item) => item.ChapterNumber || 0)
-        .filter((value, index, self) => self.indexOf(value) === index)
-    : [];
+  if (!bibleBook.value) return [];
+
+  const chapters = new Set<number>();
+  for (const item of bibleBookMedia.value) {
+    if (item.BookNumber === bibleBook.value) {
+      chapters.add(item.ChapterNumber || 0);
+    }
+  }
+  return Array.from(chapters);
 });
 
 const selectedChapterMediaItems = computed(() => {
@@ -344,9 +339,36 @@ const addSelectedMediaItems = async () => {
 };
 
 const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
-  console.log('addStudyBibleMedia', mediaItem);
   if (mediaItem.MimeType.includes('image')) {
-    await addToAdditionMediaMapFromPath(mediaItem.FilePath, props.section);
+    await addToAdditionMediaMapFromPath(
+      mediaItem.FilePath,
+      props.section,
+      undefined,
+      {
+        title: mediaItem.Label,
+      },
+    );
+  } else {
+    const mediaLookup: PublicationFetcher = {
+      docid: mediaItem.MepsDocumentId,
+      fileformat: 'MP4',
+      issue: mediaItem.IssueTagNumber || undefined,
+      langwritten: currentSettings.value?.lang || 'E',
+      pub: mediaItem.KeySymbol,
+      track: mediaItem.Track || undefined,
+    };
+    const [mediaItemFiles, { thumbnail, title }] = await Promise.all([
+      getPubMediaLinks(mediaLookup),
+      getJwMediaInfo(mediaLookup),
+    ]);
+    downloadAdditionalRemoteVideo(
+      mediaItemFiles?.files?.[currentSettings.value?.lang || 'E']?.['MP4'] ||
+        [],
+      thumbnail,
+      false,
+      title.replace(/^\d+\.\s*/, ''),
+      props.section,
+    );
   }
 };
 

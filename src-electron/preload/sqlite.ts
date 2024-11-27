@@ -14,7 +14,6 @@ export const executeQuery = <T = QueryResponseItem>(
       readonly: true,
     });
     const result = db.prepare<unknown[], T>(query).all();
-    console.debug('executeQuery', { dbPath, query, result });
     return result;
   } catch (e) {
     errorCatcher(e, {

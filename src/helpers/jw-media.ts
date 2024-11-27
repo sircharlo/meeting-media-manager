@@ -112,12 +112,12 @@ const addToAdditionMediaMapFromPath = async (
   additionalFilePath: string,
   section: MediaSection = 'additional',
   uniqueId?: string,
-  stream?: {
-    duration: number;
+  additionalInfo?: {
+    duration?: number;
     song?: string;
-    thumbnailUrl: string;
+    thumbnailUrl?: string;
     title?: string;
-    url: string;
+    url?: string;
   },
 ) => {
   try {
@@ -131,9 +131,9 @@ const addToAdditionMediaMapFromPath = async (
         ? await getMetadataFromMediaPath(additionalFilePath)
         : undefined;
 
-    const duration = stream?.duration || metadata?.format.duration || 0;
+    const duration = additionalInfo?.duration || metadata?.format.duration || 0;
     const title =
-      stream?.title ||
+      additionalInfo?.title ||
       metadata?.common.title ||
       path
         .basename(additionalFilePath)
@@ -157,10 +157,10 @@ const addToAdditionMediaMapFromPath = async (
           isVideo: video,
           section,
           sectionOriginal: section,
-          song: stream?.song,
-          streamUrl: stream?.url,
+          song: additionalInfo?.song,
+          streamUrl: additionalInfo?.url,
           thumbnailUrl:
-            stream?.thumbnailUrl ??
+            additionalInfo?.thumbnailUrl ??
             (await getThumbnailUrl(additionalFilePath, true)),
           title,
           uniqueId,
@@ -173,8 +173,8 @@ const addToAdditionMediaMapFromPath = async (
       contexts: {
         fn: {
           additionalFilePath,
+          additionalInfo,
           name: 'addToAdditionMediaMapFromPath',
-          stream,
           uniqueId,
         },
       },
@@ -916,7 +916,6 @@ const getStudyBible = async () => {
     let db: null | string = null;
     let publication: null | PublicationFetcher = null;
     for (const langwritten of languages) {
-      console.log('retrieving langwritten', langwritten);
       if (!langwritten) continue;
       publication = {
         fileformat: 'JWPUB',
@@ -930,7 +929,6 @@ const getStudyBible = async () => {
       throw new Error(
         'No study bible file found for languages: ' + languages.join(', '),
       );
-    console.log('study bible db found', db);
     return { db, publication };
   } catch (error) {
     errorCatcher(error);
@@ -940,18 +938,14 @@ const getStudyBible = async () => {
 const getStudyBibleBooks = async () => {
   try {
     const { db, publication } = await getStudyBible();
-    if (!db || !publication) {
-      return {};
-    }
-    console.log('biblebook db', db);
-    const bibleBookItems = window.electronApi.executeQuery<MultimediaItem>(
-      db,
-      ` 
+    if (!db || !publication) return {};
+
+    const query = `
       SELECT DISTINCT
           Document.*, 
           BibleBook.*, 
           SummaryDocument.DocumentId AS SummaryDocumentId,
-        CoverMultimedia.FilePath AS CoverPictureFilePath
+          CoverMultimedia.FilePath AS CoverPictureFilePath
       FROM 
           Document
       INNER JOIN 
@@ -966,16 +960,20 @@ const getStudyBibleBooks = async () => {
               CoverMultimedia.CategoryType = 9 AND CoverMultimedia.MultimediaId = DocumentMultimedia.MultimediaId
       WHERE 
           Document.Type = 2;
-        `,
-    );
+    `;
 
-    console.log('bibleBookItems', bibleBookItems);
-    const bibleBooksObject: Record<number, MultimediaItem> = {};
-    for (const bibleBook of bibleBookItems) {
-      if (!bibleBook.BibleBookId) continue;
-      bibleBooksObject[bibleBook.BibleBookId] =
-        await addFullFilePathToMultimediaItem(bibleBook, publication);
-    }
+    const bibleBookItems =
+      await window.electronApi.executeQuery<MultimediaItem>(db, query);
+    const bibleBooksObject = Object.fromEntries(
+      await Promise.all(
+        bibleBookItems
+          .filter((item) => item.BibleBookId)
+          .map(async (item) => [
+            item.BibleBookId,
+            await addFullFilePathToMultimediaItem(item, publication),
+          ]),
+      ),
+    );
     return bibleBooksObject;
   } catch (error) {
     errorCatcher(error);
@@ -986,13 +984,9 @@ const getStudyBibleBooks = async () => {
 const getStudyBibleMedia = async () => {
   try {
     const { db, publication } = await getStudyBible();
-    if (!db || !publication) {
-      return [];
-    }
-    console.log('biblebook db', db);
-    const bibleMediaItems = window.electronApi.executeQuery<MultimediaItem>(
-      db,
-      ` 
+    if (!db || !publication) return [];
+
+    const query = `
       SELECT 
           vmm.MultimediaId,
           bc.BookNumber,
@@ -1003,45 +997,31 @@ const getStudyBibleMedia = async () => {
       FROM 
           VerseMultimediaMap vmm
       INNER JOIN 
-          BibleChapter bc
-      ON 
-          vmm.BibleVerseId BETWEEN bc.FirstVerseId AND bc.LastVerseId
+          BibleChapter bc ON vmm.BibleVerseId BETWEEN bc.FirstVerseId AND bc.LastVerseId
       INNER JOIN 
-          BibleVerse bv
-      ON 
-          vmm.BibleVerseId = bv.BibleVerseId
+          BibleVerse bv ON vmm.BibleVerseId = bv.BibleVerseId
       INNER JOIN 
-          Multimedia m
-      ON 
-          vmm.MultimediaId = m.MultimediaId
+          Multimedia m ON vmm.MultimediaId = m.MultimediaId
       INNER JOIN 
-          Multimedia AS CoverMultimedia 
-      ON 
-          CoverMultimedia.LinkMultimediaId = m.MultimediaId;
-        `,
+          Multimedia AS CoverMultimedia ON CoverMultimedia.LinkMultimediaId = m.MultimediaId;
+    `;
+
+    const bibleMediaItems =
+      await window.electronApi.executeQuery<MultimediaItem>(db, query);
+
+    return Promise.all(
+      bibleMediaItems.map(async (item) => {
+        const updatedItem = await addFullFilePathToMultimediaItem(
+          item,
+          publication,
+        );
+        updatedItem.VerseNumber = parseInt(
+          item.VerseLabel?.match(/>(\d+)</)?.[1] || '',
+          10,
+        );
+        return updatedItem;
+      }),
     );
-
-    // console.log('bibleMediaItems', bibleMediaItems);
-    // const bibleMediaArray: MultimediaItem[] = [];
-    // for (const bibleMediaItem of bibleMediaItems) {
-    //   if (!bibleMediaItem.BookNumber || !bibleMediaItem.ChapterNumber) continue;
-    //   bibleBookChaptersObject[bibleMediaItem.BookNumber] ??= {};
-    //   bibleBookChaptersObject[bibleMediaItem.BookNumber][
-    //     bibleMediaItem.ChapterNumber
-    //   ] = await addFullFilePathToMultimediaItem(bibleMediaItem, publication);
-    // }
-
-    console.log('bibleMediaItems', bibleMediaItems);
-    for (let i = 0; i < bibleMediaItems.length; i++) {
-      bibleMediaItems[i] = await addFullFilePathToMultimediaItem(
-        bibleMediaItems[i],
-        publication,
-      );
-      bibleMediaItems[i].VerseNumber = parseInt(
-        bibleMediaItems[i].VerseLabel?.match(/>(\d+)</)?.[1] || '',
-      );
-    }
-    return bibleMediaItems;
   } catch (error) {
     errorCatcher(error);
     return [];
