@@ -20,7 +20,7 @@
         : ''
     "
     unelevated
-    @click="musicPopup = !musicPopup"
+    @click="(musicPopup = !musicPopup)"
   >
     <q-icon name="mmm-music-note" />
     <div v-if="musicPlaying || musicStarting" class="q-ml-sm">

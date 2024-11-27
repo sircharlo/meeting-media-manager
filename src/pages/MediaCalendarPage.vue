@@ -194,10 +194,10 @@
           :list="sortableAdditionalMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
-          @update:hidden="media.hidden = !!$event"
-          @update:repeat="media.repeat = !!$event"
+          @update:hidden="(media.hidden = !!$event)"
+          @update:repeat="(media.repeat = !!$event)"
           @update:tag="updateMediaItemTag(media, $event)"
-          @update:title="media.title = $event"
+          @update:title="(media.title = $event)"
         />
         <div
           v-if="
@@ -238,9 +238,9 @@
           :list="sortableTgwMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
-          @update:hidden="media.hidden = !!$event"
-          @update:repeat="media.repeat = !!$event"
-          @update:title="media.title = $event"
+          @update:hidden="(media.hidden = !!$event)"
+          @update:repeat="(media.repeat = !!$event)"
+          @update:title="(media.title = $event)"
         />
         <div v-if="sortableTgwMediaItems.filter((m) => !m.hidden).length === 0">
           <q-item>
@@ -275,9 +275,9 @@
           :list="sortableAyfmMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
-          @update:hidden="media.hidden = !!$event"
-          @update:repeat="media.repeat = !!$event"
-          @update:title="media.title = $event"
+          @update:hidden="(media.hidden = !!$event)"
+          @update:repeat="(media.repeat = !!$event)"
+          @update:title="(media.title = $event)"
         />
         <div
           v-if="sortableAyfmMediaItems.filter((m) => !m.hidden).length === 0"
@@ -323,9 +323,9 @@
           :list="sortableLacMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
-          @update:hidden="media.hidden = !!$event"
-          @update:repeat="media.repeat = !!$event"
-          @update:title="media.title = $event"
+          @update:hidden="(media.hidden = !!$event)"
+          @update:repeat="(media.repeat = !!$event)"
+          @update:title="(media.title = $event)"
         />
         <div v-if="sortableLacMediaItems.filter((m) => !m.hidden).length === 0">
           <q-item>
@@ -360,9 +360,9 @@
           :list="sortableWtMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
-          @update:hidden="media.hidden = !!$event"
-          @update:repeat="media.repeat = !!$event"
-          @update:title="media.title = $event"
+          @update:hidden="(media.hidden = !!$event)"
+          @update:repeat="(media.repeat = !!$event)"
+          @update:title="(media.title = $event)"
         />
         <div v-if="sortableWtMediaItems.filter((m) => !m.hidden).length === 0">
           <q-item>
@@ -424,9 +424,9 @@
           :list="sortableCircuitOverseerMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
-          @update:hidden="media.hidden = !!$event"
-          @update:repeat="media.repeat = !!$event"
-          @update:title="media.title = $event"
+          @update:hidden="(media.hidden = !!$event)"
+          @update:repeat="(media.repeat = !!$event)"
+          @update:title="(media.title = $event)"
         />
         <div
           v-if="

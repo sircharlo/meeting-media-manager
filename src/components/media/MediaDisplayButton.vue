@@ -19,7 +19,7 @@
       displayPopup ? (mediaWindowVisible ? 'primary' : 'negative') : ''
     "
     unelevated
-    @click="displayPopup = !displayPopup"
+    @click="(displayPopup = !displayPopup)"
   >
     <q-tooltip
       v-if="!displayPopup"

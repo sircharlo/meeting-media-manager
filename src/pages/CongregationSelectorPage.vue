@@ -11,8 +11,8 @@
           (currentCongregation === id ? 'active' : '')
         "
         @click="chooseCongregation(id)"
-        @mouseleave="hoveredCongregation = null"
-        @mouseover="hoveredCongregation = id"
+        @mouseleave="(hoveredCongregation = null)"
+        @mouseover="(hoveredCongregation = id)"
       >
         <q-item class="items-center">
           <div class="col">
@@ -66,7 +66,7 @@
               icon="mmm-delete"
               :label="$t('delete')"
               size="md"
-              @click.stop="congToDelete = id"
+              @click.stop="(congToDelete = id)"
             />
             <q-icon
               :class="
@@ -100,7 +100,7 @@
         }}
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
-        <q-btn flat :label="$t('cancel')" @click="congToDelete = ''" />
+        <q-btn flat :label="$t('cancel')" @click="(congToDelete = '')" />
         <q-btn
           color="negative"
           flat

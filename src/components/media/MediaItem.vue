@@ -110,7 +110,7 @@
                   color="primary"
                   flat
                   :label="$t('save')"
-                  @click="mediaDurationPopups[media.uniqueId] = false"
+                  @click="(mediaDurationPopups[media.uniqueId] = false)"
                 />
               </q-card-actions>
             </q-card>
@@ -238,7 +238,7 @@
               >
                 <div
                   class="ellipsis-3-lines row"
-                  @dblclick="mediaEditTitleDialog = true"
+                  @dblclick="(mediaEditTitleDialog = true)"
                 >
                   {{ displayMediaTitle }}
                 </div>
@@ -408,7 +408,7 @@
                 icon="mmm-play"
                 outline
                 rounded
-                @click="mediaPlayingAction = 'play'"
+                @click="(mediaPlayingAction = 'play')"
               />
               <q-btn
                 v-else-if="
@@ -420,7 +420,7 @@
                 icon="mmm-pause"
                 outline
                 rounded
-                @click="mediaPlayingAction = 'pause'"
+                @click="(mediaPlayingAction = 'pause')"
               />
               <q-btn
                 v-if="mediaPlayingAction !== '' || mediaPlayingAction === ''"
@@ -472,7 +472,7 @@
               mediaPlayingUrl === media.fileUrl ||
               mediaPlayingUrl === media.streamUrl
             "
-            @click="mediaEditTitleDialog = true"
+            @click="(mediaEditTitleDialog = true)"
           >
             <q-item-section avatar>
               <q-icon name="mmm-edit" />
@@ -482,7 +482,7 @@
               <q-item-label caption>{{ $t('rename-explain') }}</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item v-close-popup clickable @click="mediaEditTagDialog = true">
+          <q-item v-close-popup clickable @click="(mediaEditTagDialog = true)">
             <q-item-section avatar>
               <q-icon name="mmm-tag" />
             </q-item-section>
@@ -526,7 +526,7 @@
               mediaPlayingUrl === media.fileUrl ||
               mediaPlayingUrl === media.streamUrl
             "
-            @click="mediaToDelete = media.uniqueId"
+            @click="(mediaToDelete = media.uniqueId)"
           >
             <q-item-section avatar>
               <q-icon color="negative" name="mmm-delete" />
@@ -602,7 +602,7 @@
         {{ $t('sureStopVideo') }}
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
-        <q-btn flat :label="$t('cancel')" @click="mediaToStop = ''" />
+        <q-btn flat :label="$t('cancel')" @click="(mediaToStop = '')" />
         <q-btn
           ref="stopButton"
           color="negative"
@@ -636,7 +636,7 @@
         }}
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
-        <q-btn flat :label="$t('cancel')" @click="mediaToDelete = ''" />
+        <q-btn flat :label="$t('cancel')" @click="(mediaToDelete = '')" />
         <q-btn
           color="negative"
           flat
