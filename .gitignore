@@ -59,3 +59,11 @@ src/css/mmm-icons.*
 
 # Custom dep helper script
 depChecker.js
+
+# Legacy files
+build/win*-unpacked
+build/*.yml
+build/*.blockmap
+build/*.exe
+src/main
+src/renderer
