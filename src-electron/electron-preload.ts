@@ -80,6 +80,7 @@ const electronApi: ElectronApi = {
   setScreenPreferences: (s) => send('setScreenPreferences', s),
   setUrlVariables: (v) => send('setUrlVariables', v),
   toggleMediaWindow: (s) => send('toggleMediaWindow', s),
+  unregisterAllShortcuts: () => send('unregisterAllShortcuts'),
   unregisterShortcut: (s) => send('unregisterShortcut', s),
   unwatchFolders: () => send('unwatchFolders'),
   watchFolder: (p) => send('watchFolder', p),

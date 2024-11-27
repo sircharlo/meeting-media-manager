@@ -120,6 +120,7 @@ export interface ElectronApi {
   setScreenPreferences: (screenPreferences: string) => void;
   setUrlVariables: (variables: string) => void;
   toggleMediaWindow: (show: boolean) => void;
+  unregisterAllShortcuts: () => void;
   unregisterShortcut: (shortcut: string) => void;
   unwatchFolders: () => void;
   watchFolder: (path: string) => void;
@@ -166,6 +167,7 @@ export type ElectronIpcSendKey =
   | 'toggleMediaWindow'
   | 'toggleOpenAtLogin'
   | 'toggleWebsiteWindow'
+  | 'unregisterAllShortcuts'
   | 'unregisterShortcut'
   | 'unwatchFolders'
   | 'watchFolder'

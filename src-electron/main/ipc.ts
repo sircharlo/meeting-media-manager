@@ -30,7 +30,11 @@ import {
 } from './fs';
 import { getAllScreens, setScreenPreferences } from './screen';
 import { setUrlVariables } from './session';
-import { registerShortcut, unregisterShortcut } from './shortcuts';
+import {
+  registerShortcut,
+  unregisterAllShortcuts,
+  unregisterShortcut,
+} from './shortcuts';
 import { logToWindow } from './window/window-base';
 import { mainWindow, toggleAuthorizedClose } from './window/window-main';
 import { mediaWindow, moveMediaWindow } from './window/window-media';
@@ -112,6 +116,10 @@ handleIpcSend('navigateWebsiteWindow', (_e, action: NavigateWebsiteAction) => {
 
 handleIpcSend('unregisterShortcut', (_e, keySequence: string) => {
   unregisterShortcut(keySequence);
+});
+
+handleIpcSend('unregisterAllShortcuts', () => {
+  unregisterAllShortcuts();
 });
 
 handleIpcSend('moveMediaWindow', (_e, displayNr, fullscreen, noEvent) => {
