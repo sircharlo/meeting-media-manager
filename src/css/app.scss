@@ -635,7 +635,12 @@ a {
   position: absolute;
   top: 0;
   right: 0;
+  padding: 0;
   background: transparent;
+}
+
+.study-bible-item .q-badge {
+  padding: 8px !important;
 }
 
 .grid-margin {
@@ -645,7 +650,8 @@ a {
 .gradient-transparent-to-black {
   background: linear-gradient(
     0deg,
-    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.75) 0%,
     rgba(0, 0, 0, 0) 100%
   ) !important;
+  padding: 32px 8px 8px !important;
 }

@@ -57,12 +57,12 @@
                     }"
                     flat
                     @click="
-                      selectedMediaItemIds.includes(mediaItem)
-                        ? selectedMediaItemIds.splice(
-                            selectedMediaItemIds.indexOf(mediaItem),
+                      selectedMediaItems.includes(mediaItem)
+                        ? selectedMediaItems.splice(
+                            selectedMediaItems.indexOf(mediaItem),
                             1,
                           )
-                        : selectedMediaItemIds.push(mediaItem)
+                        : selectedMediaItems.push(mediaItem)
                     "
                     @mouseout="(hoveredMediaItem = undefined)"
                     @mouseover="(hoveredMediaItem = mediaItem)"
@@ -76,18 +76,36 @@
                         :class="{
                           'study-bible-item': true,
                           'study-bible-item-selected':
-                            selectedMediaItemIds.includes(mediaItem),
+                            selectedMediaItems.includes(mediaItem),
                         }"
                         :src="mediaItem.CoverPictureFilePath"
                       >
                         <q-badge
                           v-if="mediaItem.CategoryType < 0"
-                          color="negative"
-                          floating
-                          >{{ mediaItem.CategoryType * -1 }}</q-badge
+                          class="q-mt-sm q-ml-sm q-pa-xs bg-semi-black rounded-borders-sm"
                         >
+                          {{ $t('video') }}
+                        </q-badge>
+                        <q-checkbox
+                          v-if="selectedMediaItems.includes(mediaItem)"
+                          v-model="selectedMediaItems"
+                          color="primary"
+                          :val="mediaItem"
+                        />
+                        <div
+                          class="absolute-bottom text-caption gradient-transparent-to-black"
+                        >
+                          {{ mediaItem.Label }}
+                        </div>
                       </q-img>
                     </q-card-section>
+                    <!-- <q-card-section class="q-pa-sm">
+                      <div class="text-subtitle2 q-mb-xs">
+                        {{
+                          mediaItem.Label
+                        }}
+                      </div>
+                    </q-card-section> -->
                   </div>
                 </div>
               </template>
@@ -148,12 +166,12 @@
             @click="resetBibleBook()"
           />
           <q-btn
-            v-if="selectedMediaItemIds.length"
+            v-if="selectedMediaItems.length"
             v-close-popup
             color="primary"
-            :label="$t('add') + ' (' + selectedMediaItemIds.length + ')'"
+            :label="$t('add') + ' (' + selectedMediaItems.length + ')'"
+            @click="addSelectedMediaItems()"
           />
-          <!-- @click="addSelectedMediaItems()" -->
           <q-btn
             v-else
             v-close-popup
@@ -301,7 +319,7 @@ const loadingProgress = ref<number>(0);
 const hoveredBibleBook = ref('');
 const hoveredMediaItem = ref<MultimediaItem>();
 
-const selectedMediaItemIds = ref<MultimediaItem[]>([]);
+const selectedMediaItems = ref<MultimediaItem[]>([]);
 
 whenever(open, () => {
   resetBibleBook();
@@ -327,10 +345,21 @@ const getBibleMedia = async () => {
   }
 };
 
+const addSelectedMediaItems = async () => {
+  for (const mediaItem of selectedMediaItems.value) {
+    await addStudyBibleMedia(mediaItem);
+  }
+  resetBibleBook(true);
+};
+
+const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
+  console.log('addStudyBibleMedia', mediaItem);
+};
+
 const resetBibleBook = (close = false) => {
   bibleBook.value = 0;
   bibleBookChapter.value = 0;
-  selectedMediaItemIds.value = [];
+  selectedMediaItems.value = [];
   if (close) open.value = false;
 };
 </script>
