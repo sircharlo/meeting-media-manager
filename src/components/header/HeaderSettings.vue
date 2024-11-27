@@ -22,7 +22,7 @@
           <q-item-label header>{{ $t('invalid-settings') }}</q-item-label>
           <q-item
             clickable
-            @click="(onlyShowInvalidSettings = !onlyShowInvalidSettings)"
+            @click="onlyShowInvalidSettings = !onlyShowInvalidSettings"
           >
             <q-item-section avatar>
               <q-icon

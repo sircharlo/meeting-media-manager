@@ -1,5 +1,5 @@
 <template>
-  <div class="row" style="width: 240px" @click="(shortcutPicker = true)">
+  <div class="row" style="width: 240px" @click="shortcutPicker = true">
     <template v-if="localValue">
       <template
         v-for="(keyboardKey, index) in localValue.split('+')"
@@ -22,7 +22,7 @@
       color="primary"
       :label="$t('enter-key-combination')"
       outline
-      @click="(shortcutPicker = true)"
+      @click="shortcutPicker = true"
     />
   </div>
   <q-dialog
@@ -60,7 +60,7 @@
           color="negative"
           flat
           :label="$t('clear')"
-          @click="(localValue = '')"
+          @click="localValue = ''"
         />
         <q-btn v-close-popup flat :label="$t('confirm')" />
       </q-card-actions>
