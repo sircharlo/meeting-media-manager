@@ -53,8 +53,8 @@
                 );
                 open = false;
               "
-              @mouseout="(hoveredRemoteVideo = '')"
-              @mouseover="(hoveredRemoteVideo = video.guid)"
+              @mouseout="hoveredRemoteVideo = ''"
+              @mouseover="hoveredRemoteVideo = video.guid"
             >
               <q-card-section class="q-pa-sm">
                 <q-img

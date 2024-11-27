@@ -94,7 +94,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^15.2.10",
     "postcss": "^8.4.49",
-    "prettier": "^3.4.0",
+    "prettier": "^3.4.1",
     "typescript": "~5.5.4",
     "vitepress": "^1.5.0",
     "vue-tsc": "^2.1.10"

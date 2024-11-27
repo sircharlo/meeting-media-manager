@@ -23,7 +23,7 @@
     v-if="selectedDate"
     color="white-transparent"
     unelevated
-    @click="(section = undefined)"
+    @click="section = undefined"
   >
     <q-icon
       :class="{ 'q-mr-sm': $q.screen.gt.xs }"
@@ -41,7 +41,7 @@
           v-close-popup
           clickable
           :disable="!online"
-          @click="(chooseSong = true)"
+          @click="chooseSong = true"
         >
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-music-note" />
@@ -55,7 +55,7 @@
           v-close-popup
           clickable
           :disable="!online"
-          @click="(remoteVideoPopup = true)"
+          @click="remoteVideoPopup = true"
         >
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-movie" />
@@ -71,7 +71,7 @@
           v-close-popup
           clickable
           :disable="!online"
-          @click="(studyBiblePopup = true)"
+          @click="studyBiblePopup = true"
         >
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-bible" />
@@ -82,7 +82,7 @@
           </q-item-section>
         </q-item>
         <q-item-label header>{{ $t('from-local-computer') }}</q-item-label>
-        <q-item v-close-popup clickable @click="(publicTalkMediaPopup = true)">
+        <q-item v-close-popup clickable @click="publicTalkMediaPopup = true">
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-lectern" />
           </q-item-section>
@@ -131,7 +131,7 @@
             v-if="additionalMediaForDay"
             v-close-popup
             clickable
-            @click="(mediaDeleteAllPending = true)"
+            @click="mediaDeleteAllPending = true"
           >
             <q-item-section avatar>
               <q-icon color="negative" name="mmm-delete" />

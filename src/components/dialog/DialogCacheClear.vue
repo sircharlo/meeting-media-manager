@@ -17,7 +17,7 @@
         }}
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
-        <q-btn flat :label="$t('cancel')" @click="(open = false)" />
+        <q-btn flat :label="$t('cancel')" @click="open = false" />
         <q-btn
           color="negative"
           flat

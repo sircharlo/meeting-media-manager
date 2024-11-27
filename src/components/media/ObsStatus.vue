@@ -23,7 +23,7 @@
         : ''
     "
     unelevated
-    @click="(obsPopup = !obsPopup)"
+    @click="obsPopup = !obsPopup"
     @mouseenter="
       currentSettings?.obsQuickToggle && obsConnectionState === 'connected'
         ? (obsPopup = true)

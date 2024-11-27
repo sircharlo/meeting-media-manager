@@ -92,7 +92,7 @@
               icon="mmm-search"
               :label="$t('congregation-lookup')"
               outline
-              @click="(showCongregationLookup = true)"
+              @click="showCongregationLookup = true"
             />
           </div>
           <q-stepper-navigation class="q-gutter-sm">
@@ -150,7 +150,7 @@
             <q-btn
               color="primary"
               :label="$t('continue')"
-              @click="(step = regularProfile ? step + 1 : 103)"
+              @click="step = regularProfile ? step + 1 : 103"
             />
           </q-stepper-navigation>
         </q-step>
@@ -297,7 +297,7 @@
               color="negative"
               flat
               :label="$t('back')"
-              @click="(step = 8)"
+              @click="step = 8"
             />
             <q-btn color="primary" :label="$t('continue')" @click="step++" />
           </q-stepper-navigation>
@@ -504,7 +504,7 @@
               color="primary"
               :disable="!currentSettings.obsMediaScene"
               :label="$t('continue')"
-              @click="(step = 300)"
+              @click="step = 300"
             />
           </q-stepper-navigation>
         </q-step>
@@ -528,7 +528,7 @@
               color="negative"
               flat
               :label="$t('start-over')"
-              @click="(step = 1)"
+              @click="step = 1"
             />
             <q-btn
               color="primary"

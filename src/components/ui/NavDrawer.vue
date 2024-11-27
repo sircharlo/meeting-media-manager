@@ -10,7 +10,7 @@
       v-if="$q.screen.gt.xs"
       v-ripple
       clickable
-      @click="(miniState = !miniState)"
+      @click="miniState = !miniState"
     >
       <q-tooltip
         v-if="miniState"

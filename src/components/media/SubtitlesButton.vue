@@ -6,7 +6,7 @@
     :icon="subtitlesVisible ? 'mmm-subtitles' : 'mmm-subtitles-off'"
     rounded
     unelevated
-    @click="(subtitlesVisible = !subtitlesVisible)"
+    @click="subtitlesVisible = !subtitlesVisible"
   >
     <q-tooltip :delay="1000" :offset="[14, 22]">
       {{ $t('subtitles') }}
