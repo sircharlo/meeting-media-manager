@@ -92,6 +92,7 @@ export interface MultimediaItem {
   EndTime?: number;
   FileName?: string;
   FilePath: string;
+  FormattedVerseLabel?: string;
   HasMediaLinks?: number;
   Height?: null | number;
   IssueTagNumber?: number;
@@ -122,6 +123,7 @@ export interface MultimediaItem {
   Track?: null | number;
   VerseLabel?: string;
   VerseNumber?: number;
+  VerseNumbers?: number[];
   VideoMarkers?: VideoMarker[];
   Width?: null | number;
 }
