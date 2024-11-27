@@ -5,15 +5,15 @@ on:
     branches:
       - master
     paths-ignore:
-      - '.github/DISCUSSION_TEMPLATE/*.yml'
-      - '.github/ISSUE_TEMPLATE/*.yml'
+      - '.github/*_TEMPLATE/*.yml'
+      - '.github/*.yml'
       - '.vscode/**'
       - 'docs/**'
       - '**/*.md'
   pull_request:
     paths-ignore:
-      - '.github/DISCUSSION_TEMPLATE/*.yml'
-      - '.github/ISSUE_TEMPLATE/*.yml'
+      - '.github/*_TEMPLATE/*.yml'
+      - '.github/*.yml'
       - '.vscode/**'
       - 'docs/**'
       - '**/*.md'
