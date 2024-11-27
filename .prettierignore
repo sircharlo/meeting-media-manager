@@ -48,15 +48,23 @@ yarn-error.log*
 docs/.vitepress/dist
 docs/.vitepress/cache
 
-# Translated Markdown files
-docs/src/**/*
-!docs/src/en/**/*
-
 # Output of 'yarn icons'
 src/css/mmm-icons.*
 
 # Custom dep helper script
 depChecker.js
+
+# Legacy files
+build/win*-unpacked
+build/*.yml
+build/*.blockmap
+build/*.exe
+src/main
+src/renderer
+
+# Translated Markdown files
+docs/src/**/*
+!docs/src/en/**/*
 
 # Generated files
 LICENCE.md

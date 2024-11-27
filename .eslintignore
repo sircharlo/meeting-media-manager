@@ -1,8 +1,71 @@
+.DS_Store
+.thumbs.db
+node_modules
+
+# Quasar core related directories
+.quasar
 /dist
-/src-capacitor
-/src-cordova
-/.quasar
-/node_modules
-.eslintrc.cjs
 /quasar.config.*.temporary.compiled*
-/.yarn
+
+# Cordova related directories and files
+/src-cordova/node_modules
+/src-cordova/platforms
+/src-cordova/plugins
+/src-cordova/www
+
+# Capacitor related directories and files
+/src-capacitor/www
+/src-capacitor/node_modules
+
+# BEX related directories and files
+/src-bex/www
+/src-bex/js/core
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# local .env files
+.env*
+!.env.example
+
+# Sentry Config File
+.env.sentry-build-plugin
+
+# Yarn files
+.pnp.*
+.yarn/*
+
+# VitePress
+docs/.vitepress/dist
+docs/.vitepress/cache
+
+# Output of 'yarn icons'
+src/css/mmm-icons.*
+
+# Custom dep helper script
+depChecker.js
+
+# Legacy files
+build/win*-unpacked
+build/*.yml
+build/*.blockmap
+build/*.exe
+src/main
+src/renderer
+
+# Translated Markdown files
+docs/src/**/*
+!docs/src/en/**/*
+
+# Generated files
+LICENCE.md
+.eslintrc.cjs
