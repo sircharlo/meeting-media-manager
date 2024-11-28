@@ -499,21 +499,19 @@ import {
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
-  getFileUrl,
   getMetadataFromMediaPath,
   getPublicationDirectory,
   getTempDirectory,
-  getThumbnailUrl,
-  trimFilepathAsNeeded,
 } from 'src/helpers/fs';
 import {
   addDayToExportQueue,
   addJwpubDocumentMediaToFiles,
+  addToAdditionMediaMapFromPath,
+  copyToDatedAdditionalMedia,
   downloadFileIfNeeded,
   fetchMedia,
   getPublicationInfoFromDb,
   mapOrder,
-  sanitizeId,
 } from 'src/helpers/jw-media';
 import {
   convertImageIfNeeded,
@@ -559,7 +557,7 @@ const route = useRoute();
 const router = useRouter();
 
 const jwStore = useJwStore();
-const { addToAdditionMediaMap, removeFromAdditionMediaMap } = jwStore;
+const { addToAdditionMediaMap } = jwStore;
 const {
   additionalMediaMaps,
   customDurations,
@@ -1273,118 +1271,6 @@ const playState = (id: string) => {
   if (id === nextMediaUniqueId.value) return 'next';
   if (id === previousMediaUniqueId.value) return 'previous';
   return 'unknown';
-};
-
-const copyToDatedAdditionalMedia = async (
-  filepathToCopy: string,
-  section?: MediaSection,
-  addToAdditionMediaMap?: boolean,
-) => {
-  const datedAdditionalMediaDir = await getDatedAdditionalMediaDirectory();
-
-  try {
-    if (!filepathToCopy || !(await fs.exists(filepathToCopy))) return '';
-    let datedAdditionalMediaPath = path.join(
-      datedAdditionalMediaDir,
-      path.basename(filepathToCopy),
-    );
-    datedAdditionalMediaPath = trimFilepathAsNeeded(datedAdditionalMediaPath);
-    const uniqueId = sanitizeId(
-      formatDate(selectedDate.value, 'YYYYMMDD') +
-        '-' +
-        getFileUrl(datedAdditionalMediaPath),
-    );
-    if (await fs.exists(datedAdditionalMediaPath)) {
-      if (filepathToCopy !== datedAdditionalMediaPath) {
-        await fs.remove(datedAdditionalMediaPath);
-        removeFromAdditionMediaMap(uniqueId);
-      }
-    }
-    if (filepathToCopy !== datedAdditionalMediaPath)
-      await fs.copy(filepathToCopy, datedAdditionalMediaPath);
-    if (addToAdditionMediaMap)
-      await addToAdditionMediaMapFromPath(
-        datedAdditionalMediaPath,
-        section,
-        uniqueId,
-      );
-    return datedAdditionalMediaPath;
-  } catch (error) {
-    errorCatcher(error);
-    return '';
-  }
-};
-
-const addToAdditionMediaMapFromPath = async (
-  additionalFilePath: string,
-  section: MediaSection = 'additional',
-  uniqueId?: string,
-  stream?: {
-    duration: number;
-    song?: string;
-    thumbnailUrl: string;
-    title?: string;
-    url: string;
-  },
-) => {
-  try {
-    if (!additionalFilePath) return;
-    const video = isVideo(additionalFilePath);
-    const audio = isAudio(additionalFilePath);
-    const metadata =
-      video || audio
-        ? await getMetadataFromMediaPath(additionalFilePath)
-        : undefined;
-
-    const duration = stream?.duration || metadata?.format.duration || 0;
-    const title =
-      stream?.title ||
-      metadata?.common.title ||
-      path
-        .basename(additionalFilePath)
-        .replace(path.extname(additionalFilePath), '');
-
-    if (!uniqueId) {
-      uniqueId = sanitizeId(
-        formatDate(selectedDate.value, 'YYYYMMDD') +
-          '-' +
-          getFileUrl(additionalFilePath),
-      );
-    }
-    addToAdditionMediaMap(
-      [
-        {
-          duration,
-          fileUrl: getFileUrl(additionalFilePath),
-          isAdditional: true,
-          isAudio: audio,
-          isImage: isImage(additionalFilePath),
-          isVideo: video,
-          section,
-          sectionOriginal: section,
-          song: stream?.song,
-          streamUrl: stream?.url,
-          thumbnailUrl:
-            stream?.thumbnailUrl ??
-            (await getThumbnailUrl(additionalFilePath, true)),
-          title,
-          uniqueId,
-        },
-      ],
-      section,
-    );
-  } catch (error) {
-    errorCatcher(error, {
-      contexts: {
-        fn: {
-          additionalFilePath,
-          name: 'addToAdditionMediaMapFromPath',
-          stream,
-          uniqueId,
-        },
-      },
-    });
-  }
 };
 
 const addToFiles = async (

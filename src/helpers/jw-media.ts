@@ -7,6 +7,7 @@ import type {
   ImageSizes,
   ImageTypeSizes,
   JwLangCode,
+  JwPlaylistItem,
   MediaItemsMediator,
   MediaItemsMediatorFile,
   MediaLink,
@@ -63,6 +64,123 @@ import { errorCatcher } from './error-catcher';
 const { formatDate, subtractFromDate } = date;
 
 const { executeQuery, fileUrlToPath, fs, path, readdir } = window.electronApi;
+
+export const copyToDatedAdditionalMedia = async (
+  filepathToCopy: string,
+  section?: MediaSection,
+  addToAdditionMediaMap?: boolean,
+) => {
+  const currentStateStore = useCurrentStateStore();
+  const jwStore = useJwStore();
+  const datedAdditionalMediaDir =
+    await currentStateStore.getDatedAdditionalMediaDirectory();
+
+  try {
+    if (!filepathToCopy || !(await fs.exists(filepathToCopy))) return '';
+    let datedAdditionalMediaPath = path.join(
+      datedAdditionalMediaDir,
+      path.basename(filepathToCopy),
+    );
+    datedAdditionalMediaPath = trimFilepathAsNeeded(datedAdditionalMediaPath);
+    const uniqueId = sanitizeId(
+      formatDate(currentStateStore.selectedDate, 'YYYYMMDD') +
+        '-' +
+        getFileUrl(datedAdditionalMediaPath),
+    );
+    if (await fs.exists(datedAdditionalMediaPath)) {
+      if (filepathToCopy !== datedAdditionalMediaPath) {
+        await fs.remove(datedAdditionalMediaPath);
+        jwStore.removeFromAdditionMediaMap(uniqueId);
+      }
+    }
+    if (filepathToCopy !== datedAdditionalMediaPath)
+      await fs.copy(filepathToCopy, datedAdditionalMediaPath);
+    if (addToAdditionMediaMap)
+      await addToAdditionMediaMapFromPath(
+        datedAdditionalMediaPath,
+        section,
+        uniqueId,
+      );
+    return datedAdditionalMediaPath;
+  } catch (error) {
+    errorCatcher(error);
+    return '';
+  }
+};
+
+export const addToAdditionMediaMapFromPath = async (
+  additionalFilePath: string,
+  section: MediaSection = 'additional',
+  uniqueId?: string,
+  additionalInfo?: {
+    duration?: number;
+    song?: string;
+    thumbnailUrl?: string;
+    title?: string;
+    url?: string;
+  },
+) => {
+  try {
+    if (!additionalFilePath) return;
+    const currentStateStore = useCurrentStateStore();
+    const jwStore = useJwStore();
+    const video = isVideo(additionalFilePath);
+    const audio = isAudio(additionalFilePath);
+    const metadata =
+      video || audio
+        ? await getMetadataFromMediaPath(additionalFilePath)
+        : undefined;
+
+    const duration = additionalInfo?.duration || metadata?.format.duration || 0;
+    const title =
+      additionalInfo?.title ||
+      metadata?.common.title ||
+      path
+        .basename(additionalFilePath)
+        .replace(path.extname(additionalFilePath), '');
+
+    if (!uniqueId) {
+      uniqueId = sanitizeId(
+        formatDate(currentStateStore.selectedDate, 'YYYYMMDD') +
+          '-' +
+          getFileUrl(additionalFilePath),
+      );
+    }
+    jwStore.addToAdditionMediaMap(
+      [
+        {
+          duration,
+          fileUrl: getFileUrl(additionalFilePath),
+          isAdditional: true,
+          isAudio: audio,
+          isImage: isImage(additionalFilePath),
+          isVideo: video,
+          section,
+          sectionOriginal: section,
+          song: additionalInfo?.song,
+          streamUrl: additionalInfo?.url,
+          thumbnailUrl:
+            additionalInfo?.thumbnailUrl ??
+            (await getThumbnailUrl(additionalFilePath, true)),
+          title,
+          uniqueId,
+        },
+      ],
+      section,
+    );
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          additionalFilePath,
+          additionalInfo,
+          name: 'addToAdditionMediaMapFromPath',
+          uniqueId,
+        },
+      },
+    });
+  }
+};
 
 export const addJwpubDocumentMediaToFiles = async (
   dbPath: string,
@@ -474,26 +592,25 @@ export const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
 async function addFullFilePathToMultimediaItem(
   multimediaItem: MultimediaItem,
   publication: PublicationFetcher,
-) {
+): Promise<MultimediaItem> {
   try {
-    const fullFilePath = multimediaItem.FilePath
-      ? path.join(
-          await getPublicationDirectory(publication),
-          multimediaItem.FilePath,
-        )
-      : undefined;
-    const fullLinkedPreviewFilePath = multimediaItem.LinkedPreviewFilePath
-      ? path.join(
-          await getPublicationDirectory(publication),
-          multimediaItem.LinkedPreviewFilePath,
-        )
-      : undefined;
+    const paths: (keyof MultimediaItem)[] = [
+      'FilePath',
+      'LinkedPreviewFilePath',
+      'CoverPictureFilePath',
+    ];
+    const baseDir = await getPublicationDirectory(publication);
+
+    const resolvedPaths = Object.fromEntries(
+      paths.map((key) =>
+        multimediaItem[key]
+          ? [key, path.join(baseDir, multimediaItem[key])]
+          : [],
+      ),
+    );
     return {
       ...multimediaItem,
-      ...(fullFilePath ? { FilePath: fullFilePath } : {}),
-      ...(fullLinkedPreviewFilePath
-        ? { LinkedPreviewFilePath: fullLinkedPreviewFilePath }
-        : {}),
+      ...resolvedPaths,
     };
   } catch (error) {
     errorCatcher(error);
@@ -786,6 +903,232 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
     return allExtractItems;
   } catch (e: unknown) {
     errorCatcher(e);
+    return [];
+  }
+};
+
+const getStudyBible = async () => {
+  try {
+    const nwtStyPublication_E: PublicationFetcher = {
+      fileformat: 'JWPUB',
+      langwritten: 'E',
+      pub: 'nwtsty',
+    };
+    const nwtStyDb_E = getDbFromJWPUB(nwtStyPublication_E);
+    const currentStateStore = useCurrentStateStore();
+    const languages = [
+      ...new Set([
+        currentStateStore.currentSettings?.lang,
+        currentStateStore.currentSettings?.langFallback,
+      ]),
+    ].filter((l): l is JwLangCode => !!l);
+    let nwtStyDb: null | string = null;
+    let nwtStyPublication: null | PublicationFetcher = null;
+    let nwtDb: null | string = null;
+    for (const langwritten of languages) {
+      if (!langwritten) continue;
+      nwtStyPublication = {
+        fileformat: 'JWPUB',
+        langwritten,
+        pub: 'nwtsty',
+      };
+      nwtStyDb = await getDbFromJWPUB(nwtStyPublication);
+      if (nwtStyDb) break;
+    }
+    if (!nwtStyDb) {
+      nwtStyPublication = nwtStyPublication_E;
+      nwtStyDb = await nwtStyDb_E;
+
+      let nwtPublication: null | PublicationFetcher = null;
+      for (const langwritten of languages) {
+        if (!langwritten) continue;
+        nwtPublication = {
+          fileformat: 'JWPUB',
+          langwritten,
+          pub: 'nwt',
+        };
+        nwtDb = await getDbFromJWPUB(nwtPublication);
+        if (nwtDb) break;
+      }
+    }
+    return {
+      nwtDb,
+      nwtStyDb,
+      nwtStyDb_E: await nwtStyDb_E,
+      nwtStyPublication,
+      nwtStyPublication_E,
+    };
+  } catch (error) {
+    errorCatcher(error);
+    return { nwtDb: null, nwtStyDb: null, nwtStyPublication: null };
+  }
+};
+export const getStudyBibleBooks = async () => {
+  try {
+    const {
+      nwtDb,
+      nwtStyDb,
+      nwtStyDb_E,
+      nwtStyPublication,
+      nwtStyPublication_E,
+    } = await getStudyBible();
+    if (!nwtStyDb || !nwtStyPublication) return {};
+
+    const query = `
+      SELECT DISTINCT
+          Document.*, 
+          BibleBook.*, 
+          SummaryDocument.DocumentId AS SummaryDocumentId,
+          CoverMultimedia.FilePath AS CoverPictureFilePath
+      FROM 
+          Document
+      INNER JOIN 
+          BibleBook ON BibleBook.BookDocumentId = Document.DocumentId
+      LEFT JOIN 
+          Document AS SummaryDocument ON SummaryDocument.DocumentId = BibleBook.IntroDocumentId
+      LEFT JOIN 
+          DocumentMultimedia ON 
+              DocumentMultimedia.DocumentId IN (Document.DocumentId, SummaryDocument.DocumentId)
+      LEFT JOIN 
+          Multimedia AS CoverMultimedia ON 
+              CoverMultimedia.CategoryType = 9 AND CoverMultimedia.MultimediaId = DocumentMultimedia.MultimediaId
+      WHERE 
+          Document.Type = 2;
+    `;
+
+    const bibleBookItems = window.electronApi.executeQuery<MultimediaItem>(
+      nwtStyDb,
+      query,
+    );
+
+    if (nwtStyDb_E) {
+      const englishBookItems = window.electronApi.executeQuery<MultimediaItem>(
+        nwtStyDb_E,
+        query,
+      );
+
+      englishBookItems.forEach((englishItem) => {
+        const styItem = bibleBookItems.find(
+          (item) => englishItem.BibleBookId === item.BibleBookId,
+        );
+        if (styItem && !styItem.CoverPictureFilePath) {
+          styItem.MepsLanguageIndex = englishItem.MepsLanguageIndex;
+          styItem.CoverPictureFilePath = englishItem.CoverPictureFilePath;
+        }
+      });
+    }
+
+    if (nwtDb) {
+      const query = `
+      SELECT *
+      FROM 
+          Document
+      WHERE
+          Class = 1
+    `;
+
+      const bibleBookLocalNames =
+        window.electronApi.executeQuery<JwPlaylistItem>(nwtDb, query);
+
+      bibleBookLocalNames.forEach((localItem) => {
+        const styItem = bibleBookItems.find(
+          (item) => localItem.ChapterNumber === item.BibleBookId,
+        );
+        if (styItem) {
+          styItem.Title = localItem.Title;
+        }
+      });
+    }
+    const bibleBooksObject = Object.fromEntries(
+      await Promise.all(
+        bibleBookItems
+          .filter((item) => !!item.BibleBookId && !!item.CoverPictureFilePath)
+          .map(async (item) => [
+            item.BibleBookId,
+            await addFullFilePathToMultimediaItem(
+              item,
+              item.MepsLanguageIndex === 0
+                ? nwtStyPublication_E
+                : nwtStyPublication,
+            ),
+          ]),
+      ),
+    );
+    return bibleBooksObject;
+  } catch (error) {
+    errorCatcher(error);
+    return {};
+  }
+};
+
+export const getStudyBibleMedia = async () => {
+  try {
+    const { nwtStyDb, nwtStyDb_E, nwtStyPublication, nwtStyPublication_E } =
+      await getStudyBible();
+    if (!nwtStyDb || !nwtStyPublication) return [];
+
+    const query = `
+      SELECT 
+          vmm.MultimediaId,
+          bc.BookNumber,
+          bc.ChapterNumber,
+          bv.Label AS VerseLabel,
+          m.*,
+          CoverMultimedia.FilePath AS CoverPictureFilePath
+      FROM 
+          VerseMultimediaMap vmm
+      INNER JOIN 
+          BibleChapter bc ON vmm.BibleVerseId BETWEEN bc.FirstVerseId AND bc.LastVerseId
+      INNER JOIN 
+          BibleVerse bv ON vmm.BibleVerseId = bv.BibleVerseId
+      INNER JOIN 
+          Multimedia m ON vmm.MultimediaId = m.MultimediaId
+      INNER JOIN 
+          Multimedia AS CoverMultimedia ON CoverMultimedia.LinkMultimediaId = m.MultimediaId;
+    `;
+
+    const bibleMediaItems = window.electronApi.executeQuery<MultimediaItem>(
+      nwtStyDb,
+      query,
+    );
+
+    if (nwtStyDb_E) {
+      const englishMediaItems = window.electronApi.executeQuery<MultimediaItem>(
+        nwtStyDb_E,
+        query,
+      );
+
+      englishMediaItems.forEach((englishItem) => {
+        const styItem = bibleMediaItems.find(
+          (item) =>
+            englishItem.FilePath.replace(
+              '_E_',
+              `_${nwtStyPublication.langwritten}_`,
+            ) === item.FilePath,
+        );
+        if (!styItem) {
+          bibleMediaItems.push({ ...englishItem, MepsLanguageIndex: 0 });
+        }
+      });
+    }
+
+    return Promise.all(
+      bibleMediaItems.map(async (item) => {
+        const updatedItem = await addFullFilePathToMultimediaItem(
+          item,
+          item.MepsLanguageIndex === 0
+            ? nwtStyPublication_E
+            : nwtStyPublication,
+        );
+        updatedItem.VerseNumber = parseInt(
+          item.VerseLabel?.match(/>(\d+)</)?.[1] || '',
+          10,
+        );
+        return updatedItem;
+      }),
+    );
+  } catch (error) {
+    errorCatcher(error);
     return [];
   }
 };

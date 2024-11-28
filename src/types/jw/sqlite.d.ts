@@ -72,10 +72,14 @@ export interface MultimediaItem {
   AlternativeLanguage?: JwLangCode;
   BeginParagraphOrdinal: number;
   BeginPosition?: number;
+  BibleBookId?: number;
+  BookNumber?: number;
   Caption: string;
   CaptionContent?: null | string;
   CaptionRich?: null | string;
   CategoryType: number;
+  ChapterNumber?: number;
+  CoverPictureFilePath?: string;
   CreditLine?: string;
   CreditLineContent?: null | string;
   CreditLineRich?: null | string;
@@ -87,6 +91,8 @@ export interface MultimediaItem {
   EndTime?: number;
   FileName?: string;
   FilePath: string;
+  FormattedVerseLabel?: string;
+  HasMediaLinks?: number;
   Height?: null | number;
   IssueTagNumber?: number;
   KeySymbol?: null | string;
@@ -113,7 +119,11 @@ export interface MultimediaItem {
   TargetParagraphNumberLabel: number;
   ThumbnailFilePath?: string;
   ThumbnailUrl?: string;
+  Title?: string;
   Track?: null | number;
+  VerseLabel?: string;
+  VerseNumber?: number;
+  VerseNumbers?: number[];
   VideoMarkers?: VideoMarker[];
   Width?: null | number;
 }
