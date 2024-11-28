@@ -9,7 +9,7 @@ import { errorCatcher } from './error-catcher';
 
 const { addToDate, buildDate, extractDate, formatDate, getDateDiff } = date;
 
-const dateFromString = (lookupDate?: Date | string | undefined) => {
+export const dateFromString = (lookupDate?: Date | string | undefined) => {
   try {
     if (!lookupDate) {
       const now = new Date();
@@ -66,7 +66,10 @@ const dateFromString = (lookupDate?: Date | string | undefined) => {
  * @param months How many months should pass before updating
  * @returns Wether the list should be updated
  */
-const shouldUpdateList = (list: CacheList | undefined, months: number) => {
+export const shouldUpdateList = (
+  list: CacheList | undefined,
+  months: number,
+) => {
   if (!list) return true;
   return (
     !list.list.length ||
@@ -74,7 +77,7 @@ const shouldUpdateList = (list: CacheList | undefined, months: number) => {
   );
 };
 
-const isInPast = (lookupDate: Date) => {
+export const isInPast = (lookupDate: Date) => {
   try {
     if (!lookupDate) return false;
     const now = dateFromString();
@@ -104,7 +107,7 @@ const getWeekDay = (lookupDate: Date) => {
   }
 };
 
-function datesAreSame(date1: Date, date2: Date) {
+export function datesAreSame(date1: Date, date2: Date) {
   try {
     if (!date1 || !date2) throw new Error('Missing date for comparison');
     return date1.toDateString() === date2.toDateString();
@@ -114,7 +117,10 @@ function datesAreSame(date1: Date, date2: Date) {
   }
 }
 
-function getSpecificWeekday(lookupDate: Date | string, desiredWeekday: number) {
+export function getSpecificWeekday(
+  lookupDate: Date | string,
+  desiredWeekday: number,
+) {
   try {
     if (!lookupDate) return new Date();
     if (desiredWeekday === null) throw new Error('No desired weekday');
@@ -131,7 +137,7 @@ function getSpecificWeekday(lookupDate: Date | string, desiredWeekday: number) {
   }
 }
 
-function isCoWeek(lookupDate: Date) {
+export function isCoWeek(lookupDate: Date) {
   try {
     if (!lookupDate) return false;
     lookupDate = dateFromString(lookupDate);
@@ -150,7 +156,7 @@ function isCoWeek(lookupDate: Date) {
   }
 }
 
-const isMwMeetingDay = (lookupDate: Date) => {
+export const isMwMeetingDay = (lookupDate: Date) => {
   try {
     const currentState = useCurrentStateStore();
     if (!lookupDate || currentState.currentSettings?.disableMediaFetching)
@@ -171,7 +177,7 @@ const isMwMeetingDay = (lookupDate: Date) => {
   }
 };
 
-const isWeMeetingDay = (lookupDate: Date) => {
+export const isWeMeetingDay = (lookupDate: Date) => {
   try {
     const currentState = useCurrentStateStore();
     if (!lookupDate || currentState.currentSettings?.disableMediaFetching)
@@ -184,7 +190,7 @@ const isWeMeetingDay = (lookupDate: Date) => {
   }
 };
 
-function updateLookupPeriod(reset = false) {
+export function updateLookupPeriod(reset = false) {
   try {
     const { currentCongregation } = useCurrentStateStore();
     if (!currentCongregation) return;
@@ -234,13 +240,13 @@ function updateLookupPeriod(reset = false) {
   }
 }
 
-const getLocalDate = (dateObj: Date | string, locale: DateLocale) => {
+export const getLocalDate = (dateObj: Date | string, locale: DateLocale) => {
   const parsedDate =
     typeof dateObj === 'string' ? extractDate(dateObj, 'YYYY/MM/DD') : dateObj;
   return formatDate(parsedDate, 'D MMMM YYYY', locale);
 };
 
-const remainingTimeBeforeMeetingStart = () => {
+export const remainingTimeBeforeMeetingStart = () => {
   try {
     const currentState = useCurrentStateStore();
     const meetingDay =
@@ -267,7 +273,7 @@ const remainingTimeBeforeMeetingStart = () => {
   }
 };
 
-const friendlyDayToJsDay = (day?: number) => {
+export const friendlyDayToJsDay = (day?: number) => {
   try {
     if (!day) day = -1;
     const firstDay = day === 6 ? 0 : parseInt(day.toString()) + 1;
@@ -277,19 +283,4 @@ const friendlyDayToJsDay = (day?: number) => {
     errorCatcher(error);
     return 0;
   }
-};
-
-export {
-  dateFromString,
-  datesAreSame,
-  friendlyDayToJsDay,
-  getLocalDate,
-  getSpecificWeekday,
-  isCoWeek,
-  isInPast,
-  isMwMeetingDay,
-  isWeMeetingDay,
-  remainingTimeBeforeMeetingStart,
-  shouldUpdateList,
-  updateLookupPeriod,
 };

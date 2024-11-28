@@ -16,7 +16,7 @@ export const initObsWebSocket = async () => {
   }
 };
 
-const sendObsSceneEvent = (scene: ObsSceneType) => {
+export const sendObsSceneEvent = (scene: ObsSceneType) => {
   if (!scene) return;
   window.dispatchEvent(
     new CustomEvent<{ scene: ObsSceneType }>('obsSceneEvent', {
@@ -25,7 +25,7 @@ const sendObsSceneEvent = (scene: ObsSceneType) => {
   );
 };
 
-const isUUID = (uuid?: string) => {
+export const isUUID = (uuid?: string) => {
   if (!uuid) return false;
   try {
     const uuidRegex =
@@ -37,7 +37,7 @@ const isUUID = (uuid?: string) => {
   }
 };
 
-const configuredScenesAreAllUUIDs = () => {
+export const configuredScenesAreAllUUIDs = () => {
   try {
     const currentState = useCurrentStateStore();
     const configuredScenes = [
@@ -53,14 +53,14 @@ const configuredScenesAreAllUUIDs = () => {
   }
 };
 
-const obsErrorHandler = (err: OBSWebSocketError) => {
+export const obsErrorHandler = (err: OBSWebSocketError) => {
   const obsState = useObsStateStore();
   obsState.obsMessage = 'obs.error';
   if (err?.code && ![-1, 1001, 1006, 4009].includes(err.code))
     errorCatcher(err);
 };
 
-const obsCloseHandler = () => {
+export const obsCloseHandler = () => {
   const obsState = useObsStateStore();
   obsState.obsConnectionState = 'disconnected';
   obsState.obsMessage = 'obs.disconnected';
@@ -71,7 +71,7 @@ const sleep = (ms: number) =>
     setTimeout(resolve, ms);
   });
 
-const obsConnect = async (setup?: boolean) => {
+export const obsConnect = async (setup?: boolean) => {
   const currentState = useCurrentStateStore();
   const obsState = useObsStateStore();
   try {
@@ -123,13 +123,4 @@ const obsConnect = async (setup?: boolean) => {
   } catch (error) {
     errorCatcher(error);
   }
-};
-
-export {
-  configuredScenesAreAllUUIDs,
-  isUUID,
-  obsCloseHandler,
-  obsConnect,
-  obsErrorHandler,
-  sendObsSceneEvent,
 };

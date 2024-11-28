@@ -8,8 +8,6 @@ import { fetchRaw } from './api';
 import { errorCatcher } from './error-catcher';
 import { getFontsPath } from './fs';
 
-const { fs, path } = window.electronApi;
-
 export const setElementFont = async (fontName: FontName) => {
   if (!fontName) return;
 
@@ -36,17 +34,17 @@ export const setElementFont = async (fontName: FontName) => {
 const getLocalFontPath = async (fontName: FontName) => {
   const fontsDir = await getFontsPath();
   const fontFileName = `${fontName}.woff2`;
-  const fontPath = path.join(fontsDir, fontFileName);
+  const fontPath = window.electronApi.path.join(fontsDir, fontFileName);
   let mustDownload = false;
   const fontUrls = useJwStore().fontUrls;
   try {
-    if (await fs.exists(fontPath)) {
+    if (await window.electronApi.fs.exists(fontPath)) {
       const headReq = await fetchRaw(fontUrls[fontName], {
         method: 'HEAD',
       });
       if (headReq.ok) {
         const remoteSize = headReq.headers.get('content-length');
-        const localSize = (await fs.stat(fontPath)).size;
+        const localSize = (await window.electronApi.fs.stat(fontPath)).size;
         mustDownload = remoteSize ? parseInt(remoteSize) !== localSize : true;
       } else {
         mustDownload = true;
@@ -65,7 +63,7 @@ const getLocalFontPath = async (fontName: FontName) => {
     mustDownload = true;
   }
   if (mustDownload) {
-    await fs.ensureDir(fontsDir);
+    await window.electronApi.fs.ensureDir(fontsDir);
     const response = await fetchRaw(fontUrls[fontName], {
       method: 'GET',
     });
@@ -76,7 +74,7 @@ const getLocalFontPath = async (fontName: FontName) => {
     }
     const blob = await response.blob();
     const buffer = await blob.arrayBuffer();
-    await fs.writeFile(fontPath, Buffer.from(buffer));
+    await window.electronApi.fs.writeFile(fontPath, Buffer.from(buffer));
   }
   return fontPath;
 };

@@ -26,7 +26,7 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 
 import { errorCatcher } from './error-catcher';
 
-const formatTime = (time: number) => {
+export const formatTime = (time: number) => {
   try {
     if (!time) return '00:00';
     if (Number.isNaN(time)) return '..:..';
@@ -42,7 +42,7 @@ const formatTime = (time: number) => {
   }
 };
 
-const isFileOfType = (filepath: string, validExtensions: string[]) => {
+export const isFileOfType = (filepath: string, validExtensions: string[]) => {
   try {
     if (!filepath) return false;
     const fileExtension = window.electronApi.path
@@ -56,43 +56,43 @@ const isFileOfType = (filepath: string, validExtensions: string[]) => {
   }
 };
 
-const isImage = (filepath: string) => {
+export const isImage = (filepath: string) => {
   return isFileOfType(filepath, PURE_IMG_EXTENSIONS);
 };
 
-const isHeic = (filepath: string) => {
+export const isHeic = (filepath: string) => {
   return isFileOfType(filepath, HEIC_EXTENSIONS);
 };
 
-const isSvg = (filepath: string) => {
+export const isSvg = (filepath: string) => {
   return isFileOfType(filepath, SVG_EXTENSIONS);
 };
 
-const isVideo = (filepath: string) => {
+export const isVideo = (filepath: string) => {
   return isFileOfType(filepath, VIDEO_EXTENSIONS);
 };
 
-const isAudio = (filepath: string) => {
+export const isAudio = (filepath: string) => {
   return isFileOfType(filepath, AUDIO_EXTENSIONS);
 };
 
-const isPdf = (filepath: string) => {
+export const isPdf = (filepath: string) => {
   return isFileOfType(filepath, PDF_EXTENSIONS);
 };
 
-const isArchive = (filepath: string) => {
+export const isArchive = (filepath: string) => {
   return isFileOfType(filepath, ZIP_EXTENSIONS);
 };
 
-const isJwpub = (filepath: string) => {
+export const isJwpub = (filepath: string) => {
   return isFileOfType(filepath, JWPUB_EXTENSIONS);
 };
 
-const isJwPlaylist = (filepath: string) => {
+export const isJwPlaylist = (filepath: string) => {
   return isFileOfType(filepath, JWL_PLAYLIST_EXTENSIONS);
 };
 
-const isSong = (multimediaItem: MultimediaItem) => {
+export const isSong = (multimediaItem: MultimediaItem) => {
   if (
     !multimediaItem.FilePath ||
     !isVideo(multimediaItem.FilePath) ||
@@ -103,14 +103,14 @@ const isSong = (multimediaItem: MultimediaItem) => {
   return multimediaItem.Track.toString();
 };
 
-const isRemoteFile = (
+export const isRemoteFile = (
   file: File | { filename?: string; filetype?: string; path: string },
 ): file is { filename?: string; filetype?: string; path: string } => {
   if (!file.path) return false;
   return file.path.startsWith('http://') || file.path.startsWith('https://');
 };
 
-const inferExtension = async (filename: string, filetype?: string) => {
+export const inferExtension = async (filename: string, filetype?: string) => {
   if (!filetype) return filename;
   const { default: mime } = await import('mime');
   const extractedExtension = mime.extension(filetype);
@@ -128,7 +128,7 @@ const inferExtension = async (filename: string, filetype?: string) => {
   return `${filename}.${extractedExtension}`;
 };
 
-const isImageString = (url: string) => {
+export const isImageString = (url: string) => {
   if (!url) return false;
   return url.startsWith('data:image');
 };
@@ -147,7 +147,7 @@ const jwpubDecompressor = async (jwpubPath: string, outputPath: string) => {
   }
 };
 
-const decompressJwpub = async (
+export const decompressJwpub = async (
   jwpubPath: string,
   outputPath?: string,
   force = false,
@@ -183,7 +183,7 @@ const decompressJwpub = async (
   }
 };
 
-const getMediaFromJwPlaylist = async (
+export const getMediaFromJwPlaylist = async (
   jwPlaylistPath: string,
   selectedDateValue: Date,
   destPath: string,
@@ -319,7 +319,7 @@ const getMediaFromJwPlaylist = async (
   }
 };
 
-const findDb = async (publicationDirectory: string | undefined) => {
+export const findDb = async (publicationDirectory: string | undefined) => {
   if (!publicationDirectory) return undefined;
   try {
     if (!(await window.electronApi.fs.pathExists(publicationDirectory)))
@@ -336,7 +336,7 @@ const findDb = async (publicationDirectory: string | undefined) => {
   }
 };
 
-const convertHeicToJpg = async (filepath: string) => {
+export const convertHeicToJpg = async (filepath: string) => {
   if (!isHeic(filepath)) return filepath;
   try {
     const buffer = await window.electronApi.fs.readFile(filepath);
@@ -354,7 +354,7 @@ const convertHeicToJpg = async (filepath: string) => {
   }
 };
 
-const convertSvgToJpg = async (filepath: string): Promise<string> => {
+export const convertSvgToJpg = async (filepath: string): Promise<string> => {
   try {
     if (!isSvg(filepath)) return filepath;
 
@@ -409,7 +409,7 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
   }
 };
 
-const convertImageIfNeeded = async (filepath: string) => {
+export const convertImageIfNeeded = async (filepath: string) => {
   if (isHeic(filepath)) {
     return await convertHeicToJpg(filepath);
   } else if (isSvg(filepath)) {
@@ -427,7 +427,7 @@ const convertImageIfNeeded = async (filepath: string) => {
   return filepath;
 };
 
-const showMediaWindow = (state?: boolean) => {
+export const showMediaWindow = (state?: boolean) => {
   try {
     const currentState = useCurrentStateStore();
     if (typeof state === 'undefined') {
@@ -438,29 +438,4 @@ const showMediaWindow = (state?: boolean) => {
   } catch (error) {
     errorCatcher(error);
   }
-};
-
-export {
-  convertHeicToJpg,
-  convertImageIfNeeded,
-  convertSvgToJpg,
-  decompressJwpub,
-  findDb,
-  formatTime,
-  getMediaFromJwPlaylist,
-  inferExtension,
-  isArchive,
-  isAudio,
-  isFileOfType,
-  isHeic,
-  isImage,
-  isImageString,
-  isJwPlaylist,
-  isJwpub,
-  isPdf,
-  isRemoteFile,
-  isSong,
-  isSvg,
-  isVideo,
-  showMediaWindow,
 };
