@@ -29,156 +29,162 @@
       >
         <q-spinner color="primary" size="md" />
       </div>
+      <q-tabs
+        v-model="tab"
+        active-color="primary"
+        align="justify"
+        class="text-grey"
+        dense
+        indicator-color="primary"
+        narrow-indicator
+      >
+        <q-tab
+          v-for="category in bibleMediaCategories"
+          :key="category"
+          :label="category"
+          :name="category"
+        />
+      </q-tabs>
       <div class="q-pr-scroll overflow-auto col full-width items-start">
-        <q-tabs
-          v-model="tab"
-          active-color="primary"
-          align="justify"
-          class="text-grey"
-          dense
-          indicator-color="primary"
-          narrow-indicator
-        >
-          <q-tab
-            v-for="category in bibleMediaCategories"
-            :key="category"
-            :label="category"
-            :name="category"
-          />
-        </q-tabs>
         <q-tab-panels v-model="tab" animated>
           <q-tab-panel
             v-for="category in bibleMediaCategories"
             :key="category"
             :name="category"
           >
-            <template v-if="category === bibleMediaCategories[1]">
-              <template v-if="bibleBookChapter">
-                <template
-                  v-for="[label, mediaItems] in groupedMediaItems"
-                  :key="label"
-                >
-                  <div class="text-subtitle1 col q-px-md">
-                    {{ bibleBookChapter }}:{{ label }}
-                  </div>
-                  <div class="row q-px-md">
-                    <template
-                      v-for="mediaItem in mediaItems"
-                      :key="mediaItem.MultimediaId"
-                    >
-                      <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2 col-xl-1">
-                        <div
-                          v-ripple
-                          :class="{
-                            'cursor-pointer': true,
-                            'rounded-borders-lg': true,
-                            'bg-accent-100': hoveredMediaItem === mediaItem,
-                            'relative-position': true,
-                          }"
-                          flat
-                          @click="
-                            selectedMediaItems.includes(mediaItem)
-                              ? selectedMediaItems.splice(
-                                  selectedMediaItems.indexOf(mediaItem),
-                                  1,
-                                )
-                              : selectedMediaItems.push(mediaItem)
-                          "
-                          @mouseout="hoveredMediaItem = undefined"
-                          @mouseover="hoveredMediaItem = mediaItem"
-                        >
-                          <q-card-section
-                            :class="{
-                              'q-pa-sm': true,
-                            }"
-                          >
-                            <q-img
-                              :class="{
-                                'study-bible-item': true,
-                                'study-bible-item-selected':
-                                  selectedMediaItems.includes(mediaItem),
-                              }"
-                              :src="mediaItem.CoverPictureFilePath"
-                            >
-                              <q-badge
-                                v-if="mediaItem.CategoryType < 0"
-                                class="q-mt-sm q-ml-sm bg-semi-black rounded-borders-sm"
-                              >
-                                <q-icon
-                                  class="q-mr-xs"
-                                  color="white"
-                                  name="mmm-play"
-                                />
-                                {{ $t('video') }}
-                              </q-badge>
-                              <q-checkbox
-                                v-if="selectedMediaItems.includes(mediaItem)"
-                                v-model="selectedMediaItems"
-                                color="primary"
-                                :val="mediaItem"
-                              />
-                              <div
-                                class="absolute-bottom text-caption gradient-transparent-to-black"
-                              >
-                                {{ mediaItem.Label }}
-                              </div>
-                            </q-img>
-                          </q-card-section>
-                        </div>
-                      </div>
-                    </template>
-                  </div>
-                </template>
-              </template>
-              <div v-else-if="bibleBook" class="row q-px-md">
-                <q-btn
-                  v-for="chapter in selectedBookChapters"
-                  :key="chapter"
-                  class="rounded-borders-sm q-mr-xs q-mb-xs"
-                  color="primary"
-                  :label="chapter"
-                  style="width: 3em; height: 3em"
-                  unelevated
-                  @click="bibleBookChapter = chapter"
-                />
-              </div>
-              <div v-else class="row q-col-gutter-md full-width">
-                <template
-                  v-for="[bookNr, book] in Object.entries(bibleBooks)"
-                  :key="bookNr"
-                >
-                  <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-1">
-                    <div
-                      v-ripple
-                      :class="{
-                        'cursor-pointer': true,
-                        'rounded-borders-lg': true,
-                        'full-height': true,
-                        'bg-accent-100': hoveredBibleBook === bookNr,
-                      }"
-                      flat
-                      @click="bibleBook = parseInt(bookNr)"
-                      @mouseout="hoveredBibleBook = ''"
-                      @mouseover="hoveredBibleBook = bookNr"
-                    >
-                      <q-img
-                        class="rounded-borders"
-                        :src="book.CoverPictureFilePath"
+            <template
+              v-if="category !== bibleMediaCategories[1] || bibleBookChapter"
+            >
+              <template
+                v-for="[label, mediaItems] in groupedMediaItems"
+                :key="label"
+              >
+                <div class="text-subtitle1 col q-px-md">
+                  {{
+                    (category === bibleMediaCategories[1]
+                      ? bibleBookChapter + ':'
+                      : '') + label
+                  }}
+                </div>
+                <div class="row q-px-md">
+                  <template
+                    v-for="mediaItem in mediaItems"
+                    :key="mediaItem.MultimediaId"
+                  >
+                    <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2 col-xl-1">
+                      <div
+                        v-ripple
+                        :class="{
+                          'cursor-pointer': true,
+                          'rounded-borders-lg': true,
+                          'bg-accent-100': hoveredMediaItem === mediaItem,
+                          'relative-position': true,
+                        }"
+                        flat
+                        @click="
+                          selectedMediaItems.includes(mediaItem)
+                            ? selectedMediaItems.splice(
+                                selectedMediaItems.indexOf(mediaItem),
+                                1,
+                              )
+                            : selectedMediaItems.push(mediaItem)
+                        "
+                        @mouseout="hoveredMediaItem = undefined"
+                        @mouseover="hoveredMediaItem = mediaItem"
                       >
-                        <div
-                          class="absolute-bottom text-subtitle2 gradient-transparent-to-black"
+                        <q-card-section
+                          :class="{
+                            'q-pa-sm': true,
+                          }"
                         >
-                          {{ book.Title }}
-                        </div>
-                      </q-img>
+                          <q-img
+                            :class="{
+                              'study-bible-item': true,
+                              'study-bible-item-selected':
+                                selectedMediaItems.includes(mediaItem),
+                            }"
+                            fit="contain"
+                            :ratio="1"
+                            :src="
+                              mediaItem.CoverPictureFilePath ||
+                              mediaItem.FilePath
+                            "
+                          >
+                            <q-badge
+                              v-if="mediaItem.CategoryType < 0"
+                              class="q-mt-sm q-ml-sm bg-semi-black rounded-borders-sm"
+                            >
+                              <q-icon
+                                class="q-mr-xs"
+                                color="white"
+                                name="mmm-play"
+                              />
+                              {{ $t('video') }}
+                            </q-badge>
+                            <q-checkbox
+                              v-if="selectedMediaItems.includes(mediaItem)"
+                              v-model="selectedMediaItems"
+                              color="primary"
+                              :val="mediaItem"
+                            />
+                            <div
+                              class="absolute-bottom text-caption gradient-transparent-to-black"
+                            >
+                              {{ mediaItem.Label }}
+                            </div>
+                          </q-img>
+                        </q-card-section>
+                      </div>
                     </div>
+                  </template>
+                </div>
+              </template>
+            </template>
+            <div v-else-if="bibleBook" class="row q-px-md">
+              <q-btn
+                v-for="chapter in selectedBookChapters"
+                :key="chapter"
+                class="rounded-borders-sm q-mr-xs q-mb-xs"
+                color="primary"
+                :label="chapter"
+                style="width: 3em; height: 3em"
+                unelevated
+                @click="bibleBookChapter = chapter"
+              />
+            </div>
+            <div v-else class="row q-col-gutter-md full-width">
+              <template
+                v-for="[bookNr, book] in Object.entries(bibleBooks)"
+                :key="bookNr"
+              >
+                <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-1">
+                  <div
+                    v-ripple
+                    :class="{
+                      'cursor-pointer': true,
+                      'rounded-borders-lg': true,
+                      'full-height': true,
+                      'bg-accent-100': hoveredBibleBook === bookNr,
+                    }"
+                    flat
+                    @click="bibleBook = parseInt(bookNr)"
+                    @mouseout="hoveredBibleBook = ''"
+                    @mouseover="hoveredBibleBook = bookNr"
+                  >
+                    <q-img
+                      class="rounded-borders"
+                      :src="book.CoverPictureFilePath"
+                    >
+                      <div
+                        class="absolute-bottom text-subtitle2 gradient-transparent-to-black"
+                      >
+                        {{ book.Title }}
+                      </div>
+                    </q-img>
                   </div>
-                </template>
-              </div>
-            </template>
-            <template v-else>
-              <pre>{{ bibleMediaByCategory[category] }}</pre>
-            </template>
+                </div>
+              </template>
+            </div>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -222,6 +228,7 @@ import type {
 
 import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
+import { SORTER } from 'src/constants/general';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   addToAdditionMediaMapFromPath,
@@ -264,7 +271,6 @@ const bibleMediaByCategory = computed(() => {
   returnObj[bibleMediaCategories.value[1]] = allBibleMedia.value.filter(
     (item) => item.BookNumber,
   );
-  // todo: make this dynamic
   for (let i = 2; i < bibleMediaCategories.value.length; i++) {
     returnObj[bibleMediaCategories.value[i]] = allBibleMedia.value.filter(
       (item) =>
@@ -293,6 +299,8 @@ const selectedBookChapters = computed(() => {
 });
 
 const selectedChapterMediaItems = computed(() => {
+  if (tab.value !== bibleMediaCategories.value[1])
+    return bibleMediaByCategory.value[tab.value];
   if (!bibleBook.value || !bibleBookChapter.value) return [];
 
   const filteredItems = bibleBookMedia.value.filter(
@@ -343,7 +351,10 @@ const selectedChapterMediaItems = computed(() => {
 const groupedMediaItems = computed(() => {
   const groups = selectedChapterMediaItems.value.reduce(
     (groups: Record<string, MultimediaItem[]>, item) => {
-      const label = item.FormattedVerseLabel || '';
+      const label =
+        (tab.value !== bibleMediaCategories.value[1]
+          ? item.Title
+          : item.FormattedVerseLabel) || '';
       if (!groups[label]) {
         groups[label] = [];
       }
@@ -352,6 +363,9 @@ const groupedMediaItems = computed(() => {
     },
     {},
   );
+  if (tab.value !== bibleMediaCategories.value[1]) {
+    Object.entries(groups).sort((a, b) => SORTER.compare(a[0], b[0]));
+  }
   return Object.entries(groups).sort((a, b) => {
     const parseRange = (str: string) => str.split('-').map(Number);
     const [aStart] = parseRange(a[0]);
@@ -409,7 +423,6 @@ const getBibleMedia = async () => {
     bibleBooksStartAtId.value = studyMediaInfo.bibleBookDocumentsStartAtId || 0;
     bibleBooksEndAtId.value = studyMediaInfo.bibleBookDocumentsEndAtId || 0;
     allBibleMedia.value = studyMediaInfo.mediaItems;
-    console.log(allBibleMedia.value);
   } catch (error) {
     errorCatcher(error);
   }

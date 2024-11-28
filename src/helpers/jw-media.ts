@@ -1139,8 +1139,6 @@ export const getStudyBibleMedia = async () => {
     const bibleBookDocumentsStartAtId =
       bibleBookDocumentsStartAt[0]?.DocumentId;
 
-    console.log('bibleBookDocumentsStartAtId', bibleBookDocumentsStartAtId);
-
     const bibleBookDocumentsEndAtQuery = `
       SELECT Document.DocumentId
       FROM Document
@@ -1157,8 +1155,6 @@ export const getStudyBibleMedia = async () => {
       );
 
     const bibleBookDocumentsEndAtId = bibleBookDocumentsEndAt[0]?.DocumentId;
-
-    console.log('bibleBookDocumentsEndAtId', bibleBookDocumentsEndAtId);
 
     const nonBibleBookMediaItemsQuery = `
     WITH RankedMultimedia AS (
@@ -1193,8 +1189,6 @@ export const getStudyBibleMedia = async () => {
         nwtStyDb,
         nonBibleBookMediaItemsQuery,
       );
-
-    console.log('nonBibleBookMediaItems', nonBibleBookMediaItems);
 
     if (nwtStyDb_E) {
       const englishBibleBookMediaItems =
