@@ -3,6 +3,7 @@
   <PublicTalkMediaPicker v-model="publicTalkMediaPopup" />
   <DialogRemoteVideo v-model="remoteVideoPopup" :section="section" />
   <DialogStudyBible v-model="studyBiblePopup" :section="section" />
+  <DialogAudioBible v-model="audioBiblePopup" :section="section" />
   <q-btn
     color="white-transparent"
     :disable="mediaPlaying || !mediaSortForDay"
@@ -79,6 +80,20 @@
           <q-item-section>
             <q-item-label>{{ $t('study-bible') }}</q-item-label>
             <q-item-label caption>{{ $t('study-bible-media') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item
+          v-close-popup
+          clickable
+          :disable="!online"
+          @click="audioBiblePopup = true"
+        >
+          <q-item-section avatar>
+            <q-icon color="primary" name="mmm-headphones" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('audio-bible') }}</q-item-label>
+            <q-item-label caption>{{ $t('audio-bible-media') }}</q-item-label>
           </q-item-section>
         </q-item>
         <q-item-label header>{{ $t('from-local-computer') }}</q-item-label>
@@ -204,6 +219,7 @@ import type { MediaSection } from 'src/types';
 
 import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
+import DialogAudioBible from 'src/components//dialog/DialogAudioBible.vue';
 import DialogRemoteVideo from 'src/components/dialog/DialogRemoteVideo.vue';
 import DialogStudyBible from 'src/components/dialog/DialogStudyBible.vue';
 import PublicTalkMediaPicker from 'src/components/media/PublicTalkMediaPicker.vue';
@@ -243,6 +259,7 @@ const publicTalkMediaPopup = ref(false);
 const datePickerActive = ref(false);
 const remoteVideoPopup = ref(false);
 const studyBiblePopup = ref(false);
+const audioBiblePopup = ref(false);
 
 const openDragAndDropper = () => {
   window.dispatchEvent(

@@ -1280,6 +1280,41 @@ export const getStudyBibleMedia = async () => {
   }
 };
 
+export const getAudioBibleMedia = async () => {
+  try {
+    const currentStateStore = useCurrentStateStore();
+    const returnedItems: Publication[] = [];
+    const publication: PublicationFetcher = {
+      booknum: 0,
+      fileformat: 'MP3',
+      issue: '',
+      langwritten: '',
+      pub: 'nwt',
+    };
+    const languages = [
+      currentStateStore.currentSettings?.lang,
+      currentStateStore.currentSettings?.langFallback,
+    ].filter(Boolean) as JwLangCode[];
+    for (const booknum of Array.from({ length: 66 }, (_, i) => i + 1)) {
+      console.log(booknum);
+      for (const lang of languages) {
+        console.log(lang);
+        publication.booknum = booknum;
+        publication.langwritten = lang;
+        const audioBibleMediaItems = await getPubMediaLinks(publication);
+        if (!audioBibleMediaItems) break;
+        returnedItems.push(audioBibleMediaItems);
+      }
+    }
+    console.log(returnedItems);
+    return returnedItems;
+    //todo: save json to store
+  } catch (error) {
+    errorCatcher(error);
+    return [];
+  }
+};
+
 const getWtIssue = async (
   monday: Date,
   weeksInPast: number,
@@ -2020,6 +2055,7 @@ export const getPubMediaLinks = async (publication: PublicationFetcher) => {
     }
     const params = {
       alllangs: '0',
+      ...(publication.booknum && { booknum: publication.booknum.toString() }),
       docid: !publication.pub ? publication.docid?.toString() || '' : '',
       fileformat: publication.fileformat || '',
       issue: publication.issue?.toString() || '',
