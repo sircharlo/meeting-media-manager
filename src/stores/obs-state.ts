@@ -2,8 +2,8 @@ import type { JsonObject } from 'obs-websocket-js/node_modules/type-fest';
 import type { ObsConnectionState, ObsSceneType } from 'src/types';
 
 import { defineStore } from 'pinia';
-import { configuredScenesAreAllUUIDs, isUUID } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { isUUID } from 'src/utils/general';
 
 interface Store {
   currentScene: string;
@@ -28,24 +28,25 @@ export const useObsStateStore = defineStore('obs-state', {
     additionalScenes: (state): string[] => {
       const currentState = useCurrentStateStore();
       const { currentSettings } = currentState;
+      const configuredScenes = [
+        currentSettings?.obsCameraScene,
+        currentSettings?.obsMediaScene,
+        currentSettings?.obsImageScene,
+      ].filter((s): s is string => !!s);
+
+      const scenesAreUUIDS = configuredScenes.every(isUUID);
       return state.scenes
         .filter(
           (scene) =>
-            ![
-              currentSettings?.obsCameraScene,
-              currentSettings?.obsMediaScene,
-              currentSettings?.obsImageScene,
-            ]
-              .filter((s): s is string => !!s)
-              .includes(
-                (configuredScenesAreAllUUIDs() && scene.sceneUuid
-                  ? scene.sceneUuid.toString()
-                  : scene.sceneName?.toString()) || '',
-              ),
+            !configuredScenes.includes(
+              (scenesAreUUIDS && scene.sceneUuid
+                ? scene.sceneUuid.toString()
+                : scene.sceneName?.toString()) || '',
+            ),
         )
         .map(
           (scene): string =>
-            (configuredScenesAreAllUUIDs() && scene.sceneUuid
+            (scenesAreUUIDS && scene.sceneUuid
               ? scene.sceneUuid.toString()
               : scene.sceneName?.toString()) || '',
         )

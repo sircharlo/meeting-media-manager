@@ -99,12 +99,12 @@ import { isImage } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import {
   configuredScenesAreAllUUIDs,
-  isUUID,
   obsConnect,
   obsWebSocket,
 } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useObsStateStore } from 'src/stores/obs-state';
+import { isUUID } from 'src/utils/general';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
