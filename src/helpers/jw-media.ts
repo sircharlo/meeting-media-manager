@@ -606,7 +606,7 @@ const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
       .map((item) => item.name)
       .includes('SuppressZoom');
 
-    let select = 'SELECT Multimedia.*, Document.*';
+    let select = 'SELECT Document.*, Multimedia.*';
     select += mmTable === 'DocumentMultimedia' ? ', DocumentMultimedia.*' : '';
     select += ParagraphColumnsExist ? ', DocumentParagraph.*' : '';
     select += LinkMultimediaIdExists
