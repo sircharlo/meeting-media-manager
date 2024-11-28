@@ -176,6 +176,9 @@
                 </template>
               </div>
             </template>
+            <template v-else>
+              <pre>{{ bibleMediaByCategory[category] }}</pre>
+            </template>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -243,18 +246,38 @@ const props = defineProps<{
 
 const open = defineModel<boolean>({ default: false });
 
-const tab = ref('books');
+const tab = ref('');
 
 const bibleBook = ref(0);
 const bibleBookChapter = ref(0);
 const allBibleMedia = ref<MultimediaItem[]>([]);
+const bibleBooksStartAtId = ref(0);
+const bibleBooksEndAtId = ref(0);
 
 const bibleMediaCategories = ref<string[]>([]);
 
-const bibleBookMedia = computed(() => {
-  return allBibleMedia.value.filter((item) => item.BookNumber);
+const bibleMediaByCategory = computed(() => {
+  const returnObj: Record<string, MultimediaItem[]> = {};
+  returnObj[bibleMediaCategories.value[0]] = allBibleMedia.value.filter(
+    (item) => item.DocumentId < bibleBooksStartAtId.value,
+  );
+  returnObj[bibleMediaCategories.value[1]] = allBibleMedia.value.filter(
+    (item) => item.BookNumber,
+  );
+  // todo: make this dynamic
+  for (let i = 2; i < bibleMediaCategories.value.length; i++) {
+    returnObj[bibleMediaCategories.value[i]] = allBibleMedia.value.filter(
+      (item) =>
+        item.DocumentId > bibleBooksEndAtId.value &&
+        (item.ParentTitle || '').toLowerCase() ===
+          bibleMediaCategories.value[i].toLowerCase(),
+    );
+  }
+  return returnObj;
 });
-
+const bibleBookMedia = computed(() => {
+  return bibleMediaByCategory.value[bibleMediaCategories.value[1]];
+});
 const bibleBooks = ref<Record<number, MultimediaItem>>({});
 
 const selectedBookChapters = computed(() => {
@@ -358,6 +381,8 @@ const getBibleMediaCategories = async () => {
     bibleMediaCategories.value = (await getStudyBibleCategories()).map(
       (item) => item.Title || '',
     );
+    if (bibleMediaCategories.value.length > 1)
+      tab.value = bibleMediaCategories.value[1];
   } catch (error) {
     errorCatcher(error);
   } finally {
@@ -380,7 +405,10 @@ const getBibleBooks = async () => {
 const getBibleMedia = async () => {
   if (Object.keys(allBibleMedia.value).length) return;
   try {
-    allBibleMedia.value = await getStudyBibleMedia();
+    const studyMediaInfo = await getStudyBibleMedia();
+    bibleBooksStartAtId.value = studyMediaInfo.bibleBookDocumentsStartAtId || 0;
+    bibleBooksEndAtId.value = studyMediaInfo.bibleBookDocumentsEndAtId || 0;
+    allBibleMedia.value = studyMediaInfo.mediaItems;
     console.log(allBibleMedia.value);
   } catch (error) {
     errorCatcher(error);

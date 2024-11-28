@@ -1094,7 +1094,7 @@ export const getStudyBibleMedia = async () => {
   try {
     const { nwtStyDb, nwtStyDb_E, nwtStyPublication, nwtStyPublication_E } =
       await getStudyBible();
-    if (!nwtStyDb || !nwtStyPublication) return [];
+    if (!nwtStyDb || !nwtStyPublication) throw new Error('No study bible');
 
     const bibleBookMediaItemsQuery = `
       SELECT 
@@ -1247,24 +1247,32 @@ export const getStudyBibleMedia = async () => {
       ...nonBibleBookMediaItems,
     ];
 
-    return Promise.all(
-      allStudyBibleMediaItems.map(async (item) => {
-        const updatedItem = await addFullFilePathToMultimediaItem(
-          item,
-          item.MepsLanguageIndex === 0
-            ? nwtStyPublication_E
-            : nwtStyPublication,
-        );
-        updatedItem.VerseNumber = parseInt(
-          item.VerseLabel?.match(/>(\d+)</)?.[1] || '',
-          10,
-        );
-        return updatedItem;
-      }),
-    );
+    return {
+      bibleBookDocumentsEndAtId,
+      bibleBookDocumentsStartAtId,
+      mediaItems: await Promise.all(
+        allStudyBibleMediaItems.map(async (item) => {
+          const updatedItem = await addFullFilePathToMultimediaItem(
+            item,
+            item.MepsLanguageIndex === 0
+              ? nwtStyPublication_E
+              : nwtStyPublication,
+          );
+          updatedItem.VerseNumber = parseInt(
+            item.VerseLabel?.match(/>(\d+)</)?.[1] || '',
+            10,
+          );
+          return updatedItem;
+        }),
+      ),
+    };
   } catch (error) {
     errorCatcher(error);
-    return [];
+    return {
+      bibleBookDocumentsEndAtId: null,
+      bibleBookDocumentsStartAtId: null,
+      mediaItems: [],
+    };
   }
 };
 
