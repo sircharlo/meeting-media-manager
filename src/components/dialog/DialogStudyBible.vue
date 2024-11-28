@@ -240,6 +240,7 @@ import {
   getStudyBibleCategories,
   getStudyBibleMedia,
 } from 'src/helpers/jw-media';
+import { convertImageIfNeeded } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, ref } from 'vue';
 
@@ -442,6 +443,7 @@ const addSelectedMediaItems = async () => {
 
 const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
   if (mediaItem.MimeType.includes('image')) {
+    mediaItem.FilePath = await convertImageIfNeeded(mediaItem.FilePath);
     await addToAdditionMediaMapFromPath(
       mediaItem.FilePath,
       props.section,
