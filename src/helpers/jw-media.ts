@@ -1157,37 +1157,49 @@ export const getStudyBibleMedia = async () => {
     const bibleBookDocumentsEndAtId = bibleBookDocumentsEndAt[0]?.DocumentId;
 
     const nonBibleBookMediaItemsQuery = `
-    WITH RankedMultimedia AS (
-        SELECT 
-            Multimedia.*,
-            Document.DocumentId,
-            Document.Title,
-            DocumentInternalLink.DocumentId AS ParentDocumentId,
-            ParentDocument.Title AS ParentTitle,
-            ROW_NUMBER() OVER (PARTITION BY Multimedia.MultimediaId ORDER BY Document.DocumentId) AS RowNum
-        FROM Multimedia
-        INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId
-        INNER JOIN Document ON Document.DocumentId = DocumentMultimedia.DocumentId
-        LEFT JOIN InternalLink ON InternalLink.MepsDocumentId = Document.MepsDocumentId
-        LEFT JOIN DocumentInternalLink ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId
-        LEFT JOIN Document AS ParentDocument ON ParentDocument.DocumentId = DocumentInternalLink.DocumentId
-        WHERE 
-            Multimedia.CategoryType <> 9 
-            AND Multimedia.CategoryType <> 17 
-            AND Document.SectionNumber <> 1 
-            AND Document.Type <> 0 
-            AND ParentDocument.SectionNumber <> 1 
-            AND ParentDocument.Type <> 0
-    )
-    SELECT *
-    FROM RankedMultimedia
-    WHERE RowNum = 1;
+      WITH RankedMultimedia AS (
+          SELECT 
+              Multimedia.*,
+              Document.DocumentId,
+              Document.Title,
+              ParentDocument.Title AS ParentTitle,
+              ParentDocument.SectionNumber AS ParentSection,
+              Document.SectionNumber,
+              ParentDocument.Type AS ParentType,
+              Document.Type,
+              LinkedMultimedia.FilePath AS CoverPictureFilePath,
+              ROW_NUMBER() OVER (PARTITION BY Multimedia.MultimediaId ORDER BY Document.DocumentId) AS RowNum
+          FROM Multimedia
+          LEFT JOIN DocumentMultimedia 
+              ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId
+          LEFT JOIN Multimedia AS LinkedMultimedia 
+              ON Multimedia.LinkMultimediaId = LinkedMultimedia.MultimediaId
+          LEFT JOIN Document 
+              ON Document.DocumentId = DocumentMultimedia.DocumentId
+          LEFT JOIN InternalLink 
+              ON InternalLink.MepsDocumentId = Document.MepsDocumentId
+          LEFT JOIN DocumentInternalLink 
+              ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId
+          LEFT JOIN Document AS ParentDocument 
+              ON ParentDocument.DocumentId = DocumentInternalLink.DocumentId
+          WHERE 
+              Multimedia.CategoryType <> 9 
+              AND Multimedia.CategoryType <> 17 
+              AND (Document.SectionNumber IS NULL OR Document.SectionNumber <> 1)
+              AND (ParentDocument.SectionNumber IS NULL OR ParentDocument.SectionNumber <> 1)
+              AND (ParentDocument.Type IS NULL OR ParentDocument.Type <> 0)
+      )
+      SELECT *
+      FROM RankedMultimedia
+      WHERE RowNum = 1;
   `;
 
-    const nonBibleBookMediaItems =
-      window.electronApi.executeQuery<MultimediaItem>(
-        nwtStyDb,
-        nonBibleBookMediaItemsQuery,
+    const nonBibleBookMediaItems = window.electronApi
+      .executeQuery<MultimediaItem>(nwtStyDb, nonBibleBookMediaItemsQuery)
+      .filter(
+        (item) =>
+          item.DocumentId < bibleBookDocumentsStartAtId &&
+          item.DocumentId > bibleBookDocumentsEndAtId,
       );
 
     if (nwtStyDb_E) {

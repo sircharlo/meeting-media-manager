@@ -104,8 +104,6 @@
                               'study-bible-item-selected':
                                 selectedMediaItems.includes(mediaItem),
                             }"
-                            fit="contain"
-                            :ratio="1"
                             :src="
                               mediaItem.CoverPictureFilePath ||
                               mediaItem.FilePath
