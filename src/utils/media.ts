@@ -3,8 +3,8 @@ import type { MaxRes, MediaItemsMediatorFile, MediaLink } from 'src/types';
 import { errorCatcher } from 'src/helpers/error-catcher';
 
 export function findBestResolution(
-  mediaLinks?: MediaItemsMediatorFile[] | MediaLink[],
-  maxRes?: MaxRes,
+  mediaLinks: MediaItemsMediatorFile[] | MediaLink[] | undefined,
+  maxRes: MaxRes | undefined,
 ) {
   try {
     if (!mediaLinks?.length) return null;
