@@ -323,7 +323,6 @@ const getBibleBooks = async () => {
   if (Object.keys(bibleBooks.value).length) return;
   try {
     bibleBooks.value = await getStudyBibleBooks();
-    console.log('bibleBooks', bibleBooks.value);
   } catch (error) {
     errorCatcher(error);
   }
@@ -333,7 +332,6 @@ const getBibleMedia = async () => {
   if (Object.keys(bibleBookMedia.value).length) return;
   try {
     bibleBookMedia.value = await getStudyBibleMedia();
-    console.log('bibleBookMedia', bibleBookMedia.value);
   } catch (error) {
     errorCatcher(error);
   }
