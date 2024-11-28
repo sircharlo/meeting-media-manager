@@ -49,9 +49,9 @@ import type {
 
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
+import { SORTER } from 'src/constants/general';
 import { RESOLUTIONS } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { sorter } from 'src/helpers/general';
 import { configuredScenesAreAllUUIDs } from 'src/helpers/obs';
 import { getRules } from 'src/helpers/settings';
 import { localeOptions } from 'src/i18n';
@@ -146,7 +146,7 @@ const listOptions = computed(
         });
       } else if (props.list === 'appLanguages') {
         return [...filteredLocaleAppLang.value]
-          .sort((a, b) => sorter.compare(a.englishName, b.englishName))
+          .sort((a, b) => SORTER.compare(a.englishName, b.englishName))
           .map((language) => {
             return {
               description: language.englishName,

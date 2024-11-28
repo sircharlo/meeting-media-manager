@@ -488,6 +488,7 @@ import { date, uid } from 'quasar';
 import DragAndDropper from 'src/components/media/DragAndDropper.vue';
 import MediaItem from 'src/components/media/MediaItem.vue';
 import { useLocale } from 'src/composables/useLocale';
+import { SORTER } from 'src/constants/general';
 import {
   dateFromString,
   getLocalDate,
@@ -502,7 +503,6 @@ import {
   getPublicationDirectory,
   getTempDirectory,
 } from 'src/helpers/fs';
-import { sorter } from 'src/helpers/general';
 import {
   addDayToExportQueue,
   addJwpubDocumentMediaToFiles,
@@ -1526,7 +1526,7 @@ const dropEnd = (event: DragEvent) => {
             path: getLocalPathFromFileObject(file),
           };
         })
-        .sort((a, b) => sorter.compare(a?.path, b?.path));
+        .sort((a, b) => SORTER.compare(a?.path, b?.path));
       let noLocalDroppedFiles =
         droppedStuff.filter((file) => file.path).length === 0;
       if (noLocalDroppedFiles && droppedStuff.length > 0) {

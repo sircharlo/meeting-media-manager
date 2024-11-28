@@ -3,8 +3,8 @@ import type { FontName } from 'src/types';
 import { Buffer } from 'buffer';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+import { fetchRaw } from 'src/utils/api';
 
-import { fetchRaw } from './api';
 import { errorCatcher } from './error-catcher';
 import { getFontsPath } from './fs';
 

@@ -3,7 +3,7 @@ import type { OldAppConfig, SettingsValues } from 'src/types';
 
 import { defaultSettings } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { kebabToCamelCase } from 'src/helpers/general';
+import { kebabToCamelCase } from 'src/utils/general';
 
 export const getOldPrefsPaths = async (oldPath: string) => {
   try {

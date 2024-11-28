@@ -48,11 +48,11 @@ import type { Announcement } from 'src/types';
 
 import { whenever } from '@vueuse/core';
 import { useQuasar } from 'quasar';
-import { fetchAnnouncements, fetchLatestVersion } from 'src/helpers/api';
-import { isVersionValid, parseVersion } from 'src/helpers/general';
 import { localeOptions } from 'src/i18n';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { fetchAnnouncements, fetchLatestVersion } from 'src/utils/api';
+import { isVersionWithinBounds, parseVersion } from 'src/utils/general';
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -186,7 +186,7 @@ const activeAnnouncements = computed(() => {
       }
 
       if (version.value) {
-        return isVersionValid(version.value, a.minVersion, a.maxVersion);
+        return isVersionWithinBounds(version.value, a.minVersion, a.maxVersion);
       } else {
         return true;
       }

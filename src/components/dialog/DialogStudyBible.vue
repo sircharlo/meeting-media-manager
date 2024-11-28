@@ -184,7 +184,6 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
-// Types
 import type {
   JwLangCode,
   MediaSection,
@@ -194,9 +193,7 @@ import type {
 
 import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-// Composables
 import { errorCatcher } from 'src/helpers/error-catcher';
-// Helpers
 import {
   addToAdditionMediaMapFromPath,
   downloadAdditionalRemoteVideo,
@@ -206,7 +203,6 @@ import {
   getStudyBibleMedia,
 } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
-// Packages
 import { computed, ref } from 'vue';
 
 // Stores
