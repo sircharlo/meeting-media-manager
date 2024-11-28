@@ -110,6 +110,7 @@ export interface MultimediaItem {
   MultimediaId: number;
   Multimeps?: null | number;
   NextParagraphOrdinal?: number;
+  ParentTitle?: string;
   Repeat?: boolean;
   SizeConstraint?: null | number;
   StartTime?: number;
