@@ -7,17 +7,14 @@ const MILLISECONDS_IN_MINUTE = 60000;
 const defaultMask = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 const token =
   /\[((?:[^\]\\]|\\]|\\)*)\]|do|d{1,4}|Mo|M{1,4}|m{1,2}|wo|w{1,2}|Qo|Do|DDDo|D{1,4}|YY(?:YY)?|H{1,2}|h{1,2}|s{1,2}|S{1,3}|Z{1,2}|a{1,2}|[AQExX]/g;
-const defaultDateLocale = {
+const defaultDateLocale: Required<DateLocale> = {
   days: 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_'),
   daysShort: 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_'),
-  firstDayOfWeek: 0, // 0-6, 0 - Sunday, 1 Monday, ...
-  format24h: false,
   months:
     'January_February_March_April_May_June_July_August_September_October_November_December'.split(
       '_',
     ),
   monthsShort: 'Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec'.split('_'),
-  pluralDay: 'days',
 };
 
 const formatter = {
@@ -52,8 +49,8 @@ const formatter = {
   },
 
   // Day of week: Su, Mo, ...
-  dd(date: Date, dateLocale: DateLocale) {
-    return dateLocale.days?.[date.getDay()].slice(0, 2);
+  dd(date: Date, dateLocale: Required<DateLocale>) {
+    return dateLocale.days[date.getDay()].slice(0, 2);
   },
 
   // Day of year: 1, 2, ..., 366
@@ -62,8 +59,8 @@ const formatter = {
   },
 
   // Day of week: Sun, Mon, ...
-  ddd(date: Date, dateLocale: DateLocale) {
-    return dateLocale.daysShort?.[date.getDay()];
+  ddd(date: Date, dateLocale: Required<DateLocale>) {
+    return dateLocale.daysShort[date.getDay()];
   },
 
   // Day of year: 001, 002, ..., 366
@@ -72,8 +69,8 @@ const formatter = {
   },
 
   // Day of week: Sunday, Monday, ...
-  dddd(date: Date, dateLocale: DateLocale) {
-    return dateLocale.days?.[date.getDay()];
+  dddd(date: Date, dateLocale: Required<DateLocale>) {
+    return dateLocale.days[date.getDay()];
   },
 
   // Day of year: 1st, 2nd, ..., 366th
@@ -138,12 +135,12 @@ const formatter = {
   },
 
   // Month Short Name: Jan, Feb, ...
-  MMM(date: Date, dateLocale: DateLocale) {
+  MMM(date: Date, dateLocale: Required<DateLocale>) {
     return dateLocale.monthsShort?.[date.getMonth()];
   },
 
   // Month Name: January, February, ...
-  MMMM(date: Date, dateLocale: DateLocale) {
+  MMMM(date: Date, dateLocale: Required<DateLocale>) {
     return dateLocale.months?.[date.getMonth()];
   },
 
@@ -213,14 +210,14 @@ const formatter = {
   },
 
   // Year: 00, 01, ..., 99
-  YY(date: Date, dateLocale: DateLocale, forcedYear?: number) {
+  YY(date: Date, dateLocale: Required<DateLocale>, forcedYear?: number) {
     // workaround for < 1900 with new Date()
     const y = this.YYYY(date, dateLocale, forcedYear) % 100;
     return y >= 0 ? pad(y) : '-' + pad(Math.abs(y));
   },
 
   // Year: 1900, 1901, ..., 2099
-  YYYY(date: Date, _dateLocale: DateLocale, forcedYear?: number) {
+  YYYY(date: Date, _dateLocale: Required<DateLocale>, forcedYear?: number) {
     // workaround for < 1900 with new Date()
     return forcedYear !== void 0 && forcedYear !== null
       ? forcedYear
@@ -265,7 +262,7 @@ export function daysInMonth(date: Date) {
 export function formatDate(
   val: Date | number | string | undefined,
   mask?: string,
-  dateLocale?: DateLocale,
+  dateLocale?: Required<DateLocale>,
 ): string {
   if ((val !== 0 && !val) || val === Infinity || val === -Infinity) {
     return '';
@@ -530,7 +527,7 @@ function getChange(
   return t;
 }
 
-function getDateLocale(paramDateLocale?: DateLocale) {
+function getDateLocale(paramDateLocale?: Required<DateLocale>) {
   return paramDateLocale ?? defaultDateLocale;
 }
 

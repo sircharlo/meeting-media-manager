@@ -239,7 +239,10 @@ export function updateLookupPeriod(reset = false) {
   }
 }
 
-export const getLocalDate = (dateObj: Date | string, locale: DateLocale) => {
+export const getLocalDate = (
+  dateObj: Date | string,
+  locale: Required<DateLocale>,
+) => {
   const parsedDate = typeof dateObj === 'string' ? new Date(dateObj) : dateObj;
   return formatDate(parsedDate, 'D MMMM YYYY', locale);
 };
