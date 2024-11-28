@@ -498,11 +498,7 @@ import {
   isWeMeetingDay,
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import {
-  getMetadataFromMediaPath,
-  getPublicationDirectory,
-  getTempDirectory,
-} from 'src/helpers/fs';
+import { getMetadataFromMediaPath } from 'src/helpers/fs';
 import {
   addDayToExportQueue,
   addJwpubDocumentMediaToFiles,
@@ -533,6 +529,7 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+import { getPublicationDirectory, getTempPath } from 'src/utils/fs';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -1306,7 +1303,7 @@ const addToFiles = async (
         const baseFileName = path.basename(new URL(filepath).pathname);
         filepath = (
           await downloadFileIfNeeded({
-            dir: await getTempDirectory(),
+            dir: await getTempPath(),
             filename: await inferExtension(
               file.filename || baseFileName,
               file.filetype,
@@ -1318,7 +1315,7 @@ const addToFiles = async (
         const [preamble, data] = filepath.split(';base64,');
         const ext = preamble.split('/')[1];
         const tempFilename = uid() + '.' + ext;
-        const tempFilepath = path.join(await getTempDirectory(), tempFilename);
+        const tempFilepath = path.join(await getTempPath(), tempFilename);
         await fs.writeFile(tempFilepath, Buffer.from(data, 'base64'));
         filepath = tempFilepath;
       }
@@ -1359,7 +1356,7 @@ const addToFiles = async (
         }
       } else if (isPdf(filepath)) {
         const convertedImages = (
-          await convertPdfToImages(filepath, await getTempDirectory())
+          await convertPdfToImages(filepath, await getTempPath())
         ).map((path) => {
           return { path };
         });
@@ -1372,7 +1369,7 @@ const addToFiles = async (
           tempJwpubContent.path.endsWith('contents'),
         );
         if (!tempContentFile) return;
-        const tempDir = await getTempDirectory();
+        const tempDir = await getTempPath();
         if (!tempDir) return;
         await fs.ensureDir(tempDir);
         const tempFilePath = path.join(
@@ -1386,7 +1383,7 @@ const addToFiles = async (
         );
         if (!tempDbFile) return;
         const tempDbFilePath = path.join(
-          await getTempDirectory(),
+          await getTempPath(),
           path.basename(filepath) + '.db',
         );
         await fs.writeFile(tempDbFilePath, tempDbFile.data);
@@ -1456,7 +1453,7 @@ const addToFiles = async (
           });
       } else if (isArchive(filepath)) {
         const unzipDirectory = path.join(
-          await getTempDirectory(),
+          await getTempPath(),
           path.basename(filepath),
         );
         await fs.remove(unzipDirectory);

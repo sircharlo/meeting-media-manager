@@ -29,6 +29,7 @@ import {
 } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { fetchJwLanguages, fetchYeartext } from 'src/utils/api';
+import { isFileUrl } from 'src/utils/fs';
 
 const { getDateDiff } = date;
 
@@ -359,9 +360,7 @@ export const useJwStore = defineStore('jw-store', {
       ).concat(
         state.additionalMediaMaps?.[currentCongregation]?.[selectedDate] || [],
       );
-      return allMediaItems.filter(
-        (media) => !window.electronApi.isFileUrl(media.fileUrl),
-      );
+      return allMediaItems.filter((media) => !isFileUrl(media.fileUrl));
     },
     yeartext: (state) => {
       const year = new Date().getFullYear();

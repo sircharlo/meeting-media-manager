@@ -223,7 +223,6 @@ import {
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getTempDirectory } from 'src/helpers/fs';
 import {
   convertImageIfNeeded,
   decompressJwpub,
@@ -235,6 +234,7 @@ import {
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { useAppSettingsStore } from 'src/stores/app-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { getTempPath } from 'src/utils/fs';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -305,7 +305,7 @@ const chooseCustomBackground = async (reset?: boolean) => {
               notifyInvalidBackgroundFile();
             }
           } else {
-            const tempDirectory = await getTempDirectory();
+            const tempDirectory = await getTempPath();
             const tempFilepath = path.join(
               tempDirectory,
               path.basename(filepath),

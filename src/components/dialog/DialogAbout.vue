@@ -94,7 +94,7 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
-import { disableUpdates, enableUpdates, updatesDisabled } from 'src/helpers/fs';
+import { disableUpdates, enableUpdates, updatesDisabled } from 'src/utils/fs';
 import { onMounted, ref, watch } from 'vue';
 
 const { getAppVersion, openExternal } = window.electronApi;

@@ -81,10 +81,10 @@
 import type { DocumentItem, MediaSection, PublicationInfo } from 'src/types';
 
 import { storeToRefs } from 'pinia';
-import { getPublicationsPath } from 'src/helpers/fs';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { decompressJwpub, findDb } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { getPublicationsPath } from 'src/utils/fs';
 import { computed, ref, watch } from 'vue';
 
 const { executeQuery, fs, openFileDialog, path } = window.electronApi;
