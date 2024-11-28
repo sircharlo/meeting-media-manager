@@ -2,11 +2,12 @@ import type {
   Announcement,
   JwLangCode,
   JwLanguageResult,
+  Publication,
+  PublicationFetcher,
   Release,
 } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { useCurrentStateStore } from 'src/stores/current-state';
 
 /**
  * Fetches data from the given url.
@@ -28,6 +29,7 @@ export const fetchRaw = async (url: string, init?: RequestInit) => {
 export const fetchJson = async <T>(
   url: string,
   params?: URLSearchParams,
+  online = true,
 ): Promise<null | T> => {
   try {
     if (!url) return null;
@@ -53,7 +55,7 @@ export const fetchJson = async <T>(
       });
     }
   } catch (e) {
-    if (useCurrentStateStore().online) {
+    if (online) {
       errorCatcher(e, {
         contexts: {
           fn: {
@@ -133,4 +135,33 @@ export const fetchLatestVersion = async () => {
     new URLSearchParams({ per_page: '1' }),
   );
   return result?.[0]?.tag_name.slice(1);
+};
+
+export const fetchPubMediaLinks = async (
+  publication: PublicationFetcher,
+  pubMedia: string,
+  online?: boolean,
+) => {
+  try {
+    const params = {
+      alllangs: '0',
+      docid: !publication.pub ? publication.docid?.toString() || '' : '',
+      fileformat: publication.fileformat || '',
+      issue: publication.issue?.toString() || '',
+      langwritten: publication.langwritten || '',
+      output: 'json',
+      pub: publication.pub || '',
+      track: publication.track?.toString() || '',
+      txtCMSLang: 'E',
+    };
+    const response = await fetchJson<Publication>(
+      pubMedia,
+      new URLSearchParams(params),
+      online,
+    );
+    return response;
+  } catch (e) {
+    errorCatcher(e);
+    return null;
+  }
 };

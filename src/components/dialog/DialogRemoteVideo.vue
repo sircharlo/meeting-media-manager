@@ -192,7 +192,13 @@ const getJwVideos = async () => {
       return await fetchJson<JwVideoCategory>(
         `${urlVariables.value.mediator}/v1/categories/${
           currentSettings.value?.lang
-        }/${category}?detailed=1&mediaLimit=0&clientType=www`,
+        }/${category}`,
+        new URLSearchParams({
+          clientType: 'www',
+          detailed: '1',
+          mediaLimit: '0',
+        }),
+        currentState.online,
       );
     };
     const subcategories: {
@@ -216,7 +222,12 @@ const getJwVideos = async () => {
       const request = await fetchJson<JwVideoCategory>(
         `${urlVariables.value.mediator}/v1/categories/${
           currentSettings.value?.lang
-        }/${category.key}?detailed=0&clientType=www`,
+        }/${category.key}`,
+        new URLSearchParams({
+          clientType: 'www',
+          detailed: '0',
+        }),
+        currentState.online,
       );
       const newVideos = (request?.category?.media || []).filter(
         (video) => !remoteVideos.value.find((v) => v.guid === video.guid),

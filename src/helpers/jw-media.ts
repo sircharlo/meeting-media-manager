@@ -15,7 +15,6 @@ import type {
   MultimediaExtractItem,
   MultimediaItem,
   MultimediaItemsFetcher,
-  Publication,
   PublicationFetcher,
   PublicationFiles,
   PublicationItem,
@@ -53,7 +52,7 @@ import {
 } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { fetchJson, fetchRaw } from 'src/utils/api';
+import { fetchJson, fetchPubMediaLinks, fetchRaw } from 'src/utils/api';
 import { formatDate, subtractFromDate } from 'src/utils/date';
 import { getPublicationDirectory, trimFilepathAsNeeded } from 'src/utils/fs';
 import { pad } from 'src/utils/general';
@@ -2015,25 +2014,18 @@ export const getPubMediaLinks = async (publication: PublicationFetcher) => {
   try {
     const currentStateStore = useCurrentStateStore();
 
-    if (publication.pub === 'sjjm') {
-      publication.pub = currentStateStore.currentSongbook?.pub;
-      // publication.fileformat = currentStateStore.currentSongbook?.fileformat;
-    }
-    const params = {
-      alllangs: '0',
-      docid: !publication.pub ? publication.docid?.toString() || '' : '',
-      fileformat: publication.fileformat || '',
-      issue: publication.issue?.toString() || '',
-      langwritten: publication.langwritten || '',
-      output: 'json',
-      pub: publication.pub || '',
-      track: publication.track?.toString() || '',
-      txtCMSLang: 'E',
-    };
-    const response = await fetchJson<Publication>(
+    const response = await fetchPubMediaLinks(
+      {
+        ...publication,
+        pub:
+          publication.pub === 'sjjm'
+            ? (currentStateStore.currentSongbook?.pub ?? 'sjjm')
+            : publication.pub,
+      },
       urlVariables.pubMedia,
-      new URLSearchParams(params),
+      currentStateStore.online,
     );
+
     if (!response) {
       const downloadId = getPubId(publication, true);
       currentStateStore.downloadProgress[downloadId] = {
@@ -2277,7 +2269,11 @@ export const getJwMediaInfo = async (publication: PublicationFetcher) => {
     if (publication.fileformat?.toLowerCase().includes('mp4')) url += '_VIDEO';
     else if (publication.fileformat?.toLowerCase().includes('mp3'))
       url += '_AUDIO';
-    const responseObject = await fetchJson<MediaItemsMediator>(url);
+    const responseObject = await fetchJson<MediaItemsMediator>(
+      url,
+      undefined,
+      useCurrentStateStore().online,
+    );
     if (responseObject && responseObject.media.length > 0) {
       const best = findBestResolution(
         responseObject.media[0].files,
