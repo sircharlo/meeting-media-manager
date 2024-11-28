@@ -72,7 +72,7 @@
                     v-for="mediaItem in mediaItems"
                     :key="mediaItem.MultimediaId"
                   >
-                    <div class="col-xs-4 col-sm-3 col-md-2 col-lg-2 col-xl-1">
+                    <div class="col col-xs-12 col-sm-6 col-md-4 col-lg-3">
                       <div
                         v-ripple
                         :class="{
@@ -104,6 +104,8 @@
                               'study-bible-item-selected':
                                 selectedMediaItems.includes(mediaItem),
                             }"
+                            fit="contain"
+                            :ratio="1"
                             :src="
                               mediaItem.CoverPictureFilePath ||
                               mediaItem.FilePath
@@ -156,7 +158,7 @@
                 v-for="[bookNr, book] in Object.entries(bibleBooks)"
                 :key="bookNr"
               >
-                <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-1">
+                <div class="col col-xs-6 col-sm-4 col-md-3 col-lg-2">
                   <div
                     v-ripple
                     :class="{

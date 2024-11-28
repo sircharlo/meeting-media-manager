@@ -33,7 +33,7 @@
           )"
           :key="video.guid"
         >
-          <div class="col-xs-6 col-sm-4 col-md-3 col-lg-3 col-xl-2">
+          <div class="col col-xs-6 col-sm-4 col-md-3 col-lg-2">
             <div
               v-ripple
               :class="{
@@ -59,7 +59,7 @@
               <q-card-section class="q-pa-sm">
                 <q-img
                   class="rounded-borders"
-                  :src="getBestImageUrl(video.images, 'md')"
+                  :src="getBestImageUrl(video.images, 'md', true)"
                 >
                   <q-badge
                     class="q-mt-sm q-ml-sm bg-semi-black rounded-borders-sm"
@@ -68,17 +68,15 @@
                     <q-icon class="q-mr-xs" color="white" name="mmm-play" />
                     {{ formatTime(video.duration) }}
                   </q-badge>
-                </q-img>
-              </q-card-section>
-              <q-card-section class="q-pa-sm">
-                <div class="text-subtitle2 q-mb-xs">
-                  {{ video.title }}
-                </div>
-                <div>
-                  <span class="text-caption text-dark-grey">
+                  <div
+                    class="absolute-bottom text-caption gradient-transparent-to-black"
+                  >
+                    {{ video.title }}
+                  </div>
+                  <q-tooltip :delay="1000">
                     {{ video.naturalKey }}
-                  </span>
-                </div>
+                  </q-tooltip>
+                </q-img>
               </q-card-section>
             </div>
           </div>

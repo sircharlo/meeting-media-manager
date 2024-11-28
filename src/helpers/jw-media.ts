@@ -2260,6 +2260,7 @@ export const downloadAdditionalRemoteVideo = async (
 export function getBestImageUrl(
   images: ImageTypeSizes,
   minSize?: keyof ImageSizes,
+  square = false,
 ) {
   try {
     const preferredOrder: (keyof ImageTypeSizes)[] = [
@@ -2268,6 +2269,13 @@ export function getBestImageUrl(
       'sqr',
       'pnr',
     ];
+    if (square) {
+      const sqrIndex = preferredOrder.indexOf('sqr');
+      if (sqrIndex !== -1) {
+        preferredOrder.splice(sqrIndex, 1);
+        preferredOrder.unshift('sqr');
+      }
+    }
     const sizeOrder: (keyof ImageSizes)[] = ['sm', 'md', 'lg', 'xl'];
     const startIndex = minSize ? sizeOrder.indexOf(minSize) : 0;
     const sizesToConsider = sizeOrder.slice(startIndex);
