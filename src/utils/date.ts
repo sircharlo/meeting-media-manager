@@ -1,6 +1,8 @@
 /* eslint-disable no-fallthrough */
 import type { DateLocale, DateOptions, DateUnitOptions } from 'quasar';
 
+import { capitalize, pad } from 'src/utils/general';
+
 const MILLISECONDS_IN_DAY = 86400000;
 const MILLISECONDS_IN_HOUR = 3600000;
 const MILLISECONDS_IN_MINUTE = 60000;
@@ -251,10 +253,6 @@ export function buildDate(mod: DateOptions, utc?: boolean) {
   return adjustDate(new Date(), mod, utc);
 }
 
-export function capitalize(str: string) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
 export function daysInMonth(date: Date) {
   return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 }
@@ -399,17 +397,6 @@ export function getWeekOfYear(date: Date) {
   // @ts-expect-error: Date is not Number
   const weekDiff = (thursday - firstThursday) / (MILLISECONDS_IN_DAY * 7);
   return 1 + Math.floor(weekDiff);
-}
-
-export function pad(v: number | string, length = 2, char = '0') {
-  if (v === void 0 || v === null) {
-    return v;
-  }
-
-  const val = '' + v;
-  return val.length >= length
-    ? val
-    : new Array(length - val.length + 1).join(char) + val;
 }
 
 export function startOfDate(

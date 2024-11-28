@@ -56,6 +56,7 @@ import { useJwStore } from 'src/stores/jw';
 import { fetchJson, fetchRaw } from 'src/utils/api';
 import { formatDate, subtractFromDate } from 'src/utils/date';
 import { getPublicationDirectory, trimFilepathAsNeeded } from 'src/utils/fs';
+import { pad } from 'src/utils/general';
 
 import { errorCatcher } from './error-catcher';
 
@@ -359,16 +360,14 @@ const exportDayToFolder = async (targetDate?: Date) => {
       if (!sections[m.section]) {
         sections[m.section] = Object.keys(sections).length + 1;
       }
-      const sectionPrefix = (sections[m.section] || 0)
-        .toString()
-        .padStart(2, '0');
+      const sectionPrefix = pad(sections[m.section] || 0);
 
       const destFilePath = trimFilepathAsNeeded(
         path.join(
           destFolder,
           sectionPrefix +
             '-' +
-            (i + 1).toString().padStart(dayMediaLength > 99 ? 3 : 2, '0') +
+            pad(i + 1, dayMediaLength > 99 ? 3 : 2) +
             ' ' +
             (m.title
               ? sanitize(m.title.replace(path.extname(m.fileUrl), '')) +

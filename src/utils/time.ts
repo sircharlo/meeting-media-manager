@@ -1,4 +1,5 @@
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { pad } from 'src/utils/general';
 
 export const formatTime = (time: number) => {
   try {
@@ -8,8 +9,8 @@ export const formatTime = (time: number) => {
     const minutes = Math.floor((time % 3600) / 60);
     const seconds = Math.floor(time % 60);
     return hours > 0
-      ? `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-      : `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+      ? `${hours}:${pad(minutes)}:${pad(seconds)}`
+      : `${pad(minutes)}:${pad(seconds)}`;
   } catch (error) {
     errorCatcher(error);
     return '..:..';

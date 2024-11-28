@@ -19,6 +19,16 @@ export const kebabToCamelCase = (str: string) =>
   str.replace(/-./g, (x) => x[1].toUpperCase());
 
 /**
+ * Capitalizes the first letter of a string.
+ * @param str The string to capitalize.
+ * @returns The capitalized string.
+ * @example
+ * capitalize('hello') // 'Hello'
+ */
+export const capitalize = (str: string) =>
+  str.charAt(0).toUpperCase() + str.slice(1);
+
+/**
  * Checks if a value is empty.
  * @param val The value to check.
  * @returns Weather the value is empty.
@@ -85,10 +95,26 @@ export const isVersionWithinBounds = (
   return true;
 };
 
-export function uuid() {
+/**
+ * Generates a UUID.
+ * @returns The generated UUID.
+ * @example
+ * uuid() // '8e8679e3-02b1-410b-9399-2c1e5606a971'
+ */
+export const uuid = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     const r = (Math.random() * 16) | 0,
       v = c == 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
-}
+};
+
+/**
+ * Adds padding to a string or number.
+ * @param v The value to pad.
+ * @param length The length of the padding.
+ * @param char The character to pad with.
+ * @returns The padded value.
+ */
+export const pad = (v: number | string, length = 2, char = '0') =>
+  v.toString().padStart(length, char);
