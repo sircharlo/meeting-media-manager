@@ -57,6 +57,7 @@ import { fetchJson, fetchRaw } from 'src/utils/api';
 import { formatDate, subtractFromDate } from 'src/utils/date';
 import { getPublicationDirectory, trimFilepathAsNeeded } from 'src/utils/fs';
 import { pad } from 'src/utils/general';
+import { getPubId } from 'src/utils/jw';
 import { findBestResolution, isMediaLink } from 'src/utils/media';
 
 import { errorCatcher } from './error-catcher';
@@ -2034,16 +2035,7 @@ export const getPubMediaLinks = async (publication: PublicationFetcher) => {
       new URLSearchParams(params),
     );
     if (!response) {
-      const downloadId = [
-        publication.docid,
-        publication.pub,
-        publication.langwritten,
-        publication.issue,
-        publication.track,
-        publication.fileformat,
-      ]
-        .filter(Boolean)
-        .join('_');
+      const downloadId = getPubId(publication, true);
       currentStateStore.downloadProgress[downloadId] = {
         error: true,
         filename: downloadId,
@@ -2312,16 +2304,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
     const publicationInfo = await getPubMediaLinks(publication);
     if (!publication.fileformat) return;
     if (!publicationInfo?.files) {
-      const downloadId = [
-        publication.docid,
-        publication.pub,
-        publication.langwritten,
-        publication.issue,
-        publication.track,
-        publication.fileformat,
-      ]
-        .filter(Boolean)
-        .join('_');
+      const downloadId = getPubId(publication, true);
       currentStateStore.downloadProgress[downloadId] = {
         error: true,
         filename: downloadId,
@@ -2420,16 +2403,7 @@ const downloadJwpub = async (
     const currentStateStore = useCurrentStateStore();
     publication.fileformat = 'JWPUB';
     const handleDownloadError = () => {
-      const downloadId = [
-        publication.docid,
-        publication.pub,
-        publication.langwritten,
-        publication.issue,
-        publication.track,
-        publication.fileformat,
-      ]
-        .filter(Boolean)
-        .join('_');
+      const downloadId = getPubId(publication, true);
       currentStateStore.downloadProgress[downloadId] = {
         error: true,
         filename: downloadId,
