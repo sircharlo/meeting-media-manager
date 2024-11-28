@@ -106,10 +106,10 @@ import type { CongregationLanguage, GeoRecord } from 'src/types';
 import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
-import { fetchJson } from 'src/helpers/api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+import { fetchJson } from 'src/utils/api';
 import { ref } from 'vue';
 
 const jwStore = useJwStore();

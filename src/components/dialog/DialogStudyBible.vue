@@ -248,10 +248,7 @@ import type {
 
 import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-// Composables
-import { fetchJson, fetchRaw } from 'src/helpers/api';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { camelToKebabCase } from 'src/helpers/general';
 // Helpers
 import {
   downloadAdditionalRemoteVideo,
@@ -261,6 +258,9 @@ import {
 } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+// Composables
+import { fetchJson, fetchRaw } from 'src/utils/api';
+import { camelToKebabCase } from 'src/utils/general';
 // Packages
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';

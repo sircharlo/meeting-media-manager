@@ -28,7 +28,6 @@ import { date } from 'quasar';
 import { queues } from 'src/boot/globals';
 import { FEB_2023, FOOTNOTE_TAR_PAR, MAX_SONGS } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
-import { fetchJson, fetchRaw } from 'src/helpers/api';
 import {
   dateFromString,
   datesAreSame,
@@ -57,6 +56,7 @@ import {
 } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+import { fetchJson, fetchRaw } from 'src/utils/api';
 
 import { errorCatcher } from './error-catcher';
 

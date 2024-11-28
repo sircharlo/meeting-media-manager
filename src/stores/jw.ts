@@ -15,7 +15,6 @@ import type {
 import { defineStore } from 'pinia';
 import { date } from 'quasar';
 import { MAX_SONGS } from 'src/constants/jw';
-import { fetchJwLanguages, fetchYeartext } from 'src/helpers/api';
 import {
   dateFromString,
   isCoWeek,
@@ -29,6 +28,7 @@ import {
   isMediaLink,
 } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { fetchJwLanguages, fetchYeartext } from 'src/utils/api';
 
 const { getDateDiff } = date;
 

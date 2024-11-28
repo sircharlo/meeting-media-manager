@@ -122,8 +122,6 @@ import type {
 
 import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-// Composables
-import { fetchJson } from 'src/helpers/api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 // Helpers
 import {
@@ -133,6 +131,8 @@ import {
 import { formatTime } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+// Composables
+import { fetchJson } from 'src/utils/api';
 // Packages
 import { computed, ref } from 'vue';
 
