@@ -325,6 +325,8 @@ const getBibleBooks = async () => {
     bibleBooks.value = await getStudyBibleBooks();
   } catch (error) {
     errorCatcher(error);
+  } finally {
+    loadingProgress.value = 1;
   }
 };
 
