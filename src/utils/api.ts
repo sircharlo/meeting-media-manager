@@ -9,10 +9,10 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 
 /**
- * Fetches data from the given url
- * @param url The url to fetch data from
- * @param init Initialization options for the fetch
- * @returns The fetch response
+ * Fetches data from the given url.
+ * @param url The url to fetch data from.
+ * @param init Initialization options for the fetch.
+ * @returns The fetch response.
  */
 export const fetchRaw = async (url: string, init?: RequestInit) => {
   console.debug('fetchRaw', { init, url });
@@ -20,10 +20,10 @@ export const fetchRaw = async (url: string, init?: RequestInit) => {
 };
 
 /**
- * Fetches json data from the given url
- * @param url The url to fetch json data from
- * @param params The url search params
- * @returns The json data
+ * Fetches json data from the given url.
+ * @param url The url to fetch json data from.
+ * @param params The url search params.
+ * @returns The json data.
  */
 export const fetchJson = async <T>(
   url: string,
@@ -69,9 +69,9 @@ export const fetchJson = async <T>(
 };
 
 /**
- * Fetches the jw languages
- * @param base The base domain to fetch the languages from
- * @returns The jw languages
+ * Fetches the jw languages.
+ * @param base The base domain to fetch the languages from.
+ * @returns The jw languages.
  */
 export const fetchJwLanguages = async (base?: string) => {
   if (!base) return;
@@ -88,10 +88,10 @@ interface YeartextResult {
 }
 
 /**
- * Fetches the yeartext
- * @param wtlocale The yeartext locale
- * @param base The base domain to fetch the yeartext from
- * @returns The yeartext
+ * Fetches the yeartext.
+ * @param wtlocale The yeartext locale.
+ * @param base The base domain to fetch the yeartext from.
+ * @returns The yeartext.
  */
 export const fetchYeartext = async (wtlocale: JwLangCode, base?: string) => {
   if (!base) return { wtlocale };
@@ -110,8 +110,8 @@ export const fetchYeartext = async (wtlocale: JwLangCode, base?: string) => {
 };
 
 /**
- * Fetches the announcements from the repository
- * @returns The announcements
+ * Fetches the announcements from the repository.
+ * @returns The announcements.
  */
 export const fetchAnnouncements = async (): Promise<Announcement[]> => {
   if (!process.env.repository) return [];
@@ -122,8 +122,8 @@ export const fetchAnnouncements = async (): Promise<Announcement[]> => {
 };
 
 /**
- * Fetches the latest version of the app
- * @returns The latest version
+ * Fetches the latest version of the app.
+ * @returns The latest version.
  */
 export const fetchLatestVersion = async () => {
   if (!process.env.repository) return;
