@@ -14,24 +14,30 @@ import type {
 
 import { defineStore } from 'pinia';
 import { MAX_SONGS } from 'src/constants/jw';
-import {
-  dateFromString,
-  isCoWeek,
-  isMwMeetingDay,
-  shouldUpdateList,
-} from 'src/helpers/date';
+import { dateFromString, isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import {
-  findBestResolution,
-  getPubMediaLinks,
-  isMediaLink,
-} from 'src/helpers/jw-media';
+import { getPubMediaLinks } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { fetchJwLanguages, fetchYeartext } from 'src/utils/api';
 import { getDateDiff } from 'src/utils/date';
 import { isFileUrl } from 'src/utils/fs';
+import { findBestResolution, isMediaLink } from 'src/utils/media';
 
-export function uniqueById<T extends { uniqueId: string }>(array: T[]): T[] {
+/**
+ * Checks if a caches list should be updated
+ * @param list The cache list to check
+ * @param months How many months should pass before updating
+ * @returns Wether the list should be updated
+ */
+const shouldUpdateList = (list: CacheList | undefined, months: number) => {
+  if (!list) return true;
+  return (
+    !list.list.length ||
+    getDateDiff(new Date(), list.updated, 'months') > months
+  );
+};
+
+function uniqueById<T extends { uniqueId: string }>(array: T[]): T[] {
   return array.reduce((unique: T[], o: T) => {
     if (!unique.some((obj) => obj.uniqueId === o.uniqueId)) {
       unique.push(o);
@@ -260,6 +266,7 @@ export const useJwStore = defineStore('jw-store', {
                   if (!acc.some((m) => m.track === mediaLink.track)) {
                     const bestItem = findBestResolution(
                       mediaItemLinks.filter((m) => m.track === mediaLink.track),
+                      currentState.currentSettings?.maxRes,
                     );
                     if (isMediaLink(bestItem)) acc.push(bestItem);
                   }

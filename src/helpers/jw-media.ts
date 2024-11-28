@@ -57,6 +57,7 @@ import { fetchJson, fetchRaw } from 'src/utils/api';
 import { formatDate, subtractFromDate } from 'src/utils/date';
 import { getPublicationDirectory, trimFilepathAsNeeded } from 'src/utils/fs';
 import { pad } from 'src/utils/general';
+import { findBestResolution, isMediaLink } from 'src/utils/media';
 
 import { errorCatcher } from './error-catcher';
 
@@ -2055,48 +2056,6 @@ export const getPubMediaLinks = async (publication: PublicationFetcher) => {
   }
 };
 
-export function findBestResolution(
-  mediaLinks?: MediaItemsMediatorFile[] | MediaLink[],
-) {
-  try {
-    if (!mediaLinks?.length) return null;
-
-    const currentStateStore = useCurrentStateStore();
-    let bestItem = null;
-    let bestHeight = 0;
-    const maxRes = parseInt(
-      currentStateStore.currentSettings?.maxRes?.replace(/\D/g, '') || '0',
-    );
-
-    if (mediaLinks.some((m) => !m.subtitled)) {
-      mediaLinks = mediaLinks.filter((m) => !m.subtitled) as
-        | MediaItemsMediatorFile[]
-        | MediaLink[];
-    }
-
-    for (const mediaLink of mediaLinks) {
-      if (
-        mediaLink.frameHeight <= maxRes &&
-        mediaLink.frameHeight >= bestHeight
-      ) {
-        bestItem = mediaLink;
-        bestHeight = mediaLink.frameHeight;
-      }
-    }
-    return bestItem;
-  } catch (e) {
-    errorCatcher(e);
-    return mediaLinks?.length ? mediaLinks[mediaLinks.length - 1] : null;
-  }
-}
-
-export function isMediaLink(
-  item: MediaItemsMediatorFile | MediaLink | null,
-): item is MediaLink {
-  if (!item) return false;
-  return !('progressiveDownloadURL' in item);
-}
-
 const downloadMissingMedia = async (publication: PublicationFetcher) => {
   try {
     const pubDir = await getPublicationDirectory(publication);
@@ -2151,7 +2110,10 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
             publication.fileformat
           ] || []
         : [];
-    const bestItem = findBestResolution(mediaItemLinks);
+    const bestItem = findBestResolution(
+      mediaItemLinks,
+      useCurrentStateStore().currentSettings?.maxRes,
+    );
     if (!isMediaLink(bestItem) || !bestItem?.file?.url) {
       return { FilePath: '' };
     }
@@ -2204,7 +2166,10 @@ export const downloadAdditionalRemoteVideo = async (
 ) => {
   try {
     const currentStateStore = useCurrentStateStore();
-    const bestItem = findBestResolution(mediaItemLinks);
+    const bestItem = findBestResolution(
+      mediaItemLinks,
+      currentStateStore.currentSettings?.maxRes,
+    );
     if (bestItem) {
       const bestItemUrl =
         'progressiveDownloadURL' in bestItem
@@ -2322,7 +2287,10 @@ export const getJwMediaInfo = async (publication: PublicationFetcher) => {
       url += '_AUDIO';
     const responseObject = await fetchJson<MediaItemsMediator>(url);
     if (responseObject && responseObject.media.length > 0) {
-      const best = findBestResolution(responseObject.media[0].files);
+      const best = findBestResolution(
+        responseObject.media[0].files,
+        useCurrentStateStore().currentSettings?.maxRes,
+      );
       return {
         duration: responseObject.media[0].duration ?? undefined,
         subtitles: isMediaLink(best) ? '' : (best?.subtitles?.url ?? ''),
@@ -2380,6 +2348,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
       if (!filteredMediaItemLinks.some((m) => m.track === currentTrack)) {
         const bestItem = findBestResolution(
           mediaLinks.filter((m) => m.track === currentTrack),
+          currentStateStore.currentSettings?.maxRes,
         );
         if (isMediaLink(bestItem)) filteredMediaItemLinks.push(bestItem);
       }

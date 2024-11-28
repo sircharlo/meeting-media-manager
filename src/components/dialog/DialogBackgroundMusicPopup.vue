@@ -132,11 +132,12 @@ import { remainingTimeBeforeMeetingStart } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getMetadataFromMediaPath } from 'src/helpers/fs';
 import { downloadBackgroundMusic } from 'src/helpers/jw-media';
-import { formatTime, isVideo } from 'src/helpers/mediaPlayback';
+import { isVideo } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { getDateDiff } from 'src/utils/date';
 import { getPublicationDirectoryContents } from 'src/utils/fs';
+import { formatTime } from 'src/utils/time';
 import { ref, useTemplateRef, watch } from 'vue';
 
 const open = defineModel<boolean>({ default: false });

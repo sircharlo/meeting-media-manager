@@ -1,5 +1,5 @@
 import type { DateLocale } from 'quasar';
-import type { CacheList, DateInfo } from 'src/types';
+import type { DateInfo } from 'src/types';
 
 import { DAYS_IN_FUTURE } from 'src/constants/date';
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -57,23 +57,6 @@ export const dateFromString = (lookupDate?: Date | string | undefined) => {
     errorCatcher(error);
     return new Date();
   }
-};
-
-/**
- * Checks if a caches list should be updated
- * @param list The cache list to check
- * @param months How many months should pass before updating
- * @returns Wether the list should be updated
- */
-export const shouldUpdateList = (
-  list: CacheList | undefined,
-  months: number,
-) => {
-  if (!list) return true;
-  return (
-    !list.list.length ||
-    getDateDiff(new Date(), list.updated, 'months') > months
-  );
 };
 
 export const isInPast = (lookupDate: Date) => {
