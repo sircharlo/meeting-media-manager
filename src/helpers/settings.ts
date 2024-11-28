@@ -1,15 +1,14 @@
+import type { ValidationRule } from 'quasar';
 import type {
   SettingsItemAction,
   SettingsItemOption,
   SettingsItemRule,
 } from 'src/types';
 
-import { date, type ValidationRule } from 'quasar';
 import { getSpecificWeekday } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
-
-const { getDateDiff } = date;
+import { getDateDiff } from 'src/utils/date';
 
 const currentState = useCurrentStateStore();
 

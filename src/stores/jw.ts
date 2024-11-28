@@ -13,7 +13,6 @@ import type {
 } from 'src/types';
 
 import { defineStore } from 'pinia';
-import { date } from 'quasar';
 import { MAX_SONGS } from 'src/constants/jw';
 import {
   dateFromString,
@@ -29,9 +28,8 @@ import {
 } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { fetchJwLanguages, fetchYeartext } from 'src/utils/api';
+import { getDateDiff } from 'src/utils/date';
 import { isFileUrl } from 'src/utils/fs';
-
-const { getDateDiff } = date;
 
 export function uniqueById<T extends { uniqueId: string }>(array: T[]): T[] {
   return array.reduce((unique: T[], o: T) => {

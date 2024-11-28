@@ -484,7 +484,7 @@ import {
 import { Buffer } from 'buffer';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
-import { date, uid } from 'quasar';
+import { uid } from 'quasar';
 import DragAndDropper from 'src/components/media/DragAndDropper.vue';
 import MediaItem from 'src/components/media/MediaItem.vue';
 import { useLocale } from 'src/composables/useLocale';
@@ -529,11 +529,10 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+import { formatDate, getDateDiff } from 'src/utils/date';
 import { getPublicationDirectory, getTempPath } from 'src/utils/fs';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-
-const { formatDate, getDateDiff } = date;
 
 const dragging = ref(false);
 const jwpubImportDb = ref('');

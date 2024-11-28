@@ -1,13 +1,12 @@
+import type { DateLocale } from 'quasar';
 import type { CacheList, DateInfo } from 'src/types';
 
-import { date, type DateLocale } from 'quasar';
 import { DAYS_IN_FUTURE } from 'src/constants/date';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+import { addToDate, buildDate, formatDate, getDateDiff } from 'src/utils/date';
 
 import { errorCatcher } from './error-catcher';
-
-const { addToDate, buildDate, extractDate, formatDate, getDateDiff } = date;
 
 export const dateFromString = (lookupDate?: Date | string | undefined) => {
   try {
@@ -241,8 +240,7 @@ export function updateLookupPeriod(reset = false) {
 }
 
 export const getLocalDate = (dateObj: Date | string, locale: DateLocale) => {
-  const parsedDate =
-    typeof dateObj === 'string' ? extractDate(dateObj, 'YYYY/MM/DD') : dateObj;
+  const parsedDate = typeof dateObj === 'string' ? new Date(dateObj) : dateObj;
   return formatDate(parsedDate, 'D MMMM YYYY', locale);
 };
 

@@ -25,7 +25,6 @@ import type {
 } from 'src/types';
 
 import PQueue from 'p-queue';
-import { date } from 'quasar';
 import { queues } from 'src/boot/globals';
 import { FEB_2023, FOOTNOTE_TAR_PAR, MAX_SONGS } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
@@ -55,11 +54,10 @@ import {
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { fetchJson, fetchRaw } from 'src/utils/api';
+import { formatDate, subtractFromDate } from 'src/utils/date';
 import { getPublicationDirectory, trimFilepathAsNeeded } from 'src/utils/fs';
 
 import { errorCatcher } from './error-catcher';
-
-const { formatDate, subtractFromDate } = date;
 
 const { executeQuery, fileUrlToPath, fs, path, pathToFileURL, readdir } =
   window.electronApi;

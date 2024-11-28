@@ -118,6 +118,7 @@
 </template>
 
 <script setup lang="ts">
+import type { QMenu } from 'quasar';
 import type { SongItem } from 'src/types';
 
 import {
@@ -127,7 +128,6 @@ import {
   whenever,
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { date, type QMenu } from 'quasar';
 import { remainingTimeBeforeMeetingStart } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getMetadataFromMediaPath } from 'src/helpers/fs';
@@ -135,12 +135,11 @@ import { downloadBackgroundMusic } from 'src/helpers/jw-media';
 import { formatTime, isVideo } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+import { getDateDiff } from 'src/utils/date';
 import { getPublicationDirectoryContents } from 'src/utils/fs';
 import { ref, useTemplateRef, watch } from 'vue';
 
 const open = defineModel<boolean>({ default: false });
-
-const { getDateDiff } = date;
 
 const { fileUrlToPath, parseMediaFile, path } = window.electronApi;
 

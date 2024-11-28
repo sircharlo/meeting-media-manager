@@ -1,10 +1,9 @@
 import type { PublicationFetcher } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { isEmpty } from 'src/utils/general';
 
-import { isEmpty } from './general';
-
-// This might belong in a different file if used in multiple places
+// ? This might belong in a different file if used in multiple places
 const getPubId = ({ docid, issue, langwritten, pub }: PublicationFetcher) =>
   [pub || docid, langwritten, issue].filter((p) => !isEmpty(p)).join('_');
 
@@ -93,7 +92,7 @@ const removeEmptyDir = async (directory: string) => {
 };
 
 /**
- * Removes all empty directories in a directory.
+ * Removes all empty directories inside a root directory.
  * @param rootDir The root directory to remove empty directories from.
  */
 export const removeEmptyDirs = async (rootDir: string) => {

@@ -1,10 +1,10 @@
 {
   "recommendations": [
     "dbaeumer.vscode-eslint",
+    "edwinhuish.better-comments-next",
     "esbenp.prettier-vscode",
     "editorconfig.editorconfig",
-    "vue.volar",
-    "wayou.vscode-todo-highlight"
+    "vue.volar"
   ],
   "unwantedRecommendations": [
     "octref.vetur",
