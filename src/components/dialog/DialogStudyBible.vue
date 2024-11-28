@@ -24,7 +24,7 @@
         </template>
       </div>
       <div
-        v-if="!!(loadingProgress < 1 && Object.keys(bibleBooks).length === 0)"
+        v-if="loading"
         class="col-shrink full-width q-px-md q-pb-md row justify-center"
       >
         <q-spinner color="primary" size="md" />
@@ -303,7 +303,7 @@ const groupedMediaItems = computed(() => {
   });
 });
 
-const loadingProgress = ref<number>(0);
+const loading = ref<boolean>(false);
 const hoveredBibleBook = ref('');
 const hoveredMediaItem = ref<MultimediaItem>();
 
@@ -318,11 +318,12 @@ whenever(open, () => {
 const getBibleBooks = async () => {
   if (Object.keys(bibleBooks.value).length) return;
   try {
+    loading.value = true;
     bibleBooks.value = await getStudyBibleBooks();
   } catch (error) {
     errorCatcher(error);
   } finally {
-    loadingProgress.value = 1;
+    loading.value = false;
   }
 };
 
