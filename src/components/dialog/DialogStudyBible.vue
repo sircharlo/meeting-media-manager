@@ -256,6 +256,10 @@ const open = defineModel<boolean>({ default: false });
 
 const tab = ref('');
 
+whenever(tab, () => {
+  if (tab.value !== bibleMediaCategories.value[1]) resetBibleBook(true);
+});
+
 const bibleBook = ref(0);
 const bibleBookChapter = ref(0);
 const allBibleMedia = ref<MultimediaItem[]>([]);
@@ -390,17 +394,17 @@ whenever(open, () => {
 });
 
 const getBibleMediaCategories = async () => {
-  if (Object.keys(bibleMediaCategories.value).length) return;
   try {
+    if (Object.keys(bibleMediaCategories.value).length) return;
     loading.value = true;
     bibleMediaCategories.value = (await getStudyBibleCategories()).map(
       (item) => item.Title || '',
     );
-    if (bibleMediaCategories.value.length > 1)
-      tab.value = bibleMediaCategories.value[1];
   } catch (error) {
     errorCatcher(error);
   } finally {
+    if (bibleMediaCategories.value.length > 1)
+      tab.value = bibleMediaCategories.value[1];
     loading.value = false;
   }
 };
