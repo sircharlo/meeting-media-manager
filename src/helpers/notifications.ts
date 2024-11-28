@@ -2,7 +2,7 @@ import { Notify, type QNotifyCreateOptions } from 'quasar';
 
 import { errorCatcher } from './error-catcher';
 
-const createTemporaryNotification = ({
+export const createTemporaryNotification = ({
   actions,
   badgeStyle,
   caption,
@@ -50,5 +50,3 @@ const createTemporaryNotification = ({
     errorCatcher(error);
   }
 };
-
-export { createTemporaryNotification };

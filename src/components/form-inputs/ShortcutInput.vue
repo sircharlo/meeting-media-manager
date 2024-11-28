@@ -76,7 +76,6 @@ import {
   getCurrentShortcuts,
   isKeyCode,
   registerCustomShortcut,
-  unregisterShortcut,
 } from 'src/helpers/keyboardShortcuts';
 import { ref, watch } from 'vue';
 
@@ -94,7 +93,7 @@ const localValue = ref(props.modelValue);
 watch(localValue, (newValue, oldValue) => {
   if (!newValue || !getCurrentShortcuts().includes(newValue)) {
     emit('update:modelValue', newValue);
-    if (oldValue) unregisterShortcut(oldValue);
+    if (oldValue) window.electronApi.unregisterShortcut(oldValue);
     if (newValue) registerCustomShortcut(props.shortcutName, newValue);
   }
 });

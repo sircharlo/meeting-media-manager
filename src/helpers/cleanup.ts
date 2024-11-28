@@ -9,7 +9,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 
 // const { fileUrlToPath, fs, readDirectory, path } = window.electronApi;
 
-const cleanLocalStorage = () => {
+export const cleanLocalStorage = () => {
   // try {
   //   ['customDurations', 'additionalMediaMaps', 'mediaSort'].forEach((key) => {
   //     cleanUpPastDatesFromLocalStorage(key);
@@ -19,7 +19,7 @@ const cleanLocalStorage = () => {
   // }
 };
 
-const cleanAdditionalMediaFolder = () => {
+export const cleanAdditionalMediaFolder = () => {
   try {
     // const jwStore = useJwStore();
     // const { additionalMediaMaps } = storeToRefs(jwStore);
@@ -80,5 +80,3 @@ const cleanAdditionalMediaFolder = () => {
     errorCatcher(error);
   }
 };
-
-export { cleanAdditionalMediaFolder, cleanLocalStorage };

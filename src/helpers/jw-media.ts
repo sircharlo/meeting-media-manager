@@ -26,7 +26,6 @@ import type {
 
 import PQueue from 'p-queue';
 import { date } from 'quasar';
-import sanitize from 'sanitize-filename';
 import { queues } from 'src/boot/globals';
 import { FEB_2023, FOOTNOTE_TAR_PAR, MAX_SONGS } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
@@ -66,7 +65,7 @@ const { formatDate, subtractFromDate } = date;
 
 const { executeQuery, fileUrlToPath, fs, path, readdir } = window.electronApi;
 
-const copyToDatedAdditionalMedia = async (
+export const copyToDatedAdditionalMedia = async (
   filepathToCopy: string,
   section?: MediaSection,
   addToAdditionMediaMap?: boolean,
@@ -109,7 +108,7 @@ const copyToDatedAdditionalMedia = async (
   }
 };
 
-const addToAdditionMediaMapFromPath = async (
+export const addToAdditionMediaMapFromPath = async (
   additionalFilePath: string,
   section: MediaSection = 'additional',
   uniqueId?: string,
@@ -183,7 +182,7 @@ const addToAdditionMediaMapFromPath = async (
   }
 };
 
-const addJwpubDocumentMediaToFiles = async (
+export const addJwpubDocumentMediaToFiles = async (
   dbPath: string,
   document: DocumentItem,
   section?: MediaSection,
@@ -219,21 +218,24 @@ const addJwpubDocumentMediaToFiles = async (
   }
 };
 
-const downloadFileIfNeeded = async ({
+export const downloadFileIfNeeded = async ({
   dir,
   filename,
   lowPriority = false,
   size,
   url,
 }: FileDownloader): Promise<DownloadedFile> => {
-  if (!url)
+  if (!url) {
     return {
       new: false,
       path: '',
     };
+  }
+
   const currentStateStore = useCurrentStateStore();
   await fs.ensureDir(dir);
   if (!filename) filename = path.basename(url);
+  const { default: sanitize } = await import('sanitize-filename');
   filename = sanitize(filename);
   const destinationPath = path.join(dir, filename);
   const remoteSize: number =
@@ -349,6 +351,7 @@ const exportDayToFolder = async (targetDate?: Date) => {
 
   const expectedFiles = new Set<string>();
 
+  const { default: sanitize } = await import('sanitize-filename');
   const sections: Partial<Record<MediaSection, number>> = {}; // Object to store dynamic section prefixes
   for (let i = 0; i < dayMediaLength; i++) {
     try {
@@ -448,7 +451,7 @@ export const exportAllDays = async () => {
   }
 };
 
-const fetchMedia = async () => {
+export const fetchMedia = async () => {
   try {
     const currentStateStore = useCurrentStateStore();
     if (
@@ -564,7 +567,7 @@ const getDbFromJWPUB = async (publication: PublicationFetcher) => {
   }
 };
 
-const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
+export const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
   try {
     const pubQuery = executeQuery<PublicationItem>(
       db,
@@ -681,7 +684,7 @@ const getMediaVideoMarkers = (
   }
 };
 
-const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
+export const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
   try {
     if (!source.db) return [];
     const currentStateStore = useCurrentStateStore();
@@ -960,7 +963,7 @@ const getStudyBible = async () => {
     return { nwtDb: null, nwtStyDb: null, nwtStyPublication: null };
   }
 };
-const getStudyBibleBooks = async () => {
+export const getStudyBibleBooks = async () => {
   try {
     const {
       nwtDb,
@@ -1058,7 +1061,7 @@ const getStudyBibleBooks = async () => {
   }
 };
 
-const getStudyBibleMedia = async () => {
+export const getStudyBibleMedia = async () => {
   try {
     const { nwtStyDb, nwtStyDb_E, nwtStyPublication, nwtStyPublication_E } =
       await getStudyBible();
@@ -1220,7 +1223,7 @@ const getParagraphNumbers = (
   }
 };
 
-const dynamicMediaMapper = async (
+export const dynamicMediaMapper = async (
   allMedia: MultimediaItem[],
   lookupDate: Date,
   additional?: boolean,
@@ -1354,7 +1357,7 @@ const dynamicMediaMapper = async (
   }
 };
 
-const watchedItemMapper: (
+export const watchedItemMapper: (
   parentDate: string,
   watchedItemPath: string,
 ) => Promise<DynamicMediaObject[] | undefined> = async (
@@ -1444,7 +1447,7 @@ const watchedItemMapper: (
   }
 };
 
-const getWeMedia = async (lookupDate: Date) => {
+export const getWeMedia = async (lookupDate: Date) => {
   try {
     const currentStateStore = useCurrentStateStore();
     lookupDate = dateFromString(lookupDate);
@@ -1657,7 +1660,7 @@ const getWeMedia = async (lookupDate: Date) => {
   }
 };
 
-function sanitizeId(id: string) {
+export function sanitizeId(id: string) {
   try {
     const regex = /[a-zA-Z0-9\-_:.]/g;
     const sanitizedString = id.replace(regex, function (match) {
@@ -1670,7 +1673,7 @@ function sanitizeId(id: string) {
   }
 }
 
-const getMwMedia = async (lookupDate: Date) => {
+export const getMwMedia = async (lookupDate: Date) => {
   try {
     const currentStateStore = useCurrentStateStore();
     lookupDate = dateFromString(lookupDate);
@@ -1775,7 +1778,7 @@ const getMwMedia = async (lookupDate: Date) => {
   }
 };
 
-async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
+export async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
   try {
     const currentStateStore = useCurrentStateStore();
     const errors = [];
@@ -1858,7 +1861,7 @@ async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
   }
 }
 
-const getPubMediaLinks = async (publication: PublicationFetcher) => {
+export const getPubMediaLinks = async (publication: PublicationFetcher) => {
   const jwStore = useJwStore();
   const { urlVariables } = jwStore;
   try {
@@ -2046,7 +2049,7 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
   }
 };
 
-const downloadAdditionalRemoteVideo = async (
+export const downloadAdditionalRemoteVideo = async (
   mediaItemLinks: MediaItemsMediatorFile[] | MediaLink[],
   thumbnailUrl?: string,
   song: false | number | string = false,
@@ -2105,7 +2108,10 @@ const downloadAdditionalRemoteVideo = async (
   }
 };
 
-function getBestImageUrl(images: ImageTypeSizes, minSize?: keyof ImageSizes) {
+export function getBestImageUrl(
+  images: ImageTypeSizes,
+  minSize?: keyof ImageSizes,
+) {
   try {
     const preferredOrder: (keyof ImageTypeSizes)[] = [
       'wss',
@@ -2136,7 +2142,7 @@ function getBestImageUrl(images: ImageTypeSizes, minSize?: keyof ImageSizes) {
   }
 }
 
-const getJwMediaInfo = async (publication: PublicationFetcher) => {
+export const getJwMediaInfo = async (publication: PublicationFetcher) => {
   const jwStore = useJwStore();
   const { urlVariables } = jwStore;
   const emptyResponse = {
@@ -2243,7 +2249,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
   }
 };
 
-const downloadBackgroundMusic = () => {
+export const downloadBackgroundMusic = () => {
   try {
     const currentStateStore = useCurrentStateStore();
     if (
@@ -2263,7 +2269,7 @@ const downloadBackgroundMusic = () => {
   }
 };
 
-const downloadSongbookVideos = () => {
+export const downloadSongbookVideos = () => {
   try {
     const currentStateStore = useCurrentStateStore();
     if (
@@ -2346,7 +2352,7 @@ const downloadJwpub = async (
 
 const requestControllers: AbortController[] = [];
 
-const setUrlVariables = async (baseUrl: string | undefined) => {
+export const setUrlVariables = async (baseUrl: string | undefined) => {
   const jwStore = useJwStore();
 
   const resetUrlVariables = (base = false) => {
@@ -2434,29 +2440,4 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
   } finally {
     window.electronApi.setUrlVariables(JSON.stringify(jwStore.urlVariables));
   }
-};
-
-export {
-  addJwpubDocumentMediaToFiles,
-  addToAdditionMediaMapFromPath,
-  copyToDatedAdditionalMedia,
-  downloadAdditionalRemoteVideo,
-  downloadBackgroundMusic,
-  downloadFileIfNeeded,
-  downloadSongbookVideos,
-  dynamicMediaMapper,
-  fetchMedia,
-  getBestImageUrl,
-  getDocumentMultimediaItems,
-  getJwMediaInfo,
-  getMwMedia,
-  getPublicationInfoFromDb,
-  getPubMediaLinks,
-  getStudyBibleBooks,
-  getStudyBibleMedia,
-  getWeMedia,
-  processMissingMediaInfo,
-  sanitizeId,
-  setUrlVariables,
-  watchedItemMapper,
 };

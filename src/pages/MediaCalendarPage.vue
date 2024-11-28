@@ -1307,7 +1307,7 @@ const addToFiles = async (
         filepath = (
           await downloadFileIfNeeded({
             dir: await getTempDirectory(),
-            filename: inferExtension(
+            filename: await inferExtension(
               file.filename || baseFileName,
               file.filetype,
             ),

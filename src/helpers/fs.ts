@@ -26,20 +26,21 @@ const {
   readdir,
 } = window.electronApi;
 
-const getPublicationsPath = async () =>
+export const getPublicationsPath = async () =>
   path.join(await getUserDataPath(), 'Publications');
-const getFontsPath = async () => path.join(await getUserDataPath(), 'Fonts');
+export const getFontsPath = async () =>
+  path.join(await getUserDataPath(), 'Fonts');
 
-const getAdditionalMediaPath = async () =>
+export const getAdditionalMediaPath = async () =>
   path.join(await getUserDataPath(), 'Additional Media');
 
-const getTempDirectory = async () => {
+export const getTempDirectory = async () => {
   const tempDirectory = path.join(await getUserDataPath(), 'Temp');
   await fs.ensureDir(tempDirectory);
   return tempDirectory;
 };
 
-const getPublicationDirectory = async (
+export const getPublicationDirectory = async (
   publication: PublicationFetcher,
   noIssue = false,
 ) => {
@@ -62,13 +63,13 @@ const getPublicationDirectory = async (
   }
 };
 
-const getParentDirectory = (filepath: string) => {
+export const getParentDirectory = (filepath: string) => {
   if (!filepath) return '';
   if (isFileUrl(filepath)) filepath = fileUrlToPath(filepath);
   return path.dirname(filepath);
 };
 
-const getPublicationDirectoryContents = async (
+export const getPublicationDirectoryContents = async (
   publication: PublicationFetcher,
   filter?: string,
 ) => {
@@ -89,13 +90,13 @@ const getPublicationDirectoryContents = async (
   }
 };
 
-const getFileUrl = (path: string) => {
+export const getFileUrl = (path: string) => {
   if (!path) return '';
   if (isFileUrl(path)) return path;
   return pathToFileURL(path);
 };
 
-const trimFilepathAsNeeded = (filepath: string) => {
+export const trimFilepathAsNeeded = (filepath: string) => {
   const fileDir = path.dirname(filepath);
   let filepathSize = new Blob([filepath]).size;
   while (filepathSize > 230) {
@@ -115,7 +116,7 @@ const trimFilepathAsNeeded = (filepath: string) => {
   return filepath;
 };
 
-const getMetadataFromMediaPath = async (
+export const getMetadataFromMediaPath = async (
   mediaPath: string,
 ): Promise<IAudioMetadata> => {
   const defaultMetadata = {
@@ -294,7 +295,10 @@ const getThumbnailFromVideoPath = async (
   });
 };
 
-const getThumbnailUrl = async (filepath: string, forceRefresh?: boolean) => {
+export const getThumbnailUrl = async (
+  filepath: string,
+  forceRefresh?: boolean,
+) => {
   try {
     filepath = fileUrlToPath(filepath);
     if (!filepath || !(await fs.exists(filepath))) return '';
@@ -316,7 +320,7 @@ const getThumbnailUrl = async (filepath: string, forceRefresh?: boolean) => {
   }
 };
 
-const getSubtitlesUrl = async (
+export const getSubtitlesUrl = async (
   multimediaItem: MultimediaItem,
   comparisonDuration: number,
 ) => {
@@ -378,7 +382,7 @@ const isEmptyDir = async (directory: string) => {
   }
 };
 
-const removeEmptyDirs = async (rootDir: string) => {
+export const removeEmptyDirs = async (rootDir: string) => {
   try {
     if (!(await fs.pathExists(rootDir))) return;
     const dirs = (await readdir(rootDir))
@@ -398,9 +402,10 @@ const removeEmptyDirs = async (rootDir: string) => {
 const disableUpdatesPath = async () =>
   path.join(await getUserDataPath(), 'Global Preferences', 'disable-updates');
 
-const updatesDisabled = async () => fs.exists(await disableUpdatesPath());
+export const updatesDisabled = async () =>
+  fs.exists(await disableUpdatesPath());
 
-const disableUpdates = async () => {
+export const disableUpdates = async () => {
   try {
     await fs.ensureFile(await disableUpdatesPath());
     await fs.writeFile(await disableUpdatesPath(), 'true');
@@ -409,7 +414,7 @@ const disableUpdates = async () => {
   }
 };
 
-const enableUpdates = async () => {
+export const enableUpdates = async () => {
   try {
     await fs.remove(await disableUpdatesPath());
   } catch (error) {
@@ -417,7 +422,7 @@ const enableUpdates = async () => {
   }
 };
 
-const watchExternalFolder = async (folder?: string) => {
+export const watchExternalFolder = async (folder?: string) => {
   try {
     const currentState = useCurrentStateStore();
     currentState.watchFolderMedia = {};
@@ -426,24 +431,4 @@ const watchExternalFolder = async (folder?: string) => {
   } catch (error) {
     errorCatcher(error);
   }
-};
-
-export {
-  disableUpdates,
-  enableUpdates,
-  getAdditionalMediaPath,
-  getFileUrl,
-  getFontsPath,
-  getMetadataFromMediaPath,
-  getParentDirectory,
-  getPublicationDirectory,
-  getPublicationDirectoryContents,
-  getPublicationsPath,
-  getSubtitlesUrl,
-  getTempDirectory,
-  getThumbnailUrl,
-  removeEmptyDirs,
-  trimFilepathAsNeeded,
-  updatesDisabled,
-  watchExternalFolder,
 };
