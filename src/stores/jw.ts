@@ -16,11 +16,15 @@ import { defineStore } from 'pinia';
 import { MAX_SONGS } from 'src/constants/jw';
 import { dateFromString, isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getPubMediaLinks } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { fetchJwLanguages, fetchYeartext } from 'src/utils/api';
+import {
+  fetchJwLanguages,
+  fetchPubMediaLinks,
+  fetchYeartext,
+} from 'src/utils/api';
 import { getDateDiff } from 'src/utils/date';
 import { isFileUrl } from 'src/utils/fs';
+import { getPubId } from 'src/utils/jw';
 import { findBestResolution, isMediaLink } from 'src/utils/media';
 
 /**
@@ -251,7 +255,18 @@ export const useJwStore = defineStore('jw-store', {
                 langwritten,
                 pub: currentState.currentSongbook.pub,
               };
-              const pubMediaLinks = await getPubMediaLinks(songbook);
+              const pubMediaLinks = await fetchPubMediaLinks(
+                songbook,
+                this.urlVariables.pubMedia,
+                currentState.online,
+              );
+              if (!pubMediaLinks) {
+                const downloadId = getPubId(songbook, true);
+                currentState.downloadProgress[downloadId] = {
+                  error: true,
+                  filename: downloadId,
+                };
+              }
               if (!pubMediaLinks || !pubMediaLinks.files) {
                 continue;
               }

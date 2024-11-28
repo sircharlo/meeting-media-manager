@@ -142,6 +142,7 @@ const lookupCongregation = async () => {
           longitude: '0',
           searchLanguageCode: '',
         }),
+        useCurrentStateStore().online,
       ).then((response) => {
         results.value = (response?.geoLocationList || []).map((location) => {
           const languageIsAlreadyGood = !!jwLanguages.value?.list.find(
@@ -168,6 +169,8 @@ const lookupCongregation = async () => {
 const congregationLookupLanguages = ref<CongregationLanguage[]>([]);
 fetchJson<CongregationLanguage[]>(
   `https://apps.${urlVariables.value.base || 'jw.org'}/api/public/meeting-search/languages`,
+  undefined,
+  useCurrentStateStore().online,
 )
   .then((response) => {
     congregationLookupLanguages.value = response || [];

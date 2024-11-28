@@ -35,6 +35,11 @@ export function findBestResolution(
   }
 }
 
+/**
+ * Check if the item is a MediaLink
+ * @param item The item to check
+ * @returns Whether the item is a MediaLink
+ */
 export function isMediaLink(
   item: MediaItemsMediatorFile | MediaLink | null,
 ): item is MediaLink {

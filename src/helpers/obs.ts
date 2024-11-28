@@ -4,6 +4,7 @@ import type { ObsSceneType } from 'src/types';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useObsStateStore } from 'src/stores/obs-state';
+import { isUUID } from 'src/utils/general';
 
 import { portNumberValidator } from './settings';
 
@@ -23,18 +24,6 @@ export const sendObsSceneEvent = (scene: ObsSceneType) => {
       detail: { scene },
     }),
   );
-};
-
-export const isUUID = (uuid?: string) => {
-  if (!uuid) return false;
-  try {
-    const uuidRegex =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    return uuidRegex.test(uuid);
-  } catch (error) {
-    errorCatcher(error);
-    return false;
-  }
 };
 
 export const configuredScenesAreAllUUIDs = () => {

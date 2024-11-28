@@ -1,11 +1,7 @@
 import type { PublicationFetcher } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { isEmpty } from 'src/utils/general';
-
-// ? This might belong in a different file if used in multiple places
-const getPubId = ({ docid, issue, langwritten, pub }: PublicationFetcher) =>
-  [pub || docid, langwritten, issue].filter((p) => !isEmpty(p)).join('_');
+import { getPubId } from 'src/utils/jw';
 
 export const isFileUrl = (path: string) => path.startsWith('file://');
 

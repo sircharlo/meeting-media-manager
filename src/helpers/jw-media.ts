@@ -15,7 +15,6 @@ import type {
   MultimediaExtractItem,
   MultimediaItem,
   MultimediaItemsFetcher,
-  Publication,
   PublicationFetcher,
   PublicationFiles,
   PublicationItem,
@@ -53,10 +52,11 @@ import {
 } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { fetchJson, fetchRaw } from 'src/utils/api';
+import { fetchJson, fetchPubMediaLinks, fetchRaw } from 'src/utils/api';
 import { formatDate, subtractFromDate } from 'src/utils/date';
 import { getPublicationDirectory, trimFilepathAsNeeded } from 'src/utils/fs';
 import { pad } from 'src/utils/general';
+import { getPubId } from 'src/utils/jw';
 import { findBestResolution, isMediaLink } from 'src/utils/media';
 
 import { errorCatcher } from './error-catcher';
@@ -2049,37 +2049,20 @@ export const getPubMediaLinks = async (publication: PublicationFetcher) => {
   try {
     const currentStateStore = useCurrentStateStore();
 
-    if (publication.pub === 'sjjm') {
-      publication.pub = currentStateStore.currentSongbook?.pub;
-      // publication.fileformat = currentStateStore.currentSongbook?.fileformat;
-    }
-    const params = {
-      alllangs: '0',
-      ...(publication.booknum && { booknum: publication.booknum.toString() }),
-      docid: !publication.pub ? publication.docid?.toString() || '' : '',
-      fileformat: publication.fileformat || '',
-      issue: publication.issue?.toString() || '',
-      langwritten: publication.langwritten || '',
-      output: 'json',
-      pub: publication.pub || '',
-      track: publication.track?.toString() || '',
-      txtCMSLang: 'E',
-    };
-    const response = await fetchJson<Publication>(
+    const response = await fetchPubMediaLinks(
+      {
+        ...publication,
+        pub:
+          publication.pub === 'sjjm'
+            ? (currentStateStore.currentSongbook?.pub ?? 'sjjm')
+            : publication.pub,
+      },
       urlVariables.pubMedia,
-      new URLSearchParams(params),
+      currentStateStore.online,
     );
+
     if (!response) {
-      const downloadId = [
-        publication.docid,
-        publication.pub,
-        publication.langwritten,
-        publication.issue,
-        publication.track,
-        publication.fileformat,
-      ]
-        .filter(Boolean)
-        .join('_');
+      const downloadId = getPubId(publication, true);
       currentStateStore.downloadProgress[downloadId] = {
         error: true,
         filename: downloadId,
@@ -2321,7 +2304,11 @@ export const getJwMediaInfo = async (publication: PublicationFetcher) => {
     if (publication.fileformat?.toLowerCase().includes('mp4')) url += '_VIDEO';
     else if (publication.fileformat?.toLowerCase().includes('mp3'))
       url += '_AUDIO';
-    const responseObject = await fetchJson<MediaItemsMediator>(url);
+    const responseObject = await fetchJson<MediaItemsMediator>(
+      url,
+      undefined,
+      useCurrentStateStore().online,
+    );
     if (responseObject && responseObject.media.length > 0) {
       const best = findBestResolution(
         responseObject.media[0].files,
@@ -2348,16 +2335,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
     const publicationInfo = await getPubMediaLinks(publication);
     if (!publication.fileformat) return;
     if (!publicationInfo?.files) {
-      const downloadId = [
-        publication.docid,
-        publication.pub,
-        publication.langwritten,
-        publication.issue,
-        publication.track,
-        publication.fileformat,
-      ]
-        .filter(Boolean)
-        .join('_');
+      const downloadId = getPubId(publication, true);
       currentStateStore.downloadProgress[downloadId] = {
         error: true,
         filename: downloadId,
@@ -2456,16 +2434,7 @@ const downloadJwpub = async (
     const currentStateStore = useCurrentStateStore();
     publication.fileformat = 'JWPUB';
     const handleDownloadError = () => {
-      const downloadId = [
-        publication.docid,
-        publication.pub,
-        publication.langwritten,
-        publication.issue,
-        publication.track,
-        publication.fileformat,
-      ]
-        .filter(Boolean)
-        .join('_');
+      const downloadId = getPubId(publication, true);
       currentStateStore.downloadProgress[downloadId] = {
         error: true,
         filename: downloadId,

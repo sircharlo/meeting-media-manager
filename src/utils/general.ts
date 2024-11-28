@@ -109,6 +109,9 @@ export const uuid = () => {
   });
 };
 
+export const isUUID = (str: string) =>
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
+
 /**
  * Adds padding to a string or number.
  * @param v The value to pad.
