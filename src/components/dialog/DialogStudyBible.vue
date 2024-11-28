@@ -64,8 +64,8 @@
                           )
                         : selectedMediaItems.push(mediaItem)
                     "
-                    @mouseout="(hoveredMediaItem = undefined)"
-                    @mouseover="(hoveredMediaItem = mediaItem)"
+                    @mouseout="hoveredMediaItem = undefined"
+                    @mouseover="hoveredMediaItem = mediaItem"
                   >
                     <q-card-section
                       :class="{
@@ -119,7 +119,7 @@
             :label="chapter"
             style="width: 3em; height: 3em"
             unelevated
-            @click="(bibleBookChapter = chapter)"
+            @click="bibleBookChapter = chapter"
           />
         </div>
         <div v-else class="row q-col-gutter-md full-width">
@@ -137,9 +137,9 @@
                   'bg-accent-100': hoveredBibleBook === bookNr,
                 }"
                 flat
-                @click="(bibleBook = parseInt(bookNr))"
-                @mouseout="(hoveredBibleBook = '')"
-                @mouseover="(hoveredBibleBook = bookNr)"
+                @click="bibleBook = parseInt(bookNr)"
+                @mouseout="hoveredBibleBook = ''"
+                @mouseover="hoveredBibleBook = bookNr"
               >
                 <q-img class="rounded-borders" :src="book.CoverPictureFilePath">
                   <div
@@ -161,7 +161,7 @@
             color="primary"
             flat
             :label="$t('back')"
-            @click="resetBibleBook()"
+            @click="resetBibleBook(!bibleBookChapter)"
           />
           <q-btn
             v-if="selectedMediaItems.length"
@@ -176,7 +176,7 @@
             color="negative"
             flat
             :label="$t('cancel')"
-            @click="resetBibleBook()"
+            @click="resetBibleBook(true)"
           />
         </div>
       </div>
@@ -314,7 +314,7 @@ const hoveredMediaItem = ref<MultimediaItem>();
 const selectedMediaItems = ref<MultimediaItem[]>([]);
 
 whenever(open, () => {
-  resetBibleBook();
+  resetBibleBook(true);
   getBibleBooks();
   getBibleMedia();
 });
@@ -323,6 +323,7 @@ const getBibleBooks = async () => {
   if (Object.keys(bibleBooks.value).length) return;
   try {
     bibleBooks.value = await getStudyBibleBooks();
+    console.log('bibleBooks', bibleBooks.value);
   } catch (error) {
     errorCatcher(error);
   }
@@ -332,6 +333,7 @@ const getBibleMedia = async () => {
   if (Object.keys(bibleBookMedia.value).length) return;
   try {
     bibleBookMedia.value = await getStudyBibleMedia();
+    console.log('bibleBookMedia', bibleBookMedia.value);
   } catch (error) {
     errorCatcher(error);
   }
@@ -341,7 +343,7 @@ const addSelectedMediaItems = async () => {
   for (const mediaItem of selectedMediaItems.value) {
     await addStudyBibleMedia(mediaItem);
   }
-  resetBibleBook(true);
+  resetBibleBook(true, true);
 };
 
 const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
@@ -399,10 +401,10 @@ const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
   }
 };
 
-const resetBibleBook = (close = false) => {
-  bibleBook.value = 0;
+const resetBibleBook = (closeBook = false, closeDialog = false) => {
+  if (closeDialog) open.value = false;
+  if (closeBook) bibleBook.value = 0;
   bibleBookChapter.value = 0;
   selectedMediaItems.value = [];
-  if (close) open.value = false;
 };
 </script>

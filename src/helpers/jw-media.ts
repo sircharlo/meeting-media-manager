@@ -906,6 +906,12 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
 
 const getStudyBible = async () => {
   try {
+    const nwtStyPublication_E: PublicationFetcher = {
+      fileformat: 'JWPUB',
+      langwritten: 'E',
+      pub: 'nwtsty',
+    };
+    const nwtStyDb_E = getDbFromJWPUB(nwtStyPublication_E);
     const currentStateStore = useCurrentStateStore();
     const languages = [
       ...new Set([
@@ -927,12 +933,8 @@ const getStudyBible = async () => {
       if (nwtStyDb) break;
     }
     if (!nwtStyDb) {
-      nwtStyPublication = {
-        fileformat: 'JWPUB',
-        langwritten: 'E',
-        pub: 'nwtsty',
-      };
-      nwtStyDb = await getDbFromJWPUB(nwtStyPublication);
+      nwtStyPublication = nwtStyPublication_E;
+      nwtStyDb = await nwtStyDb_E;
 
       let nwtPublication: null | PublicationFetcher = null;
       for (const langwritten of languages) {
@@ -946,7 +948,13 @@ const getStudyBible = async () => {
         if (nwtDb) break;
       }
     }
-    return { nwtDb, nwtStyDb, nwtStyPublication };
+    return {
+      nwtDb,
+      nwtStyDb,
+      nwtStyDb_E: await nwtStyDb_E,
+      nwtStyPublication,
+      nwtStyPublication_E,
+    };
   } catch (error) {
     errorCatcher(error);
     return { nwtDb: null, nwtStyDb: null, nwtStyPublication: null };
@@ -954,7 +962,13 @@ const getStudyBible = async () => {
 };
 const getStudyBibleBooks = async () => {
   try {
-    const { nwtDb, nwtStyDb, nwtStyPublication } = await getStudyBible();
+    const {
+      nwtDb,
+      nwtStyDb,
+      nwtStyDb_E,
+      nwtStyPublication,
+      nwtStyPublication_E,
+    } = await getStudyBible();
     if (!nwtStyDb || !nwtStyPublication) return {};
 
     const query = `
@@ -972,15 +986,34 @@ const getStudyBibleBooks = async () => {
       LEFT JOIN 
           DocumentMultimedia ON 
               DocumentMultimedia.DocumentId IN (Document.DocumentId, SummaryDocument.DocumentId)
-      INNER JOIN 
+      LEFT JOIN 
           Multimedia AS CoverMultimedia ON 
               CoverMultimedia.CategoryType = 9 AND CoverMultimedia.MultimediaId = DocumentMultimedia.MultimediaId
       WHERE 
           Document.Type = 2;
     `;
 
-    const bibleBookItems =
-      await window.electronApi.executeQuery<MultimediaItem>(nwtStyDb, query);
+    const bibleBookItems = window.electronApi.executeQuery<MultimediaItem>(
+      nwtStyDb,
+      query,
+    );
+
+    if (nwtStyDb_E) {
+      const englishBookItems = window.electronApi.executeQuery<MultimediaItem>(
+        nwtStyDb_E,
+        query,
+      );
+
+      englishBookItems.forEach((englishItem) => {
+        const styItem = bibleBookItems.find(
+          (item) => englishItem.BibleBookId === item.BibleBookId,
+        );
+        if (styItem && !styItem.CoverPictureFilePath) {
+          styItem.MepsLanguageIndex = englishItem.MepsLanguageIndex;
+          styItem.CoverPictureFilePath = englishItem.CoverPictureFilePath;
+        }
+      });
+    }
 
     if (nwtDb) {
       const query = `
@@ -992,7 +1025,7 @@ const getStudyBibleBooks = async () => {
     `;
 
       const bibleBookLocalNames =
-        await window.electronApi.executeQuery<JwPlaylistItem>(nwtDb, query);
+        window.electronApi.executeQuery<JwPlaylistItem>(nwtDb, query);
 
       bibleBookLocalNames.forEach((localItem) => {
         const styItem = bibleBookItems.find(
@@ -1006,10 +1039,15 @@ const getStudyBibleBooks = async () => {
     const bibleBooksObject = Object.fromEntries(
       await Promise.all(
         bibleBookItems
-          .filter((item) => item.BibleBookId)
+          .filter((item) => !!item.BibleBookId && !!item.CoverPictureFilePath)
           .map(async (item) => [
             item.BibleBookId,
-            await addFullFilePathToMultimediaItem(item, nwtStyPublication),
+            await addFullFilePathToMultimediaItem(
+              item,
+              item.MepsLanguageIndex === 0
+                ? nwtStyPublication_E
+                : nwtStyPublication,
+            ),
           ]),
       ),
     );
@@ -1022,7 +1060,8 @@ const getStudyBibleBooks = async () => {
 
 const getStudyBibleMedia = async () => {
   try {
-    const { nwtStyDb, nwtStyPublication } = await getStudyBible();
+    const { nwtStyDb, nwtStyDb_E, nwtStyPublication, nwtStyPublication_E } =
+      await getStudyBible();
     if (!nwtStyDb || !nwtStyPublication) return [];
 
     const query = `
@@ -1045,14 +1084,38 @@ const getStudyBibleMedia = async () => {
           Multimedia AS CoverMultimedia ON CoverMultimedia.LinkMultimediaId = m.MultimediaId;
     `;
 
-    const bibleMediaItems =
-      await window.electronApi.executeQuery<MultimediaItem>(nwtStyDb, query);
+    const bibleMediaItems = window.electronApi.executeQuery<MultimediaItem>(
+      nwtStyDb,
+      query,
+    );
+
+    if (nwtStyDb_E) {
+      const englishMediaItems = window.electronApi.executeQuery<MultimediaItem>(
+        nwtStyDb_E,
+        query,
+      );
+
+      englishMediaItems.forEach((englishItem) => {
+        const styItem = bibleMediaItems.find(
+          (item) =>
+            englishItem.FilePath.replace(
+              '_E_',
+              `_${nwtStyPublication.langwritten}_`,
+            ) === item.FilePath,
+        );
+        if (!styItem) {
+          bibleMediaItems.push({ ...englishItem, MepsLanguageIndex: 0 });
+        }
+      });
+    }
 
     return Promise.all(
       bibleMediaItems.map(async (item) => {
         const updatedItem = await addFullFilePathToMultimediaItem(
           item,
-          nwtStyPublication,
+          item.MepsLanguageIndex === 0
+            ? nwtStyPublication_E
+            : nwtStyPublication,
         );
         updatedItem.VerseNumber = parseInt(
           item.VerseLabel?.match(/>(\d+)</)?.[1] || '',
