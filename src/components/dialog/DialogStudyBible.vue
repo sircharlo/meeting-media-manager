@@ -41,6 +41,7 @@
         <q-tab
           v-for="category in bibleMediaCategories"
           :key="category"
+          :disable="!bibleMediaByCategory[category]?.length"
           :label="category"
           :name="category"
         />
