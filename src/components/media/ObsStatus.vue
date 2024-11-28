@@ -38,20 +38,20 @@
 </template>
 
 <script setup lang="ts">
-import { OBSWebSocketError } from 'obs-websocket-js';
 import { storeToRefs } from 'pinia';
-import { obsWebSocket } from 'src/boot/globals';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import {
   configuredScenesAreAllUUIDs,
+  initObsWebSocket,
   obsCloseHandler,
   obsConnect,
   obsErrorHandler,
+  obsWebSocket,
 } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useObsStateStore } from 'src/stores/obs-state';
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
@@ -91,6 +91,7 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
       }
     } catch (error) {
       attempts++;
+      const { OBSWebSocketError } = await import('obs-websocket-js');
       if (
         error instanceof OBSWebSocketError &&
         error.message.includes('OBS is not ready')
@@ -119,8 +120,13 @@ const notifySceneNotFound = () =>
     type: 'negative',
   });
 
-onMounted(() => {
+const initObsListeners = async () => {
   try {
+    if (!currentSettings.value?.obsEnable) return;
+    await initObsWebSocket();
+    if (!obsWebSocket) return;
+    removeObsListeners();
+
     obsWebSocket.on('ConnectionOpened', () => {
       obsConnectionState.value = 'connecting';
     });
@@ -156,18 +162,43 @@ onMounted(() => {
   } catch (error) {
     errorCatcher(error);
   }
-});
+};
 
-onUnmounted(() => {
+const removeObsListeners = () => {
+  const events = [
+    'ConnectionClosed',
+    'ConnectionError',
+    'ConnectionOpened',
+    'CurrentProgramSceneChanged',
+    'Identified',
+    'SceneListChanged',
+  ] as const;
   try {
-    obsWebSocket.removeAllListeners('ConnectionClosed');
-    obsWebSocket.removeAllListeners('ConnectionError');
-    obsWebSocket.removeAllListeners('ConnectionOpened');
-    obsWebSocket.removeAllListeners('CurrentProgramSceneChanged');
-    obsWebSocket.removeAllListeners('Identified');
-    obsWebSocket.removeAllListeners('SceneListChanged');
+    if (!obsWebSocket) return;
+    events.forEach((event) => {
+      obsWebSocket?.removeAllListeners(event);
+    });
   } catch (error) {
     errorCatcher(error);
   }
+};
+
+onMounted(() => {
+  initObsListeners();
+});
+
+watch(
+  () => currentSettings.value?.obsEnable,
+  (val) => {
+    if (val) {
+      initObsListeners();
+    } else {
+      removeObsListeners();
+    }
+  },
+);
+
+onUnmounted(() => {
+  removeObsListeners();
 });
 </script>

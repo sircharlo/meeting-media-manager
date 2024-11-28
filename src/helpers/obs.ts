@@ -1,12 +1,20 @@
+import type { OBSWebSocket, OBSWebSocketError } from 'obs-websocket-js';
 import type { ObsSceneType } from 'src/types';
 
-import { OBSWebSocketError } from 'obs-websocket-js';
-import { obsWebSocket } from 'src/boot/globals';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useObsStateStore } from 'src/stores/obs-state';
 
 import { portNumberValidator } from './settings';
+
+export let obsWebSocket: OBSWebSocket | undefined;
+
+export const initObsWebSocket = async () => {
+  if (!obsWebSocket) {
+    const { default: OBSWebSocket } = await import('obs-websocket-js');
+    obsWebSocket = new OBSWebSocket();
+  }
+};
 
 const sendObsSceneEvent = (scene: ObsSceneType) => {
   if (!scene) return;
@@ -90,6 +98,7 @@ const obsConnect = async (setup?: boolean) => {
       obsState.obsConnectionState !== 'connected'
     ) {
       try {
+        await initObsWebSocket();
         const connection = await obsWebSocket?.connect(
           'ws://127.0.0.1:' + obsPort,
           obsPassword,
@@ -101,6 +110,7 @@ const obsConnect = async (setup?: boolean) => {
           break;
         }
       } catch (err) {
+        const { OBSWebSocketError } = await import('obs-websocket-js');
         if (err instanceof OBSWebSocketError) obsErrorHandler(err);
         else errorCatcher(err);
       } finally {

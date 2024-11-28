@@ -25,7 +25,6 @@ import type {
 
 import PQueue from 'p-queue';
 import { date } from 'quasar';
-import sanitize from 'sanitize-filename';
 import { queues } from 'src/boot/globals';
 import { FEB_2023, FOOTNOTE_TAR_PAR, MAX_SONGS } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
@@ -108,14 +107,17 @@ const downloadFileIfNeeded = async ({
   size,
   url,
 }: FileDownloader): Promise<DownloadedFile> => {
-  if (!url)
+  if (!url) {
     return {
       new: false,
       path: '',
     };
+  }
+
   const currentStateStore = useCurrentStateStore();
   await fs.ensureDir(dir);
   if (!filename) filename = path.basename(url);
+  const { default: sanitize } = await import('sanitize-filename');
   filename = sanitize(filename);
   const destinationPath = path.join(dir, filename);
   const remoteSize: number =
@@ -231,6 +233,7 @@ const exportDayToFolder = async (targetDate?: Date) => {
 
   const expectedFiles = new Set<string>();
 
+  const { default: sanitize } = await import('sanitize-filename');
   const sections: Partial<Record<MediaSection, number>> = {}; // Object to store dynamic section prefixes
   for (let i = 0; i < dayMediaLength; i++) {
     try {

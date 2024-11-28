@@ -94,7 +94,6 @@ import type { ObsSceneType } from 'src/types';
 
 import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { obsWebSocket } from 'src/boot/globals';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { isImage } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -102,6 +101,7 @@ import {
   configuredScenesAreAllUUIDs,
   isUUID,
   obsConnect,
+  obsWebSocket,
 } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useObsStateStore } from 'src/stores/obs-state';

@@ -5,7 +5,6 @@ import type {
 } from 'src/types';
 
 import { Buffer } from 'buffer';
-import mime from 'mime';
 import {
   AUDIO_EXTENSIONS,
   HEIC_EXTENSIONS,
@@ -111,8 +110,9 @@ const isRemoteFile = (
   return file.path.startsWith('http://') || file.path.startsWith('https://');
 };
 
-const inferExtension = (filename: string, filetype?: string) => {
+const inferExtension = async (filename: string, filetype?: string) => {
   if (!filetype) return filename;
+  const { default: mime } = await import('mime');
   const extractedExtension = mime.extension(filetype);
   if (!extractedExtension) {
     // warningCatcher(
