@@ -1,8 +1,7 @@
 import type { PublicationFetcher } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
-
-import { getPubId } from './pub';
+import { getPubId } from 'src/utils/jw';
 
 export const isFileUrl = (path: string) => path.startsWith('file://');
 
