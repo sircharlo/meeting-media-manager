@@ -15,6 +15,7 @@ import type {
   MultimediaExtractItem,
   MultimediaItem,
   MultimediaItemsFetcher,
+  Publication,
   PublicationFetcher,
   PublicationFiles,
   PublicationItem,
