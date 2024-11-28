@@ -484,7 +484,6 @@ import {
 import { Buffer } from 'buffer';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
-import { uid } from 'quasar';
 import DragAndDropper from 'src/components/media/DragAndDropper.vue';
 import MediaItem from 'src/components/media/MediaItem.vue';
 import { useLocale } from 'src/composables/useLocale';
@@ -531,6 +530,7 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { formatDate, getDateDiff } from 'src/utils/date';
 import { getPublicationDirectory, getTempPath } from 'src/utils/fs';
+import { uuid } from 'src/utils/general';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -1313,7 +1313,7 @@ const addToFiles = async (
       } else if (isImageString(filepath)) {
         const [preamble, data] = filepath.split(';base64,');
         const ext = preamble.split('/')[1];
-        const tempFilename = uid() + '.' + ext;
+        const tempFilename = uuid() + '.' + ext;
         const tempFilepath = path.join(await getTempPath(), tempFilename);
         await fs.writeFile(tempFilepath, Buffer.from(data, 'base64'));
         filepath = tempFilepath;

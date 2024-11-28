@@ -130,13 +130,3 @@ export const getTimeOptions = (options: SettingsItemOption[] | undefined) => {
     return undefined;
   }
 };
-
-export const parseJsonSafe = <T>(json: null | string | T, fallback: T): T => {
-  if (!json) return fallback;
-  try {
-    return typeof json === 'string' ? (JSON.parse(json) as T) : json;
-  } catch (e) {
-    errorCatcher(e);
-    return fallback;
-  }
-};

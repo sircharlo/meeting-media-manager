@@ -111,7 +111,6 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
-// Types
 import type {
   JwVideoCategory,
   MediaItemsMediatorItem,
@@ -121,17 +120,14 @@ import type {
 import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
-// Helpers
 import {
   downloadAdditionalRemoteVideo,
   getBestImageUrl,
 } from 'src/helpers/jw-media';
-import { formatTime } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-// Composables
 import { fetchJson } from 'src/utils/api';
-// Packages
+import { formatTime } from 'src/utils/time';
 import { computed, ref } from 'vue';
 
 // Stores

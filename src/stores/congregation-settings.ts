@@ -1,8 +1,8 @@
 import type { SettingsValues } from 'src/types';
 
 import { defineStore } from 'pinia';
-import { uid } from 'quasar';
 import { defaultSettings } from 'src/constants/settings';
+import { uuid } from 'src/utils/general';
 
 interface Store {
   announcements: Partial<Record<string, string[]>>;
@@ -14,7 +14,7 @@ export const useCongregationSettingsStore = defineStore(
   {
     actions: {
       createCongregation() {
-        const newId = uid();
+        const newId = uuid();
         this.congregations[newId] = Object.assign({}, defaultSettings);
         return newId;
       },

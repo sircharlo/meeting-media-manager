@@ -13,12 +13,12 @@ import type {
 import { defineStore } from 'pinia';
 import { settingsDefinitions } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { formatTime } from 'src/helpers/mediaPlayback';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useJwStore } from 'src/stores/jw';
 import { formatDate, getDateDiff } from 'src/utils/date';
 import { getAdditionalMediaPath } from 'src/utils/fs';
 import { isEmpty } from 'src/utils/general';
+import { formatTime } from 'src/utils/time';
 
 const { fs, path } = window.electronApi;
 
