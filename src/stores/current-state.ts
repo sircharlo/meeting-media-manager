@@ -14,10 +14,10 @@ import { defineStore } from 'pinia';
 import { date } from 'quasar';
 import { settingsDefinitions } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getAdditionalMediaPath } from 'src/helpers/fs';
 import { formatTime } from 'src/helpers/mediaPlayback';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useJwStore } from 'src/stores/jw';
+import { getAdditionalMediaPath } from 'src/utils/fs';
 import { isEmpty } from 'src/utils/general';
 
 const { formatDate, getDateDiff } = date;

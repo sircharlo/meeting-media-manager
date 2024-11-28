@@ -37,12 +37,9 @@ import {
   isMwMeetingDay,
 } from 'src/helpers/date';
 import {
-  getFileUrl,
   getMetadataFromMediaPath,
-  getPublicationDirectory,
   getSubtitlesUrl,
   getThumbnailUrl,
-  trimFilepathAsNeeded,
 } from 'src/helpers/fs';
 import {
   convertImageIfNeeded,
@@ -58,12 +55,14 @@ import {
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { fetchJson, fetchRaw } from 'src/utils/api';
+import { getPublicationDirectory, trimFilepathAsNeeded } from 'src/utils/fs';
 
 import { errorCatcher } from './error-catcher';
 
 const { formatDate, subtractFromDate } = date;
 
-const { executeQuery, fileUrlToPath, fs, path, readdir } = window.electronApi;
+const { executeQuery, fileUrlToPath, fs, path, pathToFileURL, readdir } =
+  window.electronApi;
 
 export const copyToDatedAdditionalMedia = async (
   filepathToCopy: string,
@@ -85,7 +84,7 @@ export const copyToDatedAdditionalMedia = async (
     const uniqueId = sanitizeId(
       formatDate(currentStateStore.selectedDate, 'YYYYMMDD') +
         '-' +
-        getFileUrl(datedAdditionalMediaPath),
+        pathToFileURL(datedAdditionalMediaPath),
     );
     if (await fs.exists(datedAdditionalMediaPath)) {
       if (filepathToCopy !== datedAdditionalMediaPath) {
@@ -143,14 +142,14 @@ export const addToAdditionMediaMapFromPath = async (
       uniqueId = sanitizeId(
         formatDate(currentStateStore.selectedDate, 'YYYYMMDD') +
           '-' +
-          getFileUrl(additionalFilePath),
+          pathToFileURL(additionalFilePath),
       );
     }
     jwStore.addToAdditionMediaMap(
       [
         {
           duration,
-          fileUrl: getFileUrl(additionalFilePath),
+          fileUrl: pathToFileURL(additionalFilePath),
           isAdditional: true,
           isAudio: audio,
           isImage: isImage(additionalFilePath),
@@ -1253,7 +1252,7 @@ export const dynamicMediaMapper = async (
       async (m): Promise<DynamicMediaObject> => {
         m.FilePath = await convertImageIfNeeded(m.FilePath);
         const fileUrl = m.FilePath
-          ? getFileUrl(m.FilePath)
+          ? pathToFileURL(m.FilePath)
           : ([m.KeySymbol, m.IssueTagNumber].filter(Boolean).length
               ? [m.KeySymbol, m.IssueTagNumber]
               : [m.MepsDocumentId]
@@ -1371,7 +1370,7 @@ export const watchedItemMapper: (
 
     const dateString = parentDate.replace(/-/g, '');
 
-    const fileUrl = getFileUrl(watchedItemPath);
+    const fileUrl = pathToFileURL(watchedItemPath);
 
     const video = isVideo(watchedItemPath);
     const audio = isAudio(watchedItemPath);

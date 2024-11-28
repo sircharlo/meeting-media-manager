@@ -17,7 +17,7 @@ export const parseMediaFile = async (filePath: string, options?: IOptions) => {
   return musicMetadata.parseFile(filePath, options);
 };
 
-export const isFileUrl = (path: string) => {
+const isFileUrl = (path: string) => {
   if (!path) return false;
   try {
     return path.startsWith('file://');

@@ -48,7 +48,6 @@ export interface ElectronApi {
   getScreenAccessStatus: () => Promise<string>;
   getUserDataPath: () => Promise<string>;
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
-  isFileUrl: (url: string) => boolean;
   moveMediaWindow: (
     targetScreenNumber?: number,
     windowedMode?: boolean,

@@ -17,12 +17,12 @@ import {
   ZIP_EXTENSIONS,
 } from 'src/constants/fs';
 import { FULL_HD } from 'src/constants/media';
-import { getFileUrl, getTempDirectory } from 'src/helpers/fs';
 import {
   dynamicMediaMapper,
   processMissingMediaInfo,
 } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { getTempPath } from 'src/utils/fs';
 
 import { errorCatcher } from './error-catcher';
 
@@ -157,7 +157,7 @@ export const decompressJwpub = async (
     if (!isJwpub(jwpubPath)) return jwpubPath;
     if (!outputPath) {
       outputPath = window.electronApi.path.join(
-        await getTempDirectory(),
+        await getTempPath(),
         window.electronApi.path.basename(jwpubPath),
       );
     }
@@ -365,7 +365,7 @@ export const convertSvgToJpg = async (filepath: string): Promise<string> => {
     if (!ctx) return filepath;
 
     const img = new Image();
-    img.src = getFileUrl(filepath);
+    img.src = window.electronApi.pathToFileURL(filepath);
 
     return new Promise((resolve, reject) => {
       img.onload = async function () {
@@ -419,7 +419,7 @@ export const convertImageIfNeeded = async (filepath: string) => {
     if (nrOfPages === 1) {
       const converted = await window.electronApi.convertPdfToImages(
         filepath,
-        await getTempDirectory(),
+        await getTempPath(),
       );
       return converted[0] || filepath;
     }

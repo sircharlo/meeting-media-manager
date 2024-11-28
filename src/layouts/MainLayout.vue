@@ -55,7 +55,7 @@ import {
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setElementFont } from 'src/helpers/fonts';
-import { getFileUrl, watchExternalFolder } from 'src/helpers/fs';
+import { watchExternalFolder } from 'src/helpers/fs';
 import {
   downloadBackgroundMusic,
   downloadSongbookVideos,
@@ -344,7 +344,8 @@ const updateWatchFolderRef = async ({
     } else if (event === 'unlink') {
       watchFolderMedia.value[day] = watchFolderMedia.value[day]?.filter(
         (dM) =>
-          dM.fileUrl !== getFileUrl(changedPath) && dM.watched !== changedPath,
+          dM.fileUrl !== window.electronApi.pathToFileURL(changedPath) &&
+          dM.watched !== changedPath,
       );
     }
   } catch (error) {

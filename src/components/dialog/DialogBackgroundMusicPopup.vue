@@ -130,15 +130,12 @@ import { storeToRefs } from 'pinia';
 import { date, type QMenu } from 'quasar';
 import { remainingTimeBeforeMeetingStart } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import {
-  getFileUrl,
-  getMetadataFromMediaPath,
-  getPublicationDirectoryContents,
-} from 'src/helpers/fs';
+import { getMetadataFromMediaPath } from 'src/helpers/fs';
 import { downloadBackgroundMusic } from 'src/helpers/jw-media';
 import { formatTime, isVideo } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+import { getPublicationDirectoryContents } from 'src/utils/fs';
 import { ref, useTemplateRef, watch } from 'vue';
 
 const open = defineModel<boolean>({ default: false });
@@ -392,7 +389,7 @@ const getNextSong = async () => {
     }
     return {
       duration: nextSong.duration,
-      nextSongUrl: getFileUrl(nextSong.path),
+      nextSongUrl: window.electronApi.pathToFileURL(nextSong.path),
       secsFromEnd,
     };
   } catch (error) {

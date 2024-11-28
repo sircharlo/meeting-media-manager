@@ -11,110 +11,18 @@ import {
   isVideo,
 } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { getPublicationDirectory } from 'src/utils/fs';
 
 import { errorCatcher } from './error-catcher';
 
 const {
   fileUrlToPath,
   fs,
-  getUserDataPath,
   getVideoDuration,
-  isFileUrl,
   parseMediaFile,
   path,
   pathToFileURL,
-  readdir,
 } = window.electronApi;
-
-export const getPublicationsPath = async () =>
-  path.join(await getUserDataPath(), 'Publications');
-export const getFontsPath = async () =>
-  path.join(await getUserDataPath(), 'Fonts');
-
-export const getAdditionalMediaPath = async () =>
-  path.join(await getUserDataPath(), 'Additional Media');
-
-export const getTempDirectory = async () => {
-  const tempDirectory = path.join(await getUserDataPath(), 'Temp');
-  await fs.ensureDir(tempDirectory);
-  return tempDirectory;
-};
-
-export const getPublicationDirectory = async (
-  publication: PublicationFetcher,
-  noIssue = false,
-) => {
-  try {
-    const publicationsPath = await getPublicationsPath();
-    const dir = path.join(
-      publicationsPath,
-      (publication.pub || publication.docid) +
-        '_' +
-        publication.langwritten +
-        (publication.issue !== undefined && !noIssue
-          ? '_' + publication.issue.toString()
-          : ''),
-    );
-    await fs.ensureDir(dir);
-    return dir;
-  } catch (error) {
-    errorCatcher(error);
-    return path.resolve('./');
-  }
-};
-
-export const getParentDirectory = (filepath: string) => {
-  if (!filepath) return '';
-  if (isFileUrl(filepath)) filepath = fileUrlToPath(filepath);
-  return path.dirname(filepath);
-};
-
-export const getPublicationDirectoryContents = async (
-  publication: PublicationFetcher,
-  filter?: string,
-) => {
-  try {
-    const dir = await getPublicationDirectory(publication);
-    if (!(await fs.pathExists(dir))) return [];
-    const items = await readdir(dir);
-    return items
-      .filter(
-        (item) =>
-          item.isFile &&
-          (!filter || item.name.toLowerCase().includes(filter.toLowerCase())),
-      )
-      .map((item) => ({ path: path.join(dir, item.name) }));
-  } catch (error) {
-    errorCatcher(error);
-    return [];
-  }
-};
-
-export const getFileUrl = (path: string) => {
-  if (!path) return '';
-  if (isFileUrl(path)) return path;
-  return pathToFileURL(path);
-};
-
-export const trimFilepathAsNeeded = (filepath: string) => {
-  const fileDir = path.dirname(filepath);
-  let filepathSize = new Blob([filepath]).size;
-  while (filepathSize > 230) {
-    const uniqueId =
-      '_' +
-      Math.floor(Math.random() * Date.now())
-        .toString(16)
-        .slice(0, 4);
-    const overBy = filepathSize - 230 + uniqueId.length;
-    const baseName = path
-      .basename(filepath)
-      .slice(0, -path.extname(filepath).length);
-    const newBaseName = baseName.slice(0, -overBy) + uniqueId;
-    filepath = path.join(fileDir, newBaseName + path.extname(filepath));
-    filepathSize = new Blob([filepath]).size;
-  }
-  return filepath;
-};
 
 export const getMetadataFromMediaPath = async (
   mediaPath: string,
@@ -174,7 +82,7 @@ const getThumbnailFromMetadata = async (mediaPath: string) => {
             `${path.basename(mediaPath, path.extname(mediaPath))}.${thumbnailFormat.split('/')[1]}`,
           );
           await fs.writeFile(thumbnailPath, thumbnailData);
-          return getFileUrl(thumbnailPath);
+          return pathToFileURL(thumbnailPath);
         }
       } catch (error) {
         errorCatcher(error);
@@ -227,7 +135,7 @@ const getThumbnailFromVideoPath = async (
 
   return new Promise((resolve, reject) => {
     const videoRef = document.createElement('video');
-    videoRef.src = getFileUrl(videoPath);
+    videoRef.src = pathToFileURL(videoPath);
     videoRef.load();
 
     videoRef.addEventListener('loadeddata', () => {
@@ -304,11 +212,11 @@ export const getThumbnailUrl = async (
     if (!filepath || !(await fs.exists(filepath))) return '';
     let thumbnailUrl = '';
     if (isImage(filepath)) {
-      thumbnailUrl = getFileUrl(filepath);
+      thumbnailUrl = pathToFileURL(filepath);
     } else if (isVideo(filepath) || isAudio(filepath)) {
       const thumbnailPath = filepath.split('.')[0] + '.jpg';
       if (await fs.exists(thumbnailPath)) {
-        thumbnailUrl = getFileUrl(thumbnailPath);
+        thumbnailUrl = pathToFileURL(thumbnailPath);
       } else {
         thumbnailUrl = await getThumbnailFromVideoPath(filepath, thumbnailPath);
       }
@@ -357,7 +265,7 @@ export const getSubtitlesUrl = async (
         });
         subtitlesPath = path.join(subDirectory, subtitlesFilename);
         if (await fs.exists(subtitlesPath)) {
-          subtitlesUrl = getFileUrl(subtitlesPath);
+          subtitlesUrl = pathToFileURL(subtitlesPath);
         } else {
           subtitlesUrl = '';
         }
@@ -369,56 +277,6 @@ export const getSubtitlesUrl = async (
   } catch (error) {
     errorCatcher(error);
     return '';
-  }
-};
-
-const isEmptyDir = async (directory: string) => {
-  try {
-    const files = await readdir(directory);
-    return files.length === 0;
-  } catch (error) {
-    errorCatcher(error);
-    return false;
-  }
-};
-
-export const removeEmptyDirs = async (rootDir: string) => {
-  try {
-    if (!(await fs.pathExists(rootDir))) return;
-    const dirs = (await readdir(rootDir))
-      .filter((item) => item.isDirectory)
-      .map((item) => path.join(rootDir, item.name))
-      .sort((a, b) => b.length - a.length);
-    for (const dir of dirs) {
-      if (await isEmptyDir(dir)) {
-        await fs.remove(dir);
-      }
-    }
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
-
-const disableUpdatesPath = async () =>
-  path.join(await getUserDataPath(), 'Global Preferences', 'disable-updates');
-
-export const updatesDisabled = async () =>
-  fs.exists(await disableUpdatesPath());
-
-export const disableUpdates = async () => {
-  try {
-    await fs.ensureFile(await disableUpdatesPath());
-    await fs.writeFile(await disableUpdatesPath(), 'true');
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
-
-export const enableUpdates = async () => {
-  try {
-    await fs.remove(await disableUpdatesPath());
-  } catch (error) {
-    errorCatcher(error);
   }
 };
 
