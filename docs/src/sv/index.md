@@ -7,7 +7,7 @@ hero:
   actions:
     - theme: brand
       text: Installera M³
-      link: /using-at-a-kingdom-hall#download-and-install
+      link: /sv/using-at-a-kingdom-hall#download-and-install
     - theme: alt
       text: Använda i Rikets sal
       link: /sv/using-at-a-kingdom-hall
