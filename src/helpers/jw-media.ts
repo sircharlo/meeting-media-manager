@@ -18,12 +18,12 @@ import type {
   PublicationFiles,
 } from 'src/types';
 
-import PQueue from 'p-queue';
 import { queues } from 'src/boot/globals';
 import { FEB_2023, FOOTNOTE_TAR_PAR, MAX_SONGS } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
 import { isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { exportAllDays } from 'src/helpers/export-media';
 import { getSubtitlesUrl, getThumbnailUrl } from 'src/helpers/fs';
 import {
   decompressJwpub,
@@ -35,13 +35,12 @@ import { fetchJson, fetchPubMediaLinks, fetchRaw } from 'src/utils/api';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
   dateFromString,
-  datesAreSame,
   formatDate,
   getSpecificWeekday,
   subtractFromDate,
 } from 'src/utils/date';
 import { getPublicationDirectory, trimFilepathAsNeeded } from 'src/utils/fs';
-import { pad } from 'src/utils/general';
+import { sanitizeId } from 'src/utils/general';
 import { findBestResolution, getPubId, isMediaLink } from 'src/utils/jw';
 import {
   getMetadataFromMediaPath,
@@ -284,136 +283,6 @@ export const downloadFileIfNeeded = async ({
   return result;
 };
 
-export const addDayToExportQueue = async (targetDate?: Date) => {
-  folderExportQueue.add(() => exportDayToFolder(targetDate));
-};
-
-const exportDayToFolder = async (targetDate?: Date) => {
-  const currentStateStore = useCurrentStateStore();
-  const jwStore = useJwStore();
-
-  if (
-    !targetDate ||
-    !currentStateStore?.currentCongregation ||
-    !currentStateStore.currentSettings?.mediaAutoExportFolder
-  ) {
-    return;
-  }
-
-  const dateString = formatDate(targetDate, 'YYYY/MM/DD');
-  const dateFolderName = formatDate(targetDate, 'YYYY-MM-DD');
-
-  const dynamicMedia = [
-    ...(jwStore.lookupPeriod?.[currentStateStore.currentCongregation]?.find(
-      (d) => datesAreSame(d.date, targetDate),
-    )?.dynamicMedia || []),
-    ...(jwStore.additionalMediaMaps?.[currentStateStore.currentCongregation]?.[
-      dateString
-    ] || []),
-    ...(currentStateStore.watchFolderMedia[dateString] || []),
-  ];
-
-  const dynamicMediaFiltered = Array.from(
-    new Map(dynamicMedia.map((item) => [item.fileUrl, item])).values(),
-  )
-    .sort(
-      mapOrder(
-        jwStore.mediaSort[currentStateStore.currentCongregation]?.[
-          dateString
-        ] || [],
-      ),
-    )
-    .sort((a, b) => {
-      const sectionOrder: MediaSection[] = [
-        'additional',
-        'tgw',
-        'ayfm',
-        'lac',
-        'wt',
-        'circuitOverseer',
-      ];
-      return sectionOrder.indexOf(a.section) - sectionOrder.indexOf(b.section);
-    });
-
-  const dayMediaLength = dynamicMediaFiltered.length;
-
-  const destFolder = path.join(
-    currentStateStore.currentSettings.mediaAutoExportFolder,
-    dateFolderName,
-  );
-
-  try {
-    await fs.ensureDir(destFolder);
-  } catch (error) {
-    errorCatcher(error);
-    return; // Exit early if we can't create the folder
-  }
-
-  const expectedFiles = new Set<string>();
-
-  const { default: sanitize } = await import('sanitize-filename');
-  const sections: Partial<Record<MediaSection, number>> = {}; // Object to store dynamic section prefixes
-  for (let i = 0; i < dayMediaLength; i++) {
-    try {
-      const m = dynamicMediaFiltered[i];
-      const sourceFilePath = window.electronApi.fileUrlToPath(m.fileUrl);
-      if (!sourceFilePath || !(await fs.exists(sourceFilePath))) continue;
-
-      if (!sections[m.section]) {
-        sections[m.section] = Object.keys(sections).length + 1;
-      }
-      const sectionPrefix = pad(sections[m.section] || 0);
-
-      const destFilePath = trimFilepathAsNeeded(
-        path.join(
-          destFolder,
-          sectionPrefix +
-            '-' +
-            pad(i + 1, dayMediaLength > 99 ? 3 : 2) +
-            ' ' +
-            (m.title
-              ? sanitize(m.title.replace(path.extname(m.fileUrl), '')) +
-                path.extname(m.fileUrl)
-              : path.basename(m.fileUrl)),
-        ),
-      );
-      const fileBaseName = path.basename(destFilePath);
-
-      // Check if destination file exists and matches size
-      if (await fs.exists(destFilePath)) {
-        const sourceStats = await fs.stat(sourceFilePath);
-        const destStats = await fs.stat(destFilePath);
-
-        if (sourceStats.size === destStats.size) {
-          expectedFiles.add(fileBaseName); // Mark as expected without copying
-          continue;
-        }
-      }
-
-      // Copy file if it doesn't exist or size doesn't match
-      expectedFiles.add(fileBaseName);
-      await fs.copy(sourceFilePath, destFilePath);
-    } catch (error) {
-      errorCatcher(error);
-    }
-  }
-
-  try {
-    const filesInDestFolder = await fs.readdir(destFolder);
-    for (const file of filesInDestFolder) {
-      try {
-        if (!expectedFiles.has(file)) {
-          await fs.remove(path.join(destFolder, file));
-        }
-      } catch (error) {
-        errorCatcher(error);
-      }
-    }
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
-
 export const mapOrder =
   (sortOrder: string | string[] | undefined) =>
   (a: DynamicMediaObject, b: DynamicMediaObject) => {
@@ -426,28 +295,6 @@ export const mapOrder =
       return 0;
     }
   };
-
-const folderExportQueue = new PQueue({ concurrency: 1 });
-
-export const exportAllDays = async () => {
-  try {
-    const jwStore = useJwStore();
-    const currentStateStore = useCurrentStateStore();
-    if (
-      !currentStateStore.currentSettings?.enableMediaAutoExport ||
-      !currentStateStore.currentSettings?.mediaAutoExportFolder
-    )
-      return;
-    const daysToExport = (
-      jwStore.lookupPeriod[currentStateStore.currentCongregation] || []
-    ).map((d) => d.date);
-    await folderExportQueue.addAll(
-      daysToExport.map((day) => () => exportDayToFolder(day)),
-    );
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
 
 export const fetchMedia = async () => {
   try {
@@ -496,6 +343,7 @@ export const fetchMedia = async () => {
       day.complete = false;
     });
     if (!queues.meetings[currentStateStore.currentCongregation]) {
+      const { default: PQueue } = await import('p-queue');
       queues.meetings[currentStateStore.currentCongregation] = new PQueue({
         concurrency: 2,
       });
@@ -1619,19 +1467,6 @@ export const getWeMedia = async (lookupDate: Date) => {
     };
   }
 };
-
-export function sanitizeId(id: string) {
-  try {
-    const regex = /[a-zA-Z0-9\-_:.]/g;
-    const sanitizedString = id.replace(regex, function (match) {
-      return match;
-    });
-    return sanitizedString;
-  } catch (e) {
-    errorCatcher(e);
-    return id;
-  }
-}
 
 export const getMwMedia = async (lookupDate: Date) => {
   try {

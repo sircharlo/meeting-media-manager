@@ -54,12 +54,12 @@ import {
   updateLookupPeriod,
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { exportAllDays } from 'src/helpers/export-media';
 import { setElementFont } from 'src/helpers/fonts';
 import { watchExternalFolder } from 'src/helpers/fs';
 import {
   downloadBackgroundMusic,
   downloadSongbookVideos,
-  exportAllDays,
   setUrlVariables,
   watchedItemMapper,
 } from 'src/helpers/jw-media';

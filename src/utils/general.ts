@@ -1,3 +1,5 @@
+import { errorCatcher } from 'src/helpers/error-catcher';
+
 /**
  * Converts a camelCase string to kebab-case.
  * @param str The camelCase string to convert.
@@ -45,6 +47,24 @@ export const capitalize = (str: string) =>
  */
 export const isEmpty = (val: unknown) =>
   val === '' || val === null || val === undefined;
+
+/**
+ * Santitizes a string to be used as an html id.
+ * @param id The id to sanitize.
+ * @returns The sanitized id.
+ */
+export const sanitizeId = (id: string) => {
+  try {
+    const regex = /[a-zA-Z0-9\-_:.]/g;
+    const sanitizedString = id.replace(regex, function (match) {
+      return match;
+    });
+    return sanitizedString;
+  } catch (e) {
+    errorCatcher(e);
+    return id;
+  }
+};
 
 /**
  * Parses a version string into an object.

@@ -490,8 +490,8 @@ import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
 import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { addDayToExportQueue } from 'src/helpers/export-media';
 import {
-  addDayToExportQueue,
   addJwpubDocumentMediaToFiles,
   addToAdditionMediaMapFromPath,
   copyToDatedAdditionalMedia,
