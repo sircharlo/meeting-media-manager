@@ -96,11 +96,12 @@ import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { obsConnect, obsWebSocket } from 'src/helpers/obs';
+import { obsConnect } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useObsStateStore } from 'src/stores/obs-state';
 import { isUUID } from 'src/utils/general';
 import { isImage } from 'src/utils/media';
+import { obsWebSocket } from 'src/utils/obs';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
