@@ -6,10 +6,7 @@ import type {
 } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { useCurrentStateStore } from 'src/stores/current-state';
 import { getDateDiff, getSpecificWeekday } from 'src/utils/date';
-
-const currentState = useCurrentStateStore();
 
 const requiredRule: ValidationRule = (val: boolean | string) =>
   (val?.toString() && val?.toString().length > 0) || '';
@@ -55,14 +52,16 @@ export const getDateOptions = (options: SettingsItemOption[] | undefined) => {
   }
 };
 
-export const getRules = (rules: SettingsItemRule[] | undefined) => {
+export const getRules = (
+  rules: SettingsItemRule[] | undefined,
+  disableMediaFetching: boolean | undefined,
+) => {
   try {
     const filteredRules: ValidationRule[] =
       rules
         ?.map((rule): undefined | ValidationRule => {
           if (rule === 'notEmpty') {
-            return !rules.includes('regular') ||
-              !currentState.currentSettings?.disableMediaFetching
+            return !rules.includes('regular') || !disableMediaFetching
               ? requiredRule
               : undefined;
           } else if (rule === 'portNumber') {

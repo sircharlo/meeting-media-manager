@@ -1,6 +1,7 @@
 import type { DateInfo } from 'src/types';
 
 import { DAYS_IN_FUTURE } from 'src/constants/date';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import {
@@ -12,8 +13,6 @@ import {
   getSpecificWeekday,
   isInPast,
 } from 'src/utils/date';
-
-import { errorCatcher } from './error-catcher';
 
 const getWeekDay = (lookupDate: Date) => {
   try {

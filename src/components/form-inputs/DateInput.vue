@@ -6,7 +6,7 @@
     hide-bottom-space
     mask="date"
     outlined
-    :rules="getRules(rules)"
+    :rules="getRules(rules, currentSettings?.disableMediaFetching)"
     style="width: 240px"
     v-bind="{ label: label || undefined }"
     @focus="focusHandler"
@@ -48,9 +48,9 @@ import type { SettingsItemOption, SettingsItemRule } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
-import { getDateOptions, getRules } from 'src/helpers/settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { friendlyDayToJsDay } from 'src/utils/date';
+import { getDateOptions, getRules } from 'src/utils/settings';
 
 const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);

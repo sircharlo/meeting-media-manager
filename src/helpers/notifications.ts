@@ -1,6 +1,5 @@
 import { Notify, type QNotifyCreateOptions } from 'quasar';
-
-import { errorCatcher } from './error-catcher';
+import { errorCatcher } from 'src/helpers/error-catcher';
 
 export const createTemporaryNotification = ({
   actions,

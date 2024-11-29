@@ -15,7 +15,7 @@
     map-options
     :options="listOptions"
     outlined
-    :rules="getRules(rules)"
+    :rules="getRules(rules, currentSettings?.disableMediaFetching)"
     spellcheck="false"
     style="width: 240px"
     :use-input="useInput"
@@ -53,14 +53,16 @@ import { SORTER } from 'src/constants/general';
 import { RESOLUTIONS } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { configuredScenesAreAllUUIDs } from 'src/helpers/obs';
-import { getRules } from 'src/helpers/settings';
 import { localeOptions } from 'src/i18n';
+import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { useObsStateStore } from 'src/stores/obs-state';
+import { getRules } from 'src/utils/settings';
 import { computed, ref } from 'vue';
 
 const jwStore = useJwStore();
 const { jwLanguages } = storeToRefs(jwStore);
+const { currentSettings } = storeToRefs(useCurrentStateStore());
 
 const props = defineProps<{
   label?: string;

@@ -2,12 +2,11 @@ import type { MultimediaItem, PublicationFetcher } from 'src/types';
 
 import { Buffer } from 'buffer';
 import { FULL_HD } from 'src/constants/media';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadFileIfNeeded, getJwMediaInfo } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { getPublicationDirectory } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
-
-import { errorCatcher } from './error-catcher';
 
 const { fileUrlToPath, fs, parseMediaFile, path, pathToFileURL } =
   window.electronApi;

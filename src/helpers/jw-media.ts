@@ -28,6 +28,7 @@ import { queues } from 'src/boot/globals';
 import { FEB_2023, FOOTNOTE_TAR_PAR, MAX_SONGS } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
 import { isCoWeek, isMwMeetingDay } from 'src/helpers/date';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { getSubtitlesUrl, getThumbnailUrl } from 'src/helpers/fs';
 import {
   convertImageIfNeeded,
@@ -56,8 +57,6 @@ import {
   isSong,
   isVideo,
 } from 'src/utils/media';
-
-import { errorCatcher } from './error-catcher';
 
 const { executeQuery, fileUrlToPath, fs, path, pathToFileURL, readdir } =
   window.electronApi;

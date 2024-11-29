@@ -6,6 +6,7 @@ import type {
 
 import { Buffer } from 'buffer';
 import { FULL_HD } from 'src/constants/media';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   dynamicMediaMapper,
   processMissingMediaInfo,
@@ -13,8 +14,6 @@ import {
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { getTempPath } from 'src/utils/fs';
 import { isHeic, isJwpub, isPdf, isSvg } from 'src/utils/media';
-
-import { errorCatcher } from './error-catcher';
 
 const jwpubDecompressor = async (jwpubPath: string, outputPath: string) => {
   try {

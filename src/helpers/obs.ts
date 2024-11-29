@@ -5,8 +5,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useObsStateStore } from 'src/stores/obs-state';
 import { isUUID } from 'src/utils/general';
-
-import { portNumberValidator } from './settings';
+import { portNumberValidator } from 'src/utils/settings';
 
 export let obsWebSocket: OBSWebSocket | undefined;
 

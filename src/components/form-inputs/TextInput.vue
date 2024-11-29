@@ -6,7 +6,7 @@
     :error="customError"
     hide-bottom-space
     outlined
-    :rules="getRules(rules)"
+    :rules="getRules(rules, currentSettings?.disableMediaFetching)"
     spellcheck="false"
     v-bind="{ label: label || undefined }"
     style="width: 240px"
@@ -31,9 +31,10 @@ import type {
 } from 'src/types';
 
 import { storeToRefs } from 'pinia';
-import { getRules, performActions } from 'src/helpers/settings';
+import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { useObsStateStore } from 'src/stores/obs-state';
+import { getRules, performActions } from 'src/utils/settings';
 import { computed, watch } from 'vue';
 
 const obsState = useObsStateStore();
@@ -41,6 +42,8 @@ const { obsConnectionState } = storeToRefs(obsState);
 
 const jwStore = useJwStore();
 const { urlVariables } = storeToRefs(jwStore);
+
+const { currentSettings } = storeToRefs(useCurrentStateStore());
 
 const customError = computed(
   () =>
