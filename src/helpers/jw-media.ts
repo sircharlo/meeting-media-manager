@@ -24,7 +24,7 @@ import { FEB_2023, FOOTNOTE_TAR_PAR, MAX_SONGS } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
 import { isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { exportAllDays } from 'src/helpers/export-media';
+import { addDayToExportQueue, exportAllDays } from 'src/helpers/export-media';
 import { getSubtitlesUrl, getThumbnailUrl } from 'src/helpers/fs';
 import {
   decompressJwpub,
@@ -165,6 +165,7 @@ export const addToAdditionMediaMapFromPath = async (
       ],
       section,
     );
+    return uniqueId;
   } catch (error) {
     errorCatcher(error, {
       contexts: {
@@ -176,6 +177,7 @@ export const addToAdditionMediaMapFromPath = async (
         },
       },
     });
+    return undefined;
   }
 };
 
@@ -1834,6 +1836,7 @@ export const downloadAdditionalRemoteVideo = async (
   song: false | number | string = false,
   title?: string,
   section?: MediaSection,
+  customDuration?: Record<string, number>,
 ) => {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -1841,52 +1844,44 @@ export const downloadAdditionalRemoteVideo = async (
       mediaItemLinks,
       currentStateStore.currentSettings?.maxRes,
     );
+    console.log('bestItem', bestItem, customDuration);
     if (bestItem) {
       const bestItemUrl =
         'progressiveDownloadURL' in bestItem
           ? bestItem.progressiveDownloadURL
           : bestItem.file.url;
-      window.dispatchEvent(
-        new CustomEvent<{
-          duration: number;
-          path: string;
-          section?: MediaSection;
-          song: false | number | string;
-          thumbnailUrl: string;
-          title?: string;
-          url: string;
-        }>('remote-video-loading', {
-          detail: {
-            duration: bestItem.duration,
-            path: path.join(
-              await currentStateStore.getDatedAdditionalMediaDirectory(),
-              path.basename(bestItemUrl),
-            ),
-            section,
-            song,
-            thumbnailUrl: thumbnailUrl || '',
-            title,
-            url: bestItemUrl,
-          },
-        }),
+
+      const uniqueId = await addToAdditionMediaMapFromPath(
+        path.join(
+          await currentStateStore.getDatedAdditionalMediaDirectory(),
+          path.basename(bestItemUrl),
+        ),
+        section,
+        undefined,
+        {
+          duration: bestItem.duration,
+          song: song ? song.toString() : undefined,
+          thumbnailUrl,
+          title,
+          url: bestItemUrl,
+        },
       );
-      await downloadFileIfNeeded({
+
+      downloadFileIfNeeded({
         dir: await currentStateStore.getDatedAdditionalMediaDirectory(),
         size: bestItem.filesize,
         url: bestItemUrl,
+      }).then(() => {
+        if (currentStateStore?.selectedDateObject?.date) {
+          addDayToExportQueue(currentStateStore.selectedDateObject.date);
+        }
       });
-      window.dispatchEvent(
-        new CustomEvent<{
-          targetDate: Date | undefined;
-        }>('remote-video-loaded', {
-          detail: {
-            targetDate: currentStateStore?.selectedDateObject?.date,
-          },
-        }),
-      );
+
+      return uniqueId;
     }
   } catch (e) {
     errorCatcher(e);
+    return undefined;
   }
 };
 

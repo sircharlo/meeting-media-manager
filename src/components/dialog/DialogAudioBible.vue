@@ -97,7 +97,7 @@
         </template>
         <template v-else>
           <div
-            v-for="(section, sectionIndex) in [
+            v-for="(sectionInfo, sectionIndex) in [
               {
                 title: 'hebrew-aramaic-scriptures',
                 books: bibleAudioMediaHebrew,
@@ -108,11 +108,11 @@
             class="col-shrink full-width q-px-md q-py-md"
           >
             <div class="text-caption text-uppercase">
-              {{ $t(section.title) }}
+              {{ $t(sectionInfo.title) }}
             </div>
             <div class="row full-width q-col-gutter-xs">
               <div
-                v-for="(book, index) in section.books"
+                v-for="(book, index) in sectionInfo.books"
                 :key="index"
                 class="col col-xs-4 col-sm-3 col-md-2 col-lg-1"
               >
@@ -122,7 +122,7 @@
                   no-caps
                   text-color="black"
                   unelevated
-                  @click="selectedBibleBook = book.booknum"
+                  @click="selectedBibleBook = book.booknum || 0"
                 >
                   <div class="ellipsis">
                     {{ book.pubName }}
@@ -164,20 +164,38 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
-import type { MediaLink, Publication, PublicationFiles } from 'src/types';
+import type {
+  MediaLink,
+  MediaSection,
+  Publication,
+  PublicationFiles,
+} from 'src/types';
 
 import { whenever } from '@vueuse/core';
+import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getAudioBibleMedia } from 'src/helpers/jw-media';
+import {
+  downloadAdditionalRemoteVideo,
+  getAudioBibleMedia,
+} from 'src/helpers/jw-media';
+import { useCurrentStateStore } from 'src/stores/current-state';
+import { useJwStore } from 'src/stores/jw';
 import { computed, ref, watch } from 'vue';
-// // Props
-// const props = defineProps<{
-//   section?: MediaSection;
-// }>();
+
+// Stores
+const currentStateStore = useCurrentStateStore();
+const { currentCongregation, selectedDate } = storeToRefs(currentStateStore);
+const jwStore = useJwStore();
+const { customDurations } = storeToRefs(jwStore);
+
+// Props
+const props = defineProps<{
+  section?: MediaSection;
+}>();
 
 const open = defineModel<boolean>({ default: false });
 
-const selectedBibleBook = ref<null | number>(0);
+const selectedBibleBook = ref<number>(0);
 const selectedChapter = ref(0);
 const bibleAudioMedia = ref<Publication[]>([]);
 
@@ -281,103 +299,61 @@ whenever(open, () => {
 });
 
 const addSelectedVerses = async () => {
-  const timeToMs = (time: string) => {
+  if (!chosenVerses.value.length) return;
+  const startVerseNumber = chosenVerses.value[0];
+  const endVerseNumber = chosenVerses.value[1] || startVerseNumber;
+
+  const timeToSeconds = (time: string) => {
     const [h, m, s] = time.split(':').map(parseFloat);
-    return (h * 3600 + m * 60 + s) * 1000;
+    return h * 3600 + m * 60 + s;
   };
 
-  const msToTime = (ms: number) => {
-    const h = Math.floor(ms / 3600000)
-      .toString()
-      .padStart(2, '0');
-    const m = Math.floor((ms % 3600000) / 60000)
-      .toString()
-      .padStart(2, '0');
-    const s = ((ms % 60000) / 1000).toFixed(3).padStart(6, '0');
-    return `${h}:${m}:${s}`;
-  };
-
-  const startTime =
+  const min = timeToSeconds(
     selectedChapterMedia.value.map((item) =>
       item.markers.markers.find(
-        (marker) => marker.verseNumber === chosenVerses.value[0],
+        (marker) => marker.verseNumber === startVerseNumber,
       ),
-    )?.[0]?.startTime || 0;
+    )?.[0]?.startTime || '0',
+  );
+
   const endVerse = selectedChapterMedia.value.map((item) =>
     item.markers.markers.find(
-      (marker) => marker.verseNumber === chosenVerses.value[1],
+      (marker) => marker.verseNumber === endVerseNumber,
     ),
   )?.[0];
-  const endTime = msToTime(
-    endVerse ? timeToMs(endVerse.startTime) + timeToMs(endVerse.duration) : 0,
+  const max = endVerse
+    ? timeToSeconds(endVerse.startTime) + timeToSeconds(endVerse.duration)
+    : 0;
+
+  const uniqueId = await downloadAdditionalRemoteVideo(
+    selectedChapterMedia.value,
+    undefined,
+    false,
+    bibleBookNames.value[selectedBibleBook.value - 1] +
+      ' ' +
+      selectedChapter.value +
+      ':' +
+      chosenVerses.value
+        .filter((verse, index, self) => self.indexOf(verse) === index)
+        .join('-'),
+    props.section,
   );
-  console.log(chosenVerses.value[0], startTime, chosenVerses.value[1], endTime);
-  // for (const verse of chosenVerses.value.sort()) {
-  //   console.log(
-  //     verse,
-  //     selectedChapterMedia.value.map((item) =>
-  //       item.markers.markers.find((marker) => marker.verseNumber === verse),
-  //     ),
-  //   );
-  // }
+
+  if (
+    uniqueId &&
+    min &&
+    max &&
+    selectedDate.value &&
+    currentCongregation.value
+  ) {
+    const congregation = (customDurations.value[currentCongregation.value] ??=
+      {});
+    const dateDurations = (congregation[selectedDate.value] ??= {});
+    dateDurations[uniqueId] = { max, min };
+  }
+
   resetBibleBook(true, true);
 };
-
-// const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
-//   if (mediaItem.MimeType.includes('image')) {
-//     mediaItem.FilePath = await convertImageIfNeeded(mediaItem.FilePath);
-//     await addToAdditionMediaMapFromPath(
-//       mediaItem.FilePath,
-//       props.section,
-//       undefined,
-//       {
-//         title: mediaItem.Label,
-//       },
-//     );
-//   } else {
-//     const mediaLookup: PublicationFetcher = {
-//       docid: mediaItem.MepsDocumentId,
-//       fileformat: 'MP4',
-//       issue: mediaItem.IssueTagNumber || undefined,
-//       langwritten: '',
-//       pub: mediaItem.KeySymbol,
-//       track: mediaItem.Track || undefined,
-//     };
-
-//     const langsToTry = [
-//       currentSettings.value?.lang,
-//       currentSettings.value?.langFallback,
-//       'E',
-//     ].filter((l) => l !== undefined && l !== null);
-//     let mediaInfo, mediaItemFiles;
-//     for (const lang of langsToTry) {
-//       if (!lang) continue;
-//       mediaLookup.langwritten = lang as JwLangCode;
-//       try {
-//         [mediaItemFiles, mediaInfo] = await Promise.all([
-//           getPubMediaLinks(mediaLookup),
-//           getJwMediaInfo(mediaLookup),
-//         ]);
-//         if (mediaItemFiles && mediaInfo) break; // Exit loop if successful
-//       } catch {
-//         // Continue to the next language on failure
-//       }
-//     }
-
-//     if (mediaItemFiles && mediaInfo && mediaLookup.langwritten) {
-//       const { thumbnail, title } = mediaInfo;
-//       downloadAdditionalRemoteVideo(
-//         mediaItemFiles?.files?.[mediaLookup.langwritten]?.['MP4'] || [],
-//         thumbnail,
-//         false,
-//         title.replace(/^\d+\.\s*/, ''),
-//         props.section,
-//       );
-//     } else {
-//       console.error('Failed to fetch media for all languages.');
-//     }
-//   }
-// };
 
 const resetBibleBook = (closeBook = false, closeDialog = false) => {
   if (closeDialog) open.value = false;
