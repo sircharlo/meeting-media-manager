@@ -488,14 +488,7 @@ import DragAndDropper from 'src/components/media/DragAndDropper.vue';
 import MediaItem from 'src/components/media/MediaItem.vue';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
-import {
-  dateFromString,
-  getLocalDate,
-  isCoWeek,
-  isInPast,
-  isMwMeetingDay,
-  isWeMeetingDay,
-} from 'src/helpers/date';
+import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getMetadataFromMediaPath } from 'src/helpers/fs';
 import {
@@ -528,7 +521,13 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { formatDate, getDateDiff } from 'src/utils/date';
+import {
+  dateFromString,
+  formatDate,
+  getDateDiff,
+  getLocalDate,
+  isInPast,
+} from 'src/utils/date';
 import { getPublicationDirectory, getTempPath } from 'src/utils/fs';
 import { uuid } from 'src/utils/general';
 import { computed, onMounted, ref, watch } from 'vue';

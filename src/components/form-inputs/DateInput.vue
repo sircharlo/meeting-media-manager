@@ -48,9 +48,9 @@ import type { SettingsItemOption, SettingsItemRule } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
-import { friendlyDayToJsDay } from 'src/helpers/date';
 import { getDateOptions, getRules } from 'src/helpers/settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { friendlyDayToJsDay } from 'src/utils/date';
 
 const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);

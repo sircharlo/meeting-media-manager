@@ -5,10 +5,9 @@ import type {
   SettingsItemRule,
 } from 'src/types';
 
-import { getSpecificWeekday } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { getDateDiff } from 'src/utils/date';
+import { getDateDiff, getSpecificWeekday } from 'src/utils/date';
 
 const currentState = useCurrentStateStore();
 

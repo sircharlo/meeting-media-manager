@@ -209,13 +209,14 @@ import DialogStudyBible from 'src/components/dialog/DialogStudyBible.vue';
 import PublicTalkMediaPicker from 'src/components/media/PublicTalkMediaPicker.vue';
 import SongPicker from 'src/components/media/SongPicker.vue';
 import { useLocale } from 'src/composables/useLocale';
-import { friendlyDayToJsDay, getLocalDate } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import {
   formatDate,
+  friendlyDayToJsDay,
   getDateDiff,
+  getLocalDate,
   getMaxDate,
   getMinDate,
 } from 'src/utils/date';
