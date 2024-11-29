@@ -3,7 +3,7 @@ layout: home
 hero:
   name: Nyaraka za M³
   text: Usaidizi wa kusanidi na kutumia Meeting Media Manager
-  image: /icon.png
+  image: /logo.svg
   actions:
     - theme: brand
       text: Pakua M³
