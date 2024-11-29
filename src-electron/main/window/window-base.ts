@@ -43,7 +43,11 @@ export function createWindow(
     backgroundColor: 'grey',
     height: defaultSize.height,
     icon: resolve(
-      join(__dirname, 'icons', `icon.${PLATFORM === 'win32' ? 'ico' : 'png'}`),
+      join(
+        __dirname,
+        'icons',
+        `icon.${PLATFORM === 'win32' ? 'ico' : PLATFORM === 'darwin' ? 'icns' : 'png'}`,
+      ),
     ),
     minHeight: 450,
     minWidth: 500,

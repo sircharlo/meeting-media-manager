@@ -30,7 +30,7 @@ export function createMediaWindow() {
       join(
         __dirname,
         'icons',
-        `media-player.${PLATFORM === 'win32' ? 'ico' : 'png'}`,
+        `media-player.${PLATFORM === 'win32' ? 'ico' : PLATFORM === 'darwin' ? 'icns' : 'png'}`,
       ),
     ),
     minHeight: 110,
