@@ -7,7 +7,7 @@ hero:
   actions:
     - theme: brand
       text: Pakua M³
-      link: /using-at-a-kingdom-hall#download-and-install
+      link: /sw/using-at-a-kingdom-hall#download-and-install
     - theme: alt
       text: Kutumia kwenye Mikutano
       link: /sw/using-at-a-kingdom-hall
