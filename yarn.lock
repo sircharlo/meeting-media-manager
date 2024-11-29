@@ -9252,6 +9252,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"link@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "link@npm:2.1.1"
+  bin:
+    link: dist/cli.js
+  checksum: 10c0/2ab956715e77c4fb9d78e16172301b59e2c03611feae4df33f50a70351445da050bea4010c682a0e187a09b5f2ee4462bab842153c2767a3b018de00b0e8282a
+  languageName: node
+  linkType: hard
+
 "lint-staged@npm:^15.2.10":
   version: 15.2.10
   resolution: "lint-staged@npm:15.2.10"
@@ -9636,7 +9645,7 @@ __metadata:
     husky: "npm:^9.1.7"
     is-online: "npm:^11.0.0"
     lint-staged: "npm:^15.2.10"
-    music-metadata: "npm:^10.6.0"
+    music-metadata: "npm:^10.6.1"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.0.1"
     pdfjs-dist: "npm:^4.8.69"
@@ -10104,19 +10113,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^10.6.0":
-  version: 10.6.0
-  resolution: "music-metadata@npm:10.6.0"
+"music-metadata@npm:^10.6.1":
+  version: 10.6.1
+  resolution: "music-metadata@npm:10.6.1"
   dependencies:
     "@tokenizer/token": "npm:^0.3.0"
     content-type: "npm:^1.0.5"
     debug: "npm:^4.3.7"
     file-type: "npm:^19.6.0"
+    link: "npm:^2.1.1"
     media-typer: "npm:^1.1.0"
-    strtok3: "npm:^9.0.1"
+    strtok3: "npm:^9.1.1"
     token-types: "npm:^6.0.0"
     uint8array-extras: "npm:^1.4.0"
-  checksum: 10c0/2820ff34114246bd56f85e638f0cac26e49d7a460f2bf150b23f9b001484ed18814ff7d7f1cb38b410ea5fb94dac75b46f7fc817e3a03336731423740b9c1f40
+  checksum: 10c0/24b34f3170157b545b0d223b1aa18719c69f372b98b7b60bd32cc7289b8d609bfeddcb488d9039b3eae19950eade5874c49661ec061383325f0b9fd4bcf9d0fd
   languageName: node
   linkType: hard
 
@@ -12847,7 +12857,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strtok3@npm:^9.0.1":
+"strtok3@npm:^9.0.1, strtok3@npm:^9.1.1":
   version: 9.1.1
   resolution: "strtok3@npm:9.1.1"
   dependencies:
