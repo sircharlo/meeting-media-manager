@@ -24,7 +24,7 @@ import {
   createMainWindow,
   mainWindow,
 } from './main/window/window-main';
-import { errorCatcher } from './utils';
+import { captureError } from './utils';
 
 if (process.env.PORTABLE_EXECUTABLE_DIR) {
   app.setPath('appData', process.env.PORTABLE_EXECUTABLE_DIR);
@@ -79,13 +79,13 @@ app.on('activate', () => {
   app
     .whenReady()
     .then(createMainWindow)
-    .catch((e) => errorCatcher(e));
+    .catch((e) => captureError(e));
 });
 
 app
   .whenReady()
   .then(createMainWindow)
-  .catch((e) => errorCatcher(e));
+  .catch((e) => captureError(e));
 
 function createApplicationMenu() {
   const appMenu: MenuItem | MenuItemConstructorOptions = { role: 'appMenu' };

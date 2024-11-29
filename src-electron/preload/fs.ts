@@ -3,7 +3,7 @@ import type { VideoDuration } from 'src/types';
 
 import url from 'url';
 
-import { errorCatcher } from '../utils';
+import { captureError } from '../utils';
 
 export const getVideoDuration = async (
   filePath: string,
@@ -22,7 +22,7 @@ const isFileUrl = (path: string) => {
   try {
     return path.startsWith('file://');
   } catch (err) {
-    errorCatcher(err, { contexts: { fn: { name: 'isFileUrl', path } } });
+    captureError(err, { contexts: { fn: { name: 'isFileUrl', path } } });
     return false;
   }
 };

@@ -22,7 +22,7 @@ export async function askForMediaAccess() {
         logToWindow(mainWindow, `${type} result:`, result, 'debug');
       }
     } catch (e) {
-      errorCatcher(e);
+      captureError(e);
     }
   }
 }
@@ -121,7 +121,7 @@ export const fetchJson = async <T>(
     if (response.ok) {
       return await response.json();
     } else if (![400, 404].includes(response.status)) {
-      errorCatcher(new Error('Failed to fetch json!'), {
+      captureError(new Error('Failed to fetch json!'), {
         contexts: {
           fn: {
             headers: response.headers,
@@ -140,7 +140,7 @@ export const fetchJson = async <T>(
     const { default: isOnline } = await import('is-online');
     const online = await isOnline();
     if (online) {
-      errorCatcher(e, {
+      captureError(e, {
         contexts: {
           fn: {
             name: 'fetchJson',
@@ -158,7 +158,7 @@ export const fetchJson = async <T>(
  * Logs an error to the console or to Sentry
  * @param error The error to log
  */
-export function errorCatcher(
+export function captureError(
   error: Error | string | unknown,
   context?: ExclusiveEventHintOrCaptureContext,
 ) {

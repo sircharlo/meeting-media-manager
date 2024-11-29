@@ -3,10 +3,9 @@ import type { PDFPageProxy } from 'pdfjs-dist';
 import type { RenderParameters } from 'pdfjs-dist/types/src/display/api';
 
 import { ensureDir, writeFile } from 'fs-extra';
-import { FULL_HD } from 'src/constants/media';
 import { basename, join } from 'upath';
 
-import { errorCatcher } from '../utils';
+import { captureError } from '../utils';
 
 export interface ConversionOptions {
   /**
@@ -42,7 +41,7 @@ export const getNrOfPdfPages = async (pdfPath: string): Promise<number> => {
     const pdfDocument = await loadingTask.promise;
     return pdfDocument.numPages;
   } catch (e) {
-    errorCatcher(e);
+    captureError(e);
     return 0;
   }
 };
@@ -73,6 +72,7 @@ export const convertPdfToImages = async (
         const context = canvas.getContext('2d');
         if (!context) return [];
 
+        const FULL_HD = { height: 1080, width: 1920 };
         const scale = Math.min(
           (2 * FULL_HD.width) / viewport.width,
           (2 * FULL_HD.height) / viewport.height,
@@ -98,12 +98,12 @@ export const convertPdfToImages = async (
         await writeFile(outputPath, base64Data, 'base64');
         outputImages.push(outputPath);
       } catch (e) {
-        errorCatcher(e);
+        captureError(e);
       }
     }
     return outputImages;
   } catch (e) {
-    errorCatcher(e);
+    captureError(e);
     return outputImages;
   }
 };
