@@ -80,6 +80,11 @@
 ::-webkit-scrollbar-thumb:hover {
   cursor: grab;
 }
+
+.dotted-borders {
+  border: 1px dashed $accent-300;
+}
+
 body.body--light {
   background: $primary-bg;
 

@@ -31,7 +31,7 @@ import {
   getMediaFromJwPlaylist,
 } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
+import { shouldUpdateList, useJwStore } from 'src/stores/jw';
 import { fetchJson, fetchPubMediaLinks, fetchRaw } from 'src/utils/api';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
@@ -625,7 +625,9 @@ const getStudyBible = async () => {
   }
 };
 
-export const getStudyBibleBooks = async () => {
+export const getStudyBibleBooks: () => Promise<
+  Record<number, MultimediaItem>
+> = async () => {
   try {
     const {
       nwtDb,
@@ -944,10 +946,22 @@ export const getStudyBibleMedia = async () => {
   }
 };
 
-export const getAudioBibleMedia = async () => {
+export const getAudioBibleMedia = async (force = false) => {
   try {
     const currentStateStore = useCurrentStateStore();
-    const returnedItems: Publication[] = [];
+    const jwStore = useJwStore();
+
+    const lang = currentStateStore.currentSettings?.lang;
+    if (!lang) return;
+
+    if (!force) {
+      const audioFilesList = jwStore.jwBibleAudioFiles?.[lang];
+      if (audioFilesList && !shouldUpdateList(audioFilesList, 3)) {
+        return audioFilesList.list;
+      }
+    }
+
+    const returnedItems: Partial<Publication>[] = [];
     const publication: PublicationFetcher = {
       booknum: 0,
       fileformat: 'MP3',
@@ -956,23 +970,61 @@ export const getAudioBibleMedia = async () => {
       pub: 'nwt',
     };
     const languages = [
-      currentStateStore.currentSettings?.lang,
+      currentStateStore.currentSettings.lang,
       currentStateStore.currentSettings?.langFallback,
     ].filter(Boolean) as JwLangCode[];
+
+    const backupNameNeeded: number[] = [];
+
     for (const booknum of Array.from({ length: 66 }, (_, i) => i + 1)) {
-      console.log(booknum);
       for (const lang of languages) {
-        console.log(lang);
         publication.booknum = booknum;
         publication.langwritten = lang;
         const audioBibleMediaItems = await getPubMediaLinks(publication);
-        if (!audioBibleMediaItems) break;
+        console.log('audioBibleMediaItems', audioBibleMediaItems);
+        if (!audioBibleMediaItems) {
+          backupNameNeeded.push(booknum);
+          returnedItems.push({ booknum });
+          break;
+        }
         returnedItems.push(audioBibleMediaItems);
       }
     }
-    console.log(returnedItems);
+
+    if (backupNameNeeded.length) {
+      const { nwtDb } = await getStudyBible();
+
+      if (nwtDb) {
+        const bibleBooksSimpleQuery = `
+        SELECT *
+        FROM 
+            Document
+        WHERE
+            Class = 1
+      `;
+
+        const bibleBookLocalNames =
+          window.electronApi.executeQuery<JwPlaylistItem>(
+            nwtDb,
+            bibleBooksSimpleQuery,
+          );
+        console.log('backupBooks', backupNameNeeded, bibleBookLocalNames);
+        for (const booknum of backupNameNeeded) {
+          const pubName = bibleBookLocalNames.find(
+            (item) => item.ChapterNumber === booknum,
+          )?.Title;
+          returnedItems[booknum - 1] = {
+            booknum,
+            pubName,
+          };
+        }
+      }
+    }
+    jwStore.jwBibleAudioFiles[lang] = {
+      list: returnedItems,
+      updated: new Date(),
+    };
     return returnedItems;
-    //todo: save json to store
   } catch (error) {
     errorCatcher(error);
     return [];

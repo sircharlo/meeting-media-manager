@@ -16,7 +16,7 @@
         <q-spinner color="primary" size="md" />
       </div>
       <div
-        v-if="selectedBibleBook && bibleBookNames.length"
+        v-if="selectedBibleBook && bibleAudioMediaGreek?.length"
         class="col-shrink full-width q-px-md"
       >
         <q-tabs
@@ -29,10 +29,10 @@
           outside-arrows
         >
           <q-tab
-            v-for="(name, index) in bibleBookNames"
-            :key="name"
-            :label="name"
-            :name="index + 1"
+            v-for="book in bibleAudioMediaHebrew.concat(bibleAudioMediaGreek)"
+            :key="book.booknum || 0"
+            :label="book.pubName"
+            :name="book.booknum || 0"
           />
         </q-tabs>
       </div>
@@ -87,7 +87,7 @@
               </div>
             </div>
           </template>
-          <template v-else-if="bibleAudioMedia.length">
+          <template v-else-if="bibleAudioMedia?.length">
             <div
               v-for="(sectionInfo, sectionIndex) in [
                 {
@@ -109,10 +109,14 @@
                   class="col col-xs-4 col-sm-3 col-md-2 col-lg-1"
                 >
                   <q-btn
-                    class="full-width"
-                    color="accent-200"
+                    :class="{
+                      'full-width': true,
+                      'dotted-borders': !book.files,
+                    }"
+                    :color="!book.files ? '' : 'accent-200'"
+                    :disable="!book.files"
                     no-caps
-                    text-color="black"
+                    :text-color="!book.files ? 'accent-300' : 'black'"
                     unelevated
                     @click="selectedBibleBook = book.booknum || 0"
                   >
@@ -135,7 +139,7 @@
             round
             @click="
               loading = true;
-              fetchMedia();
+              fetchMedia(true);
             "
           >
             <q-spinner
@@ -208,32 +212,30 @@ const open = defineModel<boolean>({ default: false });
 
 const selectedBibleBook = ref<number>(0);
 const selectedChapter = ref(0);
-const bibleAudioMedia = ref<Publication[]>([]);
-
-const bibleBookNames = computed(() => {
-  return bibleAudioMedia.value.map((item) => item.pubName);
-});
+const bibleAudioMedia = ref<Partial<Publication>[] | undefined>([]);
 
 const bibleAudioMediaHebrew = computed(() => {
-  return bibleAudioMedia.value.filter(
-    (item) => item.booknum && item.booknum < 40,
+  return bibleAudioMedia.value?.filter(
+    (item) => item?.booknum && item?.booknum < 40,
   );
 });
 
 const bibleAudioMediaGreek = computed(() => {
-  return bibleAudioMedia.value.filter(
-    (item) => item.booknum && item.booknum >= 40,
+  return bibleAudioMedia.value?.filter(
+    (item) => item?.booknum && item?.booknum >= 40,
   );
 });
 
 const selectedBookMedia = computed(() => {
   if (!selectedBibleBook.value) return [];
   const allFiles: PublicationFiles[] = Object.values(
-    bibleAudioMedia.value[selectedBibleBook.value - 1].files,
+    bibleAudioMedia.value?.find(
+      (item) => item?.booknum === selectedBibleBook.value,
+    )?.files || {},
   );
   const langFiles: PublicationFiles = allFiles[0];
-  const mediaFiles: MediaLink[] = Object.values(langFiles)[0];
-  return mediaFiles;
+  const mediaFiles: MediaLink[] = Object.values(langFiles || {})[0];
+  return mediaFiles || [];
 });
 
 const selectedChapterMedia = computed(() => {
@@ -293,10 +295,10 @@ const toggleVerse = (verse: number) => {
   }
 };
 
-const fetchMedia = async () => {
+const fetchMedia = async (force = false) => {
   try {
     loading.value = true;
-    bibleAudioMedia.value = await getAudioBibleMedia();
+    bibleAudioMedia.value = await getAudioBibleMedia(force);
   } catch (error) {
     errorCatcher(error);
   } finally {
@@ -340,7 +342,7 @@ const addSelectedVerses = async () => {
     selectedChapterMedia.value,
     undefined,
     false,
-    bibleBookNames.value[selectedBibleBook.value - 1] +
+    bibleAudioMedia.value?.[selectedBibleBook.value - 1] +
       ' ' +
       selectedChapter.value +
       ':' +
