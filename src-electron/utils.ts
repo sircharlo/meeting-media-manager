@@ -9,6 +9,9 @@ import { urlVariables } from './main/session';
 import { logToWindow } from './main/window/window-base';
 import { mainWindow } from './main/window/window-main';
 
+/**
+ * Asks for media access for the camera and microphone
+ */
 export async function askForMediaAccess() {
   if (PLATFORM !== 'darwin') return;
   const types = ['camera', 'microphone'] as const;
@@ -22,11 +25,15 @@ export async function askForMediaAccess() {
         logToWindow(mainWindow, `${type} result:`, result, 'debug');
       }
     } catch (e) {
-      errorCatcher(e);
+      captureElectronError(e);
     }
   }
 }
 
+/**
+ * Gets the current app version
+ * @returns The app version
+ */
 export function getAppVersion() {
   return IS_DEV ? version : app.getVersion();
 }
@@ -95,6 +102,11 @@ export function isTrustedDomain(url: string): boolean {
   }
 }
 
+/**
+ * Checks if a given url is a valid url
+ * @param url The url to check
+ * @returns Wether the url is a valid url
+ */
 export const isValidUrl = (url: string): boolean => {
   try {
     new URL(url);
@@ -104,11 +116,23 @@ export const isValidUrl = (url: string): boolean => {
   }
 };
 
+/**
+ * Fetches a raw response from a given url
+ * @param url The url to fetch
+ * @param init The fetch init options
+ * @returns The fetch response
+ */
 export const fetchRaw = async (url: string, init?: RequestInit) => {
   console.debug('fetchRaw', { init, url });
   return fetch(url, init);
 };
 
+/**
+ * Fetches a json response from a given url
+ * @param url The url to fetch
+ * @param params The url parameters
+ * @returns The json response or null if the fetch failed
+ */
 export const fetchJson = async <T>(
   url: string,
   params?: URLSearchParams,
@@ -121,7 +145,7 @@ export const fetchJson = async <T>(
     if (response.ok) {
       return await response.json();
     } else if (![400, 404].includes(response.status)) {
-      errorCatcher(new Error('Failed to fetch json!'), {
+      captureElectronError(new Error('Failed to fetch json!'), {
         contexts: {
           fn: {
             headers: response.headers,
@@ -140,7 +164,7 @@ export const fetchJson = async <T>(
     const { default: isOnline } = await import('is-online');
     const online = await isOnline();
     if (online) {
-      errorCatcher(e, {
+      captureElectronError(e, {
         contexts: {
           fn: {
             name: 'fetchJson',
@@ -157,19 +181,26 @@ export const fetchJson = async <T>(
 /**
  * Logs an error to the console or to Sentry
  * @param error The error to log
+ * @param context The context to log with the error
  */
-export function errorCatcher(
+export function captureElectronError(
   error: Error | string | unknown,
   context?: ExclusiveEventHintOrCaptureContext,
 ) {
-  if (!IS_DEV) {
-    captureException(error, context);
-  } else {
+  if (IS_DEV) {
     console.error(error);
     console.warn('context', context);
+  } else {
+    captureException(error, context);
   }
 }
 
+/**
+ * Throttles a function to only run once every `delay` milliseconds
+ * @param func The function to throttle
+ * @param delay The delay in milliseconds
+ * @returns The throttled function
+ */
 export const throttle = <T>(func: (...args: T[]) => void, delay: number) => {
   let prev = 0;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

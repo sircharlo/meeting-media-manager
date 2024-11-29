@@ -2,7 +2,7 @@ import type { SettingsValues } from 'src/types';
 
 import { globalShortcut } from 'electron';
 
-import { errorCatcher } from '../utils';
+import { captureElectronError } from '../utils';
 import { sendToWindow } from './window/window-base';
 import { mainWindow } from './window/window-main';
 
@@ -17,7 +17,7 @@ export const registerShortcut = (
       sendToWindow(mainWindow, 'shortcut', { shortcut: name });
     });
   } catch (e) {
-    errorCatcher(e);
+    captureElectronError(e);
   }
 };
 
@@ -28,7 +28,7 @@ export const unregisterShortcut = (keySequence: string) => {
       globalShortcut.unregister(keySequence);
     }
   } catch (e) {
-    errorCatcher(e);
+    captureElectronError(e);
   }
 };
 
@@ -36,6 +36,6 @@ export const unregisterAllShortcuts = () => {
   try {
     globalShortcut.unregisterAll();
   } catch (e) {
-    errorCatcher(e);
+    captureElectronError(e);
   }
 };

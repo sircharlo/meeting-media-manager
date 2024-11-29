@@ -1,14 +1,123 @@
 /* eslint-disable no-fallthrough */
 import type { DateLocale, DateOptions, DateUnitOptions } from 'quasar';
 
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { capitalize, pad } from 'src/utils/general';
+
+/**
+ * Creates a new date object from a date string.
+ * @param lookupDate The date string to create the date object from.
+ * @returns The date object.
+ */
+export const dateFromString = (lookupDate?: Date | string | undefined) => {
+  try {
+    const date = lookupDate ? new Date(lookupDate) : new Date();
+    date.setHours(0, 0, 0, 0);
+    return date;
+  } catch (error) {
+    errorCatcher(error);
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }
+};
+
+/**
+ * Checks if a date is in the past.
+ * @param lookupDate The date to check.
+ * @returns Weather the date is in the past.
+ */
+export const isInPast = (lookupDate: Date) => {
+  try {
+    if (!lookupDate) return false;
+    const now = dateFromString();
+    return getDateDiff(lookupDate, now, 'days') < 0;
+  } catch (error) {
+    errorCatcher(error);
+    return false;
+  }
+};
+
+/**
+ * Converts a friendly day to a js day.
+ * @param day The friendly day to convert.
+ * @returns The js day.
+ */
+export const friendlyDayToJsDay = (day?: number) => {
+  try {
+    if (!day) day = -1;
+    const firstDay = day === 6 ? 0 : parseInt(day.toString()) + 1;
+    const correctedFirstDay = firstDay > 7 ? firstDay - 7 : firstDay;
+    return correctedFirstDay;
+  } catch (error) {
+    errorCatcher(error);
+    return 0;
+  }
+};
+
+/**
+ * Formats a date object to a local date string.
+ * @param dateObj The date object to format.
+ * @param locale The locale to format the date in.
+ * @returns The local date string.
+ */
+export const getLocalDate = (
+  dateObj: Date | string,
+  locale: Required<DateLocale>,
+) => {
+  const parsedDate = typeof dateObj === 'string' ? new Date(dateObj) : dateObj;
+  return formatDate(parsedDate, 'D MMMM YYYY', locale);
+};
+
+/**
+ * Checks if two dates are the same.
+ * @param date1 The first date to compare.
+ * @param date2 The second date to compare.
+ * @returns The result of the comparison.
+ */
+export const datesAreSame = (date1: Date, date2: Date) => {
+  try {
+    if (!date1 || !date2) throw new Error('Missing date for comparison');
+    return date1.toDateString() === date2.toDateString();
+  } catch (error) {
+    errorCatcher(error);
+    return false;
+  }
+};
+
+/**
+ * Gets a specific day from a week.
+ * @param lookupDate The week to get the specific day from.
+ * @param desiredWeekday The desired weekday.
+ * @returns The desired date object.
+ */
+export const getSpecificWeekday = (
+  lookupDate: Date | string,
+  desiredWeekday: number,
+) => {
+  try {
+    if (!lookupDate) return new Date();
+    if (desiredWeekday === null) throw new Error('No desired weekday');
+    lookupDate = dateFromString(lookupDate);
+    desiredWeekday++;
+    desiredWeekday = desiredWeekday === 7 ? 0 : desiredWeekday;
+    const difference = (lookupDate.getDay() - desiredWeekday + 7) % 7;
+    const newDate = new Date(lookupDate.valueOf());
+    newDate.setDate(newDate.getDate() - difference);
+    return newDate;
+  } catch (error) {
+    errorCatcher(error);
+    return new Date();
+  }
+};
+
+// Taken from Quasar Date Utils
 
 const MILLISECONDS_IN_DAY = 86400000;
 const MILLISECONDS_IN_HOUR = 3600000;
 const MILLISECONDS_IN_MINUTE = 60000;
-const defaultMask = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
-const token =
-  /\[((?:[^\]\\]|\\]|\\)*)\]|do|d{1,4}|Mo|M{1,4}|m{1,2}|wo|w{1,2}|Qo|Do|DDDo|D{1,4}|YY(?:YY)?|H{1,2}|h{1,2}|s{1,2}|S{1,3}|Z{1,2}|a{1,2}|[AQExX]/g;
+const defaultMask = 'YYYY-MM-DD';
+const token = /\[((?:[^\]\\]|\\]|\\)*)\]|d{1,4}|M{1,4}|D{1,4}|YY(?:YY)?/g;
 const defaultDateLocale: Required<DateLocale> = {
   days: 'Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday'.split('_'),
   daysShort: 'Sun_Mon_Tue_Wed_Thu_Fri_Sat'.split('_'),
@@ -20,29 +129,9 @@ const defaultDateLocale: Required<DateLocale> = {
 };
 
 const formatter = {
-  // Meridiem: AM, PM
-  A(date: Date) {
-    return date.getHours() < 12 ? 'AM' : 'PM';
-  },
-
-  // Meridiem: am, pm
-  a(date: Date) {
-    return date.getHours() < 12 ? 'am' : 'pm';
-  },
-
-  // Meridiem: a.m., p.m.
-  aa(date: Date) {
-    return date.getHours() < 12 ? 'a.m.' : 'p.m.';
-  },
-
   // Day of month: 1, 2, ..., 31
   D(date: Date) {
     return date.getDate();
-  },
-
-  // Day of week: 0, 1, ..., 6
-  d(date: Date) {
-    return date.getDay();
   },
 
   // Day of month: 01, 02, ..., 31
@@ -55,19 +144,9 @@ const formatter = {
     return dateLocale.days[date.getDay()].slice(0, 2);
   },
 
-  // Day of year: 1, 2, ..., 366
-  DDD(date: Date) {
-    return getDayOfYear(date);
-  },
-
   // Day of week: Sun, Mon, ...
   ddd(date: Date, dateLocale: Required<DateLocale>) {
     return dateLocale.daysShort[date.getDay()];
-  },
-
-  // Day of year: 001, 002, ..., 366
-  DDDD(date: Date) {
-    return pad(getDayOfYear(date), 3);
   },
 
   // Day of week: Sunday, Monday, ...
@@ -75,65 +154,14 @@ const formatter = {
     return dateLocale.days[date.getDay()];
   },
 
-  // Day of year: 1st, 2nd, ..., 366th
-  DDDo(date: Date) {
-    return getOrdinal(getDayOfYear(date));
-  },
-
-  // Day of month: 1st, 2nd, ..., 31st
-  Do(date: Date) {
-    return getOrdinal(date.getDate());
-  },
-
-  // Day of week: 0th, 1st, ..., 6th
-  do(date: Date) {
-    return getOrdinal(date.getDay());
-  },
-
-  // Day of ISO week: 1, 2, ..., 7
-  E(date: Date) {
-    return date.getDay() || 7;
-  },
-
-  // Hour: 0, 1, ... 23
-  H(date: Date) {
-    return date.getHours();
-  },
-
-  // Hour: 1, 2, ..., 12
-  h(date: Date) {
-    const hours = date.getHours();
-    return hours === 0 ? 12 : hours > 12 ? hours % 12 : hours;
-  },
-
-  // Hour: 00, 01, ..., 23
-  HH(date: Date) {
-    return pad(date.getHours());
-  },
-
-  // Hour: 01, 02, ..., 12
-  hh(date: Date) {
-    return pad(this.h(date));
-  },
-
   // Month: 1, 2, ..., 12
   M(date: Date) {
     return date.getMonth() + 1;
   },
 
-  // Minute: 0, 1, ..., 59
-  m(date: Date) {
-    return date.getMinutes();
-  },
-
   // Month: 01, 02, ..., 12
   MM(date: Date) {
     return pad(date.getMonth() + 1);
-  },
-
-  // Minute: 00, 01, ..., 59
-  mm(date: Date) {
-    return pad(date.getMinutes());
   },
 
   // Month Short Name: Jan, Feb, ...
@@ -144,71 +172,6 @@ const formatter = {
   // Month Name: January, February, ...
   MMMM(date: Date, dateLocale: Required<DateLocale>) {
     return dateLocale.months?.[date.getMonth()];
-  },
-
-  // Month: 1st, 2nd, ..., 12th
-  Mo(date: Date) {
-    return getOrdinal(date.getMonth() + 1);
-  },
-
-  // Quarter: 1, 2, 3, 4
-  Q(date: Date) {
-    return Math.ceil((date.getMonth() + 1) / 3);
-  },
-
-  // Quarter: 1st, 2nd, 3rd, 4th
-  Qo(date: Date) {
-    return getOrdinal(this.Q(date));
-  },
-
-  // Second: 0, 1, ..., 59
-  s(date: Date) {
-    return date.getSeconds();
-  },
-
-  // 1/10 of second: 0, 1, ..., 9
-  S(date: Date) {
-    return Math.floor(date.getMilliseconds() / 100);
-  },
-
-  // Second: 00, 01, ..., 59
-  ss(date: Date) {
-    return pad(date.getSeconds());
-  },
-
-  // 1/100 of second: 00, 01, ..., 99
-  SS(date: Date) {
-    return pad(Math.floor(date.getMilliseconds() / 10));
-  },
-
-  // Millisecond: 000, 001, ..., 999
-  SSS(date: Date) {
-    return pad(date.getMilliseconds(), 3);
-  },
-
-  // Week of Year: 1 2 ... 52 53
-  w(date: Date) {
-    return getWeekOfYear(date);
-  },
-
-  // Week of Year: 1st 2nd ... 52nd 53rd
-  wo(date: Date) {
-    return getOrdinal(getWeekOfYear(date));
-  },
-
-  // Week of Year: 01 02 ... 52 53
-  ww(date: Date) {
-    return pad(getWeekOfYear(date));
-  },
-
-  // Seconds timestamp: 512969520
-  X(date: Date) {
-    return Math.floor(date.getTime() / 1000);
-  },
-
-  // Milliseconds timestamp: 512969520900
-  x(date: Date) {
-    return date.getTime();
   },
 
   // Year: 00, 01, ..., 99
@@ -229,32 +192,6 @@ const formatter = {
 
 export function addToDate(date: Date, mod: DateOptions) {
   return getChange(date, mod, 1);
-}
-
-export function adjustDate(date: Date, rawMod: DateOptions, utc?: boolean) {
-  const d = new Date(date),
-    middle = utc === true ? 'UTC' : '',
-    mod = normalizeMod(rawMod),
-    t =
-      mod.year !== void 0 || mod.month !== void 0 || mod.date !== void 0
-        ? applyYearMonthDay(d, mod, middle) // removes year/month/day
-        : d;
-
-  for (const key in mod) {
-    const op = key.charAt(0).toUpperCase() + key.slice(1);
-    // @ts-expect-error: op is not a key of Date
-    t[`set${middle}${op}`](mod[key]);
-  }
-
-  return t;
-}
-
-export function buildDate(mod: DateOptions, utc?: boolean) {
-  return adjustDate(new Date(), mod, utc);
-}
-
-export function daysInMonth(date: Date) {
-  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 }
 
 export function formatDate(
@@ -342,10 +279,6 @@ export function getDateDiff(
   }
 }
 
-export function getDayOfYear(date: Date) {
-  return getDateDiff(date, startOfDate(date, 'year'), 'days') + 1;
-}
-
 export function getMaxDate(
   date: Date | number | string,
   ...args: (Date | number | string)[]
@@ -370,96 +303,11 @@ export function getMinDate(
   return t;
 }
 
-export function getWeekOfYear(date: Date) {
-  // Remove time components of date
-  const thursday = new Date(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-  );
-
-  // Change date to Thursday same week
-  thursday.setDate(thursday.getDate() - ((thursday.getDay() + 6) % 7) + 3);
-
-  // Take January 4th as it is always in week 1 (see ISO 8601)
-  const firstThursday = new Date(thursday.getFullYear(), 0, 4);
-
-  // Change date to Thursday same week
-  firstThursday.setDate(
-    firstThursday.getDate() - ((firstThursday.getDay() + 6) % 7) + 3,
-  );
-
-  // Check if daylight-saving-time-switch occurred and correct for it
-  const ds = thursday.getTimezoneOffset() - firstThursday.getTimezoneOffset();
-  thursday.setHours(thursday.getHours() - ds);
-
-  // Number of weeks between target Thursday and first Thursday
-  // @ts-expect-error: Date is not Number
-  const weekDiff = (thursday - firstThursday) / (MILLISECONDS_IN_DAY * 7);
-  return 1 + Math.floor(weekDiff);
-}
-
-export function startOfDate(
-  date: Date | number | string,
-  unit: DateUnitOptions,
-  utc?: boolean,
-) {
-  const prefix = `set${utc === true ? 'UTC' : ''}` as const;
-  const t = new Date(date);
-
-  switch (unit) {
-    case 'year':
-    case 'years':
-      t[`${prefix}Month`](0);
-    case 'month':
-    case 'months':
-      t[`${prefix}Date`](1);
-    case 'date':
-    case 'day':
-    case 'days':
-      t[`${prefix}Hours`](0);
-    case 'hour':
-    case 'hours':
-      t[`${prefix}Minutes`](0);
-    case 'minute':
-    case 'minutes':
-      t[`${prefix}Seconds`](0);
-    case 'second':
-    case 'seconds':
-      t[`${prefix}Milliseconds`](0);
-  }
-  return t;
-}
-
 export function subtractFromDate(
   date: Date | number | string,
   mod: DateOptions,
 ) {
   return getChange(date, mod, -1);
-}
-
-function applyYearMonthDay(date: Date, mod: DateOptions, middle: '' | 'UTC') {
-  const month =
-      mod.month !== void 0 ? mod.month - 1 : date[`get${middle}Month`](),
-    year = mod.year !== void 0 ? mod.year : date[`get${middle}FullYear`](),
-    maxDay = new Date(year, month + 1, 0).getDate(),
-    day = Math.min(
-      maxDay,
-      mod.date !== void 0 ? mod.date : date[`get${middle}Date`](),
-    );
-
-  date[`set${middle}Date`](1);
-  date[`set${middle}Month`](2);
-
-  date[`set${middle}FullYear`](year);
-  date[`set${middle}Month`](month);
-  date[`set${middle}Date`](day);
-
-  delete mod.year;
-  delete mod.month;
-  delete mod.date;
-
-  return date;
 }
 
 function applyYearMonthDayChange(date: Date, mod: DateOptions, sign: number) {
@@ -491,6 +339,10 @@ function applyYearMonthDayChange(date: Date, mod: DateOptions, sign: number) {
   }
 
   return date;
+}
+
+function daysInMonth(date: Date) {
+  return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 }
 
 function getChange(
@@ -525,21 +377,6 @@ function getDiff(t: Date, sub: Date, interval: number) {
       (sub.getTime() - sub.getTimezoneOffset() * MILLISECONDS_IN_MINUTE)) /
     interval
   );
-}
-
-function getOrdinal(n: number) {
-  if (n >= 11 && n <= 13) {
-    return `${n}th`;
-  }
-  switch (n % 10) {
-    case 1:
-      return `${n}st`;
-    case 2:
-      return `${n}nd`;
-    case 3:
-      return `${n}rd`;
-  }
-  return `${n}th`;
 }
 
 function normalizeMod(mod: DateOptions) {
@@ -585,4 +422,32 @@ function normalizeMod(mod: DateOptions) {
   }
 
   return acc;
+}
+
+function startOfDate(date: Date | number | string, unit: DateUnitOptions) {
+  const prefix = 'set';
+  const t = new Date(date);
+
+  switch (unit) {
+    case 'year':
+    case 'years':
+      t[`${prefix}Month`](0);
+    case 'month':
+    case 'months':
+      t[`${prefix}Date`](1);
+    case 'date':
+    case 'day':
+    case 'days':
+      t[`${prefix}Hours`](0);
+    case 'hour':
+    case 'hours':
+      t[`${prefix}Minutes`](0);
+    case 'minute':
+    case 'minutes':
+      t[`${prefix}Seconds`](0);
+    case 'second':
+    case 'seconds':
+      t[`${prefix}Milliseconds`](0);
+  }
+  return t;
 }

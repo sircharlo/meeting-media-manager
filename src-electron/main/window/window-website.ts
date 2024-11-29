@@ -2,7 +2,10 @@ import type { BrowserWindow, Video } from 'electron';
 import type { NavigateWebsiteAction } from 'src/types';
 
 import { PLATFORM } from 'app/src-electron/constants';
-import { askForMediaAccess, errorCatcher } from 'app/src-electron/utils';
+import {
+  askForMediaAccess,
+  captureElectronError,
+} from 'app/src-electron/utils';
 
 import { createWindow, sendToWindow } from './window-base';
 import { mainWindow } from './window-main';
@@ -91,7 +94,7 @@ export async function createWebsiteWindow(lang?: string) {
       document.body.addEventListener('mouseup', onMouseUp);
     `);
     } catch (e) {
-      errorCatcher(e, {
+      captureElectronError(e, {
         contexts: { fn: { name: 'createWebsiteWindow cursor indicator' } },
       });
     }

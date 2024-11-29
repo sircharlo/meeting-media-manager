@@ -7,10 +7,10 @@ import {
   IMG_EXTENSIONS,
   JWPUB_EXTENSIONS,
   PDF_EXTENSIONS,
-} from 'src/constants/fs';
+} from 'src/constants/media';
 import { basename, dirname, join, toUnix } from 'upath';
 
-import { errorCatcher } from '../utils';
+import { captureElectronError } from '../utils';
 import { sendToWindow } from './window/window-base';
 import { mainWindow } from './window/window-main';
 
@@ -73,7 +73,7 @@ export async function readDirectory(
     if (!(await exists(dir))) return [];
     return await readDirRecursive(dir, withSizes, recursive);
   } catch (error) {
-    errorCatcher(error);
+    captureElectronError(error);
     return [];
   }
 }
@@ -84,7 +84,7 @@ export async function unwatchFolders() {
       if (!watcher?.closed) await watcher?.close();
       watchers.delete(watcher);
     } catch (error) {
-      errorCatcher(error);
+      captureElectronError(error);
     }
   }
 }
@@ -102,14 +102,14 @@ export async function watchFolder(folderPath: string) {
           const dirOfNote = basename(dirPath); // Get the name of the directory
           return !datePattern.test(dirOfNote); // Ignore files in a directory whose name doesn't match YYYY-MM-DD
         } catch (error) {
-          errorCatcher(error);
+          captureElectronError(error);
           return true;
         }
       },
       ignorePermissionErrors: true,
     })
       .on('error', (e) => {
-        errorCatcher(e);
+        captureElectronError(e);
       })
       .on('all', (event, changedPath, stats) => {
         try {
@@ -126,7 +126,7 @@ export async function watchFolder(folderPath: string) {
             event,
           });
         } catch (error) {
-          errorCatcher(error);
+          captureElectronError(error);
           return true;
         }
       }),

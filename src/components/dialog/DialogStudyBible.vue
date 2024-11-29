@@ -240,8 +240,8 @@ import {
   getStudyBibleCategories,
   getStudyBibleMedia,
 } from 'src/helpers/jw-media';
-import { convertImageIfNeeded } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { convertImageIfNeeded } from 'src/utils/converters';
 import { computed, ref } from 'vue';
 
 // Stores

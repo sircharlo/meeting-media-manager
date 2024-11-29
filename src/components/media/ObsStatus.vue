@@ -41,26 +41,21 @@
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import {
-  configuredScenesAreAllUUIDs,
-  initObsWebSocket,
-  obsCloseHandler,
-  obsConnect,
-  obsErrorHandler,
-  obsWebSocket,
-} from 'src/helpers/obs';
+import { obsConnect } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useObsStateStore } from 'src/stores/obs-state';
+import { initObsWebSocket, obsWebSocket } from 'src/utils/obs';
 import { onMounted, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
-const { currentSettings } = storeToRefs(currentState);
+const { configuredScenesAreAllUUIDs, currentSettings } =
+  storeToRefs(currentState);
 
 const obsState = useObsStateStore();
 const { currentScene, obsConnectionState, obsMessage, previousScene, scenes } =
   storeToRefs(obsState);
-const { sceneExists } = obsState;
+const { obsCloseHandler, obsErrorHandler, sceneExists } = obsState;
 
 const obsPopup = defineModel<boolean>({ required: true });
 
@@ -72,7 +67,7 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
       if (sceneList) {
         scenes.value = sceneList.scenes.reverse();
         const current =
-          configuredScenesAreAllUUIDs() && sceneList.currentProgramSceneUuid
+          configuredScenesAreAllUUIDs.value && sceneList.currentProgramSceneUuid
             ? sceneList.currentProgramSceneUuid
             : sceneList.currentProgramSceneName;
 
@@ -136,7 +131,7 @@ const initObsListeners = async () => {
       'CurrentProgramSceneChanged',
       (data: { sceneName: string; sceneUuid: string }) => {
         const newScene =
-          configuredScenesAreAllUUIDs() && data.sceneUuid
+          configuredScenesAreAllUUIDs.value && data.sceneUuid
             ? data.sceneUuid
             : data.sceneName;
 

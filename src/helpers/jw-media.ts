@@ -14,53 +14,50 @@ import type {
   MediaSection,
   MultimediaExtractItem,
   MultimediaItem,
-  MultimediaItemsFetcher,
   Publication,
   PublicationFetcher,
   PublicationFiles,
-  PublicationItem,
-  TableItem,
-  TableItemCount,
-  VideoMarker,
 } from 'src/types';
 
-import PQueue from 'p-queue';
 import { queues } from 'src/boot/globals';
 import { FEB_2023, FOOTNOTE_TAR_PAR, MAX_SONGS } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
+import { isCoWeek, isMwMeetingDay } from 'src/helpers/date';
+import { errorCatcher } from 'src/helpers/error-catcher';
+import { exportAllDays } from 'src/helpers/export-media';
+import { getSubtitlesUrl, getThumbnailUrl } from 'src/helpers/fs';
+import {
+  decompressJwpub,
+  getMediaFromJwPlaylist,
+} from 'src/helpers/mediaPlayback';
+import { useCurrentStateStore } from 'src/stores/current-state';
+import { useJwStore } from 'src/stores/jw';
+import { fetchJson, fetchPubMediaLinks, fetchRaw } from 'src/utils/api';
+import { convertImageIfNeeded } from 'src/utils/converters';
 import {
   dateFromString,
-  datesAreSame,
+  formatDate,
   getSpecificWeekday,
-  isCoWeek,
-  isMwMeetingDay,
-} from 'src/helpers/date';
+  subtractFromDate,
+} from 'src/utils/date';
+import { getPublicationDirectory, trimFilepathAsNeeded } from 'src/utils/fs';
+import { sanitizeId } from 'src/utils/general';
+import { findBestResolution, getPubId, isMediaLink } from 'src/utils/jw';
 import {
   getMetadataFromMediaPath,
-  getSubtitlesUrl,
-  getThumbnailUrl,
-} from 'src/helpers/fs';
-import {
-  convertImageIfNeeded,
-  decompressJwpub,
-  findDb,
-  getMediaFromJwPlaylist,
   isAudio,
   isImage,
   isJwPlaylist,
   isSong,
   isVideo,
-} from 'src/helpers/mediaPlayback';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
-import { fetchJson, fetchPubMediaLinks, fetchRaw } from 'src/utils/api';
-import { formatDate, subtractFromDate } from 'src/utils/date';
-import { getPublicationDirectory, trimFilepathAsNeeded } from 'src/utils/fs';
-import { pad } from 'src/utils/general';
-import { getPubId } from 'src/utils/jw';
-import { findBestResolution, isMediaLink } from 'src/utils/media';
-
-import { errorCatcher } from './error-catcher';
+} from 'src/utils/media';
+import {
+  findDb,
+  getDocumentMultimediaItems,
+  getMediaVideoMarkers,
+  getMultimediaMepsLangs,
+  getPublicationInfoFromDb,
+} from 'src/utils/sqlite';
 
 const { executeQuery, fileUrlToPath, fs, path, pathToFileURL, readdir } =
   window.electronApi;
@@ -193,10 +190,13 @@ export const addJwpubDocumentMediaToFiles = async (
   try {
     if (!dbPath) return;
     const publication = getPublicationInfoFromDb(dbPath);
-    const multimediaItems = getDocumentMultimediaItems({
-      db: dbPath,
-      docId: document.DocumentId,
-    });
+    const multimediaItems = getDocumentMultimediaItems(
+      {
+        db: dbPath,
+        docId: document.DocumentId,
+      },
+      currentStateStore.currentSettings?.includePrinted,
+    );
     for (let i = 0; i < multimediaItems.length; i++) {
       multimediaItems[i] = await addFullFilePathToMultimediaItem(
         multimediaItems[i],
@@ -284,136 +284,6 @@ export const downloadFileIfNeeded = async ({
   return result;
 };
 
-export const addDayToExportQueue = async (targetDate?: Date) => {
-  folderExportQueue.add(() => exportDayToFolder(targetDate));
-};
-
-const exportDayToFolder = async (targetDate?: Date) => {
-  const currentStateStore = useCurrentStateStore();
-  const jwStore = useJwStore();
-
-  if (
-    !targetDate ||
-    !currentStateStore?.currentCongregation ||
-    !currentStateStore.currentSettings?.mediaAutoExportFolder
-  ) {
-    return;
-  }
-
-  const dateString = formatDate(targetDate, 'YYYY/MM/DD');
-  const dateFolderName = formatDate(targetDate, 'YYYY-MM-DD');
-
-  const dynamicMedia = [
-    ...(jwStore.lookupPeriod?.[currentStateStore.currentCongregation]?.find(
-      (d) => datesAreSame(d.date, targetDate),
-    )?.dynamicMedia || []),
-    ...(jwStore.additionalMediaMaps?.[currentStateStore.currentCongregation]?.[
-      dateString
-    ] || []),
-    ...(currentStateStore.watchFolderMedia[dateString] || []),
-  ];
-
-  const dynamicMediaFiltered = Array.from(
-    new Map(dynamicMedia.map((item) => [item.fileUrl, item])).values(),
-  )
-    .sort(
-      mapOrder(
-        jwStore.mediaSort[currentStateStore.currentCongregation]?.[
-          dateString
-        ] || [],
-      ),
-    )
-    .sort((a, b) => {
-      const sectionOrder: MediaSection[] = [
-        'additional',
-        'tgw',
-        'ayfm',
-        'lac',
-        'wt',
-        'circuitOverseer',
-      ];
-      return sectionOrder.indexOf(a.section) - sectionOrder.indexOf(b.section);
-    });
-
-  const dayMediaLength = dynamicMediaFiltered.length;
-
-  const destFolder = path.join(
-    currentStateStore.currentSettings.mediaAutoExportFolder,
-    dateFolderName,
-  );
-
-  try {
-    await fs.ensureDir(destFolder);
-  } catch (error) {
-    errorCatcher(error);
-    return; // Exit early if we can't create the folder
-  }
-
-  const expectedFiles = new Set<string>();
-
-  const { default: sanitize } = await import('sanitize-filename');
-  const sections: Partial<Record<MediaSection, number>> = {}; // Object to store dynamic section prefixes
-  for (let i = 0; i < dayMediaLength; i++) {
-    try {
-      const m = dynamicMediaFiltered[i];
-      const sourceFilePath = window.electronApi.fileUrlToPath(m.fileUrl);
-      if (!sourceFilePath || !(await fs.exists(sourceFilePath))) continue;
-
-      if (!sections[m.section]) {
-        sections[m.section] = Object.keys(sections).length + 1;
-      }
-      const sectionPrefix = pad(sections[m.section] || 0);
-
-      const destFilePath = trimFilepathAsNeeded(
-        path.join(
-          destFolder,
-          sectionPrefix +
-            '-' +
-            pad(i + 1, dayMediaLength > 99 ? 3 : 2) +
-            ' ' +
-            (m.title
-              ? sanitize(m.title.replace(path.extname(m.fileUrl), '')) +
-                path.extname(m.fileUrl)
-              : path.basename(m.fileUrl)),
-        ),
-      );
-      const fileBaseName = path.basename(destFilePath);
-
-      // Check if destination file exists and matches size
-      if (await fs.exists(destFilePath)) {
-        const sourceStats = await fs.stat(sourceFilePath);
-        const destStats = await fs.stat(destFilePath);
-
-        if (sourceStats.size === destStats.size) {
-          expectedFiles.add(fileBaseName); // Mark as expected without copying
-          continue;
-        }
-      }
-
-      // Copy file if it doesn't exist or size doesn't match
-      expectedFiles.add(fileBaseName);
-      await fs.copy(sourceFilePath, destFilePath);
-    } catch (error) {
-      errorCatcher(error);
-    }
-  }
-
-  try {
-    const filesInDestFolder = await fs.readdir(destFolder);
-    for (const file of filesInDestFolder) {
-      try {
-        if (!expectedFiles.has(file)) {
-          await fs.remove(path.join(destFolder, file));
-        }
-      } catch (error) {
-        errorCatcher(error);
-      }
-    }
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
-
 export const mapOrder =
   (sortOrder: string | string[] | undefined) =>
   (a: DynamicMediaObject, b: DynamicMediaObject) => {
@@ -426,28 +296,6 @@ export const mapOrder =
       return 0;
     }
   };
-
-const folderExportQueue = new PQueue({ concurrency: 1 });
-
-export const exportAllDays = async () => {
-  try {
-    const jwStore = useJwStore();
-    const currentStateStore = useCurrentStateStore();
-    if (
-      !currentStateStore.currentSettings?.enableMediaAutoExport ||
-      !currentStateStore.currentSettings?.mediaAutoExportFolder
-    )
-      return;
-    const daysToExport = (
-      jwStore.lookupPeriod[currentStateStore.currentCongregation] || []
-    ).map((d) => d.date);
-    await folderExportQueue.addAll(
-      daysToExport.map((day) => () => exportDayToFolder(day)),
-    );
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
 
 export const fetchMedia = async () => {
   try {
@@ -496,6 +344,7 @@ export const fetchMedia = async () => {
       day.complete = false;
     });
     if (!queues.meetings[currentStateStore.currentCongregation]) {
+      const { default: PQueue } = await import('p-queue');
       queues.meetings[currentStateStore.currentCongregation] = new PQueue({
         concurrency: 2,
       });
@@ -565,28 +414,6 @@ const getDbFromJWPUB = async (publication: PublicationFetcher) => {
   }
 };
 
-export const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
-  try {
-    const pubQuery = executeQuery<PublicationItem>(
-      db,
-      'SELECT * FROM Publication',
-    )[0];
-
-    if (!pubQuery) return { issue: '', langwritten: '', pub: '' };
-
-    const publication: PublicationFetcher = {
-      issue: pubQuery.IssueTagNumber,
-      langwritten: mepslangs[pubQuery.MepsLanguageIndex],
-      pub: pubQuery.UndatedSymbol,
-    };
-
-    return publication;
-  } catch (error) {
-    errorCatcher(error);
-    return { issue: '', langwritten: '', pub: '' };
-  }
-};
-
 async function addFullFilePathToMultimediaItem(
   multimediaItem: MultimediaItem,
   publication: PublicationFetcher,
@@ -615,175 +442,6 @@ async function addFullFilePathToMultimediaItem(
     return multimediaItem;
   }
 }
-
-const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
-  try {
-    if (!source.db) return [];
-    const multimediaMepsLangs: MultimediaItem[] = [];
-    for (const table of [
-      'Multimedia',
-      'DocumentMultimedia',
-      'ExtractMultimedia',
-    ]) {
-      // exists
-      try {
-        const tableExists =
-          executeQuery<TableItem>(
-            source.db,
-            `SELECT * FROM sqlite_master WHERE type='table' AND name='${table}'`,
-          ).length > 0;
-        if (!tableExists) continue;
-      } catch (error) {
-        errorCatcher(error, {
-          contexts: { fn: { name: 'getMultimediaMepsLangs', source, table } },
-        });
-        continue;
-      }
-      const columnQueryResult = executeQuery<TableItem>(
-        source.db,
-        `PRAGMA table_info(${table})`,
-      );
-
-      const columnMLIExists = columnQueryResult.some(
-        (column) => column.name === 'MepsLanguageIndex',
-      );
-      const columnKSExists = columnQueryResult.some(
-        (column) => column.name === 'KeySymbol',
-      );
-
-      if (columnKSExists && columnMLIExists)
-        multimediaMepsLangs.push(
-          ...executeQuery<MultimediaItem>(
-            source.db,
-            `SELECT DISTINCT KeySymbol, Track, IssueTagNumber, MepsLanguageIndex from ${table} ORDER by KeySymbol, IssueTagNumber, Track`,
-          ),
-        );
-    }
-    return multimediaMepsLangs;
-  } catch (error) {
-    errorCatcher(error);
-    return [];
-  }
-};
-
-const getMediaVideoMarkers = (
-  source: MultimediaItemsFetcher,
-  mediaId: number,
-) => {
-  try {
-    const mediaVideoMarkers = executeQuery<VideoMarker>(
-      source.db,
-      `SELECT * from VideoMarker WHERE MultimediaId = ${mediaId} ORDER by StartTimeTicks`,
-    );
-    return mediaVideoMarkers;
-  } catch (error) {
-    errorCatcher(error);
-    return [];
-  }
-};
-
-export const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
-  try {
-    if (!source.db) return [];
-    const currentStateStore = useCurrentStateStore();
-    const DocumentMultimediaTable = executeQuery<TableItem>(
-      source.db,
-      "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'",
-    ).map((item) => item.name);
-    const mmTable =
-      DocumentMultimediaTable.length === 0
-        ? 'Multimedia'
-        : DocumentMultimediaTable[0];
-    const columnQueryResult = executeQuery<TableItem>(
-      source.db,
-      `PRAGMA table_info(${mmTable})`,
-    );
-
-    const ParagraphColumnsExist = columnQueryResult.some(
-      (column) => column.name === 'BeginParagraphOrdinal',
-    );
-
-    const targetParNrExists =
-      executeQuery<TableItem>(source.db, "PRAGMA table_info('Question')").some(
-        (item) => item.name === 'TargetParagraphNumberLabel',
-      ) &&
-      !!executeQuery<TableItemCount>(
-        source.db,
-        'SELECT COUNT(*) FROM Question',
-      )[0]?.count;
-
-    const LinkMultimediaIdExists = executeQuery<TableItem>(
-      source.db,
-      "PRAGMA table_info('Multimedia')",
-    ).some((item) => item.name === 'LinkMultimediaId');
-
-    const suppressZoomExists = executeQuery<TableItem>(
-      source.db,
-      "PRAGMA table_info('Multimedia')",
-    )
-      .map((item) => item.name)
-      .includes('SuppressZoom');
-
-    let select = 'SELECT Document.*, Multimedia.*';
-    select += mmTable === 'DocumentMultimedia' ? ', DocumentMultimedia.*' : '';
-    select += ParagraphColumnsExist ? ', DocumentParagraph.*' : '';
-    select += LinkMultimediaIdExists
-      ? ', LinkedMultimedia.FilePath AS LinkedPreviewFilePath'
-      : '';
-    let from = ' FROM Multimedia';
-    if (mmTable === 'DocumentMultimedia') {
-      from +=
-        ' INNER JOIN DocumentMultimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId';
-      from += ` LEFT JOIN DocumentParagraph ON ${mmTable}.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex`;
-    }
-    from += ` INNER JOIN Document ON ${mmTable}.DocumentId = Document.DocumentId`;
-    if (LinkMultimediaIdExists)
-      from +=
-        ' LEFT JOIN Multimedia AS LinkedMultimedia ON Multimedia.LinkMultimediaId = LinkedMultimedia.MultimediaId';
-    let where = `WHERE ${
-      source.docId || source.docId === 0
-        ? `Document.DocumentId = ${source.docId}`
-        : `Document.MepsDocumentId = ${source.mepsId}`
-    }`;
-
-    const videoString =
-      "(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')";
-    const imgString = `(Multimedia.MimeType LIKE '%image%'${
-      currentStateStore.currentSettings?.includePrinted
-        ? ''
-        : ' AND Multimedia.CategoryType <> 4 AND Multimedia.CategoryType <> 6'
-    } AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)`;
-
-    where += ` AND (${videoString} OR ${imgString})`;
-
-    if (
-      'BeginParagraphOrdinal' in source &&
-      'EndParagraphOrdinal' in source &&
-      ParagraphColumnsExist
-    ) {
-      where += ` AND ${mmTable}.BeginParagraphOrdinal >= ${source.BeginParagraphOrdinal} AND ${mmTable}.EndParagraphOrdinal <= ${source.EndParagraphOrdinal}`;
-    }
-
-    const groupAndSort = ParagraphColumnsExist
-      ? 'GROUP BY Multimedia.MultimediaId ORDER BY DocumentParagraph.BeginPosition'
-      : '';
-
-    if (targetParNrExists && ParagraphColumnsExist) {
-      from += ` LEFT JOIN Question ON Question.DocumentId = ${mmTable}.DocumentId AND Question.TargetParagraphOrdinal = ${mmTable}.BeginParagraphOrdinal`;
-    }
-    if (suppressZoomExists) {
-      where += ' AND Multimedia.SuppressZoom <> 1';
-    }
-    const items = executeQuery<MultimediaItem>(
-      source.db,
-      `${select} ${from} ${where} ${groupAndSort}`,
-    );
-    return items;
-  } catch (error) {
-    errorCatcher(error);
-    return [];
-  }
-};
 
 const getDocumentExtractItems = async (db: string, docId: number) => {
   try {
@@ -859,22 +517,25 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
 
       if (!extractDb) continue;
 
-      const extractItems = getDocumentMultimediaItems({
-        db: extractDb,
-        lang: extractLang,
-        mepsId: extract.RefMepsDocumentId,
-        ...(extract.RefBeginParagraphOrdinal
-          ? {
-              BeginParagraphOrdinal:
-                symbol === 'lmd' && extract.RefBeginParagraphOrdinal < 8
-                  ? 1 // Hack to show intro picture from the lmd brochure when appropriate
-                  : extract.RefBeginParagraphOrdinal,
-            }
-          : {}),
-        ...(extract.RefEndParagraphOrdinal
-          ? { EndParagraphOrdinal: extract.RefEndParagraphOrdinal }
-          : {}),
-      })
+      const extractItems = getDocumentMultimediaItems(
+        {
+          db: extractDb,
+          lang: extractLang,
+          mepsId: extract.RefMepsDocumentId,
+          ...(extract.RefBeginParagraphOrdinal
+            ? {
+                BeginParagraphOrdinal:
+                  symbol === 'lmd' && extract.RefBeginParagraphOrdinal < 8
+                    ? 1 // Hack to show intro picture from the lmd brochure when appropriate
+                    : extract.RefBeginParagraphOrdinal,
+              }
+            : {}),
+          ...(extract.RefEndParagraphOrdinal
+            ? { EndParagraphOrdinal: extract.RefEndParagraphOrdinal }
+            : {}),
+        },
+        currentStateStore.currentSettings?.includePrinted,
+      )
         .map((extractItem): MultimediaItem => {
           return {
             ...extractItem,
@@ -1843,19 +1504,6 @@ export const getWeMedia = async (lookupDate: Date) => {
   }
 };
 
-export function sanitizeId(id: string) {
-  try {
-    const regex = /[a-zA-Z0-9\-_:.]/g;
-    const sanitizedString = id.replace(regex, function (match) {
-      return match;
-    });
-    return sanitizedString;
-  } catch (e) {
-    errorCatcher(e);
-    return id;
-  }
-}
-
 export const getMwMedia = async (lookupDate: Date) => {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -1900,7 +1548,10 @@ export const getMwMedia = async (lookupDate: Date) => {
         'No document id found for ' + monday + ' ' + issueString + ' ' + db,
       );
 
-    const mms = getDocumentMultimediaItems({ db, docId });
+    const mms = getDocumentMultimediaItems(
+      { db, docId },
+      currentStateStore.currentSettings?.includePrinted,
+    );
     for (let i = 0; i < mms.length; i++) {
       const multimediaItem = mms[i];
       const videoMarkers = getMediaVideoMarkers(

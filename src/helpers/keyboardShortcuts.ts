@@ -1,9 +1,8 @@
 import type { SettingsValues } from 'src/types';
 
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
-
-import { errorCatcher } from './error-catcher';
 
 const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
   shortcutMediaNext: () => {
@@ -68,10 +67,12 @@ export const registerCustomShortcut = (
       !currentState.currentSettings ||
       !currentState.currentSettings[shortcutName] ||
       !currentState.currentSettings?.enableKeyboardShortcuts
-    )
+    ) {
       return;
-    if (!keySequence)
+    }
+    if (!keySequence) {
       keySequence = currentState.currentSettings[shortcutName] as string;
+    }
     window.electronApi.registerShortcut(shortcutName, keySequence);
   } catch (error) {
     errorCatcher(error);

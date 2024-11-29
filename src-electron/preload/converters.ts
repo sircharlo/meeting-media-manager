@@ -6,7 +6,7 @@ import { ensureDir, writeFile } from 'fs-extra';
 import { FULL_HD } from 'src/constants/media';
 import { basename, join } from 'upath';
 
-import { errorCatcher } from '../utils';
+import { captureElectronError } from '../utils';
 
 export interface ConversionOptions {
   /**
@@ -42,7 +42,7 @@ export const getNrOfPdfPages = async (pdfPath: string): Promise<number> => {
     const pdfDocument = await loadingTask.promise;
     return pdfDocument.numPages;
   } catch (e) {
-    errorCatcher(e);
+    captureElectronError(e);
     return 0;
   }
 };
@@ -98,12 +98,12 @@ export const convertPdfToImages = async (
         await writeFile(outputPath, base64Data, 'base64');
         outputImages.push(outputPath);
       } catch (e) {
-        errorCatcher(e);
+        captureElectronError(e);
       }
     }
     return outputImages;
   } catch (e) {
-    errorCatcher(e);
+    captureElectronError(e);
     return outputImages;
   }
 };

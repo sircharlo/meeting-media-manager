@@ -2,7 +2,7 @@ import type { BrowserWindow } from 'electron';
 import type { ScreenPreferences } from 'src/types';
 
 import { PLATFORM } from 'app/src-electron/constants';
-import { errorCatcher } from 'app/src-electron/utils';
+import { captureElectronError } from 'app/src-electron/utils';
 import { join, resolve } from 'path';
 
 import { getAllScreens, getWindowScreen, screenPreferences } from '../screen';
@@ -26,7 +26,13 @@ export function createMediaWindow() {
     backgroundColor: 'black',
     frame: false,
     height: 720,
-    icon: resolve(join(__dirname, 'icons', 'media-player.png')),
+    icon: resolve(
+      join(
+        __dirname,
+        'icons',
+        `media-player.${PLATFORM === 'win32' ? 'ico' : PLATFORM === 'darwin' ? 'icns' : 'png'}`,
+      ),
+    ),
     minHeight: 110,
     minWidth: 195,
     thickFrame: false,
@@ -103,7 +109,7 @@ export const moveMediaWindow = (
 
     setWindowPosition(displayNr, fullscreen, noEvent);
   } catch (e) {
-    errorCatcher(e);
+    captureElectronError(e);
   }
 };
 
@@ -206,6 +212,6 @@ const setWindowPosition = (
       }
     }
   } catch (err) {
-    errorCatcher(err);
+    captureElectronError(err);
   }
 };

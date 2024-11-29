@@ -130,13 +130,12 @@ import {
 import { storeToRefs } from 'pinia';
 import { remainingTimeBeforeMeetingStart } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getMetadataFromMediaPath } from 'src/helpers/fs';
 import { downloadBackgroundMusic } from 'src/helpers/jw-media';
-import { isVideo } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { getDateDiff } from 'src/utils/date';
 import { getPublicationDirectoryContents } from 'src/utils/fs';
+import { getMetadataFromMediaPath, isVideo } from 'src/utils/media';
 import { formatTime } from 'src/utils/time';
 import { ref, useTemplateRef, watch } from 'vue';
 

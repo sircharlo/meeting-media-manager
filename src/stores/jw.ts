@@ -14,7 +14,7 @@ import type {
 
 import { defineStore } from 'pinia';
 import { MAX_SONGS } from 'src/constants/jw';
-import { dateFromString, isCoWeek, isMwMeetingDay } from 'src/helpers/date';
+import { isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import {
@@ -22,10 +22,9 @@ import {
   fetchPubMediaLinks,
   fetchYeartext,
 } from 'src/utils/api';
-import { getDateDiff } from 'src/utils/date';
+import { dateFromString, getDateDiff } from 'src/utils/date';
 import { isFileUrl } from 'src/utils/fs';
-import { getPubId } from 'src/utils/jw';
-import { findBestResolution, isMediaLink } from 'src/utils/media';
+import { findBestResolution, getPubId, isMediaLink } from 'src/utils/jw';
 
 /**
  * Checks if a caches list should be updated

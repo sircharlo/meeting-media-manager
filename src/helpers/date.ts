@@ -1,74 +1,18 @@
-import type { DateLocale } from 'quasar';
 import type { DateInfo } from 'src/types';
 
 import { DAYS_IN_FUTURE } from 'src/constants/date';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { addToDate, buildDate, formatDate, getDateDiff } from 'src/utils/date';
-
-import { errorCatcher } from './error-catcher';
-
-export const dateFromString = (lookupDate?: Date | string | undefined) => {
-  try {
-    if (!lookupDate) {
-      const now = new Date();
-      lookupDate = buildDate(
-        {
-          day: now.getDate(),
-          hours: 0,
-          minutes: 0,
-          month: now.getMonth() + 1,
-          seconds: 0,
-          year: now.getFullYear(),
-        },
-        false,
-      );
-    }
-    let dateBuilder;
-    if (typeof lookupDate === 'string') {
-      dateBuilder = new Date(lookupDate);
-      dateBuilder = buildDate(
-        {
-          day: dateBuilder.getDate(),
-          hours: 0,
-          minutes: 0,
-          month: dateBuilder.getMonth() + 1,
-          seconds: 0,
-          year: dateBuilder.getFullYear(),
-        },
-        false,
-      );
-    } else {
-      dateBuilder = lookupDate;
-    }
-    const outputDate = buildDate(
-      {
-        day: dateBuilder.getDate(),
-        hours: 0,
-        minutes: 0,
-        month: dateBuilder.getMonth() + 1,
-        seconds: 0,
-        year: dateBuilder.getFullYear(),
-      },
-      false,
-    );
-    return outputDate;
-  } catch (error) {
-    errorCatcher(error);
-    return new Date();
-  }
-};
-
-export const isInPast = (lookupDate: Date) => {
-  try {
-    if (!lookupDate) return false;
-    const now = dateFromString();
-    return getDateDiff(lookupDate, now, 'days') < 0;
-  } catch (error) {
-    errorCatcher(error);
-    return false;
-  }
-};
+import {
+  addToDate,
+  dateFromString,
+  datesAreSame,
+  formatDate,
+  getDateDiff,
+  getSpecificWeekday,
+  isInPast,
+} from 'src/utils/date';
 
 const getWeekDay = (lookupDate: Date) => {
   try {
@@ -88,36 +32,6 @@ const getWeekDay = (lookupDate: Date) => {
     return '0';
   }
 };
-
-export function datesAreSame(date1: Date, date2: Date) {
-  try {
-    if (!date1 || !date2) throw new Error('Missing date for comparison');
-    return date1.toDateString() === date2.toDateString();
-  } catch (error) {
-    errorCatcher(error);
-    return false;
-  }
-}
-
-export function getSpecificWeekday(
-  lookupDate: Date | string,
-  desiredWeekday: number,
-) {
-  try {
-    if (!lookupDate) return new Date();
-    if (desiredWeekday === null) throw new Error('No desired weekday');
-    lookupDate = dateFromString(lookupDate);
-    desiredWeekday++;
-    desiredWeekday = desiredWeekday === 7 ? 0 : desiredWeekday;
-    const difference = (lookupDate.getDay() - desiredWeekday + 7) % 7;
-    const newDate = new Date(lookupDate.valueOf());
-    newDate.setDate(newDate.getDate() - difference);
-    return newDate;
-  } catch (error) {
-    errorCatcher(error);
-    return new Date();
-  }
-}
 
 export function isCoWeek(lookupDate: Date) {
   try {
@@ -187,10 +101,7 @@ export function updateLookupPeriod(reset = false) {
     const futureDates: DateInfo[] = Array.from(
       { length: DAYS_IN_FUTURE },
       (_, i): DateInfo => {
-        const dayDate = addToDate(
-          buildDate({ hour: 0, milliseconds: 0, minute: 0, second: 0 }),
-          { day: i },
-        );
+        const dayDate = addToDate(dateFromString(), { day: i });
         return {
           complete: false,
           date: dayDate,
@@ -222,14 +133,6 @@ export function updateLookupPeriod(reset = false) {
   }
 }
 
-export const getLocalDate = (
-  dateObj: Date | string,
-  locale: Required<DateLocale>,
-) => {
-  const parsedDate = typeof dateObj === 'string' ? new Date(dateObj) : dateObj;
-  return formatDate(parsedDate, 'D MMMM YYYY', locale);
-};
-
 export const remainingTimeBeforeMeetingStart = () => {
   try {
     const currentState = useCurrentStateStore();
@@ -251,18 +154,6 @@ export const remainingTimeBeforeMeetingStart = () => {
     } else {
       return 0;
     }
-  } catch (error) {
-    errorCatcher(error);
-    return 0;
-  }
-};
-
-export const friendlyDayToJsDay = (day?: number) => {
-  try {
-    if (!day) day = -1;
-    const firstDay = day === 6 ? 0 : parseInt(day.toString()) + 1;
-    const correctedFirstDay = firstDay > 7 ? firstDay - 7 : firstDay;
-    return correctedFirstDay;
   } catch (error) {
     errorCatcher(error);
     return 0;

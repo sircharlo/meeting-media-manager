@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress';
 import messages, { localeOptions, enabled } from './../locales';
 import { mapLocales, mapSearch } from './../utils/locales';
 import { CANONICAL_URL, GH_REPO, GH_REPO_URL } from './../utils/constants';
-import { camelToKebabCase, kebabToCamelCase } from './../utils/general';
+import { camelToKebabCase, kebabToCamelCase } from './../../src/utils/general';
 import type { LanguageValue } from '../../src/constants/locales';
 
 const base = `/${GH_REPO}/`;
@@ -62,7 +62,7 @@ export default defineConfig({
       {
         rel: 'icon',
         type: 'image/svg+xml',
-        href: `${base}logo-no-background.svg`,
+        href: `${base}logo.svg`,
       },
     ],
     ['meta', { name: 'color-scheme', content: 'light dark' }],
@@ -87,7 +87,7 @@ export default defineConfig({
     ['meta', { content: `${CANONICAL_URL}icon.png`, property: 'og:image' }],
     ['meta', { content: 'image/png', property: 'og:image:type' }],
     ['meta', { content: '512', property: 'og:image:width' }],
-    ['meta', { content: '513', property: 'og:image:height' }],
+    ['meta', { content: '512', property: 'og:image:height' }],
     ['meta', { content: 'The logo of M³', property: 'og:image:alt' }],
     [
       'meta',
@@ -191,7 +191,7 @@ export default defineConfig({
   locales: mapLocales(),
   themeConfig: {
     externalLinkIcon: true,
-    logo: '/icon.png',
+    logo: '/logo.svg',
     search: mapSearch(),
     socialLinks: [{ icon: 'github', link: GH_REPO_URL, ariaLabel: 'GitHub' }],
   },

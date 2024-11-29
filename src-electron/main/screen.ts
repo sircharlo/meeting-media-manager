@@ -2,7 +2,7 @@ import type { Display, ScreenPreferences } from 'src/types';
 
 import { app, type BrowserWindow, screen } from 'electron';
 
-import { errorCatcher } from '../utils';
+import { captureElectronError } from '../utils';
 import { mainWindow } from './window/window-main';
 import { mediaWindow, moveMediaWindow } from './window/window-media';
 
@@ -41,7 +41,7 @@ export const getAllScreens = (): Display[] => {
       );
       if (mainWindowScreen) mainWindowScreen.mainWindow = true;
     } catch (e) {
-      errorCatcher(e);
+      captureElectronError(e);
     }
   }
   if (mediaWindow) {
@@ -53,7 +53,7 @@ export const getAllScreens = (): Display[] => {
       );
       if (mediaWindowScreen) mediaWindowScreen.mediaWindow = true;
     } catch (e) {
-      errorCatcher(e);
+      captureElectronError(e);
     }
   }
 

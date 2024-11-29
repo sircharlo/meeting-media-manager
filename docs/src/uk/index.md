@@ -3,12 +3,11 @@ layout: home
 hero:
   name: Документація M³
   text: Допомога у налаштуванні та використанні Meeting Media Manager
-  image: /icon.png
+  image: /logo.svg
   actions:
     - theme: brand
       text: Встановлення M³
-      target: _blank
-      link: https://sircharlo.github.io/meeting-media-manager/using-at-a-kingdom-hall#download-and-install
+      link: /uk/using-at-a-kingdom-hall#download-and-install
     - theme: alt
       text: Використання в Залі Царства
       link: /uk/using-at-a-kingdom-hall
