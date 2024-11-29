@@ -6,6 +6,7 @@ var options = {
   cssPrefix: 'mmm',
   fontName: 'mmm-icons',
   fontsOutput: 'src/css/',
+  formats: ['woff2'],
   htmlOutput: false,
   jsOutput: false,
   svgs: 'build/icons/*.svg',
