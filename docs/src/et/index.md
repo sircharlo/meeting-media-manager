@@ -3,7 +3,7 @@ layout: home
 hero:
   name: M³ dokumentatsioon
   text: Abi Meeting Media Manageri seadistamisel ja kasutamisel
-  image: /icon.png
+  image: /logo.svg
   actions:
     - theme: brand
       text: Paigalda M³
