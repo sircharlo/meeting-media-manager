@@ -82,7 +82,7 @@
                 <q-img
                   v-else
                   fit="contain"
-                  src="images/no-media.svg"
+                  src="~assets/img/no-media.svg"
                   style="max-height: 30vh"
                 />
               </div>

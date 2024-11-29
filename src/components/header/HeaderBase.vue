@@ -10,7 +10,7 @@
         style="width: 56px"
         @click="aboutModal = true"
       >
-        <img src="logo-no-background.svg" />
+        <img src="~assets/img/logo-no-background.svg" />
       </div>
       <q-separator class="bg-semi-white-24 q-ml-none" inset vertical />
       <div class="col q-ml-md flex items-center">
