@@ -7,8 +7,7 @@ hero:
   actions:
     - theme: brand
       text: 安装M³
-      target: _blank
-      link: https://sircharlo.github.io/meeting-media-manager/using-at-a-kingdom-hall#download-and-install
+      link: /cmn-hans/using-at-a-kingdom-hall#download-and-install
     - theme: alt
       text: 在王国聚会所使用
       link: /cmn-hans/using-at-a-kingdom-hall
