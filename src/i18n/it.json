@@ -191,7 +191,7 @@
   "main-scenes": "Scene principali",
   "make-sure-that-m-is-in-not-use-before-quitting": "Make sure that M³ is in not use before closing it.",
   "maxRes": "Risoluzione massima per i video",
-  "maxRes-explain": "Choose the maximum resolution for videos. Videos above this resolution will not be downloaded.",
+  "maxRes-explain": "Scegli la risoluzione massima per i video. I video sopra questa risoluzione non verranno scaricati.",
   "media-display": "Media display",
   "media-display-settings": "Media display settings",
   "media-from-s34mp": "Media from the S-34mp",
