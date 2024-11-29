@@ -87,7 +87,7 @@ export default defineConfig({
     ['meta', { content: `${CANONICAL_URL}icon.png`, property: 'og:image' }],
     ['meta', { content: 'image/png', property: 'og:image:type' }],
     ['meta', { content: '512', property: 'og:image:width' }],
-    ['meta', { content: '513', property: 'og:image:height' }],
+    ['meta', { content: '512', property: 'og:image:height' }],
     ['meta', { content: 'The logo of M³', property: 'og:image:alt' }],
     [
       'meta',

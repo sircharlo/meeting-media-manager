@@ -5,7 +5,7 @@
     >
       <div class="row items-center">
         <div class="col-shrink q-mr-md">
-          <img col src="favicon.ico" style="max-height: 10vh; display: flex" />
+          <img col src="logo.svg" style="max-height: 10vh; display: flex" />
         </div>
         <div class="col">
           <div class="row text-h6">
