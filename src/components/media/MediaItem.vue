@@ -869,19 +869,33 @@ const imageLoadingError = () => {
 };
 
 async function findThumbnailUrl() {
+  let fileRetryCount = 0;
+  let thumbnailRetryCount = 0;
+
   const runThumbnailCheck = async () => {
     const filePath = fileUrlToPath(props.media.fileUrl);
     const fileExists = await fs.pathExists(filePath);
+
+    if (!fileExists) {
+      if (fileRetryCount < 30) {
+        fileRetryCount++;
+        setTimeout(runThumbnailCheck, 2000); // Retry after 2 seconds
+      }
+      return;
+    }
+
     if (fileExists) {
       const thumbnailUrl = await getThumbnailUrl(props.media.fileUrl);
       if (!thumbnailFromMetadata.value) {
         thumbnailFromMetadata.value = thumbnailUrl;
       }
-      if (!thumbnailFromMetadata.value) {
-        setTimeout(runThumbnailCheck, 2000); // Retry after 2 seconds if still not set
+      if (!thumbnailFromMetadata.value && thumbnailRetryCount < 5) {
+        thumbnailRetryCount++;
+        setTimeout(runThumbnailCheck, 2000); // Retry after 2 seconds
       }
     }
   };
+
   // Run immediately
   await runThumbnailCheck();
 }

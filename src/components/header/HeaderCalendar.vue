@@ -89,7 +89,7 @@
           @click="audioBiblePopup = true"
         >
           <q-item-section avatar>
-            <q-icon color="primary" name="mmm-headphones" />
+            <q-icon color="primary" name="mmm-audio-bible" />
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ $t('audio-bible') }}</q-item-label>
