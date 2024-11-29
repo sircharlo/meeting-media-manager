@@ -5,7 +5,7 @@ layout: home
 hero:
   name: 'M³ documentation'
   text: 'Help to set up and use Meeting Media Manager'
-  image: /icon.png
+  image: /logo.svg
   actions:
     - theme: brand
       text: Install M³

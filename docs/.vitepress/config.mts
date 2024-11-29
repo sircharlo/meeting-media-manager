@@ -62,7 +62,7 @@ export default defineConfig({
       {
         rel: 'icon',
         type: 'image/svg+xml',
-        href: `${base}logo-no-background.svg`,
+        href: `${base}logo.svg`,
       },
     ],
     ['meta', { name: 'color-scheme', content: 'light dark' }],
@@ -191,7 +191,7 @@ export default defineConfig({
   locales: mapLocales(),
   themeConfig: {
     externalLinkIcon: true,
-    logo: '/icon.png',
+    logo: '/logo.svg',
     search: mapSearch(),
     socialLinks: [{ icon: 'github', link: GH_REPO_URL, ariaLabel: 'GitHub' }],
   },
