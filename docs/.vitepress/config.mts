@@ -2,7 +2,7 @@ import { defineConfig } from 'vitepress';
 import messages, { localeOptions, enabled } from './../locales';
 import { mapLocales, mapSearch } from './../utils/locales';
 import { CANONICAL_URL, GH_REPO, GH_REPO_URL } from './../utils/constants';
-import { camelToKebabCase, kebabToCamelCase } from './../utils/general';
+import { camelToKebabCase, kebabToCamelCase } from './../../src/utils/general';
 import type { LanguageValue } from '../../src/constants/locales';
 
 const base = `/${GH_REPO}/`;
