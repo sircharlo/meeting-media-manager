@@ -7,7 +7,7 @@ hero:
   actions:
     - theme: brand
       text: Install M³
-      link: /ilo/using-at-a-kingdom-hall#download-and-install
+      link: /it/using-at-a-kingdom-hall#download-and-install
     - theme: alt
       text: Using at a Kingdom Hall
       link: /it/using-at-a-kingdom-hall
