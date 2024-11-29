@@ -5,10 +5,10 @@ import type {
 } from 'vitepress';
 import type { LocalSearchTranslations } from 'vitepress/types/local-search';
 
-import { camelToKebabCase } from './general';
 import messages, { enabled, localeOptions } from './../locales';
 import { fetchLatestVersion } from './api';
 import { GH_ISSUES, GH_REPO_URL } from './constants';
+import { camelToKebabCase } from './general';
 
 export type MessageSchema = (typeof messages)['en'];
 
