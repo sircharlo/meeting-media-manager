@@ -665,12 +665,12 @@ import { storeToRefs } from 'pinia';
 import { debounce, type QBtn, type QImg, useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
-import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { useObsStateStore } from 'src/stores/obs-state';
 import { isFileUrl } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
+import { sendObsSceneEvent } from 'src/utils/obs';
 import { formatTime } from 'src/utils/time';
 import {
   computed,

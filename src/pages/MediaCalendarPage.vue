@@ -507,7 +507,6 @@ import {
   getMediaFromJwPlaylist,
 } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { sendObsSceneEvent } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import {
@@ -532,6 +531,7 @@ import {
   isRemoteFile,
   isVideo,
 } from 'src/utils/media';
+import { sendObsSceneEvent } from 'src/utils/obs';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 

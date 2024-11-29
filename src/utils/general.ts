@@ -19,6 +19,16 @@ export const kebabToCamelCase = (str: string) =>
   str.replace(/-./g, (x) => x[1].toUpperCase());
 
 /**
+ * Sleeps for a given amount of time.
+ * @param ms The time to sleep in milliseconds.
+ * @returns The promise that resolves after the sleep.
+ */
+export const sleep = (ms: number) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+
+/**
  * Capitalizes the first letter of a string.
  * @param str The string to capitalize.
  * @returns The capitalized string.

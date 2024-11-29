@@ -96,11 +96,7 @@ import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import {
-  configuredScenesAreAllUUIDs,
-  obsConnect,
-  obsWebSocket,
-} from 'src/helpers/obs';
+import { obsConnect, obsWebSocket } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useObsStateStore } from 'src/stores/obs-state';
 import { isUUID } from 'src/utils/general';
@@ -111,7 +107,8 @@ import { useI18n } from 'vue-i18n';
 const open = defineModel<boolean>({ default: false });
 
 const currentState = useCurrentStateStore();
-const { currentSettings, mediaPlayingUrl } = storeToRefs(currentState);
+const { configuredScenesAreAllUUIDs, currentSettings, mediaPlayingUrl } =
+  storeToRefs(currentState);
 
 const obsState = useObsStateStore();
 const {
@@ -164,13 +161,14 @@ const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
     }
     if (newProgramScene) {
       const hasSceneUuid = scenes.value?.every((scene) => 'sceneUuid' in scene);
-      const currentScenesAreUuids = configuredScenesAreAllUUIDs();
 
       if (sceneExists(newProgramScene)) {
         obsWebSocket?.call('SetCurrentProgramScene', {
           ...(hasSceneUuid &&
-            currentScenesAreUuids && { sceneUuid: newProgramScene }),
-          ...((!hasSceneUuid || !currentScenesAreUuids) && {
+            configuredScenesAreAllUUIDs.value && {
+              sceneUuid: newProgramScene,
+            }),
+          ...((!hasSceneUuid || !configuredScenesAreAllUUIDs.value) && {
             sceneName: newProgramScene,
           }),
         });

@@ -52,7 +52,6 @@ import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
 import { RESOLUTIONS } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { configuredScenesAreAllUUIDs } from 'src/helpers/obs';
 import { localeOptions } from 'src/i18n';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
@@ -62,7 +61,9 @@ import { computed, ref } from 'vue';
 
 const jwStore = useJwStore();
 const { jwLanguages } = storeToRefs(jwStore);
-const { currentSettings } = storeToRefs(useCurrentStateStore());
+const { configuredScenesAreAllUUIDs, currentSettings } = storeToRefs(
+  useCurrentStateStore(),
+);
 
 const props = defineProps<{
   label?: string;
@@ -174,7 +175,7 @@ const listOptions = computed(
           return {
             label: scene.sceneName?.toString() ?? 'Unknown scene',
             value:
-              configuredScenesAreAllUUIDs() && scene.sceneUuid
+              configuredScenesAreAllUUIDs.value && scene.sceneUuid
                 ? scene.sceneUuid.toString()
                 : (scene.sceneName?.toString() ?? 'Unknown scene'),
           };

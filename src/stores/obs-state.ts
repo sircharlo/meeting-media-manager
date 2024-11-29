@@ -1,7 +1,9 @@
+import type { OBSWebSocketError } from 'obs-websocket-js';
 import type { JsonObject } from 'obs-websocket-js/node_modules/type-fest';
 import type { ObsConnectionState, ObsSceneType } from 'src/types';
 
 import { defineStore } from 'pinia';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { isUUID } from 'src/utils/general';
 
@@ -16,6 +18,15 @@ interface Store {
 
 export const useObsStateStore = defineStore('obs-state', {
   actions: {
+    obsCloseHandler() {
+      this.obsConnectionState = 'disconnected';
+      this.obsMessage = 'obs.disconnected';
+    },
+    obsErrorHandler(err: OBSWebSocketError) {
+      this.obsMessage = 'obs.error';
+      if (err?.code && ![-1, 1001, 1006, 4009].includes(err.code))
+        errorCatcher(err);
+    },
     sceneExists(sceneToCheck?: string) {
       if (!this.scenes || !sceneToCheck) return false;
       const matchScene = isUUID(sceneToCheck)

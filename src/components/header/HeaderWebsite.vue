@@ -57,11 +57,9 @@
   </q-btn>
 </template>
 <script setup lang="ts">
-// Packages
 import { storeToRefs } from 'pinia';
-import { sendObsSceneEvent } from 'src/helpers/obs';
-// Stores
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { sendObsSceneEvent } from 'src/utils/obs';
 import { watch } from 'vue';
 
 const {
