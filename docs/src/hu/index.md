@@ -7,7 +7,7 @@ hero:
   actions:
     - theme: brand
       text: Install M³
-      link: /using-at-a-kingdom-hall#download-and-install
+      link: /hu/using-at-a-kingdom-hall#download-and-install
     - theme: alt
       text: Használat egy Királyság-teremben
       link: /hu/using-at-a-kingdom-hall
