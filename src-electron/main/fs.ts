@@ -7,7 +7,7 @@ import {
   IMG_EXTENSIONS,
   JWPUB_EXTENSIONS,
   PDF_EXTENSIONS,
-} from 'src/constants/fs';
+} from 'src/constants/media';
 import { basename, dirname, join, toUnix } from 'upath';
 
 import { captureElectronError } from '../utils';

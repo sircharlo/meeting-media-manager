@@ -24,8 +24,7 @@ import {
 } from 'src/utils/api';
 import { dateFromString, getDateDiff } from 'src/utils/date';
 import { isFileUrl } from 'src/utils/fs';
-import { getPubId } from 'src/utils/jw';
-import { findBestResolution, isMediaLink } from 'src/utils/media';
+import { findBestResolution, getPubId, isMediaLink } from 'src/utils/jw';
 
 /**
  * Checks if a caches list should be updated

@@ -95,7 +95,6 @@ import type { ObsSceneType } from 'src/types';
 import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { isImage } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import {
   configuredScenesAreAllUUIDs,
@@ -105,6 +104,7 @@ import {
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useObsStateStore } from 'src/stores/obs-state';
 import { isUUID } from 'src/utils/general';
+import { isImage } from 'src/utils/media';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 

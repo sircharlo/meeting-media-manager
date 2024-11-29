@@ -28,21 +28,12 @@ import { queues } from 'src/boot/globals';
 import { FEB_2023, FOOTNOTE_TAR_PAR, MAX_SONGS } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
 import { isCoWeek, isMwMeetingDay } from 'src/helpers/date';
-import {
-  getMetadataFromMediaPath,
-  getSubtitlesUrl,
-  getThumbnailUrl,
-} from 'src/helpers/fs';
+import { getSubtitlesUrl, getThumbnailUrl } from 'src/helpers/fs';
 import {
   convertImageIfNeeded,
   decompressJwpub,
   findDb,
   getMediaFromJwPlaylist,
-  isAudio,
-  isImage,
-  isJwPlaylist,
-  isSong,
-  isVideo,
 } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
@@ -56,8 +47,15 @@ import {
 } from 'src/utils/date';
 import { getPublicationDirectory, trimFilepathAsNeeded } from 'src/utils/fs';
 import { pad } from 'src/utils/general';
-import { getPubId } from 'src/utils/jw';
-import { findBestResolution, isMediaLink } from 'src/utils/media';
+import { findBestResolution, getPubId, isMediaLink } from 'src/utils/jw';
+import {
+  getMetadataFromMediaPath,
+  isAudio,
+  isImage,
+  isJwPlaylist,
+  isSong,
+  isVideo,
+} from 'src/utils/media';
 
 import { errorCatcher } from './error-catcher';
 

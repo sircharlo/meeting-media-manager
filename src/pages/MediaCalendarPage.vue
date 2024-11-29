@@ -490,7 +490,6 @@ import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
 import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getMetadataFromMediaPath } from 'src/helpers/fs';
 import {
   addDayToExportQueue,
   addJwpubDocumentMediaToFiles,
@@ -506,16 +505,7 @@ import {
   decompressJwpub,
   findDb,
   getMediaFromJwPlaylist,
-  inferExtension,
-  isArchive,
-  isAudio,
-  isImage,
   isImageString,
-  isJwPlaylist,
-  isJwpub,
-  isPdf,
-  isRemoteFile,
-  isVideo,
 } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { sendObsSceneEvent } from 'src/helpers/obs';
@@ -530,6 +520,18 @@ import {
 } from 'src/utils/date';
 import { getPublicationDirectory, getTempPath } from 'src/utils/fs';
 import { uuid } from 'src/utils/general';
+import {
+  getMetadataFromMediaPath,
+  inferExtension,
+  isArchive,
+  isAudio,
+  isImage,
+  isJwPlaylist,
+  isJwpub,
+  isPdf,
+  isRemoteFile,
+  isVideo,
+} from 'src/utils/media';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 

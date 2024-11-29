@@ -4,6 +4,11 @@ import type { DateLocale, DateOptions, DateUnitOptions } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { capitalize, pad } from 'src/utils/general';
 
+/**
+ * Creates a new date object from a date string.
+ * @param lookupDate The date string to create the date object from.
+ * @returns The date object.
+ */
 export const dateFromString = (lookupDate?: Date | string | undefined) => {
   try {
     const date = lookupDate ? new Date(lookupDate) : new Date();
@@ -17,6 +22,11 @@ export const dateFromString = (lookupDate?: Date | string | undefined) => {
   }
 };
 
+/**
+ * Checks if a date is in the past.
+ * @param lookupDate The date to check.
+ * @returns Weather the date is in the past.
+ */
 export const isInPast = (lookupDate: Date) => {
   try {
     if (!lookupDate) return false;
@@ -28,6 +38,11 @@ export const isInPast = (lookupDate: Date) => {
   }
 };
 
+/**
+ * Converts a friendly day to a js day.
+ * @param day The friendly day to convert.
+ * @returns The js day.
+ */
 export const friendlyDayToJsDay = (day?: number) => {
   try {
     if (!day) day = -1;
@@ -40,6 +55,12 @@ export const friendlyDayToJsDay = (day?: number) => {
   }
 };
 
+/**
+ * Formats a date object to a local date string.
+ * @param dateObj The date object to format.
+ * @param locale The locale to format the date in.
+ * @returns The local date string.
+ */
 export const getLocalDate = (
   dateObj: Date | string,
   locale: Required<DateLocale>,
@@ -48,6 +69,12 @@ export const getLocalDate = (
   return formatDate(parsedDate, 'D MMMM YYYY', locale);
 };
 
+/**
+ * Checks if two dates are the same.
+ * @param date1 The first date to compare.
+ * @param date2 The second date to compare.
+ * @returns The result of the comparison.
+ */
 export const datesAreSame = (date1: Date, date2: Date) => {
   try {
     if (!date1 || !date2) throw new Error('Missing date for comparison');
@@ -58,6 +85,12 @@ export const datesAreSame = (date1: Date, date2: Date) => {
   }
 };
 
+/**
+ * Gets a specific day from a week.
+ * @param lookupDate The week to get the specific day from.
+ * @param desiredWeekday The desired weekday.
+ * @returns The desired date object.
+ */
 export const getSpecificWeekday = (
   lookupDate: Date | string,
   desiredWeekday: number,

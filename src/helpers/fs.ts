@@ -1,63 +1,16 @@
-import type { IAudioMetadata } from 'music-metadata';
 import type { MultimediaItem, PublicationFetcher } from 'src/types';
 
 import { Buffer } from 'buffer';
 import { FULL_HD } from 'src/constants/media';
 import { downloadFileIfNeeded, getJwMediaInfo } from 'src/helpers/jw-media';
-import {
-  isAudio,
-  isFileOfType,
-  isImage,
-  isVideo,
-} from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { getPublicationDirectory } from 'src/utils/fs';
+import { isAudio, isImage, isVideo } from 'src/utils/media';
 
 import { errorCatcher } from './error-catcher';
 
-const {
-  fileUrlToPath,
-  fs,
-  getVideoDuration,
-  parseMediaFile,
-  path,
-  pathToFileURL,
-} = window.electronApi;
-
-export const getMetadataFromMediaPath = async (
-  mediaPath: string,
-): Promise<IAudioMetadata> => {
-  const defaultMetadata = {
-    common: {
-      disk: { no: null, of: null },
-      movementIndex: { no: null, of: null },
-      title: '',
-      track: { no: null, of: null },
-    },
-    format: {
-      duration: 0,
-      tagTypes: [],
-      trackInfo: [],
-    },
-    native: {},
-    quality: { warnings: [] },
-  };
-  try {
-    mediaPath = fileUrlToPath(mediaPath);
-    if (!mediaPath || !(await fs.exists(mediaPath))) return defaultMetadata;
-    if (isFileOfType(mediaPath, ['mov'])) {
-      const videoDuration = await getVideoDuration(mediaPath);
-      defaultMetadata.format.duration = videoDuration?.seconds || 0;
-      return defaultMetadata;
-    }
-    return await parseMediaFile(mediaPath);
-  } catch (error) {
-    errorCatcher(error, {
-      contexts: { fn: { mediaPath, name: 'getMetadataFromMediaPath' } },
-    });
-    return defaultMetadata;
-  }
-};
+const { fileUrlToPath, fs, parseMediaFile, path, pathToFileURL } =
+  window.electronApi;
 
 const getThumbnailFromMetadata = async (mediaPath: string) => {
   try {

@@ -227,14 +227,13 @@ import {
   convertImageIfNeeded,
   decompressJwpub,
   findDb,
-  isImage,
-  isJwpub,
   showMediaWindow,
 } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { useAppSettingsStore } from 'src/stores/app-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { getTempPath } from 'src/utils/fs';
+import { isImage, isJwpub } from 'src/utils/media';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 

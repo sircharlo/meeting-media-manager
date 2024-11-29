@@ -5,17 +5,6 @@ import type {
 } from 'src/types';
 
 import { Buffer } from 'buffer';
-import {
-  AUDIO_EXTENSIONS,
-  HEIC_EXTENSIONS,
-  JWL_PLAYLIST_EXTENSIONS,
-  JWPUB_EXTENSIONS,
-  PDF_EXTENSIONS,
-  PURE_IMG_EXTENSIONS,
-  SVG_EXTENSIONS,
-  VIDEO_EXTENSIONS,
-  ZIP_EXTENSIONS,
-} from 'src/constants/fs';
 import { FULL_HD } from 'src/constants/media';
 import {
   dynamicMediaMapper,
@@ -23,94 +12,9 @@ import {
 } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { getTempPath } from 'src/utils/fs';
+import { isHeic, isJwpub, isPdf, isSvg } from 'src/utils/media';
 
 import { errorCatcher } from './error-catcher';
-
-export const isFileOfType = (filepath: string, validExtensions: string[]) => {
-  try {
-    if (!filepath) return false;
-    const fileExtension = window.electronApi.path
-      .parse(filepath)
-      .ext.toLowerCase()
-      .slice(1);
-    return validExtensions.includes(fileExtension);
-  } catch (error) {
-    errorCatcher(error);
-    return false;
-  }
-};
-
-export const isImage = (filepath: string) => {
-  return isFileOfType(filepath, PURE_IMG_EXTENSIONS);
-};
-
-export const isHeic = (filepath: string) => {
-  return isFileOfType(filepath, HEIC_EXTENSIONS);
-};
-
-export const isSvg = (filepath: string) => {
-  return isFileOfType(filepath, SVG_EXTENSIONS);
-};
-
-export const isVideo = (filepath: string) => {
-  return isFileOfType(filepath, VIDEO_EXTENSIONS);
-};
-
-export const isAudio = (filepath: string) => {
-  return isFileOfType(filepath, AUDIO_EXTENSIONS);
-};
-
-export const isPdf = (filepath: string) => {
-  return isFileOfType(filepath, PDF_EXTENSIONS);
-};
-
-export const isArchive = (filepath: string) => {
-  return isFileOfType(filepath, ZIP_EXTENSIONS);
-};
-
-export const isJwpub = (filepath: string) => {
-  return isFileOfType(filepath, JWPUB_EXTENSIONS);
-};
-
-export const isJwPlaylist = (filepath: string) => {
-  return isFileOfType(filepath, JWL_PLAYLIST_EXTENSIONS);
-};
-
-export const isSong = (multimediaItem: MultimediaItem) => {
-  if (
-    !multimediaItem.FilePath ||
-    !isVideo(multimediaItem.FilePath) ||
-    !multimediaItem.Track ||
-    !multimediaItem.KeySymbol?.includes('sjj')
-  )
-    return '';
-  return multimediaItem.Track.toString();
-};
-
-export const isRemoteFile = (
-  file: File | { filename?: string; filetype?: string; path: string },
-): file is { filename?: string; filetype?: string; path: string } => {
-  if (!file.path) return false;
-  return file.path.startsWith('http://') || file.path.startsWith('https://');
-};
-
-export const inferExtension = async (filename: string, filetype?: string) => {
-  if (!filetype) return filename;
-  const { default: mime } = await import('mime');
-  const extractedExtension = mime.extension(filetype);
-  if (!extractedExtension) {
-    // warningCatcher(
-    //   'Could not determine the file extension from the provided file type: ' +
-    //     filetype,
-    // );
-    return filename;
-  }
-  const hasExtension = /\.[0-9a-z]+$/i.test(filename);
-  if (hasExtension) {
-    return filename;
-  }
-  return `${filename}.${extractedExtension}`;
-};
 
 export const isImageString = (url: string) => {
   if (!url) return false;

@@ -124,7 +124,7 @@ import {
   IMG_EXTENSIONS,
   OTHER_EXTENSIONS,
   VIDEO_EXTENSIONS,
-} from 'src/constants/fs';
+} from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { computed, ref, useTemplateRef } from 'vue';

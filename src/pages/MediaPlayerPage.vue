@@ -79,15 +79,11 @@ import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setElementFont } from 'src/helpers/fonts';
-import {
-  isAudio,
-  isImage,
-  isVideo,
-  showMediaWindow,
-} from 'src/helpers/mediaPlayback';
+import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+import { isAudio, isImage, isVideo } from 'src/utils/media';
 import { computed, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
