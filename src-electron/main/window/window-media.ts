@@ -26,7 +26,13 @@ export function createMediaWindow() {
     backgroundColor: 'black',
     frame: false,
     height: 720,
-    icon: resolve(join(__dirname, 'icons', 'media-player.png')),
+    icon: resolve(
+      join(
+        __dirname,
+        'icons',
+        `media-player.${PLATFORM === 'win32' ? 'ico' : 'png'}`,
+      ),
+    ),
     minHeight: 110,
     minWidth: 195,
     thickFrame: false,
