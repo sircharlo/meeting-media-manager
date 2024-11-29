@@ -7,7 +7,7 @@ hero:
   actions:
     - theme: brand
       text: Namesti M³
-      link: /using-at-a-kingdom-hall#download-and-install
+      link: /sl/using-at-a-kingdom-hall#download-and-install
     - theme: alt
       text: Za uporabo v kraljestveni dvorani
       link: /sl/using-at-a-kingdom-hall
