@@ -3,7 +3,7 @@ layout: home
 hero:
   name: M³ documentatie
   text: Hulp bij het opzetten en gebruiken van M³
-  image: /icon.png
+  image: /logo.svg
   actions:
     - theme: brand
       text: Installeer M³
