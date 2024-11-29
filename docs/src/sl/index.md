@@ -3,7 +3,7 @@ layout: home
 hero:
   name: Dokumentacija M³
   text: Pomoč pri nastavitvi in uporabi aplikacije Meeting Media Manager
-  image: /icon.png
+  image: /logo.svg
   actions:
     - theme: brand
       text: Namesti M³
