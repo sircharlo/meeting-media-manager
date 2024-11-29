@@ -505,7 +505,6 @@ import {
   decompressJwpub,
   findDb,
   getMediaFromJwPlaylist,
-  isImageString,
 } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { sendObsSceneEvent } from 'src/helpers/obs';
@@ -526,6 +525,7 @@ import {
   isArchive,
   isAudio,
   isImage,
+  isImageString,
   isJwPlaylist,
   isJwpub,
   isPdf,

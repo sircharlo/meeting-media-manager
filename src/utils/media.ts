@@ -145,6 +145,16 @@ export const isRemoteFile = (
 };
 
 /**
+ * Checks if a url is an image string.
+ * @param url The url to check.
+ * @returns Weather the url is an image string.
+ */
+export const isImageString = (url: string) => {
+  if (!url) return false;
+  return url.startsWith('data:image');
+};
+
+/**
  * Infers the extension of a file based on its type.
  * @param filename The name of the file.
  * @param filetype The type of the file.

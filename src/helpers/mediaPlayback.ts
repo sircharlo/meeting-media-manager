@@ -16,11 +16,6 @@ import { isHeic, isJwpub, isPdf, isSvg } from 'src/utils/media';
 
 import { errorCatcher } from './error-catcher';
 
-export const isImageString = (url: string) => {
-  if (!url) return false;
-  return url.startsWith('data:image');
-};
-
 const jwpubDecompressor = async (jwpubPath: string, outputPath: string) => {
   try {
     await window.electronApi.decompress(jwpubPath, outputPath);
