@@ -3,7 +3,7 @@ layout: home
 hero:
   name: M³ documentation
   text: Help to set up and use Meeting Media Manager
-  image: /icon.png
+  image: /logo.svg
   actions:
     - theme: brand
       text: Install M³
@@ -11,10 +11,10 @@ hero:
       link: https://sircharlo.github.io/meeting-media-manager/using-at-a-kingdom-hall#download-and-install
     - theme: alt
       text: Using at a Kingdom Hall
-      link: /using-at-a-kingdom-hall
+      link: /wes-x-pgw/using-at-a-kingdom-hall
     - theme: alt
       text: About
-      link: /about
+      link: /wes-x-pgw/about
 features:
   - icon: 🚀
     title: Automatic media downloads
