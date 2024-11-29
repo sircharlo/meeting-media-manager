@@ -3,6 +3,7 @@ import type { PDFPageProxy } from 'pdfjs-dist';
 import type { RenderParameters } from 'pdfjs-dist/types/src/display/api';
 
 import { ensureDir, writeFile } from 'fs-extra';
+import { FULL_HD } from 'src/constants/media';
 import { basename, join } from 'upath';
 
 import { captureElectronError } from '../utils';
@@ -72,7 +73,6 @@ export const convertPdfToImages = async (
         const context = canvas.getContext('2d');
         if (!context) return [];
 
-        const FULL_HD = { height: 1080, width: 1920 };
         const scale = Math.min(
           (2 * FULL_HD.width) / viewport.width,
           (2 * FULL_HD.height) / viewport.height,
