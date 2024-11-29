@@ -3,7 +3,7 @@ layout: home
 hero:
   name: Documentação do M³
   text: Aqui você encontra ajuda para configurar e usar o Meeting Media Manager
-  image: /icon.png
+  image: /logo.svg
   actions:
     - theme: brand
       text: Instalar M³
