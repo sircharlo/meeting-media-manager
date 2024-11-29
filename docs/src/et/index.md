@@ -7,7 +7,7 @@ hero:
   actions:
     - theme: brand
       text: Paigalda M³
-      link: /using-at-a-kingdom-hall#download-and-install
+      link: /et/using-at-a-kingdom-hall#download-and-install
     - theme: alt
       text: Kuningriigisaalis kasutamiseks
       link: /et/using-at-a-kingdom-hall
