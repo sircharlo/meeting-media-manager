@@ -224,7 +224,6 @@ import {
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
-  convertImageIfNeeded,
   decompressJwpub,
   findDb,
   showMediaWindow,
@@ -232,6 +231,7 @@ import {
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { useAppSettingsStore } from 'src/stores/app-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { convertImageIfNeeded } from 'src/utils/converters';
 import { getTempPath } from 'src/utils/fs';
 import { isImage, isJwpub } from 'src/utils/media';
 import { computed, onMounted, ref, watch } from 'vue';

@@ -501,7 +501,6 @@ import {
   mapOrder,
 } from 'src/helpers/jw-media';
 import {
-  convertImageIfNeeded,
   decompressJwpub,
   findDb,
   getMediaFromJwPlaylist,
@@ -509,6 +508,7 @@ import {
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+import { convertImageIfNeeded } from 'src/utils/converters';
 import {
   dateFromString,
   formatDate,

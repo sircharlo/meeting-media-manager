@@ -31,7 +31,6 @@ import { isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getSubtitlesUrl, getThumbnailUrl } from 'src/helpers/fs';
 import {
-  convertImageIfNeeded,
   decompressJwpub,
   findDb,
   getMediaFromJwPlaylist,
@@ -39,6 +38,7 @@ import {
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { fetchJson, fetchPubMediaLinks, fetchRaw } from 'src/utils/api';
+import { convertImageIfNeeded } from 'src/utils/converters';
 import {
   dateFromString,
   datesAreSame,
