@@ -7,7 +7,7 @@ hero:
   actions:
     - theme: brand
       text: Установить M³
-      link: /using-at-a-kingdom-hall#download-and-install
+      link: /ru/using-at-a-kingdom-hall#download-and-install
     - theme: alt
       text: Использование в Зале Царства
       link: /ru/using-at-a-kingdom-hall
