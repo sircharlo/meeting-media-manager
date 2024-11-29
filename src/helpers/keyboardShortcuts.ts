@@ -68,10 +68,12 @@ export const registerCustomShortcut = (
       !currentState.currentSettings ||
       !currentState.currentSettings[shortcutName] ||
       !currentState.currentSettings?.enableKeyboardShortcuts
-    )
+    ) {
       return;
-    if (!keySequence)
+    }
+    if (!keySequence) {
       keySequence = currentState.currentSettings[shortcutName] as string;
+    }
     window.electronApi.registerShortcut(shortcutName, keySequence);
   } catch (error) {
     errorCatcher(error);
