@@ -34,11 +34,6 @@
       </q-tabs>
       <div class="q-pr-scroll overflow-auto col items-start q-px-md">
         <template v-if="selectedBibleBook">
-          <!-- <div class="col-shrink full-width q-px-md q-pb-md">
-            <div class="text-subtitle1">
-              {{ selectedBibleBook }}
-            </div>
-          </div> -->
           <div class="row">
             <div class="col">
               <div class="text-caption text-uppercase">
@@ -49,8 +44,10 @@
                   v-for="chapter in selectedBookChapters"
                   :key="chapter"
                   class="rounded-borders-sm col-shrink grid-margin"
-                  :color="
-                    selectedChapter === chapter ? 'primary' : 'accent-400'
+                  :class="
+                    selectedChapter === chapter
+                      ? 'bg-primary text-white'
+                      : 'bg-primary-light'
                   "
                   :disable="loading"
                   :label="chapter"
@@ -65,74 +62,73 @@
               <div class="text-caption text-uppercase">
                 {{ $t('verse-or-verses') }}
               </div>
-              <div class="q-px-md overflow-auto col full-width flex">
-                {{ selectedChapterVerses }}
+              <div
+                class="q-px-md overflow-auto col full-width flex"
+                @mouseleave="hoveredVerse = null"
+              >
                 <q-btn
                   v-for="verse in selectedChapterVerses"
                   :key="verse"
                   class="rounded-borders-sm col-shrink grid-margin"
-                  :color="
-                    chosenVerses.includes(verse) ? 'primary' : 'accent-400'
+                  :class="
+                    chosenVerses.includes(verse)
+                      ? 'bg-primary text-white'
+                      : chosenVerses.length === 2 &&
+                          verse > Math.min(...chosenVerses) &&
+                          verse < Math.max(...chosenVerses)
+                        ? 'bg-primary-semi-transparent text-white'
+                        : chosenVerses.length === 1 &&
+                            hoveredVerse !== null &&
+                            verse > Math.min(chosenVerses[0], hoveredVerse) &&
+                            verse < Math.max(chosenVerses[0], hoveredVerse)
+                          ? 'bg-primary-semi-transparent text-white'
+                          : 'bg-primary-light'
                   "
                   :disable="loading"
                   :label="verse"
                   style="width: 3em; height: 3em"
                   unelevated
                   @click="toggleVerse(verse)"
+                  @mouseover="hoveredVerse = verse"
                 />
               </div>
             </div>
           </div>
         </template>
         <template v-else>
-          <div class="col-shrink full-width q-px-md q-pb-md">
+          <div
+            v-for="(section, sectionIndex) in [
+              {
+                title: 'hebrew-aramaic-scriptures',
+                books: bibleAudioMediaHebrew,
+              },
+              { title: 'greek-scriptures', books: bibleAudioMediaGreek },
+            ]"
+            :key="sectionIndex"
+            class="col-shrink full-width q-px-md q-py-md"
+          >
             <div class="text-caption text-uppercase">
-              {{ $t('hebrew-aramaic-scriptures') }}
+              {{ $t(section.title) }}
             </div>
-          </div>
-          <div class="row full-width q-col-gutter-xs">
-            <div
-              v-for="(book, index) in bibleAudioMediaHebrew"
-              :key="index"
-              class="col col-xs-4 col-sm-3 col-md-2 col-lg-1"
-            >
-              <q-btn
-                class="full-width"
-                color="accent-200"
-                no-caps
-                text-color="black"
-                unelevated
-                @click="selectedBibleBook = book.booknum"
+            <div class="row full-width q-col-gutter-xs">
+              <div
+                v-for="(book, index) in section.books"
+                :key="index"
+                class="col col-xs-4 col-sm-3 col-md-2 col-lg-1"
               >
-                <div class="ellipsis">
-                  {{ book.pubName }}
-                </div>
-              </q-btn>
-            </div>
-          </div>
-          <div class="col-shrink full-width q-px-md q-py-md">
-            <div class="text-caption text-uppercase">
-              {{ $t('greek-scriptures') }}
-            </div>
-          </div>
-          <div class="row full-width q-col-gutter-xs">
-            <div
-              v-for="(book, index) in bibleAudioMediaGreek"
-              :key="index"
-              class="col col-xs-4 col-sm-3 col-md-2 col-lg-1"
-            >
-              <q-btn
-                class="full-width"
-                color="accent-200"
-                no-caps
-                text-color="black"
-                unelevated
-                @click="selectedBibleBook = book.booknum"
-              >
-                <div class="ellipsis">
-                  {{ book.pubName }}
-                </div>
-              </q-btn>
+                <q-btn
+                  class="full-width"
+                  color="accent-200"
+                  no-caps
+                  text-color="black"
+                  unelevated
+                  @click="selectedBibleBook = book.booknum"
+                >
+                  <div class="ellipsis">
+                    {{ book.pubName }}
+                  </div>
+                </q-btn>
+              </div>
             </div>
           </div>
         </template>
@@ -151,9 +147,9 @@
             v-if="chosenVerses.length"
             v-close-popup
             color="primary"
-            :label="$t('add') + ' (' + chosenVerses.length + ')'"
+            :label="$t('add') + totalChosenVerses"
+            @click="addSelectedVerses()"
           />
-          <!-- @click="addSelectedMediaItems()" -->
           <q-btn
             v-else
             v-close-popup
@@ -211,13 +207,18 @@ const selectedBookMedia = computed(() => {
   return mediaFiles;
 });
 
+const selectedChapterMedia = computed(() => {
+  return selectedBookMedia.value.filter(
+    (item) => item.track === selectedChapter.value,
+  );
+});
+
 const selectedBookChapters = computed(() => {
   return selectedBookMedia.value.map((item) => item.track || 0);
 });
 
 const selectedChapterVerses = computed(() => {
-  return selectedBookMedia.value
-    .filter((item) => item.track === selectedChapter.value)
+  return selectedChapterMedia.value
     .map((item) => item.markers)
     .flatMap((item) => item.markers)
     .map((item) => item.verseNumber)
@@ -241,12 +242,25 @@ watch(
 const loading = ref<boolean>(false);
 
 const chosenVerses = ref<number[]>([]);
+const hoveredVerse = ref<null | number>(null);
+const totalChosenVerses = computed(() => {
+  return !chosenVerses.value.length
+    ? ''
+    : ' (' +
+        (chosenVerses.value.length === 2
+          ? Math.abs(chosenVerses.value[0] - chosenVerses.value[1]) + 1
+          : chosenVerses.value.length === 1
+            ? 1
+            : '') +
+        ')';
+});
 
 const toggleVerse = (verse: number) => {
-  if (chosenVerses.value.includes(verse)) {
-    chosenVerses.value = chosenVerses.value.filter((v) => v !== verse);
+  if (chosenVerses.value.length === 2) {
+    chosenVerses.value = [verse];
   } else {
     chosenVerses.value.push(verse);
+    chosenVerses.value.sort((a, b) => a - b);
   }
 };
 
@@ -266,12 +280,48 @@ whenever(open, () => {
   fetchMedia();
 });
 
-// const addSelectedMediaItems = async () => {
-//   for (const mediaItem of selectedMediaItems.value) {
-//     await addStudyBibleMedia(mediaItem);
-//   }
-//   resetBibleBook(true, true);
-// };
+const addSelectedVerses = async () => {
+  const timeToMs = (time: string) => {
+    const [h, m, s] = time.split(':').map(parseFloat);
+    return (h * 3600 + m * 60 + s) * 1000;
+  };
+
+  const msToTime = (ms: number) => {
+    const h = Math.floor(ms / 3600000)
+      .toString()
+      .padStart(2, '0');
+    const m = Math.floor((ms % 3600000) / 60000)
+      .toString()
+      .padStart(2, '0');
+    const s = ((ms % 60000) / 1000).toFixed(3).padStart(6, '0');
+    return `${h}:${m}:${s}`;
+  };
+
+  const startTime =
+    selectedChapterMedia.value.map((item) =>
+      item.markers.markers.find(
+        (marker) => marker.verseNumber === chosenVerses.value[0],
+      ),
+    )?.[0]?.startTime || 0;
+  const endVerse = selectedChapterMedia.value.map((item) =>
+    item.markers.markers.find(
+      (marker) => marker.verseNumber === chosenVerses.value[1],
+    ),
+  )?.[0];
+  const endTime = msToTime(
+    endVerse ? timeToMs(endVerse.startTime) + timeToMs(endVerse.duration) : 0,
+  );
+  console.log(chosenVerses.value[0], startTime, chosenVerses.value[1], endTime);
+  // for (const verse of chosenVerses.value.sort()) {
+  //   console.log(
+  //     verse,
+  //     selectedChapterMedia.value.map((item) =>
+  //       item.markers.markers.find((marker) => marker.verseNumber === verse),
+  //     ),
+  //   );
+  // }
+  resetBibleBook(true, true);
+};
 
 // const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
 //   if (mediaItem.MimeType.includes('image')) {
@@ -334,5 +384,6 @@ const resetBibleBook = (closeBook = false, closeDialog = false) => {
   if (closeBook) selectedBibleBook.value = 0;
   selectedChapter.value = 0;
   chosenVerses.value = [];
+  hoveredVerse.value = null;
 };
 </script>
