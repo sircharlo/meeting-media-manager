@@ -3,7 +3,7 @@ import type { ExclusiveEventHintOrCaptureContext } from '@sentry/vue/node_module
 import { captureException } from '@sentry/vue';
 import { IS_DEV } from 'src/constants/general';
 
-const errorCatcher = async (
+export const errorCatcher = async (
   originalError: Error | string | unknown,
   context?: ExclusiveEventHintOrCaptureContext,
 ) => {
@@ -15,13 +15,3 @@ const errorCatcher = async (
     console.warn('context', context);
   }
 };
-
-// const warningCatcher = (warning: string) => {
-//   if (process.env.NODE_ENV === 'production') {
-//     Sentry.captureMessage(warning);
-//   } else {
-//     console.warn(warning);
-//   }
-// };
-
-export { errorCatcher };

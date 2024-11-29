@@ -3,12 +3,11 @@ layout: home
 hero:
   name: M³ documentatie
   text: Hulp bij het opzetten en gebruiken van M³
-  image: /icon.png
+  image: /logo.svg
   actions:
     - theme: brand
       text: Installeer M³
-      target: _blank
-      link: https://sircharlo.github.io/meeting-media-manager/using-at-a-kingdom-hall#download-and-install
+      link: /nl/using-at-a-kingdom-hall#download-and-install
     - theme: alt
       text: Gebruik in de Koninkrijkszaal
       link: /nl/using-at-a-kingdom-hall

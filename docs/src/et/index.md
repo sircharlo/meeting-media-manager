@@ -3,12 +3,11 @@ layout: home
 hero:
   name: M³ dokumentatsioon
   text: Abi Meeting Media Manageri seadistamisel ja kasutamisel
-  image: /icon.png
+  image: /logo.svg
   actions:
     - theme: brand
       text: Paigalda M³
-      target: _blank
-      link: https://sircharlo.github.io/meeting-media-manager/using-at-a-kingdom-hall#download-and-install
+      link: /et/using-at-a-kingdom-hall#download-and-install
     - theme: alt
       text: Kuningriigisaalis kasutamiseks
       link: /et/using-at-a-kingdom-hall

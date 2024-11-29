@@ -1,69 +1,11 @@
-import type { ObsSceneType } from 'src/types';
-
-import { OBSWebSocketError } from 'obs-websocket-js';
-import { obsWebSocket } from 'src/boot/globals';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useObsStateStore } from 'src/stores/obs-state';
+import { sleep } from 'src/utils/general';
+import { initObsWebSocket, obsWebSocket } from 'src/utils/obs';
+import { portNumberValidator } from 'src/utils/settings';
 
-import { portNumberValidator } from './settings';
-
-const sendObsSceneEvent = (scene: ObsSceneType) => {
-  if (!scene) return;
-  window.dispatchEvent(
-    new CustomEvent<{ scene: ObsSceneType }>('obsSceneEvent', {
-      detail: { scene },
-    }),
-  );
-};
-
-const isUUID = (uuid?: string) => {
-  if (!uuid) return false;
-  try {
-    const uuidRegex =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    return uuidRegex.test(uuid);
-  } catch (error) {
-    errorCatcher(error);
-    return false;
-  }
-};
-
-const configuredScenesAreAllUUIDs = () => {
-  try {
-    const currentState = useCurrentStateStore();
-    const configuredScenes = [
-      currentState.currentSettings?.obsCameraScene,
-      currentState.currentSettings?.obsImageScene,
-      currentState.currentSettings?.obsMediaScene,
-    ].filter((s): s is string => !!s);
-    if (!configuredScenes.length) return true;
-    return configuredScenes.every((scene) => isUUID(scene));
-  } catch (error) {
-    errorCatcher(error);
-    return false;
-  }
-};
-
-const obsErrorHandler = (err: OBSWebSocketError) => {
-  const obsState = useObsStateStore();
-  obsState.obsMessage = 'obs.error';
-  if (err?.code && ![-1, 1001, 1006, 4009].includes(err.code))
-    errorCatcher(err);
-};
-
-const obsCloseHandler = () => {
-  const obsState = useObsStateStore();
-  obsState.obsConnectionState = 'disconnected';
-  obsState.obsMessage = 'obs.disconnected';
-};
-
-const sleep = (ms: number) =>
-  new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-
-const obsConnect = async (setup?: boolean) => {
+export const obsConnect = async (setup?: boolean) => {
   const currentState = useCurrentStateStore();
   const obsState = useObsStateStore();
   try {
@@ -90,6 +32,7 @@ const obsConnect = async (setup?: boolean) => {
       obsState.obsConnectionState !== 'connected'
     ) {
       try {
+        await initObsWebSocket();
         const connection = await obsWebSocket?.connect(
           'ws://127.0.0.1:' + obsPort,
           obsPassword,
@@ -101,7 +44,8 @@ const obsConnect = async (setup?: boolean) => {
           break;
         }
       } catch (err) {
-        if (err instanceof OBSWebSocketError) obsErrorHandler(err);
+        const { OBSWebSocketError } = await import('obs-websocket-js');
+        if (err instanceof OBSWebSocketError) obsState.obsErrorHandler(err);
         else errorCatcher(err);
       } finally {
         attempt++;
@@ -113,13 +57,4 @@ const obsConnect = async (setup?: boolean) => {
   } catch (error) {
     errorCatcher(error);
   }
-};
-
-export {
-  configuredScenesAreAllUUIDs,
-  isUUID,
-  obsCloseHandler,
-  obsConnect,
-  obsErrorHandler,
-  sendObsSceneEvent,
 };

@@ -38,29 +38,24 @@
 </template>
 
 <script setup lang="ts">
-import { OBSWebSocketError } from 'obs-websocket-js';
 import { storeToRefs } from 'pinia';
-import { obsWebSocket } from 'src/boot/globals';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import {
-  configuredScenesAreAllUUIDs,
-  obsCloseHandler,
-  obsConnect,
-  obsErrorHandler,
-} from 'src/helpers/obs';
+import { obsConnect } from 'src/helpers/obs';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useObsStateStore } from 'src/stores/obs-state';
-import { onMounted, onUnmounted } from 'vue';
+import { initObsWebSocket, obsWebSocket } from 'src/utils/obs';
+import { onMounted, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
-const { currentSettings } = storeToRefs(currentState);
+const { configuredScenesAreAllUUIDs, currentSettings } =
+  storeToRefs(currentState);
 
 const obsState = useObsStateStore();
 const { currentScene, obsConnectionState, obsMessage, previousScene, scenes } =
   storeToRefs(obsState);
-const { sceneExists } = obsState;
+const { obsCloseHandler, obsErrorHandler, sceneExists } = obsState;
 
 const obsPopup = defineModel<boolean>({ required: true });
 
@@ -72,7 +67,7 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
       if (sceneList) {
         scenes.value = sceneList.scenes.reverse();
         const current =
-          configuredScenesAreAllUUIDs() && sceneList.currentProgramSceneUuid
+          configuredScenesAreAllUUIDs.value && sceneList.currentProgramSceneUuid
             ? sceneList.currentProgramSceneUuid
             : sceneList.currentProgramSceneName;
 
@@ -91,6 +86,7 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
       }
     } catch (error) {
       attempts++;
+      const { OBSWebSocketError } = await import('obs-websocket-js');
       if (
         error instanceof OBSWebSocketError &&
         error.message.includes('OBS is not ready')
@@ -119,8 +115,13 @@ const notifySceneNotFound = () =>
     type: 'negative',
   });
 
-onMounted(() => {
+const initObsListeners = async () => {
   try {
+    if (!currentSettings.value?.obsEnable) return;
+    await initObsWebSocket();
+    if (!obsWebSocket) return;
+    removeObsListeners();
+
     obsWebSocket.on('ConnectionOpened', () => {
       obsConnectionState.value = 'connecting';
     });
@@ -130,7 +131,7 @@ onMounted(() => {
       'CurrentProgramSceneChanged',
       (data: { sceneName: string; sceneUuid: string }) => {
         const newScene =
-          configuredScenesAreAllUUIDs() && data.sceneUuid
+          configuredScenesAreAllUUIDs.value && data.sceneUuid
             ? data.sceneUuid
             : data.sceneName;
 
@@ -156,18 +157,43 @@ onMounted(() => {
   } catch (error) {
     errorCatcher(error);
   }
-});
+};
 
-onUnmounted(() => {
+const removeObsListeners = () => {
+  const events = [
+    'ConnectionClosed',
+    'ConnectionError',
+    'ConnectionOpened',
+    'CurrentProgramSceneChanged',
+    'Identified',
+    'SceneListChanged',
+  ] as const;
   try {
-    obsWebSocket.removeAllListeners('ConnectionClosed');
-    obsWebSocket.removeAllListeners('ConnectionError');
-    obsWebSocket.removeAllListeners('ConnectionOpened');
-    obsWebSocket.removeAllListeners('CurrentProgramSceneChanged');
-    obsWebSocket.removeAllListeners('Identified');
-    obsWebSocket.removeAllListeners('SceneListChanged');
+    if (!obsWebSocket) return;
+    events.forEach((event) => {
+      obsWebSocket?.removeAllListeners(event);
+    });
   } catch (error) {
     errorCatcher(error);
   }
+};
+
+onMounted(() => {
+  initObsListeners();
+});
+
+watch(
+  () => currentSettings.value?.obsEnable,
+  (val) => {
+    if (val) {
+      initObsListeners();
+    } else {
+      removeObsListeners();
+    }
+  },
+);
+
+onUnmounted(() => {
+  removeObsListeners();
 });
 </script>

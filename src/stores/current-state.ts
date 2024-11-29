@@ -11,16 +11,15 @@ import type {
 } from 'src/types';
 
 import { defineStore } from 'pinia';
-import { date } from 'quasar';
 import { settingsDefinitions } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getAdditionalMediaPath } from 'src/helpers/fs';
-import { isEmpty } from 'src/helpers/general';
-import { formatTime } from 'src/helpers/mediaPlayback';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useJwStore } from 'src/stores/jw';
+import { formatDate, getDateDiff } from 'src/utils/date';
+import { getAdditionalMediaPath } from 'src/utils/fs';
+import { isEmpty, isUUID } from 'src/utils/general';
+import { formatTime } from 'src/utils/time';
 
-const { formatDate, getDateDiff } = date;
 const { fs, path } = window.electronApi;
 
 interface Songbook {
@@ -130,6 +129,15 @@ export const useCurrentStateStore = defineStore('current-state', {
     },
   },
   getters: {
+    configuredScenesAreAllUUIDs(): boolean {
+      const configuredScenes = [
+        this.currentSettings?.obsCameraScene,
+        this.currentSettings?.obsImageScene,
+        this.currentSettings?.obsMediaScene,
+      ].filter((s): s is string => !!s);
+      if (!configuredScenes.length) return true;
+      return configuredScenes.every((scene) => isUUID(scene));
+    },
     congregationIsSelected: (state) => {
       return state.currentCongregation;
     },

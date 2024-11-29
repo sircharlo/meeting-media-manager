@@ -13,26 +13,34 @@ import type {
 } from 'src/types';
 
 import { defineStore } from 'pinia';
-import { date } from 'quasar';
 import { MAX_SONGS } from 'src/constants/jw';
-import { fetchJwLanguages, fetchYeartext } from 'src/helpers/api';
-import {
-  dateFromString,
-  isCoWeek,
-  isMwMeetingDay,
-  shouldUpdateList,
-} from 'src/helpers/date';
+import { isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import {
-  findBestResolution,
-  getPubMediaLinks,
-  isMediaLink,
-} from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import {
+  fetchJwLanguages,
+  fetchPubMediaLinks,
+  fetchYeartext,
+} from 'src/utils/api';
+import { dateFromString, getDateDiff } from 'src/utils/date';
+import { isFileUrl } from 'src/utils/fs';
+import { findBestResolution, getPubId, isMediaLink } from 'src/utils/jw';
 
-const { getDateDiff } = date;
+/**
+ * Checks if a caches list should be updated
+ * @param list The cache list to check
+ * @param months How many months should pass before updating
+ * @returns Wether the list should be updated
+ */
+const shouldUpdateList = (list: CacheList | undefined, months: number) => {
+  if (!list) return true;
+  return (
+    !list.list.length ||
+    getDateDiff(new Date(), list.updated, 'months') > months
+  );
+};
 
-export function uniqueById<T extends { uniqueId: string }>(array: T[]): T[] {
+function uniqueById<T extends { uniqueId: string }>(array: T[]): T[] {
   return array.reduce((unique: T[], o: T) => {
     if (!unique.some((obj) => obj.uniqueId === o.uniqueId)) {
       unique.push(o);
@@ -246,7 +254,18 @@ export const useJwStore = defineStore('jw-store', {
                 langwritten,
                 pub: currentState.currentSongbook.pub,
               };
-              const pubMediaLinks = await getPubMediaLinks(songbook);
+              const pubMediaLinks = await fetchPubMediaLinks(
+                songbook,
+                this.urlVariables.pubMedia,
+                currentState.online,
+              );
+              if (!pubMediaLinks) {
+                const downloadId = getPubId(songbook, true);
+                currentState.downloadProgress[downloadId] = {
+                  error: true,
+                  filename: downloadId,
+                };
+              }
               if (!pubMediaLinks || !pubMediaLinks.files) {
                 continue;
               }
@@ -261,6 +280,7 @@ export const useJwStore = defineStore('jw-store', {
                   if (!acc.some((m) => m.track === mediaLink.track)) {
                     const bestItem = findBestResolution(
                       mediaItemLinks.filter((m) => m.track === mediaLink.track),
+                      currentState.currentSettings?.maxRes,
                     );
                     if (isMediaLink(bestItem)) acc.push(bestItem);
                   }
@@ -309,6 +329,7 @@ export const useJwStore = defineStore('jw-store', {
 
         const results = await Promise.allSettled(promises);
 
+        const { default: sanitizeHtml } = await import('sanitize-html');
         for (const result of results) {
           if (result.status === 'fulfilled') {
             const { wtlocale, yeartext } = result.value;
@@ -316,7 +337,6 @@ export const useJwStore = defineStore('jw-store', {
               if (!this.yeartexts[year]) {
                 this.yeartexts[year] = {};
               }
-              const { default: sanitizeHtml } = await import('sanitize-html');
 
               this.yeartexts[year][wtlocale] = sanitizeHtml(yeartext, {
                 allowedAttributes: { p: ['class'] },
@@ -359,9 +379,7 @@ export const useJwStore = defineStore('jw-store', {
       ).concat(
         state.additionalMediaMaps?.[currentCongregation]?.[selectedDate] || [],
       );
-      return allMediaItems.filter(
-        (media) => !window.electronApi.isFileUrl(media.fileUrl),
-      );
+      return allMediaItems.filter((media) => !isFileUrl(media.fileUrl));
     },
     yeartext: (state) => {
       const year = new Date().getFullYear();

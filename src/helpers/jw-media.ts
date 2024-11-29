@@ -7,65 +7,178 @@ import type {
   ImageSizes,
   ImageTypeSizes,
   JwLangCode,
+  JwPlaylistItem,
   MediaItemsMediator,
   MediaItemsMediatorFile,
   MediaLink,
   MediaSection,
   MultimediaExtractItem,
   MultimediaItem,
-  MultimediaItemsFetcher,
-  Publication,
   PublicationFetcher,
   PublicationFiles,
-  PublicationItem,
-  TableItem,
-  TableItemCount,
-  VideoMarker,
 } from 'src/types';
 
-import PQueue from 'p-queue';
-import { date } from 'quasar';
-import sanitize from 'sanitize-filename';
 import { queues } from 'src/boot/globals';
 import { FEB_2023, FOOTNOTE_TAR_PAR, MAX_SONGS } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
-import { fetchJson, fetchRaw } from 'src/helpers/api';
+import { isCoWeek, isMwMeetingDay } from 'src/helpers/date';
+import { errorCatcher } from 'src/helpers/error-catcher';
+import { exportAllDays } from 'src/helpers/export-media';
+import { getSubtitlesUrl, getThumbnailUrl } from 'src/helpers/fs';
+import {
+  decompressJwpub,
+  getMediaFromJwPlaylist,
+} from 'src/helpers/mediaPlayback';
+import { useCurrentStateStore } from 'src/stores/current-state';
+import { useJwStore } from 'src/stores/jw';
+import { fetchJson, fetchPubMediaLinks, fetchRaw } from 'src/utils/api';
+import { convertImageIfNeeded } from 'src/utils/converters';
 import {
   dateFromString,
-  datesAreSame,
+  formatDate,
   getSpecificWeekday,
-  isCoWeek,
-  isMwMeetingDay,
-} from 'src/helpers/date';
+  subtractFromDate,
+} from 'src/utils/date';
+import { getPublicationDirectory, trimFilepathAsNeeded } from 'src/utils/fs';
+import { sanitizeId } from 'src/utils/general';
+import { findBestResolution, getPubId, isMediaLink } from 'src/utils/jw';
 import {
-  getFileUrl,
   getMetadataFromMediaPath,
-  getPublicationDirectory,
-  getSubtitlesUrl,
-  getThumbnailUrl,
-  trimFilepathAsNeeded,
-} from 'src/helpers/fs';
-import {
-  convertImageIfNeeded,
-  decompressJwpub,
-  findDb,
-  getMediaFromJwPlaylist,
   isAudio,
   isImage,
   isJwPlaylist,
   isSong,
   isVideo,
-} from 'src/helpers/mediaPlayback';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
+} from 'src/utils/media';
+import {
+  findDb,
+  getDocumentMultimediaItems,
+  getMediaVideoMarkers,
+  getMultimediaMepsLangs,
+  getPublicationInfoFromDb,
+} from 'src/utils/sqlite';
 
-import { errorCatcher } from './error-catcher';
+const { executeQuery, fileUrlToPath, fs, path, pathToFileURL, readdir } =
+  window.electronApi;
 
-const { formatDate, subtractFromDate } = date;
+export const copyToDatedAdditionalMedia = async (
+  filepathToCopy: string,
+  section?: MediaSection,
+  addToAdditionMediaMap?: boolean,
+) => {
+  const currentStateStore = useCurrentStateStore();
+  const jwStore = useJwStore();
+  const datedAdditionalMediaDir =
+    await currentStateStore.getDatedAdditionalMediaDirectory();
 
-const { executeQuery, fileUrlToPath, fs, path, readdir } = window.electronApi;
+  try {
+    if (!filepathToCopy || !(await fs.exists(filepathToCopy))) return '';
+    let datedAdditionalMediaPath = path.join(
+      datedAdditionalMediaDir,
+      path.basename(filepathToCopy),
+    );
+    datedAdditionalMediaPath = trimFilepathAsNeeded(datedAdditionalMediaPath);
+    const uniqueId = sanitizeId(
+      formatDate(currentStateStore.selectedDate, 'YYYYMMDD') +
+        '-' +
+        pathToFileURL(datedAdditionalMediaPath),
+    );
+    if (await fs.exists(datedAdditionalMediaPath)) {
+      if (filepathToCopy !== datedAdditionalMediaPath) {
+        await fs.remove(datedAdditionalMediaPath);
+        jwStore.removeFromAdditionMediaMap(uniqueId);
+      }
+    }
+    if (filepathToCopy !== datedAdditionalMediaPath)
+      await fs.copy(filepathToCopy, datedAdditionalMediaPath);
+    if (addToAdditionMediaMap)
+      await addToAdditionMediaMapFromPath(
+        datedAdditionalMediaPath,
+        section,
+        uniqueId,
+      );
+    return datedAdditionalMediaPath;
+  } catch (error) {
+    errorCatcher(error);
+    return '';
+  }
+};
 
-const addJwpubDocumentMediaToFiles = async (
+export const addToAdditionMediaMapFromPath = async (
+  additionalFilePath: string,
+  section: MediaSection = 'additional',
+  uniqueId?: string,
+  additionalInfo?: {
+    duration?: number;
+    song?: string;
+    thumbnailUrl?: string;
+    title?: string;
+    url?: string;
+  },
+) => {
+  try {
+    if (!additionalFilePath) return;
+    const currentStateStore = useCurrentStateStore();
+    const jwStore = useJwStore();
+    const video = isVideo(additionalFilePath);
+    const audio = isAudio(additionalFilePath);
+    const metadata =
+      video || audio
+        ? await getMetadataFromMediaPath(additionalFilePath)
+        : undefined;
+
+    const duration = additionalInfo?.duration || metadata?.format.duration || 0;
+    const title =
+      additionalInfo?.title ||
+      metadata?.common.title ||
+      path
+        .basename(additionalFilePath)
+        .replace(path.extname(additionalFilePath), '');
+
+    if (!uniqueId) {
+      uniqueId = sanitizeId(
+        formatDate(currentStateStore.selectedDate, 'YYYYMMDD') +
+          '-' +
+          pathToFileURL(additionalFilePath),
+      );
+    }
+    jwStore.addToAdditionMediaMap(
+      [
+        {
+          duration,
+          fileUrl: pathToFileURL(additionalFilePath),
+          isAdditional: true,
+          isAudio: audio,
+          isImage: isImage(additionalFilePath),
+          isVideo: video,
+          section,
+          sectionOriginal: section,
+          song: additionalInfo?.song,
+          streamUrl: additionalInfo?.url,
+          thumbnailUrl:
+            additionalInfo?.thumbnailUrl ??
+            (await getThumbnailUrl(additionalFilePath, true)),
+          title,
+          uniqueId,
+        },
+      ],
+      section,
+    );
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          additionalFilePath,
+          additionalInfo,
+          name: 'addToAdditionMediaMapFromPath',
+          uniqueId,
+        },
+      },
+    });
+  }
+};
+
+export const addJwpubDocumentMediaToFiles = async (
   dbPath: string,
   document: DocumentItem,
   section?: MediaSection,
@@ -76,10 +189,13 @@ const addJwpubDocumentMediaToFiles = async (
   try {
     if (!dbPath) return;
     const publication = getPublicationInfoFromDb(dbPath);
-    const multimediaItems = getDocumentMultimediaItems({
-      db: dbPath,
-      docId: document.DocumentId,
-    });
+    const multimediaItems = getDocumentMultimediaItems(
+      {
+        db: dbPath,
+        docId: document.DocumentId,
+      },
+      currentStateStore.currentSettings?.includePrinted,
+    );
     for (let i = 0; i < multimediaItems.length; i++) {
       multimediaItems[i] = await addFullFilePathToMultimediaItem(
         multimediaItems[i],
@@ -101,21 +217,24 @@ const addJwpubDocumentMediaToFiles = async (
   }
 };
 
-const downloadFileIfNeeded = async ({
+export const downloadFileIfNeeded = async ({
   dir,
   filename,
   lowPriority = false,
   size,
   url,
 }: FileDownloader): Promise<DownloadedFile> => {
-  if (!url)
+  if (!url) {
     return {
       new: false,
       path: '',
     };
+  }
+
   const currentStateStore = useCurrentStateStore();
   await fs.ensureDir(dir);
   if (!filename) filename = path.basename(url);
+  const { default: sanitize } = await import('sanitize-filename');
   filename = sanitize(filename);
   const destinationPath = path.join(dir, filename);
   const remoteSize: number =
@@ -164,137 +283,6 @@ const downloadFileIfNeeded = async ({
   return result;
 };
 
-export const addDayToExportQueue = async (targetDate?: Date) => {
-  folderExportQueue.add(() => exportDayToFolder(targetDate));
-};
-
-const exportDayToFolder = async (targetDate?: Date) => {
-  const currentStateStore = useCurrentStateStore();
-  const jwStore = useJwStore();
-
-  if (
-    !targetDate ||
-    !currentStateStore?.currentCongregation ||
-    !currentStateStore.currentSettings?.mediaAutoExportFolder
-  ) {
-    return;
-  }
-
-  const dateString = formatDate(targetDate, 'YYYY/MM/DD');
-  const dateFolderName = formatDate(targetDate, 'YYYY-MM-DD');
-
-  const dynamicMedia = [
-    ...(jwStore.lookupPeriod?.[currentStateStore.currentCongregation]?.find(
-      (d) => datesAreSame(d.date, targetDate),
-    )?.dynamicMedia || []),
-    ...(jwStore.additionalMediaMaps?.[currentStateStore.currentCongregation]?.[
-      dateString
-    ] || []),
-    ...(currentStateStore.watchFolderMedia[dateString] || []),
-  ];
-
-  const dynamicMediaFiltered = Array.from(
-    new Map(dynamicMedia.map((item) => [item.fileUrl, item])).values(),
-  )
-    .sort(
-      mapOrder(
-        jwStore.mediaSort[currentStateStore.currentCongregation]?.[
-          dateString
-        ] || [],
-      ),
-    )
-    .sort((a, b) => {
-      const sectionOrder: MediaSection[] = [
-        'additional',
-        'tgw',
-        'ayfm',
-        'lac',
-        'wt',
-        'circuitOverseer',
-      ];
-      return sectionOrder.indexOf(a.section) - sectionOrder.indexOf(b.section);
-    });
-
-  const dayMediaLength = dynamicMediaFiltered.length;
-
-  const destFolder = path.join(
-    currentStateStore.currentSettings.mediaAutoExportFolder,
-    dateFolderName,
-  );
-
-  try {
-    await fs.ensureDir(destFolder);
-  } catch (error) {
-    errorCatcher(error);
-    return; // Exit early if we can't create the folder
-  }
-
-  const expectedFiles = new Set<string>();
-
-  const sections: Partial<Record<MediaSection, number>> = {}; // Object to store dynamic section prefixes
-  for (let i = 0; i < dayMediaLength; i++) {
-    try {
-      const m = dynamicMediaFiltered[i];
-      const sourceFilePath = window.electronApi.fileUrlToPath(m.fileUrl);
-      if (!sourceFilePath || !(await fs.exists(sourceFilePath))) continue;
-
-      if (!sections[m.section]) {
-        sections[m.section] = Object.keys(sections).length + 1;
-      }
-      const sectionPrefix = (sections[m.section] || 0)
-        .toString()
-        .padStart(2, '0');
-
-      const destFilePath = trimFilepathAsNeeded(
-        path.join(
-          destFolder,
-          sectionPrefix +
-            '-' +
-            (i + 1).toString().padStart(dayMediaLength > 99 ? 3 : 2, '0') +
-            ' ' +
-            (m.title
-              ? sanitize(m.title.replace(path.extname(m.fileUrl), '')) +
-                path.extname(m.fileUrl)
-              : path.basename(m.fileUrl)),
-        ),
-      );
-      const fileBaseName = path.basename(destFilePath);
-
-      // Check if destination file exists and matches size
-      if (await fs.exists(destFilePath)) {
-        const sourceStats = await fs.stat(sourceFilePath);
-        const destStats = await fs.stat(destFilePath);
-
-        if (sourceStats.size === destStats.size) {
-          expectedFiles.add(fileBaseName); // Mark as expected without copying
-          continue;
-        }
-      }
-
-      // Copy file if it doesn't exist or size doesn't match
-      expectedFiles.add(fileBaseName);
-      await fs.copy(sourceFilePath, destFilePath);
-    } catch (error) {
-      errorCatcher(error);
-    }
-  }
-
-  try {
-    const filesInDestFolder = await fs.readdir(destFolder);
-    for (const file of filesInDestFolder) {
-      try {
-        if (!expectedFiles.has(file)) {
-          await fs.remove(path.join(destFolder, file));
-        }
-      } catch (error) {
-        errorCatcher(error);
-      }
-    }
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
-
 export const mapOrder =
   (sortOrder: string | string[] | undefined) =>
   (a: DynamicMediaObject, b: DynamicMediaObject) => {
@@ -308,29 +296,7 @@ export const mapOrder =
     }
   };
 
-const folderExportQueue = new PQueue({ concurrency: 1 });
-
-export const exportAllDays = async () => {
-  try {
-    const jwStore = useJwStore();
-    const currentStateStore = useCurrentStateStore();
-    if (
-      !currentStateStore.currentSettings?.enableMediaAutoExport ||
-      !currentStateStore.currentSettings?.mediaAutoExportFolder
-    )
-      return;
-    const daysToExport = (
-      jwStore.lookupPeriod[currentStateStore.currentCongregation] || []
-    ).map((d) => d.date);
-    await folderExportQueue.addAll(
-      daysToExport.map((day) => () => exportDayToFolder(day)),
-    );
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
-
-const fetchMedia = async () => {
+export const fetchMedia = async () => {
   try {
     const currentStateStore = useCurrentStateStore();
     if (
@@ -377,6 +343,7 @@ const fetchMedia = async () => {
       day.complete = false;
     });
     if (!queues.meetings[currentStateStore.currentCongregation]) {
+      const { default: PQueue } = await import('p-queue');
       queues.meetings[currentStateStore.currentCongregation] = new PQueue({
         concurrency: 2,
       });
@@ -446,226 +413,34 @@ const getDbFromJWPUB = async (publication: PublicationFetcher) => {
   }
 };
 
-const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
-  try {
-    const pubQuery = executeQuery<PublicationItem>(
-      db,
-      'SELECT * FROM Publication',
-    )[0];
-
-    if (!pubQuery) return { issue: '', langwritten: '', pub: '' };
-
-    const publication: PublicationFetcher = {
-      issue: pubQuery.IssueTagNumber,
-      langwritten: mepslangs[pubQuery.MepsLanguageIndex],
-      pub: pubQuery.UndatedSymbol,
-    };
-
-    return publication;
-  } catch (error) {
-    errorCatcher(error);
-    return { issue: '', langwritten: '', pub: '' };
-  }
-};
-
 async function addFullFilePathToMultimediaItem(
   multimediaItem: MultimediaItem,
   publication: PublicationFetcher,
-) {
+): Promise<MultimediaItem> {
   try {
-    const fullFilePath = multimediaItem.FilePath
-      ? path.join(
-          await getPublicationDirectory(publication),
-          multimediaItem.FilePath,
-        )
-      : undefined;
-    const fullLinkedPreviewFilePath = multimediaItem.LinkedPreviewFilePath
-      ? path.join(
-          await getPublicationDirectory(publication),
-          multimediaItem.LinkedPreviewFilePath,
-        )
-      : undefined;
+    const paths: (keyof MultimediaItem)[] = [
+      'FilePath',
+      'LinkedPreviewFilePath',
+      'CoverPictureFilePath',
+    ];
+    const baseDir = await getPublicationDirectory(publication);
+
+    const resolvedPaths = Object.fromEntries(
+      paths.map((key) =>
+        multimediaItem[key]
+          ? [key, path.join(baseDir, multimediaItem[key])]
+          : [],
+      ),
+    );
     return {
       ...multimediaItem,
-      ...(fullFilePath ? { FilePath: fullFilePath } : {}),
-      ...(fullLinkedPreviewFilePath
-        ? { LinkedPreviewFilePath: fullLinkedPreviewFilePath }
-        : {}),
+      ...resolvedPaths,
     };
   } catch (error) {
     errorCatcher(error);
     return multimediaItem;
   }
 }
-
-const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
-  try {
-    if (!source.db) return [];
-    const multimediaMepsLangs: MultimediaItem[] = [];
-    for (const table of [
-      'Multimedia',
-      'DocumentMultimedia',
-      'ExtractMultimedia',
-    ]) {
-      // exists
-      try {
-        const tableExists =
-          executeQuery<TableItem>(
-            source.db,
-            `SELECT * FROM sqlite_master WHERE type='table' AND name='${table}'`,
-          ).length > 0;
-        if (!tableExists) continue;
-      } catch (error) {
-        errorCatcher(error, {
-          contexts: { fn: { name: 'getMultimediaMepsLangs', source, table } },
-        });
-        continue;
-      }
-      const columnQueryResult = executeQuery<TableItem>(
-        source.db,
-        `PRAGMA table_info(${table})`,
-      );
-
-      const columnMLIExists = columnQueryResult.some(
-        (column) => column.name === 'MepsLanguageIndex',
-      );
-      const columnKSExists = columnQueryResult.some(
-        (column) => column.name === 'KeySymbol',
-      );
-
-      if (columnKSExists && columnMLIExists)
-        multimediaMepsLangs.push(
-          ...executeQuery<MultimediaItem>(
-            source.db,
-            `SELECT DISTINCT KeySymbol, Track, IssueTagNumber, MepsLanguageIndex from ${table} ORDER by KeySymbol, IssueTagNumber, Track`,
-          ),
-        );
-    }
-    return multimediaMepsLangs;
-  } catch (error) {
-    errorCatcher(error);
-    return [];
-  }
-};
-
-const getMediaVideoMarkers = (
-  source: MultimediaItemsFetcher,
-  mediaId: number,
-) => {
-  try {
-    const mediaVideoMarkers = executeQuery<VideoMarker>(
-      source.db,
-      `SELECT * from VideoMarker WHERE MultimediaId = ${mediaId} ORDER by StartTimeTicks`,
-    );
-    return mediaVideoMarkers;
-  } catch (error) {
-    errorCatcher(error);
-    return [];
-  }
-};
-
-const getDocumentMultimediaItems = (source: MultimediaItemsFetcher) => {
-  try {
-    if (!source.db) return [];
-    const currentStateStore = useCurrentStateStore();
-    const DocumentMultimediaTable = executeQuery<TableItem>(
-      source.db,
-      "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'",
-    ).map((item) => item.name);
-    const mmTable =
-      DocumentMultimediaTable.length === 0
-        ? 'Multimedia'
-        : DocumentMultimediaTable[0];
-    const columnQueryResult = executeQuery<TableItem>(
-      source.db,
-      `PRAGMA table_info(${mmTable})`,
-    );
-
-    const ParagraphColumnsExist = columnQueryResult.some(
-      (column) => column.name === 'BeginParagraphOrdinal',
-    );
-
-    const targetParNrExists =
-      executeQuery<TableItem>(source.db, "PRAGMA table_info('Question')").some(
-        (item) => item.name === 'TargetParagraphNumberLabel',
-      ) &&
-      !!executeQuery<TableItemCount>(
-        source.db,
-        'SELECT COUNT(*) FROM Question',
-      )[0]?.count;
-
-    const LinkMultimediaIdExists = executeQuery<TableItem>(
-      source.db,
-      "PRAGMA table_info('Multimedia')",
-    ).some((item) => item.name === 'LinkMultimediaId');
-
-    const suppressZoomExists = executeQuery<TableItem>(
-      source.db,
-      "PRAGMA table_info('Multimedia')",
-    )
-      .map((item) => item.name)
-      .includes('SuppressZoom');
-
-    let select = 'SELECT Multimedia.*, Document.*';
-    select += mmTable === 'DocumentMultimedia' ? ', DocumentMultimedia.*' : '';
-    select += ParagraphColumnsExist ? ', DocumentParagraph.*' : '';
-    select += LinkMultimediaIdExists
-      ? ', LinkedMultimedia.FilePath AS LinkedPreviewFilePath'
-      : '';
-    let from = ' FROM Multimedia';
-    if (mmTable === 'DocumentMultimedia') {
-      from +=
-        ' INNER JOIN DocumentMultimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId';
-      from += ` LEFT JOIN DocumentParagraph ON ${mmTable}.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex`;
-    }
-    from += ` INNER JOIN Document ON ${mmTable}.DocumentId = Document.DocumentId`;
-    if (LinkMultimediaIdExists)
-      from +=
-        ' LEFT JOIN Multimedia AS LinkedMultimedia ON Multimedia.LinkMultimediaId = LinkedMultimedia.MultimediaId';
-    let where = `WHERE ${
-      source.docId || source.docId === 0
-        ? `Document.DocumentId = ${source.docId}`
-        : `Document.MepsDocumentId = ${source.mepsId}`
-    }`;
-
-    const videoString =
-      "(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')";
-    const imgString = `(Multimedia.MimeType LIKE '%image%'${
-      currentStateStore.currentSettings?.includePrinted
-        ? ''
-        : ' AND Multimedia.CategoryType <> 4 AND Multimedia.CategoryType <> 6'
-    } AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)`;
-
-    where += ` AND (${videoString} OR ${imgString})`;
-
-    if (
-      'BeginParagraphOrdinal' in source &&
-      'EndParagraphOrdinal' in source &&
-      ParagraphColumnsExist
-    ) {
-      where += ` AND ${mmTable}.BeginParagraphOrdinal >= ${source.BeginParagraphOrdinal} AND ${mmTable}.EndParagraphOrdinal <= ${source.EndParagraphOrdinal}`;
-    }
-
-    const groupAndSort = ParagraphColumnsExist
-      ? 'GROUP BY Multimedia.MultimediaId ORDER BY DocumentParagraph.BeginPosition'
-      : '';
-
-    if (targetParNrExists && ParagraphColumnsExist) {
-      from += ` LEFT JOIN Question ON Question.DocumentId = ${mmTable}.DocumentId AND Question.TargetParagraphOrdinal = ${mmTable}.BeginParagraphOrdinal`;
-    }
-    if (suppressZoomExists) {
-      where += ' AND Multimedia.SuppressZoom <> 1';
-    }
-    const items = executeQuery<MultimediaItem>(
-      source.db,
-      `${select} ${from} ${where} ${groupAndSort}`,
-    );
-    return items;
-  } catch (error) {
-    errorCatcher(error);
-    return [];
-  }
-};
 
 const getDocumentExtractItems = async (db: string, docId: number) => {
   try {
@@ -741,22 +516,25 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
 
       if (!extractDb) continue;
 
-      const extractItems = getDocumentMultimediaItems({
-        db: extractDb,
-        lang: extractLang,
-        mepsId: extract.RefMepsDocumentId,
-        ...(extract.RefBeginParagraphOrdinal
-          ? {
-              BeginParagraphOrdinal:
-                symbol === 'lmd' && extract.RefBeginParagraphOrdinal < 8
-                  ? 1 // Hack to show intro picture from the lmd brochure when appropriate
-                  : extract.RefBeginParagraphOrdinal,
-            }
-          : {}),
-        ...(extract.RefEndParagraphOrdinal
-          ? { EndParagraphOrdinal: extract.RefEndParagraphOrdinal }
-          : {}),
-      })
+      const extractItems = getDocumentMultimediaItems(
+        {
+          db: extractDb,
+          lang: extractLang,
+          mepsId: extract.RefMepsDocumentId,
+          ...(extract.RefBeginParagraphOrdinal
+            ? {
+                BeginParagraphOrdinal:
+                  symbol === 'lmd' && extract.RefBeginParagraphOrdinal < 8
+                    ? 1 // Hack to show intro picture from the lmd brochure when appropriate
+                    : extract.RefBeginParagraphOrdinal,
+              }
+            : {}),
+          ...(extract.RefEndParagraphOrdinal
+            ? { EndParagraphOrdinal: extract.RefEndParagraphOrdinal }
+            : {}),
+        },
+        currentStateStore.currentSettings?.includePrinted,
+      )
         .map((extractItem): MultimediaItem => {
           return {
             ...extractItem,
@@ -784,6 +562,382 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
   } catch (e: unknown) {
     errorCatcher(e);
     return [];
+  }
+};
+
+const getStudyBible = async () => {
+  try {
+    const nwtStyPublication_E: PublicationFetcher = {
+      fileformat: 'JWPUB',
+      langwritten: 'E',
+      pub: 'nwtsty',
+    };
+    const nwtStyDb_E = getDbFromJWPUB(nwtStyPublication_E);
+    const currentStateStore = useCurrentStateStore();
+    const languages = [
+      ...new Set([
+        currentStateStore.currentSettings?.lang,
+        currentStateStore.currentSettings?.langFallback,
+      ]),
+    ].filter((l): l is JwLangCode => !!l);
+    let nwtStyDb: null | string = null;
+    let nwtStyPublication: null | PublicationFetcher = null;
+    let nwtDb: null | string = null;
+    for (const langwritten of languages) {
+      if (!langwritten) continue;
+      nwtStyPublication = {
+        fileformat: 'JWPUB',
+        langwritten,
+        pub: 'nwtsty',
+      };
+      nwtStyDb = await getDbFromJWPUB(nwtStyPublication);
+      if (nwtStyDb) break;
+    }
+    if (!nwtStyDb) {
+      nwtStyPublication = nwtStyPublication_E;
+      nwtStyDb = await nwtStyDb_E;
+
+      let nwtPublication: null | PublicationFetcher = null;
+      for (const langwritten of languages) {
+        if (!langwritten) continue;
+        nwtPublication = {
+          fileformat: 'JWPUB',
+          langwritten,
+          pub: 'nwt',
+        };
+        nwtDb = await getDbFromJWPUB(nwtPublication);
+        if (nwtDb) break;
+      }
+    }
+    return {
+      nwtDb,
+      nwtStyDb,
+      nwtStyDb_E: await nwtStyDb_E,
+      nwtStyPublication,
+      nwtStyPublication_E,
+    };
+  } catch (error) {
+    errorCatcher(error);
+    return { nwtDb: null, nwtStyDb: null, nwtStyPublication: null };
+  }
+};
+
+export const getStudyBibleBooks = async () => {
+  try {
+    const {
+      nwtDb,
+      nwtStyDb,
+      nwtStyDb_E,
+      nwtStyPublication,
+      nwtStyPublication_E,
+    } = await getStudyBible();
+    if (!nwtStyDb || !nwtStyPublication) return {};
+
+    const bibleBooksQuery = `
+      SELECT DISTINCT
+          Document.*, 
+          BibleBook.*, 
+          SummaryDocument.DocumentId AS SummaryDocumentId,
+          CoverMultimedia.FilePath AS CoverPictureFilePath
+      FROM 
+          Document
+      INNER JOIN 
+          BibleBook ON BibleBook.BookDocumentId = Document.DocumentId
+      LEFT JOIN 
+          Document AS SummaryDocument ON SummaryDocument.DocumentId = BibleBook.IntroDocumentId
+      LEFT JOIN 
+          DocumentMultimedia ON 
+              DocumentMultimedia.DocumentId IN (Document.DocumentId, SummaryDocument.DocumentId)
+      LEFT JOIN 
+          Multimedia AS CoverMultimedia ON 
+              CoverMultimedia.CategoryType = 9 AND CoverMultimedia.MultimediaId = DocumentMultimedia.MultimediaId
+      WHERE 
+          Document.Type = 2;
+    `;
+
+    const bibleBookItems = window.electronApi.executeQuery<MultimediaItem>(
+      nwtStyDb,
+      bibleBooksQuery,
+    );
+
+    if (nwtStyDb_E) {
+      const englishBookItems = window.electronApi.executeQuery<MultimediaItem>(
+        nwtStyDb_E,
+        bibleBooksQuery,
+      );
+
+      englishBookItems.forEach((englishItem) => {
+        const styItem = bibleBookItems.find(
+          (item) => englishItem.BibleBookId === item.BibleBookId,
+        );
+        if (styItem && !styItem.CoverPictureFilePath) {
+          styItem.MepsLanguageIndex = englishItem.MepsLanguageIndex;
+          styItem.CoverPictureFilePath = englishItem.CoverPictureFilePath;
+        }
+      });
+    }
+
+    if (nwtDb) {
+      const bibleBooksSimpleQuery = `
+      SELECT *
+      FROM 
+          Document
+      WHERE
+          Class = 1
+    `;
+
+      const bibleBookLocalNames =
+        window.electronApi.executeQuery<JwPlaylistItem>(
+          nwtDb,
+          bibleBooksSimpleQuery,
+        );
+
+      bibleBookLocalNames.forEach((localItem) => {
+        const styItem = bibleBookItems.find(
+          (item) => localItem.ChapterNumber === item.BibleBookId,
+        );
+        if (styItem) {
+          styItem.Title = localItem.Title;
+        }
+      });
+    }
+    const bibleBooksObject = Object.fromEntries(
+      await Promise.all(
+        bibleBookItems
+          .filter((item) => !!item.BibleBookId && !!item.CoverPictureFilePath)
+          .map(async (item) => [
+            item.BibleBookId,
+            await addFullFilePathToMultimediaItem(
+              item,
+              item.MepsLanguageIndex === 0
+                ? nwtStyPublication_E
+                : nwtStyPublication,
+            ),
+          ]),
+      ),
+    );
+    return bibleBooksObject;
+  } catch (error) {
+    errorCatcher(error);
+    return {};
+  }
+};
+
+export const getStudyBibleCategories = async () => {
+  try {
+    const { nwtStyDb, nwtStyPublication } = await getStudyBible();
+    if (!nwtStyDb || !nwtStyPublication) return [];
+
+    const bibleMediaCategoriesQuery = `
+      select *
+      from PublicationViewItem
+      where PublicationViewId = 2
+        and DefaultDocumentId < 0
+        and ParentPublicationViewItemId < 0
+    `;
+
+    const bibleMediaCategories =
+      window.electronApi.executeQuery<MultimediaItem>(
+        nwtStyDb,
+        bibleMediaCategoriesQuery,
+      );
+
+    return bibleMediaCategories;
+  } catch (error) {
+    errorCatcher(error);
+    return [];
+  }
+};
+
+export const getStudyBibleMedia = async () => {
+  try {
+    const { nwtStyDb, nwtStyDb_E, nwtStyPublication, nwtStyPublication_E } =
+      await getStudyBible();
+    if (!nwtStyDb || !nwtStyPublication) throw new Error('No study bible');
+
+    const bibleBookMediaItemsQuery = `
+      SELECT 
+          vmm.MultimediaId,
+          bc.BookNumber,
+          bc.ChapterNumber,
+          bv.Label AS VerseLabel,
+          m.*,
+          CoverMultimedia.FilePath AS CoverPictureFilePath
+      FROM 
+          VerseMultimediaMap vmm
+      INNER JOIN 
+          BibleChapter bc ON vmm.BibleVerseId BETWEEN bc.FirstVerseId AND bc.LastVerseId
+      INNER JOIN 
+          BibleVerse bv ON vmm.BibleVerseId = bv.BibleVerseId
+      INNER JOIN 
+          Multimedia m ON vmm.MultimediaId = m.MultimediaId
+      INNER JOIN 
+          Multimedia AS CoverMultimedia ON CoverMultimedia.LinkMultimediaId = m.MultimediaId;
+    `;
+
+    const bibleBookMediaItems = window.electronApi.executeQuery<MultimediaItem>(
+      nwtStyDb,
+      bibleBookMediaItemsQuery,
+    );
+
+    const bibleBookDocumentsStartAtQuery = `
+      SELECT Document.DocumentId
+      FROM Document
+      WHERE Document.SectionNumber <> 0 
+        AND Document.Type <> 1
+      ORDER BY Document.DocumentId
+      LIMIT 1;
+    `;
+
+    const bibleBookDocumentsStartAt =
+      window.electronApi.executeQuery<DocumentItem>(
+        nwtStyDb,
+        bibleBookDocumentsStartAtQuery,
+      );
+
+    const bibleBookDocumentsStartAtId =
+      bibleBookDocumentsStartAt[0]?.DocumentId;
+
+    const bibleBookDocumentsEndAtQuery = `
+      SELECT Document.DocumentId
+      FROM Document
+      WHERE Document.SectionNumber <> 0 
+        AND Document.Type <> 1
+      ORDER BY Document.DocumentId DESC
+      LIMIT 1;
+    `;
+
+    const bibleBookDocumentsEndAt =
+      window.electronApi.executeQuery<DocumentItem>(
+        nwtStyDb,
+        bibleBookDocumentsEndAtQuery,
+      );
+
+    const bibleBookDocumentsEndAtId = bibleBookDocumentsEndAt[0]?.DocumentId;
+
+    const nonBibleBookMediaItemsQuery = `
+      WITH RankedMultimedia AS (
+          SELECT 
+              Multimedia.*,
+              Document.DocumentId,
+              Document.Title,
+              ParentDocument.Title AS ParentTitle,
+              ParentDocument.SectionNumber AS ParentSection,
+              Document.SectionNumber,
+              ParentDocument.Type AS ParentType,
+              Document.Type,
+              LinkedMultimedia.FilePath AS CoverPictureFilePath,
+              ROW_NUMBER() OVER (PARTITION BY Multimedia.MultimediaId ORDER BY Document.DocumentId) AS RowNum
+          FROM Multimedia
+          LEFT JOIN DocumentMultimedia 
+              ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId
+          LEFT JOIN Multimedia AS LinkedMultimedia 
+              ON Multimedia.LinkMultimediaId = LinkedMultimedia.MultimediaId
+          LEFT JOIN Document 
+              ON Document.DocumentId = DocumentMultimedia.DocumentId
+          LEFT JOIN InternalLink 
+              ON InternalLink.MepsDocumentId = Document.MepsDocumentId
+          LEFT JOIN DocumentInternalLink 
+              ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId
+          LEFT JOIN Document AS ParentDocument 
+              ON ParentDocument.DocumentId = DocumentInternalLink.DocumentId
+          WHERE 
+              Multimedia.CategoryType <> 9 
+              AND Multimedia.CategoryType <> 17 
+              AND (Document.SectionNumber IS NULL OR Document.SectionNumber <> 1)
+              AND (ParentDocument.SectionNumber IS NULL OR ParentDocument.SectionNumber <> 1)
+              AND (ParentDocument.Type IS NULL OR ParentDocument.Type <> 0)
+      )
+      SELECT *
+      FROM RankedMultimedia
+      WHERE RowNum = 1;
+  `;
+
+    const nonBibleBookMediaItems = window.electronApi
+      .executeQuery<MultimediaItem>(nwtStyDb, nonBibleBookMediaItemsQuery)
+      .filter(
+        (item) =>
+          item.DocumentId < bibleBookDocumentsStartAtId &&
+          item.DocumentId > bibleBookDocumentsEndAtId,
+      );
+
+    if (nwtStyDb_E) {
+      const englishBibleBookMediaItems =
+        window.electronApi.executeQuery<MultimediaItem>(
+          nwtStyDb_E,
+          bibleBookMediaItemsQuery,
+        );
+
+      englishBibleBookMediaItems.forEach((englishBibleBookItem) => {
+        const styItem = bibleBookMediaItems.find(
+          (item) =>
+            englishBibleBookItem.FilePath.replace(
+              '_E_',
+              `_${nwtStyPublication.langwritten}_`,
+            ) === item.FilePath,
+        );
+        if (!styItem) {
+          bibleBookMediaItems.push({
+            ...englishBibleBookItem,
+            MepsLanguageIndex: 0,
+          });
+        }
+      });
+
+      const englishNonBibleBookMediaItems =
+        window.electronApi.executeQuery<MultimediaItem>(
+          nwtStyDb_E,
+          nonBibleBookMediaItemsQuery,
+        );
+
+      englishNonBibleBookMediaItems.forEach((englishNonBibleBookItem) => {
+        const styItem = nonBibleBookMediaItems.find(
+          (item) =>
+            englishNonBibleBookItem.FilePath.replace(
+              '_E_',
+              `_${nwtStyPublication.langwritten}_`,
+            ) === item.FilePath,
+        );
+        if (!styItem) {
+          nonBibleBookMediaItems.push({
+            ...englishNonBibleBookItem,
+            MepsLanguageIndex: 0,
+          });
+        }
+      });
+    }
+
+    const allStudyBibleMediaItems = [
+      ...bibleBookMediaItems,
+      ...nonBibleBookMediaItems,
+    ];
+
+    return {
+      bibleBookDocumentsEndAtId,
+      bibleBookDocumentsStartAtId,
+      mediaItems: await Promise.all(
+        allStudyBibleMediaItems.map(async (item) => {
+          const updatedItem = await addFullFilePathToMultimediaItem(
+            item,
+            item.MepsLanguageIndex === 0
+              ? nwtStyPublication_E
+              : nwtStyPublication,
+          );
+          updatedItem.VerseNumber = parseInt(
+            item.VerseLabel?.match(/>(\d+)</)?.[1] || '',
+            10,
+          );
+          return updatedItem;
+        }),
+      ),
+    };
+  } catch (error) {
+    errorCatcher(error);
+    return {
+      bibleBookDocumentsEndAtId: null,
+      bibleBookDocumentsStartAtId: null,
+      mediaItems: [],
+    };
   }
 };
 
@@ -877,7 +1031,7 @@ const getParagraphNumbers = (
   }
 };
 
-const dynamicMediaMapper = async (
+export const dynamicMediaMapper = async (
   allMedia: MultimediaItem[],
   lookupDate: Date,
   additional?: boolean,
@@ -907,7 +1061,7 @@ const dynamicMediaMapper = async (
       async (m): Promise<DynamicMediaObject> => {
         m.FilePath = await convertImageIfNeeded(m.FilePath);
         const fileUrl = m.FilePath
-          ? getFileUrl(m.FilePath)
+          ? pathToFileURL(m.FilePath)
           : ([m.KeySymbol, m.IssueTagNumber].filter(Boolean).length
               ? [m.KeySymbol, m.IssueTagNumber]
               : [m.MepsDocumentId]
@@ -1011,7 +1165,7 @@ const dynamicMediaMapper = async (
   }
 };
 
-const watchedItemMapper: (
+export const watchedItemMapper: (
   parentDate: string,
   watchedItemPath: string,
 ) => Promise<DynamicMediaObject[] | undefined> = async (
@@ -1025,7 +1179,7 @@ const watchedItemMapper: (
 
     const dateString = parentDate.replace(/-/g, '');
 
-    const fileUrl = getFileUrl(watchedItemPath);
+    const fileUrl = pathToFileURL(watchedItemPath);
 
     const video = isVideo(watchedItemPath);
     const audio = isAudio(watchedItemPath);
@@ -1101,7 +1255,7 @@ const watchedItemMapper: (
   }
 };
 
-const getWeMedia = async (lookupDate: Date) => {
+export const getWeMedia = async (lookupDate: Date) => {
   try {
     const currentStateStore = useCurrentStateStore();
     lookupDate = dateFromString(lookupDate);
@@ -1314,20 +1468,7 @@ const getWeMedia = async (lookupDate: Date) => {
   }
 };
 
-function sanitizeId(id: string) {
-  try {
-    const regex = /[a-zA-Z0-9\-_:.]/g;
-    const sanitizedString = id.replace(regex, function (match) {
-      return match;
-    });
-    return sanitizedString;
-  } catch (e) {
-    errorCatcher(e);
-    return id;
-  }
-}
-
-const getMwMedia = async (lookupDate: Date) => {
+export const getMwMedia = async (lookupDate: Date) => {
   try {
     const currentStateStore = useCurrentStateStore();
     lookupDate = dateFromString(lookupDate);
@@ -1371,7 +1512,10 @@ const getMwMedia = async (lookupDate: Date) => {
         'No document id found for ' + monday + ' ' + issueString + ' ' + db,
       );
 
-    const mms = getDocumentMultimediaItems({ db, docId });
+    const mms = getDocumentMultimediaItems(
+      { db, docId },
+      currentStateStore.currentSettings?.includePrinted,
+    );
     for (let i = 0; i < mms.length; i++) {
       const multimediaItem = mms[i];
       const videoMarkers = getMediaVideoMarkers(
@@ -1432,7 +1576,7 @@ const getMwMedia = async (lookupDate: Date) => {
   }
 };
 
-async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
+export async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
   try {
     const currentStateStore = useCurrentStateStore();
     const errors = [];
@@ -1515,42 +1659,26 @@ async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
   }
 }
 
-const getPubMediaLinks = async (publication: PublicationFetcher) => {
+export const getPubMediaLinks = async (publication: PublicationFetcher) => {
   const jwStore = useJwStore();
   const { urlVariables } = jwStore;
   try {
     const currentStateStore = useCurrentStateStore();
 
-    if (publication.pub === 'sjjm') {
-      publication.pub = currentStateStore.currentSongbook?.pub;
-      // publication.fileformat = currentStateStore.currentSongbook?.fileformat;
-    }
-    const params = {
-      alllangs: '0',
-      docid: !publication.pub ? publication.docid?.toString() || '' : '',
-      fileformat: publication.fileformat || '',
-      issue: publication.issue?.toString() || '',
-      langwritten: publication.langwritten || '',
-      output: 'json',
-      pub: publication.pub || '',
-      track: publication.track?.toString() || '',
-      txtCMSLang: 'E',
-    };
-    const response = await fetchJson<Publication>(
+    const response = await fetchPubMediaLinks(
+      {
+        ...publication,
+        pub:
+          publication.pub === 'sjjm'
+            ? (currentStateStore.currentSongbook?.pub ?? 'sjjm')
+            : publication.pub,
+      },
       urlVariables.pubMedia,
-      new URLSearchParams(params),
+      currentStateStore.online,
     );
+
     if (!response) {
-      const downloadId = [
-        publication.docid,
-        publication.pub,
-        publication.langwritten,
-        publication.issue,
-        publication.track,
-        publication.fileformat,
-      ]
-        .filter(Boolean)
-        .join('_');
+      const downloadId = getPubId(publication, true);
       currentStateStore.downloadProgress[downloadId] = {
         error: true,
         filename: downloadId,
@@ -1562,48 +1690,6 @@ const getPubMediaLinks = async (publication: PublicationFetcher) => {
     return null;
   }
 };
-
-export function findBestResolution(
-  mediaLinks?: MediaItemsMediatorFile[] | MediaLink[],
-) {
-  try {
-    if (!mediaLinks?.length) return null;
-
-    const currentStateStore = useCurrentStateStore();
-    let bestItem = null;
-    let bestHeight = 0;
-    const maxRes = parseInt(
-      currentStateStore.currentSettings?.maxRes?.replace(/\D/g, '') || '0',
-    );
-
-    if (mediaLinks.some((m) => !m.subtitled)) {
-      mediaLinks = mediaLinks.filter((m) => !m.subtitled) as
-        | MediaItemsMediatorFile[]
-        | MediaLink[];
-    }
-
-    for (const mediaLink of mediaLinks) {
-      if (
-        mediaLink.frameHeight <= maxRes &&
-        mediaLink.frameHeight >= bestHeight
-      ) {
-        bestItem = mediaLink;
-        bestHeight = mediaLink.frameHeight;
-      }
-    }
-    return bestItem;
-  } catch (e) {
-    errorCatcher(e);
-    return mediaLinks?.length ? mediaLinks[mediaLinks.length - 1] : null;
-  }
-}
-
-export function isMediaLink(
-  item: MediaItemsMediatorFile | MediaLink | null,
-): item is MediaLink {
-  if (!item) return false;
-  return !('progressiveDownloadURL' in item);
-}
 
 const downloadMissingMedia = async (publication: PublicationFetcher) => {
   try {
@@ -1659,7 +1745,10 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
             publication.fileformat
           ] || []
         : [];
-    const bestItem = findBestResolution(mediaItemLinks);
+    const bestItem = findBestResolution(
+      mediaItemLinks,
+      useCurrentStateStore().currentSettings?.maxRes,
+    );
     if (!isMediaLink(bestItem) || !bestItem?.file?.url) {
       return { FilePath: '' };
     }
@@ -1703,7 +1792,7 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
   }
 };
 
-const downloadAdditionalRemoteVideo = async (
+export const downloadAdditionalRemoteVideo = async (
   mediaItemLinks: MediaItemsMediatorFile[] | MediaLink[],
   thumbnailUrl?: string,
   song: false | number | string = false,
@@ -1712,7 +1801,10 @@ const downloadAdditionalRemoteVideo = async (
 ) => {
   try {
     const currentStateStore = useCurrentStateStore();
-    const bestItem = findBestResolution(mediaItemLinks);
+    const bestItem = findBestResolution(
+      mediaItemLinks,
+      currentStateStore.currentSettings?.maxRes,
+    );
     if (bestItem) {
       const bestItemUrl =
         'progressiveDownloadURL' in bestItem
@@ -1762,7 +1854,11 @@ const downloadAdditionalRemoteVideo = async (
   }
 };
 
-function getBestImageUrl(images: ImageTypeSizes, minSize?: keyof ImageSizes) {
+export function getBestImageUrl(
+  images: ImageTypeSizes,
+  minSize?: keyof ImageSizes,
+  square = false,
+) {
   try {
     const preferredOrder: (keyof ImageTypeSizes)[] = [
       'wss',
@@ -1770,6 +1866,13 @@ function getBestImageUrl(images: ImageTypeSizes, minSize?: keyof ImageSizes) {
       'sqr',
       'pnr',
     ];
+    if (square) {
+      const sqrIndex = preferredOrder.indexOf('sqr');
+      if (sqrIndex !== -1) {
+        preferredOrder.splice(sqrIndex, 1);
+        preferredOrder.unshift('sqr');
+      }
+    }
     const sizeOrder: (keyof ImageSizes)[] = ['sm', 'md', 'lg', 'xl'];
     const startIndex = minSize ? sizeOrder.indexOf(minSize) : 0;
     const sizesToConsider = sizeOrder.slice(startIndex);
@@ -1793,7 +1896,7 @@ function getBestImageUrl(images: ImageTypeSizes, minSize?: keyof ImageSizes) {
   }
 }
 
-const getJwMediaInfo = async (publication: PublicationFetcher) => {
+export const getJwMediaInfo = async (publication: PublicationFetcher) => {
   const jwStore = useJwStore();
   const { urlVariables } = jwStore;
   const emptyResponse = {
@@ -1817,9 +1920,16 @@ const getJwMediaInfo = async (publication: PublicationFetcher) => {
     if (publication.fileformat?.toLowerCase().includes('mp4')) url += '_VIDEO';
     else if (publication.fileformat?.toLowerCase().includes('mp3'))
       url += '_AUDIO';
-    const responseObject = await fetchJson<MediaItemsMediator>(url);
+    const responseObject = await fetchJson<MediaItemsMediator>(
+      url,
+      undefined,
+      useCurrentStateStore().online,
+    );
     if (responseObject && responseObject.media.length > 0) {
-      const best = findBestResolution(responseObject.media[0].files);
+      const best = findBestResolution(
+        responseObject.media[0].files,
+        useCurrentStateStore().currentSettings?.maxRes,
+      );
       return {
         duration: responseObject.media[0].duration ?? undefined,
         subtitles: isMediaLink(best) ? '' : (best?.subtitles?.url ?? ''),
@@ -1841,16 +1951,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
     const publicationInfo = await getPubMediaLinks(publication);
     if (!publication.fileformat) return;
     if (!publicationInfo?.files) {
-      const downloadId = [
-        publication.docid,
-        publication.pub,
-        publication.langwritten,
-        publication.issue,
-        publication.track,
-        publication.fileformat,
-      ]
-        .filter(Boolean)
-        .join('_');
+      const downloadId = getPubId(publication, true);
       currentStateStore.downloadProgress[downloadId] = {
         error: true,
         filename: downloadId,
@@ -1877,6 +1978,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
       if (!filteredMediaItemLinks.some((m) => m.track === currentTrack)) {
         const bestItem = findBestResolution(
           mediaLinks.filter((m) => m.track === currentTrack),
+          currentStateStore.currentSettings?.maxRes,
         );
         if (isMediaLink(bestItem)) filteredMediaItemLinks.push(bestItem);
       }
@@ -1900,7 +2002,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
   }
 };
 
-const downloadBackgroundMusic = () => {
+export const downloadBackgroundMusic = () => {
   try {
     const currentStateStore = useCurrentStateStore();
     if (
@@ -1920,7 +2022,7 @@ const downloadBackgroundMusic = () => {
   }
 };
 
-const downloadSongbookVideos = () => {
+export const downloadSongbookVideos = () => {
   try {
     const currentStateStore = useCurrentStateStore();
     if (
@@ -1948,16 +2050,7 @@ const downloadJwpub = async (
     const currentStateStore = useCurrentStateStore();
     publication.fileformat = 'JWPUB';
     const handleDownloadError = () => {
-      const downloadId = [
-        publication.docid,
-        publication.pub,
-        publication.langwritten,
-        publication.issue,
-        publication.track,
-        publication.fileformat,
-      ]
-        .filter(Boolean)
-        .join('_');
+      const downloadId = getPubId(publication, true);
       currentStateStore.downloadProgress[downloadId] = {
         error: true,
         filename: downloadId,
@@ -2003,7 +2096,7 @@ const downloadJwpub = async (
 
 const requestControllers: AbortController[] = [];
 
-const setUrlVariables = async (baseUrl: string | undefined) => {
+export const setUrlVariables = async (baseUrl: string | undefined) => {
   const jwStore = useJwStore();
 
   const resetUrlVariables = (base = false) => {
@@ -2091,25 +2184,4 @@ const setUrlVariables = async (baseUrl: string | undefined) => {
   } finally {
     window.electronApi.setUrlVariables(JSON.stringify(jwStore.urlVariables));
   }
-};
-
-export {
-  addJwpubDocumentMediaToFiles,
-  downloadAdditionalRemoteVideo,
-  downloadBackgroundMusic,
-  downloadFileIfNeeded,
-  downloadSongbookVideos,
-  dynamicMediaMapper,
-  fetchMedia,
-  getBestImageUrl,
-  getDocumentMultimediaItems,
-  getJwMediaInfo,
-  getMwMedia,
-  getPublicationInfoFromDb,
-  getPubMediaLinks,
-  getWeMedia,
-  processMissingMediaInfo,
-  sanitizeId,
-  setUrlVariables,
-  watchedItemMapper,
 };

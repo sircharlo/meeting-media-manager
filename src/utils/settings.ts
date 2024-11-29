@@ -1,17 +1,12 @@
+import type { ValidationRule } from 'quasar';
 import type {
   SettingsItemAction,
   SettingsItemOption,
   SettingsItemRule,
 } from 'src/types';
 
-import { date, type ValidationRule } from 'quasar';
-import { getSpecificWeekday } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { useCurrentStateStore } from 'src/stores/current-state';
-
-const { getDateDiff } = date;
-
-const currentState = useCurrentStateStore();
+import { getDateDiff, getSpecificWeekday } from 'src/utils/date';
 
 const requiredRule: ValidationRule = (val: boolean | string) =>
   (val?.toString() && val?.toString().length > 0) || '';
@@ -38,7 +33,7 @@ const coTuesdays = (lookupDate: string) => {
   }
 };
 
-const getDateOptions = (options: SettingsItemOption[] | undefined) => {
+export const getDateOptions = (options: SettingsItemOption[] | undefined) => {
   try {
     const filteredOptions =
       options
@@ -57,14 +52,16 @@ const getDateOptions = (options: SettingsItemOption[] | undefined) => {
   }
 };
 
-const getRules = (rules: SettingsItemRule[] | undefined) => {
+export const getRules = (
+  rules: SettingsItemRule[] | undefined,
+  disableMediaFetching: boolean | undefined,
+) => {
   try {
     const filteredRules: ValidationRule[] =
       rules
         ?.map((rule): undefined | ValidationRule => {
           if (rule === 'notEmpty') {
-            return !rules.includes('regular') ||
-              !currentState.currentSettings?.disableMediaFetching
+            return !rules.includes('regular') || !disableMediaFetching
               ? requiredRule
               : undefined;
           } else if (rule === 'portNumber') {
@@ -81,7 +78,7 @@ const getRules = (rules: SettingsItemRule[] | undefined) => {
   }
 };
 
-const performActions = (actions: SettingsItemAction[] | undefined) => {
+export const performActions = (actions: SettingsItemAction[] | undefined) => {
   actions?.forEach((action) => {
     try {
       if (action === 'obsConnect') {
@@ -109,7 +106,8 @@ const meetingTime = (hr: number, min: null | number) => {
     return false;
   }
 };
-const getTimeOptions = (options: SettingsItemOption[] | undefined) => {
+
+export const getTimeOptions = (options: SettingsItemOption[] | undefined) => {
   try {
     if (!options) return undefined;
     const filteredOptions = options
@@ -129,22 +127,4 @@ const getTimeOptions = (options: SettingsItemOption[] | undefined) => {
     errorCatcher(error);
     return undefined;
   }
-};
-
-const parseJsonSafe = <T>(json: null | string | T, fallback: T): T => {
-  if (!json) return fallback;
-  try {
-    return typeof json === 'string' ? (JSON.parse(json) as T) : json;
-  } catch (e) {
-    errorCatcher(e);
-    return fallback;
-  }
-};
-
-export {
-  getDateOptions,
-  getRules,
-  getTimeOptions,
-  parseJsonSafe,
-  performActions,
 };

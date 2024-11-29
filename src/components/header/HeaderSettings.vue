@@ -75,27 +75,22 @@
   </q-btn>
 </template>
 <script setup lang="ts">
-// Types
 import type { CacheFile, JwLangCode } from 'src/types';
 
-// Packages
 import { storeToRefs } from 'pinia';
 import prettyBytes from 'pretty-bytes';
-// Components
 import DialogCacheClear from 'src/components/dialog/DialogCacheClear.vue';
-// Helpers
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { useCurrentStateStore } from 'src/stores/current-state';
+import { useJwStore } from 'src/stores/jw';
 import {
   getAdditionalMediaPath,
   getParentDirectory,
   getPublicationDirectory,
   getPublicationsPath,
-  getTempDirectory,
-} from 'src/helpers/fs';
-// Stores
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
-import { computed, ref, type Ref, watchEffect } from 'vue';
+  getTempPath,
+} from 'src/utils/fs';
+import { computed, ref, watchEffect } from 'vue';
 
 const { fs, path, pathToFileURL, readdir } = window.electronApi;
 
@@ -206,11 +201,11 @@ const usedCacheFiles = computed(() => {
   }
 });
 
-const untouchableDirectories: Ref<Set<string>> = ref(new Set());
+const untouchableDirectories = ref(new Set<string>());
 
 const fetchUntouchableDirectories = async () => {
   try {
-    const tempDirectory = await getTempDirectory();
+    const tempDirectory = await getTempPath();
     untouchableDirectories.value = new Set([
       await getAdditionalMediaPath(),
       await getPublicationsPath(),
@@ -302,7 +297,7 @@ const calculateCacheSize = async () => {
   try {
     const dirs = [
       await getAdditionalMediaPath(),
-      await getTempDirectory(),
+      await getTempPath(),
       await getPublicationsPath(),
     ];
     const cacheDirs = (

@@ -9,18 +9,26 @@ import type {
 } from 'src/types';
 
 import { defineStore } from 'pinia';
-import { LocalStorage as QuasarStorage, uid } from 'quasar';
+import { LocalStorage as QuasarStorage } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   buildNewPrefsObject,
   getOldPrefsPaths,
   parsePrefsFile,
 } from 'src/helpers/migrations';
-import { parseJsonSafe } from 'src/helpers/settings';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useJwStore } from 'src/stores/jw';
+import { uuid } from 'src/utils/general';
 
-const { fs, getAppDataPath, path } = window.electronApi;
+const parseJsonSafe = <T>(json: null | string | T, fallback: T): T => {
+  if (!json) return fallback;
+  try {
+    return typeof json === 'string' ? (JSON.parse(json) as T) : json;
+  } catch (e) {
+    errorCatcher(e);
+    return fallback;
+  }
+};
 
 interface Store {
   migrations: string[];
@@ -35,11 +43,11 @@ export const useAppSettingsStore = defineStore('app-settings', {
         const congregationStore = useCongregationSettingsStore();
         const jwStore = useJwStore();
         if (type === 'firstRun') {
-          const oldVersionPath = path.join(
-            await getAppDataPath(),
+          const oldVersionPath = window.electronApi.path.join(
+            await window.electronApi.getAppDataPath(),
             'meeting-media-manager',
           );
-          if (await fs.exists(oldVersionPath)) {
+          if (await window.electronApi.fs.exists(oldVersionPath)) {
             const oldPrefsPaths = await getOldPrefsPaths(oldVersionPath);
             await Promise.allSettled(
               oldPrefsPaths.map(async (oldPrefsPath) => {
@@ -47,7 +55,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
                   const oldPrefs: OldAppConfig =
                     await parsePrefsFile(oldPrefsPath);
                   const newPrefsObject = buildNewPrefsObject(oldPrefs);
-                  const newCongId = uid();
+                  const newCongId = uuid();
                   congregationStore.congregations[newCongId] = newPrefsObject;
                 } catch (error) {
                   errorCatcher(error);

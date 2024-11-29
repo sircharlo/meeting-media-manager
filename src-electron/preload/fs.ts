@@ -3,7 +3,7 @@ import type { VideoDuration } from 'src/types';
 
 import url from 'url';
 
-import { errorCatcher } from '../utils';
+import { captureElectronError } from '../utils';
 
 export const getVideoDuration = async (
   filePath: string,
@@ -17,12 +17,14 @@ export const parseMediaFile = async (filePath: string, options?: IOptions) => {
   return musicMetadata.parseFile(filePath, options);
 };
 
-export const isFileUrl = (path: string) => {
+const isFileUrl = (path: string) => {
   if (!path) return false;
   try {
     return path.startsWith('file://');
   } catch (err) {
-    errorCatcher(err, { contexts: { fn: { name: 'isFileUrl', path } } });
+    captureElectronError(err, {
+      contexts: { fn: { name: 'isFileUrl', path } },
+    });
     return false;
   }
 };

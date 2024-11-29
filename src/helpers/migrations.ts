@@ -3,23 +3,19 @@ import type { OldAppConfig, SettingsValues } from 'src/types';
 
 import { defaultSettings } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { kebabToCamelCase } from 'src/utils/general';
 
-import { kebabToCamelCase } from './general';
-
-const { fs, path, readdir } = window.electronApi;
-const { readJSON } = fs;
-
-const getOldPrefsPaths = async (oldPath: string) => {
+export const getOldPrefsPaths = async (oldPath: string) => {
   try {
     if (!oldPath) return [];
     const filePaths: string[] = [];
-    const items = await readdir(oldPath);
+    const items = await window.electronApi.readdir(oldPath);
     for (const item of items) {
-      const filePath = path.join(oldPath, item.name);
+      const filePath = window.electronApi.path.join(oldPath, item.name);
       if (
         item.isFile &&
-        path.basename(filePath).startsWith('prefs') &&
-        path.basename(filePath).endsWith('.json')
+        window.electronApi.path.basename(filePath).startsWith('prefs') &&
+        window.electronApi.path.basename(filePath).endsWith('.json')
       ) {
         filePaths.push(filePath);
       }
@@ -31,18 +27,23 @@ const getOldPrefsPaths = async (oldPath: string) => {
   }
 };
 
-const parsePrefsFile: (path: string) => Promise<OldAppConfig> = async (
+export const parsePrefsFile: (path: string) => Promise<OldAppConfig> = async (
   path: string,
 ) => {
   try {
-    return (await readJSON(path, { encoding: 'utf8', throws: false })) || {};
+    return (
+      (await window.electronApi.fs.readJSON(path, {
+        encoding: 'utf8',
+        throws: false,
+      })) || {}
+    );
   } catch (error) {
     errorCatcher(error);
     return {};
   }
 };
 
-const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
+export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
   try {
     const newPrefsObject: SettingsValues = {
       autoStartAtLogin: oldPrefs.app?.autoRunAtBoot || false,
@@ -109,5 +110,3 @@ const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
     return Object.assign({}, defaultSettings);
   }
 };
-
-export { buildNewPrefsObject, getOldPrefsPaths, parsePrefsFile };

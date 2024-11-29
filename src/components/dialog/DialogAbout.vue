@@ -5,7 +5,11 @@
     >
       <div class="row items-center">
         <div class="col-shrink q-mr-md">
-          <img col src="favicon.ico" style="max-height: 10vh; display: flex" />
+          <img
+            col
+            src="~assets/img/logo.svg"
+            style="max-height: 10vh; display: flex"
+          />
         </div>
         <div class="col">
           <div class="row text-h6">
@@ -94,7 +98,7 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
-import { disableUpdates, enableUpdates, updatesDisabled } from 'src/helpers/fs';
+import { disableUpdates, enableUpdates, updatesDisabled } from 'src/utils/fs';
 import { onMounted, ref, watch } from 'vue';
 
 const { getAppVersion, openExternal } = window.electronApi;

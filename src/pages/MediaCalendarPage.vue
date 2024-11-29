@@ -82,7 +82,7 @@
                 <q-img
                   v-else
                   fit="contain"
-                  src="images/no-media.svg"
+                  src="~assets/img/no-media.svg"
                   style="max-height: 30vh"
                 />
               </div>
@@ -484,42 +484,40 @@ import {
 import { Buffer } from 'buffer';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
-import { date, uid } from 'quasar';
 import DragAndDropper from 'src/components/media/DragAndDropper.vue';
 import MediaItem from 'src/components/media/MediaItem.vue';
 import { useLocale } from 'src/composables/useLocale';
-import {
-  dateFromString,
-  getLocalDate,
-  isCoWeek,
-  isInPast,
-  isMwMeetingDay,
-  isWeMeetingDay,
-} from 'src/helpers/date';
+import { SORTER } from 'src/constants/general';
+import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { addDayToExportQueue } from 'src/helpers/export-media';
 import {
-  getFileUrl,
-  getMetadataFromMediaPath,
-  getPublicationDirectory,
-  getTempDirectory,
-  getThumbnailUrl,
-  trimFilepathAsNeeded,
-} from 'src/helpers/fs';
-import { sorter } from 'src/helpers/general';
-import {
-  addDayToExportQueue,
   addJwpubDocumentMediaToFiles,
+  addToAdditionMediaMapFromPath,
+  copyToDatedAdditionalMedia,
   downloadFileIfNeeded,
   fetchMedia,
-  getPublicationInfoFromDb,
   mapOrder,
-  sanitizeId,
 } from 'src/helpers/jw-media';
 import {
-  convertImageIfNeeded,
   decompressJwpub,
-  findDb,
   getMediaFromJwPlaylist,
+} from 'src/helpers/mediaPlayback';
+import { createTemporaryNotification } from 'src/helpers/notifications';
+import { useCurrentStateStore } from 'src/stores/current-state';
+import { useJwStore } from 'src/stores/jw';
+import { convertImageIfNeeded } from 'src/utils/converters';
+import {
+  dateFromString,
+  formatDate,
+  getDateDiff,
+  getLocalDate,
+  isInPast,
+} from 'src/utils/date';
+import { getPublicationDirectory, getTempPath } from 'src/utils/fs';
+import { uuid } from 'src/utils/general';
+import {
+  getMetadataFromMediaPath,
   inferExtension,
   isArchive,
   isAudio,
@@ -530,15 +528,11 @@ import {
   isPdf,
   isRemoteFile,
   isVideo,
-} from 'src/helpers/mediaPlayback';
-import { createTemporaryNotification } from 'src/helpers/notifications';
-import { sendObsSceneEvent } from 'src/helpers/obs';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
+} from 'src/utils/media';
+import { sendObsSceneEvent } from 'src/utils/obs';
+import { findDb, getPublicationInfoFromDb } from 'src/utils/sqlite';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-
-const { formatDate, getDateDiff } = date;
 
 const dragging = ref(false);
 const jwpubImportDb = ref('');
@@ -559,7 +553,7 @@ const route = useRoute();
 const router = useRouter();
 
 const jwStore = useJwStore();
-const { addToAdditionMediaMap, removeFromAdditionMediaMap } = jwStore;
+const { addToAdditionMediaMap } = jwStore;
 const {
   additionalMediaMaps,
   customDurations,
@@ -1275,118 +1269,6 @@ const playState = (id: string) => {
   return 'unknown';
 };
 
-const copyToDatedAdditionalMedia = async (
-  filepathToCopy: string,
-  section?: MediaSection,
-  addToAdditionMediaMap?: boolean,
-) => {
-  const datedAdditionalMediaDir = await getDatedAdditionalMediaDirectory();
-
-  try {
-    if (!filepathToCopy || !(await fs.exists(filepathToCopy))) return '';
-    let datedAdditionalMediaPath = path.join(
-      datedAdditionalMediaDir,
-      path.basename(filepathToCopy),
-    );
-    datedAdditionalMediaPath = trimFilepathAsNeeded(datedAdditionalMediaPath);
-    const uniqueId = sanitizeId(
-      formatDate(selectedDate.value, 'YYYYMMDD') +
-        '-' +
-        getFileUrl(datedAdditionalMediaPath),
-    );
-    if (await fs.exists(datedAdditionalMediaPath)) {
-      if (filepathToCopy !== datedAdditionalMediaPath) {
-        await fs.remove(datedAdditionalMediaPath);
-        removeFromAdditionMediaMap(uniqueId);
-      }
-    }
-    if (filepathToCopy !== datedAdditionalMediaPath)
-      await fs.copy(filepathToCopy, datedAdditionalMediaPath);
-    if (addToAdditionMediaMap)
-      await addToAdditionMediaMapFromPath(
-        datedAdditionalMediaPath,
-        section,
-        uniqueId,
-      );
-    return datedAdditionalMediaPath;
-  } catch (error) {
-    errorCatcher(error);
-    return '';
-  }
-};
-
-const addToAdditionMediaMapFromPath = async (
-  additionalFilePath: string,
-  section: MediaSection = 'additional',
-  uniqueId?: string,
-  stream?: {
-    duration: number;
-    song?: string;
-    thumbnailUrl: string;
-    title?: string;
-    url: string;
-  },
-) => {
-  try {
-    if (!additionalFilePath) return;
-    const video = isVideo(additionalFilePath);
-    const audio = isAudio(additionalFilePath);
-    const metadata =
-      video || audio
-        ? await getMetadataFromMediaPath(additionalFilePath)
-        : undefined;
-
-    const duration = stream?.duration || metadata?.format.duration || 0;
-    const title =
-      stream?.title ||
-      metadata?.common.title ||
-      path
-        .basename(additionalFilePath)
-        .replace(path.extname(additionalFilePath), '');
-
-    if (!uniqueId) {
-      uniqueId = sanitizeId(
-        formatDate(selectedDate.value, 'YYYYMMDD') +
-          '-' +
-          getFileUrl(additionalFilePath),
-      );
-    }
-    addToAdditionMediaMap(
-      [
-        {
-          duration,
-          fileUrl: getFileUrl(additionalFilePath),
-          isAdditional: true,
-          isAudio: audio,
-          isImage: isImage(additionalFilePath),
-          isVideo: video,
-          section,
-          sectionOriginal: section,
-          song: stream?.song,
-          streamUrl: stream?.url,
-          thumbnailUrl:
-            stream?.thumbnailUrl ??
-            (await getThumbnailUrl(additionalFilePath, true)),
-          title,
-          uniqueId,
-        },
-      ],
-      section,
-    );
-  } catch (error) {
-    errorCatcher(error, {
-      contexts: {
-        fn: {
-          additionalFilePath,
-          name: 'addToAdditionMediaMapFromPath',
-          stream,
-          uniqueId,
-        },
-      },
-    });
-  }
-};
-
 const addToFiles = async (
   files: FileList | { filename?: string; filetype?: string; path: string }[],
 ) => {
@@ -1420,8 +1302,8 @@ const addToFiles = async (
         const baseFileName = path.basename(new URL(filepath).pathname);
         filepath = (
           await downloadFileIfNeeded({
-            dir: await getTempDirectory(),
-            filename: inferExtension(
+            dir: await getTempPath(),
+            filename: await inferExtension(
               file.filename || baseFileName,
               file.filetype,
             ),
@@ -1431,8 +1313,8 @@ const addToFiles = async (
       } else if (isImageString(filepath)) {
         const [preamble, data] = filepath.split(';base64,');
         const ext = preamble.split('/')[1];
-        const tempFilename = uid() + '.' + ext;
-        const tempFilepath = path.join(await getTempDirectory(), tempFilename);
+        const tempFilename = uuid() + '.' + ext;
+        const tempFilepath = path.join(await getTempPath(), tempFilename);
         await fs.writeFile(tempFilepath, Buffer.from(data, 'base64'));
         filepath = tempFilepath;
       }
@@ -1473,7 +1355,7 @@ const addToFiles = async (
         }
       } else if (isPdf(filepath)) {
         const convertedImages = (
-          await convertPdfToImages(filepath, await getTempDirectory())
+          await convertPdfToImages(filepath, await getTempPath())
         ).map((path) => {
           return { path };
         });
@@ -1486,7 +1368,7 @@ const addToFiles = async (
           tempJwpubContent.path.endsWith('contents'),
         );
         if (!tempContentFile) return;
-        const tempDir = await getTempDirectory();
+        const tempDir = await getTempPath();
         if (!tempDir) return;
         await fs.ensureDir(tempDir);
         const tempFilePath = path.join(
@@ -1500,7 +1382,7 @@ const addToFiles = async (
         );
         if (!tempDbFile) return;
         const tempDbFilePath = path.join(
-          await getTempDirectory(),
+          await getTempPath(),
           path.basename(filepath) + '.db',
         );
         await fs.writeFile(tempDbFilePath, tempDbFile.data);
@@ -1570,7 +1452,7 @@ const addToFiles = async (
           });
       } else if (isArchive(filepath)) {
         const unzipDirectory = path.join(
-          await getTempDirectory(),
+          await getTempPath(),
           path.basename(filepath),
         );
         await fs.remove(unzipDirectory);
@@ -1640,7 +1522,7 @@ const dropEnd = (event: DragEvent) => {
             path: getLocalPathFromFileObject(file),
           };
         })
-        .sort((a, b) => sorter.compare(a?.path, b?.path));
+        .sort((a, b) => SORTER.compare(a?.path, b?.path));
       let noLocalDroppedFiles =
         droppedStuff.filter((file) => file.path).length === 0;
       if (noLocalDroppedFiles && droppedStuff.length > 0) {

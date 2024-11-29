@@ -199,29 +199,28 @@
   </q-btn>
 </template>
 <script setup lang="ts">
-// Types
+import type { QMenu } from 'quasar';
 import type { MediaSection } from 'src/types';
 
-// Packages
 import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { date, type QMenu } from 'quasar';
-// Components
 import DialogRemoteVideo from 'src/components/dialog/DialogRemoteVideo.vue';
 import DialogStudyBible from 'src/components/dialog/DialogStudyBible.vue';
 import PublicTalkMediaPicker from 'src/components/media/PublicTalkMediaPicker.vue';
 import SongPicker from 'src/components/media/SongPicker.vue';
-// Composables
 import { useLocale } from 'src/composables/useLocale';
-// Helpers
-import { friendlyDayToJsDay, getLocalDate } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-// Stores
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+import {
+  formatDate,
+  friendlyDayToJsDay,
+  getDateDiff,
+  getLocalDate,
+  getMaxDate,
+  getMinDate,
+} from 'src/utils/date';
 import { computed, ref, useTemplateRef } from 'vue';
-
-const { formatDate, getDateDiff, getMaxDate, getMinDate } = date;
 
 const jwStore = useJwStore();
 const { clearCurrentDayAdditionalMedia, resetSort, showCurrentDayHiddenMedia } =

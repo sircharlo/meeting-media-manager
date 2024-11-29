@@ -14,7 +14,6 @@ import { initCloseListeners } from './preload/close';
 // import {
 //   fileUrlToPath,
 //   getVideoDuration,
-//   isFileUrl,
 //   parseMediaFile,
 //   pathToFileURL,
 // } from './preload/fs';
@@ -53,7 +52,6 @@ const electronApi: Partial<ElectronApi> = {
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),
   getUserDataPath: () => invoke('getUserDataPath'),
   // getVideoDuration,
-  // isFileUrl,
   moveMediaWindow: (t, w, ne) =>
     send('moveMediaWindow', t, w === undefined ? undefined : !w, ne),
   navigateWebsiteWindow,

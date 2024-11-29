@@ -29,21 +29,14 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
-// Types
 import type { CacheFile } from 'src/types';
 
-// Packages
-// import PQueue from 'p-queue';
 import { storeToRefs } from 'pinia';
-// Globals
-// import { queues } from 'src/boot/globals';
-// Helpers
 import { updateLookupPeriod } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { removeEmptyDirs } from 'src/helpers/fs';
-// Stores
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+import { removeEmptyDirs } from 'src/utils/fs';
 import { ref } from 'vue';
 
 // Props

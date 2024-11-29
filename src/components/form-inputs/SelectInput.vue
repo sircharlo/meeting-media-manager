@@ -15,7 +15,7 @@
     map-options
     :options="listOptions"
     outlined
-    :rules="getRules(rules)"
+    :rules="getRules(rules, currentSettings?.disableMediaFetching)"
     spellcheck="false"
     style="width: 240px"
     :use-input="useInput"
@@ -49,18 +49,21 @@ import type {
 
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
+import { SORTER } from 'src/constants/general';
 import { RESOLUTIONS } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { sorter } from 'src/helpers/general';
-import { configuredScenesAreAllUUIDs } from 'src/helpers/obs';
-import { getRules } from 'src/helpers/settings';
 import { localeOptions } from 'src/i18n';
+import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { useObsStateStore } from 'src/stores/obs-state';
+import { getRules } from 'src/utils/settings';
 import { computed, ref } from 'vue';
 
 const jwStore = useJwStore();
 const { jwLanguages } = storeToRefs(jwStore);
+const { configuredScenesAreAllUUIDs, currentSettings } = storeToRefs(
+  useCurrentStateStore(),
+);
 
 const props = defineProps<{
   label?: string;
@@ -146,7 +149,7 @@ const listOptions = computed(
         });
       } else if (props.list === 'appLanguages') {
         return [...filteredLocaleAppLang.value]
-          .sort((a, b) => sorter.compare(a.englishName, b.englishName))
+          .sort((a, b) => SORTER.compare(a.englishName, b.englishName))
           .map((language) => {
             return {
               description: language.englishName,
@@ -172,7 +175,7 @@ const listOptions = computed(
           return {
             label: scene.sceneName?.toString() ?? 'Unknown scene',
             value:
-              configuredScenesAreAllUUIDs() && scene.sceneUuid
+              configuredScenesAreAllUUIDs.value && scene.sceneUuid
                 ? scene.sceneUuid.toString()
                 : (scene.sceneName?.toString() ?? 'Unknown scene'),
           };

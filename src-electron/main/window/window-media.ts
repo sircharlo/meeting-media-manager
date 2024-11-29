@@ -2,7 +2,7 @@ import type { BrowserWindow } from 'electron';
 import type { ScreenPreferences } from 'src/types';
 
 import { CURRENT_DIR, PLATFORM } from 'app/src-electron/constants';
-import { errorCatcher } from 'app/src-electron/utils';
+import { captureElectronError } from 'app/src-electron/utils';
 import { join, resolve } from 'path';
 
 import { getAllScreens, getWindowScreen, screenPreferences } from '../screen';
@@ -26,7 +26,13 @@ export function createMediaWindow() {
     backgroundColor: 'black',
     frame: false,
     height: 720,
-    icon: resolve(join(CURRENT_DIR, 'icons', 'media-player.png')),
+    icon: resolve(
+      join(
+        CURRENT_DIR,
+        'icons',
+        `media-player.${PLATFORM === 'win32' ? 'ico' : PLATFORM === 'darwin' ? 'icns' : 'png'}`,
+      ),
+    ),
     minHeight: 110,
     minWidth: 195,
     thickFrame: false,
@@ -42,7 +48,7 @@ export function createMediaWindow() {
   });
 }
 
-const mediaWindowIsFullScreen = (parentScreenBounds: Electron.Rectangle) =>
+const mediaWindowIsFullScreen = (parentScreenBounds?: Electron.Rectangle) =>
   boundsAreSame(mediaWindow?.getBounds(), parentScreenBounds) ||
   mediaWindow?.isFullScreen();
 
@@ -95,7 +101,7 @@ export const moveMediaWindow = (
       }
       if (displayNr === undefined) return;
       fullscreen =
-        fullscreen ?? mediaWindowIsFullScreen(screens[displayNr].bounds);
+        fullscreen ?? mediaWindowIsFullScreen(screens[displayNr]?.bounds);
     } else {
       displayNr = 0;
       fullscreen = false;
@@ -103,7 +109,7 @@ export const moveMediaWindow = (
 
     setWindowPosition(displayNr, fullscreen, noEvent);
   } catch (e) {
-    errorCatcher(e);
+    captureElectronError(e);
   }
 };
 
@@ -206,6 +212,6 @@ const setWindowPosition = (
       }
     }
   } catch (err) {
-    errorCatcher(err);
+    captureElectronError(err);
   }
 };

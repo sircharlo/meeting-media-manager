@@ -1,7 +1,7 @@
 import type { ElectronIpcListenKey } from 'src/types';
 
 import { CURRENT_DIR, IS_DEV, PLATFORM } from 'app/src-electron/constants';
-import { errorCatcher } from 'app/src-electron/utils';
+import { captureElectronError } from 'app/src-electron/utils';
 import {
   app,
   BrowserWindow,
@@ -19,7 +19,7 @@ export function closeOtherWindows(source: BrowserWindow) {
       if (win !== source) win.close();
     }
   } catch (e) {
-    errorCatcher(e);
+    captureElectronError(e);
   }
 }
 
@@ -46,7 +46,7 @@ export function createWindow(
       join(
         CURRENT_DIR,
         'icons',
-        `icon.${PLATFORM === 'win32' ? 'ico' : 'png'}`,
+        `icon.${PLATFORM === 'win32' ? 'ico' : PLATFORM === 'darwin' ? 'icns' : 'png'}`,
       ),
     ),
     minHeight: 450,

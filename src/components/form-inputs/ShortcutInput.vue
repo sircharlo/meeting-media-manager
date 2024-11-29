@@ -40,7 +40,7 @@
         {{ $t('enter-a-key-combination-now-using-your-keyboard') }}
       </q-card-section>
       <q-card-section class="q-pt-none text-center row">
-        <template v-if="localValue?.length > 0">
+        <template v-if="localValue">
           <template v-for="(key, index) in localValue.split('+')" :key="key">
             <div
               :class="
@@ -76,13 +76,12 @@ import {
   getCurrentShortcuts,
   isKeyCode,
   registerCustomShortcut,
-  unregisterShortcut,
 } from 'src/helpers/keyboardShortcuts';
 import { ref, watch } from 'vue';
 
 // Define props and emits
 const props = defineProps<{
-  modelValue: string;
+  modelValue: null | string;
   shortcutName: keyof SettingsValues;
 }>();
 
@@ -92,10 +91,10 @@ const emit = defineEmits(['update:modelValue']);
 const localValue = ref(props.modelValue);
 
 watch(localValue, (newValue, oldValue) => {
-  if (!getCurrentShortcuts().includes(newValue)) {
+  if (!newValue || !getCurrentShortcuts().includes(newValue)) {
     emit('update:modelValue', newValue);
-    unregisterShortcut(oldValue);
-    registerCustomShortcut(props.shortcutName, newValue);
+    if (oldValue) window.electronApi.unregisterShortcut(oldValue);
+    if (newValue) registerCustomShortcut(props.shortcutName, newValue);
   }
 });
 

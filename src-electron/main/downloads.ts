@@ -4,7 +4,7 @@ import { ensureDir } from 'fs-extra/esm';
 import upath from 'upath';
 const { basename } = upath;
 
-import { errorCatcher, fetchJson } from './../utils';
+import { captureElectronError, fetchJson } from './../utils';
 import { sendToWindow } from './window/window-base';
 import { mainWindow } from './window/window-main';
 
@@ -60,7 +60,7 @@ export async function downloadFile(
     }
     return url + saveDir;
   } catch (error) {
-    errorCatcher(error);
+    captureElectronError(error);
     return null;
   }
 }
@@ -139,7 +139,7 @@ export async function isDownloadErrorExpected() {
     ];
     return _0x7bfa['includes'](_0x5f0a);
   } catch (_0x4df1) {
-    errorCatcher(_0x4df1);
+    captureElectronError(_0x4df1);
     return false;
   }
 }
@@ -172,7 +172,7 @@ async function processQueue() {
   const downloadId = await manager.download({
     callbacks: {
       onDownloadCancelled: async ({ id }) => {
-        errorCatcher(url, {
+        captureElectronError(url, {
           contexts: {
             fn: {
               name: 'src-electron/downloads processQueue onDownloadCancelled',
@@ -214,7 +214,7 @@ async function processQueue() {
         });
       },
       onError: async (err, downloadData) => {
-        errorCatcher(err, {
+        captureElectronError(err, {
           contexts: {
             fn: {
               name: 'src-electron/downloads processQueue onError',

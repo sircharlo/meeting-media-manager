@@ -6,7 +6,7 @@
     hide-bottom-space
     mask="time"
     outlined
-    :rules="getRules(rules)"
+    :rules="getRules(rules, currentSettings?.disableMediaFetching)"
     style="width: 240px"
     v-bind="{ label: label || undefined }"
     @focus="focusHandler"
@@ -38,7 +38,11 @@
 <script setup lang="ts">
 import type { SettingsItemOption, SettingsItemRule } from 'src/types';
 
-import { getRules, getTimeOptions } from 'src/helpers/settings';
+import { storeToRefs } from 'pinia';
+import { useCurrentStateStore } from 'src/stores/current-state';
+import { getRules, getTimeOptions } from 'src/utils/settings';
+
+const { currentSettings } = storeToRefs(useCurrentStateStore());
 
 defineProps<{
   label?: string;

@@ -33,7 +33,7 @@
           )"
           :key="video.guid"
         >
-          <div class="col-xs-6 col-sm-4 col-md-3 col-lg-3 col-xl-2">
+          <div class="col col-xs-6 col-sm-4 col-md-3 col-lg-2">
             <div
               v-ripple
               :class="{
@@ -59,7 +59,7 @@
               <q-card-section class="q-pa-sm">
                 <q-img
                   class="rounded-borders"
-                  :src="getBestImageUrl(video.images, 'md')"
+                  :src="getBestImageUrl(video.images, 'md', true)"
                 >
                   <q-badge
                     class="q-mt-sm q-ml-sm bg-semi-black rounded-borders-sm"
@@ -68,17 +68,15 @@
                     <q-icon class="q-mr-xs" color="white" name="mmm-play" />
                     {{ formatTime(video.duration) }}
                   </q-badge>
-                </q-img>
-              </q-card-section>
-              <q-card-section class="q-pa-sm">
-                <div class="text-subtitle2 q-mb-xs">
-                  {{ video.title }}
-                </div>
-                <div>
-                  <span class="text-caption text-dark-grey">
+                  <div
+                    class="absolute-bottom text-caption gradient-transparent-to-black"
+                  >
+                    {{ video.title }}
+                  </div>
+                  <q-tooltip :delay="1000">
                     {{ video.naturalKey }}
-                  </span>
-                </div>
+                  </q-tooltip>
+                </q-img>
               </q-card-section>
             </div>
           </div>
@@ -113,7 +111,6 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
-// Types
 import type {
   JwVideoCategory,
   MediaItemsMediatorItem,
@@ -122,18 +119,15 @@ import type {
 
 import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-// Composables
-import { fetchJson } from 'src/helpers/api';
 import { errorCatcher } from 'src/helpers/error-catcher';
-// Helpers
 import {
   downloadAdditionalRemoteVideo,
   getBestImageUrl,
 } from 'src/helpers/jw-media';
-import { formatTime } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-// Packages
+import { fetchJson } from 'src/utils/api';
+import { formatTime } from 'src/utils/time';
 import { computed, ref } from 'vue';
 
 // Stores
@@ -198,7 +192,13 @@ const getJwVideos = async () => {
       return await fetchJson<JwVideoCategory>(
         `${urlVariables.value.mediator}/v1/categories/${
           currentSettings.value?.lang
-        }/${category}?detailed=1&mediaLimit=0&clientType=www`,
+        }/${category}`,
+        new URLSearchParams({
+          clientType: 'www',
+          detailed: '1',
+          mediaLimit: '0',
+        }),
+        currentState.online,
       );
     };
     const subcategories: {
@@ -222,7 +222,12 @@ const getJwVideos = async () => {
       const request = await fetchJson<JwVideoCategory>(
         `${urlVariables.value.mediator}/v1/categories/${
           currentSettings.value?.lang
-        }/${category.key}?detailed=0&clientType=www`,
+        }/${category.key}`,
+        new URLSearchParams({
+          clientType: 'www',
+          detailed: '0',
+        }),
+        currentState.online,
       );
       const newVideos = (request?.category?.media || []).filter(
         (video) => !remoteVideos.value.find((v) => v.guid === video.guid),

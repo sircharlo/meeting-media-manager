@@ -43,6 +43,7 @@ import HeaderBase from 'src/components/header/HeaderBase.vue';
 import ActionIsland from 'src/components/ui/ActionIsland.vue';
 import AnnouncementBanner from 'src/components/ui/AnnouncementBanner.vue';
 import NavDrawer from 'src/components/ui/NavDrawer.vue';
+import { SORTER } from 'src/constants/general';
 // Helpers
 import {
   cleanAdditionalMediaFolder,
@@ -53,13 +54,12 @@ import {
   updateLookupPeriod,
 } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { exportAllDays } from 'src/helpers/export-media';
 import { setElementFont } from 'src/helpers/fonts';
-import { getFileUrl, watchExternalFolder } from 'src/helpers/fs';
-import { kebabToCamelCase, sorter } from 'src/helpers/general';
+import { watchExternalFolder } from 'src/helpers/fs';
 import {
   downloadBackgroundMusic,
   downloadSongbookVideos,
-  exportAllDays,
   setUrlVariables,
   watchedItemMapper,
 } from 'src/helpers/jw-media';
@@ -74,6 +74,7 @@ import { localeOptions } from 'src/i18n';
 // Stores
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+import { kebabToCamelCase } from 'src/utils/general';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
@@ -331,7 +332,7 @@ const updateWatchFolderRef = async ({
         for (const watchedItemMap of watchedItemMapItems) {
           watchFolderMedia.value[day].push(watchedItemMap);
           watchFolderMedia.value[day].sort((a, b) =>
-            sorter.compare(a.title, b.title),
+            SORTER.compare(a.title, b.title),
           );
           if (jwStore.mediaSort[currentCongregation.value]?.[day]?.length) {
             jwStore.mediaSort[currentCongregation.value]?.[day]?.push(
@@ -343,7 +344,8 @@ const updateWatchFolderRef = async ({
     } else if (event === 'unlink') {
       watchFolderMedia.value[day] = watchFolderMedia.value[day]?.filter(
         (dM) =>
-          dM.fileUrl !== getFileUrl(changedPath) && dM.watched !== changedPath,
+          dM.fileUrl !== window.electronApi.pathToFileURL(changedPath) &&
+          dM.watched !== changedPath,
       );
     }
   } catch (error) {

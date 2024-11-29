@@ -106,10 +106,10 @@ import type { CongregationLanguage, GeoRecord } from 'src/types';
 import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
-import { fetchJson } from 'src/helpers/api';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+import { fetchJson } from 'src/utils/api';
 import { ref } from 'vue';
 
 const jwStore = useJwStore();
@@ -142,6 +142,7 @@ const lookupCongregation = async () => {
           longitude: '0',
           searchLanguageCode: '',
         }),
+        useCurrentStateStore().online,
       ).then((response) => {
         results.value = (response?.geoLocationList || []).map((location) => {
           const languageIsAlreadyGood = !!jwLanguages.value?.list.find(
@@ -168,6 +169,8 @@ const lookupCongregation = async () => {
 const congregationLookupLanguages = ref<CongregationLanguage[]>([]);
 fetchJson<CongregationLanguage[]>(
   `https://apps.${urlVariables.value.base || 'jw.org'}/api/public/meeting-search/languages`,
+  undefined,
+  useCurrentStateStore().online,
 )
   .then((response) => {
     congregationLookupLanguages.value = response || [];
