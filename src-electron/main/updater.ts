@@ -4,11 +4,13 @@ import { exists } from 'fs-extra';
 import { join } from 'path';
 
 import { PLATFORM } from './../constants';
-import { captureError } from './../utils';
+import { captureElectronError } from './../utils';
 
 export async function initUpdater() {
   autoUpdater.on('error', (error, message) => {
-    captureError(error, { contexts: { fn: { message, name: 'initUpdater' } } });
+    captureElectronError(error, {
+      contexts: { fn: { message, name: 'initUpdater' } },
+    });
   });
 
   const disabled = await exists(
@@ -29,6 +31,8 @@ const triggerUpdateCheck = async (attempt = 1) => {
       }
     }
   } catch (error) {
-    captureError(error, { contexts: { fn: { name: 'triggerUpdateCheck' } } });
+    captureElectronError(error, {
+      contexts: { fn: { name: 'triggerUpdateCheck' } },
+    });
   }
 };

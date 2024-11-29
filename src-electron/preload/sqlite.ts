@@ -2,7 +2,7 @@ import type { QueryResponseItem } from 'src/types';
 
 import BetterSqlite3 from 'better-sqlite3';
 
-import { captureError } from '../utils';
+import { captureElectronError } from '../utils';
 
 export const executeQuery = <T = QueryResponseItem>(
   dbPath: string,
@@ -17,7 +17,7 @@ export const executeQuery = <T = QueryResponseItem>(
     console.debug('executeQuery', { dbPath, query, result });
     return result;
   } catch (e) {
-    captureError(e, {
+    captureElectronError(e, {
       contexts: { fn: { name: 'executeQuery', path: dbPath, query } },
     });
     return [];

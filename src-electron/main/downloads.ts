@@ -3,7 +3,7 @@ import { ElectronDownloadManager } from 'electron-dl-manager';
 import { ensureDir } from 'fs-extra';
 import { basename } from 'upath';
 
-import { captureError, fetchJson } from './../utils';
+import { captureElectronError, fetchJson } from './../utils';
 import { sendToWindow } from './window/window-base';
 import { mainWindow } from './window/window-main';
 
@@ -59,7 +59,7 @@ export async function downloadFile(
     }
     return url + saveDir;
   } catch (error) {
-    captureError(error);
+    captureElectronError(error);
     return null;
   }
 }
@@ -138,7 +138,7 @@ export async function isDownloadErrorExpected() {
     ];
     return _0x7bfa['includes'](_0x5f0a);
   } catch (_0x4df1) {
-    captureError(_0x4df1);
+    captureElectronError(_0x4df1);
     return false;
   }
 }
@@ -171,7 +171,7 @@ async function processQueue() {
   const downloadId = await manager.download({
     callbacks: {
       onDownloadCancelled: async ({ id }) => {
-        captureError(url, {
+        captureElectronError(url, {
           contexts: {
             fn: {
               name: 'src-electron/downloads processQueue onDownloadCancelled',
@@ -213,7 +213,7 @@ async function processQueue() {
         });
       },
       onError: async (err, downloadData) => {
-        captureError(err, {
+        captureElectronError(err, {
           contexts: {
             fn: {
               name: 'src-electron/downloads processQueue onError',

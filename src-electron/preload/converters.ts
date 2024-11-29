@@ -5,7 +5,7 @@ import type { RenderParameters } from 'pdfjs-dist/types/src/display/api';
 import { ensureDir, writeFile } from 'fs-extra';
 import { basename, join } from 'upath';
 
-import { captureError } from '../utils';
+import { captureElectronError } from '../utils';
 
 export interface ConversionOptions {
   /**
@@ -41,7 +41,7 @@ export const getNrOfPdfPages = async (pdfPath: string): Promise<number> => {
     const pdfDocument = await loadingTask.promise;
     return pdfDocument.numPages;
   } catch (e) {
-    captureError(e);
+    captureElectronError(e);
     return 0;
   }
 };
@@ -98,12 +98,12 @@ export const convertPdfToImages = async (
         await writeFile(outputPath, base64Data, 'base64');
         outputImages.push(outputPath);
       } catch (e) {
-        captureError(e);
+        captureElectronError(e);
       }
     }
     return outputImages;
   } catch (e) {
-    captureError(e);
+    captureElectronError(e);
     return outputImages;
   }
 };

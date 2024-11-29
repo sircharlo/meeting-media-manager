@@ -2,7 +2,7 @@ import type { BrowserWindow } from 'electron';
 import type { ScreenPreferences } from 'src/types';
 
 import { PLATFORM } from 'app/src-electron/constants';
-import { captureError } from 'app/src-electron/utils';
+import { captureElectronError } from 'app/src-electron/utils';
 import { join, resolve } from 'path';
 
 import { getAllScreens, getWindowScreen, screenPreferences } from '../screen';
@@ -103,7 +103,7 @@ export const moveMediaWindow = (
 
     setWindowPosition(displayNr, fullscreen, noEvent);
   } catch (e) {
-    captureError(e);
+    captureElectronError(e);
   }
 };
 
@@ -206,6 +206,6 @@ const setWindowPosition = (
       }
     }
   } catch (err) {
-    captureError(err);
+    captureElectronError(err);
   }
 };

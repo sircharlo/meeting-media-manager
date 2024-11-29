@@ -10,7 +10,7 @@ import {
 } from 'src/constants/fs';
 import { basename, dirname, join, toUnix } from 'upath';
 
-import { captureError } from '../utils';
+import { captureElectronError } from '../utils';
 import { sendToWindow } from './window/window-base';
 import { mainWindow } from './window/window-main';
 
@@ -73,7 +73,7 @@ export async function readDirectory(
     if (!(await exists(dir))) return [];
     return await readDirRecursive(dir, withSizes, recursive);
   } catch (error) {
-    captureError(error);
+    captureElectronError(error);
     return [];
   }
 }
@@ -84,7 +84,7 @@ export async function unwatchFolders() {
       if (!watcher?.closed) await watcher?.close();
       watchers.delete(watcher);
     } catch (error) {
-      captureError(error);
+      captureElectronError(error);
     }
   }
 }
@@ -102,14 +102,14 @@ export async function watchFolder(folderPath: string) {
           const dirOfNote = basename(dirPath); // Get the name of the directory
           return !datePattern.test(dirOfNote); // Ignore files in a directory whose name doesn't match YYYY-MM-DD
         } catch (error) {
-          captureError(error);
+          captureElectronError(error);
           return true;
         }
       },
       ignorePermissionErrors: true,
     })
       .on('error', (e) => {
-        captureError(e);
+        captureElectronError(e);
       })
       .on('all', (event, changedPath, stats) => {
         try {
@@ -126,7 +126,7 @@ export async function watchFolder(folderPath: string) {
             event,
           });
         } catch (error) {
-          captureError(error);
+          captureElectronError(error);
           return true;
         }
       }),
