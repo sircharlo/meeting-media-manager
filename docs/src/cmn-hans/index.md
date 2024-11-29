@@ -3,7 +3,7 @@ layout: home
 hero:
   name: M³文库
   text: 帮助设置和使用Meeting Media Manager
-  image: /icon.png
+  image: /logo.svg
   actions:
     - theme: brand
       text: 安装M³
