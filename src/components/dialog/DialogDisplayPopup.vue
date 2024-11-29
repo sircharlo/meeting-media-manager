@@ -223,17 +223,14 @@ import {
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import {
-  decompressJwpub,
-  findDb,
-  showMediaWindow,
-} from 'src/helpers/mediaPlayback';
+import { decompressJwpub, showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { useAppSettingsStore } from 'src/stores/app-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import { getTempPath } from 'src/utils/fs';
 import { isImage, isJwpub } from 'src/utils/media';
+import { findDb } from 'src/utils/sqlite';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 

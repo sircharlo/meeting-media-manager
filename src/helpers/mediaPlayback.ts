@@ -12,6 +12,7 @@ import {
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { getTempPath } from 'src/utils/fs';
 import { isJwpub } from 'src/utils/media';
+import { findDb } from 'src/utils/sqlite';
 
 const jwpubDecompressor = async (jwpubPath: string, outputPath: string) => {
   try {
@@ -196,23 +197,6 @@ export const getMediaFromJwPlaylist = async (
   } catch (error) {
     errorCatcher(error);
     return [];
-  }
-};
-
-export const findDb = async (publicationDirectory: string | undefined) => {
-  if (!publicationDirectory) return undefined;
-  try {
-    if (!(await window.electronApi.fs.pathExists(publicationDirectory)))
-      return undefined;
-    const files = await window.electronApi.readdir(publicationDirectory);
-    return files
-      .map((file) =>
-        window.electronApi.path.join(publicationDirectory, file.name),
-      )
-      .find((filename) => filename.includes('.db'));
-  } catch (error) {
-    errorCatcher(error);
-    return undefined;
   }
 };
 

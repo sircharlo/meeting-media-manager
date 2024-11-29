@@ -497,12 +497,10 @@ import {
   copyToDatedAdditionalMedia,
   downloadFileIfNeeded,
   fetchMedia,
-  getPublicationInfoFromDb,
   mapOrder,
 } from 'src/helpers/jw-media';
 import {
   decompressJwpub,
-  findDb,
   getMediaFromJwPlaylist,
 } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -532,6 +530,7 @@ import {
   isVideo,
 } from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
+import { findDb, getPublicationInfoFromDb } from 'src/utils/sqlite';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
