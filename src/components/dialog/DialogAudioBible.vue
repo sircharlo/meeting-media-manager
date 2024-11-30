@@ -6,7 +6,7 @@
       <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
         {{ $t('add-media-audio-bible') }}
       </div>
-      <div class="col-shrink full-widh q-px-md q-py-md">
+      <div class="col-shrink full-width q-px-md q-py-md">
         {{ $t('add-media-audio-bible-explain') }}
       </div>
       <div
