@@ -1,7 +1,7 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="bg-secondary-contrast column fit-snugly large-overlay q-px-none"
+      class="bg-secondary-contrast column fit-snugly medium-overlay q-px-none"
     >
       <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
         {{ $t('add-media-audio-bible') }}
@@ -16,7 +16,10 @@
         <q-spinner color="primary" size="md" />
       </div>
       <div
-        v-if="selectedBibleBook && bibleAudioMediaGreek?.length"
+        v-if="
+          selectedBibleBook &&
+          bibleAudioMediaHebrew.concat(bibleAudioMediaGreek).length
+        "
         class="col-shrink full-width q-px-md"
       >
         <q-tabs
@@ -31,6 +34,7 @@
           <q-tab
             v-for="book in bibleAudioMediaHebrew.concat(bibleAudioMediaGreek)"
             :key="book.booknum || 0"
+            :disable="!book.files"
             :label="book.pubName"
             :name="book.booknum || 0"
           />
@@ -44,23 +48,28 @@
                 <div class="text-grey text-uppercase q-my-sm">
                   {{ $t('chapter') }}
                 </div>
-                <div class="overflow-auto col full-width flex items-start">
-                  <q-btn
+                <div class="overflow-auto row q-col-gutter-xs">
+                  <div
                     v-for="chapter in selectedBookChapters"
                     :key="chapter"
-                    class="rounded-borders-sm col-shrink grid-margin"
-                    :class="
-                      selectedChapter === chapter
-                        ? 'bg-primary text-white'
-                        : 'bg-primary-light'
-                    "
-                    :disable="loading"
-                    :label="chapter"
-                    style="width: 3em; height: 3em"
-                    unelevated
-                    @click="selectedChapter = chapter"
-                  />
+                    class="col col-xs-4 col-sm-3 col-md-2 col-xl-1"
+                  >
+                    <q-btn
+                      :key="chapter"
+                      class="rounded-borders-sm full-width aspect-ratio-1"
+                      :class="{
+                        'bg-primary': selectedChapter === chapter,
+                        'text-white': selectedChapter === chapter,
+                        'bg-primary-light': selectedChapter !== chapter,
+                      }"
+                      :disable="loading"
+                      :label="chapter"
+                      unelevated
+                      @click="selectedChapter = chapter"
+                    />
+                  </div>
                 </div>
+                <!-- style="width: 3em; height: 3em" -->
               </div>
               <q-separator class="q-mx-sm" vertical />
               <div class="col q-px-md q-pb-md">
@@ -68,21 +77,24 @@
                   {{ $t('verse-or-verses') }}
                 </div>
                 <div
-                  class="overflow-auto col full-width flex"
+                  class="overflow-auto row q-col-gutter-xs"
                   @mouseleave="hoveredVerse = null"
                 >
-                  <q-btn
+                  <div
                     v-for="verse in selectedChapterVerses"
                     :key="verse"
-                    class="rounded-borders-sm col-shrink grid-margin"
-                    :class="getVerseClass(verse)"
-                    :disable="loading"
-                    :label="verse"
-                    style="width: 3em; height: 3em"
-                    unelevated
-                    @click="toggleVerse(verse)"
-                    @mouseover="hoveredVerse = verse"
-                  />
+                    class="col col-xs-4 col-sm-3 col-md-2 col-xl-1"
+                  >
+                    <q-btn
+                      class="rounded-borders-sm full-width aspect-ratio-1"
+                      :class="getVerseClass(verse)"
+                      :disable="loading"
+                      :label="verse"
+                      unelevated
+                      @click="toggleVerse(verse)"
+                      @mouseover="hoveredVerse = verse"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -215,14 +227,18 @@ const selectedChapter = ref(0);
 const bibleAudioMedia = ref<Partial<Publication>[] | undefined>([]);
 
 const bibleAudioMediaHebrew = computed(() => {
-  return bibleAudioMedia.value?.filter(
-    (item) => item?.booknum && item?.booknum < 40,
+  return (
+    bibleAudioMedia.value?.filter(
+      (item) => item?.booknum && item?.booknum < 40,
+    ) || []
   );
 });
 
 const bibleAudioMediaGreek = computed(() => {
-  return bibleAudioMedia.value?.filter(
-    (item) => item?.booknum && item?.booknum >= 40,
+  return (
+    bibleAudioMedia.value?.filter(
+      (item) => item?.booknum && item?.booknum >= 40,
+    ) || []
   );
 });
 
@@ -312,6 +328,7 @@ whenever(open, () => {
 });
 
 const addSelectedVerses = async () => {
+  loading.value = true;
   if (!chosenVerses.value.length) return;
   const startVerseNumber = chosenVerses.value[0];
   const endVerseNumber = chosenVerses.value[1] || startVerseNumber;
@@ -342,7 +359,7 @@ const addSelectedVerses = async () => {
     selectedChapterMedia.value,
     undefined,
     false,
-    bibleAudioMedia.value?.[selectedBibleBook.value - 1] +
+    bibleAudioMedia.value?.[selectedBibleBook.value - 1]?.pubName +
       ' ' +
       selectedChapter.value +
       ':' +
@@ -366,6 +383,8 @@ const addSelectedVerses = async () => {
   }
 
   resetBibleBook(true, true);
+
+  loading.value = false;
 };
 
 const resetBibleBook = (closeBook = false, closeDialog = false) => {
