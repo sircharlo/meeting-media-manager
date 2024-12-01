@@ -1176,7 +1176,9 @@ const sortedMediaIds = computed(() => {
   return [
     ...sortableAdditionalMediaItems.value.filter((m) => !m.hidden),
     ...sortableMediaItems.value.filter((m) => !m.hidden),
-  ].map((m) => m.uniqueId);
+  ]
+    .map((m) => m.uniqueId)
+    .filter((uniqueId, index, self) => self.indexOf(uniqueId) === index);
 });
 
 const arraysAreIdentical = (a: string[], b: string[]) =>
