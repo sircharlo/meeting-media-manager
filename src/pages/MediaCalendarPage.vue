@@ -493,7 +493,6 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
 import {
   addJwpubDocumentMediaToFiles,
-  addToAdditionMediaMapFromPath,
   copyToDatedAdditionalMedia,
   downloadFileIfNeeded,
   fetchMedia,
@@ -1015,42 +1014,6 @@ useEventListener<
   addToFiles(event.detail?.files ?? []).catch((error) => {
     errorCatcher(error);
   });
-});
-useEventListener<
-  CustomEvent<{
-    duration: number;
-    path: string;
-    section?: MediaSection;
-    song: false | number | string;
-    thumbnailUrl: string;
-    title?: string;
-    url: string;
-  }>
->(window, 'remote-video-loading', (event) => {
-  addToAdditionMediaMapFromPath(
-    event.detail.path,
-    event.detail.section,
-    undefined,
-    {
-      duration: event.detail.duration,
-      song:
-        event.detail.song === false ? undefined : event.detail.song?.toString(),
-      thumbnailUrl: event.detail.thumbnailUrl,
-      title: event.detail.title,
-      url: event.detail.url,
-    },
-  );
-});
-
-useEventListener<
-  CustomEvent<{
-    targetDate: Date;
-  }>
->(window, 'remote-video-loaded', (event) => {
-  if (!event.detail.targetDate) {
-    return;
-  }
-  addDayToExportQueue(event.detail.targetDate);
 });
 
 watchImmediate(selectedDate, (newVal) => {

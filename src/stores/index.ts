@@ -47,14 +47,32 @@ export default defineStore((/* { ssrContext } */) => {
     createSentryPiniaPlugin({
       attachPiniaState: false, // Until https://github.com/getsentry/sentry-javascript/issues/14441 is fixed
       stateTransformer: (state) => {
-        // Transform the state to remove unneeded information that only takes up space
-        const transformedState = {
-          ...state,
-          jwLanguages: 'FILTERED',
-          jwSongs: 'FILTERED',
-          yeartexts: 'FILTERED',
-        };
-        return transformedState;
+        try {
+          // Transform the state to remove unneeded information that only takes up space
+          const transformedState = {
+            ...state,
+            jwBibleAudioFiles:
+              'FILTERED (length: ' +
+              Object.keys(state.jwBibleAudioFiles || {}).length +
+              ')',
+            jwLanguages:
+              'FILTERED (length: ' +
+              (state.jwLanguages?.list?.length || 0) +
+              ')',
+            jwSongs:
+              'FILTERED (length: ' +
+              (Object.keys(state.jwSongs || {}).length || 0) +
+              ')',
+            yeartexts:
+              'FILTERED (length: ' +
+              (Object.keys(state.yeartexts || {}).length || 0) +
+              ')',
+          };
+          return transformedState;
+        } catch (error) {
+          console.error(error);
+          return state;
+        }
       },
     }),
   );

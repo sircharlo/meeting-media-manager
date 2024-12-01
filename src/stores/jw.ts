@@ -7,6 +7,7 @@ import type {
   JwLanguage,
   MediaLink,
   MediaSection,
+  Publication,
   PublicationFetcher,
   PublicationFiles,
   UrlVariables,
@@ -26,30 +27,24 @@ import { dateFromString, getDateDiff } from 'src/utils/date';
 import { isFileUrl } from 'src/utils/fs';
 import { findBestResolution, getPubId, isMediaLink } from 'src/utils/jw';
 
+const oldDate = new Date(0);
+
 /**
  * Checks if a caches list should be updated
  * @param list The cache list to check
  * @param months How many months should pass before updating
  * @returns Wether the list should be updated
  */
-const shouldUpdateList = (list: CacheList | undefined, months: number) => {
-  if (!list) return true;
+export const shouldUpdateList = (
+  cacheList: CacheList | undefined,
+  months: number,
+) => {
+  if (!cacheList) return true;
   return (
-    !list.list.length ||
-    getDateDiff(new Date(), list.updated, 'months') > months
+    !cacheList?.list?.length ||
+    getDateDiff(new Date(), cacheList?.updated, 'months') > months
   );
 };
-
-function uniqueById<T extends { uniqueId: string }>(array: T[]): T[] {
-  return array.reduce((unique: T[], o: T) => {
-    if (!unique.some((obj) => obj.uniqueId === o.uniqueId)) {
-      unique.push(o);
-    }
-    return unique;
-  }, []);
-}
-
-const oldDate = new Date(0);
 
 interface Store {
   additionalMediaMaps: Partial<
@@ -61,6 +56,9 @@ interface Store {
       Partial<Record<string, Record<string, { max: number; min: number }>>>
     >
   >;
+  jwBibleAudioFiles: Partial<
+    Record<JwLangCode, CacheList<Partial<Publication>>>
+  >;
   jwLanguages: CacheList<JwLanguage>;
   jwSongs: Partial<Record<JwLangCode, CacheList<MediaLink>>>;
   lookupPeriod: Partial<Record<string, DateInfo[]>>;
@@ -70,6 +68,15 @@ interface Store {
     Record<string, Partial<Record<string, Record<string, MediaSection>>>>
   >;
   yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
+}
+
+function uniqueById<T extends { uniqueId: string }>(array: T[]): T[] {
+  return array.reduce((unique: T[], o: T) => {
+    if (!unique.some((obj) => obj.uniqueId === o.uniqueId)) {
+      unique.push(o);
+    }
+    return unique;
+  }, []);
 }
 
 export const useJwStore = defineStore('jw-store', {
@@ -414,6 +421,7 @@ export const useJwStore = defineStore('jw-store', {
     return {
       additionalMediaMaps: {},
       customDurations: {},
+      jwBibleAudioFiles: {},
       jwLanguages: { list: [], updated: oldDate },
       jwSongs: {},
       lookupPeriod: {},

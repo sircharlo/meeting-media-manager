@@ -145,6 +145,9 @@ export const fetchPubMediaLinks = async (
   try {
     const params = {
       alllangs: '0',
+      ...(publication.booknum
+        ? { booknum: publication.booknum.toString() }
+        : {}),
       docid: !publication.pub ? publication.docid?.toString() || '' : '',
       fileformat: publication.fileformat || '',
       issue: publication.issue?.toString() || '',

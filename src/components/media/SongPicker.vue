@@ -36,22 +36,25 @@
           </div>
         </div>
       </q-slide-transition>
-      <div class="q-px-md overflow-auto col full-width flex">
-        <q-btn
+      <div class="q-px-md overflow-auto col row q-col-gutter-xs content-start">
+        <div
           v-for="song in filteredSongs"
           :key="song.track"
-          class="rounded-borders-sm col-shrink grid-margin"
-          color="primary"
-          :disable="loading"
-          :label="song.track"
-          style="width: 3em; height: 3em"
-          unelevated
-          @click="addSong(song.track)"
+          class="col col-grid"
         >
-          <q-tooltip v-if="!loading" class="bg-black text-white">
-            {{ song.title }}
-          </q-tooltip>
-        </q-btn>
+          <q-btn
+            class="rounded-borders-sm full-width aspect-ratio-1"
+            color="primary"
+            :disable="loading"
+            :label="song.track"
+            unelevated
+            @click="addSong(song.track)"
+          >
+            <q-tooltip v-if="!loading" class="bg-black text-white">
+              {{ song.title }}
+            </q-tooltip>
+          </q-btn>
+        </div>
       </div>
       <div class="row q-px-md q-py-md col-shrink full-width">
         <div class="col">
