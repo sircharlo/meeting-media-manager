@@ -59,6 +59,7 @@ export interface MediaItemsMediatorFile {
     modifiedDatetime: string;
     url: string;
   };
+  track: number;
 }
 
 export interface MediaItemsMediatorItem {
@@ -112,8 +113,9 @@ export interface MediaLink {
     };
     markers: {
       duration: string;
-      mepsParagraphId: number;
+      mepsParagraphId?: number;
       startTime: string;
+      verseNumber?: number;
     }[];
     mepsLanguageSpoken: JwLangCode;
     mepsLanguageWritten: JwLangCode;
@@ -163,6 +165,7 @@ export interface Publication {
 }
 
 export interface PublicationFetcher {
+  booknum?: number;
   docid?: null | number | undefined;
   fileformat?: keyof PublicationFiles;
   issue?: number | string;

@@ -14,6 +14,7 @@ import type {
   MediaSection,
   MultimediaExtractItem,
   MultimediaItem,
+  Publication,
   PublicationFetcher,
   PublicationFiles,
 } from 'src/types';
@@ -23,14 +24,14 @@ import { FEB_2023, FOOTNOTE_TAR_PAR, MAX_SONGS } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
 import { isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { exportAllDays } from 'src/helpers/export-media';
+import { addDayToExportQueue, exportAllDays } from 'src/helpers/export-media';
 import { getSubtitlesUrl, getThumbnailUrl } from 'src/helpers/fs';
 import {
   decompressJwpub,
   getMediaFromJwPlaylist,
 } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
+import { shouldUpdateList, useJwStore } from 'src/stores/jw';
 import { fetchJson, fetchPubMediaLinks, fetchRaw } from 'src/utils/api';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
@@ -164,6 +165,7 @@ export const addToAdditionMediaMapFromPath = async (
       ],
       section,
     );
+    return uniqueId;
   } catch (error) {
     errorCatcher(error, {
       contexts: {
@@ -175,6 +177,7 @@ export const addToAdditionMediaMapFromPath = async (
         },
       },
     });
+    return undefined;
   }
 };
 
@@ -622,7 +625,9 @@ const getStudyBible = async () => {
   }
 };
 
-export const getStudyBibleBooks = async () => {
+export const getStudyBibleBooks: () => Promise<
+  Record<number, MultimediaItem>
+> = async () => {
   try {
     const {
       nwtDb,
@@ -938,6 +943,91 @@ export const getStudyBibleMedia = async () => {
       bibleBookDocumentsStartAtId: null,
       mediaItems: [],
     };
+  }
+};
+
+export const getAudioBibleMedia = async (force = false) => {
+  try {
+    const currentStateStore = useCurrentStateStore();
+    const jwStore = useJwStore();
+
+    const lang = currentStateStore.currentSettings?.lang;
+    if (!lang) return;
+
+    if (!force) {
+      const audioFilesList = jwStore.jwBibleAudioFiles?.[lang];
+      if (audioFilesList && !shouldUpdateList(audioFilesList, 3)) {
+        return audioFilesList.list;
+      }
+    }
+
+    const returnedItems: Partial<Publication>[] = [];
+    const publication: PublicationFetcher = {
+      booknum: 0,
+      fileformat: 'MP3',
+      issue: '',
+      langwritten: '',
+      pub: 'nwt',
+    };
+    const languages = [
+      currentStateStore.currentSettings.lang,
+      currentStateStore.currentSettings?.langFallback,
+    ].filter(Boolean) as JwLangCode[];
+
+    const backupNameNeeded: number[] = [];
+
+    for (const booknum of Array.from({ length: 66 }, (_, i) => i + 1)) {
+      for (const lang of languages) {
+        publication.booknum = booknum;
+        publication.langwritten = lang;
+        const audioBibleMediaItems = await getPubMediaLinks(publication);
+        console.log('audioBibleMediaItems', audioBibleMediaItems);
+        if (!audioBibleMediaItems) {
+          backupNameNeeded.push(booknum);
+          returnedItems.push({ booknum });
+          break;
+        }
+        returnedItems.push(audioBibleMediaItems);
+      }
+    }
+
+    if (backupNameNeeded.length) {
+      const { nwtDb } = await getStudyBible();
+
+      if (nwtDb) {
+        const bibleBooksSimpleQuery = `
+        SELECT *
+        FROM 
+            Document
+        WHERE
+            Class = 1
+      `;
+
+        const bibleBookLocalNames =
+          window.electronApi.executeQuery<JwPlaylistItem>(
+            nwtDb,
+            bibleBooksSimpleQuery,
+          );
+        console.log('backupBooks', backupNameNeeded, bibleBookLocalNames);
+        for (const booknum of backupNameNeeded) {
+          const pubName = bibleBookLocalNames.find(
+            (item) => item.ChapterNumber === booknum,
+          )?.Title;
+          returnedItems[booknum - 1] = {
+            booknum,
+            pubName,
+          };
+        }
+      }
+    }
+    jwStore.jwBibleAudioFiles[lang] = {
+      list: returnedItems,
+      updated: new Date(),
+    };
+    return returnedItems;
+  } catch (error) {
+    errorCatcher(error);
+    return [];
   }
 };
 
@@ -1798,6 +1888,7 @@ export const downloadAdditionalRemoteVideo = async (
   song: false | number | string = false,
   title?: string,
   section?: MediaSection,
+  customDuration?: Record<string, number>,
 ) => {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -1805,52 +1896,44 @@ export const downloadAdditionalRemoteVideo = async (
       mediaItemLinks,
       currentStateStore.currentSettings?.maxRes,
     );
+    console.log('bestItem', bestItem, customDuration);
     if (bestItem) {
       const bestItemUrl =
         'progressiveDownloadURL' in bestItem
           ? bestItem.progressiveDownloadURL
           : bestItem.file.url;
-      window.dispatchEvent(
-        new CustomEvent<{
-          duration: number;
-          path: string;
-          section?: MediaSection;
-          song: false | number | string;
-          thumbnailUrl: string;
-          title?: string;
-          url: string;
-        }>('remote-video-loading', {
-          detail: {
-            duration: bestItem.duration,
-            path: path.join(
-              await currentStateStore.getDatedAdditionalMediaDirectory(),
-              path.basename(bestItemUrl),
-            ),
-            section,
-            song,
-            thumbnailUrl: thumbnailUrl || '',
-            title,
-            url: bestItemUrl,
-          },
-        }),
+
+      const uniqueId = await addToAdditionMediaMapFromPath(
+        path.join(
+          await currentStateStore.getDatedAdditionalMediaDirectory(),
+          path.basename(bestItemUrl),
+        ),
+        section,
+        undefined,
+        {
+          duration: bestItem.duration,
+          song: song ? song.toString() : undefined,
+          thumbnailUrl,
+          title,
+          url: bestItemUrl,
+        },
       );
-      await downloadFileIfNeeded({
+
+      downloadFileIfNeeded({
         dir: await currentStateStore.getDatedAdditionalMediaDirectory(),
         size: bestItem.filesize,
         url: bestItemUrl,
+      }).then(() => {
+        if (currentStateStore?.selectedDateObject?.date) {
+          addDayToExportQueue(currentStateStore.selectedDateObject.date);
+        }
       });
-      window.dispatchEvent(
-        new CustomEvent<{
-          targetDate: Date | undefined;
-        }>('remote-video-loaded', {
-          detail: {
-            targetDate: currentStateStore?.selectedDateObject?.date,
-          },
-        }),
-      );
+
+      return uniqueId;
     }
   } catch (e) {
     errorCatcher(e);
+    return undefined;
   }
 };
 

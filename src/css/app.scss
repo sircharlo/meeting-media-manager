@@ -81,8 +81,20 @@
   cursor: grab;
 }
 
+.dotted-borders {
+  border: 1px dashed $accent-300;
+}
+
 body.body--light {
   background: $primary-bg;
+
+  .bg-primary-light {
+    background-color: $primary-bg;
+  }
+
+  .bg-primary-semi-transparent {
+    background-color: $primary-semi-transparent;
+  }
 
   .q-drawer--left.q-drawer--bordered {
     border-color: $accent-300;
@@ -158,6 +170,14 @@ body.body--light {
 
 body.body--dark {
   background: $primary-bg-dark;
+
+  .bg-primary-light {
+    background-color: $primary-bg-dark;
+  }
+
+  .bg-primary-semi-transparent {
+    background-color: $primary-semi-transparent-dark;
+  }
 
   .bg-accent-100 {
     background-color: $accent-100-dark;
@@ -643,8 +663,15 @@ a {
   padding: 8px !important;
 }
 
-.grid-margin {
-  margin: 2px;
+.aspect-ratio-1 {
+  aspect-ratio: 1;
+}
+
+.col-grid {
+  height: auto;
+  width: 3em !important;
+  max-width: 3em !important;
+  flex: auto;
 }
 
 .gradient-transparent-to-black {
