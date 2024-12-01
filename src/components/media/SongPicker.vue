@@ -1,7 +1,7 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="bg-secondary-contrast column fit-snugly large-overlay q-px-none"
+      class="bg-secondary-contrast column fit-snugly medium-overlay q-px-none"
     >
       <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
         {{ $t('choose-a-song') }}
@@ -36,8 +36,12 @@
           </div>
         </div>
       </q-slide-transition>
-      <div class="q-px-md overflow-auto col row q-col-gutter-xs">
-        <div v-for="song in filteredSongs" :key="song.track" class="col col-1">
+      <div class="q-px-md overflow-auto col row q-col-gutter-xs content-start">
+        <div
+          v-for="song in filteredSongs"
+          :key="song.track"
+          class="col col-grid"
+        >
           <q-btn
             class="rounded-borders-sm full-width aspect-ratio-1"
             color="primary"

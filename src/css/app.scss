@@ -667,6 +667,13 @@ a {
   aspect-ratio: 1;
 }
 
+.col-grid {
+  height: auto;
+  width: 3em !important;
+  max-width: 3em !important;
+  flex: auto;
+}
+
 .gradient-transparent-to-black {
   background: linear-gradient(
     0deg,

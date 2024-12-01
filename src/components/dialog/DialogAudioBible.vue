@@ -1,7 +1,7 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="bg-secondary-contrast column fit-snugly medium-overlay q-px-none"
+      class="bg-secondary-contrast column fit-snugly large-overlay q-px-none"
     >
       <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
         {{ $t('add-media-audio-bible') }}
@@ -10,13 +10,8 @@
         {{ $t('add-media-audio-bible-explain') }}
       </div>
       <div
-        v-if="loading"
-        class="col-shrink full-width q-px-md q-pb-md row justify-center"
-      >
-        <q-spinner color="primary" size="md" />
-      </div>
-      <div
         v-if="
+          !loading &&
           selectedBibleBook &&
           bibleAudioMediaHebrew.concat(bibleAudioMediaGreek).length
         "
@@ -40,8 +35,16 @@
           />
         </q-tabs>
       </div>
-      <div class="q-pr-scroll overflow-auto col items-start q-pt-sm">
-        <template v-if="!loading">
+      <div
+        class="q-pr-scroll overflow-auto col items-start q-pt-sm"
+        :class="{ 'content-center': loading }"
+      >
+        <template v-if="loading">
+          <div class="row q-px-md col flex-center">
+            <q-spinner color="primary" size="md" />
+          </div>
+        </template>
+        <template v-else>
           <template v-if="selectedBibleBook && selectedBookChapters.length">
             <div class="row q-px-md col">
               <div class="col q-pr-scroll overflow-auto">
@@ -52,7 +55,7 @@
                   <div
                     v-for="chapter in selectedBookChapters"
                     :key="chapter"
-                    class="col col-xs-4 col-sm-3 col-md-2 col-xl-1"
+                    class="col col-grid"
                   >
                     <q-btn
                       :key="chapter"
@@ -83,7 +86,7 @@
                   <div
                     v-for="verse in selectedChapterVerses"
                     :key="verse"
-                    class="col col-xs-4 col-sm-3 col-md-2 col-xl-1"
+                    class="col col-grid"
                   >
                     <q-btn
                       class="rounded-borders-sm full-width aspect-ratio-1"
