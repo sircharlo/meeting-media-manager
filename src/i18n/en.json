@@ -226,6 +226,7 @@
   "no": "No",
   "no-circuit-overseer-date-set": "The date of the circuit overseer's visit is not set",
   "no-media-files-for-section": "There are no media items for this meeting section.",
+  "no-media-for-this-category": "There is no media for this category",
   "no-regular-meetings": "No regular meetings",
   "no-results": "No results found",
   "no-results-explain": "You'll need to enter your congregation's information manually if the lookup is unsuccessful.",

@@ -29,25 +29,35 @@
       >
         <q-spinner color="primary" size="md" />
       </div>
-      <q-tabs
-        v-model="tab"
-        active-color="primary"
-        align="justify"
-        class="text-grey"
-        dense
-        indicator-color="primary"
-        narrow-indicator
-      >
-        <q-tab
-          v-for="category in bibleMediaCategories"
-          :key="category"
-          :disable="!bibleMediaByCategory[category]?.length"
-          :label="category"
-          :name="category"
-        />
-      </q-tabs>
+      <div class="col-shrink full-width q-px-md">
+        <q-tabs
+          v-model="tab"
+          active-color="primary"
+          align="justify"
+          class="text-grey"
+          dense
+          indicator-color="primary"
+          narrow-indicator
+          outside-arrows
+        >
+          <q-tab
+            v-for="category in bibleMediaCategories"
+            :key="category"
+            :disable="!bibleMediaByCategory[category]?.length"
+            :label="category"
+            :name="category"
+          >
+            <q-tooltip
+              v-if="!bibleMediaByCategory[category]?.length"
+              :delay="500"
+            >
+              {{ $t('no-media-for-this-category') }}
+            </q-tooltip>
+          </q-tab>
+        </q-tabs>
+      </div>
       <div class="q-pr-scroll overflow-auto col full-width items-start">
-        <q-tab-panels v-model="tab" animated>
+        <q-tab-panels v-model="tab" animated style="background: transparent">
           <q-tab-panel
             v-for="category in bibleMediaCategories"
             :key="category"
@@ -72,7 +82,9 @@
                     v-for="mediaItem in mediaItems"
                     :key="mediaItem.MultimediaId"
                   >
-                    <div class="col col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                    <div
+                      class="col col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-1"
+                    >
                       <div
                         v-ripple
                         :class="{
@@ -95,7 +107,7 @@
                       >
                         <q-card-section
                           :class="{
-                            'q-pa-sm': true,
+                            'q-pa-none': true,
                           }"
                         >
                           <q-img
@@ -139,6 +151,10 @@
                     </div>
                   </template>
                 </div>
+                <q-separator
+                  class="bg-accent-200 full-width q-mt-md q-mb-lg"
+                  size="2px"
+                />
               </template>
             </template>
             <div v-else-if="bibleBook" class="row q-px-md">
