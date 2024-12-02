@@ -889,10 +889,31 @@ export const getStudyBibleMedia = async () => {
         }
       });
 
+      const englishBibleBookDocumentsStartAt =
+        window.electronApi.executeQuery<DocumentItem>(
+          nwtStyDb_E,
+          bibleBookDocumentsStartAtQuery,
+        );
+
+      const englishBibleBookDocumentsStartAtId =
+        englishBibleBookDocumentsStartAt[0]?.DocumentId;
+
+      const englishBibleBookDocumentsEndAt =
+        window.electronApi.executeQuery<DocumentItem>(
+          nwtStyDb_E,
+          bibleBookDocumentsEndAtQuery,
+        );
+
+      const englishBibleBookDocumentsEndAtId =
+        englishBibleBookDocumentsEndAt[0]?.DocumentId;
+
       const englishNonBibleBookMediaItems =
         window.electronApi.executeQuery<MultimediaItem>(
           nwtStyDb_E,
-          nonBibleBookMediaItemsQuery,
+          nonBibleBookMediaItemsQuery.replace(
+            `Document.DocumentId < ${bibleBookDocumentsStartAtId} OR Document.DocumentId > ${bibleBookDocumentsEndAtId}`,
+            `Document.DocumentId < ${englishBibleBookDocumentsStartAtId} OR Document.DocumentId > ${englishBibleBookDocumentsEndAtId}`,
+          ),
         );
 
       englishNonBibleBookMediaItems.forEach((englishNonBibleBookItem) => {
