@@ -832,7 +832,7 @@ export const getStudyBibleMedia = async () => {
               ParentDocument.Type AS ParentType,
               Document.Type,
               LinkedMultimedia.FilePath AS CoverPictureFilePath,
-              ROW_NUMBER() OVER (PARTITION BY Multimedia.MultimediaId ORDER BY Document.DocumentId) AS RowNum
+              ROW_NUMBER() OVER (PARTITION BY Multimedia.MultimediaId ORDER BY Document.DocumentId, ParentDocument.Class DESC) AS RowNum
           FROM Multimedia
           LEFT JOIN DocumentMultimedia 
               ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId
@@ -849,21 +849,21 @@ export const getStudyBibleMedia = async () => {
           WHERE 
               Multimedia.CategoryType <> 9 
               AND Multimedia.CategoryType <> 17 
+              AND (ParentDocument.Class IS NULL OR ParentDocument.Class <> 14)
               AND (Document.SectionNumber IS NULL OR Document.SectionNumber <> 1)
               AND (ParentDocument.SectionNumber IS NULL OR ParentDocument.SectionNumber <> 1)
               AND (ParentDocument.Type IS NULL OR ParentDocument.Type <> 0)
+              ${bibleBookDocumentsStartAtId && bibleBookDocumentsEndAtId ? `AND (Document.DocumentId < ${bibleBookDocumentsStartAtId} OR Document.DocumentId > ${bibleBookDocumentsEndAtId})` : ''}
       )
       SELECT *
       FROM RankedMultimedia
       WHERE RowNum = 1;
   `;
 
-    const nonBibleBookMediaItems = window.electronApi
-      .executeQuery<MultimediaItem>(nwtStyDb, nonBibleBookMediaItemsQuery)
-      .filter(
-        (item) =>
-          item.DocumentId < bibleBookDocumentsStartAtId &&
-          item.DocumentId > bibleBookDocumentsEndAtId,
+    const nonBibleBookMediaItems =
+      window.electronApi.executeQuery<MultimediaItem>(
+        nwtStyDb,
+        nonBibleBookMediaItemsQuery,
       );
 
     if (nwtStyDb_E) {
