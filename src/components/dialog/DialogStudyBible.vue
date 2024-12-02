@@ -520,3 +520,8 @@ const resetBibleBook = (closeBook = false, closeDialog = false) => {
   selectedMediaItems.value = [];
 };
 </script>
+<style scoped>
+.study-bible-item :deep(img) {
+  background-color: white;
+}
+</style>
