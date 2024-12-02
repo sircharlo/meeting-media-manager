@@ -1,7 +1,6 @@
 import type { JwLangCode } from 'src/types';
 
-// When adding a new language (enabled or not), add the language below and add the messages import statement in src/i18n/index.ts and docs/locales/index.ts.
-
+// ! This type should include all languages that are configured in Crowdin.
 export type LanguageValue =
   | 'af'
   | 'am'
@@ -54,6 +53,8 @@ export const enabled: LanguageValue[] = [
   'sw',
   'uk',
 ];
+
+// This is the list of all languages that are configured in Crowdin.
 
 export const locales: {
   englishName: string;

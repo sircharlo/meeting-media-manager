@@ -7,6 +7,8 @@ import {
 export const localeOptions = locales;
 export const enabled: LanguageValue[] = baseEnabled.filter((l) => l !== 'en');
 
+// ! This file should import the JSON files for all languages configured in Crowdin.
+
 import af from './af.json';
 import am from './am.json';
 import cmnHans from './cmn-hans.json';

@@ -4,6 +4,9 @@ export const localeOptions = locales.filter((locale) =>
   enabled.includes(locale.value),
 );
 
+// ! This file should only import the JSON files for the enabled languages.
+// ! The import statements for the disabled languages should be commented out.
+
 // import af from './af.json';
 // import am from './am.json';
 import cmnHans from './cmn-hans.json';
