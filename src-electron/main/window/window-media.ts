@@ -184,7 +184,9 @@ const setWindowPosition = (
         displayNr === currentDisplayNr &&
         mediaWindowIsFullScreen(targetScreenBounds)
       ) {
-        mediaWindow.setAlwaysOnTop(PLATFORM !== 'darwin');
+        if (!mediaWindow.isAlwaysOnTop() && PLATFORM !== 'darwin') {
+          mediaWindow.setAlwaysOnTop(true);
+        }
         updateScreenAndPrefs();
         return;
       }
