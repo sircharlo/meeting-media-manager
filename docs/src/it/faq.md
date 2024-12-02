@@ -1,41 +1,41 @@
-# Frequently Asked Questions {#frequently-asked-questions}
+# Domande Frequenti {#frequently-asked-questions}
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content? {#external-dependencies}
+## Questa app dipende da siti esterni, fonti o "curatori" per scaricare pubblicazioni e media per l'adunanza? {#external-dependencies}
 
-**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
+\*\*No. L'app si comporta in modo simile a JW Library. Scarica pubblicazioni, media e altri contenuti direttamente dal sito ufficiale dei Testimoni di Geova e dalla sua rete di distribuzione di contenuti. L'applicazione determina automaticamente ciò che deve essere scaricato e quando il contenuto precedentemente scaricato non è più aggiornato e dovrebbe essere nuovamente scaricato.
 
-:::info Note
+:::info Nota
 
-The source code for this app is available for all to examine and verify what goes on under the hood.
+Il codice sorgente per questa app è aperto e disponibile per tutti per esaminare e verificare cosa succede sotto il cofano.
 
 :::
 
-## :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses? {#terms-of-use}
+## :thinking: Questa app viola le Condizioni d'uso del sito ufficiale dei Testimoni di Geova? {#terms-of-use}
 
-**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
+**No.** I [Termini d'uso](https://www.jw.org/finder?docid=1011511\&prefer=content) del sito ufficiale dei Testimoni di Geova consentono esplicitamente il tipo di utilizzo che stiamo facendo. Ecco il relativo estratto da quei termini (sottolineatura aggiunta):
 
-> You may not:
+> Non puoi:
 >
-> Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)
+> Creare per scopi di distribuzione, applicazioni software, strumenti o tecniche specificamente realizzati per raccogliere, copiare, scaricare, estrarre, raccogliere o scrape dati, HTML, immagini o testo da questo sito. (Questo **non** vieta la distribuzione gratuita di applicazioni non commerciali progettate per scaricare file elettronici come EPUB, File PDF, MP3 e MP4 dalle aree pubbliche di questo sito.)
 
-## :radioactive: How do I report an issue? {#how-do-i-report-an-issue}
+## :radioactive: Come faccio a segnalare un problema? {#how-do-i-report-an-issue}
 
-Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
+Per favore [segnala un problema](https://github.com/sircharlo/meeting-media-manager/issues) sul repository ufficiale di GitHub.
 
-## :new: How can I request a new feature or enhancement? {#how-can-i-request-a-new-feature-or-enhancement}
+## :new: Come posso richiedere una nuova funzionalità o miglioramento? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
+Per favore [apri una discussione](https://github.com/sircharlo/meeting-media-manager/discussions) sul repository ufficiale di GitHub.
 
-## :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
+## :handshake: Come posso contribuire con qualche codice? {#how-can-i-contribute-some-code}
 
-Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+Si prega di [vedere la guida contributiva](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) sul repository ufficiale di GitHub.
 
-## :x: Can I make a donation to the project? {#can-i-make-a-donation-to-the-project}
+## :x: Posso fare una donazione al progetto? {#can-i-make-a-donation-to-the-project}
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+Grazie per il vostro interesse a sostenere il progetto! Tuttavia, nello spirito di Matteo 10:8, le donazioni sono **non** accettate e mai lo saranno. Questa app è fatta con amore e un po' di tempo libero. Per piacere, divertiti! :tada:
 
-:::tip :book: Matthew 10:8
+:::tip :book: Matteo 10:8
 
-"You received free, give free."
+"Gratuitamente avete ricevuto, gratuitamente date"
 
 :::
