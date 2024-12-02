@@ -6,51 +6,51 @@
 
 Meeting Media Manager, o M³ in breve, è un'app per Windows, macOS e Linux, che scarica automaticamente immagini e video che verranno presi in considerazione durante le adunanze di congregazione dei Testimoni di Geova, in qualsiasi lingua disponibile su JW.org.
 
-It features support for managing regular and custom meeting media, and support for multiple congregations and/or groups using the same computer account.
+È dotato di supporto per la gestione di media standard personalizzati durante le adunanze e  gestisce più congregazioni e/o gruppi utilizzando lo stesso account del computer.
 
-:::info Note
+:::info Nota
 
-M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.
+Nota: M³ era noto come JWMMF (JW Meeting Media Fetcher), ma è stato rinominato nel maggio 2022.
 
 :::
 
-## Why choose M³? {#why-choose-m3}
+## Perché scegliere M³? {#why-choose-m3}
 
-M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms.
+M3 è lo strumento definitivo per gestire i media di un adunanza, offrendo un'esperienza senza interruzioni, affidabile e ricca di funzionalità su diverse piattaforme.
 
-### Key benefits {#key-benefits}
+### Principali vantaggi {#key-benefits}
 
-- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
+- **Presentazione multimediale senza sforzo**: Presentare i media al meglio — basta aprire M³ e tutto funziona. Nessuna configurazione complessa o passi extra necessari.
 
-- **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
+- **Supporto multi-congregazione**: Gestisci le impostazioni per più congregazioni o gruppi facilmente all'interno di una singola applicazione.
 
-- **Advanced features**: Easily add extra media, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Funzioni avanzate**: Aggiungi facilmente altri media e condividi automaticamente ciò che succede in Sala del Regno con i partecipanti su Zoom.
 
-- **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
+- **Prestazioni ottimizzate multipiattaforma**: Goditi un'esperienza fluida e reattiva su Windows, macOS e Linux, anche su vecchi sistemi o computer con risorse limitate.
 
-- **Reliable and stable**: Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
+- **Affidabile e stabile**: Costruito per funzionare quando ne hai più bisogno. Hai trovato un bug? Segnalalo, e sarà gestito prontamente.
 
-## What can M³ do? {#what-can-m3-do}
+## Cosa può fare M³? {#what-can-m3-do}
 
-In short, M³ allows you to easily and automatically download, synchronize, share and present all meeting media.
+In breve, M³ ti consente di scaricare, sincronizzare, condividere e presentare in modo semplice e automatico tutti i media dell'adunanza.
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode has all the features needed to simplify the task of sharing media with the congregation, including:
+Per le adunanze di congregazione ibride o in presenza, la modalità di presentazione dei media integrata ha tutte le funzionalità necessarie per semplificare il compito di condividere i media con la congregazione, tra cui:
 
-- Media thumbnails with the ability to zoom and pan, as well as set custom start and end times for media
-- Easy-to-use pause/play/stop buttons to manage playback of media files
-- Easy background music playback, with automatic stop before the start of regularly scheduled meetings
-- Automatic external monitor recognition and management
-- OBS Studio integration with automatic scene switching during media presentation
-- Presenting the official website of Jehovah's Witnesses website on an external monitor
-- Import JWPUB files, JWLPLAYLIST files, videos from the official website of Jehovah's Witnesses, and media for public talks from the S-34 file in a few clicks.
-- Custom videos, pictures, audio files and even PDF files can be easily imported too!
+- Miniature multimediali con la possibilità di zoom e pan, così come impostare i tempi di inizio e fine personalizzati per i media
+- Pulsanti di pausa/riproduzione/arresto facili da usare per gestire la riproduzione di file multimediali
+- Facile riproduzione dei cantici di sottofondo, con arresto automatico prima dell'inizio delle adunanze
+- Riconoscimento e gestione automatici di monitor esterni
+- Integrazione OBS Studio con il cambio automatico della scena durante la presentazione multimediale
+- Presentare il sito ufficiale del sito web dei Testimoni di Geova su un monitor esterno
+- Importa file JWPUB, file JWLPLAYLIST, video dal sito ufficiale dei Testimoni di Geova, e i media per i discorsi pubblici dal file S-34 in pochi clic.
+- Anche i video personalizzati, le immagini, i file audio e persino i file PDF possono essere facilmente importati!
 
-**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
+**Prova oggi M³  e scopri cosa può fare! Presentare i media alle adunanze di congregazione non è mai stato facile.**
 
 ![M³ preview](./../assets/m3-preview.png)
 
-## Does M³ work in my language? {#does-m3-work-in-my-language}
+## M³ funziona nella mia lingua? {#does-m3-work-in-my-language}
 
-**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need.
+\*\*Sì! I media per le adunanze dei Testimoni di Geova possono essere scaricati automaticamente in una qualsiasi delle centinaia di lingue disponibili su JW.org. L'elenco delle lingue disponibili viene aggiornato dinamicamente; tutto quello che devi fare è selezionare quella che vuoi.
 
-In addition, M³ itself has been translated into several languages by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
+Inoltre, M³ stesso è stato tradotto in diverse lingue da molti volontari; puoi quindi configurare la lingua che desideri venga utilizzata nell'interfaccia di M³.
