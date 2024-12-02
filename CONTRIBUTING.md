@@ -171,6 +171,8 @@ const enabled = [
 ];
 ```
 
+To disable a language, you need to perform the same steps, but in reverse.
+
 ### Contribute to the documentation site
 
 The documentation website lives in the `docs` folder. It is built with [VitePress](https://vitepress.dev/). Information about the directory structure can be found [here](https://vitepress.dev/guide/getting-started#file-structure). To work on the documentation site, you can use the following commands:
