@@ -16,7 +16,7 @@ import et from './et.json';
 import fr from './fr.json';
 import hu from './hu.json';
 // import ilo from './ilo.json';
-// import it from './it.json';
+import it from './it.json';
 // import mg from './mg.json';
 import nl from './nl.json';
 // import pag from './pag.json';
@@ -47,7 +47,7 @@ export default {
   fr,
   hu,
   // ilo,
-  // it,
+  it,
   // mg,
   nl,
   // pag,

@@ -44,6 +44,7 @@ export const enabled: LanguageValue[] = [
   'et',
   'fr',
   'hu',
+  'it',
   'nl',
   'pt',
   'ptPt',
