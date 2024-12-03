@@ -16,7 +16,7 @@
       size="xs"
     />
     {{ $q.screen.gt.sm ? $t('reset-sort-order') : '' }}
-    <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+    <q-tooltip v-if="!$q.screen.gt.sm" :delay="1000">
       {{ $t('reset-sort-order') }}
     </q-tooltip>
   </q-btn>
@@ -193,6 +193,9 @@
       name="mmm-calendar-month"
       size="xs"
     />
+    <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+      {{ getLocalDate(selectedDate, dateLocale) || $t('select-a-date') }}
+    </q-tooltip>
     {{
       $q.screen.gt.xs
         ? getLocalDate(selectedDate, dateLocale) || $t('select-a-date')
@@ -208,6 +211,7 @@
         minimal
         :navigation-max-year-month="maxDate()"
         :navigation-min-year-month="minDate()"
+        no-unset
         :options="dateOptions"
       />
     </q-popup-proxy>
