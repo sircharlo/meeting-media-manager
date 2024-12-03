@@ -285,6 +285,13 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'subtitles',
     type: 'toggle',
   },
+  langSubtitles: {
+    depends: 'enableSubtitles',
+    group: 'advanced',
+    list: 'jwLanguages',
+    subgroup: 'subtitles',
+    type: 'list',
+  },
   enableMediaAutoExport: {
     depends: 'enableMediaDisplayButton',
     group: 'advanced',
@@ -298,13 +305,6 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'mediaExport',
     type: 'path',
     unless: 'disableMediaFetching',
-  },
-  langSubtitles: {
-    depends: 'enableSubtitles',
-    group: 'advanced',
-    list: 'jwLanguages',
-    subgroup: 'subtitles',
-    type: 'list',
   },
   musicVolume: {
     actions: ['setBackgroundMusicVolume'],
