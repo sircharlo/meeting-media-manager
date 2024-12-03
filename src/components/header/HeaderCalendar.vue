@@ -5,6 +5,7 @@
   <DialogStudyBible v-model="studyBiblePopup" :section="section" />
   <DialogAudioBible v-model="audioBiblePopup" :section="section" />
   <q-btn
+    v-if="selectedDate"
     color="white-transparent"
     :disable="mediaPlaying || !mediaSortForDay"
     unelevated
