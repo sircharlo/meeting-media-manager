@@ -320,8 +320,9 @@ const chooseCustomBackground = async (reset?: boolean) => {
         if (
           error instanceof Error &&
           !error.message.includes('Invalid file type')
-        )
+        ) {
           errorCatcher(error);
+        }
         notifyInvalidBackgroundFile();
       }
     }
