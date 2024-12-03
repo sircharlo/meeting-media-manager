@@ -4,6 +4,7 @@ import type {
   ElectronIpcSendKey,
   ExternalWebsite,
   FileDialogFilter,
+  MediaAccessStatus,
   NavigateWebsiteAction,
   SettingsValues,
 } from 'src/types';
@@ -194,10 +195,12 @@ handleIpcInvoke('getVersion', async () => getAppVersion());
 handleIpcInvoke('getAppDataPath', async () => app.getPath('appData'));
 handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
 
-handleIpcInvoke('getScreenAccessStatus', async () =>
-  PLATFORM === 'linux'
-    ? 'granted'
-    : systemPreferences.getMediaAccessStatus('screen'),
+handleIpcInvoke(
+  'getScreenAccessStatus',
+  async (): Promise<MediaAccessStatus> =>
+    PLATFORM === 'linux'
+      ? 'granted'
+      : systemPreferences.getMediaAccessStatus('screen'),
 );
 
 handleIpcInvoke('getAllScreens', async () => getAllScreens());
