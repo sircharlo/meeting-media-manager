@@ -14,7 +14,11 @@ export const executeQuery = <T = QueryResponseItem>(
       readonly: true,
     });
     const result = db.prepare<unknown[], T>(query).all();
-    console.debug('executeQuery', { dbPath, query, result });
+    console.debug('executeQuery', {
+      db: dbPath.split('/').pop(),
+      query,
+      result,
+    });
     return result;
   } catch (e) {
     captureElectronError(e, {
