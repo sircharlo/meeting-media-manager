@@ -49,6 +49,7 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       autoStartAtLogin: oldPrefs.app?.autoRunAtBoot || false,
       autoStartMusic: oldPrefs.meeting?.autoStartMusic || true,
       baseUrl: 'jw.org',
+      cacheFolder: oldPrefs.app?.customCachePath || null,
       congregationName: oldPrefs.app?.congregationName || '',
       coWeek: oldPrefs.meeting?.coWeek || '',
       darkMode: 'auto',
