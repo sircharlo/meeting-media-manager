@@ -36,9 +36,9 @@ export const fetchJson = async <T>(
     const response = await fetchRaw(
       `${url}?${params ? params.toString() : ''}`,
     );
-    if (response.ok) {
+    if (response.ok || response.status === 304) {
       return await response.json();
-    } else if (![400, 404].includes(response.status)) {
+    } else if (![403, 404].includes(response.status)) {
       errorCatcher(new Error('Failed to fetch json!'), {
         contexts: {
           fn: {
