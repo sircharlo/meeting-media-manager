@@ -149,13 +149,13 @@ const addPublicTalkMedia = (publicTalkDocId: DocumentItem) => {
   if (!s34mpDb.value || !publicTalkDocId) return;
   addJwpubDocumentMediaToFiles(s34mpDb.value, publicTalkDocId, props.section, {
     issue: currentState.currentCongregation,
-    langwritten: currentState.currentSettings?.lang || 'E',
+    langwritten: '',
     pub: 'S-34mp',
   }).then(dismissPopup);
 };
 
 const setS34mp = async () => {
-  s34mpBasename.value = `S-34mp_${currentState.currentSettings?.lang || 'E'}_${currentState.currentCongregation}`;
+  s34mpBasename.value = `S-34mp_${currentState.currentCongregation}`;
   s34mpDir.value = path.join(await getPublicationsPath(), s34mpBasename.value);
 };
 

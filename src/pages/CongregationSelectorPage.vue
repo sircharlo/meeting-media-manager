@@ -126,7 +126,7 @@ import { useAppSettingsStore } from 'src/stores/app-settings';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { getAdditionalMediaPath } from 'src/utils/fs';
+import { getAdditionalMediaPath, getPublicationsPath } from 'src/utils/fs';
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
@@ -207,6 +207,9 @@ const removeCongregation = async (id: number | string) => {
   try {
     window.electronApi.fs.remove(
       window.electronApi.path.join(await getAdditionalMediaPath(), `${id}`),
+    );
+    window.electronApi.fs.remove(
+      window.electronApi.path.join(await getPublicationsPath(), `S-34mp_${id}`),
     );
   } catch (error) {
     errorCatcher(error);
