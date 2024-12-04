@@ -25,7 +25,7 @@ export const dateFromString = (lookupDate?: Date | string | undefined) => {
 /**
  * Checks if a date is in the past.
  * @param lookupDate The date to check.
- * @returns Weather the date is in the past.
+ * @returns Wether the date is in the past.
  */
 export const isInPast = (lookupDate: Date) => {
   try {

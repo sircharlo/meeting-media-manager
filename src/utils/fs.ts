@@ -12,7 +12,7 @@ const PUBLICATION_FOLDER = 'Publications';
 /**
  * Gets the full path of a directory in the user data folder.
  * @param paths The paths to the directory, relative to the user data folder.
- * @param create Weather to create the directory if it doesn't exist.
+ * @param create Wether to create the directory if it doesn't exist.
  * @returns The full path of the directory.
  */
 const getUserDataPath = async (paths: string[], create = false) => {
@@ -65,7 +65,7 @@ export const getPublicationDirectory = async (
 /**
  * Checks if a directory is empty.
  * @param directory The directory to check.
- * @returns Weather the directory is empty.
+ * @returns Wether the directory is empty.
  */
 const isEmptyDir = async (directory: string) => {
   try {

@@ -135,7 +135,7 @@ export const isSong = (multimediaItem: MultimediaItem) => {
 /**
  * Checks if a file is a remote file.
  * @param file The file to check.
- * @returns Weather the file is a remote file.
+ * @returns Wether the file is a remote file.
  */
 export const isRemoteFile = (
   file: File | { filename?: string; filetype?: string; path: string },
@@ -147,7 +147,7 @@ export const isRemoteFile = (
 /**
  * Checks if a url is an image string.
  * @param url The url to check.
- * @returns Weather the url is an image string.
+ * @returns Wether the url is an image string.
  */
 export const isImageString = (url: string) => {
   if (!url) return false;

@@ -43,7 +43,7 @@ export const capitalize = (str: string) =>
 /**
  * Checks if a value is empty.
  * @param val The value to check.
- * @returns Weather the value is empty.
+ * @returns Wether the value is empty.
  */
 export const isEmpty = (val: unknown) =>
   val === '' || val === null || val === undefined;
@@ -83,7 +83,7 @@ export const parseVersion = (version: string) => {
  * @param version The version to check.
  * @param minVersion The minimum version.
  * @param maxVersion The maximum version.
- * @returns Weather the version is within bounds.
+ * @returns Wether the version is within bounds.
  * @example
  * isVersionWithinBounds('1.2.3', '1.0.0', '2.0.0') // true
  * isVersionWithinBounds('1.2.3', '1.3.0', '2.0.0') // false
