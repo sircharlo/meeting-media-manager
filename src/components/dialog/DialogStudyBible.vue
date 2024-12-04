@@ -266,7 +266,7 @@ const { currentSettings } = storeToRefs(currentState);
 
 // Props
 const props = defineProps<{
-  section?: MediaSection;
+  section: MediaSection | undefined;
 }>();
 
 const open = defineModel<boolean>({ default: false });

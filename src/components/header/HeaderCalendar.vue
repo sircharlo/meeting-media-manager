@@ -1,6 +1,6 @@
 <template>
   <SongPicker v-model="chooseSong" :section="section" />
-  <PublicTalkMediaPicker v-model="publicTalkMediaPopup" />
+  <PublicTalkMediaPicker v-model="publicTalkMediaPopup" :section="section" />
   <DialogRemoteVideo v-model="remoteVideoPopup" :section="section" />
   <DialogStudyBible v-model="studyBiblePopup" :section="section" />
   <DialogAudioBible v-model="audioBiblePopup" :section="section" />
@@ -269,9 +269,12 @@ const audioBiblePopup = ref(false);
 
 const openDragAndDropper = () => {
   window.dispatchEvent(
-    new CustomEvent<{ section?: MediaSection }>('openDragAndDropper', {
-      detail: { section: section.value },
-    }),
+    new CustomEvent<{ section: MediaSection | undefined }>(
+      'openDragAndDropper',
+      {
+        detail: { section: section.value },
+      },
+    ),
   );
 };
 
@@ -425,12 +428,12 @@ const openSongPicker = (newSection?: MediaSection) => {
   chooseSong.value = true;
 };
 
-useEventListener<CustomEvent<{ section?: MediaSection }>>(
+useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
   window,
   'openSongPicker',
   (e) => openSongPicker(e.detail?.section),
 );
-useEventListener<CustomEvent<{ section?: MediaSection }>>(
+useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
   window,
   'openImportMenu',
   (e) => openImportMenu(e.detail?.section),

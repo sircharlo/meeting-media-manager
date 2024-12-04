@@ -83,7 +83,7 @@ export const useJwStore = defineStore('jw-store', {
   actions: {
     addToAdditionMediaMap(
       mediaArray: DynamicMediaObject[],
-      section?: MediaSection,
+      section: MediaSection | undefined,
     ) {
       try {
         const { currentCongregation, selectedDate, selectedDateObject } =

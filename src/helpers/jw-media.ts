@@ -64,7 +64,7 @@ const { executeQuery, fileUrlToPath, fs, path, pathToFileURL, readdir } =
 
 export const copyToDatedAdditionalMedia = async (
   filepathToCopy: string,
-  section?: MediaSection,
+  section: MediaSection | undefined,
   addToAdditionMediaMap?: boolean,
 ) => {
   const currentStateStore = useCurrentStateStore();
@@ -184,7 +184,7 @@ export const addToAdditionMediaMapFromPath = async (
 export const addJwpubDocumentMediaToFiles = async (
   dbPath: string,
   document: DocumentItem,
-  section?: MediaSection,
+  section: MediaSection | undefined,
 ) => {
   const jwStore = useJwStore();
   const { addToAdditionMediaMap } = jwStore;

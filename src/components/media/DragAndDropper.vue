@@ -21,9 +21,11 @@
               clickable
               @click="
                 jwpubLoading = true;
-                addJwpubDocumentMediaToFiles(jwpubDb, jwpubImportDocument).then(
-                  resetModal,
-                );
+                addJwpubDocumentMediaToFiles(
+                  jwpubDb,
+                  jwpubImportDocument,
+                  section,
+                ).then(resetModal);
               "
             >
               <q-item-section class="no-wrap">
@@ -133,7 +135,7 @@ const { openFileDialog } = window.electronApi;
 
 const props = defineProps<{
   currentFile: number;
-  section?: MediaSection;
+  section: MediaSection | undefined;
   totalFiles: number;
 }>();
 
@@ -167,7 +169,7 @@ const getLocalFiles = async () => {
         window.dispatchEvent(
           new CustomEvent<{
             files: { filename?: string; filetype?: string; path: string }[];
-            section?: MediaSection;
+            section: MediaSection | undefined;
           }>('localFiles-browsed', {
             detail: {
               files: result.filePaths.map((path) => ({ path })),

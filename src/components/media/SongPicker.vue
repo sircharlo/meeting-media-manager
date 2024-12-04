@@ -104,7 +104,7 @@ import { useJwStore } from 'src/stores/jw';
 import { computed, ref } from 'vue';
 
 const props = defineProps<{
-  section?: MediaSection;
+  section: MediaSection | undefined;
 }>();
 
 // Define model

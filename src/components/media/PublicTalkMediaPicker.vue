@@ -91,7 +91,7 @@ import { computed, ref, watch } from 'vue';
 const { executeQuery, fs, openFileDialog, path } = window.electronApi;
 
 const props = defineProps<{
-  section?: MediaSection;
+  section: MediaSection | undefined;
 }>();
 
 const open = defineModel<boolean>({ required: true });

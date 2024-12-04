@@ -127,7 +127,7 @@
                 <q-btn
                   v-if="selectedDate"
                   color="primary"
-                  @click="openImportMenu()"
+                  @click="openImportMenu(undefined)"
                 >
                   <q-icon class="q-mr-sm" name="mmm-add-media" size="xs" />
                   {{ $t('add-extra-media') }}
@@ -995,7 +995,7 @@ const checkCoDate = () => {
 
 const sectionToAddTo = ref<MediaSection | undefined>();
 
-useEventListener<CustomEvent<{ section?: MediaSection }>>(
+useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
   window,
   'openDragAndDropper',
   (e) => {
@@ -1007,7 +1007,7 @@ useEventListener<CustomEvent<{ section?: MediaSection }>>(
 useEventListener<
   CustomEvent<{
     files: { filename?: string; filetype?: string; path: string }[];
-    section?: MediaSection;
+    section: MediaSection | undefined;
   }>
 >(window, 'localFiles-browsed', (event) => {
   sectionToAddTo.value = event.detail?.section;
@@ -1452,17 +1452,17 @@ const addToFiles = async (
   if (!isJwpub(files[0].path)) resetDragging();
 };
 
-const addSong = (section?: MediaSection) => {
+const addSong = (section: MediaSection | undefined) => {
   window.dispatchEvent(
-    new CustomEvent<{ section?: MediaSection }>('openSongPicker', {
+    new CustomEvent<{ section: MediaSection | undefined }>('openSongPicker', {
       detail: { section },
     }),
   );
 };
 
-const openImportMenu = (section?: MediaSection) => {
+const openImportMenu = (section: MediaSection | undefined) => {
   window.dispatchEvent(
-    new CustomEvent<{ section?: MediaSection }>('openImportMenu', {
+    new CustomEvent<{ section: MediaSection | undefined }>('openImportMenu', {
       detail: { section },
     }),
   );
