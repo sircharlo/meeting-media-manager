@@ -142,11 +142,15 @@ export async function createWebsiteWindow(lang?: string) {
 
 export const zoomWebsiteWindow = (direction: 'in' | 'out') => {
   if (!websiteWindow) return;
-  const currentZoom = websiteWindow.webContents.getZoomFactor();
-  if (direction === 'in') {
-    websiteWindow.webContents.setZoomFactor(currentZoom + 0.2);
-  } else if (direction === 'out') {
-    websiteWindow.webContents.zoomFactor = Math.max(0, currentZoom - 0.2);
+  try {
+    const currentZoom = websiteWindow.webContents.getZoomFactor();
+    if (direction === 'in') {
+      websiteWindow.webContents.setZoomFactor(Math.min(currentZoom + 0.2, 5));
+    } else if (direction === 'out') {
+      websiteWindow.webContents.zoomFactor = Math.max(0.1, currentZoom - 0.2);
+    }
+  } catch (e) {
+    captureElectronError(e);
   }
 };
 
