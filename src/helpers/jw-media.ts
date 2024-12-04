@@ -185,6 +185,7 @@ export const addJwpubDocumentMediaToFiles = async (
   dbPath: string,
   document: DocumentItem,
   section: MediaSection | undefined,
+  pubFolder?: PublicationFetcher,
 ) => {
   const jwStore = useJwStore();
   const { addToAdditionMediaMap } = jwStore;
@@ -202,7 +203,7 @@ export const addJwpubDocumentMediaToFiles = async (
     for (let i = 0; i < multimediaItems.length; i++) {
       multimediaItems[i] = await addFullFilePathToMultimediaItem(
         multimediaItems[i],
-        publication,
+        pubFolder ?? publication,
       );
     }
     await processMissingMediaInfo(multimediaItems);

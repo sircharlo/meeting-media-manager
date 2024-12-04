@@ -80,7 +80,9 @@ export const datesAreSame = (date1: Date, date2: Date) => {
     if (!date1 || !date2) throw new Error('Missing date for comparison');
     return date1.toDateString() === date2.toDateString();
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: { fn: { date1, date2, name: 'datesAreSame' } },
+    });
     return false;
   }
 };
