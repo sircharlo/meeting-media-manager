@@ -188,6 +188,10 @@ export function captureElectronError(
   error: Error | string | unknown,
   context?: ExclusiveEventHintOrCaptureContext,
 ) {
+  if (error instanceof Error && error.cause) {
+    captureElectronError(error.cause, context);
+  }
+
   if (IS_DEV) {
     console.error(error);
     console.warn('context', context);
