@@ -61,6 +61,7 @@ export const fetchJson = async <T>(
           fn: {
             name: 'fetchJson',
             params: Object.fromEntries(params || []),
+            responseUrl: `${url}?${params ? params.toString() : ''}`,
             url,
           },
         },
