@@ -99,12 +99,7 @@ const { additionalMediaMaps, lookupPeriod } = storeToRefs(jwStore);
 
 const currentState = useCurrentStateStore();
 const { invalidSettings } = currentState;
-const {
-  currentSettings,
-  currentSongbook,
-  onlyShowInvalidSettings,
-  selectedDate,
-} = storeToRefs(currentState);
+const { onlyShowInvalidSettings, selectedDate } = storeToRefs(currentState);
 
 const moreOptionsMenuActive = ref(false);
 const calculatingCacheSize = ref(false);
@@ -121,21 +116,29 @@ const loadFrequentlyUsedDirectories = async () => {
       langwritten: JwLangCode;
       pub: string;
     } = {
-      langwritten: currentSettings.value?.lang || 'E',
+      langwritten: currentState.currentSettings?.lang || 'E',
       pub,
     };
     if (issue === 0) {
       directoryParams.issue = issue;
     }
-    return currentSettings.value
-      ? await getPublicationDirectory(directoryParams)
+    return currentState.currentSettings
+      ? [
+          await getPublicationDirectory(directoryParams),
+          await getPublicationDirectory(
+            directoryParams,
+            currentState.currentSettings?.cacheFolder,
+          ),
+        ]
       : '';
   };
 
   const directories = [
-    currentSongbook.value ? await getDirectory(currentSongbook.value.pub) : '', // Background music
-    currentSongbook.value
-      ? await getDirectory(currentSongbook.value.pub, 0)
+    currentState.currentSongbook
+      ? await getDirectory(currentState.currentSongbook.pub)
+      : '', // Background music
+    currentState.currentSongbook
+      ? await getDirectory(currentState.currentSongbook.pub, 0)
       : '', // Songbook videos
     await getDirectory('it', 0), // Insight
     await getDirectory('lff', 0), // Enjoy Life Forever
@@ -146,7 +149,15 @@ const loadFrequentlyUsedDirectories = async () => {
       langwritten: '',
       pub: 'S-34mp',
     }),
-  ];
+    await getPublicationDirectory(
+      {
+        issue: currentState.currentCongregation,
+        langwritten: '',
+        pub: 'S-34mp',
+      },
+      currentState.currentSettings?.cacheFolder,
+    ),
+  ].flat();
 
   frequentlyUsedDirectories.value = new Set(directories.filter(Boolean));
 };
@@ -210,11 +221,12 @@ const untouchableDirectories = ref(new Set<string>());
 
 const fetchUntouchableDirectories = async () => {
   try {
-    const tempDirectory = await getTempPath();
     untouchableDirectories.value = new Set([
       await getAdditionalMediaPath(),
+      await getAdditionalMediaPath(currentState.currentSettings?.cacheFolder),
       await getPublicationsPath(),
-      tempDirectory,
+      await getPublicationsPath(currentState.currentSettings?.cacheFolder),
+      await getTempPath(),
     ]);
   } catch (error) {
     errorCatcher(error);
@@ -310,12 +322,21 @@ const calculateCacheSize = async () => {
   cacheFiles.value = [];
   try {
     const dirs = [
-      window.electronApi.path.join(
-        await getAdditionalMediaPath(),
-        currentState.currentCongregation,
-      ),
-      await getTempPath(),
-      await getPublicationsPath(),
+      ...new Set([
+        await getPublicationsPath(),
+        await getPublicationsPath(currentState.currentSettings?.cacheFolder),
+        await getTempPath(),
+        window.electronApi.path.join(
+          await getAdditionalMediaPath(),
+          currentState.currentCongregation,
+        ),
+        window.electronApi.path.join(
+          await getAdditionalMediaPath(
+            currentState.currentSettings?.cacheFolder,
+          ),
+          currentState.currentCongregation,
+        ),
+      ]),
     ];
     const cacheDirs = (
       await Promise.all(

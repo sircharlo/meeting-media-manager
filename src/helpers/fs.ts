@@ -209,7 +209,10 @@ export const getSubtitlesUrl = async (
             'Duration mismatch: ' + JSON.stringify(subtitleFetcher),
           );
         const subtitlesFilename = path.basename(subtitles);
-        const subDirectory = await getPublicationDirectory(subtitleFetcher);
+        const subDirectory = await getPublicationDirectory(
+          subtitleFetcher,
+          currentState.currentSettings?.cacheFolder,
+        );
         await downloadFileIfNeeded({
           dir: subDirectory,
           filename: subtitlesFilename,

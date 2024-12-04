@@ -63,7 +63,7 @@
           <div
             v-if="
               !currentSettings?.disableMediaFetching ||
-              sortableAdditionalMediaItems?.filter((m) => !m.hidden).length < 1
+              !sortableAdditionalMediaItems?.filter((m) => !m.hidden).length
             "
             class="row justify-center"
           >
@@ -1354,7 +1354,10 @@ const addToFiles = async (
         fs.remove(tempFilePath);
         if (!(await fs.exists(tempDbFilePath))) return;
         const publication = getPublicationInfoFromDb(tempDbFilePath);
-        const publicationDirectory = await getPublicationDirectory(publication);
+        const publicationDirectory = await getPublicationDirectory(
+          publication,
+          currentState.currentSettings?.cacheFolder,
+        );
         if (!publicationDirectory) return;
         const unzipDir = await decompressJwpub(filepath, publicationDirectory);
         const db = await findDb(unzipDir);

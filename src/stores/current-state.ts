@@ -67,7 +67,9 @@ export const useCurrentStateStore = defineStore('current-state', {
       try {
         if (!destDate) destDate = this.selectedDate;
         if (!destDate) return '';
-        const additionalMediaPath = await getAdditionalMediaPath();
+        const additionalMediaPath = await getAdditionalMediaPath(
+          this.currentSettings?.cacheFolder,
+        );
         const dateString = formatDate(new Date(destDate), 'YYYYMMDD');
         const datedAdditionalMediaDirectory = path.join(
           additionalMediaPath,

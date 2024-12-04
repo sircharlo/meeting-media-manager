@@ -16,7 +16,7 @@ export interface CacheList<T = unknown> {
   updated: Date;
 }
 
-export type FontName = 'JW-Icons' | 'WT-ClearText-Bold';
+export type FontName = 'JW-Icons' | 'Wt-ClearText-Bold';
 
 export interface UrlVariables {
   base: string;
