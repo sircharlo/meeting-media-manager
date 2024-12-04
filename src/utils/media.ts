@@ -164,17 +164,16 @@ export const isImageString = (url: string) => {
  * inferExtension('A video', 'video/mp4') // A video.mp4
  */
 export const inferExtension = async (filename: string, filetype?: string) => {
-  if (!filetype) return filename;
-  const { default: mime } = await import('mime');
-  const extractedExtension = mime.extension(filetype);
-  if (!extractedExtension) {
+  if (!filetype || /\.[0-9a-z]+$/i.test(filename)) return filename;
+
+  try {
+    const { default: mime } = await import('mime');
+    const extractedExtension = mime.extension(filetype);
+    return extractedExtension ? `${filename}.${extractedExtension}` : filename;
+  } catch (e) {
+    errorCatcher(e);
     return filename;
   }
-  const hasExtension = /\.[0-9a-z]+$/i.test(filename);
-  if (hasExtension) {
-    return filename;
-  }
-  return `${filename}.${extractedExtension}`;
 };
 
 /**
