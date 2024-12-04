@@ -1,7 +1,7 @@
 import type { BrowserWindow, Video } from 'electron';
 import type { NavigateWebsiteAction } from 'src/types';
 
-import { PLATFORM } from 'app/src-electron/constants';
+import { HD_RESOLUTION, PLATFORM } from 'app/src-electron/constants';
 import {
   askForMediaAccess,
   captureElectronError,
@@ -29,11 +29,11 @@ export async function createWebsiteWindow(lang?: string) {
     'website',
     {
       alwaysOnTop: true,
-      height: 720,
+      height: HD_RESOLUTION[1],
       show: true,
       title: 'Website Stream',
       useContentSize: PLATFORM !== 'darwin',
-      width: 1280,
+      width: HD_RESOLUTION[0],
     },
     lang,
   );

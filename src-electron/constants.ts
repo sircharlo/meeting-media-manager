@@ -10,3 +10,4 @@ export const TRUSTED_DOMAINS: string[] = [
   'akamaihd.net',
   'cloudfront.net',
 ];
+export const HD_RESOLUTION = [1280, 720];
