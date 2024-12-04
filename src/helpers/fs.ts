@@ -150,7 +150,7 @@ const getThumbnailFromVideoPath = async (
     videoRef.addEventListener('error', (e) => {
       // Cleanup in case of error
       videoRef.remove();
-      reject(e.error);
+      reject(new Error(e.message, { cause: e.error }));
     });
   });
 };
