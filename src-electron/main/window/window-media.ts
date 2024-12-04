@@ -120,8 +120,10 @@ const boundsAreSame = (
   if (!current || !target) return false;
   return ['height', 'width', 'x', 'y'].every(
     (prop) =>
-      current[prop as keyof Electron.Rectangle] ===
-      target[prop as keyof Electron.Rectangle],
+      Math.abs(
+        current[prop as keyof Electron.Rectangle] -
+          target[prop as keyof Electron.Rectangle],
+      ) <= 5,
   );
 };
 
