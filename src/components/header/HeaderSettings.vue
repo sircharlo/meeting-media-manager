@@ -282,13 +282,20 @@ const getCacheFiles = async (cacheDirs: string[]) => {
       for (const item of items) {
         const filePath = path.join(item.parentPath, item.name);
         if (item.isFile) {
-          const fileParentDirectoryUrl = pathToFileURL(item.parentPath);
-          files.push({
-            orphaned: !mediaFileParentDirectories.has(fileParentDirectoryUrl),
-            parentPath: item.parentPath,
-            path: filePath,
-            size: item.size || 0,
-          });
+          const parentFolder = item.parentPath.split('/').pop() || '';
+          if (
+            !parentFolder.startsWith('S-34mp') ||
+            parentFolder === `S-34mp_${currentState.currentCongregation}` ||
+            /^S-34mp_[A-Z]+_0$/.test(parentFolder)
+          ) {
+            const fileParentDirectoryUrl = pathToFileURL(item.parentPath);
+            files.push({
+              orphaned: !mediaFileParentDirectories.has(fileParentDirectoryUrl),
+              parentPath: item.parentPath,
+              path: filePath,
+              size: item.size || 0,
+            });
+          }
         }
       }
     } catch (error) {
