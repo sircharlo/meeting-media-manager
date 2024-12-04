@@ -147,10 +147,10 @@ const getThumbnailFromVideoPath = async (
       videoRef.currentTime = 5; // Seek to 5 seconds to get the thumbnail
     });
 
-    videoRef.addEventListener('error', (err) => {
+    videoRef.addEventListener('error', (e) => {
       // Cleanup in case of error
       videoRef.remove();
-      reject(err);
+      reject(e.error);
     });
   });
 };
