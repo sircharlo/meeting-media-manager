@@ -316,6 +316,11 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'setupWizard.backgroundMusic',
     type: 'slider',
   },
+  cacheFolder: {
+    group: 'advanced',
+    subgroup: 'cache',
+    type: 'path',
+  },
   baseUrl: {
     rules: ['notEmpty'],
     group: 'advanced',
@@ -334,6 +339,7 @@ export const defaultSettings: SettingsValues = {
   autoStartAtLogin: false,
   autoStartMusic: true,
   baseUrl: 'jw.org',
+  cacheFolder: null,
   congregationName: null,
   coWeek: null,
   darkMode: 'auto',

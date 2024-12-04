@@ -39,6 +39,8 @@
   "baseUrl-explain": "Enter the address used to access the official website of Jehovah's Witnesses.",
   "browse": "Browse",
   "cache": "Cache",
+  "cacheFolder": "Custom cache folder",
+  "cacheFolder-explain": "Choose a folder where cache files, like publications and additional media will be stored. This can be useful if you want to store cache on an external drive.",
   "cancel": "Cancel",
   "change-tag": "Edit tag",
   "change-tag-explain": "Change the tag type and label for this media item.",

@@ -77,7 +77,14 @@ const deleteCacheFiles = async (type = '') => {
     for (const filepath of filepathsToDelete) {
       try {
         fs.remove(filepath);
-        if (filepath.startsWith(await getAdditionalMediaPath())) {
+        if (
+          filepath.startsWith(await getAdditionalMediaPath()) ||
+          filepath.startsWith(
+            await getAdditionalMediaPath(
+              currentState.currentSettings?.cacheFolder,
+            ),
+          )
+        ) {
           const folder = filepath.split('/').pop();
           const date = folder
             ? `${folder.slice(0, 4)}/${folder.slice(4, 6)}/${folder.slice(6, 8)}`

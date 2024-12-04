@@ -206,10 +206,16 @@ const removeCongregation = async (id: number | string) => {
   deleteCongregation(id);
   try {
     window.electronApi.fs.remove(
-      window.electronApi.path.join(await getAdditionalMediaPath(), `${id}`),
+      window.electronApi.path.join(
+        await getAdditionalMediaPath(currentState.currentSettings?.cacheFolder),
+        `${id}`,
+      ),
     );
     window.electronApi.fs.remove(
-      window.electronApi.path.join(await getPublicationsPath(), `S-34mp_${id}`),
+      window.electronApi.path.join(
+        await getPublicationsPath(currentState.currentSettings?.cacheFolder),
+        `S-34mp_${id}`,
+      ),
     );
   } catch (error) {
     errorCatcher(error);

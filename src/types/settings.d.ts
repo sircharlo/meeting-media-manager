@@ -166,6 +166,7 @@ export interface SettingsValues {
   autoStartAtLogin: boolean;
   autoStartMusic: boolean;
   baseUrl: string;
+  cacheFolder: null | string;
   congregationName: null | string;
   coWeek: null | string;
   darkMode: 'auto' | boolean;
