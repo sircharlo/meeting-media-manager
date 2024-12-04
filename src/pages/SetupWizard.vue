@@ -107,8 +107,22 @@
         </q-step>
         <q-step
           :done="step > 4"
-          icon="mmm-media-language"
+          icon="mmm-download"
           :name="4"
+          :title="$t('cacheFolder')"
+        >
+          <p>{{ $t('cacheFolder-explain') }}</p>
+          <p>{{ $t('cacheFolder-wizard') }}</p>
+          <FolderInput v-model="currentSettings.cacheFolder" />
+          <q-stepper-navigation class="q-gutter-sm">
+            <q-btn color="negative" flat :label="$t('back')" @click="step--" />
+            <q-btn color="primary" :label="$t('continue')" @click="step++" />
+          </q-stepper-navigation>
+        </q-step>
+        <q-step
+          :done="step > 5"
+          icon="mmm-media-language"
+          :name="5"
           :title="$t('lang')"
         >
           <p>{{ $t('in-what-language-should-media-be-downloaded') }}</p>
@@ -132,9 +146,9 @@
           </q-stepper-navigation>
         </q-step>
         <q-step
-          :done="step > 5"
+          :done="step > 6"
           icon="mmm-yeartext"
-          :name="5"
+          :name="6"
           :title="$t('yeartext')"
         >
           <!-- This icon is from the Material Design Icons collection -->
@@ -158,9 +172,9 @@
         <q-step
           v-if="regularProfile"
           :disable="!regularProfile"
-          :done="step > 6"
+          :done="step > 7"
           icon="mmm-calendar-month"
-          :name="6"
+          :name="7"
           :title="$t('setupWizard.meetingDaysTimes')"
         >
           <p>
@@ -208,9 +222,9 @@
         <q-step
           v-if="regularProfile"
           :disable="!regularProfile"
-          :done="step > 7"
+          :done="step > 8"
           icon="mmm-download"
-          :name="7"
+          :name="8"
           :title="$t('songbook-video-caching')"
         >
           <p class="text-subtitle1">
@@ -235,9 +249,9 @@
         <q-step
           v-if="regularProfile"
           :disable="!regularProfile"
-          :done="step > 8"
+          :done="step > 9"
           icon="mmm-almost-done"
-          :name="8"
+          :name="9"
           :title="$t('almost-done')"
         >
           <p>
@@ -297,7 +311,7 @@
               color="negative"
               flat
               :label="$t('back')"
-              @click="step = 8"
+              @click="step = 9"
             />
             <q-btn color="primary" :label="$t('continue')" @click="step++" />
           </q-stepper-navigation>
@@ -552,6 +566,7 @@
 import { watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import DialogCongregationLookup from 'src/components/dialog/DialogCongregationLookup.vue';
+import FolderInput from 'src/components/form-inputs/FolderInput.vue';
 import SelectInput from 'src/components/form-inputs/SelectInput.vue';
 import TextInput from 'src/components/form-inputs/TextInput.vue';
 import TimeInput from 'src/components/form-inputs/TimeInput.vue';
