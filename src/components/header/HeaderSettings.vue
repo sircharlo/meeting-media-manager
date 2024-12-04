@@ -253,11 +253,13 @@ const lookupPeriodsCollections = Object.values(lookupPeriod.value).flatMap(
       (lookupPeriods) => lookupPeriods?.dynamicMedia || [],
     ),
 );
+
 const additionalMediaCollections = Object.values(
   additionalMediaMaps.value,
 ).flatMap((congregationAdditionalMediaMap) =>
   Object.values(congregationAdditionalMediaMap || {}).flat(),
 );
+
 const mediaFileParentDirectories = new Set([
   ...additionalMediaCollections.map((media) =>
     media ? pathToFileURL(getParentDirectory(media.fileUrl)) : '',
@@ -296,7 +298,10 @@ const calculateCacheSize = async () => {
   cacheFiles.value = [];
   try {
     const dirs = [
-      await getAdditionalMediaPath(),
+      window.electronApi.path.join(
+        await getAdditionalMediaPath(),
+        currentState.currentCongregation,
+      ),
       await getTempPath(),
       await getPublicationsPath(),
     ];
