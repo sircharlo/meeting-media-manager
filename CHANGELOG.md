@@ -2,6 +2,44 @@
 
 # Changelog
 
+## 24.12.0
+
+### New Features
+
+- 🧹 Added **cache folder customization** in settings and the wizard for better data control.
+- 🎤 Introduced **audio Bible import** functionality (#3569).
+- 📂 Added **auto-export media to folder** functionality (#3474).
+- 📖 Included **non-book media** (e.g., appendices, introductions) from the study Bible (#3559).
+- 🌐 Enabled **Italian** language support.
+- 🎨 Updated icon assets and introduced **new media player icon**.
+
+### Fixes
+
+- 🖼️ Move **subtitle settings** to ensure better grouping in settings.
+- 🖱️ Resolved **hover color issues** for list items.
+- 📜 Fixed **study Bible style tweaks** and harmonized video title displays with study Bible tiles.
+- 🎬 Corrected **ordering issues** for meetings with extra media.
+- 🖥️ Fixed **window offscreen issues** by resetting window position when necessary.
+- 🎛️ Fixed **slider tooltip position glitch** to ensure proper display.
+- 🚪 Properly handled **public talk media** so it is displayed correctly in the list.
+- 🔄 Resolved **issues with combined properties** from JWPUB files.
+- 🎵 Fixed **S-34mp menu position** for better usability.
+- 🛠️ Fixed **menu actions** to disable them as needed when media is active and adjusted menu icon placement.
+- 🖼️ Corrected **window flicker** issues during screen transitions.
+- ⚙️ Fixed **media access status logic** to avoid unnecessary calls on Linux.
+- 🛠️ Resolved **zoom limit enforcement** for better usability while presenting the website.
+
+### Improvements & Chores
+
+- 🔨 Refactored and optimized **code** for reusability.
+- 📚 Improved **documentation**.
+- 🖼️ Implemented **custom scrolling styles and logic** instead of using `q-scroll-area` repeatedly (#3525).
+- ✏️ Cleaned up SVGs and resolved typos in the documentation.
+- 🛠️ Refactored **error handling** across Electron processes, including thumbnails and fetch contexts.
+- 🚀 Improved **DX (Developer Experience)** with streamlined workflows and templates.
+
+This release includes critical fixes, exciting new features, and numerous under-the-hood improvements to enhance performance, usability, and developer experience. Enjoy!
+
 ## 24.11.5
 
 ### New Features
@@ -570,7 +608,7 @@ Managing media is now **a breeze**! We've eliminated all those tricky steps like
 ### New or improved features
 
 - The tabs in settings have an icon for easier recognition
-- Zoom and pan has been reworked to be accurate whether using the mousewheel or double click
+- Zoom and pan has been reworked to be accurate whether using the mouse-wheel or double click
 
 ### Bug fixes
 
