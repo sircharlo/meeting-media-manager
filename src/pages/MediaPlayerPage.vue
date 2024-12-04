@@ -422,7 +422,7 @@ $q.iconMapFn = (iconName) => {
 watchImmediate(
   () => [jwStore.urlVariables?.base, jwStore.urlVariables?.mediator],
   () => {
-    setElementFont('WT-ClearText-Bold');
+    setElementFont('Wt-ClearText-Bold');
     setElementFont('JW-Icons');
   },
 );
