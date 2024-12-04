@@ -17,6 +17,7 @@ import es from './es.json';
 import et from './et.json';
 // import fi from './fi.json';
 import fr from './fr.json';
+// import ht from './ht.json';
 import hu from './hu.json';
 // import ilo from './ilo.json';
 import it from './it.json';
@@ -48,6 +49,7 @@ export default {
   et,
   // fi,
   fr,
+  // ht,
   hu,
   // ilo,
   it,

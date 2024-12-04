@@ -12,6 +12,7 @@ export type LanguageValue =
   | 'et'
   | 'fi'
   | 'fr'
+  | 'ht'
   | 'hu'
   | 'ilo'
   | 'it'
@@ -130,6 +131,12 @@ export const locales: {
     langcode: 'F',
     signLangCodes: ['LSF'],
     value: 'fr',
+  },
+  {
+    englishName: 'Haitian Creole',
+    label: 'Kreyòl ayisyen',
+    langcode: 'CR',
+    value: 'ht',
   },
   {
     englishName: 'Hungarian',
