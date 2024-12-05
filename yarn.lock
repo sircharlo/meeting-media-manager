@@ -1988,10 +1988,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/extras@npm:^1.16.14":
-  version: 1.16.14
-  resolution: "@quasar/extras@npm:1.16.14"
-  checksum: 10c0/bc4635d8ba6be268f22256f0650ae46ae23dc44e2998639698fb54b9982acaab9750e116f83f12e7322b050fd8b3cdc87f31c271aca8df9bf241ffa8308ccd1f
+"@quasar/extras@npm:^1.16.15":
+  version: 1.16.15
+  resolution: "@quasar/extras@npm:1.16.15"
+  checksum: 10c0/393e6ef13a418f0c74fd2c9d1716289e365ed643d5aea9926a2e037bced4f3820ed2f82ddd88507cf72651dafdcb14febea908adb7c336d58be8597479c8353e
   languageName: node
   linkType: hard
 
@@ -9709,7 +9709,7 @@ __metadata:
     "@numairawan/video-duration": "npm:^1.0.0"
     "@panzoom/panzoom": "npm:^4.5.1"
     "@quasar/app-vite": "npm:^1.11.0"
-    "@quasar/extras": "npm:^1.16.14"
+    "@quasar/extras": "npm:^1.16.15"
     "@rollup/plugin-inject": "npm:^5.0.5"
     "@sentry/electron": "npm:^5.7.0"
     "@sentry/esbuild-plugin": "npm:^2.22.6"
