@@ -130,6 +130,7 @@ export async function createWebsiteWindow(lang?: string) {
   );
 
   websiteWindow.on('close', () => {
+    websiteWindow?.webContents.setZoomFactor(1);
     sendToWindow(mainWindow, 'websiteWindowClosed');
   });
   websiteWindow.on('closed', () => {
