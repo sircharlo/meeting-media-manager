@@ -157,7 +157,7 @@ const openTranslateDiscussion = () => {
     'translations',
     `New translation in ${currentJwLang.value?.name}`,
     JSON.stringify({
-      language: `I would like to help translate M³ into a language I speak: ${currentJwLang.value?.vernacularName}/${currentJwLang.value.name}} - ${currentJwLang.value.langcode}/${currentJwLang.value.symbol}`,
+      language: `I would like to help translate M³ into a language I speak: ${currentJwLang.value?.vernacularName}/${currentJwLang.value.name} - ${currentJwLang.value.langcode}/${currentJwLang.value.symbol}`,
     }),
   );
 };
