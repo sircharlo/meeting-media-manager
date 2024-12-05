@@ -533,9 +533,14 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
           mepsId: extract.RefMepsDocumentId,
           ...(extract.RefBeginParagraphOrdinal
             ? {
+                // Hack to show intro picture when appropriate from:
+                // - the Love People brochure
+                // - the Enjoy Life Forever book
+                // - the Bearing Thorough Witness book
                 BeginParagraphOrdinal:
-                  symbol === 'lmd' && extract.RefBeginParagraphOrdinal < 8
-                    ? 1 // Hack to show intro picture from the lmd brochure when appropriate
+                  ['bt', 'lff', 'lmd'].includes(symbol) &&
+                  extract.RefBeginParagraphOrdinal < 8
+                    ? 1
                     : extract.RefBeginParagraphOrdinal,
               }
             : {}),
