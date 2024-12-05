@@ -25,6 +25,7 @@
         :first-day-of-week="friendlyDayToJsDay(currentSettings?.firstDayOfWeek)"
         :locale="dateLocale"
         minimal
+        :no-unset="rules?.includes('notEmpty')"
         :options="getDateOptions(options)"
         :rules="rules"
       >

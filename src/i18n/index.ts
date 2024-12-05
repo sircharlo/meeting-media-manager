@@ -4,6 +4,9 @@ export const localeOptions = locales.filter((locale) =>
   enabled.includes(locale.value),
 );
 
+// ! This file should only import the JSON files for the enabled languages.
+// ! The import statements for the disabled languages should be commented out.
+
 // import af from './af.json';
 // import am from './am.json';
 import cmnHans from './cmn-hans.json';
@@ -14,9 +17,10 @@ import es from './es.json';
 import et from './et.json';
 // import fi from './fi.json';
 import fr from './fr.json';
+// import ht from './ht.json';
 import hu from './hu.json';
 // import ilo from './ilo.json';
-// import it from './it.json';
+import it from './it.json';
 // import mg from './mg.json';
 import nl from './nl.json';
 // import pag from './pag.json';
@@ -45,9 +49,10 @@ export default {
   et,
   // fi,
   fr,
+  // ht,
   hu,
   // ilo,
-  // it,
+  it,
   // mg,
   nl,
   // pag,

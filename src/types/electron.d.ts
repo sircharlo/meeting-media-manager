@@ -45,7 +45,7 @@ export interface ElectronApi {
   getAppVersion: () => Promise<string>;
   getLocalPathFromFileObject: (fileObject: File) => string;
   getNrOfPdfPages: (pdfPath: string) => Promise<number>;
-  getScreenAccessStatus: () => Promise<string>;
+  getScreenAccessStatus: () => Promise<MediaAccessStatus>;
   getUserDataPath: () => Promise<string>;
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
   moveMediaWindow: (
@@ -153,6 +153,7 @@ export type ElectronIpcListenKey =
   | 'shortcut'
   | 'watchFolderUpdate'
   | 'websiteWindowClosed';
+
 // ipcMain.on / ipcRenderer.send channels
 export type ElectronIpcSendKey =
   | 'askForMediaAccess'
@@ -171,11 +172,21 @@ export type ElectronIpcSendKey =
   | 'unwatchFolders'
   | 'watchFolder'
   | 'zoomWebsiteWindow';
+
 export type ExternalWebsite = 'docs' | 'latestRelease' | 'repo';
+
 export type FileDialogFilter =
   | 'image'
   | 'image+pdf'
   | 'jwpub'
   | 'jwpub+image'
   | 'jwpub+image+pdf';
+
+export type MediaAccessStatus =
+  | 'denied'
+  | 'granted'
+  | 'not-determined'
+  | 'restricted'
+  | 'unknown';
+
 export type NavigateWebsiteAction = 'back' | 'forward' | 'refresh';

@@ -304,6 +304,7 @@ const getNextSong = async () => {
           await getPublicationDirectoryContents(
             { langwritten: currentSettings.value?.lang || 'E', pub: 'sjjm' },
             'mp3',
+            currentState.currentSettings?.cacheFolder,
           )
         ).sort(() => Math.random() - 0.5);
         if (songList.value.length >= 10) {

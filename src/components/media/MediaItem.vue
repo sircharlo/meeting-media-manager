@@ -270,7 +270,7 @@
                     size="sm"
                   >
                     <q-tooltip :delay="500">
-                      {{ media.repeat ? $t('repeat') : $t('repeat-off') }}
+                      {{ $t('repeat') }}
                     </q-tooltip>
                   </q-icon>
                 </div>

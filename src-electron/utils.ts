@@ -142,9 +142,9 @@ export const fetchJson = async <T>(
     const response = await fetchRaw(
       `${url}?${params ? params.toString() : ''}`,
     );
-    if (response.ok) {
+    if (response.ok || response.status === 304) {
       return await response.json();
-    } else if (![400, 404].includes(response.status)) {
+    } else if (![403, 404].includes(response.status)) {
       captureElectronError(new Error('Failed to fetch json!'), {
         contexts: {
           fn: {
@@ -169,6 +169,7 @@ export const fetchJson = async <T>(
           fn: {
             name: 'fetchJson',
             params: Object.fromEntries(params || []),
+            responseUrl: `${url}?${params ? params.toString() : ''}`,
             url,
           },
         },
@@ -187,6 +188,10 @@ export function captureElectronError(
   error: Error | string | unknown,
   context?: ExclusiveEventHintOrCaptureContext,
 ) {
+  if (error instanceof Error && error.cause) {
+    captureElectronError(error.cause, context);
+  }
+
   if (IS_DEV) {
     console.error(error);
     console.warn('context', context);

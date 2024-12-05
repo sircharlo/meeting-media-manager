@@ -88,6 +88,7 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
       attempts++;
       const { OBSWebSocketError } = await import('obs-websocket-js');
       if (
+        attempts < maxRetries &&
         error instanceof OBSWebSocketError &&
         error.message.includes('OBS is not ready')
       ) {
@@ -100,7 +101,6 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
       }
     }
   }
-  errorCatcher('OBS Error: Max retries reached. Could not fetch scene list.');
 };
 
 const { t } = useI18n();

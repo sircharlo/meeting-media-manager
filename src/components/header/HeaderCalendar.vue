@@ -1,10 +1,11 @@
 <template>
   <SongPicker v-model="chooseSong" :section="section" />
-  <PublicTalkMediaPicker v-model="publicTalkMediaPopup" />
+  <PublicTalkMediaPicker v-model="publicTalkMediaPopup" :section="section" />
   <DialogRemoteVideo v-model="remoteVideoPopup" :section="section" />
   <DialogStudyBible v-model="studyBiblePopup" :section="section" />
   <DialogAudioBible v-model="audioBiblePopup" :section="section" />
   <q-btn
+    v-if="selectedDate"
     color="white-transparent"
     :disable="mediaPlaying || !mediaSortForDay"
     unelevated
@@ -16,7 +17,7 @@
       size="xs"
     />
     {{ $q.screen.gt.sm ? $t('reset-sort-order') : '' }}
-    <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+    <q-tooltip v-if="!$q.screen.gt.sm" :delay="1000">
       {{ $t('reset-sort-order') }}
     </q-tooltip>
   </q-btn>
@@ -193,6 +194,9 @@
       name="mmm-calendar-month"
       size="xs"
     />
+    <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+      {{ getLocalDate(selectedDate, dateLocale) || $t('select-a-date') }}
+    </q-tooltip>
     {{
       $q.screen.gt.xs
         ? getLocalDate(selectedDate, dateLocale) || $t('select-a-date')
@@ -208,6 +212,7 @@
         minimal
         :navigation-max-year-month="maxDate()"
         :navigation-min-year-month="minDate()"
+        no-unset
         :options="dateOptions"
       />
     </q-popup-proxy>
@@ -264,9 +269,12 @@ const audioBiblePopup = ref(false);
 
 const openDragAndDropper = () => {
   window.dispatchEvent(
-    new CustomEvent<{ section?: MediaSection }>('openDragAndDropper', {
-      detail: { section: section.value },
-    }),
+    new CustomEvent<{ section: MediaSection | undefined }>(
+      'openDragAndDropper',
+      {
+        detail: { section: section.value },
+      },
+    ),
   );
 };
 
@@ -420,12 +428,12 @@ const openSongPicker = (newSection?: MediaSection) => {
   chooseSong.value = true;
 };
 
-useEventListener<CustomEvent<{ section?: MediaSection }>>(
+useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
   window,
   'openSongPicker',
   (e) => openSongPicker(e.detail?.section),
 );
-useEventListener<CustomEvent<{ section?: MediaSection }>>(
+useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
   window,
   'openImportMenu',
   (e) => openImportMenu(e.detail?.section),

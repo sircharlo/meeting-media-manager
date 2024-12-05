@@ -1283,6 +1283,115 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@napi-rs/canvas-android-arm64@npm:0.1.65":
+  version: 0.1.65
+  resolution: "@napi-rs/canvas-android-arm64@npm:0.1.65"
+  conditions: os=android & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-darwin-arm64@npm:0.1.65":
+  version: 0.1.65
+  resolution: "@napi-rs/canvas-darwin-arm64@npm:0.1.65"
+  conditions: os=darwin & cpu=arm64
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-darwin-x64@npm:0.1.65":
+  version: 0.1.65
+  resolution: "@napi-rs/canvas-darwin-x64@npm:0.1.65"
+  conditions: os=darwin & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-linux-arm-gnueabihf@npm:0.1.65":
+  version: 0.1.65
+  resolution: "@napi-rs/canvas-linux-arm-gnueabihf@npm:0.1.65"
+  conditions: os=linux & cpu=arm
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-linux-arm64-gnu@npm:0.1.65":
+  version: 0.1.65
+  resolution: "@napi-rs/canvas-linux-arm64-gnu@npm:0.1.65"
+  conditions: os=linux & cpu=arm64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-linux-arm64-musl@npm:0.1.65":
+  version: 0.1.65
+  resolution: "@napi-rs/canvas-linux-arm64-musl@npm:0.1.65"
+  conditions: os=linux & cpu=arm64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-linux-riscv64-gnu@npm:0.1.65":
+  version: 0.1.65
+  resolution: "@napi-rs/canvas-linux-riscv64-gnu@npm:0.1.65"
+  conditions: os=linux & cpu=riscv64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-linux-x64-gnu@npm:0.1.65":
+  version: 0.1.65
+  resolution: "@napi-rs/canvas-linux-x64-gnu@npm:0.1.65"
+  conditions: os=linux & cpu=x64 & libc=glibc
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-linux-x64-musl@npm:0.1.65":
+  version: 0.1.65
+  resolution: "@napi-rs/canvas-linux-x64-musl@npm:0.1.65"
+  conditions: os=linux & cpu=x64 & libc=musl
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas-win32-x64-msvc@npm:0.1.65":
+  version: 0.1.65
+  resolution: "@napi-rs/canvas-win32-x64-msvc@npm:0.1.65"
+  conditions: os=win32 & cpu=x64
+  languageName: node
+  linkType: hard
+
+"@napi-rs/canvas@npm:^0.1.64":
+  version: 0.1.65
+  resolution: "@napi-rs/canvas@npm:0.1.65"
+  dependencies:
+    "@napi-rs/canvas-android-arm64": "npm:0.1.65"
+    "@napi-rs/canvas-darwin-arm64": "npm:0.1.65"
+    "@napi-rs/canvas-darwin-x64": "npm:0.1.65"
+    "@napi-rs/canvas-linux-arm-gnueabihf": "npm:0.1.65"
+    "@napi-rs/canvas-linux-arm64-gnu": "npm:0.1.65"
+    "@napi-rs/canvas-linux-arm64-musl": "npm:0.1.65"
+    "@napi-rs/canvas-linux-riscv64-gnu": "npm:0.1.65"
+    "@napi-rs/canvas-linux-x64-gnu": "npm:0.1.65"
+    "@napi-rs/canvas-linux-x64-musl": "npm:0.1.65"
+    "@napi-rs/canvas-win32-x64-msvc": "npm:0.1.65"
+  dependenciesMeta:
+    "@napi-rs/canvas-android-arm64":
+      optional: true
+    "@napi-rs/canvas-darwin-arm64":
+      optional: true
+    "@napi-rs/canvas-darwin-x64":
+      optional: true
+    "@napi-rs/canvas-linux-arm-gnueabihf":
+      optional: true
+    "@napi-rs/canvas-linux-arm64-gnu":
+      optional: true
+    "@napi-rs/canvas-linux-arm64-musl":
+      optional: true
+    "@napi-rs/canvas-linux-riscv64-gnu":
+      optional: true
+    "@napi-rs/canvas-linux-x64-gnu":
+      optional: true
+    "@napi-rs/canvas-linux-x64-musl":
+      optional: true
+    "@napi-rs/canvas-win32-x64-msvc":
+      optional: true
+  checksum: 10c0/87e92baf5b4bf479c3d4f0c853f974411d62b05f772f2b5f7f0e94f7bfb3103497913ce1b9e7a176f6e8017ebfad80acc78e4d476589d0a44eac3ee6db5c81a2
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -1948,10 +2057,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/extras@npm:^1.16.13":
-  version: 1.16.13
-  resolution: "@quasar/extras@npm:1.16.13"
-  checksum: 10c0/6a43e0bb079e2609aba6faa30a313f9f1823ea58c8ce8bc5d0b1b9661398c0466b74f47a057760fab8d4c22973f910e73f5064f7dbd573ae97f926d33f325ff8
+"@quasar/extras@npm:^1.16.14":
+  version: 1.16.14
+  resolution: "@quasar/extras@npm:1.16.14"
+  checksum: 10c0/bc4635d8ba6be268f22256f0650ae46ae23dc44e2998639698fb54b9982acaab9750e116f83f12e7322b050fd8b3cdc87f31c271aca8df9bf241ffa8308ccd1f
   languageName: node
   linkType: hard
 
@@ -3189,13 +3298,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/scope-manager@npm:8.16.0, @typescript-eslint/scope-manager@npm:^8.13.0":
-  version: 8.16.0
-  resolution: "@typescript-eslint/scope-manager@npm:8.16.0"
+"@typescript-eslint/scope-manager@npm:8.17.0, @typescript-eslint/scope-manager@npm:^8.13.0":
+  version: 8.17.0
+  resolution: "@typescript-eslint/scope-manager@npm:8.17.0"
   dependencies:
-    "@typescript-eslint/types": "npm:8.16.0"
-    "@typescript-eslint/visitor-keys": "npm:8.16.0"
-  checksum: 10c0/23b7c738b83f381c6419a36e6ca951944187e3e00abb8e012bce8041880410fe498303e28bdeb0e619023a69b14cf32a5ec1f9427c5382807788cd8e52a46a6e
+    "@typescript-eslint/types": "npm:8.17.0"
+    "@typescript-eslint/visitor-keys": "npm:8.17.0"
+  checksum: 10c0/0c08d14240bad4b3f6874f08ba80b29db1a6657437089a6f109db458c544d835bcdc06ba9140bb4f835233ba4326d9a86e6cf6bdb5209960d2f7025aa3191f4f
   languageName: node
   linkType: hard
 
@@ -3223,10 +3332,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/types@npm:8.16.0, @typescript-eslint/types@npm:^8.16.0":
-  version: 8.16.0
-  resolution: "@typescript-eslint/types@npm:8.16.0"
-  checksum: 10c0/141e257ab4060a9c0e2e14334ca14ab6be713659bfa38acd13be70a699fb5f36932a2584376b063063ab3d723b24bc703dbfb1ce57d61d7cfd7ec5bd8a975129
+"@typescript-eslint/types@npm:8.17.0, @typescript-eslint/types@npm:^8.17.0":
+  version: 8.17.0
+  resolution: "@typescript-eslint/types@npm:8.17.0"
+  checksum: 10c0/26b1bf9dfc3ee783c85c6f354b84c28706d5689d777f3ff2de2cb496e45f9d0189c0d561c03ccbc8b24712438be17cf63dd0871ff3ca2083e7f48749770d1893
   languageName: node
   linkType: hard
 
@@ -3249,12 +3358,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/typescript-estree@npm:8.16.0, @typescript-eslint/typescript-estree@npm:^8.13.0":
-  version: 8.16.0
-  resolution: "@typescript-eslint/typescript-estree@npm:8.16.0"
+"@typescript-eslint/typescript-estree@npm:8.17.0, @typescript-eslint/typescript-estree@npm:^8.13.0":
+  version: 8.17.0
+  resolution: "@typescript-eslint/typescript-estree@npm:8.17.0"
   dependencies:
-    "@typescript-eslint/types": "npm:8.16.0"
-    "@typescript-eslint/visitor-keys": "npm:8.16.0"
+    "@typescript-eslint/types": "npm:8.17.0"
+    "@typescript-eslint/visitor-keys": "npm:8.17.0"
     debug: "npm:^4.3.4"
     fast-glob: "npm:^3.3.2"
     is-glob: "npm:^4.0.3"
@@ -3264,7 +3373,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/f28fea5af4798a718b6735d1758b791a331af17386b83cb2856d89934a5d1693f7cb805e73c3b33f29140884ac8ead9931b1d7c3de10176fa18ca7a346fe10d0
+  checksum: 10c0/523013f9b5cf2c58c566868e4c3b0b9ac1b4807223a6d64e2a7c58e01e53b6587ba61f1a8241eade361f3f426d6057657515473176141ef8aebb352bc0d223ce
   languageName: node
   linkType: hard
 
@@ -3282,20 +3391,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:^8.16.0":
-  version: 8.16.0
-  resolution: "@typescript-eslint/utils@npm:8.16.0"
+"@typescript-eslint/utils@npm:^8.17.0":
+  version: 8.17.0
+  resolution: "@typescript-eslint/utils@npm:8.17.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.4.0"
-    "@typescript-eslint/scope-manager": "npm:8.16.0"
-    "@typescript-eslint/types": "npm:8.16.0"
-    "@typescript-eslint/typescript-estree": "npm:8.16.0"
+    "@typescript-eslint/scope-manager": "npm:8.17.0"
+    "@typescript-eslint/types": "npm:8.17.0"
+    "@typescript-eslint/typescript-estree": "npm:8.17.0"
   peerDependencies:
     eslint: ^8.57.0 || ^9.0.0
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/1e61187eef3da1ab1486d2a977d8f3b1cb8ef7fa26338500a17eb875ca42a8942ef3f2241f509eef74cf7b5620c109483afc7d83d5b0ab79b1e15920f5a49818
+  checksum: 10c0/a9785ae5f7e7b51d521dc3f48b15093948e4fcd03352c0b60f39bae366cbc935947d215f91e2ae3182d52fa6affb5ccbb50feff487bd1209011f3e0da02cdf07
   languageName: node
   linkType: hard
 
@@ -3309,13 +3418,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/visitor-keys@npm:8.16.0":
-  version: 8.16.0
-  resolution: "@typescript-eslint/visitor-keys@npm:8.16.0"
+"@typescript-eslint/visitor-keys@npm:8.17.0":
+  version: 8.17.0
+  resolution: "@typescript-eslint/visitor-keys@npm:8.17.0"
   dependencies:
-    "@typescript-eslint/types": "npm:8.16.0"
+    "@typescript-eslint/types": "npm:8.17.0"
     eslint-visitor-keys: "npm:^4.2.0"
-  checksum: 10c0/537df37801831aa8d91082b2adbffafd40305ed4518f0e7d3cbb17cc466d8b9ac95ac91fa232e7fe585d7c522d1564489ec80052ebb2a6ab9bbf89ef9dd9b7bc
+  checksum: 10c0/9144c4e4a63034fb2031a0ee1fc77e80594f30cab3faafa9a1f7f83782695774dd32fac8986f260698b4e150b4dd52444f2611c07e4c101501f08353eb47c82c
   languageName: node
   linkType: hard
 
@@ -4729,13 +4838,6 @@ __metadata:
   version: 1.0.30001684
   resolution: "caniuse-lite@npm:1.0.30001684"
   checksum: 10c0/446485ca3d9caf408a339a44636a86a2b119ec247492393ae661cd93dccd6668401dd2dfec1e149be4e44563cd1e23351b44453a52fa2c2f19e2bf3287c865f6
-  languageName: node
-  linkType: hard
-
-"canvas@npm:empty-npm-package@1.0.0":
-  version: 1.0.0
-  resolution: "empty-npm-package@npm:1.0.0"
-  checksum: 10c0/86dc2266288d7e3456205b8fe69ef30a1561d2365783439df0870124e5f4cf64b845ef3fea9b3312107d5a08e8d0b56813392be80a98825b4ad75d22b7e68ce0
   languageName: node
   linkType: hard
 
@@ -6468,22 +6570,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-perfectionist@npm:^4.1.2":
-  version: 4.1.2
-  resolution: "eslint-plugin-perfectionist@npm:4.1.2"
+"eslint-plugin-perfectionist@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "eslint-plugin-perfectionist@npm:4.2.0"
   dependencies:
-    "@typescript-eslint/types": "npm:^8.16.0"
-    "@typescript-eslint/utils": "npm:^8.16.0"
+    "@typescript-eslint/types": "npm:^8.17.0"
+    "@typescript-eslint/utils": "npm:^8.17.0"
     natural-orderby: "npm:^5.0.0"
   peerDependencies:
     eslint: ">=8.0.0"
-  checksum: 10c0/9718e5d1f9f59cc30c5b66ccbd1980f12405228ea401b8c698fb8b742da414777d5acca22f317b31084894cd13e9f90a6ca8afafc348f0b2ce14f5ed1b3e21ae
+  checksum: 10c0/eea575a6f3fae83e53a5b98ba0649276c51e6aa39853c8f4d48e3fa760d613b6c04551f9fbf138b37bcb11abda40d5105f19d389a83574414c56a5c3644a961a
   languageName: node
   linkType: hard
 
-"eslint-plugin-vue@npm:^9.31.0":
-  version: 9.31.0
-  resolution: "eslint-plugin-vue@npm:9.31.0"
+"eslint-plugin-vue@npm:^9.32.0":
+  version: 9.32.0
+  resolution: "eslint-plugin-vue@npm:9.32.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.4.0"
     globals: "npm:^13.24.0"
@@ -6495,7 +6597,7 @@ __metadata:
     xml-name-validator: "npm:^4.0.0"
   peerDependencies:
     eslint: ^6.2.0 || ^7.0.0 || ^8.0.0 || ^9.0.0
-  checksum: 10c0/c87ab4d59bc431be6c2235501139b257c906b86fdeb1a64a5ff7d560a5c9439e7f1a78341d78c80e81ed5fe43dd2df8f0daf403581f62c4443cc0c6f7af2c997
+  checksum: 10c0/69040947271b0d46132a34cccd54af5aeff9c017060ceba49c0cb689d4817468c27fb07881d655bc4453b40e2858715e3ab6a5155ee0846aa000013685185a81
   languageName: node
   linkType: hard
 
@@ -9339,7 +9441,7 @@ __metadata:
     "@numairawan/video-duration": "npm:^1.0.0"
     "@panzoom/panzoom": "npm:^4.5.1"
     "@quasar/app-vite": "npm:^2.0.0-rc.1"
-    "@quasar/extras": "npm:^1.16.13"
+    "@quasar/extras": "npm:^1.16.14"
     "@rollup/plugin-inject": "npm:^5.0.5"
     "@sentry/electron": "npm:^5.7.0"
     "@sentry/esbuild-plugin": "npm:^2.22.6"
@@ -9370,18 +9472,18 @@ __metadata:
     electron-updater: "npm:^6.3.9"
     eslint: "npm:^8.57.1"
     eslint-config-prettier: "npm:^9.1.0"
-    eslint-plugin-perfectionist: "npm:^4.1.2"
-    eslint-plugin-vue: "npm:^9.31.0"
+    eslint-plugin-perfectionist: "npm:^4.2.0"
+    eslint-plugin-vue: "npm:^9.32.0"
     fs-extra: "npm:^11.2.0"
     heic-convert: "npm:^2.1.0"
     husky: "npm:^9.1.7"
     is-online: "npm:^11.0.0"
     lint-staged: "npm:^15.2.10"
-    music-metadata: "npm:^10.6.1"
+    music-metadata: "npm:^10.6.2"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.0.1"
-    pdfjs-dist: "npm:^4.8.69"
-    pinia: "npm:^2.2.8"
+    pdfjs-dist: "npm:^4.9.124"
+    pinia: "npm:^2.3.0"
     pinia-plugin-persistedstate: "npm:^4.1.3"
     pinia-shared-state: "npm:^0.5.1"
     postcss: "npm:^8.4.49"
@@ -9845,9 +9947,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^10.6.1":
-  version: 10.6.1
-  resolution: "music-metadata@npm:10.6.1"
+"music-metadata@npm:^10.6.2":
+  version: 10.6.2
+  resolution: "music-metadata@npm:10.6.2"
   dependencies:
     "@tokenizer/token": "npm:^0.3.0"
     content-type: "npm:^1.0.5"
@@ -9855,10 +9957,10 @@ __metadata:
     file-type: "npm:^19.6.0"
     link: "npm:^2.1.1"
     media-typer: "npm:^1.1.0"
-    strtok3: "npm:^9.1.1"
+    strtok3: "npm:^10.0.0"
     token-types: "npm:^6.0.0"
     uint8array-extras: "npm:^1.4.0"
-  checksum: 10c0/24b34f3170157b545b0d223b1aa18719c69f372b98b7b60bd32cc7289b8d609bfeddcb488d9039b3eae19950eade5874c49661ec061383325f0b9fd4bcf9d0fd
+  checksum: 10c0/fdbd6893773b36c2bacabb74cdae19ad355e92e6d2acafe0743eabf010e328531b0c065b7cdde3d14333bb3fcc228de57c4b2052bd044054facb3e211eecc8d3
   languageName: node
   linkType: hard
 
@@ -10694,13 +10796,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path2d@npm:^0.2.1":
-  version: 0.2.2
-  resolution: "path2d@npm:0.2.2"
-  checksum: 10c0/1bb76c7f275d07f1bc7ca12171d828e91bf8a12596f0765a52e9d4d47fe1a428455dc1dd4c9002924a9bc554f6ac25e09a6c22eaecf32e5e33fba2985b5168f8
-  languageName: node
-  linkType: hard
-
 "pathe@npm:^1.0.0, pathe@npm:^1.1.2":
   version: 1.1.2
   resolution: "pathe@npm:1.1.2"
@@ -10708,18 +10803,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pdfjs-dist@npm:^4.8.69":
-  version: 4.8.69
-  resolution: "pdfjs-dist@npm:4.8.69"
+"pdfjs-dist@npm:^4.9.124":
+  version: 4.9.124
+  resolution: "pdfjs-dist@npm:4.9.124"
   dependencies:
-    canvas: "npm:^3.0.0-rc2"
-    path2d: "npm:^0.2.1"
+    "@napi-rs/canvas": "npm:^0.1.64"
   dependenciesMeta:
-    canvas:
+    "@napi-rs/canvas":
       optional: true
-    path2d:
-      optional: true
-  checksum: 10c0/dc297f2a36aa36834a2892cb78c3cafc7ac01753a2e7c4316a1f6e8c1d337a52a3bfbf7fdff7aaba615893b53f2d06a0efc2176525592b4d7b51021279c101be
+  checksum: 10c0/ad97d05f0bb4a269f9bf5a1c6c27e0538dde81c06892a02440ae8e63d2afc2df0dcd20f7b2448d29c2eb55c0b8d88327f4d70d41071c43ead5c8c580baa9ba5f
   languageName: node
   linkType: hard
 
@@ -10876,22 +10968,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pinia@npm:^2.2.8":
-  version: 2.2.8
-  resolution: "pinia@npm:2.2.8"
+"pinia@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "pinia@npm:2.3.0"
   dependencies:
     "@vue/devtools-api": "npm:^6.6.3"
     vue-demi: "npm:^0.14.10"
   peerDependencies:
-    "@vue/composition-api": ^1.4.0
     typescript: ">=4.4.4"
-    vue: ^2.6.14 || ^3.5.11
+    vue: ^2.7.0 || ^3.5.11
   peerDependenciesMeta:
-    "@vue/composition-api":
-      optional: true
     typescript:
       optional: true
-  checksum: 10c0/afcaba130850d939659d72d855f449d5d153a623d81139cf4667526253e6dcc426219cafd898b544cd538ffe63d3f750ac023a643056ec20e8c19cb909678f32
+  checksum: 10c0/08bba6fd45f4e45e1e7160c70005f074722a6eccb3da113bb038bf219ff4447b745fed23ec42efd001322599433bb741986b5f17628c079508136ee2b7923062
   languageName: node
   linkType: hard
 
@@ -12821,7 +12910,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strtok3@npm:^9.0.1, strtok3@npm:^9.1.1":
+"strtok3@npm:^10.0.0":
+  version: 10.0.1
+  resolution: "strtok3@npm:10.0.1"
+  dependencies:
+    "@tokenizer/token": "npm:^0.3.0"
+    peek-readable: "npm:^5.3.1"
+  checksum: 10c0/476ccea29feebef1659d825e71a5e054b80486617139966217f53fd197d9d78d2d6f1e3be52cad7bc7ff71e164d38696adc60f883705fb440be1162a3ce6cb9b
+  languageName: node
+  linkType: hard
+
+"strtok3@npm:^9.0.1":
   version: 9.1.1
   resolution: "strtok3@npm:9.1.1"
   dependencies:

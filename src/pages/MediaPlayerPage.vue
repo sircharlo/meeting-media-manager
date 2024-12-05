@@ -239,10 +239,14 @@ watch(
       const screenAccessStatus =
         await window.electronApi.getScreenAccessStatus();
       if (!screenAccessStatus || screenAccessStatus !== 'granted') {
-        await navigator.mediaDevices.getDisplayMedia({
-          audio: false,
-          video: true,
-        });
+        try {
+          await navigator.mediaDevices.getDisplayMedia({
+            audio: false,
+            video: true,
+          });
+        } catch (e) {
+          errorCatcher(e);
+        }
         const screenAccessStatusSecondTry =
           await window.electronApi.getScreenAccessStatus();
         if (
@@ -260,29 +264,37 @@ watch(
           return;
         }
       }
-      const stream = await navigator.mediaDevices
-        .getDisplayMedia({ audio: false, video: true })
-        .catch((e) => errorCatcher(e));
-      let timeouts = 0;
-      while (!mediaElement.value) {
-        await new Promise((resolve) => {
-          setTimeout(resolve, 100);
+      try {
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          audio: false,
+          video: true,
         });
-        if (++timeouts > 10) break;
+        let timeouts = 0;
+        while (!mediaElement.value) {
+          await new Promise((resolve) => {
+            setTimeout(resolve, 100);
+          });
+          if (++timeouts > 10) break;
+        }
+        if (!mediaElement.value || !stream) {
+          videoStreaming.value = false;
+          mediaPlayingAction.value = '';
+          mediaElement.value?.pause();
+          if (mediaElement?.value?.srcObject) {
+            mediaElement.value.srcObject = null;
+          }
+          return;
+        }
+        mediaElement.value.srcObject = stream;
+        playMediaElement();
+      } catch (e) {
+        errorCatcher(e);
       }
-      if (!mediaElement.value || !stream) {
-        videoStreaming.value = false;
-        mediaPlayingAction.value = '';
-        mediaElement?.value?.pause();
-        if (mediaElement?.value?.srcObject) mediaElement.value.srcObject = null;
-        return;
-      }
-      mediaElement.value.srcObject = stream;
-      playMediaElement();
     } else {
-      if (!mediaElement.value) return;
-      mediaElement.value.pause();
-      mediaElement.value.srcObject = null;
+      if (mediaElement.value) {
+        mediaElement.value.pause();
+        mediaElement.value.srcObject = null;
+      }
       mediaPlayingAction.value = '';
     }
   },
@@ -410,7 +422,7 @@ $q.iconMapFn = (iconName) => {
 watchImmediate(
   () => [jwStore.urlVariables?.base, jwStore.urlVariables?.mediator],
   () => {
-    setElementFont('WT-ClearText-Bold');
+    setElementFont('Wt-ClearText-Bold');
     setElementFont('JW-Icons');
   },
 );

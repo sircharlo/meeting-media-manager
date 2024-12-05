@@ -135,7 +135,7 @@ export const isSong = (multimediaItem: MultimediaItem) => {
 /**
  * Checks if a file is a remote file.
  * @param file The file to check.
- * @returns Weather the file is a remote file.
+ * @returns Wether the file is a remote file.
  */
 export const isRemoteFile = (
   file: File | { filename?: string; filetype?: string; path: string },
@@ -147,7 +147,7 @@ export const isRemoteFile = (
 /**
  * Checks if a url is an image string.
  * @param url The url to check.
- * @returns Weather the url is an image string.
+ * @returns Wether the url is an image string.
  */
 export const isImageString = (url: string) => {
   if (!url) return false;
@@ -160,21 +160,20 @@ export const isImageString = (url: string) => {
  * @param filetype The type of the file.
  * @returns The filename with the inferred extension.
  * @example
+ * inferExtension('A video.mp4') // A video.mp4
  * inferExtension('An audio file', 'audio/mpeg') // An audio file.mp3
- * inferExtension('A video', 'video/mp4') // A video.mp4
  */
 export const inferExtension = async (filename: string, filetype?: string) => {
-  if (!filetype) return filename;
-  const { default: mime } = await import('mime');
-  const extractedExtension = mime.extension(filetype);
-  if (!extractedExtension) {
+  if (!filetype || /\.[0-9a-z]+$/i.test(filename)) return filename;
+
+  try {
+    const { default: mime } = await import('mime');
+    const extractedExtension = mime.extension(filetype);
+    return extractedExtension ? `${filename}.${extractedExtension}` : filename;
+  } catch (e) {
+    errorCatcher(e);
     return filename;
   }
-  const hasExtension = /\.[0-9a-z]+$/i.test(filename);
-  if (hasExtension) {
-    return filename;
-  }
-  return `${filename}.${extractedExtension}`;
 };
 
 /**

@@ -36,7 +36,7 @@ import { updateLookupPeriod } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
-import { removeEmptyDirs } from 'src/utils/fs';
+import { getAdditionalMediaPath, removeEmptyDirs } from 'src/utils/fs';
 import { ref } from 'vue';
 
 // Props
@@ -77,10 +77,27 @@ const deleteCacheFiles = async (type = '') => {
     for (const filepath of filepathsToDelete) {
       try {
         fs.remove(filepath);
+        if (
+          filepath.startsWith(await getAdditionalMediaPath()) ||
+          filepath.startsWith(
+            await getAdditionalMediaPath(
+              currentState.currentSettings?.cacheFolder,
+            ),
+          )
+        ) {
+          const folder = filepath.split('/').pop();
+          const date = folder
+            ? `${folder.slice(0, 4)}/${folder.slice(4, 6)}/${folder.slice(6, 8)}`
+            : '0001/01/01';
+          const cong = currentState.currentCongregation;
+          if (additionalMediaMaps.value[cong]?.[date]) {
+            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+            delete additionalMediaMaps.value[cong][date];
+          }
+        }
       } catch (error) {
         errorCatcher(error);
       }
-      additionalMediaMaps.value = {};
     }
     for (const untouchableDirectory of props.untouchableDirectories) {
       await removeEmptyDirs(untouchableDirectory);

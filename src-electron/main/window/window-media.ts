@@ -1,7 +1,11 @@
 import type { BrowserWindow } from 'electron';
 import type { ScreenPreferences } from 'src/types';
 
-import { CURRENT_DIR, PLATFORM } from 'app/src-electron/constants';
+import {
+  CURRENT_DIR,
+  HD_RESOLUTION,
+  PLATFORM,
+} from 'app/src-electron/constants';
 import { captureElectronError } from 'app/src-electron/utils';
 import { join, resolve } from 'path';
 
@@ -25,7 +29,7 @@ export function createMediaWindow() {
   mediaWindow = createWindow('media', {
     backgroundColor: 'black',
     frame: false,
-    height: 720,
+    height: HD_RESOLUTION[1],
     icon: resolve(
       join(
         CURRENT_DIR,
@@ -37,7 +41,7 @@ export function createMediaWindow() {
     minWidth: 195,
     thickFrame: false,
     title: 'Media Window',
-    width: 1280,
+    width: HD_RESOLUTION[0],
   });
 
   // Force aspect ratio
@@ -120,8 +124,10 @@ const boundsAreSame = (
   if (!current || !target) return false;
   return ['height', 'width', 'x', 'y'].every(
     (prop) =>
-      current[prop as keyof Electron.Rectangle] ===
-      target[prop as keyof Electron.Rectangle],
+      Math.abs(
+        current[prop as keyof Electron.Rectangle] -
+          target[prop as keyof Electron.Rectangle],
+      ) <= 5,
   );
 };
 
@@ -184,7 +190,9 @@ const setWindowPosition = (
         displayNr === currentDisplayNr &&
         mediaWindowIsFullScreen(targetScreenBounds)
       ) {
-        mediaWindow.setAlwaysOnTop(PLATFORM !== 'darwin');
+        if (!mediaWindow.isAlwaysOnTop() && PLATFORM !== 'darwin') {
+          mediaWindow.setAlwaysOnTop(true);
+        }
         updateScreenAndPrefs();
         return;
       }
@@ -192,12 +200,33 @@ const setWindowPosition = (
         setWindowBounds(targetScreenBounds, true);
       });
     } else {
-      const newBounds = {
-        height: 720,
-        width: 1280,
-        x: targetScreenBounds.x + 50,
-        y: targetScreenBounds.y + 50,
-      };
+      const HD_RESOLUTION_RATIO = HD_RESOLUTION[0] / HD_RESOLUTION[1];
+
+      const newBounds = (() => {
+        // Calculate max width and height while ensuring they don't exceed screen bounds
+        let maxHeight = Math.min(
+          targetScreenBounds.height - 100,
+          HD_RESOLUTION[1],
+        );
+        let maxWidth = Math.min(
+          targetScreenBounds.width - 100,
+          HD_RESOLUTION[0],
+        );
+
+        // Adjust height and width to maintain a 16:9 ratio
+        if (maxWidth / HD_RESOLUTION_RATIO <= maxHeight) {
+          maxHeight = Math.floor(maxWidth / HD_RESOLUTION_RATIO);
+        } else {
+          maxWidth = Math.floor(maxHeight * HD_RESOLUTION_RATIO);
+        }
+
+        return {
+          height: maxHeight,
+          width: maxWidth,
+          x: targetScreenBounds.x + 50,
+          y: targetScreenBounds.y + 50,
+        };
+      })();
       if (
         displayNr !== currentDisplayNr ||
         mediaWindowIsFullScreen(targetScreenBounds) ||

@@ -8,6 +8,11 @@ export const errorCatcher = async (
   context?: ExclusiveEventHintOrCaptureContext,
 ) => {
   if (!originalError) return;
+
+  if (originalError instanceof Error && originalError.cause) {
+    errorCatcher(originalError.cause, context);
+  }
+
   if (!IS_DEV) {
     captureException(originalError, context);
   } else {

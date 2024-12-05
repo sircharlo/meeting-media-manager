@@ -80,7 +80,6 @@
 <script setup lang="ts">
 import type { DocumentItem, MediaSection, PublicationInfo } from 'src/types';
 
-import { storeToRefs } from 'pinia';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { decompressJwpub } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -91,13 +90,12 @@ import { computed, ref, watch } from 'vue';
 const { executeQuery, fs, openFileDialog, path } = window.electronApi;
 
 const props = defineProps<{
-  section?: MediaSection;
+  section: MediaSection | undefined;
 }>();
 
 const open = defineModel<boolean>({ required: true });
 
 const currentState = useCurrentStateStore();
-const { currentSettings } = storeToRefs(currentState);
 
 const filter = ref('');
 const publicTalks = ref<DocumentItem[]>([]);
@@ -149,20 +147,23 @@ const dismissPopup = () => {
 
 const addPublicTalkMedia = (publicTalkDocId: DocumentItem) => {
   if (!s34mpDb.value || !publicTalkDocId) return;
-  addJwpubDocumentMediaToFiles(
-    s34mpDb.value,
-    publicTalkDocId,
-    props.section,
-  ).then(dismissPopup);
+  addJwpubDocumentMediaToFiles(s34mpDb.value, publicTalkDocId, props.section, {
+    issue: currentState.currentCongregation,
+    langwritten: '',
+    pub: 'S-34mp',
+  }).then(dismissPopup);
 };
 
 const setS34mp = async () => {
-  s34mpBasename.value = 'S-34mp_' + currentSettings.value?.lang + '_0';
-  s34mpDir.value = path.join(await getPublicationsPath(), s34mpBasename.value);
+  s34mpBasename.value = `S-34mp_${currentState.currentCongregation}`;
+  s34mpDir.value = path.join(
+    await getPublicationsPath(currentState.currentSettings?.cacheFolder),
+    s34mpBasename.value,
+  );
 };
 
 watch(open, () => {
-  if (currentSettings.value?.lang) {
+  if (currentState.currentSettings?.lang) {
     setS34mp().then(() => {
       populatePublicTalks();
     });

@@ -285,6 +285,13 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'subtitles',
     type: 'toggle',
   },
+  langSubtitles: {
+    depends: 'enableSubtitles',
+    group: 'advanced',
+    list: 'jwLanguages',
+    subgroup: 'subtitles',
+    type: 'list',
+  },
   enableMediaAutoExport: {
     depends: 'enableMediaDisplayButton',
     group: 'advanced',
@@ -299,13 +306,6 @@ export const settingsDefinitions: SettingsItems = {
     type: 'path',
     unless: 'disableMediaFetching',
   },
-  langSubtitles: {
-    depends: 'enableSubtitles',
-    group: 'advanced',
-    list: 'jwLanguages',
-    subgroup: 'subtitles',
-    type: 'list',
-  },
   musicVolume: {
     actions: ['setBackgroundMusicVolume'],
     depends: 'enableMusicButton',
@@ -315,6 +315,11 @@ export const settingsDefinitions: SettingsItems = {
     step: 1,
     subgroup: 'setupWizard.backgroundMusic',
     type: 'slider',
+  },
+  cacheFolder: {
+    group: 'advanced',
+    subgroup: 'cache',
+    type: 'path',
   },
   baseUrl: {
     rules: ['notEmpty'],
@@ -334,6 +339,7 @@ export const defaultSettings: SettingsValues = {
   autoStartAtLogin: false,
   autoStartMusic: true,
   baseUrl: 'jw.org',
+  cacheFolder: null,
   congregationName: null,
   coWeek: null,
   darkMode: 'auto',

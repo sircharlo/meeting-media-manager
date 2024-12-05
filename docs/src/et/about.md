@@ -14,21 +14,21 @@ Märkus: M³ tunti varem nimega JWMMF (JW Meeting Media Fetcher), kuid nimetati 
 
 :::
 
-## Why choose M³? {#why-choose-m3}
+## Miks kasutada M³-e? {#why-choose-m3}
 
-M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms.
+M³ on parim vahend koosolekute meedia haldamiseks, pakkudes sujuvat, usaldusväärset ja funktsionaalset kogemust kõikidel platvormidel.
 
-### Key benefits {#key-benefits}
+### Olulisemad eelised {#key-benefits}
 
-- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
+- **Mugav meediafailide esitlus**: Lihtsalt avage M³ ja kõik toimib. Ei vaja keerulisi seadistusi ega täiendavaid samme.
 
-- **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
+- **Mitme koguduse toetus**: Haldae mitme koguduse või grupi seadeid hõlpsasti ühes rakenduses.
 
-- **Advanced features**: Easily add extra media, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Täiendavad funktsioonid**: Lisage hõlpsasti lisameediat ja jagage kuningriigisaalis toimuvat automaatselt Zoomi kaudu.
 
-- **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
+- **Optimeeritud platvormidevaheline jõudlus**: Nautige sujuvat ja maugavat kasutuskogemust Windowsis, macOSis ja Linuxis - isegi vanemates süsteemides või piiratud ressurssidega arvutites.
 
-- **Reliable and stable**: Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
+- **Usaldusväärne ja stabiilne**: Loodud töötama siis, kui seda kõige rohkem vajate. Koged probleemi? Teata sellest ja sellega tegeletakse kohe.
 
 ## Mida saab M³-ga teha? {#what-can-m3-do}
 
@@ -36,16 +36,16 @@ M³ võimaldab teil lihtsalt ja automaatselt alla laadida, sünkroonida, jagada 
 
 Koguduse hübriidsete või kontaktkoosolekute jaoks on integreeritud meediaesitlusrežiimil kõik funktsioonid, mis on vajalikud kogudusega meedia jagamise lihtsustamiseks, sealhulgas:
 
-- Media thumbnails with the ability to zoom and pan, as well as set custom start and end times for media
+- Meediafailide pisipildid, millel on võimalus suumida ja liigutada, samuti määrata meedia jaoks kohandatud algus- ja lõpuaegasid
 - Lihtsalt kasutatavad pausi/esituse/seiskamise nupud meediafailide taasesituse haldamiseks
 - Lihtne taustamuusika taasesitus koos automaatse peatamisega enne koosolekute algust
 - Automaatne lisamonitori tuvastamine ja haldamine
-- OBS Studio integration with automatic scene switching during media presentation
-- Presenting the official website of Jehovah's Witnesses website on an external monitor
-- Import JWPUB files, JWLPLAYLIST files, videos from the official website of Jehovah's Witnesses, and media for public talks from the S-34 file in a few clicks.
-- Custom videos, pictures, audio files and even PDF files can be easily imported too!
+- Koostöös OBS Studioga automaatne stseeni vahetus meedia esitluse ajal
+- Jehoova tunnistajate ametliku veebilehe esitamine teisel monitoril
+- Impordi JWPUB-failid, JWLPLAYLIST-failid, videod Jehoova tunnistajate ametlikult veebilehelt ja avalike kõnede meedia S-34 failist paari hiireklõpsuga.
+- Lisavideoid, pilte, helifaile ja isegi PDF-faile saab hõlpsasti importida!
 
-**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
+**Proovige M³ juba täna ja veendu ise, mida see suudab! Meedia esitlemine koguduse koosolekutel ei ole kunagi varem olnud nii lihtne.**
 
 ![M³ preview](./../assets/m3-preview.png)
 

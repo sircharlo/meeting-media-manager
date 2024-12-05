@@ -64,7 +64,7 @@ const { executeQuery, fileUrlToPath, fs, path, pathToFileURL, readdir } =
 
 export const copyToDatedAdditionalMedia = async (
   filepathToCopy: string,
-  section?: MediaSection,
+  section: MediaSection | undefined,
   addToAdditionMediaMap?: boolean,
 ) => {
   const currentStateStore = useCurrentStateStore();
@@ -184,7 +184,8 @@ export const addToAdditionMediaMapFromPath = async (
 export const addJwpubDocumentMediaToFiles = async (
   dbPath: string,
   document: DocumentItem,
-  section?: MediaSection,
+  section: MediaSection | undefined,
+  pubFolder?: PublicationFetcher,
 ) => {
   const jwStore = useJwStore();
   const { addToAdditionMediaMap } = jwStore;
@@ -202,7 +203,7 @@ export const addJwpubDocumentMediaToFiles = async (
     for (let i = 0; i < multimediaItems.length; i++) {
       multimediaItems[i] = await addFullFilePathToMultimediaItem(
         multimediaItems[i],
-        publication,
+        pubFolder ?? publication,
       );
     }
     await processMissingMediaInfo(multimediaItems);
@@ -400,7 +401,10 @@ const getDbFromJWPUB = async (publication: PublicationFetcher) => {
   try {
     const jwpub = await downloadJwpub(publication);
     if (jwpub.error) return null;
-    const publicationDirectory = await getPublicationDirectory(publication);
+    const publicationDirectory = await getPublicationDirectory(
+      publication,
+      useCurrentStateStore().currentSettings?.cacheFolder,
+    );
     if (jwpub.new || !(await findDb(publicationDirectory))) {
       await decompressJwpub(jwpub.path, publicationDirectory);
     }
@@ -426,7 +430,10 @@ async function addFullFilePathToMultimediaItem(
       'LinkedPreviewFilePath',
       'CoverPictureFilePath',
     ];
-    const baseDir = await getPublicationDirectory(publication);
+    const baseDir = await getPublicationDirectory(
+      publication,
+      useCurrentStateStore().currentSettings?.cacheFolder,
+    );
 
     const resolvedPaths = Object.fromEntries(
       paths.map((key) =>
@@ -526,9 +533,14 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
           mepsId: extract.RefMepsDocumentId,
           ...(extract.RefBeginParagraphOrdinal
             ? {
+                // Hack to show intro picture when appropriate from:
+                // - the Love People brochure
+                // - the Enjoy Life Forever book
+                // - the Bearing Thorough Witness book
                 BeginParagraphOrdinal:
-                  symbol === 'lmd' && extract.RefBeginParagraphOrdinal < 8
-                    ? 1 // Hack to show intro picture from the lmd brochure when appropriate
+                  ['bt', 'lff', 'lmd'].includes(symbol) &&
+                  extract.RefBeginParagraphOrdinal < 8
+                    ? 1
                     : extract.RefBeginParagraphOrdinal,
               }
             : {}),
@@ -832,7 +844,7 @@ export const getStudyBibleMedia = async () => {
               ParentDocument.Type AS ParentType,
               Document.Type,
               LinkedMultimedia.FilePath AS CoverPictureFilePath,
-              ROW_NUMBER() OVER (PARTITION BY Multimedia.MultimediaId ORDER BY Document.DocumentId) AS RowNum
+              ROW_NUMBER() OVER (PARTITION BY Multimedia.MultimediaId ORDER BY Document.DocumentId, ParentDocument.Class DESC) AS RowNum
           FROM Multimedia
           LEFT JOIN DocumentMultimedia 
               ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId
@@ -849,21 +861,21 @@ export const getStudyBibleMedia = async () => {
           WHERE 
               Multimedia.CategoryType <> 9 
               AND Multimedia.CategoryType <> 17 
+              AND (ParentDocument.Class IS NULL OR ParentDocument.Class <> 14)
               AND (Document.SectionNumber IS NULL OR Document.SectionNumber <> 1)
               AND (ParentDocument.SectionNumber IS NULL OR ParentDocument.SectionNumber <> 1)
               AND (ParentDocument.Type IS NULL OR ParentDocument.Type <> 0)
+              ${bibleBookDocumentsStartAtId && bibleBookDocumentsEndAtId ? `AND (Document.DocumentId < ${bibleBookDocumentsStartAtId} OR Document.DocumentId > ${bibleBookDocumentsEndAtId})` : ''}
       )
       SELECT *
       FROM RankedMultimedia
       WHERE RowNum = 1;
   `;
 
-    const nonBibleBookMediaItems = window.electronApi
-      .executeQuery<MultimediaItem>(nwtStyDb, nonBibleBookMediaItemsQuery)
-      .filter(
-        (item) =>
-          item.DocumentId < bibleBookDocumentsStartAtId &&
-          item.DocumentId > bibleBookDocumentsEndAtId,
+    const nonBibleBookMediaItems =
+      window.electronApi.executeQuery<MultimediaItem>(
+        nwtStyDb,
+        nonBibleBookMediaItemsQuery,
       );
 
     if (nwtStyDb_E) {
@@ -889,10 +901,31 @@ export const getStudyBibleMedia = async () => {
         }
       });
 
+      const englishBibleBookDocumentsStartAt =
+        window.electronApi.executeQuery<DocumentItem>(
+          nwtStyDb_E,
+          bibleBookDocumentsStartAtQuery,
+        );
+
+      const englishBibleBookDocumentsStartAtId =
+        englishBibleBookDocumentsStartAt[0]?.DocumentId;
+
+      const englishBibleBookDocumentsEndAt =
+        window.electronApi.executeQuery<DocumentItem>(
+          nwtStyDb_E,
+          bibleBookDocumentsEndAtQuery,
+        );
+
+      const englishBibleBookDocumentsEndAtId =
+        englishBibleBookDocumentsEndAt[0]?.DocumentId;
+
       const englishNonBibleBookMediaItems =
         window.electronApi.executeQuery<MultimediaItem>(
           nwtStyDb_E,
-          nonBibleBookMediaItemsQuery,
+          nonBibleBookMediaItemsQuery.replace(
+            `Document.DocumentId < ${bibleBookDocumentsStartAtId} OR Document.DocumentId > ${bibleBookDocumentsEndAtId}`,
+            `Document.DocumentId < ${englishBibleBookDocumentsStartAtId} OR Document.DocumentId > ${englishBibleBookDocumentsEndAtId}`,
+          ),
         );
 
       englishNonBibleBookMediaItems.forEach((englishNonBibleBookItem) => {
@@ -1783,7 +1816,10 @@ export const getPubMediaLinks = async (publication: PublicationFetcher) => {
 
 const downloadMissingMedia = async (publication: PublicationFetcher) => {
   try {
-    const pubDir = await getPublicationDirectory(publication);
+    const pubDir = await getPublicationDirectory(
+      publication,
+      useCurrentStateStore().currentSettings?.cacheFolder,
+    );
     const responseObject = await getPubMediaLinks(publication);
     if (!responseObject?.files) {
       if (!(await fs.pathExists(pubDir))) return { FilePath: '' };
@@ -2054,7 +2090,10 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
           !publication.maxTrack || mediaLink.track < publication.maxTrack,
       );
 
-    const dir = await getPublicationDirectory(publication);
+    const dir = await getPublicationDirectory(
+      publication,
+      currentStateStore.currentSettings?.cacheFolder,
+    );
     const filteredMediaItemLinks: MediaLink[] = [];
     for (const mediaItemLink of mediaLinks) {
       const currentTrack = mediaItemLink.track;
@@ -2164,7 +2203,10 @@ const downloadJwpub = async (
     }
 
     return await downloadFileIfNeeded({
-      dir: await getPublicationDirectory(publication),
+      dir: await getPublicationDirectory(
+        publication,
+        currentStateStore.currentSettings?.cacheFolder,
+      ),
       size: mediaLinks[0].filesize,
       url: mediaLinks[0].file.url,
     });

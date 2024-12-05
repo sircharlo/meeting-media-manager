@@ -104,6 +104,75 @@ This project uses [ESLint](https://eslint.org/) and [Prettier](https://prettier.
 
 To release a new version of the application, a draft release must be created on GitHub. The [package.json](package.json) version must be updated to the desired version and the changes committed with the message `chore(release): vx.x.x` (e.g. `chore(release): v26.3.1`). Afterwards, the build/release workflow will be executed automatically and will add the necessary executable files to the release draft. After adding a description of the release (features, bug fixes, etc.), it can be published.
 
+### Internationalization
+
+#### Adding a new language
+
+In order to add a completely new language to the application, it has to first be added to Crowdin. Make sure that the `two_letters_code` of the language equals the language symbol that the official website of Jehovah's Witnesses uses. Crowdin will create a Pull Request which will add the new language files to the repository. After that, it can be added to the application.
+
+Add the language symbol in camelCase to the `LanguageValue` type in the [src/constants/locales.ts](./src/constants/locales.ts) file:
+
+```typescript
+export type LanguageValue =
+  // Some more languages
+  | 'en'
+  // Some more languages
+ + | 'ptPt'
+  // Some more languages
+```
+
+The language symbol should be the camelCase version of the symbol used by the official website of Jehovah's Witnesses. For example, the Portuguese language is represented by the `pt-pt` symbol, so the camelCase version is `ptPt`.
+
+Add the new language to the `locales` array in the [src/constants/locales.ts](./src/constants/locales.ts) file:
+
+```typescript
+{
+  // English name of the language
+  englishName: string;
+  // Localized name of the language
+  label: string;
+  // JW language code
+  langcode: JwLangCode;
+  // JW language codes for related sign languages
+  signLangCodes?: JwLangCode[];
+  // The symbol of the language in camelCase (e.g. ptPt for pt-pt).
+  value: LanguageValue;
+}
+```
+
+Add the necessary import statements to the [docs/locales/index.ts](./docs/locales/index.ts) and [src/i18n/index.ts](./src/i18n/index.ts) files:
+
+```typescript
+// Make sure that the import name is the same as the value in the locales array
+// This line should initially be commented out in src/i18n/index.ts
++ import ptPt from './pt-pt.json';
+```
+
+#### Enabling a language
+
+To enable a language in the application, you need to perform two steps:
+
+First, uncomment the import statement in the [src/i18n/index.ts](./src/i18n/index.ts) file:
+
+```typescript
+- // import ptPt from './pt-pt.json';
++ import ptPt from './pt-pt.json';
+```
+
+Then, add the language symbol in camelCase to the `enabled` array in the [src/constants/locales.ts](./src/constants/locales.ts) file:
+
+```typescript
+const enabled = [
+  // Some more languages
+  'en',
+  // Some more languages
+  +'ptPt',
+  // Some more languages
+];
+```
+
+To disable a language, you need to perform the same steps, but in reverse.
+
 ### Contribute to the documentation site
 
 The documentation website lives in the `docs` folder. It is built with [VitePress](https://vitepress.dev/). Information about the directory structure can be found [here](https://vitepress.dev/guide/getting-started#file-structure). To work on the documentation site, you can use the following commands:

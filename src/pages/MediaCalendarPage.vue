@@ -63,7 +63,7 @@
           <div
             v-if="
               !currentSettings?.disableMediaFetching ||
-              sortableAdditionalMediaItems?.filter((m) => !m.hidden).length < 1
+              !sortableAdditionalMediaItems?.filter((m) => !m.hidden).length
             "
             class="row justify-center"
           >
@@ -127,7 +127,7 @@
                 <q-btn
                   v-if="selectedDate"
                   color="primary"
-                  @click="openImportMenu()"
+                  @click="openImportMenu(undefined)"
                 >
                   <q-icon class="q-mr-sm" name="mmm-add-media" size="xs" />
                   {{ $t('add-extra-media') }}
@@ -995,7 +995,7 @@ const checkCoDate = () => {
 
 const sectionToAddTo = ref<MediaSection | undefined>();
 
-useEventListener<CustomEvent<{ section?: MediaSection }>>(
+useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
   window,
   'openDragAndDropper',
   (e) => {
@@ -1007,7 +1007,7 @@ useEventListener<CustomEvent<{ section?: MediaSection }>>(
 useEventListener<
   CustomEvent<{
     files: { filename?: string; filetype?: string; path: string }[];
-    section?: MediaSection;
+    section: MediaSection | undefined;
   }>
 >(window, 'localFiles-browsed', (event) => {
   sectionToAddTo.value = event.detail?.section;
@@ -1176,7 +1176,9 @@ const sortedMediaIds = computed(() => {
   return [
     ...sortableAdditionalMediaItems.value.filter((m) => !m.hidden),
     ...sortableMediaItems.value.filter((m) => !m.hidden),
-  ].map((m) => m.uniqueId);
+  ]
+    .map((m) => m.uniqueId)
+    .filter((uniqueId, index, self) => self.indexOf(uniqueId) === index);
 });
 
 const arraysAreIdentical = (a: string[], b: string[]) =>
@@ -1352,7 +1354,10 @@ const addToFiles = async (
         fs.remove(tempFilePath);
         if (!(await fs.exists(tempDbFilePath))) return;
         const publication = getPublicationInfoFromDb(tempDbFilePath);
-        const publicationDirectory = await getPublicationDirectory(publication);
+        const publicationDirectory = await getPublicationDirectory(
+          publication,
+          currentState.currentSettings?.cacheFolder,
+        );
         if (!publicationDirectory) return;
         const unzipDir = await decompressJwpub(filepath, publicationDirectory);
         const db = await findDb(unzipDir);
@@ -1450,17 +1455,17 @@ const addToFiles = async (
   if (!isJwpub(files[0].path)) resetDragging();
 };
 
-const addSong = (section?: MediaSection) => {
+const addSong = (section: MediaSection | undefined) => {
   window.dispatchEvent(
-    new CustomEvent<{ section?: MediaSection }>('openSongPicker', {
+    new CustomEvent<{ section: MediaSection | undefined }>('openSongPicker', {
       detail: { section },
     }),
   );
 };
 
-const openImportMenu = (section?: MediaSection) => {
+const openImportMenu = (section: MediaSection | undefined) => {
   window.dispatchEvent(
-    new CustomEvent<{ section?: MediaSection }>('openImportMenu', {
+    new CustomEvent<{ section: MediaSection | undefined }>('openImportMenu', {
       detail: { section },
     }),
   );

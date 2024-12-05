@@ -106,7 +106,7 @@
           flat
           :label="$t('delete')"
           @click="
-            deleteCongregation(congToDelete);
+            removeCongregation(congToDelete);
             congToDelete = '';
           "
         />
@@ -126,6 +126,7 @@ import { useAppSettingsStore } from 'src/stores/app-settings';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+import { getAdditionalMediaPath, getPublicationsPath } from 'src/utils/fs';
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
@@ -198,6 +199,26 @@ const autoSelectCongregation = () => {
     chooseCongregation(Object.keys(congregations.value)[0]);
   } else if (!isHomePage.value) {
     chooseCongregation('');
+  }
+};
+
+const removeCongregation = async (id: number | string) => {
+  deleteCongregation(id);
+  try {
+    window.electronApi.fs.remove(
+      window.electronApi.path.join(
+        await getAdditionalMediaPath(currentState.currentSettings?.cacheFolder),
+        `${id}`,
+      ),
+    );
+    window.electronApi.fs.remove(
+      window.electronApi.path.join(
+        await getPublicationsPath(currentState.currentSettings?.cacheFolder),
+        `S-34mp_${id}`,
+      ),
+    );
+  } catch (error) {
+    errorCatcher(error);
   }
 };
 

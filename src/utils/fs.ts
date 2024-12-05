@@ -10,14 +10,19 @@ export const isFileUrl = (path: string) => path.startsWith('file://');
 const PUBLICATION_FOLDER = 'Publications';
 
 /**
- * Gets the full path of a directory in the user data folder.
- * @param paths The paths to the directory, relative to the user data folder.
- * @param create Weather to create the directory if it doesn't exist.
+ * Gets the full path of a directory in the cache folder.
+ * @param paths The paths to the directory, relative to the cache folder.
+ * @param create Wether to create the directory if it doesn't exist.
+ * @param cacheDir The cache directory if it is not the default.
  * @returns The full path of the directory.
  */
-const getUserDataPath = async (paths: string[], create = false) => {
+const getCachePath = async (
+  paths: string[],
+  create = false,
+  cacheDir?: null | string,
+) => {
   const dir = window.electronApi.path.join(
-    await window.electronApi.getUserDataPath(),
+    cacheDir || (await window.electronApi.getUserDataPath()),
     ...paths,
   );
   if (create) {
@@ -30,11 +35,12 @@ const getUserDataPath = async (paths: string[], create = false) => {
   return dir;
 };
 
-export const getFontsPath = () => getUserDataPath(['Fonts']);
-export const getTempPath = () => getUserDataPath(['Temp'], true);
-export const getPublicationsPath = () => getUserDataPath([PUBLICATION_FOLDER]);
-export const getAdditionalMediaPath = () =>
-  getUserDataPath(['Additional Media']);
+export const getFontsPath = () => getCachePath(['Fonts']);
+export const getTempPath = () => getCachePath(['Temp'], true);
+export const getPublicationsPath = (cacheDir?: null | string) =>
+  getCachePath([PUBLICATION_FOLDER], false, cacheDir);
+export const getAdditionalMediaPath = (cacheDir?: null | string) =>
+  getCachePath(['Additional Media'], false, cacheDir);
 
 // Directories
 
@@ -58,14 +64,19 @@ export const getParentDirectory = (filepath: string) => {
  */
 export const getPublicationDirectory = async (
   publication: PublicationFetcher,
+  cacheDir?: null | string,
 ) => {
-  return getUserDataPath([PUBLICATION_FOLDER, getPubId(publication)], true);
+  return getCachePath(
+    [PUBLICATION_FOLDER, getPubId(publication)],
+    true,
+    cacheDir,
+  );
 };
 
 /**
  * Checks if a directory is empty.
  * @param directory The directory to check.
- * @returns Weather the directory is empty.
+ * @returns Wether the directory is empty.
  */
 const isEmptyDir = async (directory: string) => {
   try {
@@ -109,14 +120,16 @@ export const removeEmptyDirs = async (rootDir: string) => {
  * Gets the files inside a publication directory.
  * @param publication The publication to get the files of.
  * @param filter The filter to apply to the files.
+ * @param cacheFolder The cache folder if it is not the default.
  * @returns The files inside the publication directory.
  */
 export const getPublicationDirectoryContents = async (
   publication: PublicationFetcher,
   filter?: string,
+  cacheFolder?: null | string,
 ) => {
   try {
-    const dir = await getPublicationDirectory(publication);
+    const dir = await getPublicationDirectory(publication, cacheFolder);
     if (!(await window.electronApi.fs.pathExists(dir))) return [];
     const items = await window.electronApi.readdir(dir);
     return items
@@ -168,7 +181,7 @@ export const trimFilepathAsNeeded = (filepath: string) => {
 // Disable Updates File
 
 const disableUpdatesPath = () =>
-  getUserDataPath(['Global Preferences', 'disable-updates']);
+  getCachePath(['Global Preferences', 'disable-updates']);
 
 /**
  * Checks if auto updates are disabled.

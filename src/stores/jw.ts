@@ -83,7 +83,7 @@ export const useJwStore = defineStore('jw-store', {
   actions: {
     addToAdditionMediaMap(
       mediaArray: DynamicMediaObject[],
-      section?: MediaSection,
+      section: MediaSection | undefined,
     ) {
       try {
         const { currentCongregation, selectedDate, selectedDateObject } =
@@ -367,8 +367,8 @@ export const useJwStore = defineStore('jw-store', {
         'JW-Icons': urlVariables.base
           ? `https://wol.${urlVariables.base}/assets/fonts/jw-icons-external-1970474.woff`
           : '',
-        'WT-ClearText-Bold': mediatorBaseUrl
-          ? `https://${mediatorBaseUrl}/fonts/wt-clear-text/1.019/Wt-ClearText-Bold.woff2`
+        'Wt-ClearText-Bold': mediatorBaseUrl
+          ? `https://${mediatorBaseUrl}/fonts/wt-clear-text/1.024/Wt-ClearText-Bold.woff2`
           : '',
       };
     },

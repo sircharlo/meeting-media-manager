@@ -147,10 +147,10 @@ const getThumbnailFromVideoPath = async (
       videoRef.currentTime = 5; // Seek to 5 seconds to get the thumbnail
     });
 
-    videoRef.addEventListener('error', (err) => {
+    videoRef.addEventListener('error', (e) => {
       // Cleanup in case of error
       videoRef.remove();
-      reject(err);
+      reject(new Error(e.message, { cause: e.error }));
     });
   });
 };
@@ -209,7 +209,10 @@ export const getSubtitlesUrl = async (
             'Duration mismatch: ' + JSON.stringify(subtitleFetcher),
           );
         const subtitlesFilename = path.basename(subtitles);
-        const subDirectory = await getPublicationDirectory(subtitleFetcher);
+        const subDirectory = await getPublicationDirectory(
+          subtitleFetcher,
+          currentState.currentSettings?.cacheFolder,
+        );
         await downloadFileIfNeeded({
           dir: subDirectory,
           filename: subtitlesFilename,

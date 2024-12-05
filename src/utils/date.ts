@@ -25,7 +25,7 @@ export const dateFromString = (lookupDate?: Date | string | undefined) => {
 /**
  * Checks if a date is in the past.
  * @param lookupDate The date to check.
- * @returns Weather the date is in the past.
+ * @returns Wether the date is in the past.
  */
 export const isInPast = (lookupDate: Date) => {
   try {
@@ -75,12 +75,14 @@ export const getLocalDate = (
  * @param date2 The second date to compare.
  * @returns The result of the comparison.
  */
-export const datesAreSame = (date1: Date, date2: Date) => {
+export const datesAreSame = (date1: Date | string, date2: Date | string) => {
   try {
     if (!date1 || !date2) throw new Error('Missing date for comparison');
-    return date1.toDateString() === date2.toDateString();
+    return new Date(date1).toDateString() === new Date(date2).toDateString();
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: { fn: { date1, date2, name: 'datesAreSame' } },
+    });
     return false;
   }
 };
