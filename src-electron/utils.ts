@@ -84,7 +84,8 @@ export function isSelf(url?: string): boolean {
  * @param url The url to check
  * @returns Wether the url is a trusted domain
  */
-export function isTrustedDomain(url: string): boolean {
+export function isTrustedDomain(url?: string): boolean {
+  if (!url) return false;
   try {
     const parsedUrl = new URL(url);
     if (parsedUrl.protocol !== 'https:') return false;

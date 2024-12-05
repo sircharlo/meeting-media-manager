@@ -208,7 +208,7 @@ onMounted(() => {
 
   if (invalidSettings.value.length === 1) {
     setTimeout(() => {
-      const el = document.getElementById(invalidSettings.value[0]);
+      const el = document.getElementById(invalidSettings.value[0] ?? '');
       el?.scrollIntoView({ behavior: 'smooth' });
     }, 500);
   }

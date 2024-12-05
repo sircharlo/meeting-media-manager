@@ -108,7 +108,10 @@ const getThumbnailFromVideoPath = async (
           if (ctx) {
             ctx.drawImage(videoRef, 0, 0, canvas.width, canvas.height);
             const imageUrl = canvas.toDataURL('image/jpeg');
-            const imageData = Buffer.from(imageUrl.split(',')[1], 'base64');
+            const imageData = Buffer.from(
+              imageUrl.split(',')[1] ?? '',
+              'base64',
+            );
 
             const saveImage = async () => {
               await fs.writeFile(thumbnailPath, imageData);

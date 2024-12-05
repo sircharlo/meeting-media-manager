@@ -18,7 +18,7 @@ export const camelToKebabCase = (str: string) =>
  * kebabToCamelCase('kebab-case') // 'kebabCase'
  */
 export const kebabToCamelCase = (str: string) =>
-  str.replace(/-./g, (x) => x[1].toUpperCase());
+  str.replace(/-./g, (x) => x[1]!.toUpperCase());
 
 /**
  * Sleeps for a given amount of time.
@@ -75,7 +75,7 @@ export const sanitizeId = (id: string) => {
  */
 export const parseVersion = (version: string) => {
   const [major, minor, patch] = version.split('.').map((v) => parseInt(v, 10));
-  return { major, minor, patch };
+  return { major: major ?? 0, minor: minor ?? 0, patch: patch ?? 0 };
 };
 
 /**

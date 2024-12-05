@@ -202,7 +202,7 @@ export const addJwpubDocumentMediaToFiles = async (
     );
     for (let i = 0; i < multimediaItems.length; i++) {
       multimediaItems[i] = await addFullFilePathToMultimediaItem(
-        multimediaItems[i],
+        multimediaItems[i]!,
         pubFolder ?? publication,
       );
     }
@@ -352,13 +352,13 @@ export const fetchMedia = async () => {
         concurrency: 2,
       });
     } else {
-      queues.meetings[currentStateStore.currentCongregation].start();
+      queues.meetings[currentStateStore.currentCongregation]?.start();
     }
     const queue = queues.meetings[currentStateStore.currentCongregation];
     for (const day of meetingsToFetch) {
       try {
         queue
-          .add(async () => {
+          ?.add(async () => {
             if (!day) return;
             const dayDate = day.date;
             if (!dayDate) {
@@ -390,7 +390,7 @@ export const fetchMedia = async () => {
         day.error = true;
       }
     }
-    await queue.onIdle();
+    await queue?.onIdle();
     exportAllDays();
   } catch (error) {
     errorCatcher(error);
@@ -563,7 +563,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
         );
       for (let i = 0; i < extractItems.length; i++) {
         extractItems[i] = await addFullFilePathToMultimediaItem(
-          extractItems[i],
+          extractItems[i]!,
           {
             issue: extract.IssueTagNumber,
             langwritten: extractLang,
@@ -1102,10 +1102,11 @@ const getWtIssue = async (
     if (weekNr === -1) {
       throw new Error('No week found in following w: ' + issueString);
     }
-    const docId = executeQuery<{ DocumentId: number }>(
-      db,
-      `SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`,
-    )[0]?.DocumentId;
+    const docId =
+      executeQuery<{ DocumentId: number }>(
+        db,
+        `SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`,
+      )[0]?.DocumentId ?? 0;
     return { db, docId, issueString, publication, weekNr };
   } catch (e) {
     if (lastChance) errorCatcher(e);
@@ -1137,7 +1138,7 @@ const getParagraphNumbers = (
     if (!numbers.length) return paragraphLabel;
     if (numbers.length === 1) return numbers[0];
 
-    const max = numbers[numbers.length - 1]; // Find the last number
+    const max = numbers[numbers.length - 1]!; // Find the last number
 
     // Find the first number less than or equal to max
     const firstNumber = numbers.find((n) => n <= max);
@@ -1166,11 +1167,11 @@ export const dynamicMediaMapper = async (
     if (!additional) {
       const songs = allMedia.filter((m) => isSong(m));
       middleSongParagraphOrdinal =
-        songs.length === 3 ? songs[1].BeginParagraphOrdinal : 0;
+        songs.length === 3 ? songs[1]!.BeginParagraphOrdinal : 0;
       if (isCoWeek(lookupDate)) {
         // The last songs for both MW and WE meeting get replaced during the CO visit
         const lastParagraphOrdinal =
-          allMedia[allMedia.length - 1].BeginParagraphOrdinal || 0;
+          allMedia[allMedia.length - 1]!.BeginParagraphOrdinal || 0;
         allMedia.pop();
         if (isMwMeetingDay(lookupDate)) {
           // Also remove CBS media if it's the MW meeting, since the CBS is skipped during the CO visit
@@ -1457,7 +1458,7 @@ export const getWeMedia = async (lookupDate: Date) => {
     );
     for (let i = 0; i < mediaWithoutVideos.length; i++) {
       mediaWithoutVideos[i] = await addFullFilePathToMultimediaItem(
-        mediaWithoutVideos[i],
+        mediaWithoutVideos[i]!,
         publication,
       );
     }
@@ -1528,7 +1529,7 @@ export const getWeMedia = async (lookupDate: Date) => {
         .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal)
         .map((item) => {
           const match = item.Link.match(/\/(.*)\//);
-          const langOverride = match ? match[1].split(':')[0] : '';
+          const langOverride = (match ? match[1]?.split(':')[0] : '') ?? '';
           return langOverride === currentStateStore.currentSettings?.lang
             ? ''
             : langOverride;
@@ -1550,8 +1551,8 @@ export const getWeMedia = async (lookupDate: Date) => {
       );
     const allMedia = finalMedia;
     if (mergedSongs.length > 0) {
-      allMedia.unshift(mergedSongs[0]);
-      if (mergedSongs.length > 1) allMedia.push(mergedSongs[1]);
+      allMedia.unshift(mergedSongs[0]!);
+      if (mergedSongs.length > 1) allMedia.push(mergedSongs[1]!);
     }
 
     const multimediaMepsLangs = getMultimediaMepsLangs({ db, docId });
@@ -1640,7 +1641,7 @@ export const getMwMedia = async (lookupDate: Date) => {
       currentStateStore.currentSettings?.includePrinted,
     );
     for (let i = 0; i < mms.length; i++) {
-      const multimediaItem = mms[i];
+      const multimediaItem = mms[i]!;
       const videoMarkers = getMediaVideoMarkers(
         { db, docId },
         multimediaItem.MultimediaId,
@@ -2005,7 +2006,7 @@ export function getBestImageUrl(
           Object.keys(images[key]) as (keyof ImageSizes)[]
         ).filter((size) => !sizesToConsider.includes(size));
         if (otherSizes.length > 0) {
-          return images[key][otherSizes[0]];
+          return images[key][otherSizes[0]!];
         }
       }
     }
@@ -2046,14 +2047,14 @@ export const getJwMediaInfo = async (publication: PublicationFetcher) => {
     );
     if (responseObject && responseObject.media.length > 0) {
       const best = findBestResolution(
-        responseObject.media[0].files,
+        responseObject.media[0]!.files,
         useCurrentStateStore().currentSettings?.maxRes,
       );
       return {
-        duration: responseObject.media[0].duration ?? undefined,
+        duration: responseObject.media[0]!.duration ?? undefined,
         subtitles: isMediaLink(best) ? '' : (best?.subtitles?.url ?? ''),
-        thumbnail: getBestImageUrl(responseObject.media[0].images),
-        title: responseObject.media[0].title,
+        thumbnail: getBestImageUrl(responseObject.media[0]!.images),
+        title: responseObject.media[0]!.title,
       };
     } else {
       return emptyResponse;
@@ -2207,8 +2208,8 @@ const downloadJwpub = async (
         publication,
         currentStateStore.currentSettings?.cacheFolder,
       ),
-      size: mediaLinks[0].filesize,
-      url: mediaLinks[0].file.url,
+      size: mediaLinks[0]!.filesize,
+      url: mediaLinks[0]!.file.url,
     });
   } catch (e) {
     errorCatcher(e);

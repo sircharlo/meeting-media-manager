@@ -178,7 +178,7 @@ const unusedParentDirectories = computed(() => {
         !untouchableDirectories.value.has(file.parentPath)
       ) {
         if (acc[file.parentPath]) {
-          acc[file.parentPath] += file.size;
+          acc[file.parentPath]! += file.size;
         } else {
           acc[file.parentPath] = file.size;
         }
@@ -195,7 +195,7 @@ const usedParentDirectories = computed(() => {
   try {
     return usedCacheFiles.value.reduce<Record<string, number>>((acc, file) => {
       if (acc[file.parentPath]) {
-        acc[file.parentPath] += file.size;
+        acc[file.parentPath]! += file.size;
       } else {
         acc[file.parentPath] = file.size;
       }

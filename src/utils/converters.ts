@@ -59,7 +59,7 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
         try {
           await window.electronApi.fs.writeFile(
             newPath,
-            Buffer.from(outputImg.split(',')[1], 'base64'),
+            Buffer.from(outputImg.split(',')[1] ?? '', 'base64'),
           );
           resolve(newPath);
         } catch (error) {

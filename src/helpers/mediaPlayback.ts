@@ -86,7 +86,7 @@ export const getMediaFromJwPlaylist = async (
           'SELECT Name FROM Tag ORDER BY TagId ASC LIMIT 1;',
         );
       if (playlistNameQuery.length) {
-        playlistName = playlistNameQuery[0].Name + ' - ';
+        playlistName = playlistNameQuery[0]!.Name + ' - ';
       }
     } catch (error) {
       errorCatcher(error);

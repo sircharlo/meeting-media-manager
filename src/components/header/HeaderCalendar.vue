@@ -120,7 +120,7 @@
               <q-icon color="primary" :name="icon" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>{{ $t(name) }}</q-item-label>
+              <q-item-label>{{ $t(name ? name : '') }}</q-item-label>
               <q-item-label caption>{{ $t(name + '-explain') }}</q-item-label>
             </q-item-section>
           </q-item>
@@ -347,7 +347,7 @@ const minDate = () => {
     const dateArray: Date[] =
       lookupPeriod.value[currentCongregation.value]?.map((day) => day.date) ||
       [];
-    const minDate = getMinDate(dateArray[0], ...dateArray.slice(1));
+    const minDate = getMinDate(dateArray[0]!, ...dateArray.slice(1));
     return formatDate(minDate, 'YYYY/MM');
   } catch (error) {
     errorCatcher(error);
@@ -361,7 +361,7 @@ const maxDate = () => {
     const dateArray: Date[] =
       lookupPeriod.value[currentCongregation.value]?.map((day) => day.date) ||
       [];
-    const maxDate = getMaxDate(dateArray[0], ...dateArray.slice(1));
+    const maxDate = getMaxDate(dateArray[0]!, ...dateArray.slice(1));
     return formatDate(maxDate, 'YYYY/MM');
   } catch (error) {
     errorCatcher(error);
@@ -381,8 +381,8 @@ const dateOptions = (lookupDate: string) => {
     const dateArray: Date[] =
       lookupPeriod.value[currentCongregation.value]?.map((day) => day.date) ||
       [];
-    const minDate = getMinDate(dateArray[0], ...dateArray.slice(1));
-    const maxDate = getMaxDate(dateArray[0], ...dateArray.slice(1));
+    const minDate = getMinDate(dateArray[0]!, ...dateArray.slice(1));
+    const maxDate = getMaxDate(dateArray[0]!, ...dateArray.slice(1));
     return (
       getDateDiff(lookupDate, minDate, 'days') >= 0 &&
       getDateDiff(lookupDate, maxDate, 'days') <= 0

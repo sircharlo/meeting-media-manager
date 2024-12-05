@@ -56,7 +56,13 @@ export default defineConfig((ctx) => {
       sourcemap: true,
       // See: https://www.electronjs.org/docs/latest/tutorial/electron-timelines#timeline
       target: { browser: ['chrome130'], node: 'node20.18.0' },
-      typescript: { strict: true, vueShim: true },
+      typescript: {
+        extendTsConfig: (tsConfig) => {
+          tsConfig.exclude?.push('./../docs');
+        },
+        strict: true,
+        vueShim: true,
+      },
       vitePlugins: [
         [
           '@intlify/unplugin-vue-i18n/vite',

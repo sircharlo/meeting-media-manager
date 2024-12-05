@@ -252,7 +252,7 @@ const selectedBookMedia = computed(() => {
       (item) => item?.booknum === selectedBibleBook.value,
     )?.files || {},
   );
-  const langFiles: PublicationFiles = allFiles[0];
+  const langFiles: PublicationFiles = allFiles[0]!;
   const mediaFiles: MediaLink[] = Object.values(langFiles || {})[0];
   return mediaFiles || [];
 });
@@ -298,7 +298,7 @@ const totalChosenVerses = computed(() => {
     ? ''
     : ' (' +
         (chosenVerses.value.length === 2
-          ? Math.abs(chosenVerses.value[0] - chosenVerses.value[1]) + 1
+          ? Math.abs(chosenVerses.value[0]! - chosenVerses.value[1]!) + 1
           : chosenVerses.value.length === 1
             ? 1
             : '') +
@@ -338,7 +338,7 @@ const addSelectedVerses = async () => {
 
   const timeToSeconds = (time: string) => {
     const [h, m, s] = time.split(':').map(parseFloat);
-    return h * 3600 + m * 60 + s;
+    return h! * 3600 + m! * 60 + s!;
   };
 
   const min = timeToSeconds(
@@ -410,8 +410,8 @@ const getVerseClass = (verse: number) => {
   } else if (
     chosenVerses.value.length === 1 &&
     chosenVerses.value !== null &&
-    verse > Math.min(chosenVerses.value[0], hoveredVerse.value || 0) &&
-    verse < Math.max(chosenVerses.value[0], hoveredVerse.value || 0)
+    verse > Math.min(chosenVerses.value[0]!, hoveredVerse.value || 0) &&
+    verse < Math.max(chosenVerses.value[0]!, hoveredVerse.value || 0)
   ) {
     return 'bg-primary-semi-transparent text-white';
   } else {

@@ -167,7 +167,7 @@ const listOptions = computed(
         return RESOLUTIONS.map((r) => ({ label: r, value: r }));
       } else if (props.list === 'days') {
         return Array.from({ length: 7 }, (_, i) => ({
-          label: dateLocale.value.days[i === 6 ? 0 : i + 1],
+          label: dateLocale.value.days[i === 6 ? 0 : i + 1]!,
           value: String(i),
         }));
       } else if (props.list?.startsWith('obs')) {

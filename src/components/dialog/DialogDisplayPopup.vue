@@ -282,7 +282,7 @@ const chooseCustomBackground = async (reset?: boolean) => {
         if (!backgroundPicker || backgroundPicker.filePaths?.length === 0) {
           notifyInvalidBackgroundFile();
         } else {
-          const filepath = backgroundPicker.filePaths[0];
+          const filepath = backgroundPicker.filePaths[0]!;
           if (isJwpub(filepath)) {
             jwpubImportFilePath.value = filepath;
             const unzipDir = await decompressJwpub(filepath);
