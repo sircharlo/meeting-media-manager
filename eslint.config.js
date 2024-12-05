@@ -69,6 +69,11 @@ export default [
       globals: {
         ...globals.browser,
         ...globals.node, // SSR, Electron, config files
+        browser: 'readonly', // bex related
+        Capacitor: 'readonly',
+        chrome: 'readonly', // bex related
+        cordova: 'readonly',
+        ga: 'readonly', // Google Analytics
         process: 'readonly', // process.env.*
       },
 
