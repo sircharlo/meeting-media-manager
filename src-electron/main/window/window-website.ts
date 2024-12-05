@@ -1,13 +1,10 @@
-import type { BrowserWindow, Video } from 'electron';
 import type { NavigateWebsiteAction } from 'src/types';
 
 import { HD_RESOLUTION, PLATFORM } from 'app/src-electron/constants';
-import {
-  askForMediaAccess,
-  captureElectronError,
-} from 'app/src-electron/utils';
+import { captureElectronError } from 'app/src-electron/utils';
+import { type BrowserWindow, systemPreferences, type Video } from 'electron';
 
-import { createWindow, sendToWindow } from './window-base';
+import { createWindow, logToWindow, sendToWindow } from './window-base';
 import { mainWindow } from './window-main';
 
 export let websiteWindow: BrowserWindow | null = null;
@@ -139,6 +136,27 @@ export async function createWebsiteWindow(lang?: string) {
     websiteWindow = null;
   });
 }
+
+/**
+ * Asks for media access for the camera and microphone
+ */
+export const askForMediaAccess = async () => {
+  if (PLATFORM !== 'darwin') return;
+  const types = ['camera', 'microphone'] as const;
+
+  for (const type of types) {
+    try {
+      const access = systemPreferences.getMediaAccessStatus(type);
+      if (access !== 'granted') {
+        logToWindow(mainWindow, `No ${type} access`, access, 'error');
+        const result = await systemPreferences.askForMediaAccess(type);
+        logToWindow(mainWindow, `${type} result:`, result, 'debug');
+      }
+    } catch (e) {
+      captureElectronError(e);
+    }
+  }
+};
 
 export const zoomWebsiteWindow = (direction: 'in' | 'out') => {
   if (!websiteWindow) return;

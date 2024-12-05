@@ -1,6 +1,6 @@
 import type { ElectronIpcListenKey } from 'src/types';
 
-import { CURRENT_DIR, IS_DEV, PLATFORM } from 'app/src-electron/constants';
+import { IS_DEV, PLATFORM } from 'app/src-electron/constants';
 import { captureElectronError } from 'app/src-electron/utils';
 import {
   app,
@@ -8,6 +8,7 @@ import {
   type BrowserWindowConstructorOptions,
 } from 'electron';
 import { join, resolve } from 'path';
+import { fileURLToPath } from 'url';
 
 import { urlVariables } from '../session';
 import { StatefulBrowserWindow } from './window-state';
@@ -44,7 +45,7 @@ export function createWindow(
     height: defaultSize.height,
     icon: resolve(
       join(
-        CURRENT_DIR,
+        fileURLToPath(new URL('.', import.meta.url)),
         'icons',
         `icon.${PLATFORM === 'win32' ? 'ico' : PLATFORM === 'darwin' ? 'icns' : 'png'}`,
       ),
@@ -62,7 +63,7 @@ export function createWindow(
         name === 'website'
           ? undefined
           : resolve(
-              CURRENT_DIR,
+              fileURLToPath(new URL('.', import.meta.url)),
               join(
                 process.env.QUASAR_ELECTRON_PRELOAD_FOLDER,
                 'electron-preload' +

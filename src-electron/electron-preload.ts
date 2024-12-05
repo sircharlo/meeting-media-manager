@@ -5,21 +5,21 @@ import fs from 'fs-extra';
 import path from 'upath';
 
 import { initCloseListeners } from './preload/close';
-// import {
-//   convertHeic,
-//   convertPdfToImages,
-//   decompress,
-//   getNrOfPdfPages,
-// } from './preload/converters';
-// import {
-//   fileUrlToPath,
-//   getVideoDuration,
-//   parseMediaFile,
-//   pathToFileURL,
-// } from './preload/fs';
+import {
+  convertHeic,
+  convertPdfToImages,
+  decompress,
+  getNrOfPdfPages,
+} from './preload/converters';
+import {
+  fileUrlToPath,
+  getVideoDuration,
+  parseMediaFile,
+  pathToFileURL,
+} from './preload/fs';
 import { invoke, listen, removeAllIpcListeners, send } from './preload/ipc';
 import { initScreenListeners } from './preload/screen';
-// import { executeQuery } from './preload/sqlite';
+import { executeQuery } from './preload/sqlite';
 import {
   closeWebsiteWindow,
   initWebsiteListeners,
@@ -37,21 +37,21 @@ initWebsiteListeners();
 const electronApi: Partial<ElectronApi> = {
   askForMediaAccess: () => send('askForMediaAccess'),
   closeWebsiteWindow,
-  // convertHeic,
-  // convertPdfToImages,
-  // decompress,
+  convertHeic,
+  convertPdfToImages,
+  decompress,
   downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
-  // executeQuery,
-  // fileUrlToPath,
+  executeQuery,
+  fileUrlToPath,
   fs,
   getAllScreens: () => invoke('getAllScreens'),
   getAppDataPath: () => invoke('getAppDataPath'),
   getAppVersion: () => invoke('getVersion'),
   getLocalPathFromFileObject: (fo) => webUtils.getPathForFile(fo),
-  // getNrOfPdfPages,
+  getNrOfPdfPages,
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),
   getUserDataPath: () => invoke('getUserDataPath'),
-  // getVideoDuration,
+  getVideoDuration,
   moveMediaWindow: (t, w, ne) =>
     send('moveMediaWindow', t, w === undefined ? undefined : !w, ne),
   navigateWebsiteWindow,
@@ -68,9 +68,9 @@ const electronApi: Partial<ElectronApi> = {
   openFileDialog: (s, f) => invoke('openFileDialog', s, f),
   openFolderDialog: () => invoke('openFolderDialog'),
   openWebsiteWindow,
-  // parseMediaFile,
+  parseMediaFile,
   path,
-  // pathToFileURL,
+  pathToFileURL,
   readdir: (p, withSizes, recursive) =>
     invoke('readdir', p, withSizes, recursive),
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),

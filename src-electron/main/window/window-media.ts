@@ -1,13 +1,10 @@
 import type { BrowserWindow } from 'electron';
 import type { ScreenPreferences } from 'src/types';
 
-import {
-  CURRENT_DIR,
-  HD_RESOLUTION,
-  PLATFORM,
-} from 'app/src-electron/constants';
+import { HD_RESOLUTION, PLATFORM } from 'app/src-electron/constants';
 import { captureElectronError } from 'app/src-electron/utils';
 import { join, resolve } from 'path';
+import { fileURLToPath } from 'url';
 
 import { getAllScreens, getWindowScreen, screenPreferences } from '../screen';
 import { createWindow, sendToWindow } from './window-base';
@@ -32,7 +29,7 @@ export function createMediaWindow() {
     height: HD_RESOLUTION[1],
     icon: resolve(
       join(
-        CURRENT_DIR,
+        fileURLToPath(new URL('.', import.meta.url)),
         'icons',
         `media-player.${PLATFORM === 'win32' ? 'ico' : PLATFORM === 'darwin' ? 'icns' : 'png'}`,
       ),
