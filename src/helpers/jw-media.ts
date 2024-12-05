@@ -2061,7 +2061,7 @@ export const getJwMediaInfo = async (publication: PublicationFetcher) => {
         duration: responseObject.media[0]?.duration ?? undefined,
         subtitles: isMediaLink(best) ? '' : (best?.subtitles?.url ?? ''),
         thumbnail: getBestImageUrl(responseObject.media[0]?.images ?? {}),
-        title: responseObject.media[0]?.title,
+        title: responseObject.media[0]?.title ?? '',
       };
     } else {
       return emptyResponse;
