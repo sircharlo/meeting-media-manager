@@ -8,14 +8,6 @@ import globals from 'globals';
 
 export default [
   {
-    /**
-     * Ignore the following files.
-     * Please note that pluginQuasar.configs.recommended already ignores
-     * the "node_modules" folder for you (and all other Quasar project
-     * relevant folders and files).
-     *
-     * ESLint requires "ignores" key to be the only one in this object
-     */
     ignores: [
       '**/.DS_Store',
       '.yarn/',
