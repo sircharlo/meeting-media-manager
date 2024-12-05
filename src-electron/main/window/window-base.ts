@@ -57,6 +57,7 @@ export function createWindow(
     ...(options ?? {}),
     webPreferences: {
       backgroundThrottling: false,
+      contextIsolation: true,
       preload:
         name === 'website'
           ? undefined
