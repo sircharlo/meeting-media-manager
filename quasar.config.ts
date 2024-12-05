@@ -188,6 +188,7 @@ export default defineConfig((ctx) => {
         Object.keys(pkg.dependencies).forEach((dep) => {
           if (!electronDeps.includes(dep)) {
             console.log(`Removing dependency: ${dep}`);
+            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             delete pkg.dependencies[dep];
           }
         });

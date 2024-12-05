@@ -827,8 +827,10 @@ const setMediaPlaying = async (
         max: media.duration,
         min: 0,
       };
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       customDurations.value[currentCong][currentDate][media.uniqueId]!.min =
         marker.StartTimeTicks / 10000 / 1000;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       customDurations.value[currentCong][currentDate][media.uniqueId]!.max =
         (marker.StartTimeTicks +
           marker.DurationTicks -
@@ -987,6 +989,7 @@ const destroyPanzoom = () => {
     panzooms[props.media.uniqueId]?.reset({ animate: false });
     panzooms[props.media.uniqueId]?.destroy();
 
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete panzooms[props.media.uniqueId];
   } catch (e) {
     errorCatcher(e);

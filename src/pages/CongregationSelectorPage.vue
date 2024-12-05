@@ -196,7 +196,8 @@ const autoSelectCongregation = () => {
   if (congregationCount.value === 0) {
     createNewCongregation();
   } else if (congregationCount.value === 1 && isHomePage.value) {
-    chooseCongregation(Object.keys(congregations.value)[0]!);
+    const id = Object.keys(congregations.value)[0];
+    if (id) chooseCongregation(id);
   } else if (!isHomePage.value) {
     chooseCongregation('');
   }

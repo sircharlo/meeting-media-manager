@@ -148,7 +148,7 @@ export const remainingTimeBeforeMeetingStart = () => {
       if (!meetingStartTime) return 0;
       const [hours, minutes] = meetingStartTime.split(':').map(Number);
       const meetingStartDateTime = new Date(now);
-      meetingStartDateTime.setHours(hours!, minutes, 0, 0);
+      meetingStartDateTime.setHours(hours ?? 0, minutes, 0, 0);
       const dateDiff = getDateDiff(meetingStartDateTime, now, 'seconds');
       return dateDiff;
     } else {

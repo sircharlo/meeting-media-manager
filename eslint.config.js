@@ -42,7 +42,7 @@ export default [
   // https://github.com/vuejs/eslint-config-typescript
   ...vueTsEslintConfig({
     // https://typescript-eslint.io/users/configs#recommended-configurations
-    extends: ['recommended', 'stylistic'],
+    extends: ['strict', 'stylistic'],
   }),
 
   // https://typescript-eslint.io/rules/

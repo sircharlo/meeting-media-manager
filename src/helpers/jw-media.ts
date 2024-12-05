@@ -202,6 +202,7 @@ export const addJwpubDocumentMediaToFiles = async (
     );
     for (let i = 0; i < multimediaItems.length; i++) {
       multimediaItems[i] = await addFullFilePathToMultimediaItem(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         multimediaItems[i]!,
         pubFolder ?? publication,
       );
@@ -563,6 +564,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
         );
       for (let i = 0; i < extractItems.length; i++) {
         extractItems[i] = await addFullFilePathToMultimediaItem(
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           extractItems[i]!,
           {
             issue: extract.IssueTagNumber,
@@ -1138,6 +1140,7 @@ const getParagraphNumbers = (
     if (!numbers.length) return paragraphLabel;
     if (numbers.length === 1) return numbers[0];
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const max = numbers[numbers.length - 1]!; // Find the last number
 
     // Find the first number less than or equal to max
@@ -1167,10 +1170,12 @@ export const dynamicMediaMapper = async (
     if (!additional) {
       const songs = allMedia.filter((m) => isSong(m));
       middleSongParagraphOrdinal =
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         songs.length === 3 ? songs[1]!.BeginParagraphOrdinal : 0;
       if (isCoWeek(lookupDate)) {
         // The last songs for both MW and WE meeting get replaced during the CO visit
         const lastParagraphOrdinal =
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           allMedia[allMedia.length - 1]!.BeginParagraphOrdinal || 0;
         allMedia.pop();
         if (isMwMeetingDay(lookupDate)) {
@@ -1458,6 +1463,7 @@ export const getWeMedia = async (lookupDate: Date) => {
     );
     for (let i = 0; i < mediaWithoutVideos.length; i++) {
       mediaWithoutVideos[i] = await addFullFilePathToMultimediaItem(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         mediaWithoutVideos[i]!,
         publication,
       );
@@ -1550,9 +1556,9 @@ export const getWeMedia = async (lookupDate: Date) => {
           (a.BeginParagraphOrdinal ?? 0) - (b.BeginParagraphOrdinal ?? 0),
       );
     const allMedia = finalMedia;
-    if (mergedSongs.length > 0) {
-      allMedia.unshift(mergedSongs[0]!);
-      if (mergedSongs.length > 1) allMedia.push(mergedSongs[1]!);
+    if (mergedSongs[0]) {
+      allMedia.unshift(mergedSongs[0]);
+      if (mergedSongs[1]) allMedia.push(mergedSongs[1]);
     }
 
     const multimediaMepsLangs = getMultimediaMepsLangs({ db, docId });
@@ -1641,6 +1647,7 @@ export const getMwMedia = async (lookupDate: Date) => {
       currentStateStore.currentSettings?.includePrinted,
     );
     for (let i = 0; i < mms.length; i++) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const multimediaItem = mms[i]!;
       const videoMarkers = getMediaVideoMarkers(
         { db, docId },
@@ -2005,8 +2012,8 @@ export function getBestImageUrl(
         const otherSizes = (
           Object.keys(images[key]) as (keyof ImageSizes)[]
         ).filter((size) => !sizesToConsider.includes(size));
-        if (otherSizes.length > 0) {
-          return images[key][otherSizes[0]!];
+        if (otherSizes[0]) {
+          return images[key][otherSizes[0]];
         }
       }
     }
@@ -2047,14 +2054,14 @@ export const getJwMediaInfo = async (publication: PublicationFetcher) => {
     );
     if (responseObject && responseObject.media.length > 0) {
       const best = findBestResolution(
-        responseObject.media[0]!.files,
+        responseObject.media[0]?.files,
         useCurrentStateStore().currentSettings?.maxRes,
       );
       return {
-        duration: responseObject.media[0]!.duration ?? undefined,
+        duration: responseObject.media[0]?.duration ?? undefined,
         subtitles: isMediaLink(best) ? '' : (best?.subtitles?.url ?? ''),
-        thumbnail: getBestImageUrl(responseObject.media[0]!.images),
-        title: responseObject.media[0]!.title,
+        thumbnail: getBestImageUrl(responseObject.media[0]?.images ?? {}),
+        title: responseObject.media[0]?.title,
       };
     } else {
       return emptyResponse;
@@ -2208,8 +2215,8 @@ const downloadJwpub = async (
         publication,
         currentStateStore.currentSettings?.cacheFolder,
       ),
-      size: mediaLinks[0]!.filesize,
-      url: mediaLinks[0]!.file.url,
+      size: mediaLinks[0]?.filesize,
+      url: mediaLinks[0]?.file.url ?? '',
     });
   } catch (e) {
     errorCatcher(e);

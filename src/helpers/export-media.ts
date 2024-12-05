@@ -85,6 +85,7 @@ const exportDayToFolder = async (targetDate?: Date) => {
   const sections: Partial<Record<MediaSection, number>> = {}; // Object to store dynamic section prefixes
   for (let i = 0; i < dayMediaLength; i++) {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const m = dynamicMediaFiltered[i]!;
       const sourceFilePath = window.electronApi.fileUrlToPath(m.fileUrl);
       if (

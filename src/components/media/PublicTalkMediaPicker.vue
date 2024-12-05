@@ -129,16 +129,18 @@ const populatePublicTalks = async () => {
     s34mpDb.value,
     'SELECT DISTINCT VersionNumber, Year FROM Publication',
   );
-  if (PublicationInfos.length) s34mpInfo.value = PublicationInfos[0]!;
+  if (PublicationInfos[0]) s34mpInfo.value = PublicationInfos[0];
 };
 
 const browse = async () => {
   const s34mpFileSelection = await openFileDialog(true, 'jwpub');
   if (!s34mpFileSelection || !s34mpFileSelection.filePaths.length) return;
-  s34mpFile.value = s34mpFileSelection.filePaths[0]!;
+  s34mpFile.value = s34mpFileSelection.filePaths[0];
   if (s34mpDir.value) await fs.ensureDir(s34mpDir.value);
-  await decompressJwpub(s34mpFile.value, s34mpDir.value, true);
-  populatePublicTalks();
+  if (s34mpFile.value) {
+    await decompressJwpub(s34mpFile.value, s34mpDir.value, true);
+    populatePublicTalks();
+  }
 };
 
 const dismissPopup = () => {

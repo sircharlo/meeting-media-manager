@@ -1385,10 +1385,10 @@ const addToFiles = async (
             db,
             `SELECT DISTINCT Document.DocumentId, Title FROM Document JOIN ${mmTable} ON Document.DocumentId = ${mmTable}.DocumentId;`,
           );
-          if (jwpubImportDocuments.value.length === 1) {
+          if (jwpubImportDocuments.value[0]) {
             await addJwpubDocumentMediaToFiles(
               jwpubImportDb.value,
-              jwpubImportDocuments.value[0]!,
+              jwpubImportDocuments.value[0],
               sectionToAddTo.value,
             );
             jwpubImportDb.value = '';
