@@ -1108,7 +1108,7 @@ const getWtIssue = async (
       executeQuery<{ DocumentId: number }>(
         db,
         `SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`,
-      )[0]?.DocumentId ?? 0;
+      )[0]?.DocumentId ?? -1;
     return { db, docId, issueString, publication, weekNr };
   } catch (e) {
     if (lastChance) errorCatcher(e);

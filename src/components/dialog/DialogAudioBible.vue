@@ -409,6 +409,7 @@ const getVerseClass = (verse: number) => {
   ) {
     return 'bg-primary-semi-transparent text-white';
   } else if (
+    chosenVerses.value.length === 1 &&
     chosenVerses.value?.[0] &&
     verse > Math.min(chosenVerses.value[0], hoveredVerse.value || 0) &&
     verse < Math.max(chosenVerses.value[0], hoveredVerse.value || 0)
