@@ -1,4 +1,3 @@
-/* eslint-disable */
 // https://github.com/michael-ciniawsky/postcss-load-config
 
 import autoprefixer from 'autoprefixer';

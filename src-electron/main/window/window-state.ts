@@ -67,7 +67,7 @@ export class StatefulBrowserWindow {
 
     try {
       this.win.setBounds({ height, width, x, y });
-    } catch (e) {
+    } catch {
       // This fails when opening the website window for some reason
     }
 
@@ -210,7 +210,7 @@ function refineOptionsAndState(
 
   try {
     savedState = readJsonSync(join(configFilePath, configFileName));
-  } catch (e) {
+  } catch {
     // Don't care, use defaults
   }
 

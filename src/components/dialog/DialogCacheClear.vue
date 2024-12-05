@@ -91,7 +91,6 @@ const deleteCacheFiles = async (type = '') => {
             : '0001/01/01';
           const cong = currentState.currentCongregation;
           if (additionalMediaMaps.value[cong]?.[date]) {
-            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             delete additionalMediaMaps.value[cong][date];
           }
         }

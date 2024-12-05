@@ -1,7 +1,5 @@
-/* eslint-env node */
-
 // Configuration for your app
-// https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
+// https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
 import { defineConfig } from '#q-app/wrappers';
 import { sentryEsbuildPlugin } from '@sentry/esbuild-plugin';
@@ -11,18 +9,18 @@ import { mergeConfig } from 'vite'; // use mergeConfig helper to avoid overwriti
 
 import { repository, version } from './package.json';
 
-export default defineConfig(function (ctx) {
+export default defineConfig((ctx) => {
   return {
-    // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
-    // preFetch: true,
-
+    // animations: 'all', // --- includes all animations
     // https://v2.quasar.dev/options/animations
     animations: ['fadeIn', 'fadeOut'],
 
+    // app boot file (/src/boot)
+    // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
     boot: ['sentry', 'i18n', 'globals'],
 
-    // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
+    // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#build
     build: {
       env: {
         repository: repository.url.replace('.git', ''),
@@ -71,22 +69,10 @@ export default defineConfig(function (ctx) {
       vueRouterMode: 'hash', // available values: 'hash', 'history'
     },
 
-    // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
+    // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
     css: ['app.scss', 'mmm-icons.css'],
 
-    // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#sourcefiles
-    // sourceFiles: {
-    //   rootComponent: 'src/App.vue',
-    //   router: 'src/router/index',
-    //   store: 'src/store/index',
-    //   registerServiceWorker: 'src-pwa/register-service-worker',
-    //   serviceWorker: 'src-pwa/custom-service-worker',
-    //   pwaManifestFile: 'src-pwa/manifest.json',
-    //   electronMain: 'src-electron/electron-main',
-    //   electronPreload: 'src-electron/electron-preload'
-    // },
-
-    // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
+    // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#devServer
     devServer: {
       // https: true
       open: true, // opens browser window automatically
@@ -196,32 +182,15 @@ export default defineConfig(function (ctx) {
         Object.keys(pkg.dependencies).forEach((dep) => {
           if (!electronDeps.includes(dep)) {
             console.log(`Removing dependency: ${dep}`);
-            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             delete pkg.dependencies[dep];
           }
         });
       },
-      inspectPort: 5858,
-      preloadScripts: ['electron-preload'],
     },
 
-    // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
+    // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework
     framework: {
-      config: {
-        dark: 'auto',
-      },
-
-      // iconSet: 'material-icons', // Quasar icon set
-      // lang: 'en-US', // Quasar language pack
-
-      // For special cases outside of where the auto-import strategy can have an impact
-      // (like functional components as one of the examples),
-      // you can manually specify Quasar components/directives to be available everywhere:
-      //
-      // components: [],
-      // directives: [],
-
-      // Quasar plugins
+      config: { dark: 'auto' },
       plugins: ['LocalStorage', 'Notify'],
     },
   };
