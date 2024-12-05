@@ -2,7 +2,6 @@ import type { JwLangCode } from 'src/types';
 
 // ! This type should include all languages that are configured in Crowdin.
 export type LanguageValue =
-  | 'af'
   | 'am'
   | 'cmnHans'
   | 'de'
@@ -14,24 +13,17 @@ export type LanguageValue =
   | 'fr'
   | 'ht'
   | 'hu'
-  | 'ilo'
   | 'it'
   | 'mg'
   | 'nl'
-  | 'pag'
   | 'pt'
   | 'ptPt'
-  | 'rmnXRmg'
   | 'ro'
   | 'ru'
-  | 'sk'
   | 'sl'
   | 'sv'
   | 'sw'
-  | 'ta'
-  | 'tl'
-  | 'uk'
-  | 'wesXPgw';
+  | 'uk';
 
 // As a sort of rule, let's only enable a language once it's reached a threshold of 50% translated in Crowdin.
 // Modify this file along with src/i18n/index.ts to enable a language both on the docs website and in the app.
@@ -64,12 +56,6 @@ export const locales: {
   signLangCodes?: JwLangCode[];
   value: LanguageValue;
 }[] = [
-  {
-    englishName: 'Afrikaans',
-    label: 'Afrikaans',
-    langcode: 'AF',
-    value: 'af',
-  },
   {
     englishName: 'Amharic',
     label: 'አማርኛ',
@@ -146,12 +132,6 @@ export const locales: {
     value: 'hu',
   },
   {
-    englishName: 'Iloko',
-    label: 'Iloko',
-    langcode: 'IL',
-    value: 'ilo',
-  },
-  {
     englishName: 'Italian',
     label: 'Italiano',
     langcode: 'I',
@@ -172,12 +152,6 @@ export const locales: {
     value: 'nl',
   },
   {
-    englishName: 'Pangasinan',
-    label: 'Pangasinan',
-    langcode: 'PN',
-    value: 'pag',
-  },
-  {
     englishName: 'Portuguese (Portugal)',
     label: 'Português (Portugal)',
     langcode: 'TPO',
@@ -192,12 +166,6 @@ export const locales: {
     value: 'pt',
   },
   {
-    englishName: 'Romany (Southern Greece)',
-    label: 'Ρομανί (Νότια Ελλάδα)',
-    langcode: 'RMG',
-    value: 'rmnXRmg',
-  },
-  {
     englishName: 'Romanian',
     label: 'Română',
     langcode: 'M',
@@ -210,13 +178,6 @@ export const locales: {
     langcode: 'U',
     signLangCodes: ['RSL'],
     value: 'ru',
-  },
-  {
-    englishName: 'Slovak',
-    label: 'slovenčina',
-    langcode: 'V',
-    signLangCodes: ['VSL'],
-    value: 'sk',
   },
   {
     englishName: 'Slovenian',
@@ -239,27 +200,9 @@ export const locales: {
     value: 'sw',
   },
   {
-    englishName: 'Tamil',
-    label: 'தமிழ்',
-    langcode: 'TL',
-    value: 'ta',
-  },
-  {
-    englishName: 'Tagalog',
-    label: 'Tagalog',
-    langcode: 'TG',
-    value: 'tl',
-  },
-  {
     englishName: 'Ukrainian',
     label: 'українська',
     langcode: 'K',
     value: 'uk',
-  },
-  {
-    englishName: 'Pidgin (West Africa)',
-    label: 'Pidgin (West Africa)',
-    langcode: 'PGW',
-    value: 'wesXPgw',
   },
 ];
