@@ -11,7 +11,8 @@ import {
   type MenuItemConstructorOptions,
   shell,
 } from 'electron';
-import { join } from 'upath';
+import upath from 'upath';
+const { join } = upath;
 
 import { PLATFORM } from './constants';
 import { cancelAllDownloads } from './main/downloads';

@@ -9,7 +9,8 @@ import {
   JWPUB_EXTENSIONS,
   PDF_EXTENSIONS,
 } from 'src/constants/media';
-import { basename, dirname, join, toUnix } from 'upath';
+import upath from 'upath';
+const { basename, dirname, join, toUnix } = upath;
 
 import { captureElectronError } from '../utils';
 import { sendToWindow } from './window/window-base';
