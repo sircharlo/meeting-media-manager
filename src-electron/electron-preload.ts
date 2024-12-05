@@ -32,9 +32,7 @@ initCloseListeners();
 initScreenListeners();
 initWebsiteListeners();
 
-// TODO: fix imports of node modules without esm support
-
-const electronApi: Partial<ElectronApi> = {
+const electronApi: ElectronApi = {
   askForMediaAccess: () => send('askForMediaAccess'),
   closeWebsiteWindow,
   convertHeic,
