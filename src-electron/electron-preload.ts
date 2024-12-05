@@ -16,7 +16,6 @@ import {
   getVideoDuration,
   parseMediaFile,
   pathToFileURL,
-  // readDirectory,
 } from './preload/fs';
 import { invoke, listen, removeAllIpcListeners, send } from './preload/ipc';
 import { initScreenListeners } from './preload/screen';
