@@ -70,7 +70,7 @@
     "@daipeng7/rollup-plugin-iconfont": "^3.0.6",
     "@electron/rebuild": "^3.7.1",
     "@intlify/vite-plugin-vue-i18n": "^7.0.0",
-    "@quasar/app-vite": "^1.11.0",
+    "@quasar/app-vite": "^2.0.0",
     "@rollup/plugin-inject": "^5.0.5",
     "@sentry/esbuild-plugin": "^2.22.6",
     "@sentry/vite-plugin": "^2.22.7",
