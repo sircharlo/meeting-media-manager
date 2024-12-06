@@ -194,7 +194,9 @@
           :list="sortableAdditionalMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
-          @update:custom-duration="media.customDuration = $event"
+          @update:custom-duration="
+            media.customDuration = JSON.parse($event) || undefined
+          "
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
           @update:tag="media.tag = $event"
@@ -239,7 +241,9 @@
           :list="sortableTgwMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
-          @update:custom-duration="media.customDuration = $event"
+          @update:custom-duration="
+            media.customDuration = JSON.parse($event) || undefined
+          "
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
           @update:tag="media.tag = $event"
@@ -278,7 +282,9 @@
           :list="sortableAyfmMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
-          @update:custom-duration="media.customDuration = $event"
+          @update:custom-duration="
+            media.customDuration = JSON.parse($event) || undefined
+          "
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
           @update:tag="media.tag = $event"
@@ -328,7 +334,9 @@
           :list="sortableLacMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
-          @update:custom-duration="media.customDuration = $event"
+          @update:custom-duration="
+            media.customDuration = JSON.parse($event) || undefined
+          "
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
           @update:tag="media.tag = $event"
@@ -367,7 +375,9 @@
           :list="sortableWtMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
-          @update:custom-duration="media.customDuration = $event"
+          @update:custom-duration="
+            media.customDuration = JSON.parse($event) || undefined
+          "
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
           @update:tag="media.tag = $event"
@@ -433,7 +443,9 @@
           :list="sortableCircuitOverseerMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
-          @update:custom-duration="media.customDuration = $event"
+          @update:custom-duration="
+            media.customDuration = JSON.parse($event) || undefined
+          "
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
           @update:tag="media.tag = $event"
@@ -605,8 +617,6 @@ const currentFile = ref(0);
 watch(
   () => mediaPlayingUniqueId.value,
   (newMediaUniqueId) => {
-    const { post } = useBroadcastChannel<string, string>({ name: 'unique-id' });
-    post(newMediaUniqueId);
     if (newMediaUniqueId) lastPlayedMediaUniqueId.value = newMediaUniqueId;
   },
 );
@@ -653,14 +663,36 @@ watch(
   { deep: true },
 );
 
-const { post: postMediaUrl } = useBroadcastChannel<string, string>({
-  name: 'media-url',
-});
-
 watch(
   () => mediaPlayingUrl.value,
   (newUrl, oldUrl) => {
-    if (newUrl !== oldUrl) postMediaUrl(newUrl);
+    if (newUrl !== oldUrl) {
+      const { post: postMediaUrl } = useBroadcastChannel<string, string>({
+        name: 'media-url',
+      });
+      postMediaUrl(newUrl);
+
+      const customDuration =
+        (
+          lookupPeriod.value[currentCongregation.value]?.flatMap(
+            (item) => item.dynamicMedia,
+          ) ?? []
+        )
+          .concat(watchFolderMedia.value?.[selectedDate.value] ?? [])
+          .concat(
+            additionalMediaMaps.value[currentCongregation.value]?.[
+              selectedDate.value
+            ] ?? [],
+          )
+          .find((item) => item.uniqueId === mediaPlayingUniqueId.value)
+          ?.customDuration || undefined;
+      if (customDuration) {
+        const { post } = useBroadcastChannel<string, string>({
+          name: 'custom-duration',
+        });
+        post(JSON.stringify(customDuration));
+      }
+    }
   },
 );
 

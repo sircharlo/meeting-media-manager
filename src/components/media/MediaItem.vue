@@ -860,7 +860,7 @@ const updateMediaCustomDuration = (customDuration?: {
   max: number;
   min: number;
 }) => {
-  emit('update:customDuration', customDuration);
+  emit('update:customDuration', JSON.stringify(customDuration || ''));
 };
 
 const customDurationIsSet = computed(() => {
