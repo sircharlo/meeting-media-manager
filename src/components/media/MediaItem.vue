@@ -719,7 +719,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DynamicMediaObject, VideoMarker } from 'src/types';
+import type { DynamicMediaObject, Tag, VideoMarker } from 'src/types';
 
 import Panzoom, {
   type PanzoomObject,
@@ -819,7 +819,7 @@ const displayMediaTitle = computed(() => {
 const mediaEditTagDialog = ref(false);
 const { t } = useI18n();
 
-const mediaTag = ref(
+const mediaTag = ref<Tag>(
   props.media.tag || {
     type: '',
     value: '',
