@@ -11,6 +11,7 @@ import {
   type MenuItemConstructorOptions,
   shell,
 } from 'electron';
+import { SENTRY_DSN } from 'src/constants/sentry';
 import { join } from 'upath';
 
 import { PLATFORM } from './constants';
@@ -45,10 +46,9 @@ if (process.env.PORTABLE_EXECUTABLE_DIR) {
 }
 
 initSentry({
-  debug: true,
-  dsn: 'https://0f2ab1c7ddfb118d25704c85957b8188@o1401005.ingest.us.sentry.io/4507449197920256',
+  dsn: SENTRY_DSN,
   environment: process.env.NODE_ENV,
-  release: version,
+  release: `meeting-media-manager@${version}`,
   tracesSampleRate: 1.0,
 });
 
