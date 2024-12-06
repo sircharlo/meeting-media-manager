@@ -3,8 +3,7 @@ import { ElectronDownloadManager } from 'electron-dl-manager';
 import { ensureDir } from 'fs-extra';
 import { basename } from 'upath';
 
-import { fetchJson } from './../utils';
-import { captureElectronError } from './log';
+import { captureElectronError, fetchJson } from './utils';
 import { sendToWindow } from './window/window-base';
 import { mainWindow } from './window/window-main';
 

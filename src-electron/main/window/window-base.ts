@@ -8,8 +8,8 @@ import {
 } from 'electron';
 import { join, resolve } from 'path';
 
-import { captureElectronError } from './../log';
 import { urlVariables } from './../session';
+import { captureElectronError } from './../utils';
 import { StatefulBrowserWindow } from './window-state';
 
 export function closeOtherWindows(source: BrowserWindow) {

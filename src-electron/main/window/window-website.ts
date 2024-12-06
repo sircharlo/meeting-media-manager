@@ -3,7 +3,7 @@ import type { NavigateWebsiteAction } from 'src/types';
 import { HD_RESOLUTION, PLATFORM } from 'app/src-electron/constants';
 import { type BrowserWindow, systemPreferences, type Video } from 'electron';
 
-import { captureElectronError } from './../log';
+import { captureElectronError } from './../utils';
 import { createWindow, logToWindow, sendToWindow } from './window-base';
 import { mainWindow } from './window-main';
 

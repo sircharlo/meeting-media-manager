@@ -4,8 +4,8 @@ import type { ScreenPreferences } from 'src/types';
 import { HD_RESOLUTION, PLATFORM } from 'app/src-electron/constants';
 import { join, resolve } from 'path';
 
-import { captureElectronError } from './../log';
 import { getAllScreens, getWindowScreen, screenPreferences } from './../screen';
+import { captureElectronError } from './../utils';
 import { createWindow, sendToWindow } from './window-base';
 import { mainWindow } from './window-main';
 

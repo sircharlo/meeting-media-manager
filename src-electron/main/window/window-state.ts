@@ -8,7 +8,7 @@ import {
 import { ensureDirSync, readJsonSync, writeJsonSync } from 'fs-extra';
 import { dirname, join } from 'path';
 
-import { captureElectronError } from './../log';
+import { captureElectronError } from './../utils';
 
 interface ExtraOptions {
   /** The name of file. Defaults to `window-state.json`. */
