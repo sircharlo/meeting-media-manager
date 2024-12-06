@@ -32,14 +32,14 @@ export const timeToSeconds = (time: string) => {
     if (parts.length === 3) {
       // Format: hh:mm:ss
       const [h, m, s] = parts;
-      return h * 3600 + m * 60 + s;
+      return (h || 0) * 3600 + (m || 0) * 60 + (s || 0);
     } else if (parts.length === 2) {
       // Format: mm:ss
       const [m, s] = parts;
       // Convert minutes to hours and calculate seconds
-      const h = Math.floor(m / 60);
-      const remainingMinutes = m % 60;
-      return h * 3600 + remainingMinutes * 60 + s;
+      const h = Math.floor((m || 0) / 60);
+      const remainingMinutes = (m || 0) % 60;
+      return h * 3600 + remainingMinutes * 60 + (s || 0);
     }
     return 0;
   } catch (error) {
