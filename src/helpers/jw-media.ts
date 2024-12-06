@@ -1734,10 +1734,13 @@ export async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
       const langsWritten = [
         ...new Set([
           /* eslint-disable perfectionist/sort-sets */
+          currentStateStore.currentSettings?.langFallback &&
+            currentStateStore.currentSettings?.lang,
           media.MepsLanguageIndex !== undefined &&
             mepslangs[media.MepsLanguageIndex],
           media.AlternativeLanguage,
-          currentStateStore.currentSettings?.lang,
+          !currentStateStore.currentSettings?.langFallback &&
+            currentStateStore.currentSettings?.lang,
           currentStateStore.currentSettings?.langFallback,
           /* eslint-disable perfectionist/sort-sets */
         ]),
