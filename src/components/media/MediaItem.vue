@@ -313,6 +313,20 @@
                 class="absolute duration-slider"
               >
                 <div class="row flex-center">
+                  <div
+                    class="col-shrink text-caption text-accent-400 q-mx-sm text-left"
+                    style="min-width: 40px"
+                  >
+                    {{
+                      formatTime(
+                        Math.max(
+                          (mediaPlayingCurrentPosition || 0) -
+                            (customDurationMin || 0),
+                          0,
+                        ),
+                      )
+                    }}
+                  </div>
                   <div class="col" style="height: 28px">
                     <q-slider
                       v-model="mediaPlayingCurrentPosition"
@@ -344,7 +358,7 @@
                     />
                   </div>
                   <div
-                    class="col-shrink text-caption q-mx-sm text-right"
+                    class="col-shrink text-caption text-accent-400 q-mx-sm text-right"
                     style="min-width: 40px"
                   >
                     {{
