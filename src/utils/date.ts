@@ -143,7 +143,7 @@ const formatter = {
 
   // Day of week: Su, Mo, ...
   dd(date: Date, dateLocale: Required<DateLocale>) {
-    return dateLocale.days[date.getDay()].slice(0, 2);
+    return dateLocale.days[date.getDay()]?.slice(0, 2);
   },
 
   // Day of week: Sun, Mon, ...

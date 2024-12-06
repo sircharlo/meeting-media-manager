@@ -340,7 +340,7 @@ const getNextSong = async () => {
             }
             return null;
           })
-          .filter((song) => song !== null);
+          .filter((song) => !!song);
         if (timeBeforeMeetingStart > 0) {
           let customSongList: SongItem[] = [];
           if (selectedDaySongs.length) {
@@ -371,7 +371,7 @@ const getNextSong = async () => {
         nextSongUrl: '',
         secsFromEnd: 0,
       };
-    let nextSong = songList.value.shift();
+    const nextSong = songList.value.shift();
     if (!nextSong) {
       return {
         nextSongUrl: '',
@@ -418,7 +418,6 @@ const fadeToVolumeLevel = (targetVolume: number, fadeOutSeconds: number) => {
     const volumeChange = targetVolume - initialVolume;
     const startTime = performance.now();
 
-    // eslint-disable-next-line no-inner-declarations
     function updateVolume(currentTime: number) {
       try {
         if (!musicPlayer.value) return;

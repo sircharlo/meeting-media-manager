@@ -7,6 +7,7 @@ import {
   type BrowserWindowConstructorOptions,
 } from 'electron';
 import { join, resolve } from 'path';
+import { fileURLToPath } from 'url';
 
 import { urlVariables } from './../session';
 import { captureElectronError } from './../utils';
@@ -44,7 +45,7 @@ export function createWindow(
     height: defaultSize.height,
     icon: resolve(
       join(
-        __dirname,
+        fileURLToPath(new URL('.', import.meta.url)),
         'icons',
         `icon.${PLATFORM === 'win32' ? 'ico' : PLATFORM === 'darwin' ? 'icns' : 'png'}`,
       ),
@@ -57,10 +58,18 @@ export function createWindow(
     ...(options ?? {}),
     webPreferences: {
       backgroundThrottling: false,
+      contextIsolation: true,
       preload:
         name === 'website'
           ? undefined
-          : resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
+          : resolve(
+              fileURLToPath(new URL('.', import.meta.url)),
+              join(
+                process.env.QUASAR_ELECTRON_PRELOAD_FOLDER,
+                'electron-preload' +
+                  process.env.QUASAR_ELECTRON_PRELOAD_EXTENSION,
+              ),
+            ),
       sandbox: name === 'website',
       webSecurity: !IS_DEV,
       ...(options?.webPreferences ?? {}),
@@ -95,9 +104,13 @@ export function createWindow(
       page = `https://www.${urlVariables?.base || 'jw.org'}/${lang}`;
       break;
   }
-  win.loadURL(
-    page.startsWith('https') ? page : process.env.APP_URL + `?page=${page}`, //+ `#${page}`,
-  );
+  if (page.startsWith('https://')) {
+    win.loadURL(page);
+  } else if (process.env.DEV) {
+    win.loadURL(process.env.APP_URL + `?page=${page}`);
+  } else {
+    win.loadFile('index.html', { query: { page } });
+  }
 
   // Devtools
   let devToolsOpenedCount = 0; // Track the number of times the devtools-opened event is fired

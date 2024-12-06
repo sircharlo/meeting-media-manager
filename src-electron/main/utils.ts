@@ -1,4 +1,4 @@
-import type { ExclusiveEventHintOrCaptureContext } from '@sentry/core/build/types/utils/prepareEvent';
+import type { ExclusiveEventHintOrCaptureContext } from 'app/node_modules/@sentry/core/build/types/utils/prepareEvent';
 
 import { captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
@@ -29,7 +29,7 @@ export function isJwDomain(url: string): boolean {
         .filter((d): d is string => !!d)
         .map((d) => new URL(`https://${d}/`).hostname),
     ).some((domain) => parsedUrl.hostname.endsWith(domain));
-  } catch (e) {
+  } catch {
     return false;
   }
 }
@@ -51,7 +51,7 @@ export function isSelf(url?: string): boolean {
         parsedUrl.protocol === 'file:' &&
         parsedUrl.pathname === parsedAppUrl.pathname)
     );
-  } catch (e) {
+  } catch {
     return false;
   }
 }
@@ -61,7 +61,8 @@ export function isSelf(url?: string): boolean {
  * @param url The url to check
  * @returns Wether the url is a trusted domain
  */
-export function isTrustedDomain(url: string): boolean {
+export function isTrustedDomain(url?: string): boolean {
+  if (!url) return false;
   try {
     const parsedUrl = new URL(url);
     if (parsedUrl.protocol !== 'https:') return false;
@@ -74,7 +75,7 @@ export function isTrustedDomain(url: string): boolean {
         .filter((d): d is string => !!d)
         .map((d) => new URL(d).hostname),
     ).some((domain) => parsedUrl.hostname.endsWith(domain));
-  } catch (e) {
+  } catch {
     return false;
   }
 }
@@ -88,7 +89,7 @@ export const isValidUrl = (url: string): boolean => {
   try {
     new URL(url);
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 };
@@ -185,7 +186,6 @@ export function captureElectronError(
  */
 export const throttle = <T>(func: (...args: T[]) => void, delay: number) => {
   let prev = 0;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (...args: T[]) => {
     const now = new Date().getTime();
     if (now - prev > delay) {

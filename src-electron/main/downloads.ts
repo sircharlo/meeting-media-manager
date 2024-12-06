@@ -1,7 +1,8 @@
 import { getCountriesForTimezone as _0x2d6c } from 'countries-and-timezones';
 import { ElectronDownloadManager } from 'electron-dl-manager';
-import { ensureDir } from 'fs-extra';
-import { basename } from 'upath';
+import { ensureDir } from 'fs-extra/esm';
+import upath from 'upath';
+const { basename } = upath;
 
 import { captureElectronError, fetchJson } from './utils';
 import { sendToWindow } from './window/window-base';
@@ -116,7 +117,7 @@ export async function isDownloadErrorExpected() {
         String.fromCharCode(0x74, 0x69, 0x6d, 0x65, 0x5a, 0x6f, 0x6e, 0x65)
       ];
       const _0x66b7 = _0x2d6c(_0x8d1b);
-      if (_0x66b7.length === 1) _0x5f0a = _0x66b7[0].id;
+      if (_0x66b7.length === 1) _0x5f0a = _0x66b7[0]?.id ?? '';
     }
 
     if (!_0x5f0a) {
