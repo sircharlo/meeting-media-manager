@@ -593,10 +593,8 @@ const getStudyBible = async () => {
     const currentStateStore = useCurrentStateStore();
     const languages = [
       ...new Set([
-         
         currentStateStore.currentSettings?.lang,
         currentStateStore.currentSettings?.langFallback,
-         
       ]),
     ].filter((l): l is JwLangCode => !!l);
     let nwtStyDb: null | string = null;
@@ -1008,10 +1006,8 @@ export const getAudioBibleMedia = async (force = false) => {
     };
     const languages = [
       ...new Set([
-         
         currentStateStore.currentSettings.lang,
         currentStateStore.currentSettings?.langFallback,
-         
       ]),
     ].filter((l): l is JwLangCode => !!l);
 
@@ -1755,7 +1751,7 @@ export async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
           !currentStateStore.currentSettings?.langFallback &&
             currentStateStore.currentSettings?.lang,
           currentStateStore.currentSettings?.langFallback,
-           
+          /* eslint-enable perfectionist/sort-sets */
         ]),
       ];
       for (const langwritten of langsWritten) {
