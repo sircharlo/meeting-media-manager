@@ -1,40 +1,40 @@
 <!-- markdownlint-disable no-inline-html -->
 
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# Verwendung von M³ in einem Königreichssaal {#using-m3-at-a-kingdom-hall}
 
-This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
+Diese Anleitung führt Sie durch den Prozess des Herunterladens, Installierens und Einrichtens von **Meeting Media Manager (M³)** in einem Königreichssaal. Befolgen Sie die Schritte, um eine reibungslose Einrichtung für die Verwaltung von Medien während der Versammlungen zu gewährleisten.
 
-## 1. Download and install {#download-and-install}
+## 1. Herunterladen und Installieren {#download-and-install}
 
 <script setup>
   import { data } from './../../data/version.data.mts'
 </script>
 
-1. Download the appropriate version for your operating system:
+1. Laden Sie die entsprechende Version für Ihr Betriebssystem herunter:
    - **Windows:**
-     - For most Windows systems, download <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
-     - For older 32-bit Windows systems, download <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
+     - Für die meisten Windows-Systeme laden Sie <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a> herunter.
+     - Für ältere 32-Bit-Windows-Systeme laden Sie <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a> herunter.
    - **macOS:**
-     - **M-series (Apple Silicon)**: Download <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
-     - **Intel-based Macs**: Download <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
+     - **M-Serie (Apple Silicon):** Laden Sie <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a> herunter.
+     - **Intel-basierte Macs:** Laden Sie <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a> herunter.
    - **Linux:**
-     - Download <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
-2. If the download links do not work, visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and download the correct version manually.
-3. Open the installer and follow the on-screen instructions to install M³.
-4. Launch M³.
-5. Go through the configuration wizard.
+     - Laden Sie <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a> herunter.
+2. Wenn die Download-Links nicht funktionieren, besuchen Sie die [M³-Download-Seite](https://github.com/sircharlo/meeting-media-manager/releases/latest) und laden Sie die richtige Version manuell herunter.
+3. Öffnen Sie das Installationsprogramm und folgen Sie den Anweisungen auf dem Bildschirm, um M³ zu installieren.
+4. Starten Sie M³.
+5. Gehen Sie den Konfigurationsassistenten durch.
 
-### macOS only: Additional installation steps {#additional-steps-for-macos-users}
+### Nur macOS: Zusätzliche Installationsschritte {#additional-steps-for-macos-users}
 
 :::warning Warnung
 
-This section only applies to macOS users.
+Dieser Abschnitt gilt nur für macOS-Nutzer.
 
 :::
 
-Due to Apple's security measures, a few additional steps are required to run the installed M³ app on modern macOS systems.
+Aufgrund der Sicherheitsmaßnahmen von Apple sind einige zusätzliche Schritte erforderlich, um die installierte M³-App auf modernen macOS-Systemen auszuführen.
 
-Run the following two commands in Terminal, modifying the path to M³ as needed:
+Führen Sie die folgenden zwei Befehle im Terminal aus, wobei Sie den Pfad zu M³ nach Bedarf anpassen:
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
@@ -43,128 +43,127 @@ sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 
 :::warning Warnung
 
-As a macOS user, you will need to follow these steps every time you install or update M³.
+Als macOS-Nutzer müssen Sie diese Schritte jedes Mal befolgen, wenn Sie M³ installieren oder aktualisieren.
 
 :::
 
-:::info Explanation
+:::info Erklärung
 
-The first command _signs the application's code_. This is required to prevent M³ from being detected as a malicious application from an unknown developer.
+Der erste Befehl _signiert den Code der Anwendung_. Dies ist erforderlich, um zu verhindern, dass M³ als schadhafte Anwendung eines unbekannten Entwicklers erkannt wird.
 
-The second command _removes the quarantine flag_ from the application. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
+Der zweite Befehl _entfernt das Quarantäne-Flag_ von der Anwendung. Das Quarantäne-Flag wird verwendet, um Benutzer vor potenziell schadhafter Software zu warnen, die aus dem Internet heruntergeladen wurde.
 
 :::
 
-#### Alternative method {#alternative-method-for-macos-users}
+#### Alternative Methode {#alternative-method-for-macos-users}
 
-If you are still unable to launch M³ after entering the two commands from the previous section, please try the following:
+Wenn Sie M³ nach Eingabe der beiden Befehle aus dem vorherigen Abschnitt immer noch nicht starten können, versuchen Sie Folgendes:
 
-1. Open the macOS system **Privacy & Security** settings.
-2. Find the entry for M³ and click the button to **Open Anyway**.
-3. You will then be warned again, and given the advice to not "open this unless you are certain it is from a trustworthy source." Click **Open Anyway**.
-4. Another warning will appear, where you’ll need to authenticate to launch the app.
-5. M³ should now launch successfully.
+1. Öffnen Sie die macOS-Systemeinstellungen **Datenschutz & Sicherheit**.
+2. Finden Sie den Eintrag für M³ und klicken Sie auf die Schaltfläche **Trotzdem öffnen**.
+3. Es wird erneut eine Warnung angezeigt, die Sie darauf hinweist, dies nur zu tun, wenn Sie sicher sind, dass die Quelle vertrauenswürdig ist. Klicken Sie auf **Trotzdem öffnen**.
+4. Eine weitere Warnung erscheint, bei der Sie sich authentifizieren müssen, um die App zu starten.
+5. M³ sollte jetzt erfolgreich gestartet werden.
 
-If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
+Wenn weiterhin Probleme auftreten, öffnen Sie bitte [ein Problem auf GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). Wir werden unser Bestes tun, um zu helfen.
 
-### macOS only: Re-enabling website presentation after updates {#screen-sharing-issues}
+### Nur macOS: Bildschirmpräsentation nach Updates erneut aktivieren {#screen-sharing-issues}
 
 :::warning Warnung
 
-This section only applies to macOS users.
+Dieser Abschnitt gilt nur für macOS-Nutzer.
 
 :::
 
-Some macOS users have reported that website presentation no longer works after installing updates to M³.
+Einige macOS-Nutzer haben gemeldet, dass die Bildschirmpräsentation nach der Installation von Updates für M³ nicht mehr funktioniert.
 
-If the media window is black when presenting the website after updating M³, try the following steps:
+Wenn das Medienfenster schwarz wird, wenn Sie die Webseite nach dem Update von M³ präsentieren, versuchen Sie die folgenden Schritte:
 
-1. Open the macOS system **Privacy & Security** settings.
-2. Go to **Screen Recording**.
-3. Select M³ in the list.
-4. Click the `-` (minus) button to remove it.
-5. Click the `+` (plus) button and select M³ from the Applications folder.
-6. You may be prompted to relaunch M³ to apply the change.
+1. Öffnen Sie die macOS-Systemeinstellungen **Datenschutz & Sicherheit**.
+2. Gehen Sie zu **Bildschirmaufnahme**.
+3. Wählen Sie M³ in der Liste aus.
+4. Klicken Sie auf die `-` (Minus)-Schaltfläche, um es zu entfernen.
+5. Klicken Sie auf die `+` (Plus)-Schaltfläche und wählen Sie M³ aus dem Ordner "Programme" aus.
+6. Möglicherweise müssen Sie M³ neu starten, um die Änderung anzuwenden.
 
-After these steps, screen sharing should function as expected once again.
+Nach diesen Schritten sollte die Bildschirmfreigabe wieder wie erwartet funktionieren.
 
-:::tip Tip
+:::tip Tipp
 
-These steps are optional and can be skipped if you do not plan to use the website presentation feature. On the other hand, if you do plan to use the website presentation feature, it is recommended to follow these steps after every update to ensure the feature works as expected.
-
-:::
-
-## 2. Configuration wizard {#configuration-wizard}
-
-### App display language {#app-display-language}
-
-When launching M³ for the first time, you will be prompted to choose your preferred **display language**. Choose the language you want M³ to use for its interface.
-
-:::tip Tip
-
-This is does not have to be the same language as the one in which M³ will download media. The language for media downloads is configured in a later step.
+Diese Schritte sind optional und können übersprungen werden, wenn Sie die Funktion zur Präsentation von Webseiten nicht verwenden möchten. Wenn Sie jedoch die Webseite präsentieren möchten, wird empfohlen, diese Schritte nach jedem Update zu befolgen, um sicherzustellen, dass die Funktion wie erwartet funktioniert.
 
 :::
 
-### Profile type {#profile-type}
+## 2. Konfigurationsassistent {#configuration-wizard}
 
-The next step is to choose a **profile type**. For a regular setup in a Kingdom Hall, choose **Regular**. This will configure many features that are commonly used for congregation meetings.
+### Anzeigesprache der App {#app-display-language}
+
+Beim ersten Start von M³ werden Sie aufgefordert, Ihre bevorzugte **Anzeigesprache** auszuwählen. Wählen Sie die Sprache, die M³ für seine Benutzeroberfläche verwenden soll.
+
+:::tip Tipp
+
+Dies muss nicht die gleiche Sprache sein wie die, in der M³ Medien herunterladen wird. Die Sprache für den Medien-Download wird in einem späteren Schritt konfiguriert.
+
+:::
+
+### Profiltyp {#profile-type}
+
+Der nächste Schritt ist die Auswahl eines **Profiltyps**. Für eine normale Einrichtung in einem Königreichssaal wählen Sie **Regulär**. Dies wird viele Funktionen konfigurieren, die häufig für Versammlungen verwendet werden.
 
 :::warning Warnung
 
-You should only choose **Other** if you are creating a profile for which no media should be automatically downloaded. Media will have to be manually imported for use in this profile. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
+Wählen Sie **Sonstiges** nur aus, wenn Sie ein Profil erstellen, für das keine Medien automatisch heruntergeladen werden sollen. Medien müssen für dieses Profil manuell importiert werden. Dieser Profiltyp wird hauptsächlich für den Einsatz in theokratischen Schulen, Versammlungen, Kongressen und anderen Sonderveranstaltungen verwendet.
 
-The **Other** profile type is rarely used. **For normal use during congregation meetings, please choose _Regular_.**
+Der Profiltyp **Sonstiges** wird selten verwendet. **Für die normale Nutzung während der Versammlungen wählen Sie bitte _Regulär_.**
 :::
 
 :::
 
-### Automatic congregation lookup {#automatic-congregation-lookup}
+### Automatische Suche der Versammlung {#automatic-congregation-lookup}
 
-M³ can attempt to automatically find your congregation's meeting schedule, language, and formatted name.
+M³ kann versuchen, automatisch den Versammlungsplan, die Sprache und den formatierten Namen Ihrer Versammlung zu finden.
 
-To do so, use the **Congregation Lookup** button next to the congregation name field and enter at least part of the congregation's name and city.
+Verwenden Sie dazu die Schaltfläche **Versammlungssuche** neben dem Feld für den Versammlungsnamen und geben Sie mindestens einen Teil des Versammlungsnamens und der Stadt ein.
 
-Once the correct congregation is found and selected, M³ will prefill all available information, such as your congregation's **name**, **meeting language**, and **meeting days and times**.
+Sobald die richtige Versammlung gefunden und ausgewählt wurde, füllt M³ alle verfügbaren Informationen aus, wie den **Namen** der Versammlung, die **Sprache** der Versammlung und die **Tage und Zeiten der Versammlungen**.
 
-:::info Note
+:::info Hinweis
 
-This lookup uses publicly available data from the official website of Jehovah's Witnesses.
-
-:::
-
-### Manual entry of congregation information {#manual-entry-of-congregation-information}
-
-If the automated lookup did not find your congregation, you can of course manually enter the required information. The wizard will allow you to review and/or enter your congregation's **name**, **meeting language**, and **meeting days and times**.
-
-### Caching videos from the songbook {#caching-videos-from-the-songbook}
-
-You will also be given the option of **caching all videos from the songbook**. This option pre-downloads all the songbook videos, reducing the time it takes to fetch media for meetings in the future.
-
-- **Pros:** Meeting media will be available much faster.
-- **Cons:** The size of the media cache will increase significantly, by approximately 5GB.
-
-:::tip Tip
-
-If your Kingdom Hall has sufficient storage space, it’s recommended to **enable** this option for efficiency and perceived performance.
+Diese Suche verwendet öffentlich zugängliche Daten von der offiziellen Website der Zeugen Jehovas.
 
 :::
 
-### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
+### Manuelle Eingabe der Versammlungsinformationen {#manual-entry-of-congregation-information}
 
-If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Zoom, M³ can automatically integrate with that program. During setup, you can configure the integration with OBS Studio by entering the following:
+Wenn die automatische Suche Ihre Versammlung nicht gefunden hat, können Sie die erforderlichen Informationen natürlich manuell eingeben. Der Assistent ermöglicht es Ihnen, den **Namen** der Versammlung, die **Sprache** der Versammlung und die **Tage und Zeiten der Versammlungen** zu überprüfen und/oder einzugeben.
 
-- **Port:** The port number used to connect to the OBS Studio Websocket plugin.
-- **Password:** The password used to connect to the OBS Studio Websocket plugin.
-- **Scenes:** The OBS scenes that will be used during media presentations. You'll need one scene that captures the media window or screen, and one that shows the stage.
+### Caching von Videos aus dem Gesangbuch {#caching-videos-from-the-songbook}
 
-:::tip Tip
+Sie haben auch die Möglichkeit, **alle Videos aus dem Gesangbuch zwischenzuspeichern**. Diese Option lädt alle Videos aus dem Gesangbuch vorab herunter und verringert die Zeit, die benötigt wird, um Medien für Versammlungen in der Zukunft abzurufen.
 
-::: tip Tip
-If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
+- **Vorteile:** Medien für Versammlungen sind viel schneller verfügbar.
+- **Nachteile:** Der Speicherplatzbedarf des Medien-Caches wird erheblich steigen, um ca. 5 GB.
+
+:::tip Tipp
+
+Wenn Ihr Königreichssaal über ausreichend Speicherplatz verfügt, wird empfohlen, diese Option für Effizienz und wahrgenommene Leistung zu **aktivieren**.
 
 :::
 
-## 3. Enjoy using M³ {#enjoy-using-m3}
+### OBS Studio-Integrationskonfiguration (Optional) {#obs-studio-integration-configuration}
 
-Once the setup wizard is complete, M³ is ready to help manage and present media for congregation meetings. Enjoy using the app! :tada:
+Wenn Ihr Königreichssaal **OBS Studio** für die Übertragung von Hybrid-Versammlungen über Zoom verwendet, kann M³ automatisch mit diesem Programm integriert werden. Während der Einrichtung können Sie die Integration mit OBS Studio konfigurieren, indem Sie Folgendes eingeben:
+
+- **Port:** Die Portnummer, die für die Verbindung zum OBS Studio Websocket-Plugin verwendet wird.
+- **Passwort:** Das Passwort, das für die Verbindung zum OBS Studio Websocket-Plugin verwendet wird.
+- **Szenen:** Die OBS-Szenen, die während der Medienpräsentation verwendet werden. Sie benötigen eine Szene, die das Medienfenster oder den Bildschirm erfasst, und eine, die die Bühne zeigt.
+
+:::tip Tipp
+
+Wenn Ihre Versammlung regelmäßig Hybrid-Versammlungen abhält, wird dringend empfohlen, die Integration mit OBS Studio zu aktivieren.
+
+:::
+
+## 3. Genießen Sie die Nutzung von M³ {#enjoy-using-m3}
+
+Sobald der Einrichtungsassistent abgeschlossen ist, ist M³ bereit, die Verwaltung und Präsentation von Medien für Versammlungen zu unterstützen. Viel Spaß beim Benutzen! :tada:

@@ -20,7 +20,6 @@ import {
 } from 'electron';
 
 import { PLATFORM } from '../constants';
-import { askForMediaAccess, getAppVersion, isSelf } from './../utils';
 import { downloadFile } from './downloads';
 import {
   openFileDialog,
@@ -36,10 +35,12 @@ import {
   unregisterAllShortcuts,
   unregisterShortcut,
 } from './shortcuts';
+import { getAppVersion, isSelf } from './utils';
 import { logToWindow } from './window/window-base';
 import { mainWindow, toggleAuthorizedClose } from './window/window-main';
 import { mediaWindow, moveMediaWindow } from './window/window-media';
 import {
+  askForMediaAccess,
   createWebsiteWindow,
   navigateWebsiteWindow,
   websiteWindow,

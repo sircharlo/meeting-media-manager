@@ -46,8 +46,6 @@ const props = defineProps<{
   unusedParentDirectories: Record<string, number>;
 }>();
 
-const { fs } = window.electronApi;
-
 const jwStore = useJwStore();
 const { additionalMediaMaps, lookupPeriod } = storeToRefs(jwStore);
 
@@ -76,7 +74,7 @@ const deleteCacheFiles = async (type = '') => {
         : props.cacheFiles.map((f) => f.path);
     for (const filepath of filepathsToDelete) {
       try {
-        fs.remove(filepath);
+        window.electronApi.fs.remove(filepath);
         if (
           filepath.startsWith(await getAdditionalMediaPath()) ||
           filepath.startsWith(

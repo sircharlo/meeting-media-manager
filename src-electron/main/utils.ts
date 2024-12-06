@@ -1,34 +1,11 @@
 import type { ExclusiveEventHintOrCaptureContext } from '@sentry/core/build/types/utils/prepareEvent';
 
-import { captureException } from '@sentry/browser';
+import { captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
-import { app, systemPreferences } from 'electron';
+import { app } from 'electron';
 
-import { IS_DEV, JW_DOMAINS, PLATFORM, TRUSTED_DOMAINS } from './constants';
-import { urlVariables } from './main/session';
-import { logToWindow } from './main/window/window-base';
-import { mainWindow } from './main/window/window-main';
-
-/**
- * Asks for media access for the camera and microphone
- */
-export async function askForMediaAccess() {
-  if (PLATFORM !== 'darwin') return;
-  const types = ['camera', 'microphone'] as const;
-
-  for (const type of types) {
-    try {
-      const access = systemPreferences.getMediaAccessStatus(type);
-      if (access !== 'granted') {
-        logToWindow(mainWindow, `No ${type} access`, access, 'error');
-        const result = await systemPreferences.askForMediaAccess(type);
-        logToWindow(mainWindow, `${type} result:`, result, 'debug');
-      }
-    } catch (e) {
-      captureElectronError(e);
-    }
-  }
-}
+import { IS_DEV, JW_DOMAINS, TRUSTED_DOMAINS } from './../constants';
+import { urlVariables } from './session';
 
 /**
  * Gets the current app version

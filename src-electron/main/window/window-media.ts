@@ -2,10 +2,10 @@ import type { BrowserWindow } from 'electron';
 import type { ScreenPreferences } from 'src/types';
 
 import { HD_RESOLUTION, PLATFORM } from 'app/src-electron/constants';
-import { captureElectronError } from 'app/src-electron/utils';
 import { join, resolve } from 'path';
 
-import { getAllScreens, getWindowScreen, screenPreferences } from '../screen';
+import { getAllScreens, getWindowScreen, screenPreferences } from './../screen';
+import { captureElectronError } from './../utils';
 import { createWindow, sendToWindow } from './window-base';
 import { mainWindow } from './window-main';
 

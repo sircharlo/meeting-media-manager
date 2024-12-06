@@ -10,7 +10,7 @@ import {
   isSelf,
   isTrustedDomain,
   isValidUrl,
-} from './../utils';
+} from './utils';
 
 export let urlVariables: undefined | UrlVariables;
 

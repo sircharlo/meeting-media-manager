@@ -1,6 +1,6 @@
-import type { ExclusiveEventHintOrCaptureContext } from '@sentry/vue/node_modules/@sentry/core/build/types/utils/prepareEvent';
+import type { ExclusiveEventHintOrCaptureContext } from '@sentry/core/build/types/utils/prepareEvent';
 
-import { captureException } from '@sentry/vue';
+import { captureException } from '@sentry/electron/renderer';
 import { IS_DEV } from 'src/constants/general';
 
 export const errorCatcher = async (

@@ -312,7 +312,9 @@ const chooseCustomBackground = async (reset?: boolean) => {
             if (isImage(workingTempFilepath)) {
               setMediaBackground(workingTempFilepath);
             } else {
-              throw new Error('Invalid file type: ' + workingTempFilepath);
+              throw new Error(
+                'Invalid file type: ' + workingTempFilepath.split('/').pop(),
+              );
             }
           }
         }

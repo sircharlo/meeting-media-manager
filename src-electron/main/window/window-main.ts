@@ -1,9 +1,9 @@
 import type { BrowserWindow } from 'electron';
 
 import { PLATFORM } from 'app/src-electron/constants';
-import { throttle } from 'app/src-electron/utils';
 
-import { cancelAllDownloads } from '../downloads';
+import { cancelAllDownloads } from './../downloads';
+import { throttle } from './../utils';
 import { closeOtherWindows, createWindow, sendToWindow } from './window-base';
 import { createMediaWindow, moveMediaWindow } from './window-media';
 

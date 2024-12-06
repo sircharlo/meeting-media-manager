@@ -1,7 +1,6 @@
 import type { ElectronIpcListenKey } from 'src/types';
 
 import { IS_DEV, PLATFORM } from 'app/src-electron/constants';
-import { captureElectronError } from 'app/src-electron/utils';
 import {
   app,
   BrowserWindow,
@@ -9,7 +8,8 @@ import {
 } from 'electron';
 import { join, resolve } from 'path';
 
-import { urlVariables } from '../session';
+import { urlVariables } from './../session';
+import { captureElectronError } from './../utils';
 import { StatefulBrowserWindow } from './window-state';
 
 export function closeOtherWindows(source: BrowserWindow) {
