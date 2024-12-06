@@ -479,9 +479,13 @@ const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
     };
 
     const langsToTry = [
-      currentSettings.value?.lang,
-      currentSettings.value?.langFallback,
-      'E',
+      ...new Set([
+        /* eslint-disable perfectionist/sort-sets */
+        currentSettings.value?.lang,
+        currentSettings.value?.langFallback,
+        'E',
+        /* eslint-enable perfectionist/sort-sets */
+      ]),
     ].filter((l) => l !== undefined && l !== null);
     let mediaInfo, mediaItemFiles;
     for (const lang of langsToTry) {
