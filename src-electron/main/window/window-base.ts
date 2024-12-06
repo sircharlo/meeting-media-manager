@@ -9,8 +9,8 @@ import {
 import { join, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
-import { captureElectronError } from './../log';
 import { urlVariables } from './../session';
+import { captureElectronError } from './../utils';
 import { StatefulBrowserWindow } from './window-state';
 
 export function closeOtherWindows(source: BrowserWindow) {

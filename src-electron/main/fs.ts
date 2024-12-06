@@ -12,7 +12,7 @@ import {
 import upath from 'upath';
 const { basename, dirname, join, toUnix } = upath;
 
-import { captureElectronError } from './log';
+import { captureElectronError } from './utils';
 import { sendToWindow } from './window/window-base';
 import { mainWindow } from './window/window-main';
 

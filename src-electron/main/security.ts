@@ -1,6 +1,6 @@
 import { app, session, shell } from 'electron';
 
-import { isSelf, isTrustedDomain } from './../utils';
+import { isSelf, isTrustedDomain } from './utils';
 import { logToWindow } from './window/window-base';
 import { mainWindow } from './window/window-main';
 

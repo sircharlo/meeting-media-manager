@@ -6,7 +6,7 @@ const { exists } = fse;
 import { join } from 'path';
 
 import { PLATFORM } from './../constants';
-import { captureElectronError } from './log';
+import { captureElectronError } from './utils';
 
 export async function initUpdater() {
   autoUpdater.on('error', (error, message) => {

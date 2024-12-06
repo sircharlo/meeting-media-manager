@@ -17,10 +17,10 @@ const { join } = upath;
 
 import { PLATFORM } from './constants';
 import { cancelAllDownloads } from './main/downloads';
-import { captureElectronError } from './main/log';
 import { initScreenListeners } from './main/screen';
 import { initSessionListeners } from './main/session';
 import { initUpdater } from './main/updater';
+import { captureElectronError } from './main/utils';
 import { closeOtherWindows, sendToWindow } from './main/window/window-base';
 import {
   authorizedClose,
