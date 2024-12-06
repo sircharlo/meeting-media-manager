@@ -9,6 +9,11 @@
       'bg-accent-100': mediaPlayingUniqueId === '' && playState === 'current',
     }"
   >
+    {{
+      customDurations?.[currentCongregation]?.[selectedDate]?.[media.uniqueId]
+    }}
+    / {{ customDurationMin }} / {{ customDurationMax }} /
+    {{ props.media.duration }}
     <div class="q-pr-none rounded-borders">
       <div
         class="q-pr-none rounded-borders overflow-hidden relative-position bg-black"
@@ -41,10 +46,7 @@
               class="q-mr-xs"
               color="white"
               :name="
-                !!hoveredBadges[media.uniqueId] ||
-                customDurations[currentCongregation]?.[selectedDate]?.[
-                  media.uniqueId
-                ]
+                !!hoveredBadges[media.uniqueId] || customDurationIsSet
                   ? 'mmm-edit'
                   : props.media.isAudio
                     ? 'mmm-music-note'
@@ -56,7 +58,7 @@
             }}
             {{ formatTime(customDurationMax) }}
           </q-badge>
-          <q-dialog v-model="mediaDurationPopups[media.uniqueId]">
+          <q-dialog v-model="mediaDurationPopups[media.uniqueId]" persistent>
             <q-card>
               <q-card-section
                 class="row items-center text-bigger text-semibold q-pb-none"
@@ -80,29 +82,33 @@
                       v-model="customDurationMinUserInput"
                       class="text-center q-pa-none"
                       dense
-                      hide-bottom-space
-                      item-aligned
-                      :max="customDurationMax"
-                      min="0"
-                      outlined
-                      style="width: 70px"
+                      style="width: 3.5em"
+                      @update:model-value="
+                        if ($event) {
+                          let val = Math.max(
+                            Math.min(
+                              timeToSeconds($event.toString()),
+                              media.duration,
+                            ),
+                            0,
+                          );
+                          console.log(val, media.duration);
+                          if (val >= media.duration) val = 0;
+                          customDurationMinUserInput = formatTime(val);
+                          customDurationRange.min = val;
+                        }
+                      "
                     />
                   </div>
                   <div class="col flex">
                     <q-range
-                      v-model="
-                        customDurations[currentCongregation]![selectedDate]![
-                          media.uniqueId
-                        ]
-                      "
+                      v-model="customDurationRange"
                       :max="media.duration"
                       :min="0"
                       :step="0.1"
                       @update:model-value="
-                        customDurationMinUserInput =
-                          formatTime(customDurationMin);
-                        customDurationMaxUserInput =
-                          formatTime(customDurationMax);
+                        customDurationMinUserInput = formatTime($event.min);
+                        customDurationMaxUserInput = formatTime($event.max);
                       "
                     />
                   </div>
@@ -111,12 +117,20 @@
                       v-model="customDurationMaxUserInput"
                       class="text-center q-pa-none"
                       dense
-                      hide-bottom-space
-                      item-aligned
-                      :max="media.duration"
-                      :min="customDurationMin"
-                      outlined
-                      style="width: 70px"
+                      style="width: 3.5em"
+                      @update:model-value="
+                        if ($event) {
+                          let val = Math.max(
+                            Math.min(
+                              timeToSeconds($event.toString()),
+                              media.duration,
+                            ),
+                            0,
+                          );
+                          customDurationMaxUserInput = formatTime(val);
+                          customDurationRange.max = val;
+                        }
+                      "
                     />
                   </div>
                 </div>
@@ -126,13 +140,13 @@
                   color="negative"
                   flat
                   :label="$t('reset')"
-                  @click="resetMediaDuration(media)"
+                  @click="resetMediaDuration()"
                 />
                 <q-btn
                   color="primary"
                   flat
                   :label="$t('save')"
-                  @click="mediaDurationPopups[media.uniqueId] = false"
+                  @click="saveMediaDuration()"
                 />
               </q-card-actions>
             </q-card>
@@ -862,15 +876,6 @@ const customDurationMin = computed(() => {
 
 const customDurationMinUserInput = ref(formatTime(customDurationMin.value));
 
-watch(customDurationMinUserInput, (val) => {
-  const duration =
-    customDurations.value?.[currentCongregation.value]?.[selectedDate.value]?.[
-      props.media.uniqueId
-    ];
-  if (!duration) return;
-  duration.min = timeToSeconds(val);
-});
-
 const customDurationMax = computed(() => {
   return (
     customDurations.value[currentCongregation.value]?.[selectedDate.value]?.[
@@ -881,14 +886,11 @@ const customDurationMax = computed(() => {
 
 const customDurationMaxUserInput = ref(formatTime(customDurationMax.value));
 
-watch(customDurationMaxUserInput, (val) => {
-  const duration =
-    customDurations.value?.[currentCongregation.value]?.[selectedDate.value]?.[
-      props.media.uniqueId
-    ];
-  if (!duration) return;
-  duration.max = timeToSeconds(val);
-});
+const customDurationRange = ref(
+  customDurations.value[currentCongregation.value]?.[selectedDate.value]?.[
+    props.media.uniqueId
+  ] ?? { max: props.media.duration, min: 0 },
+);
 
 const setMediaPlaying = async (
   media: DynamicMediaObject,
@@ -1002,12 +1004,44 @@ const showMediaDurationPopup = (media: DynamicMediaObject) => {
   }
 };
 
-const resetMediaDuration = (media: DynamicMediaObject) => {
+const resetMediaDuration = () => {
   try {
-    delete customDurations.value?.[currentCongregation.value]?.[
-      selectedDate.value
-    ]?.[media.uniqueId];
-    mediaDurationPopups.value[media.uniqueId] = false;
+    const currentCong = currentCongregation.value;
+    if (!currentCong) return;
+    const currentDate = selectedDate.value;
+
+    delete customDurations.value?.[currentCong]?.[currentDate]?.[
+      props.media.uniqueId
+    ];
+    mediaDurationPopups.value[props.media.uniqueId] = false;
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
+const saveMediaDuration = () => {
+  try {
+    const currentCong = currentCongregation.value;
+    if (!currentCong) return;
+    const currentDate = selectedDate.value;
+
+    console.log(
+      customDurationRange.value,
+      customDurations.value[currentCong][currentDate][props.media.uniqueId],
+    );
+
+    customDurations.value[currentCong] ??= {};
+    customDurations.value[currentCong][currentDate] ??= {};
+    customDurations.value[currentCong][currentDate][props.media.uniqueId] ??= {
+      max: customDurationRange.value.max,
+      min: customDurationRange.value.min,
+    };
+
+    console.log(
+      customDurationRange.value,
+      customDurations.value[currentCong][currentDate][props.media.uniqueId],
+    );
+    mediaDurationPopups.value[props.media.uniqueId] = false;
   } catch (error) {
     errorCatcher(error);
   }
