@@ -1,4 +1,3 @@
-import { captureElectronError } from 'app/src-electron/utils';
 import {
   app,
   BrowserWindow,
@@ -8,6 +7,8 @@ import {
 } from 'electron';
 import { ensureDirSync, readJsonSync, writeJsonSync } from 'fs-extra';
 import { dirname, join } from 'path';
+
+import { captureElectronError } from './../log';
 
 interface ExtraOptions {
   /** The name of file. Defaults to `window-state.json`. */

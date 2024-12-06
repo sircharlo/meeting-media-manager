@@ -2,7 +2,7 @@ import type { SettingsValues } from 'src/types';
 
 import { globalShortcut } from 'electron';
 
-import { captureElectronError } from '../utils';
+import { captureElectronError } from './log';
 import { sendToWindow } from './window/window-base';
 import { mainWindow } from './window/window-main';
 

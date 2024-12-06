@@ -1,34 +1,9 @@
-import type { ExclusiveEventHintOrCaptureContext } from '@sentry/core/build/types/utils/prepareEvent';
-
-import { captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
-import { app, systemPreferences } from 'electron';
+import { app } from 'electron';
 
-import { IS_DEV, JW_DOMAINS, PLATFORM, TRUSTED_DOMAINS } from './constants';
+import { IS_DEV, JW_DOMAINS, TRUSTED_DOMAINS } from './constants';
+import { captureElectronError } from './main/log';
 import { urlVariables } from './main/session';
-import { logToWindow } from './main/window/window-base';
-import { mainWindow } from './main/window/window-main';
-
-/**
- * Asks for media access for the camera and microphone
- */
-export async function askForMediaAccess() {
-  if (PLATFORM !== 'darwin') return;
-  const types = ['camera', 'microphone'] as const;
-
-  for (const type of types) {
-    try {
-      const access = systemPreferences.getMediaAccessStatus(type);
-      if (access !== 'granted') {
-        logToWindow(mainWindow, `No ${type} access`, access, 'error');
-        const result = await systemPreferences.askForMediaAccess(type);
-        logToWindow(mainWindow, `${type} result:`, result, 'debug');
-      }
-    } catch (e) {
-      captureElectronError(e);
-    }
-  }
-}
 
 /**
  * Gets the current app version
@@ -178,27 +153,6 @@ export const fetchJson = async <T>(
   }
   return null;
 };
-
-/**
- * Logs an error to the console or to Sentry
- * @param error The error to log
- * @param context The context to log with the error
- */
-export function captureElectronError(
-  error: Error | string | unknown,
-  context?: ExclusiveEventHintOrCaptureContext,
-) {
-  if (error instanceof Error && error.cause) {
-    captureElectronError(error.cause, context);
-  }
-
-  if (IS_DEV) {
-    console.error(error);
-    console.warn('context', context);
-  } else {
-    captureException(error, context);
-  }
-}
 
 /**
  * Throttles a function to only run once every `delay` milliseconds

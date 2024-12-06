@@ -16,6 +16,7 @@ import { join } from 'upath';
 
 import { PLATFORM } from './constants';
 import { cancelAllDownloads } from './main/downloads';
+import { captureElectronError } from './main/log';
 import { initScreenListeners } from './main/screen';
 import { initSessionListeners } from './main/session';
 import { initUpdater } from './main/updater';
@@ -25,7 +26,6 @@ import {
   createMainWindow,
   mainWindow,
 } from './main/window/window-main';
-import { captureElectronError } from './utils';
 
 if (process.env.PORTABLE_EXECUTABLE_DIR) {
   app.setPath('appData', process.env.PORTABLE_EXECUTABLE_DIR);
