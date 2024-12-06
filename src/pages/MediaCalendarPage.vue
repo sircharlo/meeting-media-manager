@@ -197,7 +197,7 @@
           @update:custom-duration="media.customDuration = $event"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
-          @update:tag="updateMediaItemTag(media, $event)"
+          @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
         <div
@@ -242,6 +242,7 @@
           @update:custom-duration="media.customDuration = $event"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
         <div v-if="sortableTgwMediaItems.filter((m) => !m.hidden).length === 0">
@@ -280,6 +281,7 @@
           @update:custom-duration="media.customDuration = $event"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
         <div
@@ -329,6 +331,7 @@
           @update:custom-duration="media.customDuration = $event"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
         <div v-if="sortableLacMediaItems.filter((m) => !m.hidden).length === 0">
@@ -367,6 +370,7 @@
           @update:custom-duration="media.customDuration = $event"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
         <div v-if="sortableWtMediaItems.filter((m) => !m.hidden).length === 0">
@@ -432,6 +436,7 @@
           @update:custom-duration="media.customDuration = $event"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
         <div
@@ -1525,15 +1530,5 @@ const resetDragging = () => {
   currentFile.value = 0;
   totalFiles.value = 0;
   sectionToAddTo.value = undefined;
-};
-
-const updateMediaItemTag = (
-  media?: DynamicMediaObject,
-  tag?: Record<string, string>,
-) => {
-  if (!media) return;
-  if (tag?.value && tag.value.length > 15) tag.value = tag.value.slice(0, 15);
-  media.song = tag?.type === 'song' ? tag.value : undefined;
-  media.paragraph = tag?.type === 'paragraph' ? tag.value : undefined;
 };
 </script>

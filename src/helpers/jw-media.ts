@@ -154,8 +154,11 @@ export const addToAdditionMediaMapFromPath = async (
           isVideo: video,
           section,
           sectionOriginal: section,
-          song: additionalInfo?.song,
           streamUrl: additionalInfo?.url,
+          tag: {
+            type: additionalInfo?.song ? 'song' : undefined,
+            value: additionalInfo?.song ?? undefined,
+          },
           thumbnailUrl:
             additionalInfo?.thumbnailUrl ??
             (await getThumbnailUrl(additionalFilePath, true)),
@@ -1260,6 +1263,21 @@ export const dynamicMediaMapper = async (
               }
             : undefined;
 
+        const tagType = mediaIsSong
+          ? 'song'
+          : getParagraphNumbers(m.TargetParagraphNumberLabel, m.Caption)
+            ? 'paragraph'
+            : undefined;
+
+        const tagValue =
+          tagType === 'song' && mediaIsSong
+            ? mediaIsSong
+            : tagType === 'paragraph'
+              ? getParagraphNumbers(m.TargetParagraphNumberLabel, m.Caption)
+              : undefined;
+
+        const tag = tagType ? { type: tagType, value: tagValue } : undefined;
+
         return {
           customDuration,
           duration,
@@ -1269,16 +1287,12 @@ export const dynamicMediaMapper = async (
           isImage: isImage(m.FilePath),
           isVideo: video,
           markers: m.VideoMarkers,
-          paragraph: getParagraphNumbers(
-            m.TargetParagraphNumberLabel,
-            m.Caption,
-          ),
           repeat: !!m.Repeat,
           section, // if is we: wt; else, if >= middle song: LAC; >= (middle song - 8???): AYFM; else: TGW
           sectionOriginal: section, // to enable restoring the original section after custom sorting
-          song: mediaIsSong,
           streamUrl: m.StreamUrl,
           subtitlesUrl: video ? await getSubtitlesUrl(m, duration) : '',
+          tag,
           thumbnailUrl,
           title: mediaIsSong
             ? m.Label.replace(/^\d+\.\s*/, '')

@@ -207,8 +207,7 @@
                   (media.isAdditional &&
                     !currentSettings?.disableMediaFetching &&
                     isFileUrl(media.fileUrl)) ||
-                  media.paragraph ||
-                  media.song ||
+                  media.tag?.type ||
                   media.watched
                 "
                 :class="mediaTagClasses"
@@ -217,14 +216,16 @@
                 <q-chip
                   :class="[
                     'media-tag full-width',
-                    media.song ? 'bg-accent-400' : 'bg-accent-200',
+                    media.tag?.type === 'song'
+                      ? 'bg-accent-400'
+                      : 'bg-accent-200',
                   ]"
                   :clickable="false"
                   :ripple="false"
-                  :text-color="media.song ? 'white' : undefined"
+                  :text-color="media.tag?.type === 'song' ? 'white' : undefined"
                 >
                   <q-icon
-                    :class="{ 'q-mr-xs': media.song || media.paragraph }"
+                    :class="{ 'q-mr-xs': media.tag?.type }"
                     :name="
                       media.watched
                         ? 'mmm-watched-media'
@@ -232,8 +233,8 @@
                             !currentSettings?.disableMediaFetching &&
                             isFileUrl(media.fileUrl)
                           ? 'mmm-add-media'
-                          : media.paragraph
-                            ? media.paragraph !== 9999
+                          : media.tag?.type === 'paragraph'
+                            ? media.tag.value !== 9999
                               ? 'mmm-paragraph'
                               : 'mmm-footnote'
                             : 'mmm-music-note'
@@ -252,13 +253,12 @@
                   >
                     {{ $t('extra-media-item-explain') }}
                   </q-tooltip>
-                  <template v-if="media.paragraph || media.song">
+                  <template v-if="media?.tag?.type">
                     {{
-                      media.paragraph
-                        ? media.paragraph !== 9999
-                          ? media.paragraph
-                          : $t('footnote')
-                        : media.song?.toString()
+                      media.tag?.type === 'paragraph' &&
+                      media.tag.value === 9999
+                        ? $t('footnote')
+                        : media.tag?.value
                     }}
                   </template>
                 </q-chip>
@@ -639,20 +639,20 @@
     <q-card class="modal-confirm">
       <q-card-section class="items-center">
         <q-option-group
-          v-model="tag.type"
+          v-model="mediaTag.type"
           color="primary"
           inline
           name="tagType"
           :options="tagTypes"
-          @update:model-value="emit('update:tag', tag)"
+          @update:model-value="emit('update:tag', mediaTag)"
         />
         <q-input
-          v-model="tag.value"
+          v-model="mediaTag.value"
           dense
-          :disable="tag.type === ''"
+          :disable="!mediaTag.type"
           focused
           outlined
-          @update:model-value="emit('update:tag', tag)"
+          @update:model-value="emit('update:tag', mediaTag)"
         />
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
@@ -818,10 +818,12 @@ const displayMediaTitle = computed(() => {
 
 const mediaEditTagDialog = ref(false);
 const { t } = useI18n();
-const tag = ref({
-  type: props.media.song ? 'song' : props.media.paragraph ? 'paragraph' : '',
-  value: (props.media.song || props.media.paragraph || '') as string,
+
+const mediaTag = ref({
+  type: '',
+  value: '',
 });
+
 const tagTypes = [
   {
     label: t('none'),

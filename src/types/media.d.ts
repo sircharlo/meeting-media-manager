@@ -35,13 +35,12 @@ export interface DynamicMediaObject {
   isImage: boolean;
   isVideo: boolean;
   markers?: VideoMarker[];
-  paragraph?: number | string;
   repeat?: boolean;
   section: MediaSection;
   sectionOriginal: MediaSection;
-  song?: boolean | string;
   streamUrl?: string;
   subtitlesUrl?: string;
+  tag?: Tag | undefined;
   thumbnailUrl: string;
   title: string;
   uniqueId: string;
@@ -69,6 +68,11 @@ export interface SongItem {
   duration?: number; // or the correct type for duration
   path: string;
   title?: string;
+}
+
+export interface Tag {
+  type: string | undefined;
+  value: number | string | undefined;
 }
 
 export interface VideoDuration {
