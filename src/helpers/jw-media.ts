@@ -383,7 +383,7 @@ export const fetchMedia = async () => {
           })
           .catch((error) => {
             day.error = true;
-            throw new Error(error);
+            throw error;
           });
       } catch (error) {
         errorCatcher(error);
@@ -1642,7 +1642,12 @@ export const getMwMedia = async (lookupDate: Date) => {
 
     if (docId < 0)
       throw new Error(
-        'No document id found for ' + monday + ' ' + issueString + ' ' + db,
+        'No document id found for ' +
+          formatDate(monday, 'YYYYMMDD') +
+          ' ' +
+          issueString +
+          ' ' +
+          db.split('/').pop(),
       );
 
     const mms = getDocumentMultimediaItems(
