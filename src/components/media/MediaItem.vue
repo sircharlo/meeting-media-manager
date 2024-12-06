@@ -76,26 +76,48 @@
                 </div>
                 <div class="row items-center q-mt-lg">
                   <div class="col-shrink q-pr-md time-duration">
-                    {{ formatTime(0) }}
+                    <q-input
+                      v-model="customDurationMinUserInput"
+                      class="text-center q-pa-none"
+                      dense
+                      hide-bottom-space
+                      item-aligned
+                      :max="customDurationMax"
+                      min="0"
+                      outlined
+                      style="width: 70px"
+                    />
                   </div>
-                  <div class="col">
+                  <div class="col flex">
                     <q-range
                       v-model="
                         customDurations[currentCongregation]![selectedDate]![
                           media.uniqueId
                         ]
                       "
-                      label
-                      label-always
-                      :left-label-value="formatTime(customDurationMin)"
                       :max="media.duration"
                       :min="0"
-                      :right-label-value="formatTime(customDurationMax)"
                       :step="0.1"
+                      @update:model-value="
+                        customDurationMinUserInput =
+                          formatTime(customDurationMin);
+                        customDurationMaxUserInput =
+                          formatTime(customDurationMax);
+                      "
                     />
                   </div>
                   <div class="col-shrink q-pl-md time-duration">
-                    {{ formatTime(media.duration) }}
+                    <q-input
+                      v-model="customDurationMaxUserInput"
+                      class="text-center q-pa-none"
+                      dense
+                      hide-bottom-space
+                      item-aligned
+                      :max="media.duration"
+                      :min="customDurationMin"
+                      outlined
+                      style="width: 70px"
+                    />
                   </div>
                 </div>
               </q-card-section>
@@ -290,31 +312,53 @@
                 "
                 class="absolute duration-slider"
               >
-                <q-slider
-                  v-model="mediaPlayingCurrentPosition"
-                  :color="
-                    mediaPlayingAction === 'pause' ? 'primary' : 'accent-400'
-                  "
-                  :inner-max="customDurationMax"
-                  :inner-min="customDurationMin"
-                  inner-track-color="accent-400"
-                  label
-                  :label-always="mediaPlayingAction === 'pause'"
-                  :label-color="
-                    mediaPlayingAction === 'pause' ? undefined : 'accent-400'
-                  "
-                  :label-value="
-                    mediaPlayingAction === 'pause'
-                      ? formatTime(mediaPlayingCurrentPosition)
-                      : $t('pause-to-adjust-time')
-                  "
-                  :max="media.duration"
-                  :min="0"
-                  :readonly="mediaPlayingAction !== 'pause'"
-                  :step="0.1"
-                  track-color="negative"
-                  @update:model-value="seekTo"
-                />
+                <div class="row flex-center">
+                  <div class="col" style="height: 28px">
+                    <q-slider
+                      v-model="mediaPlayingCurrentPosition"
+                      :color="
+                        mediaPlayingAction === 'pause'
+                          ? 'primary'
+                          : 'accent-400'
+                      "
+                      :inner-max="customDurationMax"
+                      :inner-min="customDurationMin"
+                      inner-track-color="accent-400"
+                      label
+                      :label-color="
+                        mediaPlayingAction === 'pause'
+                          ? undefined
+                          : 'accent-400'
+                      "
+                      :label-value="
+                        mediaPlayingAction === 'pause'
+                          ? formatTime(mediaPlayingCurrentPosition)
+                          : $t('pause-to-adjust-time')
+                      "
+                      :max="media.duration"
+                      :min="0"
+                      :readonly="mediaPlayingAction !== 'pause'"
+                      :step="0.1"
+                      track-color="negative"
+                      @update:model-value="seekTo"
+                    />
+                  </div>
+                  <div
+                    class="col-shrink text-caption q-mx-sm text-right"
+                    style="min-width: 40px"
+                  >
+                    {{
+                      '-' +
+                      formatTime(
+                        Math.max(
+                          (customDurationMax || 0) -
+                            (mediaPlayingCurrentPosition || 0),
+                          0,
+                        ),
+                      )
+                    }}
+                  </div>
+                </div>
               </div>
             </transition>
           </div>
@@ -671,7 +715,7 @@ import { useObsStateStore } from 'src/stores/obs-state';
 import { isFileUrl } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
-import { formatTime } from 'src/utils/time';
+import { formatTime, timeToSeconds } from 'src/utils/time';
 import {
   computed,
   onMounted,
@@ -802,12 +846,34 @@ const customDurationMin = computed(() => {
   );
 });
 
+const customDurationMinUserInput = ref(formatTime(customDurationMin.value));
+
+watch(customDurationMinUserInput, (val) => {
+  const duration =
+    customDurations.value?.[currentCongregation.value]?.[selectedDate.value]?.[
+      props.media.uniqueId
+    ];
+  if (!duration) return;
+  duration.min = timeToSeconds(val);
+});
+
 const customDurationMax = computed(() => {
   return (
     customDurations.value[currentCongregation.value]?.[selectedDate.value]?.[
       props.media.uniqueId
     ]?.max ?? props.media.duration
   );
+});
+
+const customDurationMaxUserInput = ref(formatTime(customDurationMax.value));
+
+watch(customDurationMaxUserInput, (val) => {
+  const duration =
+    customDurations.value?.[currentCongregation.value]?.[selectedDate.value]?.[
+      props.media.uniqueId
+    ];
+  if (!duration) return;
+  duration.max = timeToSeconds(val);
 });
 
 const setMediaPlaying = async (

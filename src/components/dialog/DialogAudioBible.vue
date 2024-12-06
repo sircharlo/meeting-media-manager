@@ -210,6 +210,7 @@ import {
 } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
+import { timeToSeconds } from 'src/utils/time';
 import { computed, ref, watch } from 'vue';
 
 // Stores
@@ -335,11 +336,6 @@ const addSelectedVerses = async () => {
   if (!chosenVerses.value.length) return;
   const startVerseNumber = chosenVerses.value[0];
   const endVerseNumber = chosenVerses.value[1] || startVerseNumber;
-
-  const timeToSeconds = (time: string) => {
-    const [h, m, s] = time.split(':').map(parseFloat);
-    return h * 3600 + m * 60 + s;
-  };
 
   const min = timeToSeconds(
     selectedChapterMedia.value.map((item) =>
