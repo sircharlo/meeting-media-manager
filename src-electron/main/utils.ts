@@ -4,7 +4,7 @@ import { captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
 
-import { IS_DEV, JW_DOMAINS, TRUSTED_DOMAINS } from '../constants';
+import { IS_DEV, JW_DOMAINS, TRUSTED_DOMAINS } from './../constants';
 import { urlVariables } from './session';
 
 /**
