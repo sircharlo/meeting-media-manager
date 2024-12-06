@@ -20,8 +20,6 @@ import { getAdditionalMediaPath } from 'src/utils/fs';
 import { isEmpty, isUUID } from 'src/utils/general';
 import { formatTime } from 'src/utils/time';
 
-const { fs, path } = window.electronApi;
-
 interface Songbook {
   fileformat: 'MP3' | 'MP4';
   pub: 'sjj' | 'sjjm';
@@ -71,12 +69,12 @@ export const useCurrentStateStore = defineStore('current-state', {
           this.currentSettings?.cacheFolder,
         );
         const dateString = formatDate(new Date(destDate), 'YYYYMMDD');
-        const datedAdditionalMediaDirectory = path.join(
+        const datedAdditionalMediaDirectory = window.electronApi.path.join(
           additionalMediaPath,
           this.currentCongregation,
           dateString,
         );
-        await fs.ensureDir(datedAdditionalMediaDirectory);
+        await window.electronApi.fs.ensureDir(datedAdditionalMediaDirectory);
         return datedAdditionalMediaDirectory;
       } catch (error) {
         errorCatcher(error);
