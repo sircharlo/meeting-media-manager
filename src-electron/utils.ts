@@ -1,6 +1,6 @@
 import type { ExclusiveEventHintOrCaptureContext } from '@sentry/core/build/types/utils/prepareEvent';
 
-import { captureException } from '@sentry/browser';
+import { captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app, systemPreferences } from 'electron';
 
