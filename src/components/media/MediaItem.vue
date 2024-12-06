@@ -9,11 +9,6 @@
       'bg-accent-100': mediaPlayingUniqueId === '' && playState === 'current',
     }"
   >
-    {{
-      customDurations?.[currentCongregation]?.[selectedDate]?.[media.uniqueId]
-    }}
-    / {{ customDurationMin }} / {{ customDurationMax }} /
-    {{ props.media.duration }}
     <div class="q-pr-none rounded-borders">
       <div
         class="q-pr-none rounded-borders overflow-hidden relative-position bg-black"
@@ -54,9 +49,11 @@
               "
             />
             {{
-              customDurationIsSet ? formatTime(customDurationMin) + ' - ' : ''
+              customDurationIsSet
+                ? formatTime(mediaCustomDuration.min ?? 0) + ' - '
+                : ''
             }}
-            {{ formatTime(customDurationMax) }}
+            {{ formatTime(mediaCustomDuration.max ?? media.duration) }}
           </q-badge>
           <q-dialog v-model="mediaDurationPopups[media.uniqueId]" persistent>
             <q-card>
@@ -95,17 +92,18 @@
                           console.log(val, media.duration);
                           if (val >= media.duration) val = 0;
                           customDurationMinUserInput = formatTime(val);
-                          customDurationRange.min = val;
+                          mediaCustomDuration.min = val;
                         }
                       "
                     />
                   </div>
                   <div class="col flex">
                     <q-range
-                      v-model="customDurationRange"
+                      v-model="mediaCustomDuration"
                       :max="media.duration"
                       :min="0"
                       :step="0.1"
+                      @change="updateMediaCustomDuration($event)"
                       @update:model-value="
                         customDurationMinUserInput = formatTime($event.min);
                         customDurationMaxUserInput = formatTime($event.max);
@@ -128,7 +126,7 @@
                             0,
                           );
                           customDurationMaxUserInput = formatTime(val);
-                          customDurationRange.max = val;
+                          mediaCustomDuration.max = val;
                         }
                       "
                     />
@@ -335,7 +333,7 @@
                       formatTime(
                         Math.max(
                           (mediaPlayingCurrentPosition || 0) -
-                            (customDurationMin || 0),
+                            (mediaCustomDuration.min || 0),
                           0,
                         ),
                       )
@@ -349,8 +347,8 @@
                           ? 'primary'
                           : 'accent-400'
                       "
-                      :inner-max="customDurationMax"
-                      :inner-min="customDurationMin"
+                      :inner-max="mediaCustomDuration.max"
+                      :inner-min="mediaCustomDuration.min"
                       inner-track-color="accent-400"
                       label
                       :label-color="
@@ -379,7 +377,7 @@
                       '-' +
                       formatTime(
                         Math.max(
-                          (customDurationMax || 0) -
+                          (mediaCustomDuration.max || media.duration) -
                             (mediaPlayingCurrentPosition || 0),
                           0,
                         ),
@@ -756,7 +754,6 @@ import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
 const {
-  currentCongregation,
   currentSettings,
   mediaPlayingAction,
   mediaPlayingCurrentPosition,
@@ -764,12 +761,10 @@ const {
   mediaPlayingSubtitlesUrl,
   mediaPlayingUniqueId,
   mediaPlayingUrl,
-  selectedDate,
 } = storeToRefs(currentState);
 
 const jwStore = useJwStore();
 const { removeFromAdditionMediaMap } = jwStore;
-const { customDurations } = storeToRefs(jwStore);
 const hoveredBadges = ref<Record<string, boolean>>({});
 
 const setHoveredBadge = debounce((key: string, value: boolean) => {
@@ -798,6 +793,7 @@ const emit = defineEmits([
   'update:hidden',
   'update:repeat',
   'update:tag',
+  'update:customDuration',
   'update:title',
 ]);
 
@@ -856,40 +852,32 @@ const resetMediaTitle = () => {
   emit('update:title', initialMediaTitle.value);
 };
 
+const updateMediaCustomDuration = (customDuration?: {
+  max: number;
+  min: number;
+}) => {
+  emit('update:customDuration', customDuration);
+};
+
 const customDurationIsSet = computed(() => {
   return (
-    customDurations.value[currentCongregation.value]?.[selectedDate.value]?.[
-      props.media.uniqueId
-    ] &&
-    (customDurationMin.value > 0 ||
-      customDurationMax.value < props.media.duration)
+    props.media.customDuration &&
+    (props.media.customDuration.min > 0 ||
+      props.media.customDuration.max < props.media.duration)
   );
 });
 
-const customDurationMin = computed(() => {
-  return (
-    customDurations.value[currentCongregation.value]?.[selectedDate.value]?.[
-      props.media.uniqueId
-    ]?.min ?? 0
-  );
+const mediaCustomDuration = ref({
+  max: props.media.customDuration?.max || props.media.duration,
+  min: props.media.customDuration?.min || 0,
 });
 
-const customDurationMinUserInput = ref(formatTime(customDurationMin.value));
+const customDurationMinUserInput = ref(
+  formatTime(mediaCustomDuration.value.min),
+);
 
-const customDurationMax = computed(() => {
-  return (
-    customDurations.value[currentCongregation.value]?.[selectedDate.value]?.[
-      props.media.uniqueId
-    ]?.max ?? props.media.duration
-  );
-});
-
-const customDurationMaxUserInput = ref(formatTime(customDurationMax.value));
-
-const customDurationRange = ref(
-  customDurations.value[currentCongregation.value]?.[selectedDate.value]?.[
-    props.media.uniqueId
-  ] ?? { max: props.media.duration, min: 0 },
+const customDurationMaxUserInput = ref(
+  formatTime(mediaCustomDuration.value.max),
 );
 
 const setMediaPlaying = async (
@@ -900,29 +888,17 @@ const setMediaPlaying = async (
   if (isImage(mediaPlayingUrl.value)) stopMedia(true);
   if (signLanguage) {
     if (marker) {
-      const currentCong = currentCongregation.value;
-      const currentDate = selectedDate.value;
-
-      customDurations.value[currentCong] ??= {};
-      customDurations.value[currentCong][currentDate] ??= {};
-      customDurations.value[currentCong][currentDate][media.uniqueId] ??= {
-        max: media.duration,
-        min: 0,
-      };
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      customDurations.value[currentCong][currentDate][media.uniqueId]!.min =
-        marker.StartTimeTicks / 10000 / 1000;
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      customDurations.value[currentCong][currentDate][media.uniqueId]!.max =
-        (marker.StartTimeTicks +
-          marker.DurationTicks -
-          marker.EndTransitionDurationTicks) /
-        10000 /
-        1000;
+      updateMediaCustomDuration({
+        max:
+          (marker.StartTimeTicks +
+            marker.DurationTicks -
+            marker.EndTransitionDurationTicks) /
+          10000 /
+          1000,
+        min: marker.StartTimeTicks / 10000 / 1000,
+      });
     } else {
-      delete customDurations.value?.[currentCongregation.value]?.[
-        selectedDate.value
-      ]?.[media.uniqueId];
+      updateMediaCustomDuration();
       mediaPlayingAction.value = 'play';
     }
   } else {
@@ -988,14 +964,8 @@ if (props.media.duration && !props.media.thumbnailUrl) findThumbnailUrl();
 
 const showMediaDurationPopup = (media: DynamicMediaObject) => {
   try {
-    const currentCong = currentCongregation.value;
-    if (!currentCong) return;
-    const currentDate = selectedDate.value;
-
-    customDurations.value[currentCong] ??= {};
-    customDurations.value[currentCong][currentDate] ??= {};
-    customDurations.value[currentCong][currentDate][media.uniqueId] ??= {
-      max: media.duration,
+    mediaCustomDuration.value = props.media.customDuration || {
+      max: props.media.duration,
       min: 0,
     };
     mediaDurationPopups.value[media.uniqueId] = true;
@@ -1006,14 +976,18 @@ const showMediaDurationPopup = (media: DynamicMediaObject) => {
 
 const resetMediaDuration = () => {
   try {
-    const currentCong = currentCongregation.value;
-    if (!currentCong) return;
-    const currentDate = selectedDate.value;
-
-    delete customDurations.value?.[currentCong]?.[currentDate]?.[
-      props.media.uniqueId
-    ];
     mediaDurationPopups.value[props.media.uniqueId] = false;
+    updateMediaCustomDuration();
+    mediaCustomDuration.value = {
+      max: props.media.duration,
+      min: 0,
+    };
+    customDurationMinUserInput.value = formatTime(
+      mediaCustomDuration.value.min,
+    );
+    customDurationMaxUserInput.value = formatTime(
+      mediaCustomDuration.value.max,
+    );
   } catch (error) {
     errorCatcher(error);
   }
@@ -1021,26 +995,6 @@ const resetMediaDuration = () => {
 
 const saveMediaDuration = () => {
   try {
-    const currentCong = currentCongregation.value;
-    if (!currentCong) return;
-    const currentDate = selectedDate.value;
-
-    console.log(
-      customDurationRange.value,
-      customDurations.value[currentCong][currentDate][props.media.uniqueId],
-    );
-
-    customDurations.value[currentCong] ??= {};
-    customDurations.value[currentCong][currentDate] ??= {};
-    customDurations.value[currentCong][currentDate][props.media.uniqueId] ??= {
-      max: customDurationRange.value.max,
-      min: customDurationRange.value.min,
-    };
-
-    console.log(
-      customDurationRange.value,
-      customDurations.value[currentCong][currentDate][props.media.uniqueId],
-    );
     mediaDurationPopups.value[props.media.uniqueId] = false;
   } catch (error) {
     errorCatcher(error);

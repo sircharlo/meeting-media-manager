@@ -194,6 +194,7 @@
           :list="sortableAdditionalMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
+          @update:custom-duration="media.customDuration = $event"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
           @update:tag="updateMediaItemTag(media, $event)"
@@ -238,6 +239,7 @@
           :list="sortableTgwMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
+          @update:custom-duration="media.customDuration = $event"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
           @update:title="media.title = $event"
@@ -275,6 +277,7 @@
           :list="sortableAyfmMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
+          @update:custom-duration="media.customDuration = $event"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
           @update:title="media.title = $event"
@@ -323,6 +326,7 @@
           :list="sortableLacMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
+          @update:custom-duration="media.customDuration = $event"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
           @update:title="media.title = $event"
@@ -360,6 +364,7 @@
           :list="sortableWtMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
+          @update:custom-duration="media.customDuration = $event"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
           @update:title="media.title = $event"
@@ -424,6 +429,7 @@
           :list="sortableCircuitOverseerMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
+          @update:custom-duration="media.customDuration = $event"
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
           @update:title="media.title = $event"
@@ -555,7 +561,6 @@ const jwStore = useJwStore();
 const { addToAdditionMediaMap } = jwStore;
 const {
   additionalMediaMaps,
-  customDurations,
   lookupPeriod,
   mediaSort,
   missingMedia,
@@ -1022,8 +1027,6 @@ watchImmediate(selectedDate, (newVal) => {
     if (!currentCongregation.value || !newVal) {
       return;
     }
-    const durations = (customDurations.value[currentCongregation.value] ||= {});
-    durations[newVal] ||= {};
     coWeek.value = isCoWeek(dateFromString(newVal));
   } catch (e) {
     errorCatcher(e);
@@ -1408,20 +1411,10 @@ const addToFiles = async (
           throw error;
         });
         addToAdditionMediaMap(additionalMedia, sectionToAddTo.value);
-        additionalMedia
-          .filter(
-            (m) =>
-              m.customDuration &&
-              (m.customDuration.max || m.customDuration.min),
-          )
-          .forEach((m) => {
-            const { max, min } = m.customDuration ?? { max: 0, min: 0 };
-            const congregation = (customDurations.value[
-              currentCongregation.value
-            ] ??= {});
-            const dateDurations = (congregation[selectedDate.value] ??= {});
-            dateDurations[m.uniqueId] = { max, min };
-          });
+        additionalMedia.filter(
+          (m) =>
+            m.customDuration && (m.customDuration.max || m.customDuration.min),
+        );
       } else if (isArchive(filepath)) {
         const unzipDirectory = path.join(
           await getTempPath(),

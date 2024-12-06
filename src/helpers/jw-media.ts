@@ -1327,20 +1327,10 @@ export const watchedItemMapper: (
             ),
           )
         ).map((m) => ({ ...m, isAdditional: false, watched: watchedItemPath }));
-        additionalMedia
-          .filter(
-            (m) =>
-              m.customDuration &&
-              (m.customDuration.max || m.customDuration.min),
-          )
-          .forEach((m) => {
-            const { max, min } = m.customDuration ?? { max: 0, min: 0 };
-            const congregation = (jwStore.customDurations[
-              currentStateStore.currentCongregation
-            ] ??= {});
-            const dateDurations = (congregation[dateString] ??= {});
-            dateDurations[m.uniqueId] = { max, min };
-          });
+        additionalMedia.filter(
+          (m) =>
+            m.customDuration && (m.customDuration.max || m.customDuration.min),
+        );
         return additionalMedia;
       }
       return undefined;

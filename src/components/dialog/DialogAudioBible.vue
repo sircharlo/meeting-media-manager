@@ -202,22 +202,13 @@ import type {
 } from 'src/types';
 
 import { whenever } from '@vueuse/core';
-import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   downloadAdditionalRemoteVideo,
   getAudioBibleMedia,
 } from 'src/helpers/jw-media';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
 import { timeToSeconds } from 'src/utils/time';
 import { computed, ref, watch } from 'vue';
-
-// Stores
-const currentStateStore = useCurrentStateStore();
-const { currentCongregation, selectedDate } = storeToRefs(currentStateStore);
-const jwStore = useJwStore();
-const { customDurations } = storeToRefs(jwStore);
 
 // Props
 const props = defineProps<{
@@ -338,7 +329,7 @@ const addSelectedVerses = async () => {
   const startVerseNumber = chosenVerses.value[0];
   const endVerseNumber = chosenVerses.value[1] || startVerseNumber;
 
-const min = timeToSeconds(
+  const min = timeToSeconds(
     selectedChapterMedia.value.map((item) =>
       item.markers.markers.find(
         (marker) => marker.verseNumber === startVerseNumber,
@@ -355,7 +346,7 @@ const min = timeToSeconds(
     ? timeToSeconds(endVerse.startTime) + timeToSeconds(endVerse.duration)
     : 0;
 
-  const uniqueId = await downloadAdditionalRemoteVideo(
+  await downloadAdditionalRemoteVideo(
     selectedChapterMedia.value,
     undefined,
     false,
@@ -367,20 +358,11 @@ const min = timeToSeconds(
         .filter((verse, index, self) => self.indexOf(verse) === index)
         .join('-'),
     props.section,
+    {
+      max,
+      min,
+    },
   );
-
-  if (
-    uniqueId &&
-    min &&
-    max &&
-    selectedDate.value &&
-    currentCongregation.value
-  ) {
-    const congregation = (customDurations.value[currentCongregation.value] ??=
-      {});
-    const dateDurations = (congregation[selectedDate.value] ??= {});
-    dateDurations[uniqueId] = { max, min };
-  }
 
   resetBibleBook(true, true);
 
