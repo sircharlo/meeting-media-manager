@@ -36,6 +36,6 @@ Vielen Dank für Ihr Interesse, das Projekt zu unterstützen! Aus der Perspektiv
 
 :::tip :book: Matthäus 10:8
 
-"Umsonst habt ihr empfangen, umsonst gebt!"
+"Kostenfrei habt ihr empfangen, kostenfrei gebt."
 
 :::
