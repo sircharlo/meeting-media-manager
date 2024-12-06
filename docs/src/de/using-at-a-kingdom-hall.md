@@ -166,4 +166,4 @@ Wenn Ihre Versammlung regelmäßig Hybrid-Versammlungen abhält, wird dringend e
 
 ## 3. Genießen Sie die Nutzung von M³ {#enjoy-using-m3}
 
-Once the setup wizard is complete, M³ is ready to help manage and present media for congregation meetings. Enjoy using the app! :tada:
+Sobald der Einrichtungsassistent abgeschlossen ist, ist M³ bereit, die Verwaltung und Präsentation von Medien für Versammlungen zu unterstützen. Viel Spaß beim Benutzen! :tada:
