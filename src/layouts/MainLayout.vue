@@ -320,16 +320,20 @@ const updateWatchFolderRef = async ({
   event,
 }: Record<string, string>) => {
   try {
-    day = day.replace(/-/g, '/');
+    day = day?.replace(/-/g, '/');
+    if (!day) return;
     if (event === 'addDir' || event === 'unlinkDir') {
       watchFolderMedia.value[day] = [];
     } else if (event === 'add') {
       watchFolderMedia.value[day] ??= [];
-      const watchedItemMapItems = await watchedItemMapper(day, changedPath);
+      const watchedItemMapItems = await watchedItemMapper(
+        day,
+        changedPath ?? '',
+      );
       if (watchedItemMapItems?.length) {
         for (const watchedItemMap of watchedItemMapItems) {
-          watchFolderMedia.value[day].push(watchedItemMap);
-          watchFolderMedia.value[day].sort((a, b) =>
+          watchFolderMedia.value[day]?.push(watchedItemMap);
+          watchFolderMedia.value[day]?.sort((a, b) =>
             SORTER.compare(a.title, b.title),
           );
           if (jwStore.mediaSort[currentCongregation.value]?.[day]?.length) {
@@ -340,11 +344,13 @@ const updateWatchFolderRef = async ({
         }
       }
     } else if (event === 'unlink') {
-      watchFolderMedia.value[day] = watchFolderMedia.value[day]?.filter(
-        (dM) =>
-          dM.fileUrl !== window.electronApi.pathToFileURL(changedPath) &&
-          dM.watched !== changedPath,
-      );
+      watchFolderMedia.value[day] =
+        watchFolderMedia.value[day]?.filter(
+          (dM) =>
+            dM.fileUrl !==
+              window.electronApi.pathToFileURL(changedPath ?? '') &&
+            dM.watched !== changedPath,
+        ) ?? [];
     }
   } catch (error) {
     errorCatcher(error);
@@ -412,24 +418,29 @@ const initListeners = () => {
 
   window.electronApi.onDownloadCancelled((args) => {
     if (downloadProgress.value[args.id])
-      downloadProgress.value[args.id].error = true;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      downloadProgress.value[args.id]!.error = true;
   });
 
   window.electronApi.onDownloadCompleted((args) => {
     if (downloadProgress.value[args.id]) {
-      downloadProgress.value[args.id].complete = true;
-      delete downloadProgress.value[args.id].loaded;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      downloadProgress.value[args.id]!.complete = true;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      delete downloadProgress.value[args.id]!.loaded;
     }
   });
 
   window.electronApi.onDownloadError((args) => {
     if (downloadProgress.value[args.id])
-      downloadProgress.value[args.id].error = true;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      downloadProgress.value[args.id]!.error = true;
   });
 
   window.electronApi.onDownloadProgress((args) => {
     if (downloadProgress.value[args.id]) {
-      downloadProgress.value[args.id].loaded = args.bytesReceived;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      downloadProgress.value[args.id]!.loaded = args.bytesReceived;
     }
   });
 };

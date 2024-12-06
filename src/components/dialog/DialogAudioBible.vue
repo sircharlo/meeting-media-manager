@@ -253,7 +253,7 @@ const selectedBookMedia = computed(() => {
       (item) => item?.booknum === selectedBibleBook.value,
     )?.files || {},
   );
-  const langFiles: PublicationFiles = allFiles[0];
+  const langFiles: PublicationFiles = allFiles[0] ?? {};
   const mediaFiles: MediaLink[] = Object.values(langFiles || {})[0];
   return mediaFiles || [];
 });
@@ -299,7 +299,8 @@ const totalChosenVerses = computed(() => {
     ? ''
     : ' (' +
         (chosenVerses.value.length === 2
-          ? Math.abs(chosenVerses.value[0] - chosenVerses.value[1]) + 1
+          ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            Math.abs(chosenVerses.value[0]! - chosenVerses.value[1]!) + 1
           : chosenVerses.value.length === 1
             ? 1
             : '') +
@@ -337,7 +338,7 @@ const addSelectedVerses = async () => {
   const startVerseNumber = chosenVerses.value[0];
   const endVerseNumber = chosenVerses.value[1] || startVerseNumber;
 
-  const min = timeToSeconds(
+const min = timeToSeconds(
     selectedChapterMedia.value.map((item) =>
       item.markers.markers.find(
         (marker) => marker.verseNumber === startVerseNumber,
@@ -405,7 +406,7 @@ const getVerseClass = (verse: number) => {
     return 'bg-primary-semi-transparent text-white';
   } else if (
     chosenVerses.value.length === 1 &&
-    chosenVerses.value !== null &&
+    chosenVerses.value?.[0] &&
     verse > Math.min(chosenVerses.value[0], hoveredVerse.value || 0) &&
     verse < Math.max(chosenVerses.value[0], hoveredVerse.value || 0)
   ) {

@@ -177,11 +177,7 @@ const unusedParentDirectories = computed(() => {
         !frequentlyUsedDirectories.value.has(file.parentPath) &&
         !untouchableDirectories.value.has(file.parentPath)
       ) {
-        if (acc[file.parentPath]) {
-          acc[file.parentPath] += file.size;
-        } else {
-          acc[file.parentPath] = file.size;
-        }
+        acc[file.parentPath] = file.size + (acc[file.parentPath] ?? 0);
       }
       return acc;
     }, {});
@@ -194,11 +190,7 @@ const unusedParentDirectories = computed(() => {
 const usedParentDirectories = computed(() => {
   try {
     return usedCacheFiles.value.reduce<Record<string, number>>((acc, file) => {
-      if (acc[file.parentPath]) {
-        acc[file.parentPath] += file.size;
-      } else {
-        acc[file.parentPath] = file.size;
-      }
+      acc[file.parentPath] = file.size + (acc[file.parentPath] ?? 0);
       return acc;
     }, {});
   } catch (error) {

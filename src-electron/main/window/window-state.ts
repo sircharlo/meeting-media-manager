@@ -5,7 +5,7 @@ import {
   type Rectangle,
   screen,
 } from 'electron';
-import { ensureDirSync, readJsonSync, writeJsonSync } from 'fs-extra';
+import { ensureDirSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
 import { dirname, join } from 'path';
 
 import { captureElectronError } from './../utils';
@@ -68,7 +68,7 @@ export class StatefulBrowserWindow {
 
     try {
       this.win.setBounds({ height, width, x, y });
-    } catch (e) {
+    } catch {
       // This fails when opening the website window for some reason
     }
 
@@ -211,7 +211,7 @@ function refineOptionsAndState(
 
   try {
     savedState = readJsonSync(join(configFilePath, configFileName));
-  } catch (e) {
+  } catch {
     // Don't care, use defaults
   }
 

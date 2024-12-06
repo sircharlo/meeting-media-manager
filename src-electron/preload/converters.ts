@@ -2,9 +2,11 @@ import type Decompress from 'decompress';
 import type { PDFPageProxy } from 'pdfjs-dist';
 import type { RenderParameters } from 'pdfjs-dist/types/src/display/api';
 
-import { ensureDir, writeFile } from 'fs-extra';
+import fse from 'fs-extra';
+const { ensureDir, writeFile } = fse;
 import { FULL_HD } from 'src/constants/media';
-import { basename, join } from 'upath';
+import upath from 'upath';
+const { basename, join } = upath;
 
 import { capturePreloadError } from './log';
 

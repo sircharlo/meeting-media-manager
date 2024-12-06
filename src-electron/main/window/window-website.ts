@@ -110,7 +110,8 @@ export async function createWebsiteWindow(lang?: string) {
 
   if (PLATFORM === 'darwin') {
     websiteWindow.setAspectRatio(16 / 9, {
-      height: websiteWindow.getSize()[1] - websiteWindow.getContentSize()[1],
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      height: websiteWindow.getSize()[1]! - websiteWindow.getContentSize()[1]!,
       width: 0,
     });
   } else {
@@ -190,10 +191,13 @@ const setAspectRatio = () => {
   // Compute the new aspect ratio that, when the frame is removed, results in a 16:9 aspect ratio for the content
   const size = websiteWindow.getSize();
   const contentSize = websiteWindow.getContentSize();
-  const frameSize = [size[0] - contentSize[0], size[1] - contentSize[1]];
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const frameSize = [size[0]! - contentSize[0]!, size[1]! - contentSize[1]!];
   const aspectRatio = 16 / 9;
   const newAspectRatio =
-    (contentSize[0] + frameSize[0]) /
-    (contentSize[0] / aspectRatio + frameSize[1]);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    (contentSize[0]! + frameSize[0]!) /
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    (contentSize[0]! / aspectRatio + frameSize[1]!);
   websiteWindow.setAspectRatio(newAspectRatio);
 };

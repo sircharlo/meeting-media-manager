@@ -279,11 +279,11 @@ const chooseCustomBackground = async (reset?: boolean) => {
       try {
         const backgroundPicker = await openFileDialog(true, 'jwpub+image+pdf');
         if (backgroundPicker?.canceled) return;
-        if (!backgroundPicker || backgroundPicker.filePaths?.length === 0) {
+        if (!backgroundPicker?.filePaths.length) {
           notifyInvalidBackgroundFile();
         } else {
           const filepath = backgroundPicker.filePaths[0];
-          if (isJwpub(filepath)) {
+          if (filepath && isJwpub(filepath)) {
             jwpubImportFilePath.value = filepath;
             const unzipDir = await decompressJwpub(filepath);
             const db = await findDb(unzipDir);
@@ -300,7 +300,7 @@ const chooseCustomBackground = async (reset?: boolean) => {
             if (jwpubImages.value?.length === 0) {
               notifyInvalidBackgroundFile();
             }
-          } else {
+          } else if (filepath) {
             const tempDirectory = await getTempPath();
             const tempFilepath = path.join(
               tempDirectory,

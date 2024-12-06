@@ -931,22 +931,23 @@ const goToNextDayWithMedia = () => {
       (lookupPeriod.value?.[currentCongregation.value] ||
         additionalMediaMaps.value?.[currentCongregation.value])
     ) {
-      selectedDate.value = [
-        ...(lookupPeriod.value?.[currentCongregation.value]
-          ?.filter((day) => day.meeting)
-          .map((day) => day.date) ?? []),
-        ...Object.keys(
-          additionalMediaMaps.value?.[currentCongregation.value] || {},
-        ).filter(
-          (day) =>
-            (additionalMediaMaps.value?.[currentCongregation.value]?.[day]
-              ?.length || 0) > 0,
-        ),
-      ]
-        .filter(Boolean)
-        .filter((mediaDate) => !isInPast(dateFromString(mediaDate)))
-        .map((mediaDate) => formatDate(mediaDate, 'YYYY/MM/DD'))
-        .sort()[0];
+      selectedDate.value =
+        [
+          ...(lookupPeriod.value?.[currentCongregation.value]
+            ?.filter((day) => day.meeting)
+            .map((day) => day.date) ?? []),
+          ...Object.keys(
+            additionalMediaMaps.value?.[currentCongregation.value] || {},
+          ).filter(
+            (day) =>
+              (additionalMediaMaps.value?.[currentCongregation.value]?.[day]
+                ?.length || 0) > 0,
+          ),
+        ]
+          .filter(Boolean)
+          .filter((mediaDate) => !isInPast(dateFromString(mediaDate)))
+          .map((mediaDate) => formatDate(mediaDate, 'YYYY/MM/DD'))
+          .sort()[0] || '';
     }
   } catch (e) {
     errorCatcher(e);
@@ -1246,7 +1247,7 @@ const addToFiles = async (
       files = [jwPubFile];
       createTemporaryNotification({
         caption: t('jwpub-file-found'),
-        message: t('processing') + ' ' + path.basename(files[0].path),
+        message: t('processing') + ' ' + path.basename(files[0]?.path || ''),
       });
     }
     const archiveFile = files.find((f) => isArchive(f.path));
@@ -1254,7 +1255,7 @@ const addToFiles = async (
       files = [archiveFile];
       createTemporaryNotification({
         caption: t('archive-file-found'),
-        message: t('processing') + ' ' + path.basename(files[0].path),
+        message: t('processing') + ' ' + path.basename(files[0]?.path || ''),
       });
     }
   }
@@ -1277,10 +1278,10 @@ const addToFiles = async (
         ).path;
       } else if (isImageString(filepath)) {
         const [preamble, data] = filepath.split(';base64,');
-        const ext = preamble.split('/')[1];
+        const ext = preamble?.split('/')[1];
         const tempFilename = uuid() + '.' + ext;
         const tempFilepath = path.join(await getTempPath(), tempFilename);
-        await fs.writeFile(tempFilepath, Buffer.from(data, 'base64'));
+        await fs.writeFile(tempFilepath, Buffer.from(data ?? '', 'base64'));
         filepath = tempFilepath;
       }
       filepath = await convertImageIfNeeded(filepath);
@@ -1384,7 +1385,10 @@ const addToFiles = async (
             db,
             `SELECT DISTINCT Document.DocumentId, Title FROM Document JOIN ${mmTable} ON Document.DocumentId = ${mmTable}.DocumentId;`,
           );
-          if (jwpubImportDocuments.value.length === 1) {
+          if (
+            jwpubImportDocuments.value.length === 1 &&
+            jwpubImportDocuments.value[0]
+          ) {
             await addJwpubDocumentMediaToFiles(
               jwpubImportDb.value,
               jwpubImportDocuments.value[0],
@@ -1452,7 +1456,7 @@ const addToFiles = async (
     }
     currentFile.value++;
   }
-  if (!isJwpub(files[0].path)) resetDragging();
+  if (!isJwpub(files[0]?.path)) resetDragging();
 };
 
 const addSong = (section: MediaSection | undefined) => {
@@ -1491,12 +1495,12 @@ const dropEnd = (event: DragEvent) => {
           };
         })
         .sort((a, b) => SORTER.compare(a?.path, b?.path));
-      let noLocalDroppedFiles =
+      const noLocalDroppedFiles =
         droppedStuff.filter((file) => file.path).length === 0;
       if (noLocalDroppedFiles && droppedStuff.length > 0) {
-        let html = event.dataTransfer.getData('text/html');
-        let sanitizedHtml = DOMPurify.sanitize(html);
-        let src = new DOMParser()
+        const html = event.dataTransfer.getData('text/html');
+        const sanitizedHtml = DOMPurify.sanitize(html);
+        const src = new DOMParser()
           .parseFromString(sanitizedHtml, 'text/html')
           .querySelector('img')?.src;
         const filetype =
@@ -1535,7 +1539,7 @@ const updateMediaItemTag = (
   tag?: Record<string, string>,
 ) => {
   if (!media) return;
-  if (tag && tag.value?.length > 15) tag.value = tag.value.slice(0, 15);
+  if (tag?.value && tag.value.length > 15) tag.value = tag.value.slice(0, 15);
   media.song = tag?.type === 'song' ? tag.value : undefined;
   media.paragraph = tag?.type === 'paragraph' ? tag.value : undefined;
 };

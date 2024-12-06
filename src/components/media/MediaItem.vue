@@ -151,7 +151,7 @@
               @mouseenter="setHoveredBadge(media.uniqueId, true)"
               @mouseleave="setHoveredBadge(media.uniqueId, false)"
             >
-              <template v-if="mediaPanzoom?.scale > 1.01">
+              <template v-if="mediaPanzoom.scale && mediaPanzoom.scale > 1.01">
                 <q-badge
                   class="q-mr-xs"
                   color="warning"
@@ -164,7 +164,7 @@
               <div class="bg-semi-black row rounded-borders">
                 <q-badge
                   color="transparent"
-                  :disabled="mediaPanzoom?.scale < 1.01 || undefined"
+                  :disabled="!mediaPanzoom.scale || mediaPanzoom.scale < 1.01"
                   style="padding: 5px !important; cursor: pointer"
                   @click="zoomOut()"
                 >
@@ -173,7 +173,7 @@
                 <q-separator class="bg-grey-8 q-my-xs" vertical />
                 <q-badge
                   color="transparent"
-                  :disabled="mediaPanzoom?.scale > 4.99 || undefined"
+                  :disabled="!mediaPanzoom.scale || mediaPanzoom?.scale > 4.99"
                   style="padding: 5px !important; cursor: pointer"
                   @click="zoomIn()"
                 >
@@ -893,9 +893,11 @@ const setMediaPlaying = async (
         max: media.duration,
         min: 0,
       };
-      customDurations.value[currentCong][currentDate][media.uniqueId].min =
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      customDurations.value[currentCong][currentDate][media.uniqueId]!.min =
         marker.StartTimeTicks / 10000 / 1000;
-      customDurations.value[currentCong][currentDate][media.uniqueId].max =
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      customDurations.value[currentCong][currentDate][media.uniqueId]!.max =
         (marker.StartTimeTicks +
           marker.DurationTicks -
           marker.EndTransitionDurationTicks) /
@@ -1031,8 +1033,9 @@ function zoomOut() {
 }
 
 const zoomReset = (forced = false, animate = true) => {
-  if (panzooms[props.media.uniqueId]?.getScale() <= 1.25 || forced)
+  if ((panzooms[props.media.uniqueId]?.getScale() || 0) <= 1.25 || forced) {
     panzooms[props.media.uniqueId]?.reset({ animate });
+  }
 };
 
 function stopMedia(forOtherMediaItem = false) {
@@ -1048,9 +1051,10 @@ function stopMedia(forOtherMediaItem = false) {
 const destroyPanzoom = () => {
   try {
     if (!panzooms[props.media.uniqueId] || !props.media.uniqueId) return;
-    panzooms[props.media.uniqueId].resetStyle();
-    panzooms[props.media.uniqueId].reset({ animate: false });
-    panzooms[props.media.uniqueId].destroy();
+    panzooms[props.media.uniqueId]?.resetStyle();
+    panzooms[props.media.uniqueId]?.reset({ animate: false });
+    panzooms[props.media.uniqueId]?.destroy();
+
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete panzooms[props.media.uniqueId];
   } catch (e) {
