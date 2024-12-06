@@ -1747,7 +1747,7 @@ export async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
           !currentStateStore.currentSettings?.langFallback &&
             currentStateStore.currentSettings?.lang,
           currentStateStore.currentSettings?.langFallback,
-          /* eslint-disable perfectionist/sort-sets */
+          /* eslint-enable perfectionist/sort-sets */
         ]),
       ];
       for (const langwritten of langsWritten) {
