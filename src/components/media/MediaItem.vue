@@ -819,10 +819,12 @@ const displayMediaTitle = computed(() => {
 const mediaEditTagDialog = ref(false);
 const { t } = useI18n();
 
-const mediaTag = ref({
-  type: '',
-  value: '',
-});
+const mediaTag = ref(
+  props.media.tag || {
+    type: '',
+    value: '',
+  },
+);
 
 const tagTypes = [
   {
