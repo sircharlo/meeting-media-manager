@@ -263,12 +263,10 @@ watch(
   },
 );
 
-const { setAutoStartAtLogin } = window.electronApi;
-
 watch(
   () => currentSettings.value?.autoStartAtLogin,
   (newAutoStartAtLogin) => {
-    setAutoStartAtLogin(!!newAutoStartAtLogin);
+    window.electronApi.setAutoStartAtLogin(!!newAutoStartAtLogin);
   },
 );
 

@@ -4,7 +4,8 @@ import { ensureDir } from 'fs-extra/esm';
 import upath from 'upath';
 const { basename } = upath;
 
-import { captureElectronError, fetchJson } from './../utils';
+import { fetchJson } from './../utils';
+import { captureElectronError } from './log';
 import { sendToWindow } from './window/window-base';
 import { mainWindow } from './window/window-main';
 

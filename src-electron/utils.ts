@@ -1,10 +1,8 @@
-import type { ExclusiveEventHintOrCaptureContext } from 'app/node_modules/@sentry/core/build/types/utils/prepareEvent';
-
-import { captureException } from '@sentry/browser';
 import { version } from 'app/package.json';
 import { app } from 'electron';
 
 import { IS_DEV, JW_DOMAINS, TRUSTED_DOMAINS } from './constants';
+import { captureElectronError } from './main/log';
 import { urlVariables } from './main/session';
 
 /**
@@ -156,27 +154,6 @@ export const fetchJson = async <T>(
   }
   return null;
 };
-
-/**
- * Logs an error to the console or to Sentry
- * @param error The error to log
- * @param context The context to log with the error
- */
-export function captureElectronError(
-  error: Error | string | unknown,
-  context?: ExclusiveEventHintOrCaptureContext,
-) {
-  if (error instanceof Error && error.cause) {
-    captureElectronError(error.cause, context);
-  }
-
-  if (IS_DEV) {
-    console.error(error);
-    console.warn('context', context);
-  } else {
-    captureException(error, context);
-  }
-}
 
 /**
  * Throttles a function to only run once every `delay` milliseconds

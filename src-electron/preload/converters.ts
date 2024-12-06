@@ -8,7 +8,7 @@ import { FULL_HD } from 'src/constants/media';
 import upath from 'upath';
 const { basename, join } = upath;
 
-import { captureElectronError } from '../utils';
+import { capturePreloadError } from './log';
 
 export interface ConversionOptions {
   /**
@@ -44,7 +44,7 @@ export const getNrOfPdfPages = async (pdfPath: string): Promise<number> => {
     const pdfDocument = await loadingTask.promise;
     return pdfDocument.numPages;
   } catch (e) {
-    captureElectronError(e);
+    capturePreloadError(e);
     return 0;
   }
 };
@@ -100,12 +100,12 @@ export const convertPdfToImages = async (
         await writeFile(outputPath, base64Data, 'base64');
         outputImages.push(outputPath);
       } catch (e) {
-        captureElectronError(e);
+        capturePreloadError(e);
       }
     }
     return outputImages;
   } catch (e) {
-    captureElectronError(e);
+    capturePreloadError(e);
     return outputImages;
   }
 };

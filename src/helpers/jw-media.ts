@@ -384,7 +384,7 @@ export const fetchMedia = async () => {
           })
           .catch((error) => {
             day.error = true;
-            throw new Error(error);
+            throw error;
           });
       } catch (error) {
         errorCatcher(error);
@@ -593,8 +593,10 @@ const getStudyBible = async () => {
     const currentStateStore = useCurrentStateStore();
     const languages = [
       ...new Set([
+         
         currentStateStore.currentSettings?.lang,
         currentStateStore.currentSettings?.langFallback,
+         
       ]),
     ].filter((l): l is JwLangCode => !!l);
     let nwtStyDb: null | string = null;
@@ -1005,9 +1007,13 @@ export const getAudioBibleMedia = async (force = false) => {
       pub: 'nwt',
     };
     const languages = [
-      currentStateStore.currentSettings.lang,
-      currentStateStore.currentSettings?.langFallback,
-    ].filter(Boolean) as JwLangCode[];
+      ...new Set([
+         
+        currentStateStore.currentSettings.lang,
+        currentStateStore.currentSettings?.langFallback,
+         
+      ]),
+    ].filter((l): l is JwLangCode => !!l);
 
     const backupNameNeeded: number[] = [];
 
@@ -1520,7 +1526,7 @@ export const getWeMedia = async (lookupDate: Date) => {
     } else {
       songs = videosNotInParagraphs.slice(0, 2); // after FEB_2023, the first two videos from DocumentMultimedia are the songs
     }
-    let songLangs: string[] = [];
+    let songLangs: ('' | JwLangCode)[] = [];
     try {
       songLangs = executeQuery<MultimediaExtractItem>(
         db,
@@ -1535,7 +1541,9 @@ export const getWeMedia = async (lookupDate: Date) => {
         .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal)
         .map((item) => {
           const match = item.Link.match(/\/(.*)\//);
-          const langOverride = (match ? match[1]?.split(':')[0] : '') ?? '';
+          const langOverride = match
+            ? (match[1]?.split(':')[0] as JwLangCode)
+            : '';
           return langOverride === currentStateStore.currentSettings?.lang
             ? ''
             : langOverride;
@@ -1546,10 +1554,10 @@ export const getWeMedia = async (lookupDate: Date) => {
         () => currentStateStore.currentSettings?.lang || 'E',
       );
     }
-    const mergedSongs = songs
+    const mergedSongs: MultimediaItem[] = songs
       .map((song, index) => ({
         ...song,
-        ...(songLangs[index] ? { LangOverride: songLangs[index] } : {}),
+        ...(songLangs[index] ? { AlternativeLanguage: songLangs[index] } : {}),
       }))
       .sort(
         (a, b) =>
@@ -1575,7 +1583,9 @@ export const getWeMedia = async (lookupDate: Date) => {
       );
       if (multimediaMepsLangItem?.MepsLanguageIndex !== undefined) {
         const mepsLang = mepslangs[multimediaMepsLangItem.MepsLanguageIndex];
-        if (mepsLang) media.AlternativeLanguage = mepsLang;
+        if (mepsLang) {
+          media.AlternativeLanguage = mepsLang;
+        }
       }
       const videoMarkers = getMediaVideoMarkers(
         { db, docId },
@@ -1639,7 +1649,12 @@ export const getMwMedia = async (lookupDate: Date) => {
 
     if (docId < 0)
       throw new Error(
-        'No document id found for ' + monday + ' ' + issueString + ' ' + db,
+        'No document id found for ' +
+          formatDate(monday, 'YYYYMMDD') +
+          ' ' +
+          issueString +
+          ' ' +
+          db.split('/').pop(),
       );
 
     const mms = getDocumentMultimediaItems(
@@ -1731,11 +1746,16 @@ export async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
     for (const { media } of mediaToProcess) {
       const langsWritten = [
         ...new Set([
-          currentStateStore.currentSettings?.lang,
-          currentStateStore.currentSettings?.langFallback,
-          media.AlternativeLanguage,
+          /* eslint-disable perfectionist/sort-sets */
+          currentStateStore.currentSettings?.langFallback &&
+            currentStateStore.currentSettings?.lang,
           media.MepsLanguageIndex !== undefined &&
             mepslangs[media.MepsLanguageIndex],
+          media.AlternativeLanguage,
+          !currentStateStore.currentSettings?.langFallback &&
+            currentStateStore.currentSettings?.lang,
+          currentStateStore.currentSettings?.langFallback,
+           
         ]),
       ];
       for (const langwritten of langsWritten) {

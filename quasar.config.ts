@@ -9,6 +9,10 @@ import { mergeConfig } from 'vite'; // use mergeConfig helper to avoid overwriti
 
 import { repository, version } from './package.json';
 
+const SENTRY_ORG = 'jw-projects';
+const SENTRY_PROJECT = 'mmm-v2';
+const SENTRY_VERSION = `meeting-media-manager@${version}`;
+
 export default defineConfig((ctx) => {
   return {
     // animations: 'all', // --- includes all animations
@@ -42,11 +46,9 @@ export default defineConfig((ctx) => {
             viteConf.plugins.push(
               sentryVitePlugin({
                 authToken: process.env.SENTRY_AUTH_TOKEN,
-                org: 'jw-projects',
-                project: 'mmm-v2',
-                release: {
-                  name: version,
-                },
+                org: SENTRY_ORG,
+                project: SENTRY_PROJECT,
+                release: { name: SENTRY_VERSION },
                 telemetry: false,
               }),
             );
@@ -128,18 +130,16 @@ export default defineConfig((ctx) => {
       },
       bundler: 'builder', // 'packager' or 'builder'
       extendElectronMainConf: (esbuildConf) => {
-        if (ctx.prod && !ctx.debug) {
+        if (ctx.prod && !ctx.debug && process.env.SENTRY_AUTH_TOKEN) {
           esbuildConf.sourcemap = true;
           if (!esbuildConf.plugins) esbuildConf.plugins = [];
           if (process.env.SENTRY_AUTH_TOKEN) {
             esbuildConf.plugins.push(
               sentryEsbuildPlugin({
                 authToken: process.env.SENTRY_AUTH_TOKEN,
-                org: 'jw-projects',
-                project: 'mmm-v2',
-                release: {
-                  name: version,
-                },
+                org: SENTRY_ORG,
+                project: SENTRY_PROJECT,
+                release: { name: SENTRY_VERSION },
                 telemetry: false,
               }),
             );
@@ -147,18 +147,16 @@ export default defineConfig((ctx) => {
         }
       },
       extendElectronPreloadConf: (esbuildConf) => {
-        if (ctx.prod && !ctx.debug) {
+        if (ctx.prod && !ctx.debug && process.env.SENTRY_AUTH_TOKEN) {
           esbuildConf.sourcemap = true;
           if (!esbuildConf.plugins) esbuildConf.plugins = [];
           if (process.env.SENTRY_AUTH_TOKEN) {
             esbuildConf.plugins.push(
               sentryEsbuildPlugin({
                 authToken: process.env.SENTRY_AUTH_TOKEN,
-                org: 'jw-projects',
-                project: 'mmm-v2',
-                release: {
-                  name: version,
-                },
+                org: SENTRY_ORG,
+                project: SENTRY_PROJECT,
+                release: { name: SENTRY_VERSION },
                 telemetry: false,
               }),
             );

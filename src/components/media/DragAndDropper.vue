@@ -131,8 +131,6 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { computed, ref, useTemplateRef } from 'vue';
 
-const { openFileDialog } = window.electronApi;
-
 const props = defineProps<{
   currentFile: number;
   section: MediaSection | undefined;
@@ -163,7 +161,8 @@ const resetModal = () => {
 };
 
 const getLocalFiles = async () => {
-  openFileDialog()
+  window.electronApi
+    .openFileDialog()
     .then((result) => {
       if (result && result.filePaths.length > 0) {
         window.dispatchEvent(
