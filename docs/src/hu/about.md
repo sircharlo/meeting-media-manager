@@ -1,10 +1,10 @@
-# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
+# A Meeting Media Managerről (M³) {#about-meeting-media-manager-m3}
 
 ![M³ banner](./../assets/m3-banner.png)
 
-## What is this app? {#what-is-this-app}
+## Mi ez az alkalmazás? {#what-is-this-app}
 
-**Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on the official website of Jehovah's Witnesses.
+A **Meeting Media Manager**, vagy röviden **M³** egy Windows, macOS és Linux operációs rendszerekhez készült alkalmazás, amely automatikusan letölti a Jehova Tanúi gyülekezeti összejövetelein használt képeket és videókat, bármilyen nyelven, amelyek megtalálhatók Jehova Tanúi hivatalos weboldalán.
 
 Támogatja a rendszeres és egyéni összejövetelek médiaanyagainak kezelését, és támogatja az azonos számítógépes fiókot használó több gyülekezet és/vagy csoport működését.
 

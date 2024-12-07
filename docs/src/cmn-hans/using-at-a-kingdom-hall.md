@@ -14,6 +14,7 @@
    - **Windows:**
      - 对于大多数Windows系统，下载 <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
      - 对于较旧的32位Windows系统，请下载 <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>。
+     - For a portable version, download <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
    - **MacOS:**
      - **M系列(Apple Silicon)**: 下载 <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>。
      - **Intel系列 Mac**：下载 <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>。
