@@ -1,19 +1,20 @@
 <!-- markdownlint-disable no-inline-html -->
 
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# Az M³ használata egy Királyság teremben {#using-m3-at-a-kingdom-hall}
 
-This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
+Ez az útmutató végigvezeti Önt a **Meeting Media Manager (M³)** letöltésének, telepítésének és beállításának folyamatán egy Királyságteremben. Kövesse a lépéseket, hogy a gyülekezeti összejövetelek során zökkenőmentesen tudja kezelni a médiát.
 
-## 1. Download and install {#download-and-install}
+## 1. Letöltés és telepítés {#download-and-install}
 
 <script setup>
   import { data } from './../../data/version.data.mts'
 </script>
 
-1. Download the appropriate version for your operating system:
+1. Töltse le az operációs rendszerének megfelelő verziót:
    - **Windows:**
-     - For most Windows systems, download <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
-     - For older 32-bit Windows systems, download <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
+     - A legtöbb Windows rendszerhez töltse le a <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a> fájlt.
+     - Régebbi 32 bites Windows rendszerekhez töltse le a <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a> fájlt.
+     - For a portable version, download <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
    - **macOS:**
      - **M-series (Apple Silicon)**: Download <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
      - **Intel-based Macs**: Download <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
