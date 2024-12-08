@@ -20,15 +20,15 @@ Az M³ a tökéletes eszköz az összejöveteli média kezeléséhez, amely zök
 
 ### Legfontosabb előnyök {#key-benefits}
 
-- **Könnyed médiabemutatás**: Csak nyissa meg az M³ programot, és minden működik. No complex setup or extra steps required.
+- **Könnyed médiabemutatás**: Csak nyissa meg az M³ programot, és minden működik. Nincs szükség bonyolult beállításra vagy további lépésekre.
 
-- **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
+- **Több gyülekezet támogatása**: Kezelje több gyülekezet vagy csoport beállításait egyetlen alkalmazáson belül.
 
-- **Advanced features**: Easily add extra media, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Továbbfejlesztett funkciók**: Könnyedén adhat hozzá extra médiát, és automatikusan megoszthatja a résztvevőkkel a Zoomon, hogy mi történik a Királyság Teremben.
 
-- **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
+- **Optimalizált keresztplatformos teljesítmény**: Élvezze a zökkenőmentes és gyors reagálást Windows, macOS és Linux rendszereken, még régebbi rendszereken vagy korlátozott erőforrásokkal rendelkező számítógépeken is.
 
-- **Reliable and stable**: Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
+- **Megbízható és stabil**: Úgy tervezték, hogy akkor is megállja a helyét, amikor a legnagyobb szükség van rá. Találkozott egy hibával? Jelentse, és azonnal foglalkozunk vele.
 
 ## Mit tud az M³? {#what-can-m3-do}
 
@@ -36,21 +36,21 @@ Röviden, az M³ lehetővé teszi, hogy egyszerűen és automatikusan letöltse,
 
 A **hibrid** vagy **személyes** gyülekezeti összejövetelekhez az integrált médiamegjelenítési mód minden olyan funkcióval rendelkezik, amely leegyszerűsíti a gyülekezettel való médiamegosztás feladatát, többek között:
 
-- Media thumbnails with the ability to zoom and pan, as well as set custom start and end times for media
+- Média miniatűrök a nagyítás és a pásztázás lehetőségével, valamint lehetőség van a média kezdő- és befejező időpontjának egyéni beállítására
 - Könnyen használható szünet/lejátszás/stop gombok a médiafájlok lejátszásának kezeléséhez
 - Egyszerű háttérzene-lejátszás, automatikus leállítással a terv szerint ütemezett összejövetelek kezdete előtt
 - Automatikus külső monitorfelismerés és -kezelés
-- OBS Studio integration with automatic scene switching during media presentation
-- Presenting the official website of Jehovah's Witnesses website on an external monitor
-- Import JWPUB files, JWLPLAYLIST files, videos from the official website of Jehovah's Witnesses, and media for public talks from the S-34 file in a few clicks.
-- Custom videos, pictures, audio files and even PDF files can be easily imported too!
+- OBS Studio integráció automatikus jelenetváltással a média megjelenítése során
+- Jehova Tanúi hivatalos honlapjának megjelenítése egy kihelyezett képernyőn
+- Importáljon JWPUB fájlokat, JWLPLAYLIST fájlokat, videókat Jehova Tanúi hivatalos weboldaláról és a nyilvános előadások médiáját az S-34 fájlból néhány kattintással.
+- Egyéni videók, képek, hangfájlok és akár PDF fájlok is könnyedén importálhatók!
 
-**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
+**Adjon egy esélyt az M³-nak még ma, és győződjön meg róla, hogy mire képes! A média bemutatása a gyülekezeti összejöveteleken még soha nem volt ilyen egyszerű.**
 
 ![M³ preview](./../assets/m3-preview.png)
 
 ## Működik az M³ az én nyelvemen? {#does-m3-work-in-my-language}
 
-**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on the official website of Jehovah's Witnesses. A rendelkezésre álló nyelvek listája dinamikusan frissül; Önnek csak ki kell választania, hogy melyikre van szüksége.
+**Igen!** Jehova Tanúi összejöveteleinek médiaanyagai automatikusan letölthetők Jehova Tanúi hivatalos honlapjáról a több száz nyelv bármelyikén. A rendelkezésre álló nyelvek listája dinamikusan frissül; Önnek csak ki kell választania, hogy melyikre van szüksége.
 
 Ráadásul magát az M³ programot is számos önkéntes fordította le több nyelvre; így Ön beállíthatja, hogy milyen nyelven szeretné, hogy az M³ felülete megjelenjen.
