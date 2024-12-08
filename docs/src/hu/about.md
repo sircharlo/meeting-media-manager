@@ -1,4 +1,4 @@
-# A Meeting Media Managerről (M³) {#about-meeting-media-manager-m3}
+# A Meeting Media Manager-ről (M³) {#about-meeting-media-manager-m3}
 
 ![M³ banner](./../assets/m3-banner.png)
 
@@ -14,13 +14,13 @@ Az M³ korábban JWMMF (JW Meeting Media Fetcher) néven volt ismert, de 2022 m�
 
 :::
 
-## Why choose M³? {#why-choose-m3}
+## Miért válassza az M³ programot? {#why-choose-m3}
 
-M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms.
+Az M³ a tökéletes eszköz az összejöveteli média kezeléséhez, amely zökkenőmentes, megbízható és funkciógazdag élményt nyújt minden platformon.
 
-### Key benefits {#key-benefits}
+### Legfontosabb előnyök {#key-benefits}
 
-- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
+- **Könnyed médiabemutatás**: Csak nyissa meg az M³ programot, és minden működik. No complex setup or extra steps required.
 
 - **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
 
