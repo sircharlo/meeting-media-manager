@@ -41,7 +41,7 @@
   "cache": "Hifadhi ya faili",
   "cacheFolder": "Pahali pa kuhifadhi",
   "cacheFolder-explain": "Chagua folda ya kuhifadhi faili, kama machapisho na midia. Ikiwachwa bila kujawza, programu itachagua folda hiyo kiotomatiki.",
-  "cacheFolder-wizard": "If you are uncertain about this setting, you may proceed to the next step without selecting a folder. The default configuration is suitable for most users.",
+  "cacheFolder-wizard": "Ikiwa hauko hakika na mpangilio huu, unaweza kuendelea kwenye hatua ifuatayo bila kuchagua folda. Mpangilio wa kawaida unawafaa watumiaji wengi.",
   "cancel": "Ghairi",
   "change-tag": "Hariri lebo",
   "change-tag-explain": "Badilisha aina ya lebo kwa ajili ya midia hii.",
