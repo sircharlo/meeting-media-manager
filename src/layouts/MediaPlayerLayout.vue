@@ -12,6 +12,6 @@ import { onMounted } from 'vue';
 
 onMounted(() => {
   document.body.style.overflow = 'hidden';
-  document.title = 'Media Player Window';
+  document.title = 'Media Player - M³';
 });
 </script>
