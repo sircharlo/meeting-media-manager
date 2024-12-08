@@ -47,10 +47,7 @@
     color="white-transparent"
     :disable="mediaPlaying"
     unelevated
-    @click="
-      openWebsiteWindow(currentState.currentLangObject?.symbol);
-      mediaPlayingAction = 'website';
-    "
+    @click="presentWebsite"
   >
     <q-icon class="q-mr-sm" name="mmm-mirror" size="xs" />
     {{ $t('start-mirroring') }}
@@ -79,4 +76,17 @@ watch(mediaPlayingAction, (newValue, oldValue) => {
     sendObsSceneEvent('camera');
   }
 });
+
+const presentWebsite = () => {
+  const el = document.getElementById(
+    'website-present-preview',
+  ) as HTMLIFrameElement | null;
+  console.log('el', el);
+  console.log(
+    'url',
+    window.electronApi.getIframeUrl('website-present-preview'),
+  );
+  openWebsiteWindow(currentState.currentLangObject?.symbol);
+  mediaPlayingAction.value = 'website';
+};
 </script>

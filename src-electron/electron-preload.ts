@@ -45,6 +45,12 @@ const electronApi: ElectronApi = {
   getAllScreens: () => invoke('getAllScreens'),
   getAppDataPath: () => invoke('getAppDataPath'),
   getAppVersion: () => invoke('getVersion'),
+  getIframeUrl: (iframeId) => {
+    const iframe = document.getElementById(
+      iframeId,
+    ) as HTMLIFrameElement | null;
+    return iframe?.contentWindow?.location?.href ?? '';
+  },
   getLocalPathFromFileObject: (fo) => webUtils.getPathForFile(fo),
   getNrOfPdfPages,
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),

@@ -27,14 +27,13 @@ export function closeOtherWindows(source: BrowserWindow) {
  * Creates a new browser window
  * @param name The name of the window
  * @param options The options for the window
- * @param defaultHeight The default height of the window
- * @param defaultWidth The default width of the window
+ * @param subPage The sub page of the website to load
  * @returns The created window
  */
 export function createWindow(
   name: 'main' | 'media' | 'website' = 'main',
   options?: BrowserWindowConstructorOptions,
-  lang = '',
+  subPage = '',
 ) {
   const defaultSize = { height: 600, width: 1000 };
   // Create the browser window
@@ -92,7 +91,7 @@ export function createWindow(
       page = 'media-player';
       break;
     case 'website':
-      page = `https://www.${urlVariables?.base || 'jw.org'}/${lang}`;
+      page = `https://www.${urlVariables?.base || 'jw.org'}/${subPage}`;
       break;
   }
   win.loadURL(

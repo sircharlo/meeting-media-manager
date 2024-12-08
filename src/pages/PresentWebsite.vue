@@ -26,12 +26,26 @@
         </q-item>
       </div>
     </q-list>
+    <iframe
+      id="website-present-preview"
+      :src="websiteSrc"
+      style="aspect-ratio: 16 / 9; width: 100%"
+    ></iframe>
   </q-page>
 </template>
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { useCurrentStateStore } from 'src/stores/current-state';
+import { useJwStore } from 'src/stores/jw';
+import { computed, onMounted } from 'vue';
+
+const jwStore = useJwStore();
+const currentState = useCurrentStateStore();
 
 onMounted(() => {
   window.electronApi.askForMediaAccess();
+});
+
+const websiteSrc = computed(() => {
+  return `https://www.${jwStore.urlVariables?.base || 'jw.org'}/${currentState.currentLangObject?.symbol}`;
 });
 </script>

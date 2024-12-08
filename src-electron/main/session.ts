@@ -32,6 +32,10 @@ export const initSessionListeners = () => {
           const baseUrl = `${url.protocol}//${url.hostname}`;
           details.requestHeaders['Referer'] = baseUrl;
           details.requestHeaders['Origin'] = baseUrl;
+          if (details.requestHeaders['Sec-Fetch-Dest'] === 'iframe') {
+            details.requestHeaders['Sec-Fetch-Dest'] = 'document';
+            details.requestHeaders['Sec-Fetch-Site'] = 'same-site';
+          }
         }
         callback({ requestHeaders: details.requestHeaders });
       },
@@ -57,7 +61,7 @@ export const initSessionListeners = () => {
           'connect-src': "'self' https: ws: devtools:",
           'default-src': "'self'",
           'font-src': "'self' https: https://fonts.gstatic.com file:",
-          'frame-src': "'self'",
+          'frame-src': `'self' ${trustedDomains}`,
           'img-src': `'self' ${trustedDomains} file: data: blob:`,
           'media-src': `'self' ${trustedDomains} file: data:`,
           'object-src': "'none'",
@@ -104,6 +108,10 @@ export const initSessionListeners = () => {
         }
       }
 
+      if (details.responseHeaders['x-frame-options']) {
+        delete details.responseHeaders['x-frame-options'];
+      }
+
       if (alterResponseHeaders) {
         if (
           !details.responseHeaders['access-control-allow-origin'] ||
@@ -118,10 +126,6 @@ export const initSessionListeners = () => {
           details.responseHeaders['access-control-allow-credentials'] = [
             'true',
           ];
-        }
-
-        if (details.responseHeaders['x-frame-options']) {
-          delete details.responseHeaders['x-frame-options'];
         }
       }
 
