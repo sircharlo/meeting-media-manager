@@ -66,9 +66,9 @@ Ha az előző szakaszban leírt két parancs beírása után sem tudja elindíta
 4. Egy újabb figyelmeztetés jelenik meg, amelyben hitelesítenie kell magát az alkalmazás elindításához.
 5. Az M³ programnak most már el kell indulnia.
 
-If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
+Ha a fenti lépések követése után még mindig problémái vannak, kérjük, [nyisson egy problémát a GitHubon](https://github.com/sircharlo/meeting-media-manager/issues/new). Mindent meg fogunk tenni, hogy segítsünk.
 
-### macOS only: Re-enabling website presentation after updates {#screen-sharing-issues}
+### Csak macOS: A webhely megjelenítésének ismételt engedélyezése a frissítések után {#screen-sharing-issues}
 
 :::warning Figyelem
 
@@ -76,28 +76,28 @@ Ez a szakasz csak a macOS-felhasználókra vonatkozik.
 
 :::
 
-Some macOS users have reported that website presentation no longer works after installing updates to M³.
+Néhány macOS-felhasználó arról számolt be, hogy a webhelybemutatás nem működik az M³ frissítéseinek telepítése után.
 
-If the media window is black when presenting the website after updating M³, try the following steps:
+Ha az M³ frissítése után a weboldal megjelenítésekor a médiaablak fekete, próbálja meg a következő lépéseket:
 
 1. Nyissa meg a macOS rendszer **Adatvédelem és biztonság** beállításait.
-2. Go to **Screen Recording**.
-3. Select M³ in the list.
-4. Click the `-` (minus) button to remove it.
-5. Click the `+` (plus) button and select M³ from the Applications folder.
-6. You may be prompted to relaunch M³ to apply the change.
+2. Válassza a **Képernyőfelvétel** menüpontot.
+3. Válassza ki a listából az M³ programot.
+4. Kattintson a '-' (mínusz) gombra az eltávolításhoz.
+5. Kattintson a `+` (plusz) gombra, és válassza ki az Alkalmazások mappából az M³ programot.
+6. Előfordulhat, hogy a módosítás alkalmazásához újra kell indítani az M³ programot.
 
-After these steps, screen sharing should function as expected once again.
+A fenti lépések után a képernyőmegosztásnak ismét a várt módon kell működnie.
 
 :::tip Tipp
 
-These steps are optional and can be skipped if you do not plan to use the website presentation feature. On the other hand, if you do plan to use the website presentation feature, it is recommended to follow these steps after every update to ensure the feature works as expected.
+Ezek a lépések opcionálisak, és kihagyhatók, ha nem kívánja használni a weboldal bemutatása funkciót. Másrészt, ha tervezi a webhelybemutató funkció használatát, ajánlott minden frissítés után követni az alábbi lépéseket, hogy a funkció az elvárt módon működjön.
 
 :::
 
-## 2. Configuration wizard {#configuration-wizard}
+## 2. Konfigurációs varázsló {#configuration-wizard}
 
-### App display language {#app-display-language}
+### Az alkalmazás megjelenítési nyelve {#app-display-language}
 
 Az M³ első indításakor a rendszer kéri, hogy válassza ki a kívánt **megjelenítési nyelvet**. Válassza ki azt a nyelvet, amelyet az M³ felületén kíván használni.
 
@@ -107,7 +107,7 @@ Ez a nyelv nem kell, hogy megegyezzen azzal a nyelvvel, amelyen az M³ a médiat
 
 :::
 
-### Profile type {#profile-type}
+### Profil típusa {#profile-type}
 
 A következő lépés a **profil típusának** kiválasztása. A Királyság-teremben történő szokásos beállításhoz válassza a **Szokásos** lehetőséget. Ez számos, a gyülekezeti összejöveteleken általánosan használt funkciót fog beállítani.
 
@@ -119,7 +119,7 @@ Az **Egyéb** profiltípust ritkán kell használni. **A gyülekezeti összejöv
 
 :::
 
-### Automatic congregation lookup {#automatic-congregation-lookup}
+### Automatikus gyülekezetkeresés {#automatic-congregation-lookup}
 
 Az M³ megpróbálhatja automatikusan megkeresni a gyülekezet összejöveteleinek időpontját, nyelvét és formázott nevét.
 
@@ -133,11 +133,11 @@ Ez a lekérdezés Jehova Tanúi hivatalos honlapjának nyilvánosan elérhető a
 
 :::
 
-### Manual entry of congregation information {#manual-entry-of-congregation-information}
+### A gyülekezet információinak kézi bevitele {#manual-entry-of-congregation-information}
 
 Ha az automatikus keresés nem találta meg az Ön gyülekezetét, természetesen kézzel is megadhatja a szükséges adatokat. A varázsló lehetővé teszi, hogy felülvizsgálja és/vagy megadja a gyülekezet **nevét**, **az összejövetelek nyelvét**, valamint **az összejövetelek napját és időpontját**.
 
-### Caching videos from the songbook {#caching-videos-from-the-songbook}
+### Videók gyorsítótárazása az énekeskönyvből {#caching-videos-from-the-songbook}
 
 Lehetősége lesz arra is, hogy **minden videót letöltsön az énekeskönyvből**. Ez az opció előre letölti az összes zenei videót, csökkentve ezzel a jövőbeni összejövetelekhez szükséges médiatartalmak betöltési idejét.
 
@@ -150,7 +150,7 @@ Ha a Királyság-terem számítógépe elegendő tárhellyel rendelkezik, akkor 
 
 :::
 
-### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
+### OBS Studio integráció konfigurálása (opcionális) {#obs-studio-integration-configuration}
 
 Ha az Ön Királyság-terme **OBS Studio**-t használ a hibrid összejövetelek Zoom-on keresztüli közvetítésére, akkor az M³ automatikusan integrálható ezzel a programmal. A beállítás során a következő adatok megadásával konfigurálhatja az OBS Studio integrációját:
 
@@ -164,6 +164,6 @@ Ha a gyülekezete rendszeresen tart hibrid összejöveteleket akkor **kifejezett
 
 :::
 
-## 3. Enjoy using M³ {#enjoy-using-m3}
+## 3. Élvezze az M³ program használatát {#enjoy-using-m3}
 
 Miután a beállítási varázslóval elkészült, az M³ készen áll arra, hogy segítsen a gyülekezeti összejövetelek médiaanyagainak kezelésében és megjelenítésében. Élvezze az alkalmazás használatát! :tada:
