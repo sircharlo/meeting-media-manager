@@ -16,8 +16,8 @@ Ez az útmutató végigvezeti Önt a **Meeting Media Manager (M³)** letöltés�
      - Régebbi 32 bites Windows rendszerekhez töltse le a <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a> fájlt.
      - A hordozható változathoz töltse le a <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a> fájlt.
    - **macOS:**
-     - **M-sorozat (Apple Silicon)**: Letöltés <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
-     - **Intel-alapú Mac számítógépek**: Letöltés <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
+     - **M-sorozat (Apple Silicon)**: Töltse le a <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a> fájlt.
+     - **Intel-alapú Mac számítógépek**: Töltse le a <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a> fájlt.
    - **Linux:**
      - Töltse le a <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a> fájlt.
 2. Ha a letöltési linkek nem működnek, látogasson el az [M³ letöltési oldalra](https://github.com/sircharlo/meeting-media-manager/releases/latest), és töltse le manuálisan a megfelelő verziót.
