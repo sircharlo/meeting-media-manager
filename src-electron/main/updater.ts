@@ -1,6 +1,8 @@
 import { app } from 'electron';
-import { autoUpdater } from 'electron-updater';
-import { exists } from 'fs-extra';
+import electronUpdater from 'electron-updater';
+const { autoUpdater } = electronUpdater;
+import fse from 'fs-extra';
+const { exists } = fse;
 import { join } from 'path';
 
 import { PLATFORM } from './../constants';

@@ -102,8 +102,8 @@ export const isArchive = (filepath: string) => {
  * @param filepath The path to the file.
  * @returns The result of the check.
  */
-export const isJwpub = (filepath: string) => {
-  return isFileOfType(filepath, JWPUB_EXTENSIONS);
+export const isJwpub = (filepath?: string) => {
+  return isFileOfType(filepath ?? '', JWPUB_EXTENSIONS);
 };
 
 /**

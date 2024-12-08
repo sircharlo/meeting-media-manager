@@ -6,7 +6,7 @@ hero:
   image: /logo.svg
   actions:
     - theme: brand
-      text: Install M³
+      text: M³ telepítése
       link: /hu/using-at-a-kingdom-hall#download-and-install
     - theme: alt
       text: Használat egy Királyság-teremben
@@ -17,7 +17,7 @@ hero:
 features:
   - icon: 🚀
     title: Automatikus médialetöltés
-    details: Automatically downloads pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
+    details: Automatikusan letölti a gyülekezeti összejövetelek képeit és videóit a Jehova Tanúi hivatalos honlapján elérhető nyelveken.
   - icon: 🎦
     title: Média megjelenítése
     details: Lehetővé teszi a médiatartalom egyszerű megosztását a hibrid vagy személyes összejövetelek során.

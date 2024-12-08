@@ -73,7 +73,7 @@ export function findBestResolution(
  * @returns Whether the item is a MediaLink
  */
 export function isMediaLink(
-  item: MediaItemsMediatorFile | MediaLink | null,
+  item?: MediaItemsMediatorFile | MediaLink | null,
 ): item is MediaLink {
   if (!item) return false;
   return !('progressiveDownloadURL' in item);

@@ -126,11 +126,8 @@
           :title="$t('lang')"
         >
           <p>{{ $t('in-what-language-should-media-be-downloaded') }}</p>
-          <SelectInput
-            v-model="currentSettings.lang"
-            list="jwLanguages"
-            use-input
-          />
+          <SelectInput v-model="currentSettings.lang" list="jwLanguages" />
+          <!-- use-input -->
           <!-- :label="$t('lang')" -->
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn color="negative" flat :label="$t('back')" @click="step--" />

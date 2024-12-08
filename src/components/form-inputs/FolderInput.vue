@@ -36,7 +36,7 @@ const showFolderPicker = async () => {
     if (!result || !result.filePaths || result.canceled) {
       model.value = null;
     } else if (result.filePaths.length > 0) {
-      model.value = result.filePaths[0];
+      model.value = result.filePaths[0] ?? null;
     }
   } catch (error) {
     errorCatcher(error);

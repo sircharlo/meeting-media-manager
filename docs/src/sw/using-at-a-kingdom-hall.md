@@ -14,6 +14,7 @@ Mwongozo huu utakuelekeza kwenye hatua za kupakua, kusakinisha na kuanzisha Meet
    - **Windows:**
      - Kwa mifumo mingi ya Windows, pakua <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
      - Kwa mifumo ya kitambo ya 32-bit Windows, pakua <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
+     - Kwa programu inayoweza kuhamishwa, pakua <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
    - **macOS:**
      - **M-series (Apple Silicon)**: Pakua <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
      - **Intel-based Macs**: Pakua <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.

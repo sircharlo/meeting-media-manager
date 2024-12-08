@@ -9,7 +9,7 @@
         </template>
         <template v-else>
           {{ $t('media-gallery') }} -
-          {{ bibleBooks[bibleBook].Title }}
+          {{ bibleBooks[bibleBook]?.Title }}
         </template>
       </div>
       <div class="col-shrink full-width q-px-md q-py-md">
@@ -18,7 +18,7 @@
         </template>
         <template v-else>
           <div class="text-subtitle1">
-            {{ bibleBooks[bibleBook].Title }} - {{ $t('chapter') }}
+            {{ bibleBooks[bibleBook]?.Title }} - {{ $t('chapter') }}
             {{ bibleBookChapter }}
           </div>
         </template>
@@ -287,24 +287,27 @@ const bibleMediaCategories = ref<string[]>([]);
 
 const bibleMediaByCategory = computed(() => {
   const returnObj: Record<string, MultimediaItem[]> = {};
-  returnObj[bibleMediaCategories.value[0]] = allBibleMedia.value.filter(
-    (item) => item.DocumentId < bibleBooksStartAtId.value,
-  );
-  returnObj[bibleMediaCategories.value[1]] = allBibleMedia.value.filter(
-    (item) => item.BookNumber,
-  );
+  returnObj[bibleMediaCategories.value[0] ?? 'INTRODUCTION'] =
+    allBibleMedia.value.filter(
+      (item) => item.DocumentId < bibleBooksStartAtId.value,
+    );
+  returnObj[bibleMediaCategories.value[1] ?? 'BOOKS'] =
+    allBibleMedia.value.filter((item) => item.BookNumber);
   for (let i = 2; i < bibleMediaCategories.value.length; i++) {
-    returnObj[bibleMediaCategories.value[i]] = allBibleMedia.value.filter(
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    returnObj[bibleMediaCategories.value[i]!] = allBibleMedia.value.filter(
       (item) =>
         item.DocumentId > bibleBooksEndAtId.value &&
         (item.ParentTitle || '').toLowerCase() ===
-          bibleMediaCategories.value[i].toLowerCase(),
+          bibleMediaCategories.value[i]?.toLowerCase(),
     );
   }
   return returnObj;
 });
 const bibleBookMedia = computed(() => {
-  return bibleMediaByCategory.value[bibleMediaCategories.value[1]];
+  return (
+    bibleMediaByCategory.value[bibleMediaCategories.value[1] ?? 'BOOKS'] ?? []
+  );
 });
 const bibleBooks = ref<Record<number, MultimediaItem>>({});
 
@@ -321,8 +324,9 @@ const selectedBookChapters = computed(() => {
 });
 
 const selectedChapterMediaItems = computed(() => {
-  if (tab.value !== bibleMediaCategories.value[1])
+  if (tab.value !== bibleMediaCategories.value[1]) {
     return bibleMediaByCategory.value[tab.value];
+  }
   if (!bibleBook.value || !bibleBookChapter.value) return [];
 
   const filteredItems = bibleBookMedia.value.filter(
@@ -351,7 +355,8 @@ const selectedChapterMediaItems = computed(() => {
     let start = sorted[0];
 
     for (let i = 1; i <= sorted.length; i++) {
-      if (sorted[i] !== sorted[i - 1] + 1) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      if (sorted[i] !== sorted[i - 1]! + 1) {
         ranges.push(
           start === sorted[i - 1] ? `${start}` : `${start}-${sorted[i - 1]}`,
         );
@@ -371,20 +376,21 @@ const selectedChapterMediaItems = computed(() => {
 });
 
 const groupedMediaItems = computed(() => {
-  const groups = selectedChapterMediaItems.value.reduce(
-    (groups: Record<string, MultimediaItem[]>, item) => {
-      const label =
-        (tab.value !== bibleMediaCategories.value[1]
-          ? item.Title
-          : item.FormattedVerseLabel) || '';
-      if (!groups[label]) {
-        groups[label] = [];
-      }
-      groups[label].push(item);
-      return groups;
-    },
-    {},
-  );
+  const groups =
+    selectedChapterMediaItems.value?.reduce(
+      (groups: Record<string, MultimediaItem[]>, item) => {
+        const label =
+          (tab.value !== bibleMediaCategories.value[1]
+            ? item.Title
+            : item.FormattedVerseLabel) || '';
+        if (!groups[label]) {
+          groups[label] = [];
+        }
+        groups[label].push(item);
+        return groups;
+      },
+      {},
+    ) ?? {};
   if (tab.value !== bibleMediaCategories.value[1]) {
     Object.entries(groups).sort((a, b) => SORTER.compare(a[0], b[0]));
   }
@@ -393,7 +399,7 @@ const groupedMediaItems = computed(() => {
     const [aStart] = parseRange(a[0]);
     const [bStart] = parseRange(b[0]);
 
-    return aStart - bStart;
+    return (aStart ?? 0) - (bStart ?? 0);
   });
 });
 
@@ -420,8 +426,9 @@ const getBibleMediaCategories = async () => {
   } catch (error) {
     errorCatcher(error);
   } finally {
-    if (bibleMediaCategories.value.length > 1)
+    if (bibleMediaCategories.value[1]) {
       tab.value = bibleMediaCategories.value[1];
+    }
     loading.value = false;
   }
 };
@@ -480,11 +487,11 @@ const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
 
     const langsToTry = [
       ...new Set([
-        /* eslint-disable perfectionist/sort-sets */
+         
         currentSettings.value?.lang,
         currentSettings.value?.langFallback,
         'E',
-        /* eslint-enable perfectionist/sort-sets */
+         
       ]),
     ].filter((l) => l !== undefined && l !== null);
     let mediaInfo, mediaItemFiles;

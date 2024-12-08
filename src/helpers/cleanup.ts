@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-dynamic-delete */
 // import type { DynamicMediaObject } from 'src/types';
 
 // import { storeToRefs } from 'pinia';

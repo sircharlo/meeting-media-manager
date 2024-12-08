@@ -14,6 +14,7 @@
    - **Windows:**
      - Для більшості систем Windows завантажте <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
      - Для старих 32-бітних систем Windows завантажте <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
+     - For a portable version, download <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
    - **macOS:**
      - **M-серія (Apple Silicon)**: Завантажте <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
      - **Mac на базі Intel**: Завантажте <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.

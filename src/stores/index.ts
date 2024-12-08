@@ -1,10 +1,8 @@
-import type { Router } from 'vue-router';
-
+import { defineStore } from '#q-app/wrappers';
 import { createSentryPiniaPlugin } from '@sentry/vue';
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import { PiniaSharedState } from 'pinia-shared-state';
-import { store } from 'quasar/wrappers';
 
 /*
  * When adding new properties to stores, you should also
@@ -12,8 +10,9 @@ import { store } from 'quasar/wrappers';
  * @see https://pinia.vuejs.org/core-concepts/plugins.html#typing-new-store-properties
  */
 declare module 'pinia' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   export interface PiniaCustomProperties {
-    readonly router: Router;
+    // add your custom properties here, if any
   }
 }
 
@@ -26,7 +25,7 @@ declare module 'pinia' {
  * with the Store instance.
  */
 
-export default store((/* { ssrContext } */) => {
+export default defineStore((/* { ssrContext } */) => {
   const pinia = createPinia();
 
   // You can add Pinia plugins here

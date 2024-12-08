@@ -119,7 +119,7 @@ const initiatePanzoom = () => {
   }
 };
 
-let mediaElement = useTemplateRef<HTMLAudioElement | HTMLVideoElement>(
+const mediaElement = useTemplateRef<HTMLAudioElement | HTMLVideoElement>(
   'mediaElement',
 );
 

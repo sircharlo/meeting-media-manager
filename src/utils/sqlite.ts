@@ -55,7 +55,7 @@ export const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
 
     const publication: PublicationFetcher = {
       issue: pubQuery.IssueTagNumber,
-      langwritten: mepslangs[pubQuery.MepsLanguageIndex],
+      langwritten: mepslangs[pubQuery.MepsLanguageIndex] ?? '',
       pub: pubQuery.UndatedSymbol,
     };
 

@@ -1,8 +1,8 @@
-# Frequently Asked Questions {#frequently-asked-questions}
+# Gyakran Ismételt Kérdések {#frequently-asked-questions}
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content? {#external-dependencies}
+## :earth_americas: Függ-e ez az alkalmazás külső webhelyektől, forrásoktól vagy "kurátoroktól" a kiadványok, összejöveteli média vagy más tartalmak letöltéséhez? {#external-dependencies}
 
-**Nem.** Az alkalmazás hasonlóan működik, mint a JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. Az alkalmazás automatikusan meghatározza, hogy mit kell letölteni, és hogy a korábban letöltött tartalom már nem aktuális, ezért azt újra le kell tölteni.
+**Nem.** Az alkalmazás hasonlóan működik, mint a JW Library. Közvetlenül a Jehova Tanúi hivatalos honlapjáról és annak tartalomszolgáltató hálózatáról tölti le a kiadványokat, médiát és egyéb tartalmakat. Az alkalmazás automatikusan meghatározza, hogy mit kell letölteni, és hogy a korábban letöltött tartalom már nem aktuális, ezért azt újra le kell tölteni.
 
 :::info Megjegyzés
 
@@ -10,9 +10,9 @@ Az alkalmazás forráskódja mindenki számára elérhető, hogy megvizsgálja �
 
 :::
 
-## :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses? {#terms-of-use}
+## :thinking: Ez az alkalmazás sérti Jehova Tanúi hivatalos honlapjának felhasználási feltételeit? {#terms-of-use}
 
-**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
+**Nem.** Jehova Tanúi hivatalos weboldalának [Felhasználási feltételei](https://www.jw.org/finder?docid=1011511\&prefer=content) kifejezetten engedélyezik az általunk alkalmazott felhasználási módot. Íme a vonatkozó részlet az említett feltételekből (kiemelés hozzáadva):
 
 > Tilos:
 >
@@ -20,15 +20,15 @@ Az alkalmazás forráskódja mindenki számára elérhető, hogy megvizsgálja �
 
 ## :radioactive: Hogyan jelenthetek be egy problémát? {#how-do-i-report-an-issue}
 
-Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
+Kérjük, [jelentse be a problémát](https://github.com/sircharlo/meeting-media-manager/issues) a hivatalos GitHub tárolóban.
 
 ## :new: Hogyan kérhetek új funkciót vagy továbbfejlesztést? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
+Kérjük, [nyisson egy megbeszélést](https://github.com/sircharlo/meeting-media-manager/discussions) a hivatalos GitHub oldalon.
 
 ## :handshake: Hogyan tudok hozzájárulni a program kódjához? {#how-can-i-contribute-some-code}
 
-Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+Kérjük, [tekintse meg a hozzájárulási útmutatót](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) a hivatalos GitHub tárolóban.
 
 ## :x: Adományozhatok a projekt számára? {#can-i-make-a-donation-to-the-project}
 

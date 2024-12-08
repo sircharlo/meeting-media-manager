@@ -2,13 +2,15 @@ import type { FileDialogFilter, FileItem } from 'src/types';
 
 import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
 import { dialog } from 'electron';
-import { type Dirent, exists, readdir, stat, type Stats } from 'fs-extra';
+import fse, { type Dirent, type Stats } from 'fs-extra';
+const { exists, readdir, stat } = fse;
 import {
   IMG_EXTENSIONS,
   JWPUB_EXTENSIONS,
   PDF_EXTENSIONS,
 } from 'src/constants/media';
-import { basename, dirname, join, toUnix } from 'upath';
+import upath from 'upath';
+const { basename, dirname, join, toUnix } = upath;
 
 import { captureElectronError } from './utils';
 import { sendToWindow } from './window/window-base';

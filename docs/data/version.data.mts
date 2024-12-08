@@ -8,6 +8,7 @@ export interface Data {
   macIntel: string;
   win32: string;
   win64: string;
+  winPortable: string;
 }
 
 declare const data: Data;
@@ -24,6 +25,7 @@ export default defineLoader({
       macIntel: downloadUrl('x64', 'dmg'),
       win32: downloadUrl('ia32', 'exe'),
       win64: downloadUrl('x64', 'exe'),
+      winPortable: downloadUrl('portable', 'exe'),
     };
   },
 });

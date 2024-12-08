@@ -1,90 +1,86 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
-/* eslint-env node */
-
-/*
- * This file runs in a Node context (it's NOT transpiled by Babel), so use only
- * the ES6 features that are supported by your Node version. https://node.green/
- */
-
 // Configuration for your app
-// https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
-const { sentryEsbuildPlugin } = require('@sentry/esbuild-plugin');
-const { sentryVitePlugin } = require('@sentry/vite-plugin');
-const path = require('path');
-const { configure } = require('quasar/wrappers');
-const { mergeConfig } = require('vite'); // use mergeConfig helper to avoid overwriting the default config
+// https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
-const { repository, version } = require('./package.json');
+import { defineConfig } from '#q-app/wrappers';
+import { sentryEsbuildPlugin } from '@sentry/esbuild-plugin';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
+import { fileURLToPath } from 'node:url';
+import { mergeConfig } from 'vite'; // use mergeConfig helper to avoid overwriting the default config
+
+import { repository, version } from './package.json';
 
 const SENTRY_ORG = 'jw-projects';
 const SENTRY_PROJECT = 'mmm-v2';
 const SENTRY_VERSION = `meeting-media-manager@${version}`;
 
-module.exports = configure(function (ctx) {
+export default defineConfig((ctx) => {
   return {
-    // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
-    // preFetch: true,
-
+    // animations: 'all', // --- includes all animations
     // https://v2.quasar.dev/options/animations
     animations: ['fadeIn', 'fadeOut'],
 
+    // app boot file (/src/boot)
+    // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
     boot: ['sentry', 'i18n', 'globals'],
 
-    // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
+    // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#build
     build: {
       env: {
         repository: repository.url.replace('.git', ''),
       },
       extendViteConf(viteConf) {
-        viteConf.optimizeDeps = mergeConfig(viteConf, {
-          esbuildOptions: { define: { global: 'window' } },
+        viteConf.optimizeDeps = mergeConfig(viteConf.optimizeDeps ?? {}, {
+          esbuildOptions: {
+            define: {
+              global: 'window',
+            },
+          },
         });
-        if (ctx.prod && !ctx.debug && process.env.SENTRY_AUTH_TOKEN) {
-          if (!viteConf.build) viteConf.build = {};
-          viteConf.build.sourcemap = true;
+        if (ctx.prod && !ctx.debug) {
+          viteConf.build = mergeConfig(viteConf.build ?? {}, {
+            sourcemap: true,
+          });
           if (!viteConf.plugins) viteConf.plugins = [];
-          viteConf.plugins.push(
-            sentryVitePlugin({
-              authToken: process.env.SENTRY_AUTH_TOKEN,
-              org: SENTRY_ORG,
-              project: SENTRY_PROJECT,
-              release: { name: SENTRY_VERSION },
-              telemetry: false,
-            }),
-          );
+          if (process.env.SENTRY_AUTH_TOKEN) {
+            viteConf.plugins.push(
+              sentryVitePlugin({
+                authToken: process.env.SENTRY_AUTH_TOKEN,
+                org: SENTRY_ORG,
+                project: SENTRY_PROJECT,
+                release: { name: SENTRY_VERSION },
+                telemetry: false,
+              }),
+            );
+          }
         }
       },
       sourcemap: true,
       // See: https://www.electronjs.org/docs/latest/tutorial/electron-timelines#timeline
       target: { browser: ['chrome130'], node: 'node20.18.0' },
+      typescript: {
+        extendTsConfig: (tsConfig) => {
+          tsConfig.exclude?.push('./../docs');
+        },
+        strict: true,
+        vueShim: true,
+      },
       vitePlugins: [
         [
-          '@intlify/vite-plugin-vue-i18n',
+          '@intlify/unplugin-vue-i18n/vite',
           {
-            include: path.resolve(__dirname, './src/i18n/**'),
+            include: [fileURLToPath(new URL('./src/i18n', import.meta.url))],
+            ssr: ctx.modeName === 'ssr',
           },
         ],
       ],
       vueRouterMode: 'hash', // available values: 'hash', 'history'
     },
 
-    // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
+    // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
     css: ['app.scss', 'mmm-icons.css'],
 
-    // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#sourcefiles
-    // sourceFiles: {
-    //   rootComponent: 'src/App.vue',
-    //   router: 'src/router/index',
-    //   store: 'src/store/index',
-    //   registerServiceWorker: 'src-pwa/register-service-worker',
-    //   serviceWorker: 'src-pwa/custom-service-worker',
-    //   pwaManifestFile: 'src-pwa/manifest.json',
-    //   electronMain: 'src-electron/electron-main',
-    //   electronPreload: 'src-electron/electron-preload'
-    // },
-
-    // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
+    // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#devServer
     devServer: {
       // https: true
       open: true, // opens browser window automatically
@@ -127,7 +123,7 @@ module.exports = configure(function (ctx) {
           icon: 'icons/icon.ico',
           publish: ['github'],
           target: [
-            { arch: ctx.debug ? undefined : ['x64', 'ia32'], target: 'nsis' },
+            { arch: ctx.debug ? 'x64' : ['x64', 'ia32'], target: 'nsis' },
             'portable',
           ],
         },
@@ -137,30 +133,34 @@ module.exports = configure(function (ctx) {
         if (ctx.prod && !ctx.debug && process.env.SENTRY_AUTH_TOKEN) {
           esbuildConf.sourcemap = true;
           if (!esbuildConf.plugins) esbuildConf.plugins = [];
-          esbuildConf.plugins.push(
-            sentryEsbuildPlugin({
-              authToken: process.env.SENTRY_AUTH_TOKEN,
-              org: SENTRY_ORG,
-              project: SENTRY_PROJECT,
-              release: { name: SENTRY_VERSION },
-              telemetry: false,
-            }),
-          );
+          if (process.env.SENTRY_AUTH_TOKEN) {
+            esbuildConf.plugins.push(
+              sentryEsbuildPlugin({
+                authToken: process.env.SENTRY_AUTH_TOKEN,
+                org: SENTRY_ORG,
+                project: SENTRY_PROJECT,
+                release: { name: SENTRY_VERSION },
+                telemetry: false,
+              }),
+            );
+          }
         }
       },
       extendElectronPreloadConf: (esbuildConf) => {
         if (ctx.prod && !ctx.debug && process.env.SENTRY_AUTH_TOKEN) {
           esbuildConf.sourcemap = true;
           if (!esbuildConf.plugins) esbuildConf.plugins = [];
-          esbuildConf.plugins.push(
-            sentryEsbuildPlugin({
-              authToken: process.env.SENTRY_AUTH_TOKEN,
-              org: SENTRY_ORG,
-              project: SENTRY_PROJECT,
-              release: { name: SENTRY_VERSION },
-              telemetry: false,
-            }),
-          );
+          if (process.env.SENTRY_AUTH_TOKEN) {
+            esbuildConf.plugins.push(
+              sentryEsbuildPlugin({
+                authToken: process.env.SENTRY_AUTH_TOKEN,
+                org: SENTRY_ORG,
+                project: SENTRY_PROJECT,
+                release: { name: SENTRY_VERSION },
+                telemetry: false,
+              }),
+            );
+          }
         }
       },
       extendPackageJson(pkg) {
@@ -191,26 +191,11 @@ module.exports = configure(function (ctx) {
           }
         });
       },
-      inspectPort: 5858,
     },
 
-    // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
+    // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework
     framework: {
-      config: {
-        dark: 'auto',
-      },
-
-      // iconSet: 'material-icons', // Quasar icon set
-      // lang: 'en-US', // Quasar language pack
-
-      // For special cases outside of where the auto-import strategy can have an impact
-      // (like functional components as one of the examples),
-      // you can manually specify Quasar components/directives to be available everywhere:
-      //
-      // components: [],
-      // directives: [],
-
-      // Quasar plugins
+      config: { dark: 'auto' },
       plugins: ['LocalStorage', 'Notify'],
     },
   };

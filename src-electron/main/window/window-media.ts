@@ -3,6 +3,7 @@ import type { ScreenPreferences } from 'src/types';
 
 import { HD_RESOLUTION, PLATFORM } from 'app/src-electron/constants';
 import { join, resolve } from 'path';
+import { fileURLToPath } from 'url';
 
 import { getAllScreens, getWindowScreen, screenPreferences } from './../screen';
 import { captureElectronError } from './../utils';
@@ -28,7 +29,7 @@ export function createMediaWindow() {
     height: HD_RESOLUTION[1],
     icon: resolve(
       join(
-        __dirname,
+        fileURLToPath(new URL('.', import.meta.url)),
         'icons',
         `media-player.${PLATFORM === 'win32' ? 'ico' : PLATFORM === 'darwin' ? 'icns' : 'png'}`,
       ),
@@ -48,7 +49,7 @@ export function createMediaWindow() {
   });
 }
 
-const mediaWindowIsFullScreen = (parentScreenBounds: Electron.Rectangle) =>
+const mediaWindowIsFullScreen = (parentScreenBounds?: Electron.Rectangle) =>
   boundsAreSame(mediaWindow?.getBounds(), parentScreenBounds) ||
   mediaWindow?.isFullScreen();
 
@@ -101,7 +102,7 @@ export const moveMediaWindow = (
       }
       if (displayNr === undefined) return;
       fullscreen =
-        fullscreen ?? mediaWindowIsFullScreen(screens[displayNr].bounds);
+        fullscreen ?? mediaWindowIsFullScreen(screens[displayNr]?.bounds);
     } else {
       displayNr = 0;
       fullscreen = false;

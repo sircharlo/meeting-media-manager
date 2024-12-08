@@ -12,7 +12,8 @@ import {
   shell,
 } from 'electron';
 import { SENTRY_DSN } from 'src/constants/sentry';
-import { join } from 'upath';
+import upath from 'upath';
+const { join } = upath;
 
 import { PLATFORM } from './constants';
 import { cancelAllDownloads } from './main/downloads';
