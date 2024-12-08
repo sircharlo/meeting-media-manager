@@ -14,28 +14,28 @@ Ez az útmutató végigvezeti Önt a **Meeting Media Manager (M³)** letöltés�
    - **Windows:**
      - A legtöbb Windows rendszerhez töltse le a <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a> fájlt.
      - Régebbi 32 bites Windows rendszerekhez töltse le a <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a> fájlt.
-     - For a portable version, download <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
+     - A hordozható változathoz töltse le a <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a> fájlt.
    - **macOS:**
-     - **M-series (Apple Silicon)**: Download <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
-     - **Intel-based Macs**: Download <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
+     - **M-sorozat (Apple Silicon)**: Letöltés <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
+     - **Intel-alapú Mac számítógépek**: Letöltés <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
    - **Linux:**
-     - Download <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
-2. If the download links do not work, visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and download the correct version manually.
+     - Töltse le a <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a> fájlt.
+2. Ha a letöltési linkek nem működnek, látogasson el az [M³ letöltési oldalra](https://github.com/sircharlo/meeting-media-manager/releases/latest), és töltse le manuálisan a megfelelő verziót.
 3. Nyissa meg a telepítőt, és kövesse a képernyőn megjelenő utasításokat az M³ telepítéséhez.
 4. Indítsa el az M³ programot.
 5. Menjen végig a konfigurációs varázslón.
 
-### macOS only: Additional installation steps {#additional-steps-for-macos-users}
+### Csak macOS: További lépések a telepítéshez {#additional-steps-for-macos-users}
 
 :::warning Figyelem
 
-This section only applies to macOS users.
+Ez a szakasz csak a macOS-felhasználókra vonatkozik.
 
 :::
 
-Due to Apple's security measures, a few additional steps are required to run the installed M³ app on modern macOS systems.
+Az Apple biztonsági intézkedései miatt a telepített M³ alkalmazás futtatásához a modern macOS rendszereken néhány további lépésre van szükség.
 
-Run the following two commands in Terminal, modifying the path to M³ as needed:
+Futtassa a következő két parancsot a Terminálban, szükség szerint módosítva az M³ elérési útvonalát:
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
@@ -44,27 +44,27 @@ sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 
 :::warning Figyelem
 
-As a macOS user, you will need to follow these steps every time you install or update M³.
+MacOS felhasználóként minden alkalommal, amikor telepíti vagy frissíti az M³ programot, követnie kell ezeket a lépéseket.
 
 :::
 
-:::info Explanation
+:::info Magyarázat
 
-The first command _signs the application's code_. This is required to prevent M³ from being detected as a malicious application from an unknown developer.
+Az első parancs _jelöli az alkalmazás kódját_. Erre azért van szükség, hogy az M³-program ne ismeretlen fejlesztőtől származó rosszindulatú alkalmazásként legyen azonosítva.
 
-The second command _removes the quarantine flag_ from the application. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
+A második parancs _eltávolítja a karanténjelzőt_ az alkalmazásból. A karanténjelzés arra szolgál, hogy figyelmeztesse a felhasználókat az internetről letöltött, potenciálisan rosszindulatú alkalmazásokról.
 
 :::
 
-#### Alternative method {#alternative-method-for-macos-users}
+#### Alternatív módszer {#alternative-method-for-macos-users}
 
-If you are still unable to launch M³ after entering the two commands from the previous section, please try the following:
+Ha az előző szakaszban leírt két parancs beírása után sem tudja elindítani az M³ programot, próbálja meg a következőket:
 
-1. Open the macOS system **Privacy & Security** settings.
-2. Find the entry for M³ and click the button to **Open Anyway**.
-3. You will then be warned again, and given the advice to not "open this unless you are certain it is from a trustworthy source." Click **Open Anyway**.
-4. Another warning will appear, where you’ll need to authenticate to launch the app.
-5. M³ should now launch successfully.
+1. Nyissa meg a macOS rendszer **Adatvédelem és biztonság** beállításait.
+2. Keresse meg az M³ nevű bejegyzést, és kattintson a **Megnyitás mindenképpen** gombra.
+3. Ezután ismét figyelmeztetést kap, és azt a tanácsot kapja, hogy "ne nyissa meg, hacsak nem biztos benne, hogy megbízható forrásból származik." Kattintson a **Megnyitás mindenképpen** gombra.
+4. Egy újabb figyelmeztetés jelenik meg, amelyben hitelesítenie kell magát az alkalmazás elindításához.
+5. Az M³ programnak most már el kell indulnia.
 
 If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
 
@@ -72,7 +72,7 @@ If you still have issues after following all these steps, please [open an issue 
 
 :::warning Figyelem
 
-This section only applies to macOS users.
+Ez a szakasz csak a macOS-felhasználókra vonatkozik.
 
 :::
 
@@ -80,7 +80,7 @@ Some macOS users have reported that website presentation no longer works after i
 
 If the media window is black when presenting the website after updating M³, try the following steps:
 
-1. Open the macOS system **Privacy & Security** settings.
+1. Nyissa meg a macOS rendszer **Adatvédelem és biztonság** beállításait.
 2. Go to **Screen Recording**.
 3. Select M³ in the list.
 4. Click the `-` (minus) button to remove it.
