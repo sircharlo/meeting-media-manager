@@ -41,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+import type { JsonObject } from 'app/node_modules/obs-websocket-js/node_modules/type-fest';
 import type {
   SettingsItemListKey,
   SettingsItemRule,
@@ -89,7 +90,7 @@ const { dateLocale, t } = useLocale();
 
 const filteredJwLanguages = ref(jwLanguages.value?.list || []);
 const filteredLocaleAppLang = ref(localeOptions);
-const filteredResolutions = ref(RESOLUTIONS);
+const filteredResolutions = ref<string[]>([...RESOLUTIONS]);
 const filteredDays = ref(
   Array.from({ length: 7 }, (_, i) => ({
     label: dateLocale.value.days[i === 6 ? 0 : i + 1] ?? '',
@@ -101,7 +102,7 @@ const filteredDarkModes = ref([
   { description: t('dark'), label: t('dark'), value: true },
   { description: t('light'), label: t('light'), value: false },
 ]);
-const filteredObsScenes = ref([]);
+const filteredObsScenes = ref<JsonObject[]>([]);
 
 const customDisabled = computed(() => {
   return (
@@ -119,7 +120,7 @@ const filterFn = (
     update(() => {
       filteredJwLanguages.value = jwLanguages.value?.list || [];
       filteredLocaleAppLang.value = localeOptions;
-      filteredResolutions.value = RESOLUTIONS;
+      filteredResolutions.value = [...RESOLUTIONS];
       filteredDays.value = Array.from({ length: 7 }, (_, i) => ({
         label: dateLocale.value.days[i === 6 ? 0 : i + 1] ?? '',
         value: String(i),
@@ -179,42 +180,49 @@ const filterFn = (
   }
 };
 
-const listOptions = computed(() => {
-  try {
-    if (props.list === 'jwLanguages') {
-      return filteredJwLanguages.value.map((language) => ({
-        description: language.name,
-        label: language.vernacularName,
-        value: language.langcode,
-      }));
-    } else if (props.list === 'appLanguages') {
-      return [...filteredLocaleAppLang.value]
-        .sort((a, b) => SORTER.compare(a.englishName, b.englishName))
-        .map((language) => ({
-          description: language.englishName,
-          label: language.label,
-          value: language.value,
+const listOptions = computed(
+  (): {
+    description?: string;
+    icon?: string;
+    label: string;
+    value: boolean | number | string;
+  }[] => {
+    try {
+      if (props.list === 'jwLanguages') {
+        return filteredJwLanguages.value.map((language) => ({
+          description: language.name,
+          label: language.vernacularName,
+          value: language.langcode,
         }));
-    } else if (props.list === 'darkModes') {
-      return filteredDarkModes.value;
-    } else if (props.list === 'resolutions') {
-      return filteredResolutions.value.map((r) => ({ label: r, value: r }));
-    } else if (props.list === 'days') {
-      return filteredDays.value;
-    } else if (props.list?.startsWith('obs')) {
-      return filteredObsScenes.value.map((scene) => ({
-        label: scene.sceneName?.toString() ?? 'Unknown scene',
-        value:
-          configuredScenesAreAllUUIDs.value && scene.sceneUuid
-            ? scene.sceneUuid.toString()
-            : (scene.sceneName?.toString() ?? 'Unknown scene'),
-      }));
-    } else {
-      throw new Error('List not found: ' + props.list);
+      } else if (props.list === 'appLanguages') {
+        return [...filteredLocaleAppLang.value]
+          .sort((a, b) => SORTER.compare(a.englishName, b.englishName))
+          .map((language) => ({
+            description: language.englishName,
+            label: language.label,
+            value: language.value,
+          }));
+      } else if (props.list === 'darkModes') {
+        return filteredDarkModes.value;
+      } else if (props.list === 'resolutions') {
+        return filteredResolutions.value.map((r) => ({ label: r, value: r }));
+      } else if (props.list === 'days') {
+        return filteredDays.value;
+      } else if (props.list?.startsWith('obs')) {
+        return filteredObsScenes.value.map((scene) => ({
+          label: scene.sceneName?.toString() ?? 'Unknown scene',
+          value:
+            configuredScenesAreAllUUIDs.value && scene.sceneUuid
+              ? scene.sceneUuid.toString()
+              : (scene.sceneName?.toString() ?? 'Unknown scene'),
+        }));
+      } else {
+        throw new Error('List not found: ' + props.list);
+      }
+    } catch (error) {
+      errorCatcher(error);
+      return [];
     }
-  } catch (error) {
-    errorCatcher(error);
-    return [];
-  }
-});
+  },
+);
 </script>
