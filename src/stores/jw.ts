@@ -50,12 +50,6 @@ interface Store {
   additionalMediaMaps: Partial<
     Record<string, Partial<Record<string, DynamicMediaObject[]>>>
   >;
-  customDurations: Partial<
-    Record<
-      string,
-      Partial<Record<string, Record<string, { max: number; min: number }>>>
-    >
-  >;
   jwBibleAudioFiles: Partial<
     Record<JwLangCode, CacheList<Partial<Publication>>>
   >;
@@ -420,7 +414,6 @@ export const useJwStore = defineStore('jw-store', {
   state: (): Store => {
     return {
       additionalMediaMaps: {},
-      customDurations: {},
       jwBibleAudioFiles: {},
       jwLanguages: { list: [], updated: oldDate },
       jwSongs: {},

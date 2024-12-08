@@ -194,9 +194,12 @@
           :list="sortableAdditionalMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
+          @update:custom-duration="
+            media.customDuration = JSON.parse($event) || undefined
+          "
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
-          @update:tag="updateMediaItemTag(media, $event)"
+          @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
         <div
@@ -238,8 +241,12 @@
           :list="sortableTgwMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
+          @update:custom-duration="
+            media.customDuration = JSON.parse($event) || undefined
+          "
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
         <div v-if="sortableTgwMediaItems.filter((m) => !m.hidden).length === 0">
@@ -275,8 +282,12 @@
           :list="sortableAyfmMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
+          @update:custom-duration="
+            media.customDuration = JSON.parse($event) || undefined
+          "
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
         <div
@@ -323,8 +334,12 @@
           :list="sortableLacMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
+          @update:custom-duration="
+            media.customDuration = JSON.parse($event) || undefined
+          "
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
         <div v-if="sortableLacMediaItems.filter((m) => !m.hidden).length === 0">
@@ -360,8 +375,12 @@
           :list="sortableWtMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
+          @update:custom-duration="
+            media.customDuration = JSON.parse($event) || undefined
+          "
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
         <div v-if="sortableWtMediaItems.filter((m) => !m.hidden).length === 0">
@@ -424,8 +443,12 @@
           :list="sortableCircuitOverseerMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
+          @update:custom-duration="
+            media.customDuration = JSON.parse($event) || undefined
+          "
           @update:hidden="media.hidden = !!$event"
           @update:repeat="media.repeat = !!$event"
+          @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
         <div
@@ -555,7 +578,6 @@ const jwStore = useJwStore();
 const { addToAdditionMediaMap } = jwStore;
 const {
   additionalMediaMaps,
-  customDurations,
   lookupPeriod,
   mediaSort,
   missingMedia,
@@ -595,8 +617,6 @@ const currentFile = ref(0);
 watch(
   () => mediaPlayingUniqueId.value,
   (newMediaUniqueId) => {
-    const { post } = useBroadcastChannel<string, string>({ name: 'unique-id' });
-    post(newMediaUniqueId);
     if (newMediaUniqueId) lastPlayedMediaUniqueId.value = newMediaUniqueId;
   },
 );
@@ -643,14 +663,36 @@ watch(
   { deep: true },
 );
 
-const { post: postMediaUrl } = useBroadcastChannel<string, string>({
-  name: 'media-url',
-});
-
 watch(
   () => mediaPlayingUrl.value,
   (newUrl, oldUrl) => {
-    if (newUrl !== oldUrl) postMediaUrl(newUrl);
+    if (newUrl !== oldUrl) {
+      const { post: postMediaUrl } = useBroadcastChannel<string, string>({
+        name: 'media-url',
+      });
+      postMediaUrl(newUrl);
+
+      const customDuration =
+        (
+          lookupPeriod.value[currentCongregation.value]?.flatMap(
+            (item) => item.dynamicMedia,
+          ) ?? []
+        )
+          .concat(watchFolderMedia.value?.[selectedDate.value] ?? [])
+          .concat(
+            additionalMediaMaps.value[currentCongregation.value]?.[
+              selectedDate.value
+            ] ?? [],
+          )
+          .find((item) => item.uniqueId === mediaPlayingUniqueId.value)
+          ?.customDuration || undefined;
+      if (customDuration) {
+        const { post } = useBroadcastChannel<string, string>({
+          name: 'custom-duration',
+        });
+        post(JSON.stringify(customDuration));
+      }
+    }
   },
 );
 
@@ -1022,8 +1064,6 @@ watchImmediate(selectedDate, (newVal) => {
     if (!currentCongregation.value || !newVal) {
       return;
     }
-    const durations = (customDurations.value[currentCongregation.value] ||= {});
-    durations[newVal] ||= {};
     coWeek.value = isCoWeek(dateFromString(newVal));
   } catch (e) {
     errorCatcher(e);
@@ -1408,20 +1448,10 @@ const addToFiles = async (
           throw error;
         });
         addToAdditionMediaMap(additionalMedia, sectionToAddTo.value);
-        additionalMedia
-          .filter(
-            (m) =>
-              m.customDuration &&
-              (m.customDuration.max || m.customDuration.min),
-          )
-          .forEach((m) => {
-            const { max, min } = m.customDuration ?? { max: 0, min: 0 };
-            const congregation = (customDurations.value[
-              currentCongregation.value
-            ] ??= {});
-            const dateDurations = (congregation[selectedDate.value] ??= {});
-            dateDurations[m.uniqueId] = { max, min };
-          });
+        additionalMedia.filter(
+          (m) =>
+            m.customDuration && (m.customDuration.max || m.customDuration.min),
+        );
       } else if (isArchive(filepath)) {
         const unzipDirectory = path.join(
           await getTempPath(),
@@ -1532,15 +1562,5 @@ const resetDragging = () => {
   currentFile.value = 0;
   totalFiles.value = 0;
   sectionToAddTo.value = undefined;
-};
-
-const updateMediaItemTag = (
-  media?: DynamicMediaObject,
-  tag?: Record<string, string>,
-) => {
-  if (!media) return;
-  if (tag?.value && tag.value.length > 15) tag.value = tag.value.slice(0, 15);
-  media.song = tag?.type === 'song' ? tag.value : undefined;
-  media.paragraph = tag?.type === 'paragraph' ? tag.value : undefined;
 };
 </script>

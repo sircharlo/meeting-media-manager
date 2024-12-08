@@ -90,16 +90,10 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 const currentState = useCurrentStateStore();
-const {
-  currentCongregation,
-  currentSettings,
-  mediaPlayingAction,
-  selectedDate,
-} = storeToRefs(currentState);
+const { currentCongregation, currentSettings, mediaPlayingAction } =
+  storeToRefs(currentState);
 
 const jwStore = useJwStore();
-const { customDurations } = storeToRefs(jwStore);
-
 const yeartext = computed(() => jwStore.yeartext);
 
 const panzoom = ref<PanzoomObject | undefined>();
@@ -160,8 +154,11 @@ whenever(
   },
 );
 
-const { data: mediaUniqueId } = useBroadcastChannel<string, string>({
-  name: 'unique-id',
+const { data: mediaCustomDuration } = useBroadcastChannel<
+  string | undefined,
+  string
+>({
+  name: 'custom-duration',
 });
 
 const { data: mediaRepeat } = useBroadcastChannel<string, boolean>({
@@ -322,22 +319,17 @@ const { post: postMediaState } = useBroadcastChannel<'ended', 'ended'>({
 });
 
 const customMin = computed(() => {
-  return (
-    customDurations?.value?.[currentCongregation.value]?.[selectedDate.value]?.[
-      mediaUniqueId.value
-    ]?.min || 0
-  );
+  return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.min || 0;
 });
 
 const customMax = computed(() => {
-  return customDurations?.value?.[currentCongregation.value]?.[
-    selectedDate.value
-  ]?.[mediaUniqueId.value]?.max;
+  return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.max;
 });
 
 const endOrLoop = () => {
   if (!mediaRepeat.value) {
     postMediaState('ended');
+    mediaCustomDuration.value = undefined;
   } else {
     if (mediaElement.value) {
       mediaElement.value.currentTime = customMin.value;
@@ -365,13 +357,11 @@ const playMedia = () => {
         const currentTime = mediaElement.value?.currentTime || 0;
         postCurrentTime(currentTime);
         if (
-          customDurations?.value?.[currentCongregation.value]?.[
-            selectedDate.value
-          ]?.[mediaUniqueId.value]
+          mediaCustomDuration.value &&
+          customMax.value &&
+          currentTime >= customMax.value
         ) {
-          if (customMax.value && currentTime >= customMax.value) {
-            endOrLoop();
-          }
+          endOrLoop();
         }
       } catch (e) {
         errorCatcher(e);

@@ -41,10 +41,7 @@
               class="q-mr-xs"
               color="white"
               :name="
-                !!hoveredBadges[media.uniqueId] ||
-                customDurations[currentCongregation]?.[selectedDate]?.[
-                  media.uniqueId
-                ]
+                !!hoveredBadges[media.uniqueId] || customDurationIsSet
                   ? 'mmm-edit'
                   : props.media.isAudio
                     ? 'mmm-music-note'
@@ -52,11 +49,13 @@
               "
             />
             {{
-              customDurationIsSet ? formatTime(customDurationMin) + ' - ' : ''
+              customDurationIsSet
+                ? formatTime(mediaCustomDuration.min ?? 0) + ' - '
+                : ''
             }}
-            {{ formatTime(customDurationMax) }}
+            {{ formatTime(mediaCustomDuration.max ?? media.duration) }}
           </q-badge>
-          <q-dialog v-model="mediaDurationPopups[media.uniqueId]">
+          <q-dialog v-model="mediaDurationPopups[media.uniqueId]" persistent>
             <q-card>
               <q-card-section
                 class="row items-center text-bigger text-semibold q-pb-none"
@@ -76,26 +75,61 @@
                 </div>
                 <div class="row items-center q-mt-lg">
                   <div class="col-shrink q-pr-md time-duration">
-                    {{ formatTime(0) }}
-                  </div>
-                  <div class="col">
-                    <q-range
-                      v-model="
-                        customDurations[currentCongregation]![selectedDate]![
-                          media.uniqueId
-                        ]
+                    <q-input
+                      v-model="customDurationMinUserInput"
+                      class="text-center q-pa-none"
+                      dense
+                      style="width: 3.5em"
+                      @update:model-value="
+                        if ($event) {
+                          let val = Math.max(
+                            Math.min(
+                              timeToSeconds($event.toString()),
+                              media.duration,
+                            ),
+                            0,
+                          );
+                          console.log(val, media.duration);
+                          if (val >= media.duration) val = 0;
+                          customDurationMinUserInput = formatTime(val);
+                          mediaCustomDuration.min = val;
+                        }
                       "
-                      label
-                      label-always
-                      :left-label-value="formatTime(customDurationMin)"
+                    />
+                  </div>
+                  <div class="col flex">
+                    <q-range
+                      v-model="mediaCustomDuration"
                       :max="media.duration"
                       :min="0"
-                      :right-label-value="formatTime(customDurationMax)"
                       :step="0.1"
+                      @change="updateMediaCustomDuration($event)"
+                      @update:model-value="
+                        customDurationMinUserInput = formatTime($event.min);
+                        customDurationMaxUserInput = formatTime($event.max);
+                      "
                     />
                   </div>
                   <div class="col-shrink q-pl-md time-duration">
-                    {{ formatTime(media.duration) }}
+                    <q-input
+                      v-model="customDurationMaxUserInput"
+                      class="text-center q-pa-none"
+                      dense
+                      style="width: 3.5em"
+                      @update:model-value="
+                        if ($event) {
+                          let val = Math.max(
+                            Math.min(
+                              timeToSeconds($event.toString()),
+                              media.duration,
+                            ),
+                            0,
+                          );
+                          customDurationMaxUserInput = formatTime(val);
+                          mediaCustomDuration.max = val;
+                        }
+                      "
+                    />
                   </div>
                 </div>
               </q-card-section>
@@ -104,13 +138,13 @@
                   color="negative"
                   flat
                   :label="$t('reset')"
-                  @click="resetMediaDuration(media)"
+                  @click="resetMediaDuration()"
                 />
                 <q-btn
                   color="primary"
                   flat
                   :label="$t('save')"
-                  @click="mediaDurationPopups[media.uniqueId] = false"
+                  @click="saveMediaDuration()"
                 />
               </q-card-actions>
             </q-card>
@@ -173,8 +207,7 @@
                   (media.isAdditional &&
                     !currentSettings?.disableMediaFetching &&
                     isFileUrl(media.fileUrl)) ||
-                  media.paragraph ||
-                  media.song ||
+                  media.tag?.type ||
                   media.watched
                 "
                 :class="mediaTagClasses"
@@ -183,14 +216,16 @@
                 <q-chip
                   :class="[
                     'media-tag full-width',
-                    media.song ? 'bg-accent-400' : 'bg-accent-200',
+                    media.tag?.type === 'song'
+                      ? 'bg-accent-400'
+                      : 'bg-accent-200',
                   ]"
                   :clickable="false"
                   :ripple="false"
-                  :text-color="media.song ? 'white' : undefined"
+                  :text-color="media.tag?.type === 'song' ? 'white' : undefined"
                 >
                   <q-icon
-                    :class="{ 'q-mr-xs': media.song || media.paragraph }"
+                    :class="{ 'q-mr-xs': media.tag?.type }"
                     :name="
                       media.watched
                         ? 'mmm-watched-media'
@@ -198,8 +233,8 @@
                             !currentSettings?.disableMediaFetching &&
                             isFileUrl(media.fileUrl)
                           ? 'mmm-add-media'
-                          : media.paragraph
-                            ? media.paragraph !== 9999
+                          : media.tag?.type === 'paragraph'
+                            ? media.tag.value !== 9999
                               ? 'mmm-paragraph'
                               : 'mmm-footnote'
                             : 'mmm-music-note'
@@ -218,13 +253,12 @@
                   >
                     {{ $t('extra-media-item-explain') }}
                   </q-tooltip>
-                  <template v-if="media.paragraph || media.song">
+                  <template v-if="media?.tag?.type">
                     {{
-                      media.paragraph
-                        ? media.paragraph !== 9999
-                          ? media.paragraph
-                          : $t('footnote')
-                        : media.song?.toString()
+                      media.tag?.type === 'paragraph' &&
+                      media.tag.value === 9999
+                        ? $t('footnote')
+                        : media.tag?.value
                     }}
                   </template>
                 </q-chip>
@@ -293,31 +327,67 @@
                 "
                 class="absolute duration-slider"
               >
-                <q-slider
-                  v-model="mediaPlayingCurrentPosition"
-                  :color="
-                    mediaPlayingAction === 'pause' ? 'primary' : 'accent-400'
-                  "
-                  :inner-max="customDurationMax"
-                  :inner-min="customDurationMin"
-                  inner-track-color="accent-400"
-                  label
-                  :label-always="mediaPlayingAction === 'pause'"
-                  :label-color="
-                    mediaPlayingAction === 'pause' ? undefined : 'accent-400'
-                  "
-                  :label-value="
-                    mediaPlayingAction === 'pause'
-                      ? formatTime(mediaPlayingCurrentPosition)
-                      : $t('pause-to-adjust-time')
-                  "
-                  :max="media.duration"
-                  :min="0"
-                  :readonly="mediaPlayingAction !== 'pause'"
-                  :step="0.1"
-                  track-color="negative"
-                  @update:model-value="seekTo"
-                />
+                <div class="row flex-center">
+                  <div
+                    class="col-shrink text-caption text-accent-400 q-mx-sm text-left"
+                    style="min-width: 40px"
+                  >
+                    {{
+                      formatTime(
+                        Math.max(
+                          (mediaPlayingCurrentPosition || 0) -
+                            (mediaCustomDuration.min || 0),
+                          0,
+                        ),
+                      )
+                    }}
+                  </div>
+                  <div class="col" style="height: 28px">
+                    <q-slider
+                      v-model="mediaPlayingCurrentPosition"
+                      :color="
+                        mediaPlayingAction === 'pause'
+                          ? 'primary'
+                          : 'accent-400'
+                      "
+                      :inner-max="mediaCustomDuration.max"
+                      :inner-min="mediaCustomDuration.min"
+                      inner-track-color="accent-400"
+                      label
+                      :label-color="
+                        mediaPlayingAction === 'pause'
+                          ? undefined
+                          : 'accent-400'
+                      "
+                      :label-value="
+                        mediaPlayingAction === 'pause'
+                          ? formatTime(mediaPlayingCurrentPosition)
+                          : $t('pause-to-adjust-time')
+                      "
+                      :max="media.duration"
+                      :min="0"
+                      :readonly="mediaPlayingAction !== 'pause'"
+                      :step="0.1"
+                      track-color="negative"
+                      @update:model-value="seekTo"
+                    />
+                  </div>
+                  <div
+                    class="col-shrink text-caption text-accent-400 q-mx-sm text-right"
+                    style="min-width: 40px"
+                  >
+                    {{
+                      '-' +
+                      formatTime(
+                        Math.max(
+                          (mediaCustomDuration.max || media.duration) -
+                            (mediaPlayingCurrentPosition || 0),
+                          0,
+                        ),
+                      )
+                    }}
+                  </div>
+                </div>
               </div>
             </transition>
           </div>
@@ -572,20 +642,20 @@
     <q-card class="modal-confirm">
       <q-card-section class="items-center">
         <q-option-group
-          v-model="tag.type"
+          v-model="mediaTag.type"
           color="primary"
           inline
           name="tagType"
           :options="tagTypes"
-          @update:model-value="emit('update:tag', tag)"
+          @update:model-value="emit('update:tag', mediaTag)"
         />
         <q-input
-          v-model="tag.value"
+          v-model="mediaTag.value"
           dense
-          :disable="tag.type === ''"
+          :disable="!mediaTag.type"
           focused
           outlined
-          @update:model-value="emit('update:tag', tag)"
+          @update:model-value="emit('update:tag', mediaTag)"
         />
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
@@ -652,7 +722,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DynamicMediaObject, VideoMarker } from 'src/types';
+import type { DynamicMediaObject, Tag, VideoMarker } from 'src/types';
 
 import Panzoom, {
   type PanzoomObject,
@@ -674,7 +744,7 @@ import { useObsStateStore } from 'src/stores/obs-state';
 import { isFileUrl } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
-import { formatTime } from 'src/utils/time';
+import { formatTime, timeToSeconds } from 'src/utils/time';
 import {
   computed,
   onMounted,
@@ -687,7 +757,6 @@ import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
 const {
-  currentCongregation,
   currentSettings,
   mediaPlayingAction,
   mediaPlayingCurrentPosition,
@@ -695,12 +764,10 @@ const {
   mediaPlayingSubtitlesUrl,
   mediaPlayingUniqueId,
   mediaPlayingUrl,
-  selectedDate,
 } = storeToRefs(currentState);
 
 const jwStore = useJwStore();
 const { removeFromAdditionMediaMap } = jwStore;
-const { customDurations } = storeToRefs(jwStore);
 const hoveredBadges = ref<Record<string, boolean>>({});
 
 const setHoveredBadge = debounce((key: string, value: boolean) => {
@@ -729,6 +796,7 @@ const emit = defineEmits([
   'update:hidden',
   'update:repeat',
   'update:tag',
+  'update:customDuration',
   'update:title',
 ]);
 
@@ -753,10 +821,14 @@ const displayMediaTitle = computed(() => {
 
 const mediaEditTagDialog = ref(false);
 const { t } = useI18n();
-const tag = ref({
-  type: props.media.song ? 'song' : props.media.paragraph ? 'paragraph' : '',
-  value: (props.media.song || props.media.paragraph || '') as string,
-});
+
+const mediaTag = ref<Tag>(
+  props.media.tag || {
+    type: '',
+    value: '',
+  },
+);
+
 const tagTypes = [
   {
     label: t('none'),
@@ -787,31 +859,33 @@ const resetMediaTitle = () => {
   emit('update:title', initialMediaTitle.value);
 };
 
+const updateMediaCustomDuration = (customDuration?: {
+  max: number;
+  min: number;
+}) => {
+  emit('update:customDuration', JSON.stringify(customDuration || ''));
+};
+
 const customDurationIsSet = computed(() => {
   return (
-    customDurations.value[currentCongregation.value]?.[selectedDate.value]?.[
-      props.media.uniqueId
-    ] &&
-    (customDurationMin.value > 0 ||
-      customDurationMax.value < props.media.duration)
+    props.media.customDuration &&
+    (props.media.customDuration.min > 0 ||
+      props.media.customDuration.max < props.media.duration)
   );
 });
 
-const customDurationMin = computed(() => {
-  return (
-    customDurations.value[currentCongregation.value]?.[selectedDate.value]?.[
-      props.media.uniqueId
-    ]?.min ?? 0
-  );
+const mediaCustomDuration = ref({
+  max: props.media.customDuration?.max || props.media.duration,
+  min: props.media.customDuration?.min || 0,
 });
 
-const customDurationMax = computed(() => {
-  return (
-    customDurations.value[currentCongregation.value]?.[selectedDate.value]?.[
-      props.media.uniqueId
-    ]?.max ?? props.media.duration
-  );
-});
+const customDurationMinUserInput = ref(
+  formatTime(mediaCustomDuration.value.min),
+);
+
+const customDurationMaxUserInput = ref(
+  formatTime(mediaCustomDuration.value.max),
+);
 
 const setMediaPlaying = async (
   media: DynamicMediaObject,
@@ -821,29 +895,17 @@ const setMediaPlaying = async (
   if (isImage(mediaPlayingUrl.value)) stopMedia(true);
   if (signLanguage) {
     if (marker) {
-      const currentCong = currentCongregation.value;
-      const currentDate = selectedDate.value;
-
-      customDurations.value[currentCong] ??= {};
-      customDurations.value[currentCong][currentDate] ??= {};
-      customDurations.value[currentCong][currentDate][media.uniqueId] ??= {
-        max: media.duration,
-        min: 0,
-      };
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      customDurations.value[currentCong][currentDate][media.uniqueId]!.min =
-        marker.StartTimeTicks / 10000 / 1000;
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      customDurations.value[currentCong][currentDate][media.uniqueId]!.max =
-        (marker.StartTimeTicks +
-          marker.DurationTicks -
-          marker.EndTransitionDurationTicks) /
-        10000 /
-        1000;
+      updateMediaCustomDuration({
+        max:
+          (marker.StartTimeTicks +
+            marker.DurationTicks -
+            marker.EndTransitionDurationTicks) /
+          10000 /
+          1000,
+        min: marker.StartTimeTicks / 10000 / 1000,
+      });
     } else {
-      delete customDurations.value?.[currentCongregation.value]?.[
-        selectedDate.value
-      ]?.[media.uniqueId];
+      updateMediaCustomDuration();
       mediaPlayingAction.value = 'play';
     }
   } else {
@@ -909,14 +971,8 @@ if (props.media.duration && !props.media.thumbnailUrl) findThumbnailUrl();
 
 const showMediaDurationPopup = (media: DynamicMediaObject) => {
   try {
-    const currentCong = currentCongregation.value;
-    if (!currentCong) return;
-    const currentDate = selectedDate.value;
-
-    customDurations.value[currentCong] ??= {};
-    customDurations.value[currentCong][currentDate] ??= {};
-    customDurations.value[currentCong][currentDate][media.uniqueId] ??= {
-      max: media.duration,
+    mediaCustomDuration.value = props.media.customDuration || {
+      max: props.media.duration,
       min: 0,
     };
     mediaDurationPopups.value[media.uniqueId] = true;
@@ -925,12 +981,28 @@ const showMediaDurationPopup = (media: DynamicMediaObject) => {
   }
 };
 
-const resetMediaDuration = (media: DynamicMediaObject) => {
+const resetMediaDuration = () => {
   try {
-    delete customDurations.value?.[currentCongregation.value]?.[
-      selectedDate.value
-    ]?.[media.uniqueId];
-    mediaDurationPopups.value[media.uniqueId] = false;
+    mediaDurationPopups.value[props.media.uniqueId] = false;
+    updateMediaCustomDuration();
+    mediaCustomDuration.value = {
+      max: props.media.duration,
+      min: 0,
+    };
+    customDurationMinUserInput.value = formatTime(
+      mediaCustomDuration.value.min,
+    );
+    customDurationMaxUserInput.value = formatTime(
+      mediaCustomDuration.value.max,
+    );
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
+const saveMediaDuration = () => {
+  try {
+    mediaDurationPopups.value[props.media.uniqueId] = false;
   } catch (error) {
     errorCatcher(error);
   }

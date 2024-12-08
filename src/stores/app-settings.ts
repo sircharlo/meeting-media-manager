@@ -79,12 +79,6 @@ export const useAppSettingsStore = defineStore('app-settings', {
             additionalMediaMaps: parseJsonSafe<
               Record<string, Record<string, DynamicMediaObject[]>>
             >(QuasarStorage.getItem('additionalMediaMaps'), {}),
-            customDurations: parseJsonSafe<
-              Record<
-                string,
-                Record<string, Record<string, { max: number; min: number }>>
-              >
-            >(QuasarStorage.getItem('customDurations'), {}),
             jwLanguages: parseJsonSafe<{ list: JwLanguage[]; updated: Date }>(
               QuasarStorage.getItem('jwLanguages'),
               { list: [], updated: new Date(0) },
@@ -109,7 +103,6 @@ export const useAppSettingsStore = defineStore('app-settings', {
           // Remove migrated items from localStorage
           [
             'additionalMediaMaps',
-            'customDurations',
             'jwLanguages',
             'jwSongs',
             'lookupPeriod',
