@@ -176,7 +176,11 @@
               <div class="bg-semi-black row rounded-borders">
                 <q-badge
                   color="transparent"
-                  :disabled="!mediaPanzoom.scale || mediaPanzoom.scale < 1.01"
+                  :disabled="
+                    !mediaPanzoom.scale ||
+                    mediaPanzoom.scale < 1.01 ||
+                    undefined
+                  "
                   style="padding: 5px !important; cursor: pointer"
                   @click="zoomOut()"
                 >
@@ -185,7 +189,11 @@
                 <q-separator class="bg-grey-8 q-my-xs" vertical />
                 <q-badge
                   color="transparent"
-                  :disabled="!mediaPanzoom.scale || mediaPanzoom?.scale > 4.99"
+                  :disabled="
+                    !mediaPanzoom.scale ||
+                    mediaPanzoom?.scale > 4.99 ||
+                    undefined
+                  "
                   style="padding: 5px !important; cursor: pointer"
                   @click="zoomIn()"
                 >
@@ -1015,12 +1023,13 @@ const seekTo = (newSeekTo: null | number) => {
 };
 
 function zoomIn(click?: MouseEvent) {
+  const zoomFactor = 0.2;
   try {
     if (!click?.clientX && !click?.clientY) {
-      panzooms[props.media.uniqueId]?.zoomIn();
+      panzooms[props.media.uniqueId]?.zoomIn({ step: zoomFactor });
     } else {
       panzooms[props.media.uniqueId]?.zoomToPoint(
-        (panzooms[props.media.uniqueId]?.getScale() || 1) * 1.35,
+        (panzooms[props.media.uniqueId]?.getScale() || 1) * (1 + zoomFactor),
         {
           clientX: click?.clientX || 0,
           clientY: click?.clientY || 0,
@@ -1042,7 +1051,7 @@ function zoomOut() {
 }
 
 const zoomReset = (forced = false, animate = true) => {
-  if ((panzooms[props.media.uniqueId]?.getScale() || 0) <= 1.25 || forced) {
+  if ((panzooms[props.media.uniqueId]?.getScale() || 0) < 1.05 || forced) {
     panzooms[props.media.uniqueId]?.reset({ animate });
   }
 };
@@ -1095,6 +1104,7 @@ const initiatePanzoom = () => {
       minScale: 1,
       panOnlyWhenZoomed: true,
       pinchAndPan: true,
+      step: 0.1, // for wheel / trackpad zoom
     };
     panzooms[props.media.uniqueId] = Panzoom(mediaImage.value.$el, options);
 
