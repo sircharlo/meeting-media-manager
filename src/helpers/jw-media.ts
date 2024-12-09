@@ -1032,10 +1032,11 @@ export const getAudioBibleMedia = async (force = false) => {
     }
 
     if (backupNameNeeded.length) {
-      const { nwtDb } = await getStudyBible();
+      const { nwtDb, nwtStyDb } = await getStudyBible();
 
-      if (nwtDb) {
-        const bibleBooksSimpleQuery = `
+      if (!(nwtStyDb || nwtDb)) return;
+
+      const bibleBooksSimpleQuery = `
         SELECT *
         FROM 
             Document
@@ -1043,21 +1044,19 @@ export const getAudioBibleMedia = async (force = false) => {
             Class = 1
       `;
 
-        const bibleBookLocalNames =
-          window.electronApi.executeQuery<JwPlaylistItem>(
-            nwtDb,
-            bibleBooksSimpleQuery,
-          );
-        console.log('backupBooks', backupNameNeeded, bibleBookLocalNames);
-        for (const booknum of backupNameNeeded) {
-          const pubName = bibleBookLocalNames.find(
-            (item) => item.ChapterNumber === booknum,
-          )?.Title;
-          returnedItems[booknum - 1] = {
-            booknum,
-            pubName,
-          };
-        }
+      const bibleBookLocalNames =
+        window.electronApi.executeQuery<JwPlaylistItem>(
+          (nwtStyDb || nwtDb) as string,
+          bibleBooksSimpleQuery,
+        );
+      for (const booknum of backupNameNeeded) {
+        const pubName = bibleBookLocalNames.find(
+          (item) => item.ChapterNumber === booknum,
+        )?.Title;
+        returnedItems[booknum - 1] = {
+          booknum,
+          pubName,
+        };
       }
     }
     jwStore.jwBibleAudioFiles[lang] = {

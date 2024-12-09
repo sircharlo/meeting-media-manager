@@ -131,7 +131,7 @@
                     :color="!book.files ? '' : 'accent-200'"
                     :disable="!book.files"
                     no-caps
-                    :text-color="!book.files ? 'accent-300' : 'black'"
+                    :text-color="!book.files ? 'accent-400' : 'black'"
                     unelevated
                     @click="selectedBibleBook = book.booknum || 0"
                   >
