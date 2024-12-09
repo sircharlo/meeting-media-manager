@@ -3,8 +3,8 @@ name: Build
 on:
   workflow_call:
     inputs:
-      fetch-latest:
-        description: 'Fetch the latest changes from the repository'
+      checkout-latest:
+        description: 'Checkout the latest changes from the repository'
         type: boolean
     secrets:
       SENTRY_AUTH_TOKEN:
@@ -17,12 +17,12 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-13, macos-latest, windows-latest]
     steps:
-      - if: ${{ github.event.inputs.fetch-latest == true }}
+      - if: ${{ inputs.checkout-latest == true }}
         name: Check out master branch
         uses: actions/checkout@v4
         with:
           ref: master
-      - if: ${{ github.event.inputs.fetch-latest == false }}
+      - if: ${{ inputs.checkout-latest == false }}
         name: Check out Git repository
         uses: actions/checkout@v4
       - name: Setup Node
