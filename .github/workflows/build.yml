@@ -1,114 +1,49 @@
-name: Build/release
+name: Build
 
 on:
-  push:
-    branches:
-      - master
-    paths-ignore:
-      - '.github/*_TEMPLATE/*.yml'
-      - '.github/*.yml'
-      - '.vscode/**'
-      - 'docs/**'
-      - '**/*.md'
-  pull_request:
-    paths-ignore:
-      - '.github/*_TEMPLATE/*.yml'
-      - '.github/*.yml'
-      - '.vscode/**'
-      - 'docs/**'
-      - '**/*.md'
-  workflow_dispatch:
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  workflow_call:
+    inputs:
+      checkout-latest:
+        description: 'Checkout the latest changes from the repository'
+        type: boolean
+    secrets:
+      SENTRY_AUTH_TOKEN:
+        required: true
 
 jobs:
-  version_checker:
-    runs-on: ubuntu-latest
-    outputs:
-      VERSION_MATCH: ${{ steps.compare-versions.outputs.VERSION_MATCH }}
-    #    permissions:
-    #      contents: write
-    #      pull-requests: write
-    #      repository-projects: write
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Read package version
-        uses: ZvonimirSun/read-package-version-actions@v2
-        id: package-version
-      - name: Get Latest Release Version
-        id: get-latest-release
-        uses: pozetroninc/github-action-get-latest-release@v0.8.0
-        with:
-          repository: ${{ github.repository }}
-        #   token: ${{ secrets.GITHUB_TOKEN }}
-        #   excludes: draft
-        # uses: InsonusK/get-latest-release@v1.1.0
-        # with:
-        #   myToken: ${{ secrets.GITHUB_TOKEN }}
-        #   exclude_types: 'draft'
-      - name: Compare versions and increment if needed
-        id: compare-versions
-        run: |
-          PACKAGE_VERSION="${{ steps.package-version.outputs.version }}"
-          GITHUB_RELEASE_VERSION="${{ steps.get-latest-release.outputs.release }}"
-          # Strip leading 'v' if present
-          GITHUB_RELEASE_VERSION="${GITHUB_RELEASE_VERSION#v}"
-          echo "Package version: $PACKAGE_VERSION"
-          echo "GitHub release version: $GITHUB_RELEASE_VERSION"
-          if [ "$PACKAGE_VERSION" = "$GITHUB_RELEASE_VERSION" ]; then
-            VERSION_MATCH=true
-          else
-            VERSION_MATCH=false
-          fi
-          echo "Versions are equal: $VERSION_MATCH"
-          echo "VERSION_MATCH=${VERSION_MATCH}" >> $GITHUB_ENV
-          echo "VERSION_MATCH=${VERSION_MATCH}" >> $GITHUB_OUTPUT
-          exit 0
-      - name: Create a pull request with version bump if needed
-        if: ${{ steps.compare-versions.outputs.VERSION_MATCH == 'true' }}
-        uses: r7kamura/bump-request@v0.5.0
-        with:
-          release_type: 'patch'
-
-  release:
-    needs: version_checker
+  build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-13, macos-latest, windows-latest]
     steps:
-      - name: Check out Git repository
+      - if: ${{ inputs.checkout-latest == true }}
+        name: Check out master branch
         uses: actions/checkout@v4
-        if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
+        with:
+          ref: master
+      - if: ${{ inputs.checkout-latest == false }}
+        name: Check out Git repository
+        uses: actions/checkout@v4
       - name: Setup Node
         uses: actions/setup-node@v4
-        if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
         with:
-          node-version: 20
+          node-version: 20.18.1
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install
-        if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
       - name: Lint files
         run: |
           yarn lint
           yarn type-check
-        if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
       - name: Build and Publish Electron App
         run: |
           yarn icons
           yarn build
-        if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
       - name: Upload artifacts
-        if: ${{ needs.version_checker.outputs.VERSION_MATCH == 'false' }}
         uses: actions/upload-artifact@v4
         with:
           name: M³ test build for ${{ matrix.os == 'macos-13' && 'Intel-based macOS' || matrix.os == 'macos-latest' && 'M-series (Apple Silicon) macOS' || matrix.os == 'windows-latest' && 'Windows' || 'Linux' }}

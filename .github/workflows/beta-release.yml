@@ -1,0 +1,102 @@
+name: Release Beta Version
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '42 22 * * *'
+
+jobs:
+  get-commit:
+    name: Get commit message
+    runs-on: ubuntu-latest
+    outputs:
+      msg: ${{ steps.set-msg.outputs.msg }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: set-msg
+        name: Set commit message variable
+        run: |
+          commitMessages=$(git log $(git describe --tags --abbrev=0)..@ --pretty=format:"%s" --no-merges | sed '/chore/d' | sed '/docs/d' | sed '/style/d' | sed '/test/d' | sed '/ci/d' | sed '/build/d' | sed '/refactor/d' | sed '2,$d')
+          echo "msg=${commitMessages}"
+          echo "msg=${commitMessages}" >> $GITHUB_OUTPUT
+  bump-version:
+    name: Bump version
+    needs: get-commit
+    if: ${{ needs.get-commit.outputs.msg != '' && needs.get-commit.outputs.msg != null }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Automated Version Bump
+        id: version-bump
+        uses: phips28/gh-action-bump-version@v11.0.7
+        with:
+          version-type: prerelease
+          preid: 'beta'
+          tag-prefix: 'v'
+          skip-tag: 'true'
+          bump-policy: 'last-commit'
+          commit-message: 'chore: bump version to {{version}} [skip ci]'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Output new version
+        env:
+          NEW_VERSION: ${{ steps.version-bump.outputs.newTag }}
+        run: echo "new version $NEW_VERSION"
+    outputs:
+      newTag: ${{ steps.version-bump.outputs.newTag }}
+
+  draft-release:
+    name: Draft release
+    runs-on: ubuntu-latest
+    needs: bump-version
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create draft release
+        id: create_release
+        uses: ncipollo/release-action@v1
+        with:
+          name: ${{ needs.bump-version.outputs.newTag }}
+          tag: ${{ needs.bump-version.outputs.newTag }}
+          commit: 'master'
+          draft: true
+          prerelease: true
+          generateReleaseNotes: true
+    outputs:
+      id: ${{ steps.create_release.outputs.id }}
+
+  build:
+    needs: draft-release
+    uses: ./.github/workflows/build.yml
+    with:
+      checkout-latest: true
+    secrets:
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
+  publish-release:
+    name: 'Publish release'
+    runs-on: ubuntu-latest
+    needs: [bump-version, build]
+    permissions:
+      contents: write
+    steps:
+      - uses: ncipollo/release-action@v1
+        with:
+          name: ${{ needs.bump-version.outputs.newTag }}
+          tag: ${{ needs.bump-version.outputs.newTag }}
+          draft: false
+          prerelease: true
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+          updateOnlyUnreleased: true
+          token: ${{ secrets.GITHUB_TOKEN }}
