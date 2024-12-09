@@ -44,11 +44,14 @@
         >
           <q-btn
             class="rounded-borders-sm full-width aspect-ratio-1"
-            color="primary"
+            :color="hoveredSong === song.track ? 'primary' : 'accent-200'"
             :disable="loading"
             :label="song.track"
+            :text-color="hoveredSong === song.track ? 'white' : 'black'"
             unelevated
             @click="addSong(song.track)"
+            @mouseout="if (!loading) hoveredSong = null;"
+            @mouseover="if (!loading) hoveredSong = song.track;"
           >
             <q-tooltip v-if="!loading" class="bg-black text-white">
               {{ song.title }}
@@ -119,6 +122,7 @@ const jwStore = useJwStore();
 const { updateJwSongs } = jwStore;
 
 const loading = ref(false);
+const hoveredSong = ref<null | number>(null);
 
 const filter = ref('');
 const filteredSongs = computed((): MediaLink[] => {
@@ -142,6 +146,7 @@ const dismissPopup = () => {
 const addSong = async (songTrack: number) => {
   try {
     loading.value = true;
+    hoveredSong.value = songTrack;
     if (songTrack) {
       const songTrackItem: PublicationFetcher = {
         fileformat: 'MP4',

@@ -162,11 +162,17 @@
                 v-for="chapter in selectedBookChapters"
                 :key="chapter"
                 class="rounded-borders-sm q-mr-xs q-mb-xs"
-                color="primary"
+                :color="hoveredChapter === chapter ? 'primary' : 'accent-200'"
                 :label="chapter"
                 style="width: 3em; height: 3em"
+                :text-color="hoveredChapter === chapter ? 'white' : 'black'"
                 unelevated
-                @click="bibleBookChapter = chapter"
+                @click="
+                  hoveredChapter = null;
+                  bibleBookChapter = chapter;
+                "
+                @mouseout="hoveredChapter = null"
+                @mouseover="hoveredChapter = chapter"
               />
             </div>
             <div v-else class="row q-col-gutter-md full-width">
@@ -279,6 +285,7 @@ whenever(tab, () => {
 
 const bibleBook = ref(0);
 const bibleBookChapter = ref(0);
+const hoveredChapter = ref<null | number>(0);
 const allBibleMedia = ref<MultimediaItem[]>([]);
 const bibleBooksStartAtId = ref(0);
 const bibleBooksEndAtId = ref(0);
@@ -487,11 +494,9 @@ const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
 
     const langsToTry = [
       ...new Set([
-         
         currentSettings.value?.lang,
         currentSettings.value?.langFallback,
         'E',
-         
       ]),
     ].filter((l) => l !== undefined && l !== null);
     let mediaInfo, mediaItemFiles;
