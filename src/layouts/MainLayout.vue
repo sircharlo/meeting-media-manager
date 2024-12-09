@@ -7,7 +7,10 @@
     <NavDrawer v-model="miniState" />
 
     <!-- Main content -->
-    <q-page-container class="main-bg fit-snugly overflow-auto">
+    <q-page-container
+      class="main-bg fit-snugly overflow-auto"
+      style="overflow-x: hidden !important"
+    >
       <AnnouncementBanner />
       <router-view />
     </q-page-container>

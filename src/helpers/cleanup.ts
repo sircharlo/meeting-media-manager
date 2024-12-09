@@ -10,7 +10,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 
 export const cleanLocalStorage = () => {
   // try {
-  //   ['customDurations', 'additionalMediaMaps', 'mediaSort'].forEach((key) => {
+  //   ['additionalMediaMaps', 'mediaSort'].forEach((key) => {
   //     cleanUpPastDatesFromLocalStorage(key);
   //   });
   // } catch (error) {
