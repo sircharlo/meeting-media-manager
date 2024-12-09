@@ -7,26 +7,18 @@
     unelevated
     @click="downloadPopup = !downloadPopup"
   >
+    <template v-if="someAreLoading && !someHaveError">
+      <q-icon name="mmm-cloud" />
+      <q-spinner
+        class="absolute"
+        :color="downloadPopup ? 'white' : 'primary'"
+        size="8px"
+        style="top: 14"
+      />
+    </template>
     <q-icon
-      :name="
-        Object.values(downloadProgress).filter((item) => item.error).length ===
-        0
-          ? Object.values(downloadProgress).filter((item) => item.loaded)
-              .length > 0
-            ? 'mmm-cloud'
-            : 'mmm-cloud-done'
-          : 'mmm-cloud-error'
-      "
-    >
-    </q-icon>
-    <q-spinner
-      v-if="
-        Object.values(downloadProgress).filter((item) => item.loaded).length > 0
-      "
-      class="absolute"
-      :color="downloadPopup ? 'white' : 'primary'"
-      size="8px"
-      style="top: 14"
+      v-else
+      :name="someHaveError ? 'mmm-cloud-error' : 'mmm-cloud-done'"
     />
     <q-tooltip
       v-if="!downloadPopup"
@@ -41,11 +33,13 @@
 </template>
 
 <script setup lang="ts">
+import type { DownloadProgressItem } from 'src/types';
+
 import isOnline from 'is-online';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 
 const currentState = useCurrentStateStore();
 const { downloadProgress, online } = storeToRefs(currentState);
@@ -66,5 +60,20 @@ setInterval(() => {
 
 onMounted(() => {
   updateOnline();
+});
+
+const someHaveError = computed(() => {
+  return Object.values(downloadProgress.value).some(
+    (item: DownloadProgressItem) => item.error,
+  );
+});
+
+const someAreLoading = computed(() => {
+  return Object.values(downloadProgress.value).some(
+    (item: DownloadProgressItem) =>
+      !item.complete &&
+      !item.error &&
+      (!item.loaded || !item.total || item.loaded < item.total),
+  );
 });
 </script>

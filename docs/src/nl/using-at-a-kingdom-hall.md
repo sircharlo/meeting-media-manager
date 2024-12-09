@@ -14,6 +14,7 @@ Deze handleiding zal je begeleiden bij het downloaden, installeren en opzetten v
    - **Windows:**
      - Voor de meeste Windows-systemen, download <a :href="data.win64">meeting-media-manager-[VERSIE]-x64.exe</a>.
      - Voor oudere 32-bit Windows-systemen, download <a :href="data.win32">meeting-media-manager-[VERSIE]-ia32.exe</a>.
+     - Voor een draagbare versie, download <a :href="data.winPortable">meeting-media-manager-[VERSIE]-portable.exe</a>.
    - **macOS:**
      - **M-serie (Apple Silicon)**: Download <a :href="data.macArm">meeting-media-manager-[VERSIE]-arm64.dmg</a>.
      - **Intel Macs**: Download <a :href="data.macIntel">meeting-media-manager-[VERSIE]-x64.dmg</a>.

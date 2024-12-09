@@ -5,11 +5,7 @@
     >
       <div class="row items-center">
         <div class="col-shrink q-mr-md">
-          <img
-            col
-            src="~assets/img/logo.svg"
-            style="max-height: 10vh; display: flex"
-          />
+          <q-img loading="lazy" src="~assets/img/logo.svg" width="48px" />
         </div>
         <div class="col">
           <div class="row text-h6">

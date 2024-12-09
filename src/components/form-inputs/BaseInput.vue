@@ -39,8 +39,9 @@
     :list="item.list"
     :rules="item.rules"
     :setting-id="settingId"
-    :use-input="settingId.toLowerCase().includes('lang')"
+    use-input
   />
+  <!-- :use-input="settingId.toLowerCase().includes('lang')" -->
   <ShortcutInput
     v-else-if="item.type === 'shortcut'"
     v-model="model"

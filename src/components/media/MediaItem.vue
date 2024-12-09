@@ -275,6 +275,9 @@
                   @dblclick="mediaEditTitleDialog = true"
                 >
                   {{ displayMediaTitle }}
+                  <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+                    {{ displayMediaTitle }}
+                  </q-tooltip>
                 </div>
                 <div v-if="!isFileUrl(media.fileUrl)" class="text-caption">
                   {{ $t('media-item-missing-explain') }}
