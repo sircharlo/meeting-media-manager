@@ -1,8 +1,8 @@
 project_id: '559843'
-pull_request_title: 'chore: new translations'
+pull_request_title: 'feat: new translations'
 pull_request_labels:
   - translations
-commit_message: 'chore: new translations for %language%'
+commit_message: 'feat: new translations for %language%'
 append_commit_message: false
 files:
   - source: /src/i18n/en.json

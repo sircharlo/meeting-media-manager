@@ -1,0 +1,30 @@
+name: Build/Release
+
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - '.github/*_TEMPLATE/*.yml'
+      - '.github/*.yml'
+      - '.vscode/**'
+      - 'docs/**'
+      - '**/*.md'
+  pull_request:
+    paths-ignore:
+      - '.github/*_TEMPLATE/*.yml'
+      - '.github/*.yml'
+      - '.vscode/**'
+      - 'docs/**'
+      - '**/*.md'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    secrets:
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
