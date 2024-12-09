@@ -2,6 +2,10 @@ name: Build
 
 on:
   workflow_call:
+    inputs:
+      fetch-latest:
+        description: 'Fetch the latest changes from the repository'
+        type: boolean
     secrets:
       SENTRY_AUTH_TOKEN:
         required: true
@@ -13,7 +17,13 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-13, macos-latest, windows-latest]
     steps:
-      - name: Check out Git repository
+      - if: ${{ github.event.inputs.fetch-latest == true }}
+        name: Check out master branch
+        uses: actions/checkout@v4
+        with:
+          ref: master
+      - if: ${{ github.event.inputs.fetch-latest == false }}
+        name: Check out Git repository
         uses: actions/checkout@v4
       - name: Setup Node
         uses: actions/setup-node@v4

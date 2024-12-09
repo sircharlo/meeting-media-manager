@@ -78,6 +78,8 @@ jobs:
   build:
     needs: draft-release
     uses: ./.github/workflows/build.yml
+    with:
+      fetch-latest: true
     secrets:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
