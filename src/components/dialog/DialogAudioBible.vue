@@ -1,12 +1,13 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="bg-secondary-contrast column fit-snugly large-overlay q-px-none"
+      class="bg-secondary-contrast large-overlay q-px-none flex"
+      style="flex-flow: column"
     >
-      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
+      <div class="text-h6 row q-px-md q-pt-lg">
         {{ $t('add-media-audio-bible') }}
       </div>
-      <div class="col-shrink full-width q-px-md q-py-md">
+      <div class="row q-px-md q-py-md">
         {{ $t('add-media-audio-bible-explain') }}
       </div>
       <div
@@ -15,7 +16,7 @@
           selectedBibleBook &&
           bibleAudioMediaHebrew.concat(bibleAudioMediaGreek).length
         "
-        class="col-shrink full-width q-px-md"
+        class="row q-px-md full-width"
       >
         <q-tabs
           v-model="selectedBibleBook"
@@ -25,6 +26,7 @@
           indicator-color="primary"
           narrow-indicator
           outside-arrows
+          style="width: -webkit-fill-available; max-width: 100%"
         >
           <q-tab
             v-for="book in bibleAudioMediaHebrew.concat(bibleAudioMediaGreek)"
@@ -59,7 +61,7 @@
                   >
                     <q-btn
                       :key="chapter"
-                      class="rounded-borders-sm full-width aspect-ratio-1"
+                      class="rounded-borders-sm aspect-ratio-1 full-width"
                       :class="{
                         'bg-primary': selectedChapter === chapter,
                         'text-white': selectedChapter === chapter,
@@ -89,7 +91,7 @@
                     class="col col-grid"
                   >
                     <q-btn
-                      class="rounded-borders-sm full-width aspect-ratio-1"
+                      class="rounded-borders-sm aspect-ratio-1 full-width"
                       :class="getVerseClass(verse)"
                       :disable="loading"
                       :label="verse"
@@ -112,20 +114,20 @@
                 { title: 'greek-scriptures', books: bibleAudioMediaGreek },
               ]"
               :key="sectionIndex"
-              class="col-shrink full-width q-px-md"
+              class="row q-px-md"
             >
-              <div class="text-grey text-uppercase q-my-sm">
+              <div class="text-grey text-uppercase q-my-sm row">
                 {{ $t(sectionInfo.title) }}
               </div>
-              <div class="row full-width q-col-gutter-xs q-mb-lg">
+              <div class="row q-col-gutter-xs">
                 <div
                   v-for="(book, index) in sectionInfo.books"
                   :key="index"
                   class="col col-xs-4 col-sm-3 col-md-2 col-lg-1"
                 >
                   <q-btn
+                    class="full-width"
                     :class="{
-                      'full-width': true,
                       'dotted-borders': !book.files,
                     }"
                     :color="!book.files ? '' : 'accent-200'"
@@ -145,7 +147,7 @@
           </template>
         </template>
       </div>
-      <div class="row q-px-md q-py-md col-shrink full-width">
+      <div class="row q-px-md q-py-md row">
         <div class="col">
           <q-btn
             color="primary"

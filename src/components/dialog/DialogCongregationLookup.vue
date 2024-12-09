@@ -1,13 +1,13 @@
 <template>
   <q-dialog v-model="open" persistent>
-    <div class="bg-secondary-contrast column fit-snugly q-px-none">
-      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
+    <div class="bg-secondary-contrast flex q-px-none" style="flex-flow: column">
+      <div class="text-h6 row q-px-md q-pt-lg">
         {{ $t('congregation-lookup') }}
       </div>
-      <div class="col-shrink full-width q-px-md q-pt-md">
+      <div class="row q-px-md q-pt-md">
         {{ $t('congregation-lookup-explain') }}
       </div>
-      <div class="col-shrink full-width q-px-md q-py-md">
+      <div class="row q-px-md q-py-md">
         <q-input
           v-model="congregationFilter"
           clearable
@@ -21,9 +21,9 @@
           </template>
         </q-input>
       </div>
-      <div class="q-pl-md overflow-auto col full-width flex">
+      <div class="q-pl-md overflow-auto row flex">
         <q-list
-          class="full-width q-pr-scroll"
+          class="q-pr-scroll full-width"
           padding
           separator
           style="max-height: 20vh"
@@ -90,7 +90,7 @@
           </template>
         </q-list>
       </div>
-      <div class="row q-px-md q-py-md col-shrink full-width justify-end">
+      <div class="row q-px-md q-py-md row flex-center">
         <div class="col text-right">
           <q-btn v-close-popup color="negative" flat @click="dismissPopup">
             {{ $t('cancel') }}

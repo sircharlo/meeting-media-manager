@@ -8,18 +8,18 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div class="column action-popup q-py-md">
-      <div class="card-title col-shrink full-width q-px-md q-mb-none">
+    <div class="flex action-popup q-py-md" style="flex-flow: column">
+      <div class="card-title row q-px-md q-mb-none">
         {{ $t('media-display-settings') }}
       </div>
       <template v-if="screenList?.length > 1">
         <template
           v-if="!screenPreferences.preferWindowed && screenList?.length > 2"
         >
-          <div class="card-section-title col-shrink full-width q-px-md">
+          <div class="card-section-title row q-px-md">
             {{ $t('display') }}
           </div>
-          <div class="col-shrink full-width q-px-md q-pb-sm">
+          <div class="row q-px-md q-pb-sm">
             <div class="row q-col-gutter-sm">
               <template v-for="(screen, index) in screenList" :key="screen.id">
                 <div class="col">
@@ -51,10 +51,10 @@
           </div>
           <q-separator class="bg-accent-200 q-mb-md" />
         </template>
-        <div class="card-section-title col-shrink full-width q-px-md">
+        <div class="card-section-title row q-px-md">
           {{ $t('window-type') }}
         </div>
-        <div class="col-shrink full-width q-px-md q-pb-sm">
+        <div class="row q-px-md q-pb-sm">
           <div class="row q-col-gutter-sm">
             <div class="col-6">
               <q-btn
@@ -95,10 +95,10 @@
         </div>
         <q-separator class="bg-accent-200 q-mb-md" />
       </template>
-      <div class="card-section-title col-shrink full-width q-px-md q-pb-sm">
+      <div class="card-section-title row q-px-md q-pb-sm">
         {{ $t('custom-background') }}
       </div>
-      <div class="col-shrink full-width q-px-md q-pb-sm">
+      <div class="row q-px-md q-pb-sm">
         <q-btn
           class="full-width"
           color="primary"
@@ -120,7 +120,7 @@
           }}
         </q-btn>
       </div>
-      <div class="col-shrink full-width q-px-md q-pt-md row">
+      <div class="row q-px-md q-pt-md row">
         <div class="col">
           <div class="row text-subtitle1 text-weight-medium">
             {{ mediaWindowVisible ? $t('projecting') : $t('inactive') }}
@@ -159,14 +159,14 @@
     </div>
   </q-menu>
   <q-dialog v-model="showCustomBackgroundPicker">
-    <div class="bg-secondary-contrast column fit-snugly q-px-none">
-      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
+    <div class="bg-secondary-contrast flex q-px-none" style="flex-flow: column">
+      <div class="text-h6 row q-px-md q-pt-lg">
         {{ $t('choose-an-image') }}
       </div>
-      <div class="col-shrink full-width q-px-md q-py-md">
+      <div class="row q-px-md q-py-md">
         {{ $t('select-a-custom-background') }}
       </div>
-      <div class="q-px-md overflow-auto col full-width flex">
+      <div class="q-px-md overflow-auto row flex">
         <template
           v-for="(jwpubImage, index) in jwpubImages"
           :key="jwpubImage.FilePath"
@@ -176,7 +176,7 @@
             clickable
             @click="setMediaBackground(jwpubImage.FilePath)"
           >
-            <div class="col-shrink q-mr-md">
+            <div class="row q-mr-md">
               <q-img
                 v-ripple
                 class="rounded-borders"
@@ -198,7 +198,7 @@
           :showing="!!jwpubImportFilePath && !jwpubImages.length"
         />
       </div>
-      <div class="row q-px-md q-py-md col-shrink full-width justify-end">
+      <div class="q-px-md q-py-md row justify-end">
         <q-btn
           color="negative"
           flat

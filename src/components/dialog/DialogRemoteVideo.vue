@@ -1,15 +1,16 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="bg-secondary-contrast column fit-snugly large-overlay q-px-none medium-overlay"
+      class="bg-secondary-contrast flex large-overlay q-px-none medium-overlay"
+      style="flex-flow: column"
     >
-      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
+      <div class="text-h6 row q-px-md q-pt-lg">
         {{ $t('add-video-jw-org') }}
       </div>
-      <div class="col-shrink full-width q-px-md q-pt-md">
+      <div class="row q-px-md q-pt-md">
         {{ $t('add-a-video-explain') }}
       </div>
-      <div class="col-shrink full-width q-px-md q-py-md">
+      <div class="row q-px-md q-py-md">
         <div class="col-grow">
           <q-input
             v-model="remoteVideoFilter"
@@ -25,7 +26,7 @@
           </q-input>
         </div>
       </div>
-      <div class="q-px-md overflow-auto col full-width row">
+      <div class="q-px-md overflow-auto row">
         <template
           v-for="video in remoteVideosFiltered.slice(
             (currentPage - 1) * videosPerPage,
@@ -82,7 +83,7 @@
           </div>
         </template>
       </div>
-      <div class="row q-px-md q-py-md col-shrink full-width justify-center">
+      <div class="row q-px-md q-py-md justify-center">
         <q-pagination
           v-model="currentPage"
           active-color="primary"
@@ -93,7 +94,7 @@
           :max-pages="10"
         />
       </div>
-      <div class="row q-px-md q-py-md col-shrink full-width">
+      <div class="q-px-md q-py-md row">
         <div class="col">
           <q-spinner v-if="videosAreLoading" color="primary" size="md" />
           <q-toggle

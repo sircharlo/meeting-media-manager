@@ -1,18 +1,17 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="bg-secondary-contrast column fit-snugly medium-overlay q-px-none"
+      class="bg-secondary-contrast flex medium-overlay q-px-none"
+      style="flex-flow: column"
     >
-      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
+      <div class="text-h6 row q-px-md q-pt-lg">
         {{ $t('import-media-from-s34mp') }}
       </div>
-      <div class="col-shrink full-width q-px-md q-pt-md">
+      <div class="row q-px-md q-pt-md">
         {{ $t('select-s34mp-to-add-public-talk-media') }}
       </div>
-      <div
-        class="col-shrink full-width q-px-md q-pt-md row items-center q-gutter-x-sm"
-      >
-        <div class="col-shrink">
+      <div class="row q-px-md q-pt-md row items-center q-gutter-x-sm">
+        <div class="row">
           <q-icon name="mmm-file" size="md" />
         </div>
         <div class="col text-subtitle2">
@@ -36,7 +35,7 @@
         </q-btn>
       </div>
       <template v-if="s34mpDb">
-        <div class="col-shrink full-width q-px-md q-py-md">
+        <div class="row q-px-md q-py-md">
           <q-input
             v-model="filter"
             class="col"
@@ -52,7 +51,7 @@
             </template>
           </q-input>
         </div>
-        <div class="col full-width q-px-md overflow-auto">
+        <div class="col overflow-auto">
           <template v-for="publicTalk in filteredPublicTalks" :key="publicTalk">
             <q-item
               v-ripple
@@ -65,7 +64,7 @@
           </template>
         </div>
       </template>
-      <div class="row q-px-md q-py-md col-shrink full-width justify-end">
+      <div class="row q-px-md q-py-md justify-end">
         <q-btn
           color="negative"
           flat

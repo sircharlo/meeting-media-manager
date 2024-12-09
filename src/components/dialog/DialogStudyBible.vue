@@ -1,9 +1,10 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="bg-secondary-contrast column fit-snugly large-overlay q-px-none"
+      class="bg-secondary-contrast flex large-overlay q-px-none"
+      style="flex-flow: column"
     >
-      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
+      <div class="text-h6 row q-px-md q-pt-lg">
         <template v-if="!bibleBook">
           {{ $t('add-media-study-bible') }}
         </template>
@@ -12,7 +13,7 @@
           {{ bibleBooks[bibleBook]?.Title }}
         </template>
       </div>
-      <div class="col-shrink full-width q-px-md q-py-md">
+      <div class="row q-px-md q-py-md">
         <template v-if="!bibleBook || !bibleBookChapter">
           {{ $t('add-media-study-bible-explain') }}
         </template>
@@ -23,13 +24,10 @@
           </div>
         </template>
       </div>
-      <div
-        v-if="loading"
-        class="col-shrink full-width q-px-md q-pb-md row justify-center"
-      >
+      <div v-if="loading" class="row q-px-md q-pb-md row justify-center">
         <q-spinner color="primary" size="md" />
       </div>
-      <div class="col-shrink full-width q-px-md">
+      <div class="row q-px-md">
         <q-tabs
           v-model="tab"
           active-color="primary"
@@ -56,7 +54,7 @@
           </q-tab>
         </q-tabs>
       </div>
-      <div class="q-pr-scroll overflow-auto col full-width items-start">
+      <div class="q-pr-scroll overflow-auto col items-start">
         <q-tab-panels v-model="tab" animated style="background: transparent">
           <q-tab-panel
             v-for="category in bibleMediaCategories"
@@ -151,10 +149,7 @@
                     </div>
                   </template>
                 </div>
-                <q-separator
-                  class="bg-accent-200 full-width q-mt-md q-mb-lg"
-                  size="2px"
-                />
+                <q-separator class="bg-accent-200 q-mt-md q-mb-lg" size="2px" />
               </template>
             </template>
             <div v-else-if="bibleBook" class="row q-px-md">
@@ -175,7 +170,7 @@
                 @mouseover="hoveredChapter = chapter"
               />
             </div>
-            <div v-else class="row q-col-gutter-md full-width">
+            <div v-else class="row q-col-gutter-md">
               <template
                 v-for="[bookNr, book] in Object.entries(bibleBooks)"
                 :key="bookNr"
@@ -211,8 +206,7 @@
           </q-tab-panel>
         </q-tab-panels>
       </div>
-      <div class="row q-px-md q-py-md col-shrink full-width">
-        <div class="col"></div>
+      <div class="row q-px-md q-py-md">
         <div class="col text-right q-gutter-x-sm">
           <q-btn
             v-if="bibleBook"

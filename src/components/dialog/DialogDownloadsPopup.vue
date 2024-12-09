@@ -9,14 +9,14 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    <div class="column action-popup fit-snugly q-py-md">
-      <div class="card-title col-shrink full-width q-px-md q-mb-none">
+    <div class="action-popup flex q-py-md" style="flex-flow: column">
+      <div class="card-title row q-px-md q-mb-none">
         {{ $t('media-sync') }}
       </div>
-      <div class="overflow-auto col full-width">
+      <div class="col overflow-auto q-col-gutter-y-sm">
         <template v-if="Object.values(downloadProgress).length === 0">
-          <div class="col-shrink full-width q-px-md q-pt-xs row">
-            <div class="col text-weight-medium text-dark-grey">
+          <div class="row flex-center q-px-md row">
+            <div class="col ellipsis text-weight-medium text-dark-grey">
               {{ $t('noDownloadsInProgress') }}
             </div>
             <div class="col-shrink">
@@ -31,7 +31,7 @@
           >
             <p
               v-if="hasStatus(downloadProgress, statusObject.status)"
-              class="card-section-title text-dark-grey col-shrink full-width q-px-md q-pt-sm"
+              class="card-section-title text-dark-grey row q-px-md"
             >
               {{ $t(statusObject.label) }}
             </p>
@@ -39,8 +39,8 @@
               v-for="(item, id) in filteredDownloads(statusObject.status)"
               :key="id"
             >
-              <div class="col-shrink full-width q-px-md q-pt-xs row">
-                <div class="col text-weight-medium text-dark-grey">
+              <div class="row flex-center q-px-md row">
+                <div class="col ellipsis text-weight-medium text-dark-grey">
                   {{ item.filename && path.basename(item.filename) }}
                 </div>
                 <div class="col-shrink">
@@ -64,7 +64,7 @@
                   />
                 </div>
               </div>
-              <div class="col-shrink full-width q-px-md">
+              <div class="row q-px-md">
                 <q-separator
                   v-if="
                     Object.keys(filteredDownloads(statusObject.status) || {})

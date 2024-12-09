@@ -1,15 +1,16 @@
 <template>
   <q-dialog v-model="open">
     <div
-      class="bg-secondary-contrast column fit-snugly medium-overlay q-px-none"
+      class="bg-secondary-contrast flex medium-overlay q-px-none"
+      style="flex-flow: column"
     >
-      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg">
+      <div class="text-h6 row q-px-md q-pt-lg">
         {{ $t('choose-a-song') }}
       </div>
-      <div class="col-shrink full-width q-px-md q-pt-md">
+      <div class="row q-px-md q-pt-md">
         {{ $t('add-a-song') }}
       </div>
-      <div class="col-shrink full-width q-px-md q-py-md">
+      <div class="row q-px-md q-py-md">
         <q-input
           v-model="filter"
           class="col"
@@ -27,23 +28,20 @@
         </q-input>
       </div>
       <q-slide-transition>
-        <div
-          v-if="loading && filteredSongs?.length === 0"
-          class="col-shrink q-pb-md full-width"
-        >
+        <div v-if="loading && filteredSongs?.length === 0" class="row q-pb-md">
           <div class="row justify-center">
             <q-spinner color="primary" size="lg" />
           </div>
         </div>
       </q-slide-transition>
-      <div class="q-px-md overflow-auto col row q-col-gutter-xs content-start">
+      <div class="q-px-md overflow-auto row q-col-gutter-xs content-start">
         <div
           v-for="song in filteredSongs"
           :key="song.track"
           class="col col-grid"
         >
           <q-btn
-            class="rounded-borders-sm full-width aspect-ratio-1"
+            class="rounded-borders-sm aspect-ratio-1 full-width"
             :color="hoveredSong === song.track ? 'primary' : 'accent-200'"
             :disable="loading"
             :label="song.track"
@@ -59,7 +57,7 @@
           </q-btn>
         </div>
       </div>
-      <div class="row q-px-md q-py-md col-shrink full-width">
+      <div class="row q-px-md q-py-md row">
         <div class="col">
           <q-spinner
             v-if="loading || filteredSongs?.length === 0"

@@ -10,57 +10,50 @@
     transition-show="jump-up"
   >
     <div
+      class="action-popup q-py-md flex"
       :class="{
-        column: true,
-        'action-popup': true,
         'fit-snugly': musicPlaying && !musicStopping,
-        'q-py-md': true,
       }"
+      style="flex-flow: column"
     >
-      <div class="card-title col-shrink full-width q-px-md q-mb-none">
+      <div class="card-title row q-px-md q-mb-none">
         {{ $t('setupWizard.backgroundMusic') }}
       </div>
       <template v-if="musicPlaying">
-        <p
-          class="card-section-title text-dark-grey col-shrink full-width q-px-md q-pt-sm"
-        >
+        <p class="card-section-title text-dark-grey row q-px-md q-pt-sm">
           {{ $t('current-song') }}
         </p>
-        <div class="col-shrink full-width q-px-md q-pt-xs row">
+        <div class="row q-px-md q-pt-xs row">
           <div class="col text-weight-medium">
             {{ musicPlayingTitle }}
           </div>
-          <div class="col-shrink text-grey">
+          <div class="row text-grey">
             {{ currentSongRemainingTime }}
           </div>
         </div>
-        <div class="col-shrink full-width q-px-md q-pt-sm">
-          <q-separator class="bg-accent-200 full-width" />
+        <div class="row q-px-md q-pt-sm">
+          <q-separator class="bg-accent-200" />
         </div>
-        <template v-if="!musicStopping">
-          <p
-            class="col-shrink card-section-title text-dark-grey q-px-md q-pt-sm"
-          >
-            {{ $t('upcoming-songs') }}
-          </p>
-          <div class="overflow-auto col full-width flex">
-            <template v-for="(song, i) in songList" :key="i">
-              <div class="row q-my-xs q-pl-md full-width q-pr-scroll">
-                <div class="col text-weight-medium">
-                  {{ song.title }}
-                </div>
-                <div class="col-shrink text-grey">
-                  {{ formatTime(song.duration ?? 0) }}
-                </div>
+        <p class="row card-section-title text-dark-grey q-px-md q-pt-sm">
+          {{ $t('upcoming-songs') }}
+        </p>
+        <div class="overflow-auto col">
+          <template v-for="(song, i) in songList" :key="i">
+            <div class="row q-my-sm q-pl-md q-pr-scroll">
+              <div class="col text-weight-medium">
+                {{ song.title }}
               </div>
-            </template>
-          </div>
-          <div class="col-shrink full-width q-px-md q-pt-sm">
-            <q-separator class="bg-accent-200 full-width" />
-          </div>
-        </template>
+              <div class="row text-grey">
+                {{ formatTime(song.duration ?? 0) }}
+              </div>
+            </div>
+          </template>
+        </div>
+        <div class="row q-px-md q-pt-sm">
+          <q-separator class="bg-accent-200" />
+        </div>
       </template>
-      <div class="col-shrink full-width q-px-md q-pt-md row">
+      <div class="row q-px-md q-pt-md">
         <div class="col">
           <div class="row text-subtitle1 text-weight-medium">
             {{
@@ -86,7 +79,7 @@
         <div class="col-grow">
           <q-btn
             v-if="!musicPlaying"
-            class="full-width"
+            class=""
             color="primary"
             :disable="mediaPlaying || musicStarting"
             unelevated
@@ -96,7 +89,7 @@
           </q-btn>
           <q-btn
             v-else
-            class="full-width"
+            class=""
             color="primary"
             :disable="musicStopping"
             unelevated

@@ -1,9 +1,10 @@
 <template>
   <q-dialog v-model="open" persistent>
     <div
-      class="bg-secondary-contrast column fit-snugly medium-overlay q-px-none"
+      class="bg-secondary-contrast flex medium-overlay q-px-none"
+      style="flex-flow: column"
     >
-      <div class="text-h6 col-shrink full-width q-px-md q-pt-lg q-pb-md">
+      <div class="text-h6 row q-px-md q-pt-lg q-pb-md">
         {{
           $t(
             jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)
@@ -13,8 +14,8 @@
         }}
       </div>
       <template v-if="jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)">
-        <div class="row q-px-md col full-width overflow-auto">
-          <q-list class="full-width">
+        <div class="row q-px-md overflow-auto">
+          <q-list class="">
             <q-item
               v-for="jwpubImportDocument in jwpubDocuments"
               :key="jwpubImportDocument.DocumentId"
@@ -36,7 +37,7 @@
         </div>
       </template>
       <template v-else>
-        <div class="col-shrink full-width q-px-md">
+        <div class="row q-px-md">
           <p>{{ $t('local-media-explain-1') }}</p>
           <a>
             {{ $t('local-media-explain-2') }}
@@ -60,7 +61,7 @@
             </q-tooltip>
           </a>
         </div>
-        <div class="col full-width q-px-md q-pt-md">
+        <div class="row q-px-md q-pt-md">
           <div
             ref="dropArea"
             class="col rounded-borders dashed-border items-center justify-center flex"
@@ -68,8 +69,8 @@
               'cursor-pointer': !totalFiles && !(!!jwpubDb || jwpubLoading),
               'bg-accent-100':
                 hovering && !totalFiles && !(!!jwpubDb || jwpubLoading),
-              'full-height': true,
             }"
+            style="min-height: 200px"
             @click="
               () => {
                 if (!totalFiles && !(!!jwpubDb || jwpubLoading)) {
@@ -104,7 +105,7 @@
           </div>
         </div>
       </template>
-      <div class="row q-px-md q-py-md col-shrink full-width justify-end">
+      <div class="row q-px-md q-py-md justify-end">
         <q-btn
           v-close-popup
           color="negative"
