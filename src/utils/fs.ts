@@ -23,7 +23,7 @@ const getCachePath = async (
 ) => {
   const dir = window.electronApi.path.join(
     cacheDir || (await window.electronApi.getUserDataPath()),
-    ...paths,
+    ...paths.filter((p) => !!p),
   );
   if (create) {
     try {
