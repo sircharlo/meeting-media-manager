@@ -9,7 +9,7 @@
       'bg-accent-100': mediaPlayingUniqueId === '' && playState === 'current',
     }"
   >
-    <div class="q-pr-none rounded-borders">
+    <div class="col-shrink">
       <div
         class="q-pr-none rounded-borders overflow-hidden relative-position bg-black"
         :style="{ opacity: isFileUrl(media.fileUrl) ? undefined : 0.64 }"
@@ -205,423 +205,409 @@
         </transition>
       </div>
     </div>
-    <div class="row" style="flex-grow: 1; align-content: center">
-      <div class="col-12">
-        <div class="row items-center">
-          <div class="col">
-            <div class="row items-center">
-              <div
-                v-if="
-                  (media.isAdditional &&
-                    !currentSettings?.disableMediaFetching &&
-                    isFileUrl(media.fileUrl)) ||
-                  media.tag?.type ||
-                  media.watched
-                "
-                :class="mediaTagClasses"
-                side
-              >
-                <q-chip
-                  :class="[
-                    'media-tag full-width',
-                    media.tag?.type === 'song'
-                      ? 'bg-accent-400'
-                      : 'bg-accent-200',
-                  ]"
-                  :clickable="false"
-                  :ripple="false"
-                  :text-color="media.tag?.type === 'song' ? 'white' : undefined"
-                >
-                  <q-icon
-                    :class="{ 'q-mr-xs': media.tag?.type }"
-                    :name="
-                      media.watched
-                        ? 'mmm-watched-media'
-                        : media.isAdditional &&
-                            !currentSettings?.disableMediaFetching &&
-                            isFileUrl(media.fileUrl)
-                          ? 'mmm-add-media'
-                          : media.tag?.type === 'paragraph'
-                            ? media.tag.value !== 9999
-                              ? 'mmm-paragraph'
-                              : 'mmm-footnote'
-                            : 'mmm-music-note'
-                    "
-                  />
-                  <q-tooltip v-if="media.watched" :delay="500">
-                    {{ $t('watched-media-item-explain') }}
-                  </q-tooltip>
-                  <q-tooltip
-                    v-if="
-                      media.isAdditional &&
+    <div class="col">
+      <div class="row items-center">
+        <div
+          v-if="
+            (media.isAdditional &&
+              !currentSettings?.disableMediaFetching &&
+              isFileUrl(media.fileUrl)) ||
+            media.tag?.type ||
+            media.watched
+          "
+          :class="mediaTagClasses"
+          side
+        >
+          <q-chip
+            :class="[
+              'media-tag full-width',
+              media.tag?.type === 'song' ? 'bg-accent-400' : 'bg-accent-200',
+            ]"
+            :clickable="false"
+            :ripple="false"
+            :text-color="media.tag?.type === 'song' ? 'white' : undefined"
+          >
+            <q-icon
+              :class="{ 'q-mr-xs': media.tag?.type }"
+              :name="
+                media.watched
+                  ? 'mmm-watched-media'
+                  : media.isAdditional &&
                       !currentSettings?.disableMediaFetching &&
                       isFileUrl(media.fileUrl)
-                    "
-                    :delay="1000"
-                  >
-                    {{ $t('extra-media-item-explain') }}
-                  </q-tooltip>
-                  <template v-if="media?.tag?.type">
-                    {{
-                      media.tag?.type === 'paragraph' &&
-                      media.tag.value === 9999
-                        ? $t('footnote')
-                        : media.tag?.value
-                    }}
-                  </template>
-                </q-chip>
-              </div>
-              <div
-                :class="{
-                  'q-px-md': true,
-                  col: true,
-                  'text-grey': !isFileUrl(media.fileUrl),
-                }"
-              >
-                <div
-                  class="ellipsis-3-lines row"
-                  @dblclick="mediaEditTitleDialog = true"
-                >
-                  {{ displayMediaTitle }}
-                  <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
-                    {{ displayMediaTitle }}
-                  </q-tooltip>
-                </div>
-                <div v-if="!isFileUrl(media.fileUrl)" class="text-caption">
-                  {{ $t('media-item-missing-explain') }}
-                </div>
-              </div>
-              <div class="col-shrink">
-                <div class="row q-gutter-sm items-center q-mr-sm">
-                  <q-btn
-                    ref="moreButton"
-                    color="accent-400"
-                    flat
-                    icon="mmm-dots"
-                    round
-                    size="sm"
-                    :style="`visibility: ${hoveringMediaItem || contextMenu ? 'visible' : 'hidden'}`"
-                    @click="
-                      () => {
-                        menuTarget = moreButton?.$el;
-                        contextMenu = true;
-                      }
-                    "
-                  />
-                  <q-icon
-                    v-if="media.repeat"
-                    color="warning"
-                    name="mmm-repeat"
-                    size="sm"
-                  >
-                    <q-tooltip :delay="500">
-                      {{ $t('repeat') }}
-                    </q-tooltip>
-                  </q-icon>
-                </div>
-              </div>
-            </div>
-            <transition
-              appear
-              enter-active-class="animated fadeIn"
-              leave-active-class="animated fadeOut"
-              mode="out-in"
-              name="fade"
+                    ? 'mmm-add-media'
+                    : media.tag?.type === 'paragraph'
+                      ? media.tag.value !== 9999
+                        ? 'mmm-paragraph'
+                        : 'mmm-footnote'
+                      : 'mmm-music-note'
+              "
+            />
+            <q-tooltip v-if="media.watched" :delay="500">
+              {{ $t('watched-media-item-explain') }}
+            </q-tooltip>
+            <q-tooltip
+              v-if="
+                media.isAdditional &&
+                !currentSettings?.disableMediaFetching &&
+                isFileUrl(media.fileUrl)
+              "
+              :delay="1000"
             >
-              <div
-                v-if="
-                  [media.fileUrl, media.streamUrl].includes(mediaPlayingUrl) &&
-                  media.duration
-                "
-                class="absolute duration-slider"
-              >
-                <div class="row flex-center">
-                  <div
-                    class="col-shrink text-caption text-accent-400 q-mx-sm text-left"
-                    style="min-width: 40px"
-                  >
-                    {{
-                      formatTime(
-                        Math.max(
-                          (mediaPlayingCurrentPosition || 0) -
-                            (mediaCustomDuration.min || 0),
-                          0,
-                        ),
-                      )
-                    }}
-                  </div>
-                  <div class="col" style="height: 28px">
-                    <q-slider
-                      v-model="mediaPlayingCurrentPosition"
-                      :color="
-                        mediaPlayingAction === 'pause'
-                          ? 'primary'
-                          : 'accent-400'
-                      "
-                      :inner-max="mediaCustomDuration.max"
-                      :inner-min="mediaCustomDuration.min"
-                      inner-track-color="accent-400"
-                      label
-                      :label-color="
-                        mediaPlayingAction === 'pause'
-                          ? undefined
-                          : 'accent-400'
-                      "
-                      :label-value="
-                        mediaPlayingAction === 'pause'
-                          ? formatTime(mediaPlayingCurrentPosition)
-                          : $t('pause-to-adjust-time')
-                      "
-                      :max="media.duration"
-                      :min="0"
-                      :readonly="mediaPlayingAction !== 'pause'"
-                      :step="0.1"
-                      track-color="negative"
-                      @update:model-value="seekTo"
-                    />
-                  </div>
-                  <div
-                    class="col-shrink text-caption text-accent-400 q-mx-sm text-right"
-                    style="min-width: 40px"
-                  >
-                    {{
-                      '-' +
-                      formatTime(
-                        Math.max(
-                          (mediaCustomDuration.max || media.duration) -
-                            (mediaPlayingCurrentPosition || 0),
-                          0,
-                        ),
-                      )
-                    }}
-                  </div>
-                </div>
-              </div>
-            </transition>
-          </div>
+              {{ $t('extra-media-item-explain') }}
+            </q-tooltip>
+            <template v-if="media?.tag?.type">
+              {{
+                media.tag?.type === 'paragraph' && media.tag.value === 9999
+                  ? $t('footnote')
+                  : media.tag?.value
+              }}
+            </template>
+          </q-chip>
+        </div>
+        <div
+          :class="{
+            'q-px-md': true,
+            col: true,
+            'text-grey': !isFileUrl(media.fileUrl),
+          }"
+        >
           <div
-            v-if="
-              !(
-                mediaPlayingUrl === media.fileUrl ||
-                mediaPlayingUrl === media.streamUrl
-              )
+            :class="
+              ($q.screen.gt.xs || !media.tag) &&
+              (displayMediaTitle.match(/\s/g) || []).length
+                ? 'ellipsis-3-lines'
+                : 'ellipsis'
             "
-            class="col-shrink"
-            style="align-content: center"
+            @dblclick="mediaEditTitleDialog = true"
           >
-            <template v-if="!media.markers || media.markers.length === 0">
-              <q-btn
-                ref="playButton"
-                :color="isFileUrl(media.fileUrl) ? 'primary' : 'grey'"
-                :disable="
-                  (mediaPlayingUrl !== '' &&
-                    (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))) ||
-                  !isFileUrl(media.fileUrl)
-                "
-                icon="mmm-play"
-                rounded
-                :unelevated="!isFileUrl(media.fileUrl)"
-                @click="setMediaPlaying(media)"
-              />
-            </template>
-            <template v-else>
-              <q-btn
-                ref="playButton"
-                color="primary"
-                :disable="
-                  mediaPlayingUrl !== '' &&
-                  (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))
-                "
-                icon="mmm-play-sign-language"
-                push
-                rounded
-              >
-                <q-menu>
-                  <q-list>
-                    <q-item clickable @click="setMediaPlaying(media, true)">
-                      <q-item-section>{{ $t('entireFile') }}</q-item-section>
-                    </q-item>
-                    <q-separator />
-                    <q-item
-                      v-for="marker in media.markers"
-                      :key="marker.VideoMarkerId"
-                      clickable
-                      @click="setMediaPlaying(media, true, marker)"
-                    >
-                      <q-item-section>{{ marker.Label }}</q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-menu>
-              </q-btn>
-            </template>
+            {{ displayMediaTitle }}
+            <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+              {{ displayMediaTitle }}
+            </q-tooltip>
           </div>
-          <template v-else>
-            <div class="col-shrink items-center justify-center flex">
-              <q-btn
-                v-if="
-                  isImage(mediaPlayingUrl) && obsConnectionState === 'connected'
-                "
-                :color="currentSceneType === 'media' ? 'negative' : 'primary'"
-                icon="
-                    mmm-picture-for-zoom-participants
-                "
-                rounded
-                @click="
-                  sendObsSceneEvent(
-                    currentSceneType === 'media' ? 'camera' : 'media',
-                  )
-                "
-              >
-                <q-tooltip :delay="1000">
-                  {{
-                    $t(
-                      currentSceneType === 'media'
-                        ? 'hide-image-for-zoom-participants'
-                        : 'show-image-for-zoom-participants',
-                    )
-                  }}
-                </q-tooltip>
-              </q-btn>
-              <q-btn
-                v-if="mediaPlayingAction === 'pause'"
-                ref="pauseResumeButton"
-                color="primary"
-                icon="mmm-play"
-                outline
-                rounded
-                @click="mediaPlayingAction = 'play'"
-              />
-              <q-btn
-                v-else-if="
-                  media.duration &&
-                  (mediaPlayingAction === 'play' || !mediaPlayingAction)
-                "
-                ref="pauseResumeButton"
-                color="negative"
-                icon="mmm-pause"
-                outline
-                rounded
-                @click="mediaPlayingAction = 'pause'"
-              />
-              <q-btn
-                v-if="mediaPlayingAction !== '' || mediaPlayingAction === ''"
-                ref="stopButton"
-                class="q-ml-sm"
-                color="negative"
-                icon="mmm-stop"
-                rounded
-                @click="
-                  media.isVideo ? (mediaToStop = media.uniqueId) : stopMedia()
-                "
-              />
-            </div>
-          </template>
+          <div v-if="!isFileUrl(media.fileUrl)" class="text-caption">
+            {{ $t('media-item-missing-explain') }}
+          </div>
+        </div>
+        <div class="col-shrink">
+          <div class="row q-gutter-sm items-center q-mr-sm">
+            <q-btn
+              ref="moreButton"
+              color="accent-400"
+              flat
+              icon="mmm-dots"
+              round
+              size="sm"
+              :style="`visibility: ${hoveringMediaItem || contextMenu ? 'visible' : 'hidden'}`"
+              @click="
+                () => {
+                  menuTarget = moreButton?.$el;
+                  contextMenu = true;
+                }
+              "
+            />
+            <q-icon
+              v-if="media.repeat"
+              color="warning"
+              name="mmm-repeat"
+              size="sm"
+            >
+              <q-tooltip :delay="500">
+                {{ $t('repeat') }}
+              </q-tooltip>
+            </q-icon>
+          </div>
         </div>
       </div>
-      <q-menu
-        v-model="contextMenu"
-        context-menu
-        style="overflow-x: hidden"
-        :target="menuTarget"
-        touch-position
+      <transition
+        appear
+        enter-active-class="animated fadeIn"
+        leave-active-class="animated fadeOut"
+        mode="out-in"
+        name="fade"
       >
-        <q-list>
-          <q-item-label header>{{ displayMediaTitle }}</q-item-label>
-          <q-item
-            v-close-popup
-            clickable
-            :disable="
-              mediaPlayingUrl === media.fileUrl ||
-              mediaPlayingUrl === media.streamUrl
-            "
-            @click="emit('update:hidden', true)"
-          >
-            <q-item-section avatar>
-              <q-icon name="mmm-file-hidden" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ $t('hide-from-list') }}</q-item-label>
-              <q-item-label caption>
-                {{ $t('hide-from-list-explain') }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item
-            v-close-popup
-            clickable
-            :disable="
-              mediaPlayingUrl === media.fileUrl ||
-              mediaPlayingUrl === media.streamUrl
-            "
-            @click="mediaEditTitleDialog = true"
-          >
-            <q-item-section avatar>
-              <q-icon name="mmm-edit" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ $t('rename') }}</q-item-label>
-              <q-item-label caption>{{ $t('rename-explain') }}</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item v-close-popup clickable @click="mediaEditTagDialog = true">
-            <q-item-section avatar>
-              <q-icon name="mmm-tag" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ $t('change-tag') }}</q-item-label>
-              <q-item-label caption>
-                {{ $t('change-tag-explain') }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item
-            v-if="media.duration"
-            clickable
-            @click="emit('update:repeat', !media.repeat)"
-          >
-            <q-item-section avatar>
-              <q-icon :name="media.repeat ? 'mmm-repeat-off' : 'mmm-repeat'" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>
-                {{
-                  media.repeat
-                    ? $t('stop-repeat-media-item')
-                    : $t('repeat-media-item')
-                }}
-              </q-item-label>
-              <q-item-label caption>
-                {{
-                  media.repeat
-                    ? $t('stop-repeat-media-item-explain')
-                    : $t('repeat-media-item-explain')
-                }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item
-            v-if="media.isAdditional"
-            v-close-popup
-            clickable
-            :disable="
-              mediaPlayingUrl === media.fileUrl ||
-              mediaPlayingUrl === media.streamUrl
-            "
-            @click="mediaToDelete = media.uniqueId"
-          >
-            <q-item-section avatar>
-              <q-icon color="negative" name="mmm-delete" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ $t('delete-media') }}</q-item-label>
-              <q-item-label caption>
-                {{ $t('delete-media-explain') }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-        </q-list>
-      </q-menu>
+        <div
+          v-if="
+            [media.fileUrl, media.streamUrl].includes(mediaPlayingUrl) &&
+            media.duration
+          "
+          class="absolute duration-slider"
+        >
+          <div class="row flex-center">
+            <div
+              class="col-shrink text-caption text-accent-400 q-mx-sm text-left"
+              style="min-width: 40px"
+            >
+              {{
+                formatTime(
+                  Math.max(
+                    (mediaPlayingCurrentPosition || 0) -
+                      (mediaCustomDuration.min || 0),
+                    0,
+                  ),
+                )
+              }}
+            </div>
+            <div class="col" style="height: 28px">
+              <q-slider
+                v-model="mediaPlayingCurrentPosition"
+                :color="
+                  mediaPlayingAction === 'pause' ? 'primary' : 'accent-400'
+                "
+                :inner-max="mediaCustomDuration.max"
+                :inner-min="mediaCustomDuration.min"
+                inner-track-color="accent-400"
+                label
+                :label-color="
+                  mediaPlayingAction === 'pause' ? undefined : 'accent-400'
+                "
+                :label-value="
+                  mediaPlayingAction === 'pause'
+                    ? formatTime(mediaPlayingCurrentPosition)
+                    : $t('pause-to-adjust-time')
+                "
+                :max="media.duration"
+                :min="0"
+                :readonly="mediaPlayingAction !== 'pause'"
+                :step="0.1"
+                track-color="negative"
+                @update:model-value="seekTo"
+              />
+            </div>
+            <div
+              class="col-shrink text-caption text-accent-400 q-mx-sm text-right"
+              style="min-width: 40px"
+            >
+              {{
+                '-' +
+                formatTime(
+                  Math.max(
+                    (mediaCustomDuration.max || media.duration) -
+                      (mediaPlayingCurrentPosition || 0),
+                    0,
+                  ),
+                )
+              }}
+            </div>
+          </div>
+        </div>
+      </transition>
     </div>
+    <div
+      v-if="
+        !(
+          mediaPlayingUrl === media.fileUrl ||
+          mediaPlayingUrl === media.streamUrl
+        )
+      "
+      class="col-shrink"
+      style="align-content: center"
+    >
+      <template v-if="!media.markers || media.markers.length === 0">
+        <q-btn
+          ref="playButton"
+          :color="isFileUrl(media.fileUrl) ? 'primary' : 'grey'"
+          :disable="
+            (mediaPlayingUrl !== '' &&
+              (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))) ||
+            !isFileUrl(media.fileUrl)
+          "
+          icon="mmm-play"
+          rounded
+          :unelevated="!isFileUrl(media.fileUrl)"
+          @click="setMediaPlaying(media)"
+        />
+      </template>
+      <template v-else>
+        <q-btn
+          ref="playButton"
+          color="primary"
+          :disable="
+            mediaPlayingUrl !== '' &&
+            (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))
+          "
+          icon="mmm-play-sign-language"
+          push
+          rounded
+        >
+          <q-menu>
+            <q-list>
+              <q-item clickable @click="setMediaPlaying(media, true)">
+                <q-item-section>{{ $t('entireFile') }}</q-item-section>
+              </q-item>
+              <q-separator />
+              <q-item
+                v-for="marker in media.markers"
+                :key="marker.VideoMarkerId"
+                clickable
+                @click="setMediaPlaying(media, true, marker)"
+              >
+                <q-item-section>{{ marker.Label }}</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
+      </template>
+    </div>
+    <template v-else>
+      <div class="col-shrink items-center justify-center flex">
+        <q-btn
+          v-if="isImage(mediaPlayingUrl) && obsConnectionState === 'connected'"
+          :color="currentSceneType === 'media' ? 'negative' : 'primary'"
+          icon="
+                    mmm-picture-for-zoom-participants
+                "
+          rounded
+          @click="
+            sendObsSceneEvent(currentSceneType === 'media' ? 'camera' : 'media')
+          "
+        >
+          <q-tooltip :delay="1000">
+            {{
+              $t(
+                currentSceneType === 'media'
+                  ? 'hide-image-for-zoom-participants'
+                  : 'show-image-for-zoom-participants',
+              )
+            }}
+          </q-tooltip>
+        </q-btn>
+        <q-btn
+          v-if="mediaPlayingAction === 'pause'"
+          ref="pauseResumeButton"
+          color="primary"
+          icon="mmm-play"
+          outline
+          rounded
+          @click="mediaPlayingAction = 'play'"
+        />
+        <q-btn
+          v-else-if="
+            media.duration &&
+            (mediaPlayingAction === 'play' || !mediaPlayingAction)
+          "
+          ref="pauseResumeButton"
+          color="negative"
+          icon="mmm-pause"
+          outline
+          rounded
+          @click="mediaPlayingAction = 'pause'"
+        />
+        <q-btn
+          v-if="mediaPlayingAction !== '' || mediaPlayingAction === ''"
+          ref="stopButton"
+          class="q-ml-sm"
+          color="negative"
+          icon="mmm-stop"
+          rounded
+          @click="media.isVideo ? (mediaToStop = media.uniqueId) : stopMedia()"
+        />
+      </div>
+    </template>
+    <q-menu
+      v-model="contextMenu"
+      context-menu
+      style="overflow-x: hidden"
+      :target="menuTarget"
+      touch-position
+    >
+      <q-list>
+        <q-item-label header>{{ displayMediaTitle }}</q-item-label>
+        <q-item
+          v-close-popup
+          clickable
+          :disable="
+            mediaPlayingUrl === media.fileUrl ||
+            mediaPlayingUrl === media.streamUrl
+          "
+          @click="emit('update:hidden', true)"
+        >
+          <q-item-section avatar>
+            <q-icon name="mmm-file-hidden" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('hide-from-list') }}</q-item-label>
+            <q-item-label caption>
+              {{ $t('hide-from-list-explain') }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item
+          v-close-popup
+          clickable
+          :disable="
+            mediaPlayingUrl === media.fileUrl ||
+            mediaPlayingUrl === media.streamUrl
+          "
+          @click="mediaEditTitleDialog = true"
+        >
+          <q-item-section avatar>
+            <q-icon name="mmm-edit" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('rename') }}</q-item-label>
+            <q-item-label caption>{{ $t('rename-explain') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item v-close-popup clickable @click="mediaEditTagDialog = true">
+          <q-item-section avatar>
+            <q-icon name="mmm-tag" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('change-tag') }}</q-item-label>
+            <q-item-label caption>
+              {{ $t('change-tag-explain') }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item
+          v-if="media.duration"
+          clickable
+          @click="emit('update:repeat', !media.repeat)"
+        >
+          <q-item-section avatar>
+            <q-icon :name="media.repeat ? 'mmm-repeat-off' : 'mmm-repeat'" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>
+              {{
+                media.repeat
+                  ? $t('stop-repeat-media-item')
+                  : $t('repeat-media-item')
+              }}
+            </q-item-label>
+            <q-item-label caption>
+              {{
+                media.repeat
+                  ? $t('stop-repeat-media-item-explain')
+                  : $t('repeat-media-item-explain')
+              }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item
+          v-if="media.isAdditional"
+          v-close-popup
+          clickable
+          :disable="
+            mediaPlayingUrl === media.fileUrl ||
+            mediaPlayingUrl === media.streamUrl
+          "
+          @click="mediaToDelete = media.uniqueId"
+        >
+          <q-item-section avatar>
+            <q-icon color="negative" name="mmm-delete" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ $t('delete-media') }}</q-item-label>
+            <q-item-label caption>
+              {{ $t('delete-media-explain') }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </q-menu>
   </q-item>
   <q-dialog v-model="mediaEditTitleDialog">
     <q-card class="modal-confirm">
