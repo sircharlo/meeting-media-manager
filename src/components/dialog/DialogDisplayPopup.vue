@@ -12,9 +12,9 @@
       <div class="card-title col-shrink full-width q-px-md q-mb-none">
         {{ $t('media-display-settings') }}
       </div>
-      <template v-if="screenList.length > 1">
+      <template v-if="screenList?.length > 1">
         <template
-          v-if="!screenPreferences.preferWindowed && screenList.length > 2"
+          v-if="!screenPreferences.preferWindowed && screenList?.length > 2"
         >
           <div class="card-section-title col-shrink full-width q-px-md">
             {{ $t('display') }}
@@ -60,9 +60,9 @@
               <q-btn
                 class="full-width"
                 color="primary"
-                :disable="screenList.length < 2"
+                :disable="screenList?.length < 2"
                 :outline="
-                  screenList.length < 2 || screenPreferences.preferWindowed
+                  screenList?.length < 2 || screenPreferences.preferWindowed
                 "
                 unelevated
                 @click="screenPreferences.preferWindowed = false"
@@ -75,12 +75,12 @@
               <q-btn
                 class="full-width"
                 color="primary"
-                :disable="screenList.length < 2"
+                :disable="screenList?.length < 2"
                 :outline="
-                  !(screenList.length < 2 || screenPreferences.preferWindowed)
+                  !(screenList?.length < 2 || screenPreferences.preferWindowed)
                 "
                 :text-color="
-                  screenList.length < 2 || screenPreferences.preferWindowed
+                  screenList?.length < 2 || screenPreferences.preferWindowed
                     ? ''
                     : 'primary'
                 "
@@ -128,7 +128,7 @@
           <div class="row text-dark-grey">
             {{
               $t(
-                screenList.length < 2 || screenPreferences.preferWindowed
+                screenList?.length < 2 || screenPreferences.preferWindowed
                   ? 'windowed'
                   : 'external-screen',
               )
