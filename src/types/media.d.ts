@@ -13,16 +13,15 @@ export interface DownloadedFile {
   path: string;
 }
 
-export type DownloadProgressItems = Record<
-  string,
-  {
-    complete?: boolean;
-    error?: boolean;
-    filename: string;
-    loaded?: number;
-    total?: number;
-  }
->;
+export interface DownloadProgressItem {
+  complete?: boolean;
+  error?: boolean;
+  filename: string;
+  loaded?: number;
+  total?: number;
+}
+
+export type DownloadProgressItems = Record<string, DownloadProgressItem>;
 
 export interface DynamicMediaObject {
   customDuration?: { max: number; min: number };
