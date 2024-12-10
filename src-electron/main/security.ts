@@ -24,10 +24,15 @@ app.on('ready', () => {
   // See: https://www.electronjs.org/docs/latest/tutorial/security#18-avoid-usage-of-the-file-protocol-and-prefer-usage-of-custom-protocols
   protocol.handle('m3', (req) => {
     const { hash, host, pathname } = new URL(req.url);
+    const currentDir = fileURLToPath(new URL('.', import.meta.url));
+
+    let pathToServe = '';
 
     if (host === 'app') {
-      const currentDir = fileURLToPath(new URL('.', import.meta.url));
-      const pathToServe = path.join(currentDir, pathname);
+      pathToServe = path.join(currentDir, pathname);
+    }
+
+    if (pathToServe) {
       const relativePath = path.relative(currentDir, pathToServe);
 
       const isSafe =

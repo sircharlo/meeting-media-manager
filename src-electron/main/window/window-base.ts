@@ -1,6 +1,6 @@
 import type { ElectronIpcListenKey } from 'src/types';
 
-import { IS_DEV, PLATFORM } from 'app/src-electron/constants';
+import { PLATFORM } from 'app/src-electron/constants';
 import {
   app,
   BrowserWindow,
@@ -71,7 +71,7 @@ export function createWindow(
               ),
             ),
       sandbox: name === 'website',
-      webSecurity: !IS_DEV,
+      webSecurity: false,
       ...(options?.webPreferences ?? {}),
     },
   };
