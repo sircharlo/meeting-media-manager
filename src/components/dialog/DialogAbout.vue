@@ -87,14 +87,28 @@
           {{ $t('app-issues') }}
         </div>
       </div>
-      <div class="row justify-end">
+      <div class="row justify-between">
+        <q-toggle
+          v-model="betaUpdatesEnabled"
+          checked-icon="mmm-check"
+          :class="betaUpdatesEnabled ? 'text-negative text-weight-bold' : ''"
+          dense
+          :label="$t('beta-updates')"
+          left-label
+          unchecked-icon="mmm-clear"
+        />
         <q-btn v-close-popup flat>{{ $t('close') }}</q-btn>
       </div>
     </div>
   </q-dialog>
 </template>
 <script setup lang="ts">
-import { disableUpdates, enableUpdates, updatesDisabled } from 'src/utils/fs';
+import {
+  betaUpdatesDisabled,
+  toggleAutoUpdates,
+  toggleBetaUpdates,
+  updatesDisabled,
+} from 'src/utils/fs';
 import { onMounted, ref, watch } from 'vue';
 
 const { getAppVersion, openExternal } = window.electronApi;
@@ -104,6 +118,7 @@ const open = defineModel<boolean>({ default: false });
 const appVersion = ref('');
 
 const updatesEnabled = ref(true);
+const betaUpdatesEnabled = ref(false);
 
 const loadAppVersion = async () => {
   appVersion.value = await getAppVersion();
@@ -113,16 +128,21 @@ const getUpdatesEnabled = async () => {
   updatesEnabled.value = !(await updatesDisabled());
 };
 
+const getBetaUpdatesEnabled = async () => {
+  betaUpdatesEnabled.value = !(await betaUpdatesDisabled());
+};
+
 onMounted(() => {
   loadAppVersion();
   getUpdatesEnabled();
+  getBetaUpdatesEnabled();
 });
 
-watch(updatesEnabled, (newUpdatesEnabled) => {
-  if (newUpdatesEnabled) {
-    enableUpdates();
-  } else {
-    disableUpdates();
-  }
+watch(updatesEnabled, (val) => {
+  toggleAutoUpdates(val);
+});
+
+watch(betaUpdatesEnabled, (val) => {
+  toggleBetaUpdates(val);
 });
 </script>

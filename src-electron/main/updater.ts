@@ -15,13 +15,26 @@ export async function initUpdater() {
     });
   });
 
-  const disabled = await exists(
-    join(app.getPath('userData'), 'Global Preferences', 'disable-updates'),
-  );
-  if (!disabled && PLATFORM !== 'darwin') triggerUpdateCheck();
+  triggerUpdateCheck();
 }
 
-const triggerUpdateCheck = async (attempt = 1) => {
+export const triggerUpdateCheck = async (attempt = 1) => {
+  // macOS auto-updates are not supported without code signing
+  if (PLATFORM === 'darwin') return;
+  if (
+    await exists(
+      join(app.getPath('userData'), 'Global Preferences', 'disable-updates'),
+    )
+  ) {
+    return;
+  }
+
+  if (attempt === 1) {
+    autoUpdater.allowPrerelease = await exists(
+      join(app.getPath('userData'), 'Global Preferences', 'beta-updates'),
+    );
+  }
+
   try {
     const { default: isOnline } = await import('is-online');
     const online = await isOnline();

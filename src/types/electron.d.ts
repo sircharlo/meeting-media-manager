@@ -24,6 +24,7 @@ export type Display = Electron.Display & {
 
 export interface ElectronApi {
   askForMediaAccess: () => void;
+  checkForUpdates: () => void;
   closeWebsiteWindow: () => void;
   convertHeic: (image: ConversionOptions) => Promise<ArrayBuffer>;
   convertPdfToImages: (
@@ -158,6 +159,7 @@ export type ElectronIpcListenKey =
 export type ElectronIpcSendKey =
   | 'askForMediaAccess'
   | 'authorizedClose'
+  | 'checkForUpdates'
   | 'moveMediaWindow'
   | 'navigateWebsiteWindow'
   | 'openDiscussion'

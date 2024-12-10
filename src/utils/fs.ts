@@ -178,10 +178,10 @@ export const trimFilepathAsNeeded = (filepath: string) => {
   return filepath;
 };
 
-// Disable Updates File
+// Global Preferences
 
 const disableUpdatesPath = () =>
-  getCachePath(['Global Preferences', 'disable-updates'], true);
+  getCachePath(['Global Preferences', 'disable-updates']);
 
 /**
  * Checks if auto updates are disabled.
@@ -191,23 +191,45 @@ export const updatesDisabled = async () =>
   window.electronApi.fs.exists(await disableUpdatesPath());
 
 /**
- * Enables auto updates.
+ * Toggles auto updates.
+ * @param enable Wether to enable beta updates.
  */
-export const enableUpdates = async () => {
+export const toggleAutoUpdates = async (enable: boolean) => {
   try {
-    await window.electronApi.fs.remove(await disableUpdatesPath());
+    if (enable) {
+      await window.electronApi.fs.remove(await disableUpdatesPath());
+      window.electronApi.checkForUpdates();
+    } else {
+      await window.electronApi.fs.ensureFile(await disableUpdatesPath());
+    }
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, { contexts: { fn: { name: 'enableUpdates' } } });
   }
 };
 
+const betaUpdatesPath = () =>
+  getCachePath(['Global Preferences', 'beta-updates']);
+
 /**
- * Disables auto updates.
+ * Checks if beta updates are disabled.
+ * @returns Wether beta updates are disabled.
  */
-export const disableUpdates = async () => {
+export const betaUpdatesDisabled = async () =>
+  !(await window.electronApi.fs.exists(await betaUpdatesPath()));
+
+/**
+ * Toggles beta updates
+ * @param enable Wether to enable beta updates.
+ */
+export const toggleBetaUpdates = async (enable: boolean) => {
   try {
-    await window.electronApi.fs.writeFile(await disableUpdatesPath(), 'true');
+    if (enable) {
+      await window.electronApi.fs.ensureFile(await betaUpdatesPath());
+    } else {
+      await window.electronApi.fs.remove(await betaUpdatesPath());
+    }
+    window.electronApi.checkForUpdates();
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, { contexts: { fn: { name: 'toggleBetaUpdates' } } });
   }
 };
