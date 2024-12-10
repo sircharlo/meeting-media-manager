@@ -107,9 +107,9 @@ export function createWindow(
   if (page.startsWith('https://')) {
     win.loadURL(page);
   } else if (process.env.DEV) {
-    win.loadURL(process.env.APP_URL + `?page=${page}`);
+    win.loadURL(`${process.env.APP_URL}?page=${page}`);
   } else {
-    win.loadFile('index.html', { query: { page } });
+    win.loadURL(`m3://app/index.html?page=${page}`);
   }
 
   // Devtools

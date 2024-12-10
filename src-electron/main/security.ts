@@ -1,10 +1,51 @@
-import { app, session, shell } from 'electron';
+import { app, net, protocol, session, shell } from 'electron';
+import path from 'path';
+import { fileURLToPath, pathToFileURL } from 'url';
 
 import { isSelf, isTrustedDomain } from './utils';
 import { logToWindow } from './window/window-base';
 import { mainWindow } from './window/window-main';
 
+// Avoid usage of the file protocol and prefer usage of custom protocols
+// See: https://www.electronjs.org/docs/latest/tutorial/security#18-avoid-usage-of-the-file-protocol-and-prefer-usage-of-custom-protocols
+protocol.registerSchemesAsPrivileged([
+  {
+    privileges: {
+      secure: true,
+      standard: true,
+      supportFetchAPI: true,
+    },
+    scheme: 'm3',
+  },
+]);
+
 app.on('ready', () => {
+  // Avoid usage of the file protocol and prefer usage of custom protocols
+  // See: https://www.electronjs.org/docs/latest/tutorial/security#18-avoid-usage-of-the-file-protocol-and-prefer-usage-of-custom-protocols
+  protocol.handle('m3', (req) => {
+    const { hash, host, pathname } = new URL(req.url);
+
+    if (host === 'app') {
+      const currentDir = fileURLToPath(new URL('.', import.meta.url));
+      const pathToServe = path.join(currentDir, pathname);
+      const relativePath = path.relative(currentDir, pathToServe);
+
+      const isSafe =
+        relativePath &&
+        !relativePath.startsWith('..') &&
+        !path.isAbsolute(relativePath);
+
+      if (isSafe) {
+        return net.fetch(pathToFileURL(pathToServe).toString() + hash);
+      }
+    }
+
+    return new Response('Error 400: Bad Request', {
+      headers: { 'content-type': 'text/html' },
+      status: 400,
+    });
+  });
+
   // Handle session permission requests from remote content
   // See: https://www.electronjs.org/docs/latest/tutorial/security#5-handle-session-permission-requests-from-remote-content
   session.defaultSession.setPermissionRequestHandler(

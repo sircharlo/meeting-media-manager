@@ -43,13 +43,12 @@ export function isSelf(url?: string): boolean {
   try {
     if (!url) return false;
     const parsedUrl = new URL(url);
-    const parsedAppUrl = new URL(process.env.APP_URL);
 
     return (
       (!!process.env.DEV && parsedUrl.origin === process.env.APP_URL) ||
       (!process.env.DEV &&
-        parsedUrl.protocol === 'file:' &&
-        parsedUrl.pathname === parsedAppUrl.pathname)
+        parsedUrl.protocol === 'm3:' &&
+        parsedUrl.host === 'app')
     );
   } catch {
     return false;
