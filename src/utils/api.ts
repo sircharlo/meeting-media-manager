@@ -134,11 +134,8 @@ export const fetchAnnouncements = async (): Promise<Announcement[]> => {
 export const fetchLatestVersion = async () => {
   if (!process.env.repository) return;
   const url = `${process.env.repository.replace('github.com', 'api.github.com/repos')}/releases`;
-  const result = await fetchJson<Release[]>(
-    url,
-    new URLSearchParams({ per_page: '1' }),
-  );
-  return result?.[0]?.tag_name.slice(1);
+  const result = await fetchJson<Release[]>(url);
+  return result?.find((r) => !r.prerelease)?.tag_name.slice(1);
 };
 
 export const fetchPubMediaLinks = async (
