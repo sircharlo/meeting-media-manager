@@ -108,7 +108,7 @@ const bgColor = (type?: 'error' | 'info' | 'warning') => {
     case 'warning':
       return 'bg-warning';
     default:
-      return 'bg-info';
+      return 'bg-primary-semi-transparent';
   }
 };
 
