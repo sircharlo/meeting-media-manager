@@ -181,7 +181,7 @@ export const trimFilepathAsNeeded = (filepath: string) => {
 // Disable Updates File
 
 const disableUpdatesPath = () =>
-  getCachePath(['Global Preferences', 'disable-updates']);
+  getCachePath(['Global Preferences', 'disable-updates'], true);
 
 /**
  * Checks if auto updates are disabled.
