@@ -3,7 +3,7 @@ name: Release Beta Version
 on:
   workflow_dispatch:
   schedule:
-    - cron: '42 22 * * *'
+    - cron: '7 6 * * *'
 
 jobs:
   get-commit:
