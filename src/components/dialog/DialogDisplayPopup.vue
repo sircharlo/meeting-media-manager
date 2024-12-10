@@ -24,7 +24,7 @@
               <template v-for="(screen, index) in screenList" :key="screen.id">
                 <div class="col">
                   <q-btn
-                    class="full-width"
+                    class="full-width full-height"
                     color="primary"
                     :disable="screen.mainWindow"
                     :outline="screen.mainWindow || !screen.mediaWindow"
@@ -58,7 +58,7 @@
           <div class="row q-col-gutter-sm">
             <div class="col-6">
               <q-btn
-                class="full-width"
+                class="full-width full-height"
                 color="primary"
                 :disable="screenList?.length < 2"
                 :outline="
@@ -73,7 +73,7 @@
             </div>
             <div class="col-6">
               <q-btn
-                class="full-width"
+                class="full-width full-height"
                 color="primary"
                 :disable="screenList?.length < 2"
                 :outline="
