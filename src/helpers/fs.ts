@@ -77,7 +77,7 @@ const getThumbnailFromVideoPath = async (
   thumbnailPath = fileUrlToPath(thumbnailPath);
 
   if (!(await fs.pathExists(videoPath))) {
-    throw new Error('Video file does not exist');
+    throw new Error(`Video file does not exist: ${videoPath}`);
   }
 
   const url = await getThumbnailFromMetadata(videoFileUrl);
