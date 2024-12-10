@@ -24,15 +24,18 @@
           </div>
         </template>
       </div>
-      <div v-if="loading" class="row q-px-md q-pb-md row justify-center">
+      <div
+        v-if="loadingCategories"
+        class="row q-px-md q-pb-md row justify-center"
+      >
         <q-spinner color="primary" size="md" />
       </div>
-      <div class="row q-px-md">
+      <div class="row q-px-md full-width">
         <q-tabs
           v-model="tab"
           active-color="primary"
           align="justify"
-          class="text-grey"
+          class="text-grey full-width"
           dense
           indicator-color="primary"
           narrow-indicator
@@ -64,6 +67,12 @@
             <template
               v-if="category !== bibleMediaCategories[1] || bibleBookChapter"
             >
+              <div
+                v-if="loadingMedia"
+                class="q-px-md q-pb-md row justify-center full-width full-height"
+              >
+                <q-spinner color="primary" size="md" />
+              </div>
               <template
                 v-for="[label, mediaItems] in groupedMediaItems"
                 :key="label"
@@ -153,6 +162,12 @@
               </template>
             </template>
             <div v-else-if="bibleBook" class="row q-px-md">
+              <div
+                v-if="loadingMedia"
+                class="q-px-md q-pb-md row justify-center full-width full-height"
+              >
+                <q-spinner color="primary" size="md" />
+              </div>
               <q-btn
                 v-for="chapter in selectedBookChapters"
                 :key="chapter"
@@ -171,6 +186,12 @@
               />
             </div>
             <div v-else class="row q-col-gutter-md">
+              <div
+                v-if="loadingBooks"
+                class="q-px-md q-pb-md row justify-center full-width full-height"
+              >
+                <q-spinner color="primary" size="md" />
+              </div>
               <template
                 v-for="[bookNr, book] in Object.entries(bibleBooks)"
                 :key="bookNr"
@@ -404,7 +425,9 @@ const groupedMediaItems = computed(() => {
   });
 });
 
-const loading = ref<boolean>(false);
+const loadingCategories = ref(false);
+const loadingBooks = ref(false);
+const loadingMedia = ref(false);
 const hoveredBibleBook = ref('');
 const hoveredMediaItem = ref<MultimediaItem>();
 
@@ -420,7 +443,7 @@ whenever(open, () => {
 const getBibleMediaCategories = async () => {
   try {
     if (Object.keys(bibleMediaCategories.value).length) return;
-    loading.value = true;
+    loadingCategories.value = true;
     bibleMediaCategories.value = (await getStudyBibleCategories()).map(
       (item) => item.Title || '',
     );
@@ -430,31 +453,34 @@ const getBibleMediaCategories = async () => {
     if (bibleMediaCategories.value[1]) {
       tab.value = bibleMediaCategories.value[1];
     }
-    loading.value = false;
+    loadingCategories.value = false;
   }
 };
 
 const getBibleBooks = async () => {
   if (Object.keys(bibleBooks.value).length) return;
   try {
-    loading.value = true;
+    loadingBooks.value = true;
     bibleBooks.value = await getStudyBibleBooks();
   } catch (error) {
     errorCatcher(error);
   } finally {
-    loading.value = false;
+    loadingBooks.value = false;
   }
 };
 
 const getBibleMedia = async () => {
   if (Object.keys(allBibleMedia.value).length) return;
   try {
+    loadingMedia.value = true;
     const studyMediaInfo = await getStudyBibleMedia();
     bibleBooksStartAtId.value = studyMediaInfo.bibleBookDocumentsStartAtId || 0;
     bibleBooksEndAtId.value = studyMediaInfo.bibleBookDocumentsEndAtId || 0;
     allBibleMedia.value = studyMediaInfo.mediaItems;
   } catch (error) {
     errorCatcher(error);
+  } finally {
+    loadingMedia.value = false;
   }
 };
 
