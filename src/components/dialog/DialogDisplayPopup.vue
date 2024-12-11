@@ -19,78 +19,74 @@
           <div class="card-section-title row q-px-md">
             {{ $t('display') }}
           </div>
-          <div class="row q-px-md q-pb-sm">
-            <div class="row q-col-gutter-sm">
-              <template v-for="(screen, index) in screenList" :key="screen.id">
-                <div class="col">
-                  <q-btn
-                    class="full-width full-height"
-                    color="primary"
-                    :disable="screen.mainWindow"
-                    :outline="screen.mainWindow || !screen.mediaWindow"
-                    @click="screenPreferences.preferredScreenNumber = index"
-                  >
-                    <q-icon
-                      class="q-mr-sm"
-                      :name="
-                        screen.mainWindow
-                          ? 'mmm-display-current'
-                          : 'mmm-media-display-active'
-                      "
-                      size="xs"
-                    />
-                    {{
+          <div class="row q-px-md q-pb-sm q-col-gutter-sm">
+            <template v-for="(screen, index) in screenList" :key="screen.id">
+              <div class="col">
+                <q-btn
+                  class="full-width full-height"
+                  color="primary"
+                  :disable="screen.mainWindow"
+                  :outline="screen.mainWindow || !screen.mediaWindow"
+                  @click="screenPreferences.preferredScreenNumber = index"
+                >
+                  <q-icon
+                    class="q-mr-sm"
+                    :name="
                       screen.mainWindow
-                        ? $t('current')
-                        : $t('display') + ' ' + (index + 1)
-                    }}
-                  </q-btn>
-                </div>
-              </template>
-            </div>
+                        ? 'mmm-display-current'
+                        : 'mmm-media-display-active'
+                    "
+                    size="xs"
+                  />
+                  {{
+                    screen.mainWindow
+                      ? $t('current')
+                      : $t('display') + ' ' + (index + 1)
+                  }}
+                </q-btn>
+              </div>
+            </template>
           </div>
           <q-separator class="bg-accent-200 q-mb-md" />
         </template>
         <div class="card-section-title row q-px-md">
           {{ $t('window-type') }}
         </div>
-        <div class="row q-px-md q-pb-sm">
-          <div class="row q-col-gutter-sm">
-            <div class="col-6">
-              <q-btn
-                class="full-width full-height"
-                color="primary"
-                :disable="screenList?.length < 2"
-                :outline="
-                  screenList?.length < 2 || screenPreferences.preferWindowed
-                "
-                unelevated
-                @click="screenPreferences.preferWindowed = false"
-              >
-                <q-icon class="q-mr-sm" name="mmm-fullscreen" size="xs" />
-                {{ $t('full-screen') }}
-              </q-btn>
-            </div>
-            <div class="col-6">
-              <q-btn
-                class="full-width full-height"
-                color="primary"
-                :disable="screenList?.length < 2"
-                :outline="
-                  !(screenList?.length < 2 || screenPreferences.preferWindowed)
-                "
-                :text-color="
-                  screenList?.length < 2 || screenPreferences.preferWindowed
-                    ? ''
-                    : 'primary'
-                "
-                unelevated
-                @click="screenPreferences.preferWindowed = true"
-              >
-                <q-icon class="q-mr-sm" name="mmm-window" size="xs" />
-                {{ $t('windowed') }}
-              </q-btn>
-            </div>
+        <div class="row q-px-md q-pb-sm q-col-gutter-sm">
+          <div class="col-6">
+            <q-btn
+              class="full-width full-height"
+              color="primary"
+              :disable="screenList?.length < 2"
+              :outline="
+                screenList?.length < 2 || screenPreferences.preferWindowed
+              "
+              unelevated
+              @click="screenPreferences.preferWindowed = false"
+            >
+              <q-icon class="q-mr-sm" name="mmm-fullscreen" size="xs" />
+              {{ $t('full-screen') }}
+            </q-btn>
+          </div>
+          <div class="col-6">
+            <q-btn
+              class="full-width full-height"
+              color="primary"
+              :disable="screenList?.length < 2"
+              :outline="
+                !(screenList?.length < 2 || screenPreferences.preferWindowed)
+              "
+              :text-color="
+                screenList?.length < 2 || screenPreferences.preferWindowed
+                  ? ''
+                  : 'primary'
+              "
+              unelevated
+              @click="screenPreferences.preferWindowed = true"
+            >
+              <q-icon class="q-mr-sm" name="mmm-window" size="xs" />
+              {{ $t('windowed') }}
+            </q-btn>
           </div>
         </div>
         <q-separator class="bg-accent-200 q-mb-md" />
@@ -120,7 +116,7 @@
           }}
         </q-btn>
       </div>
-      <div class="row q-px-md q-pt-md row">
+      <div class="q-px-md q-pt-md row">
         <div class="col">
           <div class="row text-subtitle1 text-weight-medium">
             {{ mediaWindowVisible ? $t('projecting') : $t('inactive') }}
@@ -445,4 +441,15 @@ useEventListener(window, 'windowScreen-update', windowScreenListener, {
 useEventListener(window, 'screen-trigger-update', fetchScreens, {
   passive: true,
 });
+
+useEventListener<CustomEvent>(
+  window,
+  'toggleFullScreenFromMediaWindow',
+  (e) => {
+    console.log('toggleFullScreenFromMediaWindow', e);
+    screenPreferences.value.preferWindowed =
+      !screenPreferences.value.preferWindowed;
+  },
+  { passive: true },
+);
 </script>

@@ -151,6 +151,7 @@ export type ElectronIpcListenKey =
   | 'screenChange'
   | 'screenPrefsChange'
   | 'shortcut'
+  | 'toggleFullScreenFromMediaWindow'
   | 'watchFolderUpdate'
   | 'websiteWindowClosed';
 

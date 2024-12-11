@@ -34,7 +34,6 @@ export function createMediaWindow() {
         `media-player.${PLATFORM === 'win32' ? 'ico' : PLATFORM === 'darwin' ? 'icns' : 'png'}`,
       ),
     ),
-    maximizable: false,
     minHeight: 110,
     minWidth: 195,
     thickFrame: false,
@@ -48,11 +47,23 @@ export function createMediaWindow() {
   mediaWindow.on('closed', () => {
     mediaWindow = null;
   });
+
+  mediaWindow.on('maximize', () => {
+    mediaWindow?.unmaximize();
+    sendToWindow(mainWindow, 'toggleFullScreenFromMediaWindow');
+  });
 }
 
-const mediaWindowIsFullScreen = (parentScreenBounds?: Electron.Rectangle) =>
-  boundsAreSame(mediaWindow?.getBounds(), parentScreenBounds) ||
-  mediaWindow?.isFullScreen();
+const mediaWindowIsFullScreen = (parentScreenBounds?: Electron.Rectangle) => {
+  if (!parentScreenBounds)
+    parentScreenBounds = getAllScreens().find(
+      (screen) => screen.mediaWindow,
+    )?.bounds;
+  return (
+    boundsAreSame(mediaWindow?.getBounds(), parentScreenBounds) ||
+    mediaWindow?.isFullScreen()
+  );
+};
 
 const mediaWindowIsOffscreen = (parentScreenBounds: Electron.Rectangle) => {
   const mediaWindowBounds = mediaWindow?.getBounds();
