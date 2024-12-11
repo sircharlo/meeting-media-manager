@@ -4,19 +4,23 @@ on:
   push:
     branches:
       - master
-    paths-ignore:
-      - '.github/*_TEMPLATE/*.yml'
-      - '.github/*.yml'
-      - '.vscode/**'
-      - 'docs/**'
-      - '**/*.md'
+    paths:
+      - 'build/**'
+      - 'src/**'
+      - 'src-electron/**'
+      - 'index.html'
+      - 'package.json'
+      - 'quasar.config.ts'
+      - 'yarn.lock'
   pull_request:
-    paths-ignore:
-      - '.github/*_TEMPLATE/*.yml'
-      - '.github/*.yml'
-      - '.vscode/**'
-      - 'docs/**'
-      - '**/*.md'
+    paths:
+      - 'build/**'
+      - 'src/**'
+      - 'src-electron/**'
+      - 'index.html'
+      - 'package.json'
+      - 'quasar.config.ts'
+      - 'yarn.lock'
   workflow_dispatch:
 
 concurrency:
