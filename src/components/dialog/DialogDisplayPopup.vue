@@ -86,6 +86,12 @@
             >
               <q-icon class="q-mr-sm" name="mmm-window" size="xs" />
               {{ $t('windowed') }}
+              <q-tooltip
+                v-if="screenPreferences.preferWindowed && mediaWindowSize"
+                floating
+                >{{ mediaWindowSize?.width }} x
+                {{ mediaWindowSize?.height }}</q-tooltip
+              >
             </q-btn>
           </div>
         </div>
@@ -445,11 +451,17 @@ useEventListener(window, 'screen-trigger-update', fetchScreens, {
 useEventListener<CustomEvent>(
   window,
   'toggleFullScreenFromMediaWindow',
-  (e) => {
-    console.log('toggleFullScreenFromMediaWindow', e);
+  () => {
     screenPreferences.value.preferWindowed =
       !screenPreferences.value.preferWindowed;
   },
   { passive: true },
 );
+
+const { data: mediaWindowSize } = useBroadcastChannel<
+  Record<string, number>,
+  Record<string, number>
+>({
+  name: 'media-window-size',
+});
 </script>
