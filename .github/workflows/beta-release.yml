@@ -110,7 +110,7 @@ jobs:
         uses: wow-actions/delete-stale-releases@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          keep_latest_count: 2
+          keep_latest_count: '2'
           include: '*beta*'
-          include_draft: false
-          dry-run: true
+          include_draft: 'false'
+          dry-run: 'true'
