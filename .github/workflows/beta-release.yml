@@ -100,3 +100,17 @@ jobs:
           omitBodyDuringUpdate: true
           updateOnlyUnreleased: true
           token: ${{ secrets.GITHUB_TOKEN }}
+
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Delete older beta releases
+        uses: dev-drprasad/delete-older-releases@v0.3.4
+        with:
+          keep_latest: 1
+          delete_tag_pattern: beta
+          delete_prerelease_only: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
