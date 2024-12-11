@@ -179,51 +179,57 @@ export const trimFilepathAsNeeded = (filepath: string) => {
 };
 
 // Global Preferences
-const globalPreferencesPath = () => getCachePath(['Global Preferences'], true);
-const disableUpdatesKey = 'disable-updates';
+
+const disableUpdatesPath = () =>
+  getCachePath(['Global Preferences', 'disable-updates']);
 
 /**
  * Checks if auto updates are disabled.
  * @returns Whether auto updates are disabled.
  */
 export const updatesDisabled = async () =>
-  window.electronApi.fs.pathExists(
-    window.electronApi.path.join(
-      await globalPreferencesPath(),
-      disableUpdatesKey,
-    ),
-  );
+  window.electronApi.fs.exists(await disableUpdatesPath());
 
 /**
- * Enables auto updates.
+ * Toggles auto updates.
+ * @param enable Wether to enable beta updates.
  */
-export const enableUpdates = async () => {
+export const toggleAutoUpdates = async (enable: boolean) => {
   try {
-    await window.electronApi.fs.remove(
-      window.electronApi.path.join(
-        await globalPreferencesPath(),
-        disableUpdatesKey,
-      ),
-    );
+    if (enable) {
+      await window.electronApi.fs.remove(await disableUpdatesPath());
+      window.electronApi.checkForUpdates();
+    } else {
+      await window.electronApi.fs.ensureFile(await disableUpdatesPath());
+    }
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, { contexts: { fn: { name: 'enableUpdates' } } });
   }
 };
 
+const betaUpdatesPath = () =>
+  getCachePath(['Global Preferences', 'beta-updates']);
+
 /**
- * Disables auto updates.
+ * Checks if beta updates are disabled.
+ * @returns Wether beta updates are disabled.
  */
-export const disableUpdates = async () => {
+export const betaUpdatesDisabled = async () =>
+  !(await window.electronApi.fs.exists(await betaUpdatesPath()));
+
+/**
+ * Toggles beta updates
+ * @param enable Wether to enable beta updates.
+ */
+export const toggleBetaUpdates = async (enable: boolean) => {
   try {
-    const updatesFilePath = window.electronApi.path.join(
-      await globalPreferencesPath(),
-      disableUpdatesKey,
-    );
-    if (await window.electronApi.fs.pathExists(updatesFilePath)) {
-      await window.electronApi.fs.remove(updatesFilePath);
+    if (enable) {
+      await window.electronApi.fs.ensureFile(await betaUpdatesPath());
+    } else {
+      await window.electronApi.fs.remove(await betaUpdatesPath());
     }
-    await window.electronApi.fs.writeFile(updatesFilePath, 'true');
+    window.electronApi.checkForUpdates();
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, { contexts: { fn: { name: 'toggleBetaUpdates' } } });
   }
 };

@@ -35,6 +35,7 @@ import {
   unregisterAllShortcuts,
   unregisterShortcut,
 } from './shortcuts';
+import { triggerUpdateCheck } from './updater';
 import { getAppVersion, isSelf } from './utils';
 import { logToWindow } from './window/window-base';
 import { mainWindow, toggleAuthorizedClose } from './window/window-main';
@@ -82,6 +83,8 @@ handleIpcSend('toggleMediaWindow', (_e, show: boolean) => {
 });
 
 handleIpcSend('askForMediaAccess', askForMediaAccess);
+
+handleIpcSend('checkForUpdates', () => triggerUpdateCheck());
 
 handleIpcSend('setUrlVariables', (_e, variables: string) => {
   setUrlVariables(JSON.parse(variables));

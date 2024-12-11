@@ -8,6 +8,7 @@ import type {
 } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { betaUpdatesDisabled } from 'src/utils/fs';
 
 /**
  * Fetches data from the given url.
@@ -134,8 +135,9 @@ export const fetchAnnouncements = async (): Promise<Announcement[]> => {
 export const fetchLatestVersion = async () => {
   if (!process.env.repository) return;
   const url = `${process.env.repository.replace('github.com', 'api.github.com/repos')}/releases`;
+  const includeBeta = !(await betaUpdatesDisabled())
   const result = await fetchJson<Release[]>(url);
-  return result?.find((r) => !r.prerelease)?.tag_name.slice(1);
+  return result?.find((r) => includeBeta || !r.prerelease)?.tag_name.slice(1);
 };
 
 export const fetchPubMediaLinks = async (

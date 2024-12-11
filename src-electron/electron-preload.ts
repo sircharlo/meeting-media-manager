@@ -34,6 +34,7 @@ initWebsiteListeners();
 
 const electronApi: ElectronApi = {
   askForMediaAccess: () => send('askForMediaAccess'),
+  checkForUpdates: () => send('checkForUpdates'),
   closeWebsiteWindow,
   convertHeic,
   convertPdfToImages,
