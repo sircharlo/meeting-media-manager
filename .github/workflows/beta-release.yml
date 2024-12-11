@@ -107,10 +107,10 @@ jobs:
       contents: write
     steps:
       - name: Delete older beta releases
-        uses: dev-drprasad/delete-older-releases@v0.3.4
+        uses: wow-actions/delete-stale-releases@v1
         with:
-          keep_latest: 1
-          delete_tag_pattern: beta
-          delete_prerelease_only: true
-        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          keep_latest_count: 2
+          include: beta
+          include_draft: false
+          dry-run: true
