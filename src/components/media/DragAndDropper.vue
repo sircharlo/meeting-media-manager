@@ -80,10 +80,12 @@
             "
           >
             <template v-if="totalFiles || (!!jwpubDb && jwpubLoading)">
-              <q-linear-progress
-                class="full-height"
+              <q-circular-progress
                 color="primary"
                 :indeterminate="totalFiles === 1"
+                :max="totalFiles"
+                size="xl"
+                track-color="accent-200"
                 :value="percentValue"
               >
                 <div
@@ -96,7 +98,7 @@
                     text-color="primary"
                   />
                 </div>
-              </q-linear-progress>
+              </q-circular-progress>
             </template>
             <template v-else>
               <q-icon class="q-mr-sm" name="mmm-drag-n-drop" size="lg" />
