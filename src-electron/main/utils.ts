@@ -18,7 +18,7 @@ export function getAppVersion() {
 /**
  * Checks if a given url is a JW domain
  * @param url The url to check
- * @returns Wether the url is a JW domain
+ * @returns Whether the url is a JW domain
  */
 export function isJwDomain(url: string): boolean {
   try {
@@ -37,7 +37,7 @@ export function isJwDomain(url: string): boolean {
 /**
  * Checks if a given url is the same as the current app url
  * @param url The url to check
- * @returns Wether the url is the same as the current app url
+ * @returns Whether the url is the same as the current app url
  */
 export function isSelf(url?: string): boolean {
   try {
@@ -58,7 +58,7 @@ export function isSelf(url?: string): boolean {
 /**
  * Check if a given url is a trusted domain
  * @param url The url to check
- * @returns Wether the url is a trusted domain
+ * @returns Whether the url is a trusted domain
  */
 export function isTrustedDomain(url?: string): boolean {
   if (!url) return false;
@@ -82,7 +82,7 @@ export function isTrustedDomain(url?: string): boolean {
 /**
  * Checks if a given url is a valid url
  * @param url The url to check
- * @returns Wether the url is a valid url
+ * @returns Whether the url is a valid url
  */
 export const isValidUrl = (url: string): boolean => {
   try {

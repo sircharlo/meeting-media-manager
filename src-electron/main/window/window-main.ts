@@ -49,7 +49,7 @@ export function createMainWindow() {
 
 /**
  * Toggles the authorizedClose state
- * @param authorized Wether the window is authorized to close
+ * @param authorized Whether the window is authorized to close
  */
 export function toggleAuthorizedClose(authorized: boolean) {
   authorizedClose = authorized;

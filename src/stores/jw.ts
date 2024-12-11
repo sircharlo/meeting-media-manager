@@ -33,7 +33,7 @@ const oldDate = new Date(0);
  * Checks if a caches list should be updated
  * @param list The cache list to check
  * @param months How many months should pass before updating
- * @returns Wether the list should be updated
+ * @returns Whether the list should be updated
  */
 export const shouldUpdateList = (
   cacheList: CacheList | undefined,
