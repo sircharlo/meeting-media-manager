@@ -90,75 +90,83 @@ const getThumbnailFromVideoPath = async (
     videoRef.src = pathToFileURL(videoPath);
     videoRef.load();
 
-    videoRef.addEventListener('loadeddata', () => {
-      videoRef.addEventListener(
-        'seeked',
-        async () => {
-          const canvas = document.createElement('canvas');
-          canvas.width = FULL_HD.width;
-          canvas.height = FULL_HD.height;
+    videoRef.addEventListener(
+      'loadeddata',
+      () => {
+        videoRef.addEventListener(
+          'seeked',
+          async () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = FULL_HD.width;
+            canvas.height = FULL_HD.height;
 
-          const ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext('2d');
 
-          const cleanup = () => {
-            canvas.remove();
-            videoRef.remove();
-          };
-
-          if (ctx) {
-            ctx.drawImage(videoRef, 0, 0, canvas.width, canvas.height);
-            const imageUrl = canvas.toDataURL('image/jpeg');
-            const imageData = Buffer.from(
-              imageUrl.split(',')[1] ?? '',
-              'base64',
-            );
-
-            const saveImage = async () => {
-              await fs.writeFile(thumbnailPath, imageData);
-              return thumbnailPath;
+            const cleanup = () => {
+              canvas.remove();
+              videoRef.remove();
             };
 
-            const generateBlobURL = () => {
-              return URL.createObjectURL(
-                new Blob([imageData], { type: 'image/jpeg' }),
+            if (ctx) {
+              ctx.drawImage(videoRef, 0, 0, canvas.width, canvas.height);
+              const imageUrl = canvas.toDataURL('image/jpeg');
+              const imageData = Buffer.from(
+                imageUrl.split(',')[1] ?? '',
+                'base64',
               );
-            };
 
-            try {
-              if (
-                !watcherEnabled ||
-                !watchDir ||
-                !path.dirname(thumbnailPath).startsWith(watchDir)
-              ) {
-                resolve(await saveImage());
-              } else {
-                resolve(generateBlobURL());
+              const saveImage = async () => {
+                await fs.writeFile(thumbnailPath, imageData);
+                return thumbnailPath;
+              };
+
+              const generateBlobURL = () => {
+                return URL.createObjectURL(
+                  new Blob([imageData], { type: 'image/jpeg' }),
+                );
+              };
+
+              try {
+                if (
+                  !watcherEnabled ||
+                  !watchDir ||
+                  !path.dirname(thumbnailPath).startsWith(watchDir)
+                ) {
+                  resolve(await saveImage());
+                } else {
+                  resolve(generateBlobURL());
+                }
+                cleanup();
+              } catch (error) {
+                cleanup();
+                reject(error);
               }
+            } else {
               cleanup();
-            } catch (error) {
-              cleanup();
-              reject(error);
+              reject(new Error('Failed to get canvas context'));
             }
-          } else {
-            cleanup();
-            reject(new Error('Failed to get canvas context'));
-          }
-        },
-        { once: true },
-      );
+          },
+          { once: true, passive: true },
+        );
 
-      videoRef.currentTime = 5; // Seek to 5 seconds to get the thumbnail
-    });
+        videoRef.currentTime = 5; // Seek to 5 seconds to get the thumbnail
+      },
+      { passive: true },
+    );
 
-    videoRef.addEventListener('error', (e) => {
-      // Cleanup in case of error
-      videoRef.remove();
-      reject(
-        new Error(e.message || e.error.message || 'Unknown VideoRef Error', {
-          cause: e.error,
-        }),
-      );
-    });
+    videoRef.addEventListener(
+      'error',
+      (e) => {
+        // Cleanup in case of error
+        videoRef.remove();
+        reject(
+          new Error(e.message || e.error.message || 'Unknown VideoRef Error', {
+            cause: e.error,
+          }),
+        );
+      },
+      { passive: true },
+    );
   });
 };
 

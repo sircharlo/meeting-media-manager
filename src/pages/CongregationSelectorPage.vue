@@ -190,7 +190,9 @@ function createNewCongregation() {
   chooseCongregation(createCongregation(), true);
 }
 
-useEventListener(window, 'createNewCongregation', createNewCongregation);
+useEventListener(window, 'createNewCongregation', createNewCongregation, {
+  passive: true,
+});
 
 const autoSelectCongregation = () => {
   if (congregationCount.value === 0) {

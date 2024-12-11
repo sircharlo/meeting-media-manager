@@ -455,7 +455,7 @@ watch(
   },
 );
 
-useEventListener(window, 'toggleMusic', toggleMusicListener);
+useEventListener(window, 'toggleMusic', toggleMusicListener, { passive: true });
 const { data: volumeData } = useBroadcastChannel<number, number>({
   name: 'volume-setter',
 });

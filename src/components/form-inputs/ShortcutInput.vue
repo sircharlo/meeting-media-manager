@@ -137,7 +137,8 @@ const handleKeyPress = (event: KeyboardEvent) => {
   }
 };
 
-const startListening = () => window.addEventListener('keydown', handleKeyPress);
+const startListening = () =>
+  window.addEventListener('keydown', handleKeyPress, { passive: true });
 const stopListening = () =>
   window.removeEventListener('keydown', handleKeyPress);
 const shortcutPicker = ref(false);

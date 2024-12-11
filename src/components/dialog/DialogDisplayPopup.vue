@@ -439,6 +439,10 @@ watchImmediate(
   { deep: true },
 );
 
-useEventListener(window, 'windowScreen-update', windowScreenListener);
-useEventListener(window, 'screen-trigger-update', fetchScreens);
+useEventListener(window, 'windowScreen-update', windowScreenListener, {
+  passive: true,
+});
+useEventListener(window, 'screen-trigger-update', fetchScreens, {
+  passive: true,
+});
 </script>
