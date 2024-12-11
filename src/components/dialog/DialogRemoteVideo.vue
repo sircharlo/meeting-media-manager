@@ -5,7 +5,13 @@
       style="flex-flow: column"
     >
       <div class="text-h6 row q-px-md q-pt-lg">
-        {{ $t('add-video-jw-org') }}
+        <div class="col">
+          {{ $t('add-video-jw-org') }}
+        </div>
+        <div class="col-shrink">
+          <q-spinner v-if="videosAreLoading" color="primary" />
+          <q-icon v-else color="accent-400" name="mmm-cloud-done" />
+        </div>
       </div>
       <div class="row q-px-md q-pt-md">
         {{ $t('add-a-video-explain') }}
@@ -25,6 +31,13 @@
             </template>
           </q-input>
         </div>
+      </div>
+      <div
+        v-if="videosAreLoading && !remoteVideosFiltered?.length"
+        class="row q-pb-md flex-center flex"
+        style="min-height: 100px"
+      >
+        <q-spinner color="primary" size="lg" />
       </div>
       <div class="q-px-md overflow-auto row">
         <template
@@ -96,7 +109,6 @@
       </div>
       <div class="q-px-md q-py-md row">
         <div class="col">
-          <q-spinner v-if="videosAreLoading" color="primary" size="md" />
           <q-toggle
             v-model="remoteVideosIncludeAudioDescription"
             checked-icon="mmm-check"

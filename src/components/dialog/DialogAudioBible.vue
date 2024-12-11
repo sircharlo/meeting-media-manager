@@ -4,8 +4,23 @@
       class="bg-secondary-contrast large-overlay q-px-none flex"
       style="flex-flow: column"
     >
-      <div class="text-h6 row q-px-md q-pt-lg">
-        {{ $t('add-media-audio-bible') }}
+      <div class="row q-px-md q-pt-lg text-h6">
+        <div class="col">
+          {{ $t('add-media-audio-bible') }}
+        </div>
+        <div class="col-shrink">
+          <q-btn
+            color="primary"
+            flat
+            icon="mmm-cloud-done"
+            :loading="loading || !bibleAudioMedia?.length"
+            round
+            @click="
+              loading = true;
+              fetchMedia(true);
+            "
+          />
+        </div>
       </div>
       <div class="row q-px-md q-py-md">
         {{ $t('add-media-audio-bible-explain') }}
@@ -41,11 +56,13 @@
         class="q-pr-scroll overflow-auto col items-start q-pt-sm"
         :class="{ 'content-center': loading }"
       >
-        <template v-if="loading">
-          <div class="row q-px-md col flex-center">
-            <q-spinner color="primary" size="md" />
-          </div>
-        </template>
+        <div
+          v-if="loading"
+          class="row q-px-md col flex-center"
+          style="min-height: 100px"
+        >
+          <q-spinner color="primary" size="md" />
+        </div>
         <template v-else>
           <template v-if="selectedBibleBook && selectedBookChapters.length">
             <div class="row q-px-md col">
@@ -148,25 +165,6 @@
         </template>
       </div>
       <div class="row q-px-md q-py-md row">
-        <div class="col">
-          <q-btn
-            color="primary"
-            :disable="loading"
-            flat
-            round
-            @click="
-              loading = true;
-              fetchMedia(true);
-            "
-          >
-            <q-spinner
-              v-if="loading || bibleAudioMedia?.length === 0"
-              color="primary"
-              size="sm"
-            />
-            <q-icon v-else name="mmm-refresh" />
-          </q-btn>
-        </div>
         <div class="col text-right q-gutter-x-sm">
           <q-btn
             v-if="selectedBibleBook"

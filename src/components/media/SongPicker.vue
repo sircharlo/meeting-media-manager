@@ -5,7 +5,23 @@
       style="flex-flow: column"
     >
       <div class="text-h6 row q-px-md q-pt-lg">
-        {{ $t('choose-a-song') }}
+        <div class="col">
+          {{ $t('choose-a-song') }}
+        </div>
+        <div class="col-shrink">
+          <q-btn
+            color="primary"
+            flat
+            icon="mmm-cloud-done"
+            :loading="loading || !filteredSongs?.length"
+            round
+            size="sm"
+            @click="
+              loading = true;
+              updateJwSongs(true).then(() => (loading = false));
+            "
+          />
+        </div>
       </div>
       <div class="row q-px-md q-pt-md">
         {{ $t('add-a-song') }}
@@ -28,10 +44,12 @@
         </q-input>
       </div>
       <q-slide-transition>
-        <div v-if="loading && filteredSongs?.length === 0" class="row q-pb-md">
-          <div class="row justify-center">
-            <q-spinner color="primary" size="lg" />
-          </div>
+        <div
+          v-if="loading && filteredSongs?.length === 0"
+          class="row q-pb-md flex-center flex"
+          style="min-height: 100px"
+        >
+          <q-spinner color="primary" size="lg" />
         </div>
       </q-slide-transition>
       <div class="q-px-md overflow-auto row q-col-gutter-xs content-start">
@@ -58,24 +76,6 @@
         </div>
       </div>
       <div class="row q-px-md q-py-md row">
-        <div class="col">
-          <q-spinner
-            v-if="loading || filteredSongs?.length === 0"
-            color="primary"
-            size="1.5em"
-          />
-          <q-btn
-            v-else
-            color="primary"
-            flat
-            icon="mmm-refresh"
-            round
-            @click="
-              loading = true;
-              updateJwSongs(true).then(() => (loading = false));
-            "
-          />
-        </div>
         <div class="col text-right">
           <q-btn
             color="negative"
