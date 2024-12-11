@@ -85,4 +85,10 @@ const electronApi: ElectronApi = {
   zoomWebsiteWindow,
 };
 
+listen('toggleFullScreenFromMediaWindow', () => {
+  window.dispatchEvent(
+    new CustomEvent<undefined>('toggleFullScreenFromMediaWindow'),
+  );
+});
+
 contextBridge.exposeInMainWorld('electronApi', electronApi);

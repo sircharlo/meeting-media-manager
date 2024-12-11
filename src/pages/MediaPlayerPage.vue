@@ -4,7 +4,7 @@
     padding
     style="align-content: center; height: 100vh; -webkit-app-region: drag"
   >
-    <q-resize-observer debounce="50" @resize="onResize" />
+    <q-resize-observer debounce="50" @resize="postMediaWindowSize" />
     <transition
       appear
       enter-active-class="animated fadeIn slow"
@@ -374,20 +374,9 @@ const playMedia = () => {
   }
 };
 
-let initialResize = true;
-function onResize(size: { height: number; width: number }) {
-  if (!initialResize)
-    createTemporaryNotification({
-      badgeStyle: 'display: none',
-      color: 'accent-400',
-      group: 'resize',
-      icon: 'mmm-info',
-      message: size.width + 'x' + size.height,
-      noClose: true,
-      position: 'bottom',
-    });
-  initialResize = false;
-}
+const { post: postMediaWindowSize } = useBroadcastChannel({
+  name: 'media-window-size',
+});
 
 const $q = useQuasar();
 
