@@ -3,15 +3,33 @@
     bordered
     class="bg-primary text-white text-bigger text-weight-medium"
   >
-    <DialogAbout v-model="aboutModal" />
-    <div class="row items-center q-my-sm q-mr-md">
-      <div
-        class="row justify-center cursor-pointer"
-        style="width: 56px"
+    <DialogAbout ref="aboutInfo" v-model="aboutModal" />
+    <div class="row items-center q-mr-md">
+      <q-btn
+        :color="
+          !aboutInfo?.updatesEnabled || aboutInfo?.betaUpdatesEnabled
+            ? 'negative'
+            : ''
+        "
+        round
+        style="width: 56px; height: 56px"
+        unelevated
         @click="aboutModal = true"
       >
-        <img src="~assets/img/logo-no-background.svg" />
-      </div>
+        <!-- @mouseout="hoveredLogo = false"
+        @mouseover="hoveredLogo = true" -->
+        <q-img
+          loading="lazy"
+          src="~assets/img/logo-no-background.svg"
+          width="40px"
+        />
+        <!-- <q-badge
+          v-if="!aboutInfo?.updatesEnabled || aboutInfo?.betaUpdatesEnabled"
+          color="negative"
+          rounded
+          style="position: absolute; top: 12px; left: 38px"
+        /> -->
+      </q-btn>
       <q-separator class="bg-semi-white-24 q-ml-none" inset vertical />
       <div class="col q-ml-md flex items-center">
         <div class="col-shrink items-center">
@@ -64,7 +82,7 @@ import DialogAbout from 'src/components/dialog/DialogAbout.vue';
 // Stores
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { ref } from 'vue';
+import { /*computed,*/ ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 // Sub-components
@@ -81,4 +99,10 @@ const currentState = useCurrentStateStore();
 const { currentCongregation } = storeToRefs(currentState);
 
 const aboutModal = ref(false);
+const aboutInfo = ref<InstanceType<typeof DialogAbout> | null>(null);
+
+// const hoveredLogo = ref(false);
+// const activeLogo = computed(() => {
+//   return hoveredLogo.value || aboutModal.value;
+// });
 </script>
