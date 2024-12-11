@@ -34,6 +34,7 @@ export function createMediaWindow() {
         `media-player.${PLATFORM === 'win32' ? 'ico' : PLATFORM === 'darwin' ? 'icns' : 'png'}`,
       ),
     ),
+    maximizable: false,
     minHeight: 110,
     minWidth: 195,
     thickFrame: false,
