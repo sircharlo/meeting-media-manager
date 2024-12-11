@@ -117,7 +117,7 @@ export type LanguageValue =
   // Some more languages
   | 'en'
   // Some more languages
- + | 'ptPt'
++ | 'ptPt'
   // Some more languages
 ```
 
@@ -166,7 +166,7 @@ const enabled = [
   // Some more languages
   'en',
   // Some more languages
-  +'ptPt',
++ 'ptPt',
   // Some more languages
 ];
 ```
