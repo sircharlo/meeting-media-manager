@@ -12,7 +12,7 @@ import { isEmpty } from './general';
 /**
  * Gets a unique identifier for a publication.
  * @param param0 The publication to get the identifier for.
- * @param full Wether to include all parts of the identifier.
+ * @param full Whether to include all parts of the identifier.
  * @returns The publication identifier.
  */
 export const getPubId = (

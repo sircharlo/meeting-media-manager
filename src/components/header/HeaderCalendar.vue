@@ -435,10 +435,12 @@ useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
   window,
   'openSongPicker',
   (e) => openSongPicker(e.detail?.section),
+  { passive: true },
 );
 useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
   window,
   'openImportMenu',
   (e) => openImportMenu(e.detail?.section),
+  { passive: true },
 );
 </script>

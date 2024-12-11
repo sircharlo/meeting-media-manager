@@ -802,8 +802,8 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
 
   return {
     setupNode(data) {
-      useEventListener(data.node, 'dragover', dragover);
-      useEventListener(data.node, 'dragend', dragend);
+      data.node.addEventListener('dragover', dragover, { passive: true });
+      data.node.addEventListener('dragend', dragend, { passive: true });
     },
     tearDownNode(data) {
       data.node.removeEventListener('dragover', dragover);
@@ -1046,18 +1046,24 @@ useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
     sectionToAddTo.value = e.detail.section;
     dragging.value = true;
   },
+  { passive: true },
 );
 useEventListener<
   CustomEvent<{
     files: { filename?: string; filetype?: string; path: string }[];
     section: MediaSection | undefined;
   }>
->(window, 'localFiles-browsed', (event) => {
-  sectionToAddTo.value = event.detail?.section;
-  addToFiles(event.detail?.files ?? []).catch((error) => {
-    errorCatcher(error);
-  });
-});
+>(
+  window,
+  'localFiles-browsed',
+  (event) => {
+    sectionToAddTo.value = event.detail?.section;
+    addToFiles(event.detail?.files ?? []).catch((error) => {
+      errorCatcher(error);
+    });
+  },
+  { passive: true },
+);
 
 watchImmediate(selectedDate, (newVal) => {
   try {

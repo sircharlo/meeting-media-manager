@@ -219,6 +219,10 @@ const baseScenesLength = computed(
       .filter(Boolean).length,
 );
 
-useEventListener(window, 'obsConnectFromSettings', obsSettingsConnect);
-useEventListener(window, 'obsSceneEvent', setObsSceneListener);
+useEventListener(window, 'obsConnectFromSettings', obsSettingsConnect, {
+  passive: true,
+});
+useEventListener(window, 'obsSceneEvent', setObsSceneListener, {
+  passive: true,
+});
 </script>

@@ -12,7 +12,7 @@ const PUBLICATION_FOLDER = 'Publications';
 /**
  * Gets the full path of a directory in the cache folder.
  * @param paths The paths to the directory, relative to the cache folder.
- * @param create Wether to create the directory if it doesn't exist.
+ * @param create Whether to create the directory if it doesn't exist.
  * @param cacheDir The cache directory if it is not the default.
  * @returns The full path of the directory.
  */
@@ -76,7 +76,7 @@ export const getPublicationDirectory = async (
 /**
  * Checks if a directory is empty.
  * @param directory The directory to check.
- * @returns Wether the directory is empty.
+ * @returns Whether the directory is empty.
  */
 const isEmptyDir = async (directory: string) => {
   try {
@@ -185,7 +185,7 @@ const disableUpdatesPath = () =>
 
 /**
  * Checks if auto updates are disabled.
- * @returns Wether auto updates are disabled.
+ * @returns Whether auto updates are disabled.
  */
 export const updatesDisabled = async () =>
   window.electronApi.fs.exists(await disableUpdatesPath());

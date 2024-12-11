@@ -1094,18 +1094,33 @@ const initiatePanzoom = () => {
     };
     panzooms[props.media.uniqueId] = Panzoom(mediaImage.value.$el, options);
 
-    useEventListener(mediaImage.value.$el, 'dblclick', (e) => {
-      zoomIn(e);
-    });
+    useEventListener(
+      mediaImage.value.$el,
+      'dblclick',
+      (e) => {
+        zoomIn(e);
+      },
+      { passive: true },
+    );
 
-    useEventListener(mediaImage.value.$el, 'panzoomend', () => {
-      zoomReset();
-    });
+    useEventListener(
+      mediaImage.value.$el,
+      'panzoomend',
+      () => {
+        zoomReset();
+      },
+      { passive: true },
+    );
 
-    useEventListener(mediaImage.value.$el, 'wheel', function (e) {
-      if (!e.ctrlKey) return;
-      panzooms[props.media.uniqueId]?.zoomWithWheel(e);
-    });
+    useEventListener(
+      mediaImage.value.$el,
+      'wheel',
+      (e) => {
+        if (!e.ctrlKey) return;
+        panzooms[props.media.uniqueId]?.zoomWithWheel(e);
+      },
+      { passive: true },
+    );
 
     useEventListener(
       mediaImage.value.$el,
@@ -1122,6 +1137,7 @@ const initiatePanzoom = () => {
         if (mediaPlayingUrl.value !== props.media.fileUrl) return;
         mediaPlayingPanzoom.value = mediaPanzoom.value;
       },
+      { passive: true },
     );
   } catch (error) {
     errorCatcher(error);
@@ -1146,19 +1162,40 @@ const playButton = useTemplateRef<QBtn>('playButton');
 const pauseResumeButton = useTemplateRef<QBtn>('pauseResumeButton');
 const stopButton = useTemplateRef<QBtn>('stopButton');
 
-useEventListener(window, 'shortcutMediaNext', () => {
-  if (playButton.value && props.playState === 'next') playButton.value.click();
-});
-useEventListener(window, 'shortcutMediaPrevious', () => {
-  if (playButton.value && props.playState === 'previous')
-    playButton.value.click();
-});
-useEventListener(window, 'shortcutMediaPauseResume', () => {
-  if (pauseResumeButton.value && props.playState === 'current')
-    pauseResumeButton.value.click();
-});
-useEventListener(window, 'shortcutMediaStop', () => {
-  if (stopButton.value && props.playState === 'current')
-    stopButton.value.click();
-});
+useEventListener(
+  window,
+  'shortcutMediaNext',
+  () => {
+    if (playButton.value && props.playState === 'next')
+      playButton.value.click();
+  },
+  { passive: true },
+);
+useEventListener(
+  window,
+  'shortcutMediaPrevious',
+  () => {
+    if (playButton.value && props.playState === 'previous')
+      playButton.value.click();
+  },
+  { passive: true },
+);
+useEventListener(
+  window,
+  'shortcutMediaPauseResume',
+  () => {
+    if (pauseResumeButton.value && props.playState === 'current')
+      pauseResumeButton.value.click();
+  },
+  { passive: true },
+);
+useEventListener(
+  window,
+  'shortcutMediaStop',
+  () => {
+    if (stopButton.value && props.playState === 'current')
+      stopButton.value.click();
+  },
+  { passive: true },
+);
 </script>

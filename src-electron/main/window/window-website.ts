@@ -82,13 +82,13 @@ export async function createWebsiteWindow(lang?: string) {
       };
       
       document.body.removeEventListener('mousemove', onMouseMove);
-      document.body.addEventListener('mousemove', onMouseMove);
+      document.body.addEventListener('mousemove', onMouseMove, { passive: true });
   
       document.body.removeEventListener('mousedown', onMouseDown);
-      document.body.addEventListener('mousedown', onMouseDown);
+      document.body.addEventListener('mousedown', onMouseDown, { passive: true });
 
       document.body.removeEventListener('mouseup', onMouseUp);
-      document.body.addEventListener('mouseup', onMouseUp);
+      document.body.addEventListener('mouseup', onMouseUp, { passive: true });
     `);
     } catch (e) {
       captureElectronError(e, {

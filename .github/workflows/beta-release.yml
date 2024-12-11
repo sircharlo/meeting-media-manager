@@ -100,3 +100,18 @@ jobs:
           omitBodyDuringUpdate: true
           updateOnlyUnreleased: true
           token: ${{ secrets.GITHUB_TOKEN }}
+
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Delete older beta releases
+        uses: wow-actions/delete-stale-releases@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          keep_latest_count: '2'
+          keep_latest_days: '2'
+          include: '*beta*'
+          include_draft: 'false'
+          dry-run: 'true'
