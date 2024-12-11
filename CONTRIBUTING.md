@@ -112,7 +112,7 @@ In order to add a completely new language to the application, it has to first be
 
 Add the language symbol in camelCase to the `LanguageValue` type in the [src/constants/locales.ts](./src/constants/locales.ts) file:
 
-```typescript
+```diff
 export type LanguageValue =
   // Some more languages
   | 'en'
@@ -142,7 +142,7 @@ Add the new language to the `locales` array in the [src/constants/locales.ts](./
 
 Add the necessary import statements to the [docs/locales/index.ts](./docs/locales/index.ts) and [src/i18n/index.ts](./src/i18n/index.ts) files:
 
-```typescript
+```diff
 // Make sure that the import name is the same as the value in the locales array
 // This line should initially be commented out in src/i18n/index.ts
 + import ptPt from './pt-pt.json';
@@ -154,14 +154,14 @@ To enable a language in the application, you need to perform two steps:
 
 First, uncomment the import statement in the [src/i18n/index.ts](./src/i18n/index.ts) file:
 
-```typescript
+```diff
 - // import ptPt from './pt-pt.json';
 + import ptPt from './pt-pt.json';
 ```
 
 Then, add the language symbol in camelCase to the `enabled` array in the [src/constants/locales.ts](./src/constants/locales.ts) file:
 
-```typescript
+```diff
 const enabled = [
   // Some more languages
   'en',
