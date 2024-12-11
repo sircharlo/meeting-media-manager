@@ -178,24 +178,33 @@ export const trimFilepathAsNeeded = (filepath: string) => {
   return filepath;
 };
 
-// Disable Updates File
-
-const disableUpdatesPath = () =>
-  getCachePath(['Global Preferences', 'disable-updates'], true);
+// Global Preferences
+const globalPreferencesPath = () => getCachePath(['Global Preferences'], true);
+const disableUpdatesKey = 'disable-updates';
 
 /**
  * Checks if auto updates are disabled.
  * @returns Whether auto updates are disabled.
  */
 export const updatesDisabled = async () =>
-  window.electronApi.fs.exists(await disableUpdatesPath());
+  window.electronApi.fs.pathExists(
+    window.electronApi.path.join(
+      await globalPreferencesPath(),
+      disableUpdatesKey,
+    ),
+  );
 
 /**
  * Enables auto updates.
  */
 export const enableUpdates = async () => {
   try {
-    await window.electronApi.fs.remove(await disableUpdatesPath());
+    await window.electronApi.fs.remove(
+      window.electronApi.path.join(
+        await globalPreferencesPath(),
+        disableUpdatesKey,
+      ),
+    );
   } catch (error) {
     errorCatcher(error);
   }
@@ -206,7 +215,14 @@ export const enableUpdates = async () => {
  */
 export const disableUpdates = async () => {
   try {
-    await window.electronApi.fs.writeFile(await disableUpdatesPath(), 'true');
+    const updatesFilePath = window.electronApi.path.join(
+      await globalPreferencesPath(),
+      disableUpdatesKey,
+    );
+    if (await window.electronApi.fs.pathExists(updatesFilePath)) {
+      await window.electronApi.fs.remove(updatesFilePath);
+    }
+    await window.electronApi.fs.writeFile(updatesFilePath, 'true');
   } catch (error) {
     errorCatcher(error);
   }
