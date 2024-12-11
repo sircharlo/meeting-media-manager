@@ -111,6 +111,7 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           keep_latest_count: '2'
+          keep_latest_days: '2'
           include: '*beta*'
           include_draft: 'false'
           dry-run: 'true'
