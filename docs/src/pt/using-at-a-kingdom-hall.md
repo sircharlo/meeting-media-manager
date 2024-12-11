@@ -14,7 +14,7 @@ Este guia o ajudará no processo de download, instalação e configuração do *
    - **Windows:**
      - Para a maioria dos sistemas Windows, baixe <a :href="data.win64">meeting-media-manager-[VERSÃO]-x64.exe</a>.
      - Para sistemas Windows mais antigos, de 32 bits, baixe <a :href="data.win32">meeting-media-manager-[VERSÃO]-ia32.exe</a>.
-     - For a portable version, download <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
+     - Para a versão portátil, faça o download de <a :href="data.winPortable">meeting-media-manager-[VERSÃO]-portable.exe</a>.
    - **macOS:**
      - **M-series (Apple Silicon)**: Baixe <a :href="data.macArm">meeting-media-manager-[VERSÃO]-arm64.dmg</a>.
      - **Macs com chip Intel**: Baixe <a :href="data.macIntel">meeting-media-manager-[VERSÃO]-x64.dmg</a>.
