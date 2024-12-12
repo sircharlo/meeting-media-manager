@@ -30,10 +30,7 @@
         >
           <q-badge
             v-if="media.duration"
-            :class="
-              'q-mt-sm q-ml-sm cursor-pointer rounded-borders-sm ' +
-              (customDurationIsSet ? 'bg-semi-negative' : 'bg-semi-black')
-            "
+            class="q-mt-sm q-ml-sm cursor-pointer rounded-borders-sm bg-semi-black"
             style="padding: 5px !important"
             @click="showMediaDurationPopup(media)"
           >
@@ -89,7 +86,6 @@
                             ),
                             0,
                           );
-                          console.log(val, media.duration);
                           if (val >= media.duration) val = 0;
                           customDurationMinUserInput = formatTime(val);
                           mediaCustomDuration.min = val;
@@ -352,9 +348,7 @@
             <div class="col" style="height: 28px">
               <q-slider
                 v-model="mediaPlayingCurrentPosition"
-                :color="
-                  mediaPlayingAction === 'pause' ? 'primary' : 'accent-400'
-                "
+                color="primary"
                 :inner-max="mediaCustomDuration.max"
                 :inner-min="mediaCustomDuration.min"
                 inner-track-color="accent-400"
@@ -371,6 +365,7 @@
                 :min="0"
                 :readonly="mediaPlayingAction !== 'pause'"
                 :step="0.1"
+                :thumb-size="mediaPlayingAction === 'pause' ? undefined : '0'"
                 track-color="negative"
                 @update:model-value="seekTo"
               />

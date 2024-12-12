@@ -1023,7 +1023,6 @@ export const getAudioBibleMedia = async (force = false) => {
         publication.booknum = booknum;
         publication.langwritten = lang;
         const audioBibleMediaItems = await getPubMediaLinks(publication);
-        console.log('audioBibleMediaItems', audioBibleMediaItems);
         if (!audioBibleMediaItems) {
           backupNameNeeded.push(booknum);
           returnedItems.push({ booknum });

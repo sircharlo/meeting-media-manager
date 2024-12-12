@@ -157,7 +157,6 @@ handleIpcSend(
       title,
       ...JSON.parse(params),
     }).toString();
-    console.log('search', search);
     shell.openExternal(
       `${repository.url.replace('.git', '/discussions/new')}?${search}`,
     );
