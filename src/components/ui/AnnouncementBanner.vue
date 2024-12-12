@@ -52,6 +52,7 @@ import { localeOptions } from 'src/i18n';
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { fetchAnnouncements, fetchLatestVersion } from 'src/utils/api';
+import { updatesDisabled } from 'src/utils/fs';
 import { isVersionWithinBounds, parseVersion } from 'src/utils/general';
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -65,9 +66,14 @@ const { getAppVersion, openDiscussion, openExternal } = window.electronApi;
 
 const version = ref('');
 const latestVersion = ref('');
+const updatesEnabled = ref(true);
 
 const loadAppVersion = async () => {
   version.value = await getAppVersion();
+};
+
+const getUpdatesEnabled = async () => {
+  updatesEnabled.value = !(await updatesDisabled());
 };
 
 const loadLatestVersion = async () => {
@@ -81,6 +87,7 @@ onMounted(() => {
     loadLatestVersion();
     loadAnnouncements();
   }
+  getUpdatesEnabled();
 });
 
 whenever(
@@ -127,7 +134,7 @@ const newUpdateAnnouncement = computed((): Announcement => {
     maxVersion: `${major}.${patch ? minor : minor - 1}.${patch ? patch - 1 : 99}`,
     message: 'update-available',
     persistent: true,
-    platform: ['mac'],
+    platform: updatesEnabled.value ? ['mac'] : undefined,
   };
 });
 
