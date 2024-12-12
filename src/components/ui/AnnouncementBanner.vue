@@ -177,6 +177,13 @@ const activeAnnouncements = computed(() => {
       }
 
       if (
+        a.scope?.includes('obs') &&
+        !currentStateStore.currentSettings?.obsEnable
+      ) {
+        return false;
+      }
+
+      if (
         !a.persistent &&
         congregationStore.announcements[
           currentStateStore.currentCongregation

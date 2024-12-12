@@ -7,6 +7,7 @@ export interface Announcement {
   minVersion?: string;
   persistent?: boolean;
   platform?: ('linux' | 'mac' | 'win')[];
+  scope?: 'obs'[];
   type?: 'error' | 'info' | 'warning';
 }
 export type AnnouncementAction = 'docs' | 'repo' | 'translate' | 'update';

@@ -13,9 +13,17 @@
     "minVersionExplain": "Minimum target version for the announcement. Defaults to all versions.",
     "maxVersion": "0.0.0",
     "maxVersionExplain": "Maximum target version for the announcement. Defaults to all versions.",
+    "scope": ["obs"],
+    "scopeExplain": "Show only to the specified scope(s). Defaults to all scopes.",
     "persistent": true,
     "persistentExplain": "If true, show at every startup. If false, show once per congregation. Defaults to false.",
     "actions": ["docs", "repo", "update"],
     "actionsExplain": "Action buttons to show. Defaults to no actions."
+  },
+  {
+    "id": "media-window-title-update",
+    "message": "The title of the media window has been changed. This could affect your OBS setup. Please make sure that your OBS media scene is still working correctly.",
+    "type": "warning",
+    "scope": ["obs"]
   }
 ]
