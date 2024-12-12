@@ -36,7 +36,7 @@ interface Store {
   extractedFiles: Partial<Record<string, string>>;
   mediaPlayingAction: '' | 'pause' | 'play' | 'website';
   mediaPlayingCurrentPosition: number;
-  mediaPlayingPanzoom: Partial<Record<string, number>>;
+  mediaPlayingPanzoom: Partial<{ scale: number; x: number; y: number }>;
   mediaPlayingSeekTo: number;
   mediaPlayingSubtitlesUrl: string;
   mediaPlayingUniqueId: string;

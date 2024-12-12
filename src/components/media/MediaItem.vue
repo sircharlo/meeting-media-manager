@@ -303,12 +303,7 @@
                 }
               "
             />
-            <q-icon
-              v-if="media.repeat"
-              color="warning"
-              name="mmm-repeat"
-              size="sm"
-            >
+            <q-icon v-if="repeat" color="warning" name="mmm-repeat" size="sm">
               <q-tooltip :delay="500">
                 {{ t('repeat') }}
               </q-tooltip>
@@ -556,25 +551,19 @@
             </q-item-label>
           </q-item-section>
         </q-item>
-        <q-item
-          v-if="media.duration"
-          clickable
-          @click="emit('update:repeat', !media.repeat)"
-        >
+        <q-item v-if="media.duration" clickable @click="repeat = !repeat">
           <q-item-section avatar>
-            <q-icon :name="media.repeat ? 'mmm-repeat-off' : 'mmm-repeat'" />
+            <q-icon :name="repeat ? 'mmm-repeat-off' : 'mmm-repeat'" />
           </q-item-section>
           <q-item-section>
             <q-item-label>
               {{
-                media.repeat
-                  ? t('stop-repeat-media-item')
-                  : t('repeat-media-item')
+                repeat ? t('stop-repeat-media-item') : t('repeat-media-item')
               }}
             </q-item-label>
             <q-item-label caption>
               {{
-                media.repeat
+                repeat
                   ? t('stop-repeat-media-item-explain')
                   : t('repeat-media-item-explain')
               }}
@@ -607,13 +596,7 @@
   <q-dialog v-model="mediaEditTitleDialog">
     <q-card class="modal-confirm">
       <q-card-section class="items-center">
-        <q-input
-          v-model="mediaTitle"
-          focused
-          outlined
-          type="textarea"
-          @update:model-value="emit('update:title', mediaTitle)"
-        />
+        <q-input v-model="mediaTitle" focused outlined type="textarea" />
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
         <q-btn
@@ -623,7 +606,12 @@
           :label="t('reset')"
           @click="resetMediaTitle()"
         />
-        <q-btn v-close-popup flat :label="t('save')" />
+        <q-btn
+          v-close-popup
+          flat
+          :label="t('save')"
+          @click="emit('update:title', mediaTitle)"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -636,7 +624,6 @@
           inline
           name="tagType"
           :options="tagTypes"
-          @update:model-value="emit('update:tag', mediaTag)"
         />
         <q-input
           v-model="mediaTag.value"
@@ -644,11 +631,17 @@
           :disable="!mediaTag.type"
           focused
           outlined
-          @update:model-value="emit('update:tag', mediaTag)"
         />
       </q-card-section>
-      <q-card-actions align="right" class="text-primary">
-        <q-btn v-close-popup flat :label="t('dismiss')" />
+      <q-card-actions align="right">
+        <q-btn v-close-popup color="negative" flat :label="t('dismiss')" />
+        <q-btn
+          v-close-popup
+          color="primary"
+          flat
+          :label="t('save')"
+          @click="emit('update:tag', mediaTag)"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -775,8 +768,10 @@ const props = defineProps<{
   playState: string;
 }>();
 
+const repeat = defineModel<boolean | undefined>('repeat', { required: true });
+
 const emit = defineEmits<{
-  (e: 'update:hidden' | 'update:repeat', value: boolean): void;
+  (e: 'update:hidden', value: boolean): void;
   (e: 'update:tag', value: Tag): void;
   (e: 'update:customDuration' | 'update:title', value: string): void;
 }>();
@@ -803,12 +798,12 @@ const displayMediaTitle = computed(() => {
 const mediaEditTagDialog = ref(false);
 const { t } = useI18n();
 
-const mediaTag = ref<Tag>(
-  props.media.tag || {
+const mediaTag = ref<Tag>({
+  ...(props.media.tag || {
     type: '',
     value: '',
-  },
-);
+  }),
+});
 
 const tagTypes = [
   {
@@ -901,12 +896,15 @@ const setMediaPlaying = async (
   mediaPlayingSubtitlesUrl.value = media.subtitlesUrl ?? '';
 };
 
+const { post: postRepeat } = useBroadcastChannel<string, boolean>({
+  name: 'repeat',
+});
+
 watchImmediate(
-  () => [props.media.repeat, mediaPlayingUniqueId.value],
+  () => [repeat.value, mediaPlayingUniqueId.value],
   ([newMediaRepeat, newMediaPlayingUniqueId]) => {
     if (newMediaPlayingUniqueId !== props.media.uniqueId) return;
-    const { post } = useBroadcastChannel<string, boolean>({ name: 'repeat' });
-    post(!!newMediaRepeat);
+    postRepeat(!!newMediaRepeat);
   },
 );
 
@@ -1050,7 +1048,7 @@ const destroyPanzoom = () => {
   }
 };
 
-const mediaPanzoom = ref<Record<string, number>>({
+const mediaPanzoom = ref<{ scale: number; x: number; y: number }>({
   scale: 1,
   x: 0,
   y: 0,

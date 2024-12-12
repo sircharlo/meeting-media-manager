@@ -191,13 +191,13 @@
         <MediaItem
           v-for="media in sortableAdditionalMediaItems"
           :key="media.uniqueId"
+          v-model:repeat="media.repeat"
           :media="media"
           :play-state="playState(media.uniqueId)"
           @update:custom-duration="
             media.customDuration = JSON.parse($event) || undefined
           "
           @update:hidden="media.hidden = !!$event"
-          @update:repeat="media.repeat = !!$event"
           @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
@@ -237,13 +237,13 @@
         <MediaItem
           v-for="media in sortableTgwMediaItems"
           :key="media.uniqueId"
+          v-model:repeat="media.repeat"
           :media="media"
           :play-state="playState(media.uniqueId)"
           @update:custom-duration="
             media.customDuration = JSON.parse($event) || undefined
           "
           @update:hidden="media.hidden = !!$event"
-          @update:repeat="media.repeat = !!$event"
           @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
@@ -277,13 +277,13 @@
         <MediaItem
           v-for="media in sortableAyfmMediaItems"
           :key="media.uniqueId"
+          v-model:repeat="media.repeat"
           :media="media"
           :play-state="playState(media.uniqueId)"
           @update:custom-duration="
             media.customDuration = JSON.parse($event) || undefined
           "
           @update:hidden="media.hidden = !!$event"
-          @update:repeat="media.repeat = !!$event"
           @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
@@ -328,13 +328,13 @@
         <MediaItem
           v-for="media in sortableLacMediaItems"
           :key="media.uniqueId"
+          v-model:repeat="media.repeat"
           :media="media"
           :play-state="playState(media.uniqueId)"
           @update:custom-duration="
             media.customDuration = JSON.parse($event) || undefined
           "
           @update:hidden="media.hidden = !!$event"
-          @update:repeat="media.repeat = !!$event"
           @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
@@ -368,13 +368,13 @@
         <MediaItem
           v-for="media in sortableWtMediaItems"
           :key="media.uniqueId"
+          v-model:repeat="media.repeat"
           :media="media"
           :play-state="playState(media.uniqueId)"
           @update:custom-duration="
             media.customDuration = JSON.parse($event) || undefined
           "
           @update:hidden="media.hidden = !!$event"
-          @update:repeat="media.repeat = !!$event"
           @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
@@ -435,13 +435,13 @@
         <MediaItem
           v-for="media in sortableCircuitOverseerMediaItems"
           :key="media.uniqueId"
+          v-model:repeat="media.repeat"
           :media="media"
           :play-state="playState(media.uniqueId)"
           @update:custom-duration="
             media.customDuration = JSON.parse($event) || undefined
           "
           @update:hidden="media.hidden = !!$event"
-          @update:repeat="media.repeat = !!$event"
           @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
