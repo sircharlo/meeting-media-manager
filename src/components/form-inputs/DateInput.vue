@@ -34,10 +34,10 @@
             v-close-popup
             color="negative"
             flat
-            :label="$t('clear')"
+            :label="t('clear')"
             @click="clearDate"
           />
-          <q-btn v-close-popup color="primary" flat :label="$t('save')" />
+          <q-btn v-close-popup color="primary" flat :label="t('save')" />
         </div>
       </q-date>
     </q-popup-proxy>
@@ -52,6 +52,9 @@ import { useLocale } from 'src/composables/useLocale';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { friendlyDayToJsDay } from 'src/utils/date';
 import { getDateOptions, getRules } from 'src/utils/settings';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);

@@ -11,13 +11,13 @@
   >
     <div class="action-popup flex q-py-md" style="flex-flow: column">
       <div class="card-title row q-px-md q-mb-none">
-        {{ $t('media-sync') }}
+        {{ t('media-sync') }}
       </div>
       <div class="col overflow-auto q-col-gutter-y-sm">
         <template v-if="Object.values(downloadProgress).length === 0">
           <div class="row flex-center q-px-md row">
             <div class="col ellipsis text-weight-medium text-dark-grey">
-              {{ $t('noDownloadsInProgress') }}
+              {{ t('noDownloadsInProgress') }}
             </div>
             <div class="col-shrink">
               <q-icon color="positive" name="mmm-cloud-done" size="sm" />
@@ -33,7 +33,7 @@
               v-if="hasStatus(downloadProgress, statusObject.status)"
               class="card-section-title text-dark-grey row q-px-md"
             >
-              {{ $t(statusObject.label) }}
+              {{ t(statusObject.label) }}
             </p>
             <template
               v-for="(item, id) in filteredDownloads(statusObject.status)"
@@ -51,8 +51,8 @@
                     size="sm"
                   >
                     <q-tooltip v-if="statusObject.status === 'error'">
-                      {{ $t('errorDownloadingMeetingMedia') }}.
-                      {{ $t('tryConfiguringFallbackLanguage') }}.
+                      {{ t('errorDownloadingMeetingMedia') }}.
+                      {{ t('tryConfiguringFallbackLanguage') }}.
                     </q-tooltip>
                   </q-icon>
                   <q-circular-progress
@@ -94,8 +94,11 @@ import { storeToRefs } from 'pinia';
 import { SORTER } from 'src/constants/general';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useTemplateRef } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const { path } = window.electronApi;
+
+const { t } = useI18n();
 
 const open = defineModel<boolean>({ default: false });
 

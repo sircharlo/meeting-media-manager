@@ -18,12 +18,12 @@
         :delay="1000"
         self="center left"
       >
-        {{ $t('expand-sidebar') }}
+        {{ t('expand-sidebar') }}
       </q-tooltip>
       <q-item-section avatar>
         <q-icon name="mmm-menu" />
       </q-item-section>
-      <q-item-section>{{ $t('collapse-sidebar') }}</q-item-section>
+      <q-item-section>{{ t('collapse-sidebar') }}</q-item-section>
     </q-item>
     <q-item
       v-ripple
@@ -42,14 +42,14 @@
       >
         {{
           !currentSettings
-            ? $t('select-a-congregation-to-enable')
-            : $t('titles.meetingMedia')
+            ? t('select-a-congregation-to-enable')
+            : t('titles.meetingMedia')
         }}
       </q-tooltip>
       <q-item-section avatar>
         <q-icon name="mmm-media" />
       </q-item-section>
-      <q-item-section>{{ $t('titles.meetingMedia') }}</q-item-section>
+      <q-item-section>{{ t('titles.meetingMedia') }}</q-item-section>
     </q-item>
     <q-item
       v-ripple
@@ -66,12 +66,12 @@
         :delay="1000"
         self="center left"
       >
-        {{ $t('titles.presentWebsite') }}
+        {{ t('titles.presentWebsite') }}
       </q-tooltip>
       <q-item-section avatar>
         <q-icon name="mmm-open-web" />
       </q-item-section>
-      <q-item-section>{{ $t('titles.presentWebsite') }}</q-item-section>
+      <q-item-section>{{ t('titles.presentWebsite') }}</q-item-section>
     </q-item>
     <q-item
       v-ripple
@@ -89,13 +89,13 @@
         :delay="1000"
         self="center left"
       >
-        {{ $t('titles.profileSelection') }}
+        {{ t('titles.profileSelection') }}
       </q-tooltip>
       <q-item-section avatar>
         <q-icon name="mmm-groups" />
       </q-item-section>
       <q-item-section>
-        {{ $t('titles.profileSelection') }}
+        {{ t('titles.profileSelection') }}
       </q-item-section>
     </q-item>
     <q-space />
@@ -114,7 +114,7 @@
         :delay="1000"
         self="center left"
       >
-        {{ $t('titles.settings') }}
+        {{ t('titles.settings') }}
       </q-tooltip>
       <q-item-section avatar>
         <q-icon
@@ -123,7 +123,7 @@
         />
       </q-item-section>
       <q-item-section :class="invalidSettings() ? 'text-negative' : ''">
-        {{ $t('titles.settings') }}
+        {{ t('titles.settings') }}
       </q-item-section>
     </q-item>
   </q-drawer>

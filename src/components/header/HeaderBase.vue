@@ -43,7 +43,7 @@
         <div class="col items-center">
           <div class="row text-current-page">
             <div v-if="route.meta.title" class="ellipsis">
-              {{ $t(route.meta.title.toString()) }}
+              {{ t(route.meta.title.toString()) }}
             </div>
           </div>
           <div
@@ -75,22 +75,20 @@
   </q-header>
 </template>
 <script setup lang="ts">
-// Packages
 import { storeToRefs } from 'pinia';
-// Components
 import DialogAbout from 'src/components/dialog/DialogAbout.vue';
-// Stores
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { /*computed,*/ ref } from 'vue';
+import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 
-// Sub-components
 import HeaderCalendar from './HeaderCalendar.vue';
 import HeaderCongregation from './HeaderCongregation.vue';
 import HeaderSettings from './HeaderSettings.vue';
 import HeaderWebsite from './HeaderWebsite.vue';
 
+const { t } = useI18n();
 const route = useRoute();
 
 const congregationSettings = useCongregationSettingsStore();

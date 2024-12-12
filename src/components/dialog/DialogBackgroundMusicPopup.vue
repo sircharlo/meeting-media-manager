@@ -17,11 +17,11 @@
       style="flex-flow: column"
     >
       <div class="card-title row q-px-md q-mb-none">
-        {{ $t('setupWizard.backgroundMusic') }}
+        {{ t('setupWizard.backgroundMusic') }}
       </div>
       <template v-if="musicPlaying">
         <p class="card-section-title text-dark-grey row q-px-md q-pt-sm">
-          {{ $t('current-song') }}
+          {{ t('current-song') }}
         </p>
         <div class="row q-px-md q-pt-xs row">
           <div class="col text-weight-medium">
@@ -35,7 +35,7 @@
           <q-separator class="bg-accent-200" />
         </div>
         <p class="row card-section-title text-dark-grey q-px-md q-pt-sm">
-          {{ $t('upcoming-songs') }}
+          {{ t('upcoming-songs') }}
         </p>
         <div class="overflow-auto col">
           <template v-for="(song, i) in songList" :key="i">
@@ -59,9 +59,9 @@
             {{
               musicPlaying || musicStarting
                 ? musicRemainingTime.includes('music.')
-                  ? $t(musicRemainingTime)
+                  ? t(musicRemainingTime)
                   : musicRemainingTime
-                : $t('not-playing')
+                : t('not-playing')
             }}
           </div>
           <div
@@ -73,7 +73,7 @@
             "
             class="row text-dark-grey"
           >
-            {{ $t('until-meeting-starts') }}
+            {{ t('until-meeting-starts') }}
           </div>
         </div>
         <div class="col-grow">
@@ -85,7 +85,7 @@
             unelevated
             @click="playMusic"
           >
-            {{ $t('play-music') }}
+            {{ t('play-music') }}
           </q-btn>
           <q-btn
             v-else
@@ -95,7 +95,7 @@
             unelevated
             @click="stopMusic"
           >
-            {{ $t('stop-music') }}
+            {{ t('stop-music') }}
           </q-btn>
         </div>
       </div>
@@ -131,6 +131,9 @@ import { getPublicationDirectoryContents } from 'src/utils/fs';
 import { getMetadataFromMediaPath, isVideo } from 'src/utils/media';
 import { formatTime } from 'src/utils/time';
 import { ref, useTemplateRef, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const open = defineModel<boolean>({ default: false });
 

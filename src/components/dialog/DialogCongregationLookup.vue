@@ -2,10 +2,10 @@
   <q-dialog v-model="open" persistent>
     <div class="bg-secondary-contrast flex q-px-none" style="flex-flow: column">
       <div class="text-h6 row q-px-md q-pt-lg">
-        {{ $t('congregation-lookup') }}
+        {{ t('congregation-lookup') }}
       </div>
       <div class="row q-px-md q-pt-md">
-        {{ $t('congregation-lookup-explain') }}
+        {{ t('congregation-lookup-explain') }}
       </div>
       <div class="row q-px-md q-py-md">
         <q-input
@@ -33,15 +33,15 @@
               <q-item-label>
                 {{
                   congregationFilter?.length > 2
-                    ? $t('no-results')
-                    : $t('no-results-short')
+                    ? t('no-results')
+                    : t('no-results-short')
                 }}
               </q-item-label>
               <q-item-label caption>
                 {{
                   congregationFilter?.length > 2
-                    ? $t('no-results-explain')
-                    : $t('no-results-short-explain')
+                    ? t('no-results-explain')
+                    : t('no-results-short-explain')
                 }}
               </q-item-label>
             </q-item-section>
@@ -93,7 +93,7 @@
       <div class="row q-px-md q-py-md row flex-center">
         <div class="col text-right">
           <q-btn v-close-popup color="negative" flat @click="dismissPopup">
-            {{ $t('cancel') }}
+            {{ t('cancel') }}
           </q-btn>
         </div>
       </div>
@@ -111,6 +111,9 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { fetchJson } from 'src/utils/api';
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const jwStore = useJwStore();
 const { jwLanguages, urlVariables } = storeToRefs(jwStore);

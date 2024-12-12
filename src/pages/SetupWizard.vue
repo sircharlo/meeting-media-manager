@@ -7,34 +7,34 @@
           :done="step > 1"
           icon="mmm-ui-language"
           :name="1"
-          :title="$t('setupWizard.welcome')"
+          :title="t('setupWizard.welcome')"
         >
-          <p>{{ $t('setupWizard.intro') }}</p>
-          <p>{{ $t('what-language-would-you-like-m-to-be-displayed-in') }}</p>
+          <p>{{ t('setupWizard.intro') }}</p>
+          <p>{{ t('what-language-would-you-like-m-to-be-displayed-in') }}</p>
           <SelectInput
             v-model="currentSettings.localAppLang"
             list="appLanguages"
           />
-          <!-- :label="$t('localAppLang')" -->
+          <!-- :label="t('localAppLang')" -->
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn
               color="negative"
               flat
-              :label="$t('cancel')"
+              :label="t('cancel')"
               @click="
                 deleteCongregation(currentCongregation);
                 currentCongregation = '';
                 goToPage('/congregation-selector');
               "
             />
-            <!-- <q-btn :label="$t('continue')" color="primary" @click="step++" />
+            <!-- <q-btn :label="t('continue')" color="primary" @click="step++" />
         </q-stepper-navigation>
         <q-stepper-navigation class="q-gutter-sm">
-          <q-btn :label="$t('back')" color="negative" flat @click="step--" /> -->
+          <q-btn :label="t('back')" color="negative" flat @click="step--" /> -->
             <q-btn
               color="primary"
               :disable="!currentSettings.localAppLang"
-              :label="$t('continue')"
+              :label="t('continue')"
               @click="step++"
             />
           </q-stepper-navigation>
@@ -43,18 +43,18 @@
           :done="step > 2"
           icon="mmm-lectern"
           :name="2"
-          :title="$t('how-will-the-app-be-used')"
+          :title="t('how-will-the-app-be-used')"
         >
-          <p>{{ $t('what-kind-of-profile-is-this') }}</p>
-          <p>{{ $t('profile-type-regular') }}</p>
-          <p>{{ $t('profile-type-special') }}</p>
-          <p>{{ $t('profile-type-choose-regular') }}</p>
+          <p>{{ t('what-kind-of-profile-is-this') }}</p>
+          <p>{{ t('profile-type-regular') }}</p>
+          <p>{{ t('profile-type-special') }}</p>
+          <p>{{ t('profile-type-choose-regular') }}</p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="$t('back')" @click="step--" />
+            <q-btn color="negative" flat :label="t('back')" @click="step--" />
             <q-btn
               color="primary"
               flat
-              :label="$t('other')"
+              :label="t('other')"
               @click="
                 regularProfile = false;
                 step++;
@@ -62,7 +62,7 @@
             />
             <q-btn
               color="primary"
-              :label="$t('regular')"
+              :label="t('regular')"
               @click="
                 regularProfile = true;
                 step++;
@@ -74,12 +74,12 @@
           :done="step > 3"
           icon="mmm-rename"
           :name="3"
-          :title="$t('profile-name')"
+          :title="t('profile-name')"
         >
           <!-- This icon is from the Material Design Icons collection -->
           <p>
             {{
-              $t(
+              t(
                 'the-name-of-your-congregation-or-group-will-be-used-to-quickly-switch-between-profiles-if-ever-you-decide-create-more-than-one-in-the-future',
               )
             }}
@@ -90,17 +90,17 @@
               v-if="regularProfile"
               color="primary"
               icon="mmm-search"
-              :label="$t('congregation-lookup')"
+              :label="t('congregation-lookup')"
               outline
               @click="showCongregationLookup = true"
             />
           </div>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="$t('back')" @click="step--" />
+            <q-btn color="negative" flat :label="t('back')" @click="step--" />
             <q-btn
               color="primary"
               :disable="!currentSettings?.congregationName"
-              :label="$t('continue')"
+              :label="t('continue')"
               @click="step++"
             />
           </q-stepper-navigation>
@@ -109,32 +109,32 @@
           :done="step > 4"
           icon="mmm-download"
           :name="4"
-          :title="$t('cacheFolder')"
+          :title="t('cacheFolder')"
         >
-          <p>{{ $t('cacheFolder-explain') }}</p>
-          <p>{{ $t('cacheFolder-wizard') }}</p>
+          <p>{{ t('cacheFolder-explain') }}</p>
+          <p>{{ t('cacheFolder-wizard') }}</p>
           <FolderInput v-model="currentSettings.cacheFolder" />
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="$t('back')" @click="step--" />
-            <q-btn color="primary" :label="$t('continue')" @click="step++" />
+            <q-btn color="negative" flat :label="t('back')" @click="step--" />
+            <q-btn color="primary" :label="t('continue')" @click="step++" />
           </q-stepper-navigation>
         </q-step>
         <q-step
           :done="step > 5"
           icon="mmm-media-language"
           :name="5"
-          :title="$t('lang')"
+          :title="t('lang')"
         >
-          <p>{{ $t('in-what-language-should-media-be-downloaded') }}</p>
+          <p>{{ t('in-what-language-should-media-be-downloaded') }}</p>
           <SelectInput v-model="currentSettings.lang" list="jwLanguages" />
           <!-- use-input -->
-          <!-- :label="$t('lang')" -->
+          <!-- :label="t('lang')" -->
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="$t('back')" @click="step--" />
+            <q-btn color="negative" flat :label="t('back')" @click="step--" />
             <q-btn
               color="primary"
               :disable="!currentSettings.lang"
-              :label="$t('continue')"
+              :label="t('continue')"
               @click="
                 currentSettings.enableMediaDisplayButton = true;
                 step++;
@@ -146,21 +146,21 @@
           :done="step > 6"
           icon="mmm-yeartext"
           :name="6"
-          :title="$t('yeartext')"
+          :title="t('yeartext')"
         >
           <!-- This icon is from the Material Design Icons collection -->
           <p>
             {{
-              $t(
+              t(
                 'notice-the-yeartext-is-now-being-displayed-on-the-external-monitor-but-lets-keep-going',
               )
             }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="$t('back')" @click="step--" />
+            <q-btn color="negative" flat :label="t('back')" @click="step--" />
             <q-btn
               color="primary"
-              :label="$t('continue')"
+              :label="t('continue')"
               @click="step = regularProfile ? step + 1 : 103"
             />
           </q-stepper-navigation>
@@ -172,37 +172,37 @@
           :done="step > 7"
           icon="mmm-calendar-month"
           :name="7"
-          :title="$t('setupWizard.meetingDaysTimes')"
+          :title="t('setupWizard.meetingDaysTimes')"
         >
           <p>
             {{
-              $t(
+              t(
                 'what-are-your-meeting-days-and-times-well-use-this-info-to-display-the-media-calendar',
               )
             }}
           </p>
-          <p class="text-subtitle2">{{ $t('midweek-meeting') }}</p>
+          <p class="text-subtitle2">{{ t('midweek-meeting') }}</p>
           <p class="q-gutter-sm row">
             <SelectInput v-model="currentSettings.mwDay" list="days" />
-            <!-- :label="$t('mwDay')" -->
+            <!-- :label="t('mwDay')" -->
             <TimeInput
               v-model="currentSettings.mwStartTime"
               :options="['meetingTime']"
             />
-            <!-- :label="$t('mwStartTime')" -->
+            <!-- :label="t('mwStartTime')" -->
           </p>
-          <p class="text-subtitle2">{{ $t('weekend-meeting') }}</p>
+          <p class="text-subtitle2">{{ t('weekend-meeting') }}</p>
           <p class="q-gutter-sm row">
             <SelectInput v-model="currentSettings.weDay" list="days" />
-            <!-- :label="$t('weDay')" -->
+            <!-- :label="t('weDay')" -->
             <TimeInput
               v-model="currentSettings.weStartTime"
               :options="['meetingTime']"
             />
-            <!-- :label="$t('weStartTime')" -->
+            <!-- :label="t('weStartTime')" -->
           </p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="$t('back')" @click="step--" />
+            <q-btn color="negative" flat :label="t('back')" @click="step--" />
             <q-btn
               color="primary"
               :disable="
@@ -211,7 +211,7 @@
                 !currentSettings.weDay ||
                 !currentSettings.weStartTime
               "
-              :label="$t('continue')"
+              :label="t('continue')"
               @click="step++"
             />
           </q-stepper-navigation>
@@ -222,19 +222,19 @@
           :done="step > 8"
           icon="mmm-download"
           :name="8"
-          :title="$t('songbook-video-caching')"
+          :title="t('songbook-video-caching')"
         >
           <p class="text-subtitle1">
-            {{ $t('would-you-like-to-enable-songbook-video-caching') }}
+            {{ t('would-you-like-to-enable-songbook-video-caching') }}
           </p>
           <p>
-            {{ $t('this-will-speed-up-media-retrieval-for-meetings') }}
+            {{ t('this-will-speed-up-media-retrieval-for-meetings') }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn flat :label="$t('no')" @click="step++" />
+            <q-btn flat :label="t('no')" @click="step++" />
             <q-btn
               color="primary"
-              :label="$t('yes')"
+              :label="t('yes')"
               @click="
                 currentSettings.enableExtraCache = true;
                 downloadSongbookVideos();
@@ -249,20 +249,20 @@
           :done="step > 9"
           icon="mmm-almost-done"
           :name="9"
-          :title="$t('almost-done')"
+          :title="t('almost-done')"
         >
           <p>
             {{
-              $t(
+              t(
                 'well-start-fetching-media-while-we-wrap-up-with-our-initial-setup',
               )
             }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="$t('back')" @click="step--" />
+            <q-btn color="negative" flat :label="t('back')" @click="step--" />
             <q-btn
               color="primary"
-              :label="$t('continue')"
+              :label="t('continue')"
               @click="
                 fetchMedia();
                 downloadBackgroundMusic();
@@ -277,10 +277,10 @@
           :done="step > 101"
           icon="mmm-stream-now"
           :name="101"
-          :title="$t('media-display')"
+          :title="t('media-display')"
         >
           <p>
-            {{ $t('look-for-this-button-in-m-s-footer') }}
+            {{ t('look-for-this-button-in-m-s-footer') }}
             <q-btn
               class="super-rounded q-ml-sm"
               color="primary"
@@ -291,26 +291,21 @@
           </p>
           <p>
             {{
-              $t(
+              t(
                 'clicking-it-will-allow-you-to-temporarily-hide-the-media-and-yeartext-and-reveal-the-zoom-participants-underneath-once-the-zoom-part-is-over-you-can-show-the-yeartext-again-using-the-same-button',
               )
             }}
           </p>
           <p>
             {{
-              $t(
+              t(
                 'to-quickly-show-and-hide-zoom-participants-on-the-tv-screens-when-needed-make-sure-that-the-setting-to-use-dual-monitors-in-zoom-is-enabled',
               )
             }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn
-              color="negative"
-              flat
-              :label="$t('back')"
-              @click="step = 9"
-            />
-            <q-btn color="primary" :label="$t('continue')" @click="step++" />
+            <q-btn color="negative" flat :label="t('back')" @click="step = 9" />
+            <q-btn color="primary" :label="t('continue')" @click="step++" />
           </q-stepper-navigation>
         </q-step>
         <q-step
@@ -319,10 +314,10 @@
           :done="step > 102"
           icon="mmm-music-note"
           :name="102"
-          :title="$t('setupWizard.backgroundMusic')"
+          :title="t('setupWizard.backgroundMusic')"
         >
           <p>
-            {{ $t('also-look-for-this-button-in-m-s-footer') }}
+            {{ t('also-look-for-this-button-in-m-s-footer') }}
             <q-btn
               class="super-rounded q-ml-sm"
               color="primary"
@@ -333,28 +328,28 @@
           </p>
           <p>
             {{
-              $t(
+              t(
                 'clicking-it-will-allow-you-to-start-and-stop-the-playback-of-background-music-music-will-start-playing-automatically-before-a-meeting-is-scheduled-to-start-when-m-is-launched-and-will-also-stop-automatically-before-the-meeting-starts-however-background-music-playback-will-need-to-be-manually-started-after-the-closing-prayer-using-this-button',
               )
             }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn color="negative" flat :label="$t('back')" @click="step--" />
-            <q-btn color="primary" :label="$t('continue')" @click="step++" />
+            <q-btn color="negative" flat :label="t('back')" @click="step--" />
+            <q-btn color="primary" :label="t('continue')" @click="step++" />
           </q-stepper-navigation>
         </q-step>
         <q-step
           :done="step > 103"
           icon="mmm-obs-studio"
           :name="103"
-          :title="$t('obsEnable')"
+          :title="t('obsEnable')"
         >
           <p class="text-subtitle1">
-            {{ $t('does-your-kingdom-hall-use-a-program-called-obs-studio') }}
+            {{ t('does-your-kingdom-hall-use-a-program-called-obs-studio') }}
           </p>
           <p>
             {{
-              $t(
+              t(
                 'obs-studio-is-a-free-app-used-to-manage-camera-and-video-feeds-in-many-kingdom-halls',
               )
             }}
@@ -362,7 +357,7 @@
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn
               flat
-              :label="$t('no')"
+              :label="t('no')"
               @click="
                 obsUsed = false;
                 step = 300;
@@ -370,7 +365,7 @@
             />
             <q-btn
               color="primary"
-              :label="$t('yes')"
+              :label="t('yes')"
               @click="
                 obsUsed = true;
                 step++;
@@ -384,30 +379,30 @@
           :done="step > 104"
           icon="mmm-obs-studio"
           :name="104"
-          :title="$t('obs-studio-integration')"
+          :title="t('obs-studio-integration')"
         >
           <p class="text-subtitle1">
-            {{ $t('would-you-like-to-integrate-m-with-obs-studio') }}
+            {{ t('would-you-like-to-integrate-m-with-obs-studio') }}
           </p>
           <p>
             {{
-              $t(
+              t(
                 'doing-so-will-greatly-simplify-and-facilitate-sharing-media-during-hybrid-meetings',
               )
             }}
           </p>
           <p>
             {{
-              $t(
+              t(
                 'configure-the-websocket-plugin-in-obs-studio-the-virtual-camera-plugin-is-also-required-so-make-sure-its-installed-and-configured-as-well',
               )
             }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn flat :label="$t('back')" @click="step--" />
+            <q-btn flat :label="t('back')" @click="step--" />
             <q-btn
               flat
-              :label="$t('no')"
+              :label="t('no')"
               @click="
                 obsIntegrate = false;
                 step = 300;
@@ -415,7 +410,7 @@
             />
             <q-btn
               color="primary"
-              :label="$t('yes')"
+              :label="t('yes')"
               @click="
                 obsIntegrate = true;
                 step++;
@@ -429,11 +424,11 @@
           :done="step > 105"
           icon="mmm-obs-password"
           :name="105"
-          :title="$t('obs-studio-port-and-password')"
+          :title="t('obs-studio-port-and-password')"
         >
           <p>
             {{
-              $t(
+              t(
                 'enter-the-port-and-password-configured-in-obs-studios-websocket-plugin',
               )
             }}
@@ -442,21 +437,21 @@
             v-model="currentSettings.obsPort"
             :actions="['obsConnect']"
             class="q-mb-md"
-            :label="$t('obsPort')"
+            :label="t('obsPort')"
           />
           <TextInput
             v-model="currentSettings.obsPassword"
             :actions="['obsConnect']"
-            :label="$t('obsPassword')"
+            :label="t('obsPassword')"
           />
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn flat :label="$t('back')" @click="step--" />
+            <q-btn flat :label="t('back')" @click="step--" />
             <q-btn
               color="primary"
               :disable="
                 !currentSettings.obsPort || !currentSettings.obsPassword
               "
-              :label="$t('continue')"
+              :label="t('continue')"
               @click="step++"
             />
           </q-stepper-navigation>
@@ -467,25 +462,23 @@
           :done="step > 106"
           icon="mmm-lectern"
           :name="106"
-          :title="$t('obs-studio-stage-scene')"
+          :title="t('obs-studio-stage-scene')"
         >
           <p class="text-subtitle1">
-            {{
-              $t('configure-a-scene-in-obs-studio-to-show-a-stage-wide-shot')
-            }}
+            {{ t('configure-a-scene-in-obs-studio-to-show-a-stage-wide-shot') }}
           </p>
-          <p>{{ $t('once-the-scene-has-been-created-select-it-here') }}</p>
+          <p>{{ t('once-the-scene-has-been-created-select-it-here') }}</p>
           <SelectInput
             v-model="currentSettings.obsCameraScene"
             list="obsScenes"
           />
-          <!-- :label="$t('obsCameraScene')" -->
+          <!-- :label="t('obsCameraScene')" -->
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn flat :label="$t('back')" @click="step--" />
+            <q-btn flat :label="t('back')" @click="step--" />
             <q-btn
               color="primary"
               :disable="!currentSettings.obsCameraScene"
-              :label="$t('continue')"
+              :label="t('continue')"
               @click="step++"
             />
           </q-stepper-navigation>
@@ -496,25 +489,25 @@
           :done="step > 107"
           icon="mmm-media"
           :name="107"
-          :title="$t('obs-studio-media-scene')"
+          :title="t('obs-studio-media-scene')"
         >
           <p class="text-subtitle1">
             {{
-              $t('configure-a-scene-in-obs-studio-to-capture-the-media-window')
+              t('configure-a-scene-in-obs-studio-to-capture-the-media-window')
             }}
           </p>
-          <p>{{ $t('once-the-scene-has-been-created-select-it-here') }}</p>
+          <p>{{ t('once-the-scene-has-been-created-select-it-here') }}</p>
           <SelectInput
             v-model="currentSettings.obsMediaScene"
             list="obsAllScenes"
           />
-          <!-- :label="$t('obsMediaScene')" -->
+          <!-- :label="t('obsMediaScene')" -->
           <q-stepper-navigation class="q-gutter-sm">
-            <q-btn flat :label="$t('back')" @click="step--" />
+            <q-btn flat :label="t('back')" @click="step--" />
             <q-btn
               color="primary"
               :disable="!currentSettings.obsMediaScene"
-              :label="$t('continue')"
+              :label="t('continue')"
               @click="step = 300"
             />
           </q-stepper-navigation>
@@ -523,13 +516,13 @@
           :done="step > 300"
           icon="mmm-congratulations"
           :name="300"
-          :title="$t('congratulations')"
+          :title="t('congratulations')"
         >
           <!-- This icon is from the Material Design Icons collection -->
-          <p class="text-subtitle1">{{ $t('m-is-now-ready-to-be-used') }}</p>
+          <p class="text-subtitle1">{{ t('m-is-now-ready-to-be-used') }}</p>
           <p>
             {{
-              $t(
+              t(
                 'feel-free-to-browse-around-the-other-available-options-or-if-you-prefer-you-can-head-right-to-the-media-playback-screen-and-start-using-it-to-display-media',
               )
             }}
@@ -538,18 +531,18 @@
             <q-btn
               color="negative"
               flat
-              :label="$t('start-over')"
+              :label="t('start-over')"
               @click="step = 1"
             />
             <q-btn
               color="primary"
               flat
-              :label="$t('titles.settings')"
+              :label="t('titles.settings')"
               @click="goToPage('/settings')"
             />
             <q-btn
               color="primary"
-              :label="$t('media-playback')"
+              :label="t('media-playback')"
               @click="goToPage('/media-calendar')"
             />
           </q-stepper-navigation>
@@ -577,6 +570,7 @@ import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
 const currentState = useCurrentStateStore();
@@ -590,6 +584,8 @@ const regularProfile = ref(false);
 // const usingAtKh = ref(false);
 const obsUsed = ref(false);
 const obsIntegrate = ref(false);
+
+const { t } = useI18n();
 
 const jwStore = useJwStore();
 const { updateYeartext } = jwStore;

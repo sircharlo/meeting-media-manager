@@ -6,7 +6,7 @@
     >
       <div class="text-h6 row q-px-md q-pt-lg q-pb-md">
         {{
-          $t(
+          t(
             jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)
               ? 'choose-a-document-for-import'
               : 'add-extra-media',
@@ -38,24 +38,24 @@
       </template>
       <template v-else>
         <div class="row q-px-md">
-          <p>{{ $t('local-media-explain-1') }}</p>
+          <p>{{ t('local-media-explain-1') }}</p>
           <a>
-            {{ $t('local-media-explain-2') }}
+            {{ t('local-media-explain-2') }}
             <q-tooltip>
               <div class="row">
-                <strong>{{ $t('images:') }}&nbsp;</strong>
+                <strong>{{ t('images:') }}&nbsp;</strong>
                 {{ IMG_EXTENSIONS.sort().join(', ') }}
               </div>
               <div class="row">
-                <strong>{{ $t('videos:') }}&nbsp;</strong>
+                <strong>{{ t('videos:') }}&nbsp;</strong>
                 {{ VIDEO_EXTENSIONS.sort().join(', ') }}
               </div>
               <div class="row">
-                <strong>{{ $t('audio:') }}&nbsp;</strong>
+                <strong>{{ t('audio:') }}&nbsp;</strong>
                 {{ AUDIO_EXTENSIONS.sort().join(', ') }}
               </div>
               <div class="row">
-                <strong>{{ $t('other:') }}&nbsp;</strong>
+                <strong>{{ t('other:') }}&nbsp;</strong>
                 {{ OTHER_EXTENSIONS.sort().join(', ') }}
               </div>
             </q-tooltip>
@@ -102,7 +102,7 @@
             </template>
             <template v-else>
               <q-icon class="q-mr-sm" name="mmm-drag-n-drop" size="lg" />
-              {{ $t('drag-and-drop-or-click-to-browse') }}
+              {{ t('drag-and-drop-or-click-to-browse') }}
             </template>
           </div>
         </div>
@@ -112,7 +112,7 @@
           v-close-popup
           color="negative"
           flat
-          :label="$t('cancel')"
+          :label="t('cancel')"
           @click="resetModal()"
         />
       </div>
@@ -133,6 +133,9 @@ import {
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { computed, ref, useTemplateRef } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps<{
   currentFile: number;

@@ -6,7 +6,7 @@
     >
       <div class="text-h6 row q-px-md q-pt-lg">
         <div class="col">
-          {{ $t('add-video-jw-org') }}
+          {{ t('add-video-jw-org') }}
         </div>
         <div class="col-shrink">
           <q-spinner v-if="videosAreLoading" color="primary" />
@@ -14,7 +14,7 @@
         </div>
       </div>
       <div class="row q-px-md q-pt-md">
-        {{ $t('add-a-video-explain') }}
+        {{ t('add-a-video-explain') }}
       </div>
       <div class="row q-px-md q-py-md">
         <div class="col-grow">
@@ -22,7 +22,7 @@
             v-model="remoteVideoFilter"
             clearable
             dense
-            :label="$t('search')"
+            :label="t('search')"
             outlined
             spellcheck="false"
           >
@@ -113,11 +113,11 @@
             v-model="remoteVideosIncludeAudioDescription"
             checked-icon="mmm-check"
             color="primary"
-            :label="$t('include-audio-description')"
+            :label="t('include-audio-description')"
           />
         </div>
         <div class="col text-right">
-          <q-btn v-close-popup color="negative" flat :label="$t('cancel')" />
+          <q-btn v-close-popup color="negative" flat :label="t('cancel')" />
         </div>
       </div>
     </div>
@@ -142,6 +142,9 @@ import { useJwStore } from 'src/stores/jw';
 import { fetchJson } from 'src/utils/api';
 import { formatTime } from 'src/utils/time';
 import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 // Stores
 const jwStore = useJwStore();

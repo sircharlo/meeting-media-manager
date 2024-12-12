@@ -17,7 +17,7 @@
       }"
     >
       <div class="card-title col-shrink full-width q-px-md q-mb-none">
-        {{ $t('scene-selection') }}
+        {{ t('scene-selection') }}
       </div>
       <div class="overflow-auto col full-width q-px-md">
         <div class="row q-col-gutter-xs">
@@ -69,11 +69,11 @@
                 <div class="ellipsis full-width">
                   {{
                     scene === currentSettings?.obsCameraScene
-                      ? $t('stage')
+                      ? t('stage')
                       : scene === currentSettings?.obsMediaScene
-                        ? $t('media-only')
+                        ? t('media-only')
                         : scene === currentSettings?.obsImageScene
-                          ? $t('picture-in-picture')
+                          ? t('picture-in-picture')
                           : isUUID(scene)
                             ? scenes.find((s) => s.sceneUuid === scene)
                                 ?.sceneName

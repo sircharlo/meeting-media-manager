@@ -28,7 +28,7 @@
       :offset="[14, 22]"
       self="top left"
     >
-      {{ $t('media-display') }}
+      {{ t('media-display') }}
     </q-tooltip>
   </q-btn>
 </template>
@@ -36,7 +36,9 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const currentState = useCurrentStateStore();
 const { currentSettings, mediaWindowVisible } = storeToRefs(currentState);
 

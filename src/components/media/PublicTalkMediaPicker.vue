@@ -5,10 +5,10 @@
       style="flex-flow: column"
     >
       <div class="text-h6 row q-px-md q-pt-lg">
-        {{ $t('import-media-from-s34mp') }}
+        {{ t('import-media-from-s34mp') }}
       </div>
       <div class="row q-px-md q-pt-md">
-        {{ $t('select-s34mp-to-add-public-talk-media') }}
+        {{ t('select-s34mp-to-add-public-talk-media') }}
       </div>
       <div class="row q-px-md q-pt-md row items-center q-gutter-x-sm">
         <div class="row">
@@ -18,7 +18,7 @@
           {{
             s34mpDb
               ? path.basename(s34mpDb, path.extname(s34mpDb))
-              : $t('select-s34mp')
+              : t('select-s34mp')
           }}
         </div>
         <div v-if="s34mpDb || s34mpFile" class="col-grow text-caption">
@@ -31,7 +31,7 @@
         </div>
         <q-btn color="primary" outline @click="browse">
           <q-icon class="q-mr-sm" name="mmm-local-media" />
-          {{ s34mpDb ? $t('replace') : $t('browse') }}
+          {{ s34mpDb ? t('replace') : t('browse') }}
         </q-btn>
       </div>
       <template v-if="s34mpDb">
@@ -42,7 +42,7 @@
             clearable
             debounce="100"
             dense
-            :label="$t('search')"
+            :label="t('search')"
             outlined
             spellcheck="false"
           >
@@ -68,7 +68,7 @@
         <q-btn
           color="negative"
           flat
-          :label="$t('cancel')"
+          :label="t('cancel')"
           @click="dismissPopup"
         />
       </div>
@@ -85,7 +85,9 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 import { getPublicationsPath } from 'src/utils/fs';
 import { findDb } from 'src/utils/sqlite';
 import { computed, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const { executeQuery, fs, openFileDialog, path } = window.electronApi;
 
 const props = defineProps<{

@@ -22,11 +22,11 @@
                 (currentCongregation === id ? 'text-primary' : '')
               "
             >
-              {{ congregations[id]?.congregationName || $t('noName') }}
+              {{ congregations[id]?.congregationName || t('noName') }}
             </div>
             <div class="row text-caption text-grey">
               <template v-if="congregations[id]?.disableMediaFetching">
-                {{ $t('no-regular-meetings') }}
+                {{ t('no-regular-meetings') }}
               </template>
               <template
                 v-else-if="
@@ -52,7 +52,7 @@
                 {{ congregations[id]?.weStartTime }}
               </template>
               <template v-else-if="invalidSettings(id)">
-                {{ $t('incomplete-configuration') }}
+                {{ t('incomplete-configuration') }}
               </template>
             </div>
           </div>
@@ -64,7 +64,7 @@
               color="negative"
               flat
               icon="mmm-delete"
-              :label="$t('delete')"
+              :label="t('delete')"
               size="md"
               @click.stop="congToDelete = id"
             />
@@ -90,21 +90,21 @@
         class="row items-center text-bigger text-semibold text-negative q-pb-none"
       >
         <q-icon class="q-mr-sm" name="mmm-delete" />
-        {{ $t('profile-deletion') }}
+        {{ t('profile-deletion') }}
       </q-card-section>
       <q-card-section class="row items-center">
         {{
-          $t('are-you-sure-you-want-to-delete-this-profile', {
+          t('are-you-sure-you-want-to-delete-this-profile', {
             profileName: congregations[congToDelete]?.congregationName,
           })
         }}
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
-        <q-btn flat :label="$t('cancel')" @click="congToDelete = ''" />
+        <q-btn flat :label="t('cancel')" @click="congToDelete = ''" />
         <q-btn
           color="negative"
           flat
-          :label="$t('delete')"
+          :label="t('delete')"
           @click="
             removeCongregation(congToDelete);
             congToDelete = '';

@@ -27,7 +27,7 @@
       :offset="[14, 22]"
       self="top left"
     >
-      {{ $t('download-status') }}
+      {{ t('download-status') }}
     </q-tooltip>
   </q-btn>
 </template>
@@ -40,7 +40,9 @@ import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const currentState = useCurrentStateStore();
 const { downloadProgress, online } = storeToRefs(currentState);
 

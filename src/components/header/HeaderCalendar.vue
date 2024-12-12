@@ -16,9 +16,9 @@
       name="mmm-reset"
       size="xs"
     />
-    {{ $q.screen.gt.sm ? $t('reset-sort-order') : '' }}
+    {{ $q.screen.gt.sm ? t('reset-sort-order') : '' }}
     <q-tooltip v-if="!$q.screen.gt.sm" :delay="1000">
-      {{ $t('reset-sort-order') }}
+      {{ t('reset-sort-order') }}
     </q-tooltip>
   </q-btn>
   <q-btn
@@ -32,13 +32,13 @@
       name="mmm-add-media"
       size="xs"
     />
-    {{ $q.screen.gt.xs ? $t('extra-media') : '' }}
+    {{ $q.screen.gt.xs ? t('extra-media') : '' }}
     <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
-      {{ $t('extra-media') }}
+      {{ t('extra-media') }}
     </q-tooltip>
     <q-menu ref="importMenu" :offset="[0, 11]">
       <q-list class="list-primary">
-        <q-item-label header>{{ $t('from-jw-org') }}</q-item-label>
+        <q-item-label header>{{ t('from-jw-org') }}</q-item-label>
         <q-item
           v-close-popup
           clickable
@@ -49,8 +49,8 @@
             <q-icon color="primary" name="mmm-music-note" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ $t('song') }}</q-item-label>
-            <q-item-label caption>{{ $t('from-songbook') }}</q-item-label>
+            <q-item-label>{{ t('song') }}</q-item-label>
+            <q-item-label caption>{{ t('from-songbook') }}</q-item-label>
           </q-item-section>
         </q-item>
         <q-item
@@ -63,9 +63,9 @@
             <q-icon color="primary" name="mmm-movie" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ $t('video') }}</q-item-label>
+            <q-item-label>{{ t('video') }}</q-item-label>
             <q-item-label caption>
-              {{ $t('latest-videos-from-jw-org') }}
+              {{ t('latest-videos-from-jw-org') }}
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -79,8 +79,8 @@
             <q-icon color="primary" name="mmm-bible" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ $t('study-bible') }}</q-item-label>
-            <q-item-label caption>{{ $t('study-bible-media') }}</q-item-label>
+            <q-item-label>{{ t('study-bible') }}</q-item-label>
+            <q-item-label caption>{{ t('study-bible-media') }}</q-item-label>
           </q-item-section>
         </q-item>
         <q-item
@@ -93,18 +93,18 @@
             <q-icon color="primary" name="mmm-audio-bible" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ $t('audio-bible') }}</q-item-label>
-            <q-item-label caption>{{ $t('audio-bible-media') }}</q-item-label>
+            <q-item-label>{{ t('audio-bible') }}</q-item-label>
+            <q-item-label caption>{{ t('audio-bible-media') }}</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item-label header>{{ $t('from-local-computer') }}</q-item-label>
+        <q-item-label header>{{ t('from-local-computer') }}</q-item-label>
         <q-item v-close-popup clickable @click="publicTalkMediaPopup = true">
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-lectern" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ $t('public-talk-media') }}</q-item-label>
-            <q-item-label caption>{{ $t('media-from-s34mp') }}</q-item-label>
+            <q-item-label>{{ t('public-talk-media') }}</q-item-label>
+            <q-item-label caption>{{ t('media-from-s34mp') }}</q-item-label>
           </q-item-section>
         </q-item>
         <template
@@ -120,13 +120,13 @@
               <q-icon color="primary" :name="icon" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>{{ $t(name ? name : '') }}</q-item-label>
-              <q-item-label caption>{{ $t(name + '-explain') }}</q-item-label>
+              <q-item-label>{{ t(name ? name : '') }}</q-item-label>
+              <q-item-label caption>{{ t(name + '-explain') }}</q-item-label>
             </q-item-section>
           </q-item>
         </template>
         <template v-if="additionalMediaForDay || hiddenMediaForDay">
-          <q-item-label header>{{ $t('dangerZone') }}</q-item-label>
+          <q-item-label header>{{ t('dangerZone') }}</q-item-label>
           <q-item
             v-if="hiddenMediaForDay"
             v-close-popup
@@ -137,9 +137,9 @@
               <q-icon color="primary" name="mmm-eye" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>{{ $t('show-hidden-media') }}</q-item-label>
+              <q-item-label>{{ t('show-hidden-media') }}</q-item-label>
               <q-item-label caption>
-                {{ $t('show-hidden-media-explain') }}
+                {{ t('show-hidden-media-explain') }}
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -154,10 +154,10 @@
             </q-item-section>
             <q-item-section>
               <q-item-label>
-                {{ $t('delete-all-additional-media') }}
+                {{ t('delete-all-additional-media') }}
               </q-item-label>
               <q-item-label caption>
-                {{ $t('this-will-only-delete-media-for-this-day') }}
+                {{ t('this-will-only-delete-media-for-this-day') }}
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -171,18 +171,18 @@
         class="row items-center text-bigger text-semibold text-negative q-pb-none"
       >
         <q-icon class="q-mr-sm" name="mmm-delete" />
-        {{ $t('delete-all-additional-media') }}
+        {{ t('delete-all-additional-media') }}
       </q-card-section>
       <q-card-section class="row items-center">
-        {{ $t('are-you-sure-delete-all') }}
+        {{ t('are-you-sure-delete-all') }}
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
-        <q-btn v-close-popup flat :label="$t('cancel')" />
+        <q-btn v-close-popup flat :label="t('cancel')" />
         <q-btn
           v-close-popup
           color="negative"
           flat
-          :label="$t('delete')"
+          :label="t('delete')"
           @click="clearCurrentDayAdditionalMedia()"
         />
       </q-card-actions>
@@ -195,11 +195,11 @@
       size="xs"
     />
     <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
-      {{ getLocalDate(selectedDate, dateLocale) || $t('select-a-date') }}
+      {{ getLocalDate(selectedDate, dateLocale) || t('select-a-date') }}
     </q-tooltip>
     {{
       $q.screen.gt.xs
-        ? getLocalDate(selectedDate, dateLocale) || $t('select-a-date')
+        ? getLocalDate(selectedDate, dateLocale) || t('select-a-date')
         : ''
     }}
     <q-popup-proxy v-model="datePickerActive" :offset="[0, 11]">
@@ -242,7 +242,9 @@ import {
   getMinDate,
 } from 'src/utils/date';
 import { computed, ref, useTemplateRef } from 'vue';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const jwStore = useJwStore();
 const { clearCurrentDayAdditionalMedia, resetSort, showCurrentDayHiddenMedia } =
   jwStore;

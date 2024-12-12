@@ -5,11 +5,11 @@
         class="row items-center text-bigger text-semibold text-negative q-pb-none"
       >
         <q-icon class="q-mr-sm" name="mmm-delete" />
-        {{ $t('clear-cache') }}
+        {{ t('clear-cache') }}
       </q-card-section>
       <q-card-section class="row items-center">
         {{
-          $t(
+          t(
             cacheClearType === 'all'
               ? 'are-you-sure-delete-cache'
               : 'are-you-sure-delete-unused-cache',
@@ -17,11 +17,11 @@
         }}
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
-        <q-btn flat :label="$t('cancel')" @click="open = false" />
+        <q-btn flat :label="t('cancel')" @click="open = false" />
         <q-btn
           color="negative"
           flat
-          :label="$t('delete')"
+          :label="t('delete')"
           @click="deleteCacheFiles(cacheClearType)"
         />
       </q-card-actions>
@@ -38,6 +38,9 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { getAdditionalMediaPath, removeEmptyDirs } from 'src/utils/fs';
 import { ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 // Props
 const props = defineProps<{

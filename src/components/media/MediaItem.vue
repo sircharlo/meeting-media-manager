@@ -60,11 +60,11 @@
               <q-card-section
                 class="row items-center text-bigger text-semibold q-pb-none"
               >
-                {{ $t('set-custom-durations') }}
+                {{ t('set-custom-durations') }}
               </q-card-section>
               <q-card-section>
                 {{
-                  $t(
+                  t(
                     'use-the-slider-below-to-adjust-the-start-and-end-time-of-this-media-item',
                   )
                 }}
@@ -137,13 +137,13 @@
                 <q-btn
                   color="negative"
                   flat
-                  :label="$t('reset')"
+                  :label="t('reset')"
                   @click="resetMediaDuration()"
                 />
                 <q-btn
                   color="primary"
                   flat
-                  :label="$t('save')"
+                  :label="t('save')"
                   @click="saveMediaDuration()"
                 />
               </q-card-actions>
@@ -244,7 +244,7 @@
               "
             />
             <q-tooltip v-if="media.watched" :delay="500">
-              {{ $t('watched-media-item-explain') }}
+              {{ t('watched-media-item-explain') }}
             </q-tooltip>
             <q-tooltip
               v-if="
@@ -254,12 +254,12 @@
               "
               :delay="1000"
             >
-              {{ $t('extra-media-item-explain') }}
+              {{ t('extra-media-item-explain') }}
             </q-tooltip>
             <template v-if="media?.tag?.type">
               {{
                 media.tag?.type === 'paragraph' && media.tag.value === 9999
-                  ? $t('footnote')
+                  ? t('footnote')
                   : media.tag?.value
               }}
             </template>
@@ -287,7 +287,7 @@
             </q-tooltip>
           </div>
           <div v-if="!isFileUrl(media.fileUrl)" class="text-caption">
-            {{ $t('media-item-missing-explain') }}
+            {{ t('media-item-missing-explain') }}
           </div>
         </div>
         <div class="col-shrink">
@@ -314,7 +314,7 @@
               size="sm"
             >
               <q-tooltip :delay="500">
-                {{ $t('repeat') }}
+                {{ t('repeat') }}
               </q-tooltip>
             </q-icon>
           </div>
@@ -365,7 +365,7 @@
                 :label-value="
                   mediaPlayingAction === 'pause'
                     ? formatTime(mediaPlayingCurrentPosition)
-                    : $t('pause-to-adjust-time')
+                    : t('pause-to-adjust-time')
                 "
                 :max="media.duration"
                 :min="0"
@@ -434,7 +434,7 @@
           <q-menu>
             <q-list>
               <q-item clickable @click="setMediaPlaying(media, true)">
-                <q-item-section>{{ $t('entireFile') }}</q-item-section>
+                <q-item-section>{{ t('entireFile') }}</q-item-section>
               </q-item>
               <q-separator />
               <q-item
@@ -465,7 +465,7 @@
         >
           <q-tooltip :delay="1000">
             {{
-              $t(
+              t(
                 currentSceneType === 'media'
                   ? 'hide-image-for-zoom-participants'
                   : 'show-image-for-zoom-participants',
@@ -527,9 +527,9 @@
             <q-icon name="mmm-file-hidden" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ $t('hide-from-list') }}</q-item-label>
+            <q-item-label>{{ t('hide-from-list') }}</q-item-label>
             <q-item-label caption>
-              {{ $t('hide-from-list-explain') }}
+              {{ t('hide-from-list-explain') }}
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -546,8 +546,8 @@
             <q-icon name="mmm-edit" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ $t('rename') }}</q-item-label>
-            <q-item-label caption>{{ $t('rename-explain') }}</q-item-label>
+            <q-item-label>{{ t('rename') }}</q-item-label>
+            <q-item-label caption>{{ t('rename-explain') }}</q-item-label>
           </q-item-section>
         </q-item>
         <q-item v-close-popup clickable @click="mediaEditTagDialog = true">
@@ -555,9 +555,9 @@
             <q-icon name="mmm-tag" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ $t('change-tag') }}</q-item-label>
+            <q-item-label>{{ t('change-tag') }}</q-item-label>
             <q-item-label caption>
-              {{ $t('change-tag-explain') }}
+              {{ t('change-tag-explain') }}
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -573,15 +573,15 @@
             <q-item-label>
               {{
                 media.repeat
-                  ? $t('stop-repeat-media-item')
-                  : $t('repeat-media-item')
+                  ? t('stop-repeat-media-item')
+                  : t('repeat-media-item')
               }}
             </q-item-label>
             <q-item-label caption>
               {{
                 media.repeat
-                  ? $t('stop-repeat-media-item-explain')
-                  : $t('repeat-media-item-explain')
+                  ? t('stop-repeat-media-item-explain')
+                  : t('repeat-media-item-explain')
               }}
             </q-item-label>
           </q-item-section>
@@ -600,9 +600,9 @@
             <q-icon color="negative" name="mmm-delete" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ $t('delete-media') }}</q-item-label>
+            <q-item-label>{{ t('delete-media') }}</q-item-label>
             <q-item-label caption>
-              {{ $t('delete-media-explain') }}
+              {{ t('delete-media-explain') }}
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -625,10 +625,10 @@
           v-close-popup
           color="negative"
           flat
-          :label="$t('reset')"
+          :label="t('reset')"
           @click="resetMediaTitle()"
         />
-        <q-btn v-close-popup flat :label="$t('save')" />
+        <q-btn v-close-popup flat :label="t('save')" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -653,7 +653,7 @@
         />
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
-        <q-btn v-close-popup flat :label="$t('dismiss')" />
+        <q-btn v-close-popup flat :label="t('dismiss')" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -663,18 +663,18 @@
         class="row items-center text-bigger text-semibold text-negative q-pb-none"
       >
         <q-icon class="q-mr-sm" name="mmm-stop" />
-        {{ $t('stop-media') }}
+        {{ t('stop-media') }}
       </q-card-section>
       <q-card-section class="row items-center">
-        {{ $t('sureStopVideo') }}
+        {{ t('sureStopVideo') }}
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
-        <q-btn flat :label="$t('cancel')" @click="mediaToStop = ''" />
+        <q-btn flat :label="t('cancel')" @click="mediaToStop = ''" />
         <q-btn
           ref="stopButton"
           color="negative"
           flat
-          :label="$t('stop')"
+          :label="t('stop')"
           @click="stopMedia()"
         />
       </q-card-actions>
@@ -686,11 +686,11 @@
         class="row items-center text-bigger text-semibold text-negative q-pb-none"
       >
         <q-icon class="q-mr-sm" name="mmm-delete" />
-        {{ $t('delete-media') }}
+        {{ t('delete-media') }}
       </q-card-section>
       <q-card-section class="row items-center">
         {{
-          $t('are-you-sure-delete', {
+          t('are-you-sure-delete', {
             mediaToDelete:
               props.list.find((m) => m.uniqueId === mediaToDelete)?.title ||
               (props.list.find((m) => m.uniqueId === mediaToDelete)?.fileUrl
@@ -703,11 +703,11 @@
         }}
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
-        <q-btn flat :label="$t('cancel')" @click="mediaToDelete = ''" />
+        <q-btn flat :label="t('cancel')" @click="mediaToDelete = ''" />
         <q-btn
           color="negative"
           flat
-          :label="$t('delete')"
+          :label="t('delete')"
           @click="deleteMedia()"
         />
       </q-card-actions>

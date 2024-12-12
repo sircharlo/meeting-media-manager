@@ -20,7 +20,7 @@
       v-else
       class="full-width col-12 text-smaller"
       color="primary"
-      :label="$t('enter-key-combination')"
+      :label="t('enter-key-combination')"
       outline
       @click="shortcutPicker = true"
     />
@@ -34,10 +34,10 @@
       <q-card-section
         class="row items-center text-bigger text-semibold q-pb-none"
       >
-        {{ $t('enter-a-key-combination') }}
+        {{ t('enter-a-key-combination') }}
       </q-card-section>
       <q-card-section class="row items-center">
-        {{ $t('enter-a-key-combination-now-using-your-keyboard') }}
+        {{ t('enter-a-key-combination-now-using-your-keyboard') }}
       </q-card-section>
       <q-card-section class="q-pt-none text-center row">
         <template v-if="localValue">
@@ -59,10 +59,10 @@
           v-close-popup
           color="negative"
           flat
-          :label="$t('clear')"
+          :label="t('clear')"
           @click="localValue = ''"
         />
-        <q-btn v-close-popup flat :label="$t('confirm')" />
+        <q-btn v-close-popup flat :label="t('confirm')" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -78,6 +78,9 @@ import {
   registerCustomShortcut,
 } from 'src/helpers/keyboardShortcuts';
 import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 // Define props and emits
 const props = defineProps<{

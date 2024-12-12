@@ -26,13 +26,13 @@
     <div v-if="musicPlaying || musicStarting" class="q-ml-sm">
       {{
         musicRemainingTime.includes('music.')
-          ? $t(musicRemainingTime)
+          ? t(musicRemainingTime)
           : musicRemainingTime
       }}
     </div>
 
     <q-tooltip v-if="!musicPopup" :delay="1000" :offset="[14, 22]">
-      {{ $t('setupWizard.backgroundMusic') }}
+      {{ t('setupWizard.backgroundMusic') }}
     </q-tooltip>
   </q-btn>
 </template>
@@ -40,7 +40,9 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const currentState = useCurrentStateStore();
 const {
   currentSettings,

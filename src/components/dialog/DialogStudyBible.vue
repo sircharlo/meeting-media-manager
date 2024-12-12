@@ -6,20 +6,20 @@
     >
       <div class="text-h6 row q-px-md q-pt-lg">
         <template v-if="!bibleBook">
-          {{ $t('add-media-study-bible') }}
+          {{ t('add-media-study-bible') }}
         </template>
         <template v-else>
-          {{ $t('media-gallery') }} -
+          {{ t('media-gallery') }} -
           {{ bibleBooks[bibleBook]?.Title }}
         </template>
       </div>
       <div class="row q-px-md q-py-md">
         <template v-if="!bibleBook || !bibleBookChapter">
-          {{ $t('add-media-study-bible-explain') }}
+          {{ t('add-media-study-bible-explain') }}
         </template>
         <template v-else>
           <div class="text-subtitle1">
-            {{ bibleBooks[bibleBook]?.Title }} - {{ $t('chapter') }}
+            {{ bibleBooks[bibleBook]?.Title }} - {{ t('chapter') }}
             {{ bibleBookChapter }}
           </div>
         </template>
@@ -52,7 +52,7 @@
               v-if="!bibleMediaByCategory[category]?.length"
               :delay="500"
             >
-              {{ $t('no-media-for-this-category') }}
+              {{ t('no-media-for-this-category') }}
             </q-tooltip>
           </q-tab>
         </q-tabs>
@@ -139,7 +139,7 @@
                                 color="white"
                                 name="mmm-play"
                               />
-                              {{ $t('video') }}
+                              {{ t('video') }}
                             </q-badge>
                             <q-checkbox
                               v-if="selectedMediaItems.includes(mediaItem)"
@@ -233,14 +233,14 @@
             v-if="bibleBook"
             color="primary"
             flat
-            :label="$t('back')"
+            :label="t('back')"
             @click="resetBibleBook(!bibleBookChapter)"
           />
           <q-btn
             v-if="selectedMediaItems.length"
             v-close-popup
             color="primary"
-            :label="$t('add') + ' (' + selectedMediaItems.length + ')'"
+            :label="t('add') + ' (' + selectedMediaItems.length + ')'"
             @click="addSelectedMediaItems()"
           />
           <q-btn
@@ -248,7 +248,7 @@
             v-close-popup
             color="negative"
             flat
-            :label="$t('cancel')"
+            :label="t('cancel')"
             @click="resetBibleBook(true)"
           />
         </div>
@@ -280,6 +280,9 @@ import {
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 // Stores
 const currentState = useCurrentStateStore();

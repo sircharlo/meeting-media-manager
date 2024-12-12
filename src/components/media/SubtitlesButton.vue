@@ -9,7 +9,7 @@
     @click="subtitlesVisible = !subtitlesVisible"
   >
     <q-tooltip :delay="1000" :offset="[14, 22]">
-      {{ $t('subtitles') }}
+      {{ t('subtitles') }}
     </q-tooltip>
   </q-btn>
 </template>
@@ -19,7 +19,9 @@ import { useBroadcastChannel } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
 

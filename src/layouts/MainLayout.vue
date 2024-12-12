@@ -38,7 +38,7 @@ import type { ElectronIpcListenKey } from 'src/types';
 import { watchDebounced, watchImmediate, whenever } from '@vueuse/core';
 // Packages
 import { storeToRefs } from 'pinia';
-import { useQuasar } from 'quasar';
+import { useMeta, useQuasar } from 'quasar';
 // Globals
 import { queues } from 'src/boot/globals';
 // Components
@@ -84,6 +84,10 @@ import { useRoute, useRouter } from 'vue-router';
 
 // Local state
 const miniState = ref(true);
+
+useMeta({
+  titleTemplate: (title) => (title ? `${title} - M³` : 'Meeting Media Manager'),
+});
 
 // Icon mapping
 const $q = useQuasar();

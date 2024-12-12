@@ -6,7 +6,7 @@
     >
       <div class="text-h6 row q-px-md q-pt-lg">
         <div class="col">
-          {{ $t('choose-a-song') }}
+          {{ t('choose-a-song') }}
         </div>
         <div class="col-shrink">
           <q-btn
@@ -24,7 +24,7 @@
         </div>
       </div>
       <div class="row q-px-md q-pt-md">
-        {{ $t('add-a-song') }}
+        {{ t('add-a-song') }}
       </div>
       <div class="row q-px-md q-py-md">
         <q-input
@@ -34,7 +34,7 @@
           debounce="100"
           dense
           :disable="loading"
-          :label="$t('search-by-title-or-number')"
+          :label="t('search-by-title-or-number')"
           outlined
           spellcheck="false"
         >
@@ -80,7 +80,7 @@
           <q-btn
             color="negative"
             flat
-            :label="$t('cancel')"
+            :label="t('cancel')"
             @click="dismissPopup"
           />
         </div>
@@ -103,6 +103,9 @@ import {
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { computed, ref } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps<{
   section: MediaSection | undefined;

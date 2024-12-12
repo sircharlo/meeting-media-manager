@@ -25,10 +25,10 @@
             v-close-popup
             color="negative"
             flat
-            :label="$t('clear')"
+            :label="t('clear')"
             @click="clearTime"
           />
-          <q-btn v-close-popup color="primary" flat :label="$t('save')" />
+          <q-btn v-close-popup color="primary" flat :label="t('save')" />
         </div>
       </q-time>
     </q-popup-proxy>
@@ -41,6 +41,9 @@ import type { SettingsItemOption, SettingsItemRule } from 'src/types';
 import { storeToRefs } from 'pinia';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { getRules, getTimeOptions } from 'src/utils/settings';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const { currentSettings } = storeToRefs(useCurrentStateStore());
 

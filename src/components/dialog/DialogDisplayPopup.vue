@@ -10,14 +10,14 @@
   >
     <div class="flex action-popup q-py-md" style="flex-flow: column">
       <div class="card-title row q-px-md q-mb-none">
-        {{ $t('media-display-settings') }}
+        {{ t('media-display-settings') }}
       </div>
       <template v-if="screenList?.length > 1">
         <template
           v-if="!screenPreferences.preferWindowed && screenList?.length > 2"
         >
           <div class="card-section-title row q-px-md">
-            {{ $t('display') }}
+            {{ t('display') }}
           </div>
           <div class="row q-px-md q-pb-sm q-col-gutter-sm">
             <template v-for="(screen, index) in screenList" :key="screen.id">
@@ -40,8 +40,8 @@
                   />
                   {{
                     screen.mainWindow
-                      ? $t('current')
-                      : $t('display') + ' ' + (index + 1)
+                      ? t('current')
+                      : t('display') + ' ' + (index + 1)
                   }}
                 </q-btn>
               </div>
@@ -50,7 +50,7 @@
           <q-separator class="bg-accent-200 q-mb-md" />
         </template>
         <div class="card-section-title row q-px-md">
-          {{ $t('window-type') }}
+          {{ t('window-type') }}
         </div>
         <div class="row q-px-md q-pb-sm q-col-gutter-sm">
           <div class="col-6">
@@ -65,7 +65,7 @@
               @click="screenPreferences.preferWindowed = false"
             >
               <q-icon class="q-mr-sm" name="mmm-fullscreen" size="xs" />
-              {{ $t('full-screen') }}
+              {{ t('full-screen') }}
             </q-btn>
           </div>
           <div class="col-6">
@@ -85,7 +85,7 @@
               @click="screenPreferences.preferWindowed = true"
             >
               <q-icon class="q-mr-sm" name="mmm-window" size="xs" />
-              {{ $t('windowed') }}
+              {{ t('windowed') }}
               <q-tooltip
                 v-if="screenPreferences.preferWindowed && mediaWindowSize"
                 floating
@@ -98,7 +98,7 @@
         <q-separator class="bg-accent-200 q-mb-md" />
       </template>
       <div class="card-section-title row q-px-md q-pb-sm">
-        {{ $t('custom-background') }}
+        {{ t('custom-background') }}
       </div>
       <div class="row q-px-md q-pb-sm">
         <q-btn
@@ -117,19 +117,19 @@
           />
           {{
             mediaWindowCustomBackground
-              ? $t('reset-custom-background')
-              : $t('set-custom-background')
+              ? t('reset-custom-background')
+              : t('set-custom-background')
           }}
         </q-btn>
       </div>
       <div class="q-px-md q-pt-md row">
         <div class="col">
           <div class="row text-subtitle1 text-weight-medium">
-            {{ mediaWindowVisible ? $t('projecting') : $t('inactive') }}
+            {{ mediaWindowVisible ? t('projecting') : t('inactive') }}
           </div>
           <div class="row text-dark-grey">
             {{
-              $t(
+              t(
                 screenList?.length < 2 || screenPreferences.preferWindowed
                   ? 'windowed'
                   : 'external-screen',
@@ -145,7 +145,7 @@
             unelevated
             @click="showMediaWindow(false)"
           >
-            {{ $t('hide-media-display') }}
+            {{ t('hide-media-display') }}
           </q-btn>
           <q-btn
             v-else
@@ -154,7 +154,7 @@
             unelevated
             @click="showMediaWindow(true)"
           >
-            {{ $t('show-media-display') }}
+            {{ t('show-media-display') }}
           </q-btn>
         </div>
       </div>
@@ -163,10 +163,10 @@
   <q-dialog v-model="showCustomBackgroundPicker">
     <div class="bg-secondary-contrast flex q-px-none" style="flex-flow: column">
       <div class="text-h6 row q-px-md q-pt-lg">
-        {{ $t('choose-an-image') }}
+        {{ t('choose-an-image') }}
       </div>
       <div class="row q-px-md q-py-md">
-        {{ $t('select-a-custom-background') }}
+        {{ t('select-a-custom-background') }}
       </div>
       <div class="q-px-md overflow-auto row flex">
         <template
@@ -209,7 +209,7 @@
             jwpubImages = [];
           "
         >
-          {{ $t('cancel') }}
+          {{ t('cancel') }}
         </q-btn>
       </div>
     </div>

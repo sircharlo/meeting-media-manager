@@ -8,9 +8,9 @@
   />
   <q-btn v-if="selectedDate" color="white-transparent" unelevated>
     <q-icon class="q-mr-sm" name="mmm-tools" size="xs" />
-    {{ $t('tools') }}
+    {{ t('tools') }}
     <q-tooltip v-if="!moreOptionsMenuActive" :delay="1000">
-      {{ $t('tools') }}
+      {{ t('tools') }}
     </q-tooltip>
     <q-menu
       v-model="moreOptionsMenuActive"
@@ -19,7 +19,7 @@
     >
       <q-list>
         <template v-if="invalidSettings()">
-          <q-item-label header>{{ $t('invalid-settings') }}</q-item-label>
+          <q-item-label header>{{ t('invalid-settings') }}</q-item-label>
           <q-item
             clickable
             @click="onlyShowInvalidSettings = !onlyShowInvalidSettings"
@@ -34,14 +34,14 @@
               <q-item-label>
                 {{
                   onlyShowInvalidSettings
-                    ? $t('show-all-settings')
-                    : $t('only-show-settings-that-are-not-valid')
+                    ? t('show-all-settings')
+                    : t('only-show-settings-that-are-not-valid')
                 }}
               </q-item-label>
             </q-item-section>
           </q-item>
         </template>
-        <q-item-label header>{{ $t('cache') }}</q-item-label>
+        <q-item-label header>{{ t('cache') }}</q-item-label>
         <q-item
           v-close-popup
           clickable
@@ -52,7 +52,7 @@
             <q-icon color="accent-400" name="mmm-delete-smart" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ $t('remove-unused-cache') }} </q-item-label>
+            <q-item-label>{{ t('remove-unused-cache') }} </q-item-label>
             <q-item-label caption>{{ unusedCacheFoldersSize }}</q-item-label>
           </q-item-section>
         </q-item>
@@ -66,7 +66,7 @@
             <q-icon color="accent-400" name="mmm-delete-all" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ $t('remove-all-cache') }} </q-item-label>
+            <q-item-label>{{ t('remove-all-cache') }} </q-item-label>
             <q-item-label caption>{{ allCacheFilesSize }}</q-item-label>
           </q-item-section>
         </q-item>
@@ -91,9 +91,11 @@ import {
   getTempPath,
 } from 'src/utils/fs';
 import { computed, ref, watchEffect } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 const { fs, path, pathToFileURL, readdir } = window.electronApi;
 
+const { t } = useI18n();
 const jwStore = useJwStore();
 const { additionalMediaMaps, lookupPeriod } = storeToRefs(jwStore);
 

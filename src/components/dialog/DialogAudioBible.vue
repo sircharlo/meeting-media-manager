@@ -6,7 +6,7 @@
     >
       <div class="row q-px-md q-pt-lg text-h6">
         <div class="col">
-          {{ $t('add-media-audio-bible') }}
+          {{ t('add-media-audio-bible') }}
         </div>
         <div class="col-shrink">
           <q-btn
@@ -23,7 +23,7 @@
         </div>
       </div>
       <div class="row q-px-md q-py-md">
-        {{ $t('add-media-audio-bible-explain') }}
+        {{ t('add-media-audio-bible-explain') }}
       </div>
       <div
         v-if="
@@ -68,7 +68,7 @@
             <div class="row q-px-md col">
               <div class="col q-pr-scroll overflow-auto">
                 <div class="text-grey text-uppercase q-my-sm">
-                  {{ $t('chapter') }}
+                  {{ t('chapter') }}
                 </div>
                 <div class="overflow-auto row q-col-gutter-xs">
                   <div
@@ -96,7 +96,7 @@
               <q-separator class="q-mx-sm" vertical />
               <div class="col q-px-md q-pb-md">
                 <div class="text-grey text-uppercase q-my-sm">
-                  {{ $t('verse-or-verses') }}
+                  {{ t('verse-or-verses') }}
                 </div>
                 <div
                   class="overflow-auto row q-col-gutter-xs"
@@ -134,7 +134,7 @@
               class="row q-px-md"
             >
               <div class="text-grey text-uppercase q-my-sm row">
-                {{ $t(sectionInfo.title) }}
+                {{ t(sectionInfo.title) }}
               </div>
               <div class="row q-col-gutter-xs">
                 <div
@@ -170,14 +170,14 @@
             v-if="selectedBibleBook"
             color="primary"
             flat
-            :label="$t('back')"
+            :label="t('back')"
             @click="resetBibleBook(!selectedChapter)"
           />
           <q-btn
             v-if="chosenVerses.length"
             v-close-popup
             color="primary"
-            :label="$t('add') + totalChosenVerses"
+            :label="t('add') + totalChosenVerses"
             @click="addSelectedVerses()"
           />
           <q-btn
@@ -185,7 +185,7 @@
             v-close-popup
             color="negative"
             flat
-            :label="$t('cancel')"
+            :label="t('cancel')"
             @click="resetBibleBook(true)"
           />
         </div>
@@ -209,6 +209,9 @@ import {
 } from 'src/helpers/jw-media';
 import { timeToSeconds } from 'src/utils/time';
 import { computed, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 // Props
 const props = defineProps<{

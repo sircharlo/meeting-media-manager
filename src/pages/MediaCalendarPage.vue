@@ -32,7 +32,7 @@
           inline-actions
           rounded
         >
-          {{ $t('some-media-items-are-hidden') }}
+          {{ t('some-media-items-are-hidden') }}
           <template #avatar>
             <q-avatar class="bg-white text-warning" size="lg">
               <q-icon name="mmm-file-hidden" size="sm" />
@@ -91,23 +91,23 @@
               >
                 {{
                   !selectedDate
-                    ? $t('noDateSelected')
+                    ? t('noDateSelected')
                     : !currentSettings?.disableMediaFetching &&
                         selectedDateObject?.meeting &&
                         !selectedDateObject?.error
-                      ? $t('please-wait')
-                      : $t('there-are-no-media-items-for-the-selected-date')
+                      ? t('please-wait')
+                      : t('there-are-no-media-items-for-the-selected-date')
                 }}
               </div>
               <div class="row items-center justify-center text-center">
                 {{
                   !selectedDate
-                    ? $t('select-a-date-to-begin')
+                    ? t('select-a-date-to-begin')
                     : !currentSettings?.disableMediaFetching &&
                         selectedDateObject?.meeting &&
                         !selectedDateObject?.error
-                      ? $t('currently-loading')
-                      : $t(
+                      ? t('currently-loading')
+                      : t(
                           'use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media',
                         )
                 }}
@@ -122,7 +122,7 @@
               >
                 <q-btn color="primary" outline @click="goToNextDayWithMedia()">
                   <q-icon class="q-mr-sm" name="mmm-go-to-date" size="xs" />
-                  {{ $t('next-day-with-media') }}
+                  {{ t('next-day-with-media') }}
                 </q-btn>
                 <q-btn
                   v-if="selectedDate"
@@ -130,7 +130,7 @@
                   @click="openImportMenu(undefined)"
                 >
                   <q-icon class="q-mr-sm" name="mmm-add-media" size="xs" />
-                  {{ $t('add-extra-media') }}
+                  {{ t('add-extra-media') }}
                 </q-btn>
               </div>
             </div>
@@ -163,7 +163,7 @@
           class="text-bold text-uppercase text-spaced row justify-between"
         >
           {{
-            $t(
+            t(
               isWeMeetingDay(selectedDateObject.date)
                 ? 'public-talk'
                 : 'imported-media',
@@ -183,7 +183,7 @@
             icon="mmm-music-note"
             @click="addSong('additional')"
           >
-            {{ $t('add-an-opening-song') }}
+            {{ t('add-an-opening-song') }}
           </q-btn>
         </q-item-section>
       </q-item>
@@ -215,7 +215,7 @@
             >
               <div class="row items-center">
                 <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                <span>{{ $t('dont-forget-add-missing-media') }}</span>
+                <span>{{ t('dont-forget-add-missing-media') }}</span>
               </div>
             </q-item-section>
           </q-item>
@@ -231,7 +231,7 @@
       <q-item class="text-tgw items-center">
         <q-avatar class="text-white bg-tgw jw-icon" size="md"></q-avatar>
         <div class="text-bold text-uppercase text-spaced">
-          {{ $t('tgw') }}
+          {{ t('tgw') }}
         </div>
       </q-item>
       <q-list ref="tgwList" class="list-droppable">
@@ -256,7 +256,7 @@
             >
               <div class="row items-center">
                 <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                {{ $t('no-media-files-for-section') }}
+                {{ t('no-media-files-for-section') }}
               </div>
             </q-item-section>
           </q-item>
@@ -272,7 +272,7 @@
       <q-item class="text-ayfm items-center">
         <q-avatar class="text-white bg-ayfm jw-icon" size="lg"></q-avatar>
         <div class="text-bold text-uppercase text-spaced">
-          {{ $t('ayfm') }}
+          {{ t('ayfm') }}
         </div>
       </q-item>
       <q-list ref="ayfmList" class="list-droppable">
@@ -299,7 +299,7 @@
             >
               <div>
                 <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                {{ $t('no-media-files-for-section') }}
+                {{ t('no-media-files-for-section') }}
               </div>
             </q-item-section>
           </q-item>
@@ -315,14 +315,14 @@
       <q-item class="text-lac items-center">
         <q-avatar class="text-white bg-lac jw-icon" size="lg"></q-avatar>
         <q-item-section class="text-bold text-uppercase text-spaced">
-          {{ $t('lac') }}
+          {{ t('lac') }}
         </q-item-section>
         <q-item-section side>
           <q-btn
             color="lac"
             flat
             icon="mmm-add-media"
-            :label="$t('add-extra-media')"
+            :label="t('add-extra-media')"
             @click="openImportMenu('lac')"
           />
         </q-item-section>
@@ -349,7 +349,7 @@
             >
               <div>
                 <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                {{ $t('no-media-files-for-section') }}
+                {{ t('no-media-files-for-section') }}
               </div>
             </q-item-section>
           </q-item>
@@ -365,7 +365,7 @@
       <q-item class="text-wt items-center">
         <q-avatar class="text-white bg-wt jw-icon" size="lg"></q-avatar>
         <div class="text-bold text-uppercase text-spaced">
-          {{ $t('wt') }}
+          {{ t('wt') }}
         </div>
       </q-item>
       <q-list ref="wtList" class="list-droppable">
@@ -390,7 +390,7 @@
             >
               <div>
                 <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                {{ $t('no-media-files-for-section') }}
+                {{ t('no-media-files-for-section') }}
               </div>
             </q-item-section>
           </q-item>
@@ -406,7 +406,7 @@
           
         </q-avatar>
         <q-item-section class="text-bold text-uppercase text-spaced">
-          {{ $t('co') }}
+          {{ t('co') }}
         </q-item-section>
         <q-item-section side>
           <q-btn
@@ -421,7 +421,7 @@
                 : 'mmm-music-note'
             "
             :label="
-              $t(
+              t(
                 sortableCircuitOverseerMediaItems.filter((m) => !m.hidden)
                   .length
                   ? 'add-extra-media'
@@ -463,7 +463,7 @@
             >
               <div class="row items-center">
                 <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                <span>{{ $t('dont-forget-add-missing-media') }}</span>
+                <span>{{ t('dont-forget-add-missing-media') }}</span>
               </div>
             </q-item-section>
           </q-item>
@@ -940,31 +940,6 @@ watch(
     });
   },
 );
-
-// <div v-if="missingMedia.length" class="row">
-//         <q-banner
-//           class="bg-warning text-white full-width"
-//           inline-actions
-//           rounded
-//         >
-//           {{ $t('some-media-items-are-missing') }}
-//           <ul>
-//             <li v-for="media in missingMedia" :key="media.fileUrl">
-//               {{ media.fileUrl }}
-//               <!-- <q-tooltip>
-//                 <q-item-section side>
-//                   <pre class="text-white">{{ media }}</pre>
-//                 </q-item-section>
-//               </q-tooltip> -->
-//             </li>
-//           </ul>
-//           <template #avatar>
-//             <q-avatar class="bg-white text-warning" size="lg">
-//               <q-icon name="mmm-file-missing" size="sm" />
-//             </q-avatar>
-//           </template>
-//         </q-banner>
-//       </div>
 
 const goToNextDayWithMedia = () => {
   try {

@@ -21,10 +21,10 @@
               .some((settingId) => invalidSettings.includes(settingId))
           "
           v-model="expansionState[groupId]"
-          :caption="$t(description)"
+          :caption="t(description)"
           class="media-section text-subtitle2 text-weight-medium q-pr-md"
           :icon="icon"
-          :label="$t(name)"
+          :label="t(name)"
         >
           <div>
             <template
@@ -79,7 +79,7 @@
                 <q-item-label
                   class="q-pl-xl q-ml-lg text-accent-400 text-uppercase"
                   header
-                  >{{ $t(item.subgroup) }}</q-item-label
+                  >{{ t(item.subgroup) }}</q-item-label
                 >
               </template>
               <q-separator
@@ -112,9 +112,9 @@
                 tag="label"
               >
                 <q-item-section>
-                  <q-item-label>{{ $t(settingId) }}</q-item-label>
+                  <q-item-label>{{ t(settingId) }}</q-item-label>
                   <q-item-label caption>
-                    {{ $t(settingId + '-explain') }}
+                    {{ t(settingId + '-explain') }}
                   </q-item-label>
                 </q-item-section>
                 <q-item-section side style="align-items: end">
@@ -152,6 +152,9 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 // Store initializations
 const currentState = useCurrentStateStore();
