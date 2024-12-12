@@ -150,6 +150,7 @@ watch(currentCongregation, (newCongregation, oldCongregation) => {
       showMediaWindow(false);
       navigateToCongregationSelector();
     } else {
+      window.electronApi.setUrlVariables(JSON.stringify(jwStore.urlVariables));
       downloadProgress.value = {};
       updateLookupPeriod();
       registerAllCustomShortcuts();
