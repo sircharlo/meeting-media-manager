@@ -91,6 +91,7 @@ export const moveMediaWindow = (
 ) => {
   try {
     const screens = getAllScreens();
+    mediaWindow?.setMaximizable(screens.length > 1);
     const otherScreens = screens.filter((screen) => !screen.mainWindow);
 
     if (!mediaWindow || !mainWindow) return;

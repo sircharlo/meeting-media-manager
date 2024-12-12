@@ -452,8 +452,10 @@ useEventListener<CustomEvent>(
   window,
   'toggleFullScreenFromMediaWindow',
   () => {
-    screenPreferences.value.preferWindowed =
-      !screenPreferences.value.preferWindowed;
+    if (screenList.value.length > 1) {
+      screenPreferences.value.preferWindowed =
+        !screenPreferences.value.preferWindowed;
+    }
   },
   { passive: true },
 );
