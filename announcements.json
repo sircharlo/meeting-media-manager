@@ -22,9 +22,8 @@
   },
   {
     "id": "media-window-title-update",
-    "message": "The title of the media window has been changed. This could affect your OBS setup. Please make sure that your OBS media scene is still working correctly.",
+    "message": "The title of the media window will be changed in v25.1.0. This could affect your OBS setup. Please make sure that your OBS media scene is still working after updating.",
     "type": "warning",
-    "minVersion": "24.12.1",
     "scope": ["obs"]
   }
 ]

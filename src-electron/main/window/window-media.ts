@@ -37,7 +37,7 @@ export function createMediaWindow() {
     minHeight: 110,
     minWidth: 195,
     thickFrame: false,
-    title: 'Media Player - M³',
+    title: 'Media Window',
     width: HD_RESOLUTION[0],
   });
 
