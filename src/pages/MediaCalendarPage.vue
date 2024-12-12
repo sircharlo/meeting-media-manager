@@ -507,6 +507,7 @@ import {
 import { Buffer } from 'buffer';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
+import { useMeta } from 'quasar';
 import DragAndDropper from 'src/components/media/DragAndDropper.vue';
 import MediaItem from 'src/components/media/MediaItem.vue';
 import { useLocale } from 'src/composables/useLocale';
@@ -561,6 +562,7 @@ const jwpubImportDb = ref('');
 const jwpubImportDocuments = ref<DocumentItem[]>([]);
 
 const { dateLocale, t } = useLocale();
+useMeta({ title: t('titles.meetingMedia') });
 
 watch(
   () => [jwpubImportDb.value, jwpubImportDocuments.value],

@@ -118,6 +118,7 @@
 <script setup lang="ts">
 import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
+import { useMeta } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadSongbookVideos } from 'src/helpers/jw-media';
@@ -132,6 +133,8 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 
 const { getDateLocale } = useLocale();
+const { t } = useI18n({ useScope: 'global' });
+useMeta({ title: t('titles.profileSelection') });
 
 const appSettings = useAppSettingsStore();
 
@@ -153,8 +156,6 @@ const deletePending = computed(() => {
   return !!congToDelete.value;
 });
 const hoveredCongregation = ref<number | string>('');
-
-const { t } = useI18n({ useScope: 'global' });
 
 function chooseCongregation(
   congregation: number | string,

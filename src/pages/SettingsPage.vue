@@ -134,7 +134,6 @@
 </template>
 
 <script setup lang="ts">
-import type { QForm } from 'quasar';
 import type {
   SettingsGroup,
   SettingsGroupKey,
@@ -146,6 +145,7 @@ import type {
 import { whenever } from '@vueuse/core';
 import { useRouteParams } from '@vueuse/router';
 import { storeToRefs } from 'pinia';
+import { type QForm, useMeta } from 'quasar';
 import BaseInput from 'src/components/form-inputs/BaseInput.vue';
 import { settingsDefinitions, settingsGroups } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -155,6 +155,7 @@ import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+useMeta({ title: t('titles.settings') });
 
 // Store initializations
 const currentState = useCurrentStateStore();

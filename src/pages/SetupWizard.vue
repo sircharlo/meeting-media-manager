@@ -555,6 +555,7 @@
 <script setup lang="ts">
 import { watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
+import { useMeta } from 'quasar';
 import DialogCongregationLookup from 'src/components/dialog/DialogCongregationLookup.vue';
 import FolderInput from 'src/components/form-inputs/FolderInput.vue';
 import SelectInput from 'src/components/form-inputs/SelectInput.vue';
@@ -573,6 +574,9 @@ import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
+const { t } = useI18n();
+useMeta({ title: t('setup-wizard') });
+
 const currentState = useCurrentStateStore();
 const { currentCongregation, currentSettings } = storeToRefs(currentState);
 
@@ -584,8 +588,6 @@ const regularProfile = ref(false);
 // const usingAtKh = ref(false);
 const obsUsed = ref(false);
 const obsIntegrate = ref(false);
-
-const { t } = useI18n();
 
 const jwStore = useJwStore();
 const { updateYeartext } = jwStore;

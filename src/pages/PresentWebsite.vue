@@ -29,10 +29,12 @@
   </q-page>
 </template>
 <script setup lang="ts">
+import { useMeta } from 'quasar';
 import { onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+useMeta({ title: t('titles.presentWebsite') });
 
 onMounted(() => {
   window.electronApi.askForMediaAccess();
