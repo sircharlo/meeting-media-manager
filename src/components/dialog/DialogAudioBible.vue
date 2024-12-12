@@ -361,10 +361,7 @@ const addSelectedVerses = async () => {
         .filter((verse, index, self) => self.indexOf(verse) === index)
         .join('-'),
     props.section,
-    {
-      max,
-      min,
-    },
+    { max, min },
   );
 
   resetBibleBook(true, true);

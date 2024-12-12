@@ -116,6 +116,7 @@ export const addToAdditionMediaMapFromPath = async (
     title?: string;
     url?: string;
   },
+  customDuration?: { max: number; min: number },
 ) => {
   try {
     if (!additionalFilePath) return;
@@ -146,6 +147,7 @@ export const addToAdditionMediaMapFromPath = async (
     jwStore.addToAdditionMediaMap(
       [
         {
+          customDuration,
           duration,
           fileUrl: pathToFileURL(additionalFilePath),
           isAdditional: true,
@@ -1951,7 +1953,7 @@ export const downloadAdditionalRemoteVideo = async (
   song: false | number | string = false,
   title?: string,
   section?: MediaSection,
-  customDuration?: Record<string, number>,
+  customDuration?: { max: number; min: number },
 ) => {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -1959,7 +1961,6 @@ export const downloadAdditionalRemoteVideo = async (
       mediaItemLinks,
       currentStateStore.currentSettings?.maxRes,
     );
-    console.log('bestItem', bestItem, customDuration);
     if (bestItem) {
       const bestItemUrl =
         'progressiveDownloadURL' in bestItem
@@ -1980,6 +1981,7 @@ export const downloadAdditionalRemoteVideo = async (
           title,
           url: bestItemUrl,
         },
+        customDuration,
       );
 
       downloadFileIfNeeded({
