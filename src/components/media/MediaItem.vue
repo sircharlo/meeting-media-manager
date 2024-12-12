@@ -25,20 +25,20 @@
           "
           width="150px"
           @error="imageLoadingError"
-          @mouseenter="setHoveredBadge(media.uniqueId, true)"
-          @mouseleave="setHoveredBadge(media.uniqueId, false)"
+          @mouseenter="setHoveredBadge(true)"
+          @mouseleave="setHoveredBadge(false)"
         >
           <q-badge
             v-if="media.duration"
             class="q-mt-sm q-ml-sm cursor-pointer rounded-borders-sm bg-semi-black"
             style="padding: 5px !important"
-            @click="showMediaDurationPopup(media)"
+            @click="showMediaDurationPopup()"
           >
             <q-icon
               class="q-mr-xs"
               color="white"
               :name="
-                !!hoveredBadges[media.uniqueId] || customDurationIsSet
+                !!hoveredBadge || customDurationIsSet
                   ? 'mmm-edit'
                   : props.media.isAudio
                     ? 'mmm-music-note'
@@ -52,7 +52,7 @@
             }}
             {{ formatTime(mediaCustomDuration.max ?? media.duration) }}
           </q-badge>
-          <q-dialog v-model="mediaDurationPopups[media.uniqueId]" persistent>
+          <q-dialog v-model="mediaDurationPopup" persistent>
             <q-card>
               <q-card-section
                 class="row items-center text-bigger text-semibold q-pb-none"
@@ -153,11 +153,11 @@
           mode="out-in"
           name="fade"
         >
-          <template v-if="media.isImage && hoveredBadges[media.uniqueId]">
+          <template v-if="media.isImage && hoveredBadge">
             <div
               class="absolute-bottom-right q-mr-xs q-mb-xs row"
-              @mouseenter="setHoveredBadge(media.uniqueId, true)"
-              @mouseleave="setHoveredBadge(media.uniqueId, false)"
+              @mouseenter="setHoveredBadge(true)"
+              @mouseleave="setHoveredBadge(false)"
             >
               <template v-if="mediaPanzoom.scale && mediaPanzoom.scale > 1.01">
                 <q-badge
@@ -687,13 +687,8 @@
         {{
           t('are-you-sure-delete', {
             mediaToDelete:
-              props.list.find((m) => m.uniqueId === mediaToDelete)?.title ||
-              (props.list.find((m) => m.uniqueId === mediaToDelete)?.fileUrl
-                ? path.basename(
-                    props.list.find((m) => m.uniqueId === mediaToDelete)!
-                      .fileUrl,
-                  )
-                : ''),
+              props.media.title ||
+              (props.media.fileUrl ? path.basename(props.media.fileUrl) : ''),
           })
         }}
       </q-card-section>
@@ -757,10 +752,10 @@ const {
 
 const jwStore = useJwStore();
 const { removeFromAdditionMediaMap } = jwStore;
-const hoveredBadges = ref<Record<string, boolean>>({});
+const hoveredBadge = ref(false);
 
-const setHoveredBadge = debounce((key: string, value: boolean) => {
-  hoveredBadges.value[key] = value;
+const setHoveredBadge = debounce((value: boolean) => {
+  hoveredBadge.value = value;
 }, 300);
 
 const obsState = useObsStateStore();
@@ -768,26 +763,23 @@ const { currentSceneType, obsConnectionState } = storeToRefs(obsState);
 
 const { fileUrlToPath, fs, path } = window.electronApi;
 
-const mediaDurationPopups = ref<Record<string, boolean>>({});
-const panzooms: Record<string, PanzoomObject> = {};
+const mediaDurationPopup = ref(false);
+const panzoom = ref<null | PanzoomObject>(null);
 const mediaToStop = ref('');
 const mediaStopPending = computed(() => !!mediaToStop.value);
 const mediaToDelete = ref('');
 const mediaDeletePending = computed(() => !!mediaToDelete.value);
 
 const props = defineProps<{
-  list: DynamicMediaObject[];
   media: DynamicMediaObject;
   playState: string;
 }>();
 
-const emit = defineEmits([
-  'update:hidden',
-  'update:repeat',
-  'update:tag',
-  'update:customDuration',
-  'update:title',
-]);
+const emit = defineEmits<{
+  (e: 'update:hidden' | 'update:repeat', value: boolean): void;
+  (e: 'update:tag', value: Tag): void;
+  (e: 'update:customDuration' | 'update:title', value: string): void;
+}>();
 
 const mediaItem = useTemplateRef<HTMLDivElement>('mediaItem');
 const hoveringMediaItem = useElementHover(mediaItem);
@@ -958,13 +950,13 @@ async function findThumbnailUrl() {
 
 if (props.media.duration && !props.media.thumbnailUrl) findThumbnailUrl();
 
-const showMediaDurationPopup = (media: DynamicMediaObject) => {
+const showMediaDurationPopup = () => {
   try {
     mediaCustomDuration.value = props.media.customDuration || {
       max: props.media.duration,
       min: 0,
     };
-    mediaDurationPopups.value[media.uniqueId] = true;
+    mediaDurationPopup.value = true;
   } catch (error) {
     errorCatcher(error);
   }
@@ -972,7 +964,7 @@ const showMediaDurationPopup = (media: DynamicMediaObject) => {
 
 const resetMediaDuration = () => {
   try {
-    mediaDurationPopups.value[props.media.uniqueId] = false;
+    mediaDurationPopup.value = false;
     updateMediaCustomDuration();
     mediaCustomDuration.value = {
       max: props.media.duration,
@@ -991,7 +983,7 @@ const resetMediaDuration = () => {
 
 const saveMediaDuration = () => {
   try {
-    mediaDurationPopups.value[props.media.uniqueId] = false;
+    mediaDurationPopup.value = false;
   } catch (error) {
     errorCatcher(error);
   }
@@ -1004,18 +996,16 @@ const seekTo = (newSeekTo: null | number) => {
 };
 
 function zoomIn(click?: MouseEvent) {
+  if (!panzoom.value) return;
   const zoomFactor = 0.2;
   try {
     if (!click?.clientX && !click?.clientY) {
-      panzooms[props.media.uniqueId]?.zoomIn({ step: zoomFactor });
+      panzoom.value.zoomIn({ step: zoomFactor });
     } else {
-      panzooms[props.media.uniqueId]?.zoomToPoint(
-        (panzooms[props.media.uniqueId]?.getScale() || 1) * (1 + zoomFactor),
-        {
-          clientX: click?.clientX || 0,
-          clientY: click?.clientY || 0,
-        },
-      );
+      panzoom.value.zoomToPoint(panzoom.value.getScale() * (1 + zoomFactor), {
+        clientX: click?.clientX || 0,
+        clientY: click?.clientY || 0,
+      });
     }
   } catch (error) {
     errorCatcher(error);
@@ -1024,7 +1014,7 @@ function zoomIn(click?: MouseEvent) {
 
 function zoomOut() {
   try {
-    panzooms[props.media.uniqueId]?.zoomOut();
+    panzoom.value?.zoomOut();
     zoomReset();
   } catch (error) {
     errorCatcher(error);
@@ -1032,8 +1022,8 @@ function zoomOut() {
 }
 
 const zoomReset = (forced = false, animate = true) => {
-  if ((panzooms[props.media.uniqueId]?.getScale() || 0) < 1.05 || forced) {
-    panzooms[props.media.uniqueId]?.reset({ animate });
+  if ((panzoom.value?.getScale() || 0) < 1.05 || forced) {
+    panzoom.value?.reset({ animate });
   }
 };
 
@@ -1049,13 +1039,11 @@ function stopMedia(forOtherMediaItem = false) {
 
 const destroyPanzoom = () => {
   try {
-    if (!panzooms[props.media.uniqueId] || !props.media.uniqueId) return;
-    panzooms[props.media.uniqueId]?.resetStyle();
-    panzooms[props.media.uniqueId]?.reset({ animate: false });
-    panzooms[props.media.uniqueId]?.destroy();
-
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-    delete panzooms[props.media.uniqueId];
+    if (!panzoom.value || !props.media.uniqueId) return;
+    panzoom.value.resetStyle();
+    panzoom.value.reset({ animate: false });
+    panzoom.value.destroy();
+    panzoom.value = null;
   } catch (e) {
     errorCatcher(e);
   }
@@ -1087,7 +1075,7 @@ const initiatePanzoom = () => {
       pinchAndPan: true,
       step: 0.1, // for wheel / trackpad zoom
     };
-    panzooms[props.media.uniqueId] = Panzoom(mediaImage.value.$el, options);
+    panzoom.value = Panzoom(mediaImage.value.$el, options);
 
     useEventListener(
       mediaImage.value.$el,
@@ -1112,7 +1100,7 @@ const initiatePanzoom = () => {
       'wheel',
       (e) => {
         if (!e.ctrlKey) return;
-        panzooms[props.media.uniqueId]?.zoomWithWheel(e);
+        panzoom.value?.zoomWithWheel(e);
       },
       { passive: true },
     );

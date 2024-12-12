@@ -191,7 +191,6 @@
         <MediaItem
           v-for="media in sortableAdditionalMediaItems"
           :key="media.uniqueId"
-          :list="sortableAdditionalMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
           @update:custom-duration="
@@ -238,7 +237,6 @@
         <MediaItem
           v-for="media in sortableTgwMediaItems"
           :key="media.uniqueId"
-          :list="sortableTgwMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
           @update:custom-duration="
@@ -279,7 +277,6 @@
         <MediaItem
           v-for="media in sortableAyfmMediaItems"
           :key="media.uniqueId"
-          :list="sortableAyfmMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
           @update:custom-duration="
@@ -331,7 +328,6 @@
         <MediaItem
           v-for="media in sortableLacMediaItems"
           :key="media.uniqueId"
-          :list="sortableLacMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
           @update:custom-duration="
@@ -372,7 +368,6 @@
         <MediaItem
           v-for="media in sortableWtMediaItems"
           :key="media.uniqueId"
-          :list="sortableWtMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
           @update:custom-duration="
@@ -440,7 +435,6 @@
         <MediaItem
           v-for="media in sortableCircuitOverseerMediaItems"
           :key="media.uniqueId"
-          :list="sortableCircuitOverseerMediaItems"
           :media="media"
           :play-state="playState(media.uniqueId)"
           @update:custom-duration="
