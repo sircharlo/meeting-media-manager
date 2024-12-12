@@ -1022,8 +1022,9 @@ function zoomOut() {
 }
 
 const zoomReset = (forced = false, animate = true) => {
-  if ((panzoom.value?.getScale() || 0) < 1.05 || forced) {
-    panzoom.value?.reset({ animate });
+  if (!panzoom.value) return;
+  if (panzoom.value.getScale() < 1.05 || forced) {
+    panzoom.value.reset({ animate });
   }
 };
 
