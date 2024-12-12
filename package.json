@@ -36,7 +36,7 @@
     "@panzoom/panzoom": "^4.5.1",
     "@quasar/extras": "^1.16.15",
     "@sentry/electron": "^5.8.0",
-    "@sentry/vue": "8.35.0",
+    "@sentry/vue": "8.42.0",
     "@vueuse/core": "^12.0.0",
     "@vueuse/router": "^12.0.0",
     "better-sqlite3": "^11.7.0",
