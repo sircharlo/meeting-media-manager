@@ -2,6 +2,44 @@
 
 # Changelog
 
+## 24.12.1
+
+### New and Improved Features
+
+- 🛠️ Improved **announcements** feature to allow for scopes.
+- 🚩 **Warn users** when auto-updates are disabled or beta updates are enabled.
+- 💻 Improved **macOS icons** for better visual consistency.
+- 🎥 Added **time entry for custom durations**
+- 🎥 Display **elapsed/remaining time** during video playback (#3661).
+
+### Fixes
+
+- 🖥️ Restricted media window **maximization** to when using multiple screens.
+- 🌐 Immediately applied **urlVariables** upon change.
+- 🔄 Resolved issues with **spinning loader icon** and **refresh button placement** in media dialogs.
+- 🎨 Improved **drag-and-drop loader styling** for consistency.
+- 🖼️ Adjusted **about modal update toggle placement** and logo styling.
+- 🎛️ Removed **size notification from media window** and replaced it with a tooltip in the display popup.
+- 🖼️ Unified **grid** styling for song, Study Bible, and audio Bible views.
+- 📜 Fixed missing strings for **Hebrew and Greek scriptures**.
+- 📜 Resolved **Bible book name display issues** in certain cases.
+- 🖼️ Fixed **long filename layout issues** in media items.
+- 🛠️ Ensured dynamic **modal height** with friendly overflow.
+- 📦 Fixed **download popup scroll issue** and spinner icon glitches.
+- 🎨 Improved **banner color consistency**.
+- 📜 Correctly handle **media language fallback order**.
+- 🖼️ Displayed **intro pictures** from _lff_ and _bt_ and _lmd_ when appropriate.
+- 🌐 Initial support for **Haitian Creole**.
+
+### Code improvements
+
+- 📦 Improved **error handling** and messaging across the app.
+- 🛠️ Enhanced **code structure** by moving and optimizing utility functions.
+- 📄 Updated **documentation** for contributing guidelines and download links.
+- 🛠️ Improved workflows for **beta release cleanup** and CI schedules.
+- 🚀 Made event listeners **passive** for better performance.
+- 🌐 Cleaned up old locales and removed incomplete translations.
+
 ## 24.12.0
 
 ### New Features
