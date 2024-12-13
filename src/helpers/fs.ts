@@ -1,10 +1,17 @@
-import type { MultimediaItem, PublicationFetcher } from 'src/types';
+import type {
+  DownloadedFile,
+  MultimediaItem,
+  PublicationFetcher,
+  Release,
+} from 'src/types';
 
 import { Buffer } from 'buffer';
+import { Platform } from 'quasar';
 import { FULL_HD } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadFileIfNeeded, getJwMediaInfo } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { fetchJson } from 'src/utils/api';
 import { getPublicationDirectory } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
 
@@ -258,5 +265,95 @@ export const watchExternalFolder = async (folder?: string) => {
     if (folder) window.electronApi.watchFolder(folder);
   } catch (error) {
     errorCatcher(error);
+  }
+};
+
+export const setupFFmpeg = async (): Promise<string> => {
+  try {
+    const currentState = useCurrentStateStore();
+    if (currentState.ffmpegPath) return currentState.ffmpegPath;
+
+    const ffmpegReleases = await fetchJson<Release>(
+      'https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest',
+    );
+
+    if (!ffmpegReleases?.assets?.length) {
+      throw new Error('Could not determine FFmpeg version.');
+    }
+
+    const target =
+      Platform.is.platform === 'mac' ? 'macos' : Platform.is.platform;
+
+    const versions = ffmpegReleases.assets.filter(
+      (a: { name: string }) =>
+        a.name.includes(target + '-64') && a.name.includes('ffmpeg'),
+    );
+    if (!versions?.length) {
+      throw new Error('Could not find valid FFmpeg versions for ' + target);
+    }
+
+    const version = versions[0];
+    if (!version) {
+      throw new Error('Could not find valid FFmpeg version for ' + target);
+    }
+
+    const ffmpegDir = path.join(
+      await window.electronApi.getUserDataPath(),
+      'ffmpeg',
+    );
+
+    const ffmpegZipPath = path.join(
+      ffmpegDir,
+      path.basename(version.browser_download_url),
+    );
+
+    const downloadId = await window.electronApi.downloadFile(
+      version.browser_download_url,
+      ffmpegDir,
+    );
+
+    await new Promise<DownloadedFile>((resolve) => {
+      const interval = setInterval(() => {
+        if (!downloadId) {
+          clearInterval(interval);
+          resolve({
+            error: true,
+            path: ffmpegZipPath,
+          });
+          return;
+        }
+        if (currentState.downloadProgress[downloadId]?.complete) {
+          clearInterval(interval);
+          resolve({
+            new: true,
+            path: ffmpegZipPath,
+          });
+        }
+      }, 500); // Check every 500ms
+    });
+
+    const ffmpegPaths = await window.electronApi.decompress(
+      ffmpegZipPath,
+      ffmpegDir,
+    );
+
+    if (!ffmpegPaths) {
+      throw new Error('Could not decompress FFmpeg.');
+    }
+
+    const ffmpegFile = ffmpegPaths.find((f) => f.path.includes('ffmpeg')) || '';
+
+    if (!ffmpegFile) {
+      throw new Error('Could not find FFmpeg.');
+    }
+
+    const ffmpegPath = path.join(ffmpegDir, ffmpegFile.path);
+
+    currentState.ffmpegPath = ffmpegPath;
+
+    return ffmpegPath;
+  } catch (e: unknown) {
+    errorCatcher(e);
+    return '';
   }
 };

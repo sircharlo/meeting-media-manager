@@ -1919,8 +1919,10 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
         : undefined,
       jwMediaInfo.thumbnail,
     ].filter((u): u is string => !!u)) {
-      const itemFilename =
-        path.basename(bestItem.file.url).split('.')[0] + path.extname(itemUrl);
+      const itemFilename = window.electronApi.path.changeExt(
+        path.basename(bestItem.file.url),
+        path.extname(itemUrl),
+      );
       if (
         bestItem.file?.url &&
         (downloadedFile?.new ||

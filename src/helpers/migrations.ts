@@ -51,6 +51,7 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       baseUrl: 'jw.org',
       cacheFolder: oldPrefs.app?.customCachePath || null,
       congregationName: oldPrefs.app?.congregationName || '',
+      convertFilesToMp4: oldPrefs.media?.enableMp4Conversion || false,
       coWeek: oldPrefs.meeting?.coWeek || '',
       darkMode: 'auto',
       disableMediaFetching: oldPrefs.meeting?.specialCong || false,
