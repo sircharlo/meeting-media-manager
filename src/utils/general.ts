@@ -73,7 +73,7 @@ export const sanitizeId = (id: string) => {
  * @returns The version object.
  * @example
  * parseVersion('1.2.3') // { major: 1, minor: 2, patch: 3 }
- * parseVersion('1.2.3-beta.1') // { major: 1, minor: 2, patch: 3, prerelease: 'beta', prereleaseVersion: 1 }
+ * parseVersion('1.2.3-beta.0') // { major: 1, minor: 2, patch: 3, prerelease: 'beta', prereleaseVersion: 0 }
  */
 export const parseVersion = (version: string) => {
   const [versionPart, prerelease, prereleaseVersion] = version.split('-');
