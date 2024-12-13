@@ -73,10 +73,23 @@ export const sanitizeId = (id: string) => {
  * @returns The version object.
  * @example
  * parseVersion('1.2.3') // { major: 1, minor: 2, patch: 3 }
+ * parseVersion('1.2.3-beta.1') // { major: 1, minor: 2, patch: 3, prerelease: 'beta', prereleaseVersion: 1 }
  */
 export const parseVersion = (version: string) => {
-  const [major, minor, patch] = version.split('.').map((v) => parseInt(v, 10));
-  return { major: major ?? 0, minor: minor ?? 0, patch: patch ?? 0 };
+  const [versionPart, prerelease, prereleaseVersion] = version.split('-');
+  const [major, minor, patch] = versionPart
+    ?.split('.')
+    .map((v) => parseInt(v, 10)) ?? [0, 0, 0];
+
+  return {
+    major: major ?? 0,
+    minor: minor ?? 0,
+    patch: patch ?? 0,
+    prerelease,
+    prereleaseVersion: prereleaseVersion
+      ? parseInt(prereleaseVersion, 10)
+      : undefined,
+  };
 };
 
 /**
