@@ -24,6 +24,7 @@
     "id": "media-window-title-update",
     "message": "Starting in v25.1.0, the title of the media window will change. If OBS Studio is set to capture the media window by title, it may stop working. Be prepared to update your OBS Studio window capture settings after the update.",
     "type": "warning",
+    "minVersion": "24.12.1",
     "scope": ["obs"]
   }
 ]
