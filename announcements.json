@@ -21,6 +21,22 @@
     "actionsExplain": "Action buttons to show. Defaults to no actions."
   },
   {
+    "id": "new-update",
+    "message": "update-available",
+    "maxVersion": "24.11.4",
+    "persistent": true,
+    "actions": ["update"]
+  },
+  {
+    "id": "new-update",
+    "message": "update-available",
+    "platform": ["win"],
+    "minVersion": "24.11.5",
+    "maxVersion": "24.11.5",
+    "persistent": true,
+    "actions": ["update"]
+  },
+  {
     "id": "media-window-title-update",
     "message": "Starting in v25.1.0, the title of the media window will change. If OBS Studio is set to capture the media window by title, it may stop working. Be prepared to update your OBS Studio window capture settings after the update.",
     "type": "warning",
