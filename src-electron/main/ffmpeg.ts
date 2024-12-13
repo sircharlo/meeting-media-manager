@@ -1,13 +1,21 @@
 import ffmpeg from 'fluent-ffmpeg';
+import { exists } from 'fs-extra';
 import sizeOf from 'image-size';
 import { FULL_HD } from 'src/constants/media';
 import path from 'upath';
+
+const { changeExt } = path;
 
 export const createVideoFromNonVideo = async (
   originalFile: string,
   ffmpegPath: string,
 ) => {
-  const convertedFilePath = path.changeExt(originalFile, '.mp4');
+  const convertedFilePath = changeExt(originalFile, '.mp4');
+
+  if (await exists(convertedFilePath)) {
+    return convertedFilePath;
+  }
+
   ffmpeg.setFfmpegPath(ffmpegPath);
 
   if (originalFile.toLowerCase().endsWith('.mp3')) {
