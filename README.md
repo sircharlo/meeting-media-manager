@@ -10,6 +10,9 @@
 
 It features support for managing regular and custom meeting media, and support for multiple congregations and/or groups using the same computer account.
 
+> [!NOTE]  
+> M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.
+
 ## Why choose M³?
 
 M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms.
