@@ -119,6 +119,7 @@ export interface ElectronApi {
   setAutoStartAtLogin: (value: boolean) => void;
   setScreenPreferences: (screenPreferences: string) => void;
   setUrlVariables: (variables: string) => void;
+  startWebsiteStream: () => void;
   toggleMediaWindow: (show: boolean) => void;
   unregisterAllShortcuts: () => void;
   unregisterShortcut: (shortcut: string) => void;

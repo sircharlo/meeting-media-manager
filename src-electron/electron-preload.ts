@@ -25,6 +25,7 @@ import {
   initWebsiteListeners,
   navigateWebsiteWindow,
   openWebsiteWindow,
+  startWebsiteStream,
   zoomWebsiteWindow,
 } from './preload/website';
 
@@ -77,6 +78,7 @@ const electronApi: ElectronApi = {
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
   setScreenPreferences: (s) => send('setScreenPreferences', s),
   setUrlVariables: (v) => send('setUrlVariables', v),
+  startWebsiteStream,
   toggleMediaWindow: (s) => send('toggleMediaWindow', s),
   unregisterAllShortcuts: () => send('unregisterAllShortcuts'),
   unregisterShortcut: (s) => send('unregisterShortcut', s),

@@ -271,6 +271,7 @@
   "once-the-scene-has-been-created-select-it-here": "Once the scene has been created, select it here.",
   "only-show-settings-that-are-not-valid": "Only show settings that are not valid",
   "oops-nothing-here": "Oops. Nothing here...",
+  "open-website": "Open website",
   "other": "Other",
   "other:": "Other:",
   "paragraph": "Paragraph",
@@ -398,7 +399,7 @@
   "what-kind-of-profile-is-this": "Choose the type of profile you would like to create.",
   "what-language-would-you-like-m-to-be-displayed-in": "What language would you like M³ to be displayed in?",
   "when-you-are-done-presenting-the-website-you-can-either-close-the-website-window-or-click-again-on-the-button-in-the-top-right-corner-of-this-window": "When you are done presenting the website, you can either close the website window, or click again on the button in the top right corner of this window.",
-  "when-you-click-the-button-on-the-top-right-corner-of-this-window-a-new-window-will-open-where-the-website-will-be-presented-what-you-see-in-this-window-will-be-mirrored-into-the-media-window": "When you click the button on the top right corner of this window, a new window will open where the official website of Jehovah's Witnesses will be presented. What you see in this window will be mirrored into the media window.",
+  "when-you-click-the-button-on-the-top-right-corner-of-this-window-a-new-window-will-open-where-the-website-will-be-presented-what-you-see-in-this-window-will-be-mirrored-into-the-media-window": "When you click the button on the top right corner of this window, a new window will open where the official website of Jehovah's Witnesses will be presented.",
   "window-type": "Window type",
   "windowed": "Windowed",
   "would-you-like-to-enable-songbook-video-caching": "Would you like to cache all songbook videos?",
@@ -406,6 +407,7 @@
   "wt": "Watchtower Study",
   "yeartext": "Yeartext",
   "yes": "Yes",
+  "you-can-navigate-the-website-before-presenting-it": "You can navigate the website before presenting it. When you're ready, press the button again to start presenting. What you see in this window will now be mirrored into the media window.",
   "zoom-in": "Zoom in",
   "zoom-out": "Zoom out"
 }
