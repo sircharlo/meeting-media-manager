@@ -165,26 +165,28 @@ export default defineConfig((ctx) => {
       },
       extendPackageJson(pkg) {
         // All dependencies required by the main and preload scripts need to be listed here
-        const electronDeps = [
+        const electronDeps = new Set([
           '@numairawan/video-duration',
           '@sentry/electron',
           'better-sqlite3',
           'chokidar',
-          'decompress',
           'countries-and-timezones',
+          'decompress',
           'electron-dl-manager',
           'electron-updater',
+          'fluent-ffmpeg',
           'fs-extra',
           'heic-convert',
+          'image-size',
           'is-online',
           'music-metadata',
           'pdfjs-dist',
           'upath',
-        ];
+        ]);
 
         // Remove unneeded dependencies from production build
         Object.keys(pkg.dependencies).forEach((dep) => {
-          if (!electronDeps.includes(dep)) {
+          if (!electronDeps.has(dep)) {
             console.log(`Removing dependency: ${dep}`);
             // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             delete pkg.dependencies[dep];
