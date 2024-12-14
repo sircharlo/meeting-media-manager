@@ -80,7 +80,8 @@ export const parseVersion = (version: string) => {
   const [major, minor, patch] = versionPart
     ?.split('.')
     .map((v) => parseInt(v)) ?? [0, 0, 0];
-  const [prTag, prVersion] = prerelease.split('.')
+  const [prTag, prVersion] = prerelease?.split('.') ?? [];
+
   return {
     major: major ?? 0,
     minor: minor ?? 0,
