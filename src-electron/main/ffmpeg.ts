@@ -66,7 +66,6 @@ export const createVideoFromNonVideo = async (
           // .outputOptions('format=yuv420p', '-r 30')
           .outputOptions('-t 5')
           .save(convertedFilePath)
-          .on('start', (cmd) => console.log(cmd))
           .on('end', () => {
             resolve();
           })
@@ -81,6 +80,7 @@ export const createVideoFromNonVideo = async (
 
   return convertedFilePath;
 };
+
 const resize = (
   x: number,
   y: number,
