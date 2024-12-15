@@ -25,7 +25,7 @@ export const setElementFont = async (fontName: FontName) => {
     await fontFace.load();
     document.fonts.add(fontFace);
     errorCatcher(error, {
-      contexts: { fn: { fontName, name: 'setElementFont' } },
+      contexts: { fn: { fontName, name: 'setElementFont', url: fontUrls[fontName] } },
     });
   }
 };
