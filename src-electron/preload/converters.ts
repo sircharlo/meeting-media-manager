@@ -93,6 +93,7 @@ export const convertPdfToImages = async (
         await renderTask.promise;
 
         const pngData = canvas.toDataURL('image/png');
+        canvas.remove();
 
         const base64Data = pngData.replace(/^data:image\/png;base64,/, '');
         await ensureDir(outputFolder);
