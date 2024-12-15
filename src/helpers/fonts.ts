@@ -18,14 +18,12 @@ export const setElementFont = async (fontName: FontName) => {
     await fontFace.load();
     document.fonts.add(fontFace);
   } catch (error) {
-    const fontFace = new FontFace(
-      fontName,
-      'url("' + useJwStore().fontUrls[fontName] + '")',
-    );
+    const url = useJwStore().fontUrls[fontName];
+    const fontFace = new FontFace(fontName, 'url("' + url + '")');
     await fontFace.load();
     document.fonts.add(fontFace);
     errorCatcher(error, {
-      contexts: { fn: { fontName, name: 'setElementFont', url: fontUrls[fontName] } },
+      contexts: { fn: { fontName, name: 'setElementFont', url } },
     });
   }
 };
