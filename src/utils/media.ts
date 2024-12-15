@@ -184,7 +184,7 @@ export const inferExtension = async (filename: string, filetype?: string) => {
 export const getMetadataFromMediaPath = async (
   mediaPath: string,
 ): Promise<IAudioMetadata> => {
-  const defaultMetadata = {
+  const defaultMetadata: IAudioMetadata = {
     common: {
       disk: { no: null, of: null },
       movementIndex: { no: null, of: null },
@@ -201,15 +201,43 @@ export const getMetadataFromMediaPath = async (
   };
   try {
     mediaPath = window.electronApi.fileUrlToPath(mediaPath);
-    if (!mediaPath || !(await window.electronApi.fs.exists(mediaPath)))
+    if (!mediaPath || !(await window.electronApi.fs.exists(mediaPath))) {
       return defaultMetadata;
+    }
+
+    let metadata = defaultMetadata;
     if (isFileOfType(mediaPath, ['mov'])) {
       const videoDuration =
         await window.electronApi.getVideoDuration(mediaPath);
-      defaultMetadata.format.duration = videoDuration?.seconds || 0;
-      return defaultMetadata;
+      metadata = {
+        ...metadata,
+        format: { ...metadata.format, duration: videoDuration?.seconds || 0 },
+      };
+    } else {
+      metadata = await window.electronApi.parseMediaFile(mediaPath);
     }
-    return await window.electronApi.parseMediaFile(mediaPath);
+
+    if (!metadata.format.duration) {
+      await new Promise<void>((resolve, reject) => {
+        const video = document.createElement('video');
+        video.src = window.electronApi.pathToFileURL(mediaPath);
+        video.onloadedmetadata = () => {
+          metadata = {
+            ...metadata,
+            format: { ...metadata.format, duration: video.duration },
+          };
+          video.remove();
+          resolve();
+        };
+        video.onerror = (error) => {
+          errorCatcher(error);
+          video.remove();
+          reject(error);
+        };
+        video.load();
+      });
+    }
+    return metadata;
   } catch (error) {
     errorCatcher(error, {
       contexts: { fn: { mediaPath, name: 'getMetadataFromMediaPath' } },
