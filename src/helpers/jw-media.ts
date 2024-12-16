@@ -59,9 +59,6 @@ import {
   getPublicationInfoFromDb,
 } from 'src/utils/sqlite';
 
-const { executeQuery, fileUrlToPath, fs, path, pathToFileURL, readdir } =
-  window.electronApi;
-
 export const copyToDatedAdditionalMedia = async (
   filepathToCopy: string,
   section: MediaSection | undefined,
@@ -73,25 +70,32 @@ export const copyToDatedAdditionalMedia = async (
     await currentStateStore.getDatedAdditionalMediaDirectory();
 
   try {
-    if (!filepathToCopy || !(await fs.exists(filepathToCopy))) return '';
-    let datedAdditionalMediaPath = path.join(
+    if (
+      !filepathToCopy ||
+      !(await window.electronApi.fs.exists(filepathToCopy))
+    )
+      return '';
+    let datedAdditionalMediaPath = window.electronApi.path.join(
       datedAdditionalMediaDir,
-      path.basename(filepathToCopy),
+      window.electronApi.path.basename(filepathToCopy),
     );
     datedAdditionalMediaPath = trimFilepathAsNeeded(datedAdditionalMediaPath);
     const uniqueId = sanitizeId(
       formatDate(currentStateStore.selectedDate, 'YYYYMMDD') +
         '-' +
-        pathToFileURL(datedAdditionalMediaPath),
+        window.electronApi.pathToFileURL(datedAdditionalMediaPath),
     );
-    if (await fs.exists(datedAdditionalMediaPath)) {
+    if (await window.electronApi.fs.exists(datedAdditionalMediaPath)) {
       if (filepathToCopy !== datedAdditionalMediaPath) {
-        await fs.remove(datedAdditionalMediaPath);
+        await window.electronApi.fs.remove(datedAdditionalMediaPath);
         jwStore.removeFromAdditionMediaMap(uniqueId);
       }
     }
     if (filepathToCopy !== datedAdditionalMediaPath) {
-      await fs.copy(filepathToCopy, datedAdditionalMediaPath);
+      await window.electronApi.fs.copy(
+        filepathToCopy,
+        datedAdditionalMediaPath,
+      );
     }
     if (addToAdditionMediaMap) {
       await addToAdditionMediaMapFromPath(
@@ -135,15 +139,15 @@ export const addToAdditionMediaMapFromPath = async (
     const title =
       additionalInfo?.title ||
       metadata?.common.title ||
-      path
+      window.electronApi.path
         .basename(additionalFilePath)
-        .replace(path.extname(additionalFilePath), '');
+        .replace(window.electronApi.path.extname(additionalFilePath), '');
 
     if (!uniqueId) {
       uniqueId = sanitizeId(
         formatDate(currentStateStore.selectedDate, 'YYYYMMDD') +
           '-' +
-          pathToFileURL(additionalFilePath),
+          window.electronApi.pathToFileURL(additionalFilePath),
       );
     }
     jwStore.addToAdditionMediaMap(
@@ -151,7 +155,7 @@ export const addToAdditionMediaMapFromPath = async (
         {
           customDuration,
           duration,
-          fileUrl: pathToFileURL(additionalFilePath),
+          fileUrl: window.electronApi.pathToFileURL(additionalFilePath),
           isAdditional: true,
           isAudio: audio,
           isImage: isImage(additionalFilePath),
@@ -244,11 +248,11 @@ export const downloadFileIfNeeded = async ({
   }
 
   const currentStateStore = useCurrentStateStore();
-  await fs.ensureDir(dir);
-  if (!filename) filename = path.basename(url);
+  await window.electronApi.fs.ensureDir(dir);
+  if (!filename) filename = window.electronApi.path.basename(url);
   const { default: sanitize } = await import('sanitize-filename');
   filename = sanitize(filename);
-  const destinationPath = path.join(dir, filename);
+  const destinationPath = window.electronApi.path.join(dir, filename);
   const remoteSize: number =
     size ||
     (await fetchRaw(url, { method: 'HEAD' })
@@ -256,8 +260,8 @@ export const downloadFileIfNeeded = async ({
         return +(response?.headers?.get('content-length') || 0);
       })
       .catch(() => 0));
-  if (await fs.exists(destinationPath)) {
-    const stat = await fs.stat(destinationPath);
+  if (await window.electronApi.fs.exists(destinationPath)) {
+    const stat = await window.electronApi.fs.stat(destinationPath);
     const localSize = stat.size;
     if (localSize === remoteSize) {
       return {
@@ -334,8 +338,8 @@ export const fetchMedia = async () => {
             const hasMissingMediaFile = await Promise.all(
               day.dynamicMedia.map(async (media) => {
                 if (!media?.fileUrl) return true;
-                const fileExists = await fs.pathExists(
-                  fileUrlToPath(media.fileUrl),
+                const fileExists = await window.electronApi.fs.pathExists(
+                  window.electronApi.fileUrlToPath(media.fileUrl),
                 );
                 return !fileExists;
               }),
@@ -446,7 +450,7 @@ async function addFullFilePathToMultimediaItem(
     const resolvedPaths = Object.fromEntries(
       paths.map((key) =>
         multimediaItem[key]
-          ? [key, path.join(baseDir, multimediaItem[key])]
+          ? [key, window.electronApi.path.join(baseDir, multimediaItem[key])]
           : [],
       ),
     );
@@ -463,7 +467,7 @@ async function addFullFilePathToMultimediaItem(
 const getDocumentExtractItems = async (db: string, docId: number) => {
   try {
     const currentStateStore = useCurrentStateStore();
-    const extracts = executeQuery<MultimediaExtractItem>(
+    const extracts = window.electronApi.executeQuery<MultimediaExtractItem>(
       // ${currentStateStore.currentSongbook?.pub === 'sjjm'
       //   ? "AND NOT UniqueEnglishSymbol = 'sjj' "
       //   : ''
@@ -1098,7 +1102,7 @@ const getWtIssue = async (
     };
     const db = await getDbFromJWPUB(publication);
     if (!db) throw new Error('No db file found: ' + issueString);
-    const datedTexts = executeQuery<DatedTextItem>(
+    const datedTexts = window.electronApi.executeQuery<DatedTextItem>(
       db,
       'SELECT * FROM DatedText',
     );
@@ -1112,7 +1116,7 @@ const getWtIssue = async (
       throw new Error('No week found in following w: ' + issueString);
     }
     const docId =
-      executeQuery<{ DocumentId: number }>(
+      window.electronApi.executeQuery<{ DocumentId: number }>(
         db,
         `SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`,
       )[0]?.DocumentId ?? -1;
@@ -1197,7 +1201,7 @@ export const dynamicMediaMapper = async (
       async (m): Promise<DynamicMediaObject> => {
         m.FilePath = await convertImageIfNeeded(m.FilePath);
         const fileUrl = m.FilePath
-          ? pathToFileURL(m.FilePath)
+          ? window.electronApi.pathToFileURL(m.FilePath)
           : ([m.KeySymbol, m.IssueTagNumber].filter(Boolean).length
               ? [m.KeySymbol, m.IssueTagNumber]
               : [m.MepsDocumentId]
@@ -1221,7 +1225,7 @@ export const dynamicMediaMapper = async (
         if (video || audio) {
           if (m.Duration) {
             duration = m.Duration;
-          } else if (await fs.exists(m.FilePath)) {
+          } else if (await window.electronApi.fs.exists(m.FilePath)) {
             duration =
               (await getMetadataFromMediaPath(m.FilePath))?.format.duration ||
               0;
@@ -1326,7 +1330,7 @@ export const watchedItemMapper: (
 
     const dateString = parentDate.replace(/-/g, '');
 
-    const fileUrl = pathToFileURL(watchedItemPath);
+    const fileUrl = window.electronApi.pathToFileURL(watchedItemPath);
 
     const video = isVideo(watchedItemPath);
     const audio = isAudio(watchedItemPath);
@@ -1358,7 +1362,9 @@ export const watchedItemMapper: (
         : undefined;
 
     const duration = metadata?.format.duration || 0;
-    const title = metadata?.common.title || path.basename(watchedItemPath);
+    const title =
+      metadata?.common.title ||
+      window.electronApi.path.basename(watchedItemPath);
 
     const uniqueId = sanitizeId(
       formatDate(parentDate, 'YYYYMMDD') + '-' + fileUrl,
@@ -1427,7 +1433,7 @@ export const getWeMedia = async (lookupDate: Date) => {
         media: [],
       };
     }
-    const videos = executeQuery<MultimediaItem>(
+    const videos = window.electronApi.executeQuery<MultimediaItem>(
       db,
       `SELECT *
          FROM DocumentMultimedia
@@ -1450,7 +1456,7 @@ export const getWeMedia = async (lookupDate: Date) => {
       (video) => !video.TargetParagraphNumberLabel,
     );
 
-    const mediaWithoutVideos = executeQuery<MultimediaItem>(
+    const mediaWithoutVideos = window.electronApi.executeQuery<MultimediaItem>(
       db,
       `SELECT *
        FROM DocumentMultimedia
@@ -1515,7 +1521,7 @@ export const getWeMedia = async (lookupDate: Date) => {
 
     // Watchtowers before Feb 2023 don't include songs in DocumentMultimedia
     if (+issueString < FEB_2023) {
-      songs = executeQuery<MultimediaItem>(
+      songs = window.electronApi.executeQuery<MultimediaItem>(
         db,
         `SELECT *
             FROM Multimedia
@@ -1530,16 +1536,17 @@ export const getWeMedia = async (lookupDate: Date) => {
     }
     let songLangs: ('' | JwLangCode)[] = [];
     try {
-      songLangs = executeQuery<MultimediaExtractItem>(
-        db,
-        `SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal
+      songLangs = window.electronApi
+        .executeQuery<MultimediaExtractItem>(
+          db,
+          `SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal
         FROM Extract
         INNER JOIN DocumentExtract ON Extract.ExtractId = DocumentExtract.ExtractId
         WHERE Extract.RefMepsDocumentClass = 31
         ORDER BY Extract.ExtractId
         LIMIT 2
         OFFSET ${2 * weekNr}`,
-      )
+        )
         .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal)
         .map((item) => {
           const match = item.Link.match(/\/(.*)\//);
@@ -1641,7 +1648,7 @@ export const getMwMedia = async (lookupDate: Date) => {
     if (!db) return { error: true, media: [] };
 
     const docId =
-      executeQuery<{ DocumentId: number }>(
+      window.electronApi.executeQuery<{ DocumentId: number }>(
         db,
         `SELECT DocumentId FROM DatedText WHERE FirstDateOffset = ${formatDate(
           monday,
@@ -1732,7 +1739,9 @@ export async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
     const mediaExistenceChecks = allMedia.map(async (m) => {
       if (m.KeySymbol || m.MepsDocumentId) {
         const exists =
-          !!m.StreamUrl || (!!m.FilePath && (await fs.pathExists(m.FilePath)));
+          !!m.StreamUrl ||
+          (!!m.FilePath &&
+            (await window.electronApi.fs.pathExists(m.FilePath)));
         return { exists, media: m };
       }
       return null;
@@ -1775,7 +1784,10 @@ export async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
             media.Track > 0 && { track: media.Track }),
         };
         try {
-          if (!media.FilePath || !(await fs.pathExists(media.FilePath))) {
+          if (
+            !media.FilePath ||
+            !(await window.electronApi.fs.pathExists(media.FilePath))
+          ) {
             const {
               FilePath,
               Label,
@@ -1852,12 +1864,17 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
     );
     const responseObject = await getPubMediaLinks(publication);
     if (!responseObject?.files) {
-      if (!(await fs.pathExists(pubDir))) return { FilePath: '' };
+      if (!(await window.electronApi.fs.pathExists(pubDir)))
+        return { FilePath: '' };
       const files: string[] = [];
-      const items = (await readdir(pubDir)).filter((item) => item.isFile);
+      const items = (await window.electronApi.readdir(pubDir)).filter(
+        (item) => item.isFile,
+      );
       for (const item of items) {
-        const filePath = path.join(pubDir, item.name);
-        const fileExtension = path.extname(filePath).toLowerCase();
+        const filePath = window.electronApi.path.join(pubDir, item.name);
+        const fileExtension = window.electronApi.path
+          .extname(filePath)
+          .toLowerCase();
 
         let match = true;
         const params = [
@@ -1870,7 +1887,10 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
           .map((i) => i.toString());
 
         for (const test of params) {
-          if (!item.name || !path.basename(item.name).includes(test)) {
+          if (
+            !item.name ||
+            !window.electronApi.path.basename(item.name).includes(test)
+          ) {
             match = false;
             break;
           }
@@ -1922,13 +1942,15 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
       jwMediaInfo.thumbnail,
     ].filter((u): u is string => !!u)) {
       const itemFilename = window.electronApi.path.changeExt(
-        path.basename(bestItem.file.url),
-        path.extname(itemUrl),
+        window.electronApi.path.basename(bestItem.file.url),
+        window.electronApi.path.extname(itemUrl),
       );
       if (
         bestItem.file?.url &&
         (downloadedFile?.new ||
-          !(await fs.exists(path.join(pubDir, itemFilename))))
+          !(await window.electronApi.fs.exists(
+            window.electronApi.path.join(pubDir, itemFilename),
+          )))
       ) {
         await downloadFileIfNeeded({
           dir: pubDir,
@@ -1938,7 +1960,10 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
       }
     }
     return {
-      FilePath: path.join(pubDir, path.basename(bestItem.file.url)),
+      FilePath: window.electronApi.path.join(
+        pubDir,
+        window.electronApi.path.basename(bestItem.file.url),
+      ),
       Label: bestItem.title,
       StreamDuration: bestItem.duration,
       StreamThumbnailUrl: jwMediaInfo.thumbnail,
@@ -1971,9 +1996,9 @@ export const downloadAdditionalRemoteVideo = async (
           : bestItem.file.url;
 
       const uniqueId = await addToAdditionMediaMapFromPath(
-        path.join(
+        window.electronApi.path.join(
           await currentStateStore.getDatedAdditionalMediaDirectory(),
-          path.basename(bestItemUrl),
+          window.electronApi.path.basename(bestItemUrl),
         ),
         section,
         undefined,
@@ -2139,7 +2164,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
     }
     for (const mediaLink of filteredMediaItemLinks) {
       if (
-        !path
+        !window.electronApi.path
           ?.extname(mediaLink?.file?.url)
           ?.includes(publication?.fileformat?.toLowerCase())
       )
