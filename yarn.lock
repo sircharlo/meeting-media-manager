@@ -2089,9 +2089,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/app-vite@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "@quasar/app-vite@npm:2.0.1"
+"@quasar/app-vite@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@quasar/app-vite@npm:2.0.2"
   dependencies:
     "@quasar/render-ssr-error": "npm:^1.0.3"
     "@quasar/ssl-certificate": "npm:^1.0.0"
@@ -2152,7 +2152,7 @@ __metadata:
       optional: true
   bin:
     quasar: bin/quasar.js
-  checksum: 10c0/680c812e34cab1ce036432aa5b7949feff1ec8e51ba8b6e3c3f747b8e4819468187a142821166069fc993dab638b86f589ad72c256009b3fc7d57e005c82c326
+  checksum: 10c0/d9ab3ddc14e39f9c1e8e6996e1f5478943970a54ffc501dc784324fc2943723a062faeefeec4726f02bd1b8e4c52975119713e4aba5a2912bf2e5b38ea7ebe7e
   languageName: node
   linkType: hard
 
@@ -9493,7 +9493,7 @@ __metadata:
     "@intlify/unplugin-vue-i18n": "npm:^6.0.1"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@panzoom/panzoom": "npm:^4.5.1"
-    "@quasar/app-vite": "npm:^2.0.1"
+    "@quasar/app-vite": "npm:^2.0.2"
     "@quasar/extras": "npm:^1.16.15"
     "@rollup/plugin-inject": "npm:^5.0.5"
     "@sentry/electron": "npm:^5.8.0"
