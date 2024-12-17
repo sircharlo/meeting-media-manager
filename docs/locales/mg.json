@@ -3,6 +3,8 @@
   "arrowDown": "down arrow",
   "arrowUp": "up arrow",
   "backButtonTitle": "Back",
+  "codeCopyButtonTitle": "Copy Code",
+  "copied": "Copied",
   "closeText": "to close",
   "darkModeSwitchLabel": "Appearance",
   "darkModeSwitchTitle": "Switch to dark theme",
