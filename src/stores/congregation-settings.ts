@@ -28,7 +28,9 @@ export const useCongregationSettingsStore = defineStore(
         if (!this.announcements[congId]) {
           this.announcements[congId] = [];
         }
-        this.announcements[congId].push(id);
+        if (!this.announcements[congId].includes(id)) {
+          this.announcements[congId].push(id);
+        }
       },
     },
     getters: {
