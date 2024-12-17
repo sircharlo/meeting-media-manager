@@ -16,7 +16,7 @@ const SENTRY_AUTH_TOKEN = process.env.SENTRY_AUTH_TOKEN;
 const SENTRY_SOURCE_MAPS = process.env.SENTRY_SOURCE_MAPS;
 
 console.log('SENTRY_SOURCE_MAPS: ' + SENTRY_SOURCE_MAPS);
-console.log('Enabled', SENTRY_SOURCE_MAPS === 'true');
+console.log('Source maps enabled: ' + SENTRY_SOURCE_MAPS === 'true');
 
 export default defineConfig((ctx) => {
   return {
