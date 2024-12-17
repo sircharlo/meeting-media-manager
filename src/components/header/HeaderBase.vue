@@ -17,7 +17,12 @@
             src="~assets/img/logo-no-background.svg"
             width="40px"
           />
-          <q-badge v-if="!aboutInfo?.updatesEnabled" color="warning" floating>
+          <q-badge
+            v-if="!aboutInfo?.updatesEnabled"
+            color="warning"
+            floating
+            style="top: -1px; right: 0px"
+          >
             <q-icon name="mmm-warning" size="x-small" />
           </q-badge>
           <q-badge
@@ -25,7 +30,7 @@
             color="negative"
             floating
             label="β"
-            style="text-transform: none"
+            style="top: -1px; right: 0px; text-transform: none"
           />
         </q-avatar>
       </q-btn>
