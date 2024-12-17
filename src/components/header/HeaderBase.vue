@@ -6,29 +6,28 @@
     <DialogAbout ref="aboutInfo" v-model="aboutModal" />
     <div class="row items-center q-mr-md">
       <q-btn
-        :color="
-          !aboutInfo?.updatesEnabled || aboutInfo?.betaUpdatesEnabled
-            ? 'negative'
-            : ''
-        "
         round
         style="width: 56px; height: 56px"
         unelevated
         @click="aboutModal = true"
       >
-        <!-- @mouseout="hoveredLogo = false"
-        @mouseover="hoveredLogo = true" -->
-        <q-img
-          loading="lazy"
-          src="~assets/img/logo-no-background.svg"
-          width="40px"
-        />
-        <!-- <q-badge
-          v-if="!aboutInfo?.updatesEnabled || aboutInfo?.betaUpdatesEnabled"
-          color="negative"
-          rounded
-          style="position: absolute; top: 12px; left: 38px"
-        /> -->
+        <q-avatar>
+          <q-img
+            loading="lazy"
+            src="~assets/img/logo-no-background.svg"
+            width="40px"
+          />
+          <q-badge v-if="!aboutInfo?.updatesEnabled" color="warning" floating>
+            <q-icon name="mmm-warning" size="x-small" />
+          </q-badge>
+          <q-badge
+            v-else-if="aboutInfo?.betaUpdatesEnabled"
+            color="negative"
+            floating
+            label="β"
+            style="text-transform: none"
+          />
+        </q-avatar>
       </q-btn>
       <q-separator class="bg-semi-white-24 q-ml-none" inset vertical />
       <div class="col q-ml-md flex items-center">
