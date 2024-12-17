@@ -116,6 +116,10 @@ export async function watchFolder(folderPath: string) {
       .on('all', (event, changedPath, stats) => {
         try {
           if (!changedPath || (!stats && !event.includes('unlink'))) return; // Don't do anything if no stats are available or if no path is available
+          if (changedPath instanceof Error) {
+            captureElectronError(changedPath);
+            return;
+          }
           const dirPath = toUnix(
             stats?.isDirectory() || event === 'unlinkDir'
               ? changedPath
