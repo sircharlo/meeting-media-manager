@@ -82,6 +82,7 @@ jobs:
       checkout-latest: true
     secrets:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_SOURCE_MAPS: true
 
   publish-release:
     name: 'Publish release'

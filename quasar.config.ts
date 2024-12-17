@@ -12,6 +12,11 @@ import { repository, version } from './package.json';
 const SENTRY_ORG = 'jw-projects';
 const SENTRY_PROJECT = 'mmm-v2';
 const SENTRY_VERSION = `meeting-media-manager@${version}`;
+const SENTRY_AUTH_TOKEN = process.env.SENTRY_AUTH_TOKEN;
+const SENTRY_SOURCE_MAPS = process.env.SENTRY_SOURCE_MAPS;
+
+console.log('SENTRY_SOURCE_MAPS: ' + SENTRY_SOURCE_MAPS);
+console.log('Enabled', SENTRY_SOURCE_MAPS === 'true');
 
 export default defineConfig((ctx) => {
   return {
@@ -42,10 +47,10 @@ export default defineConfig((ctx) => {
             sourcemap: true,
           });
           if (!viteConf.plugins) viteConf.plugins = [];
-          if (process.env.SENTRY_AUTH_TOKEN) {
+          if (SENTRY_AUTH_TOKEN) {
             viteConf.plugins.push(
               sentryVitePlugin({
-                authToken: process.env.SENTRY_AUTH_TOKEN,
+                authToken: SENTRY_AUTH_TOKEN,
                 org: SENTRY_ORG,
                 project: SENTRY_PROJECT,
                 release: { name: SENTRY_VERSION },
@@ -130,13 +135,13 @@ export default defineConfig((ctx) => {
       },
       bundler: 'builder', // 'packager' or 'builder'
       extendElectronMainConf: (esbuildConf) => {
-        if (ctx.prod && !ctx.debug && process.env.SENTRY_AUTH_TOKEN) {
+        if (ctx.prod && !ctx.debug && SENTRY_AUTH_TOKEN) {
           esbuildConf.sourcemap = true;
           if (!esbuildConf.plugins) esbuildConf.plugins = [];
-          if (process.env.SENTRY_AUTH_TOKEN) {
+          if (SENTRY_AUTH_TOKEN) {
             esbuildConf.plugins.push(
               sentryEsbuildPlugin({
-                authToken: process.env.SENTRY_AUTH_TOKEN,
+                authToken: SENTRY_AUTH_TOKEN,
                 org: SENTRY_ORG,
                 project: SENTRY_PROJECT,
                 release: { name: SENTRY_VERSION },
@@ -147,13 +152,13 @@ export default defineConfig((ctx) => {
         }
       },
       extendElectronPreloadConf: (esbuildConf) => {
-        if (ctx.prod && !ctx.debug && process.env.SENTRY_AUTH_TOKEN) {
+        if (ctx.prod && !ctx.debug && SENTRY_AUTH_TOKEN) {
           esbuildConf.sourcemap = true;
           if (!esbuildConf.plugins) esbuildConf.plugins = [];
-          if (process.env.SENTRY_AUTH_TOKEN) {
+          if (SENTRY_AUTH_TOKEN) {
             esbuildConf.plugins.push(
               sentryEsbuildPlugin({
-                authToken: process.env.SENTRY_AUTH_TOKEN,
+                authToken: SENTRY_AUTH_TOKEN,
                 org: SENTRY_ORG,
                 project: SENTRY_PROJECT,
                 release: { name: SENTRY_VERSION },
