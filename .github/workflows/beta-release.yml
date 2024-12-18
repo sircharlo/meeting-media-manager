@@ -9,6 +9,7 @@ jobs:
   get-commit:
     name: Get commit message
     runs-on: ubuntu-latest
+    if: github.repository == 'sircharlo/meeting-media-manager'
     outputs:
       msg: ${{ steps.set-msg.outputs.msg }}
     steps:
