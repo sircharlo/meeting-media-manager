@@ -20,21 +20,21 @@ M³ es la herramienta definitiva para la gestión de multimedia de reuniones, of
 
 ### Beneficios clave {#key-benefits}
 
-- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. No se requiere una configuración compleja ni pasos adicionales.
+- **Presentación multimedia sin esfuerzo**: Presentando multimedia en su máximo esplendor — sólo abre la M³ y todo funciona. No se requiere una configuración compleja ni pasos adicionales.
 
-- **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
+- **Soporte de múltiple congregación**: Gestiona la configuración para múltiples congregaciones o grupos fácilmente dentro de una sola aplicación.
 
-- **Advanced features**: Easily add extra media, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Características avanzadas**: Agregue fácilmente multimedia extra, y comparta automáticamente lo que sucede en el Salón del Reino con los participantes en Zoom.
 
-- **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
+- **Rendimiento optimizado en múltiples plataformas**: Disfrute de una experiencia fluida en Windows, macOS y Linux, incluso en sistemas antiguos o computadoras con recursos limitados.
 
-- **Reliable and stable**: Built to perform when you need it most. ¿Encontró un error? Repórtelo, y se solucionará pronto.
+- **Seguro y estable**: Diseñado para trabajar cuando más lo necesites. ¿Encontró un error? Repórtelo, y se solucionará pronto.
 
 ## ¿Qué puede hacer M³? {#what-can-m3-do}
 
 En resumen, M3 le permite descargar, sincronizar, compartir y presentar de forma fácil y automática todos los archivos multimedia de la reunión.
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode has all the features needed to simplify the task of sharing media with the congregation, including:
+Para reuniones de congregación **híbridas** o **en persona**, el modo de presentación de contenidos integrado tiene todas las funciones necesarias para simplificar la tarea de compartir contenidos con la congregación, que incluyen:
 
 - Miniaturas multimedia con la capacidad de acercar y acercar, así como establecer tiempos de inicio y fin personalizados para los medios
 - Botones de pausa/reproducción/detener fáciles de usar para gestionar la reproducción de contenidos multimedia
