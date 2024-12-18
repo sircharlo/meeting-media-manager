@@ -1,4 +1,4 @@
-# Preguntas Frecuentes
+# Preguntas Frecuentes {#frequently-asked-questions}
 
 ## :earth_americas: ¿Esta aplicación depende de sitios o fuentes externos para descargar publicaciones y contenidos de reuniones? {#external-dependencies}
 
@@ -12,11 +12,11 @@ El código fuente de esta aplicación está disponible para que todos puedan exa
 
 ## :thinking: ¿Infringe esta aplicación las condiciones de uso del sitio web oficial de los Testigos de Jehová? {#terms-of-use}
 
-**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511\\\&prefer=content) of the official website of Jehovah's Witnesses actually explicitly allow the kind of usage that we are making. Aquí está el extracto relevante de esos términos (énfasis mío):
+**No.** Los [Términos de Uso](https://www.jw.org/finder?docid=1011511\&prefer=content) del sitio web oficial de los Testigos de Jehová realmente permiten explícitamente el tipo de uso que estamos haciendo. Aquí está el extracto relevante de esos términos (énfasis mío):
 
 > Sin embargo, debe sujetarse a las siguientes restricciones:
 >
-> Crear programas o herramientas informáticos o desarrollar técnicas para recopilar, copiar, descargar o extraer datos, páginas HTML, imágenes o textos de este sitio a fin de distribuirlos. (**No** está prohibida la distribución de aplicaciones gratuitas y no comerciales diseñadas para descargar archivos electrónicos —como archivos EPUB, PDF, MP3 y MP4— de las secciones públicas de este sitio).
+> Crear programas o herramientas informáticos o desarrollar técnicas para recopilar, copiar, descargar o extraer datos, páginas HTML, imágenes o textos de este sitio a fin de distribuirlos. (**No** está prohibida la distribución de aplicaciones gratuitas y no comerciales diseñadas para descargar archivos electrónicos —como archivos EPUB, PDF, MP3 y MP4— de las secciones públicas de este sitio)
 
 ## :radioactive: ¿Cómo reporto un problema? {#how-do-i-report-an-issue}
 
