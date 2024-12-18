@@ -357,7 +357,7 @@
   "stop-playing-media-first": "Para navegar a una página diferente, primero debe detener la reproducción del contenido multimedia.",
   "stop-playing-media-first-explain": "La navegación de la página está deshabilitada mientras se presenta el contenido multimedia.",
   "stop-repeat-media-item": "No hacer bucle de este elemento",
-  "stop-repeat-media-item-explain": "Choose this if the selected media item should play until the end and then stop.",
+  "stop-repeat-media-item-explain": "Elija esto si el elemento multimedia seleccionado debería reproducirse en un bucle hasta que se detenga manualmente.",
   "study-bible": "Biblia de Estudio",
   "study-bible-media": "Imágenes, videos, gráficos y mapas de la Biblia de Estudio",
   "subtitles": "Subtítulos",
