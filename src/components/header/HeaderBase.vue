@@ -23,7 +23,7 @@
             floating
             style="top: -1px; right: 0px"
           >
-            <q-icon name="mmm-warning" size="x-small" />
+            <q-icon name="mmm-updates-disabled" size="small" />
           </q-badge>
           <q-badge
             v-else-if="aboutInfo?.betaUpdatesEnabled"
