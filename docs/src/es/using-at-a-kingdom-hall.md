@@ -161,8 +161,7 @@ Si tu Salón del Reino usa **OBS Studio** para transmitir reuniones híbridas a 
 
 :::tip Consejo
 
-::: tip Tip
-If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
+Si su congregación celebra regularmente reuniones híbridas, se recomienda altamente activar la integración con OBS Studio.
 
 :::
 
