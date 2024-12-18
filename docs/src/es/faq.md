@@ -4,7 +4,7 @@
 
 **No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
 
-:::info Note
+:::info Nota
 
 The source code for this app is available for all to examine and verify what goes on under the hood.
 
