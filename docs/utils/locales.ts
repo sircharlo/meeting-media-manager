@@ -7,7 +7,7 @@ import type { LocalSearchTranslations } from 'vitepress/types/local-search';
 
 import messages, { enabled, localeOptions } from './../locales';
 import { fetchLatestVersion } from './api';
-import { GH_ISSUES, GH_REPO_URL } from './constants';
+import { AUTHOR, GH_ISSUES, GH_REPO_URL } from './constants';
 import { camelToKebabCase } from './general';
 
 export type MessageSchema = (typeof messages)['en'];
@@ -132,6 +132,14 @@ export const mapThemeConfig = (
     pattern: 'https://crowdin.com/project/meeting-media-manager',
     text: msg.editLink,
   },
+  footer: {
+    copyright: `${msg.copyright} © 2022-${new Date().getFullYear()} ${AUTHOR}`,
+    message: msg.footerMessage?.replace(
+      '{linkToLicense}',
+      `<a href="${GH_REPO_URL}/blob/master/LICENSE.md">AGPL-3.0 License</a>`,
+    ),
+  },
+  langMenuLabel: msg.langMenuLabel,
   lastUpdated: {
     formatOptions: { dateStyle: 'long', forceLocale: true },
     text: msg.lastUpdated,
@@ -143,7 +151,7 @@ export const mapThemeConfig = (
     {
       items: [
         {
-          link: GH_REPO_URL + '/blob/master/CHANGELOG.md',
+          link: `${GH_REPO_URL}/blob/master/CHANGELOG.md`,
           text: 'Changelog',
         },
         { link: GH_ISSUES, text: msg.reportIssue },
@@ -151,6 +159,12 @@ export const mapThemeConfig = (
       text: version,
     },
   ],
+  notFound: {
+    linkLabel: msg.notFoundLink,
+    linkText: msg.notFoundLink,
+    quote: msg.notFoundQuote,
+    title: msg.notFoundTitle,
+  },
   outline: { label: msg.outline, level: 'deep' },
   returnToTopLabel: msg.returnToTopLabel,
   sidebar: [
@@ -161,4 +175,6 @@ export const mapThemeConfig = (
     },
     { link: link(locale, 'faq'), text: msg.faq },
   ],
+  sidebarMenuLabel: msg.sidebarMenuLabel,
+  siteTitle: msg.title,
 });

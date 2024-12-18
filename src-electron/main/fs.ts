@@ -144,11 +144,11 @@ async function readDirRecursive(
   withSizes?: boolean,
   recursive?: boolean,
 ): Promise<FileItem[]> {
-  const dirents: Dirent[] = await readdir(directory, {
+  const dirs: Dirent[] = await readdir(directory, {
     withFileTypes: true,
   });
   const dirItems: FileItem[] = [];
-  for (const dirent of dirents) {
+  for (const dirent of dirs) {
     const fullPath = join(directory, dirent.name);
     const fileItem: FileItem = {
       isDirectory: dirent.isDirectory(),
