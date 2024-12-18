@@ -46,13 +46,6 @@ const mapLocale = (
       {},
       `:lang(${lang}) {--vp-code-copy-copied-text-content: '${msg.copied}'}`,
     ],
-    [
-      'script',
-      {},
-      `window.addEventListener('load', () => {
-        document.querySelectorAll('button.copy').forEach((b) => {b.title = '${msg.codeCopyButtonTitle}';})
-      })`,
-    ],
   ],
   label,
   lang,

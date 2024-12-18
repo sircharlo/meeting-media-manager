@@ -97,7 +97,27 @@ export default defineConfig({
   ],
   lastUpdated: true,
   locales: mapLocales(),
-  markdown: { image: { lazyLoading: true } },
+  markdown: {
+    config: (md) => {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const fence = md.renderer.rules.fence!;
+      md.renderer.rules.fence = function (tokens, idx, options, env, self) {
+        const { localeIndex = 'root' } = env;
+        const locale: LanguageValue =
+          localeIndex === 'root'
+            ? 'en'
+            : (kebabToCamelCase(localeIndex) as LanguageValue);
+        const codeCopyButtonTitle = (() =>
+          messages[locale]?.codeCopyButtonTitle ||
+          messages.en.codeCopyButtonTitle)();
+        return fence(tokens, idx, options, env, self).replace(
+          '<button title="Copy Code" class="copy"></button>',
+          `<button title="${codeCopyButtonTitle}" class="copy"></button>`,
+        );
+      };
+    },
+    image: { lazyLoading: true },
+  },
   rewrites: { 'en/:rest*': ':rest*' },
   srcDir: './src',
   srcExclude,
