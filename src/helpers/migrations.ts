@@ -91,6 +91,7 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       mwStartTime: oldPrefs.meeting?.mwStartTime?.toString() || '',
       obsCameraScene: oldPrefs.app?.obs?.cameraScene || '',
       obsEnable: oldPrefs.app?.obs?.enable || false,
+      obsHideIcons: false,
       obsImageScene: oldPrefs.app?.obs?.imageScene || '',
       obsMediaScene: oldPrefs.app?.obs?.mediaScene || '',
       obsPassword: oldPrefs.app?.obs?.password || '',
