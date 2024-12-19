@@ -18,6 +18,9 @@
           }}
         </q-item>
         <q-item>
+          {{ t('you-can-navigate-the-website-before-presenting-it') }}
+        </q-item>
+        <q-item>
           {{
             t(
               'when-you-are-done-presenting-the-website-you-can-either-close-the-website-window-or-click-again-on-the-button-in-the-top-right-corner-of-this-window',
