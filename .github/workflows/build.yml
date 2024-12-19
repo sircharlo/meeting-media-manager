@@ -50,9 +50,10 @@ jobs:
           CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
-          printf $MAC_CERTIFICATE_BASE64 | wc -c
-          printf $MAC_CERTIFICATE_PASSWORD | wc -c
-          printf $KEYCHAIN_PASSWORD | wc -c 
+          printf "four" | wc -c
+          printf "$MAC_CERTIFICATE_BASE64" | wc -c
+          printf "$MAC_CERTIFICATE_PASSWORD" | wc -c
+          printf "$KEYCHAIN_PASSWORD" | wc -c 
 
           echo "import certificate"
           echo -n "$MAC_CERTIFICATE_BASE64" | base64 --decode -o $CERTIFICATE_PATH
