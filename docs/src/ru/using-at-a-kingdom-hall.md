@@ -14,7 +14,7 @@
    - **Windows:**
      - Для большинства систем Windows, загрузите <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
      - Для старых 32-битных систем Windows, загрузите <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
-     - For a portable version, download <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
+     - Для портативной версии загрузите <a :href="data.winPortable">meeting-media-manager-[ВЕРСИЯ]-portable.exe</a>.
    - **macOS:**
      - **Компьютеры Mac с чипом Apple**: загрузите <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
      - **Компьютеры Mac с чипом Intel**: загрузите <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
