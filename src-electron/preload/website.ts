@@ -12,6 +12,9 @@ export const initWebsiteListeners = () => {
 
 export const openWebsiteWindow = (lang?: string) => {
   send('toggleWebsiteWindow', true, lang);
+};
+
+export const startWebsiteStream = () => {
   webStreamBroadcastChannel.postMessage(true);
 };
 

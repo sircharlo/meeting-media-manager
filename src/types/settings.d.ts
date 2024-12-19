@@ -168,6 +168,7 @@ export interface SettingsValues {
   baseUrl: string;
   cacheFolder: null | string;
   congregationName: null | string;
+  convertFilesToMp4: boolean;
   coWeek: null | string;
   darkMode: 'auto' | boolean;
   disableMediaFetching: boolean;
@@ -196,6 +197,7 @@ export interface SettingsValues {
   mwStartTime: null | string;
   obsCameraScene: null | string;
   obsEnable: boolean;
+  obsHideIcons: boolean;
   obsImageScene: null | string;
   obsMediaScene: null | string;
   obsPassword: null | string;

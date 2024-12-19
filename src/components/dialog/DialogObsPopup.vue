@@ -22,47 +22,18 @@
       <div class="overflow-auto col full-width q-px-md">
         <div class="row q-col-gutter-xs">
           <template v-for="scene in sceneList.concat([])" :key="scene">
-            <div
-              :class="
-                'col-' +
-                (sceneList.length === 2
-                  ? 6
-                  : sceneList.length === 3
-                    ? 4
-                    : sceneList.length >= 4
-                      ? 3
-                      : 12)
-              "
-            >
+            <div :class="sceneColumnClass">
               <q-btn
                 class="full-width"
                 :color="sceneExists(scene) ? 'primary' : 'negative'"
-                :icon="
-                  scene === currentSettings?.obsCameraScene
-                    ? 'mmm-stage-scene'
-                    : scene === currentSettings?.obsMediaScene
-                      ? 'mmm-media-scene'
-                      : scene === currentSettings?.obsImageScene
-                        ? 'mmm-pip-scene'
-                        : sceneList.findIndex((s) => s === scene) +
-                              1 -
-                              baseScenesLength <=
-                            10
-                          ? 'mmm-numeric-' +
-                            (sceneList.findIndex((s) => s === scene) +
-                              1 -
-                              baseScenesLength) +
-                            '-box-outline'
-                          : 'play-box-outline'
-                "
+                :icon="getSceneIcon(scene)"
                 :outline="
                   scene !==
                   (currentSettings?.obsSwitchSceneAfterMedia
                     ? previousScene
                     : currentScene)
                 "
-                size="sm"
-                stack
+                :size="currentSettings?.obsHideIcons ? 'md' : 'sm'"
                 unelevated
                 @click="setObsScene(undefined, scene)"
               >
@@ -218,6 +189,39 @@ const baseScenesLength = computed(
       )
       .filter(Boolean).length,
 );
+
+const getSceneIcon = (scene: null | string | undefined) => {
+  if (currentSettings.value?.obsHideIcons) {
+    return undefined;
+  }
+  if (!scene) {
+    return 'play-box-outline';
+  } else if (scene === currentSettings.value?.obsCameraScene) {
+    return 'mmm-stage-scene';
+  } else if (scene === currentSettings.value?.obsMediaScene) {
+    return 'mmm-media-scene';
+  } else if (scene === currentSettings.value?.obsImageScene) {
+    return 'mmm-pip-scene';
+  }
+  const sceneIndex =
+    sceneList.value.findIndex((s) => s === scene) + 1 - baseScenesLength.value;
+  if (sceneIndex <= 10) {
+    return `mmm-numeric-${sceneIndex}-box-outline`;
+  }
+  return 'play-box-outline';
+};
+
+const sceneColumnClass = computed(() => {
+  const sceneCount = sceneList.value.length;
+  if (sceneCount === 1) {
+    return 'col-12';
+  } else if (sceneCount === 2) {
+    return 'col-6';
+  } else if (currentSettings.value?.obsHideIcons) {
+    return 'col-4';
+  }
+  return sceneCount >= 4 ? 'col-3' : 'col-4';
+});
 
 useEventListener(window, 'obsConnectFromSettings', obsSettingsConnect, {
   passive: true,

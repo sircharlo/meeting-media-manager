@@ -3473,6 +3473,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/fluent-ffmpeg@npm:^2":
+  version: 2.1.27
+  resolution: "@types/fluent-ffmpeg@npm:2.1.27"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10c0/2362e7d240d4d8a0b775b5abf9ab5f26a85b17dc335276f0c3ff3bf935f913ccc9e1e10e756a6a3cebf78c1cd1eff835a253f73a3cd1bbcb343b28089a9957f3
+  languageName: node
+  linkType: hard
+
 "@types/fs-extra@npm:9.0.13, @types/fs-extra@npm:^9.0.11":
   version: 9.0.13
   resolution: "@types/fs-extra@npm:9.0.13"
@@ -4860,6 +4869,13 @@ __metadata:
   version: 1.1.0
   resolution: "async-throttle@npm:1.1.0"
   checksum: 10c0/64d0e8a9e2a466efacde29b60733adad2d1b56822e7c9481bfaa63373ca1573b24153a2bdcac3f2a26d5dd684dd887e0272582e642b65de502a77e02dd44b938
+  languageName: node
+  linkType: hard
+
+"async@npm:^0.2.9":
+  version: 0.2.10
+  resolution: "async@npm:0.2.10"
+  checksum: 10c0/714d284dc6c3ae59f3e8b347083e32c7657ba4ffc4ff945eb152ad4fb08def27e768992fcd4d9fd3b411c6b42f1541862ac917446bf2a1acfa0f302d1001f7d2
   languageName: node
   linkType: hard
 
@@ -8327,6 +8343,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fluent-ffmpeg@npm:^2.1.3":
+  version: 2.1.3
+  resolution: "fluent-ffmpeg@npm:2.1.3"
+  dependencies:
+    async: "npm:^0.2.9"
+    which: "npm:^1.1.1"
+  checksum: 10c0/0397379ec3237c10b2389edeef26fdaf93f36d1b20b0f28f8945fe6d9121dcee9b0c615bf7d44edb7abd37233e0d24f0db39389668d3c86a1a2a0d59e3f4457b
+  languageName: node
+  linkType: hard
+
 "focus-trap@npm:^7.6.0":
   version: 7.6.2
   resolution: "focus-trap@npm:7.6.2"
@@ -9485,6 +9511,17 @@ __metadata:
   dependencies:
     "@types/node": "npm:16.9.1"
   checksum: 10c0/4463f8f4c0b6897c2213dfccf08c7731edcaa0ff8e2dab81ce3cafd5bb97d4eaa7bdd64f715d616910cf7b87aba718e4326ed4270b5d13bccc49af24bf5ce1a1
+  languageName: node
+  linkType: hard
+
+"image-size@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "image-size@npm:1.1.1"
+  dependencies:
+    queue: "npm:6.0.2"
+  bin:
+    image-size: bin/image-size.js
+  checksum: 10c0/2660470096d12be82195f7e80fe03274689fbd14184afb78eaf66ade7cd06352518325814f88af4bde4b26647889fe49e573129f6e7ba8f5ff5b85cc7f559000
   languageName: node
   linkType: hard
 
@@ -11035,6 +11072,7 @@ __metadata:
     "@types/better-sqlite3": "npm:^7.6.12"
     "@types/decompress": "npm:^4.2.7"
     "@types/dompurify": "npm:^3.2.0"
+    "@types/fluent-ffmpeg": "npm:^2"
     "@types/fs-extra": "npm:^11.0.4"
     "@types/heic-convert": "npm:^2.1.0"
     "@types/node": "npm:^20.17.10"
@@ -11058,10 +11096,12 @@ __metadata:
     eslint: "npm:^9.17.0"
     eslint-plugin-perfectionist: "npm:^4.3.0"
     eslint-plugin-vue: "npm:^9.32.0"
+    fluent-ffmpeg: "npm:^2.1.3"
     fs-extra: "npm:^11.2.0"
     globals: "npm:^15.14.0"
     heic-convert: "npm:^2.1.0"
     husky: "npm:^9.1.7"
+    image-size: "npm:^1.1.1"
     is-online: "npm:^11.0.0"
     lint-staged: "npm:^15.2.11"
     music-metadata: "npm:^10.6.4"
@@ -13321,6 +13361,15 @@ __metadata:
   version: 1.0.1
   resolution: "queue-tick@npm:1.0.1"
   checksum: 10c0/0db998e2c9b15215317dbcf801e9b23e6bcde4044e115155dae34f8e7454b9a783f737c9a725528d677b7a66c775eb7a955cf144fe0b87f62b575ce5bfd515a9
+  languageName: node
+  linkType: hard
+
+"queue@npm:6.0.2":
+  version: 6.0.2
+  resolution: "queue@npm:6.0.2"
+  dependencies:
+    inherits: "npm:~2.0.3"
+  checksum: 10c0/cf987476cc72e7d3aaabe23ccefaab1cd757a2b5e0c8d80b67c9575a6b5e1198807ffd4f0948a3f118b149d1111d810ee773473530b77a5c606673cac2c9c996
   languageName: node
   linkType: hard
 
@@ -16734,7 +16783,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"which@npm:^1.2.9":
+"which@npm:^1.1.1, which@npm:^1.2.9":
   version: 1.3.1
   resolution: "which@npm:1.3.1"
   dependencies:

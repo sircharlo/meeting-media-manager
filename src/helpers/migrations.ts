@@ -51,6 +51,7 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       baseUrl: 'jw.org',
       cacheFolder: oldPrefs.app?.customCachePath || null,
       congregationName: oldPrefs.app?.congregationName || '',
+      convertFilesToMp4: oldPrefs.media?.enableMp4Conversion || false,
       coWeek: oldPrefs.meeting?.coWeek || '',
       darkMode: 'auto',
       disableMediaFetching: oldPrefs.meeting?.specialCong || false,
@@ -64,7 +65,7 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
         oldPrefs.meeting?.shuffleShortcut
           ? true
           : false,
-      enableMediaAutoExport: false,
+      enableMediaAutoExport: oldPrefs.media?.enableMp4Conversion || false,
       enableMediaDisplayButton:
         oldPrefs.media?.enableMediaDisplayButton || true,
       enableMusicButton: oldPrefs.meeting?.enableMusicButton || true,
@@ -84,12 +85,13 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
           ? kebabToCamelCase(oldPrefs.app?.localAppLang)
           : oldPrefs.app?.localAppLang) as LanguageValue) || 'en',
       maxRes: oldPrefs.media?.maxRes || '720p',
-      mediaAutoExportFolder: '',
+      mediaAutoExportFolder: oldPrefs.app?.localOutputPath || '',
       musicVolume: oldPrefs.meeting?.musicVolume || 100,
       mwDay: oldPrefs.meeting?.mwDay?.toString() || '',
       mwStartTime: oldPrefs.meeting?.mwStartTime?.toString() || '',
       obsCameraScene: oldPrefs.app?.obs?.cameraScene || '',
       obsEnable: oldPrefs.app?.obs?.enable || false,
+      obsHideIcons: false,
       obsImageScene: oldPrefs.app?.obs?.imageScene || '',
       obsMediaScene: oldPrefs.app?.obs?.mediaScene || '',
       obsPassword: oldPrefs.app?.obs?.password || '',
