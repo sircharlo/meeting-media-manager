@@ -19,13 +19,13 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-13, macos-latest, windows-latest]
     steps:
-      - if: ${{ inputs.checkout-latest == true }}
-        name: Check out master branch
+      - name: Check out master branch
+        if: ${{ inputs.checkout-latest == true }}
         uses: actions/checkout@v4
         with:
           ref: master
-      - if: ${{ inputs.checkout-latest == false }}
-        name: Check out Git repository
+      - name: Check out Git repository
+        if: ${{ inputs.checkout-latest == false }}
         uses: actions/checkout@v4
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -62,6 +62,7 @@ jobs:
           security import $CERTIFICATE_PATH -P "$MAC_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
           security list-keychain -d user -s $KEYCHAIN_PATH
       - name: Run security find-identity -v
+        if: runner.os == 'macOS'
         run: security find-identity -v
       - name: Build and Publish Electron App
         run: |
