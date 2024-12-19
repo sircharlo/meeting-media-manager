@@ -208,6 +208,8 @@
   "media-only": "Multimedia",
   "media-playback": "Reproducción de multimedia",
   "media-sync": "Sincronización de medios",
+  "convertFilesToMp4": "Convert exported files to MP4",
+  "convertFilesToMp4-explain": "When enabled, non-video files are converted to MP4 format before being exported. This ensures compatibility with Zoom's native MP4 sharing feature, offering easier and higher-quality media playback compared to screen sharing.",
   "mediaAutoExportFolder": "Carpeta de autoexportación",
   "mediaAutoExportFolder-explain": "Carpeta para las exportaciones automáticas de medios.",
   "mediaExport": "Exportar multimedia",

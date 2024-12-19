@@ -208,6 +208,8 @@
   "media-only": "Csak média",
   "media-playback": "Médialejátszás",
   "media-sync": "Média szinkronizálása",
+  "convertFilesToMp4": "Convert exported files to MP4",
+  "convertFilesToMp4-explain": "When enabled, non-video files are converted to MP4 format before being exported. This ensures compatibility with Zoom's native MP4 sharing feature, offering easier and higher-quality media playback compared to screen sharing.",
   "mediaAutoExportFolder": "Automatikus exportálás mappa",
   "mediaAutoExportFolder-explain": "Az automatikus média exportálás mappája.",
   "mediaExport": "Média exportálása",

@@ -208,6 +208,8 @@
   "media-only": "仅媒体",
   "media-playback": "媒体播放",
   "media-sync": "媒体同步",
+  "convertFilesToMp4": "Convert exported files to MP4",
+  "convertFilesToMp4-explain": "When enabled, non-video files are converted to MP4 format before being exported. This ensures compatibility with Zoom's native MP4 sharing feature, offering easier and higher-quality media playback compared to screen sharing.",
   "mediaAutoExportFolder": "自动导出文件夹",
   "mediaAutoExportFolder-explain": "自动导出媒体文件夹。",
   "mediaExport": "导出媒体",
