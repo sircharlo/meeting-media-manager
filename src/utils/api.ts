@@ -63,6 +63,7 @@ export const fetchJson = async <T>(
       errorCatcher(e, {
         contexts: {
           fn: {
+            message: e instanceof Error ? e.message : '',
             name: 'fetchJson',
             params: Object.fromEntries(params || []),
             responseUrl: `${url}?${params ? params.toString() : ''}`,
@@ -135,7 +136,7 @@ export const fetchAnnouncements = async (): Promise<Announcement[]> => {
 export const fetchLatestVersion = async () => {
   if (!process.env.repository) return;
   const url = `${process.env.repository.replace('github.com', 'api.github.com/repos')}/releases`;
-  const includeBeta = !(await betaUpdatesDisabled())
+  const includeBeta = !(await betaUpdatesDisabled());
   const result = await fetchJson<Release[]>(url);
   return result?.find((r) => includeBeta || !r.prerelease)?.tag_name.slice(1);
 };

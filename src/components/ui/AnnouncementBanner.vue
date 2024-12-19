@@ -175,7 +175,7 @@ const activeAnnouncements = computed(() => {
     .concat(langIsSupported.value ? [] : [untranslatedAnnouncement.value])
     .filter((a) => {
       if (!currentStateStore.currentCongregation) return false;
-      if (a.persistent && dismissed.value.has(a.id)) return false;
+      if (dismissed.value.has(a.id)) return false;
       if (
         a.platform &&
         !a.platform.some((p) => $q.platform.is.platform === p)

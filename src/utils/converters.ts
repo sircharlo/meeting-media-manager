@@ -9,7 +9,7 @@ const convertHeicToJpg = async (filepath: string) => {
   try {
     const buffer = await window.electronApi.fs.readFile(filepath);
     const output = await window.electronApi.convertHeic({
-      buffer,
+      buffer: buffer as unknown as ArrayBufferLike,
       format: 'JPEG',
     });
     const existingPath = window.electronApi.path.parse(filepath);
@@ -61,13 +61,16 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
             newPath,
             Buffer.from(outputImg.split(',')[1] ?? '', 'base64'),
           );
+          canvas.remove();
           resolve(newPath);
         } catch (error) {
+          canvas.remove();
           reject(error);
         }
       };
 
       img.onerror = function (error) {
+        canvas.remove();
         reject(error);
       };
     });

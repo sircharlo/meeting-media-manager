@@ -116,6 +116,10 @@ export async function watchFolder(folderPath: string) {
       .on('all', (event, changedPath, stats) => {
         try {
           if (!changedPath || (!stats && !event.includes('unlink'))) return; // Don't do anything if no stats are available or if no path is available
+          if (changedPath instanceof Error) {
+            captureElectronError(changedPath);
+            return;
+          }
           const dirPath = toUnix(
             stats?.isDirectory() || event === 'unlinkDir'
               ? changedPath
@@ -140,11 +144,11 @@ async function readDirRecursive(
   withSizes?: boolean,
   recursive?: boolean,
 ): Promise<FileItem[]> {
-  const dirents: Dirent[] = await readdir(directory, {
+  const dirs: Dirent[] = await readdir(directory, {
     withFileTypes: true,
   });
   const dirItems: FileItem[] = [];
-  for (const dirent of dirents) {
+  for (const dirent of dirs) {
     const fullPath = join(directory, dirent.name);
     const fileItem: FileItem = {
       isDirectory: dirent.isDirectory(),

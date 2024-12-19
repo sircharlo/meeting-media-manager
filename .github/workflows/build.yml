@@ -9,6 +9,8 @@ on:
     secrets:
       SENTRY_AUTH_TOKEN:
         required: true
+      SENTRY_SOURCE_MAPS:
+        required: true
 
 jobs:
   build:
@@ -34,15 +36,18 @@ jobs:
         run: yarn install
       - name: Lint files
         run: |
+          yarn quasar prepare
           yarn lint
           yarn type-check
       - name: Build and Publish Electron App
         run: |
-          yarn icons
+          yarn generate:icons
+          yarn generate:logos
           yarn build
         env:
           GITHUB_TOKEN: ${{ github.token }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_SOURCE_MAPS: ${{ secrets.SENTRY_SOURCE_MAPS }}
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:

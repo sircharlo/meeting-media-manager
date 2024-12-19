@@ -18,7 +18,7 @@ export default [
       'src/main/',
       'docs/src/**/*',
       '!docs/src/en/**/*',
-      'LICENCE.md',
+      'LICENSE.md',
       'docs/.vitepress/dist',
       'docs/.vitepress/cache',
     ],

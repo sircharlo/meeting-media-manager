@@ -18,14 +18,22 @@ export const setElementFont = async (fontName: FontName) => {
     await fontFace.load();
     document.fonts.add(fontFace);
   } catch (error) {
-    const fontFace = new FontFace(
-      fontName,
-      'url("' + useJwStore().fontUrls[fontName] + '")',
-    );
+    const url = useJwStore().fontUrls[fontName];
+    setFallbackFont(fontName, url);
+    errorCatcher(error, {
+      contexts: { fn: { fontName, name: 'setElementFont', url } },
+    });
+  }
+};
+
+const setFallbackFont = async (fontName: FontName, url: string) => {
+  try {
+    const fontFace = new FontFace(fontName, 'url("' + url + '")');
     await fontFace.load();
     document.fonts.add(fontFace);
-    errorCatcher(error, {
-      contexts: { fn: { fontName, name: 'setElementFont' } },
+  } catch (e) {
+    errorCatcher(e, {
+      contexts: { fn: { fontName, name: 'setFallbackFont', url } },
     });
   }
 };

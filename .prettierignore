@@ -48,7 +48,7 @@ yarn-error.log*
 docs/.vitepress/dist
 docs/.vitepress/cache
 
-# Output of 'yarn icons'
+# Output of 'yarn generate:icons'
 src/css/mmm-icons.*
 
 # Custom dep helper script
@@ -67,4 +67,4 @@ docs/src/**/*
 !docs/src/en/**/*
 
 # Generated files
-LICENCE.md
+LICENSE.md

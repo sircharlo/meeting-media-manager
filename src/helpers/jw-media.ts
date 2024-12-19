@@ -90,14 +90,16 @@ export const copyToDatedAdditionalMedia = async (
         jwStore.removeFromAdditionMediaMap(uniqueId);
       }
     }
-    if (filepathToCopy !== datedAdditionalMediaPath)
+    if (filepathToCopy !== datedAdditionalMediaPath) {
       await fs.copy(filepathToCopy, datedAdditionalMediaPath);
-    if (addToAdditionMediaMap)
+    }
+    if (addToAdditionMediaMap) {
       await addToAdditionMediaMapFromPath(
         datedAdditionalMediaPath,
         section,
         uniqueId,
       );
+    }
     return datedAdditionalMediaPath;
   } catch (error) {
     errorCatcher(error);
@@ -1253,7 +1255,6 @@ export const dynamicMediaMapper = async (
             // TGW
             section = 'tgw';
           }
-          // iscoweek
         }
         const customDuration =
           m.EndTime || m.StartTime

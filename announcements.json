@@ -23,6 +23,7 @@
   {
     "id": "new-update",
     "message": "update-available",
+    "type": "info",
     "maxVersion": "24.11.4",
     "persistent": true,
     "actions": ["update"]
@@ -30,6 +31,7 @@
   {
     "id": "new-update",
     "message": "update-available",
+    "type": "info",
     "platform": ["win"],
     "minVersion": "24.11.5",
     "maxVersion": "24.12.0",

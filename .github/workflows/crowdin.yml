@@ -17,6 +17,7 @@ concurrency:
 jobs:
   crowdin-translations-progress:
     runs-on: ubuntu-latest
+    if: github.repository == 'sircharlo/meeting-media-manager'
     steps:
       - name: Checkout
         uses: actions/checkout@v4

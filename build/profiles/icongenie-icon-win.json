@@ -1,0 +1,31 @@
+{
+  "params": {
+    "icon": "build/logos/icon-512-Windows.png",
+    "quality": 12,
+    "skipTrim": true
+  },
+  "assets": [
+    {
+      "generator": "png",
+      "name": "icon-{size}x{size}.png",
+      "folder": "docs/src/public/icons",
+      "sizes": [16, 32, 75, 96, 128, 150, 310, 512]
+    },
+    {
+      "generator": "ico",
+      "name": "favicon.ico",
+      "folder": "docs/src/public"
+    },
+    {
+      "generator": "ico",
+      "name": "icon.ico",
+      "folder": "src-electron/icons"
+    },
+    {
+      "generator": "png",
+      "name": "icon.png",
+      "folder": "src-electron/icons",
+      "sizes": [512]
+    }
+  ]
+}
