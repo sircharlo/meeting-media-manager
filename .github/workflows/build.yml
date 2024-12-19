@@ -7,6 +7,18 @@ on:
         description: 'Checkout the latest changes from the repository'
         type: boolean
     secrets:
+      APPLE_APP_SPECIFIC_PASSWORD:
+        required: true
+      APPLE_ID:
+        required: true
+      APPLE_TEAM_ID:
+        required: true
+      KEYCHAIN_PASSWORD:
+        required: true
+      MAC_CERTIFICATE_BASE64:
+        required: true
+      MAC_CERTIFICATE_PASSWORD:
+        required: true
       SENTRY_AUTH_TOKEN:
         required: true
       SENTRY_SOURCE_MAPS:
@@ -42,16 +54,14 @@ jobs:
       - name: Install Apple certificate
         if: runner.os == 'macOS'
         env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
           MAC_CERTIFICATE_BASE64: ${{ secrets.MAC_CERTIFICATE_BASE64 }}
           MAC_CERTIFICATE_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
-          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
         run: |
           echo "create variables"
           CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
-          printf "$SENTRY_AUTH_TOKEN" | wc -c
           printf "$CERTIFICATE_PATH" | wc -c
           printf "$KEYCHAIN_PATH" | wc -c
           printf "$MAC_CERTIFICATE_BASE64" | wc -c
@@ -78,12 +88,12 @@ jobs:
           yarn generate:logos
           yarn build
         env:
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           GITHUB_TOKEN: ${{ github.token }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_SOURCE_MAPS: ${{ secrets.SENTRY_SOURCE_MAPS }}
-          APPLE_ID: ${{ secrets.APPLE_ID }}
-          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
       - name: Clean up keychain and provisioning profile
         if: always() && runner.os == 'macOS'
         run: |
