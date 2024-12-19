@@ -42,6 +42,7 @@ jobs:
       - name: Install Apple certificate
         if: runner.os == 'macOS'
         env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           MAC_CERTIFICATE_BASE64: ${{ secrets.MAC_CERTIFICATE_BASE64 }}
           MAC_CERTIFICATE_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -50,7 +51,7 @@ jobs:
           CERTIFICATE_PATH=$RUNNER_TEMP/build_certificate.p12
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
-          printf "four" | wc -c
+          printf "$SENTRY_AUTH_TOKEN" | wc -c
           printf "$CERTIFICATE_PATH" | wc -c
           printf "$KEYCHAIN_PATH" | wc -c
           printf "$MAC_CERTIFICATE_BASE64" | wc -c
