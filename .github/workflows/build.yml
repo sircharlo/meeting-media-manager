@@ -41,6 +41,7 @@ jobs:
       - name: Build and Publish Electron App
         run: |
           yarn generate:icons
+          yarn generate:logos
           yarn build
         env:
           GITHUB_TOKEN: ${{ github.token }}

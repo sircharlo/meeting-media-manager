@@ -57,6 +57,12 @@ docs/.vitepress/cache
 # Output of 'yarn generate:icons'
 src/css/mmm-icons.*
 
+# Output of 'yarn generate:logos'
+docs/src/public/icons/*.png
+docs/src/public/favicon.ico
+src-electron/icons/*
+!src-electron/icons/.gitkeep
+
 # Custom dep helper script
 depChecker.js
 
