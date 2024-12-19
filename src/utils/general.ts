@@ -87,9 +87,7 @@ export const parseVersion = (version: string) => {
     minor: minor ?? 0,
     patch: patch ?? 0,
     prerelease: prTag,
-    prereleaseVersion: prVersion
-      ? parseInt(prVersion)
-      : undefined,
+    prereleaseVersion: prVersion ? parseInt(prVersion) : undefined,
   };
 };
 

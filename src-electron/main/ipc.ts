@@ -21,6 +21,7 @@ import {
 
 import { PLATFORM } from '../constants';
 import { downloadFile } from './downloads';
+import { createVideoFromNonVideo } from './ffmpeg';
 import {
   openFileDialog,
   openFolderDialog,
@@ -218,6 +219,12 @@ handleIpcInvoke(
   'readdir',
   async (_e, dir: string, withSizes?: boolean, recursive?: boolean) =>
     readDirectory(dir, withSizes, recursive),
+);
+
+handleIpcInvoke(
+  'createVideoFromNonVideo',
+  async (_e, path: string, ffmpegPath: string) =>
+    createVideoFromNonVideo(path, ffmpegPath),
 );
 
 handleIpcInvoke(

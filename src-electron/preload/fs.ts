@@ -3,6 +3,7 @@
 import type { IOptions } from 'music-metadata';
 import type { VideoDuration } from 'src/types';
 
+import path from 'upath';
 import url from 'url';
 
 import { capturePreloadError } from './log';
@@ -41,5 +42,5 @@ export const pathToFileURL = (path: string) => {
 export const fileUrlToPath = (fileurl: string) => {
   if (!fileurl) return '';
   if (!isFileUrl(fileurl)) return fileurl;
-  return url.fileURLToPath(fileurl);
+  return path.normalize(url.fileURLToPath(fileurl));
 };

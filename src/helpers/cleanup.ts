@@ -6,8 +6,6 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 // import { getAdditionalMediaPath, removeEmptyDirs } from 'src/helpers/fs';
 // import { useJwStore } from 'src/stores/jw';
 
-// const { fileUrlToPath, fs, readDirectory, path } = window.electronApi;
-
 export const cleanLocalStorage = () => {
   // try {
   //   ['additionalMediaMaps', 'mediaSort'].forEach((key) => {

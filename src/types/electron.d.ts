@@ -31,6 +31,17 @@ export interface ElectronApi {
     pdfPath: string,
     outputFolder: string,
   ) => Promise<string[]>;
+  /**
+   * Converts a non-video file into a video file.
+   *
+   * @param originalFile - The path to the original non-video file.
+   * @param ffmpegPath - The path to the FFmpeg executable.
+   * @returns A promise that resolves to the path of the converted video file.
+   */
+  createVideoFromNonVideo: (
+    originalFile: string,
+    ffmpegPath: string,
+  ) => Promise<string>;
   decompress: typeof decompress;
   downloadFile: (
     url: string,
@@ -39,6 +50,16 @@ export interface ElectronApi {
     lowPriority?: boolean,
   ) => Promise<null | string>;
   executeQuery: <T = QueryResponseItem>(dbPath: string, query: string) => T[];
+  /**
+   * Converts a file URL to a file path.
+   *
+   * @param fileurl File URL
+   * @returns File path
+   *
+   * @example
+   * fileUrlToPath('file:///home/user/document.pdf')
+   *   // => '/home/user/document.pdf'
+   */
   fileUrlToPath: (url: string) => string;
   fs: typeof FsExtra;
   getAllScreens: () => Promise<Display[]>;
@@ -48,6 +69,13 @@ export interface ElectronApi {
   getNrOfPdfPages: (pdfPath: string) => Promise<number>;
   getScreenAccessStatus: () => Promise<MediaAccessStatus>;
   getUserDataPath: () => Promise<string>;
+  /**
+   * Parses metadata from a media file.
+   *
+   * @param filePath - The path to the media file to be parsed.
+   * @param options - Optional configuration for parsing the media file.
+   * @returns A promise that resolves to the metadata of the media file.
+   */
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
   moveMediaWindow: (
     targetScreenNumber?: number,
@@ -108,6 +136,16 @@ export interface ElectronApi {
     options?: IOptions,
   ) => Promise<IAudioMetadata>;
   path: typeof Path;
+  /**
+   * Converts a file path to a file url.
+   *
+   * @param path File path
+   * @returns File URL
+   *
+   * @example
+   * pathToFileURL('/home/user/document.pdf')
+   *   // => 'file:///home/user/document.pdf'
+   */
   pathToFileURL: (path: string) => string;
   readdir: (
     path: string,
@@ -130,6 +168,7 @@ export interface ElectronApi {
 
 // ipcMain.handle / ipcRenderer.invoke channels
 export type ElectronIpcInvokeKey =
+  | 'createVideoFromNonVideo'
   | 'downloadFile'
   | 'getAllScreens'
   | 'getAppDataPath'
