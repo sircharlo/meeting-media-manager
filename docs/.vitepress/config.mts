@@ -166,6 +166,29 @@ export default defineConfig({
 
     pageData.frontmatter.head ??= [];
     pageData.frontmatter.head.push(
+      // Site name
+      [
+        'meta',
+        {
+          content: messages[isEnglish ? 'en' : messageLocale].title,
+          name: 'application-name',
+        },
+      ],
+      [
+        'meta',
+        {
+          content: messages[isEnglish ? 'en' : messageLocale].title,
+          name: 'apple-mobile-web-app-title',
+        },
+      ],
+      [
+        'meta',
+        {
+          content: messages[isEnglish ? 'en' : messageLocale].title,
+          property: 'og:site_name',
+        },
+      ],
+
       // Page url
       ['link', { href: canonicalUrl, rel: 'canonical' }],
       ['meta', { content: canonicalUrl, property: 'og:url' }],
