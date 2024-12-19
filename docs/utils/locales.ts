@@ -24,10 +24,16 @@ const mapLocale = (
 } => ({
   description: msg.description,
   head: [
+    // Site name
     ['meta', { content: msg.title, name: 'application-name' }],
     ['meta', { content: msg.title, name: 'apple-mobile-web-app-title' }],
     ['meta', { content: msg.title, property: 'og:site_name' }],
+
+    // Site description
     ['meta', { content: msg.description, property: 'og:description' }],
+    ['meta', { content: msg.description, name: 'twitter:description' }],
+
+    // Current locale and alternate locales
     ['meta', { content: lang, property: 'og:locale' }],
     ...localeOptions
       .filter(
@@ -41,6 +47,8 @@ const mapLocale = (
           property: 'og:locale:alternate',
         },
       ]),
+
+    // Translate the "Copied" message in code blocks
     [
       'style',
       {},

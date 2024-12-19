@@ -17,10 +17,11 @@ export default defineConfig({
   base,
   cleanUrls: true,
   head: [
+    // Favicon variants
     [
       'link',
       {
-        href: `${base}icons/favicon-128x128.png`,
+        href: `${base}icons/icon-128x128.png`,
         rel: 'icon',
         sizes: '128x128',
         type: 'image/png',
@@ -29,7 +30,7 @@ export default defineConfig({
     [
       'link',
       {
-        href: `${base}icons/favicon-96x96.png`,
+        href: `${base}icons/icon-96x96.png`,
         rel: 'icon',
         sizes: '96x96',
         type: 'image/png',
@@ -38,7 +39,7 @@ export default defineConfig({
     [
       'link',
       {
-        href: `${base}icons/favicon-32x32.png`,
+        href: `${base}icons/icon-32x32.png`,
         rel: 'icon',
         sizes: '32x32',
         type: 'image/png',
@@ -47,7 +48,7 @@ export default defineConfig({
     [
       'link',
       {
-        href: `${base}icons/favicon-16x16.png`,
+        href: `${base}icons/icon-16x16.png`,
         rel: 'icon',
         sizes: '16x16',
         type: 'image/png',
@@ -62,18 +63,36 @@ export default defineConfig({
         type: 'image/svg+xml',
       },
     ],
+
+    // General meta tags
     ['meta', { content: 'light dark', name: 'color-scheme' }],
     ['meta', { content: '#3075F2', name: 'theme-color' }],
     ['meta', { content: 'yes', name: 'mobile-web-app-capable' }],
+    ['meta', { content: 'telephone=no', name: 'format-detection' }],
+    [
+      'meta',
+      { content: `${base}browserconfig.xml`, name: 'msapplication-config' },
+    ],
+
+    // Apple meta tags
     ['meta', { content: 'yes', name: 'apple-mobile-web-app-capable' }],
     [
       'meta',
       { content: 'black', name: 'apple-mobile-web-app-status-bar-style' },
     ],
+
+    // Twitter meta tags
     ['meta', { content: 'summary_large_image', name: 'twitter:card' }],
+    [
+      'meta',
+      {
+        content: `${CANONICAL_URL}m3-project-cover.png`,
+        name: 'twitter:image',
+      },
+    ],
     ['meta', { content: 'M³ project cover', name: 'twitter:image:alt' }],
-    ['meta', { content: 'website', property: 'og:type' }],
-    // Project cover
+
+    // Project cover og image
     [
       'meta',
       { content: `${CANONICAL_URL}m3-project-cover.png`, property: 'og:image' },
@@ -82,18 +101,20 @@ export default defineConfig({
     ['meta', { content: '1442', property: 'og:image:width' }],
     ['meta', { content: '865', property: 'og:image:height' }],
     ['meta', { content: 'M³ project cover', property: 'og:image:alt' }],
-    // // Logo
-    // ['meta', { content: `${CANONICAL_URL}icon.png`, property: 'og:image' }],
+
+    // Logo og image
+    // ['meta', { content: `${CANONICAL_URL}icons/icon-512x512.png`, property: 'og:image' }],
     // ['meta', { content: 'image/png', property: 'og:image:type' }],
     // ['meta', { content: '512', property: 'og:image:width' }],
     // ['meta', { content: '512', property: 'og:image:height' }],
     // ['meta', { content: 'The logo of M³', property: 'og:image:alt' }],
-    // // Repo preview
+
+    // Repo preview og image
     // [
     //   'meta',
-    //   { content: `${CANONICAL_URL}m3-repo-preview.jpg`, property: 'og:image' },
+    //   { content: `${CANONICAL_URL}m3-repo-preview.png`, property: 'og:image' },
     // ],
-    // ['meta', { content: 'image/jpg', property: 'og:image:type' }],
+    // ['meta', { content: 'image/png', property: 'og:image:type' }],
     // ['meta', { content: '1280', property: 'og:image:width' }],
     // ['meta', { content: '640', property: 'og:image:height' }],
     // ['meta', { content: 'M³ repo preview banner', property: 'og:image:alt' }],
@@ -139,10 +160,43 @@ export default defineConfig({
     const messageLocale = kebabToCamelCase(pageLang) as LanguageValue;
     const isEnglish = pageData.relativePath.split('/').length === 1;
 
+    const lastUpdated = (
+      pageData.lastUpdated ? new Date(pageData.lastUpdated) : new Date()
+    ).toISOString();
+
     pageData.frontmatter.head ??= [];
     pageData.frontmatter.head.push(
+      // Page url
       ['link', { href: canonicalUrl, rel: 'canonical' }],
       ['meta', { content: canonicalUrl, property: 'og:url' }],
+
+      // Page type
+      [
+        'meta',
+        {
+          content:
+            pageData.frontmatter.layout === 'home' ? 'website' : 'article',
+          property: 'og:type',
+        },
+      ],
+
+      // Page last updated
+      ['meta', { content: lastUpdated, property: 'og:updated_time' }],
+      ['meta', { content: lastUpdated, property: 'article:modified_time' }],
+
+      // Page title
+      [
+        'meta',
+        {
+          content:
+            pageData.frontmatter.layout === 'home'
+              ? isEnglish
+                ? messages['en'].title
+                : messages[messageLocale].title
+              : `${pageData.title} | M³ docs`,
+          name: 'twitter:title',
+        },
+      ],
       [
         'meta',
         {
@@ -155,6 +209,8 @@ export default defineConfig({
           property: 'og:title',
         },
       ],
+
+      // Page default locale
       [
         'link',
         {
@@ -165,6 +221,8 @@ export default defineConfig({
           rel: 'alternate',
         },
       ],
+
+      // Available page locales
       ...localeOptions
         .filter((l) => l.value === 'en' || enabled.includes(l.value))
         .map((l): [string, Record<string, string>] => {
