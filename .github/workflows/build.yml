@@ -9,6 +9,8 @@ on:
     secrets:
       SENTRY_AUTH_TOKEN:
         required: true
+      SENTRY_SOURCE_MAPS:
+        required: true
 
 jobs:
   build:
@@ -43,6 +45,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_SOURCE_MAPS: ${{ secrets.SENTRY_SOURCE_MAPS }}
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:

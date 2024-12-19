@@ -12,6 +12,9 @@ import { repository, version } from './package.json';
 const SENTRY_ORG = 'jw-projects';
 const SENTRY_PROJECT = 'mmm-v2';
 const SENTRY_VERSION = `meeting-media-manager@${version}`;
+const SENTRY_AUTH_TOKEN = process.env.SENTRY_AUTH_TOKEN;
+const ENABLE_SOURCE_MAPS =
+  !!SENTRY_AUTH_TOKEN && process.env.SENTRY_SOURCE_MAPS == 'true';
 
 export default defineConfig((ctx) => {
   return {
@@ -37,22 +40,20 @@ export default defineConfig((ctx) => {
             },
           },
         });
-        if (ctx.prod && !ctx.debug) {
+        if (ctx.prod && !ctx.debug && ENABLE_SOURCE_MAPS) {
           viteConf.build = mergeConfig(viteConf.build ?? {}, {
             sourcemap: true,
           });
           if (!viteConf.plugins) viteConf.plugins = [];
-          if (process.env.SENTRY_AUTH_TOKEN) {
-            viteConf.plugins.push(
-              sentryVitePlugin({
-                authToken: process.env.SENTRY_AUTH_TOKEN,
-                org: SENTRY_ORG,
-                project: SENTRY_PROJECT,
-                release: { name: SENTRY_VERSION },
-                telemetry: false,
-              }),
-            );
-          }
+          viteConf.plugins.push(
+            sentryVitePlugin({
+              authToken: SENTRY_AUTH_TOKEN,
+              org: SENTRY_ORG,
+              project: SENTRY_PROJECT,
+              release: { name: SENTRY_VERSION },
+              telemetry: false,
+            }),
+          );
         }
       },
       sourcemap: true,
@@ -130,37 +131,33 @@ export default defineConfig((ctx) => {
       },
       bundler: 'builder', // 'packager' or 'builder'
       extendElectronMainConf: (esbuildConf) => {
-        if (ctx.prod && !ctx.debug && process.env.SENTRY_AUTH_TOKEN) {
+        if (ctx.prod && !ctx.debug && ENABLE_SOURCE_MAPS) {
           esbuildConf.sourcemap = true;
           if (!esbuildConf.plugins) esbuildConf.plugins = [];
-          if (process.env.SENTRY_AUTH_TOKEN) {
-            esbuildConf.plugins.push(
-              sentryEsbuildPlugin({
-                authToken: process.env.SENTRY_AUTH_TOKEN,
-                org: SENTRY_ORG,
-                project: SENTRY_PROJECT,
-                release: { name: SENTRY_VERSION },
-                telemetry: false,
-              }),
-            );
-          }
+          esbuildConf.plugins.push(
+            sentryEsbuildPlugin({
+              authToken: SENTRY_AUTH_TOKEN,
+              org: SENTRY_ORG,
+              project: SENTRY_PROJECT,
+              release: { name: SENTRY_VERSION },
+              telemetry: false,
+            }),
+          );
         }
       },
       extendElectronPreloadConf: (esbuildConf) => {
-        if (ctx.prod && !ctx.debug && process.env.SENTRY_AUTH_TOKEN) {
+        if (ctx.prod && !ctx.debug && ENABLE_SOURCE_MAPS) {
           esbuildConf.sourcemap = true;
           if (!esbuildConf.plugins) esbuildConf.plugins = [];
-          if (process.env.SENTRY_AUTH_TOKEN) {
-            esbuildConf.plugins.push(
-              sentryEsbuildPlugin({
-                authToken: process.env.SENTRY_AUTH_TOKEN,
-                org: SENTRY_ORG,
-                project: SENTRY_PROJECT,
-                release: { name: SENTRY_VERSION },
-                telemetry: false,
-              }),
-            );
-          }
+          esbuildConf.plugins.push(
+            sentryEsbuildPlugin({
+              authToken: SENTRY_AUTH_TOKEN,
+              org: SENTRY_ORG,
+              project: SENTRY_PROJECT,
+              release: { name: SENTRY_VERSION },
+              telemetry: false,
+            }),
+          );
         }
       },
       extendPackageJson(pkg) {
