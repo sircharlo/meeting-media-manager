@@ -40,7 +40,7 @@ jobs:
           yarn type-check
       - name: Build and Publish Electron App
         run: |
-          yarn icons
+          yarn generate:icons
           yarn build
         env:
           GITHUB_TOKEN: ${{ github.token }}

@@ -46,7 +46,10 @@ yarn install
 yarn electron-rebuild
 
 # Generate icon font
-yarn icons
+yarn generate:icons
+
+# Generate logo assets
+yarn generate:logos
 
 # Serve app with hot reload for development
 yarn dev
