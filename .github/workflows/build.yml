@@ -51,6 +51,8 @@ jobs:
           KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
 
           printf "four" | wc -c
+          printf "$CERTIFICATE_PATH" | wc -c
+          printf "$KEYCHAIN_PATH" | wc -c
           printf "$MAC_CERTIFICATE_BASE64" | wc -c
           printf "$MAC_CERTIFICATE_PASSWORD" | wc -c
           printf "$KEYCHAIN_PASSWORD" | wc -c 
