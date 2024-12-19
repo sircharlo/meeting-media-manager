@@ -103,11 +103,17 @@ export default defineConfig({
     ['meta', { content: 'M³ project cover', property: 'og:image:alt' }],
 
     // Logo og image
-    // ['meta', { content: `${CANONICAL_URL}icons/icon-512x512.png`, property: 'og:image' }],
-    // ['meta', { content: 'image/png', property: 'og:image:type' }],
-    // ['meta', { content: '512', property: 'og:image:width' }],
-    // ['meta', { content: '512', property: 'og:image:height' }],
-    // ['meta', { content: 'The logo of M³', property: 'og:image:alt' }],
+    [
+      'meta',
+      {
+        content: `${CANONICAL_URL}icons/icon-512x512.png`,
+        property: 'og:image',
+      },
+    ],
+    ['meta', { content: 'image/png', property: 'og:image:type' }],
+    ['meta', { content: '512', property: 'og:image:width' }],
+    ['meta', { content: '512', property: 'og:image:height' }],
+    ['meta', { content: 'The logo of M³', property: 'og:image:alt' }],
 
     // Repo preview og image
     // [
