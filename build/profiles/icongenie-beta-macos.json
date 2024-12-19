@@ -1,0 +1,14 @@
+{
+  "params": {
+    "icon": "build/logos/beta-icon-macOS.png",
+    "quality": 12,
+    "skipTrim": true
+  },
+  "assets": [
+    {
+      "generator": "icns",
+      "name": "beta.icns",
+      "folder": "src-electron/icons"
+    }
+  ]
+}

@@ -9,6 +9,8 @@ import { mergeConfig } from 'vite'; // use mergeConfig helper to avoid overwriti
 
 import { repository, version } from './package.json';
 
+const IS_BETA = version.includes('beta');
+
 const SENTRY_ORG = 'jw-projects';
 const SENTRY_PROJECT = 'mmm-v2';
 const SENTRY_VERSION = `meeting-media-manager@${version}`;
@@ -30,7 +32,9 @@ export default defineConfig((ctx) => {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#build
     build: {
       env: {
+        isBeta: IS_BETA,
         repository: repository.url.replace('.git', ''),
+        version,
       },
       extendViteConf(viteConf) {
         viteConf.optimizeDeps = mergeConfig(viteConf.optimizeDeps ?? {}, {
@@ -95,7 +99,7 @@ export default defineConfig((ctx) => {
         generateUpdatesFilesForAllChannels: true,
         linux: {
           category: 'Utility',
-          icon: 'icons/icon.png',
+          icon: `icons/${IS_BETA ? 'beta' : 'icon'}.png`,
           publish: ['github'],
           target: 'AppImage',
         },
@@ -109,7 +113,7 @@ export default defineConfig((ctx) => {
             NSMicrophoneUsageDescription:
               "Microphone access is required in order to use the website mirroring feature, as screen recording is treated as camera and microphone access. Please note that your device's microphone will never be accessed or used in any way by this app.",
           },
-          icon: 'icons/icon.icns',
+          icon: `icons/${IS_BETA ? 'beta' : 'icon'}.icns`,
           minimumSystemVersion: '10.15',
           publish: ['github'],
           target: { target: 'default' },
@@ -121,7 +125,7 @@ export default defineConfig((ctx) => {
         },
         productName: 'Meeting Media Manager',
         win: {
-          icon: 'icons/icon.ico',
+          icon: `icons/${IS_BETA ? 'beta' : 'icon'}.ico`,
           publish: ['github'],
           target: [
             { arch: ctx.debug ? 'x64' : ['x64', 'ia32'], target: 'nsis' },

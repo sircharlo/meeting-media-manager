@@ -5,7 +5,18 @@
     >
       <div class="row items-center">
         <div class="col-shrink q-mr-md">
-          <q-img loading="lazy" src="~assets/img/logo.svg" width="48px" />
+          <q-img
+            v-if="isBetaVersion"
+            loading="lazy"
+            src="~assets/img/beta-logo.svg"
+            width="48px"
+          />
+          <q-img
+            v-else
+            loading="lazy"
+            src="~assets/img/logo.svg"
+            width="48px"
+          />
         </div>
         <div class="col">
           <div class="row text-h6">
@@ -145,19 +156,16 @@ import {
 import { onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-const { getAppVersion, openExternal } = window.electronApi;
+const { openExternal } = window.electronApi;
 
 const open = defineModel<boolean>({ default: false });
 
 const { t } = useI18n();
-const appVersion = ref('');
+const appVersion = process.env.version;
+const isBetaVersion = process.env.isBeta;
 
 const updatesEnabled = ref(true);
 const betaUpdatesEnabled = ref(false);
-
-const loadAppVersion = async () => {
-  appVersion.value = await getAppVersion();
-};
 
 const getUpdatesEnabled = async () => {
   updatesEnabled.value = !(await updatesDisabled());
@@ -168,7 +176,6 @@ const getBetaUpdatesEnabled = async () => {
 };
 
 onMounted(() => {
-  loadAppVersion();
   getUpdatesEnabled();
   getBetaUpdatesEnabled();
 });

@@ -10,7 +10,7 @@ import { join, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
 import { urlVariables } from './../session';
-import { captureElectronError } from './../utils';
+import { captureElectronError, isBeta } from './../utils';
 import { StatefulBrowserWindow } from './window-state';
 
 export function closeOtherWindows(source: BrowserWindow) {
@@ -47,7 +47,7 @@ export function createWindow(
       join(
         fileURLToPath(new URL('.', import.meta.url)),
         'icons',
-        `icon.${PLATFORM === 'win32' ? 'ico' : PLATFORM === 'darwin' ? 'icns' : 'png'}`,
+        `${isBeta() ? 'beta' : 'icon'}.${PLATFORM === 'win32' ? 'ico' : PLATFORM === 'darwin' ? 'icns' : 'png'}`,
       ),
     ),
     minHeight: 450,

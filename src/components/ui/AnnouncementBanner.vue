@@ -62,15 +62,11 @@ const { t } = useI18n();
 const currentStateStore = useCurrentStateStore();
 const congregationStore = useCongregationSettingsStore();
 
-const { getAppVersion, openDiscussion, openExternal } = window.electronApi;
+const { openDiscussion, openExternal } = window.electronApi;
 
-const version = ref('');
+const version = process.env.version;
 const latestVersion = ref('');
 const updatesEnabled = ref(true);
-
-const loadAppVersion = async () => {
-  version.value = await getAppVersion();
-};
 
 const getUpdatesEnabled = async () => {
   updatesEnabled.value = !(await updatesDisabled());
@@ -82,7 +78,6 @@ const loadLatestVersion = async () => {
 };
 
 onMounted(() => {
-  loadAppVersion();
   if (currentStateStore.online) {
     loadLatestVersion();
     loadAnnouncements();
@@ -199,8 +194,8 @@ const activeAnnouncements = computed(() => {
         return false;
       }
 
-      if (version.value) {
-        return isVersionWithinBounds(version.value, a.minVersion, a.maxVersion);
+      if (version) {
+        return isVersionWithinBounds(version, a.minVersion, a.maxVersion);
       } else {
         return true;
       }

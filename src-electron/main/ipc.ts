@@ -36,7 +36,7 @@ import {
   unregisterShortcut,
 } from './shortcuts';
 import { triggerUpdateCheck } from './updater';
-import { getAppVersion, isSelf } from './utils';
+import { isSelf } from './utils';
 import { logToWindow } from './window/window-base';
 import { mainWindow, toggleAuthorizedClose } from './window/window-main';
 import { mediaWindow, moveMediaWindow } from './window/window-media';
@@ -194,7 +194,6 @@ function handleIpcInvoke<T = unknown>(
   });
 }
 
-handleIpcInvoke('getVersion', async () => getAppVersion());
 handleIpcInvoke('getAppDataPath', async () => app.getPath('appData'));
 handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
 

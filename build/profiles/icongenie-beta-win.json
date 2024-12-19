@@ -1,0 +1,20 @@
+{
+  "params": {
+    "icon": "build/logos/beta-icon-512-Windows.png",
+    "quality": 12,
+    "skipTrim": true
+  },
+  "assets": [
+    {
+      "generator": "ico",
+      "name": "beta.ico",
+      "folder": "src-electron/icons"
+    },
+    {
+      "generator": "png",
+      "name": "beta.png",
+      "folder": "src-electron/icons",
+      "sizes": [512]
+    }
+  ]
+}

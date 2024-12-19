@@ -45,7 +45,6 @@ const electronApi: ElectronApi = {
   fs,
   getAllScreens: () => invoke('getAllScreens'),
   getAppDataPath: () => invoke('getAppDataPath'),
-  getAppVersion: () => invoke('getVersion'),
   getLocalPathFromFileObject: (fo) => webUtils.getPathForFile(fo),
   getNrOfPdfPages,
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),
