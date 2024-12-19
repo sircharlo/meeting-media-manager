@@ -18,7 +18,8 @@
   },
   "scripts": {
     "electron-rebuild": "./node_modules/.bin/electron-rebuild.cmd -f -m ./node_modules/better-sqlite3",
-    "icons": "node ./build/svg2font.js",
+    "generate:icons": "node ./build/svg2font.js",
+    "generate:logos": "icongenie generate -p ./build/profiles",
     "dev": "quasar dev -m electron",
     "build": "quasar build -m electron",
     "build:debug": "quasar build -m electron --debug",
@@ -73,6 +74,7 @@
     "@electron/rebuild": "^3.7.1",
     "@intlify/unplugin-vue-i18n": "^6.0.1",
     "@quasar/app-vite": "^2.0.2",
+    "@quasar/icongenie": "^4.0.0",
     "@rollup/plugin-inject": "^5.0.5",
     "@sentry/esbuild-plugin": "^2.22.7",
     "@sentry/vite-plugin": "^2.22.7",

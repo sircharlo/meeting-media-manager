@@ -1,0 +1,14 @@
+{
+  "params": {
+    "icon": "build/logos/display-icon-macOS.png",
+    "quality": 12,
+    "skipTrim": true
+  },
+  "assets": [
+    {
+      "generator": "icns",
+      "name": "media-player.icns",
+      "folder": "src-electron/icons"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "params": {
+    "icon": "build/logos/icon-macOS.png",
+    "quality": 12,
+    "skipTrim": true
+  },
+  "assets": [
+    {
+      "generator": "icns",
+      "name": "icon.icns",
+      "folder": "src-electron/icons"
+    }
+  ]
+}
