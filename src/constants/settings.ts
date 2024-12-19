@@ -204,6 +204,12 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'obsStudio',
     type: 'toggle',
   },
+  obsHideIcons: {
+    depends: ['obsEnable', 'obsPort', 'obsPassword'],
+    group: 'integrations',
+    subgroup: 'obsStudio',
+    type: 'toggle',
+  },
   // Advanced
 
   enableKeyboardShortcuts: {
@@ -376,6 +382,7 @@ export const defaultSettings: SettingsValues = {
   mwStartTime: null,
   obsCameraScene: null,
   obsEnable: false,
+  obsHideIcons: false,
   obsImageScene: null,
   obsMediaScene: null,
   obsPassword: null,

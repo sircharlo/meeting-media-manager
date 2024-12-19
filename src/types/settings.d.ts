@@ -197,6 +197,7 @@ export interface SettingsValues {
   mwStartTime: null | string;
   obsCameraScene: null | string;
   obsEnable: boolean;
+  obsHideIcons: boolean;
   obsImageScene: null | string;
   obsMediaScene: null | string;
   obsPassword: null | string;
