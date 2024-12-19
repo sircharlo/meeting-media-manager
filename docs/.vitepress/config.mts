@@ -102,6 +102,16 @@ export default defineConfig({
     ['meta', { content: '865', property: 'og:image:height' }],
     ['meta', { content: 'M³ project cover', property: 'og:image:alt' }],
 
+    // Repo preview og image
+    // [
+    //   'meta',
+    //   { content: `${CANONICAL_URL}m3-repo-preview.png`, property: 'og:image' },
+    // ],
+    // ['meta', { content: 'image/png', property: 'og:image:type' }],
+    // ['meta', { content: '1280', property: 'og:image:width' }],
+    // ['meta', { content: '640', property: 'og:image:height' }],
+    // ['meta', { content: 'M³ repo preview banner', property: 'og:image:alt' }],
+
     // Logo og image
     [
       'meta',
@@ -114,16 +124,6 @@ export default defineConfig({
     ['meta', { content: '512', property: 'og:image:width' }],
     ['meta', { content: '512', property: 'og:image:height' }],
     ['meta', { content: 'The logo of M³', property: 'og:image:alt' }],
-
-    // Repo preview og image
-    // [
-    //   'meta',
-    //   { content: `${CANONICAL_URL}m3-repo-preview.png`, property: 'og:image' },
-    // ],
-    // ['meta', { content: 'image/png', property: 'og:image:type' }],
-    // ['meta', { content: '1280', property: 'og:image:width' }],
-    // ['meta', { content: '640', property: 'og:image:height' }],
-    // ['meta', { content: 'M³ repo preview banner', property: 'og:image:alt' }],
   ],
   lastUpdated: true,
   locales: mapLocales(),
