@@ -1259,7 +1259,6 @@ export const dynamicMediaMapper = async (
             // TGW
             section = 'tgw';
           }
-          // iscoweek
         }
         const customDuration =
           m.EndTime || m.StartTime

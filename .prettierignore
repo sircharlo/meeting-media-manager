@@ -67,4 +67,4 @@ docs/src/**/*
 !docs/src/en/**/*
 
 # Generated files
-LICENCE.md
+LICENSE.md

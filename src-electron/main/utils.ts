@@ -147,6 +147,7 @@ export const fetchJson = async <T>(
       captureElectronError(e, {
         contexts: {
           fn: {
+            message: e instanceof Error ? e.message : '',
             name: 'fetchJson',
             params: Object.fromEntries(params || []),
             responseUrl: `${url}?${params ? params.toString() : ''}`,

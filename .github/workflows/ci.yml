@@ -32,3 +32,4 @@ jobs:
     uses: ./.github/workflows/build.yml
     secrets:
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      SENTRY_SOURCE_MAPS: ${{ (github.event_name == 'push' && 'true') || 'false' }} # TODO: only upload source maps for release builds
