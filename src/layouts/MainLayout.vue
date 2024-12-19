@@ -214,6 +214,7 @@ watch(
     currentCongregation.value,
     currentSettings.value?.enableMediaAutoExport,
     currentSettings.value?.mediaAutoExportFolder,
+    currentSettings.value?.convertFilesToMp4,
   ],
   ([newMediaAutoExport, newMediaAutoExportFolder]) => {
     if (!!newMediaAutoExport && !!newMediaAutoExportFolder) exportAllDays();

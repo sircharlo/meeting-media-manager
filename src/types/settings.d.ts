@@ -168,6 +168,7 @@ export interface SettingsValues {
   baseUrl: string;
   cacheFolder: null | string;
   congregationName: null | string;
+  convertFilesToMp4: boolean;
   coWeek: null | string;
   darkMode: 'auto' | boolean;
   disableMediaFetching: boolean;

@@ -38,6 +38,7 @@ const electronApi: ElectronApi = {
   closeWebsiteWindow,
   convertHeic,
   convertPdfToImages,
+  createVideoFromNonVideo: (f, fP) => invoke('createVideoFromNonVideo', f, fP),
   decompress,
   downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
   executeQuery,

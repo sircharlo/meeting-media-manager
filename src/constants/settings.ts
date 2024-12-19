@@ -306,6 +306,13 @@ export const settingsDefinitions: SettingsItems = {
     type: 'path',
     unless: 'disableMediaFetching',
   },
+  convertFilesToMp4: {
+    depends: ['enableMediaDisplayButton', 'enableMediaAutoExport'],
+    group: 'advanced',
+    subgroup: 'mediaExport',
+    type: 'toggle',
+    unless: 'disableMediaFetching',
+  },
   musicVolume: {
     actions: ['setBackgroundMusicVolume'],
     depends: 'enableMusicButton',
@@ -341,6 +348,7 @@ export const defaultSettings: SettingsValues = {
   baseUrl: 'jw.org',
   cacheFolder: null,
   congregationName: null,
+  convertFilesToMp4: false,
   coWeek: null,
   darkMode: 'auto',
   disableMediaFetching: false,

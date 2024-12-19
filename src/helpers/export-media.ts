@@ -2,13 +2,14 @@ import type PQueue from 'p-queue';
 import type { MediaSection } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { setupFFmpeg } from 'src/helpers/fs';
+import { mapOrder } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { datesAreSame, formatDate } from 'src/utils/date';
 import { trimFilepathAsNeeded } from 'src/utils/fs';
 import { pad } from 'src/utils/general';
-
-import { mapOrder } from './jw-media';
+import { isVideo } from 'src/utils/media';
 
 export const addDayToExportQueue = async (targetDate?: Date) => {
   if (!folderExportQueue) {
@@ -87,12 +88,29 @@ const exportDayToFolder = async (targetDate?: Date) => {
     try {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       const m = dynamicMediaFiltered[i]!;
-      const sourceFilePath = window.electronApi.fileUrlToPath(m.fileUrl);
+      let sourceFilePath = window.electronApi.fileUrlToPath(m.fileUrl);
       if (
         !sourceFilePath ||
         !(await window.electronApi.fs.exists(sourceFilePath))
       )
         continue;
+
+      if (
+        !isVideo(sourceFilePath) &&
+        currentStateStore.currentSettings?.convertFilesToMp4
+      ) {
+        try {
+          const ffmpegPath = await setupFFmpeg();
+          const convertedFilePath =
+            await window.electronApi.createVideoFromNonVideo(
+              sourceFilePath,
+              ffmpegPath,
+            );
+          sourceFilePath = convertedFilePath;
+        } catch (error) {
+          errorCatcher(error);
+        }
+      }
 
       if (!sections[m.section]) {
         sections[m.section] = Object.keys(sections).length + 1;
@@ -109,11 +127,11 @@ const exportDayToFolder = async (targetDate?: Date) => {
             (m.title
               ? sanitize(
                   m.title.replace(
-                    window.electronApi.path.extname(m.fileUrl),
+                    window.electronApi.path.extname(sourceFilePath),
                     '',
                   ),
-                ) + window.electronApi.path.extname(m.fileUrl)
-              : window.electronApi.path.basename(m.fileUrl)),
+                ) + window.electronApi.path.extname(sourceFilePath)
+              : window.electronApi.path.basename(sourceFilePath)),
         ),
       );
       const fileBaseName = window.electronApi.path.basename(destFilePath);

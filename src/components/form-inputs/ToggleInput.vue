@@ -34,7 +34,7 @@ const customDisabled = computed(() => {
   );
 });
 
-const model = defineModel<boolean>({ required: true });
+const model = defineModel<boolean | undefined>({ required: true });
 
 // Setup component
 watch(model, () => {
