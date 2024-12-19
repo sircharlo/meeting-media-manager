@@ -354,16 +354,29 @@ export const useJwStore = defineStore('jw-store', {
   getters: {
     fontUrls: (state): Record<FontName, string> => {
       const { urlVariables } = state;
-      const mediatorBaseUrl = urlVariables.mediator
-        ? new URL(urlVariables.mediator).hostname
-        : '';
+
+      const getFontUrl = (type: 'base' | 'mediator', path = '') => {
+        const url = urlVariables[type];
+        if (!type || !url) return '';
+        try {
+          const baseUrl = type === 'base' ? `https://wol.${url}` : url;
+          const hostname = new URL(baseUrl).hostname;
+          return `https://${hostname}${path}`;
+        } catch (error) {
+          errorCatcher(error);
+          return '';
+        }
+      };
+
       return {
-        'JW-Icons': urlVariables.base
-          ? `https://wol.${urlVariables.base}/assets/fonts/jw-icons-external-1970474.woff`
-          : '',
-        'Wt-ClearText-Bold': mediatorBaseUrl
-          ? `https://${mediatorBaseUrl}/fonts/wt-clear-text/1.024/Wt-ClearText-Bold.woff2`
-          : '',
+        'JW-Icons': getFontUrl(
+          'base',
+          '/assets/fonts/jw-icons-external-1970474.woff',
+        ),
+        'Wt-ClearText-Bold': getFontUrl(
+          'mediator',
+          '/fonts/wt-clear-text/1.024/Wt-ClearText-Bold.woff2',
+        ),
       };
     },
     missingMedia: (state) => {
