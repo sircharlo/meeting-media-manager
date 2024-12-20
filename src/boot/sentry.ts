@@ -1,6 +1,7 @@
 import { defineBoot } from '#q-app/wrappers';
 import { init, replayIntegration } from '@sentry/electron/renderer';
 import {
+  browserSessionIntegration,
   browserTracingIntegration,
   init as initVue,
   vueIntegration,
@@ -21,6 +22,7 @@ export default defineBoot(({ app, router }) => {
           dsn: SENTRY_DSN,
           integrations: [
             vueIntegration({ app }),
+            browserSessionIntegration(),
             browserTracingIntegration({ router }),
             replayIntegration(),
           ],
