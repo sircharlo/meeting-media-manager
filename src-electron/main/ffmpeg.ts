@@ -63,8 +63,9 @@ export const createVideoFromNonVideo = async (
           .inputFormat('image2')
           .videoCodec('libx264')
           .size(`${convertedDimensions.width}x${convertedDimensions.height}`)
-          // .outputOptions('format=yuv420p', '-r 30')
-          .outputOptions('-t 5')
+          .loop(5) // Loop the input for 5 seconds
+          .outputOptions('-pix_fmt', 'yuv420p') // Pixel format
+          .outputOptions('-r', '30') // Frame rate: 30fps
           .save(convertedFilePath)
           .on('end', () => {
             resolve();
