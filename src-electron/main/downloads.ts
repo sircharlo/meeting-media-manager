@@ -172,21 +172,6 @@ async function processQueue() {
   const downloadId = await manager.download({
     callbacks: {
       onDownloadCancelled: async ({ id }) => {
-        captureElectronError(url, {
-          contexts: {
-            fn: {
-              name: 'src-electron/downloads processQueue onDownloadCancelled',
-              params: {
-                directory: saveDir,
-                isDownloadErrorExpected: await isDownloadErrorExpected(),
-                saveAsFilename: destFilename,
-                window: mainWindow?.id,
-              },
-              url,
-            },
-          },
-        });
-
         sendToWindow(mainWindow, 'downloadCancelled', { id });
         activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
         processQueue(); // Process next download
