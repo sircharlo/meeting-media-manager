@@ -5,7 +5,6 @@ import fse from 'fs-extra';
 const { exists } = fse;
 import { join } from 'path';
 
-import { PLATFORM } from './../constants';
 import { captureElectronError } from './utils';
 
 export async function initUpdater() {
@@ -19,8 +18,6 @@ export async function initUpdater() {
 }
 
 export const triggerUpdateCheck = async (attempt = 1) => {
-  // macOS auto-updates are not supported without code signing
-  if (PLATFORM === 'darwin') return;
   if (
     await exists(
       join(app.getPath('userData'), 'Global Preferences', 'disable-updates'),
