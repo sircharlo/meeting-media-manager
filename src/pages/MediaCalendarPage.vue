@@ -1192,9 +1192,14 @@ watchImmediate(
 
 const sortedMediaIds = computed(() => {
   return [
-    ...sortableAdditionalMediaItems.value.filter((m) => !m.hidden),
-    ...sortableMediaItems.value.filter((m) => !m.hidden),
+    ...sortableAdditionalMediaItems.value,
+    ...sortableTgwMediaItems.value,
+    ...sortableAyfmMediaItems.value,
+    ...sortableLacMediaItems.value,
+    ...sortableWtMediaItems.value,
+    ...sortableCircuitOverseerMediaItems.value,
   ]
+    .filter((m) => !m.hidden)
     .map((m) => m.uniqueId)
     .filter((uniqueId, index, self) => self.indexOf(uniqueId) === index);
 });
