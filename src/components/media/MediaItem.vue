@@ -24,6 +24,7 @@
             (media.isImage ? media.fileUrl : media.thumbnailUrl)
           "
           width="150px"
+          @dblclick="zoomIn($event)"
           @error="imageLoadingError"
           @mouseenter="setHoveredBadge(true)"
           @mouseleave="setHoveredBadge(false)"
@@ -722,14 +723,7 @@ import { isFileUrl } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
 import { formatTime, timeToSeconds } from 'src/utils/time';
-import {
-  computed,
-  onMounted,
-  onUnmounted,
-  ref,
-  useTemplateRef,
-  watch,
-} from 'vue';
+import { computed, onUnmounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
@@ -994,6 +988,7 @@ const seekTo = (newSeekTo: null | number) => {
 };
 
 function zoomIn(click?: MouseEvent) {
+  if (!panzoom.value) initiatePanzoom();
   if (!panzoom.value) return;
   const zoomFactor = 0.2;
   try {
@@ -1023,6 +1018,7 @@ const zoomReset = (forced = false, animate = true) => {
   if (!panzoom.value) return;
   if (panzoom.value.getScale() < 1.05 || forced) {
     panzoom.value.reset({ animate });
+    destroyPanzoom();
   }
 };
 
@@ -1078,15 +1074,6 @@ const initiatePanzoom = () => {
 
     useEventListener(
       mediaImage.value.$el,
-      'dblclick',
-      (e) => {
-        zoomIn(e);
-      },
-      { passive: true },
-    );
-
-    useEventListener(
-      mediaImage.value.$el,
       'panzoomend',
       () => {
         zoomReset();
@@ -1131,10 +1118,6 @@ function deleteMedia() {
   removeFromAdditionMediaMap(mediaToDelete.value);
   mediaToDelete.value = '';
 }
-
-onMounted(() => {
-  initiatePanzoom();
-});
 
 onUnmounted(() => {
   destroyPanzoom();
