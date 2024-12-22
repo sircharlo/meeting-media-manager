@@ -1100,11 +1100,7 @@ const [tgwList, sortableTgwMediaItems] = useDragAndDrop<DynamicMediaObject>(
       updateMediaSortPlugin,
       animations(),
       multiDrag({
-        plugins: [
-          selections({
-            selectedClass: 'selected-to-drag',
-          }),
-        ],
+        plugins: [selections({ selectedClass: 'selected-to-drag' })],
       }),
     ],
   },
@@ -1118,11 +1114,7 @@ const [ayfmList, sortableAyfmMediaItems] = useDragAndDrop<DynamicMediaObject>(
       updateMediaSortPlugin,
       animations(),
       multiDrag({
-        plugins: [
-          selections({
-            selectedClass: 'selected-to-drag',
-          }),
-        ],
+        plugins: [selections({ selectedClass: 'selected-to-drag' })],
       }),
     ],
   },
@@ -1136,11 +1128,7 @@ const [lacList, sortableLacMediaItems] = useDragAndDrop<DynamicMediaObject>(
       updateMediaSortPlugin,
       animations(),
       multiDrag({
-        plugins: [
-          selections({
-            selectedClass: 'selected-to-drag',
-          }),
-        ],
+        plugins: [selections({ selectedClass: 'selected-to-drag' })],
       }),
     ],
   },
@@ -1152,11 +1140,7 @@ const [wtList, sortableWtMediaItems] = useDragAndDrop<DynamicMediaObject>([], {
     updateMediaSortPlugin,
     animations(),
     multiDrag({
-      plugins: [
-        selections({
-          selectedClass: 'selected-to-drag',
-        }),
-      ],
+      plugins: [selections({ selectedClass: 'selected-to-drag' })],
     }),
   ],
 });
@@ -1168,11 +1152,7 @@ const [additionalList, sortableAdditionalMediaItems] =
       updateMediaSortPlugin,
       animations(),
       multiDrag({
-        plugins: [
-          selections({
-            selectedClass: 'selected-to-drag',
-          }),
-        ],
+        plugins: [selections({ selectedClass: 'selected-to-drag' })],
       }),
     ],
   });
@@ -1184,11 +1164,7 @@ const [circuitOverseerList, sortableCircuitOverseerMediaItems] =
       updateMediaSortPlugin,
       animations(),
       multiDrag({
-        plugins: [
-          selections({
-            selectedClass: 'selected-to-drag',
-          }),
-        ],
+        plugins: [selections({ selectedClass: 'selected-to-drag' })],
       }),
     ],
   });
