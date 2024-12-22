@@ -28,6 +28,11 @@ export const getPubId = (
     .filter((p) => !isEmpty(p))
     .join('_');
 
+/**
+ * Gets the resolution of a media item.
+ * @param m The media item to get the resolution for.
+ * @returns The resolution of the media item.
+ */
 const getMediaResolution = (m: MediaItemsMediatorFile | MediaLink) => {
   if (/\d+p/.test(m.label)) {
     return parseInt(m.label.replace(/\D/g, ''));
@@ -56,6 +61,7 @@ export function findBestResolution(
         | MediaLink[];
     }
 
+    // Sort by resolution in ascending order
     mediaLinks = mediaLinks.sort((a, b) => {
       const aRes = getMediaResolution(a);
       const bRes = getMediaResolution(b);
