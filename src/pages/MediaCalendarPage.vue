@@ -731,6 +731,16 @@ watch(
   },
 );
 
+const stopScrolling = ref(true);
+const scroll = (step: number) => {
+  const el = document.querySelector('.q-page-container');
+  if (!el) return;
+  el.scrollBy(0, step);
+  if (!stopScrolling.value) {
+    setTimeout(() => scroll(step), 20);
+  }
+};
+
 const updateMediaSortPlugin: DNDPlugin = (parent) => {
   const parentData = parents.get(parent);
   if (!parentData) return;
@@ -760,7 +770,16 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
       }
     });
   };
-  function dragover() {
+  function dragover(e: DragEvent) {
+    stopScrolling.value = true;
+    if (e.clientY < 200) {
+      stopScrolling.value = false;
+      scroll(-1);
+    } else if (window.innerHeight - e.clientY < 200) {
+      stopScrolling.value = false;
+      scroll(1);
+    }
+
     for (const media of sortableAdditionalMediaItems.value) {
       updateMediaSection(media.uniqueId, 'additional');
     }
@@ -782,6 +801,7 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
   }
 
   function dragend() {
+    stopScrolling.value = true;
     const currentCong = currentCongregation.value;
     mediaSort.value[currentCong] ??= {};
     mediaSort.value[currentCong][selectedDate.value] = [
