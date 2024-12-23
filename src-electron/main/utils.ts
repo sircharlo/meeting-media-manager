@@ -3,8 +3,10 @@ import type { ExclusiveEventHintOrCaptureContext } from 'app/node_modules/@sentr
 import { captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
+import { join, resolve } from 'path';
+import { fileURLToPath } from 'url';
 
-import { IS_DEV, JW_DOMAINS, TRUSTED_DOMAINS } from './../constants';
+import { IS_DEV, JW_DOMAINS, PLATFORM, TRUSTED_DOMAINS } from './../constants';
 import { urlVariables } from './session';
 
 /**
@@ -13,6 +15,23 @@ import { urlVariables } from './session';
  */
 export function getAppVersion() {
   return IS_DEV ? version : app.getVersion();
+}
+
+/**
+ * Returns the correct path for an icon based on the platform
+ * @param icon The icon name
+ * @returns The icon path
+ */
+export function getIconPath(icon: 'beta' | 'icon' | 'media-player') {
+  return resolve(
+    join(
+      fileURLToPath(
+        new URL(IS_DEV ? './../../src-electron' : '.', import.meta.url),
+      ),
+      'icons',
+      `${icon}.${PLATFORM === 'win32' ? 'ico' : PLATFORM === 'darwin' ? 'icns' : 'png'}`,
+    ),
+  );
 }
 
 /**

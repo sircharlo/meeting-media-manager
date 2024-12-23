@@ -2,11 +2,9 @@ import type { BrowserWindow } from 'electron';
 import type { ScreenPreferences } from 'src/types';
 
 import { HD_RESOLUTION, PLATFORM } from 'app/src-electron/constants';
-import { join, resolve } from 'path';
-import { fileURLToPath } from 'url';
 
 import { getAllScreens, getWindowScreen, screenPreferences } from './../screen';
-import { captureElectronError } from './../utils';
+import { captureElectronError, getIconPath } from './../utils';
 import { createWindow, sendToWindow } from './window-base';
 import { mainWindow } from './window-main';
 
@@ -27,13 +25,7 @@ export function createMediaWindow() {
     backgroundColor: 'black',
     frame: false,
     height: HD_RESOLUTION[1],
-    icon: resolve(
-      join(
-        fileURLToPath(new URL('.', import.meta.url)),
-        'icons',
-        `media-player.${PLATFORM === 'win32' ? 'ico' : PLATFORM === 'darwin' ? 'icns' : 'png'}`,
-      ),
-    ),
+    icon: getIconPath('media-player'),
     minHeight: 110,
     minWidth: 195,
     thickFrame: false,

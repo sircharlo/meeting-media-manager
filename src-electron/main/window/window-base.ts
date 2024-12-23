@@ -10,7 +10,7 @@ import { join, resolve } from 'path';
 import { fileURLToPath } from 'url';
 
 import { urlVariables } from './../session';
-import { captureElectronError, isBeta } from './../utils';
+import { captureElectronError, getIconPath, isBeta } from './../utils';
 import { StatefulBrowserWindow } from './window-state';
 
 export function closeOtherWindows(source: BrowserWindow) {
@@ -38,18 +38,13 @@ export function createWindow(
   lang = '',
 ) {
   const defaultSize = { height: 600, width: 1000 };
+
   // Create the browser window
   const opts: BrowserWindowConstructorOptions = {
     autoHideMenuBar: true,
     backgroundColor: 'grey',
     height: defaultSize.height,
-    icon: resolve(
-      join(
-        fileURLToPath(new URL('.', import.meta.url)),
-        'icons',
-        `${isBeta() ? 'beta' : 'icon'}.${PLATFORM === 'win32' ? 'ico' : PLATFORM === 'darwin' ? 'icns' : 'png'}`,
-      ),
-    ),
+    icon: getIconPath(isBeta() ? 'beta' : 'icon'),
     minHeight: 450,
     minWidth: 500,
     show: false,
