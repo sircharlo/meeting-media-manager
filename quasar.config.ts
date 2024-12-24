@@ -105,6 +105,7 @@ export default defineConfig((ctx) => {
         },
         mac: {
           extendInfo: {
+            //'com.apple.security.cs.allow-jit': true, 
             'com.apple.security.device.audio-input': true,
             'com.apple.security.device.camera': true,
             'com.apple.security.device.microphone': true,
@@ -113,6 +114,7 @@ export default defineConfig((ctx) => {
             NSMicrophoneUsageDescription:
               "Microphone access is required in order to use the website mirroring feature, as screen recording is treated as camera and microphone access. Please note that your device's microphone will never be accessed or used in any way by this app.",
           },
+          hardenedRuntime: true,
           icon: `icons/${IS_BETA ? 'beta' : 'icon'}.icns`,
           minimumSystemVersion: '10.15',
           publish: ['github'],
