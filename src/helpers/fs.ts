@@ -285,7 +285,6 @@ export const watchExternalFolder = async (folder?: string) => {
 export const setupFFmpeg = async (): Promise<string> => {
   try {
     const currentState = useCurrentStateStore();
-    console.log('setupFFmpeg:', currentState.ffmpegPath);
     if (currentState.ffmpegPath) return currentState.ffmpegPath;
 
     const ffmpegReleases = await fetchLatestRelease();
