@@ -29,6 +29,7 @@
       <div class="row q-px-md q-py-md">
         <q-input
           v-model="filter"
+          autofocus
           class="col"
           clearable
           debounce="100"

@@ -20,6 +20,7 @@
         <div class="col-grow">
           <q-input
             v-model="remoteVideoFilter"
+            autofocus
             clearable
             dense
             :label="t('search')"

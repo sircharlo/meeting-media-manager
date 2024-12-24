@@ -45,9 +45,17 @@
             v-for="category in bibleMediaCategories"
             :key="category"
             :disable="!bibleMediaByCategory[category]?.length"
-            :label="category"
             :name="category"
           >
+            <q-spinner
+              v-if="loadingBooks || loadingMedia || loadingCategories"
+              color="primary"
+              size="xs"
+            />
+            <template v-else>
+              {{ category }}
+            </template>
+
             <q-tooltip
               v-if="!bibleMediaByCategory[category]?.length"
               :delay="500"
@@ -74,7 +82,7 @@
                 <q-spinner color="primary" size="md" />
               </div>
               <template
-                v-for="[label, mediaItems] in groupedMediaItems"
+                v-for="([label, mediaItems], index) in groupedMediaItems"
                 :key="label"
               >
                 <div class="text-subtitle1 col q-px-md">
@@ -158,7 +166,14 @@
                     </div>
                   </template>
                 </div>
-                <q-separator class="bg-accent-200 q-mt-md q-mb-lg" size="2px" />
+                <q-separator
+                  v-if="
+                    groupedMediaItems?.length > 1 &&
+                    index + 1 < groupedMediaItems?.length
+                  "
+                  class="bg-accent-200 q-mt-md q-mb-lg"
+                  size="2px"
+                />
               </template>
             </template>
             <div v-else-if="bibleBook" class="row q-px-md">
@@ -436,11 +451,11 @@ const hoveredMediaItem = ref<MultimediaItem>();
 
 const selectedMediaItems = ref<MultimediaItem[]>([]);
 
-whenever(open, () => {
+whenever(open, async () => {
   resetBibleBook(true);
-  getBibleMediaCategories();
-  getBibleBooks();
-  getBibleMedia();
+  await getBibleMediaCategories();
+  await getBibleBooks();
+  await getBibleMedia();
 });
 
 const getBibleMediaCategories = async () => {

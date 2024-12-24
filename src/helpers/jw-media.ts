@@ -613,6 +613,11 @@ const getStudyBible = async () => {
     let nwtDb: null | string = null;
     for (const langwritten of languages) {
       if (!langwritten) continue;
+      if (langwritten === 'E') {
+        nwtStyDb = await nwtStyDb_E;
+        nwtStyPublication = nwtStyPublication_E;
+        break;
+      }
       nwtStyPublication = {
         fileformat: 'JWPUB',
         langwritten,
@@ -690,7 +695,7 @@ export const getStudyBibleBooks: () => Promise<
       bibleBooksQuery,
     );
 
-    if (nwtStyDb_E) {
+    if (nwtStyDb_E && nwtStyDb_E !== nwtStyDb) {
       const englishBookItems = window.electronApi.executeQuery<MultimediaItem>(
         nwtStyDb_E,
         bibleBooksQuery,
@@ -846,44 +851,55 @@ export const getStudyBibleMedia = async () => {
     const bibleBookDocumentsEndAtId = bibleBookDocumentsEndAt[0]?.DocumentId;
 
     const nonBibleBookMediaItemsQuery = `
-      WITH RankedMultimedia AS (
+      WITH FilteredMultimedia AS (
+        SELECT 
+            m.MultimediaId,
+            m.MimeType,
+            m.CategoryType,
+            dm.DocumentId,
+            m.FilePath,
+            d.Title,
+            pd.Title AS ParentTitle,
+            pd.SectionNumber AS ParentSection,
+            d.SectionNumber,
+            pd.Type AS ParentType,
+            d.Type,
+            lm.FilePath AS CoverPictureFilePath,
+            pd.Class AS ParentClass
+        FROM Multimedia m
+        LEFT JOIN DocumentMultimedia dm 
+            ON m.MultimediaId = dm.MultimediaId
+        LEFT JOIN Multimedia lm 
+            ON m.LinkMultimediaId = lm.MultimediaId
+        LEFT JOIN Document d 
+            ON dm.DocumentId = d.DocumentId
+        LEFT JOIN InternalLink il 
+            ON il.MepsDocumentId = d.MepsDocumentId
+        LEFT JOIN DocumentInternalLink dil 
+            ON dil.InternalLinkId = il.InternalLinkId
+        LEFT JOIN Document pd 
+            ON pd.DocumentId = dil.DocumentId
+        WHERE 
+            m.CategoryType NOT IN (9, 17)
+            AND (pd.Class IS NULL OR pd.Class <> 14)
+            AND (d.SectionNumber IS NULL OR d.SectionNumber <> 1)
+            AND (pd.SectionNumber IS NULL OR pd.SectionNumber <> 1)
+            AND (pd.Type IS NULL OR pd.Type <> 0)
+            ${bibleBookDocumentsStartAtId && bibleBookDocumentsEndAtId ? `AND (d.DocumentId NOT BETWEEN ${bibleBookDocumentsStartAtId} AND ${bibleBookDocumentsEndAtId})` : ''}
+      ),
+      RankedMultimedia AS (
           SELECT 
-              Multimedia.*,
-              Document.DocumentId,
-              Document.Title,
-              ParentDocument.Title AS ParentTitle,
-              ParentDocument.SectionNumber AS ParentSection,
-              Document.SectionNumber,
-              ParentDocument.Type AS ParentType,
-              Document.Type,
-              LinkedMultimedia.FilePath AS CoverPictureFilePath,
-              ROW_NUMBER() OVER (PARTITION BY Multimedia.MultimediaId ORDER BY Document.DocumentId, ParentDocument.Class DESC) AS RowNum
-          FROM Multimedia
-          LEFT JOIN DocumentMultimedia 
-              ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId
-          LEFT JOIN Multimedia AS LinkedMultimedia 
-              ON Multimedia.LinkMultimediaId = LinkedMultimedia.MultimediaId
-          LEFT JOIN Document 
-              ON Document.DocumentId = DocumentMultimedia.DocumentId
-          LEFT JOIN InternalLink 
-              ON InternalLink.MepsDocumentId = Document.MepsDocumentId
-          LEFT JOIN DocumentInternalLink 
-              ON DocumentInternalLink.InternalLinkId = InternalLink.InternalLinkId
-          LEFT JOIN Document AS ParentDocument 
-              ON ParentDocument.DocumentId = DocumentInternalLink.DocumentId
-          WHERE 
-              Multimedia.CategoryType <> 9 
-              AND Multimedia.CategoryType <> 17 
-              AND (ParentDocument.Class IS NULL OR ParentDocument.Class <> 14)
-              AND (Document.SectionNumber IS NULL OR Document.SectionNumber <> 1)
-              AND (ParentDocument.SectionNumber IS NULL OR ParentDocument.SectionNumber <> 1)
-              AND (ParentDocument.Type IS NULL OR ParentDocument.Type <> 0)
-              ${bibleBookDocumentsStartAtId && bibleBookDocumentsEndAtId ? `AND (Document.DocumentId < ${bibleBookDocumentsStartAtId} OR Document.DocumentId > ${bibleBookDocumentsEndAtId})` : ''}
+              *,
+              ROW_NUMBER() OVER (
+                  PARTITION BY MultimediaId 
+                  ORDER BY DocumentId, ParentClass DESC
+              ) AS RowNum
+          FROM FilteredMultimedia
       )
       SELECT *
       FROM RankedMultimedia
       WHERE RowNum = 1;
-  `;
+    `;
 
     const nonBibleBookMediaItems =
       window.electronApi.executeQuery<MultimediaItem>(
@@ -891,7 +907,7 @@ export const getStudyBibleMedia = async () => {
         nonBibleBookMediaItemsQuery,
       );
 
-    if (nwtStyDb_E) {
+    if (nwtStyDb_E && nwtStyDb_E !== nwtStyDb) {
       const englishBibleBookMediaItems =
         window.electronApi.executeQuery<MultimediaItem>(
           nwtStyDb_E,

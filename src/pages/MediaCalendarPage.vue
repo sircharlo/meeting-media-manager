@@ -731,6 +731,16 @@ watch(
   },
 );
 
+const stopScrolling = ref(true);
+const scroll = (step: number) => {
+  const el = document.querySelector('.q-page-container');
+  if (!el) return;
+  el.scrollBy(0, step);
+  if (!stopScrolling.value) {
+    setTimeout(() => scroll(step), 20);
+  }
+};
+
 const updateMediaSortPlugin: DNDPlugin = (parent) => {
   const parentData = parents.get(parent);
   if (!parentData) return;
@@ -760,7 +770,16 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
       }
     });
   };
-  function dragover() {
+  function dragover(e: DragEvent) {
+    stopScrolling.value = true;
+    if (e.clientY < 200) {
+      stopScrolling.value = false;
+      scroll(-1);
+    } else if (window.innerHeight - e.clientY < 200) {
+      stopScrolling.value = false;
+      scroll(1);
+    }
+
     for (const media of sortableAdditionalMediaItems.value) {
       updateMediaSection(media.uniqueId, 'additional');
     }
@@ -782,6 +801,7 @@ const updateMediaSortPlugin: DNDPlugin = (parent) => {
   }
 
   function dragend() {
+    stopScrolling.value = true;
     const currentCong = currentCongregation.value;
     mediaSort.value[currentCong] ??= {};
     mediaSort.value[currentCong][selectedDate.value] = [
@@ -1080,11 +1100,7 @@ const [tgwList, sortableTgwMediaItems] = useDragAndDrop<DynamicMediaObject>(
       updateMediaSortPlugin,
       animations(),
       multiDrag({
-        plugins: [
-          selections({
-            selectedClass: 'selected-to-drag',
-          }),
-        ],
+        plugins: [selections({ selectedClass: 'selected-to-drag' })],
       }),
     ],
   },
@@ -1098,11 +1114,7 @@ const [ayfmList, sortableAyfmMediaItems] = useDragAndDrop<DynamicMediaObject>(
       updateMediaSortPlugin,
       animations(),
       multiDrag({
-        plugins: [
-          selections({
-            selectedClass: 'selected-to-drag',
-          }),
-        ],
+        plugins: [selections({ selectedClass: 'selected-to-drag' })],
       }),
     ],
   },
@@ -1116,11 +1128,7 @@ const [lacList, sortableLacMediaItems] = useDragAndDrop<DynamicMediaObject>(
       updateMediaSortPlugin,
       animations(),
       multiDrag({
-        plugins: [
-          selections({
-            selectedClass: 'selected-to-drag',
-          }),
-        ],
+        plugins: [selections({ selectedClass: 'selected-to-drag' })],
       }),
     ],
   },
@@ -1132,11 +1140,7 @@ const [wtList, sortableWtMediaItems] = useDragAndDrop<DynamicMediaObject>([], {
     updateMediaSortPlugin,
     animations(),
     multiDrag({
-      plugins: [
-        selections({
-          selectedClass: 'selected-to-drag',
-        }),
-      ],
+      plugins: [selections({ selectedClass: 'selected-to-drag' })],
     }),
   ],
 });
@@ -1148,11 +1152,7 @@ const [additionalList, sortableAdditionalMediaItems] =
       updateMediaSortPlugin,
       animations(),
       multiDrag({
-        plugins: [
-          selections({
-            selectedClass: 'selected-to-drag',
-          }),
-        ],
+        plugins: [selections({ selectedClass: 'selected-to-drag' })],
       }),
     ],
   });
@@ -1164,11 +1164,7 @@ const [circuitOverseerList, sortableCircuitOverseerMediaItems] =
       updateMediaSortPlugin,
       animations(),
       multiDrag({
-        plugins: [
-          selections({
-            selectedClass: 'selected-to-drag',
-          }),
-        ],
+        plugins: [selections({ selectedClass: 'selected-to-drag' })],
       }),
     ],
   });
@@ -1192,9 +1188,14 @@ watchImmediate(
 
 const sortedMediaIds = computed(() => {
   return [
-    ...sortableAdditionalMediaItems.value.filter((m) => !m.hidden),
-    ...sortableMediaItems.value.filter((m) => !m.hidden),
+    ...sortableAdditionalMediaItems.value,
+    ...sortableTgwMediaItems.value,
+    ...sortableAyfmMediaItems.value,
+    ...sortableLacMediaItems.value,
+    ...sortableWtMediaItems.value,
+    ...sortableCircuitOverseerMediaItems.value,
   ]
+    .filter((m) => !m.hidden)
     .map((m) => m.uniqueId)
     .filter((uniqueId, index, self) => self.indexOf(uniqueId) === index);
 });

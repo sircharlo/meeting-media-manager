@@ -20,6 +20,7 @@ export type LanguageValue =
   | 'ptPt'
   | 'ro'
   | 'ru'
+  | 'sk'
   | 'sl'
   | 'sv'
   | 'sw'
@@ -178,6 +179,13 @@ export const locales: {
     langcode: 'U',
     signLangCodes: ['RSL'],
     value: 'ru',
+  },
+  {
+    englishName: 'Slovak',
+    label: 'slovenčina',
+    langcode: 'V',
+    signLangCodes: ['VSL'],
+    value: 'sk',
   },
   {
     englishName: 'Slovenian',

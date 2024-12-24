@@ -88,8 +88,8 @@ const obsState = useObsStateStore();
 const { obsConnectionState, scenes } = storeToRefs(obsState);
 const { dateLocale, t } = useLocale();
 
-const filteredJwLanguages = ref(jwLanguages.value?.list || []);
-const filteredLocaleAppLang = ref(localeOptions);
+const filteredJwLanguages = ref([...(jwLanguages.value?.list || [])]);
+const filteredLocaleAppLang = ref([...localeOptions]);
 const filteredResolutions = ref<string[]>([...RESOLUTIONS]);
 const filteredDays = ref(
   Array.from({ length: 7 }, (_, i) => ({
@@ -102,7 +102,7 @@ const filteredDarkModes = ref([
   { description: t('dark'), label: t('dark'), value: true },
   { description: t('light'), label: t('light'), value: false },
 ]);
-const filteredObsScenes = ref<JsonObject[]>([]);
+const filteredObsScenes = ref<JsonObject[]>([...scenes.value]);
 
 const customDisabled = computed(() => {
   return (
@@ -210,11 +210,11 @@ const listOptions = computed(
         return filteredDays.value;
       } else if (props.list?.startsWith('obs')) {
         return filteredObsScenes.value.map((scene) => ({
-          label: scene.sceneName?.toString() ?? 'Unknown scene',
+          label: scene.sceneName?.toString() || 'Unknown scene',
           value:
             configuredScenesAreAllUUIDs.value && scene.sceneUuid
               ? scene.sceneUuid.toString()
-              : (scene.sceneName?.toString() ?? 'Unknown scene'),
+              : scene.sceneName?.toString() || 'Unknown scene',
         }));
       } else {
         throw new Error('List not found: ' + props.list);

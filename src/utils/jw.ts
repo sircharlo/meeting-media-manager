@@ -29,6 +29,19 @@ export const getPubId = (
     .join('_');
 
 /**
+ * Gets the resolution of a media item.
+ * @param m The media item to get the resolution for.
+ * @returns The resolution of the media item.
+ */
+const getMediaResolution = (m: MediaItemsMediatorFile | MediaLink) => {
+  if (/\d+p/.test(m.label)) {
+    return parseInt(m.label.replace(/\D/g, ''));
+  } else {
+    return m.frameHeight;
+  }
+};
+
+/**
  * Find the best resolution for a media item
  * @param mediaLinks The media items to choose from
  * @param maxRes The maximum resolution to choose
@@ -40,10 +53,7 @@ export function findBestResolution(
 ) {
   try {
     if (!mediaLinks?.length) return null;
-
-    let bestItem = null;
-    let bestHeight = 0;
-    const parsedMaxRes = parseInt(maxRes?.replace(/\D/g, '') || '0');
+    if (mediaLinks.length === 1) return mediaLinks[0];
 
     if (mediaLinks.some((m) => !m.subtitled)) {
       mediaLinks = mediaLinks.filter((m) => !m.subtitled) as
@@ -51,15 +61,21 @@ export function findBestResolution(
         | MediaLink[];
     }
 
-    for (const mediaLink of mediaLinks) {
-      if (
-        mediaLink.frameHeight <= parsedMaxRes &&
-        mediaLink.frameHeight >= bestHeight
-      ) {
-        bestItem = mediaLink;
-        bestHeight = mediaLink.frameHeight;
+    // Sort by resolution in ascending order
+    mediaLinks = mediaLinks.sort((a, b) => {
+      const aRes = getMediaResolution(a);
+      const bRes = getMediaResolution(b);
+      return aRes - bRes;
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    let bestItem: MediaItemsMediatorFile | MediaLink = mediaLinks[0]!;
+    const parsedMaxRes = parseInt(maxRes?.replace(/\D/g, '') || '720');
+    mediaLinks.forEach((m) => {
+      if (parsedMaxRes && getMediaResolution(m) <= parsedMaxRes) {
+        bestItem = m;
       }
-    }
+    });
     return bestItem;
   } catch (e) {
     errorCatcher(e);

@@ -1,5 +1,5 @@
 import type {
-  DownloadedFile,
+  Asset,
   MultimediaItem,
   PublicationFetcher,
   Release,
@@ -275,92 +275,135 @@ export const watchExternalFolder = async (folder?: string) => {
   }
 };
 
+/**
+ * Sets up FFmpeg.
+ *
+ * Downloads and extracts the latest version of FFmpeg if needed, and stores the path to the executable in the current state store.
+ *
+ * @returns The path to the FFmpeg executable, or an empty string if the setup failed.
+ */
 export const setupFFmpeg = async (): Promise<string> => {
   try {
     const currentState = useCurrentStateStore();
     if (currentState.ffmpegPath) return currentState.ffmpegPath;
 
-    const ffmpegReleases = await fetchJson<Release>(
-      'https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest',
-    );
-
-    if (!ffmpegReleases?.assets?.length) {
-      throw new Error('Could not determine FFmpeg version.');
-    }
-
+    const ffmpegReleases = await fetchLatestRelease();
     const target =
       Platform.is.platform === 'mac' ? 'macos' : Platform.is.platform;
+    const version = getValidVersion(ffmpegReleases, target);
 
-    const versions = ffmpegReleases.assets.filter(
-      (a: { name: string }) =>
-        a.name.includes(target + '-64') && a.name.includes('ffmpeg'),
-    );
-    if (!versions?.length) {
-      throw new Error('Could not find valid FFmpeg versions for ' + target);
+    const ffmpegDir = await getFFmpegDirectory();
+    const ffmpegZipPath = window.electronApi.path.join(ffmpegDir, version.name);
+
+    if (await validateExistingFile(ffmpegZipPath, version.size, ffmpegDir)) {
+      return currentState.ffmpegPath;
     }
 
-    const version = versions[0];
-    if (!version) {
-      throw new Error('Could not find valid FFmpeg version for ' + target);
-    }
-
-    const ffmpegDir = window.electronApi.path.join(
-      await window.electronApi.getUserDataPath(),
-      'ffmpeg',
-    );
-
-    const ffmpegZipPath = window.electronApi.path.join(
-      ffmpegDir,
-      window.electronApi.path.basename(version.browser_download_url),
-    );
-
-    const downloadId = await window.electronApi.downloadFile(
+    await downloadFfmpeg(
       version.browser_download_url,
-      ffmpegDir,
-    );
-
-    await new Promise<DownloadedFile>((resolve) => {
-      const interval = setInterval(() => {
-        if (!downloadId) {
-          clearInterval(interval);
-          resolve({
-            error: true,
-            path: ffmpegZipPath,
-          });
-          return;
-        }
-        if (currentState.downloadProgress[downloadId]?.complete) {
-          clearInterval(interval);
-          resolve({
-            new: true,
-            path: ffmpegZipPath,
-          });
-        }
-      }, 500); // Check every 500ms
-    });
-
-    const ffmpegPaths = await window.electronApi.decompress(
       ffmpegZipPath,
       ffmpegDir,
     );
-
-    if (!ffmpegPaths) {
-      throw new Error('Could not decompress FFmpeg.');
-    }
-
-    const ffmpegFile = ffmpegPaths.find((f) => f.path.includes('ffmpeg')) || '';
-
-    if (!ffmpegFile) {
-      throw new Error('Could not find FFmpeg.');
-    }
-
-    const ffmpegPath = window.electronApi.path.join(ffmpegDir, ffmpegFile.path);
+    const ffmpegPath = await decompressAndFindFFmpeg(ffmpegZipPath, ffmpegDir);
 
     currentState.ffmpegPath = ffmpegPath;
-
     return ffmpegPath;
   } catch (e: unknown) {
     errorCatcher(e);
     return '';
   }
 };
+
+// Decompress FFmpeg and find executable
+async function decompressAndFindFFmpeg(
+  zipPath: string,
+  dir: string,
+): Promise<string> {
+  const ffmpegPaths = await window.electronApi.decompress(zipPath, dir);
+  if (!ffmpegPaths?.length) {
+    throw new Error('Could not decompress FFmpeg.');
+  }
+  const ffmpegFile = ffmpegPaths.find((f) => f.path.includes('ffmpeg'));
+  if (!ffmpegFile) {
+    throw new Error('Could not find FFmpeg.');
+  }
+  return window.electronApi.path.join(dir, ffmpegFile.path);
+}
+
+// Download FFmpeg
+async function downloadFfmpeg(
+  url: string,
+  zipPath: string,
+  dir: string,
+): Promise<void> {
+  const downloadId = await window.electronApi.downloadFile(url, dir);
+
+  await new Promise<void>((resolve, reject) => {
+    const interval = setInterval(() => {
+      if (!downloadId) {
+        clearInterval(interval);
+        reject(new Error('Download failed'));
+      } else {
+        const progress = useCurrentStateStore().downloadProgress[downloadId];
+        if (progress?.complete) {
+          clearInterval(interval);
+          resolve();
+        }
+      }
+    }, 500);
+  });
+}
+
+// Fetch the latest FFmpeg release
+async function fetchLatestRelease(): Promise<Release> {
+  const ffmpegReleases = await fetchJson<Release>(
+    'https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest',
+  );
+  if (!ffmpegReleases?.assets?.length) {
+    throw new Error('Could not determine FFmpeg version.');
+  }
+  return ffmpegReleases;
+}
+
+// Get the FFmpeg directory path
+async function getFFmpegDirectory(): Promise<string> {
+  const ffmpegDir = window.electronApi.path.join(
+    await window.electronApi.getUserDataPath(),
+    'ffmpeg',
+  );
+  return ffmpegDir;
+}
+
+// Get a valid FFmpeg version for the target platform
+function getValidVersion(releases: Release, target: string): Asset {
+  const versions = releases.assets.filter(
+    (a) => a.name.includes(`${target}-64`) && a.name.includes('ffmpeg'),
+  );
+  if (!versions.length || !versions[0]) {
+    throw new Error(`Could not find valid FFmpeg versions for ${target}`);
+  }
+  return versions[0];
+}
+
+// Validate if an existing file is usable
+async function validateExistingFile(
+  zipPath: string,
+  size: number,
+  dir: string,
+): Promise<boolean> {
+  if (await window.electronApi.fs.pathExists(zipPath)) {
+    const zipStat = await window.electronApi.fs.stat(zipPath);
+    if (zipStat.size === size) {
+      const exeName =
+        (await window.electronApi.fs.readdir(dir)).find(
+          (f) => f !== window.electronApi.path.basename(zipPath),
+        ) || '';
+      if (exeName) {
+        const exePath = window.electronApi.path.join(dir, exeName);
+        useCurrentStateStore().ffmpegPath = exePath;
+        return true;
+      }
+    }
+  }
+  return false;
+}
