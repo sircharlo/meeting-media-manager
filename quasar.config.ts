@@ -105,8 +105,8 @@ export default defineConfig((ctx) => {
         },
         mac: {
           extendInfo: {
-            'com.apple.security.cs.allow-jit': true, 'com.apple.security.cs.allow-unsigned-executable-memory': true,
-            //'com.apple.security.device.audio-input': true,
+            //'com.apple.security.cs.allow-jit': true, 
+            'com.apple.security.device.audio-input': true,
             'com.apple.security.device.camera': true,
             'com.apple.security.device.microphone': true,
             NSCameraUsageDescription:
