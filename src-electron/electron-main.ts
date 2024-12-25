@@ -28,6 +28,10 @@ import {
   mainWindow,
 } from './main/window/window-main';
 
+if (PLATFORM === 'win32') {
+  app.setAppUserModelId('sircharlo.meeting-media-manager');
+}
+
 if (process.env.PORTABLE_EXECUTABLE_DIR) {
   app.setPath('appData', process.env.PORTABLE_EXECUTABLE_DIR);
   app.setPath(
