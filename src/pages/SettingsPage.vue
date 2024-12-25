@@ -109,6 +109,7 @@
                   'rounded-borders': true,
                 }"
                 :inset-level="1"
+                :style="$q.screen.lt.sm ? 'flex-direction: column' : ''"
                 tag="label"
               >
                 <q-item-section>
@@ -117,11 +118,18 @@
                     {{ t(settingId + '-explain') }}
                   </q-item-label>
                 </q-item-section>
-                <q-item-section side style="align-items: end">
+                <q-item-section
+                  side
+                  :style="
+                    ($q.screen.lt.sm ? 'padding-left: 0' : '') +
+                    ';align-items: end'
+                  "
+                >
                   <BaseInput
                     v-model="currentSettings[settingId]"
                     :item="item"
                     :setting-id="settingId"
+                    :style="$q.screen.lt.sm ? 'width: 100%;max-width:100%' : ''"
                   />
                 </q-item-section>
               </q-item>
@@ -145,7 +153,7 @@ import type {
 import { whenever } from '@vueuse/core';
 import { useRouteParams } from '@vueuse/router';
 import { storeToRefs } from 'pinia';
-import { type QForm, useMeta } from 'quasar';
+import { type QForm, useMeta, useQuasar } from 'quasar';
 import BaseInput from 'src/components/form-inputs/BaseInput.vue';
 import { settingsDefinitions, settingsGroups } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -156,6 +164,8 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 useMeta({ title: t('titles.settings') });
+
+const $q = useQuasar();
 
 // Store initializations
 const currentState = useCurrentStateStore();

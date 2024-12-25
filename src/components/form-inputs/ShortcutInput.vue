@@ -24,48 +24,48 @@
       outline
       @click="shortcutPicker = true"
     />
-  </div>
-  <q-dialog
-    v-model="shortcutPicker"
-    @hide="stopListening()"
-    @show="startListening()"
-  >
-    <q-card class="modal-confirm">
-      <q-card-section
-        class="row items-center text-bigger text-semibold q-pb-none"
-      >
-        {{ t('enter-a-key-combination') }}
-      </q-card-section>
-      <q-card-section class="row items-center">
-        {{ t('enter-a-key-combination-now-using-your-keyboard') }}
-      </q-card-section>
-      <q-card-section class="q-pt-none text-center row">
-        <template v-if="localValue">
-          <template v-for="(key, index) in localValue.split('+')" :key="key">
-            <div
-              :class="
-                'col text-uppercase bg-primary text-white q-pa-sm rounded-borders ' +
-                (index > 0 ? 'q-ml-sm' : '')
-              "
-            >
-              {{ key }}
-            </div>
+    <q-dialog
+      v-model="shortcutPicker"
+      @hide="stopListening()"
+      @show="startListening()"
+    >
+      <q-card class="modal-confirm">
+        <q-card-section
+          class="row items-center text-bigger text-semibold q-pb-none"
+        >
+          {{ t('enter-a-key-combination') }}
+        </q-card-section>
+        <q-card-section class="row items-center">
+          {{ t('enter-a-key-combination-now-using-your-keyboard') }}
+        </q-card-section>
+        <q-card-section class="q-pt-none text-center row">
+          <template v-if="localValue">
+            <template v-for="(key, index) in localValue.split('+')" :key="key">
+              <div
+                :class="
+                  'col text-uppercase bg-primary text-white q-pa-sm rounded-borders ' +
+                  (index > 0 ? 'q-ml-sm' : '')
+                "
+              >
+                {{ key }}
+              </div>
+            </template>
           </template>
-        </template>
-      </q-card-section>
+        </q-card-section>
 
-      <q-card-actions align="right" class="text-primary">
-        <q-btn
-          v-close-popup
-          color="negative"
-          flat
-          :label="t('clear')"
-          @click="localValue = ''"
-        />
-        <q-btn v-close-popup flat :label="t('confirm')" />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
+        <q-card-actions align="right" class="text-primary">
+          <q-btn
+            v-close-popup
+            color="negative"
+            flat
+            :label="t('clear')"
+            @click="localValue = ''"
+          />
+          <q-btn v-close-popup flat :label="t('confirm')" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  </div>
 </template>
 
 <script setup lang="ts">
