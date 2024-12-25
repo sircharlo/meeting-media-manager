@@ -92,6 +92,34 @@ export const parseVersion = (version: string) => {
 };
 
 /**
+ * Gets the previous version of a version.
+ * @param version The version to get the previous version of.
+ * @returns The previous version.
+ * @example
+ * getPreviousVersion('1.2.3') // '1.2.3-rc.999'
+ * getPreviousVersion('1.2.3-beta.0') // '1.2.3-alpha.999'
+ */
+export const getPreviousVersion = (version: string) => {
+  const { major, minor, patch, prerelease, prereleaseVersion } =
+    parseVersion(version);
+
+  if (prerelease && prereleaseVersion > 0) {
+    return `${major}.${minor}.${patch}-${prerelease}.${prereleaseVersion - 1}`;
+  } else if (prerelease === 'rc' && prereleaseVersion === 0) {
+    return `${major}.${minor}.${patch}-beta.999`;
+  } else if (prerelease === 'beta' && prereleaseVersion === 0) {
+    return `${major}.${minor}.${patch}-alpha.999`;
+  } else if (prerelease === 'alpha' && prereleaseVersion === 0) {
+    if (patch > 0) return `${major}.${minor}.${patch - 1}`;
+    if (minor > 0) return `${major}.${minor - 1}.999`;
+    if (major > 0) return `${major - 1}.999.999`;
+  } else if (!prerelease) {
+    return `${major}.${minor}.${patch}-rc.999`;
+  }
+  return version;
+};
+
+/**
  * Checks if a version is within bounds.
  * @param version The version to check.
  * @param minVersion The minimum version.
