@@ -70,7 +70,7 @@
                                   )
                                 : !currentSettings?.[item.unless])),
                         )
-                        .filter(([settingId, item]) => item.group === groupId)[
+                        .filter(([, item]) => item.group === groupId)[
                         index - 1
                       ]?.[1].subgroup)
                 "
@@ -79,8 +79,9 @@
                 <q-item-label
                   class="q-pl-xl q-ml-lg text-accent-400 text-uppercase"
                   header
-                  >{{ t(item.subgroup) }}</q-item-label
                 >
+                  {{ t(item.subgroup) }}
+                </q-item-label>
               </template>
               <q-separator
                 v-if="index === 0 && !item.subgroup"
@@ -109,7 +110,11 @@
                   'rounded-borders': true,
                 }"
                 :inset-level="1"
-                :style="$q.screen.lt.sm ? 'flex-direction: column' : ''"
+                :style="
+                  $q.screen.lt.sm && item.type !== 'toggle'
+                    ? 'flex-direction: column'
+                    : ''
+                "
                 tag="label"
               >
                 <q-item-section>
