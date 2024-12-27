@@ -67,7 +67,9 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Run tests
-        run: yarn test:unit:ci
+        run: |
+          yarn quasar prepare
+          yarn test:unit:ci
   build:
     runs-on: ${{ matrix.os }}
     needs: [lint, test]
