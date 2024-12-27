@@ -1,8 +1,8 @@
 import type { Announcement, Release } from 'src/types';
 
 export const releases: Release[] = [
-  { prerelease: true, tag_name: 'v1.2.4-beta.0' },
-  { prerelease: false, tag_name: 'v1.2.3' },
+  { assets: [], prerelease: true, tag_name: 'v1.2.4-beta.0' },
+  { assets: [], prerelease: false, tag_name: 'v1.2.3' },
 ];
 
 export const announcements: Announcement[] = [

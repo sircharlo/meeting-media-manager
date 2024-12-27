@@ -37,7 +37,7 @@ export interface Author {
 }
 
 export interface Release {
-  assets?: Asset[];
+  assets: Asset[];
   assets_url?: string;
   author?: Author;
   body?: null | string;

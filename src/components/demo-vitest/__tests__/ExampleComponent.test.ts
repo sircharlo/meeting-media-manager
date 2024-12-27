@@ -20,8 +20,10 @@ describe('example Component', () => {
         ],
       },
     });
+    // @ts-expect-error clickCount is not in the component
     expect(wrapper.vm.clickCount).toBe(0);
     await wrapper.find('.q-item').trigger('click');
+    // @ts-expect-error clickCount is not in the component
     expect(wrapper.vm.clickCount).toBe(1);
   });
 
