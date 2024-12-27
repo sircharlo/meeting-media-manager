@@ -51,6 +51,8 @@ jobs:
           yarn quasar prepare
           yarn lint
           yarn type-check
+      - name: Run tests
+        run: yarn test:unit:ci
       - name: Install Apple certificate
         if: runner.os == 'macOS'
         env:

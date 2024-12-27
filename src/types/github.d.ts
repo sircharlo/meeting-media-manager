@@ -33,25 +33,28 @@ export interface Author {
   subscriptions_url: string;
   type: string;
   url: string;
+  user_view_type: string;
 }
 
 export interface Release {
-  assets: Asset[];
-  assets_url: string;
-  author: Author;
-  body: null | string;
-  created_at: string;
-  discussion_url: string;
-  draft: boolean;
-  html_url: string;
-  id: number;
-  name: null | string;
-  node_id: string;
+  assets?: Asset[];
+  assets_url?: string;
+  author?: Author;
+  body?: null | string;
+  created_at?: string;
+  discussion_url?: string;
+  draft?: boolean;
+  html_url?: string;
+  id?: number;
+  mentions_count?: number;
+  name?: null | string;
+  node_id?: string;
   prerelease: boolean;
-  published_at: string;
+  published_at?: string;
   tag_name: string;
-  tarball_url: null | string;
-  upload_url: string;
-  url: string;
-  zipball_url: null | string;
+  tarball_url?: null | string;
+  target_commitish?: string;
+  upload_url?: string;
+  url?: string;
+  zipball_url?: null | string;
 }

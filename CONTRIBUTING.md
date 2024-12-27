@@ -69,8 +69,11 @@ yarn lint
 # Check for type errors
 yarn type-check
 
-# Run tests
-yarn test
+# Run unit tests with a listener
+yarn test:unit
+
+# Run unit tests with UI
+yarn test:unit:ui
 ```
 
 ### Build Tools
