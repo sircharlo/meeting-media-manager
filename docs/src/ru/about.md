@@ -14,7 +14,7 @@ M³ раньше было известно как JWMMF (JW Meeting Media Fetche
 
 :::
 
-## Why choose M³? {#why-choose-m3}
+## Почему стоит выбрать M³? {#why-choose-m3}
 
 M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms.
 
