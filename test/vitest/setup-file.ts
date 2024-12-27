@@ -1,4 +1,3 @@
-import pkg from 'app/package.json';
 import { vol } from 'memfs';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
@@ -21,20 +20,19 @@ export const restHandlers = [
     return HttpResponse.json(jwYeartext);
   }),
   http.get(
-    `${pkg.repository.url
-      .replace('.git', '')
-      .replace('github.com', 'api.github.com/repos')}/releases`,
+    `${process.env.repository?.replace(
+      'github.com',
+      'api.github.com/repos',
+    )}/releases`,
     () => {
       return HttpResponse.json(releases);
     },
   ),
   http.get(
-    `${pkg.repository.url
-      .replace('.git', '')
-      .replace(
-        'github',
-        'raw.githubusercontent',
-      )}/refs/heads/master/announcements.json`,
+    `${process.env.repository?.replace(
+      'github',
+      'raw.githubusercontent',
+    )}/refs/heads/master/announcements.json`,
     () => {
       return HttpResponse.json(announcements);
     },

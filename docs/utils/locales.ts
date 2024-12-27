@@ -180,4 +180,6 @@ export const mapThemeConfig = (
   ],
   sidebarMenuLabel: msg.sidebarMenuLabel,
   siteTitle: msg.title,
+  // @ts-expect-error: `skipToContentLabel` is missing in `DefaultTheme`.
+  skipToContentLabel: msg.skipToContentLabel,
 });
