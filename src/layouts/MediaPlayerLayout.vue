@@ -10,6 +10,7 @@
 <script setup lang="ts">
 import { useMeta } from 'quasar';
 import { onMounted } from 'vue';
+
 useMeta({
   title: 'Media Player',
   titleTemplate: (title) => `${title} - M³`,
