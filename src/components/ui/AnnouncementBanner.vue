@@ -53,7 +53,7 @@ import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { fetchAnnouncements, fetchLatestVersion } from 'src/utils/api';
 import { updatesDisabled } from 'src/utils/fs';
-import { isVersionWithinBounds, parseVersion } from 'src/utils/general';
+import { getPreviousVersion, isVersionWithinBounds } from 'src/utils/general';
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -122,11 +122,10 @@ const loadAnnouncements = async () => {
 };
 
 const newUpdateAnnouncement = computed((): Announcement => {
-  const { major, minor, patch } = parseVersion(latestVersion.value || '1.1.0');
   return {
     actions: ['update'],
     id: 'new-update',
-    maxVersion: `${major}.${patch ? minor : minor - 1}.${patch ? patch - 1 : 99}`,
+    maxVersion: getPreviousVersion(latestVersion.value || '1.1.0'),
     message: 'update-available',
     persistent: true,
     platform: updatesEnabled.value ? ['mac'] : undefined,

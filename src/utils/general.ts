@@ -1,5 +1,3 @@
-import { errorCatcher } from 'src/helpers/error-catcher';
-
 /**
  * Converts a camelCase string to kebab-case.
  * @param str The camelCase string to convert.
@@ -53,19 +51,10 @@ export const isEmpty = (val: unknown) =>
  * Santitizes a string to be used as an html id.
  * @param id The id to sanitize.
  * @returns The sanitized id.
+ * @example
+ * sanitizeId('Figure_: "2-persons!".') // 'Figure_:__2-persons__.'
  */
-export const sanitizeId = (id: string) => {
-  try {
-    const regex = /[a-zA-Z0-9\-_:.]/g;
-    const sanitizedString = id.replace(regex, function (match) {
-      return match;
-    });
-    return sanitizedString;
-  } catch (e) {
-    errorCatcher(e);
-    return id;
-  }
-};
+export const sanitizeId = (id: string) => id.replace(/[^a-zA-Z0-9\-_:.]/g, '_');
 
 /**
  * Parses a version string into an object.
@@ -87,8 +76,36 @@ export const parseVersion = (version: string) => {
     minor: minor ?? 0,
     patch: patch ?? 0,
     prerelease: prTag,
-    prereleaseVersion: prVersion ? parseInt(prVersion) : undefined,
+    prereleaseVersion: parseInt(prVersion || '0'),
   };
+};
+
+/**
+ * Gets the previous version of a version.
+ * @param version The version to get the previous version of.
+ * @returns The previous version.
+ * @example
+ * getPreviousVersion('1.2.3') // '1.2.3-rc.999'
+ * getPreviousVersion('1.2.3-beta.0') // '1.2.3-alpha.999'
+ */
+export const getPreviousVersion = (version: string) => {
+  const { major, minor, patch, prerelease, prereleaseVersion } =
+    parseVersion(version);
+
+  if (prerelease && prereleaseVersion > 0) {
+    return `${major}.${minor}.${patch}-${prerelease}.${prereleaseVersion - 1}`;
+  } else if (prerelease === 'rc' && prereleaseVersion === 0) {
+    return `${major}.${minor}.${patch}-beta.999`;
+  } else if (prerelease === 'beta' && prereleaseVersion === 0) {
+    return `${major}.${minor}.${patch}-alpha.999`;
+  } else if (prerelease === 'alpha' && prereleaseVersion === 0) {
+    if (patch > 0) return `${major}.${minor}.${patch - 1}`;
+    if (minor > 0) return `${major}.${minor - 1}.999`;
+    if (major > 0) return `${major - 1}.999.999`;
+  } else if (!prerelease) {
+    return `${major}.${minor}.${patch}-rc.999`;
+  }
+  return version;
 };
 
 /**
@@ -107,35 +124,49 @@ export const isVersionWithinBounds = (
   maxVersion?: string,
 ) => {
   if (!version || (!minVersion && !maxVersion)) return true;
-  const { major, minor, patch } = parseVersion(version);
 
-  if (minVersion) {
-    const {
-      major: minMajor,
-      minor: minMinor,
-      patch: minPatch,
-    } = parseVersion(minVersion);
-    if (major < minMajor) return false;
-    if (major === minMajor && minor < minMinor) return false;
-    if (major === minMajor && minor === minMinor && patch < minPatch) {
-      return false;
-    }
-  }
-
-  if (maxVersion) {
-    const {
-      major: maxMajor,
-      minor: maxMinor,
-      patch: maxPatch,
-    } = parseVersion(maxVersion);
-    if (major > maxMajor) return false;
-    if (major === maxMajor && minor > maxMinor) return false;
-    if (major === maxMajor && minor === maxMinor && patch > maxPatch) {
-      return false;
-    }
-  }
+  if (minVersion && sortByVersion(version, minVersion) < 0) return false;
+  if (maxVersion && sortByVersion(version, maxVersion) > 0) return false;
 
   return true;
+};
+
+/**
+ * Sorts versions in ascending order.
+ * @param a The first version.
+ * @param b The second version.
+ * @returns The sort order.
+ */
+export const sortByVersion = (a: string, b: string) => {
+  const {
+    major: aMajor,
+    minor: aMinor,
+    patch: aPatch,
+    prerelease: aPrTag,
+    prereleaseVersion: aPrVersion,
+  } = parseVersion(a);
+  const {
+    major: bMajor,
+    minor: bMinor,
+    patch: bPatch,
+    prerelease: bPrTag,
+    prereleaseVersion: bPrVersion,
+  } = parseVersion(b);
+
+  if (aMajor !== bMajor) return aMajor - bMajor;
+  if (aMinor !== bMinor) return aMinor - bMinor;
+  if (aPatch !== bPatch) return aPatch - bPatch;
+  if (!aPrTag && !bPrTag) return 0;
+  if (!!aPrTag && aPrTag === bPrTag) return aPrVersion - bPrVersion;
+
+  // Beta before non-beta
+  if (!!aPrTag && !bPrTag) return -1;
+  if (!aPrTag && !!bPrTag) return 1;
+
+  // Alpha -> Beta -> RC
+  if (aPrTag && bPrTag) return aPrTag.localeCompare(bPrTag);
+
+  return 0;
 };
 
 /**

@@ -27,6 +27,7 @@ import ptPt from './pt-pt.json';
 import pt from './pt.json';
 import ro from './ro.json';
 import ru from './ru.json';
+import rw from './rw.json';
 import sk from './sk.json';
 import sl from './sl.json';
 import sv from './sv.json';
@@ -52,6 +53,7 @@ const messages: Record<LanguageValue, typeof en> = {
   ptPt,
   ro,
   ru,
+  rw,
   sk,
   sl,
   sv,

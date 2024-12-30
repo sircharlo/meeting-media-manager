@@ -88,7 +88,7 @@ export const fetchJwLanguages = async (base?: string) => {
   return result?.languages;
 };
 
-interface YeartextResult {
+export interface YeartextResult {
   content: string;
   exists: boolean;
   jsonUrl: string;

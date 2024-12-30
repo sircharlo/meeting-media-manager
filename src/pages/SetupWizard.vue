@@ -518,7 +518,6 @@
           :name="300"
           :title="t('congratulations')"
         >
-          <!-- This icon is from the Material Design Icons collection -->
           <p class="text-subtitle1">{{ t('m-is-now-ready-to-be-used') }}</p>
           <p>
             {{

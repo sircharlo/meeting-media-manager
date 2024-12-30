@@ -89,9 +89,10 @@
               <q-tooltip
                 v-if="screenPreferences.preferWindowed && mediaWindowSize"
                 floating
-                >{{ mediaWindowSize?.width }} x
-                {{ mediaWindowSize?.height }}</q-tooltip
               >
+                {{ mediaWindowSize?.width }} x
+                {{ mediaWindowSize?.height }}
+              </q-tooltip>
             </q-btn>
           </div>
         </div>
