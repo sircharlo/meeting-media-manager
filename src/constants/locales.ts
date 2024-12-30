@@ -20,6 +20,7 @@ export type LanguageValue =
   | 'ptPt'
   | 'ro'
   | 'ru'
+  | 'rw'
   | 'sk'
   | 'sl'
   | 'sv'
@@ -179,6 +180,12 @@ export const locales: {
     langcode: 'U',
     signLangCodes: ['RSL'],
     value: 'ru',
+  },
+  {
+    englishName: 'Kinyarwanda',
+    label: 'Ikinyarwanda',
+    langcode: 'YW',
+    value: 'rw',
   },
   {
     englishName: 'Slovak',
