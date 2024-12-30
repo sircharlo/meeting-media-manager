@@ -1240,10 +1240,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@formkit/drag-and-drop@npm:^0.1.6":
-  version: 0.1.6
-  resolution: "@formkit/drag-and-drop@npm:0.1.6"
-  checksum: 10c0/3cab2b237b5d882818287290dc38e7c4197ea7c739663de7c29ffb9a0711c471d6a6387f6c75ec713f8cf1b23c91e77d3c24fb795f52bba68d3d111253a3f0bb
+"@formkit/drag-and-drop@npm:^0.2.6":
+  version: 0.2.6
+  resolution: "@formkit/drag-and-drop@npm:0.2.6"
+  checksum: 10c0/a04369765243c7efc2d4ce0bf5076aaeb1ab04756eb1ffe134a4665b9e16d88c637a92e9c255cadf0363eb512f6d499c998f9459335f74ac270a71879a3403a1
   languageName: node
   linkType: hard
 
@@ -11838,7 +11838,7 @@ __metadata:
   dependencies:
     "@daipeng7/rollup-plugin-iconfont": "npm:^3.0.6"
     "@electron/rebuild": "npm:^3.7.1"
-    "@formkit/drag-and-drop": "npm:^0.1.6"
+    "@formkit/drag-and-drop": "npm:^0.2.6"
     "@intlify/unplugin-vue-i18n": "npm:^6.0.2"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@panzoom/panzoom": "npm:^4.5.1"

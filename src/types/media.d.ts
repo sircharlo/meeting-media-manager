@@ -26,6 +26,7 @@ export type DownloadProgressItems = Record<string, DownloadProgressItem>;
 export interface DynamicMediaObject {
   customDuration?: { max: number; min: number };
   duration: number;
+  extractCaption?: string;
   fileUrl: string;
   footnote?: boolean;
   hidden?: boolean;

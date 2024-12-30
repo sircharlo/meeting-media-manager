@@ -2,12 +2,13 @@
   <q-page
     :class="
       !(
-        sortableAdditionalMediaItems?.filter((m) => !m.hidden).length ||
-        sortableWtMediaItems?.filter((m) => !m.hidden).length ||
-        sortableTgwMediaItems?.filter((m) => !m.hidden).length ||
-        sortableAyfmMediaItems?.filter((m) => !m.hidden).length ||
-        sortableLacMediaItems?.filter((m) => !m.hidden).length ||
-        sortableCircuitOverseerMediaItems?.filter((m) => !m.hidden).length
+        sortableMediaItems?.filter((m) => !m.hidden).length // ||
+        // sortableAdditionalMediaItems?.filter((m) => !m.hidden).length ||
+        // sortableWtMediaItems?.filter((m) => !m.hidden).length ||
+        // sortableTgwMediaItems?.filter((m) => !m.hidden).length ||
+        // sortableAyfmMediaItems?.filter((m) => !m.hidden).length ||
+        // sortableLacMediaItems?.filter((m) => !m.hidden).length ||
+        // sortableCircuitOverseerMediaItems?.filter((m) => !m.hidden).length
       )
         ? 'flex'
         : ''
@@ -18,12 +19,12 @@
     @dragstart="dropActive"
     @drop="dropEnd"
   >
+    <pre>{{ sortableMediaItems.map((m) => m.uniqueId) }}</pre>
     <div class="col">
       <div
         v-if="
-          [...sortableAdditionalMediaItems, ...sortableMediaItems].some(
-            (m) => m.hidden,
-          )
+          // [...sortableAdditionalMediaItems, ...sortableMediaItems].some(
+          sortableMediaItems.some((m) => m.hidden)
         "
         class="row"
       >
@@ -43,18 +44,20 @@
       <div
         v-if="
           (currentSettings?.disableMediaFetching &&
-            sortableAdditionalMediaItems?.filter((m) => !m.hidden).length <
-              1) ||
+            sortableMediaItems.filter(
+              (m) => m.section === 'additional' && !m.hidden,
+            ).length < 1) ||
           (!currentSettings?.disableMediaFetching &&
             ((selectedDateObject?.meeting && !selectedDateObject?.complete) ||
               !(
-                sortableAdditionalMediaItems?.filter((m) => !m.hidden).length ||
-                sortableWtMediaItems?.filter((m) => !m.hidden).length ||
-                sortableTgwMediaItems?.filter((m) => !m.hidden).length ||
-                sortableAyfmMediaItems?.filter((m) => !m.hidden).length ||
-                sortableLacMediaItems?.filter((m) => !m.hidden).length ||
-                sortableCircuitOverseerMediaItems?.filter((m) => !m.hidden)
-                  .length
+                sortableMediaItems?.filter((m) => !m.hidden).length //||
+                // sortableAdditionalMediaItems?.filter((m) => !m.hidden).length ||
+                // sortableWtMediaItems?.filter((m) => !m.hidden).length ||
+                // sortableTgwMediaItems?.filter((m) => !m.hidden).length ||
+                // sortableAyfmMediaItems?.filter((m) => !m.hidden).length ||
+                // sortableLacMediaItems?.filter((m) => !m.hidden).length ||
+                // sortableCircuitOverseerMediaItems?.filter((m) => !m.hidden)
+                //   .length
               )))
         "
         class="row"
@@ -63,7 +66,8 @@
           <div
             v-if="
               !currentSettings?.disableMediaFetching ||
-              !sortableAdditionalMediaItems?.filter((m) => !m.hidden).length
+              !sortableMediaItems?.filter((m) => !m.hidden).length
+              // !sortableAdditionalMediaItems?.filter((m) => !m.hidden).length
             "
             class="row justify-center"
           >
@@ -138,9 +142,26 @@
         </div>
       </div>
     </div>
+    <q-list ref="allMediaList" class="list-droppable position-relative">
+      <MediaItem
+        v-for="media in sortableMediaItemsNonComputed.filter((m) => !m.hidden)"
+        :key="media.uniqueId"
+        v-model:repeat="media.repeat"
+        :media="media"
+        :play-state="playState(media.uniqueId)"
+        @update:custom-duration="
+          media.customDuration = JSON.parse($event) || undefined
+        "
+        @update:hidden="media.hidden = !!$event"
+        @update:tag="media.tag = $event"
+        @update:title="media.title = $event"
+      />
+    </q-list>
+    <q-separator class="bg-red q-mb-md"></q-separator>
     <q-list
       v-show="
-        sortableAdditionalMediaItems?.filter((m) => !m.hidden).length ||
+        sortableMediaItems?.filter((m) => !m.hidden).length ||
+        // sortableAdditionalMediaItems?.filter((m) => !m.hidden).length ||
         (selectedDateObject &&
           selectedDateObject.complete &&
           isWeMeetingDay(selectedDateObject?.date))
@@ -173,8 +194,9 @@
         <q-item-section
           v-if="
             isWeMeetingDay(selectedDateObject.date) &&
-            !sortableAdditionalMediaItems.filter((m) => !m.hidden && !m.watched)
-              .length
+            !sortableMediaItems.filter(
+              (m) => m.section === 'additional' && !m.hidden && !m.watched,
+            ).length
           "
           side
         >
@@ -189,7 +211,9 @@
       </q-item>
       <q-list ref="additionalList" class="list-droppable">
         <MediaItem
-          v-for="media in sortableAdditionalMediaItems"
+          v-for="media in sortableMediaItems.filter(
+            (m) => m.section === 'additional' && !m.hidden,
+          )"
           :key="media.uniqueId"
           v-model:repeat="media.repeat"
           :media="media"
@@ -203,7 +227,10 @@
         />
         <div
           v-if="
-            !sortableAdditionalMediaItems.filter((m) => !m.hidden).length &&
+            // !sortableAdditionalMediaItems.filter((m) => !m.hidden).length &&
+            !sortableMediaItems.filter(
+              (m) => m.section === 'additional' && !m.hidden,
+            ).length &&
             selectedDateObject &&
             isWeMeetingDay(selectedDateObject?.date)
           "
@@ -261,7 +288,7 @@
         </div>
       </q-list>
     </q-list>
-    <q-list
+    <!-- <q-list
       v-show="
         selectedDateObject?.complete && isMwMeetingDay(selectedDateObject?.date)
       "
@@ -273,9 +300,41 @@
           {{ t('ayfm') }}
         </div>
       </q-item>
-      <q-list ref="ayfmList" class="list-droppable">
+      <q-list
+        ref="ayfmList"
+        class="list-droppable"
+        style="min-height: 100px; background-color: aqua"
+      >
+        <template
+          v-for="(groupedMedia, caption) in groupMediaByCaption(
+            sortableAyfmMediaItems,
+          )"
+          :key="caption"
+        >
+          <q-expansion-item
+            v-show="caption"
+            class="text-bold text-spaced text-secondary"
+            :label="caption"
+          >
+            <MediaItem
+              v-for="media in groupedMedia"
+              :key="media.uniqueId"
+              v-model:repeat="media.repeat"
+              :media="media"
+              :play-state="playState(media.uniqueId)"
+              @update:custom-duration="
+                media.customDuration = JSON.parse($event) || undefined
+              "
+              @update:hidden="media.hidden = !!$event"
+              @update:tag="media.tag = $event"
+              @update:title="media.title = $event"
+            />
+          </q-expansion-item>
+        </template>
+
         <MediaItem
-          v-for="media in sortableAyfmMediaItems"
+          v-for="media in groupMediaByCaption(sortableAyfmMediaItems)['']"
+          v-show="groupMediaByCaption(sortableAyfmMediaItems)['']?.length"
           :key="media.uniqueId"
           v-model:repeat="media.repeat"
           :media="media"
@@ -287,6 +346,7 @@
           @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
+
         <div
           v-if="sortableAyfmMediaItems.filter((m) => !m.hidden).length === 0"
         >
@@ -302,7 +362,7 @@
           </q-item>
         </div>
       </q-list>
-    </q-list>
+    </q-list> -->
     <q-list
       v-show="
         selectedDateObject?.complete && isMwMeetingDay(selectedDateObject?.date)
@@ -324,9 +384,37 @@
           />
         </q-item-section>
       </q-item>
-      <q-list ref="lacList" class="list-droppable">
+      <!-- <q-list ref="lacList" class="list-droppable">
+        <template
+          v-for="(groupedMedia, caption) in groupMediaByCaption(
+            sortableAyfmMediaItems,
+          )"
+          :key="caption"
+        >
+          <q-expansion-item
+            v-show="caption"
+            class="text-bold text-spaced text-secondary"
+            :label="caption"
+          >
+            <MediaItem
+              v-for="media in groupedMedia"
+              :key="media.uniqueId"
+              v-model:repeat="media.repeat"
+              :media="media"
+              :play-state="playState(media.uniqueId)"
+              @update:custom-duration="
+                media.customDuration = JSON.parse($event) || undefined
+              "
+              @update:hidden="media.hidden = !!$event"
+              @update:tag="media.tag = $event"
+              @update:title="media.title = $event"
+            />
+          </q-expansion-item>
+        </template>
+
         <MediaItem
-          v-for="media in sortableLacMediaItems"
+          v-for="media in groupMediaByCaption(sortableLacMediaItems)['']"
+          v-show="groupMediaByCaption(sortableLacMediaItems)['']?.length"
           :key="media.uniqueId"
           v-model:repeat="media.repeat"
           :media="media"
@@ -338,6 +426,7 @@
           @update:tag="media.tag = $event"
           @update:title="media.title = $event"
         />
+
         <div v-if="sortableLacMediaItems.filter((m) => !m.hidden).length === 0">
           <q-item>
             <q-item-section
@@ -350,7 +439,7 @@
             </q-item-section>
           </q-item>
         </div>
-      </q-list>
+      </q-list> -->
     </q-list>
     <q-list
       v-show="
@@ -477,7 +566,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DNDPlugin } from '@formkit/drag-and-drop';
+// import type { DNDPlugin } from '@formkit/drag-and-drop';
 import type {
   DocumentItem,
   DynamicMediaObject,
@@ -485,12 +574,13 @@ import type {
   TableItem,
 } from 'src/types';
 
-// eslint-disable-next-line no-duplicate-imports
 import {
   animations,
-  multiDrag,
-  parents,
-  selections,
+  dropOrSwap,
+  insert,
+  // multiDrag,
+  // parents,
+  // selections,
 } from '@formkit/drag-and-drop';
 import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
 import {
@@ -501,7 +591,7 @@ import {
 import { Buffer } from 'buffer';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
-import { useMeta } from 'quasar';
+import { QList, useMeta } from 'quasar';
 import DragAndDropper from 'src/components/media/DragAndDropper.vue';
 import MediaItem from 'src/components/media/MediaItem.vue';
 import { useLocale } from 'src/composables/useLocale';
@@ -578,7 +668,7 @@ const {
   mediaSort,
   missingMedia,
   urlVariables,
-  watchedMediaSections,
+  // watchedMediaSections,
 } = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
 const {
@@ -731,172 +821,196 @@ watch(
   },
 );
 
-const stopScrolling = ref(true);
-const scroll = (step: number) => {
-  const el = document.querySelector('.q-page-container');
-  if (!el) return;
-  el.scrollBy(0, step);
-  if (!stopScrolling.value) {
-    setTimeout(() => scroll(step), 20);
-  }
-};
+// const stopScrolling = ref(true);
+// const scroll = (step: number) => {
+//   const el = document.querySelector('.q-page-container');
+//   if (!el) return;
+//   el.scrollBy(0, step);
+//   if (!stopScrolling.value) {
+//     setTimeout(() => scroll(step), 20);
+//   }
+// };
 
-const updateMediaSortPlugin: DNDPlugin = (parent) => {
-  const parentData = parents.get(parent);
-  if (!parentData) return;
+// const updateMediaSortPlugin: DNDPlugin = (parent) => {
+//   const parentData = parents.get(parent);
+//   if (!parentData) return;
 
-  const updateMediaSection = (id: string, section: MediaSection) => {
-    (selectedDateObject.value?.dynamicMedia ?? []).forEach((item) => {
-      if (item.uniqueId === id && item.section !== section) {
-        item.section = section;
-      }
-    });
+//   const updateMediaSection = (
+//     mediaItem: DynamicMediaObject,
+//     section: MediaSection,
+//   ) => {
+//     (selectedDateObject.value?.dynamicMedia ?? [])
+//       .filter(
+//         (item) =>
+//           (item.uniqueId === mediaItem.uniqueId ||
+//             (mediaItem.extractCaption &&
+//               item.extractCaption === mediaItem.extractCaption)) &&
+//           item.section !== section,
+//       )
+//       .forEach((item) => {
+//         console.log(item);
+//         item.section = section;
+//       });
 
-    const currentCong = currentCongregation.value;
-    const currentDate = selectedDate.value;
-    (additionalMediaMaps.value[currentCong]?.[currentDate] ?? []).forEach(
-      (item) => {
-        if (item.uniqueId === id && item.section !== section) {
-          item.section = section;
-        }
-      },
-    );
-    (watchFolderMedia.value?.[currentDate] ?? []).forEach((item) => {
-      if (item.uniqueId === id) {
-        watchedMediaSections.value[currentCong] ??= {};
-        watchedMediaSections.value[currentCong][currentDate] ??= {};
-        watchedMediaSections.value[currentCong][currentDate][id] = section;
-        if (item.section !== section) item.section = section;
-      }
-    });
-  };
-  function dragover(e: DragEvent) {
-    stopScrolling.value = true;
-    if (e.clientY < 200) {
-      stopScrolling.value = false;
-      scroll(-1);
-    } else if (window.innerHeight - e.clientY < 200) {
-      stopScrolling.value = false;
-      scroll(1);
-    }
+//     const currentCong = currentCongregation.value;
+//     const currentDate = selectedDate.value;
+//     (additionalMediaMaps.value[currentCong]?.[currentDate] ?? []).forEach(
+//       (item) => {
+//         if (item.uniqueId === mediaItem.uniqueId && item.section !== section) {
+//           item.section = section;
+//         }
+//       },
+//     );
+//     (watchFolderMedia.value?.[currentDate] ?? []).forEach((item) => {
+//       if (item.uniqueId === mediaItem.uniqueId) {
+//         watchedMediaSections.value[currentCong] ??= {};
+//         watchedMediaSections.value[currentCong][currentDate] ??= {};
+//         watchedMediaSections.value[currentCong][currentDate][
+//           mediaItem.uniqueId
+//         ] = section;
+//         if (item.section !== section) item.section = section;
+//       }
+//     });
+//   };
+//   function dragover(e: DragEvent) {
+//     stopScrolling.value = true;
+//     if (e.clientY < 200) {
+//       stopScrolling.value = false;
+//       scroll(-1);
+//     } else if (window.innerHeight - e.clientY < 200) {
+//       stopScrolling.value = false;
+//       scroll(1);
+//     }
 
-    for (const media of sortableAdditionalMediaItems.value) {
-      updateMediaSection(media.uniqueId, 'additional');
-    }
-    for (const media of sortableTgwMediaItems.value) {
-      updateMediaSection(media.uniqueId, 'tgw');
-    }
-    for (const media of sortableAyfmMediaItems.value) {
-      updateMediaSection(media.uniqueId, 'ayfm');
-    }
-    for (const media of sortableLacMediaItems.value) {
-      updateMediaSection(media.uniqueId, 'lac');
-    }
-    for (const media of sortableWtMediaItems.value) {
-      updateMediaSection(media.uniqueId, 'wt');
-    }
-    for (const media of sortableCircuitOverseerMediaItems.value) {
-      updateMediaSection(media.uniqueId, 'circuitOverseer');
-    }
-  }
+//     // for (const media of sortableAdditionalMediaItems.value) {
+//     //   updateMediaSection(media, 'additional');
+//     // }
+//     for (const media of sortableTgwMediaItems.value) {
+//       updateMediaSection(media, 'tgw');
+//     }
+//     // for (const media of sortableAyfmMediaItems.value) {
+//     //   updateMediaSection(media, 'ayfm');
+//     // }
+//     // for (const media of sortableLacMediaItems.value) {
+//     //   updateMediaSection(media, 'lac');
+//     // }
+//     for (const media of sortableWtMediaItems.value) {
+//       updateMediaSection(media, 'wt');
+//     }
+//     for (const media of sortableCircuitOverseerMediaItems.value) {
+//       updateMediaSection(media, 'circuitOverseer');
+//     }
+//   }
 
-  function dragend() {
-    stopScrolling.value = true;
-    const currentCong = currentCongregation.value;
-    mediaSort.value[currentCong] ??= {};
-    mediaSort.value[currentCong][selectedDate.value] = [
-      ...sortableAdditionalMediaItems.value,
-      ...sortableTgwMediaItems.value,
-      ...sortableAyfmMediaItems.value,
-      ...sortableLacMediaItems.value,
-      ...sortableWtMediaItems.value,
-      ...sortableCircuitOverseerMediaItems.value,
-    ].map((item: DynamicMediaObject) => item.uniqueId);
-    generateMediaList();
-    addDayToExportQueue(selectedDateObject.value?.date);
-  }
+//   function dragend() {
+//     stopScrolling.value = true;
+//     const currentCong = currentCongregation.value;
+//     mediaSort.value[currentCong] ??= {};
+//     mediaSort.value[currentCong][selectedDate.value] =
+//       // [
+//       //   ...sortableAdditionalMediaItems.value,
+//       //   ...sortableTgwMediaItems.value,
+//       //   ...sortableAyfmMediaItems.value,
+//       //   ...sortableLacMediaItems.value,
+//       //   ...sortableWtMediaItems.value,
+//       //   ...sortableCircuitOverseerMediaItems.value,
+//       // ]
+//       sortableMediaItems.value.map((item: DynamicMediaObject) => item.uniqueId);
+//     // generateMediaList();
+//     console.log('sortableMediaItems', sortableMediaItems.value);
+//     addDayToExportQueue(selectedDateObject.value?.date);
+//   }
 
-  return {
-    setupNode(data) {
-      data.node.addEventListener('dragover', dragover, { passive: true });
-      data.node.addEventListener('dragend', dragend, { passive: true });
-    },
-    tearDownNode(data) {
-      data.node.removeEventListener('dragover', dragover);
-      data.node.removeEventListener('dragend', dragend);
-    },
-  };
-};
+//   return {
+//     setupNode(data) {
+//       data.node.el.addEventListener('dragover', dragover, { passive: true });
+//       data.node.el.addEventListener('dragend', dragend, { passive: true });
+//     },
+//     tearDownNode(data) {
+//       data.node.el.removeEventListener('dragover', dragover);
+//       data.node.el.removeEventListener('dragend', dragend);
+//     },
+//   };
+// };
 
-const sortableMediaItems = ref<DynamicMediaObject[]>([]);
+// const sortableMediaItems = ref<DynamicMediaObject[]>([]);
 
-const generateMediaList = () => {
+// const generateMediaList = () => {
+// mediaSort.value[currentCongregation.value] ??= {};
+
+const sortableMediaItems = computed(() => {
   const combinedMediaItems = [
     ...datedAdditionalMediaMap.value,
     ...(selectedDateObject.value?.dynamicMedia ?? []),
     ...(watchFolderMedia.value?.[selectedDate.value] ?? []),
-  ];
-  if (combinedMediaItems && currentCongregation.value) {
-    mediaSort.value[currentCongregation.value] ??= {};
-    sortableMediaItems.value = combinedMediaItems
-      .filter(
-        (item, index, self) =>
-          index === self.findIndex((i) => i.fileUrl === item.fileUrl),
-      )
-      .sort(
-        mapOrder(
-          selectedDate.value
-            ? mediaSort.value[currentCongregation.value]?.[
-                selectedDate.value
-              ] || []
-            : [],
-        ),
-      );
-  }
-};
+  ]
+    .filter(
+      (item, index, self) =>
+        index === self.findIndex((i) => i.fileUrl === item.fileUrl),
+    )
+    .sort(
+      mapOrder(
+        selectedDate.value
+          ? mediaSort.value[currentCongregation.value]?.[selectedDate.value] ||
+              []
+          : [],
+      ),
+    );
+  return combinedMediaItems && currentCongregation.value
+    ? combinedMediaItems
+    : [];
+});
 
 watch(
-  () => [
-    selectedDateObject.value?.date,
-    datedAdditionalMediaMap.value?.length,
-    selectedDateObject.value?.dynamicMedia?.length,
-    watchFolderMedia.value?.[selectedDate.value]?.length,
-  ],
-  (
-    [
-      newSelectedDate,
-      newAdditionalMediaListLength,
-      newDynamicMediaListLength,
-      newWatchFolderMediaLength,
-    ],
-    [
-      oldSelectedDate,
-      oldAdditionalMediaListLength,
-      oldDynamicMediaListLength,
-      oldWatchFolderMediaLength,
-    ],
-  ) => {
-    try {
-      if (
-        newSelectedDate !== oldSelectedDate ||
-        newAdditionalMediaListLength !== oldAdditionalMediaListLength ||
-        newDynamicMediaListLength !== oldDynamicMediaListLength ||
-        newWatchFolderMediaLength !== oldWatchFolderMediaLength
-      ) {
-        generateMediaList();
-      }
-    } catch (e) {
-      errorCatcher(e);
-    }
+  () => sortableMediaItems.value,
+  () => {
+    sortableMediaItemsNonComputed.value = sortableMediaItems.value;
   },
 );
+// };
+
+// watch(
+//   () => [
+//     selectedDateObject.value?.date,
+//     datedAdditionalMediaMap.value?.length,
+//     selectedDateObject.value?.dynamicMedia?.length,
+//     watchFolderMedia.value?.[selectedDate.value]?.length,
+//   ],
+//   (
+//     [
+//       newSelectedDate,
+//       newAdditionalMediaListLength,
+//       newDynamicMediaListLength,
+//       newWatchFolderMediaLength,
+//     ],
+//     [
+//       oldSelectedDate,
+//       oldAdditionalMediaListLength,
+//       oldDynamicMediaListLength,
+//       oldWatchFolderMediaLength,
+//     ],
+//   ) => {
+//     try {
+//       if (
+//         newSelectedDate !== oldSelectedDate ||
+//         newAdditionalMediaListLength !== oldAdditionalMediaListLength ||
+//         newDynamicMediaListLength !== oldDynamicMediaListLength ||
+//         newWatchFolderMediaLength !== oldWatchFolderMediaLength
+//       ) {
+//         generateMediaList();
+//       }
+//     } catch (e) {
+//       errorCatcher(e);
+//     }
+//   },
+// );
 
 watch(
   () => mediaSort.value?.[currentCongregation.value]?.[selectedDate.value],
   (newMediaSort) => {
     try {
       if (newMediaSort?.length === 0) {
-        generateMediaList();
+        // generateMediaList();
         addDayToExportQueue(selectedDateObject.value?.date);
       }
     } catch (e) {
@@ -1068,7 +1182,7 @@ watchImmediate(selectedDate, (newVal) => {
 });
 
 onMounted(() => {
-  generateMediaList();
+  // generateMediaList();
   goToNextDayWithMedia();
 
   // If no date with media is found, go to todays date
@@ -1097,114 +1211,140 @@ const [tgwList, sortableTgwMediaItems] = useDragAndDrop<DynamicMediaObject>(
   {
     group: 'sortableMedia',
     plugins: [
-      updateMediaSortPlugin,
+      // updateMediaSortPlugin,
       animations(),
-      multiDrag({
-        plugins: [selections({ selectedClass: 'selected-to-drag' })],
-      }),
+      // multiDrag({
+      //   plugins: [selections({ selectedClass: 'selected-to-drag' })],
+      // }),
     ],
   },
 );
 
-const [ayfmList, sortableAyfmMediaItems] = useDragAndDrop<DynamicMediaObject>(
-  [],
-  {
-    group: 'sortableMedia',
-    plugins: [
-      updateMediaSortPlugin,
-      animations(),
-      multiDrag({
-        plugins: [selections({ selectedClass: 'selected-to-drag' })],
-      }),
-    ],
-  },
-);
+// const allMediaList = useTemplateRef(
+//   'allMediaList',
+// ) as unknown as Ref<HTMLUListElement>;
 
-const [lacList, sortableLacMediaItems] = useDragAndDrop<DynamicMediaObject>(
-  [],
-  {
+const [allMediaList, sortableMediaItemsNonComputed] =
+  useDragAndDrop<DynamicMediaObject>([], {
     group: 'sortableMedia',
+    onDragend(e) {
+      console.log('onDragend', e);
+    },
+    onSort(data) {
+      console.log('onSort', data);
+    },
     plugins: [
-      updateMediaSortPlugin,
+      // updateMediaSortPlugin,
       animations(),
-      multiDrag({
-        plugins: [selections({ selectedClass: 'selected-to-drag' })],
-      }),
+      dropOrSwap(),
+      insert(
+        {
+          insertPoint: () => {
+            const div = document.createElement('div');
+            const insertPointClasses = ['absolute', 'bg-negative'];
+            for (const cls of insertPointClasses) div.classList.add(cls);
+            return div;
+          },
+        },
+
+        // multiDrag({
+        // plugins: [
+        // selections({ selectedClass: 'selected-to-drag' }),
+
+        // }),
+      ),
     ],
-  },
-);
+  });
+
+// const [lacList, sortableLacMediaItems] = useDragAndDrop<DynamicMediaObject>(
+//   [],
+//   {
+//     group: 'sortableMedia',
+//     plugins: [
+//       updateMediaSortPlugin,
+//       animations(),
+//       multiDrag({
+//         plugins: [selections({ selectedClass: 'selected-to-drag' })],
+//       }),
+//     ],
+//   },
+// );
 
 const [wtList, sortableWtMediaItems] = useDragAndDrop<DynamicMediaObject>([], {
   group: 'sortableMedia',
   plugins: [
-    updateMediaSortPlugin,
+    // updateMediaSortPlugin,
     animations(),
-    multiDrag({
-      plugins: [selections({ selectedClass: 'selected-to-drag' })],
-    }),
+    // multiDrag({
+    //   plugins: [selections({ selectedClass: 'selected-to-drag' })],
+    // }),
   ],
 });
 
-const [additionalList, sortableAdditionalMediaItems] =
-  useDragAndDrop<DynamicMediaObject>([], {
-    group: 'sortableMedia',
-    plugins: [
-      updateMediaSortPlugin,
-      animations(),
-      multiDrag({
-        plugins: [selections({ selectedClass: 'selected-to-drag' })],
-      }),
-    ],
-  });
+// const [additionalList, sortableAdditionalMediaItems] =
+//   useDragAndDrop<DynamicMediaObject>([], {
+//     group: 'sortableMedia',
+//     plugins: [
+//       updateMediaSortPlugin,
+//       animations(),
+//       multiDrag({
+//         plugins: [selections({ selectedClass: 'selected-to-drag' })],
+//       }),
+//     ],
+//   });
 
 const [circuitOverseerList, sortableCircuitOverseerMediaItems] =
   useDragAndDrop<DynamicMediaObject>([], {
     group: 'sortableMedia',
     plugins: [
-      updateMediaSortPlugin,
+      // updateMediaSortPlugin,
       animations(),
-      multiDrag({
-        plugins: [selections({ selectedClass: 'selected-to-drag' })],
-      }),
+      // multiDrag({
+      //   plugins: [selections({ selectedClass: 'selected-to-drag' })],
+      // }),
     ],
   });
 
-watchImmediate(
-  () => sortableMediaItems.value,
-  (newVal) => {
-    sortableTgwMediaItems.value = newVal.filter((m) => m.section === 'tgw');
-    sortableAyfmMediaItems.value = newVal.filter((m) => m.section === 'ayfm');
-    sortableLacMediaItems.value = newVal.filter((m) => m.section === 'lac');
-    sortableWtMediaItems.value = newVal.filter((m) => m.section === 'wt');
-    sortableAdditionalMediaItems.value = newVal.filter(
-      (m) => m.section === 'additional',
-    );
-    sortableCircuitOverseerMediaItems.value = newVal.filter(
-      (m) => m.section === 'circuitOverseer',
-    );
-  },
-  { deep: true },
-);
+// watchImmediate(
+//   () => sortableMediaItems.value,
+//   (newVal) => {
+//     sortableTgwMediaItems.value = newVal.filter((m) => m.section === 'tgw');
+//     sortableAyfmMediaItems.value = newVal.filter((m) => m.section === 'ayfm');
+//     sortableLacMediaItems.value = newVal.filter((m) => m.section === 'lac');
+//     sortableWtMediaItems.value = newVal.filter((m) => m.section === 'wt');
+//     sortableAdditionalMediaItems.value = newVal.filter(
+//       (m) => m.section === 'additional',
+//     );
+//     sortableCircuitOverseerMediaItems.value = newVal.filter(
+//       (m) => m.section === 'circuitOverseer',
+//     );
+//   },
+//   { deep: true },
+// );
 
 const sortedMediaIds = computed(() => {
-  return [
-    ...sortableAdditionalMediaItems.value,
-    ...sortableTgwMediaItems.value,
-    ...sortableAyfmMediaItems.value,
-    ...sortableLacMediaItems.value,
-    ...sortableWtMediaItems.value,
-    ...sortableCircuitOverseerMediaItems.value,
-  ]
-    .filter((m) => !m.hidden)
-    .map((m) => m.uniqueId)
-    .filter((uniqueId, index, self) => self.indexOf(uniqueId) === index);
+  return (
+    sortableMediaItems.value
+      // [
+      // ...sortableAdditionalMediaItems.value,
+      // ...sortableTgwMediaItems.value,
+      // ...sortableAyfmMediaItems.value,
+      // ...sortableLacMediaItems.value,
+      // ...sortableWtMediaItems.value,
+      // ...sortableCircuitOverseerMediaItems.value,
+      // ]
+      .filter((m) => !m.hidden)
+      .map((m) => m.uniqueId)
+      .filter((uniqueId, index, self) => self.indexOf(uniqueId) === index)
+  );
 });
 
 const arraysAreIdentical = (a: string[], b: string[]) =>
   a.length === b.length && a.every((element, index) => element === b[index]);
 
 const sortedMediaFileUrls = computed(() =>
-  [...sortableAdditionalMediaItems.value, ...sortableMediaItems.value]
+  // [...sortableAdditionalMediaItems.value, ...sortableMediaItems.value]
+  sortableMediaItems.value
     .filter((m) => !m.hidden && !!m.fileUrl)
     .map((m) => m.fileUrl)
     .filter((fileUrl, index, self) => self.indexOf(fileUrl) === index),
@@ -1541,4 +1681,23 @@ const resetDragging = () => {
   totalFiles.value = 0;
   sectionToAddTo.value = undefined;
 };
+
+// const groupMediaByCaption = (
+//   mediaItems: DynamicMediaObject[],
+// ): Record<string, DynamicMediaObject[]> => {
+//   return mediaItems.reduce(
+//     (
+//       groups: Record<string, DynamicMediaObject[]>,
+//       media: DynamicMediaObject,
+//     ) => {
+//       const caption = media.extractCaption || ''; // Group by extractCaption or '' for no caption
+//       if (!groups[caption]) {
+//         groups[caption] = [];
+//       }
+//       groups[caption].push(media);
+//       return groups;
+//     },
+//     {},
+//   );
+// };
 </script>

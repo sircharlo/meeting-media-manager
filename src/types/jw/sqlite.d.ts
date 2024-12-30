@@ -51,6 +51,7 @@ export interface MultimediaExtractItem {
   BeginParagraphOrdinal: number;
   DocumentId: number;
   EndParagraphOrdinal: number;
+  ExtractCaption: string;
   FilePath?: string;
   IssueTagNumber: string;
   Lang: JwLangCode;
@@ -89,6 +90,7 @@ export interface MultimediaItem {
   Duration?: number;
   EndParagraphOrdinal?: number;
   EndTime?: number;
+  ExtractCaption?: string;
   FileName?: string;
   FilePath: string;
   FormattedVerseLabel?: string;

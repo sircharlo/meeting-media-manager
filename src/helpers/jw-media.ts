@@ -475,7 +475,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
       db,
       `SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,
       Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UniqueEnglishSymbol,IssueTagNumber,
-      Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal, Extract.Link
+      Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal, Extract.Link, Extract.Caption as ExtractCaption
     FROM DocumentExtract
       INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId
       INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId
@@ -567,6 +567,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
             ...extractItem,
             BeginParagraphOrdinal: extract.BeginParagraphOrdinal,
             EndParagraphOrdinal: extract.EndParagraphOrdinal,
+            ExtractCaption: extract.ExtractCaption,
           };
         })
         .filter(
@@ -586,6 +587,10 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
       }
       allExtractItems.push(...extractItems);
     }
+    console.log(
+      `Got ${allExtractItems.length} multimedia items from document ${docId}`,
+      allExtractItems,
+    );
     return allExtractItems;
   } catch (e: unknown) {
     errorCatcher(e);
@@ -1302,6 +1307,7 @@ export const dynamicMediaMapper = async (
         return {
           customDuration,
           duration,
+          extractCaption: m.ExtractCaption,
           fileUrl,
           isAdditional: !!additional,
           isAudio: audio,
