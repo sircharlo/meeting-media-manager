@@ -6,11 +6,11 @@
 
 ### New Features
 
-- 🌐 Allowed opening the website and navigating to a specific page **before presenting** (#3758).
-- 💾 Added option for **MP4 conversion** of non-video media (#3756).
-- 📦 Added **code signing and notarization for macOS version** (#3810) to enable auto-updates.
-- 🎥 Display **elapsed/remaining time** during video playback (#3661).
-- 🎥 Added **manual time entry** for custom durations (#3661).
+- 🌐 Allowed opening the website and navigating to a specific page **before presenting**.
+- 💾 Added option for **MP4 conversion** of non-video media.
+- 📦 Added **code signing and notarization for macOS version** to enable auto-updates.
+- 🎥 Display **elapsed/remaining time** during video playback.
+- 🎥 Added **manual time entry** for custom durations.
 - 🚩 Introduced a **banner when auto-updates are disabled** to inform users.
 - 📅 Enabled **beta update options** and banner for users who want early access to new features.
 - 🔍 **Autofocus search fields** in dialogs.
@@ -70,7 +70,7 @@
 - 🚩 **Warn users** when auto-updates are disabled or beta updates are enabled.
 - 💻 Improved **macOS icons** for better visual consistency.
 - 🎥 Added **time entry for custom durations**
-- 🎥 Display **elapsed/remaining time** during video playback (#3661).
+- 🎥 Display **elapsed/remaining time** during video playback.
 
 ### Fixes
 
@@ -105,9 +105,9 @@
 ### New Features
 
 - 🧹 Added **cache folder customization** in settings and the wizard for better data control.
-- 🎤 Introduced **audio Bible import** functionality (#3569).
-- 📂 Added **auto-export media to folder** functionality (#3474).
-- 📖 Included **non-book media** (e.g., appendices, introductions) from the study Bible (#3559).
+- 🎤 Introduced **audio Bible import** functionality.
+- 📂 Added **auto-export media to folder** functionality.
+- 📖 Included **non-book media** (e.g., appendices, introductions) from the study Bible.
 - 🌐 Enabled **Italian** language support.
 - 🎨 Updated icon assets and introduced **new media player icon**.
 
@@ -131,7 +131,7 @@
 
 - 🔨 Refactored and optimized **code** for reusability.
 - 📚 Improved **documentation**.
-- 🖼️ Implemented **custom scrolling styles and logic** instead of using `q-scroll-area` repeatedly (#3525).
+- 🖼️ Implemented **custom scrolling styles and logic** instead of using `q-scroll-area` repeatedly.
 - ✏️ Cleaned up SVGs and resolved typos in the documentation.
 - 🛠️ Refactored **error handling** across Electron processes, including thumbnails and fetch contexts.
 - 🚀 Improved **DX (Developer Experience)** with streamlined workflows and templates.
@@ -142,8 +142,8 @@ This release includes critical fixes, exciting new features, and numerous under-
 
 ### New Features
 
-- 🌐 Added a notification to **offer translation help** for missing translations (#3426).
-- 🖼️ Implemented **extra media indicators** and improved visual feedback for media items (#3452).
+- 🌐 Added a notification to **offer translation help** for missing translations.
+- 🖼️ Implemented **extra media indicators** and improved visual feedback for media items.
 - 🎤 Added support for **missing media from JW playlist files** and ensured they are added correctly from the watched folder.
 - 📚 Added support for **Study Bible media**.
 - 🖋️ Added **context menu button** for easy access to media actions in the media list.
@@ -189,7 +189,7 @@ This release includes critical fixes, exciting new features, and numerous under-
 - 🛑 Implemented **quit verification logic** for macOS `Cmd-Q` to prevent accidental exits.
 - 🎵 Added **loading indicator to song picker** when refreshing songs for a smoother experience.
 - 🎶 Improved **search and filters** in public talk media and song pickers to allow for partial text matches.
-- 🌐 Adjusted **website aspect ratio on macOS** for better display (#3283).
+- 🌐 Adjusted **website aspect ratio on macOS** for better display.
 - 🖼️ Fixed **thumbnail file path errors** that caused media thumbnails to fail in some cases.
 - 📜 Properly reset **media import progress and drag-and-dropper**.
 - 🎬 Ensured **new watched media** is added to the bottom of the list when sorted.
