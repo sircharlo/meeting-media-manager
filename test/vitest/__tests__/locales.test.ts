@@ -6,8 +6,26 @@ import { camelToKebabCase } from 'src/utils/general';
 import { resolve } from 'upath';
 import { describe, expect, it } from 'vitest';
 
+const getLocaleUrls = async (locale: string) => {
+  const page = await readFile(
+    resolve(__dirname, `../../../docs/src/${locale}/index.md`),
+    'utf-8',
+  );
+
+  const links = [...page.matchAll(/link: (.+)/g)].map((m) => m[1]);
+
+  return links.map((link) => {
+    const linkParts = link?.split('/') ?? [];
+    return {
+      link,
+      linkPage: linkParts[2] ? linkParts[2] : linkParts[1],
+      locale,
+    };
+  });
+};
+
 describe('Locales', () => {
-  it('should be defined', async () => {
+  it('should be defined and equal', async () => {
     const locales = localeOptions.map((l) => l.value).sort();
     const localesKebab = locales.map(camelToKebabCase).sort();
 
@@ -39,6 +57,18 @@ describe('Locales', () => {
     expect(localesKebab).toEqual(docsSrcFolders);
     expect(localesKebab).toEqual(srcLocaleFiles);
     expect(enabled).toEqual(srcMessages);
+  });
+
+  it('should have correct links for docs', async () => {
+    const localeUrls = await Promise.all(
+      localeOptions.map((l) => getLocaleUrls(camelToKebabCase(l.value))),
+    );
+
+    localeUrls.flat().forEach((localeUrl) => {
+      const { link, linkPage, locale } = localeUrl;
+      if (link?.startsWith('https://')) return;
+      expect(link).toBe(`${locale === 'en' ? '' : `/${locale}`}/${linkPage}`);
+    });
   });
 
   it('should not have unused keys for docs', async () => {
