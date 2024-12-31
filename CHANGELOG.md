@@ -2,6 +2,66 @@
 
 # Changelog
 
+## 24.12.2
+
+### New Features
+
+- 🌐 Allowed opening the website and navigating to a specific page **before presenting** (#3758).
+- 💾 Added option for **MP4 conversion** of non-video media (#3756).
+- 📦 Added **code signing and notarization for macOS version** (#3810) to enable auto-updates.
+- 🎥 Display **elapsed/remaining time** during video playback (#3661).
+- 🎥 Added **manual time entry** for custom durations (#3661).
+- 🚩 Introduced a **banner when auto-updates are disabled** to inform users.
+- 📅 Enabled **beta update options** and banner for users who want early access to new features.
+- 🔍 **Autofocus search fields** in dialogs.
+- 🌐 Added initial support for **Haitian Creole**, **Kinyarwanda**, and **Slovak** languages.
+
+### Improvements and Tweaks
+
+- 💻 Improved **app icons** for better visual consistency.
+- 📄 Enhanced **page titles** across the app for clarity.
+- 🖼️ Improved **about modal icon size** and **media window title**.
+- ⚙️ Improved **toggle settings and layout on small windows**.
+- 🖱️ Introduced **auto-scroll when dragging media to window edges**.
+- 🎥 Added an option to **hide icons from OBS scene switcher**.
+- 🛠️ Added **beta icon** for pre-release versions.
+- 🛠️ Adjusted **video progress bar styling** for accuracy.
+- 🖥️ Restricted media window maximization to **multiple screens**.
+- 🎵 Fixed **custom audio duration setting** issues.
+- 🌐 Immediately applied **urlVariables** upon change.
+- 🔄 Resolved issues with **spinning loader icon** and **refresh button placement** in media dialogs.
+- 🎨 Improved **drag-and-drop loader styling** for consistency.
+- 🖼️ Adjusted **about modal update toggle placement** and logo attention styling.
+- 🎛️ Removed **size notification from media window** and replaced it with a tooltip.
+- 🖱️ Restored **double-click action on media window** with improved results, preventing unintended maximize behavior.
+- 🛠️ Added separate **loading states** for Study Bible.
+- 🖼️ Unified grid styling for **song, Study Bible, and audio Bible views**.
+- 📜 Fixed missing strings for **Hebrew, Aramaic, and Greek scriptures**.
+- 📜 Resolved **Bible book name display issues** in certain cases.
+- 🖼️ Fixed **long filename layout issues** in media items.
+- 🛠️ Ensured dynamic **modal height** with friendly overflow enforcement.
+- 📦 Fixed **download popup scroll issue** and spinner icon glitches.
+- 🎨 Improved **banner color consistency**.
+- 📜 Correctly handled **media language fallback order**.
+- 🖼️ Display **intro pictures from _lff_ , _bt_ and _lmd_** when appropriate.
+- 🎥 Fixed issues where certain **images didn’t render properly in MP4 exports**.
+- 🎥 Correctly **load OBS scenes** in select inputs.
+- 📦 Resolved **`ffmpeg` setup issues** to avoid unnecessary binary downloads.
+- 🎥 Fixed **media shortcuts for CO visit**.
+- 🔍 Improved **study Bible lookups and loading UI**.
+- 🔧 Improved **pan-zoom handling**.
+- 🚀 Made event listeners **passive** for better performance.
+
+### Improvements to Codebase
+
+- 🛠️ Refactored and simplified media item code for maintainability.
+- 📦 Improved **error handling** and messaging across the app.
+- 🛠️ Enhanced **code structure** by moving and optimizing utility functions.
+- 📄 Updated documentation for **contributing guidelines** and download links.
+- 🛠️ Improved workflows for **beta release cleanup** and CI schedules.
+- 🌐 Cleaned up old locales and removed incomplete translations.
+- 🖼️ Set **correct window icons** in development mode.
+
 ## 24.12.1
 
 ### New and Improved Features
