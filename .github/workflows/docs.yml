@@ -1,6 +1,8 @@
 name: Deploy Docs site to Pages
 
 on:
+  release:
+    types: [released]
   push:
     branches:
       - master
