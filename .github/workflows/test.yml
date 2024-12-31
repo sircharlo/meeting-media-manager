@@ -31,7 +31,7 @@ jobs:
           yarn quasar prepare
           yarn lint
           yarn type-check
-  test:
+  unit:
     runs-on: ubuntu-latest
     steps:
       - name: Check out master branch
