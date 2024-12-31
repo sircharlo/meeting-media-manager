@@ -26,13 +26,12 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
+    "docs:lint": "eslint -c ./eslint.config.js './docs/**/*.{js,ts,cjs,mjs,mts,vue}'",
+    "docs:test": "vitest --dir docs",
     "format": "prettier \"**/*\" --ignore-unknown --write",
-    "lint": "eslint -c ./eslint.config.js './**/*.{js,ts,cjs,mjs,mts,vue}'",
-    "type-check": "vue-tsc --noEmit -p tsconfig.json",
-    "test": "echo \"See package.json => scripts for available tests.\" && exit 0",
-    "test:unit:ui": "vitest --ui",
-    "test:unit": "vitest",
-    "test:unit:ci": "vitest run"
+    "lint": "eslint -c ./eslint.config.js './src/**/*.{js,ts,cjs,mjs,mts,vue}'",
+    "lint:types": "vue-tsc --noEmit -p tsconfig.json",
+    "test:unit": "vitest --dir src"
   },
   "dependencies": {
     "@formkit/drag-and-drop": "^0.1.6",
