@@ -499,11 +499,11 @@ import {
   watchImmediate,
 } from '@vueuse/core';
 import { Buffer } from 'buffer';
+import DragAndDropper from 'components/media/DragAndDropper.vue';
+import MediaItem from 'components/media/MediaItem.vue';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
-import DragAndDropper from 'src/components/media/DragAndDropper.vue';
-import MediaItem from 'src/components/media/MediaItem.vue';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
 import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
@@ -521,8 +521,6 @@ import {
   getMediaFromJwPlaylist,
 } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
   dateFromString,
@@ -548,6 +546,8 @@ import {
 } from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
 import { findDb, getPublicationInfoFromDb } from 'src/utils/sqlite';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 

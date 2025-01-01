@@ -77,12 +77,10 @@
 <script setup lang="ts">
 import type { CacheFile, JwLangCode } from 'src/types';
 
+import DialogCacheClear from 'components/dialog/DialogCacheClear.vue';
 import { storeToRefs } from 'pinia';
 import prettyBytes from 'pretty-bytes';
-import DialogCacheClear from 'src/components/dialog/DialogCacheClear.vue';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
 import {
   getAdditionalMediaPath,
   getParentDirectory,
@@ -90,6 +88,8 @@ import {
   getPublicationsPath,
   getTempPath,
 } from 'src/utils/fs';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 import { computed, ref, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
 

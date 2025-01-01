@@ -157,13 +157,13 @@ import type {
 
 import { whenever } from '@vueuse/core';
 import { useRouteParams } from '@vueuse/router';
+import BaseInput from 'components/form-inputs/BaseInput.vue';
 import { storeToRefs } from 'pinia';
 import { type QForm, useMeta, useQuasar } from 'quasar';
-import BaseInput from 'src/components/form-inputs/BaseInput.vue';
 import { settingsDefinitions, settingsGroups } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 

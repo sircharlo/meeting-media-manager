@@ -4,12 +4,12 @@ import type { MediaSection } from 'src/types';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setupFFmpeg } from 'src/helpers/fs';
 import { mapOrder } from 'src/helpers/jw-media';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
 import { datesAreSame, formatDate } from 'src/utils/date';
 import { trimFilepathAsNeeded } from 'src/utils/fs';
 import { pad } from 'src/utils/general';
 import { isVideo } from 'src/utils/media';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 
 export const addDayToExportQueue = async (targetDate?: Date) => {
   if (!folderExportQueue) {

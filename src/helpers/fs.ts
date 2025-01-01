@@ -10,10 +10,10 @@ import { Platform } from 'quasar';
 import { FULL_HD } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadFileIfNeeded, getJwMediaInfo } from 'src/helpers/jw-media';
-import { useCurrentStateStore } from 'src/stores/current-state';
 import { fetchJson } from 'src/utils/api';
 import { getPublicationDirectory } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
+import { useCurrentStateStore } from 'stores/current-state';
 
 const getThumbnailFromMetadata = async (mediaPath: string) => {
   try {

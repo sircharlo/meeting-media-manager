@@ -31,10 +31,10 @@ import type {
 } from 'src/types';
 
 import { storeToRefs } from 'pinia';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
-import { useObsStateStore } from 'src/stores/obs-state';
 import { getRules, performActions } from 'src/utils/settings';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
+import { useObsStateStore } from 'stores/obs-state';
 import { computed, watch } from 'vue';
 
 const obsState = useObsStateStore();

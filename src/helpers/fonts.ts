@@ -2,10 +2,10 @@ import type { FontName } from 'src/types';
 
 import { Buffer } from 'buffer';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
 import { fetchRaw } from 'src/utils/api';
 import { getFontsPath } from 'src/utils/fs';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 
 export const setElementFont = async (fontName: FontName) => {
   if (!fontName) return;

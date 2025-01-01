@@ -553,22 +553,22 @@
 
 <script setup lang="ts">
 import { watchImmediate } from '@vueuse/core';
+import DialogCongregationLookup from 'components/dialog/DialogCongregationLookup.vue';
+import FolderInput from 'components/form-inputs/FolderInput.vue';
+import SelectInput from 'components/form-inputs/SelectInput.vue';
+import TextInput from 'components/form-inputs/TextInput.vue';
+import TimeInput from 'components/form-inputs/TimeInput.vue';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
-import DialogCongregationLookup from 'src/components/dialog/DialogCongregationLookup.vue';
-import FolderInput from 'src/components/form-inputs/FolderInput.vue';
-import SelectInput from 'src/components/form-inputs/SelectInput.vue';
-import TextInput from 'src/components/form-inputs/TextInput.vue';
-import TimeInput from 'src/components/form-inputs/TimeInput.vue';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   downloadBackgroundMusic,
   downloadSongbookVideos,
   fetchMedia,
 } from 'src/helpers/jw-media';
-import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
+import { useCongregationSettingsStore } from 'stores/congregation-settings';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';

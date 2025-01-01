@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { useCurrentStateStore } from 'src/stores/current-state';
+import { useCurrentStateStore } from 'stores/current-state';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();

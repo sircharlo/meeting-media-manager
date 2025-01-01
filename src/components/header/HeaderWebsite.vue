@@ -70,8 +70,8 @@
 </template>
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { useCurrentStateStore } from 'src/stores/current-state';
 import { sendObsSceneEvent } from 'src/utils/obs';
+import { useCurrentStateStore } from 'stores/current-state';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 

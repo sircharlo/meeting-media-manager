@@ -1,4 +1,4 @@
-import type { MessageSchema } from 'src/boot/i18n';
+import type { MessageSchema } from 'boot/i18n';
 import type { LanguageValue } from 'src/constants/locales';
 import type { RESOLUTIONS } from 'src/constants/settings';
 

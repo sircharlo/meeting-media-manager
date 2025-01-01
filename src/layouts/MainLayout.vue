@@ -36,16 +36,16 @@ import type { LanguageValue } from 'src/constants/locales';
 import type { ElectronIpcListenKey } from 'src/types';
 
 import { watchDebounced, watchImmediate, whenever } from '@vueuse/core';
+// Globals
+import { queues } from 'boot/globals';
+// Components
+import HeaderBase from 'components/header/HeaderBase.vue';
+import ActionIsland from 'components/ui/ActionIsland.vue';
+import AnnouncementBanner from 'components/ui/AnnouncementBanner.vue';
+import NavDrawer from 'components/ui/NavDrawer.vue';
 // Packages
 import { storeToRefs } from 'pinia';
 import { useMeta, useQuasar } from 'quasar';
-// Globals
-import { queues } from 'src/boot/globals';
-// Components
-import HeaderBase from 'src/components/header/HeaderBase.vue';
-import ActionIsland from 'src/components/ui/ActionIsland.vue';
-import AnnouncementBanner from 'src/components/ui/AnnouncementBanner.vue';
-import NavDrawer from 'src/components/ui/NavDrawer.vue';
 import { SORTER } from 'src/constants/general';
 // Helpers
 import {
@@ -74,10 +74,10 @@ import {
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
-// Stores
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
 import { kebabToCamelCase } from 'src/utils/general';
+// Stores
+import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
