@@ -6,7 +6,10 @@ export default defineWorkspace([
   {
     extends: './vitest.config.mts',
     plugins: [
-      vue({ template: { transformAssetUrls } }),
+      vue({
+        features: { optionsAPI: false },
+        template: { transformAssetUrls },
+      }),
       quasar({ sassVariables: 'src/quasar-variables.scss' }),
     ],
     test: {
