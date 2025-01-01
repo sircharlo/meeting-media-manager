@@ -45,7 +45,10 @@ const getLocalFontPath = async (fontName: FontName) => {
   let mustDownload = false;
   const fontUrls = useJwStore().fontUrls;
   try {
-    if (await window.electronApi.fs.exists(fontPath)) {
+    if (
+      (await window.electronApi.fs.exists(fontPath)) &&
+      useCurrentStateStore().online
+    ) {
       const headReq = await fetchRaw(fontUrls[fontName], {
         method: 'HEAD',
       });
@@ -54,7 +57,7 @@ const getLocalFontPath = async (fontName: FontName) => {
         const localSize = (await window.electronApi.fs.stat(fontPath)).size;
         mustDownload = remoteSize ? parseInt(remoteSize) !== localSize : true;
       } else {
-        mustDownload = true;
+        mustDownload = false;
       }
     } else {
       mustDownload = true;
