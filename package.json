@@ -35,7 +35,6 @@
     "test:unit:ci": "vitest run"
   },
   "dependencies": {
-    "@formkit/drag-and-drop": "^0.2.6",
     "@numairawan/video-duration": "^1.0.0",
     "@panzoom/panzoom": "^4.5.1",
     "@quasar/extras": "^1.16.15",

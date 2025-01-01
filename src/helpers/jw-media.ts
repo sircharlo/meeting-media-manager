@@ -1330,7 +1330,49 @@ export const dynamicMediaMapper = async (
         };
       },
     );
-    return Promise.all(mediaPromises);
+    const allMediaPromises = await Promise.all(mediaPromises);
+    // Group mediaPromises by extractCaption
+    const groupedMediaPromises: DynamicMediaObject[] = Object.values(
+      allMediaPromises.reduce<Record<string, DynamicMediaObject>>(
+        (acc, media) => {
+          if (!media.extractCaption) {
+            // If there's no extractCaption, keep the item as is
+            acc[media.uniqueId] = acc[media.uniqueId] || media;
+          } else {
+            // If a group for this extractCaption doesn't exist, create it
+            if (!acc[media.extractCaption]) {
+              acc[media.extractCaption] = {
+                children: [],
+                duration: 0, // Parent doesn't have a duration
+                extractCaption: media.extractCaption,
+                fileUrl: '', // Parent doesn't have a fileUrl
+                isAudio: false,
+                isImage: false,
+                isVideo: false,
+                section: media.section,
+                sectionOriginal: media.sectionOriginal,
+                thumbnailUrl: '', // Parent doesn't have a thumbnailUrl
+                title: media.extractCaption,
+                uniqueId: `group-${media.extractCaption}`, // Unique ID for the group
+              };
+            }
+            if (!acc[media.extractCaption]?.children)
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              acc[media.extractCaption]!.children = [];
+            // Add the media item as a child
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            acc[media.extractCaption]!.children!.push(media);
+          }
+          return acc;
+        },
+        {},
+      ),
+    );
+
+    console.log(groupedMediaPromises);
+
+    console.log('groupedMediaPromises', groupedMediaPromises);
+    return groupedMediaPromises;
   } catch (e) {
     errorCatcher(e);
     return [];
