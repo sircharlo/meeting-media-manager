@@ -119,7 +119,7 @@
               >
                 <q-item-section>
                   <q-item-label>{{ t(settingId) }}</q-item-label>
-                  <q-item-label caption>
+                  <q-item-label caption :class="{ 'q-pb-sm': $q.screen.lt.sm }">
                     {{ t(settingId + '-explain') }}
                   </q-item-label>
                 </q-item-section>

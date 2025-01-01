@@ -311,17 +311,22 @@
     >
       <q-item class="text-lac items-center">
         <q-avatar class="text-white bg-lac jw-icon" size="lg"></q-avatar>
-        <q-item-section class="text-bold text-uppercase text-spaced">
+        <q-item-section class="text-bold text-uppercase text-spaced col-grow">
           {{ t('lac') }}
         </q-item-section>
         <q-item-section side>
           <q-btn
+            class="add-media-shortcut ellipsis"
             color="lac"
             flat
             icon="mmm-add-media"
-            :label="t('add-extra-media')"
+            :label="$q.screen.gt.xs ? t('add-extra-media') : undefined"
             @click="openImportMenu('lac')"
-          />
+          >
+            <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+              {{ t('add-extra-media') }}
+            </q-tooltip>
+          </q-btn>
         </q-item-section>
       </q-item>
       <q-list ref="lacList" class="list-droppable">
@@ -405,6 +410,7 @@
         </q-item-section>
         <q-item-section side>
           <q-btn
+            class="add-media-shortcut"
             color="additional"
             :flat="
               !!sortableCircuitOverseerMediaItems.filter((m) => !m.hidden)
@@ -416,19 +422,32 @@
                 : 'mmm-music-note'
             "
             :label="
-              t(
-                sortableCircuitOverseerMediaItems.filter((m) => !m.hidden)
-                  .length
-                  ? 'add-extra-media'
-                  : 'add-a-closing-song',
-              )
+              $q.screen.gt.xs
+                ? t(
+                    sortableCircuitOverseerMediaItems.filter((m) => !m.hidden)
+                      .length
+                      ? 'add-extra-media'
+                      : 'add-a-closing-song',
+                  )
+                : undefined
             "
             @click="
               sortableCircuitOverseerMediaItems.filter((m) => !m.hidden).length
                 ? openImportMenu('circuitOverseer')
                 : addSong('circuitOverseer')
             "
-          />
+          >
+            <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+              {{
+                t(
+                  sortableCircuitOverseerMediaItems.filter((m) => !m.hidden)
+                    .length
+                    ? 'add-extra-media'
+                    : 'add-a-closing-song',
+                )
+              }}
+            </q-tooltip>
+          </q-btn>
         </q-item-section>
       </q-item>
       <q-list ref="circuitOverseerList" class="list-droppable">
@@ -503,7 +522,7 @@ import DragAndDropper from 'components/media/DragAndDropper.vue';
 import MediaItem from 'components/media/MediaItem.vue';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
-import { useMeta } from 'quasar';
+import { useMeta, useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
 import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
@@ -557,6 +576,8 @@ const jwpubImportDocuments = ref<DocumentItem[]>([]);
 
 const { dateLocale, t } = useLocale();
 useMeta({ title: t('titles.meetingMedia') });
+
+const $q = useQuasar();
 
 watch(
   () => [jwpubImportDb.value, jwpubImportDocuments.value],
@@ -1542,3 +1563,14 @@ const resetDragging = () => {
   sectionToAddTo.value = undefined;
 };
 </script>
+<style scoped lang="scss">
+.add-media-shortcut {
+  max-width: 100%;
+
+  :deep(span.block) {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+}
+</style>
