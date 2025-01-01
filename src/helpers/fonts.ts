@@ -45,10 +45,7 @@ const getLocalFontPath = async (fontName: FontName) => {
   let mustDownload = false;
   const fontUrls = useJwStore().fontUrls;
   try {
-    if (
-      (await window.electronApi.fs.exists(fontPath)) &&
-      useCurrentStateStore().online
-    ) {
+    if (await window.electronApi.fs.exists(fontPath)) {
       try {
         const headReq = await fetchRaw(fontUrls[fontName], {
           method: 'HEAD',
