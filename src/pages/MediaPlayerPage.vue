@@ -399,10 +399,16 @@ $q.iconMapFn = (iconName) => {
 };
 
 watchImmediate(
-  () => [jwStore.urlVariables?.base, jwStore.urlVariables?.mediator],
+  () => [
+    jwStore.urlVariables?.base,
+    jwStore.urlVariables?.mediator,
+    currentState.online,
+  ],
   () => {
-    setElementFont('Wt-ClearText-Bold');
-    setElementFont('JW-Icons');
+    if (currentState.online) {
+      setElementFont('Wt-ClearText-Bold');
+      setElementFont('JW-Icons');
+    }
   },
 );
 </script>

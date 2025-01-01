@@ -245,7 +245,6 @@ watchDebounced(
   async ([newBaseUrl, newCongregation], [oldBaseUrl]) => {
     if (!!newCongregation && newBaseUrl !== oldBaseUrl) {
       await setUrlVariables(newBaseUrl);
-      setElementFont('JW-Icons');
     }
   },
   { debounce: 500 },
@@ -474,11 +473,23 @@ const removeListeners = () => {
 onMounted(() => {
   document.title = 'Meeting Media Manager';
   if (!currentSettings.value) navigateToCongregationSelector();
-  setElementFont('JW-Icons');
   initListeners();
 });
 
 onBeforeUnmount(() => {
   removeListeners();
 });
+
+watchImmediate(
+  () => [
+    jwStore.urlVariables?.base,
+    jwStore.urlVariables?.mediator,
+    currentState.online,
+  ],
+  () => {
+    if (currentState.online) {
+      setElementFont('JW-Icons');
+    }
+  },
+);
 </script>
