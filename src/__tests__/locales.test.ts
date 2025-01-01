@@ -2,7 +2,7 @@ import { readdir, readFile } from 'fs-extra';
 import { enabled, locales as localeOptions } from 'src/constants/locales';
 import appMessages from 'src/i18n';
 import { camelToKebabCase } from 'src/utils/general';
-import { resolve } from 'upath';
+import { normalize, resolve } from 'upath';
 import { describe, expect, it } from 'vitest';
 
 describe('Locales', () => {
@@ -37,7 +37,7 @@ describe('Locales', () => {
         .filter(
           (f) =>
             typeof f === 'string' &&
-            srcFolders.has(f.split('\\')[0] ?? '') &&
+            srcFolders.has(normalize(f).split('/')[0] ?? '') &&
             !f.includes('__tests__') &&
             (f.endsWith('.ts') || f.endsWith('.vue')),
         )
