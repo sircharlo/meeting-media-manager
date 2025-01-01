@@ -39,7 +39,8 @@
       "
     >
       <q-icon class="q-mr-sm" name="mmm-mirror" size="xs" />
-      {{ t('stop-mirroring') }}
+      <template v-if="$q.screen.gt.xs">{{ t('stop-mirroring') }}</template>
+      <q-tooltip v-else :delay="1000">{{ t('stop-mirroring') }}</q-tooltip>
     </q-btn>
   </template>
   <q-btn
