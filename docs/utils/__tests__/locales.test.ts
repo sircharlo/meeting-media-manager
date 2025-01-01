@@ -11,20 +11,22 @@ describe('Locales', () => {
     const locales = localeOptions.map((l) => l.value).sort();
     const localesKebab = locales.map(camelToKebabCase).sort();
 
-    const docsLocaleMessages = Object.keys(docsMessages).sort();
+    const messages = Object.keys(docsMessages).sort();
 
-    const docsLocaleFiles = (await readdir(resolve(__dirname, '../../locales')))
+    expect(locales).toEqual(messages);
+
+    const localeFiles = (await readdir(resolve(__dirname, '../../locales')))
       .filter((f) => f.endsWith('.json'))
       .map((f) => f.replace('.json', ''))
       .sort();
 
-    const docsSrcFolders = (await readdir(resolve(__dirname, '../../src')))
+    expect(localesKebab).toEqual(localeFiles);
+
+    const srcFolders = (await readdir(resolve(__dirname, '../../src')))
       .filter((f) => f !== 'assets' && f !== 'public')
       .sort();
 
-    expect(locales).toEqual(docsLocaleMessages);
-    expect(localesKebab).toEqual(docsLocaleFiles);
-    expect(localesKebab).toEqual(docsSrcFolders);
+    expect(localesKebab).toEqual(srcFolders);
   });
 
   it('should have correct links', async () => {
@@ -62,9 +64,10 @@ describe('Locales', () => {
       readFile(resolve(__dirname, '../../.vitepress/config.mts'), 'utf-8'),
     ]);
 
-    const docsKeys = Object.keys(docsMessages.en);
-    docsKeys.forEach((key) => {
-      expect(files.join(' ')).toContain(key);
+    const keys = Object.keys(docsMessages.en);
+    keys.forEach((key) => {
+      const match = files.join(' ').includes(key);
+      expect(match, `${key} not found`).toBe(true);
     });
   });
 });
