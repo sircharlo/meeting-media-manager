@@ -10,7 +10,7 @@ describe('Announcement Banner', () => {
   it('should mount correctly', async () => {
     const wrapper = mount(AnnouncementBanner, {});
 
-    // @ts-expect-error clickCount is not in the component
+    // @ts-expect-error version is not in the component definition
     expect(wrapper.vm.version).toBe('1.2.3');
   });
 });
