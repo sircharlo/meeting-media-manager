@@ -75,6 +75,7 @@
     "@daipeng7/rollup-plugin-iconfont": "^3.0.6",
     "@electron/rebuild": "^3.7.1",
     "@intlify/unplugin-vue-i18n": "^6.0.3",
+    "@pinia/testing": "^0.1.7",
     "@quasar/app-vite": "^2.0.4",
     "@quasar/icongenie": "^4.0.0",
     "@quasar/quasar-app-extension-testing-unit-vitest": "^1.1.0",

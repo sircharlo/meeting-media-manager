@@ -32,6 +32,7 @@ describe('Locales', () => {
       'pages',
       'stores',
     ]);
+
     const files = await Promise.all(
       (await readdir(resolve(__dirname, '..'), { recursive: true }))
         .filter(
