@@ -49,14 +49,18 @@ const getLocalFontPath = async (fontName: FontName) => {
       (await window.electronApi.fs.exists(fontPath)) &&
       useCurrentStateStore().online
     ) {
-      const headReq = await fetchRaw(fontUrls[fontName], {
-        method: 'HEAD',
-      });
-      if (headReq.ok) {
-        const remoteSize = headReq.headers.get('content-length');
-        const localSize = (await window.electronApi.fs.stat(fontPath)).size;
-        mustDownload = remoteSize ? parseInt(remoteSize) !== localSize : true;
-      } else {
+      try {
+        const headReq = await fetchRaw(fontUrls[fontName], {
+          method: 'HEAD',
+        });
+        if (headReq.ok) {
+          const remoteSize = headReq.headers.get('content-length');
+          const localSize = (await window.electronApi.fs.stat(fontPath)).size;
+          mustDownload = remoteSize ? parseInt(remoteSize) !== localSize : true;
+        } else {
+          mustDownload = false;
+        }
+      } catch {
         mustDownload = false;
       }
     } else {
