@@ -37,9 +37,6 @@ const exportDayToFolder = async (targetDate?: Date) => {
     ...(jwStore.lookupPeriod?.[currentStateStore.currentCongregation]?.find(
       (d) => d.date && datesAreSame(d.date, targetDate),
     )?.dynamicMedia || []),
-    ...(jwStore.additionalMediaMaps?.[currentStateStore.currentCongregation]?.[
-      dateString
-    ] || []),
     ...(currentStateStore.watchFolderMedia[dateString] || []),
   ];
 

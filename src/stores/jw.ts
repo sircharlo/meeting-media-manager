@@ -47,9 +47,6 @@ export const shouldUpdateList = (
 };
 
 interface Store {
-  additionalMediaMaps: Partial<
-    Record<string, Partial<Record<string, DynamicMediaObject[]>>>
-  >;
   jwBibleAudioFiles: Partial<
     Record<JwLangCode, CacheList<Partial<Publication>>>
   >;
@@ -79,26 +76,46 @@ export const useJwStore = defineStore('jw-store', {
       section: MediaSection | undefined,
     ) {
       try {
-        const { currentCongregation, selectedDate, selectedDateObject } =
+        const { currentCongregation, selectedDateObject } =
           useCurrentStateStore();
+
+        // Early exit if no media or selected date object
         if (!mediaArray.length || !selectedDateObject) return;
-        const coWeek = isCoWeek(selectedDateObject?.date);
-        if (coWeek) {
-          if (isMwMeetingDay(selectedDateObject?.date)) {
-            mediaArray.forEach((media) => {
-              media.section = section || 'circuitOverseer';
-              media.sectionOriginal = section || 'circuitOverseer';
-            });
-          }
+
+        // Handle circuit overseer week logic
+        const coWeek = isCoWeek(selectedDateObject.date);
+        if (coWeek && isMwMeetingDay(selectedDateObject.date)) {
+          mediaArray.forEach((media) => {
+            media.section = section || 'circuitOverseer';
+            media.sectionOriginal = section || 'circuitOverseer';
+          });
         }
-        if (!this.additionalMediaMaps[currentCongregation])
-          this.additionalMediaMaps[currentCongregation] = {};
-        if (!this.additionalMediaMaps[currentCongregation][selectedDate])
-          this.additionalMediaMaps[currentCongregation][selectedDate] = [];
-        const currentArray =
-          this.additionalMediaMaps[currentCongregation][selectedDate];
-        this.additionalMediaMaps[currentCongregation][selectedDate] =
-          uniqueById([...currentArray, ...mediaArray]);
+
+        // Ensure lookupPeriod for current congregation exists
+        if (!this.lookupPeriod[currentCongregation]) {
+          this.lookupPeriod[currentCongregation] = [];
+        }
+
+        // Find or create the period object for the selected date
+        let period = this.lookupPeriod[currentCongregation].find(
+          (d) => getDateDiff(d.date, selectedDateObject.date, 'days') === 0,
+        );
+
+        if (!period) {
+          period = { ...selectedDateObject, dynamicMedia: [] };
+          this.lookupPeriod[currentCongregation].push(period);
+        }
+
+        // Ensure dynamicMedia array exists
+        if (!period.dynamicMedia) {
+          period.dynamicMedia = [];
+        }
+
+        // Merge mediaArray into dynamicMedia, ensuring uniqueness by ID
+        period.dynamicMedia = uniqueById([
+          ...mediaArray,
+          ...period.dynamicMedia,
+        ]);
       } catch (e) {
         errorCatcher(e);
       }
@@ -106,29 +123,39 @@ export const useJwStore = defineStore('jw-store', {
     clearCurrentDayAdditionalMedia() {
       const currentState = useCurrentStateStore();
       const { currentCongregation, selectedDate } = currentState;
-      if (
-        !currentCongregation ||
-        !selectedDate ||
-        !this.additionalMediaMaps?.[currentCongregation]?.[selectedDate]?.length
-      )
-        return;
-      this.additionalMediaMaps[currentCongregation][selectedDate] = [];
+
+      // Early exit if required data is missing
+      if (!currentCongregation || !selectedDate) return;
+
+      // Find the day matching the selected date
+      const day = this.lookupPeriod?.[currentCongregation]?.find(
+        (day) => getDateDiff(day.date, selectedDate, 'days') === 0,
+      );
+
+      // Filter out media with source 'additional' if day and dynamicMedia exist
+      if (day?.dynamicMedia) {
+        day.dynamicMedia = day.dynamicMedia.filter(
+          (media) => media.source !== 'additional',
+        );
+      }
     },
     removeFromAdditionMediaMap(uniqueId: string) {
       try {
         const { currentCongregation, selectedDate } = useCurrentStateStore();
-        if (
-          uniqueId &&
-          currentCongregation &&
-          selectedDate &&
-          this.additionalMediaMaps[currentCongregation]?.[selectedDate]
-        ) {
-          const currentArray =
-            this.additionalMediaMaps[currentCongregation][selectedDate];
-          this.additionalMediaMaps[currentCongregation][selectedDate] =
-            uniqueById(
-              currentArray.filter((media) => media.uniqueId !== uniqueId),
-            );
+
+        // Early exit if required data is missing
+        if (!uniqueId || !currentCongregation || !selectedDate) return;
+
+        // Find the day matching the selected date
+        const day = this.lookupPeriod?.[currentCongregation]?.find(
+          (day) => getDateDiff(day.date, selectedDate, 'days') === 0,
+        );
+
+        // Remove media with the specified uniqueId if day and dynamicMedia exist
+        if (day?.dynamicMedia) {
+          day.dynamicMedia = uniqueById(
+            day.dynamicMedia.filter((media) => media.uniqueId !== uniqueId),
+          );
         }
       } catch (e) {
         errorCatcher(e);
@@ -150,11 +177,6 @@ export const useJwStore = defineStore('jw-store', {
             getDateDiff(day.date, selectedDateObject?.date, 'days') === 0,
         )
         ?.dynamicMedia?.filter((media) => media.hidden)
-        ?.forEach((media) => {
-          media.hidden = false;
-        });
-      this.additionalMediaMaps?.[currentCongregation]?.[selectedDate]
-        ?.filter((media) => media.hidden)
         ?.forEach((media) => {
           media.hidden = false;
         });
@@ -339,15 +361,14 @@ export const useJwStore = defineStore('jw-store', {
       if (!currentCongregation || !selectedDate || !selectedDateObject) {
         return [];
       }
-      const allMediaItems = (
+      const allMediaItems =
         state.lookupPeriod?.[currentCongregation]?.find(
           (day) =>
             getDateDiff(day.date, selectedDateObject?.date, 'days') === 0,
-        )?.dynamicMedia || []
-      ).concat(
-        state.additionalMediaMaps?.[currentCongregation]?.[selectedDate] || [],
+        )?.dynamicMedia || [];
+      return allMediaItems.filter(
+        (media) => !media.children?.length && !isFileUrl(media.fileUrl),
       );
-      return allMediaItems.filter((media) => !isFileUrl(media.fileUrl));
     },
     yeartext: (state) => {
       const year = new Date().getFullYear();
@@ -380,7 +401,6 @@ export const useJwStore = defineStore('jw-store', {
   },
   state: (): Store => {
     return {
-      additionalMediaMaps: {},
       jwBibleAudioFiles: {},
       jwLanguages: { list: [], updated: oldDate },
       jwSongs: {},

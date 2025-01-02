@@ -507,7 +507,6 @@ const router = useRouter();
 const jwStore = useJwStore();
 const { addToAdditionMediaMap } = jwStore;
 const {
-  additionalMediaMaps,
   lookupPeriod,
   missingMedia,
   urlVariables,
@@ -608,11 +607,6 @@ watch(
           ) ?? []
         )
           .concat(watchFolderMedia.value?.[selectedDate.value] ?? [])
-          .concat(
-            additionalMediaMaps.value[currentCongregation.value]?.[
-              selectedDate.value
-            ] ?? [],
-          )
           .find((item) => item.uniqueId === mediaPlayingUniqueId.value)
           ?.customDuration || undefined;
       if (customDuration) {
@@ -624,14 +618,6 @@ watch(
     }
   },
 );
-
-const datedAdditionalMediaMap = computed(() => {
-  return (
-    additionalMediaMaps.value[currentCongregation.value]?.[
-      selectedDate.value
-    ] ?? []
-  );
-});
 
 const { data: mediaStateData } = useBroadcastChannel<
   'ended' | null,
@@ -756,7 +742,6 @@ const sortableMediaItems = ref<DynamicMediaObject[]>([]);
 
 const generateMediaList = () => {
   sortableMediaItems.value = [
-    ...datedAdditionalMediaMap.value,
     ...(selectedDateObject.value?.dynamicMedia ?? []),
     ...(watchFolderMedia.value?.[selectedDate.value] ?? []),
   ].filter(
@@ -769,7 +754,6 @@ const generateMediaList = () => {
 watch(
   () => [
     selectedDateObject.value?.date,
-    datedAdditionalMediaMap.value?.length,
     selectedDateObject.value?.dynamicMedia?.length,
     watchFolderMedia.value?.[selectedDate.value]?.length,
   ],
@@ -860,22 +844,12 @@ const goToNextDayWithMedia = () => {
   try {
     if (
       currentCongregation.value &&
-      (lookupPeriod.value?.[currentCongregation.value] ||
-        additionalMediaMaps.value?.[currentCongregation.value])
+      lookupPeriod.value?.[currentCongregation.value]
     ) {
       selectedDate.value =
-        [
-          ...(lookupPeriod.value?.[currentCongregation.value]
-            ?.filter((day) => day.meeting)
-            .map((day) => day.date) ?? []),
-          ...Object.keys(
-            additionalMediaMaps.value?.[currentCongregation.value] || {},
-          ).filter(
-            (day) =>
-              (additionalMediaMaps.value?.[currentCongregation.value]?.[day]
-                ?.length || 0) > 0,
-          ),
-        ]
+        lookupPeriod.value?.[currentCongregation.value]
+          ?.filter((day) => day.meeting)
+          .map((day) => day.date)
           .filter(Boolean)
           .filter((mediaDate) => !isInPast(dateFromString(mediaDate)))
           .map((mediaDate) => formatDate(mediaDate, 'YYYY/MM/DD'))

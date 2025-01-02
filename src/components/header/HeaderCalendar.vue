@@ -125,7 +125,7 @@
             </q-item-section>
           </q-item>
         </template>
-        <template v-if="additionalMediaForDay || hiddenMediaForDay">
+        <template v-if="additionalMediaForDayExists || hiddenMediaForDay">
           <q-item-label header>{{ t('dangerZone') }}</q-item-label>
           <q-item
             v-if="hiddenMediaForDay"
@@ -144,7 +144,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            v-if="additionalMediaForDay"
+            v-if="additionalMediaForDayExists"
             v-close-popup
             clickable
             @click="mediaDeleteAllPending = true"
@@ -247,7 +247,7 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 const jwStore = useJwStore();
 const { clearCurrentDayAdditionalMedia, showCurrentDayHiddenMedia } = jwStore;
-const { additionalMediaMaps, lookupPeriod } = storeToRefs(jwStore);
+const { lookupPeriod } = storeToRefs(jwStore);
 
 const { dateLocale } = useLocale();
 
@@ -279,38 +279,30 @@ const openDragAndDropper = () => {
   );
 };
 
-// const mediaSortForDay = computed(() => {
-//   if (!selectedDate.value || !currentCongregation.value || !mediaSort.value)
-//     return false;
-//   try {
-//     return (
-//       (mediaSort.value?.[currentCongregation.value]?.[selectedDate.value]
-//         ?.length || 0) > 0
-//     );
-//   } catch (error) {
-//     errorCatcher(error);
-//     return false;
-//   }
-// });
-
 const additionalMediaForDay = computed(
   () =>
-    (additionalMediaMaps.value?.[currentCongregation.value]?.[
-      selectedDate.value
-    ]?.length || 0) > 0,
+    lookupPeriod.value?.[currentCongregation.value]
+      ?.find((day) => formatDate(day.date, 'YYYY/MM/DD') === selectedDate.value)
+      ?.dynamicMedia.filter((media) => media.source === 'additional') || [],
 );
 
+const additionalMediaDates = computed(() =>
+  (
+    lookupPeriod.value?.[currentCongregation.value]?.filter((day) =>
+      day.dynamicMedia.some((media) => media.source === 'additional'),
+    ) || []
+  ).map((day) => formatDate(day.date, 'YYYY/MM/DD')),
+);
+
+const additionalMediaForDayExists = computed(
+  () => (additionalMediaForDay.value?.length || 0) > 0,
+);
 const hiddenMediaForDay = computed(() =>
   (
     lookupPeriod.value?.[currentCongregation.value]?.find(
       (day) => formatDate(day.date, 'YYYY/MM/DD') === selectedDate.value,
     )?.dynamicMedia || []
   )
-    .concat(
-      additionalMediaMaps.value?.[currentCongregation.value]?.[
-        selectedDate.value
-      ] || [],
-    )
     .concat(watchFolderMedia.value?.[selectedDate.value] || [])
     .some((media) => media.hidden),
 );
@@ -319,23 +311,12 @@ const mediaDeleteAllPending = ref(false);
 
 const getEventDates = () => {
   try {
-    if (
-      !(lookupPeriod.value || additionalMediaMaps.value) ||
-      !currentCongregation.value
-    )
-      return [];
+    if (!lookupPeriod.value || !currentCongregation.value) return [];
     const meetingDates =
       lookupPeriod.value[currentCongregation.value]
         ?.filter((day) => day.meeting)
         .map((day) => formatDate(day.date, 'YYYY/MM/DD')) || [];
-    const additionalMedia =
-      additionalMediaMaps.value[currentCongregation.value];
-    const additionalMediaDates = additionalMedia
-      ? Object.keys(additionalMedia)
-          .filter((day) => (additionalMedia[day]?.length || 0) > 0)
-          .map((day) => formatDate(day, 'YYYY/MM/DD'))
-      : [];
-    return meetingDates.concat(additionalMediaDates);
+    return meetingDates.concat(additionalMediaDates.value);
   } catch (error) {
     errorCatcher(error);
     return [];
@@ -409,15 +390,7 @@ const getEventDayColor = (eventDate: string) => {
     } else if (lookupDate?.complete) {
       return 'primary';
     }
-    const additionalDates =
-      additionalMediaMaps.value[currentCongregation.value];
-    if (additionalDates) {
-      const isAdditional = Object.keys(additionalDates)
-        .filter((day) => (additionalDates[day]?.length || 0) > 0)
-        .map((day) => formatDate(day, 'YYYY/MM/DD'))
-        .includes(eventDate);
-      if (isAdditional) return 'additional';
-    }
+    if (additionalMediaForDayExists.value) return 'additional';
   } catch (error) {
     errorCatcher(error);
     return 'negative';

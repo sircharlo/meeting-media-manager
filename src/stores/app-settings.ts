@@ -1,6 +1,5 @@
 import type {
   DateInfo,
-  DynamicMediaObject,
   JwLanguage,
   MediaLink,
   OldAppConfig,
@@ -76,9 +75,6 @@ export const useAppSettingsStore = defineStore('app-settings', {
           QuasarStorage.removeItem('congregations');
 
           jwStore.$patch({
-            additionalMediaMaps: parseJsonSafe<
-              Record<string, Record<string, DynamicMediaObject[]>>
-            >(QuasarStorage.getItem('additionalMediaMaps'), {}),
             jwLanguages: parseJsonSafe<{ list: JwLanguage[]; updated: Date }>(
               QuasarStorage.getItem('jwLanguages'),
               { list: [], updated: new Date(0) },
@@ -97,15 +93,11 @@ export const useAppSettingsStore = defineStore('app-settings', {
           });
 
           // Remove migrated items from localStorage
-          [
-            'additionalMediaMaps',
-            'jwLanguages',
-            'jwSongs',
-            'lookupPeriod',
-            'yeartexts',
-          ].forEach((item) => {
-            QuasarStorage.removeItem(item);
-          });
+          ['jwLanguages', 'jwSongs', 'lookupPeriod', 'yeartexts'].forEach(
+            (item) => {
+              QuasarStorage.removeItem(item);
+            },
+          );
 
           this.migrations = this.migrations.concat(
             parseJsonSafe(QuasarStorage.getItem('migrations'), []),
