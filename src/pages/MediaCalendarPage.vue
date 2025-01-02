@@ -160,7 +160,7 @@
           </template>
         </q-avatar>
         <q-item-section
-          class="text-bold text-uppercase text-spaced row justify-between"
+          class="text-bold text-uppercase text-spaced row justify-between col-grow"
         >
           {{
             t(
@@ -179,11 +179,15 @@
           side
         >
           <q-btn
+            class="add-media-shortcut"
             color="additional"
             icon="mmm-music-note"
+            :label="$q.screen.gt.xs ? t('add-an-opening-song') : undefined"
             @click="addSong('additional')"
           >
-            {{ t('add-an-opening-song') }}
+            <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+              {{ t('add-an-opening-song') }}
+            </q-tooltip>
           </q-btn>
         </q-item-section>
       </q-item>
@@ -316,7 +320,7 @@
         </q-item-section>
         <q-item-section side>
           <q-btn
-            class="add-media-shortcut ellipsis"
+            class="add-media-shortcut"
             color="lac"
             flat
             icon="mmm-add-media"
@@ -405,7 +409,7 @@
         <q-avatar class="text-white bg-additional jw-icon" size="lg">
           
         </q-avatar>
-        <q-item-section class="text-bold text-uppercase text-spaced">
+        <q-item-section class="text-bold text-uppercase text-spaced col-grow">
           {{ t('co') }}
         </q-item-section>
         <q-item-section side>
