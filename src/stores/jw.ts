@@ -60,7 +60,7 @@ interface Store {
   yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
 }
 
-function uniqueById<T extends { uniqueId: string }>(array: T[]): T[] {
+export function uniqueById<T extends { uniqueId: string }>(array: T[]): T[] {
   return array.reduce((unique: T[], o: T) => {
     if (!unique.some((obj) => obj.uniqueId === o.uniqueId)) {
       unique.push(o);

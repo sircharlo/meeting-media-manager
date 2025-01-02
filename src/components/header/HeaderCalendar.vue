@@ -125,7 +125,9 @@
             </q-item-section>
           </q-item>
         </template>
-        <template v-if="additionalMediaForDayExists || hiddenMediaForDay">
+        <template
+          v-if="additionalMediaForSelectedDayExists || hiddenMediaForDay"
+        >
           <q-item-label header>{{ t('dangerZone') }}</q-item-label>
           <q-item
             v-if="hiddenMediaForDay"
@@ -144,7 +146,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            v-if="additionalMediaForDayExists"
+            v-if="additionalMediaForSelectedDayExists"
             v-close-popup
             clickable
             @click="mediaDeleteAllPending = true"
@@ -294,7 +296,21 @@ const additionalMediaDates = computed(() =>
   ).map((day) => formatDate(day.date, 'YYYY/MM/DD')),
 );
 
-const additionalMediaForDayExists = computed(
+const additionalMediaForDayExists = (lookupDate: string) => {
+  try {
+    return (
+      (lookupPeriod.value?.[currentCongregation.value]
+        ?.find((day) => getDateDiff(lookupDate, day.date, 'days') === 0)
+        ?.dynamicMedia.filter((media) => media.source === 'additional')
+        ?.length || 0) > 0
+    );
+  } catch (error) {
+    errorCatcher(error);
+    return false;
+  }
+};
+
+const additionalMediaForSelectedDayExists = computed(
   () => (additionalMediaForDay.value?.length || 0) > 0,
 );
 const hiddenMediaForDay = computed(() =>
@@ -390,7 +406,7 @@ const getEventDayColor = (eventDate: string) => {
     } else if (lookupDate?.complete) {
       return 'primary';
     }
-    if (additionalMediaForDayExists.value) return 'additional';
+    if (additionalMediaForDayExists(eventDate)) return 'additional';
   } catch (error) {
     errorCatcher(error);
     return 'negative';

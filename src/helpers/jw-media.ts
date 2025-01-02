@@ -57,7 +57,7 @@ import {
   getPublicationInfoFromDb,
 } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
-import { shouldUpdateList, useJwStore } from 'stores/jw';
+import { shouldUpdateList, uniqueById, useJwStore } from 'stores/jw';
 
 export const copyToDatedAdditionalMedia = async (
   filepathToCopy: string,
@@ -372,7 +372,10 @@ export const fetchMedia = async () => {
               fetchResult = await getMwMedia(dayDate);
             }
             if (fetchResult) {
-              day.dynamicMedia = fetchResult.media;
+              day.dynamicMedia = uniqueById([
+                ...day.dynamicMedia,
+                ...fetchResult.media,
+              ]);
               day.error = fetchResult.error;
               day.complete = true;
             } else {

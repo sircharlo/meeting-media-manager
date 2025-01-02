@@ -848,7 +848,7 @@ const goToNextDayWithMedia = () => {
     ) {
       selectedDate.value =
         lookupPeriod.value?.[currentCongregation.value]
-          ?.filter((day) => day.meeting)
+          ?.filter((day) => day.meeting || day.dynamicMedia.length > 0)
           .map((day) => day.date)
           .filter(Boolean)
           .filter((mediaDate) => !isInPast(dateFromString(mediaDate)))
