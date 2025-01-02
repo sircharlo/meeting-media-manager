@@ -311,6 +311,7 @@ body.body--dark {
   }
 
   &.additional:before,
+  &.circuit-overseer:before,
   &.website:before {
     background: $additional;
   }
@@ -482,11 +483,13 @@ body.body--dark {
 }
 
 .bg-additional,
+.bg-circuit-overseer,
 .bg-website {
   background: $additional;
 }
 
 .text-additional,
+.text-circuit-overseer,
 .text-website {
   color: $additional;
 }

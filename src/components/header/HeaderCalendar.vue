@@ -4,7 +4,7 @@
   <DialogRemoteVideo v-model="remoteVideoPopup" :section="section" />
   <DialogStudyBible v-model="studyBiblePopup" :section="section" />
   <DialogAudioBible v-model="audioBiblePopup" :section="section" />
-  <q-btn
+  <!-- <q-btn
     v-if="selectedDate"
     color="white-transparent"
     :disable="mediaPlaying || !mediaSortForDay"
@@ -20,7 +20,7 @@
     <q-tooltip v-if="!$q.screen.gt.sm" :delay="1000">
       {{ t('reset-sort-order') }}
     </q-tooltip>
-  </q-btn>
+  </q-btn> -->
   <q-btn
     v-if="selectedDate"
     color="white-transparent"
@@ -246,9 +246,8 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const jwStore = useJwStore();
-const { clearCurrentDayAdditionalMedia, resetSort, showCurrentDayHiddenMedia } =
-  jwStore;
-const { additionalMediaMaps, lookupPeriod, mediaSort } = storeToRefs(jwStore);
+const { clearCurrentDayAdditionalMedia, showCurrentDayHiddenMedia } = jwStore;
+const { additionalMediaMaps, lookupPeriod } = storeToRefs(jwStore);
 
 const { dateLocale } = useLocale();
 
@@ -280,19 +279,19 @@ const openDragAndDropper = () => {
   );
 };
 
-const mediaSortForDay = computed(() => {
-  if (!selectedDate.value || !currentCongregation.value || !mediaSort.value)
-    return false;
-  try {
-    return (
-      (mediaSort.value?.[currentCongregation.value]?.[selectedDate.value]
-        ?.length || 0) > 0
-    );
-  } catch (error) {
-    errorCatcher(error);
-    return false;
-  }
-});
+// const mediaSortForDay = computed(() => {
+//   if (!selectedDate.value || !currentCongregation.value || !mediaSort.value)
+//     return false;
+//   try {
+//     return (
+//       (mediaSort.value?.[currentCongregation.value]?.[selectedDate.value]
+//         ?.length || 0) > 0
+//     );
+//   } catch (error) {
+//     errorCatcher(error);
+//     return false;
+//   }
+// });
 
 const additionalMediaForDay = computed(
   () =>

@@ -299,19 +299,6 @@ export const downloadFileIfNeeded = async ({
   return result;
 };
 
-export const mapOrder =
-  (sortOrder: string | string[] | undefined) =>
-  (a: DynamicMediaObject, b: DynamicMediaObject) => {
-    try {
-      const key = 'uniqueId';
-      if (!sortOrder || sortOrder.length === 0) return 0;
-      return sortOrder.indexOf(a[key]) > sortOrder.indexOf(b[key]) ? 1 : -1;
-    } catch (e) {
-      errorCatcher(e);
-      return 0;
-    }
-  };
-
 export const fetchMedia = async () => {
   try {
     const currentStateStore = useCurrentStateStore();

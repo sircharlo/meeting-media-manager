@@ -3,7 +3,6 @@ import type { MediaSection } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setupFFmpeg } from 'src/helpers/fs';
-import { mapOrder } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { datesAreSame, formatDate } from 'src/utils/date';
@@ -46,25 +45,17 @@ const exportDayToFolder = async (targetDate?: Date) => {
 
   const dynamicMediaFiltered = Array.from(
     new Map(dynamicMedia.map((item) => [item.fileUrl, item])).values(),
-  )
-    .sort(
-      mapOrder(
-        jwStore.mediaSort[currentStateStore.currentCongregation]?.[
-          dateString
-        ] || [],
-      ),
-    )
-    .sort((a, b) => {
-      const sectionOrder: MediaSection[] = [
-        'additional',
-        'tgw',
-        'ayfm',
-        'lac',
-        'wt',
-        'circuitOverseer',
-      ];
-      return sectionOrder.indexOf(a.section) - sectionOrder.indexOf(b.section);
-    });
+  ).sort((a, b) => {
+    const sectionOrder: MediaSection[] = [
+      'additional',
+      'tgw',
+      'ayfm',
+      'lac',
+      'wt',
+      'circuitOverseer',
+    ];
+    return sectionOrder.indexOf(a.section) - sectionOrder.indexOf(b.section);
+  });
 
   const dayMediaLength = dynamicMediaFiltered.length;
 

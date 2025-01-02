@@ -90,10 +90,6 @@ export const useAppSettingsStore = defineStore('app-settings', {
               QuasarStorage.getItem('lookupPeriod'),
               {},
             ),
-            mediaSort: parseJsonSafe<Record<string, Record<string, string[]>>>(
-              QuasarStorage.getItem('mediaSort'),
-              {},
-            ),
             yeartexts: parseJsonSafe<Record<number, Record<string, string>>>(
               QuasarStorage.getItem('yeartexts'),
               {},
@@ -106,7 +102,6 @@ export const useAppSettingsStore = defineStore('app-settings', {
             'jwLanguages',
             'jwSongs',
             'lookupPeriod',
-            'mediaSort',
             'yeartexts',
           ].forEach((item) => {
             QuasarStorage.removeItem(item);

@@ -345,11 +345,6 @@ const updateWatchFolderRef = async ({
           watchFolderMedia.value[day]?.sort((a, b) =>
             SORTER.compare(a.title, b.title),
           );
-          if (jwStore.mediaSort[currentCongregation.value]?.[day]?.length) {
-            jwStore.mediaSort[currentCongregation.value]?.[day]?.push(
-              watchedItemMap?.uniqueId,
-            );
-          }
         }
       }
     } else if (event === 'unlink') {

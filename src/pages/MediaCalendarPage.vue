@@ -246,20 +246,18 @@
             </q-btn>
           </q-item-section>
         </q-item>
-        <div
-          v-if="
-            !mediaList.items.filter((m) => !m.hidden).length &&
-            selectedDateObject &&
-            isWeMeetingDay(selectedDateObject?.date)
-          "
-        >
+        <div v-if="!mediaList.items.filter((m) => !m.hidden).length">
           <q-item>
             <q-item-section
               class="align-center text-secondary text-grey text-subtitle2"
             >
               <div class="row items-center">
                 <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                <span>{{ t('dont-forget-add-missing-media') }}</span>
+                <span>{{
+                  selectedDateObject && isWeMeetingDay(selectedDateObject?.date)
+                    ? t('dont-forget-add-missing-media')
+                    : t('no-media-files-for-section')
+                }}</span>
               </div>
             </q-item-section>
           </q-item>
@@ -318,261 +316,7 @@
         </Sortable>
       </q-list>
     </template>
-    <q-list
-      v-show="
-        sortableAdditionalMediaItems?.filter((m) => !m.hidden).length ||
-        (selectedDateObject &&
-          selectedDateObject.complete &&
-          isWeMeetingDay(selectedDateObject?.date))
-      "
-      class="media-section additional"
-    >
-      <q-item v-if="selectedDateObject" class="text-additional items-center">
-        <q-avatar
-          class="text-white bg-additional jw-icon"
-          :size="isWeMeetingDay(selectedDateObject.date) ? 'lg' : 'md'"
-        >
-          <template v-if="isWeMeetingDay(selectedDateObject.date)">
-            
-          </template>
-          <template v-else>
-            <q-icon name="mmm-additional-media" size="md" />
-          </template>
-        </q-avatar>
-        <q-item-section
-          class="text-bold text-uppercase text-spaced row justify-between"
-        >
-          {{
-            t(
-              isWeMeetingDay(selectedDateObject.date)
-                ? 'public-talk'
-                : 'imported-media',
-            )
-          }}
-        </q-item-section>
-        <q-item-section
-          v-if="
-            isWeMeetingDay(selectedDateObject.date) &&
-            !sortableAdditionalMediaItems.filter((m) => !m.hidden && !m.watched)
-              .length
-          "
-          side
-        >
-          <q-btn
-            color="additional"
-            icon="mmm-music-note"
-            @click="addSong('additional')"
-          >
-            {{ t('add-an-opening-song') }}
-          </q-btn>
-        </q-item-section>
-      </q-item>
-      <q-list ref="additionalList" class="list-droppable">
-        <MediaItem
-          v-for="media in sortableAdditionalMediaItems"
-          :key="media.uniqueId"
-          v-model:repeat="media.repeat"
-          :media="media"
-          :play-state="playState(media.uniqueId)"
-          @update:custom-duration="
-            media.customDuration = JSON.parse($event) || undefined
-          "
-          @update:hidden="media.hidden = !!$event"
-          @update:tag="media.tag = $event"
-          @update:title="media.title = $event"
-        />
-        <div
-          v-if="
-            !sortableAdditionalMediaItems.filter((m) => !m.hidden).length &&
-            selectedDateObject &&
-            isWeMeetingDay(selectedDateObject?.date)
-          "
-        >
-          <q-item>
-            <q-item-section
-              class="align-center text-secondary text-grey text-subtitle2"
-            >
-              <div class="row items-center">
-                <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                <span>{{ t('dont-forget-add-missing-media') }}</span>
-              </div>
-            </q-item-section>
-          </q-item>
-        </div>
-      </q-list>
-    </q-list>
-    <q-list
-      v-show="
-        selectedDateObject?.complete && isMwMeetingDay(selectedDateObject?.date)
-      "
-      class="media-section tgw"
-    >
-      <q-item class="text-tgw items-center">
-        <q-avatar class="text-white bg-tgw jw-icon" size="md"></q-avatar>
-        <div class="text-bold text-uppercase text-spaced">
-          {{ t('tgw') }}
-        </div>
-      </q-item>
-      <q-list ref="tgwList" class="list-droppable">
-        <MediaItem
-          v-for="media in sortableTgwMediaItems"
-          :key="media.uniqueId"
-          v-model:repeat="media.repeat"
-          :media="media"
-          :play-state="playState(media.uniqueId)"
-          @update:custom-duration="
-            media.customDuration = JSON.parse($event) || undefined
-          "
-          @update:hidden="media.hidden = !!$event"
-          @update:tag="media.tag = $event"
-          @update:title="media.title = $event"
-        />
-        <div v-if="sortableTgwMediaItems.filter((m) => !m.hidden).length === 0">
-          <q-item>
-            <q-item-section
-              class="align-center text-secondary text-grey text-subtitle2"
-            >
-              <div class="row items-center">
-                <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                {{ t('no-media-files-for-section') }}
-              </div>
-            </q-item-section>
-          </q-item>
-        </div>
-      </q-list>
-    </q-list>
-    <q-list
-      v-show="
-        selectedDateObject?.complete && isMwMeetingDay(selectedDateObject?.date)
-      "
-      class="media-section ayfm"
-    >
-      <q-item class="text-ayfm items-center">
-        <q-avatar class="text-white bg-ayfm jw-icon" size="lg"></q-avatar>
-        <div class="text-bold text-uppercase text-spaced">
-          {{ t('ayfm') }}
-        </div>
-      </q-item>
-      <q-list ref="ayfmList" class="list-droppable">
-        <MediaItem
-          v-for="media in sortableAyfmMediaItems"
-          :key="media.uniqueId"
-          v-model:repeat="media.repeat"
-          :media="media"
-          :play-state="playState(media.uniqueId)"
-          @update:custom-duration="
-            media.customDuration = JSON.parse($event) || undefined
-          "
-          @update:hidden="media.hidden = !!$event"
-          @update:tag="media.tag = $event"
-          @update:title="media.title = $event"
-        />
-        <div
-          v-if="sortableAyfmMediaItems.filter((m) => !m.hidden).length === 0"
-        >
-          <q-item>
-            <q-item-section
-              class="align-center text-secondary text-grey text-subtitle2"
-            >
-              <div>
-                <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                {{ t('no-media-files-for-section') }}
-              </div>
-            </q-item-section>
-          </q-item>
-        </div>
-      </q-list>
-    </q-list>
-    <q-list
-      v-show="
-        selectedDateObject?.complete && isMwMeetingDay(selectedDateObject?.date)
-      "
-      class="media-section lac"
-    >
-      <q-item class="text-lac items-center">
-        <q-avatar class="text-white bg-lac jw-icon" size="lg"></q-avatar>
-        <q-item-section class="text-bold text-uppercase text-spaced">
-          {{ t('lac') }}
-        </q-item-section>
-        <q-item-section side>
-          <q-btn
-            color="lac"
-            flat
-            icon="mmm-add-media"
-            :label="t('add-extra-media')"
-            @click="openImportMenu('lac')"
-          />
-        </q-item-section>
-      </q-item>
-      <q-list ref="lacList" class="list-droppable">
-        <MediaItem
-          v-for="media in sortableLacMediaItems"
-          :key="media.uniqueId"
-          v-model:repeat="media.repeat"
-          :media="media"
-          :play-state="playState(media.uniqueId)"
-          @update:custom-duration="
-            media.customDuration = JSON.parse($event) || undefined
-          "
-          @update:hidden="media.hidden = !!$event"
-          @update:tag="media.tag = $event"
-          @update:title="media.title = $event"
-        />
-        <div v-if="sortableLacMediaItems.filter((m) => !m.hidden).length === 0">
-          <q-item>
-            <q-item-section
-              class="align-center text-secondary text-grey text-subtitle2"
-            >
-              <div>
-                <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                {{ t('no-media-files-for-section') }}
-              </div>
-            </q-item-section>
-          </q-item>
-        </div>
-      </q-list>
-    </q-list>
-    <q-list
-      v-show="
-        selectedDateObject?.complete && isWeMeetingDay(selectedDateObject?.date)
-      "
-      class="media-section wt"
-    >
-      <q-item class="text-wt items-center">
-        <q-avatar class="text-white bg-wt jw-icon" size="lg"></q-avatar>
-        <div class="text-bold text-uppercase text-spaced">
-          {{ t('wt') }}
-        </div>
-      </q-item>
-      <q-list ref="wtList" class="list-droppable">
-        <MediaItem
-          v-for="media in sortableWtMediaItems"
-          :key="media.uniqueId"
-          v-model:repeat="media.repeat"
-          :media="media"
-          :play-state="playState(media.uniqueId)"
-          @update:custom-duration="
-            media.customDuration = JSON.parse($event) || undefined
-          "
-          @update:hidden="media.hidden = !!$event"
-          @update:tag="media.tag = $event"
-          @update:title="media.title = $event"
-        />
-        <div v-if="sortableWtMediaItems.filter((m) => !m.hidden).length === 0">
-          <q-item>
-            <q-item-section
-              class="align-center text-secondary text-grey text-subtitle2"
-            >
-              <div>
-                <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                {{ t('no-media-files-for-section') }}
-              </div>
-            </q-item-section>
-          </q-item>
-        </div>
-      </q-list>
-    </q-list>
-    <q-list
+    <!-- <q-list
       v-show="selectedDateObject?.complete && coWeek"
       class="media-section additional"
     >
@@ -643,7 +387,7 @@
           </q-item>
         </div>
       </q-list>
-    </q-list>
+    </q-list> -->
   </q-page>
   <DragAndDropper
     v-model="dragging"
@@ -673,7 +417,6 @@ import type {
 // } from '@formkit/drag-and-drop';
 // import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
 import {
-  templateRef,
   useBroadcastChannel,
   useEventListener,
   watchImmediate,
@@ -695,7 +438,6 @@ import {
   copyToDatedAdditionalMedia,
   downloadFileIfNeeded,
   fetchMedia,
-  mapOrder,
 } from 'src/helpers/jw-media';
 import {
   decompressJwpub,
@@ -756,7 +498,6 @@ const { addToAdditionMediaMap } = jwStore;
 const {
   additionalMediaMaps,
   lookupPeriod,
-  mediaSort,
   missingMedia,
   urlVariables,
   // watchedMediaSections,
@@ -984,15 +725,6 @@ watch(
 //   function dragend() {
 //     stopScrolling.value = true;
 //     const currentCong = currentCongregation.value;
-//     mediaSort.value[currentCong] ??= {};
-//     mediaSort.value[currentCong][selectedDate.value] = [
-//       ...sortableAdditionalMediaItems.value,
-//       ...sortableTgwMediaItems.value,
-//       ...sortableAyfmMediaItems.value,
-//       ...sortableLacMediaItems.value,
-//       ...sortableWtMediaItems.value,
-//       ...sortableCircuitOverseerMediaItems.value,
-//     ].map((item: DynamicMediaObject) => item.uniqueId);
 //     generateMediaList();
 //     addDayToExportQueue(selectedDateObject.value?.date);
 //   }
@@ -1012,29 +744,15 @@ watch(
 const sortableMediaItems = ref<DynamicMediaObject[]>([]);
 
 const generateMediaList = () => {
-  const combinedMediaItems = [
+  return [
     ...datedAdditionalMediaMap.value,
     ...(selectedDateObject.value?.dynamicMedia ?? []),
     ...(watchFolderMedia.value?.[selectedDate.value] ?? []),
-  ];
-  if (combinedMediaItems && currentCongregation.value) {
-    mediaSort.value[currentCongregation.value] ??= {};
-    sortableMediaItems.value = combinedMediaItems
-      .filter(
-        (item, index, self) =>
-          !item.fileUrl ||
-          index === self.findIndex((i) => i.fileUrl === item.fileUrl),
-      )
-      .sort(
-        mapOrder(
-          selectedDate.value
-            ? mediaSort.value[currentCongregation.value]?.[
-                selectedDate.value
-              ] || []
-            : [],
-        ),
-      );
-  }
+  ].filter(
+    (item, index, self) =>
+      !item.fileUrl ||
+      index === self.findIndex((i) => i.fileUrl === item.fileUrl),
+  );
 };
 
 watch(
@@ -1071,21 +789,6 @@ watch(
       errorCatcher(e);
     }
   },
-);
-
-watch(
-  () => mediaSort.value?.[currentCongregation.value]?.[selectedDate.value],
-  (newMediaSort) => {
-    try {
-      if (newMediaSort?.length === 0) {
-        generateMediaList();
-        addDayToExportQueue(selectedDateObject.value?.date);
-      }
-    } catch (e) {
-      errorCatcher(e);
-    }
-  },
-  { deep: true, immediate: true },
 );
 
 watch(
@@ -1277,7 +980,6 @@ watch(
   },
 );
 
-const tgwList = templateRef<HTMLElement>('tgwList');
 const sortableTgwMediaItems = ref<DynamicMediaObject[]>([]);
 
 // const [tgwList, sortableTgwMediaItems] = useDragAndDrop<DynamicMediaObject>(
@@ -1294,7 +996,6 @@ const sortableTgwMediaItems = ref<DynamicMediaObject[]>([]);
 //   },
 // );
 
-const ayfmList = templateRef<HTMLElement>('ayfmList');
 const sortableAyfmMediaItems = ref<DynamicMediaObject[]>([]);
 
 // const [ayfmList, sortableAyfmMediaItems] = useDragAndDrop<DynamicMediaObject>(
@@ -1311,7 +1012,6 @@ const sortableAyfmMediaItems = ref<DynamicMediaObject[]>([]);
 //   },
 // );
 
-const lacList = templateRef<HTMLElement>('lacList');
 const sortableLacMediaItems = ref<DynamicMediaObject[]>([]);
 
 // const [lacList, sortableLacMediaItems] = useDragAndDrop<DynamicMediaObject>(
@@ -1328,7 +1028,6 @@ const sortableLacMediaItems = ref<DynamicMediaObject[]>([]);
 //   },
 // );
 
-const wtList = templateRef<HTMLElement>('wtList');
 const sortableWtMediaItems = ref<DynamicMediaObject[]>([]);
 
 // const [wtList, sortableWtMediaItems] = useDragAndDrop<DynamicMediaObject>([], {
@@ -1342,7 +1041,6 @@ const sortableWtMediaItems = ref<DynamicMediaObject[]>([]);
 //   ],
 // });
 
-const additionalList = templateRef<HTMLElement>('additionalList');
 const sortableAdditionalMediaItems = ref<DynamicMediaObject[]>([]);
 
 // const [additionalList, sortableAdditionalMediaItems] =
@@ -1357,7 +1055,6 @@ const sortableAdditionalMediaItems = ref<DynamicMediaObject[]>([]);
 //     ],
 //   });
 
-const circuitOverseerList = templateRef<HTMLElement>('circuitOverseerList');
 const sortableCircuitOverseerMediaItems = ref<DynamicMediaObject[]>([]);
 
 // const [circuitOverseerList, sortableCircuitOverseerMediaItems] =

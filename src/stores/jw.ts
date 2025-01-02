@@ -56,7 +56,6 @@ interface Store {
   jwLanguages: CacheList<JwLanguage>;
   jwSongs: Partial<Record<JwLangCode, CacheList<MediaLink>>>;
   lookupPeriod: Partial<Record<string, DateInfo[]>>;
-  mediaSort: Partial<Record<string, Partial<Record<string, string[]>>>>;
   urlVariables: UrlVariables;
   watchedMediaSections: Partial<
     Record<string, Partial<Record<string, Record<string, MediaSection>>>>
@@ -131,51 +130,6 @@ export const useJwStore = defineStore('jw-store', {
               currentArray.filter((media) => media.uniqueId !== uniqueId),
             );
         }
-      } catch (e) {
-        errorCatcher(e);
-      }
-    },
-    resetSort() {
-      try {
-        const {
-          currentCongregation,
-          selectedDate,
-          selectedDateObject,
-          watchFolderMedia,
-        } = useCurrentStateStore();
-        if (
-          currentCongregation &&
-          selectedDate &&
-          this.mediaSort[currentCongregation]
-        ) {
-          this.mediaSort[currentCongregation][selectedDate] = [];
-        }
-        (selectedDateObject?.dynamicMedia ?? [])
-          .filter(
-            (item) =>
-              item.sectionOriginal && item.section !== item.sectionOriginal,
-          )
-          .forEach((item) => {
-            item.section = item.sectionOriginal;
-          });
-
-        (watchFolderMedia[selectedDate] ?? [])
-          .filter(
-            (item) =>
-              item.sectionOriginal && item.section !== item.sectionOriginal,
-          )
-          .forEach((item) => {
-            item.section = item.sectionOriginal;
-          });
-
-        (this.additionalMediaMaps[currentCongregation]?.[selectedDate] ?? [])
-          .filter(
-            (item) =>
-              item.sectionOriginal && item.section !== item.sectionOriginal,
-          )
-          .forEach((item) => {
-            item.section = item.sectionOriginal;
-          });
       } catch (e) {
         errorCatcher(e);
       }
@@ -431,7 +385,6 @@ export const useJwStore = defineStore('jw-store', {
       jwLanguages: { list: [], updated: oldDate },
       jwSongs: {},
       lookupPeriod: {},
-      mediaSort: {},
       urlVariables: {
         base: 'jw.org',
         mediator: 'https://b.jw-cdn.org/apis/mediator',
