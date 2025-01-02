@@ -39,7 +39,7 @@ export const pathToFileURL = (path: string) => {
   return url.pathToFileURL(path).href;
 };
 
-export const fileUrlToPath = (fileurl: string) => {
+export const fileUrlToPath = (fileurl?: string) => {
   if (!fileurl) return '';
   if (!isFileUrl(fileurl)) return fileurl;
   return path.normalize(url.fileURLToPath(fileurl));

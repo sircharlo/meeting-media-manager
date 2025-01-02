@@ -18,6 +18,53 @@
     @dragstart="dropActive"
     @drop="dropEnd"
   >
+    <Sortable
+      :key="sortableMediaItems.map((m) => m.uniqueId).join(',')"
+      item-key="uniqueId"
+      :list="sortableMediaItems"
+    >
+      <!-- <template #header>
+        <header>
+          <h1>SortableJS Vue3 Demo</h1>
+        </header>
+      </template> -->
+      <template #item="{ element }: { element: DynamicMediaObject }">
+        <q-expansion-item
+          v-if="element.children"
+          :key="element.uniqueId"
+          class="draggable"
+          header-class="bg-secondary text-white"
+          :label="element.extractCaption"
+        >
+          <Sortable
+            v-if="element.children"
+            item-key="uniqueId"
+            :list="element.children"
+          >
+            <!-- <template #header>
+              <header>
+                <h6 class="draggable">{{ element.extractCaption }}</h6>
+              </header>
+            </template> -->
+            <template #item="{ element }: { element: DynamicMediaObject }">
+              <div :key="element.uniqueId" class="draggable bg-red">
+                {{ element.fileUrl }}
+              </div>
+            </template>
+            <!-- <template #footer>
+              <footer class="draggable">A footer</footer>
+            </template> -->
+          </Sortable>
+        </q-expansion-item>
+        <div v-else :key="element.fileUrl" class="draggable">
+          {{ element.fileUrl }}
+        </div>
+      </template>
+      <!-- <template #footer>
+        <footer class="draggable">A footer</footer>
+      </template> -->
+    </Sortable>
+
     <div class="col">
       <div
         v-if="
@@ -502,6 +549,7 @@ import { Buffer } from 'buffer';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
+import { Sortable } from 'sortablejs-vue3';
 import DragAndDropper from 'src/components/media/DragAndDropper.vue';
 import MediaItem from 'src/components/media/MediaItem.vue';
 import { useLocale } from 'src/composables/useLocale';
@@ -841,6 +889,7 @@ const generateMediaList = () => {
     sortableMediaItems.value = combinedMediaItems
       .filter(
         (item, index, self) =>
+          !item.fileUrl ||
           index === self.findIndex((i) => i.fileUrl === item.fileUrl),
       )
       .sort(
@@ -940,7 +989,10 @@ watch(
 );
 
 watch(
-  () => missingMedia.value.map((m) => m.fileUrl).filter((f) => f),
+  () =>
+    missingMedia.value
+      .map((m) => m.fileUrl)
+      .filter((f) => typeof f === 'string'),
   (missingFileUrls) => {
     missingFileUrls?.forEach((missingFileUrl) => {
       if (seenErrors.has(currentCongregation + missingFileUrl)) return;
@@ -1225,6 +1277,7 @@ const sortedMediaFileUrls = computed(() =>
   [...sortableAdditionalMediaItems.value, ...sortableMediaItems.value]
     .filter((m) => !m.hidden && !!m.fileUrl)
     .map((m) => m.fileUrl)
+    .filter((m) => typeof m === 'string')
     .filter((fileUrl, index, self) => self.indexOf(fileUrl) === index),
 );
 
@@ -1336,7 +1389,7 @@ const addToFiles = async (
           });
         const matchingMissingItem = missingMedia.value.find((media) => {
           return (
-            JSON.stringify(normalizeArray(media.fileUrl.split('_'))) ===
+            JSON.stringify(normalizeArray(media.fileUrl?.split('_') || [])) ===
             JSON.stringify(normalizeArray(detectedPubMediaInfo))
           );
         });
@@ -1501,12 +1554,14 @@ const openImportMenu = (section: MediaSection | undefined) => {
   );
 };
 
+// TODO: re-enable after fixing drag and drop sort
 const dropActive = (event: DragEvent) => {
-  event.preventDefault();
-  event.stopPropagation();
-  if (!event?.relatedTarget && event?.dataTransfer?.effectAllowed === 'all') {
-    dragging.value = true;
-  }
+  console.log('todo: re-enable after fixing drag and drop sort', event);
+  //   event.preventDefault();
+  //   event.stopPropagation();
+  //   if (!event?.relatedTarget && event?.dataTransfer?.effectAllowed === 'all') {
+  //     dragging.value = true;
+  //   }
 };
 const dropEnd = (event: DragEvent) => {
   event.preventDefault();

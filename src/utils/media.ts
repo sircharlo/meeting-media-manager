@@ -39,7 +39,8 @@ const isFileOfType = (filepath: string, validExtensions: string[]) => {
  * @param filepath The path to the file.
  * @returns The result of the check.
  */
-export const isImage = (filepath: string) => {
+export const isImage = (filepath?: string) => {
+  if (!filepath) return false;
   return isFileOfType(filepath, PURE_IMG_EXTENSIONS);
 };
 

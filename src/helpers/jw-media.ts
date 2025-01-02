@@ -1343,15 +1343,9 @@ export const dynamicMediaMapper = async (
             if (!acc[media.extractCaption]) {
               acc[media.extractCaption] = {
                 children: [],
-                duration: 0, // Parent doesn't have a duration
                 extractCaption: media.extractCaption,
-                fileUrl: '', // Parent doesn't have a fileUrl
-                isAudio: false,
-                isImage: false,
-                isVideo: false,
                 section: media.section,
                 sectionOriginal: media.sectionOriginal,
-                thumbnailUrl: '', // Parent doesn't have a thumbnailUrl
                 title: media.extractCaption,
                 uniqueId: `group-${media.extractCaption}`, // Unique ID for the group
               };
@@ -1371,7 +1365,12 @@ export const dynamicMediaMapper = async (
 
     console.log(groupedMediaPromises);
 
-    console.log('groupedMediaPromises', groupedMediaPromises);
+    console.log(
+      'allMediaPromises',
+      allMediaPromises,
+      'groupedMediaPromises',
+      groupedMediaPromises,
+    );
     return groupedMediaPromises;
   } catch (e) {
     errorCatcher(e);
@@ -1784,6 +1783,7 @@ export const getMwMedia = async (lookupDate: Date) => {
     }
     const errors = (await processMissingMediaInfo(allMedia)) || [];
     const dynamicMediaForDay = await dynamicMediaMapper(allMedia, lookupDate);
+    console.log('dynamicMediaForDay', dynamicMediaForDay);
     return {
       error: errors.length > 0,
       media: dynamicMediaForDay,

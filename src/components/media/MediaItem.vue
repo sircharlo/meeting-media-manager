@@ -1,5 +1,9 @@
 <template>
+  <pre v-if="media.children">
+    {{ media.children }}
+  </pre>
   <q-item
+    v-else
     v-show="!media.hidden"
     ref="mediaItem"
     :class="{
@@ -79,7 +83,7 @@
                       dense
                       style="width: 3.5em"
                       @update:model-value="
-                        if ($event) {
+                        if ($event && media.duration) {
                           let val = Math.max(
                             Math.min(
                               timeToSeconds($event.toString()),
@@ -114,7 +118,7 @@
                       dense
                       style="width: 3.5em"
                       @update:model-value="
-                        if ($event) {
+                        if ($event && media.duration) {
                           let val = Math.max(
                             Math.min(
                               timeToSeconds($event.toString()),
@@ -786,7 +790,12 @@ const mediaTitle = ref(props.media.title);
 const initialMediaTitle = ref(mediaTitle.value);
 
 const displayMediaTitle = computed(() => {
-  return props.media.title || path.basename(props.media.fileUrl);
+  return (
+    props.media.title ||
+    (props.media.fileUrl && path.basename(props.media.fileUrl)) ||
+    props.media.extractCaption ||
+    ''
+  );
 });
 
 const mediaEditTagDialog = ref(false);
@@ -838,6 +847,7 @@ const updateMediaCustomDuration = (customDuration?: {
 
 const customDurationIsSet = computed(() => {
   return (
+    props.media.duration &&
     props.media.customDuration &&
     (props.media.customDuration.min > 0 ||
       props.media.customDuration.max < props.media.duration)
@@ -845,8 +855,10 @@ const customDurationIsSet = computed(() => {
 });
 
 const mediaCustomDuration = ref({
-  max: props.media.customDuration?.max || props.media.duration,
-  min: props.media.customDuration?.min || 0,
+  max: props.media.duration
+    ? props.media.customDuration?.max || props.media.duration
+    : undefined,
+  min: props.media.duration ? props.media.customDuration?.min || 0 : undefined,
 });
 
 const customDurationMinUserInput = ref(
@@ -883,9 +895,10 @@ const setMediaPlaying = async (
   }
   const filePath = fileUrlToPath(media.fileUrl);
   const fileExists = await fs.pathExists(filePath);
-  mediaPlayingUrl.value = fileExists
-    ? media.fileUrl
-    : (media.streamUrl ?? media.fileUrl);
+  mediaPlayingUrl.value =
+    fileExists && media.fileUrl
+      ? media.fileUrl
+      : (media.streamUrl ?? media.fileUrl ?? '');
   mediaPlayingUniqueId.value = media.uniqueId;
   mediaPlayingSubtitlesUrl.value = media.subtitlesUrl ?? '';
 };

@@ -182,10 +182,11 @@ const getThumbnailFromVideoPath = async (
 };
 
 export const getThumbnailUrl = async (
-  filepath: string,
+  filepath?: string,
   forceRefresh?: boolean,
 ) => {
   try {
+    if (!filepath) return '';
     filepath = window.electronApi.fileUrlToPath(filepath);
     if (!filepath || !(await window.electronApi.fs.exists(filepath))) return '';
     let thumbnailUrl = '';
