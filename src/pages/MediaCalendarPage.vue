@@ -755,7 +755,7 @@ watch(
 const sortableMediaItems = ref<DynamicMediaObject[]>([]);
 
 const generateMediaList = () => {
-  return [
+  sortableMediaItems.value = [
     ...datedAdditionalMediaMap.value,
     ...(selectedDateObject.value?.dynamicMedia ?? []),
     ...(watchFolderMedia.value?.[selectedDate.value] ?? []),
