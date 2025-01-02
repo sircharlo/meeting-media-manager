@@ -17,7 +17,6 @@ import { defineStore } from 'pinia';
 import { MAX_SONGS } from 'src/constants/jw';
 import { isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { useCurrentStateStore } from 'src/stores/current-state';
 import {
   fetchJwLanguages,
   fetchPubMediaLinks,
@@ -26,6 +25,7 @@ import {
 import { dateFromString, getDateDiff } from 'src/utils/date';
 import { isFileUrl } from 'src/utils/fs';
 import { findBestResolution, getPubId, isMediaLink } from 'src/utils/jw';
+import { useCurrentStateStore } from 'stores/current-state';
 
 const oldDate = new Date(0);
 

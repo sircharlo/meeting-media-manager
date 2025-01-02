@@ -16,9 +16,9 @@ import {
   getOldPrefsPaths,
   parsePrefsFile,
 } from 'src/helpers/migrations';
-import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
-import { useJwStore } from 'src/stores/jw';
 import { uuid } from 'src/utils/general';
+import { useCongregationSettingsStore } from 'stores/congregation-settings';
+import { useJwStore } from 'stores/jw';
 
 const parseJsonSafe = <T>(json: null | string | T, fallback: T): T => {
   if (!json) return fallback;

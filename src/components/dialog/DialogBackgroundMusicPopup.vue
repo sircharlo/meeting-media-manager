@@ -124,12 +124,12 @@ import { storeToRefs } from 'pinia';
 import { remainingTimeBeforeMeetingStart } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadBackgroundMusic } from 'src/helpers/jw-media';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
 import { getDateDiff } from 'src/utils/date';
 import { getPublicationDirectoryContents } from 'src/utils/fs';
 import { getMetadataFromMediaPath, isVideo } from 'src/utils/media';
 import { formatTime } from 'src/utils/time';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 import { ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 

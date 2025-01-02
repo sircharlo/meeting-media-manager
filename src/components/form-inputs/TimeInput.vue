@@ -39,8 +39,8 @@
 import type { SettingsItemOption, SettingsItemRule } from 'src/types';
 
 import { storeToRefs } from 'pinia';
-import { useCurrentStateStore } from 'src/stores/current-state';
 import { getRules, getTimeOptions } from 'src/utils/settings';
+import { useCurrentStateStore } from 'stores/current-state';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();

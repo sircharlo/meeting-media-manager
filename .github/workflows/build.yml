@@ -47,7 +47,7 @@ jobs:
         run: |
           yarn quasar prepare
           yarn lint
-          yarn type-check
+          yarn lint:types
   test:
     runs-on: ubuntu-latest
     steps:
@@ -69,7 +69,7 @@ jobs:
       - name: Run tests
         run: |
           yarn quasar prepare
-          yarn test:unit:ci
+          yarn test:unit
   build:
     runs-on: ${{ matrix.os }}
     needs: [lint, test]

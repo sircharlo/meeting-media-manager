@@ -92,7 +92,7 @@ import type { DownloadProgressItems } from 'src/types';
 import { watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { SORTER } from 'src/constants/general';
-import { useCurrentStateStore } from 'src/stores/current-state';
+import { useCurrentStateStore } from 'stores/current-state';
 import { useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 

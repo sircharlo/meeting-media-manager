@@ -34,9 +34,9 @@ import type { CacheFile } from 'src/types';
 import { storeToRefs } from 'pinia';
 import { updateLookupPeriod } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
 import { getAdditionalMediaPath, removeEmptyDirs } from 'src/utils/fs';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 

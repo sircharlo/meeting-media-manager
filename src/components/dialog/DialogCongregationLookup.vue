@@ -107,9 +107,9 @@ import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
 import { fetchJson } from 'src/utils/api';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
