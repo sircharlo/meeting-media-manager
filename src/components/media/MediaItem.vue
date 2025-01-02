@@ -210,11 +210,11 @@
       <div class="row items-center">
         <div
           v-if="
-            (media.isAdditional &&
+            (media.source === 'additional' &&
               !currentSettings?.disableMediaFetching &&
               isFileUrl(media.fileUrl)) ||
             media.tag?.type ||
-            media.watched
+            media.source === 'watched'
           "
           :class="mediaTagClasses"
           side
@@ -231,9 +231,9 @@
             <q-icon
               :class="{ 'q-mr-xs': media.tag?.type }"
               :name="
-                media.watched
+                media.source === 'watched'
                   ? 'mmm-watched-media'
-                  : media.isAdditional &&
+                  : media.source === 'additional' &&
                       !currentSettings?.disableMediaFetching &&
                       isFileUrl(media.fileUrl)
                     ? 'mmm-add-media'
@@ -244,12 +244,12 @@
                       : 'mmm-music-note'
               "
             />
-            <q-tooltip v-if="media.watched" :delay="500">
+            <q-tooltip v-if="media.source === 'watched'" :delay="500">
               {{ t('watched-media-item-explain') }}
             </q-tooltip>
             <q-tooltip
               v-if="
-                media.isAdditional &&
+                media.source === 'additional' &&
                 !currentSettings?.disableMediaFetching &&
                 isFileUrl(media.fileUrl)
               "
@@ -576,7 +576,7 @@
           </q-item-section>
         </q-item>
         <q-item
-          v-if="media.isAdditional"
+          v-if="media.source === 'additional'"
           v-close-popup
           clickable
           :disable="

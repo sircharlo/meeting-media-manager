@@ -347,13 +347,14 @@ const updateWatchFolderRef = async ({
         }
       }
     } else if (event === 'unlink') {
-      watchFolderMedia.value[day] =
-        watchFolderMedia.value[day]?.filter(
-          (dM) =>
-            dM.fileUrl !==
-              window.electronApi.pathToFileURL(changedPath ?? '') &&
-            dM.watched !== changedPath,
-        ) ?? [];
+      // watchFolderMedia.value[day] =
+      //   watchFolderMedia.value[day]?.filter(
+      //     (dM) =>
+      //       dM.fileUrl !==
+      //         window.electronApi.pathToFileURL(changedPath ?? '') &&
+      //       dM.watched !== changedPath,
+      //   ) ?? [];
+      // TODO: fix this to handle unlinked watched files properly
     }
   } catch (error) {
     errorCatcher(error);

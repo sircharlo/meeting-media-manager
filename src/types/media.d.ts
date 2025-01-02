@@ -31,7 +31,6 @@ export interface DynamicMediaObject {
   fileUrl?: string;
   footnote?: boolean;
   hidden?: boolean;
-  isAdditional?: boolean;
   isAudio?: boolean;
   isImage?: boolean;
   isVideo?: boolean;
@@ -39,13 +38,14 @@ export interface DynamicMediaObject {
   repeat?: boolean;
   section: MediaSection;
   sectionOriginal: MediaSection;
+  sortOrderOriginal?: number;
+  source: 'additional' | 'dynamic' | 'watched';
   streamUrl?: string;
   subtitlesUrl?: string;
   tag?: Tag | undefined;
   thumbnailUrl?: string;
   title: string;
   uniqueId: string;
-  watched?: string | true;
 }
 
 export interface FileDownloader {

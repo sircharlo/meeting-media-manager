@@ -233,7 +233,9 @@
             v-if="
               isWeMeetingDay(selectedDateObject.date) &&
               mediaList.type === 'additional' &&
-              !mediaList.items?.filter((m) => !m.hidden && !m.watched).length
+              !mediaList.items?.filter(
+                (m) => !m.hidden && m.source !== 'watched',
+              ).length
             "
             side
           >
@@ -415,7 +417,6 @@
 </template>
 
 <script setup lang="ts">
-// import type { DNDPlugin } from '@formkit/drag-and-drop';
 import type {
   DocumentItem,
   DynamicMediaObject,
@@ -423,21 +424,12 @@ import type {
   TableItem,
 } from 'src/types';
 
-// import {
-//   animations,
-//   multiDrag,
-//   parents,
-//   selections,
-// } from '@formkit/drag-and-drop';
-// import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
 import {
   useBroadcastChannel,
   useEventListener,
   watchImmediate,
 } from '@vueuse/core';
 import { Buffer } from 'buffer';
-import DragAndDropper from 'components/media/DragAndDropper.vue';
-import MediaItem from 'components/media/MediaItem.vue';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
 import { useMeta, useQuasar } from 'quasar';

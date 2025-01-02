@@ -156,12 +156,12 @@ export const addToAdditionMediaMapFromPath = async (
           customDuration,
           duration,
           fileUrl: window.electronApi.pathToFileURL(additionalFilePath),
-          isAdditional: true,
           isAudio: audio,
           isImage: isImage(additionalFilePath),
           isVideo: video,
           section,
           sectionOriginal: section,
+          source: 'additional',
           streamUrl: additionalInfo?.url,
           tag: {
             type: additionalInfo?.song ? 'song' : undefined,
@@ -223,7 +223,7 @@ export const addJwpubDocumentMediaToFiles = async (
       ? await dynamicMediaMapper(
           multimediaItems,
           currentStateStore.selectedDateObject?.date,
-          true,
+          'additional',
           section,
         )
       : [];
@@ -1180,13 +1180,13 @@ const getParagraphNumbers = (
 export const dynamicMediaMapper = async (
   allMedia: MultimediaItem[],
   lookupDate: Date,
-  additional?: boolean,
+  source: 'additional' | 'dynamic' | 'watched',
   additionalSection: MediaSection = 'additional',
 ): Promise<DynamicMediaObject[]> => {
   const { currentSettings } = useCurrentStateStore();
   try {
     let middleSongParagraphOrdinal = 0;
-    if (!additional) {
+    if (source !== 'additional') {
       const songs = allMedia.filter((m) => isSong(m));
       middleSongParagraphOrdinal =
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -1254,7 +1254,8 @@ export const dynamicMediaMapper = async (
             }
           }
         }
-        let section: MediaSection = additional ? additionalSection : 'wt';
+        let section: MediaSection =
+          source === 'additional' ? additionalSection : 'wt';
         if (middleSongParagraphOrdinal > 0) {
           //this is a meeting with 3 songs
           if (m.BeginParagraphOrdinal >= middleSongParagraphOrdinal) {
@@ -1296,7 +1297,6 @@ export const dynamicMediaMapper = async (
           duration,
           extractCaption: m.ExtractCaption,
           fileUrl,
-          isAdditional: !!additional,
           isAudio: audio,
           isImage: isImage(m.FilePath),
           isVideo: video,
@@ -1304,6 +1304,7 @@ export const dynamicMediaMapper = async (
           repeat: !!m.Repeat,
           section, // if is we: wt; else, if >= middle song: LAC; >= (middle song - 8???): AYFM; else: TGW
           sectionOriginal: section, // to enable restoring the original section after custom sorting
+          source,
           streamUrl: m.StreamUrl,
           subtitlesUrl: video ? await getSubtitlesUrl(m, duration) : '',
           tag,
@@ -1333,6 +1334,7 @@ export const dynamicMediaMapper = async (
                 extractCaption: media.extractCaption,
                 section: media.section,
                 sectionOriginal: media.sectionOriginal,
+                source: media.source,
                 title: media.extractCaption,
                 uniqueId: `group-${media.extractCaption}`, // Unique ID for the group
               };
@@ -1387,7 +1389,7 @@ export const watchedItemMapper: (
 
     if (!(video || audio || image)) {
       if (isJwPlaylist(watchedItemPath)) {
-        const additionalMedia = (
+        const additionalMedia: DynamicMediaObject[] = (
           await getMediaFromJwPlaylist(
             watchedItemPath,
             dateFromString(parentDate),
@@ -1395,7 +1397,7 @@ export const watchedItemMapper: (
               dateString,
             ),
           )
-        ).map((m) => ({ ...m, isAdditional: false, watched: watchedItemPath }));
+        ).map((m) => ({ ...m, source: 'watched' }));
         additionalMedia.filter(
           (m) =>
             m.customDuration && (m.customDuration.max || m.customDuration.min),
@@ -1435,10 +1437,10 @@ export const watchedItemMapper: (
         isVideo: video,
         section,
         sectionOriginal: 'additional', // to enable restoring the original section after custom sorting
+        source: 'watched',
         thumbnailUrl,
         title,
         uniqueId,
-        watched: true,
       },
     ];
   } catch (e) {
@@ -1652,7 +1654,11 @@ export const getWeMedia = async (lookupDate: Date) => {
       if (videoMarkers) media.VideoMarkers = videoMarkers;
     }
     await processMissingMediaInfo(allMedia);
-    const dynamicMediaForDay = await dynamicMediaMapper(allMedia, lookupDate);
+    const dynamicMediaForDay = await dynamicMediaMapper(
+      allMedia,
+      lookupDate,
+      'dynamic',
+    );
     return {
       error: false,
       media: dynamicMediaForDay,
@@ -1769,7 +1775,11 @@ export const getMwMedia = async (lookupDate: Date) => {
       }
     }
     const errors = (await processMissingMediaInfo(allMedia)) || [];
-    const dynamicMediaForDay = await dynamicMediaMapper(allMedia, lookupDate);
+    const dynamicMediaForDay = await dynamicMediaMapper(
+      allMedia,
+      lookupDate,
+      'dynamic',
+    );
     console.log('dynamicMediaForDay', dynamicMediaForDay);
     return {
       error: errors.length > 0,
