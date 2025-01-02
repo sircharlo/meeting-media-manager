@@ -79,10 +79,10 @@
   </q-header>
 </template>
 <script setup lang="ts">
+import DialogAbout from 'components/dialog/DialogAbout.vue';
 import { storeToRefs } from 'pinia';
-import DialogAbout from 'src/components/dialog/DialogAbout.vue';
-import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
-import { useCurrentStateStore } from 'src/stores/current-state';
+import { useCongregationSettingsStore } from 'stores/congregation-settings';
+import { useCurrentStateStore } from 'stores/current-state';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';

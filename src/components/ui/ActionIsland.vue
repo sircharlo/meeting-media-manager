@@ -25,11 +25,11 @@
 
 <script setup lang="ts">
 import { whenever } from '@vueuse/core';
-import DownloadStatus from 'src/components/media/DownloadStatus.vue';
-import MediaDisplayButton from 'src/components/media/MediaDisplayButton.vue';
-import MusicButton from 'src/components/media/MusicButton.vue';
-import ObsStatus from 'src/components/media/ObsStatus.vue';
-import SubtitlesButton from 'src/components/media/SubtitlesButton.vue';
+import DownloadStatus from 'components/media/DownloadStatus.vue';
+import MediaDisplayButton from 'components/media/MediaDisplayButton.vue';
+import MusicButton from 'components/media/MusicButton.vue';
+import ObsStatus from 'components/media/ObsStatus.vue';
+import SubtitlesButton from 'components/media/SubtitlesButton.vue';
 import { ref } from 'vue';
 
 import DialogBackgroundMusicPopup from '../dialog/DialogBackgroundMusicPopup.vue';

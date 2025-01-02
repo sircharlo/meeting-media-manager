@@ -1,16 +1,37 @@
+import { createTestingPinia } from '@pinia/testing';
+import { config } from '@vue/test-utils';
 import { vol } from 'memfs';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { beforeEach } from 'node:test';
+import appMessages from 'src/i18n';
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
+import { createI18n } from 'vue-i18n';
 
 import { electronApi } from './mocks/electronApi';
 import { announcements, releases } from './mocks/github';
 import { jwLangs, jwYeartext } from './mocks/jw';
 
+// Module mocks
+
 vi.mock('node:fs');
 vi.mock('node:fs/promises');
+
+// Global mocks
+
 vi.stubGlobal('electronApi', electronApi);
+
+// Vue plugins
+
+const i18n = createI18n({
+  legacy: false,
+  locale: 'en',
+  messages: { en: appMessages.en },
+});
+
+config.global.plugins = [i18n, createTestingPinia({ createSpy: vi.fn })];
+
+// Http mocks
 
 export const restHandlers = [
   http.get('https://www.jw.org/en/languages/', () => {

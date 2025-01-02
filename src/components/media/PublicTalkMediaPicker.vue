@@ -81,9 +81,9 @@ import type { DocumentItem, MediaSection, PublicationInfo } from 'src/types';
 
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { decompressJwpub } from 'src/helpers/mediaPlayback';
-import { useCurrentStateStore } from 'src/stores/current-state';
 import { getPublicationsPath } from 'src/utils/fs';
 import { findDb } from 'src/utils/sqlite';
+import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 

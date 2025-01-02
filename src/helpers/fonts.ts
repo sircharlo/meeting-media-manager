@@ -2,10 +2,10 @@ import type { FontName } from 'src/types';
 
 import { Buffer } from 'buffer';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
 import { fetchRaw } from 'src/utils/api';
 import { getFontsPath } from 'src/utils/fs';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 
 export const setElementFont = async (fontName: FontName) => {
   if (!fontName) return;
@@ -46,15 +46,19 @@ const getLocalFontPath = async (fontName: FontName) => {
   const fontUrls = useJwStore().fontUrls;
   try {
     if (await window.electronApi.fs.exists(fontPath)) {
-      const headReq = await fetchRaw(fontUrls[fontName], {
-        method: 'HEAD',
-      });
-      if (headReq.ok) {
-        const remoteSize = headReq.headers.get('content-length');
-        const localSize = (await window.electronApi.fs.stat(fontPath)).size;
-        mustDownload = remoteSize ? parseInt(remoteSize) !== localSize : true;
-      } else {
-        mustDownload = true;
+      try {
+        const headReq = await fetchRaw(fontUrls[fontName], {
+          method: 'HEAD',
+        });
+        if (headReq.ok) {
+          const remoteSize = headReq.headers.get('content-length');
+          const localSize = (await window.electronApi.fs.stat(fontPath)).size;
+          mustDownload = remoteSize ? parseInt(remoteSize) !== localSize : true;
+        } else {
+          mustDownload = false;
+        }
+      } catch {
+        mustDownload = false;
       }
     } else {
       mustDownload = true;

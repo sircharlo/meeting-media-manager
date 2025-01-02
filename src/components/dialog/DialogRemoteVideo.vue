@@ -138,10 +138,10 @@ import {
   downloadAdditionalRemoteVideo,
   getBestImageUrl,
 } from 'src/helpers/jw-media';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
 import { fetchJson } from 'src/utils/api';
 import { formatTime } from 'src/utils/time';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 

@@ -4,7 +4,7 @@
 // import { dateFromString, isInPast } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 // import { getAdditionalMediaPath, removeEmptyDirs } from 'src/helpers/fs';
-// import { useJwStore } from 'src/stores/jw';
+// import { useJwStore } from 'stores/jw';
 
 export const cleanLocalStorage = () => {
   // try {

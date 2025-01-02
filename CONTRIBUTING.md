@@ -67,13 +67,10 @@ yarn format
 yarn lint
 
 # Check for type errors
-yarn type-check
+yarn lint:types
 
-# Run unit tests with a listener
+# Run unit tests
 yarn test:unit
-
-# Run unit tests with UI
-yarn test:unit:ui
 ```
 
 ### Build Tools
@@ -200,8 +197,11 @@ yarn docs:preview
 yarn format
 
 # Lint all JS/TS/Vue files
-yarn lint
+yarn docs:lint
 
 # Check for type errors
-yarn type-check
+yarn lint:types
+
+# Run tests
+yarn docs:test
 ```

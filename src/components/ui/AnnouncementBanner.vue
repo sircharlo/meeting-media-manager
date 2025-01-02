@@ -49,11 +49,11 @@ import type { Announcement } from 'src/types';
 import { whenever } from '@vueuse/core';
 import { useQuasar } from 'quasar';
 import { localeOptions } from 'src/i18n';
-import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
-import { useCurrentStateStore } from 'src/stores/current-state';
 import { fetchAnnouncements, fetchLatestVersion } from 'src/utils/api';
 import { updatesDisabled } from 'src/utils/fs';
 import { getPreviousVersion, isVersionWithinBounds } from 'src/utils/general';
+import { useCongregationSettingsStore } from 'stores/congregation-settings';
+import { useCurrentStateStore } from 'stores/current-state';
 import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 

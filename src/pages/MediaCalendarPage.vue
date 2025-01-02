@@ -324,11 +324,12 @@
         <q-avatar class="text-white bg-additional jw-icon" size="lg">
           
         </q-avatar>
-        <q-item-section class="text-bold text-uppercase text-spaced">
+        <q-item-section class="text-bold text-uppercase text-spaced col-grow">
           {{ t('circuit-overseer') }}
         </q-item-section>
         <q-item-section side>
           <q-btn
+            class="add-media-shortcut"
             color="additional"
             :flat="
               !!sortableCircuitOverseerMediaItems.filter((m) => !m.hidden)
@@ -340,19 +341,32 @@
                 : 'mmm-music-note'
             "
             :label="
-              t(
-                sortableCircuitOverseerMediaItems.filter((m) => !m.hidden)
-                  .length
-                  ? 'add-extra-media'
-                  : 'add-a-closing-song',
-              )
+              $q.screen.gt.xs
+                ? t(
+                    sortableCircuitOverseerMediaItems.filter((m) => !m.hidden)
+                      .length
+                      ? 'add-extra-media'
+                      : 'add-a-closing-song',
+                  )
+                : undefined
             "
             @click="
               sortableCircuitOverseerMediaItems.filter((m) => !m.hidden).length
                 ? openImportMenu('circuitOverseer')
                 : addSong('circuitOverseer')
             "
-          />
+          >
+            <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+              {{
+                t(
+                  sortableCircuitOverseerMediaItems.filter((m) => !m.hidden)
+                    .length
+                    ? 'add-extra-media'
+                    : 'add-a-closing-song',
+                )
+              }}
+            </q-tooltip>
+          </q-btn>
         </q-item-section>
       </q-item>
       <q-list ref="circuitOverseerList" class="list-droppable">
@@ -422,9 +436,11 @@ import {
   watchImmediate,
 } from '@vueuse/core';
 import { Buffer } from 'buffer';
+import DragAndDropper from 'components/media/DragAndDropper.vue';
+import MediaItem from 'components/media/MediaItem.vue';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
-import { useMeta } from 'quasar';
+import { useMeta, useQuasar } from 'quasar';
 import { Sortable } from 'sortablejs-vue3';
 import DragAndDropper from 'src/components/media/DragAndDropper.vue';
 import MediaItem from 'src/components/media/MediaItem.vue';
@@ -444,8 +460,6 @@ import {
   getMediaFromJwPlaylist,
 } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
   dateFromString,
@@ -471,6 +485,8 @@ import {
 } from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
 import { findDb, getPublicationInfoFromDb } from 'src/utils/sqlite';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -480,6 +496,9 @@ const jwpubImportDocuments = ref<DocumentItem[]>([]);
 
 const { dateLocale, t } = useLocale();
 useMeta({ title: t('titles.meetingMedia') });
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const $q = useQuasar();
 
 watch(
   () => [jwpubImportDb.value, jwpubImportDocuments.value],
@@ -1445,3 +1464,14 @@ const resetDragging = () => {
   sectionToAddTo.value = undefined;
 };
 </script>
+<style scoped lang="scss">
+.add-media-shortcut {
+  max-width: 100%;
+
+  :deep(span.block) {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+}
+</style>

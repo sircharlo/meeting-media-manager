@@ -2,6 +2,66 @@
 
 # Changelog
 
+## 24.12.2
+
+### New Features
+
+- 🌐 Allowed opening the website and navigating to a specific page **before presenting**.
+- 💾 Added option for **MP4 conversion** of non-video media.
+- 📦 Added **code signing and notarization for macOS version** to enable auto-updates.
+- 🎥 Display **elapsed/remaining time** during video playback.
+- 🎥 Added **manual time entry** for custom durations.
+- 🚩 Introduced a **banner when auto-updates are disabled** to inform users.
+- 📅 Enabled **beta update options** and banner for users who want early access to new features.
+- 🔍 **Autofocus search fields** in dialogs.
+- 🌐 Added initial support for **Haitian Creole**, **Kinyarwanda**, and **Slovak** languages.
+
+### Improvements and Tweaks
+
+- 💻 Improved **app icons** for better visual consistency.
+- 📄 Enhanced **page titles** across the app for clarity.
+- 🖼️ Improved **about modal icon size** and **media window title**.
+- ⚙️ Improved **toggle settings and layout on small windows**.
+- 🖱️ Introduced **auto-scroll when dragging media to window edges**.
+- 🎥 Added an option to **hide icons from OBS scene switcher**.
+- 🛠️ Added **beta icon** for pre-release versions.
+- 🛠️ Adjusted **video progress bar styling** for accuracy.
+- 🖥️ Restricted media window maximization to **multiple screens**.
+- 🎵 Fixed **custom audio duration setting** issues.
+- 🌐 Immediately applied **urlVariables** upon change.
+- 🔄 Resolved issues with **spinning loader icon** and **refresh button placement** in media dialogs.
+- 🎨 Improved **drag-and-drop loader styling** for consistency.
+- 🖼️ Adjusted **about modal update toggle placement** and logo attention styling.
+- 🎛️ Removed **size notification from media window** and replaced it with a tooltip.
+- 🖱️ Restored **double-click action on media window** with improved results, preventing unintended maximize behavior.
+- 🛠️ Added separate **loading states** for Study Bible.
+- 🖼️ Unified grid styling for **song, Study Bible, and audio Bible views**.
+- 📜 Fixed missing strings for **Hebrew, Aramaic, and Greek scriptures**.
+- 📜 Resolved **Bible book name display issues** in certain cases.
+- 🖼️ Fixed **long filename layout issues** in media items.
+- 🛠️ Ensured dynamic **modal height** with friendly overflow enforcement.
+- 📦 Fixed **download popup scroll issue** and spinner icon glitches.
+- 🎨 Improved **banner color consistency**.
+- 📜 Correctly handled **media language fallback order**.
+- 🖼️ Display **intro pictures from _lff_ , _bt_ and _lmd_** when appropriate.
+- 🎥 Fixed issues where certain **images didn’t render properly in MP4 exports**.
+- 🎥 Correctly **load OBS scenes** in select inputs.
+- 📦 Resolved **`ffmpeg` setup issues** to avoid unnecessary binary downloads.
+- 🎥 Fixed **media shortcuts for CO visit**.
+- 🔍 Improved **study Bible lookups and loading UI**.
+- 🔧 Improved **pan-zoom handling**.
+- 🚀 Made event listeners **passive** for better performance.
+
+### Improvements to Codebase
+
+- 🛠️ Refactored and simplified media item code for maintainability.
+- 📦 Improved **error handling** and messaging across the app.
+- 🛠️ Enhanced **code structure** by moving and optimizing utility functions.
+- 📄 Updated documentation for **contributing guidelines** and download links.
+- 🛠️ Improved workflows for **beta release cleanup** and CI schedules.
+- 🌐 Cleaned up old locales and removed incomplete translations.
+- 🖼️ Set **correct window icons** in development mode.
+
 ## 24.12.1
 
 ### New and Improved Features
@@ -10,7 +70,7 @@
 - 🚩 **Warn users** when auto-updates are disabled or beta updates are enabled.
 - 💻 Improved **macOS icons** for better visual consistency.
 - 🎥 Added **time entry for custom durations**
-- 🎥 Display **elapsed/remaining time** during video playback (#3661).
+- 🎥 Display **elapsed/remaining time** during video playback.
 
 ### Fixes
 
@@ -45,9 +105,9 @@
 ### New Features
 
 - 🧹 Added **cache folder customization** in settings and the wizard for better data control.
-- 🎤 Introduced **audio Bible import** functionality (#3569).
-- 📂 Added **auto-export media to folder** functionality (#3474).
-- 📖 Included **non-book media** (e.g., appendices, introductions) from the study Bible (#3559).
+- 🎤 Introduced **audio Bible import** functionality.
+- 📂 Added **auto-export media to folder** functionality.
+- 📖 Included **non-book media** (e.g., appendices, introductions) from the study Bible.
 - 🌐 Enabled **Italian** language support.
 - 🎨 Updated icon assets and introduced **new media player icon**.
 
@@ -71,7 +131,7 @@
 
 - 🔨 Refactored and optimized **code** for reusability.
 - 📚 Improved **documentation**.
-- 🖼️ Implemented **custom scrolling styles and logic** instead of using `q-scroll-area` repeatedly (#3525).
+- 🖼️ Implemented **custom scrolling styles and logic** instead of using `q-scroll-area` repeatedly.
 - ✏️ Cleaned up SVGs and resolved typos in the documentation.
 - 🛠️ Refactored **error handling** across Electron processes, including thumbnails and fetch contexts.
 - 🚀 Improved **DX (Developer Experience)** with streamlined workflows and templates.
@@ -82,8 +142,8 @@ This release includes critical fixes, exciting new features, and numerous under-
 
 ### New Features
 
-- 🌐 Added a notification to **offer translation help** for missing translations (#3426).
-- 🖼️ Implemented **extra media indicators** and improved visual feedback for media items (#3452).
+- 🌐 Added a notification to **offer translation help** for missing translations.
+- 🖼️ Implemented **extra media indicators** and improved visual feedback for media items.
 - 🎤 Added support for **missing media from JW playlist files** and ensured they are added correctly from the watched folder.
 - 📚 Added support for **Study Bible media**.
 - 🖋️ Added **context menu button** for easy access to media actions in the media list.
@@ -129,7 +189,7 @@ This release includes critical fixes, exciting new features, and numerous under-
 - 🛑 Implemented **quit verification logic** for macOS `Cmd-Q` to prevent accidental exits.
 - 🎵 Added **loading indicator to song picker** when refreshing songs for a smoother experience.
 - 🎶 Improved **search and filters** in public talk media and song pickers to allow for partial text matches.
-- 🌐 Adjusted **website aspect ratio on macOS** for better display (#3283).
+- 🌐 Adjusted **website aspect ratio on macOS** for better display.
 - 🖼️ Fixed **thumbnail file path errors** that caused media thumbnails to fail in some cases.
 - 📜 Properly reset **media import progress and drag-and-dropper**.
 - 🎬 Ensured **new watched media** is added to the bottom of the list when sorted.

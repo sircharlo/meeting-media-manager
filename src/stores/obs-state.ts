@@ -4,8 +4,8 @@ import type { ObsConnectionState, ObsSceneType } from 'src/types';
 
 import { defineStore } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { useCurrentStateStore } from 'src/stores/current-state';
 import { isUUID } from 'src/utils/general';
+import { useCurrentStateStore } from 'stores/current-state';
 
 interface Store {
   currentScene: string;

@@ -223,16 +223,14 @@ import type { QMenu } from 'quasar';
 import type { MediaSection } from 'src/types';
 
 import { useEventListener } from '@vueuse/core';
+import DialogAudioBible from 'components//dialog/DialogAudioBible.vue';
+import DialogRemoteVideo from 'components/dialog/DialogRemoteVideo.vue';
+import DialogStudyBible from 'components/dialog/DialogStudyBible.vue';
+import PublicTalkMediaPicker from 'components/media/PublicTalkMediaPicker.vue';
+import SongPicker from 'components/media/SongPicker.vue';
 import { storeToRefs } from 'pinia';
-import DialogAudioBible from 'src/components//dialog/DialogAudioBible.vue';
-import DialogRemoteVideo from 'src/components/dialog/DialogRemoteVideo.vue';
-import DialogStudyBible from 'src/components/dialog/DialogStudyBible.vue';
-import PublicTalkMediaPicker from 'src/components/media/PublicTalkMediaPicker.vue';
-import SongPicker from 'src/components/media/SongPicker.vue';
 import { useLocale } from 'src/composables/useLocale';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
 import {
   formatDate,
   friendlyDayToJsDay,
@@ -241,6 +239,8 @@ import {
   getMaxDate,
   getMinDate,
 } from 'src/utils/date';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 import { computed, ref, useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 
