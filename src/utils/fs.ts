@@ -49,7 +49,7 @@ export const getAdditionalMediaPath = (cacheDir?: null | string) =>
  * @param filepath The path to the file.
  * @returns The path to the parent directory.
  */
-export const getParentDirectory = (filepath: string) => {
+export const getParentDirectory = (filepath?: string) => {
   if (!filepath) return '';
   if (isFileUrl(filepath)) {
     filepath = window.electronApi.fileUrlToPath(filepath);
