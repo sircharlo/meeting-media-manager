@@ -260,7 +260,6 @@ const {
   mediaPlaying,
   online,
   selectedDate,
-  watchFolderMedia,
 } = storeToRefs(currentState);
 
 const section = ref<MediaSection | undefined>();
@@ -314,13 +313,9 @@ const additionalMediaForSelectedDayExists = computed(
   () => (additionalMediaForDay.value?.length || 0) > 0,
 );
 const hiddenMediaForDay = computed(() =>
-  (
-    lookupPeriod.value?.[currentCongregation.value]?.find(
-      (day) => formatDate(day.date, 'YYYY/MM/DD') === selectedDate.value,
-    )?.dynamicMedia || []
-  )
-    .concat(watchFolderMedia.value?.[selectedDate.value] || [])
-    .some((media) => media.hidden),
+  lookupPeriod.value?.[currentCongregation.value]
+    ?.find((day) => formatDate(day.date, 'YYYY/MM/DD') === selectedDate.value)
+    ?.dynamicMedia?.some((media) => media.hidden),
 );
 
 const mediaDeleteAllPending = ref(false);

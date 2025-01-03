@@ -2,7 +2,6 @@ import type {
   DateInfo,
   DownloadedFile,
   DownloadProgressItems,
-  DynamicMediaObject,
   JwLanguage,
   MediaLink,
   SettingsItem,
@@ -52,7 +51,6 @@ interface Store {
   onlyShowInvalidSettings: boolean;
   selectedDate: string;
   timeRemainingBeforeMusicStop: number;
-  watchFolderMedia: Record<string, DynamicMediaObject[]>;
 }
 
 const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
@@ -251,7 +249,6 @@ export const useCurrentStateStore = defineStore('current-state', {
       onlyShowInvalidSettings: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
       timeRemainingBeforeMusicStop: 0,
-      watchFolderMedia: {},
     };
   },
 });

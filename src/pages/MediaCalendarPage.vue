@@ -506,12 +506,7 @@ const router = useRouter();
 
 const jwStore = useJwStore();
 const { addToAdditionMediaMap } = jwStore;
-const {
-  lookupPeriod,
-  missingMedia,
-  urlVariables,
-  // watchedMediaSections,
-} = storeToRefs(jwStore);
+const { lookupPeriod, missingMedia, urlVariables } = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
 const {
   currentCongregation,
@@ -526,7 +521,6 @@ const {
   mediaPlayingUrl,
   selectedDate,
   selectedDateObject,
-  watchFolderMedia,
 } = storeToRefs(currentState);
 const { getDatedAdditionalMediaDirectory } = currentState;
 const {
@@ -605,9 +599,7 @@ watch(
           lookupPeriod.value[currentCongregation.value]?.flatMap(
             (item) => item.dynamicMedia,
           ) ?? []
-        )
-          .concat(watchFolderMedia.value?.[selectedDate.value] ?? [])
-          .find((item) => item.uniqueId === mediaPlayingUniqueId.value)
+        ).find((item) => item.uniqueId === mediaPlayingUniqueId.value)
           ?.customDuration || undefined;
       if (customDuration) {
         const { post } = useBroadcastChannel<string, string>({
@@ -741,10 +733,9 @@ watch(
 const sortableMediaItems = ref<DynamicMediaObject[]>([]);
 
 const generateMediaList = () => {
-  sortableMediaItems.value = [
-    ...(selectedDateObject.value?.dynamicMedia ?? []),
-    ...(watchFolderMedia.value?.[selectedDate.value] ?? []),
-  ].filter(
+  sortableMediaItems.value = (
+    selectedDateObject.value?.dynamicMedia ?? []
+  ).filter(
     (item, index, self) =>
       !item.fileUrl ||
       index === self.findIndex((i) => i.fileUrl === item.fileUrl),
@@ -755,28 +746,15 @@ watch(
   () => [
     selectedDateObject.value?.date,
     selectedDateObject.value?.dynamicMedia?.length,
-    watchFolderMedia.value?.[selectedDate.value]?.length,
   ],
   (
-    [
-      newSelectedDate,
-      newAdditionalMediaListLength,
-      newDynamicMediaListLength,
-      newWatchFolderMediaLength,
-    ],
-    [
-      oldSelectedDate,
-      oldAdditionalMediaListLength,
-      oldDynamicMediaListLength,
-      oldWatchFolderMediaLength,
-    ],
+    [newSelectedDate, newDynamicMediaListLength],
+    [oldSelectedDate, oldDynamicMediaListLength],
   ) => {
     try {
       if (
         newSelectedDate !== oldSelectedDate ||
-        newAdditionalMediaListLength !== oldAdditionalMediaListLength ||
-        newDynamicMediaListLength !== oldDynamicMediaListLength ||
-        newWatchFolderMediaLength !== oldWatchFolderMediaLength
+        newDynamicMediaListLength !== oldDynamicMediaListLength
       ) {
         generateMediaList();
       }

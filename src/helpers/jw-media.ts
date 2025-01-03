@@ -1425,9 +1425,9 @@ export const watchedItemMapper: (
     );
 
     const section =
-      jwStore.watchedMediaSections?.[currentStateStore.currentCongregation]?.[
-        parentDate
-      ]?.[uniqueId] || 'additional';
+      (jwStore.lookupPeriod?.[currentStateStore.currentCongregation]?.find(
+        (day) => day.date === dateFromString(parentDate),
+      )?.dynamicMedia || [])[0]?.section || 'additional';
 
     const thumbnailUrl = await getThumbnailUrl(watchedItemPath);
 

@@ -54,9 +54,6 @@ interface Store {
   jwSongs: Partial<Record<JwLangCode, CacheList<MediaLink>>>;
   lookupPeriod: Partial<Record<string, DateInfo[]>>;
   urlVariables: UrlVariables;
-  watchedMediaSections: Partial<
-    Record<string, Partial<Record<string, Record<string, MediaSection>>>>
-  >;
   yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
 }
 
@@ -163,25 +160,14 @@ export const useJwStore = defineStore('jw-store', {
     },
     showCurrentDayHiddenMedia() {
       const currentState = useCurrentStateStore();
-      const {
-        currentCongregation,
-        selectedDate,
-        selectedDateObject,
-        watchFolderMedia,
-      } = currentState;
-      if (!currentCongregation || !selectedDateObject?.date || !selectedDate)
-        return;
+      const { currentCongregation, selectedDateObject } = currentState;
+      if (!currentCongregation || !selectedDateObject?.date) return;
       this.lookupPeriod?.[currentCongregation]
         ?.find(
           (day) =>
             getDateDiff(day.date, selectedDateObject?.date, 'days') === 0,
         )
         ?.dynamicMedia?.filter((media) => media.hidden)
-        ?.forEach((media) => {
-          media.hidden = false;
-        });
-      watchFolderMedia?.[selectedDate]
-        ?.filter((media) => media.hidden)
         ?.forEach((media) => {
           media.hidden = false;
         });
@@ -410,7 +396,6 @@ export const useJwStore = defineStore('jw-store', {
         mediator: 'https://b.jw-cdn.org/apis/mediator',
         pubMedia: 'https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS',
       },
-      watchedMediaSections: {},
       yeartexts: {},
     };
   },

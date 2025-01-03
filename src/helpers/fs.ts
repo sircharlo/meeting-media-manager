@@ -10,6 +10,7 @@ import { Platform } from 'quasar';
 import { FULL_HD } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadFileIfNeeded, getJwMediaInfo } from 'src/helpers/jw-media';
+import { useJwStore } from 'src/stores/jw';
 import { fetchJson } from 'src/utils/api';
 import { getPublicationDirectory } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
@@ -267,8 +268,14 @@ export const getSubtitlesUrl = async (
 
 export const watchExternalFolder = async (folder?: string) => {
   try {
+    const jwStore = useJwStore();
     const currentState = useCurrentStateStore();
-    currentState.watchFolderMedia = {};
+    if (!currentState.currentCongregation) return;
+    jwStore.lookupPeriod[currentState.currentCongregation]?.forEach((day) => {
+      day.dynamicMedia = day.dynamicMedia.filter(
+        (media) => media.source !== 'watched',
+      );
+    });
     window.electronApi.unwatchFolders();
     if (folder) window.electronApi.watchFolder(folder);
   } catch (error) {
