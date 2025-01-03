@@ -322,18 +322,20 @@ export const fetchMedia = async () => {
             const hasIncompleteOrErrorMeeting =
               day.meeting && (!day.complete || day.error);
 
-            const hasMissingMediaFile = await Promise.all(
-              day.dynamicMedia.map(async (media) => {
-                if (!media?.fileUrl) return true;
-                const fileExists = await window.electronApi.fs.pathExists(
-                  window.electronApi.fileUrlToPath(media.fileUrl),
-                );
-                return !fileExists;
-              }),
-            );
+            const hasMissingMediaFile = (
+              await Promise.all(
+                day.dynamicMedia.map(
+                  async (media) =>
+                    !media?.children?.length &&
+                    media?.fileUrl &&
+                    !(await window.electronApi.fs.pathExists(
+                      window.electronApi.fileUrlToPath(media.fileUrl),
+                    )),
+                ),
+              )
+            ).includes(true);
 
-            return hasIncompleteOrErrorMeeting ||
-              hasMissingMediaFile.includes(true)
+            return hasIncompleteOrErrorMeeting || hasMissingMediaFile
               ? day
               : null;
           },
@@ -574,10 +576,6 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
       }
       allExtractItems.push(...extractItems);
     }
-    console.log(
-      `Got ${allExtractItems.length} multimedia items from document ${docId}`,
-      allExtractItems,
-    );
     return allExtractItems;
   } catch (e: unknown) {
     errorCatcher(e);
@@ -1351,15 +1349,6 @@ export const dynamicMediaMapper = async (
         },
         {},
       ),
-    );
-
-    console.log(groupedMediaPromises);
-
-    console.log(
-      'allMediaPromises',
-      allMediaPromises,
-      'groupedMediaPromises',
-      groupedMediaPromises,
     );
     return groupedMediaPromises;
   } catch (e) {

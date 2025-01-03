@@ -19,7 +19,6 @@ export const addDayToExportQueue = async (targetDate?: Date) => {
 };
 
 const exportDayToFolder = async (targetDate?: Date) => {
-  console.log('exportDayToFolder', targetDate);
   const currentStateStore = useCurrentStateStore();
   const jwStore = useJwStore();
 
