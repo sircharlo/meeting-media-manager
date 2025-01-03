@@ -8,7 +8,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 
 export const cleanLocalStorage = () => {
   // try {
-  //   ['additionalMediaMaps', 'mediaSort'].forEach((key) => {
+  //   ['additionalMediaMaps'].forEach((key) => {
   //     cleanUpPastDatesFromLocalStorage(key);
   //   });
   // } catch (error) {

@@ -46,7 +46,6 @@ import NavDrawer from 'components/ui/NavDrawer.vue';
 // Packages
 import { storeToRefs } from 'pinia';
 import { useMeta, useQuasar } from 'quasar';
-import { SORTER } from 'src/constants/general';
 // Helpers
 import {
   cleanAdditionalMediaFolder,
@@ -74,6 +73,7 @@ import {
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
+import { formatDate } from 'src/utils/date';
 import { kebabToCamelCase } from 'src/utils/general';
 // Stores
 import { useCurrentStateStore } from 'stores/current-state';
@@ -127,6 +127,7 @@ const jwStore = useJwStore();
 // });
 
 const { updateJwLanguages } = jwStore;
+const { lookupPeriod } = storeToRefs(jwStore);
 updateJwLanguages();
 
 const currentState = useCurrentStateStore();
@@ -138,7 +139,6 @@ const {
   online,
   selectedDate,
   selectedDateObject,
-  watchFolderMedia,
 } = storeToRefs(currentState);
 
 watch(currentCongregation, (newCongregation, oldCongregation) => {
@@ -330,35 +330,30 @@ const updateWatchFolderRef = async ({
   try {
     day = day?.replace(/-/g, '/');
     if (!day) return;
+    const dayObj = lookupPeriod.value[currentCongregation.value]?.find(
+      (d) => formatDate(d.date, 'YYYY/MM/DD') === day,
+    );
+    if (!dayObj) return;
     if (event === 'addDir' || event === 'unlinkDir') {
-      watchFolderMedia.value[day] = [];
+      for (let i = dayObj.dynamicMedia.length - 1; i >= 0; i--) {
+        if (dayObj.dynamicMedia[i]?.source === 'watched') {
+          dayObj.dynamicMedia.splice(i, 1);
+        }
+      }
     } else if (event === 'add') {
-      watchFolderMedia.value[day] ??= [];
-      const watchedItemMapItems = await watchedItemMapper(
-        day,
-        changedPath ?? '',
-      );
-      if (watchedItemMapItems?.length) {
-        for (const watchedItemMap of watchedItemMapItems) {
-          watchFolderMedia.value[day]?.push(watchedItemMap);
-          watchFolderMedia.value[day]?.sort((a, b) =>
-            SORTER.compare(a.title, b.title),
-          );
-          if (jwStore.mediaSort[currentCongregation.value]?.[day]?.length) {
-            jwStore.mediaSort[currentCongregation.value]?.[day]?.push(
-              watchedItemMap?.uniqueId,
-            );
-          }
+      const watchedItems = await watchedItemMapper(day, changedPath ?? '');
+      if (watchedItems?.length) {
+        for (const watchedItem of watchedItems) {
+          dayObj?.dynamicMedia.unshift(watchedItem);
         }
       }
     } else if (event === 'unlink') {
-      watchFolderMedia.value[day] =
-        watchFolderMedia.value[day]?.filter(
-          (dM) =>
-            dM.fileUrl !==
-              window.electronApi.pathToFileURL(changedPath ?? '') &&
-            dM.watched !== changedPath,
-        ) ?? [];
+      const targetUrl = window.electronApi.pathToFileURL(changedPath ?? '');
+      for (let i = dayObj.dynamicMedia.length - 1; i >= 0; i--) {
+        if (dayObj.dynamicMedia[i]?.fileUrl === targetUrl) {
+          dayObj.dynamicMedia.splice(i, 1);
+        }
+      }
     }
   } catch (error) {
     errorCatcher(error);
@@ -466,7 +461,11 @@ const removeListeners = () => {
   ];
 
   listeners.forEach((listener) => {
-    window.electronApi.removeListeners(listener);
+    try {
+      window.electronApi.removeListeners(listener);
+    } catch (error) {
+      errorCatcher(error);
+    }
   });
 };
 

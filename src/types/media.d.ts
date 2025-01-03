@@ -24,26 +24,28 @@ export interface DownloadProgressItem {
 export type DownloadProgressItems = Record<string, DownloadProgressItem>;
 
 export interface DynamicMediaObject {
+  children?: DynamicMediaObject[];
   customDuration?: { max: number; min: number };
-  duration: number;
-  fileUrl: string;
+  duration?: number;
+  extractCaption?: string;
+  fileUrl?: string;
   footnote?: boolean;
   hidden?: boolean;
-  isAdditional?: boolean;
-  isAudio: boolean;
-  isImage: boolean;
-  isVideo: boolean;
+  isAudio?: boolean;
+  isImage?: boolean;
+  isVideo?: boolean;
   markers?: VideoMarker[];
   repeat?: boolean;
   section: MediaSection;
   sectionOriginal: MediaSection;
+  sortOrderOriginal?: number;
+  source: 'additional' | 'dynamic' | 'watched';
   streamUrl?: string;
   subtitlesUrl?: string;
   tag?: Tag | undefined;
-  thumbnailUrl: string;
+  thumbnailUrl?: string;
   title: string;
   uniqueId: string;
-  watched?: string | true;
 }
 
 export interface FileDownloader {

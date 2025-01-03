@@ -325,7 +325,7 @@ const getNextSong = async () => {
         const regex = /(_r\d{3,4}P)?\.\w+$/;
         const selectedDaySongs: SongItem[] = selectedDayMedia
           .map((d) =>
-            path.basename(fileUrlToPath(d.fileUrl.replace(regex, ''))),
+            path.basename(fileUrlToPath(d.fileUrl?.replace(regex, ''))),
           )
           .map((basename) => {
             const index = songList.value.findIndex(

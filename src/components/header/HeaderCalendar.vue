@@ -4,7 +4,7 @@
   <DialogRemoteVideo v-model="remoteVideoPopup" :section="section" />
   <DialogStudyBible v-model="studyBiblePopup" :section="section" />
   <DialogAudioBible v-model="audioBiblePopup" :section="section" />
-  <q-btn
+  <!-- <q-btn
     v-if="selectedDate"
     color="white-transparent"
     :disable="mediaPlaying || !mediaSortForDay"
@@ -20,7 +20,7 @@
     <q-tooltip v-if="!$q.screen.gt.sm" :delay="1000">
       {{ t('reset-sort-order') }}
     </q-tooltip>
-  </q-btn>
+  </q-btn> -->
   <q-btn
     v-if="selectedDate"
     color="white-transparent"
@@ -125,7 +125,9 @@
             </q-item-section>
           </q-item>
         </template>
-        <template v-if="additionalMediaForDay || hiddenMediaForDay">
+        <template
+          v-if="additionalMediaForSelectedDayExists || hiddenMediaForDay"
+        >
           <q-item-label header>{{ t('dangerZone') }}</q-item-label>
           <q-item
             v-if="hiddenMediaForDay"
@@ -144,7 +146,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            v-if="additionalMediaForDay"
+            v-if="additionalMediaForSelectedDayExists"
             v-close-popup
             clickable
             @click="mediaDeleteAllPending = true"
@@ -246,9 +248,8 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const jwStore = useJwStore();
-const { clearCurrentDayAdditionalMedia, resetSort, showCurrentDayHiddenMedia } =
-  jwStore;
-const { additionalMediaMaps, lookupPeriod, mediaSort } = storeToRefs(jwStore);
+const { clearCurrentDayAdditionalMedia, showCurrentDayHiddenMedia } = jwStore;
+const { lookupPeriod } = storeToRefs(jwStore);
 
 const { dateLocale } = useLocale();
 
@@ -259,7 +260,6 @@ const {
   mediaPlaying,
   online,
   selectedDate,
-  watchFolderMedia,
 } = storeToRefs(currentState);
 
 const section = ref<MediaSection | undefined>();
@@ -280,63 +280,54 @@ const openDragAndDropper = () => {
   );
 };
 
-const mediaSortForDay = computed(() => {
-  if (!selectedDate.value || !currentCongregation.value || !mediaSort.value)
-    return false;
+const additionalMediaForDay = computed(
+  () =>
+    lookupPeriod.value?.[currentCongregation.value]
+      ?.find((day) => formatDate(day.date, 'YYYY/MM/DD') === selectedDate.value)
+      ?.dynamicMedia.filter((media) => media.source === 'additional') || [],
+);
+
+const additionalMediaDates = computed(() =>
+  (
+    lookupPeriod.value?.[currentCongregation.value]?.filter((day) =>
+      day.dynamicMedia.some((media) => media.source === 'additional'),
+    ) || []
+  ).map((day) => formatDate(day.date, 'YYYY/MM/DD')),
+);
+
+const additionalMediaForDayExists = (lookupDate: string) => {
   try {
     return (
-      (mediaSort.value?.[currentCongregation.value]?.[selectedDate.value]
+      (lookupPeriod.value?.[currentCongregation.value]
+        ?.find((day) => getDateDiff(lookupDate, day.date, 'days') === 0)
+        ?.dynamicMedia.filter((media) => media.source === 'additional')
         ?.length || 0) > 0
     );
   } catch (error) {
     errorCatcher(error);
     return false;
   }
-});
+};
 
-const additionalMediaForDay = computed(
-  () =>
-    (additionalMediaMaps.value?.[currentCongregation.value]?.[
-      selectedDate.value
-    ]?.length || 0) > 0,
+const additionalMediaForSelectedDayExists = computed(
+  () => (additionalMediaForDay.value?.length || 0) > 0,
 );
-
 const hiddenMediaForDay = computed(() =>
-  (
-    lookupPeriod.value?.[currentCongregation.value]?.find(
-      (day) => formatDate(day.date, 'YYYY/MM/DD') === selectedDate.value,
-    )?.dynamicMedia || []
-  )
-    .concat(
-      additionalMediaMaps.value?.[currentCongregation.value]?.[
-        selectedDate.value
-      ] || [],
-    )
-    .concat(watchFolderMedia.value?.[selectedDate.value] || [])
-    .some((media) => media.hidden),
+  lookupPeriod.value?.[currentCongregation.value]
+    ?.find((day) => formatDate(day.date, 'YYYY/MM/DD') === selectedDate.value)
+    ?.dynamicMedia?.some((media) => media.hidden),
 );
 
 const mediaDeleteAllPending = ref(false);
 
 const getEventDates = () => {
   try {
-    if (
-      !(lookupPeriod.value || additionalMediaMaps.value) ||
-      !currentCongregation.value
-    )
-      return [];
+    if (!lookupPeriod.value || !currentCongregation.value) return [];
     const meetingDates =
       lookupPeriod.value[currentCongregation.value]
         ?.filter((day) => day.meeting)
         .map((day) => formatDate(day.date, 'YYYY/MM/DD')) || [];
-    const additionalMedia =
-      additionalMediaMaps.value[currentCongregation.value];
-    const additionalMediaDates = additionalMedia
-      ? Object.keys(additionalMedia)
-          .filter((day) => (additionalMedia[day]?.length || 0) > 0)
-          .map((day) => formatDate(day, 'YYYY/MM/DD'))
-      : [];
-    return meetingDates.concat(additionalMediaDates);
+    return meetingDates.concat(additionalMediaDates.value);
   } catch (error) {
     errorCatcher(error);
     return [];
@@ -410,15 +401,7 @@ const getEventDayColor = (eventDate: string) => {
     } else if (lookupDate?.complete) {
       return 'primary';
     }
-    const additionalDates =
-      additionalMediaMaps.value[currentCongregation.value];
-    if (additionalDates) {
-      const isAdditional = Object.keys(additionalDates)
-        .filter((day) => (additionalDates[day]?.length || 0) > 0)
-        .map((day) => formatDate(day, 'YYYY/MM/DD'))
-        .includes(eventDate);
-      if (isAdditional) return 'additional';
-    }
+    if (additionalMediaForDayExists(eventDate)) return 'additional';
   } catch (error) {
     errorCatcher(error);
     return 'negative';

@@ -138,270 +138,187 @@
         </div>
       </div>
     </div>
-    <q-list
-      v-show="
-        sortableAdditionalMediaItems?.filter((m) => !m.hidden).length ||
-        (selectedDateObject &&
-          selectedDateObject.complete &&
-          isWeMeetingDay(selectedDateObject?.date))
-      "
-      class="media-section additional"
+    <template
+      v-for="mediaList in [
+        {
+          type: 'additional',
+          label: t(
+            selectedDateObject?.date && isWeMeetingDay(selectedDateObject.date)
+              ? 'public-talk'
+              : 'imported-media',
+          ),
+          mmmIcon:
+            selectedDateObject?.date &&
+            !isWeMeetingDay(selectedDateObject?.date)
+              ? 'mmm-additional-media'
+              : undefined,
+          jwIcon:
+            selectedDateObject?.date && isWeMeetingDay(selectedDateObject?.date)
+              ? ''
+              : undefined,
+          items: sortableAdditionalMediaItems,
+        },
+        selectedDateObject?.date &&
+          isWeMeetingDay(selectedDateObject?.date) && {
+            type: 'wt',
+            label: t('wt'),
+            jwIcon: '',
+            items: sortableWtMediaItems,
+          },
+        selectedDateObject?.date &&
+          isMwMeetingDay(selectedDateObject?.date) && {
+            type: 'tgw',
+            label: t('tgw'),
+            jwIcon: '',
+            items: sortableTgwMediaItems,
+          },
+        selectedDateObject?.date &&
+          isMwMeetingDay(selectedDateObject?.date) && {
+            type: 'ayfm',
+            label: t('ayfm'),
+            jwIcon: '',
+            items: sortableAyfmMediaItems,
+          },
+        selectedDateObject?.date &&
+          isMwMeetingDay(selectedDateObject?.date) && {
+            type: 'lac',
+            label: t('lac'),
+            jwIcon: '',
+            items: sortableLacMediaItems,
+          },
+        selectedDateObject?.date &&
+          isCoWeek(selectedDateObject?.date) && {
+            type: 'circuit-overseer',
+            label: t('circuit-overseer'),
+            jwIcon: '',
+            items: sortableCircuitOverseerMediaItems,
+          },
+      ].filter((m) => !!m)"
+      :key="mediaList.items.map((m) => m.uniqueId).join(',')"
     >
-      <q-item v-if="selectedDateObject" class="text-additional items-center">
-        <q-avatar
-          class="text-white bg-additional jw-icon"
-          :size="isWeMeetingDay(selectedDateObject.date) ? 'lg' : 'md'"
+      <q-list
+        v-show="
+          mediaList.items?.filter((m) => !m.hidden).length ||
+          (selectedDateObject &&
+            selectedDateObject.complete &&
+            isWeMeetingDay(selectedDateObject?.date))
+        "
+        :class="'media-section ' + mediaList.type"
+      >
+        <q-item
+          v-if="selectedDateObject"
+          :class="'text-' + mediaList.type + ' items-center'"
         >
-          <template v-if="isWeMeetingDay(selectedDateObject.date)">
-            
-          </template>
-          <template v-else>
-            <q-icon name="mmm-additional-media" size="md" />
-          </template>
-        </q-avatar>
-        <q-item-section
-          class="text-bold text-uppercase text-spaced row justify-between col-grow"
-        >
-          {{
-            t(
-              isWeMeetingDay(selectedDateObject.date)
-                ? 'public-talk'
-                : 'imported-media',
-            )
-          }}
-        </q-item-section>
-        <q-item-section
-          v-if="
-            isWeMeetingDay(selectedDateObject.date) &&
-            !sortableAdditionalMediaItems.filter((m) => !m.hidden && !m.watched)
-              .length
-          "
-          side
-        >
-          <q-btn
-            class="add-media-shortcut"
-            color="additional"
-            icon="mmm-music-note"
-            :label="$q.screen.gt.xs ? t('add-an-opening-song') : undefined"
-            @click="addSong('additional')"
+          <q-avatar
+            :class="
+              'text-white bg-' +
+              mediaList.type +
+              (mediaList.jwIcon ? ' jw-icon' : '')
+            "
           >
-            <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+            <!-- :size="isWeMeetingDay(selectedDateObject.date) ? 'lg' : 'md'" -->
+            <template v-if="mediaList.jwIcon">
+              {{ mediaList.jwIcon }}
+            </template>
+            <template v-else>
+              <q-icon :name="mediaList.mmmIcon" size="md" />
+            </template>
+          </q-avatar>
+          <q-item-section
+            class="text-bold text-uppercase text-spaced row justify-between"
+          >
+            {{ mediaList.label }}
+          </q-item-section>
+          <q-item-section
+            v-if="
+              isWeMeetingDay(selectedDateObject.date) &&
+              mediaList.type === 'additional' &&
+              !mediaList.items?.filter(
+                (m) => !m.hidden && m.source !== 'watched',
+              ).length
+            "
+            side
+          >
+            <q-btn
+              color="additional"
+              icon="mmm-music-note"
+              @click="addSong('additional')"
+            >
               {{ t('add-an-opening-song') }}
-            </q-tooltip>
-          </q-btn>
-        </q-item-section>
-      </q-item>
-      <q-list ref="additionalList" class="list-droppable">
-        <MediaItem
-          v-for="media in sortableAdditionalMediaItems"
-          :key="media.uniqueId"
-          v-model:repeat="media.repeat"
-          :media="media"
-          :play-state="playState(media.uniqueId)"
-          @update:custom-duration="
-            media.customDuration = JSON.parse($event) || undefined
-          "
-          @update:hidden="media.hidden = !!$event"
-          @update:tag="media.tag = $event"
-          @update:title="media.title = $event"
-        />
-        <div
-          v-if="
-            !sortableAdditionalMediaItems.filter((m) => !m.hidden).length &&
-            selectedDateObject &&
-            isWeMeetingDay(selectedDateObject?.date)
-          "
-        >
+            </q-btn>
+          </q-item-section>
+        </q-item>
+        <div v-if="!mediaList.items.filter((m) => !m.hidden).length">
           <q-item>
             <q-item-section
               class="align-center text-secondary text-grey text-subtitle2"
             >
               <div class="row items-center">
                 <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                <span>{{ t('dont-forget-add-missing-media') }}</span>
+                <span>{{
+                  selectedDateObject && isWeMeetingDay(selectedDateObject?.date)
+                    ? t('dont-forget-add-missing-media')
+                    : t('no-media-files-for-section')
+                }}</span>
               </div>
             </q-item-section>
           </q-item>
         </div>
-      </q-list>
-    </q-list>
-    <q-list
-      v-show="
-        selectedDateObject?.complete && isMwMeetingDay(selectedDateObject?.date)
-      "
-      class="media-section tgw"
-    >
-      <q-item class="text-tgw items-center">
-        <q-avatar class="text-white bg-tgw jw-icon" size="md"></q-avatar>
-        <div class="text-bold text-uppercase text-spaced">
-          {{ t('tgw') }}
-        </div>
-      </q-item>
-      <q-list ref="tgwList" class="list-droppable">
-        <MediaItem
-          v-for="media in sortableTgwMediaItems"
-          :key="media.uniqueId"
-          v-model:repeat="media.repeat"
-          :media="media"
-          :play-state="playState(media.uniqueId)"
-          @update:custom-duration="
-            media.customDuration = JSON.parse($event) || undefined
-          "
-          @update:hidden="media.hidden = !!$event"
-          @update:tag="media.tag = $event"
-          @update:title="media.title = $event"
-        />
-        <div v-if="sortableTgwMediaItems.filter((m) => !m.hidden).length === 0">
-          <q-item>
-            <q-item-section
-              class="align-center text-secondary text-grey text-subtitle2"
-            >
-              <div class="row items-center">
-                <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                {{ t('no-media-files-for-section') }}
-              </div>
-            </q-item-section>
-          </q-item>
-        </div>
-      </q-list>
-    </q-list>
-    <q-list
-      v-show="
-        selectedDateObject?.complete && isMwMeetingDay(selectedDateObject?.date)
-      "
-      class="media-section ayfm"
-    >
-      <q-item class="text-ayfm items-center">
-        <q-avatar class="text-white bg-ayfm jw-icon" size="lg"></q-avatar>
-        <div class="text-bold text-uppercase text-spaced">
-          {{ t('ayfm') }}
-        </div>
-      </q-item>
-      <q-list ref="ayfmList" class="list-droppable">
-        <MediaItem
-          v-for="media in sortableAyfmMediaItems"
-          :key="media.uniqueId"
-          v-model:repeat="media.repeat"
-          :media="media"
-          :play-state="playState(media.uniqueId)"
-          @update:custom-duration="
-            media.customDuration = JSON.parse($event) || undefined
-          "
-          @update:hidden="media.hidden = !!$event"
-          @update:tag="media.tag = $event"
-          @update:title="media.title = $event"
-        />
-        <div
-          v-if="sortableAyfmMediaItems.filter((m) => !m.hidden).length === 0"
+        <Sortable
+          item-key="uniqueId"
+          :list="mediaList.items"
+          :options="{ group: 'mediaLists' }"
         >
-          <q-item>
-            <q-item-section
-              class="align-center text-secondary text-grey text-subtitle2"
+          <template #item="{ element }: { element: DynamicMediaObject }">
+            <q-expansion-item
+              v-if="element.children"
+              :key="element.uniqueId"
+              class="draggable"
+              header-class="bg-secondary text-white"
+              :label="element.extractCaption"
             >
-              <div>
-                <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                {{ t('no-media-files-for-section') }}
-              </div>
-            </q-item-section>
-          </q-item>
-        </div>
+              <Sortable
+                v-if="element.children"
+                item-key="uniqueId"
+                :list="element.children"
+              >
+                <template #item="{ element }: { element: DynamicMediaObject }">
+                  <div :key="element.uniqueId" class="draggable bg-info">
+                    <MediaItem
+                      :key="element.uniqueId"
+                      v-model:repeat="element.repeat"
+                      :media="element"
+                      :play-state="playState(element.uniqueId)"
+                      @update:custom-duration="
+                        element.customDuration = JSON.parse($event) || undefined
+                      "
+                      @update:hidden="element.hidden = !!$event"
+                      @update:tag="element.tag = $event"
+                      @update:title="element.title = $event"
+                    />
+                  </div>
+                </template>
+              </Sortable>
+            </q-expansion-item>
+            <div v-else :key="element.fileUrl" class="draggable">
+              <MediaItem
+                :key="element.uniqueId"
+                v-model:repeat="element.repeat"
+                :media="element"
+                :play-state="playState(element.uniqueId)"
+                @update:custom-duration="
+                  element.customDuration = JSON.parse($event) || undefined
+                "
+                @update:hidden="element.hidden = !!$event"
+                @update:tag="element.tag = $event"
+                @update:title="element.title = $event"
+              />
+            </div>
+          </template>
+        </Sortable>
       </q-list>
-    </q-list>
-    <q-list
-      v-show="
-        selectedDateObject?.complete && isMwMeetingDay(selectedDateObject?.date)
-      "
-      class="media-section lac"
-    >
-      <q-item class="text-lac items-center">
-        <q-avatar class="text-white bg-lac jw-icon" size="lg"></q-avatar>
-        <q-item-section class="text-bold text-uppercase text-spaced col-grow">
-          {{ t('lac') }}
-        </q-item-section>
-        <q-item-section side>
-          <q-btn
-            class="add-media-shortcut"
-            color="lac"
-            flat
-            icon="mmm-add-media"
-            :label="$q.screen.gt.xs ? t('add-extra-media') : undefined"
-            @click="openImportMenu('lac')"
-          >
-            <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
-              {{ t('add-extra-media') }}
-            </q-tooltip>
-          </q-btn>
-        </q-item-section>
-      </q-item>
-      <q-list ref="lacList" class="list-droppable">
-        <MediaItem
-          v-for="media in sortableLacMediaItems"
-          :key="media.uniqueId"
-          v-model:repeat="media.repeat"
-          :media="media"
-          :play-state="playState(media.uniqueId)"
-          @update:custom-duration="
-            media.customDuration = JSON.parse($event) || undefined
-          "
-          @update:hidden="media.hidden = !!$event"
-          @update:tag="media.tag = $event"
-          @update:title="media.title = $event"
-        />
-        <div v-if="sortableLacMediaItems.filter((m) => !m.hidden).length === 0">
-          <q-item>
-            <q-item-section
-              class="align-center text-secondary text-grey text-subtitle2"
-            >
-              <div>
-                <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                {{ t('no-media-files-for-section') }}
-              </div>
-            </q-item-section>
-          </q-item>
-        </div>
-      </q-list>
-    </q-list>
-    <q-list
-      v-show="
-        selectedDateObject?.complete && isWeMeetingDay(selectedDateObject?.date)
-      "
-      class="media-section wt"
-    >
-      <q-item class="text-wt items-center">
-        <q-avatar class="text-white bg-wt jw-icon" size="lg"></q-avatar>
-        <div class="text-bold text-uppercase text-spaced">
-          {{ t('wt') }}
-        </div>
-      </q-item>
-      <q-list ref="wtList" class="list-droppable">
-        <MediaItem
-          v-for="media in sortableWtMediaItems"
-          :key="media.uniqueId"
-          v-model:repeat="media.repeat"
-          :media="media"
-          :play-state="playState(media.uniqueId)"
-          @update:custom-duration="
-            media.customDuration = JSON.parse($event) || undefined
-          "
-          @update:hidden="media.hidden = !!$event"
-          @update:tag="media.tag = $event"
-          @update:title="media.title = $event"
-        />
-        <div v-if="sortableWtMediaItems.filter((m) => !m.hidden).length === 0">
-          <q-item>
-            <q-item-section
-              class="align-center text-secondary text-grey text-subtitle2"
-            >
-              <div>
-                <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                {{ t('no-media-files-for-section') }}
-              </div>
-            </q-item-section>
-          </q-item>
-        </div>
-      </q-list>
-    </q-list>
-    <q-list
+    </template>
+    <!-- <q-list
       v-show="selectedDateObject?.complete && coWeek"
       class="media-section additional"
     >
@@ -410,7 +327,7 @@
           
         </q-avatar>
         <q-item-section class="text-bold text-uppercase text-spaced col-grow">
-          {{ t('co') }}
+          {{ t('circuit-overseer') }}
         </q-item-section>
         <q-item-section side>
           <q-btn
@@ -486,7 +403,7 @@
           </q-item>
         </div>
       </q-list>
-    </q-list>
+    </q-list> -->
   </q-page>
   <DragAndDropper
     v-model="dragging"
@@ -500,7 +417,6 @@
 </template>
 
 <script setup lang="ts">
-import type { DNDPlugin } from '@formkit/drag-and-drop';
 import type {
   DocumentItem,
   DynamicMediaObject,
@@ -508,25 +424,18 @@ import type {
   TableItem,
 } from 'src/types';
 
-// eslint-disable-next-line no-duplicate-imports
-import {
-  animations,
-  multiDrag,
-  parents,
-  selections,
-} from '@formkit/drag-and-drop';
-import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
 import {
   useBroadcastChannel,
   useEventListener,
   watchImmediate,
 } from '@vueuse/core';
 import { Buffer } from 'buffer';
-import DragAndDropper from 'components/media/DragAndDropper.vue';
-import MediaItem from 'components/media/MediaItem.vue';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
 import { useMeta, useQuasar } from 'quasar';
+import { Sortable } from 'sortablejs-vue3';
+import DragAndDropper from 'src/components/media/DragAndDropper.vue';
+import MediaItem from 'src/components/media/MediaItem.vue';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
 import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
@@ -537,7 +446,6 @@ import {
   copyToDatedAdditionalMedia,
   downloadFileIfNeeded,
   fetchMedia,
-  mapOrder,
 } from 'src/helpers/jw-media';
 import {
   decompressJwpub,
@@ -581,6 +489,7 @@ const jwpubImportDocuments = ref<DocumentItem[]>([]);
 const { dateLocale, t } = useLocale();
 useMeta({ title: t('titles.meetingMedia') });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const $q = useQuasar();
 
 watch(
@@ -597,14 +506,7 @@ const router = useRouter();
 
 const jwStore = useJwStore();
 const { addToAdditionMediaMap } = jwStore;
-const {
-  additionalMediaMaps,
-  lookupPeriod,
-  mediaSort,
-  missingMedia,
-  urlVariables,
-  watchedMediaSections,
-} = storeToRefs(jwStore);
+const { lookupPeriod, missingMedia, urlVariables } = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
 const {
   currentCongregation,
@@ -619,7 +521,6 @@ const {
   mediaPlayingUrl,
   selectedDate,
   selectedDateObject,
-  watchFolderMedia,
 } = storeToRefs(currentState);
 const { getDatedAdditionalMediaDirectory } = currentState;
 const {
@@ -698,14 +599,7 @@ watch(
           lookupPeriod.value[currentCongregation.value]?.flatMap(
             (item) => item.dynamicMedia,
           ) ?? []
-        )
-          .concat(watchFolderMedia.value?.[selectedDate.value] ?? [])
-          .concat(
-            additionalMediaMaps.value[currentCongregation.value]?.[
-              selectedDate.value
-            ] ?? [],
-          )
-          .find((item) => item.uniqueId === mediaPlayingUniqueId.value)
+        ).find((item) => item.uniqueId === mediaPlayingUniqueId.value)
           ?.customDuration || undefined;
       if (customDuration) {
         const { post } = useBroadcastChannel<string, string>({
@@ -716,14 +610,6 @@ watch(
     }
   },
 );
-
-const datedAdditionalMediaMap = computed(() => {
-  return (
-    additionalMediaMaps.value[currentCongregation.value]?.[
-      selectedDate.value
-    ] ?? []
-  );
-});
 
 const { data: mediaStateData } = useBroadcastChannel<
   'ended' | null,
@@ -756,157 +642,119 @@ watch(
   },
 );
 
-const stopScrolling = ref(true);
-const scroll = (step: number) => {
-  const el = document.querySelector('.q-page-container');
-  if (!el) return;
-  el.scrollBy(0, step);
-  if (!stopScrolling.value) {
-    setTimeout(() => scroll(step), 20);
-  }
-};
+// const stopScrolling = ref(true);
+// const scroll = (step: number) => {
+//   const el = document.querySelector('.q-page-container');
+//   if (!el) return;
+//   el.scrollBy(0, step);
+//   if (!stopScrolling.value) {
+//     setTimeout(() => scroll(step), 20);
+//   }
+// };
 
-const updateMediaSortPlugin: DNDPlugin = (parent) => {
-  const parentData = parents.get(parent);
-  if (!parentData) return;
+// const updateMediaSortPlugin: DNDPlugin = (parent) => {
+//   const parentData = parents.get(parent);
+//   if (!parentData) return;
 
-  const updateMediaSection = (id: string, section: MediaSection) => {
-    (selectedDateObject.value?.dynamicMedia ?? []).forEach((item) => {
-      if (item.uniqueId === id && item.section !== section) {
-        item.section = section;
-      }
-    });
+//   const updateMediaSection = (id: string, section: MediaSection) => {
+//     (selectedDateObject.value?.dynamicMedia ?? []).forEach((item) => {
+//       if (item.uniqueId === id && item.section !== section) {
+//         item.section = section;
+//       }
+//     });
 
-    const currentCong = currentCongregation.value;
-    const currentDate = selectedDate.value;
-    (additionalMediaMaps.value[currentCong]?.[currentDate] ?? []).forEach(
-      (item) => {
-        if (item.uniqueId === id && item.section !== section) {
-          item.section = section;
-        }
-      },
-    );
-    (watchFolderMedia.value?.[currentDate] ?? []).forEach((item) => {
-      if (item.uniqueId === id) {
-        watchedMediaSections.value[currentCong] ??= {};
-        watchedMediaSections.value[currentCong][currentDate] ??= {};
-        watchedMediaSections.value[currentCong][currentDate][id] = section;
-        if (item.section !== section) item.section = section;
-      }
-    });
-  };
-  function dragover(e: DragEvent) {
-    stopScrolling.value = true;
-    if (e.clientY < 200) {
-      stopScrolling.value = false;
-      scroll(-1);
-    } else if (window.innerHeight - e.clientY < 200) {
-      stopScrolling.value = false;
-      scroll(1);
-    }
+//     const currentCong = currentCongregation.value;
+//     const currentDate = selectedDate.value;
+//     (additionalMediaMaps.value[currentCong]?.[currentDate] ?? []).forEach(
+//       (item) => {
+//         if (item.uniqueId === id && item.section !== section) {
+//           item.section = section;
+//         }
+//       },
+//     );
+//     (watchFolderMedia.value?.[currentDate] ?? []).forEach((item) => {
+//       if (item.uniqueId === id) {
+//         watchedMediaSections.value[currentCong] ??= {};
+//         watchedMediaSections.value[currentCong][currentDate] ??= {};
+//         watchedMediaSections.value[currentCong][currentDate][id] = section;
+//         if (item.section !== section) item.section = section;
+//       }
+//     });
+//   };
+//   function dragover(e: DragEvent) {
+//     stopScrolling.value = true;
+//     if (e.clientY < 200) {
+//       stopScrolling.value = false;
+//       scroll(-1);
+//     } else if (window.innerHeight - e.clientY < 200) {
+//       stopScrolling.value = false;
+//       scroll(1);
+//     }
 
-    for (const media of sortableAdditionalMediaItems.value) {
-      updateMediaSection(media.uniqueId, 'additional');
-    }
-    for (const media of sortableTgwMediaItems.value) {
-      updateMediaSection(media.uniqueId, 'tgw');
-    }
-    for (const media of sortableAyfmMediaItems.value) {
-      updateMediaSection(media.uniqueId, 'ayfm');
-    }
-    for (const media of sortableLacMediaItems.value) {
-      updateMediaSection(media.uniqueId, 'lac');
-    }
-    for (const media of sortableWtMediaItems.value) {
-      updateMediaSection(media.uniqueId, 'wt');
-    }
-    for (const media of sortableCircuitOverseerMediaItems.value) {
-      updateMediaSection(media.uniqueId, 'circuitOverseer');
-    }
-  }
+//     for (const media of sortableAdditionalMediaItems.value) {
+//       updateMediaSection(media.uniqueId, 'additional');
+//     }
+//     for (const media of sortableTgwMediaItems.value) {
+//       updateMediaSection(media.uniqueId, 'tgw');
+//     }
+//     for (const media of sortableAyfmMediaItems.value) {
+//       updateMediaSection(media.uniqueId, 'ayfm');
+//     }
+//     for (const media of sortableLacMediaItems.value) {
+//       updateMediaSection(media.uniqueId, 'lac');
+//     }
+//     for (const media of sortableWtMediaItems.value) {
+//       updateMediaSection(media.uniqueId, 'wt');
+//     }
+//     for (const media of sortableCircuitOverseerMediaItems.value) {
+//       updateMediaSection(media.uniqueId, 'circuitOverseer');
+//     }
+//   }
 
-  function dragend() {
-    stopScrolling.value = true;
-    const currentCong = currentCongregation.value;
-    mediaSort.value[currentCong] ??= {};
-    mediaSort.value[currentCong][selectedDate.value] = [
-      ...sortableAdditionalMediaItems.value,
-      ...sortableTgwMediaItems.value,
-      ...sortableAyfmMediaItems.value,
-      ...sortableLacMediaItems.value,
-      ...sortableWtMediaItems.value,
-      ...sortableCircuitOverseerMediaItems.value,
-    ].map((item: DynamicMediaObject) => item.uniqueId);
-    generateMediaList();
-    addDayToExportQueue(selectedDateObject.value?.date);
-  }
+//   function dragend() {
+//     stopScrolling.value = true;
+//     const currentCong = currentCongregation.value;
+//     generateMediaList();
+//     addDayToExportQueue(selectedDateObject.value?.date);
+//   }
 
-  return {
-    setupNode(data) {
-      data.node.addEventListener('dragover', dragover, { passive: true });
-      data.node.addEventListener('dragend', dragend, { passive: true });
-    },
-    tearDownNode(data) {
-      data.node.removeEventListener('dragover', dragover);
-      data.node.removeEventListener('dragend', dragend);
-    },
-  };
-};
+//   return {
+//     setupNode(data) {
+//       data.node.addEventListener('dragover', dragover, { passive: true });
+//       data.node.addEventListener('dragend', dragend, { passive: true });
+//     },
+//     tearDownNode(data) {
+//       data.node.removeEventListener('dragover', dragover);
+//       data.node.removeEventListener('dragend', dragend);
+//     },
+//   };
+// };
 
 const sortableMediaItems = ref<DynamicMediaObject[]>([]);
 
 const generateMediaList = () => {
-  const combinedMediaItems = [
-    ...datedAdditionalMediaMap.value,
-    ...(selectedDateObject.value?.dynamicMedia ?? []),
-    ...(watchFolderMedia.value?.[selectedDate.value] ?? []),
-  ];
-  if (combinedMediaItems && currentCongregation.value) {
-    mediaSort.value[currentCongregation.value] ??= {};
-    sortableMediaItems.value = combinedMediaItems
-      .filter(
-        (item, index, self) =>
-          index === self.findIndex((i) => i.fileUrl === item.fileUrl),
-      )
-      .sort(
-        mapOrder(
-          selectedDate.value
-            ? mediaSort.value[currentCongregation.value]?.[
-                selectedDate.value
-              ] || []
-            : [],
-        ),
-      );
-  }
+  sortableMediaItems.value = (
+    selectedDateObject.value?.dynamicMedia ?? []
+  ).filter(
+    (item, index, self) =>
+      !item.fileUrl ||
+      index === self.findIndex((i) => i.fileUrl === item.fileUrl),
+  );
 };
 
 watch(
   () => [
     selectedDateObject.value?.date,
-    datedAdditionalMediaMap.value?.length,
     selectedDateObject.value?.dynamicMedia?.length,
-    watchFolderMedia.value?.[selectedDate.value]?.length,
   ],
   (
-    [
-      newSelectedDate,
-      newAdditionalMediaListLength,
-      newDynamicMediaListLength,
-      newWatchFolderMediaLength,
-    ],
-    [
-      oldSelectedDate,
-      oldAdditionalMediaListLength,
-      oldDynamicMediaListLength,
-      oldWatchFolderMediaLength,
-    ],
+    [newSelectedDate, newDynamicMediaListLength],
+    [oldSelectedDate, oldDynamicMediaListLength],
   ) => {
     try {
       if (
         newSelectedDate !== oldSelectedDate ||
-        newAdditionalMediaListLength !== oldAdditionalMediaListLength ||
-        newDynamicMediaListLength !== oldDynamicMediaListLength ||
-        newWatchFolderMediaLength !== oldWatchFolderMediaLength
+        newDynamicMediaListLength !== oldDynamicMediaListLength
       ) {
         generateMediaList();
       }
@@ -914,21 +762,6 @@ watch(
       errorCatcher(e);
     }
   },
-);
-
-watch(
-  () => mediaSort.value?.[currentCongregation.value]?.[selectedDate.value],
-  (newMediaSort) => {
-    try {
-      if (newMediaSort?.length === 0) {
-        generateMediaList();
-        addDayToExportQueue(selectedDateObject.value?.date);
-      }
-    } catch (e) {
-      errorCatcher(e);
-    }
-  },
-  { deep: true, immediate: true },
 );
 
 watch(
@@ -965,7 +798,10 @@ watch(
 );
 
 watch(
-  () => missingMedia.value.map((m) => m.fileUrl).filter((f) => f),
+  () =>
+    missingMedia.value
+      .map((m) => m.fileUrl)
+      .filter((f) => typeof f === 'string'),
   (missingFileUrls) => {
     missingFileUrls?.forEach((missingFileUrl) => {
       if (seenErrors.has(currentCongregation + missingFileUrl)) return;
@@ -986,22 +822,12 @@ const goToNextDayWithMedia = () => {
   try {
     if (
       currentCongregation.value &&
-      (lookupPeriod.value?.[currentCongregation.value] ||
-        additionalMediaMaps.value?.[currentCongregation.value])
+      lookupPeriod.value?.[currentCongregation.value]
     ) {
       selectedDate.value =
-        [
-          ...(lookupPeriod.value?.[currentCongregation.value]
-            ?.filter((day) => day.meeting)
-            .map((day) => day.date) ?? []),
-          ...Object.keys(
-            additionalMediaMaps.value?.[currentCongregation.value] || {},
-          ).filter(
-            (day) =>
-              (additionalMediaMaps.value?.[currentCongregation.value]?.[day]
-                ?.length || 0) > 0,
-          ),
-        ]
+        lookupPeriod.value?.[currentCongregation.value]
+          ?.filter((day) => day.meeting || day.dynamicMedia.length > 0)
+          .map((day) => day.date)
           .filter(Boolean)
           .filter((mediaDate) => !isInPast(dateFromString(mediaDate)))
           .map((mediaDate) => formatDate(mediaDate, 'YYYY/MM/DD'))
@@ -1117,82 +943,94 @@ watch(
   },
 );
 
-const [tgwList, sortableTgwMediaItems] = useDragAndDrop<DynamicMediaObject>(
-  [],
-  {
-    group: 'sortableMedia',
-    plugins: [
-      updateMediaSortPlugin,
-      animations(),
-      multiDrag({
-        plugins: [selections({ selectedClass: 'selected-to-drag' })],
-      }),
-    ],
-  },
-);
+const sortableTgwMediaItems = ref<DynamicMediaObject[]>([]);
 
-const [ayfmList, sortableAyfmMediaItems] = useDragAndDrop<DynamicMediaObject>(
-  [],
-  {
-    group: 'sortableMedia',
-    plugins: [
-      updateMediaSortPlugin,
-      animations(),
-      multiDrag({
-        plugins: [selections({ selectedClass: 'selected-to-drag' })],
-      }),
-    ],
-  },
-);
+// const [tgwList, sortableTgwMediaItems] = useDragAndDrop<DynamicMediaObject>(
+//   [],
+//   {
+//     group: 'sortableMedia',
+//     plugins: [
+//       updateMediaSortPlugin,
+//       animations(),
+//       multiDrag({
+//         plugins: [selections({ selectedClass: 'selected-to-drag' })],
+//       }),
+//     ],
+//   },
+// );
 
-const [lacList, sortableLacMediaItems] = useDragAndDrop<DynamicMediaObject>(
-  [],
-  {
-    group: 'sortableMedia',
-    plugins: [
-      updateMediaSortPlugin,
-      animations(),
-      multiDrag({
-        plugins: [selections({ selectedClass: 'selected-to-drag' })],
-      }),
-    ],
-  },
-);
+const sortableAyfmMediaItems = ref<DynamicMediaObject[]>([]);
 
-const [wtList, sortableWtMediaItems] = useDragAndDrop<DynamicMediaObject>([], {
-  group: 'sortableMedia',
-  plugins: [
-    updateMediaSortPlugin,
-    animations(),
-    multiDrag({
-      plugins: [selections({ selectedClass: 'selected-to-drag' })],
-    }),
-  ],
-});
+// const [ayfmList, sortableAyfmMediaItems] = useDragAndDrop<DynamicMediaObject>(
+//   [],
+//   {
+//     group: 'sortableMedia',
+//     plugins: [
+//       updateMediaSortPlugin,
+//       animations(),
+//       multiDrag({
+//         plugins: [selections({ selectedClass: 'selected-to-drag' })],
+//       }),
+//     ],
+//   },
+// );
 
-const [additionalList, sortableAdditionalMediaItems] =
-  useDragAndDrop<DynamicMediaObject>([], {
-    group: 'sortableMedia',
-    plugins: [
-      updateMediaSortPlugin,
-      animations(),
-      multiDrag({
-        plugins: [selections({ selectedClass: 'selected-to-drag' })],
-      }),
-    ],
-  });
+const sortableLacMediaItems = ref<DynamicMediaObject[]>([]);
 
-const [circuitOverseerList, sortableCircuitOverseerMediaItems] =
-  useDragAndDrop<DynamicMediaObject>([], {
-    group: 'sortableMedia',
-    plugins: [
-      updateMediaSortPlugin,
-      animations(),
-      multiDrag({
-        plugins: [selections({ selectedClass: 'selected-to-drag' })],
-      }),
-    ],
-  });
+// const [lacList, sortableLacMediaItems] = useDragAndDrop<DynamicMediaObject>(
+//   [],
+//   {
+//     group: 'sortableMedia',
+//     plugins: [
+//       updateMediaSortPlugin,
+//       animations(),
+//       multiDrag({
+//         plugins: [selections({ selectedClass: 'selected-to-drag' })],
+//       }),
+//     ],
+//   },
+// );
+
+const sortableWtMediaItems = ref<DynamicMediaObject[]>([]);
+
+// const [wtList, sortableWtMediaItems] = useDragAndDrop<DynamicMediaObject>([], {
+//   group: 'sortableMedia',
+//   plugins: [
+//     updateMediaSortPlugin,
+//     animations(),
+//     multiDrag({
+//       plugins: [selections({ selectedClass: 'selected-to-drag' })],
+//     }),
+//   ],
+// });
+
+const sortableAdditionalMediaItems = ref<DynamicMediaObject[]>([]);
+
+// const [additionalList, sortableAdditionalMediaItems] =
+//   useDragAndDrop<DynamicMediaObject>([], {
+//     group: 'sortableMedia',
+//     plugins: [
+//       updateMediaSortPlugin,
+//       animations(),
+//       multiDrag({
+//         plugins: [selections({ selectedClass: 'selected-to-drag' })],
+//       }),
+//     ],
+//   });
+
+const sortableCircuitOverseerMediaItems = ref<DynamicMediaObject[]>([]);
+
+// const [circuitOverseerList, sortableCircuitOverseerMediaItems] =
+//   useDragAndDrop<DynamicMediaObject>([], {
+//     group: 'sortableMedia',
+//     plugins: [
+//       updateMediaSortPlugin,
+//       animations(),
+//       multiDrag({
+//         plugins: [selections({ selectedClass: 'selected-to-drag' })],
+//       }),
+//     ],
+//   });
 
 watchImmediate(
   () => sortableMediaItems.value,
@@ -1232,6 +1070,7 @@ const sortedMediaFileUrls = computed(() =>
   [...sortableAdditionalMediaItems.value, ...sortableMediaItems.value]
     .filter((m) => !m.hidden && !!m.fileUrl)
     .map((m) => m.fileUrl)
+    .filter((m) => typeof m === 'string')
     .filter((fileUrl, index, self) => self.indexOf(fileUrl) === index),
 );
 
@@ -1343,7 +1182,7 @@ const addToFiles = async (
           });
         const matchingMissingItem = missingMedia.value.find((media) => {
           return (
-            JSON.stringify(normalizeArray(media.fileUrl.split('_'))) ===
+            JSON.stringify(normalizeArray(media.fileUrl?.split('_') || [])) ===
             JSON.stringify(normalizeArray(detectedPubMediaInfo))
           );
         });
@@ -1508,12 +1347,14 @@ const openImportMenu = (section: MediaSection | undefined) => {
   );
 };
 
+// TODO: re-enable after fixing drag and drop sort
 const dropActive = (event: DragEvent) => {
-  event.preventDefault();
-  event.stopPropagation();
-  if (!event?.relatedTarget && event?.dataTransfer?.effectAllowed === 'all') {
-    dragging.value = true;
-  }
+  console.log('todo: re-enable after fixing drag and drop sort', event);
+  //   event.preventDefault();
+  //   event.stopPropagation();
+  //   if (!event?.relatedTarget && event?.dataTransfer?.effectAllowed === 'all') {
+  //     dragging.value = true;
+  //   }
 };
 const dropEnd = (event: DragEvent) => {
   event.preventDefault();

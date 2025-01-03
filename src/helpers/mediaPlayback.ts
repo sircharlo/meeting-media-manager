@@ -191,7 +191,7 @@ export const getMediaFromJwPlaylist = async (
     const dynamicPlaylistMediaItems = await dynamicMediaMapper(
       playlistMediaItems,
       selectedDateValue,
-      true,
+      'additional',
     );
     return dynamicPlaylistMediaItems;
   } catch (error) {

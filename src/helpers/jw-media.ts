@@ -57,7 +57,7 @@ import {
   getPublicationInfoFromDb,
 } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
-import { shouldUpdateList, useJwStore } from 'stores/jw';
+import { addUniqueById, shouldUpdateList, useJwStore } from 'stores/jw';
 
 export const copyToDatedAdditionalMedia = async (
   filepathToCopy: string,
@@ -156,12 +156,12 @@ export const addToAdditionMediaMapFromPath = async (
           customDuration,
           duration,
           fileUrl: window.electronApi.pathToFileURL(additionalFilePath),
-          isAdditional: true,
           isAudio: audio,
           isImage: isImage(additionalFilePath),
           isVideo: video,
           section,
           sectionOriginal: section,
+          source: 'additional',
           streamUrl: additionalInfo?.url,
           tag: {
             type: additionalInfo?.song ? 'song' : undefined,
@@ -223,7 +223,7 @@ export const addJwpubDocumentMediaToFiles = async (
       ? await dynamicMediaMapper(
           multimediaItems,
           currentStateStore.selectedDateObject?.date,
-          true,
+          'additional',
           section,
         )
       : [];
@@ -299,19 +299,6 @@ export const downloadFileIfNeeded = async ({
   return result;
 };
 
-export const mapOrder =
-  (sortOrder: string | string[] | undefined) =>
-  (a: DynamicMediaObject, b: DynamicMediaObject) => {
-    try {
-      const key = 'uniqueId';
-      if (!sortOrder || sortOrder.length === 0) return 0;
-      return sortOrder.indexOf(a[key]) > sortOrder.indexOf(b[key]) ? 1 : -1;
-    } catch (e) {
-      errorCatcher(e);
-      return 0;
-    }
-  };
-
 export const fetchMedia = async () => {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -385,7 +372,7 @@ export const fetchMedia = async () => {
               fetchResult = await getMwMedia(dayDate);
             }
             if (fetchResult) {
-              day.dynamicMedia = fetchResult.media;
+              addUniqueById(day.dynamicMedia, fetchResult.media);
               day.error = fetchResult.error;
               day.complete = true;
             } else {
@@ -475,7 +462,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
       db,
       `SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,
       Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UniqueEnglishSymbol,IssueTagNumber,
-      Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal, Extract.Link
+      Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal, Extract.Link, Extract.Caption as ExtractCaption
     FROM DocumentExtract
       INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId
       INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId
@@ -567,6 +554,7 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
             ...extractItem,
             BeginParagraphOrdinal: extract.BeginParagraphOrdinal,
             EndParagraphOrdinal: extract.EndParagraphOrdinal,
+            ExtractCaption: extract.ExtractCaption,
           };
         })
         .filter(
@@ -586,6 +574,10 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
       }
       allExtractItems.push(...extractItems);
     }
+    console.log(
+      `Got ${allExtractItems.length} multimedia items from document ${docId}`,
+      allExtractItems,
+    );
     return allExtractItems;
   } catch (e: unknown) {
     errorCatcher(e);
@@ -1188,13 +1180,13 @@ const getParagraphNumbers = (
 export const dynamicMediaMapper = async (
   allMedia: MultimediaItem[],
   lookupDate: Date,
-  additional?: boolean,
+  source: 'additional' | 'dynamic' | 'watched',
   additionalSection: MediaSection = 'additional',
 ): Promise<DynamicMediaObject[]> => {
   const { currentSettings } = useCurrentStateStore();
   try {
     let middleSongParagraphOrdinal = 0;
-    if (!additional) {
+    if (source !== 'additional') {
       const songs = allMedia.filter((m) => isSong(m));
       middleSongParagraphOrdinal =
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -1214,7 +1206,7 @@ export const dynamicMediaMapper = async (
       }
     }
     const mediaPromises = allMedia.map(
-      async (m): Promise<DynamicMediaObject> => {
+      async (m, index): Promise<DynamicMediaObject> => {
         m.FilePath = await convertImageIfNeeded(m.FilePath);
         const fileUrl = m.FilePath
           ? window.electronApi.pathToFileURL(m.FilePath)
@@ -1262,9 +1254,10 @@ export const dynamicMediaMapper = async (
             }
           }
         }
-        let section: MediaSection = additional ? additionalSection : 'wt';
+        let section: MediaSection =
+          source === 'additional' ? additionalSection : 'wt';
         if (middleSongParagraphOrdinal > 0) {
-          //this is a meeting with 3 songs
+          // this is a meeting with 3 songs
           if (m.BeginParagraphOrdinal >= middleSongParagraphOrdinal) {
             // LAC
             section = 'lac';
@@ -1302,8 +1295,8 @@ export const dynamicMediaMapper = async (
         return {
           customDuration,
           duration,
+          extractCaption: m.ExtractCaption,
           fileUrl,
-          isAdditional: !!additional,
           isAudio: audio,
           isImage: isImage(m.FilePath),
           isVideo: video,
@@ -1311,6 +1304,8 @@ export const dynamicMediaMapper = async (
           repeat: !!m.Repeat,
           section, // if is we: wt; else, if >= middle song: LAC; >= (middle song - 8???): AYFM; else: TGW
           sectionOriginal: section, // to enable restoring the original section after custom sorting
+          sortOrderOriginal: index, // Index in the array corresponds to the original processing order
+          source,
           streamUrl: m.StreamUrl,
           subtitlesUrl: video ? await getSubtitlesUrl(m, duration) : '',
           tag,
@@ -1324,7 +1319,49 @@ export const dynamicMediaMapper = async (
         };
       },
     );
-    return Promise.all(mediaPromises);
+    const allMediaPromises = await Promise.all(mediaPromises);
+    // Group mediaPromises by extractCaption
+    const groupedMediaPromises: DynamicMediaObject[] = Object.values(
+      allMediaPromises.reduce<Record<string, DynamicMediaObject>>(
+        (acc, media) => {
+          if (!media.extractCaption) {
+            // If there's no extractCaption, keep the item as is
+            acc[media.uniqueId] = acc[media.uniqueId] || media;
+          } else {
+            // If a group for this extractCaption doesn't exist, create it
+            if (!acc[media.extractCaption]) {
+              acc[media.extractCaption] = {
+                children: [],
+                extractCaption: media.extractCaption,
+                section: media.section,
+                sectionOriginal: media.sectionOriginal,
+                source: media.source,
+                title: media.extractCaption,
+                uniqueId: `group-${media.extractCaption}`, // Unique ID for the group
+              };
+            }
+            if (!acc[media.extractCaption]?.children)
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              acc[media.extractCaption]!.children = [];
+            // Add the media item as a child
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            acc[media.extractCaption]!.children!.push(media);
+          }
+          return acc;
+        },
+        {},
+      ),
+    );
+
+    console.log(groupedMediaPromises);
+
+    console.log(
+      'allMediaPromises',
+      allMediaPromises,
+      'groupedMediaPromises',
+      groupedMediaPromises,
+    );
+    return groupedMediaPromises;
   } catch (e) {
     errorCatcher(e);
     return [];
@@ -1353,7 +1390,7 @@ export const watchedItemMapper: (
 
     if (!(video || audio || image)) {
       if (isJwPlaylist(watchedItemPath)) {
-        const additionalMedia = (
+        const additionalMedia: DynamicMediaObject[] = (
           await getMediaFromJwPlaylist(
             watchedItemPath,
             dateFromString(parentDate),
@@ -1361,7 +1398,7 @@ export const watchedItemMapper: (
               dateString,
             ),
           )
-        ).map((m) => ({ ...m, isAdditional: false, watched: watchedItemPath }));
+        ).map((m) => ({ ...m, source: 'watched' }));
         additionalMedia.filter(
           (m) =>
             m.customDuration && (m.customDuration.max || m.customDuration.min),
@@ -1386,9 +1423,9 @@ export const watchedItemMapper: (
     );
 
     const section =
-      jwStore.watchedMediaSections?.[currentStateStore.currentCongregation]?.[
-        parentDate
-      ]?.[uniqueId] || 'additional';
+      (jwStore.lookupPeriod?.[currentStateStore.currentCongregation]?.find(
+        (day) => day.date === dateFromString(parentDate),
+      )?.dynamicMedia || [])[0]?.section || 'additional';
 
     const thumbnailUrl = await getThumbnailUrl(watchedItemPath);
 
@@ -1401,10 +1438,10 @@ export const watchedItemMapper: (
         isVideo: video,
         section,
         sectionOriginal: 'additional', // to enable restoring the original section after custom sorting
+        source: 'watched',
         thumbnailUrl,
         title,
         uniqueId,
-        watched: true,
       },
     ];
   } catch (e) {
@@ -1618,7 +1655,11 @@ export const getWeMedia = async (lookupDate: Date) => {
       if (videoMarkers) media.VideoMarkers = videoMarkers;
     }
     await processMissingMediaInfo(allMedia);
-    const dynamicMediaForDay = await dynamicMediaMapper(allMedia, lookupDate);
+    const dynamicMediaForDay = await dynamicMediaMapper(
+      allMedia,
+      lookupDate,
+      'dynamic',
+    );
     return {
       error: false,
       media: dynamicMediaForDay,
@@ -1735,7 +1776,12 @@ export const getMwMedia = async (lookupDate: Date) => {
       }
     }
     const errors = (await processMissingMediaInfo(allMedia)) || [];
-    const dynamicMediaForDay = await dynamicMediaMapper(allMedia, lookupDate);
+    const dynamicMediaForDay = await dynamicMediaMapper(
+      allMedia,
+      lookupDate,
+      'dynamic',
+    );
+    console.log('dynamicMediaForDay', dynamicMediaForDay);
     return {
       error: errors.length > 0,
       media: dynamicMediaForDay,

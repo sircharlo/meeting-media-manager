@@ -10,7 +10,7 @@ import { pad } from 'src/utils/general';
  * formatTime(60) // '01:00'
  * formatTime(0) // '00:00'
  */
-export const formatTime = (time: number) => {
+export const formatTime = (time?: number) => {
   try {
     if (!time) return '00:00';
     if (Number.isNaN(time)) return '..:..';

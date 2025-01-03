@@ -3,7 +3,6 @@ import type { MediaSection } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setupFFmpeg } from 'src/helpers/fs';
-import { mapOrder } from 'src/helpers/jw-media';
 import { datesAreSame, formatDate } from 'src/utils/date';
 import { trimFilepathAsNeeded } from 'src/utils/fs';
 import { pad } from 'src/utils/general';
@@ -20,51 +19,39 @@ export const addDayToExportQueue = async (targetDate?: Date) => {
 };
 
 const exportDayToFolder = async (targetDate?: Date) => {
+  console.log('exportDayToFolder', targetDate);
   const currentStateStore = useCurrentStateStore();
   const jwStore = useJwStore();
 
   if (
     !targetDate ||
     !currentStateStore?.currentCongregation ||
+    !currentStateStore.currentSettings?.enableMediaAutoExport ||
     !currentStateStore.currentSettings?.mediaAutoExportFolder
   ) {
     return;
   }
 
-  const dateString = formatDate(targetDate, 'YYYY/MM/DD');
   const dateFolderName = formatDate(targetDate, 'YYYY-MM-DD');
 
-  const dynamicMedia = [
-    ...(jwStore.lookupPeriod?.[currentStateStore.currentCongregation]?.find(
+  const dynamicMedia =
+    jwStore.lookupPeriod?.[currentStateStore.currentCongregation]?.find(
       (d) => d.date && datesAreSame(d.date, targetDate),
-    )?.dynamicMedia || []),
-    ...(jwStore.additionalMediaMaps?.[currentStateStore.currentCongregation]?.[
-      dateString
-    ] || []),
-    ...(currentStateStore.watchFolderMedia[dateString] || []),
-  ];
+    )?.dynamicMedia || [];
 
   const dynamicMediaFiltered = Array.from(
     new Map(dynamicMedia.map((item) => [item.fileUrl, item])).values(),
-  )
-    .sort(
-      mapOrder(
-        jwStore.mediaSort[currentStateStore.currentCongregation]?.[
-          dateString
-        ] || [],
-      ),
-    )
-    .sort((a, b) => {
-      const sectionOrder: MediaSection[] = [
-        'additional',
-        'tgw',
-        'ayfm',
-        'lac',
-        'wt',
-        'circuitOverseer',
-      ];
-      return sectionOrder.indexOf(a.section) - sectionOrder.indexOf(b.section);
-    });
+  ).sort((a, b) => {
+    const sectionOrder: MediaSection[] = [
+      'additional',
+      'tgw',
+      'ayfm',
+      'lac',
+      'wt',
+      'circuitOverseer',
+    ];
+    return sectionOrder.indexOf(a.section) - sectionOrder.indexOf(b.section);
+  });
 
   const dayMediaLength = dynamicMediaFiltered.length;
 

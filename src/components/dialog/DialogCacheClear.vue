@@ -34,7 +34,7 @@ import type { CacheFile } from 'src/types';
 import { storeToRefs } from 'pinia';
 import { updateLookupPeriod } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getAdditionalMediaPath, removeEmptyDirs } from 'src/utils/fs';
+import { removeEmptyDirs } from 'src/utils/fs';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { ref } from 'vue';
@@ -50,7 +50,7 @@ const props = defineProps<{
 }>();
 
 const jwStore = useJwStore();
-const { additionalMediaMaps, lookupPeriod } = storeToRefs(jwStore);
+const { lookupPeriod } = storeToRefs(jwStore);
 
 const currentState = useCurrentStateStore();
 const { currentCongregation } = storeToRefs(currentState);
@@ -78,24 +78,24 @@ const deleteCacheFiles = async (type = '') => {
     for (const filepath of filepathsToDelete) {
       try {
         window.electronApi.fs.remove(filepath);
-        if (
-          filepath.startsWith(await getAdditionalMediaPath()) ||
-          filepath.startsWith(
-            await getAdditionalMediaPath(
-              currentState.currentSettings?.cacheFolder,
-            ),
-          )
-        ) {
-          const folder = filepath.split('/').pop();
-          const date = folder
-            ? `${folder.slice(0, 4)}/${folder.slice(4, 6)}/${folder.slice(6, 8)}`
-            : '0001/01/01';
-          const cong = currentState.currentCongregation;
-          if (additionalMediaMaps.value[cong]?.[date]) {
-            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-            delete additionalMediaMaps.value[cong][date];
-          }
-        }
+        // if (
+        //   filepath.startsWith(await getAdditionalMediaPath()) ||
+        //   filepath.startsWith(
+        //     await getAdditionalMediaPath(
+        //       currentState.currentSettings?.cacheFolder,
+        //     ),
+        //   )
+        // ) {
+        //   const folder = filepath.split('/').pop();
+        //   const date = folder
+        //     ? `${folder.slice(0, 4)}/${folder.slice(4, 6)}/${folder.slice(6, 8)}`
+        //     : '0001/01/01';
+        //   const cong = currentState.currentCongregation;
+        //   if (additionalMediaMaps.value[cong]?.[date]) {
+        //     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        //     delete additionalMediaMaps.value[cong][date];
+        //   }
+        // }
       } catch (error) {
         errorCatcher(error);
       }
