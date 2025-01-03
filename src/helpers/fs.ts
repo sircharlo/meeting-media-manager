@@ -272,9 +272,13 @@ export const watchExternalFolder = async (folder?: string) => {
     const currentState = useCurrentStateStore();
     if (!currentState.currentCongregation) return;
     jwStore.lookupPeriod[currentState.currentCongregation]?.forEach((day) => {
-      day.dynamicMedia = day.dynamicMedia.filter(
-        (media) => media.source !== 'watched',
-      );
+      if (day.dynamicMedia) {
+        for (let i = day.dynamicMedia.length - 1; i >= 0; i--) {
+          if (day.dynamicMedia[i]?.source === 'watched') {
+            day.dynamicMedia.splice(i, 1);
+          }
+        }
+      }
     });
     window.electronApi.unwatchFolders();
     if (folder) window.electronApi.watchFolder(folder);

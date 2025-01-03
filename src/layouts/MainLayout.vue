@@ -335,24 +335,25 @@ const updateWatchFolderRef = async ({
     );
     if (!dayObj) return;
     if (event === 'addDir' || event === 'unlinkDir') {
-      dayObj.dynamicMedia = dayObj.dynamicMedia.filter(
-        (dM) => dM.source !== 'watched',
-      );
+      for (let i = dayObj.dynamicMedia.length - 1; i >= 0; i--) {
+        if (dayObj.dynamicMedia[i]?.source === 'watched') {
+          dayObj.dynamicMedia.splice(i, 1);
+        }
+      }
     } else if (event === 'add') {
-      const watchedItemMapItems = await watchedItemMapper(
-        day,
-        changedPath ?? '',
-      );
-      if (watchedItemMapItems?.length) {
-        for (const watchedItemMap of watchedItemMapItems) {
-          dayObj?.dynamicMedia.unshift(watchedItemMap);
+      const watchedItems = await watchedItemMapper(day, changedPath ?? '');
+      if (watchedItems?.length) {
+        for (const watchedItem of watchedItems) {
+          dayObj?.dynamicMedia.unshift(watchedItem);
         }
       }
     } else if (event === 'unlink') {
-      dayObj.dynamicMedia = dayObj.dynamicMedia.filter(
-        (dM) =>
-          dM.fileUrl !== window.electronApi.pathToFileURL(changedPath ?? ''),
-      );
+      const targetUrl = window.electronApi.pathToFileURL(changedPath ?? '');
+      for (let i = dayObj.dynamicMedia.length - 1; i >= 0; i--) {
+        if (dayObj.dynamicMedia[i]?.fileUrl === targetUrl) {
+          dayObj.dynamicMedia.splice(i, 1);
+        }
+      }
     }
   } catch (error) {
     errorCatcher(error);

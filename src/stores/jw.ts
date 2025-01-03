@@ -57,13 +57,25 @@ interface Store {
   yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
 }
 
-export function uniqueById<T extends { uniqueId: string }>(array: T[]): T[] {
-  return array.reduce((unique: T[], o: T) => {
-    if (!unique.some((obj) => obj.uniqueId === o.uniqueId)) {
-      unique.push(o);
+export function addUniqueById<T extends { uniqueId: string }>(
+  targetArray: T[],
+  sourceArray: T[],
+): void {
+  sourceArray.forEach((item) => {
+    if (!targetArray.some((obj) => obj.uniqueId === item.uniqueId)) {
+      targetArray.push(item);
     }
-    return unique;
-  }, []);
+  });
+}
+
+export function deduplicateById<T extends { uniqueId: string }>(
+  array: T[],
+): void {
+  for (let i = array.length - 1; i >= 0; i--) {
+    if (array.findIndex((obj) => obj?.uniqueId === array[i]?.uniqueId) !== i) {
+      array.splice(i, 1);
+    }
+  }
 }
 
 export const useJwStore = defineStore('jw-store', {
@@ -103,16 +115,9 @@ export const useJwStore = defineStore('jw-store', {
           this.lookupPeriod[currentCongregation].push(period);
         }
 
-        // Ensure dynamicMedia array exists
-        if (!period.dynamicMedia) {
-          period.dynamicMedia = [];
+        if (Array.isArray(period.dynamicMedia)) {
+          addUniqueById(period.dynamicMedia, mediaArray);
         }
-
-        // Merge mediaArray into dynamicMedia, ensuring uniqueness by ID
-        period.dynamicMedia = uniqueById([
-          ...mediaArray,
-          ...period.dynamicMedia,
-        ]);
       } catch (e) {
         errorCatcher(e);
       }
@@ -131,9 +136,11 @@ export const useJwStore = defineStore('jw-store', {
 
       // Filter out media with source 'additional' if day and dynamicMedia exist
       if (day?.dynamicMedia) {
-        day.dynamicMedia = day.dynamicMedia.filter(
-          (media) => media.source !== 'additional',
-        );
+        for (let i = day.dynamicMedia.length - 1; i >= 0; i--) {
+          if (day.dynamicMedia[i]?.source === 'additional') {
+            day.dynamicMedia.splice(i, 1);
+          }
+        }
       }
     },
     removeFromAdditionMediaMap(uniqueId: string) {
@@ -148,11 +155,15 @@ export const useJwStore = defineStore('jw-store', {
           (day) => getDateDiff(day.date, selectedDate, 'days') === 0,
         );
 
-        // Remove media with the specified uniqueId if day and dynamicMedia exist
         if (day?.dynamicMedia) {
-          day.dynamicMedia = uniqueById(
-            day.dynamicMedia.filter((media) => media.uniqueId !== uniqueId),
-          );
+          // First, remove the item with the specific uniqueId
+          for (let i = day.dynamicMedia.length - 1; i >= 0; i--) {
+            if (day.dynamicMedia[i]?.uniqueId === uniqueId) {
+              day.dynamicMedia.splice(i, 1);
+            }
+          }
+
+          deduplicateById(day.dynamicMedia);
         }
       } catch (e) {
         errorCatcher(e);

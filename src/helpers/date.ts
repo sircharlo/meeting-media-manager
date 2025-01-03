@@ -135,9 +135,11 @@ export function updateLookupPeriod(reset = false) {
       lookupPeriod[currentCongregation].forEach((day) => {
         day.complete = false;
         day.error = false;
-        day.dynamicMedia = day.dynamicMedia?.filter(
-          (media) => media.source !== 'dynamic',
-        );
+        for (let i = day.dynamicMedia.length - 1; i >= 0; i--) {
+          if (day.dynamicMedia[i]?.source === 'dynamic') {
+            day.dynamicMedia.splice(i, 1);
+          }
+        }
         day.meeting = isMwMeetingDay(day.date)
           ? 'mw'
           : isWeMeetingDay(day.date)
