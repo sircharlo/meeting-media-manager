@@ -1209,7 +1209,7 @@ export const dynamicMediaMapper = async (
       }
     }
     const mediaPromises = allMedia.map(
-      async (m): Promise<DynamicMediaObject> => {
+      async (m, index): Promise<DynamicMediaObject> => {
         m.FilePath = await convertImageIfNeeded(m.FilePath);
         const fileUrl = m.FilePath
           ? window.electronApi.pathToFileURL(m.FilePath)
@@ -1260,7 +1260,7 @@ export const dynamicMediaMapper = async (
         let section: MediaSection =
           source === 'additional' ? additionalSection : 'wt';
         if (middleSongParagraphOrdinal > 0) {
-          //this is a meeting with 3 songs
+          // this is a meeting with 3 songs
           if (m.BeginParagraphOrdinal >= middleSongParagraphOrdinal) {
             // LAC
             section = 'lac';
@@ -1307,6 +1307,7 @@ export const dynamicMediaMapper = async (
           repeat: !!m.Repeat,
           section, // if is we: wt; else, if >= middle song: LAC; >= (middle song - 8???): AYFM; else: TGW
           sectionOriginal: section, // to enable restoring the original section after custom sorting
+          sortOrderOriginal: index, // Index in the array corresponds to the original processing order
           source,
           streamUrl: m.StreamUrl,
           subtitlesUrl: video ? await getSubtitlesUrl(m, duration) : '',

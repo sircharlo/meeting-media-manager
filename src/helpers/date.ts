@@ -138,6 +138,12 @@ export function updateLookupPeriod(reset = false) {
         day.dynamicMedia = day.dynamicMedia?.filter(
           (media) => media.source !== 'dynamic',
         );
+        day.meeting = isMwMeetingDay(day.date)
+          ? 'mw'
+          : isWeMeetingDay(day.date)
+            ? 'we'
+            : false;
+        day.today = datesAreSame(day.date, new Date());
       });
     }
   } catch (error) {
