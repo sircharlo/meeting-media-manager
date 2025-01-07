@@ -341,16 +341,35 @@ const updateWatchFolderRef = async ({
         }
       }
     } else if (event === 'add') {
-      const watchedItems = await watchedItemMapper(day, changedPath ?? '');
-      if (watchedItems?.length) {
-        for (const watchedItem of watchedItems) {
-          dayObj?.dynamicMedia.unshift(watchedItem);
+      const watchedItems =
+        (await watchedItemMapper(day, changedPath ?? '')) || [];
+
+      for (const watchedItem of watchedItems) {
+        watchedItem.sortOrderOriginal = 'watched-' + watchedItem.title;
+
+        // Find the correct index to insert the item in the sorted order
+        const insertIndex = dayObj.dynamicMedia.findIndex(
+          (existingItem) =>
+            existingItem.title.localeCompare(watchedItem.title, undefined, {
+              numeric: true,
+            }) > 0,
+        );
+
+        if (insertIndex === -1) {
+          // If no larger item is found, push to the end
+          dayObj.dynamicMedia.push(watchedItem);
+        } else {
+          // Otherwise, insert at the correct index
+          dayObj.dynamicMedia.splice(insertIndex, 0, watchedItem);
         }
       }
     } else if (event === 'unlink') {
       const targetUrl = window.electronApi.pathToFileURL(changedPath ?? '');
       for (let i = dayObj.dynamicMedia.length - 1; i >= 0; i--) {
-        if (dayObj.dynamicMedia[i]?.fileUrl === targetUrl) {
+        if (
+          dayObj.dynamicMedia[i]?.source === 'watched' &&
+          dayObj.dynamicMedia[i]?.fileUrl === targetUrl
+        ) {
           dayObj.dynamicMedia.splice(i, 1);
         }
       }

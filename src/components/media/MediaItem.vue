@@ -210,11 +210,10 @@
       <div class="row items-center">
         <div
           v-if="
-            (media.source === 'additional' &&
+            (media.source !== 'dynamic' &&
               !currentSettings?.disableMediaFetching &&
               isFileUrl(media.fileUrl)) ||
-            media.tag?.type ||
-            media.source === 'watched'
+            media.tag?.type
           "
           :class="mediaTagClasses"
           side
@@ -248,7 +247,7 @@
               {{ t('watched-media-item-explain') }}
             </q-tooltip>
             <q-tooltip
-              v-if="
+              v-else-if="
                 media.source === 'additional' &&
                 !currentSettings?.disableMediaFetching &&
                 isFileUrl(media.fileUrl)

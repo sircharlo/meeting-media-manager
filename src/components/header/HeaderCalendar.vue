@@ -286,13 +286,13 @@ const additionalMediaForDay = computed(
   () =>
     lookupPeriod.value?.[currentCongregation.value]
       ?.find((day) => formatDate(day.date, 'YYYY/MM/DD') === selectedDate.value)
-      ?.dynamicMedia.filter((media) => media.source === 'additional') || [],
+      ?.dynamicMedia.filter((media) => media.source !== 'dynamic') || [],
 );
 
 const additionalMediaDates = computed(() =>
   (
     lookupPeriod.value?.[currentCongregation.value]?.filter((day) =>
-      day.dynamicMedia.some((media) => media.source === 'additional'),
+      day.dynamicMedia.some((media) => media.source !== 'dynamic'),
     ) || []
   ).map((day) => formatDate(day.date, 'YYYY/MM/DD')),
 );
@@ -302,8 +302,8 @@ const additionalMediaForDayExists = (lookupDate: string) => {
     return (
       (lookupPeriod.value?.[currentCongregation.value]
         ?.find((day) => getDateDiff(lookupDate, day.date, 'days') === 0)
-        ?.dynamicMedia.filter((media) => media.source === 'additional')
-        ?.length || 0) > 0
+        ?.dynamicMedia.filter((media) => media.source !== 'dynamic')?.length ||
+        0) > 0
     );
   } catch (error) {
     errorCatcher(error);
@@ -440,6 +440,22 @@ const mediaSortCanBeReset = computed(() => {
   ) {
     return true;
   }
+
+  const watchedMediaToConsider = selectedDateObject.value.dynamicMedia.filter(
+    (item) => item.source === 'watched',
+  );
+
+  for (let i = 0; i < watchedMediaToConsider.length - 1; i++) {
+    const firstTitle = watchedMediaToConsider[i]?.title ?? '';
+    const secondTitle = watchedMediaToConsider[i + 1]?.title ?? '';
+    if (
+      firstTitle.localeCompare(secondTitle, undefined, {
+        numeric: true,
+      }) > 0
+    ) {
+      return true; // Array is not sorted
+    }
+  }
   const mediaToConsider = [
     ...getMediaForSection.value.tgw,
     ...getMediaForSection.value.ayfm,
@@ -465,6 +481,25 @@ const resetSort = () => {
       item.section = item.sectionOriginal;
     }
   });
+
+  // Remove dynamicMedia with item.source === 'watched', in place, and then add them back but sorted by sortOrderOriginal
+  const watchedMedia = selectedDateObject.value.dynamicMedia.filter(
+    (item) => item.source === 'watched',
+  );
+  selectedDateObject.value.dynamicMedia =
+    selectedDateObject.value.dynamicMedia.filter(
+      (item) => item.source !== 'watched',
+    );
+
+  watchedMedia.sort((a, b) => {
+    const firstSortOrder = a?.sortOrderOriginal?.toString() ?? '0';
+    const secondSortOrder = b?.sortOrderOriginal?.toString() ?? '0';
+    return firstSortOrder.localeCompare(secondSortOrder, undefined, {
+      numeric: true,
+    });
+  });
+
+  selectedDateObject.value.dynamicMedia.push(...watchedMedia);
 
   // Combine all media items into one array
   const mediaToSort = [
