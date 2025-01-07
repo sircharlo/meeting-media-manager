@@ -281,7 +281,7 @@
             <q-list
               v-if="element.children"
               bordered
-              class="q-mx-md q-my-sm media-children rounded-borders"
+              class="q-mx-md q-my-sm media-children rounded-borders overflow-hidden"
             >
               <q-expansion-item
                 :key="element.children.map((m) => m.uniqueId).join(',')"
@@ -898,6 +898,8 @@ watch(
 //   sortableMediaItems.value = result;
 // };
 
+const expandedMediaGroups = reactive<Record<string, boolean>>({});
+
 // Watch for changes to `selectedDateObject` and update `sortableMediaItems`
 watchImmediate(
   () => selectedDateObject.value?.dynamicMedia?.length,
@@ -1351,8 +1353,6 @@ const handleMediaDrag = (
   }
   // initializeSortableMediaItems();
 };
-
-const expandedMediaGroups = reactive<Record<string, boolean>>({});
 </script>
 <style scoped lang="scss">
 .add-media-shortcut {
