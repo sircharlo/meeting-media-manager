@@ -434,15 +434,15 @@ useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
 const mediaSortCanBeReset = computed(() => {
   if (!selectedDateObject.value?.dynamicMedia) return;
   if (
-    selectedDateObject.value?.dynamicMedia.some(
-      (item) => item.section !== item.sectionOriginal,
-    )
+    selectedDateObject.value?.dynamicMedia
+      .filter((item) => !item.hidden)
+      .some((item) => item.section !== item.sectionOriginal)
   ) {
     return true;
   }
 
   const watchedMediaToConsider = selectedDateObject.value.dynamicMedia.filter(
-    (item) => item.source === 'watched',
+    (item) => item.source === 'watched' && !item.hidden,
   );
 
   for (let i = 0; i < watchedMediaToConsider.length - 1; i++) {
@@ -461,7 +461,7 @@ const mediaSortCanBeReset = computed(() => {
     ...getMediaForSection.value.ayfm,
     ...getMediaForSection.value.lac,
     ...getMediaForSection.value.wt,
-  ];
+  ].filter((item) => !item.hidden);
 
   for (let i = 0; i < mediaToConsider.length - 1; i++) {
     const firstSortOrder = mediaToConsider[i]?.sortOrderOriginal ?? 0;
