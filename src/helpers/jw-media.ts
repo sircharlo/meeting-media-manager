@@ -1773,7 +1773,6 @@ export const getMwMedia = async (lookupDate: Date) => {
       lookupDate,
       'dynamic',
     );
-    console.log('dynamicMediaForDay', dynamicMediaForDay);
     return {
       error: errors.length > 0,
       media: dynamicMediaForDay,

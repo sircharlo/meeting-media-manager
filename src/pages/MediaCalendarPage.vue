@@ -11,12 +11,12 @@
     @dragstart="dropActive"
     @drop="dropEnd"
   >
-    <pre>{{
+    <!-- <pre>{{
       (selectedDateObject?.dynamicMedia || []).map((m) => [
         m.sortOrderOriginal,
         m.section,
       ])
-    }}</pre>
+    }}</pre> -->
     <div class="col">
       <div v-if="someItemsHidden" class="row">
         <q-banner
@@ -278,43 +278,64 @@
           "
         >
           <template #item="{ element }: { element: DynamicMediaObject }">
-            <q-expansion-item
+            <q-list
               v-if="element.children"
-              :key="element.children.map((m) => m.uniqueId).join(',')"
-              class="draggable"
-              header-class="bg-secondary text-white"
-              :label="element.extractCaption"
+              bordered
+              class="q-mx-md q-my-sm media-children rounded-borders"
             >
-              <Sortable
-                v-if="element.children"
-                item-key="uniqueId"
-                :list="element.children"
+              <q-expansion-item
+                :key="element.children.map((m) => m.uniqueId).join(',')"
+                v-model="expandedMediaGroups[element.uniqueId]"
+                :header-class="
+                  expandedMediaGroups[element.uniqueId] ? 'bg-accent-200' : ''
+                "
               >
-                <template
-                  #item="{
-                    element: childElement,
-                  }: {
-                    element: DynamicMediaObject;
-                  }"
-                >
-                  <div :key="childElement.uniqueId" class="bg-info">
-                    <MediaItem
-                      :key="childElement.uniqueId"
-                      v-model:repeat="childElement.repeat"
-                      :media="childElement"
-                      :play-state="playState(childElement.uniqueId)"
-                      @update:custom-duration="
-                        childElement.customDuration =
-                          JSON.parse($event) || undefined
-                      "
-                      @update:hidden="childElement.hidden = !!$event"
-                      @update:tag="childElement.tag = $event"
-                      @update:title="childElement.title = $event"
-                    />
-                  </div>
+                <template #header>
+                  <q-item-section>
+                    <div>
+                      <!-- eslint-disable-next-line vue/no-v-html -->
+                      <span v-html="element.extractCaption"></span>
+                      <q-badge
+                        class="q-ml-sm text-primary"
+                        color="accent-200"
+                        :label="element.children?.length"
+                        rounded
+                      />
+                    </div>
+                  </q-item-section>
                 </template>
-              </Sortable>
-            </q-expansion-item>
+
+                <Sortable
+                  v-if="element.children"
+                  item-key="uniqueId"
+                  :list="element.children"
+                >
+                  <template
+                    #item="{
+                      element: childElement,
+                    }: {
+                      element: DynamicMediaObject;
+                    }"
+                  >
+                    <div :key="childElement.uniqueId">
+                      <MediaItem
+                        :key="childElement.uniqueId"
+                        v-model:repeat="childElement.repeat"
+                        :media="childElement"
+                        :play-state="playState(childElement.uniqueId)"
+                        @update:custom-duration="
+                          childElement.customDuration =
+                            JSON.parse($event) || undefined
+                        "
+                        @update:hidden="childElement.hidden = !!$event"
+                        @update:tag="childElement.tag = $event"
+                        @update:title="childElement.title = $event"
+                      />
+                    </div>
+                  </template>
+                </Sortable>
+              </q-expansion-item>
+            </q-list>
             <div v-else :key="element.uniqueId">
               <MediaItem
                 :key="element.uniqueId"
@@ -495,7 +516,7 @@ import { sendObsSceneEvent } from 'src/utils/obs';
 import { findDb, getPublicationInfoFromDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const dragging = ref(false);
@@ -878,11 +899,16 @@ watch(
 // };
 
 // Watch for changes to `selectedDateObject` and update `sortableMediaItems`
-// watch(
-//   () => selectedDateObject.value?.dynamicMedia?.length,
-//   initializeSortableMediaItems,
-//   { immediate: true }, // Run immediately to set the initial value
-// );
+watchImmediate(
+  () => selectedDateObject.value?.dynamicMedia?.length,
+  () => {
+    selectedDateObject.value?.dynamicMedia.forEach((element) => {
+      if (element.children && element.extractCaption) {
+        expandedMediaGroups[element.extractCaption] = false; // Default state is collapsed
+      }
+    });
+  },
+);
 
 // watchImmediate(
 //   () => selectedDateObject.value?.dynamicMedia?.length,
@@ -1270,11 +1296,8 @@ const handleMediaDrag = (
   )
     return;
 
-  console.log('Event Type:', eventType, list, sameList);
-
   switch (eventType) {
     case 'ADD':
-      console.log('Adding Item', sameList, list, mediaItemBeingDragged.value);
       if (!sameList && mediaItemBeingDragged.value) {
         const firstElementIndex = dynamicMedia.findIndex(
           (item) => item.section === list,
@@ -1285,14 +1308,11 @@ const handleMediaDrag = (
             : evt.newIndex;
         const newItem = { ...mediaItemBeingDragged.value, section: list };
         dynamicMedia.splice(insertIndex, 0, newItem);
-        // sortDynamicMedia();
-        console.log('Added Item:', newItem);
       }
       break;
 
     case 'END':
       if (sameList) {
-        // sortDynamicMedia();
         const originalPosition = dynamicMedia.findIndex(
           (item) => item.uniqueId === mediaItemBeingDragged.value?.uniqueId,
         );
@@ -1304,14 +1324,6 @@ const handleMediaDrag = (
               originalPosition + evt.newIndex - evt.oldIndex,
             );
             dynamicMedia.splice(newIndex, 0, movedItem);
-            console.log(
-              'Moved Item:',
-              movedItem,
-              originalPosition,
-              newIndex,
-              evt.newIndex,
-              evt.oldIndex,
-            );
           }
         }
       }
@@ -1325,9 +1337,7 @@ const handleMediaDrag = (
             item.section === list,
         );
         if (indexToRemove >= 0) {
-          const [removedItem] = dynamicMedia.splice(indexToRemove, 1);
-          // sortDynamicMedia();
-          console.log('Removed Item:', removedItem);
+          dynamicMedia.splice(indexToRemove, 1);
         }
       }
       break;
@@ -1336,12 +1346,13 @@ const handleMediaDrag = (
       const draggingItem = getMediaForSection.value[list]?.[evt.oldIndex];
       if (draggingItem) {
         mediaItemBeingDragged.value = draggingItem;
-        console.log('Saved Item:', draggingItem);
       }
     }
   }
   // initializeSortableMediaItems();
 };
+
+const expandedMediaGroups = reactive<Record<string, boolean>>({});
 </script>
 <style scoped lang="scss">
 .add-media-shortcut {

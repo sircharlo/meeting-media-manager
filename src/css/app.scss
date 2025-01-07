@@ -562,6 +562,22 @@ body.body--dark {
   border: 2px dashed $primary;
 }
 
+.media-children {
+  border: 2px solid $accent-200;
+}
+
+span.eloc {
+  font-weight: 300;
+}
+
+span.eloc::after {
+  content: ': ';
+}
+
+span.etitle {
+  font-weight: 500;
+}
+
 a {
   color: $primary;
   cursor: pointer;

@@ -39,7 +39,11 @@ const exportDayToFolder = async (targetDate?: Date) => {
     )?.dynamicMedia || [];
 
   const dynamicMediaFiltered = Array.from(
-    new Map(dynamicMedia.map((item) => [item.fileUrl, item])).values(),
+    new Map(
+      dynamicMedia
+        .filter((item) => !item.hidden)
+        .map((item) => [item.fileUrl, item]),
+    ).values(),
   ).sort((a, b) => {
     const sectionOrder: MediaSection[] = [
       'additional',
