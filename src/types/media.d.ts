@@ -24,6 +24,7 @@ export interface DownloadProgressItem {
 export type DownloadProgressItems = Record<string, DownloadProgressItem>;
 
 export interface DynamicMediaObject {
+  cbs?: boolean;
   children?: DynamicMediaObject[];
   customDuration?: { max: number; min: number };
   duration?: number;

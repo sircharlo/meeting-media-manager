@@ -521,7 +521,7 @@ import { sendObsSceneEvent } from 'src/utils/obs';
 import { findDb, getPublicationInfoFromDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
-import { computed, onMounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const dragging = ref(false);
@@ -867,59 +867,23 @@ watch(
   },
 );
 
-// const sortableMediaItems = ref<Record<MediaSection, DynamicMediaObject[]>>({
-//   additional: [],
-//   ayfm: [],
-//   circuitOverseer: [],
-//   lac: [],
-//   tgw: [],
-//   wt: [],
-// });
+const expandedMediaGroups = ref<Record<string, boolean>>({});
 
-// Function to update the `sortableMediaItems` ref
-// const initializeSortableMediaItems = () => {
-//   // Get dynamic media or default to an empty array
-//   const dynamicMedia = selectedDateObject.value?.dynamicMedia ?? [];
-
-//   // Reset the result object with default empty arrays for all sections
-//   const result: Record<MediaSection, DynamicMediaObject[]> = {
-//     additional: [],
-//     ayfm: [],
-//     circuitOverseer: [],
-//     lac: [],
-//     tgw: [],
-//     wt: [],
-//   };
-
-//   // Populate the result object with filtered media for each section
-//   dynamicMedia.forEach((m) => {
-//     if (result[m.section]) {
-//       result[m.section].push(m);
-//     }
-//   });
-
-//   // Update the ref
-//   sortableMediaItems.value = result;
-// };
-
-const expandedMediaGroups = reactive<Record<string, boolean>>({});
-
-// Watch for changes to `selectedDateObject` and update `sortableMediaItems`
 watchImmediate(
   () => selectedDateObject.value?.dynamicMedia?.length,
   () => {
-    selectedDateObject.value?.dynamicMedia.forEach((element) => {
-      if (element.children && element.extractCaption) {
-        expandedMediaGroups[element.extractCaption] = false; // Default state is collapsed
-      }
-    });
+    expandedMediaGroups.value =
+      selectedDateObject.value?.dynamicMedia.reduce(
+        (acc, element) => {
+          if (element.children?.length && element.extractCaption) {
+            acc[element.uniqueId] = !!element.cbs; // Default state based on element.cbs
+          }
+          return acc;
+        },
+        {} as Record<string, boolean>,
+      ) || {};
   },
 );
-
-// watchImmediate(
-//   () => selectedDateObject.value?.dynamicMedia?.length,
-//   () => initializeSortableMediaItems(),
-// );
 
 const sortedMedia = computed(() => {
   return [
@@ -1355,7 +1319,6 @@ const handleMediaDrag = (
       }
     }
   }
-  // initializeSortableMediaItems();
 };
 </script>
 <style scoped lang="scss">

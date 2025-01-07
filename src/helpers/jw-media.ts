@@ -1184,6 +1184,9 @@ export const dynamicMediaMapper = async (
 ): Promise<DynamicMediaObject[]> => {
   const { currentSettings } = useCurrentStateStore();
   try {
+    const lastParagraphOrdinal =
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      allMedia[allMedia.length - 1]!.BeginParagraphOrdinal || 0;
     let middleSongParagraphOrdinal = 0;
     if (source !== 'additional') {
       const songs = allMedia.filter((m) => isSong(m));
@@ -1192,9 +1195,6 @@ export const dynamicMediaMapper = async (
         songs.length === 3 ? songs[1]!.BeginParagraphOrdinal : 0;
       if (isCoWeek(lookupDate)) {
         // The last songs for both MW and WE meeting get replaced during the CO visit
-        const lastParagraphOrdinal =
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          allMedia[allMedia.length - 1]!.BeginParagraphOrdinal || 0;
         allMedia.pop();
         if (isMwMeetingDay(lookupDate)) {
           // Also remove CBS media if it's the MW meeting, since the CBS is skipped during the CO visit
@@ -1292,6 +1292,11 @@ export const dynamicMediaMapper = async (
         const tag = tagType ? { type: tagType, value: tagValue } : undefined;
 
         return {
+          cbs:
+            isMwMeetingDay(lookupDate) &&
+            !isCoWeek(lookupDate) &&
+            m.BeginParagraphOrdinal >= lastParagraphOrdinal - 2 &&
+            m.BeginParagraphOrdinal < lastParagraphOrdinal,
           customDuration,
           duration,
           extractCaption: m.ExtractCaption,
@@ -1330,6 +1335,7 @@ export const dynamicMediaMapper = async (
             // If a group for this extractCaption doesn't exist, create it
             if (!acc[media.extractCaption]) {
               acc[media.extractCaption] = {
+                cbs: media.cbs,
                 children: [],
                 extractCaption: media.extractCaption,
                 section: media.section,
