@@ -287,7 +287,11 @@
                 :key="element.children.map((m) => m.uniqueId).join(',')"
                 v-model="expandedMediaGroups[element.uniqueId]"
                 :header-class="
-                  expandedMediaGroups[element.uniqueId] ? 'bg-accent-200' : ''
+                  expandedMediaGroups[element.uniqueId]
+                    ? $q.dark.isActive
+                      ? 'bg-accent-300'
+                      : 'bg-accent-200'
+                    : ''
                 "
               >
                 <template #header>
@@ -297,9 +301,10 @@
                       <span v-html="element.extractCaption"></span>
                       <q-badge
                         class="q-ml-sm text-primary"
-                        color="accent-200"
+                        :color="$q.dark.isActive ? 'accent-400' : 'accent-200'"
                         :label="element.children?.length"
                         rounded
+                        :text-color="$q.dark.isActive ? 'white' : 'accent-200'"
                       />
                     </div>
                   </q-item-section>
@@ -526,7 +531,6 @@ const jwpubImportDocuments = ref<DocumentItem[]>([]);
 const { dateLocale, t } = useLocale();
 useMeta({ title: t('titles.meetingMedia') });
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const $q = useQuasar();
 
 watch(
