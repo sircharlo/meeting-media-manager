@@ -58,11 +58,11 @@ interface Store {
 }
 
 export function addUniqueById<T extends { uniqueId: string }>(
-  targetArray: T[],
-  sourceArray: T[],
+  targetArray: (T | undefined)[],
+  sourceArray: (T | undefined)[],
 ): void {
   sourceArray.forEach((item) => {
-    if (!targetArray.some((obj) => obj.uniqueId === item.uniqueId)) {
+    if (!targetArray.some((obj) => obj?.uniqueId === item?.uniqueId)) {
       targetArray.push(item);
     }
   });
@@ -95,6 +95,7 @@ export const useJwStore = defineStore('jw-store', {
         const coWeek = isCoWeek(selectedDateObject.date);
         if (coWeek && isMwMeetingDay(selectedDateObject.date)) {
           mediaArray.forEach((media) => {
+            if (!media) return;
             media.section = section || 'circuitOverseer';
             media.sectionOriginal = section || 'circuitOverseer';
           });
@@ -115,7 +116,24 @@ export const useJwStore = defineStore('jw-store', {
           this.lookupPeriod[currentCongregation].push(period);
         }
 
+        const getAdditionalCount = () => {
+          return (
+            (this.lookupPeriod[currentCongregation] || [])
+              .find(
+                (d) =>
+                  getDateDiff(d.date, selectedDateObject.date, 'days') === 0,
+              )
+              ?.dynamicMedia.filter((m) => m.section === 'additional').length ||
+            0
+          );
+        };
+
         if (Array.isArray(period.dynamicMedia)) {
+          mediaArray.forEach((media, index) => {
+            if (!media) return;
+            media.sortOrderOriginal =
+              'additional-' + getAdditionalCount() + '-' + index;
+          });
           addUniqueById(period.dynamicMedia, mediaArray);
         }
       } catch (e) {

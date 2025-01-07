@@ -38,7 +38,7 @@ export interface DynamicMediaObject {
   repeat?: boolean;
   section: MediaSection;
   sectionOriginal: MediaSection;
-  sortOrderOriginal?: number;
+  sortOrderOriginal: number | string;
   source: 'additional' | 'dynamic' | 'watched';
   streamUrl?: string;
   subtitlesUrl?: string;
@@ -70,6 +70,15 @@ export interface SongItem {
   path: string;
   title?: string;
 }
+
+export interface SortableMediaList {
+  items: Ref<DynamicMediaObject[]>;
+  jwIcon?: string | undefined;
+  label: string;
+  mmmIcon?: string | undefined;
+  type: MediaSection;
+}
+export type SortableMediaLists = SortableMediaList[];
 
 export interface Tag {
   type: string | undefined;

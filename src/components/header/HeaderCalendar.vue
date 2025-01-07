@@ -4,10 +4,10 @@
   <DialogRemoteVideo v-model="remoteVideoPopup" :section="section" />
   <DialogStudyBible v-model="studyBiblePopup" :section="section" />
   <DialogAudioBible v-model="audioBiblePopup" :section="section" />
-  <!-- <q-btn
+  <q-btn
     v-if="selectedDate"
     color="white-transparent"
-    :disable="mediaPlaying || !mediaSortForDay"
+    :disable="mediaPlaying || !mediaSortCanBeReset"
     unelevated
     @click="resetSort"
   >
@@ -20,7 +20,7 @@
     <q-tooltip v-if="!$q.screen.gt.sm" :delay="1000">
       {{ t('reset-sort-order') }}
     </q-tooltip>
-  </q-btn> -->
+  </q-btn>
   <q-btn
     v-if="selectedDate"
     color="white-transparent"
@@ -257,9 +257,11 @@ const currentState = useCurrentStateStore();
 const {
   currentCongregation,
   currentSettings,
+  getMediaForSection,
   mediaPlaying,
   online,
   selectedDate,
+  selectedDateObject,
 } = storeToRefs(currentState);
 
 const section = ref<MediaSection | undefined>();
@@ -428,4 +430,66 @@ useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
   (e) => openImportMenu(e.detail?.section),
   { passive: true },
 );
+
+const mediaSortCanBeReset = computed(() => {
+  if (!selectedDateObject.value?.dynamicMedia) return;
+  if (
+    selectedDateObject.value?.dynamicMedia.some(
+      (item) => item.section !== item.sectionOriginal,
+    )
+  ) {
+    return true;
+  }
+  const mediaToConsider = [
+    ...getMediaForSection.value.tgw,
+    ...getMediaForSection.value.ayfm,
+    ...getMediaForSection.value.lac,
+    ...getMediaForSection.value.wt,
+  ];
+
+  for (let i = 0; i < mediaToConsider.length - 1; i++) {
+    const firstSortOrder = mediaToConsider[i]?.sortOrderOriginal ?? 0;
+    const secondSortOrder = mediaToConsider[i + 1]?.sortOrderOriginal ?? 0;
+    if (firstSortOrder > secondSortOrder) {
+      return true; // Array is not sorted
+    }
+  }
+  return false; // Array is sorted
+});
+
+const resetSort = () => {
+  if (!selectedDateObject.value?.dynamicMedia) return;
+
+  selectedDateObject.value.dynamicMedia.forEach((item) => {
+    if (item.sectionOriginal !== item.section) {
+      item.section = item.sectionOriginal;
+    }
+  });
+
+  // Combine all media items into one array
+  const mediaToSort = [
+    ...getMediaForSection.value.tgw,
+    ...getMediaForSection.value.ayfm,
+    ...getMediaForSection.value.lac,
+    ...getMediaForSection.value.wt,
+  ];
+
+  // Sort the media array in ascending order by `sortOrderOriginal`
+  const sortedMedia = mediaToSort.sort((a, b) => {
+    const firstSortOrder = a?.sortOrderOriginal?.toString() ?? '0';
+    const secondSortOrder = b?.sortOrderOriginal?.toString() ?? '0';
+    return firstSortOrder.localeCompare(secondSortOrder, undefined, {
+      numeric: true,
+    });
+  });
+
+  selectedDateObject.value.dynamicMedia = [
+    ...getMediaForSection.value.additional,
+    ...sortedMedia.filter((item) => item.section === 'tgw'),
+    ...sortedMedia.filter((item) => item.section === 'ayfm'),
+    ...sortedMedia.filter((item) => item.section === 'lac'),
+    ...sortedMedia.filter((item) => item.section === 'wt'),
+    ...getMediaForSection.value.circuitOverseer,
+  ];
+};
 </script>

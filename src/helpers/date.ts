@@ -52,7 +52,7 @@ export function isCoWeek(lookupDate: Date) {
   }
 }
 
-export const isMwMeetingDay = (lookupDate: Date) => {
+export const isMwMeetingDay = (lookupDate?: Date) => {
   try {
     const currentState = useCurrentStateStore();
     if (!lookupDate || currentState.currentSettings?.disableMediaFetching)
@@ -73,7 +73,7 @@ export const isMwMeetingDay = (lookupDate: Date) => {
   }
 };
 
-export const isWeMeetingDay = (lookupDate: Date) => {
+export const isWeMeetingDay = (lookupDate?: Date) => {
   try {
     const currentState = useCurrentStateStore();
     if (!lookupDate || currentState.currentSettings?.disableMediaFetching)

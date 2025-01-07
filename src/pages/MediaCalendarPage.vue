@@ -1,14 +1,7 @@
 <template>
   <q-page
     :class="
-      !(
-        sortableAdditionalMediaItems?.filter((m) => !m.hidden).length ||
-        sortableWtMediaItems?.filter((m) => !m.hidden).length ||
-        sortableTgwMediaItems?.filter((m) => !m.hidden).length ||
-        sortableAyfmMediaItems?.filter((m) => !m.hidden).length ||
-        sortableLacMediaItems?.filter((m) => !m.hidden).length ||
-        sortableCircuitOverseerMediaItems?.filter((m) => !m.hidden).length
-      )
+      !selectedDateObject?.dynamicMedia?.filter((m) => !m.hidden).length
         ? 'flex'
         : ''
     "
@@ -18,15 +11,14 @@
     @dragstart="dropActive"
     @drop="dropEnd"
   >
+    <pre>{{
+      (selectedDateObject?.dynamicMedia || []).map((m) => [
+        m.sortOrderOriginal,
+        m.section,
+      ])
+    }}</pre>
     <div class="col">
-      <div
-        v-if="
-          [...sortableAdditionalMediaItems, ...sortableMediaItems].some(
-            (m) => m.hidden,
-          )
-        "
-        class="row"
-      >
+      <div v-if="someItemsHidden" class="row">
         <q-banner
           class="bg-warning text-white full-width"
           inline-actions
@@ -43,19 +35,12 @@
       <div
         v-if="
           (currentSettings?.disableMediaFetching &&
-            sortableAdditionalMediaItems?.filter((m) => !m.hidden).length <
+            getMediaForSection.additional?.filter((m) => !m.hidden).length <
               1) ||
           (!currentSettings?.disableMediaFetching &&
             ((selectedDateObject?.meeting && !selectedDateObject?.complete) ||
-              !(
-                sortableAdditionalMediaItems?.filter((m) => !m.hidden).length ||
-                sortableWtMediaItems?.filter((m) => !m.hidden).length ||
-                sortableTgwMediaItems?.filter((m) => !m.hidden).length ||
-                sortableAyfmMediaItems?.filter((m) => !m.hidden).length ||
-                sortableLacMediaItems?.filter((m) => !m.hidden).length ||
-                sortableCircuitOverseerMediaItems?.filter((m) => !m.hidden)
-                  .length
-              )))
+              !selectedDateObject?.dynamicMedia?.filter((m) => !m.hidden)
+                .length))
         "
         class="row"
       >
@@ -63,7 +48,7 @@
           <div
             v-if="
               !currentSettings?.disableMediaFetching ||
-              !sortableAdditionalMediaItems?.filter((m) => !m.hidden).length
+              !getMediaForSection.additional?.filter((m) => !m.hidden).length
             "
             class="row justify-center"
           >
@@ -147,6 +132,12 @@
               ? 'public-talk'
               : 'imported-media',
           ),
+          alwaysShow:
+            selectedDateObject?.dynamicMedia?.filter(
+              (m) => m.sectionOriginal === 'additional',
+            )?.length ||
+            (selectedDateObject?.complete &&
+              isWeMeetingDay(selectedDateObject?.date)),
           mmmIcon:
             selectedDateObject?.date &&
             !isWeMeetingDay(selectedDateObject?.date)
@@ -156,42 +147,52 @@
             selectedDateObject?.date && isWeMeetingDay(selectedDateObject?.date)
               ? ''
               : undefined,
-          items: sortableAdditionalMediaItems,
+          items: getMediaForSection.additional,
         },
         selectedDateObject?.date &&
-          isWeMeetingDay(selectedDateObject?.date) && {
+          isWeMeetingDay(selectedDateObject?.date) &&
+          selectedDateObject?.complete && {
             type: 'wt',
             label: t('wt'),
             jwIcon: '',
-            items: sortableWtMediaItems,
+            items: getMediaForSection.wt,
+            alwaysShow: true,
           },
         selectedDateObject?.date &&
-          isMwMeetingDay(selectedDateObject?.date) && {
+          isMwMeetingDay(selectedDateObject?.date) &&
+          selectedDateObject?.complete && {
             type: 'tgw',
             label: t('tgw'),
             jwIcon: '',
-            items: sortableTgwMediaItems,
+            items: getMediaForSection.tgw,
+            alwaysShow: true,
           },
         selectedDateObject?.date &&
-          isMwMeetingDay(selectedDateObject?.date) && {
+          isMwMeetingDay(selectedDateObject?.date) &&
+          selectedDateObject?.complete && {
             type: 'ayfm',
             label: t('ayfm'),
             jwIcon: '',
-            items: sortableAyfmMediaItems,
+            items: getMediaForSection.ayfm,
+            alwaysShow: true,
           },
         selectedDateObject?.date &&
-          isMwMeetingDay(selectedDateObject?.date) && {
+          isMwMeetingDay(selectedDateObject?.date) &&
+          selectedDateObject?.complete && {
             type: 'lac',
             label: t('lac'),
             jwIcon: '',
-            items: sortableLacMediaItems,
+            items: getMediaForSection.lac,
+            alwaysShow: true,
           },
         selectedDateObject?.date &&
-          isCoWeek(selectedDateObject?.date) && {
-            type: 'circuit-overseer',
+          isCoWeek(selectedDateObject?.date) &&
+          selectedDateObject?.complete && {
+            type: 'circuitOverseer',
             label: t('circuit-overseer'),
             jwIcon: '',
-            items: sortableCircuitOverseerMediaItems,
+            items: getMediaForSection.circuitOverseer,
+            alwaysShow: true,
           },
       ].filter((m) => !!m)"
       :key="mediaList.items.map((m) => m.uniqueId).join(',')"
@@ -199,9 +200,7 @@
       <q-list
         v-show="
           mediaList.items?.filter((m) => !m.hidden).length ||
-          (selectedDateObject &&
-            selectedDateObject.complete &&
-            isWeMeetingDay(selectedDateObject?.date))
+          mediaList.alwaysShow
         "
         :class="'media-section ' + mediaList.type"
       >
@@ -265,14 +264,23 @@
           </q-item>
         </div>
         <Sortable
+          class="sortable-media"
           item-key="uniqueId"
           :list="mediaList.items"
           :options="{ group: 'mediaLists' }"
+          @add="handleMediaDrag($event, 'ADD', mediaList.type as MediaSection)"
+          @end="handleMediaDrag($event, 'END', mediaList.type as MediaSection)"
+          @remove="
+            handleMediaDrag($event, 'REMOVE', mediaList.type as MediaSection)
+          "
+          @start="
+            handleMediaDrag($event, 'START', mediaList.type as MediaSection)
+          "
         >
           <template #item="{ element }: { element: DynamicMediaObject }">
             <q-expansion-item
               v-if="element.children"
-              :key="element.uniqueId"
+              :key="element.children.map((m) => m.uniqueId).join(',')"
               class="draggable"
               header-class="bg-secondary text-white"
               :label="element.extractCaption"
@@ -282,25 +290,32 @@
                 item-key="uniqueId"
                 :list="element.children"
               >
-                <template #item="{ element }: { element: DynamicMediaObject }">
-                  <div :key="element.uniqueId" class="draggable bg-info">
+                <template
+                  #item="{
+                    element: childElement,
+                  }: {
+                    element: DynamicMediaObject;
+                  }"
+                >
+                  <div :key="childElement.uniqueId" class="bg-info">
                     <MediaItem
-                      :key="element.uniqueId"
-                      v-model:repeat="element.repeat"
-                      :media="element"
-                      :play-state="playState(element.uniqueId)"
+                      :key="childElement.uniqueId"
+                      v-model:repeat="childElement.repeat"
+                      :media="childElement"
+                      :play-state="playState(childElement.uniqueId)"
                       @update:custom-duration="
-                        element.customDuration = JSON.parse($event) || undefined
+                        childElement.customDuration =
+                          JSON.parse($event) || undefined
                       "
-                      @update:hidden="element.hidden = !!$event"
-                      @update:tag="element.tag = $event"
-                      @update:title="element.title = $event"
+                      @update:hidden="childElement.hidden = !!$event"
+                      @update:tag="childElement.tag = $event"
+                      @update:title="childElement.title = $event"
                     />
                   </div>
                 </template>
               </Sortable>
             </q-expansion-item>
-            <div v-else :key="element.fileUrl" class="draggable">
+            <div v-else :key="element.uniqueId">
               <MediaItem
                 :key="element.uniqueId"
                 v-model:repeat="element.repeat"
@@ -417,6 +432,7 @@
 </template>
 
 <script setup lang="ts">
+import type { SortableEvent } from 'sortablejs';
 import type {
   DocumentItem,
   DynamicMediaObject,
@@ -511,6 +527,7 @@ const currentState = useCurrentStateStore();
 const {
   currentCongregation,
   currentSettings,
+  getMediaForSection,
   mediaPaused,
   mediaPlaying,
   mediaPlayingAction,
@@ -642,126 +659,8 @@ watch(
   },
 );
 
-// const stopScrolling = ref(true);
-// const scroll = (step: number) => {
-//   const el = document.querySelector('.q-page-container');
-//   if (!el) return;
-//   el.scrollBy(0, step);
-//   if (!stopScrolling.value) {
-//     setTimeout(() => scroll(step), 20);
-//   }
-// };
-
-// const updateMediaSortPlugin: DNDPlugin = (parent) => {
-//   const parentData = parents.get(parent);
-//   if (!parentData) return;
-
-//   const updateMediaSection = (id: string, section: MediaSection) => {
-//     (selectedDateObject.value?.dynamicMedia ?? []).forEach((item) => {
-//       if (item.uniqueId === id && item.section !== section) {
-//         item.section = section;
-//       }
-//     });
-
-//     const currentCong = currentCongregation.value;
-//     const currentDate = selectedDate.value;
-//     (additionalMediaMaps.value[currentCong]?.[currentDate] ?? []).forEach(
-//       (item) => {
-//         if (item.uniqueId === id && item.section !== section) {
-//           item.section = section;
-//         }
-//       },
-//     );
-//     (watchFolderMedia.value?.[currentDate] ?? []).forEach((item) => {
-//       if (item.uniqueId === id) {
-//         watchedMediaSections.value[currentCong] ??= {};
-//         watchedMediaSections.value[currentCong][currentDate] ??= {};
-//         watchedMediaSections.value[currentCong][currentDate][id] = section;
-//         if (item.section !== section) item.section = section;
-//       }
-//     });
-//   };
-//   function dragover(e: DragEvent) {
-//     stopScrolling.value = true;
-//     if (e.clientY < 200) {
-//       stopScrolling.value = false;
-//       scroll(-1);
-//     } else if (window.innerHeight - e.clientY < 200) {
-//       stopScrolling.value = false;
-//       scroll(1);
-//     }
-
-//     for (const media of sortableAdditionalMediaItems.value) {
-//       updateMediaSection(media.uniqueId, 'additional');
-//     }
-//     for (const media of sortableTgwMediaItems.value) {
-//       updateMediaSection(media.uniqueId, 'tgw');
-//     }
-//     for (const media of sortableAyfmMediaItems.value) {
-//       updateMediaSection(media.uniqueId, 'ayfm');
-//     }
-//     for (const media of sortableLacMediaItems.value) {
-//       updateMediaSection(media.uniqueId, 'lac');
-//     }
-//     for (const media of sortableWtMediaItems.value) {
-//       updateMediaSection(media.uniqueId, 'wt');
-//     }
-//     for (const media of sortableCircuitOverseerMediaItems.value) {
-//       updateMediaSection(media.uniqueId, 'circuitOverseer');
-//     }
-//   }
-
-//   function dragend() {
-//     stopScrolling.value = true;
-//     const currentCong = currentCongregation.value;
-//     generateMediaList();
-//     addDayToExportQueue(selectedDateObject.value?.date);
-//   }
-
-//   return {
-//     setupNode(data) {
-//       data.node.addEventListener('dragover', dragover, { passive: true });
-//       data.node.addEventListener('dragend', dragend, { passive: true });
-//     },
-//     tearDownNode(data) {
-//       data.node.removeEventListener('dragover', dragover);
-//       data.node.removeEventListener('dragend', dragend);
-//     },
-//   };
-// };
-
-const sortableMediaItems = ref<DynamicMediaObject[]>([]);
-
-const generateMediaList = () => {
-  sortableMediaItems.value = (
-    selectedDateObject.value?.dynamicMedia ?? []
-  ).filter(
-    (item, index, self) =>
-      !item.fileUrl ||
-      index === self.findIndex((i) => i.fileUrl === item.fileUrl),
-  );
-};
-
-watch(
-  () => [
-    selectedDateObject.value?.date,
-    selectedDateObject.value?.dynamicMedia?.length,
-  ],
-  (
-    [newSelectedDate, newDynamicMediaListLength],
-    [oldSelectedDate, oldDynamicMediaListLength],
-  ) => {
-    try {
-      if (
-        newSelectedDate !== oldSelectedDate ||
-        newDynamicMediaListLength !== oldDynamicMediaListLength
-      ) {
-        generateMediaList();
-      }
-    } catch (e) {
-      errorCatcher(e);
-    }
-  },
+const someItemsHidden = computed(
+  () => !!selectedDateObject.value?.dynamicMedia.some((m) => m.hidden),
 );
 
 watch(
@@ -919,7 +818,7 @@ watchImmediate(selectedDate, (newVal) => {
 });
 
 onMounted(() => {
-  generateMediaList();
+  // generateMediaList();
   goToNextDayWithMedia();
 
   // If no date with media is found, go to todays date
@@ -943,121 +842,66 @@ watch(
   },
 );
 
-const sortableTgwMediaItems = ref<DynamicMediaObject[]>([]);
-
-// const [tgwList, sortableTgwMediaItems] = useDragAndDrop<DynamicMediaObject>(
-//   [],
-//   {
-//     group: 'sortableMedia',
-//     plugins: [
-//       updateMediaSortPlugin,
-//       animations(),
-//       multiDrag({
-//         plugins: [selections({ selectedClass: 'selected-to-drag' })],
-//       }),
-//     ],
-//   },
-// );
-
-const sortableAyfmMediaItems = ref<DynamicMediaObject[]>([]);
-
-// const [ayfmList, sortableAyfmMediaItems] = useDragAndDrop<DynamicMediaObject>(
-//   [],
-//   {
-//     group: 'sortableMedia',
-//     plugins: [
-//       updateMediaSortPlugin,
-//       animations(),
-//       multiDrag({
-//         plugins: [selections({ selectedClass: 'selected-to-drag' })],
-//       }),
-//     ],
-//   },
-// );
-
-const sortableLacMediaItems = ref<DynamicMediaObject[]>([]);
-
-// const [lacList, sortableLacMediaItems] = useDragAndDrop<DynamicMediaObject>(
-//   [],
-//   {
-//     group: 'sortableMedia',
-//     plugins: [
-//       updateMediaSortPlugin,
-//       animations(),
-//       multiDrag({
-//         plugins: [selections({ selectedClass: 'selected-to-drag' })],
-//       }),
-//     ],
-//   },
-// );
-
-const sortableWtMediaItems = ref<DynamicMediaObject[]>([]);
-
-// const [wtList, sortableWtMediaItems] = useDragAndDrop<DynamicMediaObject>([], {
-//   group: 'sortableMedia',
-//   plugins: [
-//     updateMediaSortPlugin,
-//     animations(),
-//     multiDrag({
-//       plugins: [selections({ selectedClass: 'selected-to-drag' })],
-//     }),
-//   ],
+// const sortableMediaItems = ref<Record<MediaSection, DynamicMediaObject[]>>({
+//   additional: [],
+//   ayfm: [],
+//   circuitOverseer: [],
+//   lac: [],
+//   tgw: [],
+//   wt: [],
 // });
 
-const sortableAdditionalMediaItems = ref<DynamicMediaObject[]>([]);
+// Function to update the `sortableMediaItems` ref
+// const initializeSortableMediaItems = () => {
+//   // Get dynamic media or default to an empty array
+//   const dynamicMedia = selectedDateObject.value?.dynamicMedia ?? [];
 
-// const [additionalList, sortableAdditionalMediaItems] =
-//   useDragAndDrop<DynamicMediaObject>([], {
-//     group: 'sortableMedia',
-//     plugins: [
-//       updateMediaSortPlugin,
-//       animations(),
-//       multiDrag({
-//         plugins: [selections({ selectedClass: 'selected-to-drag' })],
-//       }),
-//     ],
+//   // Reset the result object with default empty arrays for all sections
+//   const result: Record<MediaSection, DynamicMediaObject[]> = {
+//     additional: [],
+//     ayfm: [],
+//     circuitOverseer: [],
+//     lac: [],
+//     tgw: [],
+//     wt: [],
+//   };
+
+//   // Populate the result object with filtered media for each section
+//   dynamicMedia.forEach((m) => {
+//     if (result[m.section]) {
+//       result[m.section].push(m);
+//     }
 //   });
 
-const sortableCircuitOverseerMediaItems = ref<DynamicMediaObject[]>([]);
+//   // Update the ref
+//   sortableMediaItems.value = result;
+// };
 
-// const [circuitOverseerList, sortableCircuitOverseerMediaItems] =
-//   useDragAndDrop<DynamicMediaObject>([], {
-//     group: 'sortableMedia',
-//     plugins: [
-//       updateMediaSortPlugin,
-//       animations(),
-//       multiDrag({
-//         plugins: [selections({ selectedClass: 'selected-to-drag' })],
-//       }),
-//     ],
-//   });
+// Watch for changes to `selectedDateObject` and update `sortableMediaItems`
+// watch(
+//   () => selectedDateObject.value?.dynamicMedia?.length,
+//   initializeSortableMediaItems,
+//   { immediate: true }, // Run immediately to set the initial value
+// );
 
-watchImmediate(
-  () => sortableMediaItems.value,
-  (newVal) => {
-    sortableTgwMediaItems.value = newVal.filter((m) => m.section === 'tgw');
-    sortableAyfmMediaItems.value = newVal.filter((m) => m.section === 'ayfm');
-    sortableLacMediaItems.value = newVal.filter((m) => m.section === 'lac');
-    sortableWtMediaItems.value = newVal.filter((m) => m.section === 'wt');
-    sortableAdditionalMediaItems.value = newVal.filter(
-      (m) => m.section === 'additional',
-    );
-    sortableCircuitOverseerMediaItems.value = newVal.filter(
-      (m) => m.section === 'circuitOverseer',
-    );
-  },
-  { deep: true },
-);
+// watchImmediate(
+//   () => selectedDateObject.value?.dynamicMedia?.length,
+//   () => initializeSortableMediaItems(),
+// );
+
+const sortedMedia = computed(() => {
+  return [
+    ...getMediaForSection.value.additional,
+    ...getMediaForSection.value.tgw,
+    ...getMediaForSection.value.ayfm,
+    ...getMediaForSection.value.lac,
+    ...getMediaForSection.value.wt,
+    ...getMediaForSection.value.circuitOverseer,
+  ];
+});
 
 const sortedMediaIds = computed(() => {
-  return [
-    ...sortableAdditionalMediaItems.value,
-    ...sortableTgwMediaItems.value,
-    ...sortableAyfmMediaItems.value,
-    ...sortableLacMediaItems.value,
-    ...sortableWtMediaItems.value,
-    ...sortableCircuitOverseerMediaItems.value,
-  ]
+  return sortedMedia.value
     .filter((m) => !m.hidden)
     .map((m) => m.uniqueId)
     .filter((uniqueId, index, self) => self.indexOf(uniqueId) === index);
@@ -1067,7 +911,7 @@ const arraysAreIdentical = (a: string[], b: string[]) =>
   a.length === b.length && a.every((element, index) => element === b[index]);
 
 const sortedMediaFileUrls = computed(() =>
-  [...sortableAdditionalMediaItems.value, ...sortableMediaItems.value]
+  sortedMedia.value
     .filter((m) => !m.hidden && !!m.fileUrl)
     .map((m) => m.fileUrl)
     .filter((m) => typeof m === 'string')
@@ -1349,12 +1193,13 @@ const openImportMenu = (section: MediaSection | undefined) => {
 
 // TODO: re-enable after fixing drag and drop sort
 const dropActive = (event: DragEvent) => {
-  console.log('todo: re-enable after fixing drag and drop sort', event);
-  //   event.preventDefault();
-  //   event.stopPropagation();
-  //   if (!event?.relatedTarget && event?.dataTransfer?.effectAllowed === 'all') {
-  //     dragging.value = true;
-  //   }
+  if (event?.dataTransfer?.effectAllowed === 'all') {
+    event.preventDefault();
+    event.stopPropagation();
+    console.log('todo: re-enable after fixing drag and drop sort', event);
+    //   if (!event?.relatedTarget && event?.dataTransfer?.effectAllowed === 'all') {
+    // dragging.value = true;
+  }
 };
 const dropEnd = (event: DragEvent) => {
   event.preventDefault();
@@ -1406,6 +1251,96 @@ const resetDragging = () => {
   currentFile.value = 0;
   totalFiles.value = 0;
   sectionToAddTo.value = undefined;
+};
+
+const mediaItemBeingDragged = ref<DynamicMediaObject | undefined>();
+
+const handleMediaDrag = (
+  evt: SortableEvent,
+  eventType: string,
+  list: MediaSection,
+) => {
+  const sameList = evt.from === evt.to;
+  const dynamicMedia = selectedDateObject.value?.dynamicMedia;
+
+  if (!dynamicMedia || !Array.isArray(dynamicMedia)) return;
+  if (
+    typeof evt.oldIndex === 'undefined' ||
+    typeof evt.newIndex === 'undefined'
+  )
+    return;
+
+  console.log('Event Type:', eventType, list, sameList);
+
+  switch (eventType) {
+    case 'ADD':
+      console.log('Adding Item', sameList, list, mediaItemBeingDragged.value);
+      if (!sameList && mediaItemBeingDragged.value) {
+        const firstElementIndex = dynamicMedia.findIndex(
+          (item) => item.section === list,
+        );
+        const insertIndex =
+          firstElementIndex >= 0
+            ? firstElementIndex + evt.newIndex
+            : evt.newIndex;
+        const newItem = { ...mediaItemBeingDragged.value, section: list };
+        dynamicMedia.splice(insertIndex, 0, newItem);
+        // sortDynamicMedia();
+        console.log('Added Item:', newItem);
+      }
+      break;
+
+    case 'END':
+      if (sameList) {
+        // sortDynamicMedia();
+        const originalPosition = dynamicMedia.findIndex(
+          (item) => item.uniqueId === mediaItemBeingDragged.value?.uniqueId,
+        );
+        if (originalPosition >= 0) {
+          const [movedItem] = dynamicMedia.splice(originalPosition, 1);
+          if (movedItem) {
+            const newIndex = Math.max(
+              0,
+              originalPosition + evt.newIndex - evt.oldIndex,
+            );
+            dynamicMedia.splice(newIndex, 0, movedItem);
+            console.log(
+              'Moved Item:',
+              movedItem,
+              originalPosition,
+              newIndex,
+              evt.newIndex,
+              evt.oldIndex,
+            );
+          }
+        }
+      }
+      break;
+
+    case 'REMOVE':
+      if (!sameList) {
+        const indexToRemove = dynamicMedia.findIndex(
+          (item) =>
+            item.uniqueId === mediaItemBeingDragged.value?.uniqueId &&
+            item.section === list,
+        );
+        if (indexToRemove >= 0) {
+          const [removedItem] = dynamicMedia.splice(indexToRemove, 1);
+          // sortDynamicMedia();
+          console.log('Removed Item:', removedItem);
+        }
+      }
+      break;
+
+    case 'START': {
+      const draggingItem = getMediaForSection.value[list]?.[evt.oldIndex];
+      if (draggingItem) {
+        mediaItemBeingDragged.value = draggingItem;
+        console.log('Saved Item:', draggingItem);
+      }
+    }
+  }
+  // initializeSortableMediaItems();
 };
 </script>
 <style scoped lang="scss">

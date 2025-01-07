@@ -2,8 +2,10 @@ import type {
   DateInfo,
   DownloadedFile,
   DownloadProgressItems,
+  DynamicMediaObject,
   JwLanguage,
   MediaLink,
+  MediaSection,
   SettingsItem,
   SettingsItems,
   SettingsValues,
@@ -187,6 +189,37 @@ export const useCurrentStateStore = defineStore('current-state', {
       const currentLanguage = this.currentSettings?.lang;
       if (!currentLanguage) return [];
       return jwStore.jwSongs[currentLanguage]?.list || [];
+    },
+    getMediaForSection(): Record<MediaSection, DynamicMediaObject[]> {
+      if (!this.selectedDateObject)
+        return {
+          additional: [],
+          ayfm: [],
+          circuitOverseer: [],
+          lac: [],
+          tgw: [],
+          wt: [],
+        };
+      return {
+        additional: this.selectedDateObject.dynamicMedia.filter(
+          (m) => m.section === 'additional',
+        ),
+        ayfm: this.selectedDateObject.dynamicMedia.filter(
+          (m) => m.section === 'ayfm',
+        ),
+        circuitOverseer: this.selectedDateObject.dynamicMedia.filter(
+          (m) => m.section === 'circuitOverseer',
+        ),
+        lac: this.selectedDateObject.dynamicMedia.filter(
+          (m) => m.section === 'lac',
+        ),
+        tgw: this.selectedDateObject.dynamicMedia.filter(
+          (m) => m.section === 'tgw',
+        ),
+        wt: this.selectedDateObject.dynamicMedia.filter(
+          (m) => m.section === 'wt',
+        ),
+      };
     },
     mediaPaused: (state) => {
       return (

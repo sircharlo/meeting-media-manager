@@ -161,6 +161,7 @@ export const addToAdditionMediaMapFromPath = async (
           isVideo: video,
           section,
           sectionOriginal: section,
+          sortOrderOriginal: -1,
           source: 'additional',
           streamUrl: additionalInfo?.url,
           tag: {
@@ -1333,6 +1334,7 @@ export const dynamicMediaMapper = async (
                 extractCaption: media.extractCaption,
                 section: media.section,
                 sectionOriginal: media.sectionOriginal,
+                sortOrderOriginal: media.sortOrderOriginal,
                 source: media.source,
                 title: media.extractCaption,
                 uniqueId: `group-${media.extractCaption}`, // Unique ID for the group
@@ -1427,6 +1429,7 @@ export const watchedItemMapper: (
         isVideo: video,
         section,
         sectionOriginal: 'additional', // to enable restoring the original section after custom sorting
+        sortOrderOriginal: 'watched',
         source: 'watched',
         thumbnailUrl,
         title,
