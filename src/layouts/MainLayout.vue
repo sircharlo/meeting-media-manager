@@ -345,6 +345,11 @@ const updateWatchFolderRef = async ({
         (await watchedItemMapper(day, changedPath ?? '')) || [];
 
       for (const watchedItem of watchedItems) {
+        if (
+          dayObj.dynamicMedia.find((i) => i.uniqueId === watchedItem.uniqueId)
+        ) {
+          continue;
+        }
         watchedItem.sortOrderOriginal = 'watched-' + watchedItem.title;
 
         // Find the correct index to insert the item in the sorted order
