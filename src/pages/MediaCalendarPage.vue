@@ -277,94 +277,96 @@
           "
         >
           <template #item="{ element }: { element: DynamicMediaObject }">
-            <q-list
-              v-if="element.children"
-              bordered
-              class="q-mx-sm q-my-sm media-children rounded-borders overflow-hidden"
-            >
-              <q-menu context-menu style="overflow-x: hidden" touch-position>
-                <q-list>
-                  <!-- <q-item-label header>{{ element.extractCaption }}</q-item-label> -->
-                  <q-item
-                    v-close-popup
-                    clickable
-                    :disable="!!mediaPlayingUrl"
-                    @click="element.hidden = true"
-                  >
-                    <q-item-section avatar>
-                      <q-icon name="mmm-file-hidden" />
-                    </q-item-section>
-                    <q-item-section>
-                      <q-item-label>{{ t('hide-from-list') }}</q-item-label>
-                      <q-item-label caption>
-                        {{ t('hide-from-list-explain') }}
-                      </q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </q-menu>
-
-              <q-expansion-item
-                :key="element.children.map((m) => m.uniqueId).join(',')"
-                v-model="expandedMediaGroups[element.uniqueId]"
-                :header-class="
-                  expandedMediaGroups[element.uniqueId]
-                    ? $q.dark.isActive
-                      ? 'bg-accent-300'
-                      : 'bg-accent-200'
-                    : ''
-                "
+            <template v-if="element.children">
+              <q-list
+                v-if="element.children.some((m) => !m.hidden)"
+                bordered
+                class="q-mx-sm q-my-sm media-children rounded-borders overflow-hidden"
               >
-                <!-- v-model="contextMenu" -->
-                <!-- :target="menuTarget" -->
-                <template #header>
-                  <q-item-section>
-                    <div>
-                      <!-- eslint-disable-next-line vue/no-v-html -->
-                      <span v-html="element.extractCaption"></span>
-                      <q-badge
-                        class="q-ml-sm text-primary"
-                        :color="$q.dark.isActive ? 'accent-400' : 'accent-200'"
-                        :label="element.children?.length"
-                        rounded
-                        :text-color="$q.dark.isActive ? 'white' : 'accent-200'"
-                      />
-                    </div>
-                  </q-item-section>
-                </template>
+                <q-menu context-menu style="overflow-x: hidden" touch-position>
+                  <q-list>
+                    <q-item
+                      v-close-popup
+                      clickable
+                      :disable="!!mediaPlayingUrl"
+                      @click="element.hidden = true"
+                    >
+                      <q-item-section avatar>
+                        <q-icon name="mmm-file-hidden" />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label>{{ t('hide-from-list') }}</q-item-label>
+                        <q-item-label caption>
+                          {{ t('hide-from-list-explain') }}
+                        </q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </q-list>
+                </q-menu>
 
-                <Sortable
-                  v-if="element.children"
-                  item-key="uniqueId"
-                  :list="element.children"
+                <q-expansion-item
+                  :key="element.children.map((m) => m.uniqueId).join(',')"
+                  v-model="expandedMediaGroups[element.uniqueId]"
+                  :header-class="
+                    expandedMediaGroups[element.uniqueId]
+                      ? $q.dark.isActive
+                        ? 'bg-accent-300'
+                        : 'bg-accent-200'
+                      : ''
+                  "
                 >
-                  <template
-                    #item="{
-                      element: childElement,
-                    }: {
-                      element: DynamicMediaObject;
-                    }"
-                  >
-                    <div :key="childElement.uniqueId">
-                      <MediaItem
-                        :key="childElement.uniqueId"
-                        v-model:repeat="childElement.repeat"
-                        child
-                        :media="childElement"
-                        :play-state="playState(childElement.uniqueId)"
-                        @update:custom-duration="
-                          childElement.customDuration =
-                            JSON.parse($event) || undefined
-                        "
-                        @update:hidden="childElement.hidden = !!$event"
-                        @update:tag="childElement.tag = $event"
-                        @update:title="childElement.title = $event"
-                      />
-                    </div>
+                  <template #header>
+                    <q-item-section>
+                      <div>
+                        <!-- eslint-disable-next-line vue/no-v-html -->
+                        <span v-html="element.extractCaption"></span>
+                        <q-badge
+                          class="q-ml-sm text-primary"
+                          :color="
+                            $q.dark.isActive ? 'accent-400' : 'accent-200'
+                          "
+                          :label="element.children?.length"
+                          rounded
+                          :text-color="
+                            $q.dark.isActive ? 'white' : 'accent-200'
+                          "
+                        />
+                      </div>
+                    </q-item-section>
                   </template>
-                </Sortable>
-              </q-expansion-item>
-            </q-list>
+                  <Sortable
+                    v-if="element.children"
+                    item-key="uniqueId"
+                    :list="element.children"
+                  >
+                    <template
+                      #item="{
+                        element: childElement,
+                      }: {
+                        element: DynamicMediaObject;
+                      }"
+                    >
+                      <div :key="childElement.uniqueId">
+                        <MediaItem
+                          :key="childElement.uniqueId"
+                          v-model:repeat="childElement.repeat"
+                          child
+                          :media="childElement"
+                          :play-state="playState(childElement.uniqueId)"
+                          @update:custom-duration="
+                            childElement.customDuration =
+                              JSON.parse($event) || undefined
+                          "
+                          @update:hidden="childElement.hidden = !!$event"
+                          @update:tag="childElement.tag = $event"
+                          @update:title="childElement.title = $event"
+                        />
+                      </div>
+                    </template>
+                  </Sortable>
+                </q-expansion-item>
+              </q-list>
+            </template>
             <div v-else :key="element.uniqueId">
               <MediaItem
                 :key="element.uniqueId"
