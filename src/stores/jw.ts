@@ -136,7 +136,7 @@ export const useJwStore = defineStore('jw-store', {
         errorCatcher(e);
       }
     },
-    clearCurrentDayAdditionalMedia() {
+    clearAdditionalMediaForSelectedDate() {
       const currentState = useCurrentStateStore();
       const { currentCongregation, selectedDateObject } = currentState;
 
@@ -171,16 +171,29 @@ export const useJwStore = defineStore('jw-store', {
         errorCatcher(e);
       }
     },
-    showCurrentDayHiddenMedia() {
+    showHiddenMediaForSelectedDate() {
       const currentState = useCurrentStateStore();
       const { currentCongregation, selectedDateObject } = currentState;
+
       if (!currentCongregation || !selectedDateObject?.date) return;
-      this.lookupPeriod?.[currentCongregation]
-        ?.find((day) => datesAreSame(day.date, selectedDateObject?.date))
-        ?.dynamicMedia?.filter((media) => media.hidden)
-        ?.forEach((media) => {
+
+      const currentDay = this.lookupPeriod?.[currentCongregation]?.find((day) =>
+        datesAreSame(day.date, selectedDateObject.date),
+      );
+
+      if (!currentDay?.dynamicMedia) return;
+
+      currentDay.dynamicMedia.forEach((media) => {
+        if (media.hidden) {
           media.hidden = false;
-        });
+        }
+
+        if (media.children?.some((child) => child.hidden)) {
+          media.children.forEach((child) => {
+            if (child.hidden) child.hidden = false;
+          });
+        }
+      });
     },
     async updateJwLanguages() {
       if (!useCurrentStateStore().online) return;

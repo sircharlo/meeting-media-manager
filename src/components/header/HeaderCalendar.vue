@@ -126,14 +126,17 @@
           </q-item>
         </template>
         <template
-          v-if="additionalMediaForSelectedDayExists || hiddenMediaForDayExists"
+          v-if="
+            additionalMediaForSelectedDayExists ||
+            someItemsHiddenForSelectedDate
+          "
         >
           <q-item-label header>{{ t('dangerZone') }}</q-item-label>
           <q-item
-            v-if="hiddenMediaForDayExists"
+            v-if="someItemsHiddenForSelectedDate"
             v-close-popup
             clickable
-            @click="showCurrentDayHiddenMedia()"
+            @click="showHiddenMediaForSelectedDate()"
           >
             <q-item-section avatar>
               <q-icon color="primary" name="mmm-eye" />
@@ -185,7 +188,7 @@
           color="negative"
           flat
           :label="t('delete')"
-          @click="clearCurrentDayAdditionalMedia()"
+          @click="clearAdditionalMediaForSelectedDate()"
         />
       </q-card-actions>
     </q-card>
@@ -250,7 +253,8 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const jwStore = useJwStore();
-const { clearCurrentDayAdditionalMedia, showCurrentDayHiddenMedia } = jwStore;
+const { clearAdditionalMediaForSelectedDate, showHiddenMediaForSelectedDate } =
+  jwStore;
 const { lookupPeriod } = storeToRefs(jwStore);
 
 const { dateLocale } = useLocale();
@@ -259,11 +263,13 @@ const currentState = useCurrentStateStore();
 const {
   currentCongregation,
   currentSettings,
-  getMediaForSection,
+  getAllMediaForSection,
+  getVisibleMediaForSection,
   mediaPlaying,
   online,
   selectedDate,
   selectedDateObject,
+  someItemsHiddenForSelectedDate,
 } = storeToRefs(currentState);
 
 const section = ref<MediaSection | undefined>();
@@ -311,12 +317,6 @@ const additionalMediaForSelectedDayExists = computed(
     !!selectedDateObject.value?.dynamicMedia?.filter(
       (media) => media.source !== 'dynamic',
     )?.length,
-);
-
-const hiddenMediaForDayExists = computed<boolean>(
-  () =>
-    selectedDateObject.value?.dynamicMedia?.some((media) => media.hidden) ??
-    false,
 );
 
 const mediaDeleteAllPending = ref(false);
@@ -454,11 +454,11 @@ const mediaSortCanBeReset = computed<boolean>(() => {
   }
 
   const mediaToConsider = [
-    ...getMediaForSection.value.tgw,
-    ...getMediaForSection.value.ayfm,
-    ...getMediaForSection.value.lac,
-    ...getMediaForSection.value.wt,
-  ].filter((item) => !item.hidden);
+    ...getVisibleMediaForSection.value.tgw,
+    ...getVisibleMediaForSection.value.ayfm,
+    ...getVisibleMediaForSection.value.lac,
+    ...getVisibleMediaForSection.value.wt,
+  ];
 
   for (let i = 0; i < mediaToConsider.length - 1; i++) {
     const firstSortOrder = mediaToConsider[i]?.sortOrderOriginal ?? 0;
@@ -499,10 +499,10 @@ const resetSort = () => {
 
   // Combine all media items into one array
   const mediaToSort = [
-    ...getMediaForSection.value.tgw,
-    ...getMediaForSection.value.ayfm,
-    ...getMediaForSection.value.lac,
-    ...getMediaForSection.value.wt,
+    ...getAllMediaForSection.value.tgw,
+    ...getAllMediaForSection.value.ayfm,
+    ...getAllMediaForSection.value.lac,
+    ...getAllMediaForSection.value.wt,
   ];
 
   // Sort the media array in ascending order by `sortOrderOriginal`
@@ -514,12 +514,12 @@ const resetSort = () => {
   );
 
   selectedDateObject.value.dynamicMedia = [
-    ...getMediaForSection.value.additional,
+    ...getAllMediaForSection.value.additional,
     ...sortedMedia.filter((item) => item.section === 'tgw'),
     ...sortedMedia.filter((item) => item.section === 'ayfm'),
     ...sortedMedia.filter((item) => item.section === 'lac'),
     ...sortedMedia.filter((item) => item.section === 'wt'),
-    ...getMediaForSection.value.circuitOverseer,
+    ...getAllMediaForSection.value.circuitOverseer,
   ];
 };
 </script>

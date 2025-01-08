@@ -190,8 +190,8 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!currentLanguage) return [];
       return jwStore.jwSongs[currentLanguage]?.list || [];
     },
-    getMediaForSection(): Record<MediaSection, DynamicMediaObject[]> {
-      if (!this.selectedDateObject)
+    getAllMediaForSection(): Record<MediaSection, DynamicMediaObject[]> {
+      if (!this.selectedDateObject) {
         return {
           additional: [],
           ayfm: [],
@@ -200,26 +200,59 @@ export const useCurrentStateStore = defineStore('current-state', {
           tgw: [],
           wt: [],
         };
-      return {
-        additional: this.selectedDateObject.dynamicMedia.filter(
-          (m) => m.section === 'additional',
-        ),
-        ayfm: this.selectedDateObject.dynamicMedia.filter(
-          (m) => m.section === 'ayfm',
-        ),
-        circuitOverseer: this.selectedDateObject.dynamicMedia.filter(
-          (m) => m.section === 'circuitOverseer',
-        ),
-        lac: this.selectedDateObject.dynamicMedia.filter(
-          (m) => m.section === 'lac',
-        ),
-        tgw: this.selectedDateObject.dynamicMedia.filter(
-          (m) => m.section === 'tgw',
-        ),
-        wt: this.selectedDateObject.dynamicMedia.filter(
-          (m) => m.section === 'wt',
-        ),
-      };
+      }
+
+      const sections: MediaSection[] = [
+        'additional',
+        'ayfm',
+        'circuitOverseer',
+        'lac',
+        'tgw',
+        'wt',
+      ];
+
+      return sections.reduce(
+        (acc, section) => {
+          if (!this.selectedDateObject?.dynamicMedia) return acc;
+          acc[section] = this.selectedDateObject.dynamicMedia.filter(
+            (m) => m.section === section,
+          );
+          return acc;
+        },
+        {} as Record<MediaSection, DynamicMediaObject[]>,
+      );
+    },
+    getVisibleMediaForSection(): Record<MediaSection, DynamicMediaObject[]> {
+      if (!this.selectedDateObject) {
+        return {
+          additional: [],
+          ayfm: [],
+          circuitOverseer: [],
+          lac: [],
+          tgw: [],
+          wt: [],
+        };
+      }
+
+      const sections: MediaSection[] = [
+        'additional',
+        'ayfm',
+        'circuitOverseer',
+        'lac',
+        'tgw',
+        'wt',
+      ];
+
+      return sections.reduce(
+        (acc, section) => {
+          if (!this.selectedDateObject?.dynamicMedia) return acc;
+          acc[section] = this.selectedDateObject.dynamicMedia.filter(
+            (m) => m.section === section && !m.hidden,
+          );
+          return acc;
+        },
+        {} as Record<MediaSection, DynamicMediaObject[]>,
+      );
     },
     mediaPaused: (state) => {
       return (
@@ -256,7 +289,10 @@ export const useCurrentStateStore = defineStore('current-state', {
     },
     selectedDateObject: (state): DateInfo | null => {
       const jwStore = useJwStore();
-      if (!jwStore.lookupPeriod?.[state.currentCongregation]?.length) {
+      if (
+        !state.selectedDate ||
+        !jwStore.lookupPeriod?.[state.currentCongregation]?.length
+      ) {
         return null;
       }
       return (
@@ -265,6 +301,11 @@ export const useCurrentStateStore = defineStore('current-state', {
         ) ||
         jwStore.lookupPeriod[state.currentCongregation]?.[0] ||
         null
+      );
+    },
+    someItemsHiddenForSelectedDate(): boolean {
+      return !!this.selectedDateObject?.dynamicMedia.some(
+        (m) => m.hidden || m.children?.some((child) => child.hidden),
       );
     },
   },

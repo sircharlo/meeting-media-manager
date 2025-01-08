@@ -18,7 +18,7 @@
       ])
     }}</pre> -->
     <div class="col">
-      <div v-if="someItemsHidden" class="row">
+      <div v-if="someItemsHiddenForSelectedDate" class="row">
         <q-banner
           class="bg-warning text-white full-width"
           inline-actions
@@ -35,8 +35,7 @@
       <div
         v-if="
           (currentSettings?.disableMediaFetching &&
-            getMediaForSection.additional?.filter((m) => !m.hidden).length <
-              1) ||
+            getVisibleMediaForSection.additional.length < 1) ||
           (!currentSettings?.disableMediaFetching &&
             ((selectedDateObject?.meeting && !selectedDateObject?.complete) ||
               !selectedDateObject?.dynamicMedia?.filter((m) => !m.hidden)
@@ -48,7 +47,7 @@
           <div
             v-if="
               !currentSettings?.disableMediaFetching ||
-              !getMediaForSection.additional?.filter((m) => !m.hidden).length
+              !getVisibleMediaForSection.additional.length
             "
             class="row justify-center"
           >
@@ -147,7 +146,7 @@
             selectedDateObject?.date && isWeMeetingDay(selectedDateObject?.date)
               ? ''
               : undefined,
-          items: getMediaForSection.additional,
+          items: getVisibleMediaForSection.additional,
         },
         selectedDateObject?.date &&
           isWeMeetingDay(selectedDateObject?.date) &&
@@ -155,7 +154,7 @@
             type: 'wt',
             label: t('wt'),
             jwIcon: '',
-            items: getMediaForSection.wt,
+            items: getVisibleMediaForSection.wt,
             alwaysShow: true,
           },
         selectedDateObject?.date &&
@@ -164,7 +163,7 @@
             type: 'tgw',
             label: t('tgw'),
             jwIcon: '',
-            items: getMediaForSection.tgw,
+            items: getVisibleMediaForSection.tgw,
             alwaysShow: true,
           },
         selectedDateObject?.date &&
@@ -173,7 +172,7 @@
             type: 'ayfm',
             label: t('ayfm'),
             jwIcon: '',
-            items: getMediaForSection.ayfm,
+            items: getVisibleMediaForSection.ayfm,
             alwaysShow: true,
           },
         selectedDateObject?.date &&
@@ -182,7 +181,7 @@
             type: 'lac',
             label: t('lac'),
             jwIcon: '',
-            items: getMediaForSection.lac,
+            items: getVisibleMediaForSection.lac,
             alwaysShow: true,
           },
         selectedDateObject?.date &&
@@ -191,7 +190,7 @@
             type: 'circuitOverseer',
             label: t('circuit-overseer'),
             jwIcon: '',
-            items: getMediaForSection.circuitOverseer,
+            items: getVisibleMediaForSection.circuitOverseer,
             alwaysShow: true,
           },
       ].filter((m) => !!m)"
@@ -283,6 +282,28 @@
               bordered
               class="q-mx-sm q-my-sm media-children rounded-borders overflow-hidden"
             >
+              <q-menu context-menu style="overflow-x: hidden" touch-position>
+                <q-list>
+                  <!-- <q-item-label header>{{ element.extractCaption }}</q-item-label> -->
+                  <q-item
+                    v-close-popup
+                    clickable
+                    :disable="!!mediaPlayingUrl"
+                    @click="element.hidden = true"
+                  >
+                    <q-item-section avatar>
+                      <q-icon name="mmm-file-hidden" />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ t('hide-from-list') }}</q-item-label>
+                      <q-item-label caption>
+                        {{ t('hide-from-list-explain') }}
+                      </q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-menu>
+
               <q-expansion-item
                 :key="element.children.map((m) => m.uniqueId).join(',')"
                 v-model="expandedMediaGroups[element.uniqueId]"
@@ -294,6 +315,8 @@
                     : ''
                 "
               >
+                <!-- v-model="contextMenu" -->
+                <!-- :target="menuTarget" -->
                 <template #header>
                   <q-item-section>
                     <div>
@@ -553,7 +576,7 @@ const currentState = useCurrentStateStore();
 const {
   currentCongregation,
   currentSettings,
-  getMediaForSection,
+  getVisibleMediaForSection,
   mediaPaused,
   mediaPlaying,
   mediaPlayingAction,
@@ -565,6 +588,7 @@ const {
   missingMedia,
   selectedDate,
   selectedDateObject,
+  someItemsHiddenForSelectedDate,
 } = storeToRefs(currentState);
 const { getDatedAdditionalMediaDirectory } = currentState;
 const {
@@ -684,10 +708,6 @@ watch(
   (newCurrentTime) => {
     mediaPlayingCurrentPosition.value = newCurrentTime;
   },
-);
-
-const someItemsHidden = computed(
-  () => !!selectedDateObject.value?.dynamicMedia.some((m) => m.hidden),
 );
 
 watch(
@@ -889,12 +909,12 @@ watchImmediate(
 
 const sortedMedia = computed(() => {
   return [
-    ...getMediaForSection.value.additional,
-    ...getMediaForSection.value.tgw,
-    ...getMediaForSection.value.ayfm,
-    ...getMediaForSection.value.lac,
-    ...getMediaForSection.value.wt,
-    ...getMediaForSection.value.circuitOverseer,
+    ...getVisibleMediaForSection.value.additional,
+    ...getVisibleMediaForSection.value.tgw,
+    ...getVisibleMediaForSection.value.ayfm,
+    ...getVisibleMediaForSection.value.lac,
+    ...getVisibleMediaForSection.value.wt,
+    ...getVisibleMediaForSection.value.circuitOverseer,
   ];
 });
 
@@ -1315,7 +1335,8 @@ const handleMediaDrag = (
       break;
 
     case 'START': {
-      const draggingItem = getMediaForSection.value[list]?.[evt.oldIndex];
+      const draggingItem =
+        getVisibleMediaForSection.value[list]?.[evt.oldIndex];
       if (draggingItem) {
         mediaItemBeingDragged.value = draggingItem;
       }
