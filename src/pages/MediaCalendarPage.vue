@@ -24,6 +24,13 @@
               <q-icon name="mmm-file-hidden" size="sm" />
             </q-avatar>
           </template>
+          <template #action>
+            <q-btn
+              flat
+              :label="t('show-all-media')"
+              @click="showHiddenMediaForSelectedDate()"
+            />
+          </template>
         </q-banner>
       </div>
       <div
@@ -571,7 +578,7 @@ const route = useRoute();
 const router = useRouter();
 
 const jwStore = useJwStore();
-const { addToAdditionMediaMap } = jwStore;
+const { addToAdditionMediaMap, showHiddenMediaForSelectedDate } = jwStore;
 const { lookupPeriod, urlVariables } = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
 const {

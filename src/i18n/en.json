@@ -347,7 +347,7 @@
   "show-hidden-media-explain": "This will show any media that was previously hidden for the currently selected day.",
   "show-image-for-zoom-participants": "Show image for Zoom participants",
   "show-media-display": "Show media display",
-  "some-media-items-are-hidden": "Some media items have been hidden. They can be shown using the 'Add media' menu if needed.",
+  "some-media-items-are-hidden": "Some media items have been hidden.",
   "some-media-items-are-missing": "Some media files are missing",
   "some-media-items-are-missing-explain": "The JWPUB file was imported successfully. However, some media is not included in the file and could not be downloaded automatically. You can add this media manually if needed by using the 'Add media' menu or by dragging it into the media list from your computer.",
   "song": "Song",
@@ -413,5 +413,6 @@
   "yes": "Yes",
   "you-can-navigate-the-website-before-presenting-it": "If necessary, you can navigate to a specific page before presenting it to the audience. When you're ready, press the \"Start Mirroring\" button on the top right corner of this window. What you see in the website window will now be displayed in the media window for the audience to see.",
   "zoom-in": "Zoom in",
-  "zoom-out": "Zoom out"
+  "zoom-out": "Zoom out",
+  "show-all-media": "Show all media"
 }
