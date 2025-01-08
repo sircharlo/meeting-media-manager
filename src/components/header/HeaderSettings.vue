@@ -258,20 +258,22 @@ const allCacheFilesSize = computed(() => {
   }
 });
 
-const lookupPeriodsCollections = Object.values(lookupPeriod.value).flatMap(
-  (congregationLookupPeriods) =>
-    congregationLookupPeriods?.flatMap(
-      (lookupPeriods) => lookupPeriods?.dynamicMedia || [],
-    ),
-);
-
-const mediaFileParentDirectories = new Set([
-  ...lookupPeriodsCollections.map((media) =>
-    media ? pathToFileURL(getParentDirectory(media.fileUrl)) : '',
-  ),
-]);
-
 const getCacheFiles = async (cacheDirs: string[]) => {
+  const lookupPeriodsCollections = Object.values(lookupPeriod.value).flatMap(
+    (congregationLookupPeriods) =>
+      congregationLookupPeriods?.flatMap(
+        (lookupPeriods) => lookupPeriods?.dynamicMedia || [],
+      ),
+  );
+
+  const mediaFileParentDirectories = new Set(
+    lookupPeriodsCollections.map((media) =>
+      media ? pathToFileURL(getParentDirectory(media.fileUrl)) : '',
+    ),
+  );
+
+  console.log(mediaFileParentDirectories);
+
   const files: CacheFile[] = [];
   for (const cacheDir of cacheDirs) {
     try {
