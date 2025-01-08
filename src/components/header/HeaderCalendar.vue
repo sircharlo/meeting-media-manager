@@ -126,11 +126,11 @@
           </q-item>
         </template>
         <template
-          v-if="additionalMediaForSelectedDayExists || hiddenMediaForDay"
+          v-if="additionalMediaForSelectedDayExists || hiddenMediaForDayExists"
         >
           <q-item-label header>{{ t('dangerZone') }}</q-item-label>
           <q-item
-            v-if="hiddenMediaForDay"
+            v-if="hiddenMediaForDayExists"
             v-close-popup
             clickable
             @click="showCurrentDayHiddenMedia()"
@@ -312,8 +312,10 @@ const additionalMediaForSelectedDayExists = computed(
     )?.length,
 );
 
-const hiddenMediaForDay = computed(() =>
-  selectedDateObject.value?.dynamicMedia?.some((media) => media.hidden),
+const hiddenMediaForDayExists = computed<boolean>(
+  () =>
+    selectedDateObject.value?.dynamicMedia?.some((media) => media.hidden) ??
+    false,
 );
 
 const mediaDeleteAllPending = ref(false);
