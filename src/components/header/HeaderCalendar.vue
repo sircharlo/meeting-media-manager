@@ -232,6 +232,7 @@ import PublicTalkMediaPicker from 'components/media/PublicTalkMediaPicker.vue';
 import SongPicker from 'components/media/SongPicker.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
+import { SORTER } from 'src/constants/general';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   datesAreSame,
@@ -447,14 +448,11 @@ const mediaSortCanBeReset = computed<boolean>(() => {
   for (let i = 0; i < watchedMediaToConsider.length - 1; i++) {
     const firstTitle = watchedMediaToConsider[i]?.title ?? '';
     const secondTitle = watchedMediaToConsider[i + 1]?.title ?? '';
-    if (
-      firstTitle.localeCompare(secondTitle, undefined, {
-        numeric: true,
-      }) > 0
-    ) {
+    if (SORTER.compare(firstTitle, secondTitle) > 0) {
       return true; // Array is not sorted
     }
   }
+
   const mediaToConsider = [
     ...getMediaForSection.value.tgw,
     ...getMediaForSection.value.ayfm,
@@ -490,13 +488,12 @@ const resetSort = () => {
       (item) => item.source !== 'watched',
     );
 
-  watchedMedia.sort((a, b) => {
-    const firstSortOrder = a?.sortOrderOriginal?.toString() ?? '0';
-    const secondSortOrder = b?.sortOrderOriginal?.toString() ?? '0';
-    return firstSortOrder.localeCompare(secondSortOrder, undefined, {
-      numeric: true,
-    });
-  });
+  watchedMedia.sort((a, b) =>
+    SORTER.compare(
+      a?.sortOrderOriginal?.toString() ?? '0',
+      b?.sortOrderOriginal?.toString() ?? '0',
+    ),
+  );
 
   selectedDateObject.value.dynamicMedia.push(...watchedMedia);
 
@@ -509,13 +506,12 @@ const resetSort = () => {
   ];
 
   // Sort the media array in ascending order by `sortOrderOriginal`
-  const sortedMedia = mediaToSort.sort((a, b) => {
-    const firstSortOrder = a?.sortOrderOriginal?.toString() ?? '0';
-    const secondSortOrder = b?.sortOrderOriginal?.toString() ?? '0';
-    return firstSortOrder.localeCompare(secondSortOrder, undefined, {
-      numeric: true,
-    });
-  });
+  const sortedMedia = mediaToSort.sort((a, b) =>
+    SORTER.compare(
+      a?.sortOrderOriginal?.toString() ?? '0',
+      b?.sortOrderOriginal?.toString() ?? '0',
+    ),
+  );
 
   selectedDateObject.value.dynamicMedia = [
     ...getMediaForSection.value.additional,

@@ -46,6 +46,7 @@ import NavDrawer from 'components/ui/NavDrawer.vue';
 // Packages
 import { storeToRefs } from 'pinia';
 import { useMeta, useQuasar } from 'quasar';
+import { SORTER } from 'src/constants/general';
 // Helpers
 import {
   cleanAdditionalMediaFolder,
@@ -355,9 +356,7 @@ const updateWatchFolderRef = async ({
         // Find the correct index to insert the item in the sorted order
         const insertIndex = dayObj.dynamicMedia.findIndex(
           (existingItem) =>
-            existingItem.title.localeCompare(watchedItem.title, undefined, {
-              numeric: true,
-            }) > 0,
+            SORTER.compare(existingItem.title, watchedItem.title) > 0,
         );
 
         if (insertIndex === -1) {
