@@ -341,8 +341,8 @@ const updateWatchFolderRef = async ({
         }
       }
     } else if (event === 'add') {
-      const watchedItems =
-        (await watchedItemMapper(day, changedPath ?? '')) || [];
+      if (!changedPath) return;
+      const watchedItems = (await watchedItemMapper(day, changedPath)) || [];
 
       for (const watchedItem of watchedItems) {
         if (
@@ -369,7 +369,8 @@ const updateWatchFolderRef = async ({
         }
       }
     } else if (event === 'unlink') {
-      const targetUrl = window.electronApi.pathToFileURL(changedPath ?? '');
+      if (!changedPath) return;
+      const targetUrl = window.electronApi.pathToFileURL(changedPath);
       for (let i = dayObj.dynamicMedia.length - 1; i >= 0; i--) {
         if (
           dayObj.dynamicMedia[i]?.source === 'watched' &&
