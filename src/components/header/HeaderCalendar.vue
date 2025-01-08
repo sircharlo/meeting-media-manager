@@ -283,13 +283,6 @@ const openDragAndDropper = () => {
   );
 };
 
-const additionalMediaForDay = computed(
-  () =>
-    selectedDateObject.value?.dynamicMedia.filter(
-      (media) => media.source !== 'dynamic',
-    ) || [],
-);
-
 const additionalMediaDates = computed(() =>
   (
     lookupPeriod.value?.[currentCongregation.value]?.filter((day) =>
@@ -313,8 +306,12 @@ const additionalMediaForDayExists = (lookupDate: string) => {
 };
 
 const additionalMediaForSelectedDayExists = computed(
-  () => (additionalMediaForDay.value?.length || 0) > 0,
+  () =>
+    !!selectedDateObject.value?.dynamicMedia?.filter(
+      (media) => media.source !== 'dynamic',
+    )?.length,
 );
+
 const hiddenMediaForDay = computed(() =>
   selectedDateObject.value?.dynamicMedia?.some((media) => media.hidden),
 );
