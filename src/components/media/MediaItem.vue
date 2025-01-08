@@ -7,7 +7,9 @@
       'justify-center': true,
       'bg-accent-100-transparent': playState === 'current',
       'bg-accent-100': mediaPlayingUniqueId === '' && playState === 'current',
+      'q-px-sm': child,
     }"
+    :style="child ? 'padding: 8px 6px' : undefined"
   >
     <div class="col-shrink">
       <div
@@ -757,6 +759,7 @@ const mediaToDelete = ref('');
 const mediaDeletePending = computed(() => !!mediaToDelete.value);
 
 const props = defineProps<{
+  child?: boolean;
   media: DynamicMediaObject;
   playState: string;
 }>();

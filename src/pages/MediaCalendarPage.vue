@@ -281,7 +281,7 @@
             <q-list
               v-if="element.children"
               bordered
-              class="q-mx-md q-my-sm media-children rounded-borders overflow-hidden"
+              class="q-mx-sm q-my-sm media-children rounded-borders overflow-hidden"
             >
               <q-expansion-item
                 :key="element.children.map((m) => m.uniqueId).join(',')"
@@ -326,6 +326,7 @@
                       <MediaItem
                         :key="childElement.uniqueId"
                         v-model:repeat="childElement.repeat"
+                        child
                         :media="childElement"
                         :play-state="playState(childElement.uniqueId)"
                         @update:custom-duration="
