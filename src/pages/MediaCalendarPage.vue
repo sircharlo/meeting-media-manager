@@ -11,12 +11,6 @@
     @dragstart="dropActive"
     @drop="dropEnd"
   >
-    <!-- <pre>{{
-      (selectedDateObject?.dynamicMedia || []).map((m) => [
-        m.sortOrderOriginal,
-        m.section,
-      ])
-    }}</pre> -->
     <div class="col">
       <div v-if="someItemsHiddenForSelectedDate" class="row">
         <q-banner
@@ -307,6 +301,11 @@
                 <q-expansion-item
                   :key="element.children.map((m) => m.uniqueId).join(',')"
                   v-model="expandedMediaGroups[element.uniqueId]"
+                  :disable="
+                    element.children
+                      .map((m) => m.fileUrl)
+                      .includes(mediaPlayingUrl)
+                  "
                   :header-class="
                     expandedMediaGroups[element.uniqueId]
                       ? $q.dark.isActive
@@ -909,7 +908,7 @@ watchImmediate(
   },
 );
 
-const sortedMedia = computed(() => {
+const keyboardShortcutMediaList = computed(() => {
   return [
     ...getVisibleMediaForSection.value.additional,
     ...getVisibleMediaForSection.value.tgw,
@@ -917,21 +916,27 @@ const sortedMedia = computed(() => {
     ...getVisibleMediaForSection.value.lac,
     ...getVisibleMediaForSection.value.wt,
     ...getVisibleMediaForSection.value.circuitOverseer,
-  ];
+  ].flatMap((m) => {
+    return m.children
+      ? m.children.map((c) => {
+          return {
+            ...c,
+            parentUniqueId: m.uniqueId,
+          };
+        })
+      : [m];
+  });
 });
 
-const sortedMediaIds = computed(() => {
-  return sortedMedia.value
-    .filter((m) => !m.hidden)
-    .map((m) => m.uniqueId)
-    .filter((uniqueId, index, self) => self.indexOf(uniqueId) === index);
-});
+// const sortedMediaIds = computed(() => {
+//   return keyboardShortcutMediaList.value.map((m) => m.uniqueId);
+// });
 
 const arraysAreIdentical = (a: string[], b: string[]) =>
   a.length === b.length && a.every((element, index) => element === b[index]);
 
 const sortedMediaFileUrls = computed(() =>
-  sortedMedia.value
+  keyboardShortcutMediaList.value
     .filter((m) => !m.hidden && !!m.fileUrl)
     .map((m) => m.fileUrl)
     .filter((m) => typeof m === 'string')
@@ -958,20 +963,45 @@ const lastPlayedMediaUniqueId = ref<string>('');
 
 const nextMediaUniqueId = computed(() => {
   if (!selectedDate.value) return '';
-  if (!lastPlayedMediaUniqueId.value) return sortedMediaIds.value[0];
-  const index = sortedMediaIds.value.indexOf(lastPlayedMediaUniqueId.value);
-  if (index === -1) return sortedMediaIds.value[0];
-  return sortedMediaIds.value[
-    Math.min(index + 1, sortedMediaIds.value.length - 1)
-  ];
+  const sortedMediaIds = keyboardShortcutMediaList.value.map((m) => m.uniqueId);
+  if (!lastPlayedMediaUniqueId.value) return sortedMediaIds[0];
+  const index = sortedMediaIds.indexOf(lastPlayedMediaUniqueId.value);
+  if (index === -1) return sortedMediaIds[0];
+  for (let i = index + 1; i < keyboardShortcutMediaList.value.length; i++) {
+    const mediaItem = keyboardShortcutMediaList.value[i];
+    if (mediaItem) {
+      if (
+        !mediaItem.extractCaption ||
+        (mediaItem?.parentUniqueId &&
+          expandedMediaGroups.value[mediaItem.parentUniqueId])
+      ) {
+        return mediaItem.uniqueId;
+      }
+    }
+  }
+  return sortedMediaIds[0];
 });
 
 const previousMediaUniqueId = computed(() => {
   if (!selectedDate.value) return '';
-  if (!lastPlayedMediaUniqueId.value) return sortedMediaIds.value[0];
-  const index = sortedMediaIds.value.indexOf(lastPlayedMediaUniqueId.value);
-  if (index === -1) return sortedMediaIds.value[0];
-  return sortedMediaIds.value[Math.max(index - 1, 0)];
+  const sortedMediaIds = keyboardShortcutMediaList.value.map((m) => m.uniqueId);
+  if (!lastPlayedMediaUniqueId.value) return sortedMediaIds[0];
+  const index = sortedMediaIds.indexOf(lastPlayedMediaUniqueId.value);
+  if (index === -1) return sortedMediaIds[0];
+
+  for (let i = index - 1; i >= 0; i--) {
+    const mediaItem = keyboardShortcutMediaList.value[i];
+    if (mediaItem) {
+      if (
+        !mediaItem.extractCaption ||
+        (mediaItem.parentUniqueId &&
+          expandedMediaGroups.value[mediaItem.parentUniqueId])
+      ) {
+        return mediaItem.uniqueId;
+      }
+    }
+  }
+  return sortedMediaIds[0];
 });
 
 const playState = (id: string) => {
