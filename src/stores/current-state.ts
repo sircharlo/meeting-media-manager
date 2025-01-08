@@ -14,7 +14,7 @@ import type {
 import { defineStore } from 'pinia';
 import { settingsDefinitions } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { formatDate, getDateDiff } from 'src/utils/date';
+import { datesAreSame, formatDate } from 'src/utils/date';
 import { getAdditionalMediaPath, isFileUrl } from 'src/utils/fs';
 import { isEmpty, isUUID } from 'src/utils/general';
 import { formatTime } from 'src/utils/time';
@@ -260,8 +260,8 @@ export const useCurrentStateStore = defineStore('current-state', {
         return null;
       }
       return (
-        jwStore.lookupPeriod?.[state.currentCongregation]?.find(
-          (day) => getDateDiff(day.date, state.selectedDate, 'days') === 0,
+        jwStore.lookupPeriod?.[state.currentCongregation]?.find((day) =>
+          datesAreSame(day.date, state.selectedDate),
         ) ||
         jwStore.lookupPeriod[state.currentCongregation]?.[0] ||
         null

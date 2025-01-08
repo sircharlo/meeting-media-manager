@@ -234,6 +234,7 @@ import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
+  datesAreSame,
   formatDate,
   friendlyDayToJsDay,
   getDateDiff,
@@ -301,7 +302,7 @@ const additionalMediaForDayExists = (lookupDate: string) => {
   try {
     return (
       (lookupPeriod.value?.[currentCongregation.value]
-        ?.find((day) => getDateDiff(lookupDate, day.date, 'days') === 0)
+        ?.find((day) => datesAreSame(lookupDate, day.date))
         ?.dynamicMedia.filter((media) => media.source !== 'dynamic')?.length ||
         0) > 0
     );
@@ -394,7 +395,7 @@ const getEventDayColor = (eventDate: string) => {
     if (!lookupPeriod.value || !currentCongregation.value)
       throw new Error('No congregation or lookup period');
     const lookupDate = lookupPeriod.value[currentCongregation.value]?.find(
-      (d) => getDateDiff(eventDate, d.date, 'days') === 0,
+      (d) => datesAreSame(eventDate, d.date),
     );
     if (lookupDate?.error) {
       return 'negative';

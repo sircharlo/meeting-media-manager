@@ -22,7 +22,7 @@ import {
   fetchPubMediaLinks,
   fetchYeartext,
 } from 'src/utils/api';
-import { dateFromString, getDateDiff } from 'src/utils/date';
+import { dateFromString, datesAreSame, getDateDiff } from 'src/utils/date';
 import { findBestResolution, getPubId, isMediaLink } from 'src/utils/jw';
 import { useCurrentStateStore } from 'stores/current-state';
 
@@ -106,8 +106,8 @@ export const useJwStore = defineStore('jw-store', {
         }
 
         // Find or create the period object for the selected date
-        let period = this.lookupPeriod[currentCongregation].find(
-          (d) => getDateDiff(d.date, selectedDateObject.date, 'days') === 0,
+        let period = this.lookupPeriod[currentCongregation].find((d) =>
+          datesAreSame(d.date, selectedDateObject.date),
         );
 
         if (!period) {
@@ -118,10 +118,7 @@ export const useJwStore = defineStore('jw-store', {
         const getAdditionalCount = () => {
           return (
             (this.lookupPeriod[currentCongregation] || [])
-              .find(
-                (d) =>
-                  getDateDiff(d.date, selectedDateObject.date, 'days') === 0,
-              )
+              .find((d) => datesAreSame(d.date, selectedDateObject.date))
               ?.dynamicMedia.filter((m) => m.section === 'additional').length ||
             0
           );
@@ -179,10 +176,7 @@ export const useJwStore = defineStore('jw-store', {
       const { currentCongregation, selectedDateObject } = currentState;
       if (!currentCongregation || !selectedDateObject?.date) return;
       this.lookupPeriod?.[currentCongregation]
-        ?.find(
-          (day) =>
-            getDateDiff(day.date, selectedDateObject?.date, 'days') === 0,
-        )
+        ?.find((day) => datesAreSame(day.date, selectedDateObject?.date))
         ?.dynamicMedia?.filter((media) => media.hidden)
         ?.forEach((media) => {
           media.hidden = false;

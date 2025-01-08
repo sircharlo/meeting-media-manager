@@ -78,7 +78,7 @@ export const getLocalDate = (
 export const datesAreSame = (date1: Date | string, date2: Date | string) => {
   try {
     if (!date1 || !date2) throw new Error('Missing date for comparison');
-    return new Date(date1).toDateString() === new Date(date2).toDateString();
+    return getDateDiff(date1, date2, 'days') === 0;
   } catch (error) {
     errorCatcher(error, {
       contexts: { fn: { date1, date2, name: 'datesAreSame' } },
