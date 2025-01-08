@@ -1,10 +1,6 @@
 <template>
   <q-page
-    :class="
-      !selectedDateObject?.dynamicMedia?.filter((m) => !m.hidden).length
-        ? 'flex'
-        : ''
-    "
+    :class="!someItemsHidden ? 'flex' : ''"
     padding
     @dragenter="dropActive"
     @dragover="dropActive"
@@ -39,8 +35,7 @@
               1) ||
           (!currentSettings?.disableMediaFetching &&
             ((selectedDateObject?.meeting && !selectedDateObject?.complete) ||
-              !selectedDateObject?.dynamicMedia?.filter((m) => !m.hidden)
-                .length))
+              !someItemsHidden))
         "
         class="row"
       >
@@ -685,7 +680,7 @@ watch(
   },
 );
 
-const someItemsHidden = computed(
+const someItemsHidden = computed<boolean>(
   () => !!selectedDateObject.value?.dynamicMedia.some((m) => m.hidden),
 );
 
