@@ -284,9 +284,9 @@ const openDragAndDropper = () => {
 
 const additionalMediaForDay = computed(
   () =>
-    lookupPeriod.value?.[currentCongregation.value]
-      ?.find((day) => formatDate(day.date, 'YYYY/MM/DD') === selectedDate.value)
-      ?.dynamicMedia.filter((media) => media.source !== 'dynamic') || [],
+    selectedDateObject.value?.dynamicMedia.filter(
+      (media) => media.source !== 'dynamic',
+    ) || [],
 );
 
 const additionalMediaDates = computed(() =>
@@ -315,9 +315,7 @@ const additionalMediaForSelectedDayExists = computed(
   () => (additionalMediaForDay.value?.length || 0) > 0,
 );
 const hiddenMediaForDay = computed(() =>
-  lookupPeriod.value?.[currentCongregation.value]
-    ?.find((day) => formatDate(day.date, 'YYYY/MM/DD') === selectedDate.value)
-    ?.dynamicMedia?.some((media) => media.hidden),
+  selectedDateObject.value?.dynamicMedia?.some((media) => media.hidden),
 );
 
 const mediaDeleteAllPending = ref(false);

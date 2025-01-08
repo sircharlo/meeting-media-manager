@@ -124,12 +124,10 @@ import { storeToRefs } from 'pinia';
 import { remainingTimeBeforeMeetingStart } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadBackgroundMusic } from 'src/helpers/jw-media';
-import { getDateDiff } from 'src/utils/date';
 import { getPublicationDirectoryContents } from 'src/utils/fs';
 import { getMetadataFromMediaPath, isVideo } from 'src/utils/media';
 import { formatTime } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
-import { useJwStore } from 'stores/jw';
 import { ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -152,13 +150,9 @@ const {
   musicRemainingTime,
   musicStarting,
   musicStopping,
-  selectedDate,
   selectedDateObject,
   timeRemainingBeforeMusicStop,
 } = storeToRefs(currentState);
-
-const jwStore = useJwStore();
-const { lookupPeriod } = storeToRefs(jwStore);
 
 const musicPlayer = useTemplateRef('musicPlayer');
 const musicPlayerSource = ref<HTMLSourceElement>(
@@ -318,10 +312,7 @@ const getNextSong = async () => {
           metadata?.common.title ?? path.basename(queuedSong.path);
       }
       try {
-        const selectedDayMedia =
-          lookupPeriod.value[currentCongregation.value]?.find(
-            (d) => getDateDiff(selectedDate.value, d.date, 'days') === 0,
-          )?.dynamicMedia ?? [];
+        const selectedDayMedia = selectedDateObject.value?.dynamicMedia ?? [];
         const regex = /(_r\d{3,4}P)?\.\w+$/;
         const selectedDaySongs: SongItem[] = selectedDayMedia
           .map((d) =>

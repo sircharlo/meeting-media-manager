@@ -23,7 +23,6 @@ import {
   fetchYeartext,
 } from 'src/utils/api';
 import { dateFromString, getDateDiff } from 'src/utils/date';
-import { isFileUrl } from 'src/utils/fs';
 import { findBestResolution, getPubId, isMediaLink } from 'src/utils/jw';
 import { useCurrentStateStore } from 'stores/current-state';
 
@@ -142,47 +141,35 @@ export const useJwStore = defineStore('jw-store', {
     },
     clearCurrentDayAdditionalMedia() {
       const currentState = useCurrentStateStore();
-      const { currentCongregation, selectedDate } = currentState;
+      const { currentCongregation, selectedDateObject } = currentState;
 
-      // Early exit if required data is missing
-      if (!currentCongregation || !selectedDate) return;
+      if (!currentCongregation || !selectedDateObject?.dynamicMedia) return;
 
-      // Find the day matching the selected date
-      const day = this.lookupPeriod?.[currentCongregation]?.find(
-        (day) => getDateDiff(day.date, selectedDate, 'days') === 0,
-      );
-
-      // Filter out media with source 'additional' if day and dynamicMedia exist
-      if (day?.dynamicMedia) {
-        for (let i = day.dynamicMedia.length - 1; i >= 0; i--) {
-          if (day.dynamicMedia[i]?.source === 'additional') {
-            day.dynamicMedia.splice(i, 1);
-          }
+      for (let i = selectedDateObject.dynamicMedia.length - 1; i >= 0; i--) {
+        if (selectedDateObject.dynamicMedia[i]?.source === 'additional') {
+          selectedDateObject.dynamicMedia.splice(i, 1);
         }
       }
     },
     removeFromAdditionMediaMap(uniqueId: string) {
       try {
-        const { currentCongregation, selectedDate } = useCurrentStateStore();
+        const { currentCongregation, selectedDateObject } =
+          useCurrentStateStore();
 
-        // Early exit if required data is missing
-        if (!uniqueId || !currentCongregation || !selectedDate) return;
+        if (
+          !uniqueId ||
+          !currentCongregation ||
+          !selectedDateObject?.dynamicMedia
+        )
+          return;
 
-        // Find the day matching the selected date
-        const day = this.lookupPeriod?.[currentCongregation]?.find(
-          (day) => getDateDiff(day.date, selectedDate, 'days') === 0,
-        );
-
-        if (day?.dynamicMedia) {
-          // First, remove the item with the specific uniqueId
-          for (let i = day.dynamicMedia.length - 1; i >= 0; i--) {
-            if (day.dynamicMedia[i]?.uniqueId === uniqueId) {
-              day.dynamicMedia.splice(i, 1);
-            }
+        for (let i = selectedDateObject.dynamicMedia.length - 1; i >= 0; i--) {
+          if (selectedDateObject.dynamicMedia[i]?.uniqueId === uniqueId) {
+            selectedDateObject.dynamicMedia.splice(i, 1);
           }
-
-          deduplicateById(day.dynamicMedia);
         }
+
+        deduplicateById(selectedDateObject.dynamicMedia);
       } catch (e) {
         errorCatcher(e);
       }
@@ -369,21 +356,6 @@ export const useJwStore = defineStore('jw-store', {
           '/fonts/wt-clear-text/1.024/Wt-ClearText-Bold.woff2',
         ),
       };
-    },
-    missingMedia: (state) => {
-      const { currentCongregation, selectedDate, selectedDateObject } =
-        useCurrentStateStore();
-      if (!currentCongregation || !selectedDate || !selectedDateObject) {
-        return [];
-      }
-      const allMediaItems =
-        state.lookupPeriod?.[currentCongregation]?.find(
-          (day) =>
-            getDateDiff(day.date, selectedDateObject?.date, 'days') === 0,
-        )?.dynamicMedia || [];
-      return allMediaItems.filter(
-        (media) => !media.children?.length && !isFileUrl(media.fileUrl),
-      );
     },
     yeartext: (state) => {
       const year = new Date().getFullYear();

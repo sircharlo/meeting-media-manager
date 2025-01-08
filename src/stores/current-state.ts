@@ -15,7 +15,7 @@ import { defineStore } from 'pinia';
 import { settingsDefinitions } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { formatDate, getDateDiff } from 'src/utils/date';
-import { getAdditionalMediaPath } from 'src/utils/fs';
+import { getAdditionalMediaPath, isFileUrl } from 'src/utils/fs';
 import { isEmpty, isUUID } from 'src/utils/general';
 import { formatTime } from 'src/utils/time';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
@@ -229,6 +229,17 @@ export const useCurrentStateStore = defineStore('current-state', {
     mediaPlaying: (state) => {
       return (
         state.mediaPlayingUrl !== '' || state.mediaPlayingAction === 'website'
+      );
+    },
+    missingMedia(state): DynamicMediaObject[] {
+      if (
+        !state.currentCongregation ||
+        !this.selectedDateObject?.dynamicMedia
+      ) {
+        return [];
+      }
+      return this.selectedDateObject.dynamicMedia.filter(
+        (media) => !media.children?.length && !isFileUrl(media.fileUrl),
       );
     },
     musicRemainingTime: (state) => {

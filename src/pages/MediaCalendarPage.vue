@@ -547,7 +547,7 @@ const router = useRouter();
 
 const jwStore = useJwStore();
 const { addToAdditionMediaMap } = jwStore;
-const { lookupPeriod, missingMedia, urlVariables } = storeToRefs(jwStore);
+const { lookupPeriod, urlVariables } = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
 const {
   currentCongregation,
@@ -561,6 +561,7 @@ const {
   mediaPlayingSubtitlesUrl,
   mediaPlayingUniqueId,
   mediaPlayingUrl,
+  missingMedia,
   selectedDate,
   selectedDateObject,
 } = storeToRefs(currentState);
