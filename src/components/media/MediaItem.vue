@@ -1,9 +1,5 @@
 <template>
-  <pre v-if="media.children">
-    {{ media.children }}
-  </pre>
   <q-item
-    v-else
     v-show="!media.hidden"
     ref="mediaItem"
     :class="{
