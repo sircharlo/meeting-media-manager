@@ -294,6 +294,8 @@ export const useJwStore = defineStore('jw-store', {
         const currentState = useCurrentStateStore();
         if (!currentState.currentSettings || !currentState.online) return;
 
+        if (currentState.currentLangObject?.isSignLanguage) return;
+
         const year = new Date().getFullYear();
         const promises: Promise<{ wtlocale: JwLangCode; yeartext?: string }>[] =
           [];
@@ -367,7 +369,8 @@ export const useJwStore = defineStore('jw-store', {
     yeartext: (state) => {
       const year = new Date().getFullYear();
       if (!state.yeartexts[year]) return;
-      const { currentSettings } = useCurrentStateStore();
+      const { currentLangObject, currentSettings } = useCurrentStateStore();
+      if (currentLangObject?.isSignLanguage) return;
       if (!currentSettings) return;
       const primary = state.yeartexts[year][currentSettings.lang];
       const fallback = currentSettings.langFallback

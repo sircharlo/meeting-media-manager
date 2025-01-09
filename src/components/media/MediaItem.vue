@@ -841,6 +841,10 @@ const updateMediaCustomDuration = (customDuration?: {
   min: number;
 }) => {
   emit('update:customDuration', JSON.stringify(customDuration || ''));
+  mediaCustomDuration.value = {
+    max: customDuration?.max ?? props.media.duration,
+    min: customDuration?.min ?? 0,
+  };
 };
 
 const customDurationIsSet = computed(() => {
@@ -886,11 +890,11 @@ const setMediaPlaying = async (
       });
     } else {
       updateMediaCustomDuration();
-      mediaPlayingAction.value = 'play';
     }
   } else {
     if (mediaPanzoom.value) mediaPlayingPanzoom.value = mediaPanzoom.value;
   }
+  mediaPlayingAction.value = 'play';
   const filePath = fileUrlToPath(media.fileUrl);
   const fileExists = await fs.pathExists(filePath);
   mediaPlayingUrl.value =
@@ -969,10 +973,6 @@ const resetMediaDuration = () => {
   try {
     mediaDurationPopup.value = false;
     updateMediaCustomDuration();
-    mediaCustomDuration.value = {
-      max: props.media.duration,
-      min: 0,
-    };
     customDurationMinUserInput.value = formatTime(
       mediaCustomDuration.value.min,
     );
@@ -995,7 +995,9 @@ const saveMediaDuration = () => {
 const { post } = useBroadcastChannel<number, number>({ name: 'seek-to' });
 
 const seekTo = (newSeekTo: null | number) => {
-  if (newSeekTo !== null) post(newSeekTo);
+  if (newSeekTo !== null) {
+    post(newSeekTo);
+  }
 };
 
 function zoomIn(click?: MouseEvent) {
