@@ -315,7 +315,7 @@
                   :header-class="
                     expandedMediaGroups[element.uniqueId]
                       ? $q.dark.isActive
-                        ? 'bg-accent-300'
+                        ? 'bg-accent-400'
                         : 'bg-accent-200'
                       : ''
                   "
