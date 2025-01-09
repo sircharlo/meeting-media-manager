@@ -11,6 +11,25 @@
     @dragstart="dropActive"
   >
     <div class="col">
+      <div
+        v-if="
+          currentSettings?.obsEnable &&
+          ['disconnected', 'notConnected'].includes(obsConnectionState) &&
+          selectedDateObject?.today
+        "
+        class="row"
+      >
+        <q-banner
+          class="bg-negative text-white full-width"
+          inline-actions
+          rounded
+        >
+          {{ t('obs-studio-disconnected-banner') }}
+          <template #avatar>
+            <q-icon name="mmm-obs-studio" size="lg" />
+          </template>
+        </q-banner>
+      </div>
       <div v-if="someItemsHiddenForSelectedDate" class="row">
         <q-banner
           class="bg-warning text-white full-width"
@@ -530,6 +549,7 @@ import {
   showMediaWindow,
 } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import { useObsStateStore } from 'src/stores/obs-state';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
   dateFromString,
@@ -602,6 +622,9 @@ const {
   selectedDateObject,
   someItemsHiddenForSelectedDate,
 } = storeToRefs(currentState);
+const obsState = useObsStateStore();
+const { obsConnectionState } = storeToRefs(obsState);
+
 const { getDatedAdditionalMediaDirectory } = currentState;
 const {
   convertPdfToImages,
