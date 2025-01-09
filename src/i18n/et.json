@@ -249,6 +249,7 @@
   "obs-studio-media-scene": "OBS Studio meedia stseen",
   "obs-studio-port-and-password": "OBS Studio port ja salasõna",
   "obs-studio-stage-scene": "OBS Studio lava stseen",
+  "obs-studio-disconnected-banner": "M³ is unable to connect to OBS Studio. Please ensure that OBS Studio is running and configured correctly.",
   "obs.connected": "OBS Studio: Ühendatud",
   "obs.connecting": "OBS Studio: Ühendamine",
   "obs.disconnected": "OBS Studio: ühendus katkestatud",
