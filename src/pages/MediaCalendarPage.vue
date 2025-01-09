@@ -126,14 +126,13 @@
       v-for="mediaList in [
         {
           type: 'additional',
-          label: t(
+          label:
             selectedDateObject?.date && isWeMeetingDay(selectedDateObject.date)
-              ? 'public-talk'
-              : 'imported-media',
-          ),
+              ? t('public-talk')
+              : t('imported-media'),
           alwaysShow:
             selectedDateObject?.dynamicMedia?.filter(
-              (m) => m.sectionOriginal === 'additional',
+              (m) => m.section === 'additional',
             )?.length ||
             (selectedDateObject?.complete &&
               isWeMeetingDay(selectedDateObject?.date)),
