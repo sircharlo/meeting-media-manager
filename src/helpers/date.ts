@@ -9,7 +9,6 @@ import {
   formatDate,
   getDateDiff,
   getSpecificWeekday,
-  isInPast,
 } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -101,11 +100,12 @@ export function updateLookupPeriod(reset = false) {
         formatDate(d.date, 'YYYY/MM/DD'),
       ),
     );
+    const currentDate = dateFromString();
 
     const futureDates: DateInfo[] = Array.from(
-      { length: DAYS_IN_FUTURE + dateFromString().getDay() },
+      { length: DAYS_IN_FUTURE + currentDate.getDay() },
       (_, i) => {
-const dayDate = addToDate(getSpecificWeekday(dateFromString(), 0), {
+        const dayDate = addToDate(getSpecificWeekday(currentDate, 0), {
           day: i,
         });
         return {
@@ -126,7 +126,10 @@ const dayDate = addToDate(getSpecificWeekday(dateFromString(), 0), {
     lookupPeriod[currentCongregation] = [
       ...lookupPeriod[currentCongregation],
       ...futureDates,
-    ].filter((day) => !isInPast(getSpecificWeekday(day.date, 6)));
+    ].filter(
+      (day) =>
+        getDateDiff(day.date, getSpecificWeekday(currentDate, 0), 'days') >= 0,
+    );
 
     const todayDate = lookupPeriod[currentCongregation].find((d) =>
       datesAreSame(d.date, new Date()),
