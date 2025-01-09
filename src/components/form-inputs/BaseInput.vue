@@ -52,14 +52,14 @@
 <script setup lang="ts">
 import type { SettingsItem, SettingsValues } from 'src/types';
 
-import DateInput from 'src/components/form-inputs/DateInput.vue';
-import FolderInput from 'src/components/form-inputs/FolderInput.vue';
-import SelectInput from 'src/components/form-inputs/SelectInput.vue';
-import ShortcutInput from 'src/components/form-inputs/ShortcutInput.vue';
-import SliderInput from 'src/components/form-inputs/SliderInput.vue';
-import TextInput from 'src/components/form-inputs/TextInput.vue';
-import TimeInput from 'src/components/form-inputs/TimeInput.vue';
-import ToggleInput from 'src/components/form-inputs/ToggleInput.vue';
+import DateInput from 'components/form-inputs/DateInput.vue';
+import FolderInput from 'components/form-inputs/FolderInput.vue';
+import SelectInput from 'components/form-inputs/SelectInput.vue';
+import ShortcutInput from 'components/form-inputs/ShortcutInput.vue';
+import SliderInput from 'components/form-inputs/SliderInput.vue';
+import TextInput from 'components/form-inputs/TextInput.vue';
+import TimeInput from 'components/form-inputs/TimeInput.vue';
+import ToggleInput from 'components/form-inputs/ToggleInput.vue';
 
 defineProps<{
   item: SettingsItem;

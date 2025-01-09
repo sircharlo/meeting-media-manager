@@ -54,10 +54,10 @@ import { SORTER } from 'src/constants/general';
 import { RESOLUTIONS } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { localeOptions } from 'src/i18n';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
-import { useObsStateStore } from 'src/stores/obs-state';
 import { getRules } from 'src/utils/settings';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
+import { useObsStateStore } from 'stores/obs-state';
 import { computed, ref } from 'vue';
 
 const jwStore = useJwStore();

@@ -12,8 +12,8 @@
 import type { SettingsItemAction, SettingsValues } from 'src/types';
 
 import { storeToRefs } from 'pinia';
-import { useObsStateStore } from 'src/stores/obs-state';
 import { performActions } from 'src/utils/settings';
+import { useObsStateStore } from 'stores/obs-state';
 import { computed, watch } from 'vue';
 
 const obsState = useObsStateStore();

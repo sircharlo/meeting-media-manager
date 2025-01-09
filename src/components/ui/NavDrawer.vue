@@ -135,7 +135,7 @@ import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 // Stores
-import { useCurrentStateStore } from 'src/stores/current-state';
+import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';

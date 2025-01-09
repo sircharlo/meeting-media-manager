@@ -9,10 +9,10 @@ import {
   dynamicMediaMapper,
   processMissingMediaInfo,
 } from 'src/helpers/jw-media';
-import { useCurrentStateStore } from 'src/stores/current-state';
 import { getTempPath } from 'src/utils/fs';
 import { isJwpub } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
+import { useCurrentStateStore } from 'stores/current-state';
 
 const jwpubDecompressor = async (jwpubPath: string, outputPath: string) => {
   try {

@@ -39,17 +39,15 @@
       "
     >
       <q-icon class="q-mr-sm" name="mmm-mirror" size="xs" />
-      {{ t('stop-mirroring') }}
+      <template v-if="$q.screen.gt.xs">{{ t('stop-mirroring') }}</template>
+      <q-tooltip v-else :delay="1000">{{ t('stop-mirroring') }}</q-tooltip>
     </q-btn>
   </template>
   <q-btn
     v-else-if="mediaPlayingAction === 'website'"
     color="white-transparent"
     unelevated
-    @click="
-      startWebsiteStream();
-      streaming = true;
-    "
+    @click="startStreaming()"
   >
     <q-icon class="q-mr-sm" name="mmm-mirror" size="xs" />
     {{ t('start-mirroring') }}
@@ -70,8 +68,9 @@
 </template>
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { useCurrentStateStore } from 'src/stores/current-state';
+import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { sendObsSceneEvent } from 'src/utils/obs';
+import { useCurrentStateStore } from 'stores/current-state';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -89,12 +88,23 @@ const { mediaPlaying, mediaPlayingAction } = storeToRefs(currentState);
 
 const streaming = ref(false);
 
+const startStreaming = () => {
+  startWebsiteStream();
+  streaming.value = true;
+  if (!currentState.mediaWindowVisible) {
+    showMediaWindow();
+  }
+};
+
 watch(mediaPlayingAction, (newValue, oldValue) => {
   if (newValue === 'website') {
     sendObsSceneEvent('media');
   } else if (oldValue === 'website') {
     streaming.value = false;
     sendObsSceneEvent('camera');
+    if (currentState.currentLangObject?.isSignLanguage) {
+      showMediaWindow(false);
+    }
   }
 });
 </script>

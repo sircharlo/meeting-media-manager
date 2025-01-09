@@ -42,9 +42,9 @@ import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { obsConnect } from 'src/helpers/obs';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useObsStateStore } from 'src/stores/obs-state';
 import { initObsWebSocket, obsWebSocket } from 'src/utils/obs';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useObsStateStore } from 'stores/obs-state';
 import { onMounted, onUnmounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 

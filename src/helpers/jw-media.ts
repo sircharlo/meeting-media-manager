@@ -19,7 +19,7 @@ import type {
   PublicationFiles,
 } from 'src/types';
 
-import { queues } from 'src/boot/globals';
+import { queues } from 'boot/globals';
 import { FEB_2023, FOOTNOTE_TAR_PAR, MAX_SONGS } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
 import { isCoWeek, isMwMeetingDay } from 'src/helpers/date';
@@ -30,8 +30,6 @@ import {
   decompressJwpub,
   getMediaFromJwPlaylist,
 } from 'src/helpers/mediaPlayback';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { shouldUpdateList, useJwStore } from 'src/stores/jw';
 import { fetchJson, fetchPubMediaLinks, fetchRaw } from 'src/utils/api';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
@@ -58,6 +56,8 @@ import {
   getMultimediaMepsLangs,
   getPublicationInfoFromDb,
 } from 'src/utils/sqlite';
+import { useCurrentStateStore } from 'stores/current-state';
+import { shouldUpdateList, useJwStore } from 'stores/jw';
 
 export const copyToDatedAdditionalMedia = async (
   filepathToCopy: string,
@@ -1026,7 +1026,9 @@ export const getAudioBibleMedia = async (force = false) => {
     const returnedItems: Partial<Publication>[] = [];
     const publication: PublicationFetcher = {
       booknum: 0,
-      fileformat: 'MP3',
+      fileformat: currentStateStore.currentLangObject?.isSignLanguage
+        ? 'MP4'
+        : 'MP3',
       issue: '',
       langwritten: '',
       pub: 'nwt',

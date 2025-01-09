@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "24.12.2-beta.15",
+  "version": "24.12.3-beta.3",
   "description": "A cross platform app to download and present media for congregation meetings of Jehovah’s Witnesses.",
   "keywords": [
     "M³",
@@ -26,13 +26,12 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
+    "docs:lint": "eslint -c ./eslint.config.js './docs/**/*.{js,ts,cjs,mjs,mts,vue}'",
+    "docs:test": "vitest --project docs",
     "format": "prettier \"**/*\" --ignore-unknown --write",
-    "lint": "eslint -c ./eslint.config.js './**/*.{js,ts,cjs,mjs,mts,vue}'",
-    "type-check": "vue-tsc --noEmit -p tsconfig.json",
-    "test": "echo \"See package.json => scripts for available tests.\" && exit 0",
-    "test:unit:ui": "vitest --ui",
-    "test:unit": "vitest",
-    "test:unit:ci": "vitest run"
+    "lint": "eslint -c ./eslint.config.js './src/**/*.{js,ts,cjs,mjs,mts,vue}'",
+    "lint:types": "vue-tsc --noEmit -p tsconfig.json",
+    "test:unit": "vitest --project quasar --project electron"
   },
   "dependencies": {
     "@formkit/drag-and-drop": "^0.1.6",
@@ -69,13 +68,14 @@
     "sanitize-html": "^2.14.0",
     "upath": "^2.0.1",
     "vue": "^3.5.13",
-    "vue-i18n": "^10.0.5",
+    "vue-i18n": "^11.0.1",
     "vue-router": "^4.5.0"
   },
   "devDependencies": {
     "@daipeng7/rollup-plugin-iconfont": "^3.0.6",
     "@electron/rebuild": "^3.7.1",
-    "@intlify/unplugin-vue-i18n": "^6.0.2",
+    "@intlify/unplugin-vue-i18n": "^6.0.3",
+    "@pinia/testing": "^0.1.7",
     "@quasar/app-vite": "^2.0.4",
     "@quasar/icongenie": "^4.0.0",
     "@quasar/quasar-app-extension-testing-unit-vitest": "^1.1.0",
@@ -92,10 +92,9 @@
     "@types/node": "^20.17.10",
     "@types/pretty-bytes": "^5.2.0",
     "@types/sanitize-html": "^2.13.0",
-    "@vitest/ui": "^2.0.5",
     "@vue/eslint-config-prettier": "^10.1.0",
     "@vue/eslint-config-typescript": "^14.2.0",
-    "@vue/test-utils": "^2.4.4",
+    "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.20",
     "electron": "^33.2.1",
     "electron-builder": "^25.1.8",
@@ -104,14 +103,14 @@
     "eslint-plugin-vue": "^9.32.0",
     "globals": "^15.14.0",
     "husky": "^9.1.7",
-    "lint-staged": "^15.2.11",
-    "memfs": "^4.15.1",
+    "lint-staged": "^15.3.0",
+    "memfs": "^4.15.2",
     "msw": "^2.7.0",
     "postcss": "^8.4.49",
     "prettier": "^3.4.2",
     "typescript": "~5.6.3",
     "vitepress": "^1.5.0",
-    "vitest": "^2.0.5",
+    "vitest": "^2.1.8",
     "vue-tsc": "^2.2.0"
   },
   "browserslist": [

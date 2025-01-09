@@ -228,12 +228,12 @@ import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { decompressJwpub, showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { useAppSettingsStore } from 'src/stores/app-settings';
-import { useCurrentStateStore } from 'src/stores/current-state';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import { getTempPath } from 'src/utils/fs';
 import { isImage, isJwpub } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
+import { useAppSettingsStore } from 'stores/app-settings';
+import { useCurrentStateStore } from 'stores/current-state';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 

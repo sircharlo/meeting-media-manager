@@ -2,8 +2,6 @@ import type { DateInfo } from 'src/types';
 
 import { DAYS_IN_FUTURE } from 'src/constants/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
 import {
   addToDate,
   dateFromString,
@@ -13,6 +11,8 @@ import {
   getSpecificWeekday,
   isInPast,
 } from 'src/utils/date';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 
 const getWeekDay = (lookupDate: Date) => {
   try {
@@ -95,13 +95,13 @@ export function updateLookupPeriod(reset = false) {
       lookupPeriod[currentCongregation] = [];
     lookupPeriod[currentCongregation] = lookupPeriod[
       currentCongregation
-    ]?.filter((day) => {
-      return !isInPast(day.date);
-    });
+    ]?.filter((day) => !isInPast(getSpecificWeekday(day.date, 6)));
     const futureDates: DateInfo[] = Array.from(
-      { length: DAYS_IN_FUTURE },
+      { length: DAYS_IN_FUTURE + dateFromString().getDay() },
       (_, i): DateInfo => {
-        const dayDate = addToDate(dateFromString(), { day: i });
+        const dayDate = addToDate(getSpecificWeekday(dateFromString(), 0), {
+          day: i,
+        });
         return {
           complete: false,
           date: dayDate,

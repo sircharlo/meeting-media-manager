@@ -44,6 +44,7 @@ export default defineConfig((ctx) => {
             },
           },
         });
+
         if (ctx.prod && !ctx.debug && ENABLE_SOURCE_MAPS) {
           viteConf.build = mergeConfig(viteConf.build ?? {}, {
             sourcemap: true,
@@ -79,6 +80,7 @@ export default defineConfig((ctx) => {
           },
         ],
       ],
+      vueOptionsAPI: false,
       vueRouterMode: 'hash', // available values: 'hash', 'history'
     },
 
@@ -105,7 +107,7 @@ export default defineConfig((ctx) => {
         },
         mac: {
           extendInfo: {
-            //'com.apple.security.cs.allow-jit': true, 
+            //'com.apple.security.cs.allow-jit': true,
             'com.apple.security.device.audio-input': true,
             'com.apple.security.device.camera': true,
             'com.apple.security.device.microphone': true,

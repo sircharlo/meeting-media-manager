@@ -17,7 +17,6 @@ import { defineStore } from 'pinia';
 import { MAX_SONGS } from 'src/constants/jw';
 import { isCoWeek, isMwMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { useCurrentStateStore } from 'src/stores/current-state';
 import {
   fetchJwLanguages,
   fetchPubMediaLinks,
@@ -26,6 +25,7 @@ import {
 import { dateFromString, getDateDiff } from 'src/utils/date';
 import { isFileUrl } from 'src/utils/fs';
 import { findBestResolution, getPubId, isMediaLink } from 'src/utils/jw';
+import { useCurrentStateStore } from 'stores/current-state';
 
 const oldDate = new Date(0);
 
@@ -309,6 +309,8 @@ export const useJwStore = defineStore('jw-store', {
         const currentState = useCurrentStateStore();
         if (!currentState.currentSettings || !currentState.online) return;
 
+        if (currentState.currentLangObject?.isSignLanguage) return;
+
         const year = new Date().getFullYear();
         const promises: Promise<{ wtlocale: JwLangCode; yeartext?: string }>[] =
           [];
@@ -398,7 +400,8 @@ export const useJwStore = defineStore('jw-store', {
     yeartext: (state) => {
       const year = new Date().getFullYear();
       if (!state.yeartexts[year]) return;
-      const { currentSettings } = useCurrentStateStore();
+      const { currentLangObject, currentSettings } = useCurrentStateStore();
+      if (currentLangObject?.isSignLanguage) return;
       if (!currentSettings) return;
       const primary = state.yeartexts[year][currentSettings.lang];
       const fallback = currentSettings.langFallback
