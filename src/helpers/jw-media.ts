@@ -1017,7 +1017,9 @@ export const getAudioBibleMedia = async (force = false) => {
     const returnedItems: Partial<Publication>[] = [];
     const publication: PublicationFetcher = {
       booknum: 0,
-      fileformat: 'MP3',
+      fileformat: currentStateStore.currentLangObject?.isSignLanguage
+        ? 'MP4'
+        : 'MP3',
       issue: '',
       langwritten: '',
       pub: 'nwt',

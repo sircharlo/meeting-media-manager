@@ -103,9 +103,11 @@ export function updateLookupPeriod(reset = false) {
     );
 
     const futureDates: DateInfo[] = Array.from(
-      { length: DAYS_IN_FUTURE },
+      { length: DAYS_IN_FUTURE + dateFromString().getDay() },
       (_, i) => {
-        const dayDate = addToDate(dateFromString(), { day: i });
+const dayDate = addToDate(getSpecificWeekday(dateFromString(), 0), {
+          day: i,
+        });
         return {
           complete: false,
           date: dayDate,
@@ -124,7 +126,7 @@ export function updateLookupPeriod(reset = false) {
     lookupPeriod[currentCongregation] = [
       ...lookupPeriod[currentCongregation],
       ...futureDates,
-    ].filter((day) => !isInPast(day.date));
+    ].filter((day) => !isInPast(getSpecificWeekday(day.date, 6)));
 
     const todayDate = lookupPeriod[currentCongregation].find((d) =>
       datesAreSame(d.date, new Date()),

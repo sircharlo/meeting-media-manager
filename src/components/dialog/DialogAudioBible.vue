@@ -254,7 +254,7 @@ const selectedBookMedia = computed(() => {
 
 const selectedChapterMedia = computed(() => {
   return selectedBookMedia.value.filter(
-    (item) => item.track === selectedChapter.value,
+    (item) => item.track === selectedChapter.value && !!item.markers,
   );
 });
 
