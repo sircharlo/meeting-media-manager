@@ -50,7 +50,7 @@
     "id": "media-window-title-updated",
     "message": "The title of the media window has been changed! If OBS Studio is set to capture the media window by title, it may have stopped working. If so, update your OBS Studio window capture settings.",
     "type": "warning",
-    "minVersion": "24.12.1-beta.4",
+    "minVersion": "24.12.3-beta.4",
     "scope": ["obs"]
   }
 ]
