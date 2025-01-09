@@ -716,6 +716,7 @@ import { storeToRefs } from 'pinia';
 import { debounce, type QBtn, type QImg, useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
+import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { isFileUrl } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
@@ -986,6 +987,9 @@ const { post } = useBroadcastChannel<number, number>({ name: 'seek-to' });
 const seekTo = (newSeekTo: null | number) => {
   if (newSeekTo !== null) {
     post(newSeekTo);
+    if (!currentState.mediaWindowVisible) {
+      showMediaWindow(true);
+    }
   }
 };
 
