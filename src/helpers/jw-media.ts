@@ -328,6 +328,7 @@ export const fetchMedia = async () => {
                 day.dynamicMedia.map(
                   async (media) =>
                     !media?.children?.length &&
+                    media?.source === 'dynamic' &&
                     media?.fileUrl &&
                     !(await window.electronApi.fs.pathExists(
                       window.electronApi.fileUrlToPath(media.fileUrl),
