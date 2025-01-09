@@ -4,23 +4,31 @@
   <DialogRemoteVideo v-model="remoteVideoPopup" :section="section" />
   <DialogStudyBible v-model="studyBiblePopup" :section="section" />
   <DialogAudioBible v-model="audioBiblePopup" :section="section" />
-  <q-btn
-    v-if="selectedDate"
-    color="white-transparent"
-    :disable="mediaPlaying || !mediaSortCanBeReset"
-    unelevated
-    @click="resetSort"
+  <transition
+    appear
+    enter-active-class="animated fadeIn"
+    leave-active-class="animated fadeOut"
+    mode="out-in"
+    name="fade"
   >
-    <q-icon
-      :class="{ 'q-mr-sm': $q.screen.gt.sm }"
-      name="mmm-reset"
-      size="xs"
-    />
-    {{ $q.screen.gt.sm ? t('reset-sort-order') : '' }}
-    <q-tooltip v-if="!$q.screen.gt.sm" :delay="1000">
-      {{ t('reset-sort-order') }}
-    </q-tooltip>
-  </q-btn>
+    <q-btn
+      v-if="selectedDate && mediaSortCanBeReset"
+      color="white-transparent"
+      :disable="mediaPlaying"
+      unelevated
+      @click="resetSort"
+    >
+      <q-icon
+        :class="{ 'q-mr-sm': $q.screen.gt.sm }"
+        name="mmm-reset"
+        size="xs"
+      />
+      {{ $q.screen.gt.sm ? t('reset-sort-order') : '' }}
+      <q-tooltip v-if="!$q.screen.gt.sm" :delay="1000">
+        {{ t('reset-sort-order') }}
+      </q-tooltip>
+    </q-btn>
+  </transition>
   <q-btn
     v-if="selectedDate"
     color="white-transparent"
