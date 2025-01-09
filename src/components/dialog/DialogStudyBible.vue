@@ -40,29 +40,30 @@
           indicator-color="primary"
           narrow-indicator
           outside-arrows
+          style="overflow: auto"
         >
-          <q-tab
-            v-for="category in bibleMediaCategories"
-            :key="category"
-            :disable="!bibleMediaByCategory[category]?.length"
-            :name="category"
-          >
-            <q-spinner
-              v-if="loadingBooks || loadingMedia || loadingCategories"
-              color="primary"
-              size="xs"
-            />
-            <template v-else>
-              {{ category }}
-            </template>
-
-            <q-tooltip
-              v-if="!bibleMediaByCategory[category]?.length"
-              :delay="500"
+          <template v-for="category in bibleMediaCategories" :key="category">
+            <q-tab
+              v-if="bibleMediaByCategory[category]?.length"
+              :name="category"
             >
-              {{ t('no-media-for-this-category') }}
-            </q-tooltip>
-          </q-tab>
+              <q-spinner
+                v-if="loadingBooks || loadingMedia || loadingCategories"
+                color="primary"
+                size="xs"
+              />
+              <template v-else>
+                {{ category }}
+              </template>
+
+              <q-tooltip
+                v-if="!bibleMediaByCategory[category]?.length"
+                :delay="500"
+              >
+                {{ t('no-media-for-this-category') }}
+              </q-tooltip>
+            </q-tab>
+          </template>
         </q-tabs>
       </div>
       <div class="q-pr-scroll overflow-auto col items-start">
