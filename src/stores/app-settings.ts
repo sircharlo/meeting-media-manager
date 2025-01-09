@@ -191,7 +191,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
         } else {
           // Other migrations can be added here
         }
-        // this.migrations.push(type);
+        this.migrations.push(type);
         return successfulMigration;
       } catch (error) {
         errorCatcher(error);
