@@ -249,6 +249,7 @@
   "obs-studio-media-scene": "OBS Studio媒体场景",
   "obs-studio-port-and-password": "OBS Studio 端口和密码",
   "obs-studio-stage-scene": "OBS Studio舞台场景",
+  "obs-studio-disconnected-banner": "M³ is unable to connect to OBS Studio. Please ensure that OBS Studio is running and configured correctly.",
   "obs.connected": "OBS 工作室：已连接",
   "obs.connecting": "OBS 工作室：正在连接",
   "obs.disconnected": "OBS 工作室：已断开连接",
