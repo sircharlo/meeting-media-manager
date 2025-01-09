@@ -1,5 +1,12 @@
 <template>
-  <q-dialog v-model="open" persistent>
+  <q-dialog
+    v-model="open"
+    persistent
+    @dragenter="dropHandler($event, 'dragenter')"
+    @dragover="dropHandler($event, 'dragover')"
+    @dragstart="dropHandler($event, 'dragstart')"
+    @drop="dropHandler($event, 'drop')"
+  >
     <div
       class="bg-secondary-contrast flex medium-overlay q-px-none"
       style="flex-flow: column"
@@ -26,7 +33,9 @@
                   jwpubDb,
                   jwpubImportDocument,
                   section,
-                ).then(resetModal);
+                ).then(() => {
+                  open = false;
+                });
               "
             >
               <q-item-section class="no-wrap">
@@ -64,11 +73,12 @@
         <div class="row q-px-md q-pt-md">
           <div
             ref="dropArea"
-            class="col rounded-borders dashed-border items-center justify-center flex"
+            class="col rounded-borders dashed-border items-center justify-center flex bg-accent-100 animated slow"
             :class="{
               'cursor-pointer': !totalFiles && !(!!jwpubDb || jwpubLoading),
-              'bg-accent-100':
-                hovering && !totalFiles && !(!!jwpubDb || jwpubLoading),
+              'bg-accent-200':
+                isOverDropZone ||
+                (hovering && !totalFiles && !(!!jwpubDb || jwpubLoading)),
             }"
             style="min-height: 200px"
             @click="
@@ -113,7 +123,7 @@
           color="negative"
           flat
           :label="t('cancel')"
-          @click="resetModal()"
+          @click="open = false"
         />
       </div>
     </div>
@@ -123,7 +133,7 @@
 <script setup lang="ts">
 import type { DocumentItem, MediaSection } from 'src/types';
 
-import { useElementHover } from '@vueuse/core';
+import { useDropZone, useElementHover, watchImmediate } from '@vueuse/core';
 import {
   AUDIO_EXTENSIONS,
   IMG_EXTENSIONS,
@@ -151,6 +161,7 @@ const jwpubDocuments = defineModel<DocumentItem[]>('jwpubDocuments', {
 
 const dropArea = useTemplateRef('dropArea');
 const hovering = useElementHover(dropArea);
+const authorizedDrop = ref(false);
 const jwpubLoading = ref(false);
 
 const percentValue = computed(() => {
@@ -159,12 +170,18 @@ const percentValue = computed(() => {
     : 0;
 });
 
-const resetModal = () => {
-  open.value = false;
-  jwpubDb.value = '';
-  jwpubLoading.value = false;
-  jwpubDocuments.value = [];
-};
+watchImmediate(
+  () => open.value,
+  (value) => {
+    if (!value) {
+      hovering.value = false;
+      jwpubDb.value = '';
+      jwpubLoading.value = false;
+      jwpubDocuments.value = [];
+      authorizedDrop.value = false;
+    }
+  },
+);
 
 const getLocalFiles = async () => {
   window.electronApi
@@ -188,4 +205,39 @@ const getLocalFiles = async () => {
       errorCatcher(error);
     });
 };
+
+const dropHandler = (event: DragEvent, eventType: string) => {
+  if (eventType !== 'drop') {
+    // Prevent the default for the drag event, to eventually allow the drop event to be fired
+    event.preventDefault();
+  } else if (eventType === 'drop') {
+    if (!authorizedDrop.value) {
+      // Prevent the drop event from propagating, since it's outside the drop area
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      // Animate the drop area
+      const element = dropArea.value;
+      if (element) {
+        element.classList.add('shakeX');
+        // Remove the animation class after the animation ends
+        element.addEventListener(
+          'animationend',
+          () => {
+            element.classList.remove('shakeX');
+          },
+          { once: true },
+        );
+      }
+    }
+  }
+};
+
+function onDrop() {
+  authorizedDrop.value = true;
+}
+
+const { isOverDropZone } = useDropZone(dropArea, {
+  onDrop,
+  preventDefaultForUnhandled: true,
+});
 </script>

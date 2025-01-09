@@ -9,7 +9,6 @@
     @dragenter="dropActive"
     @dragover="dropActive"
     @dragstart="dropActive"
-    @drop="dropEnd"
   >
     <div class="col">
       <div v-if="someItemsHiddenForSelectedDate" class="row">
@@ -268,13 +267,13 @@
           item-key="uniqueId"
           :list="mediaList.items"
           :options="{ group: 'mediaLists' }"
-          @add="handleMediaDrag($event, 'ADD', mediaList.type as MediaSection)"
-          @end="handleMediaDrag($event, 'END', mediaList.type as MediaSection)"
+          @add="handleMediaSort($event, 'ADD', mediaList.type as MediaSection)"
+          @end="handleMediaSort($event, 'END', mediaList.type as MediaSection)"
           @remove="
-            handleMediaDrag($event, 'REMOVE', mediaList.type as MediaSection)
+            handleMediaSort($event, 'REMOVE', mediaList.type as MediaSection)
           "
           @start="
-            handleMediaDrag($event, 'START', mediaList.type as MediaSection)
+            handleMediaSort($event, 'START', mediaList.type as MediaSection)
           "
         >
           <template #item="{ element }: { element: DynamicMediaObject }">
@@ -477,16 +476,16 @@
         </div>
       </q-list>
     </q-list> -->
+    <DialogFileImport
+      v-model="showFileImportDialog"
+      v-model:jwpub-db="jwpubImportDb"
+      v-model:jwpub-documents="jwpubImportDocuments"
+      :current-file="currentFile"
+      :section="sectionToAddTo"
+      :total-files="totalFiles"
+      @drop="dropEnd"
+    />
   </q-page>
-  <DragAndDropper
-    v-model="dragging"
-    v-model:jwpub-db="jwpubImportDb"
-    v-model:jwpub-documents="jwpubImportDocuments"
-    :current-file="currentFile"
-    :section="sectionToAddTo"
-    :total-files="totalFiles"
-    @drop="dropEnd"
-  />
 </template>
 
 <script setup lang="ts">
@@ -502,13 +501,14 @@ import {
   useBroadcastChannel,
   useEventListener,
   watchImmediate,
+  whenever,
 } from '@vueuse/core';
 import { Buffer } from 'buffer';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
 import { useMeta, useQuasar } from 'quasar';
 import { Sortable } from 'sortablejs-vue3';
-import DragAndDropper from 'src/components/media/DragAndDropper.vue';
+import DialogFileImport from 'src/components/dialog/DialogFileImport.vue';
 import MediaItem from 'src/components/media/MediaItem.vue';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
@@ -557,7 +557,7 @@ import { useJwStore } from 'stores/jw';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-const dragging = ref(false);
+const showFileImportDialog = ref(false);
 const jwpubImportDb = ref('');
 const jwpubImportDocuments = ref<DocumentItem[]>([]);
 
@@ -570,7 +570,7 @@ watch(
   () => [jwpubImportDb.value, jwpubImportDocuments.value],
   ([newJwpubImportDb, newJwpubImportDocuments]) => {
     if (!!newJwpubImportDb || newJwpubImportDocuments?.length) {
-      dragging.value = true;
+      showFileImportDialog.value = true;
     }
   },
 );
@@ -840,11 +840,10 @@ const sectionToAddTo = ref<MediaSection | undefined>();
 
 useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
   window,
-  'openDragAndDropper',
+  'openFileImportDialog',
   (e) => {
-    resetDragging();
     sectionToAddTo.value = e.detail.section;
-    dragging.value = true;
+    showFileImportDialog.value = true;
   },
   { passive: true },
 );
@@ -1183,7 +1182,7 @@ const addToFiles = async (
             );
             jwpubImportDb.value = '';
             jwpubImportDocuments.value = [];
-            resetDragging();
+            showFileImportDialog.value = false;
           }
         }
       } else if (isJwPlaylist(filepath) && selectedDateObject.value) {
@@ -1233,7 +1232,7 @@ const addToFiles = async (
     }
     currentFile.value++;
   }
-  if (!isJwpub(files[0]?.path)) resetDragging();
+  if (!isJwpub(files[0]?.path)) showFileImportDialog.value = false;
 };
 
 const addSong = (section: MediaSection | undefined) => {
@@ -1252,14 +1251,10 @@ const openImportMenu = (section: MediaSection | undefined) => {
   );
 };
 
-// TODO: re-enable after fixing drag and drop sort
 const dropActive = (event: DragEvent) => {
   if (event?.dataTransfer?.effectAllowed === 'all') {
     event.preventDefault();
-    event.stopPropagation();
-    console.log('todo: re-enable after fixing drag and drop sort', event);
-    //   if (!event?.relatedTarget && event?.dataTransfer?.effectAllowed === 'all') {
-    // dragging.value = true;
+    showFileImportDialog.value = true;
   }
 };
 const dropEnd = (event: DragEvent) => {
@@ -1292,31 +1287,26 @@ const dropEnd = (event: DragEvent) => {
       addToFiles(droppedStuff).catch((error) => {
         errorCatcher(error);
       });
-      // .then(() => {
-      //   resetDragging();
-      // });
     }
   } catch (error) {
     errorCatcher(error);
   }
 };
-// const dropIgnore = (event: DragEvent) => {
-//   event.preventDefault();
-//   event.stopPropagation();
-// };
 
-const resetDragging = () => {
-  dragging.value = false;
-  jwpubImportDb.value = '';
-  jwpubImportDocuments.value = [];
-  currentFile.value = 0;
-  totalFiles.value = 0;
-  sectionToAddTo.value = undefined;
-};
+whenever(
+  () => showFileImportDialog.value,
+  () => {
+    jwpubImportDb.value = '';
+    jwpubImportDocuments.value = [];
+    currentFile.value = 0;
+    totalFiles.value = 0;
+    sectionToAddTo.value = undefined;
+  },
+);
 
-const mediaItemBeingDragged = ref<DynamicMediaObject | undefined>();
+const mediaItemBeingSorted = ref<DynamicMediaObject | undefined>();
 
-const handleMediaDrag = (
+const handleMediaSort = (
   evt: SortableEvent,
   eventType: string,
   list: MediaSection,
@@ -1333,7 +1323,7 @@ const handleMediaDrag = (
 
   switch (eventType) {
     case 'ADD':
-      if (!sameList && mediaItemBeingDragged.value) {
+      if (!sameList && mediaItemBeingSorted.value) {
         const firstElementIndex = dynamicMedia.findIndex(
           (item) => item.section === list,
         );
@@ -1341,7 +1331,7 @@ const handleMediaDrag = (
           firstElementIndex >= 0
             ? firstElementIndex + evt.newIndex
             : evt.newIndex;
-        const newItem = { ...mediaItemBeingDragged.value, section: list };
+        const newItem = { ...mediaItemBeingSorted.value, section: list };
         dynamicMedia.splice(insertIndex, 0, newItem);
       }
       break;
@@ -1349,7 +1339,7 @@ const handleMediaDrag = (
     case 'END':
       if (sameList) {
         const originalPosition = dynamicMedia.findIndex(
-          (item) => item.uniqueId === mediaItemBeingDragged.value?.uniqueId,
+          (item) => item.uniqueId === mediaItemBeingSorted.value?.uniqueId,
         );
         if (originalPosition >= 0) {
           const [movedItem] = dynamicMedia.splice(originalPosition, 1);
@@ -1368,7 +1358,7 @@ const handleMediaDrag = (
       if (!sameList) {
         const indexToRemove = dynamicMedia.findIndex(
           (item) =>
-            item.uniqueId === mediaItemBeingDragged.value?.uniqueId &&
+            item.uniqueId === mediaItemBeingSorted.value?.uniqueId &&
             item.section === list,
         );
         if (indexToRemove >= 0) {
@@ -1378,10 +1368,10 @@ const handleMediaDrag = (
       break;
 
     case 'START': {
-      const draggingItem =
+      const itemBeingSorted =
         getVisibleMediaForSection.value[list]?.[evt.oldIndex];
-      if (draggingItem) {
-        mediaItemBeingDragged.value = draggingItem;
+      if (itemBeingSorted) {
+        mediaItemBeingSorted.value = itemBeingSorted;
       }
     }
   }

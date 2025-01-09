@@ -115,7 +115,7 @@
           ]"
           :key="name"
         >
-          <q-item v-close-popup clickable @click="openDragAndDropper">
+          <q-item v-close-popup clickable @click="openFileImportDialog">
             <q-item-section avatar>
               <q-icon color="primary" :name="icon" />
             </q-item-section>
@@ -279,10 +279,10 @@ const remoteVideoPopup = ref(false);
 const studyBiblePopup = ref(false);
 const audioBiblePopup = ref(false);
 
-const openDragAndDropper = () => {
+const openFileImportDialog = () => {
   window.dispatchEvent(
     new CustomEvent<{ section: MediaSection | undefined }>(
-      'openDragAndDropper',
+      'openFileImportDialog',
       {
         detail: { section: section.value },
       },
