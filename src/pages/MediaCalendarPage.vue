@@ -542,6 +542,7 @@ import {
 import {
   decompressJwpub,
   getMediaFromJwPlaylist,
+  showMediaWindow,
 } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { convertImageIfNeeded } from 'src/utils/converters';
@@ -650,6 +651,9 @@ watch(
   () => mediaPlayingAction.value,
   (newAction, oldAction) => {
     if (newAction !== oldAction) postMediaAction(newAction);
+    if (currentState.currentLangObject?.isSignLanguage) {
+      showMediaWindow(newAction === 'play');
+    }
   },
 );
 
