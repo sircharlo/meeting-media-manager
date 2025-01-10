@@ -58,7 +58,7 @@
   "clicking-it-will-allow-you-to-temporarily-hide-the-media-and-yeartext-and-reveal-the-zoom-participants-underneath-once-the-zoom-part-is-over-you-can-show-the-yeartext-again-using-the-same-button": "Door erop te klikken kan je de media en jaartekst tijdelijk verbergen en de onderliggende Zoom deelnemers tonen. Zodra het Zoom-aandeel klaar is, kan je de jaartekst weer tonen met dezelfde knop.",
   "clicking-the-close-button-again-will-close-app": "Door opnieuw op dezelfde knop te klikken wordt M³ afgesloten.",
   "close": "Sluiten",
-  "circuit-overseer": "Kringopziener",
+  "circuit-overseer": "kringopziener",
   "coWeek": "Eerst volgende bezoek van de kringopziener",
   "coWeek-explain": "Als dit is ingevoerd, zal M³ automatisch de doordeweekse vergaderdag op dinsdag zetten voor die week. Het zal ook de media voor de gemeentebijbelstudie overslaan en het slotlied voor zowel de doordeweekse als de weekendvergadering.",
   "collapse-sidebar": "Zijbalk inklappen",
@@ -249,7 +249,7 @@
   "obs-studio-media-scene": "OBS Studio mediascène",
   "obs-studio-port-and-password": "OBS Studio poort en wachtwoord",
   "obs-studio-stage-scene": "OBS Studio podiumscène",
-  "obs-studio-disconnected-banner": "M³ is unable to connect to OBS Studio. Please ensure that OBS Studio is running and configured correctly.",
+  "obs-studio-disconnected-banner": "M³ kan geen verbinding maken met OBS Studio. Zorg ervoor dat OBS Studio open is en correct is geconfigureerd.",
   "obs.connected": "OBS Studio: Verbonden",
   "obs.connecting": "OBS Studio: Aan het verbinden",
   "obs.disconnected": "OBS Studio: Verbinding verbroken",
@@ -348,7 +348,7 @@
   "show-hidden-media-explain": "Dit zal alle media laten zien die eerder verborgen waren voor de huidige geselecteerde dag.",
   "show-image-for-zoom-participants": "Toon plaatje voor de Zoom deelnemers",
   "show-media-display": "Toon mediavenster",
-  "some-media-items-are-hidden": "Sommige media is verborgen. Ze kunnen worden getoond via het menu 'Media toevoegen' indien nodig.",
+  "some-media-items-are-hidden": "Sommige media is verborgen.",
   "some-media-items-are-missing": "Sommige mediabestanden ontbreken",
   "some-media-items-are-missing-explain": "Het JWPUB-bestand is succesvol geïmporteerd. Sommige media zijn echter niet opgenomen in het bestand en konden niet automatisch worden gedownload. Je kunt deze media handmatig toevoegen indien nodig door gebruik te maken van het 'Media toevoegen' menu of door het naar de medialijst te slepen vanaf je computer.",
   "song": "Lied",
@@ -414,5 +414,6 @@
   "yes": "Ja",
   "you-can-navigate-the-website-before-presenting-it": "Indien nodig kan je naar een specifieke pagina navigeren voordat je het aan het publiek presenteert. Druk zodra je klaar bent op de knop \"Begin met presenteren\" in de rechterbovenhoek van dit venster. Wat je in het website-venster ziet, wordt nu in het media-venster weergegeven voor het publiek om te zien.",
   "zoom-in": "Inzoomen",
-  "zoom-out": "Uitzoomen"
+  "zoom-out": "Uitzoomen",
+  "show-all-media": "Toon alle media"
 }
