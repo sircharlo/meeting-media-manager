@@ -261,6 +261,7 @@
   "obs-studio-media-scene": "OBS Studio media scene",
   "obs-studio-port-and-password": "OBS Studio port and password",
   "obs-studio-stage-scene": "OBS Studio stage scene",
+  "obs-studio-disconnected-banner": "M³ is unable to connect to OBS Studio. Please ensure that OBS Studio is running and configured correctly.",
   "obs.connected": "OBS Studio: Connected",
   "obs.connecting": "OBS Studio: Connecting",
   "obs.disconnected": "OBS Studio: Disconnected",

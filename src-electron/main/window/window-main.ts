@@ -8,6 +8,7 @@ import { closeOtherWindows, createWindow, sendToWindow } from './window-base';
 import { createMediaWindow, moveMediaWindow } from './window-media';
 
 export let mainWindow: BrowserWindow | null = null;
+let closeAttempts = 0;
 export let authorizedClose = false;
 
 /**
@@ -31,12 +32,16 @@ export function createMainWindow() {
   if (PLATFORM !== 'darwin') mainWindow.on('moved', moveMediaWindow); // On macOS, the 'moved' event is just an alias for 'move'
 
   mainWindow.on('close', (e) => {
-    if (mainWindow && authorizedClose) {
+    if (mainWindow && (authorizedClose || closeAttempts > 2)) {
       cancelAllDownloads();
       closeOtherWindows(mainWindow);
     } else {
       e.preventDefault();
       sendToWindow(mainWindow, 'attemptedClose');
+      closeAttempts++;
+      setTimeout(() => {
+        closeAttempts = 0;
+      }, 10000);
     }
   });
 

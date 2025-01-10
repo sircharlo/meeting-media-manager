@@ -249,6 +249,7 @@
   "obs-studio-media-scene": "OBS Studio mediascène",
   "obs-studio-port-and-password": "OBS Studio poort en wachtwoord",
   "obs-studio-stage-scene": "OBS Studio podiumscène",
+  "obs-studio-disconnected-banner": "M³ is unable to connect to OBS Studio. Please ensure that OBS Studio is running and configured correctly.",
   "obs.connected": "OBS Studio: Verbonden",
   "obs.connecting": "OBS Studio: Aan het verbinden",
   "obs.disconnected": "OBS Studio: Verbinding verbroken",

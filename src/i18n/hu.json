@@ -249,6 +249,7 @@
   "obs-studio-media-scene": "OBS Studio médiajelenet",
   "obs-studio-port-and-password": "OBS Studio port és jelszó",
   "obs-studio-stage-scene": "OBS Studio színpadjelenet",
+  "obs-studio-disconnected-banner": "M³ is unable to connect to OBS Studio. Please ensure that OBS Studio is running and configured correctly.",
   "obs.connected": "OBS Studio: Kapcsolódott",
   "obs.connecting": "OBS Studio: Kapcsolódás",
   "obs.disconnected": "OBS Studio: Kapcsolat megszűnt",

@@ -249,6 +249,7 @@
   "obs-studio-media-scene": "Медіа сцена OBS Studio",
   "obs-studio-port-and-password": "Порт і пароль для OBS Studio",
   "obs-studio-stage-scene": "Медіасцена сцени в OBS Studio",
+  "obs-studio-disconnected-banner": "M³ is unable to connect to OBS Studio. Please ensure that OBS Studio is running and configured correctly.",
   "obs.connected": "OBS Studio: Під'єднано",
   "obs.connecting": "OBS Studio: Підключення",
   "obs.disconnected": "OBS Studio: Відʼєднано",
