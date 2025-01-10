@@ -88,11 +88,49 @@ export const isWeMeetingDay = (lookupDate: Date) => {
 
 export function updateLookupPeriod(reset = false) {
   try {
-    const { currentCongregation } = useCurrentStateStore();
-    if (!currentCongregation) return;
+    const { currentCongregation, currentSettings } = useCurrentStateStore();
+    if (!currentCongregation || !currentSettings) return;
+
+    if (
+      currentSettings.meetingScheduleChangeDate &&
+      ((!currentSettings.meetingScheduleChangeOnce &&
+        isInPast(currentSettings.meetingScheduleChangeDate, true)) ||
+        (currentSettings.meetingScheduleChangeOnce &&
+          isInPast(
+            addToDate(currentSettings.meetingScheduleChangeDate, { day: 7 }),
+            true,
+          )))
+    ) {
+      // Update meeting schedule
+      if (!currentSettings.meetingScheduleChangeOnce) {
+        currentSettings.mwDay =
+          currentSettings.meetingScheduleChangeMwDay ?? currentSettings.mwDay;
+        currentSettings.mwStartTime =
+          currentSettings.meetingScheduleChangeMwStartTime ??
+          currentSettings.mwStartTime;
+        currentSettings.weDay =
+          currentSettings.meetingScheduleChangeWeDay ?? currentSettings.weDay;
+        currentSettings.weStartTime =
+          currentSettings.meetingScheduleChangeWeStartTime ??
+          currentSettings.weStartTime;
+
+        reset = true;
+      }
+
+      // Clear meeting schedule change settings
+      currentSettings.meetingScheduleChangeDate = null;
+      currentSettings.meetingScheduleChangeOnce = false;
+      currentSettings.meetingScheduleChangeMwDay = null;
+      currentSettings.meetingScheduleChangeMwStartTime = null;
+      currentSettings.meetingScheduleChangeWeDay = null;
+      currentSettings.meetingScheduleChangeWeStartTime = null;
+    }
+
     const { lookupPeriod } = useJwStore();
-    if (!lookupPeriod[currentCongregation]?.length || reset)
+    if (!lookupPeriod[currentCongregation]?.length || reset) {
       lookupPeriod[currentCongregation] = [];
+    }
+
     lookupPeriod[currentCongregation] = lookupPeriod[
       currentCongregation
     ]?.filter((day) => !isInPast(getSpecificWeekday(day.date, 6)));

@@ -50,10 +50,9 @@ const props = defineProps<{
 }>();
 
 const jwStore = useJwStore();
-const { additionalMediaMaps, lookupPeriod } = storeToRefs(jwStore);
+const { additionalMediaMaps } = storeToRefs(jwStore);
 
 const currentState = useCurrentStateStore();
-const { currentCongregation } = storeToRefs(currentState);
 
 const open = defineModel<boolean>({ default: false });
 const cacheClearType = defineModel<'' | 'all' | 'smart'>('cacheClearType', {
@@ -108,8 +107,7 @@ const deleteCacheFiles = async (type = '') => {
     //   concurrency: 5,
     // });
     if (type === 'all') {
-      lookupPeriod.value[currentCongregation.value] = [];
-      updateLookupPeriod();
+      updateLookupPeriod(true);
     }
     cancelDeleteCacheFiles();
   } catch (error) {
