@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-dynamic-delete */
 import type { SettingsValues } from 'src/types';
 
 import { defineStore } from 'pinia';
 import { defaultSettings } from 'src/constants/settings';
 import { uuid } from 'src/utils/general';
+
+import { useJwStore } from './jw';
 
 interface Store {
   announcements: Partial<Record<string, string[]>>;
@@ -20,8 +23,14 @@ export const useCongregationSettingsStore = defineStore(
       },
       deleteCongregation(id: number | string) {
         if (!id) return;
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+
         delete this.congregations[id];
+
+        const jwStore = useJwStore();
+        delete jwStore.additionalMediaMaps[id];
+        delete jwStore.lookupPeriod[id];
+        delete jwStore.mediaSort[id];
+        delete jwStore.watchedMediaSections[id];
       },
       dismissAnnouncement(congId: string, id: string) {
         if (!id || !congId) return;

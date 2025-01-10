@@ -249,6 +249,7 @@
   "obs-studio-media-scene": "Medijski prizor v programu OBS Studio",
   "obs-studio-port-and-password": "Vrata in geslo programa OBS Studio",
   "obs-studio-stage-scene": "Odrski prizor v programu OBS Studio",
+  "obs-studio-disconnected-banner": "M³ is unable to connect to OBS Studio. Please ensure that OBS Studio is running and configured correctly.",
   "obs.connected": "OBS Studio: povezan",
   "obs.connecting": "OBS Studio: povezovanje",
   "obs.disconnected": "OBS Studio: nepovezan",

@@ -249,6 +249,7 @@
   "obs-studio-media-scene": "Cena de mídia do OBS Studio",
   "obs-studio-port-and-password": "Porta e senha do OBS Studio",
   "obs-studio-stage-scene": "Cena padrão do OBS Studio",
+  "obs-studio-disconnected-banner": "M³ is unable to connect to OBS Studio. Please ensure that OBS Studio is running and configured correctly.",
   "obs.connected": "OBS Studio: Conectado",
   "obs.connecting": "OBS Studio: Conectando",
   "obs.disconnected": "OBS Studio: Desconectado",

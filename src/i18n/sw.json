@@ -249,6 +249,7 @@
   "obs-studio-media-scene": "Eneo ya midia ya OBS Studio",
   "obs-studio-port-and-password": "Port na neno siri ya OBS Studio",
   "obs-studio-stage-scene": "OBS Studio Eneo ya jukwaa",
+  "obs-studio-disconnected-banner": "M³ is unable to connect to OBS Studio. Please ensure that OBS Studio is running and configured correctly.",
   "obs.connected": "OBS Studio: Imeunganishwa",
   "obs.connecting": "OBS Studio: Inaunganisha",
   "obs.disconnected": "OBS Studio: Haijaunganishwa",
