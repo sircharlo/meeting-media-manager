@@ -5,6 +5,7 @@ import type {
   DynamicMediaObject,
   JwLanguage,
   MediaLink,
+  MediaSection,
   SettingsItem,
   SettingsItems,
   SettingsValues,
@@ -13,8 +14,8 @@ import type {
 import { defineStore } from 'pinia';
 import { settingsDefinitions } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { formatDate, getDateDiff } from 'src/utils/date';
-import { getAdditionalMediaPath } from 'src/utils/fs';
+import { datesAreSame, formatDate } from 'src/utils/date';
+import { getAdditionalMediaPath, isFileUrl } from 'src/utils/fs';
 import { isEmpty, isUUID } from 'src/utils/general';
 import { formatTime } from 'src/utils/time';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
@@ -52,7 +53,6 @@ interface Store {
   onlyShowInvalidSettings: boolean;
   selectedDate: string;
   timeRemainingBeforeMusicStop: number;
-  watchFolderMedia: Record<string, DynamicMediaObject[]>;
 }
 
 const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
@@ -190,6 +190,70 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!currentLanguage) return [];
       return jwStore.jwSongs[currentLanguage]?.list || [];
     },
+    getAllMediaForSection(): Record<MediaSection, DynamicMediaObject[]> {
+      if (!this.selectedDateObject) {
+        return {
+          additional: [],
+          ayfm: [],
+          circuitOverseer: [],
+          lac: [],
+          tgw: [],
+          wt: [],
+        };
+      }
+
+      const sections: MediaSection[] = [
+        'additional',
+        'ayfm',
+        'circuitOverseer',
+        'lac',
+        'tgw',
+        'wt',
+      ];
+
+      return sections.reduce(
+        (acc, section) => {
+          if (!this.selectedDateObject?.dynamicMedia) return acc;
+          acc[section] = this.selectedDateObject.dynamicMedia.filter(
+            (m) => m.section === section,
+          );
+          return acc;
+        },
+        {} as Record<MediaSection, DynamicMediaObject[]>,
+      );
+    },
+    getVisibleMediaForSection(): Record<MediaSection, DynamicMediaObject[]> {
+      if (!this.selectedDateObject) {
+        return {
+          additional: [],
+          ayfm: [],
+          circuitOverseer: [],
+          lac: [],
+          tgw: [],
+          wt: [],
+        };
+      }
+
+      const sections: MediaSection[] = [
+        'additional',
+        'ayfm',
+        'circuitOverseer',
+        'lac',
+        'tgw',
+        'wt',
+      ];
+
+      return sections.reduce(
+        (acc, section) => {
+          if (!this.selectedDateObject?.dynamicMedia) return acc;
+          acc[section] = this.selectedDateObject.dynamicMedia.filter(
+            (m) => m.section === section && !m.hidden,
+          );
+          return acc;
+        },
+        {} as Record<MediaSection, DynamicMediaObject[]>,
+      );
+    },
     mediaPaused: (state) => {
       return (
         state.mediaPlayingUrl !== '' && state.mediaPlayingAction === 'pause'
@@ -198,6 +262,17 @@ export const useCurrentStateStore = defineStore('current-state', {
     mediaPlaying: (state) => {
       return (
         state.mediaPlayingUrl !== '' || state.mediaPlayingAction === 'website'
+      );
+    },
+    missingMedia(state): DynamicMediaObject[] {
+      if (
+        !state.currentCongregation ||
+        !this.selectedDateObject?.dynamicMedia
+      ) {
+        return [];
+      }
+      return this.selectedDateObject.dynamicMedia.filter(
+        (media) => !media.children?.length && !isFileUrl(media.fileUrl),
       );
     },
     musicRemainingTime: (state) => {
@@ -214,15 +289,23 @@ export const useCurrentStateStore = defineStore('current-state', {
     },
     selectedDateObject: (state): DateInfo | null => {
       const jwStore = useJwStore();
-      if (!jwStore.lookupPeriod?.[state.currentCongregation]?.length) {
+      if (
+        !state.selectedDate ||
+        !jwStore.lookupPeriod?.[state.currentCongregation]?.length
+      ) {
         return null;
       }
       return (
-        jwStore.lookupPeriod?.[state.currentCongregation]?.find(
-          (day) => getDateDiff(day.date, state.selectedDate, 'days') === 0,
+        jwStore.lookupPeriod?.[state.currentCongregation]?.find((day) =>
+          datesAreSame(day.date, state.selectedDate),
         ) ||
         jwStore.lookupPeriod[state.currentCongregation]?.[0] ||
         null
+      );
+    },
+    someItemsHiddenForSelectedDate(): boolean {
+      return !!this.selectedDateObject?.dynamicMedia.some(
+        (m) => m.hidden || m.children?.some((child) => child.hidden),
       );
     },
   },
@@ -251,7 +334,6 @@ export const useCurrentStateStore = defineStore('current-state', {
       onlyShowInvalidSettings: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
       timeRemainingBeforeMusicStop: 0,
-      watchFolderMedia: {},
     };
   },
 });

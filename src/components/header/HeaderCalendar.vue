@@ -4,23 +4,31 @@
   <DialogRemoteVideo v-model="remoteVideoPopup" :section="section" />
   <DialogStudyBible v-model="studyBiblePopup" :section="section" />
   <DialogAudioBible v-model="audioBiblePopup" :section="section" />
-  <q-btn
-    v-if="selectedDate"
-    color="white-transparent"
-    :disable="mediaPlaying || !mediaSortForDay"
-    unelevated
-    @click="resetSort"
+  <transition
+    appear
+    enter-active-class="animated fadeIn"
+    leave-active-class="animated fadeOut"
+    mode="out-in"
+    name="fade"
   >
-    <q-icon
-      :class="{ 'q-mr-sm': $q.screen.gt.sm }"
-      name="mmm-reset"
-      size="xs"
-    />
-    {{ $q.screen.gt.sm ? t('reset-sort-order') : '' }}
-    <q-tooltip v-if="!$q.screen.gt.sm" :delay="1000">
-      {{ t('reset-sort-order') }}
-    </q-tooltip>
-  </q-btn>
+    <q-btn
+      v-if="selectedDate && mediaSortCanBeReset"
+      color="white-transparent"
+      :disable="mediaPlaying"
+      unelevated
+      @click="resetSort"
+    >
+      <q-icon
+        :class="{ 'q-mr-sm': $q.screen.gt.sm }"
+        name="mmm-reset"
+        size="xs"
+      />
+      {{ $q.screen.gt.sm ? t('reset-sort-order') : '' }}
+      <q-tooltip v-if="!$q.screen.gt.sm" :delay="1000">
+        {{ t('reset-sort-order') }}
+      </q-tooltip>
+    </q-btn>
+  </transition>
   <q-btn
     v-if="selectedDate"
     color="white-transparent"
@@ -115,7 +123,7 @@
           ]"
           :key="name"
         >
-          <q-item v-close-popup clickable @click="openDragAndDropper">
+          <q-item v-close-popup clickable @click="openFileImportDialog">
             <q-item-section avatar>
               <q-icon color="primary" :name="icon" />
             </q-item-section>
@@ -125,13 +133,18 @@
             </q-item-section>
           </q-item>
         </template>
-        <template v-if="additionalMediaForDay || hiddenMediaForDay">
+        <template
+          v-if="
+            additionalMediaForSelectedDayExists ||
+            someItemsHiddenForSelectedDate
+          "
+        >
           <q-item-label header>{{ t('dangerZone') }}</q-item-label>
           <q-item
-            v-if="hiddenMediaForDay"
+            v-if="someItemsHiddenForSelectedDate"
             v-close-popup
             clickable
-            @click="showCurrentDayHiddenMedia()"
+            @click="showHiddenMediaForSelectedDate()"
           >
             <q-item-section avatar>
               <q-icon color="primary" name="mmm-eye" />
@@ -144,7 +157,7 @@
             </q-item-section>
           </q-item>
           <q-item
-            v-if="additionalMediaForDay"
+            v-if="additionalMediaForSelectedDayExists"
             v-close-popup
             clickable
             @click="mediaDeleteAllPending = true"
@@ -183,7 +196,7 @@
           color="negative"
           flat
           :label="t('delete')"
-          @click="clearCurrentDayAdditionalMedia()"
+          @click="clearAdditionalMediaForSelectedDate()"
         />
       </q-card-actions>
     </q-card>
@@ -230,8 +243,10 @@ import PublicTalkMediaPicker from 'components/media/PublicTalkMediaPicker.vue';
 import SongPicker from 'components/media/SongPicker.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
+import { SORTER } from 'src/constants/general';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
+  datesAreSame,
   formatDate,
   friendlyDayToJsDay,
   getDateDiff,
@@ -246,9 +261,9 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const jwStore = useJwStore();
-const { clearCurrentDayAdditionalMedia, resetSort, showCurrentDayHiddenMedia } =
+const { clearAdditionalMediaForSelectedDate, showHiddenMediaForSelectedDate } =
   jwStore;
-const { additionalMediaMaps, lookupPeriod, mediaSort } = storeToRefs(jwStore);
+const { lookupPeriod } = storeToRefs(jwStore);
 
 const { dateLocale } = useLocale();
 
@@ -256,10 +271,13 @@ const currentState = useCurrentStateStore();
 const {
   currentCongregation,
   currentSettings,
+  getAllMediaForSection,
+  getVisibleMediaForSection,
   mediaPlaying,
   online,
   selectedDate,
-  watchFolderMedia,
+  selectedDateObject,
+  someItemsHiddenForSelectedDate,
 } = storeToRefs(currentState);
 
 const section = ref<MediaSection | undefined>();
@@ -269,10 +287,10 @@ const remoteVideoPopup = ref(false);
 const studyBiblePopup = ref(false);
 const audioBiblePopup = ref(false);
 
-const openDragAndDropper = () => {
+const openFileImportDialog = () => {
   window.dispatchEvent(
     new CustomEvent<{ section: MediaSection | undefined }>(
-      'openDragAndDropper',
+      'openFileImportDialog',
       {
         detail: { section: section.value },
       },
@@ -280,63 +298,45 @@ const openDragAndDropper = () => {
   );
 };
 
-const mediaSortForDay = computed(() => {
-  if (!selectedDate.value || !currentCongregation.value || !mediaSort.value)
-    return false;
+const additionalMediaDates = computed(() =>
+  (
+    lookupPeriod.value?.[currentCongregation.value]?.filter((day) =>
+      day.dynamicMedia.some((media) => media.source !== 'dynamic'),
+    ) || []
+  ).map((day) => formatDate(day.date, 'YYYY/MM/DD')),
+);
+
+const additionalMediaForDayExists = (lookupDate: string) => {
   try {
     return (
-      (mediaSort.value?.[currentCongregation.value]?.[selectedDate.value]
-        ?.length || 0) > 0
+      (lookupPeriod.value?.[currentCongregation.value]
+        ?.find((day) => datesAreSame(lookupDate, day.date))
+        ?.dynamicMedia.filter((media) => media.source !== 'dynamic')?.length ||
+        0) > 0
     );
   } catch (error) {
     errorCatcher(error);
     return false;
   }
-});
+};
 
-const additionalMediaForDay = computed(
+const additionalMediaForSelectedDayExists = computed(
   () =>
-    (additionalMediaMaps.value?.[currentCongregation.value]?.[
-      selectedDate.value
-    ]?.length || 0) > 0,
-);
-
-const hiddenMediaForDay = computed(() =>
-  (
-    lookupPeriod.value?.[currentCongregation.value]?.find(
-      (day) => formatDate(day.date, 'YYYY/MM/DD') === selectedDate.value,
-    )?.dynamicMedia || []
-  )
-    .concat(
-      additionalMediaMaps.value?.[currentCongregation.value]?.[
-        selectedDate.value
-      ] || [],
-    )
-    .concat(watchFolderMedia.value?.[selectedDate.value] || [])
-    .some((media) => media.hidden),
+    !!selectedDateObject.value?.dynamicMedia?.filter(
+      (media) => media.source !== 'dynamic',
+    )?.length,
 );
 
 const mediaDeleteAllPending = ref(false);
 
 const getEventDates = () => {
   try {
-    if (
-      !(lookupPeriod.value || additionalMediaMaps.value) ||
-      !currentCongregation.value
-    )
-      return [];
+    if (!lookupPeriod.value || !currentCongregation.value) return [];
     const meetingDates =
       lookupPeriod.value[currentCongregation.value]
         ?.filter((day) => day.meeting)
         .map((day) => formatDate(day.date, 'YYYY/MM/DD')) || [];
-    const additionalMedia =
-      additionalMediaMaps.value[currentCongregation.value];
-    const additionalMediaDates = additionalMedia
-      ? Object.keys(additionalMedia)
-          .filter((day) => (additionalMedia[day]?.length || 0) > 0)
-          .map((day) => formatDate(day, 'YYYY/MM/DD'))
-      : [];
-    return meetingDates.concat(additionalMediaDates);
+    return meetingDates.concat(additionalMediaDates.value);
   } catch (error) {
     errorCatcher(error);
     return [];
@@ -403,22 +403,14 @@ const getEventDayColor = (eventDate: string) => {
     if (!lookupPeriod.value || !currentCongregation.value)
       throw new Error('No congregation or lookup period');
     const lookupDate = lookupPeriod.value[currentCongregation.value]?.find(
-      (d) => getDateDiff(eventDate, d.date, 'days') === 0,
+      (d) => datesAreSame(eventDate, d.date),
     );
     if (lookupDate?.error) {
       return 'negative';
     } else if (lookupDate?.complete) {
       return 'primary';
     }
-    const additionalDates =
-      additionalMediaMaps.value[currentCongregation.value];
-    if (additionalDates) {
-      const isAdditional = Object.keys(additionalDates)
-        .filter((day) => (additionalDates[day]?.length || 0) > 0)
-        .map((day) => formatDate(day, 'YYYY/MM/DD'))
-        .includes(eventDate);
-      if (isAdditional) return 'additional';
-    }
+    if (additionalMediaForDayExists(eventDate)) return 'additional';
   } catch (error) {
     errorCatcher(error);
     return 'negative';
@@ -445,4 +437,97 @@ useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
   (e) => openImportMenu(e.detail?.section),
   { passive: true },
 );
+
+const mediaSortCanBeReset = computed<boolean>(() => {
+  if (!selectedDateObject.value?.dynamicMedia) return false;
+
+  const nonHiddenMedia = selectedDateObject.value.dynamicMedia.filter(
+    (item) => !item.hidden,
+  );
+
+  if (nonHiddenMedia.some((item) => item.section !== item.sectionOriginal)) {
+    return true;
+  }
+
+  const watchedMediaToConsider = nonHiddenMedia.filter(
+    (item) => item.source === 'watched',
+  );
+
+  for (let i = 0; i < watchedMediaToConsider.length - 1; i++) {
+    const firstTitle = watchedMediaToConsider[i]?.title ?? '';
+    const secondTitle = watchedMediaToConsider[i + 1]?.title ?? '';
+    if (SORTER.compare(firstTitle, secondTitle) > 0) {
+      return true; // Array is not sorted
+    }
+  }
+
+  const mediaToConsider = [
+    ...getVisibleMediaForSection.value.tgw,
+    ...getVisibleMediaForSection.value.ayfm,
+    ...getVisibleMediaForSection.value.lac,
+    ...getVisibleMediaForSection.value.wt,
+  ];
+
+  for (let i = 0; i < mediaToConsider.length - 1; i++) {
+    const firstSortOrder = mediaToConsider[i]?.sortOrderOriginal ?? 0;
+    const secondSortOrder = mediaToConsider[i + 1]?.sortOrderOriginal ?? 0;
+    if (firstSortOrder > secondSortOrder) {
+      return true; // Array is not sorted
+    }
+  }
+  return false; // Array is sorted
+});
+
+const resetSort = () => {
+  if (!selectedDateObject.value?.dynamicMedia) return;
+
+  selectedDateObject.value.dynamicMedia.forEach((item) => {
+    if (item.sectionOriginal !== item.section) {
+      item.section = item.sectionOriginal;
+    }
+  });
+
+  // Remove dynamicMedia with item.source === 'watched', in place, and then add them back but sorted by sortOrderOriginal
+  const watchedMedia = selectedDateObject.value.dynamicMedia.filter(
+    (item) => item.source === 'watched',
+  );
+  selectedDateObject.value.dynamicMedia =
+    selectedDateObject.value.dynamicMedia.filter(
+      (item) => item.source !== 'watched',
+    );
+
+  watchedMedia.sort((a, b) =>
+    SORTER.compare(
+      a?.sortOrderOriginal?.toString() ?? '0',
+      b?.sortOrderOriginal?.toString() ?? '0',
+    ),
+  );
+
+  selectedDateObject.value.dynamicMedia.push(...watchedMedia);
+
+  // Combine all media items into one array
+  const mediaToSort = [
+    ...getAllMediaForSection.value.tgw,
+    ...getAllMediaForSection.value.ayfm,
+    ...getAllMediaForSection.value.lac,
+    ...getAllMediaForSection.value.wt,
+  ];
+
+  // Sort the media array in ascending order by `sortOrderOriginal`
+  const sortedMedia = mediaToSort.sort((a, b) =>
+    SORTER.compare(
+      a?.sortOrderOriginal?.toString() ?? '0',
+      b?.sortOrderOriginal?.toString() ?? '0',
+    ),
+  );
+
+  selectedDateObject.value.dynamicMedia = [
+    ...getAllMediaForSection.value.additional,
+    ...sortedMedia.filter((item) => item.section === 'tgw'),
+    ...sortedMedia.filter((item) => item.section === 'ayfm'),
+    ...sortedMedia.filter((item) => item.section === 'lac'),
+    ...sortedMedia.filter((item) => item.section === 'wt'),
+    ...getAllMediaForSection.value.circuitOverseer,
+  ];
+};
 </script>

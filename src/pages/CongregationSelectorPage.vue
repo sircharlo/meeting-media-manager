@@ -231,6 +231,7 @@ const runMigrations = async () => {
     'firstRun',
     'localStorageToPiniaPersist',
     'addBaseUrlToAllCongregations',
+    'moveAdditionalMediaMaps',
   ];
 
   for (const migration of migrationsToRun) {

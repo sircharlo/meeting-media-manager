@@ -22,7 +22,7 @@ export default defineConfig((ctx) => {
   return {
     // animations: 'all', // --- includes all animations
     // https://v2.quasar.dev/options/animations
-    animations: ['fadeIn', 'fadeOut'],
+    animations: ['fadeIn', 'fadeOut', 'shakeX'],
 
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"

@@ -16,6 +16,7 @@ import {
   getOldPrefsPaths,
   parsePrefsFile,
 } from 'src/helpers/migrations';
+import { dateFromString, datesAreSame } from 'src/utils/date';
 import { parseJsonSafe, uuid } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
@@ -66,9 +67,6 @@ export const useAppSettingsStore = defineStore('app-settings', {
           QuasarStorage.removeItem('congregations');
 
           jwStore.$patch({
-            additionalMediaMaps: parseJsonSafe<
-              Record<string, Record<string, DynamicMediaObject[]>>
-            >(QuasarStorage.getItem('additionalMediaMaps'), {}),
             jwLanguages: parseJsonSafe<{ list: JwLanguage[]; updated: Date }>(
               QuasarStorage.getItem('jwLanguages'),
               { list: [], updated: new Date(0) },
@@ -80,10 +78,6 @@ export const useAppSettingsStore = defineStore('app-settings', {
               QuasarStorage.getItem('lookupPeriod'),
               {},
             ),
-            mediaSort: parseJsonSafe<Record<string, Record<string, string[]>>>(
-              QuasarStorage.getItem('mediaSort'),
-              {},
-            ),
             yeartexts: parseJsonSafe<Record<number, Record<string, string>>>(
               QuasarStorage.getItem('yeartexts'),
               {},
@@ -91,16 +85,11 @@ export const useAppSettingsStore = defineStore('app-settings', {
           });
 
           // Remove migrated items from localStorage
-          [
-            'additionalMediaMaps',
-            'jwLanguages',
-            'jwSongs',
-            'lookupPeriod',
-            'mediaSort',
-            'yeartexts',
-          ].forEach((item) => {
-            QuasarStorage.removeItem(item);
-          });
+          ['jwLanguages', 'jwSongs', 'lookupPeriod', 'yeartexts'].forEach(
+            (item) => {
+              QuasarStorage.removeItem(item);
+            },
+          );
 
           this.migrations = this.migrations.concat(
             parseJsonSafe(QuasarStorage.getItem('migrations'), []),
@@ -120,6 +109,75 @@ export const useAppSettingsStore = defineStore('app-settings', {
             cong.baseUrl = 'jw.org';
           });
           congregationStore.congregations = updatedCongregations;
+        } else if (type === 'moveAdditionalMediaMaps') {
+          const storedData = JSON.parse(
+            QuasarStorage.getItem('jw-store') || '{}',
+          ) as {
+            additionalMediaMaps?: Record<
+              string,
+              Partial<Record<string, DynamicMediaObject[]>>
+            >;
+          };
+
+          const currentAdditionalMediaMaps: Record<
+            string,
+            Partial<Record<string, DynamicMediaObject[]>>
+          > = storedData.additionalMediaMaps || {};
+
+          const currentLookupPeriods: Record<string, DateInfo[]> = JSON.parse(
+            JSON.stringify(jwStore.lookupPeriod),
+          );
+
+          for (const [congId, dates] of Object.entries(
+            currentAdditionalMediaMaps,
+          )) {
+            if (!congId || !currentLookupPeriods) continue;
+            if (!currentLookupPeriods[congId]) {
+              currentLookupPeriods[congId] = [];
+            }
+            const lookupPeriodForCongregation = currentLookupPeriods[congId];
+            lookupPeriodForCongregation.forEach((day) => {
+              day.dynamicMedia = [];
+              day.complete = false;
+              day.error = false;
+            });
+            for (const [targetDate, additionalItems] of Object.entries(dates)) {
+              if (!targetDate || !additionalItems) continue;
+              additionalItems.forEach((item) => {
+                item.source = 'additional';
+              });
+              const existingMediaItemsForDate =
+                lookupPeriodForCongregation.find((d) =>
+                  datesAreSame(d.date, targetDate),
+                );
+              if (existingMediaItemsForDate) {
+                const newAdditionalItems = additionalItems.filter(
+                  (item) =>
+                    !existingMediaItemsForDate?.dynamicMedia?.find(
+                      (m) => m.uniqueId === item.uniqueId,
+                    ),
+                );
+                existingMediaItemsForDate.dynamicMedia.push(
+                  ...newAdditionalItems,
+                );
+              } else {
+                lookupPeriodForCongregation.push({
+                  complete: true,
+                  date: dateFromString(targetDate),
+                  dynamicMedia: additionalItems,
+                  error: false,
+                  meeting: false,
+                  today: false,
+                });
+              }
+            }
+          }
+          if ('additionalMediaMaps' in jwStore) {
+            delete (
+              jwStore as typeof jwStore & { additionalMediaMaps?: unknown }
+            ).additionalMediaMaps;
+          }
+          jwStore.lookupPeriod = currentLookupPeriods;
         } else {
           // Other migrations can be added here
         }
