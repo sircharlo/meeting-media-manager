@@ -58,7 +58,7 @@
   "clicking-it-will-allow-you-to-temporarily-hide-the-media-and-yeartext-and-reveal-the-zoom-participants-underneath-once-the-zoom-part-is-over-you-can-show-the-yeartext-again-using-the-same-button": "Ha rákattint, ideiglenesen elrejtheti a médiát és az éviszöveget, és megjelenítheti a Zoomon csatlakozókat alatta. Ha a Zoom rész véget ért, ugyanezen gomb segítségével újra megjelenítheti az éviszöveget.",
   "clicking-the-close-button-again-will-close-app": "Ha ismét ugyanerre a gombra kattint, az M³ program kilép.",
   "close": "Bezár",
-  "circuit-overseer": "Körzetfelvigyázó",
+  "circuit-overseer": "körzetfelvigyázó",
   "coWeek": "A körzetfelvigyázó következő tervezett látogatása",
   "coWeek-explain": "Ha megadja, akkor a program automatikusan áthelyezi a hétközbeni összejövetelt az adott hét keddjére. A gyülekezeti bibliatanulmányozás médiáját is kihagyja, és mind a hétközbeni, mind a hétvégi összejövetelek záró énekeit is mellőzi.",
   "collapse-sidebar": "Oldalsáv összecsukása",
@@ -348,7 +348,7 @@
   "show-hidden-media-explain": "Ezzel megjelenik minden olyan médiaelem, amely korábban el volt rejtve az aktuálisan kiválasztott napra vonatkozóan.",
   "show-image-for-zoom-participants": "Kép megjelenítése a Zoom résztvevők számára",
   "show-media-display": "Médiaablak megjelenítése",
-  "some-media-items-are-hidden": "Néhány médiaelem el lett rejtve. Szükség esetén a \"Média hozzáadása\" menü segítségével megjeleníthetők.",
+  "some-media-items-are-hidden": "Some media items have been hidden.",
   "some-media-items-are-missing": "Néhány médiafájl hiányzik",
   "some-media-items-are-missing-explain": "A JWPUB fájl importálása sikeres volt. Néhány médiatartalom azonban nem szerepel a fájlban, és nem tudott automatikusan letöltődni. Szükség esetén manuálisan hozzáadhatja ezt a médiát a \"Média hozzáadása\" menü segítségével, vagy a számítógépéről a médialistába húzva.",
   "song": "Ének",
@@ -414,5 +414,6 @@
   "yes": "Igen",
   "you-can-navigate-the-website-before-presenting-it": "If necessary, you can navigate to a specific page before presenting it to the audience. When you're ready, press the \"Start Mirroring\" button on the top right corner of this window. What you see in the website window will now be displayed in the media window for the audience to see.",
   "zoom-in": "Nagyítás",
-  "zoom-out": "Kicsinyítés"
+  "zoom-out": "Kicsinyítés",
+  "show-all-media": "Show all media"
 }

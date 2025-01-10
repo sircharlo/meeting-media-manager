@@ -348,7 +348,7 @@
   "show-hidden-media-explain": "Dies zeigt alle Medien, die für den aktuell ausgewählten Tag zuvor verborgen wurden.",
   "show-image-for-zoom-participants": "Bild für Zoom-Teilnehmer einblenden",
   "show-media-display": "Medienanzeige einblenden",
-  "some-media-items-are-hidden": "Einige Medienobjekte sind verborgen. Sie können über das 'Medien hinzufügen' Menü angezeigt werden, wenn nötig.",
+  "some-media-items-are-hidden": "Some media items have been hidden.",
   "some-media-items-are-missing": "Einige Medien fehlen",
   "some-media-items-are-missing-explain": "Die JWPUB-Datei wurde erfolgreich importiert. Einige Medien sind jedoch nicht in der Datei enthalten und konnten nicht automatisch heruntergeladen werden. Sie können diese Medien manuell hinzufügen, wenn nötig, indem Sie das 'Medien hinzufügen' Menü verwenden oder sie per Drag-and-Drop in die Medienliste von Ihrem Computer ziehen.",
   "song": "Lied",
@@ -414,5 +414,6 @@
   "yes": "Ja",
   "you-can-navigate-the-website-before-presenting-it": "Wenn nötig, können Sie zu einer bestimmten Seite navigieren, bevor Sie sie dem Publikum vorstellen. Wenn Sie fertig sind, drücken Sie die Schaltfläche \"Spiegeln starten\" oben rechts in diesem Fenster. Was Sie im Webseitenfenster sehen, wird nun im Medienfenster angezeigt, damit das Publikum sehen kann.",
   "zoom-in": "Hineinzoomen",
-  "zoom-out": "Herauszoomen"
+  "zoom-out": "Herauszoomen",
+  "show-all-media": "Show all media"
 }
