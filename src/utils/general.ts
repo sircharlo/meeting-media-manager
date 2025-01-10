@@ -195,3 +195,18 @@ export const isUUID = (str: string) =>
  */
 export const pad = (v: number | string, length = 2, char = '0') =>
   v.toString().padStart(length, char);
+
+/**
+ * Parses a JSON string.
+ * @param json The JSON string to parse.
+ * @param fallback The fallback value to return if parsing fails.
+ * @returns The parsed JSON or the fallback value.
+ */
+export const parseJsonSafe = <T>(json: null | string | T, fallback: T): T => {
+  if (!json) return fallback;
+  try {
+    return typeof json === 'string' ? (JSON.parse(json) as T) : json;
+  } catch {
+    return fallback;
+  }
+};

@@ -48,10 +48,7 @@ import { storeToRefs } from 'pinia';
 import { useMeta, useQuasar } from 'quasar';
 import { SORTER } from 'src/constants/general';
 // Helpers
-import {
-  cleanAdditionalMediaFolder,
-  cleanLocalStorage,
-} from 'src/helpers/cleanup';
+import { cleanPersistedStores } from 'src/helpers/cleanup';
 import {
   remainingTimeBeforeMeetingStart,
   updateLookupPeriod,
@@ -384,8 +381,7 @@ const updateWatchFolderRef = async ({
   }
 };
 
-cleanLocalStorage();
-cleanAdditionalMediaFolder();
+cleanPersistedStores();
 
 const closeAttempts = ref(0);
 

@@ -9,6 +9,7 @@ import {
   isVersionWithinBounds,
   kebabToCamelCase,
   pad,
+  parseJsonSafe,
   parseVersion,
   sanitizeId,
   sortByVersion,
@@ -139,5 +140,25 @@ describe('isUUID', () => {
     expect(isUUID('123e4567-e89b-12d3-a456-426614174000')).toBe(true);
     expect(isUUID('123e4567-e89b-12d3-a456-42661417400')).toBe(false);
     expect(isUUID('123e4567-e89b-12d3-a456-4266141740000')).toBe(false);
+  });
+});
+
+describe('parseJsonSafe', () => {
+  it('should parse valid JSON', () => {
+    expect(parseJsonSafe('{"key":"value"}', { fallback: true })).toEqual({
+      key: 'value',
+    });
+  });
+
+  it('should return the fallback value for invalid JSON', () => {
+    expect(parseJsonSafe('invalid', { fallback: true })).toEqual({
+      fallback: true,
+    });
+  });
+
+  it('should return the fallback value for undefined JSON', () => {
+    expect(parseJsonSafe(undefined, { fallback: true })).toEqual({
+      fallback: true,
+    });
   });
 });
