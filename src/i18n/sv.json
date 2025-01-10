@@ -348,7 +348,7 @@
   "show-hidden-media-explain": "Detta kommer att visa alla medier som tidigare har dolts för den valda dagen.",
   "show-image-for-zoom-participants": "Visa bild för Zoomdeltagare",
   "show-media-display": "Visa mediaskärm",
-  "some-media-items-are-hidden": "Some media items have been hidden.",
+  "some-media-items-are-hidden": "Vissa medieobjekt har dolts.",
   "some-media-items-are-missing": "Vissa mediefiler saknas",
   "some-media-items-are-missing-explain": "JWPUB-filen importerades framgångsrikt. Vissa medier ingår dock inte i filen och kunde inte laddas ner automatiskt. Du kan lägga till detta media manuellt om det behövs genom att använda menyn 'Lägg till media' eller genom att dra det i medielistan från datorn.",
   "song": "Sång",
@@ -415,5 +415,5 @@
   "you-can-navigate-the-website-before-presenting-it": "Vid behov kan du navigera till en specifik sida innan du presenterar den för åhörarna. När du är redo, tryck på \"Börja spegla\" knappen i det övre högra hörnet av detta fönster. Vad du ser i webbplatsfönstret kommer nu att visas i mediafönstret för åhörarna att se.",
   "zoom-in": "Zooma in",
   "zoom-out": "Zooma ut",
-  "show-all-media": "Show all media"
+  "show-all-media": "Visa all media"
 }
