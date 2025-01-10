@@ -348,7 +348,7 @@
   "show-hidden-media-explain": "Questo mostrerà tutti i media che erano stati precedentemente nascosti per il giorno attualmente selezionato.",
   "show-image-for-zoom-participants": "Mostra immagine per i partecipanti Zoom",
   "show-media-display": "Mostra display multimediale",
-  "some-media-items-are-hidden": "Alcuni elementi multimediali sono stati nascosti. Possono essere mostrati usando il menu 'Aggiungi media' se necessario.",
+  "some-media-items-are-hidden": "Some media items have been hidden.",
   "some-media-items-are-missing": "Mancano alcuni file multimediali",
   "some-media-items-are-missing-explain": "Il file JWPUB è stato importato con successo. Tuttavia, alcuni media non sono inclusi nel file e non possono essere scaricati automaticamente. Puoi aggiungere manualmente i file mancanti se necessario usando il menu 'Aggiungi media' o trascinandolo nella lista dei media dal tuo computer.",
   "song": "Cantico",
@@ -414,5 +414,6 @@
   "yes": "Sì",
   "you-can-navigate-the-website-before-presenting-it": "Se necessario, puoi navigare verso una pagina specifica prima di presentarla al pubblico. Quando sei pronto, premi il pulsante \"Avvia condivisione\" nell'angolo in alto a destra di questa finestra. Ciò che vedi nella finestra del sito web verrà ora visualizzato nella finestra multimediale per il pubblico.",
   "zoom-in": "Ingrandisci",
-  "zoom-out": "Riduci"
+  "zoom-out": "Riduci",
+  "show-all-media": "Show all media"
 }
