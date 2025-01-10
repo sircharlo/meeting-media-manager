@@ -58,7 +58,7 @@
   "clicking-it-will-allow-you-to-temporarily-hide-the-media-and-yeartext-and-reveal-the-zoom-participants-underneath-once-the-zoom-part-is-over-you-can-show-the-yeartext-again-using-the-same-button": "En cliquant dessus, vous pourrez masquer temporairement les média et le texte de l'année, pour afficher les participants Zoom en dessous. Une fois la partie Zoom terminée, vous pouvez afficher à nouveau le texte de l'année en utilisant le même bouton.",
   "clicking-the-close-button-again-will-close-app": "En cliquant à nouveau sur le même bouton, vous quitterez M³.",
   "close": "Fermer",
-  "circuit-overseer": "Responsable de circonscription",
+  "circuit-overseer": "responsable de circonscription",
   "coWeek": "Prochaine visite prévue du responsable de circonscription",
   "coWeek-explain": "Si cette date est ajoutée, M³ déplacera automatiquement la réunion de semaine au mardi pour cette semaine. Les médias pour l’étude biblique de l'assemblée et les cantiques de clôture pour les réunions de semaine et de fin de semaine seront également enlevés.",
   "collapse-sidebar": "Réduire la barre latérale",
@@ -348,7 +348,7 @@
   "show-hidden-media-explain": "Ceci affichera tous les médias qui ont été masqués au préalable pour le jour sélectionné.",
   "show-image-for-zoom-participants": "Afficher l'image pour les participants Zoom",
   "show-media-display": "Afficher la fenêtre des médias",
-  "some-media-items-are-hidden": "Certains médias ont été masqués. Ils peuvent être affichés en utilisant le menu « Ajouter des médias» si nécessaire.",
+  "some-media-items-are-hidden": "Some media items have been hidden.",
   "some-media-items-are-missing": "Certains fichiers média sont manquants",
   "some-media-items-are-missing-explain": "Le fichier JWPUB a été importé avec succès. Cependant, certains médias ne sont pas inclus dans le fichier et n'ont pu être téléchargés automatiquement. Vous pouvez ajouter ces médias manuellement si nécessaire en utilisant le menu « Ajouter des médias» ou en les faisant glisser dans la liste des médias depuis votre ordinateur.",
   "song": "Cantique",
@@ -414,5 +414,6 @@
   "yes": "Oui",
   "you-can-navigate-the-website-before-presenting-it": "Si nécessaire, vous pouvez naviguer vers une page spécifique avant de partager le site avec l'auditoire. Lorsque vous êtes prêt, cliquez sur le bouton « Démarrer le partage » dans le coin supérieur droit de cette fenêtre. Ce que vous voyez dans la fenêtre du site web sera maintenant affiché dans la fenêtre média pour que l'auditoire puisse en profiter.",
   "zoom-in": "Agrandir",
-  "zoom-out": "Réduire"
+  "zoom-out": "Réduire",
+  "show-all-media": "Show all media"
 }
