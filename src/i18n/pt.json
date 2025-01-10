@@ -58,7 +58,7 @@
   "clicking-it-will-allow-you-to-temporarily-hide-the-media-and-yeartext-and-reveal-the-zoom-participants-underneath-once-the-zoom-part-is-over-you-can-show-the-yeartext-again-using-the-same-button": "Clicando aqui você pode ocultar temporariamente a mídia e o texto do ano, permitindo exibir os participantes do Zoom em uma janela subjacente. Após o término da parte no Zoom, você pode mostrar o texto do ano novamente clicando no mesmo botão.",
   "clicking-the-close-button-again-will-close-app": "Clicar no mesmo botão novamente fechará o M³.",
   "close": "Fechar",
-  "circuit-overseer": "Superintendente de Circuito",
+  "circuit-overseer": "Superintendente de circuito",
   "coWeek": "Data da visita do superintendente de circuito",
   "coWeek-explain": "Ao selecionar uma data, a reunião do meio de semana será alterada para terça-feira. Além disso, as mídias do Estudo Bíblico de Congregação e o cântico final, não serão baixados, tanto para a reunião do meio como do fim de semana.",
   "collapse-sidebar": "Ocultar barra lateral",
@@ -348,7 +348,7 @@
   "show-hidden-media-explain": "Essa opção mostra novamente qualquer mídia que tenha sido oculta no dia selecionado.",
   "show-image-for-zoom-participants": "Mostrar imagem para os participantes do Zoom",
   "show-media-display": "Mostrar janela de mídia",
-  "some-media-items-are-hidden": "Uma mídia foi oculta. Para mostrá-la novamente na lista de mídias clique no botão \"Adicionar mídia\".",
+  "some-media-items-are-hidden": "Some media items have been hidden.",
   "some-media-items-are-missing": "Alguns arquivos de mídia estão faltando",
   "some-media-items-are-missing-explain": "O arquivo JWPUB foi importado com sucesso. No entanto, uma ou mais mídias não está(ão) incluída(s) no arquivo e não foi possível baixá-la(s) automaticamente. Você pode adicionar mídias faltantes manualmente, se necessário, usando o menu 'Adicionar mídia' ou arrastando-as do seu computador para a lista de mídias.",
   "song": "Cântico",
@@ -414,5 +414,6 @@
   "yes": "Sim",
   "you-can-navigate-the-website-before-presenting-it": "Se necessário, você pode navegar para uma página específica antes de exibi-la. Após isso, clique no botão “Iniciar espelhamento” no canto superior direito dessa janela. Esse botão permite que a janela do site seja exibida na janela de exibição de mídia.",
   "zoom-in": "Aumentar o zoom",
-  "zoom-out": "Diminuir o zoom"
+  "zoom-out": "Diminuir o zoom",
+  "show-all-media": "Show all media"
 }
