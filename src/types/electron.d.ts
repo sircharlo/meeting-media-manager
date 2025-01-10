@@ -60,7 +60,7 @@ export interface ElectronApi {
    * fileUrlToPath('file:///home/user/document.pdf')
    *   // => '/home/user/document.pdf'
    */
-  fileUrlToPath: (url: string) => string;
+  fileUrlToPath: (url?: string) => string;
   fs: typeof FsExtra;
   getAllScreens: () => Promise<Display[]>;
   getAppDataPath: () => Promise<string>;

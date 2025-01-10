@@ -1,6 +1,6 @@
 import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useJwStore } from 'src/stores/jw';
-import { getSpecificWeekday, isInPast } from 'src/utils/date';
+//import { getSpecificWeekday, isInPast } from 'src/utils/date';
 
 const cleanCongregationRecord = (
   record: Partial<Record<string, unknown>>,
@@ -14,15 +14,15 @@ const cleanCongregationRecord = (
   });
 };
 
-const cleanDateRecord = (record?: Partial<Record<string, unknown>>) => {
-  if (!record) return;
-  Object.keys(record).forEach((dateKey) => {
-    if (isInPast(getSpecificWeekday(dateKey, 6))) {
-      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-      delete record[dateKey];
-    }
-  });
-};
+// const cleanDateRecord = (record?: Partial<Record<string, unknown>>) => {
+//   if (!record) return;
+//   Object.keys(record).forEach((dateKey) => {
+//     if (isInPast(getSpecificWeekday(dateKey, 6))) {
+//       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+//       delete record[dateKey];
+//     }
+//   });
+// };
 
 export const cleanPersistedStores = () => {
   const jwStore = useJwStore();
@@ -30,20 +30,8 @@ export const cleanPersistedStores = () => {
   const congIds = new Set(Object.keys(congregationStore.congregations));
 
   // Cleanup old congregation records
-  const congregationRecords: (keyof typeof jwStore.$state)[] = [
-    'additionalMediaMaps',
-    'lookupPeriod',
-    'mediaSort',
-    'watchedMediaSections',
-  ];
+  const congregationRecords: (keyof typeof jwStore.$state)[] = ['lookupPeriod'];
   congregationRecords.forEach((r) =>
     cleanCongregationRecord(jwStore[r], congIds),
   );
-
-  // Cleanup old date records
-  congIds.forEach((congId) => {
-    cleanDateRecord(jwStore.additionalMediaMaps[congId]);
-    cleanDateRecord(jwStore.mediaSort[congId]);
-    cleanDateRecord(jwStore.watchedMediaSections[congId]);
-  });
 };

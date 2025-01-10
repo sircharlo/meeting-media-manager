@@ -1240,13 +1240,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@formkit/drag-and-drop@npm:^0.1.6":
-  version: 0.1.6
-  resolution: "@formkit/drag-and-drop@npm:0.1.6"
-  checksum: 10c0/3cab2b237b5d882818287290dc38e7c4197ea7c739663de7c29ffb9a0711c471d6a6387f6c75ec713f8cf1b23c91e77d3c24fb795f52bba68d3d111253a3f0bb
-  languageName: node
-  linkType: hard
-
 "@gar/promisify@npm:^1.1.3":
   version: 1.1.3
   resolution: "@gar/promisify@npm:1.1.3"
@@ -4200,6 +4193,13 @@ __metadata:
   version: 1.2.0
   resolution: "@types/shimmer@npm:1.2.0"
   checksum: 10c0/6f7bfe1b55601cfc3ae713fc74a03341f3834253b8b91cb2add926d5949e4a63f7e666f59c2a6e40a883a5f9e2f3e3af10f9d3aed9b60fced0bda87659e58d8d
+  languageName: node
+  linkType: hard
+
+"@types/sortablejs@npm:^1.15.8":
+  version: 1.15.8
+  resolution: "@types/sortablejs@npm:1.15.8"
+  checksum: 10c0/cac9c8279ead93b5fc6b0dde6bf4b1c4fe067d40d7b2b3415880df823f2efe5779616009488f940a003687ace70cb3d52bda168dfad2b5f4242403cd8f4ed500
   languageName: node
   linkType: hard
 
@@ -11833,7 +11833,6 @@ __metadata:
   dependencies:
     "@daipeng7/rollup-plugin-iconfont": "npm:^3.0.6"
     "@electron/rebuild": "npm:^3.7.1"
-    "@formkit/drag-and-drop": "npm:^0.1.6"
     "@intlify/unplugin-vue-i18n": "npm:^6.0.3"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@panzoom/panzoom": "npm:^4.5.1"
@@ -11857,6 +11856,7 @@ __metadata:
     "@types/node": "npm:^20.17.10"
     "@types/pretty-bytes": "npm:^5.2.0"
     "@types/sanitize-html": "npm:^2.13.0"
+    "@types/sortablejs": "npm:^1.15.8"
     "@vue/eslint-config-prettier": "npm:^10.1.0"
     "@vue/eslint-config-typescript": "npm:^14.2.0"
     "@vue/test-utils": "npm:^2.4.6"
@@ -11899,6 +11899,8 @@ __metadata:
     quasar: "npm:^2.17.5"
     sanitize-filename: "npm:^1.6.3"
     sanitize-html: "npm:^2.14.0"
+    sortablejs: "npm:^1.15.6"
+    sortablejs-vue3: "npm:^1.2.11"
     typescript: "npm:~5.6.3"
     upath: "npm:^2.0.1"
     vitepress: "npm:^1.5.0"
@@ -15755,6 +15757,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sortablejs-vue3@npm:^1.2.11":
+  version: 1.2.11
+  resolution: "sortablejs-vue3@npm:1.2.11"
+  dependencies:
+    sortablejs: "npm:^1.15.0"
+    vue: "npm:^3.3.7"
+  peerDependencies:
+    sortablejs: ^1.15.0
+    vue: ^3.2.25
+  checksum: 10c0/026575342679d7190ba9fdc6c1ca186404a358b10618a2e4cd6702c72bfb08404b891bff37aa1db61fb4d469d8da455694e0ef0c1f52ee713ad418d6485d6e97
+  languageName: node
+  linkType: hard
+
+"sortablejs@npm:^1.15.0, sortablejs@npm:^1.15.6":
+  version: 1.15.6
+  resolution: "sortablejs@npm:1.15.6"
+  checksum: 10c0/a75dcf53e5613b4106d46434e40114830f9c6449b3b439bc1925c1fbf0a0c1f044727a8f3d4ae1759fa7beaa33e7eb0c4a413e6aa88d6026577b59f3658ff727
+  languageName: node
+  linkType: hard
+
 "source-map-js@npm:^1.0.1, source-map-js@npm:^1.0.2, source-map-js@npm:^1.2.0, source-map-js@npm:^1.2.1":
   version: 1.2.1
   resolution: "source-map-js@npm:1.2.1"
@@ -17909,7 +17931,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue@npm:^3.4, vue@npm:^3.5.12, vue@npm:^3.5.13":
+"vue@npm:^3.3.7, vue@npm:^3.4, vue@npm:^3.5.12, vue@npm:^3.5.13":
   version: 3.5.13
   resolution: "vue@npm:3.5.13"
   dependencies:

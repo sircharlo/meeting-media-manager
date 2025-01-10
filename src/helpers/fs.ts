@@ -10,6 +10,7 @@ import { Platform } from 'quasar';
 import { FULL_HD } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadFileIfNeeded, getJwMediaInfo } from 'src/helpers/jw-media';
+import { useJwStore } from 'src/stores/jw';
 import { fetchJson } from 'src/utils/api';
 import { getPublicationDirectory } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
@@ -182,10 +183,11 @@ const getThumbnailFromVideoPath = async (
 };
 
 export const getThumbnailUrl = async (
-  filepath: string,
+  filepath?: string,
   forceRefresh?: boolean,
 ) => {
   try {
+    if (!filepath) return '';
     filepath = window.electronApi.fileUrlToPath(filepath);
     if (!filepath || !(await window.electronApi.fs.exists(filepath))) return '';
     let thumbnailUrl = '';
@@ -266,8 +268,18 @@ export const getSubtitlesUrl = async (
 
 export const watchExternalFolder = async (folder?: string) => {
   try {
+    const jwStore = useJwStore();
     const currentState = useCurrentStateStore();
-    currentState.watchFolderMedia = {};
+    if (!currentState.currentCongregation) return;
+    jwStore.lookupPeriod[currentState.currentCongregation]?.forEach((day) => {
+      if (day.dynamicMedia) {
+        for (let i = day.dynamicMedia.length - 1; i >= 0; i--) {
+          if (day.dynamicMedia[i]?.source === 'watched') {
+            day.dynamicMedia.splice(i, 1);
+          }
+        }
+      }
+    });
     window.electronApi.unwatchFolders();
     if (folder) window.electronApi.watchFolder(folder);
   } catch (error) {

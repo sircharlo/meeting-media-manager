@@ -27,10 +27,7 @@ export const useCongregationSettingsStore = defineStore(
         delete this.congregations[id];
 
         const jwStore = useJwStore();
-        delete jwStore.additionalMediaMaps[id];
         delete jwStore.lookupPeriod[id];
-        delete jwStore.mediaSort[id];
-        delete jwStore.watchedMediaSections[id];
       },
       dismissAnnouncement(congId: string, id: string) {
         if (!id || !congId) return;

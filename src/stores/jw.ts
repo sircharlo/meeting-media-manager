@@ -22,8 +22,7 @@ import {
   fetchPubMediaLinks,
   fetchYeartext,
 } from 'src/utils/api';
-import { dateFromString, getDateDiff } from 'src/utils/date';
-import { isFileUrl } from 'src/utils/fs';
+import { dateFromString, datesAreSame, getDateDiff } from 'src/utils/date';
 import { findBestResolution, getPubId, isMediaLink } from 'src/utils/jw';
 import { useCurrentStateStore } from 'stores/current-state';
 
@@ -47,30 +46,35 @@ export const shouldUpdateList = (
 };
 
 interface Store {
-  additionalMediaMaps: Partial<
-    Record<string, Partial<Record<string, DynamicMediaObject[]>>>
-  >;
   jwBibleAudioFiles: Partial<
     Record<JwLangCode, CacheList<Partial<Publication>>>
   >;
   jwLanguages: CacheList<JwLanguage>;
   jwSongs: Partial<Record<JwLangCode, CacheList<MediaLink>>>;
   lookupPeriod: Partial<Record<string, DateInfo[]>>;
-  mediaSort: Partial<Record<string, Partial<Record<string, string[]>>>>;
   urlVariables: UrlVariables;
-  watchedMediaSections: Partial<
-    Record<string, Partial<Record<string, Record<string, MediaSection>>>>
-  >;
   yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
 }
 
-function uniqueById<T extends { uniqueId: string }>(array: T[]): T[] {
-  return array.reduce((unique: T[], o: T) => {
-    if (!unique.some((obj) => obj.uniqueId === o.uniqueId)) {
-      unique.push(o);
+export function addUniqueById<T extends { uniqueId: string }>(
+  targetArray: (T | undefined)[],
+  sourceArray: (T | undefined)[],
+): void {
+  sourceArray.forEach((item) => {
+    if (!targetArray.some((obj) => obj?.uniqueId === item?.uniqueId)) {
+      targetArray.push(item);
     }
-    return unique;
-  }, []);
+  });
+}
+
+export function deduplicateById<T extends { uniqueId: string }>(
+  array: T[],
+): void {
+  for (let i = array.length - 1; i >= 0; i--) {
+    if (array.findIndex((obj) => obj?.uniqueId === array[i]?.uniqueId) !== i) {
+      array.splice(i, 1);
+    }
+  }
 }
 
 export const useJwStore = defineStore('jw-store', {
@@ -80,135 +84,116 @@ export const useJwStore = defineStore('jw-store', {
       section: MediaSection | undefined,
     ) {
       try {
-        const { currentCongregation, selectedDate, selectedDateObject } =
+        const { currentCongregation, selectedDateObject } =
           useCurrentStateStore();
+
+        // Early exit if no media or selected date object
         if (!mediaArray.length || !selectedDateObject) return;
-        const coWeek = isCoWeek(selectedDateObject?.date);
-        if (coWeek) {
-          if (isMwMeetingDay(selectedDateObject?.date)) {
-            mediaArray.forEach((media) => {
-              media.section = section || 'circuitOverseer';
-              media.sectionOriginal = section || 'circuitOverseer';
-            });
-          }
+
+        // Handle circuit overseer week logic
+        const coWeek = isCoWeek(selectedDateObject.date);
+        if (coWeek && isMwMeetingDay(selectedDateObject.date)) {
+          mediaArray.forEach((media) => {
+            if (!media) return;
+            media.section = section || 'circuitOverseer';
+            media.sectionOriginal = section || 'circuitOverseer';
+          });
         }
-        if (!this.additionalMediaMaps[currentCongregation])
-          this.additionalMediaMaps[currentCongregation] = {};
-        if (!this.additionalMediaMaps[currentCongregation][selectedDate])
-          this.additionalMediaMaps[currentCongregation][selectedDate] = [];
-        const currentArray =
-          this.additionalMediaMaps[currentCongregation][selectedDate];
-        this.additionalMediaMaps[currentCongregation][selectedDate] =
-          uniqueById([...currentArray, ...mediaArray]);
+
+        // Ensure lookupPeriod for current congregation exists
+        if (!this.lookupPeriod[currentCongregation]) {
+          this.lookupPeriod[currentCongregation] = [];
+        }
+
+        // Find or create the period object for the selected date
+        let period = this.lookupPeriod[currentCongregation].find((d) =>
+          datesAreSame(d.date, selectedDateObject.date),
+        );
+
+        if (!period) {
+          period = { ...selectedDateObject, dynamicMedia: [] };
+          this.lookupPeriod[currentCongregation].push(period);
+        }
+
+        const getAdditionalCount = () => {
+          return (
+            (this.lookupPeriod[currentCongregation] || [])
+              .find((d) => datesAreSame(d.date, selectedDateObject.date))
+              ?.dynamicMedia.filter((m) => m.section === 'additional').length ||
+            0
+          );
+        };
+
+        if (Array.isArray(period.dynamicMedia)) {
+          mediaArray.forEach((media, index) => {
+            if (!media) return;
+            media.sortOrderOriginal =
+              'additional-' + getAdditionalCount() + '-' + index;
+          });
+          addUniqueById(period.dynamicMedia, mediaArray);
+        }
       } catch (e) {
         errorCatcher(e);
       }
     },
-    clearCurrentDayAdditionalMedia() {
+    clearAdditionalMediaForSelectedDate() {
       const currentState = useCurrentStateStore();
-      const { currentCongregation, selectedDate } = currentState;
-      if (
-        !currentCongregation ||
-        !selectedDate ||
-        !this.additionalMediaMaps?.[currentCongregation]?.[selectedDate]?.length
-      )
-        return;
-      this.additionalMediaMaps[currentCongregation][selectedDate] = [];
+      const { currentCongregation, selectedDateObject } = currentState;
+
+      if (!currentCongregation || !selectedDateObject?.dynamicMedia) return;
+
+      for (let i = selectedDateObject.dynamicMedia.length - 1; i >= 0; i--) {
+        if (selectedDateObject.dynamicMedia[i]?.source === 'additional') {
+          selectedDateObject.dynamicMedia.splice(i, 1);
+        }
+      }
     },
     removeFromAdditionMediaMap(uniqueId: string) {
       try {
-        const { currentCongregation, selectedDate } = useCurrentStateStore();
-        if (
-          uniqueId &&
-          currentCongregation &&
-          selectedDate &&
-          this.additionalMediaMaps[currentCongregation]?.[selectedDate]
-        ) {
-          const currentArray =
-            this.additionalMediaMaps[currentCongregation][selectedDate];
-          this.additionalMediaMaps[currentCongregation][selectedDate] =
-            uniqueById(
-              currentArray.filter((media) => media.uniqueId !== uniqueId),
-            );
-        }
-      } catch (e) {
-        errorCatcher(e);
-      }
-    },
-    resetSort() {
-      try {
-        const {
-          currentCongregation,
-          selectedDate,
-          selectedDateObject,
-          watchFolderMedia,
-        } = useCurrentStateStore();
-        if (
-          currentCongregation &&
-          selectedDate &&
-          this.mediaSort[currentCongregation]
-        ) {
-          this.mediaSort[currentCongregation][selectedDate] = [];
-        }
-        (selectedDateObject?.dynamicMedia ?? [])
-          .filter(
-            (item) =>
-              item.sectionOriginal && item.section !== item.sectionOriginal,
-          )
-          .forEach((item) => {
-            item.section = item.sectionOriginal;
-          });
+        const { currentCongregation, selectedDateObject } =
+          useCurrentStateStore();
 
-        (watchFolderMedia[selectedDate] ?? [])
-          .filter(
-            (item) =>
-              item.sectionOriginal && item.section !== item.sectionOriginal,
-          )
-          .forEach((item) => {
-            item.section = item.sectionOriginal;
-          });
-
-        (this.additionalMediaMaps[currentCongregation]?.[selectedDate] ?? [])
-          .filter(
-            (item) =>
-              item.sectionOriginal && item.section !== item.sectionOriginal,
-          )
-          .forEach((item) => {
-            item.section = item.sectionOriginal;
-          });
-      } catch (e) {
-        errorCatcher(e);
-      }
-    },
-    showCurrentDayHiddenMedia() {
-      const currentState = useCurrentStateStore();
-      const {
-        currentCongregation,
-        selectedDate,
-        selectedDateObject,
-        watchFolderMedia,
-      } = currentState;
-      if (!currentCongregation || !selectedDateObject?.date || !selectedDate)
-        return;
-      this.lookupPeriod?.[currentCongregation]
-        ?.find(
-          (day) =>
-            getDateDiff(day.date, selectedDateObject?.date, 'days') === 0,
+        if (
+          !uniqueId ||
+          !currentCongregation ||
+          !selectedDateObject?.dynamicMedia
         )
-        ?.dynamicMedia?.filter((media) => media.hidden)
-        ?.forEach((media) => {
+          return;
+
+        for (let i = selectedDateObject.dynamicMedia.length - 1; i >= 0; i--) {
+          if (selectedDateObject.dynamicMedia[i]?.uniqueId === uniqueId) {
+            selectedDateObject.dynamicMedia.splice(i, 1);
+          }
+        }
+
+        deduplicateById(selectedDateObject.dynamicMedia);
+      } catch (e) {
+        errorCatcher(e);
+      }
+    },
+    showHiddenMediaForSelectedDate() {
+      const currentState = useCurrentStateStore();
+      const { currentCongregation, selectedDateObject } = currentState;
+
+      if (!currentCongregation || !selectedDateObject?.date) return;
+
+      const currentDay = this.lookupPeriod?.[currentCongregation]?.find((day) =>
+        datesAreSame(day.date, selectedDateObject.date),
+      );
+
+      if (!currentDay?.dynamicMedia) return;
+
+      currentDay.dynamicMedia.forEach((media) => {
+        if (media.hidden) {
           media.hidden = false;
-        });
-      this.additionalMediaMaps?.[currentCongregation]?.[selectedDate]
-        ?.filter((media) => media.hidden)
-        ?.forEach((media) => {
-          media.hidden = false;
-        });
-      watchFolderMedia?.[selectedDate]
-        ?.filter((media) => media.hidden)
-        ?.forEach((media) => {
-          media.hidden = false;
-        });
+        }
+
+        if (media.children?.some((child) => child.hidden)) {
+          media.children.forEach((child) => {
+            if (child.hidden) child.hidden = false;
+          });
+        }
+      });
     },
     async updateJwLanguages() {
       if (!useCurrentStateStore().online) return;
@@ -381,22 +366,6 @@ export const useJwStore = defineStore('jw-store', {
         ),
       };
     },
-    missingMedia: (state) => {
-      const { currentCongregation, selectedDate, selectedDateObject } =
-        useCurrentStateStore();
-      if (!currentCongregation || !selectedDate || !selectedDateObject) {
-        return [];
-      }
-      const allMediaItems = (
-        state.lookupPeriod?.[currentCongregation]?.find(
-          (day) =>
-            getDateDiff(day.date, selectedDateObject?.date, 'days') === 0,
-        )?.dynamicMedia || []
-      ).concat(
-        state.additionalMediaMaps?.[currentCongregation]?.[selectedDate] || [],
-      );
-      return allMediaItems.filter((media) => !isFileUrl(media.fileUrl));
-    },
     yeartext: (state) => {
       const year = new Date().getFullYear();
       if (!state.yeartexts[year]) return;
@@ -429,18 +398,15 @@ export const useJwStore = defineStore('jw-store', {
   },
   state: (): Store => {
     return {
-      additionalMediaMaps: {},
       jwBibleAudioFiles: {},
       jwLanguages: { list: [], updated: oldDate },
       jwSongs: {},
       lookupPeriod: {},
-      mediaSort: {},
       urlVariables: {
         base: 'jw.org',
         mediator: 'https://b.jw-cdn.org/apis/mediator',
         pubMedia: 'https://b.jw-cdn.org/apis/pub-media/GETPUBMEDIALINKS',
       },
-      watchedMediaSections: {},
       yeartexts: {},
     };
   },

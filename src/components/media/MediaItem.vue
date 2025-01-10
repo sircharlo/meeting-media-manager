@@ -7,7 +7,9 @@
       'justify-center': true,
       'bg-accent-100-transparent': playState === 'current',
       'bg-accent-100': mediaPlayingUniqueId === '' && playState === 'current',
+      'q-px-sm': child,
     }"
+    :style="child ? 'padding: 8px 6px' : undefined"
   >
     <div class="col-shrink">
       <div
@@ -79,7 +81,7 @@
                       dense
                       style="width: 3.5em"
                       @update:model-value="
-                        if ($event) {
+                        if ($event && media.duration) {
                           let val = Math.max(
                             Math.min(
                               timeToSeconds($event.toString()),
@@ -114,7 +116,7 @@
                       dense
                       style="width: 3.5em"
                       @update:model-value="
-                        if ($event) {
+                        if ($event && media.duration) {
                           let val = Math.max(
                             Math.min(
                               timeToSeconds($event.toString()),
@@ -206,11 +208,10 @@
       <div class="row items-center">
         <div
           v-if="
-            (media.isAdditional &&
+            (media.source !== 'dynamic' &&
               !currentSettings?.disableMediaFetching &&
               isFileUrl(media.fileUrl)) ||
-            media.tag?.type ||
-            media.watched
+            media.tag?.type
           "
           :class="mediaTagClasses"
           side
@@ -227,9 +228,9 @@
             <q-icon
               :class="{ 'q-mr-xs': media.tag?.type }"
               :name="
-                media.watched
+                media.source === 'watched'
                   ? 'mmm-watched-media'
-                  : media.isAdditional &&
+                  : media.source === 'additional' &&
                       !currentSettings?.disableMediaFetching &&
                       isFileUrl(media.fileUrl)
                     ? 'mmm-add-media'
@@ -240,12 +241,12 @@
                       : 'mmm-music-note'
               "
             />
-            <q-tooltip v-if="media.watched" :delay="500">
+            <q-tooltip v-if="media.source === 'watched'" :delay="500">
               {{ t('watched-media-item-explain') }}
             </q-tooltip>
             <q-tooltip
-              v-if="
-                media.isAdditional &&
+              v-else-if="
+                media.source === 'additional' &&
                 !currentSettings?.disableMediaFetching &&
                 isFileUrl(media.fileUrl)
               "
@@ -572,7 +573,7 @@
           </q-item-section>
         </q-item>
         <q-item
-          v-if="media.isAdditional"
+          v-if="media.source === 'additional'"
           v-close-popup
           clickable
           :disable="
@@ -759,6 +760,7 @@ const mediaToDelete = ref('');
 const mediaDeletePending = computed(() => !!mediaToDelete.value);
 
 const props = defineProps<{
+  child?: boolean;
   media: DynamicMediaObject;
   playState: string;
 }>();
@@ -787,7 +789,12 @@ const mediaTitle = ref(props.media.title);
 const initialMediaTitle = ref(mediaTitle.value);
 
 const displayMediaTitle = computed(() => {
-  return props.media.title || path.basename(props.media.fileUrl);
+  return (
+    props.media.title ||
+    (props.media.fileUrl && path.basename(props.media.fileUrl)) ||
+    props.media.extractCaption ||
+    ''
+  );
 });
 
 const mediaEditTagDialog = ref(false);
@@ -843,6 +850,7 @@ const updateMediaCustomDuration = (customDuration?: {
 
 const customDurationIsSet = computed(() => {
   return (
+    props.media.duration &&
     props.media.customDuration &&
     (props.media.customDuration.min > 0 ||
       props.media.customDuration.max < props.media.duration)
@@ -850,8 +858,10 @@ const customDurationIsSet = computed(() => {
 });
 
 const mediaCustomDuration = ref({
-  max: props.media.customDuration?.max || props.media.duration,
-  min: props.media.customDuration?.min || 0,
+  max: props.media.duration
+    ? props.media.customDuration?.max || props.media.duration
+    : undefined,
+  min: props.media.duration ? props.media.customDuration?.min || 0 : undefined,
 });
 
 const customDurationMinUserInput = ref(
@@ -888,9 +898,10 @@ const setMediaPlaying = async (
   mediaPlayingAction.value = 'play';
   const filePath = fileUrlToPath(media.fileUrl);
   const fileExists = await fs.pathExists(filePath);
-  mediaPlayingUrl.value = fileExists
-    ? media.fileUrl
-    : (media.streamUrl ?? media.fileUrl);
+  mediaPlayingUrl.value =
+    fileExists && media.fileUrl
+      ? media.fileUrl
+      : (media.streamUrl ?? media.fileUrl ?? '');
   mediaPlayingUniqueId.value = media.uniqueId;
   mediaPlayingSubtitlesUrl.value = media.subtitlesUrl ?? '';
 };

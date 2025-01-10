@@ -67,7 +67,7 @@ const shouldUseChangedMeetingSchedule = (lookupDate: Date | string) => {
   );
 };
 
-export const isMwMeetingDay = (lookupDate: Date) => {
+export const isMwMeetingDay = (lookupDate?: Date) => {
   try {
     const currentState = useCurrentStateStore();
     if (!lookupDate || currentState.currentSettings?.disableMediaFetching)
@@ -93,7 +93,7 @@ export const isMwMeetingDay = (lookupDate: Date) => {
   }
 };
 
-export const isWeMeetingDay = (lookupDate: Date) => {
+export const isWeMeetingDay = (lookupDate?: Date) => {
   try {
     const currentState = useCurrentStateStore();
     if (!lookupDate || currentState.currentSettings?.disableMediaFetching)
@@ -152,17 +152,21 @@ export function updateLookupPeriod(reset = false) {
     }
 
     const { lookupPeriod } = useJwStore();
-    if (!lookupPeriod[currentCongregation]?.length || reset) {
+    if (!lookupPeriod[currentCongregation]) {
       lookupPeriod[currentCongregation] = [];
     }
 
-    lookupPeriod[currentCongregation] = lookupPeriod[
-      currentCongregation
-    ]?.filter((day) => !isInPast(getSpecificWeekday(day.date, 6)));
+    const existingDates = new Set(
+      lookupPeriod[currentCongregation].map((d) =>
+        formatDate(d.date, 'YYYY/MM/DD'),
+      ),
+    );
+    const currentDate = dateFromString();
+
     const futureDates: DateInfo[] = Array.from(
-      { length: DAYS_IN_FUTURE + dateFromString().getDay() },
-      (_, i): DateInfo => {
-        const dayDate = addToDate(getSpecificWeekday(dateFromString(), 0), {
+      { length: DAYS_IN_FUTURE + currentDate.getDay() },
+      (_, i) => {
+        const dayDate = addToDate(getSpecificWeekday(currentDate, 0), {
           day: i,
         });
         return {
@@ -178,19 +182,38 @@ export function updateLookupPeriod(reset = false) {
           today: datesAreSame(dayDate, new Date()),
         };
       },
+    ).filter((day) => !existingDates.has(formatDate(day.date, 'YYYY/MM/DD')));
+
+    lookupPeriod[currentCongregation] = [
+      ...lookupPeriod[currentCongregation],
+      ...futureDates,
+    ].filter(
+      (day) =>
+        getDateDiff(day.date, getSpecificWeekday(currentDate, 0), 'days') >= 0,
     );
-    lookupPeriod[currentCongregation].push(
-      ...futureDates.filter(
-        (day) =>
-          !lookupPeriod[currentCongregation]
-            ?.map((d) => formatDate(d.date, 'YYYY/MM/DD'))
-            .includes(formatDate(day.date, 'YYYY/MM/DD')),
-      ),
-    );
-    const todayDate = lookupPeriod[currentCongregation]?.find((d) =>
-      datesAreSame(new Date(d.date), new Date()),
+
+    const todayDate = lookupPeriod[currentCongregation].find((d) =>
+      datesAreSame(d.date, new Date()),
     );
     if (todayDate) todayDate.today = true;
+
+    if (reset) {
+      lookupPeriod[currentCongregation].forEach((day) => {
+        day.complete = false;
+        day.error = false;
+        for (let i = day.dynamicMedia.length - 1; i >= 0; i--) {
+          if (day.dynamicMedia[i]?.source === 'dynamic') {
+            day.dynamicMedia.splice(i, 1);
+          }
+        }
+        day.meeting = isMwMeetingDay(day.date)
+          ? 'mw'
+          : isWeMeetingDay(day.date)
+            ? 'we'
+            : false;
+        day.today = datesAreSame(day.date, new Date());
+      });
+    }
   } catch (error) {
     errorCatcher(error);
   }

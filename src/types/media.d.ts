@@ -24,26 +24,30 @@ export interface DownloadProgressItem {
 export type DownloadProgressItems = Record<string, DownloadProgressItem>;
 
 export interface DynamicMediaObject {
+  cbs?: boolean;
+  children?: DynamicMediaObject[];
   customDuration?: { max: number; min: number };
-  duration: number;
-  fileUrl: string;
+  duration?: number;
+  extractCaption?: string;
+  fileUrl?: string;
   footnote?: boolean;
   hidden?: boolean;
-  isAdditional?: boolean;
-  isAudio: boolean;
-  isImage: boolean;
-  isVideo: boolean;
+  isAudio?: boolean;
+  isImage?: boolean;
+  isVideo?: boolean;
   markers?: VideoMarker[];
+  parentUniqueId?: string;
   repeat?: boolean;
   section: MediaSection;
   sectionOriginal: MediaSection;
+  sortOrderOriginal: number | string;
+  source: 'additional' | 'dynamic' | 'watched';
   streamUrl?: string;
   subtitlesUrl?: string;
   tag?: Tag | undefined;
-  thumbnailUrl: string;
+  thumbnailUrl?: string;
   title: string;
   uniqueId: string;
-  watched?: string | true;
 }
 
 export interface FileDownloader {
@@ -68,6 +72,15 @@ export interface SongItem {
   path: string;
   title?: string;
 }
+
+export interface SortableMediaList {
+  items: Ref<DynamicMediaObject[]>;
+  jwIcon?: string | undefined;
+  label: string;
+  mmmIcon?: string | undefined;
+  type: MediaSection;
+}
+export type SortableMediaLists = SortableMediaList[];
 
 export interface Tag {
   type: string | undefined;

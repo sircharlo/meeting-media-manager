@@ -97,7 +97,7 @@ const { fs, path, pathToFileURL, readdir } = window.electronApi;
 
 const { t } = useI18n();
 const jwStore = useJwStore();
-const { additionalMediaMaps, lookupPeriod } = storeToRefs(jwStore);
+const { lookupPeriod } = storeToRefs(jwStore);
 
 const currentState = useCurrentStateStore();
 const { invalidSettings } = currentState;
@@ -258,29 +258,20 @@ const allCacheFilesSize = computed(() => {
   }
 });
 
-const lookupPeriodsCollections = Object.values(lookupPeriod.value).flatMap(
-  (congregationLookupPeriods) =>
-    congregationLookupPeriods?.flatMap(
-      (lookupPeriods) => lookupPeriods?.dynamicMedia || [],
-    ),
-);
-
-const additionalMediaCollections = Object.values(
-  additionalMediaMaps.value,
-).flatMap((congregationAdditionalMediaMap) =>
-  Object.values(congregationAdditionalMediaMap || {}).flat(),
-);
-
-const mediaFileParentDirectories = new Set([
-  ...additionalMediaCollections.map((media) =>
-    media ? pathToFileURL(getParentDirectory(media.fileUrl)) : '',
-  ),
-  ...lookupPeriodsCollections.map((media) =>
-    media ? pathToFileURL(getParentDirectory(media.fileUrl)) : '',
-  ),
-]);
-
 const getCacheFiles = async (cacheDirs: string[]) => {
+  const lookupPeriodsCollections = Object.values(lookupPeriod.value).flatMap(
+    (congregationLookupPeriods) =>
+      congregationLookupPeriods?.flatMap(
+        (lookupPeriods) => lookupPeriods?.dynamicMedia || [],
+      ),
+  );
+
+  const mediaFileParentDirectories = new Set(
+    lookupPeriodsCollections.map((media) =>
+      media ? pathToFileURL(getParentDirectory(media.fileUrl)) : '',
+    ),
+  );
+
   const files: CacheFile[] = [];
   for (const cacheDir of cacheDirs) {
     try {
