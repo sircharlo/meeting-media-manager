@@ -348,7 +348,7 @@
   "show-hidden-media-explain": "这将显示在当前选定的日期之前被隐藏的任何媒体。",
   "show-image-for-zoom-participants": "显示Zoom参与者图像",
   "show-media-display": "显示媒体屏幕",
-  "some-media-items-are-hidden": "某些媒体项目已被隐藏。如果需要，可以使用“添加媒体”菜单显示。",
+  "some-media-items-are-hidden": "Some media items have been hidden.",
   "some-media-items-are-missing": "缺少一些媒体文件",
   "some-media-items-are-missing-explain": "JWPUB 文件已成功导入。但某些媒体未包含在文件中，无法自动下载。 您可以手动添加此媒体，如果需要您可以使用“添加媒体”菜单或将其从您的计算机拖动到媒体列表。",
   "song": "歌曲",
@@ -414,5 +414,6 @@
   "yes": "是",
   "you-can-navigate-the-website-before-presenting-it": "如有必要，您可以在向观众展示之前导航到一个特定的页面。当您准备好时，按此窗口右上角的“开始镜像”按钮。您在网站窗口中看到的东西将显示在媒体窗口中，让观众看到。",
   "zoom-in": "放大",
-  "zoom-out": "缩小"
+  "zoom-out": "缩小",
+  "show-all-media": "Show all media"
 }
