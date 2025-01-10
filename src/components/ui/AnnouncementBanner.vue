@@ -128,7 +128,7 @@ const newUpdateAnnouncement = computed((): Announcement => {
     maxVersion: getPreviousVersion(latestVersion.value || '1.1.0'),
     message: 'update-available',
     persistent: true,
-    platform: updatesEnabled.value ? ['mac'] : undefined,
+    platform: updatesEnabled.value ? [] : undefined,
   };
 });
 
@@ -147,8 +147,9 @@ const untranslatedAnnouncement = computed((): Announcement => {
   return {
     actions: ['translate'],
     icon: 'ui-language',
-    id: `untranslated-${currentJwLang.value?.langcode}}`,
+    id: `untranslated-${currentJwLang.value?.langcode}`,
     message: 'help-translate-new',
+    platform: langIsSupported.value ? [] : undefined,
   };
 });
 
@@ -165,8 +166,7 @@ const openTranslateDiscussion = () => {
 
 const activeAnnouncements = computed(() => {
   return announcements.value
-    .concat([newUpdateAnnouncement.value])
-    .concat(langIsSupported.value ? [] : [untranslatedAnnouncement.value])
+    .concat([newUpdateAnnouncement.value, untranslatedAnnouncement.value])
     .filter((a) => {
       if (!currentStateStore.currentCongregation) return false;
       if (dismissed.value.has(a.id)) return false;

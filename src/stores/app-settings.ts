@@ -16,19 +16,9 @@ import {
   getOldPrefsPaths,
   parsePrefsFile,
 } from 'src/helpers/migrations';
-import { uuid } from 'src/utils/general';
+import { parseJsonSafe, uuid } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
-
-const parseJsonSafe = <T>(json: null | string | T, fallback: T): T => {
-  if (!json) return fallback;
-  try {
-    return typeof json === 'string' ? (JSON.parse(json) as T) : json;
-  } catch (e) {
-    errorCatcher(e);
-    return fallback;
-  }
-};
 
 interface Store {
   migrations: string[];

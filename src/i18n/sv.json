@@ -249,7 +249,7 @@
   "obs-studio-media-scene": "OBS Studio mediescen",
   "obs-studio-port-and-password": "OBS Studio port och lösenord",
   "obs-studio-stage-scene": "OBS Studio scen",
-  "obs-studio-disconnected-banner": "M³ is unable to connect to OBS Studio. Please ensure that OBS Studio is running and configured correctly.",
+  "obs-studio-disconnected-banner": "M³ kan inte ansluta till OBS Studio. Se till att OBS Studio körs och är korrekt inställd.",
   "obs.connected": "OBS Studio: Ansluten",
   "obs.connecting": "OBS Studio: Ansluter",
   "obs.disconnected": "OBS Studio: Frånkopplad",
