@@ -147,7 +147,7 @@ const untranslatedAnnouncement = computed((): Announcement => {
   return {
     actions: ['translate'],
     icon: 'ui-language',
-    id: `untranslated-${currentJwLang.value?.langcode}}`,
+    id: `untranslated-${currentJwLang.value?.langcode}`,
     message: 'help-translate-new',
     platform: langIsSupported.value ? [] : undefined,
   };
