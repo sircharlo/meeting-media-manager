@@ -25,9 +25,12 @@ import ptPt from './pt-pt.json';
 import pt from './pt.json';
 // import ro from './ro.json';
 import ru from './ru.json';
+// import rw from './rw.json';
+// import sk from './sk.json';
 import sl from './sl.json';
 import sv from './sv.json';
 import sw from './sw.json';
+// import tl from './tl.json';
 import uk from './uk.json';
 
 export default {
@@ -49,8 +52,11 @@ export default {
   ptPt,
   // ro,
   ru,
+  // rw,
+  // sk,
   sl,
   sv,
   sw,
+  // tl,
   uk,
 };

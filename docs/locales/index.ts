@@ -32,6 +32,7 @@ import sk from './sk.json';
 import sl from './sl.json';
 import sv from './sv.json';
 import sw from './sw.json';
+import tl from './tl.json';
 import uk from './uk.json';
 
 const messages: Record<LanguageValue, typeof en> = {
@@ -58,6 +59,7 @@ const messages: Record<LanguageValue, typeof en> = {
   sl,
   sv,
   sw,
+  tl,
   uk,
 };
 

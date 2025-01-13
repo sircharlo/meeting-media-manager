@@ -5,31 +5,19 @@ export const releases: Release[] = [
   { assets: [], prerelease: false, tag_name: 'v1.2.3' },
 ];
 
-export const announcements: Announcement[] = [
-  {
-    actions: ['update'],
-    id: 'new-update',
-    maxVersion: '24.11.4',
-    message: 'update-available',
-    persistent: true,
-  },
-  {
-    actions: ['update'],
-    id: 'new-update',
-    maxVersion: '24.12.0',
-    message: 'update-available',
-    minVersion: '24.11.5',
-    persistent: true,
-    platform: ['win'],
-  },
-  {
-    id: 'media-window-title-update',
-    message:
-      'Starting in v25.1.0, the title of the media window will change. If OBS Studio is set to capture the media window by title, it may stop working. Be prepared to update your OBS Studio window capture settings after the update.',
-    minVersion: '24.12.1',
-    scope: ['obs'],
-    type: 'warning',
-  },
+export const invalidAnnouncements: Announcement[] = [
   { id: '', message: 'Message without id' },
   { id: 'message-without-message', message: '' },
 ];
+
+export const validAnnouncements: Announcement[] = [
+  { id: 'past', maxVersion: '1.2.2', message: 'Message for past releases' },
+  { id: 'future', message: 'Message for future releases', minVersion: '1.2.4' },
+  { id: 'macos', message: 'Message for macOS users', platform: ['mac'] },
+  { id: 'windows', message: 'Message for Windows users', platform: ['win'] },
+  { id: 'linux', message: 'Message for Linux users', platform: ['linux'] },
+  { id: 'all', message: 'Message for all users' },
+  { id: 'obs', message: 'Message for OBS users', scope: ['obs'] },
+];
+
+export const announcements = [...invalidAnnouncements, ...validAnnouncements];
