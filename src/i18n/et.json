@@ -58,7 +58,7 @@
   "clicking-it-will-allow-you-to-temporarily-hide-the-media-and-yeartext-and-reveal-the-zoom-participants-underneath-once-the-zoom-part-is-over-you-can-show-the-yeartext-again-using-the-same-button": "Sellele klõpsates saate ajutiselt peita meedia ja aastateksti ning tuua esile selle all olevad Zoomi osalejad. Kui Zoomi osa on lõppenud, saate sama nupu abil uuesti näidata aastateksti.",
   "clicking-the-close-button-again-will-close-app": "Klikates samale nupule uuesti sulgub M³.",
   "close": "Sulge",
-  "circuit-overseer": "Ringkonnaülevaataja",
+  "circuit-overseer": "RÜ",
   "coWeek": "Järgmine plaanitud ringkonnaülevaataja külastus",
   "coWeek-explain": "Kui valid selle valiku M³-s, viiakse nädala keskel toimuv koosolek automaatselt selle nädala teisipäevale. Samuti jätab see vahele koguduse piibliuurimise meediafailid ning samuti nädala keskel kui ka nädalavahetusel toimuvate koosolekute lõpulaulud.",
   "collapse-sidebar": "Sulge külgriba",
@@ -249,7 +249,7 @@
   "obs-studio-media-scene": "OBS Studio meedia stseen",
   "obs-studio-port-and-password": "OBS Studio port ja salasõna",
   "obs-studio-stage-scene": "OBS Studio lava stseen",
-  "obs-studio-disconnected-banner": "M³ is unable to connect to OBS Studio. Please ensure that OBS Studio is running and configured correctly.",
+  "obs-studio-disconnected-banner": "M³ ei saa ühendust OBS Studio'ga. Veenduge, et OBS Studio töötab ja on õigesti seadistatud.",
   "obs.connected": "OBS Studio: Ühendatud",
   "obs.connecting": "OBS Studio: Ühendamine",
   "obs.disconnected": "OBS Studio: ühendus katkestatud",
@@ -348,7 +348,7 @@
   "show-hidden-media-explain": "Toob nähtavale meediafailid, mis oli valitud kuupäevaks eelnevalt peidetud.",
   "show-image-for-zoom-participants": "Näita pilti Zoomi osalejatele",
   "show-media-display": "Näita meediat teisel ekraanil",
-  "some-media-items-are-hidden": "Mõned meediafailid on peidetud. Neid saab vajadusel nähtavale tuua uuesti kasutades 'Lisa meedia' menüüd.",
+  "some-media-items-are-hidden": "Mõned meediaüksused on peidetud.",
   "some-media-items-are-missing": "Mõned meediafailid on puudu",
   "some-media-items-are-missing-explain": "JWPUB-faili on edukalt imporditud. Siiski ei ole failis mõningaid meediafaile ja neid ei saanud automaatselt alla laadida. Vajaduse korral saad selle meedia lisada käsitsi, kasutades menüüd „Lisa meedia“ või lohistades meediafail arvutist meedia loendisse.",
   "song": "Laul",
@@ -414,5 +414,6 @@
   "yes": "Jah",
   "you-can-navigate-the-website-before-presenting-it": "Vajaduse korral saad navigeerida konkreetsele leheküljele enne selle esitamist kuulutajatele. Kui oled valmis, vajuta selle akna paremas ülanurgas olevale nupule „Start Mirroring“. See, mida näete veebisaidi aknas, kuvatakse nüüd meediaaknas, et kuulutaja saaks seda näha.",
   "zoom-in": "Suurenda",
-  "zoom-out": "Vaata kaugemalt"
+  "zoom-out": "Vaata kaugemalt",
+  "show-all-media": "Näita kõiki meediafaile"
 }

@@ -348,7 +348,7 @@
   "show-hidden-media-explain": "Hii itaonyesha midia yoyote iliyofichwa awali kutoka kwa orodha ya siku iliyochaguliwa.",
   "show-image-for-zoom-participants": "Ficha picha kwenye zoom",
   "show-media-display": "Onyesha display ya media",
-  "some-media-items-are-hidden": "Faili zingine za midia zimefichwa. Zinaweza kuonyeshwa kupitia menyu ya \"Ongeza Midia\" ikihitajika.",
+  "some-media-items-are-hidden": "Some media items have been hidden.",
   "some-media-items-are-missing": "Failli kadhaa za midia zinakosekana",
   "some-media-items-are-missing-explain": "Faili ya JWPUB imeingizwa kwa mfanikio. Hata hivyo, midia kadhaa haiko kwenye faili na haiwezi kupakuliwa kiotomatiki. Ikihitajika unaweza kuongeza midia hii kwa mkono kwa kutumia menyu ya 'Ongeza midia' au unaweza kuivuta kutoka kwa kompyuta yako na kuiweka kwenye orodha ya midia.",
   "song": "Wimbo",
@@ -414,5 +414,6 @@
   "yes": "Ndio",
   "you-can-navigate-the-website-before-presenting-it": "If necessary, you can navigate to a specific page before presenting it to the audience. When you're ready, press the \"Start Mirroring\" button on the top right corner of this window. What you see in the website window will now be displayed in the media window for the audience to see.",
   "zoom-in": "Vuta karibu",
-  "zoom-out": "Kuza nje"
+  "zoom-out": "Kuza nje",
+  "show-all-media": "Show all media"
 }

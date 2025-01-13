@@ -58,7 +58,7 @@
   "clicking-it-will-allow-you-to-temporarily-hide-the-media-and-yeartext-and-reveal-the-zoom-participants-underneath-once-the-zoom-part-is-over-you-can-show-the-yeartext-again-using-the-same-button": "Ao clicar, o texto do ano e a multimédia serão temporariamente ocultados, revelando os participantes do Zoom anteriormente ocultos. Quando a parte do Zoom terminar, pode exibir novamente o texto do ano ao clicar no mesmo botão.",
   "clicking-the-close-button-again-will-close-app": "Ao clicar novamente no botão irá fechar o M³.",
   "close": "Fechar",
-  "circuit-overseer": "Superintendente de Circuito",
+  "circuit-overseer": "superintendente de circuito",
   "coWeek": "Próxima visita planeada do Superintendente de Circuito",
   "coWeek-explain": "Se inserido, nessa semana, o M³ vai passar automaticamente a reunião de semana para a terça-feira. Também vai ignorar a multimédia do Estudo Bíblico de Congregação e os cânticos finais, tanto da reunião de semana como da reunião de fim de semana.",
   "collapse-sidebar": "Ocultar a barra lateral",
@@ -348,7 +348,7 @@
   "show-hidden-media-explain": "Isto irá mostrar toda a multimédia que foi previamente ocultada para o dia atualmente selecionado.",
   "show-image-for-zoom-participants": "Exibir imagem para os participantes do Zoom",
   "show-media-display": "Mostrar exibição de multimédia",
-  "some-media-items-are-hidden": "Alguns itens de multimédia foram ocultos. Eles podem ser exibidos através do menu 'Adicionar multimédia', se necessário.",
+  "some-media-items-are-hidden": "Alguns itens de multimédia foram ocultados.",
   "some-media-items-are-missing": "Alguns ficheiros multimédia estão em falta",
   "some-media-items-are-missing-explain": "O ficheiro JWPUB foi importado com sucesso. No entanto, alguns conteúdos multimédia não estão incluídos no ficheiro e não puderam ser descarregados automaticamente. Pode adicionar este conteúdo manualmente, se necessário, utilizando o menu \"Adicionar multimédia\" ou arrastando-o para a lista de multimédia a partir do seu computador.",
   "song": "Cântico",
@@ -414,5 +414,6 @@
   "yes": "Sim",
   "you-can-navigate-the-website-before-presenting-it": "Se necessário, pode navegar para uma página específica antes de apresentá-la ao público. Quando estiver pronto, pressione o botão “Iniciar Espelhamento” no canto superior direito desta janela. O que vê na janela do site será exibido na janela de multimédia para o público.",
   "zoom-in": "Ampliar",
-  "zoom-out": "Reduzir"
+  "zoom-out": "Reduzir",
+  "show-all-media": "Mostrar toda a multimédia"
 }

@@ -249,7 +249,7 @@
   "obs-studio-media-scene": "Medijski prizor v programu OBS Studio",
   "obs-studio-port-and-password": "Vrata in geslo programa OBS Studio",
   "obs-studio-stage-scene": "Odrski prizor v programu OBS Studio",
-  "obs-studio-disconnected-banner": "M³ is unable to connect to OBS Studio. Please ensure that OBS Studio is running and configured correctly.",
+  "obs-studio-disconnected-banner": "M³ se ne more povezati s programom OBS Studio. Preveri, ali OBS Studio deluje in ali je pravilno konfiguriran.",
   "obs.connected": "OBS Studio: povezan",
   "obs.connecting": "OBS Studio: povezovanje",
   "obs.disconnected": "OBS Studio: nepovezan",
@@ -348,7 +348,7 @@
   "show-hidden-media-explain": "S tem se bo prikazala vsa multimedijska vsebina, ki je bila skrita za trenutno izbrani dan.",
   "show-image-for-zoom-participants": "Prikaži sliko za udeležence Zooma",
   "show-media-display": "Prikaži multimedijski zaslon",
-  "some-media-items-are-hidden": "Nekateri multimedijski elementi so bili skriti. Po potrebi jih lahko prikažeš v meniju 'Dodaj multimedijsko vsebino'.",
+  "some-media-items-are-hidden": "Nekateri multimedijski elementi so bili skriti.",
   "some-media-items-are-missing": "Nekatere multimedijske datoteke manjkajo",
   "some-media-items-are-missing-explain": "Datoteka JWPUB je bila uspešno uvožena. Vendar del multimedijske vsebine ni vključen v datoteko in ga ni bilo mogoče samodejno prenesti. To multimedijsko vsebino lahko po potrebi ročno dodaš z uporabo menija „Dodaj multimedijsko vsebino“ ali tako, da jo iz računalnika povlečeš na seznam multimedijske vsebine.",
   "song": "Pesem",
@@ -414,5 +414,6 @@
   "yes": "Da",
   "you-can-navigate-the-website-before-presenting-it": "Če je treba, lahko najprej poiščeš določeno stran in jo šele potem predstaviš občinstvu. Ko boš imel vse pripravljeno, pritisni gumb „Začni zrcaljenje“ v zgornjem desnem kotu tega okna. To, kar vidiš v oknu spletnega mesta, bo zdaj prikazano v medijskem oknu, ki ga bo lahko videlo občinstvo.",
   "zoom-in": "Približaj",
-  "zoom-out": "Pomanjšaj"
+  "zoom-out": "Pomanjšaj",
+  "show-all-media": "Prikaži vso multimedijsko vsebino"
 }
