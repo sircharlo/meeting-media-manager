@@ -25,7 +25,7 @@ export type LanguageValue =
   | 'sl'
   | 'sv'
   | 'sw'
-  // | 'tl'
+  | 'tl'
   | 'uk';
 
 // As a sort of rule, let's only enable a language once it's reached a threshold of 50% translated in Crowdin.
@@ -215,12 +215,12 @@ export const locales: {
     langcode: 'SW',
     value: 'sw',
   },
-  // {
-  //   englishName: 'Tagalog',
-  //   label: 'Tagalog',
-  //   langcode: 'TG',
-  //   value: 'tl',
-  // },
+  {
+    englishName: 'Tagalog',
+    label: 'Tagalog',
+    langcode: 'TG',
+    value: 'tl',
+  },
   {
     englishName: 'Ukrainian',
     label: 'українська',
