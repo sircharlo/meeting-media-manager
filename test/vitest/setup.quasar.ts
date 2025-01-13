@@ -1,6 +1,6 @@
 import { createTestingPinia } from '@pinia/testing';
 import { config } from '@vue/test-utils';
-import { vol } from 'memfs';
+import { type fs, vol } from 'memfs';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { beforeEach } from 'node:test';
@@ -14,11 +14,24 @@ import { jwLangs, jwYeartext } from './mocks/jw';
 
 // Module mocks
 
-vi.mock('node:fs');
-vi.mock('node:fs/promises');
+vi.mock('fs', async () => {
+  const memfs: { fs: typeof fs } = await vi.importActual('memfs');
+  return memfs.fs;
+});
+vi.mock('fs/promises', async () => {
+  const memfs: { fs: typeof fs } = await vi.importActual('memfs');
+  return memfs.fs.promises;
+});
+vi.mock('node:fs', async () => {
+  const memfs: { fs: typeof fs } = await vi.importActual('memfs');
+  return memfs.fs;
+});
+vi.mock('node:fs/promises', async () => {
+  const memfs: { fs: typeof fs } = await vi.importActual('memfs');
+  return memfs.fs.promises;
+});
 
 // Global mocks
-
 vi.stubGlobal('electronApi', electronApi);
 
 // Vue plugins
@@ -29,7 +42,15 @@ const i18n = createI18n({
   messages: { en: appMessages.en },
 });
 
-config.global.plugins = [i18n, createTestingPinia({ createSpy: vi.fn })];
+config.global.plugins = [
+  i18n,
+  createTestingPinia({
+    createSpy: vi.fn,
+    initialState: {
+      'current-state': { online: true },
+    },
+  }),
+];
 
 // Http mocks
 

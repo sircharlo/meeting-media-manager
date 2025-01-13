@@ -1,3 +1,4 @@
+import { validAnnouncements } from 'app/test/vitest/mocks/github';
 import { jwYeartext } from 'app/test/vitest/mocks/jw';
 import { describe, expect, it } from 'vitest';
 
@@ -26,7 +27,7 @@ describe('fetchYeartext', () => {
 describe('fetchAnnouncements', () => {
   it('should fetch the announcements', async () => {
     const announcements = await fetchAnnouncements();
-    expect(announcements.length).toBe(3);
+    expect(announcements.length).toBe(validAnnouncements.length);
   });
 });
 

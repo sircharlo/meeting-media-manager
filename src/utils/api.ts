@@ -17,7 +17,7 @@ import { betaUpdatesDisabled } from 'src/utils/fs';
  * @returns The fetch response.
  */
 export const fetchRaw = async (url: string, init?: RequestInit) => {
-  console.debug('fetchRaw', { init, url });
+  if (!process.env.VITEST) console.debug('fetchRaw', { init, url });
   return fetch(url, init);
 };
 

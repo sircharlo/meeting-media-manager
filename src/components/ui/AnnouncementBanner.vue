@@ -200,4 +200,8 @@ const activeAnnouncements = computed(() => {
       }
     });
 });
+
+if (import.meta.env.NEVER) {
+  defineExpose({});
+}
 </script>

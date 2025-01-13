@@ -27,6 +27,7 @@ export default defineConfig({
     env: {
       repository: pkg.repository.url.replace('.git', ''),
       version: '1.2.3',
+      VITEST: 'true',
     },
   },
 });
