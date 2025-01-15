@@ -48,7 +48,7 @@ const cleanPublicTalkPubs = async (folder: string, congIds: Set<string>) => {
 };
 
 const cleanDateFolders = async (root?: string) => {
-  if (!root) return;
+  if (!root || !(await window.electronApi.fs.exists(root))) return;
 
   const folders = await window.electronApi.fs.readdir(root);
   folders.forEach((f) => {
