@@ -178,7 +178,7 @@ export function updateLookupPeriod(reset = false) {
             ? 'mw'
             : isWeMeetingDay(dayDate)
               ? 'we'
-              : false,
+              : (false as 'mw' | 'we' | boolean),
           today: datesAreSame(dayDate, new Date()),
         };
       },

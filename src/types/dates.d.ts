@@ -5,6 +5,6 @@ export interface DateInfo {
   date: Date;
   dynamicMedia: DynamicMediaObject[];
   error: boolean;
-  meeting: boolean | string;
+  meeting: 'mw' | 'we' | boolean;
   today: boolean;
 }

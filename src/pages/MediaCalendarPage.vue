@@ -51,6 +51,20 @@
           </template>
         </q-banner>
       </div>
+      <div v-if="duplicateSongsForWeMeeting" class="row">
+        <q-banner
+          class="bg-warning text-white full-width"
+          inline-actions
+          rounded
+        >
+          {{ t('some-songs-are-duplicated') }}
+          <template #avatar>
+            <q-avatar class="bg-white text-warning" size="lg">
+              <q-icon name="mmm-music-note" size="sm" />
+            </q-avatar>
+          </template>
+        </q-banner>
+      </div>
       <div
         v-if="
           (currentSettings?.disableMediaFetching &&
@@ -1405,6 +1419,21 @@ const handleMediaSort = (
     }
   }
 };
+
+const duplicateSongsForWeMeeting = computed(() => {
+  if (!(selectedDateObject.value?.meeting === 'we')) return false;
+  const songNumbers: (number | string)[] =
+    selectedDateObject.value?.dynamicMedia
+      ?.filter((m) => !m.hidden && m.tag?.type === 'song' && m.tag?.value)
+      .map((m) => m.tag?.value)
+      .filter(
+        (value): value is number | string =>
+          typeof value === 'string' || typeof value === 'number',
+      ) || [];
+  if (songNumbers.length < 2) return false;
+  const songSet = new Set(songNumbers);
+  return songSet.size !== songNumbers.length;
+});
 </script>
 <style scoped lang="scss">
 .add-media-shortcut {

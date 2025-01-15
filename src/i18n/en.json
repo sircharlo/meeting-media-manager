@@ -365,6 +365,7 @@
   "some-media-items-are-hidden": "Some media items have been hidden.",
   "some-media-items-are-missing": "Some media files are missing",
   "some-media-items-are-missing-explain": "The JWPUB file was imported successfully. However, some media is not included in the file and could not be downloaded automatically. You can add this media manually if needed by using the 'Add media' menu or by dragging it into the media list from your computer.",
+  "some-songs-are-duplicated": "Some songs appear more than once in the media list. Please check if this is intentional.",
   "song": "Song",
   "songbook-video-caching": "Songbook video caching",
   "stage": "Stage",
