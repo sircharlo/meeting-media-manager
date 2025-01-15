@@ -38,7 +38,12 @@ export default defineConfigWithVueTs([
     files: ['**/*.ts', '**/*.tsx', '**/*.mts', '**/*.vue'],
     rules: {
       '@typescript-eslint/consistent-type-imports': 'error',
+      '@typescript-eslint/default-param-last': 'error',
+      '@typescript-eslint/method-signature-style': 'error',
       '@typescript-eslint/no-import-type-side-effects': 'error',
+      '@typescript-eslint/no-loop-func': 'error',
+      'default-param-last': 'off',
+      'no-loop-func': 'off',
     },
   },
 
