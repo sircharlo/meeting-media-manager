@@ -1,12 +1,15 @@
 import js from '@eslint/js';
 import pluginQuasar from '@quasar/app-vite/eslint';
 import skipFormattingConfig from '@vue/eslint-config-prettier/skip-formatting';
-import vueTsEslintConfig from '@vue/eslint-config-typescript';
+import {
+  defineConfigWithVueTs,
+  vueTsConfigs,
+} from '@vue/eslint-config-typescript';
 import perfectionist from 'eslint-plugin-perfectionist';
 import pluginVue from 'eslint-plugin-vue';
 import globals from 'globals';
 
-export default [
+export default defineConfigWithVueTs([
   {
     ignores: [
       '**/.DS_Store',
@@ -40,10 +43,9 @@ export default [
   },
 
   // https://github.com/vuejs/eslint-config-typescript
-  ...vueTsEslintConfig({
-    // https://typescript-eslint.io/users/configs#recommended-configurations
-    extends: ['strict', 'stylistic'],
-  }),
+  // https://typescript-eslint.io/users/configs#recommended-configurations
+  vueTsConfigs.strict,
+  vueTsConfigs.stylistic,
 
   // https://typescript-eslint.io/rules/
   {
@@ -100,4 +102,4 @@ export default [
   },
 
   skipFormattingConfig,
-];
+]);
