@@ -5,8 +5,6 @@ import { defineStore } from 'pinia';
 import { defaultSettings } from 'src/constants/settings';
 import { uuid } from 'src/utils/general';
 
-import { useJwStore } from './jw';
-
 interface Store {
   announcements: Partial<Record<string, string[]>>;
   congregations: Partial<Record<string, SettingsValues>>;
@@ -25,9 +23,6 @@ export const useCongregationSettingsStore = defineStore(
         if (!id) return;
 
         delete this.congregations[id];
-
-        const jwStore = useJwStore();
-        delete jwStore.lookupPeriod[id];
       },
       dismissAnnouncement(congId: string, id: string) {
         if (!id || !congId) return;

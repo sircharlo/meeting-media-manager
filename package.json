@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "24.12.3-beta.6",
+  "version": "24.12.3-beta.8",
   "description": "A cross platform app to download and present media for congregation meetings of Jehovah’s Witnesses.",
   "keywords": [
     "M³",
@@ -35,13 +35,13 @@
   },
   "dependencies": {
     "@numairawan/video-duration": "^1.0.0",
-    "@panzoom/panzoom": "^4.5.1",
+    "@panzoom/panzoom": "^4.6.0",
     "@quasar/extras": "^1.16.15",
     "@sentry/electron": "^5.9.0",
     "@sentry/vue": "8.46.0",
     "@vueuse/core": "^12.4.0",
     "@vueuse/router": "^12.4.0",
-    "better-sqlite3": "^11.7.2",
+    "better-sqlite3": "^11.8.0",
     "cheerio": "^1.0.0",
     "chokidar": "^4.0.3",
     "countries-and-timezones": "^3.7.2",
@@ -77,7 +77,7 @@
     "@electron/rebuild": "^3.7.1",
     "@intlify/unplugin-vue-i18n": "^6.0.3",
     "@pinia/testing": "^0.1.7",
-    "@quasar/app-vite": "^2.0.6",
+    "@quasar/app-vite": "^2.0.7",
     "@quasar/icongenie": "^4.0.0",
     "@quasar/quasar-app-extension-testing-unit-vitest": "^1.1.0",
     "@quasar/vite-plugin": "^1.8.1",
@@ -90,15 +90,15 @@
     "@types/fluent-ffmpeg": "^2.1.27",
     "@types/fs-extra": "^11.0.4",
     "@types/heic-convert": "^2.1.0",
-    "@types/node": "^20.17.12",
+    "@types/node": "^20.17.13",
     "@types/pretty-bytes": "^5.2.0",
     "@types/sanitize-html": "^2.13.0",
     "@types/sortablejs": "^1.15.8",
     "@vue/eslint-config-prettier": "^10.1.0",
-    "@vue/eslint-config-typescript": "^14.2.0",
+    "@vue/eslint-config-typescript": "^14.3.0",
     "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.20",
-    "electron": "^33.3.1",
+    "electron": "^34.0.0",
     "electron-builder": "^25.1.8",
     "eslint": "^9.18.0",
     "eslint-plugin-perfectionist": "^4.6.0",
@@ -116,14 +116,14 @@
     "vue-tsc": "^2.2.0"
   },
   "browserslist": [
-    "Electron >= 33"
+    "Electron >= 34"
   ],
   "lint-staged": {
     "*": "prettier --write --ignore-unknown",
     "*.{js,ts,cjs,mjs,mts,vue}": "eslint --fix"
   },
   "engines": {
-    "node": "^20.18.0",
+    "node": "^20.18.1",
     "yarn": "^4.5.2"
   },
   "os": [
@@ -133,6 +133,6 @@
   ],
   "private": true,
   "type": "module",
-  "packageManager": "yarn@4.5.3",
+  "packageManager": "yarn@4.6.0",
   "productName": "Meeting Media Manager"
 }

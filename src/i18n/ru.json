@@ -249,7 +249,7 @@
   "obs-studio-media-scene": "Сцена для медиа в OBS Studio",
   "obs-studio-port-and-password": "Порт и пароль для OBS Studio",
   "obs-studio-stage-scene": "Сцена для пюпитра в OBS Studio",
-  "obs-studio-disconnected-banner": "M³ is unable to connect to OBS Studio. Please ensure that OBS Studio is running and configured correctly.",
+  "obs-studio-disconnected-banner": "M³ не удается подключиться к OBS Studio. Убедитесь, что OBS Studio запущено и правильно настроено.",
   "obs.connected": "OBS Studio: Подключено",
   "obs.connecting": "OBS Studio: Подключение",
   "obs.disconnected": "OBS Studio: Отключен",
@@ -348,7 +348,7 @@
   "show-hidden-media-explain": "Это покажет все медиа, которые были скрыты для выбранного на данный момент дня.",
   "show-image-for-zoom-participants": "Показать изображение для участников Zoom",
   "show-media-display": "Показать окно воспроизведения мультимедиа",
-  "some-media-items-are-hidden": "Some media items have been hidden.",
+  "some-media-items-are-hidden": "Некоторые файлы были скрыты.",
   "some-media-items-are-missing": "Некоторые файлы отсутствуют",
   "some-media-items-are-missing-explain": "Файл JWPUB был успешно импортирован. Однако некоторые медиа файлы не включены в файл JWPUB и не могли быть загружены автоматически. Вы можете добавить эти медиафайлы вручную, используя меню «Добавить медиа» или перетащив их в список медиа с вашего компьютера.",
   "song": "Песня",
@@ -415,5 +415,5 @@
   "you-can-navigate-the-website-before-presenting-it": "При необходимости вы можете перейти на определенную страницу, прежде чем представить ее аудитории. Когда все будет готово, нажмите кнопку «Начать зеркалирование» в правом верхнем углу этого окна. Теперь то, что вы видите в окне сайта, будет отображаться в медиа-окне для всех.",
   "zoom-in": "Увеличить",
   "zoom-out": "Уменьшить",
-  "show-all-media": "Show all media"
+  "show-all-media": "Показать все файлы"
 }

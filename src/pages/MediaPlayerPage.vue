@@ -25,6 +25,7 @@
         v-else-if="isVideo(mediaPlayingUrl) || videoStreaming"
         ref="mediaElement"
         class="fit-snugly"
+        disableRemotePlayback
         preload="metadata"
         @animationstart="playMedia()"
       >

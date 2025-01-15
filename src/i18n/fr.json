@@ -249,7 +249,7 @@
   "obs-studio-media-scene": "Scène média dans OBS Studio",
   "obs-studio-port-and-password": "Port et mot de passe dans OBS Studio",
   "obs-studio-stage-scene": "Scène de l'estrade dans OBS Studio",
-  "obs-studio-disconnected-banner": "M³ is unable to connect to OBS Studio. Please ensure that OBS Studio is running and configured correctly.",
+  "obs-studio-disconnected-banner": "M³ ne parvient pas à se connecter à OBS Studio. Veuillez vous assurer que OBS Studio est configuré correctement et en cours d'exécution.",
   "obs.connected": "OBS Studio : Connecté",
   "obs.connecting": "OBS Studio : connexion en cours",
   "obs.disconnected": "OBS Studio : Déconnecté",
@@ -348,7 +348,7 @@
   "show-hidden-media-explain": "Ceci affichera tous les médias qui ont été masqués au préalable pour le jour sélectionné.",
   "show-image-for-zoom-participants": "Afficher l'image pour les participants Zoom",
   "show-media-display": "Afficher la fenêtre des médias",
-  "some-media-items-are-hidden": "Some media items have been hidden.",
+  "some-media-items-are-hidden": "Certains éléments médias ont été masqués.",
   "some-media-items-are-missing": "Certains fichiers média sont manquants",
   "some-media-items-are-missing-explain": "Le fichier JWPUB a été importé avec succès. Cependant, certains médias ne sont pas inclus dans le fichier et n'ont pu être téléchargés automatiquement. Vous pouvez ajouter ces médias manuellement si nécessaire en utilisant le menu « Ajouter des médias» ou en les faisant glisser dans la liste des médias depuis votre ordinateur.",
   "song": "Cantique",
@@ -415,5 +415,5 @@
   "you-can-navigate-the-website-before-presenting-it": "Si nécessaire, vous pouvez naviguer vers une page spécifique avant de partager le site avec l'auditoire. Lorsque vous êtes prêt, cliquez sur le bouton « Démarrer le partage » dans le coin supérieur droit de cette fenêtre. Ce que vous voyez dans la fenêtre du site web sera maintenant affiché dans la fenêtre média pour que l'auditoire puisse en profiter.",
   "zoom-in": "Agrandir",
   "zoom-out": "Réduire",
-  "show-all-media": "Show all media"
+  "show-all-media": "Afficher tous les médias"
 }
