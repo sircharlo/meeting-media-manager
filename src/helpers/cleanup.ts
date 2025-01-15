@@ -8,6 +8,7 @@ const cleanCongregationRecord = (
   record: Partial<Record<string, unknown>>,
   congIds: Set<string>,
 ) => {
+  if (!record || !congIds) return;
   Object.keys(record).forEach((congId) => {
     if (!congIds.has(congId)) {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
@@ -29,6 +30,7 @@ export const cleanPersistedStores = () => {
 };
 
 const cleanCongregationFolders = async (root: string, congIds: Set<string>) => {
+  if (!root || !congIds || !(await window.electronApi.fs.exists(root))) return;
   const folders = await window.electronApi.fs.readdir(root);
   folders.forEach((f) => {
     if (!congIds.has(f)) {
@@ -38,6 +40,8 @@ const cleanCongregationFolders = async (root: string, congIds: Set<string>) => {
 };
 
 const cleanPublicTalkPubs = async (folder: string, congIds: Set<string>) => {
+  if (!folder || !congIds || !(await window.electronApi.fs.exists(folder)))
+    return;
   const files = await window.electronApi.fs.readdir(folder);
   files.forEach((f) => {
     if (!f.startsWith('S-34mp_')) return;
