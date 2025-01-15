@@ -63,7 +63,7 @@ export default defineConfig((ctx) => {
       },
       sourcemap: true,
       // See: https://www.electronjs.org/docs/latest/tutorial/electron-timelines#timeline
-      target: { browser: ['chrome130'], node: 'node20.18.1' },
+      target: { browser: ['chrome132'], node: 'node20.18.1' },
       typescript: {
         extendTsConfig: (tsConfig) => {
           tsConfig.exclude?.push('./../docs');
