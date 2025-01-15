@@ -147,7 +147,7 @@ export type SettingsItemListKey =
   | 'obsScenes'
   | 'resolutions';
 
-export type SettingsItemOption = 'coTuesdays' | 'meetingTime';
+export type SettingsItemOption = 'coTuesdays' | 'futureDate' | 'meetingTime';
 export type SettingsItemRule = 'notEmpty' | 'portNumber' | 'regular';
 
 export type SettingsItems = Record<keyof SettingsValues, SettingsItem>;
@@ -192,6 +192,12 @@ export interface SettingsValues {
   localAppLang: LanguageValue;
   maxRes: MaxRes;
   mediaAutoExportFolder: string;
+  meetingScheduleChangeDate: null | string;
+  meetingScheduleChangeMwDay: null | string;
+  meetingScheduleChangeMwStartTime: null | string;
+  meetingScheduleChangeOnce: boolean;
+  meetingScheduleChangeWeDay: null | string;
+  meetingScheduleChangeWeStartTime: null | string;
   musicVolume: number;
   mwDay: null | string;
   mwStartTime: null | string;

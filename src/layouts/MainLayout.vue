@@ -258,6 +258,10 @@ watch(
     currentSettings.value?.mwDay,
     currentSettings.value?.weDay,
     currentSettings.value?.coWeek,
+    currentSettings.value?.meetingScheduleChangeDate,
+    currentSettings.value?.meetingScheduleChangeOnce,
+    currentSettings.value?.meetingScheduleChangeMwDay,
+    currentSettings.value?.meetingScheduleChangeWeDay,
     currentSettings.value?.disableMediaFetching,
   ],
   (

@@ -6,7 +6,7 @@ import type {
 } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getDateDiff, getSpecificWeekday } from 'src/utils/date';
+import { getDateDiff, getSpecificWeekday, isInPast } from 'src/utils/date';
 
 const requiredRule: ValidationRule = (val: boolean | string) =>
   (val?.toString() && val?.toString().length > 0) || '';
@@ -40,6 +40,8 @@ export const getDateOptions = (options: SettingsItemOption[] | undefined) => {
         ?.map((option) => {
           if (option === 'coTuesdays') {
             return coTuesdays;
+          } else if (option === 'futureDate') {
+            return (lookupDate: string) => !isInPast(lookupDate);
           } else {
             return undefined;
           }

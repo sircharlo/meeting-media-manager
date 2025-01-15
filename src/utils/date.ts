@@ -25,13 +25,17 @@ export const dateFromString = (lookupDate?: Date | string | undefined) => {
 /**
  * Checks if a date is in the past.
  * @param lookupDate The date to check.
+ * @param includeToday Whether to include today as a past date.
  * @returns Whether the date is in the past.
  */
-export const isInPast = (lookupDate: Date) => {
+export const isInPast = (lookupDate: Date | string, includeToday = false) => {
   try {
     if (!lookupDate) return false;
     const now = dateFromString();
-    return getDateDiff(lookupDate, now, 'days') < 0;
+    return (
+      getDateDiff(dateFromString(lookupDate), now, 'days') <
+      (includeToday ? 1 : 0)
+    );
   } catch (error) {
     errorCatcher(error);
     return false;
@@ -192,8 +196,8 @@ const formatter = {
   },
 };
 
-export function addToDate(date: Date, mod: DateOptions) {
-  return getChange(date, mod, 1);
+export function addToDate(date: Date | string, mod: DateOptions) {
+  return getChange(dateFromString(date), mod, 1);
 }
 
 export function formatDate(

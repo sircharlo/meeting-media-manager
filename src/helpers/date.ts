@@ -9,6 +9,7 @@ import {
   formatDate,
   getDateDiff,
   getSpecificWeekday,
+  isInPast,
 } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -51,6 +52,21 @@ export function isCoWeek(lookupDate: Date) {
   }
 }
 
+const shouldUseChangedMeetingSchedule = (lookupDate: Date | string) => {
+  lookupDate = dateFromString(lookupDate);
+  if (isInPast(lookupDate)) return false;
+
+  const { currentSettings } = useCurrentStateStore();
+  const changedDate = currentSettings?.meetingScheduleChangeDate;
+  const changeOnce = currentSettings?.meetingScheduleChangeOnce;
+
+  return (
+    changedDate &&
+    getDateDiff(lookupDate, changedDate, 'days') >= 0 &&
+    (!changeOnce || getDateDiff(lookupDate, changedDate, 'days') < 7)
+  );
+};
+
 export const isMwMeetingDay = (lookupDate?: Date) => {
   try {
     const currentState = useCurrentStateStore();
@@ -63,6 +79,11 @@ export const isMwMeetingDay = (lookupDate?: Date) => {
         currentState.currentSettings?.coWeek ?? undefined,
       );
       return datesAreSame(coWeekTuesday, lookupDate);
+    } else if (shouldUseChangedMeetingSchedule(lookupDate)) {
+      return (
+        (currentState.currentSettings?.meetingScheduleChangeMwDay ??
+          currentState.currentSettings?.mwDay) === getWeekDay(lookupDate)
+      );
     } else {
       return currentState.currentSettings?.mwDay === getWeekDay(lookupDate);
     }
@@ -78,7 +99,14 @@ export const isWeMeetingDay = (lookupDate?: Date) => {
     if (!lookupDate || currentState.currentSettings?.disableMediaFetching)
       return false;
     lookupDate = dateFromString(lookupDate);
-    return currentState.currentSettings?.weDay === getWeekDay(lookupDate);
+
+    const changedWeDay =
+      currentState.currentSettings?.meetingScheduleChangeWeDay;
+    if (changedWeDay && shouldUseChangedMeetingSchedule(lookupDate)) {
+      return changedWeDay === getWeekDay(lookupDate);
+    } else {
+      return currentState.currentSettings?.weDay === getWeekDay(lookupDate);
+    }
   } catch (error) {
     errorCatcher(error);
     return false;
@@ -87,8 +115,41 @@ export const isWeMeetingDay = (lookupDate?: Date) => {
 
 export function updateLookupPeriod(reset = false) {
   try {
-    const { currentCongregation } = useCurrentStateStore();
-    if (!currentCongregation) return;
+    const { currentCongregation, currentSettings } = useCurrentStateStore();
+    if (!currentCongregation || !currentSettings) return;
+
+    if (
+      currentSettings.meetingScheduleChangeDate &&
+      ((!currentSettings.meetingScheduleChangeOnce &&
+        isInPast(currentSettings.meetingScheduleChangeDate, true)) ||
+        (currentSettings.meetingScheduleChangeOnce &&
+          isInPast(
+            addToDate(currentSettings.meetingScheduleChangeDate, { day: 7 }),
+            true,
+          )))
+    ) {
+      // Update meeting schedule
+      if (!currentSettings.meetingScheduleChangeOnce) {
+        currentSettings.mwDay =
+          currentSettings.meetingScheduleChangeMwDay ?? currentSettings.mwDay;
+        currentSettings.mwStartTime =
+          currentSettings.meetingScheduleChangeMwStartTime ??
+          currentSettings.mwStartTime;
+        currentSettings.weDay =
+          currentSettings.meetingScheduleChangeWeDay ?? currentSettings.weDay;
+        currentSettings.weStartTime =
+          currentSettings.meetingScheduleChangeWeStartTime ??
+          currentSettings.weStartTime;
+      }
+
+      // Clear meeting schedule change settings
+      currentSettings.meetingScheduleChangeDate = null;
+      currentSettings.meetingScheduleChangeOnce = false;
+      currentSettings.meetingScheduleChangeMwDay = null;
+      currentSettings.meetingScheduleChangeMwStartTime = null;
+      currentSettings.meetingScheduleChangeWeDay = null;
+      currentSettings.meetingScheduleChangeWeStartTime = null;
+    }
 
     const { lookupPeriod } = useJwStore();
     if (!lookupPeriod[currentCongregation]) {
@@ -167,9 +228,20 @@ export const remainingTimeBeforeMeetingStart = () => {
     if (meetingDay) {
       const now = new Date();
       const weMeeting = currentState.selectedDateObject?.meeting === 'we';
-      const meetingStartTime = weMeeting
-        ? currentState.currentSettings?.weStartTime
-        : currentState.currentSettings?.mwStartTime;
+      const meetingStartTimes = shouldUseChangedMeetingSchedule(now)
+        ? {
+            mw:
+              currentState.currentSettings?.meetingScheduleChangeMwStartTime ??
+              currentState.currentSettings?.mwStartTime,
+            we:
+              currentState.currentSettings?.meetingScheduleChangeWeStartTime ??
+              currentState.currentSettings?.weStartTime,
+          }
+        : {
+            mw: currentState.currentSettings?.mwStartTime,
+            we: currentState.currentSettings?.weStartTime,
+          };
+      const meetingStartTime = meetingStartTimes[weMeeting ? 'we' : 'mw'];
       if (!meetingStartTime) return 0;
       const [hours, minutes] = meetingStartTime.split(':').map(Number);
       const meetingStartDateTime = new Date(now);

@@ -31,12 +31,9 @@
 <script setup lang="ts">
 import type { CacheFile } from 'src/types';
 
-import { storeToRefs } from 'pinia';
 import { updateLookupPeriod } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { removeEmptyDirs } from 'src/utils/fs';
-import { useCurrentStateStore } from 'stores/current-state';
-import { useJwStore } from 'stores/jw';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -48,12 +45,6 @@ const props = defineProps<{
   untouchableDirectories: Set<string>;
   unusedParentDirectories: Record<string, number>;
 }>();
-
-const jwStore = useJwStore();
-const { lookupPeriod } = storeToRefs(jwStore);
-
-const currentState = useCurrentStateStore();
-const { currentCongregation } = storeToRefs(currentState);
 
 const open = defineModel<boolean>({ default: false });
 const cacheClearType = defineModel<'' | 'all' | 'smart'>('cacheClearType', {
@@ -108,8 +99,7 @@ const deleteCacheFiles = async (type = '') => {
     //   concurrency: 5,
     // });
     if (type === 'all') {
-      lookupPeriod.value[currentCongregation.value] = [];
-      updateLookupPeriod();
+      updateLookupPeriod(true);
     }
     cancelDeleteCacheFiles();
   } catch (error) {
