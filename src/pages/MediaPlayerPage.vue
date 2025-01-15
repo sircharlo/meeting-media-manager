@@ -26,6 +26,7 @@
         ref="mediaElement"
         class="fit-snugly"
         preload="metadata"
+        disableRemotePlayback
         @animationstart="playMedia()"
       >
         <source :src="mediaPlayingUrl" />
