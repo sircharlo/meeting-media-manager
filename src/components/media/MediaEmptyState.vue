@@ -4,7 +4,7 @@
       <div
         v-if="
           !currentSettings?.disableMediaFetching ||
-          !getVisibleMediaForSection.additional.length
+          !getVisibleMediaForSection.additional?.length
         "
         class="row justify-center"
       >

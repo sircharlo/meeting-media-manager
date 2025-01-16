@@ -462,10 +462,10 @@ const mediaSortCanBeReset = computed<boolean>(() => {
   }
 
   const mediaToConsider = [
-    ...getVisibleMediaForSection.value.tgw,
-    ...getVisibleMediaForSection.value.ayfm,
-    ...getVisibleMediaForSection.value.lac,
-    ...getVisibleMediaForSection.value.wt,
+    ...(getVisibleMediaForSection.value.tgw || []),
+    ...(getVisibleMediaForSection.value.ayfm || []),
+    ...(getVisibleMediaForSection.value.lac || []),
+    ...(getVisibleMediaForSection.value.wt || []),
   ];
 
   for (let i = 0; i < mediaToConsider.length - 1; i++) {
@@ -507,10 +507,10 @@ const resetSort = () => {
 
   // Combine all media items into one array
   const mediaToSort = [
-    ...getAllMediaForSection.value.tgw,
-    ...getAllMediaForSection.value.ayfm,
-    ...getAllMediaForSection.value.lac,
-    ...getAllMediaForSection.value.wt,
+    ...(getAllMediaForSection.value.tgw || []),
+    ...(getAllMediaForSection.value.ayfm || []),
+    ...(getAllMediaForSection.value.lac || []),
+    ...(getAllMediaForSection.value.wt || []),
   ];
 
   // Sort the media array in ascending order by `sortOrderOriginal`
@@ -522,12 +522,12 @@ const resetSort = () => {
   );
 
   selectedDateObject.value.dynamicMedia = [
-    ...getAllMediaForSection.value.additional,
+    ...(getAllMediaForSection.value.additional || []),
     ...sortedMedia.filter((item) => item.section === 'tgw'),
     ...sortedMedia.filter((item) => item.section === 'ayfm'),
     ...sortedMedia.filter((item) => item.section === 'lac'),
     ...sortedMedia.filter((item) => item.section === 'wt'),
-    ...getAllMediaForSection.value.circuitOverseer,
+    ...(getAllMediaForSection.value.circuitOverseer || []),
   ];
 };
 </script>
