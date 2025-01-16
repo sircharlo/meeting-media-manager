@@ -42,7 +42,9 @@ Koguduse hübriidsete või kontaktkoosolekute jaoks on integreeritud meediaesitl
 - Automaatne lisamonitori tuvastamine ja haldamine
 - Koostöös OBS Studioga automaatne stseeni vahetus meedia esitluse ajal
 - Jehoova tunnistajate ametliku veebilehe esitamine teisel monitoril
-- Impordi JWPUB-failid, JWLPLAYLIST-failid, videod Jehoova tunnistajate ametlikult veebilehelt ja avalike kõnede meedia S-34 failist paari hiireklõpsuga.
+- Import JWPUB files, JWLPLAYLIST files and videos from the official website of Jehovah's Witnesses in a few clicks.
+- Import Study Bible media and audio recordings of the New World Translation of the Bible in seconds.
+- Always have a public talks media overview (S-34) one click away and ready to be used any minute you need it.
 - Lisavideoid, pilte, helifaile ja isegi PDF-faile saab hõlpsasti importida!
 
 **Proovige M³ juba täna ja veendu ise, mida see suudab! Meedia esitlemine koguduse koosolekutel ei ole kunagi varem olnud nii lihtne.**
