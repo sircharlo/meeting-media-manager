@@ -65,7 +65,7 @@
           </template>
         </q-banner>
       </div>
-      <div
+      <MediaEmptyState
         v-if="
           (currentSettings?.disableMediaFetching &&
             getVisibleMediaForSection.additional.length < 1) ||
@@ -74,400 +74,16 @@
               !selectedDateObject?.dynamicMedia?.filter((m) => !m.hidden)
                 .length))
         "
-        class="row"
-      >
-        <div class="col content-center q-py-xl">
-          <div
-            v-if="
-              !currentSettings?.disableMediaFetching ||
-              !getVisibleMediaForSection.additional.length
-            "
-            class="row justify-center"
-          >
-            <div class="col-6 text-center">
-              <div class="row items-center justify-center q-my-lg">
-                <q-spinner
-                  v-if="
-                    !currentSettings?.disableMediaFetching &&
-                    selectedDateObject?.meeting &&
-                    !selectedDateObject?.complete &&
-                    !selectedDateObject?.error
-                  "
-                  color="primary"
-                  size="lg"
-                />
-                <q-img
-                  v-else
-                  fit="contain"
-                  src="~assets/img/no-media.svg"
-                  style="max-height: 30vh"
-                />
-              </div>
-              <div
-                class="row items-center justify-center text-subtitle1 text-semibold"
-              >
-                {{
-                  !selectedDate
-                    ? t('noDateSelected')
-                    : !currentSettings?.disableMediaFetching &&
-                        selectedDateObject?.meeting &&
-                        !selectedDateObject?.error
-                      ? t('please-wait')
-                      : t('there-are-no-media-items-for-the-selected-date')
-                }}
-              </div>
-              <div class="row items-center justify-center text-center">
-                {{
-                  !selectedDate
-                    ? t('select-a-date-to-begin')
-                    : !currentSettings?.disableMediaFetching &&
-                        selectedDateObject?.meeting &&
-                        !selectedDateObject?.error
-                      ? t('currently-loading')
-                      : t(
-                          'use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media',
-                        )
-                }}
-              </div>
-              <div
-                v-if="
-                  currentSettings?.disableMediaFetching ||
-                  !selectedDateObject?.meeting ||
-                  selectedDateObject?.error
-                "
-                class="row items-center justify-center q-mt-lg q-gutter-md"
-              >
-                <q-btn
-                  color="primary"
-                  outline
-                  @click="goToNextDayWithMedia(true)"
-                >
-                  <q-icon class="q-mr-sm" name="mmm-go-to-date" size="xs" />
-                  {{ t('next-day-with-media') }}
-                </q-btn>
-                <q-btn
-                  v-if="selectedDate"
-                  color="primary"
-                  @click="openImportMenu(undefined)"
-                >
-                  <q-icon class="q-mr-sm" name="mmm-add-media" size="xs" />
-                  {{ t('add-extra-media') }}
-                </q-btn>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        :go-to-next-day-with-media="goToNextDayWithMedia"
+        :open-import-menu="openImportMenu"
+      />
     </div>
     <template
       v-for="mediaList in mediaLists"
       :key="mediaList.items.map((m) => m.uniqueId).join(',')"
     >
-      <q-list
-        v-show="
-          mediaList.items?.filter((m) => !m.hidden).length ||
-          mediaList.alwaysShow
-        "
-        :class="'media-section ' + mediaList.type"
-      >
-        <q-item
-          v-if="selectedDateObject"
-          :class="'text-' + mediaList.type + ' items-center'"
-        >
-          <q-avatar
-            :class="
-              'text-white bg-' +
-              mediaList.type +
-              (mediaList.jwIcon ? ' jw-icon' : '')
-            "
-          >
-            <!-- :size="isWeMeetingDay(selectedDateObject.date) ? 'lg' : 'md'" -->
-            <template v-if="mediaList.jwIcon">
-              {{ mediaList.jwIcon }}
-            </template>
-            <template v-else>
-              <q-icon :name="mediaList.mmmIcon" size="md" />
-            </template>
-          </q-avatar>
-          <q-item-section
-            class="text-bold text-uppercase text-spaced row justify-between col-grow"
-          >
-            {{ mediaList.label }}
-          </q-item-section>
-          <q-item-section v-if="mediaList.extraMediaShortcut" side>
-            <q-btn
-              v-if="
-                mediaList.type === 'additional' ||
-                (mediaList.type === 'circuitOverseer' &&
-                  !mediaList.items.filter((m) => !m.hidden).length)
-              "
-              class="add-media-shortcut"
-              :color="mediaList.type"
-              icon="mmm-music-note"
-              :label="
-                $q.screen.gt.xs
-                  ? mediaList.type === 'additional'
-                    ? t('add-an-opening-song')
-                    : t('add-a-closing-song')
-                  : undefined
-              "
-              @click="addSong(mediaList.type)"
-            >
-              <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
-                {{
-                  mediaList.type === 'additional'
-                    ? t('add-an-opening-song')
-                    : t('add-a-closing-song')
-                }}
-              </q-tooltip>
-            </q-btn>
-            <q-btn
-              v-else
-              class="add-media-shortcut"
-              :color="mediaList.type"
-              icon="mmm-add-media"
-              :label="$q.screen.gt.xs ? t('add-extra-media') : undefined"
-              @click="openImportMenu(mediaList.type)"
-            >
-              <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
-                {{ t('add-extra-media') }}
-              </q-tooltip>
-            </q-btn>
-          </q-item-section>
-        </q-item>
-        <div v-if="!mediaList.items.filter((m) => !m.hidden).length">
-          <q-item>
-            <q-item-section
-              class="align-center text-secondary text-grey text-subtitle2"
-            >
-              <div class="row items-center">
-                <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                <span>
-                  {{
-                    selectedDateObject &&
-                    isWeMeetingDay(selectedDateObject?.date)
-                      ? t('dont-forget-add-missing-media')
-                      : t('no-media-files-for-section')
-                  }}
-                </span>
-              </div>
-            </q-item-section>
-          </q-item>
-        </div>
-        <Sortable
-          class="sortable-media"
-          item-key="uniqueId"
-          :list="mediaList.items"
-          :options="{ group: 'mediaLists' }"
-          @add="handleMediaSort($event, 'ADD', mediaList.type as MediaSection)"
-          @end="handleMediaSort($event, 'END', mediaList.type as MediaSection)"
-          @remove="
-            handleMediaSort($event, 'REMOVE', mediaList.type as MediaSection)
-          "
-          @start="
-            handleMediaSort($event, 'START', mediaList.type as MediaSection)
-          "
-        >
-          <template #item="{ element }: { element: DynamicMediaObject }">
-            <template v-if="element.children">
-              <q-list
-                v-if="element.children.some((m) => !m.hidden)"
-                bordered
-                class="q-mx-sm q-my-sm media-children rounded-borders overflow-hidden"
-              >
-                <q-menu context-menu style="overflow-x: hidden" touch-position>
-                  <q-list>
-                    <q-item
-                      v-close-popup
-                      clickable
-                      :disable="!!mediaPlayingUrl"
-                      @click="element.hidden = true"
-                    >
-                      <q-item-section avatar>
-                        <q-icon name="mmm-file-hidden" />
-                      </q-item-section>
-                      <q-item-section>
-                        <q-item-label>{{ t('hide-from-list') }}</q-item-label>
-                        <q-item-label caption>
-                          {{ t('hide-from-list-explain') }}
-                        </q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-menu>
-
-                <q-expansion-item
-                  :key="element.children.map((m) => m.uniqueId).join(',')"
-                  v-model="expandedMediaGroups[element.uniqueId]"
-                  :disable="
-                    element.children
-                      .map((m) => m.fileUrl)
-                      .includes(mediaPlayingUrl)
-                  "
-                  :header-class="
-                    expandedMediaGroups[element.uniqueId]
-                      ? $q.dark.isActive
-                        ? 'bg-accent-400'
-                        : 'bg-accent-200'
-                      : ''
-                  "
-                >
-                  <template #header>
-                    <q-item-section>
-                      <div>
-                        <!-- eslint-disable-next-line vue/no-v-html -->
-                        <span v-html="element.extractCaption"></span>
-                        <q-badge
-                          class="q-ml-sm text-primary"
-                          :color="
-                            $q.dark.isActive ? 'accent-400' : 'accent-200'
-                          "
-                          :label="element.children?.length"
-                          rounded
-                          :text-color="
-                            $q.dark.isActive ? 'white' : 'accent-200'
-                          "
-                        />
-                      </div>
-                    </q-item-section>
-                  </template>
-                  <Sortable
-                    v-if="element.children"
-                    item-key="uniqueId"
-                    :list="element.children"
-                  >
-                    <template
-                      #item="{
-                        element: childElement,
-                      }: {
-                        element: DynamicMediaObject;
-                      }"
-                    >
-                      <div :key="childElement.uniqueId">
-                        <MediaItem
-                          :key="childElement.uniqueId"
-                          v-model:repeat="childElement.repeat"
-                          child
-                          :media="childElement"
-                          :play-state="playState(childElement.uniqueId)"
-                          @update:custom-duration="
-                            childElement.customDuration =
-                              JSON.parse($event) || undefined
-                          "
-                          @update:hidden="childElement.hidden = !!$event"
-                          @update:tag="childElement.tag = $event"
-                          @update:title="childElement.title = $event"
-                        />
-                      </div>
-                    </template>
-                  </Sortable>
-                </q-expansion-item>
-              </q-list>
-            </template>
-            <div v-else :key="element.uniqueId">
-              <MediaItem
-                :key="element.uniqueId"
-                v-model:repeat="element.repeat"
-                :media="element"
-                :play-state="playState(element.uniqueId)"
-                @update:custom-duration="
-                  element.customDuration = JSON.parse($event) || undefined
-                "
-                @update:hidden="element.hidden = !!$event"
-                @update:tag="element.tag = $event"
-                @update:title="element.title = $event"
-              />
-            </div>
-          </template>
-        </Sortable>
-      </q-list>
+      <MediaList :media-list="mediaList" :open-import-menu="openImportMenu" />
     </template>
-    <!-- <q-list
-      v-show="selectedDateObject?.complete && coWeek"
-      class="media-section additional"
-    >
-      <q-item class="text-additional items-center">
-        <q-avatar class="text-white bg-additional jw-icon" size="lg">
-          
-        </q-avatar>
-        <q-item-section class="text-bold text-uppercase text-spaced col-grow">
-          {{ t('circuit-overseer') }}
-        </q-item-section>
-        <q-item-section side>
-          <q-btn
-            class="add-media-shortcut"
-            color="additional"
-            :flat="
-              !!sortableCircuitOverseerMediaItems.filter((m) => !m.hidden)
-                .length
-            "
-            :icon="
-              sortableCircuitOverseerMediaItems.filter((m) => !m.hidden).length
-                ? 'mmm-add-media'
-                : 'mmm-music-note'
-            "
-            :label="
-              $q.screen.gt.xs
-                ? t(
-                    sortableCircuitOverseerMediaItems.filter((m) => !m.hidden)
-                      .length
-                      ? 'add-extra-media'
-                      : 'add-a-closing-song',
-                  )
-                : undefined
-            "
-            @click="
-              sortableCircuitOverseerMediaItems.filter((m) => !m.hidden).length
-                ? openImportMenu('circuitOverseer')
-                : addSong('circuitOverseer')
-            "
-          >
-            <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
-              {{
-                t(
-                  sortableCircuitOverseerMediaItems.filter((m) => !m.hidden)
-                    .length
-                    ? 'add-extra-media'
-                    : 'add-a-closing-song',
-                )
-              }}
-            </q-tooltip>
-          </q-btn>
-        </q-item-section>
-      </q-item>
-      <q-list ref="circuitOverseerList" class="list-droppable">
-        <MediaItem
-          v-for="media in sortableCircuitOverseerMediaItems"
-          :key="media.uniqueId"
-          v-model:repeat="media.repeat"
-          :media="media"
-          :play-state="playState(media.uniqueId)"
-          @update:custom-duration="
-            media.customDuration = JSON.parse($event) || undefined
-          "
-          @update:hidden="media.hidden = !!$event"
-          @update:tag="media.tag = $event"
-          @update:title="media.title = $event"
-        />
-        <div
-          v-if="
-            sortableCircuitOverseerMediaItems.filter((m) => !m.hidden)
-              .length === 0
-          "
-        >
-          <q-item>
-            <q-item-section
-              class="align-center text-secondary text-grey text-subtitle2"
-            >
-              <div class="row items-center">
-                <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                <span>{{ t('dont-forget-add-missing-media') }}</span>
-              </div>
-            </q-item-section>
-          </q-item>
-        </div>
-      </q-list>
-    </q-list> -->
     <DialogFileImport
       v-model="showFileImportDialog"
       v-model:jwpub-db="jwpubImportDb"
@@ -481,32 +97,22 @@
 </template>
 
 <script setup lang="ts">
-import type { SortableEvent } from 'sortablejs';
-import type {
-  DocumentItem,
-  DynamicMediaObject,
-  MediaSection,
-  TableItem,
-} from 'src/types';
+import type { DocumentItem, MediaSection, TableItem } from 'src/types';
 
-import {
-  useBroadcastChannel,
-  useEventListener,
-  watchImmediate,
-  whenever,
-} from '@vueuse/core';
+import { useBroadcastChannel, useEventListener, whenever } from '@vueuse/core';
 import { Buffer } from 'buffer';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
-import { useMeta, useQuasar } from 'quasar';
-import { Sortable } from 'sortablejs-vue3';
+import { useMeta } from 'quasar';
 import DialogFileImport from 'src/components/dialog/DialogFileImport.vue';
-import MediaItem from 'src/components/media/MediaItem.vue';
+import MediaEmptyState from 'src/components/media/MediaEmptyState.vue';
+import MediaList, {
+  type MediaListObject,
+} from 'src/components/media/MediaList.vue';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
 import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { addDayToExportQueue } from 'src/helpers/export-media';
 import {
   addJwpubDocumentMediaToFiles,
   copyToDatedAdditionalMedia,
@@ -556,8 +162,6 @@ const jwpubImportDocuments = ref<DocumentItem[]>([]);
 
 const { dateLocale, t } = useLocale();
 useMeta({ title: t('titles.meetingMedia') });
-
-const $q = useQuasar();
 
 watch(
   () => [jwpubImportDb.value, jwpubImportDocuments.value],
@@ -612,19 +216,7 @@ const currentFile = ref(0);
 const mediaLists = computed(() => {
   const mwMeetingDay = isMwMeetingDay(selectedDateObject.value?.date);
   const weMeetingDay = isWeMeetingDay(selectedDateObject.value?.date);
-  const all: (
-    | false
-    | undefined
-    | {
-        alwaysShow: boolean;
-        extraMediaShortcut?: boolean;
-        items: DynamicMediaObject[];
-        jwIcon?: string;
-        label: string;
-        mmmIcon?: string;
-        type: MediaSection;
-      }
-  )[] = [
+  const all: (false | MediaListObject | undefined)[] = [
     {
       alwaysShow:
         !!selectedDateObject.value?.dynamicMedia?.filter(
@@ -691,13 +283,6 @@ const mediaLists = computed(() => {
 
   return all.filter((m) => !!m);
 });
-
-watch(
-  () => mediaPlayingUniqueId.value,
-  (newMediaUniqueId) => {
-    if (newMediaUniqueId) lastPlayedMediaUniqueId.value = newMediaUniqueId;
-  },
-);
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
   name: 'media-action',
@@ -810,7 +395,7 @@ watch(
   },
 );
 
-const seenErrors = new Set();
+const seenErrors = new Set<string>();
 watch(
   () =>
     lookupPeriod.value[currentCongregation.value]
@@ -819,7 +404,10 @@ watch(
   (errorVals) => {
     errorVals?.forEach((errorVal) => {
       const daysUntilError = getDateDiff(errorVal, new Date(), 'days');
-      if (seenErrors.has(currentCongregation + errorVal) || daysUntilError > 7)
+      if (
+        seenErrors.has(currentCongregation.value + errorVal) ||
+        daysUntilError > 7
+      )
         return;
       createTemporaryNotification({
         caption: getLocalDate(errorVal, dateLocale.value),
@@ -829,7 +417,7 @@ watch(
         timeout: 15000,
         type: 'negative',
       });
-      seenErrors.add(currentCongregation + errorVal);
+      seenErrors.add(currentCongregation.value + errorVal);
     });
   },
 );
@@ -841,7 +429,7 @@ watch(
       .filter((f) => typeof f === 'string'),
   (missingFileUrls) => {
     missingFileUrls?.forEach((missingFileUrl) => {
-      if (seenErrors.has(currentCongregation + missingFileUrl)) return;
+      if (seenErrors.has(currentCongregation.value + missingFileUrl)) return;
       createTemporaryNotification({
         caption: t('some-media-items-are-missing-explain'),
         color: 'warning',
@@ -850,7 +438,7 @@ watch(
         message: t('some-media-items-are-missing'),
         timeout: 15000,
       });
-      seenErrors.add(currentCongregation + missingFileUrl);
+      seenErrors.add(currentCongregation.value + missingFileUrl);
     });
   },
 );
@@ -868,7 +456,7 @@ const goToNextDayWithMedia = (ignoreTodaysDate = false) => {
           .filter(Boolean)
           .filter(
             (mediaDate) =>
-              ignoreTodaysDate || !isInPast(dateFromString(mediaDate)),
+              !isInPast(dateFromString(mediaDate), ignoreTodaysDate),
           )
           .map((mediaDate) => formatDate(mediaDate, 'YYYY/MM/DD'))
           .sort()?.[0] || '';
@@ -877,8 +465,6 @@ const goToNextDayWithMedia = (ignoreTodaysDate = false) => {
     errorCatcher(e);
   }
 };
-
-const coWeek = ref(false);
 
 const checkCoDate = () => {
   if (
@@ -946,17 +532,6 @@ useEventListener<
   { passive: true },
 );
 
-watchImmediate(selectedDate, (newVal) => {
-  try {
-    if (!currentCongregation.value || !newVal) {
-      return;
-    }
-    coWeek.value = isCoWeek(dateFromString(newVal));
-  } catch (e) {
-    errorCatcher(e);
-  }
-});
-
 onMounted(() => {
   // generateMediaList();
   goToNextDayWithMedia();
@@ -981,127 +556,6 @@ watch(
     fetchMedia();
   },
 );
-
-const expandedMediaGroups = ref<Record<string, boolean>>({});
-
-watchImmediate(
-  () => selectedDateObject.value?.dynamicMedia?.length,
-  () => {
-    expandedMediaGroups.value =
-      selectedDateObject.value?.dynamicMedia.reduce(
-        (acc, element) => {
-          if (element.children?.length && element.extractCaption) {
-            acc[element.uniqueId] = !!element.cbs; // Default state based on element.cbs
-          }
-          return acc;
-        },
-        {} as Record<string, boolean>,
-      ) || {};
-  },
-);
-
-const keyboardShortcutMediaList = computed(() => {
-  return [
-    ...getVisibleMediaForSection.value.additional,
-    ...getVisibleMediaForSection.value.tgw,
-    ...getVisibleMediaForSection.value.ayfm,
-    ...getVisibleMediaForSection.value.lac,
-    ...getVisibleMediaForSection.value.wt,
-    ...getVisibleMediaForSection.value.circuitOverseer,
-  ].flatMap((m) => {
-    return m.children
-      ? m.children.map((c) => {
-          return {
-            ...c,
-            parentUniqueId: m.uniqueId,
-          };
-        })
-      : [m];
-  });
-});
-
-// const sortedMediaIds = computed(() => {
-//   return keyboardShortcutMediaList.value.map((m) => m.uniqueId);
-// });
-
-const arraysAreIdentical = (a: string[], b: string[]) =>
-  a.length === b.length && a.every((element, index) => element === b[index]);
-
-const sortedMediaFileUrls = computed(() =>
-  keyboardShortcutMediaList.value
-    .filter((m) => !m.hidden && !!m.fileUrl)
-    .map((m) => m.fileUrl)
-    .filter((m) => typeof m === 'string')
-    .filter((fileUrl, index, self) => self.indexOf(fileUrl) === index),
-);
-
-watch(
-  () => sortedMediaFileUrls.value,
-  (newSortedMediaFileUrls, oldSortedMediaFileUrls) => {
-    if (
-      selectedDateObject.value?.date &&
-      !arraysAreIdentical(newSortedMediaFileUrls, oldSortedMediaFileUrls)
-    ) {
-      try {
-        addDayToExportQueue(selectedDateObject.value.date);
-      } catch (e) {
-        errorCatcher(e);
-      }
-    }
-  },
-);
-
-const lastPlayedMediaUniqueId = ref<string>('');
-
-const nextMediaUniqueId = computed(() => {
-  if (!selectedDate.value) return '';
-  const sortedMediaIds = keyboardShortcutMediaList.value.map((m) => m.uniqueId);
-  if (!lastPlayedMediaUniqueId.value) return sortedMediaIds[0];
-  const index = sortedMediaIds.indexOf(lastPlayedMediaUniqueId.value);
-  if (index === -1) return sortedMediaIds[0];
-  for (let i = index + 1; i < keyboardShortcutMediaList.value.length; i++) {
-    const mediaItem = keyboardShortcutMediaList.value[i];
-    if (mediaItem) {
-      if (
-        !mediaItem.extractCaption ||
-        (mediaItem?.parentUniqueId &&
-          expandedMediaGroups.value[mediaItem.parentUniqueId])
-      ) {
-        return mediaItem.uniqueId;
-      }
-    }
-  }
-  return sortedMediaIds[0];
-});
-
-const previousMediaUniqueId = computed(() => {
-  if (!selectedDate.value) return '';
-  const sortedMediaIds = keyboardShortcutMediaList.value.map((m) => m.uniqueId);
-  if (!lastPlayedMediaUniqueId.value) return sortedMediaIds[0];
-  const index = sortedMediaIds.indexOf(lastPlayedMediaUniqueId.value);
-  if (index === -1) return sortedMediaIds[0];
-
-  for (let i = index - 1; i >= 0; i--) {
-    const mediaItem = keyboardShortcutMediaList.value[i];
-    if (mediaItem) {
-      if (
-        !mediaItem.extractCaption ||
-        (mediaItem.parentUniqueId &&
-          expandedMediaGroups.value[mediaItem.parentUniqueId])
-      ) {
-        return mediaItem.uniqueId;
-      }
-    }
-  }
-  return sortedMediaIds[0];
-});
-
-const playState = (id: string) => {
-  if (id === lastPlayedMediaUniqueId.value) return 'current';
-  if (id === nextMediaUniqueId.value) return 'next';
-  if (id === previousMediaUniqueId.value) return 'previous';
-  return 'unknown';
-};
 
 const addToFiles = async (
   files: FileList | { filename?: string; filetype?: string; path: string }[],
@@ -1317,14 +771,6 @@ const addToFiles = async (
   if (!isJwpub(files[0]?.path)) showFileImportDialog.value = false;
 };
 
-const addSong = (section: MediaSection | undefined) => {
-  window.dispatchEvent(
-    new CustomEvent<{ section: MediaSection | undefined }>('openSongPicker', {
-      detail: { section },
-    }),
-  );
-};
-
 const openImportMenu = (section: MediaSection | undefined) => {
   window.dispatchEvent(
     new CustomEvent<{ section: MediaSection | undefined }>('openImportMenu', {
@@ -1386,79 +832,6 @@ whenever(
   },
 );
 
-const mediaItemBeingSorted = ref<DynamicMediaObject | undefined>();
-
-const handleMediaSort = (
-  evt: SortableEvent,
-  eventType: string,
-  list: MediaSection,
-) => {
-  const sameList = evt.from === evt.to;
-  const dynamicMedia = selectedDateObject.value?.dynamicMedia;
-
-  if (!dynamicMedia || !Array.isArray(dynamicMedia)) return;
-  if (
-    typeof evt.oldIndex === 'undefined' ||
-    typeof evt.newIndex === 'undefined'
-  )
-    return;
-
-  switch (eventType) {
-    case 'ADD':
-      if (!sameList && mediaItemBeingSorted.value) {
-        const firstElementIndex = dynamicMedia.findIndex(
-          (item) => item.section === list,
-        );
-        const insertIndex =
-          firstElementIndex >= 0
-            ? firstElementIndex + evt.newIndex
-            : evt.newIndex;
-        const newItem = { ...mediaItemBeingSorted.value, section: list };
-        dynamicMedia.splice(insertIndex, 0, newItem);
-      }
-      break;
-
-    case 'END':
-      if (sameList) {
-        const originalPosition = dynamicMedia.findIndex(
-          (item) => item.uniqueId === mediaItemBeingSorted.value?.uniqueId,
-        );
-        if (originalPosition >= 0) {
-          const [movedItem] = dynamicMedia.splice(originalPosition, 1);
-          if (movedItem) {
-            const newIndex = Math.max(
-              0,
-              originalPosition + evt.newIndex - evt.oldIndex,
-            );
-            dynamicMedia.splice(newIndex, 0, movedItem);
-          }
-        }
-      }
-      break;
-
-    case 'REMOVE':
-      if (!sameList) {
-        const indexToRemove = dynamicMedia.findIndex(
-          (item) =>
-            item.uniqueId === mediaItemBeingSorted.value?.uniqueId &&
-            item.section === list,
-        );
-        if (indexToRemove >= 0) {
-          dynamicMedia.splice(indexToRemove, 1);
-        }
-      }
-      break;
-
-    case 'START': {
-      const itemBeingSorted =
-        getVisibleMediaForSection.value[list]?.[evt.oldIndex];
-      if (itemBeingSorted) {
-        mediaItemBeingSorted.value = itemBeingSorted;
-      }
-    }
-  }
-};
-
 const duplicateSongsForWeMeeting = computed(() => {
   if (!(selectedDateObject.value?.meeting === 'we')) return false;
   const songNumbers: (number | string)[] =
@@ -1474,14 +847,3 @@ const duplicateSongsForWeMeeting = computed(() => {
   return songSet.size !== songNumbers.length;
 });
 </script>
-<style scoped lang="scss">
-.add-media-shortcut {
-  max-width: 100%;
-
-  :deep(span.block) {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-}
-</style>
