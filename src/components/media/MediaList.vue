@@ -3,17 +3,31 @@
     v-show="
       mediaList.items?.filter((m) => !m.hidden).length || mediaList.alwaysShow
     "
-    :class="'media-section ' + mediaList.type"
+    :class="
+      'media-section ' +
+      mediaList.type +
+      (mediaList.type === 'custom' ? ' custom' : '')
+    "
+    :style="{
+      '--bg-color': mediaList.bgColor,
+      '--text-color': mediaList.textColor,
+    }"
   >
     <q-item
       v-if="selectedDateObject"
-      :class="'text-' + mediaList.type + ' items-center'"
+      :class="
+        'text-' +
+        mediaList.type +
+        ' items-center ' +
+        (mediaList.type === 'custom' ? ' custom-text-color' : '')
+      "
     >
       <q-avatar
         :class="
           'text-white bg-' +
           mediaList.type +
-          (mediaList.jwIcon ? ' jw-icon' : '')
+          (mediaList.jwIcon ? ' jw-icon' : '') +
+          (mediaList.type === 'custom' ? ' custom-bg-color' : '')
         "
       >
         <!-- :size="isWeMeetingDay(selectedDateObject.date) ? 'lg' : 'md'" -->
@@ -210,7 +224,11 @@
 </template>
 <script setup lang="ts">
 import type { SortableEvent } from 'sortablejs';
-import type { DynamicMediaObject, MediaSection } from 'src/types';
+import type {
+  DynamicMediaObject,
+  DynamicMediaSection,
+  MediaSection,
+} from 'src/types';
 
 import { watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
@@ -224,18 +242,8 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-export interface MediaListObject {
-  alwaysShow: boolean;
-  extraMediaShortcut?: boolean;
-  items: DynamicMediaObject[];
-  jwIcon?: string;
-  label: string;
-  mmmIcon?: string;
-  type: MediaSection;
-}
-
 defineProps<{
-  mediaList: MediaListObject;
+  mediaList: DynamicMediaSection;
   openImportMenu: (section: MediaSection) => void;
 }>();
 
@@ -295,12 +303,12 @@ watchImmediate(
 
 const keyboardShortcutMediaList = computed(() => {
   return [
-    ...getVisibleMediaForSection.value.additional,
-    ...getVisibleMediaForSection.value.tgw,
-    ...getVisibleMediaForSection.value.ayfm,
-    ...getVisibleMediaForSection.value.lac,
-    ...getVisibleMediaForSection.value.wt,
-    ...getVisibleMediaForSection.value.circuitOverseer,
+    ...(getVisibleMediaForSection.value.additional || []),
+    ...(getVisibleMediaForSection.value.tgw || []),
+    ...(getVisibleMediaForSection.value.ayfm || []),
+    ...(getVisibleMediaForSection.value.lac || []),
+    ...(getVisibleMediaForSection.value.wt || []),
+    ...(getVisibleMediaForSection.value.circuitOverseer || []),
   ].flatMap((m) => {
     return m.children
       ? m.children.map((c) => {
@@ -456,7 +464,18 @@ const handleMediaSort = (
   }
 };
 </script>
-<style scoped lang="scss">
+
+<style lang="scss" scoped>
+.media-section.custom .custom-text-color {
+  color: var(--bg-color) !important;
+}
+.media-section.custom .custom-bg-color {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+}
+.media-section.custom:before {
+  background-color: var(--bg-color);
+}
 .add-media-shortcut {
   max-width: 100%;
 

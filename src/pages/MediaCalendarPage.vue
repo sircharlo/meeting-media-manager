@@ -11,21 +11,6 @@
     @dragstart="dropActive"
   >
     <div class="col">
-      {{ selectedDateObject?.customSections }}
-      <q-btn
-        color="primary"
-        label="Add section"
-        @click="
-          if (selectedDateObject && !selectedDateObject?.customSections)
-            selectedDateObject.customSections = [];
-          selectedDateObject?.customSections?.push({
-            label: 'Custom section',
-            type: 'custom',
-            items: [],
-            bgColor: 'primary',
-          });
-        "
-      />
       <div
         v-if="
           currentSettings?.obsEnable &&
@@ -83,22 +68,25 @@
       <MediaEmptyState
         v-if="
           (currentSettings?.disableMediaFetching &&
-            getVisibleMediaForSection.additional.length < 1) ||
+            (getVisibleMediaForSection.additional?.length || 0) < 1) ||
           (!currentSettings?.disableMediaFetching &&
             ((selectedDateObject?.meeting && !selectedDateObject?.complete) ||
-              !selectedDateObject?.dynamicMedia?.filter((m) => !m.hidden)
-                .length))
+              (!selectedDateObject?.customSections?.length &&
+                !selectedDateObject?.dynamicMedia?.filter((m) => !m.hidden)
+                  .length)))
         "
         :go-to-next-day-with-media="goToNextDayWithMedia"
         :open-import-menu="openImportMenu"
       />
+      <template
+        v-for="mediaList in mediaLists"
+        :key="mediaList.items.map((m) => m.uniqueId).join(',')"
+      >
+        {{ mediaList }}
+
+        <MediaList :media-list="mediaList" :open-import-menu="openImportMenu" />
+      </template>
     </div>
-    <template
-      v-for="mediaList in mediaLists"
-      :key="mediaList.items.map((m) => m.uniqueId).join(',')"
-    >
-      <MediaList :media-list="mediaList" :open-import-menu="openImportMenu" />
-    </template>
     <DialogFileImport
       v-model="showFileImportDialog"
       v-model:jwpub-db="jwpubImportDb"
@@ -108,22 +96,42 @@
       :total-files="totalFiles"
       @drop="dropEnd"
     />
+    <DialogCustomSectionEdit v-model="showCustomSectionDialog" />
+    <q-menu context-menu style="overflow-x: hidden" touch-position>
+      <q-list>
+        <q-item v-close-popup clickable @click="showCustomSectionDialog = true">
+          <q-item-section avatar>
+            <q-icon name="mmm-file-" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ t('edit-sections') }}</q-item-label>
+            <q-item-label caption>
+              {{ t('edit-sections-explain') }}
+            </q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </q-menu>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import type { DocumentItem, MediaSection, TableItem } from 'src/types';
+import type {
+  DocumentItem,
+  DynamicMediaSection,
+  MediaSection,
+  TableItem,
+} from 'src/types';
 
 import { useBroadcastChannel, useEventListener, whenever } from '@vueuse/core';
 import { Buffer } from 'buffer';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
+import DialogCustomSectionEdit from 'src/components/dialog/DialogCustomSectionEdit.vue';
 import DialogFileImport from 'src/components/dialog/DialogFileImport.vue';
 import MediaEmptyState from 'src/components/media/MediaEmptyState.vue';
-import MediaList, {
-  type MediaListObject,
-} from 'src/components/media/MediaList.vue';
+import MediaList from 'src/components/media/MediaList.vue';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
 import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
@@ -170,6 +178,8 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+
+const showCustomSectionDialog = ref(false);
 
 const showFileImportDialog = ref(false);
 const jwpubImportDb = ref('');
@@ -228,7 +238,7 @@ const {
 const totalFiles = ref(0);
 const currentFile = ref(0);
 
-const mediaLists = computed<MediaListObject[]>(() => {
+const mediaLists = computed<DynamicMediaSection[]>(() => {
   const mwMeetingDay = isMwMeetingDay(selectedDateObject.value?.date);
   const weMeetingDay = isWeMeetingDay(selectedDateObject.value?.date);
   const isComplete = selectedDateObject.value?.complete;
@@ -236,7 +246,7 @@ const mediaLists = computed<MediaListObject[]>(() => {
 
   const mediaSections: {
     condition: boolean | undefined;
-    config: MediaListObject;
+    config: DynamicMediaSection;
   }[] = [
     {
       condition:
@@ -248,10 +258,10 @@ const mediaLists = computed<MediaListObject[]>(() => {
         alwaysShow: true,
         extraMediaShortcut:
           weMeetingDay &&
-          !getVisibleMediaForSection.value.additional.some(
+          !getVisibleMediaForSection.value.additional?.some(
             (m) => !m.hidden && m.source !== 'watched',
           ),
-        items: getVisibleMediaForSection.value.additional,
+        items: getVisibleMediaForSection.value.additional || [],
         jwIcon: weMeetingDay ? '' : undefined,
         label: weMeetingDay ? t('public-talk') : t('imported-media'),
         mmmIcon: date && !weMeetingDay ? 'mmm-additional-media' : undefined,
@@ -262,7 +272,7 @@ const mediaLists = computed<MediaListObject[]>(() => {
       condition: weMeetingDay && isComplete,
       config: {
         alwaysShow: true,
-        items: getVisibleMediaForSection.value.wt,
+        items: getVisibleMediaForSection.value.wt || [],
         jwIcon: '',
         label: t('wt'),
         type: 'wt',
@@ -272,7 +282,7 @@ const mediaLists = computed<MediaListObject[]>(() => {
       condition: mwMeetingDay && isComplete,
       config: {
         alwaysShow: true,
-        items: getVisibleMediaForSection.value.tgw,
+        items: getVisibleMediaForSection.value.tgw || [],
         jwIcon: '',
         label: t('tgw'),
         type: 'tgw',
@@ -282,7 +292,7 @@ const mediaLists = computed<MediaListObject[]>(() => {
       condition: mwMeetingDay && isComplete,
       config: {
         alwaysShow: true,
-        items: getVisibleMediaForSection.value.ayfm,
+        items: getVisibleMediaForSection.value.ayfm || [],
         jwIcon: '',
         label: t('ayfm'),
         type: 'ayfm',
@@ -293,7 +303,7 @@ const mediaLists = computed<MediaListObject[]>(() => {
       config: {
         alwaysShow: true,
         extraMediaShortcut: true,
-        items: getVisibleMediaForSection.value.lac,
+        items: getVisibleMediaForSection.value.lac || [],
         jwIcon: '',
         label: t('lac'),
         type: 'lac',
@@ -304,7 +314,7 @@ const mediaLists = computed<MediaListObject[]>(() => {
       config: {
         alwaysShow: true,
         extraMediaShortcut: true,
-        items: getVisibleMediaForSection.value.circuitOverseer,
+        items: getVisibleMediaForSection.value.circuitOverseer || [],
         jwIcon: '',
         label: t('circuit-overseer'),
         type: 'circuitOverseer',
@@ -312,9 +322,14 @@ const mediaLists = computed<MediaListObject[]>(() => {
     },
   ];
 
-  return mediaSections
-    .filter(({ condition }) => condition)
-    .map(({ config }) => config);
+  const customSections = selectedDateObject.value?.customSections ?? [];
+
+  const defaultMediaSections =
+    mediaSections
+      .filter(({ condition }) => condition)
+      .map(({ config }) => config) ?? [];
+
+  return [...defaultMediaSections, ...customSections];
 });
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({

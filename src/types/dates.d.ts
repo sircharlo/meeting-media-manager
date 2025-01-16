@@ -1,4 +1,4 @@
-import type { DynamicMediaObject } from './media';
+import type { DynamicMediaObject, DynamicMediaSection } from './media';
 
 export interface DateInfo {
   complete: boolean;

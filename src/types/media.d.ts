@@ -51,12 +51,15 @@ export interface DynamicMediaObject {
 }
 
 export interface DynamicMediaSection {
+  alwaysShow: boolean;
   bgColor?: string;
   extraMediaShortcut?: boolean;
   items: DynamicMediaObject[];
+  jwIcon?: string;
   label: string;
+  mmmIcon?: string;
   textColor?: string;
-  type: string;
+  type: MediaSection;
 }
 
 export interface FileDownloader {
@@ -74,7 +77,8 @@ export type MediaSection =
   | 'circuitOverseer'
   | 'lac'
   | 'tgw'
-  | 'wt';
+  | 'wt'
+  | string;
 
 export interface SongItem {
   duration?: number; // or the correct type for duration
