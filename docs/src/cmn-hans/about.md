@@ -42,7 +42,9 @@ M3是管理聚会媒体的最终工具，为各平台提供无缝、可靠和丰
 - 自动外部屏幕的识别和管理
 - OBS 工作室集成，在媒体播放时自动切换场景
 - 在外部显示器上展示耶和华见证人的官方网站
-- 从耶和华见证人官方网站上导入JWPUB档案、JWLPLAYLIST文件和视频， 单击几次，S-34档案中的公众演讲媒体就轻松被导入。
+- Import JWPUB files, JWLPLAYLIST files and videos from the official website of Jehovah's Witnesses in a few clicks.
+- Import Study Bible media and audio recordings of the New World Translation of the Bible in seconds.
+- Always have a public talks media overview (S-34) one click away and ready to be used any minute you need it.
 - 自定义视频、图片、音频文件甚至PDF文件也可以轻松地导入！
 
 **今天给M³一次尝试，看看它能做些什么！  在会众聚会上播放媒体的工作从来没有那么容易。**

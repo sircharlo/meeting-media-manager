@@ -42,7 +42,9 @@ Für **hybride** oder **präsente** Versammlungen bietet der integrierte Medienp
 - Automatische Erkennung und Verwaltung externer Monitore
 - Integration von OBS Studio mit automatischem Szenenwechsel während der Medienpräsentation
 - Präsentation der offiziellen Website der Zeugen Jehovas auf einem externen Monitor
-- Import von JWPUB-Dateien, JWLPLAYLIST-Dateien, Videos von der offiziellen Website der Zeugen Jehovas und Medien für öffentliche Vorträge aus der S-34-Datei mit nur wenigen Klicks
+- Import JWPUB files, JWLPLAYLIST files and videos from the official website of Jehovah's Witnesses in a few clicks.
+- Import Study Bible media and audio recordings of the New World Translation of the Bible in seconds.
+- Always have a public talks media overview (S-34) one click away and ready to be used any minute you need it.
 - Benutzerdefinierte Videos, Bilder, Audiodateien und sogar PDF-Dateien können ebenfalls einfach importiert werden!
 
 **Testen Sie M³ noch heute und überzeugen Sie sich selbst, was es leisten kann! Die Präsentation von Medien während der Versammlungen war noch nie so einfach.**
