@@ -41,7 +41,7 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - Automatic external monitor recognition and management
 - OBS Studio integration with automatic scene switching during media presentation
 - Presenting the official website of Jehovah's Witnesses website on an external monitor
-- Import JWPUB files, JWLPLAYLIST files, videos from the official website of Jehovah's Witnesses, and media for public talks from the S-34 file in a few clicks.
+- Import JWPUB files, JWLPLAYLIST files and videos from the official website of Jehovah's Witnesses in a few clicks.
 - Import Study Bible media and audio recordings of the New World Translation of the Bible in seconds.
 - Always have a public talks media overview (S-34) one click away and ready to be used any minute you need it.
 - Custom videos, pictures, audio files and even PDF files can be easily imported too!
