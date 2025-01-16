@@ -50,6 +50,15 @@ export interface DynamicMediaObject {
   uniqueId: string;
 }
 
+export interface DynamicMediaSection {
+  bgColor?: string;
+  extraMediaShortcut?: boolean;
+  items: DynamicMediaObject[];
+  label: string;
+  textColor?: string;
+  type: string;
+}
+
 export interface FileDownloader {
   dir: string;
   filename?: string;

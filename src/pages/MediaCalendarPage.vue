@@ -11,6 +11,21 @@
     @dragstart="dropActive"
   >
     <div class="col">
+      {{ selectedDateObject?.customSections }}
+      <q-btn
+        color="primary"
+        label="Add section"
+        @click="
+          if (selectedDateObject && !selectedDateObject?.customSections)
+            selectedDateObject.customSections = [];
+          selectedDateObject?.customSections?.push({
+            label: 'Custom section',
+            type: 'custom',
+            items: [],
+            bgColor: 'primary',
+          });
+        "
+      />
       <div
         v-if="
           currentSettings?.obsEnable &&
@@ -213,56 +228,69 @@ const {
 const totalFiles = ref(0);
 const currentFile = ref(0);
 
-const mediaLists = computed(() => {
+const mediaLists = computed<MediaListObject[]>(() => {
   const mwMeetingDay = isMwMeetingDay(selectedDateObject.value?.date);
   const weMeetingDay = isWeMeetingDay(selectedDateObject.value?.date);
-  const all: (false | MediaListObject | undefined)[] = [
+  const isComplete = selectedDateObject.value?.complete;
+  const date = selectedDateObject.value?.date;
+
+  const mediaSections: {
+    condition: boolean | undefined;
+    config: MediaListObject;
+  }[] = [
     {
-      alwaysShow:
-        !!selectedDateObject.value?.dynamicMedia?.filter(
+      condition:
+        !!selectedDateObject.value?.dynamicMedia?.some(
           (m) => m.section === 'additional',
-        )?.length ||
-        (!!selectedDateObject.value?.complete && weMeetingDay),
-      extraMediaShortcut:
-        weMeetingDay &&
-        !getVisibleMediaForSection.value.additional.filter(
-          (m) => !m.hidden && m.source !== 'watched',
-        ).length,
-      items: getVisibleMediaForSection.value.additional,
-      jwIcon: weMeetingDay ? '' : undefined,
-      label: weMeetingDay ? t('public-talk') : t('imported-media'),
-      mmmIcon:
-        selectedDateObject.value?.date && !weMeetingDay
-          ? 'mmm-additional-media'
-          : undefined,
-      type: 'additional',
+        ) ||
+        (isComplete && weMeetingDay),
+      config: {
+        alwaysShow: true,
+        extraMediaShortcut:
+          weMeetingDay &&
+          !getVisibleMediaForSection.value.additional.some(
+            (m) => !m.hidden && m.source !== 'watched',
+          ),
+        items: getVisibleMediaForSection.value.additional,
+        jwIcon: weMeetingDay ? '' : undefined,
+        label: weMeetingDay ? t('public-talk') : t('imported-media'),
+        mmmIcon: date && !weMeetingDay ? 'mmm-additional-media' : undefined,
+        type: 'additional',
+      },
     },
-    weMeetingDay &&
-      selectedDateObject.value?.complete && {
+    {
+      condition: weMeetingDay && isComplete,
+      config: {
         alwaysShow: true,
         items: getVisibleMediaForSection.value.wt,
         jwIcon: '',
         label: t('wt'),
         type: 'wt',
       },
-    mwMeetingDay &&
-      selectedDateObject.value?.complete && {
+    },
+    {
+      condition: mwMeetingDay && isComplete,
+      config: {
         alwaysShow: true,
         items: getVisibleMediaForSection.value.tgw,
         jwIcon: '',
         label: t('tgw'),
         type: 'tgw',
       },
-    mwMeetingDay &&
-      selectedDateObject.value?.complete && {
+    },
+    {
+      condition: mwMeetingDay && isComplete,
+      config: {
         alwaysShow: true,
         items: getVisibleMediaForSection.value.ayfm,
         jwIcon: '',
         label: t('ayfm'),
         type: 'ayfm',
       },
-    mwMeetingDay &&
-      selectedDateObject.value?.complete && {
+    },
+    {
+      condition: mwMeetingDay && isComplete,
+      config: {
         alwaysShow: true,
         extraMediaShortcut: true,
         items: getVisibleMediaForSection.value.lac,
@@ -270,8 +298,10 @@ const mediaLists = computed(() => {
         label: t('lac'),
         type: 'lac',
       },
-    isCoWeek(selectedDateObject.value?.date) &&
-      selectedDateObject.value?.complete && {
+    },
+    {
+      condition: isCoWeek(date) && isComplete,
+      config: {
         alwaysShow: true,
         extraMediaShortcut: true,
         items: getVisibleMediaForSection.value.circuitOverseer,
@@ -279,9 +309,12 @@ const mediaLists = computed(() => {
         label: t('circuit-overseer'),
         type: 'circuitOverseer',
       },
+    },
   ];
 
-  return all.filter((m) => !!m);
+  return mediaSections
+    .filter(({ condition }) => condition)
+    .map(({ config }) => config);
 });
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
