@@ -42,7 +42,9 @@ M³ позволяет легко и автоматически скачать, 
 - Автоматическое распознавание и управление внешним монитором
 - Интеграция с OBS Studio с автоматическим переключением сцен во время представления медиафайлов
 - Представление официального сайта Свидетелей Иеговы на внешнем мониторе
-- Импортируйте файлы JWPUB, JWLPLAYLIST, видео с официального сайта Свидетелей Иеговы и медиа для публичных речей из S-34 всего за несколько щелчков мыши.
+- Import JWPUB files, JWLPLAYLIST files and videos from the official website of Jehovah's Witnesses in a few clicks.
+- Import Study Bible media and audio recordings of the New World Translation of the Bible in seconds.
+- Always have a public talks media overview (S-34) one click away and ready to be used any minute you need it.
 - Пользовательские видео, изображения, аудио и даже PDF-файлы тоже можно легко добавить!
 
 **Попробуйте M³ сегодня и убедитесь сами, на что оно способно! Представление мультимедиа во время встреч легче чем когда-либо.**
