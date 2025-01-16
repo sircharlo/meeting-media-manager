@@ -6,7 +6,7 @@ import { pad } from 'src/utils/general';
  * @param time The time in seconds
  * @returns The formatted time string
  * @example
- * formatTime(3600) // '01:00:00'
+ * formatTime(3600) // '1:00:00'
  * formatTime(60) // '01:00'
  * formatTime(0) // '00:00'
  */
@@ -26,6 +26,15 @@ export const formatTime = (time?: number) => {
   }
 };
 
+/**
+ * Converts time string to seconds
+ * @param time The time string in the format of 'hh:mm:ss' or 'mm:ss'
+ * @returns The time in seconds
+ * @example
+ * timeToSeconds('01:00:00') // 3600
+ * timeToSeconds('01:00') // 60
+ * timeToSeconds('00:00') // 0
+ */
 export const timeToSeconds = (time: string) => {
   try {
     const parts = time.split(':').map(parseFloat);

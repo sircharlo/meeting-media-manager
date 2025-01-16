@@ -19,6 +19,9 @@ import { errorCatcher } from 'src/helpers/error-catcher';
  * @param filepath The path to the file.
  * @param validExtensions The valid extensions for the file type.
  * @returns The result of the check.
+ * @example
+ * isFileOfType('some-file.mp4', ['mp4', 'mov']) // true
+ * isFileOfType('some-file.mp4', ['mp3', 'wav']) // false
  */
 const isFileOfType = (filepath: string, validExtensions: string[]) => {
   try {
