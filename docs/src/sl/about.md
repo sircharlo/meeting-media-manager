@@ -42,7 +42,9 @@ Za **hibridne** občinske shode ali za shode **v živo** ima integrirani način 
 - samodejno prepoznavanje in upravljanje zunanjih monitorjev,
 - integracija programa OBS Studio s samodejnim preklapljanjem prizorov med predvajanjem multimedijskih vsebin,
 - prikaz uradnega spletnega mesta Jehovovih prič na zunanjem monitorju,
-- uvažanje datotek JWPUB, datotek JWLPLAYLIST, videoposnetkov z uradnega spletnega mesta Jehovovih prič in multimedijske vsebine za javne govore iz datoteke S-34 z le nekaj kliki,
+- Import JWPUB files, JWLPLAYLIST files and videos from the official website of Jehovah's Witnesses in a few clicks.
+- Import Study Bible media and audio recordings of the New World Translation of the Bible in seconds.
+- Always have a public talks media overview (S-34) one click away and ready to be used any minute you need it.
 - enostavno lahko uvozite tudi svoje videoposnetke, slike, zvočne datoteke in celo datoteke PDF!
 
 **Preizkusite M³ še danes in se prepričajte, kaj vse zmore! Predvajanje multimedijske vsebina na občinskih shodih ni bilo še nikoli tako enostavno.**

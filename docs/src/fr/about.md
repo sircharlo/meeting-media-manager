@@ -42,7 +42,9 @@ Pour les réunions de l'assemblée locale **hybrides** ou **en présentiel**, le
 - Reconnaissance et gestion automatique des moniteurs externes
 - Intégration avec OBS Studio avec changement automatique de scène lors de la présentation des médias
 - Présentation du site web officiel des Témoins de Jéhovah sur les moniteurs externe
-- Ajouter des fichiers JWPUB, JWLPLAYLIST, des vidéos depuis le site officiel des Témoins de Jéhovah, et des médias pour les discours publics à partir du S-34mp, le tout en quelques clics.
+- Import JWPUB files, JWLPLAYLIST files and videos from the official website of Jehovah's Witnesses in a few clicks.
+- Import Study Bible media and audio recordings of the New World Translation of the Bible in seconds.
+- Always have a public talks media overview (S-34) one click away and ready to be used any minute you need it.
 - Des fichiers personnalisés, tels que les vidéos, photos, fichiers audio et même fichiers PDF, peuvent aussi être facilement importés !
 
 Essayez M³ aujourd'hui et voyez par vous-même ce qu'elle peut faire ! Il n’a jamais été aussi facile de présenter les médias lors des réunions de l'assemblée locale.\*\*
