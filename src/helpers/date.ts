@@ -33,7 +33,7 @@ const getWeekDay = (lookupDate: Date) => {
   }
 };
 
-export function isCoWeek(lookupDate: Date) {
+export function isCoWeek(lookupDate?: Date) {
   try {
     if (!lookupDate) return false;
     lookupDate = dateFromString(lookupDate);
@@ -96,8 +96,10 @@ export const isMwMeetingDay = (lookupDate?: Date) => {
 export const isWeMeetingDay = (lookupDate?: Date) => {
   try {
     const currentState = useCurrentStateStore();
-    if (!lookupDate || currentState.currentSettings?.disableMediaFetching)
+    if (!lookupDate || currentState.currentSettings?.disableMediaFetching) {
       return false;
+    }
+
     lookupDate = dateFromString(lookupDate);
 
     const changedWeDay =

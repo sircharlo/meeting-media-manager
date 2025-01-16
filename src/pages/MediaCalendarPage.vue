@@ -160,76 +160,7 @@
       </div>
     </div>
     <template
-      v-for="mediaList in [
-        {
-          type: 'additional',
-          label:
-            selectedDateObject?.date && isWeMeetingDay(selectedDateObject.date)
-              ? t('public-talk')
-              : t('imported-media'),
-          alwaysShow:
-            selectedDateObject?.dynamicMedia?.filter(
-              (m) => m.section === 'additional',
-            )?.length ||
-            (selectedDateObject?.complete &&
-              isWeMeetingDay(selectedDateObject?.date)),
-          mmmIcon:
-            selectedDateObject?.date &&
-            !isWeMeetingDay(selectedDateObject?.date)
-              ? 'mmm-additional-media'
-              : undefined,
-          jwIcon:
-            selectedDateObject?.date && isWeMeetingDay(selectedDateObject?.date)
-              ? ''
-              : undefined,
-          items: getVisibleMediaForSection.additional,
-        },
-        selectedDateObject?.date &&
-          isWeMeetingDay(selectedDateObject?.date) &&
-          selectedDateObject?.complete && {
-            type: 'wt',
-            label: t('wt'),
-            jwIcon: '',
-            items: getVisibleMediaForSection.wt,
-            alwaysShow: true,
-          },
-        selectedDateObject?.date &&
-          isMwMeetingDay(selectedDateObject?.date) &&
-          selectedDateObject?.complete && {
-            type: 'tgw',
-            label: t('tgw'),
-            jwIcon: '',
-            items: getVisibleMediaForSection.tgw,
-            alwaysShow: true,
-          },
-        selectedDateObject?.date &&
-          isMwMeetingDay(selectedDateObject?.date) &&
-          selectedDateObject?.complete && {
-            type: 'ayfm',
-            label: t('ayfm'),
-            jwIcon: '',
-            items: getVisibleMediaForSection.ayfm,
-            alwaysShow: true,
-          },
-        selectedDateObject?.date &&
-          isMwMeetingDay(selectedDateObject?.date) &&
-          selectedDateObject?.complete && {
-            type: 'lac',
-            label: t('lac'),
-            jwIcon: '',
-            items: getVisibleMediaForSection.lac,
-            alwaysShow: true,
-          },
-        selectedDateObject?.date &&
-          isCoWeek(selectedDateObject?.date) &&
-          selectedDateObject?.complete && {
-            type: 'circuitOverseer',
-            label: t('circuit-overseer'),
-            jwIcon: '',
-            items: getVisibleMediaForSection.circuitOverseer,
-            alwaysShow: true,
-          },
-      ].filter((m) => !!m)"
+      v-for="mediaList in mediaLists"
       :key="mediaList.items.map((m) => m.uniqueId).join(',')"
     >
       <q-list
@@ -259,26 +190,48 @@
             </template>
           </q-avatar>
           <q-item-section
-            class="text-bold text-uppercase text-spaced row justify-between"
+            class="text-bold text-uppercase text-spaced row justify-between col-grow"
           >
             {{ mediaList.label }}
           </q-item-section>
-          <q-item-section
-            v-if="
-              isWeMeetingDay(selectedDateObject.date) &&
-              mediaList.type === 'additional' &&
-              !mediaList.items?.filter(
-                (m) => !m.hidden && m.source !== 'watched',
-              ).length
-            "
-            side
-          >
+          <q-item-section v-if="mediaList.extraMediaShortcut" side>
             <q-btn
-              color="additional"
+              v-if="
+                mediaList.type === 'additional' ||
+                (mediaList.type === 'circuitOverseer' &&
+                  !mediaList.items.filter((m) => !m.hidden).length)
+              "
+              class="add-media-shortcut"
+              :color="mediaList.type"
               icon="mmm-music-note"
-              @click="addSong('additional')"
+              :label="
+                $q.screen.gt.xs
+                  ? mediaList.type === 'additional'
+                    ? t('add-an-opening-song')
+                    : t('add-a-closing-song')
+                  : undefined
+              "
+              @click="addSong(mediaList.type)"
             >
-              {{ t('add-an-opening-song') }}
+              <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
+                {{
+                  mediaList.type === 'additional'
+                    ? t('add-an-opening-song')
+                    : t('add-a-closing-song')
+                }}
+              </q-tooltip>
+            </q-btn>
+            <q-btn
+              v-else
+              class="add-media-shortcut"
+              :color="mediaList.type"
+              icon="mmm-add-media"
+              :label="$q.screen.gt.xs ? t('add-extra-media') : undefined"
+              @click="openImportMenu(mediaList.type)"
+            >
+              <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
+                {{ t('add-extra-media') }}
+              </q-tooltip>
             </q-btn>
           </q-item-section>
         </q-item>
@@ -289,11 +242,14 @@
             >
               <div class="row items-center">
                 <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-                <span>{{
-                  selectedDateObject && isWeMeetingDay(selectedDateObject?.date)
-                    ? t('dont-forget-add-missing-media')
-                    : t('no-media-files-for-section')
-                }}</span>
+                <span>
+                  {{
+                    selectedDateObject &&
+                    isWeMeetingDay(selectedDateObject?.date)
+                      ? t('dont-forget-add-missing-media')
+                      : t('no-media-files-for-section')
+                  }}
+                </span>
               </div>
             </q-item-section>
           </q-item>
@@ -652,6 +608,89 @@ const {
 
 const totalFiles = ref(0);
 const currentFile = ref(0);
+
+const mediaLists = computed(() => {
+  const mwMeetingDay = isMwMeetingDay(selectedDateObject.value?.date);
+  const weMeetingDay = isWeMeetingDay(selectedDateObject.value?.date);
+  const all: (
+    | false
+    | undefined
+    | {
+        alwaysShow: boolean;
+        extraMediaShortcut?: boolean;
+        items: DynamicMediaObject[];
+        jwIcon?: string;
+        label: string;
+        mmmIcon?: string;
+        type: MediaSection;
+      }
+  )[] = [
+    {
+      alwaysShow:
+        !!selectedDateObject.value?.dynamicMedia?.filter(
+          (m) => m.section === 'additional',
+        )?.length ||
+        (!!selectedDateObject.value?.complete && weMeetingDay),
+      extraMediaShortcut:
+        weMeetingDay &&
+        !getVisibleMediaForSection.value.additional.filter(
+          (m) => !m.hidden && m.source !== 'watched',
+        ).length,
+      items: getVisibleMediaForSection.value.additional,
+      jwIcon: weMeetingDay ? '' : undefined,
+      label: weMeetingDay ? t('public-talk') : t('imported-media'),
+      mmmIcon:
+        selectedDateObject.value?.date && !weMeetingDay
+          ? 'mmm-additional-media'
+          : undefined,
+      type: 'additional',
+    },
+    weMeetingDay &&
+      selectedDateObject.value?.complete && {
+        alwaysShow: true,
+        items: getVisibleMediaForSection.value.wt,
+        jwIcon: '',
+        label: t('wt'),
+        type: 'wt',
+      },
+    mwMeetingDay &&
+      selectedDateObject.value?.complete && {
+        alwaysShow: true,
+        items: getVisibleMediaForSection.value.tgw,
+        jwIcon: '',
+        label: t('tgw'),
+        type: 'tgw',
+      },
+    mwMeetingDay &&
+      selectedDateObject.value?.complete && {
+        alwaysShow: true,
+        items: getVisibleMediaForSection.value.ayfm,
+        jwIcon: '',
+        label: t('ayfm'),
+        type: 'ayfm',
+      },
+    mwMeetingDay &&
+      selectedDateObject.value?.complete && {
+        alwaysShow: true,
+        extraMediaShortcut: true,
+        items: getVisibleMediaForSection.value.lac,
+        jwIcon: '',
+        label: t('lac'),
+        type: 'lac',
+      },
+    isCoWeek(selectedDateObject.value?.date) &&
+      selectedDateObject.value?.complete && {
+        alwaysShow: true,
+        extraMediaShortcut: true,
+        items: getVisibleMediaForSection.value.circuitOverseer,
+        jwIcon: '',
+        label: t('circuit-overseer'),
+        type: 'circuitOverseer',
+      },
+  ];
+
+  return all.filter((m) => !!m);
+});
 
 watch(
   () => mediaPlayingUniqueId.value,
