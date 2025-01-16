@@ -42,7 +42,9 @@ A **hibrid** vagy **személyes** gyülekezeti összejövetelekhez az integrált 
 - Automatikus külső monitorfelismerés és -kezelés
 - OBS Studio integráció automatikus jelenetváltással a média megjelenítése során
 - Jehova Tanúi hivatalos honlapjának megjelenítése egy kihelyezett képernyőn
-- Importáljon JWPUB fájlokat, JWLPLAYLIST fájlokat, videókat Jehova Tanúi hivatalos weboldaláról és a nyilvános előadások médiáját az S-34 fájlból néhány kattintással.
+- Import JWPUB files, JWLPLAYLIST files and videos from the official website of Jehovah's Witnesses in a few clicks.
+- Import Study Bible media and audio recordings of the New World Translation of the Bible in seconds.
+- Always have a public talks media overview (S-34) one click away and ready to be used any minute you need it.
 - Egyéni videók, képek, hangfájlok és akár PDF fájlok is könnyedén importálhatók!
 
 **Adjon egy esélyt az M³-nak még ma, és győződjön meg róla, hogy mire képes! A média bemutatása a gyülekezeti összejöveteleken még soha nem volt ilyen egyszerű.**
