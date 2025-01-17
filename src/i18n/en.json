@@ -62,6 +62,7 @@
   "coWeek": "Next planned visit of the circuit overseer",
   "coWeek-explain": "If entered, M³ will automatically move the midweek meeting to Tuesday on that week. It will also skip media for the Congregation Bible Study, and skip the closing songs for both the midweek and weekend meetings.",
   "collapse-sidebar": "Collapse sidebar",
+  "color": "Color",
   "complete": "Complete",
   "configure-a-scene-in-obs-studio-to-capture-the-media-window": "Configure a scene in OBS Studio to capture the media window.",
   "configure-a-scene-in-obs-studio-to-show-a-stage-wide-shot": "Configure a scene in OBS Studio to show a stage wide shot.",
@@ -84,6 +85,7 @@
   "custom-background-removed": "The custom background has now been removed.",
   "custom-background-set": "The chosen image is now displayed instead of the yeartext.",
   "custom-background-will-not-persist": "Please note that the custom background will not be saved if you quit the app.",
+  "custom-sections": "Custom sections",
   "dangerZone": "Danger zone",
   "dark": "Dark",
   "darkMode": "Theme preference",
@@ -104,6 +106,8 @@
   "dont-forget-to-add-circuit-overseer-date": "For best results, add the date of the circuit overseer's visit to the \"{ congregationMeetings }\" section in { settings }.",
   "download-status": "Download status",
   "drag-and-drop-or-click-to-browse": "Drag and drop files here or click to browse.",
+  "edit-sections": "Edit sections",
+  "edit-sections-explain": "Add, reorder or change custom media sections",
   "enableExtraCache": "Cache songbook video files",
   "enableExtraCache-explain": "Cache all songbook videos to improve performance. Note that this will increase the size of the media cache.",
   "enableFolderWatcher": "Enable extra media folder monitoring",
@@ -429,8 +433,5 @@
   "yes": "Yes",
   "you-can-navigate-the-website-before-presenting-it": "If necessary, you can navigate to a specific page before presenting it to the audience. When you're ready, press the \"Start Mirroring\" button on the top right corner of this window. What you see in the website window will now be displayed in the media window for the audience to see.",
   "zoom-in": "Zoom in",
-  "zoom-out": "Zoom out",
-  "custom-sections": "Custom sections",
-  "edit-sections": "Edit sections",
-  "edit-sections-explain": "Add, reorder or change custom media sections"
+  "zoom-out": "Zoom out"
 }

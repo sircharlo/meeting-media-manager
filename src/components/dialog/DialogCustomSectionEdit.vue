@@ -24,11 +24,13 @@
                 }"
               >
                 <q-item-section>
-                  <q-item-label>{{ element.label }}</q-item-label>
+                  <q-item-label>
+                    <q-input v-model="element.label" outlined />
+                  </q-item-label>
                 </q-item-section>
                 <q-item-section side>
                   <q-chip class="custom-bg-color custom-text-color" round>
-                    Click me!
+                    {{ t('color') }}
                     <q-popup-proxy
                       cover
                       transition-hide="scale"
@@ -41,6 +43,16 @@
                       />
                     </q-popup-proxy>
                   </q-chip>
+                </q-item-section>
+                <q-item-section side>
+                  <q-btn
+                    color="negative"
+                    flat
+                    icon="mmm-delete"
+                    round
+                    size="sm"
+                    @click="deleteSection(element.uniqueId)"
+                  />
                 </q-item-section>
               </q-item>
             </template>
@@ -66,6 +78,7 @@ import type { DynamicMediaSection } from 'src/types';
 import { storeToRefs } from 'pinia';
 import { Sortable } from 'sortablejs-vue3';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -97,18 +110,41 @@ const handleMediaSectionSort = (event: SortableEvent) => {
   console.log('After Move:', [...sections]);
 };
 
+const getRandomColor = () => {
+  const min = 60; // Minimum brightness for each RGB channel
+  const max = 200; // Maximum brightness for each RGB channel
+  const randomChannel = () => Math.floor(Math.random() * (max - min + 1)) + min;
+
+  const r = randomChannel();
+  const g = randomChannel();
+  const b = randomChannel();
+
+  return `rgb(${r}, ${g}, ${b})`;
+};
+
 const addSection = () => {
   if (selectedDateObject.value && !selectedDateObject.value?.customSections)
     selectedDateObject.value.customSections = [];
-  selectedDateObject.value?.customSections?.push({
+  const newSection: DynamicMediaSection = {
     alwaysShow: true,
-    bgColor: '#003399',
+    bgColor: getRandomColor(),
     items: [],
-    label: 'Custom section',
+    label: ref(t('imported-media')).value,
     textColor: '#ffffff',
     type: 'custom',
     uniqueId: 'custom-' + Date.now().toString(),
-  });
+  };
+  setTextColor(newSection);
+  selectedDateObject.value?.customSections?.push(newSection);
+};
+
+const deleteSection = (uniqueId: string) => {
+  selectedDateObject.value?.customSections?.splice(
+    selectedDateObject.value?.customSections.findIndex(
+      (s) => s.uniqueId === uniqueId,
+    ),
+    1,
+  );
 };
 
 const setTextColor = (section: DynamicMediaSection) => {
