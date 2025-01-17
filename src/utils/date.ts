@@ -49,7 +49,7 @@ export const isInPast = (lookupDate: Date | string, includeToday = false) => {
  */
 export const friendlyDayToJsDay = (day?: number) => {
   try {
-    if (day === undefined) day = -1;
+    if (day === undefined || day === null) day = -1;
     const firstDay = day === 6 ? 0 : parseInt(day.toString()) + 1;
     const correctedFirstDay = firstDay > 7 ? firstDay - 7 : firstDay;
     return correctedFirstDay;
