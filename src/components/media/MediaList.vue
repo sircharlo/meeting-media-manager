@@ -245,6 +245,7 @@ const { t } = useI18n();
 const currentState = useCurrentStateStore();
 const {
   getVisibleMediaForSection,
+  mediaItemBeingSorted,
   mediaPlayingUniqueId,
   mediaPlayingUrl,
   selectedDate,
@@ -383,8 +384,6 @@ const nextMediaUniqueId = computed(() => {
   return sortedMediaIds[0];
 });
 
-const mediaItemBeingSorted = ref<DynamicMediaObject | undefined>();
-
 const handleMediaSort = (
   evt: SortableEvent,
   eventType: string,
@@ -401,7 +400,7 @@ const handleMediaSort = (
     return;
 
   switch (eventType) {
-    case 'ADD':
+    case 'ADD': {
       if (!sameList && mediaItemBeingSorted.value) {
         const firstElementIndex = dynamicMedia.findIndex(
           (item) => item.section === list,
@@ -414,8 +413,9 @@ const handleMediaSort = (
         dynamicMedia.splice(insertIndex, 0, newItem);
       }
       break;
+    }
 
-    case 'END':
+    case 'END': {
       if (sameList) {
         const originalPosition = dynamicMedia.findIndex(
           (item) => item.uniqueId === mediaItemBeingSorted.value?.uniqueId,
@@ -432,8 +432,9 @@ const handleMediaSort = (
         }
       }
       break;
+    }
 
-    case 'REMOVE':
+    case 'REMOVE': {
       if (!sameList) {
         const indexToRemove = dynamicMedia.findIndex(
           (item) =>
@@ -445,6 +446,7 @@ const handleMediaSort = (
         }
       }
       break;
+    }
 
     case 'START': {
       const itemBeingSorted =
@@ -452,6 +454,7 @@ const handleMediaSort = (
       if (itemBeingSorted) {
         mediaItemBeingSorted.value = itemBeingSorted;
       }
+      break;
     }
   }
 };
