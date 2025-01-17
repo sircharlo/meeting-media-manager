@@ -2,6 +2,20 @@
 
 # Changelog
 
+## 25.1.1
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Fix moving items between media lists**: Resolved an issue where media items could get lost when transferring them between lists.
+- 🛠️ **Improve day mapping logic**: Fixed a potential error in the `friendlyDayToJsDay` function.
+
+### 🔧 Improvements to Codebase
+
+- 🔧 **Simplify Electron imports**: Refactored imports to improve code readability and maintainability.
+- 🔧 **Expand test coverage**: Added tests for `fs utils` and fixed the `getParentDirectory` test.
+- 🔧 **Dependency updates**: Updated dependencies and refreshed the `yarn.lock` file.
+- 🔧 **Repository maintenance**: Updated the `.gitignore` file.
+
 ## 25.1.0
 
 ### ⚠️ Breaking Changes
