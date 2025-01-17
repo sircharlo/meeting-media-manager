@@ -2,16 +2,22 @@
 
 import type { ElectronApi } from 'src/types';
 
-import fs from 'fs-extra';
+import fs, { ensureDir } from 'fs-extra';
+import { fileUrlToPath, pathToFileURL, readDirectory } from 'preload/fs';
 import upath from 'upath';
+
+export const basePath = upath.join(__dirname, '..', 'fs');
+const fakePath = async (path: string) => {
+  const dir = upath.join(basePath, path);
+  await ensureDir(dir);
+  return dir;
+};
 
 export const electronApi: ElectronApi = {
   askForMediaAccess: function () {
     throw new Error('Function not implemented.');
   },
-  checkForUpdates: function () {
-    throw new Error('Function not implemented.');
-  },
+  checkForUpdates: () => void 0,
   closeWebsiteWindow: function () {
     throw new Error('Function not implemented.');
   },
@@ -33,16 +39,12 @@ export const electronApi: ElectronApi = {
   executeQuery: function (dbPath, query) {
     throw new Error('Function not implemented.');
   },
-  fileUrlToPath: function (url) {
-    throw new Error('Function not implemented.');
-  },
+  fileUrlToPath,
   fs,
   getAllScreens: function () {
     throw new Error('Function not implemented.');
   },
-  getAppDataPath: function () {
-    throw new Error('Function not implemented.');
-  },
+  getAppDataPath: async () => fakePath('app'),
   getLocalPathFromFileObject: function (fileObject) {
     throw new Error('Function not implemented.');
   },
@@ -52,7 +54,7 @@ export const electronApi: ElectronApi = {
   getScreenAccessStatus: function () {
     throw new Error('Function not implemented.');
   },
-  getUserDataPath: async () => '/app/meeting-media-manager',
+  getUserDataPath: async () => fakePath('app/meeting-media-manager'),
   getVideoDuration: function (filePath) {
     throw new Error('Function not implemented.');
   },
@@ -105,12 +107,8 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   path: upath,
-  pathToFileURL: function (path) {
-    throw new Error('Function not implemented.');
-  },
-  readdir: function (path, withSizes, recursive) {
-    throw new Error('Function not implemented.');
-  },
+  pathToFileURL,
+  readdir: readDirectory,
   registerShortcut: function (name, shortcut) {
     throw new Error('Function not implemented.');
   },

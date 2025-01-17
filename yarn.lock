@@ -3787,6 +3787,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash-es@npm:^4":
+  version: 4.17.12
+  resolution: "@types/lodash-es@npm:4.17.12"
+  dependencies:
+    "@types/lodash": "npm:*"
+  checksum: 10c0/5d12d2cede07f07ab067541371ed1b838a33edb3c35cb81b73284e93c6fd0c4bbeaefee984e69294bffb53f62d7272c5d679fdba8e595ff71e11d00f2601dde0
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:*":
+  version: 4.17.14
+  resolution: "@types/lodash@npm:4.17.14"
+  checksum: 10c0/343c6f722e0b39969036a885ad5aad6578479ead83987128c9b994e6b7f2fb9808244d802d4d332396bb09096f720a6c7060de16a492f5460e06a44560360322
+  languageName: node
+  linkType: hard
+
 "@types/markdown-it@npm:^14.1.2":
   version: 14.1.2
   resolution: "@types/markdown-it@npm:14.1.2"
@@ -11575,6 +11591,7 @@ __metadata:
     "@types/fluent-ffmpeg": "npm:^2.1.27"
     "@types/fs-extra": "npm:^11.0.4"
     "@types/heic-convert": "npm:^2.1.0"
+    "@types/lodash-es": "npm:^4"
     "@types/node": "npm:^20.17.14"
     "@types/pretty-bytes": "npm:^5.2.0"
     "@types/sanitize-html": "npm:^2.13.0"
@@ -11606,6 +11623,7 @@ __metadata:
     image-size: "npm:^1.2.0"
     is-online: "npm:^11.0.0"
     lint-staged: "npm:^15.4.1"
+    lodash-es: "npm:^4.17.21"
     memfs: "npm:^4.17.0"
     msw: "npm:^2.7.0"
     music-metadata: "npm:^10.7.0"

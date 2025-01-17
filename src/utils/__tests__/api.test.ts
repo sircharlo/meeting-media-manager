@@ -1,5 +1,5 @@
 import { validAnnouncements } from 'app/test/vitest/mocks/github';
-import { jwYeartext } from 'app/test/vitest/mocks/jw';
+import { jwLangs, jwYeartext } from 'app/test/vitest/mocks/jw';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -12,7 +12,7 @@ import {
 describe('fetchJwLanguages', () => {
   it('should fetch the jw languages', async () => {
     const languages = await fetchJwLanguages('jw.org');
-    expect(languages?.length).toBe(2);
+    expect(languages?.length).toBe(jwLangs.languages.length);
   });
 });
 
