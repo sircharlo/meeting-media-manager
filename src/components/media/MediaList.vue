@@ -6,7 +6,7 @@
     :class="
       'media-section ' +
       mediaList.type +
-      (mediaList.type === 'custom' ? ' custom' : '')
+      (mediaList.type.startsWith('custom') ? ' custom' : '')
     "
     :style="{
       '--bg-color': mediaList.bgColor,
@@ -19,7 +19,7 @@
         'text-' +
         mediaList.type +
         ' items-center ' +
-        (mediaList.type === 'custom' ? ' custom-text-color' : '')
+        (mediaList.type.startsWith('custom') ? ' custom-text-color' : '')
       "
     >
       <q-avatar
@@ -27,7 +27,7 @@
           'text-white bg-' +
           mediaList.type +
           (mediaList.jwIcon ? ' jw-icon' : '') +
-          (mediaList.type === 'custom' ? ' custom-bg-color' : '')
+          (mediaList.type.startsWith('custom') ? ' custom-bg-color' : '')
         "
       >
         <!-- :size="isWeMeetingDay(selectedDateObject.date) ? 'lg' : 'md'" -->
@@ -60,7 +60,7 @@
                 : t('add-a-closing-song')
               : undefined
           "
-          @click="addSong(mediaList.type)"
+          @click="addSong(mediaList.uniqueId)"
         >
           <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
             {{
@@ -76,7 +76,7 @@
           :color="mediaList.type"
           icon="mmm-add-media"
           :label="$q.screen.gt.xs ? t('add-extra-media') : undefined"
-          @click="openImportMenu(mediaList.type)"
+          @click="openImportMenu(mediaList.uniqueId)"
         >
           <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
             {{ t('add-extra-media') }}

@@ -128,6 +128,7 @@ const addSection = () => {
   const newSection: DynamicMediaSection = {
     alwaysShow: true,
     bgColor: getRandomColor(),
+    extraMediaShortcut: true,
     items: [],
     label: ref(t('imported-media')).value,
     textColor: '#ffffff',
@@ -154,15 +155,14 @@ const setTextColor = (section: DynamicMediaSection) => {
   let b, g, r;
   if (bgColor.startsWith('#')) {
     const hex = bgColor.replace('#', '');
-    if (hex.length === 3) {
-      r = parseInt(hex.slice(0, 1) + hex.slice(0, 1), 16);
-      g = parseInt(hex.slice(1, 2) + hex.slice(1, 2), 16);
-      b = parseInt(hex.slice(2, 3) + hex.slice(2, 3), 16);
-    } else if (hex.length === 6) {
-      r = parseInt(hex.slice(0, 2), 16);
-      g = parseInt(hex.slice(2, 4), 16);
-      b = parseInt(hex.slice(4, 6), 16);
-    }
+    [r, g, b] = [0, 1, 2].map((i) =>
+      parseInt(
+        hex.length === 3
+          ? hex.charAt(i) + hex.charAt(i)
+          : hex.slice(i * 2, i * 2 + 2),
+        16,
+      ),
+    );
   } else if (bgColor.startsWith('rgb')) {
     [r, g, b] = bgColor
       .replace(/rgba?|\(|\)|\s/g, '')

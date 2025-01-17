@@ -329,6 +329,12 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
   ];
 
   const customSections = selectedDateObject.value?.customSections ?? [];
+  customSections.forEach((section) => {
+    section.items =
+      selectedDateObject.value?.dynamicMedia?.filter(
+        (m) => m.section === section.uniqueId && !m.hidden,
+      ) || [];
+  });
 
   const defaultMediaSections =
     mediaSections
