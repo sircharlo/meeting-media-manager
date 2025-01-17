@@ -4,10 +4,14 @@ import { captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
 import { join, resolve } from 'path';
+import {
+  IS_DEV,
+  JW_DOMAINS,
+  PLATFORM,
+  TRUSTED_DOMAINS,
+} from 'src-electron/constants';
+import { urlVariables } from 'src-electron/main/session';
 import { fileURLToPath } from 'url';
-
-import { IS_DEV, JW_DOMAINS, PLATFORM, TRUSTED_DOMAINS } from './../constants';
-import { urlVariables } from './session';
 
 /**
  * Gets the current app version

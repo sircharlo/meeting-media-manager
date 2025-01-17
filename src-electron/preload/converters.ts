@@ -8,7 +8,7 @@ import { FULL_HD } from 'src/constants/media';
 import upath from 'upath';
 const { basename, join } = upath;
 
-import { capturePreloadError } from './log';
+import { capturePreloadError } from 'preload/log';
 
 export interface ConversionOptions {
   /**

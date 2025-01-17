@@ -1,8 +1,7 @@
 import type { QueryResponseItem } from 'src/types';
 
 import BetterSqlite3 from 'better-sqlite3';
-
-import { capturePreloadError } from './log';
+import { capturePreloadError } from 'preload/log';
 
 export const executeQuery = <T = QueryResponseItem>(
   dbPath: string,

@@ -3,9 +3,8 @@ import electronUpdater from 'electron-updater';
 const { autoUpdater } = electronUpdater;
 import fse from 'fs-extra';
 const { exists } = fse;
+import { captureElectronError } from 'main/utils';
 import { join } from 'path';
-
-import { captureElectronError } from './utils';
 
 export async function initUpdater() {
   autoUpdater.on('error', (error, message) => {

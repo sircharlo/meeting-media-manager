@@ -1,11 +1,14 @@
 import type { BrowserWindow } from 'electron';
 
-import { PLATFORM } from 'app/src-electron/constants';
-
-import { cancelAllDownloads } from './../downloads';
-import { throttle } from './../utils';
-import { closeOtherWindows, createWindow, sendToWindow } from './window-base';
-import { createMediaWindow, moveMediaWindow } from './window-media';
+import { cancelAllDownloads } from 'main/downloads';
+import { throttle } from 'main/utils';
+import {
+  closeOtherWindows,
+  createWindow,
+  sendToWindow,
+} from 'main/window/window-base';
+import { createMediaWindow, moveMediaWindow } from 'main/window/window-media';
+import { PLATFORM } from 'src-electron/constants';
 
 export let mainWindow: BrowserWindow | null = null;
 let closeAttempts = 0;
