@@ -266,6 +266,7 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
         label: weMeetingDay ? t('public-talk') : t('imported-media'),
         mmmIcon: date && !weMeetingDay ? 'mmm-additional-media' : undefined,
         type: 'additional',
+        uniqueId: 'additional',
       },
     },
     {
@@ -276,6 +277,7 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
         jwIcon: '',
         label: t('wt'),
         type: 'wt',
+        uniqueId: 'wt',
       },
     },
     {
@@ -286,6 +288,7 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
         jwIcon: '',
         label: t('tgw'),
         type: 'tgw',
+        uniqueId: 'tgw',
       },
     },
     {
@@ -296,6 +299,7 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
         jwIcon: '',
         label: t('ayfm'),
         type: 'ayfm',
+        uniqueId: 'ayfm',
       },
     },
     {
@@ -307,6 +311,7 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
         jwIcon: '',
         label: t('lac'),
         type: 'lac',
+        uniqueId: 'lac',
       },
     },
     {
@@ -318,6 +323,7 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
         jwIcon: '',
         label: t('circuit-overseer'),
         type: 'circuitOverseer',
+        uniqueId: 'circuitOverseer',
       },
     },
   ];

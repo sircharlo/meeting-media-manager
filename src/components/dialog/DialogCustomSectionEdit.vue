@@ -8,23 +8,47 @@
         {{ t('custom-sections') }}
       </div>
       <div class="row q-px-md overflow-auto">
-        {{ selectedDateObject?.customSections }}
-        <q-btn
-          color="primary"
-          label="Add section"
-          @click="
-            if (selectedDateObject && !selectedDateObject?.customSections)
-              selectedDateObject.customSections = [];
-            selectedDateObject?.customSections?.push({
-              alwaysShow: true,
-              label: 'Custom section',
-              type: 'custom',
-              items: [],
-              bgColor: '#003399',
-              textColor: '#ffffff',
-            });
-          "
-        />
+        <q-list bordered class="full-width" separator>
+          <Sortable
+            item-key="uniqueId"
+            :list="selectedDateObject?.customSections"
+            @end="handleMediaSectionSort"
+          >
+            <template #item="{ element }: { element: DynamicMediaSection }">
+              <q-item
+                :key="element.uniqueId"
+                clickable
+                :style="{
+                  '--bg-color': element.bgColor,
+                  '--text-color': element.textColor,
+                }"
+              >
+                <q-item-section>
+                  <q-item-label>{{ element.label }}</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-chip class="custom-bg-color custom-text-color" round>
+                    Click me!
+                    <q-popup-proxy
+                      cover
+                      transition-hide="scale"
+                      transition-show="scale"
+                    >
+                      <q-color
+                        v-model="element.bgColor"
+                        format-model="rgb"
+                        @update:model-value="setTextColor(element)"
+                      />
+                    </q-popup-proxy>
+                  </q-chip>
+                </q-item-section>
+              </q-item>
+            </template>
+          </Sortable>
+        </q-list>
+      </div>
+      <div class="row q-px-md q-pb-md">
+        <q-btn color="primary" label="Add section" @click="addSection" />
       </div>
       <!-- <div class="row q-px-md"></div>
       <div class="row q-px-md q-pt-md"></div> -->
@@ -36,7 +60,11 @@
 </template>
 
 <script setup lang="ts">
+import type { SortableEvent } from 'sortablejs';
+import type { DynamicMediaSection } from 'src/types';
+
 import { storeToRefs } from 'pinia';
+import { Sortable } from 'sortablejs-vue3';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useI18n } from 'vue-i18n';
 
@@ -46,4 +74,89 @@ const currentState = useCurrentStateStore();
 const { selectedDateObject } = storeToRefs(currentState);
 
 const open = defineModel<boolean>({ required: true });
+
+const handleMediaSectionSort = (event: SortableEvent) => {
+  const sections = selectedDateObject.value?.customSections;
+  if (
+    !sections ||
+    event?.oldIndex === undefined ||
+    event?.newIndex === undefined
+  )
+    return;
+
+  console.log('Before Move:', [...sections]);
+  if (event.oldIndex === event.newIndex) return;
+
+  const [item] = sections.splice(event.oldIndex, 1);
+  if (!item) {
+    console.error('No item found at old index:', event.oldIndex);
+    return;
+  }
+
+  sections.splice(event.newIndex, 0, item);
+  console.log('After Move:', [...sections]);
+};
+
+const addSection = () => {
+  if (selectedDateObject.value && !selectedDateObject.value?.customSections)
+    selectedDateObject.value.customSections = [];
+  selectedDateObject.value?.customSections?.push({
+    alwaysShow: true,
+    bgColor: '#003399',
+    items: [],
+    label: 'Custom section',
+    textColor: '#ffffff',
+    type: 'custom',
+    uniqueId: 'custom-' + Date.now().toString(),
+  });
+};
+
+const setTextColor = (section: DynamicMediaSection) => {
+  const bgColor = section.bgColor;
+  if (!bgColor) return;
+  // Convert HEX to RGB
+  let b, g, r;
+  if (bgColor.startsWith('#')) {
+    const hex = bgColor.replace('#', '');
+    if (hex.length === 3) {
+      r = parseInt(hex.slice(0, 1) + hex.slice(0, 1), 16);
+      g = parseInt(hex.slice(1, 2) + hex.slice(1, 2), 16);
+      b = parseInt(hex.slice(2, 3) + hex.slice(2, 3), 16);
+    } else if (hex.length === 6) {
+      r = parseInt(hex.slice(0, 2), 16);
+      g = parseInt(hex.slice(2, 4), 16);
+      b = parseInt(hex.slice(4, 6), 16);
+    }
+  } else if (bgColor.startsWith('rgb')) {
+    [r, g, b] = bgColor
+      .replace(/rgba?|\(|\)|\s/g, '')
+      .split(',')
+      .map(Number);
+  } else {
+    console.warn('Invalid color format');
+    section.textColor = '#000000'; // Default to black if invalid input
+  }
+
+  // Calculate relative luminance
+  const luminance = (val: number | undefined) => {
+    if (val === undefined) return 0;
+    val /= 255;
+    return val <= 0.03928 ? val / 12.92 : Math.pow((val + 0.055) / 1.055, 2.4);
+  };
+
+  const lum =
+    0.2126 * luminance(r) + 0.7152 * luminance(g) + 0.0722 * luminance(b);
+
+  // Return white or black based on contrast
+  section.textColor = lum > 0.179 ? '#000000' : '#ffffff';
+};
 </script>
+<style lang="scss" scoped>
+.custom-text-color {
+  color: var(--bg-color);
+}
+.custom-bg-color {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+</style>

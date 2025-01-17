@@ -60,6 +60,7 @@ export interface DynamicMediaSection {
   mmmIcon?: string;
   textColor?: string;
   type: MediaSection;
+  uniqueId: string;
 }
 
 export interface FileDownloader {
