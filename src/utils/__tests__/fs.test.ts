@@ -62,7 +62,9 @@ describe('Paths', () => {
 describe('getParentDirectory', () => {
   it('should return the parent directory of a file path', () => {
     expect(getParentDirectory('/root/to/file')).toBe('/root/to');
-    expect(getParentDirectory('file://C:\\root/to/file')).toBe('C:/root/to');
+    expect(getParentDirectory('file://' + basePath)).toBe(
+      basePath.replace('/fs', ''),
+    );
   });
 });
 
