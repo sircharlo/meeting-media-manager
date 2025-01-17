@@ -1,7 +1,7 @@
-import type { ConversionOptions } from 'app/src-electron/preload/converters';
 import type decompress from 'decompress';
 import type { default as FsExtra } from 'fs-extra';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
+import type { ConversionOptions } from 'src-electron/preload/converters';
 import type {
   FileItem,
   QueryResponseItem,
@@ -175,7 +175,6 @@ export type ElectronIpcInvokeKey =
   | 'getUserDataPath'
   | 'openFileDialog'
   | 'openFolderDialog'
-  | 'readdir'
   | 'registerShortcut';
 
 // BrowserWindow.webContents.send / ipcRenderer.on channels

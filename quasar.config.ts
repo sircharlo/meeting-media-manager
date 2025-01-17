@@ -31,6 +31,15 @@ export default defineConfig((ctx) => {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#build
     build: {
+      alias: {
+        main: fileURLToPath(new URL('./src-electron/main', import.meta.url)),
+        preload: fileURLToPath(
+          new URL('./src-electron/preload', import.meta.url),
+        ),
+        'src-electron': fileURLToPath(
+          new URL('./src-electron', import.meta.url),
+        ),
+      },
       env: {
         isBeta: IS_BETA,
         repository: repository.url.replace('.git', ''),

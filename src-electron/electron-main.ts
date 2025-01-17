@@ -1,9 +1,7 @@
 import { init as initSentry } from '@sentry/electron/main';
 import { bugs, homepage, repository, version } from 'app/package.json';
-
-import './main/ipc';
-import './main/security';
-
+import 'src-electron/main/ipc';
+import 'src-electron/main/security';
 import {
   app,
   Menu,
@@ -14,18 +12,21 @@ import {
 import upath from 'upath';
 const { join } = upath;
 
-import { PLATFORM } from './constants';
-import { cancelAllDownloads } from './main/downloads';
-import { initScreenListeners } from './main/screen';
-import { initSessionListeners } from './main/session';
-import { initUpdater } from './main/updater';
-import { captureElectronError } from './main/utils';
-import { closeOtherWindows, sendToWindow } from './main/window/window-base';
+import { PLATFORM } from 'src-electron/constants';
+import { cancelAllDownloads } from 'src-electron/main/downloads';
+import { initScreenListeners } from 'src-electron/main/screen';
+import { initSessionListeners } from 'src-electron/main/session';
+import { initUpdater } from 'src-electron/main/updater';
+import { captureElectronError } from 'src-electron/main/utils';
+import {
+  closeOtherWindows,
+  sendToWindow,
+} from 'src-electron/main/window/window-base';
 import {
   authorizedClose,
   createMainWindow,
   mainWindow,
-} from './main/window/window-main';
+} from 'src-electron/main/window/window-main';
 
 if (PLATFORM === 'win32') {
   app.setAppUserModelId('sircharlo.meeting-media-manager');

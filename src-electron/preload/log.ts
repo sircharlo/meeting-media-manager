@@ -1,8 +1,7 @@
 import type { ExclusiveEventHintOrCaptureContext } from 'app/node_modules/@sentry/core/build/types/utils/prepareEvent';
 
 import { captureException } from '@sentry/electron/renderer';
-
-import { IS_DEV } from '../constants';
+import { IS_DEV } from 'src-electron/constants';
 
 /**
  * Logs an error to the console or to Sentry

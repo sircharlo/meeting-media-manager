@@ -1,11 +1,14 @@
 import type { NavigateWebsiteAction } from 'src/types';
 
-import { HD_RESOLUTION, PLATFORM } from 'app/src-electron/constants';
 import { type BrowserWindow, systemPreferences, type Video } from 'electron';
-
-import { captureElectronError } from './../utils';
-import { createWindow, logToWindow, sendToWindow } from './window-base';
-import { mainWindow } from './window-main';
+import { captureElectronError } from 'main/utils';
+import {
+  createWindow,
+  logToWindow,
+  sendToWindow,
+} from 'main/window/window-base';
+import { mainWindow } from 'main/window/window-main';
+import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
 
 export let websiteWindow: BrowserWindow | null = null;
 

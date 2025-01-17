@@ -1,17 +1,16 @@
 import type { ElectronIpcListenKey } from 'src/types';
 
-import { IS_DEV, PLATFORM } from 'app/src-electron/constants';
 import {
   app,
   BrowserWindow,
   type BrowserWindowConstructorOptions,
 } from 'electron';
+import { urlVariables } from 'main/session';
+import { captureElectronError, getIconPath, isBeta } from 'main/utils';
+import { StatefulBrowserWindow } from 'main/window/window-state';
 import { join, resolve } from 'path';
+import { IS_DEV, PLATFORM } from 'src-electron/constants';
 import { fileURLToPath } from 'url';
-
-import { urlVariables } from './../session';
-import { captureElectronError, getIconPath, isBeta } from './../utils';
-import { StatefulBrowserWindow } from './window-state';
 
 export function closeOtherWindows(source: BrowserWindow) {
   try {

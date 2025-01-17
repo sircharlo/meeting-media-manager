@@ -1,12 +1,11 @@
 import type { BrowserWindow } from 'electron';
 import type { ScreenPreferences } from 'src/types';
 
-import { HD_RESOLUTION, PLATFORM } from 'app/src-electron/constants';
-
-import { getAllScreens, getWindowScreen, screenPreferences } from './../screen';
-import { captureElectronError, getIconPath } from './../utils';
-import { createWindow, sendToWindow } from './window-base';
-import { mainWindow } from './window-main';
+import { getAllScreens, getWindowScreen, screenPreferences } from 'main/screen';
+import { captureElectronError, getIconPath } from 'main/utils';
+import { createWindow, sendToWindow } from 'main/window/window-base';
+import { mainWindow } from 'main/window/window-main';
+import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
 
 export let mediaWindow: BrowserWindow | null = null;
 

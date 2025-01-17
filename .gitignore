@@ -56,6 +56,7 @@ docs/.vitepress/cache
 
 # Vitest
 vitest.config.mts.timestamp-*
+test/vitest/fs/*
 
 # Output of 'yarn generate:icons'
 src/css/mmm-icons.*

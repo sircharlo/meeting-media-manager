@@ -4,9 +4,9 @@ import { ensureDir } from 'fs-extra/esm';
 import upath from 'upath';
 const { basename } = upath;
 
-import { captureElectronError, fetchJson } from './utils';
-import { sendToWindow } from './window/window-base';
-import { mainWindow } from './window/window-main';
+import { sendToWindow } from 'main/window/window-base';
+import { mainWindow } from 'main/window/window-main';
+import { captureElectronError, fetchJson } from 'src-electron/main/utils';
 
 const manager = new ElectronDownloadManager();
 interface DownloadQueueItem {

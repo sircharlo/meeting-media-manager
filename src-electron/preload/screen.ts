@@ -1,6 +1,6 @@
 import type { ScreenPreferences } from 'src/types';
 
-import { listen } from './ipc';
+import { listen } from 'preload/ipc';
 
 export const initScreenListeners = () => {
   listen('screenChange', () => {

@@ -1,4 +1,4 @@
-import { listen, send } from './ipc';
+import { listen, send } from 'preload/ipc';
 
 const bcClose = new BroadcastChannel('closeAttempts');
 

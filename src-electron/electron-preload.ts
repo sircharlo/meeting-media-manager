@@ -2,24 +2,28 @@ import type { ElectronApi } from 'src/types';
 
 import { contextBridge, webUtils } from 'electron/renderer';
 import fs from 'fs-extra';
-import path from 'upath';
-
-import { initCloseListeners } from './preload/close';
+import { initCloseListeners } from 'src-electron/preload/close';
 import {
   convertHeic,
   convertPdfToImages,
   decompress,
   getNrOfPdfPages,
-} from './preload/converters';
+} from 'src-electron/preload/converters';
 import {
   fileUrlToPath,
   getVideoDuration,
   parseMediaFile,
   pathToFileURL,
-} from './preload/fs';
-import { invoke, listen, removeAllIpcListeners, send } from './preload/ipc';
-import { initScreenListeners } from './preload/screen';
-import { executeQuery } from './preload/sqlite';
+  readDirectory,
+} from 'src-electron/preload/fs';
+import {
+  invoke,
+  listen,
+  removeAllIpcListeners,
+  send,
+} from 'src-electron/preload/ipc';
+import { initScreenListeners } from 'src-electron/preload/screen';
+import { executeQuery } from 'src-electron/preload/sqlite';
 import {
   closeWebsiteWindow,
   initWebsiteListeners,
@@ -27,7 +31,8 @@ import {
   openWebsiteWindow,
   startWebsiteStream,
   zoomWebsiteWindow,
-} from './preload/website';
+} from 'src-electron/preload/website';
+import path from 'upath';
 
 initCloseListeners();
 initScreenListeners();
@@ -71,8 +76,7 @@ const electronApi: ElectronApi = {
   parseMediaFile,
   path,
   pathToFileURL,
-  readdir: (p, withSizes, recursive) =>
-    invoke('readdir', p, withSizes, recursive),
+  readdir: readDirectory,
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),
   removeListeners: (c) => removeAllIpcListeners(c),
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
