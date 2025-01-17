@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "24.12.3-beta.9",
+  "version": "25.1.0",
   "description": "A cross platform app to download and present media for congregation meetings of Jehovah’s Witnesses.",
   "keywords": [
     "M³",
@@ -105,7 +105,7 @@
     "eslint-plugin-vue": "^9.32.0",
     "globals": "^15.14.0",
     "husky": "^9.1.7",
-    "lint-staged": "^15.4.0",
+    "lint-staged": "^15.4.1",
     "memfs": "^4.17.0",
     "msw": "^2.7.0",
     "postcss": "^8.5.1",

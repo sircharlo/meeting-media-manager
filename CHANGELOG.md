@@ -2,6 +2,42 @@
 
 # Changelog
 
+## 25.1.0
+
+### ⚠️ Breaking Changes
+
+- 🖼 Media Window Title Change: The media window title has been changed. If OBS Studio is set to capture the media window by title, it may stop working. Please update your OBS Studio window capture settings if necessary.
+
+### ✨ New Features
+
+- 📅 Open Previous Dates: Allow opening previous dates of the current week, which is useful when the meeting day is moved later in the week.
+- 🛑 Error Banner for OBS Studio: Add an error banner when OBS Studio is not connected on a meeting day, ensuring users are alerted.
+- 📚 Group Media by Publication: Group media from the same referred publication for a cleaner and more organized media overview.
+- 🎵 Duplicate Song Warning: Show a warning if songs are listed more than once in the media list for weekend meetings.
+- 🔄 Future Schedule Planning: Enable the planning of future meeting schedule changes, which is useful for yearly schedule changes or for the circuit overseer's visit to a neighboring congregation.
+
+### 🛠️ Improvements and Tweaks
+
+- 📘 Bible Import Documentation: Add Bible import features to the documentation website to help users understand and utilize this feature.
+- 🔧 Force Close Option: Allow force closing the application when the UI is unresponsive, improving user control during freezes.
+- 🖋 Local Font Fallback: When offline, correctly fallback to a local font file if available, ensuring smooth icon rendering.
+- 🪟 UI Improvements for Small Windows: Enhance the user interface for smaller windows for better accessibility.
+- 📖 Hide Empty Tabs: Hide empty study Bible media tabs to declutter the interface.
+- 🤝 Sign Language Behavior Alignment: Align sign language behavior with JW Library Sign Language, by automatically hiding the media window and not showing the yeartext.
+- 🔊 Sign Language for Audio Bible: Add support for sign language in the audio Bible feature, increasing accessibility.
+- 🧹 Automatic Cache Cleanup: Automatically clean up old dates and cache periodically, keeping the application streamlined.
+- 🇵🇭 Preparations for Tagalog: Make preparations for supporting the Tagalog language, expanding the app's accessibility.
+- 🚫 Hide Cast Button: Remove the cast button on the media window to simplify the user interface.
+- 🔍 Better Zooming: Improve first manual zoom-in by keeping the image centered, reducing the first zoom factor, and ensuring smooth transition.
+
+### 🔧 Improvements to Codebase
+
+- 🛠 Sorting Logic Refactor: Refactor sorting logic for improved stability and better performance.
+- 📅 Media Calendar Refactor: Refactor the media calendar page for improved maintainability and ease of updates.
+- ✅ Unit Tests: Add unit tests for better code stability and reliability, ensuring new changes do not break existing functionality.
+- 📄 Documentation Auto-Refresh: Automatically refresh the documentation website on new releases, ensuring users always have the latest information.
+- 🧹 Improved ESlint Config: Update ESlint configuration for cleaner and better code, maintaining high code quality standards.
+
 ## 24.12.2
 
 ### New Features
