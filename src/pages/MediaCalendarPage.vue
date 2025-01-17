@@ -7,7 +7,7 @@
     "
     padding
     @dragenter="dropActive"
-    @dragover="dropActive"
+    @dragover="dropActive($event, 'dragover')"
     @dragstart="dropActive"
   >
     <div class="col">
@@ -779,12 +779,34 @@ const openImportMenu = (section: MediaSection | undefined) => {
   );
 };
 
-const dropActive = (event: DragEvent) => {
+const stopScrolling = ref(true);
+
+const scroll = (step: number) => {
+  const el = document.querySelector('.q-page-container');
+  if (!el || stopScrolling.value) return;
+  el.scrollBy(0, step);
+  setTimeout(() => scroll(step), 20);
+};
+
+const dropActive = (event: DragEvent, eventType?: string) => {
+  if (eventType === 'dragover') {
+    const marginToEdge = Math.max(window.innerHeight / 10, 150);
+    const step =
+      event.clientY < marginToEdge
+        ? -1
+        : window.innerHeight - event.clientY < marginToEdge
+          ? 1
+          : 0;
+    stopScrolling.value = step === 0;
+    if (step) scroll(step);
+  }
+
   if (event?.dataTransfer?.effectAllowed === 'all') {
     event.preventDefault();
     showFileImportDialog.value = true;
   }
 };
+
 const dropEnd = (event: DragEvent) => {
   event.preventDefault();
   event.stopPropagation();
