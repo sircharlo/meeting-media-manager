@@ -5,8 +5,8 @@
     "
     :class="
       'media-section ' +
-      mediaList.type +
-      (mediaList.type.startsWith('custom') ? ' custom' : '')
+      mediaList.uniqueId +
+      (mediaList.uniqueId.startsWith('custom') ? ' custom' : '')
     "
     :style="{
       '--bg-color': mediaList.bgColor,
@@ -17,17 +17,17 @@
       v-if="selectedDateObject"
       :class="
         'text-' +
-        mediaList.type +
+        mediaList.uniqueId +
         ' items-center ' +
-        (mediaList.type.startsWith('custom') ? ' custom-text-color' : '')
+        (mediaList.uniqueId.startsWith('custom') ? ' custom-text-color' : '')
       "
     >
       <q-avatar
         :class="
           'text-white bg-' +
-          mediaList.type +
+          mediaList.uniqueId +
           (mediaList.jwIcon ? ' jw-icon' : '') +
-          (mediaList.type.startsWith('custom') ? ' custom-bg-color' : '')
+          (mediaList.uniqueId.startsWith('custom') ? ' custom-bg-color' : '')
         "
       >
         <!-- :size="isWeMeetingDay(selectedDateObject.date) ? 'lg' : 'md'" -->
@@ -46,16 +46,16 @@
       <q-item-section v-if="mediaList.extraMediaShortcut" side>
         <q-btn
           v-if="
-            mediaList.type === 'additional' ||
-            (mediaList.type === 'circuitOverseer' &&
+            mediaList.uniqueId === 'additional' ||
+            (mediaList.uniqueId === 'circuitOverseer' &&
               !mediaList.items.filter((m) => !m.hidden).length)
           "
           class="add-media-shortcut"
-          :color="mediaList.type"
+          :color="mediaList.uniqueId"
           icon="mmm-music-note"
           :label="
             $q.screen.gt.xs
-              ? mediaList.type === 'additional'
+              ? mediaList.uniqueId === 'additional'
                 ? t('add-an-opening-song')
                 : t('add-a-closing-song')
               : undefined
@@ -64,7 +64,7 @@
         >
           <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
             {{
-              mediaList.type === 'additional'
+              mediaList.uniqueId === 'additional'
                 ? t('add-an-opening-song')
                 : t('add-a-closing-song')
             }}
@@ -73,7 +73,7 @@
         <q-btn
           v-else
           class="add-media-shortcut"
-          :color="mediaList.type"
+          :color="mediaList.uniqueId"
           icon="mmm-add-media"
           :label="$q.screen.gt.xs ? t('add-extra-media') : undefined"
           @click="openImportMenu(mediaList.uniqueId)"
@@ -107,12 +107,14 @@
       item-key="uniqueId"
       :list="mediaList.items"
       :options="{ group: 'mediaLists' }"
-      @add="handleMediaSort($event, 'ADD', mediaList.type as MediaSection)"
-      @end="handleMediaSort($event, 'END', mediaList.type as MediaSection)"
+      @add="handleMediaSort($event, 'ADD', mediaList.uniqueId as MediaSection)"
+      @end="handleMediaSort($event, 'END', mediaList.uniqueId as MediaSection)"
       @remove="
-        handleMediaSort($event, 'REMOVE', mediaList.type as MediaSection)
+        handleMediaSort($event, 'REMOVE', mediaList.uniqueId as MediaSection)
       "
-      @start="handleMediaSort($event, 'START', mediaList.type as MediaSection)"
+      @start="
+        handleMediaSort($event, 'START', mediaList.uniqueId as MediaSection)
+      "
     >
       <template #item="{ element }: { element: DynamicMediaObject }">
         <template v-if="element.children">

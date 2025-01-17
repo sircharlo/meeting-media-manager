@@ -203,7 +203,7 @@ export const useCurrentStateStore = defineStore('current-state', {
         };
       }
 
-      const sections: MediaSection[] = [
+      const standardSections: MediaSection[] = [
         'additional',
         'ayfm',
         'circuitOverseer',
@@ -211,6 +211,13 @@ export const useCurrentStateStore = defineStore('current-state', {
         'tgw',
         'wt',
       ];
+
+      const customSections =
+        this.selectedDateObject.customSections
+          ?.filter((m) => !standardSections.includes(m.uniqueId))
+          .map((m) => m.uniqueId) || [];
+
+      const sections = [...standardSections, ...[...new Set(customSections)]];
 
       return sections.reduce(
         (acc, section) => {
@@ -235,7 +242,7 @@ export const useCurrentStateStore = defineStore('current-state', {
         };
       }
 
-      const sections: MediaSection[] = [
+      const standardSections: MediaSection[] = [
         'additional',
         'ayfm',
         'circuitOverseer',
@@ -243,6 +250,12 @@ export const useCurrentStateStore = defineStore('current-state', {
         'tgw',
         'wt',
       ];
+
+      const customSections = this.selectedDateObject.dynamicMedia
+        .filter((m) => !standardSections.includes(m.section))
+        .map((m) => m.section);
+
+      const sections = [...standardSections, ...[...new Set(customSections)]];
 
       return sections.reduce(
         (acc, section) => {

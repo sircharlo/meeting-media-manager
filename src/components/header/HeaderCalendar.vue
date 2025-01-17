@@ -521,7 +521,23 @@ const resetSort = () => {
     ),
   );
 
+  const customSections = [
+    ...new Set(
+      selectedDateObject.value?.customSections?.map(
+        (section) => section.uniqueId,
+      ) ?? [],
+    ),
+  ];
+
+  const mediaFromCustomSections = customSections.flatMap(
+    (sectionId) =>
+      selectedDateObject.value?.dynamicMedia?.filter(
+        (item) => item.section === sectionId,
+      ) || [],
+  );
+
   selectedDateObject.value.dynamicMedia = [
+    ...mediaFromCustomSections,
     ...(getAllMediaForSection.value.additional || []),
     ...sortedMedia.filter((item) => item.section === 'tgw'),
     ...sortedMedia.filter((item) => item.section === 'ayfm'),

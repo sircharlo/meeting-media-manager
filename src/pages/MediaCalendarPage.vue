@@ -82,10 +82,16 @@
         v-for="mediaList in mediaLists"
         :key="mediaList.items.map((m) => m.uniqueId).join(',')"
       >
-        {{ mediaList }}
-
         <MediaList :media-list="mediaList" :open-import-menu="openImportMenu" />
       </template>
+      <!-- <pre>
+      {{
+          selectedDateObject?.dynamicMedia
+            ?.filter((m) => !m.hidden)
+            .map((m) => [m.section, m.uniqueId])
+        }}
+    </pre
+      > -->
     </div>
     <DialogFileImport
       v-model="showFileImportDialog"
@@ -265,7 +271,6 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
         jwIcon: weMeetingDay ? '' : undefined,
         label: weMeetingDay ? t('public-talk') : t('imported-media'),
         mmmIcon: date && !weMeetingDay ? 'mmm-additional-media' : undefined,
-        type: 'additional',
         uniqueId: 'additional',
       },
     },
@@ -276,7 +281,6 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
         items: getVisibleMediaForSection.value.wt || [],
         jwIcon: '',
         label: t('wt'),
-        type: 'wt',
         uniqueId: 'wt',
       },
     },
@@ -287,7 +291,6 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
         items: getVisibleMediaForSection.value.tgw || [],
         jwIcon: '',
         label: t('tgw'),
-        type: 'tgw',
         uniqueId: 'tgw',
       },
     },
@@ -298,7 +301,6 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
         items: getVisibleMediaForSection.value.ayfm || [],
         jwIcon: '',
         label: t('ayfm'),
-        type: 'ayfm',
         uniqueId: 'ayfm',
       },
     },
@@ -310,7 +312,6 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
         items: getVisibleMediaForSection.value.lac || [],
         jwIcon: '',
         label: t('lac'),
-        type: 'lac',
         uniqueId: 'lac',
       },
     },
@@ -322,7 +323,6 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
         items: getVisibleMediaForSection.value.circuitOverseer || [],
         jwIcon: '',
         label: t('circuit-overseer'),
-        type: 'circuitOverseer',
         uniqueId: 'circuitOverseer',
       },
     },
@@ -330,10 +330,7 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
 
   const customSections = selectedDateObject.value?.customSections ?? [];
   customSections.forEach((section) => {
-    section.items =
-      selectedDateObject.value?.dynamicMedia?.filter(
-        (m) => m.section === section.uniqueId && !m.hidden,
-      ) || [];
+    section.items = getVisibleMediaForSection.value[section.uniqueId] || [];
   });
 
   const defaultMediaSections =

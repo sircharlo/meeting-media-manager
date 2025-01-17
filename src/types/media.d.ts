@@ -59,8 +59,7 @@ export interface DynamicMediaSection {
   label: string;
   mmmIcon?: string;
   textColor?: string;
-  type: MediaSection;
-  uniqueId: string;
+  uniqueId: MediaSection;
 }
 
 export interface FileDownloader {
