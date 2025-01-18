@@ -172,8 +172,8 @@ const getThumbnailFromVideoPath = async (
         // Cleanup in case of error
         videoRef.remove();
         reject(
-          new Error(e.message || e.error.message || 'Unknown VideoRef Error', {
-            cause: e.error,
+          new Error(e.message || e.error?.message || 'Unknown VideoRef Error', {
+            cause: e.error ?? e,
           }),
         );
       },
