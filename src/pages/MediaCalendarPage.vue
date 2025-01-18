@@ -80,7 +80,14 @@
       />
       <template
         v-for="mediaList in mediaLists"
-        :key="(mediaList.items?.map((m) => m.uniqueId) || []).sort().join(',')"
+        :key="
+          (mediaList.items?.length
+            ? mediaList.items.map((m) => m.uniqueId)
+            : [mediaList.uniqueId]
+          )
+            .sort()
+            .join(',')
+        "
       >
         <MediaList :media-list="mediaList" :open-import-menu="openImportMenu" />
       </template>
