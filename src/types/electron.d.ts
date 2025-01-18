@@ -64,6 +64,7 @@ export interface ElectronApi {
   fs: typeof FsExtra;
   getAllScreens: () => Promise<Display[]>;
   getAppDataPath: () => Promise<string>;
+  getLocales: () => Promise<string[]>;
   getLocalPathFromFileObject: (fileObject: File) => string;
   getNrOfPdfPages: (pdfPath: string) => Promise<number>;
   getScreenAccessStatus: () => Promise<MediaAccessStatus>;
@@ -171,6 +172,7 @@ export type ElectronIpcInvokeKey =
   | 'downloadFile'
   | 'getAllScreens'
   | 'getAppDataPath'
+  | 'getLocales'
   | 'getScreenAccessStatus'
   | 'getUserDataPath'
   | 'openFileDialog'
