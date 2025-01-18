@@ -16,7 +16,7 @@ export function closeOtherWindows(source: BrowserWindow) {
   try {
     const windows = BrowserWindow.getAllWindows();
     for (const win of windows) {
-      if (win !== source) win.close();
+      if (win !== source && !win.isDestroyed()) win.close();
     }
   } catch (e) {
     captureElectronError(e);
