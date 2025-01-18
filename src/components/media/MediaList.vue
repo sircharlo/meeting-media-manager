@@ -114,7 +114,11 @@
       class="sortable-media"
       item-key="uniqueId"
       :list="mediaList.items"
-      :options="{ group: 'mediaLists' }"
+      :options="{
+        animation: 150,
+        group: 'mediaLists',
+        ghostClass: 'bg-accent-200',
+      }"
       @add="handleMediaSort($event, 'ADD', mediaList.uniqueId as MediaSection)"
       @end="handleMediaSort($event, 'END', mediaList.uniqueId as MediaSection)"
       @remove="
@@ -185,6 +189,7 @@
                 v-if="element.children"
                 item-key="uniqueId"
                 :list="element.children"
+                :options="{ animation: 150, ghostClass: 'bg-accent-200' }"
               >
                 <template
                   #item="{
