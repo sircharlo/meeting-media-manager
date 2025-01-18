@@ -24,10 +24,10 @@
     >
       <q-avatar
         :class="
-          'text-white bg-' +
-          mediaList.uniqueId +
-          (mediaList.jwIcon ? ' jw-icon' : '') +
-          (mediaList.uniqueId?.startsWith('custom') ? ' custom-bg-color' : '')
+          (mediaList.uniqueId?.startsWith('custom')
+            ? ' custom-bg-color custom-text-color'
+            : 'text-white bg-' + mediaList.uniqueId) +
+          (mediaList.jwIcon ? ' jw-icon' : '')
         "
       >
         <!-- :size="isWeMeetingDay(selectedDateObject.date) ? 'lg' : 'md'" -->
@@ -51,7 +51,11 @@
               !mediaList.items.filter((m) => !m.hidden).length)
           "
           class="add-media-shortcut"
-          :color="mediaList.uniqueId"
+          :class="
+            mediaList.uniqueId?.startsWith('custom')
+              ? ' custom-bg-color custom-text-color'
+              : 'text-white bg-' + mediaList.uniqueId
+          "
           icon="mmm-music-note"
           :label="
             $q.screen.gt.xs
@@ -73,7 +77,11 @@
         <q-btn
           v-else
           class="add-media-shortcut"
-          :color="mediaList.uniqueId"
+          :class="
+            mediaList.uniqueId?.startsWith('custom')
+              ? ' custom-bg-color custom-text-color'
+              : 'text-white bg-' + mediaList.uniqueId
+          "
           icon="mmm-add-media"
           :label="$q.screen.gt.xs ? t('add-extra-media') : undefined"
           @click="openImportMenu(mediaList.uniqueId)"
