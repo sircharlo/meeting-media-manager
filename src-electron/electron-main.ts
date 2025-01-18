@@ -74,7 +74,9 @@ app.on('before-quit', (e) => {
   captureMessage('before-quit', {
     contexts: { electron: { authorizedClose, mainWindow, PLATFORM } },
   });
-  if (PLATFORM === 'darwin' && mainWindow) {
+  if (PLATFORM !== 'darwin') return;
+  if (!mainWindow) return;
+  if (!mainWindow.isDestroyed()) {
     if (authorizedClose) {
       cancelAllDownloads();
       closeOtherWindows(mainWindow);
