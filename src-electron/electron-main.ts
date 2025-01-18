@@ -65,14 +65,14 @@ initSessionListeners();
 // macOS default behavior is to keep the app running even after all windows are closed
 app.on('window-all-closed', () => {
   captureMessage('window-all-closed', {
-    contexts: { electron: { win: mainWindow?.isDestoyed() } },
+    contexts: { electron: { win: mainWindow?.isDestroyed() } },
   });
   if (PLATFORM !== 'darwin') app.quit();
 });
 
 app.on('before-quit', (e) => {
   captureMessage('before-quit', {
-    contexts: { electron: { authorizedClose, win: mainWindow?.isDestoyed() } },
+    contexts: { electron: { authorizedClose, win: mainWindow?.isDestroyed() } },
   });
   if (PLATFORM !== 'darwin') return;
   if (!mainWindow) return;
@@ -90,7 +90,7 @@ app.on('before-quit', (e) => {
 
 app.on('activate', () => {
   captureMessage('activate', {
-    contexts: { electron: { win: mainWindow?.isDestoyed() } },
+    contexts: { electron: { win: mainWindow?.isDestroyed() } },
   });
   app.whenReady().then(createMainWindow).catch(captureElectronError);
 });
