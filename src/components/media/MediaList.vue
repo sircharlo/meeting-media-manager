@@ -6,7 +6,7 @@
     :class="
       'media-section ' +
       mediaList.uniqueId +
-      (mediaList.uniqueId.startsWith('custom') ? ' custom' : '')
+      (mediaList.uniqueId?.startsWith('custom') ? ' custom' : '')
     "
     :style="{
       '--bg-color': mediaList.bgColor,
@@ -19,7 +19,7 @@
         'text-' +
         mediaList.uniqueId +
         ' items-center ' +
-        (mediaList.uniqueId.startsWith('custom') ? ' custom-text-color' : '')
+        (mediaList.uniqueId?.startsWith('custom') ? ' custom-text-color' : '')
       "
     >
       <q-avatar
@@ -27,7 +27,7 @@
           'text-white bg-' +
           mediaList.uniqueId +
           (mediaList.jwIcon ? ' jw-icon' : '') +
-          (mediaList.uniqueId.startsWith('custom') ? ' custom-bg-color' : '')
+          (mediaList.uniqueId?.startsWith('custom') ? ' custom-bg-color' : '')
         "
       >
         <!-- :size="isWeMeetingDay(selectedDateObject.date) ? 'lg' : 'md'" -->
