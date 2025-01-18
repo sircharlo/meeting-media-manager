@@ -132,7 +132,6 @@ const addSection = () => {
     items: [],
     label: ref(t('imported-media')).value,
     textColor: '#ffffff',
-    type: 'custom',
     uniqueId: 'custom-' + Date.now().toString(),
   };
   setTextColor(newSection);
