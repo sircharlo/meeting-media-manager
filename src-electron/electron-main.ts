@@ -1,7 +1,7 @@
-import { init as initSentry } from '@sentry/electron/main';
-import { bugs, homepage, repository, version } from 'app/package.json';
+import { captureMessage, init as initSentry } from '@sentry/electron/main';
 import 'src-electron/main/ipc';
 import 'src-electron/main/security';
+import { bugs, homepage, repository, version } from 'app/package.json';
 import {
   app,
   Menu,
@@ -64,10 +64,16 @@ initSessionListeners();
 
 // macOS default behavior is to keep the app running even after all windows are closed
 app.on('window-all-closed', () => {
+  captureMessage('window-all-closed', {
+    contexts: { electron: { mainWindow, PLATFORM } },
+  });
   if (PLATFORM !== 'darwin') app.quit();
 });
 
 app.on('before-quit', (e) => {
+  captureMessage('before-quit', {
+    contexts: { electron: { authorizedClose, mainWindow, PLATFORM } },
+  });
   if (PLATFORM === 'darwin' && mainWindow) {
     if (authorizedClose) {
       cancelAllDownloads();
@@ -81,16 +87,13 @@ app.on('before-quit', (e) => {
 });
 
 app.on('activate', () => {
-  app
-    .whenReady()
-    .then(createMainWindow)
-    .catch((e) => captureElectronError(e));
+  captureMessage('activate', {
+    contexts: { electron: { mainWindow, PLATFORM } },
+  });
+  app.whenReady().then(createMainWindow).catch(captureElectronError);
 });
 
-app
-  .whenReady()
-  .then(createMainWindow)
-  .catch((e) => captureElectronError(e));
+app.whenReady().then(createMainWindow).catch(captureElectronError);
 
 function createApplicationMenu() {
   const appMenu: MenuItem | MenuItemConstructorOptions = { role: 'appMenu' };
