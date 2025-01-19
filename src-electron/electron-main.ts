@@ -1,6 +1,4 @@
 import { captureMessage, init as initSentry } from '@sentry/electron/main';
-import 'src-electron/main/ipc';
-import 'src-electron/main/security';
 import { bugs, homepage, repository, version } from 'app/package.json';
 import {
   app,
@@ -13,20 +11,18 @@ import upath from 'upath';
 const { join } = upath;
 
 import { PLATFORM } from 'src-electron/constants';
-import { cancelAllDownloads } from 'src-electron/main/downloads';
 import { initScreenListeners } from 'src-electron/main/screen';
-import { initSessionListeners } from 'src-electron/main/session';
+import { initSessionListeners, setShouldQuit } from 'src-electron/main/session';
 import { initUpdater } from 'src-electron/main/updater';
 import { captureElectronError } from 'src-electron/main/utils';
-import {
-  closeOtherWindows,
-  sendToWindow,
-} from 'src-electron/main/window/window-base';
+import { sendToWindow } from 'src-electron/main/window/window-base';
 import {
   authorizedClose,
   createMainWindow,
   mainWindow,
 } from 'src-electron/main/window/window-main';
+import 'src-electron/main/ipc';
+import 'src-electron/main/security';
 
 if (PLATFORM === 'win32') {
   app.setAppUserModelId('sircharlo.meeting-media-manager');
@@ -75,16 +71,13 @@ app.on('before-quit', (e) => {
     contexts: { electron: { authorizedClose, win: mainWindow?.isDestroyed() } },
   });
   if (PLATFORM !== 'darwin') return;
-  if (!mainWindow) return;
-  if (!mainWindow.isDestroyed()) {
-    if (authorizedClose) {
-      cancelAllDownloads();
-      closeOtherWindows(mainWindow);
-      mainWindow?.close();
-    } else {
-      e.preventDefault();
-      sendToWindow(mainWindow, 'attemptedClose');
-    }
+  if (!mainWindow || mainWindow.isDestroyed()) return;
+  if (authorizedClose) {
+    mainWindow.close();
+  } else {
+    e.preventDefault();
+    setShouldQuit(true);
+    sendToWindow(mainWindow, 'attemptedClose');
   }
 });
 

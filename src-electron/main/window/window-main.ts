@@ -11,6 +11,8 @@ import {
 import { createMediaWindow, moveMediaWindow } from 'main/window/window-media';
 import { PLATFORM } from 'src-electron/constants';
 
+import { setShouldQuit } from '../session';
+
 export let mainWindow: BrowserWindow | null = null;
 let closeAttempts = 0;
 export let authorizedClose = false;
@@ -47,13 +49,18 @@ export function createMainWindow() {
   mainWindow.on('close', (e) => {
     captureMessage('close', {
       contexts: {
-        electron: { authorizedClose, closeAttempts, mainWindow, PLATFORM },
+        electron: {
+          authorizedClose,
+          closeAttempts,
+          win: mainWindow?.isDestroyed(),
+        },
       },
     });
     if (mainWindow && (authorizedClose || closeAttempts > 2)) {
       cancelAllDownloads();
       closeOtherWindows(mainWindow);
     } else {
+      setShouldQuit(false);
       e.preventDefault();
       sendToWindow(mainWindow, 'attemptedClose');
       closeAttempts++;

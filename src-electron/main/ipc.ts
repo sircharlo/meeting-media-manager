@@ -9,6 +9,7 @@ import type {
   SettingsValues,
 } from 'src/types';
 
+import { captureMessage } from '@sentry/electron/main';
 import { homepage, repository } from 'app/package.json';
 import {
   app,
@@ -27,7 +28,7 @@ import {
   watchFolder,
 } from 'main/fs';
 import { getAllScreens, setScreenPreferences } from 'main/screen';
-import { setUrlVariables } from 'main/session';
+import { setUrlVariables, shouldQuit } from 'main/session';
 import {
   registerShortcut,
   unregisterAllShortcuts,
@@ -94,8 +95,12 @@ handleIpcSend('setScreenPreferences', (_e, prefs: string) => {
 });
 
 handleIpcSend('authorizedClose', () => {
+  captureMessage('authorizedClose', {
+    contexts: { electron: { shouldQuit, win: mainWindow?.isDestroyed() } },
+  });
   toggleAuthorizedClose(true);
-  mainWindow?.close();
+  if (shouldQuit) app.quit();
+  else if (mainWindow && !mainWindow.isDestroyed()) mainWindow.close();
 });
 
 handleIpcSend('toggleOpenAtLogin', (_e, openAtLogin: boolean) => {

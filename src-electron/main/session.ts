@@ -16,6 +16,12 @@ export const setUrlVariables = (variables: UrlVariables) => {
   urlVariables = variables;
 };
 
+export let shouldQuit = false;
+
+export const setShouldQuit = (quit: boolean) => {
+  shouldQuit = quit;
+};
+
 export const initSessionListeners = () => {
   app.on('ready', () => {
     const currentUserAgent = session.defaultSession.getUserAgent();
