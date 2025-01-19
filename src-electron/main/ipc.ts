@@ -9,7 +9,6 @@ import type {
   SettingsValues,
 } from 'src/types';
 
-import { captureMessage } from '@sentry/electron/main';
 import { homepage, repository } from 'app/package.json';
 import {
   app,
@@ -95,9 +94,6 @@ handleIpcSend('setScreenPreferences', (_e, prefs: string) => {
 });
 
 handleIpcSend('authorizedClose', () => {
-  captureMessage('authorizedClose', {
-    contexts: { electron: { shouldQuit, win: mainWindow?.isDestroyed() } },
-  });
   toggleAuthorizedClose(true);
   if (shouldQuit) app.quit();
   else if (mainWindow && !mainWindow.isDestroyed()) mainWindow.close();

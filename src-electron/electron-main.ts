@@ -1,4 +1,4 @@
-import { captureMessage, init as initSentry } from '@sentry/electron/main';
+import { init as initSentry } from '@sentry/electron/main';
 import { bugs, homepage, repository, version } from 'app/package.json';
 import {
   app,
@@ -60,16 +60,10 @@ initSessionListeners();
 
 // macOS default behavior is to keep the app running even after all windows are closed
 app.on('window-all-closed', () => {
-  captureMessage('window-all-closed', {
-    contexts: { electron: { win: mainWindow?.isDestroyed() } },
-  });
   if (PLATFORM !== 'darwin') app.quit();
 });
 
 app.on('before-quit', (e) => {
-  captureMessage('before-quit', {
-    contexts: { electron: { authorizedClose, win: mainWindow?.isDestroyed() } },
-  });
   if (PLATFORM !== 'darwin') return;
   if (!mainWindow || mainWindow.isDestroyed()) return;
   if (authorizedClose) {
@@ -82,9 +76,6 @@ app.on('before-quit', (e) => {
 });
 
 app.on('activate', () => {
-  captureMessage('activate', {
-    contexts: { electron: { win: mainWindow?.isDestroyed() } },
-  });
   app.whenReady().then(createMainWindow).catch(captureElectronError);
 });
 
