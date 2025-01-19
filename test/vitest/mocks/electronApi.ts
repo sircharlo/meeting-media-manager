@@ -45,6 +45,7 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   getAppDataPath: async () => fakePath('app'),
+  getLocales: () => [],
   getLocalPathFromFileObject: function (fileObject) {
     throw new Error('Function not implemented.');
   },

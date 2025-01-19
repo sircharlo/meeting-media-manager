@@ -1,6 +1,7 @@
 import type PQueue from 'p-queue';
 import type { MediaSection } from 'src/types';
 
+import { i18n } from 'boot/i18n';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setupFFmpeg } from 'src/helpers/fs';
 import { datesAreSame, formatDate } from 'src/utils/date';
@@ -105,23 +106,25 @@ const exportDayToFolder = async (targetDate?: Date) => {
       if (!sections[m.section]) {
         sections[m.section] = Object.keys(sections).length + 1;
       }
-      const sectionPrefix = pad(sections[m.section] || 0);
 
+      const sectionPrefix = pad(sections[m.section] || 0);
+      const mediaPrefix = pad(i + 1, dayMediaLength > 99 ? 3 : 2);
+      const mediaTag = m.tag?.type
+        ? // @ts-expect-error: t has no matching signature
+          `${i18n.global.t(m.tag.type)} ${m.tag.value}`
+        : null;
+      const mediaTitle = m.title
+        ? sanitize(
+            m.title.replace(
+              window.electronApi.path.extname(sourceFilePath),
+              '',
+            ),
+          ) + window.electronApi.path.extname(sourceFilePath)
+        : window.electronApi.path.basename(sourceFilePath);
       const destFilePath = trimFilepathAsNeeded(
         window.electronApi.path.join(
           destFolder,
-          sectionPrefix +
-            '-' +
-            pad(i + 1, dayMediaLength > 99 ? 3 : 2) +
-            ' ' +
-            (m.title
-              ? sanitize(
-                  m.title.replace(
-                    window.electronApi.path.extname(sourceFilePath),
-                    '',
-                  ),
-                ) + window.electronApi.path.extname(sourceFilePath)
-              : window.electronApi.path.basename(sourceFilePath)),
+          `${sectionPrefix}-${mediaPrefix}${mediaTag ? ` - ${mediaTag} - ` : ' '}${mediaTitle}`,
         ),
       );
       const fileBaseName = window.electronApi.path.basename(destFilePath);
@@ -177,7 +180,9 @@ export const exportAllDays = async () => {
     }
     const daysToExport = (
       jwStore.lookupPeriod[currentStateStore.currentCongregation] || []
-    ).map((d) => d.date);
+    )
+      .map((d) => (d.dynamicMedia.length ? d.date : undefined))
+      .filter((d): d is Date => !!d);
 
     if (!folderExportQueue) {
       const { default: PQueue } = await import('p-queue');
