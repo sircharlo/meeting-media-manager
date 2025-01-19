@@ -2,7 +2,7 @@ import { config } from '@vue/test-utils';
 import fs from 'fs-extra';
 import { http, HttpResponse } from 'msw';
 import appMessages from 'src/i18n';
-import { afterAll, vi } from 'vitest';
+import { afterAll, beforeAll, vi } from 'vitest';
 import { createI18n } from 'vue-i18n';
 
 import { initHttpHandlers } from '../mocks/http';
@@ -57,6 +57,10 @@ initHttpHandlers([
     () => HttpResponse.json(announcements),
   ),
 ]);
+
+beforeAll(async () => {
+  await fs.emptyDir(basePath);
+});
 
 afterAll(async () => {
   await fs.emptyDir(basePath);

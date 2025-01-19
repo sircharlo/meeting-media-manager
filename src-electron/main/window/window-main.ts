@@ -10,6 +10,8 @@ import {
 import { createMediaWindow, moveMediaWindow } from 'main/window/window-media';
 import { PLATFORM } from 'src-electron/constants';
 
+import { setShouldQuit } from '../session';
+
 export let mainWindow: BrowserWindow | null = null;
 let closeAttempts = 0;
 export let authorizedClose = false;
@@ -39,6 +41,7 @@ export function createMainWindow() {
       cancelAllDownloads();
       closeOtherWindows(mainWindow);
     } else {
+      setShouldQuit(false);
       e.preventDefault();
       sendToWindow(mainWindow, 'attemptedClose');
       closeAttempts++;

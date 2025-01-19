@@ -8,9 +8,12 @@ import { join } from 'path';
 
 export async function initUpdater() {
   autoUpdater.on('error', (error, message) => {
-    captureElectronError(error, {
-      contexts: { fn: { message, name: 'initUpdater' } },
-    });
+    const ignoreErrors = ['ENOENT', 'EPERM'];
+    if (!ignoreErrors.some((ignoreError) => message?.includes(ignoreError))) {
+      captureElectronError(error, {
+        contexts: { fn: { message, name: 'initUpdater' } },
+      });
+    }
   });
 
   triggerUpdateCheck();
