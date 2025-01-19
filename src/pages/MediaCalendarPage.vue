@@ -7,7 +7,7 @@
     "
     padding
     @dragenter="dropActive"
-    @dragover="dropActive($event, 'dragover')"
+    @dragover="dropActive"
     @dragstart="dropActive"
   >
     <div class="col">
@@ -80,7 +80,7 @@
     </div>
     <template
       v-for="mediaList in mediaLists"
-      :key="mediaList.items.map((m) => m.uniqueId).join(',')"
+      :key="(mediaList.items?.map((m) => m.uniqueId) || []).sort().join(',')"
     >
       <MediaList :media-list="mediaList" :open-import-menu="openImportMenu" />
     </template>
@@ -99,7 +99,13 @@
 <script setup lang="ts">
 import type { DocumentItem, MediaSection, TableItem } from 'src/types';
 
-import { useBroadcastChannel, useEventListener, whenever } from '@vueuse/core';
+import {
+  useBroadcastChannel,
+  useEventListener,
+  useMouse,
+  usePointer,
+  whenever,
+} from '@vueuse/core';
 import { Buffer } from 'buffer';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
@@ -780,6 +786,13 @@ const openImportMenu = (section: MediaSection | undefined) => {
 };
 
 const stopScrolling = ref(true);
+const { pressure } = usePointer();
+const { y } = useMouse();
+const marginToEdge = Math.max(window.innerHeight / 4, 150);
+
+watch(pressure, () => {
+  if (!pressure.value) stopScrolling.value = true;
+});
 
 const scroll = (step: number) => {
   const el = document.querySelector('.q-page-container');
@@ -787,20 +800,15 @@ const scroll = (step: number) => {
   el.scrollBy(0, step);
   setTimeout(() => scroll(step), 20);
 };
-
-const dropActive = (event: DragEvent, eventType?: string) => {
-  if (eventType === 'dragover') {
-    const marginToEdge = Math.max(window.innerHeight / 10, 150);
-    const step =
-      event.clientY < marginToEdge
-        ? -1
-        : window.innerHeight - event.clientY < marginToEdge
-          ? 1
-          : 0;
-    stopScrolling.value = step === 0;
-    if (step) scroll(step);
-  }
-
+const dropActive = (event: DragEvent) => {
+  const step =
+    y.value < marginToEdge
+      ? -1
+      : window.innerHeight - y.value < marginToEdge
+        ? 1
+        : 0;
+  stopScrolling.value = step === 0;
+  if (step) scroll(step);
   if (event?.dataTransfer?.effectAllowed === 'all') {
     event.preventDefault();
     showFileImportDialog.value = true;

@@ -195,6 +195,7 @@ function handleIpcInvoke<T = unknown>(
 
 handleIpcInvoke('getAppDataPath', async () => app.getPath('appData'));
 handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
+handleIpcInvoke('getLocales', async () => app.getPreferredSystemLanguages());
 
 handleIpcInvoke(
   'getScreenAccessStatus',
