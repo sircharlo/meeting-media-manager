@@ -36,18 +36,14 @@ import type { LanguageValue } from 'src/constants/locales';
 import type { ElectronIpcListenKey } from 'src/types';
 
 import { watchDebounced, watchImmediate, whenever } from '@vueuse/core';
-// Globals
 import { queues } from 'boot/globals';
-// Components
 import HeaderBase from 'components/header/HeaderBase.vue';
 import ActionIsland from 'components/ui/ActionIsland.vue';
 import AnnouncementBanner from 'components/ui/AnnouncementBanner.vue';
 import NavDrawer from 'components/ui/NavDrawer.vue';
-// Packages
 import { storeToRefs } from 'pinia';
 import { useMeta, useQuasar } from 'quasar';
 import { SORTER } from 'src/constants/general';
-// Helpers
 import { cleanCache, cleanPersistedStores } from 'src/helpers/cleanup';
 import {
   remainingTimeBeforeMeetingStart,
@@ -73,7 +69,6 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
 import { formatDate } from 'src/utils/date';
 import { kebabToCamelCase } from 'src/utils/general';
-// Stores
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
@@ -397,6 +392,7 @@ bcClose.onmessage = (event) => {
       !!selectedDateObject.value?.today && !!selectedDateObject.value?.meeting;
     if (
       (mediaPlaying.value ||
+        currentState.musicPlaying ||
         (currentCongregation.value && // a congregation is selected
           !currentSettings.value?.disableMediaFetching && // media fetching is enabled
           meetingDay && // today is a meeting day
@@ -404,9 +400,9 @@ bcClose.onmessage = (event) => {
       closeAttempts.value === 0
     ) {
       createTemporaryNotification({
-        caption: ref(t('clicking-the-close-button-again-will-close-app')).value,
+        caption: t('clicking-the-close-button-again-will-close-app'),
         icon: 'mmm-error',
-        message: ref(t('make-sure-that-m-is-in-not-use-before-quitting')).value,
+        message: t('make-sure-that-m-is-in-not-use-before-quitting'),
         noClose: true,
         progress: true,
         timeout: 10000,
