@@ -77,6 +77,7 @@ import type { DynamicMediaSection } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { Sortable } from 'sortablejs-vue3';
+import { deleteSection } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -136,15 +137,6 @@ const addSection = () => {
   };
   setTextColor(newSection);
   selectedDateObject.value?.customSections?.push(newSection);
-};
-
-const deleteSection = (uniqueId: string) => {
-  selectedDateObject.value?.customSections?.splice(
-    selectedDateObject.value?.customSections.findIndex(
-      (s) => s.uniqueId === uniqueId,
-    ),
-    1,
-  );
 };
 
 const setTextColor = (section: DynamicMediaSection) => {
