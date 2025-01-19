@@ -25,12 +25,11 @@
       <q-avatar
         :class="
           (mediaList.uniqueId?.startsWith('custom')
-            ? ' custom-bg-color custom-text-color'
-            : 'text-white bg-' + mediaList.uniqueId) +
+            ? ' custom-bg-color'
+            : ' text-white bg-' + mediaList.uniqueId) +
           (mediaList.jwIcon ? ' jw-icon' : '')
         "
       >
-        <!-- :size="isWeMeetingDay(selectedDateObject.date) ? 'lg' : 'md'" -->
         <template v-if="mediaList.jwIcon">
           {{ mediaList.jwIcon }}
         </template>
@@ -53,7 +52,7 @@
           class="add-media-shortcut"
           :class="
             mediaList.uniqueId?.startsWith('custom')
-              ? ' custom-bg-color custom-text-color'
+              ? ' custom-text-color'
               : 'text-white bg-' + mediaList.uniqueId
           "
           icon="mmm-music-note"
@@ -79,17 +78,33 @@
           class="add-media-shortcut"
           :class="
             mediaList.uniqueId?.startsWith('custom')
-              ? ' custom-bg-color custom-text-color'
-              : 'text-white bg-' + mediaList.uniqueId
+              ? ' custom-text-color'
+              : ' text-white bg-' + mediaList.uniqueId
           "
+          :flat="!isStandardSection(mediaList.uniqueId)"
           icon="mmm-add-media"
-          :label="$q.screen.gt.xs ? t('add-extra-media') : undefined"
+          :label="
+            isStandardSection(mediaList.uniqueId) && $q.screen.gt.xs
+              ? t('add-extra-media')
+              : undefined
+          "
+          :round="!isStandardSection(mediaList.uniqueId)"
           @click="openImportMenu(mediaList.uniqueId)"
         >
           <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
             {{ t('add-extra-media') }}
           </q-tooltip>
         </q-btn>
+      </q-item-section>
+      <q-item-section v-if="!isStandardSection(mediaList.uniqueId)" side>
+        <q-btn
+          color="negative"
+          flat
+          icon="mmm-delete"
+          round
+          size="sm"
+          @click="deleteSection(mediaList.uniqueId)"
+        />
       </q-item-section>
     </q-item>
     <div v-if="!mediaList.items.filter((m) => !m.hidden).length">
@@ -253,6 +268,7 @@ import MediaItem from 'src/components/media/MediaItem.vue';
 import { isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
+import { deleteSection, isStandardSection } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -484,14 +500,14 @@ const handleMediaSort = (
 </script>
 
 <style lang="scss" scoped>
-.media-section.custom .custom-text-color {
+.media-section .custom-text-color {
   color: var(--bg-color) !important;
 }
-.media-section.custom .custom-bg-color {
+.media-section .custom-bg-color {
   background-color: var(--bg-color) !important;
   color: var(--text-color) !important;
 }
-.media-section.custom:before {
+.media-section:before {
   background-color: var(--bg-color);
 }
 .add-media-shortcut {

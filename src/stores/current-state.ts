@@ -12,6 +12,7 @@ import type {
 } from 'src/types';
 
 import { defineStore } from 'pinia';
+import { standardSections } from 'src/constants/media';
 import { settingsDefinitions } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { datesAreSame, formatDate } from 'src/utils/date';
@@ -202,15 +203,6 @@ export const useCurrentStateStore = defineStore('current-state', {
           wt: [],
         };
       }
-
-      const standardSections: MediaSection[] = [
-        'additional',
-        'ayfm',
-        'circuitOverseer',
-        'lac',
-        'tgw',
-        'wt',
-      ];
 
       const customSections =
         this.selectedDateObject.customSections
