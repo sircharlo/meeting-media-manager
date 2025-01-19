@@ -1,7 +1,5 @@
-import { init as initSentry } from '@sentry/electron/main';
+import { captureMessage, init as initSentry } from '@sentry/electron/main';
 import { bugs, homepage, repository, version } from 'app/package.json';
-import 'src-electron/main/ipc';
-import 'src-electron/main/security';
 import {
   app,
   Menu,
@@ -13,20 +11,18 @@ import upath from 'upath';
 const { join } = upath;
 
 import { PLATFORM } from 'src-electron/constants';
-import { cancelAllDownloads } from 'src-electron/main/downloads';
 import { initScreenListeners } from 'src-electron/main/screen';
-import { initSessionListeners } from 'src-electron/main/session';
+import { initSessionListeners, setShouldQuit } from 'src-electron/main/session';
 import { initUpdater } from 'src-electron/main/updater';
 import { captureElectronError } from 'src-electron/main/utils';
-import {
-  closeOtherWindows,
-  sendToWindow,
-} from 'src-electron/main/window/window-base';
+import { sendToWindow } from 'src-electron/main/window/window-base';
 import {
   authorizedClose,
   createMainWindow,
   mainWindow,
 } from 'src-electron/main/window/window-main';
+import 'src-electron/main/ipc';
+import 'src-electron/main/security';
 
 if (PLATFORM === 'win32') {
   app.setAppUserModelId('sircharlo.meeting-media-manager');
@@ -64,33 +60,35 @@ initSessionListeners();
 
 // macOS default behavior is to keep the app running even after all windows are closed
 app.on('window-all-closed', () => {
+  captureMessage('window-all-closed', {
+    contexts: { electron: { win: mainWindow?.isDestroyed() } },
+  });
   if (PLATFORM !== 'darwin') app.quit();
 });
 
 app.on('before-quit', (e) => {
-  if (PLATFORM === 'darwin' && mainWindow) {
-    if (authorizedClose) {
-      cancelAllDownloads();
-      closeOtherWindows(mainWindow);
-      mainWindow?.close();
-    } else {
-      e.preventDefault();
-      sendToWindow(mainWindow, 'attemptedClose');
-    }
+  captureMessage('before-quit', {
+    contexts: { electron: { authorizedClose, win: mainWindow?.isDestroyed() } },
+  });
+  if (PLATFORM !== 'darwin') return;
+  if (!mainWindow || mainWindow.isDestroyed()) return;
+  if (authorizedClose) {
+    mainWindow.close();
+  } else {
+    e.preventDefault();
+    setShouldQuit(true);
+    sendToWindow(mainWindow, 'attemptedClose');
   }
 });
 
 app.on('activate', () => {
-  app
-    .whenReady()
-    .then(createMainWindow)
-    .catch((e) => captureElectronError(e));
+  captureMessage('activate', {
+    contexts: { electron: { win: mainWindow?.isDestroyed() } },
+  });
+  app.whenReady().then(createMainWindow).catch(captureElectronError);
 });
 
-app
-  .whenReady()
-  .then(createMainWindow)
-  .catch((e) => captureElectronError(e));
+app.whenReady().then(createMainWindow).catch(captureElectronError);
 
 function createApplicationMenu() {
   const appMenu: MenuItem | MenuItemConstructorOptions = { role: 'appMenu' };
