@@ -42,69 +42,86 @@
       >
         {{ mediaList.label }}
       </q-item-section>
-      <q-item-section v-if="mediaList.extraMediaShortcut" side>
-        <q-btn
-          v-if="
-            mediaList.uniqueId === 'additional' ||
-            (mediaList.uniqueId === 'circuitOverseer' &&
-              !mediaList.items.filter((m) => !m.hidden).length)
-          "
-          class="add-media-shortcut"
-          :class="
-            mediaList.uniqueId?.startsWith('custom')
-              ? ' custom-text-color'
-              : 'text-white bg-' + mediaList.uniqueId
-          "
-          icon="mmm-music-note"
-          :label="
-            $q.screen.gt.xs
-              ? mediaList.uniqueId === 'additional'
-                ? t('add-an-opening-song')
-                : t('add-a-closing-song')
-              : undefined
-          "
-          @click="addSong(mediaList.uniqueId)"
-        >
-          <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
-            {{
-              mediaList.uniqueId === 'additional'
-                ? t('add-an-opening-song')
-                : t('add-a-closing-song')
-            }}
-          </q-tooltip>
-        </q-btn>
-        <q-btn
-          v-else
-          class="add-media-shortcut"
-          :class="
-            mediaList.uniqueId?.startsWith('custom')
-              ? ' custom-text-color'
-              : ' text-white bg-' + mediaList.uniqueId
-          "
-          :flat="!isStandardSection(mediaList.uniqueId)"
-          icon="mmm-add-media"
-          :label="
-            isStandardSection(mediaList.uniqueId) && $q.screen.gt.xs
-              ? t('add-extra-media')
-              : undefined
-          "
-          :round="!isStandardSection(mediaList.uniqueId)"
-          @click="openImportMenu(mediaList.uniqueId)"
-        >
-          <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
-            {{ t('add-extra-media') }}
-          </q-tooltip>
-        </q-btn>
-      </q-item-section>
-      <q-item-section v-if="!isStandardSection(mediaList.uniqueId)" side>
-        <q-btn
-          color="negative"
-          flat
-          icon="mmm-delete"
-          round
-          size="sm"
-          @click="deleteSection(mediaList.uniqueId)"
-        />
+      <q-item-section side>
+        <div class="row items-center">
+          <template v-if="mediaList.extraMediaShortcut">
+            <q-btn
+              v-if="
+                mediaList.uniqueId === 'additional' ||
+                (mediaList.uniqueId === 'circuitOverseer' &&
+                  !mediaList.items.filter((m) => !m.hidden).length)
+              "
+              class="add-media-shortcut"
+              :class="
+                mediaList.uniqueId?.startsWith('custom')
+                  ? ' custom-text-color'
+                  : 'text-white bg-' + mediaList.uniqueId
+              "
+              icon="mmm-music-note"
+              :label="
+                $q.screen.gt.xs
+                  ? mediaList.uniqueId === 'additional'
+                    ? t('add-an-opening-song')
+                    : t('add-a-closing-song')
+                  : undefined
+              "
+              size="sm"
+              @click="addSong(mediaList.uniqueId)"
+            >
+              <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
+                {{
+                  mediaList.uniqueId === 'additional'
+                    ? t('add-an-opening-song')
+                    : t('add-a-closing-song')
+                }}
+              </q-tooltip>
+            </q-btn>
+            <q-btn
+              v-else
+              class="add-media-shortcut"
+              :class="
+                mediaList.uniqueId?.startsWith('custom')
+                  ? ' custom-text-color'
+                  : ' text-white bg-' + mediaList.uniqueId
+              "
+              :flat="!isStandardSection(mediaList.uniqueId)"
+              icon="mmm-add-media"
+              :label="
+                isStandardSection(mediaList.uniqueId) && $q.screen.gt.xs
+                  ? t('add-extra-media')
+                  : undefined
+              "
+              :round="!isStandardSection(mediaList.uniqueId)"
+              size="sm"
+              @click="openImportMenu(mediaList.uniqueId)"
+            >
+              <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
+                {{ t('add-extra-media') }}
+              </q-tooltip>
+            </q-btn>
+          </template>
+          <template v-if="!isStandardSection(mediaList.uniqueId)">
+            <q-btn flat round size="sm">
+              <q-badge class="custom-bg-color" clickable round> </q-badge>
+              <q-popup-proxy
+                cover
+                transition-hide="scale"
+                transition-show="scale"
+              >
+                <q-color v-model="mediaListBgColor" format-model="rgb" />
+              </q-popup-proxy>
+            </q-btn>
+
+            <q-btn
+              color="negative"
+              flat
+              icon="mmm-delete"
+              round
+              size="sm"
+              @click="deleteSection(mediaList.uniqueId)"
+            />
+          </template>
+        </div>
       </q-item-section>
     </q-item>
     <div v-if="!mediaList.items.filter((m) => !m.hidden).length">
@@ -268,12 +285,16 @@ import MediaItem from 'src/components/media/MediaItem.vue';
 import { isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
-import { deleteSection, isStandardSection } from 'src/helpers/media-sections';
+import {
+  deleteSection,
+  isStandardSection,
+  setTextColor,
+} from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-defineProps<{
+const props = defineProps<{
   mediaList: DynamicMediaSection;
   openImportMenu: (section: MediaSection) => void;
 }>();
@@ -497,6 +518,24 @@ const handleMediaSort = (
     }
   }
 };
+
+const mediaListBgColor = ref<string>(
+  selectedDateObject.value?.customSections?.find(
+    (s) => s.uniqueId === props.mediaList.uniqueId,
+  )?.bgColor || '#000000',
+);
+
+watch(
+  () => mediaListBgColor.value,
+  (newVal) => {
+    const section = selectedDateObject.value?.customSections?.find(
+      (s) => s.uniqueId === props.mediaList.uniqueId,
+    );
+    if (!section) return;
+    section.bgColor = newVal;
+    setTextColor(section);
+  },
+);
 </script>
 
 <style lang="scss" scoped>
