@@ -7,6 +7,7 @@ import { captureElectronError } from 'main/utils';
 import { join } from 'path';
 
 export async function initUpdater() {
+  autoUpdater.allowDowngrade = true;
   autoUpdater.on('error', (error, message) => {
     const ignoreErrors = ['ENOENT', 'EPERM'];
     if (!ignoreErrors.some((ignoreError) => message?.includes(ignoreError))) {

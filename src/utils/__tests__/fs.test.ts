@@ -43,6 +43,8 @@ describe('Paths', () => {
     paths.forEach((path) => {
       expect(path).toContain(basePath);
     });
+
+    await Promise.all(paths.map((path) => window.electronApi.fs.remove(path)));
   });
 
   it('should overwrite default cache location', async () => {
@@ -56,6 +58,8 @@ describe('Paths', () => {
     paths.forEach((path) => {
       expect(path).toContain(cacheDir);
     });
+
+    await window.electronApi.fs.remove(cacheDir);
   });
 });
 
@@ -76,6 +80,8 @@ describe('getPublicationDirectory', () => {
       pub: 'w',
     });
     expect(path).toContain('/w_E_2025010100');
+
+    await window.electronApi.fs.remove(path);
   });
 });
 
@@ -95,6 +101,8 @@ describe('removeEmptyDirs', () => {
 
     expect(await window.electronApi.fs.exists(emptyDir)).toBe(false);
     expect(await window.electronApi.fs.exists(file)).toBe(true);
+
+    await window.electronApi.fs.remove(root);
   });
 });
 
@@ -120,12 +128,20 @@ describe('getPublicationDirectoryContents', () => {
     const filtered = await getPublicationDirectoryContents(pub, 'jpg');
     expect(filtered.length).toBe(2);
 
+    const customRoot = await getPublicationDirectory(
+      pub,
+      join(basePath, 'customCacheDir'),
+    );
     const withCustomRoot = await getPublicationDirectoryContents(
       pub,
       undefined,
-      await getPublicationDirectory(pub, join(basePath, 'customCacheDir')),
+      customRoot,
     );
     expect(withCustomRoot.length).toBe(0);
+
+    await Promise.all(
+      [root, customRoot].map((path) => window.electronApi.fs.remove(path)),
+    );
   });
 });
 
