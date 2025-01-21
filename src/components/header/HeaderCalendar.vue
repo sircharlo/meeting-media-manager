@@ -244,6 +244,7 @@ import SongPicker from 'components/media/SongPicker.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
+import { standardSections } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   datesAreSame,
@@ -445,7 +446,11 @@ const mediaSortCanBeReset = computed<boolean>(() => {
     (item) => !item.hidden,
   );
 
-  if (nonHiddenMedia.some((item) => item.section !== item.sectionOriginal)) {
+  if (
+    nonHiddenMedia
+      .filter((item) => standardSections.includes(item.section))
+      .some((item) => item.section !== item.sectionOriginal)
+  ) {
     return true;
   }
 

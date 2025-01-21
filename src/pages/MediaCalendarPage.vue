@@ -81,12 +81,11 @@
       <template
         v-for="mediaList in mediaLists"
         :key="
-          (mediaList.items?.length
-            ? mediaList.items.map((m) => m.uniqueId)
-            : [mediaList.uniqueId]
-          )
-            .sort()
-            .join(',')
+          selectedDateObject?.date +
+          '-' +
+          mediaList.uniqueId +
+          '-' +
+          mediaList.items?.length
         "
       >
         <MediaList :media-list="mediaList" :open-import-menu="openImportMenu" />
