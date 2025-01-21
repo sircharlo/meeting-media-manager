@@ -62,7 +62,6 @@
   "coWeek": "Next planned visit of the circuit overseer",
   "coWeek-explain": "If entered, M³ will automatically move the midweek meeting to Tuesday on that week. It will also skip media for the Congregation Bible Study, and skip the closing songs for both the midweek and weekend meetings.",
   "collapse-sidebar": "Collapse sidebar",
-  "color": "Color",
   "complete": "Complete",
   "configure-a-scene-in-obs-studio-to-capture-the-media-window": "Configure a scene in OBS Studio to capture the media window.",
   "configure-a-scene-in-obs-studio-to-show-a-stage-wide-shot": "Configure a scene in OBS Studio to show a stage wide shot.",

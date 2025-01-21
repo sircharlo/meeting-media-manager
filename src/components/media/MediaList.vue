@@ -39,7 +39,7 @@
       <q-item-section
         class="text-bold text-uppercase text-spaced row justify-between col-grow"
       >
-        {{ mediaList.label }} - {{ mediaList.uniqueId }}
+        {{ mediaList.label }}
       </q-item-section>
       <q-item-section side>
         <div class="row items-center">

@@ -100,14 +100,14 @@
         unelevated
         @click="addSection()"
       />
-      <pre>
+      <!-- <pre>
       {{
           selectedDateObject?.dynamicMedia
             ?.filter((m) => !m.hidden)
             .map((m) => [m.section, m.uniqueId])
         }}
     </pre
-      >
+      > -->
     </div>
     <DialogFileImport
       v-model="showFileImportDialog"
