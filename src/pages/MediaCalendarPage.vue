@@ -119,22 +119,6 @@
       :total-files="totalFiles"
       @drop="dropEnd"
     />
-    <DialogCustomSectionEdit v-model="showCustomSectionDialog" />
-    <q-menu context-menu style="overflow-x: hidden" touch-position>
-      <q-list>
-        <q-item v-close-popup clickable @click="showCustomSectionDialog = true">
-          <q-item-section avatar>
-            <q-icon name="mmm-file-" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ t('edit-sections') }}</q-item-label>
-            <q-item-label caption>
-              {{ t('edit-sections-explain') }}
-            </q-item-label>
-          </q-item-section>
-        </q-item>
-      </q-list>
-    </q-menu>
   </q-page>
 </template>
 
@@ -157,7 +141,6 @@ import { Buffer } from 'buffer';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
-import DialogCustomSectionEdit from 'src/components/dialog/DialogCustomSectionEdit.vue';
 import DialogFileImport from 'src/components/dialog/DialogFileImport.vue';
 import MediaEmptyState from 'src/components/media/MediaEmptyState.vue';
 import MediaList from 'src/components/media/MediaList.vue';
@@ -208,8 +191,6 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-
-const showCustomSectionDialog = ref(false);
 
 const showFileImportDialog = ref(false);
 const jwpubImportDb = ref('');

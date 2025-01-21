@@ -104,6 +104,14 @@
               mediaListReactiveRef && !isStandardSection(mediaList.uniqueId)
             "
           >
+            <q-btn
+              class="custom-text-color"
+              flat
+              icon="mmm-label-sort"
+              round
+              size="sm"
+              @click="showCustomSectionDialog = true"
+            />
             <q-btn flat round size="sm">
               <q-badge class="custom-bg-color" clickable round> </q-badge>
               <q-popup-proxy
@@ -117,7 +125,6 @@
                 />
               </q-popup-proxy>
             </q-btn>
-
             <q-btn
               color="negative"
               flat
@@ -274,6 +281,7 @@
       </template>
     </Sortable>
   </q-list>
+  <DialogCustomSectionEdit v-model="showCustomSectionDialog" />
 </template>
 <script setup lang="ts">
 import type { SortableEvent } from 'sortablejs';
@@ -287,6 +295,7 @@ import { watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { Sortable } from 'sortablejs-vue3';
+import DialogCustomSectionEdit from 'src/components/dialog/DialogCustomSectionEdit.vue';
 import MediaItem from 'src/components/media/MediaItem.vue';
 import { isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -300,6 +309,8 @@ const props = defineProps<{
   mediaList: DynamicMediaSection;
   openImportMenu: (section: MediaSection) => void;
 }>();
+
+const showCustomSectionDialog = ref(false);
 
 const $q = useQuasar();
 const { t } = useI18n();

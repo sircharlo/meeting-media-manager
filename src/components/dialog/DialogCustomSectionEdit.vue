@@ -8,47 +8,68 @@
         {{ t('custom-sections') }}
       </div>
       <div class="row q-px-md overflow-auto">
-        <q-list bordered class="full-width" separator>
+        <q-list
+          v-if="selectedDateObject?.customSections?.length"
+          bordered
+          class="full-width q-mb-md"
+          separator
+        >
           <Sortable
             item-key="uniqueId"
             :list="selectedDateObject?.customSections"
+            :options="{
+              handle: '.sort-handle',
+              ghostClass: 'bg-accent-200',
+              animation: 150,
+            }"
             @end="handleMediaSectionSort"
           >
             <template #item="{ element }: { element: DynamicMediaSection }">
               <q-item
                 :key="element.uniqueId"
-                clickable
                 :style="{
                   '--bg-color': element.bgColor,
                   // '--text-color': element.textColor,
                 }"
               >
+                <q-item-section side>
+                  <div class="row">
+                    <q-icon
+                      class="sort-handle"
+                      color="accent-100"
+                      flat
+                      name="mmm-reorder"
+                      size="sm"
+                      style="cursor: grab"
+                    />
+                  </div>
+                </q-item-section>
                 <q-item-section>
                   <q-item-label>
-                    <q-input v-model="element.label" outlined />
+                    <q-input v-model="element.label" dense />
                   </q-item-label>
                 </q-item-section>
                 <q-item-section side>
-                  <q-chip class="custom-bg-color custom-text-color" round>
-                    {{ t('color') }}
-                    <q-popup-proxy
-                      cover
-                      transition-hide="scale"
-                      transition-show="scale"
-                    >
-                      <q-color v-model="element.bgColor" format-model="rgb" />
-                    </q-popup-proxy>
-                  </q-chip>
-                </q-item-section>
-                <q-item-section side>
-                  <q-btn
-                    color="negative"
-                    flat
-                    icon="mmm-delete"
-                    round
-                    size="sm"
-                    @click="deleteSection(element.uniqueId)"
-                  />
+                  <div class="row">
+                    <q-btn flat round>
+                      <q-badge class="custom-bg-color" clickable round />
+                      <q-popup-proxy
+                        cover
+                        transition-hide="scale"
+                        transition-show="scale"
+                      >
+                        <q-color v-model="element.bgColor" format-model="rgb" />
+                      </q-popup-proxy>
+                    </q-btn>
+
+                    <q-btn
+                      color="negative"
+                      flat
+                      icon="mmm-delete"
+                      round
+                      @click="deleteSection(element.uniqueId)"
+                    />
+                  </div>
                 </q-item-section>
               </q-item>
             </template>
@@ -56,10 +77,17 @@
         </q-list>
       </div>
       <div class="row q-px-md q-pb-md">
-        <q-btn color="primary" label="Add section" @click="addSection" />
+        <q-btn
+          v-if="selectedDateObject && !selectedDateObject.meeting"
+          class="full-width dashed-border"
+          color="accent-100"
+          icon="mmm-plus"
+          :label="t('new-section')"
+          text-color="primary"
+          unelevated
+          @click="addSection()"
+        />
       </div>
-      <!-- <div class="row q-px-md"></div>
-      <div class="row q-px-md q-pt-md"></div> -->
       <div class="row q-px-md q-py-md justify-end">
         <q-btn v-close-popup color="primary" flat :label="t('close')" />
       </div>
