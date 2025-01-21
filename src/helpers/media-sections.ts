@@ -1,7 +1,25 @@
 import type { DynamicMediaSection } from 'src/types';
 
+import { i18n } from 'boot/i18n';
 import { standardSections } from 'src/constants/media';
 import { useCurrentStateStore } from 'src/stores/current-state';
+
+export const addSection = () => {
+  const { selectedDateObject } = useCurrentStateStore();
+  if (!selectedDateObject) return;
+  if (!selectedDateObject?.customSections)
+    selectedDateObject.customSections = [];
+  const newSection: DynamicMediaSection = {
+    alwaysShow: true,
+    bgColor: getRandomColor(),
+    extraMediaShortcut: true,
+    items: [],
+    // @ts-expect-error: t has no matching signature
+    label: i18n.global.t('imported-media'),
+    uniqueId: 'custom-' + Date.now().toString(),
+  };
+  selectedDateObject?.customSections?.push(newSection);
+};
 
 export const deleteSection = (uniqueId: string) => {
   const { selectedDateObject } = useCurrentStateStore();
@@ -26,6 +44,18 @@ export const deleteSection = (uniqueId: string) => {
       mediaItem.sectionOriginal = 'additional';
     }
   });
+};
+
+const getRandomColor = () => {
+  const min = 80; // Minimum brightness for each RGB channel
+  const max = 230; // Maximum brightness for each RGB channel
+  const randomChannel = () => Math.floor(Math.random() * (max - min + 1)) + min;
+
+  const r = randomChannel();
+  const g = randomChannel();
+  const b = randomChannel();
+
+  return `rgb(${r}, ${g}, ${b})`;
 };
 
 export const isStandardSection = (section: string) => {

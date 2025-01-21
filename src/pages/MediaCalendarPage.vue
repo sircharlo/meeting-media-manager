@@ -91,6 +91,16 @@
       >
         <MediaList :media-list="mediaList" :open-import-menu="openImportMenu" />
       </template>
+      <q-btn
+        v-if="selectedDateObject && !selectedDateObject.meeting"
+        class="full-width dashed-border big-button"
+        color="accent-100"
+        icon="mmm-plus"
+        :label="t('new-section')"
+        text-color="primary"
+        unelevated
+        @click="addSection()"
+      />
       <pre>
       {{
           selectedDateObject?.dynamicMedia
@@ -161,6 +171,7 @@ import {
   downloadFileIfNeeded,
   fetchMedia,
 } from 'src/helpers/jw-media';
+import { addSection } from 'src/helpers/media-sections';
 import {
   decompressJwpub,
   getMediaFromJwPlaylist,

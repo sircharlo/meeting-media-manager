@@ -73,9 +73,8 @@ import type { DynamicMediaSection } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { Sortable } from 'sortablejs-vue3';
-import { deleteSection } from 'src/helpers/media-sections';
+import { addSection, deleteSection } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -105,32 +104,6 @@ const handleMediaSectionSort = (event: SortableEvent) => {
 
   sections.splice(event.newIndex, 0, item);
   console.log('After Move:', [...sections]);
-};
-
-const getRandomColor = () => {
-  const min = 60; // Minimum brightness for each RGB channel
-  const max = 200; // Maximum brightness for each RGB channel
-  const randomChannel = () => Math.floor(Math.random() * (max - min + 1)) + min;
-
-  const r = randomChannel();
-  const g = randomChannel();
-  const b = randomChannel();
-
-  return `rgb(${r}, ${g}, ${b})`;
-};
-
-const addSection = () => {
-  if (selectedDateObject.value && !selectedDateObject.value?.customSections)
-    selectedDateObject.value.customSections = [];
-  const newSection: DynamicMediaSection = {
-    alwaysShow: true,
-    bgColor: getRandomColor(),
-    extraMediaShortcut: true,
-    items: [],
-    label: ref(t('imported-media')).value,
-    uniqueId: 'custom-' + Date.now().toString(),
-  };
-  selectedDateObject.value?.customSections?.push(newSection);
 };
 </script>
 <style lang="scss" scoped>
