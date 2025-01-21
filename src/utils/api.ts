@@ -61,7 +61,7 @@ export const fetchJson = async <T>(
       });
     }
   } catch (e) {
-    if (online) {
+    if (online && !(await window.electronApi.isDownloadErrorExpected())) {
       errorCatcher(e, {
         contexts: {
           fn: {

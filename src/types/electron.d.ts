@@ -77,6 +77,7 @@ export interface ElectronApi {
    * @returns A promise that resolves to the metadata of the media file.
    */
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
+  isDownloadErrorExpected: () => Promise<boolean>;
   moveMediaWindow: (
     targetScreenNumber?: number,
     windowedMode?: boolean,
@@ -175,6 +176,7 @@ export type ElectronIpcInvokeKey =
   | 'getLocales'
   | 'getScreenAccessStatus'
   | 'getUserDataPath'
+  | 'isDownloadErrorExpected'
   | 'openFileDialog'
   | 'openFolderDialog'
   | 'registerShortcut';
