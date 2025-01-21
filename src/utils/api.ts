@@ -43,7 +43,10 @@ export const fetchJson = async <T>(
       return await response.json();
     } else if (
       ![403, 404].includes(response.status) &&
-      !(response.status === 400 && params?.get('pub')?.startsWith('S-'))
+      !(
+        response.status === 400 &&
+        ['S', 'CO'].some((p) => params?.get('pub')?.startsWith(`${p}-`))
+      )
     ) {
       errorCatcher(new Error('Failed to fetch json!'), {
         contexts: {
