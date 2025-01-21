@@ -5,13 +5,16 @@
       style="flex-flow: column"
     >
       <div class="text-h6 row q-px-md q-pt-lg q-pb-md">
-        {{ t('custom-sections') }}
+        {{ t('edit-sections') }}
+      </div>
+      <div class="row q-px-md q-py-md">
+        {{ t('edit-sections-explain') }}
       </div>
       <div class="row q-px-md overflow-auto">
         <q-list
           v-if="selectedDateObject?.customSections?.length"
           bordered
-          class="full-width q-mb-md"
+          class="full-width"
           separator
         >
           <Sortable
@@ -76,7 +79,10 @@
           </Sortable>
         </q-list>
       </div>
-      <div class="row q-px-md q-pb-md">
+      <div
+        class="row q-px-md q-pb-md"
+        :class="selectedDateObject?.customSections?.length ? 'q-mt-md' : ''"
+      >
         <q-btn
           v-if="selectedDateObject && !selectedDateObject.meeting"
           class="full-width dashed-border"
