@@ -58,7 +58,6 @@ export interface DynamicMediaSection {
   jwIcon?: string;
   label: string;
   mmmIcon?: string;
-  textColor?: string;
   uniqueId: MediaSection;
 }
 

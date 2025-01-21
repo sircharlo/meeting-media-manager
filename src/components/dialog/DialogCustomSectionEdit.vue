@@ -20,7 +20,7 @@
                 clickable
                 :style="{
                   '--bg-color': element.bgColor,
-                  '--text-color': element.textColor,
+                  // '--text-color': element.textColor,
                 }"
               >
                 <q-item-section>
@@ -36,11 +36,7 @@
                       transition-hide="scale"
                       transition-show="scale"
                     >
-                      <q-color
-                        v-model="element.bgColor"
-                        format-model="rgb"
-                        @update:model-value="setTextColor(element)"
-                      />
+                      <q-color v-model="element.bgColor" format-model="rgb" />
                     </q-popup-proxy>
                   </q-chip>
                 </q-item-section>
@@ -77,7 +73,7 @@ import type { DynamicMediaSection } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { Sortable } from 'sortablejs-vue3';
-import { deleteSection, setTextColor } from 'src/helpers/media-sections';
+import { deleteSection } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -132,10 +128,8 @@ const addSection = () => {
     extraMediaShortcut: true,
     items: [],
     label: ref(t('imported-media')).value,
-    textColor: '#ffffff',
     uniqueId: 'custom-' + Date.now().toString(),
   };
-  setTextColor(newSection);
   selectedDateObject.value?.customSections?.push(newSection);
 };
 </script>

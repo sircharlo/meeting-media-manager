@@ -91,14 +91,14 @@
       >
         <MediaList :media-list="mediaList" :open-import-menu="openImportMenu" />
       </template>
-      <!-- <pre>
+      <pre>
       {{
           selectedDateObject?.dynamicMedia
             ?.filter((m) => !m.hidden)
             .map((m) => [m.section, m.uniqueId])
         }}
     </pre
-      > -->
+      >
     </div>
     <DialogFileImport
       v-model="showFileImportDialog"

@@ -5,12 +5,27 @@ import { useCurrentStateStore } from 'src/stores/current-state';
 
 export const deleteSection = (uniqueId: string) => {
   const { selectedDateObject } = useCurrentStateStore();
-  selectedDateObject?.customSections?.splice(
-    selectedDateObject?.customSections.findIndex(
-      (s) => s.uniqueId === uniqueId,
-    ),
+  if (!selectedDateObject?.customSections) return;
+
+  const sectionIndex = selectedDateObject.customSections.findIndex(
+    (s) => s.uniqueId === uniqueId,
+  );
+
+  if (sectionIndex === -1) return;
+
+  const [removedSection] = selectedDateObject.customSections.splice(
+    sectionIndex,
     1,
   );
+  removedSection?.items?.forEach((itemToReassign) => {
+    const mediaItem = selectedDateObject.dynamicMedia?.find(
+      (m) => m.uniqueId === itemToReassign.uniqueId,
+    );
+    if (mediaItem) {
+      mediaItem.section = 'additional';
+      mediaItem.sectionOriginal = 'additional';
+    }
+  });
 };
 
 export const isStandardSection = (section: string) => {
@@ -18,7 +33,7 @@ export const isStandardSection = (section: string) => {
   return standardSections.includes(section);
 };
 
-export const setTextColor = (section: DynamicMediaSection) => {
+export const getTextColor = (section: DynamicMediaSection) => {
   const bgColor = section.bgColor;
   if (!bgColor) return;
   // Convert HEX to RGB
@@ -40,7 +55,7 @@ export const setTextColor = (section: DynamicMediaSection) => {
       .map(Number);
   } else {
     console.warn('Invalid color format');
-    section.textColor = '#000000'; // Default to black if invalid input
+    return '#000000'; // Default to black if invalid input
   }
 
   // Calculate relative luminance
@@ -54,5 +69,5 @@ export const setTextColor = (section: DynamicMediaSection) => {
     0.2126 * luminance(r) + 0.7152 * luminance(g) + 0.0722 * luminance(b);
 
   // Return white or black based on contrast
-  section.textColor = lum > 0.179 ? '#000000' : '#ffffff';
+  return lum > 0.179 ? '#000000' : '#ffffff';
 };

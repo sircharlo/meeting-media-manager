@@ -10,7 +10,6 @@
     "
     :style="{
       '--bg-color': mediaList.bgColor,
-      '--text-color': mediaList.textColor,
     }"
   >
     <q-item
@@ -40,7 +39,7 @@
       <q-item-section
         class="text-bold text-uppercase text-spaced row justify-between col-grow"
       >
-        {{ mediaList.label }}
+        {{ mediaList.label }} - {{ mediaList.uniqueId }}
       </q-item-section>
       <q-item-section side>
         <div class="row items-center">
@@ -100,7 +99,11 @@
               </q-tooltip>
             </q-btn>
           </template>
-          <template v-if="!isStandardSection(mediaList.uniqueId)">
+          <template
+            v-if="
+              mediaListReactiveRef && !isStandardSection(mediaList.uniqueId)
+            "
+          >
             <q-btn flat round size="sm">
               <q-badge class="custom-bg-color" clickable round> </q-badge>
               <q-popup-proxy
@@ -108,7 +111,10 @@
                 transition-hide="scale"
                 transition-show="scale"
               >
-                <q-color v-model="mediaListBgColor" format-model="rgb" />
+                <q-color
+                  v-model="mediaListReactiveRef.bgColor"
+                  format-model="rgb"
+                />
               </q-popup-proxy>
             </q-btn>
 
@@ -285,11 +291,7 @@ import MediaItem from 'src/components/media/MediaItem.vue';
 import { isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
-import {
-  deleteSection,
-  isStandardSection,
-  setTextColor,
-} from 'src/helpers/media-sections';
+import { deleteSection, isStandardSection } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -519,34 +521,22 @@ const handleMediaSort = (
   }
 };
 
-const mediaListBgColor = ref<string>(
+const mediaListReactiveRef = ref<DynamicMediaSection | undefined>(
   selectedDateObject.value?.customSections?.find(
     (s) => s.uniqueId === props.mediaList.uniqueId,
-  )?.bgColor || '#000000',
-);
-
-watch(
-  () => mediaListBgColor.value,
-  (newVal) => {
-    const section = selectedDateObject.value?.customSections?.find(
-      (s) => s.uniqueId === props.mediaList.uniqueId,
-    );
-    if (!section) return;
-    section.bgColor = newVal;
-    setTextColor(section);
-  },
+  ),
 );
 </script>
 
 <style lang="scss" scoped>
-.media-section .custom-text-color {
+.media-section.custom .custom-text-color {
   color: var(--bg-color) !important;
 }
-.media-section .custom-bg-color {
+.media-section.custom .custom-bg-color {
   background-color: var(--bg-color) !important;
   color: var(--text-color) !important;
 }
-.media-section:before {
+.media-section.custom:before {
   background-color: var(--bg-color);
 }
 .add-media-shortcut {
