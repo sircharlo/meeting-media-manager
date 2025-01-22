@@ -5299,14 +5299,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"better-sqlite3@npm:^11.8.0":
-  version: 11.8.0
-  resolution: "better-sqlite3@npm:11.8.0"
+"better-sqlite3@npm:^11.8.1":
+  version: 11.8.1
+  resolution: "better-sqlite3@npm:11.8.1"
   dependencies:
     bindings: "npm:^1.5.0"
     node-gyp: "npm:latest"
     prebuild-install: "npm:^7.1.1"
-  checksum: 10c0/8dcebf674c47882662c423aa5c1de141082bec48fda8c0b9fe417151de666eb66ca893baaf5dd2336b271beb86d4582c0dcd632f5e4d3c5f4069faa46e2a6b56
+  checksum: 10c0/b6b1844f8ed5668080cc1e2a137656da756af406b616ffbd6139b230c906b9c0571bbdac53cd78cc1415689f5090d25daf95ea596ced0b9ad5e8be9b4a08662e
   languageName: node
   linkType: hard
 
@@ -11563,7 +11563,7 @@ __metadata:
     "@vueuse/core": "npm:^12.4.0"
     "@vueuse/router": "npm:^12.4.0"
     autoprefixer: "npm:^10.4.20"
-    better-sqlite3: "npm:^11.8.0"
+    better-sqlite3: "npm:^11.8.1"
     cheerio: "npm:^1.0.0"
     chokidar: "npm:^4.0.3"
     countries-and-timezones: "npm:^3.7.2"
