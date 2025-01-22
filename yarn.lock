@@ -11658,7 +11658,7 @@ __metadata:
     postcss: "npm:^8.5.1"
     prettier: "npm:^3.4.2"
     pretty-bytes: "npm:^6.1.1"
-    quasar: "npm:^2.17.6"
+    quasar: "npm:^2.17.7"
     sanitize-filename: "npm:^1.6.3"
     sanitize-html: "npm:^2.14.0"
     sortablejs: "npm:^1.15.6"
@@ -14000,10 +14000,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quasar@npm:^2.17.6":
-  version: 2.17.6
-  resolution: "quasar@npm:2.17.6"
-  checksum: 10c0/e8023b4bc85f1417ee9a69f961075fbc23c89957ed5bb2e94db7fdbe9626ac67ae6013c8d5eeddeeebdd674926263cf68e2b1bd985482d07b600bd7ba1080d18
+"quasar@npm:^2.17.7":
+  version: 2.17.7
+  resolution: "quasar@npm:2.17.7"
+  checksum: 10c0/a331f9615b93fbb674d2b0f0fa6c9aac08d47e80219b0bb9035414358a43fe4c55ce6b354c86314a1efc6310edb0beaa8aef490ceb698f3148ffb7ef0c6c3433
   languageName: node
   linkType: hard
 
