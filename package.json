@@ -112,7 +112,7 @@
     "postcss": "^8.5.1",
     "prettier": "^3.4.2",
     "typescript": "~5.6.3",
-    "vitepress": "^1.5.0",
+    "vitepress": "^1.6.3",
     "vitest": "^2.1.8",
     "vue-tsc": "^2.2.0"
   },
