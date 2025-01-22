@@ -36,7 +36,7 @@
   "dependencies": {
     "@numairawan/video-duration": "^1.0.0",
     "@panzoom/panzoom": "^4.6.0",
-    "@quasar/extras": "^1.16.15",
+    "@quasar/extras": "^1.16.16",
     "@sentry/electron": "^5.10.0",
     "@sentry/vue": "8.48.0",
     "@vueuse/core": "^12.4.0",
