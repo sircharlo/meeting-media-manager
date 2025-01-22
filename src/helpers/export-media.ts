@@ -1,5 +1,5 @@
 import type PQueue from 'p-queue';
-import type { MediaSection } from 'src/types';
+import type { MediaSectionIdentifier } from 'src/types';
 
 import { i18n } from 'boot/i18n';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -46,7 +46,7 @@ const exportDayToFolder = async (targetDate?: Date) => {
         .map((item) => [item.fileUrl, item]),
     ).values(),
   ).sort((a, b) => {
-    const sectionOrder: MediaSection[] = [
+    const sectionOrder: MediaSectionIdentifier[] = [
       'additional',
       'tgw',
       'ayfm',
@@ -74,7 +74,7 @@ const exportDayToFolder = async (targetDate?: Date) => {
   const expectedFiles = new Set<string>();
 
   const { default: sanitize } = await import('sanitize-filename');
-  const sections: Partial<Record<MediaSection, number>> = {}; // Object to store dynamic section prefixes
+  const sections: Partial<Record<MediaSectionIdentifier, number>> = {}; // Object to store dynamic section prefixes
   for (let i = 0; i < dayMediaLength; i++) {
     try {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

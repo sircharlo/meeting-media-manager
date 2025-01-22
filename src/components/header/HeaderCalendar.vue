@@ -233,7 +233,7 @@
 </template>
 <script setup lang="ts">
 import type { QMenu } from 'quasar';
-import type { MediaSection } from 'src/types';
+import type { MediaSectionIdentifier } from 'src/types';
 
 import { useEventListener } from '@vueuse/core';
 import DialogAudioBible from 'components//dialog/DialogAudioBible.vue';
@@ -281,7 +281,7 @@ const {
   someItemsHiddenForSelectedDate,
 } = storeToRefs(currentState);
 
-const section = ref<MediaSection | undefined>();
+const section = ref<MediaSectionIdentifier | undefined>();
 const publicTalkMediaPopup = ref(false);
 const datePickerActive = ref(false);
 const remoteVideoPopup = ref(false);
@@ -290,7 +290,7 @@ const audioBiblePopup = ref(false);
 
 const openFileImportDialog = () => {
   window.dispatchEvent(
-    new CustomEvent<{ section: MediaSection | undefined }>(
+    new CustomEvent<{ section: MediaSectionIdentifier | undefined }>(
       'openFileImportDialog',
       {
         detail: { section: section.value },
@@ -375,7 +375,7 @@ const maxDate = () => {
 };
 
 const importMenu = useTemplateRef<QMenu>('importMenu');
-const openImportMenu = (newSection?: MediaSection) => {
+const openImportMenu = (newSection?: MediaSectionIdentifier) => {
   section.value = newSection;
   importMenu.value?.show();
 };
@@ -421,18 +421,18 @@ const getEventDayColor = (eventDate: string) => {
 
 const chooseSong = ref(false);
 
-const openSongPicker = (newSection?: MediaSection) => {
+const openSongPicker = (newSection?: MediaSectionIdentifier) => {
   section.value = newSection;
   chooseSong.value = true;
 };
 
-useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
+useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
   window,
   'openSongPicker',
   (e) => openSongPicker(e.detail?.section),
   { passive: true },
 );
-useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
+useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
   window,
   'openImportMenu',
   (e) => openImportMenu(e.detail?.section),

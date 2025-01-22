@@ -87,7 +87,13 @@
           '-' +
           mediaList.items?.length
         "
-      >
+        >{{
+          selectedDateObject?.date +
+          '-' +
+          mediaList.uniqueId +
+          '-' +
+          mediaList.items?.length
+        }}
         <MediaList :media-list="mediaList" :open-import-menu="openImportMenu" />
       </template>
       <q-btn
@@ -125,7 +131,7 @@
 import type {
   DocumentItem,
   DynamicMediaSection,
-  MediaSection,
+  MediaSectionIdentifier,
   TableItem,
 } from 'src/types';
 
@@ -332,10 +338,12 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
     },
   ];
 
-  const customSections = selectedDateObject.value?.customSections ?? [];
-  customSections.forEach((section) => {
-    section.items = getVisibleMediaForSection.value[section.uniqueId] || [];
-  });
+  const customSections: DynamicMediaSection[] = (
+    selectedDateObject.value?.customSections ?? []
+  ).map((section) => ({
+    ...section,
+    items: getVisibleMediaForSection.value[section.uniqueId] || [],
+  }));
 
   const defaultMediaSections =
     mediaSections
@@ -565,9 +573,9 @@ const checkCoDate = () => {
   }
 };
 
-const sectionToAddTo = ref<MediaSection | undefined>();
+const sectionToAddTo = ref<MediaSectionIdentifier | undefined>();
 
-useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
+useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
   window,
   'openFileImportDialog',
   (e) => {
@@ -579,7 +587,7 @@ useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
 useEventListener<
   CustomEvent<{
     files: { filename?: string; filetype?: string; path: string }[];
-    section: MediaSection | undefined;
+    section: MediaSectionIdentifier | undefined;
   }>
 >(
   window,
@@ -832,11 +840,14 @@ const addToFiles = async (
   if (!isJwpub(files[0]?.path)) showFileImportDialog.value = false;
 };
 
-const openImportMenu = (section: MediaSection | undefined) => {
+const openImportMenu = (section: MediaSectionIdentifier | undefined) => {
   window.dispatchEvent(
-    new CustomEvent<{ section: MediaSection | undefined }>('openImportMenu', {
-      detail: { section },
-    }),
+    new CustomEvent<{ section: MediaSectionIdentifier | undefined }>(
+      'openImportMenu',
+      {
+        detail: { section },
+      },
+    ),
   );
 };
 

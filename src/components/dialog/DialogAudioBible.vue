@@ -196,7 +196,7 @@
 <script setup lang="ts">
 import type {
   MediaLink,
-  MediaSection,
+  MediaSectionIdentifier,
   Publication,
   PublicationFiles,
 } from 'src/types';
@@ -215,7 +215,7 @@ const { t } = useI18n();
 
 // Props
 const props = defineProps<{
-  section: MediaSection | undefined;
+  section: MediaSectionIdentifier | undefined;
 }>();
 
 const open = defineModel<boolean>({ default: false });

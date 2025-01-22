@@ -275,7 +275,7 @@
 <script setup lang="ts">
 import type {
   JwLangCode,
-  MediaSection,
+  MediaSectionIdentifier,
   MultimediaItem,
   PublicationFetcher,
 } from 'src/types';
@@ -306,7 +306,7 @@ const { currentSettings } = storeToRefs(currentState);
 
 // Props
 const props = defineProps<{
-  section: MediaSection | undefined;
+  section: MediaSectionIdentifier | undefined;
 }>();
 
 const open = defineModel<boolean>({ default: false });

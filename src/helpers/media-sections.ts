@@ -1,4 +1,4 @@
-import type { DynamicMediaSection } from 'src/types';
+import type { MediaSection } from 'src/types';
 
 import { i18n } from 'boot/i18n';
 import { standardSections } from 'src/constants/media';
@@ -9,11 +9,10 @@ export const addSection = () => {
   if (!selectedDateObject) return;
   if (!selectedDateObject?.customSections)
     selectedDateObject.customSections = [];
-  const newSection: DynamicMediaSection = {
+  const newSection: MediaSection = {
     alwaysShow: true,
     bgColor: getRandomColor(),
     extraMediaShortcut: true,
-    items: [],
     // @ts-expect-error: t has no matching signature
     label: i18n.global.t('imported-media'),
     uniqueId: 'custom-' + Date.now().toString(),
@@ -31,19 +30,14 @@ export const deleteSection = (uniqueId: string) => {
 
   if (sectionIndex === -1) return;
 
-  const [removedSection] = selectedDateObject.customSections.splice(
-    sectionIndex,
-    1,
-  );
-  removedSection?.items?.forEach((itemToReassign) => {
-    const mediaItem = selectedDateObject.dynamicMedia?.find(
-      (m) => m.uniqueId === itemToReassign.uniqueId,
-    );
-    if (mediaItem) {
-      mediaItem.section = 'additional';
-      mediaItem.sectionOriginal = 'additional';
-    }
-  });
+  selectedDateObject.customSections.splice(sectionIndex, 1);
+
+  selectedDateObject.dynamicMedia
+    ?.filter((m) => m.uniqueId === uniqueId)
+    .forEach((m) => {
+      m.section = 'additional';
+      m.sectionOriginal = 'additional';
+    });
 };
 
 const getRandomColor = () => {
@@ -63,7 +57,7 @@ export const isStandardSection = (section: string) => {
   return standardSections.includes(section);
 };
 
-export const getTextColor = (section: DynamicMediaSection) => {
+export const getTextColor = (section: MediaSection) => {
   const bgColor = section.bgColor;
   if (!bgColor) return;
   // Convert HEX to RGB

@@ -38,8 +38,8 @@ export interface DynamicMediaObject {
   markers?: VideoMarker[];
   parentUniqueId?: string;
   repeat?: boolean;
-  section: MediaSection;
-  sectionOriginal: MediaSection;
+  section: MediaSectionIdentifier;
+  sectionOriginal: MediaSectionIdentifier;
   sortOrderOriginal: number | string;
   source: 'additional' | 'dynamic' | 'watched';
   streamUrl?: string;
@@ -50,15 +50,8 @@ export interface DynamicMediaObject {
   uniqueId: string;
 }
 
-export interface DynamicMediaSection {
-  alwaysShow: boolean;
-  bgColor?: string;
-  extraMediaShortcut?: boolean;
+export interface DynamicMediaSection extends MediaSection {
   items: DynamicMediaObject[];
-  jwIcon?: string;
-  label: string;
-  mmmIcon?: string;
-  uniqueId: MediaSection;
 }
 
 export interface FileDownloader {
@@ -70,7 +63,17 @@ export interface FileDownloader {
   url: string;
 }
 
-export type MediaSection =
+export interface MediaSection {
+  alwaysShow: boolean;
+  bgColor?: string;
+  extraMediaShortcut?: boolean;
+  jwIcon?: string;
+  label: string;
+  mmmIcon?: string;
+  uniqueId: MediaSectionIdentifier;
+}
+
+export type MediaSectionIdentifier =
   | 'additional'
   | 'ayfm'
   | 'circuitOverseer'
@@ -90,7 +93,7 @@ export interface SortableMediaList {
   jwIcon?: string | undefined;
   label: string;
   mmmIcon?: string | undefined;
-  type: MediaSection;
+  type: MediaSectionIdentifier;
 }
 export type SortableMediaLists = SortableMediaList[];
 

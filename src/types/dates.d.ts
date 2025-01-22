@@ -1,8 +1,8 @@
-import type { DynamicMediaObject, DynamicMediaSection } from './media';
+import type { DynamicMediaObject, MediaSection } from './media';
 
 export interface DateInfo {
   complete: boolean;
-  customSections?: DynamicMediaSection[];
+  customSections?: MediaSection[];
   date: Date;
   dynamicMedia: DynamicMediaObject[];
   error: boolean;

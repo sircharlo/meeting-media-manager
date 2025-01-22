@@ -1,4 +1,4 @@
-import type { MediaSection } from 'src/types';
+import type { MediaSectionIdentifier } from 'src/types';
 
 export const FULL_HD = { height: 1080, width: 1920 };
 
@@ -42,7 +42,7 @@ export const OTHER_EXTENSIONS = [
   ...JWL_PLAYLIST_EXTENSIONS,
 ];
 
-export const standardSections: MediaSection[] = [
+export const standardSections: MediaSectionIdentifier[] = [
   'additional',
   'ayfm',
   'circuitOverseer',

@@ -27,7 +27,7 @@
             }"
             @end="handleMediaSectionSort"
           >
-            <template #item="{ element }: { element: DynamicMediaSection }">
+            <template #item="{ element }: { element: MediaSection }">
               <q-item
                 :key="element.uniqueId"
                 :style="{
@@ -103,7 +103,7 @@
 
 <script setup lang="ts">
 import type { SortableEvent } from 'sortablejs';
-import type { DynamicMediaSection } from 'src/types';
+import type { MediaSection } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { Sortable } from 'sortablejs-vue3';

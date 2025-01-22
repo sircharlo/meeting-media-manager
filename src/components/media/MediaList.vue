@@ -1,4 +1,5 @@
 <template>
+  {{ !!mediaItemBeingSorted }}
   <q-list
     v-show="
       mediaList.items?.filter((m) => !m.hidden).length || mediaList.alwaysShow
@@ -148,7 +149,9 @@
               {{
                 selectedDateObject && isWeMeetingDay(selectedDateObject?.date)
                   ? t('dont-forget-add-missing-media')
-                  : t('no-media-files-for-section')
+                  : !mediaItemBeingSorted
+                    ? t('no-media-files-for-section')
+                    : t('drop-media-here')
               }}
             </span>
           </div>
@@ -164,13 +167,47 @@
         group: 'mediaLists',
         ghostClass: 'bg-accent-200',
       }"
-      @add="handleMediaSort($event, 'ADD', mediaList.uniqueId as MediaSection)"
-      @end="handleMediaSort($event, 'END', mediaList.uniqueId as MediaSection)"
+      @add="
+        handleMediaSort(
+          $event,
+          'ADD',
+          mediaList.uniqueId as MediaSectionIdentifier,
+        )
+      "
+      @change="
+        handleMediaSort(
+          $event,
+          'CHANGE',
+          mediaList.uniqueId as MediaSectionIdentifier,
+        )
+      "
+      @end="
+        handleMediaSort(
+          $event,
+          'END',
+          mediaList.uniqueId as MediaSectionIdentifier,
+        )
+      "
       @remove="
-        handleMediaSort($event, 'REMOVE', mediaList.uniqueId as MediaSection)
+        handleMediaSort(
+          $event,
+          'REMOVE',
+          mediaList.uniqueId as MediaSectionIdentifier,
+        )
+      "
+      @sort="
+        handleMediaSort(
+          $event,
+          'SORT',
+          mediaList.uniqueId as MediaSectionIdentifier,
+        )
       "
       @start="
-        handleMediaSort($event, 'START', mediaList.uniqueId as MediaSection)
+        handleMediaSort(
+          $event,
+          'START',
+          mediaList.uniqueId as MediaSectionIdentifier,
+        )
       "
     >
       <template #item="{ element }: { element: DynamicMediaObject }">
@@ -289,6 +326,7 @@ import type {
   DynamicMediaObject,
   DynamicMediaSection,
   MediaSection,
+  MediaSectionIdentifier,
 } from 'src/types';
 
 import { watchImmediate } from '@vueuse/core';
@@ -307,7 +345,7 @@ import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{
   mediaList: DynamicMediaSection;
-  openImportMenu: (section: MediaSection) => void;
+  openImportMenu: (section: MediaSectionIdentifier) => void;
 }>();
 
 const showCustomSectionDialog = ref(false);
@@ -332,11 +370,14 @@ const playState = (id: string) => {
   return 'unknown';
 };
 
-const addSong = (section: MediaSection | undefined) => {
+const addSong = (section: MediaSectionIdentifier | undefined) => {
   window.dispatchEvent(
-    new CustomEvent<{ section: MediaSection | undefined }>('openSongPicker', {
-      detail: { section },
-    }),
+    new CustomEvent<{ section: MediaSectionIdentifier | undefined }>(
+      'openSongPicker',
+      {
+        detail: { section },
+      },
+    ),
   );
 };
 
@@ -460,10 +501,12 @@ const nextMediaUniqueId = computed(() => {
 const handleMediaSort = (
   evt: SortableEvent,
   eventType: string,
-  list: MediaSection,
+  list: MediaSectionIdentifier,
 ) => {
   const sameList = evt.from === evt.to;
   const dynamicMedia = selectedDateObject.value?.dynamicMedia;
+
+  console.log('handleMediaSort', evt, list, sameList, eventType);
 
   if (!dynamicMedia || !Array.isArray(dynamicMedia)) return;
   if (
@@ -504,6 +547,7 @@ const handleMediaSort = (
           }
         }
       }
+      mediaItemBeingSorted.value = undefined;
       break;
     }
 
@@ -521,6 +565,13 @@ const handleMediaSort = (
       break;
     }
 
+    case 'SORT': {
+      if (!sameList) {
+        mediaItemBeingSorted.value = undefined;
+      }
+      break;
+    }
+
     case 'START': {
       const itemBeingSorted =
         getVisibleMediaForSection.value[list]?.[evt.oldIndex];
@@ -532,7 +583,7 @@ const handleMediaSort = (
   }
 };
 
-const mediaListReactiveRef = ref<DynamicMediaSection | undefined>(
+const mediaListReactiveRef = ref<MediaSection | undefined>(
   selectedDateObject.value?.customSections?.find(
     (s) => s.uniqueId === props.mediaList.uniqueId,
   ),

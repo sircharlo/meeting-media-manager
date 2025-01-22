@@ -128,7 +128,7 @@
 import type {
   JwVideoCategory,
   MediaItemsMediatorItem,
-  MediaSection,
+  MediaSectionIdentifier,
 } from 'src/types';
 
 import { whenever } from '@vueuse/core';
@@ -156,7 +156,7 @@ const { currentSettings } = storeToRefs(currentState);
 
 // Props
 defineProps<{
-  section: MediaSection | undefined;
+  section: MediaSectionIdentifier | undefined;
 }>();
 
 const open = defineModel<boolean>({ default: false });
