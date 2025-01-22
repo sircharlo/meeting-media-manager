@@ -11588,7 +11588,7 @@ __metadata:
     msw: "npm:^2.7.0"
     music-metadata: "npm:^10.7.0"
     obs-websocket-js: "npm:^5.0.6"
-    p-queue: "npm:^8.0.1"
+    p-queue: "npm:^8.1.0"
     pdfjs-dist: "npm:^4.10.38"
     pinia: "npm:^2.3.0"
     pinia-plugin-persistedstate: "npm:^4.2.0"
@@ -12961,13 +12961,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-queue@npm:^8.0.1":
-  version: 8.0.1
-  resolution: "p-queue@npm:8.0.1"
+"p-queue@npm:^8.1.0":
+  version: 8.1.0
+  resolution: "p-queue@npm:8.1.0"
   dependencies:
     eventemitter3: "npm:^5.0.1"
     p-timeout: "npm:^6.1.2"
-  checksum: 10c0/fe185bc8bbd32d17a5f6dba090077b1bb326b008b4ec9b0646c57a32a6984035aa8ece909a6d0de7f6c4640296dc288197f430e7394cdc76a26d862339494616
+  checksum: 10c0/6bdea170840546769c29682fed212745c951933476761ed3a981967fab624c7c0120dff79bd99a1ac8b650b420719a245813e944af4b8ee77d4dd78adbf5fe75
   languageName: node
   linkType: hard
 
