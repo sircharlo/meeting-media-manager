@@ -11,14 +11,54 @@ import { capitalize, pad } from 'src/utils/general';
  */
 export const dateFromString = (lookupDate?: Date | string | undefined) => {
   try {
-    const date = lookupDate ? new Date(lookupDate) : new Date();
-    date.setHours(0, 0, 0, 0);
-    return date;
+    let date: Date;
+
+    if (!lookupDate) {
+      // If no input, default to today's date
+      date = new Date();
+    } else if (lookupDate instanceof Date) {
+      // If it's already a Date object
+      date = new Date(lookupDate);
+    } else if (typeof lookupDate === 'string') {
+      // Handle ISO strings or other formats
+      if (!isNaN(Date.parse(lookupDate))) {
+        const isISO = lookupDate.includes('T');
+        if (isISO) {
+          date = new Date(lookupDate); // Parse ISO string directly
+        } else {
+          // Normalize separators for yyyy/mm/dd and yyyy.mm.dd
+          const normalizedDate = lookupDate.replace(/[.\-/]/g, '-');
+          const [year, month, day] = normalizedDate.split('-').map(Number);
+
+          if (
+            typeof year === 'number' &&
+            typeof month === 'number' &&
+            typeof day === 'number' &&
+            !isNaN(year) &&
+            !isNaN(month) &&
+            !isNaN(day)
+          ) {
+            date = new Date(year, month - 1, day); // Create local date
+          } else {
+            throw new Error('Invalid date format');
+          }
+        }
+      } else {
+        throw new Error('Unsupported date format');
+      }
+    } else {
+      throw new Error('Unsupported input type');
+    }
+
+    // Return the date with time set to midnight
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
   } catch (error) {
     errorCatcher(error);
-    const date = new Date();
-    date.setHours(0, 0, 0, 0);
-    return date;
+
+    // Fallback: return today's date set to midnight
+    const fallbackDate = new Date();
+    fallbackDate.setHours(0, 0, 0, 0);
+    return fallbackDate;
   }
 };
 
