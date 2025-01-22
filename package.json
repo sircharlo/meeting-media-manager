@@ -62,7 +62,7 @@
     "pinia-plugin-persistedstate": "^4.2.0",
     "pinia-shared-state": "^0.5.1",
     "pretty-bytes": "^6.1.1",
-    "quasar": "^2.17.6",
+    "quasar": "^2.17.7",
     "sanitize-filename": "^1.6.3",
     "sanitize-html": "^2.14.0",
     "sortablejs": "^1.15.6",
