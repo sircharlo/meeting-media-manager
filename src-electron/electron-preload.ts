@@ -58,6 +58,7 @@ const electronApi: ElectronApi = {
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),
   getUserDataPath: () => invoke('getUserDataPath'),
   getVideoDuration,
+  isDownloadErrorExpected: () => invoke('isDownloadErrorExpected'),
   moveMediaWindow: (t, w, ne) =>
     send('moveMediaWindow', t, w === undefined ? undefined : !w, ne),
   navigateWebsiteWindow,

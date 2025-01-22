@@ -18,7 +18,7 @@ import {
   shell,
   systemPreferences,
 } from 'electron';
-import { downloadFile } from 'main/downloads';
+import { downloadFile, isDownloadErrorExpected } from 'main/downloads';
 import { createVideoFromNonVideo } from 'main/ffmpeg';
 import {
   openFileDialog,
@@ -207,6 +207,9 @@ handleIpcInvoke(
 );
 
 handleIpcInvoke('getAllScreens', async () => getAllScreens());
+handleIpcInvoke('isDownloadErrorExpected', async () =>
+  isDownloadErrorExpected(),
+);
 
 handleIpcInvoke(
   'registerShortcut',

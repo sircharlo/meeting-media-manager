@@ -4,7 +4,6 @@ import { Buffer } from 'buffer';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { fetchRaw } from 'src/utils/api';
 import { getFontsPath } from 'src/utils/fs';
-import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
 export const setElementFont = async (fontName: FontName) => {
@@ -20,9 +19,11 @@ export const setElementFont = async (fontName: FontName) => {
   } catch (error) {
     const url = useJwStore().fontUrls[fontName];
     setFallbackFont(fontName, url);
-    errorCatcher(error, {
-      contexts: { fn: { fontName, name: 'setElementFont', url } },
-    });
+    if (!(await window.electronApi.isDownloadErrorExpected())) {
+      errorCatcher(error, {
+        contexts: { fn: { fontName, name: 'setElementFont', url } },
+      });
+    }
   }
 };
 
@@ -64,13 +65,11 @@ const getLocalFontPath = async (fontName: FontName) => {
       mustDownload = true;
     }
   } catch (error) {
-    if (useCurrentStateStore().online) {
-      errorCatcher(error, {
-        contexts: {
-          fn: { fontName, name: 'getLocalFontPath', url: fontUrls[fontName] },
-        },
-      });
-    }
+    errorCatcher(error, {
+      contexts: {
+        fn: { fontName, name: 'getLocalFontPath', url: fontUrls[fontName] },
+      },
+    });
     mustDownload = true;
   }
   if (mustDownload) {

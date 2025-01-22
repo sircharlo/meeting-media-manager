@@ -845,10 +845,15 @@ export const getStudyBibleMedia = async () => {
       WITH FilteredMultimedia AS (
         SELECT 
             m.MultimediaId,
+            m.MepsDocumentId,
+            m.KeySymbol,
+            m.IssueTagNumber,
+            m.Track,
             m.MimeType,
             m.CategoryType,
             dm.DocumentId,
             m.FilePath,
+            m.Label,
             d.Title,
             pd.Title AS ParentTitle,
             pd.SectionNumber AS ParentSection,
