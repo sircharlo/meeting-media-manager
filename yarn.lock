@@ -2726,13 +2726,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/app-vite@npm:^2.0.7":
-  version: 2.0.7
-  resolution: "@quasar/app-vite@npm:2.0.7"
+"@quasar/app-vite@npm:^2.0.8":
+  version: 2.0.8
+  resolution: "@quasar/app-vite@npm:2.0.8"
   dependencies:
     "@quasar/render-ssr-error": "npm:^1.0.3"
     "@quasar/ssl-certificate": "npm:^1.0.0"
-    "@quasar/vite-plugin": "npm:^1.8.1"
+    "@quasar/vite-plugin": "npm:^1.9.0"
     "@types/chrome": "npm:^0.0.262"
     "@types/compression": "npm:^1.7.5"
     "@types/cordova": "npm:^11.0.3"
@@ -2742,6 +2742,7 @@ __metadata:
     chokidar: "npm:^3.6.0"
     ci-info: "npm:^4.0.0"
     compression: "npm:^1.7.5"
+    confbox: "npm:^0.1.8"
     cross-spawn: "npm:^7.0.6"
     dot-prop: "npm:9.0.0"
     dotenv: "npm:^16.4.5"
@@ -2789,7 +2790,7 @@ __metadata:
       optional: true
   bin:
     quasar: bin/quasar.js
-  checksum: 10c0/c189ae1827073cd617aa8ea1a71cdf7d97b7937af59597700a410eaebe3ba4f7b64020de346cc68368ad56f822dfc50e00cf3cf49e542d502046dfe605efadf1
+  checksum: 10c0/608faa1901017ed59960b1ebe34b1d8edcb45b0261ef82ba63f24d97af2c038b4bbd49df4a45fbaca3b092c02edbefe9435b8480cddfe230cbac9dd2f0c2d110
   languageName: node
   linkType: hard
 
@@ -2867,7 +2868,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/vite-plugin@npm:^1.8.1, @quasar/vite-plugin@npm:^1.9.0":
+"@quasar/vite-plugin@npm:^1.9.0":
   version: 1.9.0
   resolution: "@quasar/vite-plugin@npm:1.9.0"
   peerDependencies:
@@ -11536,7 +11537,7 @@ __metadata:
     "@numairawan/video-duration": "npm:^1.0.0"
     "@panzoom/panzoom": "npm:^4.6.0"
     "@pinia/testing": "npm:^0.1.7"
-    "@quasar/app-vite": "npm:^2.0.7"
+    "@quasar/app-vite": "npm:^2.0.8"
     "@quasar/extras": "npm:^1.16.15"
     "@quasar/icongenie": "npm:^4.0.0"
     "@quasar/quasar-app-extension-testing-unit-vitest": "npm:^1.1.0"
