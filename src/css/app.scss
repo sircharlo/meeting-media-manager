@@ -334,7 +334,6 @@ body.body--dark {
     background: $apply;
   }
 
-  &.additional:before,
   &.circuitOverseer:before,
   &.website:before {
     background: $additional;
@@ -512,7 +511,6 @@ body.body--dark {
   background: $additional;
 }
 
-.text-additional,
 .text-circuitOverseer,
 .text-website {
   color: $additional;

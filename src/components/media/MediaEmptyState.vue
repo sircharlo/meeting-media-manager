@@ -4,7 +4,7 @@
       <div
         v-if="
           !currentSettings?.disableMediaFetching ||
-          !getVisibleMediaForSection.additional?.length
+          !selectedDateObject?.dynamicMedia?.length
         "
         class="row justify-center"
       >
@@ -108,10 +108,6 @@ watch(
 );
 
 const currentState = useCurrentStateStore();
-const {
-  currentSettings,
-  getVisibleMediaForSection,
-  selectedDate,
-  selectedDateObject,
-} = storeToRefs(currentState);
+const { currentSettings, selectedDate, selectedDateObject } =
+  storeToRefs(currentState);
 </script>

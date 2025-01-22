@@ -11,6 +11,7 @@
     @dragstart="dropActive"
   >
     <div class="col">
+      {{ selectedDateObject?.customSections }}
       <div
         v-if="
           currentSettings?.obsEnable &&
@@ -68,7 +69,7 @@
       <MediaEmptyState
         v-if="
           (currentSettings?.disableMediaFetching &&
-            (getVisibleMediaForSection.additional?.length || 0) < 1) ||
+            (selectedDateObject?.dynamicMedia?.length || 0) < 1) ||
           (!currentSettings?.disableMediaFetching &&
             ((selectedDateObject?.meeting && !selectedDateObject?.complete) ||
               (!selectedDateObject?.customSections?.length &&
@@ -265,26 +266,6 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
     config: DynamicMediaSection;
   }[] = [
     {
-      condition:
-        !!selectedDateObject.value?.dynamicMedia?.some(
-          (m) => m.section === 'additional',
-        ) ||
-        (isComplete && weMeetingDay),
-      config: {
-        alwaysShow: true,
-        extraMediaShortcut:
-          weMeetingDay &&
-          !getVisibleMediaForSection.value.additional?.some(
-            (m) => !m.hidden && m.source !== 'watched',
-          ),
-        items: getVisibleMediaForSection.value.additional || [],
-        jwIcon: weMeetingDay ? '' : undefined,
-        label: weMeetingDay ? t('public-talk') : t('imported-media'),
-        mmmIcon: date && !weMeetingDay ? 'mmm-additional-media' : undefined,
-        uniqueId: 'additional',
-      },
-    },
-    {
       condition: weMeetingDay && isComplete,
       config: {
         alwaysShow: true,
@@ -349,8 +330,14 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
     mediaSections
       .filter(({ condition }) => condition)
       .map(({ config }) => config) ?? [];
-
-  return [...defaultMediaSections, ...customSections];
+  console.log(
+    'customSections',
+    customSections,
+    'defaultMediaSections',
+    defaultMediaSections,
+    selectedDateObject.value?.dynamicMedia,
+  );
+  return [...customSections, ...defaultMediaSections];
 });
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
@@ -623,6 +610,33 @@ watch(
   () => urlVariables.value.mediator,
   () => {
     fetchMedia();
+  },
+);
+
+watch(
+  () => selectedDate.value,
+  (newVal) => {
+    console.log('selectedDate.value', newVal);
+    if (!newVal || !selectedDateObject.value) return;
+    if (
+      !selectedDateObject.value.customSections?.find(
+        (s) => s.uniqueId === 'additional',
+      )
+    ) {
+      if (!selectedDateObject.value.customSections) {
+        selectedDateObject.value.customSections = [];
+      }
+      const weMeetingDay = isWeMeetingDay(selectedDateObject.value.date);
+      selectedDateObject.value.customSections.unshift({
+        alwaysShow: weMeetingDay,
+        bgColor: 'rgb(148, 94, 181)',
+        extraMediaShortcut: true,
+        jwIcon: weMeetingDay ? '' : undefined,
+        label: weMeetingDay ? t('public-talk') : t('imported-media'),
+        mmmIcon: !weMeetingDay ? 'mmm-additional-media' : undefined,
+        uniqueId: 'additional',
+      });
+    }
   },
 );
 

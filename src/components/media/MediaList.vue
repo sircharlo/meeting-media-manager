@@ -1,5 +1,4 @@
 <template>
-  {{ !!mediaItemBeingSorted }}
   <q-list
     v-show="
       mediaList.items?.filter((m) => !m.hidden).length || mediaList.alwaysShow
@@ -7,10 +6,12 @@
     :class="
       'media-section ' +
       mediaList.uniqueId +
-      (mediaList.uniqueId?.startsWith('custom') ? ' custom' : '')
+      ' ' +
+      (mediaSectionCanBeCustomized ? ' custom' : '')
     "
     :style="{
-      '--bg-color': mediaList.bgColor,
+      '--bg-color': mediaList.bgColor || 'rgb(148, 94, 181)',
+      '--text-color': getTextColor(mediaList),
     }"
   >
     <q-item
@@ -19,12 +20,12 @@
         'text-' +
         mediaList.uniqueId +
         ' items-center ' +
-        (mediaList.uniqueId?.startsWith('custom') ? ' custom-text-color' : '')
+        (mediaSectionCanBeCustomized ? ' custom-text-color' : '')
       "
     >
       <q-avatar
         :class="
-          (mediaList.uniqueId?.startsWith('custom')
+          (mediaSectionCanBeCustomized
             ? ' custom-bg-color'
             : ' text-white bg-' + mediaList.uniqueId) +
           (mediaList.jwIcon ? ' jw-icon' : '')
@@ -53,7 +54,7 @@
               "
               class="add-media-shortcut"
               :class="
-                mediaList.uniqueId?.startsWith('custom')
+                mediaSectionCanBeCustomized
                   ? ' custom-text-color'
                   : 'text-white bg-' + mediaList.uniqueId
               "
@@ -80,18 +81,18 @@
               v-else
               class="add-media-shortcut"
               :class="
-                mediaList.uniqueId?.startsWith('custom')
+                mediaSectionCanBeCustomized
                   ? ' custom-text-color'
                   : ' text-white bg-' + mediaList.uniqueId
               "
-              :flat="!isStandardSection(mediaList.uniqueId)"
+              :flat="mediaSectionCanBeCustomized"
               icon="mmm-add-media"
               :label="
-                isStandardSection(mediaList.uniqueId) && $q.screen.gt.xs
+                !mediaSectionCanBeCustomized && $q.screen.gt.xs
                   ? t('add-extra-media')
                   : undefined
               "
-              :round="!isStandardSection(mediaList.uniqueId)"
+              :round="mediaSectionCanBeCustomized"
               size="sm"
               @click="openImportMenu(mediaList.uniqueId)"
             >
@@ -100,11 +101,7 @@
               </q-tooltip>
             </q-btn>
           </template>
-          <template
-            v-if="
-              mediaListReactiveRef && !isStandardSection(mediaList.uniqueId)
-            "
-          >
+          <template v-if="mediaListReactiveRef && mediaSectionCanBeCustomized">
             <q-btn
               class="custom-text-color"
               flat
@@ -127,6 +124,7 @@
               </q-popup-proxy>
             </q-btn>
             <q-btn
+              v-if="mediaList.uniqueId !== 'additional'"
               color="negative"
               flat
               icon="mmm-delete"
@@ -338,7 +336,7 @@ import MediaItem from 'src/components/media/MediaItem.vue';
 import { isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
-import { deleteSection, isStandardSection } from 'src/helpers/media-sections';
+import { deleteSection, getTextColor } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -409,8 +407,15 @@ watchImmediate(
 );
 
 const keyboardShortcutMediaList = computed(() => {
+  const mediaFromCustomSections =
+    selectedDateObject.value?.customSections?.flatMap(
+      (section) =>
+        selectedDateObject.value?.dynamicMedia?.filter(
+          (item) => item.section === section.uniqueId,
+        ) || [],
+    );
   return [
-    ...(getVisibleMediaForSection.value.additional || []),
+    ...(mediaFromCustomSections || []),
     ...(getVisibleMediaForSection.value.tgw || []),
     ...(getVisibleMediaForSection.value.ayfm || []),
     ...(getVisibleMediaForSection.value.lac || []),
@@ -588,6 +593,13 @@ const mediaListReactiveRef = ref<MediaSection | undefined>(
     (s) => s.uniqueId === props.mediaList.uniqueId,
   ),
 );
+
+const mediaSectionCanBeCustomized = computed(() => {
+  return (
+    props.mediaList.uniqueId === 'additional' ||
+    props.mediaList.uniqueId?.startsWith('custom')
+  );
+});
 </script>
 
 <style lang="scss" scoped>

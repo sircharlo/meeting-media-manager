@@ -13,8 +13,8 @@ export const addSection = () => {
     alwaysShow: true,
     bgColor: getRandomColor(),
     extraMediaShortcut: true,
-    // @ts-expect-error: t has no matching signature
-    label: i18n.global.t('imported-media'),
+    label: (i18n.global.t as (key: string) => string)('imported-media'),
+    mmmIcon: 'mmm-additional-media',
     uniqueId: 'custom-' + Date.now().toString(),
   };
   selectedDateObject?.customSections?.push(newSection);
@@ -33,7 +33,7 @@ export const deleteSection = (uniqueId: string) => {
   selectedDateObject.customSections.splice(sectionIndex, 1);
 
   selectedDateObject.dynamicMedia
-    ?.filter((m) => m.uniqueId === uniqueId)
+    ?.filter((m) => m.section === uniqueId)
     .forEach((m) => {
       m.section = 'additional';
       m.sectionOriginal = 'additional';
@@ -59,7 +59,7 @@ export const isStandardSection = (section: string) => {
 
 export const getTextColor = (section: MediaSection) => {
   const bgColor = section.bgColor;
-  if (!bgColor) return;
+  if (!bgColor) return '#ffffff';
   // Convert HEX to RGB
   let b, g, r;
   if (bgColor.startsWith('#')) {
@@ -79,7 +79,7 @@ export const getTextColor = (section: MediaSection) => {
       .map(Number);
   } else {
     console.warn('Invalid color format');
-    return '#000000'; // Default to black if invalid input
+    return '#ffffff'; // Default to white if invalid input
   }
 
   // Calculate relative luminance
@@ -93,5 +93,5 @@ export const getTextColor = (section: MediaSection) => {
     0.2126 * luminance(r) + 0.7152 * luminance(g) + 0.0722 * luminance(b);
 
   // Return white or black based on contrast
-  return lum > 0.179 ? '#000000' : '#ffffff';
+  return lum > 0.3 ? '#000000' : '#ffffff';
 };

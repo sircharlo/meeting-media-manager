@@ -43,7 +43,6 @@ export const OTHER_EXTENSIONS = [
 ];
 
 export const standardSections: MediaSectionIdentifier[] = [
-  'additional',
   'ayfm',
   'circuitOverseer',
   'lac',

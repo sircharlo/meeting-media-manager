@@ -543,7 +543,6 @@ const resetSort = () => {
 
   selectedDateObject.value.dynamicMedia = [
     ...mediaFromCustomSections,
-    ...(getAllMediaForSection.value.additional || []),
     ...sortedMedia.filter((item) => item.section === 'tgw'),
     ...sortedMedia.filter((item) => item.section === 'ayfm'),
     ...sortedMedia.filter((item) => item.section === 'lac'),
