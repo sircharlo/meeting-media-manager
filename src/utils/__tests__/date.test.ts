@@ -90,11 +90,11 @@ describe('getSpecificWeekday', () => {
     const monday = getSpecificWeekday(date, 0);
     expect(monday.getDay()).toBe(1);
 
-    const wednessday = getSpecificWeekday(date, 3);
-    expect(wednessday.getDay()).toBe(4);
+    const wed = getSpecificWeekday(date, 3);
+    expect(wed.getDay()).toBe(4);
 
-    const sunday = getSpecificWeekday(date, 6);
-    expect(sunday.getDay()).toBe(0);
+    const sun = getSpecificWeekday(date, 6);
+    expect(sun.getDay()).toBe(0);
   });
 });
 
@@ -122,7 +122,7 @@ describe('dateFromString', () => {
   });
 
   it('should reset the time to 00:00:00', () => {
-    const date = dateFromString(new Date().toISOString());
+    const date = dateFromString(new Date());
     expect(date.getHours()).toBe(0);
     expect(date.getMinutes()).toBe(0);
     expect(date.getSeconds()).toBe(0);
