@@ -4484,8 +4484,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-
-"@vueuse/core@npm:12.5.0, @vueuse/core@npm:^12.5.0":
+"@vueuse/core@npm:12.5.0, @vueuse/core@npm:^12.4.0, @vueuse/core@npm:^12.5.0":
   version: 12.5.0
   resolution: "@vueuse/core@npm:12.5.0"
   dependencies:
@@ -4562,15 +4561,6 @@ __metadata:
   peerDependencies:
     vue-router: ">=4.0.0-rc.1"
   checksum: 10c0/9342c43d3c8f1ab5e935c4b971f06023152ab801ec613d14910db1096657e582c506ab546971c5bff00c0fcf73b6622c04b17096080a04a2bf84df91903dc6b2
-  languageName: node
-  linkType: hard
-
-"@vueuse/shared@npm:12.4.0":
-  version: 12.4.0
-  resolution: "@vueuse/shared@npm:12.4.0"
-  dependencies:
-    vue: "npm:^3.5.13"
-  checksum: 10c0/0e34bd94c9aee2240b45f33d952878dedb30f82348d05987e9dd99929a8d8984a753c5f9f2ed2e757bd29189b04119340c7c8ebfa812ceb86347809683ba6071
   languageName: node
   linkType: hard
 
