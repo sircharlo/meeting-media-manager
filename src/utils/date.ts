@@ -44,10 +44,10 @@ export const dateFromString = (lookupDate?: Date | string | undefined) => {
           }
         }
       } else {
-        throw new Error('Unsupported date format');
+        throw new Error(`Unsupported date format: ${lookupDate}`);
       }
     } else {
-      throw new Error('Unsupported input type');
+      throw new Error(`Unsupported input type: ${lookupDate}`);
     }
 
     // Return the date with time set to midnight
