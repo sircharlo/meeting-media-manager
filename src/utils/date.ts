@@ -40,7 +40,7 @@ export const dateFromString = (lookupDate?: Date | string | undefined) => {
           ) {
             date = new Date(year, month - 1, day); // Create local date
           } else {
-            throw new Error('Invalid date format');
+            throw new Error(`Invalid date format: ${lookupDate}`);
           }
         }
       } else {
