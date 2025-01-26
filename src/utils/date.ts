@@ -40,14 +40,14 @@ export const dateFromString = (lookupDate?: Date | string | undefined) => {
           ) {
             date = new Date(year, month - 1, day); // Create local date
           } else {
-            throw new Error('Invalid date format');
+            throw new Error(`Invalid date format: ${lookupDate}`);
           }
         }
       } else {
-        throw new Error('Unsupported date format');
+        throw new Error(`Unsupported date format: ${lookupDate}`);
       }
     } else {
-      throw new Error('Unsupported input type');
+      throw new Error(`Unsupported input type: ${lookupDate}`);
     }
 
     // Return the date with time set to midnight
