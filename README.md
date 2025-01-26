@@ -45,10 +45,12 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - Import Study Bible media and audio recordings of the New World Translation of the Bible in seconds.
 - Always have a public talks media overview (S-34) one click away and ready to be used any minute you need it.
 - Custom videos, pictures, audio files and even PDF files can be easily imported too!
+- Automatic sync of media and playlists from a watched folder, like Dropbox, OneDrive, or others, so you can upload from home and they’ll be added to M³ in the Kingdom Hall.
 
 **Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
 
 ![M³ preview](./docs/src/assets/m3-preview.png)
+
 
 ## Does M³ work in my language?
 
