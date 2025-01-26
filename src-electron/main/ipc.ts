@@ -18,36 +18,34 @@ import {
   shell,
   systemPreferences,
 } from 'electron';
-
-import { PLATFORM } from '../constants';
-import { downloadFile } from './downloads';
-import { createVideoFromNonVideo } from './ffmpeg';
+import { downloadFile, isDownloadErrorExpected } from 'main/downloads';
+import { createVideoFromNonVideo } from 'main/ffmpeg';
 import {
   openFileDialog,
   openFolderDialog,
-  readDirectory,
   unwatchFolders,
   watchFolder,
-} from './fs';
-import { getAllScreens, setScreenPreferences } from './screen';
-import { setUrlVariables } from './session';
+} from 'main/fs';
+import { getAllScreens, setScreenPreferences } from 'main/screen';
+import { setUrlVariables, shouldQuit } from 'main/session';
 import {
   registerShortcut,
   unregisterAllShortcuts,
   unregisterShortcut,
-} from './shortcuts';
-import { triggerUpdateCheck } from './updater';
-import { isSelf } from './utils';
-import { logToWindow } from './window/window-base';
-import { mainWindow, toggleAuthorizedClose } from './window/window-main';
-import { mediaWindow, moveMediaWindow } from './window/window-media';
+} from 'main/shortcuts';
+import { triggerUpdateCheck } from 'main/updater';
+import { isSelf } from 'main/utils';
+import { logToWindow } from 'main/window/window-base';
+import { mainWindow, toggleAuthorizedClose } from 'main/window/window-main';
+import { mediaWindow, moveMediaWindow } from 'main/window/window-media';
 import {
   askForMediaAccess,
   createWebsiteWindow,
   navigateWebsiteWindow,
   websiteWindow,
   zoomWebsiteWindow,
-} from './window/window-website';
+} from 'main/window/window-website';
+import { PLATFORM } from 'src-electron/constants';
 
 // IPC send/on
 
@@ -97,7 +95,8 @@ handleIpcSend('setScreenPreferences', (_e, prefs: string) => {
 
 handleIpcSend('authorizedClose', () => {
   toggleAuthorizedClose(true);
-  mainWindow?.close();
+  if (shouldQuit) app.quit();
+  else if (mainWindow && !mainWindow.isDestroyed()) mainWindow.close();
 });
 
 handleIpcSend('toggleOpenAtLogin', (_e, openAtLogin: boolean) => {
@@ -197,6 +196,7 @@ function handleIpcInvoke<T = unknown>(
 
 handleIpcInvoke('getAppDataPath', async () => app.getPath('appData'));
 handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
+handleIpcInvoke('getLocales', async () => app.getPreferredSystemLanguages());
 
 handleIpcInvoke(
   'getScreenAccessStatus',
@@ -207,17 +207,14 @@ handleIpcInvoke(
 );
 
 handleIpcInvoke('getAllScreens', async () => getAllScreens());
+handleIpcInvoke('isDownloadErrorExpected', async () =>
+  isDownloadErrorExpected(),
+);
 
 handleIpcInvoke(
   'registerShortcut',
   async (_e, name: keyof SettingsValues, keySequence: string) =>
     registerShortcut(name, keySequence),
-);
-
-handleIpcInvoke(
-  'readdir',
-  async (_e, dir: string, withSizes?: boolean, recursive?: boolean) =>
-    readDirectory(dir, withSizes, recursive),
 );
 
 handleIpcInvoke(

@@ -93,7 +93,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Install Apple certificate
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && github.actor != 'dependabot[bot]'
         env:
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
           MAC_CERTIFICATE_BASE64: ${{ secrets.MAC_CERTIFICATE_BASE64 }}
@@ -115,7 +115,7 @@ jobs:
           security import $CERTIFICATE_PATH -P "$MAC_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
           security list-keychain -d user -s $KEYCHAIN_PATH
       - name: Run security find-identity -v
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && github.actor != 'dependabot[bot]'
         run: security find-identity -v
       - name: Build and Publish Electron App
         run: |
@@ -130,7 +130,7 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_SOURCE_MAPS: ${{ secrets.SENTRY_SOURCE_MAPS }}
       - name: Clean up keychain and provisioning profile
-        if: always() && runner.os == 'macOS'
+        if: always() && runner.os == 'macOS' && github.actor != 'dependabot[bot]'
         run: |
           rm -f $RUNNER_TEMP/build_certificate.p12
           security delete-keychain $RUNNER_TEMP/app-signing.keychain-db

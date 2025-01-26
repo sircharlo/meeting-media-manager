@@ -36,6 +36,7 @@ interface Store {
   downloadProgress: DownloadProgressItems;
   extractedFiles: Partial<Record<string, string>>;
   ffmpegPath: string;
+  mediaItemBeingSorted: DynamicMediaObject | undefined;
   mediaPlayingAction: '' | 'pause' | 'play' | 'website';
   mediaPlayingCurrentPosition: number;
   mediaPlayingPanzoom: Partial<{ scale: number; x: number; y: number }>;
@@ -317,6 +318,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       downloadProgress: {},
       extractedFiles: {},
       ffmpegPath: '',
+      mediaItemBeingSorted: undefined,
       mediaPlayingAction: '',
       mediaPlayingCurrentPosition: 0,
       mediaPlayingPanzoom: { scale: 1, x: 0, y: 0 },

@@ -1,10 +1,9 @@
 import type { SettingsValues } from 'src/types';
 
 import { globalShortcut } from 'electron';
-
-import { captureElectronError } from './utils';
-import { sendToWindow } from './window/window-base';
-import { mainWindow } from './window/window-main';
+import { captureElectronError } from 'main/utils';
+import { sendToWindow } from 'main/window/window-base';
+import { mainWindow } from 'main/window/window-main';
 
 export const registerShortcut = (
   name: keyof SettingsValues,

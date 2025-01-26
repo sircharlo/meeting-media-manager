@@ -1,6 +1,6 @@
 import type { NavigateWebsiteAction } from 'src/types';
 
-import { listen, send } from './ipc';
+import { listen, send } from 'preload/ipc';
 
 const webStreamBroadcastChannel = new BroadcastChannel('web-stream');
 

@@ -17,7 +17,7 @@ export default defineWorkspace([
       include: ['src/**/*.test.ts'],
       name: 'quasar',
       server: { deps: { inline: ['fs-extra', 'graceful-fs'] } },
-      setupFiles: 'test/vitest/setup.quasar.ts',
+      setupFiles: 'test/vitest/setup/setup.quasar.ts',
     },
   },
   {
@@ -27,7 +27,7 @@ export default defineWorkspace([
       include: ['src-electron/**/*.test.ts'],
       name: 'electron',
       server: { deps: { inline: ['fs-extra', 'graceful-fs'] } },
-      setupFiles: 'test/vitest/setup.electron.ts',
+      setupFiles: 'test/vitest/setup/setup.electron.ts',
     },
   },
   {
@@ -37,7 +37,7 @@ export default defineWorkspace([
       environment: 'node',
       include: ['docs/**/*.test.ts'],
       name: 'docs',
-      setupFiles: 'test/vitest/setup.docs.ts',
+      setupFiles: 'test/vitest/setup/setup.docs.ts',
     },
   },
 ]);

@@ -1,7 +1,7 @@
-import type { ConversionOptions } from 'app/src-electron/preload/converters';
 import type decompress from 'decompress';
 import type { default as FsExtra } from 'fs-extra';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
+import type { ConversionOptions } from 'src-electron/preload/converters';
 import type {
   FileItem,
   QueryResponseItem,
@@ -64,6 +64,7 @@ export interface ElectronApi {
   fs: typeof FsExtra;
   getAllScreens: () => Promise<Display[]>;
   getAppDataPath: () => Promise<string>;
+  getLocales: () => Promise<string[]>;
   getLocalPathFromFileObject: (fileObject: File) => string;
   getNrOfPdfPages: (pdfPath: string) => Promise<number>;
   getScreenAccessStatus: () => Promise<MediaAccessStatus>;
@@ -76,6 +77,7 @@ export interface ElectronApi {
    * @returns A promise that resolves to the metadata of the media file.
    */
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
+  isDownloadErrorExpected: () => Promise<boolean>;
   moveMediaWindow: (
     targetScreenNumber?: number,
     windowedMode?: boolean,
@@ -171,11 +173,12 @@ export type ElectronIpcInvokeKey =
   | 'downloadFile'
   | 'getAllScreens'
   | 'getAppDataPath'
+  | 'getLocales'
   | 'getScreenAccessStatus'
   | 'getUserDataPath'
+  | 'isDownloadErrorExpected'
   | 'openFileDialog'
   | 'openFolderDialog'
-  | 'readdir'
   | 'registerShortcut';
 
 // BrowserWindow.webContents.send / ipcRenderer.on channels

@@ -1,9 +1,5 @@
 import { init as initSentry } from '@sentry/electron/main';
 import { bugs, homepage, repository, version } from 'app/package.json';
-
-import './main/ipc';
-import './main/security';
-
 import {
   app,
   Menu,
@@ -11,22 +7,22 @@ import {
   type MenuItemConstructorOptions,
   shell,
 } from 'electron';
-import { SENTRY_DSN } from 'src/constants/sentry';
 import upath from 'upath';
 const { join } = upath;
 
-import { PLATFORM } from './constants';
-import { cancelAllDownloads } from './main/downloads';
-import { initScreenListeners } from './main/screen';
-import { initSessionListeners } from './main/session';
-import { initUpdater } from './main/updater';
-import { captureElectronError } from './main/utils';
-import { closeOtherWindows, sendToWindow } from './main/window/window-base';
+import { PLATFORM } from 'src-electron/constants';
+import { initScreenListeners } from 'src-electron/main/screen';
+import { initSessionListeners, setShouldQuit } from 'src-electron/main/session';
+import { initUpdater } from 'src-electron/main/updater';
+import { captureElectronError } from 'src-electron/main/utils';
+import { sendToWindow } from 'src-electron/main/window/window-base';
 import {
   authorizedClose,
   createMainWindow,
   mainWindow,
-} from './main/window/window-main';
+} from 'src-electron/main/window/window-main';
+import 'src-electron/main/ipc';
+import 'src-electron/main/security';
 
 if (PLATFORM === 'win32') {
   app.setAppUserModelId('sircharlo.meeting-media-manager');
@@ -51,7 +47,7 @@ if (process.env.PORTABLE_EXECUTABLE_DIR) {
 }
 
 initSentry({
-  dsn: SENTRY_DSN,
+  dsn: 'https://0f2ab1c7ddfb118d25704c85957b8188@o1401005.ingest.us.sentry.io/4507449197920256',
   environment: process.env.NODE_ENV,
   release: `meeting-media-manager@${version}`,
   tracesSampleRate: 1.0,
@@ -68,29 +64,22 @@ app.on('window-all-closed', () => {
 });
 
 app.on('before-quit', (e) => {
-  if (PLATFORM === 'darwin' && mainWindow) {
-    if (authorizedClose) {
-      cancelAllDownloads();
-      closeOtherWindows(mainWindow);
-      mainWindow?.close();
-    } else {
-      e.preventDefault();
-      sendToWindow(mainWindow, 'attemptedClose');
-    }
+  if (PLATFORM !== 'darwin') return;
+  if (!mainWindow || mainWindow.isDestroyed()) return;
+  if (authorizedClose) {
+    mainWindow.close();
+  } else {
+    e.preventDefault();
+    setShouldQuit(true);
+    sendToWindow(mainWindow, 'attemptedClose');
   }
 });
 
 app.on('activate', () => {
-  app
-    .whenReady()
-    .then(createMainWindow)
-    .catch((e) => captureElectronError(e));
+  app.whenReady().then(createMainWindow).catch(captureElectronError);
 });
 
-app
-  .whenReady()
-  .then(createMainWindow)
-  .catch((e) => captureElectronError(e));
+app.whenReady().then(createMainWindow).catch(captureElectronError);
 
 function createApplicationMenu() {
   const appMenu: MenuItem | MenuItemConstructorOptions = { role: 'appMenu' };

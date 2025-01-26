@@ -8,7 +8,6 @@ import type {
   ImageTypeSizes,
   JwLangCode,
   JwPlaylistItem,
-  MediaItemsMediator,
   MediaItemsMediatorFile,
   MediaLink,
   MediaSection,
@@ -30,7 +29,7 @@ import {
   decompressJwpub,
   getMediaFromJwPlaylist,
 } from 'src/helpers/mediaPlayback';
-import { fetchJson, fetchPubMediaLinks, fetchRaw } from 'src/utils/api';
+import { fetchMediaItems, fetchPubMediaLinks, fetchRaw } from 'src/utils/api';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
   dateFromString,
@@ -846,10 +845,15 @@ export const getStudyBibleMedia = async () => {
       WITH FilteredMultimedia AS (
         SELECT 
             m.MultimediaId,
+            m.MepsDocumentId,
+            m.KeySymbol,
+            m.IssueTagNumber,
+            m.Track,
             m.MimeType,
             m.CategoryType,
             dm.DocumentId,
             m.FilePath,
+            m.Label,
             d.Title,
             pd.Title AS ParentTitle,
             pd.SectionNumber AS ParentSection,
@@ -2143,39 +2147,27 @@ export const getJwMediaInfo = async (publication: PublicationFetcher) => {
     title: '',
   };
   try {
-    let url = `${urlVariables.mediator}/v1/media-items/`;
-    url += publication.langwritten + '/';
-    if (publication.pub) {
-      url += 'pub-' + publication.pub;
-      let issue = publication.issue?.toString();
-      if (issue && issue.endsWith('00')) issue = issue.slice(0, -2);
-      if (issue && issue !== '0') url += '_' + issue;
-    } else {
-      url += 'docid-' + publication.docid;
-    }
-    if (publication.track) url += '_' + publication.track;
-    if (publication.fileformat?.toLowerCase().includes('mp4')) url += '_VIDEO';
-    else if (publication.fileformat?.toLowerCase().includes('mp3'))
-      url += '_AUDIO';
-    const responseObject = await fetchJson<MediaItemsMediator>(
-      url,
-      undefined,
+    const responseObject = await fetchMediaItems(
+      publication,
+      urlVariables.mediator,
       useCurrentStateStore().online,
     );
-    if (responseObject && responseObject.media.length > 0) {
-      const best = findBestResolution(
-        responseObject.media[0]?.files,
-        useCurrentStateStore().currentSettings?.maxRes,
-      );
-      return {
-        duration: responseObject.media[0]?.duration ?? undefined,
-        subtitles: isMediaLink(best) ? '' : (best?.subtitles?.url ?? ''),
-        thumbnail: getBestImageUrl(responseObject.media[0]?.images ?? {}),
-        title: responseObject.media[0]?.title ?? '',
-      };
-    } else {
-      return emptyResponse;
-    }
+
+    const jwMediaInfo = responseObject?.media[0];
+    if (!jwMediaInfo) return emptyResponse;
+
+    const best = findBestResolution(
+      jwMediaInfo.files,
+      useCurrentStateStore().currentSettings?.maxRes,
+    );
+
+    return {
+      duration: jwMediaInfo.duration,
+      subtitles:
+        !isMediaLink(best) && best?.subtitles ? best.subtitles.url : '',
+      thumbnail: getBestImageUrl(jwMediaInfo.images) ?? '',
+      title: jwMediaInfo.title,
+    };
   } catch (error) {
     errorCatcher(error);
     return emptyResponse;

@@ -1,10 +1,9 @@
 import type { Display, ScreenPreferences } from 'src/types';
 
 import { app, type BrowserWindow, screen } from 'electron';
-
-import { captureElectronError } from './utils';
-import { mainWindow } from './window/window-main';
-import { mediaWindow, moveMediaWindow } from './window/window-media';
+import { captureElectronError } from 'main/utils';
+import { mainWindow } from 'main/window/window-main';
+import { mediaWindow, moveMediaWindow } from 'main/window/window-media';
 
 export let screenPreferences: ScreenPreferences = {
   preferredScreenNumber: undefined,

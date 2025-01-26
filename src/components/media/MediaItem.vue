@@ -1009,10 +1009,18 @@ function zoomIn(click?: MouseEvent) {
   if (!panzoom.value) return;
   const zoomFactor = 0.2;
   try {
+    const scale = panzoom.value.getScale();
     if (!click?.clientX && !click?.clientY) {
-      panzoom.value.zoomIn({ step: zoomFactor });
+      if (scale === 1) {
+        panzoom.value.zoomIn({ step: 0.001 });
+        setTimeout(() => {
+          zoomIn();
+        }, 100);
+      } else {
+        panzoom.value.zoomIn({ step: zoomFactor });
+      }
     } else {
-      panzoom.value.zoomToPoint(panzoom.value.getScale() * (1 + zoomFactor), {
+      panzoom.value.zoomToPoint(scale * (1 + zoomFactor), {
         clientX: click?.clientX || 0,
         clientY: click?.clientY || 0,
       });
@@ -1098,15 +1106,10 @@ const initiatePanzoom = () => {
       { passive: true },
     );
 
-    useEventListener(
-      mediaImage.value.$el,
-      'wheel',
-      (e) => {
-        if (!e.ctrlKey) return;
-        panzoom.value?.zoomWithWheel(e);
-      },
-      { passive: true },
-    );
+    useEventListener(mediaImage.value.$el, 'wheel', (e) => {
+      if (!e.ctrlKey) return;
+      panzoom.value?.zoomWithWheel(e);
+    });
 
     useEventListener(
       mediaImage.value.$el,

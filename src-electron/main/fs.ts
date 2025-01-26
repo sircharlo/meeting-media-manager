@@ -1,20 +1,19 @@
-import type { FileDialogFilter, FileItem } from 'src/types';
+import type { Stats } from 'fs-extra';
+import type { FileDialogFilter } from 'src/types';
 
 import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
 import { dialog } from 'electron';
-import fse, { type Dirent, type Stats } from 'fs-extra';
-const { exists, readdir, stat } = fse;
 import {
   IMG_EXTENSIONS,
   JWPUB_EXTENSIONS,
   PDF_EXTENSIONS,
 } from 'src/constants/media';
 import upath from 'upath';
-const { basename, dirname, join, toUnix } = upath;
+const { basename, dirname, toUnix } = upath;
 
-import { captureElectronError } from './utils';
-import { sendToWindow } from './window/window-base';
-import { mainWindow } from './window/window-main';
+import { sendToWindow } from 'main/window/window-base';
+import { mainWindow } from 'main/window/window-main';
+import { captureElectronError } from 'src-electron/main/utils';
 
 export async function openFileDialog(
   single: boolean,
@@ -65,20 +64,6 @@ export async function openFolderDialog() {
 
 const watchers = new Set<FSWatcher>();
 const datePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
-
-export async function readDirectory(
-  dir: string,
-  withSizes?: boolean,
-  recursive?: boolean,
-) {
-  try {
-    if (!(await exists(dir))) return [];
-    return await readDirRecursive(dir, withSizes, recursive);
-  } catch (error) {
-    captureElectronError(error);
-    return [];
-  }
-}
 
 export async function unwatchFolders() {
   for (const watcher of watchers) {
@@ -133,36 +118,4 @@ export async function watchFolder(folderPath: string) {
         }
       }),
   );
-}
-
-async function readDirRecursive(
-  directory: string,
-  withSizes?: boolean,
-  recursive?: boolean,
-): Promise<FileItem[]> {
-  const dirs: Dirent[] = await readdir(directory, {
-    withFileTypes: true,
-  });
-  const dirItems: FileItem[] = [];
-  for (const dirent of dirs) {
-    const fullPath = join(directory, dirent.name);
-    const fileItem: FileItem = {
-      isDirectory: dirent.isDirectory(),
-      isFile: dirent.isFile(),
-      name: dirent.name,
-      parentPath: directory,
-      ...(withSizes &&
-        dirent.isFile() && { size: (await stat(fullPath)).size }),
-    };
-    dirItems.push(fileItem);
-    if (recursive && dirent.isDirectory()) {
-      const subDirItems = await readDirRecursive(
-        fullPath,
-        withSizes,
-        recursive,
-      );
-      dirItems.push(...subDirItems);
-    }
-  }
-  return dirItems;
 }

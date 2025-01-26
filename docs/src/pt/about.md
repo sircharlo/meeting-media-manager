@@ -42,7 +42,9 @@ Em reuniões híbridas ou presenciais, o modo de exibição de mídias integrado
 - Reconhecimento automático de telas externas e gerenciamento delas
 - Integração com o OBS Studio com mudança automática de cena ao apresentar as mídias
 - Exibição do site oficial das Testemunhas de Jeová em uma segunda tela
-- Importe arquivos JWPUB, arquivos JWLPLAYLIST, vídeos do site oficial das Testemunhas de Jeová e mídias para discursos públicos a partir do arquivo S-34 com poucos cliques.
+- Importe arquivos JWPUB, arquivos JWLPLAYLIST e vídeos do site oficial das Testemunhas de Jeová com poucos cliques.
+- Importe mídias da Bíblia de Estudo e gravações de áudio da Tradução de Novo Mundo da Bíblia em segundos.
+- Sempre tenha uma visão geral das mídias dos discursos públicos (S-34) a um clique e prontas para ser usadas a qualquer momento que você precisar.
 - Outros vídeos, imagens, arquivos de áudio e até mesmo arquivos PDF também podem ser facilmente importados!
 
 **Experimente hoje o M³ e veja com os próprios olhos o que ele pode fazer! A exibição de mídias nas reuniões congregacionais nunca foi tão fácil.**

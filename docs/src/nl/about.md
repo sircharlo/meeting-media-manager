@@ -42,7 +42,9 @@ Voor **hybride** of **fysieke** gemeente vergaderingen, heeft de media presentat
 - Automatische herkenning en beheer van externe schermen
 - OBS Studio integratie met automatische scène wisselen tijdens media presentatie
 - De officiële website van Jehovah's Getuigen website op een externe monitor presenteren
-- Importeer JWPUB bestanden, JWLPLAYLIST bestanden, video's van de officiële website van Jehovah's Getuigen, en media voor openbare lezingen uit het S34-bestand in een paar muisklikken.
+- Importeer JWPUB bestanden, JWLPLAYLIST bestanden en video's van de officiële website van Jehovah's Getuigen in een paar klikken.
+- Importeer studiebijbel media en audio-opnames van de Nieuwewereldvertaling van de Bijbel in seconden.
+- Heb altijd een openbare lezing mediaoverzicht (S-34) met één klik beschikbaar en klaar om elk moment te worden gebruikt.
 - Aangepaste video's, afbeeldingen, audiobestanden en zelfs PDF-bestanden kunnen ook gemakkelijk worden geïmporteerd!
 
 **Probeer M³ vandaag nog en kijk zelf wat het kan doen! Het is nog nooit zo eenvoudig geweest om media te presenteren bij vergaderingen.**

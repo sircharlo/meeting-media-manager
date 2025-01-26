@@ -42,7 +42,9 @@ För **hybrid** eller **vanliga** församlingsmöten har det mediepresentationsl
 - Automatisk igenkänning och hantering av extern bildskärm
 - OBS Studio-integration med automatisk scenväxling under mediepresentation
 - Presentera den officiella hemsidan för Jehovas vittnen på en extern bildskärm
-- Importera JWPUB-filer, JWLPLAYLIST-filer, videor från Jehovas vittnens officiella hemsida och media för offentliga föredrag från S-34-filen med några få klick.
+- Importera JWPUB-filer, JWLPLAYLIST-filer och videor från Jehovas officiella hemsida med några få klick.
+- Importera bibelmedier och ljudinspelningar av Nya världens översättning av Bibeln på några sekunder.
+- Ha alltid en överblick över media till offentliga tal (S-34) med ett klick bort och redo att användas när du behöver det.
 - Anpassade videor, bilder, ljudfiler och även PDF-filer kan enkelt importeras!
 
 **Prova M³ idag och se med egna ögon vad den kan göra! Det har aldrig varit enklare att presentera media på församlingsmöten.**

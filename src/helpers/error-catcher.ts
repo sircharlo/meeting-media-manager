@@ -4,19 +4,19 @@ import { captureException } from '@sentry/electron/renderer';
 import { IS_DEV } from 'src/constants/general';
 
 export const errorCatcher = async (
-  originalError: Error | string | unknown,
+  error: Error | string | unknown,
   context?: ExclusiveEventHintOrCaptureContext,
 ) => {
-  if (!originalError) return;
+  if (!error) return;
 
-  if (originalError instanceof Error && originalError.cause) {
-    errorCatcher(originalError.cause, context);
+  if (error instanceof Error && error.cause) {
+    errorCatcher(error.cause, context);
   }
 
   if (!IS_DEV) {
-    captureException(originalError, context);
+    captureException(error, context);
   } else {
-    console.error(originalError);
+    console.error(error);
     console.warn('context', context);
   }
 };

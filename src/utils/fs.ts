@@ -108,7 +108,7 @@ export const removeEmptyDirs = async (rootDir: string) => {
       .filter((item) => item.isDirectory)
       .map((item) => window.electronApi.path.join(rootDir, item.name));
 
-    dirs.forEach((dir) => removeEmptyDir(dir));
+    await Promise.allSettled(dirs.map((dir) => removeEmptyDir(dir)));
   } catch (error) {
     errorCatcher(error);
   }

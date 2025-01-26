@@ -552,6 +552,8 @@
 </template>
 
 <script setup lang="ts">
+import type { LanguageValue } from 'src/constants/locales';
+
 import { watchImmediate } from '@vueuse/core';
 import DialogCongregationLookup from 'components/dialog/DialogCongregationLookup.vue';
 import FolderInput from 'components/form-inputs/FolderInput.vue';
@@ -566,10 +568,12 @@ import {
   downloadSongbookVideos,
   fetchMedia,
 } from 'src/helpers/jw-media';
+import { localeOptions } from 'src/i18n';
+import { camelToKebabCase } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
-import { ref, watch } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
@@ -620,6 +624,36 @@ watchImmediate(
       currentSettings.value.disableMediaFetching = !newRegularProfile;
   },
 );
+
+const loadSystemLocale = async () => {
+  try {
+    const systemLocales = await window.electronApi.getLocales();
+    const availableLocales = localeOptions.map((l) =>
+      camelToKebabCase(l.value),
+    );
+    let match: LanguageValue | undefined;
+    systemLocales.forEach((l) => {
+      if (match || !currentSettings.value) return;
+      if (availableLocales.includes(l.toLowerCase())) {
+        match = l.toLowerCase() as LanguageValue;
+      } else if (
+        availableLocales.includes(l.split('-')[0]?.toLowerCase() ?? '')
+      ) {
+        match = l.split('-')[0]?.toLowerCase() as LanguageValue;
+      }
+    });
+
+    if (match && currentSettings.value) {
+      currentSettings.value.localAppLang = match;
+    }
+  } catch (e) {
+    errorCatcher(e);
+  }
+};
+
+onMounted(() => {
+  loadSystemLocale();
+});
 
 const goToPage = (path: string) => {
   try {

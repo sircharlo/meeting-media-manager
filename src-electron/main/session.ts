@@ -1,21 +1,25 @@
 import type { UrlVariables } from 'src/types';
 
 import { app, session } from 'electron';
-
-import { TRUSTED_DOMAINS } from '../constants';
-//import { JW_DOMAINS, TRUSTED_DOMAINS } from '../constants';
 import {
   getAppVersion,
   isJwDomain,
   isSelf,
   isTrustedDomain,
   isValidUrl,
-} from './utils';
+} from 'main/utils';
+import { TRUSTED_DOMAINS } from 'src-electron/constants';
 
 export let urlVariables: undefined | UrlVariables;
 
 export const setUrlVariables = (variables: UrlVariables) => {
   urlVariables = variables;
+};
+
+export let shouldQuit = false;
+
+export const setShouldQuit = (quit: boolean) => {
+  shouldQuit = quit;
 };
 
 export const initSessionListeners = () => {

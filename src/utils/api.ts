@@ -2,6 +2,7 @@ import type {
   Announcement,
   JwLangCode,
   JwLanguageResult,
+  MediaItemsMediator,
   Publication,
   PublicationFetcher,
   Release,
@@ -25,6 +26,7 @@ export const fetchRaw = async (url: string, init?: RequestInit) => {
  * Fetches json data from the given url.
  * @param url The url to fetch json data from.
  * @param params The url search params.
+ * @param online Whether to catch errors or not.
  * @returns The json data.
  */
 export const fetchJson = async <T>(
@@ -41,7 +43,10 @@ export const fetchJson = async <T>(
       return await response.json();
     } else if (
       ![403, 404].includes(response.status) &&
-      !(response.status === 400 && params?.get('pub')?.startsWith('S-'))
+      !(
+        response.status === 400 &&
+        ['S', 'CO'].some((p) => params?.get('pub')?.startsWith(`${p}-`))
+      )
     ) {
       errorCatcher(new Error('Failed to fetch json!'), {
         contexts: {
@@ -59,7 +64,7 @@ export const fetchJson = async <T>(
       });
     }
   } catch (e) {
-    if (online) {
+    if (online && !(await window.electronApi.isDownloadErrorExpected())) {
       errorCatcher(e, {
         contexts: {
           fn: {
@@ -81,7 +86,7 @@ export const fetchJson = async <T>(
  * @param base The base domain to fetch the languages from.
  * @returns The jw languages.
  */
-export const fetchJwLanguages = async (base?: string) => {
+export const fetchJwLanguages = async (base: string) => {
   if (!base) return;
   const url = `https://www.${base}/en/languages/`;
   const result = await fetchJson<JwLanguageResult>(url);
@@ -101,7 +106,7 @@ export interface YeartextResult {
  * @param base The base domain to fetch the yeartext from.
  * @returns The yeartext.
  */
-export const fetchYeartext = async (wtlocale: JwLangCode, base?: string) => {
+export const fetchYeartext = async (wtlocale: JwLangCode, base: string) => {
   if (!base) return { wtlocale };
   const url = `https://wol.${base}/wol/finder`;
   const result = await fetchJson<YeartextResult>(
@@ -141,9 +146,16 @@ export const fetchLatestVersion = async () => {
   return result?.find((r) => includeBeta || !r.prerelease)?.tag_name.slice(1);
 };
 
+/**
+ * Fetches the media links for the given publication.
+ * @param publication The publication to fetch the media links for.
+ * @param base The base domain to fetch the media links from.
+ * @param online Whether the application is online.
+ * @returns The media links.
+ */
 export const fetchPubMediaLinks = async (
   publication: PublicationFetcher,
-  pubMedia: string,
+  base: string,
   online?: boolean,
 ) => {
   try {
@@ -162,8 +174,50 @@ export const fetchPubMediaLinks = async (
       txtCMSLang: 'E',
     };
     const response = await fetchJson<Publication>(
-      pubMedia,
+      base,
       new URLSearchParams(params),
+      online,
+    );
+    return response;
+  } catch (e) {
+    errorCatcher(e);
+    return null;
+  }
+};
+
+/**
+ * Fetches the media items for the given publication.
+ * @param publication The publication to fetch the media items for.
+ * @param base The base domain to fetch the media items from.
+ * @param online Whether the application is online.
+ * @returns The media items.
+ */
+export const fetchMediaItems = async (
+  publication: PublicationFetcher,
+  base: string,
+  online?: boolean,
+) => {
+  try {
+    const url = `${base}/v1/media-items/${publication.langwritten}`;
+
+    const id = [
+      publication.pub ? `pub-${publication.pub}` : `docid-${publication.docid}`,
+      publication.pub
+        ? publication.issue?.toString().replace(/(\d{6})00$/gm, '$1')
+        : null,
+      publication.track,
+      publication.fileformat?.toLowerCase().includes('mp4')
+        ? 'VIDEO'
+        : publication.fileformat?.toLowerCase().includes('mp3')
+          ? 'AUDIO'
+          : null,
+    ]
+      .filter((v) => !!v && v !== '0')
+      .join('_');
+
+    const response = await fetchJson<MediaItemsMediator>(
+      `${url}/${id}`,
+      undefined,
       online,
     );
     return response;
