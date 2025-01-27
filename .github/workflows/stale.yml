@@ -55,3 +55,17 @@ jobs:
           close-unanswered: 'true'
           category: 'ideas'
           close-reason: 'OUTDATED'
+  close-stale-translations-discussions:
+    runs-on: ubuntu-latest
+    permissions:
+      discussions: write
+    steps:
+      - name: Close stale Translations discussions
+        uses: steffen-karlsson/stalesweeper@v1.1.1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          message: 'This discussion has automatically been closed due to inactivity. If this is still relevant, please open a new discussion.'
+          days-before-close: '30'
+          close-unanswered: 'true'
+          category: 'translations'
+          close-reason: 'OUTDATED'
