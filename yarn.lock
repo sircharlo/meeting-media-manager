@@ -11577,7 +11577,7 @@ __metadata:
     lint-staged: "npm:^15.4.3"
     lodash-es: "npm:^4.17.21"
     msw: "npm:^2.7.0"
-    music-metadata: "npm:^10.7.0"
+    music-metadata: "npm:^10.7.1"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.1.0"
     pdfjs-dist: "npm:^4.10.38"
@@ -12122,9 +12122,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^10.7.0":
-  version: 10.7.0
-  resolution: "music-metadata@npm:10.7.0"
+"music-metadata@npm:^10.7.1":
+  version: 10.7.1
+  resolution: "music-metadata@npm:10.7.1"
   dependencies:
     "@tokenizer/token": "npm:^0.3.0"
     content-type: "npm:^1.0.5"
@@ -12135,7 +12135,7 @@ __metadata:
     strtok3: "npm:^10.0.1"
     token-types: "npm:^6.0.0"
     uint8array-extras: "npm:^1.4.0"
-  checksum: 10c0/ba7769f2a21b19034979105a23c36d962c42deb576846beefea0f3243acab002afdca4376394fad6ec5cae616e5a89ec6e4427e20ead5e71c8eeae6adbc6990b
+  checksum: 10c0/72101e0dfdc1387e24c89b83917f9cbd83a212f93db6e92e08b5b774570af0374b60e1d5fc3903eb759b7099c9e89bad01fad32f86da6781ba1bf1b6d8496f51
   languageName: node
   linkType: hard
 
