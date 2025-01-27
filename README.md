@@ -40,11 +40,12 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - Easy background music playback, with automatic stop before the start of regularly scheduled meetings
 - Automatic external monitor recognition and management
 - OBS Studio integration with automatic scene switching during media presentation
-- Presenting the official website of Jehovah's Witnesses website on an external monitor
+- Presenting the official website of Jehovah's Witnesses on an external monitor
 - Import JWPUB files, JWLPLAYLIST files and videos from the official website of Jehovah's Witnesses in a few clicks.
 - Import Study Bible media and audio recordings of the New World Translation of the Bible in seconds.
 - Always have a public talks media overview (S-34) one click away and ready to be used any minute you need it.
 - Custom videos, pictures, audio files and even PDF files can be easily imported too!
+- Automatic sync of media and playlists from a watched folder, like Dropbox, OneDrive, or others, so you can upload from home and they’ll be added to M³ in the Kingdom Hall.
 
 **Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
 
