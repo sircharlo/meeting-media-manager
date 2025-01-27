@@ -22,10 +22,11 @@
       </div>
       <template v-if="jwpubDocuments?.length && !(!!jwpubDb && jwpubLoading)">
         <div class="row q-px-md overflow-auto">
-          <q-list class="">
+          <q-list class="full-width">
             <q-item
               v-for="jwpubImportDocument in jwpubDocuments"
               :key="jwpubImportDocument.DocumentId"
+              class="rounded-borders"
               clickable
               @click="
                 jwpubLoading = true;
