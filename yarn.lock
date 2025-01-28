@@ -1049,10 +1049,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/js@npm:9.18.0":
-  version: 9.18.0
-  resolution: "@eslint/js@npm:9.18.0"
-  checksum: 10c0/3938344c5ac7feef4b73fcb30f3c3e753570cea74c24904bb5d07e9c42fcd34fcbc40f545b081356a299e11f360c9c274b348c05fb0113fc3d492e5175eee140
+"@eslint/js@npm:9.19.0":
+  version: 9.19.0
+  resolution: "@eslint/js@npm:9.19.0"
+  checksum: 10c0/45dc544c8803984f80a438b47a8e578fae4f6e15bc8478a703827aaf05e21380b42a43560374ce4dad0d5cb6349e17430fc9ce1686fed2efe5d1ff117939ff90
   languageName: node
   linkType: hard
 
@@ -7991,16 +7991,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^9.18.0":
-  version: 9.18.0
-  resolution: "eslint@npm:9.18.0"
+"eslint@npm:^9.19.0":
+  version: 9.19.0
+  resolution: "eslint@npm:9.19.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.2.0"
     "@eslint-community/regexpp": "npm:^4.12.1"
     "@eslint/config-array": "npm:^0.19.0"
     "@eslint/core": "npm:^0.10.0"
     "@eslint/eslintrc": "npm:^3.2.0"
-    "@eslint/js": "npm:9.18.0"
+    "@eslint/js": "npm:9.19.0"
     "@eslint/plugin-kit": "npm:^0.2.5"
     "@humanfs/node": "npm:^0.16.6"
     "@humanwhocodes/module-importer": "npm:^1.0.1"
@@ -8036,7 +8036,7 @@ __metadata:
       optional: true
   bin:
     eslint: bin/eslint.js
-  checksum: 10c0/7f592ad228b9bd627a24870fdc875bacdab7bf535d4b67316c4cb791e90d0125130a74769f3c407b0c4b7027b3082ef33864a63ee1024552a60a17db60493f15
+  checksum: 10c0/3b0dfaeff6a831de086884a3e2432f18468fe37c69f35e1a0a9a2833d9994a65b6dd2a524aaee28f361c849035ad9d15e3841029b67d261d0abd62c7de6d51f5
   languageName: node
   linkType: hard
 
@@ -11150,9 +11150,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:^15.4.2":
-  version: 15.4.2
-  resolution: "lint-staged@npm:15.4.2"
+"lint-staged@npm:^15.4.3":
+  version: 15.4.3
+  resolution: "lint-staged@npm:15.4.3"
   dependencies:
     chalk: "npm:^5.4.1"
     commander: "npm:^13.1.0"
@@ -11166,7 +11166,7 @@ __metadata:
     yaml: "npm:^2.7.0"
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: 10c0/08dd28149241788f7ca628a64c9c1817a9dfbe19517ba0317fdf96a1109f6d624948864edfeaf2936561bb49c65aeb32d5ddc75fb15afa2b6527024ef01a546b
+  checksum: 10c0/c1f71f2273bcbd992af929620f5acc6b9f6899da4b395e780e0b3ab33a0d725c239eb961873067c8c842e057c585c71dd4d44c0dc8b25539d3c2e97a3bdd6f30
   languageName: node
   linkType: hard
 
@@ -11564,7 +11564,7 @@ __metadata:
     electron-builder: "npm:^25.1.8"
     electron-dl-manager: "npm:^3.2.1"
     electron-updater: "npm:^6.3.9"
-    eslint: "npm:^9.18.0"
+    eslint: "npm:^9.19.0"
     eslint-plugin-perfectionist: "npm:^4.7.0"
     eslint-plugin-vue: "npm:^9.32.0"
     fluent-ffmpeg: "npm:^2.1.3"
@@ -11574,10 +11574,10 @@ __metadata:
     husky: "npm:^9.1.7"
     image-size: "npm:^1.2.0"
     is-online: "npm:^11.0.0"
-    lint-staged: "npm:^15.4.2"
+    lint-staged: "npm:^15.4.3"
     lodash-es: "npm:^4.17.21"
     msw: "npm:^2.7.0"
-    music-metadata: "npm:^10.7.0"
+    music-metadata: "npm:^10.7.1"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.1.0"
     pdfjs-dist: "npm:^4.10.38"
@@ -12122,9 +12122,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^10.7.0":
-  version: 10.7.0
-  resolution: "music-metadata@npm:10.7.0"
+"music-metadata@npm:^10.7.1":
+  version: 10.7.1
+  resolution: "music-metadata@npm:10.7.1"
   dependencies:
     "@tokenizer/token": "npm:^0.3.0"
     content-type: "npm:^1.0.5"
@@ -12135,7 +12135,7 @@ __metadata:
     strtok3: "npm:^10.0.1"
     token-types: "npm:^6.0.0"
     uint8array-extras: "npm:^1.4.0"
-  checksum: 10c0/ba7769f2a21b19034979105a23c36d962c42deb576846beefea0f3243acab002afdca4376394fad6ec5cae616e5a89ec6e4427e20ead5e71c8eeae6adbc6990b
+  checksum: 10c0/72101e0dfdc1387e24c89b83917f9cbd83a212f93db6e92e08b5b774570af0374b60e1d5fc3903eb759b7099c9e89bad01fad32f86da6781ba1bf1b6d8496f51
   languageName: node
   linkType: hard
 
