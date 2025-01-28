@@ -3053,30 +3053,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry-internal/browser-utils@npm:8.48.0":
-  version: 8.48.0
-  resolution: "@sentry-internal/browser-utils@npm:8.48.0"
-  dependencies:
-    "@sentry/core": "npm:8.48.0"
-  checksum: 10c0/0d61094a87c35e305b13cb43c3f48ffb9345e23b06f0e792763c5c84ada68cb999abfc5a49db1dea1b6e58e2bef98963221eb35a947008083b84fee1b60d4f41
-  languageName: node
-  linkType: hard
-
 "@sentry-internal/browser-utils@npm:8.51.0":
   version: 8.51.0
   resolution: "@sentry-internal/browser-utils@npm:8.51.0"
   dependencies:
     "@sentry/core": "npm:8.51.0"
   checksum: 10c0/6ef56baa0881cf41ee5f084545c5e55067d3ea8616bef6bb1909ffd26a1310a898c12de8a63aad69d2f2d162fd480103aed2f118e13af1b325e3172505d14b62
-  languageName: node
-  linkType: hard
-
-"@sentry-internal/feedback@npm:8.48.0":
-  version: 8.48.0
-  resolution: "@sentry-internal/feedback@npm:8.48.0"
-  dependencies:
-    "@sentry/core": "npm:8.48.0"
-  checksum: 10c0/3af3ec32f71cb0c41b7d91e81e4886d4ecb2bbaffe46d590e3ba4c7aeb352b41e7ef2a3f5f29414092bc2a24dc3d16aefb1839bd48a0b39bba9cd8d911bd7ace
   languageName: node
   linkType: hard
 
@@ -3089,16 +3071,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry-internal/replay-canvas@npm:8.48.0":
-  version: 8.48.0
-  resolution: "@sentry-internal/replay-canvas@npm:8.48.0"
-  dependencies:
-    "@sentry-internal/replay": "npm:8.48.0"
-    "@sentry/core": "npm:8.48.0"
-  checksum: 10c0/7495435d0129bdb28cee08ca30834444fcde981fe76ad2c1daee76d6d8a3d8889788a45e7975c89333fe756ecaee4a48a39110d8bf3c871959e669cda196c49a
-  languageName: node
-  linkType: hard
-
 "@sentry-internal/replay-canvas@npm:8.51.0":
   version: 8.51.0
   resolution: "@sentry-internal/replay-canvas@npm:8.51.0"
@@ -3106,16 +3078,6 @@ __metadata:
     "@sentry-internal/replay": "npm:8.51.0"
     "@sentry/core": "npm:8.51.0"
   checksum: 10c0/49e0ade1a776b1fa5390647084806b67c1ccc79b5e223d045388db7f1a9a1e0eae0d404e4fffa67706deb2454860dcd8a7bd4c89ff28b33212cf60a2742ec82f
-  languageName: node
-  linkType: hard
-
-"@sentry-internal/replay@npm:8.48.0":
-  version: 8.48.0
-  resolution: "@sentry-internal/replay@npm:8.48.0"
-  dependencies:
-    "@sentry-internal/browser-utils": "npm:8.48.0"
-    "@sentry/core": "npm:8.48.0"
-  checksum: 10c0/607fc41c67053f37bb8e0d15187e3158274aa8d4c35efed225a775f78547ae9fbffe51b6d7f06c6cc9bcbd5a7d54356cecc3143385d68f9b499cf5f8b7818931
   languageName: node
   linkType: hard
 
@@ -3133,19 +3095,6 @@ __metadata:
   version: 3.1.0
   resolution: "@sentry/babel-plugin-component-annotate@npm:3.1.0"
   checksum: 10c0/fb98cc96cec48e4a0232816ace15db7d782366827617d6c6fcd435be2dab6a5097d2dc3a43726e8673789ffe685f1a4e299c56cf30f53396fee35ecc5aba76e7
-  languageName: node
-  linkType: hard
-
-"@sentry/browser@npm:8.48.0":
-  version: 8.48.0
-  resolution: "@sentry/browser@npm:8.48.0"
-  dependencies:
-    "@sentry-internal/browser-utils": "npm:8.48.0"
-    "@sentry-internal/feedback": "npm:8.48.0"
-    "@sentry-internal/replay": "npm:8.48.0"
-    "@sentry-internal/replay-canvas": "npm:8.48.0"
-    "@sentry/core": "npm:8.48.0"
-  checksum: 10c0/e6f5ba45ef149e2ccdcc31324021d3530946e8174058a3cd6b8ee5092454a6f7d748467fcf149222a867099349d27673491ffe7cc016731ba7a0f145d5a9d567
   languageName: node
   linkType: hard
 
@@ -3264,13 +3213,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:8.48.0":
-  version: 8.48.0
-  resolution: "@sentry/core@npm:8.48.0"
-  checksum: 10c0/c25fd9be19944ab13d3f7bd0330b047cfd76f60e7c443b275f338f1fd2b1e2cf848378e9a2aef529f7fcecaf86976d01194920a467fd0c8fe2a14e89430838e2
-  languageName: node
-  linkType: hard
-
 "@sentry/core@npm:8.51.0":
   version: 8.51.0
   resolution: "@sentry/core@npm:8.51.0"
@@ -3369,19 +3311,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/vue@npm:8.48.0":
-  version: 8.48.0
-  resolution: "@sentry/vue@npm:8.48.0"
+"@sentry/vue@npm:8.51.0":
+  version: 8.51.0
+  resolution: "@sentry/vue@npm:8.51.0"
   dependencies:
-    "@sentry/browser": "npm:8.48.0"
-    "@sentry/core": "npm:8.48.0"
+    "@sentry/browser": "npm:8.51.0"
+    "@sentry/core": "npm:8.51.0"
   peerDependencies:
     pinia: 2.x
     vue: 2.x || 3.x
   peerDependenciesMeta:
     pinia:
       optional: true
-  checksum: 10c0/b30c41464a351f4bcaaf86c8e4ff9750a7ca6ef16984b711a8e86ffce144f2a97b05695b64ff38430c3ad22e2c1c4c1c86ae9351d4ddbb323d0035c86b6d2369
+  checksum: 10c0/a447b34699e79ef7547805a33fe5a902291dffbe2ee221378509e1ef0a682fd6178fb5ff616ba949c34d4a808bd34dbfd4037645396909c5a0fae5443a25fc9d
   languageName: node
   linkType: hard
 
@@ -3906,21 +3848,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^20.17.16":
+"@types/node@npm:^20.17.16, @types/node@npm:^20.9.0":
   version: 20.17.16
   resolution: "@types/node@npm:20.17.16"
   dependencies:
     undici-types: "npm:~6.19.2"
   checksum: 10c0/50c589dd6a377238bc51b6fb5b8fc60ff6d688df0bde621d4a9fc59f480eb956cdf6d46052e1cb9536f150bc62e9194ddc733aa78b65e812155b4d3a32717de2
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^20.9.0":
-  version: 20.17.14
-  resolution: "@types/node@npm:20.17.14"
-  dependencies:
-    undici-types: "npm:~6.19.2"
-  checksum: 10c0/2af0722989c677416dec4d9bc37e262a9724e090e5ce021a976e4ab12d4fa26aecbb00dddc8114d0fbf4a6552f12ace0ec98156247a20bf4d57809b7ce90ea5a
   languageName: node
   linkType: hard
 
@@ -7488,7 +7421,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^34.0.0":
+"electron@npm:^34.0.1":
   version: 34.0.1
   resolution: "electron@npm:34.0.1"
   dependencies:
@@ -11594,7 +11527,7 @@ __metadata:
     "@sentry/electron": "npm:^5.11.0"
     "@sentry/esbuild-plugin": "npm:^3.1.0"
     "@sentry/vite-plugin": "npm:^3.1.0"
-    "@sentry/vue": "npm:8.48.0"
+    "@sentry/vue": "npm:8.51.0"
     "@types/better-sqlite3": "npm:^7.6.12"
     "@types/decompress": "npm:^4.2.7"
     "@types/dompurify": "npm:^3.2.0"
@@ -11618,7 +11551,7 @@ __metadata:
     countries-and-timezones: "npm:^3.7.2"
     decompress: "npm:^4.2.1"
     dompurify: "npm:^3.2.3"
-    electron: "npm:^34.0.0"
+    electron: "npm:^34.0.1"
     electron-builder: "npm:^25.1.8"
     electron-dl-manager: "npm:^3.2.1"
     electron-updater: "npm:^6.3.9"
