@@ -12,6 +12,7 @@ export async function initUpdater() {
   autoUpdater.autoDownload = !IS_TEST;
   autoUpdater.autoInstallOnAppQuit = !IS_TEST;
   autoUpdater.on('error', (error, message) => {
+    if (IS_TEST) return;
     const ignoreErrors = ['ENOENT', 'EPERM', 'Command failed: mv -f'];
     if (!ignoreErrors.some((ignoreError) => message?.includes(ignoreError))) {
       captureElectronError(error, {
