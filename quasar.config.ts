@@ -41,9 +41,9 @@ export default defineConfig((ctx) => {
         ),
       },
       env: {
-        IS_TEST,
         isBeta: IS_BETA,
         repository: repository.url.replace('.git', ''),
+        TEST_VERSION: IS_TEST,
         version,
       },
       extendViteConf(viteConf) {
