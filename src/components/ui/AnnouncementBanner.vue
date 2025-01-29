@@ -121,6 +121,18 @@ const loadAnnouncements = async () => {
   announcements.value = await fetchAnnouncements();
 };
 
+const isTestVersion = process.env.IS_TEST;
+
+const testVersionAnnouncement = computed((): Announcement => {
+  return {
+    id: 'test-version',
+    message: 'this-is-a-test-version',
+    persistent: true,
+    platform: isTestVersion ? undefined : [],
+    type: 'error',
+  };
+});
+
 const newUpdateAnnouncement = computed((): Announcement => {
   return {
     actions: ['update'],
@@ -128,7 +140,7 @@ const newUpdateAnnouncement = computed((): Announcement => {
     maxVersion: getPreviousVersion(latestVersion.value || '1.1.0'),
     message: 'update-available',
     persistent: true,
-    platform: updatesEnabled.value ? [] : undefined,
+    platform: updatesEnabled.value && !isTestVersion ? [] : undefined,
   };
 });
 
@@ -166,7 +178,11 @@ const openTranslateDiscussion = () => {
 
 const activeAnnouncements = computed(() => {
   return announcements.value
-    .concat([newUpdateAnnouncement.value, untranslatedAnnouncement.value])
+    .concat([
+      newUpdateAnnouncement.value,
+      untranslatedAnnouncement.value,
+      testVersionAnnouncement.value,
+    ])
     .filter((a) => {
       if (!currentStateStore.currentCongregation) return false;
       if (dismissed.value.has(a.id)) return false;
