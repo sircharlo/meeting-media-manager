@@ -41,6 +41,7 @@ export default defineConfig((ctx) => {
         ),
       },
       env: {
+        IS_TEST,
         isBeta: IS_BETA,
         repository: repository.url.replace('.git', ''),
         version,
