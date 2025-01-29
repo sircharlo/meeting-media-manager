@@ -46,6 +46,8 @@ if (process.env.PORTABLE_EXECUTABLE_DIR) {
       `${PRODUCT_NAME} - Temporary Files`,
     ),
   );
+} else if (IS_TEST) {
+  app.setPath('userData', join(app.getPath('appData'), PRODUCT_NAME));
 }
 
 initSentry({
