@@ -8,10 +8,22 @@ import { fileURLToPath } from 'node:url';
 import { mergeConfig } from 'vite'; // use mergeConfig helper to avoid overwriting the default config
 
 import { repository, version } from './package.json';
-import { APP_NAME, IS_TEST, PRODUCT_NAME } from './src-electron/constants';
 
+// Environment
+const IS_DEV = process.env.NODE_ENV === 'development';
 const IS_BETA = version.includes('beta');
+const IS_TEST = process.env.TEST_VERSION == 'true';
 
+// App
+const APP_NAME = IS_TEST
+  ? 'meeting-media-manager-test'
+  : 'meeting-media-manager';
+const PRODUCT_NAME = IS_TEST
+  ? 'Meeting Media Manager - Test'
+  : 'Meeting Media Manager';
+const APP_ID = `sircharlo.${APP_NAME}`;
+
+// Sentry
 const SENTRY_ORG = 'jw-projects';
 const SENTRY_PROJECT = 'mmm-v2';
 const SENTRY_VERSION = `meeting-media-manager@${version}`;
@@ -41,9 +53,13 @@ export default defineConfig((ctx) => {
         ),
       },
       env: {
-        isBeta: IS_BETA,
+        APP_ID,
+        APP_NAME,
+        IS_BETA,
+        IS_DEV,
+        IS_TEST,
+        PRODUCT_NAME,
         repository: repository.url.replace('.git', ''),
-        TEST_VERSION: IS_TEST,
         version,
       },
       extendViteConf(viteConf) {
@@ -105,7 +121,7 @@ export default defineConfig((ctx) => {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/configuring-electron
     electron: {
       builder: {
-        appId: `sircharlo.${APP_NAME}`,
+        appId: APP_ID,
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: APP_NAME + '-${version}-${arch}.${ext}',
         generateUpdatesFilesForAllChannels: true,

@@ -1,7 +1,6 @@
 import type { ExclusiveEventHintOrCaptureContext } from 'app/node_modules/@sentry/core/build/types/utils/prepareEvent';
 
 import { captureException } from '@sentry/electron/renderer';
-import { IS_DEV } from 'src-electron/constants';
 
 /**
  * Logs an error to the console or to Sentry
@@ -16,7 +15,7 @@ export function capturePreloadError(
     capturePreloadError(error.cause, context);
   }
 
-  if (IS_DEV) {
+  if (process.env.IS_DEV) {
     console.error(error);
     console.warn('context', context);
   } else {

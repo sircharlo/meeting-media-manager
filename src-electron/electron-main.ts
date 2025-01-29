@@ -11,7 +11,7 @@ import upath from 'upath';
 const { join } = upath;
 
 import {
-  APP_NAME,
+  APP_ID,
   IS_TEST,
   PLATFORM,
   PRODUCT_NAME,
@@ -30,7 +30,7 @@ import 'src-electron/main/ipc';
 import 'src-electron/main/security';
 
 if (PLATFORM === 'win32') {
-  app.setAppUserModelId(`sircharlo.${APP_NAME}`);
+  app.setAppUserModelId(`${APP_ID}`);
 }
 
 if (process.env.PORTABLE_EXECUTABLE_DIR) {
