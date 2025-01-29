@@ -13,37 +13,27 @@ export const dateFromString = (lookupDate?: Date | string | undefined) => {
   try {
     let date: Date;
 
+    // If no input, default to today's date
     if (!lookupDate) {
-      // If no input, default to today's date
       date = new Date();
-    } else if (lookupDate instanceof Date) {
-      // If it's already a Date object
+    }
+    // If it's already a Date object
+    else if (lookupDate instanceof Date) {
       date = new Date(lookupDate);
-    } else if (typeof lookupDate === 'string') {
-      // Handle ISO strings or other formats
-      if (!isNaN(Date.parse(lookupDate))) {
-        const isISO = lookupDate.includes('T');
-        if (isISO) {
-          date = new Date(lookupDate); // Parse ISO string directly
-        } else {
-          // Normalize separators for yyyy/mm/dd and yyyy.mm.dd
-          const normalizedDate = lookupDate.replace(/[.\-/]/g, '-');
-          const [year, month, day] = normalizedDate.split('-').map(Number);
+    }
+    // Handle ISO strings or other formats
+    else if (typeof lookupDate === 'string') {
+      let parsedDate = lookupDate;
 
-          if (
-            typeof year === 'number' &&
-            typeof month === 'number' &&
-            typeof day === 'number' &&
-            !isNaN(year) &&
-            !isNaN(month) &&
-            !isNaN(day)
-          ) {
-            date = new Date(year, month - 1, day); // Create local date
-          } else {
-            throw new Error(`Invalid date format: ${lookupDate}`);
-          }
-        }
-      } else {
+      // Convert yyyymmdd to yyyy-mm-dd
+      if (/^\d{8}$/.test(parsedDate)) {
+        parsedDate = `${lookupDate.slice(0, 4)}-${lookupDate.slice(4, 6)}-${lookupDate.slice(6, 8)}`;
+      }
+
+      date = new Date(parsedDate);
+
+      // @ts-expect-error: Date constructor can return NaN
+      if (isNaN(date)) {
         throw new Error(`Unsupported date format: ${lookupDate}`);
       }
     } else {
@@ -51,7 +41,8 @@ export const dateFromString = (lookupDate?: Date | string | undefined) => {
     }
 
     // Return the date with time set to midnight
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    date.setHours(0, 0, 0, 0);
+    return date;
   } catch (error) {
     errorCatcher(error);
 
