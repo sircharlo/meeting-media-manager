@@ -234,7 +234,9 @@ export const getMetadataFromMediaPath = async (
           resolve();
         };
         video.onerror = (error) => {
-          errorCatcher(error);
+          if (typeof error === 'string') {
+            errorCatcher(new Error(error));
+          }
           video.remove();
           reject(error);
         };
