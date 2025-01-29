@@ -8,6 +8,11 @@ import { capitalize, pad } from 'src/utils/general';
  * Creates a new date object from a date string.
  * @param lookupDate The date string to create the date object from.
  * @returns The date object.
+ * @example
+ * dateFromString('20210230')
+ * dateFromString('2021-02-30')
+ * dateFromString('2021/02/30')
+ * dateFromString('2021-02-30T12:34:56')
  */
 export const dateFromString = (lookupDate?: Date | string | undefined) => {
   try {
@@ -31,13 +36,13 @@ export const dateFromString = (lookupDate?: Date | string | undefined) => {
       }
 
       date = new Date(parsedDate);
-
-      // @ts-expect-error: Date constructor can return NaN
-      if (isNaN(date)) {
-        throw new Error(`Unsupported date format: ${lookupDate}`);
-      }
     } else {
       throw new Error(`Unsupported input type: ${lookupDate}`);
+    }
+
+    // @ts-expect-error: Date constructor can return NaN
+    if (isNaN(date)) {
+      throw new Error(`Unsupported date format: ${lookupDate}`);
     }
 
     // Return the date with time set to midnight
