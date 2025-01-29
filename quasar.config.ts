@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { mergeConfig } from 'vite'; // use mergeConfig helper to avoid overwriting the default config
 
 import { repository, version } from './package.json';
+import { APP_NAME, IS_TEST, PRODUCT_NAME } from './src-electron/constants';
 
 const IS_BETA = version.includes('beta');
 
@@ -15,8 +16,7 @@ const SENTRY_ORG = 'jw-projects';
 const SENTRY_PROJECT = 'mmm-v2';
 const SENTRY_VERSION = `meeting-media-manager@${version}`;
 const SENTRY_AUTH_TOKEN = process.env.SENTRY_AUTH_TOKEN;
-const ENABLE_SOURCE_MAPS =
-  !!SENTRY_AUTH_TOKEN && process.env.SENTRY_SOURCE_MAPS == 'true';
+const ENABLE_SOURCE_MAPS = !!SENTRY_AUTH_TOKEN && !IS_TEST;
 
 export default defineConfig((ctx) => {
   return {
@@ -104,9 +104,9 @@ export default defineConfig((ctx) => {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/configuring-electron
     electron: {
       builder: {
-        appId: 'sircharlo.meeting-media-manager',
+        appId: `sircharlo.${APP_NAME}`,
         // eslint-disable-next-line no-template-curly-in-string
-        artifactName: 'meeting-media-manager-${version}-${arch}.${ext}',
+        artifactName: APP_NAME + '-${version}-${arch}.${ext}',
         generateUpdatesFilesForAllChannels: true,
         linux: {
           category: 'Utility',
@@ -128,18 +128,18 @@ export default defineConfig((ctx) => {
           hardenedRuntime: true,
           icon: `icons/${IS_BETA ? 'beta' : 'icon'}.icns`,
           minimumSystemVersion: '10.15',
-          publish: ['github'],
+          publish: IS_TEST ? [] : ['github'],
           target: { target: 'default' },
         },
         nsis: { oneClick: false },
         portable: {
           // eslint-disable-next-line no-template-curly-in-string
-          artifactName: 'meeting-media-manager-${version}-portable.${ext}',
+          artifactName: APP_NAME + '-${version}-portable.${ext}',
         },
-        productName: 'Meeting Media Manager',
+        productName: PRODUCT_NAME,
         win: {
           icon: `icons/${IS_BETA ? 'beta' : 'icon'}.ico`,
-          publish: ['github'],
+          publish: IS_TEST ? [] : ['github'],
           target: [
             { arch: ctx.debug ? 'x64' : ['x64', 'ia32'], target: 'nsis' },
             'portable',

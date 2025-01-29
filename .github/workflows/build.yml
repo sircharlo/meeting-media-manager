@@ -21,7 +21,7 @@ on:
         required: true
       SENTRY_AUTH_TOKEN:
         required: true
-      SENTRY_SOURCE_MAPS:
+      TEST_VERSION:
         required: true
 
 jobs:
@@ -128,7 +128,7 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           GITHUB_TOKEN: ${{ github.token }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SENTRY_SOURCE_MAPS: ${{ secrets.SENTRY_SOURCE_MAPS }}
+          TEST_VERSION: ${{ secrets.TEST_VERSION }}
       - name: Clean up keychain and provisioning profile
         if: always() && runner.os == 'macOS' && github.actor != 'dependabot[bot]'
         run: |
