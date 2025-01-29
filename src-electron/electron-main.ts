@@ -1,5 +1,5 @@
 import { init as initSentry } from '@sentry/electron/main';
-import { bugs, homepage, repository, version } from 'app/package.json';
+import { bugs, homepage, name, repository, version } from 'app/package.json';
 import {
   app,
   Menu,
@@ -46,14 +46,12 @@ if (process.env.PORTABLE_EXECUTABLE_DIR) {
       `${PRODUCT_NAME} - Temporary Files`,
     ),
   );
-} else if (IS_TEST) {
-  app.setPath('userData', join(app.getPath('appData'), PRODUCT_NAME));
 }
 
 initSentry({
   dsn: 'https://0f2ab1c7ddfb118d25704c85957b8188@o1401005.ingest.us.sentry.io/4507449197920256',
   environment: IS_TEST ? 'test' : process.env.NODE_ENV,
-  release: `meeting-media-manager@${version}`,
+  release: `${name}@${version}`,
   tracesSampleRate: 1.0,
 });
 

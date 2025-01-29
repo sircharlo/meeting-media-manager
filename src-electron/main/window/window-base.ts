@@ -9,7 +9,12 @@ import { urlVariables } from 'main/session';
 import { captureElectronError, getIconPath } from 'main/utils';
 import { StatefulBrowserWindow } from 'main/window/window-state';
 import { join, resolve } from 'path';
-import { IS_BETA, IS_DEV, PLATFORM } from 'src-electron/constants';
+import {
+  IS_BETA,
+  IS_DEV,
+  PLATFORM,
+  PRODUCT_NAME,
+} from 'src-electron/constants';
 import { fileURLToPath } from 'url';
 
 export function closeOtherWindows(source: BrowserWindow) {
@@ -47,7 +52,7 @@ export function createWindow(
     minHeight: 450,
     minWidth: 500,
     show: false,
-    title: 'Meeting Media Manager',
+    title: PRODUCT_NAME,
     width: defaultSize.width,
     ...(options ?? {}),
     webPreferences: {

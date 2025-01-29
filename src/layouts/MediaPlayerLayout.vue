@@ -18,6 +18,5 @@ useMeta({
 
 onMounted(() => {
   document.body.style.overflow = 'hidden';
-  document.title = 'Media Player Window';
 });
 </script>

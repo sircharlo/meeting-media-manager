@@ -7,7 +7,8 @@ import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { fileURLToPath } from 'node:url';
 import { mergeConfig } from 'vite'; // use mergeConfig helper to avoid overwriting the default config
 
-import { repository, version } from './package.json';
+import { name, repository, version } from './package.json';
+import { toTitleCase } from './src/utils/general';
 
 // Environment
 const IS_DEV = process.env.NODE_ENV === 'development';
@@ -15,20 +16,19 @@ const IS_BETA = version.includes('beta');
 const IS_TEST = process.env.TEST_VERSION == 'true';
 
 // App
-const APP_NAME = IS_TEST
-  ? 'meeting-media-manager-test'
-  : 'meeting-media-manager';
-const PRODUCT_NAME = IS_TEST
-  ? 'Meeting Media Manager - Test'
-  : 'Meeting Media Manager';
+const APP_NAME = `${name}${IS_TEST ? '-test' : ''}`;
+const PRODUCT_NAME = `${toTitleCase(name)}${IS_TEST ? ' - Test' : ''}`;
 const APP_ID = `sircharlo.${APP_NAME}`;
 
 // Sentry
 const SENTRY_ORG = 'jw-projects';
 const SENTRY_PROJECT = 'mmm-v2';
-const SENTRY_VERSION = `meeting-media-manager@${version}`;
+const SENTRY_VERSION = `${name}@${version}`;
 const SENTRY_AUTH_TOKEN = process.env.SENTRY_AUTH_TOKEN;
 const ENABLE_SOURCE_MAPS = !!SENTRY_AUTH_TOKEN && !IS_TEST;
+
+const getIconPath = (ext: 'icns' | 'ico' | 'png') =>
+  `icons/${IS_BETA ? 'beta' : 'icon'}.${ext}`;
 
 export default defineConfig((ctx) => {
   return {
@@ -127,8 +127,7 @@ export default defineConfig((ctx) => {
         generateUpdatesFilesForAllChannels: true,
         linux: {
           category: 'Utility',
-          icon: `icons/${IS_BETA ? 'beta' : 'icon'}.png`,
-          publish: ['github'],
+          icon: getIconPath('png'),
           target: 'AppImage',
         },
         mac: {
@@ -143,9 +142,8 @@ export default defineConfig((ctx) => {
               "Microphone access is required in order to use the website mirroring feature, as screen recording is treated as camera and microphone access. Please note that your device's microphone will never be accessed or used in any way by this app.",
           },
           hardenedRuntime: true,
-          icon: `icons/${IS_BETA ? 'beta' : 'icon'}.icns`,
+          icon: getIconPath('icns'),
           minimumSystemVersion: '10.15',
-          publish: IS_TEST ? [] : ['github'],
           target: { target: 'default' },
         },
         nsis: { oneClick: false },
@@ -154,9 +152,9 @@ export default defineConfig((ctx) => {
           artifactName: APP_NAME + '-${version}-portable.${ext}',
         },
         productName: PRODUCT_NAME,
+        publish: ['github'],
         win: {
-          icon: `icons/${IS_BETA ? 'beta' : 'icon'}.ico`,
-          publish: IS_TEST ? [] : ['github'],
+          icon: getIconPath('ico'),
           target: [
             { arch: ctx.debug ? 'x64' : ['x64', 'ia32'], target: 'nsis' },
             'portable',
