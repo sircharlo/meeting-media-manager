@@ -7,8 +7,7 @@ import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { fileURLToPath } from 'node:url';
 import { mergeConfig } from 'vite'; // use mergeConfig helper to avoid overwriting the default config
 
-import { name, repository, version } from './package.json';
-import { toTitleCase } from './src/utils/general';
+import { name, productName, repository, version } from './package.json';
 
 // Environment
 const IS_DEV = process.env.NODE_ENV === 'development';
@@ -17,7 +16,7 @@ const IS_TEST = process.env.TEST_VERSION == 'true';
 
 // App
 const APP_NAME = `${name}${IS_TEST ? '-test' : ''}`;
-const PRODUCT_NAME = `${toTitleCase(name)}${IS_TEST ? ' - Test' : ''}`;
+const PRODUCT_NAME = `${productName}${IS_TEST ? ' - Test' : ''}`;
 const APP_ID = `sircharlo.${APP_NAME}`;
 
 // Sentry
