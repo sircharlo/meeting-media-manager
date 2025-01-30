@@ -3091,13 +3091,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/babel-plugin-component-annotate@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@sentry/babel-plugin-component-annotate@npm:3.1.0"
-  checksum: 10c0/fb98cc96cec48e4a0232816ace15db7d782366827617d6c6fcd435be2dab6a5097d2dc3a43726e8673789ffe685f1a4e299c56cf30f53396fee35ecc5aba76e7
-  languageName: node
-  linkType: hard
-
 "@sentry/babel-plugin-component-annotate@npm:3.1.1":
   version: 3.1.1
   resolution: "@sentry/babel-plugin-component-annotate@npm:3.1.1"
@@ -3115,22 +3108,6 @@ __metadata:
     "@sentry-internal/replay-canvas": "npm:8.51.0"
     "@sentry/core": "npm:8.51.0"
   checksum: 10c0/4951a3d8c3522a5dc559360e0ac50fc91488cd7b483003a18d15779375ffab4aa41630e70f48954b763d2321f990012fbf189bcc5600f9dd9cafc547949ace70
-  languageName: node
-  linkType: hard
-
-"@sentry/bundler-plugin-core@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@sentry/bundler-plugin-core@npm:3.1.0"
-  dependencies:
-    "@babel/core": "npm:^7.18.5"
-    "@sentry/babel-plugin-component-annotate": "npm:3.1.0"
-    "@sentry/cli": "npm:2.39.1"
-    dotenv: "npm:^16.3.1"
-    find-up: "npm:^5.0.0"
-    glob: "npm:^9.3.2"
-    magic-string: "npm:0.30.8"
-    unplugin: "npm:1.0.1"
-  checksum: 10c0/3a0dfe92eee543dcebb7037a60226773c03238d074b3a7621627c1529643070de2832aad59bcec050e1460f3a7ef8f569d82934bd8a5c0347ef6a500160aeb8a
   languageName: node
   linkType: hard
 
@@ -3324,13 +3301,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/vite-plugin@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "@sentry/vite-plugin@npm:3.1.0"
+"@sentry/vite-plugin@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "@sentry/vite-plugin@npm:3.1.1"
   dependencies:
-    "@sentry/bundler-plugin-core": "npm:3.1.0"
+    "@sentry/bundler-plugin-core": "npm:3.1.1"
     unplugin: "npm:1.0.1"
-  checksum: 10c0/522c48c377ee9c4cbf833f947e8d7d9344caca317509798ead1fec5fa8315a7cf2dec12e0d8c8c74dce77a1799fdf78d74bb8961186618de978d001fb8d926d1
+  checksum: 10c0/7303d4e0ed402badc51059bfb5a016e2f3801817306dda445271c270ffcd4a9a842cd25e4f26ad4388844beb685734539e38ebed59be7589334d4eeb3ec7585d
   languageName: node
   linkType: hard
 
@@ -11561,7 +11538,7 @@ __metadata:
     "@rollup/plugin-inject": "npm:^5.0.5"
     "@sentry/electron": "npm:^5.11.0"
     "@sentry/esbuild-plugin": "npm:^3.1.1"
-    "@sentry/vite-plugin": "npm:^3.1.0"
+    "@sentry/vite-plugin": "npm:^3.1.1"
     "@sentry/vue": "npm:8.51.0"
     "@types/better-sqlite3": "npm:^7.6.12"
     "@types/decompress": "npm:^4.2.7"
