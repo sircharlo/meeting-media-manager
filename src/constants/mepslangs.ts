@@ -1,12 +1,11 @@
 import type { JwLangCode } from 'src/types';
 
-// https://www.jw.org/en/online-help/jw-library/windows/manually-install-windows/
-// 1. Download the windows edition
+// 1. Download the windows edition from: https://www.jw.org/en/online-help/jw-library/windows/manually-install-windows/
 // 2. Unzip the file
 // 3. Rename the msixbundle to a zip extension
 // 4. Unzip it
-// 5. Ssame step on any of the versions inside msixbundle, preferably the suffixed with x64
-// 6. Uunzip it
+// 5. Same step on any of the versions inside msixbundle, preferably the suffixed with x64
+// 6. Unzip it
 // 7. The MEPS unit is available in Data folder
 const mepslangs: Record<number, JwLangCode> = {
   0: 'E',
