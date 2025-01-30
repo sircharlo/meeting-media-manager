@@ -11603,7 +11603,7 @@ __metadata:
     lint-staged: "npm:^15.4.3"
     lodash-es: "npm:^4.17.21"
     msw: "npm:^2.7.0"
-    music-metadata: "npm:^10.7.1"
+    music-metadata: "npm:^10.8.1"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.1.0"
     pdfjs-dist: "npm:^4.10.38"
@@ -12148,9 +12148,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^10.7.1":
-  version: 10.7.1
-  resolution: "music-metadata@npm:10.7.1"
+"music-metadata@npm:^10.8.1":
+  version: 10.8.1
+  resolution: "music-metadata@npm:10.8.1"
   dependencies:
     "@tokenizer/token": "npm:^0.3.0"
     content-type: "npm:^1.0.5"
@@ -12158,10 +12158,10 @@ __metadata:
     file-type: "npm:^19.6.0"
     link: "npm:^2.1.1"
     media-typer: "npm:^1.1.0"
-    strtok3: "npm:^10.0.1"
+    strtok3: "npm:^10.1.2"
     token-types: "npm:^6.0.0"
     uint8array-extras: "npm:^1.4.0"
-  checksum: 10c0/72101e0dfdc1387e24c89b83917f9cbd83a212f93db6e92e08b5b774570af0374b60e1d5fc3903eb759b7099c9e89bad01fad32f86da6781ba1bf1b6d8496f51
+  checksum: 10c0/7ec33d1a730476a080826d0f7696596c9a4d938afc9cb7e84922f83a4f9aa20ca4bd04f647c422da343e2795f88cdb712d77c78fb04145f9fff86593db3c994f
   languageName: node
   linkType: hard
 
@@ -13328,6 +13328,13 @@ __metadata:
   version: 5.3.1
   resolution: "peek-readable@npm:5.3.1"
   checksum: 10c0/49f628e4728887230c158699e422ebb10747f5e02aee930ec10634fa7142e74e67d3fb3a780e7a9b9f092c61bf185f07d167c099b2359b22a58cee3dbfe0e43b
+  languageName: node
+  linkType: hard
+
+"peek-readable@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "peek-readable@npm:6.0.2"
+  checksum: 10c0/1ea609773ce86371dbfe1aa969da5090e6c19ef997216633f8d0c4530647f4d518e40e7d9a1ca0d358af7df91343b96d1bc4daa0e792bb12a1dfcdd1e8774a24
   languageName: node
   linkType: hard
 
@@ -15905,13 +15912,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strtok3@npm:^10.0.1":
-  version: 10.0.1
-  resolution: "strtok3@npm:10.0.1"
+"strtok3@npm:^10.1.2":
+  version: 10.1.2
+  resolution: "strtok3@npm:10.1.2"
   dependencies:
     "@tokenizer/token": "npm:^0.3.0"
-    peek-readable: "npm:^5.3.1"
-  checksum: 10c0/476ccea29feebef1659d825e71a5e054b80486617139966217f53fd197d9d78d2d6f1e3be52cad7bc7ff71e164d38696adc60f883705fb440be1162a3ce6cb9b
+    peek-readable: "npm:^6.0.2"
+  checksum: 10c0/f754131361637c74f14d832b9dfe6ad9e66de1e37343ada01a050bbf4287670e7c3962e1fb4d32a0c4ed06222ab9e0c9021bb981cf6440c676d723d0d20dbcf6
   languageName: node
   linkType: hard
 
