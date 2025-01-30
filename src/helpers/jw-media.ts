@@ -1895,12 +1895,17 @@ export const getPubMediaLinks = async (publication: PublicationFetcher) => {
   try {
     const currentStateStore = useCurrentStateStore();
 
+    const isSignLanguage =
+      jwStore.jwLanguages.list.find(
+        (l) => l.langcode === publication.langwritten,
+      )?.isSignLanguage ?? currentStateStore.currentSongbook.signLanguage;
+
     const response = await fetchPubMediaLinks(
       {
         ...publication,
         pub:
-          publication.pub === 'sjjm'
-            ? (currentStateStore.currentSongbook?.pub ?? 'sjjm')
+          publication.pub === 'sjjm' && isSignLanguage
+            ? currentStateStore.currentSongbook.pub
             : publication.pub,
       },
       urlVariables.pubMedia,
