@@ -54,7 +54,7 @@
     "heic-convert": "^2.1.0",
     "image-size": "^1.2.0",
     "is-online": "^11.0.0",
-    "music-metadata": "^10.7.1",
+    "music-metadata": "^10.8.1",
     "obs-websocket-js": "^5.0.6",
     "p-queue": "^8.1.0",
     "pdfjs-dist": "^4.10.38",
