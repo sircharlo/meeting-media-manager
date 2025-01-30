@@ -1256,9 +1256,22 @@ const mepslangs: Record<number, JwLangCode> = {
   1251: 'MXI',
   1252: 'MXH',
   1253: 'QIX',
+  // 1254 - 1257
   1258: 'STN',
+  // 1259 - 1267
   1268: 'BRS',
+  1284: 'SGO',
+  // 1269 - 1285
   1286: 'LBS',
+  1310: 'GDE',
+  1339: 'NDW',
+  1350: 'NDV',
+  1370: 'ACC',
+  1371: 'ACR',
+  1375: 'ASN',
+  1383: 'TNG',
+  1391: 'CML',
+  1417: 'KFL',
 };
 
 export default mepslangs;

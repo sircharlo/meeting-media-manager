@@ -7,6 +7,7 @@ import type {
   ImageSizes,
   ImageTypeSizes,
   JwLangCode,
+  JwLanguage,
   JwPlaylistItem,
   MediaItemsMediatorFile,
   MediaLink,
@@ -2424,4 +2425,116 @@ export const setUrlVariables = async (baseUrl: string | undefined) => {
   } finally {
     window.electronApi.setUrlVariables(JSON.stringify(jwStore.urlVariables));
   }
+};
+
+export const checkMepsIndexes = async () => {
+  const knownMepsCodes = Object.values(mepslangs);
+  const langs = useJwStore().jwLanguages.list;
+
+  const knownLangs = langs.filter((lang) =>
+    knownMepsCodes.includes(lang.langcode),
+  );
+  const missingLangs = langs.filter(
+    (lang) => !knownMepsCodes.includes(lang.langcode),
+  );
+
+  knownLangs.forEach((lang) => {
+    verifyKnownMepsIndex(lang);
+  });
+
+  missingLangs.forEach((lang) => {
+    findMissingMepsIndex(lang);
+  });
+};
+
+const verifyKnownMepsIndex = async (lang: JwLanguage) => {
+  // if not monday, get the previous monday
+  const monday = getSpecificWeekday(new Date(), 0);
+  const issue = subtractFromDate(monday, {
+    months: (monday.getMonth() + 1) % 2 === 0 ? 1 : 0,
+  });
+  const mwbIssue = formatDate(issue, 'YYYYMM') + '00';
+
+  const pubsToTry: PublicationFetcher[] = [
+    { pub: 'lff' },
+    { issue: mwbIssue, pub: 'mwb' },
+    { issue: '202411', pub: 'w' },
+  ].map((pub) => ({ ...pub, langwritten: lang.langcode }));
+
+  const pubs = await Promise.all(pubsToTry.map((pub) => getDbFromJWPUB(pub)));
+
+  const pub = pubs.find((pub) => pub !== null);
+  if (!pub) {
+    console.warn(`No publication found for ${lang.name}`);
+    return;
+  }
+
+  const result = window.electronApi.executeQuery<{
+    MepsLanguageIndex: null | number;
+  }>(pub, 'SELECT MepsLanguageIndex from Multimedia');
+
+  const allMepsIndexes = result
+    .map((row) => row.MepsLanguageIndex)
+    .filter((i) => i !== null);
+  const mepsIndexes = [...new Set(allMepsIndexes)]
+    .map((mepsIndex) => ({
+      count: allMepsIndexes.filter((index) => index === mepsIndex).length,
+      mepsIndex,
+    }))
+    .sort((a, b) => b.count - a.count);
+
+  const mepsIndex = mepsIndexes[0];
+  if (!mepsIndex) {
+    console.warn(`No MepsLanguageIndex found for ${lang.name}`);
+    return;
+  }
+
+  if (mepslangs[mepsIndex.mepsIndex] !== lang.langcode) {
+    console.warn('Mismatch', {
+      found: mepslangs[mepsIndex.mepsIndex],
+      lang,
+      mepsIndexes,
+    });
+  }
+};
+
+const findMissingMepsIndex = async (lang: JwLanguage) => {
+  // if not monday, get the previous monday
+  const monday = getSpecificWeekday(new Date(), 0);
+  const issue = subtractFromDate(monday, {
+    months: (monday.getMonth() + 1) % 2 === 0 ? 1 : 0,
+  });
+  const mwbIssue = formatDate(issue, 'YYYYMM') + '00';
+
+  const pubsToTry: PublicationFetcher[] = [
+    { pub: 'lff' },
+    { issue: mwbIssue, pub: 'mwb' },
+    { issue: '202411', pub: 'w' },
+  ].map((pub) => ({ ...pub, langwritten: lang.langcode }));
+
+  const pubs = await Promise.all(pubsToTry.map((pub) => getDbFromJWPUB(pub)));
+
+  const pub = pubs.find((pub) => pub !== null);
+  if (!pub) {
+    console.warn(`No publication found for ${lang.name}`);
+    return;
+  }
+
+  const result = window.electronApi.executeQuery<{
+    MepsLanguageIndex: null | number;
+  }>(pub, 'SELECT MepsLanguageIndex from Multimedia');
+
+  const allMepsIndexes = result
+    .map((row) => row.MepsLanguageIndex)
+    .filter((i) => i !== null);
+  const uniqueMepsIndexes = [...new Set(allMepsIndexes)]
+    .map((mepsIndex) => ({
+      count: allMepsIndexes.filter((index) => index === mepsIndex).length,
+      mepsIndex,
+    }))
+    .sort((a, b) => b.count - a.count);
+  console.log(`${lang.name} (${lang.langcode})`, {
+    pub: pub.split('/').pop(),
+    ...uniqueMepsIndexes,
+  });
 };
