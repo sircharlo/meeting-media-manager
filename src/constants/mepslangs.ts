@@ -1,6 +1,13 @@
 import type { JwLangCode } from 'src/types';
 
-// https://github.com/BenShelton/library-api/blob/develop/packages/core/src/data/languages.json
+// https://www.jw.org/en/online-help/jw-library/windows/manually-install-windows/
+// 1. Download the windows edition
+// 2. Unzip the file
+// 3. Rename the msixbundle to a zip extension
+// 4. Unzip it
+// 5. Ssame step on any of the versions inside msixbundle, preferably the suffixed with x64
+// 6. Uunzip it
+// 7. The MEPS unit is available in Data folder
 const mepslangs: Record<number, JwLangCode> = {
   0: 'E',
   1: 'S',
@@ -1369,6 +1376,64 @@ const mepslangs: Record<number, JwLangCode> = {
   1364: 'YKM',
   1365: 'TSF',
   1366: 'CBC',
+  1367: 'NYL',
+  1368: 'GGS',
+  1369: 'WRN',
+  1370: 'ACC',
+  1371: 'ACR',
+  1372: 'OSR',
+  1373: 'ENG',
+  1374: 'OKW',
+  1375: 'ASN',
+  1376: 'YSL',
+  1377: 'TMM',
+  1378: 'TME',
+  1379: 'TMW',
+  1380: 'HRM',
+  1381: 'PJR',
+  1382: 'TTS',
+  1383: 'TNG',
+  1384: 'GBG',
+  1385: 'LKA',
+  1386: 'RBH',
+  1387: 'CYO',
+  1388: 'KLG',
+  1389: 'MNB',
+  1390: 'KBB',
+  1391: 'CML',
+  1392: 'KBK',
+  1393: 'MRW',
+  1394: 'NCW',
+  1395: 'GRM',
+  1396: 'BCM',
+  1397: 'GRB',
+  1398: 'KUI',
+  1399: 'MDL',
+  1400: 'MWR',
+  1401: 'MNR',
+  1402: 'NGG',
+  1403: 'NLM',
+  1404: 'BHL',
+  1405: 'KHB',
+  1406: 'TLB',
+  1407: 'PNT',
+  1408: 'GLN',
+  1409: 'KHL',
+  1410: 'KRH',
+  1411: 'LMD',
+  1412: 'ODN',
+  1413: 'NLS',
+  1414: 'BKY',
+  1415: 'MDO',
+  1416: 'SLP',
+  1417: 'KFL',
+  1418: 'MAF',
+  1419: 'ERS',
+  1420: 'CHX',
+  1421: 'MMU',
+  1422: 'SWK',
+  1423: 'KBI',
+  1424: 'RMY',
 };
 
 export default mepslangs;
