@@ -2230,8 +2230,10 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
         !window.electronApi.path
           ?.extname(mediaLink?.file?.url)
           ?.includes(publication?.fileformat?.toLowerCase())
-      )
-        continue; // This file is not of the right format; API glitch!
+      ) {
+        // This file is not of the right format; API glitch!
+        continue;
+      }
       downloadFileIfNeeded({
         dir,
         lowPriority: true,
