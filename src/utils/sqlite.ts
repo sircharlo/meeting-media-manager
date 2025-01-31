@@ -10,22 +10,10 @@ import type {
 
 import mepslangs from 'src/constants/mepslangs';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { findFile } from 'src/utils/fs';
 
 export const findDb = async (publicationDirectory: string | undefined) => {
-  if (!publicationDirectory) return undefined;
-  try {
-    if (!(await window.electronApi.fs.pathExists(publicationDirectory)))
-      return undefined;
-    const files = await window.electronApi.readdir(publicationDirectory);
-    return files
-      .map((file) =>
-        window.electronApi.path.join(publicationDirectory, file.name),
-      )
-      .find((filename) => filename.includes('.db'));
-  } catch (error) {
-    errorCatcher(error);
-    return undefined;
-  }
+  return findFile(publicationDirectory, '.db');
 };
 
 export const getMediaVideoMarkers = (

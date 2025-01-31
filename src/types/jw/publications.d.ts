@@ -186,4 +186,5 @@ export interface PublicationFiles {
   MP4?: MediaItemsMediatorFile[] | MediaLink[];
   PDF?: MediaItemsMediatorFile[] | MediaLink[];
   RTF?: MediaItemsMediatorFile[] | MediaLink[];
+  ZIP?: MediaItemsMediatorFile[] | MediaLink[];
 }
