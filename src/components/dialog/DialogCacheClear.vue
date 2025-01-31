@@ -66,38 +66,23 @@ const deleteCacheFiles = async (type = '') => {
       type === 'smart'
         ? Object.keys(props.unusedParentDirectories)
         : props.cacheFiles.map((f) => f.path);
-    for (const filepath of filepathsToDelete) {
-      try {
-        window.electronApi.fs.remove(filepath);
-        // if (
-        //   filepath.startsWith(await getAdditionalMediaPath()) ||
-        //   filepath.startsWith(
-        //     await getAdditionalMediaPath(
-        //       currentState.currentSettings?.cacheFolder,
-        //     ),
-        //   )
-        // ) {
-        //   const folder = filepath.split('/').pop();
-        //   const date = folder
-        //     ? `${folder.slice(0, 4)}/${folder.slice(4, 6)}/${folder.slice(6, 8)}`
-        //     : '0001/01/01';
-        //   const cong = currentState.currentCongregation;
-        //   if (additionalMediaMaps.value[cong]?.[date]) {
-        //     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-        //     delete additionalMediaMaps.value[cong][date];
-        //   }
-        // }
-      } catch (error) {
-        errorCatcher(error);
-      }
+
+    try {
+      await Promise.allSettled(
+        filepathsToDelete.map((f) => window.electronApi.fs.remove(f)),
+      );
+    } catch (e) {
+      errorCatcher(e);
     }
-    for (const untouchableDirectory of props.untouchableDirectories) {
-      await removeEmptyDirs(untouchableDirectory);
+
+    try {
+      await Promise.allSettled(
+        [...props.untouchableDirectories].map((d) => removeEmptyDirs(d)),
+      );
+    } catch (e) {
+      errorCatcher(e);
     }
-    // queues.downloads[currentCongregation.value]?.clear();
-    // queues.downloads[currentCongregation.value] = new PQueue({
-    //   concurrency: 5,
-    // });
+
     if (type === 'all') {
       updateLookupPeriod(true);
     }

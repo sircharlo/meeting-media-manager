@@ -13,7 +13,12 @@ export async function initUpdater() {
   autoUpdater.autoInstallOnAppQuit = !IS_TEST;
   autoUpdater.on('error', (error, message) => {
     if (IS_TEST) return;
-    const ignoreErrors = ['ENOENT', 'EPERM', 'Command failed: mv -f'];
+    const ignoreErrors = [
+      'ENOENT',
+      'EPERM',
+      'Command failed: mv -f',
+      '504 Gateway Time-out',
+    ];
     if (!ignoreErrors.some((ignoreError) => message?.includes(ignoreError))) {
       captureElectronError(error, {
         contexts: { fn: { message, name: 'initUpdater' } },
