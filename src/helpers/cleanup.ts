@@ -32,34 +32,46 @@ export const cleanPersistedStores = () => {
 const cleanCongregationFolders = async (root: string, congIds: Set<string>) => {
   if (!root || !congIds || !(await window.electronApi.fs.exists(root))) return;
   const folders = await window.electronApi.fs.readdir(root);
-  folders.forEach((f) => {
-    if (!congIds.has(f)) {
-      window.electronApi.fs.remove(window.electronApi.path.join(root, f));
-    }
-  });
+  await Promise.allSettled(
+    folders
+      .filter((f) => !congIds.has(f))
+      .map((f) =>
+        window.electronApi.fs.remove(window.electronApi.path.join(root, f)),
+      ),
+  );
 };
 
 const cleanPublicTalkPubs = async (folder: string, congIds: Set<string>) => {
   if (!folder || !congIds || !(await window.electronApi.fs.exists(folder)))
     return;
   const files = await window.electronApi.fs.readdir(folder);
-  files.forEach((f) => {
-    if (!f.startsWith('S-34mp_')) return;
-    const congIdOrLang = f.split('_')[1];
-    if (!congIdOrLang?.includes('-') || congIds.has(congIdOrLang)) return;
-    window.electronApi.fs.remove(window.electronApi.path.join(folder, f));
-  });
+
+  await Promise.allSettled(
+    files
+      .filter((f) => f.startsWith('S-34mp_'))
+      .map((f) => {
+        const congIdOrLang = f.split('_')[1];
+        if (!congIdOrLang?.includes('-') || congIds.has(congIdOrLang))
+          return Promise.resolve();
+        return window.electronApi.fs.remove(
+          window.electronApi.path.join(folder, f),
+        );
+      }),
+  );
 };
 
 const cleanDateFolders = async (root?: string) => {
   if (!root || !(await window.electronApi.fs.exists(root))) return;
 
   const folders = await window.electronApi.fs.readdir(root);
-  folders.forEach((f) => {
-    if (isInPast(getSpecificWeekday(f, 6))) {
-      window.electronApi.fs.remove(window.electronApi.path.join(root, f));
-    }
-  });
+
+  await Promise.allSettled(
+    folders
+      .filter((f) => isInPast(getSpecificWeekday(f, 6)))
+      .map((f) =>
+        window.electronApi.fs.remove(window.electronApi.path.join(root, f)),
+      ),
+  );
 };
 
 export const cleanCache = async () => {

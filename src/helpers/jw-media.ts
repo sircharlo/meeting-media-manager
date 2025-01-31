@@ -87,7 +87,11 @@ export const copyToDatedAdditionalMedia = async (
     );
     if (await window.electronApi.fs.exists(datedAdditionalMediaPath)) {
       if (filepathToCopy !== datedAdditionalMediaPath) {
-        await window.electronApi.fs.remove(datedAdditionalMediaPath);
+        try {
+          await window.electronApi.fs.remove(datedAdditionalMediaPath);
+        } catch (e) {
+          errorCatcher(e);
+        }
         jwStore.removeFromAdditionMediaMap(uniqueId);
       }
     }

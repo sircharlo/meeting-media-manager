@@ -150,17 +150,16 @@ const exportDayToFolder = async (targetDate?: Date) => {
 
   try {
     const filesInDestFolder = await window.electronApi.fs.readdir(destFolder);
-    for (const file of filesInDestFolder) {
-      try {
-        if (!expectedFiles.has(file)) {
-          await window.electronApi.fs.remove(
-            window.electronApi.path.join(destFolder, file),
-          );
-        }
-      } catch (error) {
-        errorCatcher(error);
-      }
-    }
+
+    await Promise.allSettled(
+      filesInDestFolder
+        .filter((f) => !expectedFiles.has(f))
+        .map((f) =>
+          window.electronApi.fs.remove(
+            window.electronApi.path.join(destFolder, f),
+          ),
+        ),
+    );
   } catch (error) {
     errorCatcher(error);
   }
