@@ -148,7 +148,7 @@ export const fetchJson = async <T>(
   try {
     if (!url) return null;
     const response = await fetchRaw(
-      `${url}?${params ? params.toString() : ''}`,
+      `${url}${params ? '?' + params.toString() : ''}`,
     );
     if (response.ok || response.status === 304) {
       return await response.json();
