@@ -3091,10 +3091,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/babel-plugin-component-annotate@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@sentry/babel-plugin-component-annotate@npm:3.1.0"
-  checksum: 10c0/fb98cc96cec48e4a0232816ace15db7d782366827617d6c6fcd435be2dab6a5097d2dc3a43726e8673789ffe685f1a4e299c56cf30f53396fee35ecc5aba76e7
+"@sentry/babel-plugin-component-annotate@npm:3.1.1":
+  version: 3.1.1
+  resolution: "@sentry/babel-plugin-component-annotate@npm:3.1.1"
+  checksum: 10c0/0316412a73af114f01cbd1be66c920f5a018b9d6f0c06865f6d3eb1b026d83255ff07d232de5e75dd52f946f547c7c17b7d0703afbe8e26782b75b9127ab1a9c
   languageName: node
   linkType: hard
 
@@ -3111,19 +3111,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/bundler-plugin-core@npm:3.1.0":
-  version: 3.1.0
-  resolution: "@sentry/bundler-plugin-core@npm:3.1.0"
+"@sentry/bundler-plugin-core@npm:3.1.1":
+  version: 3.1.1
+  resolution: "@sentry/bundler-plugin-core@npm:3.1.1"
   dependencies:
     "@babel/core": "npm:^7.18.5"
-    "@sentry/babel-plugin-component-annotate": "npm:3.1.0"
+    "@sentry/babel-plugin-component-annotate": "npm:3.1.1"
     "@sentry/cli": "npm:2.39.1"
     dotenv: "npm:^16.3.1"
     find-up: "npm:^5.0.0"
     glob: "npm:^9.3.2"
     magic-string: "npm:0.30.8"
     unplugin: "npm:1.0.1"
-  checksum: 10c0/3a0dfe92eee543dcebb7037a60226773c03238d074b3a7621627c1529643070de2832aad59bcec050e1460f3a7ef8f569d82934bd8a5c0347ef6a500160aeb8a
+  checksum: 10c0/a95e841a096390dae126b363dab3e9c56760cdb8b19dcf2e817195c0554675b48a2219a4e9e1980a9447889ddbdc4fc4234502cf17e58341fbcbf74b81ec68aa
   languageName: node
   linkType: hard
 
@@ -3232,14 +3232,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/esbuild-plugin@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "@sentry/esbuild-plugin@npm:3.1.0"
+"@sentry/esbuild-plugin@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "@sentry/esbuild-plugin@npm:3.1.1"
   dependencies:
-    "@sentry/bundler-plugin-core": "npm:3.1.0"
+    "@sentry/bundler-plugin-core": "npm:3.1.1"
     unplugin: "npm:1.0.1"
     uuid: "npm:^9.0.0"
-  checksum: 10c0/cf8dda4249c29e2b85a010697f9d6a525484961e866e893ba36f83e35d6a826b36f515628cb09ac2233f3a64d29201bc12fac6fdf107d54704e024589f6b60ed
+  checksum: 10c0/40f96b2942024afea672694243cbeaf685d14964301a8fbd4328d361ea9c4317134b0390060dd0015f9babaeca8828610e2750f45cb0d852191f4b981d1b4a35
   languageName: node
   linkType: hard
 
@@ -3301,13 +3301,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/vite-plugin@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "@sentry/vite-plugin@npm:3.1.0"
+"@sentry/vite-plugin@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "@sentry/vite-plugin@npm:3.1.1"
   dependencies:
-    "@sentry/bundler-plugin-core": "npm:3.1.0"
+    "@sentry/bundler-plugin-core": "npm:3.1.1"
     unplugin: "npm:1.0.1"
-  checksum: 10c0/522c48c377ee9c4cbf833f947e8d7d9344caca317509798ead1fec5fa8315a7cf2dec12e0d8c8c74dce77a1799fdf78d74bb8961186618de978d001fb8d926d1
+  checksum: 10c0/7303d4e0ed402badc51059bfb5a016e2f3801817306dda445271c270ffcd4a9a842cd25e4f26ad4388844beb685734539e38ebed59be7589334d4eeb3ec7585d
   languageName: node
   linkType: hard
 
@@ -7196,7 +7196,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:*, dompurify@npm:^3.2.3":
+"dompurify@npm:*":
   version: 3.2.3
   resolution: "dompurify@npm:3.2.3"
   dependencies:
@@ -7205,6 +7205,18 @@ __metadata:
     "@types/trusted-types":
       optional: true
   checksum: 10c0/0ce5cb89b76f396d800751bcb48e0d137792891d350ccc049f1bc9a5eca7332cc69030c25007ff4962e0824a5696904d4d74264df9277b5ad955642dfb6f313f
+  languageName: node
+  linkType: hard
+
+"dompurify@npm:^3.2.4":
+  version: 3.2.4
+  resolution: "dompurify@npm:3.2.4"
+  dependencies:
+    "@types/trusted-types": "npm:^2.0.7"
+  dependenciesMeta:
+    "@types/trusted-types":
+      optional: true
+  checksum: 10c0/6be56810fb7ad2776155c8fc2967af5056783c030094362c7d0cf1ad13f2129cf922d8eefab528a34bdebfb98e2f44b306a983ab93aefb9d6f24c18a3d027a05
   languageName: node
   linkType: hard
 
@@ -7421,16 +7433,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^34.0.1":
-  version: 34.0.1
-  resolution: "electron@npm:34.0.1"
+"electron@npm:^34.0.2":
+  version: 34.0.2
+  resolution: "electron@npm:34.0.2"
   dependencies:
     "@electron/get": "npm:^2.0.0"
     "@types/node": "npm:^20.9.0"
     extract-zip: "npm:^2.0.1"
   bin:
     electron: cli.js
-  checksum: 10c0/0a63edd57633edac8e4f4d1310dbb82ac01287f1f9113a18cef310dfef7f266ef8be98eda7d01890e23b37d03f36811bbac0fe5c4e0a27c9f3719ba3b7841f83
+  checksum: 10c0/c1708b7a01a1490fb9162823a95b4ebdcae237c624c4f9836fc9cb6bde063a650422f2219eb56a38ca1e8e50f0d178961c2224879cf0dc334f9e9891e85e817d
   languageName: node
   linkType: hard
 
@@ -11525,8 +11537,8 @@ __metadata:
     "@quasar/vite-plugin": "npm:^1.9.0"
     "@rollup/plugin-inject": "npm:^5.0.5"
     "@sentry/electron": "npm:^5.11.0"
-    "@sentry/esbuild-plugin": "npm:^3.1.0"
-    "@sentry/vite-plugin": "npm:^3.1.0"
+    "@sentry/esbuild-plugin": "npm:^3.1.1"
+    "@sentry/vite-plugin": "npm:^3.1.1"
     "@sentry/vue": "npm:8.51.0"
     "@types/better-sqlite3": "npm:^7.6.12"
     "@types/decompress": "npm:^4.2.7"
@@ -11550,8 +11562,8 @@ __metadata:
     chokidar: "npm:^4.0.3"
     countries-and-timezones: "npm:^3.7.2"
     decompress: "npm:^4.2.1"
-    dompurify: "npm:^3.2.3"
-    electron: "npm:^34.0.1"
+    dompurify: "npm:^3.2.4"
+    electron: "npm:^34.0.2"
     electron-builder: "npm:^25.1.8"
     electron-dl-manager: "npm:^3.2.1"
     electron-updater: "npm:^6.3.9"
@@ -11568,7 +11580,7 @@ __metadata:
     lint-staged: "npm:^15.4.3"
     lodash-es: "npm:^4.17.21"
     msw: "npm:^2.7.0"
-    music-metadata: "npm:^10.7.1"
+    music-metadata: "npm:^10.8.1"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.1.0"
     pdfjs-dist: "npm:^4.10.38"
@@ -12113,9 +12125,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^10.7.1":
-  version: 10.7.1
-  resolution: "music-metadata@npm:10.7.1"
+"music-metadata@npm:^10.8.1":
+  version: 10.8.1
+  resolution: "music-metadata@npm:10.8.1"
   dependencies:
     "@tokenizer/token": "npm:^0.3.0"
     content-type: "npm:^1.0.5"
@@ -12123,10 +12135,10 @@ __metadata:
     file-type: "npm:^19.6.0"
     link: "npm:^2.1.1"
     media-typer: "npm:^1.1.0"
-    strtok3: "npm:^10.0.1"
+    strtok3: "npm:^10.1.2"
     token-types: "npm:^6.0.0"
     uint8array-extras: "npm:^1.4.0"
-  checksum: 10c0/72101e0dfdc1387e24c89b83917f9cbd83a212f93db6e92e08b5b774570af0374b60e1d5fc3903eb759b7099c9e89bad01fad32f86da6781ba1bf1b6d8496f51
+  checksum: 10c0/7ec33d1a730476a080826d0f7696596c9a4d938afc9cb7e84922f83a4f9aa20ca4bd04f647c422da343e2795f88cdb712d77c78fb04145f9fff86593db3c994f
   languageName: node
   linkType: hard
 
@@ -13293,6 +13305,13 @@ __metadata:
   version: 5.3.1
   resolution: "peek-readable@npm:5.3.1"
   checksum: 10c0/49f628e4728887230c158699e422ebb10747f5e02aee930ec10634fa7142e74e67d3fb3a780e7a9b9f092c61bf185f07d167c099b2359b22a58cee3dbfe0e43b
+  languageName: node
+  linkType: hard
+
+"peek-readable@npm:^6.0.2":
+  version: 6.0.2
+  resolution: "peek-readable@npm:6.0.2"
+  checksum: 10c0/1ea609773ce86371dbfe1aa969da5090e6c19ef997216633f8d0c4530647f4d518e40e7d9a1ca0d358af7df91343b96d1bc4daa0e792bb12a1dfcdd1e8774a24
   languageName: node
   linkType: hard
 
@@ -15870,13 +15889,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strtok3@npm:^10.0.1":
-  version: 10.0.1
-  resolution: "strtok3@npm:10.0.1"
+"strtok3@npm:^10.1.2":
+  version: 10.1.2
+  resolution: "strtok3@npm:10.1.2"
   dependencies:
     "@tokenizer/token": "npm:^0.3.0"
-    peek-readable: "npm:^5.3.1"
-  checksum: 10c0/476ccea29feebef1659d825e71a5e054b80486617139966217f53fd197d9d78d2d6f1e3be52cad7bc7ff71e164d38696adc60f883705fb440be1162a3ce6cb9b
+    peek-readable: "npm:^6.0.2"
+  checksum: 10c0/f754131361637c74f14d832b9dfe6ad9e66de1e37343ada01a050bbf4287670e7c3962e1fb4d32a0c4ed06222ab9e0c9021bb981cf6440c676d723d0d20dbcf6
   languageName: node
   linkType: hard
 

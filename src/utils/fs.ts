@@ -94,7 +94,11 @@ const isEmptyDir = async (directory: string) => {
  */
 const removeEmptyDir = async (directory: string) => {
   if (await isEmptyDir(directory)) {
-    await window.electronApi.fs.remove(directory);
+    try {
+      await window.electronApi.fs.remove(directory);
+    } catch (e) {
+      errorCatcher(e);
+    }
   }
 };
 

@@ -9,7 +9,12 @@ import { join } from 'path';
 export async function initUpdater() {
   autoUpdater.allowDowngrade = true;
   autoUpdater.on('error', (error, message) => {
-    const ignoreErrors = ['ENOENT', 'EPERM'];
+    const ignoreErrors = [
+      'ENOENT',
+      'EPERM',
+      'Command failed: mv -f',
+      '504 Gateway Time-out',
+    ];
     if (!ignoreErrors.some((ignoreError) => message?.includes(ignoreError))) {
       captureElectronError(error, {
         contexts: { fn: { message, name: 'initUpdater' } },

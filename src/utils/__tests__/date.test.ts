@@ -99,6 +99,13 @@ describe('getSpecificWeekday', () => {
 });
 
 describe('dateFromString', () => {
+  it('should convert yyyymmdd to date', () => {
+    const date = dateFromString('20210301');
+    expect(date.getFullYear()).toBe(2021);
+    expect(date.getMonth()).toBe(2);
+    expect(date.getDate()).toBe(1);
+  });
+
   it('should convert yyyy-mm-dd to date', () => {
     const date = dateFromString('2021-03-01');
     expect(date.getFullYear()).toBe(2021);
