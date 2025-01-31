@@ -172,6 +172,7 @@ watch(online, (isNowOnline) => {
       meetingQueue?.start();
       jwStore.updateYeartext();
       jwStore.updateJwLanguages();
+      getJwMepsInfo();
     } else {
       // downloadQueue?.pause();
       meetingQueue?.pause();
