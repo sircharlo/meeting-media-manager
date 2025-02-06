@@ -2726,9 +2726,23 @@ export interface JwLanguage {
   symbol: JwLangSymbol;
   vernacularName: string;
 }
-
 export interface JwLanguageResult {
   languages: JwLanguage[];
   localizedCount: string;
   status: number;
+}
+
+export interface JwMepsLanguage {
+  AssociatedTextLanguageId: number;
+  EnglishName: string;
+  IsoAlpha2Code: string;
+  IsoAlpha3Code: string;
+  IsoName: string;
+  IsSignLanguage: 0 | 1;
+  LanguageId: number;
+  PrimaryFallbackLanguageId: number;
+  PrimaryIetfCode: JwLangSymbol;
+  ScriptId: number;
+  Symbol: JwLangCode;
+  VernacularName: string;
 }

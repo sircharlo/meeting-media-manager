@@ -5,6 +5,7 @@ import type {
   FontName,
   JwLangCode,
   JwLanguage,
+  JwMepsLanguage,
   MediaLink,
   MediaSection,
   Publication,
@@ -50,6 +51,7 @@ interface Store {
     Record<JwLangCode, CacheList<Partial<Publication>>>
   >;
   jwLanguages: CacheList<JwLanguage>;
+  jwMepsLanguages: CacheList<JwMepsLanguage>;
   jwSongs: Partial<Record<JwLangCode, CacheList<MediaLink>>>;
   lookupPeriod: Partial<Record<string, DateInfo[]>>;
   urlVariables: UrlVariables;
@@ -400,6 +402,7 @@ export const useJwStore = defineStore('jw-store', {
     return {
       jwBibleAudioFiles: {},
       jwLanguages: { list: [], updated: oldDate },
+      jwMepsLanguages: { list: [], updated: oldDate },
       jwSongs: {},
       lookupPeriod: {},
       urlVariables: {

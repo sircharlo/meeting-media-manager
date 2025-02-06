@@ -56,6 +56,7 @@ import { watchExternalFolder } from 'src/helpers/fs';
 import {
   downloadBackgroundMusic,
   downloadSongbookVideos,
+  getJwMepsInfo,
   setUrlVariables,
   watchedItemMapper,
 } from 'src/helpers/jw-media';
@@ -173,6 +174,7 @@ watch(online, (isNowOnline) => {
       meetingQueue?.start();
       jwStore.updateYeartext();
       jwStore.updateJwLanguages();
+      getJwMepsInfo();
     } else {
       // downloadQueue?.pause();
       meetingQueue?.pause();
@@ -510,6 +512,7 @@ watchImmediate(
   () => {
     if (currentState.online) {
       setElementFont('JW-Icons');
+      getJwMepsInfo();
     }
   },
 );
