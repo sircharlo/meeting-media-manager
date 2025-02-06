@@ -3855,21 +3855,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^20.17.17":
+"@types/node@npm:^20.17.17, @types/node@npm:^20.9.0":
   version: 20.17.17
   resolution: "@types/node@npm:20.17.17"
   dependencies:
     undici-types: "npm:~6.19.2"
   checksum: 10c0/6aebc8053b96f1b6d82c3a3fe5fc20d9f7eeb507d79d967221bbecaa2b26665fa1c9efe460be2a2f4aaae4e98f37797df7d5a4189f2b6edf8abf9f82f7fd8b1f
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:^20.9.0":
-  version: 20.17.16
-  resolution: "@types/node@npm:20.17.16"
-  dependencies:
-    undici-types: "npm:~6.19.2"
-  checksum: 10c0/50c589dd6a377238bc51b6fb5b8fc60ff6d688df0bde621d4a9fc59f480eb956cdf6d46052e1cb9536f150bc62e9194ddc733aa78b65e812155b4d3a32717de2
   languageName: node
   linkType: hard
 
@@ -4087,7 +4078,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/scope-manager@npm:8.21.0, @typescript-eslint/scope-manager@npm:^8.13.0":
+"@typescript-eslint/scope-manager@npm:8.21.0":
   version: 8.21.0
   resolution: "@typescript-eslint/scope-manager@npm:8.21.0"
   dependencies:
@@ -4097,7 +4088,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/scope-manager@npm:8.23.0":
+"@typescript-eslint/scope-manager@npm:8.23.0, @typescript-eslint/scope-manager@npm:^8.13.0":
   version: 8.23.0
   resolution: "@typescript-eslint/scope-manager@npm:8.23.0"
   dependencies:
@@ -4136,7 +4127,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/typescript-estree@npm:8.21.0, @typescript-eslint/typescript-estree@npm:^8.13.0":
+"@typescript-eslint/typescript-estree@npm:8.21.0":
   version: 8.21.0
   resolution: "@typescript-eslint/typescript-estree@npm:8.21.0"
   dependencies:
@@ -4154,7 +4145,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/typescript-estree@npm:8.23.0":
+"@typescript-eslint/typescript-estree@npm:8.23.0, @typescript-eslint/typescript-estree@npm:^8.13.0":
   version: 8.23.0
   resolution: "@typescript-eslint/typescript-estree@npm:8.23.0"
   dependencies:
@@ -4172,7 +4163,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:8.21.0, @typescript-eslint/utils@npm:^8.20.0":
+"@typescript-eslint/utils@npm:8.21.0":
   version: 8.21.0
   resolution: "@typescript-eslint/utils@npm:8.21.0"
   dependencies:
@@ -4187,7 +4178,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:^8.23.0":
+"@typescript-eslint/utils@npm:^8.20.0, @typescript-eslint/utils@npm:^8.23.0":
   version: 8.23.0
   resolution: "@typescript-eslint/utils@npm:8.23.0"
   dependencies:
@@ -7272,19 +7263,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:*":
-  version: 3.2.3
-  resolution: "dompurify@npm:3.2.3"
-  dependencies:
-    "@types/trusted-types": "npm:^2.0.7"
-  dependenciesMeta:
-    "@types/trusted-types":
-      optional: true
-  checksum: 10c0/0ce5cb89b76f396d800751bcb48e0d137792891d350ccc049f1bc9a5eca7332cc69030c25007ff4962e0824a5696904d4d74264df9277b5ad955642dfb6f313f
-  languageName: node
-  linkType: hard
-
-"dompurify@npm:^3.2.4":
+"dompurify@npm:*, dompurify@npm:^3.2.4":
   version: 3.2.4
   resolution: "dompurify@npm:3.2.4"
   dependencies:
@@ -7509,16 +7488,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^34.0.2":
-  version: 34.0.2
-  resolution: "electron@npm:34.0.2"
+"electron@npm:^34.1.0":
+  version: 34.1.0
+  resolution: "electron@npm:34.1.0"
   dependencies:
     "@electron/get": "npm:^2.0.0"
     "@types/node": "npm:^20.9.0"
     extract-zip: "npm:^2.0.1"
   bin:
     electron: cli.js
-  checksum: 10c0/c1708b7a01a1490fb9162823a95b4ebdcae237c624c4f9836fc9cb6bde063a650422f2219eb56a38ca1e8e50f0d178961c2224879cf0dc334f9e9891e85e817d
+  checksum: 10c0/399167132fd8b2153ee95e97cb9f48963f4ddca249418453af0b65b99580bfc069d547ebea1ec0990c9a81b4ec5446ce162cd1b7d2eb5c178d42d723670991e9
   languageName: node
   linkType: hard
 
@@ -11639,7 +11618,7 @@ __metadata:
     countries-and-timezones: "npm:^3.7.2"
     decompress: "npm:^4.2.1"
     dompurify: "npm:^3.2.4"
-    electron: "npm:^34.0.2"
+    electron: "npm:^34.1.0"
     electron-builder: "npm:^25.1.8"
     electron-dl-manager: "npm:^3.2.1"
     electron-updater: "npm:^6.3.9"
@@ -11656,7 +11635,7 @@ __metadata:
     lint-staged: "npm:^15.4.3"
     lodash-es: "npm:^4.17.21"
     msw: "npm:^2.7.0"
-    music-metadata: "npm:^10.8.2"
+    music-metadata: "npm:^10.8.3"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.1.0"
     pdfjs-dist: "npm:^4.10.38"
@@ -12201,9 +12180,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^10.8.2":
-  version: 10.8.2
-  resolution: "music-metadata@npm:10.8.2"
+"music-metadata@npm:^10.8.3":
+  version: 10.8.3
+  resolution: "music-metadata@npm:10.8.3"
   dependencies:
     "@tokenizer/token": "npm:^0.3.0"
     content-type: "npm:^1.0.5"
@@ -12211,10 +12190,10 @@ __metadata:
     file-type: "npm:^19.6.0"
     link: "npm:^2.1.1"
     media-typer: "npm:^1.1.0"
-    strtok3: "npm:^10.2.0"
+    strtok3: "npm:^10.2.1"
     token-types: "npm:^6.0.0"
     uint8array-extras: "npm:^1.4.0"
-  checksum: 10c0/cf8e1e73648fc19503a9f24f1c22195ccef982c23bc4553981830a6094170eff188a230b4d1def24383aa008a1d06b210b1032452ae42424c69f7f371acfe618
+  checksum: 10c0/29fc26e2157cef04ef703902cc815e94566e16f69d08db2963df206a55396a77a856f579cf6296b15ceeb01aff2afc13244c5e47afca81f24d152753a8be3938
   languageName: node
   linkType: hard
 
@@ -13384,10 +13363,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"peek-readable@npm:^6.1.0":
-  version: 6.1.0
-  resolution: "peek-readable@npm:6.1.0"
-  checksum: 10c0/e98fa8ad3908889a4db7c8bebe7e57c9ca6cfdda3206591cce330a8ad1681c05fab15ee7871ebe1c52d0d1982c561039e88aa915f1dd4ae203593944e2a59ee2
+"peek-readable@npm:^6.1.1":
+  version: 6.1.1
+  resolution: "peek-readable@npm:6.1.1"
+  checksum: 10c0/5200f480e34b93ba95d13353bbec672cc9fd778377d3eb5fc07f4417486a68445bc23100838afc95493fa89c8263522ea01323e7fd28fc5a737cc876466bfedb
   languageName: node
   linkType: hard
 
@@ -15965,13 +15944,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strtok3@npm:^10.2.0":
-  version: 10.2.0
-  resolution: "strtok3@npm:10.2.0"
+"strtok3@npm:^10.2.1":
+  version: 10.2.1
+  resolution: "strtok3@npm:10.2.1"
   dependencies:
     "@tokenizer/token": "npm:^0.3.0"
-    peek-readable: "npm:^6.1.0"
-  checksum: 10c0/b8ce1fe96cb46f466c979b0349163c09da03ae6e3e23db050c27be3b548f42402336f095aa70e7698e80fec614c84bf84ebcefe9238c3ba8c4a71a34595fc451
+    peek-readable: "npm:^6.1.1"
+  checksum: 10c0/864d88358c1cbca5c1a4538e74189ea89e0ed89d46cafe82178a2bb8b2bf22d5882da711fe73e9eaacad9cf1a3f875aa5a666900f3b0af6a7f5d8d94b211af1f
   languageName: node
   linkType: hard
 
@@ -16577,16 +16556,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-api-utils@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "ts-api-utils@npm:2.0.0"
-  peerDependencies:
-    typescript: ">=4.8.4"
-  checksum: 10c0/6165e29a5b75bd0218e3cb0f9ee31aa893dbd819c2e46dbb086c841121eb0436ed47c2c18a20cb3463d74fd1fb5af62e2604ba5971cc48e5b38ebbdc56746dfc
-  languageName: node
-  linkType: hard
-
-"ts-api-utils@npm:^2.0.1":
+"ts-api-utils@npm:^2.0.0, ts-api-utils@npm:^2.0.1":
   version: 2.0.1
   resolution: "ts-api-utils@npm:2.0.1"
   peerDependencies:
