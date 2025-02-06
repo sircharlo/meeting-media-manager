@@ -7,7 +7,8 @@ import type {
   ImageSizes,
   ImageTypeSizes,
   JwLangCode,
-  JwLanguage,
+  JwLangSymbol,
+  JwMepsLanguage,
   JwPlaylistItem,
   MediaItemsMediatorFile,
   MediaLink,
@@ -38,7 +39,11 @@ import {
   getSpecificWeekday,
   subtractFromDate,
 } from 'src/utils/date';
-import { getPublicationDirectory, trimFilepathAsNeeded } from 'src/utils/fs';
+import {
+  findFile,
+  getPublicationDirectory,
+  trimFilepathAsNeeded,
+} from 'src/utils/fs';
 import { sanitizeId } from 'src/utils/general';
 import { findBestResolution, getPubId, isMediaLink } from 'src/utils/jw';
 import {
@@ -58,6 +63,16 @@ import {
 } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
 import { addUniqueById, shouldUpdateList, useJwStore } from 'stores/jw';
+
+export const getJwLangCode = (mepsId?: number): JwLangCode | null => {
+  if (mepsId === undefined) return null;
+  const jwStore = useJwStore();
+  const match = jwStore.jwMepsLanguages.list.find(
+    (l) => l.LanguageId === mepsId,
+  );
+  if (match) return match.Symbol;
+  return mepslangs[mepsId] || null;
+};
 
 export const copyToDatedAdditionalMedia = async (
   filepathToCopy: string,
@@ -1227,7 +1242,7 @@ export const dynamicMediaMapper = async (
             )
               .concat([
                 (m.MepsLanguageIndex !== undefined &&
-                  mepslangs[m.MepsLanguageIndex]) ||
+                  getJwLangCode(m.MepsLanguageIndex)) ||
                   '',
                 m.Track,
               ])
@@ -1653,7 +1668,9 @@ export const getWeMedia = async (lookupDate: Date) => {
           item.IssueTagNumber === media.IssueTagNumber,
       );
       if (multimediaMepsLangItem?.MepsLanguageIndex !== undefined) {
-        const mepsLang = mepslangs[multimediaMepsLangItem.MepsLanguageIndex];
+        const mepsLang = getJwLangCode(
+          multimediaMepsLangItem.MepsLanguageIndex,
+        );
         if (mepsLang) {
           media.AlternativeLanguage = mepsLang;
         }
@@ -1781,7 +1798,9 @@ export const getMwMedia = async (lookupDate: Date) => {
           item.IssueTagNumber === media.IssueTagNumber,
       );
       if (multimediaMepsLangItem?.MepsLanguageIndex) {
-        const mepsLang = mepslangs[multimediaMepsLangItem.MepsLanguageIndex];
+        const mepsLang = getJwLangCode(
+          multimediaMepsLangItem.MepsLanguageIndex,
+        );
         if (mepsLang) media.AlternativeLanguage = mepsLang;
       }
     }
@@ -1928,6 +1947,49 @@ export const getPubMediaLinks = async (publication: PublicationFetcher) => {
   } catch (e) {
     errorCatcher(e);
     return null;
+  }
+};
+
+export const getJwMepsInfo = async () => {
+  try {
+    const jwStore = useJwStore();
+
+    if (!shouldUpdateList(jwStore.jwMepsLanguages, 3)) {
+      return;
+    }
+
+    const file = await downloadMissingMedia({
+      fileformat: 'ZIP',
+      langwritten: 'E',
+      pub: 'jwlb',
+    });
+    if (!file.FilePath) return;
+    const dir = window.electronApi.path.dirname(file.FilePath);
+    await window.electronApi.decompress(file.FilePath, dir);
+    const msixbundle = await findFile(dir, '.msixbundle');
+    if (!msixbundle) return;
+    await window.electronApi.decompress(msixbundle, dir);
+    const msix = await findFile(dir, '_x64.msix');
+    if (!msix) return;
+    await window.electronApi.decompress(msix, dir);
+    const mepsunit = await findFile(
+      window.electronApi.path.join(dir, 'Data'),
+      '.db',
+    );
+    if (!mepsunit) return;
+    const mepsLangs = window.electronApi
+      .executeQuery<JwMepsLanguage>(mepsunit, 'SELECT * FROM Language')
+      .map((l) => ({
+        ...l,
+        PrimaryIetfCode: l.PrimaryIetfCode.toLowerCase() as JwLangSymbol,
+      }));
+    if (mepsLangs.length < jwStore.jwMepsLanguages.list.length) return;
+    jwStore.jwMepsLanguages = {
+      list: mepsLangs,
+      updated: new Date(),
+    };
+  } catch (e) {
+    errorCatcher(e);
   }
 };
 
@@ -2431,116 +2493,4 @@ export const setUrlVariables = async (baseUrl: string | undefined) => {
   } finally {
     window.electronApi.setUrlVariables(JSON.stringify(jwStore.urlVariables));
   }
-};
-
-export const checkMepsIndexes = async () => {
-  const knownMepsCodes = Object.values(mepslangs);
-  const langs = useJwStore().jwLanguages.list;
-
-  const knownLangs = langs.filter((lang) =>
-    knownMepsCodes.includes(lang.langcode),
-  );
-  const missingLangs = langs.filter(
-    (lang) => !knownMepsCodes.includes(lang.langcode),
-  );
-
-  knownLangs.forEach((lang) => {
-    verifyKnownMepsIndex(lang);
-  });
-
-  missingLangs.forEach((lang) => {
-    findMissingMepsIndex(lang);
-  });
-};
-
-const verifyKnownMepsIndex = async (lang: JwLanguage) => {
-  // if not monday, get the previous monday
-  const monday = getSpecificWeekday(new Date(), 0);
-  const issue = subtractFromDate(monday, {
-    months: (monday.getMonth() + 1) % 2 === 0 ? 1 : 0,
-  });
-  const mwbIssue = formatDate(issue, 'YYYYMM') + '00';
-
-  const pubsToTry: PublicationFetcher[] = [
-    { pub: 'lff' },
-    { issue: mwbIssue, pub: 'mwb' },
-    { issue: '202411', pub: 'w' },
-  ].map((pub) => ({ ...pub, langwritten: lang.langcode }));
-
-  const pubs = await Promise.all(pubsToTry.map((pub) => getDbFromJWPUB(pub)));
-
-  const pub = pubs.find((pub) => pub !== null);
-  if (!pub) {
-    console.warn(`No publication found for ${lang.name}`);
-    return;
-  }
-
-  const result = window.electronApi.executeQuery<{
-    MepsLanguageIndex: null | number;
-  }>(pub, 'SELECT MepsLanguageIndex from Multimedia');
-
-  const allMepsIndexes = result
-    .map((row) => row.MepsLanguageIndex)
-    .filter((i) => i !== null);
-  const mepsIndexes = [...new Set(allMepsIndexes)]
-    .map((mepsIndex) => ({
-      count: allMepsIndexes.filter((index) => index === mepsIndex).length,
-      mepsIndex,
-    }))
-    .sort((a, b) => b.count - a.count);
-
-  const mepsIndex = mepsIndexes[0];
-  if (!mepsIndex) {
-    console.warn(`No MepsLanguageIndex found for ${lang.name}`);
-    return;
-  }
-
-  if (mepslangs[mepsIndex.mepsIndex] !== lang.langcode) {
-    console.warn('Mismatch', {
-      found: mepslangs[mepsIndex.mepsIndex],
-      lang,
-      mepsIndexes,
-    });
-  }
-};
-
-const findMissingMepsIndex = async (lang: JwLanguage) => {
-  // if not monday, get the previous monday
-  const monday = getSpecificWeekday(new Date(), 0);
-  const issue = subtractFromDate(monday, {
-    months: (monday.getMonth() + 1) % 2 === 0 ? 1 : 0,
-  });
-  const mwbIssue = formatDate(issue, 'YYYYMM') + '00';
-
-  const pubsToTry: PublicationFetcher[] = [
-    { pub: 'lff' },
-    { issue: mwbIssue, pub: 'mwb' },
-    { issue: '202411', pub: 'w' },
-  ].map((pub) => ({ ...pub, langwritten: lang.langcode }));
-
-  const pubs = await Promise.all(pubsToTry.map((pub) => getDbFromJWPUB(pub)));
-
-  const pub = pubs.find((pub) => pub !== null);
-  if (!pub) {
-    console.warn(`No publication found for ${lang.name}`);
-    return;
-  }
-
-  const result = window.electronApi.executeQuery<{
-    MepsLanguageIndex: null | number;
-  }>(pub, 'SELECT MepsLanguageIndex from Multimedia');
-
-  const allMepsIndexes = result
-    .map((row) => row.MepsLanguageIndex)
-    .filter((i) => i !== null);
-  const uniqueMepsIndexes = [...new Set(allMepsIndexes)]
-    .map((mepsIndex) => ({
-      count: allMepsIndexes.filter((index) => index === mepsIndex).length,
-      mepsIndex,
-    }))
-    .sort((a, b) => b.count - a.count);
-  console.log(`${lang.name} (${lang.langcode})`, {
-    pub: pub.split('/').pop(),
-    ...uniqueMepsIndexes,
-  });
 };

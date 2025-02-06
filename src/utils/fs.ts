@@ -121,6 +121,26 @@ export const removeEmptyDirs = async (rootDir: string) => {
 // Files
 
 /**
+ * Find a file in a directory
+ * @param dir The directory to search in.
+ * @param search The search string.
+ * @returns The path to the file.
+ */
+export const findFile = async (dir: string | undefined, search: string) => {
+  if (!dir) return undefined;
+  try {
+    if (!(await window.electronApi.fs.pathExists(dir))) return undefined;
+    const files = await window.electronApi.readdir(dir);
+    return files
+      .map((file) => window.electronApi.path.join(dir, file.name))
+      .find((filename) => filename.includes(search));
+  } catch (error) {
+    errorCatcher(error);
+    return undefined;
+  }
+};
+
+/**
  * Gets the files inside a publication directory.
  * @param publication The publication to get the files of.
  * @param filter The filter to apply to the files.
