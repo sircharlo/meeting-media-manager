@@ -96,7 +96,7 @@
     "@types/sanitize-html": "^2.13.0",
     "@types/sortablejs": "^1.15.8",
     "@vue/eslint-config-prettier": "^10.2.0",
-    "@vue/eslint-config-typescript": "^14.3.0",
+    "@vue/eslint-config-typescript": "^14.4.0",
     "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.20",
     "electron": "^34.1.1",
