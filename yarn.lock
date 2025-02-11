@@ -4347,7 +4347,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/devtools-api@npm:^6.5.0, @vue/devtools-api@npm:^6.6.3, @vue/devtools-api@npm:^6.6.4":
+"@vue/devtools-api@npm:^6.5.0, @vue/devtools-api@npm:^6.6.4":
   version: 6.6.4
   resolution: "@vue/devtools-api@npm:6.6.4"
   checksum: 10c0/0a993ae23618166e1bee5a7c14cebd8312752b93c143cbdd48fb2d0f7ade070d0e6baf757cd920d4681fef8f9acf29515162160f38cc7410f9a684d2df21b6de
@@ -4360,6 +4360,15 @@ __metadata:
   dependencies:
     "@vue/devtools-kit": "npm:^7.7.0"
   checksum: 10c0/8bc0a263cf78bf2b9217fc3d4c8ebb9911587e63de27155a5294c4a209308564d4ac19a6b882a30adc6f0489890523f857636042fcf9168484407348abfd676a
+  languageName: node
+  linkType: hard
+
+"@vue/devtools-api@npm:^7.7.1":
+  version: 7.7.1
+  resolution: "@vue/devtools-api@npm:7.7.1"
+  dependencies:
+    "@vue/devtools-kit": "npm:^7.7.1"
+  checksum: 10c0/699c57936c9618faf771632e34179d64b9e8e0adbc06cb6d33167ba2a16392bef3b8d3db61466d5860a4b36ab0a99a1c03d5236237a018109fd252c67c4c50e7
   languageName: node
   linkType: hard
 
@@ -4378,12 +4387,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@vue/devtools-kit@npm:^7.7.1":
+  version: 7.7.1
+  resolution: "@vue/devtools-kit@npm:7.7.1"
+  dependencies:
+    "@vue/devtools-shared": "npm:^7.7.1"
+    birpc: "npm:^0.2.19"
+    hookable: "npm:^5.5.3"
+    mitt: "npm:^3.0.1"
+    perfect-debounce: "npm:^1.0.0"
+    speakingurl: "npm:^14.0.1"
+    superjson: "npm:^2.2.1"
+  checksum: 10c0/c5320a18196ac39af373d1b23c2073ce73578f21c8e8c077a38d552cf5559267627bbd3d48f6462b1295670935ac86dbc112e1e04b5f0f201cf3338d8d601759
+  languageName: node
+  linkType: hard
+
 "@vue/devtools-shared@npm:^7.7.0":
   version: 7.7.0
   resolution: "@vue/devtools-shared@npm:7.7.0"
   dependencies:
     rfdc: "npm:^1.4.1"
   checksum: 10c0/d0fcb9210ed15650b3c2f4a85aff36c52186309298cd2e99d5e14deaba9939f98875a667a731def653f8e2beb175a17f738d27c37c79f8d9acfa3b451aeccc81
+  languageName: node
+  linkType: hard
+
+"@vue/devtools-shared@npm:^7.7.1":
+  version: 7.7.1
+  resolution: "@vue/devtools-shared@npm:7.7.1"
+  dependencies:
+    rfdc: "npm:^1.4.1"
+  checksum: 10c0/02e880140453f57885debe1ab61344d31575d2a90195c6b38e469a8338108bfd25c07d07a56d07c56454096c3d45367ec8b987b6cb675cbb4c778829ec6df566
   languageName: node
   linkType: hard
 
@@ -11588,7 +11621,7 @@ __metadata:
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.1.0"
     pdfjs-dist: "npm:^4.10.38"
-    pinia: "npm:^2.3.1"
+    pinia: "npm:^3.0.0"
     pinia-plugin-persistedstate: "npm:^4.2.0"
     pinia-shared-state: "npm:^0.5.1"
     postcss: "npm:^8.5.2"
@@ -13488,19 +13521,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pinia@npm:^2.3.1":
-  version: 2.3.1
-  resolution: "pinia@npm:2.3.1"
+"pinia@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "pinia@npm:3.0.0"
   dependencies:
-    "@vue/devtools-api": "npm:^6.6.3"
-    vue-demi: "npm:^0.14.10"
+    "@vue/devtools-api": "npm:^7.7.1"
   peerDependencies:
     typescript: ">=4.4.4"
     vue: ^2.7.0 || ^3.5.11
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/e005883c26fe782e26803859db8703ead2e7053271d22828175c82d56e925ddab65ca2543a3f3a36686a11e6835f60c031f1eb2ef9159f9da05121495499c5f6
+  checksum: 10c0/ac3743c138a13e54f63864c4346a015b6e8dbb17daa644f40dc1a04921cdf00804d814e238eb47c0a044f4ceeb4fa0dc5d6eda026512a56840b026d0d3586cc6
   languageName: node
   linkType: hard
 
