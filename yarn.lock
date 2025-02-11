@@ -2680,14 +2680,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pinia/testing@npm:^0.1.7":
-  version: 0.1.7
-  resolution: "@pinia/testing@npm:0.1.7"
-  dependencies:
-    vue-demi: "npm:^0.14.10"
+"@pinia/testing@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@pinia/testing@npm:1.0.0"
   peerDependencies:
-    pinia: ">=2.2.6"
-  checksum: 10c0/427dee43d4fab22071a3cb5146b3bff7179bdede4c729ac9121affe818d148f81a57665d74924ee3df55395b860ec1a64c95de61b81971dcf3a63f95941f2f18
+    pinia: ">=3.0.0"
+  checksum: 10c0/0f1625c834f6d0589eba092639b55f0c1c786517ef50b00a70c9b63f76aa7a8f6def73746396b46be71dc0e2030f2c9a4583e1ce6982172f3741f4de637cd47d
   languageName: node
   linkType: hard
 
@@ -11566,7 +11564,7 @@ __metadata:
     "@intlify/unplugin-vue-i18n": "npm:^6.0.3"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@panzoom/panzoom": "npm:^4.6.0"
-    "@pinia/testing": "npm:^0.1.7"
+    "@pinia/testing": "npm:^1.0.0"
     "@quasar/app-vite": "npm:^2.0.8"
     "@quasar/extras": "npm:^1.16.17"
     "@quasar/icongenie": "npm:^4.0.0"
