@@ -15,12 +15,12 @@
 
 - 🚫 **Prevent Media Flicker**: Improve sorting logic to prevent flickering when reordering media.
 - 🖱 **Smooth Scrolling**: Enhance scroll behavior for a more seamless navigation experience.
-- ⚠️ **Warn Before Closing with Background Music**: Show a confirmation prompt when attempting to close the application while background music is playing.
+- ⚠️ **Warn Before Closing with Background Music**: Show a warning when attempting to close the application while background music is playing.
 - 📖 **Fix Study Bible Media Import**: Correct issues related to importing certain Study Bible media files.
 - 🌍 **Translation Updates**: Improve and update translations across various supported languages.
-- 📑 **Enhanced JWPub Document List**: Improve the styling of the JWPub document list for better readability.
+- 📑 **Enhanced JWPUB Document List**: Improve the styling of the JWPUB document list for better readability.
 - 📆 **Support YYYYMMDD Date Format**: Enable compatibility with YYYYMMDD date format for better regional support.
-- 🎵 **Sign Language Song Handling**: Only overwrite song publication details for sign languages to preserve intended formatting.
+- 🎵 **Sign Language Song Handling**: Only overwrite song publication details for sign languages to preserve intended song publication 
 - 🌐 **Expanded MEPS Language Indexes**: Add more language indexes to improve multilingual support.
 - 🗑 **Optimized File Removal Actions**: Improve efficiency when deleting files, reducing unnecessary operations.
 
