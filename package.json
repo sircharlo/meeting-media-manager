@@ -109,7 +109,7 @@
     "lint-staged": "^15.4.3",
     "lodash-es": "^4.17.21",
     "msw": "^2.7.0",
-    "postcss": "^8.5.1",
+    "postcss": "^8.5.2",
     "prettier": "^3.5.0",
     "typescript": "~5.6.3",
     "vitepress": "^1.6.3",
