@@ -4352,36 +4352,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/devtools-api@npm:^7.7.0":
-  version: 7.7.0
-  resolution: "@vue/devtools-api@npm:7.7.0"
-  dependencies:
-    "@vue/devtools-kit": "npm:^7.7.0"
-  checksum: 10c0/8bc0a263cf78bf2b9217fc3d4c8ebb9911587e63de27155a5294c4a209308564d4ac19a6b882a30adc6f0489890523f857636042fcf9168484407348abfd676a
-  languageName: node
-  linkType: hard
-
-"@vue/devtools-api@npm:^7.7.1":
+"@vue/devtools-api@npm:^7.7.0, @vue/devtools-api@npm:^7.7.1":
   version: 7.7.1
   resolution: "@vue/devtools-api@npm:7.7.1"
   dependencies:
     "@vue/devtools-kit": "npm:^7.7.1"
   checksum: 10c0/699c57936c9618faf771632e34179d64b9e8e0adbc06cb6d33167ba2a16392bef3b8d3db61466d5860a4b36ab0a99a1c03d5236237a018109fd252c67c4c50e7
-  languageName: node
-  linkType: hard
-
-"@vue/devtools-kit@npm:^7.7.0":
-  version: 7.7.0
-  resolution: "@vue/devtools-kit@npm:7.7.0"
-  dependencies:
-    "@vue/devtools-shared": "npm:^7.7.0"
-    birpc: "npm:^0.2.19"
-    hookable: "npm:^5.5.3"
-    mitt: "npm:^3.0.1"
-    perfect-debounce: "npm:^1.0.0"
-    speakingurl: "npm:^14.0.1"
-    superjson: "npm:^2.2.1"
-  checksum: 10c0/0576048e6a2c137fdb198667ff217ab1b509325332566309b1046c82f9f1e9780c62260b06244a680042985941fd3277bd20ae28d240b3f2b9cd0249b5df7cf6
   languageName: node
   linkType: hard
 
@@ -4397,15 +4373,6 @@ __metadata:
     speakingurl: "npm:^14.0.1"
     superjson: "npm:^2.2.1"
   checksum: 10c0/c5320a18196ac39af373d1b23c2073ce73578f21c8e8c077a38d552cf5559267627bbd3d48f6462b1295670935ac86dbc112e1e04b5f0f201cf3338d8d601759
-  languageName: node
-  linkType: hard
-
-"@vue/devtools-shared@npm:^7.7.0":
-  version: 7.7.0
-  resolution: "@vue/devtools-shared@npm:7.7.0"
-  dependencies:
-    rfdc: "npm:^1.4.1"
-  checksum: 10c0/d0fcb9210ed15650b3c2f4a85aff36c52186309298cd2e99d5e14deaba9939f98875a667a731def653f8e2beb175a17f738d27c37c79f8d9acfa3b451aeccc81
   languageName: node
   linkType: hard
 
@@ -13657,18 +13624,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.3.11, postcss@npm:^8.4.43, postcss@npm:^8.4.48, postcss@npm:^8.4.49":
-  version: 8.5.1
-  resolution: "postcss@npm:8.5.1"
-  dependencies:
-    nanoid: "npm:^3.3.8"
-    picocolors: "npm:^1.1.1"
-    source-map-js: "npm:^1.2.1"
-  checksum: 10c0/c4d90c59c98e8a0c102b77d3f4cac190f883b42d63dc60e2f3ed840f16197c0c8e25a4327d2e9a847b45a985612317dc0534178feeebd0a1cf3eb0eecf75cae4
-  languageName: node
-  linkType: hard
-
-"postcss@npm:^8.5.2":
+"postcss@npm:^8.3.11, postcss@npm:^8.4.43, postcss@npm:^8.4.48, postcss@npm:^8.4.49, postcss@npm:^8.5.2":
   version: 8.5.2
   resolution: "postcss@npm:8.5.2"
   dependencies:
@@ -17581,7 +17537,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-demi@npm:^0.14.10, vue-demi@npm:^0.14.6":
+"vue-demi@npm:^0.14.6":
   version: 0.14.10
   resolution: "vue-demi@npm:0.14.10"
   peerDependencies:
