@@ -18,6 +18,7 @@ export async function initUpdater() {
       'EPERM',
       'Command failed: mv -f',
       '504 Gateway Time-out',
+      'HttpError: 504',
     ];
     if (!ignoreErrors.some((ignoreError) => message?.includes(ignoreError))) {
       captureElectronError(error, {
