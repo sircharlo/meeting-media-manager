@@ -11449,7 +11449,7 @@ __metadata:
     pdfjs-dist: "npm:^4.10.38"
     pinia: "npm:^3.0.1"
     pinia-plugin-persistedstate: "npm:^4.2.0"
-    pinia-shared-state: "npm:^0.5.1"
+    pinia-shared-state: "npm:^1.0.1"
     postcss: "npm:^8.5.2"
     prettier: "npm:^3.5.0"
     pretty-bytes: "npm:^6.1.1"
@@ -13335,15 +13335,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pinia-shared-state@npm:^0.5.1":
-  version: 0.5.1
-  resolution: "pinia-shared-state@npm:0.5.1"
+"pinia-shared-state@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "pinia-shared-state@npm:1.0.1"
   dependencies:
     broadcast-channel: "npm:^7.0.0"
-    vue-demi: "npm:^0.14.6"
   peerDependencies:
-    pinia: ^2
-  checksum: 10c0/695871d2ba2ec582b47e78bbfd71c6e7483b9cdd99af0d1bc26b1401e0487156a60c222120869b55326fa13f24b7fd747555d3896fa35cf960bee9303b485c68
+    pinia: ^3.0.0
+  checksum: 10c0/838f4239d6ed3a8e9ec23506c07dd68686d600987f20b9f5a4e1f68b5ab5f5066300c0c82f7e105fd2d4716c0556045229ae358c4b0604a8fc713e635bed63f0
   languageName: node
   linkType: hard
 
@@ -17352,22 +17351,6 @@ __metadata:
   version: 2.2.0
   resolution: "vue-component-type-helpers@npm:2.2.0"
   checksum: 10c0/3e95ddc38e01accdc1f0ae4bdeb3b5a32fd9ad3f7f10100d84c2752492d4f757d305d3026d26244b574d921eb35123a5f1cfa6f2e2c943a4ecd7deeaf777843d
-  languageName: node
-  linkType: hard
-
-"vue-demi@npm:^0.14.6":
-  version: 0.14.10
-  resolution: "vue-demi@npm:0.14.10"
-  peerDependencies:
-    "@vue/composition-api": ^1.0.0-rc.1
-    vue: ^3.0.0-0 || ^2.6.0
-  peerDependenciesMeta:
-    "@vue/composition-api":
-      optional: true
-  bin:
-    vue-demi-fix: bin/vue-demi-fix.js
-    vue-demi-switch: bin/vue-demi-switch.js
-  checksum: 10c0/a9ed8712fa36d01bc13c39757f95f30cebf42d557b99e94bff86d8660c81f2911b41220f7affc023d1ffcc19e13999e4a83019991e264787cca2c616e83aea48
   languageName: node
   linkType: hard
 

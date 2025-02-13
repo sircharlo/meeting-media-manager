@@ -60,7 +60,7 @@
     "pdfjs-dist": "^4.10.38",
     "pinia": "^3.0.1",
     "pinia-plugin-persistedstate": "^4.2.0",
-    "pinia-shared-state": "^0.5.1",
+    "pinia-shared-state": "^1.0.1",
     "pretty-bytes": "^6.1.1",
     "quasar": "^2.17.7",
     "sanitize-filename": "^1.6.3",
