@@ -6,12 +6,11 @@ import {
   init as initVue,
   vueIntegration,
 } from '@sentry/vue';
-import { IS_DEV } from 'src/constants/general';
 import { errorCatcher } from 'src/helpers/error-catcher';
 
 export default defineBoot(({ app, router }) => {
   try {
-    if (!IS_DEV) {
+    if (!process.env.IS_DEV) {
       init(
         {
           // @ts-expect-error: app does not exist on Sentry renderer, but it does on Sentry vue

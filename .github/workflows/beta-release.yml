@@ -89,7 +89,7 @@ jobs:
       MAC_CERTIFICATE_BASE64: ${{ secrets.MAC_CERTIFICATE_BASE64 }}
       MAC_CERTIFICATE_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
       SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-      SENTRY_SOURCE_MAPS: 'true'
+      TEST_VERSION: 'false'
 
   rerun-on-failure:
     needs: [build]

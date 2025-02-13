@@ -162,7 +162,7 @@ const open = defineModel<boolean>({ default: false });
 
 const { t } = useI18n();
 const appVersion = process.env.version;
-const isBetaVersion = process.env.isBeta;
+const isBetaVersion = process.env.IS_BETA;
 
 const updatesEnabled = ref(true);
 const betaUpdatesEnabled = ref(false);

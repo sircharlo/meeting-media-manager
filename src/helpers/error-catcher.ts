@@ -1,7 +1,6 @@
 import type { ExclusiveEventHintOrCaptureContext } from 'app/node_modules/@sentry/core/build/types/utils/prepareEvent';
 
 import { captureException } from '@sentry/electron/renderer';
-import { IS_DEV } from 'src/constants/general';
 
 export const errorCatcher = async (
   error: Error | string | unknown,
@@ -13,7 +12,7 @@ export const errorCatcher = async (
     errorCatcher(error.cause, context);
   }
 
-  if (!IS_DEV) {
+  if (!process.env.IS_DEV) {
     captureException(error, context);
   } else {
     console.error(error);
