@@ -5,10 +5,14 @@ import fse from 'fs-extra';
 const { exists } = fse;
 import { captureElectronError } from 'main/utils';
 import { join } from 'path';
+import { IS_TEST } from 'src-electron/constants';
 
 export async function initUpdater() {
   autoUpdater.allowDowngrade = true;
+  autoUpdater.autoDownload = !IS_TEST;
+  autoUpdater.autoInstallOnAppQuit = !IS_TEST;
   autoUpdater.on('error', (error, message) => {
+    if (IS_TEST) return;
     const ignoreErrors = [
       'ENOENT',
       'EPERM',

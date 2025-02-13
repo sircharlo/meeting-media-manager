@@ -13,6 +13,7 @@ import {
   parseVersion,
   sanitizeId,
   sortByVersion,
+  toTitleCase,
   uuid,
 } from '../general';
 
@@ -25,6 +26,16 @@ describe('camelToKebabCase', () => {
 describe('kebabToCamelCase', () => {
   it('should convert kebab-case to camelCase', () => {
     expect(kebabToCamelCase('kebab-case-string')).toBe('kebabCaseString');
+  });
+});
+
+describe('toTitleCase', () => {
+  it('should convert kebab-case to Title Case', () => {
+    expect(toTitleCase('kebab-case-string')).toBe('Kebab Case String');
+  });
+
+  it('should convert snake_case to Title Case', () => {
+    expect(toTitleCase('snake_case_string')).toBe('Snake Case String');
   });
 });
 

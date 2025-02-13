@@ -79,8 +79,10 @@ import { useRoute, useRouter } from 'vue-router';
 // Local state
 const miniState = ref(true);
 
+const productName = process.env.PRODUCT_NAME;
+
 useMeta({
-  titleTemplate: (title) => (title ? `${title} - M³` : 'Meeting Media Manager'),
+  titleTemplate: (title) => (title ? `${title} - M³` : `${productName}`),
 });
 
 // Icon mapping
@@ -493,7 +495,6 @@ const removeListeners = () => {
 };
 
 onMounted(() => {
-  document.title = 'Meeting Media Manager';
   if (!currentSettings.value) navigateToCongregationSelector();
   initListeners();
 });

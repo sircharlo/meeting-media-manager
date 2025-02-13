@@ -7,16 +7,27 @@ import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { fileURLToPath } from 'node:url';
 import { mergeConfig } from 'vite'; // use mergeConfig helper to avoid overwriting the default config
 
-import { repository, version } from './package.json';
+import { name, productName, repository, version } from './package.json';
 
+// Environment
+const IS_DEV = process.env.NODE_ENV === 'development';
 const IS_BETA = version.includes('beta');
+const IS_TEST = process.env.TEST_VERSION == 'true';
 
+// App
+const APP_NAME = `${name}${IS_TEST ? '-test' : ''}`;
+const PRODUCT_NAME = `${productName}${IS_TEST ? ' - Test' : ''}`;
+const APP_ID = `sircharlo.${APP_NAME}`;
+
+// Sentry
 const SENTRY_ORG = 'jw-projects';
 const SENTRY_PROJECT = 'mmm-v2';
-const SENTRY_VERSION = `meeting-media-manager@${version}`;
+const SENTRY_VERSION = `${name}@${version}`;
 const SENTRY_AUTH_TOKEN = process.env.SENTRY_AUTH_TOKEN;
-const ENABLE_SOURCE_MAPS =
-  !!SENTRY_AUTH_TOKEN && process.env.SENTRY_SOURCE_MAPS == 'true';
+const ENABLE_SOURCE_MAPS = !!SENTRY_AUTH_TOKEN && !IS_TEST;
+
+const getIconPath = (ext: 'icns' | 'ico' | 'png') =>
+  `icons/${IS_BETA ? 'beta' : 'icon'}.${ext}`;
 
 export default defineConfig((ctx) => {
   return {
@@ -41,7 +52,12 @@ export default defineConfig((ctx) => {
         ),
       },
       env: {
-        isBeta: IS_BETA,
+        APP_ID,
+        APP_NAME,
+        IS_BETA,
+        IS_DEV,
+        IS_TEST,
+        PRODUCT_NAME,
         repository: repository.url.replace('.git', ''),
         version,
       },
@@ -104,14 +120,13 @@ export default defineConfig((ctx) => {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-electron-apps/configuring-electron
     electron: {
       builder: {
-        appId: 'sircharlo.meeting-media-manager',
+        appId: APP_ID,
         // eslint-disable-next-line no-template-curly-in-string
-        artifactName: 'meeting-media-manager-${version}-${arch}.${ext}',
+        artifactName: APP_NAME + '-${version}-${arch}.${ext}',
         generateUpdatesFilesForAllChannels: true,
         linux: {
           category: 'Utility',
-          icon: `icons/${IS_BETA ? 'beta' : 'icon'}.png`,
-          publish: ['github'],
+          icon: getIconPath('png'),
           target: 'AppImage',
         },
         mac: {
@@ -126,20 +141,19 @@ export default defineConfig((ctx) => {
               "Microphone access is required in order to use the website mirroring feature, as screen recording is treated as camera and microphone access. Please note that your device's microphone will never be accessed or used in any way by this app.",
           },
           hardenedRuntime: true,
-          icon: `icons/${IS_BETA ? 'beta' : 'icon'}.icns`,
+          icon: getIconPath('icns'),
           minimumSystemVersion: '10.15',
-          publish: ['github'],
           target: { target: 'default' },
         },
         nsis: { oneClick: false },
         portable: {
           // eslint-disable-next-line no-template-curly-in-string
-          artifactName: 'meeting-media-manager-${version}-portable.${ext}',
+          artifactName: APP_NAME + '-${version}-portable.${ext}',
         },
-        productName: 'Meeting Media Manager',
+        productName: PRODUCT_NAME,
+        publish: ['github'],
         win: {
-          icon: `icons/${IS_BETA ? 'beta' : 'icon'}.ico`,
-          publish: ['github'],
+          icon: getIconPath('ico'),
           target: [
             { arch: ctx.debug ? 'x64' : ['x64', 'ia32'], target: 'nsis' },
             'portable',

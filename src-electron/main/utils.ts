@@ -39,14 +39,6 @@ export function getIconPath(icon: 'beta' | 'icon' | 'media-player') {
 }
 
 /**
- * Checks if current app version is a beta version
- * @returns Whether the app version is a beta version
- */
-export function isBeta() {
-  return getAppVersion().includes('beta');
-}
-
-/**
  * Checks if a given url is a JW domain
  * @param url The url to check
  * @returns Whether the url is a JW domain

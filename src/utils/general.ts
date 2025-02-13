@@ -20,6 +20,19 @@ export const kebabToCamelCase = (str: string) =>
   str.replace(/-./g, (x) => x[1]!.toUpperCase());
 
 /**
+ * Converts a kebab-case or snake_case string to title case.
+ * @param str The string to convert.
+ * @returns The title case string.
+ * @example
+ * toTitleCase('kebab-case') // 'Kebab Case'
+ * toTitleCase('snake_case') // 'Snake Case'
+ */
+export const toTitleCase = (str: string) =>
+  str
+    .replace(/^[-_]*(.)/, (_, c) => c.toUpperCase())
+    .replace(/[-_]+(.)/g, (_, c) => ' ' + c.toUpperCase());
+
+/**
  * Sleeps for a given amount of time.
  * @param ms The time to sleep in milliseconds.
  * @returns The promise that resolves after the sleep.
