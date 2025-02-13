@@ -1,4 +1,10 @@
+import { exec } from 'child_process';
+import path from 'upath';
+import { fileURLToPath } from 'url';
+import { promisify } from 'util';
 import { defineConfig } from 'vitepress';
+
+const execPromise = promisify(exec);
 
 import type { LanguageValue } from '../../src/constants/locales';
 
@@ -157,7 +163,7 @@ export default defineConfig({
     search: mapSearch(),
     socialLinks: [{ ariaLabel: 'GitHub', icon: 'github', link: GH_REPO_URL }],
   },
-  transformPageData(pageData) {
+  async transformPageData(pageData) {
     const canonicalUrl = `${CANONICAL_URL}${pageData.relativePath}`
       .replace(/index\.md$/, '')
       .replace(/\.md$/, '');
@@ -165,6 +171,18 @@ export default defineConfig({
     const pageLang = pageData.relativePath.split('/')[0];
     const messageLocale = kebabToCamelCase(pageLang) as LanguageValue;
     const isEnglish = pageData.relativePath.split('/').length === 1;
+
+    let createdDate = '';
+    try {
+      const { stdout } = await execPromise(
+        `git log --follow --format=%ad --date iso-strict ${fileURLToPath(
+          new URL(path.join('../src/', pageData.filePath), import.meta.url),
+        )} | tail -1`,
+      );
+      createdDate = stdout.trim();
+    } catch {
+      createdDate = '';
+    }
 
     const lastUpdated = (
       pageData.lastUpdated ? new Date(pageData.lastUpdated) : new Date()
@@ -306,5 +324,12 @@ export default defineConfig({
         `,
       ],
     );
+
+    if (createdDate) {
+      pageData.frontmatter.head.push(
+        // Page published time
+        ['meta', { content: createdDate, property: 'article:published_time' }],
+      );
+    }
   },
 });

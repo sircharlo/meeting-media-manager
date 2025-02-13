@@ -39,7 +39,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20.18.1
+          node-version: 20.18.2
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install
@@ -62,7 +62,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20.18.1
+          node-version: 20.18.2
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install
@@ -88,7 +88,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20.18.1
+          node-version: 20.18.2
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install
