@@ -78,8 +78,10 @@ export const cleanCache = async () => {
   const congregationStore = useCongregationSettingsStore();
   const congIds = new Set(Object.keys(congregationStore.congregations));
 
+  const settings = useCurrentStateStore().currentSettings;
+
   const additionalMediaPath = await getAdditionalMediaPath(
-    useCurrentStateStore().currentSettings?.cacheFolder,
+    settings?.cacheFolder,
   );
 
   cleanPublicTalkPubs(additionalMediaPath, congIds);
@@ -88,4 +90,8 @@ export const cleanCache = async () => {
   congIds.forEach((congId) => {
     cleanDateFolders(window.electronApi.path.join(additionalMediaPath, congId));
   });
+
+  if (settings?.enableMediaAutoExport && settings?.mediaAutoExportFolder) {
+    cleanDateFolders(settings.mediaAutoExportFolder);
+  }
 };
