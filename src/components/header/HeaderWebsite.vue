@@ -1,5 +1,5 @@
 <template>
-  <template v-if="mediaPlayingAction === 'website' && streaming">
+  <template v-if="mediaPlayingAction === 'website'">
     <q-btn-group unelevated>
       <q-btn color="white-transparent" @click="zoomWebsiteWindow('out')">
         <q-icon name="mmm-minus" size="xs" />
@@ -30,19 +30,20 @@
         <q-tooltip :delay="1000">{{ t('refresh') }}</q-tooltip>
       </q-btn>
     </q-btn-group>
-    <q-btn
-      color="white-transparent"
-      unelevated
-      @click="
-        closeWebsiteWindow();
-        mediaPlayingAction = '';
-      "
-    >
-      <q-icon class="q-mr-sm" name="mmm-mirror" size="xs" />
-      <template v-if="$q.screen.gt.xs">{{ t('stop-mirroring') }}</template>
-      <q-tooltip v-else :delay="1000">{{ t('stop-mirroring') }}</q-tooltip>
-    </q-btn>
   </template>
+  <q-btn
+    v-if="streaming"
+    color="white-transparent"
+    unelevated
+    @click="
+      closeWebsiteWindow();
+      mediaPlayingAction = '';
+    "
+  >
+    <q-icon class="q-mr-sm" name="mmm-mirror" size="xs" />
+    <template v-if="$q.screen.gt.xs">{{ t('stop-mirroring') }}</template>
+    <q-tooltip v-else :delay="1000">{{ t('stop-mirroring') }}</q-tooltip>
+  </q-btn>
   <q-btn
     v-else-if="mediaPlayingAction === 'website'"
     color="white-transparent"
@@ -96,15 +97,20 @@ const startStreaming = () => {
   }
 };
 
-watch(mediaPlayingAction, (newValue, oldValue) => {
-  if (newValue === 'website') {
+watch(streaming, (val) => {
+  if (val) {
     sendObsSceneEvent('media');
-  } else if (oldValue === 'website') {
-    streaming.value = false;
+  } else {
     sendObsSceneEvent('camera');
     if (currentState.currentLangObject?.isSignLanguage) {
       showMediaWindow(false);
     }
+  }
+});
+
+watch(mediaPlayingAction, (newValue, oldValue) => {
+  if (oldValue === 'website') {
+    streaming.value = false;
   }
 });
 </script>
