@@ -11,7 +11,7 @@
             ? 'negative'
             : 'warning'
     "
-    :disable="obsConnectionState !== 'connected'"
+    :disabled="obsConnectionState === 'connecting'"
     rounded
     :text-color="
       obsPopup
@@ -23,7 +23,7 @@
         : ''
     "
     unelevated
-    @click="obsPopup = !obsPopup"
+    @click="onClick"
     @mouseenter="
       currentSettings?.obsQuickToggle && obsConnectionState === 'connected'
         ? (obsPopup = true)
@@ -58,6 +58,14 @@ const { currentScene, obsConnectionState, obsMessage, previousScene, scenes } =
 const { obsCloseHandler, obsErrorHandler, sceneExists } = obsState;
 
 const obsPopup = defineModel<boolean>({ required: true });
+
+const onClick = () => {
+  if (obsConnectionState.value === 'connected') {
+    obsPopup.value = !obsPopup.value;
+  } else if (obsConnectionState.value !== 'connecting') {
+    obsConnect();
+  }
+};
 
 const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
   let attempts = 0;
