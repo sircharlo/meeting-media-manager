@@ -11,7 +11,7 @@
             ? 'negative'
             : 'warning'
     "
-    :disabled="obsConnectionState === 'connecting'"
+    :disable="obsConnectionState === 'connecting'"
     rounded
     :text-color="
       obsPopup
