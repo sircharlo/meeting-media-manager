@@ -1,5 +1,5 @@
 import type PQueue from 'p-queue';
-import type { MediaSection } from 'src/types';
+import type { MediaSectionIdentifier } from 'src/types';
 
 import { i18n } from 'boot/i18n';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -46,8 +46,7 @@ const exportDayToFolder = async (targetDate?: Date) => {
         .map((item) => [item.fileUrl, item]),
     ).values(),
   ).sort((a, b) => {
-    const sectionOrder: MediaSection[] = [
-      'additional',
+    const sectionOrder: MediaSectionIdentifier[] = [
       'tgw',
       'ayfm',
       'lac',
@@ -74,7 +73,7 @@ const exportDayToFolder = async (targetDate?: Date) => {
   const expectedFiles = new Set<string>();
 
   const { default: sanitize } = await import('sanitize-filename');
-  const sections: Partial<Record<MediaSection, number>> = {}; // Object to store dynamic section prefixes
+  const sections: Partial<Record<MediaSectionIdentifier, number>> = {}; // Object to store dynamic section prefixes
   for (let i = 0; i < dayMediaLength; i++) {
     try {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -110,8 +109,7 @@ const exportDayToFolder = async (targetDate?: Date) => {
       const sectionPrefix = pad(sections[m.section] || 0);
       const mediaPrefix = pad(i + 1, dayMediaLength > 99 ? 3 : 2);
       const mediaTag = m.tag?.type
-        ? // @ts-expect-error: t has no matching signature
-          `${i18n.global.t(m.tag.type)} ${m.tag.value}`
+        ? `${(i18n.global.t as (key: string) => string)(m.tag.type)} ${m.tag.value}`
         : null;
       const mediaTitle = m.title
         ? sanitize(

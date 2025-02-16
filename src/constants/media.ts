@@ -1,3 +1,5 @@
+import type { MediaSectionIdentifier } from 'src/types';
+
 export const FULL_HD = { height: 1080, width: 1920 };
 
 export const PURE_IMG_EXTENSIONS = [
@@ -38,4 +40,12 @@ export const OTHER_EXTENSIONS = [
   ...ZIP_EXTENSIONS,
   ...JWPUB_EXTENSIONS,
   ...JWL_PLAYLIST_EXTENSIONS,
+];
+
+export const standardSections: MediaSectionIdentifier[] = [
+  'ayfm',
+  'circuitOverseer',
+  'lac',
+  'tgw',
+  'wt',
 ];
