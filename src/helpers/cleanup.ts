@@ -67,6 +67,7 @@ const cleanDateFolders = async (root?: string) => {
 
   await Promise.allSettled(
     folders
+      .filter((f) => !f.includes('.jwlplaylist'))
       .filter((f) => isInPast(getSpecificWeekday(f, 6)))
       .map((f) =>
         window.electronApi.fs.remove(window.electronApi.path.join(root, f)),
