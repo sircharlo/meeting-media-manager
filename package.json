@@ -39,8 +39,8 @@
     "@quasar/extras": "^1.16.17",
     "@sentry/electron": "^5.11.0",
     "@sentry/vue": "8.51.0",
-    "@vueuse/core": "^12.6.1",
-    "@vueuse/router": "^12.6.1",
+    "@vueuse/core": "^12.7.0",
+    "@vueuse/router": "^12.7.0",
     "better-sqlite3": "^11.8.1",
     "cheerio": "^1.0.0",
     "chokidar": "^4.0.3",
@@ -54,7 +54,7 @@
     "heic-convert": "^2.1.0",
     "image-size": "^1.2.0",
     "is-online": "^11.0.0",
-    "music-metadata": "^10.9.0",
+    "music-metadata": "^10.9.1",
     "obs-websocket-js": "^5.0.6",
     "p-queue": "^8.1.0",
     "pdfjs-dist": "^4.10.38",
@@ -114,7 +114,7 @@
     "typescript": "~5.6.3",
     "vitepress": "next",
     "vitest": "^3.0.5",
-    "vue-tsc": "^2.2.0"
+    "vue-tsc": "^2.2.2"
   },
   "browserslist": [
     "Electron >= 34"

@@ -4325,15 +4325,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/language-core@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@vue/language-core@npm:2.2.0"
+"@vue/language-core@npm:2.2.2":
+  version: 2.2.2
+  resolution: "@vue/language-core@npm:2.2.2"
   dependencies:
     "@volar/language-core": "npm:~2.4.11"
     "@vue/compiler-dom": "npm:^3.5.0"
     "@vue/compiler-vue2": "npm:^2.7.16"
     "@vue/shared": "npm:^3.5.0"
-    alien-signals: "npm:^0.4.9"
+    alien-signals: "npm:^1.0.3"
     minimatch: "npm:^9.0.3"
     muggle-string: "npm:^0.4.1"
     path-browserify: "npm:^1.0.1"
@@ -4342,7 +4342,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/1c44cc4067266bbc825af358a867aed455963a08c160cd9df9a47571fd917a87d9de9bdea6149877e0c8309a6cf39f263e7cf2fbadeceba47a5a158f392151b2
+  checksum: 10c0/4d2172f74063c330fb8ec9d435687ac4c70ca7a78dac48c5e69eeed2d4d62c2ce61c7cc6e350670fadfec7877b9597743773c3d16d16b07ce2dd9ecc44ccad4c
   languageName: node
   linkType: hard
 
@@ -4418,15 +4418,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/core@npm:^12.6.1":
-  version: 12.6.1
-  resolution: "@vueuse/core@npm:12.6.1"
+"@vueuse/core@npm:^12.7.0":
+  version: 12.7.0
+  resolution: "@vueuse/core@npm:12.7.0"
   dependencies:
     "@types/web-bluetooth": "npm:^0.0.20"
-    "@vueuse/metadata": "npm:12.6.1"
-    "@vueuse/shared": "npm:12.6.1"
+    "@vueuse/metadata": "npm:12.7.0"
+    "@vueuse/shared": "npm:12.7.0"
     vue: "npm:^3.5.13"
-  checksum: 10c0/6d9ba216918c0be204c9977b8596274258d249b32a2c19bcd6ae8787979aa375118552eca0e01453812377d487c2ba7ee6c31aa1b12a3313ada35285ef63cbaf
+  checksum: 10c0/d1ff4009097f15d4204b8b64f6ae4dda4f47e228c12588dcf8018f105eb804406344e35ef1f30b24e4e79b3cd19fd8c1289395f81f8a99a8f49daa7522cf7cbe
   languageName: node
   linkType: hard
 
@@ -4486,22 +4486,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/metadata@npm:12.6.1":
-  version: 12.6.1
-  resolution: "@vueuse/metadata@npm:12.6.1"
-  checksum: 10c0/f5a0c993a4e6f9348645c48869f9f997eb12eecba29675496f87e4641f6efd9c126c655368bc3481a5d84e9d8377b99a5515335011ace36f3bf8170ba8a77538
+"@vueuse/metadata@npm:12.7.0":
+  version: 12.7.0
+  resolution: "@vueuse/metadata@npm:12.7.0"
+  checksum: 10c0/e85fd0cf4fc432ba8eb21381d31f08dccb5bb42ed8bc3d21aa755f5e4ec4400c8d3168048b9cfc229544ee417bbd66123d053f248cc64ac0b7889de54e1ac571
   languageName: node
   linkType: hard
 
-"@vueuse/router@npm:^12.6.1":
-  version: 12.6.1
-  resolution: "@vueuse/router@npm:12.6.1"
+"@vueuse/router@npm:^12.7.0":
+  version: 12.7.0
+  resolution: "@vueuse/router@npm:12.7.0"
   dependencies:
-    "@vueuse/shared": "npm:12.6.1"
+    "@vueuse/shared": "npm:12.7.0"
     vue: "npm:^3.5.13"
   peerDependencies:
     vue-router: ">=4.0.0-rc.1"
-  checksum: 10c0/dd1c0da73f9ec40fc55fccd6eb4319df029027b87df5c9004961b1cd2e72763c81ab4b53c3f106c7980aea8d1a468169af2bd472100279e5be0f47c9cf37fdd1
+  checksum: 10c0/39f17205173bd5b29a95bd0d367eaa53515e5c368fca595e6287aecff7fffc03affaa4d7b084643b178eda1d124572e780cd23d747546855ff2f7baeaa64c299
   languageName: node
   linkType: hard
 
@@ -4514,12 +4514,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/shared@npm:12.6.1":
-  version: 12.6.1
-  resolution: "@vueuse/shared@npm:12.6.1"
+"@vueuse/shared@npm:12.7.0":
+  version: 12.7.0
+  resolution: "@vueuse/shared@npm:12.7.0"
   dependencies:
     vue: "npm:^3.5.13"
-  checksum: 10c0/a18cc45f552694b219e8ae5c58d1a6eb5a0b681198ea4f4276831670a4a4374896e4d258fafa7365d246bfe4bce41c68661f9d03220d2ac3569741d62a93ec98
+  checksum: 10c0/b9508af450146feb5f1e9c53f0854e9a7b4e819ebd56a8cdeaf717287c4ade72bbfa4d4c90d656c27141288986dd712156b4d0463582616be8bd42f9368e7243
   languageName: node
   linkType: hard
 
@@ -4691,10 +4691,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"alien-signals@npm:^0.4.9":
-  version: 0.4.14
-  resolution: "alien-signals@npm:0.4.14"
-  checksum: 10c0/5abb3377bcaf6b3819e950084b3ebd022ad90210105afb450c89dc347e80e28da441bf34858a57ea122abe7603e552ddbad80dc597c8f02a0a5206c5fb9c20cb
+"alien-signals@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "alien-signals@npm:1.0.3"
+  checksum: 10c0/90e7c1cd42321d604886fbbb3b5f409e8e1ef78d5748b38f742ca3ce3df7ba921421bfba3c370f4c60eac4acaba9026f9a5b9859d83292eef3033d1eed3e6217
   languageName: node
   linkType: hard
 
@@ -11412,8 +11412,8 @@ __metadata:
     "@vue/eslint-config-prettier": "npm:^10.2.0"
     "@vue/eslint-config-typescript": "npm:^14.4.0"
     "@vue/test-utils": "npm:^2.4.6"
-    "@vueuse/core": "npm:^12.6.1"
-    "@vueuse/router": "npm:^12.6.1"
+    "@vueuse/core": "npm:^12.7.0"
+    "@vueuse/router": "npm:^12.7.0"
     autoprefixer: "npm:^10.4.20"
     better-sqlite3: "npm:^11.8.1"
     cheerio: "npm:^1.0.0"
@@ -11438,7 +11438,7 @@ __metadata:
     lint-staged: "npm:^15.4.3"
     lodash-es: "npm:^4.17.21"
     msw: "npm:^2.7.0"
-    music-metadata: "npm:^10.9.0"
+    music-metadata: "npm:^10.9.1"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.1.0"
     pdfjs-dist: "npm:^4.10.38"
@@ -11460,7 +11460,7 @@ __metadata:
     vue: "npm:^3.5.13"
     vue-i18n: "npm:^11.1.1"
     vue-router: "npm:^4.5.0"
-    vue-tsc: "npm:^2.2.0"
+    vue-tsc: "npm:^2.2.2"
   languageName: unknown
   linkType: soft
 
@@ -11983,9 +11983,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^10.9.0":
-  version: 10.9.0
-  resolution: "music-metadata@npm:10.9.0"
+"music-metadata@npm:^10.9.1":
+  version: 10.9.1
+  resolution: "music-metadata@npm:10.9.1"
   dependencies:
     "@tokenizer/token": "npm:^0.3.0"
     content-type: "npm:^1.0.5"
@@ -11996,7 +11996,7 @@ __metadata:
     strtok3: "npm:^10.2.1"
     token-types: "npm:^6.0.0"
     uint8array-extras: "npm:^1.4.0"
-  checksum: 10c0/7c455f34643b34a6b94ac3e0d56dba2e24b19c2ee6941ab43864af5a3cfcc71aa862989302b260379521041f3d5207ab46eccc55b47cf325964f00ef7590959e
+  checksum: 10c0/2ce054f2386e401d2f49053cd71f90c782dc4315ef0f4c868952e51ab88ba8a19180036a914fea1875d8c021098edbbd3d4a7650801e14de68cb113e64ad3db8
   languageName: node
   linkType: hard
 
@@ -17403,17 +17403,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-tsc@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "vue-tsc@npm:2.2.0"
+"vue-tsc@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "vue-tsc@npm:2.2.2"
   dependencies:
     "@volar/typescript": "npm:~2.4.11"
-    "@vue/language-core": "npm:2.2.0"
+    "@vue/language-core": "npm:2.2.2"
   peerDependencies:
     typescript: ">=5.0.0"
   bin:
     vue-tsc: ./bin/vue-tsc.js
-  checksum: 10c0/7258db27efd689402cf66631e5425fceb032526b0647c5188080a5ddbb02040eaaeafc1685270d281c6f05f9230344351343be5494a78b517173df2c6c0e4796
+  checksum: 10c0/3ad596d3556019347840b05a248bb6c0204a0b8c010de09324d0cce69301fba289bca3eb7ae82378e5b7ffbbf90e37819630087e3d1cf3a4323bab64f50219b6
   languageName: node
   linkType: hard
 

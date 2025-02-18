@@ -68,7 +68,7 @@
 - 🤝 **Sign Language Behavior Alignment**: Align sign language behavior with JW Library Sign Language, by automatically hiding the media window and not showing the yeartext.
 - 🔊 **Sign Language for Audio Bible**: Add support for sign language in the audio Bible feature, increasing accessibility.
 - 🧹 **Automatic Cache Cleanup**: Automatically clean up old dates and cache periodically, keeping the application streamlined.
-- 🇵🇭 Preparations for Tagalog\*\*: Make preparations for supporting the Tagalog language, expanding the app's accessibility.
+- 🇵🇭 **Preparations for Tagalog**: Make preparations for supporting the Tagalog language, expanding the app's accessibility.
 - 🚫 **Hide Cast Button**: Remove the cast button on the media window to simplify the user interface.
 - 🔍 **Better Zooming**: Improve first manual zoom-in by keeping the image centered, reducing the first zoom factor, and ensuring smooth transition.
 
