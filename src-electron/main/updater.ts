@@ -19,6 +19,7 @@ export async function initUpdater() {
       'Command failed: mv -f',
       '504 Gateway Time-out',
       'HttpError: 504',
+      'YAMLException',
     ];
     if (!ignoreErrors.some((ignoreError) => message?.includes(ignoreError))) {
       captureElectronError(error, {
