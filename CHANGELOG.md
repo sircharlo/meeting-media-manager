@@ -2,6 +2,34 @@
 
 # Changelog
 
+## 25.2.1
+
+### ✨ New Features
+
+- 🔄 **Allow OBS Reconnection Attempts**: Introduce the possibility to manually force OBS to reconnect when needed.
+- 🗑 **Auto Cleanup Old Export Date Folders**: Automatically remove outdated export date folders to keep storage organized.
+
+### 🛠️ Improvements and Tweaks
+
+- 🖼 **Fix Playlist Image Import**: Ensure playlist files correctly import all images.
+- 📆 **Prevent JWLPlaylist Parsing as Date**: Fix an issue where JWLPlaylist files were mistakenly parsed as dates.
+- 🎬 **Correctly Set OBS Scenes for Website Presentation**: Ensure OBS scenes are properly configured for website presentation.
+- 🚫 **Correctly Set Disabled State**: Fix an issue where disabled states were not being applied correctly.
+
+### 🔧 Improvements to Codebase
+
+- 🛠 **Prevent Catching YAMLException**: Improve error handling by preventing unnecessary YAML exceptions.
+- 📦 **Refactor Test and Regular Versions**: Separate test versions from regular versions for better clarity and management. (#4007)
+- 🔄 **Update Dependencies**: Upgrade various dependencies to maintain stability and security.
+- 🚨 **Revert Version Bump**: Roll back an unintended version bump.
+- 📰 **Update Announcements**: Refresh the announcements section with new updates.
+
+### 📑 Documentation & CI Updates
+
+- 🔼 **Improve SEO**: Enhance documentation for better search engine optimization.
+- 🔄 **Update Changelog**: Keep the changelog up to date with recent changes.
+- ⚙️ **Bump Node Version**: Upgrade Node.js in the CI pipeline for better performance and compatibility.
+
 ## 25.2.0
 
 ### ✨ New Features
@@ -20,7 +48,7 @@
 - 🌍 **Translation Updates**: Improve and update translations across various supported languages.
 - 📑 **Enhanced JWPUB Document List**: Improve the styling of the JWPUB document list for better readability.
 - 📆 **Support YYYYMMDD Date Format**: Enable compatibility with YYYYMMDD date format for better regional support.
-- 🎵 **Sign Language Song Handling**: Only overwrite song publication details for sign languages to preserve intended song publication 
+- 🎵 **Sign Language Song Handling**: Only overwrite song publication details for sign languages to preserve intended song publication
 - 🌐 **Expanded MEPS Language Indexes**: Add more language indexes to improve multilingual support.
 - 🗑 **Optimized File Removal Actions**: Improve efficiency when deleting files, reducing unnecessary operations.
 
