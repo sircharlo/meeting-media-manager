@@ -4,6 +4,7 @@ import type {
   PlaylistTagItem,
 } from 'src/types';
 
+import { JPG_EXTENSIONS } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   dynamicMediaMapper,
@@ -135,14 +136,23 @@ export const getMediaFromJwPlaylist = async (
           : '';
         if (
           item.ThumbnailFilePath &&
-          (await window.electronApi.fs.pathExists(item.ThumbnailFilePath)) &&
-          !item.ThumbnailFilePath.includes('.jpg')
+          !JPG_EXTENSIONS.includes(
+            window.electronApi.path
+              .extname(item.ThumbnailFilePath)
+              .toLowerCase()
+              .replace('.', ''),
+          ) &&
+          (await window.electronApi.fs.pathExists(item.ThumbnailFilePath))
         ) {
-          await window.electronApi.fs.rename(
-            item.ThumbnailFilePath,
-            item.ThumbnailFilePath + '.jpg',
-          );
-          item.ThumbnailFilePath += '.jpg';
+          try {
+            await window.electronApi.fs.rename(
+              item.ThumbnailFilePath,
+              item.ThumbnailFilePath + '.jpg',
+            );
+            item.ThumbnailFilePath += '.jpg';
+          } catch (error) {
+            errorCatcher(error);
+          }
         }
         const durationTicks =
           item?.BaseDurationTicks || item?.DurationTicks || 0;

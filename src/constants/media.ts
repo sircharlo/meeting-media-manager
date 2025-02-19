@@ -1,20 +1,17 @@
 export const FULL_HD = { height: 1080, width: 1920 };
 
+export const JPG_EXTENSIONS = ['jpg', 'jpeg', 'jfif', 'pjpeg', 'pjp'];
+
 export const PURE_IMG_EXTENSIONS = [
   'apng',
   'avif',
   'gif',
-  'jpg',
-  'jpeg',
-  'jfif',
-  'pjpeg',
-  'pjp',
   'png',
   'webp',
   'bmp',
   'ico',
   'cur',
-];
+].concat(JPG_EXTENSIONS);
 
 export const HEIC_EXTENSIONS = ['heic'];
 export const SVG_EXTENSIONS = ['svg'];
