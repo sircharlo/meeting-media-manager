@@ -1,5 +1,6 @@
 import js from '@eslint/js';
 import pluginQuasar from '@quasar/app-vite/eslint';
+import vitest from '@vitest/eslint-plugin';
 import skipFormattingConfig from '@vue/eslint-config-prettier/skip-formatting';
 import {
   defineConfigWithVueTs,
@@ -104,6 +105,12 @@ export default defineConfigWithVueTs([
       'vue/no-boolean-default': 'error',
       'vue/prefer-true-attribute-shorthand': 'error',
     },
+  },
+
+  {
+    files: ['test/vitest/**', '**/__tests__/**'],
+    plugins: { vitest },
+    rules: { ...vitest.configs.recommended.rules },
   },
 
   skipFormattingConfig,

@@ -45,7 +45,8 @@ export default defineStore((/* { ssrContext } */) => {
   pinia.use(
     createSentryPiniaPlugin({
       attachPiniaState: false, // Until https://github.com/getsentry/sentry-javascript/issues/14441 is fixed
-      stateTransformer: (state) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      stateTransformer: (state: Record<string, any>) => {
         try {
           // Transform the state to remove unneeded information that only takes up space
           const transformedState = {
