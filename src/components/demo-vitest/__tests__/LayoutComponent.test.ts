@@ -9,7 +9,6 @@ installQuasarPlugin();
 describe('layout example', () => {
   it('should mount component properly', () => {
     const wrapper = mount(LayoutComponent);
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    expect(wrapper.exists()).to.be.true;
+    expect(wrapper.exists()).toBe(true);
   });
 });
