@@ -75,7 +75,7 @@
   </q-btn>
 </template>
 <script setup lang="ts">
-import type { CacheFile, JwLangCode } from 'src/types';
+import type { CacheFile, JwLangCode, PublicationFetcher } from 'src/types';
 
 import DialogCacheClear from 'components/dialog/DialogCacheClear.vue';
 import { storeToRefs } from 'pinia';
@@ -112,18 +112,17 @@ const cacheFiles = ref<CacheFile[]>([]);
 const frequentlyUsedDirectories = ref(new Set());
 
 const loadFrequentlyUsedDirectories = async () => {
-  const getDirectory = async (pub: string, issue?: number) => {
-    const directoryParams: {
-      issue?: number;
-      langwritten: JwLangCode;
-      pub: string;
-    } = {
-      langwritten: currentState.currentSettings?.lang || 'E',
+  const getDirectory = async (
+    pub: string,
+    issue?: number | string,
+    lang?: '' | JwLangCode,
+  ) => {
+    const directoryParams: PublicationFetcher = {
+      issue,
+      langwritten: lang ?? currentState.currentSettings?.lang ?? 'E',
       pub,
     };
-    if (issue === 0) {
-      directoryParams.issue = issue;
-    }
+
     return currentState.currentSettings
       ? [
           await getPublicationDirectory(directoryParams),
@@ -136,29 +135,15 @@ const loadFrequentlyUsedDirectories = async () => {
   };
 
   const directories = [
-    currentState.currentSongbook
-      ? await getDirectory(currentState.currentSongbook.pub)
-      : '', // Background music
-    currentState.currentSongbook
-      ? await getDirectory(currentState.currentSongbook.pub, 0)
-      : '', // Songbook videos
+    await getDirectory(currentState.currentSongbook.pub), // Background music
+    await getDirectory(currentState.currentSongbook.pub, 0), // Songbook videos
+    await getDirectory('nwtsty'), // Study Bible
     await getDirectory('it', 0), // Insight
     await getDirectory('lff', 0), // Enjoy Life Forever
     await getDirectory('lmd', 0), // Love People
     await getDirectory('lmdv', 0), // Love People Videos
-    await getPublicationDirectory({
-      issue: currentState.currentCongregation,
-      langwritten: '',
-      pub: 'S-34mp',
-    }),
-    await getPublicationDirectory(
-      {
-        issue: currentState.currentCongregation,
-        langwritten: '',
-        pub: 'S-34mp',
-      },
-      currentState.currentSettings?.cacheFolder,
-    ),
+    await getDirectory('jwlb', undefined, 'E'), // JW Library
+    await getDirectory('S-34mp', currentState.currentCongregation, ''), // Public Talk Publication
   ].flat();
 
   frequentlyUsedDirectories.value = new Set(directories.filter(Boolean));
