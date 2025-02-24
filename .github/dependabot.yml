@@ -33,4 +33,8 @@ updates:
         applies-to: version-updates
         patterns:
           - '@vueuse/*'
+      sentry-plugins:
+        applies-to: version-updates
+        patterns:
+          - '@sentry/*-plugin'
     open-pull-requests-limit: 15
