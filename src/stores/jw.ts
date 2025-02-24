@@ -16,7 +16,7 @@ import type {
 
 import { defineStore } from 'pinia';
 import { MAX_SONGS } from 'src/constants/jw';
-import { isCoWeek, isMwMeetingDay } from 'src/helpers/date';
+import { isCoWeek } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   fetchJwLanguages,
@@ -94,7 +94,7 @@ export const useJwStore = defineStore('jw-store', {
 
         // Handle circuit overseer week logic
         const coWeek = isCoWeek(selectedDateObject.date);
-        if (coWeek && isMwMeetingDay(selectedDateObject.date)) {
+        if (coWeek) {
           mediaArray.forEach((media) => {
             if (!media) return;
             media.section = section || 'circuitOverseer';
