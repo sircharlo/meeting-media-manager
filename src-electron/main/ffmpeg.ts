@@ -31,8 +31,9 @@ export const createVideoFromNonVideo = async (
         });
     });
   } else {
-    const { default: sizeOf } = await import('image-size');
-    const { height, orientation, width } = sizeOf(originalFile);
+    const { imageSizeFromFile } = await import('image-size/fromFile');
+    const { height, orientation, width } =
+      await imageSizeFromFile(originalFile);
 
     let adjustedWidth = width;
     let adjustedHeight = height;

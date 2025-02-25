@@ -1,7 +1,7 @@
 import { exec } from 'child_process';
+import { fileURLToPath } from 'node:url';
+import { promisify } from 'node:util';
 import path from 'upath';
-import { fileURLToPath } from 'url';
-import { promisify } from 'util';
 import { defineConfig } from 'vitepress';
 
 const execPromise = promisify(exec);
