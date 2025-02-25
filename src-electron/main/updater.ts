@@ -4,7 +4,7 @@ const { autoUpdater } = electronUpdater;
 import fse from 'fs-extra';
 const { exists } = fse;
 import { captureElectronError } from 'main/utils';
-import { join } from 'path';
+import { join } from 'node:path';
 import { IS_TEST } from 'src-electron/constants';
 
 export async function initUpdater() {

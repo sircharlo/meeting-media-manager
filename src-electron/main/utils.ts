@@ -3,7 +3,8 @@ import type { ExclusiveEventHintOrCaptureContext } from 'app/node_modules/@sentr
 import { captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
-import { join, resolve } from 'path';
+import { join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   IS_DEV,
   JW_DOMAINS,
@@ -11,7 +12,6 @@ import {
   TRUSTED_DOMAINS,
 } from 'src-electron/constants';
 import { urlVariables } from 'src-electron/main/session';
-import { fileURLToPath } from 'url';
 
 /**
  * Gets the current app version
