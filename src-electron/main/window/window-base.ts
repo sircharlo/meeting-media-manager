@@ -8,14 +8,14 @@ import {
 import { urlVariables } from 'main/session';
 import { captureElectronError, getIconPath } from 'main/utils';
 import { StatefulBrowserWindow } from 'main/window/window-state';
-import { join, resolve } from 'path';
+import { join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   IS_BETA,
   IS_DEV,
   PLATFORM,
   PRODUCT_NAME,
 } from 'src-electron/constants';
-import { fileURLToPath } from 'url';
 
 export function closeOtherWindows(source: BrowserWindow) {
   try {

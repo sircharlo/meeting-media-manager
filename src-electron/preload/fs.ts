@@ -4,9 +4,9 @@ import type { IOptions } from 'music-metadata';
 import type { FileItem, VideoDuration } from 'src/types';
 
 import { type Dirent, exists, readdir, stat } from 'fs-extra';
+import url from 'node:url';
 import { capturePreloadError } from 'preload/log';
 import { join, normalize } from 'upath';
-import url from 'url';
 
 export const getVideoDuration = async (
   filePath: string,

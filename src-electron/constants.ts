@@ -1,4 +1,4 @@
-import os from 'os';
+import os from 'node:os';
 
 // Environment
 export const PLATFORM = process?.platform || os.platform();
