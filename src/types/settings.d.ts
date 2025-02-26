@@ -121,6 +121,7 @@ export type SettingsGroups = Record<SettingsGroupKey, SettingsGroup>;
 
 export interface SettingsItem {
   actions?: SettingsItemAction[];
+  beta?: true;
   depends?: (keyof SettingsValues)[] | keyof SettingsValues;
   group: SettingsGroupKey;
   icon?: string;
@@ -198,6 +199,7 @@ export interface SettingsValues {
   meetingScheduleChangeOnce: boolean;
   meetingScheduleChangeWeDay: null | string;
   meetingScheduleChangeWeStartTime: null | string;
+  memorialDate: null | string;
   musicVolume: number;
   mwDay: null | string;
   mwStartTime: null | string;

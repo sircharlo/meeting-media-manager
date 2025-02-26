@@ -226,6 +226,7 @@ import {
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getMemorialBackground } from 'src/helpers/jw-media';
 import { decompressJwpub, showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { convertImageIfNeeded } from 'src/utils/converters';
@@ -410,13 +411,22 @@ watchImmediate(
   },
 );
 
+const { post: postCustomBackground } = useBroadcastChannel<string, string>({
+  name: 'custom-background',
+});
+
 watch(
   () => mediaWindowCustomBackground.value,
-  (newMediaBackground) => {
-    const { post } = useBroadcastChannel<string, string>({
-      name: 'custom-background',
-    });
-    post(newMediaBackground);
+  async (newMediaBackground) => {
+    let bg: string | undefined = newMediaBackground;
+    if (
+      !newMediaBackground &&
+      currentState.selectedDate &&
+      currentState.selectedDate === currentSettings.value?.memorialDate
+    ) {
+      bg = await getMemorialBackground();
+    }
+    postCustomBackground(bg ?? '');
   },
 );
 

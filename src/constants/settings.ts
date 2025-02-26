@@ -112,6 +112,13 @@ export const settingsDefinitions: SettingsItems = {
     type: 'date',
     unless: 'disableMediaFetching',
   },
+  memorialDate: {
+    group: 'congregationMeetings',
+    type: 'date',
+    beta: true,
+    options: ['futureDate'],
+    unless: 'disableMediaFetching',
+  },
   meetingScheduleChangeDate: {
     group: 'congregationMeetings',
     type: 'date',
@@ -433,6 +440,7 @@ export const defaultSettings: SettingsValues = {
   meetingScheduleChangeOnce: false,
   meetingScheduleChangeWeDay: null,
   meetingScheduleChangeWeStartTime: null,
+  memorialDate: null,
   musicVolume: 100,
   mwDay: null,
   mwStartTime: null,

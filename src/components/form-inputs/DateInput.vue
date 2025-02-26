@@ -25,6 +25,7 @@
         :first-day-of-week="friendlyDayToJsDay(currentSettings?.firstDayOfWeek)"
         :locale="dateLocale"
         minimal
+        :navigation-min-year-month="minNavigationDate"
         :no-unset="rules?.includes('notEmpty')"
         :options="getDateOptions(options)"
         :rules="rules"
@@ -49,9 +50,14 @@ import type { SettingsItemOption, SettingsItemRule } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
-import { friendlyDayToJsDay } from 'src/utils/date';
+import {
+  formatDate,
+  friendlyDayToJsDay,
+  getSpecificWeekday,
+} from 'src/utils/date';
 import { getDateOptions, getRules } from 'src/utils/settings';
 import { useCurrentStateStore } from 'stores/current-state';
+import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -61,7 +67,7 @@ const { currentSettings } = storeToRefs(currentState);
 
 const { dateLocale } = useLocale();
 
-defineProps<{
+const props = defineProps<{
   label?: null | string;
   options?: SettingsItemOption[];
   rules?: SettingsItemRule[];
@@ -72,6 +78,16 @@ const model = defineModel<null | string>({ required: true });
 const clearDate = () => {
   model.value = '';
 };
+
+const minNavigationDate = computed(() => {
+  if (props.options?.includes('futureDate')) {
+    return formatDate(new Date().toISOString(), 'YYYY/MM');
+  } else if (props.options?.includes('coTuesdays')) {
+    return formatDate(getSpecificWeekday(new Date(), 0), 'YYYY/MM');
+  }
+
+  return undefined;
+});
 
 const focusHandler = (evt: Event) => {
   (evt.target as HTMLInputElement)?.blur();

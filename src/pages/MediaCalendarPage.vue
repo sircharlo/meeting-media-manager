@@ -124,6 +124,7 @@ import {
   copyToDatedAdditionalMedia,
   downloadFileIfNeeded,
   fetchMedia,
+  getMemorialBackground,
 } from 'src/helpers/jw-media';
 import {
   decompressJwpub,
@@ -538,6 +539,17 @@ useEventListener<
   { passive: true },
 );
 
+const checkMemorialDate = async () => {
+  let bg: string | undefined = currentState.mediaWindowCustomBackground;
+  if (
+    selectedDate.value &&
+    selectedDate.value === currentSettings.value?.memorialDate
+  ) {
+    bg = await getMemorialBackground();
+  }
+  postCustomBackground(bg ?? '');
+};
+
 onMounted(() => {
   // generateMediaList();
   goToNextDayWithMedia();
@@ -554,6 +566,15 @@ onMounted(() => {
     router.push('/settings');
   }
   checkCoDate();
+  checkMemorialDate();
+});
+
+const { post: postCustomBackground } = useBroadcastChannel<string, string>({
+  name: 'custom-background',
+});
+
+watch(selectedDate, () => {
+  checkMemorialDate();
 });
 
 watch(

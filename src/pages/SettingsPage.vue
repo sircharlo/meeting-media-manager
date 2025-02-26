@@ -118,7 +118,10 @@
                 tag="label"
               >
                 <q-item-section>
-                  <q-item-label>{{ t(settingId) }}</q-item-label>
+                  <q-item-label>
+                    {{ t(settingId) }}
+                    <q-badge v-if="item.beta" align="top">beta</q-badge>
+                  </q-item-label>
                   <q-item-label caption :class="{ 'q-pb-sm': $q.screen.lt.sm }">
                     {{ t(settingId + '-explain') }}
                   </q-item-label>

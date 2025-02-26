@@ -1111,6 +1111,42 @@ export const getAudioBibleMedia = async (force = false) => {
   }
 };
 
+export const getMemorialBackground = async () => {
+  try {
+    const currentStateStore = useCurrentStateStore();
+    const year = new Date().getFullYear().toString().substring(2);
+    const languages = [
+      ...new Set([
+        currentStateStore.currentSettings?.lang,
+        currentStateStore.currentSettings?.langFallback,
+      ]),
+    ].filter((l): l is JwLangCode => !!l);
+
+    for (const langwritten of languages) {
+      const pub: PublicationFetcher = {
+        fileformat: 'JWPUB',
+        langwritten,
+        pub: `mi${year}`,
+      };
+      const db = await getDbFromJWPUB(pub);
+
+      if (!db) continue;
+
+      const mediaItem = window.electronApi.executeQuery<MultimediaItem>(
+        db,
+        `SELECT FilePath FROM Multimedia WHERE CategoryType = 26 LIMIT 1`,
+      )?.[0];
+
+      if (!mediaItem) continue;
+
+      const parsedItem = await addFullFilePathToMultimediaItem(mediaItem, pub);
+      return parsedItem.FilePath;
+    }
+  } catch (e) {
+    errorCatcher(e);
+  }
+};
+
 const getWtIssue = async (
   monday: Date,
   weeksInPast: number,
