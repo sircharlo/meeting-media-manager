@@ -92,6 +92,7 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       meetingScheduleChangeOnce: false,
       meetingScheduleChangeWeDay: null,
       meetingScheduleChangeWeStartTime: null,
+      memorialDate: null,
       musicVolume: oldPrefs.meeting?.musicVolume || 100,
       mwDay: oldPrefs.meeting?.mwDay?.toString() || '',
       mwStartTime: oldPrefs.meeting?.mwStartTime?.toString() || '',
