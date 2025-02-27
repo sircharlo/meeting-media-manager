@@ -3973,11 +3973,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/eslint-plugin@npm:^1.1.31":
-  version: 1.1.31
-  resolution: "@vitest/eslint-plugin@npm:1.1.31"
+"@vitest/eslint-plugin@npm:^1.1.33":
+  version: 1.1.33
+  resolution: "@vitest/eslint-plugin@npm:1.1.33"
   peerDependencies:
-    "@typescript-eslint/utils": ">= 8.0"
     eslint: ">= 8.57.0"
     typescript: ">= 5.0.0"
     vitest: "*"
@@ -3986,7 +3985,7 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 10c0/c63bde5114339360b305802b7fa3da758721f7755a289ae3297d04f5c26395fff8db767ba4de1e01db25c481148b8b5d46e3b7e5d04b0338d9ee0b757d634c1d
+  checksum: 10c0/2a2de41d4b817640b927ca7d619816f7eefb40e5ffc1e30f2efe363b3f0d3a6d5492d943921aaf0355e309cddb85424743068a4c7e8850777bc653814d86ab63
   languageName: node
   linkType: hard
 
@@ -11295,7 +11294,7 @@ __metadata:
     "@types/pretty-bytes": "npm:^5.2.0"
     "@types/sanitize-html": "npm:^2.13.0"
     "@types/sortablejs": "npm:^1.15.8"
-    "@vitest/eslint-plugin": "npm:^1.1.31"
+    "@vitest/eslint-plugin": "npm:^1.1.33"
     "@vue/eslint-config-prettier": "npm:^10.2.0"
     "@vue/eslint-config-typescript": "npm:^14.4.0"
     "@vue/test-utils": "npm:^2.4.6"
