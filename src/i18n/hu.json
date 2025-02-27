@@ -170,6 +170,8 @@
   "in-what-language-should-media-be-downloaded": "Milyen nyelven kell letölteni a médiaanyagokat?",
   "inProgress": "Folyamatban",
   "inactive": "Inaktív",
+  "memorialDate": "Date of the Memorial",
+  "memorialDate-explain": "If entered, M³ will automatically try to download and prepare the background image for the Memorial. The image will be displayed instead of the yeartext. Beware that this is an experimental feature and may not work as expected.",
   "include-audio-description": "Tartalmazza az audiónarrációval ellátott videókat",
   "includePrinted": "A nyomtatott média bevonása, ha rendelkezésre áll",
   "includePrinted-explain": "További képek csatolása a kiadványok nyomtatott kiadásaiból, amelyek nem feltétlenül állnak rendelkezésre a digitális változatokban.",
