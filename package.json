@@ -100,7 +100,7 @@
     "@vue/eslint-config-typescript": "^14.4.0",
     "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.20",
-    "electron": "^34.2.0",
+    "electron": "^34.3.0",
     "electron-builder": "^25.1.8",
     "eslint": "^9.21.0",
     "eslint-plugin-perfectionist": "^4.9.0",
