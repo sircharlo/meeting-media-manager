@@ -170,6 +170,8 @@
   "in-what-language-should-media-be-downloaded": "Якою мовою слід завантажувати медіа?",
   "inProgress": "В процесі",
   "inactive": "Неактивні",
+  "memorialDate": "Date of the Memorial",
+  "memorialDate-explain": "If entered, M³ will automatically try to download and prepare the background image for the Memorial. The image will be displayed instead of the yeartext. Beware that this is an experimental feature and may not work as expected.",
   "include-audio-description": "Показувати відео з аудіоописом",
   "includePrinted": "Включити зображення з друкованого видання, якщо вони доступні",
   "includePrinted-explain": "Включити додаткові зображення з друкованих видань публікацій, які можуть бути недоступні в цифрових версіях.",

@@ -170,6 +170,8 @@
   "in-what-language-should-media-be-downloaded": "In welcher Sprache sollen Medien heruntergeladen werden?",
   "inProgress": "In Arbeit",
   "inactive": "Deaktiviert",
+  "memorialDate": "Date of the Memorial",
+  "memorialDate-explain": "If entered, M³ will automatically try to download and prepare the background image for the Memorial. The image will be displayed instead of the yeartext. Beware that this is an experimental feature and may not work as expected.",
   "include-audio-description": "Videos mit Audiobeschreibungen einbeziehen",
   "includePrinted": "Druckausgaben einbeziehen, wenn verfügbar",
   "includePrinted-explain": "Zusätzliche Bilder aus gedruckten Ausgaben einbeziehen, die in den digitalen Versionen möglicherweise nicht verfügbar sind.",

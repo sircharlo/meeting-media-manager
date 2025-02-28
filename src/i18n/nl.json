@@ -170,6 +170,8 @@
   "in-what-language-should-media-be-downloaded": "In welke taal moet de media gedownload worden?",
   "inProgress": "Bezig",
   "inactive": "Inactief",
+  "memorialDate": "Datum van het Avondmaal",
+  "memorialDate-explain": "Indien ingevuld, zal M³ proberen om automatisch het achtergrondplaatje voor het Avondmaal te downloaden en voorbereiden. Het plaatje zal getoond worden in plaats van de jaartekst. Let op, dit is een experimentele functie en werkt misschien niet zoals verwacht.",
   "include-audio-description": "Voeg video's met audiobeschrijvingen toe",
   "includePrinted": "Haal geprinte media op als het beschikbaar is",
   "includePrinted-explain": "Voeg extra afbeeldingen van de gedrukte versie van publicaties toe die niet zijn opgenomen in de digitale versie.",
