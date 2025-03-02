@@ -257,18 +257,17 @@ watch(
     currentSettings.value?.mwDay,
     currentSettings.value?.weDay,
     currentSettings.value?.coWeek,
+    currentSettings.value?.memorialDate,
     currentSettings.value?.meetingScheduleChangeDate,
     currentSettings.value?.meetingScheduleChangeOnce,
     currentSettings.value?.meetingScheduleChangeMwDay,
     currentSettings.value?.meetingScheduleChangeWeDay,
     currentSettings.value?.disableMediaFetching,
   ],
-  (
-    [newCurrentCongregation, , , , , , ,],
-    [oldCurrentCongregation, , , , , , ,],
-  ) => {
-    if (newCurrentCongregation === oldCurrentCongregation)
+  ([newCurrentCongregation], [oldCurrentCongregation]) => {
+    if (newCurrentCongregation === oldCurrentCongregation) {
       updateLookupPeriod(true);
+    }
   },
 );
 
