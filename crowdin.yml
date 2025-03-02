@@ -7,6 +7,8 @@ append_commit_message: false
 files:
   - source: /src/i18n/en.json
     translation: /src/i18n/%two_letters_code%.json
+  - source: /src/release_notes/en/**
+    translation: /src/release_notes/%two_letters_code%/%original_file_name%
   - source: /docs/src/en/**
     translation: /docs/src/%two_letters_code%/%original_file_name%
   - source: /docs/locales/en.json
