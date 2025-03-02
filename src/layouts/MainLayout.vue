@@ -152,7 +152,11 @@ watch(currentCongregation, (newCongregation, oldCongregation) => {
       if (jwStore.memorials[year] && isInPast(jwStore.memorials[year]!)) {
         year++;
       }
-      if (currentSettings.value && jwStore.memorials[year]) {
+      if (
+        currentSettings.value &&
+        jwStore.memorials[year] &&
+        currentSettings.value.memorialDate !== jwStore.memorials[year]
+      ) {
         currentSettings.value.memorialDate = jwStore.memorials[year] ?? null;
       }
       window.electronApi.setUrlVariables(JSON.stringify(jwStore.urlVariables));
