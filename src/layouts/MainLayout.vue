@@ -68,7 +68,7 @@ import {
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
-import { formatDate } from 'src/utils/date';
+import { formatDate, isInPast } from 'src/utils/date';
 import { kebabToCamelCase } from 'src/utils/general';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -122,8 +122,9 @@ const jwStore = useJwStore();
 //   saveSettingsStoreToFile('jw', state);
 // });
 
-const { updateJwLanguages } = jwStore;
+const { updateJwLanguages, updateMemorials } = jwStore;
 const { lookupPeriod } = storeToRefs(jwStore);
+updateMemorials();
 updateJwLanguages();
 
 const currentState = useCurrentStateStore();
@@ -146,6 +147,14 @@ watch(currentCongregation, (newCongregation, oldCongregation) => {
       showMediaWindow(false);
       navigateToCongregationSelector();
     } else {
+      let year = new Date().getFullYear();
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      if (jwStore.memorials[year] && isInPast(jwStore.memorials[year]!)) {
+        year++;
+      }
+      if (currentSettings.value && jwStore.memorials[year]) {
+        currentSettings.value.memorialDate = jwStore.memorials[year] ?? null;
+      }
       window.electronApi.setUrlVariables(JSON.stringify(jwStore.urlVariables));
       downloadProgress.value = {};
       updateLookupPeriod();

@@ -20,10 +20,16 @@ import { isCoWeek } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   fetchJwLanguages,
+  fetchMemorials,
   fetchPubMediaLinks,
   fetchYeartext,
 } from 'src/utils/api';
-import { dateFromString, datesAreSame, getDateDiff } from 'src/utils/date';
+import {
+  dateFromString,
+  datesAreSame,
+  getDateDiff,
+  isInPast,
+} from 'src/utils/date';
 import { findBestResolution, getPubId, isMediaLink } from 'src/utils/jw';
 import { useCurrentStateStore } from 'stores/current-state';
 
@@ -54,6 +60,7 @@ interface Store {
   jwMepsLanguages: CacheList<JwMepsLanguage>;
   jwSongs: Partial<Record<JwLangCode, CacheList<MediaLink>>>;
   lookupPeriod: Partial<Record<string, DateInfo[]>>;
+  memorials: Partial<Record<number, string>>;
   urlVariables: UrlVariables;
   yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
 }
@@ -291,6 +298,23 @@ export const useJwStore = defineStore('jw-store', {
         errorCatcher(error);
       }
     },
+    async updateMemorials() {
+      const currentState = useCurrentStateStore();
+      if (!currentState.online) return;
+      try {
+        let year = new Date().getFullYear();
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        if (this.memorials[year] && isInPast(this.memorials[year]!)) {
+          year++;
+        }
+        if (!this.memorials[year]) {
+          const result = await fetchMemorials();
+          if (result) this.memorials = result;
+        }
+      } catch (e) {
+        errorCatcher(e);
+      }
+    },
     async updateYeartext() {
       try {
         const currentState = useCurrentStateStore();
@@ -405,6 +429,7 @@ export const useJwStore = defineStore('jw-store', {
       jwMepsLanguages: { list: [], updated: oldDate },
       jwSongs: {},
       lookupPeriod: {},
+      memorials: {},
       urlVariables: {
         base: 'jw.org',
         mediator: 'https://b.jw-cdn.org/apis/mediator',
