@@ -135,6 +135,27 @@ export const fetchAnnouncements = async (): Promise<Announcement[]> => {
 };
 
 /**
+ * Fetches the memorial dates from the repository.
+ * @returns The memorial dates.
+ */
+export const fetchMemorials = async (): Promise<null | Record<
+  number,
+  string
+>> => {
+  if (!process.env.repository) return null;
+  const result = await fetchJson<Record<string, string>>(
+    `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/memorials.json`,
+  );
+  if (!result) return null;
+  const memorials: Record<number, string> = {};
+  for (const [key, value] of Object.entries(result)) {
+    const year = parseInt(key);
+    if (year && !isNaN(year)) memorials[year] = value;
+  }
+  return memorials;
+};
+
+/**
  * Fetches the latest version of the app.
  * @returns The latest version.
  */

@@ -67,11 +67,45 @@ const shouldUseChangedMeetingSchedule = (lookupDate: Date | string) => {
   );
 };
 
+export const isReplacedByMemorial = (lookupDate?: Date) => {
+  try {
+    const currentState = useCurrentStateStore();
+    if (
+      !lookupDate ||
+      currentState.currentSettings?.disableMediaFetching ||
+      !currentState.currentSettings?.memorialDate
+    ) {
+      return false;
+    }
+
+    lookupDate = dateFromString(lookupDate);
+    const memorialDate = dateFromString(
+      currentState.currentSettings.memorialDate,
+    );
+
+    const memorialInWeekend = [0, 6].includes(memorialDate.getDay());
+    const lookupDateInWeekend = [0, 6].includes(lookupDate.getDay());
+
+    if (memorialInWeekend !== lookupDateInWeekend) return false;
+    return datesAreSame(
+      getSpecificWeekday(lookupDate, 0),
+      getSpecificWeekday(memorialDate, 0),
+    );
+  } catch (error) {
+    errorCatcher(error);
+    return false;
+  }
+};
+
 export const isMwMeetingDay = (lookupDate?: Date) => {
   try {
     const currentState = useCurrentStateStore();
-    if (!lookupDate || currentState.currentSettings?.disableMediaFetching)
+    if (!lookupDate || currentState.currentSettings?.disableMediaFetching) {
       return false;
+    }
+
+    if (isReplacedByMemorial(lookupDate)) return false;
+
     lookupDate = dateFromString(lookupDate);
     const coWeek = isCoWeek(lookupDate);
     if (coWeek) {
@@ -99,6 +133,8 @@ export const isWeMeetingDay = (lookupDate?: Date) => {
     if (!lookupDate || currentState.currentSettings?.disableMediaFetching) {
       return false;
     }
+
+    if (isReplacedByMemorial(lookupDate)) return false;
 
     lookupDate = dateFromString(lookupDate);
 
@@ -180,9 +216,9 @@ export function updateLookupPeriod(reset = false) {
             ? 'mw'
             : isWeMeetingDay(dayDate)
               ? 'we'
-              : (false as 'mw' | 'we' | boolean),
+              : false,
           today: datesAreSame(dayDate, new Date()),
-        };
+        } satisfies DateInfo;
       },
     ).filter((day) => !existingDates.has(formatDate(day.date, 'YYYY/MM/DD')));
 
