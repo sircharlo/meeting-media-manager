@@ -171,7 +171,7 @@
   "inProgress": "Em curso",
   "inactive": "Inativo",
   "memorialDate": "Data do Memorial",
-  "memorialDate-explain": "Se preenchido, o M³ tentará automaticamente descarregar e preparar a imagem de fundo para a Comemoração da Morte de Cristo. A imagem será exibida no lugar do texto do ano. Tenha em atenção que esta é uma funcionalidade experimental e pode não funcionar como esperado.",
+  "memorialDate-explain": "Se preenchido, o M³ irá descarregar automaticamente a imagem de fundo para o Memorial, exibindo-a no lugar do texto do ano. Tenha em atenção que esta é uma funcionalidade experimental e pode não funcionar como esperado.",
   "include-audio-description": "Incluir vídeos com descrições de áudio",
   "includePrinted": "Incluir multimédia impressa quando disponível",
   "includePrinted-explain": "Incluir imagens adicionais das edições impressas das publicações que podem não estar disponíveis nas versões digitais.",
