@@ -115,7 +115,7 @@
     "typescript": "~5.6.3",
     "vitepress": "next",
     "vitest": "^3.0.7",
-    "vue-tsc": "^2.2.4"
+    "vue-tsc": "^2.2.8"
   },
   "browserslist": [
     "Electron >= 34"
