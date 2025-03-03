@@ -3658,7 +3658,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^20.17.19, @types/node@npm:^20.9.0":
+"@types/node@npm:^20.17.22":
+  version: 20.17.22
+  resolution: "@types/node@npm:20.17.22"
+  dependencies:
+    undici-types: "npm:~6.19.2"
+  checksum: 10c0/5a78f60144bd69eaf1bdce39c906d988b0dc0f4c13068af9a3c44b0df737a0f363680a97d073a45d962b061cd4b3a8cfab71eec491ca6845888b68ab7855a778
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.9.0":
   version: 20.17.19
   resolution: "@types/node@npm:20.17.19"
   dependencies:
@@ -11291,7 +11300,7 @@ __metadata:
     "@types/fs-extra": "npm:^11.0.4"
     "@types/heic-convert": "npm:^2.1.0"
     "@types/lodash-es": "npm:^4.17.12"
-    "@types/node": "npm:^20.17.19"
+    "@types/node": "npm:^20.17.22"
     "@types/pretty-bytes": "npm:^5.2.0"
     "@types/sanitize-html": "npm:^2.13.0"
     "@types/sortablejs": "npm:^1.15.8"
