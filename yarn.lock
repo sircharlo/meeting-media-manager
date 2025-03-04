@@ -7211,7 +7211,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-updater@npm:^6.6.1":
+"electron-updater@npm:next":
   version: 6.6.1
   resolution: "electron-updater@npm:6.6.1"
   dependencies:
@@ -11265,7 +11265,7 @@ __metadata:
     electron: "npm:^35.0.0"
     electron-builder: "npm:next"
     electron-dl-manager: "npm:^3.2.1"
-    electron-updater: "npm:^6.6.1"
+    electron-updater: "npm:next"
     eslint: "npm:^9.21.0"
     eslint-plugin-perfectionist: "npm:^4.9.0"
     eslint-plugin-vue: "npm:^9.32.0"
@@ -12325,9 +12325,9 @@ __metadata:
   linkType: hard
 
 "ohash@npm:^2.0.4":
-  version: 2.0.10
-  resolution: "ohash@npm:2.0.10"
-  checksum: 10c0/82a24fd5cfc651a1858ad9aa3c48125334cf700fb0395cc96cccf79ac2b723e65723449eb95121592c0f2adf9d64d3db539ec7345bea8781fb894fcc56ff2884
+  version: 2.0.11
+  resolution: "ohash@npm:2.0.11"
+  checksum: 10c0/d07c8d79cc26da082c1a7c8d5b56c399dd4ed3b2bd069fcae6bae78c99a9bcc3ad813b1e1f49ca2f335292846d689c6141a762cf078727d2302a33d414e69c79
   languageName: node
   linkType: hard
 
