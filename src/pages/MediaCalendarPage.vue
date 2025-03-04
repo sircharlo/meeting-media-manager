@@ -11,6 +11,7 @@
     @dragstart="dropActive"
   >
     <div class="col">
+      {{ selectedDateObject?.customSections }}
       <div
         v-if="
           currentSettings?.obsEnable &&
@@ -68,22 +69,53 @@
       <MediaEmptyState
         v-if="
           (currentSettings?.disableMediaFetching &&
-            getVisibleMediaForSection.additional.length < 1) ||
+            (selectedDateObject?.dynamicMedia?.length || 0) < 1) ||
           (!currentSettings?.disableMediaFetching &&
             ((selectedDateObject?.meeting && !selectedDateObject?.complete) ||
-              !selectedDateObject?.dynamicMedia?.filter((m) => !m.hidden)
-                .length))
+              (!selectedDateObject?.customSections?.length &&
+                !selectedDateObject?.dynamicMedia?.filter((m) => !m.hidden)
+                  .length)))
         "
         :go-to-next-day-with-media="goToNextDayWithMedia"
         :open-import-menu="openImportMenu"
       />
+      <template
+        v-for="mediaList in mediaLists"
+        :key="
+          selectedDateObject?.date +
+          '-' +
+          mediaList.uniqueId +
+          '-' +
+          mediaList.items?.length
+        "
+        >{{
+          selectedDateObject?.date +
+          '-' +
+          mediaList.uniqueId +
+          '-' +
+          mediaList.items?.length
+        }}
+        <MediaList :media-list="mediaList" :open-import-menu="openImportMenu" />
+      </template>
+      <q-btn
+        v-if="selectedDateObject && !selectedDateObject.meeting"
+        class="full-width dashed-border big-button"
+        color="accent-100"
+        icon="mmm-plus"
+        :label="t('new-section')"
+        text-color="primary"
+        unelevated
+        @click="addSection()"
+      />
+      <!-- <pre>
+      {{
+          selectedDateObject?.dynamicMedia
+            ?.filter((m) => !m.hidden)
+            .map((m) => [m.section, m.uniqueId])
+        }}
+    </pre
+      > -->
     </div>
-    <template
-      v-for="mediaList in mediaLists"
-      :key="(mediaList.items?.map((m) => m.uniqueId) || []).sort().join(',')"
-    >
-      <MediaList :media-list="mediaList" :open-import-menu="openImportMenu" />
-    </template>
     <DialogFileImport
       v-model="showFileImportDialog"
       v-model:jwpub-db="jwpubImportDb"
@@ -97,7 +129,12 @@
 </template>
 
 <script setup lang="ts">
-import type { DocumentItem, MediaSection, TableItem } from 'src/types';
+import type {
+  DocumentItem,
+  DynamicMediaSection,
+  MediaSectionIdentifier,
+  TableItem,
+} from 'src/types';
 
 import {
   useBroadcastChannel,
@@ -112,9 +149,7 @@ import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
 import DialogFileImport from 'src/components/dialog/DialogFileImport.vue';
 import MediaEmptyState from 'src/components/media/MediaEmptyState.vue';
-import MediaList, {
-  type MediaListObject,
-} from 'src/components/media/MediaList.vue';
+import MediaList from 'src/components/media/MediaList.vue';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
 import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
@@ -126,6 +161,7 @@ import {
   fetchMedia,
   getMemorialBackground,
 } from 'src/helpers/jw-media';
+import { addSection } from 'src/helpers/media-sections';
 import {
   decompressJwpub,
   getMediaFromJwPlaylist,
@@ -220,75 +256,89 @@ const {
 const totalFiles = ref(0);
 const currentFile = ref(0);
 
-const mediaLists = computed(() => {
+const mediaLists = computed<DynamicMediaSection[]>(() => {
   const mwMeetingDay = isMwMeetingDay(selectedDateObject.value?.date);
   const weMeetingDay = isWeMeetingDay(selectedDateObject.value?.date);
-  const all: (false | MediaListObject | undefined)[] = [
+  const isComplete = selectedDateObject.value?.complete;
+  const date = selectedDateObject.value?.date;
+
+  const mediaSections: {
+    condition: boolean | undefined;
+    config: DynamicMediaSection;
+  }[] = [
     {
-      alwaysShow:
-        !!selectedDateObject.value?.dynamicMedia?.filter(
-          (m) => m.section === 'additional',
-        )?.length ||
-        (!!selectedDateObject.value?.complete && weMeetingDay),
-      extraMediaShortcut:
-        weMeetingDay &&
-        !getVisibleMediaForSection.value.additional.filter(
-          (m) => !m.hidden && m.source !== 'watched',
-        ).length,
-      items: getVisibleMediaForSection.value.additional,
-      jwIcon: weMeetingDay ? '' : undefined,
-      label: weMeetingDay ? t('public-talk') : t('imported-media'),
-      mmmIcon:
-        selectedDateObject.value?.date && !weMeetingDay
-          ? 'mmm-additional-media'
-          : undefined,
-      type: 'additional',
-    },
-    weMeetingDay &&
-      selectedDateObject.value?.complete && {
+      condition: weMeetingDay && isComplete,
+      config: {
         alwaysShow: true,
-        items: getVisibleMediaForSection.value.wt,
+        items: getVisibleMediaForSection.value.wt || [],
         jwIcon: '',
         label: t('wt'),
-        type: 'wt',
+        uniqueId: 'wt',
       },
-    mwMeetingDay &&
-      selectedDateObject.value?.complete && {
+    },
+    {
+      condition: mwMeetingDay && isComplete,
+      config: {
         alwaysShow: true,
-        items: getVisibleMediaForSection.value.tgw,
+        items: getVisibleMediaForSection.value.tgw || [],
         jwIcon: '',
         label: t('tgw'),
-        type: 'tgw',
+        uniqueId: 'tgw',
       },
-    mwMeetingDay &&
-      selectedDateObject.value?.complete && {
+    },
+    {
+      condition: mwMeetingDay && isComplete,
+      config: {
         alwaysShow: true,
-        items: getVisibleMediaForSection.value.ayfm,
+        items: getVisibleMediaForSection.value.ayfm || [],
         jwIcon: '',
         label: t('ayfm'),
-        type: 'ayfm',
+        uniqueId: 'ayfm',
       },
-    mwMeetingDay &&
-      selectedDateObject.value?.complete && {
+    },
+    {
+      condition: mwMeetingDay && isComplete,
+      config: {
         alwaysShow: true,
         extraMediaShortcut: true,
-        items: getVisibleMediaForSection.value.lac,
+        items: getVisibleMediaForSection.value.lac || [],
         jwIcon: '',
         label: t('lac'),
-        type: 'lac',
+        uniqueId: 'lac',
       },
-    isCoWeek(selectedDateObject.value?.date) &&
-      selectedDateObject.value?.complete && {
+    },
+    {
+      condition: isCoWeek(date) && isComplete,
+      config: {
         alwaysShow: true,
         extraMediaShortcut: true,
-        items: getVisibleMediaForSection.value.circuitOverseer,
+        items: getVisibleMediaForSection.value.circuitOverseer || [],
         jwIcon: '',
         label: t('circuit-overseer'),
-        type: 'circuitOverseer',
+        uniqueId: 'circuitOverseer',
       },
+    },
   ];
 
-  return all.filter((m) => !!m);
+  const customSections: DynamicMediaSection[] = (
+    selectedDateObject.value?.customSections ?? []
+  ).map((section) => ({
+    ...section,
+    items: getVisibleMediaForSection.value[section.uniqueId] || [],
+  }));
+
+  const defaultMediaSections =
+    mediaSections
+      .filter(({ condition }) => condition)
+      .map(({ config }) => config) ?? [];
+  console.log(
+    'customSections',
+    customSections,
+    'defaultMediaSections',
+    defaultMediaSections,
+    selectedDateObject.value?.dynamicMedia,
+  );
+  return [...customSections, ...defaultMediaSections];
 });
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
@@ -511,9 +561,9 @@ const checkCoDate = () => {
   }
 };
 
-const sectionToAddTo = ref<MediaSection | undefined>();
+const sectionToAddTo = ref<MediaSectionIdentifier | undefined>();
 
-useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
+useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
   window,
   'openFileImportDialog',
   (e) => {
@@ -525,7 +575,7 @@ useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
 useEventListener<
   CustomEvent<{
     files: { filename?: string; filetype?: string; path: string }[];
-    section: MediaSection | undefined;
+    section: MediaSectionIdentifier | undefined;
   }>
 >(
   window,
@@ -581,6 +631,33 @@ watch(
   () => urlVariables.value.mediator,
   () => {
     fetchMedia();
+  },
+);
+
+watch(
+  () => selectedDate.value,
+  (newVal) => {
+    console.log('selectedDate.value', newVal);
+    if (!newVal || !selectedDateObject.value) return;
+    if (
+      !selectedDateObject.value.customSections?.find(
+        (s) => s.uniqueId === 'additional',
+      )
+    ) {
+      if (!selectedDateObject.value.customSections) {
+        selectedDateObject.value.customSections = [];
+      }
+      const weMeetingDay = isWeMeetingDay(selectedDateObject.value.date);
+      selectedDateObject.value.customSections.unshift({
+        alwaysShow: weMeetingDay,
+        bgColor: 'rgb(148, 94, 181)',
+        extraMediaShortcut: true,
+        jwIcon: weMeetingDay ? '' : undefined,
+        label: weMeetingDay ? t('public-talk') : t('imported-media'),
+        mmmIcon: !weMeetingDay ? 'mmm-additional-media' : undefined,
+        uniqueId: 'additional',
+      });
+    }
   },
 );
 
@@ -798,11 +875,14 @@ const addToFiles = async (
   if (!isJwpub(files[0]?.path)) showFileImportDialog.value = false;
 };
 
-const openImportMenu = (section: MediaSection | undefined) => {
+const openImportMenu = (section: MediaSectionIdentifier | undefined) => {
   window.dispatchEvent(
-    new CustomEvent<{ section: MediaSection | undefined }>('openImportMenu', {
-      detail: { section },
-    }),
+    new CustomEvent<{ section: MediaSectionIdentifier | undefined }>(
+      'openImportMenu',
+      {
+        detail: { section },
+      },
+    ),
   );
 };
 

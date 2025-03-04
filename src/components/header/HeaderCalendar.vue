@@ -233,7 +233,7 @@
 </template>
 <script setup lang="ts">
 import type { QMenu } from 'quasar';
-import type { MediaSection } from 'src/types';
+import type { MediaSectionIdentifier } from 'src/types';
 
 import { useEventListener } from '@vueuse/core';
 import DialogAudioBible from 'components//dialog/DialogAudioBible.vue';
@@ -244,6 +244,7 @@ import SongPicker from 'components/media/SongPicker.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
+import { standardSections } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   datesAreSame,
@@ -280,7 +281,7 @@ const {
   someItemsHiddenForSelectedDate,
 } = storeToRefs(currentState);
 
-const section = ref<MediaSection | undefined>();
+const section = ref<MediaSectionIdentifier | undefined>();
 const publicTalkMediaPopup = ref(false);
 const datePickerActive = ref(false);
 const remoteVideoPopup = ref(false);
@@ -289,7 +290,7 @@ const audioBiblePopup = ref(false);
 
 const openFileImportDialog = () => {
   window.dispatchEvent(
-    new CustomEvent<{ section: MediaSection | undefined }>(
+    new CustomEvent<{ section: MediaSectionIdentifier | undefined }>(
       'openFileImportDialog',
       {
         detail: { section: section.value },
@@ -374,7 +375,7 @@ const maxDate = () => {
 };
 
 const importMenu = useTemplateRef<QMenu>('importMenu');
-const openImportMenu = (newSection?: MediaSection) => {
+const openImportMenu = (newSection?: MediaSectionIdentifier) => {
   section.value = newSection;
   importMenu.value?.show();
 };
@@ -420,18 +421,18 @@ const getEventDayColor = (eventDate: string) => {
 
 const chooseSong = ref(false);
 
-const openSongPicker = (newSection?: MediaSection) => {
+const openSongPicker = (newSection?: MediaSectionIdentifier) => {
   section.value = newSection;
   chooseSong.value = true;
 };
 
-useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
+useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
   window,
   'openSongPicker',
   (e) => openSongPicker(e.detail?.section),
   { passive: true },
 );
-useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
+useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
   window,
   'openImportMenu',
   (e) => openImportMenu(e.detail?.section),
@@ -445,7 +446,11 @@ const mediaSortCanBeReset = computed<boolean>(() => {
     (item) => !item.hidden,
   );
 
-  if (nonHiddenMedia.some((item) => item.section !== item.sectionOriginal)) {
+  if (
+    nonHiddenMedia
+      .filter((item) => standardSections.includes(item.section))
+      .some((item) => item.section !== item.sectionOriginal)
+  ) {
     return true;
   }
 
@@ -462,10 +467,10 @@ const mediaSortCanBeReset = computed<boolean>(() => {
   }
 
   const mediaToConsider = [
-    ...getVisibleMediaForSection.value.tgw,
-    ...getVisibleMediaForSection.value.ayfm,
-    ...getVisibleMediaForSection.value.lac,
-    ...getVisibleMediaForSection.value.wt,
+    ...(getVisibleMediaForSection.value.tgw || []),
+    ...(getVisibleMediaForSection.value.ayfm || []),
+    ...(getVisibleMediaForSection.value.lac || []),
+    ...(getVisibleMediaForSection.value.wt || []),
   ];
 
   for (let i = 0; i < mediaToConsider.length - 1; i++) {
@@ -507,10 +512,10 @@ const resetSort = () => {
 
   // Combine all media items into one array
   const mediaToSort = [
-    ...getAllMediaForSection.value.tgw,
-    ...getAllMediaForSection.value.ayfm,
-    ...getAllMediaForSection.value.lac,
-    ...getAllMediaForSection.value.wt,
+    ...(getAllMediaForSection.value.tgw || []),
+    ...(getAllMediaForSection.value.ayfm || []),
+    ...(getAllMediaForSection.value.lac || []),
+    ...(getAllMediaForSection.value.wt || []),
   ];
 
   // Sort the media array in ascending order by `sortOrderOriginal`
@@ -521,13 +526,28 @@ const resetSort = () => {
     ),
   );
 
+  const customSections = [
+    ...new Set(
+      selectedDateObject.value?.customSections?.map(
+        (section) => section.uniqueId,
+      ) ?? [],
+    ),
+  ];
+
+  const mediaFromCustomSections = customSections.flatMap(
+    (sectionId) =>
+      selectedDateObject.value?.dynamicMedia?.filter(
+        (item) => item.section === sectionId,
+      ) || [],
+  );
+
   selectedDateObject.value.dynamicMedia = [
-    ...getAllMediaForSection.value.additional,
+    ...mediaFromCustomSections,
     ...sortedMedia.filter((item) => item.section === 'tgw'),
     ...sortedMedia.filter((item) => item.section === 'ayfm'),
     ...sortedMedia.filter((item) => item.section === 'lac'),
     ...sortedMedia.filter((item) => item.section === 'wt'),
-    ...getAllMediaForSection.value.circuitOverseer,
+    ...(getAllMediaForSection.value.circuitOverseer || []),
   ];
 };
 </script>
