@@ -1,5 +1,12 @@
 <template>
   <q-dialog v-model="open">
+    <q-dialog v-model="releaseNotesOpen">
+      <q-card>
+        <q-card-section>
+          <q-markdown :src="releaseNotes" />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
     <div
       class="items-center q-pb-lg q-px-lg q-gutter-y-md bg-secondary-contrast"
     >
@@ -82,6 +89,24 @@
             </div>
           </q-btn>
         </div>
+        <div class="col">
+          <q-btn
+            class="q-pa-md full-width"
+            color="accent-400"
+            no-caps
+            outline
+            @click="releaseNotesOpen = true"
+          >
+            <div class="row q-gutter-x-md full-width items-center">
+              <div class="col-shrink text-primary q-ml-none">
+                <q-icon name="mmm-github" />
+              </div>
+              <div class="col-shrink text-secondary">
+                {{ t('whats-new') }}
+              </div>
+            </div>
+          </q-btn>
+        </div>
       </div>
       <div class="row text-subtitle1">
         {{ t('app-updates') }}
@@ -147,6 +172,7 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
+import { watchImmediate } from '@vueuse/core';
 import {
   betaUpdatesDisabled,
   toggleAutoUpdates,
@@ -160,7 +186,7 @@ const { openExternal } = window.electronApi;
 
 const open = defineModel<boolean>({ default: false });
 
-const { t } = useI18n();
+const { locale, t } = useI18n();
 const appVersion = process.env.version;
 const isBetaVersion = process.env.IS_BETA;
 
@@ -178,6 +204,19 @@ const getBetaUpdatesEnabled = async () => {
 onMounted(() => {
   getUpdatesEnabled();
   getBetaUpdatesEnabled();
+});
+
+const releaseNotes = ref('');
+const releaseNotesOpen = ref(false);
+
+watchImmediate(locale, async (val) => {
+  try {
+    const { default: md } = await import(`./../../release_notes/${val}.md`);
+    console.log('md', md);
+    releaseNotes.value = md;
+  } catch (e) {
+    console.error(e);
+  }
 });
 
 watch(updatesEnabled, (val) => {
