@@ -125,7 +125,7 @@ import { remainingTimeBeforeMeetingStart } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadBackgroundMusic } from 'src/helpers/jw-media';
 import { getPublicationDirectoryContents } from 'src/utils/fs';
-import { getMetadataFromMediaPath, isVideo } from 'src/utils/media';
+import { getMetadataFromMediaPath } from 'src/utils/media';
 import { formatTime } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
 import { ref, useTemplateRef, watch } from 'vue';
@@ -143,8 +143,6 @@ const {
   currentSettings,
   currentSongRemainingTime,
   mediaPlaying,
-  mediaPlayingAction,
-  mediaPlayingUrl,
   meetingDay,
   musicPlaying,
   musicRemainingTime,
@@ -162,10 +160,6 @@ const musicPlayerSource = ref<HTMLSourceElement>(
 const musicPlayingTitle = ref('');
 const musicStoppedAutomatically = ref(false);
 const songList = ref<SongItem[]>([]);
-
-const muteBackgroundMusic = () => fadeToVolumeLevel(0.001, 1);
-const unmuteBackgroundMusic = () =>
-  fadeToVolumeLevel((currentSettings?.value?.musicVolume ?? 100) / 100, 1);
 
 const toggleMusicListener = () => {
   try {
@@ -499,6 +493,10 @@ watch(
     musicStoppedAutomatically.value = false;
   },
 );
+/*
+const muteBackgroundMusic = () => fadeToVolumeLevel(0.001, 1);
+const unmuteBackgroundMusic = () =>
+  fadeToVolumeLevel((currentSettings?.value?.musicVolume ?? 100) / 100, 1);
 
 watch(
   () => [mediaPlayingAction.value, mediaPlayingUrl.value],
@@ -509,5 +507,5 @@ watch(
       unmuteBackgroundMusic();
     }
   },
-);
+);*/
 </script>

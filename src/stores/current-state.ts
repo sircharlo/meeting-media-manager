@@ -291,8 +291,9 @@ export const useCurrentStateStore = defineStore('current-state', {
       try {
         if (state.musicStarting) return 'music.starting';
         if (state.musicStopping) return 'music.stopping';
-        if (state.meetingDay && state.timeRemainingBeforeMusicStop > 0)
+        if (state.meetingDay && state.timeRemainingBeforeMusicStop > 0) {
           return formatTime(state.timeRemainingBeforeMusicStop);
+        }
         return state.currentSongRemainingTime;
       } catch (error) {
         errorCatcher(error);

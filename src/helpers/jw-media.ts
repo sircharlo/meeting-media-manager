@@ -61,6 +61,7 @@ import {
   getMultimediaMepsLangs,
   getPublicationInfoFromDb,
 } from 'src/utils/sqlite';
+import { timeToSeconds } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
 import { addUniqueById, shouldUpdateList, useJwStore } from 'stores/jw';
 
@@ -1024,12 +1025,15 @@ export const getStudyBibleMedia = async () => {
   }
 };
 
-export const getAudioBibleMedia = async (force = false) => {
+export const getAudioBibleMedia = async (
+  force = false,
+  langwritten?: JwLangCode,
+) => {
   try {
     const currentStateStore = useCurrentStateStore();
     const jwStore = useJwStore();
 
-    const lang = currentStateStore.currentSettings?.lang;
+    const lang = langwritten ?? currentStateStore.currentSettings?.lang;
     if (!lang) return;
 
     if (!force) {
@@ -1050,10 +1054,14 @@ export const getAudioBibleMedia = async (force = false) => {
       pub: 'nwt',
     };
     const languages = [
-      ...new Set([
-        currentStateStore.currentSettings.lang,
-        currentStateStore.currentSettings?.langFallback,
-      ]),
+      ...new Set(
+        langwritten
+          ? [langwritten]
+          : [
+              currentStateStore.currentSettings?.lang,
+              currentStateStore.currentSettings?.langFallback,
+            ],
+      ),
     ].filter((l): l is JwLangCode => !!l);
 
     const backupNameNeeded: number[] = [];
@@ -1908,38 +1916,90 @@ export async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
           ...(typeof media.Track === 'number' &&
             media.Track > 0 && { track: media.Track }),
         };
-        try {
-          if (
-            !media.FilePath ||
-            !(await window.electronApi.fs.pathExists(media.FilePath))
-          ) {
-            const {
-              FilePath,
-              Label,
-              StreamDuration,
-              StreamThumbnailUrl,
-              StreamUrl,
-            } = await downloadMissingMedia(publicationFetcher);
-            media.FilePath = FilePath ?? media.FilePath;
-            media.Label = Label || media.Label;
-            media.StreamUrl = StreamUrl ?? media.StreamUrl;
-            media.Duration = StreamDuration ?? media.Duration;
-            media.ThumbnailUrl = StreamThumbnailUrl ?? media.ThumbnailUrl;
+
+        if (media.KeySymbol === 'nwt') {
+          const pubs = await getAudioBibleMedia(false, langwritten);
+          const bookMedia: MediaLink[] =
+            Object.values(
+              pubs?.find((p) => p.booknum === media.BookNumber)?.files?.[
+                langwritten
+              ] ?? {},
+            )[0] ?? [];
+          const chapterMedia = bookMedia.filter(
+            (m) => m.track === media.ChapterNumber && !!m.markers,
+          );
+
+          let min = 0;
+          let max = 0;
+          const verses = media.VerseNumbers?.sort();
+
+          if (verses) {
+            min = timeToSeconds(
+              chapterMedia.map((item) =>
+                item.markers.markers.find(
+                  (marker) => marker.verseNumber === verses[0],
+                ),
+              )?.[0]?.startTime || '0',
+            );
+
+            const endVerse = chapterMedia.map((item) =>
+              item.markers.markers.find(
+                (marker) => marker.verseNumber === verses[verses.length - 1],
+              ),
+            )?.[0];
+            max = endVerse
+              ? timeToSeconds(endVerse.startTime) +
+                timeToSeconds(endVerse.duration)
+              : 0;
           }
-          if (!media.FilePath && !media.StreamUrl) {
+
+          const uniqueId = await downloadAdditionalRemoteVideo(
+            chapterMedia,
+            media.ThumbnailFilePath,
+            false,
+            media.Label,
+            undefined,
+            { max, min },
+          );
+
+          if (!uniqueId) {
             errors.push(publicationFetcher);
             continue;
           }
-          if (!media.Label) {
-            media.Label =
-              media.Label ||
-              media.Caption ||
-              (await getJwMediaInfo(publicationFetcher)).title ||
-              '';
+        } else {
+          try {
+            if (
+              !media.FilePath ||
+              !(await window.electronApi.fs.pathExists(media.FilePath))
+            ) {
+              const {
+                FilePath,
+                Label,
+                StreamDuration,
+                StreamThumbnailUrl,
+                StreamUrl,
+              } = await downloadMissingMedia(publicationFetcher);
+              media.FilePath = FilePath ?? media.FilePath;
+              media.Label = Label || media.Label;
+              media.StreamUrl = StreamUrl ?? media.StreamUrl;
+              media.Duration = StreamDuration ?? media.Duration;
+              media.ThumbnailUrl = StreamThumbnailUrl ?? media.ThumbnailUrl;
+            }
+            if (!media.FilePath && !media.StreamUrl) {
+              errors.push(publicationFetcher);
+              continue;
+            }
+            if (!media.Label) {
+              media.Label =
+                media.Label ||
+                media.Caption ||
+                (await getJwMediaInfo(publicationFetcher)).title ||
+                '';
+            }
+          } catch (e) {
+            errors.push(publicationFetcher);
+            errorCatcher(e);
           }
-        } catch (e) {
-          errors.push(publicationFetcher);
-          errorCatcher(e);
         }
       }
     }
@@ -2155,48 +2215,47 @@ export const downloadAdditionalRemoteVideo = async (
   title?: string,
   section?: MediaSectionIdentifier,
   customDuration?: { max: number; min: number },
-) => {
+): Promise<string | undefined> => {
   try {
     const currentStateStore = useCurrentStateStore();
     const bestItem = findBestResolution(
       mediaItemLinks,
       currentStateStore.currentSettings?.maxRes,
     );
-    if (bestItem) {
-      const bestItemUrl =
-        'progressiveDownloadURL' in bestItem
-          ? bestItem.progressiveDownloadURL
-          : bestItem.file.url;
+    if (!bestItem) return undefined;
+    const bestItemUrl =
+      'progressiveDownloadURL' in bestItem
+        ? bestItem.progressiveDownloadURL
+        : bestItem.file.url;
 
-      const uniqueId = await addToAdditionMediaMapFromPath(
-        window.electronApi.path.join(
-          await currentStateStore.getDatedAdditionalMediaDirectory(),
-          window.electronApi.path.basename(bestItemUrl),
-        ),
-        section,
-        undefined,
-        {
-          duration: bestItem.duration,
-          song: song ? song.toString() : undefined,
-          thumbnailUrl,
-          title,
-          url: bestItemUrl,
-        },
-        customDuration,
-      );
-
-      downloadFileIfNeeded({
-        dir: await currentStateStore.getDatedAdditionalMediaDirectory(),
-        size: bestItem.filesize,
+    const uniqueId = await addToAdditionMediaMapFromPath(
+      window.electronApi.path.join(
+        await currentStateStore.getDatedAdditionalMediaDirectory(),
+        window.electronApi.path.basename(bestItemUrl),
+      ),
+      section,
+      undefined,
+      {
+        duration: bestItem.duration,
+        song: song ? song.toString() : undefined,
+        thumbnailUrl,
+        title,
         url: bestItemUrl,
-      }).then(() => {
-        if (currentStateStore?.selectedDateObject?.date) {
-          addDayToExportQueue(currentStateStore.selectedDateObject.date);
-        }
-      });
+      },
+      customDuration,
+    );
 
-      return uniqueId;
-    }
+    downloadFileIfNeeded({
+      dir: await currentStateStore.getDatedAdditionalMediaDirectory(),
+      size: bestItem.filesize,
+      url: bestItemUrl,
+    }).then(() => {
+      if (currentStateStore?.selectedDateObject?.date) {
+        addDayToExportQueue(currentStateStore.selectedDateObject.date);
+      }
+    });
+
+    return uniqueId;
   } catch (e) {
     errorCatcher(e);
     return undefined;
