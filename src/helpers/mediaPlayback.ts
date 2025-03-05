@@ -168,10 +168,25 @@ export const getMediaFromJwPlaylist = async (
             ? item.StartTrimOffsetTicks / 10000 / 1000
             : null;
 
+        const verseNumbers = window.electronApi.executeQuery<{
+          VerseId: number;
+        }>(
+          dbFile,
+          `SELECT
+            VerseId
+          FROM
+            PlaylistItemMarkerBibleVerseMap pimB
+          LEFT JOIN PlaylistItemMarker pim ON pimB.PlaylistItemMarkerId = pim.PlaylistItemMarkerId
+          WHERE
+            PlaylistItemId = ${item.PlaylistItemId}`,
+        );
+
         const returnItem: MultimediaItem = {
           BeginParagraphOrdinal: 0,
+          BookNumber: item.BookNumber,
           Caption: '',
           CategoryType: 0,
+          ChapterNumber: item.ChapterNumber,
           DocumentId: 0,
           EndTime: EndTime ?? undefined,
           FilePath: item.IndependentMediaFilePath
@@ -192,6 +207,7 @@ export const getMediaFromJwPlaylist = async (
           TargetParagraphNumberLabel: 0,
           ThumbnailFilePath: item.ThumbnailFilePath || '',
           Track: item.Track,
+          VerseNumbers: verseNumbers.map((v) => v.VerseId),
         };
         return returnItem;
       }),
@@ -199,7 +215,7 @@ export const getMediaFromJwPlaylist = async (
 
     await processMissingMediaInfo(playlistMediaItems);
     const dynamicPlaylistMediaItems = await dynamicMediaMapper(
-      playlistMediaItems,
+      playlistMediaItems.filter((m) => m.KeySymbol !== 'nwt'),
       selectedDateValue,
       'additional',
     );
