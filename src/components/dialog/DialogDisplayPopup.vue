@@ -123,6 +123,24 @@
           }}
         </q-btn>
       </div>
+      <template v-if="currentLangObject?.isSignLanguage && cameras.length">
+        <q-separator class="bg-accent-200 q-mb-md" />
+        <div class="card-section-title row q-px-md q-pb-sm">
+          {{ t('camera-as-background') }}
+        </div>
+        <div class="row q-px-md q-pb-sm">
+          <q-select
+            v-model="displayCameraId"
+            clearable
+            emit-value
+            :label="t('select-camera')"
+            map-options
+            :options="cameras"
+            outlined
+            style="width: 100%"
+          />
+        </div>
+      </template>
       <div class="q-px-md q-pt-md row">
         <div class="col">
           <div class="row text-subtitle1 text-weight-medium">
@@ -254,11 +272,12 @@ const { t } = useI18n();
 const screenList = ref<Display[]>([]);
 
 const appSettings = useAppSettingsStore();
-const { screenPreferences } = storeToRefs(appSettings);
+const { displayCameraId, screenPreferences } = storeToRefs(appSettings);
 
 const currentState = useCurrentStateStore();
 const {
   currentCongregation,
+  currentLangObject,
   currentSettings,
   mediaWindowCustomBackground,
   mediaWindowVisible,
@@ -355,6 +374,29 @@ const fetchScreens = async () => {
 
 onMounted(() => {
   fetchScreens();
+  getCameras();
+});
+
+const cameras = ref<{ label: string; value: string }[]>([]);
+
+const getCameras = async () => {
+  try {
+    cameras.value = (await navigator.mediaDevices.enumerateDevices())
+      .filter((d) => d.kind === 'videoinput')
+      .map((d) => ({ label: d.label, value: d.deviceId }));
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
+watch(displayCameraId, (newCameraId) => {
+  if (currentState.mediaPlaying) return;
+  if (newCameraId) {
+    const cameraStream = new BroadcastChannel('camera-stream');
+    cameraStream.postMessage(newCameraId);
+  } else {
+    currentState.mediaPlayingUrl = '';
+  }
 });
 
 const notifyInvalidBackgroundFile = () => {
