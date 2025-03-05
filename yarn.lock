@@ -3853,6 +3853,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/web-bluetooth@npm:^0.0.21":
+  version: 0.0.21
+  resolution: "@types/web-bluetooth@npm:0.0.21"
+  checksum: 10c0/5f47c5ec452ca31e6a9b44c8aaa54b66c4f57d4aca00166c45902a3883139580e14b254b774172ff982ba4458cc444b5aa59bb4573c2fd34562cfa599721f8e4
+  languageName: node
+  linkType: hard
+
 "@types/yauzl@npm:^2.9.1":
   version: 2.10.3
   resolution: "@types/yauzl@npm:2.10.3"
@@ -4329,7 +4336,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/core@npm:12.7.0, @vueuse/core@npm:^12.7.0":
+"@vueuse/core@npm:12.7.0":
   version: 12.7.0
   resolution: "@vueuse/core@npm:12.7.0"
   dependencies:
@@ -4338,6 +4345,18 @@ __metadata:
     "@vueuse/shared": "npm:12.7.0"
     vue: "npm:^3.5.13"
   checksum: 10c0/d1ff4009097f15d4204b8b64f6ae4dda4f47e228c12588dcf8018f105eb804406344e35ef1f30b24e4e79b3cd19fd8c1289395f81f8a99a8f49daa7522cf7cbe
+  languageName: node
+  linkType: hard
+
+"@vueuse/core@npm:^12.7.0, @vueuse/core@npm:^12.8.0":
+  version: 12.8.0
+  resolution: "@vueuse/core@npm:12.8.0"
+  dependencies:
+    "@types/web-bluetooth": "npm:^0.0.21"
+    "@vueuse/metadata": "npm:12.8.0"
+    "@vueuse/shared": "npm:12.8.0"
+    vue: "npm:^3.5.13"
+  checksum: 10c0/53436bdcf5944f0804f8818cd5c76f4445b6cba7dfaeea692808c2525b66ef1c5764ca48624616c32cc6f1f1ebaacb407949e36964b0f5160c9a015becd7d5be
   languageName: node
   linkType: hard
 
@@ -4397,15 +4416,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/router@npm:^12.7.0":
-  version: 12.7.0
-  resolution: "@vueuse/router@npm:12.7.0"
+"@vueuse/metadata@npm:12.8.0":
+  version: 12.8.0
+  resolution: "@vueuse/metadata@npm:12.8.0"
+  checksum: 10c0/f111844845b6756c11624ff89bd51d0c1e8ec56108392b4ac3f409865924c18071083a648cfbf96d3b579622563c59e66571e5bd94cf1adae26db4a54aaeb52f
+  languageName: node
+  linkType: hard
+
+"@vueuse/router@npm:^12.8.0":
+  version: 12.8.0
+  resolution: "@vueuse/router@npm:12.8.0"
   dependencies:
-    "@vueuse/shared": "npm:12.7.0"
+    "@vueuse/shared": "npm:12.8.0"
     vue: "npm:^3.5.13"
   peerDependencies:
     vue-router: ">=4.0.0-rc.1"
-  checksum: 10c0/39f17205173bd5b29a95bd0d367eaa53515e5c368fca595e6287aecff7fffc03affaa4d7b084643b178eda1d124572e780cd23d747546855ff2f7baeaa64c299
+  checksum: 10c0/911181750a4d97a86943461d602253c7b81518d95c2b9d606fd7776fef213ee0d267b76ccda624f3fcea3495ffbf3f858264925de79ac6a35cb339e15bd0a6ff
   languageName: node
   linkType: hard
 
@@ -4415,6 +4441,15 @@ __metadata:
   dependencies:
     vue: "npm:^3.5.13"
   checksum: 10c0/b9508af450146feb5f1e9c53f0854e9a7b4e819ebd56a8cdeaf717287c4ade72bbfa4d4c90d656c27141288986dd712156b4d0463582616be8bd42f9368e7243
+  languageName: node
+  linkType: hard
+
+"@vueuse/shared@npm:12.8.0":
+  version: 12.8.0
+  resolution: "@vueuse/shared@npm:12.8.0"
+  dependencies:
+    vue: "npm:^3.5.13"
+  checksum: 10c0/14a34e7ef8451b9434f45c18c19412407266a204dafbf4c1bb14d116cacdeb02a72670aee605c78e40283f920984e148f973fc0acb05fedbcac5257e6e8e047f
   languageName: node
   linkType: hard
 
@@ -7155,7 +7190,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-builder@npm:next":
+"electron-builder@npm:^26.0.10":
   version: 26.0.10
   resolution: "electron-builder@npm:26.0.10"
   dependencies:
@@ -7211,7 +7246,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-updater@npm:next":
+"electron-updater@npm:^6.6.1":
   version: 6.6.1
   resolution: "electron-updater@npm:6.6.1"
   dependencies:
@@ -7657,8 +7692,8 @@ __metadata:
   linkType: hard
 
 "eslint-plugin-vue@npm:^9.32.0":
-  version: 9.32.0
-  resolution: "eslint-plugin-vue@npm:9.32.0"
+  version: 9.33.0
+  resolution: "eslint-plugin-vue@npm:9.33.0"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.4.0"
     globals: "npm:^13.24.0"
@@ -7670,7 +7705,7 @@ __metadata:
     xml-name-validator: "npm:^4.0.0"
   peerDependencies:
     eslint: ^6.2.0 || ^7.0.0 || ^8.0.0 || ^9.0.0
-  checksum: 10c0/69040947271b0d46132a34cccd54af5aeff9c017060ceba49c0cb689d4817468c27fb07881d655bc4453b40e2858715e3ab6a5155ee0846aa000013685185a81
+  checksum: 10c0/2f5ee967158fc345ec3f2076835e6a9d706c4bbb7dc4c3806ad8db81133d73128fbd402f71b3adf8ae53e5e4a0a1aba32e44eb757544901a6a62021a1ccad92e
   languageName: node
   linkType: hard
 
@@ -11253,8 +11288,8 @@ __metadata:
     "@vue/eslint-config-prettier": "npm:^10.2.0"
     "@vue/eslint-config-typescript": "npm:^14.4.0"
     "@vue/test-utils": "npm:^2.4.6"
-    "@vueuse/core": "npm:^12.7.0"
-    "@vueuse/router": "npm:^12.7.0"
+    "@vueuse/core": "npm:^12.8.0"
+    "@vueuse/router": "npm:^12.8.0"
     autoprefixer: "npm:^10.4.20"
     better-sqlite3: "npm:^11.8.1"
     cheerio: "npm:^1.0.0"
@@ -11263,9 +11298,9 @@ __metadata:
     decompress: "npm:^4.2.1"
     dompurify: "npm:^3.2.4"
     electron: "npm:^35.0.0"
-    electron-builder: "npm:next"
+    electron-builder: "npm:^26.0.10"
     electron-dl-manager: "npm:^3.2.1"
-    electron-updater: "npm:next"
+    electron-updater: "npm:^6.6.1"
     eslint: "npm:^9.21.0"
     eslint-plugin-perfectionist: "npm:^4.9.0"
     eslint-plugin-vue: "npm:^9.32.0"
