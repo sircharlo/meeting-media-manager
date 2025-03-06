@@ -11,15 +11,15 @@ Denna guide kommer att gå igenom processen för nedladdning och installation av
 </script>
 
 1. Ladda ned lämplig version för ditt operativsystem:
-   - **Windows:**
-     - För de flesta Windows-versionerna, ladda ned <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
-     - För äldre 32-bitars Windows, ladda ned <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
-     - För en portabel version, ladda ner <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
-   - **macOS:**
-     - **M-serien (Apple Silicon)**: Ladda ned <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
-     - **Intel-baserad Mac**: Ladda ned <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
-   - **Linux:**
-     - Ladda ned <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
+  - **Windows:**
+    - För de flesta Windows-versionerna, ladda ned <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
+    - För äldre 32-bitars Windows, ladda ned <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
+    - För en portabel version, ladda ner <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
+  - **macOS:**
+    - **M-serien (Apple Silicon)**: Ladda ned <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
+    - **Intel-baserad Mac**: Ladda ned <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
+  - **Linux:**
+    - Ladda ned <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
 2. Om nedladdningslänkarna inte fungerar, besök [M³ nedladdningssida](https://github.com/sircharlo/meeting-media-manager/releases/latest) och ladda ned rätt version manuellt.
 3. Öppna installationsprogrammet och följ instruktionerna på skärmen för att installera M³.
 4. Starta M³.
