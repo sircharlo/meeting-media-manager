@@ -1,12 +1,14 @@
 <!-- markdownlint-disable no-duplicate-heading -->
 
-# What's New
+# Kaj je novega
+
+For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
 ## 25.3.0
 
-### ✨ New Features
+### ✨ Nove funkcije
 
-- 🎵 **Play Background Music with Videos**: Allow background music to continue playing while videos are being viewed.
+- 🎵 **Predvajanje glasbe v ozadju z videoposnetki**: Omogoči, da se glasba v ozadju predvaja tudi med ogledom videoposnetkov.
 - 🎥 **Camera Feed for Sign Language Media**: Add the ability to display a camera feed on the media window specifically for sign language users.
 - 📅 **Automatic Memorial Date & Background**: Automatically detect and set the Memorial date and prepare the Memorial background image.
 - 📜 **Show Release Notes In-App**: Display release notes directly in the application so users can easily review changes after an update.
