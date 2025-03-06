@@ -12,7 +12,7 @@
 
 ## :thinking: 此应用是否违反了耶和华见证人官方网站的使用条款？ {#terms-of-use}
 
-\*\*不。\*\*耶和华见证人官方网站使用条款实际上明确允许我们正在做的用法。 以下是相关摘录（重要部分已标明）：
+**No.** The Terms of Use of the official website of Jehovah's Witnesses explicitly allow the kind of usage that we are making. 以下是相关摘录（重要部分已标明）：
 
 > 你不得：
 >
