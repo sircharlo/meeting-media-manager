@@ -12,7 +12,7 @@ Il codice sorgente per questa app è aperto e disponibile per tutti per esaminar
 
 ## :thinking: Questa app viola le Condizioni d'uso del sito ufficiale dei Testimoni di Geova? {#terms-of-use}
 
-**No.** I [Termini d'uso](https://www.jw.org/finder?docid=1011511\&prefer=content) del sito ufficiale dei Testimoni di Geova consentono esplicitamente il tipo di utilizzo che stiamo facendo. Ecco il relativo estratto da quei termini (sottolineatura aggiunta):
+**No.** I Termini d'uso del sito ufficiale dei Testimoni di Geova consentono esplicitamente il tipo di utilizzo che stiamo facendo. Ecco il relativo estratto da quei termini (sottolineatura aggiunta):
 
 > Non puoi:
 >
