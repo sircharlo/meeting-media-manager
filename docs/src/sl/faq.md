@@ -12,7 +12,7 @@ Izvorna koda tega programa je na voljo vsem, da jo lahko preučijo in preverijo,
 
 ## :thinking: Ali ta program krši pogoje uporabe uradnega spletnega mesta Jehovovih prič? {#terms-of-use}
 
-**Ne.** [Pogoji uporabe](https://www.jw.org/finder?docid=1011511\&prefer=content) uradnega spletnega mesta Jehovovih prič dejansko izrecno dovoljujejo takšno uporabo, kot jo izvajamo mi. Navajamo odlomek iz teh pogojev (poudarili mi):
+**Ne.** Pogoji uporabe uradnega spletnega mesta Jehovovih prič dejansko izrecno dovoljujejo takšno uporabo, kot jo izvajamo mi. Navajamo odlomek iz teh pogojev (poudarili mi):
 
 > Ni vam dovoljeno:
 >

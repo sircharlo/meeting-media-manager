@@ -11,15 +11,15 @@
 </script>
 
 1. 下载您操作系统的适当版本：
-   - **Windows:**
-     - 对于大多数Windows系统，下载 <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
-     - 对于较旧的32位Windows系统，请下载 <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>。
-     - 如需便携版本，请下载 <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>。
-   - **MacOS:**
-     - **M系列(Apple Silicon)**: 下载 <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>。
-     - **Intel系列 Mac**：下载 <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>。
-   - **Linux:**
-     - 下载 <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>。
+  - **Windows:**
+    - 对于大多数Windows系统，下载 <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
+    - 对于较旧的32位Windows系统，请下载 <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>。
+    - 如需便携版本，请下载 <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>。
+  - **MacOS:**
+    - **M系列(Apple Silicon)**: 下载 <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>。
+    - **Intel系列 Mac**：下载 <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>。
+  - **Linux:**
+    - 下载 <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>。
 2. 如果下载链接无法正常工作，请访问[M3下载页面](https://github.com/sircharlo/meeting-media-manager/releases/latest)并手动下载正确的版本。
 3. 打开安装程序并按照屏幕上的说明安装M³。
 4. 启动 M³。

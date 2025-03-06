@@ -11,15 +11,15 @@ Esta guía te guiará a través del proceso de descarga, instalación y configur
 </script>
 
 1. Descargue la versión apropiada para su sistema operativo:
-   - **Windows:**
-     - Para la mayoría de sistemas Windows, descarga <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
-     - Para sistemas Windows de 32 bits más antiguos, descarga <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
-     - Para una versión portable, descarga <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
-   - **macOS:**
-     - **M-series (Apple Sillicon)**: Descarga <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
-     - **Macs basados en Intel**: Descargar <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
-   - **Linux:**
-     - Descargar <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
+  - **Windows:**
+    - Para la mayoría de sistemas Windows, descarga <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
+    - Para sistemas Windows de 32 bits más antiguos, descarga <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
+    - Para una versión portable, descarga <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
+  - **macOS:**
+    - **M-series (Apple Sillicon)**: Descarga <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
+    - **Macs basados en Intel**: Descargar <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
+  - **Linux:**
+    - Descargar <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
 2. Si los enlaces de descarga no funcionan, visita la [página de descarga M³](https://github.com/sircharlo/meeting-media-manager/releases/latest) y descarga la versión correcta manualmente.
 3. Abra el instalador y siga las instrucciones en pantalla para instalar M³.
 4. Iniciar M³.
