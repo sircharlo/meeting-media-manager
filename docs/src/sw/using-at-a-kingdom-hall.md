@@ -11,15 +11,15 @@ Mwongozo huu utakuelekeza kwenye hatua za kupakua, kusakinisha na kuanzisha Meet
 </script>
 
 1. Pakua aina ambayo inafaa mfumo wa kopyuta yako:
-   - **Windows:**
-     - Kwa mifumo mingi ya Windows, pakua <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
-     - Kwa mifumo ya kitambo ya 32-bit Windows, pakua <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
-     - Kwa programu inayoweza kuhamishwa, pakua <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
-   - **macOS:**
-     - **M-series (Apple Silicon)**: Pakua <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
-     - **Intel-based Macs**: Pakua <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
-   - **Linux:**
-     - Pakua <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
+  - **Windows:**
+    - Kwa mifumo mingi ya Windows, pakua <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
+    - Kwa mifumo ya kitambo ya 32-bit Windows, pakua <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
+    - Kwa programu inayoweza kuhamishwa, pakua <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
+  - **macOS:**
+    - **M-series (Apple Silicon)**: Pakua <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
+    - **Intel-based Macs**: Pakua <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
+  - **Linux:**
+    - Pakua <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
 2. Ikiwa viunganishi vya kupakua havifanyi kazi, tembelea [Ukurasa wa kupakua wa M³] (https://github.com/sircharlo/meeting-media-manager/releases/latest) na upakue toleo ambayo inafaa.
 3. Fungua mfumo wa kupakua na ufuate maagizo ya kupakua M³ kwenye scrini.
 4. Fungua M³.
