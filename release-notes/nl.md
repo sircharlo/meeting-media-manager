@@ -2,6 +2,8 @@
 
 # Wat is er nieuw
 
+Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
+
 ## 25.3.0
 
 ### ✨ Nieuwe functies
