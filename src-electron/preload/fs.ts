@@ -59,7 +59,7 @@ export const inferExtension = async (filename: string, filetype?: string) => {
 
   try {
     const { default: mime } = await import('mime/lite');
-    const extractedExtension = mime.extension(filetype);
+    const extractedExtension = mime.getExtension(filetype);
     return extractedExtension ? `${filename}.${extractedExtension}` : filename;
   } catch (e) {
     capturePreloadError(e);
