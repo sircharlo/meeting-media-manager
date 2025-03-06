@@ -161,12 +161,18 @@ export const fetchMemorials = async (): Promise<null | Record<
  */
 export const fetchReleaseNotes = async (
   lang: string,
-): Promise<null | Record<number, string>> => {
-  if (!process.env.repository) return null;
-  const result = await fetchJson<Record<string, string>>(
-    `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/feat/release-notes/release-notes/${lang}.md`,
-  );
-  return result;
+): Promise<null | string> => {
+  try {
+    if (!process.env.repository) return null;
+    const res = await fetchRaw(
+      `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/release-notes/${lang}.md`,
+    );
+    if (!res.ok) return null;
+    return await res.text();
+  } catch (e) {
+    errorCatcher(e);
+    return null;
+  }
 };
 
 /**

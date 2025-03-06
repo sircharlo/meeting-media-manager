@@ -3,7 +3,7 @@
     <q-dialog v-model="releaseNotesOpen">
       <q-card>
         <q-card-section>
-          <q-markdown :src="releaseNotes" />
+          <q-markdown no-heading-anchor-links :src="releaseNotes" />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -33,6 +33,9 @@
             <div class="col">v{{ appVersion }}</div>
           </div>
         </div>
+      </div>
+      <div v-if="releaseNotes" class="row">
+        <q-btn :label="t('whats-new')" @click="releaseNotesOpen = true" />
       </div>
       <div class="row">
         <div class="col">
@@ -85,24 +88,6 @@
               </div>
               <div class="col text-right text-accent-400">
                 <q-icon name="mmm-arrow-outward" />
-              </div>
-            </div>
-          </q-btn>
-        </div>
-        <div class="col">
-          <q-btn
-            class="q-pa-md full-width"
-            color="accent-400"
-            no-caps
-            outline
-            @click="releaseNotesOpen = true"
-          >
-            <div class="row q-gutter-x-md full-width items-center">
-              <div class="col-shrink text-primary q-ml-none">
-                <q-icon name="mmm-github" />
-              </div>
-              <div class="col-shrink text-secondary">
-                {{ t('whats-new') }}
               </div>
             </div>
           </q-btn>
@@ -173,12 +158,14 @@
 </template>
 <script setup lang="ts">
 import { watchImmediate } from '@vueuse/core';
+import { fetchReleaseNotes } from 'src/utils/api';
 import {
   betaUpdatesDisabled,
   toggleAutoUpdates,
   toggleBetaUpdates,
   updatesDisabled,
 } from 'src/utils/fs';
+import { camelToKebabCase } from 'src/utils/general';
 import { onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -210,13 +197,8 @@ const releaseNotes = ref('');
 const releaseNotesOpen = ref(false);
 
 watchImmediate(locale, async (val) => {
-  try {
-    const { default: md } = await import(`./../../release_notes/${val}.md`);
-    console.log('md', md);
-    releaseNotes.value = md;
-  } catch (e) {
-    console.error(e);
-  }
+  const result = await fetchReleaseNotes(camelToKebabCase(val));
+  releaseNotes.value = result ?? '';
 });
 
 watch(updatesEnabled, (val) => {
