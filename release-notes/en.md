@@ -2,7 +2,7 @@
 
 # What's New
 
-For the full list of changes between versions, see our [CHANGELOG.md](https://github.com/sircharlo/meeting-media-manager/CHANGELOG.md) on GitHub.
+For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
 ## 25.3.0
 
