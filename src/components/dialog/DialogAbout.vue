@@ -164,6 +164,7 @@ import {
   toggleAutoUpdates,
   toggleBetaUpdates,
   updatesDisabled,
+  wasUpdateInstalled,
 } from 'src/utils/fs';
 import { camelToKebabCase } from 'src/utils/general';
 import { onMounted, ref, watch } from 'vue';
@@ -188,9 +189,17 @@ const getBetaUpdatesEnabled = async () => {
   betaUpdatesEnabled.value = !(await betaUpdatesDisabled());
 };
 
+const checkLastVersion = async () => {
+  if (await wasUpdateInstalled()) {
+    open.value = true;
+    releaseNotesOpen.value = true;
+  }
+};
+
 onMounted(() => {
   getUpdatesEnabled();
   getBetaUpdatesEnabled();
+  checkLastVersion();
 });
 
 const releaseNotes = ref('');
