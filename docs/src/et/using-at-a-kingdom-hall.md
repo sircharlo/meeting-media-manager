@@ -11,15 +11,15 @@ Selles juhendis tutvustatakse teile **Meeting Media Manager (M³)** allalaadimis
 </script>
 
 1. Lae alla oma operatsioonisüsteemi jaoks sobiv versioon:
-   - **Windows:**
-     - Enamiku Windowsi süsteemide jaoks laadige alla <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
-     - Vanemate 32-bitiste Windowsi süsteemide puhul laadige alla <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
-     - Kaasaskantava versiooni kasutamiseks lae alla <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
-   - **macOS:**
-     - **M-seeria (Apple Silicon)**: Laadige alla <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
-     - **Inteli baasil Mac arvutid**: Download <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
-   - **Linux:**
-     - Lae alla <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
+  - **Windows:**
+    - Enamiku Windowsi süsteemide jaoks laadige alla <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
+    - Vanemate 32-bitiste Windowsi süsteemide puhul laadige alla <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
+    - Kaasaskantava versiooni kasutamiseks lae alla <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
+  - **macOS:**
+    - **M-seeria (Apple Silicon)**: Laadige alla <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
+    - **Inteli baasil Mac arvutid**: Download <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
+  - **Linux:**
+    - Lae alla <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
 2. Kui allalaadimise lingid ei tööta, külastage [M³ allalaadimise lehte](https://github.com/sircharlo/meeting-media-manager/releases/latest) ja laadige õige versioon käsitsi alla.
 3. Ava paigaldusprogramm ja järgi ekraanil kuvatavaid juhiseid, et paigaldada M³.
 4. Käivita M³.
