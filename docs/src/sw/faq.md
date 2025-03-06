@@ -12,7 +12,7 @@ Code ya programu hii inapatikana kwa wote kuchunguza na kuthibitisha kinachoende
 
 ## :thinking: Je, mfumo huu unakiuka sheria za utumiaji za tovuti rasmi ya Mashahidi wa Yehova? {#terms-of-use}
 
-**Hapana.** [Sheria na Masharti](https://www.jw.org/finder?docid=1011511\&prefer=content) ya tovuti rasmi ya Mashahidi wa Yehova huruhusu aina ya matumizi ambayo tunafanya. Hapa kuna nukuu kutoka kwa maneno hayo (msisitizo umeongezwa):
+**Hapana.** Sheria na Masharti ya tovuti rasmi ya Mashahidi wa Yehova huruhusu aina ya matumizi ambayo tunafanya. Hapa kuna nukuu kutoka kwa maneno hayo (msisitizo umeongezwa):
 
 > Haupaswi:
 >
