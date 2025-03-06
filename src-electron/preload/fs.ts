@@ -45,6 +45,28 @@ export const fileUrlToPath = (fileurl?: string) => {
   return normalize(url.fileURLToPath(fileurl));
 };
 
+/**
+ * Infers the extension of a file based on its type.
+ * @param filename The name of the file.
+ * @param filetype The type of the file.
+ * @returns The filename with the inferred extension.
+ * @example
+ * inferExtension('A video.mp4') // A video.mp4
+ * inferExtension('An audio file', 'audio/mpeg') // An audio file.mp3
+ */
+export const inferExtension = async (filename: string, filetype?: string) => {
+  if (!filetype || /\.[0-9a-z]+$/i.test(filename)) return filename;
+
+  try {
+    const { default: mime } = await import('mime/lite');
+    const extractedExtension = mime.extension(filetype);
+    return extractedExtension ? `${filename}.${extractedExtension}` : filename;
+  } catch (e) {
+    capturePreloadError(e);
+    return filename;
+  }
+};
+
 export const readDirectory = async (
   dir: string,
   withSizes?: boolean,

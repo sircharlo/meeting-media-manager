@@ -146,7 +146,6 @@ import { getPublicationDirectory, getTempPath } from 'src/utils/fs';
 import { uuid } from 'src/utils/general';
 import {
   getMetadataFromMediaPath,
-  inferExtension,
   isArchive,
   isAudio,
   isImage,
@@ -629,7 +628,7 @@ const addToFiles = async (
         filepath = (
           await downloadFileIfNeeded({
             dir: await getTempPath(),
-            filename: await inferExtension(
+            filename: await window.electronApi.inferExtension(
               file.filename || baseFileName,
               file.filetype,
             ),

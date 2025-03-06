@@ -12,6 +12,7 @@ import {
 import {
   fileUrlToPath,
   getVideoDuration,
+  inferExtension,
   parseMediaFile,
   pathToFileURL,
   readDirectory,
@@ -58,6 +59,7 @@ const electronApi: ElectronApi = {
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),
   getUserDataPath: () => invoke('getUserDataPath'),
   getVideoDuration,
+  inferExtension,
   isDownloadErrorExpected: () => invoke('isDownloadErrorExpected'),
   moveMediaWindow: (t, w, ne) =>
     send('moveMediaWindow', t, w === undefined ? undefined : !w, ne),

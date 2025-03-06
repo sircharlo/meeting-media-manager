@@ -159,28 +159,6 @@ export const isImageString = (url: string) => {
 };
 
 /**
- * Infers the extension of a file based on its type.
- * @param filename The name of the file.
- * @param filetype The type of the file.
- * @returns The filename with the inferred extension.
- * @example
- * inferExtension('A video.mp4') // A video.mp4
- * inferExtension('An audio file', 'audio/mpeg') // An audio file.mp3
- */
-export const inferExtension = async (filename: string, filetype?: string) => {
-  if (!filetype || /\.[0-9a-z]+$/i.test(filename)) return filename;
-
-  try {
-    const { default: mime } = await import('mime');
-    const extractedExtension = mime.extension(filetype);
-    return extractedExtension ? `${filename}.${extractedExtension}` : filename;
-  } catch (e) {
-    errorCatcher(e);
-    return filename;
-  }
-};
-
-/**
  * Gets the metadata of a media file.
  * @param mediaPath The path to the media file.
  * @returns The metadata of the media file.

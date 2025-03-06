@@ -207,6 +207,7 @@ export default defineConfig((ctx) => {
           'heic-convert',
           'image-size',
           'is-online',
+          'mime',
           'music-metadata',
           'pdfjs-dist',
           'upath',
