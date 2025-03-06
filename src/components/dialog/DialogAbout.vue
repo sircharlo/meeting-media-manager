@@ -1,5 +1,12 @@
 <template>
   <q-dialog v-model="open">
+    <q-dialog v-model="releaseNotesOpen">
+      <q-card>
+        <q-card-section>
+          <q-markdown no-heading-anchor-links :src="releaseNotes" />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
     <div
       class="items-center q-pb-lg q-px-lg q-gutter-y-md bg-secondary-contrast"
     >
@@ -26,6 +33,9 @@
             <div class="col">v{{ appVersion }}</div>
           </div>
         </div>
+      </div>
+      <div v-if="releaseNotes" class="row">
+        <q-btn :label="t('whats-new')" @click="releaseNotesOpen = true" />
       </div>
       <div class="row">
         <div class="col">
@@ -147,12 +157,16 @@
   </q-dialog>
 </template>
 <script setup lang="ts">
+import { watchImmediate } from '@vueuse/core';
+import { fetchReleaseNotes } from 'src/utils/api';
 import {
   betaUpdatesDisabled,
   toggleAutoUpdates,
   toggleBetaUpdates,
   updatesDisabled,
+  wasUpdateInstalled,
 } from 'src/utils/fs';
+import { camelToKebabCase } from 'src/utils/general';
 import { onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -160,7 +174,7 @@ const { openExternal } = window.electronApi;
 
 const open = defineModel<boolean>({ default: false });
 
-const { t } = useI18n();
+const { locale, t } = useI18n();
 const appVersion = process.env.version;
 const isBetaVersion = process.env.IS_BETA;
 
@@ -175,9 +189,25 @@ const getBetaUpdatesEnabled = async () => {
   betaUpdatesEnabled.value = !(await betaUpdatesDisabled());
 };
 
+const checkLastVersion = async () => {
+  if (await wasUpdateInstalled()) {
+    open.value = true;
+    releaseNotesOpen.value = true;
+  }
+};
+
 onMounted(() => {
   getUpdatesEnabled();
   getBetaUpdatesEnabled();
+  checkLastVersion();
+});
+
+const releaseNotes = ref('');
+const releaseNotesOpen = ref(false);
+
+watchImmediate(locale, async (val) => {
+  const result = await fetchReleaseNotes(camelToKebabCase(val));
+  releaseNotes.value = result ?? '';
 });
 
 watch(updatesEnabled, (val) => {

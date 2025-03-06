@@ -1,5 +1,8 @@
 {
   "@quasar/testing-unit-vitest": {
     "options": []
+  },
+  "@quasar/qmarkdown": {
+    "import_md": true
   }
 }

@@ -11,15 +11,15 @@
 </script>
 
 1. Загрузите соответствующую версию для вашей операционной системы:
-   - **Windows:**
-     - Для большинства систем Windows, загрузите <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
-     - Для старых 32-битных систем Windows, загрузите <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
-     - Для портативной версии загрузите <a :href="data.winPortable">meeting-media-manager-[ВЕРСИЯ]-portable.exe</a>.
-   - **macOS:**
-     - **Компьютеры Mac с чипом Apple**: загрузите <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
-     - **Компьютеры Mac с чипом Intel**: загрузите <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
-   - **Linux:**
-     - Загрузите <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
+  - **Windows:**
+    - Для большинства систем Windows, загрузите <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
+    - Для старых 32-битных систем Windows, загрузите <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
+    - Для портативной версии загрузите <a :href="data.winPortable">meeting-media-manager-[ВЕРСИЯ]-portable.exe</a>.
+  - **macOS:**
+    - **Компьютеры Mac с чипом Apple**: загрузите <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
+    - **Компьютеры Mac с чипом Intel**: загрузите <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
+  - **Linux:**
+    - Загрузите <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
 2. Если ссылки на скачивание не работают, посетите [страницу загрузки M³](https://github.com/sircharlo/meeting-media-manager/releases/latest) и загрузите корректную версию вручную.
 3. Откройте установщик и следуйте инструкциям установки M³.
 4. Запустите M³.

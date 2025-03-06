@@ -80,6 +80,7 @@
     "@pinia/testing": "^1.0.0",
     "@quasar/app-vite": "^2.1.4",
     "@quasar/icongenie": "^4.0.0",
+    "@quasar/quasar-app-extension-qmarkdown": "^2.0.5",
     "@quasar/quasar-app-extension-testing-unit-vitest": "^1.1.0",
     "@quasar/vite-plugin": "^1.9.0",
     "@rollup/plugin-inject": "^5.0.5",

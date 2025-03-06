@@ -12,7 +12,7 @@ De broncode voor deze app is voor iedereen beschikbaar om te onderzoeken en cont
 
 ## :thinking: Schendt deze app de Gebruiksvoorwaarden van de officiële website van Jehovah's Getuigen? {#terms-of-use}
 
-**Nee** De [gebruiksvoorwaarden](https://www.jw.org/finder?docid=1011511\&prefer=content) van de officiële website van Jehovah's Getuigen staat expliciet het soort gebruik toe dat we maken. Hier is het relevante stukje van de gebruiksvoorwaarden (nadruk toegevoegd):
+**Nee** De gebruiksvoorwaarden van de officiële website van Jehovah's Getuigen staat expliciet het soort gebruik toe dat we maken. Hier is het relevante stukje van de gebruiksvoorwaarden (nadruk toegevoegd):
 
 > Het is niet toegestaan:
 >

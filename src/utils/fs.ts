@@ -257,3 +257,35 @@ export const toggleBetaUpdates = async (enable: boolean) => {
     errorCatcher(error, { contexts: { fn: { name: 'toggleBetaUpdates' } } });
   }
 };
+
+const lastVersionPath = () => getCachePath(['last-version']);
+
+/**
+ * Verifies whether a new version has been installed.
+ */
+export const wasUpdateInstalled = async () => {
+  try {
+    const lastVersionFile = await lastVersionPath();
+    if (await window.electronApi.fs.exists(lastVersionFile)) {
+      const lastVersion = await window.electronApi.fs.readFile(
+        lastVersionFile,
+        { encoding: 'utf-8' },
+      );
+      await window.electronApi.fs.writeFile(
+        lastVersionFile,
+        process.env.version ?? '',
+      );
+      return lastVersion !== (process.env.version ?? '');
+    } else {
+      await window.electronApi.fs.writeFile(
+        lastVersionFile,
+        process.env.version ?? '',
+        { encoding: 'utf-8' },
+      );
+      return true;
+    }
+  } catch (error) {
+    errorCatcher(error, { contexts: { fn: { name: 'wasUpdateInstalled' } } });
+    return false;
+  }
+};

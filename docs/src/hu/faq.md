@@ -12,7 +12,7 @@ Az alkalmazás forráskódja mindenki számára elérhető, hogy megvizsgálja �
 
 ## :thinking: Ez az alkalmazás sérti Jehova Tanúi hivatalos honlapjának felhasználási feltételeit? {#terms-of-use}
 
-**Nem.** Jehova Tanúi hivatalos weboldalának [Felhasználási feltételei](https://www.jw.org/finder?docid=1011511\&prefer=content) kifejezetten engedélyezik az általunk alkalmazott felhasználási módot. Íme a vonatkozó részlet az említett feltételekből (kiemelés hozzáadva):
+**Nem.** Jehova Tanúi hivatalos weboldalának Felhasználási feltételei kifejezetten engedélyezik az általunk alkalmazott felhasználási módot. Íme a vonatkozó részlet az említett feltételekből (kiemelés hozzáadva):
 
 > Tilos:
 >

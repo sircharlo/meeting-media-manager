@@ -12,7 +12,7 @@ Der Quellcode dieser Anwendung ist für jedermann einsehbar, um zu überprüfen,
 
 ## :thinking: Verstößt diese Anwendung gegen die Nutzungsbedingungen der offiziellen Website der Zeugen Jehovas? {#terms-of-use}
 
-**Nein.** Die [Nutzungsbedingungen](https://www.jw.org/finder?docid=1011511\\&prefer=content) der offiziellen Website der Zeugen Jehovas erlauben tatsächlich ausdrücklich die Art der Nutzung, die wir hier betreiben. Hier ist der relevante Auszug aus diesen Bedingungen (hervorgehoben):
+**Nein.** Die Nutzungsbedingungen der offiziellen Website der Zeugen Jehovas erlauben tatsächlich ausdrücklich die Art der Nutzung, die wir hier betreiben. Hier ist der relevante Auszug aus diesen Bedingungen (hervorgehoben):
 
 > Sie dürfen nicht:
 >

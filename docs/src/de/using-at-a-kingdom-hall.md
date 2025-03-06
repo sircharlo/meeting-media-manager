@@ -11,15 +11,15 @@ Diese Anleitung führt Sie durch den Prozess des Herunterladens, Installierens u
 </script>
 
 1. Laden Sie die entsprechende Version für Ihr Betriebssystem herunter:
-   - **Windows:**
-     - Für die meisten Windows-Systeme laden Sie <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a> herunter.
-     - Für ältere 32-Bit-Windows-Systeme laden Sie <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a> herunter.
-     - For a portable version, download <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
-   - **macOS:**
-     - **M-Serie (Apple Silicon):** Laden Sie <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a> herunter.
-     - **Intel-basierte Macs:** Laden Sie <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a> herunter.
-   - **Linux:**
-     - Laden Sie <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a> herunter.
+  - **Windows:**
+    - Für die meisten Windows-Systeme laden Sie <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a> herunter.
+    - Für ältere 32-Bit-Windows-Systeme laden Sie <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a> herunter.
+    - For a portable version, download <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
+  - **macOS:**
+    - **M-Serie (Apple Silicon):** Laden Sie <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a> herunter.
+    - **Intel-basierte Macs:** Laden Sie <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a> herunter.
+  - **Linux:**
+    - Laden Sie <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a> herunter.
 2. Wenn die Download-Links nicht funktionieren, besuchen Sie die [M³-Download-Seite](https://github.com/sircharlo/meeting-media-manager/releases/latest) und laden Sie die richtige Version manuell herunter.
 3. Öffnen Sie das Installationsprogramm und folgen Sie den Anweisungen auf dem Bildschirm, um M³ zu installieren.
 4. Starten Sie M³.

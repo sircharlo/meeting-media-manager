@@ -12,7 +12,7 @@ El código fuente de esta aplicación está disponible para que todos puedan exa
 
 ## :thinking: ¿Infringe esta aplicación las condiciones de uso del sitio web oficial de los Testigos de Jehová? {#terms-of-use}
 
-**No.** Los [Términos de Uso](https://www.jw.org/finder?docid=1011511\&prefer=content) del sitio web oficial de los Testigos de Jehová realmente permiten explícitamente el tipo de uso que estamos haciendo. Aquí está el extracto relevante de esos términos (énfasis mío):
+**No.** Los Términos de Uso del sitio web oficial de los Testigos de Jehová realmente permiten explícitamente el tipo de uso que estamos haciendo. Aquí está el extracto relevante de esos términos (énfasis mío):
 
 > Sin embargo, debe sujetarse a las siguientes restricciones:
 >
