@@ -12,7 +12,7 @@ Le code source de cette application est disponible afin de donner à tous la pos
 
 ## :thinking: Cette application enfreint-elle les conditions d'utilisation du site officiel des Témoins de Jéhovah ? {#terms-of-use}
 
-**Non.** Les conditions d'utilisation du site officiel des Témoins de Jéhovah autorisent en fait explicitement le type d'utilisation que nous faisons. Voici l'extrait pertinent de ces conditions :
+**No.** The Terms of Use of the official website of Jehovah's Witnesses explicitly allow the kind of usage that we are making. Voici l'extrait pertinent de ces conditions :
 
 > Il n’est pas permis de :
 >
