@@ -2,7 +2,7 @@ import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { useJwStore } from 'src/stores/jw';
 import { getSpecificWeekday, isInPast } from 'src/utils/date';
-import { getAdditionalMediaPath } from 'src/utils/fs';
+import { congPreferencesPath, getAdditionalMediaPath } from 'src/utils/fs';
 
 const cleanCongregationRecord = (
   record: Partial<Record<string, unknown>>,
@@ -87,6 +87,7 @@ export const cleanCache = async () => {
 
   cleanPublicTalkPubs(additionalMediaPath, congIds);
   cleanCongregationFolders(additionalMediaPath, congIds);
+  cleanCongregationFolders(await congPreferencesPath(), congIds);
 
   congIds.forEach((congId) => {
     cleanDateFolders(window.electronApi.path.join(additionalMediaPath, congId));

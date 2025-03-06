@@ -158,6 +158,8 @@
 </template>
 <script setup lang="ts">
 import { watchImmediate } from '@vueuse/core';
+import { storeToRefs } from 'pinia';
+import { useCurrentStateStore } from 'src/stores/current-state';
 import { fetchReleaseNotes } from 'src/utils/api';
 import {
   betaUpdatesDisabled,
@@ -166,7 +168,7 @@ import {
   updatesDisabled,
   wasUpdateInstalled,
 } from 'src/utils/fs';
-import { camelToKebabCase } from 'src/utils/general';
+import { camelToKebabCase, sleep } from 'src/utils/general';
 import { onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -189,8 +191,9 @@ const getBetaUpdatesEnabled = async () => {
   betaUpdatesEnabled.value = !(await betaUpdatesDisabled());
 };
 
-const checkLastVersion = async () => {
-  if (await wasUpdateInstalled()) {
+const checkLastVersion = async (congId: string) => {
+  if (await wasUpdateInstalled(congId)) {
+    await sleep(1000);
     open.value = true;
     releaseNotesOpen.value = true;
   }
@@ -199,7 +202,12 @@ const checkLastVersion = async () => {
 onMounted(() => {
   getUpdatesEnabled();
   getBetaUpdatesEnabled();
-  checkLastVersion();
+});
+
+const { currentCongregation } = storeToRefs(useCurrentStateStore());
+
+watch(currentCongregation, (val) => {
+  checkLastVersion(val);
 });
 
 const releaseNotes = ref('');
