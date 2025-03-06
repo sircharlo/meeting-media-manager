@@ -173,7 +173,10 @@ export const addToAdditionMediaMapFromPath = async (
     jwStore.addToAdditionMediaMap(
       [
         {
-          customDuration,
+          customDuration:
+            customDuration?.min === 0 && customDuration?.max === 0
+              ? undefined
+              : customDuration,
           duration,
           fileUrl: window.electronApi.pathToFileURL(additionalFilePath),
           isAudio: audio,
@@ -1256,8 +1259,7 @@ export const dynamicMediaMapper = async (
   const { currentSettings } = useCurrentStateStore();
   try {
     const lastParagraphOrdinal =
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      allMedia[allMedia.length - 1]!.BeginParagraphOrdinal || 0;
+      allMedia[allMedia.length - 1]?.BeginParagraphOrdinal || 0;
     let middleSongParagraphOrdinal = 0;
     if (source !== 'additional') {
       const songs = allMedia.filter((m) => isSong(m));
@@ -1931,7 +1933,7 @@ export async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
 
           let min = 0;
           let max = 0;
-          const verses = media.VerseNumbers?.sort();
+          const verses = media.VerseNumbers?.sort((a, b) => a - b);
 
           if (verses) {
             min = timeToSeconds(
@@ -1947,6 +1949,7 @@ export async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
                 (marker) => marker.verseNumber === verses[verses.length - 1],
               ),
             )?.[0];
+
             max = endVerse
               ? timeToSeconds(endVerse.startTime) +
                 timeToSeconds(endVerse.duration)

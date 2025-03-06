@@ -168,18 +168,26 @@ export const getMediaFromJwPlaylist = async (
             ? item.StartTrimOffsetTicks / 10000 / 1000
             : null;
 
-        const verseNumbers = window.electronApi.executeQuery<{
-          VerseId: number;
-        }>(
-          dbFile,
-          `SELECT
-            VerseId
+        const VerseNumbers = window.electronApi
+          .executeQuery<{
+            Label: string;
+          }>(
+            dbFile,
+            `SELECT
+            Label
           FROM
-            PlaylistItemMarkerBibleVerseMap pimB
-          LEFT JOIN PlaylistItemMarker pim ON pimB.PlaylistItemMarkerId = pim.PlaylistItemMarkerId
+            PlaylistItemMarker
           WHERE
             PlaylistItemId = ${item.PlaylistItemId}`,
-        );
+          )
+          .map((v) =>
+            parseInt(
+              Array.from(
+                v.Label.matchAll(/\w+ (?:\d+:)?(\d+)/g),
+                (m) => m[1],
+              )[0] ?? '0',
+            ),
+          );
 
         const returnItem: MultimediaItem = {
           BeginParagraphOrdinal: 0,
@@ -207,7 +215,7 @@ export const getMediaFromJwPlaylist = async (
           TargetParagraphNumberLabel: 0,
           ThumbnailFilePath: item.ThumbnailFilePath || '',
           Track: item.Track,
-          VerseNumbers: verseNumbers.map((v) => v.VerseId),
+          VerseNumbers,
         };
         return returnItem;
       }),
