@@ -12,7 +12,7 @@ Izvorna koda tega programa je na voljo vsem, da jo lahko preučijo in preverijo,
 
 ## :thinking: Ali ta program krši pogoje uporabe uradnega spletnega mesta Jehovovih prič? {#terms-of-use}
 
-**No.** The Terms of Use of the official website of Jehovah's Witnesses explicitly allow the kind of usage that we are making. Navajamo odlomek iz teh pogojev (poudarili mi):
+**Ne.** Pogoji uporabe uradnega spletnega mesta Jehovovih prič izrecno dovoljujejo takšno uporabo, kot jo izvajamo mi. Navajamo odlomek iz teh pogojev (poudarili mi):
 
 > Ni vam dovoljeno:
 >
