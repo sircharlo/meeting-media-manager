@@ -194,8 +194,11 @@ const getBetaUpdatesEnabled = async () => {
 const checkLastVersion = async (congId: string) => {
   if (await wasUpdateInstalled(congId)) {
     await sleep(1000);
-    open.value = true;
-    releaseNotesOpen.value = true;
+
+    if (releaseNotes.value) {
+      open.value = true;
+      releaseNotesOpen.value = true;
+    }
   }
 };
 

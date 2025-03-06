@@ -1,20 +1,22 @@
 <!-- markdownlint-disable no-duplicate-heading -->
 
-# What's New
+# Novidades
+
+Para a lista completa de alterações entre versões, consulte o ficheiro CHANGELOG.md no GitHub.
 
 ## 25.3.0
 
-### ✨ New Features
+### ✨ Novas Funcionalidades
 
-- 🎵 **Play Background Music with Videos**: Allow background music to continue playing while videos are being viewed.
-- 🎥 **Camera Feed for Sign Language Media**: Add the ability to display a camera feed on the media window specifically for sign language users.
-- 📅 **Automatic Memorial Date & Background**: Automatically detect and set the Memorial date and prepare the Memorial background image.
-- 📜 **Show Release Notes In-App**: Display release notes directly in the application so users can easily review changes after an update.
+- 🎵 Reproduzir Música de Fundo com Vídeos: Permite que a música de fundo continue a tocar enquanto os vídeos são reproduzidos.
+- 🎥 Transmissão de Câmara para Multimédia em Língua Gestual: Permite exibir a transmissão da câmara na janela de multimédia, especificamente para utilizadores de língua gestual.
+- 📅 Data e Plano de Fundo do Memorial Automáticos: Deteta e define automaticamente a data do Memorial e prepara a imagem de fundo correspondente.
+- 📜 Notas de Lançamento na Aplicação: Mostra as notas de lançamento diretamente na aplicação, permitindo aos utilizadores rever facilmente as alterações após uma atualização.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Melhorias e Ajustes
 
-- ⚡ **Optimize Smart Cache Clearing**: Improve the smart cache-clearing mechanism for better performance and efficiency.
-- 📂 **Correct Circuit Overseer Media Placement**: Ensure Circuit Overseer media is placed in the correct section.
-- 📅 **Exclude Regular Meeting Media for Memorial**: Prevent fetching standard meeting media for the Memorial to prevent errors.
-- 📅 **Hide Regular Meeting Sections on Memorial**: Remove unnecessary meeting sections during the Memorial event for a cleaner layout.
-- 📖 **Fix Sign Language Bible Video Downloads**: Correctly download Sign Language Bible chapter videos from JWL playlists.
+- ⚡ Otimização da Limpeza Inteligente da Cache: Melhoria do mecanismo de limpeza da cache para maior desempenho e eficiência.
+- 📂 Correção da Colocação de Multimédia do Superintendente de Circuito: Garantir que os ficheiros multimédia do Superintendente de Circuito sejam colocados na secção correta.
+- 📅 Excluir Multimédia de Reuniões Regulares para a Comemoração: Impedir o descarregamento de multimédia das reuniões regulares para a Comemoração, de modo a evitar erros.
+- 📅 Ocultar Secções de Reuniões Regulares na Comemoração: Remover secções desnecessárias de reuniões durante o evento da Comemoração para um layout mais limpo.
+- 📖 Corrigir Downloads de Vídeos da Bíblia em Língua Gestual: Corrigir o download dos vídeos dos capítulos da Bíblia em Língua Gestual a partir das playlists JWL.

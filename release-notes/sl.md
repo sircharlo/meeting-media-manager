@@ -1,20 +1,22 @@
 <!-- markdownlint-disable no-duplicate-heading -->
 
-# What's New
+# Kaj je novega
+
+Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
 ## 25.3.0
 
-### ✨ New Features
+### ✨ Nove funkcije
 
-- 🎵 **Play Background Music with Videos**: Allow background music to continue playing while videos are being viewed.
-- 🎥 **Camera Feed for Sign Language Media**: Add the ability to display a camera feed on the media window specifically for sign language users.
-- 📅 **Automatic Memorial Date & Background**: Automatically detect and set the Memorial date and prepare the Memorial background image.
-- 📜 **Show Release Notes In-App**: Display release notes directly in the application so users can easily review changes after an update.
+- 🎵 **Predvajanje glasbe v ozadju z videoposnetki**: Omogoči, da se glasba v ozadju predvaja tudi med ogledom videoposnetkov.
+- 🎥 **Signal od kamere za multimedijsko vsebino znakovnega jezika**: Dodaj možnost, da je za uporabnike znakovnega jezika v oknu multimedijske vsebine prikazan signal od kamere.
+- 📅 **Samodejni datum spominske slovesnosti in ozadje**: Samodejno zaznavanje in nastavitev datuma spominske slovesnosti ter priprava slike za prikaz na zaslonu med spominsko slovenostjo.
+- 📜 **V aplikaciji prikaži opombe ob izdaji**: Prikaz opomb ob izdaji neposredno v aplikaciji, tako da lahko uporabniki po posodobitvi enostavno pregledajo spremembe.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Izboljšave in popravki
 
-- ⚡ **Optimize Smart Cache Clearing**: Improve the smart cache-clearing mechanism for better performance and efficiency.
-- 📂 **Correct Circuit Overseer Media Placement**: Ensure Circuit Overseer media is placed in the correct section.
-- 📅 **Exclude Regular Meeting Media for Memorial**: Prevent fetching standard meeting media for the Memorial to prevent errors.
-- 📅 **Hide Regular Meeting Sections on Memorial**: Remove unnecessary meeting sections during the Memorial event for a cleaner layout.
-- 📖 **Fix Sign Language Bible Video Downloads**: Correctly download Sign Language Bible chapter videos from JWL playlists.
+- ⚡ **Optimiziranje pametnega čiščenja predpomnilnika**: Izboljšan je mehanizem pametnega čiščenja predpomnilnika za boljšo zmogljivost in učinkovitost.
+- 📂 **Pravilna umestitev multimedijske vsebine okrajnega nadzornika**: Poskrbljeno je, da je multimedijska vsebina okrajnega nadzornika umeščena v pravi razdelek.
+- 📅 **Izključitev multimedijske vsebine rednih shodov v času spominske slovesnosti**: Za preprečitev napak je za spominsko slovenost onemogočeno pridobivanje multimedijske vsebine rednih shodov.
+- 📅 **Med spominsko slovenostjo so razdelki rednih shodov skriti**: Razdelki, ki med spominsko slovenostjo niso nepotrebni, so zaradi preglednosti skriti.
+- 📖 **Popravljeni so prenosi svetopisemskih videoposnetkov za znakovni jezik**: Iz seznamov predvajanja JWL se zdaj pravilno prenesejo videoposnetki poglavij Svetega pisma v znakovnem jeziku.
