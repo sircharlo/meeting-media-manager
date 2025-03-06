@@ -156,6 +156,26 @@ export const fetchMemorials = async (): Promise<null | Record<
 };
 
 /**
+ * Fetches the release notes from the repository.
+ * @returns The release notes.
+ */
+export const fetchReleaseNotes = async (
+  lang: string,
+): Promise<null | string> => {
+  try {
+    if (!process.env.repository) return null;
+    const res = await fetchRaw(
+      `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/release-notes/${lang}.md`,
+    );
+    if (!res.ok) return null;
+    return await res.text();
+  } catch (e) {
+    errorCatcher(e);
+    return null;
+  }
+};
+
+/**
  * Fetches the latest version of the app.
  * @returns The latest version.
  */
