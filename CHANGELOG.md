@@ -2,7 +2,7 @@
 
 # Changelog
 
-For translations of the most important changes, see the [./release-notes](./release-notes/) directory.
+For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
 ## 25.3.0
 
