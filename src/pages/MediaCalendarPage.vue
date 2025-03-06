@@ -168,6 +168,7 @@ import {
   showMediaWindow,
 } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import { useAppSettingsStore } from 'src/stores/app-settings';
 import { useObsStateStore } from 'src/stores/obs-state';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
@@ -181,7 +182,6 @@ import { getPublicationDirectory, getTempPath } from 'src/utils/fs';
 import { uuid } from 'src/utils/general';
 import {
   getMetadataFromMediaPath,
-  inferExtension,
   isArchive,
   isAudio,
   isImage,
@@ -350,7 +350,17 @@ watch(
   (newAction, oldAction) => {
     if (newAction !== oldAction) postMediaAction(newAction);
     if (currentState.currentLangObject?.isSignLanguage) {
-      showMediaWindow(newAction === 'play');
+      if (newAction !== 'play') {
+        const cameraId = useAppSettingsStore().displayCameraId;
+        if (cameraId) {
+          const cameraStream = new BroadcastChannel('camera-stream');
+          cameraStream.postMessage(cameraId);
+        } else {
+          showMediaWindow(false);
+        }
+      } else {
+        showMediaWindow(true);
+      }
     }
   },
 );
@@ -695,7 +705,7 @@ const addToFiles = async (
         filepath = (
           await downloadFileIfNeeded({
             dir: await getTempPath(),
-            filename: await inferExtension(
+            filename: await window.electronApi.inferExtension(
               file.filename || baseFileName,
               file.filetype,
             ),

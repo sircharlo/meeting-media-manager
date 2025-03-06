@@ -88,7 +88,7 @@ export default defineConfig((ctx) => {
       },
       sourcemap: true,
       // See: https://www.electronjs.org/docs/latest/tutorial/electron-timelines#timeline
-      target: { browser: ['chrome134'], node: 'node22.14.0' },
+      target: { browser: ['chrome132'], node: 'node20.18.2' },
       typescript: {
         extendTsConfig: (tsConfig) => {
           tsConfig.exclude?.push('./../docs');
@@ -207,6 +207,7 @@ export default defineConfig((ctx) => {
           'heic-convert',
           'image-size',
           'is-online',
+          'mime',
           'music-metadata',
           'pdfjs-dist',
           'upath',
