@@ -8,6 +8,8 @@ export const isFileUrl = (path?: string) => path?.startsWith('file://');
 // Paths
 
 const PUBLICATION_FOLDER = 'Publications';
+const CONG_PREFERENCES_FOLDER = 'Cong Preferences';
+const GLOBAL_PREFERENCES_FOLDER = 'Global Preferences';
 
 /**
  * Gets the full path of a directory in the cache folder.
@@ -205,7 +207,7 @@ export const trimFilepathAsNeeded = (filepath: string) => {
 // Global Preferences
 
 const disableUpdatesPath = () =>
-  getCachePath(['Global Preferences', 'disable-updates']);
+  getCachePath([GLOBAL_PREFERENCES_FOLDER, 'disable-updates']);
 
 /**
  * Checks if auto updates are disabled.
@@ -232,7 +234,7 @@ export const toggleAutoUpdates = async (enable: boolean) => {
 };
 
 const betaUpdatesPath = () =>
-  getCachePath(['Global Preferences', 'beta-updates']);
+  getCachePath([GLOBAL_PREFERENCES_FOLDER, 'beta-updates']);
 
 /**
  * Checks if beta updates are disabled.
@@ -258,14 +260,22 @@ export const toggleBetaUpdates = async (enable: boolean) => {
   }
 };
 
-const lastVersionPath = () => getCachePath(['last-version']);
+export const congPreferencesPath = () =>
+  getCachePath([CONG_PREFERENCES_FOLDER]);
+
+const lastVersionPath = (congId: string) =>
+  getCachePath([CONG_PREFERENCES_FOLDER, congId, 'last-version']);
 
 /**
  * Verifies whether a new version has been installed.
  */
-export const wasUpdateInstalled = async () => {
+export const wasUpdateInstalled = async (congId: string) => {
   try {
-    const lastVersionFile = await lastVersionPath();
+    const lastVersionFile = await lastVersionPath(congId);
+    await window.electronApi.fs.ensureDir(
+      window.electronApi.path.dirname(lastVersionFile),
+    );
+
     if (await window.electronApi.fs.exists(lastVersionFile)) {
       const lastVersion = await window.electronApi.fs.readFile(
         lastVersionFile,
