@@ -12,7 +12,7 @@ Selle rakenduse lähtekood on kõigile kättesaadav, et uurida ja kontrollida, m
 
 ## :thinking: Kas see rakendus rikub Jehoova tunnistajate ametliku veebisaidi kasutustingimusi? {#terms-of-use}
 
-**Ei.** Jehoova tunnistajate ametliku veebisaidi [kasutustingimused] (https://www.jw.org/finder?docid=1011511&prefer=content) tegelikult lubavad selgesõnaliselt sellist kasutamist, mida me teeme. Siin on väljavõte nendest mõtetest (tsiteeritult):
+**Ei.** Jehoova tunnistajate ametliku veebisaidi [kasutustingimused] (https://www.jw.org/finder?docid=1011511&prefer=content) lubavad selgesõnaliselt sellist kasutamist, mida me teeme. Siin on väljavõte nendest mõtetest (tsiteeritult):
 
 > Te ei tohi:
 >
