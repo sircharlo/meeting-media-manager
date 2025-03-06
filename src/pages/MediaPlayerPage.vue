@@ -185,6 +185,7 @@ whenever(
       mediaElement.value?.pause();
     } else if (newMediaAction === 'play') {
       playMediaElement();
+      cameraStreamId.value = '';
     }
   },
 );
@@ -234,6 +235,7 @@ watch(
   async (newWebStreamData) => {
     videoStreaming.value = newWebStreamData;
     if (newWebStreamData) {
+      cameraStreamId.value = '';
       const screenAccessStatus =
         await window.electronApi.getScreenAccessStatus();
       if (!screenAccessStatus || screenAccessStatus !== 'granted') {
@@ -243,7 +245,9 @@ watch(
             video: true,
           });
         } catch (e) {
-          errorCatcher(e);
+          errorCatcher(e, {
+            contexts: { fn: { name: 'requestDisplayAccess' } },
+          });
         }
         const screenAccessStatusSecondTry =
           await window.electronApi.getScreenAccessStatus();
@@ -286,7 +290,102 @@ watch(
         mediaElement.value.srcObject = stream;
         playMediaElement();
       } catch (e) {
-        errorCatcher(e);
+        errorCatcher(e, { contexts: { fn: { name: 'streamDisplay' } } });
+      }
+    } else {
+      if (mediaElement.value) {
+        mediaElement.value.pause();
+        mediaElement.value.srcObject = null;
+      }
+      mediaPlayingAction.value = '';
+    }
+  },
+);
+
+const { data: cameraStreamId } = useBroadcastChannel<string, string>({
+  name: 'camera-stream',
+});
+
+watch(
+  () => cameraStreamId.value,
+  async (deviceId) => {
+    videoStreaming.value = !!deviceId;
+    if (deviceId) {
+      const screenAccessStatus =
+        await window.electronApi.getScreenAccessStatus();
+      if (!screenAccessStatus || screenAccessStatus !== 'granted') {
+        try {
+          await navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: { deviceId },
+          });
+        } catch (e) {
+          errorCatcher(e, {
+            contexts: { fn: { name: 'requestCameraAccess' } },
+          });
+          cameraStreamId.value = '';
+          videoStreaming.value = false;
+          createTemporaryNotification({
+            caption: t('camera-access-required-explain'),
+            message: t('camera-access-required'),
+            noClose: true,
+            timeout: 10000,
+            type: 'negative',
+          });
+          return;
+        }
+        const screenAccessStatusSecondTry =
+          await window.electronApi.getScreenAccessStatus();
+        if (
+          !screenAccessStatusSecondTry ||
+          screenAccessStatusSecondTry !== 'granted'
+        ) {
+          createTemporaryNotification({
+            caption: t('screen-access-required-explain'),
+            message: t('screen-access-required'),
+            noClose: true,
+            timeout: 10000,
+            type: 'negative',
+          });
+          videoStreaming.value = false;
+          return;
+        }
+      }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: false,
+          video: { deviceId },
+        });
+        let timeouts = 0;
+        while (!mediaElement.value) {
+          await new Promise((resolve) => {
+            setTimeout(resolve, 100);
+          });
+          if (++timeouts > 10) break;
+        }
+        if (!mediaElement.value || !stream) {
+          videoStreaming.value = false;
+          mediaPlayingAction.value = '';
+          mediaElement.value?.pause();
+          if (mediaElement?.value?.srcObject) {
+            mediaElement.value.srcObject = null;
+          }
+          return;
+        }
+        mediaElement.value.srcObject = stream;
+        playMediaElement();
+      } catch (e) {
+        errorCatcher(e, { contexts: { fn: { name: 'streamCamera' } } });
+        cameraStreamId.value = '';
+        videoStreaming.value = false;
+        createTemporaryNotification({
+          caption: t('camera-access-required-explain'),
+          message: t('camera-access-required'),
+          noClose: true,
+          timeout: 10000,
+          type: 'negative',
+        });
+        return;
       }
     } else {
       if (mediaElement.value) {
@@ -306,8 +405,9 @@ const playMediaElement = () => {
         error.message.includes('new load request') ||
         error.message.includes('interrupted by a call to pause')
       )
-    )
+    ) {
       errorCatcher(error);
+    }
   });
 };
 

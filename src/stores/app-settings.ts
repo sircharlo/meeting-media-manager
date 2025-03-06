@@ -22,6 +22,7 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 
 interface Store {
+  displayCameraId: null | string;
   migrations: string[];
   screenPreferences: ScreenPreferences;
 }
@@ -193,6 +194,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
   persist: true,
   state: (): Store => {
     return {
+      displayCameraId: null,
       migrations: [],
       screenPreferences: { preferredScreenNumber: 0, preferWindowed: false },
     };

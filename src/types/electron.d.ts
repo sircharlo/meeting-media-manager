@@ -77,6 +77,7 @@ export interface ElectronApi {
    * @returns A promise that resolves to the metadata of the media file.
    */
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
+  inferExtension: (filename: string, filetype?: string) => Promise<string>;
   isDownloadErrorExpected: () => Promise<boolean>;
   moveMediaWindow: (
     targetScreenNumber?: number,

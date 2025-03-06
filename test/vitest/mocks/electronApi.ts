@@ -59,6 +59,9 @@ export const electronApi: ElectronApi = {
   getVideoDuration: function (filePath) {
     throw new Error('Function not implemented.');
   },
+  inferExtension: async function (filename, filetype) {
+    throw new Error('Function not implemented.');
+  },
   isDownloadErrorExpected: async () => false,
   moveMediaWindow: function (targetScreenNumber, windowedMode, noEvent?) {
     throw new Error('Function not implemented.');

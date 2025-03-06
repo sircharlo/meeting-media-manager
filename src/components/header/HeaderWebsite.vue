@@ -70,6 +70,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
+import { useAppSettingsStore } from 'src/stores/app-settings';
 import { sendObsSceneEvent } from 'src/utils/obs';
 import { useCurrentStateStore } from 'stores/current-state';
 import { ref, watch } from 'vue';
@@ -103,7 +104,13 @@ watch(streaming, (val) => {
   } else {
     sendObsSceneEvent('camera');
     if (currentState.currentLangObject?.isSignLanguage) {
-      showMediaWindow(false);
+      const cameraId = useAppSettingsStore().displayCameraId;
+      if (cameraId) {
+        const cameraStream = new BroadcastChannel('camera-stream');
+        cameraStream.postMessage(cameraId);
+      } else {
+        showMediaWindow(false);
+      }
     }
   }
 });
