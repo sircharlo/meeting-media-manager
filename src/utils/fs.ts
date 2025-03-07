@@ -269,12 +269,20 @@ const lastVersionPath = (congId: string) =>
 /**
  * Verifies whether a new version has been installed.
  */
-export const wasUpdateInstalled = async (congId: string) => {
+export const wasUpdateInstalled = async (congId: string, newCong = false) => {
   try {
     const lastVersionFile = await lastVersionPath(congId);
     await window.electronApi.fs.ensureDir(
       window.electronApi.path.dirname(lastVersionFile),
     );
+
+    if (newCong) {
+      await window.electronApi.fs.writeFile(
+        lastVersionFile,
+        process.env.version ?? '',
+      );
+      return false;
+    }
 
     if (await window.electronApi.fs.exists(lastVersionFile)) {
       const lastVersion = await window.electronApi.fs.readFile(

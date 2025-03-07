@@ -3,6 +3,7 @@ import type { SettingsValues } from 'src/types';
 
 import { defineStore } from 'pinia';
 import { defaultSettings } from 'src/constants/settings';
+import { wasUpdateInstalled } from 'src/utils/fs';
 import { uuid } from 'src/utils/general';
 
 interface Store {
@@ -16,6 +17,7 @@ export const useCongregationSettingsStore = defineStore(
     actions: {
       createCongregation() {
         const newId = uuid();
+        wasUpdateInstalled(newId);
         this.congregations[newId] = Object.assign({}, defaultSettings);
         return newId;
       },

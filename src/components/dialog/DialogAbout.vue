@@ -210,7 +210,7 @@ onMounted(() => {
 const { currentCongregation } = storeToRefs(useCurrentStateStore());
 
 watch(currentCongregation, (val) => {
-  checkLastVersion(val);
+  if (val) checkLastVersion(val);
 });
 
 const releaseNotes = ref('');
