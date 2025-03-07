@@ -1,22 +1,22 @@
 <!-- markdownlint-disable no-duplicate-heading -->
 
-# What's New
+# 更新内容
 
-For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
+关于不同版本之间更改的完整清单，请参阅我们在 GitHub 上的 CHANGELOG.md文件。
 
 ## 25.3.0
 
-### ✨ New Features
+### ✨ 新功能
 
-- 🎵 **Play Background Music with Videos**: Allow background music to continue playing while videos are being viewed.
-- 🎥 **Camera Feed for Sign Language Media**: Add the ability to display a camera feed on the media window specifically for sign language users.
-- 📅 **Automatic Memorial Date & Background**: Automatically detect and set the Memorial date and prepare the Memorial background image.
-- 📜 **Show Release Notes In-App**: Display release notes directly in the application so users can easily review changes after an update.
+- 🎵 **用视频播放背景音乐** : 允许背景音乐在视频被查看时继续播放。
+- 🎥 **手语媒体的视频**: 添加在媒体窗口中显示专为手语用户提供视频源的能力。
+- 📅 **自动纪念聚会的日期和背景**: 自动检测和设置纪念聚会的日期并准备纪念背景图像。
+- 📜 **在应用程序中显示发布笔记** : 在应用程序中直接显示发布笔记, 以便用户在更新后可以轻松地查看更改。
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ 改进和调整
 
-- ⚡ **Optimize Smart Cache Clearing**: Improve the smart cache-clearing mechanism for better performance and efficiency.
-- 📂 **Correct Circuit Overseer Media Placement**: Ensure Circuit Overseer media is placed in the correct section.
-- 📅 **Exclude Regular Meeting Media for Memorial**: Prevent fetching standard meeting media for the Memorial to prevent errors.
-- 📅 **Hide Regular Meeting Sections on Memorial**: Remove unnecessary meeting sections during the Memorial event for a cleaner layout.
-- 📖 **Fix Sign Language Bible Video Downloads**: Correctly download Sign Language Bible chapter videos from JWL playlists.
+- :hig_voltage: **优化智能缓存清理**: 改进智能缓存清理机制以提高性能和效率。
+- 📂 **正确的分区监督媒体位置**: 确保分区监督媒体放置在正确的部分。
+- 📅 **排除纪念聚会该州的常规聚会媒体**: 防止为纪念聚会获取常规聚会媒体以防止错误。
+- 📅 **隐藏纪念聚会那天的常规聚会部分**: 在纪念聚会中删除不必要的聚会部分以进行更清洁的布局。
+- 📖 **修复手语圣经视频下载**: 正确地从 JWL 播放列表下载手语圣经章节视频。
