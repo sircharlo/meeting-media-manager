@@ -17,7 +17,7 @@ export const useCongregationSettingsStore = defineStore(
     actions: {
       createCongregation() {
         const newId = uuid();
-        wasUpdateInstalled(newId);
+        wasUpdateInstalled(newId, true);
         this.congregations[newId] = Object.assign({}, defaultSettings);
         return newId;
       },
