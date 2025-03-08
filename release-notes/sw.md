@@ -15,8 +15,8 @@ Kwa ajili ya orodha kamili ya mabadiliko baina ya toleo tofauti tofauti, ona CHA
 
 ### 🛠️ Maboresho na Marekebisho
 
-- ⚡ **Optimize Smart Cache Clearing**: Improve the smart cache-clearing mechanism for better performance and efficiency.
-- 📂 **Correct Circuit Overseer Media Placement**: Ensure Circuit Overseer media is placed in the correct section.
-- 📅 **Exclude Regular Meeting Media for Memorial**: Prevent fetching standard meeting media for the Memorial to prevent errors.
-- 📅 **Hide Regular Meeting Sections on Memorial**: Remove unnecessary meeting sections during the Memorial event for a cleaner layout.
-- 📖 **Fix Sign Language Bible Video Downloads**: Correctly download Sign Language Bible chapter videos from JWL playlists.
+- ⚡ **Boresha Usafishaji wa Cache**: Boresha utaratibu mahiri wa kufuta cache kwa utendakazi bora.
+- **Uwekaji Sahihi wa Midia ya Msimamizi wa Mzunguko**: Hakikisha media ya Mwangalizi wa Mzunguko imewekwa katika sehemu sahihi.
+- 📅 **Tenganisha midia ya mikutano ya Kawaida kutoka kwa Ukumbusho**: Zuia kupakua kwa midia ya kawaida ya mkutano kwa ajili ya Ukumbusho ili kuzuia makosa.
+- 📅 **Ficha Sehemu za Mikutano ya Kawaida kwenye Ukumbusho**: Ondoa sehemu za mikutano zisizo za lazima wakati wa tukio la Ukumbusho ili upate mpangilio safi zaidi.
+- 📖 **Rekebisha Vipakuliwa vya Video za Biblia katika Lugha ya Ishara**: Pakua kwa usahihi video za sura za Biblia katika Lugha ya Ishara kutoka kwa orodha za kucheza za JWL.
