@@ -12,7 +12,7 @@ Källkoden för denna app är tillgänglig för alla att undersöka och verifier
 
 ## :thinking: Kränker denna app användningsvillkoren för Jehovas vittnens officiella hemsida? {#terms-of-use}
 
-**No.** The Terms of Use of the official website of Jehovah's Witnesses explicitly allow the kind of usage that we are making. Här är ett utdrag från dessa villkor (fetstilt av mig):
+**Nej.** Användarvillkor på Jehovas officiella hemsida tillåter uttryckligen den typ av användning som vi gör. Här är ett utdrag från dessa villkor (fetstilt av mig):
 
 > Du får inte:
 >
