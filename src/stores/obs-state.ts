@@ -5,7 +5,6 @@ import type { ObsConnectionState, ObsSceneType } from 'src/types';
 import { defineStore } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { isUUID } from 'src/utils/general';
-import { useCurrentStateStore } from 'stores/current-state';
 
 interface Store {
   currentScene: string;
@@ -35,35 +34,7 @@ export const useObsStateStore = defineStore('obs-state', {
       return this.scenes.some(matchScene);
     },
   },
-  getters: {
-    additionalScenes: (state): string[] => {
-      const currentState = useCurrentStateStore();
-      const { currentSettings } = currentState;
-      const configuredScenes = [
-        currentSettings?.obsCameraScene,
-        currentSettings?.obsMediaScene,
-        currentSettings?.obsImageScene,
-      ].filter((s): s is string => !!s);
-
-      const scenesAreUUIDS = configuredScenes.every(isUUID);
-      return state.scenes
-        .filter(
-          (scene) =>
-            !configuredScenes.includes(
-              (scenesAreUUIDS && scene.sceneUuid
-                ? scene.sceneUuid.toString()
-                : scene.sceneName?.toString()) || '',
-            ),
-        )
-        .map(
-          (scene): string =>
-            (scenesAreUUIDS && scene.sceneUuid
-              ? scene.sceneUuid.toString()
-              : scene.sceneName?.toString()) || '',
-        )
-        .filter(Boolean);
-    },
-  },
+  getters: {},
   state: (): Store => {
     return {
       currentScene: '',

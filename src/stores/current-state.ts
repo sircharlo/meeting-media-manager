@@ -20,8 +20,9 @@ import { isEmpty, isUUID } from 'src/utils/general';
 import { formatTime } from 'src/utils/time';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
+import { useObsStateStore } from 'stores/obs-state';
 
-interface Songbook {
+export interface Songbook {
   fileformat: 'MP3' | 'MP4';
   pub: 'sjj' | 'sjjm';
   signLanguage: boolean;
@@ -131,6 +132,32 @@ export const useCurrentStateStore = defineStore('current-state', {
     },
   },
   getters: {
+    additionalScenes(): string[] {
+      const { scenes } = useObsStateStore();
+      const configuredScenes = [
+        this.currentSettings?.obsCameraScene,
+        this.currentSettings?.obsMediaScene,
+        this.currentSettings?.obsImageScene,
+      ].filter((s): s is string => !!s);
+
+      const scenesAreUUIDS = configuredScenes.every(isUUID);
+      return scenes
+        .filter(
+          (scene) =>
+            !configuredScenes.includes(
+              (scenesAreUUIDS && scene.sceneUuid
+                ? scene.sceneUuid.toString()
+                : scene.sceneName?.toString()) || '',
+            ),
+        )
+        .map(
+          (scene): string =>
+            (scenesAreUUIDS && scene.sceneUuid
+              ? scene.sceneUuid.toString()
+              : scene.sceneName?.toString()) || '',
+        )
+        .filter(Boolean);
+    },
     configuredScenesAreAllUUIDs(): boolean {
       const configuredScenes = [
         this.currentSettings?.obsCameraScene,
@@ -309,6 +336,20 @@ export const useCurrentStateStore = defineStore('current-state', {
       return !!this.selectedDateObject?.dynamicMedia.some(
         (m) => m.hidden || m.children?.some((child) => child.hidden),
       );
+    },
+    yeartext(): string | undefined {
+      const { yeartexts } = useJwStore();
+
+      const year = new Date().getFullYear();
+      if (!yeartexts[year]) return;
+      if (this.currentLangObject?.isSignLanguage) return;
+      if (!this.currentSettings) return;
+      const primary = yeartexts[year][this.currentSettings.lang];
+      const fallback = this.currentSettings.langFallback
+        ? yeartexts[year][this.currentSettings.langFallback]
+        : '';
+      const english = yeartexts[year]['E'];
+      return primary || fallback || english;
     },
   },
   state: (): Store => {

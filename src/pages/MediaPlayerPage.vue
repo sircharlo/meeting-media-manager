@@ -91,11 +91,11 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 const currentState = useCurrentStateStore();
+const yeartext = computed(() => currentState.yeartext);
 const { currentCongregation, currentSettings, mediaPlayingAction } =
   storeToRefs(currentState);
 
 const jwStore = useJwStore();
-const yeartext = computed(() => jwStore.yeartext);
 
 const panzoom = ref<PanzoomObject | undefined>();
 

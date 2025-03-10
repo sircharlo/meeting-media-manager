@@ -76,6 +76,7 @@
   "devDependencies": {
     "@daipeng7/rollup-plugin-iconfont": "^3.0.6",
     "@electron/rebuild": "^3.7.1",
+    "@eslint/compat": "^1.2.7",
     "@intlify/unplugin-vue-i18n": "^6.0.3",
     "@pinia/testing": "^1.0.0",
     "@quasar/app-vite": "^2.1.4",
@@ -116,6 +117,7 @@
     "msw": "^2.7.3",
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
+    "rollup-plugin-visualizer": "^5.14.0",
     "typescript": "~5.6.3",
     "vite": "^6.2.1",
     "vitepress": "next",

@@ -844,6 +844,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@eslint/compat@npm:^1.2.7":
+  version: 1.2.7
+  resolution: "@eslint/compat@npm:1.2.7"
+  peerDependencies:
+    eslint: ^9.10.0
+  peerDependenciesMeta:
+    eslint:
+      optional: true
+  checksum: 10c0/df89a0396750748c3748eb5fc582bd6cb89be6599d88ed1c5cc60ae0d13f77d4bf5fb30fabdb6c9ce16dda35745ef2e6417fa82548cde7d2b3fa5a896da02c8e
+  languageName: node
+  linkType: hard
+
 "@eslint/config-array@npm:^0.19.2":
   version: 0.19.2
   resolution: "@eslint/config-array@npm:0.19.2"
@@ -11494,6 +11506,7 @@ __metadata:
   dependencies:
     "@daipeng7/rollup-plugin-iconfont": "npm:^3.0.6"
     "@electron/rebuild": "npm:^3.7.1"
+    "@eslint/compat": "npm:^1.2.7"
     "@intlify/unplugin-vue-i18n": "npm:^6.0.3"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@panzoom/panzoom": "npm:^4.6.0"
@@ -11564,6 +11577,7 @@ __metadata:
     prettier: "npm:^3.5.3"
     pretty-bytes: "npm:^6.1.1"
     quasar: "npm:^2.18.1"
+    rollup-plugin-visualizer: "npm:^5.14.0"
     sanitize-filename: "npm:^1.6.3"
     sanitize-html: "npm:^2.14.0"
     sortablejs: "npm:^1.15.6"
@@ -14483,7 +14497,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-visualizer@npm:^5.13.1":
+"rollup-plugin-visualizer@npm:^5.13.1, rollup-plugin-visualizer@npm:^5.14.0":
   version: 5.14.0
   resolution: "rollup-plugin-visualizer@npm:5.14.0"
   dependencies:

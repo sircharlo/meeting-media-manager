@@ -614,7 +614,12 @@ watch(
     () => currentSettings.value?.lang,
     () => currentSettings?.value?.langFallback,
   ],
-  () => updateYeartext(),
+  () =>
+    updateYeartext(
+      currentState.online,
+      currentSettings.value,
+      currentState.currentLangObject,
+    ),
 );
 
 watchImmediate(

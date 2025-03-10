@@ -213,10 +213,10 @@ import type { SortableEvent } from 'sortablejs';
 import type { DynamicMediaObject, MediaSection } from 'src/types';
 
 import { watchImmediate } from '@vueuse/core';
+import MediaItem from 'components/media/MediaItem.vue';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { Sortable } from 'sortablejs-vue3';
-import MediaItem from 'src/components/media/MediaItem.vue';
 import { isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';

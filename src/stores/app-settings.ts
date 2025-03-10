@@ -11,13 +11,13 @@ import type {
 import { defineStore } from 'pinia';
 import { LocalStorage as QuasarStorage } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { dateFromString, datesAreSame } from 'src/utils/date';
+import { parseJsonSafe, uuid } from 'src/utils/general';
 import {
   buildNewPrefsObject,
   getOldPrefsPaths,
   parsePrefsFile,
-} from 'src/helpers/migrations';
-import { dateFromString, datesAreSame } from 'src/utils/date';
-import { parseJsonSafe, uuid } from 'src/utils/general';
+} from 'src/utils/migrations';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 
