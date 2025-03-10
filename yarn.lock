@@ -1021,12 +1021,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@iconify-json/simple-icons@npm:^1.2.26":
-  version: 1.2.27
-  resolution: "@iconify-json/simple-icons@npm:1.2.27"
+"@iconify-json/simple-icons@npm:^1.2.27":
+  version: 1.2.28
+  resolution: "@iconify-json/simple-icons@npm:1.2.28"
   dependencies:
     "@iconify/types": "npm:*"
-  checksum: 10c0/6fca14304b189b255b1f979ed3ffa92062b9b2c91a850d186366ce2a2783ea07a076014a640cac338eb58c2162e5bb7b08b86a4dbbde5b722784162c8ae999b2
+  checksum: 10c0/6426c3931ee66fc3dd16440508a1f46633e7b4eb24e31eaba1795608ca0091b79c0a7ab13a8cff2a0a899ca7c1146e7164e4fbf9223e8bbcc95c4175918320d2
   languageName: node
   linkType: hard
 
@@ -3212,7 +3212,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@shikijs/core@npm:3.1.0, @shikijs/core@npm:^3.0.0":
+"@shikijs/core@npm:3.1.0, @shikijs/core@npm:^3.1.0":
   version: 3.1.0
   resolution: "@shikijs/core@npm:3.1.0"
   dependencies:
@@ -3263,7 +3263,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@shikijs/transformers@npm:^3.0.0":
+"@shikijs/transformers@npm:^3.1.0":
   version: 3.1.0
   resolution: "@shikijs/transformers@npm:3.1.0"
   dependencies:
@@ -3273,7 +3273,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@shikijs/types@npm:3.1.0, @shikijs/types@npm:^3.0.0":
+"@shikijs/types@npm:3.1.0, @shikijs/types@npm:^3.1.0":
   version: 3.1.0
   resolution: "@shikijs/types@npm:3.1.0"
   dependencies:
@@ -4360,7 +4360,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/core@npm:12.8.2, @vueuse/core@npm:^12.7.0, @vueuse/core@npm:^12.8.2":
+"@vueuse/core@npm:12.8.2, @vueuse/core@npm:^12.8.2":
   version: 12.8.2
   resolution: "@vueuse/core@npm:12.8.2"
   dependencies:
@@ -4372,7 +4372,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/integrations@npm:^12.7.0":
+"@vueuse/integrations@npm:^12.8.2":
   version: 12.8.2
   resolution: "@vueuse/integrations@npm:12.8.2"
   dependencies:
@@ -15205,7 +15205,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"shiki@npm:^3.0.0":
+"shiki@npm:^3.1.0":
   version: 3.1.0
   resolution: "shiki@npm:3.1.0"
   dependencies:
@@ -17386,7 +17386,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^5.0.0 || ^6.0.0, vite@npm:^6.1.0, vite@npm:^6.1.1, vite@npm:^6.2.1":
+"vite@npm:^5.0.0 || ^6.0.0, vite@npm:^6.1.0, vite@npm:^6.2.1":
   version: 6.2.1
   resolution: "vite@npm:6.2.1"
   dependencies:
@@ -17439,25 +17439,25 @@ __metadata:
   linkType: hard
 
 "vitepress@npm:next":
-  version: 2.0.0-alpha.3
-  resolution: "vitepress@npm:2.0.0-alpha.3"
+  version: 2.0.0-alpha.4
+  resolution: "vitepress@npm:2.0.0-alpha.4"
   dependencies:
     "@docsearch/css": "npm:^3.9.0"
     "@docsearch/js": "npm:^3.9.0"
-    "@iconify-json/simple-icons": "npm:^1.2.26"
-    "@shikijs/core": "npm:^3.0.0"
-    "@shikijs/transformers": "npm:^3.0.0"
-    "@shikijs/types": "npm:^3.0.0"
+    "@iconify-json/simple-icons": "npm:^1.2.27"
+    "@shikijs/core": "npm:^3.1.0"
+    "@shikijs/transformers": "npm:^3.1.0"
+    "@shikijs/types": "npm:^3.1.0"
     "@vitejs/plugin-vue": "npm:^5.2.1"
     "@vue/devtools-api": "npm:^7.7.2"
     "@vue/shared": "npm:^3.5.13"
-    "@vueuse/core": "npm:^12.7.0"
-    "@vueuse/integrations": "npm:^12.7.0"
+    "@vueuse/core": "npm:^12.8.2"
+    "@vueuse/integrations": "npm:^12.8.2"
     focus-trap: "npm:^7.6.4"
     mark.js: "npm:8.11.1"
     minisearch: "npm:^7.1.2"
-    shiki: "npm:^3.0.0"
-    vite: "npm:^6.1.1"
+    shiki: "npm:^3.1.0"
+    vite: "npm:^6.2.1"
     vue: "npm:^3.5.13"
   peerDependencies:
     markdown-it-mathjax3: ^4
@@ -17469,7 +17469,7 @@ __metadata:
       optional: true
   bin:
     vitepress: bin/vitepress.js
-  checksum: 10c0/b8ec537a6971593b4e41cfb9ac0f8accc35958132e2d441b0722985a985e3169a456f3f38bef63ff227af1c3694f80eed0d650a876973381b5259e51da92d84a
+  checksum: 10c0/1745418577e9f41a836b03735000f2a532f52f877496150f4eef5a4734590d96670e19818fd2a71e460a63f8802d50dcb6b629d82d502db102fd1872ccbf13b2
   languageName: node
   linkType: hard
 
