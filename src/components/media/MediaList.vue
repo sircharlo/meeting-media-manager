@@ -3,20 +3,34 @@
     v-show="
       mediaList.items?.filter((m) => !m.hidden).length || mediaList.alwaysShow
     "
-    :class="'media-section ' + mediaList.type"
+    :class="
+      'media-section ' +
+      mediaList.uniqueId +
+      ' ' +
+      (mediaSectionCanBeCustomized ? ' custom' : '')
+    "
+    :style="{
+      '--bg-color': mediaList.bgColor || 'rgb(148, 94, 181)',
+      '--text-color': getTextColor(mediaList),
+    }"
   >
     <q-item
       v-if="selectedDateObject"
-      :class="'text-' + mediaList.type + ' items-center'"
+      :class="
+        'text-' +
+        mediaList.uniqueId +
+        ' items-center ' +
+        (mediaSectionCanBeCustomized ? ' custom-text-color' : '')
+      "
     >
       <q-avatar
         :class="
-          'text-white bg-' +
-          mediaList.type +
+          (mediaSectionCanBeCustomized
+            ? ' custom-bg-color'
+            : ' text-white bg-' + mediaList.uniqueId) +
           (mediaList.jwIcon ? ' jw-icon' : '')
         "
       >
-        <!-- :size="isWeMeetingDay(selectedDateObject.date) ? 'lg' : 'md'" -->
         <template v-if="mediaList.jwIcon">
           {{ mediaList.jwIcon }}
         </template>
@@ -29,45 +43,97 @@
       >
         {{ mediaList.label }}
       </q-item-section>
-      <q-item-section v-if="mediaList.extraMediaShortcut" side>
-        <q-btn
-          v-if="
-            mediaList.type === 'additional' ||
-            (mediaList.type === 'circuitOverseer' &&
-              !mediaList.items.filter((m) => !m.hidden).length)
-          "
-          class="add-media-shortcut"
-          :color="mediaList.type"
-          icon="mmm-music-note"
-          :label="
-            $q.screen.gt.xs
-              ? mediaList.type === 'additional'
-                ? t('add-an-opening-song')
-                : t('add-a-closing-song')
-              : undefined
-          "
-          @click="addSong(mediaList.type)"
-        >
-          <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
-            {{
-              mediaList.type === 'additional'
-                ? t('add-an-opening-song')
-                : t('add-a-closing-song')
-            }}
-          </q-tooltip>
-        </q-btn>
-        <q-btn
-          v-else
-          class="add-media-shortcut"
-          :color="mediaList.type"
-          icon="mmm-add-media"
-          :label="$q.screen.gt.xs ? t('add-extra-media') : undefined"
-          @click="openImportMenu(mediaList.type)"
-        >
-          <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
-            {{ t('add-extra-media') }}
-          </q-tooltip>
-        </q-btn>
+      <q-item-section side>
+        <div class="row items-center">
+          <template v-if="mediaList.extraMediaShortcut">
+            <q-btn
+              v-if="
+                mediaList.uniqueId === 'additional' ||
+                (mediaList.uniqueId === 'circuitOverseer' &&
+                  !mediaList.items.filter((m) => !m.hidden).length)
+              "
+              class="add-media-shortcut"
+              :class="
+                mediaSectionCanBeCustomized
+                  ? ' custom-text-color'
+                  : 'text-white bg-' + mediaList.uniqueId
+              "
+              icon="mmm-music-note"
+              :label="
+                $q.screen.gt.xs
+                  ? mediaList.uniqueId === 'additional'
+                    ? t('add-an-opening-song')
+                    : t('add-a-closing-song')
+                  : undefined
+              "
+              size="sm"
+              @click="addSong(mediaList.uniqueId)"
+            >
+              <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
+                {{
+                  mediaList.uniqueId === 'additional'
+                    ? t('add-an-opening-song')
+                    : t('add-a-closing-song')
+                }}
+              </q-tooltip>
+            </q-btn>
+            <q-btn
+              v-else
+              class="add-media-shortcut"
+              :class="
+                mediaSectionCanBeCustomized
+                  ? ' custom-text-color'
+                  : ' text-white bg-' + mediaList.uniqueId
+              "
+              :flat="mediaSectionCanBeCustomized"
+              icon="mmm-add-media"
+              :label="
+                !mediaSectionCanBeCustomized && $q.screen.gt.xs
+                  ? t('add-extra-media')
+                  : undefined
+              "
+              :round="mediaSectionCanBeCustomized"
+              size="sm"
+              @click="openImportMenu(mediaList.uniqueId)"
+            >
+              <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
+                {{ t('add-extra-media') }}
+              </q-tooltip>
+            </q-btn>
+          </template>
+          <template v-if="mediaListReactiveRef && mediaSectionCanBeCustomized">
+            <q-btn
+              class="custom-text-color"
+              flat
+              icon="mmm-label-sort"
+              round
+              size="sm"
+              @click="showCustomSectionDialog = true"
+            />
+            <q-btn flat round size="sm">
+              <q-badge class="custom-bg-color" clickable round> </q-badge>
+              <q-popup-proxy
+                cover
+                transition-hide="scale"
+                transition-show="scale"
+              >
+                <q-color
+                  v-model="mediaListReactiveRef.bgColor"
+                  format-model="rgb"
+                />
+              </q-popup-proxy>
+            </q-btn>
+            <q-btn
+              v-if="mediaList.uniqueId !== 'additional'"
+              color="negative"
+              flat
+              icon="mmm-delete"
+              round
+              size="sm"
+              @click="deleteSection(mediaList.uniqueId)"
+            />
+          </template>
+        </div>
       </q-item-section>
     </q-item>
     <div v-if="!mediaList.items.filter((m) => !m.hidden).length">
@@ -81,7 +147,9 @@
               {{
                 selectedDateObject && isWeMeetingDay(selectedDateObject?.date)
                   ? t('dont-forget-add-missing-media')
-                  : t('no-media-files-for-section')
+                  : !mediaItemBeingSorted
+                    ? t('no-media-files-for-section')
+                    : t('drop-media-here')
               }}
             </span>
           </div>
@@ -92,13 +160,53 @@
       class="sortable-media"
       item-key="uniqueId"
       :list="mediaList.items"
-      :options="{ group: 'mediaLists' }"
-      @add="handleMediaSort($event, 'ADD', mediaList.type as MediaSection)"
-      @end="handleMediaSort($event, 'END', mediaList.type as MediaSection)"
-      @remove="
-        handleMediaSort($event, 'REMOVE', mediaList.type as MediaSection)
+      :options="{
+        animation: 150,
+        group: 'mediaLists',
+        ghostClass: 'bg-accent-200',
+      }"
+      @add="
+        handleMediaSort(
+          $event,
+          'ADD',
+          mediaList.uniqueId as MediaSectionIdentifier,
+        )
       "
-      @start="handleMediaSort($event, 'START', mediaList.type as MediaSection)"
+      @change="
+        handleMediaSort(
+          $event,
+          'CHANGE',
+          mediaList.uniqueId as MediaSectionIdentifier,
+        )
+      "
+      @end="
+        handleMediaSort(
+          $event,
+          'END',
+          mediaList.uniqueId as MediaSectionIdentifier,
+        )
+      "
+      @remove="
+        handleMediaSort(
+          $event,
+          'REMOVE',
+          mediaList.uniqueId as MediaSectionIdentifier,
+        )
+      "
+      @sort="
+        handleMediaSort(
+          $event,
+          'SORT',
+          mediaList.uniqueId as MediaSectionIdentifier,
+        )
+      "
+      @start="
+        handleMediaSort(
+          $event,
+          'START',
+          mediaList.uniqueId as MediaSectionIdentifier,
+        )
+      "
     >
       <template #item="{ element }: { element: DynamicMediaObject }">
         <template v-if="element.children">
@@ -161,6 +269,7 @@
                 v-if="element.children"
                 item-key="uniqueId"
                 :list="element.children"
+                :options="{ animation: 150, ghostClass: 'bg-accent-200' }"
               >
                 <template
                   #item="{
@@ -207,37 +316,37 @@
       </template>
     </Sortable>
   </q-list>
+  <DialogCustomSectionEdit v-model="showCustomSectionDialog" />
 </template>
 <script setup lang="ts">
 import type { SortableEvent } from 'sortablejs';
-import type { DynamicMediaObject, MediaSection } from 'src/types';
+import type {
+  DynamicMediaObject,
+  DynamicMediaSection,
+  MediaSection,
+  MediaSectionIdentifier,
+} from 'src/types';
 
 import { watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { Sortable } from 'sortablejs-vue3';
+import DialogCustomSectionEdit from 'src/components/dialog/DialogCustomSectionEdit.vue';
 import MediaItem from 'src/components/media/MediaItem.vue';
 import { isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
+import { deleteSection, getTextColor } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-export interface MediaListObject {
-  alwaysShow: boolean;
-  extraMediaShortcut?: boolean;
-  items: DynamicMediaObject[];
-  jwIcon?: string;
-  label: string;
-  mmmIcon?: string;
-  type: MediaSection;
-}
-
-defineProps<{
-  mediaList: MediaListObject;
-  openImportMenu: (section: MediaSection) => void;
+const props = defineProps<{
+  mediaList: DynamicMediaSection;
+  openImportMenu: (section: MediaSectionIdentifier) => void;
 }>();
+
+const showCustomSectionDialog = ref(false);
 
 const $q = useQuasar();
 const { t } = useI18n();
@@ -259,11 +368,14 @@ const playState = (id: string) => {
   return 'unknown';
 };
 
-const addSong = (section: MediaSection | undefined) => {
+const addSong = (section: MediaSectionIdentifier | undefined) => {
   window.dispatchEvent(
-    new CustomEvent<{ section: MediaSection | undefined }>('openSongPicker', {
-      detail: { section },
-    }),
+    new CustomEvent<{ section: MediaSectionIdentifier | undefined }>(
+      'openSongPicker',
+      {
+        detail: { section },
+      },
+    ),
   );
 };
 
@@ -295,13 +407,20 @@ watchImmediate(
 );
 
 const keyboardShortcutMediaList = computed(() => {
+  const mediaFromCustomSections =
+    selectedDateObject.value?.customSections?.flatMap(
+      (section) =>
+        selectedDateObject.value?.dynamicMedia?.filter(
+          (item) => item.section === section.uniqueId,
+        ) || [],
+    );
   return [
-    ...getVisibleMediaForSection.value.additional,
-    ...getVisibleMediaForSection.value.tgw,
-    ...getVisibleMediaForSection.value.ayfm,
-    ...getVisibleMediaForSection.value.lac,
-    ...getVisibleMediaForSection.value.wt,
-    ...getVisibleMediaForSection.value.circuitOverseer,
+    ...(mediaFromCustomSections || []),
+    ...(getVisibleMediaForSection.value.tgw || []),
+    ...(getVisibleMediaForSection.value.ayfm || []),
+    ...(getVisibleMediaForSection.value.lac || []),
+    ...(getVisibleMediaForSection.value.wt || []),
+    ...(getVisibleMediaForSection.value.circuitOverseer || []),
   ].flatMap((m) => {
     return m.children
       ? m.children.map((c) => {
@@ -387,10 +506,12 @@ const nextMediaUniqueId = computed(() => {
 const handleMediaSort = (
   evt: SortableEvent,
   eventType: string,
-  list: MediaSection,
+  list: MediaSectionIdentifier,
 ) => {
   const sameList = evt.from === evt.to;
   const dynamicMedia = selectedDateObject.value?.dynamicMedia;
+
+  console.log('handleMediaSort', evt, list, sameList, eventType);
 
   if (!dynamicMedia || !Array.isArray(dynamicMedia)) return;
   if (
@@ -431,6 +552,7 @@ const handleMediaSort = (
           }
         }
       }
+      mediaItemBeingSorted.value = undefined;
       break;
     }
 
@@ -448,6 +570,13 @@ const handleMediaSort = (
       break;
     }
 
+    case 'SORT': {
+      if (!sameList) {
+        mediaItemBeingSorted.value = undefined;
+      }
+      break;
+    }
+
     case 'START': {
       const itemBeingSorted =
         getVisibleMediaForSection.value[list]?.[evt.oldIndex];
@@ -458,8 +587,32 @@ const handleMediaSort = (
     }
   }
 };
+
+const mediaListReactiveRef = ref<MediaSection | undefined>(
+  selectedDateObject.value?.customSections?.find(
+    (s) => s.uniqueId === props.mediaList.uniqueId,
+  ),
+);
+
+const mediaSectionCanBeCustomized = computed(() => {
+  return (
+    props.mediaList.uniqueId === 'additional' ||
+    props.mediaList.uniqueId?.startsWith('custom')
+  );
+});
 </script>
-<style scoped lang="scss">
+
+<style lang="scss" scoped>
+.media-section.custom .custom-text-color {
+  color: var(--bg-color) !important;
+}
+.media-section.custom .custom-bg-color {
+  background-color: var(--bg-color) !important;
+  color: var(--text-color) !important;
+}
+.media-section.custom:before {
+  background-color: var(--bg-color);
+}
 .add-media-shortcut {
   max-width: 100%;
 
