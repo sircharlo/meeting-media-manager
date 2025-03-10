@@ -55,7 +55,7 @@
     "image-size": "^2.0.0",
     "is-online": "^11.0.0",
     "mime": "^4.0.6",
-    "music-metadata": "^11.0.0",
+    "music-metadata": "^11.0.1",
     "obs-websocket-js": "^5.0.6",
     "p-queue": "^8.1.0",
     "pdfjs-dist": "^4.10.38",
