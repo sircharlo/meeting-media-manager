@@ -1,22 +1,22 @@
 <!-- markdownlint-disable no-duplicate-heading -->
 
-# What's New
+# Ni yapi Mpya
 
-For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
+Kwa ajili ya orodha kamili ya mabadiliko baina ya toleo tofauti tofauti, ona CHANGELOG.md file kwenye GitHub.
 
 ## 25.3.0
 
-### ✨ New Features
+### ✨ Vipengele Vipya
 
-- 🎵 **Play Background Music with Videos**: Allow background music to continue playing while videos are being viewed.
-- 🎥 **Camera Feed for Sign Language Media**: Add the ability to display a camera feed on the media window specifically for sign language users.
-- 📅 **Automatic Memorial Date & Background**: Automatically detect and set the Memorial date and prepare the Memorial background image.
-- 📜 **Show Release Notes In-App**: Display release notes directly in the application so users can easily review changes after an update.
+- 🎵 **Cheza Mziki wa usuli pamoja na Video**: Wezesha mziki wa usuli kuchezwa video zitazamapwo.
+- 🎥 \*\* Onyesha video ya kamera kwa ajili ya Lugha ya Ishara\*\*: Uwezo wa kuonyesha video ya kamera kwenye scrini kwa ajili ya watumiaji wa Lugha ya Ishara.
+- 📅 **Ongeza kiotomatiki tarehe ya Ukumbusho na Picha ya Usuli**: Tambua kiotomatiki na kuweka tarehe ya Ukumbusho na kutayarisha picha ya usuli ya Ukumbusho.
+- 📜 **Onyesha habari ya visasisho kwenye programu**: Onyesha habari kuhusu visasisho kwenye programu ili watumiaji waweze kuona mabadiliko baada ya kusasisha programu.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Maboresho na Marekebisho
 
-- ⚡ **Optimize Smart Cache Clearing**: Improve the smart cache-clearing mechanism for better performance and efficiency.
-- 📂 **Correct Circuit Overseer Media Placement**: Ensure Circuit Overseer media is placed in the correct section.
-- 📅 **Exclude Regular Meeting Media for Memorial**: Prevent fetching standard meeting media for the Memorial to prevent errors.
-- 📅 **Hide Regular Meeting Sections on Memorial**: Remove unnecessary meeting sections during the Memorial event for a cleaner layout.
-- 📖 **Fix Sign Language Bible Video Downloads**: Correctly download Sign Language Bible chapter videos from JWL playlists.
+- ⚡ **Boresha Usafishaji wa Cache**: Boresha utaratibu mahiri wa kufuta cache kwa utendakazi bora.
+- **Uwekaji Sahihi wa Midia ya Msimamizi wa Mzunguko**: Hakikisha media ya Mwangalizi wa Mzunguko imewekwa katika sehemu sahihi.
+- 📅 **Tenganisha midia ya mikutano ya Kawaida kutoka kwa Ukumbusho**: Zuia kupakua kwa midia ya kawaida ya mkutano kwa ajili ya Ukumbusho ili kuzuia makosa.
+- 📅 **Ficha Sehemu za Mikutano ya Kawaida kwenye Ukumbusho**: Ondoa sehemu za mikutano zisizo za lazima wakati wa tukio la Ukumbusho ili upate mpangilio safi zaidi.
+- 📖 **Rekebisha Vipakuliwa vya Video za Biblia katika Lugha ya Ishara**: Pakua kwa usahihi video za sura za Biblia katika Lugha ya Ishara kutoka kwa orodha za kucheza za JWL.
