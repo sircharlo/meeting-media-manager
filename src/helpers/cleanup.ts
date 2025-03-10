@@ -1,8 +1,8 @@
-import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
-import { useCurrentStateStore } from 'src/stores/current-state';
-import { useJwStore } from 'src/stores/jw';
 import { getSpecificWeekday, isInPast } from 'src/utils/date';
 import { congPreferencesPath, getAdditionalMediaPath } from 'src/utils/fs';
+import { useCongregationSettingsStore } from 'stores/congregation-settings';
+import { useCurrentStateStore } from 'stores/current-state';
+import { useJwStore } from 'stores/jw';
 
 const cleanCongregationRecord = (
   record: Partial<Record<string, unknown>>,

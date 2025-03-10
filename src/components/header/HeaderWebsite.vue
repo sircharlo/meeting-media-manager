@@ -70,8 +70,8 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
-import { useAppSettingsStore } from 'src/stores/app-settings';
 import { sendObsSceneEvent } from 'src/utils/obs';
+import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';

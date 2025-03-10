@@ -159,7 +159,6 @@
 <script setup lang="ts">
 import { watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { useCurrentStateStore } from 'src/stores/current-state';
 import { fetchReleaseNotes } from 'src/utils/api';
 import {
   betaUpdatesDisabled,
@@ -169,6 +168,7 @@ import {
   wasUpdateInstalled,
 } from 'src/utils/fs';
 import { camelToKebabCase, sleep } from 'src/utils/general';
+import { useCurrentStateStore } from 'stores/current-state';
 import { onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 

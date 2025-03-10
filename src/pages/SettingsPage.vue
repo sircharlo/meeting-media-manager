@@ -225,7 +225,7 @@ const settingParam = useRouteParams<keyof SettingsValues | undefined>(
 
 // Lifecycle hooks
 onMounted(() => {
-  updateJwLanguages();
+  updateJwLanguages(currentState.online);
   validateSettingsLocal();
 
   if (invalidSettings.value.length === 1) {
@@ -254,7 +254,12 @@ watch(
     () => currentSettings.value?.lang,
     () => currentSettings?.value?.langFallback,
   ],
-  () => updateYeartext(),
+  () =>
+    updateYeartext(
+      currentState.online,
+      currentSettings.value,
+      currentState.currentLangObject,
+    ),
 );
 
 const invalidSettings = computed(() => getInvalidSettings());

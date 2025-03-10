@@ -18,7 +18,12 @@
             size="sm"
             @click="
               loading = true;
-              updateJwSongs(true).then(() => (loading = false));
+              updateJwSongs(
+                online,
+                currentSettings,
+                currentSongbook,
+                true,
+              ).then(() => (loading = false));
             "
           />
         </div>
@@ -181,6 +186,7 @@ const addSong = async (songTrack: number) => {
 };
 
 whenever(open, () => {
-  if (online) updateJwSongs();
+  if (online)
+    updateJwSongs(online.value, currentSettings.value, currentSongbook.value);
 });
 </script>

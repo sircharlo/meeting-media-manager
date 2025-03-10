@@ -77,3 +77,6 @@ build/*.blockmap
 build/*.exe
 src/main
 src/renderer
+
+# Vite build output stats
+stats.html

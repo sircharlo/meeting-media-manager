@@ -5,6 +5,7 @@ import { defineConfig } from '#q-app/wrappers';
 import { sentryEsbuildPlugin } from '@sentry/esbuild-plugin';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { fileURLToPath } from 'node:url';
+import { visualizer } from 'rollup-plugin-visualizer';
 import { mergeConfig } from 'vite'; // use mergeConfig helper to avoid overwriting the default config
 
 import { name, productName, repository, version } from './package.json';
@@ -104,6 +105,7 @@ export default defineConfig((ctx) => {
             ssr: ctx.modeName === 'ssr',
           },
         ],
+        visualizer(),
       ],
       vueOptionsAPI: false,
       vueRouterMode: 'hash', // available values: 'hash', 'history'

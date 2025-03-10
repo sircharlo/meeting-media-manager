@@ -117,16 +117,6 @@ const { locale, t } = useI18n({ useScope: 'global' });
 //   saveSettingsStoreToFile('congregations', state);
 // });
 
-const jwStore = useJwStore();
-// jwStore.$subscribe((_, state) => {
-//   saveSettingsStoreToFile('jw', state);
-// });
-
-const { updateJwLanguages, updateMemorials } = jwStore;
-const { lookupPeriod } = storeToRefs(jwStore);
-updateMemorials();
-updateJwLanguages();
-
 const currentState = useCurrentStateStore();
 const {
   currentCongregation,
@@ -137,6 +127,16 @@ const {
   selectedDate,
   selectedDateObject,
 } = storeToRefs(currentState);
+
+const jwStore = useJwStore();
+// jwStore.$subscribe((_, state) => {
+//   saveSettingsStoreToFile('jw', state);
+// });
+
+const { updateJwLanguages, updateMemorials } = jwStore;
+const { lookupPeriod } = storeToRefs(jwStore);
+updateMemorials(online.value);
+updateJwLanguages(online.value);
 
 watch(currentCongregation, (newCongregation, oldCongregation) => {
   try {
@@ -185,8 +185,12 @@ watch(online, (isNowOnline) => {
     if (isNowOnline) {
       // downloadQueue?.start();
       meetingQueue?.start();
-      jwStore.updateYeartext();
-      jwStore.updateJwLanguages();
+      jwStore.updateYeartext(
+        online.value,
+        currentSettings.value,
+        currentState.currentLangObject,
+      );
+      jwStore.updateJwLanguages(online.value);
       getJwMepsInfo();
     } else {
       // downloadQueue?.pause();

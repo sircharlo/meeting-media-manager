@@ -1135,7 +1135,11 @@ const initiatePanzoom = () => {
 
 function deleteMedia() {
   if (!mediaToDelete.value) return;
-  removeFromAdditionMediaMap(mediaToDelete.value);
+  removeFromAdditionMediaMap(
+    mediaToDelete.value,
+    currentState.currentCongregation,
+    currentState.selectedDateObject,
+  );
   mediaToDelete.value = '';
 }
 

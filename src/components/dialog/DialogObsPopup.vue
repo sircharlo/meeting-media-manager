@@ -79,12 +79,15 @@ import { useI18n } from 'vue-i18n';
 const open = defineModel<boolean>({ default: false });
 
 const currentState = useCurrentStateStore();
-const { configuredScenesAreAllUUIDs, currentSettings, mediaPlayingUrl } =
-  storeToRefs(currentState);
+const {
+  additionalScenes,
+  configuredScenesAreAllUUIDs,
+  currentSettings,
+  mediaPlayingUrl,
+} = storeToRefs(currentState);
 
 const obsState = useObsStateStore();
 const {
-  additionalScenes,
   currentScene,
   currentSceneType,
   obsConnectionState,

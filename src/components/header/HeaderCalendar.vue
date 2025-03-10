@@ -144,7 +144,12 @@
             v-if="someItemsHiddenForSelectedDate"
             v-close-popup
             clickable
-            @click="showHiddenMediaForSelectedDate()"
+            @click="
+              showHiddenMediaForSelectedDate(
+                currentCongregation,
+                selectedDateObject,
+              )
+            "
           >
             <q-item-section avatar>
               <q-icon color="primary" name="mmm-eye" />
@@ -196,7 +201,12 @@
           color="negative"
           flat
           :label="t('delete')"
-          @click="clearAdditionalMediaForSelectedDate()"
+          @click="
+            clearAdditionalMediaForSelectedDate(
+              currentCongregation,
+              selectedDateObject,
+            )
+          "
         />
       </q-card-actions>
     </q-card>

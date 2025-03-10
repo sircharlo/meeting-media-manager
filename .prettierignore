@@ -62,6 +62,9 @@ build/*.exe
 src/main
 src/renderer
 
+# Vite build output stats
+stats.html
+
 # Translated Markdown files
 docs/src/**/*
 !docs/src/en/**/*

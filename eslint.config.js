@@ -1,3 +1,4 @@
+import { includeIgnoreFile } from '@eslint/compat';
 import js from '@eslint/js';
 import pluginQuasar from '@quasar/app-vite/eslint';
 import vitest from '@vitest/eslint-plugin';
@@ -9,23 +10,17 @@ import {
 import perfectionist from 'eslint-plugin-perfectionist';
 import pluginVue from 'eslint-plugin-vue';
 import globals from 'globals';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const gitignorePath = path.resolve(__dirname, '.gitignore');
 
 export default defineConfigWithVueTs([
+  includeIgnoreFile(gitignorePath),
   {
-    ignores: [
-      '**/.DS_Store',
-      '.yarn/',
-      'src/css/mmm-icons.css',
-      'build/',
-      '!build/svg2font.js',
-      'src/renderer/',
-      'src/main/',
-      'docs/src/**/*',
-      '!docs/src/en/**/*',
-      'LICENSE.md',
-      'docs/.vitepress/dist',
-      'docs/.vitepress/cache',
-    ],
+    ignores: ['docs/src/**/*', '!docs/src/en/**/*', 'LICENSE.md'],
   },
 
   ...pluginQuasar.configs.recommended(),

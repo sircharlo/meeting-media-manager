@@ -108,7 +108,11 @@ export const copyToDatedAdditionalMedia = async (
         } catch (e) {
           errorCatcher(e);
         }
-        jwStore.removeFromAdditionMediaMap(uniqueId);
+        jwStore.removeFromAdditionMediaMap(
+          uniqueId,
+          currentStateStore.currentCongregation,
+          currentStateStore.selectedDateObject,
+        );
       }
     }
     if (filepathToCopy !== datedAdditionalMediaPath) {
@@ -199,6 +203,9 @@ export const addToAdditionMediaMapFromPath = async (
         },
       ],
       section,
+      currentStateStore.currentCongregation,
+      currentStateStore.selectedDateObject,
+      isCoWeek(currentStateStore.selectedDateObject?.date),
     );
     return uniqueId;
   } catch (error) {
@@ -251,7 +258,13 @@ export const addJwpubDocumentMediaToFiles = async (
           section,
         )
       : [];
-    addToAdditionMediaMap(dynamicMediaItems, section);
+    addToAdditionMediaMap(
+      dynamicMediaItems,
+      section,
+      currentStateStore.currentCongregation,
+      currentStateStore.selectedDateObject,
+      isCoWeek(currentStateStore.selectedDateObject?.date),
+    );
   } catch (e) {
     errorCatcher(e);
   }

@@ -47,7 +47,12 @@
             <q-btn
               flat
               :label="t('show-all-media')"
-              @click="showHiddenMediaForSelectedDate()"
+              @click="
+                showHiddenMediaForSelectedDate(
+                  currentCongregation,
+                  selectedDateObject,
+                )
+              "
             />
           </template>
         </q-banner>
@@ -144,12 +149,12 @@ import {
   whenever,
 } from '@vueuse/core';
 import { Buffer } from 'buffer';
+import DialogFileImport from 'components/dialog/DialogFileImport.vue';
+import MediaEmptyState from 'components/media/MediaEmptyState.vue';
+import MediaList from 'components/media/MediaList.vue';
 import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
-import DialogFileImport from 'src/components/dialog/DialogFileImport.vue';
-import MediaEmptyState from 'src/components/media/MediaEmptyState.vue';
-import MediaList from 'src/components/media/MediaList.vue';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
 import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
@@ -168,8 +173,6 @@ import {
   showMediaWindow,
 } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { useAppSettingsStore } from 'src/stores/app-settings';
-import { useObsStateStore } from 'src/stores/obs-state';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
   dateFromString,
@@ -194,8 +197,10 @@ import {
 } from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
 import { findDb, getPublicationInfoFromDb } from 'src/utils/sqlite';
+import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
+import { useObsStateStore } from 'stores/obs-state';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
@@ -843,7 +848,13 @@ const addToFiles = async (
         ).catch((error) => {
           throw error;
         });
-        addToAdditionMediaMap(additionalMedia, sectionToAddTo.value);
+        addToAdditionMediaMap(
+          additionalMedia,
+          sectionToAddTo.value,
+          currentState.currentCongregation,
+          selectedDateObject.value,
+          isCoWeek(selectedDateObject.value?.date),
+        );
         additionalMedia.filter(
           (m) =>
             m.customDuration && (m.customDuration.max || m.customDuration.min),

@@ -163,7 +163,11 @@ function chooseCongregation(
   try {
     const invalidSettings = setCongregation(congregation);
     if (congregation) {
-      updateYeartext();
+      updateYeartext(
+        currentState.online,
+        currentState.currentSettings,
+        currentState.currentLangObject,
+      );
       downloadSongbookVideos();
       if (initialLoad) {
         // if (initialLoad || invalidSettings)
