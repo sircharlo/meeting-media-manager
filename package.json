@@ -126,7 +126,7 @@
     "vue-tsc": "^2.2.8"
   },
   "browserslist": [
-    "Electron >= 34"
+    "Electron >= 35"
   ],
   "lint-staged": {
     "*": "prettier --write --ignore-unknown",
