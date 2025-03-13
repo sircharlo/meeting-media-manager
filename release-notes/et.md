@@ -17,6 +17,6 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 
 - ⚡ **Optimeeritud nutikas vahemälu puhastamine**: Parandatud nutika vahemälu puhastamise loogikat, et saavutada parem jõudlus ja tõhusus.
 - 📂 **Korrektne ringkonnaülevaataja meediafailide paigutus**: Veenduge, et ringkonnaülevaataja külastuse meediafailid on paigutatud õigesse sektsiooni.
-- 📅 **Exclude Regular Meeting Media for Memorial**: Prevent fetching standard meeting media for the Memorial to prevent errors.
-- 📅 **Hide Regular Meeting Sections on Memorial**: Remove unnecessary meeting sections during the Memorial event for a cleaner layout.
-- 📖 **Fix Sign Language Bible Video Downloads**: Correctly download Sign Language Bible chapter videos from JWL playlists.
+- 📅 **Välista tavakoosoleku meediafailid mälestusõhtuks**: Vigade vältimiseks ei lae programm alla tavakoosolekute jaoks meediafaile.
+- 📅 **Peitke korralise koosoleku osad mälestusõhtul**: Eemaldage mittevajalikud koosolekute sektsioonid mälestusõhtu ajal, et kujundus oleks puhtam.
+- 📖 **Parandatud viipekeelse piibli videote allalaadimine**: Lae alla õiged viipekeelsete Piibli peatükkide videod JWL-i esitusloendist.
