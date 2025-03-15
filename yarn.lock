@@ -5195,14 +5195,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"better-sqlite3@npm:^11.8.1":
-  version: 11.8.1
-  resolution: "better-sqlite3@npm:11.8.1"
+"better-sqlite3@npm:^11.9.0":
+  version: 11.9.0
+  resolution: "better-sqlite3@npm:11.9.0"
   dependencies:
     bindings: "npm:^1.5.0"
     node-gyp: "npm:latest"
     prebuild-install: "npm:^7.1.1"
-  checksum: 10c0/b6b1844f8ed5668080cc1e2a137656da756af406b616ffbd6139b230c906b9c0571bbdac53cd78cc1415689f5090d25daf95ea596ced0b9ad5e8be9b4a08662e
+  checksum: 10c0/5a29aa61bfd92d5e14ecbb24c42532689ee64bd21c2fd260778da8c8105ae850c0d92f2ff1648ea590d2ee290b2bed16fc161f09e30349e3390236d941749825
   languageName: node
   linkType: hard
 
@@ -9710,12 +9710,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"image-size@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "image-size@npm:2.0.0"
+"image-size@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "image-size@npm:2.0.1"
   bin:
     image-size: bin/image-size.js
-  checksum: 10c0/c73cfc9006a5b5d500b455f5aed161eadc450a60c548becee93205d17864d18e8c442932ab1acb29bde92a177b154b3835fdf3b26eb84f881772421b6825f72e
+  checksum: 10c0/925bf741630a1c5b42fd96ae5332763ce034817f8b65221cfaaea64c3d38f4cf774763fd810e26e9510f635de57b10331404e3ca0e4e511e875d5d05f33036c0
   languageName: node
   linkType: hard
 
@@ -10973,9 +10973,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:^15.4.3":
-  version: 15.4.3
-  resolution: "lint-staged@npm:15.4.3"
+"lint-staged@npm:^15.5.0":
+  version: 15.5.0
+  resolution: "lint-staged@npm:15.5.0"
   dependencies:
     chalk: "npm:^5.4.1"
     commander: "npm:^13.1.0"
@@ -10989,7 +10989,7 @@ __metadata:
     yaml: "npm:^2.7.0"
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: 10c0/c1f71f2273bcbd992af929620f5acc6b9f6899da4b395e780e0b3ab33a0d725c239eb961873067c8c842e057c585c71dd4d44c0dc8b25539d3c2e97a3bdd6f30
+  checksum: 10c0/393b24d85d705a36e6556dc9d9b710594163be60f7789a2ca71bbf8f31debc10f7fde9cd0e868466ac2b7c154661983602decd7abbb6c685b21007bc70dbbdd6
   languageName: node
   linkType: hard
 
@@ -11503,7 +11503,7 @@ __metadata:
     "@vueuse/core": "npm:^13.0.0"
     "@vueuse/router": "npm:^13.0.0"
     autoprefixer: "npm:^10.4.21"
-    better-sqlite3: "npm:^11.8.1"
+    better-sqlite3: "npm:^11.9.0"
     cheerio: "npm:^1.0.0"
     chokidar: "npm:^4.0.3"
     countries-and-timezones: "npm:^3.7.2"
@@ -11521,9 +11521,9 @@ __metadata:
     globals: "npm:^16.0.0"
     heic-convert: "npm:^2.1.0"
     husky: "npm:^9.1.7"
-    image-size: "npm:^2.0.0"
+    image-size: "npm:^2.0.1"
     is-online: "npm:^11.0.0"
-    lint-staged: "npm:^15.4.3"
+    lint-staged: "npm:^15.5.0"
     lodash-es: "npm:^4.17.21"
     mime: "npm:^4.0.6"
     msw: "npm:^2.7.3"
@@ -11545,7 +11545,7 @@ __metadata:
     sortablejs-vue3: "npm:^1.2.11"
     typescript: "npm:~5.8.2"
     upath: "npm:^2.0.1"
-    vite: "npm:^6.2.1"
+    vite: "npm:^6.2.2"
     vitepress: "npm:next"
     vitest: "npm:^3.0.8"
     vue: "npm:^3.5.13"
@@ -17346,6 +17346,58 @@ __metadata:
   bin:
     vite: bin/vite.js
   checksum: 10c0/2c024376a840eae2ce9cfba98d62e9f1eae93caa8304875854dbc0740414aedcfbe157c2244567bd456cdb60a300312af02ae9b5c63c147d35cf4da3a0591312
+  languageName: node
+  linkType: hard
+
+"vite@npm:^6.2.2":
+  version: 6.2.2
+  resolution: "vite@npm:6.2.2"
+  dependencies:
+    esbuild: "npm:^0.25.0"
+    fsevents: "npm:~2.3.3"
+    postcss: "npm:^8.5.3"
+    rollup: "npm:^4.30.1"
+  peerDependencies:
+    "@types/node": ^18.0.0 || ^20.0.0 || >=22.0.0
+    jiti: ">=1.21.0"
+    less: "*"
+    lightningcss: ^1.21.0
+    sass: "*"
+    sass-embedded: "*"
+    stylus: "*"
+    sugarss: "*"
+    terser: ^5.16.0
+    tsx: ^4.8.1
+    yaml: ^2.4.2
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+    jiti:
+      optional: true
+    less:
+      optional: true
+    lightningcss:
+      optional: true
+    sass:
+      optional: true
+    sass-embedded:
+      optional: true
+    stylus:
+      optional: true
+    sugarss:
+      optional: true
+    terser:
+      optional: true
+    tsx:
+      optional: true
+    yaml:
+      optional: true
+  bin:
+    vite: bin/vite.js
+  checksum: 10c0/52f5b1c10cfe5e3b6382c6de1811ebbf76df9b5a8bab3d65169446c6b54a5f1528f775b1548009a6d8aad11def20fba046bb3e9abb10c0c2c9ccd78118623bb8
   languageName: node
   linkType: hard
 

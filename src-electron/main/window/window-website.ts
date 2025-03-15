@@ -42,57 +42,13 @@ export async function createWebsiteWindow(lang?: string) {
 
   websiteWindow.webContents.on('did-finish-load', () => {
     try {
-      websiteWindow?.webContents.insertCSS(`
-      .cursor {
-        position: fixed;
-        border-radius: 50%;
-        transform: translateX(-50%) translateY(-50%);
-        pointer-events: none;
-        left: -100px;
-        top: 50%;
-        background-color: transparent;
-        z-index: 10000;
-        border: 5px solid rgba(255, 0, 0, 0.8);
-        height: 50px;
-        width: 50px;
-        transition: transform 0.25s ease-out, background-color 0.25s ease-out;
-      }
-  
-      .cursor-clicked {
-        transform: translateX(-50%) translateY(-50%) scale(1.5);
-        background-color: rgba(255, 0, 0, 0.8);
-      }
-    `);
+      websiteWindow?.webContents.insertCSS(
+        `.cursor{position:fixed;border-radius:50%;transform:translateX(-50%) translateY(-50%);pointer-events:none;left:-100px;top:50%;background-color:transparent;z-index:10000;border:5px solid rgba(255, 0, 0, 0.8);height:50px;width:50px;transition:transform 0.25s ease-out, background-color 0.25s ease-out}.cursor-clicked{transform:translateX(-50%) translateY(-50%) scale(1.5);background-color:rgba(255, 0, 0, 0.8)}`,
+      );
 
-      websiteWindow?.webContents.executeJavaScript(`
-      const cursor = document.createElement('div');
-      cursor.className = 'cursor';
-      document.body.appendChild(cursor);
-  
-      const onMouseMove = (e) => {
-        cursor.style.left = e.clientX + 'px';
-        cursor.style.top = e.clientY + 'px';
-      };
-  
-      const onMouseDown = () => {
-        cursor.classList.add('cursor-clicked');
-      };
-  
-      const onMouseUp = () => {
-        setTimeout(() => {
-          cursor.classList.remove('cursor-clicked');
-        }, 250);
-      };
-      
-      document.body.removeEventListener('mousemove', onMouseMove);
-      document.body.addEventListener('mousemove', onMouseMove, { passive: true });
-  
-      document.body.removeEventListener('mousedown', onMouseDown);
-      document.body.addEventListener('mousedown', onMouseDown, { passive: true });
-
-      document.body.removeEventListener('mouseup', onMouseUp);
-      document.body.addEventListener('mouseup', onMouseUp, { passive: true });
-    `);
+      websiteWindow?.webContents.executeJavaScript(
+        `const cursor=document.createElement('div');cursor.className='cursor';document.body.appendChild(cursor);const onMouseMove=(e)=>{cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px'};const onMouseDown=()=>{cursor.classList.add('cursor-clicked')};const onMouseUp=()=>{setTimeout(()=>{cursor.classList.remove('cursor-clicked')},250)};document.body.removeEventListener('mousemove',onMouseMove);document.body.addEventListener('mousemove',onMouseMove,{passive:true});document.body.removeEventListener('mousedown',onMouseDown);document.body.addEventListener('mousedown',onMouseDown,{passive:true});document.body.removeEventListener('mouseup',onMouseUp);document.body.addEventListener('mouseup',onMouseUp,{passive:true});`,
+      );
     } catch (e) {
       captureElectronError(e, {
         contexts: { fn: { name: 'createWebsiteWindow cursor indicator' } },
