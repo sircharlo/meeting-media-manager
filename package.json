@@ -58,7 +58,7 @@
     "music-metadata": "^11.0.2",
     "obs-websocket-js": "^5.0.6",
     "p-queue": "^8.1.0",
-    "pdfjs-dist": "^4.10.38",
+    "pdfjs-dist": "^5.0.375",
     "pinia": "^3.0.1",
     "pinia-plugin-persistedstate": "^4.2.0",
     "pinia-shared-state": "^1.0.1",
@@ -105,8 +105,8 @@
     "@vue/eslint-config-typescript": "^14.5.0",
     "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.21",
-    "electron": "^34.3.2",
-    "electron-builder": "^25.1.8",
+    "electron": "^35.0.2",
+    "electron-builder": "^26.0.11",
     "eslint": "^9.22.0",
     "eslint-plugin-perfectionist": "^4.10.1",
     "eslint-plugin-vue": "^10.0.0",
@@ -118,7 +118,7 @@
     "postcss": "^8.5.3",
     "prettier": "^3.5.3",
     "rollup-plugin-visualizer": "^5.14.0",
-    "typescript": "~5.6.3",
+    "typescript": "~5.8.2",
     "vite": "^6.2.2",
     "vitepress": "next",
     "vitest": "^3.0.8",
@@ -126,7 +126,7 @@
     "vue-tsc": "^2.2.8"
   },
   "browserslist": [
-    "Electron >= 34"
+    "Electron >= 35"
   ],
   "lint-staged": {
     "*": "prettier --write --ignore-unknown",
