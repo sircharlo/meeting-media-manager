@@ -52,6 +52,7 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       cacheFolder: oldPrefs.app?.customCachePath || null,
       congregationName: oldPrefs.app?.congregationName || '',
       convertFilesToMp4: oldPrefs.media?.enableMp4Conversion || false,
+      // @ts-expect-error: coWeek is a string
       coWeek: oldPrefs.meeting?.coWeek || '',
       darkMode: 'auto',
       disableMediaFetching: oldPrefs.meeting?.specialCong || false,
@@ -94,8 +95,9 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       meetingScheduleChangeWeStartTime: null,
       memorialDate: null,
       musicVolume: oldPrefs.meeting?.musicVolume || 100,
-      mwDay: oldPrefs.meeting?.mwDay?.toString() || '',
-      mwStartTime: oldPrefs.meeting?.mwStartTime?.toString() || '',
+      mwDay: oldPrefs.meeting?.mwDay ? `${oldPrefs.meeting.mwDay}` : null,
+      // @ts-expect-error: mwStartTime is a string
+      mwStartTime: oldPrefs.meeting?.mwStartTime?.toString() || null,
       obsCameraScene: oldPrefs.app?.obs?.cameraScene || '',
       obsEnable: oldPrefs.app?.obs?.enable || false,
       obsHideIcons: false,
@@ -111,7 +113,8 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       shortcutMediaStop: '',
       shortcutMediaWindow: oldPrefs.media?.mediaWinShortcut || '',
       shortcutMusic: oldPrefs.meeting?.shuffleShortcut || '',
-      weDay: oldPrefs.meeting?.weDay?.toString() || '',
+      weDay: oldPrefs.meeting?.weDay ? `${oldPrefs.meeting.weDay}` : null,
+      // @ts-expect-error: weStartTime is a string
       weStartTime: oldPrefs.meeting?.weStartTime?.toString() || '',
     };
     return newPrefsObject;

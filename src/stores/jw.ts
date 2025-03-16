@@ -60,7 +60,7 @@ interface Store {
   jwMepsLanguages: CacheList<JwMepsLanguage>;
   jwSongs: Partial<Record<JwLangCode, CacheList<MediaLink>>>;
   lookupPeriod: Partial<Record<string, DateInfo[]>>;
-  memorials: Partial<Record<number, string>>;
+  memorials: Partial<Record<number, `${number}/${number}/${number}`>>;
   urlVariables: UrlVariables;
   yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
 }
