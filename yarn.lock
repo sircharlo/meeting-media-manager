@@ -1119,12 +1119,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@intlify/bundle-utils@npm:^10.0.0":
-  version: 10.0.0
-  resolution: "@intlify/bundle-utils@npm:10.0.0"
+"@intlify/bundle-utils@npm:^10.0.1":
+  version: 10.0.1
+  resolution: "@intlify/bundle-utils@npm:10.0.1"
   dependencies:
-    "@intlify/message-compiler": "npm:next"
-    "@intlify/shared": "npm:next"
+    "@intlify/message-compiler": "npm:^11.1.2"
+    "@intlify/shared": "npm:^11.1.2"
     acorn: "npm:^8.8.2"
     escodegen: "npm:^2.1.0"
     estree-walker: "npm:^2.0.2"
@@ -1137,7 +1137,7 @@ __metadata:
       optional: true
     vue-i18n:
       optional: true
-  checksum: 10c0/c04e0623cbc86fc2f954c983570e0b1516b8de87b297bab34ebf9da7008574859c562870ac0dc5ceab8648b06d865e79f8b7e21673096cc065f3bb58fee01476
+  checksum: 10c0/fb24c4d14c1f2e149d621e5a56bdd9e1d91ce2e00f62d56493e89b8eec45bd81bf23e147a85ee3aa7f84289602cbb8b8b17bdbeed081dd99285cfd31d5d62ca0
   languageName: node
   linkType: hard
 
@@ -1171,23 +1171,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@intlify/message-compiler@npm:11.1.2":
+"@intlify/message-compiler@npm:11.1.2, @intlify/message-compiler@npm:^11.1.2":
   version: 11.1.2
   resolution: "@intlify/message-compiler@npm:11.1.2"
   dependencies:
     "@intlify/shared": "npm:11.1.2"
     source-map-js: "npm:^1.0.2"
   checksum: 10c0/2700641d604696306ae456dceacf968738e02b8123ad35bf47240b984c53ebb04c26ec575a6d5c6b55e179c8477aa8accfe9df4b68b093dbd3501bc99ea87b9e
-  languageName: node
-  linkType: hard
-
-"@intlify/message-compiler@npm:next":
-  version: 11.0.0-rc.1
-  resolution: "@intlify/message-compiler@npm:11.0.0-rc.1"
-  dependencies:
-    "@intlify/shared": "npm:11.0.0-rc.1"
-    source-map-js: "npm:^1.0.2"
-  checksum: 10c0/2edeea13ed83c4ad25c4b1b27e8020f30c1fb41c9d79c07e68938c4daad7d0ea3a8b23bc2c3dc026e7933a911806bd6fc967354d9c9c420e7a4f58cc12246508
   languageName: node
   linkType: hard
 
@@ -1198,27 +1188,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@intlify/shared@npm:11.0.0-rc.1, @intlify/shared@npm:next":
-  version: 11.0.0-rc.1
-  resolution: "@intlify/shared@npm:11.0.0-rc.1"
-  checksum: 10c0/635e4056ee716e39744997af5ddcfb58af6654b25097dda98b3e57ce3b0c3e519d4e468ad07863af5057567864e5b64e23de16e613cdc8a1955c9106f167123d
-  languageName: node
-  linkType: hard
-
-"@intlify/shared@npm:11.1.2, @intlify/shared@npm:latest":
+"@intlify/shared@npm:11.1.2, @intlify/shared@npm:^11.1.2":
   version: 11.1.2
   resolution: "@intlify/shared@npm:11.1.2"
   checksum: 10c0/6dcf992abdf6693c546a5e32fb0d9747cf20b9ed786be2855789a2e3274dfe0eb070bf57a164415934096d1a9a3af5fa5d531ae146c755fe4c39ee659079119a
   languageName: node
   linkType: hard
 
-"@intlify/unplugin-vue-i18n@npm:^6.0.3":
-  version: 6.0.3
-  resolution: "@intlify/unplugin-vue-i18n@npm:6.0.3"
+"@intlify/unplugin-vue-i18n@npm:^6.0.4":
+  version: 6.0.4
+  resolution: "@intlify/unplugin-vue-i18n@npm:6.0.4"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.4.0"
-    "@intlify/bundle-utils": "npm:^10.0.0"
-    "@intlify/shared": "npm:latest"
+    "@intlify/bundle-utils": "npm:^10.0.1"
+    "@intlify/shared": "npm:^11.1.2"
     "@intlify/vue-i18n-extensions": "npm:^8.0.0"
     "@rollup/pluginutils": "npm:^5.1.0"
     "@typescript-eslint/scope-manager": "npm:^8.13.0"
@@ -1241,7 +1224,7 @@ __metadata:
       optional: true
     vue-i18n:
       optional: true
-  checksum: 10c0/6a2349a9467faf1460a98e0e45a44a1781130b2809336f10b9509a7b9fe0820640d3890da428e7e28179596e4580d3ac7ca2be263c423f9055e589364ca1cf82
+  checksum: 10c0/cd5b295550a389210f1999e89972df8bb3545284820a8dd159b965ca729710f2157169d4f0d58bebd16b8dc72ab547593a970efcc9c4d770c8e5dcb4a517a962
   languageName: node
   linkType: hard
 
@@ -11468,7 +11451,7 @@ __metadata:
     "@daipeng7/rollup-plugin-iconfont": "npm:^3.0.6"
     "@electron/rebuild": "npm:^3.7.1"
     "@eslint/compat": "npm:^1.2.7"
-    "@intlify/unplugin-vue-i18n": "npm:^6.0.3"
+    "@intlify/unplugin-vue-i18n": "npm:^6.0.4"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@panzoom/panzoom": "npm:^4.6.0"
     "@pinia/testing": "npm:^1.0.0"
