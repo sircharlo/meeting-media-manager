@@ -65,7 +65,7 @@
     "pretty-bytes": "^6.1.1",
     "quasar": "^2.18.1",
     "sanitize-filename": "^1.6.3",
-    "sanitize-html": "^2.14.0",
+    "sanitize-html": "^2.15.0",
     "sortablejs": "^1.15.6",
     "sortablejs-vue3": "^1.2.11",
     "upath": "^2.0.1",
