@@ -7,13 +7,13 @@ hero:
   actions:
     - theme: brand
       text: Install M³
-      link: /using-at-a-kingdom-hall#download-and-install
+      link: /ko/using-at-a-kingdom-hall#download-and-install
     - theme: alt
       text: Using at a Kingdom Hall
-      link: /using-at-a-kingdom-hall
+      link: /ko/using-at-a-kingdom-hall
     - theme: alt
       text: About
-      link: /about
+      link: /ko/about
 features:
   - icon: 🚀
     title: Automatic media downloads
