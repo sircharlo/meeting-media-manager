@@ -49,7 +49,7 @@ export interface MediaItemsMediatorFile {
   frameHeight: number;
   frameRate: number;
   frameWidth: number;
-  label: string;
+  label: `${number}p`;
   mimetype: string;
   modifiedDatetime: string;
   progressiveDownloadURL: string;
@@ -66,8 +66,8 @@ export interface MediaItemsMediatorItem {
   availableLanguages: JwLangCode[];
   description: string;
   duration: number;
-  durationFormattedHHMM: string;
-  durationFormattedMinSec: string;
+  durationFormattedHHMM: `${number}:${number}`;
+  durationFormattedMinSec: `${number}m ${number}s`;
   files: MediaItemsMediatorFile[];
   firstPublished: string;
   guid: string;
@@ -103,7 +103,7 @@ export interface MediaLink {
   frameRate: number;
   frameWidth: number;
   hasTrack: boolean;
-  label: string;
+  label: `${number}p`;
   markers: {
     documentId: number;
     hash: string;
@@ -140,7 +140,7 @@ export interface Publication {
   fileformat: string[];
   files: Partial<Record<JwLangCode, PublicationFiles>>;
   formattedDate: string;
-  issue: string;
+  issue: `${number}`;
   languages: Partial<
     Record<
       JwLangCode,

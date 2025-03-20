@@ -203,7 +203,7 @@ const selectCongregation = (congregation: GeoRecord) => {
     const { midweek, weekend } = properties.schedule.current;
 
     if (Number.isInteger(midweek?.weekday)) {
-      currentSettings.value.mwDay = (midweek.weekday - 1).toString();
+      currentSettings.value.mwDay = `${midweek.weekday - 1}`;
     }
     if (midweek?.time) {
       currentSettings.value.mwStartTime = midweek.time;
@@ -211,7 +211,7 @@ const selectCongregation = (congregation: GeoRecord) => {
 
     // Weekend day & time
     if (Number.isInteger(weekend?.weekday)) {
-      currentSettings.value.weDay = (weekend.weekday - 1).toString();
+      currentSettings.value.weDay = `${weekend.weekday - 1}`;
     }
     if (weekend?.time) {
       currentSettings.value.weStartTime = weekend.time;

@@ -140,14 +140,16 @@ export const fetchAnnouncements = async (): Promise<Announcement[]> => {
  */
 export const fetchMemorials = async (): Promise<null | Record<
   number,
-  string
+  `${number}/${number}/${number}`
 >> => {
   if (!process.env.repository) return null;
-  const result = await fetchJson<Record<string, string>>(
+  const result = await fetchJson<
+    Record<string, `${number}/${number}/${number}`>
+  >(
     `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/memorials.json`,
   );
   if (!result) return null;
-  const memorials: Record<number, string> = {};
+  const memorials: Record<number, `${number}/${number}/${number}`> = {};
   for (const [key, value] of Object.entries(result)) {
     const year = parseInt(key);
     if (year && !isNaN(year)) memorials[year] = value;

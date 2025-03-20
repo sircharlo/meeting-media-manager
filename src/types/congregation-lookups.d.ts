@@ -1,9 +1,11 @@
+import type { JwLangCode } from './jw/lang';
+
 export interface CongregationLanguage {
   isSignLanguage: boolean;
-  languageCode: string;
+  languageCode: JwLangCode;
   languageName: string;
   scriptDirection: 'ltr' | 'rtl'; // Left-to-right or right-to-left script
-  writtenLanguageCode: string[];
+  writtenLanguageCode: JwLangCode[];
 }
 
 export interface GeoRecord {
@@ -32,21 +34,21 @@ interface PhoneDetails {
 interface Properties {
   address: string;
   isPrivateMtgPlace: boolean;
-  languageCode: string;
+  languageCode: JwLangCode;
   memorialAddress: string;
-  memorialTime: string;
+  memorialTime: `${number}:${number}`;
   orgGuid: string;
   orgName: string;
   orgTransliteratedName: string;
-  orgType: string;
+  orgType: 'CONG' | 'GROUP';
   phones: PhoneDetails[];
-  relatedLanguageCodes: string[];
+  relatedLanguageCodes: JwLangCode[];
   schedule: ScheduleDetails;
   transliteratedAddress: string;
 }
 
 interface Schedule {
-  time: string;
+  time: `${number}:${number}`;
   weekday: number;
 }
 

@@ -170,7 +170,7 @@ export interface SettingsValues {
   cacheFolder: null | string;
   congregationName: null | string;
   convertFilesToMp4: boolean;
-  coWeek: null | string;
+  coWeek: `${number}/${number}/${number}` | null;
   darkMode: 'auto' | boolean;
   disableMediaFetching: boolean;
   enableExtraCache: boolean;
@@ -193,16 +193,16 @@ export interface SettingsValues {
   localAppLang: LanguageValue;
   maxRes: MaxRes;
   mediaAutoExportFolder: string;
-  meetingScheduleChangeDate: null | string;
-  meetingScheduleChangeMwDay: null | string;
-  meetingScheduleChangeMwStartTime: null | string;
+  meetingScheduleChangeDate: `${number}/${number}/${number}` | null;
+  meetingScheduleChangeMwDay: `${number}` | null;
+  meetingScheduleChangeMwStartTime: `${number}:${number}` | null;
   meetingScheduleChangeOnce: boolean;
-  meetingScheduleChangeWeDay: null | string;
-  meetingScheduleChangeWeStartTime: null | string;
-  memorialDate: null | string;
+  meetingScheduleChangeWeDay: `${number}` | null;
+  meetingScheduleChangeWeStartTime: `${number}:${number}` | null;
+  memorialDate: `${number}/${number}/${number}` | null;
   musicVolume: number;
-  mwDay: null | string;
-  mwStartTime: null | string;
+  mwDay: `${number}` | null;
+  mwStartTime: `${number}:${number}` | null;
   obsCameraScene: null | string;
   obsEnable: boolean;
   obsHideIcons: boolean;
@@ -218,6 +218,6 @@ export interface SettingsValues {
   shortcutMediaStop: null | string;
   shortcutMediaWindow: null | string;
   shortcutMusic: null | string;
-  weDay: null | string;
-  weStartTime: null | string;
+  weDay: `${number}` | null;
+  weStartTime: `${number}:${number}` | null;
 }
