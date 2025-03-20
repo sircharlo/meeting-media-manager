@@ -14,6 +14,7 @@ export type LanguageValue =
   | 'ht'
   | 'hu'
   | 'it'
+  | 'ko'
   | 'mg'
   | 'nl'
   | 'pt'
@@ -180,6 +181,13 @@ export const locales: {
     langcode: 'I',
     signLangCodes: ['ISL'],
     value: 'it',
+  },
+  {
+    englishName: 'Korean',
+    label: '한국어',
+    langcode: 'KO',
+    signLangCodes: ['KSL'],
+    value: 'ko',
   },
   {
     englishName: 'Malagasy',

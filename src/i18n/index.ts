@@ -19,6 +19,7 @@ import fr from './fr.json';
 // import ht from './ht.json';
 import hu from './hu.json';
 import it from './it.json';
+// import ko from './ko.json';
 // import mg from './mg.json';
 import nl from './nl.json';
 import ptPt from './pt-pt.json';
