@@ -27,7 +27,7 @@ This guide will walk you through the process of downloading, installing, and set
 
 ### macOS only: Additional installation steps {#additional-steps-for-macos-users}
 
-:::warning Warning
+:::warning 경고
 
 This section only applies to macOS users.
 
@@ -42,7 +42,7 @@ codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
 sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 ```
 
-:::warning Warning
+:::warning 경고
 
 As a macOS user, you will need to follow these steps every time you install or update M³.
 
@@ -70,7 +70,7 @@ If you still have issues after following all these steps, please [open an issue 
 
 ### macOS only: Re-enabling website presentation after updates {#screen-sharing-issues}
 
-:::warning Warning
+:::warning 경고
 
 This section only applies to macOS users.
 
@@ -111,7 +111,7 @@ This is does not have to be the same language as the one in which M³ will downl
 
 The next step is to choose a **profile type**. For a regular setup in a Kingdom Hall, choose **Regular**. This will configure many features that are commonly used for congregation meetings.
 
-:::warning Warning
+:::warning 경고
 
 You should only choose **Other** if you are creating a profile for which no media should be automatically downloaded. Media will have to be manually imported for use in this profile. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
 
