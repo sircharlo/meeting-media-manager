@@ -5,13 +5,14 @@ import type {
   DynamicMediaObject,
   JwLanguage,
   MediaLink,
-  MediaSection,
+  MediaSectionIdentifier,
   SettingsItem,
   SettingsItems,
   SettingsValues,
 } from 'src/types';
 
 import { defineStore } from 'pinia';
+import { standardSections } from 'src/constants/media';
 import { settingsDefinitions } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { datesAreSame, formatDate } from 'src/utils/date';
@@ -218,7 +219,10 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!currentLanguage) return [];
       return jwStore.jwSongs[currentLanguage]?.list || [];
     },
-    getAllMediaForSection(): Record<MediaSection, DynamicMediaObject[]> {
+    getAllMediaForSection(): Record<
+      MediaSectionIdentifier,
+      DynamicMediaObject[]
+    > {
       if (!this.selectedDateObject) {
         return {
           additional: [],
@@ -230,14 +234,12 @@ export const useCurrentStateStore = defineStore('current-state', {
         };
       }
 
-      const sections: MediaSection[] = [
-        'additional',
-        'ayfm',
-        'circuitOverseer',
-        'lac',
-        'tgw',
-        'wt',
-      ];
+      const customSections =
+        this.selectedDateObject.customSections
+          ?.filter((m) => !standardSections.includes(m.uniqueId))
+          .map((m) => m.uniqueId) || [];
+
+      const sections = [...standardSections, ...[...new Set(customSections)]];
 
       return sections.reduce(
         (acc, section) => {
@@ -247,10 +249,13 @@ export const useCurrentStateStore = defineStore('current-state', {
           );
           return acc;
         },
-        {} as Record<MediaSection, DynamicMediaObject[]>,
+        {} as Record<MediaSectionIdentifier, DynamicMediaObject[]>,
       );
     },
-    getVisibleMediaForSection(): Record<MediaSection, DynamicMediaObject[]> {
+    getVisibleMediaForSection(): Record<
+      MediaSectionIdentifier,
+      DynamicMediaObject[]
+    > {
       if (!this.selectedDateObject) {
         return {
           additional: [],
@@ -262,7 +267,7 @@ export const useCurrentStateStore = defineStore('current-state', {
         };
       }
 
-      const sections: MediaSection[] = [
+      const standardSections: MediaSectionIdentifier[] = [
         'additional',
         'ayfm',
         'circuitOverseer',
@@ -270,6 +275,12 @@ export const useCurrentStateStore = defineStore('current-state', {
         'tgw',
         'wt',
       ];
+
+      const customSections = this.selectedDateObject.dynamicMedia
+        .filter((m) => !standardSections.includes(m.section))
+        .map((m) => m.section);
+
+      const sections = [...standardSections, ...[...new Set(customSections)]];
 
       return sections.reduce(
         (acc, section) => {
@@ -279,7 +290,7 @@ export const useCurrentStateStore = defineStore('current-state', {
           );
           return acc;
         },
-        {} as Record<MediaSection, DynamicMediaObject[]>,
+        {} as Record<MediaSectionIdentifier, DynamicMediaObject[]>,
       );
     },
     mediaPaused: (state) => {
