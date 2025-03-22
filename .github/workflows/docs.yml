@@ -8,6 +8,7 @@ on:
       - master
     paths:
       - docs/**
+      - src/constants/locales.ts
       - package.json
       - yarn.lock
   workflow_dispatch:
