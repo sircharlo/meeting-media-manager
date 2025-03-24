@@ -281,7 +281,7 @@
   "obsImageScene": "OBS Studio에서 이미지를 표시할 때 사용하는 장면 [선택사항]",
   "obsImageScene-explain": "A scene can be configured in OBS Studio specifically to display images, for example in a picture-in-picture style. If this is left blank, the default media scene will be used instead.",
   "obsMediaScene": "OBS Studio 미디어 표시 장면 ",
-  "obsMediaScene-explain": "The scene in OBS Studio that will be used to broadcast media to Zoom participants.",
+  "obsMediaScene-explain": "Zoom 참가자들에게 미디어를 보여줄 때 사용하는 OBS Studio 장면을 지정합니다.",
   "obsPassword": "OBS Studio WebSocket 패스워드",
   "obsPassword-explain": "Find the configured password under Tools > WebSocket Server Settings in OBS Studio.",
   "obsPort": "OBS Studio WebSocket 포트",
