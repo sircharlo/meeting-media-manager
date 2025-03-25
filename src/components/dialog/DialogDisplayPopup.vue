@@ -457,18 +457,22 @@ const { post: postCustomBackground } = useBroadcastChannel<string, string>({
   name: 'custom-background',
 });
 
+const loadMemorialBackground = async (newMediaBackground?: string) => {
+  let bg: string | undefined = newMediaBackground;
+  if (
+    !newMediaBackground &&
+    currentState.selectedDate &&
+    currentState.selectedDate === currentSettings.value?.memorialDate
+  ) {
+    bg = await getMemorialBackground();
+  }
+  postCustomBackground(bg ?? '');
+};
+
 watch(
   () => mediaWindowCustomBackground.value,
-  async (newMediaBackground) => {
-    let bg: string | undefined = newMediaBackground;
-    if (
-      !newMediaBackground &&
-      currentState.selectedDate &&
-      currentState.selectedDate === currentSettings.value?.memorialDate
-    ) {
-      bg = await getMemorialBackground();
-    }
-    postCustomBackground(bg ?? '');
+  (newMediaBackground) => {
+    loadMemorialBackground(newMediaBackground);
   },
 );
 

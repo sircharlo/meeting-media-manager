@@ -216,9 +216,13 @@ watch(currentCongregation, (val) => {
 const releaseNotes = ref('');
 const releaseNotesOpen = ref(false);
 
-watchImmediate(locale, async (val) => {
-  const result = await fetchReleaseNotes(camelToKebabCase(val));
+const loadReleaseNotes = async () => {
+  const result = await fetchReleaseNotes(camelToKebabCase(locale.value));
   releaseNotes.value = result ?? '';
+};
+
+watchImmediate(locale, () => {
+  loadReleaseNotes();
 });
 
 watch(updatesEnabled, (val) => {
