@@ -79,7 +79,7 @@
     "@eslint/compat": "^1.2.7",
     "@intlify/unplugin-vue-i18n": "^6.0.5",
     "@pinia/testing": "^1.0.0",
-    "@quasar/app-vite": "^2.1.4",
+    "@quasar/app-vite": "^2.2.0",
     "@quasar/icongenie": "^4.0.0",
     "@quasar/quasar-app-extension-qmarkdown": "^2.0.5",
     "@quasar/quasar-app-extension-testing-unit-vitest": "^1.1.0",
