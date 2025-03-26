@@ -1,8 +1,8 @@
-# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
+# Meeting Media Manager (M³) 소개 {#about-meeting-media-manager-m3}
 
 ![M³ banner](./../assets/m3-banner.png)
 
-## What is this app? {#what-is-this-app}
+## 소개 {#what-is-this-app}
 
 **Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on the official website of Jehovah's Witnesses.
 
@@ -28,7 +28,7 @@ M³ is the ultimate tool for managing meeting media, offering a seamless, reliab
 
 - **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
 
-- **Reliable and stable**: Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
+- **Reliable and stable**: Built to perform when you need it most. 버그를 발견하셨나요? Report it, and it will be addressed promptly.
 
 ## What can M³ do? {#what-can-m3-do}
 
@@ -51,8 +51,8 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 
 ![M³ preview](./../assets/m3-preview.png)
 
-## Does M³ work in my language? {#does-m3-work-in-my-language}
+## 내가 사용하는 언어로도 M³가 작동하나요? {#does-m3-work-in-my-language}
 
-**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need.
+**물론입니다!** 여호와의 증인 공식 웹사이트에 있는 수 백 가지의 언어 중 어떤 언어를 사용하든 자동으로 집회 미디어를 다운로드 할 수 있습니다. The list of available languages is dynamically updated; all you need to do is select which one you need.
 
 In addition, M³ itself has been translated into several languages by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
