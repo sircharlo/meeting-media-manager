@@ -395,7 +395,7 @@
   "there-are-no-media-items-for-the-selected-date": "선택한 일자는 미디어가 없습니다.",
   "this-is-a-test-version": "테스트 버전입니다! 테스트 목적으로만 사용하시고 계속 사용하지 마십시오.",
   "this-will-only-delete-media-for-this-day": "선택한 일자의 추가 미디어만 삭제합니다",
-  "this-will-speed-up-media-retrieval-for-meetings": "이 기능을 사용하는 경우 집회 미디어를 빠르게 받을 수 있지만, 필수사항은 아닙니다.",
+  "this-will-speed-up-media-retrieval-for-meetings": "이 기능을 사용하면 집회 미디어를 빠르게 받을 수 있으나 필수는 아닙니다.",
   "titles.meetingMedia": "집회 미디어",
   "titles.presentWebsite": "웹사이트 표시",
   "titles.profileSelection": "회중 프로필",
