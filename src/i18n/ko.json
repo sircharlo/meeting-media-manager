@@ -279,7 +279,7 @@
   "obsHideIcons": "장면 전환기에 아이콘 표시 안함",
   "obsHideIcons-explain": "활성화하는 경우 장면 전환기에 아이콘을 표시하지 않습니다. 장면 이름의 가독성을 높일 수 있습니다.",
   "obsImageScene": "OBS Studio에서 이미지를 표시할 때 사용하는 장면 [선택사항]",
-  "obsImageScene-explain": "A scene can be configured in OBS Studio specifically to display images, for example in a picture-in-picture style. If this is left blank, the default media scene will be used instead.",
+  "obsImageScene-explain": "이미지를 표시할 때 사용하는 장면입니다. 예를 들어 PIP 스타일로 이미지를 표시하도록 구성할 수 있습니다. 이 항목이 비어 있는 경우 기본 미디어 장면을 사용합니다.",
   "obsMediaScene": "OBS Studio 미디어 표시 장면 ",
   "obsMediaScene-explain": "Zoom 참가자들에게 미디어를 보여줄 때 사용하는 OBS Studio 장면을 지정합니다.",
   "obsPassword": "OBS Studio WebSocket 패스워드",
