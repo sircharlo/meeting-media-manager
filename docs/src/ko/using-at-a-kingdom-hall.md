@@ -1,8 +1,8 @@
 <!-- markdownlint-disable no-inline-html -->
 
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# 왕국회관에서 M³ 사용하기 {#using-m3-at-a-kingdom-hall}
 
-This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
+이 가이드는 왕국회관에서 **Meeting Media Manager (M³)** 를 다운로드 및 설치하고 설정하는 방법에 대해 안내합니다. 가이드에 따라 회중 집회에서 미디어를 원활하게 관리하기 위한 설정을 진행해보세요.
 
 ## 1. Download and install {#download-and-install}
 
