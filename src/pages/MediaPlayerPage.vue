@@ -453,21 +453,42 @@ const playMedia = () => {
       postCurrentTime(mediaElement.value?.currentTime || 0);
     };
 
+    let lastUpdate = 0;
+    const updateInterval = 300;
+    let rafId = 0;
+
+    const updateTime = () => {
+      const currentTime = mediaElement.value?.currentTime || 0;
+
+      if (Date.now() - lastUpdate > updateInterval) {
+        // Throttle time updates
+        postCurrentTime(currentTime);
+        lastUpdate = Date.now();
+      }
+
+      if (
+        mediaCustomDuration.value &&
+        customMax.value &&
+        currentTime >= customMax.value
+      ) {
+        endOrLoop();
+        cancelAnimationFrame(rafId);
+        return;
+      }
+
+      rafId = requestAnimationFrame(updateTime);
+    };
+
     mediaElement.value.ontimeupdate = () => {
       try {
-        const currentTime = mediaElement.value?.currentTime || 0;
-        postCurrentTime(currentTime);
-        if (
-          mediaCustomDuration.value &&
-          customMax.value &&
-          currentTime >= customMax.value
-        ) {
-          endOrLoop();
+        if (!rafId) {
+          rafId = requestAnimationFrame(updateTime);
         }
       } catch (e) {
         errorCatcher(e);
       }
     };
+
     mediaElement.value.currentTime = customMin.value;
     playMediaElement();
   } catch (e) {
