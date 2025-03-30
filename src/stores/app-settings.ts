@@ -70,19 +70,18 @@ export const useAppSettingsStore = defineStore('app-settings', {
           jwStore.$patch({
             jwLanguages: parseJsonSafe<{ list: JwLanguage[]; updated: Date }>(
               QuasarStorage.getItem('jwLanguages'),
-              { list: [], updated: new Date(0) },
+              jwStore.jwLanguages,
             ),
             jwSongs: parseJsonSafe<
               Record<string, { list: MediaLink[]; updated: Date }>
             >(QuasarStorage.getItem('jwSongs'), jwStore.jwSongs),
-            lookupPeriod: parseJsonSafe<Record<string, DateInfo[]>>(
+            lookupPeriod: parseJsonSafe<Partial<Record<string, DateInfo[]>>>(
               QuasarStorage.getItem('lookupPeriod'),
-              {},
+              jwStore.lookupPeriod,
             ),
-            yeartexts: parseJsonSafe<Record<number, Record<string, string>>>(
-              QuasarStorage.getItem('yeartexts'),
-              {},
-            ),
+            yeartexts: parseJsonSafe<
+              Partial<Record<number, Record<string, string>>>
+            >(QuasarStorage.getItem('yeartexts'), jwStore.yeartexts),
           });
 
           // Remove migrated items from localStorage
@@ -93,13 +92,13 @@ export const useAppSettingsStore = defineStore('app-settings', {
           );
 
           this.migrations = this.migrations.concat(
-            parseJsonSafe(QuasarStorage.getItem('migrations'), []),
+            parseJsonSafe(QuasarStorage.getItem('migrations'), this.migrations),
           );
           QuasarStorage.removeItem('migrations');
 
           this.screenPreferences = parseJsonSafe(
             QuasarStorage.getItem('screenPreferences'),
-            { preferredScreenNumber: 0, preferWindowed: false },
+            this.screenPreferences,
           );
           QuasarStorage.removeItem('screenPreferences');
         } else if (type === 'addBaseUrlToAllCongregations') {
