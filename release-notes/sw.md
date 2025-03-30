@@ -4,6 +4,18 @@
 
 Kwa ajili ya orodha kamili ya mabadiliko baina ya toleo tofauti tofauti, ona CHANGELOG.md file kwenye GitHub.
 
+# 25.3.1
+
+## ✨ Vipengele Vipya
+
+- 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
+
+## 🛠️ Maboresho na Marekebisho
+
+- ⚡ **Improve Performance & CPU Usage**: Optimize performance to reduce CPU usage and enhance efficiency.
+- 🔄 **Fix Synchronization & Crash Issues**: Resolve various sync-related and stability issues to improve reliability.
+- 📜 **Show Release Notes for Existing Congregations**: Ensure release notes are only displayed for congregations that are already loaded.
+
 ## 25.3.0
 
 ### ✨ Vipengele Vipya
