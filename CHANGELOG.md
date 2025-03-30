@@ -4,6 +4,22 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+# 25.3.1
+
+## ✨ New Features
+
+- 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
+
+## 🛠️ Improvements and Tweaks
+
+- ⚡ **Improve Performance & CPU Usage**: Optimize performance to reduce CPU usage and enhance efficiency.
+- 🔄 **Fix Synchronization & Crash Issues**: Resolve various sync-related and stability issues to improve reliability.
+- 📜 **Show Release Notes for Existing Congregations**: Ensure release notes are only displayed for congregations that are already loaded.
+
+## 🔧 Improvements to Codebase
+
+- ⏪ **Revert Problematic Dependency Updates**: Roll back recent dependency updates that caused issues, restoring stability.
+
 ## 25.3.0
 
 ### ✨ New Features

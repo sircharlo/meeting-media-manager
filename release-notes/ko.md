@@ -1,22 +1,34 @@
 <!-- markdownlint-disable no-duplicate-heading -->
 
-# What's New
+# 업데이트 내역
 
-For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
+버전별 전체 변경 사항은, GitHub 의 CHANGELOG.md 파일을 확인해주세요.
+
+# 25.3.1
+
+## ✨ 새로운 기능
+
+- 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
+
+## 🛠️ 개선 및 변경
+
+- ⚡ **Improve Performance & CPU Usage**: Optimize performance to reduce CPU usage and enhance efficiency.
+- 🔄 **Fix Synchronization & Crash Issues**: Resolve various sync-related and stability issues to improve reliability.
+- 📜 **Show Release Notes for Existing Congregations**: Ensure release notes are only displayed for congregations that are already loaded.
 
 ## 25.3.0
 
-### ✨ New Features
+### ✨ 새로운 기능
 
-- 🎵 **Play Background Music with Videos**: Allow background music to continue playing while videos are being viewed.
-- 🎥 **Camera Feed for Sign Language Media**: Add the ability to display a camera feed on the media window specifically for sign language users.
-- 📅 **Automatic Memorial Date & Background**: Automatically detect and set the Memorial date and prepare the Memorial background image.
-- 📜 **Show Release Notes In-App**: Display release notes directly in the application so users can easily review changes after an update.
+- 🎵 **동영상 재생 중 배경 음악 재생**: 동영상을 재생중일 때에도 배경 음악을 계속 재생하도록 하였습니다.
+- 🎥 **수어 미디어를 위한 카메라 화면 표시**: 수어 사용자를 위해 미디어가 재생중일 때에도 카메라 화면을 표시할 수 있는 기능을 추가하였습니다.
+- 📅 **기념식 배경 화면 자동 적용**: 기념식 일자를 자동으로 확인해 당일 기념식 배경 화면을 자동 적용하도록 하였습니다.
+- 📜 **애플리케이션 내 업데이트 내역 표시**: 애플리케이션 내에 업데이트 내역을 바로 표시하여 사용자가 변경사항을 쉽게 확인할 수 있도록 하였습니다.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ 개선 및 변경
 
-- ⚡ **Optimize Smart Cache Clearing**: Improve the smart cache-clearing mechanism for better performance and efficiency.
-- 📂 **Correct Circuit Overseer Media Placement**: Ensure Circuit Overseer media is placed in the correct section.
-- 📅 **Exclude Regular Meeting Media for Memorial**: Prevent fetching standard meeting media for the Memorial to prevent errors.
-- 📅 **Hide Regular Meeting Sections on Memorial**: Remove unnecessary meeting sections during the Memorial event for a cleaner layout.
-- 📖 **Fix Sign Language Bible Video Downloads**: Correctly download Sign Language Bible chapter videos from JWL playlists.
+- ⚡ **스마트 캐시 정리 최적화**: 스마트 캐시 정리 방식을 개선하여 성능과 효율성을 향상하였습니다.
+- 📂 **순회 감독자 미디어 변경 수정**: 순회 감독자 미디어가 올바른 위치에 배치되도록 수정하였습니다.
+- 📅 **기념식 일반 집회 미디어 제외**: 오류를 막기 위해 기념식이 있는 기간에는 일반 집회 미디어를 처리하지 않도록 하였습니다.
+- 📅 **기념식 당일 일반 집회 섹션 표시 제외**: 깔끔한 레이아웃을 제공하기 위해 기념식 당일에는 불필요한 집회 섹션 표시를 제거하였습니다.
+- 📖 **수어 성경 동영상 다운로드 수정**: JWL 재생 목록에서 올바른 수어 성경 동영상을 다운로드하도록 수정하였습니다.

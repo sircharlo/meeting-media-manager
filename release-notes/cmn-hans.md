@@ -4,6 +4,18 @@
 
 关于不同版本之间更改的完整清单，请参阅我们在 GitHub 上的 CHANGELOG.md文件。
 
+# 25.3.1
+
+## ✨ 新功能
+
+- 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
+
+## 🛠️ 改进和调整
+
+- ⚡ **Improve Performance & CPU Usage**: Optimize performance to reduce CPU usage and enhance efficiency.
+- 🔄 **Fix Synchronization & Crash Issues**: Resolve various sync-related and stability issues to improve reliability.
+- 📜 **Show Release Notes for Existing Congregations**: Ensure release notes are only displayed for congregations that are already loaded.
+
 ## 25.3.0
 
 ### ✨ 新功能

@@ -256,9 +256,17 @@ const musicEnded = async () => {
   });
 };
 
+let lastUpdate = 0;
+const updateInterval = 300;
+
 const updateRemainingTime = () => {
   try {
     if (!musicPlayer.value) return;
+
+    const now = Date.now();
+    if (now - lastUpdate < updateInterval) return; // Throttle time updates
+    lastUpdate = now;
+
     const remainingTime = Math.floor(
       musicPlayer.value.duration - musicPlayer.value.currentTime,
     );

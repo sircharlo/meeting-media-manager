@@ -1,26 +1,26 @@
-# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
+# Meeting Media Manager (M³) 소개 {#about-meeting-media-manager-m3}
 
 ![M³ banner](./../assets/m3-banner.png)
 
-## What is this app? {#what-is-this-app}
+## 소개 {#what-is-this-app}
 
 **Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on the official website of Jehovah's Witnesses.
 
 It features support for managing regular and custom meeting media, and support for multiple congregations and/or groups using the same computer account.
 
-:::info Note
+:::info 참고
 
-M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.
+2022년 5월에 JWMMF(JW Meeting Media Fetcher)가 M³ 로 이름이 변경되었습니다.
 
 :::
 
-## Why choose M³? {#why-choose-m3}
+## M³를 사용하는 이유 {#why-choose-m3}
 
 M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms.
 
-### Key benefits {#key-benefits}
+### 주요 기능
 
-- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
+- **간편한 미디어 프레젠테이션**: 미디어를 표시하는 것이 정말 간편해집니다 — M³ 를 실행하고 바로 사용하세요. 복잡한 설치 및 추가 작업이 사라집니다.
 
 - **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
 
@@ -28,11 +28,11 @@ M³ is the ultimate tool for managing meeting media, offering a seamless, reliab
 
 - **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
 
-- **Reliable and stable**: Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
+- **Reliable and stable**: Built to perform when you need it most. 버그를 발견하셨나요? Report it, and it will be addressed promptly.
 
-## What can M³ do? {#what-can-m3-do}
+## M³로 무얼 할 수 있나요? {#what-can-m3-do}
 
-In short, M³ allows you to easily and automatically download, synchronize, share and present all meeting media.
+M³를 사용하면 모든 집회 미디어를 쉽게 자동으로 다운로드하고 동기화하고 공유할 수 있습니다.
 
 For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode has all the features needed to simplify the task of sharing media with the congregation, including:
 
@@ -47,12 +47,12 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - Always have a public talks media overview (S-34) one click away and ready to be used any minute you need it.
 - Custom videos, pictures, audio files and even PDF files can be easily imported too!
 
-**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
+**지금 M³를 사용해보시고 어떤 기능이 있는지 확인해보세요! 집회에서 미디어를 표시하는 것이 정말 간편해집니다.**
 
 ![M³ preview](./../assets/m3-preview.png)
 
-## Does M³ work in my language? {#does-m3-work-in-my-language}
+## 내가 사용하는 언어로도 M³가 작동하나요? {#does-m3-work-in-my-language}
 
-**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need.
+**물론입니다!** 여호와의 증인 공식 웹사이트에 있는 수백 가지 언어 가운데 어떤 언어를 사용하든 자동으로 집회 미디어를 다운로드 할 수 있습니다. 사용 가능한 언어가 자동으로 업데이트되므로 필요한 언어를 검색해보세요.
 
-In addition, M³ itself has been translated into several languages by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
+또한, M³ 자체도 많은 자원봉사자에 의해 다양한 언어로 번역되고 있습니다. 선택 가능한 언어를 선택해 M³를 사용해보세요.

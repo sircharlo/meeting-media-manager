@@ -12,7 +12,7 @@ O código-fonte desta app está disponível para que todos possam examinar e ver
 
 ## :thinking: Esta aplicação infringe os Termos de Uso do site oficial das Testemunhas de Jeová? {#terms-of-use}
 
-**No.** The Terms of Use of the official website of Jehovah's Witnesses explicitly allow the kind of usage that we are making. Aqui está o excerto relevante desses termos (ênfase adicionada):
+**Não.** Os Termos de Uso do site oficial das Testemunhas de Jeová permitem explicitamente o tipo de uso que estamos a fazer. Aqui está o excerto relevante desses termos (ênfase adicionada):
 
 > Você não pode:
 >

@@ -350,16 +350,24 @@ const { post: postMediaAction } = useBroadcastChannel<string, string>({
   name: 'media-action',
 });
 
+const { post: postCameraStream } = useBroadcastChannel<
+  null | string,
+  null | string
+>({
+  name: 'camera-stream',
+});
+
+const appSettingsStore = useAppSettingsStore();
+
 watch(
   () => mediaPlayingAction.value,
   (newAction, oldAction) => {
     if (newAction !== oldAction) postMediaAction(newAction);
     if (currentState.currentLangObject?.isSignLanguage) {
       if (newAction !== 'play') {
-        const cameraId = useAppSettingsStore().displayCameraId;
+        const cameraId = appSettingsStore.displayCameraId;
         if (cameraId) {
-          const cameraStream = new BroadcastChannel('camera-stream');
-          cameraStream.postMessage(cameraId);
+          postCameraStream(cameraId);
         } else {
           showMediaWindow(false);
         }
