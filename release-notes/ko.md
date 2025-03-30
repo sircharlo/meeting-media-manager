@@ -4,13 +4,13 @@
 
 버전별 전체 변경 사항은, GitHub 의 CHANGELOG.md 파일을 확인해주세요.
 
-# 25.3.1
+## 25.3.1
 
-## ✨ 새로운 기능
+### ✨ 새로운 기능
 
 - 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
 
-## 🛠️ 개선 및 변경
+### 🛠️ 개선 및 변경
 
 - ⚡ **Improve Performance & CPU Usage**: Optimize performance to reduce CPU usage and enhance efficiency.
 - 🔄 **Fix Synchronization & Crash Issues**: Resolve various sync-related and stability issues to improve reliability.
