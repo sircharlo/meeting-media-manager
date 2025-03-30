@@ -68,6 +68,7 @@
   </q-btn>
 </template>
 <script setup lang="ts">
+import { useBroadcastChannel } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { sendObsSceneEvent } from 'src/utils/obs';
@@ -98,6 +99,13 @@ const startStreaming = () => {
   }
 };
 
+const { post: postCameraStream } = useBroadcastChannel<
+  null | string,
+  null | string
+>({
+  name: 'camera-stream',
+});
+
 watch(streaming, (val) => {
   if (val) {
     sendObsSceneEvent('media');
@@ -106,8 +114,7 @@ watch(streaming, (val) => {
     if (currentState.currentLangObject?.isSignLanguage) {
       const cameraId = useAppSettingsStore().displayCameraId;
       if (cameraId) {
-        const cameraStream = new BroadcastChannel('camera-stream');
-        cameraStream.postMessage(cameraId);
+        postCameraStream(cameraId);
       } else {
         showMediaWindow(false);
       }

@@ -389,11 +389,17 @@ const getCameras = async () => {
   }
 };
 
+const { post: postCameraStream } = useBroadcastChannel<
+  null | string,
+  null | string
+>({
+  name: 'camera-stream',
+});
+
 watch(displayCameraId, (newCameraId) => {
   if (currentState.mediaPlaying) return;
   if (newCameraId) {
-    const cameraStream = new BroadcastChannel('camera-stream');
-    cameraStream.postMessage(newCameraId);
+    postCameraStream(newCameraId);
   } else {
     currentState.mediaPlayingUrl = '';
   }

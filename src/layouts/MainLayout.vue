@@ -433,7 +433,6 @@ bcClose.onmessage = (event) => {
         closeAttempts.value = 0;
       }, 10000);
     } else {
-      const bcClose = new BroadcastChannel('closeAttempts');
       bcClose.postMessage({ authorizedClose: true });
     }
   }
