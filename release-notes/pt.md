@@ -4,13 +4,13 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
-# 25.3.1
+## 25.3.1
 
-## ✨ Novos Recursos
+### ✨ Novos Recursos
 
 - 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
 
-## 🛠️ Melhorias e Ajustes
+### 🛠️ Melhorias e Ajustes
 
 - ⚡ **Improve Performance & CPU Usage**: Optimize performance to reduce CPU usage and enhance efficiency.
 - 🔄 **Fix Synchronization & Crash Issues**: Resolve various sync-related and stability issues to improve reliability.
