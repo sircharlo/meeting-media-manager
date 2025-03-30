@@ -4,13 +4,13 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
-# 25.3.1
+## 25.3.1
 
-## ✨ Nove funkcije
+### ✨ Nove funkcije
 
 - 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
 
-## 🛠️ Izboljšave in popravki
+### 🛠️ Izboljšave in popravki
 
 - ⚡ **Improve Performance & CPU Usage**: Optimize performance to reduce CPU usage and enhance efficiency.
 - 🔄 **Fix Synchronization & Crash Issues**: Resolve various sync-related and stability issues to improve reliability.
