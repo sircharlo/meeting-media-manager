@@ -223,8 +223,9 @@ export const getMetadataFromMediaPath = async (
     }
     return metadata;
   } catch (error) {
+    if (error instanceof Event) return defaultMetadata;
     errorCatcher(error, {
-      contexts: { fn: { error, mediaPath, name: 'getMetadataFromMediaPath' } },
+      contexts: { fn: { mediaPath, name: 'getMetadataFromMediaPath' } },
     });
     return defaultMetadata;
   }
