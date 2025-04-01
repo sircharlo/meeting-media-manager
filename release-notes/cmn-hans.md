@@ -8,13 +8,13 @@
 
 ### ✨ 新功能
 
-- 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
+- 🌏 **支持新语言：韩语**: 添加对韩语的支持, 扩大更多用户的访问。
 
 ### 🛠️ 改进和调整
 
-- ⚡ **Improve Performance & CPU Usage**: Optimize performance to reduce CPU usage and enhance efficiency.
-- 🔄 **Fix Synchronization & Crash Issues**: Resolve various sync-related and stability issues to improve reliability.
-- 📜 **Show Release Notes for Existing Congregations**: Ensure release notes are only displayed for congregations that are already loaded.
+- ⚡ **提高性能和 CPU 使用率**: 优化性能以降低CPU 使用率并提高效率。
+- 🔄  **修复同步和崩溃问题**: 解决各种与同步和稳定相关的问题以提高可靠性。
+- 📜 **显示现有会众的发布笔记**: 确保发布笔记只显示于已加载的会众中。
 
 ## 25.3.0
 
