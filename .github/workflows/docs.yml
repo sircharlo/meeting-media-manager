@@ -50,9 +50,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Run tests
-        run: |
-          yarn quasar prepare
-          yarn docs:test
+        run: yarn docs:test
   build:
     runs-on: ubuntu-latest
     needs: [lint, test]
