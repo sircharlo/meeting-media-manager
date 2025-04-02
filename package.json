@@ -26,11 +26,10 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "docs:lint": "eslint -c ./eslint.config.js './docs/**/*.{js,ts,cjs,mjs,mts,vue}'",
+    "docs:lint": "eslint -c ./eslint.config.js './docs/**/*.{js,ts,cjs,mjs,mts,vue}' && vue-tsc --noEmit -p docs/tsconfig.json",
     "docs:test": "vitest --project docs",
     "format": "prettier \"**/*\" --ignore-unknown --write",
-    "lint": "eslint -c ./eslint.config.js './src/**/*.{js,ts,cjs,mjs,mts,vue}'",
-    "lint:types": "vue-tsc --noEmit -p tsconfig.json",
+    "lint": "eslint -c ./eslint.config.js './src/**/*.{js,ts,cjs,mjs,mts,vue}' && vue-tsc --noEmit -p tsconfig.json",
     "test:unit": "vitest --project quasar --project electron"
   },
   "dependencies": {
