@@ -17,7 +17,6 @@ export const getVideoDuration = async (
 
 export const parseMediaFile = async (filePath: string, options?: IOptions) => {
   const musicMetadata = await import('music-metadata');
-  // @ts-expect-error: parseFile does not exist in browser context
   return musicMetadata.parseFile(filePath, options);
 };
 
