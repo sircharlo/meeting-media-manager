@@ -9709,12 +9709,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"image-size@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "image-size@npm:2.0.1"
+"image-size@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "image-size@npm:2.0.2"
   bin:
     image-size: bin/image-size.js
-  checksum: 10c0/925bf741630a1c5b42fd96ae5332763ce034817f8b65221cfaaea64c3d38f4cf774763fd810e26e9510f635de57b10331404e3ca0e4e511e875d5d05f33036c0
+  checksum: 10c0/f09dd0f7cf8511cd20e4f756bdb5a7cb6d2240de3323f41bde266bed8373392a293892bf12e907e2995f52833fd88dd27cf6b1a52ab93968afc716cb78cd7b79
   languageName: node
   linkType: hard
 
@@ -11520,7 +11520,7 @@ __metadata:
     globals: "npm:^16.0.0"
     heic-convert: "npm:^2.1.0"
     husky: "npm:^9.1.7"
-    image-size: "npm:^2.0.1"
+    image-size: "npm:^2.0.2"
     is-online: "npm:^11.0.0"
     lint-staged: "npm:^15.5.0"
     lodash-es: "npm:^4.17.21"
