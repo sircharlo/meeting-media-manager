@@ -36,7 +36,7 @@
     "@numairawan/video-duration": "^1.0.0",
     "@panzoom/panzoom": "^4.6.0",
     "@quasar/extras": "^1.16.17",
-    "@sentry/electron": "^5.11.0",
+    "@sentry/electron": "^5.12.0",
     "@sentry/vue": "8.51.0",
     "@vueuse/core": "^13.0.0",
     "@vueuse/router": "^13.0.0",
