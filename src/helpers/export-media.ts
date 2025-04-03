@@ -7,7 +7,7 @@ import { setupFFmpeg } from 'src/helpers/fs';
 import { datesAreSame, formatDate } from 'src/utils/date';
 import { trimFilepathAsNeeded } from 'src/utils/fs';
 import { pad } from 'src/utils/general';
-import { isVideo } from 'src/utils/media';
+import { isJwPlaylist, isVideo } from 'src/utils/media';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
@@ -87,6 +87,7 @@ const exportDayToFolder = async (targetDate?: Date) => {
 
       if (
         !isVideo(sourceFilePath) &&
+        !isJwPlaylist(sourceFilePath) &&
         currentStateStore.currentSettings?.convertFilesToMp4
       ) {
         try {

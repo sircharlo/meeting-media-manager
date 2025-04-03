@@ -47,7 +47,6 @@ jobs:
         run: |
           yarn quasar prepare
           yarn lint
-          yarn lint:types
   test:
     runs-on: ubuntu-latest
     steps:

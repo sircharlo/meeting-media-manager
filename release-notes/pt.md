@@ -4,17 +4,17 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
-# 25.3.1
+## 25.3.1
 
-## ✨ Novos Recursos
+### ✨ Novos Recursos
 
-- 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
+- 🌏 **Novo Idioma: Coreano**: Adiciona suporte para o idioma coreano, expandindo a acessibilidade para mais usuários.
 
-## 🛠️ Melhorias e Ajustes
+### 🛠️ Melhorias e Ajustes
 
-- ⚡ **Improve Performance & CPU Usage**: Optimize performance to reduce CPU usage and enhance efficiency.
-- 🔄 **Fix Synchronization & Crash Issues**: Resolve various sync-related and stability issues to improve reliability.
-- 📜 **Show Release Notes for Existing Congregations**: Ensure release notes are only displayed for congregations that are already loaded.
+- ⚡ **Melhora no Desempenho e Uso da CPU**: Otimiza o desempenho para reduzir o uso da CPU e melhorar a eficiência.
+- 🔄 **Correção de Problemas de Sincronização e Travamento**: Resolve vários problemas de estabilidade e relacionados à sincronização para melhorar a confiabilidade.
+- 📜 **Mostrar Notas de Lançamento para Congregações Existentes**: Garante que as notas de lançamento só sejam exibidas para congregações que já estão carregadas.
 
 ## 25.3.0
 

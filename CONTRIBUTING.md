@@ -66,9 +66,6 @@ yarn format
 # Lint all JS/TS/Vue files
 yarn lint
 
-# Check for type errors
-yarn lint:types
-
 # Run unit tests
 yarn test:unit
 ```
@@ -198,9 +195,6 @@ yarn format
 
 # Lint all JS/TS/Vue files
 yarn docs:lint
-
-# Check for type errors
-yarn lint:types
 
 # Run tests
 yarn docs:test

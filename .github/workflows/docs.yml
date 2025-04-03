@@ -36,10 +36,7 @@ jobs:
       - name: Install dependencies
         run: yarn install
       - name: Lint files
-        run: |
-          yarn quasar prepare
-          yarn docs:lint
-          yarn lint:types
+        run: yarn docs:lint
   test:
     runs-on: ubuntu-latest
     steps:

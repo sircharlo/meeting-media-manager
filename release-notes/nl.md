@@ -4,17 +4,17 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
-# 25.3.1
+## 25.3.1
 
-## ✨ Nieuwe functies
+### ✨ Nieuwe functies
 
-- 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
+- 🌏 **Nieuwe Taal: Koreaans**: Ondersteun de Koreaanse taal, waardoor de toegankelijkheid voor meer gebruikers toeneemt.
 
-## 🛠️ Verbeteringen en tweaks
+### 🛠️ Verbeteringen en tweaks
 
-- ⚡ **Improve Performance & CPU Usage**: Optimize performance to reduce CPU usage and enhance efficiency.
-- 🔄 **Fix Synchronization & Crash Issues**: Resolve various sync-related and stability issues to improve reliability.
-- 📜 **Show Release Notes for Existing Congregations**: Ensure release notes are only displayed for congregations that are already loaded.
+- ⚡ **Prestaties & CPU-gebruik verbeteren**: Optimaliseer prestaties om CPU-gebruik te verminderen en efficiëntie te verbeteren.
+- 🔄 **Problemen met synchroniseren en crashen oplossen**: los verschillende sync-gerelateerde en stabiliteitsproblemen op om de betrouwbaarheid te verbeteren.
+- 📜 **Toon release-notities voor bestaande gemeenten**: Zorg ervoor dat release notities alleen worden weergegeven voor gemeenten die al zijn ingeladen.
 
 ## 25.3.0
 

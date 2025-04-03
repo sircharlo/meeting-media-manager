@@ -4,17 +4,17 @@
 
 버전별 전체 변경 사항은, GitHub 의 CHANGELOG.md 파일을 확인해주세요.
 
-# 25.3.1
+## 25.3.1
 
-## ✨ 새로운 기능
+### ✨ 새로운 기능
 
-- 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
+- 🌏 **신규 언어: 한국어**: 더 많은 사용자가 쉽게 사용할 수 있도록 한국어 지원을 추가하였습니다.
 
-## 🛠️ 개선 및 변경
+### 🛠️ 개선 및 변경
 
-- ⚡ **Improve Performance & CPU Usage**: Optimize performance to reduce CPU usage and enhance efficiency.
-- 🔄 **Fix Synchronization & Crash Issues**: Resolve various sync-related and stability issues to improve reliability.
-- 📜 **Show Release Notes for Existing Congregations**: Ensure release notes are only displayed for congregations that are already loaded.
+- ⚡ **성능 및 CPU 사용량 개선**: 성능을 최적화하여 CPU 사용량을 줄이고 효율성을 높였습니다.
+- 🔄 **동기화 및 충돌 오류 수정**: 다양한 동기화 관련 및 안정성 문제를 수정하여 안정성을 높였습니다.
+- 📜 **기존 회중에만 업데이트 내역 표시**: 이미 애플리케이션을 사용중인 회중을 대상으로만 업데이트 내역을 표시하도록 하였습니다.
 
 ## 25.3.0
 
