@@ -45,7 +45,7 @@
     "chokidar": "^4.0.3",
     "countries-and-timezones": "^3.7.2",
     "decompress": "^4.2.1",
-    "dompurify": "^3.2.4",
+    "dompurify": "^3.2.5",
     "electron-dl-manager": "^3.2.1",
     "electron-updater": "^6.6.2",
     "fluent-ffmpeg": "^2.1.3",
