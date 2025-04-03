@@ -3727,12 +3727,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^22.13.17, @types/node@npm:^22.7.7":
-  version: 22.13.17
-  resolution: "@types/node@npm:22.13.17"
+"@types/node@npm:*, @types/node@npm:^22.14.0, @types/node@npm:^22.7.7":
+  version: 22.14.0
+  resolution: "@types/node@npm:22.14.0"
   dependencies:
-    undici-types: "npm:~6.20.0"
-  checksum: 10c0/77a052fec0fe02f60557e1c5f3f28eb09cd9bee426be88328a94689150a3c0df5b4b6b69fad28157fb34521693dad0b311ecd7f613845d681ff973991310c20e
+    undici-types: "npm:~6.21.0"
+  checksum: 10c0/9d79f3fa1af9c2c869514f419c4a4905b34c10e12915582fd1784868ac4e74c6d306cf5eb47ef889b6750ab85a31be96618227b86739c4a3e0b1c15063f384c6
   languageName: node
   linkType: hard
 
@@ -4049,9 +4049,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/eslint-plugin@npm:^1.1.38":
-  version: 1.1.38
-  resolution: "@vitest/eslint-plugin@npm:1.1.38"
+"@vitest/eslint-plugin@npm:^1.1.39":
+  version: 1.1.39
+  resolution: "@vitest/eslint-plugin@npm:1.1.39"
   peerDependencies:
     "@typescript-eslint/utils": ^8.24.0
     eslint: ">= 8.57.0"
@@ -4062,7 +4062,7 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 10c0/b5bdde57dbea90a35d0c37d29b1574d4f0fab8da19a52570f33a51188acbdcb9565f69f24e79010d3351f78591449896d326030e299736483ff5729b07d76904
+  checksum: 10c0/baaa1430800f4072c4f010a41cc9009aa2103ead53442106700cadfcbb0929362168bbb3580afc3743a9bbc391eca36956f549e1a4b7a69e57a2c59f4133804f
   languageName: node
   linkType: hard
 
@@ -7333,16 +7333,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^35.1.2":
-  version: 35.1.2
-  resolution: "electron@npm:35.1.2"
+"electron@npm:^35.1.3":
+  version: 35.1.3
+  resolution: "electron@npm:35.1.3"
   dependencies:
     "@electron/get": "npm:^2.0.0"
     "@types/node": "npm:^22.7.7"
     extract-zip: "npm:^2.0.1"
   bin:
     electron: cli.js
-  checksum: 10c0/2cd8adb70f669d28fbb1c7dddeb2cbe32b970950f13310b518cfa6aa926eaa6647514ed44fda4af95577c648353a4dd3a3a398bfb8a5f31fcbe48054241c2d14
+  checksum: 10c0/6a838a9a4136a9c81ef4b7836d44dac9348a7f5ff64f8c89423a461d28d6ed9c6e2f9146caf73e49b3003045fc0171eeb97ac78a43dc7b7a7cc2b992e131d52c
   languageName: node
   linkType: hard
 
@@ -11504,13 +11504,13 @@ __metadata:
     "@types/fs-extra": "npm:^11.0.4"
     "@types/heic-convert": "npm:^2.1.0"
     "@types/lodash-es": "npm:^4.17.12"
-    "@types/node": "npm:^22.13.17"
+    "@types/node": "npm:^22.14.0"
     "@types/pretty-bytes": "npm:^5.2.0"
     "@types/sanitize-html": "npm:^2.15.0"
     "@types/sortablejs": "npm:^1.15.8"
     "@typescript-eslint/utils": "npm:^8.29.0"
     "@vitejs/plugin-vue": "npm:^5.2.3"
-    "@vitest/eslint-plugin": "npm:^1.1.38"
+    "@vitest/eslint-plugin": "npm:^1.1.39"
     "@vue/eslint-config-prettier": "npm:^10.2.0"
     "@vue/eslint-config-typescript": "npm:^14.5.0"
     "@vue/test-utils": "npm:^2.4.6"
@@ -11523,7 +11523,7 @@ __metadata:
     countries-and-timezones: "npm:^3.7.2"
     decompress: "npm:^4.2.1"
     dompurify: "npm:^3.2.4"
-    electron: "npm:^35.1.2"
+    electron: "npm:^35.1.3"
     electron-builder: "npm:^26.0.12"
     electron-dl-manager: "npm:^3.2.1"
     electron-updater: "npm:^6.6.2"
@@ -11541,7 +11541,7 @@ __metadata:
     lodash-es: "npm:^4.17.21"
     mime: "npm:^4.0.6"
     msw: "npm:^2.7.3"
-    music-metadata: "npm:^11.0.3"
+    music-metadata: "npm:^11.0.5"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.1.0"
     pdfjs-dist: "npm:^5.1.91"
@@ -11559,7 +11559,7 @@ __metadata:
     sortablejs-vue3: "npm:^1.2.11"
     typescript: "npm:~5.8.2"
     upath: "npm:^2.0.1"
-    vite: "npm:^6.2.4"
+    vite: "npm:^6.2.5"
     vitepress: "npm:^2.0.0-alpha.4"
     vitest: "npm:^3.1.1"
     vue: "npm:^3.5.13"
@@ -12097,9 +12097,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^11.0.3":
-  version: 11.0.3
-  resolution: "music-metadata@npm:11.0.3"
+"music-metadata@npm:^11.0.5":
+  version: 11.0.5
+  resolution: "music-metadata@npm:11.0.5"
   dependencies:
     "@tokenizer/token": "npm:^0.3.0"
     content-type: "npm:^1.0.5"
@@ -12110,7 +12110,7 @@ __metadata:
     strtok3: "npm:^10.2.2"
     token-types: "npm:^6.0.0"
     uint8array-extras: "npm:^1.4.0"
-  checksum: 10c0/689954eb61f513983d2637de05c502a16dcf756ea5f4b920935d49350b0bcae375b3c3121639f03e2e716c7a3a304aa293ca6122f58e93408ad95f48cc0720b8
+  checksum: 10c0/5ed3be9f6d20f84cd99b97564ac0290bf4cd38c8dde4c9b7a25e4b48a43691008f1088ed52c4cc18bb1881836b010626e513a62ae07d4bf50935a4a189dc77e9
   languageName: node
   linkType: hard
 
@@ -16781,10 +16781,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"undici-types@npm:~6.20.0":
-  version: 6.20.0
-  resolution: "undici-types@npm:6.20.0"
-  checksum: 10c0/68e659a98898d6a836a9a59e6adf14a5d799707f5ea629433e025ac90d239f75e408e2e5ff086afc3cace26f8b26ee52155293564593fbb4a2f666af57fc59bf
+"undici-types@npm:~6.21.0":
+  version: 6.21.0
+  resolution: "undici-types@npm:6.21.0"
+  checksum: 10c0/c01ed51829b10aa72fc3ce64b747f8e74ae9b60eafa19a7b46ef624403508a54c526ffab06a14a26b3120d055e1104d7abe7c9017e83ced038ea5cf52f8d5e04
   languageName: node
   linkType: hard
 
@@ -17302,9 +17302,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^5.0.0 || ^6.0.0, vite@npm:^6.1.0, vite@npm:^6.2.1, vite@npm:^6.2.4":
-  version: 6.2.4
-  resolution: "vite@npm:6.2.4"
+"vite@npm:^5.0.0 || ^6.0.0, vite@npm:^6.1.0, vite@npm:^6.2.1, vite@npm:^6.2.5":
+  version: 6.2.5
+  resolution: "vite@npm:6.2.5"
   dependencies:
     esbuild: "npm:^0.25.0"
     fsevents: "npm:~2.3.3"
@@ -17350,7 +17350,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/5a011ee5cce91de023a22564a314f04bf64d0d02b420d92c3d539d10257448d60e98e52b491404656426fba4a50dc25f107282540d7388fc5303dc441280155e
+  checksum: 10c0/226bb3c1875e1982559007007580e8d083b81f5289f18e28841d622ba030599e1bd9926adccc8264879e319e9f9e4f48a38a0dc52a5dfcdf2a9cb7313bfc1816
   languageName: node
   linkType: hard
 
