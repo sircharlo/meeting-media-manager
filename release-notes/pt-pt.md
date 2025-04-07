@@ -8,13 +8,13 @@ Para a lista completa de alterações entre versões, consulte o ficheiro CHANGE
 
 ### ✨ Novas Funcionalidades
 
-- 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
+- : globe_showing_Asia-Austrália: **Novo Idioma: Coreano**: Adicionado suporte para o idioma coreano, expandindo a acessibilidade para mais utilizadores.
 
 ### 🛠️ Melhorias e Ajustes
 
-- ⚡ **Improve Performance & CPU Usage**: Optimize performance to reduce CPU usage and enhance efficiency.
-- 🔄 **Fix Synchronization & Crash Issues**: Resolve various sync-related and stability issues to improve reliability.
-- 📜 **Show Release Notes for Existing Congregations**: Ensure release notes are only displayed for congregations that are already loaded.
+- ⚡ **Melhor desempenho e uso da CPU**: Otimização do desempenho para reduzir o uso da CPU e melhorar a eficiência.
+- 🔄 **Corrigir problemas de sincronização e 'crash'**: resolver vários problemas de estabilidade e sincronização para melhorar a confiabilidade.
+- 📜 **Mostrar Notas de Lançamento para Congregações Existentes**: Garante de que as notas de lançamento só são exibidas para congregações que já estão carregadas.
 
 ## 25.3.0
 
