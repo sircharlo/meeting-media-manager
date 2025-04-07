@@ -195,9 +195,9 @@ export function updateLookupPeriod(reset = false) {
     }
 
     const existingDates = new Set(
-      lookupPeriod[currentCongregation].map((d) =>
-        formatDate(d.date, 'YYYY/MM/DD'),
-      ),
+      lookupPeriod[currentCongregation]
+        .filter((d) => d.dynamicMedia.length || !d.meeting)
+        .map((d) => formatDate(d.date, 'YYYY/MM/DD')),
     );
     const currentDate = dateFromString();
 

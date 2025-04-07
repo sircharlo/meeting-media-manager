@@ -1277,8 +1277,9 @@ export const dynamicMediaMapper = async (
     if (source !== 'additional') {
       const songs = allMedia.filter((m) => isSong(m));
       middleSongParagraphOrdinal =
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        songs.length === 3 ? songs[1]!.BeginParagraphOrdinal : 0;
+        isMwMeetingDay(lookupDate) && songs?.length >= 2 && songs[1]
+          ? songs[1].BeginParagraphOrdinal
+          : 0;
       if (isCoWeek(lookupDate)) {
         // The last songs for both MW and WE meeting get replaced during the CO visit
         allMedia.pop();
