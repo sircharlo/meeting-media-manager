@@ -4,23 +4,23 @@
 
 이 가이드는 왕국회관에서 **Meeting Media Manager (M³)** 를 다운로드 및 설치하고 설정하는 방법에 대해 안내합니다. 가이드에 따라 회중 집회에서 미디어를 원활하게 관리하기 위한 설정을 진행해보세요.
 
-## 1. Download and install {#download-and-install}
+## 1. 다운로드 및 설치 {#download-and-install}
 
 <script setup>
   import { data } from './../../data/version.data.mts'
 </script>
 
-1. Download the appropriate version for your operating system:
-  - **Windows:**
+1. 사용하는 운영체제에 해당하는 버전을 다운로드하세요.
+  - **윈도우:**
     - For most Windows systems, download <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
     - For older 32-bit Windows systems, download <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
     - For a portable version, download <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
   - **macOS:**
     - **M-series (Apple Silicon)**: Download <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
     - **Intel-based Macs**: Download <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
-  - **Linux:**
+  - **리눅스:**
     - Download <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
-2. If the download links do not work, visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and download the correct version manually.
+2. 위 다운로드 링크가 동작하지 않는 경우 [M³ 다운로드 페이지](https://github.com/sircharlo/meeting-media-manager/releases/latest) 에 방문하여 직접 다운로드해주세요.
 3. Open the installer and follow the on-screen instructions to install M³.
 4. Launch M³.
 5. Go through the configuration wizard.
@@ -89,9 +89,9 @@ If the media window is black when presenting the website after updating M³, try
 
 After these steps, screen sharing should function as expected once again.
 
-:::tip Tip
+:::tip 참고
 
-These steps are optional and can be skipped if you do not plan to use the website presentation feature. On the other hand, if you do plan to use the website presentation feature, it is recommended to follow these steps after every update to ensure the feature works as expected.
+웹사이트 표시 기능을 사용하지 않을 경우, 이 작업은 진행하지 않아도 괜찮습니다. 하지만 웹사이트 표시 기능을 사용할 경우, 애플리케이션이 업데이트될 때마다 이 작업을 진행하는 것을 권장합니다.
 
 :::
 
@@ -101,7 +101,7 @@ These steps are optional and can be skipped if you do not plan to use the websit
 
 When launching M³ for the first time, you will be prompted to choose your preferred **display language**. Choose the language you want M³ to use for its interface.
 
-:::tip Tip
+:::tip 참고
 
 This is does not have to be the same language as the one in which M³ will download media. The language for media downloads is configured in a later step.
 
@@ -144,7 +144,7 @@ You will also be given the option of **caching all videos from the songbook**. T
 - **Pros:** Meeting media will be available much faster.
 - **Cons:** The size of the media cache will increase significantly, by approximately 5GB.
 
-:::tip Tip
+:::tip 참고
 
 If your Kingdom Hall has sufficient storage space, it’s recommended to **enable** this option for efficiency and perceived performance.
 
@@ -158,7 +158,7 @@ If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Z
 - **Password:** The password used to connect to the OBS Studio Websocket plugin.
 - **Scenes:** The OBS scenes that will be used during media presentations. You'll need one scene that captures the media window or screen, and one that shows the stage.
 
-:::tip Tip
+:::tip 참고
 
 If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
 
