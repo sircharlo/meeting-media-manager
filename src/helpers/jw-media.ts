@@ -1242,7 +1242,11 @@ const getParagraphNumbers = (
       parseInt(match[0]),
     ); // Find all numbers in the line
 
-    if (!numbers.length) return paragraphLabel;
+    if (
+      !numbers.length ||
+      !numbers.map((n) => n.toString()).includes(paragraphLabel.toString())
+    )
+      return paragraphLabel;
     if (numbers.length === 1) return numbers[0];
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
