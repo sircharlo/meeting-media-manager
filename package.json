@@ -58,7 +58,7 @@
     "obs-websocket-js": "^5.0.6",
     "p-queue": "^8.1.0",
     "pdfjs-dist": "^5.1.91",
-    "pinia": "^3.0.1",
+    "pinia": "^3.0.2",
     "pinia-plugin-persistedstate": "^4.2.0",
     "pinia-shared-state": "^1.0.1",
     "pretty-bytes": "^6.1.1",
