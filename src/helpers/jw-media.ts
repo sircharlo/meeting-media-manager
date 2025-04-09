@@ -1746,8 +1746,31 @@ export const getWeMedia = async (lookupDate: Date) => {
       );
     const allMedia = finalMedia;
     if (mergedSongs[0]) {
-      allMedia.unshift(mergedSongs[0]);
-      if (mergedSongs[1]) allMedia.push(mergedSongs[1]);
+      const index0 = allMedia.findIndex(
+        (item) =>
+          item.Track === mergedSongs[0]?.Track &&
+          item.KeySymbol === mergedSongs[0]?.KeySymbol,
+      );
+
+      if (index0 !== -1) {
+        allMedia[index0] = mergedSongs[0];
+      } else {
+        allMedia.unshift(mergedSongs[0]);
+      }
+
+      if (mergedSongs[1]) {
+        const index1 = allMedia.findIndex(
+          (item) =>
+            item.Track === mergedSongs[1]?.Track &&
+            item.KeySymbol === mergedSongs[1]?.KeySymbol,
+        );
+
+        if (index1 !== -1) {
+          allMedia[index1] = mergedSongs[1];
+        } else {
+          allMedia.push(mergedSongs[1]);
+        }
+      }
     }
 
     const multimediaMepsLangs = getMultimediaMepsLangs({ db, docId });
