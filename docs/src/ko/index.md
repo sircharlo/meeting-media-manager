@@ -1,7 +1,7 @@
 ---
 layout: home
 hero:
-  name: M³ documentation
+  name: M³ 가이드
   text: Help to set up and use Meeting Media Manager
   image: /logo.svg
   actions:
@@ -31,6 +31,6 @@ features:
     title: Multiple languages
     details: Download meeting media in hundreds of languages and use M³'s interface in any of the many available languages.
   - icon: 🧩
-    title: OBS Studio Integration
+    title: OBS Studio 연동
     details: Integrates with OBS Studio for enhanced media management and presenting capabilities.
 ---

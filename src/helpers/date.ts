@@ -1,4 +1,4 @@
-import type { DateInfo } from 'src/types';
+import type { DateInfo, DynamicMediaObject } from 'src/types';
 
 import { DAYS_IN_FUTURE } from 'src/constants/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -194,10 +194,19 @@ export function updateLookupPeriod(reset = false) {
       lookupPeriod[currentCongregation] = [];
     }
 
+    const isRelevantMedia = (meeting: string, media: DynamicMediaObject[]) => {
+      const excludedSections: Record<string, string[]> = {
+        mw: ['wt'],
+        we: ['ayfm', 'lac', 'tgw'],
+      };
+      const excluded = excludedSections[meeting] || [];
+      return media.some((m) => !excluded.includes(m.section));
+    };
+
     const existingDates = new Set(
-      lookupPeriod[currentCongregation].map((d) =>
-        formatDate(d.date, 'YYYY/MM/DD'),
-      ),
+      lookupPeriod[currentCongregation]
+        .filter((d) => !d.meeting || isRelevantMedia(d.meeting, d.dynamicMedia))
+        .map((d) => formatDate(d.date, 'YYYY/MM/DD')),
     );
     const currentDate = dateFromString();
 

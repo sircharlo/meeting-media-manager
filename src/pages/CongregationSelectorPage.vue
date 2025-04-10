@@ -219,6 +219,7 @@ const runMigrations = async () => {
     'localStorageToPiniaPersist',
     'addBaseUrlToAllCongregations',
     'moveAdditionalMediaMaps',
+    '25.3.2-refreshDynamicMedia',
   ];
 
   for (const migration of migrationsToRun) {

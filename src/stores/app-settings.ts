@@ -34,6 +34,34 @@ export const useAppSettingsStore = defineStore('app-settings', {
         let successfulMigration = true;
         const congregationStore = useCongregationSettingsStore();
         const jwStore = useJwStore();
+
+        /**
+         * Removes all dynamic media entries from the lookupPeriod store, and sets the
+         * complete and error flags to false for all days that have a meeting. This is
+         * needed after certain updates to reset the state of the dynamic media items.
+         */
+        const refreshDynamicMedia = () => {
+          const currentLookupPeriods: Record<string, DateInfo[]> = JSON.parse(
+            JSON.stringify(jwStore.lookupPeriod),
+          );
+          for (const [congId, dateInfo] of Object.entries(
+            currentLookupPeriods,
+          )) {
+            if (!congId || !dateInfo) continue;
+            dateInfo
+              .filter((day) => !!day.meeting)
+              .forEach((day) => {
+                day.dynamicMedia =
+                  day.dynamicMedia.filter(
+                    (item) => item.source !== 'dynamic',
+                  ) || [];
+                day.complete = false;
+                day.error = false;
+              });
+          }
+          jwStore.lookupPeriod = currentLookupPeriods;
+        };
+
         if (type === 'firstRun') {
           const oldVersionPath = window.electronApi.path.join(
             await window.electronApi.getAppDataPath(),
@@ -178,6 +206,8 @@ export const useAppSettingsStore = defineStore('app-settings', {
             ).additionalMediaMaps;
           }
           jwStore.lookupPeriod = currentLookupPeriods;
+        } else if (type === '25.3.2-refreshDynamicMedia') {
+          refreshDynamicMedia();
         } else {
           // Other migrations can be added here
         }

@@ -1242,7 +1242,11 @@ const getParagraphNumbers = (
       parseInt(match[0]),
     ); // Find all numbers in the line
 
-    if (!numbers.length) return paragraphLabel;
+    if (
+      !numbers.length ||
+      !numbers.map((n) => n.toString()).includes(paragraphLabel.toString())
+    )
+      return paragraphLabel;
     if (numbers.length === 1) return numbers[0];
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -1277,8 +1281,9 @@ export const dynamicMediaMapper = async (
     if (source !== 'additional') {
       const songs = allMedia.filter((m) => isSong(m));
       middleSongParagraphOrdinal =
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        songs.length === 3 ? songs[1]!.BeginParagraphOrdinal : 0;
+        isMwMeetingDay(lookupDate) && songs?.length >= 2 && songs[1]
+          ? songs[1].BeginParagraphOrdinal
+          : 0;
       if (isCoWeek(lookupDate)) {
         // The last songs for both MW and WE meeting get replaced during the CO visit
         allMedia.pop();
@@ -1552,12 +1557,12 @@ export const getWeMedia = async (lookupDate: Date) => {
       return result;
     };
 
-    let { db, docId, issueString, publication, weekNr } = await getIssue(
+    let { db, docId, issueString, publication } = await getIssue(
       monday,
       currentStateStore.currentSettings?.lang,
     );
     if (db?.length === 0 && currentStateStore.currentSettings?.langFallback) {
-      ({ db, docId, issueString, publication, weekNr } = await getIssue(
+      ({ db, docId, issueString, publication } = await getIssue(
         monday,
         currentStateStore.currentSettings?.langFallback,
         true,
@@ -1618,26 +1623,54 @@ export const getWeMedia = async (lookupDate: Date) => {
         publication,
       );
     }
-    const media = mediaWithoutVideos.concat(videosInParagraphs).concat(
-      // exclude the first two videos if wt is after FEB_2023, since these are the songs
-      videosNotInParagraphs
-        .slice(+issueString < FEB_2023 ? 0 : 2)
-        .map((mediaObj) =>
-          mediaObj.TargetParagraphNumberLabel === null
-            ? { ...mediaObj, TargetParagraphNumberLabel: FOOTNOTE_TAR_PAR } // assign special number so we know videos are referenced by a footnote
-            : mediaObj,
-        )
-        .filter((v) => {
-          return (
-            !currentStateStore.currentSettings?.excludeFootnotes ||
-            v.TargetParagraphNumberLabel < FOOTNOTE_TAR_PAR
-          );
-        }),
+
+    const combined = [
+      ...mediaWithoutVideos,
+      ...videosInParagraphs,
+      ...videosNotInParagraphs,
+    ];
+
+    // Separate items with and without BeginPosition
+    const withBegin = combined.filter(
+      (item) => item.BeginPosition !== undefined && item.BeginPosition !== null,
+    );
+    const withoutBegin = combined.filter(
+      (item) => item.BeginPosition === undefined || item.BeginPosition === null,
     );
 
-    const updatedMedia = media.map((item) => {
+    // Sort those with BeginPosition
+    withBegin.sort((a, b) => (a.BeginPosition || 0) - (b.BeginPosition || 0));
+
+    // Final result: Insert all withoutBegin *before* the last item with BeginPosition
+    let final = [];
+    if (withBegin.length === 0) {
+      final.push(...withoutBegin);
+    } else {
+      const lastIndex = withBegin.length - 1;
+      final.push(...withBegin.slice(0, lastIndex));
+      final.push(...withoutBegin);
+      final.push(withBegin[lastIndex]);
+    }
+
+    final = final
+      .map((mediaObj) =>
+        mediaObj?.TargetParagraphNumberLabel === null &&
+        mediaObj?.BeginPosition === null
+          ? { ...mediaObj, TargetParagraphNumberLabel: FOOTNOTE_TAR_PAR }
+          : mediaObj,
+      )
+      .filter((v) => {
+        return (
+          !currentStateStore.currentSettings?.excludeFootnotes ||
+          (v?.TargetParagraphNumberLabel &&
+            v.TargetParagraphNumberLabel < FOOTNOTE_TAR_PAR)
+        );
+      })
+      .filter((item) => !!item);
+
+    const updatedMedia = final.map((item) => {
       if (item.MultimediaId !== null && item.LinkMultimediaId !== null) {
-        const linkedItem = media.find(
+        const linkedItem = final.find(
           (i) => i.MultimediaId === item.LinkMultimediaId,
         );
         if (linkedItem && linkedItem.FilePath) {
@@ -1664,11 +1697,14 @@ export const getWeMedia = async (lookupDate: Date) => {
             INNER JOIN DocumentMultimedia
               ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId
             WHERE DataType = 2
+            AND DocumentId = ${docId}
             ORDER BY BeginParagraphOrdinal
-            LIMIT 2 OFFSET ${2 * weekNr}`,
+            LIMIT 2`,
       );
     } else {
-      songs = videosNotInParagraphs.slice(0, 2); // after FEB_2023, the first two videos from DocumentMultimedia are the songs
+      songs = videosNotInParagraphs
+        .filter((item) => item.BeginPosition)
+        .slice(0, 2); // after FEB_2023, the first two videos from DocumentMultimedia are the songs
     }
     let songLangs: ('' | JwLangCode)[] = [];
     try {
@@ -1676,12 +1712,12 @@ export const getWeMedia = async (lookupDate: Date) => {
         .executeQuery<MultimediaExtractItem>(
           db,
           `SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal
-        FROM Extract
-        INNER JOIN DocumentExtract ON Extract.ExtractId = DocumentExtract.ExtractId
-        WHERE Extract.RefMepsDocumentClass = 31
-        ORDER BY Extract.ExtractId
-        LIMIT 2
-        OFFSET ${2 * weekNr}`,
+           FROM Extract
+           INNER JOIN DocumentExtract ON Extract.ExtractId = DocumentExtract.ExtractId
+           WHERE Extract.RefMepsDocumentClass = 31
+             AND DocumentExtract.DocumentId = ${docId}
+           ORDER BY Extract.ExtractId
+           LIMIT 2`,
         )
         .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal)
         .map((item) => {
@@ -1710,8 +1746,31 @@ export const getWeMedia = async (lookupDate: Date) => {
       );
     const allMedia = finalMedia;
     if (mergedSongs[0]) {
-      allMedia.unshift(mergedSongs[0]);
-      if (mergedSongs[1]) allMedia.push(mergedSongs[1]);
+      const index0 = allMedia.findIndex(
+        (item) =>
+          item.Track === mergedSongs[0]?.Track &&
+          item.KeySymbol === mergedSongs[0]?.KeySymbol,
+      );
+
+      if (index0 !== -1) {
+        allMedia[index0] = mergedSongs[0];
+      } else {
+        allMedia.unshift(mergedSongs[0]);
+      }
+
+      if (mergedSongs[1]) {
+        const index1 = allMedia.findIndex(
+          (item) =>
+            item.Track === mergedSongs[1]?.Track &&
+            item.KeySymbol === mergedSongs[1]?.KeySymbol,
+        );
+
+        if (index1 !== -1) {
+          allMedia[index1] = mergedSongs[1];
+        } else {
+          allMedia.push(mergedSongs[1]);
+        }
+      }
     }
 
     const multimediaMepsLangs = getMultimediaMepsLangs({ db, docId });
