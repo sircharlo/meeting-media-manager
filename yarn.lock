@@ -629,9 +629,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/rebuild@npm:^3.7.1":
-  version: 3.7.1
-  resolution: "@electron/rebuild@npm:3.7.1"
+"@electron/rebuild@npm:^3.7.2":
+  version: 3.7.2
+  resolution: "@electron/rebuild@npm:3.7.2"
   dependencies:
     "@electron/node-gyp": "git+https://github.com/electron/node-gyp.git#06b29aafb7708acef8b3669835c8a7857ebc92d2"
     "@malept/cross-spawn-promise": "npm:^2.0.0"
@@ -650,7 +650,7 @@ __metadata:
     yargs: "npm:^17.0.1"
   bin:
     electron-rebuild: lib/cli.js
-  checksum: 10c0/ef498ec1eb6d2870f4331dd53d84132a4fb7d2ef6a0058854731d3261fc0af3e2c8549c1c268801b7c2c9e93519b22d67b2a4fe7ed0136214100980801e2a372
+  checksum: 10c0/e561819926c30c7ad284f721d1d66453f59f8e5ea54a7cc9148a00e8ab3cedb6aa57fe4789f39a3454a3eb90b41a5f7d7461246ee3a16c63c8d3db23db94a391
   languageName: node
   linkType: hard
 
@@ -11479,7 +11479,7 @@ __metadata:
   resolution: "meeting-media-manager@workspace:."
   dependencies:
     "@daipeng7/rollup-plugin-iconfont": "npm:^3.0.6"
-    "@electron/rebuild": "npm:^3.7.1"
+    "@electron/rebuild": "npm:^3.7.2"
     "@eslint/compat": "npm:^1.2.8"
     "@intlify/unplugin-vue-i18n": "npm:^6.0.5"
     "@numairawan/video-duration": "npm:^1.0.0"
