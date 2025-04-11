@@ -33,9 +33,9 @@ Ang seksyong ito ay para lamang sa macOS users.
 
 :::
 
-Due to Apple's security measures, a few additional steps are required to run the installed M³ app on modern macOS systems.
+Dahil sa mga security measures ng Apple, ilang karagdagang hakbang ang kailangan upang magamit ang na-install na M³ app sa mga modern systems ng macOS.
 
-Run the following two commands in Terminal, modifying the path to M³ as needed:
+I-run ang dalawang command sa Terminal, baguhin ang path sa M³ kung kinakailangan:
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
@@ -44,15 +44,15 @@ sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 
 :::warning Babala
 
-As a macOS user, you will need to follow these steps every time you install or update M³.
+Bilang macOS user, kailangang sundin ang mga ito sa tuwing nagi-install o mag-update ng M³.
 
 :::
 
-:::info Explanation
+:::info Paliwanag
 
-The first command _signs the application's code_. This is required to prevent M³ from being detected as a malicious application from an unknown developer.
+Ang unang command ay _pag-sign sa code ng application_. Kailangan ito upang hindi ma-detect ang M³ bilang malicious application mula sa hindi kilalang developer.
 
-The second command _removes the quarantine flag_ from the application. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
+Ang pangalawang command ay _inaalis ang quarantine flag mula sa application. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
 
 :::
 
