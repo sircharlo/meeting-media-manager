@@ -32,7 +32,7 @@ Pakisuyong [tingnan ang contributing guide](https://github.com/sircharlo/meeting
 
 ## :x: Puwede ba akong magbigay ng donasyon? {#can-i-make-a-donation-to-the-project}
 
-Salamat sa interes mong tumulong sa project na ito! Gayunpaman, bilang pagsunod sa diwa ng Mateo 10:8, **hindi** tatanggapin at kailanman ay hindi tatanggap ng donasyon. Ang app ay ginawa nang may pag-ibig at kaunting libreng oras. Mag-enjoy! :tada:
+Salamat sa interes mong tumulong sa project na ito! Gayunpaman, bilang pagsunod sa diwa ng Mateo 10:8, **hindi** tatanggapin at kailanman ay hindi tatanggap ng donasyon. Ang app ay ginawa nang may pag-ibig at naglaan ng kaunting panahon. Mag-enjoy! :tada:
 
 :::tip :book: Mateo 10:8
 
