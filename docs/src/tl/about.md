@@ -1,58 +1,58 @@
-# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
+# Tungkol sa Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
 
 ![M³ banner](./../assets/m3-banner.png)
 
-## What is this app? {#what-is-this-app}
+## Ano ang app na ito? {#what-is-this-app}
 
-**Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on the official website of Jehovah's Witnesses.
+**Meeting Media Manager**, o **M³** sa maikli, ay isang app para sa Windows, macOS, at Linux, na awtomatikong nagda-download ng mga larawan at video na ginagamit sa mga pulong ng kongregasyon ng mga Saksi ni Jehova, sa anumang wika na matatagpuan sa opisyal na website ng mga Saksi ni Jehova.
 
-It features support for managing regular and custom meeting media, and support for multiple congregations and/or groups using the same computer account.
+Tampok nito ang tulong para sa pag-manage ng karaniwan at custom na media sa mga pulong, at tulong para sa maraming kongregasyon at/o grupo na gumagamit ng parehong computer account.
 
 :::info Note
 
-M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.
+Nakilala ang M³ bilang JWMMF (JW Meeting Media Fetcher), pero binago ang pangalan noong Mayo 2022.
 
 :::
 
-## Why choose M³? {#why-choose-m3}
+## Bakit M³? {#why-choose-m3}
 
-M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms.
+Ang M³ ay ang pinakamahusay na gamit para sa pag-manage ng media sa mga pulong, na nag-aalok ng tuloy-tuloy, maaasahan, at maraming feature sa iba’t ibang platform.
 
-### Key benefits {#key-benefits}
+### Mga susing pakinabang
 
-- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
+- **Napakadaling pagpapakita ng media**: Ang pinakamahusay na paraan ng pagpapakita ng media — buksan lang ang M³ at gagana na ang lahat. Walang komplikadong setup o karagdagang mga paraan.
 
-- **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
+- **Tulong sa maraming kongregasyon**: Madaling i-manage ang settings para sa maraming kongregasyon o grupo sa iisang application.
 
-- **Advanced features**: Easily add extra media, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Advanced features**: Madaling magdagdag ng extra media, at awtomatikong ibahagi ang mga nangyayari sa Kingdom Hall sa Zoom.
 
-- **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
+- **Pinahusay na performance sa iba’t ibang platform**: Masiyahan sa maayos at maaasahang paggamit sa Windows, macOS, at Linux — kahit sa mas lumang system o mga computer na may limitadong resources.
 
-- **Reliable and stable**: Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
+- **Maaasahan at ligtas**: Dinisenyo upang gumana sa mga pagkakataong pinaka-kailangan. Nakaranas ng bug? Ipaalam upang matugunan agad.
 
-## What can M³ do? {#what-can-m3-do}
+## Ano ang kayang gawin ng M³? {#what-can-m3-do}
 
-In short, M³ allows you to easily and automatically download, synchronize, share and present all meeting media.
+Sa maikli, pinapadali at awtomatikong pag-download, pag-synchronize, pagbahagi at pag-display lahat ng meeting media ng M³.
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode has all the features needed to simplify the task of sharing media with the congregation, including:
+Para sa **hybrid** o **in-person** na mga pulong ng kongregasyon, ang integrated media presentation mode ay may lahat ng kinakailangang feature upang pasimplehin ang pag-display ng media sa kongregasyon, kabilang ang:
 
-- Media thumbnails with the ability to zoom and pan, as well as set custom start and end times for media
-- Easy-to-use pause/play/stop buttons to manage playback of media files
-- Easy background music playback, with automatic stop before the start of regularly scheduled meetings
-- Automatic external monitor recognition and management
-- OBS Studio integration with automatic scene switching during media presentation
-- Presenting the official website of Jehovah's Witnesses website on an external monitor
-- Import JWPUB files, JWLPLAYLIST files and videos from the official website of Jehovah's Witnesses in a few clicks.
-- Import Study Bible media and audio recordings of the New World Translation of the Bible in seconds.
-- Always have a public talks media overview (S-34) one click away and ready to be used any minute you need it.
-- Custom videos, pictures, audio files and even PDF files can be easily imported too!
+- Media thumbnails na kayang i-zoom at i-pan, gayundin ang haba ng pag-display ng media.
+- Madaling gamitin na mga pause/play/stop button sa pag-manage ng playback ng media files
+- Madaling pag-play ng background music, na awtomatikong humihinto bago magsimula ang oras ng pulong.
+- Awtomatikong pagtukoy at pag-manage ng external monitor
+- OBS Studio integration na may awtomatikong pagpapalit ng scene habang media presentation
+- Pag-display ng opisyal na website ng mga Saksi ni Jehova sa external monitor
+- Mag-import ng JWPUB files, JWPLAYLIST files at mga video mula sa opisyal na website ng mga Saksi ni Jehova sa ilang click lamang.
+- Mag-import ng Study Bible media at audio recordings ng Bagong Sanlibutang Salin ng Bibliya sa ilang segundo.
+- Laging may public talk media overview (S-34) sa isang click lang at handa nang gamitin anumang oras kailangan.
+- Mga custom  na video, larawan, audio files at kahit PDF format ay madali ring i-import!
 
-**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
+**Subukan ang M³ ngayon at tingnan mo ang kaya nitong gawin! Hindi pa kailanman naging kasing-dali ang pagpapakita ng media sa mga pulong ng kongregasyon.**
 
 ![M³ preview](./../assets/m3-preview.png)
 
-## Does M³ work in my language? {#does-m3-work-in-my-language}
+## Gumagana ba ang M³ sa sarili kong wika? {#does-m3-work-in-my-language}
 
-**Yes!** Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of language that are available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need.
+**Oo naman!** Awtomatikong mada-download ang media para sa mga pulong ng mga Saksi ni Jehova alinman sa daan-daang wika na available sa opisyal na website ng mga Saksi ni Jehova. Awtomatikong naa-update ang listahan ng mga available na wika—piliin kung alin ang kailangan mo.
 
-In addition, M³ itself has been translated into several languages by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
+Bukod pa rito, naisalin na rin ang M³ sa iba't ibang wika sa tulong ng mga boluntaryo. Maaari mong i-configure kung anong wika ang gusto mong gamitin para sa interface ng M³.
