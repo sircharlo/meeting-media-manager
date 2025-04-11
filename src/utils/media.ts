@@ -38,6 +38,25 @@ const isFileOfType = (filepath: string, validExtensions: string[]) => {
 };
 
 /**
+ * Checks if a filepath is likely a file.
+ * @param filepath The path to the file.
+ * @returns The result of the check.
+ * @example
+ * isLikelyFile('some_file.mp4') // true
+ * isLikelyFile('some_file') // false
+ */
+export const isLikelyFile = (filepath: string): boolean => {
+  try {
+    if (!filepath) return false;
+    const ext = window.electronApi.path.parse(filepath).ext;
+    return !!ext;
+  } catch (error) {
+    errorCatcher(error);
+    return false;
+  }
+};
+
+/**
  * Checks if a file is an image.
  * @param filepath The path to the file.
  * @returns The result of the check.

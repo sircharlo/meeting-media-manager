@@ -51,6 +51,7 @@ import {
   isAudio,
   isImage,
   isJwPlaylist,
+  isLikelyFile,
   isSong,
   isVideo,
 } from 'src/utils/media';
@@ -63,7 +64,11 @@ import {
 } from 'src/utils/sqlite';
 import { timeToSeconds } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
-import { addUniqueById, shouldUpdateList, useJwStore } from 'stores/jw';
+import {
+  replaceMissingMediaByPubMediaId,
+  shouldUpdateList,
+  useJwStore,
+} from 'stores/jw';
 
 export const getJwLangCode = (mepsId?: number): JwLangCode | null => {
   if (mepsId === undefined) return null;
@@ -412,7 +417,10 @@ export const fetchMedia = async () => {
               fetchResult = await getMwMedia(dayDate);
             }
             if (fetchResult) {
-              addUniqueById(day.dynamicMedia, fetchResult.media);
+              replaceMissingMediaByPubMediaId(
+                day.dynamicMedia,
+                fetchResult.media,
+              );
               day.error = fetchResult.error;
               day.complete = true;
             } else {
@@ -1298,20 +1306,22 @@ export const dynamicMediaMapper = async (
     const mediaPromises = allMedia.map(
       async (m, index): Promise<DynamicMediaObject> => {
         m.FilePath = await convertImageIfNeeded(m.FilePath);
-        const fileUrl = m.FilePath
+        const pubMediaId = (
+          [m.KeySymbol, m.IssueTagNumber].filter(Boolean).length
+            ? [m.KeySymbol, m.IssueTagNumber]
+            : [m.MepsDocumentId]
+        )
+          .concat([
+            (m.MepsLanguageIndex !== undefined &&
+              getJwLangCode(m.MepsLanguageIndex)) ||
+              '',
+            m.Track,
+          ])
+          .filter(Boolean)
+          .join('_');
+        const fileUrl = isLikelyFile(m.FilePath)
           ? window.electronApi.pathToFileURL(m.FilePath)
-          : ([m.KeySymbol, m.IssueTagNumber].filter(Boolean).length
-              ? [m.KeySymbol, m.IssueTagNumber]
-              : [m.MepsDocumentId]
-            )
-              .concat([
-                (m.MepsLanguageIndex !== undefined &&
-                  getJwLangCode(m.MepsLanguageIndex)) ||
-                  '',
-                m.Track,
-              ])
-              .filter(Boolean)
-              .join('_');
+          : pubMediaId;
         const mediaIsSong = isSong(m);
         const thumbnailUrl =
           m.ThumbnailUrl ??
@@ -1396,6 +1406,7 @@ export const dynamicMediaMapper = async (
           isImage: isImage(m.FilePath),
           isVideo: video,
           markers: m.VideoMarkers,
+          pubMediaId,
           repeat: !!m.Repeat,
           section, // if is we: wt; else, if >= middle song: LAC; >= (middle song - 8???): AYFM; else: TGW
           sectionOriginal: section, // to enable restoring the original section after custom sorting
