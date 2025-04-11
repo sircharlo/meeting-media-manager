@@ -2,35 +2,35 @@
 layout: home
 hero:
   name: M³ documentation
-  text: Help to set up and use Meeting Media Manager
+  text: Tulong sa pag-setup at paggamit ng Meeting Media Manager
   image: /logo.svg
   actions:
     - theme: brand
       text: Install M³
       link: /tl/using-at-a-kingdom-hall#download-and-install
     - theme: alt
-      text: Using at a Kingdom Hall
+      text: Gagamitin sa Kingdom Hall
       link: /tl/using-at-a-kingdom-hall
     - theme: alt
       text: About
       link: /tl/about
 features:
   - icon: 🚀
-    title: Automatic media downloads
-    details: Automatically downloads pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
+    title: Awtomatikong pag-download ng media
+    details: Awtomatikong nagda-download ng mga larawan at video para sa mga pulong ng kongregasyon sa anumang wika na available sa opisyal na website ng mga Saksi ni Jehova.
   - icon: 🎦
-    title: Media presenting
-    details: Allows to easily share media during hybrid or in-person meetings.
+    title: Pagpapakita ng media
+    details: Pinapadali ang pagbabahagi ng media sa hybrid o in-person na mga pulong.
   - icon: 🎵
     title: Background music
-    details: Plays background music automatically. Stops playback before the meeting starts. Background music can be restarted in one click after the meeting.
+    details: Awtomatikong pag-play ng background music. Kusang humihinto bago magsimula ang pulong. Maaaring i-play ulit ang background music sa isang click matapos ang pulong.
   - icon: 🖥️
     title: External monitor support
-    details: Automatically detects and manages external monitors for smooth media presentations.
+    details: Awtomatikong matukoy at i-manage ang mga external monitor para sa maayos na pagpapakita ng media
   - icon: 🌐
-    title: Multiple languages
-    details: Download meeting media in hundreds of languages and use M³'s interface in any of the many available languages.
+    title: Maraming wika
+    details: I-download ang meeting media sa daan-daang mga wika at gamitin ang mga available na wika sa interface ng M³.
   - icon: 🧩
     title: OBS Studio Integration
-    details: Integrates with OBS Studio for enhanced media management and presenting capabilities.
+    details: Nagi-integrate sa OBS Studio para sa pinahusay na pag-manage ng media at kakayahan sa pag-display.
 ---

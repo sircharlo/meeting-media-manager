@@ -1,41 +1,41 @@
-# Frequently Asked Questions {#frequently-asked-questions}
+# Karaniwang Mga Tanong{#frequently-asked-questions}
 
-## :earth_americas: Does this app depend on external sites, sources or "curators" to download publications, meeting media or other content? {#external-dependencies}
+## :earth_americas: Nakadepende ba ang app na ito sa mga panlabas na site, pinagkukunan, o "curators" upang mag-download ng mga publikasyon, media ng pulong, o ibang content? {#external-dependencies}
 
-**No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
+**Hindi.** Gumagana ito kagaya ng JW Library. Nagda-download ito ang mga publikasyon, media, at iba pang content nang direkta mula sa opisyal na website ng mga Saksi ni Jehova at ng kanilang content delivery network. Awtomatikong tinutukoy ng app kung ano ang kailangang i-download at kung ang mga patiunang na-download na content ay hindi na up-to-date at kailangang i-download muli.
 
 :::info Note
 
-The source code for this app is available for all to examine and verify what goes on under the hood.
+Available sa lahat ang source code ng app upang masuri kung ano ang nasa likod nito.
 
 :::
 
-## :thinking: Does this app infringe the Terms of Use of the official website of Jehovah's Witnesses? {#terms-of-use}
+## :thinking: Nilalabag ba ng app na ito ang Terms of Use ng opisyal na website ng mga Saksi ni Jehova? {#terms-of-use}
 
-**No.** The Terms of Use of the official website of Jehovah's Witnesses explicitly allow the kind of usage that we are making. Here is the relevant excerpt from those terms (emphasis added):
+**Hindi.** Ang Terms of Use ay hayagang pinapahintulutan ng opisyal na website ng mga Saksi ni Jehova ang uri ng paggamit na ginagawa namin. Narito ang kaugnay na bahagi mula sa mga tuntuning iyon (binigyang-diin ang mahalagang bahagi):
 
-> You may not:
+> Hindi ka pinapayagang:
 >
-> Create for distribution purposes, any software applications, tools, or techniques that are specifically made to collect, copy, download, extract, harvest, or scrape data, HTML, images, or text from this site. (This does **not** prohibit the distribution of free, non-commercial applications designed to download electronic files such as EPUB, PDF, MP3, and MP4 files from public areas of this site.)
+> Gumawa, para sa layunin ng pamamahagi, ng anumang software application, tool, o pamamaraan na sadyang ginawa para mangolekta, kumopya, mag-download, mag-extract, mang-ani, o mag-scrape ng data, HTML, mga larawan, o teksto mula sa site na ito. **Hindi** nito ipinagbabawal ang pamamahagi ng libre at di-komersiyal na mga application na idinisenyo para mag-download ng mga elektronikong file gaya ng EPUB, PDF, MP3, at MP4 mula sa pampublikong bahagi ng site na ito.)
 
-## :radioactive: How do I report an issue? {#how-do-i-report-an-issue}
+## :radioactive: Paano ako mag-uulat ng isyu? {#how-do-i-report-an-issue}
 
-Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository.
+Pakisuyong [mag-file ng isyu](https://github.com/sircharlo/meeting-media-manager/issues) sa opisyal na GitHub repository.
 
-## :new: How can I request a new feature or enhancement? {#how-can-i-request-a-new-feature-or-enhancement}
+## :new: Paano ako magre-request ng bagong feature o pagpapahusay? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository.
+Pakisuyong [magbukas ng discussion](https://github.com/sircharlo/meeting-media-manager/discussions) sa opisyal na GitHub repository.
 
-## :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
+## :handshake: Paano ako makakapagbahagi ng ilang code? {#how-can-i-contribute-some-code}
 
-Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository.
+Pakisuyong [tingnan ang contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) sa opisyal na GitHub repository.
 
-## :x: Can I make a donation to the project? {#can-i-make-a-donation-to-the-project}
+## :x: Puwede ba akong magbigay ng donasyon? {#can-i-make-a-donation-to-the-project}
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+Salamat sa interes mong tumulong sa project na ito! Gayunpaman, bilang pagsunod sa diwa ng Mateo 10:8, **hindi** tatanggapin at kailanman ay hindi tatanggap ng donasyon. Ang app ay ginawa nang may pag-ibig at naglaan ng kaunting panahon. Mag-enjoy! :tada:
 
-:::tip :book: Matthew 10:8
+:::tip :book: Mateo 10:8
 
-"You received free, give free."
+"Tinanggap ninyo nang walang bayad, ibigay ninyo nang walang bayad."
 
 :::
