@@ -321,10 +321,7 @@
         name="fade"
       >
         <div
-          v-if="
-            [media.fileUrl, media.streamUrl].includes(mediaPlayingUrl) &&
-            media.duration
-          "
+          v-if="isCurrentlyPlaying && media.duration"
           class="absolute duration-slider"
         >
           <div class="row flex-center">
@@ -387,12 +384,7 @@
       </transition>
     </div>
     <div
-      v-if="
-        !(
-          mediaPlayingUrl === media.fileUrl ||
-          mediaPlayingUrl === media.streamUrl
-        )
-      "
+      v-if="!isCurrentlyPlaying"
       class="col-shrink"
       style="align-content: center"
     >
@@ -509,10 +501,7 @@
         <q-item
           v-close-popup
           clickable
-          :disable="
-            mediaPlayingUrl === media.fileUrl ||
-            mediaPlayingUrl === media.streamUrl
-          "
+          :disable="isCurrentlyPlaying"
           @click="emit('update:hidden', true)"
         >
           <q-item-section avatar>
@@ -528,10 +517,7 @@
         <q-item
           v-close-popup
           clickable
-          :disable="
-            mediaPlayingUrl === media.fileUrl ||
-            mediaPlayingUrl === media.streamUrl
-          "
+          :disable="isCurrentlyPlaying"
           @click="mediaEditTitleDialog = true"
         >
           <q-item-section avatar>
@@ -576,10 +562,7 @@
           v-if="media.source === 'additional'"
           v-close-popup
           clickable
-          :disable="
-            mediaPlayingUrl === media.fileUrl ||
-            mediaPlayingUrl === media.streamUrl
-          "
+          :disable="isCurrentlyPlaying"
           @click="mediaToDelete = media.uniqueId"
         >
           <q-item-section avatar>
@@ -1057,6 +1040,14 @@ function stopMedia(forOtherMediaItem = false) {
   if (!forOtherMediaItem) zoomReset(true);
 }
 
+const isCurrentlyPlaying = computed(() => {
+  return (
+    (mediaPlayingUrl.value === props.media.fileUrl ||
+      mediaPlayingUrl.value === props.media.streamUrl) &&
+    mediaPlayingUniqueId.value === props.media.uniqueId
+  );
+});
+
 const destroyPanzoom = () => {
   try {
     if (!panzoom.value || !props.media.uniqueId) return;
@@ -1123,7 +1114,7 @@ const initiatePanzoom = () => {
           x: e.detail.x / width,
           y: e.detail.y / height,
         };
-        if (mediaPlayingUrl.value !== props.media.fileUrl) return;
+        if (!isCurrentlyPlaying.value) return;
         mediaPlayingPanzoom.value = mediaPanzoom.value;
       },
       { passive: true },

@@ -18,6 +18,7 @@ import type { Songbook } from 'stores/current-state';
 
 import { defineStore } from 'pinia';
 import { MAX_SONGS } from 'src/constants/jw';
+import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   fetchJwLanguages,
@@ -136,7 +137,12 @@ export const useJwStore = defineStore('jw-store', {
         if (coWeek) {
           mediaArray.forEach((media) => {
             if (!media) return;
-            media.section = section || 'circuitOverseer';
+            media.section =
+              section ||
+              (isMwMeetingDay(selectedDateObject.date) ||
+              isWeMeetingDay(selectedDateObject.date)
+                ? 'circuitOverseer'
+                : 'additional');
             media.sectionOriginal = section || 'circuitOverseer';
           });
         }

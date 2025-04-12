@@ -1278,15 +1278,16 @@ const getParagraphNumbers = (
 export const dynamicMediaMapper = async (
   allMedia: MultimediaItem[],
   lookupDate: Date,
-  source: 'additional' | 'dynamic' | 'watched',
+  source: 'additional' | 'dynamic' | 'playlist' | 'watched',
   additionalSection: MediaSection = 'additional',
 ): Promise<DynamicMediaObject[]> => {
   const { currentSettings } = useCurrentStateStore();
   try {
+    const calculatedSource = source === 'playlist' ? 'additional' : source;
     const lastParagraphOrdinal =
       allMedia[allMedia.length - 1]?.BeginParagraphOrdinal || 0;
     let middleSongParagraphOrdinal = 0;
-    if (source !== 'additional') {
+    if (calculatedSource !== 'additional') {
       const songs = allMedia.filter((m) => isSong(m));
       middleSongParagraphOrdinal =
         isMwMeetingDay(lookupDate) && songs?.length >= 2 && songs[1]
@@ -1355,7 +1356,7 @@ export const dynamicMediaMapper = async (
           }
         }
         let section: MediaSection =
-          source === 'additional' ? additionalSection : 'wt';
+          calculatedSource === 'additional' ? additionalSection : 'wt';
         if (middleSongParagraphOrdinal > 0) {
           // this is a meeting with 3 songs
           if (m.BeginParagraphOrdinal >= middleSongParagraphOrdinal) {
@@ -1392,6 +1393,15 @@ export const dynamicMediaMapper = async (
 
         const tag = tagType ? { type: tagType, value: tagValue } : undefined;
 
+        const datePart = formatDate(lookupDate, 'YYYYMMDD');
+        const durationPart =
+          calculatedSource === 'additional' &&
+          (customDuration?.min || customDuration?.max)
+            ? `${customDuration.min ?? ''}_${customDuration.max ?? ''}-`
+            : '';
+        const idRaw = `${datePart}-${durationPart}${fileUrl}`;
+        const uniqueId = sanitizeId(idRaw);
+
         return {
           cbs:
             isMwMeetingDay(lookupDate) &&
@@ -1411,7 +1421,7 @@ export const dynamicMediaMapper = async (
           section, // if is we: wt; else, if >= middle song: LAC; >= (middle song - 8???): AYFM; else: TGW
           sectionOriginal: section, // to enable restoring the original section after custom sorting
           sortOrderOriginal: index, // Index in the array corresponds to the original processing order
-          source,
+          source: calculatedSource,
           streamUrl: m.StreamUrl,
           subtitlesUrl: video ? await getSubtitlesUrl(m, duration) : '',
           tag,
@@ -1419,9 +1429,7 @@ export const dynamicMediaMapper = async (
           title: mediaIsSong
             ? m.Label.replace(/^\d+\.\s*/, '')
             : m.Label || m.Caption,
-          uniqueId: sanitizeId(
-            formatDate(lookupDate, 'YYYYMMDD') + '-' + fileUrl,
-          ),
+          uniqueId,
         };
       },
     );
