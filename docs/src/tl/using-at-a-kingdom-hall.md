@@ -52,23 +52,23 @@ Bilang macOS user, kailangang sundin ang mga ito sa tuwing nagi-install o mag-up
 
 Ang unang command ay _pag-sign sa code ng application_. Kailangan ito upang hindi ma-detect ang M³ bilang malicious application mula sa hindi kilalang developer.
 
-Ang pangalawang command ay _inaalis ang quarantine flag mula sa application. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
+Ang pangalawang command ay _inaalis ang quarantine flag mula sa application. Ginagamit ang quarantine flag bilang paalala sa mga user tungkol sa panganib sa paggamit ng hindi kilalang application mula sa internet.
 
 :::
 
-#### Alternative method {#alternative-method-for-macos-users}
+#### Alternatibong paraan {#alternative-method-for-macos-users}
 
-If you are still unable to launch M³ after entering the two commands from the previous section, please try the following:
+Kung hindi pa rin magamit ang M³ matapos ilagay ang dalawang command, subukan ang mga sumusunod:
 
-1. Open the macOS system **Privacy & Security** settings.
-2. Find the entry for M³ and click the button to **Open Anyway**.
-3. You will then be warned again, and given the advice to not "open this unless you are certain it is from a trustworthy source." Click **Open Anyway**.
-4. Another warning will appear, where you’ll need to authenticate to launch the app.
-5. M³ should now launch successfully.
+1. Buksan ang macOS system **Privacy & Security** settings.
+2. Hanapin ang entry sa M³ at i-click ang button ng **Open Anyway**.
+3. Papaalalahanan ka ulit, at papayuhang huwag "buksan malibang mapagkakatiwalaan ang pinagmulan". I-click ang **Open Anyway**.
+4. Lalabas ulit ang paalala, kung saan kailangang i-authenticate upang buksan ang app.
+5. Maayos nang magbubukas ang M³.
 
-If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
+Kung may isyu pa rin matapos sundin ang mga ito, pakisuyong [magbukas ng isyu sa GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). Tutulong kami sa abot nang makakaya.
 
-### macOS only: Re-enabling website presentation after updates {#screen-sharing-issues}
+### macOS lamang: Pag-enable muli ng website presentation pagtapos ng mga update {#screen-sharing-issues}
 
 :::warning Babala
 
@@ -76,15 +76,15 @@ Ang seksyong ito ay para lamang sa macOS users.
 
 :::
 
-Some macOS users have reported that website presentation no longer works after installing updates to M³.
+May mga ulat na hindi gumagana ang website presentation pagtapos mag-install ng mga update sa M³.
 
-If the media window is black when presenting the website after updating M³, try the following steps:
+Kung black ang makikita sa media window nang ipakita ang website pagtapos ng update, subukan ito:
 
-1. Open the macOS system **Privacy & Security** settings.
-2. Go to **Screen Recording**.
-3. Select M³ in the list.
-4. Click the `-` (minus) button to remove it.
-5. Click the `+` (plus) button and select M³ from the Applications folder.
+1. Buksan ang macOS system **Privacy & Security** settings.
+2. Pumunta sa **Screen Recording**.
+3. Piliin ang M³ sa list.
+4. I-click ang `-` (minus) button upang alisin.
+5. I-click ang `+` (plus) button at piliin ang M³ mula sa folder ng Applications.
 6. You may be prompted to relaunch M³ to apply the change.
 
 After these steps, screen sharing should function as expected once again.
