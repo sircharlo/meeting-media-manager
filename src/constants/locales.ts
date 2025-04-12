@@ -49,6 +49,7 @@ export const enabled: LanguageValue[] = [
   'sl',
   'sv',
   'sw',
+  'tl',
   'uk',
 ];
 
