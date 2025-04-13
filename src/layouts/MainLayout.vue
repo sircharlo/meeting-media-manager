@@ -147,6 +147,7 @@ watch(currentCongregation, (newCongregation, oldCongregation) => {
       showMediaWindow(false);
       navigateToCongregationSelector();
     } else {
+      window.electronApi.setUrlVariables(JSON.stringify(jwStore.urlVariables));
       let year = new Date().getFullYear();
       if (
         jwStore.memorials[year] &&
@@ -162,7 +163,6 @@ watch(currentCongregation, (newCongregation, oldCongregation) => {
       ) {
         currentSettings.value.memorialDate = jwStore.memorials[year] ?? null;
       }
-      window.electronApi.setUrlVariables(JSON.stringify(jwStore.urlVariables));
       downloadProgress.value = {};
       updateLookupPeriod();
       registerAllCustomShortcuts();

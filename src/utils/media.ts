@@ -207,7 +207,7 @@ export const getMetadataFromMediaPath = async (
     }
 
     let metadata = defaultMetadata;
-    if (isFileOfType(mediaPath, ['mov'])) {
+    if (isFileOfType(mediaPath, ['mov', '3gp'])) {
       const videoDuration =
         await window.electronApi.getVideoDuration(mediaPath);
       metadata = {

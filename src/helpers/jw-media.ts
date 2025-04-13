@@ -607,7 +607,8 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
         })
         .filter(
           (extractItem) =>
-            !(symbol === 'lmd' && extractItem.FilePath.includes('mp4')),
+            currentStateStore.currentLangObject?.isSignLanguage ||
+            !(symbol === 'lmd' && extractItem.MimeType.includes('video')),
         );
       for (let i = 0; i < extractItems.length; i++) {
         extractItems[i] = await addFullFilePathToMultimediaItem(
