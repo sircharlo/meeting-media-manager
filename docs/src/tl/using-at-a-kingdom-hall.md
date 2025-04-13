@@ -85,13 +85,13 @@ Kung black ang makikita sa media window nang ipakita ang website pagtapos ng upd
 3. Piliin ang M³ sa list.
 4. I-click ang `-` (minus) button upang alisin.
 5. I-click ang `+` (plus) button at piliin ang M³ mula sa folder ng Applications.
-6. You may be prompted to relaunch M³ to apply the change.
+6. Hihilingan ka na buksan muli ang M³ upang makita ang pagbabago.
 
-After these steps, screen sharing should function as expected once again.
+Pagtapos nito, gagana na ang screen sharing gaya ng inaasahan.
 
 :::tip Tip
 
-These steps are optional and can be skipped if you do not plan to use the website presentation feature. On the other hand, if you do plan to use the website presentation feature, it is recommended to follow these steps after every update to ensure the feature works as expected.
+Opsyonal ang mga hakbang na ito at puwedeng laktawan kung hindi mo gagamitin ang website future sa hinaharap. Sa kabilang banda, kung gagamitin mo ang feature na ito, iminumungkahi na sundan ang mga hakbang tuwingay update upang masigurado na gagana ito.
 
 :::
 
@@ -99,7 +99,7 @@ These steps are optional and can be skipped if you do not plan to use the websit
 
 ### App display language {#app-display-language}
 
-When launching M³ for the first time, you will be prompted to choose your preferred **display language**. Choose the language you want M³ to use for its interface.
+Kapag gagamitin ang M³ sa unang pagkakataon, hihilingan kang pumili ng gusto mong **display language**. Pumili ng wika na gusto mo sa interface ng M³.
 
 :::tip Tip
 
