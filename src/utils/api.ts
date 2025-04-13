@@ -5,6 +5,7 @@ import type {
   MediaItemsMediator,
   Publication,
   PublicationFetcher,
+  PublicationFiles,
   Release,
 } from 'src/types';
 
@@ -200,15 +201,20 @@ export const fetchPubMediaLinks = async (
   publication: PublicationFetcher,
   base: string,
   online?: boolean,
-) => {
+): Promise<null | Publication> => {
   try {
+    const videoExtensions: (keyof PublicationFiles)[] = ['MP4', 'M4V'];
     const params = {
       alllangs: '0',
       ...(publication.booknum
         ? { booknum: publication.booknum.toString() }
         : {}),
       docid: !publication.pub ? publication.docid?.toString() || '' : '',
-      fileformat: publication.fileformat || '',
+      fileformat:
+        publication.fileformat &&
+        videoExtensions.includes(publication.fileformat)
+          ? videoExtensions.join(',')
+          : publication.fileformat || '',
       issue: publication.issue?.toString() || '',
       langwritten: publication.langwritten || '',
       output: 'json',
@@ -221,6 +227,28 @@ export const fetchPubMediaLinks = async (
       new URLSearchParams(params),
       online,
     );
+
+    if (
+      response &&
+      publication.fileformat &&
+      videoExtensions.includes(publication.fileformat)
+    ) {
+      const videoFiles = videoExtensions
+        .map(
+          (ext) => response.files[publication.langwritten || 'E']?.[ext] || [],
+        )
+        .flat();
+      return {
+        ...response,
+        files: {
+          ...response.files,
+          [publication.langwritten || 'E']: {
+            [publication.fileformat]: videoFiles,
+          },
+        },
+      };
+    }
+
     return response;
   } catch (e) {
     errorCatcher(e);

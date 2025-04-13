@@ -1,90 +1,90 @@
 <!-- markdownlint-disable no-inline-html -->
 
-# Using M³ at a Kingdom Hall {#using-m3-at-a-kingdom-hall}
+# Paggamit ng M³ sa Kingdom Hall {#using-m3-at-a-kingdom-hall}
 
-This guide will walk you through the process of downloading, installing, and setting up **Meeting Media Manager (M³)** at a Kingdom Hall. Follow the steps to ensure a smooth setup for managing media during congregation meetings.
+Ang guide na ito ay magtuturo sa iyo ng proseso ng pag-download, pag-install, at pag-setup ng **Meeting Media Manager (M³)** sa isang Kingdom Hall. Sundin ang mga hakbang upang matiyak ang maayos na setup sa pag-manage ng media sa mga pulong ng kongregasyon.
 
-## 1. Download and install {#download-and-install}
+## 1. Pag-download at install {#download-and-install}
 
 <script setup>
   import { data } from './../../data/version.data.mts'
 </script>
 
-1. Download the appropriate version for your operating system:
+1. I-download ang angkop na bersyon sa iyong operating system:
   - **Windows:**
-    - For most Windows systems, download <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
-    - For older 32-bit Windows systems, download <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
-    - For a portable version, download <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
+    - Para sa mga karaniwang Windows systems, i-download ang <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a>.
+    - Para sa mas lumang 32-bit Windows systems, i-download ang <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a>.
+    - Para sa portable version, i-download ang <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
   - **macOS:**
-    - **M-series (Apple Silicon)**: Download <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
-    - **Intel-based Macs**: Download <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
+    - **M-series (Apple Silicon)**: I-download ang <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a>.
+    - **Intel-based Macs**: I-download ang <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a>.
   - **Linux:**
-    - Download <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
-2. If the download links do not work, visit the [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and download the correct version manually.
-3. Open the installer and follow the on-screen instructions to install M³.
-4. Launch M³.
-5. Go through the configuration wizard.
+    - I-download ang <a :href="data.linux">meeting-media-manager-[VERSION]-x86_64.AppImage</a>.
+2. Kung hindi gumagana ang mga link ng pag-download, bisitahin ang [M³ download page](https://github.com/sircharlo/meeting-media-manager/releases/latest) at i-download ang tamang bersyon nang manu-mano.
+3. Buksan ang installer at sundan ang on-screen instructions para i-install ang M³.
+4. I-launch ang M³.
+5. Pumunta sa configuration wizard.
 
-### macOS only: Additional installation steps {#additional-steps-for-macos-users}
+### macOS lamang: Karagdagang hakbang sa pag-install {#additional-steps-for-macos-users}
 
-:::warning Warning
+:::warning Babala
 
-This section only applies to macOS users.
+Ang seksyong ito ay para lamang sa macOS users.
 
 :::
 
-Due to Apple's security measures, a few additional steps are required to run the installed M³ app on modern macOS systems.
+Dahil sa mga security measures ng Apple, ilang karagdagang hakbang ang kailangan upang magamit ang na-install na M³ app sa mga modern systems ng macOS.
 
-Run the following two commands in Terminal, modifying the path to M³ as needed:
+I-run ang dalawang command sa Terminal, baguhin ang path sa M³ kung kinakailangan:
 
 ```bash
 codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
 sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
 ```
 
-:::warning Warning
+:::warning Babala
 
-As a macOS user, you will need to follow these steps every time you install or update M³.
-
-:::
-
-:::info Explanation
-
-The first command _signs the application's code_. This is required to prevent M³ from being detected as a malicious application from an unknown developer.
-
-The second command _removes the quarantine flag_ from the application. The quarantine flag is used to warn users about potentially malicious applications that have been downloaded from the internet.
+Bilang macOS user, kailangang sundin ang mga ito sa tuwing nagi-install o mag-update ng M³.
 
 :::
 
-#### Alternative method {#alternative-method-for-macos-users}
+:::info Paliwanag
 
-If you are still unable to launch M³ after entering the two commands from the previous section, please try the following:
+Ang unang command ay _pag-sign sa code ng application_. Kailangan ito upang hindi ma-detect ang M³ bilang malicious application mula sa hindi kilalang developer.
 
-1. Open the macOS system **Privacy & Security** settings.
-2. Find the entry for M³ and click the button to **Open Anyway**.
-3. You will then be warned again, and given the advice to not "open this unless you are certain it is from a trustworthy source." Click **Open Anyway**.
-4. Another warning will appear, where you’ll need to authenticate to launch the app.
-5. M³ should now launch successfully.
-
-If you still have issues after following all these steps, please [open an issue on GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). We will do our best to help.
-
-### macOS only: Re-enabling website presentation after updates {#screen-sharing-issues}
-
-:::warning Warning
-
-This section only applies to macOS users.
+Ang pangalawang command ay _inaalis ang quarantine flag mula sa application. Ginagamit ang quarantine flag bilang paalala sa mga user tungkol sa panganib sa paggamit ng hindi kilalang application mula sa internet.
 
 :::
 
-Some macOS users have reported that website presentation no longer works after installing updates to M³.
+#### Alternatibong paraan {#alternative-method-for-macos-users}
 
-If the media window is black when presenting the website after updating M³, try the following steps:
+Kung hindi pa rin magamit ang M³ matapos ilagay ang dalawang command, subukan ang mga sumusunod:
 
-1. Open the macOS system **Privacy & Security** settings.
-2. Go to **Screen Recording**.
-3. Select M³ in the list.
-4. Click the `-` (minus) button to remove it.
-5. Click the `+` (plus) button and select M³ from the Applications folder.
+1. Buksan ang macOS system **Privacy & Security** settings.
+2. Hanapin ang entry sa M³ at i-click ang button ng **Open Anyway**.
+3. Papaalalahanan ka ulit, at papayuhang huwag "buksan malibang mapagkakatiwalaan ang pinagmulan". I-click ang **Open Anyway**.
+4. Lalabas ulit ang paalala, kung saan kailangang i-authenticate upang buksan ang app.
+5. Maayos nang magbubukas ang M³.
+
+Kung may isyu pa rin matapos sundin ang mga ito, pakisuyong [magbukas ng isyu sa GitHub](https://github.com/sircharlo/meeting-media-manager/issues/new). Tutulong kami sa abot nang makakaya.
+
+### macOS lamang: Pag-enable muli ng website presentation pagtapos ng mga update {#screen-sharing-issues}
+
+:::warning Babala
+
+Ang seksyong ito ay para lamang sa macOS users.
+
+:::
+
+May mga ulat na hindi gumagana ang website presentation pagtapos mag-install ng mga update sa M³.
+
+Kung black ang makikita sa media window nang ipakita ang website pagtapos ng update, subukan ito:
+
+1. Buksan ang macOS system **Privacy & Security** settings.
+2. Pumunta sa **Screen Recording**.
+3. Piliin ang M³ sa list.
+4. I-click ang `-` (minus) button upang alisin.
+5. I-click ang `+` (plus) button at piliin ang M³ mula sa folder ng Applications.
 6. You may be prompted to relaunch M³ to apply the change.
 
 After these steps, screen sharing should function as expected once again.
@@ -111,7 +111,7 @@ This is does not have to be the same language as the one in which M³ will downl
 
 The next step is to choose a **profile type**. For a regular setup in a Kingdom Hall, choose **Regular**. This will configure many features that are commonly used for congregation meetings.
 
-:::warning Warning
+:::warning Babala
 
 You should only choose **Other** if you are creating a profile for which no media should be automatically downloaded. Media will have to be manually imported for use in this profile. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
 

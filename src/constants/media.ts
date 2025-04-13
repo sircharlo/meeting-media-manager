@@ -25,7 +25,7 @@ export const IMG_EXTENSIONS = [
 ];
 
 export const AUDIO_EXTENSIONS = ['mp3', 'wav', 'ogg', 'flac'];
-export const VIDEO_EXTENSIONS = ['mp4', 'mov', 'mkv', 'avi', 'webm'];
+export const VIDEO_EXTENSIONS = ['mp4', 'm4v', 'mov', 'mkv', 'avi', 'webm'];
 
 export const PDF_EXTENSIONS = ['pdf'];
 export const ZIP_EXTENSIONS = ['zip'];

@@ -42,7 +42,13 @@ const exportDayToFolder = async (targetDate?: Date) => {
   const dynamicMediaFiltered = Array.from(
     new Map(
       dynamicMedia
+        // Flatten items with children
+        .flatMap((item) =>
+          Array.isArray(item.children) ? item.children : [item],
+        )
+        // Filter out hidden items
         .filter((item) => !item.hidden)
+        // Use Map to deduplicate by fileUrl
         .map((item) => [item.fileUrl, item]),
     ).values(),
   ).sort((a, b) => {
@@ -76,8 +82,8 @@ const exportDayToFolder = async (targetDate?: Date) => {
   const sections: Partial<Record<MediaSectionIdentifier, number>> = {}; // Object to store dynamic section prefixes
   for (let i = 0; i < dayMediaLength; i++) {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const m = dynamicMediaFiltered[i]!;
+      const m = dynamicMediaFiltered[i];
+      if (!m) continue;
       let sourceFilePath = window.electronApi.fileUrlToPath(m.fileUrl);
       if (
         !sourceFilePath ||

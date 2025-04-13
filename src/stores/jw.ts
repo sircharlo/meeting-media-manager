@@ -18,6 +18,7 @@ import type { Songbook } from 'stores/current-state';
 
 import { defineStore } from 'pinia';
 import { MAX_SONGS } from 'src/constants/jw';
+import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   fetchJwLanguages,
@@ -86,6 +87,39 @@ export function deduplicateById<T extends { uniqueId: string }>(
   }
 }
 
+/**
+ * Replaces existing media items in the target array with the matching item
+ * from the source array, if the existing item is a placeholder (has no fileUrl).
+ * If there is no match at all, the item from the source array will be added to
+ * the target array.
+ * @param targetArray The array to search and modify
+ * @param sourceArray The array of items to search for matches
+ */
+export function replaceMissingMediaByPubMediaId(
+  targetArray: DynamicMediaObject[],
+  sourceArray: DynamicMediaObject[],
+): void {
+  sourceArray.forEach((item) => {
+    const index = targetArray.findIndex(
+      (obj) => obj?.pubMediaId === item?.pubMediaId,
+    );
+
+    if (index !== -1) {
+      const existing = targetArray[index];
+      // Replace only if it's a placeholder (fileUrl is the same as pubMediaId) and has no children
+      if (
+        existing?.fileUrl === existing?.pubMediaId &&
+        !existing?.children?.length
+      ) {
+        targetArray[index] = item;
+      }
+    } else {
+      // Add new item if no match at all
+      targetArray.push(item);
+    }
+  });
+}
+
 export const useJwStore = defineStore('jw-store', {
   actions: {
     addToAdditionMediaMap(
@@ -103,7 +137,12 @@ export const useJwStore = defineStore('jw-store', {
         if (coWeek) {
           mediaArray.forEach((media) => {
             if (!media) return;
-            media.section = section || 'circuitOverseer';
+            media.section =
+              section ||
+              (isMwMeetingDay(selectedDateObject.date) ||
+              isWeMeetingDay(selectedDateObject.date)
+                ? 'circuitOverseer'
+                : 'additional');
             media.sectionOriginal = section || 'circuitOverseer';
           });
         }

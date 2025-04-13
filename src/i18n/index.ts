@@ -31,7 +31,7 @@ import ru from './ru.json';
 import sl from './sl.json';
 import sv from './sv.json';
 import sw from './sw.json';
-// import tl from './tl.json';
+import tl from './tl.json';
 import uk from './uk.json';
 
 export default {
@@ -59,6 +59,6 @@ export default {
   sl,
   sv,
   sw,
-  // tl,
+  tl,
   uk,
 };

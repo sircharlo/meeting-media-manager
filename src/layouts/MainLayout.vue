@@ -68,7 +68,7 @@ import {
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
-import { formatDate, isInPast } from 'src/utils/date';
+import { formatDate, getSpecificWeekday, isInPast } from 'src/utils/date';
 import { kebabToCamelCase } from 'src/utils/general';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -147,9 +147,13 @@ watch(currentCongregation, (newCongregation, oldCongregation) => {
       showMediaWindow(false);
       navigateToCongregationSelector();
     } else {
+      window.electronApi.setUrlVariables(JSON.stringify(jwStore.urlVariables));
       let year = new Date().getFullYear();
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      if (jwStore.memorials[year] && isInPast(jwStore.memorials[year]!)) {
+      if (
+        jwStore.memorials[year] &&
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        isInPast(getSpecificWeekday(jwStore.memorials[year]!, 6))
+      ) {
         year++;
       }
       if (
@@ -159,7 +163,6 @@ watch(currentCongregation, (newCongregation, oldCongregation) => {
       ) {
         currentSettings.value.memorialDate = jwStore.memorials[year] ?? null;
       }
-      window.electronApi.setUrlVariables(JSON.stringify(jwStore.urlVariables));
       downloadProgress.value = {};
       updateLookupPeriod();
       registerAllCustomShortcuts();

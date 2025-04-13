@@ -51,6 +51,7 @@ import {
   isAudio,
   isImage,
   isJwPlaylist,
+  isLikelyFile,
   isSong,
   isVideo,
 } from 'src/utils/media';
@@ -63,7 +64,11 @@ import {
 } from 'src/utils/sqlite';
 import { timeToSeconds } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
-import { addUniqueById, shouldUpdateList, useJwStore } from 'stores/jw';
+import {
+  replaceMissingMediaByPubMediaId,
+  shouldUpdateList,
+  useJwStore,
+} from 'stores/jw';
 
 export const getJwLangCode = (mepsId?: number): JwLangCode | null => {
   if (mepsId === undefined) return null;
@@ -412,7 +417,10 @@ export const fetchMedia = async () => {
               fetchResult = await getMwMedia(dayDate);
             }
             if (fetchResult) {
-              addUniqueById(day.dynamicMedia, fetchResult.media);
+              replaceMissingMediaByPubMediaId(
+                day.dynamicMedia,
+                fetchResult.media,
+              );
               day.error = fetchResult.error;
               day.complete = true;
             } else {
@@ -599,7 +607,8 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
         })
         .filter(
           (extractItem) =>
-            !(symbol === 'lmd' && extractItem.FilePath.includes('mp4')),
+            currentStateStore.currentLangObject?.isSignLanguage ||
+            !(symbol === 'lmd' && extractItem.MimeType.includes('video')),
         );
       for (let i = 0; i < extractItems.length; i++) {
         extractItems[i] = await addFullFilePathToMultimediaItem(
@@ -1270,15 +1279,16 @@ const getParagraphNumbers = (
 export const dynamicMediaMapper = async (
   allMedia: MultimediaItem[],
   lookupDate: Date,
-  source: 'additional' | 'dynamic' | 'watched',
+  source: 'additional' | 'dynamic' | 'playlist' | 'watched',
   additionalSection: MediaSectionIdentifier = 'additional',
 ): Promise<DynamicMediaObject[]> => {
   const { currentSettings } = useCurrentStateStore();
   try {
+    const calculatedSource = source === 'playlist' ? 'additional' : source;
     const lastParagraphOrdinal =
       allMedia[allMedia.length - 1]?.BeginParagraphOrdinal || 0;
     let middleSongParagraphOrdinal = 0;
-    if (source !== 'additional') {
+    if (calculatedSource !== 'additional') {
       const songs = allMedia.filter((m) => isSong(m));
       middleSongParagraphOrdinal =
         isMwMeetingDay(lookupDate) && songs?.length >= 2 && songs[1]
@@ -1298,20 +1308,22 @@ export const dynamicMediaMapper = async (
     const mediaPromises = allMedia.map(
       async (m, index): Promise<DynamicMediaObject> => {
         m.FilePath = await convertImageIfNeeded(m.FilePath);
-        const fileUrl = m.FilePath
+        const pubMediaId = (
+          [m.KeySymbol, m.IssueTagNumber].filter(Boolean).length
+            ? [m.KeySymbol, m.IssueTagNumber]
+            : [m.MepsDocumentId]
+        )
+          .concat([
+            (m.MepsLanguageIndex !== undefined &&
+              getJwLangCode(m.MepsLanguageIndex)) ||
+              '',
+            m.Track,
+          ])
+          .filter(Boolean)
+          .join('_');
+        const fileUrl = isLikelyFile(m.FilePath)
           ? window.electronApi.pathToFileURL(m.FilePath)
-          : ([m.KeySymbol, m.IssueTagNumber].filter(Boolean).length
-              ? [m.KeySymbol, m.IssueTagNumber]
-              : [m.MepsDocumentId]
-            )
-              .concat([
-                (m.MepsLanguageIndex !== undefined &&
-                  getJwLangCode(m.MepsLanguageIndex)) ||
-                  '',
-                m.Track,
-              ])
-              .filter(Boolean)
-              .join('_');
+          : pubMediaId;
         const mediaIsSong = isSong(m);
         const thumbnailUrl =
           m.ThumbnailUrl ??
@@ -1345,7 +1357,7 @@ export const dynamicMediaMapper = async (
           }
         }
         let section: MediaSectionIdentifier =
-          source === 'additional' ? additionalSection : 'wt';
+          calculatedSource === 'additional' ? additionalSection : 'wt';
         if (middleSongParagraphOrdinal > 0) {
           // this is a meeting with 3 songs
           if (m.BeginParagraphOrdinal >= middleSongParagraphOrdinal) {
@@ -1382,6 +1394,15 @@ export const dynamicMediaMapper = async (
 
         const tag = tagType ? { type: tagType, value: tagValue } : undefined;
 
+        const datePart = formatDate(lookupDate, 'YYYYMMDD');
+        const durationPart =
+          calculatedSource === 'additional' &&
+          (customDuration?.min || customDuration?.max)
+            ? `${customDuration.min ?? ''}_${customDuration.max ?? ''}-`
+            : '';
+        const idRaw = `${datePart}-${durationPart}${fileUrl}`;
+        const uniqueId = sanitizeId(idRaw);
+
         return {
           cbs:
             isMwMeetingDay(lookupDate) &&
@@ -1396,11 +1417,12 @@ export const dynamicMediaMapper = async (
           isImage: isImage(m.FilePath),
           isVideo: video,
           markers: m.VideoMarkers,
+          pubMediaId,
           repeat: !!m.Repeat,
           section, // if is we: wt; else, if >= middle song: LAC; >= (middle song - 8???): AYFM; else: TGW
           sectionOriginal: section, // to enable restoring the original section after custom sorting
           sortOrderOriginal: index, // Index in the array corresponds to the original processing order
-          source,
+          source: calculatedSource,
           streamUrl: m.StreamUrl,
           subtitlesUrl: video ? await getSubtitlesUrl(m, duration) : '',
           tag,
@@ -1408,9 +1430,7 @@ export const dynamicMediaMapper = async (
           title: mediaIsSong
             ? m.Label.replace(/^\d+\.\s*/, '')
             : m.Label || m.Caption,
-          uniqueId: sanitizeId(
-            formatDate(lookupDate, 'YYYYMMDD') + '-' + fileUrl,
-          ),
+          uniqueId,
         };
       },
     );

@@ -225,7 +225,7 @@ export const getMediaFromJwPlaylist = async (
     const dynamicPlaylistMediaItems = await dynamicMediaMapper(
       playlistMediaItems.filter((m) => m.KeySymbol !== 'nwt'),
       selectedDateValue,
-      'additional',
+      'playlist',
     );
     return dynamicPlaylistMediaItems;
   } catch (error) {

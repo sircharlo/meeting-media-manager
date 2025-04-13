@@ -37,6 +37,7 @@ export interface DynamicMediaObject {
   isVideo?: boolean;
   markers?: VideoMarker[];
   parentUniqueId?: string;
+  pubMediaId?: string;
   repeat?: boolean;
   section: MediaSectionIdentifier;
   sectionOriginal: MediaSectionIdentifier;
