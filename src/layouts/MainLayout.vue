@@ -68,7 +68,7 @@ import {
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
-import { formatDate, isInPast } from 'src/utils/date';
+import { formatDate, getSpecificWeekday, isInPast } from 'src/utils/date';
 import { kebabToCamelCase } from 'src/utils/general';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -148,8 +148,11 @@ watch(currentCongregation, (newCongregation, oldCongregation) => {
       navigateToCongregationSelector();
     } else {
       let year = new Date().getFullYear();
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      if (jwStore.memorials[year] && isInPast(jwStore.memorials[year]!)) {
+      if (
+        jwStore.memorials[year] &&
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        isInPast(getSpecificWeekday(jwStore.memorials[year]!, 6))
+      ) {
         year++;
       }
       if (
