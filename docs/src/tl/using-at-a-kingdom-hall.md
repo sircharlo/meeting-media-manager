@@ -103,19 +103,19 @@ Kapag gagamitin ang M³ sa unang pagkakataon, hihilingan kang pumili ng gusto mo
 
 :::tip Tip
 
-This is does not have to be the same language as the one in which M³ will download media. The language for media downloads is configured in a later step.
+Hindi ito katulad ng wika na gagamitin ng M³ sa pag-download ng media. Ang wika para sa mga media download ay isasaayos mamaya.
 
 :::
 
 ### Profile type {#profile-type}
 
-The next step is to choose a **profile type**. For a regular setup in a Kingdom Hall, choose **Regular**. This will configure many features that are commonly used for congregation meetings.
+Ang susunod ay pumili ng **profile type**. Para sa regular na setup sa Kingdom Hall piliin ang **Regular**. Iko-configure nito ang maraming feature na karaniwang ginagamit sa mga pulong ng kongregasyon.
 
 :::warning Babala
 
-You should only choose **Other** if you are creating a profile for which no media should be automatically downloaded. Media will have to be manually imported for use in this profile. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
+Piliin lamang ang **Other** kung gagawa ng profile na walang media na awtomatikong magda-download. Mano-mano ang pag-import ng media sa profile na ito. Ang profile na ito ay karaniwang ginagamit sa mga theocratic school, asemblea, kombensyon at iba pang espesyal na okasyon.
 
-The **Other** profile type is rarely used. **For normal use during congregation meetings, please choose _Regular_.**
+Madalang gamitin ang profile na **Other**. **For normal use during congregation meetings, please choose _Regular_.**
 
 :::
 
