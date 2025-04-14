@@ -125,7 +125,7 @@ Susubukan ng M³ na hanapin ang iskedyul ng pulong, wika, at pangalan ng inyong 
 
 Para gawin ito, gamitin ang **Congregation Lookup** button sa tabi ng field ng pangalan ng kongregasyon at ilagay kahit bahagi lamang ng pangalan ng kongregasyon at lungsod.
 
-Kapag nakita at napili na ang kongregasyon, pupunan ng M³ lahat ng available na impormasyon sa kongregasyon kagaya ng **pangalan**, **wika**, at **iskedyul ng pulong**.
+Kapag nakita at napili na ang kongregasyon, pupunan ng M³ lahat ng available na impormasyon sa kongregasyon kagaya ng **pangalan**, **wika**, at **mga iskedyul ng pulong**.
 
 :::info Note
 
@@ -135,35 +135,35 @@ Ginagamit ng lookup ang available na data mula sa opisyal na website ng mga Saks
 
 ### Manu-manong paglalagay ng impormasyon ng kongregasyon {#manual-entry-of-congregation-information}
 
-If the automated lookup did not find your congregation, you can of course manually enter the required information. The wizard will allow you to review and/or enter your congregation's **name**, **meeting language**, and **meeting days and times**.
+Kung hindi nahanap ng automated lookup ang inyong kongregasyon, pupuwedeng manu-manong ilagay ang mga detalye. Papayagan ka ng wizard na suriin at/o ilagay ang **pangalan** ng inyong kongregasyon, **wika ng pulong**, pati na rin mga **iskedyul ng pulong**.
 
-### Caching videos from the songbook {#caching-videos-from-the-songbook}
+### Pag-cache ng mga video mula sa songbook {#caching-videos-from-the-songbook}
 
-You will also be given the option of **caching all videos from the songbook**. This option pre-downloads all the songbook videos, reducing the time it takes to fetch media for meetings in the future.
+Bibigyan ka rin ng opsyon na **i-cache ang lahat ng video mula sa songbook**.Sa opsyong ito patiunang dina-download ang lahat ng video mula sa songbook, para mabawasan ang oras ng pagkuha ng media para sa mga pulong sa hinaharap.
 
-- **Pros:** Meeting media will be available much faster.
-- **Cons:** The size of the media cache will increase significantly, by approximately 5GB.
+- **Mga Pakinabang:** Mas magiging mabilis ang pagkuha ng media para sa mga pulong.
+- **Kahinaan:** Malaki ang madadagdag sa laki ng media cache—humigit-kumulang 5GB.
 
 :::tip Tip
 
-If your Kingdom Hall has sufficient storage space, it’s recommended to **enable** this option for efficiency and perceived performance.
+Kung sapat ang storage space ng inyong Kingdom Hall, iminumungkahing **i-enable** ang opsyong ito para magamit nang maayos.
 
 :::
 
 ### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
 
-If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Zoom, M³ can automatically integrate with that program. During setup, you can configure the integration with OBS Studio by entering the following:
+Kung gumagamit ng **OBS Studio** ang inyong Kingdom Hall para sa hybrid na mga pulong sa Zoom, awtomatikong makakakonekta ang M³ sa program na iyon.Habang nagse-setup, maaaring i-configure ang integration sa OBS Studio sa pamamagitan ng paglalagay ng mga sumusunod na detalye:
 
-- **Port:** The port number used to connect to the OBS Studio Websocket plugin.
-- **Password:** The password used to connect to the OBS Studio Websocket plugin.
-- **Scenes:** The OBS scenes that will be used during media presentations. You'll need one scene that captures the media window or screen, and one that shows the stage.
+- **Port:** Port number na gagamitin upang makakonekta sa OBS Studio Websocket plugin.
+- **Password:** Password na gagamitin upang makakonekta sa OBS Studio Websocket plugin.
+- **Scenes:** Mga scene sa OBS na gagamitin sa mga media presentation. Kailangan ng isang scene para sa media window o screen, at isa para sa stage.
 
 :::tip Tip
 
-If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
+Kung madalas na hybrid ang pulong ng inyong kongregasyon, **lubos** na iminumungkahi ang pag-integrate sa OBS Studio.
 
 :::
 
-## 3. Enjoy using M³ {#enjoy-using-m3}
+## 3. Masiyahan sa paggamit ng M³ {#enjoy-using-m3}
 
-Once the setup wizard is complete, M³ is ready to help manage and present media for congregation meetings. Enjoy using the app! :tada:
+Kung tapos na ang setup wizard, handa na ang M³ sa pag-manage at pag-display ng media sa mga pagpupulong. Mag-enjoy sa paggamit ng app! :tada:
