@@ -4,6 +4,19 @@
 
 关于不同版本之间更改的完整清单，请参阅我们在 GitHub 上的 CHANGELOG.md文件。
 
+## 25.4.0
+
+### ✨ 新功能
+
+- 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
+- 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
+
+### 🛠️ 改进和调整
+
+- 🎬 **Multiple Start/End Times for Single Video**: Allow a single video to appear in the media list multiple times with different custom start/end times.
+- 📤 **Include Grouped Media in Auto Export**: Automatically export grouped media items along with others.
+- 📡 **Correct `.m4v` Fetching from JW API**: Ensure `.m4v` files are correctly fetched from the JW API.
+
 ## 25.3.1
 
 ### ✨ 新功能
