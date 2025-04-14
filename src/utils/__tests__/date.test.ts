@@ -95,13 +95,13 @@ describe('getSpecificWeekday', () => {
       +`${date.getFullYear()}${date.getMonth()}${date.getDate()}`,
     );
 
-    const wed = getSpecificWeekday(date, 2);
-    expect(wed.getDay()).toBe(3);
+    const thursday = getSpecificWeekday(date, 3);
+    expect(thursday.getDay()).toBe(4);
 
-    const sun = getSpecificWeekday(date, 6);
-    expect(sun.getDay()).toBe(0);
+    const sunday = getSpecificWeekday(date, 6);
+    expect(sunday.getDay()).toBe(0);
     expect(
-      +`${sun.getFullYear()}${sun.getMonth()}${sun.getDate()}`,
+      +`${sunday.getFullYear()}${sunday.getMonth()}${sunday.getDate()}`,
     ).toBeGreaterThanOrEqual(
       +`${date.getFullYear()}${date.getMonth()}${date.getDate()}`,
     );
