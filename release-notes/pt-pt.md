@@ -4,6 +4,19 @@
 
 Para a lista completa de alterações entre versões, consulte o ficheiro CHANGELOG.md no GitHub.
 
+## 25.4.0
+
+### ✨ Novas Funcionalidades
+
+- 🇵🇭 **Novo Idioma: Tagalog**: Adicionado suporte para Tagalog, expandindo as capacidades multilingues da aplicação.
+- 🎞 **Suporte para o formato de vídeo `.m4v`**: Agora é possível reproduzir ficheiros `.m4v`, melhorando a compatibilidade com diferentes tipos de multimédia.
+
+### 🛠️ Melhorias e Ajustes
+
+- 🎬 Vários Momentos de Início/Fim para um Único Vídeo: Permite que um único vídeo apareça várias vezes na lista de multimédia com diferentes momentos personalizados de início e fim.
+- 📤 Incluir Multimédia Agrupado na Exportação Automática: Exporta automaticamente os itens de multimédia agrupados juntamente com os restantes.
+- 📡 Correcção na Obtenção de.m4v a partir da API JW: Garante que os ficheiros.m4v são correctamente obtidos a partir da API JW.
+
 ## 25.3.1
 
 ### ✨ Novas Funcionalidades
