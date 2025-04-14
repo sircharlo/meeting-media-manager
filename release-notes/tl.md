@@ -4,11 +4,24 @@
 
 Para sa makita ang lahat ng mga update, tingnan ang aming CHANGELOG.md na file sa GitHub.
 
+## 25.4.0
+
+### ✨ Mga Bagong Feature
+
+- 🇵🇭 **Bagong Wika: Tagalog**: Idinagdag ang Tagalog, pinalawak ang paggamit ng app sa iba't ibang wika.
+- 🎞 **Tulong sa `.m4v` Video Format**: Ngayon ay mayroon nang playback para sa `.m4v` files upang palawakin ang media compatibility.
+
+### 🛠️ Mga Pinahusay at Inayos
+
+- 🎬 **Multiple Start/End Times sa Iisang Video**: Isang video na lamang sa media list na lilitaw nang higit sa isang beses na may iba-ibang start/end times.
+- 📤 **Isama ang Grouped Media sa Auto Export**: Awtomatikong i-export ang mga item sa grouped media kasama ng iba pa.
+- 📡 **Wastong Pagkuha ng `.m4v` Mula sa JW API**: Sinigurong ang mga `.m4v` file ay wastong nakuha mula sa JW API.
+
 ## 25.3.1
 
 ### ✨ Mga Bagong Feature
 
-- 🌏 **Bagong Wika: Korean**: Tumulong sa wikang ito upang mas madaming makinabang.
+- 🌏 **Bagong Wika: Korean**: Idinagdag ang Korean, pinalawak ang paggamit ng app sa iba't ibang wika.
 
 ### 🛠️ Mga Pinahusay at Inayos
 
