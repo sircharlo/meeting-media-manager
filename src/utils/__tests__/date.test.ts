@@ -89,6 +89,8 @@ describe('getSpecificWeekday', () => {
     const date = new Date();
     const monday = getSpecificWeekday(date, 0);
     expect(monday.getDay()).toBe(1);
+
+    // Check that the date is in the correct week
     expect(
       +`${monday.getFullYear()}${monday.getMonth()}${monday.getDate()}`,
     ).toBeLessThanOrEqual(
@@ -100,6 +102,8 @@ describe('getSpecificWeekday', () => {
 
     const sunday = getSpecificWeekday(date, 6);
     expect(sunday.getDay()).toBe(0);
+
+    // Check that the date is in the correct week
     expect(
       +`${sunday.getFullYear()}${sunday.getMonth()}${sunday.getDate()}`,
     ).toBeGreaterThanOrEqual(
