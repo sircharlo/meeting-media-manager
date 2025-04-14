@@ -12,11 +12,11 @@ Der Quellcode dieser Anwendung ist für jedermann einsehbar, um zu überprüfen,
 
 ## :thinking: Verstößt diese Anwendung gegen die Nutzungsbedingungen der offiziellen Website der Zeugen Jehovas? {#terms-of-use}
 
-**No.** The Terms of Use of the official website of Jehovah's Witnesses explicitly allow the kind of usage that we are making. Hier ist der relevante Auszug aus diesen Bedingungen (hervorgehoben):
+**Nein.** Die Nutzungsbedingungen der offiziellen Website der Zeugen Jehovas erlauben tatsächlich ausdrücklich die Art der Nutzung, die wir hier betreiben. Hier ist der relevante Auszug aus diesen Bedingungen (hervorgehoben):
 
 > Sie dürfen nicht:
 >
-> Software-Anwendungen, Werkzeuge oder Techniken erstellen, die speziell dazu dienen, Daten, HTML, Bilder oder Texte von dieser Seite zu sammeln, zu kopieren, herunterzuladen, zu extrahieren, zu ernten oder zu scrapen. (Dies verbietet **nicht** die Verteilung von kostenlosen, nicht-kommerziellen Anwendungen, die dazu gedacht sind, elektronische Dateien wie EPUB-, PDF-, MP3- und MP4-Dateien aus öffentlichen Bereichen dieser Seite herunterzuladen.)
+> Software-Anwendungen, Werkzeuge oder Techniken erstellen, die speziell dazu dienen, Daten, HTML, Bilder oder Texte von dieser Seite zu sammeln, zu kopieren, herunterzuladen, zu extrahieren, zu ernten oder zu scrapen. (Dazu zählt nicht die Verbreitung von kostenfreien, nicht kommerziellen Anwendungen, die entwickelt wurden, um elektronische Dateien vom öffentlichen Bereich dieser Website herunterzuladen — zum Beispiel EPUB-, PDF-, MP3- und MP4-Dateien.)
 
 ## :radioactive: Wie melde ich ein Problem? {#how-do-i-report-an-issue}
 
