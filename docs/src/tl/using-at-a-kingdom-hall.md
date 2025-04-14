@@ -115,25 +115,25 @@ Ang susunod ay pumili ng **profile type**. Para sa regular na setup sa Kingdom H
 
 Piliin lamang ang **Other** kung gagawa ng profile na walang media na awtomatikong magda-download. Mano-mano ang pag-import ng media sa profile na ito. Ang profile na ito ay karaniwang ginagamit sa mga theocratic school, asemblea, kombensyon at iba pang espesyal na okasyon.
 
-Madalang gamitin ang profile na **Other**. **For normal use during congregation meetings, please choose _Regular_.**
+Madalang gamitin ang profile na **Other**. **Kung gagamitin para sa mga pulong ng kongregasyon, pakisuyong piliin ang _Regular_.**
 
 :::
 
 ### Automatic congregation lookup {#automatic-congregation-lookup}
 
-M³ can attempt to automatically find your congregation's meeting schedule, language, and formatted name.
+Susubukan ng M³ na hanapin ang iskedyul ng pulong, wika, at pangalan ng inyong kongregasyon.
 
-To do so, use the **Congregation Lookup** button next to the congregation name field and enter at least part of the congregation's name and city.
+Para gawin ito, gamitin ang **Congregation Lookup** button sa tabi ng field ng pangalan ng kongregasyon at ilagay kahit bahagi lamang ng pangalan ng kongregasyon at lungsod.
 
-Once the correct congregation is found and selected, M³ will prefill all available information, such as your congregation's **name**, **meeting language**, and **meeting days and times**.
+Kapag nakita at napili na ang kongregasyon, pupunan ng M³ lahat ng available na impormasyon sa kongregasyon kagaya ng **pangalan**, **wika**, at **iskedyul ng pulong**.
 
 :::info Note
 
-This lookup uses publicly available data from the official website of Jehovah's Witnesses.
+Ginagamit ng lookup ang available na data mula sa opisyal na website ng mga Saksi ni Jehova.
 
 :::
 
-### Manual entry of congregation information {#manual-entry-of-congregation-information}
+### Manu-manong paglalagay ng impormasyon ng kongregasyon {#manual-entry-of-congregation-information}
 
 If the automated lookup did not find your congregation, you can of course manually enter the required information. The wizard will allow you to review and/or enter your congregation's **name**, **meeting language**, and **meeting days and times**.
 
