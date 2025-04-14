@@ -85,13 +85,13 @@ Kung black ang makikita sa media window nang ipakita ang website pagtapos ng upd
 3. Piliin ang M³ sa list.
 4. I-click ang `-` (minus) button upang alisin.
 5. I-click ang `+` (plus) button at piliin ang M³ mula sa folder ng Applications.
-6. You may be prompted to relaunch M³ to apply the change.
+6. Hihilingan ka na buksan muli ang M³ upang makita ang pagbabago.
 
-After these steps, screen sharing should function as expected once again.
+Pagtapos nito, gagana na ang screen sharing gaya ng inaasahan.
 
 :::tip Tip
 
-These steps are optional and can be skipped if you do not plan to use the website presentation feature. On the other hand, if you do plan to use the website presentation feature, it is recommended to follow these steps after every update to ensure the feature works as expected.
+Opsyonal ang mga hakbang na ito at puwedeng laktawan kung hindi mo gagamitin ang website future sa hinaharap. Sa kabilang banda, kung gagamitin mo ang feature na ito, iminumungkahi na sundan ang mga hakbang tuwingay update upang masigurado na gagana ito.
 
 :::
 
@@ -99,71 +99,71 @@ These steps are optional and can be skipped if you do not plan to use the websit
 
 ### App display language {#app-display-language}
 
-When launching M³ for the first time, you will be prompted to choose your preferred **display language**. Choose the language you want M³ to use for its interface.
+Kapag gagamitin ang M³ sa unang pagkakataon, hihilingan kang pumili ng gusto mong **display language**. Pumili ng wika na gusto mo sa interface ng M³.
 
 :::tip Tip
 
-This is does not have to be the same language as the one in which M³ will download media. The language for media downloads is configured in a later step.
+Hindi ito katulad ng wika na gagamitin ng M³ sa pag-download ng media. Ang wika para sa mga media download ay isasaayos mamaya.
 
 :::
 
 ### Profile type {#profile-type}
 
-The next step is to choose a **profile type**. For a regular setup in a Kingdom Hall, choose **Regular**. This will configure many features that are commonly used for congregation meetings.
+Ang susunod ay pumili ng **profile type**. Para sa regular na setup sa Kingdom Hall piliin ang **Regular**. Iko-configure nito ang maraming feature na karaniwang ginagamit sa mga pulong ng kongregasyon.
 
 :::warning Babala
 
-You should only choose **Other** if you are creating a profile for which no media should be automatically downloaded. Media will have to be manually imported for use in this profile. This type of profile is used mostly to use M³ during theocratic schools, assemblies, conventions and other special events.
+Piliin lamang ang **Other** kung gagawa ng profile na walang media na awtomatikong magda-download. Mano-mano ang pag-import ng media sa profile na ito. Ang profile na ito ay karaniwang ginagamit sa mga theocratic school, asemblea, kombensyon at iba pang espesyal na okasyon.
 
-The **Other** profile type is rarely used. **For normal use during congregation meetings, please choose _Regular_.**
+Madalang gamitin ang profile na **Other**. **Kung gagamitin para sa mga pulong ng kongregasyon, pakisuyong piliin ang _Regular_.**
 
 :::
 
 ### Automatic congregation lookup {#automatic-congregation-lookup}
 
-M³ can attempt to automatically find your congregation's meeting schedule, language, and formatted name.
+Susubukan ng M³ na hanapin ang iskedyul ng pulong, wika, at pangalan ng inyong kongregasyon.
 
-To do so, use the **Congregation Lookup** button next to the congregation name field and enter at least part of the congregation's name and city.
+Para gawin ito, gamitin ang **Congregation Lookup** button sa tabi ng field ng pangalan ng kongregasyon at ilagay kahit bahagi lamang ng pangalan ng kongregasyon at lungsod.
 
-Once the correct congregation is found and selected, M³ will prefill all available information, such as your congregation's **name**, **meeting language**, and **meeting days and times**.
+Kapag nakita at napili na ang kongregasyon, pupunan ng M³ lahat ng available na impormasyon sa kongregasyon kagaya ng **pangalan**, **wika**, at **mga iskedyul ng pulong**.
 
 :::info Note
 
-This lookup uses publicly available data from the official website of Jehovah's Witnesses.
+Ginagamit ng lookup ang available na data mula sa opisyal na website ng mga Saksi ni Jehova.
 
 :::
 
-### Manual entry of congregation information {#manual-entry-of-congregation-information}
+### Manu-manong paglalagay ng impormasyon ng kongregasyon {#manual-entry-of-congregation-information}
 
-If the automated lookup did not find your congregation, you can of course manually enter the required information. The wizard will allow you to review and/or enter your congregation's **name**, **meeting language**, and **meeting days and times**.
+Kung hindi nahanap ng automated lookup ang inyong kongregasyon, pupuwedeng manu-manong ilagay ang mga detalye. Papayagan ka ng wizard na suriin at/o ilagay ang **pangalan** ng inyong kongregasyon, **wika ng pulong**, pati na rin mga **iskedyul ng pulong**.
 
-### Caching videos from the songbook {#caching-videos-from-the-songbook}
+### Pag-cache ng mga video mula sa songbook {#caching-videos-from-the-songbook}
 
-You will also be given the option of **caching all videos from the songbook**. This option pre-downloads all the songbook videos, reducing the time it takes to fetch media for meetings in the future.
+Bibigyan ka rin ng opsyon na **i-cache ang lahat ng video mula sa songbook**.Sa opsyong ito patiunang dina-download ang lahat ng video mula sa songbook, para mabawasan ang oras ng pagkuha ng media para sa mga pulong sa hinaharap.
 
-- **Pros:** Meeting media will be available much faster.
-- **Cons:** The size of the media cache will increase significantly, by approximately 5GB.
+- **Mga Pakinabang:** Mas magiging mabilis ang pagkuha ng media para sa mga pulong.
+- **Kahinaan:** Malaki ang madadagdag sa laki ng media cache—humigit-kumulang 5GB.
 
 :::tip Tip
 
-If your Kingdom Hall has sufficient storage space, it’s recommended to **enable** this option for efficiency and perceived performance.
+Kung sapat ang storage space ng inyong Kingdom Hall, iminumungkahing **i-enable** ang opsyong ito para magamit nang maayos.
 
 :::
 
 ### OBS Studio Integration Configuration (Optional) {#obs-studio-integration-configuration}
 
-If your Kingdom Hall uses **OBS Studio** for broadcasting hybrid meetings over Zoom, M³ can automatically integrate with that program. During setup, you can configure the integration with OBS Studio by entering the following:
+Kung gumagamit ng **OBS Studio** ang inyong Kingdom Hall para sa hybrid na mga pulong sa Zoom, awtomatikong makakakonekta ang M³ sa program na iyon.Habang nagse-setup, maaaring i-configure ang integration sa OBS Studio sa pamamagitan ng paglalagay ng mga sumusunod na detalye:
 
-- **Port:** The port number used to connect to the OBS Studio Websocket plugin.
-- **Password:** The password used to connect to the OBS Studio Websocket plugin.
-- **Scenes:** The OBS scenes that will be used during media presentations. You'll need one scene that captures the media window or screen, and one that shows the stage.
+- **Port:** Port number na gagamitin upang makakonekta sa OBS Studio Websocket plugin.
+- **Password:** Password na gagamitin upang makakonekta sa OBS Studio Websocket plugin.
+- **Scenes:** Mga scene sa OBS na gagamitin sa mga media presentation. Kailangan ng isang scene para sa media window o screen, at isa para sa stage.
 
 :::tip Tip
 
-If your congregation regularly conducts hybrid meetings, it's **highly** recommended to enable the integration with OBS Studio.
+Kung madalas na hybrid ang pulong ng inyong kongregasyon, **lubos** na iminumungkahi ang pag-integrate sa OBS Studio.
 
 :::
 
-## 3. Enjoy using M³ {#enjoy-using-m3}
+## 3. Masiyahan sa paggamit ng M³ {#enjoy-using-m3}
 
-Once the setup wizard is complete, M³ is ready to help manage and present media for congregation meetings. Enjoy using the app! :tada:
+Kung tapos na ang setup wizard, handa na ang M³ sa pag-manage at pag-display ng media sa mga pagpupulong. Mag-enjoy sa paggamit ng app! :tada:

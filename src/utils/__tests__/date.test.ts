@@ -90,11 +90,25 @@ describe('getSpecificWeekday', () => {
     const monday = getSpecificWeekday(date, 0);
     expect(monday.getDay()).toBe(1);
 
-    const wed = getSpecificWeekday(date, 3);
-    expect(wed.getDay()).toBe(4);
+    // Check that the date is in the correct week
+    expect(
+      +`${monday.getFullYear()}${monday.getMonth()}${monday.getDate()}`,
+    ).toBeLessThanOrEqual(
+      +`${date.getFullYear()}${date.getMonth()}${date.getDate()}`,
+    );
 
-    const sun = getSpecificWeekday(date, 6);
-    expect(sun.getDay()).toBe(0);
+    const thursday = getSpecificWeekday(date, 3);
+    expect(thursday.getDay()).toBe(4);
+
+    const sunday = getSpecificWeekday(date, 6);
+    expect(sunday.getDay()).toBe(0);
+
+    // Check that the date is in the correct week
+    expect(
+      +`${sunday.getFullYear()}${sunday.getMonth()}${sunday.getDate()}`,
+    ).toBeGreaterThanOrEqual(
+      +`${date.getFullYear()}${date.getMonth()}${date.getDate()}`,
+    );
   });
 });
 

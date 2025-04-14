@@ -145,13 +145,13 @@ export const findFile = async (dir: string | undefined, search: string) => {
 /**
  * Gets the files inside a publication directory.
  * @param publication The publication to get the files of.
- * @param filter The filter to apply to the files.
+ * @param ext The extension filter to apply to the files.
  * @param cacheFolder The cache folder if it is not the default.
  * @returns The files inside the publication directory.
  */
 export const getPublicationDirectoryContents = async (
   publication: PublicationFetcher,
-  filter?: string,
+  ext?: string,
   cacheFolder?: null | string,
 ) => {
   try {
@@ -162,7 +162,7 @@ export const getPublicationDirectoryContents = async (
       .filter(
         (item) =>
           item.isFile &&
-          (!filter || item.name.toLowerCase().includes(filter.toLowerCase())),
+          (!ext || item.name.toLowerCase().endsWith(ext.toLowerCase())),
       )
       .map((item) => ({ path: window.electronApi.path.join(dir, item.name) }));
   } catch (error) {

@@ -4,6 +4,30 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## 25.4.0
+
+### ✨ New Features
+
+- 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
+- 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
+
+### 🛠️ Improvements and Tweaks
+
+- 🎬 **Multiple Start/End Times for Single Video**: Allow a single video to appear in the media list multiple times with different custom start/end times.
+- 📦 **Skip `.jwlplaylist` Files in Video Conversion**: Improve processing by skipping unnecessary `.jwlplaylist` files during video conversion.
+- 🛡 **Improve Error Handling**: Enhance robustness by handling unexpected errors more gracefully.
+- 🚫 **Prevent Errors from Unreleased Songs**: Avoid crashes when meeting workbooks reference unreleased songs.
+- 🗂 **Improve Watchtower Media Labels & Order**: Clarify media labeling and improve item ordering for Watchtower content.
+- 📤 **Include Grouped Media in Auto Export**: Automatically export grouped media items along with others.
+- 🔄 **Replace Missing Media When Available**: Automatically replace missing media files when they become available.
+- 📡 **Correct `.m4v` Fetching from JW API**: Ensure `.m4v` files are correctly fetched from the JW API.
+- 📆 **Fix Future Day Calculation**: Correctly determine a future day within a specific week for accurate media planning.
+
+### 🔧 Improvements to Codebase
+
+- ⚙️ **Optimize CI Pipeline**: Speed up development and deployment processes by improving the continuous integration pipeline.
+- 📦 **Update Dependencies**: Keep the application secure and up to date by updating various dependencies.
+
 ## 25.3.1
 
 ### ✨ New Features

@@ -59,6 +59,10 @@ export default defineStore((/* { ssrContext } */) => {
               'FILTERED (length: ' +
               (state.jwLanguages?.list?.length || 0) +
               ')',
+            jwMepsLanguages:
+              'FILTERED (length: ' +
+              (state.jwMepsLanguages?.list?.length || 0) +
+              ')',
             jwSongs:
               'FILTERED (length: ' +
               (Object.keys(state.jwSongs || {}).length || 0) +

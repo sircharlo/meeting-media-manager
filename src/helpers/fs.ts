@@ -380,6 +380,9 @@ async function fetchLatestRelease(): Promise<Release> {
     'https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest',
   );
   if (!ffmpegReleases?.assets?.length) {
+    errorCatcher('No FFmpeg releases found', {
+      contexts: { fn: { ffmpegReleases, name: 'fetchLatestRelease' } },
+    });
     throw new Error('Could not determine FFmpeg version.');
   }
   return ffmpegReleases;
