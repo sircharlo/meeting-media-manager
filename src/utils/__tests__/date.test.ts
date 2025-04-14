@@ -89,12 +89,22 @@ describe('getSpecificWeekday', () => {
     const date = new Date();
     const monday = getSpecificWeekday(date, 0);
     expect(monday.getDay()).toBe(1);
+    expect(
+      +`${monday.getFullYear()}${monday.getMonth()}${monday.getDate()}`,
+    ).toBeLessThanOrEqual(
+      +`${date.getFullYear()}${date.getMonth()}${date.getDate()}`,
+    );
 
-    const wed = getSpecificWeekday(date, 3);
-    expect(wed.getDay()).toBe(4);
+    const wed = getSpecificWeekday(date, 2);
+    expect(wed.getDay()).toBe(3);
 
     const sun = getSpecificWeekday(date, 6);
     expect(sun.getDay()).toBe(0);
+    expect(
+      +`${sun.getFullYear()}${sun.getMonth()}${sun.getDate()}`,
+    ).toBeGreaterThanOrEqual(
+      +`${date.getFullYear()}${date.getMonth()}${date.getDate()}`,
+    );
   });
 });
 

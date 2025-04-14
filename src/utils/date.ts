@@ -141,11 +141,11 @@ export const getSpecificWeekday = (
     if (!lookupDate) return new Date();
     if (desiredWeekday === null) throw new Error('No desired weekday');
     lookupDate = dateFromString(lookupDate);
-    desiredWeekday++;
-    desiredWeekday = desiredWeekday === 7 ? 0 : desiredWeekday;
-    const difference = (lookupDate.getDay() - desiredWeekday + 7) % 7;
+    const currentWeekday =
+      lookupDate.getDay() === 0 ? 6 : lookupDate.getDay() - 1;
+    const difference = desiredWeekday - currentWeekday;
     const newDate = new Date(lookupDate.valueOf());
-    newDate.setDate(newDate.getDate() - difference);
+    newDate.setDate(newDate.getDate() + difference);
     return newDate;
   } catch (error) {
     errorCatcher(error);
