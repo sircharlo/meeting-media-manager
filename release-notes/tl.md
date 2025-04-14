@@ -1,34 +1,34 @@
 <!-- markdownlint-disable no-duplicate-heading -->
 
-# What's New
+# Ano'ng Bago
 
-For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
+Para sa makita ang lahat ng mga update, tingnan ang aming CHANGELOG.md na file sa GitHub.
 
 ## 25.3.1
 
-### ✨ New Features
+### ✨ Mga Bagong Feature
 
-- 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
+- 🌏 **Bagong Wika: Korean**: Tumulong sa wikang ito upang mas madaming makinabang.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Mga Pinahusay at Inayos
 
-- ⚡ **Improve Performance & CPU Usage**: Optimize performance to reduce CPU usage and enhance efficiency.
-- 🔄 **Fix Synchronization & Crash Issues**: Resolve various sync-related and stability issues to improve reliability.
-- 📜 **Show Release Notes for Existing Congregations**: Ensure release notes are only displayed for congregations that are already loaded.
+- ⚡ **Pinahusay na Kakayahan at Paggamit ng CPU**: Pinahusay na kakayahan ng CPU upang magamit nang mabuti.
+- 🔄 **Pag-ayos sa Pag-synchronize at mga Crash Issues**: Paglutas may kinalaman sa mga problemang ito.
+- 📜 **Pagpapakita ng mga Release Notes sa mga Kongregasyon**: Sinisiguradong naka-display ang mga release notes sa mga kongregasyon.
 
 ## 25.3.0
 
-### ✨ New Features
+### ✨ Mga Bagong Feature
 
-- 🎵 **Play Background Music with Videos**: Allow background music to continue playing while videos are being viewed.
-- 🎥 **Camera Feed for Sign Language Media**: Add the ability to display a camera feed on the media window specifically for sign language users.
-- 📅 **Automatic Memorial Date & Background**: Automatically detect and set the Memorial date and prepare the Memorial background image.
-- 📜 **Show Release Notes In-App**: Display release notes directly in the application so users can easily review changes after an update.
+- 🎵 **Mag-play ng Background Music kasama ang Video**: Patuloy na pag-play ng background music habang tinitingnan ang mga video.
+- 🎥 **Camera Feed para sa Sign Language Media**: Magpakita ng camera feed sa media window para sa mga gumagamit ng sign language.
+- 📅 **Awtomatikong Petsa ng Memoryal at Background**: Awtomatikong tukuyin at i-set ang petsa ng Memoryal at ihanda ang background image para rito.
+- 📜 **Ipakita ang Release Notes sa App**: Ipakita ang release notes sa mismong application upang makita ng mga gumagamit ang mga binago pagtapos ng update.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Mga Pinahusay at Inayos
 
-- ⚡ **Optimize Smart Cache Clearing**: Improve the smart cache-clearing mechanism for better performance and efficiency.
-- 📂 **Correct Circuit Overseer Media Placement**: Ensure Circuit Overseer media is placed in the correct section.
-- 📅 **Exclude Regular Meeting Media for Memorial**: Prevent fetching standard meeting media for the Memorial to prevent errors.
-- 📅 **Hide Regular Meeting Sections on Memorial**: Remove unnecessary meeting sections during the Memorial event for a cleaner layout.
-- 📖 **Fix Sign Language Bible Video Downloads**: Correctly download Sign Language Bible chapter videos from JWL playlists.
+- ⚡ \*\*Pag-optimize ng Smart Cache Clearing: Pinaganda ang awtomatikong clearing ng cache.
+- 📂 **Wastong Media para sa Circuit Overseer**: Tinitiyak na ang media para sa Circuit Overseer ay mailalagay sa tamang seksyon.
+- 📅 **Pag-alis ng Media para sa Pulong para sa Memoryal**: Pagpigil sa pagkuha ng karaniwang meeting media para sa Memoryal upang maiwasan ang error.
+- 📅 **Pagtago ng mga Meeting Section sa Memoryal**: Mas malinis na layout habang Memoryal.
+- 📖 **Inayos na Pag-download ng Sign Language Bible Video**: Tamang pag-download ng mga video sa bawat kabanata ng Bibliya sa wikang Sign Language mula sa JWL playlist.
