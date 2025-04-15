@@ -97,7 +97,7 @@
     "@types/pretty-bytes": "^5.2.0",
     "@types/sanitize-html": "^2.15.0",
     "@types/sortablejs": "^1.15.8",
-    "@typescript-eslint/utils": "^8.29.1",
+    "@typescript-eslint/utils": "^8.30.1",
     "@vitejs/plugin-vue": "^5.2.3",
     "@vitest/eslint-plugin": "^1.1.42",
     "@vue/eslint-config-prettier": "^10.2.0",
