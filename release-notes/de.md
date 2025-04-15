@@ -1,8 +1,8 @@
 <!-- markdownlint-disable no-duplicate-heading -->
 
-# What's New
+# Was ist neu
 
-For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
+Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in unserer CHANGELOG.md Datei auf GitHub.
 
 ## 25.4.0
 
@@ -14,7 +14,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 ### 🛠️ Verbesserungen und Optimierungen
 
 - 🎬 **Mehrere Start/End-Zeiten für Einzelvideo**: Lasse ein einzelnes Video mehrfach in der Medienliste mit verschiedenen benutzerdefinierten Start-/Endzeiten erscheinen.
-- 📤 **Include Grouped Media in Auto Export**: Automatically export grouped media items along with others.
+- 📤 **Gruppierte Medien in den Auto-Export einbeziehen**: Gruppierte Medienelemente automatisch zusammen mit anderen exportieren.
 - 📡 **Korrektur beim Abruf von `.m4v` mittels JW API**: Sichergestellt, dass `.m4v` Dateien korrekt aus der JW API geholt werden.
 
 ## 25.3.1
