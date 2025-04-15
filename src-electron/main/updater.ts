@@ -18,6 +18,7 @@ export async function initUpdater() {
       'EPERM',
       'Command failed: mv -f',
       '504 Gateway Time-out',
+      'Code signature at URL',
       'HttpError: 504',
       'YAMLException',
     ];
