@@ -239,7 +239,6 @@ export const getSubtitlesUrl = async (
               fn: { comparisonDuration, duration, multimediaItem, subtitles },
             },
           });
-          return '';
         }
 
         const subtitlesFilename = window.electronApi.path.basename(subtitles);
