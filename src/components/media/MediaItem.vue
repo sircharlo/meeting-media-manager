@@ -43,7 +43,7 @@
               :name="
                 !!hoveredBadge || customDurationIsSet
                   ? 'mmm-edit'
-                  : props.media.isAudio
+                  : media.isAudio
                     ? 'mmm-music-note'
                     : 'mmm-play'
               "
@@ -485,7 +485,11 @@
           color="negative"
           icon="mmm-stop"
           rounded
-          @click="media.isVideo ? (mediaToStop = media.uniqueId) : stopMedia()"
+          @click="
+            media.isVideo || media.isAudio
+              ? (mediaToStop = media.uniqueId)
+              : stopMedia()
+          "
         />
       </div>
     </template>

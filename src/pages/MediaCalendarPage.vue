@@ -359,28 +359,34 @@ watch(
   { deep: true },
 );
 
+const { post: postMediaUrl } = useBroadcastChannel<string, string>({
+  name: 'media-url',
+});
+
+const { post: postCustomDuration } = useBroadcastChannel<
+  string | undefined,
+  string | undefined
+>({
+  name: 'custom-duration',
+});
+
 watch(
   () => mediaPlayingUrl.value,
   (newUrl, oldUrl) => {
-    if (newUrl !== oldUrl) {
-      const { post: postMediaUrl } = useBroadcastChannel<string, string>({
-        name: 'media-url',
-      });
-      postMediaUrl(newUrl);
+    if (newUrl === oldUrl) return;
+    postMediaUrl(newUrl);
+    postCustomDuration(undefined);
 
-      const customDuration =
-        (
-          lookupPeriod.value[currentCongregation.value]?.flatMap(
-            (item) => item.dynamicMedia,
-          ) ?? []
-        ).find((item) => item.uniqueId === mediaPlayingUniqueId.value)
-          ?.customDuration || undefined;
-      if (customDuration) {
-        const { post } = useBroadcastChannel<string, string>({
-          name: 'custom-duration',
-        });
-        post(JSON.stringify(customDuration));
-      }
+    const customDuration =
+      (
+        lookupPeriod.value[currentCongregation.value]?.flatMap(
+          (item) => item.dynamicMedia,
+        ) ?? []
+      ).find((item) => item.uniqueId === mediaPlayingUniqueId.value)
+        ?.customDuration || undefined;
+
+    if (customDuration) {
+      postCustomDuration(JSON.stringify(customDuration));
     }
   },
 );
