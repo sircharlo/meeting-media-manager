@@ -27,6 +27,7 @@ export function createMediaWindow() {
     icon: getIconPath('media-player'),
     minHeight: 110,
     minWidth: 195,
+    roundedCorners: PLATFORM === 'darwin',
     thickFrame: false,
     title: 'Media Player - M³',
     width: HD_RESOLUTION[0],
