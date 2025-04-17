@@ -10996,15 +10996,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"link@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "link@npm:2.1.1"
-  bin:
-    link: dist/cli.js
-  checksum: 10c0/2ab956715e77c4fb9d78e16172301b59e2c03611feae4df33f50a70351445da050bea4010c682a0e187a09b5f2ee4462bab842153c2767a3b018de00b0e8282a
-  languageName: node
-  linkType: hard
-
 "linkify-it@npm:^3.0.1":
   version: 3.0.3
   resolution: "linkify-it@npm:3.0.3"
@@ -11568,7 +11559,7 @@ __metadata:
     lodash-es: "npm:^4.17.21"
     mime: "npm:^4.0.7"
     msw: "npm:^2.7.4"
-    music-metadata: "npm:^11.2.0"
+    music-metadata: "npm:^11.2.1"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.1.0"
     pdfjs-dist: "npm:^5.1.91"
@@ -11581,12 +11572,12 @@ __metadata:
     quasar: "npm:^2.18.1"
     rollup-plugin-visualizer: "npm:^5.14.0"
     sanitize-filename: "npm:^1.6.3"
-    sanitize-html: "npm:^2.15.0"
+    sanitize-html: "npm:^2.16.0"
     sortablejs: "npm:^1.15.6"
     sortablejs-vue3: "npm:^1.2.11"
     typescript: "npm:~5.8.3"
     upath: "npm:^2.0.1"
-    vite: "npm:^6.3.0"
+    vite: "npm:~6.2.6"
     vitepress: "npm:^2.0.0-alpha.4"
     vitest: "npm:^3.1.1"
     vue: "npm:^3.5.13"
@@ -12124,20 +12115,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^11.2.0":
-  version: 11.2.0
-  resolution: "music-metadata@npm:11.2.0"
+"music-metadata@npm:^11.2.1":
+  version: 11.2.1
+  resolution: "music-metadata@npm:11.2.1"
   dependencies:
     "@tokenizer/token": "npm:^0.3.0"
     content-type: "npm:^1.0.5"
     debug: "npm:^4.4.0"
     file-type: "npm:^20.4.1"
-    link: "npm:^2.1.1"
     media-typer: "npm:^1.1.0"
     strtok3: "npm:^10.2.2"
     token-types: "npm:^6.0.0"
     uint8array-extras: "npm:^1.4.0"
-  checksum: 10c0/a766cbfbff7a8cd7e2463286088b0a1f3828999783c678331877f3077c211cf5734411fbe73378b932b6ead2a7009c24a207e203ccf56c78934f9d6063a75af8
+  checksum: 10c0/a2c32c1a9f7ef522a9af6c6c070e39f32d0c8cdb4430f592e4574028896d53b1756e044402c5a8cb107829c11f03d0b5dc9776129404985ea7d01287d9f0dee9
   languageName: node
   linkType: hard
 
@@ -14477,7 +14467,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^4.30.1, rollup@npm:^4.34.9":
+"rollup@npm:^4.30.1":
   version: 4.40.0
   resolution: "rollup@npm:4.40.0"
   dependencies:
@@ -14657,9 +14647,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sanitize-html@npm:^2.15.0":
-  version: 2.15.0
-  resolution: "sanitize-html@npm:2.15.0"
+"sanitize-html@npm:^2.16.0":
+  version: 2.16.0
+  resolution: "sanitize-html@npm:2.16.0"
   dependencies:
     deepmerge: "npm:^4.2.2"
     escape-string-regexp: "npm:^4.0.0"
@@ -14667,7 +14657,7 @@ __metadata:
     is-plain-object: "npm:^5.0.0"
     parse-srcset: "npm:^1.0.2"
     postcss: "npm:^8.3.11"
-  checksum: 10c0/ad0086cbaa53f06d9c0c551cfd057ea03a35834bd77f37393bc83ab042ade2f19b41a43bf78ddadd95ad33b54ffd8ecf26d38b73690d41c239ab042b4815bb46
+  checksum: 10c0/c94311c73a8f4b6c5970f4d743e3f1a7f0f6b443b0841a6ec0b88725da16237a5a076534240b042858f964bdc437b421b09a22b76e8e22e6ef2cbba2ed52d77f
   languageName: node
   linkType: hard
 
@@ -17313,7 +17303,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^5.0.0 || ^6.0.0, vite@npm:^6.1.0, vite@npm:^6.2.1":
+"vite@npm:^5.0.0 || ^6.0.0, vite@npm:^6.1.0, vite@npm:^6.2.1, vite@npm:~6.2.6":
   version: 6.2.6
   resolution: "vite@npm:6.2.6"
   dependencies:
@@ -17362,61 +17352,6 @@ __metadata:
   bin:
     vite: bin/vite.js
   checksum: 10c0/68a2ed3e61bdd654c59b817b4f3203065241c66d1739faa707499130f3007bc3a666c7a8320a4198e275e62b5e4d34d9b78a6533f69e321d366e76f5093b2071
-  languageName: node
-  linkType: hard
-
-"vite@npm:^6.3.0":
-  version: 6.3.0
-  resolution: "vite@npm:6.3.0"
-  dependencies:
-    esbuild: "npm:^0.25.0"
-    fdir: "npm:^6.4.3"
-    fsevents: "npm:~2.3.3"
-    picomatch: "npm:^4.0.2"
-    postcss: "npm:^8.5.3"
-    rollup: "npm:^4.34.9"
-    tinyglobby: "npm:^0.2.12"
-  peerDependencies:
-    "@types/node": ^18.0.0 || ^20.0.0 || >=22.0.0
-    jiti: ">=1.21.0"
-    less: "*"
-    lightningcss: ^1.21.0
-    sass: "*"
-    sass-embedded: "*"
-    stylus: "*"
-    sugarss: "*"
-    terser: ^5.16.0
-    tsx: ^4.8.1
-    yaml: ^2.4.2
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  peerDependenciesMeta:
-    "@types/node":
-      optional: true
-    jiti:
-      optional: true
-    less:
-      optional: true
-    lightningcss:
-      optional: true
-    sass:
-      optional: true
-    sass-embedded:
-      optional: true
-    stylus:
-      optional: true
-    sugarss:
-      optional: true
-    terser:
-      optional: true
-    tsx:
-      optional: true
-    yaml:
-      optional: true
-  bin:
-    vite: bin/vite.js
-  checksum: 10c0/f97c66f22d32b40a5c327ed48836b8627711af702fa85ba740efe58e066cb8ba3954c6a0c5172f66f69b86e9806eae4d84d4320bf2caf695412bb10fa8537eaa
   languageName: node
   linkType: hard
 
