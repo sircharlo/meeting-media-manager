@@ -14,7 +14,7 @@
 ### 🛠️ 개선 및 변경
 
 - 🎬 **Multiple Start/End Times for Single Video**: Allow a single video to appear in the media list multiple times with different custom start/end times.
-- 📤 **Include Grouped Media in Auto Export**: Automatically export grouped media items along with others.
+- 📤 **자동 내보내기에 그룹화된 미디어 포함**: 다른 항목과 함께 그룹화된 미디어 항목을 자동으로 내보냅니다.
 - 📡 **Correct `.m4v` Fetching from JW API**: Ensure `.m4v` files are correctly fetched from the JW API.
 
 ## 25.3.1
