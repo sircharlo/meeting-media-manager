@@ -6472,10 +6472,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"countries-and-timezones@npm:^3.7.2":
-  version: 3.7.2
-  resolution: "countries-and-timezones@npm:3.7.2"
-  checksum: 10c0/72f81bc341b9cd0d3d2f565433eb6f2d110c49157bedf1a55f9286e731fe1db56af431d0ca41de14a96a055267dea5b882e2e87f20000d3980e8c78fd09b3dcb
+"countries-and-timezones@npm:^3.8.0":
+  version: 3.8.0
+  resolution: "countries-and-timezones@npm:3.8.0"
+  checksum: 10c0/5252abe77d346b899390feef5b28aa77702663a7b99eb1d665e289a4b83d2208531cad7580bee61c2692634c270c26bdce4000fa42ad99f23fcdf9c60ef3739d
   languageName: node
   linkType: hard
 
@@ -11478,7 +11478,7 @@ __metadata:
     better-sqlite3: "npm:^11.9.1"
     cheerio: "npm:^1.0.0"
     chokidar: "npm:^4.0.3"
-    countries-and-timezones: "npm:^3.7.2"
+    countries-and-timezones: "npm:^3.8.0"
     decompress: "npm:^4.2.1"
     dompurify: "npm:^3.2.5"
     electron: "npm:^35.1.5"

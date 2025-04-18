@@ -43,7 +43,7 @@
     "better-sqlite3": "^11.9.1",
     "cheerio": "^1.0.0",
     "chokidar": "^4.0.3",
-    "countries-and-timezones": "^3.7.2",
+    "countries-and-timezones": "^3.8.0",
     "decompress": "^4.2.1",
     "dompurify": "^3.2.5",
     "electron-dl-manager": "^4.0.0",
