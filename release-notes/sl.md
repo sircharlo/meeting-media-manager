@@ -4,6 +4,17 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
+## 25.4.1
+
+### 🛠️ Izboljšave in popravki
+
+- 🎬 **Popravek prilagoditve začetnega/končnega časa po meri**: Preprečite, da bi se začetni in končni čas nepravilno uporabila za napačen videoposnetek.
+- 📝 **Omogočanje neusklajenih podnapisov**: Omogočite uporabo podnapisov, tudi če se ne ujemajo popolnoma z multimedijsko datoteko.
+- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
+- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
+- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
+- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
+
 ## 25.4.0
 
 ### ✨ Nove funkcije
