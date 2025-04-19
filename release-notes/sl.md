@@ -10,10 +10,10 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 - 🎬 **Popravek prilagoditve začetnega/končnega časa po meri**: Preprečite, da bi se začetni in končni čas nepravilno uporabila za napačen videoposnetek.
 - 📝 **Omogočanje neusklajenih podnapisov**: Omogočite uporabo podnapisov, tudi če se ne ujemajo popolnoma z multimedijsko datoteko.
-- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
-- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
-- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
-- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
+- 🪟 **Onemogočite zaobljene vogale v sistemu Windows**: Odstranite zaobljene vogale za multimedijsko okno v operacijskem sistemu Windows.
+- 🖼 **Vključitev slik, ki niso del referenc, na seznam multimedijskih datotek**: Na seznam multimedijskih datotek dodajte vse slike, ki niso del referenc.
+- ➕ **Preprečevanje podvojenih multimedijskih razdelkov**: Preprečite ustvarjanje več multimedijskih razdelkov za isti multimedijski element.
+- 📥 **Shrani vrstni red seznama predvajanja pri uvozu**: Pri uvozu se ohrani originalni vrstni red seznamov predvajanja JW Library.
 
 ## 25.4.0
 
