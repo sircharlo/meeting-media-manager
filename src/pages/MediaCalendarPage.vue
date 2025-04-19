@@ -607,7 +607,6 @@ const { post: postCustomBackground } = useBroadcastChannel<string, string>({
 
 watch(selectedDate, () => {
   checkMemorialDate();
-  console.log('selectedDate', selectedDateObject.value);
 });
 
 watch(

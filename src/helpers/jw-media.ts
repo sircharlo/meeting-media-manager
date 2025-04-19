@@ -1958,7 +1958,10 @@ export const getMwMedia = async (lookupDate: Date) => {
   }
 };
 
-export async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
+export async function processMissingMediaInfo(
+  allMedia: MultimediaItem[],
+  keepMediaLabels = false,
+) {
   try {
     const currentStateStore = useCurrentStateStore();
     const errors = [];
@@ -2075,7 +2078,9 @@ export async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
                 StreamUrl,
               } = await downloadMissingMedia(publicationFetcher);
               media.FilePath = FilePath ?? media.FilePath;
-              media.Label = Label || media.Label;
+              media.Label = keepMediaLabels
+                ? media.Label || Label || ''
+                : Label || media.Label;
               media.StreamUrl = StreamUrl ?? media.StreamUrl;
               media.Duration = StreamDuration ?? media.Duration;
               media.ThumbnailUrl = StreamThumbnailUrl ?? media.ThumbnailUrl;
