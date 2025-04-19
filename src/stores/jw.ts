@@ -100,6 +100,10 @@ export function replaceMissingMediaByPubMediaId(
   sourceArray: DynamicMediaObject[],
 ): void {
   sourceArray.forEach((item) => {
+    if (!item?.pubMediaId) {
+      targetArray.push(item);
+      return;
+    }
     const index = targetArray.findIndex(
       (obj) => obj?.pubMediaId === item?.pubMediaId,
     );
