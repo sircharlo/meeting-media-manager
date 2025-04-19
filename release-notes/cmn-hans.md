@@ -4,18 +4,29 @@
 
 关于不同版本之间更改的完整清单，请参阅我们在 GitHub 上的 CHANGELOG.md文件。
 
+## 25.4.1
+
+### 🛠️ 改进和调整
+
+- 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
+- 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
+- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
+- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
+- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
+- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
+
 ## 25.4.0
 
 ### ✨ 新功能
 
-- 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
-- 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
+- 🇵🇭 **新语言: Tagalog** : 添加对 Tagalog的支持，扩展应用程序的多语言功能。
+- 🎞 **支持`.m4v`视频格式**：现在支持播放`.m4v`文件，以提高媒体兼容性。
 
 ### 🛠️ 改进和调整
 
-- 🎬 **Multiple Start/End Times for Single Video**: Allow a single video to appear in the media list multiple times with different custom start/end times.
-- 📤 **Include Grouped Media in Auto Export**: Automatically export grouped media items along with others.
-- 📡 **Correct `.m4v` Fetching from JW API**: Ensure `.m4v` files are correctly fetched from the JW API.
+- 🎬 **视频的多个开始/结束时间**: 允许单次视频多次出现在媒体列表中，有不同的自定义开始/结束时间。
+- 📤 **在自动导出中包含分组媒体**: 自动导出分组媒体项目和其他媒体。
+- 📡 **正确`.m4v`从JW API获取**: 确保`.m4v`文件正确从JW API获取。
 
 ## 25.3.1
 
