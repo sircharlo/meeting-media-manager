@@ -85,7 +85,10 @@
     </div>
     <template
       v-for="mediaList in mediaLists"
-      :key="(mediaList.items?.map((m) => m.uniqueId) || []).sort().join(',')"
+      :key="
+        mediaList.type +
+        (mediaList.items?.map((m) => m.uniqueId) || []).sort().join(',')
+      "
     >
       <MediaList :media-list="mediaList" :open-import-menu="openImportMenu" />
     </template>
@@ -604,6 +607,7 @@ const { post: postCustomBackground } = useBroadcastChannel<string, string>({
 
 watch(selectedDate, () => {
   checkMemorialDate();
+  console.log('selectedDate', selectedDateObject.value);
 });
 
 watch(
