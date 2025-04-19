@@ -4,6 +4,17 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## 25.4.1
+
+### 🛠️ Verbeteringen en tweaks
+
+- 🎬 **Fix aangepaste begin- en eindtijden**: Voorkom dat aangepaste begin- en eindtijden verkeerd worden toegepast op de verkeerde video.
+- 📝 **Niet overeenkomende ondertitels toestaan**: Gebruik van ondertitels inschakelen, zelfs als ze niet perfect overeenkomen met het mediabestand.
+- 🪟 **Schakel Ronde hoeken uit in Windows**: Verwijder afgeronde hoeken voor het media-venster in Windows.
+- 🖼️ **Voeg niet-gerefereerde afbeeldingen toe aan de medialijst**: Zorg ervoor dat alle afbeeldingen zonder verwijzing toegevoegd worden aan de medialijst voor volledigheid.
+- ➕ **Voorkom dubbele media secties**: Vermijd meerdere media secties voor hetzelfde media-item te maken.
+- 📥 **Behoud Afspeellijst Volgorde bij Importeren**: Behoud de originele volgorde van JWL afspeellijsten tijdens het importproces.
+
 ## 25.4.0
 
 ### ✨ Nieuwe functies
