@@ -12,7 +12,7 @@ import type {
   JwPlaylistItem,
   MediaItemsMediatorFile,
   MediaLink,
-  MediaSection,
+  MediaSectionIdentifier,
   MultimediaExtractItem,
   MultimediaItem,
   Publication,
@@ -82,7 +82,7 @@ export const getJwLangCode = (mepsId?: number): JwLangCode | null => {
 
 export const copyToDatedAdditionalMedia = async (
   filepathToCopy: string,
-  section: MediaSection | undefined,
+  section: MediaSectionIdentifier | undefined,
   addToAdditionMediaMap?: boolean,
 ) => {
   const currentStateStore = useCurrentStateStore();
@@ -142,7 +142,7 @@ export const copyToDatedAdditionalMedia = async (
 
 export const addToAdditionMediaMapFromPath = async (
   additionalFilePath: string,
-  section: MediaSection = 'additional',
+  section: MediaSectionIdentifier = 'additional',
   uniqueId?: string,
   additionalInfo?: {
     duration?: number;
@@ -231,7 +231,7 @@ export const addToAdditionMediaMapFromPath = async (
 export const addJwpubDocumentMediaToFiles = async (
   dbPath: string,
   document: DocumentItem,
-  section: MediaSection | undefined,
+  section: MediaSectionIdentifier | undefined,
   pubFolder?: PublicationFetcher,
 ) => {
   const jwStore = useJwStore();
@@ -1280,7 +1280,7 @@ export const dynamicMediaMapper = async (
   allMedia: MultimediaItem[],
   lookupDate: Date,
   source: 'additional' | 'dynamic' | 'playlist' | 'watched',
-  additionalSection: MediaSection = 'additional',
+  additionalSection: MediaSectionIdentifier = 'additional',
 ): Promise<DynamicMediaObject[]> => {
   const { currentSettings } = useCurrentStateStore();
   try {
@@ -1356,7 +1356,7 @@ export const dynamicMediaMapper = async (
             }
           }
         }
-        let section: MediaSection =
+        let section: MediaSectionIdentifier =
           calculatedSource === 'additional' ? additionalSection : 'wt';
         if (middleSongParagraphOrdinal > 0) {
           // this is a meeting with 3 songs
@@ -2308,7 +2308,7 @@ export const downloadAdditionalRemoteVideo = async (
   thumbnailUrl?: string,
   song: false | number | string = false,
   title?: string,
-  section?: MediaSection,
+  section?: MediaSectionIdentifier,
   customDuration?: { max: number; min: number },
 ): Promise<string | undefined> => {
   try {

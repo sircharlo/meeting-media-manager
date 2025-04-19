@@ -39,8 +39,8 @@ export interface DynamicMediaObject {
   parentUniqueId?: string;
   pubMediaId?: string;
   repeat?: boolean;
-  section: MediaSection;
-  sectionOriginal: MediaSection;
+  section: MediaSectionIdentifier;
+  sectionOriginal: MediaSectionIdentifier;
   sortOrderOriginal: number | string;
   source: 'additional' | 'dynamic' | 'watched';
   streamUrl?: string;
@@ -49,6 +49,10 @@ export interface DynamicMediaObject {
   thumbnailUrl?: string;
   title: string;
   uniqueId: string;
+}
+
+export interface DynamicMediaSection extends MediaSection {
+  items: DynamicMediaObject[];
 }
 
 export interface FileDownloader {
@@ -60,13 +64,24 @@ export interface FileDownloader {
   url: string;
 }
 
-export type MediaSection =
+export interface MediaSection {
+  alwaysShow: boolean;
+  bgColor?: string;
+  extraMediaShortcut?: boolean;
+  jwIcon?: string;
+  label: string;
+  mmmIcon?: string;
+  uniqueId: MediaSectionIdentifier;
+}
+
+export type MediaSectionIdentifier =
   | 'additional'
   | 'ayfm'
   | 'circuitOverseer'
   | 'lac'
   | 'tgw'
-  | 'wt';
+  | 'wt'
+  | string;
 
 export interface SongItem {
   duration?: number; // or the correct type for duration
@@ -79,7 +94,7 @@ export interface SortableMediaList {
   jwIcon?: string | undefined;
   label: string;
   mmmIcon?: string | undefined;
-  type: MediaSection;
+  type: MediaSectionIdentifier;
 }
 export type SortableMediaLists = SortableMediaList[];
 

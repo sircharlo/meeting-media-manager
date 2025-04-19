@@ -4,6 +4,7 @@ import { ensureDir } from 'fs-extra/esm';
 import upath from 'upath';
 const { basename } = upath;
 
+import { app } from 'electron';
 import { sendToWindow } from 'main/window/window-base';
 import { mainWindow } from 'main/window/window-main';
 import { captureElectronError, fetchJson } from 'src-electron/main/utils';
