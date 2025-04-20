@@ -378,7 +378,13 @@ export const fetchMedia = async () => {
               )
             ).includes(true);
 
-            return hasIncompleteOrErrorMeeting || hasMissingMediaFile
+            const hasDuplicates =
+              day.dynamicMedia.length >
+              new Set(day.dynamicMedia.map((m) => m.uniqueId)).size;
+
+            return hasIncompleteOrErrorMeeting ||
+              hasMissingMediaFile ||
+              hasDuplicates
               ? day
               : null;
           },
