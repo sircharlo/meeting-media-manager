@@ -8,12 +8,12 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 ### 🛠️ Förbättringar och justeringar
 
-- 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
-- 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
-- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
-- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
-- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
-- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
+- 🎬 **Fixa anpassad start-/sluttidsuppgift**: Förhindra att anpassade start- och sluttider inte tillämpas felaktigt på fel video.
+- 📝 **Tillåt felaktiga undertexter**: Använd undertexter även om de inte matchar perfekt med videon.
+- 🪟 **Inaktivera rundade hörn på fönster**: Ta bort rundade hörn för mediafönstret i Windows.
+- 🖼️ **Inkludera bilder som inte är refererade i medielistan**: Se till att alla bilder läggs till i medielistan för enhetlighet.
+- ➕ **Förhindra duplicera mediesektioner**: Undvik att skapa flera mediesektioner för samma medieobjekt.
+- 📥 **Bevara ordning på spellistan vid import**: Behåll den ursprungliga ordningen för JWL spellistor under importprocessen.
 
 ## 25.4.0
 
