@@ -58,6 +58,6 @@
     "message": "Version v25.4.0 contains a bug that causes some Watchtower images to be missing. This has been fixed in v25.4.1, but might require you to remove all cache files using the tools menu from the settings page.",
     "type": "warning",
     "minVersion": "25.3.2-beta.9",
-    "maxVersion": "25.4.1"
+    "maxVersion": "25.4.2"
   }
 ]
