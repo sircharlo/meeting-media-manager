@@ -4,6 +4,12 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## 25.4.2
+
+### 🛠️ Improvements and Tweaks
+
+- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+
 ## 25.4.1
 
 ### 🛠️ Improvements and Tweaks
