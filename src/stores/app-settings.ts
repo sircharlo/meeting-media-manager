@@ -206,7 +206,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
             ).additionalMediaMaps;
           }
           jwStore.lookupPeriod = currentLookupPeriods;
-        } else if (type === '25.3.2-refreshDynamicMedia') {
+        } else if (type.endsWith('refreshDynamicMedia')) {
           refreshDynamicMedia();
         } else {
           // Other migrations can be added here
