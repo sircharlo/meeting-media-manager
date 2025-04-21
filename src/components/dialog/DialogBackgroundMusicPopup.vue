@@ -193,10 +193,11 @@ async function playMusic() {
     musicPlayer.value.style.display = 'none';
     musicPlayer.value.volume = 0;
     const { duration, nextSongUrl, secsFromEnd } = await getNextSong();
-    if (!nextSongUrl) return;
+    if (!nextSongUrl) throw new Error('No next song found');
     musicPlayerSource.value.src = nextSongUrl;
     musicPlayer.value?.load();
     const startTime = duration ? duration - secsFromEnd : 0;
+    if (!musicPlayer.value) throw new Error('Music player not found');
     musicPlayer.value.currentTime = startTime;
     musicPlayer.value
       .play()
