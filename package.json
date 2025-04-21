@@ -106,7 +106,7 @@
     "autoprefixer": "^10.4.21",
     "electron": "^35.1.5",
     "electron-builder": "^26.0.12",
-    "eslint": "^9.24.0",
+    "eslint": "^9.25.0",
     "eslint-plugin-perfectionist": "^4.11.0",
     "eslint-plugin-vue": "^10.0.0",
     "globals": "^16.0.0",
