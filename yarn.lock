@@ -1161,9 +1161,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@intlify/unplugin-vue-i18n@npm:^6.0.5":
-  version: 6.0.5
-  resolution: "@intlify/unplugin-vue-i18n@npm:6.0.5"
+"@intlify/unplugin-vue-i18n@npm:^6.0.8":
+  version: 6.0.8
+  resolution: "@intlify/unplugin-vue-i18n@npm:6.0.8"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.4.0"
     "@intlify/bundle-utils": "npm:^10.0.1"
@@ -1190,7 +1190,7 @@ __metadata:
       optional: true
     vue-i18n:
       optional: true
-  checksum: 10c0/d88cdd593609cb447e78cf235c9438824774b8f43490469ae807d3d4cb410e1d6bc80b2ab1fb3e71169c1e75134bf65a1f7a58037f42c60b3a35b079d652a28c
+  checksum: 10c0/55c7068bbd366d683cb65a26088e181084e89849f39b6ce1cb2bf3804ba840b3af22b4e3187d60933401bd4f0ed252005721acfa2d24a60f1e4163a36e0d7d8a
   languageName: node
   linkType: hard
 
@@ -11433,7 +11433,7 @@ __metadata:
     "@daipeng7/rollup-plugin-iconfont": "npm:^3.0.6"
     "@electron/rebuild": "npm:^3.7.2"
     "@eslint/compat": "npm:^1.2.8"
-    "@intlify/unplugin-vue-i18n": "npm:^6.0.5"
+    "@intlify/unplugin-vue-i18n": "npm:^6.0.8"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@panzoom/panzoom": "npm:^4.6.0"
     "@pinia/testing": "npm:^1.0.1"
