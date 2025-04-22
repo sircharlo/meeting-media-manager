@@ -8,13 +8,13 @@
 
 ### 🛠️ 改进和调整
 
-- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+- ➕ **从 v25.4.x**清理媒体：从 v25 开始自动清理成为孤儿或置于错误位置的媒体。 第1至v25.4.2段，以确保媒体名单上没有媒体，或媒体处于错误的位置。
 
 ## 25.4.2
 
 ### 🛠️ 改进和调整
 
-- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+- ➕ **防止重复媒体**: 避免多次向媒体列表添加一些媒体项目。
 
 ## 25.4.1
 
