@@ -4,6 +4,18 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## 25.4.3
+
+### 🛠️ Verbeteringen en tweaks
+
+- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+
+## 25.4.2
+
+### 🛠️ Verbeteringen en tweaks
+
+- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+
 ## 25.4.1
 
 ### 🛠️ Verbeteringen en tweaks
