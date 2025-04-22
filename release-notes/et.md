@@ -4,6 +4,18 @@
 
 Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGELOG.md GitHubis.
 
+## 25.4.3
+
+### 🛠️ Parandused ja täiustused
+
+- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+
+## 25.4.2
+
+### 🛠️ Parandused ja täiustused
+
+- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+
 ## 25.4.1
 
 ### 🛠️ Parandused ja täiustused
