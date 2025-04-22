@@ -8,7 +8,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### 🛠️ Izboljšave in popravki
 
-- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+- ➕ **Čiščenje multimedijskih datotek iz verzije v25.4.x**: Samodejno čiščenje preostalih ali napačno umeščenih multimedijskih datotek iz verzije v25.4.1 v verzijo v25.4.2, da na seznamu multimedijske vsebine ne bo manjkala nobena datoteka ali da ne bo na napačnem mestu.
 
 ## 25.4.2
 
