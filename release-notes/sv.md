@@ -8,13 +8,13 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 ### 🛠️ Förbättringar och justeringar
 
-- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+- ➕ **Rensa media från v25.4.x**: Städa automatiskt upp övergivna eller felplacerade medier från v25.4.1 till v25.4.2 för att säkerställa att inga medier saknas eller är på fel plats i medialistan.
 
 ## 25.4.2
 
 ### 🛠️ Förbättringar och justeringar
 
-- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+- ➕ **Förhindra mediaduplicering**: Undvik att lägga till några medieobjekt flera gånger i medialistan.
 
 ## 25.4.1
 

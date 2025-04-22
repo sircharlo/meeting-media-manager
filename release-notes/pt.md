@@ -8,13 +8,13 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 
 ### 🛠️ Melhorias e Ajustes
 
-- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+- ➕ **Limpar Mídias da Versão 25.4.x**: Limpa automaticamente mídias órfãs ou deslocadas da versão 25.4.1 à 25.4.2 para garantir que nenhum item esteja faltando ou no lugar errado da lista de mídias.
 
 ## 25.4.2
 
 ### 🛠️ Melhorias e Ajustes
 
-- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+- ➕ **Prevenção a Mídias Duplicadas**: Evita que sejam adicionados itens repetidos à lista de mídias.
 
 ## 25.4.1
 
