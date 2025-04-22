@@ -4,6 +4,18 @@
 
 버전별 전체 변경 사항은, GitHub 의 CHANGELOG.md 파일을 확인해주세요.
 
+## 25.4.3
+
+### 🛠️ 개선 및 변경
+
+- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+
+## 25.4.2
+
+### 🛠️ 개선 및 변경
+
+- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+
 ## 25.4.1
 
 ### 🛠️ 개선 및 변경
