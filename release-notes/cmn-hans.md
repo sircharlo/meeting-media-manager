@@ -4,16 +4,28 @@
 
 关于不同版本之间更改的完整清单，请参阅我们在 GitHub 上的 CHANGELOG.md文件。
 
+## 25.4.3
+
+### 🛠️ 改进和调整
+
+- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+
+## 25.4.2
+
+### 🛠️ 改进和调整
+
+- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+
 ## 25.4.1
 
 ### 🛠️ 改进和调整
 
-- 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
-- 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
-- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
-- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
-- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
-- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
+- 🎬 **修复自定义开始/结束时间分配**: 防止自定义开始和结束时间被错误地应用到错误的视频中。
+- 📝 **允许不匹配字幕**: 启用使用字幕，即使它们不完全匹配媒体文件。
+- 🪟 **禁用Windows上的圆角**: 移除窗口上媒体窗口的圆角。
+- 🖼️ **包括媒体列表中未引用的图像**: 确保所有未引用的图像被添加到媒体列表中以获取完整性。
+- ➕ **防止媒体部分重复**: 避免为同一个媒体项目创建多个媒体部分。
+- 📥 **在导入时保留播放列表顺序**: 在导入过程中保持JWL播放列表的原始顺序。
 
 ## 25.4.0
 
