@@ -156,7 +156,12 @@
           mode="out-in"
           name="fade"
         >
-          <template v-if="media.isImage && hoveredBadge">
+          <template
+            v-if="
+              media.isImage &&
+              (hoveredBadge || (panzoom?.getScale() || 1) > 1.01)
+            "
+          >
             <div
               class="absolute-bottom-right q-mr-xs q-mb-xs row"
               @mouseenter="setHoveredBadge(true)"
@@ -712,7 +717,14 @@ import { formatTime, timeToSeconds } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
-import { computed, onUnmounted, ref, useTemplateRef, watch } from 'vue';
+import {
+  computed,
+  onMounted,
+  onUnmounted,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
@@ -864,7 +876,7 @@ const setMediaPlaying = async (
   signLanguage = false,
   marker?: VideoMarker,
 ) => {
-  if (isImage(mediaPlayingUrl.value)) stopMedia(true);
+  if (isImage(mediaPlayingUrl.value)) stopMedia();
   if (signLanguage) {
     if (marker) {
       updateMediaCustomDuration({
@@ -992,7 +1004,6 @@ const seekTo = (newSeekTo: null | number) => {
 };
 
 function zoomIn(click?: MouseEvent) {
-  if (!panzoom.value) initiatePanzoom();
   if (!panzoom.value) return;
   const zoomFactor = 0.2;
   try {
@@ -1030,18 +1041,16 @@ const zoomReset = (forced = false, animate = true) => {
   if (!panzoom.value) return;
   if (panzoom.value.getScale() < 1.05 || forced) {
     panzoom.value.reset({ animate });
-    destroyPanzoom();
   }
 };
 
-function stopMedia(forOtherMediaItem = false) {
+function stopMedia() {
   mediaPlayingAction.value = 'pause';
   mediaPlayingUrl.value = '';
   mediaPlayingUniqueId.value = '';
   mediaPlayingCurrentPosition.value = 0;
   mediaPlayingAction.value = '';
   mediaToStop.value = '';
-  if (!forOtherMediaItem) zoomReset(true);
 }
 
 const isCurrentlyPlaying = computed(() => {
@@ -1137,6 +1146,10 @@ function deleteMedia() {
   );
   mediaToDelete.value = '';
 }
+
+onMounted(() => {
+  initiatePanzoom();
+});
 
 onUnmounted(() => {
   destroyPanzoom();
