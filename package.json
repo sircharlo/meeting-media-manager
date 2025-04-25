@@ -70,7 +70,7 @@
     "upath": "^2.0.1",
     "vue": "^3.5.13",
     "vue-i18n": "^11.1.3",
-    "vue-router": "^4.5.0"
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@daipeng7/rollup-plugin-iconfont": "^3.0.6",
