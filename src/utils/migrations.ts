@@ -105,6 +105,7 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       obsMediaScene: oldPrefs.app?.obs?.mediaScene || '',
       obsPassword: oldPrefs.app?.obs?.password || '',
       obsPort: oldPrefs.app?.obs?.port?.toString() || '',
+      obsPostponeImages: false,
       obsQuickToggle: false,
       obsSwitchSceneAfterMedia: false,
       shortcutMediaNext: oldPrefs.media?.ppForward || '',

@@ -428,6 +428,14 @@ watch(
 watch(
   () => [mediaPlaying.value, mediaPaused.value, mediaPlayingUrl.value],
   ([newMediaPlaying, newMediaPaused]) => {
+    if (
+      currentSettings.value?.obsPostponeImages &&
+      newMediaPlaying.value &&
+      !mediaPaused.value &&
+      isImage(mediaPlayingUrl.value)
+    ) {
+      return;
+    }
     sendObsSceneEvent(
       newMediaPaused ? 'camera' : newMediaPlaying ? 'media' : 'camera',
     );
