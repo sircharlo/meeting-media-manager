@@ -427,12 +427,12 @@ watch(
 
 watch(
   () => [mediaPlaying.value, mediaPaused.value, mediaPlayingUrl.value],
-  ([newMediaPlaying, newMediaPaused]) => {
+  ([newMediaPlaying, newMediaPaused, newMediaPlayingUrl]) => {
     if (
       currentSettings.value?.obsPostponeImages &&
-      newMediaPlaying.value &&
-      !mediaPaused.value &&
-      isImage(mediaPlayingUrl.value)
+      newMediaPlaying &&
+      !newMediaPaused &&
+      isImage(newMediaPlayingUrl)
     ) {
       return;
     }
