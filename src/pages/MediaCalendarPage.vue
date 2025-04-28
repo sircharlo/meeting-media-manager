@@ -917,7 +917,6 @@ whenever(
     jwpubImportDocuments.value = [];
     currentFile.value = 0;
     totalFiles.value = 0;
-    sectionToAddTo.value = undefined;
   },
 );
 
