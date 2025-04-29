@@ -432,6 +432,7 @@ watch(
       currentSettings.value?.obsPostponeImages &&
       newMediaPlaying &&
       !newMediaPaused &&
+      typeof newMediaPlayingUrl === 'string' &&
       isImage(newMediaPlayingUrl)
     ) {
       return;
