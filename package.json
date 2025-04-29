@@ -61,7 +61,7 @@
     "pinia": "^3.0.2",
     "pinia-plugin-persistedstate": "^4.2.0",
     "pinia-shared-state": "^1.0.1",
-    "pretty-bytes": "^6.1.1",
+    "pretty-bytes": "^7.0.0",
     "quasar": "^2.18.1",
     "sanitize-filename": "^1.6.3",
     "sanitize-html": "^2.16.0",
