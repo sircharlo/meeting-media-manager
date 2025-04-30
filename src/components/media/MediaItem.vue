@@ -156,12 +156,7 @@
           mode="out-in"
           name="fade"
         >
-          <template
-            v-if="
-              media.isImage &&
-              (hoveredBadge || (panzoom?.getScale() || 1) > 1.01)
-            "
-          >
+          <template v-if="media.isImage && (hoveredBadge || getScale() > 1.01)">
             <div
               class="absolute-bottom-right q-mr-xs q-mb-xs row"
               @mouseenter="setHoveredBadge(true)"
@@ -1007,7 +1002,7 @@ function zoomIn(click?: MouseEvent) {
   if (!panzoom.value) return;
   const zoomFactor = 0.2;
   try {
-    const scale = panzoom.value.getScale();
+    const scale = getScale();
     if (!click?.clientX && !click?.clientY) {
       if (scale === 1) {
         panzoom.value.zoomIn({ step: 0.001 });
@@ -1039,7 +1034,7 @@ function zoomOut() {
 
 const zoomReset = (forced = false, animate = true) => {
   if (!panzoom.value) return;
-  if (panzoom.value.getScale() < 1.05 || forced) {
+  if (getScale() < 1.05 || forced) {
     panzoom.value.reset({ animate });
   }
 };
@@ -1081,6 +1076,11 @@ const mediaPanzoom = ref<{ scale: number; x: number; y: number }>({
 
 const mediaImage = useTemplateRef<QImg>('mediaImage');
 
+const getScale = () => {
+  if (!panzoom.value) return 1;
+  return panzoom.value.getScale();
+};
+
 const initiatePanzoom = () => {
   try {
     if (
@@ -1093,6 +1093,12 @@ const initiatePanzoom = () => {
     const options: PanzoomOptions = {
       animate: true,
       contain: 'outside',
+      handleStartEvent: (e) => {
+        if (getScale() > 1.01) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      },
       maxScale: 5,
       minScale: 1,
       panOnlyWhenZoomed: true,
