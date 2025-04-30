@@ -372,6 +372,7 @@
   "some-media-items-are-missing": "Certains fichiers média sont manquants",
   "some-media-items-are-missing-explain": "Le fichier JWPUB a été importé avec succès. Cependant, certains médias ne sont pas inclus dans le fichier et n'ont pu être téléchargés automatiquement. Vous pouvez ajouter ces médias manuellement si nécessaire en utilisant le menu « Ajouter des médias» ou en les faisant glisser dans la liste des médias depuis votre ordinateur.",
   "some-songs-are-duplicated": "Certains cantiques apparaissent plus d'une fois dans la liste des médias. Veuillez vérifier si c'est intentionnel.",
+  "this-song-is-duplicated": "This song appears more than once in the media list.",
   "song": "Cantique",
   "songbook-video-caching": "Mise en cache des vidéos pour cantiques",
   "stage": "Estrade",
