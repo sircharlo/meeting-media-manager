@@ -372,6 +372,7 @@
   "some-media-items-are-missing": "Einige Medien fehlen",
   "some-media-items-are-missing-explain": "Die JWPUB-Datei wurde erfolgreich importiert. Einige Medien sind jedoch nicht in der Datei enthalten und konnten nicht automatisch heruntergeladen werden. Sie können diese Medien manuell hinzufügen, wenn nötig, indem Sie das 'Medien hinzufügen' Menü verwenden oder sie per Drag-and-Drop in die Medienliste von Ihrem Computer ziehen.",
   "some-songs-are-duplicated": "Einige Lieder erscheinen mehr als einmal in der Medienliste. Bitte überprüfen Sie, ob dies beabsichtigt ist.",
+  "this-song-is-duplicated": "This song appears more than once in the media list.",
   "song": "Lied",
   "songbook-video-caching": "Liederbuch-Videos zwischenspeichern",
   "stage": "Bühne",
