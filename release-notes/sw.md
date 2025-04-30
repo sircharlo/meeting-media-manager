@@ -4,6 +4,42 @@
 
 Kwa ajili ya orodha kamili ya mabadiliko baina ya toleo tofauti tofauti, ona CHANGELOG.md file kwenye GitHub.
 
+## 25.4.3
+
+### 🛠️ Maboresho na Marekebisho
+
+- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+
+## 25.4.2
+
+### 🛠️ Maboresho na Marekebisho
+
+- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+
+## 25.4.1
+
+### 🛠️ Maboresho na Marekebisho
+
+- 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
+- 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
+- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
+- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
+- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
+- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
+
+## 25.4.0
+
+### ✨ Vipengele Vipya
+
+- 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
+- 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
+
+### 🛠️ Maboresho na Marekebisho
+
+- 🎬 **Multiple Start/End Times for Single Video**: Allow a single video to appear in the media list multiple times with different custom start/end times.
+- 📤 **Include Grouped Media in Auto Export**: Automatically export grouped media items along with others.
+- 📡 **Correct `.m4v` Fetching from JW API**: Ensure `.m4v` files are correctly fetched from the JW API.
+
 ## 25.3.1
 
 ### ✨ Vipengele Vipya

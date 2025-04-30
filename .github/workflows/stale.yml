@@ -1,8 +1,6 @@
 name: Close stale items
 
 on:
-  schedule:
-    - cron: '3 6 * * *'
   workflow_dispatch:
 
 jobs:

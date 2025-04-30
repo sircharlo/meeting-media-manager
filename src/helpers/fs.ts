@@ -234,14 +234,11 @@ export const getSubtitlesUrl = async (
         const { duration, subtitles } = await getJwMediaInfo(subtitleFetcher);
         if (!subtitles) return '';
         if (duration && Math.abs(duration - comparisonDuration) > 10) {
-          errorCatcher('Duration mismatch', {
+          errorCatcher(new Error('Duration mismatch'), {
             contexts: {
               fn: { comparisonDuration, duration, multimediaItem, subtitles },
             },
           });
-          throw new Error(
-            'Duration mismatch: ' + JSON.stringify(subtitleFetcher),
-          );
         }
 
         const subtitlesFilename = window.electronApi.path.basename(subtitles);
@@ -380,6 +377,9 @@ async function fetchLatestRelease(): Promise<Release> {
     'https://api.github.com/repos/vot/ffbinaries-prebuilt/releases/latest',
   );
   if (!ffmpegReleases?.assets?.length) {
+    errorCatcher('No FFmpeg releases found', {
+      contexts: { fn: { ffmpegReleases, name: 'fetchLatestRelease' } },
+    });
     throw new Error('Could not determine FFmpeg version.');
   }
   return ffmpegReleases;

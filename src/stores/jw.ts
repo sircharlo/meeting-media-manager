@@ -100,6 +100,25 @@ export function replaceMissingMediaByPubMediaId(
   sourceArray: DynamicMediaObject[],
 ): void {
   sourceArray.forEach((item) => {
+    if (item.source !== 'dynamic') return;
+    if (!item.pubMediaId) {
+      const fileUrlIndex = targetArray.findIndex(
+        (t) => t.uniqueId === item.uniqueId,
+      );
+      if (fileUrlIndex === -1) {
+        targetArray.push(item);
+      } else {
+        // check for duplicates
+        const lastIndex = targetArray.findLastIndex(
+          (t) => t.uniqueId === item.uniqueId,
+        );
+        if (lastIndex > fileUrlIndex) {
+          targetArray.splice(lastIndex, 1);
+        }
+      }
+      return;
+    }
+
     const index = targetArray.findIndex(
       (obj) => obj?.pubMediaId === item?.pubMediaId,
     );

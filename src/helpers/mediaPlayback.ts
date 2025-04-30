@@ -130,7 +130,7 @@ export const getMediaFromJwPlaylist = async (
         Location l ON plm.LocationId = l.LocationId`,
     );
     const playlistMediaItems: MultimediaItem[] = await Promise.all(
-      playlistItems.map(async (item) => {
+      playlistItems.map(async (item, i) => {
         item.ThumbnailFilePath = item.ThumbnailFilePath
           ? window.electronApi.path.join(outputPath, item.ThumbnailFilePath)
           : '';
@@ -189,6 +189,8 @@ export const getMediaFromJwPlaylist = async (
             ),
           );
 
+        const playlistItemName = `${i + 1} - ${item.Label}`;
+
         const returnItem: MultimediaItem = {
           BeginParagraphOrdinal: 0,
           BookNumber: item.BookNumber,
@@ -205,7 +207,7 @@ export const getMediaFromJwPlaylist = async (
             : '',
           IssueTagNumber: item.IssueTagNumber,
           KeySymbol: item.KeySymbol,
-          Label: `${playlistName}${item.Label}`,
+          Label: `${playlistName}${playlistItemName}`,
           MajorType: 0,
           MepsLanguageIndex: item.MepsLanguage,
           MimeType: item.MimeType,
@@ -221,7 +223,7 @@ export const getMediaFromJwPlaylist = async (
       }),
     );
 
-    await processMissingMediaInfo(playlistMediaItems);
+    await processMissingMediaInfo(playlistMediaItems, true);
     const dynamicPlaylistMediaItems = await dynamicMediaMapper(
       playlistMediaItems.filter((m) => m.KeySymbol !== 'nwt'),
       selectedDateValue,

@@ -4,6 +4,42 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
+## 25.4.3
+
+### 🛠️ Melhorias e Ajustes
+
+- ➕ **Limpar Mídias da Versão 25.4.x**: Limpa automaticamente mídias órfãs ou deslocadas da versão 25.4.1 à 25.4.2 para garantir que nenhum item esteja faltando ou no lugar errado da lista de mídias.
+
+## 25.4.2
+
+### 🛠️ Melhorias e Ajustes
+
+- ➕ **Prevenção a Mídias Duplicadas**: Evita que sejam adicionados itens repetidos à lista de mídias.
+
+## 25.4.1
+
+### 🛠️ Melhorias e Ajustes
+
+- 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
+- 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
+- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
+- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
+- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
+- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
+
+## 25.4.0
+
+### ✨ Novos Recursos
+
+- 🇵🇭 **Novo idioma: Tagalo**: Suporte adicionado para Tagalo, expandindo as capacidades multilíngues do aplicativo.
+- 🎞️ **Suporte para o Formato de Vídeo `.m4v`**: Agora suporta a reprodução de arquivos `.m4v` para melhorar a compatibilidade de mídia.
+
+### 🛠️ Melhorias e Ajustes
+
+- 🎬 **Múltiplos Pontos de Início/Fim para um Único Vídeo**: Permite que um único vídeo apareça na lista de mídia várias vezes com diferentes pontos de início/fim personalizados.
+- 📤 **Inclusão de Mídia Agrupada na Exportação Automática**: Exporta automaticamente itens de mídia agrupados junto com outros.
+- 📡 **Obtenção correta de `.m4v` da API JW**: Garante que os arquivos `.m4v` sejam obtidos corretamente da API JW.
+
 ## 25.3.1
 
 ### ✨ Novos Recursos

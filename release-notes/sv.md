@@ -4,6 +4,42 @@
 
 För den fullständiga listan över ändringar mellan versioner, se vår CHANGELOG.md-fil på GitHub.
 
+## 25.4.3
+
+### 🛠️ Förbättringar och justeringar
+
+- ➕ **Rensa media från v25.4.x**: Städa automatiskt upp övergivna eller felplacerade medier från v25.4.1 till v25.4.2 för att säkerställa att inga medier saknas eller är på fel plats i medialistan.
+
+## 25.4.2
+
+### 🛠️ Förbättringar och justeringar
+
+- ➕ **Förhindra mediaduplicering**: Undvik att lägga till några medieobjekt flera gånger i medialistan.
+
+## 25.4.1
+
+### 🛠️ Förbättringar och justeringar
+
+- 🎬 **Fixa anpassad start-/sluttidsuppgift**: Förhindra att anpassade start- och sluttider inte tillämpas felaktigt på fel video.
+- 📝 **Tillåt felaktiga undertexter**: Använd undertexter även om de inte matchar perfekt med videon.
+- 🪟 **Inaktivera rundade hörn på fönster**: Ta bort rundade hörn för mediafönstret i Windows.
+- 🖼️ **Inkludera bilder som inte är refererade i medielistan**: Se till att alla bilder läggs till i medielistan för enhetlighet.
+- ➕ **Förhindra duplicera mediesektioner**: Undvik att skapa flera mediesektioner för samma medieobjekt.
+- 📥 **Bevara ordning på spellistan vid import**: Behåll den ursprungliga ordningen för JWL spellistor under importprocessen.
+
+## 25.4.0
+
+### ✨ Nya funktioner
+
+- 🇵🇭 **Nytt språk: Tagalog**: Lagt till stöd för Tagalog som utökar därmed appens flerspråkighet.
+- 🎞️ **Stöd för `.m4v` videoformat**: Stöder nu uppspelning av `.m4v`-filer för att förbättra mediekompatibiliteten.
+
+### 🛠️ Förbättringar och justeringar
+
+- 🎬 **Flera start-/sluttider för en video**: Tillåt att en enda video visas i medielistan flera gånger med olika anpassade start-/sluttider.
+- 📤 **Inkludera grupperade media i Auto export**: Exportera automatiskt grupperade mediaobjekt tillsammans med andra.
+- 📡 **Korrekt `.m4v` Hämtar från JW API**: Se till att `.m4v`-filer hämtas korrekt från JW API.
+
 ## 25.3.1
 
 ### ✨ Nya funktioner

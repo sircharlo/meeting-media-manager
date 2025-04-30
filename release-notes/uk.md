@@ -4,6 +4,42 @@
 
 Для повного списку змін між версіями перегляньте наш файл CHANGELOG.md на GitHub.
 
+## 25.4.3
+
+### 🛠️ Покращення та налаштування
+
+- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+
+## 25.4.2
+
+### 🛠️ Покращення та налаштування
+
+- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+
+## 25.4.1
+
+### 🛠️ Покращення та налаштування
+
+- 🎬 **Виправлення призначення власного часу початку/завершення**: Запобігає неправильному застосуванню заданого часу початку та завершення до іншого відео.
+- 📝 **Дозволити невідповідні субтитри**: Дозволяє використовувати субтитри, навіть якщо вони не повністю відповідають медіафайлу.
+- 🪟 **Вимкнути заокруглені кути у Windows**: Видаляє заокруглені кути у вікні медіа у Windows.
+- 🖼 **Додати невикористані зображення до списку медіа**: Гарантує, що всі невикористані зображення будуть додані до списку медіа для повноти.
+- ➕ **Запобігти дублюванню розділів медіа**: Уникає створення кількох розділів медіа для одного й того ж елемента.
+- 📥 **Зберігати порядок файлів у плейлисті при імпорті**: Зберігайте оригінальний порядок файлів у плейлисті JWL під час імпорту.
+
+## 25.4.0
+
+### ✨ Нові функції
+
+- 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
+- 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
+
+### 🛠️ Покращення та налаштування
+
+- 🎬 **Multiple Start/End Times for Single Video**: Allow a single video to appear in the media list multiple times with different custom start/end times.
+- 📤 **Include Grouped Media in Auto Export**: Automatically export grouped media items along with others.
+- 📡 **Correct `.m4v` Fetching from JW API**: Ensure `.m4v` files are correctly fetched from the JW API.
+
 ## 25.3.1
 
 ### ✨ Нові функції

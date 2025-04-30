@@ -157,7 +157,7 @@ whenever(
 
 const { data: mediaCustomDuration } = useBroadcastChannel<
   string | undefined,
-  string
+  string | undefined
 >({
   name: 'custom-duration',
 });

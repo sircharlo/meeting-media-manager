@@ -220,6 +220,7 @@ const runMigrations = async () => {
     'addBaseUrlToAllCongregations',
     'moveAdditionalMediaMaps',
     '25.3.2-refreshDynamicMedia',
+    '25.4.3-refreshDynamicMedia',
   ];
 
   for (const migration of migrationsToRun) {

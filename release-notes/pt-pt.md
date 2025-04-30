@@ -4,6 +4,42 @@
 
 Para a lista completa de alterações entre versões, consulte o ficheiro CHANGELOG.md no GitHub.
 
+## 25.4.3
+
+### 🛠️ Melhorias e Ajustes
+
+- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+
+## 25.4.2
+
+### 🛠️ Melhorias e Ajustes
+
+- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+
+## 25.4.1
+
+### 🛠️ Melhorias e Ajustes
+
+- 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
+- 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
+- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
+- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
+- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
+- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
+
+## 25.4.0
+
+### ✨ Novas Funcionalidades
+
+- 🇵🇭 **Novo Idioma: Tagalog**: Adicionado suporte para Tagalog, expandindo as capacidades multilingues da aplicação.
+- 🎞 **Suporte para o formato de vídeo `.m4v`**: Agora é possível reproduzir ficheiros `.m4v`, melhorando a compatibilidade com diferentes tipos de multimédia.
+
+### 🛠️ Melhorias e Ajustes
+
+- 🎬 Vários Momentos de Início/Fim para um Único Vídeo: Permite que um único vídeo apareça várias vezes na lista de multimédia com diferentes momentos personalizados de início e fim.
+- 📤 Incluir Multimédia Agrupado na Exportação Automática: Exporta automaticamente os itens de multimédia agrupados juntamente com os restantes.
+- 📡 Correcção na Obtenção de.m4v a partir da API JW: Garante que os ficheiros.m4v são correctamente obtidos a partir da API JW.
+
 ## 25.3.1
 
 ### ✨ Novas Funcionalidades

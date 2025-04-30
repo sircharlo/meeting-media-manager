@@ -31,41 +31,23 @@
       </q-item-section>
       <q-item-section v-if="mediaList.extraMediaShortcut" side>
         <q-btn
-          v-if="
-            mediaList.type === 'additional' ||
-            (mediaList.type === 'circuitOverseer' &&
-              !mediaList.items.filter((m) => !m.hidden).length)
-          "
-          class="add-media-shortcut"
           :color="mediaList.type"
-          icon="mmm-music-note"
-          :label="
-            $q.screen.gt.xs
-              ? mediaList.type === 'additional'
-                ? t('add-an-opening-song')
-                : t('add-a-closing-song')
-              : undefined
+          :icon="isSongButton ? 'mmm-music-note' : 'mmm-add-media'"
+          outline
+          @click="
+            isSongButton
+              ? addSong(mediaList.type)
+              : openImportMenu(mediaList.type)
           "
-          @click="addSong(mediaList.type)"
         >
-          <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
+          <q-tooltip :delay="500">
             {{
-              mediaList.type === 'additional'
-                ? t('add-an-opening-song')
-                : t('add-a-closing-song')
+              isSongButton
+                ? mediaList.type === 'additional'
+                  ? t('add-an-opening-song')
+                  : t('add-a-closing-song')
+                : t('add-extra-media')
             }}
-          </q-tooltip>
-        </q-btn>
-        <q-btn
-          v-else
-          class="add-media-shortcut"
-          :color="mediaList.type"
-          icon="mmm-add-media"
-          :label="$q.screen.gt.xs ? t('add-extra-media') : undefined"
-          @click="openImportMenu(mediaList.type)"
-        >
-          <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
-            {{ t('add-extra-media') }}
           </q-tooltip>
         </q-btn>
       </q-item-section>
@@ -234,7 +216,7 @@ export interface MediaListObject {
   type: MediaSection;
 }
 
-defineProps<{
+const props = defineProps<{
   mediaList: MediaListObject;
   openImportMenu: (section: MediaSection) => void;
 }>();
@@ -458,15 +440,11 @@ const handleMediaSort = (
     }
   }
 };
-</script>
-<style scoped lang="scss">
-.add-media-shortcut {
-  max-width: 100%;
 
-  :deep(span.block) {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-}
-</style>
+const isSongButton = computed(
+  () =>
+    props.mediaList.type === 'additional' ||
+    (props.mediaList.type === 'circuitOverseer' &&
+      !props.mediaList.items.some((m) => !m.hidden)),
+);
+</script>

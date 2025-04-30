@@ -4,6 +4,42 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## 25.4.3
+
+### 🛠️ Verbeteringen en tweaks
+
+- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+
+## 25.4.2
+
+### 🛠️ Verbeteringen en tweaks
+
+- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+
+## 25.4.1
+
+### 🛠️ Verbeteringen en tweaks
+
+- 🎬 **Fix aangepaste begin- en eindtijden**: Voorkom dat aangepaste begin- en eindtijden verkeerd worden toegepast op de verkeerde video.
+- 📝 **Niet overeenkomende ondertitels toestaan**: Gebruik van ondertitels inschakelen, zelfs als ze niet perfect overeenkomen met het mediabestand.
+- 🪟 **Schakel Ronde hoeken uit in Windows**: Verwijder afgeronde hoeken voor het media-venster in Windows.
+- 🖼️ **Voeg niet-gerefereerde afbeeldingen toe aan de medialijst**: Zorg ervoor dat alle afbeeldingen zonder verwijzing toegevoegd worden aan de medialijst voor volledigheid.
+- ➕ **Voorkom dubbele media secties**: Vermijd meerdere media secties voor hetzelfde media-item te maken.
+- 📥 **Behoud Afspeellijst Volgorde bij Importeren**: Behoud de originele volgorde van JWL afspeellijsten tijdens het importproces.
+
+## 25.4.0
+
+### ✨ Nieuwe functies
+
+- 🇵🇭 **Nieuwe taal: Tagalog**: Ondersteuning toegevoegd voor Tagalog, waardoor de meertalige mogelijkheden van de app worden uitgebreid.
+- 🎞️ **Ondersteuning voor `.m4v` Video Formaat**: Ondersteuning voor het afspelen van `.m4v` bestanden om de compatibiliteit met de media te verbeteren.
+
+### 🛠️ Verbeteringen en tweaks
+
+- 🎬 **Meerdere start/stop tijden voor een video**: Laat een enkele video meerdere keren in de medialijst verschijnen met verschillende aangepaste start- en eindtijden.
+- 📤 **Voeg gegroepeerde media in Auto-export toe**: Automatisch gegroepeerde media exporteren samen met anderen.
+- 📡 **Haal `.m4v` bestanden op van de JW API**: Zorg ervoor dat `.m4v` bestanden correct worden opgehaald van de JW API.
+
 ## 25.3.1
 
 ### ✨ Nieuwe functies

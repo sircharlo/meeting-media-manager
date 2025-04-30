@@ -4,6 +4,53 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## 25.4.3
+
+### 🛠️ Improvements and Tweaks
+
+- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+
+## 25.4.2
+
+### 🛠️ Improvements and Tweaks
+
+- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+
+## 25.4.1
+
+### 🛠️ Improvements and Tweaks
+
+- 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
+- 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
+- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
+- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
+- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
+- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
+
+## 25.4.0
+
+### ✨ New Features
+
+- 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
+- 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
+
+### 🛠️ Improvements and Tweaks
+
+- 🎬 **Multiple Start/End Times for Single Video**: Allow a single video to appear in the media list multiple times with different custom start/end times.
+- 📦 **Skip `.jwlplaylist` Files in Video Conversion**: Improve processing by skipping unnecessary `.jwlplaylist` files during video conversion.
+- 🛡 **Improve Error Handling**: Enhance robustness by handling unexpected errors more gracefully.
+- 🚫 **Prevent Errors from Unreleased Songs**: Avoid crashes when meeting workbooks reference unreleased songs.
+- 🗂 **Improve Watchtower Media Labels & Order**: Clarify media labeling and improve item ordering for Watchtower content.
+- 📤 **Include Grouped Media in Auto Export**: Automatically export grouped media items along with others.
+- 🔄 **Replace Missing Media When Available**: Automatically replace missing media files when they become available.
+- 📡 **Correct `.m4v` Fetching from JW API**: Ensure `.m4v` files are correctly fetched from the JW API.
+- 📆 **Fix Future Day Calculation**: Correctly determine a future day within a specific week for accurate media planning.
+
+### 🔧 Improvements to Codebase
+
+- ⚙️ **Optimize CI Pipeline**: Speed up development and deployment processes by improving the continuous integration pipeline.
+- 📦 **Update Dependencies**: Keep the application secure and up to date by updating various dependencies.
+
 ## 25.3.1
 
 ### ✨ New Features

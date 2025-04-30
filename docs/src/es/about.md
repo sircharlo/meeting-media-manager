@@ -42,9 +42,9 @@ Para reuniones de congregación **híbridas** o **en persona**, el modo de prese
 - Gestión y reconocimiento automático de monitores externos
 - Integración de OBS Studio con cambio automático de escena durante la presentación de multimedia
 - Presentación del sitio web oficial de Testigos de Jehová en un monitor externo
-- Import JWPUB files, JWLPLAYLIST files and videos from the official website of Jehovah's Witnesses in a few clicks.
-- Import Study Bible media and audio recordings of the New World Translation of the Bible in seconds.
-- Always have a public talks media overview (S-34) one click away and ready to be used any minute you need it.
+- Importe archivos JWPUB, archivos JWLPLAYLIST y vídeos del sitio web oficial de los Testigos de Jehová en unos pocos clics.
+- Importe multimedia de la Biblia de Estudio y grabaciones de audio de la Traducción del Nuevo Mundo de la Biblia en segundos.
+- Disponga siempre de una visión general de la multimedia de los discursos públicos (S-34) a un clic de distancia y lista para ser utilizada en cualquier momento que la necesite.
 - ¡Vídeos personalizados, fotos, archivos de audio e incluso archivos PDF pueden ser fácilmente importados!
 
 **¡Pruébalo hoy mismo y comprueba lo que puede hacer! Presentar multimedia en reuniones de congregación nunca ha sido más fácil.**
