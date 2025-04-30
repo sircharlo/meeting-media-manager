@@ -372,6 +372,7 @@
   "some-media-items-are-missing": "Failli kadhaa za midia zinakosekana",
   "some-media-items-are-missing-explain": "Faili ya JWPUB imeingizwa kwa mfanikio. Hata hivyo, midia kadhaa haiko kwenye faili na haiwezi kupakuliwa kiotomatiki. Ikihitajika unaweza kuongeza midia hii kwa mkono kwa kutumia menyu ya 'Ongeza midia' au unaweza kuivuta kutoka kwa kompyuta yako na kuiweka kwenye orodha ya midia.",
   "some-songs-are-duplicated": "Some songs appear more than once in the media list. Please check if this is intentional.",
+  "this-song-is-duplicated": "This song appears more than once in the media list.",
   "song": "Wimbo",
   "songbook-video-caching": "Kuhifadhi video kutoka kwa kitabu cha wimbo",
   "stage": "Jukwaa",
