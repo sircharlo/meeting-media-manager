@@ -74,7 +74,7 @@
   },
   "devDependencies": {
     "@daipeng7/rollup-plugin-iconfont": "^3.0.6",
-    "@electron/rebuild": "^3.7.2",
+    "@electron/rebuild": "^4.0.0",
     "@eslint/compat": "^1.2.8",
     "@intlify/unplugin-vue-i18n": "^6.0.8",
     "@pinia/testing": "^1.0.1",

@@ -591,7 +591,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/rebuild@npm:3.7.2, @electron/rebuild@npm:^3.7.2":
+"@electron/rebuild@npm:3.7.2":
   version: 3.7.2
   resolution: "@electron/rebuild@npm:3.7.2"
   dependencies:
@@ -613,6 +613,31 @@ __metadata:
   bin:
     electron-rebuild: lib/cli.js
   checksum: 10c0/e561819926c30c7ad284f721d1d66453f59f8e5ea54a7cc9148a00e8ab3cedb6aa57fe4789f39a3454a3eb90b41a5f7d7461246ee3a16c63c8d3db23db94a391
+  languageName: node
+  linkType: hard
+
+"@electron/rebuild@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@electron/rebuild@npm:4.0.0"
+  dependencies:
+    "@electron/node-gyp": "git+https://github.com/electron/node-gyp.git#06b29aafb7708acef8b3669835c8a7857ebc92d2"
+    "@malept/cross-spawn-promise": "npm:^2.0.0"
+    chalk: "npm:^4.0.0"
+    debug: "npm:^4.1.1"
+    detect-libc: "npm:^2.0.1"
+    got: "npm:^11.7.0"
+    graceful-fs: "npm:^4.2.11"
+    node-abi: "npm:^4.2.0"
+    node-api-version: "npm:^0.2.1"
+    node-gyp: "npm:latest"
+    ora: "npm:^5.1.0"
+    read-binary-file-arch: "npm:^1.0.6"
+    semver: "npm:^7.3.5"
+    tar: "npm:^6.0.5"
+    yargs: "npm:^17.0.1"
+  bin:
+    electron-rebuild: lib/cli.js
+  checksum: 10c0/2a0a5c1a0eba72fb6d542151e6d45157710a38dc2ca4733256f68fde630cac1d55177085c078ab00af8a3f3ca30ed9e6be0664dd069cca58cd9ebec403251137
   languageName: node
   linkType: hard
 
@@ -11459,7 +11484,7 @@ __metadata:
   resolution: "meeting-media-manager@workspace:."
   dependencies:
     "@daipeng7/rollup-plugin-iconfont": "npm:^3.0.6"
-    "@electron/rebuild": "npm:^3.7.2"
+    "@electron/rebuild": "npm:^4.0.0"
     "@eslint/compat": "npm:^1.2.8"
     "@intlify/unplugin-vue-i18n": "npm:^6.0.8"
     "@numairawan/video-duration": "npm:^1.0.0"
@@ -12231,6 +12256,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-abi@npm:^4.2.0":
+  version: 4.5.0
+  resolution: "node-abi@npm:4.5.0"
+  dependencies:
+    semver: "npm:^7.6.3"
+  checksum: 10c0/8fa9df17f65c496873da52dd2ee00b7a7ba2afcdc63d61b48719bd60527758c4b11cef72c5bbb2b8f197a35a46ceb2f687c818b5bc37fec28fe8885ac684ae0a
+  languageName: node
+  linkType: hard
+
 "node-addon-api@npm:^1.6.3":
   version: 1.7.2
   resolution: "node-addon-api@npm:1.7.2"
@@ -12249,7 +12283,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-api-version@npm:^0.2.0":
+"node-api-version@npm:^0.2.0, node-api-version@npm:^0.2.1":
   version: 0.2.1
   resolution: "node-api-version@npm:0.2.1"
   dependencies:
