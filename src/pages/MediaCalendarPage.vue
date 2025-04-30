@@ -921,7 +921,7 @@ whenever(
 );
 
 const duplicateSongsForWeMeeting = computed(() => {
-  if (!(selectedDateObject.value?.meeting === 'we')) return false;
+  // if (!(selectedDateObject.value?.meeting === 'we')) return false;
   const songNumbers: (number | string)[] =
     selectedDateObject.value?.dynamicMedia
       ?.filter((m) => !m.hidden && m.tag?.type === 'song' && m.tag?.value)
