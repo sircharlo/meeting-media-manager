@@ -871,7 +871,7 @@ const setMediaPlaying = async (
   signLanguage = false,
   marker?: VideoMarker,
 ) => {
-  if (isImage(mediaPlayingUrl.value)) stopMedia();
+  if (isImage(mediaPlayingUrl.value)) stopMedia(true);
   if (signLanguage) {
     if (marker) {
       updateMediaCustomDuration({
@@ -1039,13 +1039,14 @@ const zoomReset = (forced = false, animate = true) => {
   }
 };
 
-function stopMedia() {
+function stopMedia(forOtherMediaItem = false) {
   mediaPlayingAction.value = 'pause';
   mediaPlayingUrl.value = '';
   mediaPlayingUniqueId.value = '';
   mediaPlayingCurrentPosition.value = 0;
   mediaPlayingAction.value = '';
   mediaToStop.value = '';
+  if (!forOtherMediaItem) zoomReset(true);
 }
 
 const isCurrentlyPlaying = computed(() => {
