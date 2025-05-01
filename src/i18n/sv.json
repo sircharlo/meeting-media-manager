@@ -372,7 +372,7 @@
   "some-media-items-are-missing": "Vissa mediefiler saknas",
   "some-media-items-are-missing-explain": "JWPUB-filen importerades framgångsrikt. Vissa medier ingår dock inte i filen och kunde inte laddas ner automatiskt. Du kan lägga till detta media manuellt om det behövs genom att använda menyn 'Lägg till media' eller genom att dra det i medielistan från datorn.",
   "some-songs-are-duplicated": "Vissa sånger är med mer än en gång i medielistan. Kontrollera om detta är avsiktligt.",
-  "this-song-is-duplicated": "This song appears more than once in the media list.",
+  "this-song-is-duplicated": "Den här sången finns mer än en gång i medialistan.",
   "song": "Sång",
   "songbook-video-caching": "Sångbokens videocacheminne",
   "stage": "Scen",
