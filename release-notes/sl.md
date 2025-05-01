@@ -14,7 +14,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### 🛠️ Izboljšave in popravki
 
-- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+- ➕ **Preprečevanje podvojenih multimedijskih datotek**: Preprečitev večkratnega dodajanja nekaterih multimedijskih elementov na seznam multimedijske vsebine.
 
 ## 25.4.1
 
