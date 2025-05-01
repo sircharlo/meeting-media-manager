@@ -372,7 +372,7 @@
   "some-media-items-are-missing": "缺少一些媒体文件",
   "some-media-items-are-missing-explain": "JWPUB 文件已成功导入。但某些媒体未包含在文件中，无法自动下载。 您可以手动添加此媒体，如果需要您可以使用“添加媒体”菜单或将其从您的计算机拖动到媒体列表。",
   "some-songs-are-duplicated": "某些歌曲多次出现在媒体列表中。请检查。",
-  "this-song-is-duplicated": "This song appears more than once in the media list.",
+  "this-song-is-duplicated": "这首歌不止一次出现在媒体列表中。",
   "song": "歌曲",
   "songbook-video-caching": "歌曲视频缓存",
   "stage": "舞台",
