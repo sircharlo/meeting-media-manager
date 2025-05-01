@@ -7262,7 +7262,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^36.0.0":
+"electron@npm:^36.0.1":
   version: 36.0.1
   resolution: "electron@npm:36.0.1"
   dependencies:
@@ -7753,7 +7753,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^9.25.0":
+"eslint@npm:^9.25.1":
   version: 9.25.1
   resolution: "eslint@npm:9.25.1"
   dependencies:
@@ -11419,11 +11419,11 @@ __metadata:
     countries-and-timezones: "npm:^3.8.0"
     decompress: "npm:^4.2.1"
     dompurify: "npm:^3.2.5"
-    electron: "npm:^36.0.0"
+    electron: "npm:^36.0.1"
     electron-builder: "npm:^26.0.14"
     electron-dl-manager: "npm:^4.0.0"
     electron-updater: "npm:^6.6.2"
-    eslint: "npm:^9.25.0"
+    eslint: "npm:^9.25.1"
     eslint-plugin-perfectionist: "npm:^4.12.3"
     eslint-plugin-vue: "npm:^10.1.0"
     fluent-ffmpeg: "npm:^2.1.3"
