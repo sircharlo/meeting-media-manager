@@ -831,15 +831,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/compat@npm:^1.2.8":
-  version: 1.2.8
-  resolution: "@eslint/compat@npm:1.2.8"
+"@eslint/compat@npm:^1.2.9":
+  version: 1.2.9
+  resolution: "@eslint/compat@npm:1.2.9"
   peerDependencies:
     eslint: ^9.10.0
   peerDependenciesMeta:
     eslint:
       optional: true
-  checksum: 10c0/1e004c6917220ff1731fdc562ada9ddcbcecc6f3ba2e4b0433fb6d8eddf2a443e009f1f9796b78128b78a0a588c723b78021319055ac6e5dda55c0ace346496b
+  checksum: 10c0/e912058f1e3847a1eec654c0c040467b676bd48171e915c730c7215f57cf5f4db8508c4a431ccb470f4a000d94559b41c4fe8de3d71f23eb8ae7acf4959e1c06
   languageName: node
   linkType: hard
 
@@ -4006,9 +4006,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/eslint-plugin@npm:^1.1.43":
-  version: 1.1.43
-  resolution: "@vitest/eslint-plugin@npm:1.1.43"
+"@vitest/eslint-plugin@npm:^1.1.44":
+  version: 1.1.44
+  resolution: "@vitest/eslint-plugin@npm:1.1.44"
   peerDependencies:
     "@typescript-eslint/utils": ">= 8.24.0"
     eslint: ">= 8.57.0"
@@ -4019,7 +4019,7 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 10c0/cab1319930c9fc37b41bf2b8f5d271749ab9e9469c5649933dd7d8334269ef264658aeda3622ce4387b0489045a7da5bdeb773b23a144d4a0913fdc6aec887fd
+  checksum: 10c0/136fc55ebdf3d70b69c92a1f302065d8c36e447a79a40158c0ce04e0b2d26c28ec4d0cf29bc754aa9f9c4350c4232d5a203cda7c6a630d1d2ee3b7be1038342b
   languageName: node
   linkType: hard
 
@@ -11377,7 +11377,7 @@ __metadata:
   dependencies:
     "@daipeng7/rollup-plugin-iconfont": "npm:^3.0.6"
     "@electron/rebuild": "npm:^3.7.2"
-    "@eslint/compat": "npm:^1.2.8"
+    "@eslint/compat": "npm:^1.2.9"
     "@intlify/unplugin-vue-i18n": "npm:^6.0.8"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@panzoom/panzoom": "npm:^4.6.0"
@@ -11406,7 +11406,7 @@ __metadata:
     "@types/sortablejs": "npm:^1.15.8"
     "@typescript-eslint/utils": "npm:^8.31.1"
     "@vitejs/plugin-vue": "npm:^5.2.3"
-    "@vitest/eslint-plugin": "npm:^1.1.43"
+    "@vitest/eslint-plugin": "npm:^1.1.44"
     "@vue/eslint-config-prettier": "npm:^10.2.0"
     "@vue/eslint-config-typescript": "npm:^14.5.0"
     "@vue/test-utils": "npm:^2.4.6"

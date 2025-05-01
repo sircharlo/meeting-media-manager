@@ -75,7 +75,7 @@
   "devDependencies": {
     "@daipeng7/rollup-plugin-iconfont": "^3.0.6",
     "@electron/rebuild": "^3.7.2",
-    "@eslint/compat": "^1.2.8",
+    "@eslint/compat": "^1.2.9",
     "@intlify/unplugin-vue-i18n": "^6.0.8",
     "@pinia/testing": "^1.0.1",
     "@quasar/app-vite": "^2.2.0",
@@ -99,7 +99,7 @@
     "@types/sortablejs": "^1.15.8",
     "@typescript-eslint/utils": "^8.31.1",
     "@vitejs/plugin-vue": "^5.2.3",
-    "@vitest/eslint-plugin": "^1.1.43",
+    "@vitest/eslint-plugin": "^1.1.44",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.5.0",
     "@vue/test-utils": "^2.4.6",
