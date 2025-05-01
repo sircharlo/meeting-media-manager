@@ -112,7 +112,6 @@ import {
   useEventListener,
   useMouse,
   usePointer,
-  whenever,
 } from '@vueuse/core';
 import { Buffer } from 'buffer';
 import DialogFileImport from 'components/dialog/DialogFileImport.vue';
@@ -556,7 +555,7 @@ useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
 );
 useEventListener<
   CustomEvent<{
-    files: { filename?: string; filetype?: string; path: string }[];
+    files: File[];
     section: MediaSection | undefined;
   }>
 >(
@@ -616,32 +615,38 @@ watch(
   },
 );
 
-const addToFiles = async (
-  files: FileList | { filename?: string; filetype?: string; path: string }[],
-) => {
+const addToFiles = async (files: (File | string)[] | FileList) => {
   if (!files) return;
   totalFiles.value = files.length;
   if (!Array.isArray(files)) files = Array.from(files);
   if (files.length > 1) {
-    const jwPubFile = files.find((f) => isJwpub(f.path));
+    const jwPubFile = files.find((f) => isJwpub(getLocalPathFromFileObject(f)));
     if (jwPubFile) {
       files = [jwPubFile];
       createTemporaryNotification({
         caption: t('jwpub-file-found'),
-        message: t('processing') + ' ' + path.basename(files[0]?.path || ''),
+        message:
+          t('processing') +
+          ' ' +
+          path.basename(getLocalPathFromFileObject(files[0])),
       });
     }
-    const archiveFile = files.find((f) => isArchive(f.path));
+    const archiveFile = files.find((f) =>
+      isArchive(getLocalPathFromFileObject(f)),
+    );
     if (archiveFile) {
       files = [archiveFile];
       createTemporaryNotification({
         caption: t('archive-file-found'),
-        message: t('processing') + ' ' + path.basename(files[0]?.path || ''),
+        message:
+          t('processing') +
+          ' ' +
+          path.basename(getLocalPathFromFileObject(files[0])),
       });
     }
   }
   for (const file of files) {
-    let filepath = file?.path;
+    let filepath = getLocalPathFromFileObject(file);
     try {
       if (!filepath) continue;
       // Check if file is remote URL; if so, download it
@@ -651,8 +656,8 @@ const addToFiles = async (
           await downloadFileIfNeeded({
             dir: await getTempPath(),
             filename: await window.electronApi.inferExtension(
-              file.filename || baseFileName,
-              file.filetype,
+              baseFileName,
+              file instanceof File ? file.type : undefined,
             ),
             url: filepath,
           })
@@ -701,11 +706,10 @@ const addToFiles = async (
           matchingMissingItem.isAudio = isAudio(filepath);
         }
       } else if (isPdf(filepath)) {
-        const convertedImages = (
-          await convertPdfToImages(filepath, await getTempPath())
-        ).map((path) => {
-          return { path };
-        });
+        const convertedImages = await convertPdfToImages(
+          filepath,
+          await getTempPath(),
+        );
         // await addToFiles(convertedImages);
         files.push(...convertedImages);
       } else if (isJwpub(filepath)) {
@@ -809,9 +813,9 @@ const addToFiles = async (
           throw error;
         });
         const files = await readdir(unzipDirectory);
-        const filePaths = files.map((file) => ({
-          path: path.join(unzipDirectory, file.name),
-        }));
+        const filePaths = files.map((file) =>
+          path.join(unzipDirectory, file.name),
+        );
         await addToFiles(filePaths);
         await fs.remove(unzipDirectory);
       } else {
@@ -833,7 +837,8 @@ const addToFiles = async (
     }
     currentFile.value++;
   }
-  if (!isJwpub(files[0]?.path)) showFileImportDialog.value = false;
+  if (!isJwpub(getLocalPathFromFileObject(files[0])))
+    showFileImportDialog.value = false;
 };
 
 const openImportMenu = (section: MediaSection | undefined) => {
@@ -853,9 +858,15 @@ watch(pressure, () => {
   if (!pressure.value) stopScrolling.value = true;
 });
 
-const scroll = (step: number) => {
+const scroll = (step?: number) => {
   const el = document.querySelector('.q-page-container');
-  if (!el || stopScrolling.value) return;
+  if (!el) return;
+  if (!step) {
+    el.scrollTop = 0;
+    stopScrolling.value = true;
+    return;
+  }
+  if (stopScrolling.value) return;
   el.scrollBy(0, step);
   setTimeout(() => scroll(step), 20);
 };
@@ -868,9 +879,10 @@ const dropActive = (event: DragEvent) => {
         : 0;
   stopScrolling.value = step === 0;
   if (step) scroll(step);
-  if (event?.dataTransfer?.effectAllowed === 'all') {
+  if (['all', 'copyLink'].includes(event?.dataTransfer?.effectAllowed || '')) {
     event.preventDefault();
     showFileImportDialog.value = true;
+    stopScrolling.value = true;
   }
 };
 
@@ -879,27 +891,24 @@ const dropEnd = (event: DragEvent) => {
   event.stopPropagation();
   try {
     if (event.dataTransfer?.files?.length) {
-      const droppedStuff = Array.from(event.dataTransfer.files)
-        .map((file) => {
-          return {
-            filetype: file.type,
-            path: getLocalPathFromFileObject(file),
-          };
-        })
-        .sort((a, b) => SORTER.compare(a?.path, b?.path));
+      const droppedStuff: (File | string)[] = Array.from(
+        event.dataTransfer.files,
+      ).sort((a, b) =>
+        SORTER.compare(
+          getLocalPathFromFileObject(a),
+          getLocalPathFromFileObject(b),
+        ),
+      );
       const noLocalDroppedFiles =
-        droppedStuff.filter((file) => file.path).length === 0;
+        droppedStuff.filter((file) => getLocalPathFromFileObject(file))
+          .length === 0;
       if (noLocalDroppedFiles && droppedStuff.length > 0) {
         const html = event.dataTransfer.getData('text/html');
         const sanitizedHtml = DOMPurify.sanitize(html);
         const src = new DOMParser()
           .parseFromString(sanitizedHtml, 'text/html')
           .querySelector('img')?.src;
-        const filetype =
-          Array.from(event.dataTransfer.items).find(
-            (item) => item.kind === 'file',
-          )?.type ?? '';
-        if (src) droppedStuff[0] = { filetype, path: src };
+        if (src) droppedStuff[0] = src;
       }
       addToFiles(droppedStuff).catch((error) => {
         errorCatcher(error);
@@ -910,13 +919,17 @@ const dropEnd = (event: DragEvent) => {
   }
 };
 
-whenever(
+watch(
   () => showFileImportDialog.value,
-  () => {
-    jwpubImportDb.value = '';
-    jwpubImportDocuments.value = [];
-    currentFile.value = 0;
-    totalFiles.value = 0;
+  (newVal) => {
+    if (newVal) {
+      jwpubImportDb.value = '';
+      jwpubImportDocuments.value = [];
+      currentFile.value = 0;
+      totalFiles.value = 0;
+    } else {
+      scroll(); // Scroll to top when dialog closes
+    }
   },
 );
 
