@@ -372,6 +372,7 @@
   "some-media-items-are-missing": "Mancano alcuni file multimediali",
   "some-media-items-are-missing-explain": "Il file JWPUB è stato importato con successo. Tuttavia, alcuni media non sono inclusi nel file e non possono essere scaricati automaticamente. Puoi aggiungere manualmente i file mancanti se necessario usando il menu 'Aggiungi media' o trascinandolo nella lista dei media dal tuo computer.",
   "some-songs-are-duplicated": "Some songs appear more than once in the media list. Please check if this is intentional.",
+  "this-song-is-duplicated": "This song appears more than once in the media list.",
   "song": "Cantico",
   "songbook-video-caching": "Cache cantici video",
   "stage": "Scena Alternativa (PIP)",

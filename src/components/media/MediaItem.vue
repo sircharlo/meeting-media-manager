@@ -219,7 +219,11 @@
           <q-chip
             :class="[
               'media-tag full-width',
-              media.tag?.type === 'song' ? 'bg-accent-400' : 'bg-accent-200',
+              media.tag?.type === 'song'
+                ? currentSongIsDuplicated
+                  ? 'bg-warning'
+                  : 'bg-accent-400'
+                : 'bg-accent-200',
             ]"
             :clickable="false"
             :ripple="false"
@@ -241,18 +245,8 @@
                       : 'mmm-music-note'
               "
             />
-            <q-tooltip v-if="media.source === 'watched'" :delay="500">
-              {{ t('watched-media-item-explain') }}
-            </q-tooltip>
-            <q-tooltip
-              v-else-if="
-                media.source === 'additional' &&
-                !currentSettings?.disableMediaFetching &&
-                isFileUrl(media.fileUrl)
-              "
-              :delay="1000"
-            >
-              {{ t('extra-media-item-explain') }}
+            <q-tooltip v-if="tagTooltipText" :delay="500">
+              {{ tagTooltipText }}
             </q-tooltip>
             <template v-if="media?.tag?.type">
               {{
@@ -290,6 +284,17 @@
         </div>
         <div class="col-shrink">
           <div class="row q-gutter-sm items-center q-mr-sm">
+            <q-icon
+              v-if="currentSongIsDuplicated"
+              class="q-mr-sm"
+              color="warning"
+              name="mmm-warning"
+              size="sm"
+            >
+              <q-tooltip :delay="500">
+                {{ $t('this-song-is-duplicated') }}
+              </q-tooltip>
+            </q-icon>
             <q-btn
               ref="moreButton"
               color="accent-400"
@@ -871,7 +876,7 @@ const setMediaPlaying = async (
   signLanguage = false,
   marker?: VideoMarker,
 ) => {
-  if (isImage(mediaPlayingUrl.value)) stopMedia();
+  if (isImage(mediaPlayingUrl.value)) stopMedia(true);
   if (signLanguage) {
     if (marker) {
       updateMediaCustomDuration({
@@ -1039,13 +1044,14 @@ const zoomReset = (forced = false, animate = true) => {
   }
 };
 
-function stopMedia() {
+function stopMedia(forOtherMediaItem = false) {
   mediaPlayingAction.value = 'pause';
   mediaPlayingUrl.value = '';
   mediaPlayingUniqueId.value = '';
   mediaPlayingCurrentPosition.value = 0;
   mediaPlayingAction.value = '';
   mediaToStop.value = '';
+  if (!forOtherMediaItem) zoomReset(true);
 }
 
 const isCurrentlyPlaying = computed(() => {
@@ -1201,4 +1207,38 @@ useEventListener(
   },
   { passive: true },
 );
+const currentSongIsDuplicated = computed(() => {
+  const currentSong = props.media.tag?.value?.toString();
+  if (!currentSong) return false;
+
+  const songNumbers =
+    currentState.selectedDateObject?.dynamicMedia?.filter(
+      (m) =>
+        !m.hidden &&
+        m.tag?.type === 'song' &&
+        m.tag?.value?.toString() === currentSong,
+    ) ?? [];
+
+  return songNumbers.length > 1;
+});
+
+const tagTooltipText = computed(() => {
+  if (currentSongIsDuplicated.value) {
+    return t('this-song-is-duplicated');
+  }
+
+  if (props.media.source === 'watched') {
+    return t('watched-media-item-explain');
+  }
+
+  if (
+    props.media.source === 'additional' &&
+    !currentSettings.value?.disableMediaFetching &&
+    isFileUrl(props.media.fileUrl)
+  ) {
+    return t('extra-media-item-explain');
+  }
+
+  return null;
+});
 </script>

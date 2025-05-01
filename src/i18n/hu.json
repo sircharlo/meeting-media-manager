@@ -372,6 +372,7 @@
   "some-media-items-are-missing": "Néhány médiafájl hiányzik",
   "some-media-items-are-missing-explain": "A JWPUB fájl importálása sikeres volt. Néhány médiatartalom azonban nem szerepel a fájlban, és nem tudott automatikusan letöltődni. Szükség esetén manuálisan hozzáadhatja ezt a médiát a \"Média hozzáadása\" menü segítségével, vagy a számítógépéről a médialistába húzva.",
   "some-songs-are-duplicated": "Some songs appear more than once in the media list. Please check if this is intentional.",
+  "this-song-is-duplicated": "This song appears more than once in the media list.",
   "song": "Ének",
   "songbook-video-caching": "Énekeskönyv videók gyorsítótárazása",
   "stage": "Színpad",

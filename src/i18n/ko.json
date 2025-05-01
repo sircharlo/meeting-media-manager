@@ -372,6 +372,7 @@
   "some-media-items-are-missing": "일부 미디어가 누락되었습니다",
   "some-media-items-are-missing-explain": "JWPUB 파일 불러오기는 성공했습니다. 하지만 JWPUB 내에 일부 미디어가 포함되어 있지 않아 자동 다운로드가 불가능합니다. 필요한 경우 '미디어 추가' 버튼을 누르거나 컴퓨터에서 미디어 파일을 끌어와 직접 추가하십시오.",
   "some-songs-are-duplicated": "미디어 목록에 노래가 중복 등록되었습니다. 의도한 것인지 확인해주십시오.",
+  "this-song-is-duplicated": "This song appears more than once in the media list.",
   "song": "노래",
   "songbook-video-caching": "노래책 동영상 미리 받기",
   "stage": "연단",

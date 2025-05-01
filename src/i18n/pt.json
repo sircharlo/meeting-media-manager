@@ -372,6 +372,7 @@
   "some-media-items-are-missing": "Alguns arquivos de mídia estão faltando",
   "some-media-items-are-missing-explain": "O arquivo JWPUB foi importado com sucesso. No entanto, uma ou mais mídias não está(ão) incluída(s) no arquivo e não foi possível baixá-la(s) automaticamente. Você pode adicionar mídias faltantes manualmente, se necessário, usando o menu 'Adicionar mídia' ou arrastando-as do seu computador para a lista de mídias.",
   "some-songs-are-duplicated": "Alguns cânticos aparecem mais de uma vez na lista de mídias. Verifique se isso é intencional.",
+  "this-song-is-duplicated": "Este cântico aparece mais de uma vez na lista de mídia.",
   "song": "Cântico",
   "songbook-video-caching": "Armazenamento local dos cânticos em vídeo",
   "stage": "Palco",

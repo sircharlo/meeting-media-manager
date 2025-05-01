@@ -372,6 +372,7 @@
   "some-media-items-are-missing": "Nekatere multimedijske datoteke manjkajo",
   "some-media-items-are-missing-explain": "Datoteka JWPUB je bila uspešno uvožena. Vendar del multimedijske vsebine ni vključen v datoteko in ga ni bilo mogoče samodejno prenesti. To multimedijsko vsebino lahko po potrebi ročno dodaš z uporabo menija „Dodaj multimedijsko vsebino“ ali tako, da jo iz računalnika povlečeš na seznam multimedijske vsebine.",
   "some-songs-are-duplicated": "Nekatere pesmi so na seznamu multimedijske vsebine prikazane več kot enkrat. Preveri, ali je to namerno.",
+  "this-song-is-duplicated": "This song appears more than once in the media list.",
   "song": "Pesem",
   "songbook-video-caching": "Predpomnjenje videoposnetkov pesmi iz pesmarice",
   "stage": "Oder",

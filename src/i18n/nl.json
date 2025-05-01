@@ -372,6 +372,7 @@
   "some-media-items-are-missing": "Sommige mediabestanden ontbreken",
   "some-media-items-are-missing-explain": "Het JWPUB-bestand is succesvol geïmporteerd. Sommige media zijn echter niet opgenomen in het bestand en konden niet automatisch worden gedownload. Je kunt deze media handmatig toevoegen indien nodig door gebruik te maken van het 'Media toevoegen' menu of door het naar de medialijst te slepen vanaf je computer.",
   "some-songs-are-duplicated": "Sommige liederen verschijnen meer dan één keer in de medialijst. Controleer of dit opzettelijk is.",
+  "this-song-is-duplicated": "This song appears more than once in the media list.",
   "song": "Lied",
   "songbook-video-caching": "Koninkrijksliederen cachen",
   "stage": "Podium",
