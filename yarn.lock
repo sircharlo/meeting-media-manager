@@ -807,13 +807,13 @@ __metadata:
   linkType: hard
 
 "@eslint-community/eslint-utils@npm:^4.2.0, @eslint-community/eslint-utils@npm:^4.4.0":
-  version: 4.6.1
-  resolution: "@eslint-community/eslint-utils@npm:4.6.1"
+  version: 4.7.0
+  resolution: "@eslint-community/eslint-utils@npm:4.7.0"
   dependencies:
     eslint-visitor-keys: "npm:^3.4.3"
   peerDependencies:
     eslint: ^6.0.0 || ^7.0.0 || >=8.0.0
-  checksum: 10c0/cdeb6f8fc33a83726357d7f736075cdbd6e79dc7ac4b00b15680f1111d0f33bda583e7fafa5937245a058cc66302dc47568bba57b251302dc74964d8e87f56d7
+  checksum: 10c0/c0f4f2bd73b7b7a9de74b716a664873d08ab71ab439e51befe77d61915af41a81ecec93b408778b3a7856185244c34c2c8ee28912072ec14def84ba2dec70adf
   languageName: node
   linkType: hard
 
@@ -848,9 +848,9 @@ __metadata:
   linkType: hard
 
 "@eslint/config-helpers@npm:^0.2.1":
-  version: 0.2.1
-  resolution: "@eslint/config-helpers@npm:0.2.1"
-  checksum: 10c0/3e829a78b0bb4f7c44384ba1df3986e5de24b7f440ad5c6bb3cfc366ded773a869ca9ee8d212b5a563ae94596c5940dea6fd2ea1ee53a84c6241ac953dcb8bb7
+  version: 0.2.2
+  resolution: "@eslint/config-helpers@npm:0.2.2"
+  checksum: 10c0/98f7cefe484bb754674585d9e73cf1414a3ab4fd0783c385465288d13eb1a8d8e7d7b0611259fc52b76b396c11a13517be5036d1f48eeb877f6f0a6b9c4f03ad
   languageName: node
   linkType: hard
 
@@ -1765,90 +1765,90 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-android-arm64@npm:0.1.69":
-  version: 0.1.69
-  resolution: "@napi-rs/canvas-android-arm64@npm:0.1.69"
+"@napi-rs/canvas-android-arm64@npm:0.1.70":
+  version: 0.1.70
+  resolution: "@napi-rs/canvas-android-arm64@npm:0.1.70"
   conditions: os=android & cpu=arm64
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-darwin-arm64@npm:0.1.69":
-  version: 0.1.69
-  resolution: "@napi-rs/canvas-darwin-arm64@npm:0.1.69"
+"@napi-rs/canvas-darwin-arm64@npm:0.1.70":
+  version: 0.1.70
+  resolution: "@napi-rs/canvas-darwin-arm64@npm:0.1.70"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-darwin-x64@npm:0.1.69":
-  version: 0.1.69
-  resolution: "@napi-rs/canvas-darwin-x64@npm:0.1.69"
+"@napi-rs/canvas-darwin-x64@npm:0.1.70":
+  version: 0.1.70
+  resolution: "@napi-rs/canvas-darwin-x64@npm:0.1.70"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-linux-arm-gnueabihf@npm:0.1.69":
-  version: 0.1.69
-  resolution: "@napi-rs/canvas-linux-arm-gnueabihf@npm:0.1.69"
+"@napi-rs/canvas-linux-arm-gnueabihf@npm:0.1.70":
+  version: 0.1.70
+  resolution: "@napi-rs/canvas-linux-arm-gnueabihf@npm:0.1.70"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-linux-arm64-gnu@npm:0.1.69":
-  version: 0.1.69
-  resolution: "@napi-rs/canvas-linux-arm64-gnu@npm:0.1.69"
+"@napi-rs/canvas-linux-arm64-gnu@npm:0.1.70":
+  version: 0.1.70
+  resolution: "@napi-rs/canvas-linux-arm64-gnu@npm:0.1.70"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-linux-arm64-musl@npm:0.1.69":
-  version: 0.1.69
-  resolution: "@napi-rs/canvas-linux-arm64-musl@npm:0.1.69"
+"@napi-rs/canvas-linux-arm64-musl@npm:0.1.70":
+  version: 0.1.70
+  resolution: "@napi-rs/canvas-linux-arm64-musl@npm:0.1.70"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-linux-riscv64-gnu@npm:0.1.69":
-  version: 0.1.69
-  resolution: "@napi-rs/canvas-linux-riscv64-gnu@npm:0.1.69"
+"@napi-rs/canvas-linux-riscv64-gnu@npm:0.1.70":
+  version: 0.1.70
+  resolution: "@napi-rs/canvas-linux-riscv64-gnu@npm:0.1.70"
   conditions: os=linux & cpu=riscv64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-linux-x64-gnu@npm:0.1.69":
-  version: 0.1.69
-  resolution: "@napi-rs/canvas-linux-x64-gnu@npm:0.1.69"
+"@napi-rs/canvas-linux-x64-gnu@npm:0.1.70":
+  version: 0.1.70
+  resolution: "@napi-rs/canvas-linux-x64-gnu@npm:0.1.70"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-linux-x64-musl@npm:0.1.69":
-  version: 0.1.69
-  resolution: "@napi-rs/canvas-linux-x64-musl@npm:0.1.69"
+"@napi-rs/canvas-linux-x64-musl@npm:0.1.70":
+  version: 0.1.70
+  resolution: "@napi-rs/canvas-linux-x64-musl@npm:0.1.70"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas-win32-x64-msvc@npm:0.1.69":
-  version: 0.1.69
-  resolution: "@napi-rs/canvas-win32-x64-msvc@npm:0.1.69"
+"@napi-rs/canvas-win32-x64-msvc@npm:0.1.70":
+  version: 0.1.70
+  resolution: "@napi-rs/canvas-win32-x64-msvc@npm:0.1.70"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
 "@napi-rs/canvas@npm:^0.1.67":
-  version: 0.1.69
-  resolution: "@napi-rs/canvas@npm:0.1.69"
+  version: 0.1.70
+  resolution: "@napi-rs/canvas@npm:0.1.70"
   dependencies:
-    "@napi-rs/canvas-android-arm64": "npm:0.1.69"
-    "@napi-rs/canvas-darwin-arm64": "npm:0.1.69"
-    "@napi-rs/canvas-darwin-x64": "npm:0.1.69"
-    "@napi-rs/canvas-linux-arm-gnueabihf": "npm:0.1.69"
-    "@napi-rs/canvas-linux-arm64-gnu": "npm:0.1.69"
-    "@napi-rs/canvas-linux-arm64-musl": "npm:0.1.69"
-    "@napi-rs/canvas-linux-riscv64-gnu": "npm:0.1.69"
-    "@napi-rs/canvas-linux-x64-gnu": "npm:0.1.69"
-    "@napi-rs/canvas-linux-x64-musl": "npm:0.1.69"
-    "@napi-rs/canvas-win32-x64-msvc": "npm:0.1.69"
+    "@napi-rs/canvas-android-arm64": "npm:0.1.70"
+    "@napi-rs/canvas-darwin-arm64": "npm:0.1.70"
+    "@napi-rs/canvas-darwin-x64": "npm:0.1.70"
+    "@napi-rs/canvas-linux-arm-gnueabihf": "npm:0.1.70"
+    "@napi-rs/canvas-linux-arm64-gnu": "npm:0.1.70"
+    "@napi-rs/canvas-linux-arm64-musl": "npm:0.1.70"
+    "@napi-rs/canvas-linux-riscv64-gnu": "npm:0.1.70"
+    "@napi-rs/canvas-linux-x64-gnu": "npm:0.1.70"
+    "@napi-rs/canvas-linux-x64-musl": "npm:0.1.70"
+    "@napi-rs/canvas-win32-x64-msvc": "npm:0.1.70"
   dependenciesMeta:
     "@napi-rs/canvas-android-arm64":
       optional: true
@@ -1870,7 +1870,7 @@ __metadata:
       optional: true
     "@napi-rs/canvas-win32-x64-msvc":
       optional: true
-  checksum: 10c0/ed924773fb5e5ddfb68c1c05b81d6b5dac345a32ece670f5b267d80e2878a66b86e4d6688b3fbd1c93de195cdd4148603144908a79793894a8b7c6ff5c8b4b9a
+  checksum: 10c0/0855e9d65f24811006d5b6b9a37f70c9742ba12fd7f7d2968f49a7bcec17bd49e209ce3f0ee9f88e2df97466e14c4e829b8664a4277b2d64fe873cf5cfcff9f0
   languageName: node
   linkType: hard
 
@@ -5352,16 +5352,16 @@ __metadata:
   linkType: hard
 
 "browserslist@npm:^4.24.0, browserslist@npm:^4.24.4":
-  version: 4.24.4
-  resolution: "browserslist@npm:4.24.4"
+  version: 4.24.5
+  resolution: "browserslist@npm:4.24.5"
   dependencies:
-    caniuse-lite: "npm:^1.0.30001688"
-    electron-to-chromium: "npm:^1.5.73"
+    caniuse-lite: "npm:^1.0.30001716"
+    electron-to-chromium: "npm:^1.5.149"
     node-releases: "npm:^2.0.19"
-    update-browserslist-db: "npm:^1.1.1"
+    update-browserslist-db: "npm:^1.1.3"
   bin:
     browserslist: cli.js
-  checksum: 10c0/db7ebc1733cf471e0b490b4f47e3e2ea2947ce417192c9246644e92c667dd56a71406cc58f62ca7587caf828364892e9952904a02b7aead752bc65b62a37cfe9
+  checksum: 10c0/f4c1ce1a7d8fdfab5e5b88bb6e93d09e8a883c393f86801537a252da0362dbdcde4dbd97b318246c5d84c6607b2f6b47af732c1b000d6a8a881ee024bad29204
   languageName: node
   linkType: hard
 
@@ -5721,7 +5721,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.30001688, caniuse-lite@npm:^1.0.30001702":
+"caniuse-lite@npm:^1.0.30001702, caniuse-lite@npm:^1.0.30001716":
   version: 1.0.30001716
   resolution: "caniuse-lite@npm:1.0.30001716"
   checksum: 10c0/5cca5089f7ee214a346ea38ecbd114c1a675c94254675150e535aa0766fe2c446961990637f25f65dc29ce9c543aed12006d679dd797d2e6159c46aa518da0cb
@@ -7217,10 +7217,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-to-chromium@npm:^1.5.73":
-  version: 1.5.148
-  resolution: "electron-to-chromium@npm:1.5.148"
-  checksum: 10c0/e6de6bf2f632775ef426d346f0453ff9551c321a5d0e0a336e6c646e43b723ec0d2ce95199f3f3ab5ccb8a9c1996a409eaae056954366c491113928c66f60173
+"electron-to-chromium@npm:^1.5.149":
+  version: 1.5.149
+  resolution: "electron-to-chromium@npm:1.5.149"
+  checksum: 10c0/dc9fe63d1ffb034a5c91133291b09d877b4b200b01b1235090e94aed7f75f4413637c7b4e3a783b03f03c06bee8f45bbd5f44ddb397bc35528ac8a838eb6a66d
   languageName: node
   linkType: hard
 
@@ -12492,7 +12492,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oniguruma-parser@npm:^0.12.0":
+"oniguruma-parser@npm:^0.12.1":
   version: 0.12.1
   resolution: "oniguruma-parser@npm:0.12.1"
   checksum: 10c0/b843ea54cda833efb19f856314afcbd43e903ece3de489ab78c527ddec84859208052557daa9fad4bdba89ebdd15b0cc250de86b3daf8c7cbe37bac5a6a185d3
@@ -12500,13 +12500,13 @@ __metadata:
   linkType: hard
 
 "oniguruma-to-es@npm:^4.2.0":
-  version: 4.3.2
-  resolution: "oniguruma-to-es@npm:4.3.2"
+  version: 4.3.3
+  resolution: "oniguruma-to-es@npm:4.3.3"
   dependencies:
-    oniguruma-parser: "npm:^0.12.0"
+    oniguruma-parser: "npm:^0.12.1"
     regex: "npm:^6.0.1"
     regex-recursion: "npm:^6.0.2"
-  checksum: 10c0/d03ea9c13cc4123e9c19f3c6b1dcd174f4acf249906bda5e4a2a46869a5e4f07c12859aa9480b74ad3ab646c4f675f5a79dd3addfa3873ae0e79fd7c54d400c5
+  checksum: 10c0/bc034e84dfee4dbc061cf6364023e66e1667fb8dc3afcad3b7d6a2c77e2d4a4809396ee2fb8c1fd3d6f00f76f7ca14b773586bf862c5f0c0074c059e2a219252
   languageName: node
   linkType: hard
 
@@ -16763,7 +16763,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"update-browserslist-db@npm:^1.1.1":
+"update-browserslist-db@npm:^1.1.3":
   version: 1.1.3
   resolution: "update-browserslist-db@npm:1.1.3"
   dependencies:
