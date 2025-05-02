@@ -286,6 +286,8 @@
   "obsPassword-explain": "Найдите настроенный пароль в разделе Инструменты > Настройки сервера WebSocket в OBS Studio.",
   "obsPort": "Порт для Websocket в OBS Studio",
   "obsPort-explain": "Настроенный порт находится в меню Tools > WebSocket Server Settings в OBS Studio.",
+  "obsPostponeImages": "Do not automatically share images",
+  "obsPostponeImages-explain": "When enabled, images will only be displayed for Zoom participants when the media operator clicks on the \"Show in OBS Studio\" button. This can be useful if you generally display images to the in-person audience before sharing them on Zoom.",
   "obsQuickToggle": "Включить мгновенный переключатель сцен",
   "obsQuickToggle-explain": "Если включить эту функцию, при наведении курсора на кнопку OBS Studio откроется переключатель сцен. Это может быть полезно для быстрого переключения сцен в OBS Studio, особенно если настроено много сцен.",
   "obsStudio": "OBS Studio",
