@@ -286,6 +286,8 @@
   "obsPassword-explain": "OBS Studio의 도구 > WebSocket 서버 설정에 입력한 패스워드를 입력합니다.",
   "obsPort": "OBS Studio WebSocket 포트",
   "obsPort-explain": "OBS Studio의 도구 > WebSocket 서버 설정에 입력한 포트를 입력합니다.",
+  "obsPostponeImages": "Do not automatically share images",
+  "obsPostponeImages-explain": "When enabled, images will only be displayed for Zoom participants when the media operator clicks on the \"Show in OBS Studio\" button. This can be useful if you generally display images to the in-person audience before sharing them on Zoom.",
   "obsQuickToggle": "빠른 장면 전환기 활성화",
   "obsQuickToggle-explain": "활성화하는 경우 OBS Studio 버튼에 마우스를 올리면 장면 전환기가 표시됩니다. 많은 장면이 구성된 경우 OBS Studio에서 장면을 빠르게 전환하는데 사용할 수 있습니다.",
   "obsStudio": "OBS Studio",
