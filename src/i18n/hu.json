@@ -286,6 +286,8 @@
   "obsPassword-explain": "Keresse meg a konfigurált jelszót az OBS Studio Eszközök > WebSocket Server beállítások menüpontjában.",
   "obsPort": "OBS Studio Websocket port",
   "obsPort-explain": "Keresse meg a konfigurált portot az OBS Studio Eszközök > WebSocket Server beállítások menüpontjában.",
+  "obsPostponeImages": "Do not automatically share images",
+  "obsPostponeImages-explain": "When enabled, images will only be displayed for Zoom participants when the media operator clicks on the \"Show in OBS Studio\" button. This can be useful if you generally display images to the in-person audience before sharing them on Zoom.",
   "obsQuickToggle": "Azonnali jelenetváltás engedélyezése",
   "obsQuickToggle-explain": "Ha engedélyezve van, a kurzort az OBS Studio gomb fölé mozgatva megnyílik a jelenetváltó. Ez hasznos lehet a jelenetek gyors váltásához az OBS Studio-ban, különösen, ha sok jelenet van konfigurálva.",
   "obsStudio": "OBS Studio",
