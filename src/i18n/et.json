@@ -286,6 +286,8 @@
   "obsPassword-explain": "Leidke seadistatud salasõna OBS Studio jaotisest Tools > WebSocket Server Settings.",
   "obsPort": "OBS Studio Websocket-i port",
   "obsPort-explain": "Leidke seadistatud pordi number OBS Studio jaotisest Tools > WebSocket Server Settings.",
+  "obsPostponeImages": "Do not automatically share images",
+  "obsPostponeImages-explain": "When enabled, images will only be displayed for Zoom participants when the media operator clicks on the \"Show in OBS Studio\" button. This can be useful if you generally display images to the in-person audience before sharing them on Zoom.",
   "obsQuickToggle": "Luba kiire stseenide vahetamine",
   "obsQuickToggle-explain": "Kui on lubatud, siis peatudes hiirega OBS Studio nupul, avaneb stseeni vahetamise aken. See on kasulik kiireks stseeni vahetamiseks OBS Studios, kui on erinevad stseenid seadistatud.",
   "obsStudio": "OBS Studio",
