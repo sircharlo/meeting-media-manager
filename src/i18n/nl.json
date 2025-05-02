@@ -286,6 +286,8 @@
   "obsPassword-explain": "Vind het geconfigureerde wachtwoord onder Tools > WebSocket Server Instellingen in OBS Studio.",
   "obsPort": "OBS Studio Websocket poort",
   "obsPort-explain": "Vind de geconfigureerde poort onder Tools > WebSocket Server Instellingen in OBS Studio.",
+  "obsPostponeImages": "Do not automatically share images",
+  "obsPostponeImages-explain": "When enabled, images will only be displayed for Zoom participants when the media operator clicks on the \"Show in OBS Studio\" button. This can be useful if you generally display images to the in-person audience before sharing them on Zoom.",
   "obsQuickToggle": "Schakel directe scène wisselaar in",
   "obsQuickToggle-explain": "Wanneer ingeschakeld, zal het openen zodra je op de OBS Studio knop staat. Dit kan handig zijn voor het snel wisselen van scènes in OBS Studio, vooral als veel scènes zijn geconfigureerd.",
   "obsStudio": "OBS Studio",
