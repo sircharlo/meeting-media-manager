@@ -2690,24 +2690,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/quasar-app-extension-testing-unit-vitest@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@quasar/quasar-app-extension-testing-unit-vitest@npm:1.1.0"
+"@quasar/quasar-app-extension-testing-unit-vitest@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@quasar/quasar-app-extension-testing-unit-vitest@npm:1.2.1"
   dependencies:
     happy-dom: "npm:^15.0.0"
     lodash-es: "npm:^4.17.21"
     vite-jsconfig-paths: "npm:^2.0.1"
     vite-tsconfig-paths: "npm:^4.3.1"
   peerDependencies:
-    "@vitest/ui": ^1.1.0 || ^2.0.0
+    "@vitest/ui": ^1.1.0 || ^2.0.0 || ^3.0.0
     "@vue/test-utils": ^2.4.3
     quasar: ^2.12.7
-    vitest: ^1.1.0 || ^2.0.0
+    vitest: ^1.1.0 || ^2.0.0 || ^3.0.0
     vue: ^3.3.4
   peerDependenciesMeta:
     "@vitest/ui":
       optional: true
-  checksum: 10c0/75cdeb5daca116f5d04330f2e3535bc00e1296f0117af5c06902dc957e68dfa1c2afa9a57f4c1031f8fa8b25345d26163d863a99483c48b97462e9c5568929a5
+  checksum: 10c0/718631408a97d2617db75ccea38c5cc13c7b7c9aa04e732a1705a4bd8950b46a8e65fc7cf25b62c807062ace7653642c8a94679d67d327cd4480bdcf218e19c7
   languageName: node
   linkType: hard
 
@@ -11386,7 +11386,7 @@ __metadata:
     "@quasar/extras": "npm:^1.16.17"
     "@quasar/icongenie": "npm:^4.0.0"
     "@quasar/quasar-app-extension-qmarkdown": "npm:^2.0.5"
-    "@quasar/quasar-app-extension-testing-unit-vitest": "npm:^1.1.0"
+    "@quasar/quasar-app-extension-testing-unit-vitest": "npm:^1.2.1"
     "@quasar/vite-plugin": "npm:^1.9.0"
     "@rollup/plugin-inject": "npm:^5.0.5"
     "@sentry/electron": "npm:^5.12.0"
