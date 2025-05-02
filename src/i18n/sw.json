@@ -286,6 +286,8 @@
   "obsPassword-explain": "Pata neno siri lako kwa Tools > Websocket Server Settings kwenye OBS Studio.",
   "obsPort": "Websocket port la OBS Studio",
   "obsPort-explain": "Pata mipangilio ya port chini ya Tools > mipangilio ya Websocket Server kwenye OBS Studio.",
+  "obsPostponeImages": "Do not automatically share images",
+  "obsPostponeImages-explain": "When enabled, images will only be displayed for Zoom participants when the media operator clicks on the \"Show in OBS Studio\" button. This can be useful if you generally display images to the in-person audience before sharing them on Zoom.",
   "obsQuickToggle": "Washa kibadilishaji cha scene",
   "obsQuickToggle-explain": "Ikiwezeshwa, kuelea juu ya kitufe cha OBS Studio kutafungua kibadilishaji cha scene. Hii inaweza kuwa muhimu kwa kubadili kwa haraka scene katika Studio ya OBS, hasa ikiwa scene nyingi zimesanidiwa.",
   "obsStudio": "OBS Studio",

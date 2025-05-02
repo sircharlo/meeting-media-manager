@@ -8,24 +8,24 @@ Para a lista completa de alterações entre versões, consulte o ficheiro CHANGE
 
 ### 🛠️ Melhorias e Ajustes
 
-- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+- ➕ Limpar Conteúdos da v25.4.x: Limpeza automática de conteúdos órfãos ou mal colocados das versões v25.4.1 a v25.4.2, garantindo que nenhuma multimédia esteja em falta ou no local errado na lista de multimédia.
 
 ## 25.4.2
 
 ### 🛠️ Melhorias e Ajustes
 
-- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+- ➕ Evitar Duplicação de Multimédia: Impede que certa multimédia seja adicionada várias vezes à lista de multimédia.
 
 ## 25.4.1
 
 ### 🛠️ Melhorias e Ajustes
 
-- 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
-- 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
-- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
-- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
-- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
-- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
+- 🎬 Corrigir Atribuição Personalizada de Início/Fim: Impede que os tempos personalizados de início e fim sejam aplicados incorretamente ao vídeo errado.
+- 📝 Permitir Legendas Desajustadas: Permite o uso de legendas mesmo quando não correspondem perfeitamente ao ficheiro de multimédia.
+- 🪟 Desativar Canto Arredondado no Windows: Remove os cantos arredondados da janela de mídia no Windows.
+- 🖼 Incluir Imagens Não Referenciadas na Lista de Multimédia: Garante que todas as imagens não referenciadas sejam adicionadas à lista de multimédia para maior completude.
+- ➕ Evitar Secções de Multimédia Duplicadas: Impede a criação de várias secções de multimédia para o mesmo item de multimédia.
+- 📥 Preservar a Ordem da Playlist na Importação: Manter a ordem original das playlists JWL durante o processo de importação.
 
 ## 25.4.0
 

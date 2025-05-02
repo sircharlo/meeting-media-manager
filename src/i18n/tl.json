@@ -286,6 +286,8 @@
   "obsPassword-explain": "Hanapin ang password sa Tools > WebSocket Server Settings in OBS Studio.",
   "obsPort": "OBS Studio Websocket port",
   "obsPort-explain": "Hanapin ang port sa Tools > WebSocket Server Settings in OBS Studio.",
+  "obsPostponeImages": "Do not automatically share images",
+  "obsPostponeImages-explain": "When enabled, images will only be displayed for Zoom participants when the media operator clicks on the \"Show in OBS Studio\" button. This can be useful if you generally display images to the in-person audience before sharing them on Zoom.",
   "obsQuickToggle": "I-enable ang instant screen switcher",
   "obsQuickToggle-explain": "Kapag naka-enable, ang pag-hover sa OBS Studio button ay magbubukas ng scene switcher. Makakatulong ito para sa mabilisang pagpapalit ng mga scene sa OBS Studio, lalo na kung maraming scene ang naka-configure.",
   "obsStudio": "OBS Studio",

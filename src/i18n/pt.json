@@ -286,6 +286,8 @@
   "obsPassword-explain": "Encontre a senha configurada em Ferramentas > Configurações do servidor WebSocket no OBS Studio.",
   "obsPort": "Porta do OBS Studio Websocket",
   "obsPort-explain": "Encontre a porta configurada em Ferramentas > Configurações do servidor WebSocket no OBS Studio.",
+  "obsPostponeImages": "Não compartilhar imagens automaticamente",
+  "obsPostponeImages-explain": "Quando ativado, as imagens só serão exibidas para os participantes no Zoom quando o operador de mídia clica no botão \"Mostrar no OBS Studio\". Isso pode ser útil se você geralmente exibe imagens para a assistência presente antes de compartilhá-las no Zoom.",
   "obsQuickToggle": "Habilitar popup de visualização de cena",
   "obsQuickToggle-explain": "Se essa opção estiver habilitada, um popup do seletor de cena do OBS irá abrir ao passar o mouse em cima do botão. Isso pode ser útil para mudar rapidamente de uma cena para outra do OBS Studio, especialmente se muitas cenas forem configuradas.",
   "obsStudio": "OBS Studio",
