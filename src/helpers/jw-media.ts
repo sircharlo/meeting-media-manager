@@ -1300,16 +1300,6 @@ export const dynamicMediaMapper = async (
         isMwMeetingDay(lookupDate) && songs?.length >= 2 && songs[1]
           ? songs[1].BeginParagraphOrdinal
           : 0;
-      if (isCoWeek(lookupDate)) {
-        // The last songs for both MW and WE meeting get replaced during the CO visit
-        allMedia.pop();
-        if (isMwMeetingDay(lookupDate)) {
-          // Also remove CBS media if it's the MW meeting, since the CBS is skipped during the CO visit
-          allMedia = allMedia.filter(
-            (m) => m.BeginParagraphOrdinal < lastParagraphOrdinal - 2,
-          );
-        }
-      }
     }
     const mediaPromises = allMedia.map(
       async (m, index): Promise<DynamicMediaObject> => {
@@ -1412,7 +1402,6 @@ export const dynamicMediaMapper = async (
         return {
           cbs:
             isMwMeetingDay(lookupDate) &&
-            !isCoWeek(lookupDate) &&
             m.BeginParagraphOrdinal >= lastParagraphOrdinal - 2 &&
             m.BeginParagraphOrdinal < lastParagraphOrdinal,
           customDuration,
@@ -1441,6 +1430,18 @@ export const dynamicMediaMapper = async (
       },
     );
     const allMediaPromises = await Promise.all(mediaPromises);
+
+    if (isCoWeek(lookupDate)) {
+      // Hide the last song for both MW and WE meetings during the CO visit
+      const lastSong = allMediaPromises.at(-1);
+      if (lastSong) lastSong.hidden = true;
+
+      // Hide CBS media
+      allMediaPromises.forEach((m) => {
+        if (m.cbs) m.hidden = true;
+      });
+    }
+
     // Group mediaPromises by extractCaption
     const groupedMediaPromises: DynamicMediaObject[] = Object.values(
       allMediaPromises.reduce<Record<string, DynamicMediaObject>>(

@@ -54,7 +54,8 @@ const electronApi: ElectronApi = {
   getAllScreens: () => invoke('getAllScreens'),
   getAppDataPath: () => invoke('getAppDataPath'),
   getLocales: () => invoke('getLocales'),
-  getLocalPathFromFileObject: (fo) => webUtils.getPathForFile(fo),
+  getLocalPathFromFileObject: (fo) =>
+    fo ? (typeof fo === 'string' ? fo : webUtils.getPathForFile(fo)) : '',
   getNrOfPdfPages,
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),
   getUserDataPath: () => invoke('getUserDataPath'),

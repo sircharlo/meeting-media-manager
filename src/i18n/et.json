@@ -372,6 +372,7 @@
   "some-media-items-are-missing": "Mõned meediafailid on puudu",
   "some-media-items-are-missing-explain": "JWPUB-faili on edukalt imporditud. Siiski ei ole failis mõningaid meediafaile ja neid ei saanud automaatselt alla laadida. Vajaduse korral saad selle meedia lisada käsitsi, kasutades menüüd „Lisa meedia“ või lohistades meediafail arvutist meedia loendisse.",
   "some-songs-are-duplicated": "Mõned laulud on meedia nimekirjas rohkem kui üks kord. Palun kontrolli, kas see on tahtlik.",
+  "this-song-is-duplicated": "This song appears more than once in the media list.",
   "song": "Laul",
   "songbook-video-caching": "Lauliku videofaili vahemällu salvestamine",
   "stage": "Lava",

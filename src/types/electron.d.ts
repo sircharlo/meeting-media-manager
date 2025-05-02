@@ -65,7 +65,7 @@ export interface ElectronApi {
   getAllScreens: () => Promise<Display[]>;
   getAppDataPath: () => Promise<string>;
   getLocales: () => Promise<string[]>;
-  getLocalPathFromFileObject: (fileObject: File) => string;
+  getLocalPathFromFileObject: (fileObject: File | string | undefined) => string;
   getNrOfPdfPages: (pdfPath: string) => Promise<number>;
   getScreenAccessStatus: () => Promise<MediaAccessStatus>;
   getUserDataPath: () => Promise<string>;
