@@ -249,6 +249,12 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'obsStudio',
     type: 'list',
   },
+  obsPostponeImages: {
+    depends: ['obsEnable', 'obsPort', 'obsPassword'],
+    group: 'integrations',
+    subgroup: 'obsStudio',
+    type: 'toggle',
+  },
   obsQuickToggle: {
     depends: ['obsEnable', 'obsPort', 'obsPassword', 'obsMediaScene'],
     group: 'integrations',
@@ -262,12 +268,6 @@ export const settingsDefinitions: SettingsItems = {
     type: 'toggle',
   },
   obsHideIcons: {
-    depends: ['obsEnable', 'obsPort', 'obsPassword'],
-    group: 'integrations',
-    subgroup: 'obsStudio',
-    type: 'toggle',
-  },
-  obsPostponeImages: {
     depends: ['obsEnable', 'obsPort', 'obsPassword'],
     group: 'integrations',
     subgroup: 'obsStudio',
