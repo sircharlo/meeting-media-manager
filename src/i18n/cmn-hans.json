@@ -286,6 +286,8 @@
   "obsPassword-explain": "在 OBS Studio 中在“工具 > WebSocket 服务器设置”下查找已配置的密码。",
   "obsPort": "OBS Studio Websocket 端口",
   "obsPort-explain": "在 OBS Studio 中查找工具> WebSocket 服务器设置下的配置端口。",
+  "obsPostponeImages": "Do not automatically share images",
+  "obsPostponeImages-explain": "When enabled, images will only be displayed for Zoom participants when the media operator clicks on the \"Show in OBS Studio\" button. This can be useful if you generally display images to the in-person audience before sharing them on Zoom.",
   "obsQuickToggle": "启用即时场景切换器",
   "obsQuickToggle-explain": "启用时，悬停在OBS工作室按钮将打开场景切换器。 这可能有助于快速切换OBS Studio中的场景，尤其是如果配置了许多场景。",
   "obsStudio": "OBS 工作室",
