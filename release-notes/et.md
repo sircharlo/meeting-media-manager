@@ -8,37 +8,37 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 
 ### 🛠️ Parandused ja täiustused
 
-- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+- ➕ **Media puhastamine alates v25.4.x**: Puhastab automaatselt orvuks jäänud või valesti paigutatud meediafailid alates v25.4.1 kuni v25.4.2, et tagada, et meediafailid ei puuduks või ei oleks meediafailide nimekirjas vales kohas.
 
 ## 25.4.2
 
 ### 🛠️ Parandused ja täiustused
 
-- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+- ➕ \*_Topelt meediafailide vältimine_: Välista mõnede meediaelementide korduvat lisamist meedia nimekirja.
 
 ## 25.4.1
 
 ### 🛠️ Parandused ja täiustused
 
-- 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
-- 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
-- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
-- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
-- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
-- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
+- **Parandatud algus/lõpuaja määramine**: Väldi olukorda, kus kohandatud algus/lõpu aeg saab määratud valele meediafailile.
+- 📝 **Luba kohandatud subtiitreid**: Võimaldab subtiitrite kasutamise isegi siis, kui need ei vasta täielikult meediafailile.
+- 🪟 **Lülita välja ümardatud nurgad Windowsis**: Eemaldage ümardatud nurgad meediaaknast Windowsis.
+- 🖼 **Lisa meedia loetelusse viitamata pilte**: Veenduge, et kõik mitteviidatud pildid lisatakse meeda nimekirja.
+- ➕ **Dubleerivate meediasektsioonide tekkimise vältimine**: Vältige mitme meediasektsiooni loomist sama meediaelemendi jaoks.
+- 📥 **Säilita esitusloendi järjekorda importimisel**: Säilitab JWL-i esitusloendite algse järjekorra importimise ajal.
 
 ## 25.4.0
 
 ### ✨ Uued funktsioonid
 
-- 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
-- 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
+- 🇵🇭 **Uus keel: Tagalog**: Lisati tugi tagalogi keelele, mis laiendab rakenduse mitmekeelsuse võimekust.
+- 🎞 **.m4v-videoformaadi toetus**: Programm toetab meedia ühilduvuse parandamiseks `.m4v` failide taasesitamist.
 
 ### 🛠️ Parandused ja täiustused
 
-- 🎬 **Multiple Start/End Times for Single Video**: Allow a single video to appear in the media list multiple times with different custom start/end times.
-- 📤 **Include Grouped Media in Auto Export**: Automatically export grouped media items along with others.
-- 📡 **Correct `.m4v` Fetching from JW API**: Ensure `.m4v` files are correctly fetched from the JW API.
+- 🎬 **Mitmed algus-/lõpuajad video jaoks**: Võimaldab ühe video ilmumist meediakanalite loetelus mitu korda erinevate kohandatud algus-/lõppaegadega.
+- 📤 **Rühmitatud meedia lisamine automaatsesse eksportimisse**: Ekspordib automaatselt rühmitatud meediaelemendid koos teistega.
+- 📡 **Parandatud `.m4v` JW API-st kättesaamine**: Tagatud on`.m4v` failide korrektne kättesaamine JW API-st.
 
 ## 25.3.1
 
