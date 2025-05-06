@@ -111,7 +111,7 @@
     "eslint-plugin-vue": "^10.1.0",
     "globals": "^16.0.0",
     "husky": "^9.1.7",
-    "lint-staged": "^15.5.1",
+    "lint-staged": "^15.5.2",
     "lodash-es": "^4.17.21",
     "msw": "^2.7.6",
     "postcss": "^8.5.3",
