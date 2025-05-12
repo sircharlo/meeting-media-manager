@@ -8,14 +8,14 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 ### ✨ Nya funktioner
 
-- 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
-- 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
+- 🖼️ **OBS fördröjningsalternativ för bilder**: Lägg till en OBS Studio-inställning för att fördröja scenändringar när bilder visas för att förbättra övergångar.
+- 🔊 **Stöd för .m4a Ljudformat**: Lagt till stöd för .m4a-ljudfiler för att utöka mediatyper.
 
 ### 🛠️ Förbättringar och justeringar
 
-- 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
-- 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
-- 🎵 **Improve Duplicate Song Indicator**: Enhance the visual cue for duplicate songs to make them easier to identify.
+- 🔍 **Återställ Zoomning med Ctrl + Scroll**: Nollställning av zoomning för enklare navigering.
+- 👤 **Dölj oanvänd media för kretsbesöket**: Dölj istället för att hoppa över media som inte används för kretsbesöket, för att hålla en renare presentation.
+- 🎵 **Hitta dubletter av sånger**: Gör det lättare att hitta dubletter av sånger.
 
 ## 25.4.3
 
