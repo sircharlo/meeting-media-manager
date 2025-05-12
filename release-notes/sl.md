@@ -4,6 +4,19 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
+## 25.5.0
+
+### ✨ Nove funkcije
+
+- 🖼️ **Možnost zakasnitve za slike v programu OBS**: Dodaj nastavitev programa OBS Studio za zakasnitev spreminjanja scen pri prikazovanju slik, kar izboljša prehode.
+- 🔊 **Podpora za avdio format `.m4a`**: Dodajanje združljivosti za avdio datoteke `.m4a` za razširitev podprtih vrst multimedijskih datotek.
+
+### 🛠️ Izboljšave in popravki
+
+- 🔍 **Povrnitev povečave s `Ctrl` + `Scroll`**: Za lažjo navigacijo je možno ponovno omogočiti takojšnjo povečavo s kombinacijo tipke Ctrl in vrtenjem koleščka na miški.
+- 👤 **Skrij neuporabljeno multimedijsko vsebino ON**: Neuporabljeno multimedijsko vsebino za obiske okrajnega nadzornika skrijte, namesto preskočite, da bo predstavitev bolj jasna.
+- 🎵 **Izboljšaj prikazovalnik podvojenih pesmi**: Boljši vizualni prikaz podvojenih pesmi, da jih bo lažje prepoznati.
+
 ## 25.4.3
 
 ### 🛠️ Izboljšave in popravki
