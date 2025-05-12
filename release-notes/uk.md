@@ -4,6 +4,19 @@
 
 Для повного списку змін між версіями перегляньте наш файл CHANGELOG.md на GitHub.
 
+## 25.5.0
+
+### ✨ Нові функції
+
+- 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
+- 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
+
+### 🛠️ Покращення та налаштування
+
+- 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
+- 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
+- 🎵 **Improve Duplicate Song Indicator**: Enhance the visual cue for duplicate songs to make them easier to identify.
+
 ## 25.4.3
 
 ### 🛠️ Покращення та налаштування

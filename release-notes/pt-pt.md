@@ -4,6 +4,19 @@
 
 Para a lista completa de alterações entre versões, consulte o ficheiro CHANGELOG.md no GitHub.
 
+## 25.5.0
+
+### ✨ Novas Funcionalidades
+
+- 🖼️ **Opção de atraso de OBS para imagens**: Adicionar uma definição OBS Studio para atrasar as alterações de cena ao apresentar imagens, melhorando as transições.
+- 🔊 **Suporte para o formato de áudio `.m4a`**: Adicionar compatibilidade para ficheiros de áudio `.m4a` para expandir os tipos de multimédia suportados.
+
+### 🛠️ Melhorias e Ajustes
+
+- 🔍 **Restaurar o zoom com `Ctrl` + `Scroll`**: Reativar o zoom imediato com o gesto de controlo + scroll para facilitar a navegação.
+- 👤 **Ocultar multimédia não utilizada do Sup. Circuito**: Esconder em vez de saltar a multimédia não utilizada nas visitas do Superintendente de Circuito para manter uma apresentação mais limpa.
+- 🎵 **Melhorar o indicador de músicas duplicadas**: Melhorar a indicação visual de músicas duplicadas para facilitar a sua identificação.
+
 ## 25.4.3
 
 ### 🛠️ Melhorias e Ajustes

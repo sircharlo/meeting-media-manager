@@ -564,7 +564,7 @@ useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
 );
 useEventListener<
   CustomEvent<{
-    files: File[];
+    files: (File | string)[];
     section: MediaSection | undefined;
   }>
 >(

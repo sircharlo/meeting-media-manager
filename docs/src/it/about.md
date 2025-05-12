@@ -42,9 +42,9 @@ Per le adunanze di congregazione ibride o in presenza, la modalità di presentaz
 - Riconoscimento e gestione automatici di monitor esterni
 - Integrazione OBS Studio con il cambio automatico della scena durante la presentazione multimediale
 - Presentare il sito ufficiale del sito web dei Testimoni di Geova su un monitor esterno
-- Import JWPUB files, JWLPLAYLIST files and videos from the official website of Jehovah's Witnesses in a few clicks.
-- Import Study Bible media and audio recordings of the New World Translation of the Bible in seconds.
-- Always have a public talks media overview (S-34) one click away and ready to be used any minute you need it.
+- Importa file JWPUB, file JWLPLAYLIST e video dal sito ufficiale dei Testimoni di Geova con pochi clic.
+- Importa i media della Bibbia e le registrazioni audio della Traduzione del Nuovo Mondo della Bibbia in pochi secondi.
+- Avere sempre con un clic una panoramica sui media dei discorsi pubblici (S-34) pronti per essere utilizzati in qualsiasi momento ne avete bisogno.
 - Anche i video personalizzati, le immagini, i file audio e persino i file PDF possono essere facilmente importati!
 
 **Prova oggi M³  e scopri cosa può fare! Presentare i media alle adunanze di congregazione non è mai stato facile.**

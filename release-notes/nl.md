@@ -4,6 +4,19 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## 25.5.0
+
+### ✨ Nieuwe functies
+
+- 🖼️ **OBS Vertraging optie voor Afbeeldingen**: Voeg een OBS Studio instelling toe om scène wijzigingen te vertragen bij het weergeven van afbeeldingen, waardoor overgangen worden verbeterd.
+- 🔊 **Ondersteuning voor `.m4a` Audio Formaat**: Voeg compatibiliteit toe voor `.m4a` audio bestanden om ondersteunde media types uit te breiden.
+
+### 🛠️ Verbeteringen en tweaks
+
+- 🔍 **Herstel Zoom via `Ctrl` + `Scroll`**: Herstel onmiddellijke zooming met ctrl + scroll voor makkelijkere navigatie.
+- 👤 **Verberg ongebruikte KO Media**: Verberg in plaats van ongebruikte media over te slaan voor kringopziener bezoeken om een schonere presentatie te onderhouden.
+- 🎵 **Verbeter dubbele liederen indicator**: Verbeter de visuele hint voor dubbele liederen om ze gemakkelijker te identificeren.
+
 ## 25.4.3
 
 ### 🛠️ Verbeteringen en tweaks
