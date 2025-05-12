@@ -4,6 +4,21 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## 25.5.0
+
+### ✨ New Features
+
+- 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
+- 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
+
+### 🛠️ Improvements and Tweaks
+
+- 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
+- ➕ **Smaller Extra Media Button**: Make the "extra media" button more compact for a cleaner interface.
+- 🗂️ **Assign Custom Media to Correct Section**: Ensure custom media is correctly attributed to the appropriate section of the meeting.
+- 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
+- 🎵 **Improve Duplicate Song Indicator**: Enhance the visual cue for duplicate songs to make them easier to identify.
+
 ## 25.4.3
 
 ### 🛠️ Improvements and Tweaks
