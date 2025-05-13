@@ -204,7 +204,16 @@ export const getThumbnailUrl = async (
     return thumbnailUrl + (forceRefresh ? '?timestamp=' + Date.now() : '');
   } catch (error) {
     if (error instanceof Event) return '';
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          filepath,
+          forceRefresh,
+          name: 'getThumbnailUrl',
+          type: typeof error,
+        },
+      },
+    });
     return '';
   }
 };
