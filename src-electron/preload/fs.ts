@@ -57,7 +57,7 @@ export const inferExtension = async (filename: string, filetype?: string) => {
   if (!filetype || /\.[0-9a-z]+$/i.test(filename)) return filename;
 
   try {
-    const { default: mime } = await import('mime/lite');
+    const { default: mime } = await import('mime');
     const extractedExtension = mime.getExtension(filetype);
     return extractedExtension ? `${filename}.${extractedExtension}` : filename;
   } catch (e) {
