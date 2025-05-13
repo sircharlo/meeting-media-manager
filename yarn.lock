@@ -4002,7 +4002,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:8.32.0, @typescript-eslint/utils@npm:^8.26.0, @typescript-eslint/utils@npm:^8.32.0":
+"@typescript-eslint/utils@npm:8.32.0, @typescript-eslint/utils@npm:^8.26.0":
   version: 8.32.0
   resolution: "@typescript-eslint/utils@npm:8.32.0"
   dependencies:
@@ -11540,7 +11540,7 @@ __metadata:
     "@types/pretty-bytes": "npm:^5.2.0"
     "@types/sanitize-html": "npm:^2.16.0"
     "@types/sortablejs": "npm:^1.15.8"
-    "@typescript-eslint/utils": "npm:^8.32.0"
+    "@typescript-eslint/utils": "npm:^8.32.1"
     "@vitejs/plugin-vue": "npm:^5.2.4"
     "@vitest/eslint-plugin": "npm:^1.1.44"
     "@vue/eslint-config-prettier": "npm:^10.2.0"
