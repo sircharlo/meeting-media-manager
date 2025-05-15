@@ -8,14 +8,14 @@
 
 ### ✨ 新功能
 
-- 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
-- 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
+- 🖼️ **OBS 延迟选项用于图像**: 添加 OBS Studio 设置以在显示图像时延迟场景更改, 改进离子对。
+- 🔊 **支持 `.m4a` 音频格式**: 增加`.m4a`音频文件的兼容性以扩展支持的媒体类型。
 
 ### 🛠️ 改进和调整
 
-- 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
-- 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
-- 🎵 **Improve Duplicate Song Indicator**: Enhance the visual cue for duplicate songs to make them easier to identify.
+- 🔍 **恢复使用 `Ctrl` + `Scroll`**：重新启用以控制+滚动手势立即缩放以方便导航。
+- 👤 **隐藏未使用的CO媒体**: 分区监督探访期间，隐藏而不是跳过未使用的媒体来保持较清洁的演示。
+- 🎵 **改进重复歌曲指示器**: 提升重复歌曲的视觉提示, 使其更容易识别。
 
 ## 25.4.3
 
