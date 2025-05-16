@@ -99,7 +99,7 @@
     "@types/sortablejs": "^1.15.8",
     "@typescript-eslint/utils": "^8.32.1",
     "@vitejs/plugin-vue": "^5.2.4",
-    "@vitest/eslint-plugin": "^1.1.44",
+    "@vitest/eslint-plugin": "^1.2.0",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.5.0",
     "@vue/test-utils": "^2.4.6",
