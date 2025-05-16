@@ -3967,7 +3967,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:8.32.1, @typescript-eslint/utils@npm:^8.26.0, @typescript-eslint/utils@npm:^8.32.1":
+"@typescript-eslint/utils@npm:8.32.1, @typescript-eslint/utils@npm:^8.24.0, @typescript-eslint/utils@npm:^8.26.0, @typescript-eslint/utils@npm:^8.32.1":
   version: 8.32.1
   resolution: "@typescript-eslint/utils@npm:8.32.1"
   dependencies:
@@ -4009,11 +4009,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/eslint-plugin@npm:^1.1.44":
-  version: 1.1.44
-  resolution: "@vitest/eslint-plugin@npm:1.1.44"
+"@vitest/eslint-plugin@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@vitest/eslint-plugin@npm:1.2.0"
+  dependencies:
+    "@typescript-eslint/utils": "npm:^8.24.0"
   peerDependencies:
-    "@typescript-eslint/utils": ">= 8.24.0"
     eslint: ">= 8.57.0"
     typescript: ">= 5.0.0"
     vitest: "*"
@@ -4022,7 +4023,7 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 10c0/136fc55ebdf3d70b69c92a1f302065d8c36e447a79a40158c0ce04e0b2d26c28ec4d0cf29bc754aa9f9c4350c4232d5a203cda7c6a630d1d2ee3b7be1038342b
+  checksum: 10c0/ce9b4cd6718df992a836ed52408b43c2a916ab35c615bdfaf2960c4f8aaf762c04f07b1b172ab480d404af2e54eb617e664d199c6f7e31bd0661f76dcc5ee1a0
   languageName: node
   linkType: hard
 
@@ -11482,7 +11483,7 @@ __metadata:
     "@types/sortablejs": "npm:^1.15.8"
     "@typescript-eslint/utils": "npm:^8.32.1"
     "@vitejs/plugin-vue": "npm:^5.2.4"
-    "@vitest/eslint-plugin": "npm:^1.1.44"
+    "@vitest/eslint-plugin": "npm:^1.2.0"
     "@vue/eslint-config-prettier": "npm:^10.2.0"
     "@vue/eslint-config-typescript": "npm:^14.5.0"
     "@vue/test-utils": "npm:^2.4.6"
