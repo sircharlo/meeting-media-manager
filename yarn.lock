@@ -6671,7 +6671,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:4, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.3, debug@npm:^4.3.4, debug@npm:^4.3.5, debug@npm:^4.4.0":
+"debug@npm:4, debug@npm:^4.1.0, debug@npm:^4.1.1, debug@npm:^4.3.1, debug@npm:^4.3.2, debug@npm:^4.3.3, debug@npm:^4.3.4, debug@npm:^4.3.5, debug@npm:^4.4.0, debug@npm:^4.4.1":
   version: 4.4.1
   resolution: "debug@npm:4.4.1"
   dependencies:
@@ -8389,7 +8389,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"file-type@npm:^20.4.1":
+"file-type@npm:^20.5.0":
   version: 20.5.0
   resolution: "file-type@npm:20.5.0"
   dependencies:
@@ -11513,7 +11513,7 @@ __metadata:
     lodash-es: "npm:^4.17.21"
     mime: "npm:^4.0.7"
     msw: "npm:^2.8.2"
-    music-metadata: "npm:^11.2.1"
+    music-metadata: "npm:^11.2.2"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.1.0"
     pdfjs-dist: "npm:^5.2.133"
@@ -12078,19 +12078,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^11.2.1":
-  version: 11.2.1
-  resolution: "music-metadata@npm:11.2.1"
+"music-metadata@npm:^11.2.2":
+  version: 11.2.2
+  resolution: "music-metadata@npm:11.2.2"
   dependencies:
     "@tokenizer/token": "npm:^0.3.0"
     content-type: "npm:^1.0.5"
-    debug: "npm:^4.4.0"
-    file-type: "npm:^20.4.1"
+    debug: "npm:^4.4.1"
+    file-type: "npm:^20.5.0"
     media-typer: "npm:^1.1.0"
     strtok3: "npm:^10.2.2"
     token-types: "npm:^6.0.0"
     uint8array-extras: "npm:^1.4.0"
-  checksum: 10c0/a2c32c1a9f7ef522a9af6c6c070e39f32d0c8cdb4430f592e4574028896d53b1756e044402c5a8cb107829c11f03d0b5dc9776129404985ea7d01287d9f0dee9
+  checksum: 10c0/32a08b7af32c1def28a70749aea375da7cf47f4b83523876efe88106a191078e1499267929f76aff7c4b87581566a121fff42e80b9dfb3baef59adcee770132b
   languageName: node
   linkType: hard
 
