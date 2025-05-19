@@ -351,7 +351,7 @@ watch(
   (newPanzoom, oldPanzoom) => {
     try {
       if (JSON.stringify(newPanzoom) !== JSON.stringify(oldPanzoom)) {
-        newPanzoom = JSON.parse(JSON.stringify(newPanzoom));
+        newPanzoom = structuredClone(newPanzoom);
         postPanzoom(newPanzoom);
       }
     } catch (error) {

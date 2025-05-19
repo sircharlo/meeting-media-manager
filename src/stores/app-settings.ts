@@ -41,9 +41,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
          * needed after certain updates to reset the state of the dynamic media items.
          */
         const refreshDynamicMedia = () => {
-          const currentLookupPeriods: Record<string, DateInfo[]> = JSON.parse(
-            JSON.stringify(jwStore.lookupPeriod),
-          );
+          const currentLookupPeriods = structuredClone(jwStore.lookupPeriod);
           for (const [congId, dateInfo] of Object.entries(
             currentLookupPeriods,
           )) {
