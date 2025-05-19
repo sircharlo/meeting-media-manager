@@ -287,7 +287,7 @@
   "obsPort": "Порт OBS Studio Websocket",
   "obsPort-explain": "Знайдіть налаштований порт у розділі Tools > WebSocket Server Settings в OBS Studio.",
   "obsPostponeImages": "Не транслювати зображення автоматично",
-  "obsPostponeImages-explain": "When enabled, images will only be displayed for Zoom participants when the media operator clicks on the \"Show in OBS Studio\" button. This can be useful if you generally display images to the in-person audience before sharing them on Zoom.",
+  "obsPostponeImages-explain": "Коли увімкнено, зображення показуватимуться учасникам Zoom лише після того, як оператор медіа натисне кнопку “Показати в OBS Studio”. Це може бути корисно, якщо зазвичай ви показуєте зображення присутнім у залі перед тим, як поділитися ними в Zoom.",
   "obsQuickToggle": "Увімкнути миттєве перемикання сцен",
   "obsQuickToggle-explain": "Коли ввімкнено, наведення курсору на кнопку OBS Studio відкриє перемикач сцен. Це може бути корисно для швидкого перемикання сцен в OBS Studio, особливо якщо налаштовано багато сцен.",
   "obsStudio": "OBS Studio",
