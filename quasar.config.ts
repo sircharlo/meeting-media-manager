@@ -27,6 +27,8 @@ const SENTRY_VERSION = `${name}@${version}`;
 const SENTRY_AUTH_TOKEN = process.env.SENTRY_AUTH_TOKEN;
 const ENABLE_SOURCE_MAPS = !!SENTRY_AUTH_TOKEN && !IS_TEST;
 
+const repoURL = repository.url.replace('.git', '');
+
 const getIconPath = (ext: 'icns' | 'ico' | 'png') =>
   `icons/${IS_BETA ? 'beta' : 'icon'}.${ext}`;
 
@@ -59,7 +61,7 @@ export default defineConfig((ctx) => {
         IS_DEV,
         IS_TEST,
         PRODUCT_NAME,
-        repository: repository.url.replace('.git', ''),
+        repository: repoURL,
         version,
       },
       extendViteConf(viteConf) {
@@ -147,7 +149,12 @@ export default defineConfig((ctx) => {
           minimumSystemVersion: '10.15',
           target: { target: 'default' },
         },
-        nsis: { oneClick: false },
+        nsis: {
+          oneClick: false,
+          // uninstallUrlHelp: `${repoURL}/blob/master/SUPPORT.md`,
+          // uninstallUrlReadme: `${repoURL}#readme`,
+          // uninstallUrlUpdateInfo: `${repoURL}/releases`,
+        },
         portable: {
           // eslint-disable-next-line no-template-curly-in-string
           artifactName: APP_NAME + '-${version}-portable.${ext}',
