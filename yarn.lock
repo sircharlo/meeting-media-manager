@@ -2628,10 +2628,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/extras@npm:^1.16.17":
-  version: 1.16.17
-  resolution: "@quasar/extras@npm:1.16.17"
-  checksum: 10c0/1ae52fb5283ad119fb5097c6071f5807c6fa4eaeeb7fbf9e4143ff48953c71cca8a82b3c1a3fbb38b478eaf1df4318e61d9fd50bb93c10684f688a9670107a6b
+"@quasar/extras@npm:^1.17.0":
+  version: 1.17.0
+  resolution: "@quasar/extras@npm:1.17.0"
+  checksum: 10c0/b303d3e1f71f63302eb89659cca48cdf7eace53963bb9d1b55611ebe3f7d76c4557d0c754983de90ef1a681c31667788bccf55881e5bffb50ca18a4e93b1ff43
   languageName: node
   linkType: hard
 
@@ -11320,7 +11320,7 @@ __metadata:
     "@panzoom/panzoom": "npm:^4.6.0"
     "@pinia/testing": "npm:^1.0.1"
     "@quasar/app-vite": "npm:^2.2.0"
-    "@quasar/extras": "npm:^1.16.17"
+    "@quasar/extras": "npm:^1.17.0"
     "@quasar/icongenie": "npm:^4.0.0"
     "@quasar/quasar-app-extension-qmarkdown": "npm:^2.0.5"
     "@quasar/quasar-app-extension-testing-unit-vitest": "npm:^1.2.3"
