@@ -8,14 +8,14 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 
 ### ✨ Novos Recursos
 
-- 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
-- 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
+- **Opção de Atraso no OBS para Imagens**: Adiciona uma configuração no OBS Studio para atrasar a mudança de cena ao exibir imagens, melhorando as transições.
+- **Compatibilidade com Áudio .m4a**: Adiciona compatibilidade com arquivos .m4a, ampliando os tipos de mídia aceitos.
 
 ### 🛠️ Melhorias e Ajustes
 
-- 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
-- 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
-- 🎵 **Improve Duplicate Song Indicator**: Enhance the visual cue for duplicate songs to make them easier to identify.
+- **Restaurar Zoom com Ctrl + Rolagem**: Reabilita o zoom imediato com o gesto de Ctrl + rolagem, facilitando a navegação.
+- 👤 **Ocultar Mídia do SC Não Utilizada**: Oculta, em vez de ignorar, a mídia não utilizada nas visitas do superintendente de circuito, mantendo a apresentação mais limpa.
+- 🎵 **Melhoria no Indicador de Cânticos Duplicados**: Melhora o destaque visual para cânticos duplicados, facilitando sua identificação.
 
 ## 25.4.3
 
@@ -37,7 +37,7 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 - 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
 - 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
 - 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
-- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
+- ➕ **Prevenir Seções de Mídia Duplicadas**: Evitar a criação de várias seções para o mesmo item de mídia.
 - 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
 
 ## 25.4.0
