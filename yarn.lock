@@ -11531,7 +11531,7 @@ __metadata:
     prettier: "npm:^3.5.3"
     pretty-bytes: "npm:^7.0.0"
     quasar: "npm:^2.18.1"
-    rollup-plugin-visualizer: "npm:^6.0.0"
+    rollup-plugin-visualizer: "npm:^6.0.1"
     sanitize-filename: "npm:^1.6.3"
     sanitize-html: "npm:^2.17.0"
     sortablejs: "npm:^1.15.6"
@@ -12622,7 +12622,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"open@npm:^10.1.0, open@npm:^10.1.2":
+"open@npm:^10.1.0":
   version: 10.1.2
   resolution: "open@npm:10.1.2"
   dependencies:
@@ -12634,7 +12634,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"open@npm:^8.4.0":
+"open@npm:^8.0.0, open@npm:^8.4.0":
   version: 8.4.2
   resolution: "open@npm:8.4.2"
   dependencies:
@@ -14364,11 +14364,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-visualizer@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "rollup-plugin-visualizer@npm:6.0.0"
+"rollup-plugin-visualizer@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "rollup-plugin-visualizer@npm:6.0.1"
   dependencies:
-    open: "npm:^10.1.2"
+    open: "npm:^8.0.0"
     picomatch: "npm:^4.0.2"
     source-map: "npm:^0.7.4"
     yargs: "npm:^17.5.1"
@@ -14382,7 +14382,7 @@ __metadata:
       optional: true
   bin:
     rollup-plugin-visualizer: dist/bin/cli.js
-  checksum: 10c0/803b7a93692824c31c4eb6595367717591123dbdc6be3402403bba633bb81ccfdbd16827e852af9da03fd7e8211a974717492e4032d14897c37c130f0cb86222
+  checksum: 10c0/c938224b2027b3f490569c439d400b8fc80a0ad07b58720771b23623efe1efc7eb61f3de4506fb4520ce95ef4ea3c93153c31130559e017606c046c052690d1c
   languageName: node
   linkType: hard
 
