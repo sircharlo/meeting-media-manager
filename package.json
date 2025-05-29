@@ -113,7 +113,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.1.0",
     "lodash-es": "^4.17.21",
-    "msw": "^2.8.5",
+    "msw": "^2.8.6",
     "postcss": "^8.5.4",
     "prettier": "^3.5.3",
     "rollup-plugin-visualizer": "^6.0.1",
