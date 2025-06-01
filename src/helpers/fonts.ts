@@ -20,7 +20,7 @@ export const setElementFont = async (fontName: FontName) => {
     const url = useJwStore().fontUrls[fontName];
     setFallbackFont(fontName, url);
     if (useJwStore().urlVariables.base !== 'jw.org') return;
-    if (await window.electronApi.isDownloadErrorExpected()) return;
+    if (await window.electronApi?.isDownloadErrorExpected()) return;
     errorCatcher(error, {
       contexts: { fn: { fontName, name: 'setElementFont', url } },
     });
