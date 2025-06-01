@@ -29,8 +29,24 @@ import {
 import 'src-electron/main/ipc';
 import 'src-electron/main/security';
 
+const gotTheLock = app.requestSingleInstanceLock();
+
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+  });
+}
+
 if (PLATFORM === 'win32') {
   app.setAppUserModelId(`${APP_ID}`);
+} else if (PLATFORM === 'linux') {
+  app.commandLine.appendSwitch('gtk-version', '3'); // Force GTK 3 on Linux (Workaround for https://github.com/electron/electron/issues/46538)
 }
 
 if (process.env.PORTABLE_EXECUTABLE_DIR) {
