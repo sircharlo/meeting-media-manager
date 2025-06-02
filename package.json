@@ -57,7 +57,7 @@
     "music-metadata": "^11.2.3",
     "obs-websocket-js": "^5.0.6",
     "p-queue": "^8.1.0",
-    "pdfjs-dist": "^5.2.133",
+    "pdfjs-dist": "^5.3.31",
     "pinia": "^3.0.2",
     "pinia-plugin-persistedstate": "^4.3.0",
     "pinia-shared-state": "^1.0.1",
