@@ -124,6 +124,9 @@
     "vue-eslint-parser": "^10.1.3",
     "vue-tsc": "^2.2.10"
   },
+  "resolutions": {
+    "vite": "6.3.5"
+  },
   "browserslist": [
     "Electron >= 36"
   ],
