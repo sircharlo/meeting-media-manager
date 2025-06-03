@@ -20,11 +20,33 @@ import {
 } from 'src/utils/migrations';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
+import { toRaw } from 'vue';
 
 interface Store {
   displayCameraId: null | string;
   migrations: string[];
   screenPreferences: ScreenPreferences;
+}
+
+function toRawDeep<T>(observed: T): T {
+  const val = toRaw(observed);
+
+  if (Array.isArray(val)) {
+    return val.map(toRawDeep) as T;
+  }
+
+  if (val === null) return null as T;
+
+  if (typeof val === 'object') {
+    const entries = Object.entries(val).map(([key, val]) => [
+      key,
+      toRawDeep(val),
+    ]);
+
+    return Object.fromEntries(entries);
+  }
+
+  return val;
 }
 
 export const useAppSettingsStore = defineStore('app-settings', {
@@ -41,7 +63,9 @@ export const useAppSettingsStore = defineStore('app-settings', {
          * needed after certain updates to reset the state of the dynamic media items.
          */
         const refreshDynamicMedia = () => {
-          const currentLookupPeriods = structuredClone(jwStore.lookupPeriod);
+          const currentLookupPeriods = structuredClone(
+            toRawDeep(jwStore.lookupPeriod),
+          );
           for (const [congId, dateInfo] of Object.entries(
             currentLookupPeriods,
           )) {

@@ -167,7 +167,7 @@ import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, toRaw, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const showFileImportDialog = ref(false);
@@ -351,7 +351,7 @@ watch(
   (newPanzoom, oldPanzoom) => {
     try {
       if (JSON.stringify(newPanzoom) !== JSON.stringify(oldPanzoom)) {
-        newPanzoom = structuredClone(newPanzoom);
+        newPanzoom = structuredClone(toRaw(newPanzoom));
         postPanzoom(newPanzoom);
       }
     } catch (error) {
