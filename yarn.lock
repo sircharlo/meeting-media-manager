@@ -11386,7 +11386,7 @@ __metadata:
     lint-staged: "npm:^16.1.0"
     lodash-es: "npm:^4.17.21"
     mime: "npm:^4.0.7"
-    msw: "npm:^2.8.7"
+    msw: "npm:^2.9.0"
     music-metadata: "npm:^11.2.3"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.1.0"
@@ -11896,9 +11896,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msw@npm:^2.8.7":
-  version: 2.8.7
-  resolution: "msw@npm:2.8.7"
+"msw@npm:^2.9.0":
+  version: 2.9.0
+  resolution: "msw@npm:2.9.0"
   dependencies:
     "@bundled-es-modules/cookie": "npm:^2.0.1"
     "@bundled-es-modules/statuses": "npm:^1.0.1"
@@ -11925,7 +11925,7 @@ __metadata:
       optional: true
   bin:
     msw: cli/index.js
-  checksum: 10c0/2da0a5daf172590fecf3ac3c469c2c4b23e5cd98e28ef7bb0fdb719ecae1391c66c5c48d31d1d3aae13c0e7ace03d9a7ccd70dfe05fa41f87b890c107f1c49e4
+  checksum: 10c0/5c1a9a3939eb6128b7c904c4ae2131961185737d9bb993d422e3dadd54dcfebc042eb8a2cd93cf91d067e76df7351d62b6f2c7dc08ec4042776d13d7b06efaa5
   languageName: node
   linkType: hard
 
