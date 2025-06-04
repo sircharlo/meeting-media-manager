@@ -2498,12 +2498,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pinia/testing@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@pinia/testing@npm:1.0.1"
+"@pinia/testing@npm:^1.0.2":
+  version: 1.0.2
+  resolution: "@pinia/testing@npm:1.0.2"
   peerDependencies:
-    pinia: ">=3.0.2"
-  checksum: 10c0/3671e4e0edc65ca5eefe478568d3db112e83c2f08ee0d04dd670b42080f0550fe10dd5e04c154f641db27b513943c9979c7c776f73ddf9e223df4a391d2d29fa
+    pinia: ">=3.0.3"
+  checksum: 10c0/2cf80d753ccca9da819064d32af24656296ea573bc47fdb58d21abf584da1809af9d7e2d1934079719481159d54aca1d6848c4141dfa3fa6c8c9b566a7881699
   languageName: node
   linkType: hard
 
@@ -11331,7 +11331,7 @@ __metadata:
     "@intlify/unplugin-vue-i18n": "npm:^6.0.8"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@panzoom/panzoom": "npm:^4.6.0"
-    "@pinia/testing": "npm:^1.0.1"
+    "@pinia/testing": "npm:^1.0.2"
     "@quasar/app-vite": "npm:^2.2.0"
     "@quasar/extras": "npm:^1.17.0"
     "@quasar/icongenie": "npm:^4.0.0"
