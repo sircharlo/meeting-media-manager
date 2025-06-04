@@ -11,6 +11,7 @@ export type LanguageValue =
   | 'et'
   | 'fi'
   | 'fr'
+  | 'gaa'
   | 'ht'
   | 'hu'
   | 'it'
@@ -163,6 +164,12 @@ export const locales: {
     langcode: 'F',
     signLangCodes: ['LSF', 'LSQ', 'SBF', 'CGS', 'LSI', 'BRS'],
     value: 'fr',
+  },
+  {
+    englishName: 'Ga',
+    label: 'Ga',
+    langcode: 'GA',
+    value: 'gaa',
   },
   {
     englishName: 'Haitian Creole',
