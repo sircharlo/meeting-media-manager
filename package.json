@@ -107,7 +107,7 @@
     "electron": "^36.4.0",
     "electron-builder": "^26.0.16",
     "eslint": "^9.28.0",
-    "eslint-plugin-perfectionist": "^4.13.0",
+    "eslint-plugin-perfectionist": "^4.14.0",
     "eslint-plugin-vue": "^10.1.0",
     "globals": "^16.2.0",
     "husky": "^9.1.7",
