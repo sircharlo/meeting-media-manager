@@ -4,6 +4,31 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## 25.6.0
+
+For the full list of changes between versions, see our [CHANGELOG.md](https://github.com/sircharlo/meeting-media-manager/blob/master/CHANGELOG.md).
+
+## v25.6.0 Release Notes
+
+### ✨ New Features
+
+- ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
+- ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
+- 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
+- 🛠️ **Linux compatibility**: Forced GTK 3 usage on Linux to prevent UI and launch issues.
+
+### 🔧 Improvements to Codebase
+
+- 🛠️ **Electron API error resilience**: Added optional chaining to better handle missing `electronApi` during font and API error operations.
+- 🛠️ **Fix structuredClone error**: Addressed `DataCloneError` caused by attempting to clone unsupported objects.
+- 🔧 **Main process refactor**: Improved handling of duplicate Electron instances and restructured main process logic.
+- 🔧 **Performance optimization**: Replaced `JSON.parse(JSON.stringify(...))` with `structuredClone` where possible.
+- 🔧 **Error handling**: Improved error catching for thumbnails and ignored HTTP 429 errors to reduce noise.
+
 ## 25.5.0
 
 ### ✨ New Features
