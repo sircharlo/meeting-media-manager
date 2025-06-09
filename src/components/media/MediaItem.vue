@@ -402,7 +402,7 @@
               (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))) ||
             !isFileUrl(media.fileUrl)
           "
-          icon="mmm-play"
+          :icon="localFile ? 'mmm-play' : 'mmm-stream'"
           rounded
           :unelevated="!isFileUrl(media.fileUrl)"
           @click="setMediaPlaying(media)"
@@ -473,6 +473,7 @@
         />
         <q-btn
           v-else-if="
+            localFile &&
             media.duration &&
             (mediaPlayingAction === 'play' || !mediaPlayingAction)
           "
@@ -488,14 +489,23 @@
           ref="stopButton"
           class="q-ml-sm"
           color="negative"
-          icon="mmm-stop"
+          :icon="
+            !localFile && mediaPlayingCurrentPosition === 0
+              ? undefined
+              : 'mmm-stop'
+          "
           rounded
           @click="
             media.isVideo || media.isAudio
               ? (mediaToStop = media.uniqueId)
               : stopMedia()
           "
-        />
+        >
+          <q-spinner
+            v-if="!localFile && mediaPlayingCurrentPosition === 0"
+            size="xs"
+          />
+        </q-btn>
       </div>
     </template>
     <q-menu
@@ -703,7 +713,9 @@ import {
   useBroadcastChannel,
   useElementHover,
   useEventListener,
+  useTimeoutPoll,
   watchImmediate,
+  whenever,
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { debounce, type QBtn, type QImg, useQuasar } from 'quasar';
@@ -871,6 +883,32 @@ const customDurationMaxUserInput = ref(
   formatTime(mediaCustomDuration.value.max),
 );
 
+const fileIsLocal = () => {
+  const filePath = fileUrlToPath(props.media.fileUrl);
+  const fileExists = fs.pathExistsSync(filePath);
+  const remoteSizeKnown = props.media.filesize !== undefined;
+  const localSize = fileExists ? fs.statSync(filePath).size : 0;
+
+  if (!fileExists) return false;
+  if (!remoteSizeKnown) return true;
+  if (localSize !== props.media.filesize) return false;
+  return true;
+};
+
+const localFile = ref(fileIsLocal());
+
+const { pause } = useTimeoutPoll(() => {
+  localFile.value = fileIsLocal();
+}, 1000);
+
+whenever(
+  () => localFile.value,
+  () => {
+    pause();
+  },
+  { immediate: true },
+);
+
 const setMediaPlaying = async (
   media: DynamicMediaObject,
   signLanguage = false,
@@ -895,12 +933,10 @@ const setMediaPlaying = async (
     if (mediaPanzoom.value) mediaPlayingPanzoom.value = mediaPanzoom.value;
   }
   mediaPlayingAction.value = 'play';
-  const filePath = fileUrlToPath(media.fileUrl);
-  const fileExists = await fs.pathExists(filePath);
-  mediaPlayingUrl.value =
-    fileExists && media.fileUrl
-      ? media.fileUrl
-      : (media.streamUrl ?? media.fileUrl ?? '');
+  localFile.value = fileIsLocal();
+  mediaPlayingUrl.value = localFile.value
+    ? (media.fileUrl ?? '')
+    : (media.streamUrl ?? media.fileUrl ?? '');
   mediaPlayingUniqueId.value = media.uniqueId;
   mediaPlayingSubtitlesUrl.value = media.subtitlesUrl ?? '';
 };
@@ -1051,6 +1087,7 @@ function stopMedia(forOtherMediaItem = false) {
   mediaPlayingCurrentPosition.value = 0;
   mediaPlayingAction.value = '';
   mediaToStop.value = '';
+  localFile.value = fileIsLocal();
   if (!forOtherMediaItem) zoomReset(true);
 }
 

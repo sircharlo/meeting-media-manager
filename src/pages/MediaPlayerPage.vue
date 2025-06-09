@@ -180,11 +180,11 @@ const { data: mediaAction } = useBroadcastChannel<string, string>({
 
 whenever(
   () => mediaAction.value,
-  (newMediaAction) => {
+  (newMediaAction, oldMediaAction) => {
     if (newMediaAction === 'pause') {
       mediaElement.value?.pause();
     } else if (newMediaAction === 'play') {
-      playMediaElement();
+      playMediaElement(oldMediaAction === 'pause');
       cameraStreamId.value = '';
     }
   },
@@ -397,7 +397,10 @@ watch(
   },
 );
 
-const playMediaElement = () => {
+const triggerPlay = () => {
+  if (mediaAction.value !== 'play') {
+    return;
+  }
   mediaElement.value?.play().catch((error: Error) => {
     if (
       !(
@@ -409,6 +412,20 @@ const playMediaElement = () => {
       errorCatcher(error);
     }
   });
+};
+
+const playMediaElement = (wasPaused = false) => {
+  if (!mediaElement.value) {
+    return;
+  }
+
+  if (wasPaused) {
+    triggerPlay();
+  }
+
+  mediaElement.value.oncanplaythrough = () => {
+    triggerPlay();
+  };
 };
 
 watch(currentCongregation, (newCongregation) => {

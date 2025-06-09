@@ -146,6 +146,7 @@ export const addToAdditionMediaMapFromPath = async (
   uniqueId?: string,
   additionalInfo?: {
     duration?: number;
+    filesize?: number;
     song?: string;
     thumbnailUrl?: string;
     title?: string;
@@ -187,6 +188,7 @@ export const addToAdditionMediaMapFromPath = async (
               ? undefined
               : customDuration,
           duration,
+          filesize: additionalInfo?.filesize,
           fileUrl: window.electronApi.pathToFileURL(additionalFilePath),
           isAudio: audio,
           isImage: isImage(additionalFilePath),
@@ -2344,6 +2346,7 @@ export const downloadAdditionalRemoteVideo = async (
       undefined,
       {
         duration: bestItem.duration,
+        filesize: bestItem.filesize,
         song: song ? song.toString() : undefined,
         thumbnailUrl,
         title,
