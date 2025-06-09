@@ -8,14 +8,14 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 
 ### ✨ Uued funktsioonid
 
-- 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
-- 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
+- 🖼️ **OBS viivitusvalik piltide jaoks**: Lisa OBS Studio seadistus, et viivitada stseeni muutusi piltide kuvamisel, parandades üleminekuid.
+- 🔊 **.m4a audioformaadi toetus**: Lisatud ühilduvus `.m4a` audiofailidele, et laiendada toetatud meediatüüpe.
 
 ### 🛠️ Parandused ja täiustused
 
-- 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
+- 🔍 **Suurenduse taastamine klahvikombinatsiooniga `Ctrl` + `Scroll`**: Võimaldab uuesti koheselt suumi juhtimist + kerimist, et navigeerimine oleks lihtsam.
 - 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
-- 🎵 **Improve Duplicate Song Indicator**: Enhance the visual cue for duplicate songs to make them easier to identify.
+- 🎵 **Parandatud dubleeritud laulude indikaatorit**: Parandatud duplikaatlaulude visuaalset märki, et neid oleks lihtsam tuvastada.
 
 ## 25.4.3
 
