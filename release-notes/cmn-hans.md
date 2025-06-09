@@ -4,6 +4,19 @@
 
 关于不同版本之间更改的完整清单，请参阅我们在 GitHub 上的 CHANGELOG.md文件。
 
+## v25.6.0 Release Notes
+
+### ✨ 新功能
+
+- ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
+- ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
+
+### 🛠️ 改进和调整
+
+- 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
+- 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
+- 🛠️ **Linux compatibility**: Forced GTK 3 usage on Linux to prevent UI and launch issues.
+
 ## 25.5.0
 
 ### ✨ 新功能
