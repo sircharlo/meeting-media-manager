@@ -11407,7 +11407,7 @@ __metadata:
     prettier: "npm:^3.5.3"
     pretty-bytes: "npm:^7.0.0"
     quasar: "npm:^2.18.1"
-    rollup-plugin-visualizer: "npm:^6.0.1"
+    rollup-plugin-visualizer: "npm:^6.0.3"
     sanitize-filename: "npm:^1.6.3"
     sanitize-html: "npm:^2.17.0"
     sortablejs: "npm:^1.15.6"
@@ -14174,16 +14174,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-visualizer@npm:^6.0.1":
-  version: 6.0.1
-  resolution: "rollup-plugin-visualizer@npm:6.0.1"
+"rollup-plugin-visualizer@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "rollup-plugin-visualizer@npm:6.0.3"
   dependencies:
     open: "npm:^8.0.0"
     picomatch: "npm:^4.0.2"
     source-map: "npm:^0.7.4"
     yargs: "npm:^17.5.1"
   peerDependencies:
-    rolldown: 1.x
+    rolldown: 1.x || ^1.0.0-beta
     rollup: 2.x || 3.x || 4.x
   peerDependenciesMeta:
     rolldown:
@@ -14192,7 +14192,7 @@ __metadata:
       optional: true
   bin:
     rollup-plugin-visualizer: dist/bin/cli.js
-  checksum: 10c0/c938224b2027b3f490569c439d400b8fc80a0ad07b58720771b23623efe1efc7eb61f3de4506fb4520ce95ef4ea3c93153c31130559e017606c046c052690d1c
+  checksum: 10c0/595d68936a6338744e8facd165fceedf7f2ebedc44863e640e725198001ed62948cc4a5d8403aa74e679de92957e4def3b1dffc4a9f8de71e4245929566553a3
   languageName: node
   linkType: hard
 
