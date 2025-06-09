@@ -283,6 +283,7 @@ watch(
     currentSettings.value?.meetingScheduleChangeMwDay,
     currentSettings.value?.meetingScheduleChangeWeDay,
     currentSettings.value?.disableMediaFetching,
+    currentSettings.value?.meteredConnection,
   ],
   ([newCurrentCongregation], [oldCurrentCongregation]) => {
     if (newCurrentCongregation === oldCurrentCongregation) {
