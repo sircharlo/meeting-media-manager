@@ -6,10 +6,6 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ## 25.6.0
 
-For the full list of changes between versions, see our [CHANGELOG.md](https://github.com/sircharlo/meeting-media-manager/blob/master/CHANGELOG.md).
-
-## v25.6.0 Release Notes
-
 ### ✨ New Features
 
 - ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
