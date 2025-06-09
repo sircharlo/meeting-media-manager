@@ -5,26 +5,28 @@
     :breakpoint="5"
     class="column justify-between no-wrap bg-secondary-contrast text-weight-medium text-dark-grey"
     :mini="miniState"
+    :mini-to-overlay="$q.screen.lt.md"
+    @mouseenter="$q.screen.lt.md ? (miniState = false) : undefined"
+    @mouseleave="$q.screen.lt.md ? (miniState = true) : undefined"
   >
-    <q-item
-      v-if="$q.screen.gt.xs"
-      v-ripple
-      clickable
-      @click="miniState = !miniState"
-    >
-      <q-tooltip
-        v-if="miniState"
-        anchor="center right"
-        :delay="1000"
-        self="center left"
-      >
-        {{ t('expand-sidebar') }}
-      </q-tooltip>
-      <q-item-section avatar>
-        <q-icon name="mmm-menu" />
-      </q-item-section>
-      <q-item-section>{{ t('collapse-sidebar') }}</q-item-section>
-    </q-item>
+    <q-slide-transition>
+      <div v-if="$q.screen.gt.sm">
+        <q-item v-ripple clickable @click="miniState = !miniState">
+          <q-tooltip
+            v-if="miniState"
+            anchor="center right"
+            :delay="1000"
+            self="center left"
+          >
+            {{ t('expand-sidebar') }}
+          </q-tooltip>
+          <q-item-section avatar>
+            <q-icon name="mmm-menu" />
+          </q-item-section>
+          <q-item-section>{{ t('collapse-sidebar') }}</q-item-section>
+        </q-item>
+      </div>
+    </q-slide-transition>
     <q-item
       v-ripple
       :class="route.path.startsWith('/media-calendar') ? navActiveClass : ''"
@@ -157,7 +159,7 @@ const navActiveClass = computed(
 );
 
 whenever(
-  () => $q.screen.lt.sm,
+  () => $q.screen.lt.md,
   () => {
     miniState.value = true;
   },
