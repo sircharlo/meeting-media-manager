@@ -235,7 +235,7 @@
   "memorialDate": "Data della Commemorazione",
   "memorialDate-explain": "Se inserito, M³ proverà automaticamente a scaricare e preparare l'immagine di sfondo per la Commemorazione. L'immagine verrà visualizzata al posto della scrittura dell'anno. Attenzione che questa è una funzione sperimentale e potrebbe non funzionare come previsto.",
   "meteredConnection": "Limited data connection",
-  "meteredConnection-explain": "Turn this on if you have limited internet (like mobile data). In this case, M³ won't automatically download videos and files unless they're needed for meetings on either the current day or the next one.",
+  "meteredConnection-explain": "Attivare questa opzione se si dispone di una connessione internet limitata (come dati mobile). In questo caso, M³ non scaricherà automaticamente video e file a meno che non siano necessari per le riunioni il giorno corrente o quello successivo.",
   "midweek-meeting": "Adunanza infrasettimanale",
   "months-long": "Gennaio_Febbraio_March_Aprile_May_June_Luglio_Agosto_Settembre_Ottobre_Novembre_Dicembre",
   "months-short": "Gen_feb_Mar_Apr_Mag_Giu_Lug_Ago_Set_Ott_Nov_Dic",
