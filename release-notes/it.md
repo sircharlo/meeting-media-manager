@@ -34,7 +34,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ### 🛠️ Improvements and Tweaks
 
-- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+- ➕ **Pulisci i media dalla v25.4.x**: Pulisci automaticamente i media orfani o non piazzati dalla v25.4.1 a v25.4.2 per assicurarsi che nessun supporto manchi o nel posto sbagliato nella lista dei media.
 
 ## 25.4.2
 
