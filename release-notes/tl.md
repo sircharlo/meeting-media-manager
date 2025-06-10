@@ -4,7 +4,7 @@
 
 Para sa makita ang lahat ng mga update, tingnan ang aming CHANGELOG.md na file sa GitHub.
 
-## v25.6.0 Release Notes
+## 25.6.0
 
 ### ✨ Mga Bagong Feature
 
