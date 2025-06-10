@@ -8,14 +8,14 @@ Para a lista completa de alterações entre versões, consulte o ficheiro CHANGE
 
 ### ✨ Novas Funcionalidades
 
-- ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
-- ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
+- ✨ **Definição de conexão limitada**: Adicionada uma nova configuração para reduzir o uso da largura de banda de download em conexões com medidor.
+- **Melhoria do tratamento de multimédia em fluxo contínuo**: Melhor suporte para multimédia em fluxo contínuo, reduzindo os problemas relacionados com a latência.
 
 ### 🛠️ Melhorias e Ajustes
 
-- 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
-- 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
-- 🛠️ **Linux compatibility**: Forced GTK 3 usage on Linux to prevent UI and launch issues.
+- 🛠️ **Melhor tratamento de tipos MIME**: Suporte melhorado para tipos MIME para uma melhor compatibilidade com a multimédia.
+- 🛠️ **Gaveta de navegação melhorada**: Melhoria do manuseamento do miniestado e adição de uma apresentação de dicas para uma melhor navegação do utilizador.
+- 🛠️ **Compatibilidade com Linux**: Uso forçado do GTK 3 no Linux para evitar a UI e iniciar problemas.
 
 ## 25.5.0
 
