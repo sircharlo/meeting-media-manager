@@ -4,18 +4,18 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
-## v25.6.0 Release Notes
+## 25.6.0
 
 ### ✨ Nove funkcije
 
-- ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
-- ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
+- ✨ **Nastavitev omejene povezave**: Dodana je bila nova nastavitev za zmanjšanje porabe pasovne širine za prenos pri omejenih povezavah.
+- ✨ **Izboljšano upravljanje pretakanih medijev**: Boljša podpora za pretakane medije, kar zmanjšuje težave, povezane z zakasnitvijo.
 
 ### 🛠️ Izboljšave in popravki
 
-- 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
-- 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
-- 🛠️ **Linux compatibility**: Forced GTK 3 usage on Linux to prevent UI and launch issues.
+- 🛠️ **Boljše upravljanje vrst MIME**: Izboljšana podpora za vrste MIME za boljšo združljivost z medijskimi vsebinami.
+- 🛠️ **Izboljšan navigacijski predal**: Izboljšano upravljanje pomanjšanega stanja in dodan prikaz orodnih namigov za lažjo navigacijo.
+- 🛠️ **Združljivost z Linuxom**: Prisiljena uporaba knjižnice GTK 3 v Linuxu za preprečevanje težav z uporabniškim vmesnikom in zagonom.
 
 ## 25.5.0
 

@@ -4,7 +4,7 @@
 
 Para a lista completa de alterações entre versões, consulte o ficheiro CHANGELOG.md no GitHub.
 
-## v25.6.0 Release Notes
+## 25.6.0
 
 ### ✨ Novas Funcionalidades
 

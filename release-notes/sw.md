@@ -4,7 +4,7 @@
 
 Kwa ajili ya orodha kamili ya mabadiliko baina ya toleo tofauti tofauti, ona CHANGELOG.md file kwenye GitHub.
 
-## v25.6.0 Release Notes
+## 25.6.0
 
 ### ✨ Vipengele Vipya
 

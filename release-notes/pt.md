@@ -4,7 +4,7 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
-## v25.6.0 Notas de Versão
+## 25.6.0
 
 ### ✨ Novos Recursos
 
