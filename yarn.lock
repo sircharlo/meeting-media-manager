@@ -2523,9 +2523,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/app-vite@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "@quasar/app-vite@npm:2.2.0"
+"@quasar/app-vite@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "@quasar/app-vite@npm:2.2.1"
   dependencies:
     "@quasar/render-ssr-error": "npm:^1.0.3"
     "@quasar/ssl-certificate": "npm:^1.0.0"
@@ -2588,7 +2588,7 @@ __metadata:
       optional: true
   bin:
     quasar: bin/quasar.js
-  checksum: 10c0/e8c97f6cae0fbc70cb8b4c9ec2e59af4023e4441ba4b4c68e11d8d5c2386ece7e91f63b3b444a2c730a1abe81f5f41c7eaebe688f84659c0bb9891cb733ea895
+  checksum: 10c0/2f023f6848ce9fcaa69e9521fe957f21467c99015c0cbe2ecbb9f4fc8a6581aabe2e9952d4b1395911f6e1d282c381d65840d7707b2953e18a37b674ee4320a6
   languageName: node
   linkType: hard
 
@@ -10368,7 +10368,7 @@ __metadata:
     "@numairawan/video-duration": "npm:^1.0.0"
     "@panzoom/panzoom": "npm:^4.6.0"
     "@pinia/testing": "npm:^1.0.2"
-    "@quasar/app-vite": "npm:^2.2.0"
+    "@quasar/app-vite": "npm:^2.2.1"
     "@quasar/extras": "npm:^1.17.0"
     "@quasar/icongenie": "npm:^4.0.0"
     "@quasar/quasar-app-extension-qmarkdown": "npm:^2.0.5"
