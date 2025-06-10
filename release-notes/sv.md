@@ -8,14 +8,14 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 ### ✨ Nya funktioner
 
-- ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
-- ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
+- ✨ **Anslutning med datapriser**: Lagt till en ny inställning för att minska användningen av bandbredd för nedladdning anslutningar med datapriser.
+- ✨ **Förbättrad mediehantering för streaming**: Bättre stöd för strömmade medier, vilket minskar latensrelaterade problem.
 
 ### 🛠️ Förbättringar och justeringar
 
-- 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
-- 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
-- 🛠️ **Linux compatibility**: Forced GTK 3 usage on Linux to prevent UI and launch issues.
+- 🛠️ **Bättre hantering av mime-typer**: Förbättrat stöd för MIME-typer för bättre mediekompatibilitet.
+- 🛠️ **Förbättrad navigation drawer**: Förbättrad hantering av miniläge och tillsatt verktygstips för bättre användarnavigering.
+- 🛠️ **Linuxkompatibilitet**: Tvingad användning av GTK 3 på Linux för att förhindra problem med UI och uppstart.
 
 ## 25.5.0
 
