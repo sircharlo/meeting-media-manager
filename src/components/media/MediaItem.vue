@@ -402,7 +402,7 @@
               (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))) ||
             !isFileUrl(media.fileUrl)
           "
-          :icon="localFile ? 'mmm-play' : 'mmm-stream'"
+          :icon="localFile ? 'mmm-play' : 'mmm-stream-play'"
           rounded
           :unelevated="!isFileUrl(media.fileUrl)"
           @click="setMediaPlaying(media)"
