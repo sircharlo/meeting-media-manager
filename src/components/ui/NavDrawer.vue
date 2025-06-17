@@ -1,13 +1,12 @@
 <template>
   <q-drawer
+    ref="navigationDrawer"
     v-model="drawer"
     bordered
     :breakpoint="5"
     class="column justify-between no-wrap bg-secondary-contrast text-weight-medium text-dark-grey"
     :mini="miniState"
     :mini-to-overlay="$q.screen.lt.md"
-    @mouseenter="$q.screen.lt.md ? (miniState = false) : undefined"
-    @mouseleave="$q.screen.lt.md ? (miniState = true) : undefined"
   >
     <q-slide-transition>
       <div v-if="$q.screen.gt.sm">
@@ -131,16 +130,27 @@
   </q-drawer>
 </template>
 <script setup lang="ts">
-import { whenever } from '@vueuse/core';
+import { useElementHover, whenever } from '@vueuse/core';
 // Packages
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 // Stores
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, ref } from 'vue';
+import { computed, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
+
+const drawerElement = useTemplateRef<HTMLDivElement>('navigationDrawer');
+const isHovered = useElementHover(drawerElement, {
+  delayEnter: 200,
+  delayLeave: 200,
+});
+
+watch(isHovered, (hovered) => {
+  if (!$q.screen.lt.md) return;
+  miniState.value = !hovered;
+});
 
 const currentState = useCurrentStateStore();
 const { invalidSettings } = currentState;
