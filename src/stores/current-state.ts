@@ -30,6 +30,7 @@ export interface Songbook {
 
 interface Store {
   currentCongregation: string;
+  currentlyGrabbingFromSection: MediaSection | undefined;
   currentSongRemainingTime: string;
   downloadedFiles: Partial<
     Record<string, DownloadedFile | Promise<DownloadedFile>>
@@ -355,6 +356,7 @@ export const useCurrentStateStore = defineStore('current-state', {
   state: (): Store => {
     return {
       currentCongregation: '',
+      currentlyGrabbingFromSection: undefined,
       currentSongRemainingTime: '..:..',
       downloadedFiles: {},
       downloadProgress: {},

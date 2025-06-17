@@ -71,6 +71,7 @@
       </q-item>
     </div>
     <Sortable
+      ref="sortableRef"
       class="sortable-media"
       :class="{
         'drop-here': currentlySorting,
@@ -87,6 +88,13 @@
         selectedClass: 'sortable-selected',
         multiDragKey: 'ctrl',
         avoidImplicitDeselect: false,
+        fallbackOnBody: true,
+        swapThreshold: 0.65,
+        onError: (evt: any) => {
+          console.error('Sortable error:', evt);
+          mediaItemsBeingSorted = [];
+          currentlyGrabbingFromSection = undefined;
+        },
       }"
       @add="handleMediaSort($event, 'ADD', mediaList.type as MediaSection)"
       @end="handleMediaSort($event, 'END', mediaList.type as MediaSection)"
@@ -224,11 +232,13 @@ import { isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 try {
-  SortableJs?.mount(new MultiDrag());
+  if (SortableJs && MultiDrag && !SortableJs?.MultiDrag) {
+    SortableJs.mount(new MultiDrag());
+  }
 } catch (error) {
   console.warn('Failed to mount MultiDrag:', error);
 }
@@ -253,6 +263,7 @@ const { t } = useI18n();
 
 const currentState = useCurrentStateStore();
 const {
+  currentlyGrabbingFromSection,
   getVisibleMediaForSection,
   mediaItemsBeingSorted,
   mediaPlayingUniqueId,
@@ -398,6 +409,20 @@ const handleMediaSort = (
   eventType: string,
   list: MediaSection,
 ) => {
+  if (!evt || !evt.from || !evt.to) {
+    console.warn('Invalid sort event:', evt);
+    return;
+  }
+
+  // Check if sortable instances are valid
+  const fromSortable = SortableJs.get(evt.from);
+  const toSortable = SortableJs.get(evt.to);
+
+  if (!fromSortable || !toSortable) {
+    console.warn('Sortable instances not found:', { fromSortable, toSortable });
+    return;
+  }
+
   console.group(`🔄 Media Sort Event: ${eventType} on ${list}`);
   console.log('📋 Event data:', evt);
   console.log('📍 Same list operation:', evt.from === evt.to);
@@ -516,6 +541,7 @@ const handleMediaSort = (
                 evtOldIndex,
                 item: mediaItemBeingSorted,
                 originalPosition,
+                // Calculate target position based on the drop position plus the item's offset
                 targetPosition: originalPosition + evtNewIndex - evtOldIndex,
               });
             }
@@ -533,39 +559,58 @@ const handleMediaSort = (
           })),
         );
 
-        // Sort moves by original position (descending) to avoid index shifting
+        // Sort moves by original position (descending) to avoid index shifting during removal
         moves.sort((a, b) => b.originalPosition - a.originalPosition);
 
-        // Execute moves
+        // Remove all items first (in descending order to avoid index shifting)
         const movedItems = [];
         for (const move of moves) {
-          console.log('🔄 Executing move:', {
+          console.log('🔄 Removing item:', {
             from: move.originalPosition,
-            removing: true,
             uniqueId: move.item.uniqueId,
           });
 
           const [movedItem] = dynamicMedia.splice(move.originalPosition, 1);
           if (movedItem) {
             movedItems.push({
+              evtNewIndex: move.evtNewIndex,
               item: movedItem,
-              targetPosition: Math.max(0, move.targetPosition),
+              originalTargetPosition: move.targetPosition,
             });
           }
         }
 
-        // Sort by target position and insert
-        movedItems.sort((a, b) => a.targetPosition - b.targetPosition);
-        for (const { item, targetPosition } of movedItems) {
-          console.log('🔄 Inserting moved item:', {
-            at: targetPosition,
-            uniqueId: item.uniqueId,
-          });
-          dynamicMedia.splice(targetPosition, 0, item);
+        // Sort by the event new index to maintain the original drop order
+        movedItems.sort((a, b) => a.evtNewIndex - b.evtNewIndex);
+
+        // Calculate the base insertion position (where the first item should go)
+        const firstItem = movedItems[0];
+        if (firstItem) {
+          const baseInsertionPosition = Math.max(
+            0,
+            firstItem.originalTargetPosition,
+          );
+
+          console.log('📍 Base insertion position:', baseInsertionPosition);
+
+          // Insert items consecutively starting from the base position
+          for (let i = 0; i < movedItems.length; i++) {
+            const movedItem = movedItems[i];
+            if (!movedItem) continue;
+            const { item } = movedItem;
+            const insertPosition = baseInsertionPosition + i;
+
+            console.log('🔄 Inserting moved item:', {
+              at: insertPosition,
+              itemIndex: i,
+              uniqueId: item.uniqueId,
+            });
+
+            dynamicMedia.splice(insertPosition, 0, item);
+          }
         }
 
         console.log('✅ Same list sorting completed');
-        mediaItemsBeingSorted.value = [];
       } else if (!sameList) {
         console.log(
           '🔀 Cross-list operation - items should be handled by ADD/REMOVE',
@@ -576,7 +621,6 @@ const handleMediaSort = (
       mediaItemsBeingSorted.value = [];
       break;
     }
-
     case 'REMOVE': {
       console.log('➖ Processing REMOVE event');
       console.log('📦 Items to remove:', mediaItemsBeingSorted.value.length);
@@ -614,6 +658,84 @@ const handleMediaSort = (
       break;
     }
 
+    case 'SELECT': {
+      console.log('✅ Processing SELECT event');
+
+      console.log(
+        '🎯 Validating the origin section',
+        currentlyGrabbingFromSection.value,
+        list,
+      );
+
+      if (
+        !currentlyGrabbingFromSection.value ||
+        currentlyGrabbingFromSection.value !== list
+      ) {
+        if (currentlyGrabbingFromSection.value) {
+          console.warn(
+            '⚠️ Origin section does not match the current section:',
+            currentlyGrabbingFromSection.value,
+            'vs',
+            list,
+          );
+
+          // Safer deselection with null checks
+          try {
+            const allSortableElements =
+              document.querySelectorAll('.sortable-media');
+            allSortableElements.forEach((sortableElement) => {
+              const sortableInstance = SortableJs.get(
+                sortableElement as HTMLElement,
+              );
+              if (sortableInstance && sortableInstance.options) {
+                const selectedItems =
+                  sortableElement.querySelectorAll('.sortable-selected');
+                selectedItems.forEach((selectedItem) => {
+                  const itemSection = (
+                    selectedItem.closest('.media-section') as HTMLElement
+                  )?.classList[1];
+                  if (itemSection && itemSection !== list) {
+                    try {
+                      SortableJs.utils.deselect(selectedItem as HTMLElement);
+                      selectedItem.classList.remove('sortable-selected');
+                      console.log(
+                        '🚫 Deselected item from different section:',
+                        itemSection,
+                      );
+                    } catch (deselectError) {
+                      console.warn('Error deselecting item:', deselectError);
+                      // Fallback: just remove the class
+                      selectedItem.classList.remove('sortable-selected');
+                    }
+                  }
+                });
+              }
+            });
+          } catch (error) {
+            console.warn('Error during deselection:', error);
+          }
+
+          mediaItemsBeingSorted.value = [];
+        }
+
+        currentlyGrabbingFromSection.value = list;
+      }
+      console.log('📦 Items selected:', mediaItemsBeingSorted.value.length);
+      console.log('🎯 From section:', list);
+
+      if (mediaItemsBeingSorted.value.length === 0) {
+        console.warn('⚠️ No items selected for sorting');
+      } else {
+        console.log(
+          '📦 Selected items:',
+          mediaItemsBeingSorted.value.map((item) => ({
+            section: item.section,
+            uniqueId: item.uniqueId,
+          })),
+        );
+      }
+      break;
+    }
     case 'START': {
       console.log('🚀 Processing START event');
       console.log('🎯 Source section:', list);
@@ -634,6 +756,7 @@ const handleMediaSort = (
           console.log('🎯 Processing index:', {
             found: !!itemBeingSorted,
             index: oldIndex.index,
+            section: itemBeingSorted?.section,
             uniqueId: itemBeingSorted?.uniqueId,
           });
 
@@ -690,5 +813,23 @@ const emptyMediaList = computed(() => {
 
 const currentlySorting = computed(() => {
   return mediaItemsBeingSorted.value.length > 0;
+});
+
+onBeforeUnmount(() => {
+  // Clear any ongoing sort operations
+  mediaItemsBeingSorted.value = [];
+  currentlyGrabbingFromSection.value = undefined;
+
+  // Destroy sortable instances if they exist
+  // sortableInstances.value.forEach((instance) => {
+  //   try {
+  //     if (instance && typeof instance.destroy === 'function') {
+  //       instance.destroy();
+  //     }
+  //   } catch (error) {
+  //     console.warn('Error destroying sortable instance:', error);
+  //   }
+  // });
+  // sortableInstances.value.clear();
 });
 </script>
