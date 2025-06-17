@@ -11,65 +11,71 @@
     @dragstart="dropActive"
   >
     <div class="col">
-      <div
-        v-if="
-          currentSettings?.obsEnable &&
-          ['disconnected', 'notConnected'].includes(obsConnectionState) &&
-          selectedDateObject?.today
-        "
-        class="row"
-      >
-        <q-banner
-          class="bg-negative text-white full-width"
-          inline-actions
-          rounded
+      <q-slide-transition>
+        <div
+          v-if="
+            currentSettings?.obsEnable &&
+            ['disconnected', 'notConnected'].includes(obsConnectionState) &&
+            selectedDateObject?.today
+          "
+          class="row"
         >
-          {{ t('obs-studio-disconnected-banner') }}
-          <template #avatar>
-            <q-icon name="mmm-obs-studio" size="lg" />
-          </template>
-        </q-banner>
-      </div>
-      <div v-if="someItemsHiddenForSelectedDate" class="row">
-        <q-banner
-          class="bg-warning text-white full-width"
-          inline-actions
-          rounded
-        >
-          {{ t('some-media-items-are-hidden') }}
-          <template #avatar>
-            <q-avatar class="bg-white text-warning" size="lg">
-              <q-icon name="mmm-file-hidden" size="sm" />
-            </q-avatar>
-          </template>
-          <template #action>
-            <q-btn
-              flat
-              :label="t('show-all-media')"
-              @click="
-                showHiddenMediaForSelectedDate(
-                  currentCongregation,
-                  selectedDateObject,
-                )
-              "
-            />
-          </template>
-        </q-banner>
-      </div>
-      <div v-if="duplicateSongsForWeMeeting" class="row">
-        <q-banner
-          class="bg-warning text-white full-width"
-          inline-actions
-          rounded
-        >
-          {{ t('some-songs-are-duplicated') }}
-          <template #avatar>
-            <q-avatar class="bg-white text-warning" size="lg">
-              <q-icon name="mmm-music-note" size="sm" />
-            </q-avatar>
-          </template>
-        </q-banner>
-      </div>
+          <q-banner
+            class="bg-negative text-white full-width"
+            inline-actions
+            rounded
+          >
+            {{ t('obs-studio-disconnected-banner') }}
+            <template #avatar>
+              <q-icon name="mmm-obs-studio" size="lg" />
+            </template>
+          </q-banner>
+        </div>
+      </q-slide-transition>
+      <q-slide-transition>
+        <div v-if="someItemsHiddenForSelectedDate" class="row">
+          <q-banner
+            class="bg-warning text-white full-width"
+            inline-actions
+            rounded
+          >
+            {{ t('some-media-items-are-hidden') }}
+            <template #avatar>
+              <q-avatar class="bg-white text-warning" size="lg">
+                <q-icon name="mmm-file-hidden" size="sm" />
+              </q-avatar>
+            </template>
+            <template #action>
+              <q-btn
+                flat
+                :label="t('show-all-media')"
+                @click="
+                  showHiddenMediaForSelectedDate(
+                    currentCongregation,
+                    selectedDateObject,
+                  )
+                "
+              />
+            </template>
+          </q-banner>
+        </div>
+      </q-slide-transition>
+      <q-slide-transition>
+        <div v-if="duplicateSongsForWeMeeting" class="row">
+          <q-banner
+            class="bg-warning text-white full-width"
+            inline-actions
+            rounded
+          >
+            {{ t('some-songs-are-duplicated') }}
+            <template #avatar>
+              <q-avatar class="bg-white text-warning" size="lg">
+                <q-icon name="mmm-music-note" size="sm" />
+              </q-avatar>
+            </template>
+          </q-banner>
+        </div>
+      </q-slide-transition>
       <MediaEmptyState
         v-if="
           (currentSettings?.disableMediaFetching &&
