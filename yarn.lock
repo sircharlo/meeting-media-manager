@@ -1138,6 +1138,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@intlify/shared@npm:11.1.6":
+  version: 11.1.6
+  resolution: "@intlify/shared@npm:11.1.6"
+  checksum: 10c0/5223159dee51395152c87d3b13ad0487b03944c2dbe32968345fe5350e4bfa991ff9ecb2cd69139f04b8b778176b4c4e14c6e25b80bc0fee071bf8cdf81d788d
+  languageName: node
+  linkType: hard
+
 "@intlify/unplugin-vue-i18n@npm:^6.0.8":
   version: 6.0.8
   resolution: "@intlify/unplugin-vue-i18n@npm:6.0.8"
@@ -3998,6 +4005,7 @@ __metadata:
 "@typescript-eslint/utils@npm:8.34.1, @typescript-eslint/utils@npm:^8.24.1, @typescript-eslint/utils@npm:^8.33.1, @typescript-eslint/utils@npm:^8.34.1":
   version: 8.34.1
   resolution: "@typescript-eslint/utils@npm:8.34.1"
+
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.7.0"
     "@typescript-eslint/scope-manager": "npm:8.34.1"
@@ -4007,6 +4015,16 @@ __metadata:
     eslint: ^8.57.0 || ^9.0.0
     typescript: ">=4.8.4 <5.9.0"
   checksum: 10c0/e3085877f7940c02a37653e6bc52ac6cde115e755b1f788fe4331202f371b3421cc4d0878c7d3eb054e14e9b3a064496a707a73eac471cb2b73593b9e9d4b998
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/visitor-keys@npm:8.34.1":
+  version: 8.34.1
+  resolution: "@typescript-eslint/visitor-keys@npm:8.34.1"
+  dependencies:
+    "@typescript-eslint/types": "npm:8.34.1"
+    eslint-visitor-keys: "npm:^4.2.1"
+  checksum: 10c0/0e5a9b3d93905d16d3cf8cb5fb346dcc6f760482eb7d0ac209aefc09a32f78ef28a687634df6ad08e81fb3e1083e8805f34472de6bbc501c0105ad654d518f40
   languageName: node
   linkType: hard
 
