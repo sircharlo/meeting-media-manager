@@ -708,3 +708,12 @@ a {
 .study-bible-item .gradient-transparent-to-black {
   padding: 32px 8px 8px !important;
 }
+
+.sortable-selected {
+  background-color: $accent-200 !important;
+  border-color: $accent-300 !important;
+}
+
+.sortable-media.drop-here {
+  min-height: 50px;
+}
