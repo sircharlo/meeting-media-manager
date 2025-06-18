@@ -202,12 +202,12 @@
                 v-ripple
                 class="rounded-borders"
                 fit="contain"
-                :src="pathToFileURL(jwpubImage.FilePath)"
+                :src="getFileUrlFromPath(jwpubImage.FilePath)"
                 style="width: 150px"
               />
             </div>
             <div class="col">
-              <div class="row">{{ path.basename(jwpubImage.FilePath) }}</div>
+              <div class="row">{{ getBasename(jwpubImage.FilePath) }}</div>
             </div>
           </q-item>
           <q-separator
@@ -256,17 +256,6 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-const {
-  executeQuery,
-  fs,
-  getAllScreens,
-  moveMediaWindow,
-  openFileDialog,
-  path,
-  pathToFileURL,
-  setScreenPreferences,
-} = window.electronApi;
-
 const { t } = useI18n();
 
 const screenList = ref<Display[]>([]);
@@ -285,6 +274,16 @@ const {
 
 const open = defineModel<boolean>({ default: false });
 
+const getBasename = (filename: string) => {
+  if (!filename) return '';
+  return window.electronApi.path.basename(filename);
+};
+
+const getFileUrlFromPath = (filepath: string) => {
+  if (!filepath) return '';
+  return window.electronApi.pathToFileURL(filepath);
+};
+
 const jwpubImportFilePath = ref('');
 const jwpubImages = ref<MultimediaItem[]>([]);
 
@@ -300,7 +299,10 @@ const chooseCustomBackground = async (reset?: boolean) => {
       return;
     } else {
       try {
-        const backgroundPicker = await openFileDialog(true, 'jwpub+image+pdf');
+        const backgroundPicker = await window.electronApi.openFileDialog(
+          true,
+          'jwpub+image+pdf',
+        );
         if (backgroundPicker?.canceled) return;
         if (!backgroundPicker?.filePaths.length) {
           notifyInvalidBackgroundFile();
@@ -311,25 +313,30 @@ const chooseCustomBackground = async (reset?: boolean) => {
             const unzipDir = await decompressJwpub(filepath);
             const db = await findDb(unzipDir);
             if (!db) throw new Error('No db file found: ' + filepath);
-            jwpubImages.value = executeQuery<MultimediaItem>(
-              db,
-              "SELECT * FROM Multimedia WHERE CategoryType >= 0 AND CategoryType <> 9 AND FilePath <> '';",
-            ).map((multimediaItem) => {
-              return {
-                ...multimediaItem,
-                FilePath: path.join(unzipDir, multimediaItem.FilePath),
-              };
-            });
+            jwpubImages.value = window.electronApi
+              .executeQuery<MultimediaItem>(
+                db,
+                "SELECT * FROM Multimedia WHERE CategoryType >= 0 AND CategoryType <> 9 AND FilePath <> '';",
+              )
+              .map((multimediaItem) => {
+                return {
+                  ...multimediaItem,
+                  FilePath: window.electronApi.path.join(
+                    unzipDir,
+                    multimediaItem.FilePath,
+                  ),
+                };
+              });
             if (jwpubImages.value?.length === 0) {
               notifyInvalidBackgroundFile();
             }
           } else if (filepath) {
             const tempDirectory = await getTempPath();
-            const tempFilepath = path.join(
+            const tempFilepath = window.electronApi.path.join(
               tempDirectory,
-              path.basename(filepath),
+              window.electronApi.path.basename(filepath),
             );
-            await fs.copyFile(filepath, tempFilepath);
+            await window.electronApi.fs.copyFile(filepath, tempFilepath);
             const workingTempFilepath =
               await convertImageIfNeeded(tempFilepath);
             if (isImage(workingTempFilepath)) {
@@ -366,7 +373,7 @@ const windowScreenListener = (event: CustomEvent<ScreenPreferences>) => {
 
 const fetchScreens = async () => {
   try {
-    screenList.value = await getAllScreens();
+    screenList.value = await window.electronApi.getAllScreens();
   } catch (error) {
     errorCatcher(error);
   }
@@ -436,7 +443,8 @@ const setMediaBackground = (filepath: string) => {
     if (!filepath) {
       throw new Error('Problem with image file');
     } else {
-      mediaWindowCustomBackground.value = pathToFileURL(filepath);
+      mediaWindowCustomBackground.value =
+        window.electronApi.pathToFileURL(filepath);
       notifyCustomBackgroundSet();
     }
   } catch (error) {
@@ -486,8 +494,10 @@ watchImmediate(
   screenPreferences,
   (newScreenPreferences) => {
     try {
-      setScreenPreferences(JSON.stringify(newScreenPreferences));
-      moveMediaWindow(
+      window.electronApi.setScreenPreferences(
+        JSON.stringify(newScreenPreferences),
+      );
+      window.electronApi.moveMediaWindow(
         newScreenPreferences.preferredScreenNumber,
         newScreenPreferences.preferWindowed,
         true,

@@ -41,7 +41,7 @@
             >
               <div class="row flex-center q-px-md row">
                 <div class="col ellipsis text-weight-medium text-dark-grey">
-                  {{ item.filename && path.basename(item.filename) }}
+                  {{ getBasename(item.filename) }}
                 </div>
                 <div class="col-shrink">
                   <q-icon
@@ -96,14 +96,17 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-const { path } = window.electronApi;
-
 const { t } = useI18n();
 
 const open = defineModel<boolean>({ default: false });
 
 const currentState = useCurrentStateStore();
 const { downloadProgress } = storeToRefs(currentState);
+
+const getBasename = (filename: string) => {
+  if (!filename) return '';
+  return window.electronApi.path.basename(filename);
+};
 
 const filteredDownloads = (status: 'complete' | 'error' | 'loaded') =>
   Object.entries(downloadProgress.value || {})
