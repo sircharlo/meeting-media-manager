@@ -30,10 +30,13 @@
         : undefined
     "
   >
-    <q-icon name="mmm-obs-studio" />
-    <q-tooltip v-if="!obsPopup" :delay="1000" :offset="[14, 22]">
-      {{ t(obsMessage ?? 'scene-selection') }}
-    </q-tooltip>
+    <q-spinner v-if="obsConnectionState === 'connecting'" size="sm" />
+    <template v-else>
+      <q-icon name="mmm-obs-studio" />
+      <q-tooltip v-if="!obsPopup" :delay="1000" :offset="[14, 22]">
+        {{ t(obsMessage ?? 'scene-selection') }}
+      </q-tooltip>
+    </template>
   </q-btn>
 </template>
 

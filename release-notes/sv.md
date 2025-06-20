@@ -4,6 +4,19 @@
 
 För den fullständiga listan över ändringar mellan versioner, se vår CHANGELOG.md-fil på GitHub.
 
+## 25.6.0
+
+### ✨ Nya funktioner
+
+- ✨ **Anslutning med datapriser**: Lagt till en ny inställning för att minska användningen av bandbredd för nedladdning anslutningar med datapriser.
+- ✨ **Förbättrad mediehantering för streaming**: Bättre stöd för strömmade medier, vilket minskar latensrelaterade problem.
+
+### 🛠️ Förbättringar och justeringar
+
+- 🛠️ **Bättre hantering av mime-typer**: Förbättrat stöd för MIME-typer för bättre mediekompatibilitet.
+- 🛠️ **Förbättrad navigation drawer**: Förbättrad hantering av miniläge och tillsatt verktygstips för bättre användarnavigering.
+- 🛠️ **Linuxkompatibilitet**: Tvingad användning av GTK 3 på Linux för att förhindra problem med UI och uppstart.
+
 ## 25.5.0
 
 ### ✨ Nya funktioner

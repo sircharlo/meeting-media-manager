@@ -4,6 +4,19 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## 25.6.0
+
+### ✨ Nieuwe functies
+
+- ✨ **Betaalde verbindingsinstelling**: Een nieuwe instelling toegevoegd om het gebruik van de downloadbandbreedte voor datalimiet te verminderen.
+- ✨ **Verbeterde streaming van media**: Betere ondersteuning voor het streamen van media, minder problemen in verband met vertraging.
+
+### 🛠️ Verbeteringen en tweaks
+
+- 🛠️ **Betere mime type verwerking**: Verbeterde ondersteuning voor MIME-types voor betere compatibiliteit van de media.
+- 🛠️ **Verbeterde navigatie drawer**: Verbeterde mini state behandeling en toegevoegde tooltip voor betere user navigatie.
+- 🛠️ **Linux compatibiliteit**: Forced GTK 3 gebruik op Linux om UI en opstart problemen te voorkomen.
+
 ## 25.5.0
 
 ### ✨ Nieuwe functies

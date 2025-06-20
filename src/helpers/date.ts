@@ -211,7 +211,11 @@ export function updateLookupPeriod(reset = false) {
     const currentDate = dateFromString();
 
     const futureDates: DateInfo[] = Array.from(
-      { length: DAYS_IN_FUTURE + currentDate.getDay() },
+      {
+        length:
+          (currentSettings?.meteredConnection ? 1 : DAYS_IN_FUTURE) +
+          currentDate.getDay(),
+      },
       (_, i) => {
         const dayDate = addToDate(getSpecificWeekday(currentDate, 0), {
           day: i,

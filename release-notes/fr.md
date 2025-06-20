@@ -4,6 +4,19 @@
 
 For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
+## 25.6.0
+
+### ✨ New Features
+
+- ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
+- ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
+- 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
+- 🛠️ **Linux compatibility**: Forced GTK 3 usage on Linux to prevent UI and launch issues.
+
 ## 25.5.0
 
 ### ✨ New Features

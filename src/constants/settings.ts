@@ -170,6 +170,10 @@ export const settingsDefinitions: SettingsItems = {
     unless: 'disableMediaFetching',
   },
   // Media Retrieval and Playback
+  meteredConnection: {
+    group: 'mediaRetrievalPlayback',
+    type: 'toggle',
+  },
   enableMediaDisplayButton: {
     group: 'mediaRetrievalPlayback',
     type: 'toggle',
@@ -447,6 +451,7 @@ export const defaultSettings: SettingsValues = {
   meetingScheduleChangeWeDay: null,
   meetingScheduleChangeWeStartTime: null,
   memorialDate: null,
+  meteredConnection: false,
   musicVolume: 100,
   mwDay: null,
   mwStartTime: null,

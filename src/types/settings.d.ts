@@ -200,6 +200,7 @@ export interface SettingsValues {
   meetingScheduleChangeWeDay: `${number}` | null;
   meetingScheduleChangeWeStartTime: `${number}:${number}` | null;
   memorialDate: `${number}/${number}/${number}` | null;
+  meteredConnection: boolean;
   musicVolume: number;
   mwDay: `${number}` | null;
   mwStartTime: `${number}:${number}` | null;
