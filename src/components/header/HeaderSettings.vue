@@ -93,8 +93,6 @@ import { useJwStore } from 'stores/jw';
 import { computed, ref, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-const { fs, path, pathToFileURL, readdir } = window.electronApi;
-
 const { t } = useI18n();
 const jwStore = useJwStore();
 const { lookupPeriod } = storeToRefs(jwStore);
@@ -253,16 +251,21 @@ const getCacheFiles = async (cacheDirs: string[]) => {
 
   const mediaFileParentDirectories = new Set(
     lookupPeriodsCollections.map((media) =>
-      media ? pathToFileURL(getParentDirectory(media.fileUrl)) : '',
+      media
+        ? window.electronApi.pathToFileURL(getParentDirectory(media.fileUrl))
+        : '',
     ),
   );
 
   const files: CacheFile[] = [];
   for (const cacheDir of cacheDirs) {
     try {
-      const items = await readdir(cacheDir, true, true);
+      const items = await window.electronApi.readdir(cacheDir, true, true);
       for (const item of items) {
-        const filePath = path.join(item.parentPath, item.name);
+        const filePath = window.electronApi.path.join(
+          item.parentPath,
+          item.name,
+        );
         if (item.isFile) {
           const parentFolder = item.parentPath.split('/').pop() || '';
           if (
@@ -270,7 +273,9 @@ const getCacheFiles = async (cacheDirs: string[]) => {
             parentFolder === `S-34mp_${currentState.currentCongregation}` ||
             /^S-34mp_[A-Z]+_0$/.test(parentFolder)
           ) {
-            const fileParentDirectoryUrl = pathToFileURL(item.parentPath);
+            const fileParentDirectoryUrl = window.electronApi.pathToFileURL(
+              item.parentPath,
+            );
             files.push({
               orphaned: !mediaFileParentDirectories.has(fileParentDirectoryUrl),
               parentPath: item.parentPath,
@@ -310,7 +315,9 @@ const calculateCacheSize = async () => {
     ];
     const cacheDirs = (
       await Promise.all(
-        dirs.map(async (dir) => ((await fs.pathExists(dir)) ? dir : null)),
+        dirs.map(async (dir) =>
+          (await window.electronApi.fs.pathExists(dir)) ? dir : null,
+        ),
       )
     ).filter((s) => typeof s === 'string');
     cacheFiles.value = await getCacheFiles(cacheDirs);

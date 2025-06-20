@@ -69,6 +69,9 @@
   </q-page-container>
 </template>
 <script setup lang="ts">
+import { initializeElectronApi } from 'src/helpers/electron-api-manager';
+initializeElectronApi('MediaPlayerPage');
+
 import Panzoom, { type PanzoomObject } from '@panzoom/panzoom';
 import {
   useBroadcastChannel,
