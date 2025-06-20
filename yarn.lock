@@ -4208,16 +4208,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/compiler-ssr@npm:3.5.17":
-  version: 3.5.17
-  resolution: "@vue/compiler-ssr@npm:3.5.17"
-  dependencies:
-    "@vue/compiler-dom": "npm:3.5.17"
-    "@vue/shared": "npm:3.5.17"
-  checksum: 10c0/80f0ccb05e8c6b3c72d4ea50ec87a1f89704483608053b1fcc88669886069edcd21cabc6608816c09d99fc6cab1985d676bf3725175f80482f2b3aaf51a15416
-  languageName: node
-  linkType: hard
-
 "@vue/compiler-vue2@npm:^2.7.16":
   version: 2.7.16
   resolution: "@vue/compiler-vue2@npm:2.7.16"
@@ -4371,13 +4361,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/shared@npm:3.5.17":
-  version: 3.5.17
-  resolution: "@vue/shared@npm:3.5.17"
-  checksum: 10c0/915d8f80d863826531cf6ddefeb52455cbffcbca4d14717472b7765b3142d2ad9900dfce351e90a22e1fe9e2f8fca588421de6e751e1c816ab9e1fdefa3e8a0d
-  languageName: node
-  linkType: hard
-
 "@vue/test-utils@npm:^2.4.6":
   version: 2.4.6
   resolution: "@vue/test-utils@npm:2.4.6"
@@ -4388,20 +4371,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/core@npm:13.4.0, @vueuse/core@npm:^13.3.0":
-  version: 13.4.0
-  resolution: "@vueuse/core@npm:13.4.0"
-  dependencies:
-    "@types/web-bluetooth": "npm:^0.0.21"
-    "@vueuse/metadata": "npm:13.4.0"
-    "@vueuse/shared": "npm:13.4.0"
-  peerDependencies:
-    vue: ^3.5.0
-  checksum: 10c0/a4ec26881cba3cefb8cb7eddb2148d80508c10c3d3efb07069c39119cec3f99a0dee578d776c4f440d57e4a23b07b0b65e66de0a66fecced28191ec4c6380805
-  languageName: node
-  linkType: hard
-
-"@vueuse/core@npm:^13.4.0":
+"@vueuse/core@npm:13.4.0, @vueuse/core@npm:^13.3.0, @vueuse/core@npm:^13.4.0":
   version: 13.4.0
   resolution: "@vueuse/core@npm:13.4.0"
   dependencies:
@@ -4479,15 +4449,6 @@ __metadata:
     vue: ^3.5.0
     vue-router: ^4.0.0
   checksum: 10c0/a7e593241328e9397b24c2a44b722d5296a21b5e3755dd50aa0e9337123b491c8d94d98554267d3f6faae89843f3fb7cca0747f39ed748fbbf6df809034b1eb4
-  languageName: node
-  linkType: hard
-
-"@vueuse/shared@npm:13.4.0":
-  version: 13.4.0
-  resolution: "@vueuse/shared@npm:13.4.0"
-  peerDependencies:
-    vue: ^3.5.0
-  checksum: 10c0/6a32f8bf1f655b42374f3f07efd370e1f5b2f2ab9ff7d67f544f8660a48dbf4cb21f206991be6b12fc20a0983e3c82117676583c636f435e369a91dfd5455d78
   languageName: node
   linkType: hard
 
@@ -4763,9 +4724,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"app-builder-lib@npm:26.0.17":
-  version: 26.0.17
-  resolution: "app-builder-lib@npm:26.0.17"
+"app-builder-lib@npm:26.0.16":
+  version: 26.0.16
+  resolution: "app-builder-lib@npm:26.0.16"
   dependencies:
     "@develar/schema-utils": "npm:~2.6.5"
     "@electron/asar": "npm:3.4.1"
@@ -4777,7 +4738,7 @@ __metadata:
     "@malept/flatpak-bundler": "npm:^0.4.0"
     "@types/fs-extra": "npm:9.0.13"
     async-exit-hook: "npm:^2.0.1"
-    builder-util: "npm:26.0.17"
+    builder-util: "npm:26.0.16"
     builder-util-runtime: "npm:9.3.2"
     chromium-pickle-js: "npm:^0.2.0"
     ci-info: "npm:^4.2.0"
@@ -4786,25 +4747,24 @@ __metadata:
     dotenv: "npm:^16.4.5"
     dotenv-expand: "npm:^11.0.6"
     ejs: "npm:^3.1.8"
-    electron-publish: "npm:26.0.17"
+    electron-publish: "npm:26.0.16"
     fs-extra: "npm:^10.1.0"
     hosted-git-info: "npm:^4.1.0"
     isbinaryfile: "npm:^5.0.0"
     js-yaml: "npm:^4.1.0"
     json5: "npm:^2.2.3"
     lazy-val: "npm:^1.0.5"
-    minimatch: "npm:^10.0.3"
+    minimatch: "npm:^10.0.0"
     plist: "npm:3.1.0"
     resedit: "npm:^1.7.0"
     semver: "npm:^7.3.8"
     tar: "npm:^6.1.12"
     temp-file: "npm:^3.4.0"
     tiny-async-pool: "npm:1.3.0"
-    which: "npm:^5.0.0"
   peerDependencies:
-    dmg-builder: 26.0.17
-    electron-builder-squirrel-windows: 26.0.17
-  checksum: 10c0/7f2da114955f3fd13eeeb7d070babcf8a3b79da4d881fa5f208e57ca3eff78ba92f6f8adeea7435b028b33ca08c5e9a98e991fb9018e96445dad122ffc307e98
+    dmg-builder: 26.0.16
+    electron-builder-squirrel-windows: 26.0.16
+  checksum: 10c0/7257cab014b5fdb7f76b5ded90a6a70b49bb73b9ce60e043fcfe0127ee7707e36737e868f9302ad90368aec469c732d3f1488b76661a53a77a55f73d2325f68f
   languageName: node
   linkType: hard
 
@@ -5415,9 +5375,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"builder-util@npm:26.0.17":
-  version: 26.0.17
-  resolution: "builder-util@npm:26.0.17"
+"builder-util@npm:26.0.16":
+  version: 26.0.16
+  resolution: "builder-util@npm:26.0.16"
   dependencies:
     7zip-bin: "npm:~5.2.0"
     "@types/debug": "npm:^4.1.6"
@@ -5436,7 +5396,7 @@ __metadata:
     stat-mode: "npm:^1.0.0"
     temp-file: "npm:^3.4.0"
     tiny-async-pool: "npm:1.3.0"
-  checksum: 10c0/33c4829d1118211f2ff75aa2f34c19696fc1680ae9a547bc398d7535521ee73507983e667fefb799b1081490d58debdd1ac05e731da519ecb00891a63f310086
+  checksum: 10c0/df23b1cba81595e120dcf896d1714fa28a788b416920d1500e0f0f0ad9d4b1e0bec454471d86f0634959f516b2bb69f62afdc8b1e1be19b17815b6ff5928b85f
   languageName: node
   linkType: hard
 
@@ -6740,12 +6700,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dmg-builder@npm:26.0.17":
-  version: 26.0.17
-  resolution: "dmg-builder@npm:26.0.17"
+"dmg-builder@npm:26.0.16":
+  version: 26.0.16
+  resolution: "dmg-builder@npm:26.0.16"
   dependencies:
-    app-builder-lib: "npm:26.0.17"
-    builder-util: "npm:26.0.17"
+    app-builder-lib: "npm:26.0.16"
+    builder-util: "npm:26.0.16"
     builder-util-runtime: "npm:9.3.2"
     dmg-license: "npm:^1.0.11"
     fs-extra: "npm:^10.1.0"
@@ -6754,7 +6714,7 @@ __metadata:
   dependenciesMeta:
     dmg-license:
       optional: true
-  checksum: 10c0/d2d0eb25e0b33465fb4dd093985771b054d88c5261353f64c48c9e0085b66b1a262721e982e505eaa2e8873d6df8718d16a8dc7d224d358baedd5eef467ee7d9
+  checksum: 10c0/5acd0dcf99c8c1b2fc1f431757b2016307d1b552d718166f56f6ac5e4296b71ca69201351abd8a8285b8264b6d2ee1212f0db5ad94c8c6da4acc37162c4165bc
   languageName: node
   linkType: hard
 
@@ -6982,16 +6942,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-builder@npm:26.0.17":
-  version: 26.0.17
-  resolution: "electron-builder@npm:26.0.17"
+"electron-builder@npm:26.0.16":
+  version: 26.0.16
+  resolution: "electron-builder@npm:26.0.16"
   dependencies:
-    app-builder-lib: "npm:26.0.17"
-    builder-util: "npm:26.0.17"
+    app-builder-lib: "npm:26.0.16"
+    builder-util: "npm:26.0.16"
     builder-util-runtime: "npm:9.3.2"
     chalk: "npm:^4.1.2"
     ci-info: "npm:^4.2.0"
-    dmg-builder: "npm:26.0.17"
+    dmg-builder: "npm:26.0.16"
     fs-extra: "npm:^10.1.0"
     lazy-val: "npm:^1.0.5"
     simple-update-notifier: "npm:2.0.0"
@@ -6999,7 +6959,7 @@ __metadata:
   bin:
     electron-builder: cli.js
     install-app-deps: install-app-deps.js
-  checksum: 10c0/d3dbbd638974aa53c1007a33521005c8b6f83bfb74adf622ed0d10d3f3c1fca3920276881be15cd646296dcf1f9ac67778df72e3a156a27f01e2ce98110938d9
+  checksum: 10c0/65dafc5c266965512d7f9f0e895cb4c6bc5d3e997add7cfa92082207078164358a9664018777a16565854a33713a0657a3e90f8ad08741d3a596d02b572f5667
   languageName: node
   linkType: hard
 
@@ -7015,19 +6975,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-publish@npm:26.0.17":
-  version: 26.0.17
-  resolution: "electron-publish@npm:26.0.17"
+"electron-publish@npm:26.0.16":
+  version: 26.0.16
+  resolution: "electron-publish@npm:26.0.16"
   dependencies:
     "@types/fs-extra": "npm:^9.0.11"
-    builder-util: "npm:26.0.17"
+    builder-util: "npm:26.0.16"
     builder-util-runtime: "npm:9.3.2"
     chalk: "npm:^4.1.2"
     form-data: "npm:^4.0.0"
     fs-extra: "npm:^10.1.0"
     lazy-val: "npm:^1.0.5"
     mime: "npm:^2.5.2"
-  checksum: 10c0/b15b28ef1e9f9495bd535a3ccd6415086e1349cbc4a7d7686da48881f296bc5a3fd0417ea6ef9afb9634eb82c41cc495c6d1884ffb738cd0ffe3042d3dc124fb
+  checksum: 10c0/0a8bc64dc6362aa0ddd3feb666f4e21e1d71345793badf03906e1c12fcd337afd04ed759fafd4dd5b7e3fdb7180b7fc921984817206fb6fa4529735e2692dc5f
   languageName: node
   linkType: hard
 
@@ -10152,13 +10112,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loupe@npm:^3.1.4":
-  version: 3.1.4
-  resolution: "loupe@npm:3.1.4"
-  checksum: 10c0/5c2e6aefaad25f812d361c750b8cf4ff91d68de289f141d7c85c2ce9bb79eeefa06a93c85f7b87cba940531ed8f15e492f32681d47eed23842ad1963eb3a154d
-  languageName: node
-  linkType: hard
-
 "lower-case@npm:^2.0.2":
   version: 2.0.2
   resolution: "lower-case@npm:2.0.2"
@@ -10533,7 +10486,7 @@ __metadata:
     decompress: "npm:^4.2.1"
     dompurify: "npm:^3.2.6"
     electron: "npm:^36.5.0"
-    electron-builder: "npm:26.0.17"
+    electron-builder: "npm:26.0.16"
     electron-dl-manager: "npm:^4.0.0"
     electron-updater: "npm:^6.6.5"
     eslint: "npm:^9.29.0"
@@ -10770,7 +10723,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimatch@npm:^10.0.3":
+"minimatch@npm:^10.0.0":
   version: 10.0.3
   resolution: "minimatch@npm:10.0.3"
   dependencies:
@@ -15695,25 +15648,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue@npm:^3.3.7, vue@npm:^3.4, vue@npm:^3.5.16":
-  version: 3.5.17
-  resolution: "vue@npm:3.5.17"
-  dependencies:
-    "@vue/compiler-dom": "npm:3.5.17"
-    "@vue/compiler-sfc": "npm:3.5.17"
-    "@vue/runtime-dom": "npm:3.5.17"
-    "@vue/server-renderer": "npm:3.5.17"
-    "@vue/shared": "npm:3.5.17"
-  peerDependencies:
-    typescript: "*"
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: 10c0/271e7aeca24495145e0e00e8553c681ae4feb08309207aa7bf6e13d0603ca8e1b6a8091d62542041aef2f4874940ee3f0a186a7753f0729fa5a12576861b34a8
-  languageName: node
-  linkType: hard
-
-"vue@npm:^3.5.17":
+"vue@npm:^3.3.7, vue@npm:^3.4, vue@npm:^3.5.16, vue@npm:^3.5.17":
   version: 3.5.17
   resolution: "vue@npm:3.5.17"
   dependencies:
