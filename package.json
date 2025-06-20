@@ -104,7 +104,7 @@
     "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.21",
     "electron": "^36.5.0",
-    "electron-builder": "26.0.16",
+    "electron-builder": "26.0.17",
     "eslint": "^9.29.0",
     "eslint-plugin-perfectionist": "^4.15.0",
     "eslint-plugin-vue": "^10.2.0",
