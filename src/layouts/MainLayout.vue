@@ -32,6 +32,9 @@
 </template>
 
 <script setup lang="ts">
+import { initializeElectronApi } from 'src/helpers/electron-api-manager';
+initializeElectronApi('MainLayout');
+
 import type { LanguageValue } from 'src/constants/locales';
 import type { ElectronIpcListenKey } from 'src/types';
 
