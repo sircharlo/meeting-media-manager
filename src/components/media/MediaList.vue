@@ -81,21 +81,7 @@
       }"
       item-key="uniqueId"
       :list="mediaList.items"
-      :options="{
-        animation: 150,
-        group: 'mediaLists',
-        multiDrag: true,
-        selectedClass: 'sortable-selected',
-        multiDragKey: 'ctrl',
-        avoidImplicitDeselect: false,
-        fallbackOnBody: true,
-        swapThreshold: 0.65,
-        onError: (evt: any) => {
-          console.error('Sortable error:', evt);
-          mediaItemsBeingSorted = [];
-          currentlyGrabbingFromSection = undefined;
-        },
-      }"
+      :options="sortableOptions"
       @add="handleMediaSort($event, 'ADD', mediaList.type as MediaSection)"
       @end="handleMediaSort($event, 'END', mediaList.type as MediaSection)"
       @remove="
@@ -108,6 +94,7 @@
       @unselect="
         handleMediaSort($event, 'UNSELECT', mediaList.type as MediaSection)
       "
+      @vue:mounted="sortableMounted"
     >
       <template #item="{ element }: { element: DynamicMediaObject }">
         <template v-if="element.children">
@@ -232,16 +219,38 @@ import { isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-try {
-  if (SortableJs && MultiDrag && !SortableJs?.MultiDrag) {
+const sortableRef = useTemplateRef('sortableRef');
+const sortableMounted = () => {
+  try {
+    if (!SortableJs || SortableJs === undefined) {
+      console.warn('SortableJs is not available');
+      return;
+    }
+    if (!sortableRef.value) {
+      console.warn('Sortable reference is not defined');
+      return;
+    }
+    if (!MultiDrag) {
+      console.warn('MultiDrag is not available');
+      return;
+    }
+    if (SortableJs.MultiDrag) {
+      console.warn('MultiDrag is already mounted');
+      return;
+    }
     SortableJs.mount(new MultiDrag());
+    console.log('MultiDrag mounted successfully');
+  } catch (error) {
+    if (typeof error === 'string' && error.includes('more than once')) {
+      console.warn('MultiDrag is already mounted');
+      return;
+    }
+    console.error('Failed to mount MultiDrag:', error);
   }
-} catch (error) {
-  console.warn('Failed to mount MultiDrag:', error);
-}
+};
 
 export interface MediaListObject {
   alwaysShow: boolean;
@@ -409,395 +418,412 @@ const handleMediaSort = (
   eventType: string,
   list: MediaSection,
 ) => {
-  if (!evt || !evt.from || !evt.to) {
-    console.warn('Invalid sort event:', evt);
-    return;
-  }
+  try {
+    if (!evt || !evt.from || !evt.to) {
+      console.warn('Invalid sort event:', evt);
+      return;
+    }
 
-  // Check if sortable instances are valid
-  const fromSortable = SortableJs.get(evt.from);
-  const toSortable = SortableJs.get(evt.to);
+    // Check if sortable instances are valid
+    const fromSortable = SortableJs.get(evt.from);
+    const toSortable = SortableJs.get(evt.to);
 
-  if (!fromSortable || !toSortable) {
-    console.warn('Sortable instances not found:', { fromSortable, toSortable });
-    return;
-  }
+    if (!fromSortable || !toSortable) {
+      console.warn('Sortable instances not found:', {
+        fromSortable,
+        toSortable,
+      });
+      return;
+    }
 
-  console.group(`🔄 Media Sort Event: ${eventType} on ${list}`);
-  console.log('📋 Event data:', evt);
-  console.log('📍 Same list operation:', evt.from === evt.to);
+    console.group(`🔄 Media Sort Event: ${eventType} on ${list}`);
+    console.log('📋 Event data:', evt);
+    console.log('📍 Same list operation:', evt.from === evt.to);
 
-  const sameList = evt.from === evt.to;
-  const dynamicMedia = selectedDateObject.value?.dynamicMedia;
+    const sameList = evt.from === evt.to;
+    const dynamicMedia = selectedDateObject.value?.dynamicMedia;
 
-  const oldIndicies = evt.oldIndicies?.length
-    ? evt.oldIndicies
-    : [{ index: evt.oldIndex }];
-  const newIndicies = evt.newIndicies?.length
-    ? evt.newIndicies
-    : [{ index: evt.newIndex }];
+    const oldIndicies = evt.oldIndicies?.length
+      ? evt.oldIndicies
+      : [{ index: evt.oldIndex }];
+    const newIndicies = evt.newIndicies?.length
+      ? evt.newIndicies
+      : [{ index: evt.newIndex }];
 
-  console.log('📊 Index mapping:', {
-    newIndicies: newIndicies.map((i) => i.index),
-    oldIndicies: oldIndicies.map((i) => i.index),
-  });
+    console.log('📊 Index mapping:', {
+      newIndicies: newIndicies.map((i) => i.index),
+      oldIndicies: oldIndicies.map((i) => i.index),
+    });
 
-  if (!dynamicMedia || !Array.isArray(dynamicMedia)) {
-    console.warn('⚠️ No dynamic media found or not an array');
-    console.groupEnd();
-    return;
-  }
+    if (!dynamicMedia || !Array.isArray(dynamicMedia)) {
+      console.warn('⚠️ No dynamic media found or not an array');
+      console.groupEnd();
+      return;
+    }
 
-  switch (eventType) {
-    case 'ADD': {
-      console.log('➕ Processing ADD event');
-      if (mediaItemsBeingSorted.value.length) {
+    switch (eventType) {
+      case 'ADD': {
+        console.log('➕ Processing ADD event');
+        if (mediaItemsBeingSorted.value.length) {
+          console.log(
+            '📦 Items being sorted:',
+            mediaItemsBeingSorted.value.length,
+          );
+
+          if (oldIndicies.length && newIndicies.length) {
+            const firstElementIndex = dynamicMedia.findIndex(
+              (item) => item.section === list,
+            );
+            console.log(
+              '🎯 First element index for section:',
+              firstElementIndex,
+            );
+
+            // Sort by newIndex in descending order to avoid index shifting issues
+            const sortedItems = mediaItemsBeingSorted.value
+              .map((item, i) => ({
+                item,
+                newIndex: newIndicies[i]?.index,
+                oldIndex: oldIndicies[i]?.index,
+              }))
+              .filter(
+                ({ newIndex, oldIndex }) =>
+                  oldIndex !== undefined && newIndex !== undefined,
+              )
+              .sort((a, b) => (b.newIndex || 0) - (a.newIndex || 0));
+
+            console.log(
+              '📈 Sorted items for insertion:',
+              sortedItems.map((s) => ({
+                newIndex: s.newIndex,
+                oldIndex: s.oldIndex,
+                uniqueId: s.item.uniqueId,
+              })),
+            );
+
+            for (const {
+              item: mediaItemBeingSorted,
+              newIndex,
+            } of sortedItems) {
+              const insertIndex =
+                firstElementIndex >= 0
+                  ? firstElementIndex + (newIndex || 0)
+                  : newIndex;
+
+              console.log('🔄 Inserting item:', {
+                insertIndex,
+                originalSection: mediaItemBeingSorted.section,
+                section: list,
+                uniqueId: mediaItemBeingSorted.uniqueId,
+              });
+
+              const newItem = { ...mediaItemBeingSorted, section: list };
+              if (!newItem.sectionOriginal) {
+                newItem.sectionOriginal = mediaItemBeingSorted.section;
+              }
+              dynamicMedia.splice(insertIndex || 0, 0, newItem);
+            }
+          }
+        } else {
+          console.log('📭 No items being sorted');
+        }
+        break;
+      }
+
+      case 'END': {
+        console.log('🏁 Processing END event');
         console.log(
           '📦 Items being sorted:',
           mediaItemsBeingSorted.value.length,
         );
+        console.log('🎯 Target section:', list);
 
-        if (oldIndicies.length && newIndicies.length) {
-          const firstElementIndex = dynamicMedia.findIndex(
-            (item) => item.section === list,
-          );
-          console.log('🎯 First element index for section:', firstElementIndex);
+        if (sameList && mediaItemsBeingSorted.value.length > 0) {
+          console.log('🔄 Same list sorting operation');
 
-          // Sort by newIndex in descending order to avoid index shifting issues
-          const sortedItems = mediaItemsBeingSorted.value
-            .map((item, i) => ({
-              item,
-              newIndex: newIndicies[i]?.index,
-              oldIndex: oldIndicies[i]?.index,
-            }))
-            .filter(
-              ({ newIndex, oldIndex }) =>
-                oldIndex !== undefined && newIndex !== undefined,
-            )
-            .sort((a, b) => (b.newIndex || 0) - (a.newIndex || 0));
+          // Create a mapping of moves to execute
+          const moves = [];
+          for (let i = 0; i < oldIndicies.length; i++) {
+            const mediaItemBeingSorted = mediaItemsBeingSorted.value[i];
+            const evtOldIndex = oldIndicies[i]?.index;
+            const evtNewIndex = newIndicies[i]?.index;
+
+            if (
+              mediaItemBeingSorted &&
+              evtOldIndex !== undefined &&
+              evtNewIndex !== undefined
+            ) {
+              const originalPosition = dynamicMedia.findIndex(
+                (item) => item.uniqueId === mediaItemBeingSorted.uniqueId,
+              );
+
+              if (originalPosition >= 0) {
+                moves.push({
+                  evtNewIndex,
+                  evtOldIndex,
+                  item: mediaItemBeingSorted,
+                  originalPosition,
+                  // Calculate target position based on the drop position plus the item's offset
+                  targetPosition: originalPosition + evtNewIndex - evtOldIndex,
+                });
+              }
+            }
+          }
 
           console.log(
-            '📈 Sorted items for insertion:',
-            sortedItems.map((s) => ({
-              newIndex: s.newIndex,
-              oldIndex: s.oldIndex,
-              uniqueId: s.item.uniqueId,
+            '🎯 Planned moves:',
+            moves.map((m) => ({
+              from: m.originalPosition,
+              newIndex: m.evtNewIndex,
+              oldIndex: m.evtOldIndex,
+              to: Math.max(0, m.targetPosition),
+              uniqueId: m.item.uniqueId,
             })),
           );
 
-          for (const { item: mediaItemBeingSorted, newIndex } of sortedItems) {
-            const insertIndex =
-              firstElementIndex >= 0
-                ? firstElementIndex + (newIndex || 0)
-                : newIndex;
+          // Sort moves by original position (descending) to avoid index shifting during removal
+          moves.sort((a, b) => b.originalPosition - a.originalPosition);
 
-            console.log('🔄 Inserting item:', {
-              insertIndex,
-              originalSection: mediaItemBeingSorted.section,
-              section: list,
-              uniqueId: mediaItemBeingSorted.uniqueId,
+          // Remove all items first (in descending order to avoid index shifting)
+          const movedItems = [];
+          for (const move of moves) {
+            console.log('🔄 Removing item:', {
+              from: move.originalPosition,
+              uniqueId: move.item.uniqueId,
             });
 
-            const newItem = { ...mediaItemBeingSorted, section: list };
-            if (!newItem.sectionOriginal) {
-              newItem.sectionOriginal = mediaItemBeingSorted.section;
-            }
-            dynamicMedia.splice(insertIndex || 0, 0, newItem);
-          }
-        }
-      } else {
-        console.log('📭 No items being sorted');
-      }
-      break;
-    }
-
-    case 'END': {
-      console.log('🏁 Processing END event');
-      console.log('📦 Items being sorted:', mediaItemsBeingSorted.value.length);
-      console.log('🎯 Target section:', list);
-
-      if (sameList && mediaItemsBeingSorted.value.length > 0) {
-        console.log('🔄 Same list sorting operation');
-
-        // Create a mapping of moves to execute
-        const moves = [];
-        for (let i = 0; i < oldIndicies.length; i++) {
-          const mediaItemBeingSorted = mediaItemsBeingSorted.value[i];
-          const evtOldIndex = oldIndicies[i]?.index;
-          const evtNewIndex = newIndicies[i]?.index;
-
-          if (
-            mediaItemBeingSorted &&
-            evtOldIndex !== undefined &&
-            evtNewIndex !== undefined
-          ) {
-            const originalPosition = dynamicMedia.findIndex(
-              (item) => item.uniqueId === mediaItemBeingSorted.uniqueId,
-            );
-
-            if (originalPosition >= 0) {
-              moves.push({
-                evtNewIndex,
-                evtOldIndex,
-                item: mediaItemBeingSorted,
-                originalPosition,
-                // Calculate target position based on the drop position plus the item's offset
-                targetPosition: originalPosition + evtNewIndex - evtOldIndex,
+            const [movedItem] = dynamicMedia.splice(move.originalPosition, 1);
+            if (movedItem) {
+              movedItems.push({
+                evtNewIndex: move.evtNewIndex,
+                item: movedItem,
+                originalTargetPosition: move.targetPosition,
               });
             }
           }
-        }
 
-        console.log(
-          '🎯 Planned moves:',
-          moves.map((m) => ({
-            from: m.originalPosition,
-            newIndex: m.evtNewIndex,
-            oldIndex: m.evtOldIndex,
-            to: Math.max(0, m.targetPosition),
-            uniqueId: m.item.uniqueId,
-          })),
-        );
+          // Sort by the event new index to maintain the original drop order
+          movedItems.sort((a, b) => a.evtNewIndex - b.evtNewIndex);
 
-        // Sort moves by original position (descending) to avoid index shifting during removal
-        moves.sort((a, b) => b.originalPosition - a.originalPosition);
-
-        // Remove all items first (in descending order to avoid index shifting)
-        const movedItems = [];
-        for (const move of moves) {
-          console.log('🔄 Removing item:', {
-            from: move.originalPosition,
-            uniqueId: move.item.uniqueId,
-          });
-
-          const [movedItem] = dynamicMedia.splice(move.originalPosition, 1);
-          if (movedItem) {
-            movedItems.push({
-              evtNewIndex: move.evtNewIndex,
-              item: movedItem,
-              originalTargetPosition: move.targetPosition,
-            });
-          }
-        }
-
-        // Sort by the event new index to maintain the original drop order
-        movedItems.sort((a, b) => a.evtNewIndex - b.evtNewIndex);
-
-        // Calculate the base insertion position (where the first item should go)
-        const firstItem = movedItems[0];
-        if (firstItem) {
-          const baseInsertionPosition = Math.max(
-            0,
-            firstItem.originalTargetPosition,
-          );
-
-          console.log('📍 Base insertion position:', baseInsertionPosition);
-
-          // Insert items consecutively starting from the base position
-          for (let i = 0; i < movedItems.length; i++) {
-            const movedItem = movedItems[i];
-            if (!movedItem) continue;
-            const { item } = movedItem;
-            const insertPosition = baseInsertionPosition + i;
-
-            console.log('🔄 Inserting moved item:', {
-              at: insertPosition,
-              itemIndex: i,
-              uniqueId: item.uniqueId,
-            });
-
-            dynamicMedia.splice(insertPosition, 0, item);
-          }
-        }
-
-        console.log('✅ Same list sorting completed');
-      } else if (!sameList) {
-        console.log(
-          '🔀 Cross-list operation - items should be handled by ADD/REMOVE',
-        );
-      }
-
-      console.log('🧹 Clearing items being sorted');
-      mediaItemsBeingSorted.value = [];
-      break;
-    }
-    case 'REMOVE': {
-      console.log('➖ Processing REMOVE event');
-      console.log('📦 Items to remove:', mediaItemsBeingSorted.value.length);
-      console.log('🎯 From section:', list);
-
-      if (!sameList) {
-        const removedItems = [];
-        for (const mediaItemBeingSorted of mediaItemsBeingSorted.value) {
-          const indexToRemove = dynamicMedia.findIndex(
-            (item) =>
-              item.uniqueId === mediaItemBeingSorted?.uniqueId &&
-              item.section === list,
-          );
-
-          if (indexToRemove >= 0) {
-            console.log('🗑️ Removing item:', {
-              index: indexToRemove,
-              section: list,
-              uniqueId: mediaItemBeingSorted.uniqueId,
-            });
-            dynamicMedia.splice(indexToRemove, 1);
-            removedItems.push(mediaItemBeingSorted.uniqueId);
-          } else {
-            console.warn(
-              '⚠️ Item not found for removal:',
-              mediaItemBeingSorted.uniqueId,
+          // Calculate the base insertion position (where the first item should go)
+          const firstItem = movedItems[0];
+          if (firstItem) {
+            const baseInsertionPosition = Math.max(
+              0,
+              firstItem.originalTargetPosition,
             );
+
+            console.log('📍 Base insertion position:', baseInsertionPosition);
+
+            // Insert items consecutively starting from the base position
+            for (let i = 0; i < movedItems.length; i++) {
+              const movedItem = movedItems[i];
+              if (!movedItem) continue;
+              const { item } = movedItem;
+              const insertPosition = baseInsertionPosition + i;
+
+              console.log('🔄 Inserting moved item:', {
+                at: insertPosition,
+                itemIndex: i,
+                uniqueId: item.uniqueId,
+              });
+
+              dynamicMedia.splice(insertPosition, 0, item);
+            }
           }
+
+          console.log('✅ Same list sorting completed');
+        } else if (!sameList) {
+          console.log(
+            '🔀 Cross-list operation - items should be handled by ADD/REMOVE',
+          );
         }
-        console.log('✅ Removed items:', removedItems);
+
+        console.log('🧹 Clearing items being sorted');
         mediaItemsBeingSorted.value = [];
-      } else {
-        console.log('ℹ️ Same list - skipping remove (handled by END)');
+        break;
       }
-      break;
-    }
+      case 'REMOVE': {
+        console.log('➖ Processing REMOVE event');
+        console.log('📦 Items to remove:', mediaItemsBeingSorted.value.length);
+        console.log('🎯 From section:', list);
 
-    case 'SELECT': {
-      console.log('✅ Processing SELECT event');
+        if (!sameList) {
+          const removedItems = [];
+          for (const mediaItemBeingSorted of mediaItemsBeingSorted.value) {
+            const indexToRemove = dynamicMedia.findIndex(
+              (item) =>
+                item.uniqueId === mediaItemBeingSorted?.uniqueId &&
+                item.section === list,
+            );
 
-      console.log(
-        '🎯 Validating the origin section',
-        currentlyGrabbingFromSection.value,
-        list,
-      );
+            if (indexToRemove >= 0) {
+              console.log('🗑️ Removing item:', {
+                index: indexToRemove,
+                section: list,
+                uniqueId: mediaItemBeingSorted.uniqueId,
+              });
+              dynamicMedia.splice(indexToRemove, 1);
+              removedItems.push(mediaItemBeingSorted.uniqueId);
+            } else {
+              console.warn(
+                '⚠️ Item not found for removal:',
+                mediaItemBeingSorted.uniqueId,
+              );
+            }
+          }
+          console.log('✅ Removed items:', removedItems);
+          mediaItemsBeingSorted.value = [];
+        } else {
+          console.log('ℹ️ Same list - skipping remove (handled by END)');
+        }
+        break;
+      }
 
-      if (
-        !currentlyGrabbingFromSection.value ||
-        currentlyGrabbingFromSection.value !== list
-      ) {
-        if (currentlyGrabbingFromSection.value) {
-          console.warn(
-            '⚠️ Origin section does not match the current section:',
-            currentlyGrabbingFromSection.value,
-            'vs',
-            list,
+      case 'SELECT': {
+        console.log('✅ Processing SELECT event');
+
+        console.log(
+          '🎯 Validating the origin section',
+          currentlyGrabbingFromSection.value,
+          list,
+        );
+
+        if (
+          !currentlyGrabbingFromSection.value ||
+          currentlyGrabbingFromSection.value !== list
+        ) {
+          if (currentlyGrabbingFromSection.value) {
+            console.warn(
+              '⚠️ Origin section does not match the current section:',
+              currentlyGrabbingFromSection.value,
+              'vs',
+              list,
+            );
+
+            // Safer deselection with null checks
+            try {
+              const allSortableElements =
+                document.querySelectorAll('.sortable-media');
+              allSortableElements.forEach((sortableElement) => {
+                const sortableInstance = SortableJs.get(
+                  sortableElement as HTMLElement,
+                );
+                if (sortableInstance && sortableInstance.options) {
+                  const selectedItems =
+                    sortableElement.querySelectorAll('.sortable-selected');
+                  selectedItems.forEach((selectedItem) => {
+                    const itemSection = (
+                      selectedItem.closest('.media-section') as HTMLElement
+                    )?.classList[1];
+                    if (itemSection && itemSection !== list) {
+                      try {
+                        SortableJs.utils.deselect(selectedItem as HTMLElement);
+                        selectedItem.classList.remove('sortable-selected');
+                        console.log(
+                          '🚫 Deselected item from different section:',
+                          itemSection,
+                        );
+                      } catch (deselectError) {
+                        console.warn('Error deselecting item:', deselectError);
+                        // Fallback: just remove the class
+                        selectedItem.classList.remove('sortable-selected');
+                      }
+                    }
+                  });
+                }
+              });
+            } catch (error) {
+              console.warn('Error during deselection:', error);
+            }
+
+            mediaItemsBeingSorted.value = [];
+          }
+
+          currentlyGrabbingFromSection.value = list;
+        }
+        console.log('📦 Items selected:', mediaItemsBeingSorted.value.length);
+        console.log('🎯 From section:', list);
+
+        if (mediaItemsBeingSorted.value.length === 0) {
+          console.warn('⚠️ No items selected for sorting');
+        } else {
+          console.log(
+            '📦 Selected items:',
+            mediaItemsBeingSorted.value.map((item) => ({
+              section: item.section,
+              uniqueId: item.uniqueId,
+            })),
+          );
+        }
+        break;
+      }
+      case 'START': {
+        console.log('🚀 Processing START event');
+        console.log('🎯 Source section:', list);
+
+        mediaItemsBeingSorted.value = [];
+
+        if (evt.oldIndicies?.length) {
+          console.log(
+            '🔢 Processing multiple indices:',
+            evt.oldIndicies.map((i) => i.index),
           );
 
-          // Safer deselection with null checks
-          try {
-            const allSortableElements =
-              document.querySelectorAll('.sortable-media');
-            allSortableElements.forEach((sortableElement) => {
-              const sortableInstance = SortableJs.get(
-                sortableElement as HTMLElement,
-              );
-              if (sortableInstance && sortableInstance.options) {
-                const selectedItems =
-                  sortableElement.querySelectorAll('.sortable-selected');
-                selectedItems.forEach((selectedItem) => {
-                  const itemSection = (
-                    selectedItem.closest('.media-section') as HTMLElement
-                  )?.classList[1];
-                  if (itemSection && itemSection !== list) {
-                    try {
-                      SortableJs.utils.deselect(selectedItem as HTMLElement);
-                      selectedItem.classList.remove('sortable-selected');
-                      console.log(
-                        '🚫 Deselected item from different section:',
-                        itemSection,
-                      );
-                    } catch (deselectError) {
-                      console.warn('Error deselecting item:', deselectError);
-                      // Fallback: just remove the class
-                      selectedItem.classList.remove('sortable-selected');
-                    }
-                  }
-                });
-              }
-            });
-          } catch (error) {
-            console.warn('Error during deselection:', error);
-          }
+          // Don't reverse here - maintain original order
+          for (const oldIndex of evt.oldIndicies) {
+            const itemBeingSorted =
+              getVisibleMediaForSection.value[list]?.[oldIndex.index];
 
-          mediaItemsBeingSorted.value = [];
+            console.log('🎯 Processing index:', {
+              found: !!itemBeingSorted,
+              index: oldIndex.index,
+              section: itemBeingSorted?.section,
+              uniqueId: itemBeingSorted?.uniqueId,
+            });
+
+            if (itemBeingSorted) {
+              mediaItemsBeingSorted.value.push(itemBeingSorted);
+            }
+          }
+        } else if (
+          evt.oldIndex !== null &&
+          evt.oldIndex !== undefined &&
+          evt.oldIndex > -1
+        ) {
+          console.log('🔢 Processing single index:', evt.oldIndex);
+
+          const itemBeingSorted =
+            getVisibleMediaForSection.value[list]?.[evt.oldIndex];
+          if (itemBeingSorted) {
+            console.log('🎯 Found item:', itemBeingSorted.uniqueId);
+            mediaItemsBeingSorted.value.push(itemBeingSorted);
+          } else {
+            console.warn('⚠️ No item found at index:', evt.oldIndex);
+          }
         }
 
-        currentlyGrabbingFromSection.value = list;
-      }
-      console.log('📦 Items selected:', mediaItemsBeingSorted.value.length);
-      console.log('🎯 From section:', list);
-
-      if (mediaItemsBeingSorted.value.length === 0) {
-        console.warn('⚠️ No items selected for sorting');
-      } else {
         console.log(
-          '📦 Selected items:',
+          '📦 Items selected for sorting:',
           mediaItemsBeingSorted.value.map((item) => ({
             section: item.section,
             uniqueId: item.uniqueId,
           })),
         );
-      }
-      break;
-    }
-    case 'START': {
-      console.log('🚀 Processing START event');
-      console.log('🎯 Source section:', list);
-
-      mediaItemsBeingSorted.value = [];
-
-      if (evt.oldIndicies?.length) {
-        console.log(
-          '🔢 Processing multiple indices:',
-          evt.oldIndicies.map((i) => i.index),
-        );
-
-        // Don't reverse here - maintain original order
-        for (const oldIndex of evt.oldIndicies) {
-          const itemBeingSorted =
-            getVisibleMediaForSection.value[list]?.[oldIndex.index];
-
-          console.log('🎯 Processing index:', {
-            found: !!itemBeingSorted,
-            index: oldIndex.index,
-            section: itemBeingSorted?.section,
-            uniqueId: itemBeingSorted?.uniqueId,
-          });
-
-          if (itemBeingSorted) {
-            mediaItemsBeingSorted.value.push(itemBeingSorted);
-          }
-        }
-      } else if (
-        evt.oldIndex !== null &&
-        evt.oldIndex !== undefined &&
-        evt.oldIndex > -1
-      ) {
-        console.log('🔢 Processing single index:', evt.oldIndex);
-
-        const itemBeingSorted =
-          getVisibleMediaForSection.value[list]?.[evt.oldIndex];
-        if (itemBeingSorted) {
-          console.log('🎯 Found item:', itemBeingSorted.uniqueId);
-          mediaItemsBeingSorted.value.push(itemBeingSorted);
-        } else {
-          console.warn('⚠️ No item found at index:', evt.oldIndex);
-        }
+        break;
       }
 
-      console.log(
-        '📦 Items selected for sorting:',
-        mediaItemsBeingSorted.value.map((item) => ({
-          section: item.section,
-          uniqueId: item.uniqueId,
-        })),
-      );
-      break;
+      default:
+        console.log(`ℹ️ Unhandled event type: ${eventType}`);
+        break;
     }
 
-    default:
-      console.log(`ℹ️ Unhandled event type: ${eventType}`);
-      break;
+    console.log('📊 Final dynamic media count:', dynamicMedia.length);
+    console.groupEnd();
+  } catch (error) {
+    console.error('Error handling media sort:', error);
+    errorCatcher(error);
   }
-
-  console.log('📊 Final dynamic media count:', dynamicMedia.length);
-  console.groupEnd();
 };
 
 const isSongButton = computed(
@@ -832,4 +858,20 @@ onBeforeUnmount(() => {
   // });
   // sortableInstances.value.clear();
 });
+
+const sortableOptions = {
+  animation: 150,
+  avoidImplicitDeselect: false,
+  fallbackOnBody: true,
+  group: 'mediaLists',
+  multiDrag: true,
+  multiDragKey: 'ctrl',
+  onError: (evt: unknown) => {
+    console.error('Sortable error:', evt);
+    mediaItemsBeingSorted.value = [];
+    currentlyGrabbingFromSection.value = undefined;
+  },
+  selectedClass: 'sortable-selected',
+  swapThreshold: 0.65,
+};
 </script>
