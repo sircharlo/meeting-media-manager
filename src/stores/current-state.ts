@@ -30,6 +30,7 @@ export interface Songbook {
 
 interface Store {
   currentCongregation: string;
+  currentlyGrabbingFromSection: MediaSection | undefined;
   currentSongRemainingTime: string;
   downloadedFiles: Partial<
     Record<string, DownloadedFile | Promise<DownloadedFile>>
@@ -37,7 +38,7 @@ interface Store {
   downloadProgress: DownloadProgressItems;
   extractedFiles: Partial<Record<string, string>>;
   ffmpegPath: string;
-  mediaItemBeingSorted: DynamicMediaObject | undefined;
+  mediaItemsBeingSorted: DynamicMediaObject[];
   mediaPlayingAction: '' | 'pause' | 'play' | 'website';
   mediaPlayingCurrentPosition: number;
   mediaPlayingPanzoom: Partial<{ scale: number; x: number; y: number }>;
@@ -355,12 +356,13 @@ export const useCurrentStateStore = defineStore('current-state', {
   state: (): Store => {
     return {
       currentCongregation: '',
+      currentlyGrabbingFromSection: undefined,
       currentSongRemainingTime: '..:..',
       downloadedFiles: {},
       downloadProgress: {},
       extractedFiles: {},
       ffmpegPath: '',
-      mediaItemBeingSorted: undefined,
+      mediaItemsBeingSorted: [],
       mediaPlayingAction: '',
       mediaPlayingCurrentPosition: 0,
       mediaPlayingPanzoom: { scale: 1, x: 0, y: 0 },
