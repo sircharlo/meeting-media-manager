@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-import { execSync } from 'child_process';
-import { existsSync } from 'fs';
+/* eslint-disable @typescript-eslint/no-require-imports */
+const { execSync } = require('child_process');
+const { existsSync } = require('fs');
 
 function main() {
   // Skip in CI environments or if no .git directory
