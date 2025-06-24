@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "25.6.1-beta.4",
+  "version": "25.6.1-beta.5",
   "description": "A cross platform app to download and present media for congregation meetings of Jehovah’s Witnesses.",
   "keywords": [
     "M³",
@@ -40,7 +40,7 @@
     "@sentry/vue": "8.55.0",
     "@vueuse/core": "^13.4.0",
     "@vueuse/router": "^13.4.0",
-    "better-sqlite3": "^11.10.0",
+    "better-sqlite3": "^12.0.0",
     "cheerio": "^1.1.0",
     "chokidar": "^4.0.3",
     "countries-and-timezones": "^3.8.0",
@@ -69,7 +69,7 @@
     "sortablejs-vue3": "^1.2.11",
     "upath": "^2.0.1",
     "vue": "^3.5.17",
-    "vue-i18n": "^11.1.6",
+    "vue-i18n": "^11.1.7",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
@@ -103,7 +103,7 @@
     "@vue/eslint-config-typescript": "^14.5.1",
     "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.21",
-    "electron": "^36.5.0",
+    "electron": "^37.0.0",
     "electron-builder": "26.0.16",
     "eslint": "^9.29.0",
     "eslint-plugin-perfectionist": "^4.15.0",
@@ -135,7 +135,7 @@
     "*.{js,ts,cjs,mjs,mts,vue}": "eslint --fix"
   },
   "engines": {
-    "node": "^22.15.1",
+    "node": "^22.16.0",
     "yarn": "^4.7.0"
   },
   "os": [
