@@ -32,6 +32,8 @@ updates:
       - dependency-name: 'typescript'
         update-types:
           ['version-update:semver-major', 'version-update:semver-minor']
+      - dependency-name: 'electron-builder'
+        update-types: ['version-update:semver-patch']
     groups:
       vueuse:
         applies-to: version-updates
