@@ -135,7 +135,7 @@
     "*.{js,ts,cjs,mjs,mts,vue}": "eslint --fix"
   },
   "engines": {
-    "node": "^22.15.1",
+    "node": "^22.16.0",
     "yarn": "^4.7.0"
   },
   "os": [
