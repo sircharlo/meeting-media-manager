@@ -59,7 +59,7 @@
     "p-queue": "^8.1.0",
     "pdfjs-dist": "^5.3.31",
     "pinia": "^3.0.3",
-    "pinia-plugin-persistedstate": "^4.3.0",
+    "pinia-plugin-persistedstate": "^4.4.1",
     "pinia-shared-state": "^1.0.1",
     "pretty-bytes": "^7.0.0",
     "quasar": "^2.18.1",
