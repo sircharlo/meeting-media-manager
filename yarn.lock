@@ -10389,7 +10389,7 @@ __metadata:
     lodash-es: "npm:^4.17.21"
     mime: "npm:^4.0.7"
     msw: "npm:^2.10.2"
-    music-metadata: "npm:^11.4.0"
+    music-metadata: "npm:^11.6.0"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.1.0"
     pdfjs-dist: "npm:^5.3.31"
@@ -10908,9 +10908,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^11.4.0":
-  version: 11.4.0
-  resolution: "music-metadata@npm:11.4.0"
+"music-metadata@npm:^11.6.0":
+  version: 11.6.0
+  resolution: "music-metadata@npm:11.6.0"
   dependencies:
     "@tokenizer/token": "npm:^0.3.0"
     content-type: "npm:^1.0.5"
@@ -10918,9 +10918,9 @@ __metadata:
     file-type: "npm:^21.0.0"
     media-typer: "npm:^1.1.0"
     strtok3: "npm:^10.3.1"
-    token-types: "npm:^6.0.0"
+    token-types: "npm:^6.0.3"
     uint8array-extras: "npm:^1.4.0"
-  checksum: 10c0/6b38c2f8c546a42ec3b4d8c392f978a0e5615290979babfa2901229d2557c61de16580bdebe979b9712bafb2dfe107505100df346dd17c660488c0de76fb02e6
+  checksum: 10c0/1f0d2a07bbf8700a316e63dec02fec9b4e32331cb4caacdace4c3d3a7df23c646856d1a3702362ea9e7dbfe1392330e13b4a6d258d320c4ad5a189d4cb9bf9ff
   languageName: node
   linkType: hard
 
@@ -14502,6 +14502,16 @@ __metadata:
     "@tokenizer/token": "npm:^0.3.0"
     ieee754: "npm:^1.2.1"
   checksum: 10c0/5bf5eba51d63f71f301659ff70ce10ca43e7038364883437d8b4541cc98377e3e56109b11720e25fe51047014efaccdff90eaf6de9a78270483578814b838ab9
+  languageName: node
+  linkType: hard
+
+"token-types@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "token-types@npm:6.0.3"
+  dependencies:
+    "@tokenizer/token": "npm:^0.3.0"
+    ieee754: "npm:^1.2.1"
+  checksum: 10c0/9fbd60754329cef6a793a81e62cb81880a52619b05c3ee96bb8b0f698e8f515c0e3d3159fc3b9cdec55271b6b839cba63cd6d387be4b4f63c1e4f222eb34a858
   languageName: node
   linkType: hard
 
