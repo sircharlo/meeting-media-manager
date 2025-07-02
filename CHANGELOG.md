@@ -4,6 +4,25 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v25.7.0
+
+### ✨ New Features
+
+- No new features for this release!
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Visual improvements**: Added slight delay to navigationo drawer in mini state and updated the stream-now icon.
+- 🛠️ **New stream icon**: Updated the stream icon.
+- 🛠️ **OBS reconnection feedback**: Enhanced visual cues when reconnecting to OBS Studio.
+
+### 🔧 Improvements to Codebase
+
+- 🔧 **Electron API initialization checks**: Added checks in `MainLayout` and `MediaPlayerPage` to prevent issues with uninitialized Electron APIs.
+- 🔧 **Vitest config update**: Consolidated Vitest configuration into `vitest.config.mts` and removed deprecated `vitest.workspace.ts`.
+- 🔧 **Electron builder management**: Downgraded `electron-builder` to avoid issues, and blocked automatic patch updates.
+- 🔧 **Post-install script refactor**: Moved post-install logic to `build/`, tweaked for Husky compatibility, and updated paths in `.yarnrc.yml`.
+
 ## 25.6.0
 
 ### ✨ New Features
