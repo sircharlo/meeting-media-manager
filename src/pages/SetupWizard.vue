@@ -596,6 +596,8 @@ const jwStore = useJwStore();
 const { updateYeartext } = jwStore;
 const router = useRouter();
 
+const { getLocales } = window.electronApi;
+
 if (currentSettings.value) {
   currentSettings.value.autoStartMusic = true;
 }
@@ -632,7 +634,7 @@ watchImmediate(
 
 const loadSystemLocale = async () => {
   try {
-    const systemLocales = await window.electronApi.getLocales();
+    const systemLocales = await getLocales();
     const availableLocales = localeOptions.map((l) =>
       camelToKebabCase(l.value),
     );

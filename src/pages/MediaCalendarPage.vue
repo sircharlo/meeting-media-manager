@@ -224,6 +224,18 @@ const { getDatedAdditionalMediaDirectory } = currentState;
 const totalFiles = ref(0);
 const currentFile = ref(0);
 
+const {
+  convertPdfToImages,
+  decompress,
+  executeQuery,
+  fs,
+  getLocalPathFromFileObject,
+  inferExtension,
+  path,
+  pathToFileURL,
+  readdir,
+} = window.electronApi;
+
 const mediaLists = computed(() => {
   const mwMeetingDay = isMwMeetingDay(selectedDateObject.value?.date);
   const weMeetingDay = isWeMeetingDay(selectedDateObject.value?.date);
@@ -626,9 +638,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
   totalFiles.value = files.length;
   if (!Array.isArray(files)) files = Array.from(files);
   if (files.length > 1) {
-    const jwPubFile = files.find((f) =>
-      isJwpub(window.electronApi.getLocalPathFromFileObject(f)),
-    );
+    const jwPubFile = files.find((f) => isJwpub(getLocalPathFromFileObject(f)));
     if (jwPubFile) {
       files = [jwPubFile];
       createTemporaryNotification({
@@ -636,13 +646,11 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         message:
           t('processing') +
           ' ' +
-          window.electronApi.path.basename(
-            window.electronApi.getLocalPathFromFileObject(files[0]),
-          ),
+          path.basename(getLocalPathFromFileObject(files[0])),
       });
     }
     const archiveFile = files.find((f) =>
-      isArchive(window.electronApi.getLocalPathFromFileObject(f)),
+      isArchive(getLocalPathFromFileObject(f)),
     );
     if (archiveFile) {
       files = [archiveFile];
@@ -651,25 +659,21 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         message:
           t('processing') +
           ' ' +
-          window.electronApi.path.basename(
-            window.electronApi.getLocalPathFromFileObject(files[0]),
-          ),
+          path.basename(getLocalPathFromFileObject(files[0])),
       });
     }
   }
   for (const file of files) {
-    let filepath = window.electronApi.getLocalPathFromFileObject(file);
+    let filepath = getLocalPathFromFileObject(file);
     try {
       if (!filepath) continue;
       // Check if file is remote URL; if so, download it
       if (isRemoteFile(file)) {
-        const baseFileName = window.electronApi.path.basename(
-          new URL(filepath).pathname,
-        );
+        const baseFileName = path.basename(new URL(filepath).pathname);
         filepath = (
           await downloadFileIfNeeded({
             dir: await getTempPath(),
-            filename: await window.electronApi.inferExtension(
+            filename: await inferExtension(
               baseFileName,
               file instanceof File ? file.type : undefined,
             ),
@@ -680,21 +684,15 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         const [preamble, data] = filepath.split(';base64,');
         const ext = preamble?.split('/')[1];
         const tempFilename = uuid() + '.' + ext;
-        const tempFilepath = window.electronApi.path.join(
-          await getTempPath(),
-          tempFilename,
-        );
-        await window.electronApi.fs.writeFile(
-          tempFilepath,
-          Buffer.from(data ?? '', 'base64'),
-        );
+        const tempFilepath = path.join(await getTempPath(), tempFilename);
+        await fs.writeFile(tempFilepath, Buffer.from(data ?? '', 'base64'));
         filepath = tempFilepath;
       }
       filepath = await convertImageIfNeeded(filepath);
       if (isImage(filepath)) {
         await copyToDatedAdditionalMedia(filepath, sectionToAddTo.value, true);
       } else if (isVideo(filepath) || isAudio(filepath)) {
-        const detectedPubMediaInfo = window.electronApi.path
+        const detectedPubMediaInfo = path
           .parse(filepath)
           .name.split('_')
           .filter((item) => !/^r\d+P$/.test(item));
@@ -717,16 +715,15 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         );
         if (matchingMissingItem) {
           const metadata = await getMetadataFromMediaPath(destPath);
-          matchingMissingItem.fileUrl =
-            window.electronApi.pathToFileURL(destPath);
+          matchingMissingItem.fileUrl = pathToFileURL(destPath);
           matchingMissingItem.duration = metadata.format.duration || 0;
           matchingMissingItem.title =
-            metadata.common.title || window.electronApi.path.basename(destPath);
+            metadata.common.title || path.basename(destPath);
           matchingMissingItem.isVideo = isVideo(filepath);
           matchingMissingItem.isAudio = isAudio(filepath);
         }
       } else if (isPdf(filepath)) {
-        const convertedImages = await window.electronApi.convertPdfToImages(
+        const convertedImages = await convertPdfToImages(
           filepath,
           await getTempPath(),
         );
@@ -734,35 +731,31 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         files.push(...convertedImages);
       } else if (isJwpub(filepath)) {
         // First, only decompress the db in memory to get the publication info and derive the destination path
-        const tempJwpubContents = await window.electronApi.decompress(filepath);
+        const tempJwpubContents = await decompress(filepath);
         const tempContentFile = tempJwpubContents.find((tempJwpubContent) =>
           tempJwpubContent.path.endsWith('contents'),
         );
         if (!tempContentFile) return;
         const tempDir = await getTempPath();
         if (!tempDir) return;
-        await window.electronApi.fs.ensureDir(tempDir);
-        const tempFilePath = window.electronApi.path.join(
+        await fs.ensureDir(tempDir);
+        const tempFilePath = path.join(
           tempDir,
-          window.electronApi.path.basename(filepath) + '-contents',
+          path.basename(filepath) + '-contents',
         );
-        await window.electronApi.fs.writeFile(
-          tempFilePath,
-          tempContentFile.data,
-        );
-        const tempJwpubFileContents =
-          await window.electronApi.decompress(tempFilePath);
+        await fs.writeFile(tempFilePath, tempContentFile.data);
+        const tempJwpubFileContents = await decompress(tempFilePath);
         const tempDbFile = tempJwpubFileContents.find((tempJwpubFileContent) =>
           tempJwpubFileContent.path.endsWith('.db'),
         );
         if (!tempDbFile) return;
-        const tempDbFilePath = window.electronApi.path.join(
+        const tempDbFilePath = path.join(
           await getTempPath(),
-          window.electronApi.path.basename(filepath) + '.db',
+          path.basename(filepath) + '.db',
         );
-        await window.electronApi.fs.writeFile(tempDbFilePath, tempDbFile.data);
-        window.electronApi.fs.remove(tempFilePath);
-        if (!(await window.electronApi.fs.exists(tempDbFilePath))) return;
+        await fs.writeFile(tempDbFilePath, tempDbFile.data);
+        fs.remove(tempFilePath);
+        if (!(await fs.exists(tempDbFilePath))) return;
         const publication = getPublicationInfoFromDb(tempDbFilePath);
         const publicationDirectory = await getPublicationDirectory(
           publication,
@@ -773,12 +766,9 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         const db = await findDb(unzipDir);
         if (!db) return;
         jwpubImportDb.value = db;
-        if (
-          window.electronApi.executeQuery(db, 'SELECT * FROM Multimedia;')
-            .length === 0
-        ) {
+        if (executeQuery(db, 'SELECT * FROM Multimedia;').length === 0) {
           createTemporaryNotification({
-            caption: window.electronApi.path.basename(filepath),
+            caption: path.basename(filepath),
             icon: 'mmm-jwpub',
             message: t('jwpubNoMultimedia'),
             type: 'warning',
@@ -786,18 +776,17 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
           jwpubImportDb.value = '';
         } else {
           const documentMultimediaTableExists =
-            window.electronApi.executeQuery<TableItem>(
+            executeQuery<TableItem>(
               db,
               'PRAGMA table_info(DocumentMultimedia);',
             ).length > 0;
           const mmTable = documentMultimediaTableExists
             ? 'DocumentMultimedia'
             : 'Multimedia';
-          jwpubImportDocuments.value =
-            window.electronApi.executeQuery<DocumentItem>(
-              db,
-              `SELECT DISTINCT Document.DocumentId, Title FROM Document JOIN ${mmTable} ON Document.DocumentId = ${mmTable}.DocumentId;`,
-            );
+          jwpubImportDocuments.value = executeQuery<DocumentItem>(
+            db,
+            `SELECT DISTINCT Document.DocumentId, Title FROM Document JOIN ${mmTable} ON Document.DocumentId = ${mmTable}.DocumentId;`,
+          );
           if (
             jwpubImportDocuments.value.length === 1 &&
             jwpubImportDocuments.value[0]
@@ -832,27 +821,25 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             m.customDuration && (m.customDuration.max || m.customDuration.min),
         );
       } else if (isArchive(filepath)) {
-        const unzipDirectory = window.electronApi.path.join(
+        const unzipDirectory = path.join(
           await getTempPath(),
-          window.electronApi.path.basename(filepath),
+          path.basename(filepath),
         );
-        await window.electronApi.fs.remove(unzipDirectory);
+        await fs.remove(unzipDirectory);
         await window.electronApi
           .decompress(filepath, unzipDirectory)
           .catch((error) => {
             throw error;
           });
-        const files = await window.electronApi.readdir(unzipDirectory);
+        const files = await readdir(unzipDirectory);
         const filePaths = files.map((file) =>
-          window.electronApi.path.join(unzipDirectory, file.name),
+          path.join(unzipDirectory, file.name),
         );
         await addToFiles(filePaths);
-        await window.electronApi.fs.remove(unzipDirectory);
+        await fs.remove(unzipDirectory);
       } else {
         createTemporaryNotification({
-          caption: filepath
-            ? window.electronApi.path.basename(filepath)
-            : filepath,
+          caption: filepath ? path.basename(filepath) : filepath,
           icon: 'mmm-local-media',
           message: t('filetypeNotSupported'),
           type: 'negative',
@@ -860,9 +847,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
       }
     } catch (error) {
       createTemporaryNotification({
-        caption: filepath
-          ? window.electronApi.path.basename(filepath)
-          : filepath,
+        caption: filepath ? path.basename(filepath) : filepath,
         icon: 'mmm-error',
         message: t('fileProcessError'),
         type: 'negative',
@@ -871,7 +856,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
     }
     currentFile.value++;
   }
-  if (!isJwpub(window.electronApi.getLocalPathFromFileObject(files[0])))
+  if (!isJwpub(getLocalPathFromFileObject(files[0])))
     showFileImportDialog.value = false;
 };
 
@@ -929,14 +914,13 @@ const dropEnd = (event: DragEvent) => {
         event.dataTransfer.files,
       ).sort((a, b) =>
         SORTER.compare(
-          window.electronApi.getLocalPathFromFileObject(a),
-          window.electronApi.getLocalPathFromFileObject(b),
+          getLocalPathFromFileObject(a),
+          getLocalPathFromFileObject(b),
         ),
       );
       const noLocalDroppedFiles =
-        droppedStuff.filter((file) =>
-          window.electronApi.getLocalPathFromFileObject(file),
-        ).length === 0;
+        droppedStuff.filter((file) => getLocalPathFromFileObject(file))
+          .length === 0;
       if (noLocalDroppedFiles && droppedStuff.length > 0) {
         const html = event.dataTransfer.getData('text/html');
         const sanitizedHtml = DOMPurify.sanitize(html);

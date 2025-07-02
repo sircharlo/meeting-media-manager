@@ -797,11 +797,12 @@ const mediaEditTitleDialog = ref(false);
 const mediaTitle = ref(props.media.title);
 const initialMediaTitle = ref(mediaTitle.value);
 
+const { fileUrlToPath, fs, path } = window.electronApi;
+
 const displayMediaTitle = computed(() => {
   return (
     props.media.title ||
-    (props.media.fileUrl &&
-      window.electronApi.path.basename(props.media.fileUrl)) ||
+    (props.media.fileUrl && path.basename(props.media.fileUrl)) ||
     props.media.extractCaption ||
     ''
   );
@@ -884,16 +885,14 @@ const customDurationMaxUserInput = ref(
 
 const getBasename = (fileUrl: string) => {
   if (!fileUrl) return '';
-  return window.electronApi.path.basename(fileUrl);
+  return path.basename(fileUrl);
 };
 
 const fileIsLocal = () => {
-  const filePath = window.electronApi.fileUrlToPath(props.media.fileUrl);
-  const fileExists = window.electronApi.fs.pathExistsSync(filePath);
+  const filePath = fileUrlToPath(props.media.fileUrl);
+  const fileExists = fs.pathExistsSync(filePath);
   const remoteSizeKnown = props.media.filesize !== undefined;
-  const localSize = fileExists
-    ? window.electronApi.fs.statSync(filePath).size
-    : 0;
+  const localSize = fileExists ? fs.statSync(filePath).size : 0;
 
   if (!fileExists) return false;
   if (!remoteSizeKnown) return true;
@@ -970,8 +969,8 @@ async function findThumbnailUrl() {
   let thumbnailRetryCount = 0;
 
   const runThumbnailCheck = async () => {
-    const filePath = window.electronApi.fileUrlToPath(props.media.fileUrl);
-    const fileExists = await window.electronApi.fs.pathExists(filePath);
+    const filePath = fileUrlToPath(props.media.fileUrl);
+    const fileExists = await fs.pathExists(filePath);
 
     if (!fileExists) {
       if (fileRetryCount < 30) {

@@ -27,7 +27,7 @@ import {
   watchFolder,
 } from 'main/fs';
 import { getAllScreens, setScreenPreferences } from 'main/screen';
-import { setUrlVariables, shouldQuit } from 'main/session';
+import { setElectronUrlVariables, shouldQuit } from 'main/session';
 import {
   registerShortcut,
   unregisterAllShortcuts,
@@ -85,8 +85,8 @@ handleIpcSend('askForMediaAccess', askForMediaAccess);
 
 handleIpcSend('checkForUpdates', () => triggerUpdateCheck());
 
-handleIpcSend('setUrlVariables', (_e, variables: string) => {
-  setUrlVariables(JSON.parse(variables));
+handleIpcSend('setElectronUrlVariables', (_e, variables: string) => {
+  setElectronUrlVariables(JSON.parse(variables));
 });
 
 handleIpcSend('setScreenPreferences', (_e, prefs: string) => {

@@ -39,6 +39,8 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
+const { fs } = window.electronApi;
+
 // Props
 const props = defineProps<{
   cacheFiles: CacheFile[];
@@ -68,9 +70,7 @@ const deleteCacheFiles = async (type = '') => {
         : props.cacheFiles.map((f) => f.path);
 
     try {
-      await Promise.allSettled(
-        filepathsToDelete.map((f) => window.electronApi.fs.remove(f)),
-      );
+      await Promise.allSettled(filepathsToDelete.map((f) => fs.remove(f)));
     } catch (e) {
       errorCatcher(e);
     }

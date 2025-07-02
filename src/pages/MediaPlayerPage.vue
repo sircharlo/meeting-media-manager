@@ -93,6 +93,8 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
+const { getScreenAccessStatus } = window.electronApi;
+
 const currentState = useCurrentStateStore();
 const yeartext = computed(() => currentState.yeartext);
 const { currentCongregation, currentSettings, mediaPlayingAction } =
@@ -239,8 +241,7 @@ watch(
     videoStreaming.value = newWebStreamData;
     if (newWebStreamData) {
       cameraStreamId.value = '';
-      const screenAccessStatus =
-        await window.electronApi.getScreenAccessStatus();
+      const screenAccessStatus = await getScreenAccessStatus();
       if (!screenAccessStatus || screenAccessStatus !== 'granted') {
         try {
           await navigator.mediaDevices.getDisplayMedia({
@@ -252,8 +253,7 @@ watch(
             contexts: { fn: { name: 'requestDisplayAccess' } },
           });
         }
-        const screenAccessStatusSecondTry =
-          await window.electronApi.getScreenAccessStatus();
+        const screenAccessStatusSecondTry = await getScreenAccessStatus();
         if (
           !screenAccessStatusSecondTry ||
           screenAccessStatusSecondTry !== 'granted'
@@ -314,8 +314,7 @@ watch(
   async (deviceId) => {
     videoStreaming.value = !!deviceId;
     if (deviceId) {
-      const screenAccessStatus =
-        await window.electronApi.getScreenAccessStatus();
+      const screenAccessStatus = await getScreenAccessStatus();
       if (!screenAccessStatus || screenAccessStatus !== 'granted') {
         try {
           await navigator.mediaDevices.getUserMedia({
@@ -337,8 +336,7 @@ watch(
           });
           return;
         }
-        const screenAccessStatusSecondTry =
-          await window.electronApi.getScreenAccessStatus();
+        const screenAccessStatusSecondTry = await getScreenAccessStatus();
         if (
           !screenAccessStatusSecondTry ||
           screenAccessStatusSecondTry !== 'granted'

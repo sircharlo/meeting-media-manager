@@ -114,14 +114,16 @@ const s34mpDir = ref<string | undefined>();
 const s34mpDb = ref<string | undefined>();
 const s34mpInfo = ref<null | PublicationInfo>(null);
 
+const { executeQuery, fs, openFileDialog, path } = window.electronApi;
+
 const populatePublicTalks = async () => {
   s34mpDb.value = await findDb(s34mpDir.value);
   if (!s34mpDb.value) return;
-  publicTalks.value = window.electronApi.executeQuery<DocumentItem>(
+  publicTalks.value = executeQuery<DocumentItem>(
     s34mpDb.value,
     'SELECT DISTINCT Document.DocumentId, Title FROM Document INNER JOIN DocumentMultimedia ON Document.DocumentId = DocumentMultimedia.DocumentId',
   );
-  const PublicationInfos = window.electronApi.executeQuery<PublicationInfo>(
+  const PublicationInfos = executeQuery<PublicationInfo>(
     s34mpDb.value,
     'SELECT DISTINCT VersionNumber, Year FROM Publication',
   );
@@ -129,13 +131,10 @@ const populatePublicTalks = async () => {
 };
 
 const browse = async () => {
-  const s34mpFileSelection = await window.electronApi.openFileDialog(
-    true,
-    'jwpub',
-  );
+  const s34mpFileSelection = await openFileDialog(true, 'jwpub');
   if (!s34mpFileSelection || !s34mpFileSelection.filePaths.length) return;
   s34mpFile.value = s34mpFileSelection.filePaths[0];
-  if (s34mpDir.value) await window.electronApi.fs.ensureDir(s34mpDir.value);
+  if (s34mpDir.value) await fs.ensureDir(s34mpDir.value);
   if (s34mpFile.value) {
     await decompressJwpub(s34mpFile.value, s34mpDir.value, true);
     populatePublicTalks();
@@ -157,7 +156,7 @@ const addPublicTalkMedia = (publicTalkDocId: DocumentItem) => {
 
 const setS34mp = async () => {
   s34mpBasename.value = `S-34mp_${currentState.currentCongregation}`;
-  s34mpDir.value = window.electronApi.path.join(
+  s34mpDir.value = path.join(
     await getPublicationsPath(currentState.currentSettings?.cacheFolder),
     s34mpBasename.value,
   );
@@ -166,10 +165,7 @@ const setS34mp = async () => {
 const s34mpDisplayName = computed((): string => {
   try {
     if (s34mpDb.value)
-      return window.electronApi.path.basename(
-        s34mpDb.value,
-        window.electronApi.path.extname(s34mpDb.value),
-      );
+      return path.basename(s34mpDb.value, path.extname(s34mpDb.value));
     return t('select-s34mp');
   } catch (e) {
     console.error('Error getting S-34mp display name:', e);

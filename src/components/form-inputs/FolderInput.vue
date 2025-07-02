@@ -19,8 +19,10 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+const { path } = window.electronApi;
+
 const displayFolderName = computed(() => {
-  return model.value ? window.electronApi.path.basename(model.value) : '';
+  return model.value ? path.basename(model.value) : '';
 });
 
 const { t } = useI18n();

@@ -2696,6 +2696,8 @@ export const setUrlVariables = async (baseUrl: string | undefined) => {
     errorCatcher(e);
     resetUrlVariables();
   } finally {
-    window.electronApi.setUrlVariables(JSON.stringify(jwStore.urlVariables));
+    window.electronApi.setElectronUrlVariables(
+      JSON.stringify(jwStore.urlVariables),
+    );
   }
 };

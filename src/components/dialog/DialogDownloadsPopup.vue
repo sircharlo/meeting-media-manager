@@ -98,6 +98,8 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
+const { path } = window.electronApi;
+
 const open = defineModel<boolean>({ default: false });
 
 const currentState = useCurrentStateStore();
@@ -105,7 +107,7 @@ const { downloadProgress } = storeToRefs(currentState);
 
 const getBasename = (filename: string) => {
   if (!filename) return '';
-  return window.electronApi.path.basename(filename);
+  return path.basename(filename);
 };
 
 const filteredDownloads = (status: 'complete' | 'error' | 'loaded') =>
