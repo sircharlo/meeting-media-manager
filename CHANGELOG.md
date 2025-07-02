@@ -12,7 +12,7 @@ For translations of the most important changes, see the [`./release-notes/`](./r
 
 ### 🛠️ Improvements and Tweaks
 
-- 🛠️ **Visual improvements**: Added slight delay to navigationo drawer in mini state and updated the stream-now icon.
+- 🛠️ **Visual improvements**: Added slight delay to navigation drawer in mini state and updated the stream-now icon.
 - 🛠️ **New stream icon**: Updated the stream icon.
 - 🛠️ **OBS reconnection feedback**: Enhanced visual cues when reconnecting to OBS Studio.
 
