@@ -236,6 +236,8 @@ const {
   readdir,
 } = window.electronApi;
 
+const { ensureDir, exists, remove, writeFile } = fs;
+
 const mediaLists = computed(() => {
   const mwMeetingDay = isMwMeetingDay(selectedDateObject.value?.date);
   const weMeetingDay = isWeMeetingDay(selectedDateObject.value?.date);
@@ -685,7 +687,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         const ext = preamble?.split('/')[1];
         const tempFilename = uuid() + '.' + ext;
         const tempFilepath = path.join(await getTempPath(), tempFilename);
-        await fs.writeFile(tempFilepath, Buffer.from(data ?? '', 'base64'));
+        await writeFile(tempFilepath, Buffer.from(data ?? '', 'base64'));
         filepath = tempFilepath;
       }
       filepath = await convertImageIfNeeded(filepath);
@@ -738,12 +740,12 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         if (!tempContentFile) return;
         const tempDir = await getTempPath();
         if (!tempDir) return;
-        await fs.ensureDir(tempDir);
+        await ensureDir(tempDir);
         const tempFilePath = path.join(
           tempDir,
           path.basename(filepath) + '-contents',
         );
-        await fs.writeFile(tempFilePath, tempContentFile.data);
+        await writeFile(tempFilePath, tempContentFile.data);
         const tempJwpubFileContents = await decompress(tempFilePath);
         const tempDbFile = tempJwpubFileContents.find((tempJwpubFileContent) =>
           tempJwpubFileContent.path.endsWith('.db'),
@@ -753,9 +755,9 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
           await getTempPath(),
           path.basename(filepath) + '.db',
         );
-        await fs.writeFile(tempDbFilePath, tempDbFile.data);
-        fs.remove(tempFilePath);
-        if (!(await fs.exists(tempDbFilePath))) return;
+        await writeFile(tempDbFilePath, tempDbFile.data);
+        remove(tempFilePath);
+        if (!(await exists(tempDbFilePath))) return;
         const publication = getPublicationInfoFromDb(tempDbFilePath);
         const publicationDirectory = await getPublicationDirectory(
           publication,
@@ -825,7 +827,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
           await getTempPath(),
           path.basename(filepath),
         );
-        await fs.remove(unzipDirectory);
+        await remove(unzipDirectory);
         await window.electronApi
           .decompress(filepath, unzipDirectory)
           .catch((error) => {
@@ -836,7 +838,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
           path.join(unzipDirectory, file.name),
         );
         await addToFiles(filePaths);
-        await fs.remove(unzipDirectory);
+        await remove(unzipDirectory);
       } else {
         createTemporaryNotification({
           caption: filepath ? path.basename(filepath) : filepath,

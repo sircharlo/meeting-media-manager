@@ -116,6 +116,8 @@ const s34mpInfo = ref<null | PublicationInfo>(null);
 
 const { executeQuery, fs, openFileDialog, path } = window.electronApi;
 
+const { ensureDir } = fs;
+
 const populatePublicTalks = async () => {
   s34mpDb.value = await findDb(s34mpDir.value);
   if (!s34mpDb.value) return;
@@ -134,7 +136,7 @@ const browse = async () => {
   const s34mpFileSelection = await openFileDialog(true, 'jwpub');
   if (!s34mpFileSelection || !s34mpFileSelection.filePaths.length) return;
   s34mpFile.value = s34mpFileSelection.filePaths[0];
-  if (s34mpDir.value) await fs.ensureDir(s34mpDir.value);
+  if (s34mpDir.value) await ensureDir(s34mpDir.value);
   if (s34mpFile.value) {
     await decompressJwpub(s34mpFile.value, s34mpDir.value, true);
     populatePublicTalks();

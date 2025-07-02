@@ -284,6 +284,8 @@ const {
   setScreenPreferences,
 } = window.electronApi;
 
+const { copyFile } = fs;
+
 const getBasename = (filename: string) => {
   if (!filename) return '';
   return path.basename(filename);
@@ -340,7 +342,7 @@ const chooseCustomBackground = async (reset?: boolean) => {
               tempDirectory,
               path.basename(filepath),
             );
-            await fs.copyFile(filepath, tempFilepath);
+            await copyFile(filepath, tempFilepath);
             const workingTempFilepath =
               await convertImageIfNeeded(tempFilepath);
             if (isImage(workingTempFilepath)) {

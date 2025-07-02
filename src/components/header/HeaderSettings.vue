@@ -111,6 +111,8 @@ const frequentlyUsedDirectories = ref(new Set());
 
 const { fs, path, pathToFileURL, readdir } = window.electronApi;
 
+const { pathExists } = fs;
+
 const loadFrequentlyUsedDirectories = async () => {
   const getDirectory = async (
     pub: string,
@@ -310,7 +312,7 @@ const calculateCacheSize = async () => {
     ];
     const cacheDirs = (
       await Promise.all(
-        dirs.map(async (dir) => ((await fs.pathExists(dir)) ? dir : null)),
+        dirs.map(async (dir) => ((await pathExists(dir)) ? dir : null)),
       )
     ).filter((s) => typeof s === 'string');
     cacheFiles.value = await getCacheFiles(cacheDirs);
