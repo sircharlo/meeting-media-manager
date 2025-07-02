@@ -439,7 +439,7 @@ export const useJwStore = defineStore('jw-store', {
         ),
         'Wt-ClearText-Bold': getFontUrl(
           'mediator',
-          '/fonts/wt-clear-text/1.024/Wt-ClearText-Bold.woff2',
+          '/fonts/wt-clear-text/1.029/Wt-ClearText-Bold.woff2',
         ),
       };
     },

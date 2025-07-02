@@ -12,7 +12,7 @@ import { TRUSTED_DOMAINS } from 'src-electron/constants';
 
 export let urlVariables: undefined | UrlVariables;
 
-export const setUrlVariables = (variables: UrlVariables) => {
+export const setElectronUrlVariables = (variables: UrlVariables) => {
   urlVariables = variables;
 };
 

@@ -81,6 +81,7 @@ const {
   closeWebsiteWindow,
   navigateWebsiteWindow,
   openWebsiteWindow,
+  startWebsiteStream,
   zoomWebsiteWindow,
 } = window.electronApi;
 
@@ -91,7 +92,7 @@ const { mediaPlaying, mediaPlayingAction } = storeToRefs(currentState);
 const streaming = ref(false);
 
 const startStreaming = () => {
-  window.electronApi.startWebsiteStream();
+  startWebsiteStream();
   streaming.value = true;
   if (!currentState.mediaWindowVisible) {
     showMediaWindow();

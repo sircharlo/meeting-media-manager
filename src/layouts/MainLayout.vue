@@ -138,6 +138,22 @@ const jwStore = useJwStore();
 
 const { updateJwLanguages, updateMemorials } = jwStore;
 const { lookupPeriod } = storeToRefs(jwStore);
+
+const {
+  onDownloadCancelled,
+  onDownloadCompleted,
+  onDownloadError,
+  onDownloadProgress,
+  onDownloadStarted,
+  onLog,
+  onShortcut,
+  onWatchFolderUpdate,
+  pathToFileURL,
+  removeListeners,
+  setAutoStartAtLogin,
+  setElectronUrlVariables,
+} = window.electronApi;
+
 updateMemorials(online.value);
 updateJwLanguages(online.value);
 
@@ -150,7 +166,7 @@ watch(currentCongregation, (newCongregation, oldCongregation) => {
       showMediaWindow(false);
       navigateToCongregationSelector();
     } else {
-      window.electronApi.setUrlVariables(JSON.stringify(jwStore.urlVariables));
+      setElectronUrlVariables(JSON.stringify(jwStore.urlVariables));
       let year = new Date().getFullYear();
       if (
         jwStore.memorials[year] &&
@@ -298,7 +314,7 @@ watch(
 watch(
   () => currentSettings.value?.autoStartAtLogin,
   (newAutoStartAtLogin) => {
-    window.electronApi.setAutoStartAtLogin(!!newAutoStartAtLogin);
+    setAutoStartAtLogin(!!newAutoStartAtLogin);
   },
 );
 
@@ -392,7 +408,7 @@ const updateWatchFolderRef = async ({
       }
     } else if (event === 'unlink') {
       if (!changedPath) return;
-      const targetUrl = window.electronApi.pathToFileURL(changedPath);
+      const targetUrl = pathToFileURL(changedPath);
       for (let i = dayObj.dynamicMedia.length - 1; i >= 0; i--) {
         if (
           dayObj.dynamicMedia[i]?.source === 'watched' &&
@@ -446,33 +462,33 @@ bcClose.onmessage = (event) => {
 };
 
 const initListeners = () => {
-  window.electronApi.onLog(({ ctx, level, msg }) => {
+  onLog(({ ctx, level, msg }) => {
     console[level](`[main] ${msg}`, ctx);
   });
 
-  window.electronApi.onShortcut(({ shortcut }) => {
+  onShortcut(({ shortcut }) => {
     if (!currentSettings.value?.enableKeyboardShortcuts) return;
     executeShortcut(shortcut);
   });
 
-  window.electronApi.onWatchFolderUpdate(({ changedPath, day, event }) => {
+  onWatchFolderUpdate(({ changedPath, day, event }) => {
     updateWatchFolderRef({ changedPath, day, event });
   });
 
-  window.electronApi.onDownloadStarted((args) => {
+  onDownloadStarted((args) => {
     downloadProgress.value[args.id] = {
       filename: args.filename,
       total: args.totalBytes,
     };
   });
 
-  window.electronApi.onDownloadCancelled((args) => {
+  onDownloadCancelled((args) => {
     if (downloadProgress.value[args.id])
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       downloadProgress.value[args.id]!.error = true;
   });
 
-  window.electronApi.onDownloadCompleted((args) => {
+  onDownloadCompleted((args) => {
     if (downloadProgress.value[args.id]) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       downloadProgress.value[args.id]!.complete = true;
@@ -481,13 +497,13 @@ const initListeners = () => {
     }
   });
 
-  window.electronApi.onDownloadError((args) => {
+  onDownloadError((args) => {
     if (downloadProgress.value[args.id])
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       downloadProgress.value[args.id]!.error = true;
   });
 
-  window.electronApi.onDownloadProgress((args) => {
+  onDownloadProgress((args) => {
     if (downloadProgress.value[args.id]) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       downloadProgress.value[args.id]!.loaded = args.bytesReceived;
@@ -495,7 +511,7 @@ const initListeners = () => {
   });
 };
 
-const removeListeners = () => {
+const removeListenersLocal = () => {
   const listeners: ElectronIpcListenKey[] = [
     'log',
     'shortcut',
@@ -509,7 +525,7 @@ const removeListeners = () => {
 
   listeners.forEach((listener) => {
     try {
-      window.electronApi.removeListeners(listener);
+      removeListeners(listener);
     } catch (error) {
       errorCatcher(error);
     }
@@ -522,7 +538,7 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  removeListeners();
+  removeListenersLocal();
 });
 
 watchImmediate(

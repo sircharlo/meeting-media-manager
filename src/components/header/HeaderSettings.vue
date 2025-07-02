@@ -109,6 +109,10 @@ const cacheFiles = ref<CacheFile[]>([]);
 
 const frequentlyUsedDirectories = ref(new Set());
 
+const { fs, path, pathToFileURL, readdir } = window.electronApi;
+
+const { pathExists } = fs;
+
 const loadFrequentlyUsedDirectories = async () => {
   const getDirectory = async (
     pub: string,
@@ -251,21 +255,16 @@ const getCacheFiles = async (cacheDirs: string[]) => {
 
   const mediaFileParentDirectories = new Set(
     lookupPeriodsCollections.map((media) =>
-      media
-        ? window.electronApi.pathToFileURL(getParentDirectory(media.fileUrl))
-        : '',
+      media ? pathToFileURL(getParentDirectory(media.fileUrl)) : '',
     ),
   );
 
   const files: CacheFile[] = [];
   for (const cacheDir of cacheDirs) {
     try {
-      const items = await window.electronApi.readdir(cacheDir, true, true);
+      const items = await readdir(cacheDir, true, true);
       for (const item of items) {
-        const filePath = window.electronApi.path.join(
-          item.parentPath,
-          item.name,
-        );
+        const filePath = path.join(item.parentPath, item.name);
         if (item.isFile) {
           const parentFolder = item.parentPath.split('/').pop() || '';
           if (
@@ -273,9 +272,7 @@ const getCacheFiles = async (cacheDirs: string[]) => {
             parentFolder === `S-34mp_${currentState.currentCongregation}` ||
             /^S-34mp_[A-Z]+_0$/.test(parentFolder)
           ) {
-            const fileParentDirectoryUrl = window.electronApi.pathToFileURL(
-              item.parentPath,
-            );
+            const fileParentDirectoryUrl = pathToFileURL(item.parentPath);
             files.push({
               orphaned: !mediaFileParentDirectories.has(fileParentDirectoryUrl),
               parentPath: item.parentPath,
@@ -301,11 +298,11 @@ const calculateCacheSize = async () => {
         await getPublicationsPath(),
         await getPublicationsPath(currentState.currentSettings?.cacheFolder),
         await getTempPath(),
-        window.electronApi.path.join(
+        path.join(
           await getAdditionalMediaPath(),
           currentState.currentCongregation,
         ),
-        window.electronApi.path.join(
+        path.join(
           await getAdditionalMediaPath(
             currentState.currentSettings?.cacheFolder,
           ),
@@ -315,9 +312,7 @@ const calculateCacheSize = async () => {
     ];
     const cacheDirs = (
       await Promise.all(
-        dirs.map(async (dir) =>
-          (await window.electronApi.fs.pathExists(dir)) ? dir : null,
-        ),
+        dirs.map(async (dir) => ((await pathExists(dir)) ? dir : null)),
       )
     ).filter((s) => typeof s === 'string');
     cacheFiles.value = await getCacheFiles(cacheDirs);

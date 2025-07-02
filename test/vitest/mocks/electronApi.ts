@@ -123,10 +123,10 @@ export const electronApi: ElectronApi = {
   setAutoStartAtLogin: function (value) {
     throw new Error('Function not implemented.');
   },
-  setScreenPreferences: function (screenPreferences) {
+  setElectronUrlVariables: function (variables) {
     throw new Error('Function not implemented.');
   },
-  setUrlVariables: function (variables) {
+  setScreenPreferences: function (screenPreferences) {
     throw new Error('Function not implemented.');
   },
   startWebsiteStream: function () {
