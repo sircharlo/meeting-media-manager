@@ -1,8 +1,6 @@
 <template>
   <q-list
-    v-show="
-      mediaList.items?.filter((m) => !m.hidden).length || mediaList.alwaysShow
-    "
+    v-show="currentSectionVisibleItems.length || mediaList.alwaysShow"
     :class="
       'media-section ' +
       mediaList.uniqueId +
@@ -53,9 +51,10 @@
                   ? 'custom-text-color'
                   : 'text-white bg-' + mediaList.uniqueId
               "
-              :color="!mediaSectionCanBeCustomized ? mediaList.uniqueId : undefined"
+              :color="
+                !mediaSectionCanBeCustomized ? mediaList.uniqueId : undefined
+              "
               :flat="mediaSectionCanBeCustomized"
-              :outline="!mediaSectionCanBeCustomized"
               :icon="isSongButton ? 'mmm-music-note' : 'mmm-add-media'"
               :label="
                 $q.screen.gt.xs
@@ -68,6 +67,7 @@
                       : undefined
                   : undefined
               "
+              :outline="!mediaSectionCanBeCustomized"
               :round="mediaSectionCanBeCustomized"
               size="sm"
               @click="
@@ -122,7 +122,7 @@
         </div>
       </q-item-section>
     </q-item>
-    <div v-if="!mediaList.items.filter((m) => !m.hidden).length">
+    <div v-if="!currentSectionVisibleItems.length">
       <q-item>
         <q-item-section
           class="align-center text-secondary text-grey text-subtitle2"
@@ -145,7 +145,7 @@
     <Sortable
       class="sortable-media"
       item-key="uniqueId"
-      :list="mediaList.items"
+      :list="currentSectionVisibleItems"
       :options="{
         animation: 150,
         group: 'mediaLists',
@@ -308,7 +308,6 @@
 import type { SortableEvent } from 'sortablejs';
 import type {
   DynamicMediaObject,
-  DynamicMediaSection,
   MediaSection,
   MediaSectionIdentifier,
 } from 'src/types';
@@ -327,18 +326,8 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-export interface MediaListObject {
-  alwaysShow: boolean;
-  extraMediaShortcut?: boolean;
-  items: DynamicMediaObject[];
-  jwIcon?: string;
-  label: string;
-  mmmIcon?: string;
-  type: MediaSection;
-}
-
 const props = defineProps<{
-  mediaList: MediaListObject;
+  mediaList: MediaSection;
   openImportMenu: (section: MediaSectionIdentifier) => void;
 }>();
 
@@ -596,6 +585,27 @@ const mediaSectionCanBeCustomized = computed(() => {
     props.mediaList.uniqueId?.startsWith('custom')
   );
 });
+
+const currentSectionItems = computed(() => {
+  return selectedDateObject.value?.dynamicMedia?.filter(
+    (m) => m.section === props.mediaList.uniqueId,
+  );
+});
+
+const currentSectionVisibleItems = computed(() => {
+  return currentSectionItems.value?.filter((m) => !m.hidden) || [];
+});
+
+const currentSectionHiddenItems = computed(() => {
+  return currentSectionItems.value?.filter((m) => m.hidden) || [];
+});
+
+const isSongButton = computed(
+  () =>
+    props.mediaList.label === 'additional' ||
+    (props.mediaList.label === 'circuitOverseer' &&
+      !currentSectionHiddenItems.value.length),
+);
 </script>
 
 <style lang="scss" scoped>
@@ -611,11 +621,5 @@ const mediaSectionCanBeCustomized = computed(() => {
 }
 .add-media-shortcut {
   max-width: 100%;
-
-const isSongButton = computed(
-  () =>
-    props.mediaList.type === 'additional' ||
-    (props.mediaList.type === 'circuitOverseer' &&
-      !props.mediaList.items.some((m) => !m.hidden)),
-);
-</script>
+}
+</style>

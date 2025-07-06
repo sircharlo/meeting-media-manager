@@ -84,7 +84,7 @@
         :class="selectedDateObject?.customSections?.length ? 'q-mt-md' : ''"
       >
         <q-btn
-          v-if="selectedDateObject && !selectedDateObject.meeting"
+          v-if="selectedDateObject"
           class="full-width dashed-border"
           color="accent-100"
           icon="mmm-plus"
