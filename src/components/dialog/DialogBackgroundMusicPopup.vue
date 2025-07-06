@@ -135,8 +135,6 @@ const { t } = useI18n();
 
 const open = defineModel<boolean>({ default: false });
 
-const { fileUrlToPath, parseMediaFile, path } = window.electronApi;
-
 const currentState = useCurrentStateStore();
 const {
   currentCongregation,
@@ -160,6 +158,9 @@ const musicPlayerSource = ref<HTMLSourceElement>(
 const musicPlayingTitle = ref('');
 const musicStoppedAutomatically = ref(false);
 const songList = ref<SongItem[]>([]);
+
+const { fileUrlToPath, parseMediaFile, path, pathToFileURL } =
+  window.electronApi;
 
 const toggleMusicListener = () => {
   try {
@@ -193,10 +194,11 @@ async function playMusic() {
     musicPlayer.value.style.display = 'none';
     musicPlayer.value.volume = 0;
     const { duration, nextSongUrl, secsFromEnd } = await getNextSong();
-    if (!nextSongUrl) return;
+    if (!nextSongUrl) throw new Error('No next song found');
     musicPlayerSource.value.src = nextSongUrl;
     musicPlayer.value?.load();
     const startTime = duration ? duration - secsFromEnd : 0;
+    if (!musicPlayer.value) throw new Error('Music player not found');
     musicPlayer.value.currentTime = startTime;
     musicPlayer.value
       .play()
@@ -378,7 +380,7 @@ const getNextSong = async () => {
     }
     return {
       duration: nextSong.duration,
-      nextSongUrl: window.electronApi.pathToFileURL(nextSong.path),
+      nextSongUrl: pathToFileURL(nextSong.path),
       secsFromEnd,
     };
   } catch (error) {

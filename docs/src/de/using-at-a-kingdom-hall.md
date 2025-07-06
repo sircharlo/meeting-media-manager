@@ -2,7 +2,7 @@
 
 # Verwendung von M³ in einem Königreichssaal {#using-m3-at-a-kingdom-hall}
 
-Diese Anleitung führt Sie durch den Prozess des Herunterladens, Installierens und Einrichtens von **Meeting Media Manager (M³)** in einem Königreichssaal. Befolgen Sie die Schritte, um eine reibungslose Einrichtung für die Verwaltung von Medien während der Versammlungen zu gewährleisten.
+Diese Anleitung führt Sie durch den Prozess des Herunterladens, Installierens und Einrichtens von **Meeting Media Manager (M³)** in einem Königreichssaal. Befolge die Schritte, um eine reibungslose Einrichtung für die Verwaltung von Medien während der Versammlungen zu gewährleisten.
 
 ## 1. Herunterladen und Installieren {#download-and-install}
 
@@ -14,7 +14,7 @@ Diese Anleitung führt Sie durch den Prozess des Herunterladens, Installierens u
   - **Windows:**
     - Für die meisten Windows-Systeme laden Sie <a :href="data.win64">meeting-media-manager-[VERSION]-x64.exe</a> herunter.
     - Für ältere 32-Bit-Windows-Systeme laden Sie <a :href="data.win32">meeting-media-manager-[VERSION]-ia32.exe</a> herunter.
-    - For a portable version, download <a :href="data.winPortable">meeting-media-manager-[VERSION]-portable.exe</a>.
+    - Für eine portable Version lade <a :href="data.win32">Meeting-Media-Manager-[VERSION]-portable.exe</a> herunter.
   - **macOS:**
     - **M-Serie (Apple Silicon):** Laden Sie <a :href="data.macArm">meeting-media-manager-[VERSION]-arm64.dmg</a> herunter.
     - **Intel-basierte Macs:** Laden Sie <a :href="data.macIntel">meeting-media-manager-[VERSION]-x64.dmg</a> herunter.

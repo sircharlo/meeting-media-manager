@@ -4,6 +4,84 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v25.7.0
+
+### ✨ New Features
+
+- No new features for this release!
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Visual improvements**: Added slight delay to navigation drawer in mini state and updated the stream-now icon.
+- 🛠️ **New stream icon**: Updated the stream icon.
+- 🛠️ **OBS reconnection feedback**: Enhanced visual cues when reconnecting to OBS Studio.
+
+### 🔧 Improvements to Codebase
+
+- 🔧 **Electron API initialization checks**: Added checks in `MainLayout` and `MediaPlayerPage` to prevent issues with uninitialized Electron APIs.
+- 🔧 **Vitest config update**: Consolidated Vitest configuration into `vitest.config.mts` and removed deprecated `vitest.workspace.ts`.
+- 🔧 **Electron builder management**: Downgraded `electron-builder` to avoid issues, and blocked automatic patch updates.
+- 🔧 **Post-install script refactor**: Moved post-install logic to `build/`, tweaked for Husky compatibility, and updated paths in `.yarnrc.yml`.
+
+## 25.6.0
+
+### ✨ New Features
+
+- ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
+- ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
+- 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
+- 🛠️ **Linux compatibility**: Forced GTK 3 usage on Linux to prevent UI and launch issues.
+
+### 🔧 Improvements to Codebase
+
+- 🛠️ **Electron API error resilience**: Added optional chaining to better handle missing `electronApi` during font and API error operations.
+- 🛠️ **Fix structuredClone error**: Addressed `DataCloneError` caused by attempting to clone unsupported objects.
+- 🔧 **Main process refactor**: Improved handling of duplicate Electron instances and restructured main process logic.
+- 🔧 **Performance optimization**: Replaced `JSON.parse(JSON.stringify(...))` with `structuredClone` where possible.
+- 🔧 **Error handling**: Improved error catching for thumbnails and ignored HTTP 429 errors to reduce noise.
+
+## 25.5.0
+
+### ✨ New Features
+
+- 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
+- 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
+
+### 🛠️ Improvements and Tweaks
+
+- 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
+- ➕ **Smaller Extra Media Button**: Make the "extra media" button more compact for a cleaner interface.
+- 🗂️ **Assign Custom Media to Correct Section**: Ensure custom media is correctly attributed to the appropriate section of the meeting.
+- 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
+- 🎵 **Improve Duplicate Song Indicator**: Enhance the visual cue for duplicate songs to make them easier to identify.
+
+## 25.4.3
+
+### 🛠️ Improvements and Tweaks
+
+- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+
+## 25.4.2
+
+### 🛠️ Improvements and Tweaks
+
+- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+
+## 25.4.1
+
+### 🛠️ Improvements and Tweaks
+
+- 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
+- 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
+- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
+- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
+- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
+- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
+
 ## 25.4.0
 
 ### ✨ New Features

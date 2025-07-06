@@ -4,6 +4,55 @@
 
 For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
+## 25.6.0
+
+### ✨ New Features
+
+- ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
+- ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
+- 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
+- 🛠️ **Linux compatibility**: Forced GTK 3 usage on Linux to prevent UI and launch issues.
+
+## 25.5.0
+
+### ✨ New Features
+
+- 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
+- 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
+
+### 🛠️ Improvements and Tweaks
+
+- 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
+- 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
+- 🎵 **Improve Duplicate Song Indicator**: Enhance the visual cue for duplicate songs to make them easier to identify.
+
+## 25.4.3
+
+### 🛠️ Improvements and Tweaks
+
+- ➕ **Pulisci i media dalla v25.4.x**: Pulisci automaticamente i media orfani o non piazzati dalla v25.4.1 a v25.4.2 per assicurarsi che nessun supporto manchi o nel posto sbagliato nella lista dei media.
+
+## 25.4.2
+
+### 🛠️ Improvements and Tweaks
+
+- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+
+## 25.4.1
+
+### 🛠️ Improvements and Tweaks
+
+- 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
+- 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
+- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
+- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
+- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
+- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
+
 ## 25.4.0
 
 ### ✨ New Features

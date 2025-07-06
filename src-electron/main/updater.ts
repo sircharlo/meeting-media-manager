@@ -18,12 +18,20 @@ export async function initUpdater() {
       'EPERM',
       'Command failed: mv -f',
       '504 Gateway Time-out',
+      'Code signature at URL',
       'HttpError: 504',
       'YAMLException',
     ];
-    if (!ignoreErrors.some((ignoreError) => message?.includes(ignoreError))) {
+    if (
+      !ignoreErrors.some(
+        (ignoreError) =>
+          message?.includes(ignoreError) || error.message.includes(ignoreError),
+      )
+    ) {
       captureElectronError(error, {
-        contexts: { fn: { message, name: 'initUpdater' } },
+        contexts: {
+          fn: { errorMessage: error.message, message, name: 'initUpdater' },
+        },
       });
     }
   });

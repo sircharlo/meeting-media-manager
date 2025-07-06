@@ -170,6 +170,10 @@ export const settingsDefinitions: SettingsItems = {
     unless: 'disableMediaFetching',
   },
   // Media Retrieval and Playback
+  meteredConnection: {
+    group: 'mediaRetrievalPlayback',
+    type: 'toggle',
+  },
   enableMediaDisplayButton: {
     group: 'mediaRetrievalPlayback',
     type: 'toggle',
@@ -248,6 +252,12 @@ export const settingsDefinitions: SettingsItems = {
     list: 'obsAllScenes',
     subgroup: 'obsStudio',
     type: 'list',
+  },
+  obsPostponeImages: {
+    depends: ['obsEnable', 'obsPort', 'obsPassword'],
+    group: 'integrations',
+    subgroup: 'obsStudio',
+    type: 'toggle',
   },
   obsQuickToggle: {
     depends: ['obsEnable', 'obsPort', 'obsPassword', 'obsMediaScene'],
@@ -441,6 +451,7 @@ export const defaultSettings: SettingsValues = {
   meetingScheduleChangeWeDay: null,
   meetingScheduleChangeWeStartTime: null,
   memorialDate: null,
+  meteredConnection: false,
   musicVolume: 100,
   mwDay: null,
   mwStartTime: null,
@@ -451,6 +462,7 @@ export const defaultSettings: SettingsValues = {
   obsMediaScene: null,
   obsPassword: null,
   obsPort: null,
+  obsPostponeImages: false,
   obsQuickToggle: false,
   obsSwitchSceneAfterMedia: false,
   shortcutMediaNext: null,

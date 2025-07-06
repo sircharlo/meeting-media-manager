@@ -4,6 +4,55 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
+## 25.6.0
+
+### ✨ Novos Recursos
+
+- ✨ **Configuração de conexão limitada**: Adicionada uma nova configuração para reduzir o uso de largura de banda em conexões limitadas.
+- ✨ **Melhoria no Manuseio de Mídia em Stream**: Melhor suporte para mídia transmitida, reduzindo problemas relacionados à latência.
+
+### 🛠️ Melhorias e Ajustes
+
+- 🛠️ **Melhor Manuseio de Tipos MIME**: Suporte aprimorado para tipos MIME, garantindo melhor compatibilidade de mídia.
+- 🛠️ **Aprimoramento do Menu de Navegação**: Melhor gerenciamento de estado e adição de exibição de dicas de ferramenta para facilitar a navegação do usuário.
+- 🛠️ **Compatibilidade com Linux**: Forçado o uso do GTK 3 no Linux para evitar problemas de interface e inicialização.
+
+## 25.5.0
+
+### ✨ Novos Recursos
+
+- **Opção de Atraso no OBS para Imagens**: Adiciona uma configuração no OBS Studio para atrasar a mudança de cena ao exibir imagens, melhorando as transições.
+- **Compatibilidade com Áudio .m4a**: Adiciona compatibilidade com arquivos .m4a, ampliando os tipos de mídia aceitos.
+
+### 🛠️ Melhorias e Ajustes
+
+- **Restaurar Zoom com Ctrl + Rolagem**: Reabilita o zoom imediato com o gesto de Ctrl + rolagem, facilitando a navegação.
+- 👤 **Ocultar Mídia do SC Não Utilizada**: Oculta, em vez de ignorar, a mídia não utilizada nas visitas do superintendente de circuito, mantendo a apresentação mais limpa.
+- 🎵 **Melhoria no Indicador de Cânticos Duplicados**: Melhora o destaque visual para cânticos duplicados, facilitando sua identificação.
+
+## 25.4.3
+
+### 🛠️ Melhorias e Ajustes
+
+- ➕ **Limpar Mídias da Versão 25.4.x**: Limpa automaticamente mídias órfãs ou deslocadas da versão 25.4.1 à 25.4.2 para garantir que nenhum item esteja faltando ou no lugar errado da lista de mídias.
+
+## 25.4.2
+
+### 🛠️ Melhorias e Ajustes
+
+- ➕ **Prevenção a Mídias Duplicadas**: Evita que sejam adicionados itens repetidos à lista de mídias.
+
+## 25.4.1
+
+### 🛠️ Melhorias e Ajustes
+
+- 🎬 **Correção na Atribuição de Horários de Início/Fim Personalizados**: Impede que horários de início e fim personalizados sejam aplicados incorretamente a vídeos errados.
+- 📝 **Permitir Legendas Desajustadas**: Habilita o uso de legendas, mesmo que não correspondam perfeitamente ao arquivo de mídia.
+- 🪟 **Desabilitar Cantos Arredondados no Windows**: Remove os cantos arredondados da janela de mídia no Windows.
+- 🖼 **Incluir Imagens Não Referenciadas na Lista de Mídia**: Garante que todas as imagens não referenciadas sejam adicionadas à lista de mídia para maior completude.
+- ➕ **Prevenir Seções de Mídia Duplicadas**: Evitar a criação de várias seções para o mesmo item de mídia.
+- 📥 **Preservar a Ordem da Playlist na Importação**: Manter a ordem original das playlists JWL durante o processo de importação.
+
 ## 25.4.0
 
 ### ✨ Novos Recursos
@@ -27,7 +76,7 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 
 - ⚡ **Melhora no Desempenho e Uso da CPU**: Otimiza o desempenho para reduzir o uso da CPU e melhorar a eficiência.
 - 🔄 **Correção de Problemas de Sincronização e Travamento**: Resolve vários problemas de estabilidade e relacionados à sincronização para melhorar a confiabilidade.
-- 📜 **Mostrar Notas de Lançamento para Congregações Existentes**: Garante que as notas de lançamento só sejam exibidas para congregações que já estão carregadas.
+- 📜 **Mostrar Notas de Versão para Congregações Existentes**: Garante que as notas de lançamento só sejam exibidas para congregações que já estão carregadas.
 
 ## 25.3.0
 
@@ -36,7 +85,7 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 - 🎵 **Reprodução de Música de Fundo com Vídeos**: Permite que a música de fundo continue reproduzindo enquanto os vídeos estão sendo exibidos.
 - 🎥 **Transmissão de Câmera para Mídia de Língua de Sinais**: Adiciona a capacidade de exibir a transmissão de uma câmera na janela de mídia especificamente para usuários de língua de sinais.
 - 📅 **Data da Celebração e Fundo de Tela Automáticos**: Detecta e configura automaticamente a data da Celebração e prepara a imagem de fundo da Celebração.
-- 📜 **Exibição de Notas de Lançamento no Aplicativo**: Mostra notas de lançamento diretamente no aplicativo para que os usuários possam facilmente revisar as alterações após uma atualização.
+- 📜 **Exibição de Notas de Versão no Aplicativo**: Mostra notas de lançamento diretamente no aplicativo para que os usuários possam facilmente revisar as alterações após uma atualização.
 
 ### 🛠️ Melhorias e Ajustes
 

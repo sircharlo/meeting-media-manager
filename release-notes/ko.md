@@ -4,6 +4,55 @@
 
 버전별 전체 변경 사항은, GitHub 의 CHANGELOG.md 파일을 확인해주세요.
 
+## 25.6.0
+
+### ✨ 새로운 기능
+
+- ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
+- ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
+
+### 🛠️ 개선 및 변경
+
+- 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
+- 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
+- 🛠️ **Linux compatibility**: Forced GTK 3 usage on Linux to prevent UI and launch issues.
+
+## 25.5.0
+
+### ✨ 새로운 기능
+
+- 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
+- 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
+
+### 🛠️ 개선 및 변경
+
+- 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
+- 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
+- 🎵 **Improve Duplicate Song Indicator**: Enhance the visual cue for duplicate songs to make them easier to identify.
+
+## 25.4.3
+
+### 🛠️ 개선 및 변경
+
+- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+
+## 25.4.2
+
+### 🛠️ 개선 및 변경
+
+- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+
+## 25.4.1
+
+### 🛠️ 개선 및 변경
+
+- 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
+- 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
+- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
+- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
+- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
+- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
+
 ## 25.4.0
 
 ### ✨ 새로운 기능
@@ -14,7 +63,7 @@
 ### 🛠️ 개선 및 변경
 
 - 🎬 **Multiple Start/End Times for Single Video**: Allow a single video to appear in the media list multiple times with different custom start/end times.
-- 📤 **Include Grouped Media in Auto Export**: Automatically export grouped media items along with others.
+- 📤 **자동 내보내기에 그룹화된 미디어 포함**: 다른 항목과 함께 그룹화된 미디어 항목을 자동으로 내보냅니다.
 - 📡 **Correct `.m4v` Fetching from JW API**: Ensure `.m4v` files are correctly fetched from the JW API.
 
 ## 25.3.1

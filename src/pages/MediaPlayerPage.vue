@@ -69,6 +69,9 @@
   </q-page-container>
 </template>
 <script setup lang="ts">
+import { initializeElectronApi } from 'src/helpers/electron-api-manager';
+initializeElectronApi('MediaPlayerPage');
+
 import Panzoom, { type PanzoomObject } from '@panzoom/panzoom';
 import {
   useBroadcastChannel,
@@ -89,6 +92,8 @@ import { computed, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+
+const { getScreenAccessStatus } = window.electronApi;
 
 const currentState = useCurrentStateStore();
 const yeartext = computed(() => currentState.yeartext);
@@ -157,7 +162,7 @@ whenever(
 
 const { data: mediaCustomDuration } = useBroadcastChannel<
   string | undefined,
-  string
+  string | undefined
 >({
   name: 'custom-duration',
 });
@@ -180,11 +185,11 @@ const { data: mediaAction } = useBroadcastChannel<string, string>({
 
 whenever(
   () => mediaAction.value,
-  (newMediaAction) => {
+  (newMediaAction, oldMediaAction) => {
     if (newMediaAction === 'pause') {
       mediaElement.value?.pause();
     } else if (newMediaAction === 'play') {
-      playMediaElement();
+      playMediaElement(oldMediaAction === 'pause');
       cameraStreamId.value = '';
     }
   },
@@ -236,8 +241,7 @@ watch(
     videoStreaming.value = newWebStreamData;
     if (newWebStreamData) {
       cameraStreamId.value = '';
-      const screenAccessStatus =
-        await window.electronApi.getScreenAccessStatus();
+      const screenAccessStatus = await getScreenAccessStatus();
       if (!screenAccessStatus || screenAccessStatus !== 'granted') {
         try {
           await navigator.mediaDevices.getDisplayMedia({
@@ -249,8 +253,7 @@ watch(
             contexts: { fn: { name: 'requestDisplayAccess' } },
           });
         }
-        const screenAccessStatusSecondTry =
-          await window.electronApi.getScreenAccessStatus();
+        const screenAccessStatusSecondTry = await getScreenAccessStatus();
         if (
           !screenAccessStatusSecondTry ||
           screenAccessStatusSecondTry !== 'granted'
@@ -311,8 +314,7 @@ watch(
   async (deviceId) => {
     videoStreaming.value = !!deviceId;
     if (deviceId) {
-      const screenAccessStatus =
-        await window.electronApi.getScreenAccessStatus();
+      const screenAccessStatus = await getScreenAccessStatus();
       if (!screenAccessStatus || screenAccessStatus !== 'granted') {
         try {
           await navigator.mediaDevices.getUserMedia({
@@ -334,8 +336,7 @@ watch(
           });
           return;
         }
-        const screenAccessStatusSecondTry =
-          await window.electronApi.getScreenAccessStatus();
+        const screenAccessStatusSecondTry = await getScreenAccessStatus();
         if (
           !screenAccessStatusSecondTry ||
           screenAccessStatusSecondTry !== 'granted'
@@ -397,7 +398,10 @@ watch(
   },
 );
 
-const playMediaElement = () => {
+const triggerPlay = () => {
+  if (mediaAction.value !== 'play') {
+    return;
+  }
   mediaElement.value?.play().catch((error: Error) => {
     if (
       !(
@@ -409,6 +413,20 @@ const playMediaElement = () => {
       errorCatcher(error);
     }
   });
+};
+
+const playMediaElement = (wasPaused = false) => {
+  if (!mediaElement.value) {
+    return;
+  }
+
+  if (wasPaused) {
+    triggerPlay();
+  }
+
+  mediaElement.value.oncanplaythrough = () => {
+    triggerPlay();
+  };
 };
 
 watch(currentCongregation, (newCongregation) => {

@@ -29,61 +29,77 @@ import {
 import 'src-electron/main/ipc';
 import 'src-electron/main/security';
 
-if (PLATFORM === 'win32') {
-  app.setAppUserModelId(`${APP_ID}`);
-}
+const gotTheLock = app.requestSingleInstanceLock();
 
-if (process.env.PORTABLE_EXECUTABLE_DIR) {
-  app.setPath('appData', process.env.PORTABLE_EXECUTABLE_DIR);
-  app.setPath(
-    'userData',
-    join(process.env.PORTABLE_EXECUTABLE_DIR, `${PRODUCT_NAME} - User Data`),
-  );
-  app.setPath(
-    'temp',
-    join(
-      process.env.PORTABLE_EXECUTABLE_DIR,
-      `${PRODUCT_NAME} - Temporary Files`,
-    ),
-  );
-} else if (IS_TEST) {
-  app.setPath('userData', join(app.getPath('appData'), PRODUCT_NAME));
-}
+if (!gotTheLock) {
+  app.exit(2);
+} else {
+  app.on('second-instance', () => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.show();
+    }
+  });
 
-initSentry({
-  dsn: 'https://0f2ab1c7ddfb118d25704c85957b8188@o1401005.ingest.us.sentry.io/4507449197920256',
-  environment: IS_TEST ? 'test' : process.env.NODE_ENV,
-  release: `${name}@${version}`,
-  tracesSampleRate: 1.0,
-});
-
-initUpdater();
-initScreenListeners();
-createApplicationMenu();
-initSessionListeners();
-
-// macOS default behavior is to keep the app running even after all windows are closed
-app.on('window-all-closed', () => {
-  if (PLATFORM !== 'darwin') app.quit();
-});
-
-app.on('before-quit', (e) => {
-  if (PLATFORM !== 'darwin') return;
-  if (!mainWindow || mainWindow.isDestroyed()) return;
-  if (authorizedClose) {
-    mainWindow.close();
-  } else {
-    e.preventDefault();
-    setShouldQuit(true);
-    sendToWindow(mainWindow, 'attemptedClose');
+  if (PLATFORM === 'win32') {
+    app.setAppUserModelId(`${APP_ID}`);
+  } else if (PLATFORM === 'linux') {
+    app.commandLine.appendSwitch('gtk-version', '3'); // Force GTK 3 on Linux (Workaround for https://github.com/electron/electron/issues/46538)
   }
-});
 
-app.on('activate', () => {
-  app.whenReady().then(createMainWindow).catch(captureElectronError);
-});
+  if (process.env.PORTABLE_EXECUTABLE_DIR) {
+    app.setPath('appData', process.env.PORTABLE_EXECUTABLE_DIR);
+    app.setPath(
+      'userData',
+      join(process.env.PORTABLE_EXECUTABLE_DIR, `${PRODUCT_NAME} - User Data`),
+    );
+    app.setPath(
+      'temp',
+      join(
+        process.env.PORTABLE_EXECUTABLE_DIR,
+        `${PRODUCT_NAME} - Temporary Files`,
+      ),
+    );
+  } else if (IS_TEST) {
+    app.setPath('userData', join(app.getPath('appData'), PRODUCT_NAME));
+  }
 
-app.whenReady().then(createMainWindow).catch(captureElectronError);
+  initSentry({
+    dsn: 'https://0f2ab1c7ddfb118d25704c85957b8188@o1401005.ingest.us.sentry.io/4507449197920256',
+    environment: IS_TEST ? 'test' : process.env.NODE_ENV,
+    release: `${name}@${version}`,
+    tracesSampleRate: 1.0,
+  });
+
+  initUpdater();
+  initScreenListeners();
+  createApplicationMenu();
+  initSessionListeners();
+
+  // macOS default behavior is to keep the app running even after all windows are closed
+  app.on('window-all-closed', () => {
+    if (PLATFORM !== 'darwin') app.quit();
+  });
+
+  app.on('before-quit', (e) => {
+    if (PLATFORM !== 'darwin') return;
+    if (!mainWindow || mainWindow.isDestroyed()) return;
+    if (authorizedClose) {
+      mainWindow.close();
+    } else {
+      e.preventDefault();
+      setShouldQuit(true);
+      sendToWindow(mainWindow, 'attemptedClose');
+    }
+  });
+
+  app.on('activate', () => {
+    createWindowAndCaptureErrors();
+  });
+
+  createWindowAndCaptureErrors();
+}
 
 function createApplicationMenu() {
   const appMenu: MenuItem | MenuItemConstructorOptions = { role: 'appMenu' };
@@ -139,4 +155,8 @@ function createApplicationMenu() {
   ];
   template.find((item) => item.role === 'viewMenu');
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+}
+
+function createWindowAndCaptureErrors() {
+  app.whenReady().then(createMainWindow).catch(captureElectronError);
 }

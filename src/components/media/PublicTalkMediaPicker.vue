@@ -15,11 +15,7 @@
           <q-icon name="mmm-file" size="md" />
         </div>
         <div class="col text-subtitle2">
-          {{
-            s34mpDb
-              ? path.basename(s34mpDb, path.extname(s34mpDb))
-              : t('select-s34mp')
-          }}
+          {{ s34mpDisplayName }}
         </div>
         <div v-if="s34mpDb || s34mpFile" class="col-grow text-caption">
           <template
@@ -92,7 +88,6 @@ import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-const { executeQuery, fs, openFileDialog, path } = window.electronApi;
 
 const props = defineProps<{
   section: MediaSectionIdentifier | undefined;
@@ -123,6 +118,10 @@ const s34mpDir = ref<string | undefined>();
 const s34mpDb = ref<string | undefined>();
 const s34mpInfo = ref<null | PublicationInfo>(null);
 
+const { executeQuery, fs, openFileDialog, path } = window.electronApi;
+
+const { ensureDir } = fs;
+
 const populatePublicTalks = async () => {
   s34mpDb.value = await findDb(s34mpDir.value);
   if (!s34mpDb.value) return;
@@ -141,7 +140,7 @@ const browse = async () => {
   const s34mpFileSelection = await openFileDialog(true, 'jwpub');
   if (!s34mpFileSelection || !s34mpFileSelection.filePaths.length) return;
   s34mpFile.value = s34mpFileSelection.filePaths[0];
-  if (s34mpDir.value) await fs.ensureDir(s34mpDir.value);
+  if (s34mpDir.value) await ensureDir(s34mpDir.value);
   if (s34mpFile.value) {
     await decompressJwpub(s34mpFile.value, s34mpDir.value, true);
     populatePublicTalks();
@@ -168,6 +167,17 @@ const setS34mp = async () => {
     s34mpBasename.value,
   );
 };
+
+const s34mpDisplayName = computed((): string => {
+  try {
+    if (s34mpDb.value)
+      return path.basename(s34mpDb.value, path.extname(s34mpDb.value));
+    return t('select-s34mp');
+  } catch (e) {
+    console.error('Error getting S-34mp display name:', e);
+    return t('select-s34mp');
+  }
+});
 
 watch(open, () => {
   if (currentState.currentSettings?.lang) {

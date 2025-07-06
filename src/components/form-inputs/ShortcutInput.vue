@@ -93,10 +93,12 @@ const emit = defineEmits(['update:modelValue']);
 // Setup component
 const localValue = ref(props.modelValue);
 
+const { unregisterShortcut } = window.electronApi;
+
 watch(localValue, (newValue, oldValue) => {
   if (!newValue || !getCurrentShortcuts().includes(newValue)) {
     emit('update:modelValue', newValue);
-    if (oldValue) window.electronApi.unregisterShortcut(oldValue);
+    if (oldValue) unregisterShortcut(oldValue);
     if (newValue) registerCustomShortcut(props.shortcutName, newValue);
   }
 });

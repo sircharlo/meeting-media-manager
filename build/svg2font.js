@@ -1,17 +1,21 @@
-import IconfontWebpackPlugin from '@daipeng7/rollup-plugin-iconfont';
+import path from 'path';
+import WebpackIconfontPluginNodejs from 'webpack-iconfont-plugin-nodejs';
+
+const dir = 'src';
+
 var options = {
-  cssOutput: 'src/css/mmm-icons.css',
+  cssOutput: path.join(dir, 'css/mmm-icons.css'),
   // iconFont name prefix
   cssPrefix: 'mmm',
   fontName: 'mmm-icons',
-  fontsOutput: 'src/css/',
+  fontsOutput: path.join(dir, 'css/'),
   formats: ['woff2'],
   htmlOutput: false,
   jsOutput: false,
-  svgs: 'build/icons/*.svg',
+  svgs: path.join('build/icons/', '*.svg'),
   // Font loads the absolute path. If not set, the relative path will be automatically calculated based on `cssOutput` and `fontsOutput`.
   // cssFontPath: '',
   template: 'scss',
 };
 
-IconfontWebpackPlugin(options).buildStart();
+new WebpackIconfontPluginNodejs(options).build();

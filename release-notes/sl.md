@@ -4,6 +4,55 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
+## 25.6.0
+
+### ✨ Nove funkcije
+
+- ✨ **Nastavitev omejene povezave**: Dodana je bila nova nastavitev za zmanjšanje porabe pasovne širine za prenos pri omejenih povezavah.
+- ✨ **Izboljšano upravljanje pretakanih medijev**: Boljša podpora za pretakane medije, kar zmanjšuje težave, povezane z zakasnitvijo.
+
+### 🛠️ Izboljšave in popravki
+
+- 🛠️ **Boljše upravljanje vrst MIME**: Izboljšana podpora za vrste MIME za boljšo združljivost z medijskimi vsebinami.
+- 🛠️ **Izboljšan navigacijski predal**: Izboljšano upravljanje pomanjšanega stanja in dodan prikaz orodnih namigov za lažjo navigacijo.
+- 🛠️ **Združljivost z Linuxom**: Prisiljena uporaba knjižnice GTK 3 v Linuxu za preprečevanje težav z uporabniškim vmesnikom in zagonom.
+
+## 25.5.0
+
+### ✨ Nove funkcije
+
+- 🖼️ **Možnost zakasnitve za slike v programu OBS**: Dodaj nastavitev programa OBS Studio za zakasnitev spreminjanja scen pri prikazovanju slik, kar izboljša prehode.
+- 🔊 **Podpora za avdio format `.m4a`**: Dodajanje združljivosti za avdio datoteke `.m4a` za razširitev podprtih vrst multimedijskih datotek.
+
+### 🛠️ Izboljšave in popravki
+
+- 🔍 **Povrnitev povečave s `Ctrl` + `Scroll`**: Za lažjo navigacijo je možno ponovno omogočiti takojšnjo povečavo s kombinacijo tipke Ctrl in vrtenjem koleščka na miški.
+- 👤 **Skrij neuporabljeno multimedijsko vsebino ON**: Neuporabljeno multimedijsko vsebino za obiske okrajnega nadzornika skrijte, namesto preskočite, da bo predstavitev bolj jasna.
+- 🎵 **Izboljšaj prikazovalnik podvojenih pesmi**: Boljši vizualni prikaz podvojenih pesmi, da jih bo lažje prepoznati.
+
+## 25.4.3
+
+### 🛠️ Izboljšave in popravki
+
+- ➕ **Čiščenje multimedijskih datotek iz verzije v25.4.x**: Samodejno čiščenje preostalih ali napačno umeščenih multimedijskih datotek iz verzije v25.4.1 v verzijo v25.4.2, da na seznamu multimedijske vsebine ne bo manjkala nobena datoteka ali da ne bo na napačnem mestu.
+
+## 25.4.2
+
+### 🛠️ Izboljšave in popravki
+
+- ➕ **Preprečevanje podvojenih multimedijskih datotek**: Preprečitev večkratnega dodajanja nekaterih multimedijskih elementov na seznam multimedijske vsebine.
+
+## 25.4.1
+
+### 🛠️ Izboljšave in popravki
+
+- 🎬 **Popravek prilagoditve začetnega/končnega časa po meri**: Preprečite, da bi se začetni in končni čas nepravilno uporabila za napačen videoposnetek.
+- 📝 **Omogočanje neusklajenih podnapisov**: Omogočite uporabo podnapisov, tudi če se ne ujemajo popolnoma z multimedijsko datoteko.
+- 🪟 **Onemogočite zaobljene vogale v sistemu Windows**: Odstranite zaobljene vogale za multimedijsko okno v operacijskem sistemu Windows.
+- 🖼 **Vključitev slik, ki niso del referenc, na seznam multimedijskih datotek**: Na seznam multimedijskih datotek dodajte vse slike, ki niso del referenc.
+- ➕ **Preprečevanje podvojenih multimedijskih razdelkov**: Preprečite ustvarjanje več multimedijskih razdelkov za isti multimedijski element.
+- 📥 **Shrani vrstni red seznama predvajanja pri uvozu**: Pri uvozu se ohrani originalni vrstni red seznamov predvajanja JW Library.
+
 ## 25.4.0
 
 ### ✨ Nove funkcije

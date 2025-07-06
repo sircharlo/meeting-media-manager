@@ -29,6 +29,7 @@ export interface DynamicMediaObject {
   customDuration?: { max: number; min: number };
   duration?: number;
   extractCaption?: string;
+  filesize?: number;
   fileUrl?: string;
   footnote?: boolean;
   hidden?: boolean;

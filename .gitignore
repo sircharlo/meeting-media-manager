@@ -80,3 +80,7 @@ src/renderer
 
 # Vite build output stats
 stats.html
+
+# Local electron-builder dev files
+.yalc
+yalc.lock

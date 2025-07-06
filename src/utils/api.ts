@@ -43,7 +43,7 @@ export const fetchJson = async <T>(
     if (response.ok || response.status === 304) {
       return await response.json();
     } else if (
-      ![403, 404, 502].includes(response.status) &&
+      ![403, 404, 429, 502].includes(response.status) &&
       !(
         response.status === 400 &&
         ['S', 'CO'].some((p) => params?.get('pub')?.startsWith(`${p}-`))
@@ -53,7 +53,7 @@ export const fetchJson = async <T>(
         contexts: {
           fn: {
             headers: response.headers,
-            name: 'fetchJson',
+            name: 'fetchJsonMain',
             params: Object.fromEntries(params || []),
             responseUrl: response.url,
             status: response.status,
@@ -65,7 +65,7 @@ export const fetchJson = async <T>(
       });
     }
   } catch (e) {
-    if (online && !(await window.electronApi.isDownloadErrorExpected())) {
+    if (online && !(await window.electronApi?.isDownloadErrorExpected())) {
       errorCatcher(e, {
         contexts: {
           fn: {

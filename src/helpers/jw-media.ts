@@ -146,6 +146,7 @@ export const addToAdditionMediaMapFromPath = async (
   uniqueId?: string,
   additionalInfo?: {
     duration?: number;
+    filesize?: number;
     song?: string;
     thumbnailUrl?: string;
     title?: string;
@@ -187,6 +188,7 @@ export const addToAdditionMediaMapFromPath = async (
               ? undefined
               : customDuration,
           duration,
+          filesize: additionalInfo?.filesize,
           fileUrl: window.electronApi.pathToFileURL(additionalFilePath),
           isAudio: audio,
           isImage: isImage(additionalFilePath),
@@ -378,7 +380,13 @@ export const fetchMedia = async () => {
               )
             ).includes(true);
 
-            return hasIncompleteOrErrorMeeting || hasMissingMediaFile
+            const hasDuplicates =
+              day.dynamicMedia.length >
+              new Set(day.dynamicMedia.map((m) => m.uniqueId)).size;
+
+            return hasIncompleteOrErrorMeeting ||
+              hasMissingMediaFile ||
+              hasDuplicates
               ? day
               : null;
           },
@@ -1294,16 +1302,6 @@ export const dynamicMediaMapper = async (
         isMwMeetingDay(lookupDate) && songs?.length >= 2 && songs[1]
           ? songs[1].BeginParagraphOrdinal
           : 0;
-      if (isCoWeek(lookupDate)) {
-        // The last songs for both MW and WE meeting get replaced during the CO visit
-        allMedia.pop();
-        if (isMwMeetingDay(lookupDate)) {
-          // Also remove CBS media if it's the MW meeting, since the CBS is skipped during the CO visit
-          allMedia = allMedia.filter(
-            (m) => m.BeginParagraphOrdinal < lastParagraphOrdinal - 2,
-          );
-        }
-      }
     }
     const mediaPromises = allMedia.map(
       async (m, index): Promise<DynamicMediaObject> => {
@@ -1406,7 +1404,6 @@ export const dynamicMediaMapper = async (
         return {
           cbs:
             isMwMeetingDay(lookupDate) &&
-            !isCoWeek(lookupDate) &&
             m.BeginParagraphOrdinal >= lastParagraphOrdinal - 2 &&
             m.BeginParagraphOrdinal < lastParagraphOrdinal,
           customDuration,
@@ -1435,6 +1432,18 @@ export const dynamicMediaMapper = async (
       },
     );
     const allMediaPromises = await Promise.all(mediaPromises);
+
+    if (isCoWeek(lookupDate)) {
+      // Hide the last song for both MW and WE meetings during the CO visit
+      const lastSong = allMediaPromises.at(-1);
+      if (lastSong) lastSong.hidden = true;
+
+      // Hide CBS media
+      allMediaPromises.forEach((m) => {
+        if (m.cbs) m.hidden = true;
+      });
+    }
+
     // Group mediaPromises by extractCaption
     const groupedMediaPromises: DynamicMediaObject[] = Object.values(
       allMediaPromises.reduce<Record<string, DynamicMediaObject>>(
@@ -1958,7 +1967,10 @@ export const getMwMedia = async (lookupDate: Date) => {
   }
 };
 
-export async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
+export async function processMissingMediaInfo(
+  allMedia: MultimediaItem[],
+  keepMediaLabels = false,
+) {
   try {
     const currentStateStore = useCurrentStateStore();
     const errors = [];
@@ -2075,7 +2087,9 @@ export async function processMissingMediaInfo(allMedia: MultimediaItem[]) {
                 StreamUrl,
               } = await downloadMissingMedia(publicationFetcher);
               media.FilePath = FilePath ?? media.FilePath;
-              media.Label = Label || media.Label;
+              media.Label = keepMediaLabels
+                ? media.Label || Label || ''
+                : Label || media.Label;
               media.StreamUrl = StreamUrl ?? media.StreamUrl;
               media.Duration = StreamDuration ?? media.Duration;
               media.ThumbnailUrl = StreamThumbnailUrl ?? media.ThumbnailUrl;
@@ -2332,6 +2346,7 @@ export const downloadAdditionalRemoteVideo = async (
       undefined,
       {
         duration: bestItem.duration,
+        filesize: bestItem.filesize,
         song: song ? song.toString() : undefined,
         thumbnailUrl,
         title,
@@ -2681,6 +2696,8 @@ export const setUrlVariables = async (baseUrl: string | undefined) => {
     errorCatcher(e);
     resetUrlVariables();
   } finally {
-    window.electronApi.setUrlVariables(JSON.stringify(jwStore.urlVariables));
+    window.electronApi.setElectronUrlVariables(
+      JSON.stringify(jwStore.urlVariables),
+    );
   }
 };

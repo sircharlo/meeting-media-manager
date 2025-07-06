@@ -18,6 +18,7 @@ import es from './es.json';
 import et from './et.json';
 import fi from './fi.json';
 import fr from './fr.json';
+import gaa from './gaa.json';
 import ht from './ht.json';
 import hu from './hu.json';
 import it from './it.json';
@@ -46,6 +47,7 @@ const messages: Record<LanguageValue, typeof en> = {
   et,
   fi,
   fr,
+  gaa,
   ht,
   hu,
   it,

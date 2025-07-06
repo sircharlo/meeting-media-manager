@@ -47,57 +47,43 @@
         <div class="row items-center">
           <template v-if="mediaList.extraMediaShortcut">
             <q-btn
-              v-if="
-                mediaList.uniqueId === 'additional' ||
-                (mediaList.uniqueId === 'circuitOverseer' &&
-                  !mediaList.items.filter((m) => !m.hidden).length)
-              "
               class="add-media-shortcut"
               :class="
                 mediaSectionCanBeCustomized
-                  ? ' custom-text-color'
+                  ? 'custom-text-color'
                   : 'text-white bg-' + mediaList.uniqueId
               "
-              icon="mmm-music-note"
+              :color="!mediaSectionCanBeCustomized ? mediaList.uniqueId : undefined"
+              :flat="mediaSectionCanBeCustomized"
+              :outline="!mediaSectionCanBeCustomized"
+              :icon="isSongButton ? 'mmm-music-note' : 'mmm-add-media'"
               :label="
                 $q.screen.gt.xs
-                  ? mediaList.uniqueId === 'additional'
-                    ? t('add-an-opening-song')
-                    : t('add-a-closing-song')
-                  : undefined
-              "
-              size="sm"
-              @click="addSong(mediaList.uniqueId)"
-            >
-              <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
-                {{
-                  mediaList.uniqueId === 'additional'
-                    ? t('add-an-opening-song')
-                    : t('add-a-closing-song')
-                }}
-              </q-tooltip>
-            </q-btn>
-            <q-btn
-              v-else
-              class="add-media-shortcut"
-              :class="
-                mediaSectionCanBeCustomized
-                  ? ' custom-text-color'
-                  : ' text-white bg-' + mediaList.uniqueId
-              "
-              :flat="mediaSectionCanBeCustomized"
-              icon="mmm-add-media"
-              :label="
-                !mediaSectionCanBeCustomized && $q.screen.gt.xs
-                  ? t('add-extra-media')
+                  ? isSongButton
+                    ? mediaList.uniqueId === 'additional'
+                      ? t('add-an-opening-song')
+                      : t('add-a-closing-song')
+                    : !mediaSectionCanBeCustomized
+                      ? t('add-extra-media')
+                      : undefined
                   : undefined
               "
               :round="mediaSectionCanBeCustomized"
               size="sm"
-              @click="openImportMenu(mediaList.uniqueId)"
+              @click="
+                isSongButton
+                  ? addSong(mediaList.uniqueId)
+                  : openImportMenu(mediaList.uniqueId)
+              "
             >
               <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
-                {{ t('add-extra-media') }}
+                {{
+                  isSongButton
+                    ? mediaList.uniqueId === 'additional'
+                      ? t('add-an-opening-song')
+                      : t('add-a-closing-song')
+                    : t('add-extra-media')
+                }}
               </q-tooltip>
             </q-btn>
           </template>
@@ -341,8 +327,18 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
+export interface MediaListObject {
+  alwaysShow: boolean;
+  extraMediaShortcut?: boolean;
+  items: DynamicMediaObject[];
+  jwIcon?: string;
+  label: string;
+  mmmIcon?: string;
+  type: MediaSection;
+}
+
 const props = defineProps<{
-  mediaList: DynamicMediaSection;
+  mediaList: MediaListObject;
   openImportMenu: (section: MediaSectionIdentifier) => void;
 }>();
 
@@ -616,10 +612,10 @@ const mediaSectionCanBeCustomized = computed(() => {
 .add-media-shortcut {
   max-width: 100%;
 
-  :deep(span.block) {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-}
-</style>
+const isSongButton = computed(
+  () =>
+    props.mediaList.type === 'additional' ||
+    (props.mediaList.type === 'circuitOverseer' &&
+      !props.mediaList.items.some((m) => !m.hidden)),
+);
+</script>

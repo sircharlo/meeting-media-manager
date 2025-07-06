@@ -200,6 +200,7 @@ export interface SettingsValues {
   meetingScheduleChangeWeDay: `${number}` | null;
   meetingScheduleChangeWeStartTime: `${number}:${number}` | null;
   memorialDate: `${number}/${number}/${number}` | null;
+  meteredConnection: boolean;
   musicVolume: number;
   mwDay: `${number}` | null;
   mwStartTime: `${number}:${number}` | null;
@@ -210,6 +211,7 @@ export interface SettingsValues {
   obsMediaScene: null | string;
   obsPassword: null | string;
   obsPort: null | string;
+  obsPostponeImages: boolean;
   obsQuickToggle: boolean;
   obsSwitchSceneAfterMedia: boolean;
   shortcutMediaNext: null | string;

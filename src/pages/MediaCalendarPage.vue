@@ -12,65 +12,71 @@
   >
     <div class="col">
       {{ selectedDateObject?.customSections }}
-      <div
-        v-if="
-          currentSettings?.obsEnable &&
-          ['disconnected', 'notConnected'].includes(obsConnectionState) &&
-          selectedDateObject?.today
-        "
-        class="row"
-      >
-        <q-banner
-          class="bg-negative text-white full-width"
-          inline-actions
-          rounded
+      <q-slide-transition>
+        <div
+          v-if="
+            currentSettings?.obsEnable &&
+            ['disconnected', 'notConnected'].includes(obsConnectionState) &&
+            selectedDateObject?.today
+          "
+          class="row"
         >
-          {{ t('obs-studio-disconnected-banner') }}
-          <template #avatar>
-            <q-icon name="mmm-obs-studio" size="lg" />
-          </template>
-        </q-banner>
-      </div>
-      <div v-if="someItemsHiddenForSelectedDate" class="row">
-        <q-banner
-          class="bg-warning text-white full-width"
-          inline-actions
-          rounded
-        >
-          {{ t('some-media-items-are-hidden') }}
-          <template #avatar>
-            <q-avatar class="bg-white text-warning" size="lg">
-              <q-icon name="mmm-file-hidden" size="sm" />
-            </q-avatar>
-          </template>
-          <template #action>
-            <q-btn
-              flat
-              :label="t('show-all-media')"
-              @click="
-                showHiddenMediaForSelectedDate(
-                  currentCongregation,
-                  selectedDateObject,
-                )
-              "
-            />
-          </template>
-        </q-banner>
-      </div>
-      <div v-if="duplicateSongsForWeMeeting" class="row">
-        <q-banner
-          class="bg-warning text-white full-width"
-          inline-actions
-          rounded
-        >
-          {{ t('some-songs-are-duplicated') }}
-          <template #avatar>
-            <q-avatar class="bg-white text-warning" size="lg">
-              <q-icon name="mmm-music-note" size="sm" />
-            </q-avatar>
-          </template>
-        </q-banner>
-      </div>
+          <q-banner
+            class="bg-negative text-white full-width"
+            inline-actions
+            rounded
+          >
+            {{ t('obs-studio-disconnected-banner') }}
+            <template #avatar>
+              <q-icon name="mmm-obs-studio" size="lg" />
+            </template>
+          </q-banner>
+        </div>
+      </q-slide-transition>
+      <q-slide-transition>
+        <div v-if="someItemsHiddenForSelectedDate" class="row">
+          <q-banner
+            class="bg-warning text-white full-width"
+            inline-actions
+            rounded
+          >
+            {{ t('some-media-items-are-hidden') }}
+            <template #avatar>
+              <q-avatar class="bg-white text-warning" size="lg">
+                <q-icon name="mmm-file-hidden" size="sm" />
+              </q-avatar>
+            </template>
+            <template #action>
+              <q-btn
+                flat
+                :label="t('show-all-media')"
+                @click="
+                  showHiddenMediaForSelectedDate(
+                    currentCongregation,
+                    selectedDateObject,
+                  )
+                "
+              />
+            </template>
+          </q-banner>
+        </div>
+      </q-slide-transition>
+      <q-slide-transition>
+        <div v-if="duplicateSongsForWeMeeting" class="row">
+          <q-banner
+            class="bg-warning text-white full-width"
+            inline-actions
+            rounded
+          >
+            {{ t('some-songs-are-duplicated') }}
+            <template #avatar>
+              <q-avatar class="bg-white text-warning" size="lg">
+                <q-icon name="mmm-music-note" size="sm" />
+              </q-avatar>
+            </template>
+          </q-banner>
+        </div>
+      </q-slide-transition>
       <MediaEmptyState
         v-if="
           (currentSettings?.disableMediaFetching &&
@@ -146,7 +152,6 @@ import {
   useEventListener,
   useMouse,
   usePointer,
-  whenever,
 } from '@vueuse/core';
 import { Buffer } from 'buffer';
 import DialogFileImport from 'components/dialog/DialogFileImport.vue';
@@ -201,7 +206,7 @@ import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, toRaw, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const showFileImportDialog = ref(false);
@@ -248,18 +253,23 @@ const obsState = useObsStateStore();
 const { obsConnectionState } = storeToRefs(obsState);
 
 const { getDatedAdditionalMediaDirectory } = currentState;
+
+const totalFiles = ref(0);
+const currentFile = ref(0);
+
 const {
   convertPdfToImages,
   decompress,
   executeQuery,
   fs,
   getLocalPathFromFileObject,
+  inferExtension,
   path,
+  pathToFileURL,
   readdir,
 } = window.electronApi;
 
-const totalFiles = ref(0);
-const currentFile = ref(0);
+const { ensureDir, exists, remove, writeFile } = fs;
 
 const mediaLists = computed<DynamicMediaSection[]>(() => {
   const mwMeetingDay = isMwMeetingDay(selectedDateObject.value?.date);
@@ -399,7 +409,7 @@ watch(
   (newPanzoom, oldPanzoom) => {
     try {
       if (JSON.stringify(newPanzoom) !== JSON.stringify(oldPanzoom)) {
-        newPanzoom = JSON.parse(JSON.stringify(newPanzoom));
+        newPanzoom = structuredClone(toRaw(newPanzoom));
         postPanzoom(newPanzoom);
       }
     } catch (error) {
@@ -409,28 +419,34 @@ watch(
   { deep: true },
 );
 
+const { post: postMediaUrl } = useBroadcastChannel<string, string>({
+  name: 'media-url',
+});
+
+const { post: postCustomDuration } = useBroadcastChannel<
+  string | undefined,
+  string | undefined
+>({
+  name: 'custom-duration',
+});
+
 watch(
   () => mediaPlayingUrl.value,
   (newUrl, oldUrl) => {
-    if (newUrl !== oldUrl) {
-      const { post: postMediaUrl } = useBroadcastChannel<string, string>({
-        name: 'media-url',
-      });
-      postMediaUrl(newUrl);
+    if (newUrl === oldUrl) return;
+    postMediaUrl(newUrl);
+    postCustomDuration(undefined);
 
-      const customDuration =
-        (
-          lookupPeriod.value[currentCongregation.value]?.flatMap(
-            (item) => item.dynamicMedia,
-          ) ?? []
-        ).find((item) => item.uniqueId === mediaPlayingUniqueId.value)
-          ?.customDuration || undefined;
-      if (customDuration) {
-        const { post } = useBroadcastChannel<string, string>({
-          name: 'custom-duration',
-        });
-        post(JSON.stringify(customDuration));
-      }
+    const customDuration =
+      (
+        lookupPeriod.value[currentCongregation.value]?.flatMap(
+          (item) => item.dynamicMedia,
+        ) ?? []
+      ).find((item) => item.uniqueId === mediaPlayingUniqueId.value)
+        ?.customDuration || undefined;
+
+    if (customDuration) {
+      postCustomDuration(JSON.stringify(customDuration));
     }
   },
 );
@@ -468,7 +484,16 @@ watch(
 
 watch(
   () => [mediaPlaying.value, mediaPaused.value, mediaPlayingUrl.value],
-  ([newMediaPlaying, newMediaPaused]) => {
+  ([newMediaPlaying, newMediaPaused, newMediaPlayingUrl]) => {
+    if (
+      currentSettings.value?.obsPostponeImages &&
+      newMediaPlaying &&
+      !newMediaPaused &&
+      typeof newMediaPlayingUrl === 'string' &&
+      isImage(newMediaPlayingUrl)
+    ) {
+      return;
+    }
     sendObsSceneEvent(
       newMediaPaused ? 'camera' : newMediaPlaying ? 'media' : 'camera',
     );
@@ -597,7 +622,7 @@ useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
 );
 useEventListener<
   CustomEvent<{
-    files: { filename?: string; filetype?: string; path: string }[];
+    files: (File | string)[];
     section: MediaSectionIdentifier | undefined;
   }>
 >(
@@ -684,32 +709,38 @@ watch(
   },
 );
 
-const addToFiles = async (
-  files: FileList | { filename?: string; filetype?: string; path: string }[],
-) => {
+const addToFiles = async (files: (File | string)[] | FileList) => {
   if (!files) return;
   totalFiles.value = files.length;
   if (!Array.isArray(files)) files = Array.from(files);
   if (files.length > 1) {
-    const jwPubFile = files.find((f) => isJwpub(f.path));
+    const jwPubFile = files.find((f) => isJwpub(getLocalPathFromFileObject(f)));
     if (jwPubFile) {
       files = [jwPubFile];
       createTemporaryNotification({
         caption: t('jwpub-file-found'),
-        message: t('processing') + ' ' + path.basename(files[0]?.path || ''),
+        message:
+          t('processing') +
+          ' ' +
+          path.basename(getLocalPathFromFileObject(files[0])),
       });
     }
-    const archiveFile = files.find((f) => isArchive(f.path));
+    const archiveFile = files.find((f) =>
+      isArchive(getLocalPathFromFileObject(f)),
+    );
     if (archiveFile) {
       files = [archiveFile];
       createTemporaryNotification({
         caption: t('archive-file-found'),
-        message: t('processing') + ' ' + path.basename(files[0]?.path || ''),
+        message:
+          t('processing') +
+          ' ' +
+          path.basename(getLocalPathFromFileObject(files[0])),
       });
     }
   }
   for (const file of files) {
-    let filepath = file?.path;
+    let filepath = getLocalPathFromFileObject(file);
     try {
       if (!filepath) continue;
       // Check if file is remote URL; if so, download it
@@ -718,9 +749,9 @@ const addToFiles = async (
         filepath = (
           await downloadFileIfNeeded({
             dir: await getTempPath(),
-            filename: await window.electronApi.inferExtension(
-              file.filename || baseFileName,
-              file.filetype,
+            filename: await inferExtension(
+              baseFileName,
+              file instanceof File ? file.type : undefined,
             ),
             url: filepath,
           })
@@ -730,7 +761,7 @@ const addToFiles = async (
         const ext = preamble?.split('/')[1];
         const tempFilename = uuid() + '.' + ext;
         const tempFilepath = path.join(await getTempPath(), tempFilename);
-        await fs.writeFile(tempFilepath, Buffer.from(data ?? '', 'base64'));
+        await writeFile(tempFilepath, Buffer.from(data ?? '', 'base64'));
         filepath = tempFilepath;
       }
       filepath = await convertImageIfNeeded(filepath);
@@ -760,20 +791,18 @@ const addToFiles = async (
         );
         if (matchingMissingItem) {
           const metadata = await getMetadataFromMediaPath(destPath);
-          matchingMissingItem.fileUrl =
-            window.electronApi.pathToFileURL(destPath);
+          matchingMissingItem.fileUrl = pathToFileURL(destPath);
           matchingMissingItem.duration = metadata.format.duration || 0;
           matchingMissingItem.title =
-            metadata.common.title || window.electronApi.path.basename(destPath);
+            metadata.common.title || path.basename(destPath);
           matchingMissingItem.isVideo = isVideo(filepath);
           matchingMissingItem.isAudio = isAudio(filepath);
         }
       } else if (isPdf(filepath)) {
-        const convertedImages = (
-          await convertPdfToImages(filepath, await getTempPath())
-        ).map((path) => {
-          return { path };
-        });
+        const convertedImages = await convertPdfToImages(
+          filepath,
+          await getTempPath(),
+        );
         // await addToFiles(convertedImages);
         files.push(...convertedImages);
       } else if (isJwpub(filepath)) {
@@ -785,12 +814,12 @@ const addToFiles = async (
         if (!tempContentFile) return;
         const tempDir = await getTempPath();
         if (!tempDir) return;
-        await fs.ensureDir(tempDir);
+        await ensureDir(tempDir);
         const tempFilePath = path.join(
           tempDir,
           path.basename(filepath) + '-contents',
         );
-        await fs.writeFile(tempFilePath, tempContentFile.data);
+        await writeFile(tempFilePath, tempContentFile.data);
         const tempJwpubFileContents = await decompress(tempFilePath);
         const tempDbFile = tempJwpubFileContents.find((tempJwpubFileContent) =>
           tempJwpubFileContent.path.endsWith('.db'),
@@ -800,9 +829,9 @@ const addToFiles = async (
           await getTempPath(),
           path.basename(filepath) + '.db',
         );
-        await fs.writeFile(tempDbFilePath, tempDbFile.data);
-        fs.remove(tempFilePath);
-        if (!(await fs.exists(tempDbFilePath))) return;
+        await writeFile(tempDbFilePath, tempDbFile.data);
+        remove(tempFilePath);
+        if (!(await exists(tempDbFilePath))) return;
         const publication = getPublicationInfoFromDb(tempDbFilePath);
         const publicationDirectory = await getPublicationDirectory(
           publication,
@@ -872,16 +901,18 @@ const addToFiles = async (
           await getTempPath(),
           path.basename(filepath),
         );
-        await fs.remove(unzipDirectory);
-        await decompress(filepath, unzipDirectory).catch((error) => {
-          throw error;
-        });
+        await remove(unzipDirectory);
+        await window.electronApi
+          .decompress(filepath, unzipDirectory)
+          .catch((error) => {
+            throw error;
+          });
         const files = await readdir(unzipDirectory);
-        const filePaths = files.map((file) => ({
-          path: path.join(unzipDirectory, file.name),
-        }));
+        const filePaths = files.map((file) =>
+          path.join(unzipDirectory, file.name),
+        );
         await addToFiles(filePaths);
-        await fs.remove(unzipDirectory);
+        await remove(unzipDirectory);
       } else {
         createTemporaryNotification({
           caption: filepath ? path.basename(filepath) : filepath,
@@ -901,7 +932,8 @@ const addToFiles = async (
     }
     currentFile.value++;
   }
-  if (!isJwpub(files[0]?.path)) showFileImportDialog.value = false;
+  if (!isJwpub(getLocalPathFromFileObject(files[0])))
+    showFileImportDialog.value = false;
 };
 
 const openImportMenu = (section: MediaSectionIdentifier | undefined) => {
@@ -924,9 +956,15 @@ watch(pressure, () => {
   if (!pressure.value) stopScrolling.value = true;
 });
 
-const scroll = (step: number) => {
+const scroll = (step?: number) => {
   const el = document.querySelector('.q-page-container');
-  if (!el || stopScrolling.value) return;
+  if (!el) return;
+  if (!step) {
+    el.scrollTop = 0;
+    stopScrolling.value = true;
+    return;
+  }
+  if (stopScrolling.value) return;
   el.scrollBy(0, step);
   setTimeout(() => scroll(step), 20);
 };
@@ -939,9 +977,10 @@ const dropActive = (event: DragEvent) => {
         : 0;
   stopScrolling.value = step === 0;
   if (step) scroll(step);
-  if (event?.dataTransfer?.effectAllowed === 'all') {
+  if (['all', 'copyLink'].includes(event?.dataTransfer?.effectAllowed || '')) {
     event.preventDefault();
     showFileImportDialog.value = true;
+    stopScrolling.value = true;
   }
 };
 
@@ -950,27 +989,24 @@ const dropEnd = (event: DragEvent) => {
   event.stopPropagation();
   try {
     if (event.dataTransfer?.files?.length) {
-      const droppedStuff = Array.from(event.dataTransfer.files)
-        .map((file) => {
-          return {
-            filetype: file.type,
-            path: getLocalPathFromFileObject(file),
-          };
-        })
-        .sort((a, b) => SORTER.compare(a?.path, b?.path));
+      const droppedStuff: (File | string)[] = Array.from(
+        event.dataTransfer.files,
+      ).sort((a, b) =>
+        SORTER.compare(
+          getLocalPathFromFileObject(a),
+          getLocalPathFromFileObject(b),
+        ),
+      );
       const noLocalDroppedFiles =
-        droppedStuff.filter((file) => file.path).length === 0;
+        droppedStuff.filter((file) => getLocalPathFromFileObject(file))
+          .length === 0;
       if (noLocalDroppedFiles && droppedStuff.length > 0) {
         const html = event.dataTransfer.getData('text/html');
         const sanitizedHtml = DOMPurify.sanitize(html);
         const src = new DOMParser()
           .parseFromString(sanitizedHtml, 'text/html')
           .querySelector('img')?.src;
-        const filetype =
-          Array.from(event.dataTransfer.items).find(
-            (item) => item.kind === 'file',
-          )?.type ?? '';
-        if (src) droppedStuff[0] = { filetype, path: src };
+        if (src) droppedStuff[0] = src;
       }
       addToFiles(droppedStuff).catch((error) => {
         errorCatcher(error);
@@ -981,19 +1017,22 @@ const dropEnd = (event: DragEvent) => {
   }
 };
 
-whenever(
+watch(
   () => showFileImportDialog.value,
-  () => {
-    jwpubImportDb.value = '';
-    jwpubImportDocuments.value = [];
-    currentFile.value = 0;
-    totalFiles.value = 0;
-    sectionToAddTo.value = undefined;
+  (newVal) => {
+    if (newVal) {
+      jwpubImportDb.value = '';
+      jwpubImportDocuments.value = [];
+      currentFile.value = 0;
+      totalFiles.value = 0;
+    } else {
+      scroll(); // Scroll to top when dialog closes
+    }
   },
 );
 
 const duplicateSongsForWeMeeting = computed(() => {
-  if (!(selectedDateObject.value?.meeting === 'we')) return false;
+  // if (!(selectedDateObject.value?.meeting === 'we')) return false;
   const songNumbers: (number | string)[] =
     selectedDateObject.value?.dynamicMedia
       ?.filter((m) => !m.hidden && m.tag?.type === 'song' && m.tag?.value)

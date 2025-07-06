@@ -202,12 +202,12 @@
                 v-ripple
                 class="rounded-borders"
                 fit="contain"
-                :src="pathToFileURL(jwpubImage.FilePath)"
+                :src="getFileUrlFromPath(jwpubImage.FilePath)"
                 style="width: 150px"
               />
             </div>
             <div class="col">
-              <div class="row">{{ path.basename(jwpubImage.FilePath) }}</div>
+              <div class="row">{{ getBasename(jwpubImage.FilePath) }}</div>
             </div>
           </q-item>
           <q-separator
@@ -256,17 +256,6 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-const {
-  executeQuery,
-  fs,
-  getAllScreens,
-  moveMediaWindow,
-  openFileDialog,
-  path,
-  pathToFileURL,
-  setScreenPreferences,
-} = window.electronApi;
-
 const { t } = useI18n();
 
 const screenList = ref<Display[]>([]);
@@ -284,6 +273,28 @@ const {
 } = storeToRefs(currentState);
 
 const open = defineModel<boolean>({ default: false });
+
+const {
+  fs,
+  getAllScreens,
+  moveMediaWindow,
+  openFileDialog,
+  path,
+  pathToFileURL,
+  setScreenPreferences,
+} = window.electronApi;
+
+const { copyFile } = fs;
+
+const getBasename = (filename: string) => {
+  if (!filename) return '';
+  return path.basename(filename);
+};
+
+const getFileUrlFromPath = (filepath: string) => {
+  if (!filepath) return '';
+  return pathToFileURL(filepath);
+};
 
 const jwpubImportFilePath = ref('');
 const jwpubImages = ref<MultimediaItem[]>([]);
@@ -311,15 +322,17 @@ const chooseCustomBackground = async (reset?: boolean) => {
             const unzipDir = await decompressJwpub(filepath);
             const db = await findDb(unzipDir);
             if (!db) throw new Error('No db file found: ' + filepath);
-            jwpubImages.value = executeQuery<MultimediaItem>(
-              db,
-              "SELECT * FROM Multimedia WHERE CategoryType >= 0 AND CategoryType <> 9 AND FilePath <> '';",
-            ).map((multimediaItem) => {
-              return {
-                ...multimediaItem,
-                FilePath: path.join(unzipDir, multimediaItem.FilePath),
-              };
-            });
+            jwpubImages.value = window.electronApi
+              .executeQuery<MultimediaItem>(
+                db,
+                "SELECT * FROM Multimedia WHERE CategoryType >= 0 AND CategoryType <> 9 AND FilePath <> '';",
+              )
+              .map((multimediaItem) => {
+                return {
+                  ...multimediaItem,
+                  FilePath: path.join(unzipDir, multimediaItem.FilePath),
+                };
+              });
             if (jwpubImages.value?.length === 0) {
               notifyInvalidBackgroundFile();
             }
@@ -329,7 +342,7 @@ const chooseCustomBackground = async (reset?: boolean) => {
               tempDirectory,
               path.basename(filepath),
             );
-            await fs.copyFile(filepath, tempFilepath);
+            await copyFile(filepath, tempFilepath);
             const workingTempFilepath =
               await convertImageIfNeeded(tempFilepath);
             if (isImage(workingTempFilepath)) {

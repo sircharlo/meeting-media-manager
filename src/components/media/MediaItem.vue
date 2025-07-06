@@ -43,7 +43,7 @@
               :name="
                 !!hoveredBadge || customDurationIsSet
                   ? 'mmm-edit'
-                  : props.media.isAudio
+                  : media.isAudio
                     ? 'mmm-music-note'
                     : 'mmm-play'
               "
@@ -156,7 +156,7 @@
           mode="out-in"
           name="fade"
         >
-          <template v-if="media.isImage && hoveredBadge">
+          <template v-if="media.isImage && (hoveredBadge || getScale() > 1.01)">
             <div
               class="absolute-bottom-right q-mr-xs q-mb-xs row"
               @mouseenter="setHoveredBadge(true)"
@@ -219,7 +219,11 @@
           <q-chip
             :class="[
               'media-tag full-width',
-              media.tag?.type === 'song' ? 'bg-accent-400' : 'bg-accent-200',
+              media.tag?.type === 'song'
+                ? currentSongIsDuplicated
+                  ? 'bg-warning'
+                  : 'bg-accent-400'
+                : 'bg-accent-200',
             ]"
             :clickable="false"
             :ripple="false"
@@ -241,18 +245,8 @@
                       : 'mmm-music-note'
               "
             />
-            <q-tooltip v-if="media.source === 'watched'" :delay="500">
-              {{ t('watched-media-item-explain') }}
-            </q-tooltip>
-            <q-tooltip
-              v-else-if="
-                media.source === 'additional' &&
-                !currentSettings?.disableMediaFetching &&
-                isFileUrl(media.fileUrl)
-              "
-              :delay="1000"
-            >
-              {{ t('extra-media-item-explain') }}
+            <q-tooltip v-if="tagTooltipText" :delay="500">
+              {{ tagTooltipText }}
             </q-tooltip>
             <template v-if="media?.tag?.type">
               {{
@@ -290,6 +284,17 @@
         </div>
         <div class="col-shrink">
           <div class="row q-gutter-sm items-center q-mr-sm">
+            <q-icon
+              v-if="currentSongIsDuplicated"
+              class="q-mr-sm"
+              color="warning"
+              name="mmm-warning"
+              size="sm"
+            >
+              <q-tooltip :delay="500">
+                {{ $t('this-song-is-duplicated') }}
+              </q-tooltip>
+            </q-icon>
             <q-btn
               ref="moreButton"
               color="accent-400"
@@ -397,7 +402,7 @@
               (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))) ||
             !isFileUrl(media.fileUrl)
           "
-          icon="mmm-play"
+          :icon="localFile ? 'mmm-play' : 'mmm-stream-play'"
           rounded
           :unelevated="!isFileUrl(media.fileUrl)"
           @click="setMediaPlaying(media)"
@@ -468,6 +473,7 @@
         />
         <q-btn
           v-else-if="
+            localFile &&
             media.duration &&
             (mediaPlayingAction === 'play' || !mediaPlayingAction)
           "
@@ -483,10 +489,23 @@
           ref="stopButton"
           class="q-ml-sm"
           color="negative"
-          icon="mmm-stop"
+          :icon="
+            !localFile && mediaPlayingCurrentPosition === 0
+              ? undefined
+              : 'mmm-stop'
+          "
           rounded
-          @click="media.isVideo ? (mediaToStop = media.uniqueId) : stopMedia()"
-        />
+          @click="
+            media.isVideo || media.isAudio
+              ? (mediaToStop = media.uniqueId)
+              : stopMedia()
+          "
+        >
+          <q-spinner
+            v-if="!localFile && mediaPlayingCurrentPosition === 0"
+            size="xs"
+          />
+        </q-btn>
       </div>
     </template>
     <q-menu
@@ -666,7 +685,7 @@
           t('are-you-sure-delete', {
             mediaToDelete:
               props.media.title ||
-              (props.media.fileUrl ? path.basename(props.media.fileUrl) : ''),
+              (props.media.fileUrl ? getBasename(props.media.fileUrl) : ''),
           })
         }}
       </q-card-section>
@@ -694,7 +713,9 @@ import {
   useBroadcastChannel,
   useElementHover,
   useEventListener,
+  useTimeoutPoll,
   watchImmediate,
+  whenever,
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { debounce, type QBtn, type QImg, useQuasar } from 'quasar';
@@ -708,7 +729,14 @@ import { formatTime, timeToSeconds } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
-import { computed, onUnmounted, ref, useTemplateRef, watch } from 'vue';
+import {
+  computed,
+  onMounted,
+  onUnmounted,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
@@ -732,8 +760,6 @@ const setHoveredBadge = debounce((value: boolean) => {
 
 const obsState = useObsStateStore();
 const { currentSceneType, obsConnectionState } = storeToRefs(obsState);
-
-const { fileUrlToPath, fs, path } = window.electronApi;
 
 const mediaDurationPopup = ref(false);
 const panzoom = ref<null | PanzoomObject>(null);
@@ -770,6 +796,10 @@ watch(contextMenu, (val) => {
 const mediaEditTitleDialog = ref(false);
 const mediaTitle = ref(props.media.title);
 const initialMediaTitle = ref(mediaTitle.value);
+
+const { fileUrlToPath, fs, path } = window.electronApi;
+
+const { pathExists, pathExistsSync, statSync } = fs;
 
 const displayMediaTitle = computed(() => {
   return (
@@ -855,6 +885,37 @@ const customDurationMaxUserInput = ref(
   formatTime(mediaCustomDuration.value.max),
 );
 
+const getBasename = (fileUrl: string) => {
+  if (!fileUrl) return '';
+  return path.basename(fileUrl);
+};
+
+const fileIsLocal = () => {
+  const filePath = fileUrlToPath(props.media.fileUrl);
+  const fileExists = pathExistsSync(filePath);
+  const remoteSizeKnown = props.media.filesize !== undefined;
+  const localSize = fileExists ? statSync(filePath).size : 0;
+
+  if (!fileExists) return false;
+  if (!remoteSizeKnown) return true;
+  if (localSize !== props.media.filesize) return false;
+  return true;
+};
+
+const localFile = ref(fileIsLocal());
+
+const { pause } = useTimeoutPoll(() => {
+  localFile.value = fileIsLocal();
+}, 1000);
+
+whenever(
+  () => localFile.value,
+  () => {
+    pause();
+  },
+  { immediate: true },
+);
+
 const setMediaPlaying = async (
   media: DynamicMediaObject,
   signLanguage = false,
@@ -879,12 +940,10 @@ const setMediaPlaying = async (
     if (mediaPanzoom.value) mediaPlayingPanzoom.value = mediaPanzoom.value;
   }
   mediaPlayingAction.value = 'play';
-  const filePath = fileUrlToPath(media.fileUrl);
-  const fileExists = await fs.pathExists(filePath);
-  mediaPlayingUrl.value =
-    fileExists && media.fileUrl
-      ? media.fileUrl
-      : (media.streamUrl ?? media.fileUrl ?? '');
+  localFile.value = fileIsLocal();
+  mediaPlayingUrl.value = localFile.value
+    ? (media.fileUrl ?? '')
+    : (media.streamUrl ?? media.fileUrl ?? '');
   mediaPlayingUniqueId.value = media.uniqueId;
   mediaPlayingSubtitlesUrl.value = media.subtitlesUrl ?? '';
 };
@@ -913,7 +972,7 @@ async function findThumbnailUrl() {
 
   const runThumbnailCheck = async () => {
     const filePath = fileUrlToPath(props.media.fileUrl);
-    const fileExists = await fs.pathExists(filePath);
+    const fileExists = await pathExists(filePath);
 
     if (!fileExists) {
       if (fileRetryCount < 30) {
@@ -988,11 +1047,10 @@ const seekTo = (newSeekTo: null | number) => {
 };
 
 function zoomIn(click?: MouseEvent) {
-  if (!panzoom.value) initiatePanzoom();
   if (!panzoom.value) return;
   const zoomFactor = 0.2;
   try {
-    const scale = panzoom.value.getScale();
+    const scale = getScale();
     if (!click?.clientX && !click?.clientY) {
       if (scale === 1) {
         panzoom.value.zoomIn({ step: 0.001 });
@@ -1024,9 +1082,8 @@ function zoomOut() {
 
 const zoomReset = (forced = false, animate = true) => {
   if (!panzoom.value) return;
-  if (panzoom.value.getScale() < 1.05 || forced) {
+  if (getScale() < 1.05 || forced) {
     panzoom.value.reset({ animate });
-    destroyPanzoom();
   }
 };
 
@@ -1037,6 +1094,7 @@ function stopMedia(forOtherMediaItem = false) {
   mediaPlayingCurrentPosition.value = 0;
   mediaPlayingAction.value = '';
   mediaToStop.value = '';
+  localFile.value = fileIsLocal();
   if (!forOtherMediaItem) zoomReset(true);
 }
 
@@ -1068,6 +1126,11 @@ const mediaPanzoom = ref<{ scale: number; x: number; y: number }>({
 
 const mediaImage = useTemplateRef<QImg>('mediaImage');
 
+const getScale = () => {
+  if (!panzoom.value) return 1;
+  return panzoom.value.getScale();
+};
+
 const initiatePanzoom = () => {
   try {
     if (
@@ -1080,6 +1143,12 @@ const initiatePanzoom = () => {
     const options: PanzoomOptions = {
       animate: true,
       contain: 'outside',
+      handleStartEvent: (e) => {
+        if (getScale() > 1.01) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      },
       maxScale: 5,
       minScale: 1,
       panOnlyWhenZoomed: true,
@@ -1134,6 +1203,10 @@ function deleteMedia() {
   mediaToDelete.value = '';
 }
 
+onMounted(() => {
+  initiatePanzoom();
+});
+
 onUnmounted(() => {
   destroyPanzoom();
 });
@@ -1178,4 +1251,38 @@ useEventListener(
   },
   { passive: true },
 );
+const currentSongIsDuplicated = computed(() => {
+  const currentSong = props.media.tag?.value?.toString();
+  if (!currentSong) return false;
+
+  const songNumbers =
+    currentState.selectedDateObject?.dynamicMedia?.filter(
+      (m) =>
+        !m.hidden &&
+        m.tag?.type === 'song' &&
+        m.tag?.value?.toString() === currentSong,
+    ) ?? [];
+
+  return songNumbers.length > 1;
+});
+
+const tagTooltipText = computed(() => {
+  if (currentSongIsDuplicated.value) {
+    return t('this-song-is-duplicated');
+  }
+
+  if (props.media.source === 'watched') {
+    return t('watched-media-item-explain');
+  }
+
+  if (
+    props.media.source === 'additional' &&
+    !currentSettings.value?.disableMediaFetching &&
+    isFileUrl(props.media.fileUrl)
+  ) {
+    return t('extra-media-item-explain');
+  }
+
+  return null;
+});
 </script>

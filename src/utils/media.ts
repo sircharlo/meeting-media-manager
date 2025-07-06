@@ -160,11 +160,22 @@ export const isSong = (multimediaItem: MultimediaItem) => {
  * @param file The file to check.
  * @returns Whether the file is a remote file.
  */
-export const isRemoteFile = (
-  file: File | { filename?: string; filetype?: string; path: string },
-): file is { filename?: string; filetype?: string; path: string } => {
-  if (!file.path) return false;
-  return file.path.startsWith('http://') || file.path.startsWith('https://');
+export const isRemoteFile = (file: File | string): boolean => {
+  if (!file) return false;
+
+  let filePath: string;
+
+  if (typeof file === 'string') {
+    filePath = file;
+  } else if (file instanceof File) {
+    const path = window.electronApi?.getLocalPathFromFileObject?.(file);
+    if (typeof path !== 'string') return false;
+    filePath = path;
+  } else {
+    return false;
+  }
+
+  return /^https?:\/\//i.test(filePath);
 };
 
 /**

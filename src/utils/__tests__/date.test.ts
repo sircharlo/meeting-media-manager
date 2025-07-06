@@ -10,6 +10,7 @@ import {
   getSpecificWeekday,
   isInPast,
 } from '../date';
+import { pad } from '../general';
 
 describe('friendlyDayToJsDay', () => {
   // Friendly days: Mon-Sun = 0-6
@@ -92,9 +93,9 @@ describe('getSpecificWeekday', () => {
 
     // Check that the date is in the correct week
     expect(
-      +`${monday.getFullYear()}${monday.getMonth()}${monday.getDate()}`,
+      +`${monday.getFullYear()}${pad(monday.getMonth())}${pad(monday.getDate())}`,
     ).toBeLessThanOrEqual(
-      +`${date.getFullYear()}${date.getMonth()}${date.getDate()}`,
+      +`${date.getFullYear()}${pad(date.getMonth())}${pad(date.getDate())}`,
     );
 
     const thursday = getSpecificWeekday(date, 3);
@@ -105,9 +106,9 @@ describe('getSpecificWeekday', () => {
 
     // Check that the date is in the correct week
     expect(
-      +`${sunday.getFullYear()}${sunday.getMonth()}${sunday.getDate()}`,
+      +`${sunday.getFullYear()}${pad(sunday.getMonth())}${pad(sunday.getDate())}`,
     ).toBeGreaterThanOrEqual(
-      +`${date.getFullYear()}${date.getMonth()}${date.getDate()}`,
+      +`${date.getFullYear()}${pad(date.getMonth())}${pad(date.getDate())}`,
     );
   });
 });

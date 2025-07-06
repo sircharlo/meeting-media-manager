@@ -4,18 +4,67 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## 25.6.0
+
+### ✨ Nieuwe functies
+
+- ✨ **Betaalde verbindingsinstelling**: Een nieuwe instelling toegevoegd om het gebruik van de downloadbandbreedte voor datalimiet te verminderen.
+- ✨ **Verbeterde streaming van media**: Betere ondersteuning voor het streamen van media, minder problemen in verband met vertraging.
+
+### 🛠️ Verbeteringen en tweaks
+
+- 🛠️ **Betere mime type verwerking**: Verbeterde ondersteuning voor MIME-types voor betere compatibiliteit van de media.
+- 🛠️ **Verbeterde navigatie drawer**: Verbeterde mini state behandeling en toegevoegde tooltip voor betere user navigatie.
+- 🛠️ **Linux compatibiliteit**: Forced GTK 3 gebruik op Linux om UI en opstart problemen te voorkomen.
+
+## 25.5.0
+
+### ✨ Nieuwe functies
+
+- 🖼️ **OBS Vertraging optie voor Afbeeldingen**: Voeg een OBS Studio instelling toe om scène wijzigingen te vertragen bij het weergeven van afbeeldingen, waardoor overgangen worden verbeterd.
+- 🔊 **Ondersteuning voor `.m4a` Audio Formaat**: Voeg compatibiliteit toe voor `.m4a` audio bestanden om ondersteunde media types uit te breiden.
+
+### 🛠️ Verbeteringen en tweaks
+
+- 🔍 **Herstel Zoom via `Ctrl` + `Scroll`**: Herstel onmiddellijke zooming met ctrl + scroll voor makkelijkere navigatie.
+- 👤 **Verberg ongebruikte KO Media**: Verberg in plaats van ongebruikte media over te slaan voor kringopziener bezoeken om een schonere presentatie te onderhouden.
+- 🎵 **Verbeter dubbele liederen indicator**: Verbeter de visuele hint voor dubbele liederen om ze gemakkelijker te identificeren.
+
+## 25.4.3
+
+### 🛠️ Verbeteringen en tweaks
+
+- ➕ **Maak media schoon van v25.4.x**: haal automatisch losgekoppelde of misplaatste media weg van v25. .1 tot en met v25.4.2 om ervoor te zorgen dat er geen media ontbreekt of op de verkeerde plaats in de medialijst staat.
+
+## 25.4.2
+
+### 🛠️ Verbeteringen en tweaks
+
+- ➕ **Voorkom dat sommige media dupliceren**: voorkom dat sommige media-items meerdere keren toegevoegd worden aan de medialijst.
+
+## 25.4.1
+
+### 🛠️ Verbeteringen en tweaks
+
+- 🎬 **Fix aangepaste begin- en eindtijden**: Voorkom dat aangepaste begin- en eindtijden verkeerd worden toegepast op de verkeerde video.
+- 📝 **Niet overeenkomende ondertitels toestaan**: Gebruik van ondertitels inschakelen, zelfs als ze niet perfect overeenkomen met het mediabestand.
+- 🪟 **Schakel Ronde hoeken uit in Windows**: Verwijder afgeronde hoeken voor het media-venster in Windows.
+- 🖼️ **Voeg niet-gerefereerde afbeeldingen toe aan de medialijst**: Zorg ervoor dat alle afbeeldingen zonder verwijzing toegevoegd worden aan de medialijst voor volledigheid.
+- ➕ **Voorkom dubbele media secties**: Vermijd meerdere media secties voor hetzelfde media-item te maken.
+- 📥 **Behoud Afspeellijst Volgorde bij Importeren**: Behoud de originele volgorde van JWL afspeellijsten tijdens het importproces.
+
 ## 25.4.0
 
 ### ✨ Nieuwe functies
 
-- 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
-- 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
+- 🇵🇭 **Nieuwe taal: Tagalog**: Ondersteuning toegevoegd voor Tagalog, waardoor de meertalige mogelijkheden van de app worden uitgebreid.
+- 🎞️ **Ondersteuning voor `.m4v` Video Formaat**: Ondersteuning voor het afspelen van `.m4v` bestanden om de compatibiliteit met de media te verbeteren.
 
 ### 🛠️ Verbeteringen en tweaks
 
-- 🎬 **Multiple Start/End Times for Single Video**: Allow a single video to appear in the media list multiple times with different custom start/end times.
-- 📤 **Include Grouped Media in Auto Export**: Automatically export grouped media items along with others.
-- 📡 **Correct `.m4v` Fetching from JW API**: Ensure `.m4v` files are correctly fetched from the JW API.
+- 🎬 **Meerdere start/stop tijden voor een video**: Laat een enkele video meerdere keren in de medialijst verschijnen met verschillende aangepaste start- en eindtijden.
+- 📤 **Voeg gegroepeerde media in Auto-export toe**: Automatisch gegroepeerde media exporteren samen met anderen.
+- 📡 **Haal `.m4v` bestanden op van de JW API**: Zorg ervoor dat `.m4v` bestanden correct worden opgehaald van de JW API.
 
 ## 25.3.1
 

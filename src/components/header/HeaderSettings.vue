@@ -93,8 +93,6 @@ import { useJwStore } from 'stores/jw';
 import { computed, ref, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-const { fs, path, pathToFileURL, readdir } = window.electronApi;
-
 const { t } = useI18n();
 const jwStore = useJwStore();
 const { lookupPeriod } = storeToRefs(jwStore);
@@ -110,6 +108,10 @@ const cacheClearType = ref<'' | 'all' | 'smart'>('');
 const cacheFiles = ref<CacheFile[]>([]);
 
 const frequentlyUsedDirectories = ref(new Set());
+
+const { fs, path, pathToFileURL, readdir } = window.electronApi;
+
+const { pathExists } = fs;
 
 const loadFrequentlyUsedDirectories = async () => {
   const getDirectory = async (
@@ -296,11 +298,11 @@ const calculateCacheSize = async () => {
         await getPublicationsPath(),
         await getPublicationsPath(currentState.currentSettings?.cacheFolder),
         await getTempPath(),
-        window.electronApi.path.join(
+        path.join(
           await getAdditionalMediaPath(),
           currentState.currentCongregation,
         ),
-        window.electronApi.path.join(
+        path.join(
           await getAdditionalMediaPath(
             currentState.currentSettings?.cacheFolder,
           ),
@@ -310,7 +312,7 @@ const calculateCacheSize = async () => {
     ];
     const cacheDirs = (
       await Promise.all(
-        dirs.map(async (dir) => ((await fs.pathExists(dir)) ? dir : null)),
+        dirs.map(async (dir) => ((await pathExists(dir)) ? dir : null)),
       )
     ).filter((s) => typeof s === 'string');
     cacheFiles.value = await getCacheFiles(cacheDirs);

@@ -4,6 +4,55 @@
 
 Para a lista completa de alterações entre versões, consulte o ficheiro CHANGELOG.md no GitHub.
 
+## 25.6.0
+
+### ✨ Novas Funcionalidades
+
+- ✨ **Definição de conexão limitada**: Adicionada uma nova configuração para reduzir o uso da largura de banda de download em conexões com medidor.
+- **Melhoria do tratamento de multimédia em fluxo contínuo**: Melhor suporte para multimédia em fluxo contínuo, reduzindo os problemas relacionados com a latência.
+
+### 🛠️ Melhorias e Ajustes
+
+- 🛠️ **Melhor tratamento de tipos MIME**: Suporte melhorado para tipos MIME para uma melhor compatibilidade com a multimédia.
+- 🛠️ **Gaveta de navegação melhorada**: Melhoria do manuseamento do miniestado e adição de uma apresentação de dicas para uma melhor navegação do utilizador.
+- 🛠️ **Compatibilidade com Linux**: Uso forçado do GTK 3 no Linux para evitar a UI e iniciar problemas.
+
+## 25.5.0
+
+### ✨ Novas Funcionalidades
+
+- 🖼️ **Opção de atraso de OBS para imagens**: Adicionar uma definição OBS Studio para atrasar as alterações de cena ao apresentar imagens, melhorando as transições.
+- 🔊 **Suporte para o formato de áudio `.m4a`**: Adicionar compatibilidade para ficheiros de áudio `.m4a` para expandir os tipos de multimédia suportados.
+
+### 🛠️ Melhorias e Ajustes
+
+- 🔍 **Restaurar o zoom com `Ctrl` + `Scroll`**: Reativar o zoom imediato com o gesto de controlo + scroll para facilitar a navegação.
+- 👤 **Ocultar multimédia não utilizada do Sup. Circuito**: Esconder em vez de saltar a multimédia não utilizada nas visitas do Superintendente de Circuito para manter uma apresentação mais limpa.
+- 🎵 **Melhorar o indicador de músicas duplicadas**: Melhorar a indicação visual de músicas duplicadas para facilitar a sua identificação.
+
+## 25.4.3
+
+### 🛠️ Melhorias e Ajustes
+
+- ➕ Limpar Conteúdos da v25.4.x: Limpeza automática de conteúdos órfãos ou mal colocados das versões v25.4.1 a v25.4.2, garantindo que nenhuma multimédia esteja em falta ou no local errado na lista de multimédia.
+
+## 25.4.2
+
+### 🛠️ Melhorias e Ajustes
+
+- ➕ Evitar Duplicação de Multimédia: Impede que certa multimédia seja adicionada várias vezes à lista de multimédia.
+
+## 25.4.1
+
+### 🛠️ Melhorias e Ajustes
+
+- 🎬 Corrigir Atribuição Personalizada de Início/Fim: Impede que os tempos personalizados de início e fim sejam aplicados incorretamente ao vídeo errado.
+- 📝 Permitir Legendas Desajustadas: Permite o uso de legendas mesmo quando não correspondem perfeitamente ao ficheiro de multimédia.
+- 🪟 Desativar Canto Arredondado no Windows: Remove os cantos arredondados da janela de mídia no Windows.
+- 🖼 Incluir Imagens Não Referenciadas na Lista de Multimédia: Garante que todas as imagens não referenciadas sejam adicionadas à lista de multimédia para maior completude.
+- ➕ Evitar Secções de Multimédia Duplicadas: Impede a criação de várias secções de multimédia para o mesmo item de multimédia.
+- 📥 Preservar a Ordem da Playlist na Importação: Manter a ordem original das playlists JWL durante o processo de importação.
+
 ## 25.4.0
 
 ### ✨ Novas Funcionalidades

@@ -204,7 +204,16 @@ export const getThumbnailUrl = async (
     return thumbnailUrl + (forceRefresh ? '?timestamp=' + Date.now() : '');
   } catch (error) {
     if (error instanceof Event) return '';
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          filepath,
+          forceRefresh,
+          name: 'getThumbnailUrl',
+          type: typeof error,
+        },
+      },
+    });
     return '';
   }
 };
@@ -234,14 +243,11 @@ export const getSubtitlesUrl = async (
         const { duration, subtitles } = await getJwMediaInfo(subtitleFetcher);
         if (!subtitles) return '';
         if (duration && Math.abs(duration - comparisonDuration) > 10) {
-          errorCatcher('Duration mismatch', {
+          errorCatcher(new Error('Duration mismatch'), {
             contexts: {
               fn: { comparisonDuration, duration, multimediaItem, subtitles },
             },
           });
-          throw new Error(
-            'Duration mismatch: ' + JSON.stringify(subtitleFetcher),
-          );
         }
 
         const subtitlesFilename = window.electronApi.path.basename(subtitles);
