@@ -105,7 +105,8 @@
               >
                 <q-color
                   v-model="mediaListReactiveRef.bgColor"
-                  format-model="rgb"
+                  format-model="hex"
+                  no-header-tabs
                 />
               </q-popup-proxy>
             </q-btn>

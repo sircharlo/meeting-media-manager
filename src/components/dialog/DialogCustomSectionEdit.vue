@@ -61,7 +61,11 @@
                         transition-hide="scale"
                         transition-show="scale"
                       >
-                        <q-color v-model="element.bgColor" format-model="rgb" />
+                        <q-color
+                          v-model="element.bgColor"
+                          format-model="hex"
+                          no-header-tabs
+                        />
                       </q-popup-proxy>
                     </q-btn>
 
