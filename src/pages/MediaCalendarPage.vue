@@ -277,88 +277,69 @@ const {
 const { ensureDir, exists, remove, writeFile } = fs;
 
 const mediaLists = computed<DynamicMediaSection[]>(() => {
-  const mwMeetingDay = isMwMeetingDay(selectedDateObject.value?.date);
-  const weMeetingDay = isWeMeetingDay(selectedDateObject.value?.date);
-  const isComplete = selectedDateObject.value?.complete;
-  const date = selectedDateObject.value?.date;
+  const selectedDate = selectedDateObject.value;
+  if (!selectedDate?.date || !selectedDate.complete) {
+    return [];
+  }
 
-  const mediaSections: {
-    condition: boolean | undefined;
-    config: DynamicMediaSection;
-  }[] = [
+  const { complete: isComplete, date } = selectedDate;
+  const isMwDay = isMwMeetingDay(date);
+  const isWeDay = isWeMeetingDay(date);
+  const isCoWeekDay = isCoWeek(date);
+
+  const sectionConfigs = [
     {
-      condition: weMeetingDay && isComplete,
-      config: {
-        alwaysShow: true,
-        items: getVisibleMediaForSection.value.wt || [],
-        jwIcon: '',
-        label: t('wt'),
-        uniqueId: 'wt',
-      },
+      condition: isWeDay,
+      extraMediaShortcut: false,
+      id: 'wt',
+      labelKey: 'wt',
     },
     {
-      condition: mwMeetingDay && isComplete,
-      config: {
-        alwaysShow: true,
-        items: getVisibleMediaForSection.value.tgw || [],
-        jwIcon: '',
-        label: t('tgw'),
-        uniqueId: 'tgw',
-      },
+      condition: isMwDay,
+      extraMediaShortcut: false,
+      id: 'tgw',
+      labelKey: 'tgw',
     },
     {
-      condition: mwMeetingDay && isComplete,
-      config: {
-        alwaysShow: true,
-        items: getVisibleMediaForSection.value.ayfm || [],
-        jwIcon: '',
-        label: t('ayfm'),
-        uniqueId: 'ayfm',
-      },
+      condition: isMwDay,
+      extraMediaShortcut: false,
+      id: 'ayfm',
+      labelKey: 'ayfm',
     },
     {
-      condition: mwMeetingDay && isComplete,
-      config: {
-        alwaysShow: true,
-        extraMediaShortcut: true,
-        items: getVisibleMediaForSection.value.lac || [],
-        jwIcon: '',
-        label: t('lac'),
-        uniqueId: 'lac',
-      },
+      condition: isMwDay,
+      extraMediaShortcut: true,
+      id: 'lac',
+      labelKey: 'lac',
     },
     {
-      condition: isCoWeek(date) && isComplete,
-      config: {
-        alwaysShow: true,
-        extraMediaShortcut: true,
-        items: getVisibleMediaForSection.value.circuitOverseer || [],
-        jwIcon: '',
-        label: t('circuit-overseer'),
-        uniqueId: 'circuitOverseer',
-      },
+      condition: isCoWeekDay,
+      extraMediaShortcut: true,
+      id: 'circuitOverseer',
+      labelKey: 'circuit-overseer',
     },
-  ];
+  ] as const;
+
+  const defaultSections: DynamicMediaSection[] = sectionConfigs
+    .filter(({ condition }) => condition && isComplete)
+    .map(({ extraMediaShortcut = false, id, labelKey }) => ({
+      alwaysShow: true,
+      items: getVisibleMediaForSection.value[id] || [],
+      jwIcon: '',
+      label: t(labelKey),
+      uniqueId: id,
+      ...(extraMediaShortcut && { extraMediaShortcut: true }),
+    }));
 
   const customSections: DynamicMediaSection[] = (
-    selectedDateObject.value?.customSections ?? []
+    selectedDate.customSections || []
   ).map((section) => ({
     ...section,
     items: getVisibleMediaForSection.value[section.uniqueId] || [],
   }));
 
-  const defaultMediaSections =
-    mediaSections
-      .filter(({ condition }) => condition)
-      .map(({ config }) => config) ?? [];
-  console.log(
-    'customSections',
-    customSections,
-    'defaultMediaSections',
-    defaultMediaSections,
-    selectedDateObject.value?.dynamicMedia,
-  );
-  return [...customSections, ...defaultMediaSections];
+  const result = [...customSections, ...defaultSections];
+  return result;
 });
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({

@@ -129,29 +129,54 @@ const { t } = useI18n();
 const currentState = useCurrentStateStore();
 const { selectedDateObject } = storeToRefs(currentState);
 
-const selectedDaySections = selectedDateObject.value?.customSections || [];
-
 const open = defineModel<boolean>({ required: true });
 
 const handleMediaSectionSort = (event: SortableEvent) => {
-  if (
-    !selectedDaySections ||
-    event?.oldIndex === undefined ||
-    event?.newIndex === undefined
-  )
-    return;
+  try {
+    if (!selectedDateObject.value?.customSections) {
+      console.warn('No custom sections available for sorting');
+      return;
+    }
 
-  console.log('Before Move:', [...selectedDaySections]);
-  if (event.oldIndex === event.newIndex) return;
+    const { newIndex, oldIndex } = event;
 
-  const [item] = selectedDaySections.splice(event.oldIndex, 1);
-  if (!item) {
-    console.error('No item found at old index:', event.oldIndex);
-    return;
+    if (oldIndex === undefined || newIndex === undefined) {
+      console.warn('Invalid sort event: missing indices');
+      return;
+    }
+
+    if (oldIndex === newIndex) {
+      console.log('Sort cancelled: same position');
+      return;
+    }
+
+    const sections = selectedDateObject.value.customSections;
+
+    if (
+      oldIndex < 0 ||
+      oldIndex >= sections.length ||
+      newIndex < 0 ||
+      newIndex >= sections.length
+    ) {
+      console.error('Sort failed: index out of bounds', {
+        newIndex,
+        oldIndex,
+        sectionsLength: sections.length,
+      });
+      return;
+    }
+
+    const [movedItem] = sections.splice(oldIndex, 1);
+
+    if (!movedItem) {
+      console.error('No section found at index:', oldIndex);
+      return;
+    }
+
+    sections.splice(newIndex, 0, movedItem);
+  } catch (error) {
+    console.error('Error during media section sort:', error);
   }
-
-  selectedDaySections.splice(event.newIndex, 0, item);
-  console.log('After Move:', [...selectedDaySections]);
 };
 
 const hexValues = ref<Record<string, string>>({});
