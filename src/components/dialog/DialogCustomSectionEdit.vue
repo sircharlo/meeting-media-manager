@@ -32,7 +32,6 @@
                 :key="element.uniqueId"
                 :style="{
                   '--bg-color': element.bgColor,
-                  // '--text-color': element.textColor,
                 }"
               >
                 <q-item-section side>
@@ -41,7 +40,7 @@
                       class="sort-handle"
                       color="accent-100"
                       flat
-                      name="mmm-reorder"
+                      name="mmm-sort"
                       size="sm"
                       style="cursor: grab"
                     />
@@ -49,22 +48,32 @@
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>
-                    <q-input v-model="element.label" dense />
+                    <q-input
+                      v-model="labels[element.uniqueId]"
+                      dense
+                      @blur="updateLabel(element.uniqueId)"
+                      @keyup.enter="updateLabel(element.uniqueId)"
+                    />
                   </q-item-label>
                 </q-item-section>
                 <q-item-section side>
                   <div class="row">
-                    <q-btn flat round>
-                      <q-badge class="custom-bg-color" clickable round />
+                    <q-btn flat icon="mmm-palette" round>
                       <q-popup-proxy
                         cover
                         transition-hide="scale"
                         transition-show="scale"
                       >
                         <q-color
-                          v-model="element.bgColor"
+                          v-model="hexValues[element.uniqueId]"
                           format-model="hex"
-                          no-header-tabs
+                          no-footer
+                          no-header
+                          @change="
+                            (val) => {
+                              element.bgColor = val;
+                            }
+                          "
                         />
                       </q-popup-proxy>
                     </q-btn>
@@ -89,12 +98,10 @@
       >
         <q-btn
           v-if="selectedDateObject"
-          class="full-width dashed-border"
-          color="accent-100"
+          color="primary"
           icon="mmm-plus"
           :label="t('new-section')"
-          text-color="primary"
-          unelevated
+          outline
           @click="addSection()"
         />
       </div>
@@ -109,10 +116,12 @@
 import type { SortableEvent } from 'sortablejs';
 import type { MediaSection } from 'src/types';
 
+import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { Sortable } from 'sortablejs-vue3';
 import { addSection, deleteSection } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -120,29 +129,70 @@ const { t } = useI18n();
 const currentState = useCurrentStateStore();
 const { selectedDateObject } = storeToRefs(currentState);
 
+const selectedDaySections = selectedDateObject.value?.customSections || [];
+
 const open = defineModel<boolean>({ required: true });
 
 const handleMediaSectionSort = (event: SortableEvent) => {
-  const sections = selectedDateObject.value?.customSections;
   if (
-    !sections ||
+    !selectedDaySections ||
     event?.oldIndex === undefined ||
     event?.newIndex === undefined
   )
     return;
 
-  console.log('Before Move:', [...sections]);
+  console.log('Before Move:', [...selectedDaySections]);
   if (event.oldIndex === event.newIndex) return;
 
-  const [item] = sections.splice(event.oldIndex, 1);
+  const [item] = selectedDaySections.splice(event.oldIndex, 1);
   if (!item) {
     console.error('No item found at old index:', event.oldIndex);
     return;
   }
 
-  sections.splice(event.newIndex, 0, item);
-  console.log('After Move:', [...sections]);
+  selectedDaySections.splice(event.newIndex, 0, item);
+  console.log('After Move:', [...selectedDaySections]);
 };
+
+const hexValues = ref<Record<string, string>>({});
+const labels = ref<Record<string, string>>({});
+
+const updateLabel = (uuid: string) => {
+  const newLabel = labels.value[uuid];
+  if (!selectedDateObject.value?.customSections || !newLabel) return;
+
+  const section = selectedDateObject.value.customSections.find(
+    (s) => s.uniqueId === uuid,
+  );
+  if (!section) return;
+
+  section.label = newLabel;
+};
+
+const initializeValues = () => {
+  if (!selectedDateObject.value?.customSections) return;
+  labels.value = selectedDateObject.value.customSections.reduce(
+    (acc, section) => ({
+      ...acc,
+      [section.uniqueId]: section.label || '',
+    }),
+    {},
+  );
+  hexValues.value = selectedDateObject.value.customSections.reduce(
+    (acc, section) => ({
+      ...acc,
+      [section.uniqueId]: section.bgColor || '#ffffff',
+    }),
+    {},
+  );
+};
+
+onMounted(() => {
+  initializeValues();
+});
+whenever(open, () => {
+  initializeValues();
+});
 </script>
 <style lang="scss" scoped>
 .custom-text-color {
@@ -151,5 +201,8 @@ const handleMediaSectionSort = (event: SortableEvent) => {
 .custom-bg-color {
   background-color: var(--bg-color);
   color: var(--text-color);
+}
+.q-dialog__backdrop {
+  backdrop-filter: blur(7px);
 }
 </style>

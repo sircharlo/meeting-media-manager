@@ -20,6 +20,13 @@
         ' items-center ' +
         (mediaSectionCanBeCustomized ? ' custom-text-color' : '')
       "
+      @dblclick="
+        renameSection = true;
+        $nextTick(() => {
+          if ($refs.renameInput)
+            ($refs.renameInput as HTMLInputElement).focus();
+        });
+      "
     >
       <q-avatar
         :class="
@@ -39,7 +46,25 @@
       <q-item-section
         class="text-bold text-uppercase text-spaced row justify-between col-grow"
       >
-        {{ mediaList.label }}
+        <q-input
+          v-if="renameSection"
+          ref="renameInput"
+          dense
+          :model-value="mediaList.label"
+          @blur="renameSection = false"
+          @change="
+            (val: string) =>
+              emit('update-media-section-label', {
+                uniqueId: mediaList.uniqueId,
+                label: val,
+              })
+          "
+          @keyup.enter="renameSection = false"
+          @keyup.esc="renameSection = false"
+        />
+        <template v-else>
+          {{ mediaList.label }}
+        </template>
       </q-item-section>
       <q-item-section side>
         <div class="row items-center">
@@ -87,29 +112,53 @@
               </q-tooltip>
             </q-btn>
           </template>
-          <template v-if="mediaListReactiveRef && mediaSectionCanBeCustomized">
+          <template v-if="mediaSectionCanBeCustomized">
             <q-btn
               class="custom-text-color"
               flat
-              icon="mmm-label-sort"
+              icon="mmm-palette"
               round
               size="sm"
-              @click="showCustomSectionDialog = true"
-            />
-            <q-btn flat round size="sm">
-              <q-badge class="custom-bg-color" clickable round> </q-badge>
+            >
               <q-popup-proxy
                 cover
                 transition-hide="scale"
                 transition-show="scale"
               >
                 <q-color
-                  v-model="mediaListReactiveRef.bgColor"
+                  v-model="hexValues[mediaList.uniqueId]"
                   format-model="hex"
-                  no-header-tabs
+                  no-footer
+                  no-header
+                  @change="
+                    (val: string | null) => {
+                      emit('update-media-section-bg-color', {
+                        uniqueId: mediaList.uniqueId,
+                        bgColor: val ?? '',
+                      });
+                    }
+                  "
                 />
               </q-popup-proxy>
             </q-btn>
+            <q-btn
+              v-if="!isFirstCustomSection"
+              class="custom-text-color"
+              flat
+              icon="mmm-up"
+              round
+              size="sm"
+              @click="moveSection(mediaList.uniqueId, 'up')"
+            />
+            <q-btn
+              v-if="!isLastCustomSection"
+              class="custom-text-color"
+              flat
+              icon="mmm-down"
+              round
+              size="sm"
+              @click="moveSection(mediaList.uniqueId, 'down')"
+            />
             <q-btn
               v-if="mediaList.uniqueId !== 'additional'"
               color="negative"
@@ -303,7 +352,6 @@
       </template>
     </Sortable>
   </q-list>
-  <DialogCustomSectionEdit v-model="showCustomSectionDialog" />
 </template>
 <script setup lang="ts">
 import type { SortableEvent } from 'sortablejs';
@@ -314,7 +362,6 @@ import type {
 } from 'src/types';
 
 import { watchImmediate } from '@vueuse/core';
-import DialogCustomSectionEdit from 'components/dialog/DialogCustomSectionEdit.vue';
 import MediaItem from 'components/media/MediaItem.vue';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
@@ -331,8 +378,10 @@ const props = defineProps<{
   mediaList: MediaSection;
   openImportMenu: (section: MediaSectionIdentifier) => void;
 }>();
-
-const showCustomSectionDialog = ref(false);
+const emit = defineEmits([
+  'update-media-section-bg-color',
+  'update-media-section-label',
+]);
 
 const $q = useQuasar();
 const { t } = useI18n();
@@ -574,12 +623,6 @@ const handleMediaSort = (
   }
 };
 
-const mediaListReactiveRef = ref<MediaSection | undefined>(
-  selectedDateObject.value?.customSections?.find(
-    (s) => s.uniqueId === props.mediaList.uniqueId,
-  ),
-);
-
 const mediaSectionCanBeCustomized = computed(() => {
   return (
     props.mediaList.uniqueId === 'additional' ||
@@ -607,6 +650,57 @@ const isSongButton = computed(
     (props.mediaList.label === 'circuitOverseer' &&
       !currentSectionHiddenItems.value.length),
 );
+
+const hexValues = ref<Record<string, string>>(
+  selectedDateObject.value?.customSections?.reduce(
+    (acc, section) => ({
+      ...acc,
+      [section.uniqueId]: section.bgColor || '#ffffff',
+    }),
+    {},
+  ) || {},
+);
+
+const renameSection = ref(false);
+
+const moveSection = (section: string, direction: 'down' | 'up') => {
+  if (!selectedDateObject.value?.customSections) return;
+  const currentIndex = selectedDateObject.value.customSections.findIndex(
+    (s) => s.uniqueId === section,
+  );
+  if (currentIndex === -1) return;
+
+  const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+  if (
+    newIndex < 0 ||
+    newIndex >= selectedDateObject.value.customSections.length
+  )
+    return;
+
+  const [movedSection] = selectedDateObject.value.customSections.splice(
+    currentIndex,
+    1,
+  );
+  if (!movedSection) {
+    console.error('No section found at index:', currentIndex);
+    return;
+  }
+  selectedDateObject.value.customSections.splice(newIndex, 0, movedSection);
+};
+
+const isFirstCustomSection = computed(() => {
+  return (
+    selectedDateObject.value?.customSections?.[0]?.uniqueId ===
+    props.mediaList.uniqueId
+  );
+});
+
+const isLastCustomSection = computed(() => {
+  return (
+    selectedDateObject.value?.customSections?.slice(-1)?.[0]?.uniqueId ===
+    props.mediaList.uniqueId
+  );
+});
 </script>
 
 <style lang="scss" scoped>

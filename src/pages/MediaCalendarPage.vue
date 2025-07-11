@@ -106,7 +106,12 @@
           '-' +
           mediaList.items?.length
         }}
-        <MediaList :media-list="mediaList" :open-import-menu="openImportMenu" />
+        <MediaList
+          :media-list="mediaList"
+          :open-import-menu="openImportMenu"
+          @update-media-section-bg-color="updateMediaSectionBgColor"
+          @update-media-section-label="updateMediaSectionLabel"
+        />
       </template>
       <q-btn
         v-if="selectedDateObject && !selectedDateObject.meeting"
@@ -1045,4 +1050,36 @@ const duplicateSongsForWeMeeting = computed(() => {
   const songSet = new Set(songNumbers);
   return songSet.size !== songNumbers.length;
 });
+
+const updateMediaSectionBgColor = ({
+  bgColor,
+  uniqueId,
+}: {
+  bgColor: string;
+  uniqueId: string;
+}) => {
+  if (!selectedDateObject.value?.customSections) return;
+  const customSection = selectedDateObject.value.customSections.find(
+    (s) => s.uniqueId === uniqueId,
+  );
+  if (customSection) {
+    customSection.bgColor = bgColor;
+  }
+};
+
+const updateMediaSectionLabel = ({
+  label,
+  uniqueId,
+}: {
+  label: string;
+  uniqueId: string;
+}) => {
+  if (!selectedDateObject.value?.customSections) return;
+  const customSection = selectedDateObject.value.customSections.find(
+    (s) => s.uniqueId === uniqueId,
+  );
+  if (customSection) {
+    customSection.label = label;
+  }
+};
 </script>

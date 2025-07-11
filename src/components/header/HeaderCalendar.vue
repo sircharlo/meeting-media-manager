@@ -4,6 +4,7 @@
   <DialogRemoteVideo v-model="remoteVideoPopup" :section="section" />
   <DialogStudyBible v-model="studyBiblePopup" :section="section" />
   <DialogAudioBible v-model="audioBiblePopup" :section="section" />
+  <DialogCustomSectionEdit v-model="customSectionPopup" />
   <transition
     appear
     enter-active-class="animated fadeIn"
@@ -29,6 +30,21 @@
       </q-tooltip>
     </q-btn>
   </transition>
+  <q-btn
+    color="white-transparent"
+    unelevated
+    @click="customSectionPopup = true"
+  >
+    <q-icon
+      :class="{ 'q-mr-sm': $q.screen.gt.xs }"
+      name="mmm-label-sort"
+      size="xs"
+    />
+    {{ $q.screen.gt.xs ? t('edit-sections') : '' }}
+    <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+      {{ t('edit-sections') }}
+    </q-tooltip>
+  </q-btn>
   <q-btn
     v-if="selectedDate"
     color="white-transparent"
@@ -247,6 +263,7 @@ import type { MediaSectionIdentifier } from 'src/types';
 
 import { useEventListener } from '@vueuse/core';
 import DialogAudioBible from 'components//dialog/DialogAudioBible.vue';
+import DialogCustomSectionEdit from 'components/dialog/DialogCustomSectionEdit.vue';
 import DialogRemoteVideo from 'components/dialog/DialogRemoteVideo.vue';
 import DialogStudyBible from 'components/dialog/DialogStudyBible.vue';
 import PublicTalkMediaPicker from 'components/media/PublicTalkMediaPicker.vue';
@@ -297,6 +314,7 @@ const datePickerActive = ref(false);
 const remoteVideoPopup = ref(false);
 const studyBiblePopup = ref(false);
 const audioBiblePopup = ref(false);
+const customSectionPopup = ref(false);
 
 const openFileImportDialog = () => {
   window.dispatchEvent(
