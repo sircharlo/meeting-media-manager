@@ -122,9 +122,12 @@ watch(streaming, (val) => {
   }
 });
 
-watch(mediaPlayingAction, (newValue, oldValue) => {
-  if (oldValue === 'website') {
-    streaming.value = false;
-  }
-});
+watch(
+  () => mediaPlayingAction.value,
+  (newValue, oldValue) => {
+    if (newValue !== 'website' && oldValue === 'website') {
+      streaming.value = false;
+    }
+  },
+);
 </script>
