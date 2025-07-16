@@ -1085,13 +1085,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@intlify/core-base@npm:11.1.9":
-  version: 11.1.9
-  resolution: "@intlify/core-base@npm:11.1.9"
+"@intlify/core-base@npm:11.1.10":
+  version: 11.1.10
+  resolution: "@intlify/core-base@npm:11.1.10"
   dependencies:
-    "@intlify/message-compiler": "npm:11.1.9"
-    "@intlify/shared": "npm:11.1.9"
-  checksum: 10c0/b92445bfd49c2cfabb770ea0296d50b1fbd7151e94f2063b1df0069dd07eee0e9dc61d540989ad137dd8b6667c88943c67aedeeffc931b4ad13cbe6960268b6a
+    "@intlify/message-compiler": "npm:11.1.10"
+    "@intlify/shared": "npm:11.1.10"
+  checksum: 10c0/3272c691dc41dd052f1ab09ed9c834aaa44c219ad89c9ea203bff5736e22fff5e9ae8244ae8e298460d87ba87378b5e92884ae1ab193f2aecf55e374b5f54c8c
   languageName: node
   linkType: hard
 
@@ -1105,7 +1105,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@intlify/message-compiler@npm:11.1.9, @intlify/message-compiler@npm:^11.1.2":
+"@intlify/message-compiler@npm:11.1.10":
+  version: 11.1.10
+  resolution: "@intlify/message-compiler@npm:11.1.10"
+  dependencies:
+    "@intlify/shared": "npm:11.1.10"
+    source-map-js: "npm:^1.0.2"
+  checksum: 10c0/52096f90fda696baa6702abd520506e5b9543fcf538241db2494da16e7e39dd51ce610ed9837007ddcd5b24aa0145217f61eff4118e963599cf51dc8f9b1ede1
+  languageName: node
+  linkType: hard
+
+"@intlify/message-compiler@npm:^11.1.2":
   version: 11.1.9
   resolution: "@intlify/message-compiler@npm:11.1.9"
   dependencies:
@@ -1119,6 +1129,13 @@ __metadata:
   version: 10.0.7
   resolution: "@intlify/shared@npm:10.0.7"
   checksum: 10c0/776df4d4ffcfe0d7b1ccc53a2abcd73602eb469943b41073fb179b48873e809e35ad6008fa03accf91228b876a5d9741b49e9c35b20282f0dc5dd8de8e60735e
+  languageName: node
+  linkType: hard
+
+"@intlify/shared@npm:11.1.10":
+  version: 11.1.10
+  resolution: "@intlify/shared@npm:11.1.10"
+  checksum: 10c0/2ea665c9eabbe7712a81f6fbeb018af246af670545f0337c508a668bcc3c2a6f7754a8ef61e4690d97f5a093cf8140d6e070ccc0ef943c98dad37cbb7925b4cf
   languageName: node
   linkType: hard
 
@@ -10575,7 +10592,7 @@ __metadata:
     vitest: "npm:^3.2.4"
     vue: "npm:^3.5.17"
     vue-eslint-parser: "npm:^10.2.0"
-    vue-i18n: "npm:^11.1.9"
+    vue-i18n: "npm:^11.1.10"
     vue-router: "npm:^4.5.1"
     vue-tsc: "npm:^3.0.1"
     webpack-iconfont-plugin-nodejs: "npm:^1.0.36"
@@ -15526,16 +15543,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-i18n@npm:^11.1.9":
-  version: 11.1.9
-  resolution: "vue-i18n@npm:11.1.9"
+"vue-i18n@npm:^11.1.10":
+  version: 11.1.10
+  resolution: "vue-i18n@npm:11.1.10"
   dependencies:
-    "@intlify/core-base": "npm:11.1.9"
-    "@intlify/shared": "npm:11.1.9"
+    "@intlify/core-base": "npm:11.1.10"
+    "@intlify/shared": "npm:11.1.10"
     "@vue/devtools-api": "npm:^6.5.0"
   peerDependencies:
     vue: ^3.0.0
-  checksum: 10c0/4eadc2e12a7e5a84a2da7410a02267d0b95a4931ba406cd43a99f5afe72d0a08fab737ff3c3d6619aabd4efbbc09fb26d448587e426d2df1aac1c23dc22801e4
+  checksum: 10c0/07eb41db567affcba4f85040df227b1a44984242ad83feed30d0833c5ef112caabe98b9117a207eb1a0ad4c15074132bb62d1b564de0e66db70bad8306736d7d
   languageName: node
   linkType: hard
 
