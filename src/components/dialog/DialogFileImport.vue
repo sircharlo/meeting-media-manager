@@ -132,7 +132,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DocumentItem, MediaSection } from 'src/types';
+import type { DocumentItem, MediaSectionIdentifier } from 'src/types';
 
 import { useDropZone, useElementHover, watchImmediate } from '@vueuse/core';
 import {
@@ -150,7 +150,7 @@ const { t } = useI18n();
 
 const props = defineProps<{
   currentFile: number;
-  section: MediaSection | undefined;
+  section: MediaSectionIdentifier | undefined;
   totalFiles: number;
 }>();
 
@@ -192,7 +192,7 @@ const getLocalFiles = async () => {
         window.dispatchEvent(
           new CustomEvent<{
             files: (File | string)[];
-            section: MediaSection | undefined;
+            section: MediaSectionIdentifier | undefined;
           }>('localFiles-browsed', {
             detail: { files: result.filePaths, section: props.section },
           }),
