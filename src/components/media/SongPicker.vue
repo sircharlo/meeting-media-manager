@@ -96,7 +96,11 @@
 </template>
 
 <script setup lang="ts">
-import type { MediaLink, MediaSection, PublicationFetcher } from 'src/types';
+import type {
+  MediaLink,
+  MediaSectionIdentifier,
+  PublicationFetcher,
+} from 'src/types';
 
 import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
@@ -114,7 +118,7 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 const props = defineProps<{
-  section: MediaSection | undefined;
+  section: MediaSectionIdentifier | undefined;
 }>();
 
 // Define model

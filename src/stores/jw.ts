@@ -7,7 +7,7 @@ import type {
   JwLanguage,
   JwMepsLanguage,
   MediaLink,
-  MediaSection,
+  MediaSectionIdentifier,
   Publication,
   PublicationFetcher,
   PublicationFiles,
@@ -143,7 +143,7 @@ export const useJwStore = defineStore('jw-store', {
   actions: {
     addToAdditionMediaMap(
       mediaArray: DynamicMediaObject[],
-      section: MediaSection | undefined,
+      section: MediaSectionIdentifier | undefined,
       currentCongregation: string,
       selectedDateObject: DateInfo | null,
       coWeek: boolean,

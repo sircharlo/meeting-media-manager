@@ -73,7 +73,11 @@
 </template>
 
 <script setup lang="ts">
-import type { DocumentItem, MediaSection, PublicationInfo } from 'src/types';
+import type {
+  DocumentItem,
+  MediaSectionIdentifier,
+  PublicationInfo,
+} from 'src/types';
 
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { decompressJwpub } from 'src/helpers/mediaPlayback';
@@ -86,7 +90,7 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 const props = defineProps<{
-  section: MediaSection | undefined;
+  section: MediaSectionIdentifier | undefined;
 }>();
 
 const open = defineModel<boolean>({ required: true });
