@@ -110,8 +110,8 @@ const cacheFiles = ref<CacheFile[]>([]);
 const frequentlyUsedDirectories = ref(new Set());
 
 const { fs, path, pathToFileURL, readdir } = window.electronApi;
-
 const { pathExists } = fs;
+const { join } = path;
 
 const loadFrequentlyUsedDirectories = async () => {
   const getDirectory = async (
@@ -264,7 +264,7 @@ const getCacheFiles = async (cacheDirs: string[]) => {
     try {
       const items = await readdir(cacheDir, true, true);
       for (const item of items) {
-        const filePath = path.join(item.parentPath, item.name);
+        const filePath = join(item.parentPath, item.name);
         if (item.isFile) {
           const parentFolder = item.parentPath.split('/').pop() || '';
           if (
@@ -298,11 +298,8 @@ const calculateCacheSize = async () => {
         await getPublicationsPath(),
         await getPublicationsPath(currentState.currentSettings?.cacheFolder),
         await getTempPath(),
-        path.join(
-          await getAdditionalMediaPath(),
-          currentState.currentCongregation,
-        ),
-        path.join(
+        join(await getAdditionalMediaPath(), currentState.currentCongregation),
+        join(
           await getAdditionalMediaPath(
             currentState.currentSettings?.cacheFolder,
           ),

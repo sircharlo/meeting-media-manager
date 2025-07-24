@@ -235,8 +235,8 @@ const {
   pathToFileURL,
   readdir,
 } = window.electronApi;
-
 const { ensureDir, exists, remove, writeFile } = fs;
+const { basename, join } = path;
 
 const mediaLists = computed(() => {
   const mwMeetingDay = isMwMeetingDay(selectedDateObject.value?.date);
@@ -648,7 +648,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         message:
           t('processing') +
           ' ' +
-          path.basename(getLocalPathFromFileObject(files[0])),
+          basename(getLocalPathFromFileObject(files[0])),
       });
     }
     const archiveFile = files.find((f) =>
@@ -661,7 +661,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         message:
           t('processing') +
           ' ' +
-          path.basename(getLocalPathFromFileObject(files[0])),
+          basename(getLocalPathFromFileObject(files[0])),
       });
     }
   }
@@ -671,7 +671,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
       if (!filepath) continue;
       // Check if file is remote URL; if so, download it
       if (isRemoteFile(file)) {
-        const baseFileName = path.basename(new URL(filepath).pathname);
+        const baseFileName = basename(new URL(filepath).pathname);
         filepath = (
           await downloadFileIfNeeded({
             dir: await getTempPath(),
@@ -686,7 +686,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         const [preamble, data] = filepath.split(';base64,');
         const ext = preamble?.split('/')[1];
         const tempFilename = uuid() + '.' + ext;
-        const tempFilepath = path.join(await getTempPath(), tempFilename);
+        const tempFilepath = join(await getTempPath(), tempFilename);
         await writeFile(tempFilepath, Buffer.from(data ?? '', 'base64'));
         filepath = tempFilepath;
       }
@@ -720,7 +720,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
           matchingMissingItem.fileUrl = pathToFileURL(destPath);
           matchingMissingItem.duration = metadata.format.duration || 0;
           matchingMissingItem.title =
-            metadata.common.title || path.basename(destPath);
+            metadata.common.title || basename(destPath);
           matchingMissingItem.isVideo = isVideo(filepath);
           matchingMissingItem.isAudio = isAudio(filepath);
         }
@@ -741,19 +741,16 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         const tempDir = await getTempPath();
         if (!tempDir) return;
         await ensureDir(tempDir);
-        const tempFilePath = path.join(
-          tempDir,
-          path.basename(filepath) + '-contents',
-        );
+        const tempFilePath = join(tempDir, basename(filepath) + '-contents');
         await writeFile(tempFilePath, tempContentFile.data);
         const tempJwpubFileContents = await decompress(tempFilePath);
         const tempDbFile = tempJwpubFileContents.find((tempJwpubFileContent) =>
           tempJwpubFileContent.path.endsWith('.db'),
         );
         if (!tempDbFile) return;
-        const tempDbFilePath = path.join(
+        const tempDbFilePath = join(
           await getTempPath(),
-          path.basename(filepath) + '.db',
+          basename(filepath) + '.db',
         );
         await writeFile(tempDbFilePath, tempDbFile.data);
         remove(tempFilePath);
@@ -770,7 +767,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         jwpubImportDb.value = db;
         if (executeQuery(db, 'SELECT * FROM Multimedia;').length === 0) {
           createTemporaryNotification({
-            caption: path.basename(filepath),
+            caption: basename(filepath),
             icon: 'mmm-jwpub',
             message: t('jwpubNoMultimedia'),
             type: 'warning',
@@ -823,10 +820,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             m.customDuration && (m.customDuration.max || m.customDuration.min),
         );
       } else if (isArchive(filepath)) {
-        const unzipDirectory = path.join(
-          await getTempPath(),
-          path.basename(filepath),
-        );
+        const unzipDirectory = join(await getTempPath(), basename(filepath));
         await remove(unzipDirectory);
         await window.electronApi
           .decompress(filepath, unzipDirectory)
@@ -834,14 +828,12 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             throw error;
           });
         const files = await readdir(unzipDirectory);
-        const filePaths = files.map((file) =>
-          path.join(unzipDirectory, file.name),
-        );
+        const filePaths = files.map((file) => join(unzipDirectory, file.name));
         await addToFiles(filePaths);
         await remove(unzipDirectory);
       } else {
         createTemporaryNotification({
-          caption: filepath ? path.basename(filepath) : filepath,
+          caption: filepath ? basename(filepath) : filepath,
           icon: 'mmm-local-media',
           message: t('filetypeNotSupported'),
           type: 'negative',
@@ -849,7 +841,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
       }
     } catch (error) {
       createTemporaryNotification({
-        caption: filepath ? path.basename(filepath) : filepath,
+        caption: filepath ? basename(filepath) : filepath,
         icon: 'mmm-error',
         message: t('fileProcessError'),
         type: 'negative',

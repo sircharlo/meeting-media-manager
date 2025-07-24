@@ -798,13 +798,14 @@ const mediaTitle = ref(props.media.title);
 const initialMediaTitle = ref(mediaTitle.value);
 
 const { fileUrlToPath, fs, path } = window.electronApi;
+const { basename } = path;
 
 const { pathExists, pathExistsSync, statSync } = fs;
 
 const displayMediaTitle = computed(() => {
   return (
     props.media.title ||
-    (props.media.fileUrl && path.basename(props.media.fileUrl)) ||
+    (props.media.fileUrl && basename(props.media.fileUrl)) ||
     props.media.extractCaption ||
     ''
   );
@@ -887,7 +888,7 @@ const customDurationMaxUserInput = ref(
 
 const getBasename = (fileUrl: string) => {
   if (!fileUrl) return '';
-  return path.basename(fileUrl);
+  return basename(fileUrl);
 };
 
 const fileIsLocal = () => {

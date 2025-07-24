@@ -4,6 +4,10 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
+const { fs, path } = window.electronApi;
+const { exists, readdir, remove } = fs;
+const { join } = path;
+
 const cleanCongregationRecord = (
   record: Partial<Record<string, unknown>>,
   congIds: Set<string>,
@@ -30,21 +34,16 @@ export const cleanPersistedStores = () => {
 };
 
 const cleanCongregationFolders = async (root: string, congIds: Set<string>) => {
-  if (!root || !congIds || !(await window.electronApi.fs.exists(root))) return;
-  const folders = await window.electronApi.fs.readdir(root);
+  if (!root || !congIds || !(await exists(root))) return;
+  const folders = await readdir(root);
   await Promise.allSettled(
-    folders
-      .filter((f) => !congIds.has(f))
-      .map((f) =>
-        window.electronApi.fs.remove(window.electronApi.path.join(root, f)),
-      ),
+    folders.filter((f) => !congIds.has(f)).map((f) => remove(join(root, f))),
   );
 };
 
 const cleanPublicTalkPubs = async (folder: string, congIds: Set<string>) => {
-  if (!folder || !congIds || !(await window.electronApi.fs.exists(folder)))
-    return;
-  const files = await window.electronApi.fs.readdir(folder);
+  if (!folder || !congIds || !(await exists(folder))) return;
+  const files = await readdir(folder);
 
   await Promise.allSettled(
     files
@@ -53,25 +52,21 @@ const cleanPublicTalkPubs = async (folder: string, congIds: Set<string>) => {
         const congIdOrLang = f.split('_')[1];
         if (!congIdOrLang?.includes('-') || congIds.has(congIdOrLang))
           return Promise.resolve();
-        return window.electronApi.fs.remove(
-          window.electronApi.path.join(folder, f),
-        );
+        return remove(join(folder, f));
       }),
   );
 };
 
 const cleanDateFolders = async (root?: string) => {
-  if (!root || !(await window.electronApi.fs.exists(root))) return;
+  if (!root || !(await exists(root))) return;
 
-  const folders = await window.electronApi.fs.readdir(root);
+  const folders = await readdir(root);
 
   await Promise.allSettled(
     folders
       .filter((f) => !f.includes('.jwlplaylist'))
       .filter((f) => isInPast(getSpecificWeekday(f, 6)))
-      .map((f) =>
-        window.electronApi.fs.remove(window.electronApi.path.join(root, f)),
-      ),
+      .map((f) => remove(join(root, f))),
   );
 };
 
@@ -90,7 +85,7 @@ export const cleanCache = async () => {
   cleanCongregationFolders(await congPreferencesPath(), congIds);
 
   congIds.forEach((congId) => {
-    cleanDateFolders(window.electronApi.path.join(additionalMediaPath, congId));
+    cleanDateFolders(join(additionalMediaPath, congId));
   });
 
   if (settings?.enableMediaAutoExport && settings?.mediaAutoExportFolder) {

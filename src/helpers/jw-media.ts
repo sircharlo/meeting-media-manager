@@ -70,6 +70,20 @@ import {
   useJwStore,
 } from 'stores/jw';
 
+const {
+  decompress,
+  downloadFile,
+  executeQuery,
+  fileUrlToPath,
+  fs,
+  path,
+  pathToFileURL,
+  readdir,
+  setElectronUrlVariables,
+} = window.electronApi;
+const { copy, ensureDir, exists, pathExists, remove, stat } = fs;
+const { basename, changeExt, dirname, extname, join } = path;
+
 export const getJwLangCode = (mepsId?: number): JwLangCode | null => {
   if (mepsId === undefined) return null;
   const jwStore = useJwStore();
@@ -91,25 +105,21 @@ export const copyToDatedAdditionalMedia = async (
     await currentStateStore.getDatedAdditionalMediaDirectory();
 
   try {
-    if (
-      !filepathToCopy ||
-      !(await window.electronApi.fs.exists(filepathToCopy))
-    )
-      return '';
-    let datedAdditionalMediaPath = window.electronApi.path.join(
+    if (!filepathToCopy || !(await exists(filepathToCopy))) return '';
+    let datedAdditionalMediaPath = join(
       datedAdditionalMediaDir,
-      window.electronApi.path.basename(filepathToCopy),
+      basename(filepathToCopy),
     );
     datedAdditionalMediaPath = trimFilepathAsNeeded(datedAdditionalMediaPath);
     const uniqueId = sanitizeId(
       formatDate(currentStateStore.selectedDate, 'YYYYMMDD') +
         '-' +
-        window.electronApi.pathToFileURL(datedAdditionalMediaPath),
+        pathToFileURL(datedAdditionalMediaPath),
     );
-    if (await window.electronApi.fs.exists(datedAdditionalMediaPath)) {
+    if (await exists(datedAdditionalMediaPath)) {
       if (filepathToCopy !== datedAdditionalMediaPath) {
         try {
-          await window.electronApi.fs.remove(datedAdditionalMediaPath);
+          await remove(datedAdditionalMediaPath);
         } catch (e) {
           errorCatcher(e);
         }
@@ -121,10 +131,7 @@ export const copyToDatedAdditionalMedia = async (
       }
     }
     if (filepathToCopy !== datedAdditionalMediaPath) {
-      await window.electronApi.fs.copy(
-        filepathToCopy,
-        datedAdditionalMediaPath,
-      );
+      await copy(filepathToCopy, datedAdditionalMediaPath);
     }
     if (addToAdditionMediaMap) {
       await addToAdditionMediaMapFromPath(
@@ -169,15 +176,15 @@ export const addToAdditionMediaMapFromPath = async (
     const title =
       additionalInfo?.title ||
       metadata?.common.title ||
-      window.electronApi.path
+      path
         .basename(additionalFilePath)
-        .replace(window.electronApi.path.extname(additionalFilePath), '');
+        .replace(extname(additionalFilePath), '');
 
     if (!uniqueId) {
       uniqueId = sanitizeId(
         formatDate(currentStateStore.selectedDate, 'YYYYMMDD') +
           '-' +
-          window.electronApi.pathToFileURL(additionalFilePath),
+          pathToFileURL(additionalFilePath),
       );
     }
     jwStore.addToAdditionMediaMap(
@@ -189,7 +196,7 @@ export const addToAdditionMediaMapFromPath = async (
               : customDuration,
           duration,
           filesize: additionalInfo?.filesize,
-          fileUrl: window.electronApi.pathToFileURL(additionalFilePath),
+          fileUrl: pathToFileURL(additionalFilePath),
           isAudio: audio,
           isImage: isImage(additionalFilePath),
           isVideo: video,
@@ -292,11 +299,11 @@ export const downloadFileIfNeeded = async ({
   }
 
   const currentStateStore = useCurrentStateStore();
-  await window.electronApi.fs.ensureDir(dir);
-  if (!filename) filename = window.electronApi.path.basename(url);
+  await ensureDir(dir);
+  if (!filename) filename = basename(url);
   const { default: sanitize } = await import('sanitize-filename');
   filename = sanitize(filename);
-  const destinationPath = window.electronApi.path.join(dir, filename);
+  const destinationPath = join(dir, filename);
   const remoteSize: number =
     size ||
     (await fetchRaw(url, { method: 'HEAD' })
@@ -304,9 +311,9 @@ export const downloadFileIfNeeded = async ({
         return +(response?.headers?.get('content-length') || 0);
       })
       .catch(() => 0));
-  if (await window.electronApi.fs.exists(destinationPath)) {
-    const stat = await window.electronApi.fs.stat(destinationPath);
-    const localSize = stat.size;
+  if (await exists(destinationPath)) {
+    const statistics = await stat(destinationPath);
+    const localSize = statistics.size;
     if (localSize === remoteSize) {
       return {
         new: false,
@@ -314,12 +321,7 @@ export const downloadFileIfNeeded = async ({
       };
     }
   }
-  const downloadId = await window.electronApi.downloadFile(
-    url,
-    dir,
-    filename,
-    lowPriority,
-  );
+  const downloadId = await downloadFile(url, dir, filename, lowPriority);
 
   const result = await new Promise<DownloadedFile>((resolve) => {
     const interval = setInterval(() => {
@@ -373,9 +375,7 @@ export const fetchMedia = async () => {
                     !media?.children?.length &&
                     media?.source === 'dynamic' &&
                     media?.fileUrl &&
-                    !(await window.electronApi.fs.pathExists(
-                      window.electronApi.fileUrlToPath(media.fileUrl),
-                    )),
+                    !(await pathExists(fileUrlToPath(media.fileUrl))),
                 ),
               )
             ).includes(true);
@@ -492,9 +492,7 @@ async function addFullFilePathToMultimediaItem(
 
     const resolvedPaths = Object.fromEntries(
       paths.map((key) =>
-        multimediaItem[key]
-          ? [key, window.electronApi.path.join(baseDir, multimediaItem[key])]
-          : [],
+        multimediaItem[key] ? [key, join(baseDir, multimediaItem[key])] : [],
       ),
     );
     return {
@@ -510,7 +508,7 @@ async function addFullFilePathToMultimediaItem(
 const getDocumentExtractItems = async (db: string, docId: number) => {
   try {
     const currentStateStore = useCurrentStateStore();
-    const extracts = window.electronApi.executeQuery<MultimediaExtractItem>(
+    const extracts = executeQuery<MultimediaExtractItem>(
       // ${currentStateStore.currentSongbook?.pub === 'sjjm'
       //   ? "AND NOT UniqueEnglishSymbol = 'sjj' "
       //   : ''
@@ -735,13 +733,13 @@ export const getStudyBibleBooks: () => Promise<
           Document.Type = 2;
     `;
 
-    const bibleBookItems = window.electronApi.executeQuery<MultimediaItem>(
+    const bibleBookItems = executeQuery<MultimediaItem>(
       nwtStyDb,
       bibleBooksQuery,
     );
 
     if (nwtStyDb_E && nwtStyDb_E !== nwtStyDb) {
-      const englishBookItems = window.electronApi.executeQuery<MultimediaItem>(
+      const englishBookItems = executeQuery<MultimediaItem>(
         nwtStyDb_E,
         bibleBooksQuery,
       );
@@ -766,11 +764,10 @@ export const getStudyBibleBooks: () => Promise<
           Class = 1
     `;
 
-      const bibleBookLocalNames =
-        window.electronApi.executeQuery<JwPlaylistItem>(
-          nwtDb,
-          bibleBooksSimpleQuery,
-        );
+      const bibleBookLocalNames = executeQuery<JwPlaylistItem>(
+        nwtDb,
+        bibleBooksSimpleQuery,
+      );
 
       bibleBookLocalNames.forEach((localItem) => {
         const styItem = bibleBookItems.find(
@@ -816,11 +813,10 @@ export const getStudyBibleCategories = async () => {
         and ParentPublicationViewItemId < 0
     `;
 
-    const bibleMediaCategories =
-      window.electronApi.executeQuery<MultimediaItem>(
-        nwtStyDb,
-        bibleMediaCategoriesQuery,
-      );
+    const bibleMediaCategories = executeQuery<MultimediaItem>(
+      nwtStyDb,
+      bibleMediaCategoriesQuery,
+    );
 
     return bibleMediaCategories;
   } catch (error) {
@@ -855,7 +851,7 @@ export const getStudyBibleMedia = async () => {
           Multimedia AS CoverMultimedia ON CoverMultimedia.LinkMultimediaId = m.MultimediaId;
     `;
 
-    const bibleBookMediaItems = window.electronApi.executeQuery<MultimediaItem>(
+    const bibleBookMediaItems = executeQuery<MultimediaItem>(
       nwtStyDb,
       bibleBookMediaItemsQuery,
     );
@@ -869,11 +865,10 @@ export const getStudyBibleMedia = async () => {
       LIMIT 1;
     `;
 
-    const bibleBookDocumentsStartAt =
-      window.electronApi.executeQuery<DocumentItem>(
-        nwtStyDb,
-        bibleBookDocumentsStartAtQuery,
-      );
+    const bibleBookDocumentsStartAt = executeQuery<DocumentItem>(
+      nwtStyDb,
+      bibleBookDocumentsStartAtQuery,
+    );
 
     const bibleBookDocumentsStartAtId =
       bibleBookDocumentsStartAt[0]?.DocumentId;
@@ -887,11 +882,10 @@ export const getStudyBibleMedia = async () => {
       LIMIT 1;
     `;
 
-    const bibleBookDocumentsEndAt =
-      window.electronApi.executeQuery<DocumentItem>(
-        nwtStyDb,
-        bibleBookDocumentsEndAtQuery,
-      );
+    const bibleBookDocumentsEndAt = executeQuery<DocumentItem>(
+      nwtStyDb,
+      bibleBookDocumentsEndAtQuery,
+    );
 
     const bibleBookDocumentsEndAtId = bibleBookDocumentsEndAt[0]?.DocumentId;
 
@@ -951,18 +945,16 @@ export const getStudyBibleMedia = async () => {
       WHERE RowNum = 1;
     `;
 
-    const nonBibleBookMediaItems =
-      window.electronApi.executeQuery<MultimediaItem>(
-        nwtStyDb,
-        nonBibleBookMediaItemsQuery,
-      );
+    const nonBibleBookMediaItems = executeQuery<MultimediaItem>(
+      nwtStyDb,
+      nonBibleBookMediaItemsQuery,
+    );
 
     if (nwtStyDb_E && nwtStyDb_E !== nwtStyDb) {
-      const englishBibleBookMediaItems =
-        window.electronApi.executeQuery<MultimediaItem>(
-          nwtStyDb_E,
-          bibleBookMediaItemsQuery,
-        );
+      const englishBibleBookMediaItems = executeQuery<MultimediaItem>(
+        nwtStyDb_E,
+        bibleBookMediaItemsQuery,
+      );
 
       englishBibleBookMediaItems.forEach((englishBibleBookItem) => {
         const styItem = bibleBookMediaItems.find(
@@ -980,32 +972,29 @@ export const getStudyBibleMedia = async () => {
         }
       });
 
-      const englishBibleBookDocumentsStartAt =
-        window.electronApi.executeQuery<DocumentItem>(
-          nwtStyDb_E,
-          bibleBookDocumentsStartAtQuery,
-        );
+      const englishBibleBookDocumentsStartAt = executeQuery<DocumentItem>(
+        nwtStyDb_E,
+        bibleBookDocumentsStartAtQuery,
+      );
 
       const englishBibleBookDocumentsStartAtId =
         englishBibleBookDocumentsStartAt[0]?.DocumentId;
 
-      const englishBibleBookDocumentsEndAt =
-        window.electronApi.executeQuery<DocumentItem>(
-          nwtStyDb_E,
-          bibleBookDocumentsEndAtQuery,
-        );
+      const englishBibleBookDocumentsEndAt = executeQuery<DocumentItem>(
+        nwtStyDb_E,
+        bibleBookDocumentsEndAtQuery,
+      );
 
       const englishBibleBookDocumentsEndAtId =
         englishBibleBookDocumentsEndAt[0]?.DocumentId;
 
-      const englishNonBibleBookMediaItems =
-        window.electronApi.executeQuery<MultimediaItem>(
-          nwtStyDb_E,
-          nonBibleBookMediaItemsQuery.replace(
-            `Document.DocumentId < ${bibleBookDocumentsStartAtId} OR Document.DocumentId > ${bibleBookDocumentsEndAtId}`,
-            `Document.DocumentId < ${englishBibleBookDocumentsStartAtId} OR Document.DocumentId > ${englishBibleBookDocumentsEndAtId}`,
-          ),
-        );
+      const englishNonBibleBookMediaItems = executeQuery<MultimediaItem>(
+        nwtStyDb_E,
+        nonBibleBookMediaItemsQuery.replace(
+          `Document.DocumentId < ${bibleBookDocumentsStartAtId} OR Document.DocumentId > ${bibleBookDocumentsEndAtId}`,
+          `Document.DocumentId < ${englishBibleBookDocumentsStartAtId} OR Document.DocumentId > ${englishBibleBookDocumentsEndAtId}`,
+        ),
+      );
 
       englishNonBibleBookMediaItems.forEach((englishNonBibleBookItem) => {
         const styItem = nonBibleBookMediaItems.find(
@@ -1126,11 +1115,10 @@ export const getAudioBibleMedia = async (
             Class = 1
       `;
 
-      const bibleBookLocalNames =
-        window.electronApi.executeQuery<JwPlaylistItem>(
-          (nwtStyDb || nwtDb) as string,
-          bibleBooksSimpleQuery,
-        );
+      const bibleBookLocalNames = executeQuery<JwPlaylistItem>(
+        (nwtStyDb || nwtDb) as string,
+        bibleBooksSimpleQuery,
+      );
       for (const booknum of backupNameNeeded) {
         const pubName = bibleBookLocalNames.find(
           (item) => item.ChapterNumber === booknum,
@@ -1173,7 +1161,7 @@ export const getMemorialBackground = async () => {
 
       if (!db) continue;
 
-      const mediaItem = window.electronApi.executeQuery<MultimediaItem>(
+      const mediaItem = executeQuery<MultimediaItem>(
         db,
         `SELECT FilePath FROM Multimedia WHERE CategoryType = 26 LIMIT 1`,
       )?.[0];
@@ -1213,7 +1201,7 @@ const getWtIssue = async (
     };
     const db = await getDbFromJWPUB(publication);
     if (!db) throw new Error('No db file found: ' + issueString);
-    const datedTexts = window.electronApi.executeQuery<DatedTextItem>(
+    const datedTexts = executeQuery<DatedTextItem>(
       db,
       'SELECT * FROM DatedText',
     );
@@ -1227,7 +1215,7 @@ const getWtIssue = async (
       throw new Error('No week found in following w: ' + issueString);
     }
     const docId =
-      window.electronApi.executeQuery<{ DocumentId: number }>(
+      executeQuery<{ DocumentId: number }>(
         db,
         `SELECT Document.DocumentId FROM Document WHERE Document.Class=40 LIMIT 1 OFFSET ${weekNr}`,
       )[0]?.DocumentId ?? -1;
@@ -1320,12 +1308,12 @@ export const dynamicMediaMapper = async (
           .filter(Boolean)
           .join('_');
         const fileUrl = isLikelyFile(m.FilePath)
-          ? window.electronApi.pathToFileURL(m.FilePath)
+          ? pathToFileURL(m.FilePath)
           : pubMediaId;
         const mediaIsSong = isSong(m);
         const thumbnailUrl =
           m.ThumbnailUrl ??
-          window.electronApi.pathToFileURL(m.LinkedPreviewFilePath || '') ??
+          pathToFileURL(m.LinkedPreviewFilePath || '') ??
           (await getThumbnailUrl(m.ThumbnailFilePath || m.FilePath));
         const video = isVideo(m.FilePath);
         const audio = isAudio(m.FilePath);
@@ -1333,7 +1321,7 @@ export const dynamicMediaMapper = async (
         if (video || audio) {
           if (m.Duration) {
             duration = m.Duration;
-          } else if (await window.electronApi.fs.exists(m.FilePath)) {
+          } else if (await exists(m.FilePath)) {
             duration =
               (await getMetadataFromMediaPath(m.FilePath))?.format.duration ||
               0;
@@ -1499,7 +1487,7 @@ export const watchedItemMapper: (
 
     const dateString = parentDate.replace(/-/g, '');
 
-    const fileUrl = window.electronApi.pathToFileURL(watchedItemPath);
+    const fileUrl = pathToFileURL(watchedItemPath);
 
     const video = isVideo(watchedItemPath);
     const audio = isAudio(watchedItemPath);
@@ -1531,9 +1519,7 @@ export const watchedItemMapper: (
         : undefined;
 
     const duration = metadata?.format.duration || 0;
-    const title =
-      metadata?.common.title ||
-      window.electronApi.path.basename(watchedItemPath);
+    const title = metadata?.common.title || basename(watchedItemPath);
 
     const uniqueId = sanitizeId(
       formatDate(parentDate, 'YYYYMMDD') + '-' + fileUrl,
@@ -1629,7 +1615,7 @@ export const getWeMedia = async (lookupDate: Date) => {
         media: [],
       };
     }
-    const videos = window.electronApi.executeQuery<MultimediaItem>(
+    const videos = executeQuery<MultimediaItem>(
       db,
       `SELECT *
          FROM DocumentMultimedia
@@ -1652,7 +1638,7 @@ export const getWeMedia = async (lookupDate: Date) => {
       (video) => !video.TargetParagraphNumberLabel,
     );
 
-    const mediaWithoutVideos = window.electronApi.executeQuery<MultimediaItem>(
+    const mediaWithoutVideos = executeQuery<MultimediaItem>(
       db,
       `SELECT *
        FROM DocumentMultimedia
@@ -1745,7 +1731,7 @@ export const getWeMedia = async (lookupDate: Date) => {
 
     // Watchtowers before Feb 2023 don't include songs in DocumentMultimedia
     if (+issueString < FEB_2023) {
-      songs = window.electronApi.executeQuery<MultimediaItem>(
+      songs = executeQuery<MultimediaItem>(
         db,
         `SELECT *
             FROM Multimedia
@@ -1910,7 +1896,7 @@ export const getMwMedia = async (lookupDate: Date) => {
     if (!db) return { error: true, media: [] };
 
     const docId =
-      window.electronApi.executeQuery<{ DocumentId: number }>(
+      executeQuery<{ DocumentId: number }>(
         db,
         `SELECT DocumentId FROM DatedText WHERE FirstDateOffset = ${formatDate(
           monday,
@@ -2010,9 +1996,7 @@ export async function processMissingMediaInfo(
     const mediaExistenceChecks = allMedia.map(async (m) => {
       if (m.KeySymbol || m.MepsDocumentId) {
         const exists =
-          !!m.StreamUrl ||
-          (!!m.FilePath &&
-            (await window.electronApi.fs.pathExists(m.FilePath)));
+          !!m.StreamUrl || (!!m.FilePath && (await pathExists(m.FilePath)));
         return { exists, media: m };
       }
       return null;
@@ -2107,10 +2091,7 @@ export async function processMissingMediaInfo(
           }
         } else {
           try {
-            if (
-              !media.FilePath ||
-              !(await window.electronApi.fs.pathExists(media.FilePath))
-            ) {
+            if (!media.FilePath || !(await pathExists(media.FilePath))) {
               const {
                 FilePath,
                 Label,
@@ -2201,18 +2182,15 @@ export const getJwMepsInfo = async () => {
       pub: 'jwlb',
     });
     if (!file.FilePath) return;
-    const dir = window.electronApi.path.dirname(file.FilePath);
-    await window.electronApi.decompress(file.FilePath, dir);
+    const dir = dirname(file.FilePath);
+    await decompress(file.FilePath, dir);
     const msixbundle = await findFile(dir, '.msixbundle');
     if (!msixbundle) return;
-    await window.electronApi.decompress(msixbundle, dir);
+    await decompress(msixbundle, dir);
     const msix = await findFile(dir, '_x64.msix');
     if (!msix) return;
-    await window.electronApi.decompress(msix, dir);
-    const mepsunit = await findFile(
-      window.electronApi.path.join(dir, 'Data'),
-      '.db',
-    );
+    await decompress(msix, dir);
+    const mepsunit = await findFile(join(dir, 'Data'), '.db');
     if (!mepsunit) return;
     const mepsLangs = window.electronApi
       .executeQuery<JwMepsLanguage>(mepsunit, 'SELECT * FROM Language')
@@ -2238,17 +2216,12 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
     );
     const responseObject = await getPubMediaLinks(publication);
     if (!responseObject?.files) {
-      if (!(await window.electronApi.fs.pathExists(pubDir)))
-        return { FilePath: '' };
+      if (!(await pathExists(pubDir))) return { FilePath: '' };
       const files: string[] = [];
-      const items = (await window.electronApi.readdir(pubDir)).filter(
-        (item) => item.isFile,
-      );
+      const items = (await readdir(pubDir)).filter((item) => item.isFile);
       for (const item of items) {
-        const filePath = window.electronApi.path.join(pubDir, item.name);
-        const fileExtension = window.electronApi.path
-          .extname(filePath)
-          .toLowerCase();
+        const filePath = join(pubDir, item.name);
+        const fileExtension = extname(filePath).toLowerCase();
 
         let match = true;
         const params = [
@@ -2261,10 +2234,7 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
           .map((i) => i.toString());
 
         for (const test of params) {
-          if (
-            !item.name ||
-            !window.electronApi.path.basename(item.name).includes(test)
-          ) {
+          if (!item.name || !basename(item.name).includes(test)) {
             match = false;
             break;
           }
@@ -2315,16 +2285,13 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
         : undefined,
       jwMediaInfo.thumbnail,
     ].filter((u): u is string => !!u)) {
-      const itemFilename = window.electronApi.path.changeExt(
-        window.electronApi.path.basename(bestItem.file.url),
-        window.electronApi.path.extname(itemUrl),
+      const itemFilename = changeExt(
+        basename(bestItem.file.url),
+        extname(itemUrl),
       );
       if (
         bestItem.file?.url &&
-        (downloadedFile?.new ||
-          !(await window.electronApi.fs.exists(
-            window.electronApi.path.join(pubDir, itemFilename),
-          )))
+        (downloadedFile?.new || !(await exists(join(pubDir, itemFilename))))
       ) {
         await downloadFileIfNeeded({
           dir: pubDir,
@@ -2334,10 +2301,7 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
       }
     }
     return {
-      FilePath: window.electronApi.path.join(
-        pubDir,
-        window.electronApi.path.basename(bestItem.file.url),
-      ),
+      FilePath: join(pubDir, basename(bestItem.file.url)),
       Label: bestItem.title,
       StreamDuration: bestItem.duration,
       StreamThumbnailUrl: jwMediaInfo.thumbnail,
@@ -2370,9 +2334,9 @@ export const downloadAdditionalRemoteVideo = async (
         : bestItem.file.url;
 
     const uniqueId = await addToAdditionMediaMapFromPath(
-      window.electronApi.path.join(
+      join(
         await currentStateStore.getDatedAdditionalMediaDirectory(),
-        window.electronApi.path.basename(bestItemUrl),
+        basename(bestItemUrl),
       ),
       section,
       undefined,
@@ -2526,7 +2490,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
     }
     for (const mediaLink of filteredMediaItemLinks) {
       if (
-        !window.electronApi.path
+        !path
           ?.extname(mediaLink?.file?.url)
           ?.includes(publication?.fileformat?.toLowerCase())
       ) {
@@ -2728,8 +2692,6 @@ export const setUrlVariables = async (baseUrl: string | undefined) => {
     errorCatcher(e);
     resetUrlVariables();
   } finally {
-    window.electronApi.setElectronUrlVariables(
-      JSON.stringify(jwStore.urlVariables),
-    );
+    setElectronUrlVariables(JSON.stringify(jwStore.urlVariables));
   }
 };
