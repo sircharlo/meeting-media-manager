@@ -424,12 +424,6 @@ export const fetchMedia = async () => {
             } else if (day.meeting === 'mw') {
               fetchResult = await getMwMedia(dayDate);
             }
-            console.debug(
-              'getWeMedia dayDate',
-              dayDate,
-              'fetchResult',
-              fetchResult,
-            );
             if (fetchResult) {
               replaceMissingMediaByPubMediaId(
                 day.dynamicMedia,
@@ -1207,35 +1201,22 @@ const getWtIssue = async (
   weekNr: number;
 }> => {
   try {
-    console.debug(
-      'getWtIssue monday',
-      monday,
-      'weeksInPast',
-      weeksInPast,
-      'langwritten',
-      langwritten,
-      'lastChance',
-      lastChance,
-    );
     const issue = subtractFromDate(monday, {
       days: weeksInPast * 7,
     });
     const issueString = formatDate(issue, 'YYYYMM') + '00';
-    console.debug('getWtIssue issueString', issueString);
     if (!langwritten) throw new Error('No language selected');
     const publication = {
       issue: issueString,
       langwritten,
       pub: 'w',
     };
-    console.debug('getWtIssue publication', publication);
     const db = await getDbFromJWPUB(publication);
     if (!db) throw new Error('No db file found: ' + issueString);
     const datedTexts = window.electronApi.executeQuery<DatedTextItem>(
       db,
       'SELECT * FROM DatedText',
     );
-    console.debug('getWtIssue datedTexts', datedTexts);
     const weekNr = datedTexts
       ? datedTexts.findIndex((weekItem) => {
           const mondayAsNumber = parseInt(formatDate(monday, 'YYYYMMDD'));
@@ -1593,7 +1574,6 @@ export const getWeMedia = async (lookupDate: Date) => {
     lookupDate = dateFromString(lookupDate);
     const monday = getSpecificWeekday(lookupDate, 0);
 
-    console.debug('getWeMedia called for', monday);
     const getIssueWithFallback = async (
       monday: Date,
     ): Promise<{
@@ -1612,9 +1592,6 @@ export const getWeMedia = async (lookupDate: Date) => {
         for (const weeks of weeksToTry) {
           const result = await getWtIssue(monday, weeks, primaryLang);
           if (result.db?.length > 0) {
-            console.debug(
-              `Found issue with primary lang ${primaryLang} at ${weeks} weeks`,
-            );
             return result;
           }
         }
@@ -1625,9 +1602,6 @@ export const getWeMedia = async (lookupDate: Date) => {
         for (const weeks of weeksToTry) {
           const result = await getWtIssue(monday, weeks, fallbackLang, true);
           if (result.db?.length > 0) {
-            console.debug(
-              `Found issue with fallback lang ${fallbackLang} at ${weeks} weeks`,
-            );
             return result;
           }
         }
@@ -1648,11 +1622,6 @@ export const getWeMedia = async (lookupDate: Date) => {
 
     const { db, docId, issueString, publication } =
       await getIssueWithFallback(monday);
-
-    console.debug('getWeMedia issueString', issueString);
-    console.debug('getWeMedia publication', publication);
-    console.debug('getWeMedia db', db);
-    console.debug('getWeMedia docId', docId);
 
     if (!db || docId < 0) {
       return {
@@ -1676,15 +1645,12 @@ export const getWeMedia = async (lookupDate: Date) => {
          GROUP BY DocumentMultimedia.MultimediaId
          ORDER BY DocumentParagraph.BeginPosition`,
     );
-    console.debug('getWeMedia videos', videos);
     const videosInParagraphs = videos.filter(
       (video) => !!video.TargetParagraphNumberLabel,
     );
     const videosNotInParagraphs = videos.filter(
       (video) => !video.TargetParagraphNumberLabel,
     );
-    console.debug('getWeMedia videosInParagraphs', videosInParagraphs);
-    console.debug('getWeMedia videosNotInParagraphs', videosNotInParagraphs);
 
     const mediaWithoutVideos = window.electronApi.executeQuery<MultimediaItem>(
       db,
@@ -1705,7 +1671,6 @@ export const getWeMedia = async (lookupDate: Date) => {
          GROUP BY DocumentMultimedia.MultimediaId
          ORDER BY DocumentParagraph.BeginPosition`, // pictures
     );
-    console.debug('getWeMedia mediaWithoutVideos', mediaWithoutVideos);
     for (let i = 0; i < mediaWithoutVideos.length; i++) {
       mediaWithoutVideos[i] = await addFullFilePathToMultimediaItem(
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -1719,7 +1684,6 @@ export const getWeMedia = async (lookupDate: Date) => {
       ...videosInParagraphs,
       ...videosNotInParagraphs,
     ];
-    console.debug('getWeMedia combined', combined);
 
     // Separate items with and without BeginPosition
     const withBegin = combined.filter(
@@ -1728,12 +1692,9 @@ export const getWeMedia = async (lookupDate: Date) => {
     const withoutBegin = combined.filter(
       (item) => item.BeginPosition === undefined || item.BeginPosition === null,
     );
-    console.debug('getWeMedia withBegin', withBegin);
-    console.debug('getWeMedia withoutBegin', withoutBegin);
 
     // Sort those with BeginPosition
     withBegin.sort((a, b) => (a.BeginPosition || 0) - (b.BeginPosition || 0));
-    console.debug('getWeMedia sorted withBegin', withBegin);
 
     // Final result: Insert all withoutBegin *before* the last item with BeginPosition
     let final = [];
@@ -1745,7 +1706,6 @@ export const getWeMedia = async (lookupDate: Date) => {
       final.push(...withoutBegin);
       final.push(withBegin[lastIndex]);
     }
-    console.debug('getWeMedia final before footnotes', final);
 
     final = final
       .map((mediaObj) =>
@@ -1763,7 +1723,6 @@ export const getWeMedia = async (lookupDate: Date) => {
       })
       .filter((item) => !!item);
 
-    console.debug('getWeMedia final after footnotes', final);
     const updatedMedia = final.map((item) => {
       if (item.MultimediaId !== null && item.LinkMultimediaId !== null) {
         const linkedItem = final.find(
@@ -1777,13 +1736,11 @@ export const getWeMedia = async (lookupDate: Date) => {
       }
       return item;
     });
-    console.debug('getWeMedia updatedMedia', updatedMedia);
 
     const finalMedia = updatedMedia.filter(
       (item) => item.LinkMultimediaId === null,
     );
 
-    console.debug('getWeMedia finalMedia', finalMedia);
     let songs: MultimediaItem[] = [];
 
     // Watchtowers before Feb 2023 don't include songs in DocumentMultimedia
@@ -1804,7 +1761,7 @@ export const getWeMedia = async (lookupDate: Date) => {
         .filter((item) => item.BeginPosition)
         .slice(0, 2); // after FEB_2023, the first two videos from DocumentMultimedia are the songs
     }
-    console.debug('getWeMedia songs', songs);
+
     let songLangs: ('' | JwLangCode)[] = [];
     try {
       songLangs = window.electronApi
@@ -1834,7 +1791,7 @@ export const getWeMedia = async (lookupDate: Date) => {
         () => currentStateStore.currentSettings?.lang || 'E',
       );
     }
-    console.debug('getWeMedia songLangs', songLangs);
+
     const mergedSongs: MultimediaItem[] = songs
       .map((song, index) => ({
         ...song,
@@ -1844,7 +1801,7 @@ export const getWeMedia = async (lookupDate: Date) => {
         (a, b) =>
           (a.BeginParagraphOrdinal ?? 0) - (b.BeginParagraphOrdinal ?? 0),
       );
-    console.debug('getWeMedia mergedSongs', mergedSongs);
+
     const allMedia = finalMedia;
     if (mergedSongs[0]) {
       const index0 = allMedia.findIndex(
@@ -1874,8 +1831,6 @@ export const getWeMedia = async (lookupDate: Date) => {
       }
     }
 
-    console.debug('getWeMedia allMedia', allMedia);
-
     const multimediaMepsLangs = getMultimediaMepsLangs({ db, docId });
     for (const media of allMedia) {
       const mediaKeySymbol =
@@ -1902,18 +1857,14 @@ export const getWeMedia = async (lookupDate: Date) => {
       );
       if (videoMarkers) media.VideoMarkers = videoMarkers;
     }
-    console.debug('getWeMedia allMedia after markers', allMedia);
     await processMissingMediaInfo(allMedia);
-    console.debug(
-      'getWeMedia allMedia after processMissingMediaInfo',
-      allMedia,
-    );
+
     const dynamicMediaForDay = await dynamicMediaMapper(
       allMedia,
       lookupDate,
       'dynamic',
     );
-    console.debug('getWeMedia dynamicMediaForDay', dynamicMediaForDay);
+
     return {
       error: false,
       media: dynamicMediaForDay,
