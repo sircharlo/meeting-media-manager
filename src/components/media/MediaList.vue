@@ -157,7 +157,6 @@
                       v-model:repeat="childElement.repeat"
                       child
                       :media="childElement"
-                      :play-state="playState(childElement.uniqueId)"
                       @update:custom-duration="
                         childElement.customDuration =
                           JSON.parse($event) || undefined
@@ -177,7 +176,6 @@
             :key="element.uniqueId"
             v-model:repeat="element.repeat"
             :media="element"
-            :play-state="playState(element.uniqueId)"
             @update:custom-duration="
               element.customDuration = JSON.parse($event) || undefined
             "
@@ -200,10 +198,8 @@ import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { Sortable } from 'sortablejs-vue3';
 import { isWeMeetingDay } from 'src/helpers/date';
-import { errorCatcher } from 'src/helpers/error-catcher';
-import { addDayToExportQueue } from 'src/helpers/export-media';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 export interface MediaListObject {
@@ -228,18 +224,9 @@ const currentState = useCurrentStateStore();
 const {
   getVisibleMediaForSection,
   mediaItemBeingSorted,
-  mediaPlayingUniqueId,
   mediaPlayingUrl,
-  selectedDate,
   selectedDateObject,
 } = storeToRefs(currentState);
-
-const playState = (id: string) => {
-  if (id === lastPlayedMediaUniqueId.value) return 'current';
-  if (id === nextMediaUniqueId.value) return 'next';
-  if (id === previousMediaUniqueId.value) return 'previous';
-  return 'unknown';
-};
 
 const addSong = (section: MediaSection | undefined) => {
   window.dispatchEvent(
@@ -249,16 +236,11 @@ const addSong = (section: MediaSection | undefined) => {
   );
 };
 
-const lastPlayedMediaUniqueId = ref<string>('');
-
-watch(
-  () => mediaPlayingUniqueId.value,
-  (newMediaUniqueId) => {
-    if (newMediaUniqueId) lastPlayedMediaUniqueId.value = newMediaUniqueId;
-  },
-);
-
 const expandedMediaGroups = ref<Record<string, boolean>>({});
+
+defineExpose({
+  expandedMediaGroups,
+});
 
 watchImmediate(
   () => selectedDateObject.value?.dynamicMedia?.length,
@@ -266,7 +248,11 @@ watchImmediate(
     expandedMediaGroups.value =
       selectedDateObject.value?.dynamicMedia.reduce(
         (acc, element) => {
-          if (element.children?.length && element.extractCaption) {
+          if (
+            element.children?.length &&
+            element.extractCaption &&
+            element.section === props.mediaList.type
+          ) {
             acc[element.uniqueId] = !!element.cbs; // Default state based on element.cbs
           }
           return acc;
@@ -275,96 +261,6 @@ watchImmediate(
       ) || {};
   },
 );
-
-const keyboardShortcutMediaList = computed(() => {
-  return [
-    ...getVisibleMediaForSection.value.additional,
-    ...getVisibleMediaForSection.value.tgw,
-    ...getVisibleMediaForSection.value.ayfm,
-    ...getVisibleMediaForSection.value.lac,
-    ...getVisibleMediaForSection.value.wt,
-    ...getVisibleMediaForSection.value.circuitOverseer,
-  ].flatMap((m) => {
-    return m.children
-      ? m.children.map((c) => {
-          return {
-            ...c,
-            parentUniqueId: m.uniqueId,
-          };
-        })
-      : [m];
-  });
-});
-
-const arraysAreIdentical = (a: string[], b: string[]) =>
-  a.length === b.length && a.every((element, index) => element === b[index]);
-
-const sortedMediaFileUrls = computed(() =>
-  keyboardShortcutMediaList.value
-    .filter((m) => !m.hidden && !!m.fileUrl)
-    .map((m) => m.fileUrl)
-    .filter((m) => typeof m === 'string')
-    .filter((fileUrl, index, self) => self.indexOf(fileUrl) === index),
-);
-
-watch(
-  () => sortedMediaFileUrls.value,
-  (newSortedMediaFileUrls, oldSortedMediaFileUrls) => {
-    if (
-      selectedDateObject.value?.date &&
-      !arraysAreIdentical(newSortedMediaFileUrls, oldSortedMediaFileUrls)
-    ) {
-      try {
-        addDayToExportQueue(selectedDateObject.value.date);
-      } catch (e) {
-        errorCatcher(e);
-      }
-    }
-  },
-);
-
-const previousMediaUniqueId = computed(() => {
-  if (!selectedDate.value) return '';
-  const sortedMediaIds = keyboardShortcutMediaList.value.map((m) => m.uniqueId);
-  if (!lastPlayedMediaUniqueId.value) return sortedMediaIds[0];
-  const index = sortedMediaIds.indexOf(lastPlayedMediaUniqueId.value);
-  if (index === -1) return sortedMediaIds[0];
-
-  for (let i = index - 1; i >= 0; i--) {
-    const mediaItem = keyboardShortcutMediaList.value[i];
-    if (mediaItem) {
-      if (
-        !mediaItem.extractCaption ||
-        (mediaItem.parentUniqueId &&
-          expandedMediaGroups.value[mediaItem.parentUniqueId])
-      ) {
-        return mediaItem.uniqueId;
-      }
-    }
-  }
-  return sortedMediaIds[0];
-});
-
-const nextMediaUniqueId = computed(() => {
-  if (!selectedDate.value) return '';
-  const sortedMediaIds = keyboardShortcutMediaList.value.map((m) => m.uniqueId);
-  if (!lastPlayedMediaUniqueId.value) return sortedMediaIds[0];
-  const index = sortedMediaIds.indexOf(lastPlayedMediaUniqueId.value);
-  if (index === -1) return sortedMediaIds[0];
-  for (let i = index + 1; i < keyboardShortcutMediaList.value.length; i++) {
-    const mediaItem = keyboardShortcutMediaList.value[i];
-    if (mediaItem) {
-      if (
-        !mediaItem.extractCaption ||
-        (mediaItem?.parentUniqueId &&
-          expandedMediaGroups.value[mediaItem.parentUniqueId])
-      ) {
-        return mediaItem.uniqueId;
-      }
-    }
-  }
-  return sortedMediaIds[0];
-});
 
 const handleMediaSort = (
   evt: SortableEvent,

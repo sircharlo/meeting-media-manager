@@ -96,7 +96,11 @@
         (mediaList.items?.map((m) => m.uniqueId) || []).sort().join(',')
       "
     >
-      <MediaList :media-list="mediaList" :open-import-menu="openImportMenu" />
+      <MediaList
+        :ref="mediaListRefs[mediaList.type]"
+        :media-list="mediaList"
+        :open-import-menu="openImportMenu"
+      />
     </template>
     <DialogFileImport
       v-model="showFileImportDialog"
@@ -111,7 +115,12 @@
 </template>
 
 <script setup lang="ts">
-import type { DocumentItem, MediaSection, TableItem } from 'src/types';
+import type {
+  DocumentItem,
+  DynamicMediaObject,
+  MediaSection,
+  TableItem,
+} from 'src/types';
 
 import {
   useBroadcastChannel,
@@ -132,6 +141,7 @@ import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
 import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { addDayToExportQueue } from 'src/helpers/export-media';
 import {
   addJwpubDocumentMediaToFiles,
   copyToDatedAdditionalMedia,
@@ -173,7 +183,7 @@ import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
-import { computed, onMounted, ref, toRaw, watch } from 'vue';
+import { computed, onMounted, ref, type Ref, toRaw, unref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const showFileImportDialog = ref(false);
@@ -203,6 +213,7 @@ const {
   currentCongregation,
   currentSettings,
   getVisibleMediaForSection,
+  highlightedMediaId,
   mediaPaused,
   mediaPlaying,
   mediaPlayingAction,
@@ -308,6 +319,15 @@ const mediaLists = computed(() => {
 
   return all.filter((m) => !!m);
 });
+
+const mediaListRefs: Record<string, Ref> = {
+  additional: ref(null),
+  ayfm: ref(null),
+  circuitOverseer: ref(null),
+  lac: ref(null),
+  tgw: ref(null),
+  wt: ref(null),
+};
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
   name: 'media-action',
@@ -991,4 +1011,184 @@ const duplicateSongsForWeMeeting = computed(() => {
   const songSet = new Set(songNumbers);
   return songSet.size !== songNumbers.length;
 });
+
+const arraysAreIdentical = (a: string[], b: string[]) =>
+  a.length === b.length && a.every((element, index) => element === b[index]);
+
+const keyboardShortcutMediaList = () => {
+  const allMedia = [
+    ...getVisibleMediaForSection.value.additional,
+    ...getVisibleMediaForSection.value.tgw,
+    ...getVisibleMediaForSection.value.ayfm,
+    ...getVisibleMediaForSection.value.lac,
+    ...getVisibleMediaForSection.value.wt,
+    ...getVisibleMediaForSection.value.circuitOverseer,
+  ];
+
+  return allMedia.flatMap((m) => {
+    // Get media groups
+    const expanded = unref(
+      toRaw(unref(mediaListRefs[m.section]))?.[0]?.expandedMediaGroups,
+    );
+    // Check if the media is collapsed based on the expanded state
+    const isCollapsed = m.children && expanded ? !expanded[m.uniqueId] : false;
+    // If the media is collapsed, return an empty array, since it won't be selectable
+    if (isCollapsed) return [];
+
+    // If the media is not collapsed, return the media itself or its children
+    return m.children
+      ? m.children.map((c) => ({ ...c, parentUniqueId: m.uniqueId }))
+      : [m];
+  });
+};
+
+const sortedMediaFileUrls = computed(() =>
+  keyboardShortcutMediaList()
+    .filter((m) => !m.hidden && !!m.fileUrl)
+    .map((m) => m.fileUrl)
+    .filter((m) => typeof m === 'string')
+    .filter((fileUrl, index, self) => self.indexOf(fileUrl) === index),
+);
+
+watch(
+  () => sortedMediaFileUrls.value,
+  (newSortedMediaFileUrls, oldSortedMediaFileUrls) => {
+    if (
+      selectedDateObject.value?.date &&
+      !arraysAreIdentical(newSortedMediaFileUrls, oldSortedMediaFileUrls)
+    ) {
+      try {
+        addDayToExportQueue(selectedDateObject.value.date);
+      } catch (e) {
+        errorCatcher(e);
+      }
+    }
+  },
+);
+
+useEventListener(
+  window,
+  'shortcutMediaNext',
+  () => {
+    // Early return if no date selected
+    if (!selectedDate.value) return;
+
+    const mediaList = keyboardShortcutMediaList();
+    console.log('mediaList', mediaList);
+    if (!mediaList.length) return;
+
+    const sortedMediaIds = mediaList.map((item) => item.uniqueId);
+    if (!sortedMediaIds?.[0]) return;
+    const currentId = highlightedMediaId.value;
+
+    // If no current selection, return first item
+    if (!currentId) {
+      highlightedMediaId.value = sortedMediaIds[0];
+      return;
+    }
+
+    const currentIndex = sortedMediaIds.indexOf(currentId);
+
+    // If current item not found, reset to first
+    if (currentIndex === -1) {
+      highlightedMediaId.value = sortedMediaIds[0];
+      return;
+    }
+
+    // Find next selectable media item
+    const nextSelectableId = findNextSelectableMedia(mediaList, currentIndex);
+    if (!nextSelectableId) return;
+    highlightedMediaId.value = nextSelectableId;
+  },
+  { passive: true },
+);
+
+useEventListener(
+  window,
+  'shortcutMediaPrevious',
+  () => {
+    // Early return if no date selected
+    if (!selectedDate.value) return;
+
+    const mediaList = keyboardShortcutMediaList();
+    if (!mediaList.length) return;
+
+    const sortedMediaIds = mediaList.map((item) => item.uniqueId);
+    if (!sortedMediaIds?.[0]) return;
+    const currentId = highlightedMediaId.value;
+
+    const lastItem = sortedMediaIds[sortedMediaIds.length - 1];
+
+    // If no current selection, return last item if possible, otherwise first
+    if (!currentId) {
+      highlightedMediaId.value = lastItem || sortedMediaIds[0];
+      return;
+    }
+
+    const currentIndex = sortedMediaIds.indexOf(currentId);
+
+    // If current item not found, reset to last item if possible, otherwise first
+    if (currentIndex === -1) {
+      highlightedMediaId.value = lastItem || sortedMediaIds[0];
+      return;
+    }
+
+    // Find previous selectable media item
+    const previousSelectableId = findPreviousSelectableMedia(
+      mediaList,
+      currentIndex,
+    );
+    if (!previousSelectableId) return;
+    highlightedMediaId.value = previousSelectableId;
+  },
+  { passive: true },
+);
+
+function findNextSelectableMedia(
+  mediaList: DynamicMediaObject[],
+  startIndex: number,
+) {
+  // Search from next item onwards
+  for (let i = startIndex + 1; i < mediaList.length; i++) {
+    const mediaItem = mediaList[i];
+    if (mediaItem && isMediaSelectable(mediaItem)) {
+      return mediaItem.uniqueId;
+    }
+  }
+
+  // If no selectable item found, wrap to beginning
+  return mediaList[0]?.uniqueId || null;
+}
+
+function findPreviousSelectableMedia(
+  mediaList: DynamicMediaObject[],
+  startIndex: number,
+) {
+  // Search from previous item backwards
+  for (let i = startIndex - 1; i >= 0; i--) {
+    const mediaItem = mediaList[i];
+    if (mediaItem && isMediaSelectable(mediaItem)) {
+      return mediaItem.uniqueId;
+    }
+  }
+
+  // If no selectable item found, wrap to end
+  return mediaList[mediaList.length - 1]?.uniqueId || null;
+}
+
+function isMediaSelectable(mediaItem: DynamicMediaObject) {
+  if (!mediaItem) return false;
+
+  // Media is selectable if:
+  // 1. It doesn't have an extract caption, OR
+  // 2. It has a parent unique ID (indicating it's part of a group)
+  return !mediaItem.extractCaption || mediaItem.parentUniqueId;
+}
+
+watch(
+  () => mediaPlayingUniqueId.value,
+  (newMediaUniqueId) => {
+    if (newMediaUniqueId) highlightedMediaId.value = newMediaUniqueId;
+  },
+);
 </script>
