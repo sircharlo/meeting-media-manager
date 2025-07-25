@@ -4364,9 +4364,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/language-core@npm:3.0.3":
-  version: 3.0.3
-  resolution: "@vue/language-core@npm:3.0.3"
+"@vue/language-core@npm:3.0.4":
+  version: 3.0.4
+  resolution: "@vue/language-core@npm:3.0.4"
   dependencies:
     "@volar/language-core": "npm:2.4.20"
     "@vue/compiler-dom": "npm:^3.5.0"
@@ -4381,7 +4381,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/2d243f2f32ace409ce513c155495784765979219c85321c18284ee7e72bdbe6cb2c85d0e033960c8bb9177268f7e72c998750d5699435cabffbbdc7ee5a3a63e
+  checksum: 10c0/c1cc7410e5ee164cefbd36d736627874cd8d00be0ead72323b55b66f2c9548df7f013079d91047a0ea31eb4d2cd4aa1cd0704f1c02f26be58058e25a1fe4966a
   languageName: node
   linkType: hard
 
@@ -10504,7 +10504,7 @@ __metadata:
     vue-eslint-parser: "npm:^10.2.0"
     vue-i18n: "npm:^11.1.11"
     vue-router: "npm:^4.5.1"
-    vue-tsc: "npm:^3.0.3"
+    vue-tsc: "npm:^3.0.4"
     webpack-iconfont-plugin-nodejs: "npm:^1.0.36"
   languageName: unknown
   linkType: soft
@@ -15477,17 +15477,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-tsc@npm:^3.0.3":
-  version: 3.0.3
-  resolution: "vue-tsc@npm:3.0.3"
+"vue-tsc@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "vue-tsc@npm:3.0.4"
   dependencies:
     "@volar/typescript": "npm:2.4.20"
-    "@vue/language-core": "npm:3.0.3"
+    "@vue/language-core": "npm:3.0.4"
   peerDependencies:
     typescript: ">=5.0.0"
   bin:
     vue-tsc: ./bin/vue-tsc.js
-  checksum: 10c0/4846ec7ec91dceb743cf84a4c8fbacb78e1d9a0d486eb0040c5e0f892af5bedf12eafc5f40e318cbb000abda36b1452705655d10e69dd126ba4e5d90129a5af5
+  checksum: 10c0/4032a1238b18fb0727c6532d1d6ffd8bc5325d594ea1f1cdb07920eb36b5659a50f021fd0aa21963f3888befaaad3d52a39e6e7f568289d59bd4ea3689db94cb
   languageName: node
   linkType: hard
 
