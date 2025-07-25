@@ -435,9 +435,21 @@ watch(
   },
 );
 
+let mediaSceneTimeout: NodeJS.Timeout | null = null;
+const changeDelay = 600; // 600ms delay: "--animate-duration" = 300ms, "slow" = "--animate-duration" * 2
+
 watch(
   () => [mediaPlaying.value, mediaPaused.value, mediaPlayingUrl.value],
-  ([newMediaPlaying, newMediaPaused, newMediaPlayingUrl]) => {
+  (
+    [newMediaPlaying, newMediaPaused, newMediaPlayingUrl],
+    [, , oldMediaPlayingUrl],
+  ) => {
+    // Clear any existing timeout
+    if (mediaSceneTimeout) {
+      clearTimeout(mediaSceneTimeout);
+      mediaSceneTimeout = null;
+    }
+
     if (
       currentSettings.value?.obsPostponeImages &&
       newMediaPlaying &&
@@ -447,9 +459,28 @@ watch(
     ) {
       return;
     }
-    sendObsSceneEvent(
-      newMediaPaused ? 'camera' : newMediaPlaying ? 'media' : 'camera',
-    );
+
+    const targetScene = newMediaPaused
+      ? 'camera'
+      : newMediaPlaying
+        ? 'media'
+        : 'camera';
+    const wasPlayingBefore = !!oldMediaPlayingUrl;
+
+    if (targetScene === 'media') {
+      if (wasPlayingBefore) {
+        // If something was playing before, we change the scene immediately
+        sendObsSceneEvent('media');
+      } else {
+        // If nothing was already playing, we wait a bit before changing the scene to prevent seeing the fade effect in OBS
+        mediaSceneTimeout = setTimeout(() => {
+          sendObsSceneEvent('media');
+          mediaSceneTimeout = null;
+        }, changeDelay);
+      }
+    } else {
+      sendObsSceneEvent('camera');
+    }
   },
 );
 
