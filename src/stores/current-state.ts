@@ -42,7 +42,6 @@ interface Store {
   extractedFiles: Partial<Record<string, string>>;
   ffmpegPath: string;
   highlightedMediaId: string;
-  mediaItemBeingSorted: DynamicMediaObject | undefined;
   mediaPlayingAction: '' | 'pause' | 'play' | 'website';
   mediaPlayingCurrentPosition: number;
   mediaPlayingPanzoom: Partial<{ scale: number; x: number; y: number }>;
@@ -366,7 +365,6 @@ export const useCurrentStateStore = defineStore('current-state', {
       extractedFiles: {},
       ffmpegPath: '',
       highlightedMediaId: '',
-      mediaItemBeingSorted: undefined,
       mediaPlayingAction: '',
       mediaPlayingCurrentPosition: 0,
       mediaPlayingPanzoom: { scale: 1, x: 0, y: 0 },

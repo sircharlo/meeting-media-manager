@@ -16,7 +16,6 @@
           (mediaList.jwIcon ? ' jw-icon' : '')
         "
       >
-        <!-- :size="isWeMeetingDay(selectedDateObject.date) ? 'lg' : 'md'" -->
         <template v-if="mediaList.jwIcon">
           {{ mediaList.jwIcon }}
         </template>
@@ -52,7 +51,7 @@
         </q-btn>
       </q-item-section>
     </q-item>
-    <div v-if="!mediaList.items.filter((m) => !m.hidden).length">
+    <div v-if="emptyMediaList && !currentlySorting">
       <q-item>
         <q-item-section
           class="align-center text-secondary text-grey text-subtitle2"
@@ -70,19 +69,16 @@
         </q-item-section>
       </q-item>
     </div>
-    <Sortable
+    <div
+      ref="parent"
       class="sortable-media"
-      item-key="uniqueId"
-      :list="mediaList.items"
-      :options="{ group: 'mediaLists' }"
-      @add="handleMediaSort($event, 'ADD', mediaList.type as MediaSection)"
-      @end="handleMediaSort($event, 'END', mediaList.type as MediaSection)"
-      @remove="
-        handleMediaSort($event, 'REMOVE', mediaList.type as MediaSection)
-      "
-      @start="handleMediaSort($event, 'START', mediaList.type as MediaSection)"
+      :class="{
+        'drop-here': currentlySorting,
+        'bg-primary-light': currentlySorting,
+      }"
+      :data-list="mediaList.type"
     >
-      <template #item="{ element }: { element: DynamicMediaObject }">
+      <div v-for="element in sortableItems" :key="element.uniqueId">
         <template v-if="element.children">
           <q-list
             v-if="element.children.some((m) => !m.hidden)"
@@ -139,35 +135,26 @@
                   </div>
                 </q-item-section>
               </template>
-              <Sortable
-                v-if="element.children"
-                item-key="uniqueId"
-                :list="element.children"
-              >
-                <template
-                  #item="{
-                    element: childElement,
-                  }: {
-                    element: DynamicMediaObject;
-                  }"
+              <div v-if="element.children">
+                <div
+                  v-for="childElement in element.children"
+                  :key="childElement.uniqueId"
                 >
-                  <div :key="childElement.uniqueId">
-                    <MediaItem
-                      :key="childElement.uniqueId"
-                      v-model:repeat="childElement.repeat"
-                      child
-                      :media="childElement"
-                      @update:custom-duration="
-                        childElement.customDuration =
-                          JSON.parse($event) || undefined
-                      "
-                      @update:hidden="childElement.hidden = !!$event"
-                      @update:tag="childElement.tag = $event"
-                      @update:title="childElement.title = $event"
-                    />
-                  </div>
-                </template>
-              </Sortable>
+                  <MediaItem
+                    :key="childElement.uniqueId"
+                    v-model:repeat="childElement.repeat"
+                    child
+                    :media="childElement"
+                    @update:custom-duration="
+                      childElement.customDuration =
+                        JSON.parse($event) || undefined
+                    "
+                    @update:hidden="childElement.hidden = !!$event"
+                    @update:tag="childElement.tag = $event"
+                    @update:title="childElement.title = $event"
+                  />
+                </div>
+              </div>
             </q-expansion-item>
           </q-list>
         </template>
@@ -184,23 +171,79 @@
             @update:title="element.title = $event"
           />
         </div>
-      </template>
-    </Sortable>
+      </div>
+    </div>
   </q-list>
 </template>
 <script setup lang="ts">
-import type { SortableEvent } from 'sortablejs';
 import type { DynamicMediaObject, MediaSection } from 'src/types';
 
+import { animations, state } from '@formkit/drag-and-drop';
+import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
 import { watchImmediate } from '@vueuse/core';
 import MediaItem from 'components/media/MediaItem.vue';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
-import { Sortable } from 'sortablejs-vue3';
 import { isWeMeetingDay } from 'src/helpers/date';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+
+const props = defineProps<{
+  mediaList: MediaListObject;
+  openImportMenu: (section: MediaSection) => void;
+}>();
+
+const visibleMediaItems = computed(() => {
+  return props.mediaList.items.filter((m) => !m.hidden);
+});
+
+const [parent, sortableItems] = useDragAndDrop<DynamicMediaObject>(
+  visibleMediaItems.value,
+  {
+    group: 'mediaList',
+    multiDrag: true,
+    onDragend: () => {
+      currentlySorting.value = false;
+    },
+    onDragstart: () => {
+      currentlySorting.value = true;
+    },
+    plugins: [animations()],
+    selectedClass: 'sortable-selected',
+  },
+);
+
+watch(
+  () => props.mediaList.items,
+  (newItems) => {
+    // Update sortable items when media list items change
+    sortableItems.value = newItems.filter((m) => !m.hidden);
+  },
+  { immediate: true },
+);
+
+const currentlySorting = ref(false);
+
+state.on('dragStarted', () => {
+  currentlySorting.value = true;
+});
+
+state.on('dragEnded', () => {
+  currentlySorting.value = false;
+  if (!selectedDateObject.value?.dynamicMedia) return;
+  // TODO: Make this more efficient, something like: in-place resort if sortableItems same length as filtered dynamicMedia, otherwise replace as below
+  selectedDateObject.value.dynamicMedia = [
+    ...selectedDateObject.value.dynamicMedia
+      .filter((item) => item.section !== props.mediaList.type)
+      .concat(
+        sortableItems.value.map((item) => ({
+          ...item,
+          section: props.mediaList.type,
+        })),
+      ),
+  ];
+});
 
 export interface MediaListObject {
   alwaysShow: boolean;
@@ -212,21 +255,11 @@ export interface MediaListObject {
   type: MediaSection;
 }
 
-const props = defineProps<{
-  mediaList: MediaListObject;
-  openImportMenu: (section: MediaSection) => void;
-}>();
-
 const $q = useQuasar();
 const { t } = useI18n();
 
 const currentState = useCurrentStateStore();
-const {
-  getVisibleMediaForSection,
-  mediaItemBeingSorted,
-  mediaPlayingUrl,
-  selectedDateObject,
-} = storeToRefs(currentState);
+const { mediaPlayingUrl, selectedDateObject } = storeToRefs(currentState);
 
 const addSong = (section: MediaSection | undefined) => {
   window.dispatchEvent(
@@ -262,85 +295,14 @@ watchImmediate(
   },
 );
 
-const handleMediaSort = (
-  evt: SortableEvent,
-  eventType: string,
-  list: MediaSection,
-) => {
-  const sameList = evt.from === evt.to;
-  const dynamicMedia = selectedDateObject.value?.dynamicMedia;
-
-  if (!dynamicMedia || !Array.isArray(dynamicMedia)) return;
-  if (
-    typeof evt.oldIndex === 'undefined' ||
-    typeof evt.newIndex === 'undefined'
-  )
-    return;
-
-  switch (eventType) {
-    case 'ADD': {
-      if (!sameList && mediaItemBeingSorted.value) {
-        const firstElementIndex = dynamicMedia.findIndex(
-          (item) => item.section === list,
-        );
-        const insertIndex =
-          firstElementIndex >= 0
-            ? firstElementIndex + evt.newIndex
-            : evt.newIndex;
-        const newItem = { ...mediaItemBeingSorted.value, section: list };
-        dynamicMedia.splice(insertIndex, 0, newItem);
-      }
-      break;
-    }
-
-    case 'END': {
-      if (sameList) {
-        const originalPosition = dynamicMedia.findIndex(
-          (item) => item.uniqueId === mediaItemBeingSorted.value?.uniqueId,
-        );
-        if (originalPosition >= 0) {
-          const [movedItem] = dynamicMedia.splice(originalPosition, 1);
-          if (movedItem) {
-            const newIndex = Math.max(
-              0,
-              originalPosition + evt.newIndex - evt.oldIndex,
-            );
-            dynamicMedia.splice(newIndex, 0, movedItem);
-          }
-        }
-      }
-      break;
-    }
-
-    case 'REMOVE': {
-      if (!sameList) {
-        const indexToRemove = dynamicMedia.findIndex(
-          (item) =>
-            item.uniqueId === mediaItemBeingSorted.value?.uniqueId &&
-            item.section === list,
-        );
-        if (indexToRemove >= 0) {
-          dynamicMedia.splice(indexToRemove, 1);
-        }
-      }
-      break;
-    }
-
-    case 'START': {
-      const itemBeingSorted =
-        getVisibleMediaForSection.value[list]?.[evt.oldIndex];
-      if (itemBeingSorted) {
-        mediaItemBeingSorted.value = itemBeingSorted;
-      }
-      break;
-    }
-  }
-};
-
 const isSongButton = computed(
   () =>
     props.mediaList.type === 'additional' ||
     (props.mediaList.type === 'circuitOverseer' &&
       !props.mediaList.items.some((m) => !m.hidden)),
 );
+
+const emptyMediaList = computed(() => {
+  return !props.mediaList.items.filter((m) => !m.hidden).length;
+});
 </script>
