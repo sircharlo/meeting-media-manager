@@ -223,7 +223,7 @@ const dropHandler = (event: DragEvent, eventType: string) => {
           () => {
             element.classList.remove('shakeX');
           },
-          { once: true },
+          { once: true, passive: true },
         );
       }
     }

@@ -1171,10 +1171,15 @@ const initiatePanzoom = () => {
       { passive: true },
     );
 
-    useEventListener(mediaImage.value.$el, 'wheel', (e) => {
-      if (!e.ctrlKey) return;
-      panzoom.value?.zoomWithWheel(e);
-    });
+    useEventListener(
+      mediaImage.value.$el,
+      'wheel',
+      (e) => {
+        if (!e.ctrlKey) return;
+        panzoom.value?.zoomWithWheel(e);
+      },
+      { passive: true },
+    );
 
     useEventListener(
       mediaImage.value.$el,
