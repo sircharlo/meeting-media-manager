@@ -115,6 +115,7 @@ const s34mpDb = ref<string | undefined>();
 const s34mpInfo = ref<null | PublicationInfo>(null);
 
 const { executeQuery, fs, openFileDialog, path } = window.electronApi;
+const { basename, extname, join } = path;
 
 const { ensureDir } = fs;
 
@@ -158,7 +159,7 @@ const addPublicTalkMedia = (publicTalkDocId: DocumentItem) => {
 
 const setS34mp = async () => {
   s34mpBasename.value = `S-34mp_${currentState.currentCongregation}`;
-  s34mpDir.value = path.join(
+  s34mpDir.value = join(
     await getPublicationsPath(currentState.currentSettings?.cacheFolder),
     s34mpBasename.value,
   );
@@ -166,8 +167,7 @@ const setS34mp = async () => {
 
 const s34mpDisplayName = computed((): string => {
   try {
-    if (s34mpDb.value)
-      return path.basename(s34mpDb.value, path.extname(s34mpDb.value));
+    if (s34mpDb.value) return basename(s34mpDb.value, extname(s34mpDb.value));
     return t('select-s34mp');
   } catch (e) {
     console.error('Error getting S-34mp display name:', e);

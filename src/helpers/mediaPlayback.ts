@@ -15,13 +15,15 @@ import { isJwpub } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
 
+const { decompress, executeQuery, fs, path, toggleMediaWindow } =
+  window.electronApi;
+const { pathExists, remove, rename } = fs;
+const { basename, extname, join } = path;
+
 const jwpubDecompressor = async (jwpubPath: string, outputPath: string) => {
   try {
-    await window.electronApi.decompress(jwpubPath, outputPath);
-    await window.electronApi.decompress(
-      window.electronApi.path.join(outputPath, 'contents'),
-      outputPath,
-    );
+    await decompress(jwpubPath, outputPath);
+    await decompress(join(outputPath, 'contents'), outputPath);
     return outputPath;
   } catch (error) {
     errorCatcher(error);
@@ -38,16 +40,13 @@ export const decompressJwpub = async (
     const currentState = useCurrentStateStore();
     if (!isJwpub(jwpubPath)) return jwpubPath;
     if (!outputPath) {
-      outputPath = window.electronApi.path.join(
-        await getTempPath(),
-        window.electronApi.path.basename(jwpubPath),
-      );
+      outputPath = join(await getTempPath(), basename(jwpubPath));
     }
 
     // If force, clear the output directory before filling it
     if (force) {
       try {
-        await window.electronApi.fs.remove(outputPath);
+        await remove(outputPath);
       } catch (e) {
         errorCatcher(e);
       }
@@ -72,27 +71,23 @@ export const getMediaFromJwPlaylist = async (
 ) => {
   try {
     if (!jwPlaylistPath) return [];
-    const outputPath = window.electronApi.path.join(
-      destPath,
-      window.electronApi.path.basename(jwPlaylistPath),
-    );
-    await window.electronApi.decompress(jwPlaylistPath, outputPath);
+    const outputPath = join(destPath, basename(jwPlaylistPath));
+    await decompress(jwPlaylistPath, outputPath);
     const dbFile = await findDb(outputPath);
     if (!dbFile) return [];
     let playlistName = '';
     try {
-      const playlistNameQuery =
-        window.electronApi.executeQuery<PlaylistTagItem>(
-          dbFile,
-          'SELECT Name FROM Tag ORDER BY TagId ASC LIMIT 1;',
-        );
+      const playlistNameQuery = executeQuery<PlaylistTagItem>(
+        dbFile,
+        'SELECT Name FROM Tag ORDER BY TagId ASC LIMIT 1;',
+      );
       if (playlistNameQuery[0]) {
         playlistName = playlistNameQuery[0].Name + ' - ';
       }
     } catch (error) {
       errorCatcher(error);
     }
-    const playlistItems = window.electronApi.executeQuery<JwPlaylistItem>(
+    const playlistItems = executeQuery<JwPlaylistItem>(
       dbFile,
       `SELECT
         pi.PlaylistItemId,
@@ -132,20 +127,17 @@ export const getMediaFromJwPlaylist = async (
     const playlistMediaItems: MultimediaItem[] = await Promise.all(
       playlistItems.map(async (item, i) => {
         item.ThumbnailFilePath = item.ThumbnailFilePath
-          ? window.electronApi.path.join(outputPath, item.ThumbnailFilePath)
+          ? join(outputPath, item.ThumbnailFilePath)
           : '';
         if (
           item.ThumbnailFilePath &&
           !JPG_EXTENSIONS.includes(
-            window.electronApi.path
-              .extname(item.ThumbnailFilePath)
-              .toLowerCase()
-              .replace('.', ''),
+            extname(item.ThumbnailFilePath).toLowerCase().replace('.', ''),
           ) &&
-          (await window.electronApi.fs.pathExists(item.ThumbnailFilePath))
+          (await pathExists(item.ThumbnailFilePath))
         ) {
           try {
-            await window.electronApi.fs.rename(
+            await rename(
               item.ThumbnailFilePath,
               item.ThumbnailFilePath + '.jpg',
             );
@@ -200,10 +192,7 @@ export const getMediaFromJwPlaylist = async (
           DocumentId: 0,
           EndTime: EndTime ?? undefined,
           FilePath: item.IndependentMediaFilePath
-            ? window.electronApi.path.join(
-                outputPath,
-                item.IndependentMediaFilePath,
-              )
+            ? join(outputPath, item.IndependentMediaFilePath)
             : '',
           IssueTagNumber: item.IssueTagNumber,
           KeySymbol: item.KeySymbol,
@@ -243,7 +232,7 @@ export const showMediaWindow = (state?: boolean) => {
       state = !currentState.mediaWindowVisible;
     }
     currentState.mediaWindowVisible = state;
-    window.electronApi.toggleMediaWindow(state);
+    toggleMediaWindow(state);
   } catch (error) {
     errorCatcher(error);
   }

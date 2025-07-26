@@ -20,13 +20,13 @@ export const parseMediaFile = async (filePath: string, options?: IOptions) => {
   return musicMetadata.parseFile(filePath, options);
 };
 
-const isFileUrl = (path: string) => {
-  if (!path) return false;
+const isFileUrl = (testpath: string) => {
+  if (!testpath) return false;
   try {
-    return path.startsWith('file://');
+    return testpath.startsWith('file://');
   } catch (err) {
     capturePreloadError(err, {
-      contexts: { fn: { name: 'isFileUrl', path } },
+      contexts: { fn: { name: 'isFileUrl', path: testpath } },
     });
     return false;
   }

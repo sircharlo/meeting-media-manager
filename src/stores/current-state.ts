@@ -22,6 +22,10 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
 
+const { fs, path } = window.electronApi;
+const { ensureDir } = fs;
+const { join } = path;
+
 export interface Songbook {
   fileformat: 'MP3' | 'MP4';
   pub: 'sjj' | 'sjjm';
@@ -37,6 +41,7 @@ interface Store {
   downloadProgress: DownloadProgressItems;
   extractedFiles: Partial<Record<string, string>>;
   ffmpegPath: string;
+  highlightedMediaId: string;
   mediaPlayingAction: '' | 'pause' | 'play' | 'website';
   mediaPlayingCurrentPosition: number;
   mediaPlayingPanzoom: Partial<{ scale: number; x: number; y: number }>;
@@ -71,12 +76,12 @@ export const useCurrentStateStore = defineStore('current-state', {
           this.currentSettings?.cacheFolder,
         );
         const dateString = formatDate(new Date(destDate), 'YYYYMMDD');
-        const datedAdditionalMediaDirectory = window.electronApi.path.join(
+        const datedAdditionalMediaDirectory = join(
           additionalMediaPath,
           this.currentCongregation,
           dateString,
         );
-        await window.electronApi.fs.ensureDir(datedAdditionalMediaDirectory);
+        await ensureDir(datedAdditionalMediaDirectory);
         return datedAdditionalMediaDirectory;
       } catch (error) {
         errorCatcher(error);
@@ -359,6 +364,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       downloadProgress: {},
       extractedFiles: {},
       ffmpegPath: '',
+      highlightedMediaId: '',
       mediaPlayingAction: '',
       mediaPlayingCurrentPosition: 0,
       mediaPlayingPanzoom: { scale: 1, x: 0, y: 0 },

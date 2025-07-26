@@ -161,6 +161,7 @@ const songList = ref<SongItem[]>([]);
 
 const { fileUrlToPath, parseMediaFile, path, pathToFileURL } =
   window.electronApi;
+const { basename } = path;
 
 const toggleMusicListener = () => {
   try {
@@ -312,19 +313,16 @@ const getNextSong = async () => {
       for (const queuedSong of songList.value) {
         const metadata = await getMetadataFromMediaPath(queuedSong.path);
         queuedSong.duration = metadata?.format?.duration ?? 0;
-        queuedSong.title =
-          metadata?.common.title ?? path.basename(queuedSong.path);
+        queuedSong.title = metadata?.common.title ?? basename(queuedSong.path);
       }
       try {
         const selectedDayMedia = selectedDateObject.value?.dynamicMedia ?? [];
         const regex = /(_r\d{3,4}P)?\.\w+$/;
         const selectedDaySongs: SongItem[] = selectedDayMedia
-          .map((d) =>
-            path.basename(fileUrlToPath(d.fileUrl?.replace(regex, ''))),
-          )
-          .map((basename) => {
+          .map((d) => basename(fileUrlToPath(d.fileUrl?.replace(regex, ''))))
+          .map((fileBasename) => {
             const index = songList.value.findIndex(
-              (s) => path.basename(s.path.replace(regex, '')) === basename,
+              (s) => basename(s.path.replace(regex, '') || '') === fileBasename,
             );
             if (index !== -1) {
               return songList.value.splice(index, 1)[0];
@@ -373,10 +371,10 @@ const getNextSong = async () => {
     try {
       const metadata = await parseMediaFile(nextSong.path);
       musicPlayingTitle.value =
-        metadata.common.title ?? path.basename(nextSong.path);
+        metadata.common.title ?? basename(nextSong.path);
     } catch (error) {
       errorCatcher(error);
-      musicPlayingTitle.value = path.basename(nextSong.path) ?? '';
+      musicPlayingTitle.value = basename(nextSong.path) ?? '';
     }
     return {
       duration: nextSong.duration,

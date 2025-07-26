@@ -16,33 +16,45 @@ import { isAudio, isImage, isVideo } from 'src/utils/media';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
+const {
+  decompress,
+  downloadFile,
+  fileUrlToPath,
+  fs,
+  getUserDataPath,
+  parseMediaFile,
+  path,
+  pathToFileURL,
+  unwatchFolders,
+  watchFolder,
+} = window.electronApi;
+const { exists, pathExists, readdir, stat, writeFile } = fs;
+const { basename, dirname, extname, join, resolve } = path;
+
 const getThumbnailFromMetadata = async (mediaPath: string) => {
   try {
-    mediaPath = window.electronApi.fileUrlToPath(mediaPath);
-    if (!mediaPath || !(await window.electronApi.fs.exists(mediaPath)))
-      return '';
-    const metadata = await window.electronApi.parseMediaFile(mediaPath);
+    mediaPath = fileUrlToPath(mediaPath);
+    if (!mediaPath || !(await exists(mediaPath))) return '';
+    const metadata = await parseMediaFile(mediaPath);
     const thumbnailData = metadata?.common?.picture?.[0]?.data || null;
     const thumbnailFormat = metadata?.common?.picture?.[0]?.format || null;
     if (thumbnailData?.length && thumbnailFormat) {
       try {
-        const parentDir = window.electronApi.path.dirname(mediaPath);
+        const parentDir = dirname(mediaPath);
 
         const currentState = useCurrentStateStore();
         const watcherEnabled =
           currentState.currentSettings?.enableFolderWatcher || false;
         const watchDir = currentState.currentSettings?.folderToWatch
-          ? window.electronApi.path.resolve(
-              currentState.currentSettings?.folderToWatch,
-            )
+          ? resolve(currentState.currentSettings?.folderToWatch)
           : null;
         if (!watcherEnabled || !watchDir || !parentDir.startsWith(watchDir)) {
-          const thumbnailPath = window.electronApi.path.join(
-            window.electronApi.path.dirname(mediaPath),
-            `${window.electronApi.path.basename(mediaPath, window.electronApi.path.extname(mediaPath))}.${thumbnailFormat.split('/')[1]}`,
+          const thumbnailPath = join(
+            dirname(mediaPath),
+            `${basename(mediaPath, extname(mediaPath))}.${thumbnailFormat.split('/')[1]}`,
           );
-          await window.electronApi.fs.writeFile(thumbnailPath, thumbnailData);
-          return window.electronApi.pathToFileURL(thumbnailPath);
+          await writeFile(thumbnailPath, thumbnailData);
+          return pathToFileURL(thumbnailPath);
         }
       } catch (error) {
         errorCatcher(error);
@@ -77,16 +89,14 @@ const getThumbnailFromVideoPath = async (
   const watcherEnabled =
     currentState.currentSettings?.enableFolderWatcher || false;
   const watchDir = currentState.currentSettings?.folderToWatch
-    ? window.electronApi.path.resolve(
-        currentState.currentSettings?.folderToWatch,
-      )
+    ? resolve(currentState.currentSettings?.folderToWatch)
     : null;
 
   const videoFileUrl = videoPath;
-  videoPath = window.electronApi.fileUrlToPath(videoPath);
-  thumbnailPath = window.electronApi.fileUrlToPath(thumbnailPath);
+  videoPath = fileUrlToPath(videoPath);
+  thumbnailPath = fileUrlToPath(thumbnailPath);
 
-  if (!(await window.electronApi.fs.pathExists(videoPath))) {
+  if (!(await pathExists(videoPath))) {
     throw new Error(`Video file does not exist: ${videoPath}`);
   }
 
@@ -97,7 +107,7 @@ const getThumbnailFromVideoPath = async (
 
   return new Promise((resolve, reject) => {
     const videoRef = document.createElement('video');
-    videoRef.src = window.electronApi.pathToFileURL(videoPath);
+    videoRef.src = pathToFileURL(videoPath);
     videoRef.load();
 
     videoRef.addEventListener(
@@ -126,7 +136,7 @@ const getThumbnailFromVideoPath = async (
               );
 
               const saveImage = async () => {
-                await window.electronApi.fs.writeFile(thumbnailPath, imageData);
+                await writeFile(thumbnailPath, imageData);
                 return thumbnailPath;
               };
 
@@ -140,9 +150,7 @@ const getThumbnailFromVideoPath = async (
                 if (
                   !watcherEnabled ||
                   !watchDir ||
-                  !window.electronApi.path
-                    .dirname(thumbnailPath)
-                    .startsWith(watchDir)
+                  !dirname(thumbnailPath).startsWith(watchDir)
                 ) {
                   resolve(await saveImage());
                 } else {
@@ -188,15 +196,15 @@ export const getThumbnailUrl = async (
 ) => {
   try {
     if (!filepath) return '';
-    filepath = window.electronApi.fileUrlToPath(filepath);
-    if (!filepath || !(await window.electronApi.fs.exists(filepath))) return '';
+    filepath = fileUrlToPath(filepath);
+    if (!filepath || !(await exists(filepath))) return '';
     let thumbnailUrl = '';
     if (isImage(filepath)) {
-      thumbnailUrl = window.electronApi.pathToFileURL(filepath);
+      thumbnailUrl = pathToFileURL(filepath);
     } else if (isVideo(filepath) || isAudio(filepath)) {
       const thumbnailPath = filepath.split('.')[0] + '.jpg';
-      if (await window.electronApi.fs.exists(thumbnailPath)) {
-        thumbnailUrl = window.electronApi.pathToFileURL(thumbnailPath);
+      if (await exists(thumbnailPath)) {
+        thumbnailUrl = pathToFileURL(thumbnailPath);
       } else {
         thumbnailUrl = await getThumbnailFromVideoPath(filepath, thumbnailPath);
       }
@@ -250,7 +258,7 @@ export const getSubtitlesUrl = async (
           });
         }
 
-        const subtitlesFilename = window.electronApi.path.basename(subtitles);
+        const subtitlesFilename = basename(subtitles);
         const subDirectory = await getPublicationDirectory(
           subtitleFetcher,
           currentState.currentSettings?.cacheFolder,
@@ -260,12 +268,9 @@ export const getSubtitlesUrl = async (
           filename: subtitlesFilename,
           url: subtitles,
         });
-        subtitlesPath = window.electronApi.path.join(
-          subDirectory,
-          subtitlesFilename,
-        );
-        if (await window.electronApi.fs.exists(subtitlesPath)) {
-          subtitlesUrl = window.electronApi.pathToFileURL(subtitlesPath);
+        subtitlesPath = join(subDirectory, subtitlesFilename);
+        if (await exists(subtitlesPath)) {
+          subtitlesUrl = pathToFileURL(subtitlesPath);
         } else {
           subtitlesUrl = '';
         }
@@ -294,8 +299,8 @@ export const watchExternalFolder = async (folder?: string) => {
         }
       }
     });
-    window.electronApi.unwatchFolders();
-    if (folder) window.electronApi.watchFolder(folder);
+    unwatchFolders();
+    if (folder) watchFolder(folder);
   } catch (error) {
     errorCatcher(error);
   }
@@ -319,7 +324,7 @@ export const setupFFmpeg = async (): Promise<string> => {
     const version = getValidVersion(ffmpegReleases, target);
 
     const ffmpegDir = await getFFmpegDirectory();
-    const ffmpegZipPath = window.electronApi.path.join(ffmpegDir, version.name);
+    const ffmpegZipPath = join(ffmpegDir, version.name);
 
     if (await validateExistingFile(ffmpegZipPath, version.size, ffmpegDir)) {
       return currentState.ffmpegPath;
@@ -345,7 +350,7 @@ async function decompressAndFindFFmpeg(
   zipPath: string,
   dir: string,
 ): Promise<string> {
-  const ffmpegPaths = await window.electronApi.decompress(zipPath, dir);
+  const ffmpegPaths = await decompress(zipPath, dir);
   if (!ffmpegPaths?.length) {
     throw new Error('Could not decompress FFmpeg.');
   }
@@ -353,7 +358,7 @@ async function decompressAndFindFFmpeg(
   if (!ffmpegFile) {
     throw new Error('Could not find FFmpeg.');
   }
-  return window.electronApi.path.join(dir, ffmpegFile.path);
+  return join(dir, ffmpegFile.path);
 }
 
 // Download FFmpeg
@@ -362,7 +367,7 @@ async function downloadFfmpeg(
   zipPath: string,
   dir: string,
 ): Promise<void> {
-  const downloadId = await window.electronApi.downloadFile(url, dir);
+  const downloadId = await downloadFile(url, dir);
 
   await new Promise<void>((resolve, reject) => {
     const interval = setInterval(() => {
@@ -396,10 +401,7 @@ async function fetchLatestRelease(): Promise<Release> {
 
 // Get the FFmpeg directory path
 async function getFFmpegDirectory(): Promise<string> {
-  const ffmpegDir = window.electronApi.path.join(
-    await window.electronApi.getUserDataPath(),
-    'ffmpeg',
-  );
+  const ffmpegDir = join(await getUserDataPath(), 'ffmpeg');
   return ffmpegDir;
 }
 
@@ -420,15 +422,13 @@ async function validateExistingFile(
   size: number,
   dir: string,
 ): Promise<boolean> {
-  if (await window.electronApi.fs.pathExists(zipPath)) {
-    const zipStat = await window.electronApi.fs.stat(zipPath);
+  if (await pathExists(zipPath)) {
+    const zipStat = await stat(zipPath);
     if (zipStat.size === size) {
       const exeName =
-        (await window.electronApi.fs.readdir(dir)).find(
-          (f) => f !== window.electronApi.path.basename(zipPath),
-        ) || '';
+        (await readdir(dir)).find((f) => f !== basename(zipPath)) || '';
       if (exeName) {
-        const exePath = window.electronApi.path.join(dir, exeName);
+        const exePath = join(dir, exeName);
         useCurrentStateStore().ffmpegPath = exePath;
         return true;
       }

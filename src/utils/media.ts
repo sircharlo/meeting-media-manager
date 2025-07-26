@@ -14,6 +14,17 @@ import {
 } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 
+const {
+  fileUrlToPath,
+  fs,
+  getVideoDuration,
+  parseMediaFile,
+  path,
+  pathToFileURL,
+} = window.electronApi;
+const { exists } = fs;
+const { parse } = path;
+
 /**
  * Checks if a file is of a certain type.
  * @param filepath The path to the file.
@@ -26,10 +37,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 const isFileOfType = (filepath: string, validExtensions: string[]) => {
   try {
     if (!filepath) return false;
-    const fileExtension = window.electronApi.path
-      .parse(filepath)
-      .ext.toLowerCase()
-      .slice(1);
+    const fileExtension = parse(filepath).ext.toLowerCase().slice(1);
     return validExtensions.includes(fileExtension);
   } catch (error) {
     errorCatcher(error);
@@ -48,7 +56,7 @@ const isFileOfType = (filepath: string, validExtensions: string[]) => {
 export const isLikelyFile = (filepath: string): boolean => {
   try {
     if (!filepath) return false;
-    const ext = window.electronApi.path.parse(filepath).ext;
+    const ext = parse(filepath).ext;
     return !!ext;
   } catch (error) {
     errorCatcher(error);
@@ -212,27 +220,26 @@ export const getMetadataFromMediaPath = async (
     quality: { warnings: [] },
   };
   try {
-    mediaPath = window.electronApi.fileUrlToPath(mediaPath);
-    if (!mediaPath || !(await window.electronApi.fs.exists(mediaPath))) {
+    mediaPath = fileUrlToPath(mediaPath);
+    if (!mediaPath || !(await exists(mediaPath))) {
       return defaultMetadata;
     }
 
     let metadata = defaultMetadata;
     if (isFileOfType(mediaPath, ['mov', '3gp'])) {
-      const videoDuration =
-        await window.electronApi.getVideoDuration(mediaPath);
+      const videoDuration = await getVideoDuration(mediaPath);
       metadata = {
         ...metadata,
         format: { ...metadata.format, duration: videoDuration?.seconds || 0 },
       };
     } else {
-      metadata = await window.electronApi.parseMediaFile(mediaPath);
+      metadata = await parseMediaFile(mediaPath);
     }
 
     if (!metadata.format.duration) {
       await new Promise<void>((resolve, reject) => {
         const video = document.createElement('video');
-        video.src = window.electronApi.pathToFileURL(mediaPath);
+        video.src = pathToFileURL(mediaPath);
         video.onloadedmetadata = () => {
           metadata = {
             ...metadata,

@@ -69,9 +69,6 @@
   </q-page-container>
 </template>
 <script setup lang="ts">
-import { initializeElectronApi } from 'src/helpers/electron-api-manager';
-initializeElectronApi('MediaPlayerPage');
-
 import Panzoom, { type PanzoomObject } from '@panzoom/panzoom';
 import {
   useBroadcastChannel,
@@ -279,7 +276,7 @@ watch(
           await new Promise((resolve) => {
             setTimeout(resolve, 100);
           });
-          if (++timeouts > 10) break;
+          if (++timeouts > 50) break;
         }
         if (!mediaElement.value || !stream) {
           videoStreaming.value = false;
@@ -291,7 +288,7 @@ watch(
           return;
         }
         mediaElement.value.srcObject = stream;
-        playMediaElement();
+        playMediaElement(false, true);
       } catch (e) {
         errorCatcher(e, { contexts: { fn: { name: 'streamDisplay' } } });
       }
@@ -398,30 +395,35 @@ watch(
   },
 );
 
-const triggerPlay = () => {
-  if (mediaAction.value !== 'play') {
+const triggerPlay = (force = false) => {
+  if (!force && mediaAction.value !== 'play') {
     return;
   }
+
   mediaElement.value?.play().catch((error: Error) => {
-    if (
-      !(
-        error.message.includes('removed from the document') ||
-        error.message.includes('new load request') ||
-        error.message.includes('interrupted by a call to pause')
-      )
-    ) {
+    const ignoredErrors = [
+      'removed from the document',
+      'new load request',
+      'interrupted by a call to pause',
+    ];
+
+    const shouldIgnore = ignoredErrors.some((msg) =>
+      error.message.includes(msg),
+    );
+
+    if (!shouldIgnore) {
       errorCatcher(error);
     }
   });
 };
 
-const playMediaElement = (wasPaused = false) => {
+const playMediaElement = (wasPaused = false, websiteStream = false) => {
   if (!mediaElement.value) {
     return;
   }
 
-  if (wasPaused) {
-    triggerPlay();
+  if (wasPaused || websiteStream) {
+    triggerPlay(websiteStream);
   }
 
   mediaElement.value.oncanplaythrough = () => {

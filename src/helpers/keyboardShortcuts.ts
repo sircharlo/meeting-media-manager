@@ -4,6 +4,8 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { useCurrentStateStore } from 'stores/current-state';
 
+const { registerShortcut, unregisterAllShortcuts } = window.electronApi;
+
 const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
   shortcutMediaNext: () => {
     window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
@@ -73,7 +75,7 @@ export const registerCustomShortcut = (
     if (!keySequence) {
       keySequence = currentState.currentSettings[shortcutName] as string;
     }
-    window.electronApi.registerShortcut(shortcutName, keySequence);
+    registerShortcut(shortcutName, keySequence);
   } catch (error) {
     errorCatcher(error);
   }
@@ -95,7 +97,7 @@ export const registerAllCustomShortcuts = () => {
 export const unregisterAllCustomShortcuts = () => {
   console.warn('Unregistering all shortcuts');
   try {
-    window.electronApi.unregisterAllShortcuts();
+    unregisterAllShortcuts();
   } catch (error) {
     errorCatcher(error);
   }

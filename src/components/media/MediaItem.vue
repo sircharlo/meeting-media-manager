@@ -5,8 +5,8 @@
     :class="{
       'items-center': true,
       'justify-center': true,
-      'bg-accent-100-transparent': playState === 'current',
-      'bg-accent-100': mediaPlayingUniqueId === '' && playState === 'current',
+      'bg-accent-100-transparent': currentlyHighlighted,
+      'bg-accent-100': mediaPlayingUniqueId === '' && currentlyHighlighted,
       'q-px-sm': child,
     }"
     :style="child ? 'padding: 8px 6px' : undefined"
@@ -718,7 +718,7 @@ import {
   whenever,
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { debounce, type QBtn, type QImg, useQuasar } from 'quasar';
+import { debounce, type QBtn, type QImg, QItem, useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
@@ -742,6 +742,7 @@ import { useI18n } from 'vue-i18n';
 const currentState = useCurrentStateStore();
 const {
   currentSettings,
+  highlightedMediaId,
   mediaPlayingAction,
   mediaPlayingCurrentPosition,
   mediaPlayingPanzoom,
@@ -749,6 +750,10 @@ const {
   mediaPlayingUniqueId,
   mediaPlayingUrl,
 } = storeToRefs(currentState);
+
+const currentlyHighlighted = computed(
+  () => highlightedMediaId.value === props.media.uniqueId,
+);
 
 const jwStore = useJwStore();
 const { removeFromAdditionMediaMap } = jwStore;
@@ -771,7 +776,6 @@ const mediaDeletePending = computed(() => !!mediaToDelete.value);
 const props = defineProps<{
   child?: boolean;
   media: DynamicMediaObject;
-  playState: string;
 }>();
 
 const repeat = defineModel<boolean | undefined>('repeat', { required: true });
@@ -782,8 +786,8 @@ const emit = defineEmits<{
   (e: 'update:customDuration' | 'update:title', value: string): void;
 }>();
 
-const mediaItem = useTemplateRef<HTMLDivElement>('mediaItem');
-const hoveringMediaItem = useElementHover(mediaItem);
+const mediaItem = useTemplateRef<QItem>('mediaItem');
+const hoveringMediaItem = useElementHover(() => mediaItem.value?.$el);
 
 const moreButton = useTemplateRef<QBtn>('moreButton');
 const contextMenu = ref(false);
@@ -798,13 +802,14 @@ const mediaTitle = ref(props.media.title);
 const initialMediaTitle = ref(mediaTitle.value);
 
 const { fileUrlToPath, fs, path } = window.electronApi;
+const { basename } = path;
 
 const { pathExists, pathExistsSync, statSync } = fs;
 
 const displayMediaTitle = computed(() => {
   return (
     props.media.title ||
-    (props.media.fileUrl && path.basename(props.media.fileUrl)) ||
+    (props.media.fileUrl && basename(props.media.fileUrl)) ||
     props.media.extractCaption ||
     ''
   );
@@ -887,7 +892,7 @@ const customDurationMaxUserInput = ref(
 
 const getBasename = (fileUrl: string) => {
   if (!fileUrl) return '';
-  return path.basename(fileUrl);
+  return basename(fileUrl);
 };
 
 const fileIsLocal = () => {
@@ -1166,10 +1171,15 @@ const initiatePanzoom = () => {
       { passive: true },
     );
 
-    useEventListener(mediaImage.value.$el, 'wheel', (e) => {
-      if (!e.ctrlKey) return;
-      panzoom.value?.zoomWithWheel(e);
-    });
+    useEventListener(
+      mediaImage.value.$el,
+      'wheel',
+      (e) => {
+        if (!e.ctrlKey) return;
+        panzoom.value?.zoomWithWheel(e);
+      },
+      { passive: true },
+    );
 
     useEventListener(
       mediaImage.value.$el,
@@ -1217,28 +1227,17 @@ const stopButton = useTemplateRef<QBtn>('stopButton');
 
 useEventListener(
   window,
-  'shortcutMediaNext',
-  () => {
-    if (playButton.value && props.playState === 'next')
-      playButton.value.click();
-  },
-  { passive: true },
-);
-useEventListener(
-  window,
-  'shortcutMediaPrevious',
-  () => {
-    if (playButton.value && props.playState === 'previous')
-      playButton.value.click();
-  },
-  { passive: true },
-);
-useEventListener(
-  window,
   'shortcutMediaPauseResume',
   () => {
-    if (pauseResumeButton.value && props.playState === 'current')
-      pauseResumeButton.value.click();
+    if (currentlyHighlighted.value) {
+      if (pauseResumeButton.value) {
+        pauseResumeButton.value.click();
+      } else if (playButton.value) {
+        playButton.value.click();
+      } else if (isImage(props.media.fileUrl) && stopButton.value) {
+        stopButton.value.click();
+      }
+    }
   },
   { passive: true },
 );
@@ -1246,10 +1245,20 @@ useEventListener(
   window,
   'shortcutMediaStop',
   () => {
-    if (stopButton.value && props.playState === 'current')
-      stopButton.value.click();
+    if (stopButton.value && currentlyHighlighted) stopButton.value.click();
   },
   { passive: true },
+);
+whenever(
+  () => currentlyHighlighted,
+  () => {
+    if (currentlyHighlighted.value && mediaItem.value) {
+      mediaItem.value.$el.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  },
 );
 const currentSongIsDuplicated = computed(() => {
   const currentSong = props.media.tag?.value?.toString();
