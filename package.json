@@ -126,14 +126,14 @@
     "vite": "6.3.5"
   },
   "browserslist": [
-    "Electron >= 36"
+    "Electron >= 37"
   ],
   "lint-staged": {
     "*": "prettier --write --ignore-unknown",
     "*.{js,ts,cjs,mjs,mts,vue}": "eslint --fix"
   },
   "engines": {
-    "node": "^22.16.0",
+    "node": "^22.17.1",
     "yarn": "^4.7.0"
   },
   "os": [
