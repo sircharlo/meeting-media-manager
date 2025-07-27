@@ -262,7 +262,7 @@
   "noDownloadsInProgress": "Hetkel ei ole allalaadimisi käimas",
   "noName": "Nimi puudub",
   "none": "Mitte ükski",
-  "not-playing": "Ei mängita",
+  "music.not-playing": "Ei mängita",
   "notice-the-yeartext-is-now-being-displayed-on-the-external-monitor-but-lets-keep-going": "Sa märkad, et nüüd kuvatakse teisel monitoril aastatekst! Aga jätkame edasi.",
   "obs-studio-disconnected-banner": "M³ ei saa ühendust OBS Studio'ga. Veenduge, et OBS Studio töötab ja on õigesti seadistatud.",
   "obs-studio-integration": "OBS Studio seadistamine",

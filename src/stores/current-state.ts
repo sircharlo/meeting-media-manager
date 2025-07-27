@@ -17,7 +17,6 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { datesAreSame, formatDate } from 'src/utils/date';
 import { getAdditionalMediaPath, isFileUrl } from 'src/utils/fs';
 import { isEmpty, isUUID } from 'src/utils/general';
-import { formatTime } from 'src/utils/time';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
@@ -34,7 +33,6 @@ export interface Songbook {
 
 interface Store {
   currentCongregation: string;
-  currentSongRemainingTime: string;
   downloadedFiles: Partial<
     Record<string, DownloadedFile | Promise<DownloadedFile>>
   >;
@@ -52,13 +50,9 @@ interface Store {
   mediaWindowCustomBackground: string;
   mediaWindowVisible: boolean;
   meetingDay: boolean;
-  musicPlaying: boolean;
-  musicStarting: boolean;
-  musicStopping: boolean;
   online: boolean;
   onlyShowInvalidSettings: boolean;
   selectedDate: string;
-  timeRemainingBeforeMusicStop: number;
 }
 
 const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
@@ -307,19 +301,6 @@ export const useCurrentStateStore = defineStore('current-state', {
         (media) => !media.children?.length && !isFileUrl(media.fileUrl),
       );
     },
-    musicRemainingTime: (state) => {
-      try {
-        if (state.musicStarting) return 'music.starting';
-        if (state.musicStopping) return 'music.stopping';
-        if (state.meetingDay && state.timeRemainingBeforeMusicStop > 0) {
-          return formatTime(state.timeRemainingBeforeMusicStop);
-        }
-        return state.currentSongRemainingTime;
-      } catch (error) {
-        errorCatcher(error);
-        return '..:..';
-      }
-    },
     selectedDateObject: (state): DateInfo | null => {
       const jwStore = useJwStore();
       if (
@@ -359,7 +340,6 @@ export const useCurrentStateStore = defineStore('current-state', {
   state: (): Store => {
     return {
       currentCongregation: '',
-      currentSongRemainingTime: '..:..',
       downloadedFiles: {},
       downloadProgress: {},
       extractedFiles: {},
@@ -375,13 +355,9 @@ export const useCurrentStateStore = defineStore('current-state', {
       mediaWindowCustomBackground: '',
       mediaWindowVisible: true,
       meetingDay: false,
-      musicPlaying: false,
-      musicStarting: false,
-      musicStopping: false,
       online: true,
       onlyShowInvalidSettings: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
-      timeRemainingBeforeMusicStop: 0,
     };
   },
 });

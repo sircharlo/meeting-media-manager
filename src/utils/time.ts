@@ -10,9 +10,15 @@ import { pad } from 'src/utils/general';
  * formatTime(60) // '01:00'
  * formatTime(0) // '00:00'
  */
-export const formatTime = (time?: number) => {
+export const formatTime = (time?: number | string) => {
   try {
     if (!time) return '00:00';
+    if (typeof time === 'string') {
+      // If the input is a string, convert it to a number
+      time = parseFloat(time);
+    }
+    if (Number.isNaN(time)) return '00:00';
+    if (time < 0) return '00:00'; // Handle negative time gracefully
     if (Number.isNaN(time)) return '..:..';
     const hours = Math.floor(time / 3600);
     const minutes = Math.floor((time % 3600) / 60);

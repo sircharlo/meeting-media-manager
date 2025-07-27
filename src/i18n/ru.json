@@ -262,7 +262,7 @@
   "noDownloadsInProgress": "В настоящее время загрузок нет",
   "noName": "Без названия",
   "none": "Отключить",
-  "not-playing": "Ничего не воспроизводится",
+  "music.not-playing": "Ничего не воспроизводится",
   "notice-the-yeartext-is-now-being-displayed-on-the-external-monitor-but-lets-keep-going": "Заметьте, что теперь на внешнем мониторе отображается годовой текст! Но давайте продолжим.",
   "obs-studio-disconnected-banner": "M³ не удается подключиться к OBS Studio. Убедитесь, что OBS Studio запущено и правильно настроено.",
   "obs-studio-integration": "Интеграция с OBS Studio",

@@ -262,7 +262,7 @@
   "noDownloadsInProgress": "Jelenleg nincs folyamatban letöltés",
   "noName": "Nincs név",
   "none": "Semmi",
-  "not-playing": "Nincs lejátszás alatt",
+  "music.not-playing": "Nincs lejátszás alatt",
   "notice-the-yeartext-is-now-being-displayed-on-the-external-monitor-but-lets-keep-going": "Észre fogja venni, hogy az éviszöveg most már a külső monitoron jelenik meg! De haladjunk tovább.",
   "obs-studio-disconnected-banner": "Az M³ nem tud csatlakozni az OBS Studio-hoz. Kérjük, győződjön meg róla, hogy az OBS Studio fut és megfelelően van konfigurálva.",
   "obs-studio-integration": "OBS Studio integráció",

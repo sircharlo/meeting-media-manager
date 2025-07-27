@@ -10,13 +10,18 @@
       <div class="flex q-gutter-x-md">
         <DownloadStatus v-model="downloadPopup" />
         <q-separator class="bg-semi-white-24" vertical />
-        <MusicButton v-model="musicPopup" />
+        <MusicButton
+          v-model="musicPopup"
+          :music-button-status-text="musicPopupRef?.musicButtonStatusText"
+          :music-playing="musicPopupRef?.musicPlaying"
+          :music-state="musicPopupRef?.musicState"
+        />
         <SubtitlesButton />
         <ObsStatus v-model="obsPopup" />
         <MediaDisplayButton v-model="displayPopup" />
       </div>
       <DialogDownloadsPopup v-model="downloadPopup" />
-      <DialogBackgroundMusicPopup v-model="musicPopup" />
+      <DialogBackgroundMusicPopup ref="musicPopupRef" v-model="musicPopup" />
       <DialogObsPopup v-model="obsPopup" />
       <DialogDisplayPopup v-model="displayPopup" />
     </q-chip>
@@ -41,6 +46,10 @@ const downloadPopup = ref(false);
 const musicPopup = ref(false);
 const obsPopup = ref(false);
 const displayPopup = ref(false);
+
+const musicPopupRef = ref<InstanceType<
+  typeof DialogBackgroundMusicPopup
+> | null>(null);
 
 const popups = {
   displayPopup,

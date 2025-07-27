@@ -262,7 +262,7 @@
   "noDownloadsInProgress": "다운로드 중인 파일이 없습니다",
   "noName": "이름 없음",
   "none": "없음",
-  "not-playing": "재생 중 아님",
+  "music.not-playing": "재생 중 아님",
   "notice-the-yeartext-is-now-being-displayed-on-the-external-monitor-but-lets-keep-going": "이제 외부 모니터에 연표어가 표시됩니다. 계속 진행하십시오.",
   "obs-studio-disconnected-banner": "M³ 가 OBS Studio에 연결하지 못했습니다. OBS Studio가 실행중인지, 올바르게 구성되어 있는지 확인하십시오.",
   "obs-studio-integration": "OBS Studio 연동",

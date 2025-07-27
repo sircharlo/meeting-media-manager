@@ -262,7 +262,7 @@
   "noDownloadsInProgress": "No downloads are currently in progress",
   "noName": "No name",
   "none": "Tsy misy",
-  "not-playing": "Not playing",
+  "music.not-playing": "Not playing",
   "notice-the-yeartext-is-now-being-displayed-on-the-external-monitor-but-lets-keep-going": "You'll notice the yeartext is now being displayed on the external monitor! But let's keep going.",
   "obs-studio-disconnected-banner": "M³ is unable to connect to OBS Studio. Please ensure that OBS Studio is running and configured correctly.",
   "obs-studio-integration": "OBS Studio integration",
