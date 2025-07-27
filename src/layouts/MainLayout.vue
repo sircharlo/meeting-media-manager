@@ -435,7 +435,6 @@ bcClose.onmessage = (event) => {
       !!selectedDateObject.value?.today && !!selectedDateObject.value?.meeting;
     if (
       (mediaPlaying.value ||
-        currentState.musicPlaying ||
         (currentCongregation.value && // a congregation is selected
           !currentSettings.value?.disableMediaFetching && // media fetching is enabled
           meetingDay && // today is a meeting day
