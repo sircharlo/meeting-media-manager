@@ -6,7 +6,7 @@ import autoprefixer from 'autoprefixer';
 export default {
   plugins: [
     // https://github.com/postcss/autoprefixer
-    autoprefixer({ overrideBrowserslist: ['Electron >= 36'] }),
+    autoprefixer({ overrideBrowserslist: ['Electron >= 37'] }),
 
     // https://github.com/elchininet/postcss-rtlcss
     // If you want to support RTL css, then
