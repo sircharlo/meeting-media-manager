@@ -82,7 +82,6 @@ onMounted(() => {
     loadLatestVersion();
     loadAnnouncements();
   }
-  getUpdatesEnabled();
 });
 
 whenever(
@@ -216,6 +215,13 @@ const activeAnnouncements = computed(() => {
       }
     });
 });
+
+whenever(
+  () => activeAnnouncements.value.length,
+  () => {
+    getUpdatesEnabled();
+  },
+);
 
 if (import.meta.env.NEVER) {
   defineExpose({});

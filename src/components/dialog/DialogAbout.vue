@@ -187,7 +187,7 @@ import {
 } from 'src/utils/fs';
 import { camelToKebabCase, sleep } from 'src/utils/general';
 import { useCurrentStateStore } from 'stores/current-state';
-import { onMounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { openExternal } = window.electronApi;
@@ -220,9 +220,11 @@ const checkLastVersion = async (congId: string) => {
   }
 };
 
-onMounted(() => {
-  getUpdatesEnabled();
-  getBetaUpdatesEnabled();
+watchImmediate(open, async (val) => {
+  if (val) {
+    await getUpdatesEnabled();
+    await getBetaUpdatesEnabled();
+  }
 });
 
 const { currentCongregation } = storeToRefs(useCurrentStateStore());

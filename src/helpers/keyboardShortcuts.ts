@@ -86,6 +86,7 @@ export const registerAllCustomShortcuts = () => {
     const currentState = useCurrentStateStore();
     if (!currentState.currentSettings) return;
     unregisterAllCustomShortcuts();
+    console.log('Registering configured keyboard shortcuts');
     for (const shortcutName of Object.keys(shortcutCallbacks)) {
       registerCustomShortcut(shortcutName as keyof SettingsValues);
     }
@@ -95,7 +96,7 @@ export const registerAllCustomShortcuts = () => {
 };
 
 export const unregisterAllCustomShortcuts = () => {
-  console.warn('Unregistering all shortcuts');
+  console.log('Unregistering all currently active keyboard shortcuts');
   try {
     unregisterAllShortcuts();
   } catch (error) {

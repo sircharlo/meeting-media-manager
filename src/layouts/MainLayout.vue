@@ -185,7 +185,6 @@ watch(currentCongregation, (newCongregation, oldCongregation) => {
       }
       downloadProgress.value = {};
       updateLookupPeriod();
-      registerAllCustomShortcuts();
       downloadBackgroundMusic();
       if (queues.meetings[newCongregation]) {
         queues.meetings[newCongregation].start();
@@ -346,24 +345,26 @@ watchImmediate(
       string | undefined,
       boolean | undefined,
     ];
-    const congregationChanged = newCongregation !== oldCongregation;
+    const congregationChanged =
+      !(!newCongregation && !oldCongregation) &&
+      newCongregation !== oldCongregation;
     const shortcutsToggled =
       newEnableKeyboardShortcuts !== oldEnableKeyboardShortcuts;
 
-    // Only unregister if congregation changed OR shortcuts were disabled
-    if (
-      congregationChanged ||
-      (shortcutsToggled && !newEnableKeyboardShortcuts)
-    ) {
-      unregisterAllCustomShortcuts();
-    }
+    const shouldUnregister =
+      congregationChanged || (shortcutsToggled && !newEnableKeyboardShortcuts);
 
-    // Register shortcuts if they're enabled (either initially or re-enabled)
-    if (
-      newEnableKeyboardShortcuts &&
-      (congregationChanged || shortcutsToggled)
-    ) {
+    const shouldRegister =
+      newEnableKeyboardShortcuts && (congregationChanged || shortcutsToggled);
+
+    console.log(newCongregation, newEnableKeyboardShortcuts, oldValues);
+
+    if (shouldRegister) {
+      // This will internally call unregisterAllCustomShortcuts
       registerAllCustomShortcuts();
+    } else if (shouldUnregister) {
+      // Only call unregisterAllCustomShortcuts directly if we’re NOT going to register
+      unregisterAllCustomShortcuts();
     }
   },
 );
