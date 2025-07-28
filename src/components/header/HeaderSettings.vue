@@ -15,7 +15,7 @@
     <q-menu
       v-model="moreOptionsMenuActive"
       :offset="[0, 11]"
-      @show="calculateCacheSize()"
+      @before-show="calculateCacheSize()"
     >
       <q-list>
         <template v-if="invalidSettings()">
@@ -53,7 +53,9 @@
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ t('remove-unused-cache') }} </q-item-label>
-            <q-item-label caption>{{ unusedCacheFoldersSize }}</q-item-label>
+            <q-item-label caption>{{
+              calculatingCacheSize ? $t('calculating') : unusedCacheFoldersSize
+            }}</q-item-label>
           </q-item-section>
         </q-item>
         <q-item
@@ -67,7 +69,9 @@
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ t('remove-all-cache') }} </q-item-label>
-            <q-item-label caption>{{ allCacheFilesSize }}</q-item-label>
+            <q-item-label caption>{{
+              calculatingCacheSize ? $t('calculating') : allCacheFilesSize
+            }}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -90,7 +94,7 @@ import {
 } from 'src/utils/fs';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
-import { computed, ref, watchEffect } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -107,11 +111,11 @@ const cacheClearConfirmPopup = ref(false);
 const cacheClearType = ref<'' | 'all' | 'smart'>('');
 const cacheFiles = ref<CacheFile[]>([]);
 
-const frequentlyUsedDirectories = ref(new Set());
+const frequentlyUsedDirectories = ref(new Set<string>());
 
 const { fs, path, pathToFileURL, readdir } = window.electronApi;
 const { pathExists } = fs;
-const { join } = path;
+const { join, normalize } = path;
 
 const loadFrequentlyUsedDirectories = async () => {
   const getDirectory = async (
@@ -141,14 +145,15 @@ const loadFrequentlyUsedDirectories = async () => {
     await getDirectory(currentState.currentSongbook.pub, 0), // Songbook videos
     await getDirectory('nwtsty'), // Study Bible
     await getDirectory('it', 0), // Insight
-    await getDirectory('lff', 0), // Enjoy Life Forever
     await getDirectory('lmd', 0), // Love People
     await getDirectory('lmdv', 0), // Love People Videos
     await getDirectory('jwlb', undefined, 'E'), // JW Library
     await getDirectory('S-34mp', currentState.currentCongregation, ''), // Public Talk Publication
   ].flat();
 
-  frequentlyUsedDirectories.value = new Set(directories.filter(Boolean));
+  frequentlyUsedDirectories.value = new Set<string>(
+    directories.filter(Boolean),
+  );
 };
 
 loadFrequentlyUsedDirectories();
@@ -161,11 +166,19 @@ const confirmDeleteCacheFiles = (type: 'all' | 'smart') => {
 const unusedParentDirectories = computed(() => {
   try {
     return cacheFiles.value.reduce<Record<string, number>>((acc, file) => {
-      if (
-        !usedParentDirectories.value[file.parentPath] &&
-        !frequentlyUsedDirectories.value.has(file.parentPath) &&
-        !untouchableDirectories.value.has(file.parentPath)
-      ) {
+      const isInUsed = Object.keys(usedParentDirectories.value).some((dir) =>
+        file.parentPath.startsWith(dir),
+      );
+
+      const isInFrequentlyUsed = [...frequentlyUsedDirectories.value].some(
+        (dir) => file.parentPath.startsWith(dir),
+      );
+
+      const isInUntouchable = [...untouchableDirectories.value].some(
+        (dir) => normalize(file.parentPath) === normalize(dir),
+      );
+
+      if (!isInUsed && !isInFrequentlyUsed && !isInUntouchable) {
         acc[file.parentPath] = file.size + (acc[file.parentPath] ?? 0);
       }
       return acc;
@@ -214,10 +227,6 @@ const fetchUntouchableDirectories = async () => {
     untouchableDirectories.value = new Set(); // Reset to empty set on error
   }
 };
-
-watchEffect(() => {
-  fetchUntouchableDirectories();
-});
 
 const unusedCacheFoldersSize = computed(() => {
   try {
@@ -292,6 +301,7 @@ const getCacheFiles = async (cacheDirs: string[]) => {
 const calculateCacheSize = async () => {
   calculatingCacheSize.value = true;
   cacheFiles.value = [];
+  await fetchUntouchableDirectories();
   try {
     const dirs = [
       ...new Set([

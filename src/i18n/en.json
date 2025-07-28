@@ -1,4 +1,5 @@
 {
+  "about-this-app": "About this app",
   "add": "Add",
   "add-a-closing-song": "Add a closing song",
   "add-a-song": "Add a song from our songbook to the meeting media list.",
@@ -44,6 +45,7 @@
   "cacheFolder": "Cache location",
   "cacheFolder-explain": "Select a folder to store cache files, such as publications and media. If left blank, the app will configure this for you automatically.",
   "cacheFolder-wizard": "If you are uncertain about this setting, you may proceed to the next step without selecting a folder. The default configuration is suitable for most users.",
+  "calculating": "Calculating...",
   "camera-access-required": "Camera is unavailable or permissions are missing",
   "camera-access-required-explain": "Please try a different camera or restart the app when camera permissions have been granted in System Settings.",
   "camera-as-background": "Camera as background",
@@ -97,6 +99,7 @@
   "delete-all-additional-media": "Delete all extra media",
   "delete-media": "Delete media item",
   "delete-media-explain": "Choose this option to delete the selected media item.",
+  "directories": "Folders",
   "disableMediaFetching": "Disable features for regular meetings and automatic media fetching",
   "disableMediaFetching-explain": "This setting should remain disabled in almost all cases to ensure that regular meeting media is downloaded automatically. Enabling this setting will require all media to be added manually. This setting should only be enabled in profiles that will be used exclusively for special events such as theocratic schools, assemblies, or conventions.",
   "dismiss": "Dismiss",
@@ -139,6 +142,7 @@
   "extra-media-item-explain": "This media item was added manually",
   "feel-free-to-browse-around-the-other-available-options-or-if-you-prefer-you-can-head-right-to-the-media-playback-screen-and-start-using-it-to-display-media": "Feel free to browse around the other available options, or if you prefer you can head right to the media playback screen and start using it to display media.",
   "fileProcessError": "There was an error processing this file",
+  "files": "Files",
   "filetypeNotSupported": "This file type is not yet supported",
   "firstDayOfWeek": "First day of the week",
   "firstDayOfWeek-explain": "Select which day of the week should be displayed first in a calendar week.",
@@ -444,6 +448,5 @@
   "yes": "Yes",
   "you-can-navigate-the-website-before-presenting-it": "If necessary, you can navigate to a specific page before presenting it to the audience. When you're ready, press the \"Start Mirroring\" button on the top right corner of this window. What you see in the website window will now be displayed in the media window for the audience to see.",
   "zoom-in": "Zoom in",
-  "zoom-out": "Zoom out",
-  "about-this-app": "About this app"
+  "zoom-out": "Zoom out"
 }
