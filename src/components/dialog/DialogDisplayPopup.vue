@@ -495,8 +495,12 @@ watch(
 
 watchImmediate(
   screenPreferences,
-  (newScreenPreferences) => {
+  (newScreenPreferences, oldScreenPreferences) => {
     try {
+      const noChange =
+        JSON.stringify(oldScreenPreferences) ===
+        JSON.stringify(newScreenPreferences);
+      if (noChange) return;
       setScreenPreferences(JSON.stringify(newScreenPreferences));
       moveMediaWindow(
         newScreenPreferences.preferredScreenNumber,
