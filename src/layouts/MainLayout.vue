@@ -213,7 +213,6 @@ watch(online, (isNowOnline) => {
         currentState.currentLangObject,
       );
       jwStore.updateJwLanguages(online.value);
-      getJwMepsInfo();
     } else {
       // downloadQueue?.pause();
       meetingQueue?.pause();
@@ -558,17 +557,43 @@ onBeforeUnmount(() => {
   removeListenersLocal();
 });
 
+const previousState = ref<{
+  base: string | undefined;
+  mediator: string | undefined;
+  wasOnline: boolean;
+}>({
+  base: undefined,
+  mediator: undefined,
+  wasOnline: false,
+});
+
 watchImmediate(
-  () => [
+  (): [string | undefined, string | undefined, boolean] => [
     jwStore.urlVariables?.base,
     jwStore.urlVariables?.mediator,
     currentState.online,
   ],
-  () => {
-    if (currentState.online) {
-      setElementFont('JW-Icons');
+  ([base, mediator, online]: [
+    string | undefined,
+    string | undefined,
+    boolean,
+  ]) => {
+    const prev = previousState.value;
+
+    // Only get fonts and MEPS info if:
+    // 1. Coming online for the first time (!prev.wasOnline && online)
+    // 2. URL variables changed while online
+    const shouldRun =
+      (!prev.wasOnline && online) ||
+      (online && (prev.base !== base || prev.mediator !== mediator));
+
+    if (shouldRun) {
       getJwMepsInfo();
+      setElementFont('JW-Icons');
     }
+
+    // Update previous state
+    previousState.value = { base, mediator, wasOnline: online };
   },
 );
 </script>
