@@ -1,5 +1,15 @@
 import type { VideoMarker } from './jw/sqlite';
 
+export interface CacheAnalysis {
+  allCacheFilesSize: number;
+  cacheFiles: CacheFile[];
+  frequentlyUsedDirectories: Set<string>;
+  untouchableDirectories: Set<string>;
+  unusedCacheFoldersSize: number;
+  unusedParentDirectories: Record<string, number>;
+  usedParentDirectories: Record<string, number>;
+}
+
 export interface CacheFile {
   orphaned: boolean;
   parentPath: string;
