@@ -56,19 +56,10 @@
       <div class="row q-px-md q-pt-md">
         <div class="col">
           <div class="row text-subtitle1 text-weight-medium">
-            {{
-              musicButtonStatusText.includes('music.')
-                ? t(musicButtonStatusText)
-                : musicButtonStatusText
-            }}
+            {{ displayStatusText }}
           </div>
           <div
-            v-if="
-              musicPlaying &&
-              musicState !== 'music.stopping' &&
-              meetingDay &&
-              meetingWillStartSoon
-            "
+            v-if="musicPlaying && meetingDay && shouldShowMeetingCountdown"
             class="row text-dark-grey"
           >
             {{ t('until-meeting-starts') }}
@@ -81,7 +72,7 @@
             color="primary"
             :disable="mediaPlaying || musicState === 'music.starting'"
             unelevated
-            @click="playMusic"
+            @click="playMusic(true)"
           >
             {{ t('play-music') }}
           </q-btn>
@@ -97,7 +88,6 @@
           </q-btn>
         </div>
       </div>
-      <!-- </q-card-section> -->
     </div>
   </q-menu>
   <audio ref="musicPlayer" style="display: none" @ended="musicEnded" />
@@ -138,6 +128,12 @@ const {
   selectedDateObject,
 } = storeToRefs(currentState);
 
+// Constants
+const MEETING_STOP_BUFFER_SECONDS = 60; // Stop music 60 seconds before meeting
+const AUTO_START_WINDOW_HOURS = 2; // Auto-start within 2 hours of meeting
+const MEETING_DURATION_HOURS = 1.75; // Assume meeting lasts 1 hour 45 minutes
+
+// Music player setup
 const musicPlayerSource = ref<HTMLSourceElement>(
   document.createElement('source'),
 );
@@ -152,6 +148,76 @@ const {
   src: musicPlayerSource,
 });
 
+watch(
+  () => [currentTime.value, currentState.selectedDateObject?.date],
+  ([newTime, selectedDate]) => {
+    if (newTime || selectedDate) {
+      timeUntilMeeting.value = remainingTimeBeforeMeetingStart();
+    }
+  },
+  { immediate: true },
+);
+
+// Music state management
+const musicState = ref<
+  '' | 'music.error' | 'music.playing' | 'music.starting' | 'music.stopping'
+>('');
+
+const musicPlayingTitle = ref('');
+const songList = ref<SongItem[]>([]);
+const wasStartedManually = ref(false); // Track if music was started manually
+
+// Time calculations - cleaner and more predictable
+const timeUntilMeeting = ref(remainingTimeBeforeMeetingStart());
+
+const isMeetingToday = computed(() => {
+  return (
+    !!selectedDateObject.value?.today && !!selectedDateObject.value?.meeting
+  );
+});
+
+// const isMeetingActive = computed(() => {
+//   const timeUntil = timeUntilMeeting.value;
+//   return timeUntil <= 0 && timeUntil > -(MEETING_DURATION_HOURS * 3600);
+// });
+
+const isMeetingOver = computed(() => {
+  return timeUntilMeeting.value <= -(MEETING_DURATION_HOURS * 3600);
+});
+
+const shouldAutoStart = computed(() => {
+  if (
+    !currentSettings.value?.enableMusicButton ||
+    !currentSettings.value?.autoStartMusic
+  ) {
+    return false;
+  }
+
+  if (!isMeetingToday.value || musicPlaying.value) {
+    return false;
+  }
+
+  const timeUntil = timeUntilMeeting.value;
+  const withinAutoStartWindow =
+    timeUntil > MEETING_STOP_BUFFER_SECONDS * 1.5 &&
+    timeUntil <= AUTO_START_WINDOW_HOURS * 3600;
+
+  return withinAutoStartWindow;
+});
+
+const shouldAutoStop = computed(() => {
+  if (!musicPlaying.value || wasStartedManually.value) {
+    return false;
+  }
+
+  return (
+    isMeetingToday.value &&
+    timeUntilMeeting.value <= MEETING_STOP_BUFFER_SECONDS &&
+    !isMeetingOver.value
+  );
+});
+
+// Display text calculations
 const currentSongRemainingTime = computed(() => {
   if (musicPlaying.value) {
     return formatTime(duration.value - currentTime.value);
@@ -159,35 +225,53 @@ const currentSongRemainingTime = computed(() => {
   return t('music.not-playing');
 });
 
-const musicState = ref<
-  '' | 'music.error' | 'music.playing' | 'music.starting' | 'music.stopping'
->('');
+const timeUntilMusicStops = computed(() => {
+  if (!isMeetingToday.value || isMeetingOver.value) {
+    return '';
+  }
 
-const musicButtonStatusText = computed(() => {
+  const timeUntilStop = timeUntilMeeting.value - MEETING_STOP_BUFFER_SECONDS;
+  return timeUntilStop > 0 ? formatTime(timeUntilStop) : formatTime(0);
+});
+
+const shouldShowMeetingCountdown = computed(() => {
+  return (
+    musicState.value !== 'music.stopping' &&
+    !wasStartedManually.value &&
+    !isMeetingOver.value
+  );
+});
+
+const displayStatusText = computed(() => {
   switch (musicState.value) {
     case 'music.error':
       return '';
     case 'music.playing':
-      return !meetingDay.value || meetingShouldBeOver.value
-        ? currentSongRemainingTime.value
-        : timeRemainingBeforeMusicStop.value;
+      if (
+        !isMeetingToday.value ||
+        isMeetingOver.value ||
+        wasStartedManually.value
+      ) {
+        return currentSongRemainingTime.value;
+      }
+      return timeUntilMusicStops.value;
     case 'music.starting':
       return t('music.starting');
     case 'music.stopping':
       return t('music.stopping');
     default:
-      return 'music.not-playing';
+      return t('music.not-playing');
   }
 });
 
-const meetingStartBufferTime = 60; // seconds before the meeting starts to stop music
-
+// Expose for parent components
 defineExpose({
-  musicButtonStatusText,
+  musicButtonStatusText: displayStatusText,
   musicPlaying,
   musicState,
 });
 
+// Update music state when playing changes
 whenever(
   () => musicPlaying.value,
   () => {
@@ -195,79 +279,48 @@ whenever(
   },
 );
 
-const timeBeforeMeeting = ref(remainingTimeBeforeMeetingStart());
+// Main auto-start logic
+watchImmediate(
+  () => [shouldAutoStart.value, musicState.value],
+  ([shouldStart, state]) => {
+    if (
+      shouldStart &&
+      state !== 'music.starting' &&
+      state !== 'music.stopping' &&
+      state !== 'music.playing'
+    ) {
+      console.log('Auto-starting background music');
+      wasStartedManually.value = false;
+      playMusic();
+    }
+  },
+);
 
-const timeRemainingBeforeMusicStop = computed(() => {
-  if (timeBeforeMeeting.value > 0) {
-    return formatTime(timeBeforeMeeting.value - meetingStartBufferTime);
-  }
-  return formatTime(0);
-});
-
-const meetingStartBufferIsInPast = computed(() => {
-  return (
-    timeBeforeMeeting.value <= meetingStartBufferTime // Meeting has started or is starting within the buffer time
-  );
-});
-
-const meetingShouldBeOver = computed(() => {
-  return (
-    meetingStartBufferIsInPast.value &&
-    timeBeforeMeeting.value <= -(60 * 60 * 1.75) // Meeting started more than 1 hour 45 minutes ago
-  );
-});
-
-const meetingWillStartSoon = computed(() => {
-  return (
-    timeBeforeMeeting.value > meetingStartBufferTime && // Current time before meeting is greater than the buffer time
-    timeBeforeMeeting.value <= 60 * 60 * 2 // Meeting will start within the next 2 hours
-  );
-});
-
-watch(currentTime, (newCurrentTime) => {
-  // Skip processing if music isn't playing or music player isn't available
-  if (newCurrentTime <= 0 || !musicPlayer.value) {
-    return;
-  }
-
-  // Update remaining time until meeting starts
-  timeBeforeMeeting.value = remainingTimeBeforeMeetingStart();
-
-  // Stop music if meeting starts within the specified meetingStartBufferTime and music isn't already stopping
-  const shouldStopMusic =
-    musicState.value !== 'music.stopping' &&
-    meetingDay.value &&
-    meetingStartBufferIsInPast.value &&
-    !meetingShouldBeOver.value;
-
-  if (shouldStopMusic) {
+// Main auto-stop logic
+watch(shouldAutoStop, (shouldStop) => {
+  if (shouldStop && musicState.value !== 'music.stopping') {
+    console.log('Auto-stopping background music before meeting');
     stopMusic();
   }
 });
 
-const musicPlayingTitle = ref('');
-const songList = ref<SongItem[]>([]);
-
-const { fileUrlToPath, parseMediaFile, path, pathToFileURL } =
-  window.electronApi;
-const { basename } = path;
-
-const toggleMusicListener = () => {
-  try {
-    if (!currentSettings.value?.enableMusicButton) return;
-    if (musicPlaying.value) {
+// Settings change handling
+watch(
+  () => [currentSettings.value?.enableMusicButton, currentCongregation.value],
+  ([musicEnabled, newCongregation], [, oldCongregation]) => {
+    if (
+      !musicEnabled ||
+      (newCongregation && oldCongregation !== newCongregation)
+    ) {
       stopMusic();
-    } else {
-      playMusic();
     }
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
+  },
+);
 
 const musicPopup = useTemplateRef<QMenu>('musicPopup');
 
-async function playMusic() {
+// Music player functions
+async function playMusic(manualStart = false) {
   try {
     if (
       !currentSettings.value?.enableMusicButton ||
@@ -277,42 +330,71 @@ async function playMusic() {
       return;
     }
 
+    console.log('Starting background music');
     musicState.value = 'music.starting';
+    if (manualStart) {
+      console.log('Music started manually');
+      wasStartedManually.value = true;
+    }
     downloadBackgroundMusic();
     songList.value = [];
     musicPlayer.value.appendChild(musicPlayerSource.value);
     volume.value = 0;
+
     const { nextSongDuration, nextSongUrl, secsFromEnd } = await getNextSong();
     if (!nextSongUrl) throw new Error('No next song found');
+
     musicPlayerSource.value.src = nextSongUrl;
     console.log(
       `Playing music from ${nextSongUrl} with duration ${nextSongDuration} seconds`,
     );
+
     musicPlayer.value?.load();
     const startTime = nextSongDuration ? nextSongDuration - secsFromEnd : 0;
-    if (!musicPlayer.value) throw new Error('Music player not found');
     currentTime.value = startTime;
+
+    musicPlayer.value?.play();
     console.log(`Music started at ${startTime} seconds`);
-    musicPlaying.value = true;
-    console.log('Music is now playing');
-    console.log(
-      `Fading to volume level ${(currentSettings.value?.musicVolume ?? 100) / 100}`,
-    );
-    fadeToVolumeLevel((currentSettings.value?.musicVolume ?? 100) / 100, 1);
+
+    const targetVolume = (currentSettings.value?.musicVolume ?? 100) / 100;
+    console.log(`Fading to volume level ${targetVolume}`);
+    fadeToVolumeLevel(targetVolume, 1);
   } catch (error) {
+    console.error('Error starting music:', error);
+    musicState.value = 'music.error';
     errorCatcher(error);
   }
 }
 
+function stopMusic() {
+  try {
+    console.log('Stopping background music');
+    if (!musicPlayer.value || musicPlayer.value.paused) {
+      return;
+    }
+
+    musicState.value = 'music.stopping';
+    fadeToVolumeLevel(0, 5);
+  } catch (error) {
+    console.error('Error stopping music:', error);
+    errorCatcher(error);
+  }
+}
+
+// Music player event handlers
 musicPlayer.value?.addEventListener('error', (event) => {
   if (event.target instanceof HTMLAudioElement) {
     musicState.value = 'music.error';
     if (event.target.error?.message) {
+      const ignoredErrors = [
+        'removed from the document',
+        'new load request',
+        'interrupted by a call to pause',
+      ];
+
       if (
-        !(
-          event.target.error.message.includes('removed from the document') ||
-          event.target.error.message.includes('new load request') ||
-          event.target.error.message.includes('interrupted by a call to pause')
+        !ignoredErrors.some((msg) =>
+          (event.target as HTMLAudioElement)?.error?.message?.includes(msg),
         )
       ) {
         errorCatcher(event.target.error);
@@ -331,20 +413,6 @@ watch(
   },
 );
 
-function stopMusic() {
-  try {
-    console.log('Stopping music');
-    console.log(
-      `Current music state: ${musicState.value}, Music player paused: ${musicPlayer.value?.paused}`,
-    );
-    if (!musicPlayer.value || musicPlayer.value.paused) return;
-    musicState.value = 'music.stopping';
-    fadeToVolumeLevel(0, 5);
-  } catch (error) {
-    errorCatcher(error);
-  }
-}
-
 const musicEnded = async () => {
   if (
     !musicPlayer.value ||
@@ -356,17 +424,20 @@ const musicEnded = async () => {
 
   const { nextSongUrl } = await getNextSong();
   if (!nextSongUrl) return;
+
   musicPlayerSource.value.src = nextSongUrl;
   musicPlayer.value?.load();
-  musicPlaying.value = true;
+  musicPlayer.value?.play();
 };
 
+// Song management functions
 const getNextSong = async () => {
   try {
     let musicDurationSoFar = 0;
     const timeBeforeMeetingStart =
-      remainingTimeBeforeMeetingStart() - meetingStartBufferTime;
+      timeUntilMeeting.value - MEETING_STOP_BUFFER_SECONDS;
     let secsFromEnd = 0;
+
     if (!songList.value.length) {
       let attempts = 0;
       while (songList.value.length < 10 && attempts < 10) {
@@ -377,27 +448,38 @@ const getNextSong = async () => {
             currentState.currentSettings?.cacheFolder,
           )
         ).sort(() => Math.random() - 0.5);
-        if (songList.value.length >= 10) {
-          break;
-        }
+
+        if (songList.value.length >= 10) break;
+
         attempts++;
         await new Promise((resolve) => {
           setTimeout(resolve, 5000);
         });
       }
+
+      // Get metadata for songs
       for (const queuedSong of songList.value) {
         const metadata = await getMetadataFromMediaPath(queuedSong.path);
         queuedSong.duration = metadata?.format?.duration ?? 0;
-        queuedSong.title = metadata?.common.title ?? basename(queuedSong.path);
+        queuedSong.title =
+          metadata?.common.title ??
+          window.electronApi.path.basename(queuedSong.path);
       }
+
+      // Handle meeting day song selection
       try {
         const selectedDayMedia = selectedDateObject.value?.dynamicMedia ?? [];
         const regex = /(_r\d{3,4}P)?\.\w+$/;
+        const { fileUrlToPath, path } = window.electronApi;
+
         const selectedDaySongs: SongItem[] = selectedDayMedia
-          .map((d) => basename(fileUrlToPath(d.fileUrl?.replace(regex, ''))))
+          .map((d) =>
+            path.basename(fileUrlToPath(d.fileUrl?.replace(regex, ''))),
+          )
           .map((fileBasename) => {
             const index = songList.value.findIndex(
-              (s) => basename(s.path.replace(regex, '') || '') === fileBasename,
+              (s) =>
+                path.basename(s.path.replace(regex, '') || '') === fileBasename,
             );
             if (index !== -1) {
               return songList.value.splice(index, 1)[0];
@@ -405,12 +487,14 @@ const getNextSong = async () => {
             return null;
           })
           .filter((song) => !!song);
+
         if (timeBeforeMeetingStart > 0) {
           let customSongList: SongItem[] = [];
           if (selectedDaySongs.length) {
             songList.value.push(...selectedDaySongs);
             songList.value.reverse();
           }
+
           if (songList.value.length) {
             while (musicDurationSoFar < timeBeforeMeetingStart) {
               const queuedSong = songList.value.shift();
@@ -430,74 +514,76 @@ const getNextSong = async () => {
         errorCatcher(error);
       }
     }
-    if (!songList.value.length)
-      return {
-        nextSongUrl: '',
-        secsFromEnd: 0,
-      };
+
+    if (!songList.value.length) {
+      return { nextSongUrl: '', secsFromEnd: 0 };
+    }
+
     const nextSong = songList.value.shift();
     if (!nextSong) {
-      return {
-        nextSongUrl: '',
-        secsFromEnd: 0,
-      };
+      return { nextSongUrl: '', secsFromEnd: 0 };
     }
+
     songList.value.push(nextSong);
+
     try {
-      const metadata = await parseMediaFile(nextSong.path);
+      const metadata = await window.electronApi.parseMediaFile(nextSong.path);
       musicPlayingTitle.value =
-        metadata.common.title ?? basename(nextSong.path);
+        metadata.common.title ??
+        window.electronApi.path.basename(nextSong.path);
     } catch (error) {
       errorCatcher(error);
-      musicPlayingTitle.value = basename(nextSong.path) ?? '';
+      musicPlayingTitle.value =
+        window.electronApi.path.basename(nextSong.path) ?? '';
     }
+
     return {
       nextSongDuration: nextSong.duration,
-      nextSongUrl: pathToFileURL(nextSong.path),
+      nextSongUrl: window.electronApi.pathToFileURL(nextSong.path),
       secsFromEnd,
     };
   } catch (error) {
     errorCatcher(error);
-    return {
-      nextSongUrl: '',
-      secsFromEnd: 0,
-    };
+    return { nextSongUrl: '', secsFromEnd: 0 };
   }
 };
 
+// Volume control functions
 const setBackgroundMusicVolume = (desiredVolume: number) => {
   try {
     if (
       !musicPlayer.value ||
       !Number.isInteger(desiredVolume) ||
       desiredVolume < 0
-    )
+    ) {
       return;
+    }
     volume.value = Math.min(Math.max(desiredVolume / 100, 0), 1);
   } catch (error) {
     errorCatcher(error);
   }
 };
 
-const fadeToVolumeLevel = (targetVolume: number, fadeOutSeconds: number) => {
+const fadeToVolumeLevel = (targetVolume: number, fadeSeconds: number) => {
   console.log(
-    `Fading to volume level ${targetVolume} over ${fadeOutSeconds} seconds`,
+    `Fading to volume level ${targetVolume} over ${fadeSeconds} seconds`,
   );
+
   if (!musicPlayer.value) return;
+
   targetVolume = Math.min(Math.max(targetVolume, 0), 1);
-  console.log(
-    `Target volume set to ${targetVolume}, current volume is ${musicPlayer.value.volume}`,
-  );
+
   try {
     const initialVolume = Math.min(musicPlayer.value.volume, 1);
     const volumeChange = targetVolume - initialVolume;
     const startTime = performance.now();
 
-    function updateVolume(currentSongTime: number) {
+    function updateVolume(currentTime: number) {
       try {
         if (!musicPlayer.value) return;
-        const elapsedTime = currentSongTime - startTime;
-        const progress = Math.min(elapsedTime / fadeOutSeconds / 1000, 1);
+
+        const elapsedTime = currentTime - startTime;
+        const progress = Math.min(elapsedTime / (fadeSeconds * 1000), 1);
         musicPlayer.value.volume = Math.min(
           Math.max(initialVolume + volumeChange * progress, 0),
           1,
@@ -509,20 +595,24 @@ const fadeToVolumeLevel = (targetVolume: number, fadeOutSeconds: number) => {
           if (musicPlayer.value.volume === 0) {
             musicPlayer.value.pause();
             musicState.value = '';
+            wasStartedManually.value = false; // Reset manual flag when stopped
           }
         }
       } catch (error) {
         errorCatcher(error);
-        if (!musicPlayer.value) return;
-        musicPlayer.value.volume = targetVolume;
+        if (musicPlayer.value) {
+          musicPlayer.value.volume = targetVolume;
+        }
       }
     }
+
     requestAnimationFrame(updateVolume);
   } catch (error) {
     errorCatcher(error);
   }
 };
 
+// UI update handler
 watch(
   () => [musicState.value, musicPlaying.value, songList.value.length],
   () => {
@@ -534,7 +624,25 @@ watch(
   },
 );
 
+// Event listeners
+const toggleMusicListener = () => {
+  try {
+    if (!currentSettings.value?.enableMusicButton) return;
+
+    if (musicPlaying.value) {
+      stopMusic();
+    } else {
+      console.log('Music started manually');
+      wasStartedManually.value = true;
+      playMusic();
+    }
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
 useEventListener(window, 'toggleMusic', toggleMusicListener, { passive: true });
+
 const { data: volumeData } = useBroadcastChannel<number, number>({
   name: 'volume-setter',
 });
@@ -545,60 +653,4 @@ whenever(
     setBackgroundMusicVolume(val);
   },
 );
-
-watchImmediate(
-  () => [
-    selectedDateObject.value?.today,
-    selectedDateObject.value?.meeting,
-    musicPlayer.value,
-  ],
-  ([newToday, newMeeting]) => {
-    try {
-      meetingDay.value = !!newToday && !!newMeeting;
-      const timeBeforeMeetingStart = remainingTimeBeforeMeetingStart();
-      if (
-        currentSettings.value?.enableMusicButton && // background music feature is enabled
-        currentSettings.value?.autoStartMusic && // auto-start music is enabled
-        meetingDay.value && // today is a meeting day
-        timeBeforeMeetingStart > meetingStartBufferTime * 1.5 && // meeting is starting in at least meetingStartBufferTime * 1.5
-        meetingWillStartSoon.value && // meeting will start soon
-        !musicPlaying.value && // music is not already playing
-        musicState.value !== 'music.starting' && // music is not already starting
-        musicState.value !== 'music.stopping' // music is not already stopping
-      ) {
-        playMusic();
-      }
-    } catch (error) {
-      errorCatcher(error);
-    }
-  },
-);
-
-watch(
-  () => [currentSettings.value?.enableMusicButton, currentCongregation.value],
-  ([newMusicButtonEnabled, newCongregation], [, oldCongregation]) => {
-    if (
-      !newMusicButtonEnabled ||
-      !newCongregation ||
-      oldCongregation !== newCongregation
-    ) {
-      stopMusic();
-    }
-  },
-);
-/*
-const muteBackgroundMusic = () => fadeToVolumeLevel(0.001, 1);
-const unmuteBackgroundMusic = () =>
-  fadeToVolumeLevel((currentSettings?.value?.musicVolume ?? 100) / 100, 1);
-
-watch(
-  () => [mediaPlayingAction.value, mediaPlayingUrl.value],
-  ([newAction, newUrl]) => {
-    if (newUrl && isVideo(newUrl) && newAction !== 'pause') {
-      muteBackgroundMusic();
-    } else {
-      unmuteBackgroundMusic();
-    }
-  },
-);*/
 </script>
