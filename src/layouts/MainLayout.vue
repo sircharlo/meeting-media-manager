@@ -357,8 +357,6 @@ watchImmediate(
     const shouldRegister =
       newEnableKeyboardShortcuts && (congregationChanged || shortcutsToggled);
 
-    console.log(newCongregation, newEnableKeyboardShortcuts, oldValues);
-
     if (shouldRegister) {
       // This will internally call unregisterAllCustomShortcuts
       registerAllCustomShortcuts();
