@@ -199,6 +199,7 @@ export interface SettingsValues {
   meetingScheduleChangeOnce: boolean;
   meetingScheduleChangeWeDay: `${number}` | null;
   meetingScheduleChangeWeStartTime: `${number}:${number}` | null;
+  meetingStopBufferSeconds: number;
   memorialDate: `${number}/${number}/${number}` | null;
   meteredConnection: boolean;
   musicVolume: number;

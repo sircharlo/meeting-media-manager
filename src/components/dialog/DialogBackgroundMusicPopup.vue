@@ -129,7 +129,9 @@ const {
 } = storeToRefs(currentState);
 
 // Constants
-const MEETING_STOP_BUFFER_SECONDS = 60; // Stop music 60 seconds before meeting
+const MEETING_STOP_BUFFER_SECONDS = computed(
+  () => currentSettings.value?.meetingStopBufferSeconds ?? 60,
+); // Stop music a user-defined number of seconds before meeting; default to 60 seconds
 const AUTO_START_WINDOW_HOURS = 1.25; // Auto-start within 1 hour 15 minutes of meeting
 const MEETING_DURATION_HOURS = 1.75; // Assume meeting lasts 1 hour 45 minutes
 
@@ -200,7 +202,7 @@ const shouldAutoStart = computed(() => {
 
   const timeUntil = timeUntilMeeting.value;
   const withinAutoStartWindow =
-    timeUntil > MEETING_STOP_BUFFER_SECONDS * 1.5 &&
+    timeUntil > MEETING_STOP_BUFFER_SECONDS.value * 1.5 &&
     timeUntil <= AUTO_START_WINDOW_HOURS * 3600;
 
   return withinAutoStartWindow;
@@ -213,7 +215,7 @@ const shouldAutoStop = computed(() => {
 
   return (
     isMeetingToday.value &&
-    timeUntilMeeting.value <= MEETING_STOP_BUFFER_SECONDS &&
+    timeUntilMeeting.value <= MEETING_STOP_BUFFER_SECONDS.value &&
     !isMeetingOver.value
   );
 });
@@ -231,7 +233,8 @@ const timeUntilMusicStops = computed(() => {
     return '';
   }
 
-  const timeUntilStop = timeUntilMeeting.value - MEETING_STOP_BUFFER_SECONDS;
+  const timeUntilStop =
+    timeUntilMeeting.value - MEETING_STOP_BUFFER_SECONDS.value;
   return timeUntilStop > 0 ? formatTime(timeUntilStop) : formatTime(0);
 });
 
@@ -436,7 +439,7 @@ const getNextSong = async () => {
   try {
     let musicDurationSoFar = 0;
     const timeBeforeMeetingStart =
-      timeUntilMeeting.value - MEETING_STOP_BUFFER_SECONDS;
+      timeUntilMeeting.value - MEETING_STOP_BUFFER_SECONDS.value;
     let secsFromEnd = 0;
 
     if (!songList.value.length) {
