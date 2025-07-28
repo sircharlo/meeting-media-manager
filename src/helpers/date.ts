@@ -151,7 +151,19 @@ export const isWeMeetingDay = (lookupDate?: Date) => {
   }
 };
 
-export function updateLookupPeriod(reset = false) {
+export function updateLookupPeriod(
+  reset = false,
+  {
+    onlyForWeekIncluding,
+    targeted,
+  }: {
+    onlyForWeekIncluding: string;
+    targeted: boolean;
+  } = {
+    onlyForWeekIncluding: '',
+    targeted: false,
+  },
+) {
   try {
     const { currentCongregation, currentSettings } = useCurrentStateStore();
     if (!currentCongregation || !currentSettings) return;
@@ -249,21 +261,104 @@ export function updateLookupPeriod(reset = false) {
     if (todayDate) todayDate.today = true;
 
     if (reset) {
-      lookupPeriod[currentCongregation].forEach((day) => {
-        day.complete = false;
-        day.error = false;
-        for (let i = day.dynamicMedia.length - 1; i >= 0; i--) {
-          if (day.dynamicMedia[i]?.source === 'dynamic') {
-            day.dynamicMedia.splice(i, 1);
-          }
-        }
-        day.meeting = isMwMeetingDay(day.date)
-          ? 'mw'
-          : isWeMeetingDay(day.date)
-            ? 'we'
-            : false;
-        day.today = datesAreSame(day.date, new Date());
+      console.log('🔄 Starting lookup period reset process...', {
+        currentCongregation,
+        targeted,
       });
+
+      const daysToReset = targeted ? getTargetedDays() : getAllDays() || [];
+      if (!daysToReset.length) {
+        console.log('⚠️ No days found to reset');
+        return;
+      }
+
+      console.log(`📅 Found ${daysToReset.length} days to reset`);
+
+      daysToReset.forEach((day, index) => {
+        console.log(
+          `🛠️  Resetting day ${index + 1}/${daysToReset.length}:`,
+          day.date.toISOString().split('T')[0],
+        );
+        resetDay(day);
+      });
+
+      console.log('✅ Reset process completed');
+    }
+
+    function getTargetedDays() {
+      if (!lookupPeriod[currentCongregation]) {
+        console.log('⚠️ No lookup period found for current congregation');
+        return [];
+      }
+
+      console.log(
+        '🎯 Getting targeted days for week including:',
+        onlyForWeekIncluding,
+      );
+
+      const mondayOfTargetedWeek = getSpecificWeekday(
+        dateFromString(onlyForWeekIncluding),
+        0,
+      );
+
+      console.log(
+        '📍 Target week Monday:',
+        mondayOfTargetedWeek.toISOString().split('T')[0],
+      );
+
+      return lookupPeriod[currentCongregation].filter((day) => {
+        const mondayOfLookupWeek = getSpecificWeekday(day.date, 0);
+        const isTargetWeek =
+          datesAreSame(mondayOfTargetedWeek, mondayOfLookupWeek) ||
+          datesAreSame(mondayOfTargetedWeek, day.date);
+
+        if (isTargetWeek) {
+          console.log(
+            `  ✓ Including day: ${day.date.toISOString().split('T')[0]}`,
+          );
+        }
+
+        return isTargetWeek;
+      });
+    }
+
+    function getAllDays() {
+      console.log('🌍 Getting all days for congregation');
+      return lookupPeriod[currentCongregation];
+    }
+
+    function resetDay(day: DateInfo) {
+      const beforeDynamicCount = day.dynamicMedia.length;
+
+      // Reset status flags
+      day.complete = false;
+      day.error = false;
+
+      // Remove dynamic media (backwards iteration for safe removal)
+      for (let i = day.dynamicMedia.length - 1; i >= 0; i--) {
+        if (day.dynamicMedia[i]?.source === 'dynamic') {
+          day.dynamicMedia.splice(i, 1);
+        }
+      }
+
+      const removedCount = beforeDynamicCount - day.dynamicMedia.length;
+      if (removedCount > 0) {
+        console.log(`    🗑️  Removed ${removedCount} dynamic media items`);
+      }
+
+      // Set meeting type
+      day.meeting = isMwMeetingDay(day.date)
+        ? 'mw'
+        : isWeMeetingDay(day.date)
+          ? 'we'
+          : false;
+
+      // Update today flag
+      day.today = datesAreSame(day.date, new Date());
+
+      console.log(
+        `    📝 Set meeting type: ${day.meeting || 'none'}, today: ${day.today}`,
+      );
     }
   } catch (error) {
     errorCatcher(error);

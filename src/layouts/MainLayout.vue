@@ -294,7 +294,6 @@ watch(
     currentSettings.value?.enableSubtitles,
     currentSettings.value?.mwDay,
     currentSettings.value?.weDay,
-    currentSettings.value?.coWeek,
     currentSettings.value?.memorialDate,
     currentSettings.value?.meetingScheduleChangeDate,
     currentSettings.value?.meetingScheduleChangeOnce,
@@ -303,9 +302,75 @@ watch(
     currentSettings.value?.disableMediaFetching,
     currentSettings.value?.meteredConnection,
   ],
-  ([newCurrentCongregation], [oldCurrentCongregation]) => {
+  (newValues, oldValues) => {
+    // Skip if this is the initial run (oldValues is undefined)
+    if (!oldValues) return;
+
+    const [newCongregation, ...newSettings] = newValues;
+    const [oldCongregation, ...oldSettings] = oldValues;
+
+    // Only trigger if congregation hasn't changed but other settings have
+    if (newCongregation === oldCongregation) {
+      const settingsChanged = newSettings.some(
+        (newSetting, index) => newSetting !== oldSettings[index],
+      );
+
+      if (settingsChanged) {
+        console.log(
+          '⚙️ Settings changed (congregation unchanged), updating lookup period',
+        );
+        updateLookupPeriod(true);
+      }
+    }
+  },
+);
+
+watch(
+  () => [currentCongregation.value, currentSettings.value?.coWeek],
+  (
+    [newCurrentCongregation, newCoWeek],
+    [oldCurrentCongregation, oldCoWeek],
+  ) => {
+    // Skip if this is the initial run (oldValues is undefined)
+    if (!oldCurrentCongregation) {
+      return;
+    }
+
+    console.log('👁️ CO Week watcher triggered:', {
+      congregation: {
+        new: newCurrentCongregation,
+        old: oldCurrentCongregation,
+      },
+      coWeek: { new: newCoWeek, old: oldCoWeek },
+    });
+
     if (newCurrentCongregation === oldCurrentCongregation) {
-      updateLookupPeriod(true);
+      console.log('🏢 Congregation unchanged, checking CO week changes...');
+
+      const weeksToUpdate = [newCoWeek, oldCoWeek].filter((week) => !!week);
+
+      if (weeksToUpdate.length === 0) {
+        console.log('📅 No valid CO weeks to update');
+        return;
+      }
+
+      console.log(
+        `📅 Updating ${weeksToUpdate.length} CO week(s):`,
+        weeksToUpdate,
+      );
+
+      for (const changedWeek of weeksToUpdate) {
+        if (!changedWeek) continue;
+        console.log(`🎯 Updating lookup period for CO week: ${changedWeek}`);
+        updateLookupPeriod(true, {
+          onlyForWeekIncluding: changedWeek,
+          targeted: true,
+        });
+      }
+
+      console.log('✅ CO week updates completed');
+    } else {
+      console.log('🏢 Congregation changed, skipping CO week update');
     }
   },
 );
