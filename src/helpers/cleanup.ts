@@ -162,9 +162,25 @@ const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
     );
 
     const mediaFileParentDirectories = new Set(
-      lookupPeriodsCollections.map((media) =>
-        media ? pathToFileURL(getParentDirectory(media.fileUrl)) : '',
-      ),
+      lookupPeriodsCollections.flatMap((media) => {
+        const urls: string[] = [];
+
+        // Add parent directory if media has a fileUrl
+        if (media?.fileUrl) {
+          urls.push(pathToFileURL(getParentDirectory(media.fileUrl)));
+        }
+
+        // Add parent directories of children if they exist and have fileUrls
+        if (Array.isArray(media?.children)) {
+          for (const child of media.children) {
+            if (child?.fileUrl) {
+              urls.push(pathToFileURL(getParentDirectory(child.fileUrl)));
+            }
+          }
+        }
+
+        return urls;
+      }),
     );
 
     const files: CacheFile[] = [];
