@@ -117,6 +117,10 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
+const { fileUrlToPath, parseMediaFile, path, pathToFileURL } =
+  window.electronApi;
+const { basename } = path;
+
 const open = defineModel<boolean>({ default: false });
 
 const currentState = useCurrentStateStore();
@@ -465,25 +469,19 @@ const getNextSong = async () => {
       for (const queuedSong of songList.value) {
         const metadata = await getMetadataFromMediaPath(queuedSong.path);
         queuedSong.duration = metadata?.format?.duration ?? 0;
-        queuedSong.title =
-          metadata?.common.title ??
-          window.electronApi.path.basename(queuedSong.path);
+        queuedSong.title = metadata?.common.title ?? basename(queuedSong.path);
       }
 
       // Handle meeting day song selection
       try {
         const selectedDayMedia = selectedDateObject.value?.dynamicMedia ?? [];
         const regex = /(_r\d{3,4}P)?\.\w+$/;
-        const { fileUrlToPath, path } = window.electronApi;
 
         const selectedDaySongs: SongItem[] = selectedDayMedia
-          .map((d) =>
-            path.basename(fileUrlToPath(d.fileUrl?.replace(regex, ''))),
-          )
+          .map((d) => basename(fileUrlToPath(d.fileUrl?.replace(regex, ''))))
           .map((fileBasename) => {
             const index = songList.value.findIndex(
-              (s) =>
-                path.basename(s.path.replace(regex, '') || '') === fileBasename,
+              (s) => basename(s.path.replace(regex, '') || '') === fileBasename,
             );
             if (index !== -1) {
               return songList.value.splice(index, 1)[0];
@@ -531,19 +529,17 @@ const getNextSong = async () => {
     songList.value.push(nextSong);
 
     try {
-      const metadata = await window.electronApi.parseMediaFile(nextSong.path);
+      const metadata = await parseMediaFile(nextSong.path);
       musicPlayingTitle.value =
-        metadata.common.title ??
-        window.electronApi.path.basename(nextSong.path);
+        metadata.common.title ?? basename(nextSong.path);
     } catch (error) {
       errorCatcher(error);
-      musicPlayingTitle.value =
-        window.electronApi.path.basename(nextSong.path) ?? '';
+      musicPlayingTitle.value = basename(nextSong.path) ?? '';
     }
 
     return {
       nextSongDuration: nextSong.duration,
-      nextSongUrl: window.electronApi.pathToFileURL(nextSong.path),
+      nextSongUrl: pathToFileURL(nextSong.path),
       secsFromEnd,
     };
   } catch (error) {
