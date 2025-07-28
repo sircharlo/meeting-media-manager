@@ -104,9 +104,11 @@ export const useCongregationSettingsStore = defineStore(
             }
           });
 
-          console.log(
-            `Successfully updated ${updatedCount} congregations with missing settings`,
-          );
+          if (updatedCount > 0) {
+            console.log(
+              `Successfully updated ${updatedCount} congregations with missing settings`,
+            );
+          }
         } catch (error) {
           console.error(
             'Error updating congregations with missing settings:',
