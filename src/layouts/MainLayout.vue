@@ -73,6 +73,7 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
 import { formatDate, getSpecificWeekday, isInPast } from 'src/utils/date';
 import { kebabToCamelCase } from 'src/utils/general';
+import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
@@ -115,7 +116,7 @@ const router = useRouter();
 const { locale, t } = useI18n({ useScope: 'global' });
 
 // Store initializations
-// const congregationSettings = useCongregationSettingsStore();
+const congregationSettings = useCongregationSettingsStore();
 // congregationSettings.$subscribe((_, state) => {
 //   saveSettingsStoreToFile('congregations', state);
 // });
@@ -549,6 +550,7 @@ const removeListenersLocal = () => {
 };
 
 onMounted(() => {
+  congregationSettings.updateCongregationsWithMissingSettings();
   if (!currentSettings.value) navigateToCongregationSelector();
   initListeners();
 });
