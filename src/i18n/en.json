@@ -432,7 +432,7 @@
   "what-are-your-meeting-days-and-times-well-use-this-info-to-display-the-media-calendar": "What are your meeting days and times? We'll use this information to display the media calendar.",
   "what-kind-of-profile-is-this": "Choose the type of profile you would like to create.",
   "what-language-would-you-like-m-to-be-displayed-in": "What language would you like M³ to be displayed in?",
-  "whats-new": "See What's New",
+  "whats-new": "See what's new",
   "when-you-are-done-presenting-the-website-you-can-either-close-the-website-window-or-click-again-on-the-button-in-the-top-right-corner-of-this-window": "When you no longer need to present the website, either close the website window, or click on the \"Stop Mirroring\" button in the top right corner of this window.",
   "when-you-click-the-button-on-the-top-right-corner-of-this-window-a-new-window-will-open-where-the-website-will-be-presented-what-you-see-in-this-window-will-be-mirrored-into-the-media-window": "When you click the \"Open Website\" button on the top right corner of this window, a new window will open to the official website of Jehovah's Witnesses.",
   "window-type": "Window type",
@@ -444,5 +444,6 @@
   "yes": "Yes",
   "you-can-navigate-the-website-before-presenting-it": "If necessary, you can navigate to a specific page before presenting it to the audience. When you're ready, press the \"Start Mirroring\" button on the top right corner of this window. What you see in the website window will now be displayed in the media window for the audience to see.",
   "zoom-in": "Zoom in",
-  "zoom-out": "Zoom out"
+  "zoom-out": "Zoom out",
+  "about-this-app": "About this app"
 }

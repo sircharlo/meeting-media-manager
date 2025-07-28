@@ -1,12 +1,5 @@
 <template>
   <q-dialog v-model="open">
-    <q-dialog v-model="releaseNotesOpen">
-      <q-card>
-        <q-card-section>
-          <q-markdown no-heading-anchor-links :src="releaseNotes" />
-        </q-card-section>
-      </q-card>
-    </q-dialog>
     <div
       class="items-center q-pb-lg q-px-lg q-gutter-y-md bg-secondary-contrast"
     >
@@ -34,18 +27,43 @@
           </div>
         </div>
       </div>
-      <div v-if="releaseNotes" class="row">
-        <q-btn :label="t('whats-new')" @click="releaseNotesOpen = true" />
-      </div>
       <div class="row">
-        <div class="col">
-          {{ t('app-description') }}
-        </div>
-      </div>
-      <div class="row">
-        <div class="col">
-          {{ t('app-issues') }}
-        </div>
+        <q-expansion-item
+          class="full-width bg-accent-200"
+          default-opened
+          dense
+          group="about"
+          icon="mmm-info"
+          :label="t('about-this-app')"
+        >
+          <q-card>
+            <q-card-section class="bg-accent-100">
+              <p>
+                {{ t('app-description') }}
+              </p>
+              <p>
+                {{ t('app-issues') }}
+              </p>
+            </q-card-section>
+          </q-card>
+        </q-expansion-item>
+        <q-expansion-item
+          v-if="releaseNotes"
+          v-model="releaseNotesExpansionItem"
+          class="full-width bg-accent-200"
+          dense
+          group="about"
+          icon="mmm-shimmer"
+          :label="t('whats-new')"
+        >
+          <q-card>
+            <q-card-section class="bg-accent-100">
+              <q-scroll-area style="height: 200px; max-width: 100%">
+                <q-markdown no-heading-anchor-links :src="releaseNotes" />
+              </q-scroll-area>
+            </q-card-section>
+          </q-card>
+        </q-expansion-item>
       </div>
       <div class="row q-gutter-x-md">
         <div class="col">
@@ -197,7 +215,7 @@ const checkLastVersion = async (congId: string) => {
 
     if (releaseNotes.value) {
       open.value = true;
-      releaseNotesOpen.value = true;
+      releaseNotesExpansionItem.value = true;
     }
   }
 };
@@ -214,7 +232,7 @@ watch(currentCongregation, (val) => {
 });
 
 const releaseNotes = ref('');
-const releaseNotesOpen = ref(false);
+const releaseNotesExpansionItem = ref(false);
 
 const loadReleaseNotes = async () => {
   const result = await fetchReleaseNotes(camelToKebabCase(locale.value));
