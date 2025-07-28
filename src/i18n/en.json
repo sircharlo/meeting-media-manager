@@ -304,6 +304,8 @@
   "obsPostponeImages-explain": "When enabled, images will only be displayed for Zoom participants when the media operator clicks on the \"Show in OBS Studio\" button. This can be useful if you generally display images to the in-person audience before sharing them on Zoom.",
   "obsQuickToggle": "Enable instant scene switcher",
   "obsQuickToggle-explain": "When enabled, hovering over the OBS Studio button will open the scene switcher. This can be useful for quickly switching scenes in OBS Studio, especially if many scenes are configured.",
+  "obsRememberPreviouslyUsedScene": "Remember previously used scene after media playback",
+  "obsRememberPreviouslyUsedScene-explain": "When enabled, M³ will remember the scene that was active before media started playing and will return to it when media playback ends. Otherwise, M³ will switch to the default camera scene.",
   "obsStudio": "OBS Studio",
   "obsSwitchSceneAfterMedia": "Delay scene changes when playing media",
   "obsSwitchSceneAfterMedia-explain": "When enabled, OBS Studio will defer scene changes until after any currently playing media has finished. Note: enabling this option will also remove media and image scenes from the scene switcher.",

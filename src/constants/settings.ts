@@ -264,7 +264,7 @@ export const settingsDefinitions: SettingsItems = {
     type: 'list',
   },
   obsPostponeImages: {
-    depends: ['obsEnable', 'obsPort', 'obsPassword'],
+    depends: ['obsEnable', 'obsPort', 'obsPassword', 'obsMediaScene'],
     group: 'integrations',
     subgroup: 'obsStudio',
     type: 'toggle',
@@ -277,6 +277,18 @@ export const settingsDefinitions: SettingsItems = {
   },
   obsSwitchSceneAfterMedia: {
     depends: ['obsEnable', 'obsPort', 'obsPassword', 'obsMediaScene'],
+    group: 'integrations',
+    subgroup: 'obsStudio',
+    type: 'toggle',
+  },
+  obsRememberPreviouslyUsedScene: {
+    depends: [
+      'obsEnable',
+      'obsPort',
+      'obsPassword',
+      'obsMediaScene',
+      'obsCameraScene',
+    ],
     group: 'integrations',
     subgroup: 'obsStudio',
     type: 'toggle',
@@ -483,6 +495,7 @@ export const defaultSettings: SettingsValues = {
   obsPort: null,
   obsPostponeImages: false,
   obsQuickToggle: false,
+  obsRememberPreviouslyUsedScene: true,
   obsSwitchSceneAfterMedia: false,
   shortcutMediaNext: null,
   shortcutMediaPauseResume: null,

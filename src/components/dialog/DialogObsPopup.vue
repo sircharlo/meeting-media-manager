@@ -27,12 +27,7 @@
                 class="full-width"
                 :color="sceneExists(scene) ? 'primary' : 'negative'"
                 :icon="getSceneIcon(scene)"
-                :outline="
-                  scene !==
-                  (currentSettings?.obsSwitchSceneAfterMedia
-                    ? previousScene
-                    : currentScene)
-                "
+                :outline="scene !== resolvedScene"
                 :size="currentSettings?.obsHideIcons ? 'md' : 'sm'"
                 unelevated
                 @click="setObsScene(undefined, scene)"
@@ -109,22 +104,33 @@ const notifySceneNotFound = () =>
     type: 'negative',
   });
 
+const resolvedScene = computed(() => {
+  if (!currentSettings.value) return currentScene.value;
+  return currentSettings.value.obsSwitchSceneAfterMedia
+    ? currentSettings.value.obsRememberPreviouslyUsedScene
+      ? previousScene.value
+      : currentSettings.value.obsCameraScene
+    : currentSettings.value.obsCameraScene;
+});
+
 const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
   try {
     if (!obsConnectionState.value?.startsWith('connect')) await obsConnect();
     if (obsConnectionState.value !== 'connected') return;
     let newProgramScene: string | undefined = desiredScene;
     if (!desiredScene && sceneType) {
-      const mediaScene = currentSettings.value?.obsMediaScene;
-      const imageScene = currentSettings.value?.obsImageScene;
-      const cameraScene = currentSettings.value?.obsCameraScene;
+      const mediaScene = currentSettings.value?.obsMediaScene || undefined;
+      const imageScene = currentSettings.value?.obsImageScene || undefined;
+      const cameraScene = currentSettings.value?.obsCameraScene || undefined;
       newProgramScene = mediaScene ?? undefined;
       if (isImage(mediaPlayingUrl.value) && imageScene) {
         newProgramScene = imageScene;
       }
       currentSceneType.value = sceneType;
       if (sceneType === 'camera') {
-        newProgramScene = previousScene.value || cameraScene || undefined;
+        newProgramScene = currentSettings.value?.obsRememberPreviouslyUsedScene
+          ? previousScene.value || cameraScene
+          : cameraScene;
       }
     } else if (
       desiredScene &&

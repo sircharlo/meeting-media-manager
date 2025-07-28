@@ -215,6 +215,7 @@ export interface SettingsValues {
   obsPort: null | string;
   obsPostponeImages: boolean;
   obsQuickToggle: boolean;
+  obsRememberPreviouslyUsedScene: boolean;
   obsSwitchSceneAfterMedia: boolean;
   shortcutMediaNext: null | string;
   shortcutMediaPauseResume: null | string;
