@@ -411,6 +411,13 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'cache',
     type: 'path',
   },
+  enableCacheAutoClear: {
+    depends: 'enableMediaDisplayButton',
+    group: 'advanced',
+    subgroup: 'cache',
+    type: 'toggle',
+    unless: 'disableMediaFetching',
+  },
   baseUrl: {
     rules: ['notEmpty'],
     group: 'advanced',
@@ -435,6 +442,7 @@ export const defaultSettings: SettingsValues = {
   coWeek: null,
   darkMode: 'auto',
   disableMediaFetching: false,
+  enableCacheAutoClear: false,
   enableExtraCache: false,
   enableFolderWatcher: false,
   enableKeyboardShortcuts: false,

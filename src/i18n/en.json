@@ -110,6 +110,8 @@
   "dont-forget-to-add-circuit-overseer-date": "For best results, add the date of the circuit overseer's visit to the \"{ congregationMeetings }\" section in { settings }.",
   "download-status": "Download status",
   "drag-and-drop-or-click-to-browse": "Drag and drop files here or click to browse.",
+  "enableCacheAutoClear": "Enable automatic cache clearing",
+  "enableCacheAutoClear-explain": "When enabled, the app will automatically clear unused cached files on a regular basis. This helps to free up disk space and keep the cache size manageable.",
   "enableExtraCache": "Cache songbook video files",
   "enableExtraCache-explain": "Cache all songbook videos to improve performance. Note that this will increase the size of the media cache.",
   "enableFolderWatcher": "Enable extra media folder monitoring",

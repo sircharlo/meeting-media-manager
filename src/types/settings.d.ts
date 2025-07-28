@@ -173,6 +173,7 @@ export interface SettingsValues {
   coWeek: `${number}/${number}/${number}` | null;
   darkMode: 'auto' | boolean;
   disableMediaFetching: boolean;
+  enableCacheAutoClear: boolean;
   enableExtraCache: boolean;
   enableFolderWatcher: boolean;
   enableKeyboardShortcuts: boolean;
