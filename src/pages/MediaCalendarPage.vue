@@ -669,6 +669,13 @@ onMounted(() => {
   }
   checkCoDate();
   checkMemorialDate();
+
+  watch(
+    () => urlVariables.value.mediator,
+    () => {
+      fetchMedia();
+    },
+  );
 });
 
 const { post: postCustomBackground } = useBroadcastChannel<string, string>({
@@ -678,13 +685,6 @@ const { post: postCustomBackground } = useBroadcastChannel<string, string>({
 watch(selectedDate, () => {
   checkMemorialDate();
 });
-
-watch(
-  () => urlVariables.value.mediator,
-  () => {
-    fetchMedia();
-  },
-);
 
 const addToFiles = async (files: (File | string)[] | FileList) => {
   if (!files) return;

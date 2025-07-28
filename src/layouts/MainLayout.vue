@@ -335,16 +335,33 @@ watch(
   },
 );
 
-watch(
+watchImmediate(
   () => [
     currentCongregation.value,
     currentSettings.value?.enableKeyboardShortcuts,
   ],
-  ([newCongregation, newEnableKeyboardShortcuts], [oldCongregation]) => {
-    if (newCongregation !== oldCongregation || !newEnableKeyboardShortcuts) {
+  ([newCongregation, newEnableKeyboardShortcuts], oldValues = []) => {
+    const [oldCongregation, oldEnableKeyboardShortcuts] = oldValues as [
+      string | undefined,
+      boolean | undefined,
+    ];
+    const congregationChanged = newCongregation !== oldCongregation;
+    const shortcutsToggled =
+      newEnableKeyboardShortcuts !== oldEnableKeyboardShortcuts;
+
+    // Only unregister if congregation changed OR shortcuts were disabled
+    if (
+      congregationChanged ||
+      (shortcutsToggled && !newEnableKeyboardShortcuts)
+    ) {
       unregisterAllCustomShortcuts();
     }
-    if (newEnableKeyboardShortcuts) {
+
+    // Register shortcuts if they're enabled (either initially or re-enabled)
+    if (
+      newEnableKeyboardShortcuts &&
+      (congregationChanged || shortcutsToggled)
+    ) {
       registerAllCustomShortcuts();
     }
   },

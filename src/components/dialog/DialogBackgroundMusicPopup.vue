@@ -130,7 +130,7 @@ const {
 
 // Constants
 const MEETING_STOP_BUFFER_SECONDS = 60; // Stop music 60 seconds before meeting
-const AUTO_START_WINDOW_HOURS = 2; // Auto-start within 2 hours of meeting
+const AUTO_START_WINDOW_HOURS = 1.25; // Auto-start within 1 hour 15 minutes of meeting
 const MEETING_DURATION_HOURS = 1.75; // Assume meeting lasts 1 hour 45 minutes
 
 // Music player setup
@@ -147,6 +147,8 @@ const {
 } = useMediaControls(musicPlayer, {
   src: musicPlayerSource,
 });
+
+const timeUntilMeeting = ref(remainingTimeBeforeMeetingStart());
 
 watch(
   () => [currentTime.value, currentState.selectedDateObject?.date],
@@ -168,7 +170,6 @@ const songList = ref<SongItem[]>([]);
 const wasStartedManually = ref(false); // Track if music was started manually
 
 // Time calculations - cleaner and more predictable
-const timeUntilMeeting = ref(remainingTimeBeforeMeetingStart());
 
 const isMeetingToday = computed(() => {
   return (

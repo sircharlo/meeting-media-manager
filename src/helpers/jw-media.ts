@@ -1,5 +1,6 @@
 import type {
   DatedTextItem,
+  DateInfo,
   DocumentItem,
   DownloadedFile,
   DynamicMediaObject,
@@ -392,7 +393,19 @@ export const fetchMedia = async () => {
           },
         ) || [],
       )
-    ).filter((day) => !!day);
+    )
+      .filter((day) => !!day)
+      .reduce((unique: DateInfo[], day) => {
+        const dateKey = day.date.toDateString();
+        if (
+          !unique.some(
+            (existing: DateInfo) => existing.date.toDateString() === dateKey,
+          )
+        ) {
+          unique.push(day);
+        }
+        return unique;
+      }, []);
 
     meetingsToFetch.forEach((day) => {
       day.error = false;
