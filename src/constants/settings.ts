@@ -442,7 +442,7 @@ export const defaultSettings: SettingsValues = {
   coWeek: null,
   darkMode: 'auto',
   disableMediaFetching: false,
-  enableCacheAutoClear: false,
+  enableCacheAutoClear: true,
   enableExtraCache: false,
   enableFolderWatcher: false,
   enableKeyboardShortcuts: false,
