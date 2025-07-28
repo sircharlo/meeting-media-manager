@@ -362,50 +362,124 @@ export const fetchMedia = async () => {
       return;
     }
 
+    const dedupeDays = (days: DateInfo[]) => {
+      try {
+        const dayMap = new Map<string, DateInfo>();
+
+        for (const day of days) {
+          const dateKey = new Date(day.date).toISOString().split('T')[0]; // Use yyyy-mm-dd format as key
+          if (!dateKey) continue;
+
+          if (!dayMap.has(dateKey)) {
+            dayMap.set(dateKey, day);
+          } else {
+            const existing = dayMap.get(dateKey);
+            if (!existing) continue;
+
+            const preferCurrent =
+              (day.complete && !day.error) ||
+              (!existing.complete && existing.error && day.error);
+
+            if (preferCurrent) {
+              dayMap.set(dateKey, day);
+            }
+          }
+        }
+
+        return Array.from(dayMap.values());
+      } catch (error) {
+        errorCatcher(error);
+        return days;
+      }
+    };
+
+    const rawDays =
+      jwStore.lookupPeriod[currentStateStore.currentCongregation] || [];
+    const uniqueDays = dedupeDays(rawDays);
+
+    if (uniqueDays.length !== rawDays.length) {
+      console.log(
+        `Dedupe reduced days from ${rawDays.length} to ${uniqueDays.length}`,
+      );
+      jwStore.lookupPeriod[currentStateStore.currentCongregation] = uniqueDays;
+    }
+
     const meetingsToFetch = (
       await Promise.all(
         jwStore.lookupPeriod[currentStateStore.currentCongregation]?.map(
-          async (day) => {
+          async (day, index) => {
+            // console.log(`\nChecking day at index ${index}:`, day);
+
+            // Condition 1: Incomplete or error meeting
             const hasIncompleteOrErrorMeeting =
               day.meeting && (!day.complete || day.error);
+            if (hasIncompleteOrErrorMeeting) {
+              console.log('🔍 Incomplete or error meeting detected:', {
+                complete: day.complete,
+                error: day.error,
+                meeting: day.meeting,
+              });
+            }
 
-            const hasMissingMediaFile = (
-              await Promise.all(
-                day.dynamicMedia.map(
-                  async (media) =>
-                    !media?.children?.length &&
-                    media?.source === 'dynamic' &&
-                    media?.fileUrl &&
-                    !(await pathExists(fileUrlToPath(media.fileUrl))),
-                ),
-              )
-            ).includes(true);
+            // Condition 2: Missing media file
+            const missingMediaCheckResults = await Promise.all(
+              day.dynamicMedia.map(async (media, mediaIndex) => {
+                const shouldCheckFile =
+                  !media?.children?.length &&
+                  media?.source === 'dynamic' &&
+                  media?.fileUrl;
+                const fileExists =
+                  shouldCheckFile &&
+                  (await pathExists(fileUrlToPath(media.fileUrl)));
 
-            const hasDuplicates =
-              day.dynamicMedia.length >
-              new Set(day.dynamicMedia.map((m) => m.uniqueId)).size;
+                const isMissing = shouldCheckFile && !fileExists;
 
-            return hasIncompleteOrErrorMeeting ||
+                if (isMissing) {
+                  console.log(`❌ Missing media file at media[${mediaIndex}]`, {
+                    media,
+                  });
+                }
+
+                return isMissing;
+              }),
+            );
+
+            const hasMissingMediaFile = missingMediaCheckResults.includes(true);
+
+            // Condition 3: Duplicate `uniqueId`s in dynamicMedia
+            const uniqueIds = day.dynamicMedia.map((m) => m.uniqueId);
+            const hasDuplicates = uniqueIds.length > new Set(uniqueIds).size;
+
+            if (hasDuplicates) {
+              console.log('⚠️ Duplicate uniqueIds found:', {
+                totalCount: uniqueIds.length,
+                uniqueCount: new Set(uniqueIds).size,
+                uniqueIds,
+              });
+            }
+
+            // Summary for this day
+            const shouldRefresh =
+              hasIncompleteOrErrorMeeting ||
               hasMissingMediaFile ||
-              hasDuplicates
-              ? day
-              : null;
+              hasDuplicates;
+
+            if (shouldRefresh) {
+              console.log('✅ Day to be refreshed:', {
+                hasDuplicates,
+                hasIncompleteOrErrorMeeting,
+                hasMissingMediaFile,
+                index,
+              });
+              // } else {
+              //   console.log('✅ Day is clean.');
+            }
+
+            return shouldRefresh ? day : null;
           },
         ) || [],
       )
-    )
-      .filter((day) => !!day)
-      .reduce((unique: DateInfo[], day) => {
-        const dateKey = day.date.toDateString();
-        if (
-          !unique.some(
-            (existing: DateInfo) => existing.date.toDateString() === dateKey,
-          )
-        ) {
-          unique.push(day);
-        }
-        return unique;
-      }, []);
+    ).filter((day) => !!day);
 
     meetingsToFetch.forEach((day) => {
       day.error = false;
@@ -420,6 +494,11 @@ export const fetchMedia = async () => {
       queues.meetings[currentStateStore.currentCongregation]?.start();
     }
     const queue = queues.meetings[currentStateStore.currentCongregation];
+    if (meetingsToFetch.length) {
+      console.log('Fetching media for meetings:', {
+        meetings: meetingsToFetch,
+      });
+    }
     for (const day of meetingsToFetch) {
       try {
         queue
@@ -1568,6 +1647,7 @@ export const watchedItemMapper: (
 };
 
 export const getWeMedia = async (lookupDate: Date) => {
+  console.log('Getting weekend meeting media for date:', lookupDate);
   try {
     const currentStateStore = useCurrentStateStore();
     lookupDate = dateFromString(lookupDate);
@@ -1879,6 +1959,7 @@ export const getWeMedia = async (lookupDate: Date) => {
 };
 
 export const getMwMedia = async (lookupDate: Date) => {
+  console.log('Getting midweek meeting media for date:', lookupDate);
   try {
     const currentStateStore = useCurrentStateStore();
     lookupDate = dateFromString(lookupDate);
