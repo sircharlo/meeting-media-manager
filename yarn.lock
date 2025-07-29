@@ -1621,7 +1621,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@napi-rs/canvas@npm:^0.1.74":
+"@napi-rs/canvas@npm:^0.1.71":
   version: 0.1.74
   resolution: "@napi-rs/canvas@npm:0.1.74"
   dependencies:
@@ -10156,7 +10156,7 @@ __metadata:
     music-metadata: "npm:^11.7.1"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.1.0"
-    pdfjs-dist: "npm:^5.4.54"
+    pdfjs-dist: "npm:^5.3.93"
     pinia: "npm:^3.0.3"
     pinia-plugin-persistedstate: "npm:^4.4.1"
     pinia-shared-state: "npm:^1.0.1"
@@ -11607,15 +11607,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pdfjs-dist@npm:^5.4.54":
-  version: 5.4.54
-  resolution: "pdfjs-dist@npm:5.4.54"
+"pdfjs-dist@npm:^5.3.93":
+  version: 5.3.93
+  resolution: "pdfjs-dist@npm:5.3.93"
   dependencies:
-    "@napi-rs/canvas": "npm:^0.1.74"
+    "@napi-rs/canvas": "npm:^0.1.71"
   dependenciesMeta:
     "@napi-rs/canvas":
       optional: true
-  checksum: 10c0/7f709185439351457c646e63ea19c42dbc4752fb2a61dd57857d1882f6f066bf3da4b4534a29aa0b4a218ffd9f751d9ad54e247772f90d0a2a1ed11648b4287b
+  checksum: 10c0/4956f1ef76cbf35f77ca2341b5bb83de4bdd95c10bb7b3f2472f51cf302da1f3d2f734a991b4a7935a61528c11f83051ff8ccd1333bf8d5e506a464fc3bd708a
   languageName: node
   linkType: hard
 
