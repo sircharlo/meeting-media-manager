@@ -47,7 +47,11 @@ import NavDrawer from 'components/ui/NavDrawer.vue';
 import { storeToRefs } from 'pinia';
 import { useMeta, useQuasar } from 'quasar';
 import { SORTER } from 'src/constants/general';
-import { cleanCache, cleanPersistedStores } from 'src/helpers/cleanup';
+import {
+  cleanCache,
+  cleanPersistedStores,
+  deleteCacheFiles,
+} from 'src/helpers/cleanup';
 import {
   remainingTimeBeforeMeetingStart,
   updateLookupPeriod,
@@ -186,6 +190,20 @@ watch(currentCongregation, (newCongregation, oldCongregation) => {
       downloadProgress.value = {};
       updateLookupPeriod();
       downloadBackgroundMusic();
+
+      if (currentSettings.value?.enableCacheAutoClear) {
+        console.log(
+          'Clearing cache files automatically based on user settings...',
+        );
+        deleteCacheFiles('smart')
+          .then(() => {
+            console.log('Cache files cleared successfully');
+          })
+          .catch((error) => {
+            errorCatcher(error);
+          });
+      }
+
       if (queues.meetings[newCongregation]) {
         queues.meetings[newCongregation].start();
       }

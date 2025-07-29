@@ -173,6 +173,7 @@ export interface SettingsValues {
   coWeek: `${number}/${number}/${number}` | null;
   darkMode: 'auto' | boolean;
   disableMediaFetching: boolean;
+  enableCacheAutoClear: boolean;
   enableExtraCache: boolean;
   enableFolderWatcher: boolean;
   enableKeyboardShortcuts: boolean;
@@ -214,6 +215,7 @@ export interface SettingsValues {
   obsPort: null | string;
   obsPostponeImages: boolean;
   obsQuickToggle: boolean;
+  obsRememberPreviouslyUsedScene: boolean;
   obsSwitchSceneAfterMedia: boolean;
   shortcutMediaNext: null | string;
   shortcutMediaPauseResume: null | string;

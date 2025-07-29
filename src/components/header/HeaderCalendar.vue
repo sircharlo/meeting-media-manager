@@ -4,6 +4,11 @@
   <DialogRemoteVideo v-model="remoteVideoPopup" :section="section" />
   <DialogStudyBible v-model="studyBiblePopup" :section="section" />
   <DialogAudioBible v-model="audioBiblePopup" :section="section" />
+  <DialogJwPlaylist
+    v-model="jwPlaylistPopup"
+    :jw-playlist-path="jwPlaylistPath"
+    :section="section"
+  />
   <transition
     appear
     enter-active-class="animated fadeIn"
@@ -246,7 +251,8 @@ import type { QMenu } from 'quasar';
 import type { MediaSection } from 'src/types';
 
 import { useEventListener } from '@vueuse/core';
-import DialogAudioBible from 'components//dialog/DialogAudioBible.vue';
+import DialogAudioBible from 'components/dialog/DialogAudioBible.vue';
+import DialogJwPlaylist from 'components/dialog/DialogJwPlaylist.vue';
 import DialogRemoteVideo from 'components/dialog/DialogRemoteVideo.vue';
 import DialogStudyBible from 'components/dialog/DialogStudyBible.vue';
 import PublicTalkMediaPicker from 'components/media/PublicTalkMediaPicker.vue';
@@ -296,6 +302,8 @@ const datePickerActive = ref(false);
 const remoteVideoPopup = ref(false);
 const studyBiblePopup = ref(false);
 const audioBiblePopup = ref(false);
+const jwPlaylistPopup = ref(false);
+const jwPlaylistPath = ref('');
 
 const openFileImportDialog = () => {
   window.dispatchEvent(
@@ -435,6 +443,15 @@ const openSongPicker = (newSection?: MediaSection) => {
   chooseSong.value = true;
 };
 
+const openJwPlaylistPicker = (
+  newSection?: MediaSection,
+  playlistPath?: string,
+) => {
+  section.value = newSection;
+  jwPlaylistPath.value = playlistPath || '';
+  jwPlaylistPopup.value = true;
+};
+
 useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
   window,
   'openSongPicker',
@@ -445,6 +462,17 @@ useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
   window,
   'openImportMenu',
   (e) => openImportMenu(e.detail?.section),
+  { passive: true },
+);
+useEventListener<
+  CustomEvent<{
+    jwPlaylistPath: string;
+    section: MediaSection | undefined;
+  }>
+>(
+  window,
+  'openJwPlaylistPicker',
+  (e) => openJwPlaylistPicker(e.detail?.section, e.detail?.jwPlaylistPath),
   { passive: true },
 );
 

@@ -149,11 +149,7 @@ import {
   fetchMedia,
   getMemorialBackground,
 } from 'src/helpers/jw-media';
-import {
-  decompressJwpub,
-  getMediaFromJwPlaylist,
-  showMediaWindow,
-} from 'src/helpers/mediaPlayback';
+import { decompressJwpub, showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
@@ -206,7 +202,7 @@ const route = useRoute();
 const router = useRouter();
 
 const jwStore = useJwStore();
-const { addToAdditionMediaMap, showHiddenMediaForSelectedDate } = jwStore;
+const { showHiddenMediaForSelectedDate } = jwStore;
 const { lookupPeriod, urlVariables } = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
 const {
@@ -229,8 +225,6 @@ const {
 } = storeToRefs(currentState);
 const obsState = useObsStateStore();
 const { obsConnectionState } = storeToRefs(obsState);
-
-const { getDatedAdditionalMediaDirectory } = currentState;
 
 const totalFiles = ref(0);
 const currentFile = ref(0);
@@ -640,6 +634,29 @@ useEventListener<
   },
   { passive: true },
 );
+useEventListener<
+  CustomEvent<{
+    jwPlaylistPath: string;
+    section: MediaSection | undefined;
+  }>
+>(
+  window,
+  'openJwPlaylistDialog',
+  (e) => {
+    window.dispatchEvent(
+      new CustomEvent<{
+        jwPlaylistPath: string;
+        section: MediaSection | undefined;
+      }>('openJwPlaylistPicker', {
+        detail: {
+          jwPlaylistPath: e.detail?.jwPlaylistPath,
+          section: e.detail?.section,
+        },
+      }),
+    );
+  },
+  { passive: true },
+);
 
 const checkMemorialDate = async () => {
   let bg: string | undefined = currentState.mediaWindowCustomBackground;
@@ -852,23 +869,17 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
           }
         }
       } else if (isJwPlaylist(filepath) && selectedDateObject.value) {
-        const additionalMedia = await getMediaFromJwPlaylist(
-          filepath,
-          selectedDateObject.value?.date,
-          await getDatedAdditionalMediaDirectory(),
-        ).catch((error) => {
-          throw error;
-        });
-        addToAdditionMediaMap(
-          additionalMedia,
-          sectionToAddTo.value,
-          currentState.currentCongregation,
-          selectedDateObject.value,
-          isCoWeek(selectedDateObject.value?.date),
-        );
-        additionalMedia.filter(
-          (m) =>
-            m.customDuration && (m.customDuration.max || m.customDuration.min),
+        // Show playlist selection dialog
+        window.dispatchEvent(
+          new CustomEvent<{
+            jwPlaylistPath: string;
+            section: MediaSection | undefined;
+          }>('openJwPlaylistDialog', {
+            detail: {
+              jwPlaylistPath: filepath,
+              section: sectionToAddTo.value,
+            },
+          }),
         );
       } else if (isArchive(filepath)) {
         const unzipDirectory = join(await getTempPath(), basename(filepath));
