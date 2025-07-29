@@ -70,7 +70,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Create draft release
         id: create_release
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@v1.18.0
         with:
           name: ${{ needs.bump-version.outputs.newTag }}
           tag: ${{ needs.bump-version.outputs.newTag }}
@@ -140,4 +140,4 @@ jobs:
           keep_latest_days: '2'
           include: '*beta*'
           include_draft: 'false'
-          dry-run: 'true'
+          dry-run: 'false'
