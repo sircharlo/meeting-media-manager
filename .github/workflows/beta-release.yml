@@ -21,7 +21,7 @@ jobs:
       - id: set-msg
         name: Set commit message variable
         run: |
-          commitMessages=$(git log $(git describe --tags --abbrev=0)..@ --pretty=format:"%s" --no-merges | sed '/chore/d' | sed '/docs/d' | sed '/style/d' | sed '/test/d' | sed '/ci/d' | sed '/build/d' | sed '/refactor/d' | sed '2,$d')
+          commitMessages=$(git log "$(git describe --tags --abbrev=0)..HEAD" --pretty=format:"%s" --no-merges | grep -E '^(feat|fix|chore|perf|docs):')
           echo "msg=${commitMessages}"
           echo "msg=${commitMessages}" >> $GITHUB_OUTPUT
   bump-version:
@@ -128,7 +128,7 @@ jobs:
       contents: write
     steps:
       - name: Delete older beta releases
-        uses: wow-actions/delete-stale-releases@v1
+        uses: wow-actions/delete-stale-releases@v1.3.0
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           keep_latest_count: '2'
