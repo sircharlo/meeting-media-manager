@@ -22,8 +22,13 @@ jobs:
         name: Set commit message variable
         run: |
           commitMessages=$(git log "$(git describe --tags --abbrev=0)..HEAD" --pretty=format:"%s" --no-merges | grep -E '^(feat|fix|chore|perf|docs):')
-          echo "msg=${commitMessages}"
+          echo "Raw commit messages:"
+          echo "$commitMessages"
+          commitMessages="${commitMessages//'%'/'%25'}"
+          commitMessages="${commitMessages//$'\n'/'%0A'}"
+          commitMessages="${commitMessages//$'\r'/'%0D'}"
           echo "msg=${commitMessages}" >> $GITHUB_OUTPUT
+
   bump-version:
     name: Bump version
     needs: get-commit
