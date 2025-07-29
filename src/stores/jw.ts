@@ -394,7 +394,7 @@ export const useJwStore = defineStore('jw-store', {
 
         const results = await Promise.allSettled(promises);
 
-        const { default: sanitizeHtml } = await import('sanitize-html');
+        const { default: DOMPurify } = await import('dompurify');
         for (const result of results) {
           if (result.status === 'fulfilled') {
             const { wtlocale, yeartext } = result.value;
@@ -403,9 +403,9 @@ export const useJwStore = defineStore('jw-store', {
                 this.yeartexts[year] = {};
               }
 
-              this.yeartexts[year][wtlocale] = sanitizeHtml(yeartext, {
-                allowedAttributes: { p: ['class'] },
-                allowedTags: ['b', 'i', 'em', 'strong', 'p'],
+              this.yeartexts[year][wtlocale] = DOMPurify.sanitize(yeartext, {
+                ALLOWED_ATTR: ['class'],
+                ALLOWED_TAGS: ['b', 'i', 'em', 'strong', 'p'],
               });
             }
           }

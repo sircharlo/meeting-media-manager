@@ -22,6 +22,10 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 import { toRaw } from 'vue';
 
+const { fs, getAppDataPath, path } = window.electronApi;
+const { exists } = fs;
+const { join } = path;
+
 interface Store {
   displayCameraId: null | string;
   migrations: string[];
@@ -85,11 +89,11 @@ export const useAppSettingsStore = defineStore('app-settings', {
         };
 
         if (type === 'firstRun') {
-          const oldVersionPath = window.electronApi.path.join(
-            await window.electronApi.getAppDataPath(),
+          const oldVersionPath = join(
+            await getAppDataPath(),
             'meeting-media-manager',
           );
-          if (await window.electronApi.fs.exists(oldVersionPath)) {
+          if (await exists(oldVersionPath)) {
             const oldPrefsPaths = await getOldPrefsPaths(oldVersionPath);
             await Promise.allSettled(
               oldPrefsPaths.map(async (oldPrefsPath) => {

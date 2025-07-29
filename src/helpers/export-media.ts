@@ -11,6 +11,10 @@ import { isJwPlaylist, isVideo } from 'src/utils/media';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
+const { createVideoFromNonVideo, fileUrlToPath, fs, path } = window.electronApi;
+const { copy, ensureDir, exists, readdir, remove, stat } = fs;
+const { basename, extname, join } = path;
+
 export const addDayToExportQueue = async (targetDate?: Date) => {
   if (!folderExportQueue) {
     const { default: PQueue } = await import('p-queue');
@@ -64,13 +68,13 @@ const exportDayToFolder = async (targetDate?: Date) => {
 
   const dayMediaLength = dynamicMediaFiltered.length;
 
-  const destFolder = window.electronApi.path.join(
+  const destFolder = join(
     currentStateStore.currentSettings.mediaAutoExportFolder,
     dateFolderName,
   );
 
   try {
-    await window.electronApi.fs.ensureDir(destFolder);
+    await ensureDir(destFolder);
   } catch (error) {
     errorCatcher(error);
     return; // Exit early if we can't create the folder
@@ -84,12 +88,8 @@ const exportDayToFolder = async (targetDate?: Date) => {
     try {
       const m = dynamicMediaFiltered[i];
       if (!m) continue;
-      let sourceFilePath = window.electronApi.fileUrlToPath(m.fileUrl);
-      if (
-        !sourceFilePath ||
-        !(await window.electronApi.fs.exists(sourceFilePath))
-      )
-        continue;
+      let sourceFilePath = fileUrlToPath(m.fileUrl);
+      if (!sourceFilePath || !(await exists(sourceFilePath))) continue;
 
       if (
         !isVideo(sourceFilePath) &&
@@ -98,11 +98,10 @@ const exportDayToFolder = async (targetDate?: Date) => {
       ) {
         try {
           const ffmpegPath = await setupFFmpeg();
-          const convertedFilePath =
-            await window.electronApi.createVideoFromNonVideo(
-              sourceFilePath,
-              ffmpegPath,
-            );
+          const convertedFilePath = await createVideoFromNonVideo(
+            sourceFilePath,
+            ffmpegPath,
+          );
           sourceFilePath = convertedFilePath;
         } catch (error) {
           errorCatcher(error);
@@ -119,25 +118,21 @@ const exportDayToFolder = async (targetDate?: Date) => {
         ? `${(i18n.global.t as (key: string) => string)(m.tag.type)} ${m.tag.value}`
         : null;
       const mediaTitle = m.title
-        ? sanitize(
-            m.title.replace(
-              window.electronApi.path.extname(sourceFilePath),
-              '',
-            ),
-          ) + window.electronApi.path.extname(sourceFilePath)
-        : window.electronApi.path.basename(sourceFilePath);
+        ? sanitize(m.title.replace(extname(sourceFilePath), '')) +
+          extname(sourceFilePath)
+        : basename(sourceFilePath);
       const destFilePath = trimFilepathAsNeeded(
-        window.electronApi.path.join(
+        join(
           destFolder,
           `${sectionPrefix}-${mediaPrefix}${mediaTag ? ` - ${mediaTag} - ` : ' '}${mediaTitle}`,
         ),
       );
-      const fileBaseName = window.electronApi.path.basename(destFilePath);
+      const fileBaseName = basename(destFilePath);
 
       // Check if destination file exists and matches size
-      if (await window.electronApi.fs.exists(destFilePath)) {
-        const sourceStats = await window.electronApi.fs.stat(sourceFilePath);
-        const destStats = await window.electronApi.fs.stat(destFilePath);
+      if (await exists(destFilePath)) {
+        const sourceStats = await stat(sourceFilePath);
+        const destStats = await stat(destFilePath);
 
         if (sourceStats.size === destStats.size) {
           expectedFiles.add(fileBaseName); // Mark as expected without copying
@@ -147,23 +142,19 @@ const exportDayToFolder = async (targetDate?: Date) => {
 
       // Copy file if it doesn't exist or size doesn't match
       expectedFiles.add(fileBaseName);
-      await window.electronApi.fs.copy(sourceFilePath, destFilePath);
+      await copy(sourceFilePath, destFilePath);
     } catch (error) {
       errorCatcher(error);
     }
   }
 
   try {
-    const filesInDestFolder = await window.electronApi.fs.readdir(destFolder);
+    const filesInDestFolder = await readdir(destFolder);
 
     await Promise.allSettled(
       filesInDestFolder
         .filter((f) => !expectedFiles.has(f))
-        .map((f) =>
-          window.electronApi.fs.remove(
-            window.electronApi.path.join(destFolder, f),
-          ),
-        ),
+        .map((f) => remove(join(destFolder, f))),
     );
   } catch (error) {
     errorCatcher(error);

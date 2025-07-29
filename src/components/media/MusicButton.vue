@@ -5,7 +5,7 @@
     :color="
       musicPopup
         ? 'white'
-        : !(musicPlaying && musicStopping)
+        : !(musicPlaying && musicState === 'music.stopping')
           ? 'white-transparent'
           : 'negative'
     "
@@ -14,7 +14,7 @@
     :style="musicPlaying ? 'min-width: 110px;' : ''"
     :text-color="
       musicPopup
-        ? !(musicPlaying && musicStopping)
+        ? !(musicPlaying && musicState === 'music.stopping')
           ? 'primary'
           : 'negative'
         : ''
@@ -23,12 +23,8 @@
     @click="musicPopup = !musicPopup"
   >
     <q-icon name="mmm-music-note" />
-    <div v-if="musicPlaying || musicStarting" class="q-ml-sm">
-      {{
-        musicRemainingTime.includes('music.')
-          ? t(musicRemainingTime)
-          : musicRemainingTime
-      }}
+    <div v-if="musicPlaying || musicState === 'music.starting'" class="q-ml-sm">
+      {{ musicButtonStatusText }}
     </div>
 
     <q-tooltip v-if="!musicPopup" :delay="1000" :offset="[14, 22]">
@@ -44,13 +40,18 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const currentState = useCurrentStateStore();
-const {
-  currentSettings,
-  musicPlaying,
-  musicRemainingTime,
-  musicStarting,
-  musicStopping,
-} = storeToRefs(currentState);
+const { currentSettings } = storeToRefs(currentState);
+
+defineProps<{
+  musicButtonStatusText?: string;
+  musicPlaying?: boolean;
+  musicState?:
+    | ''
+    | 'music.error'
+    | 'music.playing'
+    | 'music.starting'
+    | 'music.stopping';
+}>();
 
 const musicPopup = defineModel<boolean>({ required: true });
 </script>

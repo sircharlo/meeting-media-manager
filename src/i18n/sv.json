@@ -262,7 +262,7 @@
   "noDownloadsInProgress": "Inga nedladdningar pågår just nu",
   "noName": "Inget namn",
   "none": "Inget",
-  "not-playing": "Inget spelas",
+  "music.not-playing": "Inget spelas",
   "notice-the-yeartext-is-now-being-displayed-on-the-external-monitor-but-lets-keep-going": "Du kommer att märka att årstexten nu visas på den externa skärmen! Men låt oss fortsätta.",
   "obs-studio-disconnected-banner": "M³ kan inte ansluta till OBS Studio. Se till att OBS Studio körs och är korrekt inställd.",
   "obs-studio-integration": "OBS Studio integration",

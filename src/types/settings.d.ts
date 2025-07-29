@@ -173,6 +173,7 @@ export interface SettingsValues {
   coWeek: `${number}/${number}/${number}` | null;
   darkMode: 'auto' | boolean;
   disableMediaFetching: boolean;
+  enableCacheAutoClear: boolean;
   enableExtraCache: boolean;
   enableFolderWatcher: boolean;
   enableKeyboardShortcuts: boolean;
@@ -199,6 +200,7 @@ export interface SettingsValues {
   meetingScheduleChangeOnce: boolean;
   meetingScheduleChangeWeDay: `${number}` | null;
   meetingScheduleChangeWeStartTime: `${number}:${number}` | null;
+  meetingStopBufferSeconds: number;
   memorialDate: `${number}/${number}/${number}` | null;
   meteredConnection: boolean;
   musicVolume: number;
@@ -213,6 +215,7 @@ export interface SettingsValues {
   obsPort: null | string;
   obsPostponeImages: boolean;
   obsQuickToggle: boolean;
+  obsRememberPreviouslyUsedScene: boolean;
   obsSwitchSceneAfterMedia: boolean;
   shortcutMediaNext: null | string;
   shortcutMediaPauseResume: null | string;

@@ -5,17 +5,21 @@ import { defaultSettings } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { kebabToCamelCase } from 'src/utils/general';
 
+const { fs, path, readdir } = window.electronApi;
+const { readJSON } = fs;
+const { basename, join } = path;
+
 export const getOldPrefsPaths = async (oldPath: string) => {
   try {
     if (!oldPath) return [];
     const filePaths: string[] = [];
-    const items = await window.electronApi.readdir(oldPath);
+    const items = await readdir(oldPath);
     for (const item of items) {
-      const filePath = window.electronApi.path.join(oldPath, item.name);
+      const filePath = join(oldPath, item.name);
       if (
         item.isFile &&
-        window.electronApi.path.basename(filePath).startsWith('prefs') &&
-        window.electronApi.path.basename(filePath).endsWith('.json')
+        basename(filePath).startsWith('prefs') &&
+        basename(filePath).endsWith('.json')
       ) {
         filePaths.push(filePath);
       }
@@ -32,7 +36,7 @@ export const parsePrefsFile: (path: string) => Promise<OldAppConfig> = async (
 ) => {
   try {
     return (
-      (await window.electronApi.fs.readJSON(path, {
+      (await readJSON(path, {
         encoding: 'utf8',
         throws: false,
       })) || {}

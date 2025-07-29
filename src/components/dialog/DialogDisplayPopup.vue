@@ -283,12 +283,13 @@ const {
   pathToFileURL,
   setScreenPreferences,
 } = window.electronApi;
+const { basename, join } = path;
 
 const { copyFile } = fs;
 
 const getBasename = (filename: string) => {
   if (!filename) return '';
-  return path.basename(filename);
+  return basename(filename);
 };
 
 const getFileUrlFromPath = (filepath: string) => {
@@ -330,7 +331,7 @@ const chooseCustomBackground = async (reset?: boolean) => {
               .map((multimediaItem) => {
                 return {
                   ...multimediaItem,
-                  FilePath: path.join(unzipDir, multimediaItem.FilePath),
+                  FilePath: join(unzipDir, multimediaItem.FilePath),
                 };
               });
             if (jwpubImages.value?.length === 0) {
@@ -338,10 +339,7 @@ const chooseCustomBackground = async (reset?: boolean) => {
             }
           } else if (filepath) {
             const tempDirectory = await getTempPath();
-            const tempFilepath = path.join(
-              tempDirectory,
-              path.basename(filepath),
-            );
+            const tempFilepath = join(tempDirectory, basename(filepath));
             await copyFile(filepath, tempFilepath);
             const workingTempFilepath =
               await convertImageIfNeeded(tempFilepath);
@@ -497,8 +495,12 @@ watch(
 
 watchImmediate(
   screenPreferences,
-  (newScreenPreferences) => {
+  (newScreenPreferences, oldScreenPreferences) => {
     try {
+      const noChange =
+        JSON.stringify(oldScreenPreferences) ===
+        JSON.stringify(newScreenPreferences);
+      if (noChange) return;
       setScreenPreferences(JSON.stringify(newScreenPreferences));
       moveMediaWindow(
         newScreenPreferences.preferredScreenNumber,

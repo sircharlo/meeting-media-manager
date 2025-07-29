@@ -47,7 +47,11 @@ import NavDrawer from 'components/ui/NavDrawer.vue';
 import { storeToRefs } from 'pinia';
 import { useMeta, useQuasar } from 'quasar';
 import { SORTER } from 'src/constants/general';
-import { cleanCache, cleanPersistedStores } from 'src/helpers/cleanup';
+import {
+  cleanCache,
+  cleanPersistedStores,
+  deleteCacheFiles,
+} from 'src/helpers/cleanup';
 import {
   remainingTimeBeforeMeetingStart,
   updateLookupPeriod,
@@ -73,6 +77,7 @@ import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
 import { formatDate, getSpecificWeekday, isInPast } from 'src/utils/date';
 import { kebabToCamelCase } from 'src/utils/general';
+import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
@@ -115,7 +120,7 @@ const router = useRouter();
 const { locale, t } = useI18n({ useScope: 'global' });
 
 // Store initializations
-// const congregationSettings = useCongregationSettingsStore();
+const congregationSettings = useCongregationSettingsStore();
 // congregationSettings.$subscribe((_, state) => {
 //   saveSettingsStoreToFile('congregations', state);
 // });
@@ -184,8 +189,21 @@ watch(currentCongregation, (newCongregation, oldCongregation) => {
       }
       downloadProgress.value = {};
       updateLookupPeriod();
-      registerAllCustomShortcuts();
       downloadBackgroundMusic();
+
+      if (currentSettings.value?.enableCacheAutoClear) {
+        console.log(
+          'Clearing cache files automatically based on user settings...',
+        );
+        deleteCacheFiles('smart')
+          .then(() => {
+            console.log('Cache files cleared successfully');
+          })
+          .catch((error) => {
+            errorCatcher(error);
+          });
+      }
+
       if (queues.meetings[newCongregation]) {
         queues.meetings[newCongregation].start();
       }
@@ -213,7 +231,6 @@ watch(online, (isNowOnline) => {
         currentState.currentLangObject,
       );
       jwStore.updateJwLanguages(online.value);
-      getJwMepsInfo();
     } else {
       // downloadQueue?.pause();
       meetingQueue?.pause();
@@ -295,7 +312,6 @@ watch(
     currentSettings.value?.enableSubtitles,
     currentSettings.value?.mwDay,
     currentSettings.value?.weDay,
-    currentSettings.value?.coWeek,
     currentSettings.value?.memorialDate,
     currentSettings.value?.meetingScheduleChangeDate,
     currentSettings.value?.meetingScheduleChangeOnce,
@@ -304,9 +320,75 @@ watch(
     currentSettings.value?.disableMediaFetching,
     currentSettings.value?.meteredConnection,
   ],
-  ([newCurrentCongregation], [oldCurrentCongregation]) => {
+  (newValues, oldValues) => {
+    // Skip if this is the initial run (oldValues is undefined)
+    if (!oldValues) return;
+
+    const [newCongregation, ...newSettings] = newValues;
+    const [oldCongregation, ...oldSettings] = oldValues;
+
+    // Only trigger if congregation hasn't changed but other settings have
+    if (newCongregation === oldCongregation) {
+      const settingsChanged = newSettings.some(
+        (newSetting, index) => newSetting !== oldSettings[index],
+      );
+
+      if (settingsChanged) {
+        console.log(
+          '⚙️ Settings changed (congregation unchanged), updating lookup period',
+        );
+        updateLookupPeriod(true);
+      }
+    }
+  },
+);
+
+watch(
+  () => [currentCongregation.value, currentSettings.value?.coWeek],
+  (
+    [newCurrentCongregation, newCoWeek],
+    [oldCurrentCongregation, oldCoWeek],
+  ) => {
+    // Skip if this is the initial run (oldValues is undefined)
+    if (!oldCurrentCongregation) {
+      return;
+    }
+
+    console.log('👁️ CO Week watcher triggered:', {
+      congregation: {
+        new: newCurrentCongregation,
+        old: oldCurrentCongregation,
+      },
+      coWeek: { new: newCoWeek, old: oldCoWeek },
+    });
+
     if (newCurrentCongregation === oldCurrentCongregation) {
-      updateLookupPeriod(true);
+      console.log('🏢 Congregation unchanged, checking CO week changes...');
+
+      const weeksToUpdate = [newCoWeek, oldCoWeek].filter((week) => !!week);
+
+      if (weeksToUpdate.length === 0) {
+        console.log('📅 No valid CO weeks to update');
+        return;
+      }
+
+      console.log(
+        `📅 Updating ${weeksToUpdate.length} CO week(s):`,
+        weeksToUpdate,
+      );
+
+      for (const changedWeek of weeksToUpdate) {
+        if (!changedWeek) continue;
+        console.log(`🎯 Updating lookup period for CO week: ${changedWeek}`);
+        updateLookupPeriod(true, {
+          onlyForWeekIncluding: changedWeek,
+          targeted: true,
+        });
+      }
+
+      console.log('✅ CO week updates completed');
+    } else {
+      console.log('🏢 Congregation changed, skipping CO week update');
     }
   },
 );
@@ -335,17 +417,34 @@ watch(
   },
 );
 
-watch(
+watchImmediate(
   () => [
     currentCongregation.value,
     currentSettings.value?.enableKeyboardShortcuts,
   ],
-  ([newCongregation, newEnableKeyboardShortcuts], [oldCongregation]) => {
-    if (newCongregation !== oldCongregation || !newEnableKeyboardShortcuts) {
-      unregisterAllCustomShortcuts();
-    }
-    if (newEnableKeyboardShortcuts) {
+  ([newCongregation, newEnableKeyboardShortcuts], oldValues = []) => {
+    const [oldCongregation, oldEnableKeyboardShortcuts] = oldValues as [
+      string | undefined,
+      boolean | undefined,
+    ];
+    const congregationChanged =
+      !(!newCongregation && !oldCongregation) &&
+      newCongregation !== oldCongregation;
+    const shortcutsToggled =
+      newEnableKeyboardShortcuts !== oldEnableKeyboardShortcuts;
+
+    const shouldUnregister =
+      congregationChanged || (shortcutsToggled && !newEnableKeyboardShortcuts);
+
+    const shouldRegister =
+      newEnableKeyboardShortcuts && (congregationChanged || shortcutsToggled);
+
+    if (shouldRegister) {
+      // This will internally call unregisterAllCustomShortcuts
       registerAllCustomShortcuts();
+    } else if (shouldUnregister) {
+      // Only call unregisterAllCustomShortcuts directly if we’re NOT going to register
+      unregisterAllCustomShortcuts();
     }
   },
 );
@@ -435,7 +534,6 @@ bcClose.onmessage = (event) => {
       !!selectedDateObject.value?.today && !!selectedDateObject.value?.meeting;
     if (
       (mediaPlaying.value ||
-        currentState.musicPlaying ||
         (currentCongregation.value && // a congregation is selected
           !currentSettings.value?.disableMediaFetching && // media fetching is enabled
           meetingDay && // today is a meeting day
@@ -533,6 +631,7 @@ const removeListenersLocal = () => {
 };
 
 onMounted(() => {
+  congregationSettings.updateCongregationsWithMissingSettings();
   if (!currentSettings.value) navigateToCongregationSelector();
   initListeners();
 });
@@ -541,17 +640,43 @@ onBeforeUnmount(() => {
   removeListenersLocal();
 });
 
+const previousState = ref<{
+  base: string | undefined;
+  mediator: string | undefined;
+  wasOnline: boolean;
+}>({
+  base: undefined,
+  mediator: undefined,
+  wasOnline: false,
+});
+
 watchImmediate(
-  () => [
+  (): [string | undefined, string | undefined, boolean] => [
     jwStore.urlVariables?.base,
     jwStore.urlVariables?.mediator,
     currentState.online,
   ],
-  () => {
-    if (currentState.online) {
-      setElementFont('JW-Icons');
+  ([base, mediator, online]: [
+    string | undefined,
+    string | undefined,
+    boolean,
+  ]) => {
+    const prev = previousState.value;
+
+    // Only get fonts and MEPS info if:
+    // 1. Coming online for the first time (!prev.wasOnline && online)
+    // 2. URL variables changed while online
+    const shouldRun =
+      (!prev.wasOnline && online) ||
+      (online && (prev.base !== base || prev.mediator !== mediator));
+
+    if (shouldRun) {
       getJwMepsInfo();
+      setElementFont('JW-Icons');
     }
+
+    // Update previous state
+    previousState.value = { base, mediator, wasOnline: online };
   },
 );
 </script>

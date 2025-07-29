@@ -1,26 +1,16 @@
 <template>
   <q-page
-    :class="
-      !selectedDateObject?.dynamicMedia?.filter((m) => !m.hidden).length
-        ? 'flex'
-        : ''
-    "
     padding
     @dragenter="dropActive"
     @dragover="dropActive"
     @dragstart="dropActive"
   >
-    <div class="col">
-      {{ selectedDateObject?.customSections }}
+    <pre>{{
+      selectedDateObject?.dynamicMedia.map((item) => item.uniqueId)
+    }}</pre>
+    <div v-if="showBannerColumn" class="col">
       <q-slide-transition>
-        <div
-          v-if="
-            currentSettings?.obsEnable &&
-            ['disconnected', 'notConnected'].includes(obsConnectionState) &&
-            selectedDateObject?.today
-          "
-          class="row"
-        >
+        <div v-if="showObsBanner" class="row">
           <q-banner
             class="bg-negative text-white full-width"
             inline-actions
@@ -34,7 +24,7 @@
         </div>
       </q-slide-transition>
       <q-slide-transition>
-        <div v-if="someItemsHiddenForSelectedDate" class="row">
+        <div v-if="showHiddenItemsBanner" class="row">
           <q-banner
             class="bg-warning text-white full-width"
             inline-actions
@@ -62,7 +52,7 @@
         </div>
       </q-slide-transition>
       <q-slide-transition>
-        <div v-if="duplicateSongsForWeMeeting" class="row">
+        <div v-if="showDuplicateSongsBanner" class="row">
           <q-banner
             class="bg-warning text-white full-width"
             inline-actions
@@ -78,60 +68,42 @@
         </div>
       </q-slide-transition>
       <MediaEmptyState
-        v-if="
-          (currentSettings?.disableMediaFetching &&
-            (selectedDateObject?.dynamicMedia?.length || 0) < 1) ||
-          (!currentSettings?.disableMediaFetching &&
-            ((selectedDateObject?.meeting && !selectedDateObject?.complete) ||
-              (!selectedDateObject?.customSections?.length &&
-                !selectedDateObject?.dynamicMedia?.filter((m) => !m.hidden)
-                  .length)))
-        "
+        v-if="showEmptyState"
         :go-to-next-day-with-media="goToNextDayWithMedia"
         :open-import-menu="openImportMenu"
       />
-      <template
-        v-for="mediaList in mediaLists"
-        :key="
-          selectedDateObject?.date +
-          '-' +
-          mediaList.uniqueId +
-          '-' +
-          mediaList.items?.length
-        "
-        >{{
-          selectedDateObject?.date +
-          '-' +
-          mediaList.uniqueId +
-          '-' +
-          mediaList.items?.length
-        }}
-        <MediaList
-          :media-list="mediaList"
-          :open-import-menu="openImportMenu"
-          @update-media-section-bg-color="updateMediaSectionBgColor"
-          @update-media-section-label="updateMediaSectionLabel"
-        />
-      </template>
-      <q-btn
-        v-if="selectedDateObject && !selectedDateObject.meeting"
-        class="full-width dashed-border big-button"
-        color="accent-100"
-        icon="mmm-plus"
-        :label="t('new-section')"
-        text-color="primary"
-        unelevated
-        @click="addSection()"
-      />
-      <!-- <pre>
-      {{
-          selectedDateObject?.dynamicMedia
-            ?.filter((m) => !m.hidden)
-            .map((m) => [m.section, m.uniqueId])
-        }}
-    </pre
-      > -->
     </div>
+    <template
+      v-for="mediaList in mediaLists"
+      :key="
+        selectedDateObject?.date +
+        '-' +
+        mediaList.uniqueId +
+        '-' +
+        mediaList.items?.length
+      "
+    >
+      <!-- <pre>{{
+        { ...mediaList, items: 'total: ' + mediaList.items?.length }
+      }}</pre> -->
+      <MediaList
+        :ref="mediaListRefs[mediaList.uniqueId]"
+        :media-list="mediaList"
+        :open-import-menu="openImportMenu"
+        @update-media-section-bg-color="updateMediaSectionBgColor"
+        @update-media-section-label="updateMediaSectionLabel"
+      />
+    </template>
+    <q-btn
+      v-if="selectedDateObject && !selectedDateObject.meeting"
+      class="full-width dashed-border big-button"
+      color="accent-100"
+      icon="mmm-plus"
+      :label="t('new-section')"
+      text-color="primary"
+      unelevated
+      @click="addSection()"
+    />
     <DialogFileImport
       v-model="showFileImportDialog"
       v-model:jwpub-db="jwpubImportDb"
@@ -147,7 +119,9 @@
 <script setup lang="ts">
 import type {
   DocumentItem,
+  DynamicMediaObject,
   DynamicMediaSection,
+  DynamicMediaSectionConfig,
   MediaSectionIdentifier,
   TableItem,
 } from 'src/types';
@@ -169,6 +143,7 @@ import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
 import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { addDayToExportQueue } from 'src/helpers/export-media';
 import {
   addJwpubDocumentMediaToFiles,
   copyToDatedAdditionalMedia,
@@ -177,11 +152,7 @@ import {
   getMemorialBackground,
 } from 'src/helpers/jw-media';
 import { addSection } from 'src/helpers/media-sections';
-import {
-  decompressJwpub,
-  getMediaFromJwPlaylist,
-  showMediaWindow,
-} from 'src/helpers/mediaPlayback';
+import { decompressJwpub, showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
@@ -211,7 +182,7 @@ import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
-import { computed, onMounted, ref, toRaw, watch } from 'vue';
+import { computed, onMounted, ref, type Ref, toRaw, unref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const showFileImportDialog = ref(false);
@@ -234,13 +205,14 @@ const route = useRoute();
 const router = useRouter();
 
 const jwStore = useJwStore();
-const { addToAdditionMediaMap, showHiddenMediaForSelectedDate } = jwStore;
+const { showHiddenMediaForSelectedDate } = jwStore;
 const { lookupPeriod, urlVariables } = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
 const {
   currentCongregation,
   currentSettings,
   getVisibleMediaForSection,
+  highlightedMediaId,
   mediaPaused,
   mediaPlaying,
   mediaPlayingAction,
@@ -257,8 +229,6 @@ const {
 const obsState = useObsStateStore();
 const { obsConnectionState } = storeToRefs(obsState);
 
-const { getDatedAdditionalMediaDirectory } = currentState;
-
 const totalFiles = ref(0);
 const currentFile = ref(0);
 
@@ -273,12 +243,12 @@ const {
   pathToFileURL,
   readdir,
 } = window.electronApi;
-
 const { ensureDir, exists, remove, writeFile } = fs;
+const { basename, join } = path;
 
 const mediaLists = computed<DynamicMediaSection[]>(() => {
   const selectedDate = selectedDateObject.value;
-  if (!selectedDate?.date || !selectedDate.complete) {
+  if (!selectedDate?.date || (selectedDate.meeting && !selectedDate.complete)) {
     return [];
   }
 
@@ -287,45 +257,49 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
   const isWeDay = isWeMeetingDay(date);
   const isCoWeekDay = isCoWeek(date);
 
-  const sectionConfigs = [
+  const sectionConfigs: DynamicMediaSectionConfig[] = [
     {
       condition: isWeDay,
       extraMediaShortcut: false,
       id: 'wt',
+      jwIcon: '',
       labelKey: 'wt',
     },
     {
       condition: isMwDay,
       extraMediaShortcut: false,
       id: 'tgw',
+      jwIcon: '',
       labelKey: 'tgw',
     },
     {
       condition: isMwDay,
       extraMediaShortcut: false,
       id: 'ayfm',
+      jwIcon: '',
       labelKey: 'ayfm',
     },
     {
       condition: isMwDay,
       extraMediaShortcut: true,
       id: 'lac',
+      jwIcon: '',
       labelKey: 'lac',
     },
     {
       condition: isCoWeekDay,
       extraMediaShortcut: true,
       id: 'circuitOverseer',
+      jwIcon: '',
       labelKey: 'circuit-overseer',
     },
   ] as const;
 
   const defaultSections: DynamicMediaSection[] = sectionConfigs
     .filter(({ condition }) => condition && isComplete)
-    .map(({ extraMediaShortcut = false, id, labelKey }) => ({
-      alwaysShow: true,
+    .map(({ extraMediaShortcut = false, id, jwIcon, labelKey }) => ({
       items: getVisibleMediaForSection.value[id] || [],
-      jwIcon: '',
+      jwIcon: jwIcon || '',
       label: t(labelKey),
       uniqueId: id,
       ...(extraMediaShortcut && { extraMediaShortcut: true }),
@@ -341,6 +315,20 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
   const result = [...customSections, ...defaultSections];
   return result;
 });
+
+// Refactored to use an object keyed by section uniqueId for safe lookup
+const mediaListRefs = computed<Record<string, Ref<null | typeof MediaList>>>(
+  () => {
+    const refs: Record<
+      MediaSectionIdentifier,
+      Ref<null | typeof MediaList>
+    > = {};
+    mediaLists.value.forEach((section) => {
+      refs[section.uniqueId as MediaSectionIdentifier] = ref(null);
+    });
+    return refs;
+  },
+);
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
   name: 'media-action',
@@ -468,9 +456,21 @@ watch(
   },
 );
 
+let mediaSceneTimeout: NodeJS.Timeout | null = null;
+const changeDelay = 600; // 600ms delay: "--animate-duration" = 300ms, "slow" = "--animate-duration" * 2
+
 watch(
   () => [mediaPlaying.value, mediaPaused.value, mediaPlayingUrl.value],
-  ([newMediaPlaying, newMediaPaused, newMediaPlayingUrl]) => {
+  (
+    [newMediaPlaying, newMediaPaused, newMediaPlayingUrl],
+    [, , oldMediaPlayingUrl],
+  ) => {
+    // Clear any existing timeout
+    if (mediaSceneTimeout) {
+      clearTimeout(mediaSceneTimeout);
+      mediaSceneTimeout = null;
+    }
+
     if (
       currentSettings.value?.obsPostponeImages &&
       newMediaPlaying &&
@@ -480,9 +480,28 @@ watch(
     ) {
       return;
     }
-    sendObsSceneEvent(
-      newMediaPaused ? 'camera' : newMediaPlaying ? 'media' : 'camera',
-    );
+
+    const targetScene = newMediaPaused
+      ? 'camera'
+      : newMediaPlaying
+        ? 'media'
+        : 'camera';
+    const wasPlayingBefore = !!oldMediaPlayingUrl;
+
+    if (targetScene === 'media') {
+      if (wasPlayingBefore) {
+        // If something was playing before, we change the scene immediately
+        sendObsSceneEvent('media');
+      } else {
+        // If nothing was already playing, we wait a bit before changing the scene to prevent seeing the fade effect in OBS
+        mediaSceneTimeout = setTimeout(() => {
+          sendObsSceneEvent('media');
+          mediaSceneTimeout = null;
+        }, changeDelay);
+      }
+    } else {
+      sendObsSceneEvent('camera');
+    }
   },
 );
 
@@ -622,6 +641,29 @@ useEventListener<
   },
   { passive: true },
 );
+useEventListener<
+  CustomEvent<{
+    jwPlaylistPath: string;
+    section: MediaSectionIdentifier | undefined;
+  }>
+>(
+  window,
+  'openJwPlaylistDialog',
+  (e) => {
+    window.dispatchEvent(
+      new CustomEvent<{
+        jwPlaylistPath: string;
+        section: MediaSectionIdentifier | undefined;
+      }>('openJwPlaylistPicker', {
+        detail: {
+          jwPlaylistPath: e.detail?.jwPlaylistPath,
+          section: e.detail?.section,
+        },
+      }),
+    );
+  },
+  { passive: true },
+);
 
 const checkMemorialDate = async () => {
   let bg: string | undefined = currentState.mediaWindowCustomBackground;
@@ -651,6 +693,13 @@ onMounted(() => {
   }
   checkCoDate();
   checkMemorialDate();
+
+  watch(
+    () => urlVariables.value.mediator,
+    () => {
+      fetchMedia();
+    },
+  );
 });
 
 const { post: postCustomBackground } = useBroadcastChannel<string, string>({
@@ -671,7 +720,6 @@ watch(
 watch(
   () => selectedDate.value,
   (newVal) => {
-    console.log('selectedDate.value', newVal);
     if (!newVal || !selectedDateObject.value) return;
     if (
       !selectedDateObject.value.customSections?.find(
@@ -683,7 +731,6 @@ watch(
       }
       const weMeetingDay = isWeMeetingDay(selectedDateObject.value.date);
       selectedDateObject.value.customSections.unshift({
-        alwaysShow: weMeetingDay,
         bgColor: 'rgb(148, 94, 181)',
         extraMediaShortcut: true,
         jwIcon: weMeetingDay ? '' : undefined,
@@ -708,7 +755,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         message:
           t('processing') +
           ' ' +
-          path.basename(getLocalPathFromFileObject(files[0])),
+          basename(getLocalPathFromFileObject(files[0])),
       });
     }
     const archiveFile = files.find((f) =>
@@ -721,7 +768,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         message:
           t('processing') +
           ' ' +
-          path.basename(getLocalPathFromFileObject(files[0])),
+          basename(getLocalPathFromFileObject(files[0])),
       });
     }
   }
@@ -731,7 +778,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
       if (!filepath) continue;
       // Check if file is remote URL; if so, download it
       if (isRemoteFile(file)) {
-        const baseFileName = path.basename(new URL(filepath).pathname);
+        const baseFileName = basename(new URL(filepath).pathname);
         filepath = (
           await downloadFileIfNeeded({
             dir: await getTempPath(),
@@ -746,7 +793,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         const [preamble, data] = filepath.split(';base64,');
         const ext = preamble?.split('/')[1];
         const tempFilename = uuid() + '.' + ext;
-        const tempFilepath = path.join(await getTempPath(), tempFilename);
+        const tempFilepath = join(await getTempPath(), tempFilename);
         await writeFile(tempFilepath, Buffer.from(data ?? '', 'base64'));
         filepath = tempFilepath;
       }
@@ -780,7 +827,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
           matchingMissingItem.fileUrl = pathToFileURL(destPath);
           matchingMissingItem.duration = metadata.format.duration || 0;
           matchingMissingItem.title =
-            metadata.common.title || path.basename(destPath);
+            metadata.common.title || basename(destPath);
           matchingMissingItem.isVideo = isVideo(filepath);
           matchingMissingItem.isAudio = isAudio(filepath);
         }
@@ -801,19 +848,16 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         const tempDir = await getTempPath();
         if (!tempDir) return;
         await ensureDir(tempDir);
-        const tempFilePath = path.join(
-          tempDir,
-          path.basename(filepath) + '-contents',
-        );
+        const tempFilePath = join(tempDir, basename(filepath) + '-contents');
         await writeFile(tempFilePath, tempContentFile.data);
         const tempJwpubFileContents = await decompress(tempFilePath);
         const tempDbFile = tempJwpubFileContents.find((tempJwpubFileContent) =>
           tempJwpubFileContent.path.endsWith('.db'),
         );
         if (!tempDbFile) return;
-        const tempDbFilePath = path.join(
+        const tempDbFilePath = join(
           await getTempPath(),
-          path.basename(filepath) + '.db',
+          basename(filepath) + '.db',
         );
         await writeFile(tempDbFilePath, tempDbFile.data);
         remove(tempFilePath);
@@ -830,7 +874,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         jwpubImportDb.value = db;
         if (executeQuery(db, 'SELECT * FROM Multimedia;').length === 0) {
           createTemporaryNotification({
-            caption: path.basename(filepath),
+            caption: basename(filepath),
             icon: 'mmm-jwpub',
             message: t('jwpubNoMultimedia'),
             type: 'warning',
@@ -864,29 +908,20 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
           }
         }
       } else if (isJwPlaylist(filepath) && selectedDateObject.value) {
-        const additionalMedia = await getMediaFromJwPlaylist(
-          filepath,
-          selectedDateObject.value?.date,
-          await getDatedAdditionalMediaDirectory(),
-        ).catch((error) => {
-          throw error;
-        });
-        addToAdditionMediaMap(
-          additionalMedia,
-          sectionToAddTo.value,
-          currentState.currentCongregation,
-          selectedDateObject.value,
-          isCoWeek(selectedDateObject.value?.date),
-        );
-        additionalMedia.filter(
-          (m) =>
-            m.customDuration && (m.customDuration.max || m.customDuration.min),
+        // Show playlist selection dialog
+        window.dispatchEvent(
+          new CustomEvent<{
+            jwPlaylistPath: string;
+            section: MediaSectionIdentifier | undefined;
+          }>('openJwPlaylistDialog', {
+            detail: {
+              jwPlaylistPath: filepath,
+              section: sectionToAddTo.value,
+            },
+          }),
         );
       } else if (isArchive(filepath)) {
-        const unzipDirectory = path.join(
-          await getTempPath(),
-          path.basename(filepath),
-        );
+        const unzipDirectory = join(await getTempPath(), basename(filepath));
         await remove(unzipDirectory);
         await window.electronApi
           .decompress(filepath, unzipDirectory)
@@ -894,14 +929,12 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             throw error;
           });
         const files = await readdir(unzipDirectory);
-        const filePaths = files.map((file) =>
-          path.join(unzipDirectory, file.name),
-        );
+        const filePaths = files.map((file) => join(unzipDirectory, file.name));
         await addToFiles(filePaths);
         await remove(unzipDirectory);
       } else {
         createTemporaryNotification({
-          caption: filepath ? path.basename(filepath) : filepath,
+          caption: filepath ? basename(filepath) : filepath,
           icon: 'mmm-local-media',
           message: t('filetypeNotSupported'),
           type: 'negative',
@@ -909,7 +942,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
       }
     } catch (error) {
       createTemporaryNotification({
-        caption: filepath ? path.basename(filepath) : filepath,
+        caption: filepath ? basename(filepath) : filepath,
         icon: 'mmm-error',
         message: t('fileProcessError'),
         type: 'negative',
@@ -1032,6 +1065,186 @@ const duplicateSongsForWeMeeting = computed(() => {
   return songSet.size !== songNumbers.length;
 });
 
+const arraysAreIdentical = (a: string[], b: string[]) =>
+  a.length === b.length && a.every((element, index) => element === b[index]);
+
+const keyboardShortcutMediaList = () => {
+  const allMedia = mediaLists.value.flatMap((section) => {
+    const mediaList = section.items;
+    return mediaList.map((item) => ({
+      ...item,
+      section: section.uniqueId,
+      uniqueId: item.uniqueId || uuid(),
+    }));
+  });
+
+  return allMedia.flatMap((m) => {
+    // Get media groups
+    const expanded = unref(
+      toRaw(unref(mediaListRefs.value[m.section]))?.[0]?.expandedMediaGroups,
+    );
+
+    // Check if the media is collapsed based on the expanded state
+    const isCollapsed = m.children && expanded ? !expanded[m.uniqueId] : false;
+    // If the media is collapsed, return an empty array, since it won't be selectable
+    if (isCollapsed) return [];
+
+    // If the media is not collapsed, return the media itself or its children
+    return m.children
+      ? m.children.map((c) => ({ ...c, parentUniqueId: m.uniqueId }))
+      : [m];
+  });
+};
+
+const sortedMediaFileUrls = computed(() =>
+  keyboardShortcutMediaList()
+    .filter((m) => !m.hidden && !!m.fileUrl)
+    .map((m) => m.fileUrl)
+    .filter((m) => typeof m === 'string')
+    .filter((fileUrl, index, self) => self.indexOf(fileUrl) === index),
+);
+
+watch(
+  () => sortedMediaFileUrls.value,
+  (newSortedMediaFileUrls, oldSortedMediaFileUrls) => {
+    if (
+      selectedDateObject.value?.date &&
+      !arraysAreIdentical(newSortedMediaFileUrls, oldSortedMediaFileUrls)
+    ) {
+      try {
+        addDayToExportQueue(selectedDateObject.value.date);
+      } catch (e) {
+        errorCatcher(e);
+      }
+    }
+  },
+);
+
+useEventListener(
+  window,
+  'shortcutMediaNext',
+  () => {
+    // Early return if no date selected
+    if (!selectedDate.value) return;
+
+    const mediaList = keyboardShortcutMediaList();
+    if (!mediaList.length) return;
+
+    const sortedMediaIds = mediaList.map((item) => item.uniqueId);
+    if (!sortedMediaIds?.[0]) return;
+    const currentId = highlightedMediaId.value;
+
+    // If no current selection, return first item
+    if (!currentId) {
+      highlightedMediaId.value = sortedMediaIds[0];
+      return;
+    }
+
+    const currentIndex = sortedMediaIds.indexOf(currentId);
+
+    // If current item not found, reset to first
+    if (currentIndex === -1) {
+      highlightedMediaId.value = sortedMediaIds[0];
+      return;
+    }
+
+    // Find next selectable media item
+    const nextSelectableId = findNextSelectableMedia(mediaList, currentIndex);
+    if (!nextSelectableId) return;
+    highlightedMediaId.value = nextSelectableId;
+  },
+  { passive: true },
+);
+
+useEventListener(
+  window,
+  'shortcutMediaPrevious',
+  () => {
+    // Early return if no date selected
+    if (!selectedDate.value) return;
+
+    const mediaList = keyboardShortcutMediaList();
+    if (!mediaList.length) return;
+
+    const sortedMediaIds = mediaList.map((item) => item.uniqueId);
+    if (!sortedMediaIds?.[0]) return;
+    const currentId = highlightedMediaId.value;
+
+    const lastItem = sortedMediaIds[sortedMediaIds.length - 1];
+
+    // If no current selection, return last item if possible, otherwise first
+    if (!currentId) {
+      highlightedMediaId.value = lastItem || sortedMediaIds[0];
+      return;
+    }
+
+    const currentIndex = sortedMediaIds.indexOf(currentId);
+
+    // If current item not found, reset to last item if possible, otherwise first
+    if (currentIndex === -1) {
+      highlightedMediaId.value = lastItem || sortedMediaIds[0];
+      return;
+    }
+
+    // Find previous selectable media item
+    const previousSelectableId = findPreviousSelectableMedia(
+      mediaList,
+      currentIndex,
+    );
+    if (!previousSelectableId) return;
+    highlightedMediaId.value = previousSelectableId;
+  },
+  { passive: true },
+);
+
+function findNextSelectableMedia(
+  mediaList: DynamicMediaObject[],
+  startIndex: number,
+) {
+  // Search from next item onwards
+  for (let i = startIndex + 1; i < mediaList.length; i++) {
+    const mediaItem = mediaList[i];
+    if (mediaItem && isMediaSelectable(mediaItem)) {
+      return mediaItem.uniqueId;
+    }
+  }
+
+  // If no selectable item found, wrap to beginning
+  return mediaList[0]?.uniqueId || null;
+}
+
+function findPreviousSelectableMedia(
+  mediaList: DynamicMediaObject[],
+  startIndex: number,
+) {
+  // Search from previous item backwards
+  for (let i = startIndex - 1; i >= 0; i--) {
+    const mediaItem = mediaList[i];
+    if (mediaItem && isMediaSelectable(mediaItem)) {
+      return mediaItem.uniqueId;
+    }
+  }
+
+  // If no selectable item found, wrap to end
+  return mediaList[mediaList.length - 1]?.uniqueId || null;
+}
+
+function isMediaSelectable(mediaItem: DynamicMediaObject) {
+  if (!mediaItem) return false;
+
+  // Media is selectable if:
+  // 1. It doesn't have an extract caption, OR
+  // 2. It has a parent unique ID (indicating it's part of a group)
+  return !mediaItem.extractCaption || mediaItem.parentUniqueId;
+}
+
+watch(
+  () => mediaPlayingUniqueId.value,
+  (newMediaUniqueId) => {
+    if (newMediaUniqueId) highlightedMediaId.value = newMediaUniqueId;
+  },
+);
+
 const updateMediaSectionBgColor = ({
   bgColor,
   uniqueId,
@@ -1063,4 +1276,40 @@ const updateMediaSectionLabel = ({
     customSection.label = label;
   }
 };
+
+// Computed conditions
+const showObsBanner = computed(
+  () =>
+    currentSettings.value?.obsEnable &&
+    ['disconnected', 'notConnected'].includes(obsConnectionState.value) &&
+    selectedDateObject.value?.today,
+);
+
+const showHiddenItemsBanner = computed(
+  () => someItemsHiddenForSelectedDate.value,
+);
+
+const showDuplicateSongsBanner = computed(
+  () => duplicateSongsForWeMeeting.value,
+);
+
+const showEmptyState = computed(
+  () =>
+    (currentSettings.value?.disableMediaFetching &&
+      (selectedDateObject.value?.dynamicMedia?.length || 0) < 1) ||
+    (!currentSettings.value?.disableMediaFetching &&
+      ((selectedDateObject.value?.meeting &&
+        !selectedDateObject.value?.complete) ||
+        (!selectedDateObject.value?.customSections?.length &&
+          !selectedDateObject.value?.dynamicMedia?.filter((m) => !m.hidden)
+            .length))),
+);
+
+const showBannerColumn = computed(
+  () =>
+    showObsBanner.value ||
+    showHiddenItemsBanner.value ||
+    showDuplicateSongsBanner.value ||
+    showEmptyState.value,
+);
 </script>

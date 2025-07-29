@@ -262,7 +262,7 @@
   "noDownloadsInProgress": "没有下载正在进行",
   "noName": "无名称",
   "none": "无",
-  "not-playing": "未在播放",
+  "music.not-playing": "未在播放",
   "notice-the-yeartext-is-now-being-displayed-on-the-external-monitor-but-lets-keep-going": "您会注意到全年经文现在显示在外部显示器上！现在让我们继续操作。",
   "obs-studio-disconnected-banner": "M3无法连接到 OBS Studio。请确保OBS Studio 运行并正确配置。",
   "obs-studio-integration": "支持OBS工作室",

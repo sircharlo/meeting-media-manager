@@ -3,6 +3,19 @@ import type { PublicationFetcher } from 'src/types';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getPubId } from 'src/utils/jw';
 
+const { checkForUpdates, fileUrlToPath, fs, getUserDataPath, path, readdir } =
+  window.electronApi;
+const {
+  ensureDir,
+  ensureFile,
+  exists,
+  pathExists,
+  readFile,
+  remove,
+  writeFile,
+} = fs;
+const { dirname, extname, join } = path;
+
 export const isFileUrl = (path?: string) => path?.startsWith('file://');
 
 // Paths
@@ -23,13 +36,13 @@ const getCachePath = async (
   create = false,
   cacheDir?: null | string,
 ) => {
-  const dir = window.electronApi.path.join(
-    cacheDir || (await window.electronApi.getUserDataPath()),
+  const dir = join(
+    cacheDir || (await getUserDataPath()),
     ...paths.filter((p) => !!p),
   );
   if (create) {
     try {
-      await window.electronApi.fs.ensureDir(dir);
+      await ensureDir(dir);
     } catch (e) {
       errorCatcher(e);
     }
@@ -54,9 +67,9 @@ export const getAdditionalMediaPath = (cacheDir?: null | string) =>
 export const getParentDirectory = (filepath?: string) => {
   if (!filepath) return '';
   if (isFileUrl(filepath)) {
-    filepath = window.electronApi.fileUrlToPath(filepath);
+    filepath = fileUrlToPath(filepath);
   }
-  return window.electronApi.path.dirname(filepath);
+  return dirname(filepath);
 };
 
 /**
@@ -82,7 +95,7 @@ export const getPublicationDirectory = async (
  */
 const isEmptyDir = async (directory: string) => {
   try {
-    const files = await window.electronApi.readdir(directory);
+    const files = await readdir(directory);
     return files.length === 0;
   } catch (error) {
     errorCatcher(error);
@@ -97,7 +110,7 @@ const isEmptyDir = async (directory: string) => {
 const removeEmptyDir = async (directory: string) => {
   if (await isEmptyDir(directory)) {
     try {
-      await window.electronApi.fs.remove(directory);
+      await remove(directory);
     } catch (e) {
       errorCatcher(e);
     }
@@ -110,9 +123,9 @@ const removeEmptyDir = async (directory: string) => {
  */
 export const removeEmptyDirs = async (rootDir: string) => {
   try {
-    const dirs = (await window.electronApi.readdir(rootDir))
+    const dirs = (await readdir(rootDir))
       .filter((item) => item.isDirectory)
-      .map((item) => window.electronApi.path.join(rootDir, item.name));
+      .map((item) => join(rootDir, item.name));
 
     await Promise.allSettled(dirs.map((dir) => removeEmptyDir(dir)));
   } catch (error) {
@@ -131,10 +144,10 @@ export const removeEmptyDirs = async (rootDir: string) => {
 export const findFile = async (dir: string | undefined, search: string) => {
   if (!dir) return undefined;
   try {
-    if (!(await window.electronApi.fs.pathExists(dir))) return undefined;
-    const files = await window.electronApi.readdir(dir);
+    if (!(await pathExists(dir))) return undefined;
+    const files = await readdir(dir);
     return files
-      .map((file) => window.electronApi.path.join(dir, file.name))
+      .map((file) => join(dir, file.name))
       .find((filename) => filename.includes(search));
   } catch (error) {
     errorCatcher(error);
@@ -156,15 +169,15 @@ export const getPublicationDirectoryContents = async (
 ) => {
   try {
     const dir = await getPublicationDirectory(publication, cacheFolder);
-    if (!(await window.electronApi.fs.pathExists(dir))) return [];
-    const items = await window.electronApi.readdir(dir);
+    if (!(await pathExists(dir))) return [];
+    const items = await readdir(dir);
     return items
       .filter(
         (item) =>
           item.isFile &&
           (!ext || item.name.toLowerCase().endsWith(ext.toLowerCase())),
       )
-      .map((item) => ({ path: window.electronApi.path.join(dir, item.name) }));
+      .map((item) => ({ path: join(dir, item.name) }));
   } catch (error) {
     errorCatcher(error);
     return [];
@@ -177,7 +190,7 @@ export const getPublicationDirectoryContents = async (
  * @returns The trimmed filepath.
  */
 export const trimFilepathAsNeeded = (filepath: string) => {
-  const fileDir = window.electronApi.path.dirname(filepath);
+  const fileDir = dirname(filepath);
   let filepathSize = new Blob([filepath]).size;
   while (filepathSize > 230) {
     const uniqueId =
@@ -188,16 +201,13 @@ export const trimFilepathAsNeeded = (filepath: string) => {
 
     const overBy = filepathSize - 230 + uniqueId.length;
 
-    const baseName = window.electronApi.path
+    const baseName = path
       .basename(filepath)
-      .slice(0, -window.electronApi.path.extname(filepath).length);
+      .slice(0, -extname(filepath).length);
 
     const newBaseName = baseName.slice(0, -overBy) + uniqueId;
 
-    filepath = window.electronApi.path.join(
-      fileDir,
-      newBaseName + window.electronApi.path.extname(filepath),
-    );
+    filepath = join(fileDir, newBaseName + extname(filepath));
 
     filepathSize = new Blob([filepath]).size;
   }
@@ -213,8 +223,7 @@ const disableUpdatesPath = () =>
  * Checks if auto updates are disabled.
  * @returns Whether auto updates are disabled.
  */
-export const updatesDisabled = async () =>
-  window.electronApi.fs.exists(await disableUpdatesPath());
+export const updatesDisabled = async () => exists(await disableUpdatesPath());
 
 /**
  * Toggles auto updates.
@@ -223,10 +232,10 @@ export const updatesDisabled = async () =>
 export const toggleAutoUpdates = async (enable: boolean) => {
   try {
     if (enable) {
-      await window.electronApi.fs.remove(await disableUpdatesPath());
-      window.electronApi.checkForUpdates();
+      await remove(await disableUpdatesPath());
+      checkForUpdates();
     } else {
-      await window.electronApi.fs.ensureFile(await disableUpdatesPath());
+      await ensureFile(await disableUpdatesPath());
     }
   } catch (error) {
     errorCatcher(error, { contexts: { fn: { name: 'enableUpdates' } } });
@@ -241,7 +250,7 @@ const betaUpdatesPath = () =>
  * @returns Wether beta updates are disabled.
  */
 export const betaUpdatesDisabled = async () =>
-  !(await window.electronApi.fs.exists(await betaUpdatesPath()));
+  !(await exists(await betaUpdatesPath()));
 
 /**
  * Toggles beta updates
@@ -250,11 +259,11 @@ export const betaUpdatesDisabled = async () =>
 export const toggleBetaUpdates = async (enable: boolean) => {
   try {
     if (enable) {
-      await window.electronApi.fs.ensureFile(await betaUpdatesPath());
+      await ensureFile(await betaUpdatesPath());
     } else {
-      await window.electronApi.fs.remove(await betaUpdatesPath());
+      await remove(await betaUpdatesPath());
     }
-    window.electronApi.checkForUpdates();
+    checkForUpdates();
   } catch (error) {
     errorCatcher(error, { contexts: { fn: { name: 'toggleBetaUpdates' } } });
   }
@@ -272,34 +281,23 @@ const lastVersionPath = (congId: string) =>
 export const wasUpdateInstalled = async (congId: string, newCong = false) => {
   try {
     const lastVersionFile = await lastVersionPath(congId);
-    await window.electronApi.fs.ensureDir(
-      window.electronApi.path.dirname(lastVersionFile),
-    );
+    await ensureDir(dirname(lastVersionFile));
 
     if (newCong) {
-      await window.electronApi.fs.writeFile(
-        lastVersionFile,
-        process.env.version ?? '',
-      );
+      await writeFile(lastVersionFile, process.env.version ?? '');
       return false;
     }
 
-    if (await window.electronApi.fs.exists(lastVersionFile)) {
-      const lastVersion = await window.electronApi.fs.readFile(
-        lastVersionFile,
-        { encoding: 'utf-8' },
-      );
-      await window.electronApi.fs.writeFile(
-        lastVersionFile,
-        process.env.version ?? '',
-      );
+    if (await exists(lastVersionFile)) {
+      const lastVersion = await readFile(lastVersionFile, {
+        encoding: 'utf-8',
+      });
+      await writeFile(lastVersionFile, process.env.version ?? '');
       return lastVersion !== (process.env.version ?? '');
     } else {
-      await window.electronApi.fs.writeFile(
-        lastVersionFile,
-        process.env.version ?? '',
-        { encoding: 'utf-8' },
-      );
+      await writeFile(lastVersionFile, process.env.version ?? '', {
+        encoding: 'utf-8',
+      });
       return true;
     }
   } catch (error) {

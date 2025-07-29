@@ -10,7 +10,6 @@ export const addSection = () => {
   if (!selectedDateObject?.customSections)
     selectedDateObject.customSections = [];
   const newSection: MediaSection = {
-    alwaysShow: true,
     bgColor: getRandomColor(),
     extraMediaShortcut: true,
     label: (i18n.global.t as (key: string) => string)('imported-media'),

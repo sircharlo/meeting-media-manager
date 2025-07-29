@@ -69,9 +69,6 @@
   </q-page-container>
 </template>
 <script setup lang="ts">
-import { initializeElectronApi } from 'src/helpers/electron-api-manager';
-initializeElectronApi('MediaPlayerPage');
-
 import Panzoom, { type PanzoomObject } from '@panzoom/panzoom';
 import {
   useBroadcastChannel,
@@ -543,17 +540,43 @@ $q.iconMapFn = (iconName) => {
   };
 };
 
+const previousState = ref<{
+  base: string | undefined;
+  mediator: string | undefined;
+  wasOnline: boolean;
+}>({
+  base: undefined,
+  mediator: undefined,
+  wasOnline: false,
+});
+
 watchImmediate(
-  () => [
+  (): [string | undefined, string | undefined, boolean] => [
     jwStore.urlVariables?.base,
     jwStore.urlVariables?.mediator,
     currentState.online,
   ],
-  () => {
-    if (currentState.online) {
+  ([base, mediator, online]: [
+    string | undefined,
+    string | undefined,
+    boolean,
+  ]) => {
+    const prev = previousState.value;
+
+    // Only get fonts if:
+    // 1. Coming online for the first time (!prev.wasOnline && online)
+    // 2. URL variables changed while online
+    const shouldRun =
+      (!prev.wasOnline && online) ||
+      (online && (prev.base !== base || prev.mediator !== mediator));
+
+    if (shouldRun) {
       setElementFont('Wt-ClearText-Bold');
       setElementFont('JW-Icons');
     }
+
+    // Update previous state
+    previousState.value = { base, mediator, wasOnline: online };
   },
 );
 </script>

@@ -262,7 +262,7 @@
   "noDownloadsInProgress": "Trenutno ne poteka noben prenos",
   "noName": "Brez imena",
   "none": "Brez",
-  "not-playing": "Se ne predvaja",
+  "music.not-playing": "Se ne predvaja",
   "notice-the-yeartext-is-now-being-displayed-on-the-external-monitor-but-lets-keep-going": "Opazil boš, da je letni stavek zdaj prikazan na zunanjem monitorju! Vendar nadaljujmo.",
   "obs-studio-disconnected-banner": "M³ se ne more povezati s programom OBS Studio. Preveri, ali OBS Studio deluje in ali je pravilno konfiguriran.",
   "obs-studio-integration": "Integracija programa OBS Studio",

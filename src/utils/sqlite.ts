@@ -8,6 +8,8 @@ import type {
   VideoMarker,
 } from 'src/types';
 
+const { executeQuery } = window.electronApi;
+
 import mepslangs from 'src/constants/mepslangs';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { findFile } from 'src/utils/fs';
@@ -21,7 +23,7 @@ export const getMediaVideoMarkers = (
   mediaId: number,
 ) => {
   try {
-    const mediaVideoMarkers = window.electronApi.executeQuery<VideoMarker>(
+    const mediaVideoMarkers = executeQuery<VideoMarker>(
       source.db,
       `SELECT * from VideoMarker WHERE MultimediaId = ${mediaId} ORDER by StartTimeTicks`,
     );
@@ -34,7 +36,7 @@ export const getMediaVideoMarkers = (
 
 export const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
   try {
-    const pubQuery = window.electronApi.executeQuery<PublicationItem>(
+    const pubQuery = executeQuery<PublicationItem>(
       db,
       'SELECT * FROM Publication',
     )[0];
@@ -66,7 +68,7 @@ export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
       // exists
       try {
         const tableExists =
-          window.electronApi.executeQuery<TableItem>(
+          executeQuery<TableItem>(
             source.db,
             `SELECT * FROM sqlite_master WHERE type='table' AND name='${table}'`,
           ).length > 0;
@@ -77,7 +79,7 @@ export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
         });
         continue;
       }
-      const columnQueryResult = window.electronApi.executeQuery<TableItem>(
+      const columnQueryResult = executeQuery<TableItem>(
         source.db,
         `PRAGMA table_info(${table})`,
       );
@@ -91,7 +93,7 @@ export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
 
       if (columnKSExists && columnMLIExists)
         multimediaMepsLangs.push(
-          ...window.electronApi.executeQuery<MultimediaItem>(
+          ...executeQuery<MultimediaItem>(
             source.db,
             `SELECT DISTINCT KeySymbol, Track, IssueTagNumber, MepsLanguageIndex from ${table} ORDER by KeySymbol, IssueTagNumber, Track`,
           ),
@@ -120,7 +122,7 @@ export const getDocumentMultimediaItems = (
       DocumentMultimediaTable.length === 0
         ? 'Multimedia'
         : DocumentMultimediaTable[0];
-    const columnQueryResult = window.electronApi.executeQuery<TableItem>(
+    const columnQueryResult = executeQuery<TableItem>(
       source.db,
       `PRAGMA table_info(${mmTable})`,
     );
@@ -133,7 +135,7 @@ export const getDocumentMultimediaItems = (
       window.electronApi
         .executeQuery<TableItem>(source.db, "PRAGMA table_info('Question')")
         .some((item) => item.name === 'TargetParagraphNumberLabel') &&
-      !!window.electronApi.executeQuery<TableItemCount>(
+      !!executeQuery<TableItemCount>(
         source.db,
         'SELECT COUNT(*) FROM Question',
       )[0]?.count;
@@ -197,7 +199,7 @@ export const getDocumentMultimediaItems = (
     if (suppressZoomExists) {
       where += ' AND Multimedia.SuppressZoom <> 1';
     }
-    const items = window.electronApi.executeQuery<MultimediaItem>(
+    const items = executeQuery<MultimediaItem>(
       source.db,
       `${select} ${from} ${where} ${groupAndSort}`,
     );

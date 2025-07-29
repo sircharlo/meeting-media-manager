@@ -1,6 +1,5 @@
 <template>
   <q-list
-    v-show="currentSectionVisibleItems.length || mediaList.alwaysShow"
     :class="
       'media-section ' +
       mediaList.uniqueId +
@@ -172,7 +171,7 @@
         </div>
       </q-item-section>
     </q-item>
-    <div v-if="!currentSectionVisibleItems.length">
+    <div v-if="emptyMediaList">
       <q-item>
         <q-item-section
           class="align-center text-secondary text-grey text-subtitle2"
@@ -181,70 +180,28 @@
             <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
             <span>
               {{
-                selectedDateObject && isWeMeetingDay(selectedDateObject?.date)
-                  ? t('dont-forget-add-missing-media')
-                  : !mediaItemBeingSorted
-                    ? t('no-media-files-for-section')
-                    : t('drop-media-here')
+                dragState.isDragging
+                  ? t('drop-media-here')
+                  : selectedDateObject &&
+                      isWeMeetingDay(selectedDateObject?.date)
+                    ? t('dont-forget-add-missing-media')
+                    : t('no-media-files-for-section')
               }}
             </span>
           </div>
         </q-item-section>
       </q-item>
     </div>
-    <Sortable
+    <div
+      ref="dragDropContainer"
       class="sortable-media"
-      item-key="uniqueId"
-      :list="currentSectionVisibleItems"
-      :options="{
-        animation: 150,
-        group: 'mediaLists',
-        ghostClass: 'bg-accent-200',
+      :class="{
+        'drop-here': dragState.isDragging,
+        'bg-primary-light': dragState.isDragging,
       }"
-      @add="
-        handleMediaSort(
-          $event,
-          'ADD',
-          mediaList.uniqueId as MediaSectionIdentifier,
-        )
-      "
-      @change="
-        handleMediaSort(
-          $event,
-          'CHANGE',
-          mediaList.uniqueId as MediaSectionIdentifier,
-        )
-      "
-      @end="
-        handleMediaSort(
-          $event,
-          'END',
-          mediaList.uniqueId as MediaSectionIdentifier,
-        )
-      "
-      @remove="
-        handleMediaSort(
-          $event,
-          'REMOVE',
-          mediaList.uniqueId as MediaSectionIdentifier,
-        )
-      "
-      @sort="
-        handleMediaSort(
-          $event,
-          'SORT',
-          mediaList.uniqueId as MediaSectionIdentifier,
-        )
-      "
-      @start="
-        handleMediaSort(
-          $event,
-          'START',
-          mediaList.uniqueId as MediaSectionIdentifier,
-        )
-      "
+      :data-list="mediaList.uniqueId"
     >
-      <template #item="{ element }: { element: DynamicMediaObject }">
+      <div v-for="element in sortableItems" :key="element.uniqueId">
         <template v-if="element.children">
           <q-list
             v-if="element.children.some((m) => !m.hidden)"
@@ -301,37 +258,26 @@
                   </div>
                 </q-item-section>
               </template>
-              <Sortable
-                v-if="element.children"
-                item-key="uniqueId"
-                :list="element.children"
-                :options="{ animation: 150, ghostClass: 'bg-accent-200' }"
-              >
-                <template
-                  #item="{
-                    element: childElement,
-                  }: {
-                    element: DynamicMediaObject;
-                  }"
+              <div v-if="element.children">
+                <div
+                  v-for="childElement in element.children"
+                  :key="childElement.uniqueId"
                 >
-                  <div :key="childElement.uniqueId">
-                    <MediaItem
-                      :key="childElement.uniqueId"
-                      v-model:repeat="childElement.repeat"
-                      child
-                      :media="childElement"
-                      :play-state="playState(childElement.uniqueId)"
-                      @update:custom-duration="
-                        childElement.customDuration =
-                          JSON.parse($event) || undefined
-                      "
-                      @update:hidden="childElement.hidden = !!$event"
-                      @update:tag="childElement.tag = $event"
-                      @update:title="childElement.title = $event"
-                    />
-                  </div>
-                </template>
-              </Sortable>
+                  <MediaItem
+                    :key="childElement.uniqueId"
+                    v-model:repeat="childElement.repeat"
+                    child
+                    :media="childElement"
+                    @update:custom-duration="
+                      childElement.customDuration =
+                        JSON.parse($event) || undefined
+                    "
+                    @update:hidden="childElement.hidden = !!$event"
+                    @update:tag="childElement.tag = $event"
+                    @update:title="childElement.title = $event"
+                  />
+                </div>
+              </div>
             </q-expansion-item>
           </q-list>
         </template>
@@ -340,7 +286,6 @@
             :key="element.uniqueId"
             v-model:repeat="element.repeat"
             :media="element"
-            :play-state="playState(element.uniqueId)"
             @update:custom-duration="
               element.customDuration = JSON.parse($event) || undefined
             "
@@ -349,35 +294,34 @@
             @update:title="element.title = $event"
           />
         </div>
-      </template>
-    </Sortable>
+      </div>
+    </div>
   </q-list>
 </template>
 <script setup lang="ts">
-import type { SortableEvent } from 'sortablejs';
 import type {
   DynamicMediaObject,
   MediaSection,
   MediaSectionIdentifier,
 } from 'src/types';
 
+import { animations, state } from '@formkit/drag-and-drop';
+import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
 import { watchImmediate } from '@vueuse/core';
-import MediaItem from 'components/media/MediaItem.vue';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
-import { Sortable } from 'sortablejs-vue3';
+import MediaItem from 'src/components/media/MediaItem.vue';
 import { isWeMeetingDay } from 'src/helpers/date';
-import { errorCatcher } from 'src/helpers/error-catcher';
-import { addDayToExportQueue } from 'src/helpers/export-media';
 import { deleteSection, getTextColor } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{
   mediaList: MediaSection;
   openImportMenu: (section: MediaSectionIdentifier) => void;
 }>();
+
 const emit = defineEmits([
   'update-media-section-bg-color',
   'update-media-section-label',
@@ -387,242 +331,9 @@ const $q = useQuasar();
 const { t } = useI18n();
 
 const currentState = useCurrentStateStore();
-const {
-  getVisibleMediaForSection,
-  mediaItemBeingSorted,
-  mediaPlayingUniqueId,
-  mediaPlayingUrl,
-  selectedDate,
-  selectedDateObject,
-} = storeToRefs(currentState);
+const { mediaPlayingUrl, selectedDateObject } = storeToRefs(currentState);
 
-const playState = (id: string) => {
-  if (id === lastPlayedMediaUniqueId.value) return 'current';
-  if (id === nextMediaUniqueId.value) return 'next';
-  if (id === previousMediaUniqueId.value) return 'previous';
-  return 'unknown';
-};
-
-const addSong = (section: MediaSectionIdentifier | undefined) => {
-  window.dispatchEvent(
-    new CustomEvent<{ section: MediaSectionIdentifier | undefined }>(
-      'openSongPicker',
-      {
-        detail: { section },
-      },
-    ),
-  );
-};
-
-const lastPlayedMediaUniqueId = ref<string>('');
-
-watch(
-  () => mediaPlayingUniqueId.value,
-  (newMediaUniqueId) => {
-    if (newMediaUniqueId) lastPlayedMediaUniqueId.value = newMediaUniqueId;
-  },
-);
-
-const expandedMediaGroups = ref<Record<string, boolean>>({});
-
-watchImmediate(
-  () => selectedDateObject.value?.dynamicMedia?.length,
-  () => {
-    expandedMediaGroups.value =
-      selectedDateObject.value?.dynamicMedia.reduce(
-        (acc, element) => {
-          if (element.children?.length && element.extractCaption) {
-            acc[element.uniqueId] = !!element.cbs; // Default state based on element.cbs
-          }
-          return acc;
-        },
-        {} as Record<string, boolean>,
-      ) || {};
-  },
-);
-
-const keyboardShortcutMediaList = computed(() => {
-  const mediaFromCustomSections =
-    selectedDateObject.value?.customSections?.flatMap(
-      (section) =>
-        selectedDateObject.value?.dynamicMedia?.filter(
-          (item) => item.section === section.uniqueId,
-        ) || [],
-    );
-  return [
-    ...(mediaFromCustomSections || []),
-    ...(getVisibleMediaForSection.value.tgw || []),
-    ...(getVisibleMediaForSection.value.ayfm || []),
-    ...(getVisibleMediaForSection.value.lac || []),
-    ...(getVisibleMediaForSection.value.wt || []),
-    ...(getVisibleMediaForSection.value.circuitOverseer || []),
-  ].flatMap((m) => {
-    return m.children
-      ? m.children.map((c) => {
-          return {
-            ...c,
-            parentUniqueId: m.uniqueId,
-          };
-        })
-      : [m];
-  });
-});
-
-const arraysAreIdentical = (a: string[], b: string[]) =>
-  a.length === b.length && a.every((element, index) => element === b[index]);
-
-const sortedMediaFileUrls = computed(() =>
-  keyboardShortcutMediaList.value
-    .filter((m) => !m.hidden && !!m.fileUrl)
-    .map((m) => m.fileUrl)
-    .filter((m) => typeof m === 'string')
-    .filter((fileUrl, index, self) => self.indexOf(fileUrl) === index),
-);
-
-watch(
-  () => sortedMediaFileUrls.value,
-  (newSortedMediaFileUrls, oldSortedMediaFileUrls) => {
-    if (
-      selectedDateObject.value?.date &&
-      !arraysAreIdentical(newSortedMediaFileUrls, oldSortedMediaFileUrls)
-    ) {
-      try {
-        addDayToExportQueue(selectedDateObject.value.date);
-      } catch (e) {
-        errorCatcher(e);
-      }
-    }
-  },
-);
-
-const previousMediaUniqueId = computed(() => {
-  if (!selectedDate.value) return '';
-  const sortedMediaIds = keyboardShortcutMediaList.value.map((m) => m.uniqueId);
-  if (!lastPlayedMediaUniqueId.value) return sortedMediaIds[0];
-  const index = sortedMediaIds.indexOf(lastPlayedMediaUniqueId.value);
-  if (index === -1) return sortedMediaIds[0];
-
-  for (let i = index - 1; i >= 0; i--) {
-    const mediaItem = keyboardShortcutMediaList.value[i];
-    if (mediaItem) {
-      if (
-        !mediaItem.extractCaption ||
-        (mediaItem.parentUniqueId &&
-          expandedMediaGroups.value[mediaItem.parentUniqueId])
-      ) {
-        return mediaItem.uniqueId;
-      }
-    }
-  }
-  return sortedMediaIds[0];
-});
-
-const nextMediaUniqueId = computed(() => {
-  if (!selectedDate.value) return '';
-  const sortedMediaIds = keyboardShortcutMediaList.value.map((m) => m.uniqueId);
-  if (!lastPlayedMediaUniqueId.value) return sortedMediaIds[0];
-  const index = sortedMediaIds.indexOf(lastPlayedMediaUniqueId.value);
-  if (index === -1) return sortedMediaIds[0];
-  for (let i = index + 1; i < keyboardShortcutMediaList.value.length; i++) {
-    const mediaItem = keyboardShortcutMediaList.value[i];
-    if (mediaItem) {
-      if (
-        !mediaItem.extractCaption ||
-        (mediaItem?.parentUniqueId &&
-          expandedMediaGroups.value[mediaItem.parentUniqueId])
-      ) {
-        return mediaItem.uniqueId;
-      }
-    }
-  }
-  return sortedMediaIds[0];
-});
-
-const handleMediaSort = (
-  evt: SortableEvent,
-  eventType: string,
-  list: MediaSectionIdentifier,
-) => {
-  const sameList = evt.from === evt.to;
-  const dynamicMedia = selectedDateObject.value?.dynamicMedia;
-
-  console.log('handleMediaSort', evt, list, sameList, eventType);
-
-  if (!dynamicMedia || !Array.isArray(dynamicMedia)) return;
-  if (
-    typeof evt.oldIndex === 'undefined' ||
-    typeof evt.newIndex === 'undefined'
-  )
-    return;
-
-  switch (eventType) {
-    case 'ADD': {
-      if (!sameList && mediaItemBeingSorted.value) {
-        const firstElementIndex = dynamicMedia.findIndex(
-          (item) => item.section === list,
-        );
-        const insertIndex =
-          firstElementIndex >= 0
-            ? firstElementIndex + evt.newIndex
-            : evt.newIndex;
-        const newItem = { ...mediaItemBeingSorted.value, section: list };
-        dynamicMedia.splice(insertIndex, 0, newItem);
-      }
-      break;
-    }
-
-    case 'END': {
-      if (sameList) {
-        const originalPosition = dynamicMedia.findIndex(
-          (item) => item.uniqueId === mediaItemBeingSorted.value?.uniqueId,
-        );
-        if (originalPosition >= 0) {
-          const [movedItem] = dynamicMedia.splice(originalPosition, 1);
-          if (movedItem) {
-            const newIndex = Math.max(
-              0,
-              originalPosition + evt.newIndex - evt.oldIndex,
-            );
-            dynamicMedia.splice(newIndex, 0, movedItem);
-          }
-        }
-      }
-      mediaItemBeingSorted.value = undefined;
-      break;
-    }
-
-    case 'REMOVE': {
-      if (!sameList) {
-        const indexToRemove = dynamicMedia.findIndex(
-          (item) =>
-            item.uniqueId === mediaItemBeingSorted.value?.uniqueId &&
-            item.section === list,
-        );
-        if (indexToRemove >= 0) {
-          dynamicMedia.splice(indexToRemove, 1);
-        }
-      }
-      break;
-    }
-
-    case 'SORT': {
-      if (!sameList) {
-        mediaItemBeingSorted.value = undefined;
-      }
-      break;
-    }
-
-    case 'START': {
-      const itemBeingSorted =
-        getVisibleMediaForSection.value[list]?.[evt.oldIndex];
-      if (itemBeingSorted) {
-        mediaItemBeingSorted.value = itemBeingSorted;
-      }
-      break;
-    }
-  }
-};
-
+// Computed properties
 const mediaSectionCanBeCustomized = computed(() => {
   return (
     props.mediaList.uniqueId === 'additional' ||
@@ -631,62 +342,28 @@ const mediaSectionCanBeCustomized = computed(() => {
 });
 
 const currentSectionItems = computed(() => {
-  return selectedDateObject.value?.dynamicMedia?.filter(
-    (m) => m.section === props.mediaList.uniqueId,
+  return (
+    selectedDateObject.value?.dynamicMedia?.filter(
+      (m) => m.section === props.mediaList.uniqueId,
+    ) || []
   );
 });
 
-const currentSectionVisibleItems = computed(() => {
-  return currentSectionItems.value?.filter((m) => !m.hidden) || [];
+const currentSectionHiddenItems = computed(() => {
+  return currentSectionItems.value.filter((m) => m.hidden);
 });
 
-const currentSectionHiddenItems = computed(() => {
-  return currentSectionItems.value?.filter((m) => m.hidden) || [];
+const emptyMediaList = computed(() => {
+  return currentSectionItems.value.length === 0;
 });
 
 const isSongButton = computed(
   () =>
-    props.mediaList.label === 'additional' ||
-    (props.mediaList.label === 'circuitOverseer' &&
+    (props.mediaList.uniqueId === 'additional' &&
+      selectedDateObject.value?.meeting === 'we') ||
+    (props.mediaList.uniqueId === 'circuitOverseer' &&
       !currentSectionHiddenItems.value.length),
 );
-
-const hexValues = ref<Record<string, string>>(
-  selectedDateObject.value?.customSections?.reduce(
-    (acc, section) => ({
-      ...acc,
-      [section.uniqueId]: section.bgColor || '#ffffff',
-    }),
-    {},
-  ) || {},
-);
-
-const renameSection = ref(false);
-
-const moveSection = (section: string, direction: 'down' | 'up') => {
-  if (!selectedDateObject.value?.customSections) return;
-  const currentIndex = selectedDateObject.value.customSections.findIndex(
-    (s) => s.uniqueId === section,
-  );
-  if (currentIndex === -1) return;
-
-  const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
-  if (
-    newIndex < 0 ||
-    newIndex >= selectedDateObject.value.customSections.length
-  )
-    return;
-
-  const [movedSection] = selectedDateObject.value.customSections.splice(
-    currentIndex,
-    1,
-  );
-  if (!movedSection) {
-    console.error('No section found at index:', currentIndex);
-    return;
-  }
-  selectedDateObject.value.customSections.splice(newIndex, 0, movedSection);
-};
 
 const isFirstCustomSection = computed(() => {
   return (
@@ -700,6 +377,227 @@ const isLastCustomSection = computed(() => {
     selectedDateObject.value?.customSections?.slice(-1)?.[0]?.uniqueId ===
     props.mediaList.uniqueId
   );
+});
+
+// Reactive state
+const expandedMediaGroups = ref<Record<string, boolean>>({});
+const renameSection = ref(false);
+const hexValues = ref<Record<string, string>>({});
+
+// Computed properties
+const visibleMediaItems = computed(() => {
+  return currentSectionItems.value.filter((m) => !m.hidden);
+});
+
+const dragState = ref({
+  draggedItems: [] as DynamicMediaObject[],
+  isDragging: false,
+});
+
+// Optimized function to update media order
+const updateMediaOrder = (newOrder: DynamicMediaObject[]) => {
+  console.log(
+    'updateMediaOrder called for section:',
+    props.mediaList.uniqueId,
+    'with order:',
+    newOrder,
+  );
+
+  if (!selectedDateObject.value?.dynamicMedia) return;
+
+  // Get all items that are NOT in the new order for this section
+  const itemsNotInThisSection = selectedDateObject.value.dynamicMedia.filter(
+    (item) => !newOrder.some((newItem) => newItem.uniqueId === item.uniqueId),
+  );
+
+  // Create the new items for this section with correct section assignment
+  const thisSectionItems = newOrder.map((item) => {
+    // Find the original item to preserve all properties
+    const originalItem = selectedDateObject.value?.dynamicMedia.find(
+      (media) => media.uniqueId === item.uniqueId,
+    );
+
+    if (originalItem) {
+      return {
+        ...originalItem,
+        section: props.mediaList.uniqueId, // Update section assignment
+      };
+    }
+
+    return item;
+  });
+
+  console.log('Items not in this section:', itemsNotInThisSection);
+  console.log('Items for this section:', thisSectionItems);
+
+  // Update the store with the new order
+  selectedDateObject.value.dynamicMedia = [
+    ...itemsNotInThisSection,
+    ...thisSectionItems,
+  ];
+
+  console.log(
+    'Store updated. New dynamicMedia:',
+    selectedDateObject.value.dynamicMedia,
+  );
+};
+
+// Use the drag and drop composable
+const [dragDropContainer, sortableItems] = useDragAndDrop<DynamicMediaObject>(
+  visibleMediaItems.value,
+  {
+    disabled: true,
+    dropZone: true, // Enable drop zones for empty sections
+    group: 'mediaList',
+    multiDrag: true,
+    plugins: [animations()],
+    selectedClass: 'sortable-selected',
+  },
+);
+
+// Watch for changes in visible items and update sortable items
+watch(
+  () => visibleMediaItems.value,
+  (newItems) => {
+    sortableItems.value = newItems;
+  },
+  { immediate: true },
+);
+
+// Local variable to track order during dragging (not updating store)
+let localSortableItems = visibleMediaItems.value;
+
+// Handle drag events
+watch(
+  () => sortableItems.value,
+  (newItems, oldItems) => {
+    if (!oldItems) return;
+
+    // Check if items from other sections are being dragged
+    const hasItemsFromOtherSections = newItems.some(
+      (item) => item.section !== props.mediaList.uniqueId,
+    );
+
+    if (hasItemsFromOtherSections) {
+      // Clear the selection by resetting to only items from this section
+      const itemsFromThisSection = visibleMediaItems.value;
+      sortableItems.value = itemsFromThisSection;
+      localSortableItems = itemsFromThisSection;
+      console.log('Cleared selection - items from other sections detected');
+      return;
+    }
+
+    // Always update local variable during dragging
+    localSortableItems = newItems;
+    console.log(
+      'sortableItems changed:',
+      newItems.map((item) => item.uniqueId),
+    );
+  },
+  { deep: true },
+);
+
+// Global drag state management for cross-component communication
+state.on('dragStarted', () => {
+  dragState.value.isDragging = true;
+  console.log('Drag started for section:', props.mediaList.uniqueId);
+
+  // Clear selections in other sections by resetting their sortableItems
+  // This will be handled by the drag and drop library's internal state
+});
+
+state.on('dragEnded', () => {
+  dragState.value.isDragging = false;
+  console.log(
+    'Drag ended for section:',
+    props.mediaList.uniqueId,
+    'Items:',
+    localSortableItems,
+  );
+
+  if (!selectedDateObject.value?.dynamicMedia) return;
+
+  // Use nextTick to ensure drag and drop library has finished its updates
+  nextTick(() => {
+    // Only update the store when drag is complete
+    updateMediaOrder(localSortableItems);
+  });
+});
+
+// Initialize hex values
+watchImmediate(
+  () => selectedDateObject.value?.customSections,
+  (customSections) => {
+    if (customSections) {
+      hexValues.value = customSections.reduce(
+        (acc, section) => ({
+          ...acc,
+          [section.uniqueId]: section.bgColor || '#ffffff',
+        }),
+        {},
+      );
+    }
+  },
+);
+
+// Initialize expanded media groups
+watchImmediate(
+  () => selectedDateObject.value?.dynamicMedia?.length,
+  () => {
+    expandedMediaGroups.value =
+      selectedDateObject.value?.dynamicMedia.reduce(
+        (acc, element) => {
+          if (
+            element.children?.length &&
+            element.extractCaption &&
+            element.section === props.mediaList.uniqueId
+          ) {
+            acc[element.uniqueId] = !!element.cbs;
+          }
+          return acc;
+        },
+        {} as Record<string, boolean>,
+      ) || {};
+  },
+);
+
+// Methods
+const addSong = (section: MediaSectionIdentifier | undefined) => {
+  window.dispatchEvent(
+    new CustomEvent<{ section: MediaSectionIdentifier | undefined }>(
+      'openSongPicker',
+      {
+        detail: { section },
+      },
+    ),
+  );
+};
+
+const moveSection = (section: string, direction: 'down' | 'up') => {
+  if (!selectedDateObject.value?.customSections) return;
+  const currentIndex = selectedDateObject.value.customSections.findIndex(
+    (s) => s.uniqueId === section,
+  );
+  if (currentIndex === -1) return;
+  const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+  if (
+    newIndex < 0 ||
+    newIndex >= selectedDateObject.value.customSections.length
+  )
+    return;
+  const [movedSection] = selectedDateObject.value.customSections.splice(
+    currentIndex,
+    1,
+  );
+  if (!movedSection) {
+    console.error('No section found at index:', currentIndex);
+    return;
+  }
+  selectedDateObject.value.customSections.splice(newIndex, 0, movedSection);
+};
+
+defineExpose({
+  expandedMediaGroups,
 });
 </script>
 
@@ -716,5 +614,62 @@ const isLastCustomSection = computed(() => {
 }
 .add-media-shortcut {
   max-width: 100%;
+}
+
+// Drag and drop styles
+.sortable-media {
+  transition: background-color 0.2s ease;
+
+  &.drop-here {
+    background-color: rgba(var(--q-primary), 0.1);
+    border: 2px dashed var(--q-primary);
+  }
+}
+
+.sortable-selected {
+  opacity: 0.7;
+  transform: scale(0.98);
+}
+
+[data-dragging='true'] {
+  opacity: 0.5;
+  transform: rotate(2deg);
+}
+
+[data-drag-placeholder='true'] {
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 2px dashed #ccc;
+  border-radius: 4px;
+  height: 60px;
+  margin: 4px 0;
+}
+
+.empty-drop-zone {
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed transparent;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+
+  .sortable-media.drop-here & {
+    border-color: var(--q-primary);
+    background-color: rgba(var(--q-primary), 0.05);
+  }
+}
+
+.empty-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--q-secondary);
+  opacity: 0.7;
+
+  .sortable-media.drop-here & {
+    opacity: 1;
+    color: var(--q-primary);
+  }
 }
 </style>

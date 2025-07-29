@@ -262,7 +262,7 @@
   "noDownloadsInProgress": "Hakuna faili zinazopakuliwa kwa sasa",
   "noName": "Hakuna jina",
   "none": "Hakuna",
-  "not-playing": "Haichezi",
+  "music.not-playing": "Haichezi",
   "notice-the-yeartext-is-now-being-displayed-on-the-external-monitor-but-lets-keep-going": "Utagundua andiko la mwaka sasa linaonyeshwa kwenye scrini ya nje! Lakini tuendelee.",
   "obs-studio-disconnected-banner": "M³ is unable to connect to OBS Studio. Please ensure that OBS Studio is running and configured correctly.",
   "obs-studio-integration": "Utumiaji wa OBS na M3",

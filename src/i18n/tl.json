@@ -262,7 +262,7 @@
   "noDownloadsInProgress": "Walang kasalukuyang download",
   "noName": "Walang pangalan",
   "none": "Wala",
-  "not-playing": "Not playing",
+  "music.not-playing": "Not playing",
   "notice-the-yeartext-is-now-being-displayed-on-the-external-monitor-but-lets-keep-going": "Mapapansin na ang taunang teksto sa external monitor! Magpatuloy tayo.",
   "obs-studio-disconnected-banner": "Hindi maka-connect ang M³ sa OBS Studio. Siguraduhing gumagana ang OBS Studio at naka-configure nang tama.",
   "obs-studio-integration": "OBS Studio integration",

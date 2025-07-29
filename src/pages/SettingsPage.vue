@@ -231,7 +231,7 @@ onMounted(() => {
   if (invalidSettings.value.length === 1) {
     setTimeout(() => {
       const el = document.getElementById(invalidSettings.value[0] ?? '');
-      el?.scrollIntoView({ behavior: 'smooth' });
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 500);
   }
 });
@@ -243,7 +243,7 @@ whenever(
     setTimeout(() => {
       if (!setting) return;
       const el = document.getElementById(setting);
-      el?.scrollIntoView({ behavior: 'smooth' });
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 500);
   },
   { immediate: true },

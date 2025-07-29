@@ -18,10 +18,13 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { datesAreSame, formatDate } from 'src/utils/date';
 import { getAdditionalMediaPath, isFileUrl } from 'src/utils/fs';
 import { isEmpty, isUUID } from 'src/utils/general';
-import { formatTime } from 'src/utils/time';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
+
+const { fs, path } = window.electronApi;
+const { ensureDir } = fs;
+const { join } = path;
 
 export interface Songbook {
   fileformat: 'MP3' | 'MP4';
@@ -31,14 +34,13 @@ export interface Songbook {
 
 interface Store {
   currentCongregation: string;
-  currentSongRemainingTime: string;
   downloadedFiles: Partial<
     Record<string, DownloadedFile | Promise<DownloadedFile>>
   >;
   downloadProgress: DownloadProgressItems;
   extractedFiles: Partial<Record<string, string>>;
   ffmpegPath: string;
-  mediaItemBeingSorted: DynamicMediaObject | undefined;
+  highlightedMediaId: string;
   mediaPlayingAction: '' | 'pause' | 'play' | 'website';
   mediaPlayingCurrentPosition: number;
   mediaPlayingPanzoom: Partial<{ scale: number; x: number; y: number }>;
@@ -49,13 +51,9 @@ interface Store {
   mediaWindowCustomBackground: string;
   mediaWindowVisible: boolean;
   meetingDay: boolean;
-  musicPlaying: boolean;
-  musicStarting: boolean;
-  musicStopping: boolean;
   online: boolean;
   onlyShowInvalidSettings: boolean;
   selectedDate: string;
-  timeRemainingBeforeMusicStop: number;
 }
 
 const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
@@ -73,12 +71,12 @@ export const useCurrentStateStore = defineStore('current-state', {
           this.currentSettings?.cacheFolder,
         );
         const dateString = formatDate(new Date(destDate), 'YYYYMMDD');
-        const datedAdditionalMediaDirectory = window.electronApi.path.join(
+        const datedAdditionalMediaDirectory = join(
           additionalMediaPath,
           this.currentCongregation,
           dateString,
         );
-        await window.electronApi.fs.ensureDir(datedAdditionalMediaDirectory);
+        await ensureDir(datedAdditionalMediaDirectory);
         return datedAdditionalMediaDirectory;
       } catch (error) {
         errorCatcher(error);
@@ -314,19 +312,6 @@ export const useCurrentStateStore = defineStore('current-state', {
         (media) => !media.children?.length && !isFileUrl(media.fileUrl),
       );
     },
-    musicRemainingTime: (state) => {
-      try {
-        if (state.musicStarting) return 'music.starting';
-        if (state.musicStopping) return 'music.stopping';
-        if (state.meetingDay && state.timeRemainingBeforeMusicStop > 0) {
-          return formatTime(state.timeRemainingBeforeMusicStop);
-        }
-        return state.currentSongRemainingTime;
-      } catch (error) {
-        errorCatcher(error);
-        return '..:..';
-      }
-    },
     selectedDateObject: (state): DateInfo | null => {
       const jwStore = useJwStore();
       if (
@@ -366,12 +351,11 @@ export const useCurrentStateStore = defineStore('current-state', {
   state: (): Store => {
     return {
       currentCongregation: '',
-      currentSongRemainingTime: '..:..',
       downloadedFiles: {},
       downloadProgress: {},
       extractedFiles: {},
       ffmpegPath: '',
-      mediaItemBeingSorted: undefined,
+      highlightedMediaId: '',
       mediaPlayingAction: '',
       mediaPlayingCurrentPosition: 0,
       mediaPlayingPanzoom: { scale: 1, x: 0, y: 0 },
@@ -382,13 +366,9 @@ export const useCurrentStateStore = defineStore('current-state', {
       mediaWindowCustomBackground: '',
       mediaWindowVisible: true,
       meetingDay: false,
-      musicPlaying: false,
-      musicStarting: false,
-      musicStopping: false,
       online: true,
       onlyShowInvalidSettings: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
-      timeRemainingBeforeMusicStop: 0,
     };
   },
 });

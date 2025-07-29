@@ -262,7 +262,7 @@
   "noDownloadsInProgress": "Er zijn momenteel geen downloads bezig",
   "noName": "Geen naam",
   "none": "Geen",
-  "not-playing": "Speelt niet",
+  "music.not-playing": "Speelt niet",
   "notice-the-yeartext-is-now-being-displayed-on-the-external-monitor-but-lets-keep-going": "Je zult zien dat de jaartekst nu op de externe monitor verschijnt! Maar laten we doorgaan.",
   "obs-studio-disconnected-banner": "M³ kan geen verbinding maken met OBS Studio. Zorg ervoor dat OBS Studio open is en correct is geconfigureerd.",
   "obs-studio-integration": "OBS Studio integratie",

@@ -4,17 +4,28 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { getTempPath } from 'src/utils/fs';
 import { isHeic, isPdf, isSvg } from 'src/utils/media';
 
+const {
+  convertHeic,
+  convertPdfToImages,
+  fs,
+  getNrOfPdfPages,
+  path,
+  pathToFileURL,
+} = window.electronApi;
+const { readFile, writeFile } = fs;
+const { parse } = path;
+
 const convertHeicToJpg = async (filepath: string) => {
   if (!isHeic(filepath)) return filepath;
   try {
-    const buffer = await window.electronApi.fs.readFile(filepath);
-    const output = await window.electronApi.convertHeic({
+    const buffer = await readFile(filepath);
+    const output = await convertHeic({
       buffer: buffer as unknown as ArrayBufferLike,
       format: 'JPEG',
     });
-    const existingPath = window.electronApi.path.parse(filepath);
+    const existingPath = parse(filepath);
     const newPath = `${existingPath.dir}/${existingPath.name}.jpg`;
-    await window.electronApi.fs.writeFile(newPath, Buffer.from(output));
+    await writeFile(newPath, Buffer.from(output));
     return newPath;
   } catch (error) {
     errorCatcher(error);
@@ -33,7 +44,7 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
     if (!ctx) return filepath;
 
     const img = new Image();
-    img.src = window.electronApi.pathToFileURL(filepath);
+    img.src = pathToFileURL(filepath);
 
     return new Promise((resolve, reject) => {
       img.onload = async function () {
@@ -54,10 +65,10 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         const outputImg = canvas.toDataURL('image/png');
-        const existingPath = window.electronApi.path.parse(filepath);
+        const existingPath = parse(filepath);
         const newPath = `${existingPath.dir}/${existingPath.name}.png`;
         try {
-          await window.electronApi.fs.writeFile(
+          await writeFile(
             newPath,
             Buffer.from(outputImg.split(',')[1] ?? '', 'base64'),
           );
@@ -86,12 +97,9 @@ export const convertImageIfNeeded = async (filepath: string) => {
   } else if (isSvg(filepath)) {
     return await convertSvgToJpg(filepath);
   } else if (isPdf(filepath)) {
-    const nrOfPages = await window.electronApi.getNrOfPdfPages(filepath);
+    const nrOfPages = await getNrOfPdfPages(filepath);
     if (nrOfPages === 1) {
-      const converted = await window.electronApi.convertPdfToImages(
-        filepath,
-        await getTempPath(),
-      );
+      const converted = await convertPdfToImages(filepath, await getTempPath());
       return converted[0] || filepath;
     }
   }

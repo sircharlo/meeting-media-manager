@@ -20,9 +20,10 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { path } = window.electronApi;
+const { basename } = path;
 
 const displayFolderName = computed(() => {
-  return model.value ? path.basename(model.value) : '';
+  return model.value ? basename(model.value) : '';
 });
 
 const { t } = useI18n();

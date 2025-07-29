@@ -1,5 +1,15 @@
 import type { VideoMarker } from './jw/sqlite';
 
+export interface CacheAnalysis {
+  allCacheFilesSize: number;
+  cacheFiles: CacheFile[];
+  frequentlyUsedDirectories: Set<string>;
+  untouchableDirectories: Set<string>;
+  unusedCacheFoldersSize: number;
+  unusedParentDirectories: Record<string, number>;
+  usedParentDirectories: Record<string, number>;
+}
+
 export interface CacheFile {
   orphaned: boolean;
   parentPath: string;
@@ -56,6 +66,14 @@ export interface DynamicMediaSection extends MediaSection {
   items: DynamicMediaObject[];
 }
 
+export interface DynamicMediaSectionConfig {
+  condition: boolean;
+  extraMediaShortcut: boolean;
+  id: MediaSectionIdentifier;
+  jwIcon?: string;
+  labelKey: string;
+}
+
 export interface FileDownloader {
   dir: string;
   filename?: string;
@@ -66,7 +84,6 @@ export interface FileDownloader {
 }
 
 export interface MediaSection {
-  alwaysShow: boolean;
   bgColor?: string;
   extraMediaShortcut?: boolean;
   jwIcon?: string;

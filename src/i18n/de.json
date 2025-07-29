@@ -262,7 +262,7 @@
   "noDownloadsInProgress": "Derzeit keine Downloads in Bearbeitung.",
   "noName": "Kein Name",
   "none": "Keine",
-  "not-playing": "Wird nicht abgespielt",
+  "music.not-playing": "Wird nicht abgespielt",
   "notice-the-yeartext-is-now-being-displayed-on-the-external-monitor-but-lets-keep-going": "Du wirst feststellen, dass der Jahrestext jetzt auf dem externen Monitor angezeigt wird! Aber lass uns weitermachen.",
   "obs-studio-disconnected-banner": "M³ kann sich nicht mit OBS Studio verbinden. Bitte stellen Sie sicher, dass OBS Studio korrekt ausgeführt und konfiguriert wird.",
   "obs-studio-integration": "OBS Studio Integration",

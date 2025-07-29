@@ -101,6 +101,11 @@ span.etitle {
   font-weight: 500;
 }
 
+.sortable-selected {
+  background-color: $sorting-bg !important;
+  border-color: $sorting-border !important;
+}
+
 .big-button {
   height: 100px;
 }
@@ -274,6 +279,11 @@ body.body--dark {
 
   .media-children {
     border-color: $accent-200-dark;
+  }
+
+  .sortable-selected {
+    background-color: $sorting-bg-dark !important;
+    border-color: $sorting-border-dark !important;
   }
 }
 
@@ -709,4 +719,8 @@ a {
 
 .study-bible-item .gradient-transparent-to-black {
   padding: 32px 8px 8px !important;
+}
+
+.sortable-media.drop-here {
+  min-height: 50px;
 }

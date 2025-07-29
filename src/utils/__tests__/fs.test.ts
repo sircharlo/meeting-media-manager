@@ -21,6 +21,9 @@ import {
   updatesDisabled,
 } from '../fs';
 
+const { fs } = window.electronApi;
+const { emptyDir, ensureFile, exists, remove } = fs;
+
 describe('isFileUrl', () => {
   it('should correctly recognize file urls', () => {
     expect(isFileUrl('file:///path/to/file')).toBe(true);
@@ -44,7 +47,7 @@ describe('Paths', () => {
       expect(path).toContain(basePath);
     });
 
-    await Promise.all(paths.map((path) => window.electronApi.fs.remove(path)));
+    await Promise.all(paths.map((path) => remove(path)));
   });
 
   it('should overwrite default cache location', async () => {
@@ -59,7 +62,7 @@ describe('Paths', () => {
       expect(path).toContain(cacheDir);
     });
 
-    await window.electronApi.fs.remove(cacheDir);
+    await remove(cacheDir);
   });
 });
 
@@ -81,28 +84,28 @@ describe('getPublicationDirectory', () => {
     });
     expect(path).toContain('/w_E_2025010100');
 
-    await window.electronApi.fs.remove(path);
+    await remove(path);
   });
 });
 
 describe('removeEmptyDirs', () => {
   it('should remove empty directories only', async () => {
     const root = join(basePath, 'empty-dir-root');
-    const emptyDir = join(root, 'empty-dir');
+    const emptyDirectory = join(root, 'empty-dir');
     const filledDir = join(root, 'filled-dir');
     const file = join(filledDir, 'file.txt');
-    await window.electronApi.fs.emptyDir(emptyDir);
-    await window.electronApi.fs.ensureFile(file);
+    await emptyDir(emptyDirectory);
+    await ensureFile(file);
 
-    expect(await window.electronApi.fs.exists(emptyDir)).toBe(true);
-    expect(await window.electronApi.fs.exists(file)).toBe(true);
+    expect(await exists(emptyDirectory)).toBe(true);
+    expect(await exists(file)).toBe(true);
 
     await removeEmptyDirs(root);
 
-    expect(await window.electronApi.fs.exists(emptyDir)).toBe(false);
-    expect(await window.electronApi.fs.exists(file)).toBe(true);
+    expect(await exists(emptyDirectory)).toBe(false);
+    expect(await exists(file)).toBe(true);
 
-    await window.electronApi.fs.remove(root);
+    await remove(root);
   });
 });
 
@@ -116,10 +119,10 @@ describe('getPublicationDirectoryContents', () => {
 
     const root = await getPublicationDirectory(pub);
     await Promise.all([
-      window.electronApi.fs.ensureFile(join(root, 'img1.jpg')),
-      window.electronApi.fs.ensureFile(join(root, 'img2.jpg')),
-      window.electronApi.fs.ensureFile(join(root, 'pub.jwpub')),
-      window.electronApi.fs.ensureFile(join(root, 'pub.db')),
+      ensureFile(join(root, 'img1.jpg')),
+      ensureFile(join(root, 'img2.jpg')),
+      ensureFile(join(root, 'pub.jwpub')),
+      ensureFile(join(root, 'pub.db')),
     ]);
 
     const all = await getPublicationDirectoryContents(pub);
@@ -139,22 +142,20 @@ describe('getPublicationDirectoryContents', () => {
     );
     expect(withCustomRoot.length).toBe(0);
 
-    await Promise.all(
-      [root, customRoot].map((path) => window.electronApi.fs.remove(path)),
-    );
+    await Promise.all([root, customRoot].map((filepath) => remove(filepath)));
   });
 });
 
 describe('trimFilepathAsNeeded', () => {
   it('should trim file paths to a certain length', () => {
-    const path = join(
+    const testPath = join(
       basePath,
       'Media',
       'some-very-long-file-name'.repeat(15) + '.jpg',
     );
-    expect(path.length).toBeGreaterThan(230);
+    expect(testPath.length).toBeGreaterThan(230);
 
-    const trimmed = trimFilepathAsNeeded(path);
+    const trimmed = trimFilepathAsNeeded(testPath);
     expect(trimmed).toContain(join(basePath, 'Media'));
     expect(trimmed).toContain('.jpg');
     expect(trimmed.length).toBeLessThanOrEqual(230);
