@@ -260,38 +260,10 @@ export function updateLookupPeriod(
     );
     if (todayDate) todayDate.today = true;
 
-    if (reset) {
-      console.group('🔄 Lookup Period Reset');
-      console.log('📋 Reset parameters:', {
-        currentCongregation,
-        targeted,
-      });
-
-      const daysToReset = targeted ? getTargetedDays() : getAllDays() || [];
-      if (!daysToReset.length) {
-        console.log('⚠️ No days found to reset');
-        return;
-      }
-
-      console.log(`📅 Found ${daysToReset.length} days to reset`);
-
-      daysToReset.forEach((day, index) => {
-        console.log(
-          `🛠️  Resetting day ${index + 1}/${daysToReset.length}:`,
-          day?.date?.toISOString().split('T')[0],
-        );
-        resetDay(day);
-      });
-
-      console.log('✅ Reset process completed');
-      console.groupEnd();
-    }
-
     function getTargetedDays() {
       console.group('🎯 Targeted Days Selection');
       if (!lookupPeriod[currentCongregation]) {
         console.log('⚠️ No lookup period found for current congregation');
-        console.groupEnd();
         return [];
       }
 
@@ -310,7 +282,7 @@ export function updateLookupPeriod(
         mondayOfTargetedWeek.toISOString().split('T')[0],
       );
 
-      return lookupPeriod[currentCongregation].filter((day) => {
+      const result = lookupPeriod[currentCongregation].filter((day) => {
         const mondayOfLookupWeek = getSpecificWeekday(day.date, 0);
         const isTargetWeek =
           datesAreSame(mondayOfTargetedWeek, mondayOfLookupWeek) ||
@@ -325,6 +297,7 @@ export function updateLookupPeriod(
         return isTargetWeek;
       });
       console.groupEnd();
+      return result;
     }
 
     function getAllDays() {
@@ -372,8 +345,41 @@ export function updateLookupPeriod(
       );
       console.groupEnd();
     }
+
+    if (reset) {
+      console.group('🔄 Lookup Period Reset');
+      console.log('📋 Reset parameters:', {
+        currentCongregation,
+        targeted,
+      });
+
+      const daysToReset = targeted ? getTargetedDays() : getAllDays() || [];
+      if (!daysToReset.length) {
+        console.log('⚠️ No days found to reset');
+        console.groupEnd();
+        return;
+      }
+
+      console.log(`📅 Found ${daysToReset.length} days to reset`);
+
+      daysToReset.forEach((day, index) => {
+        console.log(
+          `🛠️  Resetting day ${index + 1}/${daysToReset.length}:`,
+          day?.date?.toISOString().split('T')[0],
+        );
+        resetDay(day);
+      });
+
+      console.log('✅ Reset process completed');
+      console.groupEnd();
+    }
   } catch (error) {
     errorCatcher(error);
+  } finally {
+    // Ensure any open console groups are closed
+    if (reset) {
+      console.groupEnd();
+    }
   }
 }
 
