@@ -5,7 +5,6 @@
     @dragover="dropActive"
     @dragstart="dropActive"
   >
-    <pre>{{ selectedDateObject }}</pre>
     <div v-if="showBannerColumn" class="col">
       <q-slide-transition>
         <div v-if="showObsBanner" class="row">
@@ -112,6 +111,7 @@
       :total-files="totalFiles"
       @drop="dropEnd"
     />
+    <pre>{{ selectedDateObject }}</pre>
   </q-page>
 </template>
 

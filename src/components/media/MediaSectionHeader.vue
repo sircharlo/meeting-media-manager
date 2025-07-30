@@ -9,7 +9,9 @@
   >
     <q-avatar
       :class="[
-        isCustom ? 'custom-bg-color' : 'text-white bg-' + mediaList.uniqueId,
+        isCustom && currentState.selectedDateObject?.meeting !== 'we'
+          ? 'custom-bg-color'
+          : 'text-white bg-' + mediaList.uniqueId,
         { 'jw-icon': mediaList.jwIcon },
       ]"
     >
@@ -24,6 +26,7 @@
     <q-item-section
       class="text-bold text-uppercase text-spaced row justify-between col-grow"
     >
+      {{ isCustom }}
       <q-input
         v-if="isRenaming"
         ref="renameInput"
@@ -132,6 +135,7 @@
 import type { MediaSection } from 'src/types';
 
 import { useQuasar } from 'quasar';
+import { useCurrentStateStore } from 'stores/current-state';
 import { computed, nextTick, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -156,6 +160,7 @@ const emit = defineEmits<{
 
 const $q = useQuasar();
 const { t } = useI18n();
+const currentState = useCurrentStateStore();
 
 const renameInput = ref<HTMLInputElement>();
 const hexValue = ref(props.mediaList.bgColor || '#ffffff');
