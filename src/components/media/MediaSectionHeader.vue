@@ -48,16 +48,27 @@
           <q-btn
             class="add-media-shortcut"
             :class="[
-              isCustom
+              isCustom && currentState.selectedDateObject?.meeting !== 'we'
                 ? 'custom-text-color'
-                : 'text-white bg-' + mediaList.uniqueId,
+                : 'bg-' + mediaList.uniqueId,
             ]"
-            :color="!isCustom ? mediaList.uniqueId : undefined"
-            :flat="isCustom"
+            :color="
+              !isCustom ||
+              (isCustom && currentState.selectedDateObject?.meeting === 'we')
+                ? mediaList.uniqueId
+                : undefined
+            "
+            :flat="
+              isCustom && currentState.selectedDateObject?.meeting !== 'we'
+            "
             :icon="isSongButton ? 'mmm-music-note' : 'mmm-add-media'"
             :label="buttonLabel"
-            :outline="!isCustom"
-            :round="isCustom"
+            :outline="
+              !isCustom && currentState.selectedDateObject?.meeting !== 'we'
+            "
+            :round="
+              isCustom && currentState.selectedDateObject?.meeting !== 'we'
+            "
             size="sm"
             @click="handleAddClick"
           >

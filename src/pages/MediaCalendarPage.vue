@@ -111,7 +111,7 @@
       :total-files="totalFiles"
       @drop="dropEnd"
     />
-    <pre>{{ selectedDateObject }}</pre>
+    <!-- <pre>{{ selectedDateObject }}</pre> -->
   </q-page>
 </template>
 

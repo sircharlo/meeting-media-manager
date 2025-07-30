@@ -36,7 +36,9 @@
     </q-btn>
   </transition>
   <q-btn
-    v-if="!selectedDateObject?.meeting"
+    v-if="
+      !selectedDateObject?.meeting && selectedDateObject?.dynamicMedia?.length
+    "
     color="white-transparent"
     :disable="mediaPlaying"
     unelevated

@@ -729,6 +729,7 @@ a {
 // FormKit applies z-index: 9999 to dragged items, but headers have z-index: 2000
 [data-dragging='true'],
 .sortable-selected,
-[data-drag-placeholder='true'] {
+[data-drag-placeholder='true'],
+.q-item {
   z-index: 1500 !important; // Lower than headers (2000) but still above other content
 }

@@ -77,6 +77,17 @@ export function addUniqueById<T extends { uniqueId: string }>(
   });
 }
 
+export function addUniqueByIdToTop<T extends { uniqueId: string }>(
+  targetArray: (T | undefined)[],
+  sourceArray: (T | undefined)[],
+): void {
+  sourceArray.forEach((item) => {
+    if (!targetArray.some((obj) => obj?.uniqueId === item?.uniqueId)) {
+      targetArray.unshift(item);
+    }
+  });
+}
+
 export function deduplicateById<T extends { uniqueId: string }>(
   array: T[],
 ): void {
@@ -196,7 +207,7 @@ export const useJwStore = defineStore('jw-store', {
             media.sortOrderOriginal =
               'additional-' + getAdditionalCount() + '-' + index;
           });
-          addUniqueById(period.dynamicMedia, mediaArray);
+          addUniqueByIdToTop(period.dynamicMedia, mediaArray);
         }
       } catch (e) {
         errorCatcher(e);

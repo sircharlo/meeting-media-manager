@@ -10,16 +10,17 @@
       <div class="row q-px-md q-py-md">
         {{ t('edit-sections-explain') }}
       </div>
-      <div class="row q-px-md overflow-auto">
+      <div class="row q-px-md">
         <q-list
-          v-if="selectedDateObject?.customSections?.length"
+          v-if="sortableItems?.length"
           bordered
           class="full-width"
           separator
         >
+          HAHAHA
           <div ref="listContainer">
             <q-item
-              v-for="element in selectedDateObject?.customSections"
+              v-for="element in sortableItems"
               :key="element.uniqueId"
               :data-unique-id="element.uniqueId"
               :style="{
@@ -104,6 +105,8 @@
 </template>
 
 <script setup lang="ts">
+import type { MediaSection } from 'src/types';
+
 import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
 import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
@@ -121,6 +124,7 @@ const open = defineModel<boolean>({ required: true });
 
 const hexValues = ref<Record<string, string>>({});
 const labels = ref<Record<string, string>>({});
+const customSections = ref<MediaSection[]>([]);
 
 const updateLabel = (uuid: string) => {
   const newLabel = labels.value[uuid];
@@ -135,6 +139,7 @@ const updateLabel = (uuid: string) => {
 };
 
 const initializeValues = () => {
+  console.log('initializeValues', selectedDateObject.value?.customSections);
   if (!selectedDateObject.value?.customSections) return;
   labels.value = selectedDateObject.value.customSections.reduce(
     (acc, section) => ({
@@ -150,15 +155,36 @@ const initializeValues = () => {
     }),
     {},
   );
+  sortableItems.value = selectedDateObject.value.customSections || [];
 };
 
-// Initialize drag and drop
-const [listContainer] = useDragAndDrop(
-  selectedDateObject.value?.customSections || [],
-  {
-    dragHandle: '.drag-handle',
-  },
-);
+// Handle order change after drag and drop
+const handleOrderChange = () => {
+  if (!selectedDateObject.value?.customSections) return;
+
+  // Update the customSections array with the new order
+  selectedDateObject.value.customSections = sortableItems.value;
+
+  console.log('✅ Custom sections reordered:', {
+    newOrder: sortableItems.value.map((section) => ({
+      label: section.label,
+      uniqueId: section.uniqueId,
+    })),
+  });
+};
+
+// Initialize drag and drop with proper [parent, values] pattern
+const [listContainer, sortableItems] = useDragAndDrop(customSections.value, {
+  dragHandle: '.drag-handle',
+  onDragend: handleOrderChange,
+});
+
+// Watch for changes in sortableItems and update the store
+//whenever(sortableItems, (newOrder) => {
+//  if (newOrder && newOrder.length > 0) {
+//    handleOrderChange(newOrder);
+//  }
+//}, { deep: true });
 
 onMounted(() => {
   initializeValues();
