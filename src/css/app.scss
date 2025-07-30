@@ -724,3 +724,11 @@ a {
 .sortable-media.drop-here {
   min-height: 50px;
 }
+
+// Override FormKit drag and drop z-index to prevent covering headers
+// FormKit applies z-index: 9999 to dragged items, but headers have z-index: 2000
+[data-dragging='true'],
+.sortable-selected,
+[data-drag-placeholder='true'] {
+  z-index: 1500 !important; // Lower than headers (2000) but still above other content
+}
