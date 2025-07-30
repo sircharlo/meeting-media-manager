@@ -26,7 +26,6 @@
     <q-item-section
       class="text-bold text-uppercase text-spaced row justify-between col-grow"
     >
-      {{ isCustom }}
       <q-input
         v-if="isRenaming"
         ref="renameInput"
