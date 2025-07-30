@@ -5,9 +5,7 @@
     @dragover="dropActive"
     @dragstart="dropActive"
   >
-    <pre>{{
-      selectedDateObject?.dynamicMedia.map((item) => item.uniqueId)
-    }}</pre>
+    <pre>{{ selectedDateObject }}</pre>
     <div v-if="showBannerColumn" class="col">
       <q-slide-transition>
         <div v-if="showObsBanner" class="row">
@@ -73,29 +71,30 @@
         :open-import-menu="openImportMenu"
       />
     </div>
-    <template
-      v-for="mediaList in mediaLists"
-      :key="
-        selectedDateObject?.date +
-        '-' +
-        mediaList.uniqueId +
-        '-' +
-        mediaList.items?.length
-      "
-    >
-      <!-- <pre>{{
-        { ...mediaList, items: 'total: ' + mediaList.items?.length }
-      }}</pre> -->
-      <MediaList
-        :ref="mediaListRefs[mediaList.uniqueId]"
-        :media-list="mediaList"
-        :open-import-menu="openImportMenu"
-        @update-media-section-bg-color="updateMediaSectionBgColor"
-        @update-media-section-label="updateMediaSectionLabel"
-      />
+    <template v-if="!showEmptyState">
+      <template
+        v-for="mediaList in mediaLists"
+        :key="
+          selectedDateObject?.date +
+          '-' +
+          mediaList.uniqueId +
+          '-' +
+          mediaList.items?.length
+        "
+      >
+        <MediaList
+          :ref="mediaListRefs[mediaList.uniqueId]"
+          :media-list="mediaList"
+          :open-import-menu="openImportMenu"
+          @update-media-section-bg-color="updateMediaSectionBgColor"
+          @update-media-section-label="updateMediaSectionLabel"
+        />
+      </template>
     </template>
     <q-btn
-      v-if="selectedDateObject && !selectedDateObject.meeting"
+      v-if="
+        selectedDateObject && !selectedDateObject.meeting && !showEmptyState
+      "
       class="full-width dashed-border big-button"
       color="accent-100"
       icon="mmm-plus"
@@ -182,7 +181,7 @@ import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
-import { computed, onMounted, ref, type Ref, toRaw, unref, watch } from 'vue';
+import { computed, onMounted, ref, type Ref, toRaw, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const showFileImportDialog = ref(false);
@@ -293,7 +292,7 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
       jwIcon: '',
       labelKey: 'circuit-overseer',
     },
-  ] as const;
+  ] as DynamicMediaSectionConfig[];
 
   const defaultSections: DynamicMediaSection[] = sectionConfigs
     .filter(({ condition }) => condition && isComplete)
@@ -316,19 +315,16 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
   return result;
 });
 
-// Refactored to use an object keyed by section uniqueId for safe lookup
-const mediaListRefs = computed<Record<string, Ref<null | typeof MediaList>>>(
-  () => {
-    const refs: Record<
-      MediaSectionIdentifier,
-      Ref<null | typeof MediaList>
-    > = {};
-    mediaLists.value.forEach((section) => {
-      refs[section.uniqueId as MediaSectionIdentifier] = ref(null);
-    });
-    return refs;
-  },
-);
+const mediaListRefs = computed(() => {
+  const refs: Record<
+    MediaSectionIdentifier,
+    Ref<InstanceType<typeof MediaList> | null>
+  > = {};
+  mediaLists.value.forEach((section) => {
+    refs[section.uniqueId as MediaSectionIdentifier] = ref(null);
+  });
+  return refs;
+});
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
   name: 'media-action',
@@ -1080,9 +1076,7 @@ const keyboardShortcutMediaList = () => {
 
   return allMedia.flatMap((m) => {
     // Get media groups
-    const expanded = unref(
-      toRaw(unref(mediaListRefs.value[m.section]))?.[0]?.expandedMediaGroups,
-    );
+    const expanded = mediaListRefs.value[m.section]?.value?.expandedGroups;
 
     // Check if the media is collapsed based on the expanded state
     const isCollapsed = m.children && expanded ? !expanded[m.uniqueId] : false;
@@ -1100,7 +1094,7 @@ const sortedMediaFileUrls = computed(() =>
   keyboardShortcutMediaList()
     .filter((m) => !m.hidden && !!m.fileUrl)
     .map((m) => m.fileUrl)
-    .filter((m) => typeof m === 'string')
+    .filter((m): m is string => typeof m === 'string')
     .filter((fileUrl, index, self) => self.indexOf(fileUrl) === index),
 );
 
@@ -1300,9 +1294,8 @@ const showEmptyState = computed(
     (!currentSettings.value?.disableMediaFetching &&
       ((selectedDateObject.value?.meeting &&
         !selectedDateObject.value?.complete) ||
-        (!selectedDateObject.value?.customSections?.length &&
-          !selectedDateObject.value?.dynamicMedia?.filter((m) => !m.hidden)
-            .length))),
+        !selectedDateObject.value?.dynamicMedia?.filter((m) => !m.hidden)
+          .length)),
 );
 
 const showBannerColumn = computed(

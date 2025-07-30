@@ -36,6 +36,7 @@ export const useCongregationSettingsStore = defineStore(
         }
       },
       updateCongregationsWithMissingSettings() {
+        console.group('🏢 Congregation Settings Update');
         let updatedCount = 0;
         const updates: {
           after: Partial<Record<string, unknown>>;
@@ -48,16 +49,19 @@ export const useCongregationSettingsStore = defineStore(
           const congregationIds = Object.keys(this.congregations);
 
           if (congregationIds.length === 0) {
-            console.log('No congregations found to update');
+            console.log('🏢 No congregations found to update');
+            console.groupEnd();
             return { updatedCount, updates };
           }
 
           congregationIds.forEach((congId) => {
+            console.group(`🏢 Processing Congregation ${congId}`);
             try {
               const congregation = this.congregations[congId];
 
               if (!congregation) {
                 console.warn(`Congregation ${congId} not found, skipping`);
+                console.groupEnd();
                 return;
               }
 
@@ -92,28 +96,32 @@ export const useCongregationSettingsStore = defineStore(
                 });
 
                 console.log(
-                  `Updated congregation ${congId} with missing settings`,
+                  `🏢 Updated congregation ${congId} with missing settings`,
                   'Before:',
                   before,
                   'After:',
                   after,
                 );
               }
+              console.groupEnd();
             } catch (error) {
-              console.error(`Error updating congregation ${congId}:`, error);
+              console.log(`❌ Error updating congregation ${congId}:`, error);
+              console.groupEnd();
             }
           });
 
           if (updatedCount > 0) {
             console.log(
-              `Successfully updated ${updatedCount} congregations with missing settings`,
+              `✅ Successfully updated ${updatedCount} congregations with missing settings`,
             );
           }
         } catch (error) {
-          console.error(
-            'Error updating congregations with missing settings:',
+          console.log(
+            '❌ Error updating congregations with missing settings:',
             error,
           );
+        } finally {
+          console.groupEnd();
         }
 
         return { updatedCount, updates };

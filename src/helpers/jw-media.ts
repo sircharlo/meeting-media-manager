@@ -347,18 +347,23 @@ export const downloadFileIfNeeded = async ({
 };
 
 export const fetchMedia = async () => {
+  console.group('📥 Media Fetching');
   try {
     const currentStateStore = useCurrentStateStore();
     if (
       !currentStateStore.currentCongregation ||
       !!currentStateStore.currentSettings?.disableMediaFetching
     ) {
+      console.log('⏭️ Media fetching disabled or no congregation');
+      console.groupEnd();
       return;
     }
 
     const jwStore = useJwStore();
 
     if (!jwStore.urlVariables.base || !jwStore.urlVariables.mediator) {
+      console.log('⚠️ Missing URL variables for media fetching');
+      console.groupEnd();
       return;
     }
 
@@ -398,22 +403,33 @@ export const fetchMedia = async () => {
     const uniqueDays = dedupeDays(rawDays);
 
     if (uniqueDays.length !== rawDays.length) {
+      console.group('🔄 Day Deduplication');
       console.log(
-        `Dedupe reduced days from ${rawDays.length} to ${uniqueDays.length}`,
+        `📊 Reduced days from ${rawDays.length} to ${uniqueDays.length}`,
       );
       jwStore.lookupPeriod[currentStateStore.currentCongregation] = uniqueDays;
+      console.groupEnd();
     }
 
+    console.group('🔍 Day Analysis');
     const meetingsToFetch = (
       await Promise.all(
         jwStore.lookupPeriod[currentStateStore.currentCongregation]?.map(
           async (day, index) => {
             // console.log(`\nChecking day at index ${index}:`, day);
 
+            // Skip non-meeting days entirely
+            if (!day.meeting) {
+              return null;
+            }
+
             // Condition 1: Incomplete or error meeting
             const hasIncompleteOrErrorMeeting =
               day.meeting && (!day.complete || day.error);
             if (hasIncompleteOrErrorMeeting) {
+              console.group(
+                `📅 Day ${index + 1} - ${day.date.toISOString().split('T')[0]}`,
+              );
               console.log('🔍 Incomplete or error meeting detected:', {
                 complete: day.complete,
                 error: day.error,
@@ -435,9 +451,12 @@ export const fetchMedia = async () => {
                 const isMissing = shouldCheckFile && !fileExists;
 
                 if (isMissing) {
-                  console.log(`❌ Missing media file at media[${mediaIndex}]`, {
-                    media,
-                  });
+                  console.log(
+                    `    ❌ Missing media file at media[${mediaIndex}]`,
+                    {
+                      media,
+                    },
+                  );
                 }
 
                 return isMissing;
@@ -471,8 +490,7 @@ export const fetchMedia = async () => {
                 hasMissingMediaFile,
                 index,
               });
-              // } else {
-              //   console.log('✅ Day is clean.');
+              console.groupEnd();
             }
 
             return shouldRefresh ? day : null;
@@ -480,6 +498,7 @@ export const fetchMedia = async () => {
         ) || [],
       )
     ).filter((day) => !!day);
+    console.groupEnd();
 
     meetingsToFetch.forEach((day) => {
       day.error = false;
@@ -495,7 +514,9 @@ export const fetchMedia = async () => {
     }
     const queue = queues.meetings[currentStateStore.currentCongregation];
     if (meetingsToFetch.length) {
-      console.log('Fetching media for meetings:', {
+      console.group('📥 Media Processing');
+      console.log('📋 Meetings to process:', {
+        count: meetingsToFetch.length,
         meetings: meetingsToFetch,
       });
     }
@@ -503,20 +524,32 @@ export const fetchMedia = async () => {
       try {
         queue
           ?.add(async () => {
-            if (!day) return;
+            console.group(
+              `📅 Processing ${day.meeting === 'we' ? 'Weekend' : day.meeting === 'mw' ? 'Midweek' : 'Unknown'} Meeting - ${day.date.toISOString().split('T')[0]}`,
+            );
+            if (!day) {
+              console.log('⚠️ No day data');
+              console.groupEnd();
+              return;
+            }
             const dayDate = day.date;
             if (!dayDate) {
               day.complete = false;
               day.error = true;
+              console.log('❌ No date for day');
+              console.groupEnd();
               return;
             }
             let fetchResult = null;
             if (day.meeting === 'we') {
+              console.log('🌅 Fetching weekend meeting media');
               fetchResult = await getWeMedia(dayDate);
             } else if (day.meeting === 'mw') {
+              console.log('🌆 Fetching midweek meeting media');
               fetchResult = await getMwMedia(dayDate);
             }
             if (fetchResult) {
+              console.log('✅ Media fetched successfully');
               replaceMissingMediaByPubMediaId(
                 day.dynamicMedia,
                 fetchResult.media,
@@ -524,12 +557,16 @@ export const fetchMedia = async () => {
               day.error = fetchResult.error;
               day.complete = true;
             } else {
+              console.log('❌ Failed to fetch media');
               day.error = true;
               day.complete = false;
             }
+            console.groupEnd();
           })
           .catch((error) => {
+            console.log('❌ Error during media processing:', error);
             day.error = true;
+            console.groupEnd();
             throw error;
           });
       } catch (error) {
@@ -538,9 +575,14 @@ export const fetchMedia = async () => {
       }
     }
     await queue?.onIdle();
+    console.log('✅ All media processing completed');
+    console.groupEnd();
     exportAllDays();
   } catch (error) {
+    console.log('❌ Error in fetchMedia:', error);
     errorCatcher(error);
+  } finally {
+    console.groupEnd(); // Close main Media Fetching group
   }
 };
 

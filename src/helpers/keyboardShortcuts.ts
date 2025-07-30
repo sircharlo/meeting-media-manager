@@ -82,24 +82,38 @@ export const registerCustomShortcut = (
 };
 
 export const registerAllCustomShortcuts = () => {
+  console.group('⌨️ Keyboard Shortcuts Registration');
   try {
     const currentState = useCurrentStateStore();
-    if (!currentState.currentSettings) return;
+    if (!currentState.currentSettings) {
+      console.log('⚠️ No settings available for shortcuts');
+      console.groupEnd();
+      return;
+    }
     unregisterAllCustomShortcuts();
-    console.log('Registering configured keyboard shortcuts');
+    console.log('⌨️ Registering configured keyboard shortcuts');
     for (const shortcutName of Object.keys(shortcutCallbacks)) {
       registerCustomShortcut(shortcutName as keyof SettingsValues);
     }
+    console.log('✅ Keyboard shortcuts registered successfully');
   } catch (error) {
+    console.log('❌ Error registering keyboard shortcuts:', error);
     errorCatcher(error);
+  } finally {
+    console.groupEnd();
   }
 };
 
 export const unregisterAllCustomShortcuts = () => {
-  console.log('Unregistering all currently active keyboard shortcuts');
+  console.group('⌨️ Keyboard Shortcuts Unregistration');
+  console.log('⌨️ Unregistering all currently active keyboard shortcuts');
   try {
     unregisterAllShortcuts();
+    console.log('✅ Keyboard shortcuts unregistered successfully');
   } catch (error) {
+    console.log('❌ Error unregistering keyboard shortcuts:', error);
     errorCatcher(error);
+  } finally {
+    console.groupEnd();
   }
 };

@@ -1,5 +1,4 @@
 <template>
-  {{ mediaSortCanBeReset }}
   <SongPicker v-model="chooseSong" :section="section" />
   <PublicTalkMediaPicker v-model="publicTalkMediaPopup" :section="section" />
   <DialogRemoteVideo v-model="remoteVideoPopup" :section="section" />
@@ -513,14 +512,8 @@ const mediaSortCanBeReset = computed<boolean>(() => {
     const inStandard =
       standardSections.includes(item.section) ||
       standardSections.includes(item.sectionOriginal);
-    console.log(
-      `Checking section change for item: ${item.uniqueId}`,
-      inStandard && item.section !== item.sectionOriginal,
-    );
     return inStandard && item.section !== item.sectionOriginal;
   });
-
-  console.log('hasSectionChange:', hasSectionChange);
 
   if (hasSectionChange) {
     return true;
@@ -529,8 +522,6 @@ const mediaSortCanBeReset = computed<boolean>(() => {
   const watchedMediaToConsider = nonHiddenMedia.filter(
     (item) => item.source === 'watched',
   );
-
-  console.log('watchedMediaToConsider', watchedMediaToConsider);
 
   for (let i = 0; i < watchedMediaToConsider.length - 1; i++) {
     const firstTitle = watchedMediaToConsider[i]?.title ?? '';
@@ -547,19 +538,9 @@ const mediaSortCanBeReset = computed<boolean>(() => {
     ...(getVisibleMediaForSection.value.wt || []),
   ];
 
-  console.log('mediaToConsider', mediaToConsider);
-
   for (let i = 0; i < mediaToConsider.length - 1; i++) {
     const firstSortOrder = mediaToConsider[i]?.sortOrderOriginal ?? 0;
     const secondSortOrder = mediaToConsider[i + 1]?.sortOrderOriginal ?? 0;
-    console.log(
-      `Comparing sortOrder: ${firstSortOrder} and ${secondSortOrder}`,
-      i,
-      i + 1,
-      mediaToConsider[i]?.uniqueId,
-      mediaToConsider[i]?.sectionOriginal,
-      mediaToConsider[i]?.section,
-    );
     if (firstSortOrder > secondSortOrder) {
       return true; // Array is not sorted
     }
@@ -633,5 +614,15 @@ const resetSort = () => {
     ...sortedMedia.filter((item) => item.section === 'wt'),
     ...(getAllMediaForSection.value.circuitOverseer || []),
   ];
+
+  // Dispatch event to notify all sections to update their sortable items
+  window.dispatchEvent(
+    new CustomEvent('dragCompleted', {
+      detail: {
+        sectionId: 'reset-sort',
+        updatedItems: selectedDateObject.value.dynamicMedia.length,
+      },
+    }),
+  );
 };
 </script>

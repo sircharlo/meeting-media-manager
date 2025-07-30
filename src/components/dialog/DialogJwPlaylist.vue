@@ -347,10 +347,11 @@ const formatDuration = (item: JwPlaylistItem) => {
 };
 
 const addSelectedItems = async () => {
+  console.group('📋 JW Playlist Processing');
   try {
     loading.value = true;
     console.log(
-      'Adding selected items',
+      '📋 Adding selected items',
       selectedItems.value,
       selectedDateObject.value,
     );
@@ -360,13 +361,13 @@ const addSelectedItems = async () => {
       .map((index) => playlistItems.value[index])
       .filter(Boolean);
 
-    console.log('Selected playlist items', selectedPlaylistItems);
+    console.log('📋 Selected playlist items', selectedPlaylistItems);
     const outputPath = join(
       await getTempPath(),
       basename(props.jwPlaylistPath),
     );
 
-    console.log('Output path', outputPath);
+    console.log('📁 Output path', outputPath);
 
     // Process items sequentially and wait for each to complete
     for (let i = 0; i < selectedPlaylistItems.length; i++) {
@@ -388,11 +389,14 @@ const addSelectedItems = async () => {
 
       const playlistItemName = `${i + 1} - ${item.Label}`;
       const itemLabel = `${playlistName.value ? playlistName.value + ' - ' : ''}${playlistItemName}`;
-      console.log('Processing item:', item);
+      console.group(
+        `🔄 Processing Item ${i + 1}/${selectedPlaylistItems.length} - ${item.Label}`,
+      );
+      console.log('📋 Item details:', item);
 
       if (!item.OriginalFilename) {
         // Handle video using downloadAdditionalRemoteVideo
-        console.log('Processing video item:', itemLabel);
+        console.log('🎥 Processing video item:', itemLabel);
 
         // Create media link object for the video
         const lang = getJwLangCode(item.MepsLanguage) || 'E';
@@ -404,7 +408,7 @@ const addSelectedItems = async () => {
           pub: item.KeySymbol,
           track: item.Track,
         });
-        console.log('Pub download links:', pubDownload);
+        console.log('🔗 Pub download links:', pubDownload);
 
         if (
           !pubDownload?.files ||
@@ -435,10 +439,11 @@ const addSelectedItems = async () => {
           customDuration,
         );
 
-        console.log('Video item added:', itemLabel);
+        console.log('✅ Video item added:', itemLabel);
+        console.groupEnd();
       } else {
         // Handle non-video items (images, audio, etc.) as before
-        console.log('Processing non-video item:', itemLabel);
+        console.log('🖼️ Processing non-video item:', itemLabel);
 
         const multimediaItem: MultimediaItem = {
           BeginParagraphOrdinal: 0,
@@ -477,7 +482,7 @@ const addSelectedItems = async () => {
           );
 
           console.log(
-            'Adding dynamic media item:',
+            '📋 Adding dynamic media item:',
             dynamicMediaItems,
             props.section,
             currentCongregation.value,
@@ -493,17 +498,20 @@ const addSelectedItems = async () => {
           );
         }
 
-        console.log('Non-video item added:', itemLabel);
+        console.log('✅ Non-video item added:', itemLabel);
+        console.groupEnd();
       }
     }
 
-    console.log('All items processed successfully');
+    console.log('✅ All items processed successfully');
     open.value = false;
   } catch (error) {
+    console.log('❌ Error processing playlist items:', error);
     errorCatcher(error);
   } finally {
     loading.value = false;
     resetSelection();
+    console.groupEnd();
   }
 };
 

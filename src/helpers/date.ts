@@ -261,7 +261,8 @@ export function updateLookupPeriod(
     if (todayDate) todayDate.today = true;
 
     if (reset) {
-      console.log('🔄 Starting lookup period reset process...', {
+      console.group('🔄 Lookup Period Reset');
+      console.log('📋 Reset parameters:', {
         currentCongregation,
         targeted,
       });
@@ -283,16 +284,19 @@ export function updateLookupPeriod(
       });
 
       console.log('✅ Reset process completed');
+      console.groupEnd();
     }
 
     function getTargetedDays() {
+      console.group('🎯 Targeted Days Selection');
       if (!lookupPeriod[currentCongregation]) {
         console.log('⚠️ No lookup period found for current congregation');
+        console.groupEnd();
         return [];
       }
 
       console.log(
-        '🎯 Getting targeted days for week including:',
+        '📅 Getting targeted days for week including:',
         onlyForWeekIncluding,
       );
 
@@ -320,14 +324,21 @@ export function updateLookupPeriod(
 
         return isTargetWeek;
       });
+      console.groupEnd();
     }
 
     function getAllDays() {
-      console.log('🌍 Getting all days for congregation');
-      return lookupPeriod[currentCongregation];
+      console.group('🌍 All Days Selection');
+      console.log('📋 Getting all days for congregation');
+      const result = lookupPeriod[currentCongregation];
+      console.groupEnd();
+      return result;
     }
 
     function resetDay(day: DateInfo) {
+      console.group(
+        `📅 Resetting Day - ${day.date.toISOString().split('T')[0]}`,
+      );
       const beforeDynamicCount = day.dynamicMedia.length;
 
       // Reset status flags
@@ -343,7 +354,7 @@ export function updateLookupPeriod(
 
       const removedCount = beforeDynamicCount - day.dynamicMedia.length;
       if (removedCount > 0) {
-        console.log(`    🗑️  Removed ${removedCount} dynamic media items`);
+        console.log(`🗑️ Removed ${removedCount} dynamic media items`);
       }
 
       // Set meeting type
@@ -357,8 +368,9 @@ export function updateLookupPeriod(
       day.today = datesAreSame(day.date, new Date());
 
       console.log(
-        `    📝 Set meeting type: ${day.meeting || 'none'}, today: ${day.today}`,
+        `📝 Set meeting type: ${day.meeting || 'none'}, today: ${day.today}`,
       );
+      console.groupEnd();
     }
   } catch (error) {
     errorCatcher(error);
