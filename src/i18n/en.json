@@ -319,6 +319,7 @@
   "pause-to-adjust-time": "To enable scrubbing, the video must be paused",
   "picture-in-picture": "Media and speaker (PiP)",
   "play-music": "Play music",
+  "play-while-downloading": "Start streaming this media item from the internet while it's being downloaded",
   "playlist-items": "Playlist items",
   "please-use-image-or-jwpub": "Please select an image file or a JWPUB file that contains an image",
   "please-wait": "Please wait",

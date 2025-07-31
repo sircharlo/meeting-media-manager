@@ -406,7 +406,11 @@
           rounded
           :unelevated="!isFileUrl(media.fileUrl)"
           @click="setMediaPlaying(media)"
-        />
+        >
+          <q-tooltip v-if="!localFile" :delay="1000">
+            {{ t('play-while-downloading') }}
+          </q-tooltip>
+        </q-btn>
       </template>
       <template v-else>
         <q-btn
