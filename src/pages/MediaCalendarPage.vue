@@ -501,11 +501,7 @@ watch(
     )
       return;
     postMediaUrl(newUrl as string);
-    postCustomDuration(undefined);
-
-    if (customDuration.value) {
-      postCustomDuration(JSON.stringify(customDuration));
-    }
+    postCustomDuration(JSON.stringify(newCustomDuration));
   },
 );
 
