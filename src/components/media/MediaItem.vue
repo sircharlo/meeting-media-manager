@@ -264,14 +264,24 @@
             'text-grey': !isFileUrl(media.fileUrl),
           }"
         >
+          <q-input
+            v-if="isEditingTitle"
+            ref="titleInput"
+            v-model="mediaTitle"
+            dense
+            @blur="handleTitleEdit(false)"
+            @keyup.enter="handleTitleEdit(false)"
+            @keyup.esc="handleTitleEdit(false)"
+          />
           <div
+            v-else
             :class="
               ($q.screen.gt.xs || !media.tag) &&
               (displayMediaTitle.match(/\s/g) || []).length
                 ? 'ellipsis-3-lines'
                 : 'ellipsis'
             "
-            @dblclick="mediaEditTitleDialog = true"
+            @dblclick="handleTitleEdit(true)"
           >
             {{ displayMediaTitle }}
             <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
@@ -537,7 +547,7 @@
           v-close-popup
           clickable
           :disable="isCurrentlyPlaying"
-          @click="mediaEditTitleDialog = true"
+          @click="handleTitleEdit(true)"
         >
           <q-item-section avatar>
             <q-icon name="mmm-edit" />
@@ -597,28 +607,7 @@
       </q-list>
     </q-menu>
   </q-item>
-  <q-dialog v-model="mediaEditTitleDialog">
-    <q-card class="modal-confirm">
-      <q-card-section class="items-center">
-        <q-input v-model="mediaTitle" focused outlined type="textarea" />
-      </q-card-section>
-      <q-card-actions align="right" class="text-primary">
-        <q-btn
-          v-close-popup
-          color="negative"
-          flat
-          :label="t('reset')"
-          @click="resetMediaTitle()"
-        />
-        <q-btn
-          v-close-popup
-          flat
-          :label="t('save')"
-          @click="emit('update:title', mediaTitle)"
-        />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
+
   <q-dialog v-model="mediaEditTagDialog">
     <q-card class="modal-confirm">
       <q-card-section class="items-center">
@@ -798,9 +787,9 @@ watch(contextMenu, (val) => {
   if (!val) menuTarget.value = true;
 });
 
-const mediaEditTitleDialog = ref(false);
+const isEditingTitle = ref(false);
+const titleInput = ref<HTMLInputElement>();
 const mediaTitle = ref(props.media.title);
-const initialMediaTitle = ref(mediaTitle.value);
 
 const { fileUrlToPath, fs, path } = window.electronApi;
 const { basename } = path;
@@ -808,6 +797,10 @@ const { basename } = path;
 const { pathExists, pathExistsSync, statSync } = fs;
 
 const displayMediaTitle = computed(() => {
+  // When editing, use the local mediaTitle to avoid reactivity delays
+  if (isEditingTitle.value) {
+    return mediaTitle.value || '';
+  }
   return (
     props.media.title ||
     (props.media.fileUrl && basename(props.media.fileUrl)) ||
@@ -852,8 +845,25 @@ const mediaTagClasses = computed(() => {
   };
 });
 
-const resetMediaTitle = () => {
-  emit('update:title', initialMediaTitle.value);
+const handleTitleEdit = (value: boolean) => {
+  if (value) {
+    // Start editing
+    isEditingTitle.value = true;
+    // Initialize mediaTitle with current title when starting to edit
+    mediaTitle.value = props.media.title || '';
+    nextTick(() => {
+      if (titleInput.value) {
+        titleInput.value.focus();
+      }
+    });
+  } else {
+    // End editing - emit the updated title
+    isEditingTitle.value = false;
+    // Use nextTick to ensure the input disappears first, then emit
+    nextTick(() => {
+      emit('update:title', mediaTitle.value);
+    });
+  }
 };
 
 const updateMediaCustomDuration = (customDuration?: {

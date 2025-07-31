@@ -62,7 +62,11 @@
           "
           @update:hidden="element.hidden = !!$event"
           @update:tag="element.tag = $event"
-          @update:title="element.title = $event"
+          @update:title="
+            nextTick(() => {
+              element.title = $event;
+            })
+          "
         />
       </template>
     </div>
@@ -81,7 +85,7 @@ import { useMediaDragAndDrop } from 'src/composables/useMediaDragAndDrop';
 import { useMediaSection } from 'src/composables/useMediaSection';
 import { getTextColor } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, watch } from 'vue';
+import { computed, nextTick, watch } from 'vue';
 
 import MediaGroup from './MediaGroup.vue';
 import MediaItem from './MediaItem.vue';
