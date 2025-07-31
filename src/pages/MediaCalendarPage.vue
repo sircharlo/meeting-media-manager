@@ -263,8 +263,6 @@ watch(
 );
 
 const updateMediaListItems = (items: DynamicMediaObject[]) => {
-  console.log('🔄 Media list items updated:', items);
-
   // Update the media list items in the current state
   items.forEach((item) => {
     if (!selectedDateObject.value) return;
@@ -314,19 +312,7 @@ const updateMediaListItems = (items: DynamicMediaObject[]) => {
       return 0;
     });
 
-    const sectionItems = dynamicMedia.filter(
-      (item) => item.section === updatedSection,
-    );
-    console.log('🔄 Resorted items in section:', {
-      itemCount: sectionItems.length,
-      items: sectionItems.map((item) => ({
-        order: sectionItemIds.indexOf(item.uniqueId),
-        section: item.section,
-        title: item.title,
-        uniqueId: item.uniqueId,
-      })),
-      section: updatedSection,
-    });
+    console.log('🔄 Resorted items in section:', updatedSection);
   }
 };
 
