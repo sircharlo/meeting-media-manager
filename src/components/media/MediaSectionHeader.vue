@@ -3,9 +3,10 @@
     :class="[
       'text-' + mediaList.uniqueId,
       'items-center',
-      { 'custom-text-color': isCustom },
+      {
+        'custom-text-color': isCustom,
+      },
     ]"
-    @dblclick="handleDoubleClick"
   >
     <q-avatar
       :class="[
@@ -24,7 +25,10 @@
     </q-avatar>
 
     <q-item-section
+      ref="sectionHeader"
       class="text-bold text-uppercase text-spaced row justify-between col-grow"
+      :class="{ 'cursor-pointer': isHovered && isCustom }"
+      @dblclick="isCustom ? handleDoubleClick() : undefined"
     >
       <q-input
         v-if="isRenaming"
@@ -144,6 +148,7 @@
 <script setup lang="ts">
 import type { MediaSection } from 'src/types';
 
+import { useElementHover } from '@vueuse/core';
 import { useQuasar } from 'quasar';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, nextTick, ref } from 'vue';
@@ -171,6 +176,9 @@ const emit = defineEmits<{
 const $q = useQuasar();
 const { t } = useI18n();
 const currentState = useCurrentStateStore();
+
+const sectionHeader = ref<HTMLElement>();
+const isHovered = useElementHover(sectionHeader);
 
 const renameInput = ref<HTMLInputElement>();
 const hexValue = ref(props.mediaList.bgColor || '#ffffff');
@@ -229,6 +237,14 @@ const handleColorChange = (val: null | string) => {
 </script>
 
 <style lang="scss" scoped>
+.custom-text-color {
+  color: var(--bg-color);
+}
+.custom-bg-color {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
 .add-media-shortcut {
   max-width: 100%;
 }
