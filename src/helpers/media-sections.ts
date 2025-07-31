@@ -4,11 +4,17 @@ import { i18n } from 'boot/i18n';
 import { standardSections } from 'src/constants/media';
 import { useCurrentStateStore } from 'src/stores/current-state';
 
+export const initializeCustomSections = (reset = false) => {
+  const { selectedDateObject } = useCurrentStateStore();
+  if (!selectedDateObject) return;
+  if (!selectedDateObject.customSections || reset)
+    selectedDateObject.customSections = [];
+};
+
 export const addSection = () => {
   const { selectedDateObject } = useCurrentStateStore();
   if (!selectedDateObject) return;
-  if (!selectedDateObject?.customSections)
-    selectedDateObject.customSections = [];
+  initializeCustomSections();
   const newSection: MediaSection = {
     bgColor: getRandomColor(),
     extraMediaShortcut: true,
@@ -54,6 +60,12 @@ const getRandomColor = () => {
 export const isStandardSection = (section: string) => {
   if (!section) return false;
   return standardSections.includes(section);
+};
+
+export const getSectionBgColor = (section: MediaSection | undefined) => {
+  if (!section || isStandardSection(section.uniqueId))
+    return 'var(--q-primary)';
+  return section.bgColor || 'var(--q-primary)';
 };
 
 export const getTextColor = (section: MediaSection) => {

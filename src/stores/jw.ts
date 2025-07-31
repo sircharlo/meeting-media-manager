@@ -219,10 +219,18 @@ export const useJwStore = defineStore('jw-store', {
     ) {
       if (!currentCongregation || !selectedDateObject?.dynamicMedia) return;
 
+      // Remove all additional media items
       for (let i = selectedDateObject.dynamicMedia.length - 1; i >= 0; i--) {
         if (selectedDateObject.dynamicMedia[i]?.source === 'additional') {
           selectedDateObject.dynamicMedia.splice(i, 1);
         }
+      }
+      // Remove all custom sections that are not "additional"
+      if (selectedDateObject.customSections?.length) {
+        selectedDateObject.customSections =
+          selectedDateObject.customSections.filter(
+            (section) => section.uniqueId === 'additional',
+          );
       }
     },
     removeFromAdditionMediaMap(

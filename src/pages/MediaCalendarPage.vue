@@ -5,6 +5,7 @@
     @dragover="dropActive"
     @dragstart="dropActive"
   >
+    {{ selectedDateObject?.customSections }}
     <div v-if="showBannerColumn" class="col">
       <q-slide-transition>
         <div v-if="showObsBanner" class="row">

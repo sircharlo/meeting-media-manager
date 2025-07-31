@@ -34,6 +34,7 @@ export interface DownloadProgressItem {
 export type DownloadProgressItems = Record<string, DownloadProgressItem>;
 
 export interface DynamicMediaObject {
+  bgColor?: string;
   cbs?: boolean;
   children?: DynamicMediaObject[];
   customDuration?: { max: number; min: number };
@@ -57,8 +58,10 @@ export interface DynamicMediaObject {
   streamUrl?: string;
   subtitlesUrl?: string;
   tag?: Tag | undefined;
+  textColor?: string;
   thumbnailUrl?: string;
   title: string;
+  type?: 'divider' | 'media'; // New property to distinguish media items from dividers
   uniqueId: string;
 }
 
@@ -81,6 +84,15 @@ export interface FileDownloader {
   notify?: boolean;
   size?: number;
   url: string;
+}
+
+export interface MediaDivider {
+  bgColor?: string;
+  section: MediaSectionIdentifier;
+  sortOrderOriginal: number | string;
+  textColor?: string;
+  title: string;
+  uniqueId: string;
 }
 
 export interface MediaSection {
@@ -106,7 +118,6 @@ export interface SongItem {
   path: string;
   title?: string;
 }
-
 export interface SortableMediaList {
   items: Ref<DynamicMediaObject[]>;
   jwIcon?: string | undefined;
@@ -114,6 +125,7 @@ export interface SortableMediaList {
   mmmIcon?: string | undefined;
   type: MediaSectionIdentifier;
 }
+
 export type SortableMediaLists = SortableMediaList[];
 
 export interface Tag {

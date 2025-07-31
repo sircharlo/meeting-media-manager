@@ -12,6 +12,7 @@
       :is-renaming="isRenaming"
       :is-song-button="isSongButton"
       :media-list="mediaList"
+      @add-divider="handleAddDivider"
       @add-song="addSong"
       @delete="deleteSection"
       @move="moveSection"
@@ -41,8 +42,22 @@
         />
       </template>
       <template v-for="element in sortableItems" :key="element.uniqueId">
+        <!-- Render dividers -->
+        <MediaDivider
+          v-if="element.type === 'divider'"
+          :divider="element"
+          @delete="handleDeleteDivider"
+          @update:color="
+            (bgColor, textColor) =>
+              handleUpdateDividerColor(element.uniqueId, bgColor, textColor)
+          "
+          @update:title="
+            (title) => handleUpdateDividerTitle(element.uniqueId, title)
+          "
+        />
+        <!-- Render media groups -->
         <MediaGroup
-          v-if="element.children"
+          v-else-if="element.children"
           :element="element"
           :expanded="expandedGroups[element.uniqueId] ?? false"
           :media-playing-url="mediaPlayingUrl"
@@ -52,9 +67,9 @@
           @update:expanded="expandedGroups[element.uniqueId] = $event"
           @update:hidden="element.hidden = !!$event"
         />
+        <!-- Render media items -->
         <MediaItem
           v-else
-          :key="element.uniqueId"
           v-model:repeat="element.repeat"
           :media="element"
           @update:custom-duration="
@@ -70,6 +85,12 @@
         />
       </template>
     </div>
+
+    <!-- Add Divider Dialog -->
+    <DialogAddDivider
+      v-model="showAddDividerDialog"
+      @add="handleAddDividerConfirm"
+    />
   </q-list>
 </template>
 
@@ -85,8 +106,10 @@ import { useMediaDragAndDrop } from 'src/composables/useMediaDragAndDrop';
 import { useMediaSection } from 'src/composables/useMediaSection';
 import { getTextColor } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, nextTick, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 
+import DialogAddDivider from '../dialog/DialogAddDivider.vue';
+import MediaDivider from './MediaDivider.vue';
 import MediaGroup from './MediaGroup.vue';
 import MediaItem from './MediaItem.vue';
 import MediaSectionHeader from './MediaSectionHeader.vue';
@@ -122,6 +145,11 @@ const {
   visibleItems,
 } = useMediaSection(props.mediaList);
 
+// Use the media dividers composable
+import { useMediaDividers } from 'src/composables/useMediaDividers';
+const { addDivider, deleteDivider, updateDividerColors, updateDividerTitle } =
+  useMediaDividers(props.mediaList.uniqueId);
+
 // Use the drag and drop composable
 const { dragDropContainer, isDragging, sortableItems } = useMediaDragAndDrop(
   visibleItems.value,
@@ -137,6 +165,32 @@ const sectionStyles = computed(() => ({
 // Methods
 const handleRename = (value: boolean) => {
   isRenaming.value = value;
+};
+
+const handleDeleteDivider = (dividerId: string) => {
+  deleteDivider(dividerId);
+};
+
+const showAddDividerDialog = ref(false);
+
+const handleAddDivider = () => {
+  showAddDividerDialog.value = true;
+};
+
+const handleAddDividerConfirm = (title: string) => {
+  addDivider(title, undefined);
+};
+
+const handleUpdateDividerTitle = (dividerId: string, newTitle: string) => {
+  updateDividerTitle(dividerId, newTitle);
+};
+
+const handleUpdateDividerColor = (
+  dividerId: string,
+  bgColor: string,
+  textColor: string,
+) => {
+  updateDividerColors(dividerId, bgColor, textColor);
 };
 
 // Watch for changes in isDragging and emit to parent

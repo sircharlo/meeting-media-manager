@@ -129,6 +129,20 @@
             @click="$emit('move', 'down')"
           />
 
+          <!-- Add Divider -->
+          <q-btn
+            class="custom-text-color"
+            flat
+            icon="mmm-minus"
+            round
+            size="sm"
+            @click="$emit('add-divider', mediaList.uniqueId)"
+          >
+            <q-tooltip :delay="500">
+              {{ t('add-divider') }}
+            </q-tooltip>
+          </q-btn>
+
           <!-- Delete -->
           <q-btn
             v-if="mediaList.uniqueId !== 'additional'"
@@ -164,6 +178,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+  'add-divider': [section: string];
   'add-song': [section: string | undefined];
   delete: [];
   move: [direction: 'down' | 'up'];

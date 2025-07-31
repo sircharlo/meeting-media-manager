@@ -14,8 +14,8 @@ export function useMediaDragAndDrop(
   const [dragDropContainer, sortableItems] = useDragAndDrop<DynamicMediaObject>(
     items,
     {
-      disabled: false,
-      dropZone: true,
+      // disabled: false,
+      // dropZone: true,
       group: 'mediaList', // Shared group to allow cross-section dragging
       multiDrag: true,
       plugins: [animations()],
