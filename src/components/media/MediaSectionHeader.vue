@@ -52,9 +52,7 @@
           <q-btn
             class="add-media-shortcut"
             :class="[
-              isCustom && currentState.selectedDateObject?.meeting !== 'we'
-                ? 'custom-text-color'
-                : 'bg-' + mediaList.uniqueId,
+              !buttonLabel ? 'custom-text-color' : 'bg-' + mediaList.uniqueId,
             ]"
             :color="
               !isCustom ||
@@ -62,17 +60,11 @@
                 ? mediaList.uniqueId
                 : undefined
             "
-            :flat="
-              isCustom && currentState.selectedDateObject?.meeting !== 'we'
-            "
+            :flat="!buttonLabel"
             :icon="isSongButton ? 'mmm-music-note' : 'mmm-add-media'"
             :label="buttonLabel"
-            :outline="
-              !isCustom && currentState.selectedDateObject?.meeting !== 'we'
-            "
-            :round="
-              isCustom && currentState.selectedDateObject?.meeting !== 'we'
-            "
+            :outline="!!buttonLabel"
+            :round="!buttonLabel"
             size="sm"
             @click="handleAddClick"
           >
@@ -83,7 +75,7 @@
         </template>
 
         <!-- Custom Section Controls -->
-        <template v-if="isCustom">
+        <template v-if="isCustom && !currentState.selectedDateObject?.meeting">
           <!-- Color Picker -->
           <q-btn
             class="custom-text-color"

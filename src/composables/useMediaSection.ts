@@ -12,7 +12,7 @@ export function useMediaSection(mediaList: MediaSection) {
   });
 
   const currentState = useCurrentStateStore();
-  const { selectedDateObject } = storeToRefs(currentState);
+  const { currentSongbook, selectedDateObject } = storeToRefs(currentState);
 
   // Core computed properties
   const isCustomSection = computed(() => {
@@ -41,11 +41,20 @@ export function useMediaSection(mediaList: MediaSection) {
   });
 
   const isSongButton = computed(() => {
+    const isPublicTalkSection =
+      mediaList.uniqueId === 'additional' &&
+      selectedDateObject.value?.meeting === 'we';
+    const isCircuitOverseerSection =
+      mediaList.uniqueId === 'circuitOverseer' &&
+      !sectionItems.value.some((m) => m.hidden);
+    const sectionContainsAtLeastOneSong = sectionItems.value.some(
+      (m) =>
+        m.streamUrl?.includes(currentSongbook.value?.pub) ||
+        m.fileUrl?.includes(currentSongbook.value?.pub),
+    );
     const result =
-      (mediaList.uniqueId === 'additional' &&
-        selectedDateObject.value?.meeting === 'we') ||
-      (mediaList.uniqueId === 'circuitOverseer' &&
-        !sectionItems.value.some((m) => m.hidden));
+      (isPublicTalkSection || isCircuitOverseerSection) &&
+      !sectionContainsAtLeastOneSong;
     return result;
   });
 
