@@ -106,7 +106,6 @@
   "disableMediaFetching-explain": "This setting should remain disabled in almost all cases to ensure that regular meeting media is downloaded automatically. Enabling this setting will require all media to be added manually. This setting should only be enabled in profiles that will be used exclusively for special events such as theocratic schools, assemblies, or conventions.",
   "dismiss": "Dismiss",
   "display": "Display",
-  "divider-title": "Divider title",
   "does-your-kingdom-hall-use-a-program-called-obs-studio": "Does your Kingdom Hall use a program called OBS Studio?",
   "doing-so-will-greatly-simplify-and-facilitate-sharing-media-during-hybrid-meetings": "Doing so will greatly simplify and facilitate sharing media during hybrid meetings.",
   "dont-forget-add-missing-media": "Don't forget to add any missing songs or media.",
