@@ -121,6 +121,7 @@ const {
 // Use the drag and drop composable
 const { dragDropContainer, isDragging, sortableItems } = useMediaDragAndDrop(
   visibleItems.value,
+  props.mediaList.uniqueId,
 );
 
 // Computed styles

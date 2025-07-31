@@ -616,5 +616,6 @@ const resetSort = () => {
     ...sortedMedia.filter((item) => item.section === 'wt'),
     ...(getAllMediaForSection.value.circuitOverseer || []),
   ];
+  window.dispatchEvent(new CustomEvent('reset-sort-order'));
 };
 </script>
