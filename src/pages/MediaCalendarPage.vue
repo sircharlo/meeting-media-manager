@@ -82,7 +82,7 @@
         "
       >
         <MediaList
-          :ref="mediaListRefs[mediaList.uniqueId]"
+          :ref="(el) => (mediaListRefs[mediaList.uniqueId] = el)"
           :media-list="mediaList"
           :open-import-menu="openImportMenu"
           @update-media-section-bg-color="updateMediaSectionBgColor"
@@ -400,17 +400,6 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
 
   const result = [...customSections, ...defaultSections];
   return result;
-});
-
-const mediaListRefs = computed(() => {
-  const refs: Record<
-    MediaSectionIdentifier,
-    Ref<InstanceType<typeof MediaList> | null>
-  > = {};
-  mediaLists.value.forEach((section) => {
-    refs[section.uniqueId as MediaSectionIdentifier] = ref(null);
-  });
-  return refs;
 });
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
@@ -1173,7 +1162,9 @@ const duplicateSongsForWeMeeting = computed(() => {
 const arraysAreIdentical = (a: string[], b: string[]) =>
   a.length === b.length && a.every((element, index) => element === b[index]);
 
-const keyboardShortcutMediaList = () => {
+const mediaListRefs = ref({}) as Ref<Record<string, unknown>>;
+
+const keyboardShortcutMediaList = computed(() => {
   const allMedia = mediaLists.value.flatMap((section) => {
     const mediaList = section.items;
     return mediaList.map((item) => ({
@@ -1184,11 +1175,17 @@ const keyboardShortcutMediaList = () => {
   });
 
   return allMedia.flatMap((m) => {
-    // Get media groups
-    const expanded = mediaListRefs.value[m.section]?.value?.expandedGroups;
+    // Get media groups from the computed expanded groups
+    const expanded = (
+      mediaListRefs.value[m.section] as InstanceType<typeof MediaList>
+    )?.expandedGroups;
 
     // Check if the media is collapsed based on the expanded state
-    const isCollapsed = m.children && expanded ? !expanded[m.uniqueId] : false;
+    const isCollapsed =
+      m.children && expanded && m.uniqueId
+        ? !(expanded[m.uniqueId] ?? true)
+        : false;
+
     // If the media is collapsed, return an empty array, since it won't be selectable
     if (isCollapsed) return [];
 
@@ -1197,10 +1194,10 @@ const keyboardShortcutMediaList = () => {
       ? m.children.map((c) => ({ ...c, parentUniqueId: m.uniqueId }))
       : [m];
   });
-};
+});
 
 const sortedMediaFileUrls = computed(() =>
-  keyboardShortcutMediaList()
+  keyboardShortcutMediaList.value
     .filter((m) => !m.hidden && !!m.fileUrl)
     .map((m) => m.fileUrl)
     .filter((m): m is string => typeof m === 'string')
@@ -1230,11 +1227,14 @@ useEventListener(
     // Early return if no date selected
     if (!selectedDate.value) return;
 
-    const mediaList = keyboardShortcutMediaList();
+    const mediaList = keyboardShortcutMediaList.value;
     if (!mediaList.length) return;
 
-    const sortedMediaIds = mediaList.map((item) => item.uniqueId);
+    const sortedMediaIds = mediaList
+      .filter((item) => item.type !== 'divider')
+      .map((item) => item.uniqueId);
     if (!sortedMediaIds?.[0]) return;
+
     const currentId = highlightedMediaId.value;
 
     // If no current selection, return first item
@@ -1266,11 +1266,14 @@ useEventListener(
     // Early return if no date selected
     if (!selectedDate.value) return;
 
-    const mediaList = keyboardShortcutMediaList();
+    const mediaList = keyboardShortcutMediaList.value;
     if (!mediaList.length) return;
 
-    const sortedMediaIds = mediaList.map((item) => item.uniqueId);
+    const sortedMediaIds = mediaList
+      .filter((item) => item.type !== 'divider')
+      .map((item) => item.uniqueId);
     if (!sortedMediaIds?.[0]) return;
+
     const currentId = highlightedMediaId.value;
 
     const lastItem = sortedMediaIds[sortedMediaIds.length - 1];
