@@ -682,11 +682,6 @@ export function useMediaSectionRepeat() {
   watch(
     () => mediaPlaying.value.action,
     (newAction) => {
-      console.log(
-        '🎵 [mediaPlayingAction] Media action changed to:',
-        newAction,
-      );
-
       if (newAction === 'pause' || newAction === '') {
         console.log(
           '⏸️ [mediaPlayingAction] Media paused/stopped, clearing image timer',

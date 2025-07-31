@@ -192,7 +192,15 @@ import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
-import { computed, onMounted, ref, type Ref, toRaw, watch } from 'vue';
+import {
+  computed,
+  nextTick,
+  onMounted,
+  ref,
+  type Ref,
+  toRaw,
+  watch,
+} from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const showFileImportDialog = ref(false);
@@ -252,7 +260,6 @@ watch(
     // Only update dynamicMedia if dragging was active then stopped
     if (wasDragging && stoppedDragging) {
       console.log('🔄 Stopped dragging');
-      // console.log(mediaLists.value);
     }
   },
 );
@@ -546,8 +553,9 @@ const { data: currentTimeData } = useBroadcastChannel<number, number>({
 watch(
   () => currentTimeData.value,
   (newCurrentTime) => {
-    console.log('🔄 [currentTimeData] New current time:', newCurrentTime);
-    mediaPlaying.value.currentPosition = newCurrentTime;
+    nextTick(() => {
+      mediaPlaying.value.currentPosition = newCurrentTime;
+    });
   },
 );
 
