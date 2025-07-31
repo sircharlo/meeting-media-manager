@@ -87,6 +87,11 @@
           :open-import-menu="openImportMenu"
           @update-media-section-bg-color="updateMediaSectionBgColor"
           @update-media-section-label="updateMediaSectionLabel"
+          @update:is-dragging="
+            (isDragging) =>
+              updateMediaListDragging(mediaList.uniqueId, isDragging)
+          "
+          @update:sortable-items="updateMediaListItems"
         />
       </template>
     </template>
@@ -94,8 +99,13 @@
       v-if="
         selectedDateObject && !selectedDateObject.meeting && !showEmptyState
       "
-      class="full-width dashed-border big-button"
+      :class="{
+        'full-width': true,
+        'dashed-border': !mediaListDragging,
+        'big-button': true,
+      }"
       color="accent-100"
+      :disable="mediaListDragging"
       icon="mmm-plus"
       :label="t('new-section')"
       text-color="primary"
@@ -130,6 +140,7 @@ import {
   useEventListener,
   useMouse,
   usePointer,
+  watchImmediate,
 } from '@vueuse/core';
 import { Buffer } from 'buffer';
 import DialogFileImport from 'components/dialog/DialogFileImport.vue';
@@ -230,6 +241,94 @@ const { obsConnectionState } = storeToRefs(obsState);
 
 const totalFiles = ref(0);
 const currentFile = ref(0);
+
+// Track dragging state for each media list
+const mediaListDragging = ref(false);
+
+// Function to update dragging state for a specific media list
+const updateMediaListDragging = (sectionId: string, isDragging: boolean) => {
+  mediaListDragging.value = isDragging;
+};
+
+watch(
+  () => mediaListDragging.value,
+  (nowDragging, wasDragging) => {
+    const stoppedDragging = !nowDragging;
+    // Only update dynamicMedia if dragging was active then stopped
+    if (wasDragging && stoppedDragging) {
+      console.log('🔄 Stopped dragging');
+      // console.log(mediaLists.value);
+    }
+  },
+);
+
+const updateMediaListItems = (items: DynamicMediaObject[]) => {
+  console.log('🔄 Media list items updated:', items);
+
+  // Update the media list items in the current state
+  items.forEach((item) => {
+    if (!selectedDateObject.value) return;
+    const originalItem = selectedDateObject.value.dynamicMedia.find(
+      (i) => i.uniqueId === item.uniqueId,
+    );
+    if (originalItem) {
+      originalItem.section = item.section;
+    }
+  });
+
+  // Resort the items if needed
+  if (selectedDateObject.value && items.length > 0) {
+    const dynamicMedia = selectedDateObject.value.dynamicMedia;
+
+    // Get the section that was updated (all items should have the same section)
+    const updatedSection = items[0]?.section;
+    if (!updatedSection) return;
+
+    // Create a map of uniqueId to position in the items array for sorting
+    const itemOrderMap = new Map<string, number>();
+    items.forEach((item, index) => {
+      itemOrderMap.set(item.uniqueId, index);
+    });
+
+    // Get the order of items in the updated section
+    const sectionItemIds = items.map((item) => item.uniqueId);
+
+    // Reorder the dynamicMedia array in place
+    dynamicMedia.sort((a, b) => {
+      // If both items are in the updated section, sort by their order in items array
+      if (a.section === updatedSection && b.section === updatedSection) {
+        const orderA = sectionItemIds.indexOf(a.uniqueId);
+        const orderB = sectionItemIds.indexOf(b.uniqueId);
+        return orderA - orderB;
+      }
+
+      // If only one item is in the updated section, keep the other items in their current order
+      if (a.section === updatedSection) {
+        return -1; // Items in updated section come first
+      }
+      if (b.section === updatedSection) {
+        return 1; // Items in updated section come first
+      }
+
+      // If neither item is in the updated section, maintain their relative order
+      return 0;
+    });
+
+    const sectionItems = dynamicMedia.filter(
+      (item) => item.section === updatedSection,
+    );
+    console.log('🔄 Resorted items in section:', {
+      itemCount: sectionItems.length,
+      items: sectionItems.map((item) => ({
+        order: sectionItemIds.indexOf(item.uniqueId),
+        section: item.section,
+        title: item.title,
+        uniqueId: item.uniqueId,
+      })),
+      section: updatedSection,
+    });
+  }
+};
 
 const {
   convertPdfToImages,
@@ -688,7 +787,6 @@ onMounted(() => {
     router.push('/settings');
   }
   checkCoDate();
-  checkMemorialDate();
 
   watch(
     () => urlVariables.value.mediator,
@@ -702,10 +800,6 @@ const { post: postCustomBackground } = useBroadcastChannel<string, string>({
   name: 'custom-background',
 });
 
-watch(selectedDate, () => {
-  checkMemorialDate();
-});
-
 watch(
   () => urlVariables.value.mediator,
   () => {
@@ -713,10 +807,13 @@ watch(
   },
 );
 
-watch(
+watchImmediate(
   () => selectedDate.value,
   (newVal) => {
+    mediaListDragging.value = false;
     if (!newVal || !selectedDateObject.value) return;
+    checkMemorialDate();
+
     if (
       !selectedDateObject.value.customSections?.find(
         (s) => s.uniqueId === 'additional',

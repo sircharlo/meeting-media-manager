@@ -81,7 +81,7 @@ import { useMediaDragAndDrop } from 'src/composables/useMediaDragAndDrop';
 import { useMediaSection } from 'src/composables/useMediaSection';
 import { getTextColor } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, onMounted, onUnmounted, watch } from 'vue';
+import { computed, watch } from 'vue';
 
 import MediaGroup from './MediaGroup.vue';
 import MediaItem from './MediaItem.vue';
@@ -91,6 +91,11 @@ import SectionEmptyState from './SectionEmptyState.vue';
 const props = defineProps<{
   mediaList: MediaSection;
   openImportMenu: (section: MediaSectionIdentifier) => void;
+}>();
+
+const emit = defineEmits<{
+  'update:is-dragging': [isDragging: boolean];
+  'update:sortable-items': [items: DynamicMediaObject[]];
 }>();
 
 const currentState = useCurrentStateStore();
@@ -108,50 +113,14 @@ const {
   isRenaming,
   isSongButton,
   moveSection,
-  updateMediaOrder,
   updateSectionColor,
   updateSectionLabel,
   visibleItems,
 } = useMediaSection(props.mediaList);
 
 // Use the drag and drop composable
-const {
-  dragDropContainer,
-  forceUpdateSortableItems,
-  isDragging,
-  sortableItems,
-} = useMediaDragAndDrop(
+const { dragDropContainer, isDragging, sortableItems } = useMediaDragAndDrop(
   visibleItems.value,
-  updateMediaOrder,
-  props.mediaList.uniqueId,
-);
-
-// Watch for external changes to visibleItems and update sortableItems accordingly
-watch(
-  () => visibleItems.value,
-  (
-    newItems: DynamicMediaObject[],
-    oldItems: DynamicMediaObject[] | undefined,
-  ) => {
-    // Only update if this is an external change (not from drag operations)
-    if (!isDragging.value && oldItems) {
-      const isExternalChange =
-        oldItems.length !== newItems.length ||
-        !oldItems.every(
-          (item, index) => item.uniqueId === newItems[index]?.uniqueId,
-        );
-
-      if (isExternalChange) {
-        console.log('🔄 External change detected, updating sortableItems:', {
-          newItemCount: newItems.length,
-          oldItemCount: oldItems.length,
-          sectionId: props.mediaList.uniqueId,
-        });
-        forceUpdateSortableItems(newItems);
-      }
-    }
-  },
-  { deep: true },
 );
 
 // Computed styles
@@ -165,48 +134,25 @@ const handleRename = (value: boolean) => {
   isRenaming.value = value;
 };
 
-// Listen for drag completion events
-const handleDragCompleted = (event: CustomEvent) => {
-  console.log('🎯 Drag completed event received:', {
-    currentSection: props.mediaList.uniqueId,
-    eventDetail: event.detail,
-  });
-
-  const { sectionId } = event.detail;
-
-  // Always update if this is not the section that triggered the event
-  if (sectionId !== props.mediaList.uniqueId) {
-    console.log(
-      '🔄 Drag completed in different section, updating sortableItems:',
-      {
-        currentSection: props.mediaList.uniqueId,
-        triggeredBySection: sectionId,
-      },
-    );
-
-    // Force update sortable items with current visible items
-    forceUpdateSortableItems(visibleItems.value);
-  } else {
-    console.log('⏭️ Skipping update (same section):', {
-      currentSection: props.mediaList.uniqueId,
-      triggeredBySection: sectionId,
+// Watch for changes in isDragging and emit to parent
+watch(
+  () => isDragging.value,
+  (newIsDragging) => {
+    console.log('🔄 isDragging changed, emitting to parent:', {
+      isDragging: newIsDragging,
+      sectionId: props.mediaList.uniqueId,
+      sortableItems: sortableItems.value,
     });
-  }
-};
-
-onMounted(() => {
-  window.addEventListener(
-    'dragCompleted',
-    handleDragCompleted as EventListener,
-  );
-});
-
-onUnmounted(() => {
-  window.removeEventListener(
-    'dragCompleted',
-    handleDragCompleted as EventListener,
-  );
-});
+    emit('update:is-dragging', newIsDragging);
+    if (!newIsDragging) {
+      const newItems = sortableItems.value.map((item) => ({
+        ...item,
+        section: props.mediaList.uniqueId,
+      }));
+      emit('update:sortable-items', newItems);
+    }
+  },
+);
 
 defineExpose({
   expandedGroups,

@@ -616,15 +616,5 @@ const resetSort = () => {
     ...sortedMedia.filter((item) => item.section === 'wt'),
     ...(getAllMediaForSection.value.circuitOverseer || []),
   ];
-
-  // Dispatch event to notify all sections to update their sortable items
-  window.dispatchEvent(
-    new CustomEvent('dragCompleted', {
-      detail: {
-        sectionId: 'reset-sort',
-        updatedItems: selectedDateObject.value.dynamicMedia.length,
-      },
-    }),
-  );
 };
 </script>
