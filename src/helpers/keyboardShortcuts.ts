@@ -8,7 +8,13 @@ const { registerShortcut, unregisterAllShortcuts } = window.electronApi;
 
 const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
   shortcutMediaNext: () => {
-    window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
+    window.dispatchEvent(
+      new CustomEvent<{ scrollToSelectedMedia: boolean }>('shortcutMediaNext', {
+        detail: {
+          scrollToSelectedMedia: true,
+        },
+      }),
+    );
   },
   shortcutMediaPauseResume: () => {
     window.dispatchEvent(
@@ -16,7 +22,16 @@ const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
     );
   },
   shortcutMediaPrevious: () => {
-    window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaPrevious'));
+    window.dispatchEvent(
+      new CustomEvent<{ scrollToSelectedMedia: boolean }>(
+        'shortcutMediaPrevious',
+        {
+          detail: {
+            scrollToSelectedMedia: true,
+          },
+        },
+      ),
+    );
   },
   shortcutMediaStop: () => {
     window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaStop'));

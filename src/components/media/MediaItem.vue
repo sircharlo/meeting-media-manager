@@ -959,6 +959,9 @@ const setMediaPlaying = async (
     : (media.streamUrl ?? media.fileUrl ?? '');
   mediaPlaying.value.uniqueId = media.uniqueId;
   mediaPlaying.value.subtitlesUrl = media.subtitlesUrl ?? '';
+  nextTick(() => {
+    window.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
+  });
 };
 
 const { post: postRepeat } = useBroadcastChannel<string, boolean>({
@@ -1267,17 +1270,16 @@ useEventListener(
   },
   { passive: true },
 );
-whenever(
-  () => currentlyHighlighted,
-  () => {
-    if (currentlyHighlighted.value && mediaItem.value) {
-      mediaItem.value.$el.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      });
-    }
-  },
-);
+
+window.addEventListener('scrollToSelectedMedia', () => {
+  if (currentlyHighlighted.value && mediaItem.value?.$el) {
+    mediaItem.value.$el.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
+  }
+});
+
 const currentSongIsDuplicated = computed(() => {
   const currentSong = props.media.tag?.value?.toString();
   if (!currentSong) return false;

@@ -532,7 +532,16 @@ watch(
       mediaPlaying.value.action = '';
 
       nextTick(() => {
-        window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
+        window.dispatchEvent(
+          new CustomEvent<{ scrollToSelectedMedia: boolean }>(
+            'shortcutMediaNext',
+            {
+              detail: {
+                scrollToSelectedMedia: false,
+              },
+            },
+          ),
+        );
       });
     }
     mediaStateData.value = null;
@@ -1223,7 +1232,7 @@ watch(
 useEventListener(
   window,
   'shortcutMediaNext',
-  () => {
+  (event: CustomEvent<{ scrollToSelectedMedia: boolean }>) => {
     // Early return if no date selected
     if (!selectedDate.value) return;
 
@@ -1255,6 +1264,8 @@ useEventListener(
     const nextSelectableId = findNextSelectableMedia(mediaList, currentIndex);
     if (!nextSelectableId) return;
     highlightedMediaId.value = nextSelectableId;
+    if (event.detail?.scrollToSelectedMedia)
+      window.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
   },
   { passive: true },
 );
@@ -1262,7 +1273,7 @@ useEventListener(
 useEventListener(
   window,
   'shortcutMediaPrevious',
-  () => {
+  (event: CustomEvent<{ scrollToSelectedMedia: boolean }>) => {
     // Early return if no date selected
     if (!selectedDate.value) return;
 
@@ -1299,6 +1310,8 @@ useEventListener(
     );
     if (!previousSelectableId) return;
     highlightedMediaId.value = previousSelectableId;
+    if (event.detail?.scrollToSelectedMedia)
+      window.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
   },
   { passive: true },
 );
