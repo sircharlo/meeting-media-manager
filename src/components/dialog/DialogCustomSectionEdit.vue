@@ -112,7 +112,7 @@ import { whenever } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { addSection, deleteSection } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -177,17 +177,6 @@ const handleOrderChange = () => {
 const [listContainer, sortableItems] = useDragAndDrop(customSections.value, {
   dragHandle: '.drag-handle',
   onDragend: handleOrderChange,
-});
-
-// Watch for changes in sortableItems and update the store
-//whenever(sortableItems, (newOrder) => {
-//  if (newOrder && newOrder.length > 0) {
-//    handleOrderChange(newOrder);
-//  }
-//}, { deep: true });
-
-onMounted(() => {
-  initializeValues();
 });
 
 whenever(open, () => {
