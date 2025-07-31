@@ -2,9 +2,12 @@ import type { DynamicMediaObject } from 'src/types';
 
 import { animations, state } from '@formkit/drag-and-drop';
 import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
-import { ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 
-export function useMediaDragAndDrop(items: DynamicMediaObject[]) {
+export function useMediaDragAndDrop(
+  items: DynamicMediaObject[],
+  sectionId: string,
+) {
   const isDragging = ref(false);
 
   // Use the drag and drop composable with shared group for cross-section dragging
@@ -27,6 +30,19 @@ export function useMediaDragAndDrop(items: DynamicMediaObject[]) {
 
   state.on('dragEnded', () => {
     isDragging.value = false;
+  });
+
+  const resetSortOrderHandler = () => {
+    sortableItems.value = items.filter((item) => item.section === sectionId);
+    console.log('🔄 Reset sort order success for section', sectionId);
+  };
+
+  onMounted(() => {
+    window.addEventListener('reset-sort-order', resetSortOrderHandler);
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener('reset-sort-order', resetSortOrderHandler);
   });
 
   return {
