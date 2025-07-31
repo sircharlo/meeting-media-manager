@@ -101,6 +101,8 @@ export interface MediaSection {
   jwIcon?: string;
   label: string;
   mmmIcon?: string;
+  repeat?: boolean; // Whether the section should repeat
+  repeatInterval?: number; // Interval in seconds for images (default 10)
   uniqueId: MediaSectionIdentifier;
 }
 

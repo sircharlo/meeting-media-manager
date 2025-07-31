@@ -5,7 +5,6 @@
     @dragover="dropActive"
     @dragstart="dropActive"
   >
-    {{ selectedDateObject?.customSections }}
     <div v-if="showBannerColumn" class="col">
       <q-slide-transition>
         <div v-if="showObsBanner" class="row">
@@ -122,7 +121,6 @@
       :total-files="totalFiles"
       @drop="dropEnd"
     />
-    <!-- <pre>{{ selectedDateObject }}</pre> -->
   </q-page>
 </template>
 
@@ -151,6 +149,7 @@ import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
+import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { SORTER } from 'src/constants/general';
 import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -224,14 +223,9 @@ const {
   currentSettings,
   getVisibleMediaForSection,
   highlightedMediaId,
+  mediaIsPlaying,
   mediaPaused,
   mediaPlaying,
-  mediaPlayingAction,
-  mediaPlayingCurrentPosition,
-  mediaPlayingPanzoom,
-  mediaPlayingSubtitlesUrl,
-  mediaPlayingUniqueId,
-  mediaPlayingUrl,
   missingMedia,
   selectedDate,
   selectedDateObject,
@@ -426,7 +420,7 @@ const { post: postCameraStream } = useBroadcastChannel<
 const appSettingsStore = useAppSettingsStore();
 
 watch(
-  () => mediaPlayingAction.value,
+  () => mediaPlaying.value.action,
   (newAction, oldAction) => {
     if (newAction !== oldAction) postMediaAction(newAction);
     if (currentState.currentLangObject?.isSignLanguage) {
@@ -449,7 +443,7 @@ const { post: postSubtitlesUrl } = useBroadcastChannel<string, string>({
 });
 
 watch(
-  () => mediaPlayingSubtitlesUrl.value,
+  () => mediaPlaying.value.subtitlesUrl,
   (newSubtitlesUrl, oldSubtitlesUrl) => {
     if (newSubtitlesUrl !== oldSubtitlesUrl) postSubtitlesUrl(newSubtitlesUrl);
   },
@@ -461,7 +455,7 @@ const { post: postPanzoom } = useBroadcastChannel<
 >({ name: 'panzoom' });
 
 watch(
-  () => mediaPlayingPanzoom.value,
+  () => mediaPlaying.value.panzoom,
   (newPanzoom, oldPanzoom) => {
     try {
       if (JSON.stringify(newPanzoom) !== JSON.stringify(oldPanzoom)) {
@@ -486,22 +480,34 @@ const { post: postCustomDuration } = useBroadcastChannel<
   name: 'custom-duration',
 });
 
+// Section repeat functionality
+const { handleSectionRepeat } = useMediaSectionRepeat();
+
+const customDuration = computed(() => {
+  return (
+    (
+      lookupPeriod.value[currentCongregation.value]?.flatMap(
+        (item) => item.dynamicMedia,
+      ) ?? []
+    ).find((item) => item.uniqueId === mediaPlaying.value.uniqueId)
+      ?.customDuration || undefined
+  );
+});
+
 watch(
-  () => mediaPlayingUrl.value,
-  (newUrl, oldUrl) => {
-    if (newUrl === oldUrl) return;
-    postMediaUrl(newUrl);
+  () => [mediaPlaying.value.url, customDuration.value],
+  ([newUrl, newCustomDuration], [oldUrl, oldCustomDuration]) => {
+    if (
+      newUrl === oldUrl ||
+      (newCustomDuration &&
+        oldCustomDuration &&
+        JSON.stringify(newCustomDuration) === JSON.stringify(oldCustomDuration))
+    )
+      return;
+    postMediaUrl(newUrl as string);
     postCustomDuration(undefined);
 
-    const customDuration =
-      (
-        lookupPeriod.value[currentCongregation.value]?.flatMap(
-          (item) => item.dynamicMedia,
-        ) ?? []
-      ).find((item) => item.uniqueId === mediaPlayingUniqueId.value)
-        ?.customDuration || undefined;
-
-    if (customDuration) {
+    if (customDuration.value) {
       postCustomDuration(JSON.stringify(customDuration));
     }
   },
@@ -518,10 +524,16 @@ watch(
   () => mediaStateData.value,
   (newMediaStateData) => {
     if (newMediaStateData === 'ended') {
-      mediaPlayingCurrentPosition.value = 0;
-      mediaPlayingUrl.value = '';
-      mediaPlayingUniqueId.value = '';
-      mediaPlayingAction.value = '';
+      // Handle section repeat logic first
+      const repeatHandled = handleSectionRepeat();
+      console.log('🔄 [onMediaEnded] Repeat handled:', repeatHandled);
+      if (repeatHandled) return;
+
+      // Then handle normal media state cleanup
+      mediaPlaying.value.currentPosition = 0;
+      mediaPlaying.value.url = '';
+      mediaPlaying.value.uniqueId = '';
+      mediaPlaying.value.action = '';
     }
     mediaStateData.value = null;
   },
@@ -534,7 +546,8 @@ const { data: currentTimeData } = useBroadcastChannel<number, number>({
 watch(
   () => currentTimeData.value,
   (newCurrentTime) => {
-    mediaPlayingCurrentPosition.value = newCurrentTime;
+    console.log('🔄 [currentTimeData] New current time:', newCurrentTime);
+    mediaPlaying.value.currentPosition = newCurrentTime;
   },
 );
 
@@ -542,7 +555,7 @@ let mediaSceneTimeout: NodeJS.Timeout | null = null;
 const changeDelay = 600; // 600ms delay: "--animate-duration" = 300ms, "slow" = "--animate-duration" * 2
 
 watch(
-  () => [mediaPlaying.value, mediaPaused.value, mediaPlayingUrl.value],
+  () => [mediaIsPlaying.value, mediaPaused.value, mediaPlaying.value.url],
   (
     [newMediaPlaying, newMediaPaused, newMediaPlayingUrl],
     [, , oldMediaPlayingUrl],
@@ -1317,7 +1330,7 @@ function isMediaSelectable(mediaItem: DynamicMediaObject) {
 }
 
 watch(
-  () => mediaPlayingUniqueId.value,
+  () => mediaPlaying.value.uniqueId,
   (newMediaUniqueId) => {
     if (newMediaUniqueId) highlightedMediaId.value = newMediaUniqueId;
   },

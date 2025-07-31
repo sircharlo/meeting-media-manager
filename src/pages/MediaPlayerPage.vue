@@ -94,7 +94,7 @@ const { getScreenAccessStatus } = window.electronApi;
 
 const currentState = useCurrentStateStore();
 const yeartext = computed(() => currentState.yeartext);
-const { currentCongregation, currentSettings, mediaPlayingAction } =
+const { currentCongregation, currentSettings, mediaPlaying } =
   storeToRefs(currentState);
 
 const jwStore = useJwStore();
@@ -280,7 +280,7 @@ watch(
         }
         if (!mediaElement.value || !stream) {
           videoStreaming.value = false;
-          mediaPlayingAction.value = '';
+          mediaPlaying.value.action = '';
           mediaElement.value?.pause();
           if (mediaElement?.value?.srcObject) {
             mediaElement.value.srcObject = null;
@@ -297,7 +297,7 @@ watch(
         mediaElement.value.pause();
         mediaElement.value.srcObject = null;
       }
-      mediaPlayingAction.value = '';
+      mediaPlaying.value.action = '';
     }
   },
 );
@@ -363,7 +363,7 @@ watch(
         }
         if (!mediaElement.value || !stream) {
           videoStreaming.value = false;
-          mediaPlayingAction.value = '';
+          mediaPlaying.value.action = '';
           mediaElement.value?.pause();
           if (mediaElement?.value?.srcObject) {
             mediaElement.value.srcObject = null;
@@ -390,7 +390,7 @@ watch(
         mediaElement.value.pause();
         mediaElement.value.srcObject = null;
       }
-      mediaPlayingAction.value = '';
+      mediaPlaying.value.action = '';
     }
   },
 );

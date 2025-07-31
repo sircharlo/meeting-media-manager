@@ -20,7 +20,7 @@
     <q-btn
       v-if="mediaSortCanBeReset"
       color="white-transparent"
-      :disable="mediaPlaying"
+      :disable="mediaIsPlaying"
       unelevated
       @click="resetSort"
     >
@@ -40,7 +40,7 @@
       !selectedDateObject?.meeting && selectedDateObject?.dynamicMedia?.length
     "
     color="white-transparent"
-    :disable="mediaPlaying"
+    :disable="mediaIsPlaying"
     unelevated
     @click="customSectionPopup = true"
   >
@@ -236,7 +236,7 @@
       </q-card-actions>
     </q-card>
   </q-dialog>
-  <q-btn color="white-transparent" :disable="mediaPlaying" unelevated>
+  <q-btn color="white-transparent" :disable="mediaIsPlaying" unelevated>
     <q-icon
       :class="{ 'q-mr-sm': $q.screen.gt.xs }"
       name="mmm-calendar-month"
@@ -311,7 +311,7 @@ const {
   currentSettings,
   getAllMediaForSection,
   getVisibleMediaForSection,
-  mediaPlaying,
+  mediaIsPlaying,
   online,
   selectedDate,
   selectedDateObject,

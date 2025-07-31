@@ -26,6 +26,16 @@ const { fs, path } = window.electronApi;
 const { ensureDir } = fs;
 const { join } = path;
 
+export interface MediaPlayingState {
+  action: '' | 'pause' | 'play' | 'website';
+  currentPosition: number;
+  panzoom: Partial<{ scale: number; x: number; y: number }>;
+  seekTo: number;
+  subtitlesUrl: string;
+  uniqueId: string;
+  url: string;
+}
+
 export interface Songbook {
   fileformat: 'MP3' | 'MP4';
   pub: 'sjj' | 'sjjm';
@@ -41,13 +51,7 @@ interface Store {
   extractedFiles: Partial<Record<string, string>>;
   ffmpegPath: string;
   highlightedMediaId: string;
-  mediaPlayingAction: '' | 'pause' | 'play' | 'website';
-  mediaPlayingCurrentPosition: number;
-  mediaPlayingPanzoom: Partial<{ scale: number; x: number; y: number }>;
-  mediaPlayingSeekTo: number;
-  mediaPlayingSubtitlesUrl: string;
-  mediaPlayingUniqueId: string;
-  mediaPlayingUrl: string;
+  mediaPlaying: MediaPlayingState;
   mediaWindowCustomBackground: string;
   mediaWindowVisible: boolean;
   meetingDay: boolean;
@@ -291,14 +295,14 @@ export const useCurrentStateStore = defineStore('current-state', {
         {} as Record<MediaSectionIdentifier, DynamicMediaObject[]>,
       );
     },
-    mediaPaused: (state) => {
+    mediaIsPlaying: (state) => {
       return (
-        state.mediaPlayingUrl !== '' && state.mediaPlayingAction === 'pause'
+        state.mediaPlaying.url !== '' || state.mediaPlaying.action === 'website'
       );
     },
-    mediaPlaying: (state) => {
+    mediaPaused: (state) => {
       return (
-        state.mediaPlayingUrl !== '' || state.mediaPlayingAction === 'website'
+        state.mediaPlaying.url !== '' && state.mediaPlaying.action === 'pause'
       );
     },
     missingMedia(state): DynamicMediaObject[] {
@@ -356,13 +360,15 @@ export const useCurrentStateStore = defineStore('current-state', {
       extractedFiles: {},
       ffmpegPath: '',
       highlightedMediaId: '',
-      mediaPlayingAction: '',
-      mediaPlayingCurrentPosition: 0,
-      mediaPlayingPanzoom: { scale: 1, x: 0, y: 0 },
-      mediaPlayingSeekTo: 0,
-      mediaPlayingSubtitlesUrl: '',
-      mediaPlayingUniqueId: '',
-      mediaPlayingUrl: '',
+      mediaPlaying: {
+        action: '',
+        currentPosition: 0,
+        panzoom: { scale: 1, x: 0, y: 0 },
+        seekTo: 0,
+        subtitlesUrl: '',
+        uniqueId: '',
+        url: '',
+      },
       mediaWindowCustomBackground: '',
       mediaWindowVisible: true,
       meetingDay: false,

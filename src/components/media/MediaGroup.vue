@@ -9,7 +9,7 @@
         <q-item
           v-close-popup
           clickable
-          :disable="!!mediaPlayingUrl"
+          :disable="!!mediaPlaying.url"
           @click="emit('update:hidden', true)"
         >
           <q-item-section avatar>
@@ -29,7 +29,7 @@
       :key="element.children.map((m) => m.uniqueId).join(',')"
       v-model="isExpanded"
       :disable="
-        element.children.map((m) => m.fileUrl).includes(mediaPlayingUrl)
+        element.children.map((m) => m.fileUrl).includes(mediaPlaying.url)
       "
       :header-class="
         isExpanded ? ($q.dark.isActive ? 'bg-accent-400' : 'bg-accent-200') : ''
@@ -79,16 +79,20 @@
 <script setup lang="ts">
 import type { DynamicMediaObject } from 'src/types';
 
+import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
+import { useCurrentStateStore } from 'stores/current-state';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import MediaItem from './MediaItem.vue';
 
+const currentState = useCurrentStateStore();
+const { mediaPlaying } = storeToRefs(currentState);
+
 const props = defineProps<{
   element: DynamicMediaObject;
   expanded: boolean;
-  mediaPlayingUrl?: string;
 }>();
 
 const emit = defineEmits<{

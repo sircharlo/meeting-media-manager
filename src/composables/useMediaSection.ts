@@ -173,6 +173,42 @@ export function useMediaSection(mediaList: MediaSection) {
     }
   };
 
+  const updateSectionRepeat = (repeat: boolean, interval?: number) => {
+    console.log('🔄 Updating section repeat:', {
+      hasCustomSections: !!selectedDateObject.value?.customSections,
+      interval,
+      repeat,
+      sectionId: mediaList.uniqueId,
+    });
+
+    if (!selectedDateObject.value?.customSections) {
+      console.warn('⚠️ No custom sections found for repeat update');
+      return;
+    }
+
+    const section = selectedDateObject.value.customSections.find(
+      (s) => s.uniqueId === mediaList.uniqueId,
+    );
+    if (section) {
+      const oldRepeat = section.repeat;
+      section.repeat = repeat;
+      if (interval !== undefined) {
+        section.repeatInterval = interval;
+      }
+      console.log('✅ Section repeat updated:', {
+        interval: section.repeatInterval,
+        oldRepeat,
+        repeat,
+        sectionId: mediaList.uniqueId,
+      });
+    } else {
+      console.warn(
+        '⚠️ Section not found for repeat update:',
+        mediaList.uniqueId,
+      );
+    }
+  };
+
   const moveSection = (direction: 'down' | 'up') => {
     console.log('📦 Moving section:', {
       currentIndex: currentIndex.value,
@@ -309,6 +345,7 @@ export function useMediaSection(mediaList: MediaSection) {
     updateSectionColor,
     // Actions
     updateSectionLabel,
+    updateSectionRepeat,
     visibleItems,
   };
 }

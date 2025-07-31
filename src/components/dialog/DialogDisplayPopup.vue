@@ -408,11 +408,11 @@ const { post: postCameraStream } = useBroadcastChannel<
 });
 
 watch(displayCameraId, (newCameraId) => {
-  if (currentState.mediaPlaying) return;
+  if (currentState.mediaIsPlaying) return;
   if (newCameraId) {
     postCameraStream(newCameraId);
   } else {
-    currentState.mediaPlayingUrl = '';
+    currentState.mediaPlaying.url = '';
   }
 });
 

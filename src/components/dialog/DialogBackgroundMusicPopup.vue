@@ -70,7 +70,7 @@
             v-if="!musicPlaying"
             class=""
             color="primary"
-            :disable="mediaPlaying || musicState === 'music.starting'"
+            :disable="mediaIsPlaying || musicState === 'music.starting'"
             unelevated
             @click="playMusic(true)"
           >
@@ -127,7 +127,7 @@ const currentState = useCurrentStateStore();
 const {
   currentCongregation,
   currentSettings,
-  mediaPlaying,
+  mediaIsPlaying,
   meetingDay,
   selectedDateObject,
 } = storeToRefs(currentState);

@@ -143,6 +143,33 @@
             </q-tooltip>
           </q-btn>
 
+          <!-- Repeat Section (only for custom sections on non-meeting days) -->
+          <q-btn
+            v-if="isCustom && !currentState.selectedDateObject?.meeting"
+            :color="
+              isSectionRepeating(mediaList.uniqueId)
+                ? 'positive'
+                : 'custom-text-color'
+            "
+            :flat="!isSectionRepeating(mediaList.uniqueId)"
+            :icon="
+              isSectionRepeating(mediaList.uniqueId)
+                ? 'mmm-repeat'
+                : 'mmm-repeat-off'
+            "
+            round
+            size="sm"
+            @click="handleRepeatClick"
+          >
+            <q-tooltip :delay="500">
+              {{
+                isSectionRepeating(mediaList.uniqueId)
+                  ? t('stop-repeat-section')
+                  : t('repeat-section')
+              }}
+            </q-tooltip>
+          </q-btn>
+
           <!-- Delete -->
           <q-btn
             v-if="mediaList.uniqueId !== 'additional'"
@@ -164,6 +191,8 @@ import type { MediaSection } from 'src/types';
 
 import { useElementHover } from '@vueuse/core';
 import { useQuasar } from 'quasar';
+import { useMediaSection } from 'src/composables/useMediaSection';
+import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, nextTick, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -175,6 +204,7 @@ const props = defineProps<{
   isRenaming: boolean;
   isSongButton: boolean;
   mediaList: MediaSection;
+  shouldUpdateRepeatOnStop?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -191,6 +221,12 @@ const emit = defineEmits<{
 const $q = useQuasar();
 const { t } = useI18n();
 const currentState = useCurrentStateStore();
+
+// Section repeat functionality
+const { isSectionRepeating, toggleSectionRepeat } = useMediaSectionRepeat();
+
+// Get the section composable for updating repeat settings
+const { updateSectionRepeat } = useMediaSection(props.mediaList);
 
 const sectionHeader = ref<HTMLElement>();
 const isHovered = useElementHover(sectionHeader);
@@ -249,6 +285,44 @@ const handleLabelChange = (val: string) => {
 const handleColorChange = (val: null | string) => {
   emit('update-color', val ?? '');
 };
+
+const handleRepeatClick = () => {
+  const isCurrentlyRepeating = isSectionRepeating(props.mediaList.uniqueId);
+  const newRepeatState = !isCurrentlyRepeating;
+
+  // Update the section settings
+  updateSectionRepeat(newRepeatState);
+
+  // Toggle the repeat functionality
+  toggleSectionRepeat(props.mediaList.uniqueId);
+};
+
+// Method to update section repeat state (can be called from parent)
+const updateSectionRepeatState = (newState: boolean) => {
+  console.log('🔄 [updateSectionRepeatState] Updating section repeat state:', {
+    isCurrentlyRepeating: isSectionRepeating(props.mediaList.uniqueId),
+    newState,
+    sectionId: props.mediaList.uniqueId,
+  });
+
+  updateSectionRepeat(newState);
+  if (newState) {
+    // Start repeating if not already
+    if (!isSectionRepeating(props.mediaList.uniqueId)) {
+      toggleSectionRepeat(props.mediaList.uniqueId);
+    }
+  } else {
+    // Stop repeating if currently repeating
+    if (isSectionRepeating(props.mediaList.uniqueId)) {
+      toggleSectionRepeat(props.mediaList.uniqueId);
+    }
+  }
+};
+
+// Expose the method for parent components
+defineExpose({
+  updateSectionRepeatState,
+});
 </script>
 
 <style lang="scss" scoped>

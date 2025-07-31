@@ -6,6 +6,7 @@
     <!-- Section Header -->
     <MediaSectionHeader
       v-if="selectedDateObject"
+      ref="sectionHeaderRef"
       :is-custom="isCustomSection"
       :is-first="isFirst"
       :is-last="isLast"
@@ -60,7 +61,6 @@
           v-else-if="element.children"
           :element="element"
           :expanded="expandedGroups[element.uniqueId] ?? false"
-          :media-playing-url="mediaPlayingUrl"
           @update:child-hidden="
             element.children.forEach((child) => (child.hidden = !!$event))
           "
@@ -72,6 +72,7 @@
           v-else
           v-model:repeat="element.repeat"
           :media="element"
+          @media-stopped="handleMediaStopped"
           @update:custom-duration="
             element.customDuration = JSON.parse($event) || undefined
           "
@@ -121,12 +122,18 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+  'media-stopped': [];
   'update:is-dragging': [isDragging: boolean];
   'update:sortable-items': [items: DynamicMediaObject[]];
 }>();
 
 const currentState = useCurrentStateStore();
-const { mediaPlayingUrl, selectedDateObject } = storeToRefs(currentState);
+const { selectedDateObject } = storeToRefs(currentState);
+
+// Ref to the section header
+const sectionHeaderRef = ref<InstanceType<typeof MediaSectionHeader> | null>(
+  null,
+);
 
 // Use the media section composable
 const {
@@ -193,6 +200,16 @@ const handleUpdateDividerColor = (
   updateDividerColors(dividerId, bgColor, textColor);
 };
 
+const handleMediaStopped = () => {
+  console.log(
+    '🛑 [handleMediaStopped] Media stopped, updating section repeat to false',
+  );
+  // Update section repeat to false when media is stopped
+  if (sectionHeaderRef.value) {
+    sectionHeaderRef.value.updateSectionRepeatState(false);
+  }
+};
+
 // Watch for changes in isDragging and emit to parent
 watch(
   () => isDragging.value,
@@ -216,6 +233,7 @@ watch(
 defineExpose({
   expandedGroups,
   isDragging,
+  sectionHeaderRef,
 });
 </script>
 

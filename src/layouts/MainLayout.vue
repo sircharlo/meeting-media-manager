@@ -130,7 +130,7 @@ const {
   currentCongregation,
   currentSettings,
   downloadProgress,
-  mediaPlaying,
+  mediaIsPlaying,
   online,
   selectedDate,
   selectedDateObject,
@@ -540,7 +540,7 @@ bcClose.onmessage = (event) => {
     const meetingDay =
       !!selectedDateObject.value?.today && !!selectedDateObject.value?.meeting;
     if (
-      (mediaPlaying.value ||
+      (mediaIsPlaying.value ||
         (currentCongregation.value && // a congregation is selected
           !currentSettings.value?.disableMediaFetching && // media fetching is enabled
           meetingDay && // today is a meeting day
