@@ -19,10 +19,6 @@ export function useMediaSection(mediaList: MediaSection) {
     const result =
       mediaList.uniqueId === 'additional' ||
       mediaList.uniqueId?.startsWith('custom');
-    console.log('🔍 isCustomSection computed:', {
-      result,
-      uniqueId: mediaList.uniqueId,
-    });
     return result;
   });
 
@@ -31,35 +27,16 @@ export function useMediaSection(mediaList: MediaSection) {
       selectedDateObject.value?.dynamicMedia?.filter(
         (m) => m.section === mediaList.uniqueId,
       ) || [];
-    console.log('📋 sectionItems computed:', {
-      itemCount: items.length,
-      items: items.map((item) => ({
-        title: item.title,
-        uniqueId: item.uniqueId,
-      })),
-      sectionId: mediaList.uniqueId,
-    });
     return items;
   });
 
   const visibleItems = computed(() => {
     const items = sectionItems.value.filter((m) => !m.hidden);
-    console.log('👁️ visibleItems computed:', {
-      hiddenCount: sectionItems.value.length - items.length,
-      sectionId: mediaList.uniqueId,
-      totalItems: sectionItems.value.length,
-      visibleCount: items.length,
-    });
     return items;
   });
 
   const isEmpty = computed(() => {
     const result = sectionItems.value.length === 0;
-    console.log('📭 isEmpty computed:', {
-      isEmpty: result,
-      itemCount: sectionItems.value.length,
-      sectionId: mediaList.uniqueId,
-    });
     return result;
   });
 
@@ -69,12 +46,6 @@ export function useMediaSection(mediaList: MediaSection) {
         selectedDateObject.value?.meeting === 'we') ||
       (mediaList.uniqueId === 'circuitOverseer' &&
         !sectionItems.value.some((m) => m.hidden));
-    console.log('🎵 isSongButton computed:', {
-      hasHiddenItems: sectionItems.value.some((m) => m.hidden),
-      meeting: selectedDateObject.value?.meeting,
-      result,
-      sectionId: mediaList.uniqueId,
-    });
     return result;
   });
 
@@ -86,30 +57,14 @@ export function useMediaSection(mediaList: MediaSection) {
     const index = customSections.value.findIndex(
       (s) => s.uniqueId === mediaList.uniqueId,
     );
-    console.log('📍 currentIndex computed:', {
-      currentIndex: index,
-      customSectionsCount: customSections.value.length,
-      sectionId: mediaList.uniqueId,
-    });
     return index;
   });
   const isFirst = computed(() => {
     const result = currentIndex.value === 0;
-    console.log('🥇 isFirst computed:', {
-      currentIndex: currentIndex.value,
-      isFirst: result,
-      sectionId: mediaList.uniqueId,
-    });
     return result;
   });
   const isLast = computed(() => {
     const result = currentIndex.value === customSections.value.length - 1;
-    console.log('🥉 isLast computed:', {
-      currentIndex: currentIndex.value,
-      isLast: result,
-      sectionId: mediaList.uniqueId,
-      totalSections: customSections.value.length,
-    });
     return result;
   });
 
@@ -119,8 +74,13 @@ export function useMediaSection(mediaList: MediaSection) {
 
   // Initialize expanded groups
   watch(
-    () => sectionItems.value,
-    (items) => {
+    () => [sectionItems.value, selectedDateObject.value?.date],
+    (newValues, oldValues) => {
+      const [items, newDate] = newValues || [];
+      const [, oldDate] = oldValues || [];
+
+      if (newDate === oldDate || !Array.isArray(items)) return;
+
       console.log('🔄 Updating expanded groups for section:', {
         itemCount: items.length,
         sectionId: mediaList.uniqueId,
