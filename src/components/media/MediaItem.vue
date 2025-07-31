@@ -1110,6 +1110,9 @@ function stopMedia(forOtherMediaItem = false) {
   localFile.value = fileIsLocal();
   if (!forOtherMediaItem) {
     zoomReset(true);
+    nextTick(() => {
+      window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
+    });
 
     // Emit event to notify parent that media was stopped
     console.log('🛑 [stopMedia] Emitting media-stopped event');

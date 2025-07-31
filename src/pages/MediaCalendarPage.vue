@@ -541,6 +541,10 @@ watch(
       mediaPlaying.value.url = '';
       mediaPlaying.value.uniqueId = '';
       mediaPlaying.value.action = '';
+
+      nextTick(() => {
+        window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
+      });
     }
     mediaStateData.value = null;
   },
