@@ -84,7 +84,7 @@
       </div>
     </q-list>
   </q-page>
-  <q-dialog v-model="deletePending">
+  <BaseDialog v-model="deletePending" :dialog-id="dialogId">
     <q-card class="modal-confirm">
       <q-card-section
         class="row items-center text-bigger text-semibold text-negative q-pb-none"
@@ -112,11 +112,12 @@
         />
       </q-card-actions>
     </q-card>
-  </q-dialog>
+  </BaseDialog>
 </template>
 
 <script setup lang="ts">
 import { useEventListener } from '@vueuse/core';
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
@@ -154,6 +155,7 @@ const congToDelete = ref<number | string>('');
 const deletePending = computed(() => {
   return !!congToDelete.value;
 });
+const dialogId = 'congregation-delete-dialog';
 const hoveredCongregation = ref<number | string>('');
 
 function chooseCongregation(

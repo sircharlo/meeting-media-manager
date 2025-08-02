@@ -84,7 +84,7 @@ const cleanDateFolders = async (root?: string) => {
     folders
       .filter((f) => !f.name.includes('.jwlplaylist'))
       .filter((f) => isInPast(getSpecificWeekday(f.name, 6)))
-      .map((f) => remove(join(root, f))),
+      .map((f) => remove(join(root, f.name))),
   );
 };
 

@@ -1,14 +1,4 @@
 <template>
-  <SongPicker v-model="chooseSong" :section="section" />
-  <PublicTalkMediaPicker v-model="publicTalkMediaPopup" :section="section" />
-  <DialogRemoteVideo v-model="remoteVideoPopup" :section="section" />
-  <DialogStudyBible v-model="studyBiblePopup" :section="section" />
-  <DialogAudioBible v-model="audioBiblePopup" :section="section" />
-  <DialogJwPlaylist
-    v-model="jwPlaylistPopup"
-    :jw-playlist-path="jwPlaylistPath"
-    :section="section"
-  />
   <transition
     appear
     enter-active-class="animated fadeIn"
@@ -17,9 +7,9 @@
     name="fade"
   >
     <q-btn
-      v-if="selectedDate && mediaSortCanBeReset"
+      v-if="mediaSortCanBeReset"
       color="white-transparent"
-      :disable="mediaPlaying"
+      :disable="mediaIsPlaying"
       unelevated
       @click="resetSort"
     >
@@ -34,6 +24,25 @@
       </q-tooltip>
     </q-btn>
   </transition>
+  <q-btn
+    v-if="
+      !selectedDateObject?.meeting && selectedDateObject?.dynamicMedia?.length
+    "
+    color="white-transparent"
+    :disable="mediaIsPlaying"
+    unelevated
+    @click="openCustomSectionEdit"
+  >
+    <q-icon
+      :class="{ 'q-mr-sm': $q.screen.gt.xs }"
+      name="mmm-label-sort"
+      size="xs"
+    />
+    {{ $q.screen.gt.xs ? t('edit-sections') : '' }}
+    <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+      {{ t('edit-sections') }}
+    </q-tooltip>
+  </q-btn>
   <q-btn
     v-if="selectedDate"
     color="white-transparent"
@@ -56,7 +65,7 @@
           v-close-popup
           clickable
           :disable="!online"
-          @click="chooseSong = true"
+          @click="openSongPicker(section)"
         >
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-music-note" />
@@ -70,7 +79,7 @@
           v-close-popup
           clickable
           :disable="!online"
-          @click="remoteVideoPopup = true"
+          @click="openRemoteVideo"
         >
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-movie" />
@@ -86,7 +95,7 @@
           v-close-popup
           clickable
           :disable="!online"
-          @click="studyBiblePopup = true"
+          @click="openStudyBible"
         >
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-bible" />
@@ -100,7 +109,7 @@
           v-close-popup
           clickable
           :disable="!online"
-          @click="audioBiblePopup = true"
+          @click="openAudioBible"
         >
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-audio-bible" />
@@ -111,7 +120,7 @@
           </q-item-section>
         </q-item>
         <q-item-label header>{{ t('from-local-computer') }}</q-item-label>
-        <q-item v-close-popup clickable @click="publicTalkMediaPopup = true">
+        <q-item v-close-popup clickable @click="openPublicTalkMediaPicker">
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-lectern" />
           </q-item-section>
@@ -188,7 +197,7 @@
       </q-list>
     </q-menu>
   </q-btn>
-  <q-dialog v-model="mediaDeleteAllPending" persistent>
+  <BaseDialog v-model="mediaDeleteAllPending" :dialog-id="dialogId" persistent>
     <q-card class="modal-confirm">
       <q-card-section
         class="row items-center text-bigger text-semibold text-negative q-pb-none"
@@ -200,9 +209,12 @@
         {{ t('are-you-sure-delete-all') }}
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
-        <q-btn v-close-popup flat :label="t('cancel')" />
         <q-btn
-          v-close-popup
+          flat
+          :label="t('cancel')"
+          @click="mediaDeleteAllPending = false"
+        />
+        <q-btn
           color="negative"
           flat
           :label="t('delete')"
@@ -210,13 +222,14 @@
             clearAdditionalMediaForSelectedDate(
               currentCongregation,
               selectedDateObject,
-            )
+            );
+            mediaDeleteAllPending = false;
           "
         />
       </q-card-actions>
     </q-card>
-  </q-dialog>
-  <q-btn color="white-transparent" :disable="mediaPlaying" unelevated>
+  </BaseDialog>
+  <q-btn color="white-transparent" :disable="mediaIsPlaying" unelevated>
     <q-icon
       :class="{ 'q-mr-sm': $q.screen.gt.xs }"
       name="mmm-calendar-month"
@@ -245,21 +258,61 @@
       />
     </q-popup-proxy>
   </q-btn>
+
+  <!-- Dialog Components -->
+  <DialogCustomSectionEdit
+    v-model="showCustomSectionEdit"
+    :dialog-id="'header-calendar-custom-section-edit'"
+  />
+  <DialogRemoteVideo
+    v-model="showRemoteVideo"
+    :dialog-id="'header-calendar-remote-video'"
+    :section="section"
+  />
+  <DialogStudyBible
+    v-model="showStudyBible"
+    :dialog-id="'header-calendar-study-bible'"
+    :section="section"
+  />
+  <DialogAudioBible
+    v-model="showAudioBible"
+    :dialog-id="'header-calendar-audio-bible'"
+    :section="section"
+  />
+  <DialogSongPicker
+    v-model="showSongPicker"
+    :dialog-id="'header-calendar-song-picker'"
+    :section="section"
+  />
+  <DialogPublicTalkMediaPicker
+    v-model="showPublicTalkMediaPicker"
+    :dialog-id="'header-calendar-public-talk-media-picker'"
+    :section="section"
+  />
+  <DialogJwPlaylist
+    v-model="showJwPlaylist"
+    :dialog-id="'header-calendar-jw-playlist'"
+    :jw-playlist-path="jwPlaylistPath"
+    :section="section"
+  />
 </template>
 <script setup lang="ts">
 import type { QMenu } from 'quasar';
-import type { MediaSection } from 'src/types';
+import type { MediaSectionIdentifier } from 'src/types';
 
 import { useEventListener } from '@vueuse/core';
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import DialogAudioBible from 'components/dialog/DialogAudioBible.vue';
+import DialogCustomSectionEdit from 'components/dialog/DialogCustomSectionEdit.vue';
 import DialogJwPlaylist from 'components/dialog/DialogJwPlaylist.vue';
+import DialogPublicTalkMediaPicker from 'components/dialog/DialogPublicTalkMediaPicker.vue';
 import DialogRemoteVideo from 'components/dialog/DialogRemoteVideo.vue';
+import DialogSongPicker from 'components/dialog/DialogSongPicker.vue';
 import DialogStudyBible from 'components/dialog/DialogStudyBible.vue';
-import PublicTalkMediaPicker from 'components/media/PublicTalkMediaPicker.vue';
-import SongPicker from 'components/media/SongPicker.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
+import { standardSections } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   datesAreSame,
@@ -277,6 +330,7 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const jwStore = useJwStore();
+const dialogId = 'media-delete-all-dialog';
 const { clearAdditionalMediaForSelectedDate, showHiddenMediaForSelectedDate } =
   jwStore;
 const { lookupPeriod } = storeToRefs(jwStore);
@@ -289,25 +343,29 @@ const {
   currentSettings,
   getAllMediaForSection,
   getVisibleMediaForSection,
-  mediaPlaying,
+  mediaIsPlaying,
   online,
   selectedDate,
   selectedDateObject,
   someItemsHiddenForSelectedDate,
 } = storeToRefs(currentState);
 
-const section = ref<MediaSection | undefined>();
-const publicTalkMediaPopup = ref(false);
+const section = ref<MediaSectionIdentifier | undefined>();
 const datePickerActive = ref(false);
-const remoteVideoPopup = ref(false);
-const studyBiblePopup = ref(false);
-const audioBiblePopup = ref(false);
-const jwPlaylistPopup = ref(false);
+
+// Dialog state refs
+const showCustomSectionEdit = ref(false);
+const showRemoteVideo = ref(false);
+const showStudyBible = ref(false);
+const showAudioBible = ref(false);
+const showSongPicker = ref(false);
+const showPublicTalkMediaPicker = ref(false);
+const showJwPlaylist = ref(false);
 const jwPlaylistPath = ref('');
 
 const openFileImportDialog = () => {
   window.dispatchEvent(
-    new CustomEvent<{ section: MediaSection | undefined }>(
+    new CustomEvent<{ section: MediaSectionIdentifier | undefined }>(
       'openFileImportDialog',
       {
         detail: { section: section.value },
@@ -392,7 +450,7 @@ const maxDate = () => {
 };
 
 const importMenu = useTemplateRef<QMenu>('importMenu');
-const openImportMenu = (newSection?: MediaSection) => {
+const openImportMenu = (newSection?: MediaSectionIdentifier) => {
   section.value = newSection;
   importMenu.value?.show();
 };
@@ -436,29 +494,13 @@ const getEventDayColor = (eventDate: string) => {
   return 'warning';
 };
 
-const chooseSong = ref(false);
-
-const openSongPicker = (newSection?: MediaSection) => {
-  section.value = newSection;
-  chooseSong.value = true;
-};
-
-const openJwPlaylistPicker = (
-  newSection?: MediaSection,
-  playlistPath?: string,
-) => {
-  section.value = newSection;
-  jwPlaylistPath.value = playlistPath || '';
-  jwPlaylistPopup.value = true;
-};
-
-useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
+useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
   window,
   'openSongPicker',
   (e) => openSongPicker(e.detail?.section),
   { passive: true },
 );
-useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
+useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
   window,
   'openImportMenu',
   (e) => openImportMenu(e.detail?.section),
@@ -467,23 +509,37 @@ useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
 useEventListener<
   CustomEvent<{
     jwPlaylistPath: string;
-    section: MediaSection | undefined;
+    section: MediaSectionIdentifier | undefined;
   }>
 >(
   window,
   'openJwPlaylistPicker',
-  (e) => openJwPlaylistPicker(e.detail?.section, e.detail?.jwPlaylistPath),
+  (e) => {
+    console.log('🎯 openJwPlaylistPicker event received:', e.detail);
+    openJwPlaylistPicker(e.detail?.section, e.detail?.jwPlaylistPath);
+  },
   { passive: true },
 );
 
 const mediaSortCanBeReset = computed<boolean>(() => {
-  if (!selectedDateObject.value?.dynamicMedia) return false;
+  if (
+    !selectedDateObject.value?.dynamicMedia ||
+    !(selectedDateObject.value?.meeting && selectedDateObject.value?.complete)
+  )
+    return false;
 
   const nonHiddenMedia = selectedDateObject.value.dynamicMedia.filter(
     (item) => !item.hidden,
   );
 
-  if (nonHiddenMedia.some((item) => item.section !== item.sectionOriginal)) {
+  const hasSectionChange = nonHiddenMedia.some((item) => {
+    const inStandard =
+      standardSections.includes(item.section) ||
+      standardSections.includes(item.sectionOriginal);
+    return inStandard && item.section !== item.sectionOriginal;
+  });
+
+  if (hasSectionChange) {
     return true;
   }
 
@@ -500,10 +556,10 @@ const mediaSortCanBeReset = computed<boolean>(() => {
   }
 
   const mediaToConsider = [
-    ...getVisibleMediaForSection.value.tgw,
-    ...getVisibleMediaForSection.value.ayfm,
-    ...getVisibleMediaForSection.value.lac,
-    ...getVisibleMediaForSection.value.wt,
+    ...(getVisibleMediaForSection.value.tgw || []),
+    ...(getVisibleMediaForSection.value.ayfm || []),
+    ...(getVisibleMediaForSection.value.lac || []),
+    ...(getVisibleMediaForSection.value.wt || []),
   ];
 
   for (let i = 0; i < mediaToConsider.length - 1; i++) {
@@ -545,10 +601,10 @@ const resetSort = () => {
 
   // Combine all media items into one array
   const mediaToSort = [
-    ...getAllMediaForSection.value.tgw,
-    ...getAllMediaForSection.value.ayfm,
-    ...getAllMediaForSection.value.lac,
-    ...getAllMediaForSection.value.wt,
+    ...(getAllMediaForSection.value.tgw || []),
+    ...(getAllMediaForSection.value.ayfm || []),
+    ...(getAllMediaForSection.value.lac || []),
+    ...(getAllMediaForSection.value.wt || []),
   ];
 
   // Sort the media array in ascending order by `sortOrderOriginal`
@@ -559,13 +615,68 @@ const resetSort = () => {
     ),
   );
 
+  const customSections = [
+    ...new Set(
+      selectedDateObject.value?.customSections?.map(
+        (section) => section.uniqueId,
+      ) ?? [],
+    ),
+  ];
+
+  const mediaFromCustomSections = customSections.flatMap(
+    (sectionId) =>
+      selectedDateObject.value?.dynamicMedia?.filter(
+        (item) => item.section === sectionId,
+      ) || [],
+  );
+
   selectedDateObject.value.dynamicMedia = [
-    ...getAllMediaForSection.value.additional,
+    ...mediaFromCustomSections,
     ...sortedMedia.filter((item) => item.section === 'tgw'),
     ...sortedMedia.filter((item) => item.section === 'ayfm'),
     ...sortedMedia.filter((item) => item.section === 'lac'),
     ...sortedMedia.filter((item) => item.section === 'wt'),
-    ...getAllMediaForSection.value.circuitOverseer,
+    ...(getAllMediaForSection.value.circuitOverseer || []),
   ];
+  window.dispatchEvent(new CustomEvent('reset-sort-order'));
+};
+
+const openCustomSectionEdit = () => {
+  showCustomSectionEdit.value = true;
+};
+
+const openRemoteVideo = () => {
+  showRemoteVideo.value = true;
+};
+
+const openStudyBible = () => {
+  showStudyBible.value = true;
+};
+
+const openAudioBible = () => {
+  showAudioBible.value = true;
+};
+
+const openSongPicker = (newSection?: MediaSectionIdentifier) => {
+  section.value = newSection;
+  showSongPicker.value = true;
+};
+
+const openPublicTalkMediaPicker = () => {
+  showPublicTalkMediaPicker.value = true;
+};
+
+const openJwPlaylistPicker = (
+  newSection?: MediaSectionIdentifier,
+  playlistPath?: string,
+) => {
+  console.log('🎯 openJwPlaylistPicker called with:', {
+    newSection,
+    playlistPath,
+  });
+  section.value = newSection;
+  jwPlaylistPath.value = playlistPath || '';
+  console.log('🎯 jwPlaylistPath set to:', jwPlaylistPath.value);
+  showJwPlaylist.value = true;
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <template v-if="mediaPlayingAction === 'website'">
+  <template v-if="mediaPlaying.action === 'website'">
     <q-btn-group unelevated>
       <q-btn color="white-transparent" @click="zoomWebsiteWindow('out')">
         <q-icon name="mmm-minus" size="xs" />
@@ -37,7 +37,7 @@
     unelevated
     @click="
       closeWebsiteWindow();
-      mediaPlayingAction = '';
+      mediaPlaying.action = '';
     "
   >
     <q-icon class="q-mr-sm" name="mmm-mirror" size="xs" />
@@ -45,7 +45,7 @@
     <q-tooltip v-else :delay="1000">{{ t('stop-mirroring') }}</q-tooltip>
   </q-btn>
   <q-btn
-    v-else-if="mediaPlayingAction === 'website'"
+    v-else-if="mediaPlaying.action === 'website'"
     color="white-transparent"
     unelevated
     @click="startStreaming()"
@@ -56,11 +56,11 @@
   <q-btn
     v-else
     color="white-transparent"
-    :disable="mediaPlaying"
+    :disable="mediaIsPlaying"
     unelevated
     @click="
       openWebsiteWindow(currentState.currentLangObject?.symbol);
-      mediaPlayingAction = 'website';
+      mediaPlaying.action = 'website';
     "
   >
     <q-icon class="q-mr-sm" name="mmm-mirror" size="xs" />
@@ -87,7 +87,7 @@ const {
 
 const { t } = useI18n();
 const currentState = useCurrentStateStore();
-const { mediaPlaying, mediaPlayingAction } = storeToRefs(currentState);
+const { mediaIsPlaying, mediaPlaying } = storeToRefs(currentState);
 
 const streaming = ref(false);
 
@@ -123,7 +123,7 @@ watch(streaming, (val) => {
 });
 
 watch(
-  () => mediaPlayingAction.value,
+  () => mediaPlaying.value.action,
   (newValue, oldValue) => {
     if (newValue !== 'website' && oldValue === 'website') {
       streaming.value = false;

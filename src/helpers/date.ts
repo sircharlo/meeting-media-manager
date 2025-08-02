@@ -260,39 +260,15 @@ export function updateLookupPeriod(
     );
     if (todayDate) todayDate.today = true;
 
-    if (reset) {
-      console.log('🔄 Starting lookup period reset process...', {
-        currentCongregation,
-        targeted,
-      });
-
-      const daysToReset = targeted ? getTargetedDays() : getAllDays() || [];
-      if (!daysToReset.length) {
-        console.log('⚠️ No days found to reset');
-        return;
-      }
-
-      console.log(`📅 Found ${daysToReset.length} days to reset`);
-
-      daysToReset.forEach((day, index) => {
-        console.log(
-          `🛠️  Resetting day ${index + 1}/${daysToReset.length}:`,
-          day.date.toISOString().split('T')[0],
-        );
-        resetDay(day);
-      });
-
-      console.log('✅ Reset process completed');
-    }
-
     function getTargetedDays() {
+      console.group('🎯 Targeted Days Selection');
       if (!lookupPeriod[currentCongregation]) {
         console.log('⚠️ No lookup period found for current congregation');
         return [];
       }
 
       console.log(
-        '🎯 Getting targeted days for week including:',
+        '📅 Getting targeted days for week including:',
         onlyForWeekIncluding,
       );
 
@@ -306,7 +282,7 @@ export function updateLookupPeriod(
         mondayOfTargetedWeek.toISOString().split('T')[0],
       );
 
-      return lookupPeriod[currentCongregation].filter((day) => {
+      const result = lookupPeriod[currentCongregation].filter((day) => {
         const mondayOfLookupWeek = getSpecificWeekday(day.date, 0);
         const isTargetWeek =
           datesAreSame(mondayOfTargetedWeek, mondayOfLookupWeek) ||
@@ -320,14 +296,22 @@ export function updateLookupPeriod(
 
         return isTargetWeek;
       });
+      console.groupEnd();
+      return result;
     }
 
     function getAllDays() {
-      console.log('🌍 Getting all days for congregation');
-      return lookupPeriod[currentCongregation];
+      console.group('🌍 All Days Selection');
+      console.log('📋 Getting all days for congregation');
+      const result = lookupPeriod[currentCongregation];
+      console.groupEnd();
+      return result;
     }
 
     function resetDay(day: DateInfo) {
+      console.group(
+        `📅 Resetting Day - ${day.date.toISOString().split('T')[0]}`,
+      );
       const beforeDynamicCount = day.dynamicMedia.length;
 
       // Reset status flags
@@ -343,7 +327,7 @@ export function updateLookupPeriod(
 
       const removedCount = beforeDynamicCount - day.dynamicMedia.length;
       if (removedCount > 0) {
-        console.log(`    🗑️  Removed ${removedCount} dynamic media items`);
+        console.log(`🗑️ Removed ${removedCount} dynamic media items`);
       }
 
       // Set meeting type
@@ -357,11 +341,45 @@ export function updateLookupPeriod(
       day.today = datesAreSame(day.date, new Date());
 
       console.log(
-        `    📝 Set meeting type: ${day.meeting || 'none'}, today: ${day.today}`,
+        `📝 Set meeting type: ${day.meeting || 'none'}, today: ${day.today}`,
       );
+      console.groupEnd();
+    }
+
+    if (reset) {
+      console.group('🔄 Lookup Period Reset');
+      console.log('📋 Reset parameters:', {
+        currentCongregation,
+        targeted,
+      });
+
+      const daysToReset = targeted ? getTargetedDays() : getAllDays() || [];
+      if (!daysToReset.length) {
+        console.log('⚠️ No days found to reset');
+        console.groupEnd();
+        return;
+      }
+
+      console.log(`📅 Found ${daysToReset.length} days to reset`);
+
+      daysToReset.forEach((day, index) => {
+        console.log(
+          `🛠️  Resetting day ${index + 1}/${daysToReset.length}:`,
+          day?.date?.toISOString().split('T')[0],
+        );
+        resetDay(day);
+      });
+
+      console.log('✅ Reset process completed');
+      console.groupEnd();
     }
   } catch (error) {
     errorCatcher(error);
+  } finally {
+    // Ensure any open console groups are closed
+    if (reset) {
+      console.groupEnd();
+    }
   }
 }
 

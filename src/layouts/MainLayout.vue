@@ -130,7 +130,7 @@ const {
   currentCongregation,
   currentSettings,
   downloadProgress,
-  mediaPlaying,
+  mediaIsPlaying,
   online,
   selectedDate,
   selectedDateObject,
@@ -192,15 +192,19 @@ watch(currentCongregation, (newCongregation, oldCongregation) => {
       downloadBackgroundMusic();
 
       if (currentSettings.value?.enableCacheAutoClear) {
+        console.group('🗑️ Cache Auto-Clear');
         console.log(
-          'Clearing cache files automatically based on user settings...',
+          '🗑️ Clearing cache files automatically based on user settings...',
         );
         deleteCacheFiles('smart')
           .then(() => {
-            console.log('Cache files cleared successfully');
+            console.log('✅ Cache files cleared successfully');
+            console.groupEnd();
           })
           .catch((error) => {
+            console.log('❌ Error clearing cache:', error);
             errorCatcher(error);
+            console.groupEnd();
           });
       }
 
@@ -354,6 +358,7 @@ watch(
       return;
     }
 
+    console.group('👁️ CO Week Watcher');
     console.log('👁️ CO Week watcher triggered:', {
       congregation: {
         new: newCurrentCongregation,
@@ -387,8 +392,10 @@ watch(
       }
 
       console.log('✅ CO week updates completed');
+      console.groupEnd();
     } else {
       console.log('🏢 Congregation changed, skipping CO week update');
+      console.groupEnd();
     }
   },
 );
@@ -533,7 +540,7 @@ bcClose.onmessage = (event) => {
     const meetingDay =
       !!selectedDateObject.value?.today && !!selectedDateObject.value?.meeting;
     if (
-      (mediaPlaying.value ||
+      (mediaIsPlaying.value ||
         (currentCongregation.value && // a congregation is selected
           !currentSettings.value?.disableMediaFetching && // media fetching is enabled
           meetingDay && // today is a meeting day

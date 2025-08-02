@@ -34,6 +34,7 @@ export interface DownloadProgressItem {
 export type DownloadProgressItems = Record<string, DownloadProgressItem>;
 
 export interface DynamicMediaObject {
+  bgColor?: string;
   cbs?: boolean;
   children?: DynamicMediaObject[];
   customDuration?: { max: number; min: number };
@@ -50,16 +51,30 @@ export interface DynamicMediaObject {
   parentUniqueId?: string;
   pubMediaId?: string;
   repeat?: boolean;
-  section: MediaSection;
-  sectionOriginal: MediaSection;
+  section: MediaSectionIdentifier;
+  sectionOriginal: MediaSectionIdentifier;
   sortOrderOriginal: number | string;
   source: 'additional' | 'dynamic' | 'watched';
   streamUrl?: string;
   subtitlesUrl?: string;
   tag?: Tag | undefined;
+  textColor?: string;
   thumbnailUrl?: string;
   title: string;
+  type?: 'divider' | 'media'; // New property to distinguish media items from dividers
   uniqueId: string;
+}
+
+export interface DynamicMediaSection extends MediaSection {
+  items: DynamicMediaObject[];
+}
+
+export interface DynamicMediaSectionConfig {
+  condition: boolean;
+  extraMediaShortcut: boolean;
+  id: MediaSectionIdentifier;
+  jwIcon?: string;
+  labelKey: string;
 }
 
 export interface FileDownloader {
@@ -71,27 +86,48 @@ export interface FileDownloader {
   url: string;
 }
 
-export type MediaSection =
+export interface MediaDivider {
+  bgColor?: string;
+  section: MediaSectionIdentifier;
+  sortOrderOriginal: number | string;
+  textColor?: string;
+  title: string;
+  uniqueId: string;
+}
+
+export interface MediaSection {
+  bgColor?: string;
+  extraMediaShortcut?: boolean;
+  jwIcon?: string;
+  label: string;
+  mmmIcon?: string;
+  repeat?: boolean; // Whether the section should repeat
+  repeatInterval?: number; // Interval in seconds for images (default 10)
+  uniqueId: MediaSectionIdentifier;
+}
+
+export type MediaSectionIdentifier =
   | 'additional'
   | 'ayfm'
   | 'circuitOverseer'
   | 'lac'
   | 'tgw'
-  | 'wt';
+  | 'wt'
+  | string;
 
 export interface SongItem {
   duration?: number; // or the correct type for duration
   path: string;
   title?: string;
 }
-
 export interface SortableMediaList {
   items: Ref<DynamicMediaObject[]>;
   jwIcon?: string | undefined;
   label: string;
   mmmIcon?: string | undefined;
-  type: MediaSection;
+  type: MediaSectionIdentifier;
 }
+
 export type SortableMediaLists = SortableMediaList[];
 
 export interface Tag {

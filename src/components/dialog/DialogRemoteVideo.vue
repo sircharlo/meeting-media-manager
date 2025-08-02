@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="open">
+  <BaseDialog v-model="dialogValue" :dialog-id="dialogId">
     <div
       class="bg-secondary-contrast flex large-overlay q-px-none medium-overlay"
       style="flex-flow: column"
@@ -66,7 +66,7 @@
                   video.title,
                   section,
                 );
-                open = false;
+                closeDialog();
               "
               @mouseout="hoveredRemoteVideo = ''"
               @mouseover="hoveredRemoteVideo = video.guid"
@@ -118,20 +118,25 @@
           />
         </div>
         <div class="col text-right">
-          <q-btn v-close-popup color="negative" flat :label="t('cancel')" />
+          <q-btn
+            color="negative"
+            flat
+            :label="t('cancel')"
+            @click="cancelDialog"
+          />
         </div>
       </div>
     </div>
-  </q-dialog>
+  </BaseDialog>
 </template>
 <script setup lang="ts">
 import type {
   JwVideoCategory,
   MediaItemsMediatorItem,
-  MediaSection,
+  MediaSectionIdentifier,
 } from 'src/types';
 
-import { whenever } from '@vueuse/core';
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
@@ -142,7 +147,7 @@ import { fetchJson } from 'src/utils/api';
 import { formatTime } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -155,11 +160,22 @@ const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
 
 // Props
-defineProps<{
-  section: MediaSection | undefined;
+const props = defineProps<{
+  dialogId: string;
+  modelValue: boolean;
+  section: MediaSectionIdentifier | undefined;
 }>();
 
-const open = defineModel<boolean>({ default: false });
+const emit = defineEmits<{
+  cancel: [];
+  ok: [];
+  'update:modelValue': [value: boolean];
+}>();
+
+const dialogValue = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value),
+});
 
 const remoteVideos = ref<MediaItemsMediatorItem[]>([]);
 const remoteVideoFilter = ref('');
@@ -194,9 +210,27 @@ const videosAreLoading = ref(false);
 const currentPage = ref(1);
 const videosPerPage = ref(24);
 
-whenever(open, () => {
-  getJwVideos();
-});
+const closeDialog = () => {
+  // Reset state when dialog closes
+  resetDialogState();
+  dialogValue.value = false;
+  emit('ok');
+};
+
+const cancelDialog = () => {
+  // Reset state when dialog is cancelled
+  resetDialogState();
+  dialogValue.value = false;
+  emit('cancel');
+};
+
+const resetDialogState = () => {
+  // Reset all dialog state
+  remoteVideoFilter.value = '';
+  remoteVideosIncludeAudioDescription.value = false;
+  hoveredRemoteVideo.value = '';
+  currentPage.value = 1;
+};
 
 const getJwVideos = async () => {
   try {
@@ -259,4 +293,17 @@ const getJwVideos = async () => {
     errorCatcher(error);
   }
 };
+
+// Watch for dialog opening to get JW videos and closing to reset state
+watch(
+  () => dialogValue.value,
+  (isOpen) => {
+    if (!isOpen) {
+      // Reset state when dialog closes
+      resetDialogState();
+    } else {
+      getJwVideos();
+    }
+  },
+);
 </script>

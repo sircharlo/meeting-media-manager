@@ -6,7 +6,7 @@
       'items-center': true,
       'justify-center': true,
       'bg-accent-100-transparent': currentlyHighlighted,
-      'bg-accent-100': mediaPlayingUniqueId === '' && currentlyHighlighted,
+      'bg-accent-100': mediaPlaying.uniqueId === '' && currentlyHighlighted,
       'q-px-sm': child,
     }"
     :style="child ? 'padding: 8px 6px' : undefined"
@@ -55,7 +55,11 @@
             }}
             {{ formatTime(mediaCustomDuration.max ?? media.duration) }}
           </q-badge>
-          <q-dialog v-model="mediaDurationPopup" persistent>
+          <BaseDialog
+            v-model="mediaDurationPopup"
+            :dialog-id="'media-duration-popup-' + props.media.uniqueId"
+            persistent
+          >
             <q-card>
               <q-card-section
                 class="row items-center text-bigger text-semibold q-pb-none"
@@ -147,7 +151,7 @@
                 />
               </q-card-actions>
             </q-card>
-          </q-dialog>
+          </BaseDialog>
         </q-img>
         <transition
           appear
@@ -264,14 +268,24 @@
             'text-grey': !isFileUrl(media.fileUrl),
           }"
         >
+          <q-input
+            v-if="isEditingTitle"
+            ref="titleInput"
+            v-model="mediaTitle"
+            dense
+            @blur="handleTitleEdit(false)"
+            @keyup.enter="handleTitleEdit(false)"
+            @keyup.esc="handleTitleEdit(false)"
+          />
           <div
+            v-else
             :class="
               ($q.screen.gt.xs || !media.tag) &&
               (displayMediaTitle.match(/\s/g) || []).length
                 ? 'ellipsis-3-lines'
                 : 'ellipsis'
             "
-            @dblclick="mediaEditTitleDialog = true"
+            @dblclick="handleTitleEdit(true)"
           >
             {{ displayMediaTitle }}
             <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
@@ -337,7 +351,7 @@
               {{
                 formatTime(
                   Math.max(
-                    (mediaPlayingCurrentPosition || 0) -
+                    (mediaPlaying.currentPosition || 0) -
                       (mediaCustomDuration.min || 0),
                     0,
                   ),
@@ -346,25 +360,25 @@
             </div>
             <div class="col" style="height: 28px">
               <q-slider
-                v-model="mediaPlayingCurrentPosition"
+                v-model="mediaPlaying.currentPosition"
                 color="primary"
                 :inner-max="mediaCustomDuration.max"
                 :inner-min="mediaCustomDuration.min"
                 inner-track-color="accent-400"
                 label
                 :label-color="
-                  mediaPlayingAction === 'pause' ? undefined : 'accent-400'
+                  mediaPlaying.action === 'pause' ? undefined : 'accent-400'
                 "
                 :label-value="
-                  mediaPlayingAction === 'pause'
-                    ? formatTime(mediaPlayingCurrentPosition)
+                  mediaPlaying.action === 'pause'
+                    ? formatTime(mediaPlaying.currentPosition)
                     : t('pause-to-adjust-time')
                 "
                 :max="media.duration"
                 :min="0"
-                :readonly="mediaPlayingAction !== 'pause'"
+                :readonly="mediaPlaying.action !== 'pause'"
                 :step="0.1"
-                :thumb-size="mediaPlayingAction === 'pause' ? undefined : '0'"
+                :thumb-size="mediaPlaying.action === 'pause' ? undefined : '0'"
                 track-color="negative"
                 @update:model-value="seekTo"
               />
@@ -378,7 +392,7 @@
                 formatTime(
                   Math.max(
                     (mediaCustomDuration.max || media.duration) -
-                      (mediaPlayingCurrentPosition || 0),
+                      (mediaPlaying.currentPosition || 0),
                     0,
                   ),
                 )
@@ -398,8 +412,8 @@
           ref="playButton"
           :color="isFileUrl(media.fileUrl) ? 'primary' : 'grey'"
           :disable="
-            (mediaPlayingUrl !== '' &&
-              (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))) ||
+            (mediaPlaying.url !== '' &&
+              (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))) ||
             !isFileUrl(media.fileUrl)
           "
           :icon="localFile ? 'mmm-play' : 'mmm-stream-play'"
@@ -417,8 +431,8 @@
           ref="playButton"
           color="primary"
           :disable="
-            mediaPlayingUrl !== '' &&
-            (isVideo(mediaPlayingUrl) || isAudio(mediaPlayingUrl))
+            mediaPlaying.url !== '' &&
+            (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))
           "
           icon="mmm-play-sign-language"
           push
@@ -446,7 +460,7 @@
     <template v-else>
       <div class="col-shrink items-center justify-center flex">
         <q-btn
-          v-if="isImage(mediaPlayingUrl) && obsConnectionState === 'connected'"
+          v-if="isImage(mediaPlaying.url) && obsConnectionState === 'connected'"
           :color="currentSceneType === 'media' ? 'negative' : 'primary'"
           icon="
                     mmm-picture-for-zoom-participants
@@ -467,34 +481,34 @@
           </q-tooltip>
         </q-btn>
         <q-btn
-          v-if="mediaPlayingAction === 'pause'"
+          v-if="mediaPlaying.action === 'pause'"
           ref="pauseResumeButton"
           color="primary"
           icon="mmm-play"
           outline
           rounded
-          @click="mediaPlayingAction = 'play'"
+          @click="mediaPlaying.action = 'play'"
         />
         <q-btn
           v-else-if="
             localFile &&
             media.duration &&
-            (mediaPlayingAction === 'play' || !mediaPlayingAction)
+            (mediaPlaying.action === 'play' || !mediaPlaying.action)
           "
           ref="pauseResumeButton"
           color="negative"
           icon="mmm-pause"
           outline
           rounded
-          @click="mediaPlayingAction = 'pause'"
+          @click="mediaPlaying.action = 'pause'"
         />
         <q-btn
-          v-if="mediaPlayingAction !== '' || mediaPlayingAction === ''"
+          v-if="mediaPlaying.action !== '' || mediaPlaying.action === ''"
           ref="stopButton"
           class="q-ml-sm"
           color="negative"
           :icon="
-            !localFile && mediaPlayingCurrentPosition === 0
+            !localFile && mediaPlaying.currentPosition === 0
               ? undefined
               : 'mmm-stop'
           "
@@ -506,7 +520,7 @@
           "
         >
           <q-spinner
-            v-if="!localFile && mediaPlayingCurrentPosition === 0"
+            v-if="!localFile && mediaPlaying.currentPosition === 0"
             size="xs"
           />
         </q-btn>
@@ -541,7 +555,7 @@
           v-close-popup
           clickable
           :disable="isCurrentlyPlaying"
-          @click="mediaEditTitleDialog = true"
+          @click="handleTitleEdit(true)"
         >
           <q-item-section avatar>
             <q-icon name="mmm-edit" />
@@ -601,29 +615,11 @@
       </q-list>
     </q-menu>
   </q-item>
-  <q-dialog v-model="mediaEditTitleDialog">
-    <q-card class="modal-confirm">
-      <q-card-section class="items-center">
-        <q-input v-model="mediaTitle" focused outlined type="textarea" />
-      </q-card-section>
-      <q-card-actions align="right" class="text-primary">
-        <q-btn
-          v-close-popup
-          color="negative"
-          flat
-          :label="t('reset')"
-          @click="resetMediaTitle()"
-        />
-        <q-btn
-          v-close-popup
-          flat
-          :label="t('save')"
-          @click="emit('update:title', mediaTitle)"
-        />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
-  <q-dialog v-model="mediaEditTagDialog">
+
+  <BaseDialog
+    v-model="mediaEditTagDialog"
+    :dialog-id="'media-edit-tag-dialog-' + props.media.uniqueId"
+  >
     <q-card class="modal-confirm">
       <q-card-section class="items-center">
         <q-option-group
@@ -642,18 +638,28 @@
         />
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn v-close-popup color="negative" flat :label="t('dismiss')" />
         <q-btn
-          v-close-popup
+          color="negative"
+          flat
+          :label="t('dismiss')"
+          @click="mediaEditTagDialog = false"
+        />
+        <q-btn
           color="primary"
           flat
           :label="t('save')"
-          @click="emit('update:tag', mediaTag)"
+          @click="
+            emit('update:tag', mediaTag);
+            mediaEditTagDialog = false;
+          "
         />
       </q-card-actions>
     </q-card>
-  </q-dialog>
-  <q-dialog v-model="mediaStopPending">
+  </BaseDialog>
+  <BaseDialog
+    v-model="mediaStopPending"
+    :dialog-id="'media-stop-pending-' + props.media.uniqueId"
+  >
     <q-card class="modal-confirm">
       <q-card-section
         class="row items-center text-bigger text-semibold text-negative q-pb-none"
@@ -675,8 +681,11 @@
         />
       </q-card-actions>
     </q-card>
-  </q-dialog>
-  <q-dialog v-model="mediaDeletePending">
+  </BaseDialog>
+  <BaseDialog
+    v-model="mediaDeletePending"
+    :dialog-id="'media-delete-pending-' + props.media.uniqueId"
+  >
     <q-card class="modal-confirm">
       <q-card-section
         class="row items-center text-bigger text-semibold text-negative q-pb-none"
@@ -703,7 +712,7 @@
         />
       </q-card-actions>
     </q-card>
-  </q-dialog>
+  </BaseDialog>
 </template>
 
 <script setup lang="ts">
@@ -721,6 +730,7 @@ import {
   watchImmediate,
   whenever,
 } from '@vueuse/core';
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { debounce, type QBtn, type QImg, QItem, useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -735,6 +745,7 @@ import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
 import {
   computed,
+  nextTick,
   onMounted,
   onUnmounted,
   ref,
@@ -744,16 +755,8 @@ import {
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
-const {
-  currentSettings,
-  highlightedMediaId,
-  mediaPlayingAction,
-  mediaPlayingCurrentPosition,
-  mediaPlayingPanzoom,
-  mediaPlayingSubtitlesUrl,
-  mediaPlayingUniqueId,
-  mediaPlayingUrl,
-} = storeToRefs(currentState);
+const { currentSettings, highlightedMediaId, mediaPlaying } =
+  storeToRefs(currentState);
 
 const currentlyHighlighted = computed(
   () => highlightedMediaId.value === props.media.uniqueId,
@@ -788,6 +791,7 @@ const emit = defineEmits<{
   (e: 'update:hidden', value: boolean): void;
   (e: 'update:tag', value: Tag): void;
   (e: 'update:customDuration' | 'update:title', value: string): void;
+  (e: 'media-stopped'): void;
 }>();
 
 const mediaItem = useTemplateRef<QItem>('mediaItem');
@@ -801,9 +805,9 @@ watch(contextMenu, (val) => {
   if (!val) menuTarget.value = true;
 });
 
-const mediaEditTitleDialog = ref(false);
+const isEditingTitle = ref(false);
+const titleInput = ref<HTMLInputElement>();
 const mediaTitle = ref(props.media.title);
-const initialMediaTitle = ref(mediaTitle.value);
 
 const { fileUrlToPath, fs, path } = window.electronApi;
 const { basename } = path;
@@ -811,6 +815,10 @@ const { basename } = path;
 const { pathExists, pathExistsSync, statSync } = fs;
 
 const displayMediaTitle = computed(() => {
+  // When editing, use the local mediaTitle to avoid reactivity delays
+  if (isEditingTitle.value) {
+    return mediaTitle.value || '';
+  }
   return (
     props.media.title ||
     (props.media.fileUrl && basename(props.media.fileUrl)) ||
@@ -855,8 +863,25 @@ const mediaTagClasses = computed(() => {
   };
 });
 
-const resetMediaTitle = () => {
-  emit('update:title', initialMediaTitle.value);
+const handleTitleEdit = (value: boolean) => {
+  if (value) {
+    // Start editing
+    isEditingTitle.value = true;
+    // Initialize mediaTitle with current title when starting to edit
+    mediaTitle.value = props.media.title || '';
+    nextTick(() => {
+      if (titleInput.value) {
+        titleInput.value.focus();
+      }
+    });
+  } else {
+    // End editing - emit the updated title
+    isEditingTitle.value = false;
+    // Use nextTick to ensure the input disappears first, then emit
+    nextTick(() => {
+      emit('update:title', mediaTitle.value);
+    });
+  }
 };
 
 const updateMediaCustomDuration = (customDuration?: {
@@ -930,7 +955,7 @@ const setMediaPlaying = async (
   signLanguage = false,
   marker?: VideoMarker,
 ) => {
-  if (isImage(mediaPlayingUrl.value)) stopMedia(true);
+  if (isImage(mediaPlaying.value.url)) stopMedia(true);
   if (signLanguage) {
     if (marker) {
       updateMediaCustomDuration({
@@ -946,15 +971,18 @@ const setMediaPlaying = async (
       updateMediaCustomDuration();
     }
   } else {
-    if (mediaPanzoom.value) mediaPlayingPanzoom.value = mediaPanzoom.value;
+    if (mediaPanzoom.value) mediaPlaying.value.panzoom = mediaPanzoom.value;
   }
-  mediaPlayingAction.value = 'play';
+  mediaPlaying.value.action = 'play';
   localFile.value = fileIsLocal();
-  mediaPlayingUrl.value = localFile.value
+  mediaPlaying.value.url = localFile.value
     ? (media.fileUrl ?? '')
     : (media.streamUrl ?? media.fileUrl ?? '');
-  mediaPlayingUniqueId.value = media.uniqueId;
-  mediaPlayingSubtitlesUrl.value = media.subtitlesUrl ?? '';
+  mediaPlaying.value.uniqueId = media.uniqueId;
+  mediaPlaying.value.subtitlesUrl = media.subtitlesUrl ?? '';
+  nextTick(() => {
+    window.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
+  });
 };
 
 const { post: postRepeat } = useBroadcastChannel<string, boolean>({
@@ -962,7 +990,7 @@ const { post: postRepeat } = useBroadcastChannel<string, boolean>({
 });
 
 watchImmediate(
-  () => [repeat.value, mediaPlayingUniqueId.value],
+  () => [repeat.value, mediaPlaying.value.uniqueId],
   ([newMediaRepeat, newMediaPlayingUniqueId]) => {
     if (newMediaPlayingUniqueId !== props.media.uniqueId) return;
     postRepeat(!!newMediaRepeat);
@@ -1097,21 +1125,30 @@ const zoomReset = (forced = false, animate = true) => {
 };
 
 function stopMedia(forOtherMediaItem = false) {
-  mediaPlayingAction.value = 'pause';
-  mediaPlayingUrl.value = '';
-  mediaPlayingUniqueId.value = '';
-  mediaPlayingCurrentPosition.value = 0;
-  mediaPlayingAction.value = '';
+  mediaPlaying.value.action = 'pause';
+  mediaPlaying.value.url = '';
+  mediaPlaying.value.uniqueId = '';
+  mediaPlaying.value.currentPosition = 0;
+  mediaPlaying.value.action = '';
   mediaToStop.value = '';
   localFile.value = fileIsLocal();
-  if (!forOtherMediaItem) zoomReset(true);
+  if (!forOtherMediaItem) {
+    zoomReset(true);
+    nextTick(() => {
+      window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
+    });
+
+    // Emit event to notify parent that media was stopped
+    console.log('🛑 [stopMedia] Emitting media-stopped event');
+    emit('media-stopped');
+  }
 }
 
 const isCurrentlyPlaying = computed(() => {
   return (
-    (mediaPlayingUrl.value === props.media.fileUrl ||
-      mediaPlayingUrl.value === props.media.streamUrl) &&
-    mediaPlayingUniqueId.value === props.media.uniqueId
+    (mediaPlaying.value.url === props.media.fileUrl ||
+      mediaPlaying.value.url === props.media.streamUrl) &&
+    mediaPlaying.value.uniqueId === props.media.uniqueId
   );
 });
 
@@ -1198,7 +1235,7 @@ const initiatePanzoom = () => {
           y: e.detail.y / height,
         };
         if (!isCurrentlyPlaying.value) return;
-        mediaPlayingPanzoom.value = mediaPanzoom.value;
+        mediaPlaying.value.panzoom = mediaPanzoom.value;
       },
       { passive: true },
     );
@@ -1217,7 +1254,8 @@ function deleteMedia() {
   mediaToDelete.value = '';
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await nextTick();
   initiatePanzoom();
 });
 
@@ -1253,17 +1291,16 @@ useEventListener(
   },
   { passive: true },
 );
-whenever(
-  () => currentlyHighlighted,
-  () => {
-    if (currentlyHighlighted.value && mediaItem.value) {
-      mediaItem.value.$el.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      });
-    }
-  },
-);
+
+window.addEventListener('scrollToSelectedMedia', () => {
+  if (currentlyHighlighted.value && mediaItem.value?.$el) {
+    mediaItem.value.$el.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
+  }
+});
+
 const currentSongIsDuplicated = computed(() => {
   const currentSong = props.media.tag?.value?.toString();
   if (!currentSong) return false;

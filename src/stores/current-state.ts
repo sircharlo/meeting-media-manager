@@ -5,13 +5,14 @@ import type {
   DynamicMediaObject,
   JwLanguage,
   MediaLink,
-  MediaSection,
+  MediaSectionIdentifier,
   SettingsItem,
   SettingsItems,
   SettingsValues,
 } from 'src/types';
 
 import { defineStore } from 'pinia';
+import { standardSections } from 'src/constants/media';
 import { settingsDefinitions } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { datesAreSame, formatDate } from 'src/utils/date';
@@ -24,6 +25,16 @@ import { useObsStateStore } from 'stores/obs-state';
 const { fs, path } = window.electronApi;
 const { ensureDir } = fs;
 const { join } = path;
+
+export interface MediaPlayingState {
+  action: '' | 'pause' | 'play' | 'website';
+  currentPosition: number;
+  panzoom: Partial<{ scale: number; x: number; y: number }>;
+  seekTo: number;
+  subtitlesUrl: string;
+  uniqueId: string;
+  url: string;
+}
 
 export interface Songbook {
   fileformat: 'MP3' | 'MP4';
@@ -40,13 +51,7 @@ interface Store {
   extractedFiles: Partial<Record<string, string>>;
   ffmpegPath: string;
   highlightedMediaId: string;
-  mediaPlayingAction: '' | 'pause' | 'play' | 'website';
-  mediaPlayingCurrentPosition: number;
-  mediaPlayingPanzoom: Partial<{ scale: number; x: number; y: number }>;
-  mediaPlayingSeekTo: number;
-  mediaPlayingSubtitlesUrl: string;
-  mediaPlayingUniqueId: string;
-  mediaPlayingUrl: string;
+  mediaPlaying: MediaPlayingState;
   mediaWindowCustomBackground: string;
   mediaWindowVisible: boolean;
   meetingDay: boolean;
@@ -216,7 +221,10 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!currentLanguage) return [];
       return jwStore.jwSongs[currentLanguage]?.list || [];
     },
-    getAllMediaForSection(): Record<MediaSection, DynamicMediaObject[]> {
+    getAllMediaForSection(): Record<
+      MediaSectionIdentifier,
+      DynamicMediaObject[]
+    > {
       if (!this.selectedDateObject) {
         return {
           additional: [],
@@ -228,14 +236,12 @@ export const useCurrentStateStore = defineStore('current-state', {
         };
       }
 
-      const sections: MediaSection[] = [
-        'additional',
-        'ayfm',
-        'circuitOverseer',
-        'lac',
-        'tgw',
-        'wt',
-      ];
+      const customSections =
+        this.selectedDateObject.customSections
+          ?.filter((m) => !standardSections.includes(m.uniqueId))
+          .map((m) => m.uniqueId) || [];
+
+      const sections = [...standardSections, ...[...new Set(customSections)]];
 
       return sections.reduce(
         (acc, section) => {
@@ -245,10 +251,13 @@ export const useCurrentStateStore = defineStore('current-state', {
           );
           return acc;
         },
-        {} as Record<MediaSection, DynamicMediaObject[]>,
+        {} as Record<MediaSectionIdentifier, DynamicMediaObject[]>,
       );
     },
-    getVisibleMediaForSection(): Record<MediaSection, DynamicMediaObject[]> {
+    getVisibleMediaForSection(): Record<
+      MediaSectionIdentifier,
+      DynamicMediaObject[]
+    > {
       if (!this.selectedDateObject) {
         return {
           additional: [],
@@ -260,7 +269,7 @@ export const useCurrentStateStore = defineStore('current-state', {
         };
       }
 
-      const sections: MediaSection[] = [
+      const standardSections: MediaSectionIdentifier[] = [
         'additional',
         'ayfm',
         'circuitOverseer',
@@ -268,6 +277,12 @@ export const useCurrentStateStore = defineStore('current-state', {
         'tgw',
         'wt',
       ];
+
+      const customSections = this.selectedDateObject.dynamicMedia
+        .filter((m) => !standardSections.includes(m.section))
+        .map((m) => m.section);
+
+      const sections = [...standardSections, ...[...new Set(customSections)]];
 
       return sections.reduce(
         (acc, section) => {
@@ -277,17 +292,17 @@ export const useCurrentStateStore = defineStore('current-state', {
           );
           return acc;
         },
-        {} as Record<MediaSection, DynamicMediaObject[]>,
+        {} as Record<MediaSectionIdentifier, DynamicMediaObject[]>,
+      );
+    },
+    mediaIsPlaying: (state) => {
+      return (
+        state.mediaPlaying.url !== '' || state.mediaPlaying.action === 'website'
       );
     },
     mediaPaused: (state) => {
       return (
-        state.mediaPlayingUrl !== '' && state.mediaPlayingAction === 'pause'
-      );
-    },
-    mediaPlaying: (state) => {
-      return (
-        state.mediaPlayingUrl !== '' || state.mediaPlayingAction === 'website'
+        state.mediaPlaying.url !== '' && state.mediaPlaying.action === 'pause'
       );
     },
     missingMedia(state): DynamicMediaObject[] {
@@ -345,13 +360,15 @@ export const useCurrentStateStore = defineStore('current-state', {
       extractedFiles: {},
       ffmpegPath: '',
       highlightedMediaId: '',
-      mediaPlayingAction: '',
-      mediaPlayingCurrentPosition: 0,
-      mediaPlayingPanzoom: { scale: 1, x: 0, y: 0 },
-      mediaPlayingSeekTo: 0,
-      mediaPlayingSubtitlesUrl: '',
-      mediaPlayingUniqueId: '',
-      mediaPlayingUrl: '',
+      mediaPlaying: {
+        action: '',
+        currentPosition: 0,
+        panzoom: { scale: 1, x: 0, y: 0 },
+        seekTo: 0,
+        subtitlesUrl: '',
+        uniqueId: '',
+        url: '',
+      },
       mediaWindowCustomBackground: '',
       mediaWindowVisible: true,
       meetingDay: false,

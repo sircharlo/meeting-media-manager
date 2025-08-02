@@ -45,6 +45,7 @@
   <ShortcutInput
     v-else-if="item.type === 'shortcut'"
     v-model="model"
+    :dialog-id="`shortcut-input-${settingId}`"
     :shortcut-name="settingId"
   />
   <pre v-else>{{ item }}</pre>

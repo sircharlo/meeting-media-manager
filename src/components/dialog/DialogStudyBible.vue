@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="open">
+  <BaseDialog v-model="dialogValue" :dialog-id="dialogId">
     <div
       class="bg-secondary-contrast flex large-overlay q-px-none"
       style="flex-flow: column"
@@ -270,17 +270,18 @@
         </div>
       </div>
     </div>
-  </q-dialog>
+  </BaseDialog>
 </template>
 <script setup lang="ts">
 import type {
   JwLangCode,
-  MediaSection,
+  MediaSectionIdentifier,
   MultimediaItem,
   PublicationFetcher,
 } from 'src/types';
 
 import { whenever } from '@vueuse/core';
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { SORTER } from 'src/constants/general';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -295,7 +296,7 @@ import {
 } from 'src/helpers/jw-media';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -306,10 +307,21 @@ const { currentSettings } = storeToRefs(currentState);
 
 // Props
 const props = defineProps<{
-  section: MediaSection | undefined;
+  dialogId: string;
+  modelValue: boolean;
+  section: MediaSectionIdentifier | undefined;
 }>();
 
-const open = defineModel<boolean>({ default: false });
+const emit = defineEmits<{
+  cancel: [];
+  ok: [];
+  'update:modelValue': [value: boolean];
+}>();
+
+const dialogValue = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value),
+});
 
 const tab = ref('');
 
@@ -452,11 +464,12 @@ const hoveredMediaItem = ref<MultimediaItem>();
 
 const selectedMediaItems = ref<MultimediaItem[]>([]);
 
-whenever(open, async () => {
-  resetBibleBook(true);
+// Initialize when component mounts
+onMounted(async () => {
   await getBibleMediaCategories();
   await getBibleBooks();
   await getBibleMedia();
+  resetBibleBook(true);
 });
 
 const getBibleMediaCategories = async () => {
@@ -508,6 +521,7 @@ const addSelectedMediaItems = async () => {
     await addStudyBibleMedia(mediaItem);
   }
   resetBibleBook(true, true);
+  emit('ok');
 };
 
 const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
@@ -569,7 +583,7 @@ const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
 };
 
 const resetBibleBook = (closeBook = false, closeDialog = false) => {
-  if (closeDialog) open.value = false;
+  if (closeDialog) emit('cancel');
   if (closeBook) bibleBook.value = 0;
   bibleBookChapter.value = 0;
   selectedMediaItems.value = [];

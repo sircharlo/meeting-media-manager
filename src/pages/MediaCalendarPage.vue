@@ -1,25 +1,13 @@
 <template>
   <q-page
-    :class="
-      !selectedDateObject?.dynamicMedia?.filter((m) => !m.hidden).length
-        ? 'flex'
-        : ''
-    "
     padding
     @dragenter="dropActive"
     @dragover="dropActive"
     @dragstart="dropActive"
   >
-    <div class="col">
+    <div v-if="showBannerColumn" class="col">
       <q-slide-transition>
-        <div
-          v-if="
-            currentSettings?.obsEnable &&
-            ['disconnected', 'notConnected'].includes(obsConnectionState) &&
-            selectedDateObject?.today
-          "
-          class="row"
-        >
+        <div v-if="showObsBanner" class="row">
           <q-banner
             class="bg-negative text-white full-width"
             inline-actions
@@ -33,7 +21,7 @@
         </div>
       </q-slide-transition>
       <q-slide-transition>
-        <div v-if="someItemsHiddenForSelectedDate" class="row">
+        <div v-if="showHiddenItemsBanner" class="row">
           <q-banner
             class="bg-warning text-white full-width"
             inline-actions
@@ -61,7 +49,7 @@
         </div>
       </q-slide-transition>
       <q-slide-transition>
-        <div v-if="duplicateSongsForWeMeeting" class="row">
+        <div v-if="showDuplicateSongsBanner" class="row">
           <q-banner
             class="bg-warning text-white full-width"
             inline-actions
@@ -77,39 +65,64 @@
         </div>
       </q-slide-transition>
       <MediaEmptyState
-        v-if="
-          (currentSettings?.disableMediaFetching &&
-            getVisibleMediaForSection.additional.length < 1) ||
-          (!currentSettings?.disableMediaFetching &&
-            ((selectedDateObject?.meeting && !selectedDateObject?.complete) ||
-              !selectedDateObject?.dynamicMedia?.filter((m) => !m.hidden)
-                .length))
-        "
+        v-if="showEmptyState"
         :go-to-next-day-with-media="goToNextDayWithMedia"
         :open-import-menu="openImportMenu"
       />
     </div>
-    <template
-      v-for="mediaList in mediaLists"
-      :key="
-        mediaList.type +
-        (mediaList.items?.map((m) => m.uniqueId) || []).sort().join(',')
-      "
-    >
-      <MediaList
-        :ref="mediaListRefs[mediaList.type]"
-        :media-list="mediaList"
-        :open-import-menu="openImportMenu"
-      />
+    <template v-if="!showEmptyState">
+      <template
+        v-for="mediaList in mediaLists"
+        :key="
+          selectedDateObject?.date +
+          '-' +
+          mediaList.uniqueId +
+          '-' +
+          mediaList.items?.length
+        "
+      >
+        <MediaList
+          :ref="(el) => (mediaListRefs[mediaList.uniqueId] = el)"
+          :media-list="mediaList"
+          :open-import-menu="openImportMenu"
+          @update-media-section-bg-color="updateMediaSectionBgColor"
+          @update-media-section-label="updateMediaSectionLabel"
+          @update:is-dragging="
+            (isDragging) =>
+              updateMediaListDragging(mediaList.uniqueId, isDragging)
+          "
+          @update:sortable-items="updateMediaListItems"
+        />
+      </template>
     </template>
+    <q-btn
+      v-if="
+        selectedDateObject && !selectedDateObject.meeting && !showEmptyState
+      "
+      :class="{
+        'full-width': true,
+        'dashed-border': !mediaListDragging,
+        'big-button': true,
+      }"
+      color="accent-100"
+      :disable="mediaListDragging"
+      icon="mmm-plus"
+      :label="t('new-section')"
+      text-color="primary"
+      unelevated
+      @click="addSection()"
+    />
+
+    <!-- Dialog Components -->
     <DialogFileImport
-      v-model="showFileImportDialog"
+      v-model="showFileImport"
       v-model:jwpub-db="jwpubImportDb"
       v-model:jwpub-documents="jwpubImportDocuments"
       :current-file="currentFile"
+      :dialog-id="'media-calendar-file-import'"
       :section="sectionToAddTo"
       :total-files="totalFiles"
-      @drop="dropEnd"
+      @drop="handleDrop"
     />
   </q-page>
 </template>
@@ -118,7 +131,9 @@
 import type {
   DocumentItem,
   DynamicMediaObject,
-  MediaSection,
+  DynamicMediaSection,
+  DynamicMediaSectionConfig,
+  MediaSectionIdentifier,
   TableItem,
 } from 'src/types';
 
@@ -127,17 +142,18 @@ import {
   useEventListener,
   useMouse,
   usePointer,
+  watchImmediate,
 } from '@vueuse/core';
 import { Buffer } from 'buffer';
 import DialogFileImport from 'components/dialog/DialogFileImport.vue';
 import MediaEmptyState from 'components/media/MediaEmptyState.vue';
-import MediaList, {
-  type MediaListObject,
-} from 'components/media/MediaList.vue';
+import MediaList from 'components/media/MediaList.vue';
 import DOMPurify from 'dompurify';
+import Mousetrap from 'mousetrap';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
+import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { SORTER } from 'src/constants/general';
 import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -149,6 +165,8 @@ import {
   fetchMedia,
   getMemorialBackground,
 } from 'src/helpers/jw-media';
+import { executeLocalShortcut } from 'src/helpers/keyboardShortcuts';
+import { addSection } from 'src/helpers/media-sections';
 import { decompressJwpub, showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { convertImageIfNeeded } from 'src/utils/converters';
@@ -179,10 +197,17 @@ import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
-import { computed, onMounted, ref, type Ref, toRaw, unref, watch } from 'vue';
+import {
+  computed,
+  nextTick,
+  onMounted,
+  ref,
+  type Ref,
+  toRaw,
+  watch,
+} from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-const showFileImportDialog = ref(false);
 const jwpubImportDb = ref('');
 const jwpubImportDocuments = ref<DocumentItem[]>([]);
 
@@ -191,9 +216,9 @@ useMeta({ title: t('titles.meetingMedia') });
 
 watch(
   () => [jwpubImportDb.value, jwpubImportDocuments.value],
-  ([newJwpubImportDb, newJwpubImportDocuments]) => {
+  async ([newJwpubImportDb, newJwpubImportDocuments]) => {
     if (!!newJwpubImportDb || newJwpubImportDocuments?.length) {
-      showFileImportDialog.value = true;
+      showFileImport.value = true;
     }
   },
 );
@@ -210,14 +235,9 @@ const {
   currentSettings,
   getVisibleMediaForSection,
   highlightedMediaId,
+  mediaIsPlaying,
   mediaPaused,
   mediaPlaying,
-  mediaPlayingAction,
-  mediaPlayingCurrentPosition,
-  mediaPlayingPanzoom,
-  mediaPlayingSubtitlesUrl,
-  mediaPlayingUniqueId,
-  mediaPlayingUrl,
   missingMedia,
   selectedDate,
   selectedDateObject,
@@ -228,6 +248,92 @@ const { obsConnectionState } = storeToRefs(obsState);
 
 const totalFiles = ref(0);
 const currentFile = ref(0);
+const showFileImport = ref(false);
+
+// Watch for file import dialog closing to reset progress tracking
+watch(
+  () => showFileImport.value,
+  (isOpen) => {
+    if (!isOpen) {
+      // Reset progress tracking when dialog closes
+      totalFiles.value = 0;
+      currentFile.value = 0;
+    }
+  },
+);
+
+// Track dragging state for each media list
+const mediaListDragging = ref(false);
+
+// Function to update dragging state for a specific media list
+const updateMediaListDragging = (sectionId: string, isDragging: boolean) => {
+  mediaListDragging.value = isDragging;
+};
+
+watch(
+  () => mediaListDragging.value,
+  (nowDragging, wasDragging) => {
+    const stoppedDragging = !nowDragging;
+    // Only update dynamicMedia if dragging was active then stopped
+    if (wasDragging && stoppedDragging) {
+      console.log('🔄 Stopped dragging');
+    }
+  },
+);
+
+const updateMediaListItems = (items: DynamicMediaObject[]) => {
+  // Update the media list items in the current state
+  items.forEach((item) => {
+    if (!selectedDateObject.value) return;
+    const originalItem = selectedDateObject.value.dynamicMedia.find(
+      (i) => i.uniqueId === item.uniqueId,
+    );
+    if (originalItem) {
+      originalItem.section = item.section;
+    }
+  });
+
+  // Resort the items if needed
+  if (selectedDateObject.value && items.length > 0) {
+    const dynamicMedia = selectedDateObject.value.dynamicMedia;
+
+    // Get the section that was updated (all items should have the same section)
+    const updatedSection = items[0]?.section;
+    if (!updatedSection) return;
+
+    // Create a map of uniqueId to position in the items array for sorting
+    const itemOrderMap = new Map<string, number>();
+    items.forEach((item, index) => {
+      itemOrderMap.set(item.uniqueId, index);
+    });
+
+    // Get the order of items in the updated section
+    const sectionItemIds = items.map((item) => item.uniqueId);
+
+    // Reorder the dynamicMedia array in place
+    dynamicMedia.sort((a, b) => {
+      // If both items are in the updated section, sort by their order in items array
+      if (a.section === updatedSection && b.section === updatedSection) {
+        const orderA = sectionItemIds.indexOf(a.uniqueId);
+        const orderB = sectionItemIds.indexOf(b.uniqueId);
+        return orderA - orderB;
+      }
+
+      // If only one item is in the updated section, keep the other items in their current order
+      if (a.section === updatedSection) {
+        return -1; // Items in updated section come first
+      }
+      if (b.section === updatedSection) {
+        return 1; // Items in updated section come first
+      }
+
+      // If neither item is in the updated section, maintain their relative order
+      return 0;
+    });
+
+    console.log('🔄 Resorted items in section:', updatedSection);
+  }
+};
 
 const {
   convertPdfToImages,
@@ -243,85 +349,75 @@ const {
 const { ensureDir, exists, remove, writeFile } = fs;
 const { basename, join } = path;
 
-const mediaLists = computed(() => {
-  const mwMeetingDay = isMwMeetingDay(selectedDateObject.value?.date);
-  const weMeetingDay = isWeMeetingDay(selectedDateObject.value?.date);
-  const all: (false | MediaListObject | undefined)[] = [
+const mediaLists = computed<DynamicMediaSection[]>(() => {
+  const selectedDate = selectedDateObject.value;
+  if (!selectedDate?.date || (selectedDate.meeting && !selectedDate.complete)) {
+    return [];
+  }
+
+  const { complete: isComplete, date } = selectedDate;
+  const isMwDay = isMwMeetingDay(date);
+  const isWeDay = isWeMeetingDay(date);
+  const isCoWeekDay = isCoWeek(date);
+
+  const sectionConfigs: DynamicMediaSectionConfig[] = [
     {
-      alwaysShow:
-        !!selectedDateObject.value?.dynamicMedia?.filter(
-          (m) => m.section === 'additional',
-        )?.length ||
-        (!!selectedDateObject.value?.complete && weMeetingDay),
-      extraMediaShortcut:
-        weMeetingDay &&
-        !getVisibleMediaForSection.value.additional.filter(
-          (m) => !m.hidden && m.source !== 'watched',
-        ).length,
-      items: getVisibleMediaForSection.value.additional,
-      jwIcon: weMeetingDay ? '' : undefined,
-      label: weMeetingDay ? t('public-talk') : t('imported-media'),
-      mmmIcon:
-        selectedDateObject.value?.date && !weMeetingDay
-          ? 'mmm-additional-media'
-          : undefined,
-      type: 'additional',
+      condition: isWeDay,
+      extraMediaShortcut: false,
+      id: 'wt',
+      jwIcon: '',
+      labelKey: 'wt',
     },
-    weMeetingDay &&
-      selectedDateObject.value?.complete && {
-        alwaysShow: true,
-        items: getVisibleMediaForSection.value.wt,
-        jwIcon: '',
-        label: t('wt'),
-        type: 'wt',
-      },
-    mwMeetingDay &&
-      selectedDateObject.value?.complete && {
-        alwaysShow: true,
-        items: getVisibleMediaForSection.value.tgw,
-        jwIcon: '',
-        label: t('tgw'),
-        type: 'tgw',
-      },
-    mwMeetingDay &&
-      selectedDateObject.value?.complete && {
-        alwaysShow: true,
-        items: getVisibleMediaForSection.value.ayfm,
-        jwIcon: '',
-        label: t('ayfm'),
-        type: 'ayfm',
-      },
-    mwMeetingDay &&
-      selectedDateObject.value?.complete && {
-        alwaysShow: true,
-        extraMediaShortcut: true,
-        items: getVisibleMediaForSection.value.lac,
-        jwIcon: '',
-        label: t('lac'),
-        type: 'lac',
-      },
-    isCoWeek(selectedDateObject.value?.date) &&
-      selectedDateObject.value?.complete && {
-        alwaysShow: true,
-        extraMediaShortcut: true,
-        items: getVisibleMediaForSection.value.circuitOverseer,
-        jwIcon: '',
-        label: t('circuit-overseer'),
-        type: 'circuitOverseer',
-      },
-  ];
+    {
+      condition: isMwDay,
+      extraMediaShortcut: false,
+      id: 'tgw',
+      jwIcon: '',
+      labelKey: 'tgw',
+    },
+    {
+      condition: isMwDay,
+      extraMediaShortcut: false,
+      id: 'ayfm',
+      jwIcon: '',
+      labelKey: 'ayfm',
+    },
+    {
+      condition: isMwDay,
+      extraMediaShortcut: true,
+      id: 'lac',
+      jwIcon: '',
+      labelKey: 'lac',
+    },
+    {
+      condition: isCoWeekDay,
+      extraMediaShortcut: true,
+      id: 'circuitOverseer',
+      jwIcon: '',
+      labelKey: 'circuit-overseer',
+    },
+  ] as DynamicMediaSectionConfig[];
 
-  return all.filter((m) => !!m);
+  const defaultSections: DynamicMediaSection[] = sectionConfigs
+    .filter(({ condition }) => condition && isComplete)
+    .map(({ extraMediaShortcut = false, id, jwIcon, labelKey }) => ({
+      items: getVisibleMediaForSection.value[id] || [],
+      jwIcon: jwIcon || '',
+      label: t(labelKey),
+      uniqueId: id,
+      ...(extraMediaShortcut && { extraMediaShortcut: true }),
+    }));
+
+  const customSections: DynamicMediaSection[] = (
+    selectedDate.customSections || []
+  ).map((section) => ({
+    ...section,
+    items: getVisibleMediaForSection.value[section.uniqueId] || [],
+  }));
+
+  const result = [...customSections, ...defaultSections];
+  return result;
 });
-
-const mediaListRefs: Record<string, Ref> = {
-  additional: ref(null),
-  ayfm: ref(null),
-  circuitOverseer: ref(null),
-  lac: ref(null),
-  tgw: ref(null),
-  wt: ref(null),
-};
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
   name: 'media-action',
@@ -337,7 +433,7 @@ const { post: postCameraStream } = useBroadcastChannel<
 const appSettingsStore = useAppSettingsStore();
 
 watch(
-  () => mediaPlayingAction.value,
+  () => mediaPlaying.value.action,
   (newAction, oldAction) => {
     if (newAction !== oldAction) postMediaAction(newAction);
     if (currentState.currentLangObject?.isSignLanguage) {
@@ -360,7 +456,7 @@ const { post: postSubtitlesUrl } = useBroadcastChannel<string, string>({
 });
 
 watch(
-  () => mediaPlayingSubtitlesUrl.value,
+  () => mediaPlaying.value.subtitlesUrl,
   (newSubtitlesUrl, oldSubtitlesUrl) => {
     if (newSubtitlesUrl !== oldSubtitlesUrl) postSubtitlesUrl(newSubtitlesUrl);
   },
@@ -372,7 +468,7 @@ const { post: postPanzoom } = useBroadcastChannel<
 >({ name: 'panzoom' });
 
 watch(
-  () => mediaPlayingPanzoom.value,
+  () => mediaPlaying.value.panzoom,
   (newPanzoom, oldPanzoom) => {
     try {
       if (JSON.stringify(newPanzoom) !== JSON.stringify(oldPanzoom)) {
@@ -397,24 +493,32 @@ const { post: postCustomDuration } = useBroadcastChannel<
   name: 'custom-duration',
 });
 
+// Section repeat functionality
+const { handleSectionRepeat } = useMediaSectionRepeat();
+
+const customDuration = computed(() => {
+  return (
+    (
+      lookupPeriod.value[currentCongregation.value]?.flatMap(
+        (item) => item.dynamicMedia,
+      ) ?? []
+    ).find((item) => item.uniqueId === mediaPlaying.value.uniqueId)
+      ?.customDuration || undefined
+  );
+});
+
 watch(
-  () => mediaPlayingUrl.value,
-  (newUrl, oldUrl) => {
-    if (newUrl === oldUrl) return;
-    postMediaUrl(newUrl);
-    postCustomDuration(undefined);
-
-    const customDuration =
-      (
-        lookupPeriod.value[currentCongregation.value]?.flatMap(
-          (item) => item.dynamicMedia,
-        ) ?? []
-      ).find((item) => item.uniqueId === mediaPlayingUniqueId.value)
-        ?.customDuration || undefined;
-
-    if (customDuration) {
-      postCustomDuration(JSON.stringify(customDuration));
-    }
+  () => [mediaPlaying.value.url, customDuration.value],
+  ([newUrl, newCustomDuration], [oldUrl, oldCustomDuration]) => {
+    if (
+      newUrl === oldUrl ||
+      (newCustomDuration &&
+        oldCustomDuration &&
+        JSON.stringify(newCustomDuration) === JSON.stringify(oldCustomDuration))
+    )
+      return;
+    postMediaUrl(newUrl as string);
+    postCustomDuration(JSON.stringify(newCustomDuration));
   },
 );
 
@@ -429,10 +533,29 @@ watch(
   () => mediaStateData.value,
   (newMediaStateData) => {
     if (newMediaStateData === 'ended') {
-      mediaPlayingCurrentPosition.value = 0;
-      mediaPlayingUrl.value = '';
-      mediaPlayingUniqueId.value = '';
-      mediaPlayingAction.value = '';
+      // Handle section repeat logic first
+      const repeatHandled = handleSectionRepeat();
+      console.log('🔄 [onMediaEnded] Repeat handled:', repeatHandled);
+      if (repeatHandled) return;
+
+      // Then handle normal media state cleanup
+      mediaPlaying.value.currentPosition = 0;
+      mediaPlaying.value.url = '';
+      mediaPlaying.value.uniqueId = '';
+      mediaPlaying.value.action = '';
+
+      nextTick(() => {
+        window.dispatchEvent(
+          new CustomEvent<{ scrollToSelectedMedia: boolean }>(
+            'shortcutMediaNext',
+            {
+              detail: {
+                scrollToSelectedMedia: false,
+              },
+            },
+          ),
+        );
+      });
     }
     mediaStateData.value = null;
   },
@@ -445,7 +568,9 @@ const { data: currentTimeData } = useBroadcastChannel<number, number>({
 watch(
   () => currentTimeData.value,
   (newCurrentTime) => {
-    mediaPlayingCurrentPosition.value = newCurrentTime;
+    nextTick(() => {
+      mediaPlaying.value.currentPosition = newCurrentTime;
+    });
   },
 );
 
@@ -453,7 +578,7 @@ let mediaSceneTimeout: NodeJS.Timeout | null = null;
 const changeDelay = 600; // 600ms delay: "--animate-duration" = 300ms, "slow" = "--animate-duration" * 2
 
 watch(
-  () => [mediaPlaying.value, mediaPaused.value, mediaPlayingUrl.value],
+  () => [mediaIsPlaying.value, mediaPaused.value, mediaPlaying.value.url],
   (
     [newMediaPlaying, newMediaPaused, newMediaPlayingUrl],
     [, , oldMediaPlayingUrl],
@@ -607,21 +732,24 @@ const checkCoDate = () => {
   }
 };
 
-const sectionToAddTo = ref<MediaSection | undefined>();
+const sectionToAddTo = ref<MediaSectionIdentifier | undefined>();
 
-useEventListener<CustomEvent<{ section: MediaSection | undefined }>>(
+useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
   window,
   'openFileImportDialog',
-  (e) => {
+  async (e) => {
     sectionToAddTo.value = e.detail.section;
-    showFileImportDialog.value = true;
+    // Reset progress tracking when opening the dialog
+    totalFiles.value = 0;
+    currentFile.value = 0;
+    showFileImport.value = true;
   },
   { passive: true },
 );
 useEventListener<
   CustomEvent<{
     files: (File | string)[];
-    section: MediaSection | undefined;
+    section: MediaSectionIdentifier | undefined;
   }>
 >(
   window,
@@ -637,16 +765,17 @@ useEventListener<
 useEventListener<
   CustomEvent<{
     jwPlaylistPath: string;
-    section: MediaSection | undefined;
+    section: MediaSectionIdentifier | undefined;
   }>
 >(
   window,
   'openJwPlaylistDialog',
   (e) => {
+    console.log('🎯 openJwPlaylistDialog event received:', e.detail);
     window.dispatchEvent(
       new CustomEvent<{
         jwPlaylistPath: string;
-        section: MediaSection | undefined;
+        section: MediaSectionIdentifier | undefined;
       }>('openJwPlaylistPicker', {
         detail: {
           jwPlaylistPath: e.detail?.jwPlaylistPath,
@@ -654,6 +783,7 @@ useEventListener<
         },
       }),
     );
+    console.log('🎯 openJwPlaylistPicker event dispatched');
   },
   { passive: true },
 );
@@ -685,7 +815,6 @@ onMounted(() => {
     router.push('/settings');
   }
   checkCoDate();
-  checkMemorialDate();
 
   watch(
     () => urlVariables.value.mediator,
@@ -699,9 +828,40 @@ const { post: postCustomBackground } = useBroadcastChannel<string, string>({
   name: 'custom-background',
 });
 
-watch(selectedDate, () => {
-  checkMemorialDate();
-});
+watch(
+  () => urlVariables.value.mediator,
+  () => {
+    fetchMedia();
+  },
+);
+
+watchImmediate(
+  () => selectedDate.value,
+  (newVal) => {
+    mediaListDragging.value = false;
+    if (!newVal || !selectedDateObject.value) return;
+    checkMemorialDate();
+
+    if (
+      !selectedDateObject.value.customSections?.find(
+        (s) => s.uniqueId === 'additional',
+      )
+    ) {
+      if (!selectedDateObject.value.customSections) {
+        selectedDateObject.value.customSections = [];
+      }
+      const weMeetingDay = isWeMeetingDay(selectedDateObject.value.date);
+      selectedDateObject.value.customSections.unshift({
+        bgColor: 'rgb(148, 94, 181)',
+        extraMediaShortcut: true,
+        jwIcon: weMeetingDay ? '' : undefined,
+        label: weMeetingDay ? t('public-talk') : t('imported-media'),
+        mmmIcon: !weMeetingDay ? 'mmm-additional-media' : undefined,
+        uniqueId: 'additional',
+      });
+    }
+  },
+);
 
 const addToFiles = async (files: (File | string)[] | FileList) => {
   if (!files) return;
@@ -841,6 +1001,8 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             type: 'warning',
           });
           jwpubImportDb.value = '';
+          jwpubImportDocuments.value = [];
+          showFileImport.value = false;
         } else {
           const documentMultimediaTableExists =
             executeQuery<TableItem>(
@@ -865,15 +1027,21 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             );
             jwpubImportDb.value = '';
             jwpubImportDocuments.value = [];
-            showFileImportDialog.value = false;
           }
         }
       } else if (isJwPlaylist(filepath) && selectedDateObject.value) {
         // Show playlist selection dialog
+        console.log('🎯 JW Playlist file detected:', filepath);
+        console.log('🎯 Section to add to:', sectionToAddTo.value);
+
+        // Reset progress tracking since we're switching to JW playlist dialog
+        totalFiles.value = 0;
+        currentFile.value = 0;
+
         window.dispatchEvent(
           new CustomEvent<{
             jwPlaylistPath: string;
-            section: MediaSection | undefined;
+            section: MediaSectionIdentifier | undefined;
           }>('openJwPlaylistDialog', {
             detail: {
               jwPlaylistPath: filepath,
@@ -881,6 +1049,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             },
           }),
         );
+        console.log('🎯 openJwPlaylistDialog event dispatched');
       } else if (isArchive(filepath)) {
         const unzipDirectory = join(await getTempPath(), basename(filepath));
         await remove(unzipDirectory);
@@ -912,15 +1081,19 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
     }
     currentFile.value++;
   }
-  if (!isJwpub(getLocalPathFromFileObject(files[0])))
-    showFileImportDialog.value = false;
+  if (showFileImport.value) {
+    showFileImport.value = false;
+  }
 };
 
-const openImportMenu = (section: MediaSection | undefined) => {
+const openImportMenu = (section: MediaSectionIdentifier | undefined) => {
   window.dispatchEvent(
-    new CustomEvent<{ section: MediaSection | undefined }>('openImportMenu', {
-      detail: { section },
-    }),
+    new CustomEvent<{ section: MediaSectionIdentifier | undefined }>(
+      'openImportMenu',
+      {
+        detail: { section },
+      },
+    ),
   );
 };
 
@@ -956,12 +1129,13 @@ const dropActive = (event: DragEvent) => {
   if (step) scroll(step);
   if (['all', 'copyLink'].includes(event?.dataTransfer?.effectAllowed || '')) {
     event.preventDefault();
-    showFileImportDialog.value = true;
+    showFileImport.value = true;
+
     stopScrolling.value = true;
   }
 };
 
-const dropEnd = (event: DragEvent) => {
+const handleDrop = (event: DragEvent) => {
   event.preventDefault();
   event.stopPropagation();
   try {
@@ -994,20 +1168,6 @@ const dropEnd = (event: DragEvent) => {
   }
 };
 
-watch(
-  () => showFileImportDialog.value,
-  (newVal) => {
-    if (newVal) {
-      jwpubImportDb.value = '';
-      jwpubImportDocuments.value = [];
-      currentFile.value = 0;
-      totalFiles.value = 0;
-    } else {
-      scroll(); // Scroll to top when dialog closes
-    }
-  },
-);
-
 const duplicateSongsForWeMeeting = computed(() => {
   // if (!(selectedDateObject.value?.meeting === 'we')) return false;
   const songNumbers: (number | string)[] =
@@ -1026,23 +1186,30 @@ const duplicateSongsForWeMeeting = computed(() => {
 const arraysAreIdentical = (a: string[], b: string[]) =>
   a.length === b.length && a.every((element, index) => element === b[index]);
 
-const keyboardShortcutMediaList = () => {
-  const allMedia = [
-    ...getVisibleMediaForSection.value.additional,
-    ...getVisibleMediaForSection.value.tgw,
-    ...getVisibleMediaForSection.value.ayfm,
-    ...getVisibleMediaForSection.value.lac,
-    ...getVisibleMediaForSection.value.wt,
-    ...getVisibleMediaForSection.value.circuitOverseer,
-  ];
+const mediaListRefs = ref({}) as Ref<Record<string, unknown>>;
+
+const keyboardShortcutMediaList = computed(() => {
+  const allMedia = mediaLists.value.flatMap((section) => {
+    const mediaList = section.items;
+    return mediaList.map((item) => ({
+      ...item,
+      section: section.uniqueId,
+      uniqueId: item.uniqueId || uuid(),
+    }));
+  });
 
   return allMedia.flatMap((m) => {
-    // Get media groups
-    const expanded = unref(
-      toRaw(unref(mediaListRefs[m.section]))?.[0]?.expandedMediaGroups,
-    );
+    // Get media groups from the computed expanded groups
+    const expanded = (
+      mediaListRefs.value[m.section] as InstanceType<typeof MediaList>
+    )?.expandedGroups;
+
     // Check if the media is collapsed based on the expanded state
-    const isCollapsed = m.children && expanded ? !expanded[m.uniqueId] : false;
+    const isCollapsed =
+      m.children && expanded && m.uniqueId
+        ? !(expanded[m.uniqueId] ?? true)
+        : false;
+
     // If the media is collapsed, return an empty array, since it won't be selectable
     if (isCollapsed) return [];
 
@@ -1051,13 +1218,13 @@ const keyboardShortcutMediaList = () => {
       ? m.children.map((c) => ({ ...c, parentUniqueId: m.uniqueId }))
       : [m];
   });
-};
+});
 
 const sortedMediaFileUrls = computed(() =>
-  keyboardShortcutMediaList()
+  keyboardShortcutMediaList.value
     .filter((m) => !m.hidden && !!m.fileUrl)
     .map((m) => m.fileUrl)
-    .filter((m) => typeof m === 'string')
+    .filter((m): m is string => typeof m === 'string')
     .filter((fileUrl, index, self) => self.indexOf(fileUrl) === index),
 );
 
@@ -1080,16 +1247,18 @@ watch(
 useEventListener(
   window,
   'shortcutMediaNext',
-  () => {
+  (event: CustomEvent<{ scrollToSelectedMedia: boolean }>) => {
     // Early return if no date selected
     if (!selectedDate.value) return;
 
-    const mediaList = keyboardShortcutMediaList();
-    console.log('mediaList', mediaList);
+    const mediaList = keyboardShortcutMediaList.value;
     if (!mediaList.length) return;
 
-    const sortedMediaIds = mediaList.map((item) => item.uniqueId);
+    const sortedMediaIds = mediaList
+      .filter((item) => item.type !== 'divider')
+      .map((item) => item.uniqueId);
     if (!sortedMediaIds?.[0]) return;
+
     const currentId = highlightedMediaId.value;
 
     // If no current selection, return first item
@@ -1110,6 +1279,8 @@ useEventListener(
     const nextSelectableId = findNextSelectableMedia(mediaList, currentIndex);
     if (!nextSelectableId) return;
     highlightedMediaId.value = nextSelectableId;
+    if (event.detail?.scrollToSelectedMedia)
+      window.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
   },
   { passive: true },
 );
@@ -1117,15 +1288,18 @@ useEventListener(
 useEventListener(
   window,
   'shortcutMediaPrevious',
-  () => {
+  (event: CustomEvent<{ scrollToSelectedMedia: boolean }>) => {
     // Early return if no date selected
     if (!selectedDate.value) return;
 
-    const mediaList = keyboardShortcutMediaList();
+    const mediaList = keyboardShortcutMediaList.value;
     if (!mediaList.length) return;
 
-    const sortedMediaIds = mediaList.map((item) => item.uniqueId);
+    const sortedMediaIds = mediaList
+      .filter((item) => item.type !== 'divider')
+      .map((item) => item.uniqueId);
     if (!sortedMediaIds?.[0]) return;
+
     const currentId = highlightedMediaId.value;
 
     const lastItem = sortedMediaIds[sortedMediaIds.length - 1];
@@ -1151,9 +1325,30 @@ useEventListener(
     );
     if (!previousSelectableId) return;
     highlightedMediaId.value = previousSelectableId;
+    if (event.detail?.scrollToSelectedMedia)
+      window.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
   },
   { passive: true },
 );
+
+Mousetrap.bind('up', () => {
+  executeLocalShortcut('shortcutMediaPrevious');
+});
+Mousetrap.bind('shift+tab', () => {
+  executeLocalShortcut('shortcutMediaPrevious');
+});
+Mousetrap.bind('down', () => {
+  executeLocalShortcut('shortcutMediaNext');
+});
+Mousetrap.bind('tab', () => {
+  executeLocalShortcut('shortcutMediaNext');
+});
+Mousetrap.bind('space', () => {
+  executeLocalShortcut('shortcutMediaPauseResume');
+});
+Mousetrap.bind('esc', () => {
+  executeLocalShortcut('shortcutMediaStop');
+});
 
 function findNextSelectableMedia(
   mediaList: DynamicMediaObject[],
@@ -1197,9 +1392,76 @@ function isMediaSelectable(mediaItem: DynamicMediaObject) {
 }
 
 watch(
-  () => mediaPlayingUniqueId.value,
+  () => mediaPlaying.value.uniqueId,
   (newMediaUniqueId) => {
     if (newMediaUniqueId) highlightedMediaId.value = newMediaUniqueId;
   },
+);
+
+const updateMediaSectionBgColor = ({
+  bgColor,
+  uniqueId,
+}: {
+  bgColor: string;
+  uniqueId: string;
+}) => {
+  if (!selectedDateObject.value?.customSections) return;
+  const customSection = selectedDateObject.value.customSections.find(
+    (s) => s.uniqueId === uniqueId,
+  );
+  if (customSection) {
+    customSection.bgColor = bgColor;
+  }
+};
+
+const updateMediaSectionLabel = ({
+  label,
+  uniqueId,
+}: {
+  label: string;
+  uniqueId: string;
+}) => {
+  if (!selectedDateObject.value?.customSections) return;
+  const customSection = selectedDateObject.value.customSections.find(
+    (s) => s.uniqueId === uniqueId,
+  );
+  if (customSection) {
+    customSection.label = label;
+  }
+};
+
+// Computed conditions
+const showObsBanner = computed(
+  () =>
+    currentSettings.value?.obsEnable &&
+    ['disconnected', 'notConnected'].includes(obsConnectionState.value) &&
+    selectedDateObject.value?.today,
+);
+
+const showHiddenItemsBanner = computed(
+  () => someItemsHiddenForSelectedDate.value,
+);
+
+const showDuplicateSongsBanner = computed(
+  () => duplicateSongsForWeMeeting.value,
+);
+
+const showEmptyState = computed(
+  () =>
+    (currentSettings.value?.disableMediaFetching &&
+      (selectedDateObject.value?.dynamicMedia?.length || 0) < 1) ||
+    (!currentSettings.value?.disableMediaFetching &&
+      ((selectedDateObject.value?.meeting &&
+        !selectedDateObject.value?.complete) ||
+        !selectedDateObject.value?.dynamicMedia?.filter((m) => !m.hidden)
+          .length)),
+);
+
+const showBannerColumn = computed(
+  () =>
+    showObsBanner.value ||
+    showHiddenItemsBanner.value ||
+    showDuplicateSongsBanner.value ||
+    showEmptyState.value,
 );
 </script>

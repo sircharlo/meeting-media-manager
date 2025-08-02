@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="open">
+  <BaseDialog v-model="dialogValue" :dialog-id="dialogId" persistent>
     <q-card class="modal-confirm large-overlay">
       <q-card-section
         class="row items-center text-bigger text-semibold text-negative q-pb-none"
@@ -40,7 +40,7 @@
         </q-expansion-item>
       </q-card-section>
       <q-card-actions align="right" class="text-primary">
-        <q-btn flat :label="t('cancel')" @click="open = false" />
+        <q-btn flat :label="t('cancel')" @click="handleCancel" />
         <q-btn
           color="negative"
           flat
@@ -50,11 +50,12 @@
         />
       </q-card-actions>
     </q-card>
-  </q-dialog>
+  </BaseDialog>
 </template>
 <script setup lang="ts">
 import type { CacheAnalysis } from 'src/types';
 
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { deleteCacheFiles } from 'src/helpers/cleanup';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { computed, ref } from 'vue';
@@ -65,25 +66,32 @@ const { t } = useI18n();
 // Props
 const props = defineProps<{
   cacheAnalysis: CacheAnalysis | null;
+  cacheClearType: '' | 'all' | 'smart';
+  dialogId: string;
+  modelValue: boolean;
 }>();
 
-const open = defineModel<boolean>({ default: false });
-const cacheClearType = defineModel<'' | 'all' | 'smart'>('cacheClearType', {
-  required: true,
+const emit = defineEmits<{
+  hide: [];
+  'update:modelValue': [value: boolean];
+}>();
+
+const dialogValue = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value),
 });
 
 const deletingCacheFiles = ref(false);
 
-const cancelDeleteCacheFiles = () => {
-  cacheClearType.value = '';
-  open.value = false;
-  deletingCacheFiles.value = false;
+const handleCancel = () => {
+  dialogValue.value = false;
+  emit('hide');
 };
 
 const filepathsToDelete = computed(() => {
   if (!props.cacheAnalysis) return [];
 
-  if (cacheClearType.value === 'smart') {
+  if (props.cacheClearType === 'smart') {
     return Object.keys(props.cacheAnalysis.unusedParentDirectories);
   }
   return props.cacheAnalysis.cacheFiles.map((f) => f.path);
@@ -95,7 +103,8 @@ const handleDeleteCacheFiles = async (type: '' | 'all' | 'smart') => {
   try {
     deletingCacheFiles.value = true;
     await deleteCacheFiles(type);
-    cancelDeleteCacheFiles();
+    dialogValue.value = false;
+    emit('hide');
   } catch (error) {
     errorCatcher(error);
     deletingCacheFiles.value = false;

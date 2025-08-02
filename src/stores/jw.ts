@@ -7,7 +7,7 @@ import type {
   JwLanguage,
   JwMepsLanguage,
   MediaLink,
-  MediaSection,
+  MediaSectionIdentifier,
   Publication,
   PublicationFetcher,
   PublicationFiles,
@@ -73,6 +73,17 @@ export function addUniqueById<T extends { uniqueId: string }>(
   sourceArray.forEach((item) => {
     if (!targetArray.some((obj) => obj?.uniqueId === item?.uniqueId)) {
       targetArray.push(item);
+    }
+  });
+}
+
+export function addUniqueByIdToTop<T extends { uniqueId: string }>(
+  targetArray: (T | undefined)[],
+  sourceArray: (T | undefined)[],
+): void {
+  sourceArray.forEach((item) => {
+    if (!targetArray.some((obj) => obj?.uniqueId === item?.uniqueId)) {
+      targetArray.unshift(item);
     }
   });
 }
@@ -143,7 +154,7 @@ export const useJwStore = defineStore('jw-store', {
   actions: {
     addToAdditionMediaMap(
       mediaArray: DynamicMediaObject[],
-      section: MediaSection | undefined,
+      section: MediaSectionIdentifier | undefined,
       currentCongregation: string,
       selectedDateObject: DateInfo | null,
       coWeek: boolean,
@@ -196,7 +207,7 @@ export const useJwStore = defineStore('jw-store', {
             media.sortOrderOriginal =
               'additional-' + getAdditionalCount() + '-' + index;
           });
-          addUniqueById(period.dynamicMedia, mediaArray);
+          addUniqueByIdToTop(period.dynamicMedia, mediaArray);
         }
       } catch (e) {
         errorCatcher(e);
@@ -208,10 +219,18 @@ export const useJwStore = defineStore('jw-store', {
     ) {
       if (!currentCongregation || !selectedDateObject?.dynamicMedia) return;
 
+      // Remove all additional media items
       for (let i = selectedDateObject.dynamicMedia.length - 1; i >= 0; i--) {
         if (selectedDateObject.dynamicMedia[i]?.source === 'additional') {
           selectedDateObject.dynamicMedia.splice(i, 1);
         }
+      }
+      // Remove all custom sections that are not "additional"
+      if (selectedDateObject.customSections?.length) {
+        selectedDateObject.customSections =
+          selectedDateObject.customSections.filter(
+            (section) => section.uniqueId === 'additional',
+          );
       }
     },
     removeFromAdditionMediaMap(

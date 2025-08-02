@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="open" persistent>
+  <BaseDialog v-model="dialogValue" :dialog-id="dialogId" persistent>
     <div class="bg-secondary-contrast flex q-px-none" style="flex-flow: column">
       <div class="text-h6 row q-px-md q-pt-lg">
         {{ t('congregation-lookup') }}
@@ -92,25 +92,26 @@
       </div>
       <div class="row q-px-md q-py-md row flex-center">
         <div class="col text-right">
-          <q-btn v-close-popup color="negative" flat @click="dismissPopup">
+          <q-btn color="negative" flat @click="dismissPopup">
             {{ t('cancel') }}
           </q-btn>
         </div>
       </div>
     </div>
-  </q-dialog>
+  </BaseDialog>
 </template>
 <script setup lang="ts">
 import type { CongregationLanguage, GeoRecord } from 'src/types';
 
 import { whenever } from '@vueuse/core';
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { fetchJson } from 'src/utils/api';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -123,11 +124,26 @@ const { currentSettings } = storeToRefs(currentState);
 
 const { dateLocale } = useLocale();
 
-const open = defineModel<boolean>({ default: false });
+const props = defineProps<{
+  dialogId: string;
+  modelValue: boolean;
+}>();
+
+const emit = defineEmits<{
+  cancel: [];
+  ok: [];
+  'update:modelValue': [value: boolean];
+}>();
+
+const dialogValue = computed({
+  get: () => props.modelValue,
+  set: (value: boolean) => emit('update:modelValue', value),
+});
+
 const congregationFilter = ref('');
 const results = ref<GeoRecord[]>([]);
 
-whenever(open, () => {
+whenever(dialogValue, () => {
   congregationFilter.value = currentSettings.value?.congregationName || '';
   results.value = [];
   lookupCongregation();
@@ -224,11 +240,15 @@ const selectCongregation = (congregation: GeoRecord) => {
   } catch (error) {
     errorCatcher(error);
   }
-  dismissPopup();
+  emit('update:modelValue', false);
+  emit('ok');
+  results.value = [];
+  congregationFilter.value = '';
 };
 
 const dismissPopup = () => {
-  open.value = false;
+  emit('update:modelValue', false);
+  emit('cancel');
   results.value = [];
   congregationFilter.value = '';
 };
