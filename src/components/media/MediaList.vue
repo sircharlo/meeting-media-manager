@@ -90,7 +90,8 @@
     <!-- Add Divider Dialog -->
     <DialogAddDivider
       v-model="showAddDividerDialog"
-      @add="handleAddDividerConfirm"
+      :dialog-id="`add-divider-${mediaList.uniqueId}`"
+      @ok="handleAddDividerResult"
     />
   </q-list>
 </template>
@@ -102,6 +103,7 @@ import type {
   MediaSectionIdentifier,
 } from 'src/types';
 
+import DialogAddDivider from 'components/dialog/DialogAddDivider.vue';
 import { storeToRefs } from 'pinia';
 import { useMediaDragAndDrop } from 'src/composables/useMediaDragAndDrop';
 import { useMediaSection } from 'src/composables/useMediaSection';
@@ -109,7 +111,6 @@ import { getTextColor } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, nextTick, ref, watch } from 'vue';
 
-import DialogAddDivider from '../dialog/DialogAddDivider.vue';
 import MediaDivider from './MediaDivider.vue';
 import MediaGroup from './MediaGroup.vue';
 import MediaItem from './MediaItem.vue';
@@ -134,6 +135,9 @@ const { selectedDateObject } = storeToRefs(currentState);
 const sectionHeaderRef = ref<InstanceType<typeof MediaSectionHeader> | null>(
   null,
 );
+
+// Dialog state
+const showAddDividerDialog = ref(false);
 
 // Use the media section composable
 const {
@@ -178,14 +182,17 @@ const handleDeleteDivider = (dividerId: string) => {
   deleteDivider(dividerId);
 };
 
-const showAddDividerDialog = ref(false);
-
 const handleAddDivider = () => {
+  console.log('🎯 handleAddDivider called');
   showAddDividerDialog.value = true;
 };
 
-const handleAddDividerConfirm = (title: string) => {
-  addDivider(title, undefined);
+const handleAddDividerResult = (title: string) => {
+  console.log('✅ DialogAddDivider returned title:', title);
+  if (title) {
+    addDivider(title, undefined);
+  }
+  showAddDividerDialog.value = false;
 };
 
 const handleUpdateDividerTitle = (dividerId: string, newTitle: string) => {

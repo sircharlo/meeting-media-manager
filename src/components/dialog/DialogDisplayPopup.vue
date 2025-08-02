@@ -179,7 +179,7 @@
       </div>
     </div>
   </q-menu>
-  <q-dialog v-model="showCustomBackgroundPicker">
+  <BaseDialog v-model="showCustomBackgroundPicker" :dialog-id="props.dialogId">
     <div class="bg-secondary-contrast flex q-px-none" style="flex-flow: column">
       <div class="text-h6 row q-px-md q-pt-lg">
         {{ t('choose-an-image') }}
@@ -226,13 +226,14 @@
           @click="
             jwpubImportFilePath = '';
             jwpubImages = [];
+            showCustomBackgroundPicker = false;
           "
         >
           {{ t('cancel') }}
         </q-btn>
       </div>
     </div>
-  </q-dialog>
+  </BaseDialog>
 </template>
 <script setup lang="ts">
 import type { Display, MultimediaItem, ScreenPreferences } from 'src/types';
@@ -242,6 +243,7 @@ import {
   useEventListener,
   watchImmediate,
 } from '@vueuse/core';
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getMemorialBackground } from 'src/helpers/jw-media';
@@ -271,6 +273,10 @@ const {
   mediaWindowCustomBackground,
   mediaWindowVisible,
 } = storeToRefs(currentState);
+
+const props = defineProps<{
+  dialogId: string;
+}>();
 
 const open = defineModel<boolean>({ default: false });
 

@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="open" persistent>
+  <BaseDialog v-model="dialogValue" :dialog-id="dialogId" persistent>
     <div
       class="bg-secondary-contrast large-overlay q-px-none flex"
       style="flex-flow: column"
@@ -117,23 +117,21 @@
         <div class="col-shrink q-gutter-x-sm">
           <q-btn
             v-if="selectedItems.length"
-            v-close-popup
             color="primary"
             :label="t('add') + ` (${selectedItems.length})`"
             @click="addSelectedItems"
           />
           <q-btn
             v-else
-            v-close-popup
             color="negative"
             flat
             :label="t('cancel')"
-            @click="resetSelection"
+            @click="handleCancel"
           />
         </div>
       </div>
     </div>
-  </q-dialog>
+  </BaseDialog>
 </template>
 
 <script setup lang="ts">
@@ -144,7 +142,7 @@ import type {
   PlaylistTagItem,
 } from 'src/types';
 
-import { whenever } from '@vueuse/core';
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { JPG_EXTENSIONS } from 'src/constants/media';
 import { isCoWeek } from 'src/helpers/date';
@@ -160,18 +158,29 @@ import { getTempPath } from 'src/utils/fs';
 import { findDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
-import { ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
 // Props
 const props = defineProps<{
+  dialogId: string;
   jwPlaylistPath: string;
+  modelValue: boolean;
   section: MediaSectionIdentifier | undefined;
 }>();
 
-const open = defineModel<boolean>({ default: false });
+const emit = defineEmits<{
+  cancel: [];
+  ok: [];
+  'update:modelValue': [value: boolean];
+}>();
+
+const dialogValue = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value),
+});
 
 const loading = ref<boolean>(false);
 const playlistItems = ref<
@@ -504,7 +513,8 @@ const addSelectedItems = async () => {
     }
 
     console.log('✅ All items processed successfully');
-    open.value = false;
+    dialogValue.value = false;
+    emit('ok');
   } catch (error) {
     console.log('❌ Error processing playlist items:', error);
     errorCatcher(error);
@@ -515,16 +525,50 @@ const addSelectedItems = async () => {
   }
 };
 
+const handleCancel = () => {
+  // Reset loading states
+  loading.value = false;
+  resetSelection();
+  dialogValue.value = false;
+  emit('cancel');
+};
+
 const resetSelection = () => {
   selectedItems.value = [];
   playlistItems.value = [];
   playlistName.value = '';
 };
 
-whenever(open, () => {
-  resetSelection();
-  if (props.jwPlaylistPath) {
-    loadPlaylistItems();
-  }
-});
+// Watch for changes in jwPlaylistPath
+watch(
+  () => props.jwPlaylistPath,
+  (newPath: string) => {
+    console.log('🎯 jwPlaylistPath changed to:', newPath);
+    if (newPath) {
+      loadPlaylistItems();
+    }
+  },
+);
+
+// Watch for dialog closing to reset loading states
+watch(
+  () => dialogValue.value,
+  (isOpen) => {
+    if (!isOpen) {
+      // Reset loading states when dialog closes
+      loading.value = false;
+    }
+  },
+);
+
+// Initialize when component mounts
+resetSelection();
+console.log(
+  '🎯 DialogJwPlaylist mounted with jwPlaylistPath:',
+  props.jwPlaylistPath,
+);
+if (props.jwPlaylistPath) {
+  console.log('🎯 Loading playlist items for path:', props.jwPlaylistPath);
+  loadPlaylistItems();
+}
 </script>

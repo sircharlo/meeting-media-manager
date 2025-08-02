@@ -2,6 +2,7 @@ import type { SettingsValues } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
+import { isAnyDialogOpen } from 'src/utils/dialog-plugin';
 import { useCurrentStateStore } from 'stores/current-state';
 
 const { registerShortcut, unregisterAllShortcuts } = window.electronApi;
@@ -45,6 +46,24 @@ const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
 };
 
 export const executeShortcut = (shortcutName: keyof SettingsValues) => {
+  // Don't execute shortcuts if any dialog is open
+  if (isAnyDialogOpen()) {
+    console.log('Shortcut blocked: dialog is open');
+    return;
+  }
+
+  const callback = shortcutCallbacks[shortcutName];
+  if (callback) callback();
+  else console.warn('Unknown shortcut', shortcutName);
+};
+
+export const executeLocalShortcut = (shortcutName: keyof SettingsValues) => {
+  // Don't execute shortcuts if any dialog is open
+  if (isAnyDialogOpen()) {
+    console.log('Local shortcut blocked: dialog is open');
+    return;
+  }
+
   const callback = shortcutCallbacks[shortcutName];
   if (callback) callback();
   else console.warn('Unknown shortcut', shortcutName);

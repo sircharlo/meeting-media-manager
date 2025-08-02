@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="open">
+  <BaseDialog v-model="dialogValue" :dialog-id="dialogId">
     <div
       class="bg-secondary-contrast flex medium-overlay q-px-none"
       style="flex-flow: column"
@@ -92,7 +92,7 @@
         </div>
       </div>
     </div>
-  </q-dialog>
+  </BaseDialog>
 </template>
 
 <script setup lang="ts">
@@ -102,7 +102,7 @@ import type {
   PublicationFetcher,
 } from 'src/types';
 
-import { whenever } from '@vueuse/core';
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
@@ -112,17 +112,27 @@ import {
 } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
 const props = defineProps<{
+  dialogId: string;
+  modelValue: boolean;
   section: MediaSectionIdentifier | undefined;
 }>();
 
-// Define model
-const open = defineModel<boolean>({ required: true });
+const emit = defineEmits<{
+  cancel: [];
+  ok: [];
+  'update:modelValue': [value: boolean];
+}>();
+
+const dialogValue = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value),
+});
 
 // Setup logic
 const currentState = useCurrentStateStore();
@@ -136,6 +146,24 @@ const loading = ref(false);
 const hoveredSong = ref<null | number>(null);
 
 const filter = ref('');
+
+const resetDialogState = () => {
+  // Reset all dialog state
+  filter.value = '';
+  hoveredSong.value = null;
+  loading.value = false;
+};
+
+// Watch for dialog closing to reset state
+watch(
+  () => dialogValue.value,
+  (isOpen) => {
+    if (!isOpen) {
+      // Reset state when dialog closes
+      resetDialogState();
+    }
+  },
+);
 const filteredSongs = computed((): MediaLink[] => {
   if (filter.value) {
     const searchTerms = filter.value
@@ -150,8 +178,10 @@ const filteredSongs = computed((): MediaLink[] => {
 });
 
 const dismissPopup = () => {
-  open.value = false;
-  loading.value = false;
+  // Reset state when dialog is cancelled
+  resetDialogState();
+  dialogValue.value = false;
+  emit('cancel');
 };
 
 const addSong = async (songTrack: number) => {
@@ -181,12 +211,14 @@ const addSong = async (songTrack: number) => {
   } catch (error) {
     errorCatcher(error);
   } finally {
-    dismissPopup();
+    // Reset state and close dialog after song is added
+    resetDialogState();
+    dialogValue.value = false;
+    emit('ok');
   }
 };
 
-whenever(open, () => {
-  if (online)
-    updateJwSongs(online.value, currentSettings.value, currentSongbook.value);
-});
+// Initialize when component mounts
+if (online)
+  updateJwSongs(online.value, currentSettings.value, currentSongbook.value);
 </script>

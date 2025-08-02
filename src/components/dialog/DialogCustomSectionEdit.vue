@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="open" persistent>
+  <BaseDialog v-model="dialogValue" :dialog-id="dialogId" persistent>
     <div
       class="bg-secondary-contrast flex medium-overlay q-px-none"
       style="flex-flow: column"
@@ -17,7 +17,6 @@
           class="full-width"
           separator
         >
-          HAHAHA
           <div ref="listContainer">
             <q-item
               v-for="element in sortableItems"
@@ -76,7 +75,7 @@
                     flat
                     icon="mmm-delete"
                     round
-                    @click="deleteSection(element.uniqueId)"
+                    @click="handleDeleteSection(element.uniqueId)"
                   />
                 </div>
               </q-item-section>
@@ -94,14 +93,14 @@
           icon="mmm-plus"
           :label="t('new-section')"
           outline
-          @click="addSection()"
+          @click="handleAddSection"
         />
       </div>
       <div class="row q-px-md q-py-md justify-end">
-        <q-btn v-close-popup color="primary" flat :label="t('close')" />
+        <q-btn color="primary" flat :label="t('close')" @click="closeDialog" />
       </div>
     </div>
-  </q-dialog>
+  </BaseDialog>
 </template>
 
 <script setup lang="ts">
@@ -109,10 +108,11 @@ import type { MediaSection } from 'src/types';
 
 import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
 import { whenever } from '@vueuse/core';
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { addSection, deleteSection } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -120,11 +120,24 @@ const { t } = useI18n();
 const currentState = useCurrentStateStore();
 const { selectedDateObject } = storeToRefs(currentState);
 
-const open = defineModel<boolean>({ required: true });
+const props = defineProps<{
+  dialogId: string;
+  modelValue: boolean;
+}>();
+
+const emit = defineEmits<{
+  cancel: [];
+  ok: [];
+  'update:modelValue': [value: boolean];
+}>();
+
+const dialogValue = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value),
+});
 
 const hexValues = ref<Record<string, string>>({});
 const labels = ref<Record<string, string>>({});
-const customSections = ref<MediaSection[]>([]);
 
 const updateLabel = (uuid: string) => {
   const newLabel = labels.value[uuid];
@@ -136,26 +149,6 @@ const updateLabel = (uuid: string) => {
   if (!section) return;
 
   section.label = newLabel;
-};
-
-const initializeValues = () => {
-  console.log('initializeValues', selectedDateObject.value?.customSections);
-  if (!selectedDateObject.value?.customSections) return;
-  labels.value = selectedDateObject.value.customSections.reduce(
-    (acc, section) => ({
-      ...acc,
-      [section.uniqueId]: section.label || '',
-    }),
-    {},
-  );
-  hexValues.value = selectedDateObject.value.customSections.reduce(
-    (acc, section) => ({
-      ...acc,
-      [section.uniqueId]: section.bgColor || '#ffffff',
-    }),
-    {},
-  );
-  sortableItems.value = selectedDateObject.value.customSections || [];
 };
 
 // Handle order change after drag and drop
@@ -174,12 +167,89 @@ const handleOrderChange = () => {
 };
 
 // Initialize drag and drop with proper [parent, values] pattern
-const [listContainer, sortableItems] = useDragAndDrop(customSections.value, {
+const [listContainer, sortableItems] = useDragAndDrop<MediaSection>([], {
   dragHandle: '.drag-handle',
   onDragend: handleOrderChange,
 });
 
-whenever(open, () => {
+const closeDialog = () => {
+  emit('update:modelValue', false);
+};
+
+const handleAddSection = () => {
+  addSection();
+  // Force re-initialization after adding a section
+  setTimeout(() => {
+    initializeValues();
+  }, 0);
+};
+
+const handleDeleteSection = (uniqueId: string) => {
+  deleteSection(uniqueId);
+  // Force re-initialization after deleting a section
+  setTimeout(() => {
+    initializeValues();
+  }, 0);
+};
+
+const initializeValues = () => {
+  console.log('🔍 initializeValues called', {
+    customSections: selectedDateObject.value?.customSections,
+    customSectionsLength: selectedDateObject.value?.customSections?.length,
+    selectedDateObject: !!selectedDateObject.value,
+  });
+
+  if (!selectedDateObject.value?.customSections) {
+    console.log('❌ No customSections available');
+    return;
+  }
+
+  labels.value = selectedDateObject.value.customSections.reduce(
+    (acc, section) => ({
+      ...acc,
+      [section.uniqueId]: section.label || '',
+    }),
+    {},
+  );
+  hexValues.value = selectedDateObject.value.customSections.reduce(
+    (acc, section) => ({
+      ...acc,
+      [section.uniqueId]: section.bgColor || '#ffffff',
+    }),
+    {},
+  );
+  sortableItems.value = selectedDateObject.value.customSections || [];
+
+  console.log('✅ Values initialized', {
+    hexValues: hexValues.value,
+    labels: labels.value,
+    sortableItems: sortableItems.value,
+  });
+};
+
+// Watch for changes in selectedDateObject and dialog visibility
+watch(
+  () => [selectedDateObject.value?.customSections, dialogValue.value],
+  ([customSections, isDialogOpen]) => {
+    console.log('👀 Watch triggered', {
+      customSections: !!customSections,
+      customSectionsLength: Array.isArray(customSections)
+        ? customSections.length
+        : 0,
+      isDialogOpen,
+    });
+
+    if (isDialogOpen && customSections) {
+      console.log(
+        '🔄 Dialog opened or customSections changed, initializing values',
+      );
+      initializeValues();
+    }
+  },
+  { immediate: true },
+);
+
+whenever(dialogValue, () => {
   initializeValues();
 });
 </script>

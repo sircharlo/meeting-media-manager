@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="open">
+  <BaseDialog v-model="dialogValue" :dialog-id="dialogId">
     <div
       class="bg-secondary-contrast flex medium-overlay q-px-none"
       style="flex-flow: column"
@@ -69,7 +69,7 @@
         />
       </div>
     </div>
-  </q-dialog>
+  </BaseDialog>
 </template>
 
 <script setup lang="ts">
@@ -79,6 +79,7 @@ import type {
   PublicationInfo,
 } from 'src/types';
 
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { decompressJwpub } from 'src/helpers/mediaPlayback';
 import { getPublicationsPath } from 'src/utils/fs';
@@ -90,10 +91,20 @@ import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
 const props = defineProps<{
+  dialogId: string;
+  modelValue: boolean;
   section: MediaSectionIdentifier | undefined;
 }>();
 
-const open = defineModel<boolean>({ required: true });
+const emit = defineEmits<{
+  cancel: [];
+  'update:modelValue': [value: boolean];
+}>();
+
+const dialogValue = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value),
+});
 
 const currentState = useCurrentStateStore();
 
@@ -149,7 +160,10 @@ const browse = async () => {
 };
 
 const dismissPopup = () => {
-  open.value = false;
+  // Reset state when dialog is cancelled
+  resetDialogState();
+  dialogValue.value = false;
+  emit('cancel');
 };
 
 const addPublicTalkMedia = (publicTalkDocId: DocumentItem) => {
@@ -158,7 +172,9 @@ const addPublicTalkMedia = (publicTalkDocId: DocumentItem) => {
     issue: currentState.currentCongregation,
     langwritten: '',
     pub: 'S-34mp',
-  }).then(dismissPopup);
+  }).then(() => {
+    dismissPopup();
+  });
 };
 
 const setS34mp = async () => {
@@ -179,11 +195,32 @@ const s34mpDisplayName = computed((): string => {
   }
 });
 
-watch(open, () => {
-  if (currentState.currentSettings?.lang) {
-    setS34mp().then(() => {
-      populatePublicTalks();
-    });
-  }
-});
+const resetDialogState = () => {
+  // Reset all dialog state
+  filter.value = '';
+  publicTalks.value = [];
+  s34mpBasename.value = undefined;
+  s34mpFile.value = undefined;
+  s34mpDir.value = undefined;
+  s34mpDb.value = undefined;
+  s34mpInfo.value = null;
+};
+
+// Watch for dialog closing to reset state
+watch(
+  () => dialogValue.value,
+  (isOpen) => {
+    if (!isOpen) {
+      // Reset state when dialog closes
+      resetDialogState();
+    }
+  },
+);
+
+// Initialize when component mounts
+if (currentState.currentSettings?.lang) {
+  setS34mp().then(() => {
+    populatePublicTalks();
+  });
+}
 </script>

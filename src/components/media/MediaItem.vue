@@ -55,7 +55,11 @@
             }}
             {{ formatTime(mediaCustomDuration.max ?? media.duration) }}
           </q-badge>
-          <q-dialog v-model="mediaDurationPopup" persistent>
+          <BaseDialog
+            v-model="mediaDurationPopup"
+            :dialog-id="'media-duration-popup-' + props.media.uniqueId"
+            persistent
+          >
             <q-card>
               <q-card-section
                 class="row items-center text-bigger text-semibold q-pb-none"
@@ -147,7 +151,7 @@
                 />
               </q-card-actions>
             </q-card>
-          </q-dialog>
+          </BaseDialog>
         </q-img>
         <transition
           appear
@@ -612,7 +616,10 @@
     </q-menu>
   </q-item>
 
-  <q-dialog v-model="mediaEditTagDialog">
+  <BaseDialog
+    v-model="mediaEditTagDialog"
+    :dialog-id="'media-edit-tag-dialog-' + props.media.uniqueId"
+  >
     <q-card class="modal-confirm">
       <q-card-section class="items-center">
         <q-option-group
@@ -631,18 +638,28 @@
         />
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn v-close-popup color="negative" flat :label="t('dismiss')" />
         <q-btn
-          v-close-popup
+          color="negative"
+          flat
+          :label="t('dismiss')"
+          @click="mediaEditTagDialog = false"
+        />
+        <q-btn
           color="primary"
           flat
           :label="t('save')"
-          @click="emit('update:tag', mediaTag)"
+          @click="
+            emit('update:tag', mediaTag);
+            mediaEditTagDialog = false;
+          "
         />
       </q-card-actions>
     </q-card>
-  </q-dialog>
-  <q-dialog v-model="mediaStopPending">
+  </BaseDialog>
+  <BaseDialog
+    v-model="mediaStopPending"
+    :dialog-id="'media-stop-pending-' + props.media.uniqueId"
+  >
     <q-card class="modal-confirm">
       <q-card-section
         class="row items-center text-bigger text-semibold text-negative q-pb-none"
@@ -664,8 +681,11 @@
         />
       </q-card-actions>
     </q-card>
-  </q-dialog>
-  <q-dialog v-model="mediaDeletePending">
+  </BaseDialog>
+  <BaseDialog
+    v-model="mediaDeletePending"
+    :dialog-id="'media-delete-pending-' + props.media.uniqueId"
+  >
     <q-card class="modal-confirm">
       <q-card-section
         class="row items-center text-bigger text-semibold text-negative q-pb-none"
@@ -692,7 +712,7 @@
         />
       </q-card-actions>
     </q-card>
-  </q-dialog>
+  </BaseDialog>
 </template>
 
 <script setup lang="ts">
@@ -710,6 +730,7 @@ import {
   watchImmediate,
   whenever,
 } from '@vueuse/core';
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { debounce, type QBtn, type QImg, QItem, useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';

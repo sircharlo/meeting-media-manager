@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="open" persistent>
+  <BaseDialog v-model="dialogValue" :dialog-id="dialogId" persistent>
     <q-card class="q-pa-md" style="min-width: 300px">
       <q-card-section>
         <div class="text-h6">{{ t('add-divider') }}</div>
@@ -21,25 +21,27 @@
         <q-btn color="primary" :label="t('add')" @click="handleAdd" />
       </q-card-actions>
     </q-card>
-  </q-dialog>
+  </BaseDialog>
 </template>
 
 <script setup lang="ts">
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
 const props = defineProps<{
+  dialogId: string;
   modelValue: boolean;
 }>();
 
 const emit = defineEmits<{
-  add: [title: string];
+  ok: [title: string];
   'update:modelValue': [value: boolean];
 }>();
 
-const open = computed({
+const dialogValue = computed({
   get: () => props.modelValue,
   set: (value) => emit('update:modelValue', value),
 });
@@ -47,13 +49,14 @@ const open = computed({
 const dividerTitle = ref('');
 
 const handleAdd = () => {
-  emit('add', dividerTitle.value.trim());
+  const title = dividerTitle.value.trim();
   dividerTitle.value = '';
-  open.value = false;
+  emit('ok', title);
+  dialogValue.value = false;
 };
 
 const handleCancel = () => {
   dividerTitle.value = '';
-  open.value = false;
+  dialogValue.value = false;
 };
 </script>

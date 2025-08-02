@@ -112,14 +112,17 @@
       unelevated
       @click="addSection()"
     />
+
+    <!-- Dialog Components -->
     <DialogFileImport
-      v-model="showFileImportDialog"
+      v-model="showFileImport"
       v-model:jwpub-db="jwpubImportDb"
       v-model:jwpub-documents="jwpubImportDocuments"
       :current-file="currentFile"
+      :dialog-id="'media-calendar-file-import'"
       :section="sectionToAddTo"
       :total-files="totalFiles"
-      @drop="dropEnd"
+      @drop="handleDrop"
     />
   </q-page>
 </template>
@@ -146,6 +149,7 @@ import DialogFileImport from 'components/dialog/DialogFileImport.vue';
 import MediaEmptyState from 'components/media/MediaEmptyState.vue';
 import MediaList from 'components/media/MediaList.vue';
 import DOMPurify from 'dompurify';
+import Mousetrap from 'mousetrap';
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
@@ -161,6 +165,7 @@ import {
   fetchMedia,
   getMemorialBackground,
 } from 'src/helpers/jw-media';
+import { executeLocalShortcut } from 'src/helpers/keyboardShortcuts';
 import { addSection } from 'src/helpers/media-sections';
 import { decompressJwpub, showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -203,7 +208,6 @@ import {
 } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-const showFileImportDialog = ref(false);
 const jwpubImportDb = ref('');
 const jwpubImportDocuments = ref<DocumentItem[]>([]);
 
@@ -212,9 +216,9 @@ useMeta({ title: t('titles.meetingMedia') });
 
 watch(
   () => [jwpubImportDb.value, jwpubImportDocuments.value],
-  ([newJwpubImportDb, newJwpubImportDocuments]) => {
+  async ([newJwpubImportDb, newJwpubImportDocuments]) => {
     if (!!newJwpubImportDb || newJwpubImportDocuments?.length) {
-      showFileImportDialog.value = true;
+      showFileImport.value = true;
     }
   },
 );
@@ -244,6 +248,19 @@ const { obsConnectionState } = storeToRefs(obsState);
 
 const totalFiles = ref(0);
 const currentFile = ref(0);
+const showFileImport = ref(false);
+
+// Watch for file import dialog closing to reset progress tracking
+watch(
+  () => showFileImport.value,
+  (isOpen) => {
+    if (!isOpen) {
+      // Reset progress tracking when dialog closes
+      totalFiles.value = 0;
+      currentFile.value = 0;
+    }
+  },
+);
 
 // Track dragging state for each media list
 const mediaListDragging = ref(false);
@@ -720,9 +737,12 @@ const sectionToAddTo = ref<MediaSectionIdentifier | undefined>();
 useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
   window,
   'openFileImportDialog',
-  (e) => {
+  async (e) => {
     sectionToAddTo.value = e.detail.section;
-    showFileImportDialog.value = true;
+    // Reset progress tracking when opening the dialog
+    totalFiles.value = 0;
+    currentFile.value = 0;
+    showFileImport.value = true;
   },
   { passive: true },
 );
@@ -751,6 +771,7 @@ useEventListener<
   window,
   'openJwPlaylistDialog',
   (e) => {
+    console.log('🎯 openJwPlaylistDialog event received:', e.detail);
     window.dispatchEvent(
       new CustomEvent<{
         jwPlaylistPath: string;
@@ -762,6 +783,7 @@ useEventListener<
         },
       }),
     );
+    console.log('🎯 openJwPlaylistPicker event dispatched');
   },
   { passive: true },
 );
@@ -979,6 +1001,8 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             type: 'warning',
           });
           jwpubImportDb.value = '';
+          jwpubImportDocuments.value = [];
+          showFileImport.value = false;
         } else {
           const documentMultimediaTableExists =
             executeQuery<TableItem>(
@@ -1003,11 +1027,17 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             );
             jwpubImportDb.value = '';
             jwpubImportDocuments.value = [];
-            showFileImportDialog.value = false;
           }
         }
       } else if (isJwPlaylist(filepath) && selectedDateObject.value) {
         // Show playlist selection dialog
+        console.log('🎯 JW Playlist file detected:', filepath);
+        console.log('🎯 Section to add to:', sectionToAddTo.value);
+
+        // Reset progress tracking since we're switching to JW playlist dialog
+        totalFiles.value = 0;
+        currentFile.value = 0;
+
         window.dispatchEvent(
           new CustomEvent<{
             jwPlaylistPath: string;
@@ -1019,6 +1049,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             },
           }),
         );
+        console.log('🎯 openJwPlaylistDialog event dispatched');
       } else if (isArchive(filepath)) {
         const unzipDirectory = join(await getTempPath(), basename(filepath));
         await remove(unzipDirectory);
@@ -1050,8 +1081,9 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
     }
     currentFile.value++;
   }
-  if (!isJwpub(getLocalPathFromFileObject(files[0])))
-    showFileImportDialog.value = false;
+  if (showFileImport.value) {
+    showFileImport.value = false;
+  }
 };
 
 const openImportMenu = (section: MediaSectionIdentifier | undefined) => {
@@ -1097,12 +1129,13 @@ const dropActive = (event: DragEvent) => {
   if (step) scroll(step);
   if (['all', 'copyLink'].includes(event?.dataTransfer?.effectAllowed || '')) {
     event.preventDefault();
-    showFileImportDialog.value = true;
+    showFileImport.value = true;
+
     stopScrolling.value = true;
   }
 };
 
-const dropEnd = (event: DragEvent) => {
+const handleDrop = (event: DragEvent) => {
   event.preventDefault();
   event.stopPropagation();
   try {
@@ -1134,20 +1167,6 @@ const dropEnd = (event: DragEvent) => {
     errorCatcher(error);
   }
 };
-
-watch(
-  () => showFileImportDialog.value,
-  (newVal) => {
-    if (newVal) {
-      jwpubImportDb.value = '';
-      jwpubImportDocuments.value = [];
-      currentFile.value = 0;
-      totalFiles.value = 0;
-    } else {
-      scroll(); // Scroll to top when dialog closes
-    }
-  },
-);
 
 const duplicateSongsForWeMeeting = computed(() => {
   // if (!(selectedDateObject.value?.meeting === 'we')) return false;
@@ -1311,6 +1330,25 @@ useEventListener(
   },
   { passive: true },
 );
+
+Mousetrap.bind('up', () => {
+  executeLocalShortcut('shortcutMediaPrevious');
+});
+Mousetrap.bind('shift+tab', () => {
+  executeLocalShortcut('shortcutMediaPrevious');
+});
+Mousetrap.bind('down', () => {
+  executeLocalShortcut('shortcutMediaNext');
+});
+Mousetrap.bind('tab', () => {
+  executeLocalShortcut('shortcutMediaNext');
+});
+Mousetrap.bind('space', () => {
+  executeLocalShortcut('shortcutMediaPauseResume');
+});
+Mousetrap.bind('esc', () => {
+  executeLocalShortcut('shortcutMediaStop');
+});
 
 function findNextSelectableMedia(
   mediaList: DynamicMediaObject[],
