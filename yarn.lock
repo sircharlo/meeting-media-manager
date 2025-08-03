@@ -161,15 +161,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:7.27.0":
-  version: 7.27.0
-  resolution: "@babel/runtime@npm:7.27.0"
-  dependencies:
-    regenerator-runtime: "npm:^0.14.0"
-  checksum: 10c0/35091ea9de48bd7fd26fb177693d64f4d195eb58ab2b142b893b7f3fa0f1d7c677604d36499ae0621a3703f35ba0c6a8f6c572cc8f7dc0317213841e493cf663
-  languageName: node
-  linkType: hard
-
 "@babel/runtime@npm:^7.7.2":
   version: 7.28.2
   resolution: "@babel/runtime@npm:7.28.2"
@@ -5068,18 +5059,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"broadcast-channel@npm:^7.0.0":
-  version: 7.1.0
-  resolution: "broadcast-channel@npm:7.1.0"
-  dependencies:
-    "@babel/runtime": "npm:7.27.0"
-    oblivious-set: "npm:1.4.0"
-    p-queue: "npm:6.6.2"
-    unload: "npm:2.4.1"
-  checksum: 10c0/202e48f2322cb5a6796eb18c530010e3a80ef4f06321962a64393bbd27acf6b9443106530b28f666ecb98e48a4938dd6c6ac0981b29e47def2fe1188555d7b53
-  languageName: node
-  linkType: hard
-
 "browserslist@npm:^4.24.0, browserslist@npm:^4.24.4":
   version: 4.25.1
   resolution: "browserslist@npm:4.25.1"
@@ -7355,13 +7334,6 @@ __metadata:
   version: 5.0.1
   resolution: "event-target-shim@npm:5.0.1"
   checksum: 10c0/0255d9f936215fd206156fd4caa9e8d35e62075d720dc7d847e89b417e5e62cf1ce6c9b4e0a1633a9256de0efefaf9f8d26924b1f3c8620cffb9db78e7d3076b
-  languageName: node
-  linkType: hard
-
-"eventemitter3@npm:^4.0.4":
-  version: 4.0.7
-  resolution: "eventemitter3@npm:4.0.7"
-  checksum: 10c0/5f6d97cbcbac47be798e6355e3a7639a84ee1f7d9b199a07017f1d2f1e2fe236004d14fa5dfaeba661f94ea57805385e326236a6debbc7145c8877fbc0297c6b
   languageName: node
   linkType: hard
 
@@ -10206,7 +10178,6 @@ __metadata:
     pdfjs-dist: "npm:^5.3.93"
     pinia: "npm:^3.0.3"
     pinia-plugin-persistedstate: "npm:^4.4.1"
-    pinia-shared-state: "npm:^1.0.1"
     postcss: "npm:^8.5.6"
     prettier: "npm:^3.5.3"
     pretty-bytes: "npm:^7.0.0"
@@ -11079,13 +11050,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"oblivious-set@npm:1.4.0":
-  version: 1.4.0
-  resolution: "oblivious-set@npm:1.4.0"
-  checksum: 10c0/92fc4e0ed3e4e5a120f17e32964dc40671549704474aee94656ea8978837d8539d6e1655cc0ad42500315583eec41097fe38b58acd138ad8068a8083d0db2773
-  languageName: node
-  linkType: hard
-
 "obs-websocket-js@npm:^5.0.6":
   version: 5.0.6
   resolution: "obs-websocket-js@npm:5.0.6"
@@ -11375,16 +11339,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-queue@npm:6.6.2":
-  version: 6.6.2
-  resolution: "p-queue@npm:6.6.2"
-  dependencies:
-    eventemitter3: "npm:^4.0.4"
-    p-timeout: "npm:^3.2.0"
-  checksum: 10c0/5739ecf5806bbeadf8e463793d5e3004d08bb3f6177bd1a44a005da8fd81bb90f80e4633e1fb6f1dfd35ee663a5c0229abe26aebb36f547ad5a858347c7b0d3e
-  languageName: node
-  linkType: hard
-
 "p-queue@npm:^8.1.0":
   version: 8.1.0
   resolution: "p-queue@npm:8.1.0"
@@ -11427,15 +11381,6 @@ __metadata:
   dependencies:
     p-finally: "npm:^1.0.0"
   checksum: 10c0/26f7baa19a9a60c694e73d2727d169b357bb91e91112dfe50daa513230573ddf157b2f2c1779fb66da0f84ae952d39969f70a0cb1818f7c109ad8d4df49f99a3
-  languageName: node
-  linkType: hard
-
-"p-timeout@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "p-timeout@npm:3.2.0"
-  dependencies:
-    p-finally: "npm:^1.0.0"
-  checksum: 10c0/524b393711a6ba8e1d48137c5924749f29c93d70b671e6db761afa784726572ca06149c715632da8f70c090073afb2af1c05730303f915604fd38ee207b70a61
   languageName: node
   linkType: hard
 
@@ -11821,17 +11766,6 @@ __metadata:
     pinia:
       optional: true
   checksum: 10c0/6306122aa7b28b456275672ae1d97371dd7f56a5a1c0394cdb98c5da21c21f96aaeae3425d96db75d2066ad610bc7635e5baff2a6ff483ac69f3ef9558ea5282
-  languageName: node
-  linkType: hard
-
-"pinia-shared-state@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "pinia-shared-state@npm:1.0.1"
-  dependencies:
-    broadcast-channel: "npm:^7.0.0"
-  peerDependencies:
-    pinia: ^3.0.0
-  checksum: 10c0/838f4239d6ed3a8e9ec23506c07dd68686d600987f20b9f5a4e1f68b5ab5f5066300c0c82f7e105fd2d4716c0556045229ae358c4b0604a8fc713e635bed63f0
   languageName: node
   linkType: hard
 
@@ -12428,13 +12362,6 @@ __metadata:
   version: 0.13.11
   resolution: "regenerator-runtime@npm:0.13.11"
   checksum: 10c0/12b069dc774001fbb0014f6a28f11c09ebfe3c0d984d88c9bced77fdb6fedbacbca434d24da9ae9371bfbf23f754869307fb51a4c98a8b8b18e5ef748677ca24
-  languageName: node
-  linkType: hard
-
-"regenerator-runtime@npm:^0.14.0":
-  version: 0.14.1
-  resolution: "regenerator-runtime@npm:0.14.1"
-  checksum: 10c0/1b16eb2c4bceb1665c89de70dcb64126a22bc8eb958feef3cd68fe11ac6d2a4899b5cd1b80b0774c7c03591dc57d16631a7f69d2daa2ec98100e2f29f7ec4cc4
   languageName: node
   linkType: hard
 
@@ -14660,13 +14587,6 @@ __metadata:
   version: 2.0.1
   resolution: "universalify@npm:2.0.1"
   checksum: 10c0/73e8ee3809041ca8b818efb141801a1004e3fc0002727f1531f4de613ea281b494a40909596dae4a042a4fb6cd385af5d4db2e137b1362e0e91384b828effd3a
-  languageName: node
-  linkType: hard
-
-"unload@npm:2.4.1":
-  version: 2.4.1
-  resolution: "unload@npm:2.4.1"
-  checksum: 10c0/98bb7f276a217afc51b9ee330610a04324e4718649451b6068667a2b2f77504cdde54d344e80d2fc2843cf431e6c2ec8d57786551f296b03b51eaaca7cbdbe36
   languageName: node
   linkType: hard
 

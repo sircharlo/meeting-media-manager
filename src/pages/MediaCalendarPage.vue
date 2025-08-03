@@ -420,7 +420,7 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
 });
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
-  name: 'media-action',
+  name: 'main-window-media-action',
 });
 
 const { post: postCameraStream } = useBroadcastChannel<
@@ -543,6 +543,9 @@ watch(
       mediaPlaying.value.url = '';
       mediaPlaying.value.uniqueId = '';
       mediaPlaying.value.action = '';
+
+      // Clear custom duration when media ends
+      postCustomDuration(undefined);
 
       nextTick(() => {
         window.dispatchEvent(
@@ -819,6 +822,11 @@ onMounted(() => {
   watch(
     () => urlVariables.value.mediator,
     () => {
+      console.log(
+        '🔄 [onMounted] urlVariables.value.mediator changed:',
+        urlVariables.value.mediator,
+        'Fetching media',
+      );
       fetchMedia();
     },
   );
@@ -828,10 +836,24 @@ const { post: postCustomBackground } = useBroadcastChannel<string, string>({
   name: 'custom-background',
 });
 
-watch(
-  () => urlVariables.value.mediator,
+// Listen for requests to get current media window variables
+const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
+  string,
+  string
+>({
+  name: 'get-current-media-window-variables',
+});
+
+watchImmediate(
+  () => getCurrentMediaWindowVariables.value,
   () => {
-    fetchMedia();
+    // Push current values when requested
+    postMediaAction(mediaPlaying.value.action);
+    postSubtitlesUrl(mediaPlaying.value.subtitlesUrl);
+    postPanzoom(mediaPlaying.value.panzoom);
+    postMediaUrl(mediaPlaying.value.url);
+    postCustomDuration(JSON.stringify(customDuration.value));
+    postCustomBackground(currentState.mediaWindowCustomBackground);
   },
 );
 

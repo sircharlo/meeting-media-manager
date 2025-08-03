@@ -68,7 +68,7 @@
   </q-btn>
 </template>
 <script setup lang="ts">
-import { useBroadcastChannel } from '@vueuse/core';
+import { useBroadcastChannel, watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { sendObsSceneEvent } from 'src/utils/obs';
@@ -128,6 +128,26 @@ watch(
     if (newValue !== 'website' && oldValue === 'website') {
       streaming.value = false;
     }
+  },
+);
+
+// Listen for requests to get current media window variables
+const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
+  string,
+  string
+>({
+  name: 'get-current-media-window-variables',
+});
+
+const { post: postWebStream } = useBroadcastChannel<boolean, boolean>({
+  name: 'web-stream',
+});
+
+watchImmediate(
+  () => getCurrentMediaWindowVariables.value,
+  () => {
+    // Push current web streaming state when requested
+    postWebStream(streaming.value);
   },
 );
 </script>

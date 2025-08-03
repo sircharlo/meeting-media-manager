@@ -38,7 +38,12 @@ initializeElectronApi('MainLayout');
 import type { LanguageValue } from 'src/constants/locales';
 import type { ElectronIpcListenKey } from 'src/types';
 
-import { watchDebounced, watchImmediate, whenever } from '@vueuse/core';
+import {
+  useBroadcastChannel,
+  watchDebounced,
+  watchImmediate,
+  whenever,
+} from '@vueuse/core';
 import { queues } from 'boot/globals';
 import HeaderBase from 'components/header/HeaderBase.vue';
 import ActionIsland from 'components/ui/ActionIsland.vue';
@@ -131,6 +136,7 @@ const {
   currentSettings,
   downloadProgress,
   mediaIsPlaying,
+  mediaPlaying,
   online,
   selectedDate,
   selectedDateObject,
@@ -657,6 +663,17 @@ const previousState = ref<{
   wasOnline: false,
 });
 
+// Broadcast the three values to the media player page using useBroadcastChannel
+const { post: postUrlVariables } = useBroadcastChannel<
+  { base: string | undefined; mediator: string | undefined },
+  { base: string | undefined; mediator: string | undefined }
+>({
+  name: 'url-variables',
+});
+const { post: postOnline } = useBroadcastChannel<boolean, boolean>({
+  name: 'online',
+});
+
 watchImmediate(
   (): [string | undefined, string | undefined, boolean] => [
     jwStore.urlVariables?.base,
@@ -669,6 +686,9 @@ watchImmediate(
     boolean,
   ]) => {
     const prev = previousState.value;
+
+    postUrlVariables({ base, mediator });
+    postOnline(online);
 
     // Only get fonts and MEPS info if:
     // 1. Coming online for the first time (!prev.wasOnline && online)
@@ -684,6 +704,77 @@ watchImmediate(
 
     // Update previous state
     previousState.value = { base, mediator, wasOnline: online };
+  },
+);
+
+// Send hideMediaLogo to the media player page using useBroadcastChannel
+const { post: postHideMediaLogo } = useBroadcastChannel<
+  boolean | undefined,
+  boolean | undefined
+>({
+  name: 'hide-media-logo',
+});
+
+watchImmediate(
+  () => currentSettings.value?.hideMediaLogo,
+  (newHideMediaLogo) => {
+    postHideMediaLogo(newHideMediaLogo);
+  },
+);
+
+// Send yeartext to the media player page using useBroadcastChannel
+const { post: postYeartext } = useBroadcastChannel<
+  string | undefined,
+  string | undefined
+>({
+  name: 'yeartext',
+});
+
+watchImmediate(
+  () => currentState.yeartext,
+  (newYeartext) => {
+    postYeartext(newYeartext);
+  },
+);
+
+// Receive media playing action from the media player page using useBroadcastChannel
+const { data: mediaPlayingAction } = useBroadcastChannel<
+  '' | 'pause' | 'play' | 'website',
+  '' | 'pause' | 'play' | 'website'
+>({
+  name: 'media-window-media-action',
+});
+
+watchImmediate(
+  () => mediaPlayingAction.value,
+  (newMediaPlayingAction) => {
+    console.log(
+      '🔄 [onMounted] mediaPlayingAction changed:',
+      newMediaPlayingAction,
+    );
+    mediaPlaying.value.action = newMediaPlayingAction;
+  },
+);
+
+// Listen for requests to get current media window variables
+const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
+  string,
+  string
+>({
+  name: 'get-current-media-window-variables',
+});
+
+watchImmediate(
+  () => getCurrentMediaWindowVariables.value,
+  () => {
+    // Push current values when requested
+    postUrlVariables({
+      base: jwStore.urlVariables?.base,
+      mediator: jwStore.urlVariables?.mediator,
+    });
+    postOnline(currentState.online);
+    postHideMediaLogo(currentSettings.value?.hideMediaLogo);
+    postYeartext(currentState.yeartext);
   },
 );
 </script>

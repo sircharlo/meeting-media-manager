@@ -997,6 +997,24 @@ watchImmediate(
   },
 );
 
+// Listen for requests to get current media window variables
+const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
+  string,
+  string
+>({
+  name: 'get-current-media-window-variables',
+});
+
+watchImmediate(
+  () => getCurrentMediaWindowVariables.value,
+  () => {
+    // Push current repeat state when requested (only if this media is currently playing)
+    if (mediaPlaying.value.uniqueId === props.media.uniqueId) {
+      postRepeat(!!repeat.value);
+    }
+  },
+);
+
 const thumbnailFromMetadata = ref('');
 
 const imageLoadingError = () => {

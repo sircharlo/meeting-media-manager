@@ -422,6 +422,24 @@ watch(displayCameraId, (newCameraId) => {
   }
 });
 
+// Listen for requests to get current media window variables
+const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
+  string,
+  string
+>({
+  name: 'get-current-media-window-variables',
+});
+
+watchImmediate(
+  () => getCurrentMediaWindowVariables.value,
+  () => {
+    // Push current camera stream when requested
+    if (displayCameraId.value) {
+      postCameraStream(displayCameraId.value);
+    }
+  },
+);
+
 const notifyInvalidBackgroundFile = () => {
   createTemporaryNotification({
     icon: 'mmm-error',
