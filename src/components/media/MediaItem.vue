@@ -736,6 +736,7 @@ import { debounce, type QBtn, type QImg, QItem, useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
+import { triggerZoomScreenShare } from 'src/helpers/zoom';
 import { isFileUrl } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
@@ -980,6 +981,10 @@ const setMediaPlaying = async (
     : (media.streamUrl ?? media.fileUrl ?? '');
   mediaPlaying.value.uniqueId = media.uniqueId;
   mediaPlaying.value.subtitlesUrl = media.subtitlesUrl ?? '';
+
+  // Start Zoom screen sharing when media starts playing
+  triggerZoomScreenShare(true);
+
   nextTick(() => {
     window.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
   });
@@ -1150,6 +1155,10 @@ function stopMedia(forOtherMediaItem = false) {
   mediaPlaying.value.action = '';
   mediaToStop.value = '';
   localFile.value = fileIsLocal();
+
+  // Stop Zoom screen sharing when media is stopped
+  triggerZoomScreenShare(false);
+
   if (!forOtherMediaItem) {
     zoomReset(true);
     nextTick(() => {

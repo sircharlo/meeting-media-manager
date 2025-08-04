@@ -1,5 +1,6 @@
 import type { ElectronApi } from 'src/types';
 
+import robot from '@jitsi/robotjs';
 import { contextBridge, webUtils } from 'electron/renderer';
 import fs from 'fs-extra';
 import { initCloseListeners } from 'src-electron/preload/close';
@@ -84,6 +85,7 @@ const electronApi: ElectronApi = {
   readdir: readDirectory,
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),
   removeListeners: (c) => removeAllIpcListeners(c),
+  robot,
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
   setElectronUrlVariables: (v) => send('setElectronUrlVariables', v),
   setScreenPreferences: (s) => send('setScreenPreferences', s),

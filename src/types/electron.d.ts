@@ -1,6 +1,7 @@
 import type decompress from 'decompress';
 import type { default as FsExtra } from 'fs-extra';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
+import type robot from 'robotjs';
 import type { ConversionOptions } from 'src-electron/preload/converters';
 import type {
   FileItem,
@@ -156,6 +157,7 @@ export interface ElectronApi {
   ) => Promise<FileItem[]>;
   registerShortcut: (name: keyof SettingsValues, shortcut: string) => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
+  robot: typeof robot;
   setAutoStartAtLogin: (value: boolean) => void;
   setElectronUrlVariables: (variables: string) => void;
   setScreenPreferences: (screenPreferences: string) => void;

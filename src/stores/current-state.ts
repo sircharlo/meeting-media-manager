@@ -101,19 +101,36 @@ export const useCurrentStateStore = defineStore('current-state', {
           settingsDefinition,
         ] of settingDefinitionEntries) {
           if (settingsDefinition.rules?.includes('notEmpty')) {
-            if (
-              (settingsDefinitionId === 'baseUrl' &&
-                !(urlVariables?.base && urlVariables?.mediator)) ||
-              (isEmpty(
-                congregationSettingsStore.congregations[congregation]?.[
-                  settingsDefinitionId
-                ],
-              ) &&
-                (!settingsDefinition.rules?.includes('regular') ||
-                  !congregationSettingsStore.congregations[congregation]
-                    ?.disableMediaFetching))
-            ) {
-              invalidSettings.add(settingsDefinitionId);
+            // Check if dependencies are satisfied before applying notEmpty validation
+            const dependenciesSatisfied =
+              !settingsDefinition.depends ||
+              (Array.isArray(settingsDefinition.depends)
+                ? settingsDefinition.depends.every(
+                    (dep) =>
+                      congregationSettingsStore.congregations[
+                        congregation as string
+                      ]?.[dep],
+                  )
+                : congregationSettingsStore.congregations[congregation]?.[
+                    settingsDefinition.depends
+                  ]);
+
+            // Only apply notEmpty validation if dependencies are satisfied
+            if (dependenciesSatisfied) {
+              if (
+                (settingsDefinitionId === 'baseUrl' &&
+                  !(urlVariables?.base && urlVariables?.mediator)) ||
+                (isEmpty(
+                  congregationSettingsStore.congregations[congregation]?.[
+                    settingsDefinitionId
+                  ],
+                ) &&
+                  (!settingsDefinition.rules?.includes('regular') ||
+                    !congregationSettingsStore.congregations[congregation]
+                      ?.disableMediaFetching))
+              ) {
+                invalidSettings.add(settingsDefinitionId);
+              }
             }
           }
         }

@@ -62,7 +62,7 @@
             :src="mediaPlayerCustomBackground"
           />
         </template>
-        <template v-else>
+        <template v-else-if="fontsSet">
           <!-- eslint-disable next-line vue/no-v-html -->
           <div id="yeartext" class="q-pa-md center" v-html="yeartext" />
           <div v-if="!hideMediaLogo" id="yeartextLogoContainer">
@@ -578,6 +578,8 @@ const { post: postGetCurrentState } = useBroadcastChannel<string, string>({
   name: 'get-current-media-window-variables',
 });
 
+const fontsSet = ref(false);
+
 // Listen for initial value updates from other components
 watchImmediate(
   () => [
@@ -587,16 +589,22 @@ watchImmediate(
     yeartext.value,
   ],
   (oldValues, newValues) => {
+    const urlVariablesChanged =
+      oldValues?.[0] !== newValues?.[0] || oldValues?.[1] !== newValues?.[1];
+    const onlineChanged = oldValues?.[2] !== newValues?.[2];
+    const yeartextChanged = oldValues?.[3] !== newValues?.[3];
+    const newYeartextIsEmpty = !newValues?.[3];
     if (
-      oldValues?.[0] !== newValues?.[0] ||
-      oldValues?.[1] !== newValues?.[1] ||
-      oldValues?.[2] !== newValues?.[2] ||
-      oldValues?.[3] !== newValues?.[3]
+      urlVariablesChanged ||
+      onlineChanged ||
+      yeartextChanged ||
+      newYeartextIsEmpty
     ) {
       console.log('🔄 [MediaPlayerPage] Setting initial values');
       postGetCurrentState(new Date().getTime().toString());
       setElementFont('Wt-ClearText-Bold');
       setElementFont('JW-Icons');
+      fontsSet.value = true;
     }
   },
 );

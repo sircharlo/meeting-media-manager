@@ -470,5 +470,10 @@
   "yes": "Yes",
   "you-can-navigate-the-website-before-presenting-it": "If necessary, you can navigate to a specific page before presenting it to the audience. When you're ready, press the \"Start Mirroring\" button on the top right corner of this window. What you see in the website window will now be displayed in the media window for the audience to see.",
   "zoom-in": "Zoom in",
-  "zoom-out": "Zoom out"
+  "zoom-out": "Zoom out",
+  "zoomEnable": "Integrate M³ with Zoom screen sharing",
+  "zoomEnable-explain": "Automatically start and stop Zoom screen sharing when media starts and stops playing.",
+  "zoomIntegration": "Zoom",
+  "zoomScreenShareShortcut": "Zoom screen sharing shortcut",
+  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings."
 }
