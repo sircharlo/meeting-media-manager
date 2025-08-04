@@ -197,15 +197,7 @@ import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
-import {
-  computed,
-  nextTick,
-  onMounted,
-  ref,
-  type Ref,
-  toRaw,
-  watch,
-} from 'vue';
+import { computed, nextTick, onMounted, ref, type Ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const jwpubImportDb = ref('');
@@ -471,9 +463,28 @@ watch(
   () => mediaPlaying.value.panzoom,
   (newPanzoom, oldPanzoom) => {
     try {
-      if (JSON.stringify(newPanzoom) !== JSON.stringify(oldPanzoom)) {
-        newPanzoom = structuredClone(toRaw(newPanzoom));
-        postPanzoom(newPanzoom);
+      // Only pass the serializable panzoom state (scale, x, y)
+      const serializablePanzoom = newPanzoom
+        ? {
+            scale: newPanzoom.scale,
+            x: newPanzoom.x,
+            y: newPanzoom.y,
+          }
+        : undefined;
+
+      const serializableOldPanzoom = oldPanzoom
+        ? {
+            scale: oldPanzoom.scale,
+            x: oldPanzoom.x,
+            y: oldPanzoom.y,
+          }
+        : undefined;
+
+      if (
+        JSON.stringify(serializablePanzoom) !==
+        JSON.stringify(serializableOldPanzoom)
+      ) {
+        postPanzoom(serializablePanzoom ?? {});
       }
     } catch (error) {
       errorCatcher(error);
@@ -850,7 +861,17 @@ watchImmediate(
     // Push current values when requested
     postMediaAction(mediaPlaying.value.action);
     postSubtitlesUrl(mediaPlaying.value.subtitlesUrl);
-    postPanzoom(mediaPlaying.value.panzoom);
+
+    // Only pass the serializable panzoom state
+    const serializablePanzoom = mediaPlaying.value.panzoom
+      ? {
+          scale: mediaPlaying.value.panzoom.scale,
+          x: mediaPlaying.value.panzoom.x,
+          y: mediaPlaying.value.panzoom.y,
+        }
+      : undefined;
+    postPanzoom(serializablePanzoom ?? {});
+
     postMediaUrl(mediaPlaying.value.url);
     postCustomDuration(JSON.stringify(customDuration.value));
     postCustomBackground(currentState.mediaWindowCustomBackground);
