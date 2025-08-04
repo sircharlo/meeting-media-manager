@@ -663,26 +663,4 @@ whenever(
     setBackgroundMusicVolume(val);
   },
 );
-
-// Listen for requests to get current media window variables
-const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
-  string,
-  string
->({
-  name: 'get-current-media-window-variables',
-});
-
-const { post: postVolume } = useBroadcastChannel<number, number>({
-  name: 'volume-setter',
-});
-
-watchImmediate(
-  () => getCurrentMediaWindowVariables.value,
-  () => {
-    // Push current volume when requested
-    if (musicPlayer.value) {
-      postVolume(Math.round(musicPlayer.value.volume * 100));
-    }
-  },
-);
 </script>
