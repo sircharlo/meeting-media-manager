@@ -2,6 +2,7 @@
 
 import type { ElectronApi } from 'src/types';
 
+import robot from '@jitsi/robotjs';
 import fs, { ensureDir } from 'fs-extra';
 import { fileUrlToPath, pathToFileURL, readDirectory } from 'preload/fs';
 import upath from 'upath';
@@ -120,6 +121,7 @@ export const electronApi: ElectronApi = {
   removeListeners: function (channel) {
     throw new Error('Function not implemented.');
   },
+  robot,
   setAutoStartAtLogin: function (value) {
     throw new Error('Function not implemented.');
   },
