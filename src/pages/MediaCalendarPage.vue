@@ -402,10 +402,14 @@ const mediaLists = computed<DynamicMediaSection[]>(() => {
 
   const customSections: DynamicMediaSection[] = (
     selectedDate.customSections || []
-  ).map((section) => ({
-    ...section,
-    items: getVisibleMediaForSection.value[section.uniqueId] || [],
-  }));
+  )
+    .map((section) => ({
+      ...section,
+      items: getVisibleMediaForSection.value[section.uniqueId] || [],
+    }))
+    .filter(
+      (m) => selectedDateObject.value?.meeting !== 'mw' || m.items.length > 0, // MW shouldn't have a blank additional section, so if this is a MW meeting, we need to show it only if there are items in it
+    );
 
   const result = [...customSections, ...defaultSections];
   return result;
