@@ -47,6 +47,115 @@
 
     <q-item-section side>
       <div class="row items-center">
+        <!-- Three-dots menu for other controls -->
+        <template v-if="isCustom && !currentState.selectedDateObject?.meeting">
+          <q-btn class="custom-text-color" flat icon="mmm-dots" round size="sm">
+            <q-menu>
+              <q-list style="min-width: 150px">
+                <!-- Color Picker -->
+                <q-item clickable @click="showColorPicker = true">
+                  <q-item-section avatar>
+                    <q-icon name="mmm-palette" />
+                  </q-item-section>
+                  <q-item-section>{{ t('change-color') }}</q-item-section>
+                </q-item>
+
+                <!-- Move Up -->
+                <q-item v-if="!isFirst" clickable @click="$emit('move', 'up')">
+                  <q-item-section avatar>
+                    <q-icon name="mmm-up" />
+                  </q-item-section>
+                  <q-item-section>{{ t('move-up') }}</q-item-section>
+                </q-item>
+
+                <!-- Move Down -->
+                <q-item v-if="!isLast" clickable @click="$emit('move', 'down')">
+                  <q-item-section avatar>
+                    <q-icon name="mmm-down" />
+                  </q-item-section>
+                  <q-item-section>{{ t('move-down') }}</q-item-section>
+                </q-item>
+
+                <!-- Add Divider -->
+                <q-item
+                  clickable
+                  @click="$emit('add-divider', mediaList.uniqueId)"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="mmm-minus" />
+                  </q-item-section>
+                  <q-item-section>{{ t('add-divider') }}</q-item-section>
+                </q-item>
+
+                <!-- Repeat Section -->
+                <q-item clickable @click="handleRepeatClick">
+                  <q-item-section avatar>
+                    <q-icon
+                      :name="
+                        isSectionRepeating(mediaList.uniqueId)
+                          ? 'mmm-repeat'
+                          : 'mmm-repeat-off'
+                      "
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                    {{
+                      isSectionRepeating(mediaList.uniqueId)
+                        ? t('stop-repeat-section')
+                        : t('repeat-section')
+                    }}
+                  </q-item-section>
+                </q-item>
+
+                <!-- Delete -->
+                <q-item
+                  v-if="mediaList.uniqueId !== 'additional'"
+                  clickable
+                  @click="$emit('delete')"
+                >
+                  <q-item-section avatar>
+                    <q-icon color="negative" name="mmm-delete" />
+                  </q-item-section>
+                  <q-item-section class="text-negative">
+                    {{ t('delete') }}
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+
+            <!-- Color Picker Popup -->
+            <q-popup-proxy
+              v-model="showColorPicker"
+              cover
+              transition-hide="scale"
+              transition-show="scale"
+            >
+              <q-color
+                v-model="hexValue"
+                format-model="hex"
+                no-footer
+                no-header
+                @change="handleColorChange"
+              />
+            </q-popup-proxy>
+          </q-btn>
+        </template>
+
+        <!-- Repeat Button (only when repeating) -->
+        <template v-if="isSectionRepeating(mediaList.uniqueId)">
+          <q-btn
+            color="positive"
+            icon="mmm-repeat"
+            round
+            size="sm"
+            @click="handleRepeatClick"
+          >
+            <q-tooltip :delay="500">
+              {{ t('stop-repeat-section') }}
+            </q-tooltip>
+          </q-btn>
+        </template>
+
         <!-- Add Media Button -->
         <template v-if="mediaList.extraMediaShortcut">
           <q-btn
@@ -72,106 +181,6 @@
               {{ tooltipText }}
             </q-tooltip>
           </q-btn>
-        </template>
-
-        <!-- Custom Section Controls -->
-        <template v-if="isCustom && !currentState.selectedDateObject?.meeting">
-          <!-- Color Picker -->
-          <q-btn
-            class="custom-text-color"
-            flat
-            icon="mmm-palette"
-            round
-            size="sm"
-          >
-            <q-popup-proxy
-              cover
-              transition-hide="scale"
-              transition-show="scale"
-            >
-              <q-color
-                v-model="hexValue"
-                format-model="hex"
-                no-footer
-                no-header
-                @change="handleColorChange"
-              />
-            </q-popup-proxy>
-          </q-btn>
-
-          <!-- Move Up -->
-          <q-btn
-            v-if="!isFirst"
-            class="custom-text-color"
-            flat
-            icon="mmm-up"
-            round
-            size="sm"
-            @click="$emit('move', 'up')"
-          />
-
-          <!-- Move Down -->
-          <q-btn
-            v-if="!isLast"
-            class="custom-text-color"
-            flat
-            icon="mmm-down"
-            round
-            size="sm"
-            @click="$emit('move', 'down')"
-          />
-
-          <!-- Add Divider -->
-          <q-btn
-            class="custom-text-color"
-            flat
-            icon="mmm-minus"
-            round
-            size="sm"
-            @click="$emit('add-divider', mediaList.uniqueId)"
-          >
-            <q-tooltip :delay="500">
-              {{ t('add-divider') }}
-            </q-tooltip>
-          </q-btn>
-
-          <!-- Repeat Section (only for custom sections on non-meeting days) -->
-          <q-btn
-            v-if="isCustom && !currentState.selectedDateObject?.meeting"
-            :color="
-              isSectionRepeating(mediaList.uniqueId)
-                ? 'positive'
-                : 'custom-text-color'
-            "
-            :flat="!isSectionRepeating(mediaList.uniqueId)"
-            :icon="
-              isSectionRepeating(mediaList.uniqueId)
-                ? 'mmm-repeat'
-                : 'mmm-repeat-off'
-            "
-            round
-            size="sm"
-            @click="handleRepeatClick"
-          >
-            <q-tooltip :delay="500">
-              {{
-                isSectionRepeating(mediaList.uniqueId)
-                  ? t('stop-repeat-section')
-                  : t('repeat-section')
-              }}
-            </q-tooltip>
-          </q-btn>
-
-          <!-- Delete -->
-          <q-btn
-            v-if="mediaList.uniqueId !== 'additional'"
-            color="negative"
-            flat
-            icon="mmm-delete"
-            round
-            size="sm"
-            @click="$emit('delete')"
-          />
         </template>
       </div>
     </q-item-section>
@@ -225,6 +234,7 @@ const isHovered = useElementHover(sectionHeader);
 
 const renameInput = ref<HTMLInputElement>();
 const hexValue = ref(props.mediaList.bgColor || '#ffffff');
+const showColorPicker = ref(false);
 
 // Computed properties
 const buttonLabel = computed(() => {
