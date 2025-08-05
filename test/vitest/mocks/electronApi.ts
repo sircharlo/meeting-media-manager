@@ -64,7 +64,7 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   isDownloadErrorExpected: async () => false,
-  moveMediaWindow: function (targetScreenNumber, windowedMode, noEvent?) {
+  moveMediaWindow: function (targetScreenNumber, windowedMode) {
     throw new Error('Function not implemented.');
   },
   navigateWebsiteWindow: function (action) {
@@ -126,9 +126,6 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   setElectronUrlVariables: function (variables) {
-    throw new Error('Function not implemented.');
-  },
-  setScreenPreferences: function (screenPreferences) {
     throw new Error('Function not implemented.');
   },
   startWebsiteStream: function () {
