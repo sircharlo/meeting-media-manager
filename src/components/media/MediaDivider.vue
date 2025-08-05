@@ -28,7 +28,7 @@
           flat
           icon="mmm-check"
           round
-          size="sm"
+          size="xs"
           :style="{ color: divider.textColor }"
           @click="saveTitle"
         />
@@ -37,7 +37,7 @@
           flat
           icon="mmm-edit"
           round
-          size="sm"
+          size="xs"
           :style="{ color: divider.textColor }"
           @click="startEdit"
         />
@@ -46,7 +46,7 @@
           flat
           icon="mmm-palette"
           round
-          size="sm"
+          size="xs"
           :style="{ color: divider.textColor }"
         >
           <q-popup-proxy cover transition-hide="scale" transition-show="scale">
@@ -64,7 +64,7 @@
           flat
           icon="mmm-delete"
           round
-          size="sm"
+          size="xs"
           :style="{ color: divider.textColor }"
           @click="deleteDivider"
         />
@@ -170,19 +170,18 @@ const deleteDivider = () => {
 </script>
 
 <style lang="scss" scoped>
-.custom-bg-color {
-  background-color: var(--bg-color) !important;
-  color: var(--text-color) !important;
-}
-
-.custom-text-color * {
+.custom-text-color *,
+.q-item__section--side {
   color: inherit;
 }
 
 .media-divider {
-  margin: 4px 0;
+  margin: 4px 0 4px -1px;
   border-radius: 8px;
   transition: all 0.2s ease;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
 
   &.is-editing {
     box-shadow: 0 0 0 2px var(--q-primary);
