@@ -187,11 +187,9 @@ const handleAddDivider = () => {
   showAddDividerDialog.value = true;
 };
 
-const handleAddDividerResult = (title: string) => {
+const handleAddDividerResult = (title?: string) => {
   console.log('✅ DialogAddDivider returned title:', title);
-  if (title) {
-    addDivider(title, undefined);
-  }
+  addDivider(title, undefined);
   showAddDividerDialog.value = false;
 };
 
