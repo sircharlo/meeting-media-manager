@@ -17,6 +17,22 @@
         />
       </q-card-section>
 
+      <q-card-section>
+        <div class="text-subtitle2 q-mb-sm">{{ t('position') }}:</div>
+        <q-btn-group spread>
+          <q-btn
+            :color="addToTop ? 'primary' : 'grey'"
+            :label="t('top')"
+            @click="addToTop = true"
+          />
+          <q-btn
+            :color="!addToTop ? 'primary' : 'grey'"
+            :label="t('bottom')"
+            @click="addToTop = false"
+          />
+        </q-btn-group>
+      </q-card-section>
+
       <q-card-actions align="right">
         <q-btn flat :label="t('cancel')" @click="handleCancel" />
         <q-btn color="primary" :label="t('add')" @click="handleAdd" />
@@ -39,7 +55,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  ok: [title?: string];
+  ok: [title?: string, addToTop?: boolean];
   'update:modelValue': [value: boolean];
 }>();
 
@@ -49,7 +65,9 @@ const dialogValue = computed({
 });
 
 const dividerTitle = ref('');
+const addToTop = ref(true);
 const dividerTitleInput = ref<HTMLElement>();
+
 // Focus the input when dialog opens
 whenever(dialogValue, () => {
   if (dialogValue.value) {
@@ -63,7 +81,7 @@ whenever(dialogValue, () => {
 const handleAdd = () => {
   const title = dividerTitle.value.trim();
   dividerTitle.value = '';
-  emit('ok', title);
+  emit('ok', title, addToTop.value);
   dialogValue.value = false;
 };
 

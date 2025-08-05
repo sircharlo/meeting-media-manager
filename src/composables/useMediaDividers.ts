@@ -52,25 +52,53 @@ export function useMediaDividers(sectionId: MediaSectionIdentifier) {
   });
 
   // Create a new divider
-  const addDivider = (title: string, position?: number) => {
+  const addDivider = (title?: string, addToTop = true) => {
     const media = selectedDateObject.value?.dynamicMedia;
     if (!media) return;
+
+    // Get section-specific media items to determine proper position
+    const sectionMedia = media.filter((item) => item.section === sectionId);
+    const sectionMediaCount = sectionMedia.length;
+
+    console.log('🔍 Adding divider:', { addToTop, title }, sectionMediaCount);
 
     const newDivider: DynamicMediaObject = {
       section: sectionId,
       sectionOriginal: sectionId,
-      sortOrderOriginal: position ?? media.length,
+      sortOrderOriginal: addToTop ? 0 : sectionMediaCount,
       source: 'additional',
-      title,
+      title: title ?? '',
       type: 'divider',
       uniqueId: `divider_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     };
 
-    media.unshift(newDivider);
+    // Find the correct insertion position in the full media array
+    let insertIndex = media.length; // Default to end
+
+    if (addToTop) {
+      // Find the first item of this section
+      for (let i = 0; i < media.length; i++) {
+        const item = media[i];
+        if (item && item.section === sectionId) {
+          insertIndex = i;
+          break;
+        }
+      }
+    } else {
+      // Find the position after the last item of this section
+      for (let i = media.length - 1; i >= 0; i--) {
+        const item = media[i];
+        if (item && item.section === sectionId) {
+          insertIndex = i + 1;
+          break;
+        }
+      }
+    }
+
+    media.splice(insertIndex, 0, newDivider);
 
     console.log('✅ Divider added:', {
       dividerId: newDivider.uniqueId,
-      position,
       sectionId,
       title,
     });
