@@ -57,7 +57,7 @@
     "is-online": "^11.0.0",
     "mime": "^4.0.7",
     "mousetrap": "^1.6.5",
-    "music-metadata": "^11.7.1",
+    "music-metadata": "^11.7.3",
     "obs-websocket-js": "^5.0.6",
     "p-queue": "^8.1.0",
     "pdfjs-dist": "^5.3.93",
