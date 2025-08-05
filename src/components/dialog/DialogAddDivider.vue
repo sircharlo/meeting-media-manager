@@ -7,6 +7,7 @@
 
       <q-card-section>
         <q-input
+          ref="dividerTitleInput"
           v-model="dividerTitle"
           dense
           :label="t('optional-title')"
@@ -25,6 +26,7 @@
 </template>
 
 <script setup lang="ts">
+import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -37,7 +39,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  ok: [title: string];
+  ok: [title?: string];
   'update:modelValue': [value: boolean];
 }>();
 
@@ -47,6 +49,16 @@ const dialogValue = computed({
 });
 
 const dividerTitle = ref('');
+const dividerTitleInput = ref<HTMLElement>();
+// Focus the input when dialog opens
+whenever(dialogValue, () => {
+  if (dialogValue.value) {
+    setTimeout(() => {
+      console.log('🔍 Focusing input', dividerTitleInput.value);
+      dividerTitleInput.value?.focus();
+    }, 100);
+  }
+});
 
 const handleAdd = () => {
   const title = dividerTitle.value.trim();
