@@ -1,7 +1,7 @@
 import type { BrowserWindow } from 'electron';
 
 import { cancelAllDownloads } from 'main/downloads';
-import { throttle } from 'main/utils';
+import { throttleWithTrailing } from 'main/utils';
 import {
   closeOtherWindows,
   createWindow,
@@ -29,12 +29,12 @@ export function createMainWindow() {
   // Create the browser window
   mainWindow = createWindow('main');
 
-  mainWindow.on(
-    'move',
-    throttle(() => moveMediaWindow(), 100),
+  const moveMediaWindowThrottled = throttleWithTrailing(
+    () => moveMediaWindow(),
+    100,
   );
-
-  if (PLATFORM !== 'darwin') mainWindow.on('moved', () => moveMediaWindow()); // On macOS, the 'moved' event is just an alias for 'move'
+  mainWindow.on('move', moveMediaWindowThrottled);
+  if (PLATFORM !== 'darwin') mainWindow.on('moved', moveMediaWindowThrottled); // On macOS, the 'moved' event is just an alias for 'move'
 
   mainWindow.on('close', (e) => {
     if (mainWindow && (authorizedClose || closeAttempts > 2)) {
