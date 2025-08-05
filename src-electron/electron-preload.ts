@@ -53,6 +53,7 @@ const electronApi: ElectronApi = {
   fileUrlToPath,
   fs,
   getAllScreens: () => invoke('getAllScreens'),
+
   getAppDataPath: () => invoke('getAppDataPath'),
   getLocales: () => invoke('getLocales'),
   getLocalPathFromFileObject: (fo) =>
@@ -63,8 +64,7 @@ const electronApi: ElectronApi = {
   getVideoDuration,
   inferExtension,
   isDownloadErrorExpected: () => invoke('isDownloadErrorExpected'),
-  moveMediaWindow: (t, w, ne) =>
-    send('moveMediaWindow', t, w === undefined ? undefined : !w, ne),
+  moveMediaWindow: (t, w) => send('moveMediaWindow', t, w),
   navigateWebsiteWindow,
   onDownloadCancelled: (cb) => listen('downloadCancelled', cb),
   onDownloadCompleted: (cb) => listen('downloadCompleted', cb),
@@ -88,7 +88,7 @@ const electronApi: ElectronApi = {
   robot,
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
   setElectronUrlVariables: (v) => send('setElectronUrlVariables', v),
-  setScreenPreferences: (s) => send('setScreenPreferences', s),
+
   startWebsiteStream,
   toggleMediaWindow: (s) => send('toggleMediaWindow', s),
   unregisterAllShortcuts: () => send('unregisterAllShortcuts'),
@@ -97,11 +97,5 @@ const electronApi: ElectronApi = {
   watchFolder: (p) => send('watchFolder', p),
   zoomWebsiteWindow,
 };
-
-listen('toggleFullScreenFromMediaWindow', () => {
-  window.dispatchEvent(
-    new CustomEvent<undefined>('toggleFullScreenFromMediaWindow'),
-  );
-});
 
 contextBridge.exposeInMainWorld('electronApi', electronApi);

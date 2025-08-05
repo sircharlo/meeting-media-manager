@@ -34,7 +34,7 @@ export function createMainWindow() {
     throttle(() => moveMediaWindow(), 100),
   );
 
-  if (PLATFORM !== 'darwin') mainWindow.on('moved', moveMediaWindow); // On macOS, the 'moved' event is just an alias for 'move'
+  if (PLATFORM !== 'darwin') mainWindow.on('moved', () => moveMediaWindow()); // On macOS, the 'moved' event is just an alias for 'move'
 
   mainWindow.on('close', (e) => {
     if (mainWindow && (authorizedClose || closeAttempts > 2)) {
