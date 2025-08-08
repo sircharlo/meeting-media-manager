@@ -26,13 +26,7 @@
   </transition>
   Section: {{ section }}
   <q-btn
-    v-if="
-      !selectedDateObject?.meeting &&
-      selectedDateObject?.mediaSections &&
-      Object.values(selectedDateObject.mediaSections).some(
-        (section) => !!section.items?.length,
-      )
-    "
+    v-if="canEditCustomSections"
     color="white-transparent"
     :disable="mediaIsPlaying"
     unelevated
@@ -52,7 +46,7 @@
     v-if="selectedDate"
     color="white-transparent"
     unelevated
-    @click="section = undefined"
+    @click="section = firstSectionOrUndefined"
   >
     <q-icon
       :class="{ 'q-mr-sm': $q.screen.gt.xs }"
@@ -317,6 +311,7 @@ import DialogStudyBible from 'components/dialog/DialogStudyBible.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
+import { isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   datesAreSame,
@@ -667,4 +662,24 @@ const openJwPlaylistPicker = (
   console.log('🎯 jwPlaylistPath set to:', jwPlaylistPath.value);
   showJwPlaylist.value = true;
 };
+
+const canEditCustomSections = computed(() => {
+  return !!(
+    !selectedDateObject.value?.meeting &&
+    selectedDateObject.value?.mediaSections &&
+    Object.values(selectedDateObject.value.mediaSections).some(
+      (section) => !!section.items?.length,
+    )
+  );
+});
+
+const firstSectionOrUndefined = computed(() => {
+  return canEditCustomSections.value && selectedDateObject.value?.mediaSections
+    ? (Object.keys(
+        selectedDateObject.value.mediaSections,
+      )[0] as MediaSectionIdentifier)
+    : isWeMeetingDay(selectedDateObject.value?.date)
+      ? 'pt'
+      : undefined;
+});
 </script>
