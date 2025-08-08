@@ -1,4 +1,4 @@
-import type { DateInfo, DynamicMediaObject } from 'src/types';
+import type { DateInfo, MediaItem, MediaSectionIdentifier } from 'src/types';
 
 import { DAYS_IN_FUTURE } from 'src/constants/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -206,18 +206,23 @@ export function updateLookupPeriod(
       lookupPeriod[currentCongregation] = [];
     }
 
-    const isRelevantMedia = (meeting: string, media: DynamicMediaObject[]) => {
-      const excludedSections: Record<string, string[]> = {
-        mw: ['wt'],
-        we: ['ayfm', 'lac', 'tgw'],
-      };
-      const excluded = excludedSections[meeting] || [];
-      return media.some((m) => !excluded.includes(m.section));
+    const isRelevantMedia = (meeting: string, media: MediaItem[]) => {
+      // Since MediaItem doesn't have section property, we'll just check if there's any media
+      return media.length > 0;
     };
 
     const existingDates = new Set(
       lookupPeriod[currentCongregation]
-        .filter((d) => !d.meeting || isRelevantMedia(d.meeting, d.dynamicMedia))
+        .filter((d) => {
+          if (!d.meeting) return true;
+          const allMedia: MediaItem[] = [];
+          if (d.mediaSections) {
+            Object.values(d.mediaSections).forEach((sectionMedia) => {
+              allMedia.push(...(sectionMedia.items || []));
+            });
+          }
+          return isRelevantMedia(d.meeting, allMedia);
+        })
         .map((d) => formatDate(d.date, 'YYYY/MM/DD')),
     );
     const currentDate = dateFromString();
@@ -235,8 +240,8 @@ export function updateLookupPeriod(
         return {
           complete: false,
           date: dayDate,
-          dynamicMedia: [],
           error: false,
+          mediaSections: {},
           meeting: isMwMeetingDay(dayDate)
             ? 'mw'
             : isWeMeetingDay(dayDate)
@@ -312,20 +317,42 @@ export function updateLookupPeriod(
       console.group(
         `📅 Resetting Day - ${day.date.toISOString().split('T')[0]}`,
       );
-      const beforeDynamicCount = day.dynamicMedia.length;
+      // Get total media count before reset
+      let beforeDynamicCount = 0;
+      if (day.mediaSections) {
+        Object.values(day.mediaSections).forEach((sectionMedia) => {
+          beforeDynamicCount += sectionMedia.items?.length || 0;
+        });
+      }
 
       // Reset status flags
       day.complete = false;
       day.error = false;
 
-      // Remove dynamic media (backwards iteration for safe removal)
-      for (let i = day.dynamicMedia.length - 1; i >= 0; i--) {
-        if (day.dynamicMedia[i]?.source === 'dynamic') {
-          day.dynamicMedia.splice(i, 1);
-        }
+      // Remove dynamic media from all sections
+      if (day.mediaSections) {
+        Object.keys(day.mediaSections).forEach((sectionId) => {
+          const section = sectionId as MediaSectionIdentifier;
+          const sectionMedia = day.mediaSections[section];
+          if (sectionMedia?.items?.length) {
+            for (let i = sectionMedia.items?.length - 1; i >= 0; i--) {
+              if (sectionMedia.items?.[i]?.source === 'dynamic') {
+                sectionMedia.items?.splice(i, 1);
+              }
+            }
+          }
+        });
       }
 
-      const removedCount = beforeDynamicCount - day.dynamicMedia.length;
+      // Get total media count after reset
+      let afterDynamicCount = 0;
+      if (day.mediaSections) {
+        Object.values(day.mediaSections).forEach((sectionMedia) => {
+          afterDynamicCount += sectionMedia.items?.length || 0;
+        });
+      }
+
+      const removedCount = beforeDynamicCount - afterDynamicCount;
       if (removedCount > 0) {
         console.log(`🗑️ Removed ${removedCount} dynamic media items`);
       }

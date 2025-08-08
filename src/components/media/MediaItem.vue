@@ -716,7 +716,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DynamicMediaObject, Tag, VideoMarker } from 'src/types';
+import type { MediaItem, Tag, VideoMarker } from 'src/types';
 
 import Panzoom, {
   type PanzoomObject,
@@ -783,7 +783,7 @@ const mediaDeletePending = computed(() => !!mediaToDelete.value);
 
 const props = defineProps<{
   child?: boolean;
-  media: DynamicMediaObject;
+  media: MediaItem;
 }>();
 
 const repeat = defineModel<boolean | undefined>('repeat', { required: true });
@@ -952,7 +952,7 @@ whenever(
 );
 
 const setMediaPlaying = async (
-  media: DynamicMediaObject,
+  media: MediaItem,
   signLanguage = false,
   marker?: VideoMarker,
 ) => {
@@ -1332,13 +1332,22 @@ const currentSongIsDuplicated = computed(() => {
   const currentSong = props.media.tag?.value?.toString();
   if (!currentSong) return false;
 
-  const songNumbers =
-    currentState.selectedDateObject?.dynamicMedia?.filter(
-      (m) =>
-        !m.hidden &&
-        m.tag?.type === 'song' &&
-        m.tag?.value?.toString() === currentSong,
-    ) ?? [];
+  const songNumbers: MediaItem[] = [];
+  if (currentState.selectedDateObject?.mediaSections) {
+    Object.values(currentState.selectedDateObject.mediaSections).forEach(
+      (sectionMedia) => {
+        sectionMedia.items?.forEach((m) => {
+          if (
+            !m.hidden &&
+            m.tag?.type === 'song' &&
+            m.tag?.value?.toString() === currentSong
+          ) {
+            songNumbers.push(m);
+          }
+        });
+      },
+    );
+  }
 
   return songNumbers.length > 1;
 });

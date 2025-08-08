@@ -1,7 +1,8 @@
-import type { DynamicMediaObject, MediaSectionIdentifier } from 'src/types';
+import type { MediaItem, MediaSectionIdentifier } from 'src/types';
 
 import { useBroadcastChannel } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
+import { standardSections } from 'src/constants/media';
 import { useCurrentStateStore } from 'stores/current-state';
 import { nextTick, ref, watch } from 'vue';
 
@@ -29,26 +30,31 @@ export function useMediaSectionRepeat() {
   // Get all media items for a section
   const getSectionMediaItems = (
     sectionId: MediaSectionIdentifier,
-  ): DynamicMediaObject[] => {
+  ): MediaItem[] => {
     console.log('🔄 [getSectionMediaItems] Starting for sectionId:', sectionId);
 
-    if (!selectedDateObject.value?.dynamicMedia) {
+    if (!selectedDateObject.value?.mediaSections) {
       console.log(
-        '❌ [getSectionMediaItems] No dynamicMedia found, returning empty array',
+        '❌ [getSectionMediaItems] No mediaSections found, returning empty array',
       );
       return [];
     }
 
-    const allItems = selectedDateObject.value.dynamicMedia;
+    const allItems: MediaItem[] = [];
+    Object.values(selectedDateObject.value.mediaSections).forEach(
+      (sectionMedia) => {
+        allItems.push(...(sectionMedia.items || []));
+      },
+    );
     console.log(
-      '📊 [getSectionMediaItems] Total dynamicMedia items:',
+      '📊 [getSectionMediaItems] Total media items:',
       allItems.length,
     );
 
-    const filteredItems = allItems.filter(
-      (item) =>
-        item.section === sectionId && !item.hidden && item.type !== 'divider',
-    );
+    const filteredItems =
+      selectedDateObject.value.mediaSections[sectionId]?.items?.filter(
+        (item: MediaItem) => !item.hidden && item.type !== 'divider',
+      ) || [];
 
     console.log(
       '🔍 [getSectionMediaItems] Filtered items for section:',
@@ -58,7 +64,6 @@ export function useMediaSectionRepeat() {
       '🔍 [getSectionMediaItems] Filtered items details:',
       filteredItems.map((item) => ({
         hidden: item.hidden,
-        section: item.section,
         sortOrderOriginal: item.sortOrderOriginal,
         type: item.type,
         uniqueId: item.uniqueId,
@@ -122,35 +127,27 @@ export function useMediaSectionRepeat() {
       sectionId,
     );
 
-    if (!selectedDateObject.value?.customSections) {
-      console.log('❌ [getSectionRepeatSettings] No customSections found');
+    if (!selectedDateObject.value?.mediaSections) {
+      console.log('❌ [getSectionRepeatSettings] No mediaSections found');
       return null;
     }
 
-    const customSections = selectedDateObject.value.customSections;
-    console.log(
-      '📋 [getSectionRepeatSettings] Available customSections:',
-      customSections.map((s) => s.uniqueId),
-    );
-
-    const sectionSettings = customSections.find(
-      (section) => section.uniqueId === sectionId,
-    );
-
-    if (sectionSettings) {
-      console.log('✅ [getSectionRepeatSettings] Found settings:', {
-        repeat: sectionSettings.repeat,
-        repeatInterval: sectionSettings.repeatInterval,
-        uniqueId: sectionSettings.uniqueId,
-      });
-    } else {
+    const sectionData = selectedDateObject.value.mediaSections[sectionId];
+    if (!sectionData?.config) {
       console.log(
-        '❌ [getSectionRepeatSettings] No settings found for sectionId:',
+        '❌ [getSectionRepeatSettings] No config found for sectionId:',
         sectionId,
       );
+      return null;
     }
 
-    return sectionSettings;
+    console.log('✅ [getSectionRepeatSettings] Found settings:', {
+      repeat: sectionData.config.repeat,
+      repeatInterval: sectionData.config.repeatInterval,
+      uniqueId: sectionData.config.uniqueId,
+    });
+
+    return sectionData.config;
   };
 
   // Check if a section is a custom section
@@ -160,22 +157,15 @@ export function useMediaSectionRepeat() {
       sectionId,
     );
 
-    if (!selectedDateObject.value?.customSections) {
+    if (!selectedDateObject.value?.mediaSections) {
       console.log(
-        '❌ [isCustomSection] No customSections found, returning false',
+        '❌ [isCustomSection] No mediaSections found, returning false',
       );
       return false;
     }
 
-    const customSections = selectedDateObject.value.customSections;
-    const isCustom = customSections.some(
-      (section) => section.uniqueId === sectionId,
-    );
+    const isCustom = !standardSections.includes(sectionId);
 
-    console.log(
-      '🔍 [isCustomSection] Available custom sections:',
-      customSections.map((s) => s.uniqueId),
-    );
     console.log('🔍 [isCustomSection] Is custom section?', isCustom);
 
     return isCustom;

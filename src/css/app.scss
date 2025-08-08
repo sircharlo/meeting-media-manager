@@ -344,7 +344,7 @@ body.body--dark {
     background: $apply;
   }
 
-  &.circuitOverseer:before,
+  &.circuit-overseer:before,
   &.website:before {
     background: $additional;
   }
@@ -515,13 +515,14 @@ body.body--dark {
   color: $apply;
 }
 
-.bg-additional,
-.bg-circuitOverseer,
+.bg-imported-media,
+.bg-pt,
+.bg-circuit-overseer,
 .bg-website {
   background: $additional;
 }
 
-.text-circuitOverseer,
+.text-circuit-overseer,
 .text-website {
   color: $additional;
 }

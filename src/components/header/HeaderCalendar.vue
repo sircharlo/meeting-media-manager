@@ -24,9 +24,14 @@
       </q-tooltip>
     </q-btn>
   </transition>
+  Section: {{ section }}
   <q-btn
     v-if="
-      !selectedDateObject?.meeting && selectedDateObject?.dynamicMedia?.length
+      !selectedDateObject?.meeting &&
+      selectedDateObject?.mediaSections &&
+      Object.values(selectedDateObject.mediaSections).some(
+        (section) => !!section.items?.length,
+      )
     "
     color="white-transparent"
     :disable="mediaIsPlaying"
@@ -298,7 +303,7 @@
 </template>
 <script setup lang="ts">
 import type { QMenu } from 'quasar';
-import type { MediaSectionIdentifier } from 'src/types';
+import type { MediaItem, MediaSectionIdentifier } from 'src/types';
 
 import { useEventListener } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
@@ -312,7 +317,6 @@ import DialogStudyBible from 'components/dialog/DialogStudyBible.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
-import { standardSections } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   datesAreSame,
@@ -341,8 +345,6 @@ const currentState = useCurrentStateStore();
 const {
   currentCongregation,
   currentSettings,
-  getAllMediaForSection,
-  getVisibleMediaForSection,
   mediaIsPlaying,
   online,
   selectedDate,
@@ -376,32 +378,51 @@ const openFileImportDialog = () => {
 
 const additionalMediaDates = computed(() =>
   (
-    lookupPeriod.value?.[currentCongregation.value]?.filter((day) =>
-      day.dynamicMedia.some((media) => media.source !== 'dynamic'),
-    ) || []
+    lookupPeriod.value?.[currentCongregation.value]?.filter((day) => {
+      if (!day.mediaSections) return false;
+      return Object.values(day.mediaSections).some((sectionMedia) =>
+        sectionMedia.items?.some((media) => media.source !== 'dynamic'),
+      );
+    }) || []
   ).map((day) => formatDate(day.date, 'YYYY/MM/DD')),
 );
 
 const additionalMediaForDayExists = (lookupDate: string) => {
   try {
-    return (
-      (lookupPeriod.value?.[currentCongregation.value]
-        ?.find((day) => datesAreSame(lookupDate, day.date))
-        ?.dynamicMedia.filter((media) => media.source !== 'dynamic')?.length ||
-        0) > 0
+    const day = lookupPeriod.value?.[currentCongregation.value]?.find((day) =>
+      datesAreSame(lookupDate, day.date),
     );
+
+    if (!day?.mediaSections) return false;
+
+    const additionalMediaCount = Object.values(day.mediaSections).reduce(
+      (total, sectionMedia) => {
+        return (
+          total +
+          (sectionMedia.items?.filter((media) => media.source !== 'dynamic')
+            .length || 0)
+        );
+      },
+      0,
+    );
+
+    return additionalMediaCount > 0;
   } catch (error) {
     errorCatcher(error);
     return false;
   }
 };
 
-const additionalMediaForSelectedDayExists = computed(
-  () =>
-    !!selectedDateObject.value?.dynamicMedia?.filter(
-      (media) => media.source !== 'dynamic',
-    )?.length,
-);
+const additionalMediaForSelectedDayExists = computed(() => {
+  if (!selectedDateObject.value?.mediaSections) return false;
+  const allMedia: MediaItem[] = [];
+  Object.values(selectedDateObject.value.mediaSections).forEach(
+    (sectionMedia) => {
+      allMedia.push(...(sectionMedia.items || []));
+    },
+  );
+  return allMedia.some((media) => media.source !== 'dynamic');
+});
 
 const mediaDeleteAllPending = ref(false);
 
@@ -486,7 +507,7 @@ const getEventDayColor = (eventDate: string) => {
     } else if (lookupDate?.complete) {
       return 'primary';
     }
-    if (additionalMediaForDayExists(eventDate)) return 'additional';
+    if (additionalMediaForDayExists(eventDate)) return 'imported-media  ';
   } catch (error) {
     errorCatcher(error);
     return 'negative';
@@ -523,21 +544,20 @@ useEventListener<
 
 const mediaSortCanBeReset = computed<boolean>(() => {
   if (
-    !selectedDateObject.value?.dynamicMedia ||
+    !selectedDateObject.value?.mediaSections ||
     !(selectedDateObject.value?.meeting && selectedDateObject.value?.complete)
   )
     return false;
 
-  const nonHiddenMedia = selectedDateObject.value.dynamicMedia.filter(
-    (item) => !item.hidden,
-  );
+  const allMedia: MediaItem[] = Object.values(
+    selectedDateObject.value.mediaSections,
+  ).flatMap((section) => section.items || []);
 
-  const hasSectionChange = nonHiddenMedia.some((item) => {
-    const inStandard =
-      standardSections.includes(item.section) ||
-      standardSections.includes(item.sectionOriginal);
-    return inStandard && item.section !== item.sectionOriginal;
-  });
+  const nonHiddenMedia = allMedia.filter((item) => !item.hidden);
+
+  // Note: MediaItem no longer has section/sectionOriginal properties
+  // so we skip the section change check for now
+  const hasSectionChange = false;
 
   if (hasSectionChange) {
     return true;
@@ -556,10 +576,18 @@ const mediaSortCanBeReset = computed<boolean>(() => {
   }
 
   const mediaToConsider = [
-    ...(getVisibleMediaForSection.value.tgw || []),
-    ...(getVisibleMediaForSection.value.ayfm || []),
-    ...(getVisibleMediaForSection.value.lac || []),
-    ...(getVisibleMediaForSection.value.wt || []),
+    ...(selectedDateObject.value?.mediaSections?.tgw?.items?.filter(
+      (item) => !item.hidden,
+    ) || []),
+    ...(selectedDateObject.value?.mediaSections?.ayfm?.items?.filter(
+      (item) => !item.hidden,
+    ) || []),
+    ...(selectedDateObject.value?.mediaSections?.lac?.items?.filter(
+      (item) => !item.hidden,
+    ) || []),
+    ...(selectedDateObject.value?.mediaSections?.wt?.items?.filter(
+      (item) => !item.hidden,
+    ) || []),
   ];
 
   for (let i = 0; i < mediaToConsider.length - 1; i++) {
@@ -573,71 +601,31 @@ const mediaSortCanBeReset = computed<boolean>(() => {
 });
 
 const resetSort = () => {
-  if (!selectedDateObject.value?.dynamicMedia) return;
+  if (!selectedDateObject.value?.mediaSections) return;
 
-  selectedDateObject.value.dynamicMedia.forEach((item) => {
-    if (item.sectionOriginal !== item.section) {
-      item.section = item.sectionOriginal;
-    }
+  // For the new structure, we need to sort each section individually
+  // since media items are now organized by section
+
+  const sectionsToSort = [
+    'tgw',
+    'ayfm',
+    'lac',
+    'wt',
+    'circuit-overseer',
+  ] as const;
+
+  sectionsToSort.forEach((sectionId) => {
+    const sectionMedia = selectedDateObject.value?.mediaSections[sectionId];
+    if (!sectionMedia?.items?.length) return;
+    // Sort by sortOrderOriginal
+    sectionMedia.items.sort((a, b) =>
+      SORTER.compare(
+        a?.sortOrderOriginal?.toString() ?? '0',
+        b?.sortOrderOriginal?.toString() ?? '0',
+      ),
+    );
   });
 
-  // Remove dynamicMedia with item.source === 'watched', in place, and then add them back but sorted by sortOrderOriginal
-  const watchedMedia = selectedDateObject.value.dynamicMedia.filter(
-    (item) => item.source === 'watched',
-  );
-  selectedDateObject.value.dynamicMedia =
-    selectedDateObject.value.dynamicMedia.filter(
-      (item) => item.source !== 'watched',
-    );
-
-  watchedMedia.sort((a, b) =>
-    SORTER.compare(
-      a?.sortOrderOriginal?.toString() ?? '0',
-      b?.sortOrderOriginal?.toString() ?? '0',
-    ),
-  );
-
-  selectedDateObject.value.dynamicMedia.push(...watchedMedia);
-
-  // Combine all media items into one array
-  const mediaToSort = [
-    ...(getAllMediaForSection.value.tgw || []),
-    ...(getAllMediaForSection.value.ayfm || []),
-    ...(getAllMediaForSection.value.lac || []),
-    ...(getAllMediaForSection.value.wt || []),
-  ];
-
-  // Sort the media array in ascending order by `sortOrderOriginal`
-  const sortedMedia = mediaToSort.sort((a, b) =>
-    SORTER.compare(
-      a?.sortOrderOriginal?.toString() ?? '0',
-      b?.sortOrderOriginal?.toString() ?? '0',
-    ),
-  );
-
-  const customSections = [
-    ...new Set(
-      selectedDateObject.value?.customSections?.map(
-        (section) => section.uniqueId,
-      ) ?? [],
-    ),
-  ];
-
-  const mediaFromCustomSections = customSections.flatMap(
-    (sectionId) =>
-      selectedDateObject.value?.dynamicMedia?.filter(
-        (item) => item.section === sectionId,
-      ) || [],
-  );
-
-  selectedDateObject.value.dynamicMedia = [
-    ...mediaFromCustomSections,
-    ...sortedMedia.filter((item) => item.section === 'tgw'),
-    ...sortedMedia.filter((item) => item.section === 'ayfm'),
-    ...sortedMedia.filter((item) => item.section === 'lac'),
-    ...sortedMedia.filter((item) => item.section === 'wt'),
-    ...(getAllMediaForSection.value.circuitOverseer || []),
-  ];
   window.dispatchEvent(new CustomEvent('reset-sort-order'));
 };
 

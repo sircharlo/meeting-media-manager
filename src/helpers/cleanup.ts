@@ -2,6 +2,7 @@ import type {
   CacheAnalysis,
   CacheFile,
   JwLangCode,
+  MediaItem,
   PublicationFetcher,
 } from 'src/types';
 
@@ -156,9 +157,14 @@ const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
     const lookupPeriodsCollections = Object.values(
       jwStore.lookupPeriod,
     ).flatMap((congregationLookupPeriods) =>
-      congregationLookupPeriods?.flatMap(
-        (lookupPeriods) => lookupPeriods?.dynamicMedia || [],
-      ),
+      congregationLookupPeriods?.flatMap((lookupPeriods) => {
+        if (!lookupPeriods?.mediaSections) return [];
+        const allMedia: MediaItem[] = [];
+        Object.values(lookupPeriods.mediaSections).forEach((sectionMedia) => {
+          allMedia.push(...(sectionMedia.items || []));
+        });
+        return allMedia;
+      }),
     );
 
     const mediaFileParentDirectories = new Set(

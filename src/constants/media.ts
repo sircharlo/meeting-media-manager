@@ -41,8 +41,36 @@ export const OTHER_EXTENSIONS = [
 
 export const standardSections: MediaSectionIdentifier[] = [
   'ayfm',
-  'circuitOverseer',
+  'circuit-overseer',
   'lac',
   'tgw',
   'wt',
 ];
+
+// Standard sections for different meeting types
+export const WE_MEETING_SECTIONS: MediaSectionIdentifier[] = ['pt', 'wt'];
+export const MW_MEETING_SECTIONS: MediaSectionIdentifier[] = [
+  'tgw',
+  'ayfm',
+  'lac',
+];
+export const CO_WEEK_ADDITIONAL_SECTION: MediaSectionIdentifier =
+  'circuit-overseer';
+
+// Helper function to get sections for a meeting type
+export function getMeetingSections(
+  meeting: 'mw' | 'we' | false,
+  isCoWeek = false,
+): MediaSectionIdentifier[] {
+  console.log('🔍 [getMeetingSections] meeting', meeting);
+  if (!meeting) return [];
+
+  const baseSections =
+    meeting === 'we' ? WE_MEETING_SECTIONS : MW_MEETING_SECTIONS;
+
+  if (isCoWeek) {
+    return [...baseSections, CO_WEEK_ADDITIONAL_SECTION];
+  }
+  console.log('🔍 [getMeetingSections] baseSections', baseSections);
+  return baseSections;
+}

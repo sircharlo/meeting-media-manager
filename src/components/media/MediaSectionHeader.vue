@@ -1,7 +1,7 @@
 <template>
   <q-item
     :class="[
-      'text-' + mediaList.uniqueId,
+      'text-' + mediaList.config.uniqueId,
       'items-center',
       {
         'custom-text-color': isCustom,
@@ -12,15 +12,15 @@
       :class="[
         isCustom && currentState.selectedDateObject?.meeting !== 'we'
           ? 'custom-bg-color'
-          : 'text-white bg-' + mediaList.uniqueId,
-        { 'jw-icon': mediaList.jwIcon },
+          : 'text-white bg-' + mediaList.config.uniqueId,
+        { 'jw-icon': mediaList.config.jwIcon },
       ]"
     >
-      <template v-if="mediaList.jwIcon">
-        {{ mediaList.jwIcon }}
+      <template v-if="mediaList.config.jwIcon">
+        {{ mediaList.config.jwIcon }}
       </template>
       <template v-else>
-        <q-icon :name="mediaList.mmmIcon" size="md" />
+        <q-icon :name="mediaList.config.mmmIcon" size="md" />
       </template>
     </q-avatar>
 
@@ -34,14 +34,14 @@
         v-if="isRenaming"
         ref="renameInput"
         dense
-        :model-value="mediaList.label"
+        :model-value="mediaList.config.label"
         @blur="handleRename(false)"
         @change="handleLabelChange"
         @keyup.enter="handleRename(false)"
         @keyup.esc="handleRename(false)"
       />
       <template v-else>
-        {{ mediaList.label }}
+        {{ mediaList.config.label || t(mediaList.config.uniqueId) }}
       </template>
     </q-item-section>
 
@@ -79,7 +79,7 @@
                 <!-- Add Divider -->
                 <q-item
                   clickable
-                  @click="$emit('add-divider', mediaList.uniqueId)"
+                  @click="$emit('add-divider', mediaList.config.uniqueId)"
                 >
                   <q-item-section avatar>
                     <q-icon name="mmm-minus" />
@@ -92,7 +92,7 @@
                   <q-item-section avatar>
                     <q-icon
                       :name="
-                        isSectionRepeating(mediaList.uniqueId)
+                        isSectionRepeating(mediaList.config.uniqueId)
                           ? 'mmm-repeat'
                           : 'mmm-repeat-off'
                       "
@@ -100,7 +100,7 @@
                   </q-item-section>
                   <q-item-section>
                     {{
-                      isSectionRepeating(mediaList.uniqueId)
+                      isSectionRepeating(mediaList.config.uniqueId)
                         ? t('stop-repeat-section')
                         : t('repeat-section')
                     }}
@@ -109,7 +109,7 @@
 
                 <!-- Delete -->
                 <q-item
-                  v-if="mediaList.uniqueId !== 'additional'"
+                  v-if="mediaList.config.uniqueId !== 'imported-media'"
                   clickable
                   @click="$emit('delete')"
                 >
@@ -142,7 +142,7 @@
         </template>
 
         <!-- Repeat Button (only when repeating) -->
-        <template v-if="isSectionRepeating(mediaList.uniqueId)">
+        <template v-if="isSectionRepeating(mediaList.config.uniqueId)">
           <q-btn
             color="positive"
             icon="mmm-repeat"
@@ -157,16 +157,18 @@
         </template>
 
         <!-- Add Media Button -->
-        <template v-if="mediaList.extraMediaShortcut">
+        <template v-if="mediaList.config.extraMediaShortcut">
           <q-btn
             class="add-media-shortcut"
             :class="[
-              !buttonLabel ? 'custom-text-color' : 'bg-' + mediaList.uniqueId,
+              !buttonLabel
+                ? 'custom-text-color'
+                : 'bg-' + mediaList.config.uniqueId,
             ]"
             :color="
               !isCustom ||
               (isCustom && currentState.selectedDateObject?.meeting === 'we')
-                ? mediaList.uniqueId
+                ? mediaList.config.uniqueId
                 : undefined
             "
             :flat="!buttonLabel"
@@ -188,7 +190,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MediaSection } from 'src/types';
+import type { MediaSectionWithConfig } from 'src/types';
 
 import { useElementHover } from '@vueuse/core';
 import { useQuasar } from 'quasar';
@@ -204,7 +206,7 @@ const props = defineProps<{
   isLast: boolean;
   isRenaming: boolean;
   isSongButton: boolean;
-  mediaList: MediaSection;
+  mediaList: MediaSectionWithConfig;
   shouldUpdateRepeatOnStop?: boolean;
 }>();
 
@@ -233,7 +235,7 @@ const sectionHeader = ref<HTMLElement>();
 const isHovered = useElementHover(sectionHeader);
 
 const renameInput = ref<HTMLInputElement>();
-const hexValue = ref(props.mediaList.bgColor || '#ffffff');
+const hexValue = ref(props.mediaList.config.bgColor || '#ffffff');
 const showColorPicker = ref(false);
 
 // Computed properties
@@ -241,7 +243,7 @@ const buttonLabel = computed(() => {
   if (!$q.screen.gt.xs) return undefined;
 
   if (props.isSongButton) {
-    return props.mediaList.uniqueId === 'additional'
+    return props.mediaList.config.uniqueId === 'pt'
       ? t('add-an-opening-song')
       : t('add-a-closing-song');
   }
@@ -251,7 +253,7 @@ const buttonLabel = computed(() => {
 
 const tooltipText = computed(() => {
   if (props.isSongButton) {
-    return props.mediaList.uniqueId === 'additional'
+    return props.mediaList.config.uniqueId === 'pt'
       ? t('add-an-opening-song')
       : t('add-a-closing-song');
   }
@@ -274,9 +276,13 @@ const handleRename = (value: boolean) => {
 
 const handleAddClick = () => {
   if (props.isSongButton) {
-    emit('add-song', props.mediaList.uniqueId);
+    emit('add-song', props.mediaList.config.uniqueId);
+    console.log(
+      '🔄 [handleAddClick] Adding song to section:',
+      props.mediaList.config.uniqueId,
+    );
   } else {
-    emit('open-import', props.mediaList.uniqueId);
+    emit('open-import', props.mediaList.config.uniqueId);
   }
 };
 
@@ -289,34 +295,36 @@ const handleColorChange = (val: null | string) => {
 };
 
 const handleRepeatClick = () => {
-  const isCurrentlyRepeating = isSectionRepeating(props.mediaList.uniqueId);
+  const isCurrentlyRepeating = isSectionRepeating(
+    props.mediaList.config.uniqueId,
+  );
   const newRepeatState = !isCurrentlyRepeating;
 
   // Update the section settings
   updateSectionRepeat(newRepeatState);
 
   // Toggle the repeat functionality
-  toggleSectionRepeat(props.mediaList.uniqueId);
+  toggleSectionRepeat(props.mediaList.config.uniqueId);
 };
 
 // Method to update section repeat state (can be called from parent)
 const updateSectionRepeatState = (newState: boolean) => {
   console.log('🔄 [updateSectionRepeatState] Updating section repeat state:', {
-    isCurrentlyRepeating: isSectionRepeating(props.mediaList.uniqueId),
+    isCurrentlyRepeating: isSectionRepeating(props.mediaList.config.uniqueId),
     newState,
-    sectionId: props.mediaList.uniqueId,
+    sectionId: props.mediaList.config.uniqueId,
   });
 
   updateSectionRepeat(newState);
   if (newState) {
     // Start repeating if not already
-    if (!isSectionRepeating(props.mediaList.uniqueId)) {
-      toggleSectionRepeat(props.mediaList.uniqueId);
+    if (!isSectionRepeating(props.mediaList.config.uniqueId)) {
+      toggleSectionRepeat(props.mediaList.config.uniqueId);
     }
   } else {
     // Stop repeating if currently repeating
-    if (isSectionRepeating(props.mediaList.uniqueId)) {
-      toggleSectionRepeat(props.mediaList.uniqueId);
+    if (isSectionRepeating(props.mediaList.config.uniqueId)) {
+      toggleSectionRepeat(props.mediaList.config.uniqueId);
     }
   }
 };

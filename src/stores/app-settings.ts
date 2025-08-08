@@ -1,8 +1,9 @@
 import type {
   DateInfo,
-  DynamicMediaObject,
   JwLanguage,
+  MediaItem,
   MediaLink,
+  MediaSectionIdentifier,
   OldAppConfig,
   ScreenPreferences,
   SettingsValues,
@@ -10,6 +11,7 @@ import type {
 
 import { defineStore } from 'pinia';
 import { LocalStorage as QuasarStorage } from 'quasar';
+import { defaultAdditionalSection } from 'src/composables/useMediaSection';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { dateFromString, datesAreSame } from 'src/utils/date';
 import { parseJsonSafe, uuid } from 'src/utils/general';
@@ -77,10 +79,16 @@ export const useAppSettingsStore = defineStore('app-settings', {
             dateInfo
               .filter((day) => !!day.meeting)
               .forEach((day) => {
-                day.dynamicMedia =
-                  day.dynamicMedia.filter(
-                    (item) => item.source !== 'dynamic',
-                  ) || [];
+                // Remove dynamic media from all sections
+                Object.keys(day.mediaSections || {}).forEach((sectionId) => {
+                  const section = sectionId as MediaSectionIdentifier;
+                  if (day.mediaSections?.[section]) {
+                    day.mediaSections[section].items ??= [];
+                    day.mediaSections[section].items = day.mediaSections[
+                      section
+                    ].items.filter((item) => item.source !== 'dynamic');
+                  }
+                });
                 day.complete = false;
                 day.error = false;
               });
@@ -169,13 +177,13 @@ export const useAppSettingsStore = defineStore('app-settings', {
           ) as {
             additionalMediaMaps?: Record<
               string,
-              Partial<Record<string, DynamicMediaObject[]>>
+              Partial<Record<string, unknown[]>>
             >;
           };
 
           const currentAdditionalMediaMaps: Record<
             string,
-            Partial<Record<string, DynamicMediaObject[]>>
+            Partial<Record<string, unknown[]>>
           > = storedData.additionalMediaMaps || {};
 
           const currentLookupPeriods: Record<string, DateInfo[]> = JSON.parse(
@@ -191,13 +199,18 @@ export const useAppSettingsStore = defineStore('app-settings', {
             }
             const lookupPeriodForCongregation = currentLookupPeriods[congId];
             lookupPeriodForCongregation.forEach((day) => {
-              day.dynamicMedia = [];
+              // Initialize mediaSections if it doesn't exist
+              if (!day.mediaSections) {
+                day.mediaSections = {};
+              }
+              // Clear additional section
+              day.mediaSections['imported-media'] = defaultAdditionalSection;
               day.complete = false;
               day.error = false;
             });
             for (const [targetDate, additionalItems] of Object.entries(dates)) {
               if (!targetDate || !additionalItems) continue;
-              additionalItems.forEach((item) => {
+              (additionalItems as MediaItem[]).forEach((item) => {
                 item.source = 'additional';
               });
               const existingMediaItemsForDate =
@@ -205,21 +218,34 @@ export const useAppSettingsStore = defineStore('app-settings', {
                   datesAreSame(d.date, targetDate),
                 );
               if (existingMediaItemsForDate) {
-                const newAdditionalItems = additionalItems.filter(
+                const newAdditionalItems = (
+                  additionalItems as MediaItem[]
+                ).filter(
                   (item) =>
-                    !existingMediaItemsForDate?.dynamicMedia?.find(
-                      (m) => m.uniqueId === item.uniqueId,
+                    !existingMediaItemsForDate?.mediaSections?.[
+                      'imported-media'
+                    ]?.items?.find(
+                      (m: MediaItem) => m.uniqueId === item.uniqueId,
                     ),
                 );
-                existingMediaItemsForDate.dynamicMedia.push(
-                  ...newAdditionalItems,
-                );
+                if (
+                  !existingMediaItemsForDate.mediaSections['imported-media']
+                ) {
+                  existingMediaItemsForDate.mediaSections['imported-media'] =
+                    defaultAdditionalSection;
+                }
+                existingMediaItemsForDate.mediaSections[
+                  'imported-media'
+                ].items ??= [];
+                existingMediaItemsForDate.mediaSections[
+                  'imported-media'
+                ].items.push(...newAdditionalItems);
               } else {
                 lookupPeriodForCongregation.push({
                   complete: true,
                   date: dateFromString(targetDate),
-                  dynamicMedia: additionalItems,
                   error: false,
+                  mediaSections: {},
                   meeting: false,
                   today: false,
                 });

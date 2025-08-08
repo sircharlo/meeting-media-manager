@@ -1,6 +1,10 @@
 <template>
   <q-list
-    :class="['media-section', mediaList.uniqueId, { custom: isCustomSection }]"
+    :class="[
+      'media-section',
+      mediaList.config?.uniqueId,
+      { custom: isCustomSection },
+    ]"
     :style="sectionStyles"
   >
     <!-- Section Header -->
@@ -34,7 +38,7 @@
       ref="dragDropContainer"
       class="sortable-media"
       :class="{ 'drop-here': isDragging }"
-      :data-list="mediaList.uniqueId"
+      :data-list="mediaList.config?.uniqueId"
     >
       <template v-if="isEmpty && isDragging">
         <SectionEmptyState
@@ -46,7 +50,7 @@
         <!-- Render dividers -->
         <MediaDivider
           v-if="element.type === 'divider'"
-          :divider="element"
+          :divider="element as any"
           @delete="handleDeleteDivider"
           @update:color="
             (bgColor, textColor) =>
@@ -90,7 +94,7 @@
     <!-- Add Divider Dialog -->
     <DialogAddDivider
       v-model="showAddDividerDialog"
-      :dialog-id="`add-divider-${mediaList.uniqueId}`"
+      :dialog-id="`add-divider-${mediaList.config?.uniqueId}`"
       @ok="handleAddDividerResult"
     />
   </q-list>
@@ -98,9 +102,9 @@
 
 <script setup lang="ts">
 import type {
-  DynamicMediaObject,
-  MediaSection,
+  MediaItem as MediaItemType,
   MediaSectionIdentifier,
+  MediaSectionWithConfig,
 } from 'src/types';
 
 import DialogAddDivider from 'components/dialog/DialogAddDivider.vue';
@@ -118,14 +122,14 @@ import MediaSectionHeader from './MediaSectionHeader.vue';
 import SectionEmptyState from './SectionEmptyState.vue';
 
 const props = defineProps<{
-  mediaList: MediaSection;
+  mediaList: MediaSectionWithConfig;
   openImportMenu: (section: MediaSectionIdentifier) => void;
 }>();
 
 const emit = defineEmits<{
   'media-stopped': [];
   'update:is-dragging': [isDragging: boolean];
-  'update:sortable-items': [items: DynamicMediaObject[]];
+  'update:sortable-items': [items: MediaItemType[]];
 }>();
 
 const currentState = useCurrentStateStore();
@@ -159,17 +163,17 @@ const {
 // Use the media dividers composable
 import { useMediaDividers } from 'src/composables/useMediaDividers';
 const { addDivider, deleteDivider, updateDividerColors, updateDividerTitle } =
-  useMediaDividers(props.mediaList.uniqueId);
+  useMediaDividers(props.mediaList.config?.uniqueId);
 
 // Use the drag and drop composable
 const { dragDropContainer, isDragging, sortableItems } = useMediaDragAndDrop(
   visibleItems.value,
-  props.mediaList.uniqueId,
+  props.mediaList.config?.uniqueId || '',
 );
 
 // Computed styles
 const sectionStyles = computed(() => ({
-  '--bg-color': props.mediaList.bgColor || 'rgb(148, 94, 181)',
+  '--bg-color': props.mediaList.config?.bgColor || 'rgb(148, 94, 181)',
   '--text-color': getTextColor(props.mediaList),
 }));
 
@@ -226,16 +230,14 @@ watch(
   (newIsDragging) => {
     console.log('🔄 isDragging changed, emitting to parent:', {
       isDragging: newIsDragging,
-      sectionId: props.mediaList.uniqueId,
+      sectionId: props.mediaList.config?.uniqueId,
       sortableItems: sortableItems.value,
     });
     emit('update:is-dragging', newIsDragging);
     if (!newIsDragging) {
-      const newItems = sortableItems.value.map((item) => ({
-        ...item,
-        section: props.mediaList.uniqueId,
-      }));
-      emit('update:sortable-items', newItems);
+      // Note: MediaItem no longer has a section property
+      // The section is now determined by the key in mediaSections
+      emit('update:sortable-items', sortableItems.value);
     }
   },
 );

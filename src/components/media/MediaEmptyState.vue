@@ -4,7 +4,10 @@
       <div
         v-if="
           !currentSettings?.disableMediaFetching ||
-          !selectedDateObject?.dynamicMedia?.length
+          !selectedDateObject?.mediaSections ||
+          !Object.values(selectedDateObject.mediaSections).some(
+            (section) => section.length > 0,
+          )
         "
         class="row justify-center"
       >

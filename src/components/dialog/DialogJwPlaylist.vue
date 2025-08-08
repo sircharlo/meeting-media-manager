@@ -484,22 +484,22 @@ const addSelectedItems = async () => {
         await processMissingMediaInfo([multimediaItem], true);
 
         if (multimediaItem.KeySymbol !== 'nwt') {
-          const dynamicMediaItems = await dynamicMediaMapper(
+          const mediaItems = await dynamicMediaMapper(
             [multimediaItem],
             selectedDateObject.value.date,
             'playlist',
           );
 
           console.log(
-            '📋 Adding dynamic media item:',
-            dynamicMediaItems,
+            '📋 Adding media items:',
+            mediaItems,
             props.section,
             currentCongregation.value,
             selectedDateObject.value,
           );
 
           jwStore.addToAdditionMediaMap(
-            dynamicMediaItems,
+            mediaItems,
             props.section,
             currentCongregation.value,
             selectedDateObject.value,

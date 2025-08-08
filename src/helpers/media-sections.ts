@@ -1,51 +1,73 @@
-import type { MediaSection } from 'src/types';
+import type {
+  DateInfo,
+  MediaSection,
+  MediaSectionIdentifier,
+  MediaSectionWithConfig,
+} from 'src/types';
 
 import { i18n } from 'boot/i18n';
-import { standardSections } from 'src/constants/media';
+import { defaultAdditionalSection } from 'src/composables/useMediaSection';
+import { getMeetingSections, standardSections } from 'src/constants/media';
+import { isCoWeek } from 'src/helpers/date';
 import { useCurrentStateStore } from 'src/stores/current-state';
-
-export const initializeCustomSections = (reset = false) => {
-  const { selectedDateObject } = useCurrentStateStore();
-  if (!selectedDateObject) return;
-  if (!selectedDateObject.customSections || reset)
-    selectedDateObject.customSections = [];
-};
 
 export const addSection = () => {
   const { selectedDateObject } = useCurrentStateStore();
   if (!selectedDateObject) return;
-  initializeCustomSections();
+
+  const newSectionId = 'custom-' + Date.now().toString();
+
   const newSection: MediaSection = {
-    bgColor: getRandomColor(),
-    extraMediaShortcut: true,
+    ...defaultAdditionalSection.config,
+    bgColor: getRandomColor(), // Override with a random color for variety
     label: (i18n.global.t as (key: string) => string)('imported-media'),
     mmmIcon: 'mmm-additional-media',
-    uniqueId: 'custom-' + Date.now().toString(),
+    uniqueId: newSectionId,
   };
-  selectedDateObject?.customSections?.push(newSection);
+
+  // Add the new section to mediaSections with config
+  if (!selectedDateObject.mediaSections) {
+    selectedDateObject.mediaSections = {};
+  }
+  selectedDateObject.mediaSections[newSectionId] = {
+    config: newSection,
+    items: [],
+  };
+
+  console.log('✅ New section created:', {
+    config: newSection,
+    sectionId: newSectionId,
+  });
 };
 
 export const deleteSection = (uniqueId: string) => {
   const { selectedDateObject } = useCurrentStateStore();
-  if (!selectedDateObject?.customSections) return;
+  if (!selectedDateObject?.mediaSections) return;
 
-  const sectionIndex = selectedDateObject.customSections.findIndex(
-    (s) => s.uniqueId === uniqueId,
-  );
+  // Move media from the deleted section to additional section
+  if (selectedDateObject.mediaSections[uniqueId]) {
+    const mediaToMove = selectedDateObject.mediaSections[uniqueId].items;
+    if (mediaToMove?.length) {
+      selectedDateObject.mediaSections['imported-media'] ??=
+        defaultAdditionalSection;
+      selectedDateObject.mediaSections['imported-media'].items ??= [];
+      selectedDateObject.mediaSections['imported-media'].items.push(
+        ...mediaToMove,
+      );
+    }
 
-  if (sectionIndex === -1) return;
+    // Actually delete the section from mediaSections
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    delete selectedDateObject.mediaSections[uniqueId];
 
-  selectedDateObject.customSections.splice(sectionIndex, 1);
-
-  selectedDateObject.dynamicMedia
-    ?.filter((m) => m.section === uniqueId)
-    .forEach((m) => {
-      m.section = 'additional';
-      m.sectionOriginal = 'additional';
+    console.log('✅ Section deleted:', {
+      deletedSectionId: uniqueId,
+      remainingSections: Object.keys(selectedDateObject.mediaSections),
     });
+  }
 };
 
-const getRandomColor = () => {
+export const getRandomColor = () => {
   const min = 80; // Minimum brightness for each RGB channel
   const max = 230; // Maximum brightness for each RGB channel
   const randomChannel = () => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -62,14 +84,76 @@ export const isStandardSection = (section: string) => {
   return standardSections.includes(section);
 };
 
+function getMeetingSectionConfigs(section: MediaSectionIdentifier | undefined) {
+  if (!section) return { bgColor: getRandomColor(), uniqueId: '' };
+  if (section === 'ayfm') {
+    return {
+      jwIcon: '',
+      uniqueId: section,
+    };
+  }
+  if (section === 'lac') {
+    return {
+      jwIcon: '',
+      uniqueId: section,
+    };
+  }
+  if (section === 'tgw') {
+    return {
+      jwIcon: '',
+      uniqueId: section,
+    };
+  }
+  if (section === 'wt') {
+    return {
+      jwIcon: '',
+      uniqueId: section,
+    };
+  }
+  if (section === 'pt') {
+    return {
+      jwIcon: '',
+      uniqueId: section,
+    };
+  }
+  if (section === 'circuit-overseer') {
+    return {
+      jwIcon: '',
+      uniqueId: section,
+    };
+  }
+  return { bgColor: getRandomColor(), uniqueId: section };
+}
+
+export const createMeetingSections = (day: DateInfo) => {
+  const meetingType = day.meeting;
+  console.log('🔍 [createMeetingSections] meetingType', meetingType);
+  const sections = getMeetingSections(meetingType, isCoWeek(day.date));
+  console.log('🔍 [createMeetingSections] sections', sections);
+  sections.forEach((section) => {
+    console.log('🔍 [createMeetingSections] section', section);
+    const calculatedConfig = getMeetingSectionConfigs(section);
+    day.mediaSections[section] ??= {
+      config: calculatedConfig,
+      items: [],
+    };
+    const mediaSection = day.mediaSections[section];
+    mediaSection.config = calculatedConfig;
+  });
+  console.log(
+    '🔍 [createMeetingSections] day.mediaSections',
+    day.mediaSections,
+  );
+};
+
 export const getSectionBgColor = (section: MediaSection | undefined) => {
   if (!section || isStandardSection(section.uniqueId))
     return 'var(--q-primary)';
   return section.bgColor || 'var(--q-primary)';
 };
 
-export const getTextColor = (section: MediaSection) => {
-  const bgColor = section.bgColor;
+export const getTextColor = (section?: MediaSectionWithConfig) => {
+  const bgColor = section?.config?.bgColor;
   if (!bgColor) return '#ffffff';
   // Convert HEX to RGB
   let b, g, r;

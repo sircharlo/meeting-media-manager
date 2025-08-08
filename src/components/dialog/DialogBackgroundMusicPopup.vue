@@ -484,7 +484,11 @@ const getNextSong = async () => {
 
       // Handle meeting day song selection
       try {
-        const selectedDayMedia = selectedDateObject.value?.dynamicMedia ?? [];
+        // Get all media from all sections
+        const selectedDayMedia = Object.values(
+          selectedDateObject.value?.mediaSections ?? {},
+        ).flatMap((section) => section.items || []);
+
         const regex = /(_r\d{3,4}P)?\.\w+$/;
 
         const selectedDaySongs: SongItem[] = selectedDayMedia

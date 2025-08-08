@@ -33,50 +33,6 @@ export interface DownloadProgressItem {
 
 export type DownloadProgressItems = Record<string, DownloadProgressItem>;
 
-export interface DynamicMediaObject {
-  bgColor?: string;
-  cbs?: boolean;
-  children?: DynamicMediaObject[];
-  customDuration?: { max: number; min: number };
-  duration?: number;
-  extractCaption?: string;
-  filesize?: number;
-  fileUrl?: string;
-  footnote?: boolean;
-  hidden?: boolean;
-  isAudio?: boolean;
-  isImage?: boolean;
-  isVideo?: boolean;
-  markers?: VideoMarker[];
-  parentUniqueId?: string;
-  pubMediaId?: string;
-  repeat?: boolean;
-  section: MediaSectionIdentifier;
-  sectionOriginal: MediaSectionIdentifier;
-  sortOrderOriginal: number | string;
-  source: 'additional' | 'dynamic' | 'watched';
-  streamUrl?: string;
-  subtitlesUrl?: string;
-  tag?: Tag | undefined;
-  textColor?: string;
-  thumbnailUrl?: string;
-  title: string;
-  type?: 'divider' | 'media'; // New property to distinguish media items from dividers
-  uniqueId: string;
-}
-
-export interface DynamicMediaSection extends MediaSection {
-  items: DynamicMediaObject[];
-}
-
-export interface DynamicMediaSectionConfig {
-  condition: boolean;
-  extraMediaShortcut: boolean;
-  id: MediaSectionIdentifier;
-  jwIcon?: string;
-  labelKey: string;
-}
-
 export interface FileDownloader {
   dir: string;
   filename?: string;
@@ -95,11 +51,42 @@ export interface MediaDivider {
   uniqueId: string;
 }
 
+export interface MediaItem {
+  bgColor?: string;
+  cbs?: boolean;
+  children?: MediaItem[];
+  customDuration?: { max: number; min: number };
+  duration?: number;
+  extractCaption?: string;
+  filesize?: number;
+  fileUrl?: string;
+  footnote?: boolean;
+  hidden?: boolean;
+  isAudio?: boolean;
+  isImage?: boolean;
+  isVideo?: boolean;
+  markers?: VideoMarker[];
+  mwSection?: MediaSectionIdentifier;
+  parentUniqueId?: string;
+  pubMediaId?: string;
+  repeat?: boolean;
+  sortOrderOriginal?: number | string;
+  source?: 'additional' | 'dynamic' | 'watched';
+  streamUrl?: string;
+  subtitlesUrl?: string;
+  tag?: Tag;
+  textColor?: string;
+  thumbnailUrl?: string;
+  title: string;
+  type: 'divider' | 'media';
+  uniqueId: string;
+}
+
 export interface MediaSection {
   bgColor?: string;
   extraMediaShortcut?: boolean;
   jwIcon?: string;
-  label: string;
+  label?: string;
   mmmIcon?: string;
   repeat?: boolean; // Whether the section should repeat
   repeatInterval?: number; // Interval in seconds for images (default 10)
@@ -107,10 +94,11 @@ export interface MediaSection {
 }
 
 export type MediaSectionIdentifier =
-  | 'additional'
   | 'ayfm'
-  | 'circuitOverseer'
+  | 'circuit-overseer'
+  | 'imported-media'
   | 'lac'
+  | 'pt'
   | 'tgw'
   | 'wt'
   | string;
@@ -121,7 +109,7 @@ export interface SongItem {
   title?: string;
 }
 export interface SortableMediaList {
-  items: Ref<DynamicMediaObject[]>;
+  items: Ref<MediaItem[]>;
   jwIcon?: string | undefined;
   label: string;
   mmmIcon?: string | undefined;

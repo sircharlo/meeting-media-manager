@@ -20,6 +20,7 @@ export const useDialogStateStore = defineStore('dialogState', () => {
     component: string,
     props?: Record<string, unknown>,
   ) => {
+    console.log('🔄 [openDialog] Opening dialog:', id, component, props);
     openDialogs.value.set(id, {
       component,
       id,

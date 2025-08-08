@@ -43,8 +43,10 @@ const message = computed(() => {
   if (props.selectedDate && isWeMeetingDay(props.selectedDate.date)) {
     // Check if there's any media at all for this date
     const hasAnyMedia =
-      props.selectedDate.dynamicMedia &&
-      props.selectedDate.dynamicMedia.length > 0;
+      props.selectedDate.mediaSections &&
+      Object.values(props.selectedDate.mediaSections).some(
+        (section) => section.length > 0,
+      );
 
     if (!hasAnyMedia) {
       return t('there-are-no-media-items-for-the-selected-date');

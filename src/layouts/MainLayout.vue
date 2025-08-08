@@ -36,7 +36,11 @@ import { initializeElectronApi } from 'src/helpers/electron-api-manager';
 initializeElectronApi('MainLayout');
 
 import type { LanguageValue } from 'src/constants/locales';
-import type { ElectronIpcListenKey } from 'src/types';
+import type {
+  ElectronIpcListenKey,
+  MediaItem,
+  MediaSectionIdentifier,
+} from 'src/types';
 
 import {
   useBroadcastChannel,
@@ -51,6 +55,7 @@ import AnnouncementBanner from 'components/ui/AnnouncementBanner.vue';
 import NavDrawer from 'components/ui/NavDrawer.vue';
 import { storeToRefs } from 'pinia';
 import { useMeta, useQuasar } from 'quasar';
+import { defaultAdditionalSection } from 'src/composables/useMediaSection';
 import { SORTER } from 'src/constants/general';
 import {
   cleanCache,
@@ -487,48 +492,79 @@ const updateWatchFolderRef = async ({
     );
     if (!dayObj) return;
     if (event === 'addDir' || event === 'unlinkDir') {
-      for (let i = dayObj.dynamicMedia.length - 1; i >= 0; i--) {
-        if (dayObj.dynamicMedia[i]?.source === 'watched') {
-          dayObj.dynamicMedia.splice(i, 1);
+      // Remove watched items from all sections
+      Object.keys(dayObj.mediaSections).forEach((sectionId) => {
+        const section = sectionId as MediaSectionIdentifier;
+        const sectionMedia = dayObj.mediaSections[section]?.items;
+        if (!sectionMedia) return;
+        for (let i = sectionMedia.length - 1; i >= 0; i--) {
+          if (sectionMedia[i]?.source === 'watched') {
+            sectionMedia.splice(i, 1);
+          }
         }
-      }
+      });
     } else if (event === 'add') {
       if (!changedPath) return;
       const watchedItems = (await watchedItemMapper(day, changedPath)) || [];
 
       for (const watchedItem of watchedItems) {
-        if (
-          dayObj.dynamicMedia.find((i) => i.uniqueId === watchedItem.uniqueId)
-        ) {
-          continue;
-        }
+        // Check if item already exists in any section
+        let itemExists = false;
+        Object.values(dayObj.mediaSections).forEach((sectionMedia) => {
+          if (
+            sectionMedia.items?.find((i) => i.uniqueId === watchedItem.uniqueId)
+          ) {
+            itemExists = true;
+          }
+        });
+
+        if (itemExists) continue;
+
         watchedItem.sortOrderOriginal = 'watched-' + watchedItem.title;
 
+        // Add to additional section
+        dayObj.mediaSections ??= {};
+        dayObj.mediaSections['imported-media'] = defaultAdditionalSection;
+
+        dayObj.mediaSections['imported-media'].items ??= [];
+
         // Find the correct index to insert the item in the sorted order
-        const insertIndex = dayObj.dynamicMedia.findIndex(
-          (existingItem) =>
-            SORTER.compare(existingItem.title, watchedItem.title) > 0,
-        );
+        const insertIndex =
+          dayObj.mediaSections['imported-media'].items.findIndex(
+            (existingItem: MediaItem) =>
+              SORTER.compare(existingItem.title, watchedItem.title) > 0,
+          ) ?? -1;
 
         if (insertIndex === -1) {
           // If no larger item is found, push to the end
-          dayObj.dynamicMedia.push(watchedItem);
+          dayObj.mediaSections['imported-media'].items.push(watchedItem);
         } else {
           // Otherwise, insert at the correct index
-          dayObj.dynamicMedia.splice(insertIndex, 0, watchedItem);
+          dayObj.mediaSections['imported-media'].items.splice(
+            insertIndex,
+            0,
+            watchedItem,
+          );
         }
       }
     } else if (event === 'unlink') {
       if (!changedPath) return;
       const targetUrl = pathToFileURL(changedPath);
-      for (let i = dayObj.dynamicMedia.length - 1; i >= 0; i--) {
-        if (
-          dayObj.dynamicMedia[i]?.source === 'watched' &&
-          dayObj.dynamicMedia[i]?.fileUrl === targetUrl
-        ) {
-          dayObj.dynamicMedia.splice(i, 1);
+
+      // Remove watched items with matching fileUrl from all sections
+      Object.keys(dayObj.mediaSections).forEach((sectionId) => {
+        const section = sectionId as MediaSectionIdentifier;
+        const sectionMedia = dayObj.mediaSections[section]?.items;
+        if (!sectionMedia) return;
+        for (let i = sectionMedia.length - 1; i >= 0; i--) {
+          if (
+            sectionMedia[i]?.source === 'watched' &&
+            sectionMedia[i]?.fileUrl === targetUrl
+          ) {
+            sectionMedia.splice(i, 1);
+          }
         }
-      }
+      });
     }
   } catch (error) {
     errorCatcher(error);

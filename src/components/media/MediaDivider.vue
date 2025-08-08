@@ -136,9 +136,7 @@ const dividerStyles = computed(() => {
     backgroundColor:
       props.divider.bgColor ||
       getSectionBgColor(
-        selectedDateObject?.customSections?.find(
-          (section) => section.uniqueId === props.divider.section,
-        ),
+        selectedDateObject?.mediaSections?.[props.divider.section]?.config,
       ),
     color: props.divider.textColor || 'white',
   };

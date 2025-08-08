@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DynamicMediaObject } from 'src/types';
+import type { MediaItem as MediaItemType } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
@@ -91,7 +91,7 @@ const currentState = useCurrentStateStore();
 const { mediaPlaying } = storeToRefs(currentState);
 
 const props = defineProps<{
-  element: DynamicMediaObject;
+  element: MediaItemType;
   expanded: boolean;
 }>();
 

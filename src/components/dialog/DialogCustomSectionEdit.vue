@@ -20,10 +20,10 @@
           <div ref="listContainer">
             <q-item
               v-for="element in sortableItems"
-              :key="element.uniqueId"
-              :data-unique-id="element.uniqueId"
+              :key="element.config?.uniqueId"
+              :data-unique-id="element.config?.uniqueId"
               :style="{
-                '--bg-color': element.bgColor,
+                '--bg-color': element.config?.bgColor,
               }"
             >
               <q-item-section side>
@@ -41,10 +41,10 @@
               <q-item-section>
                 <q-item-label>
                   <q-input
-                    v-model="labels[element.uniqueId]"
+                    v-model="labels[element.config?.uniqueId || '']"
                     dense
-                    @blur="updateLabel(element.uniqueId)"
-                    @keyup.enter="updateLabel(element.uniqueId)"
+                    @blur="updateLabel(element.config?.uniqueId)"
+                    @keyup.enter="updateLabel(element.config?.uniqueId)"
                   />
                 </q-item-label>
               </q-item-section>
@@ -57,13 +57,13 @@
                       transition-show="scale"
                     >
                       <q-color
-                        v-model="hexValues[element.uniqueId]"
+                        v-model="hexValues[element.config?.uniqueId || '']"
                         format-model="hex"
                         no-footer
                         no-header
                         @change="
                           (val) => {
-                            element.bgColor = val;
+                            if (element.config) element.config.bgColor = val;
                           }
                         "
                       />
@@ -75,7 +75,7 @@
                     flat
                     icon="mmm-delete"
                     round
-                    @click="handleDeleteSection(element.uniqueId)"
+                    @click="handleDeleteSection(element.config?.uniqueId)"
                   />
                 </div>
               </q-item-section>
@@ -85,7 +85,7 @@
       </div>
       <div
         class="row q-px-md q-pb-md"
-        :class="selectedDateObject?.customSections?.length ? 'q-mt-md' : ''"
+        :class="selectedDateObject?.mediaSections?.length ? 'q-mt-md' : ''"
       >
         <q-btn
           v-if="selectedDateObject"
@@ -104,12 +104,13 @@
 </template>
 
 <script setup lang="ts">
-import type { MediaSection } from 'src/types';
+import type { MediaSectionWithConfig } from 'src/types';
 
 import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
 import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
+import { MW_MEETING_SECTIONS, WE_MEETING_SECTIONS } from 'src/constants/media';
 import { addSection, deleteSection } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, ref, watch } from 'vue';
@@ -136,41 +137,50 @@ const dialogValue = computed({
   set: (value) => emit('update:modelValue', value),
 });
 
-const hexValues = ref<Record<string, string>>({});
-const labels = ref<Record<string, string>>({});
+const hexValues = ref<Record<string, string | undefined>>({});
+const labels = ref<Record<string, string | undefined>>({});
 
-const updateLabel = (uuid: string) => {
+const updateLabel = (uuid: string | undefined) => {
+  if (!uuid) return;
   const newLabel = labels.value[uuid];
-  if (!selectedDateObject.value?.customSections || !newLabel) return;
+  if (!selectedDateObject.value?.mediaSections || !newLabel) return;
 
-  const section = selectedDateObject.value.customSections.find(
-    (s) => s.uniqueId === uuid,
-  );
-  if (!section) return;
+  const sectionData = selectedDateObject.value.mediaSections[uuid];
+  if (!sectionData?.config) return;
 
-  section.label = newLabel;
+  sectionData.config.label = newLabel;
 };
 
 // Handle order change after drag and drop
 const handleOrderChange = () => {
-  if (!selectedDateObject.value?.customSections) return;
+  if (!selectedDateObject.value?.mediaSections) return;
 
-  // Update the customSections array with the new order
-  selectedDateObject.value.customSections = sortableItems.value;
+  // Reorder the sections in mediaSections
+
+  selectedDateObject.value.mediaSections = sortableItems.value.reduce(
+    (acc, section) => {
+      acc[section.config?.uniqueId || ''] = section;
+      return acc;
+    },
+    {} as Record<string, MediaSectionWithConfig>,
+  );
 
   console.log('✅ Custom sections reordered:', {
     newOrder: sortableItems.value.map((section) => ({
-      label: section.label,
-      uniqueId: section.uniqueId,
+      label: section.config?.label,
+      uniqueId: section.config?.uniqueId,
     })),
   });
 };
 
 // Initialize drag and drop with proper [parent, values] pattern
-const [listContainer, sortableItems] = useDragAndDrop<MediaSection>([], {
-  dragHandle: '.drag-handle',
-  onDragend: handleOrderChange,
-});
+const [listContainer, sortableItems] = useDragAndDrop<MediaSectionWithConfig>(
+  [],
+  {
+    dragHandle: '.drag-handle',
+    onDragend: handleOrderChange,
+  },
+);
 
 const closeDialog = () => {
   emit('update:modelValue', false);
@@ -184,7 +194,8 @@ const handleAddSection = () => {
   }, 0);
 };
 
-const handleDeleteSection = (uniqueId: string) => {
+const handleDeleteSection = (uniqueId: string | undefined) => {
+  if (!uniqueId) return;
   deleteSection(uniqueId);
   // Force re-initialization after deleting a section
   setTimeout(() => {
@@ -193,32 +204,46 @@ const handleDeleteSection = (uniqueId: string) => {
 };
 
 const initializeValues = () => {
+  const daySections = selectedDateObject.value?.mediaSections;
+  if (!daySections) return;
   console.log('🔍 initializeValues called', {
-    customSections: selectedDateObject.value?.customSections,
-    customSectionsLength: selectedDateObject.value?.customSections?.length,
+    mediaSections: selectedDateObject.value?.mediaSections,
     selectedDateObject: !!selectedDateObject.value,
   });
 
-  if (!selectedDateObject.value?.customSections) {
-    console.log('❌ No customSections available');
+  if (!selectedDateObject.value?.mediaSections) {
+    console.log('❌ No mediaSections available');
     return;
   }
 
-  labels.value = selectedDateObject.value.customSections.reduce(
-    (acc, section) => ({
+  // Get custom sections (non-standard sections)
+
+  labels.value = Object.entries(daySections).reduce(
+    (acc, [sectionId, section]) => ({
       ...acc,
-      [section.uniqueId]: section.label || '',
+      [sectionId]: section.config?.label || t(sectionId || ''),
     }),
     {},
   );
-  hexValues.value = selectedDateObject.value.customSections.reduce(
-    (acc, section) => ({
+  hexValues.value = Object.entries(daySections).reduce(
+    (acc, [sectionId, section]) => ({
       ...acc,
-      [section.uniqueId]: section.bgColor || '#ffffff',
+      [sectionId]: section.config?.bgColor || '#ffffff',
     }),
     {},
   );
-  sortableItems.value = selectedDateObject.value.customSections || [];
+  const meetingSections =
+    WE_MEETING_SECTIONS.concat(MW_MEETING_SECTIONS).concat('circuit-overseer');
+  sortableItems.value = Object.entries(daySections)
+    .filter(
+      ([sectionId, section]) =>
+        !meetingSections.includes(sectionId) && !!section?.config,
+    )
+    .map(([sectionId, section]) => ({
+      config: section.config,
+      items: section.items,
+      uniqueId: sectionId,
+    }));
 
   console.log('✅ Values initialized', {
     hexValues: hexValues.value,
@@ -229,19 +254,16 @@ const initializeValues = () => {
 
 // Watch for changes in selectedDateObject and dialog visibility
 watch(
-  () => [selectedDateObject.value?.customSections, dialogValue.value],
-  ([customSections, isDialogOpen]) => {
+  () => [selectedDateObject.value?.mediaSections, dialogValue.value],
+  ([mediaSections, isDialogOpen]) => {
     console.log('👀 Watch triggered', {
-      customSections: !!customSections,
-      customSectionsLength: Array.isArray(customSections)
-        ? customSections.length
-        : 0,
       isDialogOpen,
+      mediaSections: !!mediaSections,
     });
 
-    if (isDialogOpen && customSections) {
+    if (isDialogOpen && mediaSections) {
       console.log(
-        '🔄 Dialog opened or customSections changed, initializing values',
+        '🔄 Dialog opened or mediaSections changed, initializing values',
       );
       initializeValues();
     }
