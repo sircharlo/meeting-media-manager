@@ -293,6 +293,50 @@ const updateMediaListItems = (
       items: [],
     };
   }
+
+  // Get the current items in this section before the update
+  const currentItems =
+    selectedDateObject.value.mediaSections[sectionId].items || [];
+
+  // Find items that were moved from other sections (items that are in the new list but weren't in the current list)
+  const movedItems = items.filter(
+    (newItem) =>
+      !currentItems.some(
+        (currentItem) => currentItem.uniqueId === newItem.uniqueId,
+      ),
+  );
+
+  // Remove moved items from their original sections
+  if (movedItems.length > 0) {
+    Object.keys(selectedDateObject.value.mediaSections).forEach(
+      (otherSectionId) => {
+        if (otherSectionId !== sectionId) {
+          const otherSection =
+            selectedDateObject.value?.mediaSections[
+              otherSectionId as MediaSectionIdentifier
+            ];
+          if (otherSection?.items) {
+            // Remove items that were moved to the new section
+            otherSection.items = otherSection.items.filter(
+              (item) =>
+                !movedItems.some(
+                  (movedItem) => movedItem.uniqueId === item.uniqueId,
+                ),
+            );
+          }
+        }
+      },
+    );
+
+    console.log(
+      '🔄 Moved items between sections:',
+      movedItems.map((item) => item.title),
+      'to section:',
+      sectionId,
+    );
+  }
+
+  // Update the target section with the new items
   selectedDateObject.value.mediaSections[sectionId].items = items;
 
   console.log(
@@ -1368,6 +1412,24 @@ Mousetrap.bind('space', () => {
 Mousetrap.bind('esc', () => {
   executeLocalShortcut('shortcutMediaStop');
 });
+
+// Listen for force calendar update event
+// useEventListener(
+//   window,
+//   'force-calendar-update',
+//   () => {
+//     // Force a reactive update by triggering a change in the selectedDateObject
+//     if (selectedDateObject.value) {
+//       // Create a new reference to force Vue to re-render
+//       const currentDate = selectedDate.value;
+//       selectedDate.value = '';
+//       nextTick(() => {
+//         selectedDate.value = currentDate;
+//       });
+//     }
+//   },
+//   { passive: true },
+// );
 
 function findNextSelectableMedia(mediaList: MediaItem[], startIndex: number) {
   // Search from next item onwards

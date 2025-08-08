@@ -598,9 +598,56 @@ const mediaSortCanBeReset = computed<boolean>(() => {
 const resetSort = () => {
   if (!selectedDateObject.value?.mediaSections) return;
 
-  // For the new structure, we need to sort each section individually
-  // since media items are now organized by section
+  // First, move items back to their original sections based on mwSection
+  const itemsToMove: {
+    fromSection: MediaSectionIdentifier;
+    item: MediaItem;
+    toSection: MediaSectionIdentifier;
+  }[] = [];
 
+  Object.entries(selectedDateObject.value.mediaSections).forEach(
+    ([currentSectionId, sectionData]) => {
+      if (!sectionData?.items) return;
+
+      sectionData.items.forEach((item) => {
+        // If item has mwSection and it's different from current section, it needs to be moved
+        if (item.mwSection && item.mwSection !== currentSectionId) {
+          itemsToMove.push({
+            fromSection: currentSectionId as MediaSectionIdentifier,
+            item,
+            toSection: item.mwSection,
+          });
+        }
+      });
+    },
+  );
+
+  // Move items to their original sections
+  itemsToMove.forEach(({ fromSection, item, toSection }) => {
+    // Remove from current section
+    const fromSectionData =
+      selectedDateObject.value?.mediaSections[fromSection];
+    if (fromSectionData?.items) {
+      fromSectionData.items = fromSectionData.items.filter(
+        (i) => i.uniqueId !== item.uniqueId,
+      );
+    }
+
+    // Add to original section
+    if (!selectedDateObject.value?.mediaSections[toSection]) {
+      if (selectedDateObject.value) {
+        selectedDateObject.value.mediaSections[toSection] = {
+          config: { uniqueId: toSection },
+          items: [],
+        };
+      }
+    }
+    if (selectedDateObject.value?.mediaSections[toSection]?.items) {
+      selectedDateObject.value.mediaSections[toSection].items.push(item);
+    }
+  });
+
+  // Then sort each section by sortOrderOriginal
   const sectionsToSort = [
     'tgw',
     'ayfm',
@@ -621,7 +668,13 @@ const resetSort = () => {
     );
   });
 
+  // Trigger visual update by dispatching events
   window.dispatchEvent(new CustomEvent('reset-sort-order'));
+
+  // Add a small delay to ensure the reset-sort-order event is processed first
+  // setTimeout(() => {
+  //   window.dispatchEvent(new CustomEvent('force-calendar-update'));
+  // }, 100);
 };
 
 const openCustomSectionEdit = () => {
