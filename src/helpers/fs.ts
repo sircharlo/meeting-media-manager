@@ -1,5 +1,6 @@
 import type {
   Asset,
+  MediaSectionIdentifier,
   MultimediaItem,
   PublicationFetcher,
   Release,
@@ -291,12 +292,17 @@ export const watchExternalFolder = async (folder?: string) => {
     const currentState = useCurrentStateStore();
     if (!currentState.currentCongregation) return;
     jwStore.lookupPeriod[currentState.currentCongregation]?.forEach((day) => {
-      if (day.dynamicMedia) {
-        for (let i = day.dynamicMedia.length - 1; i >= 0; i--) {
-          if (day.dynamicMedia[i]?.source === 'watched') {
-            day.dynamicMedia.splice(i, 1);
+      if (day.mediaSections) {
+        Object.keys(day.mediaSections).forEach((sectionId) => {
+          const section = sectionId as MediaSectionIdentifier;
+          const sectionMedia = day.mediaSections[section]?.items;
+          if (!sectionMedia) return;
+          for (let i = sectionMedia.length - 1; i >= 0; i--) {
+            if (sectionMedia[i]?.source === 'watched') {
+              sectionMedia.splice(i, 1);
+            }
           }
-        }
+        });
       }
     });
     unwatchFolders();

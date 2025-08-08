@@ -26,7 +26,7 @@ import {
   unwatchFolders,
   watchFolder,
 } from 'main/fs';
-import { getAllScreens, setScreenPreferences } from 'main/screen';
+import { getAllScreens } from 'main/screen';
 import { setElectronUrlVariables, shouldQuit } from 'main/session';
 import {
   registerShortcut,
@@ -89,10 +89,6 @@ handleIpcSend('setElectronUrlVariables', (_e, variables: string) => {
   setElectronUrlVariables(JSON.parse(variables));
 });
 
-handleIpcSend('setScreenPreferences', (_e, prefs: string) => {
-  setScreenPreferences(JSON.parse(prefs));
-});
-
 handleIpcSend('authorizedClose', () => {
   toggleAuthorizedClose(true);
   if (shouldQuit) app.quit();
@@ -127,8 +123,8 @@ handleIpcSend('unregisterAllShortcuts', () => {
   unregisterAllShortcuts();
 });
 
-handleIpcSend('moveMediaWindow', (_e, displayNr, fullscreen, noEvent) => {
-  moveMediaWindow(displayNr, fullscreen, noEvent);
+handleIpcSend('moveMediaWindow', (_e, displayNr, fullscreen) => {
+  moveMediaWindow(displayNr, fullscreen);
 });
 
 handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {

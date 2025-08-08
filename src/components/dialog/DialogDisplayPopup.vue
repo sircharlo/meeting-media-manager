@@ -27,7 +27,21 @@
                   color="primary"
                   :disable="screen.mainWindow"
                   :outline="screen.mainWindow || !screen.mediaWindow"
-                  @click="screenPreferences.preferredScreenNumber = index"
+                  @click="
+                    () => {
+                      console.log(
+                        '🔍 [Screen Button] Clicked for index:',
+                        index,
+                      );
+                      screenPreferences.preferredScreenNumber = index;
+                      const isFullscreen = !screenPreferences.preferWindowed;
+                      console.log(
+                        '🔍 [Screen Button] Calling moveMediaWindow with:',
+                        { index, isFullscreen },
+                      );
+                      moveMediaWindow(index, isFullscreen);
+                    }
+                  "
                 >
                   <q-icon
                     class="q-mr-sm"
@@ -62,7 +76,23 @@
                 screenList?.length < 2 || screenPreferences.preferWindowed
               "
               unelevated
-              @click="screenPreferences.preferWindowed = false"
+              @click="
+                () => {
+                  console.log('🔍 [Full Screen Button] Clicked');
+                  screenPreferences.preferWindowed = false;
+                  console.log(
+                    '🔍 [Full Screen Button] Calling moveMediaWindow with:',
+                    {
+                      screen: screenPreferences.preferredScreenNumber,
+                      fullscreen: true,
+                    },
+                  );
+                  moveMediaWindow(
+                    screenPreferences.preferredScreenNumber,
+                    true,
+                  );
+                }
+              "
             >
               <q-icon class="q-mr-sm" name="mmm-fullscreen" size="xs" />
               {{ t('full-screen') }}
@@ -82,7 +112,23 @@
                   : 'primary'
               "
               unelevated
-              @click="screenPreferences.preferWindowed = true"
+              @click="
+                () => {
+                  console.log('🔍 [Windowed Button] Clicked');
+                  screenPreferences.preferWindowed = true;
+                  console.log(
+                    '🔍 [Windowed Button] Calling moveMediaWindow with:',
+                    {
+                      screen: screenPreferences.preferredScreenNumber,
+                      fullscreen: false,
+                    },
+                  );
+                  moveMediaWindow(
+                    screenPreferences.preferredScreenNumber,
+                    false,
+                  );
+                }
+              "
             >
               <q-icon class="q-mr-sm" name="mmm-window" size="xs" />
               {{ t('windowed') }}
@@ -179,7 +225,7 @@
       </div>
     </div>
   </q-menu>
-  <q-dialog v-model="showCustomBackgroundPicker">
+  <BaseDialog v-model="showCustomBackgroundPicker" :dialog-id="props.dialogId">
     <div class="bg-secondary-contrast flex q-px-none" style="flex-flow: column">
       <div class="text-h6 row q-px-md q-pt-lg">
         {{ t('choose-an-image') }}
@@ -226,22 +272,24 @@
           @click="
             jwpubImportFilePath = '';
             jwpubImages = [];
+            showCustomBackgroundPicker = false;
           "
         >
           {{ t('cancel') }}
         </q-btn>
       </div>
     </div>
-  </q-dialog>
+  </BaseDialog>
 </template>
 <script setup lang="ts">
-import type { Display, MultimediaItem, ScreenPreferences } from 'src/types';
+import type { Display, MultimediaItem } from 'src/types';
 
 import {
   useBroadcastChannel,
   useEventListener,
   watchImmediate,
 } from '@vueuse/core';
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getMemorialBackground } from 'src/helpers/jw-media';
@@ -272,6 +320,10 @@ const {
   mediaWindowVisible,
 } = storeToRefs(currentState);
 
+const props = defineProps<{
+  dialogId: string;
+}>();
+
 const open = defineModel<boolean>({ default: false });
 
 const {
@@ -281,7 +333,6 @@ const {
   openFileDialog,
   path,
   pathToFileURL,
-  setScreenPreferences,
 } = window.electronApi;
 const { basename, join } = path;
 
@@ -367,14 +418,6 @@ const chooseCustomBackground = async (reset?: boolean) => {
   }
 };
 
-const windowScreenListener = (event: CustomEvent<ScreenPreferences>) => {
-  try {
-    screenPreferences.value = event.detail;
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
-
 const fetchScreens = async () => {
   try {
     screenList.value = await getAllScreens();
@@ -408,13 +451,31 @@ const { post: postCameraStream } = useBroadcastChannel<
 });
 
 watch(displayCameraId, (newCameraId) => {
-  if (currentState.mediaPlaying) return;
+  if (currentState.mediaIsPlaying) return;
   if (newCameraId) {
     postCameraStream(newCameraId);
   } else {
-    currentState.mediaPlayingUrl = '';
+    currentState.mediaPlaying.url = '';
   }
 });
+
+// Listen for requests to get current media window variables
+const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
+  string,
+  string
+>({
+  name: 'get-current-media-window-variables',
+});
+
+watchImmediate(
+  () => getCurrentMediaWindowVariables.value,
+  () => {
+    // Push current camera stream when requested
+    if (displayCameraId.value) {
+      postCameraStream(displayCameraId.value);
+    }
+  },
+);
 
 const notifyInvalidBackgroundFile = () => {
   createTemporaryNotification({
@@ -493,50 +554,9 @@ watch(
   },
 );
 
-watchImmediate(
-  screenPreferences,
-  (newScreenPreferences, oldScreenPreferences) => {
-    try {
-      const noChange =
-        JSON.stringify(oldScreenPreferences) ===
-        JSON.stringify(newScreenPreferences);
-      if (noChange) return;
-      setScreenPreferences(JSON.stringify(newScreenPreferences));
-      moveMediaWindow(
-        newScreenPreferences.preferredScreenNumber,
-        newScreenPreferences.preferWindowed,
-        true,
-      );
-      fetchScreens();
-    } catch (error) {
-      errorCatcher(error, {
-        contexts: {
-          fn: { name: 'ScreenPreferencesWatcher', newScreenPreferences },
-        },
-      });
-    }
-  },
-  { deep: true },
-);
-
-useEventListener(window, 'windowScreen-update', windowScreenListener, {
-  passive: true,
-});
 useEventListener(window, 'screen-trigger-update', fetchScreens, {
   passive: true,
 });
-
-useEventListener<CustomEvent>(
-  window,
-  'toggleFullScreenFromMediaWindow',
-  () => {
-    if (screenList.value.length > 1) {
-      screenPreferences.value.preferWindowed =
-        !screenPreferences.value.preferWindowed;
-    }
-  },
-  { passive: true },
-);
 
 const { data: mediaWindowSize } = useBroadcastChannel<
   Record<string, number>,

@@ -36,9 +36,18 @@ import { initializeElectronApi } from 'src/helpers/electron-api-manager';
 initializeElectronApi('MainLayout');
 
 import type { LanguageValue } from 'src/constants/locales';
-import type { ElectronIpcListenKey } from 'src/types';
+import type {
+  ElectronIpcListenKey,
+  MediaItem,
+  MediaSectionIdentifier,
+} from 'src/types';
 
-import { watchDebounced, watchImmediate, whenever } from '@vueuse/core';
+import {
+  useBroadcastChannel,
+  watchDebounced,
+  watchImmediate,
+  whenever,
+} from '@vueuse/core';
 import { queues } from 'boot/globals';
 import HeaderBase from 'components/header/HeaderBase.vue';
 import ActionIsland from 'components/ui/ActionIsland.vue';
@@ -46,6 +55,7 @@ import AnnouncementBanner from 'components/ui/AnnouncementBanner.vue';
 import NavDrawer from 'components/ui/NavDrawer.vue';
 import { storeToRefs } from 'pinia';
 import { useMeta, useQuasar } from 'quasar';
+import { defaultAdditionalSection } from 'src/composables/useMediaSection';
 import { SORTER } from 'src/constants/general';
 import {
   cleanCache,
@@ -130,6 +140,7 @@ const {
   currentCongregation,
   currentSettings,
   downloadProgress,
+  mediaIsPlaying,
   mediaPlaying,
   online,
   selectedDate,
@@ -192,15 +203,19 @@ watch(currentCongregation, (newCongregation, oldCongregation) => {
       downloadBackgroundMusic();
 
       if (currentSettings.value?.enableCacheAutoClear) {
+        console.group('🗑️ Cache Auto-Clear');
         console.log(
-          'Clearing cache files automatically based on user settings...',
+          '🗑️ Clearing cache files automatically based on user settings...',
         );
         deleteCacheFiles('smart')
           .then(() => {
-            console.log('Cache files cleared successfully');
+            console.log('✅ Cache files cleared successfully');
+            console.groupEnd();
           })
           .catch((error) => {
+            console.log('❌ Error clearing cache:', error);
             errorCatcher(error);
+            console.groupEnd();
           });
       }
 
@@ -354,6 +369,7 @@ watch(
       return;
     }
 
+    console.group('👁️ CO Week Watcher');
     console.log('👁️ CO Week watcher triggered:', {
       congregation: {
         new: newCurrentCongregation,
@@ -387,8 +403,10 @@ watch(
       }
 
       console.log('✅ CO week updates completed');
+      console.groupEnd();
     } else {
       console.log('🏢 Congregation changed, skipping CO week update');
+      console.groupEnd();
     }
   },
 );
@@ -474,48 +492,79 @@ const updateWatchFolderRef = async ({
     );
     if (!dayObj) return;
     if (event === 'addDir' || event === 'unlinkDir') {
-      for (let i = dayObj.dynamicMedia.length - 1; i >= 0; i--) {
-        if (dayObj.dynamicMedia[i]?.source === 'watched') {
-          dayObj.dynamicMedia.splice(i, 1);
+      // Remove watched items from all sections
+      Object.keys(dayObj.mediaSections).forEach((sectionId) => {
+        const section = sectionId as MediaSectionIdentifier;
+        const sectionMedia = dayObj.mediaSections[section]?.items;
+        if (!sectionMedia) return;
+        for (let i = sectionMedia.length - 1; i >= 0; i--) {
+          if (sectionMedia[i]?.source === 'watched') {
+            sectionMedia.splice(i, 1);
+          }
         }
-      }
+      });
     } else if (event === 'add') {
       if (!changedPath) return;
       const watchedItems = (await watchedItemMapper(day, changedPath)) || [];
 
       for (const watchedItem of watchedItems) {
-        if (
-          dayObj.dynamicMedia.find((i) => i.uniqueId === watchedItem.uniqueId)
-        ) {
-          continue;
-        }
+        // Check if item already exists in any section
+        let itemExists = false;
+        Object.values(dayObj.mediaSections).forEach((sectionMedia) => {
+          if (
+            sectionMedia.items?.find((i) => i.uniqueId === watchedItem.uniqueId)
+          ) {
+            itemExists = true;
+          }
+        });
+
+        if (itemExists) continue;
+
         watchedItem.sortOrderOriginal = 'watched-' + watchedItem.title;
 
+        // Add to additional section
+        dayObj.mediaSections ??= {};
+        dayObj.mediaSections['imported-media'] = defaultAdditionalSection;
+
+        dayObj.mediaSections['imported-media'].items ??= [];
+
         // Find the correct index to insert the item in the sorted order
-        const insertIndex = dayObj.dynamicMedia.findIndex(
-          (existingItem) =>
-            SORTER.compare(existingItem.title, watchedItem.title) > 0,
-        );
+        const insertIndex =
+          dayObj.mediaSections['imported-media'].items.findIndex(
+            (existingItem: MediaItem) =>
+              SORTER.compare(existingItem.title, watchedItem.title) > 0,
+          ) ?? -1;
 
         if (insertIndex === -1) {
           // If no larger item is found, push to the end
-          dayObj.dynamicMedia.push(watchedItem);
+          dayObj.mediaSections['imported-media'].items.push(watchedItem);
         } else {
           // Otherwise, insert at the correct index
-          dayObj.dynamicMedia.splice(insertIndex, 0, watchedItem);
+          dayObj.mediaSections['imported-media'].items.splice(
+            insertIndex,
+            0,
+            watchedItem,
+          );
         }
       }
     } else if (event === 'unlink') {
       if (!changedPath) return;
       const targetUrl = pathToFileURL(changedPath);
-      for (let i = dayObj.dynamicMedia.length - 1; i >= 0; i--) {
-        if (
-          dayObj.dynamicMedia[i]?.source === 'watched' &&
-          dayObj.dynamicMedia[i]?.fileUrl === targetUrl
-        ) {
-          dayObj.dynamicMedia.splice(i, 1);
+
+      // Remove watched items with matching fileUrl from all sections
+      Object.keys(dayObj.mediaSections).forEach((sectionId) => {
+        const section = sectionId as MediaSectionIdentifier;
+        const sectionMedia = dayObj.mediaSections[section]?.items;
+        if (!sectionMedia) return;
+        for (let i = sectionMedia.length - 1; i >= 0; i--) {
+          if (
+            sectionMedia[i]?.source === 'watched' &&
+            sectionMedia[i]?.fileUrl === targetUrl
+          ) {
+            sectionMedia.splice(i, 1);
+          }
         }
-      }
+      });
     }
   } catch (error) {
     errorCatcher(error);
@@ -533,7 +582,7 @@ bcClose.onmessage = (event) => {
     const meetingDay =
       !!selectedDateObject.value?.today && !!selectedDateObject.value?.meeting;
     if (
-      (mediaPlaying.value ||
+      (mediaIsPlaying.value ||
         (currentCongregation.value && // a congregation is selected
           !currentSettings.value?.disableMediaFetching && // media fetching is enabled
           meetingDay && // today is a meeting day
@@ -650,6 +699,17 @@ const previousState = ref<{
   wasOnline: false,
 });
 
+// Broadcast the three values to the media player page using useBroadcastChannel
+const { post: postUrlVariables } = useBroadcastChannel<
+  { base: string | undefined; mediator: string | undefined },
+  { base: string | undefined; mediator: string | undefined }
+>({
+  name: 'url-variables',
+});
+const { post: postOnline } = useBroadcastChannel<boolean, boolean>({
+  name: 'online',
+});
+
 watchImmediate(
   (): [string | undefined, string | undefined, boolean] => [
     jwStore.urlVariables?.base,
@@ -662,6 +722,9 @@ watchImmediate(
     boolean,
   ]) => {
     const prev = previousState.value;
+
+    postUrlVariables({ base, mediator });
+    postOnline(online);
 
     // Only get fonts and MEPS info if:
     // 1. Coming online for the first time (!prev.wasOnline && online)
@@ -677,6 +740,77 @@ watchImmediate(
 
     // Update previous state
     previousState.value = { base, mediator, wasOnline: online };
+  },
+);
+
+// Send hideMediaLogo to the media player page using useBroadcastChannel
+const { post: postHideMediaLogo } = useBroadcastChannel<
+  boolean | undefined,
+  boolean | undefined
+>({
+  name: 'hide-media-logo',
+});
+
+watchImmediate(
+  () => currentSettings.value?.hideMediaLogo,
+  (newHideMediaLogo) => {
+    postHideMediaLogo(newHideMediaLogo);
+  },
+);
+
+// Send yeartext to the media player page using useBroadcastChannel
+const { post: postYeartext } = useBroadcastChannel<
+  string | undefined,
+  string | undefined
+>({
+  name: 'yeartext',
+});
+
+watchImmediate(
+  () => currentState.yeartext,
+  (newYeartext) => {
+    postYeartext(newYeartext);
+  },
+);
+
+// Receive media playing action from the media player page using useBroadcastChannel
+const { data: mediaPlayingAction } = useBroadcastChannel<
+  '' | 'pause' | 'play' | 'website',
+  '' | 'pause' | 'play' | 'website'
+>({
+  name: 'media-window-media-action',
+});
+
+watchImmediate(
+  () => mediaPlayingAction.value,
+  (newMediaPlayingAction) => {
+    console.log(
+      '🔄 [onMounted] mediaPlayingAction changed:',
+      newMediaPlayingAction,
+    );
+    mediaPlaying.value.action = newMediaPlayingAction;
+  },
+);
+
+// Listen for requests to get current media window variables
+const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
+  string,
+  string
+>({
+  name: 'get-current-media-window-variables',
+});
+
+watchImmediate(
+  () => getCurrentMediaWindowVariables.value,
+  () => {
+    // Push current values when requested
+    postUrlVariables({
+      base: jwStore.urlVariables?.base,
+      mediator: jwStore.urlVariables?.mediator,
+    });
+    postOnline(currentState.online);
+    postHideMediaLogo(currentSettings.value?.hideMediaLogo);
+    postYeartext(currentState.yeartext);
   },
 );
 </script>

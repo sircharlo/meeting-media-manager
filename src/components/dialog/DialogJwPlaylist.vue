@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="open" persistent>
+  <BaseDialog v-model="dialogValue" :dialog-id="dialogId" persistent>
     <div
       class="bg-secondary-contrast large-overlay q-px-none flex"
       style="flex-flow: column"
@@ -117,34 +117,33 @@
         <div class="col-shrink q-gutter-x-sm">
           <q-btn
             v-if="selectedItems.length"
-            v-close-popup
             color="primary"
             :label="t('add') + ` (${selectedItems.length})`"
             @click="addSelectedItems"
           />
           <q-btn
             v-else
-            v-close-popup
             color="negative"
             flat
             :label="t('cancel')"
-            @click="resetSelection"
+            @click="handleCancel"
           />
         </div>
       </div>
     </div>
-  </q-dialog>
+  </BaseDialog>
 </template>
 
 <script setup lang="ts">
 import type {
   JwPlaylistItem,
-  MediaSection,
+  MediaSectionIdentifier,
   MultimediaItem,
   PlaylistTagItem,
 } from 'src/types';
 
-import { whenever } from '@vueuse/core';
+import BaseDialog from 'components/dialog/BaseDialog.vue';
+import { storeToRefs } from 'pinia';
 import { JPG_EXTENSIONS } from 'src/constants/media';
 import { isCoWeek } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -159,18 +158,29 @@ import { getTempPath } from 'src/utils/fs';
 import { findDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
-import { ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
 // Props
 const props = defineProps<{
+  dialogId: string;
   jwPlaylistPath: string;
-  section: MediaSection | undefined;
+  modelValue: boolean;
+  section: MediaSectionIdentifier | undefined;
 }>();
 
-const open = defineModel<boolean>({ default: false });
+const emit = defineEmits<{
+  cancel: [];
+  ok: [];
+  'update:modelValue': [value: boolean];
+}>();
+
+const dialogValue = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value),
+});
 
 const loading = ref<boolean>(false);
 const playlistItems = ref<
@@ -183,7 +193,7 @@ const selectedItems = ref<number[]>([]);
 const playlistName = ref<string>('');
 
 const currentState = useCurrentStateStore();
-const { currentCongregation, selectedDateObject } = currentState;
+const { currentCongregation, selectedDateObject } = storeToRefs(currentState);
 const jwStore = useJwStore();
 
 const { decompress, executeQuery, fs, path } = window.electronApi;
@@ -346,28 +356,29 @@ const formatDuration = (item: JwPlaylistItem) => {
 };
 
 const addSelectedItems = async () => {
+  console.group('📋 JW Playlist Processing');
   try {
     loading.value = true;
     console.log(
-      'Adding selected items',
+      '📋 Adding selected items',
       selectedItems.value,
-      selectedDateObject,
+      selectedDateObject.value,
     );
-    if (!selectedItems.value.length || !selectedDateObject) return;
+    if (!selectedItems.value.length || !selectedDateObject.value) return;
 
     const selectedPlaylistItems = selectedItems.value
       .map((index) => playlistItems.value[index])
       .filter(Boolean);
 
-    console.log('Selected playlist items', selectedPlaylistItems);
+    console.log('📋 Selected playlist items', selectedPlaylistItems);
     const outputPath = join(
       await getTempPath(),
       basename(props.jwPlaylistPath),
     );
 
-    console.log('Output path', outputPath);
+    console.log('📁 Output path', outputPath);
 
-    // Process items sequentially
+    // Process items sequentially and wait for each to complete
     for (let i = 0; i < selectedPlaylistItems.length; i++) {
       const item = selectedPlaylistItems[i];
       if (!item) continue;
@@ -387,10 +398,14 @@ const addSelectedItems = async () => {
 
       const playlistItemName = `${i + 1} - ${item.Label}`;
       const itemLabel = `${playlistName.value ? playlistName.value + ' - ' : ''}${playlistItemName}`;
-      console.log('Processing item:', item);
+      console.group(
+        `🔄 Processing Item ${i + 1}/${selectedPlaylistItems.length} - ${item.Label}`,
+      );
+      console.log('📋 Item details:', item);
+
       if (!item.OriginalFilename) {
         // Handle video using downloadAdditionalRemoteVideo
-        console.log('Processing video item:', itemLabel);
+        console.log('🎥 Processing video item:', itemLabel);
 
         // Create media link object for the video
         const lang = getJwLangCode(item.MepsLanguage) || 'E';
@@ -402,7 +417,7 @@ const addSelectedItems = async () => {
           pub: item.KeySymbol,
           track: item.Track,
         });
-        console.log('Pub download links:', pubDownload);
+        console.log('🔗 Pub download links:', pubDownload);
 
         if (
           !pubDownload?.files ||
@@ -433,10 +448,11 @@ const addSelectedItems = async () => {
           customDuration,
         );
 
-        console.log('Video item added:', itemLabel);
+        console.log('✅ Video item added:', itemLabel);
+        console.groupEnd();
       } else {
         // Handle non-video items (images, audio, etc.) as before
-        console.log('Processing non-video item:', itemLabel);
+        console.log('🖼️ Processing non-video item:', itemLabel);
 
         const multimediaItem: MultimediaItem = {
           BeginParagraphOrdinal: 0,
@@ -464,39 +480,57 @@ const addSelectedItems = async () => {
           VerseNumbers: item.VerseNumbers,
         };
 
-        // Process single item
+        // Process single item and wait for completion
         await processMissingMediaInfo([multimediaItem], true);
 
         if (multimediaItem.KeySymbol !== 'nwt') {
-          const dynamicMediaItems = await dynamicMediaMapper(
+          const mediaItems = await dynamicMediaMapper(
             [multimediaItem],
-            selectedDateObject.date,
+            selectedDateObject.value.date,
             'playlist',
           );
 
-          console.log('Adding dynamic media item:', dynamicMediaItems);
-
-          // Add to media immediately
-          jwStore.addToAdditionMediaMap(
-            dynamicMediaItems,
+          console.log(
+            '📋 Adding media items:',
+            mediaItems,
             props.section,
-            currentCongregation,
-            selectedDateObject,
-            isCoWeek(selectedDateObject?.date),
+            currentCongregation.value,
+            selectedDateObject.value,
+          );
+
+          jwStore.addToAdditionMediaMap(
+            mediaItems,
+            props.section,
+            currentCongregation.value,
+            selectedDateObject.value,
+            isCoWeek(selectedDateObject?.value.date),
           );
         }
 
-        console.log('Non-video item added:', itemLabel);
+        console.log('✅ Non-video item added:', itemLabel);
+        console.groupEnd();
       }
     }
 
-    resetSelection();
-    open.value = false;
+    console.log('✅ All items processed successfully');
+    dialogValue.value = false;
+    emit('ok');
   } catch (error) {
+    console.log('❌ Error processing playlist items:', error);
     errorCatcher(error);
   } finally {
     loading.value = false;
+    resetSelection();
+    console.groupEnd();
   }
+};
+
+const handleCancel = () => {
+  // Reset loading states
+  loading.value = false;
+  resetSelection();
+  dialogValue.value = false;
+  emit('cancel');
 };
 
 const resetSelection = () => {
@@ -505,10 +539,36 @@ const resetSelection = () => {
   playlistName.value = '';
 };
 
-whenever(open, () => {
-  resetSelection();
-  if (props.jwPlaylistPath) {
-    loadPlaylistItems();
-  }
-});
+// Watch for changes in jwPlaylistPath
+watch(
+  () => props.jwPlaylistPath,
+  (newPath: string) => {
+    console.log('🎯 jwPlaylistPath changed to:', newPath);
+    if (newPath) {
+      loadPlaylistItems();
+    }
+  },
+);
+
+// Watch for dialog closing to reset loading states
+watch(
+  () => dialogValue.value,
+  (isOpen) => {
+    if (!isOpen) {
+      // Reset loading states when dialog closes
+      loading.value = false;
+    }
+  },
+);
+
+// Initialize when component mounts
+resetSelection();
+console.log(
+  '🎯 DialogJwPlaylist mounted with jwPlaylistPath:',
+  props.jwPlaylistPath,
+);
+if (props.jwPlaylistPath) {
+  console.log('🎯 Loading playlist items for path:', props.jwPlaylistPath);
+  loadPlaylistItems();
+}
 </script>

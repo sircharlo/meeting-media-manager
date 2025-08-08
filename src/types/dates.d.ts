@@ -1,10 +1,15 @@
-import type { DynamicMediaObject } from './media';
+import type { MediaItem, MediaSection, MediaSectionIdentifier } from './media';
 
 export interface DateInfo {
   complete: boolean;
   date: Date;
-  dynamicMedia: DynamicMediaObject[];
   error: boolean;
+  mediaSections: Record<MediaSectionIdentifier, MediaSectionWithConfig>;
   meeting: 'mw' | 'we' | false;
   today: boolean;
+}
+
+export interface MediaSectionWithConfig {
+  config?: MediaSection;
+  items?: MediaItem[];
 }

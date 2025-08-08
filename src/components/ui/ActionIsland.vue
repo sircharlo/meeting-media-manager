@@ -23,7 +23,7 @@
       <DialogDownloadsPopup v-model="downloadPopup" />
       <DialogBackgroundMusicPopup ref="musicPopupRef" v-model="musicPopup" />
       <DialogObsPopup v-model="obsPopup" />
-      <DialogDisplayPopup v-model="displayPopup" />
+      <DialogDisplayPopup v-model="displayPopup" dialog-id="display-popup" />
     </q-chip>
   </div>
 </template>

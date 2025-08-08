@@ -1,6 +1,7 @@
 import type decompress from 'decompress';
 import type { default as FsExtra } from 'fs-extra';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
+import type robot from 'robotjs';
 import type { ConversionOptions } from 'src-electron/preload/converters';
 import type {
   FileItem,
@@ -63,6 +64,7 @@ export interface ElectronApi {
   fileUrlToPath: (url?: string) => string;
   fs: typeof FsExtra;
   getAllScreens: () => Promise<Display[]>;
+
   getAppDataPath: () => Promise<string>;
   getLocales: () => Promise<string[]>;
   getLocalPathFromFileObject: (fileObject: File | string | undefined) => string;
@@ -82,7 +84,6 @@ export interface ElectronApi {
   moveMediaWindow: (
     targetScreenNumber?: number,
     windowedMode?: boolean,
-    noEvent?: boolean,
   ) => void;
   navigateWebsiteWindow: (action: NavigateWebsiteAction) => void;
   onDownloadCancelled: (callback: (args: { id: string }) => void) => void;
@@ -156,9 +157,10 @@ export interface ElectronApi {
   ) => Promise<FileItem[]>;
   registerShortcut: (name: keyof SettingsValues, shortcut: string) => void;
   removeListeners: (channel: ElectronIpcListenKey) => void;
+  robot: typeof robot;
   setAutoStartAtLogin: (value: boolean) => void;
   setElectronUrlVariables: (variables: string) => void;
-  setScreenPreferences: (screenPreferences: string) => void;
+
   startWebsiteStream: () => void;
   toggleMediaWindow: (show: boolean) => void;
   unregisterAllShortcuts: () => void;
@@ -194,7 +196,6 @@ export type ElectronIpcListenKey =
   | 'screenChange'
   | 'screenPrefsChange'
   | 'shortcut'
-  | 'toggleFullScreenFromMediaWindow'
   | 'watchFolderUpdate'
   | 'websiteWindowClosed';
 
@@ -208,7 +209,6 @@ export type ElectronIpcSendKey =
   | 'openDiscussion'
   | 'openExternal'
   | 'setElectronUrlVariables'
-  | 'setScreenPreferences'
   | 'toggleMediaWindow'
   | 'toggleOpenAtLogin'
   | 'toggleWebsiteWindow'

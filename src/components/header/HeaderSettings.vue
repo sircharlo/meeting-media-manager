@@ -3,6 +3,7 @@
     v-model="cacheClearConfirmPopup"
     v-model:cache-clear-type="cacheClearType"
     :cache-analysis="cacheAnalysis"
+    :dialog-id="'header-settings-cache-clear'"
   />
   <q-btn v-if="selectedDate" color="white-transparent" unelevated>
     <q-icon class="q-mr-sm" name="mmm-tools" size="xs" />
@@ -43,7 +44,9 @@
         <q-item
           v-close-popup
           clickable
-          :disable="calculatingCacheSize"
+          :disable="
+            calculatingCacheSize || !cacheAnalysis?.unusedCacheFoldersSize
+          "
           @click="confirmDeleteCacheFiles('smart')"
         >
           <q-item-section avatar>

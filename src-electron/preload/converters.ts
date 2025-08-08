@@ -85,6 +85,7 @@ export const convertPdfToImages = async (
         canvas.height = scaledViewport.height;
 
         const renderContext: RenderParameters = {
+          canvas: canvas,
           canvasContext: context,
           viewport: scaledViewport,
         };

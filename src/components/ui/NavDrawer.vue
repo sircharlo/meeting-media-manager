@@ -31,8 +31,8 @@
       :class="route.path.startsWith('/media-calendar') ? navActiveClass : ''"
       clickable
       :disable="!currentSettings || invalidSettings()"
-      :disabled="mediaPlaying || undefined"
-      :to="mediaPlaying ? undefined : { path: '/media-calendar' }"
+      :disabled="mediaIsPlaying || undefined"
+      :to="mediaIsPlaying ? undefined : { path: '/media-calendar' }"
       @click="stopPlayingMediaFirst()"
     >
       <q-tooltip
@@ -57,12 +57,12 @@
       :class="route.path.startsWith('/present-website') ? navActiveClass : ''"
       clickable
       :disable="!currentSettings || invalidSettings()"
-      :disabled="mediaPlaying || undefined"
-      :to="mediaPlaying ? undefined : { path: '/present-website' }"
+      :disabled="mediaIsPlaying || undefined"
+      :to="mediaIsPlaying ? undefined : { path: '/present-website' }"
       @click="stopPlayingMediaFirst()"
     >
       <q-tooltip
-        v-if="miniState && !mediaPlaying"
+        v-if="miniState && !mediaIsPlaying"
         anchor="center right"
         :delay="1000"
         self="center left"
@@ -80,12 +80,12 @@
         route.path.startsWith('/congregation-selector') ? navActiveClass : ''
       "
       clickable
-      :disabled="mediaPlaying || undefined"
-      :to="mediaPlaying ? undefined : { path: '/congregation-selector' }"
+      :disabled="mediaIsPlaying || undefined"
+      :to="mediaIsPlaying ? undefined : { path: '/congregation-selector' }"
       @click="stopPlayingMediaFirst()"
     >
       <q-tooltip
-        v-if="miniState && !mediaPlaying"
+        v-if="miniState && !mediaIsPlaying"
         anchor="center right"
         :delay="1000"
         self="center left"
@@ -105,12 +105,12 @@
       :class="route.path.startsWith('/settings') ? navActiveClass : ''"
       clickable
       :disable="!currentSettings || route.fullPath.includes('wizard')"
-      :disabled="mediaPlaying || undefined"
-      :to="mediaPlaying ? undefined : { path: '/settings' }"
+      :disabled="mediaIsPlaying || undefined"
+      :to="mediaIsPlaying ? undefined : { path: '/settings' }"
       @click="stopPlayingMediaFirst()"
     >
       <q-tooltip
-        v-if="miniState && !mediaPlaying"
+        v-if="miniState && !mediaIsPlaying"
         anchor="center right"
         :delay="1000"
         self="center left"
@@ -154,7 +154,7 @@ watch(isHovered, (hovered) => {
 
 const currentState = useCurrentStateStore();
 const { invalidSettings } = currentState;
-const { currentSettings, mediaPlaying } = storeToRefs(currentState);
+const { currentSettings, mediaIsPlaying } = storeToRefs(currentState);
 
 const $q = useQuasar();
 const route = useRoute();
@@ -178,7 +178,7 @@ whenever(
 const { t } = useI18n();
 
 const stopPlayingMediaFirst = () => {
-  if (mediaPlaying.value) {
+  if (mediaIsPlaying.value) {
     createTemporaryNotification({
       caption: ref(t('stop-playing-media-first')).value,
       group: 'stop-playing-media',

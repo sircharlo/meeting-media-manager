@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import { useBroadcastChannel } from '@vueuse/core';
+import { useBroadcastChannel, watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useCurrentStateStore } from 'stores/current-state';
 import { ref, watch } from 'vue';
@@ -35,6 +35,22 @@ watch(
   () => subtitlesVisible.value,
   (newSubtitlesVisible, oldSubtitlesVisible) => {
     if (newSubtitlesVisible !== oldSubtitlesVisible) post(newSubtitlesVisible);
+  },
+);
+
+// Listen for requests to get current media window variables
+const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
+  string,
+  string
+>({
+  name: 'get-current-media-window-variables',
+});
+
+watchImmediate(
+  () => getCurrentMediaWindowVariables.value,
+  () => {
+    // Push current subtitles visibility when requested
+    post(subtitlesVisible.value);
   },
 );
 </script>

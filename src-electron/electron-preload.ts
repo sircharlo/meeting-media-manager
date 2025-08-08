@@ -1,5 +1,6 @@
 import type { ElectronApi } from 'src/types';
 
+import robot from '@jitsi/robotjs';
 import { contextBridge, webUtils } from 'electron/renderer';
 import fs from 'fs-extra';
 import { initCloseListeners } from 'src-electron/preload/close';
@@ -52,6 +53,7 @@ const electronApi: ElectronApi = {
   fileUrlToPath,
   fs,
   getAllScreens: () => invoke('getAllScreens'),
+
   getAppDataPath: () => invoke('getAppDataPath'),
   getLocales: () => invoke('getLocales'),
   getLocalPathFromFileObject: (fo) =>
@@ -62,8 +64,7 @@ const electronApi: ElectronApi = {
   getVideoDuration,
   inferExtension,
   isDownloadErrorExpected: () => invoke('isDownloadErrorExpected'),
-  moveMediaWindow: (t, w, ne) =>
-    send('moveMediaWindow', t, w === undefined ? undefined : !w, ne),
+  moveMediaWindow: (t, w) => send('moveMediaWindow', t, w),
   navigateWebsiteWindow,
   onDownloadCancelled: (cb) => listen('downloadCancelled', cb),
   onDownloadCompleted: (cb) => listen('downloadCompleted', cb),
@@ -84,9 +85,10 @@ const electronApi: ElectronApi = {
   readdir: readDirectory,
   registerShortcut: (n, s) => invoke('registerShortcut', n, s),
   removeListeners: (c) => removeAllIpcListeners(c),
+  robot,
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
   setElectronUrlVariables: (v) => send('setElectronUrlVariables', v),
-  setScreenPreferences: (s) => send('setScreenPreferences', s),
+
   startWebsiteStream,
   toggleMediaWindow: (s) => send('toggleMediaWindow', s),
   unregisterAllShortcuts: () => send('unregisterAllShortcuts'),
@@ -95,11 +97,5 @@ const electronApi: ElectronApi = {
   watchFolder: (p) => send('watchFolder', p),
   zoomWebsiteWindow,
 };
-
-listen('toggleFullScreenFromMediaWindow', () => {
-  window.dispatchEvent(
-    new CustomEvent<undefined>('toggleFullScreenFromMediaWindow'),
-  );
-});
 
 contextBridge.exposeInMainWorld('electronApi', electronApi);

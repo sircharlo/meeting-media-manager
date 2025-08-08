@@ -3,7 +3,12 @@
     bordered
     class="bg-primary text-white text-bigger text-weight-medium"
   >
-    <DialogAbout ref="aboutInfo" v-model="aboutModal" />
+    <DialogAbout
+      ref="aboutInfo"
+      v-model="aboutModal"
+      :dialog-id="dialogId"
+      @hide="aboutModal = false"
+    />
     <div class="row items-center q-mr-md">
       <q-btn
         round
@@ -102,6 +107,7 @@ const { currentCongregation } = storeToRefs(currentState);
 
 const aboutModal = ref(false);
 const aboutInfo = ref<InstanceType<typeof DialogAbout> | null>(null);
+const dialogId = 'about-dialog';
 
 // const hoveredLogo = ref(false);
 // const activeLogo = computed(() => {
