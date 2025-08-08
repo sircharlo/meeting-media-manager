@@ -4,8 +4,22 @@ import { useBroadcastChannel } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { standardSections } from 'src/constants/media';
 import { useCurrentStateStore } from 'stores/current-state';
-import { nextTick, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
+/**
+ * Section Repeat Logic
+ *
+ * This composable implements section repeat functionality that works like a music player repeat button:
+ *
+ * 1. When a section has repeat enabled, clicking the repeat button will start playing the section
+ * 2. The section will loop through all its media items in order
+ * 3. When the last item finishes, it will automatically start from the first item again
+ * 4. Images are displayed for a configurable interval (default 10 seconds)
+ * 5. Videos/audio play normally and automatically advance to the next item when finished
+ * 6. The repeat can be stopped at any time by clicking the repeat button again
+ *
+ * The repeat state is synchronized across all windows using broadcast channels.
+ */
 export function useMediaSectionRepeat() {
   const currentState = useCurrentStateStore();
   const { mediaPlaying, selectedDateObject } = storeToRefs(currentState);
@@ -27,50 +41,24 @@ export function useMediaSectionRepeat() {
   const isRepeating = ref(false);
   const imageDisplayTimer = ref<null | number>(null);
 
-  // Get all media items for a section
+  // Get all media items for a section (visible, non-divider items)
   const getSectionMediaItems = (
     sectionId: MediaSectionIdentifier,
   ): MediaItem[] => {
-    console.log('🔄 [getSectionMediaItems] Starting for sectionId:', sectionId);
-
     if (!selectedDateObject.value?.mediaSections) {
-      console.log(
-        '❌ [getSectionMediaItems] No mediaSections found, returning empty array',
-      );
       return [];
     }
 
-    const allItems: MediaItem[] = [];
-    Object.values(selectedDateObject.value.mediaSections).forEach(
-      (sectionMedia) => {
-        allItems.push(...(sectionMedia.items || []));
-      },
-    );
-    console.log(
-      '📊 [getSectionMediaItems] Total media items:',
-      allItems.length,
+    const sectionItems =
+      selectedDateObject.value.mediaSections[sectionId]?.items || [];
+
+    // Filter out hidden items and dividers
+    const visibleItems = sectionItems.filter(
+      (item) => !item.hidden && item.type !== 'divider',
     );
 
-    const filteredItems =
-      selectedDateObject.value.mediaSections[sectionId]?.items?.filter(
-        (item: MediaItem) => !item.hidden && item.type !== 'divider',
-      ) || [];
-
-    console.log(
-      '🔍 [getSectionMediaItems] Filtered items for section:',
-      filteredItems.length,
-    );
-    console.log(
-      '🔍 [getSectionMediaItems] Filtered items details:',
-      filteredItems.map((item) => ({
-        hidden: item.hidden,
-        sortOrderOriginal: item.sortOrderOriginal,
-        type: item.type,
-        uniqueId: item.uniqueId,
-      })),
-    );
-
-    const sortedItems = filteredItems.sort((a, b) => {
+    // Sort by sortOrderOriginal
+    return visibleItems.sort((a, b) => {
       const aOrder =
         typeof a.sortOrderOriginal === 'number'
           ? a.sortOrderOriginal
@@ -81,169 +69,56 @@ export function useMediaSectionRepeat() {
           : parseInt(String(b.sortOrderOriginal)) || 0;
       return aOrder - bOrder;
     });
-
-    console.log(
-      '📋 [getSectionMediaItems] Final sorted items count:',
-      sortedItems.length,
-    );
-    console.log(
-      '📋 [getSectionMediaItems] Sorted items order:',
-      sortedItems.map((item) => ({
-        sortOrder: item.sortOrderOriginal,
-        uniqueId: item.uniqueId,
-      })),
-    );
-
-    return sortedItems;
-  };
-
-  // Get current item index from the section items
-  const getCurrentItemIndex = (sectionId: MediaSectionIdentifier): number => {
-    if (!currentRepeatingSection.value || !isRepeating.value) {
-      console.log('❌ [getCurrentItemIndex] Not repeating, returning -1');
-      return -1;
-    }
-
-    const sectionItems = getSectionMediaItems(sectionId);
-    const currentPlayingUniqueId = mediaPlaying.value.uniqueId;
-
-    console.log('🔍 [getCurrentItemIndex] Looking for current item:', {
-      currentPlayingUniqueId,
-      sectionItemsCount: sectionItems.length,
-    });
-
-    const currentIndex = sectionItems.findIndex(
-      (item) => item.uniqueId === currentPlayingUniqueId,
-    );
-
-    console.log('📊 [getCurrentItemIndex] Found index:', currentIndex);
-    return currentIndex;
   };
 
   // Get the current section's repeat settings
   const getSectionRepeatSettings = (sectionId: MediaSectionIdentifier) => {
-    console.log(
-      '⚙️ [getSectionRepeatSettings] Looking for settings for sectionId:',
-      sectionId,
-    );
-
     if (!selectedDateObject.value?.mediaSections) {
-      console.log('❌ [getSectionRepeatSettings] No mediaSections found');
       return null;
     }
 
     const sectionData = selectedDateObject.value.mediaSections[sectionId];
-    if (!sectionData?.config) {
-      console.log(
-        '❌ [getSectionRepeatSettings] No config found for sectionId:',
-        sectionId,
-      );
-      return null;
-    }
-
-    console.log('✅ [getSectionRepeatSettings] Found settings:', {
-      repeat: sectionData.config.repeat,
-      repeatInterval: sectionData.config.repeatInterval,
-      uniqueId: sectionData.config.uniqueId,
-    });
-
-    return sectionData.config;
+    return sectionData?.config || null;
   };
 
   // Check if a section is a custom section
   const isCustomSection = (sectionId: MediaSectionIdentifier) => {
-    console.log(
-      '🔍 [isCustomSection] Checking if sectionId is custom:',
-      sectionId,
-    );
-
-    if (!selectedDateObject.value?.mediaSections) {
-      console.log(
-        '❌ [isCustomSection] No mediaSections found, returning false',
-      );
-      return false;
-    }
-
-    const isCustom = !standardSections.includes(sectionId);
-
-    console.log('🔍 [isCustomSection] Is custom section?', isCustom);
-
-    return isCustom;
+    return !standardSections.includes(sectionId);
   };
 
   // Start repeating a section
   const startRepeatingSection = (sectionId: MediaSectionIdentifier) => {
-    console.log(
-      '🚀 [startRepeatingSection] Starting repeat for sectionId:',
-      sectionId,
-    );
-
     // Only allow custom sections to be repeated
     if (!isCustomSection(sectionId)) {
-      console.warn(
-        '⚠️ [startRepeatingSection] Only custom sections can be repeated:',
-        sectionId,
-      );
+      console.warn('Only custom sections can be repeated:', sectionId);
       return;
     }
 
     const sectionItems = getSectionMediaItems(sectionId);
-    console.log(
-      '📊 [startRepeatingSection] Section items count:',
-      sectionItems.length,
-    );
-
     if (sectionItems.length === 0) {
-      console.log('❌ [startRepeatingSection] No items found, stopping');
+      console.warn('No items found in section:', sectionId);
       return;
     }
 
     // Check if the section has repeat enabled
     const sectionSettings = getSectionRepeatSettings(sectionId);
     if (!sectionSettings?.repeat) {
-      console.warn(
-        '⚠️ [startRepeatingSection] Section repeat not enabled for:',
-        sectionId,
-      );
+      console.warn('Section repeat not enabled for:', sectionId);
       return;
     }
-
-    console.log(
-      '✅ [startRepeatingSection] All checks passed, starting repeat',
-    );
-    console.log('📊 [startRepeatingSection] Repeat settings:', {
-      repeat: sectionSettings.repeat,
-      repeatInterval: sectionSettings.repeatInterval,
-    });
 
     currentRepeatingSection.value = sectionId;
     isRepeating.value = true;
 
-    console.log('🔄 [startRepeatingSection] State updated:', {
-      currentRepeatingSection: currentRepeatingSection.value,
-      isRepeating: isRepeating.value,
-    });
-
     // Notify other windows that section repeat has started
-    console.log(
-      '📡 [startRepeatingSection] Broadcasting start message to other windows',
-    );
     postSectionRepeat({ action: 'start', sectionId });
 
     // Play the first item
-    console.log('▶️ [startRepeatingSection] Playing first item');
-    playCurrentItem();
+    // playNextItem();
   };
 
   // Stop repeating
   const stopRepeating = () => {
-    console.log('🛑 [stopRepeating] Stopping repeat');
-    console.log('📊 [stopRepeating] Current state before stop:', {
-      currentRepeatingSection: currentRepeatingSection.value,
-      hasImageTimer: !!imageDisplayTimer.value,
-      isRepeating: isRepeating.value,
-    });
-
     const wasRepeating = isRepeating.value;
     const wasSection = currentRepeatingSection.value;
 
@@ -251,369 +126,148 @@ export function useMediaSectionRepeat() {
     currentRepeatingSection.value = null;
 
     if (imageDisplayTimer.value) {
-      console.log('⏰ [stopRepeating] Clearing image display timer');
       clearTimeout(imageDisplayTimer.value);
       imageDisplayTimer.value = null;
     }
 
-    console.log('✅ [stopRepeating] State cleared');
-
     // Notify other windows that section repeat has stopped
     if (wasRepeating && wasSection) {
-      console.log(
-        '📡 [stopRepeating] Broadcasting stop message to other windows',
-      );
       postSectionRepeat({ action: 'stop', sectionId: wasSection });
     }
   };
 
-  // Play the current item in the section
-  const playCurrentItem = () => {
-    console.log('▶️ [playCurrentItem] Starting to play current item');
-    console.log('📊 [playCurrentItem] Current state:', {
-      currentRepeatingSection: currentRepeatingSection.value,
-      isRepeating: isRepeating.value,
-    });
-
+  // Play the next item in the section
+  const playNextItem = () => {
     if (!currentRepeatingSection.value || !isRepeating.value) {
-      console.log('❌ [playCurrentItem] Not repeating or no section, stopping');
       return;
     }
 
     const sectionItems = getSectionMediaItems(currentRepeatingSection.value);
-    console.log(
-      '📊 [playCurrentItem] Section items count:',
-      sectionItems.length,
-    );
-
     if (sectionItems.length === 0) {
-      console.log('❌ [playCurrentItem] No section items, stopping repeat');
       stopRepeating();
       return;
     }
 
-    // Get current index from the currently playing media
-    const currentIndex = getCurrentItemIndex(currentRepeatingSection.value);
-    let targetIndex = currentIndex;
+    // Find the current item index
+    const currentPlayingUniqueId = mediaPlaying.value.uniqueId;
+    let currentIndex = sectionItems.findIndex(
+      (item) => item.uniqueId === currentPlayingUniqueId,
+    );
 
-    // If no current item is playing or current item is not in this section, start from beginning
+    // If current item not found or not in this section, start from beginning
     if (currentIndex === -1) {
-      console.log(
-        '🔄 [playCurrentItem] No current item playing, starting from index 0',
-      );
-      targetIndex = 0;
+      currentIndex = -1; // Will be incremented to 0
     }
 
-    const currentItem = sectionItems[targetIndex];
-    console.log(
-      '📋 [playCurrentItem] Current item at index',
-      targetIndex,
-      ':',
-      {
-        fileUrl: currentItem?.fileUrl,
-        isImage: currentItem?.isImage,
-        streamUrl: currentItem?.streamUrl,
-        type: currentItem?.type,
-        uniqueId: currentItem?.uniqueId,
-      },
-    );
-
-    if (!currentItem) {
-      console.log(
-        '❌ [playCurrentItem] No current item found, stopping repeat',
-      );
-      stopRepeating();
-      return;
-    }
-
-    // Clear any existing image timer
-    if (imageDisplayTimer.value) {
-      console.log('⏰ [playCurrentItem] Clearing existing image display timer');
-      clearTimeout(imageDisplayTimer.value);
-      imageDisplayTimer.value = null;
-    }
-
-    // Set the media to play using existing broadcast channels
-    console.log('🎵 [playCurrentItem] Setting media to play:', {
-      subtitlesUrl: currentItem.subtitlesUrl || '',
-      uniqueId: currentItem.uniqueId,
-      url: currentItem.fileUrl || currentItem.streamUrl || '',
-    });
-
-    mediaPlaying.value.action = 'play';
-    mediaPlaying.value.url = currentItem.fileUrl || currentItem.streamUrl || '';
-    mediaPlaying.value.uniqueId = currentItem.uniqueId;
-    mediaPlaying.value.subtitlesUrl = currentItem.subtitlesUrl || '';
-
-    console.log('✅ [playCurrentItem] Media state updated successfully');
-
-    // If this is an image, set up a timer to move to the next item
-    if (currentItem.isImage) {
-      const sectionSettings = getSectionRepeatSettings(
-        currentRepeatingSection.value,
-      );
-      const interval = sectionSettings?.repeatInterval || 10;
-
-      console.log(
-        '⏰ [playCurrentItem] Setting image display timer for',
-        interval,
-        'seconds',
-      );
-      console.log('📊 [playCurrentItem] Timer settings:', {
-        interval,
-        sectionSettings: sectionSettings?.repeatInterval,
-      });
-
-      imageDisplayTimer.value = window.setTimeout(() => {
-        console.log(
-          '⏰ [playCurrentItem] Image display timer fired, moving to next item',
-        );
-        nextItem();
-      }, interval * 1000);
-    }
-  };
-
-  // Move to the next item in the section
-  const nextItem = async () => {
-    console.log('⏭️ [nextItem] Moving to next item');
-    console.log('📊 [nextItem] Current state:', {
-      currentRepeatingSection: currentRepeatingSection.value,
-      isRepeating: isRepeating.value,
-    });
-
-    if (!currentRepeatingSection.value || !isRepeating.value) {
-      console.log('❌ [nextItem] Not repeating or no section, stopping');
-      return;
-    }
-
-    const sectionItems = getSectionMediaItems(currentRepeatingSection.value);
-    console.log('📊 [nextItem] Section items count:', sectionItems.length);
-
-    if (sectionItems.length === 0) {
-      console.log('❌ [nextItem] No section items, stopping repeat');
-      stopRepeating();
-      return;
-    }
-
-    // Get current index from the currently playing media
-    const currentIndex = getCurrentItemIndex(currentRepeatingSection.value);
-    console.log('📊 [nextItem] Current index from media:', currentIndex);
-
-    let nextIndex = 0; // Default to first item if no current item
-
-    if (currentIndex >= 0) {
-      nextIndex = currentIndex + 1;
-      console.log(
-        '📈 [nextItem] Index incremented:',
-        currentIndex,
-        '->',
-        nextIndex,
-      );
-    } else {
-      console.log('🔄 [nextItem] No current item found, starting from index 0');
-    }
-
-    // If we've reached the end of the section, start over
+    // Calculate next index
+    let nextIndex = currentIndex + 1;
     if (nextIndex >= sectionItems.length) {
-      console.log('🔄 [nextItem] Reached end of section, resetting to index 0');
-      nextIndex = 0;
+      nextIndex = 0; // Loop back to beginning
     }
 
-    console.log('📋 [nextItem] Next item will be at index:', nextIndex);
-
-    // Play the item at the next index
-    const nextItemToPlay = sectionItems[nextIndex];
-    if (!nextItemToPlay) {
-      console.log('❌ [nextItem] No next item found, stopping repeat');
+    const nextItem = sectionItems[nextIndex];
+    if (!nextItem) {
       stopRepeating();
       return;
     }
 
-    console.log('🎵 [nextItem] Setting next media to play:', {
-      subtitlesUrl: nextItemToPlay.subtitlesUrl || '',
-      uniqueId: nextItemToPlay.uniqueId,
-      url: nextItemToPlay.fileUrl || nextItemToPlay.streamUrl || '',
-    });
-
-    // Empty values before setting new values
-    mediaPlaying.value.action = 'pause';
-    mediaPlaying.value.url = '';
-    mediaPlaying.value.uniqueId = '';
-    mediaPlaying.value.subtitlesUrl = '';
-    mediaPlaying.value.currentPosition = 0;
-
-    await nextTick();
-
-    mediaPlaying.value.action = 'play';
-    mediaPlaying.value.url =
-      nextItemToPlay.fileUrl || nextItemToPlay.streamUrl || '';
-    mediaPlaying.value.uniqueId = nextItemToPlay.uniqueId;
-    mediaPlaying.value.subtitlesUrl = nextItemToPlay.subtitlesUrl || '';
-
-    console.log('✅ [nextItem] Next media state updated successfully');
+    console.log('🔄 [playNextItem] Playing next item:', nextItem);
 
     // Clear any existing image timer
     if (imageDisplayTimer.value) {
-      console.log('⏰ [nextItem] Clearing existing image display timer');
       clearTimeout(imageDisplayTimer.value);
       imageDisplayTimer.value = null;
     }
 
+    // mediaPlaying.value.url = nextItem.fileUrl || nextItem.streamUrl || '';
+    // mediaPlaying.value.uniqueId = nextItem.uniqueId;
+    // mediaPlaying.value.subtitlesUrl = nextItem.subtitlesUrl || '';
+    // // Set the media to play
+    // mediaPlaying.value.action = '';
+    // nextTick(() => {
+    //   mediaPlaying.value.action = 'play';
+    // });
+    mediaPlaying.value = {
+      action: 'play',
+      currentPosition: 0,
+      panzoom: {
+        scale: 1,
+        x: 0,
+        y: 0,
+      },
+      seekTo: 0,
+      subtitlesUrl: nextItem.subtitlesUrl || '',
+      uniqueId: nextItem.uniqueId,
+      url: nextItem.fileUrl || nextItem.streamUrl || '',
+    };
+
     // If this is an image, set up a timer to move to the next item
-    if (nextItemToPlay.isImage) {
+    if (nextItem.isImage) {
       const sectionSettings = getSectionRepeatSettings(
         currentRepeatingSection.value,
       );
       const interval = sectionSettings?.repeatInterval || 10;
 
-      console.log(
-        '⏰ [nextItem] Setting image display timer for',
-        interval,
-        'seconds',
-      );
-      console.log('📊 [nextItem] Timer settings:', {
-        interval,
-        sectionSettings: sectionSettings?.repeatInterval,
-      });
-
       imageDisplayTimer.value = window.setTimeout(() => {
-        console.log(
-          '⏰ [nextItem] Image display timer fired, moving to next item',
-        );
-        nextItem();
+        playNextItem();
       }, interval * 1000);
     }
   };
 
-  // Handle media ended event - this should only be called from the main window
-  const handleSectionRepeat = () => {
-    console.log('🎬 [handleSectionRepeat] Media ended event triggered');
-    console.log('📊 [handleSectionRepeat] Current state:', {
-      currentPlayingUniqueId: mediaPlaying.value.uniqueId,
-      currentRepeatingSection: currentRepeatingSection.value,
-      isRepeating: isRepeating.value,
-    });
-
-    // Only handle section repeat if we're actually repeating a section
+  // Handle media ended event - called when a media item finishes playing
+  const handleMediaEnded = () => {
+    console.log(
+      '🔄 [handleMediaEnded] Handle media ended',
+      currentRepeatingSection.value,
+      isRepeating.value,
+    );
     if (!currentRepeatingSection.value || !isRepeating.value) {
-      console.log(
-        '❌ [handleSectionRepeat] Not repeating or no section, ignoring',
-      );
       return false;
     }
 
-    // Get section items and find the current item
     const sectionItems = getSectionMediaItems(currentRepeatingSection.value);
     const currentPlayingUniqueId = mediaPlaying.value.uniqueId;
 
-    // Try to find the current item by uniqueId first
-    let currentItem = sectionItems.find(
+    // Check if the ended media belongs to the repeating section
+    const currentItem = sectionItems.find(
       (item) => item.uniqueId === currentPlayingUniqueId,
     );
-    let currentIndex = currentItem ? sectionItems.indexOf(currentItem) : -1;
 
-    // If we can't find the exact item, try to find it by URL
-    if (!currentItem && currentPlayingUniqueId) {
-      const currentUrl = mediaPlaying.value.url;
-      currentItem = sectionItems.find(
-        (item) => item.fileUrl === currentUrl || item.streamUrl === currentUrl,
-      );
-      currentIndex = currentItem ? sectionItems.indexOf(currentItem) : -1;
-    }
+    console.log('🔄 [handleMediaEnded] Current item', currentItem);
 
-    console.log(
-      '🔍 [handleSectionRepeat] Checking if ended media belongs to repeating section:',
-      {
-        currentIndex,
-        currentItemUniqueId: currentItem?.uniqueId,
-        currentPlayingUniqueId,
-        matches: !!currentItem,
-      },
-    );
-
-    // If we still can't find the item, but we're repeating, just move to the next item
     if (!currentItem) {
-      console.log(
-        '⚠️ [handleSectionRepeat] Could not find exact item match, but continuing with repeat logic',
-      );
-      // For videos/audio, move to next item immediately
-      console.log('▶️ [handleSectionRepeat] Moving to next item immediately');
-      nextItem();
-      return true;
-    }
-
-    if (sectionItems.length === 0) {
-      console.log('❌ [handleSectionRepeat] No section items, stopping repeat');
-      stopRepeating();
       return false;
     }
 
-    // Check if this is an image
-    const isImage = currentItem.isImage;
-    console.log('🖼️ [handleSectionRepeat] Current item is image?', isImage);
+    console.log(
+      '🔄 [handleMediaEnded] Current item is image',
+      currentItem.isImage,
+    );
 
-    if (isImage) {
-      // For images, the timer should already be set in playCurrentItem
-      // If we're here, it means the image timer fired or was cleared
-      console.log(
-        '⏰ [handleSectionRepeat] Image ended - timer should have been set in playCurrentItem',
-      );
-      // Move to next item immediately since the timer logic is handled in playCurrentItem
-      nextItem();
-      return true;
-    } else {
-      // For videos/audio, move to next item immediately
-      console.log(
-        '▶️ [handleSectionRepeat] Video/audio ended, moving to next item immediately',
-      );
-      nextItem();
+    // For videos/audio, move to next item immediately
+    // For images, the timer should handle the transition
+    if (!currentItem.isImage) {
+      playNextItem();
       return true;
     }
+
+    return true;
   };
 
   // Check if a section is currently being repeated
   const isSectionRepeating = (sectionId: MediaSectionIdentifier) => {
-    const isRepeatingSection =
-      currentRepeatingSection.value === sectionId && isRepeating.value;
-    console.log('🔍 [isSectionRepeating] Checking if section is repeating:', {
-      currentRepeatingSection: currentRepeatingSection.value,
-      isRepeating: isRepeating.value,
-      result: isRepeatingSection,
-      sectionId,
-    });
-    return isRepeatingSection;
+    return currentRepeatingSection.value === sectionId && isRepeating.value;
   };
 
   // Toggle repeat for a section
   const toggleSectionRepeat = (sectionId: MediaSectionIdentifier) => {
-    console.log(
-      '🔄 [toggleSectionRepeat] Toggling repeat for sectionId:',
-      sectionId,
-    );
-
     if (isSectionRepeating(sectionId)) {
-      console.log(
-        '🛑 [toggleSectionRepeat] Section is currently repeating, stopping',
-      );
       stopRepeating();
     } else {
-      console.log(
-        '🚀 [toggleSectionRepeat] Section is not repeating, attempting to start',
-      );
       // Check if the section has repeat enabled before starting
       const sectionSettings = getSectionRepeatSettings(sectionId);
-      console.log('⚙️ [toggleSectionRepeat] Section settings:', {
-        hasSettings: !!sectionSettings,
-        repeat: sectionSettings?.repeat,
-      });
-
       if (sectionSettings?.repeat) {
-        console.log(
-          '✅ [toggleSectionRepeat] Repeat enabled, starting section',
-        );
         startRepeatingSection(sectionId);
-      } else {
-        console.log('❌ [toggleSectionRepeat] Repeat not enabled for section');
       }
     }
   };
@@ -634,36 +288,16 @@ export function useMediaSectionRepeat() {
   watch(sectionRepeatData, (data) => {
     if (!data) return;
 
-    console.log('📡 [sectionRepeatData] Received broadcast message:', data);
-
     if (data.action === 'start') {
-      console.log(
-        '📡 [sectionRepeatData] Another window started repeating section:',
-        data.sectionId,
-      );
       // Another window started repeating this section
       if (currentRepeatingSection.value !== data.sectionId) {
-        console.log('🔄 [sectionRepeatData] Updating local state to match');
         currentRepeatingSection.value = data.sectionId;
         isRepeating.value = true;
-      } else {
-        console.log(
-          '📡 [sectionRepeatData] Already repeating this section, no change needed',
-        );
       }
     } else if (data.action === 'stop') {
-      console.log(
-        '📡 [sectionRepeatData] Another window stopped repeating section:',
-        data.sectionId,
-      );
       // Another window stopped repeating
       if (currentRepeatingSection.value === data.sectionId) {
-        console.log('🛑 [sectionRepeatData] Stopping local repeat to match');
         stopRepeating();
-      } else {
-        console.log(
-          '📡 [sectionRepeatData] Not repeating this section locally, no action needed',
-        );
       }
     }
   });
@@ -673,16 +307,10 @@ export function useMediaSectionRepeat() {
     () => mediaPlaying.value.action,
     (newAction) => {
       if (newAction === 'pause' || newAction === '') {
-        console.log(
-          '⏸️ [mediaPlayingAction] Media paused/stopped, clearing image timer',
-        );
         // If media is paused or stopped, clear any image timer
         if (imageDisplayTimer.value) {
-          console.log('⏰ [mediaPlayingAction] Clearing image display timer');
           clearTimeout(imageDisplayTimer.value);
           imageDisplayTimer.value = null;
-        } else {
-          console.log('⏰ [mediaPlayingAction] No image timer to clear');
         }
       }
     },
@@ -690,27 +318,22 @@ export function useMediaSectionRepeat() {
 
   // Clean up on unmount
   const cleanup = () => {
-    console.log('🧹 [cleanup] Cleaning up repeat logic');
     if (imageDisplayTimer.value) {
-      console.log('⏰ [cleanup] Clearing image display timer');
       clearTimeout(imageDisplayTimer.value);
       imageDisplayTimer.value = null;
     }
-    console.log('✅ [cleanup] Cleanup complete');
   };
 
   return {
     cleanup,
     currentRepeatingSection,
-    getCurrentItemIndex,
     getSectionMediaItems,
     getSectionRepeatSettings,
-    handleSectionRepeat,
+    handleMediaEnded,
     isCustomSection,
     isRepeating,
     isSectionRepeating,
-    nextItem,
-    playCurrentItem,
+    playNextItem,
     startRepeatingSection,
     stopRepeating,
     toggleSectionRepeat,

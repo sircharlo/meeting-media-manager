@@ -5,7 +5,7 @@
     @dragover="dropActive"
     @dragstart="dropActive"
   >
-    {{ mediaLists.map((m) => m[1].config) }}
+    {{ mediaPlaying }}
     <div v-if="showBannerColumn" class="col">
       <q-slide-transition>
         <div v-if="showObsBanner" class="row">
@@ -77,22 +77,23 @@
         :key="
           selectedDateObject?.date +
           '-' +
-          mediaList[0] +
+          mediaList.config?.uniqueId +
           '-' +
-          mediaList[1].items?.length
+          mediaList.items?.length
         "
       >
         <MediaList
-          :ref="(el) => (mediaListRefs[mediaList[0]] = el)"
-          :media-list="mediaList[1]"
+          :ref="(el) => (mediaListRefs[mediaList.sectionId] = el)"
+          :media-list="mediaList"
           :open-import-menu="openImportMenu"
           @update-media-section-bg-color="updateMediaSectionBgColor"
           @update-media-section-label="updateMediaSectionLabel"
           @update:is-dragging="
-            (isDragging) => updateMediaListDragging(mediaList[0], isDragging)
+            (isDragging) =>
+              updateMediaListDragging(mediaList.sectionId, isDragging)
           "
           @update:sortable-items="
-            (items) => updateMediaListItems(items, mediaList[0])
+            (items) => updateMediaListItems(items, mediaList.sectionId)
           "
         />
       </template>
@@ -162,11 +163,7 @@ import { useLocale } from 'src/composables/useLocale';
 import { defaultAdditionalSection } from 'src/composables/useMediaSection';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { SORTER } from 'src/constants/general';
-import {
-  getMeetingSections,
-  MW_MEETING_SECTIONS,
-  WE_MEETING_SECTIONS,
-} from 'src/constants/media';
+import { getMeetingSections } from 'src/constants/media';
 import { isCoWeek, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
@@ -456,7 +453,7 @@ const { post: postCustomDuration } = useBroadcastChannel<
 });
 
 // Section repeat functionality
-const { handleSectionRepeat } = useMediaSectionRepeat();
+const { handleMediaEnded } = useMediaSectionRepeat();
 
 const customDuration = computed(() => {
   // Get all media from all sections across all dates
@@ -476,6 +473,7 @@ const customDuration = computed(() => {
 watch(
   () => [mediaPlaying.value.url, customDuration.value],
   ([newUrl, newCustomDuration], [oldUrl, oldCustomDuration]) => {
+    console.log('🔄 [watch] mediaPlaying.value.url', newUrl, oldUrl);
     if (
       newUrl === oldUrl ||
       (newCustomDuration &&
@@ -488,27 +486,41 @@ watch(
   },
 );
 
-const { data: mediaStateData } = useBroadcastChannel<
-  'ended' | null,
-  'ended' | null
+const { data: lastEndTimestamp } = useBroadcastChannel<
+  null | number,
+  null | number
 >({
-  name: 'media-state',
+  name: 'last-end-timestamp',
 });
 
 watch(
-  () => mediaStateData.value,
-  (newMediaStateData) => {
-    if (newMediaStateData === 'ended') {
+  () => lastEndTimestamp.value,
+  (newLastEndTimestamp) => {
+    console.log('🔄 [onMediaEnded] Media state data:', newLastEndTimestamp);
+    if (newLastEndTimestamp) {
       // Handle section repeat logic first
-      const repeatHandled = handleSectionRepeat();
+      const repeatHandled = handleMediaEnded();
       console.log('🔄 [onMediaEnded] Repeat handled:', repeatHandled);
       if (repeatHandled) return;
 
       // Then handle normal media state cleanup
-      mediaPlaying.value.currentPosition = 0;
-      mediaPlaying.value.url = '';
-      mediaPlaying.value.uniqueId = '';
-      mediaPlaying.value.action = '';
+      // mediaPlaying.value.currentPosition = 0;
+      // mediaPlaying.value.url = '';
+      // mediaPlaying.value.uniqueId = '';
+      // mediaPlaying.value.action = '';
+      mediaPlaying.value = {
+        action: '',
+        currentPosition: 0,
+        panzoom: {
+          scale: 1,
+          x: 0,
+          y: 0,
+        },
+        seekTo: 0,
+        subtitlesUrl: '',
+        uniqueId: '',
+        url: '',
+      };
 
       // Clear custom duration when media ends
       postCustomDuration(undefined);
@@ -526,7 +538,6 @@ watch(
         );
       });
     }
-    mediaStateData.value = null;
   },
 );
 
@@ -1558,34 +1569,60 @@ const showBannerColumn = computed(
 
 const mediaLists = computed(() => {
   if (!selectedDateObject.value?.mediaSections) return [];
-  const mediaTypes: string[] = [];
-  mediaTypes.push(
-    ...getMeetingSections(
-      selectedDateObject.value?.meeting,
-      isCoWeek(selectedDateObject.value?.date),
-    ),
+
+  // Get the appropriate meeting sections based on meeting type (MW vs WE)
+  const meetingSections = getMeetingSections(
+    selectedDateObject.value?.meeting,
+    isCoWeek(selectedDateObject.value?.date),
   );
 
-  return Object.entries(selectedDateObject.value?.mediaSections)
+  // Create a list of all sections that should be displayed
+  const sectionsToShow: string[] = [...meetingSections];
+
+  // Add any custom sections that have items (not already in meeting sections)
+  Object.entries(selectedDateObject.value.mediaSections).forEach(
+    ([sectionId, sectionData]) => {
+      if (
+        sectionData?.items?.filter((item) => !item.hidden).length &&
+        !meetingSections.includes(sectionId) &&
+        !sectionsToShow.includes(sectionId)
+      ) {
+        sectionsToShow.push(sectionId);
+      }
+    },
+  );
+
+  return Object.entries(selectedDateObject.value.mediaSections)
     .filter(([, m]) => !!m.config)
     .filter(([, m]) => {
-      if (
-        Object.values(selectedDateObject.value?.mediaSections ?? {}).some(
-          (s) =>
-            s.items?.length &&
-            !WE_MEETING_SECTIONS.concat(MW_MEETING_SECTIONS)
-              .concat(['circuit-overseer'])
-              .includes(s.config?.uniqueId || ''),
-        )
-      ) {
-        mediaTypes.unshift('imported-media');
-      }
-      return mediaTypes.includes(m.config?.uniqueId || '');
+      const sectionId = m.config?.uniqueId || '';
+      // Include if it's a meeting section OR if it has items
+      return sectionsToShow.includes(sectionId);
     })
     .sort(([, a], [, b]) => {
-      const aIndex = mediaTypes.indexOf(a.config?.uniqueId || '');
-      const bIndex = mediaTypes.indexOf(b.config?.uniqueId || '');
-      return aIndex - bIndex;
-    });
+      const aId = a.config?.uniqueId || '';
+      const bId = b.config?.uniqueId || '';
+
+      // Get indices from our sectionsToShow array
+      const aIndex = sectionsToShow.indexOf(aId);
+      const bIndex = sectionsToShow.indexOf(bId);
+
+      // If both are in the list, sort by their position
+      if (aIndex !== -1 && bIndex !== -1) {
+        return aIndex - bIndex;
+      }
+
+      // If only one is in the list, prioritize the one in the list
+      if (aIndex !== -1) return -1;
+      if (bIndex !== -1) return 1;
+
+      // If neither is in the list, sort alphabetically
+      return aId.localeCompare(bId);
+    })
+    .map(([sectionId, sectionData]) => ({
+      config: sectionData?.config,
+      items: sectionData?.items || [],
+      sectionId: sectionId as MediaSectionIdentifier,
+    }));
 });
 </script>

@@ -76,7 +76,6 @@
           v-else
           v-model:repeat="element.repeat"
           :media="element"
-          @media-stopped="handleMediaStopped"
           @update:custom-duration="
             element.customDuration = JSON.parse($event) || undefined
           "
@@ -214,15 +213,15 @@ const handleUpdateDividerColor = (
   updateDividerColors(dividerId, bgColor, textColor);
 };
 
-const handleMediaStopped = () => {
-  console.log(
-    '🛑 [handleMediaStopped] Media stopped, updating section repeat to false',
-  );
-  // Update section repeat to false when media is stopped
-  if (sectionHeaderRef.value) {
-    sectionHeaderRef.value.updateSectionRepeatState(false);
-  }
-};
+// const handleMediaStopped = () => {
+//   console.log(
+//     '🛑 [handleMediaStopped] Media stopped, updating section repeat to false',
+//   );
+//   // Update section repeat to false when media is stopped
+//   if (sectionHeaderRef.value) {
+//     sectionHeaderRef.value.updateSectionRepeatState(false);
+//   }
+// };
 
 // Watch for changes in isDragging and emit to parent
 watch(

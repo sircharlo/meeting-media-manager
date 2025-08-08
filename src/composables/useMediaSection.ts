@@ -24,7 +24,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   const sectionItems = computed(() => {
     if (!selectedDateObject.value?.mediaSections) return [];
     return (
-      selectedDateObject.value.mediaSections[mediaList.config.uniqueId]
+      selectedDateObject.value.mediaSections[mediaList.config?.uniqueId || '']
         ?.items || []
     );
   });
@@ -55,14 +55,14 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   const sectionConfig = computed(() => {
     if (!selectedDateObject.value?.mediaSections) return null;
     return (
-      selectedDateObject.value.mediaSections[mediaList.config.uniqueId]
+      selectedDateObject.value.mediaSections[mediaList.config?.uniqueId || '']
         ?.config || null
     );
   });
 
   // Check if this is a custom section (not a standard meeting section)
   const isCustomSection = computed(() => {
-    return !standardSections.includes(mediaList.config.uniqueId);
+    return !standardSections.includes(mediaList.config?.uniqueId || '');
   });
 
   // Check if section contains songs
@@ -79,9 +79,9 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
   // Check if this is a public talk or circuit overseer section without songs
   const isPublicTalkOrCircuitOverseerWithoutSongs = computed(() => {
-    const isPublicTalkSection = mediaList.config.uniqueId === 'pt';
+    const isPublicTalkSection = mediaList.config?.uniqueId === 'pt';
     const isCircuitOverseerSection =
-      mediaList.config.uniqueId === 'circuit-overseer';
+      mediaList.config?.uniqueId === 'circuit-overseer';
     const sectionContainsAtLeastOneSong = sectionItems.value.some(
       (m) => m.streamUrl?.includes('sjj') || m.fileUrl?.includes('sjj'),
     );
@@ -107,7 +107,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
   const currentIndex = computed(() => {
     const index = customSections.value.findIndex(
-      (s) => s.uniqueId === mediaList.config.uniqueId,
+      (s) => s.uniqueId === mediaList.config?.uniqueId,
     );
     return index;
   });
@@ -137,7 +137,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
       console.log('🔄 Updating expanded groups for section:', {
         itemCount: items.length,
-        sectionId: mediaList.config.uniqueId,
+        sectionId: mediaList.config?.uniqueId,
       });
 
       expandedGroups.value = items.reduce(
@@ -158,7 +158,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
       console.log('✅ Expanded groups updated:', {
         expandedGroups: expandedGroups.value,
-        sectionId: mediaList.config.uniqueId,
+        sectionId: mediaList.config?.uniqueId,
       });
     },
     { immediate: true },
@@ -169,7 +169,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     console.log('🏷️ Updating section label:', {
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
       newLabel: label,
-      sectionId: mediaList.config.uniqueId,
+      sectionId: mediaList.config?.uniqueId,
     });
 
     if (!selectedDateObject.value?.mediaSections || !isCustomSection.value) {
@@ -178,19 +178,19 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     }
 
     const sectionData =
-      selectedDateObject.value.mediaSections[mediaList.config.uniqueId];
+      selectedDateObject.value.mediaSections[mediaList.config?.uniqueId || ''];
     if (sectionData && sectionData.config) {
       const oldLabel = sectionData.config.label;
       sectionData.config.label = label;
       console.log('✅ Section label updated:', {
         newLabel: label,
         oldLabel,
-        sectionId: mediaList.config.uniqueId,
+        sectionId: mediaList.config?.uniqueId,
       });
     } else {
       console.warn(
         '⚠️ Section not found for label update:',
-        mediaList.config.uniqueId,
+        mediaList.config?.uniqueId,
       );
     }
   };
@@ -199,7 +199,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     console.log('🎨 Updating section color:', {
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
       newColor: bgColor,
-      sectionId: mediaList.config.uniqueId,
+      sectionId: mediaList.config?.uniqueId,
     });
 
     if (!selectedDateObject.value?.mediaSections || !isCustomSection.value) {
@@ -208,19 +208,19 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     }
 
     const sectionData =
-      selectedDateObject.value.mediaSections[mediaList.config.uniqueId];
+      selectedDateObject.value.mediaSections[mediaList.config?.uniqueId || ''];
     if (sectionData && sectionData.config) {
       const oldColor = sectionData.config.bgColor;
       sectionData.config.bgColor = bgColor;
       console.log('✅ Section color updated:', {
         newColor: bgColor,
         oldColor,
-        sectionId: mediaList.config.uniqueId,
+        sectionId: mediaList.config?.uniqueId,
       });
     } else {
       console.warn(
         '⚠️ Section not found for color update:',
-        mediaList.config.uniqueId,
+        mediaList.config?.uniqueId,
       );
     }
   };
@@ -230,16 +230,20 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
       newInterval: interval,
       newRepeat: repeat,
-      sectionId: mediaList.config.uniqueId,
+      sectionId: mediaList.config?.uniqueId,
     });
 
     if (!selectedDateObject.value?.mediaSections || !isCustomSection.value) {
-      console.warn('⚠️ No custom sections found for repeat update');
+      console.warn(
+        '⚠️ No custom sections found for repeat update',
+        selectedDateObject.value?.mediaSections,
+        isCustomSection.value,
+      );
       return;
     }
 
     const sectionData =
-      selectedDateObject.value.mediaSections[mediaList.config.uniqueId];
+      selectedDateObject.value.mediaSections[mediaList.config?.uniqueId || ''];
     if (sectionData && sectionData.config) {
       const oldRepeat = sectionData.config.repeat;
       const oldInterval = sectionData.config.repeatInterval;
@@ -252,12 +256,12 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
         newRepeat: repeat,
         oldInterval,
         oldRepeat,
-        sectionId: mediaList.config.uniqueId,
+        sectionId: mediaList.config?.uniqueId,
       });
     } else {
       console.warn(
         '⚠️ Section not found for repeat update:',
-        mediaList.config.uniqueId,
+        mediaList.config?.uniqueId,
       );
     }
   };
@@ -266,7 +270,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     console.log('📦 Moving section:', {
       direction,
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
-      sectionId: mediaList.config.uniqueId,
+      sectionId: mediaList.config?.uniqueId,
     });
 
     if (!selectedDateObject.value?.mediaSections || !isCustomSection.value) {
@@ -276,11 +280,14 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
     const sections = customSections.value;
     const currentIndex = sections.findIndex(
-      (s) => s.uniqueId === mediaList.config.uniqueId,
+      (s) => s.uniqueId === mediaList.config?.uniqueId,
     );
 
     if (currentIndex === -1) {
-      console.warn('⚠️ Section not found for move:', mediaList.config.uniqueId);
+      console.warn(
+        '⚠️ Section not found for move:',
+        mediaList.config?.uniqueId,
+      );
       return;
     }
 
@@ -331,7 +338,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     console.log('✅ Section moved:', {
       direction,
       fromIndex: currentIndex,
-      sectionId: mediaList.config.uniqueId,
+      sectionId: mediaList.config?.uniqueId,
       toIndex: newIndex,
     });
   };
@@ -339,7 +346,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   const deleteSection = () => {
     console.log('🗑️ Deleting section:', {
       hasCustomSections: !!selectedDateObject.value?.mediaSections,
-      sectionId: mediaList.config.uniqueId,
+      sectionId: mediaList.config?.uniqueId,
     });
 
     if (!selectedDateObject.value?.mediaSections || !isCustomSection.value) {
@@ -348,7 +355,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     }
 
     const sectionData =
-      selectedDateObject.value.mediaSections[mediaList.config.uniqueId];
+      selectedDateObject.value.mediaSections[mediaList.config?.uniqueId || ''];
     if (sectionData) {
       // Move all items to additional section
       const itemsToMove = sectionData.items;
@@ -367,12 +374,12 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
       console.log('✅ Section deleted:', {
         itemsMoved: itemsToMove.length,
-        sectionId: mediaList.config.uniqueId,
+        sectionId: mediaList.config?.uniqueId,
       });
     } else {
       console.warn(
         '⚠️ Section not found for deletion:',
-        mediaList.config.uniqueId,
+        mediaList.config?.uniqueId,
       );
     }
   };
@@ -380,7 +387,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   const addSong = (section: MediaSectionIdentifier | undefined) => {
     console.log('🎵 Adding song to section:', {
       section,
-      sectionId: mediaList.config.uniqueId,
+      sectionId: mediaList.config?.uniqueId,
     });
 
     if (!section) {

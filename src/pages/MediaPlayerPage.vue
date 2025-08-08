@@ -4,14 +4,14 @@
     padding
     style="align-content: center; height: 100vh; -webkit-app-region: drag"
   >
-    <!-- <pre>
+    <pre>
       {{ urlVariables }}
       {{ online }}
       {{ hideMediaLogo }}
       {{ yeartext }}
       {{ mediaPlayingUrl }}
       {{ mediaAction }}
-    </pre> -->
+    </pre>
     <q-resize-observer debounce="50" @resize="postMediaWindowSize" />
     <transition
       appear
@@ -31,13 +31,17 @@
       />
       <video
         v-else-if="isVideo(mediaPlayingUrl) || videoStreaming"
+        :key="mediaPlayingUrl"
         ref="mediaElement"
         class="fit-snugly"
         disableRemotePlayback
         preload="metadata"
-        @animationstart="playMedia()"
+        :src="mediaPlayingUrl"
+        @canplay="handleVideoCanPlay()"
+        @ended="endOrLoop()"
+        @loadedmetadata="playMedia()"
+        @pause="handleVideoPause()"
       >
-        <source :src="mediaPlayingUrl" />
         <track
           v-if="mediaPlayerSubtitlesUrl && subtitlesVisible"
           default
@@ -201,7 +205,7 @@ whenever(
       mediaElement.value?.pause();
     } else if (newMediaAction === 'play') {
       playMediaElement(oldMediaAction === 'pause');
-      cameraStreamId.value = '';
+      if (cameraStreamId.value) cameraStreamId.value = '';
     }
   },
 );
@@ -243,8 +247,8 @@ const { data: cameraStreamId } = useBroadcastChannel<string, string>({
   name: 'camera-stream',
 });
 
-const { post: postMediaState } = useBroadcastChannel<'ended', 'ended'>({
-  name: 'media-state',
+const { post: postLastEndTimestamp } = useBroadcastChannel<number, number>({
+  name: 'last-end-timestamp',
 });
 
 const customMin = computed(() => {
@@ -260,7 +264,24 @@ const triggerPlay = (force = false) => {
     return;
   }
 
-  mediaElement.value?.play().catch((error: Error) => {
+  if (!mediaElement.value) {
+    return;
+  }
+
+  // For videos, ensure we're ready to play
+  if (isVideo(mediaPlayingUrl.value) && mediaElement.value.readyState < 2) {
+    // Video not ready yet, wait a bit and try again
+    setTimeout(() => {
+      triggerPlay(force);
+    }, 100);
+    return;
+  }
+
+  console.log(
+    `🎬 [triggerPlay] Attempting to play video: ${mediaPlayingUrl.value}, readyState: ${mediaElement.value.readyState}, paused: ${mediaElement.value.paused}`,
+  );
+
+  mediaElement.value.play().catch((error: Error) => {
     const ignoredErrors = [
       'removed from the document',
       'new load request',
@@ -272,6 +293,7 @@ const triggerPlay = (force = false) => {
     );
 
     if (!shouldIgnore) {
+      console.error('❌ [triggerPlay] Video play error:', error);
       errorCatcher(error);
     }
   });
@@ -282,21 +304,52 @@ const playMediaElement = (wasPaused = false, websiteStream = false) => {
     return;
   }
 
+  console.log(
+    '🎬 [playMediaElement] Setting up video playback',
+    wasPaused,
+    websiteStream,
+    mediaAction.value,
+  );
+
   if (wasPaused || websiteStream) {
     triggerPlay(websiteStream);
   }
 
   mediaElement.value.oncanplaythrough = () => {
+    console.log('🎬 [playMediaElement] Video can play through');
     triggerPlay();
   };
+
+  // For videos, add an additional check to ensure playback starts
+  if (isVideo(mediaPlayingUrl.value) && mediaAction.value === 'play') {
+    // Set up a fallback mechanism to ensure video starts playing
+    const checkAndPlay = () => {
+      if (
+        mediaElement.value &&
+        mediaAction.value === 'play' &&
+        mediaElement.value.paused
+      ) {
+        console.log('🎬 [playMediaElement] Fallback: triggering play');
+        triggerPlay();
+      }
+    };
+
+    // Check after a short delay to allow the video to load
+    setTimeout(checkAndPlay, 200);
+    // Also check when the video becomes ready
+    mediaElement.value.oncanplay = checkAndPlay;
+  }
 };
 
 const endOrLoop = () => {
+  console.log('🎬 [endOrLoop] Video ended, repeat:', mediaRepeat.value);
   if (!mediaRepeat.value) {
-    postMediaState('ended');
+    console.log('🎬 [endOrLoop] Posting ended state');
+    postLastEndTimestamp(Date.now());
     // Don't clear mediaCustomDuration immediately to avoid race condition
     // It will be cleared when the media state is handled by the main window
   } else {
+    console.log('🎬 [endOrLoop] Looping video');
     if (mediaElement.value) {
       mediaElement.value.currentTime = customMin.value;
       playMediaElement();
@@ -304,19 +357,54 @@ const endOrLoop = () => {
   }
 };
 
+const handleVideoPause = () => {
+  console.log('⏸️ [handleVideoPause] Video paused');
+  postCurrentTime(mediaElement.value?.currentTime || 0);
+};
+
+const handleVideoCanPlay = () => {
+  console.log(
+    '🔄 [handleVideoCanPlay] Video can play',
+    mediaAction.value,
+    mediaElement.value?.paused,
+    mediaElement.value?.readyState,
+  );
+  // Ensure video starts playing when it's ready, especially for videos that might not start immediately
+  if (
+    mediaAction.value === 'play' &&
+    mediaElement.value &&
+    !mediaElement.value.paused
+  ) {
+    // Video is already playing, no action needed
+    return;
+  }
+
+  if (mediaAction.value === 'play' && mediaElement.value) {
+    // Try to start playing if the action is 'play' but video isn't playing yet
+    // Add a small delay to ensure the video is fully ready
+    setTimeout(() => {
+      if (
+        mediaAction.value === 'play' &&
+        mediaElement.value &&
+        mediaElement.value.paused
+      ) {
+        console.log('🎬 [handleVideoCanPlay] Triggering play after delay');
+        triggerPlay();
+      }
+    }, 50);
+  }
+};
+
 const playMedia = () => {
+  console.log(
+    '🔄 [playMedia] Playing media',
+    mediaAction.value,
+    mediaElement.value?.paused,
+  );
   try {
     if (!mediaElement.value) {
       return;
     }
-
-    mediaElement.value.onended = () => {
-      endOrLoop();
-    };
-
-    mediaElement.value.onpause = () => {
-      postCurrentTime(mediaElement.value?.currentTime || 0);
-    };
 
     let lastUpdate = 0;
     const updateInterval = 300;
@@ -370,8 +458,26 @@ const playMedia = () => {
 // Reset ending flag when new media starts
 watch(
   () => mediaPlayingUrl.value,
-  () => {
+  (newUrl, oldUrl) => {
+    console.log('🔄 [mediaPlayingUrl] URL changed:', oldUrl, '->', newUrl);
     isEnding.value = false;
+
+    // Clean up any existing event handlers when media URL changes
+    if (mediaElement.value) {
+      mediaElement.value.oncanplay = null;
+      mediaElement.value.oncanplaythrough = null;
+
+      // For videos, ensure the element is properly reset when URL changes
+      if (isVideo(newUrl) && newUrl !== oldUrl) {
+        console.log('🎬 [mediaPlayingUrl] Resetting video element for new URL');
+        // Pause current playback
+        mediaElement.value.pause();
+        // Reset current time
+        mediaElement.value.currentTime = 0;
+        // Force reload of the video
+        mediaElement.value.load();
+      }
+    }
   },
 );
 

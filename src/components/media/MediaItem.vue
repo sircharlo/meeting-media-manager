@@ -971,16 +971,27 @@ const setMediaPlaying = async (
     } else {
       updateMediaCustomDuration();
     }
-  } else {
-    if (mediaPanzoom.value) mediaPlaying.value.panzoom = mediaPanzoom.value;
+    // } else {
+    //   if (mediaPanzoom.value) mediaPlaying.value.panzoom = mediaPanzoom.value;
   }
-  mediaPlaying.value.action = 'play';
   localFile.value = fileIsLocal();
-  mediaPlaying.value.url = localFile.value
-    ? (media.fileUrl ?? '')
-    : (media.streamUrl ?? media.fileUrl ?? '');
-  mediaPlaying.value.uniqueId = media.uniqueId;
-  mediaPlaying.value.subtitlesUrl = media.subtitlesUrl ?? '';
+  // mediaPlaying.value.action = 'play';
+  // mediaPlaying.value.url = localFile.value
+  //   ? (media.fileUrl ?? '')
+  //   : (media.streamUrl ?? media.fileUrl ?? '');
+  // mediaPlaying.value.uniqueId = media.uniqueId;
+  // mediaPlaying.value.subtitlesUrl = media.subtitlesUrl ?? '';
+  mediaPlaying.value = {
+    action: 'play',
+    currentPosition: 0,
+    panzoom: mediaPanzoom.value,
+    seekTo: 0,
+    subtitlesUrl: media.subtitlesUrl ?? '',
+    uniqueId: media.uniqueId,
+    url: localFile.value
+      ? (media.fileUrl ?? '')
+      : (media.streamUrl ?? media.fileUrl ?? ''),
+  };
 
   // Start Zoom screen sharing when media starts playing
   triggerZoomScreenShare(true);
@@ -1148,11 +1159,15 @@ const zoomReset = (forced = false, animate = true) => {
 };
 
 function stopMedia(forOtherMediaItem = false) {
-  mediaPlaying.value.action = 'pause';
-  mediaPlaying.value.url = '';
-  mediaPlaying.value.uniqueId = '';
-  mediaPlaying.value.currentPosition = 0;
-  mediaPlaying.value.action = '';
+  mediaPlaying.value = {
+    action: '',
+    currentPosition: 0,
+    panzoom: mediaPanzoom.value,
+    seekTo: 0,
+    subtitlesUrl: '',
+    uniqueId: '',
+    url: '',
+  };
   mediaToStop.value = '';
   localFile.value = fileIsLocal();
 
@@ -1165,9 +1180,9 @@ function stopMedia(forOtherMediaItem = false) {
       window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
     });
 
-    // Emit event to notify parent that media was stopped
-    console.log('🛑 [stopMedia] Emitting media-stopped event');
-    emit('media-stopped');
+    // // Emit event to notify parent that media was stopped
+    // console.log('🛑 [stopMedia] Emitting media-stopped event');
+    // emit('media-stopped');
   }
 }
 
