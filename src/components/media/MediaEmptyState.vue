@@ -6,7 +6,7 @@
           !currentSettings?.disableMediaFetching ||
           !selectedDateObject?.mediaSections ||
           !Object.values(selectedDateObject.mediaSections).some(
-            (section) => section.length > 0,
+            (section) => section.items?.length,
           )
         "
         class="row justify-center"

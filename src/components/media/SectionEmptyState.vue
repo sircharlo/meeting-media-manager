@@ -45,7 +45,7 @@ const message = computed(() => {
     const hasAnyMedia =
       props.selectedDate.mediaSections &&
       Object.values(props.selectedDate.mediaSections).some(
-        (section) => section.length > 0,
+        (section) => section.items?.length,
       );
 
     if (!hasAnyMedia) {
