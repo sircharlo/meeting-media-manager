@@ -177,9 +177,7 @@ const deleteDivider = () => {
   margin: 4px 0 4px -1px;
   border-radius: 8px;
   transition: all 0.2s ease;
-  border-top-left-radius: 0px;
-  border-bottom-left-radius: 0px;
-  border-bottom-right-radius: 0px;
+  border-radius: 0px;
 
   &.is-editing {
     box-shadow: 0 0 0 2px var(--q-primary);
