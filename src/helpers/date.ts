@@ -1,4 +1,4 @@
-import type { DateInfo, MediaItem, MediaSectionIdentifier } from 'src/types';
+import type { DateInfo, MediaItem } from 'src/types';
 
 import { DAYS_IN_FUTURE } from 'src/constants/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -217,7 +217,7 @@ export function updateLookupPeriod(
           if (!d.meeting) return true;
           const allMedia: MediaItem[] = [];
           if (d.mediaSections) {
-            Object.values(d.mediaSections).forEach((sectionMedia) => {
+            d.mediaSections.forEach((sectionMedia) => {
               allMedia.push(...(sectionMedia.items || []));
             });
           }
@@ -241,7 +241,7 @@ export function updateLookupPeriod(
           complete: false,
           date: dayDate,
           error: false,
-          mediaSections: {},
+          mediaSections: [],
           meeting: isMwMeetingDay(dayDate)
             ? 'mw'
             : isWeMeetingDay(dayDate)
@@ -320,7 +320,7 @@ export function updateLookupPeriod(
       // Get total media count before reset
       let beforeDynamicCount = 0;
       if (day.mediaSections) {
-        Object.values(day.mediaSections).forEach((sectionMedia) => {
+        day.mediaSections.forEach((sectionMedia) => {
           beforeDynamicCount += sectionMedia.items?.length || 0;
         });
       }
@@ -331,9 +331,7 @@ export function updateLookupPeriod(
 
       // Remove dynamic media from all sections
       if (day.mediaSections) {
-        Object.keys(day.mediaSections).forEach((sectionId) => {
-          const section = sectionId as MediaSectionIdentifier;
-          const sectionMedia = day.mediaSections[section];
+        day.mediaSections.forEach((sectionMedia) => {
           if (sectionMedia?.items?.length) {
             for (let i = sectionMedia.items?.length - 1; i >= 0; i--) {
               if (sectionMedia.items?.[i]?.source === 'dynamic') {
@@ -347,8 +345,15 @@ export function updateLookupPeriod(
       // Get total media count after reset
       let afterDynamicCount = 0;
       if (day.mediaSections) {
-        Object.values(day.mediaSections).forEach((sectionMedia) => {
+        day.mediaSections.forEach((sectionMedia) => {
           afterDynamicCount += sectionMedia.items?.length || 0;
+        });
+      }
+
+      // Remove all sections that have no items if they are meeting sections and its a meeting day
+      if (day.meeting) {
+        day.mediaSections = day.mediaSections.filter((section) => {
+          return !!section.items?.length;
         });
       }
 

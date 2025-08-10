@@ -1,15 +1,15 @@
-import type { MediaItem, MediaSection, MediaSectionIdentifier } from './media';
+import type { MediaItem, MediaSection } from './media';
 
 export interface DateInfo {
   complete: boolean;
   date: Date;
   error: boolean;
-  mediaSections: Record<MediaSectionIdentifier, MediaSectionWithConfig>;
+  mediaSections: MediaSectionWithConfig[];
   meeting: 'mw' | 'we' | false;
   today: boolean;
 }
 
 export interface MediaSectionWithConfig {
-  config?: MediaSection;
+  config: MediaSection;
   items?: MediaItem[];
 }

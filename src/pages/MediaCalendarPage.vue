@@ -5,7 +5,7 @@
     @dragover="dropActive"
     @dragstart="dropActive"
   >
-    {{ mediaPlaying }}
+    {{ selectedDateObject?.mediaSections.map((s) => s.config.uniqueId) }}
     <div v-if="showBannerColumn" class="col">
       <q-slide-transition>
         <div v-if="showObsBanner" class="row">
@@ -164,7 +164,7 @@ import { defaultAdditionalSection } from 'src/composables/useMediaSection';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { SORTER } from 'src/constants/general';
 import { getMeetingSections } from 'src/constants/media';
-import { isCoWeek, isWeMeetingDay } from 'src/helpers/date';
+import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
 import {
@@ -175,7 +175,11 @@ import {
   getMemorialBackground,
 } from 'src/helpers/jw-media';
 import { executeLocalShortcut } from 'src/helpers/keyboardShortcuts';
-import { addSection } from 'src/helpers/media-sections';
+import {
+  addSection,
+  findMediaSection,
+  getOrCreateMediaSection,
+} from 'src/helpers/media-sections';
 import { decompressJwpub, showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { convertImageIfNeeded } from 'src/utils/converters';
@@ -280,20 +284,16 @@ const updateMediaListItems = (
 
   // Update the section's media items with the new order
   if (!selectedDateObject.value.mediaSections) {
-    selectedDateObject.value.mediaSections = {};
-  }
-  if (!selectedDateObject.value.mediaSections[sectionId]) {
-    selectedDateObject.value.mediaSections[sectionId] = {
-      config: {
-        uniqueId: sectionId,
-      },
-      items: [],
-    };
+    selectedDateObject.value.mediaSections = [];
   }
 
+  const section = getOrCreateMediaSection(
+    selectedDateObject.value.mediaSections,
+    sectionId,
+  );
+
   // Get the current items in this section before the update
-  const currentItems =
-    selectedDateObject.value.mediaSections[sectionId].items || [];
+  const currentItems = section.items || [];
 
   // Find items that were moved from other sections (items that are in the new list but weren't in the current list)
   const movedItems = items.filter(
@@ -305,25 +305,19 @@ const updateMediaListItems = (
 
   // Remove moved items from their original sections
   if (movedItems.length > 0) {
-    Object.keys(selectedDateObject.value.mediaSections).forEach(
-      (otherSectionId) => {
-        if (otherSectionId !== sectionId) {
-          const otherSection =
-            selectedDateObject.value?.mediaSections[
-              otherSectionId as MediaSectionIdentifier
-            ];
-          if (otherSection?.items) {
-            // Remove items that were moved to the new section
-            otherSection.items = otherSection.items.filter(
-              (item) =>
-                !movedItems.some(
-                  (movedItem) => movedItem.uniqueId === item.uniqueId,
-                ),
-            );
-          }
+    selectedDateObject.value.mediaSections.forEach((otherSection) => {
+      if (otherSection.config.uniqueId !== sectionId) {
+        if (otherSection?.items) {
+          // Remove items that were moved to the new section
+          otherSection.items = otherSection.items.filter(
+            (item) =>
+              !movedItems.some(
+                (movedItem) => movedItem.uniqueId === item.uniqueId,
+              ),
+          );
         }
-      },
-    );
+      }
+    });
 
     console.log(
       '🔄 Moved items between sections:',
@@ -334,7 +328,7 @@ const updateMediaListItems = (
   }
 
   // Update the target section with the new items
-  selectedDateObject.value.mediaSections[sectionId].items = items;
+  section.items = items;
 
   console.log(
     '🔄 Updated items in section:',
@@ -459,7 +453,7 @@ const customDuration = computed(() => {
   // Get all media from all sections across all dates
   const allMedia: MediaItem[] = [];
   lookupPeriod.value[currentCongregation.value]?.forEach((dateInfo) => {
-    Object.values(dateInfo.mediaSections ?? {}).forEach((sectionMedia) => {
+    (dateInfo.mediaSections ?? []).forEach((sectionMedia) => {
       allMedia.push(...(sectionMedia.items || []));
     });
   });
@@ -661,7 +655,7 @@ const goToNextDayWithMedia = (ignoreTodaysDate = false) => {
         lookupPeriod.value?.[currentCongregation.value]
           ?.filter((day) => {
             // Check if it's a meeting day or has any media in any section
-            const hasMedia = Object.values(day.mediaSections ?? {}).some(
+            const hasMedia = (day.mediaSections ?? []).some(
               (section) => !!section.items?.length,
             );
             return day.meeting || hasMedia;
@@ -869,25 +863,12 @@ watchImmediate(
     if (!newVal || !selectedDateObject.value?.mediaSections) return;
     checkMemorialDate();
 
-    const ptSection = selectedDateObject.value.mediaSections?.pt;
-
-    if (
-      isWeMeetingDay(selectedDateObject.value.date) &&
-      !ptSection?.items?.length
-    ) {
-      if (!selectedDateObject.value.mediaSections) {
-        selectedDateObject.value.mediaSections = {};
-      }
-
-      const publicTalkSection = {
-        config: {
-          ...defaultAdditionalSection.config,
-          jwIcon: '',
-          label: t('public-talk'),
-          uniqueId: 'pt',
-        },
-      };
-      selectedDateObject.value.mediaSections.pt = publicTalkSection;
+    if (isWeMeetingDay(selectedDateObject.value.date)) {
+      getOrCreateMediaSection(selectedDateObject.value.mediaSections, 'pt', {
+        ...defaultAdditionalSection.config,
+        jwIcon: '',
+        label: t('public-talk'),
+      });
     }
   },
 );
@@ -1233,9 +1214,9 @@ const duplicateSongsForWeMeeting = computed(() => {
   if (selectedDateObject.value?.meeting !== 'we') return false;
 
   // Get all media from all sections
-  const allMedia = Object.values(
-    selectedDateObject.value.mediaSections ?? {},
-  ).flatMap((section) => section.items || []);
+  const allMedia = (selectedDateObject.value.mediaSections ?? []).flatMap(
+    (section) => section.items || [],
+  );
 
   const songNumbers: (number | string)[] = allMedia
     .filter((m) => !m.hidden && m.tag?.type === 'song' && m.tag?.value)
@@ -1256,17 +1237,17 @@ const arraysAreIdentical = (a: string[], b: string[]) =>
 const mediaListRefs = ref({}) as Ref<Record<string, unknown>>;
 
 const keyboardShortcutMediaList = computed(() => {
-  const allMedia = Object.values(
-    selectedDateObject.value?.mediaSections ?? {},
-  ).flatMap((section) => {
-    const mediaList = section.items;
-    if (!mediaList) return [];
-    return mediaList.map((item) => ({
-      ...item,
-      section: section.config?.uniqueId || 'imported-media',
-      uniqueId: item.uniqueId || uuid(),
-    }));
-  });
+  const allMedia = (selectedDateObject.value?.mediaSections ?? []).flatMap(
+    (section) => {
+      const mediaList = section.items;
+      if (!mediaList) return [];
+      return mediaList.map((item) => ({
+        ...item,
+        section: section.config?.uniqueId || 'imported-media',
+        uniqueId: item.uniqueId || uuid(),
+      }));
+    },
+  );
 
   return allMedia.flatMap((m) => {
     // Get media groups from the computed expanded groups
@@ -1495,10 +1476,12 @@ const updateMediaSectionBgColor = ({
   uniqueId: string;
 }) => {
   if (!selectedDateObject.value?.mediaSections) return;
-  const customSection =
-    selectedDateObject.value.mediaSections[uniqueId]?.config;
-  if (customSection) {
-    customSection.bgColor = bgColor;
+  const section = findMediaSection(
+    selectedDateObject.value.mediaSections,
+    uniqueId,
+  );
+  if (section?.config) {
+    section.config.bgColor = bgColor;
   }
 };
 
@@ -1510,10 +1493,12 @@ const updateMediaSectionLabel = ({
   uniqueId: string;
 }) => {
   if (!selectedDateObject.value?.mediaSections) return;
-  const customSection =
-    selectedDateObject.value.mediaSections[uniqueId]?.config;
-  if (customSection) {
-    customSection.label = label;
+  const section = findMediaSection(
+    selectedDateObject.value.mediaSections,
+    uniqueId,
+  );
+  if (section?.config) {
+    section.config.label = label;
   }
 };
 
@@ -1537,13 +1522,14 @@ const showEmptyState = computed(() => {
   if (!selectedDateObject.value) return true;
 
   // Count total media items across all sections
-  const totalMediaCount = Object.values(
-    selectedDateObject.value.mediaSections ?? {},
-  ).reduce((total, section) => total + (section.items?.length || 0), 0);
+  const totalMediaCount = (selectedDateObject.value.mediaSections ?? []).reduce(
+    (total, section) => total + (section.items?.length || 0),
+    0,
+  );
 
   // Count visible media items across all sections
-  const visibleMediaCount = Object.values(
-    selectedDateObject.value.mediaSections ?? {},
+  const visibleMediaCount = (
+    selectedDateObject.value.mediaSections ?? []
   ).reduce(
     (total, section) =>
       total + (section.items?.filter((item) => !item.hidden).length || 0),
@@ -1580,26 +1566,31 @@ const mediaLists = computed(() => {
   const sectionsToShow: string[] = [...meetingSections];
 
   // Add any custom sections that have items (not already in meeting sections)
-  Object.entries(selectedDateObject.value.mediaSections).forEach(
-    ([sectionId, sectionData]) => {
-      if (
-        sectionData?.items?.filter((item) => !item.hidden).length &&
-        !meetingSections.includes(sectionId) &&
-        !sectionsToShow.includes(sectionId)
-      ) {
-        sectionsToShow.push(sectionId);
-      }
-    },
-  );
+  selectedDateObject.value.mediaSections.forEach((sectionData) => {
+    const sectionId = sectionData.config.uniqueId;
+    const isMeetingToday =
+      isWeMeetingDay(selectedDateObject.value?.date) ||
+      isMwMeetingDay(selectedDateObject.value?.date);
+    if (
+      !sectionsToShow.includes(sectionId) &&
+      ((!isMeetingToday && !meetingSections.includes(sectionId)) ||
+        (isMeetingToday && sectionData?.items?.length))
+      // sectionData?.items?.filter((item) => !item.hidden).length &&
+      // !meetingSections.includes(sectionId) &&
+      // !sectionsToShow.includes(sectionId)
+    ) {
+      sectionsToShow.push(sectionId);
+    }
+  });
 
-  return Object.entries(selectedDateObject.value.mediaSections)
-    .filter(([, m]) => !!m.config)
-    .filter(([, m]) => {
+  return selectedDateObject.value.mediaSections
+    .filter((m) => !!m.config)
+    .filter((m) => {
       const sectionId = m.config?.uniqueId || '';
       // Include if it's a meeting section OR if it has items
       return sectionsToShow.includes(sectionId);
     })
-    .sort(([, a], [, b]) => {
+    .sort((a, b) => {
       const aId = a.config?.uniqueId || '';
       const bId = b.config?.uniqueId || '';
 
@@ -1619,10 +1610,10 @@ const mediaLists = computed(() => {
       // If neither is in the list, sort alphabetically
       return aId.localeCompare(bId);
     })
-    .map(([sectionId, sectionData]) => ({
+    .map((sectionData) => ({
       config: sectionData?.config,
       items: sectionData?.items || [],
-      sectionId: sectionId as MediaSectionIdentifier,
+      sectionId: sectionData.config.uniqueId as MediaSectionIdentifier,
     }));
 });
 </script>

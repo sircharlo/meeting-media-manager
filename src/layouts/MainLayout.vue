@@ -36,11 +36,7 @@ import { initializeElectronApi } from 'src/helpers/electron-api-manager';
 initializeElectronApi('MainLayout');
 
 import type { LanguageValue } from 'src/constants/locales';
-import type {
-  ElectronIpcListenKey,
-  MediaItem,
-  MediaSectionIdentifier,
-} from 'src/types';
+import type { ElectronIpcListenKey, MediaItem } from 'src/types';
 
 import {
   useBroadcastChannel,
@@ -82,6 +78,7 @@ import {
   registerAllCustomShortcuts,
   unregisterAllCustomShortcuts,
 } from 'src/helpers/keyboardShortcuts';
+import { getOrCreateMediaSection } from 'src/helpers/media-sections';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
@@ -493,13 +490,11 @@ const updateWatchFolderRef = async ({
     if (!dayObj) return;
     if (event === 'addDir' || event === 'unlinkDir') {
       // Remove watched items from all sections
-      Object.keys(dayObj.mediaSections).forEach((sectionId) => {
-        const section = sectionId as MediaSectionIdentifier;
-        const sectionMedia = dayObj.mediaSections[section]?.items;
-        if (!sectionMedia) return;
-        for (let i = sectionMedia.length - 1; i >= 0; i--) {
-          if (sectionMedia[i]?.source === 'watched') {
-            sectionMedia.splice(i, 1);
+      dayObj.mediaSections.forEach((section) => {
+        if (!section.items) return;
+        for (let i = section.items.length - 1; i >= 0; i--) {
+          if (section.items[i]?.source === 'watched') {
+            section.items.splice(i, 1);
           }
         }
       });
@@ -523,28 +518,28 @@ const updateWatchFolderRef = async ({
         watchedItem.sortOrderOriginal = 'watched-' + watchedItem.title;
 
         // Add to additional section
-        dayObj.mediaSections ??= {};
-        dayObj.mediaSections['imported-media'] = defaultAdditionalSection;
+        dayObj.mediaSections ??= [];
+        const additionalSection = getOrCreateMediaSection(
+          dayObj.mediaSections,
+          'imported-media',
+          defaultAdditionalSection.config,
+        );
 
-        dayObj.mediaSections['imported-media'].items ??= [];
+        additionalSection.items ??= [];
 
         // Find the correct index to insert the item in the sorted order
         const insertIndex =
-          dayObj.mediaSections['imported-media'].items.findIndex(
+          additionalSection.items.findIndex(
             (existingItem: MediaItem) =>
               SORTER.compare(existingItem.title, watchedItem.title) > 0,
           ) ?? -1;
 
         if (insertIndex === -1) {
           // If no larger item is found, push to the end
-          dayObj.mediaSections['imported-media'].items.push(watchedItem);
+          additionalSection.items.push(watchedItem);
         } else {
           // Otherwise, insert at the correct index
-          dayObj.mediaSections['imported-media'].items.splice(
-            insertIndex,
-            0,
-            watchedItem,
-          );
+          additionalSection.items.splice(insertIndex, 0, watchedItem);
         }
       }
     } else if (event === 'unlink') {
@@ -552,16 +547,14 @@ const updateWatchFolderRef = async ({
       const targetUrl = pathToFileURL(changedPath);
 
       // Remove watched items with matching fileUrl from all sections
-      Object.keys(dayObj.mediaSections).forEach((sectionId) => {
-        const section = sectionId as MediaSectionIdentifier;
-        const sectionMedia = dayObj.mediaSections[section]?.items;
-        if (!sectionMedia) return;
-        for (let i = sectionMedia.length - 1; i >= 0; i--) {
+      dayObj.mediaSections.forEach((section) => {
+        if (!section.items) return;
+        for (let i = section.items.length - 1; i >= 0; i--) {
           if (
-            sectionMedia[i]?.source === 'watched' &&
-            sectionMedia[i]?.fileUrl === targetUrl
+            section.items[i]?.source === 'watched' &&
+            section.items[i]?.fileUrl === targetUrl
           ) {
-            sectionMedia.splice(i, 1);
+            section.items.splice(i, 1);
           }
         }
       });

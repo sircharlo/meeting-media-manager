@@ -145,7 +145,9 @@ const updateLabel = (uuid: string | undefined) => {
   const newLabel = labels.value[uuid];
   if (!selectedDateObject.value?.mediaSections || !newLabel) return;
 
-  const sectionData = selectedDateObject.value.mediaSections[uuid];
+  const sectionData = selectedDateObject.value.mediaSections.find(
+    (section) => section.config.uniqueId === uuid,
+  );
   if (!sectionData?.config) return;
 
   sectionData.config.label = newLabel;
@@ -155,15 +157,25 @@ const updateLabel = (uuid: string | undefined) => {
 const handleOrderChange = () => {
   if (!selectedDateObject.value?.mediaSections) return;
 
-  // Reorder the sections in mediaSections
+  // Get standard sections (meeting sections) that should remain in their positions
+  const standardSections = [
+    'ayfm',
+    'lac',
+    'tgw',
+    'wt',
+    'pt',
+    'circuit-overseer',
+  ];
+  const existingStandardSections =
+    selectedDateObject.value.mediaSections.filter((section) =>
+      standardSections.includes(section.config.uniqueId),
+    );
 
-  selectedDateObject.value.mediaSections = sortableItems.value.reduce(
-    (acc, section) => {
-      acc[section.config?.uniqueId || ''] = section;
-      return acc;
-    },
-    {} as Record<string, MediaSectionWithConfig>,
-  );
+  // Reorder the sections: standard sections first, then reordered custom sections
+  selectedDateObject.value.mediaSections = [
+    ...existingStandardSections,
+    ...sortableItems.value,
+  ];
 
   console.log('✅ Custom sections reordered:', {
     newOrder: sortableItems.value.map((section) => ({
@@ -218,31 +230,32 @@ const initializeValues = () => {
 
   // Get custom sections (non-standard sections)
 
-  labels.value = Object.entries(daySections).reduce(
-    (acc, [sectionId, section]) => ({
+  labels.value = daySections.reduce(
+    (acc, section) => ({
       ...acc,
-      [sectionId]: section.config?.label || t(sectionId || ''),
+      [section.config.uniqueId]:
+        section.config?.label || t(section.config.uniqueId || ''),
     }),
     {},
   );
-  hexValues.value = Object.entries(daySections).reduce(
-    (acc, [sectionId, section]) => ({
+  hexValues.value = daySections.reduce(
+    (acc, section) => ({
       ...acc,
-      [sectionId]: section.config?.bgColor || '#ffffff',
+      [section.config.uniqueId]: section.config?.bgColor || '#ffffff',
     }),
     {},
   );
   const meetingSections =
     WE_MEETING_SECTIONS.concat(MW_MEETING_SECTIONS).concat('circuit-overseer');
-  sortableItems.value = Object.entries(daySections)
+  sortableItems.value = daySections
     .filter(
-      ([sectionId, section]) =>
-        !meetingSections.includes(sectionId) && !!section?.config,
+      (section) =>
+        !meetingSections.includes(section.config.uniqueId) && !!section?.config,
     )
-    .map(([sectionId, section]) => ({
+    .map((section) => ({
       config: section.config,
       items: section.items,
-      uniqueId: sectionId,
+      uniqueId: section.config.uniqueId,
     }));
 
   console.log('✅ Values initialized', {

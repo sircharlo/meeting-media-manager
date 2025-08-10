@@ -1,6 +1,10 @@
 import type { MediaSectionIdentifier, MediaSectionWithConfig } from 'src/types';
 
 import { standardSections } from 'src/constants/media';
+import {
+  findMediaSection,
+  getOrCreateMediaSection,
+} from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, ref, watch } from 'vue';
 
@@ -23,10 +27,11 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   // Get section items from the new structure
   const sectionItems = computed(() => {
     if (!selectedDateObject.value?.mediaSections) return [];
-    return (
-      selectedDateObject.value.mediaSections[mediaList.config?.uniqueId || '']
-        ?.items || []
+    const section = findMediaSection(
+      selectedDateObject.value.mediaSections,
+      mediaList.config?.uniqueId || '',
     );
+    return section?.items || [];
   });
 
   // Get visible items (filtered out hidden items)
@@ -54,10 +59,11 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   // Get section config from the new structure
   const sectionConfig = computed(() => {
     if (!selectedDateObject.value?.mediaSections) return null;
-    return (
-      selectedDateObject.value.mediaSections[mediaList.config?.uniqueId || '']
-        ?.config || null
+    const section = findMediaSection(
+      selectedDateObject.value.mediaSections,
+      mediaList.config?.uniqueId || '',
     );
+    return section?.config || null;
   });
 
   // Check if this is a custom section (not a standard meeting section)
@@ -94,14 +100,14 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   // Get all custom sections for ordering
   const customSections = computed(() => {
     if (!selectedDateObject.value?.mediaSections) return [];
-    return Object.entries(selectedDateObject.value.mediaSections)
-      .filter(([sectionId]) => {
-        return !standardSections.includes(sectionId);
+    return selectedDateObject.value.mediaSections
+      .filter((section) => {
+        return !standardSections.includes(section.config.uniqueId);
       })
-      .map(([sectionId, sectionData]) => ({
-        config: sectionData.config,
-        items: sectionData.items,
-        uniqueId: sectionId,
+      .map((section) => ({
+        config: section.config,
+        items: section.items,
+        uniqueId: section.config.uniqueId,
       }));
   });
 
@@ -177,8 +183,10 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
       return;
     }
 
-    const sectionData =
-      selectedDateObject.value.mediaSections[mediaList.config?.uniqueId || ''];
+    const sectionData = findMediaSection(
+      selectedDateObject.value.mediaSections,
+      mediaList.config?.uniqueId || '',
+    );
     if (sectionData && sectionData.config) {
       const oldLabel = sectionData.config.label;
       sectionData.config.label = label;
@@ -207,8 +215,10 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
       return;
     }
 
-    const sectionData =
-      selectedDateObject.value.mediaSections[mediaList.config?.uniqueId || ''];
+    const sectionData = findMediaSection(
+      selectedDateObject.value.mediaSections,
+      mediaList.config?.uniqueId || '',
+    );
     if (sectionData && sectionData.config) {
       const oldColor = sectionData.config.bgColor;
       sectionData.config.bgColor = bgColor;
@@ -242,8 +252,10 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
       return;
     }
 
-    const sectionData =
-      selectedDateObject.value.mediaSections[mediaList.config?.uniqueId || ''];
+    const sectionData = findMediaSection(
+      selectedDateObject.value.mediaSections,
+      mediaList.config?.uniqueId || '',
+    );
     if (sectionData && sectionData.config) {
       const oldRepeat = sectionData.config.repeat;
       const oldInterval = sectionData.config.repeatInterval;
@@ -298,42 +310,27 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
       return;
     }
 
-    // Reorder the sections in mediaSections
-    const sectionEntries = Object.entries(
-      selectedDateObject.value.mediaSections,
+    // Find standard and custom sections
+    const standardSectionsList = selectedDateObject.value.mediaSections.filter(
+      (section) => standardSections.includes(section.config.uniqueId),
     );
-    const customSectionEntries = sectionEntries.filter(([sectionId]) => {
-      return !standardSections.includes(sectionId);
-    });
 
-    const standardSectionEntries = sectionEntries.filter(([sectionId]) => {
-      return standardSections.includes(sectionId);
-    });
+    const customSectionsList = selectedDateObject.value.mediaSections.filter(
+      (section) => !standardSections.includes(section.config.uniqueId),
+    );
 
     // Reorder custom sections
-    const reorderedCustomSections = [...customSectionEntries];
+    const reorderedCustomSections = [...customSectionsList];
     const [movedSection] = reorderedCustomSections.splice(currentIndex, 1);
     if (movedSection) {
       reorderedCustomSections.splice(newIndex, 0, movedSection);
     }
 
-    // Rebuild mediaSections with new order
-    const newMediaSections: Record<
-      MediaSectionIdentifier,
-      MediaSectionWithConfig
-    > = {};
-
-    // Add standard sections first
-    standardSectionEntries.forEach(([sectionId, sectionData]) => {
-      newMediaSections[sectionId] = sectionData;
-    });
-
-    // Add custom sections in new order
-    reorderedCustomSections.forEach(([sectionId, sectionData]) => {
-      newMediaSections[sectionId] = sectionData;
-    });
-
-    selectedDateObject.value.mediaSections = newMediaSections;
+    // Rebuild mediaSections with new order (standard sections first, then custom)
+    selectedDateObject.value.mediaSections = [
+      ...standardSectionsList,
+      ...reorderedCustomSections,
+    ];
 
     console.log('✅ Section moved:', {
       direction,
@@ -354,18 +351,21 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
       return;
     }
 
-    const sectionData =
-      selectedDateObject.value.mediaSections[mediaList.config?.uniqueId || ''];
+    const sectionData = findMediaSection(
+      selectedDateObject.value.mediaSections,
+      mediaList.config?.uniqueId || '',
+    );
     if (sectionData) {
       // Move all items to additional section
       const itemsToMove = sectionData.items;
       if (!itemsToMove) return;
-      selectedDateObject.value.mediaSections['imported-media'] ??=
-        defaultAdditionalSection;
-      selectedDateObject.value.mediaSections['imported-media'].items ??= [];
-      selectedDateObject.value.mediaSections['imported-media'].items.push(
-        ...itemsToMove,
+      const additionalSection = getOrCreateMediaSection(
+        selectedDateObject.value.mediaSections,
+        'imported-media',
+        defaultAdditionalSection.config,
       );
+      additionalSection.items ??= [];
+      additionalSection.items.push(...itemsToMove);
 
       // Empty the section
       if (sectionData.items) {

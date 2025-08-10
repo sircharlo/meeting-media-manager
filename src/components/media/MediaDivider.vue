@@ -77,7 +77,10 @@
 import type { MediaDivider } from 'src/types';
 
 import { useElementHover, whenever } from '@vueuse/core';
-import { getSectionBgColor } from 'src/helpers/media-sections';
+import {
+  findMediaSection,
+  getSectionBgColor,
+} from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, nextTick, ref } from 'vue';
 
@@ -132,12 +135,24 @@ const getContrastTextColor = (bgColor: string): string => {
 const dividerStyles = computed(() => {
   const { selectedDateObject } = useCurrentStateStore();
 
+  if (!selectedDateObject?.mediaSections)
+    return {
+      backgroundColor: props.divider.bgColor || 'var(--q-secondary)',
+      color: props.divider.textColor || 'white',
+    };
+
+  const section = findMediaSection(
+    selectedDateObject?.mediaSections,
+    props.divider.section,
+  );
+  if (!section?.config)
+    return {
+      backgroundColor: props.divider.bgColor || 'var(--q-secondary)',
+      color: props.divider.textColor || 'white',
+    };
+
   return {
-    backgroundColor:
-      props.divider.bgColor ||
-      getSectionBgColor(
-        selectedDateObject?.mediaSections?.[props.divider.section]?.config,
-      ),
+    backgroundColor: props.divider.bgColor || getSectionBgColor(section.config),
     color: props.divider.textColor || 'white',
   };
 });

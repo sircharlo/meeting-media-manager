@@ -238,7 +238,7 @@ export const useCurrentStateStore = defineStore('current-state', {
     },
     // Direct access to media sections - no need for getter methods anymore
     // Use selectedDateObject.mediaSections directly for all media
-    // Use selectedDateObject.mediaSections[section].filter(item => !item.hidden) for visible media
+    // Use selectedDateObject.mediaSections.find(s => s.config.uniqueId === section)?.items.filter(item => !item.hidden) for visible media
     mediaIsPlaying: (state) => {
       return (
         state.mediaPlaying.url !== '' || state.mediaPlaying.action === 'website'

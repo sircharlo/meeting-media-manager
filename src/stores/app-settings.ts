@@ -3,7 +3,6 @@ import type {
   JwLanguage,
   MediaItem,
   MediaLink,
-  MediaSectionIdentifier,
   OldAppConfig,
   ScreenPreferences,
   SettingsValues,
@@ -13,6 +12,11 @@ import { defineStore } from 'pinia';
 import { LocalStorage as QuasarStorage } from 'quasar';
 import { defaultAdditionalSection } from 'src/composables/useMediaSection';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import {
+  createMeetingSections,
+  findMediaSection,
+  getOrCreateMediaSection,
+} from 'src/helpers/media-sections';
 import { dateFromString, datesAreSame } from 'src/utils/date';
 import { parseJsonSafe, uuid } from 'src/utils/general';
 import {
@@ -80,13 +84,11 @@ export const useAppSettingsStore = defineStore('app-settings', {
               .filter((day) => !!day.meeting)
               .forEach((day) => {
                 // Remove dynamic media from all sections
-                Object.keys(day.mediaSections || {}).forEach((sectionId) => {
-                  const section = sectionId as MediaSectionIdentifier;
-                  if (day.mediaSections?.[section]) {
-                    day.mediaSections[section].items ??= [];
-                    day.mediaSections[section].items = day.mediaSections[
-                      section
-                    ].items.filter((item) => item.source !== 'dynamic');
+                day.mediaSections.forEach((section) => {
+                  if (section.items) {
+                    section.items = section.items.filter(
+                      (item) => item.source !== 'dynamic',
+                    );
                   }
                 });
                 day.complete = false;
@@ -201,10 +203,15 @@ export const useAppSettingsStore = defineStore('app-settings', {
             lookupPeriodForCongregation.forEach((day) => {
               // Initialize mediaSections if it doesn't exist
               if (!day.mediaSections) {
-                day.mediaSections = {};
+                day.mediaSections = [];
               }
               // Clear additional section
-              day.mediaSections['imported-media'] = defaultAdditionalSection;
+              const additionalSection = getOrCreateMediaSection(
+                day.mediaSections,
+                'imported-media',
+                defaultAdditionalSection.config,
+              );
+              additionalSection.items = [];
               day.complete = false;
               day.error = false;
             });
@@ -218,34 +225,34 @@ export const useAppSettingsStore = defineStore('app-settings', {
                   datesAreSame(d.date, targetDate),
                 );
               if (existingMediaItemsForDate) {
+                const additionalSection = findMediaSection(
+                  existingMediaItemsForDate.mediaSections,
+                  'imported-media',
+                );
+                const existingItems = additionalSection?.items || [];
+
                 const newAdditionalItems = (
                   additionalItems as MediaItem[]
                 ).filter(
                   (item) =>
-                    !existingMediaItemsForDate?.mediaSections?.[
-                      'imported-media'
-                    ]?.items?.find(
+                    !existingItems.find(
                       (m: MediaItem) => m.uniqueId === item.uniqueId,
                     ),
                 );
-                if (
-                  !existingMediaItemsForDate.mediaSections['imported-media']
-                ) {
-                  existingMediaItemsForDate.mediaSections['imported-media'] =
-                    defaultAdditionalSection;
-                }
-                existingMediaItemsForDate.mediaSections[
-                  'imported-media'
-                ].items ??= [];
-                existingMediaItemsForDate.mediaSections[
-                  'imported-media'
-                ].items.push(...newAdditionalItems);
+
+                const targetSection = getOrCreateMediaSection(
+                  existingMediaItemsForDate.mediaSections,
+                  'imported-media',
+                  defaultAdditionalSection.config,
+                );
+                targetSection.items ??= [];
+                targetSection.items.push(...newAdditionalItems);
               } else {
                 lookupPeriodForCongregation.push({
                   complete: true,
                   date: dateFromString(targetDate),
                   error: false,
-                  mediaSections: {},
+                  mediaSections: [],
                   meeting: false,
                   today: false,
                 });
@@ -260,6 +267,20 @@ export const useAppSettingsStore = defineStore('app-settings', {
           jwStore.lookupPeriod = currentLookupPeriods;
         } else if (type.endsWith('refreshDynamicMedia')) {
           refreshDynamicMedia();
+        } else if (type === 'newMediaSections') {
+          const currentLookupPeriods = structuredClone(
+            toRawDeep(jwStore.lookupPeriod),
+          );
+          for (const [congId, dateInfo] of Object.entries(
+            currentLookupPeriods,
+          )) {
+            if (!congId || !dateInfo) continue;
+            dateInfo.forEach((day) => {
+              day.mediaSections = [];
+              createMeetingSections(day);
+            });
+          }
+          jwStore.lookupPeriod = currentLookupPeriods;
         } else {
           // Other migrations can be added here
         }

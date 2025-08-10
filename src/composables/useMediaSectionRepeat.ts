@@ -3,6 +3,7 @@ import type { MediaItem, MediaSectionIdentifier } from 'src/types';
 import { useBroadcastChannel } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { standardSections } from 'src/constants/media';
+import { findMediaSection } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
 import { ref, watch } from 'vue';
 
@@ -49,8 +50,11 @@ export function useMediaSectionRepeat() {
       return [];
     }
 
-    const sectionItems =
-      selectedDateObject.value.mediaSections[sectionId]?.items || [];
+    const section = findMediaSection(
+      selectedDateObject.value.mediaSections,
+      sectionId,
+    );
+    const sectionItems = section?.items || [];
 
     // Filter out hidden items and dividers
     const visibleItems = sectionItems.filter(
@@ -77,7 +81,10 @@ export function useMediaSectionRepeat() {
       return null;
     }
 
-    const sectionData = selectedDateObject.value.mediaSections[sectionId];
+    const sectionData = findMediaSection(
+      selectedDateObject.value.mediaSections,
+      sectionId,
+    );
     return sectionData?.config || null;
   };
 

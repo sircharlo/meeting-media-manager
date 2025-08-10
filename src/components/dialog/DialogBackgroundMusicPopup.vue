@@ -9,6 +9,7 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
+    {{ shouldAutoStart }}
     <div
       class="action-popup q-py-md flex"
       :class="{
@@ -193,14 +194,26 @@ const isMeetingOver = computed(() => {
 });
 
 const shouldAutoStart = computed(() => {
+  console.log('[shouldAutoStart] Checking auto start conditions...');
   if (
     !currentSettings.value?.enableMusicButton ||
     !currentSettings.value?.autoStartMusic
   ) {
+    console.log('[shouldAutoStart] Auto start disabled by settings:', {
+      autoStartMusic: currentSettings.value?.autoStartMusic,
+      enableMusicButton: currentSettings.value?.enableMusicButton,
+    });
     return false;
   }
 
   if (!isMeetingToday.value || musicPlaying.value) {
+    console.log(
+      '[shouldAutoStart] Not meeting today or music already playing:',
+      {
+        isMeetingToday: isMeetingToday.value,
+        musicPlaying: musicPlaying.value,
+      },
+    );
     return false;
   }
 
@@ -208,6 +221,17 @@ const shouldAutoStart = computed(() => {
   const withinAutoStartWindow =
     timeUntil > MEETING_STOP_BUFFER_SECONDS.value * 1.5 &&
     timeUntil <= AUTO_START_WINDOW_HOURS * 3600;
+
+  console.log(
+    '[shouldAutoStart] timeUntil:',
+    timeUntil,
+    'MEETING_STOP_BUFFER_SECONDS:',
+    MEETING_STOP_BUFFER_SECONDS.value,
+    'AUTO_START_WINDOW_HOURS:',
+    AUTO_START_WINDOW_HOURS,
+    'withinAutoStartWindow:',
+    withinAutoStartWindow,
+  );
 
   return withinAutoStartWindow;
 });

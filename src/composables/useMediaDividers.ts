@@ -5,6 +5,7 @@ import type {
 } from 'src/types';
 
 import { storeToRefs } from 'pinia';
+import { findMediaSection } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed } from 'vue';
 
@@ -21,8 +22,11 @@ export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
 
   // Get dividers for this section
   const sectionDividers = computed(() => {
-    if (!sectionId) return [];
-    const media = selectedDateObject.value?.mediaSections?.[sectionId]?.items;
+    if (!sectionId || !selectedDateObject.value?.mediaSections) return [];
+    const media = findMediaSection(
+      selectedDateObject.value?.mediaSections,
+      sectionId,
+    )?.items;
     if (!media) return [];
 
     return media
@@ -44,8 +48,11 @@ export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
 
   // Get media items (excluding dividers) for this section
   const sectionMediaItems = computed(() => {
-    if (!sectionId) return [];
-    const media = selectedDateObject.value?.mediaSections?.[sectionId]?.items;
+    if (!sectionId || !selectedDateObject.value?.mediaSections) return [];
+    const media = findMediaSection(
+      selectedDateObject.value?.mediaSections,
+      sectionId,
+    )?.items;
     if (!media) return [];
 
     return media
@@ -59,7 +66,10 @@ export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
     if (!sectionId) return;
 
     // Get section-specific media items to determine proper position
-    const sectionMedia = selectedDateObject.value.mediaSections[sectionId];
+    const sectionMedia = findMediaSection(
+      selectedDateObject.value.mediaSections,
+      sectionId,
+    );
     if (!sectionMedia?.items) return;
     const sectionMediaCount = sectionMedia.items.length;
 
@@ -74,14 +84,12 @@ export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
     };
 
     // Add divider to the section
-    if (!selectedDateObject.value.mediaSections[sectionId]?.items) return;
+    if (!sectionMedia?.items) return;
 
     if (addToTop) {
-      selectedDateObject.value.mediaSections[sectionId].items.unshift(
-        newDivider,
-      );
+      sectionMedia.items.unshift(newDivider);
     } else {
-      selectedDateObject.value.mediaSections[sectionId].items.push(newDivider);
+      sectionMedia.items.push(newDivider);
     }
 
     console.log('✅ Divider added:', {
@@ -93,8 +101,12 @@ export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
 
   // Update divider title
   const updateDividerTitle = (dividerId: string, newTitle: string) => {
-    if (!sectionId) return;
-    const media = selectedDateObject.value?.mediaSections?.[sectionId]?.items;
+    if (!sectionId || !selectedDateObject.value?.mediaSections || !dividerId)
+      return;
+    const media = findMediaSection(
+      selectedDateObject.value?.mediaSections,
+      sectionId,
+    )?.items;
     if (!media) return;
 
     const divider = media.find(
@@ -113,8 +125,12 @@ export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
     bgColor: string,
     textColor: string,
   ) => {
-    if (!sectionId) return;
-    const media = selectedDateObject.value?.mediaSections?.[sectionId]?.items;
+    if (!sectionId || !selectedDateObject.value?.mediaSections || !dividerId)
+      return;
+    const media = findMediaSection(
+      selectedDateObject.value?.mediaSections,
+      sectionId,
+    )?.items;
     if (!media) return;
 
     const divider = media.find(
@@ -134,9 +150,12 @@ export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
 
   // Delete divider
   const deleteDivider = (dividerId?: string) => {
-    if (!sectionId) return;
-    if (!dividerId) return;
-    const media = selectedDateObject.value?.mediaSections?.[sectionId]?.items;
+    if (!sectionId || !selectedDateObject.value?.mediaSections || !dividerId)
+      return;
+    const media = findMediaSection(
+      selectedDateObject.value?.mediaSections,
+      sectionId,
+    )?.items;
     if (!media) return;
 
     const index = media.findIndex(
@@ -151,8 +170,11 @@ export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
 
   // Move divider to new position
   const moveDivider = (dividerId: string, newPosition: number) => {
-    if (!sectionId) return;
-    const media = selectedDateObject.value?.mediaSections?.[sectionId]?.items;
+    if (!sectionId || !selectedDateObject.value?.mediaSections) return;
+    const media = findMediaSection(
+      selectedDateObject.value?.mediaSections,
+      sectionId,
+    )?.items;
     if (!media) return;
 
     const divider = media.find(

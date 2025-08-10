@@ -21,6 +21,10 @@ import { MAX_SONGS } from 'src/constants/jw';
 import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
+  findMediaSection,
+  getOrCreateMediaSection,
+} from 'src/helpers/media-sections';
+import {
   fetchJwLanguages,
   fetchMemorials,
   fetchPubMediaLinks,
@@ -137,7 +141,10 @@ export function replaceMissingMediaByPubMediaId(
       const targetSectionId = item.children?.length
         ? item.children[0]?.mwSection || 'tgw'
         : item.mwSection || 'tgw'; // Default to 'tgw' if no section assigned
-      const targetSection = targetDay.mediaSections[targetSectionId];
+      const targetSection = findMediaSection(
+        targetDay.mediaSections,
+        targetSectionId,
+      );
 
       if (!targetSection?.items) {
         console.warn(
@@ -250,21 +257,7 @@ export const useJwStore = defineStore('jw-store', {
           );
           period = {
             ...selectedDateObject,
-            mediaSections: {
-              ayfm: { config: { uniqueId: 'ayfm' }, items: [] },
-              'circuit-overseer': {
-                config: { uniqueId: 'circuit-overseer' },
-                items: [],
-              },
-              'imported-media': {
-                config: { uniqueId: 'imported-media' },
-                items: [],
-              },
-              lac: { config: { uniqueId: 'lac' }, items: [] },
-              pt: { config: { uniqueId: 'pt' }, items: [] },
-              tgw: { config: { uniqueId: 'tgw' }, items: [] },
-              wt: { config: { uniqueId: 'wt' }, items: [] },
-            },
+            mediaSections: [],
           };
           this.lookupPeriod[currentCongregation].push(period);
         }
@@ -282,27 +275,18 @@ export const useJwStore = defineStore('jw-store', {
           targetSection = section;
         }
 
+        const targetSectionContainer = getOrCreateMediaSection(
+          period.mediaSections,
+          targetSection,
+          { uniqueId: targetSection },
+        );
+
         console.log(
           '🔄 [addToAdditionMediaMap] Target section:',
           targetSection,
-          period.mediaSections[targetSection],
+          targetSectionContainer,
         );
 
-        // Ensure the target section exists
-        if (!period.mediaSections[targetSection]) {
-          period.mediaSections[targetSection] = {
-            config: { uniqueId: targetSection },
-            items: [],
-          };
-        }
-
-        // Add sort order to media items
-        period.mediaSections[targetSection] ??= {
-          config: { uniqueId: targetSection },
-          items: [],
-        };
-        const targetSectionContainer = period.mediaSections[targetSection];
-        if (!targetSectionContainer) return;
         targetSectionContainer.items ??= [];
         const sectionMedia = targetSectionContainer.items;
         const currentCount = sectionMedia.length;
@@ -333,8 +317,12 @@ export const useJwStore = defineStore('jw-store', {
           section !== 'lac' &&
           section !== 'circuit-overseer'
         ) {
-          if (selectedDateObject.mediaSections[section]) {
-            selectedDateObject.mediaSections[section].items = [];
+          const sectionData = findMediaSection(
+            selectedDateObject.mediaSections,
+            section,
+          );
+          if (sectionData) {
+            sectionData.items = [];
           }
         }
       });
@@ -353,15 +341,13 @@ export const useJwStore = defineStore('jw-store', {
           return;
 
         // Remove the item from all sections
-        Object.keys(selectedDateObject.mediaSections).forEach((sectionId) => {
-          const section = sectionId as MediaSectionIdentifier;
-          const sectionMedia = selectedDateObject.mediaSections[section]?.items;
-          if (!sectionMedia) return;
-          const index = sectionMedia.findIndex(
+        selectedDateObject.mediaSections.forEach((section) => {
+          if (!section.items) return;
+          const index = section.items.findIndex(
             (item: MediaItem) => item.uniqueId === uniqueId,
           );
           if (index !== undefined && index !== -1) {
-            sectionMedia.splice(index, 1);
+            section.items.splice(index, 1);
           }
         });
 

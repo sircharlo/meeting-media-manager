@@ -559,7 +559,7 @@ export const fetchMedia = async () => {
             if (fetchResult) {
               console.log('✅ Media fetched successfully');
               // Get all media from all sections for replacement
-              if (!day.mediaSections) day.mediaSections = {};
+              if (!day.mediaSections) day.mediaSections = [];
               createMeetingSections(day);
               if (isMwMeetingDay(dayDate)) {
                 replaceMissingMediaByPubMediaId(day, fetchResult.media);

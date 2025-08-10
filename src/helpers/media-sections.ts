@@ -11,6 +11,54 @@ import { getMeetingSections, standardSections } from 'src/constants/media';
 import { isCoWeek } from 'src/helpers/date';
 import { useCurrentStateStore } from 'src/stores/current-state';
 
+// Helper functions for array-based mediaSections
+export const findMediaSection = (
+  mediaSections: MediaSectionWithConfig[],
+  sectionId: MediaSectionIdentifier,
+): MediaSectionWithConfig | undefined => {
+  return mediaSections.find((section) => section.config.uniqueId === sectionId);
+};
+
+export const findMediaSectionIndex = (
+  mediaSections: MediaSectionWithConfig[],
+  sectionId: MediaSectionIdentifier,
+): number => {
+  return mediaSections.findIndex(
+    (section) => section.config.uniqueId === sectionId,
+  );
+};
+
+export const getOrCreateMediaSection = (
+  mediaSections: MediaSectionWithConfig[],
+  sectionId: MediaSectionIdentifier,
+  defaultConfig?: Partial<MediaSection>,
+): MediaSectionWithConfig => {
+  let section = findMediaSection(mediaSections, sectionId);
+  console.log('🔍 [getOrCreateMediaSection] section', section);
+  if (!section) {
+    section = {
+      config: {
+        uniqueId: sectionId,
+        ...defaultConfig,
+      },
+      items: [],
+    };
+    mediaSections.push(section);
+  }
+  return section;
+};
+
+export const removeMediaSection = (
+  mediaSections: MediaSectionWithConfig[],
+  sectionId: MediaSectionIdentifier,
+): MediaSectionWithConfig | undefined => {
+  const index = findMediaSectionIndex(mediaSections, sectionId);
+  if (index >= 0) {
+    return mediaSections.splice(index, 1)[0];
+  }
+  return undefined;
+};
+
 export const addSection = () => {
   const { selectedDateObject } = useCurrentStateStore();
   if (!selectedDateObject) return;
@@ -27,12 +75,12 @@ export const addSection = () => {
 
   // Add the new section to mediaSections with config
   if (!selectedDateObject.mediaSections) {
-    selectedDateObject.mediaSections = {};
+    selectedDateObject.mediaSections = [];
   }
-  selectedDateObject.mediaSections[newSectionId] = {
+  selectedDateObject.mediaSections.push({
     config: newSection,
     items: [],
-  };
+  });
 
   console.log('✅ New section created:', {
     config: newSection,
@@ -44,25 +92,32 @@ export const deleteSection = (uniqueId: string) => {
   const { selectedDateObject } = useCurrentStateStore();
   if (!selectedDateObject?.mediaSections) return;
 
-  // Move media from the deleted section to additional section
-  if (selectedDateObject.mediaSections[uniqueId]) {
-    const mediaToMove = selectedDateObject.mediaSections[uniqueId].items;
+  // Find the section to delete
+  const sectionToDelete = findMediaSection(
+    selectedDateObject.mediaSections,
+    uniqueId,
+  );
+  if (sectionToDelete) {
+    // Move media from the deleted section to additional section
+    const mediaToMove = sectionToDelete.items;
     if (mediaToMove?.length) {
-      selectedDateObject.mediaSections['imported-media'] ??=
-        defaultAdditionalSection;
-      selectedDateObject.mediaSections['imported-media'].items ??= [];
-      selectedDateObject.mediaSections['imported-media'].items.push(
-        ...mediaToMove,
+      const additionalSection = getOrCreateMediaSection(
+        selectedDateObject.mediaSections,
+        'imported-media',
+        defaultAdditionalSection.config,
       );
+      additionalSection.items ??= [];
+      additionalSection.items.push(...mediaToMove);
     }
 
     // Actually delete the section from mediaSections
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-    delete selectedDateObject.mediaSections[uniqueId];
+    removeMediaSection(selectedDateObject.mediaSections, uniqueId);
 
     console.log('✅ Section deleted:', {
       deletedSectionId: uniqueId,
-      remainingSections: Object.keys(selectedDateObject.mediaSections),
+      remainingSections: selectedDateObject.mediaSections.map(
+        (s) => s.config.uniqueId,
+      ),
     });
   }
 };
@@ -127,17 +182,13 @@ function getMeetingSectionConfigs(section: MediaSectionIdentifier | undefined) {
 
 export const createMeetingSections = (day: DateInfo) => {
   const meetingType = day.meeting;
-  console.log('🔍 [createMeetingSections] meetingType', meetingType);
+  console.log('🔍 [createMeetingSections] meetingType', meetingType, day);
   const sections = getMeetingSections(meetingType, isCoWeek(day.date));
   console.log('🔍 [createMeetingSections] sections', sections);
   sections.forEach((section) => {
     console.log('🔍 [createMeetingSections] section', section);
     const calculatedConfig = getMeetingSectionConfigs(section);
-    day.mediaSections[section] ??= {
-      config: calculatedConfig,
-      items: [],
-    };
-    const mediaSection = day.mediaSections[section];
+    const mediaSection = getOrCreateMediaSection(day.mediaSections, section);
     mediaSection.config = calculatedConfig;
   });
   console.log(

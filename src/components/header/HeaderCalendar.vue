@@ -571,18 +571,18 @@ const mediaSortCanBeReset = computed<boolean>(() => {
   }
 
   const mediaToConsider = [
-    ...(selectedDateObject.value?.mediaSections?.tgw?.items?.filter(
-      (item) => !item.hidden,
-    ) || []),
-    ...(selectedDateObject.value?.mediaSections?.ayfm?.items?.filter(
-      (item) => !item.hidden,
-    ) || []),
-    ...(selectedDateObject.value?.mediaSections?.lac?.items?.filter(
-      (item) => !item.hidden,
-    ) || []),
-    ...(selectedDateObject.value?.mediaSections?.wt?.items?.filter(
-      (item) => !item.hidden,
-    ) || []),
+    ...(selectedDateObject.value?.mediaSections
+      ?.find((section) => section.config.uniqueId === 'tgw')
+      ?.items?.filter((item) => !item.hidden) || []),
+    ...(selectedDateObject.value?.mediaSections
+      ?.find((section) => section.config.uniqueId === 'ayfm')
+      ?.items?.filter((item) => !item.hidden) || []),
+    ...(selectedDateObject.value?.mediaSections
+      ?.find((section) => section.config.uniqueId === 'lac')
+      ?.items?.filter((item) => !item.hidden) || []),
+    ...(selectedDateObject.value?.mediaSections
+      ?.find((section) => section.config.uniqueId === 'wt')
+      ?.items?.filter((item) => !item.hidden) || []),
   ];
 
   for (let i = 0; i < mediaToConsider.length - 1; i++) {
@@ -605,28 +605,27 @@ const resetSort = () => {
     toSection: MediaSectionIdentifier;
   }[] = [];
 
-  Object.entries(selectedDateObject.value.mediaSections).forEach(
-    ([currentSectionId, sectionData]) => {
-      if (!sectionData?.items) return;
+  selectedDateObject.value.mediaSections.forEach((sectionData) => {
+    if (!sectionData?.items || !sectionData.config) return;
 
-      sectionData.items.forEach((item) => {
-        // If item has mwSection and it's different from current section, it needs to be moved
-        if (item.mwSection && item.mwSection !== currentSectionId) {
-          itemsToMove.push({
-            fromSection: currentSectionId as MediaSectionIdentifier,
-            item,
-            toSection: item.mwSection,
-          });
-        }
-      });
-    },
-  );
+    sectionData.items.forEach((item) => {
+      // If item has mwSection and it's different from current section, it needs to be moved
+      if (item.mwSection && item.mwSection !== sectionData.config.uniqueId) {
+        itemsToMove.push({
+          fromSection: sectionData.config.uniqueId,
+          item,
+          toSection: item.mwSection,
+        });
+      }
+    });
+  });
 
   // Move items to their original sections
   itemsToMove.forEach(({ fromSection, item, toSection }) => {
     // Remove from current section
-    const fromSectionData =
-      selectedDateObject.value?.mediaSections[fromSection];
+    const fromSectionData = selectedDateObject.value?.mediaSections.find(
+      (section) => section.config.uniqueId === fromSection,
+    );
     if (fromSectionData?.items) {
       fromSectionData.items = fromSectionData.items.filter(
         (i) => i.uniqueId !== item.uniqueId,
@@ -634,16 +633,18 @@ const resetSort = () => {
     }
 
     // Add to original section
-    if (!selectedDateObject.value?.mediaSections[toSection]) {
-      if (selectedDateObject.value) {
-        selectedDateObject.value.mediaSections[toSection] = {
-          config: { uniqueId: toSection },
-          items: [],
-        };
-      }
+    let toSectionData = selectedDateObject.value?.mediaSections.find(
+      (section) => section.config.uniqueId === toSection,
+    );
+    if (!toSectionData && selectedDateObject.value) {
+      toSectionData = {
+        config: { uniqueId: toSection },
+        items: [],
+      };
+      selectedDateObject.value.mediaSections.push(toSectionData);
     }
-    if (selectedDateObject.value?.mediaSections[toSection]?.items) {
-      selectedDateObject.value.mediaSections[toSection].items.push(item);
+    if (toSectionData?.items) {
+      toSectionData.items.push(item);
     }
   });
 
@@ -657,7 +658,9 @@ const resetSort = () => {
   ] as const;
 
   sectionsToSort.forEach((sectionId) => {
-    const sectionMedia = selectedDateObject.value?.mediaSections[sectionId];
+    const sectionMedia = selectedDateObject.value?.mediaSections.find(
+      (section) => section.config.uniqueId === sectionId,
+    );
     if (!sectionMedia?.items?.length) return;
     // Sort by sortOrderOriginal
     sectionMedia.items.sort((a, b) =>
@@ -720,17 +723,16 @@ const canEditCustomSections = computed(() => {
   return !!(
     !selectedDateObject.value?.meeting &&
     selectedDateObject.value?.mediaSections &&
-    Object.values(selectedDateObject.value.mediaSections).some(
+    selectedDateObject.value.mediaSections.some(
       (section) => !!section.items?.length,
     )
   );
 });
 
 const firstSectionOrUndefined = computed(() => {
-  return canEditCustomSections.value && selectedDateObject.value?.mediaSections
-    ? (Object.keys(
-        selectedDateObject.value.mediaSections,
-      )[0] as MediaSectionIdentifier)
+  return canEditCustomSections.value &&
+    selectedDateObject.value?.mediaSections?.length
+    ? selectedDateObject.value.mediaSections[0]?.config?.uniqueId
     : isWeMeetingDay(selectedDateObject.value?.date)
       ? 'pt'
       : undefined;
