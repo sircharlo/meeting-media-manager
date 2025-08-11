@@ -66,7 +66,7 @@ export interface MediaItem {
   isImage?: boolean;
   isVideo?: boolean;
   markers?: VideoMarker[];
-  mwSection?: MediaSectionIdentifier;
+  originalSection?: MediaSectionIdentifier;
   parentUniqueId?: string;
   pubMediaId?: string;
   repeat?: boolean;

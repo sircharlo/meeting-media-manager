@@ -136,11 +136,11 @@ export function replaceMissingMediaByPubMediaId(
     sectionItems.forEach((item) => {
       if (item.source !== 'dynamic') return;
 
-      // Determine the correct target section based on the item's mwSection property
-      // If children, use the first child's mwSection
+      // Determine the correct target section based on the item's originalSection property
+      // If children, use the first child's originalSection
       const targetSectionId = item.children?.length
-        ? item.children[0]?.mwSection || 'tgw'
-        : item.mwSection || 'tgw'; // Default to 'tgw' if no section assigned
+        ? item.children[0]?.originalSection || 'tgw'
+        : item.originalSection || 'tgw'; // Default to 'tgw' if no section assigned
       const targetSection = findMediaSection(
         targetDay.mediaSections,
         targetSectionId,
@@ -307,18 +307,18 @@ export const useJwStore = defineStore('jw-store', {
       if (!currentCongregation || !selectedDateObject?.mediaSections) return;
 
       // Clear all sections except the standard meeting sections
-      Object.keys(selectedDateObject.mediaSections).forEach((sectionId) => {
-        const section = sectionId as MediaSectionIdentifier;
+      selectedDateObject.mediaSections.forEach((section) => {
+        const sectionId = section.config.uniqueId as MediaSectionIdentifier;
         if (
-          section !== 'wt' &&
-          section !== 'tgw' &&
-          section !== 'ayfm' &&
-          section !== 'lac' &&
-          section !== 'circuit-overseer'
+          sectionId !== 'wt' &&
+          sectionId !== 'tgw' &&
+          sectionId !== 'ayfm' &&
+          sectionId !== 'lac' &&
+          sectionId !== 'circuit-overseer'
         ) {
           const sectionData = findMediaSection(
             selectedDateObject.mediaSections,
-            section,
+            sectionId,
           );
           if (sectionData) {
             sectionData.items = [];

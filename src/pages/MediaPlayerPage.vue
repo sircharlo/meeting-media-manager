@@ -4,14 +4,14 @@
     padding
     style="align-content: center; height: 100vh; -webkit-app-region: drag"
   >
-    <pre>
+    <!-- <pre>
       {{ urlVariables }}
       {{ online }}
       {{ hideMediaLogo }}
       {{ yeartext }}
       {{ mediaPlayingUrl }}
       {{ mediaAction }}
-    </pre>
+    </pre> -->
     <q-resize-observer debounce="50" @resize="postMediaWindowSize" />
     <transition
       appear

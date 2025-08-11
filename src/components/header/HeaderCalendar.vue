@@ -550,9 +550,14 @@ const mediaSortCanBeReset = computed<boolean>(() => {
 
   const nonHiddenMedia = allMedia.filter((item) => !item.hidden);
 
-  // Note: MediaItem no longer has section/sectionOriginal properties
-  // so we skip the section change check for now
-  const hasSectionChange = false;
+  const hasSectionChange =
+    selectedDateObject.value?.mediaSections?.some((section) =>
+      section.items?.some(
+        (item) =>
+          item.originalSection &&
+          item.originalSection !== section.config.uniqueId,
+      ),
+    ) ?? false;
 
   if (hasSectionChange) {
     return true;
@@ -598,7 +603,7 @@ const mediaSortCanBeReset = computed<boolean>(() => {
 const resetSort = () => {
   if (!selectedDateObject.value?.mediaSections) return;
 
-  // First, move items back to their original sections based on mwSection
+  // First, move items back to their original sections based on originalSection
   const itemsToMove: {
     fromSection: MediaSectionIdentifier;
     item: MediaItem;
@@ -609,12 +614,15 @@ const resetSort = () => {
     if (!sectionData?.items || !sectionData.config) return;
 
     sectionData.items.forEach((item) => {
-      // If item has mwSection and it's different from current section, it needs to be moved
-      if (item.mwSection && item.mwSection !== sectionData.config.uniqueId) {
+      // If item has originalSection and it's different from current section, it needs to be moved
+      if (
+        item.originalSection &&
+        item.originalSection !== sectionData.config.uniqueId
+      ) {
         itemsToMove.push({
           fromSection: sectionData.config.uniqueId,
           item,
-          toSection: item.mwSection,
+          toSection: item.originalSection,
         });
       }
     });

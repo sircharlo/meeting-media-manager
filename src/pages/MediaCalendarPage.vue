@@ -5,7 +5,9 @@
     @dragover="dropActive"
     @dragstart="dropActive"
   >
-    {{ selectedDateObject?.mediaSections.map((s) => s.config.uniqueId) }}
+    <!-- <pre>{{
+      selectedDateObject?.mediaSections.map((s) => s.config.uniqueId)
+    }}</pre> -->
     <div v-if="showBannerColumn" class="col">
       <q-slide-transition>
         <div v-if="showObsBanner" class="row">

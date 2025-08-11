@@ -24,7 +24,7 @@ import type {
 import { queues } from 'boot/globals';
 import { FEB_2023, FOOTNOTE_TAR_PAR, MAX_SONGS } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
-import { isCoWeek, isMwMeetingDay } from 'src/helpers/date';
+import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { exportAllDays } from 'src/helpers/export-media';
 import { getSubtitlesUrl, getThumbnailUrl } from 'src/helpers/fs';
@@ -1544,7 +1544,11 @@ export const dynamicMediaMapper = async (
       const uniqueId = sanitizeId(idRaw);
 
       let section: MediaSectionIdentifier =
-        calculatedSource === 'additional' ? 'imported-media' : 'wt';
+        calculatedSource === 'additional'
+          ? isWeMeetingDay(lookupDate)
+            ? 'pt'
+            : 'imported-media'
+          : 'wt';
 
       if (isMwMeetingDay(lookupDate)) {
         if (middleSongParagraphOrdinal > 0) {
@@ -1575,7 +1579,7 @@ export const dynamicMediaMapper = async (
         isImage: isImage(m.FilePath),
         isVideo: video,
         markers: m.VideoMarkers,
-        mwSection: section,
+        originalSection: section,
         pubMediaId,
         repeat: !!m.Repeat,
         sortOrderOriginal: m.BeginParagraphOrdinal || index, // Use paragraph ordinal for proper ordering
@@ -2134,10 +2138,10 @@ export const getMwMedia = async (lookupDate: Date) => {
       'dynamic',
     );
 
-    // Group media items by their mwSection property
+    // Group media items by their originalSection property
     const groupedMedia: Record<string, MediaItem[]> = {};
     mediaForDay.forEach((mediaItem) => {
-      const section = mediaItem.mwSection || 'tgw'; // Default to 'tgw' if no section assigned
+      const section = mediaItem.originalSection || 'tgw'; // Default to 'tgw' if no section assigned
       if (!groupedMedia[section]) {
         groupedMedia[section] = [];
       }

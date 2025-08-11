@@ -46,7 +46,7 @@
           (mediaList.config?.uniqueId === 'imported-media' ||
             mediaList.config?.uniqueId.startsWith('custom-'))
             ? t('imported-media')
-            : mediaList.config?.label
+            : mediaList.config?.label || t(mediaList.config?.uniqueId)
         }}
       </template>
     </q-item-section>
