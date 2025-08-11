@@ -1,4 +1,4 @@
-import { defineStore } from '#q-app/wrappers';
+import { defineStore } from '@quasar/app-vite/wrappers';
 import { createSentryPiniaPlugin } from '@sentry/vue';
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';

@@ -1,7 +1,7 @@
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
-import { defineConfig } from '#q-app/wrappers';
+import { defineConfig } from '@quasar/app-vite/wrappers';
 import { sentryEsbuildPlugin } from '@sentry/esbuild-plugin';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { fileURLToPath } from 'node:url';
