@@ -4,7 +4,7 @@
 
 For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
 
-## v25.8.0
+## v25.8.1
 
 ### ✨ New Features
 
