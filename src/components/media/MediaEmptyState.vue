@@ -4,7 +4,10 @@
       <div
         v-if="
           !currentSettings?.disableMediaFetching ||
-          !getVisibleMediaForSection.additional.length
+          !selectedDateObject?.mediaSections ||
+          !Object.values(selectedDateObject.mediaSections).some(
+            (section) => section.items?.length,
+          )
         "
         class="row justify-center"
       >
@@ -80,7 +83,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import type { DocumentItem, MediaSection } from 'src/types';
+import type { DocumentItem, MediaSectionIdentifier } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -91,7 +94,7 @@ const { t } = useI18n();
 
 defineProps<{
   goToNextDayWithMedia: (ignoreTodaysDate?: boolean) => void;
-  openImportMenu: (section: MediaSection | undefined) => void;
+  openImportMenu: (section: MediaSectionIdentifier | undefined) => void;
 }>();
 
 const showFileImportDialog = ref(false);
@@ -108,10 +111,6 @@ watch(
 );
 
 const currentState = useCurrentStateStore();
-const {
-  currentSettings,
-  getVisibleMediaForSection,
-  selectedDate,
-  selectedDateObject,
-} = storeToRefs(currentState);
+const { currentSettings, selectedDate, selectedDateObject } =
+  storeToRefs(currentState);
 </script>

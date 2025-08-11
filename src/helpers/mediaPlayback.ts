@@ -213,12 +213,12 @@ export const getMediaFromJwPlaylist = async (
     );
 
     await processMissingMediaInfo(playlistMediaItems, true);
-    const dynamicPlaylistMediaItems = await dynamicMediaMapper(
+    const mappedPlaylistMediaItems = await dynamicMediaMapper(
       playlistMediaItems.filter((m) => m.KeySymbol !== 'nwt'),
       selectedDateValue,
       'playlist',
     );
-    return dynamicPlaylistMediaItems;
+    return mappedPlaylistMediaItems;
   } catch (error) {
     errorCatcher(error);
     return [];

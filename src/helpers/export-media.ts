@@ -1,5 +1,5 @@
 import type PQueue from 'p-queue';
-import type { MediaSection } from 'src/types';
+import type { MediaItem, MediaSectionIdentifier } from 'src/types';
 
 import { i18n } from 'boot/i18n';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -38,14 +38,23 @@ const exportDayToFolder = async (targetDate?: Date) => {
 
   const dateFolderName = formatDate(targetDate, 'YYYY-MM-DD');
 
-  const dynamicMedia =
-    jwStore.lookupPeriod?.[currentStateStore.currentCongregation]?.find(
-      (d) => d.date && datesAreSame(d.date, targetDate),
-    )?.dynamicMedia || [];
+  const day = jwStore.lookupPeriod?.[
+    currentStateStore.currentCongregation
+  ]?.find((d) => d.date && datesAreSame(d.date, targetDate));
 
-  const dynamicMediaFiltered = Array.from(
+  if (!day?.mediaSections) {
+    return;
+  }
+
+  // Get all media from all sections
+  const allMedia: MediaItem[] = [];
+  Object.values(day.mediaSections).forEach((sectionMedia) => {
+    allMedia.push(...(sectionMedia.items || []));
+  });
+
+  const filteredMedia = Array.from(
     new Map(
-      dynamicMedia
+      allMedia
         // Flatten items with children
         .flatMap((item) =>
           Array.isArray(item.children) ? item.children : [item],
@@ -55,19 +64,9 @@ const exportDayToFolder = async (targetDate?: Date) => {
         // Use Map to deduplicate by fileUrl
         .map((item) => [item.fileUrl, item]),
     ).values(),
-  ).sort((a, b) => {
-    const sectionOrder: MediaSection[] = [
-      'additional',
-      'tgw',
-      'ayfm',
-      'lac',
-      'wt',
-      'circuitOverseer',
-    ];
-    return sectionOrder.indexOf(a.section) - sectionOrder.indexOf(b.section);
-  });
+  ); // No sorting needed since we're not using section-based sorting anymore
 
-  const dayMediaLength = dynamicMediaFiltered.length;
+  const dayMediaLength = filteredMedia.length;
 
   const destFolder = join(
     currentStateStore.currentSettings.mediaAutoExportFolder,
@@ -84,10 +83,10 @@ const exportDayToFolder = async (targetDate?: Date) => {
   const expectedFiles = new Set<string>();
 
   const { default: sanitize } = await import('sanitize-filename');
-  const sections: Partial<Record<MediaSection, number>> = {}; // Object to store dynamic section prefixes
+  const sections: Partial<Record<MediaSectionIdentifier, number>> = {}; // Object to store dynamic section prefixes
   for (let i = 0; i < dayMediaLength; i++) {
     try {
-      const m = dynamicMediaFiltered[i];
+      const m = filteredMedia[i];
       if (!m) continue;
       let sourceFilePath = fileUrlToPath(m.fileUrl);
       if (!sourceFilePath || !(await exists(sourceFilePath))) continue;
@@ -109,15 +108,10 @@ const exportDayToFolder = async (targetDate?: Date) => {
         }
       }
 
-      if (!sections[m.section]) {
-        sections[m.section] = Object.keys(sections).length + 1;
-      }
-
-      const sectionPrefix = pad(sections[m.section] || 0);
+      const sectionPrefix = pad(sections['imported-media'] ?? 1);
       const mediaPrefix = pad(i + 1, dayMediaLength > 99 ? 3 : 2);
       const mediaTag = m.tag?.type
-        ? // @ts-expect-error: t has no matching signature
-          `${i18n.global.t(m.tag.type)} ${m.tag.value}`
+        ? `${(i18n.global.t as (key: string) => string)(m.tag.type)} ${m.tag.value}`
         : null;
       const mediaTitle = m.title
         ? sanitize(m.title.replace(extname(sourceFilePath), '')) +
@@ -178,7 +172,14 @@ export const exportAllDays = async () => {
     const daysToExport = (
       jwStore.lookupPeriod[currentStateStore.currentCongregation] || []
     )
-      .map((d) => (d.dynamicMedia.length ? d.date : undefined))
+      .map((d) => {
+        const hasMedia = d.mediaSections
+          ? Object.values(d.mediaSections).some(
+              (section) => !!section.items?.length,
+            )
+          : false;
+        return hasMedia ? d.date : undefined;
+      })
       .filter((d): d is Date => !!d);
 
     if (!folderExportQueue) {

@@ -2,6 +2,7 @@
 
 import type { ElectronApi } from 'src/types';
 
+import robot from '@jitsi/robotjs';
 import fs, { ensureDir } from 'fs-extra';
 import { fileUrlToPath, pathToFileURL, readDirectory } from 'preload/fs';
 import upath from 'upath';
@@ -63,7 +64,7 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   isDownloadErrorExpected: async () => false,
-  moveMediaWindow: function (targetScreenNumber, windowedMode, noEvent?) {
+  moveMediaWindow: function (targetScreenNumber, windowedMode) {
     throw new Error('Function not implemented.');
   },
   navigateWebsiteWindow: function (action) {
@@ -120,13 +121,11 @@ export const electronApi: ElectronApi = {
   removeListeners: function (channel) {
     throw new Error('Function not implemented.');
   },
+  robot,
   setAutoStartAtLogin: function (value) {
     throw new Error('Function not implemented.');
   },
   setElectronUrlVariables: function (variables) {
-    throw new Error('Function not implemented.');
-  },
-  setScreenPreferences: function (screenPreferences) {
     throw new Error('Function not implemented.');
   },
   startWebsiteStream: function () {

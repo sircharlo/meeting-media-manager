@@ -1,4 +1,4 @@
-import { defineBoot } from '#q-app/wrappers';
+import { defineBoot } from '@quasar/app-vite/wrappers';
 import { init, replayIntegration } from '@sentry/electron/renderer';
 import {
   browserSessionIntegration,

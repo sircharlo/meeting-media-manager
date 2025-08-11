@@ -78,7 +78,7 @@ const {
   additionalScenes,
   configuredScenesAreAllUUIDs,
   currentSettings,
-  mediaPlayingUrl,
+  mediaPlaying,
 } = storeToRefs(currentState);
 
 const obsState = useObsStateStore();
@@ -123,7 +123,7 @@ const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
       const imageScene = currentSettings.value?.obsImageScene || undefined;
       const cameraScene = currentSettings.value?.obsCameraScene || undefined;
       newProgramScene = mediaScene ?? undefined;
-      if (isImage(mediaPlayingUrl.value) && imageScene) {
+      if (isImage(mediaPlaying.value.url) && imageScene) {
         newProgramScene = imageScene;
       }
       currentSceneType.value = sceneType;

@@ -106,6 +106,10 @@ span.etitle {
   border-color: $sorting-border !important;
 }
 
+.big-button {
+  height: 100px;
+}
+
 body.body--light {
   background: $primary-bg;
 
@@ -340,8 +344,7 @@ body.body--dark {
     background: $apply;
   }
 
-  &.additional:before,
-  &.circuitOverseer:before,
+  &.circuit-overseer:before,
   &.website:before {
     background: $additional;
   }
@@ -512,14 +515,14 @@ body.body--dark {
   color: $apply;
 }
 
-.bg-additional,
-.bg-circuitOverseer,
+.bg-imported-media,
+.bg-pt,
+.bg-circuit-overseer,
 .bg-website {
   background: $additional;
 }
 
-.text-additional,
-.text-circuitOverseer,
+.text-circuit-overseer,
 .text-website {
   color: $additional;
 }
@@ -721,4 +724,13 @@ a {
 
 .sortable-media.drop-here {
   min-height: 50px;
+}
+
+// Override FormKit drag and drop z-index to prevent covering headers
+// FormKit applies z-index: 9999 to dragged items, but headers have z-index: 2000
+[data-dragging='true'],
+.sortable-selected,
+[data-drag-placeholder='true'],
+.q-item {
+  z-index: 1500 !important; // Lower than headers (2000) but still above other content
 }

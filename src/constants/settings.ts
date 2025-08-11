@@ -221,6 +221,18 @@ export const settingsDefinitions: SettingsItems = {
   },
 
   // Integrations
+  zoomEnable: {
+    group: 'integrations',
+    subgroup: 'zoomIntegration',
+    type: 'toggle',
+  },
+  zoomScreenShareShortcut: {
+    depends: 'zoomEnable',
+    group: 'integrations',
+    rules: ['notEmpty'],
+    subgroup: 'zoomIntegration',
+    type: 'shortcut',
+  },
   obsEnable: {
     actions: ['obsConnect'],
     group: 'integrations',
@@ -505,4 +517,6 @@ export const defaultSettings: SettingsValues = {
   shortcutMusic: null,
   weDay: null,
   weStartTime: null,
+  zoomEnable: false,
+  zoomScreenShareShortcut: null,
 };

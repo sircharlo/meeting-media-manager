@@ -1,308 +1,297 @@
 <template>
   <q-list
-    v-show="
-      mediaList.items?.filter((m) => !m.hidden).length || mediaList.alwaysShow
-    "
-    :class="'media-section ' + mediaList.type"
+    :class="[
+      'media-section',
+      mediaList.config?.uniqueId,
+      { custom: isCustomSection },
+    ]"
+    :style="sectionStyles"
   >
-    <q-item
+    <!-- Section Header -->
+    <MediaSectionHeader
       v-if="selectedDateObject"
-      :class="'text-' + mediaList.type + ' items-center'"
-    >
-      <q-avatar
-        :class="
-          'text-white bg-' +
-          mediaList.type +
-          (mediaList.jwIcon ? ' jw-icon' : '')
-        "
-      >
-        <template v-if="mediaList.jwIcon">
-          {{ mediaList.jwIcon }}
-        </template>
-        <template v-else>
-          <q-icon :name="mediaList.mmmIcon" size="md" />
-        </template>
-      </q-avatar>
-      <q-item-section
-        class="text-bold text-uppercase text-spaced row justify-between col-grow"
-      >
-        {{ mediaList.label }}
-      </q-item-section>
-      <q-item-section v-if="mediaList.extraMediaShortcut" side>
-        <q-btn
-          :color="mediaList.type"
-          :icon="isSongButton ? 'mmm-music-note' : 'mmm-add-media'"
-          outline
-          @click="
-            isSongButton
-              ? addSong(mediaList.type)
-              : openImportMenu(mediaList.type)
-          "
-        >
-          <q-tooltip :delay="500">
-            {{
-              isSongButton
-                ? mediaList.type === 'additional'
-                  ? t('add-an-opening-song')
-                  : t('add-a-closing-song')
-                : t('add-extra-media')
-            }}
-          </q-tooltip>
-        </q-btn>
-      </q-item-section>
-    </q-item>
-    <div v-if="emptyMediaList && !currentlySorting">
-      <q-item>
-        <q-item-section
-          class="align-center text-secondary text-grey text-subtitle2"
-        >
-          <div class="row items-center">
-            <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
-            <span>
-              {{
-                selectedDateObject && isWeMeetingDay(selectedDateObject?.date)
-                  ? t('dont-forget-add-missing-media')
-                  : t('no-media-files-for-section')
-              }}
-            </span>
-          </div>
-        </q-item-section>
-      </q-item>
-    </div>
-    <div
-      ref="parent"
-      class="sortable-media"
-      :class="{
-        'drop-here': currentlySorting,
-        'bg-primary-light': currentlySorting,
-      }"
-      :data-list="mediaList.type"
-    >
-      <div v-for="element in sortableItems" :key="element.uniqueId">
-        <template v-if="element.children">
-          <q-list
-            v-if="element.children.some((m) => !m.hidden)"
-            bordered
-            class="q-mx-sm q-my-sm media-children rounded-borders overflow-hidden"
-          >
-            <q-menu context-menu style="overflow-x: hidden" touch-position>
-              <q-list>
-                <q-item
-                  v-close-popup
-                  clickable
-                  :disable="!!mediaPlayingUrl"
-                  @click="element.hidden = true"
-                >
-                  <q-item-section avatar>
-                    <q-icon name="mmm-file-hidden" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ t('hide-from-list') }}</q-item-label>
-                    <q-item-label caption>
-                      {{ t('hide-from-list-explain') }}
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-menu>
+      ref="sectionHeaderRef"
+      :has-add-media-button="hasAddMediaButton"
+      :is-custom="isCustomSection"
+      :is-first="isFirst"
+      :is-last="isLast"
+      :is-renaming="isRenaming"
+      :is-song-button="isSongButton"
+      :media-list="mediaList"
+      @add-divider="handleAddDivider"
+      @add-song="addSong"
+      @delete="deleteSection"
+      @move="moveSection"
+      @open-import="openImportMenu"
+      @rename="handleRename"
+      @update-color="updateSectionColor"
+      @update-label="updateSectionLabel"
+    />
+    <!-- Empty State -->
+    <SectionEmptyState
+      v-if="isEmpty && !isDragging"
+      :is-dragging="isDragging"
+      :selected-date="selectedDateObject"
+    />
 
-            <q-expansion-item
-              :key="element.children.map((m) => m.uniqueId).join(',')"
-              v-model="expandedMediaGroups[element.uniqueId]"
-              :disable="
-                element.children.map((m) => m.fileUrl).includes(mediaPlayingUrl)
-              "
-              :header-class="
-                expandedMediaGroups[element.uniqueId]
-                  ? $q.dark.isActive
-                    ? 'bg-accent-400'
-                    : 'bg-accent-200'
-                  : ''
-              "
-            >
-              <template #header>
-                <q-item-section>
-                  <div>
-                    <!-- eslint-disable-next-line vue/no-v-html -->
-                    <span v-html="element.extractCaption"></span>
-                    <q-badge
-                      class="q-ml-sm text-primary"
-                      :color="$q.dark.isActive ? 'accent-400' : 'accent-200'"
-                      :label="element.children?.length"
-                      rounded
-                      :text-color="$q.dark.isActive ? 'white' : 'accent-200'"
-                    />
-                  </div>
-                </q-item-section>
-              </template>
-              <div v-if="element.children">
-                <div
-                  v-for="childElement in element.children"
-                  :key="childElement.uniqueId"
-                >
-                  <MediaItem
-                    :key="childElement.uniqueId"
-                    v-model:repeat="childElement.repeat"
-                    child
-                    :media="childElement"
-                    @update:custom-duration="
-                      childElement.customDuration =
-                        JSON.parse($event) || undefined
-                    "
-                    @update:hidden="childElement.hidden = !!$event"
-                    @update:tag="childElement.tag = $event"
-                    @update:title="childElement.title = $event"
-                  />
-                </div>
-              </div>
-            </q-expansion-item>
-          </q-list>
-        </template>
-        <div v-else :key="element.uniqueId">
-          <MediaItem
-            :key="element.uniqueId"
-            v-model:repeat="element.repeat"
-            :media="element"
-            @update:custom-duration="
-              element.customDuration = JSON.parse($event) || undefined
-            "
-            @update:hidden="element.hidden = !!$event"
-            @update:tag="element.tag = $event"
-            @update:title="element.title = $event"
-          />
-        </div>
-      </div>
+    <!-- Media Items -->
+    <div
+      ref="dragDropContainer"
+      class="sortable-media"
+      :class="{ 'drop-here': isDragging }"
+      :data-list="mediaList.config?.uniqueId"
+    >
+      <template v-if="isEmpty && isDragging">
+        <SectionEmptyState
+          :is-dragging="isDragging"
+          :selected-date="selectedDateObject"
+        />
+      </template>
+      <template v-for="element in sortableItems" :key="element.uniqueId">
+        <!-- Render dividers -->
+        <MediaDivider
+          v-if="element.type === 'divider'"
+          :divider="element as any"
+          @delete="handleDeleteDivider"
+          @update:color="
+            (bgColor, textColor) =>
+              handleUpdateDividerColor(element.uniqueId, bgColor, textColor)
+          "
+          @update:title="
+            (title) => handleUpdateDividerTitle(element.uniqueId, title)
+          "
+        />
+        <!-- Render media groups -->
+        <MediaGroup
+          v-else-if="element.children"
+          :element="element"
+          :expanded="expandedGroups[element.uniqueId] ?? false"
+          @update:child-hidden="
+            element.children.forEach((child) => (child.hidden = !!$event))
+          "
+          @update:expanded="expandedGroups[element.uniqueId] = $event"
+          @update:hidden="element.hidden = !!$event"
+        />
+        <!-- Render media items -->
+        <MediaItem
+          v-else
+          v-model:repeat="element.repeat"
+          :media="element"
+          @update:custom-duration="
+            element.customDuration = JSON.parse($event) || undefined
+          "
+          @update:hidden="element.hidden = !!$event"
+          @update:tag="element.tag = $event"
+          @update:title="
+            nextTick(() => {
+              element.title = $event;
+            })
+          "
+        />
+      </template>
     </div>
+
+    <!-- Add Divider Dialog -->
+    <DialogAddDivider
+      v-model="showAddDividerDialog"
+      :dialog-id="`add-divider-${mediaList.config?.uniqueId}`"
+      @ok="handleAddDividerResult"
+    />
   </q-list>
 </template>
-<script setup lang="ts">
-import type { DynamicMediaObject, MediaSection } from 'src/types';
 
-import { animations, state } from '@formkit/drag-and-drop';
-import { useDragAndDrop } from '@formkit/drag-and-drop/vue';
-import { watchImmediate } from '@vueuse/core';
-import MediaItem from 'components/media/MediaItem.vue';
+<script setup lang="ts">
+import type {
+  MediaItem as MediaItemType,
+  MediaSectionIdentifier,
+  MediaSectionWithConfig,
+} from 'src/types';
+
+import DialogAddDivider from 'components/dialog/DialogAddDivider.vue';
 import { storeToRefs } from 'pinia';
-import { useQuasar } from 'quasar';
-import { isWeMeetingDay } from 'src/helpers/date';
+import { useMediaDragAndDrop } from 'src/composables/useMediaDragAndDrop';
+import { useMediaSection } from 'src/composables/useMediaSection';
+import { getTextColor } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, ref, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { computed, nextTick, ref, watch } from 'vue';
+
+import MediaDivider from './MediaDivider.vue';
+import MediaGroup from './MediaGroup.vue';
+import MediaItem from './MediaItem.vue';
+import MediaSectionHeader from './MediaSectionHeader.vue';
+import SectionEmptyState from './SectionEmptyState.vue';
 
 const props = defineProps<{
-  mediaList: MediaListObject;
-  openImportMenu: (section: MediaSection) => void;
+  mediaList: MediaSectionWithConfig;
+  openImportMenu: (section: MediaSectionIdentifier) => void;
 }>();
 
-const visibleMediaItems = computed(() => {
-  return props.mediaList.items.filter((m) => !m.hidden);
-});
-
-const [parent, sortableItems] = useDragAndDrop<DynamicMediaObject>(
-  visibleMediaItems.value,
-  {
-    group: 'mediaList',
-    multiDrag: true,
-    onDragend: () => {
-      currentlySorting.value = false;
-    },
-    onDragstart: () => {
-      currentlySorting.value = true;
-    },
-    plugins: [animations()],
-    selectedClass: 'sortable-selected',
-  },
-);
-
-watch(
-  () => props.mediaList.items,
-  (newItems) => {
-    // Update sortable items when media list items change
-    sortableItems.value = newItems.filter((m) => !m.hidden);
-  },
-  { immediate: true },
-);
-
-const currentlySorting = ref(false);
-
-state.on('dragStarted', () => {
-  currentlySorting.value = true;
-});
-
-state.on('dragEnded', () => {
-  currentlySorting.value = false;
-  if (!selectedDateObject.value?.dynamicMedia) return;
-  // TODO: Make this more efficient, something like: in-place resort if sortableItems same length as filtered dynamicMedia, otherwise replace as below
-  selectedDateObject.value.dynamicMedia = [
-    ...selectedDateObject.value.dynamicMedia
-      .filter((item) => item.section !== props.mediaList.type)
-      .concat(
-        sortableItems.value.map((item) => ({
-          ...item,
-          section: props.mediaList.type,
-        })),
-      ),
-  ];
-});
-
-export interface MediaListObject {
-  alwaysShow: boolean;
-  extraMediaShortcut?: boolean;
-  items: DynamicMediaObject[];
-  jwIcon?: string;
-  label: string;
-  mmmIcon?: string;
-  type: MediaSection;
-}
-
-const $q = useQuasar();
-const { t } = useI18n();
+const emit = defineEmits<{
+  'media-stopped': [];
+  'update:is-dragging': [isDragging: boolean];
+  'update:sortable-items': [items: MediaItemType[]];
+}>();
 
 const currentState = useCurrentStateStore();
-const { mediaPlayingUrl, selectedDateObject } = storeToRefs(currentState);
+const { selectedDateObject } = storeToRefs(currentState);
 
-const addSong = (section: MediaSection | undefined) => {
-  window.dispatchEvent(
-    new CustomEvent<{ section: MediaSection | undefined }>('openSongPicker', {
-      detail: { section },
-    }),
-  );
+// Ref to the section header
+const sectionHeaderRef = ref<InstanceType<typeof MediaSectionHeader> | null>(
+  null,
+);
+
+// Dialog state
+const showAddDividerDialog = ref(false);
+
+// Use the media section composable
+const {
+  addSong,
+  deleteSection,
+  expandedGroups,
+  hasAddMediaButton,
+  isCustomSection,
+  isEmpty,
+  isFirst,
+  isLast,
+  isRenaming,
+  isSongButton,
+  moveSection,
+  updateSectionColor,
+  updateSectionLabel,
+  visibleItems,
+} = useMediaSection(props.mediaList);
+
+// Use the media dividers composable
+import { useMediaDividers } from 'src/composables/useMediaDividers';
+const { addDivider, deleteDivider, updateDividerColors, updateDividerTitle } =
+  useMediaDividers(props.mediaList.config?.uniqueId);
+
+// Use the drag and drop composable
+const { dragDropContainer, isDragging, sortableItems } = useMediaDragAndDrop(
+  visibleItems.value,
+  props.mediaList.config?.uniqueId || '',
+);
+
+// Computed styles
+const sectionStyles = computed(() => ({
+  '--bg-color': props.mediaList.config?.bgColor || 'rgb(148, 94, 181)',
+  '--text-color': getTextColor(props.mediaList),
+}));
+
+// Methods
+const handleRename = (value: boolean) => {
+  isRenaming.value = value;
 };
 
-const expandedMediaGroups = ref<Record<string, boolean>>({});
+const handleDeleteDivider = (dividerId: string) => {
+  deleteDivider(dividerId);
+};
 
-defineExpose({
-  expandedMediaGroups,
-});
+const handleAddDivider = () => {
+  console.log('🎯 handleAddDivider called');
+  showAddDividerDialog.value = true;
+};
 
-watchImmediate(
-  () => selectedDateObject.value?.dynamicMedia?.length,
-  () => {
-    expandedMediaGroups.value =
-      selectedDateObject.value?.dynamicMedia.reduce(
-        (acc, element) => {
-          if (
-            element.children?.length &&
-            element.extractCaption &&
-            element.section === props.mediaList.type
-          ) {
-            acc[element.uniqueId] = !!element.cbs; // Default state based on element.cbs
-          }
-          return acc;
-        },
-        {} as Record<string, boolean>,
-      ) || {};
+const handleAddDividerResult = (title?: string, addToTop?: boolean) => {
+  console.log(
+    '✅ DialogAddDivider returned title:',
+    title,
+    'addToTop:',
+    addToTop,
+  );
+  addDivider(title, addToTop);
+  showAddDividerDialog.value = false;
+};
+
+const handleUpdateDividerTitle = (dividerId: string, newTitle: string) => {
+  updateDividerTitle(dividerId, newTitle);
+};
+
+const handleUpdateDividerColor = (
+  dividerId: string,
+  bgColor: string,
+  textColor: string,
+) => {
+  updateDividerColors(dividerId, bgColor, textColor);
+};
+
+// const handleMediaStopped = () => {
+//   console.log(
+//     '🛑 [handleMediaStopped] Media stopped, updating section repeat to false',
+//   );
+//   // Update section repeat to false when media is stopped
+//   if (sectionHeaderRef.value) {
+//     sectionHeaderRef.value.updateSectionRepeatState(false);
+//   }
+// };
+
+// Watch for changes in isDragging and emit to parent
+watch(
+  () => isDragging.value,
+  (newIsDragging) => {
+    console.log('🔄 isDragging changed, emitting to parent:', {
+      isDragging: newIsDragging,
+      sectionId: props.mediaList.config?.uniqueId,
+      sortableItems: sortableItems.value,
+    });
+    emit('update:is-dragging', newIsDragging);
+    if (!newIsDragging) {
+      // Note: MediaItem no longer has a section property
+      // The section is now determined by the key in mediaSections
+      emit('update:sortable-items', sortableItems.value);
+    }
   },
 );
 
-const isSongButton = computed(
-  () =>
-    props.mediaList.type === 'additional' ||
-    (props.mediaList.type === 'circuitOverseer' &&
-      !props.mediaList.items.some((m) => !m.hidden)),
-);
-
-const emptyMediaList = computed(() => {
-  return !props.mediaList.items.filter((m) => !m.hidden).length;
+defineExpose({
+  expandedGroups,
+  isDragging,
+  sectionHeaderRef,
 });
 </script>
+
+<style lang="scss" scoped>
+.media-section {
+  &.custom {
+    .custom-text-color {
+      color: var(--bg-color) !important;
+    }
+
+    .custom-bg-color {
+      background-color: var(--bg-color) !important;
+      color: var(--text-color) !important;
+    }
+
+    &:before {
+      background-color: var(--bg-color);
+    }
+  }
+}
+
+.sortable-media {
+  transition: background-color 0.2s ease;
+
+  &.drop-here {
+    background-color: rgba(var(--q-primary), 0.1);
+    border: 2px dashed var(--q-primary);
+  }
+}
+
+.sortable-selected {
+  opacity: 0.7;
+  transform: scale(0.98);
+}
+
+[data-dragging='true'] {
+  opacity: 0.5;
+  transform: rotate(2deg);
+}
+
+[data-drag-placeholder='true'] {
+  background-color: rgba(0, 0, 0, 0.1);
+  border: 2px dashed #ccc;
+  border-radius: 4px;
+  height: 60px;
+  margin: 4px 0;
+}
+</style>

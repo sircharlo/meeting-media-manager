@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="open">
+  <BaseDialog v-model="dialogValue" :dialog-id="dialogId">
     <div
       class="bg-secondary-contrast large-overlay q-px-none flex"
       style="flex-flow: column"
@@ -186,22 +186,23 @@
             color="negative"
             flat
             :label="t('cancel')"
-            @click="resetBibleBook(true)"
+            @click="resetBibleBook(true, true)"
           />
         </div>
       </div>
     </div>
-  </q-dialog>
+  </BaseDialog>
 </template>
 <script setup lang="ts">
 import type {
   MediaLink,
-  MediaSection,
+  MediaSectionIdentifier,
   Publication,
   PublicationFiles,
 } from 'src/types';
 
 import { whenever } from '@vueuse/core';
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   downloadAdditionalRemoteVideo,
@@ -215,10 +216,21 @@ const { t } = useI18n();
 
 // Props
 const props = defineProps<{
-  section: MediaSection | undefined;
+  dialogId: string;
+  modelValue: boolean;
+  section: MediaSectionIdentifier | undefined;
 }>();
 
-const open = defineModel<boolean>({ default: false });
+const emit = defineEmits<{
+  cancel: [];
+  ok: [];
+  'update:modelValue': [value: boolean];
+}>();
+
+const dialogValue = computed({
+  get: () => props.modelValue,
+  set: (value: boolean) => emit('update:modelValue', value),
+});
 
 const selectedBibleBook = ref<number>(0);
 const selectedChapter = ref(0);
@@ -321,11 +333,6 @@ const fetchMedia = async (force = false) => {
   }
 };
 
-whenever(open, () => {
-  resetBibleBook(true);
-  fetchMedia();
-});
-
 const addSelectedVerses = async () => {
   loading.value = true;
   if (!chosenVerses.value.length) return;
@@ -365,12 +372,13 @@ const addSelectedVerses = async () => {
   );
 
   resetBibleBook(true, true);
+  emit('ok');
 
   loading.value = false;
 };
 
 const resetBibleBook = (closeBook = false, closeDialog = false) => {
-  if (closeDialog) open.value = false;
+  if (closeDialog) emit('cancel');
   if (closeBook) selectedBibleBook.value = 0;
   selectedChapter.value = 0;
   chosenVerses.value = [];
@@ -397,4 +405,10 @@ const getVerseClass = (verse: number) => {
     return 'bg-primary-light';
   }
 };
+
+// Watch for dialog opening to get JW videos and reset state
+whenever(dialogValue, () => {
+  resetBibleBook(true);
+  fetchMedia();
+});
 </script>

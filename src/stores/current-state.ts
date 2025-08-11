@@ -2,10 +2,9 @@ import type {
   DateInfo,
   DownloadedFile,
   DownloadProgressItems,
-  DynamicMediaObject,
   JwLanguage,
+  MediaItem,
   MediaLink,
-  MediaSection,
   SettingsItem,
   SettingsItems,
   SettingsValues,
@@ -25,6 +24,16 @@ const { fs, path } = window.electronApi;
 const { ensureDir } = fs;
 const { join } = path;
 
+export interface MediaPlayingState {
+  action: '' | 'pause' | 'play' | 'website';
+  currentPosition: number;
+  panzoom: Partial<{ scale: number; x: number; y: number }>;
+  seekTo: number;
+  subtitlesUrl: string;
+  uniqueId: string;
+  url: string;
+}
+
 export interface Songbook {
   fileformat: 'MP3' | 'MP4';
   pub: 'sjj' | 'sjjm';
@@ -40,13 +49,7 @@ interface Store {
   extractedFiles: Partial<Record<string, string>>;
   ffmpegPath: string;
   highlightedMediaId: string;
-  mediaPlayingAction: '' | 'pause' | 'play' | 'website';
-  mediaPlayingCurrentPosition: number;
-  mediaPlayingPanzoom: Partial<{ scale: number; x: number; y: number }>;
-  mediaPlayingSeekTo: number;
-  mediaPlayingSubtitlesUrl: string;
-  mediaPlayingUniqueId: string;
-  mediaPlayingUrl: string;
+  mediaPlaying: MediaPlayingState;
   mediaWindowCustomBackground: string;
   mediaWindowVisible: boolean;
   meetingDay: boolean;
@@ -96,19 +99,36 @@ export const useCurrentStateStore = defineStore('current-state', {
           settingsDefinition,
         ] of settingDefinitionEntries) {
           if (settingsDefinition.rules?.includes('notEmpty')) {
-            if (
-              (settingsDefinitionId === 'baseUrl' &&
-                !(urlVariables?.base && urlVariables?.mediator)) ||
-              (isEmpty(
-                congregationSettingsStore.congregations[congregation]?.[
-                  settingsDefinitionId
-                ],
-              ) &&
-                (!settingsDefinition.rules?.includes('regular') ||
-                  !congregationSettingsStore.congregations[congregation]
-                    ?.disableMediaFetching))
-            ) {
-              invalidSettings.add(settingsDefinitionId);
+            // Check if dependencies are satisfied before applying notEmpty validation
+            const dependenciesSatisfied =
+              !settingsDefinition.depends ||
+              (Array.isArray(settingsDefinition.depends)
+                ? settingsDefinition.depends.every(
+                    (dep) =>
+                      congregationSettingsStore.congregations[
+                        congregation as string
+                      ]?.[dep],
+                  )
+                : congregationSettingsStore.congregations[congregation]?.[
+                    settingsDefinition.depends
+                  ]);
+
+            // Only apply notEmpty validation if dependencies are satisfied
+            if (dependenciesSatisfied) {
+              if (
+                (settingsDefinitionId === 'baseUrl' &&
+                  !(urlVariables?.base && urlVariables?.mediator)) ||
+                (isEmpty(
+                  congregationSettingsStore.congregations[congregation]?.[
+                    settingsDefinitionId
+                  ],
+                ) &&
+                  (!settingsDefinition.rules?.includes('regular') ||
+                    !congregationSettingsStore.congregations[congregation]
+                      ?.disableMediaFetching))
+              ) {
+                invalidSettings.add(settingsDefinitionId);
+              }
             }
           }
         }
@@ -216,88 +236,35 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!currentLanguage) return [];
       return jwStore.jwSongs[currentLanguage]?.list || [];
     },
-    getAllMediaForSection(): Record<MediaSection, DynamicMediaObject[]> {
-      if (!this.selectedDateObject) {
-        return {
-          additional: [],
-          ayfm: [],
-          circuitOverseer: [],
-          lac: [],
-          tgw: [],
-          wt: [],
-        };
-      }
-
-      const sections: MediaSection[] = [
-        'additional',
-        'ayfm',
-        'circuitOverseer',
-        'lac',
-        'tgw',
-        'wt',
-      ];
-
-      return sections.reduce(
-        (acc, section) => {
-          if (!this.selectedDateObject?.dynamicMedia) return acc;
-          acc[section] = this.selectedDateObject.dynamicMedia.filter(
-            (m) => m.section === section,
-          );
-          return acc;
-        },
-        {} as Record<MediaSection, DynamicMediaObject[]>,
-      );
-    },
-    getVisibleMediaForSection(): Record<MediaSection, DynamicMediaObject[]> {
-      if (!this.selectedDateObject) {
-        return {
-          additional: [],
-          ayfm: [],
-          circuitOverseer: [],
-          lac: [],
-          tgw: [],
-          wt: [],
-        };
-      }
-
-      const sections: MediaSection[] = [
-        'additional',
-        'ayfm',
-        'circuitOverseer',
-        'lac',
-        'tgw',
-        'wt',
-      ];
-
-      return sections.reduce(
-        (acc, section) => {
-          if (!this.selectedDateObject?.dynamicMedia) return acc;
-          acc[section] = this.selectedDateObject.dynamicMedia.filter(
-            (m) => m.section === section && !m.hidden,
-          );
-          return acc;
-        },
-        {} as Record<MediaSection, DynamicMediaObject[]>,
+    // Direct access to media sections - no need for getter methods anymore
+    // Use selectedDateObject.mediaSections directly for all media
+    // Use selectedDateObject.mediaSections.find(s => s.config.uniqueId === section)?.items.filter(item => !item.hidden) for visible media
+    mediaIsPlaying: (state) => {
+      return (
+        state.mediaPlaying.url !== '' || state.mediaPlaying.action === 'website'
       );
     },
     mediaPaused: (state) => {
       return (
-        state.mediaPlayingUrl !== '' && state.mediaPlayingAction === 'pause'
+        state.mediaPlaying.url !== '' && state.mediaPlaying.action === 'pause'
       );
     },
-    mediaPlaying: (state) => {
-      return (
-        state.mediaPlayingUrl !== '' || state.mediaPlayingAction === 'website'
-      );
-    },
-    missingMedia(state): DynamicMediaObject[] {
+    missingMedia(state): MediaItem[] {
       if (
         !state.currentCongregation ||
-        !this.selectedDateObject?.dynamicMedia
+        !this.selectedDateObject?.mediaSections
       ) {
         return [];
       }
-      return this.selectedDateObject.dynamicMedia.filter(
+
+      const allMedia: MediaItem[] = [];
+      Object.values(this.selectedDateObject.mediaSections).forEach(
+        (sectionMedia) => {
+          allMedia.push(...(sectionMedia.items || []));
+        },
+      );
+
+      return allMedia.filter(
         (media) => !media.children?.length && !isFileUrl(media.fileUrl),
       );
     },
@@ -318,8 +285,15 @@ export const useCurrentStateStore = defineStore('current-state', {
       );
     },
     someItemsHiddenForSelectedDate(): boolean {
-      return !!this.selectedDateObject?.dynamicMedia.some(
-        (m) => m.hidden || m.children?.some((child) => child.hidden),
+      if (!this.selectedDateObject?.mediaSections) return false;
+
+      return Object.values(this.selectedDateObject.mediaSections).some(
+        (sectionMedia) =>
+          sectionMedia.items?.some(
+            (item: MediaItem) =>
+              item.hidden ||
+              item.children?.some((child: MediaItem) => child.hidden),
+          ),
       );
     },
     yeartext(): string | undefined {
@@ -345,13 +319,15 @@ export const useCurrentStateStore = defineStore('current-state', {
       extractedFiles: {},
       ffmpegPath: '',
       highlightedMediaId: '',
-      mediaPlayingAction: '',
-      mediaPlayingCurrentPosition: 0,
-      mediaPlayingPanzoom: { scale: 1, x: 0, y: 0 },
-      mediaPlayingSeekTo: 0,
-      mediaPlayingSubtitlesUrl: '',
-      mediaPlayingUniqueId: '',
-      mediaPlayingUrl: '',
+      mediaPlaying: {
+        action: '',
+        currentPosition: 0,
+        panzoom: { scale: 1, x: 0, y: 0 },
+        seekTo: 0,
+        subtitlesUrl: '',
+        uniqueId: '',
+        url: '',
+      },
       mediaWindowCustomBackground: '',
       mediaWindowVisible: true,
       meetingDay: false,

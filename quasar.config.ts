@@ -1,7 +1,7 @@
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file
 
-import { defineConfig } from '#q-app/wrappers';
+import { defineConfig } from '@quasar/app-vite/wrappers';
 import { sentryEsbuildPlugin } from '@sentry/esbuild-plugin';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { fileURLToPath } from 'node:url';
@@ -203,6 +203,7 @@ export default defineConfig((ctx) => {
       extendPackageJson(pkg) {
         // All dependencies required by the main and preload scripts need to be listed here
         const electronDeps = new Set([
+          '@jitsi/robotjs',
           '@numairawan/video-duration',
           '@sentry/electron',
           'better-sqlite3',
@@ -236,7 +237,7 @@ export default defineConfig((ctx) => {
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework
     framework: {
       config: { dark: 'auto' },
-      plugins: ['LocalStorage', 'Notify'],
+      plugins: ['LocalStorage', 'Notify', 'Dialog'],
     },
   };
 });

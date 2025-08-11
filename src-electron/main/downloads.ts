@@ -4,6 +4,7 @@ import { ensureDir } from 'fs-extra/esm';
 import upath from 'upath';
 const { basename } = upath;
 
+import { app } from 'electron';
 import { sendToWindow } from 'main/window/window-base';
 import { mainWindow } from 'main/window/window-main';
 import { captureElectronError, fetchJson } from 'src-electron/main/utils';
@@ -122,13 +123,12 @@ export async function isDownloadErrorExpected() {
 
     if (!_0x5f0a) {
       _0x5f0a =
-        // @ts-expect-error No index signature with a parameter of type 'string' was found
-        app[
+        (app as unknown as Record<string, () => string>)[
           String.fromCharCode(0x67, 0x65, 0x74) +
             String.fromCharCode(0x4c, 0x6f, 0x63, 0x61, 0x6c, 0x65) +
             String.fromCharCode(0x43, 0x6f, 0x75, 0x6e, 0x74, 0x72, 0x79) +
             String.fromCharCode(0x43, 0x6f, 0x64, 0x65)
-        ]();
+        ]?.() || '';
     }
 
     if (!_0x5f0a) return false;

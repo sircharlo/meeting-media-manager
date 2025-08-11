@@ -33,9 +33,28 @@ export interface DownloadProgressItem {
 
 export type DownloadProgressItems = Record<string, DownloadProgressItem>;
 
-export interface DynamicMediaObject {
+export interface FileDownloader {
+  dir: string;
+  filename?: string;
+  lowPriority?: boolean;
+  notify?: boolean;
+  size?: number;
+  url: string;
+}
+
+export interface MediaDivider {
+  bgColor?: string;
+  section: MediaSectionIdentifier;
+  sortOrderOriginal: number | string;
+  textColor?: string;
+  title: string;
+  uniqueId: string;
+}
+
+export interface MediaItem {
+  bgColor?: string;
   cbs?: boolean;
-  children?: DynamicMediaObject[];
+  children?: MediaItem[];
   customDuration?: { max: number; min: number };
   duration?: number;
   extractCaption?: string;
@@ -47,51 +66,53 @@ export interface DynamicMediaObject {
   isImage?: boolean;
   isVideo?: boolean;
   markers?: VideoMarker[];
+  originalSection?: MediaSectionIdentifier;
   parentUniqueId?: string;
   pubMediaId?: string;
   repeat?: boolean;
-  section: MediaSection;
-  sectionOriginal: MediaSection;
-  sortOrderOriginal: number | string;
-  source: 'additional' | 'dynamic' | 'watched';
+  sortOrderOriginal?: number | string;
+  source?: 'additional' | 'dynamic' | 'watched';
   streamUrl?: string;
   subtitlesUrl?: string;
-  tag?: Tag | undefined;
+  tag?: Tag;
+  textColor?: string;
   thumbnailUrl?: string;
   title: string;
+  type: 'divider' | 'media';
   uniqueId: string;
 }
 
-export interface FileDownloader {
-  dir: string;
-  filename?: string;
-  lowPriority?: boolean;
-  notify?: boolean;
-  size?: number;
-  url: string;
+export interface MediaSection {
+  bgColor?: string;
+  jwIcon?: string;
+  label?: string;
+  repeat?: boolean; // Whether the section should repeat
+  repeatInterval?: number; // Interval in seconds for images (default 10)
+  uniqueId: MediaSectionIdentifier;
 }
 
-export type MediaSection =
-  | 'additional'
+export type MediaSectionIdentifier =
   | 'ayfm'
-  | 'circuitOverseer'
+  | 'circuit-overseer'
+  | 'imported-media'
   | 'lac'
+  | 'pt'
   | 'tgw'
-  | 'wt';
+  | 'wt'
+  | string;
 
 export interface SongItem {
   duration?: number; // or the correct type for duration
   path: string;
   title?: string;
 }
-
 export interface SortableMediaList {
-  items: Ref<DynamicMediaObject[]>;
+  items: Ref<MediaItem[]>;
   jwIcon?: string | undefined;
   label: string;
-  mmmIcon?: string | undefined;
-  type: MediaSection;
+  type: MediaSectionIdentifier;
 }
+
 export type SortableMediaLists = SortableMediaList[];
 
 export interface Tag {

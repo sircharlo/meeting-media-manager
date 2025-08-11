@@ -4,6 +4,14 @@
     padding
     style="align-content: center; height: 100vh; -webkit-app-region: drag"
   >
+    <!-- <pre>
+      {{ urlVariables }}
+      {{ online }}
+      {{ hideMediaLogo }}
+      {{ yeartext }}
+      {{ mediaPlayingUrl }}
+      {{ mediaAction }}
+    </pre> -->
     <q-resize-observer debounce="50" @resize="postMediaWindowSize" />
     <transition
       appear
@@ -23,13 +31,17 @@
       />
       <video
         v-else-if="isVideo(mediaPlayingUrl) || videoStreaming"
+        :key="mediaPlayingUrl"
         ref="mediaElement"
         class="fit-snugly"
         disableRemotePlayback
         preload="metadata"
-        @animationstart="playMedia()"
+        :src="mediaPlayingUrl"
+        @canplay="handleVideoCanPlay()"
+        @ended="endOrLoop()"
+        @loadedmetadata="playMedia()"
+        @pause="handleVideoPause()"
       >
-        <source :src="mediaPlayingUrl" />
         <track
           v-if="mediaPlayerSubtitlesUrl && subtitlesVisible"
           default
@@ -54,13 +66,10 @@
             :src="mediaPlayerCustomBackground"
           />
         </template>
-        <template v-else>
+        <template v-else-if="fontsSet">
           <!-- eslint-disable next-line vue/no-v-html -->
           <div id="yeartext" class="q-pa-md center" v-html="yeartext" />
-          <div
-            v-if="!currentSettings?.hideMediaLogo"
-            id="yeartextLogoContainer"
-          >
+          <div v-if="!hideMediaLogo" id="yeartextLogoContainer">
             <p id="yeartextLogo"></p>
           </div>
         </template>
@@ -76,30 +85,40 @@ import {
   watchImmediate,
   whenever,
 } from '@vueuse/core';
-import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setElementFont } from 'src/helpers/fonts';
-import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
-import { useCurrentStateStore } from 'stores/current-state';
-import { useJwStore } from 'stores/jw';
-import { computed, ref, useTemplateRef, watch } from 'vue';
+import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
 const { getScreenAccessStatus } = window.electronApi;
 
-const currentState = useCurrentStateStore();
-const yeartext = computed(() => currentState.yeartext);
-const { currentCongregation, currentSettings, mediaPlayingAction } =
-  storeToRefs(currentState);
+const $q = useQuasar();
 
-const jwStore = useJwStore();
+$q.iconMapFn = (iconName) => {
+  if (iconName.startsWith('chevron_')) {
+    iconName = iconName.replace('chevron_', 'mmm-');
+  } else if (iconName.startsWith('keyboard_arrow_')) {
+    iconName = iconName.replace('keyboard_arrow_', 'mmm-');
+  } else if (iconName.startsWith('arrow_drop_')) {
+    iconName = 'mmm-dropdown-arrow';
+  } else if (iconName === 'cancel' || iconName === 'close') {
+    iconName = 'clear';
+  }
+  if (!iconName.startsWith('mmm-')) {
+    iconName = 'mmm-' + iconName;
+  }
+  return {
+    cls: iconName,
+  };
+};
 
 const panzoom = ref<PanzoomObject | undefined>();
+const isEnding = ref(false);
 
 const initiatePanzoom = () => {
   try {
@@ -132,7 +151,6 @@ const { data: mediaPlayerCustomBackground } = useBroadcastChannel<
 const { data: subtitlesVisible } = useBroadcastChannel<boolean, boolean>({
   name: 'subtitles-visible',
 });
-subtitlesVisible.value = true;
 
 const { data: mediaPlayerSubtitlesUrl } = useBroadcastChannel<
   string | undefined,
@@ -177,7 +195,7 @@ const { post: postCurrentTime } = useBroadcastChannel<number, number>({
 });
 
 const { data: mediaAction } = useBroadcastChannel<string, string>({
-  name: 'media-action',
+  name: 'main-window-media-action',
 });
 
 whenever(
@@ -187,7 +205,7 @@ whenever(
       mediaElement.value?.pause();
     } else if (newMediaAction === 'play') {
       playMediaElement(oldMediaAction === 'pause');
-      cameraStreamId.value = '';
+      if (cameraStreamId.value) cameraStreamId.value = '';
     }
   },
 );
@@ -221,16 +239,286 @@ const { data: panzoomState } = useBroadcastChannel<
   name: 'panzoom',
 });
 
+const { data: webStreamData } = useBroadcastChannel<boolean, boolean>({
+  name: 'web-stream',
+});
+
+const { data: cameraStreamId } = useBroadcastChannel<string, string>({
+  name: 'camera-stream',
+});
+
+const { post: postLastEndTimestamp } = useBroadcastChannel<number, number>({
+  name: 'last-end-timestamp',
+});
+
+const customMin = computed(() => {
+  return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.min || 0;
+});
+
+const customMax = computed(() => {
+  return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.max;
+});
+
+const triggerPlay = (force = false) => {
+  if (!force && mediaAction.value !== 'play') {
+    return;
+  }
+
+  if (!mediaElement.value) {
+    return;
+  }
+
+  // For videos, ensure we're ready to play
+  if (isVideo(mediaPlayingUrl.value) && mediaElement.value.readyState < 2) {
+    // Video not ready yet, wait a bit and try again
+    setTimeout(() => {
+      triggerPlay(force);
+    }, 100);
+    return;
+  }
+
+  console.log(
+    `🎬 [triggerPlay] Attempting to play video: ${mediaPlayingUrl.value}, readyState: ${mediaElement.value.readyState}, paused: ${mediaElement.value.paused}`,
+  );
+
+  mediaElement.value.play().catch((error: Error) => {
+    const ignoredErrors = [
+      'removed from the document',
+      'new load request',
+      'interrupted by a call to pause',
+    ];
+
+    const shouldIgnore = ignoredErrors.some((msg) =>
+      error.message.includes(msg),
+    );
+
+    if (!shouldIgnore) {
+      console.error('❌ [triggerPlay] Video play error:', error);
+      errorCatcher(error);
+    }
+  });
+};
+
+const playMediaElement = (wasPaused = false, websiteStream = false) => {
+  if (!mediaElement.value) {
+    return;
+  }
+
+  console.log(
+    '🎬 [playMediaElement] Setting up video playback',
+    wasPaused,
+    websiteStream,
+    mediaAction.value,
+  );
+
+  if (wasPaused || websiteStream) {
+    triggerPlay(websiteStream);
+  }
+
+  mediaElement.value.oncanplaythrough = () => {
+    console.log('🎬 [playMediaElement] Video can play through');
+    triggerPlay();
+  };
+
+  // For videos, add an additional check to ensure playback starts
+  if (isVideo(mediaPlayingUrl.value) && mediaAction.value === 'play') {
+    // Set up a fallback mechanism to ensure video starts playing
+    const checkAndPlay = () => {
+      if (
+        mediaElement.value &&
+        mediaAction.value === 'play' &&
+        mediaElement.value.paused
+      ) {
+        console.log('🎬 [playMediaElement] Fallback: triggering play');
+        triggerPlay();
+      }
+    };
+
+    // Check after a short delay to allow the video to load
+    setTimeout(checkAndPlay, 200);
+    // Also check when the video becomes ready
+    mediaElement.value.oncanplay = checkAndPlay;
+  }
+};
+
+const endOrLoop = () => {
+  console.log('🎬 [endOrLoop] Video ended, repeat:', mediaRepeat.value);
+  if (!mediaRepeat.value) {
+    console.log('🎬 [endOrLoop] Posting ended state');
+    postLastEndTimestamp(Date.now());
+    // Don't clear mediaCustomDuration immediately to avoid race condition
+    // It will be cleared when the media state is handled by the main window
+  } else {
+    console.log('🎬 [endOrLoop] Looping video');
+    if (mediaElement.value) {
+      mediaElement.value.currentTime = customMin.value;
+      playMediaElement();
+    }
+  }
+};
+
+const handleVideoPause = () => {
+  console.log('⏸️ [handleVideoPause] Video paused');
+  postCurrentTime(mediaElement.value?.currentTime || 0);
+};
+
+const handleVideoCanPlay = () => {
+  console.log(
+    '🔄 [handleVideoCanPlay] Video can play',
+    mediaAction.value,
+    mediaElement.value?.paused,
+    mediaElement.value?.readyState,
+  );
+  // Ensure video starts playing when it's ready, especially for videos that might not start immediately
+  if (
+    mediaAction.value === 'play' &&
+    mediaElement.value &&
+    !mediaElement.value.paused
+  ) {
+    // Video is already playing, no action needed
+    return;
+  }
+
+  if (mediaAction.value === 'play' && mediaElement.value) {
+    // Try to start playing if the action is 'play' but video isn't playing yet
+    // Add a small delay to ensure the video is fully ready
+    setTimeout(() => {
+      if (
+        mediaAction.value === 'play' &&
+        mediaElement.value &&
+        mediaElement.value.paused
+      ) {
+        console.log('🎬 [handleVideoCanPlay] Triggering play after delay');
+        triggerPlay();
+      }
+    }, 50);
+  }
+};
+
+const playMedia = () => {
+  console.log(
+    '🔄 [playMedia] Playing media',
+    mediaAction.value,
+    mediaElement.value?.paused,
+  );
+  try {
+    if (!mediaElement.value) {
+      return;
+    }
+
+    let lastUpdate = 0;
+    const updateInterval = 300;
+    let rafId = 0;
+
+    const updateTime = () => {
+      // Don't continue if we're in the process of ending
+      if (isEnding.value) {
+        return;
+      }
+
+      const currentTime = mediaElement.value?.currentTime || 0;
+
+      if (Date.now() - lastUpdate > updateInterval) {
+        // Throttle time updates
+        postCurrentTime(currentTime);
+        lastUpdate = Date.now();
+      }
+
+      if (
+        mediaCustomDuration.value &&
+        customMax.value &&
+        currentTime >= customMax.value
+      ) {
+        isEnding.value = true;
+        endOrLoop();
+        cancelAnimationFrame(rafId);
+        return;
+      }
+
+      rafId = requestAnimationFrame(updateTime);
+    };
+
+    mediaElement.value.ontimeupdate = () => {
+      try {
+        if (!rafId) {
+          rafId = requestAnimationFrame(updateTime);
+        }
+      } catch (e) {
+        errorCatcher(e);
+      }
+    };
+
+    mediaElement.value.currentTime = customMin.value;
+    playMediaElement();
+  } catch (e) {
+    errorCatcher(e);
+  }
+};
+
+// Reset ending flag when new media starts
+watch(
+  () => mediaPlayingUrl.value,
+  (newUrl, oldUrl) => {
+    console.log('🔄 [mediaPlayingUrl] URL changed:', oldUrl, '->', newUrl);
+    isEnding.value = false;
+
+    // Clean up any existing event handlers when media URL changes
+    if (mediaElement.value) {
+      mediaElement.value.oncanplay = null;
+      mediaElement.value.oncanplaythrough = null;
+
+      // For videos, ensure the element is properly reset when URL changes
+      if (isVideo(newUrl) && newUrl !== oldUrl) {
+        console.log('🎬 [mediaPlayingUrl] Resetting video element for new URL');
+        // Pause current playback
+        mediaElement.value.pause();
+        // Reset current time
+        mediaElement.value.currentTime = 0;
+        // Force reload of the video
+        mediaElement.value.load();
+      }
+    }
+  },
+);
+
+const { post: postMediaWindowSize } = useBroadcastChannel({
+  name: 'media-window-size',
+});
+
+const { data: urlVariables } = useBroadcastChannel<
+  {
+    base: string | undefined;
+    mediator: string | undefined;
+  },
+  {
+    base: string | undefined;
+    mediator: string | undefined;
+  }
+>({
+  name: 'url-variables',
+});
+const { data: online } = useBroadcastChannel<boolean, boolean>({
+  name: 'online',
+});
+
+const { data: hideMediaLogo } = useBroadcastChannel<boolean, boolean>({
+  name: 'hide-media-logo',
+});
+
+const { post: postMediaPlayingAction } = useBroadcastChannel<string, string>({
+  name: 'media-window-media-action',
+});
+
+const { data: yeartext } = useBroadcastChannel<string, string>({
+  name: 'yeartext',
+});
+
 watchDeep(
   () => panzoomState.value,
   (newPanzoomState) => {
     setPanzoom(newPanzoomState);
   },
 );
-
-const { data: webStreamData } = useBroadcastChannel<boolean, boolean>({
-  name: 'web-stream',
-});
 
 watch(
   () => webStreamData.value,
@@ -280,7 +568,7 @@ watch(
         }
         if (!mediaElement.value || !stream) {
           videoStreaming.value = false;
-          mediaPlayingAction.value = '';
+          postMediaPlayingAction('');
           mediaElement.value?.pause();
           if (mediaElement?.value?.srcObject) {
             mediaElement.value.srcObject = null;
@@ -297,14 +585,10 @@ watch(
         mediaElement.value.pause();
         mediaElement.value.srcObject = null;
       }
-      mediaPlayingAction.value = '';
+      postMediaPlayingAction('');
     }
   },
 );
-
-const { data: cameraStreamId } = useBroadcastChannel<string, string>({
-  name: 'camera-stream',
-});
 
 watch(
   () => cameraStreamId.value,
@@ -363,7 +647,7 @@ watch(
         }
         if (!mediaElement.value || !stream) {
           videoStreaming.value = false;
-          mediaPlayingAction.value = '';
+          postMediaPlayingAction('');
           mediaElement.value?.pause();
           if (mediaElement?.value?.srcObject) {
             mediaElement.value.srcObject = null;
@@ -390,193 +674,48 @@ watch(
         mediaElement.value.pause();
         mediaElement.value.srcObject = null;
       }
-      mediaPlayingAction.value = '';
+      postMediaPlayingAction('');
     }
   },
 );
 
-const triggerPlay = (force = false) => {
-  if (!force && mediaAction.value !== 'play') {
-    return;
-  }
-
-  mediaElement.value?.play().catch((error: Error) => {
-    const ignoredErrors = [
-      'removed from the document',
-      'new load request',
-      'interrupted by a call to pause',
-    ];
-
-    const shouldIgnore = ignoredErrors.some((msg) =>
-      error.message.includes(msg),
-    );
-
-    if (!shouldIgnore) {
-      errorCatcher(error);
-    }
-  });
-};
-
-const playMediaElement = (wasPaused = false, websiteStream = false) => {
-  if (!mediaElement.value) {
-    return;
-  }
-
-  if (wasPaused || websiteStream) {
-    triggerPlay(websiteStream);
-  }
-
-  mediaElement.value.oncanplaythrough = () => {
-    triggerPlay();
-  };
-};
-
-watch(currentCongregation, (newCongregation) => {
-  if (!newCongregation) showMediaWindow(false);
+// Send request to main layout to get the current state, for when the media player window is first opened
+const { post: postGetCurrentState } = useBroadcastChannel<string, string>({
+  name: 'get-current-media-window-variables',
 });
 
-const { post: postMediaState } = useBroadcastChannel<'ended', 'ended'>({
-  name: 'media-state',
-});
+const fontsSet = ref(false);
 
-const customMin = computed(() => {
-  return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.min || 0;
-});
-
-const customMax = computed(() => {
-  return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.max;
-});
-
-const endOrLoop = () => {
-  if (!mediaRepeat.value) {
-    postMediaState('ended');
-    mediaCustomDuration.value = undefined;
-  } else {
-    if (mediaElement.value) {
-      mediaElement.value.currentTime = customMin.value;
-      playMediaElement();
-    }
-  }
-};
-
-const playMedia = () => {
-  try {
-    if (!mediaElement.value) {
-      return;
-    }
-
-    mediaElement.value.onended = () => {
-      endOrLoop();
-    };
-
-    mediaElement.value.onpause = () => {
-      postCurrentTime(mediaElement.value?.currentTime || 0);
-    };
-
-    let lastUpdate = 0;
-    const updateInterval = 300;
-    let rafId = 0;
-
-    const updateTime = () => {
-      const currentTime = mediaElement.value?.currentTime || 0;
-
-      if (Date.now() - lastUpdate > updateInterval) {
-        // Throttle time updates
-        postCurrentTime(currentTime);
-        lastUpdate = Date.now();
-      }
-
-      if (
-        mediaCustomDuration.value &&
-        customMax.value &&
-        currentTime >= customMax.value
-      ) {
-        endOrLoop();
-        cancelAnimationFrame(rafId);
-        return;
-      }
-
-      rafId = requestAnimationFrame(updateTime);
-    };
-
-    mediaElement.value.ontimeupdate = () => {
-      try {
-        if (!rafId) {
-          rafId = requestAnimationFrame(updateTime);
-        }
-      } catch (e) {
-        errorCatcher(e);
-      }
-    };
-
-    mediaElement.value.currentTime = customMin.value;
-    playMediaElement();
-  } catch (e) {
-    errorCatcher(e);
-  }
-};
-
-const { post: postMediaWindowSize } = useBroadcastChannel({
-  name: 'media-window-size',
-});
-
-const $q = useQuasar();
-
-$q.iconMapFn = (iconName) => {
-  if (iconName.startsWith('chevron_')) {
-    iconName = iconName.replace('chevron_', 'mmm-');
-  } else if (iconName.startsWith('keyboard_arrow_')) {
-    iconName = iconName.replace('keyboard_arrow_', 'mmm-');
-  } else if (iconName.startsWith('arrow_drop_')) {
-    iconName = 'mmm-dropdown-arrow';
-  } else if (iconName === 'cancel' || iconName === 'close') {
-    iconName = 'clear';
-  }
-  if (!iconName.startsWith('mmm-')) {
-    iconName = 'mmm-' + iconName;
-  }
-  return {
-    cls: iconName,
-  };
-};
-
-const previousState = ref<{
-  base: string | undefined;
-  mediator: string | undefined;
-  wasOnline: boolean;
-}>({
-  base: undefined,
-  mediator: undefined,
-  wasOnline: false,
-});
-
+// Listen for initial value updates from other components
 watchImmediate(
-  (): [string | undefined, string | undefined, boolean] => [
-    jwStore.urlVariables?.base,
-    jwStore.urlVariables?.mediator,
-    currentState.online,
+  () => [
+    urlVariables.value?.base,
+    urlVariables.value?.mediator,
+    online.value,
+    yeartext.value,
   ],
-  ([base, mediator, online]: [
-    string | undefined,
-    string | undefined,
-    boolean,
-  ]) => {
-    const prev = previousState.value;
-
-    // Only get fonts if:
-    // 1. Coming online for the first time (!prev.wasOnline && online)
-    // 2. URL variables changed while online
-    const shouldRun =
-      (!prev.wasOnline && online) ||
-      (online && (prev.base !== base || prev.mediator !== mediator));
-
-    if (shouldRun) {
+  (oldValues, newValues) => {
+    const urlVariablesChanged =
+      oldValues?.[0] !== newValues?.[0] || oldValues?.[1] !== newValues?.[1];
+    const onlineChanged = oldValues?.[2] !== newValues?.[2];
+    const yeartextChanged = oldValues?.[3] !== newValues?.[3];
+    const newYeartextIsEmpty = !newValues?.[3];
+    if (
+      urlVariablesChanged ||
+      onlineChanged ||
+      yeartextChanged ||
+      newYeartextIsEmpty
+    ) {
+      console.log('🔄 [MediaPlayerPage] Setting initial values');
+      postGetCurrentState(new Date().getTime().toString());
       setElementFont('Wt-ClearText-Bold');
       setElementFont('JW-Icons');
+      fontsSet.value = true;
     }
-
-    // Update previous state
-    previousState.value = { base, mediator, wasOnline: online };
   },
 );
+
+onMounted(() => {
+  postGetCurrentState(new Date().getTime().toString());
+});
 </script>

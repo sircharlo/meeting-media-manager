@@ -1,13 +1,13 @@
 import type {
   CacheList,
   DateInfo,
-  DynamicMediaObject,
   FontName,
   JwLangCode,
   JwLanguage,
   JwMepsLanguage,
+  MediaItem,
   MediaLink,
-  MediaSection,
+  MediaSectionIdentifier,
   Publication,
   PublicationFetcher,
   PublicationFiles,
@@ -20,6 +20,10 @@ import { defineStore } from 'pinia';
 import { MAX_SONGS } from 'src/constants/jw';
 import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import {
+  findMediaSection,
+  getOrCreateMediaSection,
+} from 'src/helpers/media-sections';
 import {
   fetchJwLanguages,
   fetchMemorials,
@@ -77,6 +81,17 @@ export function addUniqueById<T extends { uniqueId: string }>(
   });
 }
 
+export function addUniqueByIdToTop<T extends { uniqueId: string }>(
+  targetArray: (T | undefined)[],
+  sourceArray: (T | undefined)[],
+): void {
+  sourceArray.forEach((item) => {
+    if (!targetArray.some((obj) => obj?.uniqueId === item?.uniqueId)) {
+      targetArray.push(item);
+    }
+  });
+}
+
 export function deduplicateById<T extends { uniqueId: string }>(
   array: T[],
 ): void {
@@ -88,53 +103,127 @@ export function deduplicateById<T extends { uniqueId: string }>(
 }
 
 /**
- * Replaces existing media items in the target array with the matching item
- * from the source array, if the existing item is a placeholder (has no fileUrl).
+ * Replaces existing media items across all sections in the target day with matching items
+ * from the newMediaItems, if the existing item is a placeholder (has no fileUrl).
  * If there is no match at all, the item from the source array will be added to
- * the target array.
- * @param targetArray The array to search and modify
- * @param sourceArray The array of items to search for matches
+ * the appropriate section.
+ * @param targetDay The day object containing mediaSections to search and modify
+ * @param newMediaItems Record of section identifiers to arrays of new media items
  */
 export function replaceMissingMediaByPubMediaId(
-  targetArray: DynamicMediaObject[],
-  sourceArray: DynamicMediaObject[],
+  targetDay: DateInfo,
+  newMediaItems: Record<string, MediaItem[]> | undefined,
 ): void {
-  sourceArray.forEach((item) => {
-    if (item.source !== 'dynamic') return;
-    if (!item.pubMediaId) {
-      const fileUrlIndex = targetArray.findIndex(
-        (t) => t.uniqueId === item.uniqueId,
-      );
-      if (fileUrlIndex === -1) {
-        targetArray.push(item);
-      } else {
-        // check for duplicates
-        const lastIndex = targetArray.findLastIndex(
-          (t) => t.uniqueId === item.uniqueId,
-        );
-        if (lastIndex > fileUrlIndex) {
-          targetArray.splice(lastIndex, 1);
-        }
-      }
-      return;
-    }
-
-    const index = targetArray.findIndex(
-      (obj) => obj?.pubMediaId === item?.pubMediaId,
+  // Iterate through all new media items from all sections
+  if (!newMediaItems) return;
+  console.log(
+    '🔍 [replaceMissingMediaByPubMediaId] newMediaItems',
+    newMediaItems,
+  );
+  console.log(
+    '🔍 [replaceMissingMediaByPubMediaId] targetDay.mediaSections',
+    targetDay.mediaSections,
+  );
+  for (const sectionId in newMediaItems) {
+    const sectionItems = newMediaItems[sectionId];
+    if (!sectionItems || !targetDay.mediaSections) continue;
+    console.log(
+      '🔍 [replaceMissingMediaByPubMediaId] sourceArray',
+      sectionItems,
     );
 
-    if (index !== -1) {
-      const existing = targetArray[index];
-      // Replace only if it's a placeholder (fileUrl is the same as pubMediaId) and has no children
-      if (
-        existing?.fileUrl === existing?.pubMediaId &&
-        !existing?.children?.length
-      ) {
-        targetArray[index] = item;
+    // Process each item in the section
+    sectionItems.forEach((item) => {
+      if (item.source !== 'dynamic') return;
+
+      // Determine the correct target section based on the item's originalSection property
+      // If children, use the first child's originalSection
+      const targetSectionId = item.children?.length
+        ? item.children[0]?.originalSection || 'tgw'
+        : item.originalSection || 'tgw'; // Default to 'tgw' if no section assigned
+      const targetSection = findMediaSection(
+        targetDay.mediaSections,
+        targetSectionId,
+      );
+
+      if (!targetSection?.items) {
+        console.warn(
+          `Target section ${targetSectionId} not found in mediaSections`,
+        );
+        return;
       }
-    } else {
-      // Add new item if no match at all
-      targetArray.push(item);
+
+      // Handle items without pubMediaId (use uniqueId matching)
+      if (!item.pubMediaId) {
+        const fileUrlIndex = targetSection.items.findIndex(
+          (t) => t.uniqueId === item.uniqueId,
+        );
+        if (fileUrlIndex === -1) {
+          // Add to the correct section if no match found
+          targetSection.items.push(item);
+        } else {
+          // check for duplicates
+          const lastIndex = targetSection.items.findLastIndex(
+            (t) => t.uniqueId === item.uniqueId,
+          );
+          if (lastIndex > fileUrlIndex) {
+            targetSection.items.splice(lastIndex, 1);
+          }
+        }
+        return;
+      }
+
+      // Handle items with pubMediaId
+      const index = targetSection.items.findIndex(
+        (obj) => obj?.pubMediaId === item?.pubMediaId,
+      );
+
+      if (index !== -1) {
+        const existing = targetSection.items[index];
+        // Replace only if it's a placeholder (fileUrl is the same as pubMediaId) and has no children
+        if (
+          existing?.fileUrl === existing?.pubMediaId &&
+          !existing?.children?.length
+        ) {
+          targetSection.items[index] = item;
+        }
+      } else {
+        // Add new item to the correct section if no match found
+        targetSection.items.push(item);
+      }
+    });
+  }
+
+  // Sort all sections by sortOrderOriginal to maintain paragraph order
+  Object.values(targetDay.mediaSections).forEach((section) => {
+    if (section?.items) {
+      // Debug logging for sorting
+      console.log(
+        '🔍 [replaceMissingMediaByPubMediaId] Before sorting section items:',
+        section.items.map((item) => ({
+          isSong: item.tag?.type === 'song',
+          sortOrderOriginal: item.sortOrderOriginal,
+          title: item.title,
+        })),
+      );
+
+      section.items.sort((a, b) => {
+        const aOrder =
+          typeof a.sortOrderOriginal === 'number' ? a.sortOrderOriginal : 0;
+        const bOrder =
+          typeof b.sortOrderOriginal === 'number' ? b.sortOrderOriginal : 0;
+        return aOrder - bOrder;
+      });
+
+      // Debug logging after sorting
+      console.log(
+        '🔍 [replaceMissingMediaByPubMediaId] After sorting section items:',
+        section.items.map((item) => ({
+          isSong: item.tag?.type === 'song',
+          sortOrderOriginal: item.sortOrderOriginal,
+          title: item.title,
+        })),
+      );
     }
   });
 }
@@ -142,8 +231,8 @@ export function replaceMissingMediaByPubMediaId(
 export const useJwStore = defineStore('jw-store', {
   actions: {
     addToAdditionMediaMap(
-      mediaArray: DynamicMediaObject[],
-      section: MediaSection | undefined,
+      mediaArray: MediaItem[],
+      section: MediaSectionIdentifier | undefined,
       currentCongregation: string,
       selectedDateObject: DateInfo | null,
       coWeek: boolean,
@@ -151,20 +240,6 @@ export const useJwStore = defineStore('jw-store', {
       try {
         // Early exit if no media or selected date object
         if (!mediaArray.length || !selectedDateObject) return;
-
-        // Handle circuit overseer week logic
-        if (coWeek) {
-          mediaArray.forEach((media) => {
-            if (!media) return;
-            media.section =
-              section ||
-              (isMwMeetingDay(selectedDateObject.date) ||
-              isWeMeetingDay(selectedDateObject.date)
-                ? 'circuitOverseer'
-                : 'additional');
-            media.sectionOriginal = section || 'circuitOverseer';
-          });
-        }
 
         // Ensure lookupPeriod for current congregation exists
         if (!this.lookupPeriod[currentCongregation]) {
@@ -177,27 +252,50 @@ export const useJwStore = defineStore('jw-store', {
         );
 
         if (!period) {
-          period = { ...selectedDateObject, dynamicMedia: [] };
+          console.log(
+            '🔄 [addToAdditionMediaMap] No period found, creating new one',
+          );
+          period = {
+            ...selectedDateObject,
+            mediaSections: [],
+          };
           this.lookupPeriod[currentCongregation].push(period);
         }
 
-        const getAdditionalCount = () => {
-          return (
-            (this.lookupPeriod[currentCongregation] || [])
-              .find((d) => datesAreSame(d.date, selectedDateObject.date))
-              ?.dynamicMedia.filter((m) => m.section === 'additional').length ||
-            0
-          );
-        };
-
-        if (Array.isArray(period.dynamicMedia)) {
-          mediaArray.forEach((media, index) => {
-            if (!media) return;
-            media.sortOrderOriginal =
-              'additional-' + getAdditionalCount() + '-' + index;
-          });
-          addUniqueById(period.dynamicMedia, mediaArray);
+        // Determine the target section
+        let targetSection: MediaSectionIdentifier = 'imported-media';
+        if (coWeek) {
+          targetSection =
+            section ||
+            (isMwMeetingDay(selectedDateObject.date) ||
+            isWeMeetingDay(selectedDateObject.date)
+              ? 'circuit-overseer'
+              : 'imported-media');
+        } else if (section) {
+          targetSection = section;
         }
+
+        const targetSectionContainer = getOrCreateMediaSection(
+          period.mediaSections,
+          targetSection,
+        );
+
+        console.log(
+          '🔄 [addToAdditionMediaMap] Target section:',
+          targetSection,
+          targetSectionContainer,
+        );
+
+        targetSectionContainer.items ??= [];
+        const sectionMedia = targetSectionContainer.items;
+        const currentCount = sectionMedia.length;
+        mediaArray.forEach((media, index) => {
+          if (!media) return;
+          media.sortOrderOriginal = `${targetSection}-${currentCount + index}`;
+        });
+
+        // Add media items to the section
+        addUniqueByIdToTop(sectionMedia, mediaArray);
       } catch (e) {
         errorCatcher(e);
       }
@@ -206,13 +304,18 @@ export const useJwStore = defineStore('jw-store', {
       currentCongregation: string,
       selectedDateObject: DateInfo | null,
     ) {
-      if (!currentCongregation || !selectedDateObject?.dynamicMedia) return;
+      if (!currentCongregation || !selectedDateObject?.mediaSections) return;
 
-      for (let i = selectedDateObject.dynamicMedia.length - 1; i >= 0; i--) {
-        if (selectedDateObject.dynamicMedia[i]?.source === 'additional') {
-          selectedDateObject.dynamicMedia.splice(i, 1);
+      // Clear all sections except the standard meeting sections
+      selectedDateObject.mediaSections.forEach((section) => {
+        const additionalItems = section.items?.filter(
+          (item) => item.source === 'additional',
+        );
+        if (additionalItems?.length) {
+          section.items =
+            section.items?.filter((item) => item.source !== 'additional') ?? [];
         }
-      }
+      });
     },
     removeFromAdditionMediaMap(
       uniqueId: string,
@@ -223,17 +326,22 @@ export const useJwStore = defineStore('jw-store', {
         if (
           !uniqueId ||
           !currentCongregation ||
-          !selectedDateObject?.dynamicMedia
+          !selectedDateObject?.mediaSections
         )
           return;
 
-        for (let i = selectedDateObject.dynamicMedia.length - 1; i >= 0; i--) {
-          if (selectedDateObject.dynamicMedia[i]?.uniqueId === uniqueId) {
-            selectedDateObject.dynamicMedia.splice(i, 1);
+        // Remove the item from all sections
+        selectedDateObject.mediaSections.forEach((section) => {
+          if (!section.items) return;
+          const index = section.items.findIndex(
+            (item: MediaItem) => item.uniqueId === uniqueId,
+          );
+          if (index !== undefined && index !== -1) {
+            section.items.splice(index, 1);
           }
-        }
+        });
 
-        deduplicateById(selectedDateObject.dynamicMedia);
+        // No need to deduplicate since we're working with sections now
       } catch (e) {
         errorCatcher(e);
       }
@@ -248,18 +356,21 @@ export const useJwStore = defineStore('jw-store', {
         datesAreSame(day.date, selectedDateObject.date),
       );
 
-      if (!currentDay?.dynamicMedia) return;
+      if (!currentDay?.mediaSections) return;
 
-      currentDay.dynamicMedia.forEach((media) => {
-        if (media.hidden) {
-          media.hidden = false;
-        }
+      // Show all hidden media in all sections
+      Object.values(currentDay.mediaSections).forEach((sectionMedia) => {
+        sectionMedia.items?.forEach((media: MediaItem) => {
+          if (media.hidden) {
+            media.hidden = false;
+          }
 
-        if (media.children?.some((child) => child.hidden)) {
-          media.children.forEach((child) => {
-            if (child.hidden) child.hidden = false;
-          });
-        }
+          if (media.children?.some((child: MediaItem) => child.hidden)) {
+            media.children.forEach((child: MediaItem) => {
+              if (child.hidden) child.hidden = false;
+            });
+          }
+        });
       });
     },
     async updateJwLanguages(online: boolean) {
