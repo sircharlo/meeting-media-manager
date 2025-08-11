@@ -83,7 +83,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
               .filter((day) => !!day.meeting)
               .forEach((day) => {
                 // Remove dynamic media from all sections
-                day.mediaSections.forEach((section) => {
+                day.mediaSections?.forEach((section) => {
                   if (section.items) {
                     section.items = section.items.filter(
                       (item) => item.source !== 'dynamic',
@@ -201,9 +201,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
             const lookupPeriodForCongregation = currentLookupPeriods[congId];
             lookupPeriodForCongregation.forEach((day) => {
               // Initialize mediaSections if it doesn't exist
-              if (!day.mediaSections) {
-                day.mediaSections = [];
-              }
+              day.mediaSections ??= [];
               // Clear additional section
               const additionalSection = getOrCreateMediaSection(
                 day.mediaSections,
@@ -223,6 +221,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
                   datesAreSame(d.date, targetDate),
                 );
               if (existingMediaItemsForDate) {
+                existingMediaItemsForDate.mediaSections ??= [];
                 const additionalSection = findMediaSection(
                   existingMediaItemsForDate.mediaSections,
                   'imported-media',
@@ -264,7 +263,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
           jwStore.lookupPeriod = currentLookupPeriods;
         } else if (type.endsWith('refreshDynamicMedia')) {
           refreshDynamicMedia();
-        } else if (type === 'newMediaSections') {
+        } else if (type === '25.8.1-newMediaSections') {
           const currentLookupPeriods = structuredClone(
             toRawDeep(jwStore.lookupPeriod),
           );
@@ -274,6 +273,12 @@ export const useAppSettingsStore = defineStore('app-settings', {
             if (!congId || !dateInfo) continue;
             dateInfo.forEach((day) => {
               day.mediaSections = [];
+              if (day.complete) {
+                day.complete = false;
+              }
+              if (day.error) {
+                day.error = false;
+              }
               createMeetingSections(day);
             });
           }
