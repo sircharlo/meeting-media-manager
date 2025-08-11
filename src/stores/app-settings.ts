@@ -10,7 +10,6 @@ import type {
 
 import { defineStore } from 'pinia';
 import { LocalStorage as QuasarStorage } from 'quasar';
-import { defaultAdditionalSection } from 'src/composables/useMediaSection';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   createMeetingSections,
@@ -209,7 +208,6 @@ export const useAppSettingsStore = defineStore('app-settings', {
               const additionalSection = getOrCreateMediaSection(
                 day.mediaSections,
                 'imported-media',
-                defaultAdditionalSection.config,
               );
               additionalSection.items = [];
               day.complete = false;
@@ -243,7 +241,6 @@ export const useAppSettingsStore = defineStore('app-settings', {
                 const targetSection = getOrCreateMediaSection(
                   existingMediaItemsForDate.mediaSections,
                   'imported-media',
-                  defaultAdditionalSection.config,
                 );
                 targetSection.items ??= [];
                 targetSection.items.push(...newAdditionalItems);

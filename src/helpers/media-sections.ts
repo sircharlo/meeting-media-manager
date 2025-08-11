@@ -5,7 +5,6 @@ import type {
   MediaSectionWithConfig,
 } from 'src/types';
 
-import { i18n } from 'boot/i18n';
 import { defaultAdditionalSection } from 'src/composables/useMediaSection';
 import { getMeetingSections, standardSections } from 'src/constants/media';
 import { isCoWeek } from 'src/helpers/date';
@@ -34,7 +33,9 @@ export const getOrCreateMediaSection = (
   defaultConfig?: Partial<MediaSection>,
 ): MediaSectionWithConfig => {
   let section = findMediaSection(mediaSections, sectionId);
-  console.log('🔍 [getOrCreateMediaSection] section', section);
+  if (sectionId === 'imported-media') {
+    defaultConfig = defaultAdditionalSection.config;
+  }
   if (!section) {
     section = {
       config: {
@@ -68,8 +69,6 @@ export const addSection = () => {
   const newSection: MediaSection = {
     ...defaultAdditionalSection.config,
     bgColor: getRandomColor(), // Override with a random color for variety
-    label: (i18n.global.t as (key: string) => string)('imported-media'),
-    mmmIcon: 'mmm-additional-media',
     uniqueId: newSectionId,
   };
 
@@ -104,7 +103,6 @@ export const deleteSection = (uniqueId: string) => {
       const additionalSection = getOrCreateMediaSection(
         selectedDateObject.mediaSections,
         'imported-media',
-        defaultAdditionalSection.config,
       );
       additionalSection.items ??= [];
       additionalSection.items.push(...mediaToMove);

@@ -278,7 +278,6 @@ export const useJwStore = defineStore('jw-store', {
         const targetSectionContainer = getOrCreateMediaSection(
           period.mediaSections,
           targetSection,
-          { uniqueId: targetSection },
         );
 
         console.log(

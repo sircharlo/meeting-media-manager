@@ -124,7 +124,7 @@
             <q-icon color="primary" name="mmm-lectern" />
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ t('public-talk-media') }}</q-item-label>
+            <q-item-label>{{ t('pt-media') }}</q-item-label>
             <q-item-label caption>{{ t('media-from-s34mp') }}</q-item-label>
           </q-item-section>
         </q-item>
@@ -285,7 +285,7 @@
   />
   <DialogPublicTalkMediaPicker
     v-model="showPublicTalkMediaPicker"
-    :dialog-id="'header-calendar-public-talk-media-picker'"
+    :dialog-id="'header-calendar-pt-media-picker'"
     :section="section"
   />
   <DialogJwPlaylist
@@ -502,7 +502,7 @@ const getEventDayColor = (eventDate: string) => {
     } else if (lookupDate?.complete) {
       return 'primary';
     }
-    if (additionalMediaForDayExists(eventDate)) return 'imported-media  ';
+    if (additionalMediaForDayExists(eventDate)) return 'imported-media';
   } catch (error) {
     errorCatcher(error);
     return 'negative';

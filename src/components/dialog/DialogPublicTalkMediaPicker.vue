@@ -8,7 +8,7 @@
         {{ t('import-media-from-s34mp') }}
       </div>
       <div class="row q-px-md q-pt-md">
-        {{ t('select-s34mp-to-add-public-talk-media') }}
+        {{ t('select-s34mp-to-add-pt-media') }}
       </div>
       <div class="row q-px-md q-pt-md row items-center q-gutter-x-sm">
         <div class="row">

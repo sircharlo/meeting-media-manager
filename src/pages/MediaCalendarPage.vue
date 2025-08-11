@@ -867,7 +867,7 @@ watchImmediate(
       getOrCreateMediaSection(selectedDateObject.value.mediaSections, 'pt', {
         ...defaultAdditionalSection.config,
         jwIcon: '',
-        label: t('public-talk'),
+        label: t('pt'),
       });
     }
   },
@@ -1521,27 +1521,21 @@ const showDuplicateSongsBanner = computed(
 const showEmptyState = computed(() => {
   if (!selectedDateObject.value) return true;
 
+  const noMediaSections = !selectedDateObject.value.mediaSections?.length;
+
   // Count total media items across all sections
   const totalMediaCount = (selectedDateObject.value.mediaSections ?? []).reduce(
     (total, section) => total + (section.items?.length || 0),
     0,
   );
 
-  // Count visible media items across all sections
-  const visibleMediaCount = (
-    selectedDateObject.value.mediaSections ?? []
-  ).reduce(
-    (total, section) =>
-      total + (section.items?.filter((item) => !item.hidden).length || 0),
-    0,
-  );
-
   return (
-    (currentSettings.value?.disableMediaFetching && totalMediaCount < 1) ||
+    (currentSettings.value?.disableMediaFetching && noMediaSections) ||
     (!currentSettings.value?.disableMediaFetching &&
       ((selectedDateObject.value.meeting &&
         !selectedDateObject.value.complete) ||
-        visibleMediaCount === 0))
+        (selectedDateObject.value.meeting && totalMediaCount === 0) ||
+        (!selectedDateObject.value.meeting && noMediaSections)))
   );
 });
 

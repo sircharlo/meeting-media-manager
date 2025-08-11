@@ -51,7 +51,6 @@ import AnnouncementBanner from 'components/ui/AnnouncementBanner.vue';
 import NavDrawer from 'components/ui/NavDrawer.vue';
 import { storeToRefs } from 'pinia';
 import { useMeta, useQuasar } from 'quasar';
-import { defaultAdditionalSection } from 'src/composables/useMediaSection';
 import { SORTER } from 'src/constants/general';
 import {
   cleanCache,
@@ -522,7 +521,6 @@ const updateWatchFolderRef = async ({
         const additionalSection = getOrCreateMediaSection(
           dayObj.mediaSections,
           'imported-media',
-          defaultAdditionalSection.config,
         );
 
         additionalSection.items ??= [];

@@ -234,7 +234,11 @@ const initializeValues = () => {
     (acc, section) => ({
       ...acc,
       [section.config.uniqueId]:
-        section.config?.label || t(section.config.uniqueId || ''),
+        !section.config?.label &&
+        (section.config.uniqueId === 'imported-media' ||
+          section.config.uniqueId.startsWith('custom-'))
+          ? t('imported-media')
+          : section.config?.label,
     }),
     {},
   );

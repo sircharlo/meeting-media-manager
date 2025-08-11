@@ -12,7 +12,6 @@ export const defaultAdditionalSection = {
   config: {
     bgColor: 'rgb(148, 94, 181)',
     extraMediaShortcut: true,
-    mmmIcon: 'mmm-additional-media',
     uniqueId: 'imported-media',
   },
   items: [],
@@ -362,7 +361,6 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
       const additionalSection = getOrCreateMediaSection(
         selectedDateObject.value.mediaSections,
         'imported-media',
-        defaultAdditionalSection.config,
       );
       additionalSection.items ??= [];
       additionalSection.items.push(...itemsToMove);

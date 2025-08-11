@@ -20,7 +20,7 @@
         {{ mediaList.config?.jwIcon }}
       </template>
       <template v-else>
-        <q-icon :name="mediaList.config?.mmmIcon" size="md" />
+        <q-icon name="mmm-additional-media" size="md" />
       </template>
     </q-avatar>
 
@@ -41,7 +41,13 @@
         @keyup.esc="handleRename(false)"
       />
       <template v-else>
-        {{ mediaList.config?.label || t(mediaList.config?.uniqueId || '') }}
+        {{
+          !mediaList.config?.label &&
+          (mediaList.config?.uniqueId === 'imported-media' ||
+            mediaList.config?.uniqueId.startsWith('custom-'))
+            ? t('imported-media')
+            : mediaList.config?.label
+        }}
       </template>
     </q-item-section>
 
