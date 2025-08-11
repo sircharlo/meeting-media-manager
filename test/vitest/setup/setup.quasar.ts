@@ -27,6 +27,7 @@ vi.mock('src/helpers/error-catcher', async (importOriginal) => {
 vi.stubGlobal('electronApi', electronApi);
 
 const i18n = createI18n({
+  allowComposition: true,
   legacy: false,
   locale: 'en',
   messages: { en: appMessages.en },

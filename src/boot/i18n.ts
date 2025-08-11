@@ -9,6 +9,7 @@ let i18n: ReturnType<typeof createI18n> = createI18n({});
 
 export default defineBoot(({ app }) => {
   i18n = createI18n({
+    allowComposition: true,
     fallbackLocale: 'en',
     legacy: false,
     locale: 'en',
