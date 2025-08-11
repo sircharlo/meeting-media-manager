@@ -11,7 +11,6 @@ import { computed, ref, watch } from 'vue';
 export const defaultAdditionalSection = {
   config: {
     bgColor: 'rgb(148, 94, 181)',
-    extraMediaShortcut: true,
     uniqueId: 'imported-media',
   },
   items: [],
@@ -41,6 +40,16 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   // Check if section is empty
   const isEmpty = computed(() => {
     return sectionItems.value.length === 0;
+  });
+
+  const hasAddMediaButton = computed(() => {
+    return (
+      mediaList.config?.uniqueId === 'imported-media' ||
+      mediaList.config?.uniqueId.startsWith('custom-') ||
+      mediaList.config?.uniqueId === 'pt' ||
+      mediaList.config?.uniqueId === 'circuit-overseer' ||
+      mediaList.config?.uniqueId === 'lac'
+    );
   });
 
   // Check if this is a song button section
@@ -408,6 +417,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     customSections,
     deleteSection,
     expandedGroups,
+    hasAddMediaButton,
     isCustomSection,
     isEmpty,
     isFirst,

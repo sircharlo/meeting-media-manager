@@ -172,7 +172,7 @@
         </template>
 
         <!-- Add Media Button -->
-        <template v-if="mediaList.config?.extraMediaShortcut">
+        <template v-if="hasAddMediaButton">
           <q-btn
             class="add-media-shortcut"
             :class="[
@@ -216,6 +216,7 @@ import { computed, nextTick, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{
+  hasAddMediaButton: boolean;
   isCustom: boolean;
   isFirst: boolean;
   isLast: boolean;

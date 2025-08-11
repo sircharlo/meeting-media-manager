@@ -84,10 +84,8 @@ export interface MediaItem {
 
 export interface MediaSection {
   bgColor?: string;
-  extraMediaShortcut?: boolean;
   jwIcon?: string;
   label?: string;
-  mmmIcon?: string;
   repeat?: boolean; // Whether the section should repeat
   repeatInterval?: number; // Interval in seconds for images (default 10)
   uniqueId: MediaSectionIdentifier;
@@ -112,7 +110,6 @@ export interface SortableMediaList {
   items: Ref<MediaItem[]>;
   jwIcon?: string | undefined;
   label: string;
-  mmmIcon?: string | undefined;
   type: MediaSectionIdentifier;
 }
 

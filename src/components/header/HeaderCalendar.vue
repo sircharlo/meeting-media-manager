@@ -46,7 +46,7 @@
     v-if="selectedDate"
     color="white-transparent"
     unelevated
-    @click="section = firstSectionOrUndefined"
+    @click="section = undefined"
   >
     <q-icon
       :class="{ 'q-mr-sm': $q.screen.gt.xs }"
@@ -64,7 +64,7 @@
           v-close-popup
           clickable
           :disable="!online"
-          @click="openSongPicker(section)"
+          @click="openSongPickerWithSectionCheck(section)"
         >
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-music-note" />
@@ -78,7 +78,7 @@
           v-close-popup
           clickable
           :disable="!online"
-          @click="openRemoteVideo"
+          @click="openRemoteVideoWithSectionCheck"
         >
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-movie" />
@@ -94,7 +94,7 @@
           v-close-popup
           clickable
           :disable="!online"
-          @click="openStudyBible"
+          @click="openStudyBibleWithSectionCheck"
         >
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-bible" />
@@ -108,7 +108,7 @@
           v-close-popup
           clickable
           :disable="!online"
-          @click="openAudioBible"
+          @click="openAudioBibleWithSectionCheck"
         >
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-audio-bible" />
@@ -119,7 +119,11 @@
           </q-item-section>
         </q-item>
         <q-item-label header>{{ t('from-local-computer') }}</q-item-label>
-        <q-item v-close-popup clickable @click="openPublicTalkMediaPicker">
+        <q-item
+          v-close-popup
+          clickable
+          @click="openPublicTalkMediaPickerWithSectionCheck"
+        >
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-lectern" />
           </q-item-section>
@@ -263,6 +267,11 @@
     v-model="showCustomSectionEdit"
     :dialog-id="'header-calendar-custom-section-edit'"
   />
+  <DialogSectionPicker
+    v-model="showSectionPicker"
+    :files="pendingFiles"
+    @section-selected="handleSectionSelected"
+  />
   <DialogRemoteVideo
     v-model="showRemoteVideo"
     :dialog-id="'header-calendar-remote-video'"
@@ -306,12 +315,12 @@ import DialogCustomSectionEdit from 'components/dialog/DialogCustomSectionEdit.v
 import DialogJwPlaylist from 'components/dialog/DialogJwPlaylist.vue';
 import DialogPublicTalkMediaPicker from 'components/dialog/DialogPublicTalkMediaPicker.vue';
 import DialogRemoteVideo from 'components/dialog/DialogRemoteVideo.vue';
+import DialogSectionPicker from 'components/dialog/DialogSectionPicker.vue';
 import DialogSongPicker from 'components/dialog/DialogSongPicker.vue';
 import DialogStudyBible from 'components/dialog/DialogStudyBible.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
-import { isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   datesAreSame,
@@ -359,6 +368,8 @@ const showSongPicker = ref(false);
 const showPublicTalkMediaPicker = ref(false);
 const showJwPlaylist = ref(false);
 const jwPlaylistPath = ref('');
+const showSectionPicker = ref(false);
+const pendingFiles = ref<(File | string)[]>([]);
 
 const openFileImportDialog = () => {
   window.dispatchEvent(
@@ -466,9 +477,18 @@ const maxDate = () => {
 };
 
 const importMenu = useTemplateRef<QMenu>('importMenu');
-const openImportMenu = (newSection?: MediaSectionIdentifier) => {
-  section.value = newSection;
-  importMenu.value?.show();
+const openImportMenuWithSectionCheck = (
+  newSection?: MediaSectionIdentifier,
+) => {
+  if (newSection) {
+    section.value = newSection;
+    importMenu.value?.show();
+  } else {
+    pendingDialogAction.value = () => {
+      importMenu.value?.show();
+    };
+    showSectionPicker.value = true;
+  }
 };
 
 const dateOptions = (lookupDate: string) => {
@@ -513,13 +533,13 @@ const getEventDayColor = (eventDate: string) => {
 useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
   window,
   'openSongPicker',
-  (e) => openSongPicker(e.detail?.section),
+  (e) => openSongPickerWithSectionCheck(e.detail?.section),
   { passive: true },
 );
 useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
   window,
   'openImportMenu',
-  (e) => openImportMenu(e.detail?.section),
+  (e) => openImportMenuWithSectionCheck(e.detail?.section),
   { passive: true },
 );
 useEventListener<
@@ -527,15 +547,13 @@ useEventListener<
     jwPlaylistPath: string;
     section: MediaSectionIdentifier | undefined;
   }>
->(
-  window,
-  'openJwPlaylistPicker',
-  (e) => {
-    console.log('🎯 openJwPlaylistPicker event received:', e.detail);
-    openJwPlaylistPicker(e.detail?.section, e.detail?.jwPlaylistPath);
-  },
-  { passive: true },
-);
+>(window, 'openJwPlaylistPicker', (e) => {
+  console.log('🎯 openJwPlaylistPicker event received:', e.detail);
+  openJwPlaylistPickerWithSectionCheck(
+    e.detail?.section,
+    e.detail?.jwPlaylistPath,
+  );
+});
 
 const mediaSortCanBeReset = computed<boolean>(() => {
   if (
@@ -692,39 +710,94 @@ const openCustomSectionEdit = () => {
   showCustomSectionEdit.value = true;
 };
 
-const openRemoteVideo = () => {
-  showRemoteVideo.value = true;
+const handleSectionSelected = (selectedSection: MediaSectionIdentifier) => {
+  section.value = selectedSection;
+  showSectionPicker.value = false;
+
+  // Now open the pending dialog with the selected section
+  if (pendingDialogAction.value) {
+    pendingDialogAction.value();
+    pendingDialogAction.value = null;
+  }
 };
 
-const openStudyBible = () => {
-  showStudyBible.value = true;
+// Store the pending dialog action
+const pendingDialogAction = ref<(() => void) | null>(null);
+
+// Wrapper functions that check for section specification
+const openRemoteVideoWithSectionCheck = () => {
+  if (section.value) {
+    showRemoteVideo.value = true;
+  } else {
+    pendingDialogAction.value = () => {
+      showRemoteVideo.value = true;
+    };
+    showSectionPicker.value = true;
+  }
 };
 
-const openAudioBible = () => {
-  showAudioBible.value = true;
+const openStudyBibleWithSectionCheck = () => {
+  if (section.value) {
+    showStudyBible.value = true;
+  } else {
+    pendingDialogAction.value = () => {
+      showStudyBible.value = true;
+    };
+    showSectionPicker.value = true;
+  }
 };
 
-const openSongPicker = (newSection?: MediaSectionIdentifier) => {
-  section.value = newSection;
-  showSongPicker.value = true;
+const openAudioBibleWithSectionCheck = () => {
+  if (section.value) {
+    showAudioBible.value = true;
+  } else {
+    pendingDialogAction.value = () => {
+      showAudioBible.value = true;
+    };
+    showSectionPicker.value = true;
+  }
 };
 
-const openPublicTalkMediaPicker = () => {
-  showPublicTalkMediaPicker.value = true;
+const openSongPickerWithSectionCheck = (
+  newSection?: MediaSectionIdentifier,
+) => {
+  if (newSection || section.value) {
+    section.value = newSection || section.value;
+    showSongPicker.value = true;
+  } else {
+    pendingDialogAction.value = () => {
+      showSongPicker.value = true;
+    };
+    showSectionPicker.value = true;
+  }
 };
 
-const openJwPlaylistPicker = (
+const openPublicTalkMediaPickerWithSectionCheck = () => {
+  if (section.value) {
+    showPublicTalkMediaPicker.value = true;
+  } else {
+    pendingDialogAction.value = () => {
+      showPublicTalkMediaPicker.value = true;
+    };
+    showSectionPicker.value = true;
+  }
+};
+
+const openJwPlaylistPickerWithSectionCheck = (
   newSection?: MediaSectionIdentifier,
   playlistPath?: string,
 ) => {
-  console.log('🎯 openJwPlaylistPicker called with:', {
-    newSection,
-    playlistPath,
-  });
-  section.value = newSection;
-  jwPlaylistPath.value = playlistPath || '';
-  console.log('🎯 jwPlaylistPath set to:', jwPlaylistPath.value);
-  showJwPlaylist.value = true;
+  if (newSection || section.value) {
+    section.value = newSection || section.value;
+    jwPlaylistPath.value = playlistPath || '';
+    showJwPlaylist.value = true;
+  } else {
+    pendingDialogAction.value = () => {
+      jwPlaylistPath.value = playlistPath || '';
+      showJwPlaylist.value = true;
+    };
+    showSectionPicker.value = true;
+  }
 };
 
 const canEditCustomSections = computed(() => {
@@ -735,14 +808,5 @@ const canEditCustomSections = computed(() => {
       (section) => !!section.items?.length,
     )
   );
-});
-
-const firstSectionOrUndefined = computed(() => {
-  return canEditCustomSections.value &&
-    selectedDateObject.value?.mediaSections?.length
-    ? selectedDateObject.value.mediaSections[0]?.config?.uniqueId
-    : isWeMeetingDay(selectedDateObject.value?.date)
-      ? 'pt'
-      : undefined;
 });
 </script>

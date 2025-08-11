@@ -5,30 +5,33 @@
         <div class="text-subtitle2 q-mb-sm">
           {{ t('choose-section-for-files') }}
         </div>
-        <div
-          v-for="section in availableSections"
-          :key="section.config?.uniqueId"
-          class="row q-gutter-sm"
-        >
-          <q-btn
+        <div class="row">
+          <div
+            v-for="section in availableSections"
             :key="section.config?.uniqueId"
-            class="section-btn"
-            :class="`bg-${section.config?.uniqueId}`"
-            flat
-            :icon="section.config?.jwIcon ? undefined : section.config?.mmmIcon"
-            size="md"
-            :style="`background-color: ${section.config?.bgColor}; color: ${
-              getTextColor(section) || 'white'
-            }`"
-            @click="selectSection(section.config?.uniqueId || '')"
+            class="col-12 q-mt-sm"
           >
-            <template #default>
-              <span v-if="section.config?.jwIcon" class="jw-icon q-mr-sm">{{
-                section.config.jwIcon
-              }}</span>
-              {{ section.config?.label || t(section.config?.uniqueId || '') }}
-            </template>
-          </q-btn>
+            <q-btn
+              class="section-btn"
+              :class="`bg-${section.config?.uniqueId} full-width`"
+              flat
+              :icon="
+                section.config?.jwIcon ? undefined : 'mmm-additional-media'
+              "
+              size="md"
+              :style="`background-color: ${section.config?.bgColor}; color: ${
+                getTextColor(section) || 'white'
+              }`"
+              @click="selectSection(section.config?.uniqueId || '')"
+            >
+              <template #default>
+                <span v-if="section.config?.jwIcon" class="jw-icon q-mr-sm">{{
+                  section.config.jwIcon
+                }}</span>
+                {{ section.config?.label || t(section.config?.uniqueId || '') }}
+              </template>
+            </q-btn>
+          </div>
         </div>
       </q-card-section>
     </q-card>

@@ -12,7 +12,7 @@
       class="bg-secondary-contrast flex medium-overlay q-px-none"
       style="flex-flow: column"
     >
-      {{ totalFiles || (!!jwpubDb && jwpubLoading) }}
+      <!-- {{ totalFiles || (!!jwpubDb && jwpubLoading) }} -->
       <div class="text-h6 row q-px-md q-pt-lg q-pb-md">
         {{
           t(

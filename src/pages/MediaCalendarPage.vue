@@ -8,6 +8,7 @@
     <!-- <pre>{{
       selectedDateObject?.mediaSections.map((s) => s.config.uniqueId)
     }}</pre> -->
+    <!-- <pre>Section to add to:   {{ sectionToAddTo }}</pre> -->
     <div v-if="showBannerColumn" class="col">
       <q-slide-transition>
         <div v-if="showObsBanner" class="row">
@@ -737,17 +738,15 @@ useEventListener<
   window,
   'localFiles-browsed',
   (event) => {
-    sectionToAddTo.value = event.detail?.section;
-
-    // Check if it's a WE meeting and no specific section was chosen
+    // Show section picker if more than one section exists
     if (
-      selectedDateObject.value &&
-      isWeMeetingDay(selectedDateObject.value.date) &&
+      (selectedDateObject.value?.mediaSections?.length || 0) > 1 &&
       !event.detail?.section
     ) {
       pendingFiles.value = event.detail?.files ?? [];
       showSectionPicker.value = true;
     } else {
+      sectionToAddTo.value = event.detail?.section;
       // For non-WE meetings or when section is already specified, process files directly
       addToFiles(event.detail?.files ?? []).catch((error) => {
         errorCatcher(error);
@@ -1148,6 +1147,7 @@ const scroll = (step?: number) => {
   setTimeout(() => scroll(step), 20);
 };
 const dropActive = (event: DragEvent) => {
+  sectionToAddTo.value = undefined;
   const step =
     y.value < marginToEdge
       ? -1
@@ -1171,6 +1171,14 @@ const dropActive = (event: DragEvent) => {
 const handleDrop = (event: DragEvent) => {
   event.preventDefault();
   event.stopPropagation();
+  // if (
+  //     (isWeMeetingDay(selectedDateObject.value?.date) ||
+  //       isMwMeetingDay(selectedDateObject.value?.date)) &&
+  //     !event.detail?.section
+  //   ) {
+  //     pendingFiles.value = event.detail?.files ?? [];
+  //     showSectionPicker.value = true;
+  //   } else {
   try {
     if (event.dataTransfer?.files?.length) {
       const droppedStuff: (File | string)[] = Array.from(
@@ -1193,15 +1201,12 @@ const handleDrop = (event: DragEvent) => {
         if (src) droppedStuff[0] = src;
       }
 
-      // Check if it's a WE meeting and show section picker
-      if (
-        selectedDateObject.value &&
-        isWeMeetingDay(selectedDateObject.value.date)
-      ) {
+      // Show section picker if more than one section exists
+      if ((selectedDateObject.value?.mediaSections?.length || 0) > 1) {
         pendingFiles.value = droppedStuff;
         showSectionPicker.value = true;
       } else {
-        // For non-WE meetings, process files directly
+        // Otherwise, process files directly
         addToFiles(droppedStuff).catch((error) => {
           errorCatcher(error);
         });

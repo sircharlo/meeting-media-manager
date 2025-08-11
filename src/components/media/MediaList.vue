@@ -11,6 +11,7 @@
     <MediaSectionHeader
       v-if="selectedDateObject"
       ref="sectionHeaderRef"
+      :has-add-media-button="hasAddMediaButton"
       :is-custom="isCustomSection"
       :is-first="isFirst"
       :is-last="isLast"
@@ -147,6 +148,7 @@ const {
   addSong,
   deleteSection,
   expandedGroups,
+  hasAddMediaButton,
   isCustomSection,
   isEmpty,
   isFirst,
