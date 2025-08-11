@@ -24,7 +24,7 @@
       </q-tooltip>
     </q-btn>
   </transition>
-  Section: {{ section }}
+  <!-- Section: {{ section }} -->
   <q-btn
     v-if="canEditCustomSections"
     color="white-transparent"

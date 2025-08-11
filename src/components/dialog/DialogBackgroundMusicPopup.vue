@@ -9,7 +9,6 @@
     transition-hide="jump-down"
     transition-show="jump-up"
   >
-    {{ shouldAutoStart }}
     <div
       class="action-popup q-py-md flex"
       :class="{
