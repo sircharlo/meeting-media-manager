@@ -308,21 +308,12 @@ export const useJwStore = defineStore('jw-store', {
 
       // Clear all sections except the standard meeting sections
       selectedDateObject.mediaSections.forEach((section) => {
-        const sectionId = section.config.uniqueId as MediaSectionIdentifier;
-        if (
-          sectionId !== 'wt' &&
-          sectionId !== 'tgw' &&
-          sectionId !== 'ayfm' &&
-          sectionId !== 'lac' &&
-          sectionId !== 'circuit-overseer'
-        ) {
-          const sectionData = findMediaSection(
-            selectedDateObject.mediaSections,
-            sectionId,
-          );
-          if (sectionData) {
-            sectionData.items = [];
-          }
+        const additionalItems = section.items?.filter(
+          (item) => item.source === 'additional',
+        );
+        if (additionalItems?.length) {
+          section.items =
+            section.items?.filter((item) => item.source !== 'additional') ?? [];
         }
       });
     },
