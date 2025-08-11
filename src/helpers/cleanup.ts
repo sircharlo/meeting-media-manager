@@ -119,6 +119,7 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
       await getDirectory(currentState.currentSongbook.pub), // Background music
       await getDirectory(currentState.currentSongbook.pub, 0), // Songbook videos
       await getDirectory('nwtsty'), // Study Bible
+      await getDirectory('nwtsty', undefined, 'E'), // Study Bible in English
       await getDirectory('it', 0), // Insight
       await getDirectory('lmd', 0), // Love People
       await getDirectory('lmdv', 0), // Love People Videos
@@ -154,6 +155,7 @@ const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
     const currentState = useCurrentStateStore();
     const jwStore = useJwStore();
 
+    // Get all media items from all congregations and all dates in the lookup period
     const lookupPeriodsCollections = Object.values(
       jwStore.lookupPeriod,
     ).flatMap((congregationLookupPeriods) =>
@@ -167,27 +169,49 @@ const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
       }),
     );
 
-    const mediaFileParentDirectories = new Set(
-      lookupPeriodsCollections.flatMap((media) => {
-        const urls: string[] = [];
+    // Create a set of all file URLs that are explicitly referenced in the lookup period
+    const referencedFileUrls = new Set<string>();
 
-        // Add parent directory if media has a fileUrl
-        if (media?.fileUrl) {
-          urls.push(pathToFileURL(getParentDirectory(media.fileUrl)));
-        }
+    lookupPeriodsCollections.forEach((media) => {
+      // Add all explicitly referenced file URLs (hidden or not)
+      if (media?.fileUrl) {
+        referencedFileUrls.add(media.fileUrl);
+      }
+      if (media?.streamUrl) {
+        referencedFileUrls.add(media.streamUrl);
+      }
+      if (media?.thumbnailUrl) {
+        referencedFileUrls.add(media.thumbnailUrl);
+      }
+      if (media?.subtitlesUrl) {
+        referencedFileUrls.add(media.subtitlesUrl);
+      }
 
-        // Add parent directories of children if they exist and have fileUrls
-        if (Array.isArray(media?.children)) {
-          for (const child of media.children) {
-            if (child?.fileUrl) {
-              urls.push(pathToFileURL(getParentDirectory(child.fileUrl)));
-            }
+      // Add child media file URLs
+      if (Array.isArray(media?.children)) {
+        for (const child of media.children) {
+          if (child?.fileUrl) {
+            referencedFileUrls.add(child.fileUrl);
+          }
+          if (child?.streamUrl) {
+            referencedFileUrls.add(child.streamUrl);
+          }
+          if (child?.thumbnailUrl) {
+            referencedFileUrls.add(child.thumbnailUrl);
+          }
+          if (child?.subtitlesUrl) {
+            referencedFileUrls.add(child.subtitlesUrl);
           }
         }
+      }
+    });
 
-        return urls;
-      }),
-    );
+    // Get parent directories of all referenced files
+    const referencedParentDirectories = new Set<string>();
+    referencedFileUrls.forEach((fileUrl) => {
+      const parentDir = pathToFileURL(getParentDirectory(fileUrl));
+      referencedParentDirectories.add(parentDir);
+    });
 
     const files: CacheFile[] = [];
     for (const cacheDir of cacheDirs) {
@@ -203,10 +227,12 @@ const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
               /^S-34mp_[A-Z]+_0$/.test(parentFolder)
             ) {
               const fileParentDirectoryUrl = pathToFileURL(item.parentPath);
+              const isReferenced = referencedParentDirectories.has(
+                fileParentDirectoryUrl,
+              );
+
               files.push({
-                orphaned: !mediaFileParentDirectories.has(
-                  fileParentDirectoryUrl,
-                ),
+                orphaned: !isReferenced,
                 parentPath: item.parentPath,
                 path: filePath,
                 size: item.size || 0,
@@ -275,12 +301,19 @@ export const analyzeCacheFiles = async (): Promise<CacheAnalysis> => {
     // Calculate unused parent directories
     const unusedParentDirectories = cacheFiles.reduce<Record<string, number>>(
       (acc, file) => {
-        const isInUsed = Object.keys(usedParentDirectories).some((dir) =>
-          file.parentPath.startsWith(dir),
-        );
+        const isInUsed = Object.keys(usedParentDirectories).some((dir) => {
+          // Use normalized paths for comparison to handle different path separators
+          const normalizedFileParent = normalize(file.parentPath);
+          const normalizedUsedDir = normalize(dir);
+          return normalizedFileParent.startsWith(normalizedUsedDir);
+        });
 
-        const isInFrequentlyUsed = [...frequentlyUsedDirectories].some((dir) =>
-          file.parentPath.startsWith(dir),
+        const isInFrequentlyUsed = [...frequentlyUsedDirectories].some(
+          (dir) => {
+            const normalizedFileParent = normalize(file.parentPath);
+            const normalizedFreqDir = normalize(dir);
+            return normalizedFileParent.startsWith(normalizedFreqDir);
+          },
         );
 
         const isInUntouchable = [...untouchableDirectories].some(
@@ -288,6 +321,18 @@ export const analyzeCacheFiles = async (): Promise<CacheAnalysis> => {
         );
 
         if (!isInUsed && !isInFrequentlyUsed && !isInUntouchable) {
+          // Add debugging for files that are being marked as unused
+          console.log('🗑️ File marked as unused:', {
+            filePath: file.path,
+            frequentlyUsedDirs: [...frequentlyUsedDirectories],
+            isInFrequentlyUsed,
+            isInUntouchable,
+            isInUsed,
+            parentPath: file.parentPath,
+            size: file.size,
+            untouchableDirs: [...untouchableDirectories],
+            usedParentDirs: Object.keys(usedParentDirectories),
+          });
           acc[file.parentPath] = file.size + (acc[file.parentPath] ?? 0);
         }
         return acc;
