@@ -131,6 +131,7 @@ export default defineConfig({
     ['meta', { content: '512', property: 'og:image:height' }],
     ['meta', { content: 'The logo of M³', property: 'og:image:alt' }],
   ],
+  ignoreDeadLinks: true,
   lastUpdated: true,
   locales: mapLocales(),
   markdown: {
