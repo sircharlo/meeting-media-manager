@@ -1,4 +1,4 @@
-import { defineBoot } from '#q-app/wrappers';
+import { defineBoot } from '@quasar/app-vite/wrappers';
 import messages from 'src/i18n';
 import { createI18n } from 'vue-i18n';
 
@@ -9,6 +9,7 @@ let i18n: ReturnType<typeof createI18n> = createI18n({});
 
 export default defineBoot(({ app }) => {
   i18n = createI18n({
+    allowComposition: true,
     fallbackLocale: 'en',
     legacy: false,
     locale: 'en',

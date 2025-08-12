@@ -24,8 +24,9 @@
       outline
       @click="shortcutPicker = true"
     />
-    <q-dialog
+    <BaseDialog
       v-model="shortcutPicker"
+      :dialog-id="dialogId"
       @hide="stopListening()"
       @show="startListening()"
     >
@@ -55,22 +56,27 @@
 
         <q-card-actions align="right" class="text-primary">
           <q-btn
-            v-close-popup
+            v-if="localValue"
             color="negative"
             flat
             :label="t('clear')"
             @click="localValue = ''"
           />
-          <q-btn v-close-popup flat :label="t('confirm')" />
+          <q-btn
+            flat
+            :label="localValue ? t('confirm') : t('cancel')"
+            @click="shortcutPicker = false"
+          />
         </q-card-actions>
       </q-card>
-    </q-dialog>
+    </BaseDialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { SettingsValues } from 'src/types';
 
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   getCurrentShortcuts,
@@ -84,6 +90,7 @@ const { t } = useI18n();
 
 // Define props and emits
 const props = defineProps<{
+  dialogId: string;
   modelValue: null | string;
   shortcutName: keyof SettingsValues;
 }>();
@@ -111,9 +118,18 @@ watch(
 );
 
 const handleKeyPress = (event: KeyboardEvent) => {
+  console.log('🎹 Key pressed:', event.code, event.key, {
+    altKey: event.altKey,
+    ctrlKey: event.ctrlKey,
+    metaKey: event.metaKey,
+    shiftKey: event.shiftKey,
+  });
   try {
     const { altKey, code, ctrlKey, key, metaKey, shiftKey } = event;
     const keys = [];
+
+    // Prevent default behavior for key combinations
+    event.preventDefault();
 
     // Press a combination of modifier keys
     if (ctrlKey) keys.push('Ctrl');
@@ -121,20 +137,25 @@ const handleKeyPress = (event: KeyboardEvent) => {
     if (altKey) keys.push('Alt');
     if (metaKey) keys.push('Meta');
 
-    // Press a key
-    if (keys.length > 0) {
-      let pressed = code;
+    // Handle the actual key press
+    let pressed = code;
 
-      if (code.startsWith('Digit')) pressed = key;
-      if (code.startsWith('Key')) pressed = code.slice(3);
-      if (code.startsWith('Arrow')) pressed = key.slice(5);
-      if (code.startsWith('MediaTrack')) {
-        pressed = `Media${code.slice(10)}Track`;
-      }
+    if (code.startsWith('Digit')) pressed = key;
+    if (code.startsWith('Key')) pressed = code.slice(3);
+    if (code.startsWith('Arrow')) pressed = key.slice(5);
+    if (code.startsWith('MediaTrack')) {
+      pressed = `Media${code.slice(10)}Track`;
+    }
 
-      if (isKeyCode(pressed)) {
+    // Allow single key presses or key combinations
+    if (isKeyCode(pressed)) {
+      if (keys.length > 0) {
+        // Key combination
         keys.push(pressed);
         localValue.value = keys.join('+');
+      } else {
+        // Single key press
+        localValue.value = pressed;
       }
     }
   } catch (e) {
@@ -142,9 +163,23 @@ const handleKeyPress = (event: KeyboardEvent) => {
   }
 };
 
-const startListening = () =>
-  window.addEventListener('keydown', handleKeyPress, { passive: true });
-const stopListening = () =>
+const startListening = () => {
+  console.log('🎹 Starting keyboard listener for shortcut input');
+  window.addEventListener('keydown', handleKeyPress, { passive: false });
+  // Focus the dialog to ensure it receives key events
+  setTimeout(() => {
+    const dialog = document.querySelector(
+      `[data-dialog-id="${props.dialogId}"]`,
+    );
+    if (dialog) {
+      (dialog as HTMLElement).focus();
+    }
+  }, 100);
+};
+
+const stopListening = () => {
+  console.log('🎹 Stopping keyboard listener for shortcut input');
   window.removeEventListener('keydown', handleKeyPress);
+};
 const shortcutPicker = ref(false);
 </script>

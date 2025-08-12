@@ -1,6 +1,7 @@
 <template>
-  <q-dialog
-    v-model="open"
+  <BaseDialog
+    v-model="dialogValue"
+    :dialog-id="dialogId"
     persistent
     @dragenter="dropHandler($event, 'dragenter')"
     @dragover="dropHandler($event, 'dragover')"
@@ -11,6 +12,7 @@
       class="bg-secondary-contrast flex medium-overlay q-px-none"
       style="flex-flow: column"
     >
+      <!-- {{ totalFiles || (!!jwpubDb && jwpubLoading) }} -->
       <div class="text-h6 row q-px-md q-pt-lg q-pb-md">
         {{
           t(
@@ -28,16 +30,7 @@
               :key="jwpubImportDocument.DocumentId"
               class="rounded-borders"
               clickable
-              @click="
-                jwpubLoading = true;
-                addJwpubDocumentMediaToFiles(
-                  jwpubDb,
-                  jwpubImportDocument,
-                  section,
-                ).then(() => {
-                  open = false;
-                });
-              "
+              @click="handleJwpubImport(jwpubImportDocument)"
             >
               <q-item-section class="no-wrap">
                 {{ jwpubImportDocument.Title }}
@@ -120,21 +113,21 @@
       </template>
       <div class="row q-px-md q-py-md justify-end">
         <q-btn
-          v-close-popup
           color="negative"
           flat
           :label="t('cancel')"
-          @click="open = false"
+          @click="handleCancel"
         />
       </div>
     </div>
-  </q-dialog>
+  </BaseDialog>
 </template>
 
 <script setup lang="ts">
-import type { DocumentItem, MediaSection } from 'src/types';
+import type { DocumentItem, MediaSectionIdentifier } from 'src/types';
 
-import { useDropZone, useElementHover, watchImmediate } from '@vueuse/core';
+import { useDropZone, useElementHover, useEventListener } from '@vueuse/core';
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import {
   AUDIO_EXTENSIONS,
   IMG_EXTENSIONS,
@@ -143,21 +136,42 @@ import {
 } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
-import { computed, ref, useTemplateRef } from 'vue';
+import { computed, onUnmounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
 const props = defineProps<{
   currentFile: number;
-  section: MediaSection | undefined;
+  dialogId: string;
+  jwpubDb?: string;
+  jwpubDocuments?: DocumentItem[];
+  modelValue: boolean;
+  section: MediaSectionIdentifier | undefined;
   totalFiles: number;
 }>();
 
-const open = defineModel<boolean>({ required: true });
-const jwpubDb = defineModel<string>('jwpubDb', { required: true });
-const jwpubDocuments = defineModel<DocumentItem[]>('jwpubDocuments', {
-  required: true,
+const emit = defineEmits<{
+  cancel: [];
+  ok: [];
+  'update:jwpub-db': [value: string];
+  'update:jwpub-documents': [value: DocumentItem[]];
+  'update:modelValue': [value: boolean];
+}>();
+
+const dialogValue = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value),
+});
+
+const jwpubDb = computed({
+  get: () => props.jwpubDb || '',
+  set: (value) => emit('update:jwpub-db', value),
+});
+
+const jwpubDocuments = computed({
+  get: () => props.jwpubDocuments || [],
+  set: (value) => emit('update:jwpub-documents', value),
 });
 
 const dropArea = useTemplateRef('dropArea');
@@ -171,18 +185,55 @@ const percentValue = computed(() => {
     : 0;
 });
 
-watchImmediate(
-  () => open.value,
-  (value) => {
-    if (!value) {
-      hovering.value = false;
-      jwpubDb.value = '';
+// Watch for dialog closing to reset loading states and data
+watch(
+  () => dialogValue.value,
+  (isOpen) => {
+    if (!isOpen) {
+      // Reset loading states and data when dialog closes
       jwpubLoading.value = false;
+      jwpubDb.value = '';
       jwpubDocuments.value = [];
-      authorizedDrop.value = false;
     }
   },
 );
+
+// Watch for processing completion to auto-close dialog
+watch(
+  () => props.totalFiles || (!!jwpubDb.value && jwpubLoading.value),
+  (isProcessing, wasProcessing) => {
+    // Only close if we were processing and now we're not
+    if (wasProcessing && !isProcessing && dialogValue.value) {
+      console.log('🎯 File processing complete, auto-closing dialog');
+      dialogValue.value = false;
+    }
+  },
+);
+
+// Listen for JW Playlist mode activation
+useEventListener(
+  window,
+  'openJwPlaylistDialog',
+  () => {
+    console.log('🎯 JW Playlist mode activated, closing file import dialog');
+    // Reset JW PUB data when switching to JW playlist dialog
+    jwpubLoading.value = false;
+    jwpubDb.value = '';
+    jwpubDocuments.value = [];
+    dialogValue.value = false;
+    emit('cancel');
+  },
+  { passive: true },
+);
+
+// Reset state when component unmounts
+onUnmounted(() => {
+  hovering.value = false;
+  jwpubDb.value = '';
+  jwpubLoading.value = false;
+  jwpubDocuments.value = [];
+  authorizedDrop.value = false;
+});
 
 const getLocalFiles = async () => {
   window.electronApi
@@ -192,7 +243,7 @@ const getLocalFiles = async () => {
         window.dispatchEvent(
           new CustomEvent<{
             files: (File | string)[];
-            section: MediaSection | undefined;
+            section: MediaSectionIdentifier | undefined;
           }>('localFiles-browsed', {
             detail: { files: result.filePaths, section: props.section },
           }),
@@ -238,4 +289,31 @@ const { isOverDropZone } = useDropZone(dropArea, {
   onDrop,
   preventDefaultForUnhandled: true,
 });
+
+const handleJwpubImport = async (jwpubImportDocument: DocumentItem) => {
+  try {
+    jwpubLoading.value = true;
+    await addJwpubDocumentMediaToFiles(
+      jwpubDb.value,
+      jwpubImportDocument,
+      props.section,
+    );
+    dialogValue.value = false;
+    emit('ok');
+  } catch (error) {
+    console.error('❌ JW Playlist import failed:', error);
+    errorCatcher(error);
+  } finally {
+    jwpubLoading.value = false;
+  }
+};
+
+const handleCancel = () => {
+  // Reset loading states and JW PUB data
+  jwpubLoading.value = false;
+  jwpubDb.value = '';
+  jwpubDocuments.value = [];
+  dialogValue.value = false;
+  emit('cancel');
+};
 </script>

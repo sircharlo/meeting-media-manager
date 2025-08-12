@@ -1,8 +1,8 @@
-import { defineStore } from '#q-app/wrappers';
+import { defineStore } from '@quasar/app-vite/wrappers';
 import { createSentryPiniaPlugin } from '@sentry/vue';
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
-import { PiniaSharedState } from 'pinia-shared-state';
+// import { PiniaSharedState } from 'pinia-shared-state';
 
 /*
  * When adding new properties to stores, you should also
@@ -29,16 +29,16 @@ export default defineStore((/* { ssrContext } */) => {
   const pinia = createPinia();
 
   // You can add Pinia plugins here
-  pinia.use(
-    PiniaSharedState({
-      // Enables the plugin for all stores. Defaults to true.
-      enable: true,
-      // If set to true this tab tries to immediately recover the shared state from another tab. Defaults to true.
-      initialize: true,
-      // Enforce a type. One of native, idb, local storage or node. Defaults to native.
-      type: 'native',
-    }),
-  );
+  // pinia.use(
+  //   PiniaSharedState({
+  //     // Enables the plugin for all stores. Defaults to true.
+  //     enable: true,
+  //     // If set to true this tab tries to immediately recover the shared state from another tab. Defaults to true.
+  //     initialize: true,
+  //     // Enforce a type. One of native, idb, local storage or node. Defaults to native.
+  //     type: 'native',
+  //   }),
+  // );
 
   pinia.use(piniaPluginPersistedstate);
 

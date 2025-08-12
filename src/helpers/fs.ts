@@ -291,12 +291,15 @@ export const watchExternalFolder = async (folder?: string) => {
     const currentState = useCurrentStateStore();
     if (!currentState.currentCongregation) return;
     jwStore.lookupPeriod[currentState.currentCongregation]?.forEach((day) => {
-      if (day.dynamicMedia) {
-        for (let i = day.dynamicMedia.length - 1; i >= 0; i--) {
-          if (day.dynamicMedia[i]?.source === 'watched') {
-            day.dynamicMedia.splice(i, 1);
+      if (day.mediaSections) {
+        day.mediaSections.forEach((section) => {
+          if (!section.items) return;
+          for (let i = section.items.length - 1; i >= 0; i--) {
+            if (section.items[i]?.source === 'watched') {
+              section.items.splice(i, 1);
+            }
           }
-        }
+        });
       }
     });
     unwatchFolders();

@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="open">
+  <BaseDialog v-model="dialogValue" :dialog-id="dialogId" persistent>
     <div
       class="items-center q-pb-lg q-px-lg q-gutter-y-md bg-secondary-contrast"
     >
@@ -25,6 +25,9 @@
           <div class="row items-center">
             <div class="col">v{{ appVersion }}</div>
           </div>
+        </div>
+        <div class="col-shrink">
+          <q-btn flat icon="close" round @click="handleHide" />
         </div>
       </div>
       <div class="row">
@@ -166,16 +169,12 @@
           </q-btn>
         </div>
       </div>
-      <div class="row">
-        <div class="col text-right">
-          <q-btn v-close-popup flat :label="t('close')" />
-        </div>
-      </div>
     </div>
-  </q-dialog>
+  </BaseDialog>
 </template>
 <script setup lang="ts">
-import { watchImmediate } from '@vueuse/core';
+import { watchImmediate, whenever } from '@vueuse/core';
+import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { fetchReleaseNotes } from 'src/utils/api';
 import {
@@ -187,12 +186,31 @@ import {
 } from 'src/utils/fs';
 import { camelToKebabCase, sleep } from 'src/utils/general';
 import { useCurrentStateStore } from 'stores/current-state';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { openExternal } = window.electronApi;
 
-const open = defineModel<boolean>({ default: false });
+interface Props {
+  dialogId: string;
+  modelValue: boolean;
+}
+
+const props = defineProps<Props>();
+
+const emit = defineEmits<{
+  hide: [];
+  'update:modelValue': [value: boolean];
+}>();
+
+const dialogValue = computed({
+  get: () => props.modelValue,
+  set: (value) => emit('update:modelValue', value),
+});
+
+const handleHide = () => {
+  emit('hide');
+};
 
 const { locale, t } = useI18n();
 const appVersion = process.env.version;
@@ -214,17 +232,14 @@ const checkLastVersion = async (congId: string) => {
     await sleep(1000);
 
     if (releaseNotes.value) {
-      open.value = true;
       releaseNotesExpansionItem.value = true;
     }
   }
 };
 
-watchImmediate(open, async (val) => {
-  if (val) {
-    await getUpdatesEnabled();
-    await getBetaUpdatesEnabled();
-  }
+whenever(dialogValue, () => {
+  getUpdatesEnabled();
+  getBetaUpdatesEnabled();
 });
 
 const { currentCongregation } = storeToRefs(useCurrentStateStore());

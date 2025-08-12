@@ -1,7 +1,7 @@
 import type {
   DateInfo,
-  DynamicMediaObject,
   JwLanguage,
+  MediaItem,
   MediaLink,
   OldAppConfig,
   ScreenPreferences,
@@ -11,6 +11,11 @@ import type {
 import { defineStore } from 'pinia';
 import { LocalStorage as QuasarStorage } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import {
+  createMeetingSections,
+  findMediaSection,
+  getOrCreateMediaSection,
+} from 'src/helpers/media-sections';
 import { dateFromString, datesAreSame } from 'src/utils/date';
 import { parseJsonSafe, uuid } from 'src/utils/general';
 import {
@@ -77,10 +82,14 @@ export const useAppSettingsStore = defineStore('app-settings', {
             dateInfo
               .filter((day) => !!day.meeting)
               .forEach((day) => {
-                day.dynamicMedia =
-                  day.dynamicMedia.filter(
-                    (item) => item.source !== 'dynamic',
-                  ) || [];
+                // Remove dynamic media from all sections
+                day.mediaSections?.forEach((section) => {
+                  if (section.items) {
+                    section.items = section.items.filter(
+                      (item) => item.source !== 'dynamic',
+                    );
+                  }
+                });
                 day.complete = false;
                 day.error = false;
               });
@@ -169,13 +178,13 @@ export const useAppSettingsStore = defineStore('app-settings', {
           ) as {
             additionalMediaMaps?: Record<
               string,
-              Partial<Record<string, DynamicMediaObject[]>>
+              Partial<Record<string, unknown[]>>
             >;
           };
 
           const currentAdditionalMediaMaps: Record<
             string,
-            Partial<Record<string, DynamicMediaObject[]>>
+            Partial<Record<string, unknown[]>>
           > = storedData.additionalMediaMaps || {};
 
           const currentLookupPeriods: Record<string, DateInfo[]> = JSON.parse(
@@ -191,13 +200,20 @@ export const useAppSettingsStore = defineStore('app-settings', {
             }
             const lookupPeriodForCongregation = currentLookupPeriods[congId];
             lookupPeriodForCongregation.forEach((day) => {
-              day.dynamicMedia = [];
+              // Initialize mediaSections if it doesn't exist
+              day.mediaSections ??= [];
+              // Clear additional section
+              const additionalSection = getOrCreateMediaSection(
+                day.mediaSections,
+                'imported-media',
+              );
+              additionalSection.items = [];
               day.complete = false;
               day.error = false;
             });
             for (const [targetDate, additionalItems] of Object.entries(dates)) {
               if (!targetDate || !additionalItems) continue;
-              additionalItems.forEach((item) => {
+              (additionalItems as MediaItem[]).forEach((item) => {
                 item.source = 'additional';
               });
               const existingMediaItemsForDate =
@@ -205,21 +221,34 @@ export const useAppSettingsStore = defineStore('app-settings', {
                   datesAreSame(d.date, targetDate),
                 );
               if (existingMediaItemsForDate) {
-                const newAdditionalItems = additionalItems.filter(
+                existingMediaItemsForDate.mediaSections ??= [];
+                const additionalSection = findMediaSection(
+                  existingMediaItemsForDate.mediaSections,
+                  'imported-media',
+                );
+                const existingItems = additionalSection?.items || [];
+
+                const newAdditionalItems = (
+                  additionalItems as MediaItem[]
+                ).filter(
                   (item) =>
-                    !existingMediaItemsForDate?.dynamicMedia?.find(
-                      (m) => m.uniqueId === item.uniqueId,
+                    !existingItems.find(
+                      (m: MediaItem) => m.uniqueId === item.uniqueId,
                     ),
                 );
-                existingMediaItemsForDate.dynamicMedia.push(
-                  ...newAdditionalItems,
+
+                const targetSection = getOrCreateMediaSection(
+                  existingMediaItemsForDate.mediaSections,
+                  'imported-media',
                 );
+                targetSection.items ??= [];
+                targetSection.items.push(...newAdditionalItems);
               } else {
                 lookupPeriodForCongregation.push({
                   complete: true,
                   date: dateFromString(targetDate),
-                  dynamicMedia: additionalItems,
                   error: false,
+                  mediaSections: [],
                   meeting: false,
                   today: false,
                 });
@@ -234,6 +263,26 @@ export const useAppSettingsStore = defineStore('app-settings', {
           jwStore.lookupPeriod = currentLookupPeriods;
         } else if (type.endsWith('refreshDynamicMedia')) {
           refreshDynamicMedia();
+        } else if (type === '25.8.1-newMediaSections') {
+          const currentLookupPeriods = structuredClone(
+            toRawDeep(jwStore.lookupPeriod),
+          );
+          for (const [congId, dateInfo] of Object.entries(
+            currentLookupPeriods,
+          )) {
+            if (!congId || !dateInfo) continue;
+            dateInfo.forEach((day) => {
+              day.mediaSections = [];
+              if (day.complete) {
+                day.complete = false;
+              }
+              if (day.error) {
+                day.error = false;
+              }
+              createMeetingSections(day);
+            });
+          }
+          jwStore.lookupPeriod = currentLookupPeriods;
         } else {
           // Other migrations can be added here
         }

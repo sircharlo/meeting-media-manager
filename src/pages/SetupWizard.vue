@@ -1,5 +1,4 @@
 <template>
-  <DialogCongregationLookup v-model="showCongregationLookup" />
   <q-page padding>
     <template v-if="currentSettings">
       <q-stepper v-model="step" animated color="primary" vertical>
@@ -92,7 +91,7 @@
               icon="mmm-search"
               :label="t('congregation-lookup')"
               outline
-              @click="showCongregationLookup = true"
+              @click="openCongregationLookup"
             />
           </div>
           <q-stepper-navigation class="q-gutter-sm">
@@ -548,6 +547,12 @@
         </q-step>
       </q-stepper>
     </template>
+
+    <!-- Congregation Lookup Dialog -->
+    <DialogCongregationLookup
+      v-model="showCongregationLookup"
+      :dialog-id="'setup-wizard-congregation-lookup'"
+    />
   </q-page>
 </template>
 
@@ -671,5 +676,10 @@ const goToPage = (path: string) => {
 };
 
 const step = ref(1);
+
 const showCongregationLookup = ref(false);
+
+const openCongregationLookup = () => {
+  showCongregationLookup.value = true;
+};
 </script>

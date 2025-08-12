@@ -225,4 +225,6 @@ export interface SettingsValues {
   shortcutMusic: null | string;
   weDay: `${number}` | null;
   weStartTime: `${number}:${number}` | null;
+  zoomEnable: boolean;
+  zoomScreenShareShortcut: null | string;
 }

@@ -2,13 +2,20 @@ import type { SettingsValues } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
+import { isAnyDialogOpen } from 'src/utils/dialog-plugin';
 import { useCurrentStateStore } from 'stores/current-state';
 
 const { registerShortcut, unregisterAllShortcuts } = window.electronApi;
 
 const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
   shortcutMediaNext: () => {
-    window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
+    window.dispatchEvent(
+      new CustomEvent<{ scrollToSelectedMedia: boolean }>('shortcutMediaNext', {
+        detail: {
+          scrollToSelectedMedia: true,
+        },
+      }),
+    );
   },
   shortcutMediaPauseResume: () => {
     window.dispatchEvent(
@@ -16,7 +23,16 @@ const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
     );
   },
   shortcutMediaPrevious: () => {
-    window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaPrevious'));
+    window.dispatchEvent(
+      new CustomEvent<{ scrollToSelectedMedia: boolean }>(
+        'shortcutMediaPrevious',
+        {
+          detail: {
+            scrollToSelectedMedia: true,
+          },
+        },
+      ),
+    );
   },
   shortcutMediaStop: () => {
     window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaStop'));
@@ -30,6 +46,24 @@ const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
 };
 
 export const executeShortcut = (shortcutName: keyof SettingsValues) => {
+  // Don't execute shortcuts if any dialog is open
+  if (isAnyDialogOpen()) {
+    console.log('Shortcut blocked: dialog is open');
+    return;
+  }
+
+  const callback = shortcutCallbacks[shortcutName];
+  if (callback) callback();
+  else console.warn('Unknown shortcut', shortcutName);
+};
+
+export const executeLocalShortcut = (shortcutName: keyof SettingsValues) => {
+  // Don't execute shortcuts if any dialog is open
+  if (isAnyDialogOpen()) {
+    console.log('Local shortcut blocked: dialog is open');
+    return;
+  }
+
   const callback = shortcutCallbacks[shortcutName];
   if (callback) callback();
   else console.warn('Unknown shortcut', shortcutName);
@@ -82,24 +116,38 @@ export const registerCustomShortcut = (
 };
 
 export const registerAllCustomShortcuts = () => {
+  console.group('⌨️ Keyboard Shortcuts Registration');
   try {
     const currentState = useCurrentStateStore();
-    if (!currentState.currentSettings) return;
+    if (!currentState.currentSettings) {
+      console.log('⚠️ No settings available for shortcuts');
+      console.groupEnd();
+      return;
+    }
     unregisterAllCustomShortcuts();
-    console.log('Registering configured keyboard shortcuts');
+    console.log('⌨️ Registering configured keyboard shortcuts');
     for (const shortcutName of Object.keys(shortcutCallbacks)) {
       registerCustomShortcut(shortcutName as keyof SettingsValues);
     }
+    console.log('✅ Keyboard shortcuts registered successfully');
   } catch (error) {
+    console.log('❌ Error registering keyboard shortcuts:', error);
     errorCatcher(error);
+  } finally {
+    console.groupEnd();
   }
 };
 
 export const unregisterAllCustomShortcuts = () => {
-  console.log('Unregistering all currently active keyboard shortcuts');
+  console.group('⌨️ Keyboard Shortcuts Unregistration');
+  console.log('⌨️ Unregistering all currently active keyboard shortcuts');
   try {
     unregisterAllShortcuts();
+    console.log('✅ Keyboard shortcuts unregistered successfully');
   } catch (error) {
+    console.log('❌ Error unregistering keyboard shortcuts:', error);
     errorCatcher(error);
+  } finally {
+    console.groupEnd();
   }
 };
