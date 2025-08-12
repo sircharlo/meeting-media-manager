@@ -22,9 +22,21 @@ export const dateFromString = (lookupDate?: Date | string | undefined) => {
     if (!lookupDate) {
       date = new Date();
     }
-    // If it's already a Date object
-    else if (lookupDate instanceof Date) {
-      date = new Date(lookupDate);
+    // If it's already a Date object or a date-like object
+    else if (
+      lookupDate instanceof Date ||
+      (typeof lookupDate === 'object' && lookupDate !== null)
+    ) {
+      // Try to create a new Date from the object
+      try {
+        date = new Date(lookupDate);
+        // Check if the result is valid
+        if (isNaN(date.getTime())) {
+          throw new Error('Invalid date object');
+        }
+      } catch {
+        throw new Error(`Cannot convert object to date: ${typeof lookupDate}`);
+      }
     }
     // Handle ISO strings or other formats
     else if (typeof lookupDate === 'string') {
@@ -37,7 +49,7 @@ export const dateFromString = (lookupDate?: Date | string | undefined) => {
 
       date = new Date(parsedDate);
     } else {
-      throw new Error(`Unsupported input type: ${lookupDate}`);
+      throw new Error(`Unsupported input type: ${typeof lookupDate}`);
     }
 
     // @ts-expect-error: Date constructor can return NaN
@@ -49,7 +61,9 @@ export const dateFromString = (lookupDate?: Date | string | undefined) => {
     date.setHours(0, 0, 0, 0);
     return date;
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: { fn: { lookupDate, name: 'dateFromString' } },
+    });
 
     // Fallback: return today's date set to midnight
     const fallbackDate = new Date();
