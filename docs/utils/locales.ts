@@ -150,6 +150,8 @@ export const mapThemeConfig = (
   lightModeSwitchTitle: msg.lightModeSwitchTitle,
   nav: [
     { link: link(locale, 'about'), text: msg.about },
+    // { link: link(locale, 'user-guide'), text: msg.userGuide },
+    // { link: link(locale, 'settings-guide'), text: msg.settingsGuide },
     { link: link(locale, 'faq'), text: msg.faq },
     {
       items: [
@@ -171,12 +173,13 @@ export const mapThemeConfig = (
   outline: { label: msg.outline, level: 'deep' },
   returnToTopLabel: msg.returnToTopLabel,
   sidebar: [
-    { link: link(locale, 'about'), text: msg.about },
+    // { link: link(locale, 'about'), text: msg.about },
     {
-      link: link(locale, 'using-at-a-kingdom-hall'),
-      text: msg.usingAtAKingdomHall,
+      link: link(locale, 'user-guide'),
+      text: msg.userGuide,
     },
-    { link: link(locale, 'faq'), text: msg.faq },
+    { link: link(locale, 'settings-guide'), text: msg.settingsGuide },
+    // { link: link(locale, 'faq'), text: msg.faq },
   ],
   sidebarMenuLabel: msg.sidebarMenuLabel,
   siteTitle: msg.title,
