@@ -203,7 +203,6 @@ export default defineConfig((ctx) => {
       extendPackageJson(pkg) {
         // All dependencies required by the main and preload scripts need to be listed here
         const electronDeps = new Set([
-          '@jitsi/robotjs',
           '@numairawan/video-duration',
           '@sentry/electron',
           'better-sqlite3',
@@ -220,6 +219,7 @@ export default defineConfig((ctx) => {
           'mime',
           'music-metadata',
           'pdfjs-dist',
+          'robotjs',
           'upath',
         ]);
 
