@@ -4,6 +4,13 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v25.8.2
+
+### 🐞 Bug Fixes
+
+- 🐞 **Meta key mapping for Zoom screen sharing shortcut**: Fixed an issue where the meta key was not mapping correctly for the Zoom screen sharing shortcut on some platforms.
+- 🐞 **Date parsing in `dateFromString`**: Enhanced the robustness of date parsing in the `dateFromString` function to handle more date formats and edge cases, and allow for enhanced debugging in cases where it still fails.
+
 ## v25.8.1
 
 ### ✨ New Features
