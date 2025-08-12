@@ -2,9 +2,9 @@
 
 import type { ElectronApi } from 'src/types';
 
+import robot from '@jitsi/robotjs';
 import fs, { ensureDir } from 'fs-extra';
 import { fileUrlToPath, pathToFileURL, readDirectory } from 'preload/fs';
-import robot from 'robotjs';
 import upath from 'upath';
 
 export const basePath = upath.join(__dirname, '..', 'fs');
