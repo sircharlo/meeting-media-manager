@@ -21,7 +21,7 @@ jobs:
     if: github.repository == 'sircharlo/meeting-media-manager'
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Generate Crowdin translations progress markdown
         uses: benjaminjonard/crowdin-translations-progress-action@1.0.7
