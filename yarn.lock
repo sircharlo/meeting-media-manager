@@ -10425,7 +10425,7 @@ __metadata:
     p-queue: "npm:^8.1.0"
     pdfjs-dist: "npm:^5.3.93"
     pinia: "npm:^3.0.3"
-    pinia-plugin-persistedstate: "npm:^4.4.1"
+    pinia-plugin-persistedstate: "npm:^4.5.0"
     postcss: "npm:^8.5.6"
     prettier: "npm:^3.5.3"
     pretty-bytes: "npm:^7.0.1"
@@ -12024,9 +12024,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pinia-plugin-persistedstate@npm:^4.4.1":
-  version: 4.4.1
-  resolution: "pinia-plugin-persistedstate@npm:4.4.1"
+"pinia-plugin-persistedstate@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "pinia-plugin-persistedstate@npm:4.5.0"
   dependencies:
     deep-pick-omit: "npm:^1.2.1"
     defu: "npm:^6.1.4"
@@ -12042,7 +12042,7 @@ __metadata:
       optional: true
     pinia:
       optional: true
-  checksum: 10c0/6306122aa7b28b456275672ae1d97371dd7f56a5a1c0394cdb98c5da21c21f96aaeae3425d96db75d2066ad610bc7635e5baff2a6ff483ac69f3ef9558ea5282
+  checksum: 10c0/88fd62a085c04b92f237a8f2674bf712a6aff8ea21a512c8bf72760b4ce124fca6083453ddd2535012bd03d94edd02cd3acb5117b897f50628f95663f54c4b35
   languageName: node
   linkType: hard
 
