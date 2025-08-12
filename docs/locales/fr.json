@@ -35,5 +35,7 @@
   "sidebarMenuLabel": "Menu",
   "skipToContentLabel": "Passer directement au contenu",
   "title": "Documentation pour M³",
-  "usingAtAKingdomHall": "Utilisation dans une salle du Royaume"
+
+  "settingsGuide": "Guide des paramètres",
+  "userGuide": "Guide d'utilisation"
 }

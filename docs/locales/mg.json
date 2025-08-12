@@ -34,5 +34,7 @@
   "selectText": "to select",
   "sidebarMenuLabel": "Menu",
   "skipToContentLabel": "Skip to content",
-  "title": "M³ documentation"
+  "title": "M³ documentation",
+  "settingsGuide": "Settings Guide",
+  "userGuide": "User Guide"
 }

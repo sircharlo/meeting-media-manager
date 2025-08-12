@@ -35,5 +35,7 @@
   "sidebarMenuLabel": "Meni",
   "skipToContentLabel": "Preskoči na vsebino",
   "title": "Dokumentacija aplikacije M³",
-  "usingAtAKingdomHall": "Za uporabo v kraljestveni dvorani"
+
+  "settingsGuide": "Settings Guide",
+  "userGuide": "User Guide"
 }
