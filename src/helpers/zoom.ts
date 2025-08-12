@@ -30,25 +30,9 @@ export const triggerZoomScreenShare = (startSharing: boolean) => {
 
     // Map common key names to robotjs key names
     const keyMap: Record<string, string> = {
-      alt: 'alt',
-      backspace: 'backspace',
       cmd: 'command',
       ctrl: 'control',
-      delete: 'delete',
-      down: 'down',
-      end: 'end',
-      enter: 'enter',
-      escape: 'escape',
-      home: 'home',
-      left: 'left',
       meta: 'command',
-      pagedown: 'pagedown',
-      pageup: 'pageup',
-      right: 'right',
-      shift: 'shift',
-      space: 'space',
-      tab: 'tab',
-      up: 'up',
     };
 
     // Convert keys to robotjs format
