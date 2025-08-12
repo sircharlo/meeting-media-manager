@@ -30,12 +30,12 @@ jobs:
     steps:
       - name: Check out master branch
         if: ${{ inputs.checkout-latest == true }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: master
       - name: Check out Git repository
         if: ${{ inputs.checkout-latest == false }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -52,12 +52,12 @@ jobs:
     steps:
       - name: Check out master branch
         if: ${{ inputs.checkout-latest == true }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: master
       - name: Check out Git repository
         if: ${{ inputs.checkout-latest == false }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -78,12 +78,12 @@ jobs:
     steps:
       - name: Check out master branch
         if: ${{ inputs.checkout-latest == true }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: master
       - name: Check out Git repository
         if: ${{ inputs.checkout-latest == false }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
