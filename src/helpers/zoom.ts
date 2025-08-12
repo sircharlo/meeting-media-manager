@@ -52,16 +52,29 @@ export const triggerZoomScreenShare = (startSharing: boolean) => {
     };
 
     // Convert keys to robotjs format
-    const robotKeys = keys.map((key: number | string) => keyMap[key] || key);
+    const robotKeys = keys.map((key: number | string) =>
+      (keyMap[key] || key)?.toString(),
+    );
 
     // Send the key combination
-    if (robotKeys.length === 1) {
+    if (robotKeys.length === 1 && robotKeys[0]) {
       robot.keyTap(robotKeys[0]);
-    } else if (robotKeys.length === 2) {
+    } else if (robotKeys.length === 2 && robotKeys[0] && robotKeys[1]) {
       robot.keyTap(robotKeys[1], [robotKeys[0]]);
-    } else if (robotKeys.length === 3) {
+    } else if (
+      robotKeys.length === 3 &&
+      robotKeys[0] &&
+      robotKeys[1] &&
+      robotKeys[2]
+    ) {
       robot.keyTap(robotKeys[2], [robotKeys[0], robotKeys[1]]);
-    } else if (robotKeys.length === 4) {
+    } else if (
+      robotKeys.length === 4 &&
+      robotKeys[0] &&
+      robotKeys[1] &&
+      robotKeys[2] &&
+      robotKeys[3]
+    ) {
       robot.keyTap(robotKeys[3], [robotKeys[0], robotKeys[1], robotKeys[2]]);
     }
 
