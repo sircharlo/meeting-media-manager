@@ -41,6 +41,7 @@ export const triggerZoomScreenShare = (startSharing: boolean) => {
       escape: 'escape',
       home: 'home',
       left: 'left',
+      meta: 'command',
       pagedown: 'pagedown',
       pageup: 'pageup',
       right: 'right',
