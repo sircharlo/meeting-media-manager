@@ -340,7 +340,11 @@
         name="fade"
       >
         <div
-          v-if="isCurrentlyPlaying && (media.duration || imageDuration)"
+          v-if="
+            isCurrentlyPlaying &&
+            (media.duration ||
+              (imageDuration && media.isImage && isInRepeatedSection))
+          "
           class="absolute duration-slider"
         >
           <div class="row flex-center">
@@ -1470,24 +1474,10 @@ const { post: postLastEndTimestamp } = useBroadcastChannel<number, number>({
 watch(
   () => [isCurrentlyPlaying.value, isInRepeatedSection.value],
   ([isPlaying, inRepeatedSection]) => {
-    console.debug(
-      '[MediaItem.vue] watch: isCurrentlyPlaying =',
-      isPlaying,
-      ', isInRepeatedSection =',
-      inRepeatedSection,
-      ', isImage =',
-      props.media.isImage,
-    );
     if (isPlaying && inRepeatedSection && props.media.isImage) {
       // Start progress tracking
       imageStartTime.value = Date.now();
       imageProgressPercentage.value = 0;
-      console.debug(
-        '[MediaItem.vue] Starting image progress tracking. imageStartTime:',
-        imageStartTime.value,
-        ', imageDuration:',
-        imageDuration.value,
-      );
 
       const updateProgress = () => {
         if (!imageStartTime.value || !isCurrentlyPlaying.value) {
@@ -1500,12 +1490,6 @@ watch(
         const elapsed = (Date.now() - imageStartTime.value) / 1000;
         const percentage = Math.min((elapsed / imageDuration.value) * 100, 100);
         imageProgressPercentage.value = percentage;
-        console.debug(
-          '[MediaItem.vue] updateProgress: elapsed =',
-          elapsed,
-          ', percentage =',
-          percentage,
-        );
 
         if (percentage < 100) {
           requestAnimationFrame(updateProgress);
