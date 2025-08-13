@@ -372,5 +372,6 @@ defineExpose({
 
 .add-media-shortcut {
   max-width: 100%;
+  border-radius: 4px;
 }
 </style>
