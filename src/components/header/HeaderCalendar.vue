@@ -483,11 +483,14 @@ const openImportMenuWithSectionCheck = (
   if (newSection) {
     section.value = newSection;
     importMenu.value?.show();
-  } else {
+  } else if (hasMultipleSections.value) {
     pendingDialogAction.value = () => {
       importMenu.value?.show();
     };
     showSectionPicker.value = true;
+  } else {
+    // If only one section exists, show the import menu directly
+    importMenu.value?.show();
   }
 };
 
@@ -728,33 +731,42 @@ const pendingDialogAction = ref<(() => void) | null>(null);
 const openRemoteVideoWithSectionCheck = () => {
   if (section.value) {
     showRemoteVideo.value = true;
-  } else {
+  } else if (hasMultipleSections.value) {
     pendingDialogAction.value = () => {
       showRemoteVideo.value = true;
     };
     showSectionPicker.value = true;
+  } else {
+    // If only one section exists, use it directly
+    showRemoteVideo.value = true;
   }
 };
 
 const openStudyBibleWithSectionCheck = () => {
   if (section.value) {
     showStudyBible.value = true;
-  } else {
+  } else if (hasMultipleSections.value) {
     pendingDialogAction.value = () => {
       showStudyBible.value = true;
     };
     showSectionPicker.value = true;
+  } else {
+    // If only one section exists, use it directly
+    showStudyBible.value = true;
   }
 };
 
 const openAudioBibleWithSectionCheck = () => {
   if (section.value) {
     showAudioBible.value = true;
-  } else {
+  } else if (hasMultipleSections.value) {
     pendingDialogAction.value = () => {
       showAudioBible.value = true;
     };
     showSectionPicker.value = true;
+  } else {
+    // If only one section exists, use it directly
+    showAudioBible.value = true;
   }
 };
 
@@ -764,22 +776,28 @@ const openSongPickerWithSectionCheck = (
   if (newSection || section.value) {
     section.value = newSection || section.value;
     showSongPicker.value = true;
-  } else {
+  } else if (hasMultipleSections.value) {
     pendingDialogAction.value = () => {
       showSongPicker.value = true;
     };
     showSectionPicker.value = true;
+  } else {
+    // If only one section exists, use it directly
+    showSongPicker.value = true;
   }
 };
 
 const openPublicTalkMediaPickerWithSectionCheck = () => {
   if (section.value) {
     showPublicTalkMediaPicker.value = true;
-  } else {
+  } else if (hasMultipleSections.value) {
     pendingDialogAction.value = () => {
       showPublicTalkMediaPicker.value = true;
     };
     showSectionPicker.value = true;
+  } else {
+    // If only one section exists, use it directly
+    showPublicTalkMediaPicker.value = true;
   }
 };
 
@@ -791,12 +809,16 @@ const openJwPlaylistPickerWithSectionCheck = (
     section.value = newSection || section.value;
     jwPlaylistPath.value = playlistPath || '';
     showJwPlaylist.value = true;
-  } else {
+  } else if (hasMultipleSections.value) {
     pendingDialogAction.value = () => {
       jwPlaylistPath.value = playlistPath || '';
       showJwPlaylist.value = true;
     };
     showSectionPicker.value = true;
+  } else {
+    // If only one section exists, use it directly
+    jwPlaylistPath.value = playlistPath || '';
+    showJwPlaylist.value = true;
   }
 };
 
@@ -808,5 +830,10 @@ const canEditCustomSections = computed(() => {
       (section) => !!section.items?.length,
     )
   );
+});
+
+// Check if there are multiple sections for the selected date
+const hasMultipleSections = computed(() => {
+  return (selectedDateObject.value?.mediaSections?.length || 0) > 1;
 });
 </script>
