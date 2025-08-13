@@ -1015,7 +1015,12 @@ const setMediaPlaying = async (
   signLanguage = false,
   marker?: VideoMarker,
 ) => {
-  if (isImage(mediaPlaying.value.url)) stopMedia(true);
+  if (!mediaPlaying.value.url) {
+    // Start Zoom screen sharing when media starts playing and no media was playing before
+    triggerZoomScreenShare(true);
+  } else if (isImage(mediaPlaying.value.url)) {
+    stopMedia(true);
+  }
   if (signLanguage) {
     if (marker) {
       updateMediaCustomDuration({
@@ -1034,12 +1039,6 @@ const setMediaPlaying = async (
     //   if (mediaPanzoom.value) mediaPlaying.value.panzoom = mediaPanzoom.value;
   }
   localFile.value = fileIsLocal();
-  // mediaPlaying.value.action = 'play';
-  // mediaPlaying.value.url = localFile.value
-  //   ? (media.fileUrl ?? '')
-  //   : (media.streamUrl ?? media.fileUrl ?? '');
-  // mediaPlaying.value.uniqueId = media.uniqueId;
-  // mediaPlaying.value.subtitlesUrl = media.subtitlesUrl ?? '';
   mediaPlaying.value = {
     action: 'play',
     currentPosition: 0,
@@ -1051,9 +1050,6 @@ const setMediaPlaying = async (
       ? (media.fileUrl ?? '')
       : (media.streamUrl ?? media.fileUrl ?? ''),
   };
-
-  // Start Zoom screen sharing when media starts playing
-  triggerZoomScreenShare(true);
 
   nextTick(() => {
     window.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
@@ -1230,18 +1226,13 @@ function stopMedia(forOtherMediaItem = false) {
   mediaToStop.value = '';
   localFile.value = fileIsLocal();
 
-  // Stop Zoom screen sharing when media is stopped
-  triggerZoomScreenShare(false);
-
   if (!forOtherMediaItem) {
+    // Stop Zoom screen sharing when media is stopped (unless it's a media switch instead of a stop)
+    triggerZoomScreenShare(false);
     zoomReset(true);
     nextTick(() => {
       window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
     });
-
-    // // Emit event to notify parent that media was stopped
-    // console.log('🛑 [stopMedia] Emitting media-stopped event');
-    // emit('media-stopped');
   }
 }
 
