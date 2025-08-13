@@ -208,17 +208,19 @@ export function useMediaSectionRepeat() {
       url: nextItem.fileUrl || nextItem.streamUrl || '',
     };
 
-    // If this is an image, set up a timer to move to the next item
-    if (nextItem.isImage) {
-      const sectionSettings = getSectionRepeatSettings(
-        currentRepeatingSection.value,
-      );
-      const interval = sectionSettings?.repeatInterval || 10;
+    // // If this is an image, set up a timer to move to the next item
+    // if (nextItem.isImage) {
+    //   const sectionSettings = getSectionRepeatSettings(
+    //     currentRepeatingSection.value,
+    //   );
+    //   const interval = sectionSettings?.repeatInterval || 10;
 
-      imageDisplayTimer.value = window.setTimeout(() => {
-        playNextItem();
-      }, interval * 1000);
-    }
+    //   imageDisplayTimer.value = window.setTimeout(() => {
+    //     // Post the last end timestamp to trigger handleMediaEnded for images
+    //     postLastEndTimestamp(Date.now());
+    //     playNextItem();
+    //   }, interval * 1000);
+    // }
   };
 
   // Handle media ended event - called when a media item finishes playing
@@ -253,12 +255,12 @@ export function useMediaSectionRepeat() {
 
     // For videos/audio, move to next item immediately
     // For images, the timer should handle the transition
-    if (!currentItem.isImage) {
-      playNextItem();
-      return true;
-    }
-
+    // if (!currentItem.isImage) {
+    playNextItem();
     return true;
+    // }
+
+    // return true;
   };
 
   // Check if a section is currently being repeated
@@ -276,6 +278,31 @@ export function useMediaSectionRepeat() {
       if (sectionSettings?.repeat) {
         startRepeatingSection(sectionId);
       }
+    }
+  };
+
+  // Update the repeat interval for a section
+  const updateSectionRepeatInterval = (
+    sectionId: MediaSectionIdentifier,
+    interval: number,
+  ) => {
+    if (!selectedDateObject.value?.mediaSections) {
+      return;
+    }
+
+    const section = findMediaSection(
+      selectedDateObject.value.mediaSections,
+      sectionId,
+    );
+
+    if (section?.config) {
+      section.config.repeatInterval = interval;
+      console.log(
+        '🔄 [updateSectionRepeatInterval] Updated interval:',
+        interval,
+        'for section:',
+        sectionId,
+      );
     }
   };
 
@@ -344,5 +371,6 @@ export function useMediaSectionRepeat() {
     startRepeatingSection,
     stopRepeating,
     toggleSectionRepeat,
+    updateSectionRepeatInterval,
   };
 }

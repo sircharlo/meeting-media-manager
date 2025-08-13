@@ -423,6 +423,7 @@
   "stop-repeat-media-item-explain": "Choose this if the selected media item should play until the end and then stop.",
   "stop-repeat-section": "Stop repeating this section",
   "stop-repeat-section-explain": "Disable continuous playback.",
+  "image-duration-explain": "Set how long this image will be displayed while this section is being looped",
   "study-bible": "Study Bible",
   "study-bible-media": "Images, videos, charts and maps from the Study Bible",
   "subtitles": "Subtitles",

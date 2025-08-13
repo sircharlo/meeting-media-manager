@@ -340,7 +340,7 @@
         name="fade"
       >
         <div
-          v-if="isCurrentlyPlaying && media.duration"
+          v-if="isCurrentlyPlaying && (media.duration || imageDuration)"
           class="absolute duration-slider"
         >
           <div class="row flex-center">
@@ -350,17 +350,13 @@
             >
               {{
                 formatTime(
-                  Math.max(
-                    (mediaPlaying.currentPosition || 0) -
-                      (mediaCustomDuration.min || 0),
-                    0,
-                  ),
+                  Math.max(mediaElapsed - (mediaCustomDuration.min || 0), 0),
                 )
               }}
             </div>
             <div class="col" style="height: 28px">
               <q-slider
-                v-model="mediaPlaying.currentPosition"
+                v-model="mediaElapsed"
                 color="primary"
                 :inner-max="mediaCustomDuration.max"
                 :inner-min="mediaCustomDuration.min"
@@ -371,10 +367,10 @@
                 "
                 :label-value="
                   mediaPlaying.action === 'pause'
-                    ? formatTime(mediaPlaying.currentPosition)
+                    ? formatTime(mediaElapsed)
                     : t('pause-to-adjust-time')
                 "
-                :max="media.duration"
+                :max="media.duration || imageDuration"
                 :min="0"
                 :readonly="mediaPlaying.action !== 'pause'"
                 :step="0.1"
@@ -391,8 +387,9 @@
                 '-' +
                 formatTime(
                   Math.max(
-                    (mediaCustomDuration.max || media.duration) -
-                      (mediaPlaying.currentPosition || 0),
+                    (mediaCustomDuration.max ||
+                      media.duration ||
+                      imageDuration) - mediaElapsed,
                     0,
                   ),
                 )
@@ -408,23 +405,45 @@
       style="align-content: center"
     >
       <template v-if="!media.markers || media.markers.length === 0">
-        <q-btn
-          ref="playButton"
-          :color="isFileUrl(media.fileUrl) ? 'primary' : 'grey'"
-          :disable="
-            (mediaPlaying.url !== '' &&
-              (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))) ||
-            !isFileUrl(media.fileUrl)
-          "
-          :icon="localFile ? 'mmm-play' : 'mmm-stream-play'"
-          rounded
-          :unelevated="!isFileUrl(media.fileUrl)"
-          @click="setMediaPlaying(media)"
-        >
-          <q-tooltip v-if="!localFile" :delay="1000">
-            {{ t('play-while-downloading') }}
-          </q-tooltip>
-        </q-btn>
+        <div class="row items-center q-gutter-xs">
+          <!-- Duration dropdown for images in repeated sections -->
+          <q-select
+            v-if="media.isImage && isInRepeatedSection"
+            v-model="imageDuration"
+            dense
+            :display-value="
+              imageDuration < 60
+                ? imageDuration + 's'
+                : imageDuration / 60 + 'm'
+            "
+            :options="imageDurationOptions"
+            outlined
+            style="min-width: 80px"
+            @update:model-value="updateImageDuration"
+          >
+            <q-tooltip :delay="1000">
+              {{ t('image-duration-explain') }}
+            </q-tooltip>
+          </q-select>
+
+          <q-btn
+            ref="playButton"
+            :color="isFileUrl(media.fileUrl) ? 'primary' : 'grey'"
+            :disable="
+              (mediaPlaying.url !== '' &&
+                (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))) ||
+              !isFileUrl(media.fileUrl)
+            "
+            :icon="localFile ? 'mmm-play' : 'mmm-stream-play'"
+            rounded
+            :unelevated="!isFileUrl(media.fileUrl)"
+            @click="setMediaPlaying(media)"
+          >
+            <q-tooltip v-if="!localFile" :delay="1000">
+              {{ t('play-while-downloading') }}
+            </q-tooltip>
+          </q-btn>
+        </div>
       </template>
       <template v-else>
         <q-btn
@@ -733,6 +752,7 @@ import {
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { debounce, type QBtn, type QImg, QItem, useQuasar } from 'quasar';
+import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
@@ -780,6 +800,45 @@ const mediaToStop = ref('');
 const mediaStopPending = computed(() => !!mediaToStop.value);
 const mediaToDelete = ref('');
 const mediaDeletePending = computed(() => !!mediaToDelete.value);
+
+// Section repeat functionality
+const {
+  getSectionRepeatSettings,
+  isSectionRepeating,
+  updateSectionRepeatInterval,
+} = useMediaSectionRepeat();
+
+// Image duration control for repeated sections
+const imageDuration = ref(10); // Default 10 seconds
+
+// Initialize image duration from section settings
+const initializeImageDuration = () => {
+  if (props.media.originalSection) {
+    const sectionSettings = getSectionRepeatSettings(
+      props.media.originalSection,
+    );
+    if (sectionSettings?.repeatInterval) {
+      imageDuration.value = sectionSettings.repeatInterval;
+    }
+  }
+};
+const imageDurationOptions = [
+  { label: '10s', value: 10 },
+  { label: '30s', value: 30 },
+  { label: '1m', value: 60 },
+  { label: '5m', value: 300 },
+  { label: '10m', value: 600 },
+];
+
+// Check if this media item is in a repeated section
+const isInRepeatedSection = computed(() => {
+  if (!props.media.originalSection) return false;
+  return isSectionRepeating(props.media.originalSection);
+});
+
+// Image progress for repeated sections
+const imageProgressPercentage = ref(0);
+const imageStartTime = ref<null | number>(null);
 
 const props = defineProps<{
   child?: boolean;
@@ -1299,6 +1358,7 @@ function deleteMedia() {
 onMounted(async () => {
   await nextTick();
   initiatePanzoom();
+  initializeImageDuration();
 });
 
 onUnmounted(() => {
@@ -1386,4 +1446,115 @@ const tagTooltipText = computed(() => {
 
   return null;
 });
+
+// Image duration control functions
+// const formatImageDuration = (seconds: number): string => {
+//   if (seconds < 60) {
+//     return `${seconds}s`;
+//   } else if (seconds < 3600) {
+//     const minutes = Math.floor(seconds / 60);
+//     return `${minutes}m`;
+//   } else {
+//     const hours = Math.floor(seconds / 3600);
+//     const minutes = Math.floor((seconds % 3600) / 60);
+//     return `${hours}h${minutes}m`;
+//   }
+// };
+
+const updateImageDuration = (newDuration: { label: string; value: number }) => {
+  console.log(newDuration);
+  imageDuration.value = newDuration.value;
+  // Update the section's repeat interval
+  if (props.media.originalSection) {
+    updateSectionRepeatInterval(props.media.originalSection, newDuration.value);
+  }
+};
+
+// Broadcast channel for posting last end timestamp (for images)
+const { post: postLastEndTimestamp } = useBroadcastChannel<number, number>({
+  name: 'last-end-timestamp',
+});
+
+// Watch for image playing in repeated sections to update progress
+watch(
+  () => [isCurrentlyPlaying.value, isInRepeatedSection.value],
+  ([isPlaying, inRepeatedSection]) => {
+    console.debug(
+      '[MediaItem.vue] watch: isCurrentlyPlaying =',
+      isPlaying,
+      ', isInRepeatedSection =',
+      inRepeatedSection,
+      ', isImage =',
+      props.media.isImage,
+    );
+    if (isPlaying && inRepeatedSection && props.media.isImage) {
+      // Start progress tracking
+      imageStartTime.value = Date.now();
+      imageProgressPercentage.value = 0;
+      console.debug(
+        '[MediaItem.vue] Starting image progress tracking. imageStartTime:',
+        imageStartTime.value,
+        ', imageDuration:',
+        imageDuration.value,
+      );
+
+      const updateProgress = () => {
+        if (!imageStartTime.value || !isCurrentlyPlaying.value) {
+          console.debug(
+            '[MediaItem.vue] Stopping updateProgress: imageStartTime or isCurrentlyPlaying falsy',
+          );
+          return;
+        }
+
+        const elapsed = (Date.now() - imageStartTime.value) / 1000;
+        const percentage = Math.min((elapsed / imageDuration.value) * 100, 100);
+        imageProgressPercentage.value = percentage;
+        console.debug(
+          '[MediaItem.vue] updateProgress: elapsed =',
+          elapsed,
+          ', percentage =',
+          percentage,
+        );
+
+        if (percentage < 100) {
+          requestAnimationFrame(updateProgress);
+        } else {
+          postLastEndTimestamp(Date.now());
+          console.debug('[MediaItem.vue] Image progress reached 100%');
+        }
+      };
+
+      requestAnimationFrame(updateProgress);
+    } else {
+      // Reset progress
+      console.debug('[MediaItem.vue] Resetting image progress');
+      imageStartTime.value = null;
+      imageProgressPercentage.value = 0;
+    }
+  },
+  { immediate: true },
+);
+
+const imageElapsed = ref(0);
+
+// Update elapsed time for images
+watch(
+  () => [isCurrentlyPlaying.value, imageStartTime.value],
+  ([isPlaying, startTime]) => {
+    if (props.media.isImage && isPlaying && startTime) {
+      const updateElapsed = () => {
+        if (isCurrentlyPlaying.value && imageStartTime.value) {
+          imageElapsed.value = (Date.now() - imageStartTime.value) / 1000;
+          requestAnimationFrame(updateElapsed);
+        }
+      };
+      updateElapsed();
+    }
+  },
+  { immediate: true },
+);
+
+const mediaElapsed = computed(
+  () => mediaPlaying.value.currentPosition || imageElapsed.value || 0,
+);
 </script>
