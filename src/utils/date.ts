@@ -40,24 +40,37 @@ export const dateFromString = (lookupDate?: Date | string | undefined) => {
     }
     // Handle ISO strings or other formats
     else if (typeof lookupDate === 'string') {
-      let parsedDate = lookupDate;
+      const parsedDate = lookupDate;
 
-      // Convert yyyymmdd to yyyy-mm-dd
+      // Convert yyyymmdd to yyyy-mm-dd and create date in local timezone
       if (/^\d{8}$/.test(parsedDate)) {
-        parsedDate = `${lookupDate.slice(0, 4)}-${lookupDate.slice(4, 6)}-${lookupDate.slice(6, 8)}`;
-      }
+        const year = parseInt(lookupDate.slice(0, 4));
+        const month = parseInt(lookupDate.slice(4, 6)) - 1; // Month is 0-indexed
+        const day = parseInt(lookupDate.slice(6, 8));
+        date = new Date(year, month, day);
+      } else {
+        // For other string formats, try to parse normally first
+        date = new Date(parsedDate);
 
-      date = new Date(parsedDate);
+        // If it's an ISO date string (YYYY-MM-DD), convert to local timezone
+        if (/^\d{4}-\d{2}-\d{2}$/.test(parsedDate)) {
+          const [year, month, day] = parsedDate.split('-').map(Number);
+          if (!year || !month || !day) {
+            throw new Error(`Invalid date format: ${parsedDate}`);
+          }
+          date = new Date(year, month - 1, day); // Month is 0-indexed
+        }
+      }
     } else {
       throw new Error(`Unsupported input type: ${typeof lookupDate}`);
     }
 
-    // @ts-expect-error: Date constructor can return NaN
-    if (isNaN(date)) {
+    // Check if the date is valid
+    if (isNaN(date.getTime())) {
       throw new Error(`Unsupported date format: ${lookupDate}`);
     }
 
-    // Return the date with time set to midnight
+    // Return the date with time set to midnight in local timezone
     date.setHours(0, 0, 0, 0);
     return date;
   } catch (error) {
