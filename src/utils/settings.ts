@@ -11,11 +11,11 @@ import { getDateDiff, getSpecificWeekday, isInPast } from 'src/utils/date';
 const requiredRule: ValidationRule = (val: boolean | string) =>
   (val?.toString() && val?.toString().length > 0) || '';
 
-export const portNumberValidator = (val: string) =>
-  val &&
-  Number.isInteger(Number(val)) &&
-  Number(val) > 0 &&
-  Number(val) < 65536;
+export const portNumberValidator = (val: string): boolean => {
+  if (typeof val !== 'string' || val.trim() === '') return false;
+  const num = Number(val);
+  return Number.isInteger(num) && num > 0 && num < 65536;
+};
 
 const portNumberRule: ValidationRule = (val: string) =>
   portNumberValidator(val) || '';
@@ -94,9 +94,9 @@ export const performActions = (actions: SettingsItemAction[] | undefined) => {
   });
 };
 
-const meetingTime = (hr: number, min: null | number) => {
+export const meetingTime = (hr: number, min: null | number) => {
   try {
-    if (hr < 8 || hr > 22) {
+    if (hr < 8 || hr > 22 || (hr === 22 && min && min > 30)) {
       return false;
     }
     if (min !== null && min % 5 !== 0) {
