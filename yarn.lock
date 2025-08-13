@@ -1504,6 +1504,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@kayahr/text-encoding@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "@kayahr/text-encoding@npm:2.0.1"
+  checksum: 10c0/1bb7f677eaac834b63a4e30f39421c53faab515db7bff072fd8b9c5b1b5a6f1694680b9241cd0e85dbf4b61cacc62653e16130f0469fe073388afb9783faa4bc
+  languageName: node
+  linkType: hard
+
 "@leichtgewicht/ip-codec@npm:^2.0.1":
   version: 2.0.5
   resolution: "@leichtgewicht/ip-codec@npm:2.0.5"
@@ -10420,7 +10427,7 @@ __metadata:
     mime: "npm:^4.0.7"
     mousetrap: "npm:^1.6.5"
     msw: "npm:^2.10.4"
-    music-metadata: "npm:^11.7.3"
+    music-metadata: "npm:^11.8.1"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.1.0"
     pdfjs-dist: "npm:^5.3.93"
@@ -10942,19 +10949,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^11.7.3":
-  version: 11.7.3
-  resolution: "music-metadata@npm:11.7.3"
+"music-metadata@npm:^11.8.1":
+  version: 11.8.1
+  resolution: "music-metadata@npm:11.8.1"
   dependencies:
+    "@kayahr/text-encoding": "npm:^2.0.1"
     "@tokenizer/token": "npm:^0.3.0"
     content-type: "npm:^1.0.5"
     debug: "npm:^4.4.1"
     file-type: "npm:^21.0.0"
     media-typer: "npm:^1.1.0"
     strtok3: "npm:^10.3.4"
-    token-types: "npm:^6.0.4"
-    uint8array-extras: "npm:^1.4.0"
-  checksum: 10c0/941ce6ef7b58a53f5eea47523bc078c069558ae56ff690c34f329389681b42a55b1c5006cdbfb5f0b2742e59c56fe8c81f546aba1cd795b1a6b2831dc5d1c6f9
+    token-types: "npm:^6.1.0"
+  checksum: 10c0/e53715a5152e3b0ee3faab034235a7ebb92a8bca6514b6e0764a004ebd1181e09faff6e0bdf3ee2c94c399ba4d7d794e1cb6fe5202d1f08ae1e29a134b577843
   languageName: node
   linkType: hard
 
@@ -14514,13 +14521,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"token-types@npm:^6.0.0, token-types@npm:^6.0.4":
+"token-types@npm:^6.0.0":
   version: 6.0.4
   resolution: "token-types@npm:6.0.4"
   dependencies:
     "@tokenizer/token": "npm:^0.3.0"
     ieee754: "npm:^1.2.1"
   checksum: 10c0/09bac2346a48d5172201e87e967753c7df25ee0f762401932476fe2930f028212dbdc8a17507f03901e148a9f8d9a060001d15ce88bef75ad66c33f9bf3d0310
+  languageName: node
+  linkType: hard
+
+"token-types@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "token-types@npm:6.1.0"
+  dependencies:
+    "@kayahr/text-encoding": "npm:^2.0.1"
+    "@tokenizer/token": "npm:^0.3.0"
+    ieee754: "npm:^1.2.1"
+  checksum: 10c0/3611f516db2ab6ac2497aad4baba700c9a0edf4f1fadb029d1657cd24100be04e8202f9fec96194778873188a53a01424464f31a358fd9a656e4f739a2f5c3fd
   languageName: node
   linkType: hard
 
