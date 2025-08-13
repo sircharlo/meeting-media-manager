@@ -185,6 +185,7 @@ import {
 } from 'src/helpers/media-sections';
 import { decompressJwpub, showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import { triggerZoomScreenShare } from 'src/helpers/zoom';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
   dateFromString,
@@ -500,11 +501,8 @@ watch(
       console.log('🔄 [onMediaEnded] Repeat handled:', repeatHandled);
       if (repeatHandled) return;
 
-      // Then handle normal media state cleanup
-      // mediaPlaying.value.currentPosition = 0;
-      // mediaPlaying.value.url = '';
-      // mediaPlaying.value.uniqueId = '';
-      // mediaPlaying.value.action = '';
+      triggerZoomScreenShare(false);
+
       mediaPlaying.value = {
         action: '',
         currentPosition: 0,
