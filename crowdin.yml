@@ -3,7 +3,7 @@ pull_request_title: 'feat: new translations'
 pull_request_labels:
   - translations
 commit_message: 'feat: new translations for %language%'
-append_commit_message: false
+append_commit_message: 
 files:
   - source: /src/i18n/en.json
     translation: /src/i18n/%two_letters_code%.json
