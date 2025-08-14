@@ -82,6 +82,15 @@ export const useAppSettingsStore = defineStore('app-settings', {
             dateInfo
               .filter((day) => !!day.meeting)
               .forEach((day) => {
+                // Ensure the date is properly converted to a Date object
+                if (day.date && !(day.date instanceof Date)) {
+                  console.warn(
+                    '🔍 [refreshDynamicMedia] Converting corrupted date object:',
+                    day.date,
+                  );
+                  day.date = dateFromString(day.date);
+                }
+
                 // Remove dynamic media from all sections
                 day.mediaSections?.forEach((section) => {
                   if (section.items) {
@@ -130,6 +139,27 @@ export const useAppSettingsStore = defineStore('app-settings', {
 
           QuasarStorage.removeItem('congregations');
 
+          const parsedLookupPeriod = parseJsonSafe<
+            Partial<Record<string, DateInfo[]>>
+          >(QuasarStorage.getItem('lookupPeriod'), jwStore.lookupPeriod);
+
+          // Ensure all dates in lookupPeriod are properly converted to Date objects
+          if (parsedLookupPeriod) {
+            for (const [, dateInfo] of Object.entries(parsedLookupPeriod)) {
+              if (dateInfo) {
+                dateInfo.forEach((day) => {
+                  if (day.date && !(day.date instanceof Date)) {
+                    console.warn(
+                      '🔍 [migration] Converting corrupted date object in localStorageToPiniaPersist:',
+                      day.date,
+                    );
+                    day.date = dateFromString(day.date);
+                  }
+                });
+              }
+            }
+          }
+
           jwStore.$patch({
             jwLanguages: parseJsonSafe<{ list: JwLanguage[]; updated: Date }>(
               QuasarStorage.getItem('jwLanguages'),
@@ -138,10 +168,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
             jwSongs: parseJsonSafe<
               Record<string, { list: MediaLink[]; updated: Date }>
             >(QuasarStorage.getItem('jwSongs'), jwStore.jwSongs),
-            lookupPeriod: parseJsonSafe<Partial<Record<string, DateInfo[]>>>(
-              QuasarStorage.getItem('lookupPeriod'),
-              jwStore.lookupPeriod,
-            ),
+            lookupPeriod: parsedLookupPeriod,
             yeartexts: parseJsonSafe<
               Partial<Record<number, Record<string, string>>>
             >(QuasarStorage.getItem('yeartexts'), jwStore.yeartexts),
@@ -165,11 +192,13 @@ export const useAppSettingsStore = defineStore('app-settings', {
           );
           QuasarStorage.removeItem('screenPreferences');
         } else if (type === 'addBaseUrlToAllCongregations') {
-          const updatedCongregations: Record<string, SettingsValues> =
-            JSON.parse(JSON.stringify(congregationStore.congregations));
+          const updatedCongregations: Partial<Record<string, SettingsValues>> =
+            structuredClone(toRawDeep(congregationStore.congregations));
 
           Object.values(updatedCongregations).forEach((cong) => {
-            cong.baseUrl = 'jw.org';
+            if (cong) {
+              cong.baseUrl = 'jw.org';
+            }
           });
           congregationStore.congregations = updatedCongregations;
         } else if (type === 'moveAdditionalMediaMaps') {
@@ -187,9 +216,8 @@ export const useAppSettingsStore = defineStore('app-settings', {
             Partial<Record<string, unknown[]>>
           > = storedData.additionalMediaMaps || {};
 
-          const currentLookupPeriods: Record<string, DateInfo[]> = JSON.parse(
-            JSON.stringify(jwStore.lookupPeriod),
-          );
+          const currentLookupPeriods: Partial<Record<string, DateInfo[]>> =
+            structuredClone(toRawDeep(jwStore.lookupPeriod));
 
           for (const [congId, dates] of Object.entries(
             currentAdditionalMediaMaps,
@@ -199,7 +227,17 @@ export const useAppSettingsStore = defineStore('app-settings', {
               currentLookupPeriods[congId] = [];
             }
             const lookupPeriodForCongregation = currentLookupPeriods[congId];
+            if (!lookupPeriodForCongregation) continue;
             lookupPeriodForCongregation.forEach((day) => {
+              // Ensure the date is properly converted to a Date object
+              if (day.date && !(day.date instanceof Date)) {
+                console.warn(
+                  '🔍 [migration] Converting corrupted date object in lookupPeriodForCongregation:',
+                  day.date,
+                );
+                day.date = dateFromString(day.date);
+              }
+
               // Initialize mediaSections if it doesn't exist
               day.mediaSections ??= [];
               // Clear additional section
@@ -217,9 +255,17 @@ export const useAppSettingsStore = defineStore('app-settings', {
                 item.source = 'additional';
               });
               const existingMediaItemsForDate =
-                lookupPeriodForCongregation.find((d) =>
-                  datesAreSame(d.date, targetDate),
-                );
+                lookupPeriodForCongregation.find((d) => {
+                  // Ensure d.date is a proper Date object before comparison
+                  if (d.date && !(d.date instanceof Date)) {
+                    console.warn(
+                      '🔍 [migration] Converting corrupted date object in datesAreSame comparison:',
+                      d.date,
+                    );
+                    d.date = dateFromString(d.date);
+                  }
+                  return datesAreSame(d.date, targetDate);
+                });
               if (existingMediaItemsForDate) {
                 existingMediaItemsForDate.mediaSections ??= [];
                 const additionalSection = findMediaSection(
@@ -272,6 +318,15 @@ export const useAppSettingsStore = defineStore('app-settings', {
           )) {
             if (!congId || !dateInfo) continue;
             dateInfo.forEach((day) => {
+              // Ensure the date is properly converted to a Date object
+              if (day.date && !(day.date instanceof Date)) {
+                console.warn(
+                  '🔍 [migration] Converting corrupted date object:',
+                  day.date,
+                );
+                day.date = dateFromString(day.date);
+              }
+
               day.mediaSections = [];
               if (day.complete) {
                 day.complete = false;

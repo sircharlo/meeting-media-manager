@@ -33,10 +33,29 @@ const getWeekDay = (lookupDate: Date) => {
   }
 };
 
-export function isCoWeek(lookupDate?: Date) {
+export function isCoWeek(
+  lookupDate?: Date | string | { getTime: () => number },
+) {
   try {
     if (!lookupDate) return false;
-    lookupDate = dateFromString(lookupDate);
+
+    // Debug logging to help identify the issue
+    if (
+      lookupDate &&
+      typeof lookupDate === 'object' &&
+      !(lookupDate instanceof Date)
+    ) {
+      console.warn('🔍 [isCoWeek] Received non-Date object:', {
+        constructor: (
+          lookupDate as unknown as { constructor: { name: string } }
+        ).constructor?.name,
+        keys: Object.keys(lookupDate),
+        type: typeof lookupDate,
+        value: lookupDate,
+      });
+    }
+
+    const newLookupDate = dateFromString(lookupDate);
     const currentState = useCurrentStateStore();
     const coWeekSet = !!currentState.currentSettings?.coWeek;
     if (!coWeekSet) return false;
@@ -44,7 +63,7 @@ export function isCoWeek(lookupDate?: Date) {
       currentState.currentSettings?.coWeek ?? undefined,
     );
     const coMonday = getSpecificWeekday(coWeekTuesday, 0);
-    const lookupWeekMonday = getSpecificWeekday(lookupDate, 0);
+    const lookupWeekMonday = getSpecificWeekday(newLookupDate, 0);
     return datesAreSame(coMonday, lookupWeekMonday);
   } catch (error) {
     errorCatcher(error);
