@@ -11,7 +11,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 - ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
 - ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
 - ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
-- ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
+- ✨ **Integrazione zoom**: Coordinamento per lo start/stop di condivisione automatica dello schermo durante la riproduzione multimediale.
 
 ### 🛠️ Miglioramenti e modifiche
 

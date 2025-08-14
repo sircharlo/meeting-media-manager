@@ -8,17 +8,17 @@
 
 ### ✨ 新功能
 
-- ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
-- ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
-- ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
-- ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
+- ✨ **自定义媒体部分**: 创建、编辑和管理自定义媒体部分的完整系统，包括颜色定制和拖放重排序。
+- ✨ **媒体分割线**: 在媒体列表中添加标题分隔符, 以便更好地组织顶部/底部定位选项。
+- ✨ **部分循环播放**: 启用针对无缝媒体循环的特定部分内连续播放。
+- ✨ **Zoom集成**: 自动分享屏幕开始/停止与媒体播放的协调。
 
 ### 🛠️ 改进和调整
 
-- 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
-- ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
-- 🛠️ **Improved Navigation**: Better keyboard shortcuts with scroll-to-selected functionality and enhanced media navigation.
-- 🛠️ **Visual Enhancements**: Animation support during sorting operations and improved drag-and-drop visual feedback.
+- 🛠️ **部分名称**: 新建三点菜单系统，带颜色选择器、向上/向下移动控制器、重复选项和删除功能。
+- ✨ **内嵌标题编辑**: 直接在接口中编辑媒体项目标题而不打开单独对话框。
+- 🛠️ **改进导航**: 使用滚动到选定功能更好的键盘快捷键和增强媒体导航。
+- 🛠️ **视觉效果优化**: 动态支持在排序操作和改进拖放视觉反馈。
 
 ## 25.6.0
 
