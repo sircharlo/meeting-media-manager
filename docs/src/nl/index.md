@@ -1,36 +1,48 @@
 ---
+# https://vitepress.dev/reference/default-theme-home-page
 layout: home
+
 hero:
-  name: M³ documentatie
-  text: Hulp bij het opzetten en gebruiken van M³
+  name: 'M³ Documentation'
+  text: 'Complete guide to setting up and using Meeting Media Manager'
   image: /logo.svg
   actions:
     - theme: brand
-      text: Installeer M³
-      link: /nl/using-at-a-kingdom-hall#download-and-install
-    - theme: alt
-      text: Gebruik in de Koninkrijkszaal
-      link: /nl/using-at-a-kingdom-hall
-    - theme: alt
       text: Over M³
       link: /nl/about
+    - theme: brand
+      text: User Guide
+      link: /user-guide
+    - theme: brand
+      text: Settings Guide
+      link: /settings-guide
+    - theme: brand
+      text: Veelgestelde vragen
+      link: /faq
+
 features:
   - icon: 🚀
-    title: Automatisch media downloaden
-    details: Download automatisch foto's en video's voor gemeente vergaderingen in elke taal die beschikbaar is op de officiële website van Jehovah's Getuigen.
+    title: Automatic Media Management
+    details: Automatically downloads and organizes pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
   - icon: 🎦
-    title: Media presenteren
-    details: Maakt het mogelijk om gemakkelijk media te delen tijdens hybride en fysieke vergaderingen.
+    title: Media Presentation
+    details: Present media with ease during hybrid or in-person meetings with advanced controls, zoom/pan capabilities, and custom timing options.
   - icon: 🎵
-    title: Achtergrondmuziek
-    details: Speelt achtergrondmuziek automatisch af. Stopt het afspelen voordat de vergadering begint. Achtergrondmuziek kan met één klik na de vergadering opnieuw worden gestart.
+    title: Background Music System
+    details: Intelligent background music that automatically stops before meetings start and can be restarted with one click after meetings.
   - icon: 🖥️
-    title: Ondersteuning voor externe monitoren
-    details: Detecteert en beheert externe monitoren automatisch voor een soepele media-presentatie.
+    title: Multi-Monitor Support
+    details: Automatically detects and manages external monitors for seamless media presentations and website sharing.
   - icon: 🌐
-    title: Meerdere talen
+    title: Multi-Language Support
     details: Download vergadering media in honderden talen en gebruik de interface van M³ in een van de vele beschikbare talen.
   - icon: 🧩
-    title: OBS Studio integratie
-    details: Integreert met OBS Studio voor betere media-beheer en presentatie mogelijkheden.
+    title: Integraties
+    details: Seamlessly integrates with Zoom or OBS Studio for enhanced media management and playback during meetings.
+  - icon: 📁
+    title: Folder Monitoring
+    details: Automatically sync media from watched folders (like Dropbox or OneDrive) and export media to folders.
+  - icon: 🎯
+    title: Advanced Features
+    details: Import custom media, JWPUB files, playlists, audio Bible recordings, and manage multiple congregations.
 ---

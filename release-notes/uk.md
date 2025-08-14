@@ -4,6 +4,22 @@
 
 Для повного списку змін між версіями перегляньте наш файл CHANGELOG.md на GitHub.
 
+## v25.8.1
+
+### ✨ Нові функції
+
+- ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
+- ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
+- ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
+- ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
+
+### 🛠️ Покращення та налаштування
+
+- 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
+- ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
+- 🛠️ **Improved Navigation**: Better keyboard shortcuts with scroll-to-selected functionality and enhanced media navigation.
+- 🛠️ **Visual Enhancements**: Animation support during sorting operations and improved drag-and-drop visual feedback.
+
 ## 25.6.0
 
 ### ✨ Нові функції

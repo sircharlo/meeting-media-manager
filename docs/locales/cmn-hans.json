@@ -3,10 +3,10 @@
   "arrowDown": "下箭头",
   "arrowUp": "上箭头",
   "backButtonTitle": "返回",
+  "closeText": "关闭",
   "codeCopyButtonTitle": "复制代码",
   "copied": "已复制",
   "copyright": "版权",
-  "closeText": "关闭",
   "darkModeSwitchLabel": "外观",
   "darkModeSwitchTitle": "切换到深色主题",
   "description": "Meeting Media Manager (M³)的文件网站。",
@@ -32,10 +32,9 @@
   "returnToTopLabel": "返回顶部",
   "search": "搜索",
   "selectText": "选中",
+  "settingsGuide": "Settings Guide",
   "sidebarMenuLabel": "菜单",
   "skipToContentLabel": "跳转到内容",
   "title": "M³文库",
-
-  "settingsGuide": "Settings Guide",
   "userGuide": "User Guide"
 }

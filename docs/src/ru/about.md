@@ -4,19 +4,19 @@
 
 ## Что это за приложение? {#what-is-this-app}
 
-**Meeting Media Manager**, или **M³**, это приложение для Windows, macOS и Linux, которая автоматически загружает изображения и видео, которые будут рассматриваться во время встреч собрания Свидетелей Иеговы на любом языке, доступном на официальном сайте Свидетелей Иеговы.
+**Meeting Media Manager**, or **M³** for short, is a comprehensive cross-platform application for Windows, macOS and Linux that automatically downloads, organizes, and presents pictures and videos for congregation meetings of Jehovah's Witnesses. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
 
-Оно способно управлять обычными и пользовательскими мультимедийными файлами для встреч, а также позволяет нескольким собраниям и/или группам использовать одну компьютерную учетную запись.
+M³ features support for managing regular and custom meeting media, multiple congregations and/or groups using the same computer account, and advanced presentation capabilities that make media sharing effortless.
 
 :::info Примечание
 
-M³ раньше было известно как JWMMF (JW Meeting Media Fetcher), но было переименовано в мае 2022 года.
+This app used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed to Meeting Media Manager in May 2022.
 
 :::
 
 ## Почему стоит выбрать M³? {#why-choose-m3}
 
-M³ - это идеальный инструмент для представления мультимедиа во время встреч, обеспечивающий бесперебойную, надежную и многофункциональную производительность на всех платформах.
+M³ - это идеальный инструмент для представления мультимедиа во время встреч, обеспечивающий бесперебойную, надежную и многофункциональную производительность на всех платформах. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
 
 ### Ключевые преимущества {#key-benefits}
 
@@ -24,28 +24,65 @@ M³ - это идеальный инструмент для представле
 
 - **Поддержка многих собраний**: Легко управляйте настройками нескольких собраний или групп в одном приложении.
 
-- **Расширенные функции**: Легко добавляйте дополнительные медиафайлы и автоматически делитесь то, что происходит в Зале Царства, с участниками в Zoom.
+- **Advanced features**: Easily add extra media, import custom content, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
 
 - **Оптимизированная кроссплатформенная производительность**: Наслаждайтесь плавной и отзывчивой работой в Windows, macOS и Linux, даже на старых системах или компьютерах с ограниченными ресурсами.
 
 - **Надежно и стабильно**: Создано специально для того, чтобы выполнять свои функции, когда они вам больше всего нужны. Столкнулись с ошибкой? Сообщите об этом, и проблема будет оперативно решена.
 
+- **Advanced presentation tools**: Advanced media controls, zoom/pan capabilities, custom timing, and seamless Zoom and OBS Studio integration.
+
 ## Каковы функции M³? {#what-can-m3-do}
 
-M³ позволяет легко и автоматически скачать, синхронизировать, и представлять все мультимедийные файлы для встреч.
+M³ is a comprehensive media management solution that allows you to easily and automatically download, synchronize, share, and present all meeting media. Here's what makes M³ powerful:
 
-Для **гибридных** или обычных встреч собрания **в живую**, встроенный режим демонстрации медиа обладает всеми необходимыми функциями, чтобы упростить задачу представления мультимедиа собранию, включая:
+### Core Media Management {#core-media-management}
 
-- Миниатюры медиафайлов с возможностью масштабирования и панорамирования, а также установки пользовательского времени начала и окончания медиафайлов
-- Удобные кнопки паузы/воспроизведения/остановки для управления воспроизведением мультимедийных файлов
-- Удобное воспроизведение фоновой музыки с автоматической остановкой перед началом запланированных встреч
-- Автоматическое распознавание и управление внешним монитором
-- Интеграция с OBS Studio с автоматическим переключением сцен во время представления медиафайлов
-- Представление официального сайта Свидетелей Иеговы на внешнем мониторе
-- Import JWPUB files, JWLPLAYLIST files and videos from the official website of Jehovah's Witnesses in a few clicks.
-- Import Study Bible media and audio recordings of the New World Translation of the Bible in seconds.
-- Always have a public talks media overview (S-34) one click away and ready to be used any minute you need it.
-- Пользовательские видео, изображения, аудио и даже PDF-файлы тоже можно легко добавить!
+- **Automatic media downloads**: Automatically fetches and downloads all media needed for upcoming meetings
+- **Multi-language support**: Download media in any of hundreds of available languages
+- **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
+- **Media organization**: Automatically organizes media by date and meeting section
+
+### Media Presentation Features {#presentation-features}
+
+For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
+
+- **Advanced media controls**: Media thumbnails with zoom and pan capabilities
+- **Custom timing**: Set custom start and end times for media playback
+- **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
+- **Multi-monitor support**: Automatic external monitor detection and management
+- **Clean presentation**: Distraction-free media presentation interface
+
+### Background Music {#background-music}
+
+- **Intelligent playback**: Background music that automatically stops before meetings start
+- **One-click restart**: Resume background music with a single click after meetings
+- **Volume control**: Adjustable background music volume with fade-out capabilities
+
+### Zoom Integration {#zoom-integration}
+
+- **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
+
+### OBS Studio Integration {#obs-integration}
+
+- **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
+- **Scene management**: Automatic switching between camera, media, and other scenes
+
+### Media Import and Management {#media-import}
+
+- **JWPUB files**: Import and manage JWPUB files with ease
+- **JWLPLAYLIST files**: Support for JW Library playlist files
+- **Custom media**: Import custom videos, pictures, audio files, and PDF files
+- **Audio Bible**: Import Study Bible media and audio recordings of the New World Translation
+- **Public talks**: Always have public talk media overview ready to use with the S-34 importer
+
+### Advanced Features {#advanced-features}
+
+- **Folder monitoring**: Automatically sync media from watched folders (Dropbox, OneDrive, etc.)
+- **Media export**: Automatically export media to folders, organized by date
+- **Website presentation**: Present the official website on external monitors
+- **Keyboard shortcuts**: Customizable keyboard shortcuts for many functions
+- **Multiple profiles**: Manage different congregations or groups with separate profiles
 
 **Попробуйте M³ сегодня и убедитесь сами, на что оно способно! Представление мультимедиа во время встреч легче чем когда-либо.**
 
@@ -53,6 +90,40 @@ M³ позволяет легко и автоматически скачать, 
 
 ## Работает ли M³ на моём языке? {#does-m3-work-in-my-language}
 
-\*\*Да! Медиа для встреч Свидетелей Иеговы могут быть загружены автоматически на любой из сотен языков, доступных на официальном сайте Свидетелей Иеговы. Список доступных языков обновляется автоматически, вам остается только выбрать нужный.
+**Yes!** M³ provides comprehensive multi-language support:
 
-Кроме того, сама программа M³ была переведена на много языках многими участниками; поэтому вы можете настроить язык, который вы хотели бы использовать в интерфейсе M³.
+### Media Languages {#media-languages}
+
+Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of languages available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need during setup.
+
+### Interface Languages {#interface-languages}
+
+M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
+
+### Language Features {#language-features}
+
+- **Dynamic language detection**: Automatically detects available languages
+- **Fallback languages**: Configure fallback languages for when primary language content isn't available
+- **Subtitle support**: Download and display subtitles in different languages
+- **Localized interface**: Complete interface translation for many languages
+
+## System Requirements {#system-requirements}
+
+M³ is designed to work on a wide range of systems:
+
+### Supported Operating Systems {#supported-operating-systems}
+
+- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
+- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
+- **Linux**: Most modern Linux distributions (AppImage format)
+
+### Hardware Requirements {#hardware-requirements}
+
+- **Minimum**: 4GB RAM, 6GB free disk space
+- **Recommended**: 8GB RAM, 15GB free disk space for media caching
+- **Network**: Internet connection for media downloads
+
+### Additional Requirements {#additional-requirements}
+
+- **Zoom**: Required only if using Zoom integration features
+- **OBS Studio**: Required only if using OBS integration features
