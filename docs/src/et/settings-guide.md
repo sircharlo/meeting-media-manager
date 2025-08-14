@@ -275,6 +275,14 @@ Enable OBS Studio integration for automatic scene switching.
 
 **Default**: `false`
 
+:::warning Important Note
+
+**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+
+**Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
+
+:::
+
 #### OBS Port {#obs-port}
 
 <!-- **Setting**: `obsPort` -->
@@ -306,6 +314,14 @@ Configure which OBS scenes to use for different purposes:
 - **Switch Scene After Media**: Automatically return to previous scene after media
 - **Remember Previous Scene**: Remember and restore the previous scene
 - **Hide Icons**: Hide OBS-related icons in the interface
+
+:::warning Important Note
+
+**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+
+**Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
+
+:::
 
 ## Advanced Settings {#advanced-settings}
 
@@ -465,3 +481,5 @@ Completely disable automatic media downloads. Use this only for profiles that wi
 - If OBS integration isn't working, verify port and password settings
 - If performance is slow, try enabling extra cache or reducing resolution
 - If you're having language issues, check both interface and media language settings
+- If Zoom participants can't hear media audio, configure Zoom's Original Audio settings or use "Share Computer Sound"
+- **Tip**: Consider using Zoom integration instead of OBS Studio for simpler audio handling
