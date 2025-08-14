@@ -3,10 +3,10 @@
   "arrowDown": "стрілка вниз",
   "arrowUp": "стрілка вгору",
   "backButtonTitle": "Назад",
+  "closeText": "щоб закрити",
   "codeCopyButtonTitle": "Копіювати код",
   "copied": "Скопійовано",
   "copyright": "Copyright",
-  "closeText": "щоб закрити",
   "darkModeSwitchLabel": "Вигляд",
   "darkModeSwitchTitle": "Увімкнути темну тему",
   "description": "Сайт документації для Meeting Media Manager (M³).",
@@ -32,10 +32,9 @@
   "returnToTopLabel": "Повернутися нагору",
   "search": "Пошук",
   "selectText": "для вибору",
+  "settingsGuide": "Settings Guide",
   "sidebarMenuLabel": "Меню",
   "skipToContentLabel": "Перейти до вмісту",
   "title": "Документація M³",
-
-  "settingsGuide": "Settings Guide",
   "userGuide": "User Guide"
 }
