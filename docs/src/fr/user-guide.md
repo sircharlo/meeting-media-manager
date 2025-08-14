@@ -253,7 +253,7 @@ Importez des enregistrements audio de versets bibliques :
 
 1. Cliquez sur le bouton « Bible audio »
 2. Sélectionnez le livre et le chapitre de la Bible
-3. Choisissez des versets spécifiques ou des plages de versets
+3. Choisir des versets spécifiques ou des plages de versets
 4. Téléchargez les fichiers audio
 5. Utilisez-les
 
@@ -268,7 +268,7 @@ Surveillez un dossier pour les nouveaux fichiers multimédias :
 3. **Import automatique** - Les nouveaux fichiers sont automatiquement ajoutés à M³
 4. **Organisation** - Les fichiers sont organisés par date selon la structure du dossier
 
-### Export des médias {#media-export}
+### Exportation des médias {#media-export}
 
 Exportez automatiquement les médias vers des dossiers organisés :
 
