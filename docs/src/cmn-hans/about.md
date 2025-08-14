@@ -45,12 +45,12 @@ M³是一个综合性媒体管理解决方案，让您能够轻松自动地下�
 
 ### 媒体播放功能 {#presentation-features}
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
+对于**混合**或**现场**的会众聚会，集成的媒体演示模式包括：
 
-- **Advanced media controls**: Media thumbnails with zoom and pan capabilities
-- **Custom timing**: Set custom start and end times for media playback
-- **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
-- **Multi-monitor support**: Automatic external monitor detection and management
+- **高级媒体控制**: 带有缩放和平移功能的媒体缩略图
+- **自定义计时**: 设置媒体播放的自定义开始和结束时间
+- **播放控制**: 易于使用的暂停/播放/停止按钮，带有键盘快捷键
+- **多显示器支持**: 自动外部显示器检测和管理
 - **Clean presentation**: Distraction-free media presentation interface
 
 ### Background Music {#background-music}
