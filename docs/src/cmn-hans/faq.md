@@ -24,13 +24,13 @@
 
 M³ supports Windows, macOS, and Linux:
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**：Windows 10及更高版本（提供64位和32位版本）
+- **macOS**：macOS 10.15 (Catalina)及更高版本（支持Intel和Apple Silicon）
+- **Linux**：大多数现代Linux发行版（AppImage格式）
 
 ### :globe_with_meridians: Does M³ work in my language? {#language-support}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**是的！** M³提供全面的多语言支持：
 
 - **Media Languages**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
 - **Interface Languages**: Use M³'s interface in many different languages
@@ -130,7 +130,7 @@ To integrate with Zoom:
 2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
 3. M³ will automatically start and stop Zoom screen sharing during media presentations
 
-## OBS Studio Integration {#obs-integration}
+## OBS Studio集成 {#obs-integration}
 
 ### :video_camera: How do I set up the OBS Studio integration? {#obs-setup}
 
@@ -159,7 +159,7 @@ This feature delays sharing images to OBS until you manually trigger them. This 
 - Having more control over timing
 - Avoiding premature scene changes
 
-## Advanced Features {#advanced-features}
+## 高级功能 {#advanced-features}
 
 ### :cloud: How does folder monitoring work? {#folder-monitoring}
 
