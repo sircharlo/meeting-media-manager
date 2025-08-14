@@ -4,13 +4,13 @@
 
 ## 这个应用程序是什么？ {#what-is-this-app}
 
-**Meeting Media Manager**, or **M³** for short, is a comprehensive cross-platform application for Windows, macOS and Linux that automatically downloads, organizes, and presents pictures and videos for congregation meetings of Jehovah's Witnesses. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
+**Meeting Media Manager**，简称**M³**，是一个适用于Windows、macOS和Linux的综合性跨平台应用程序，可自动下载、组织和播放耶和华见证人会众聚会的图片和视频。它支持耶和华见证人官方网站上提供的任何语言，并为混合聚会和现场聚会期间的媒体管理提供强大的工具。 It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
 
-M³ features support for managing regular and custom meeting media, multiple congregations and/or groups using the same computer account, and advanced presentation capabilities that make media sharing effortless.
+M³具有管理常规和自定义聚会媒体的功能，支持使用同一计算机账户的多个会众和/或小组，以及使媒体共享变得轻松的高级演示功能。
 
 :::info 备注
 
-This app used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed to Meeting Media Manager in May 2022.
+此应用程序以前被称为JWMMF（JW Meeting Media Fetcher），但在2022年5月更名为Meeting Media Manager。
 
 :::
 
@@ -24,26 +24,26 @@ M3是管理聚会媒体的最终工具，为各平台提供无缝、可靠和丰
 
 - **支持多会众操作：** 在单个应用程序内管理多个会众或小组的设置。
 
-- **Advanced features**: Easily add extra media, import custom content, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **高级功能**: 轻松添加额外媒体，导入自定义内容，并自动与Zoom上的参与者共享王国聚会所中发生的事情。
 
 - \*\*优化跨平台性能：\*\*即使在资源有限的旧系统或计算机上，也享受Windows、 macOS和Linux的顺畅和响应性体验。
 
 - \*\*可靠和稳定：\*\*非常可靠和稳定，选择它就不会有错。 遇到了问题吗？ 请报告，问题将迅速予以处理。
 
-- **Advanced presentation tools**: Advanced media controls, zoom/pan capabilities, custom timing, and seamless Zoom and OBS Studio integration.
+- **高级播放工具**: 高级媒体控制、缩放/平移功能、自定义计时以及无缝的Zoom和OBS Studio集成。
 
 ## M³能做什么？ {#what-can-m3-do}
 
-M³ is a comprehensive media management solution that allows you to easily and automatically download, synchronize, share, and present all meeting media. Here's what makes M³ powerful:
+M³是一个综合性媒体管理解决方案，让您能够轻松自动地下载、同步、共享和演示所有聚会媒体。 以下是M³的强大之处：
 
-### Core Media Management {#core-media-management}
+### 核心媒体管理 {#core-media-management}
 
-- **Automatic media downloads**: Automatically fetches and downloads all media needed for upcoming meetings
-- **Multi-language support**: Download media in any of hundreds of available languages
-- **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
-- **Media organization**: Automatically organizes media by date and meeting section
+- **自动媒体下载**: 自动获取并下载即将举行的聚会所需的所有媒体
+- **多语言支持**: 下载数百种可用语言中任何一种的媒体
+- **智能缓存**: 智能缓存系统，保持媒体的组织性和时效性
+- **媒体管理**: 按日期和聚会部分自动组织媒体
 
-### Media Presentation Features {#presentation-features}
+### 媒体播放功能 {#presentation-features}
 
 For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
 
@@ -94,11 +94,11 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 
 ### Media Languages {#media-languages}
 
-Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of languages available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need during setup.
+耶和华见证人聚会的媒体可以自动下载耶和华见证人官方网站上提供的数百种语言中的任何一种。可用语言列表会动态更新；您只需在设置期间选择所需的语言即可。 The list of available languages is dynamically updated; all you need to do is select which one you need during setup.
 
 ### Interface Languages {#interface-languages}
 
-M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
+M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. M³本身已被志愿者翻译成多种语言。您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。这意味着您可以使用首选语言使用M³，同时下载任何其他支持语言的媒体。
 
 ### Language Features {#language-features}
 
