@@ -181,7 +181,8 @@ const hasActiveDownloads = () => {
 let cacheClearTriggered = false;
 
 const delayedCacheClear = () => {
-  if (!currentSettings.value?.enableCacheAutoClear || cacheClearTriggered) return;
+  if (!currentSettings.value?.enableCacheAutoClear || cacheClearTriggered)
+    return;
 
   cacheClearTriggered = true;
   console.group('🗑️ Cache Auto-Clear');
@@ -193,7 +194,7 @@ const delayedCacheClear = () => {
   const checkAndClear = () => {
     if (hasActiveDownloads()) {
       console.log('⏳ Downloads still in progress, waiting...');
-      setTimeout(checkAndClear, 1000); // Check again in 1 second
+      setTimeout(checkAndClear, 10000); // Check again in 10 seconds
       return;
     }
 
