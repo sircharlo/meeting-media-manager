@@ -3,10 +3,10 @@
   "arrowDown": "lefelé nyíl",
   "arrowUp": "felfelé nyíl",
   "backButtonTitle": "Vissza",
+  "closeText": "a bezáráshoz",
   "codeCopyButtonTitle": "Kód másolása",
   "copied": "Másolva",
   "copyright": "Szerzői jog",
-  "closeText": "a bezáráshoz",
   "darkModeSwitchLabel": "Megjelenés",
   "darkModeSwitchTitle": "Váltás sötét témára",
   "description": "A Meeting Media Manager (M³) dokumentációs weboldala.",
@@ -32,10 +32,9 @@
   "returnToTopLabel": "Vissza az oldal tetejére",
   "search": "Keresés",
   "selectText": "a kiválasztáshoz",
+  "settingsGuide": "Settings Guide",
   "sidebarMenuLabel": "Menü",
   "skipToContentLabel": "Ugrás a tartalomra",
   "title": "M³ dokumentáció",
-
-  "settingsGuide": "Settings Guide",
   "userGuide": "User Guide"
 }
