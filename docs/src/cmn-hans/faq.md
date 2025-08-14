@@ -91,7 +91,7 @@ Yes! M³ includes an Audio Bible feature that allows you to:
 
 ## Presentation Features {#presentation-features}
 
-### :file_folder: What is media auto-export? {#media-export}
+### :tv: How do I present media during meetings? {#present-media}
 
 To present media:
 
