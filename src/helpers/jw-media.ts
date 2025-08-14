@@ -1334,6 +1334,22 @@ const getWtIssue = async (
   publication: PublicationFetcher;
   weekNr: number;
 }> => {
+  const defaultResult: {
+    db: string;
+    docId: number;
+    issueString: string;
+    publication: PublicationFetcher;
+    weekNr: number;
+  } = {
+    db: '',
+    docId: -1,
+    issueString: '',
+    publication: {
+      langwritten: '',
+      pub: '',
+    },
+    weekNr: -1,
+  };
   try {
     const issue = subtractFromDate(monday, {
       days: weeksInPast * 7,
@@ -1358,7 +1374,7 @@ const getWtIssue = async (
         })
       : -1;
     if (weekNr === -1) {
-      throw new Error('No week found in following w: ' + issueString);
+      return defaultResult;
     }
     const docId =
       executeQuery<{ DocumentId: number }>(
@@ -1368,16 +1384,7 @@ const getWtIssue = async (
     return { db, docId, issueString, publication, weekNr };
   } catch (e) {
     if (lastChance) errorCatcher(e);
-    return {
-      db: '',
-      docId: -1,
-      issueString: '',
-      publication: {
-        langwritten: '',
-        pub: '',
-      },
-      weekNr: -1,
-    };
+    return defaultResult;
   }
 };
 
