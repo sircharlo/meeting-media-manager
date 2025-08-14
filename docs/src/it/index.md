@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: 'M³ Documentation'
+  name: 'Documentazione M³'
   text: 'Complete guide to setting up and using Meeting Media Manager'
   image: /logo.svg
   actions:
@@ -11,14 +11,14 @@ hero:
       text: Informazioni
       link: /it/about
     - theme: brand
-      text: User Guide
-      link: /it/user-guide
+      text: Guida Utente
+      link: /user-guide
     - theme: brand
       text: Settings Guide
-      link: /it/settings-guide
+      link: /settings-guide
     - theme: brand
       text: FAQ
-      link: /it/faq
+      link: /faq
 
 features:
   - icon: 🚀
