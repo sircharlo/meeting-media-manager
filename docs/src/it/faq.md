@@ -130,7 +130,7 @@ To integrate with Zoom:
 2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
 3. M³ will automatically start and stop Zoom screen sharing during media presentations
 
-## OBS Studio Integration {#obs-integration}
+## Integrazione di OBS Studio {#obs-integration}
 
 ### :video_camera: How do I set up the OBS Studio integration? {#obs-setup}
 
@@ -159,7 +159,7 @@ This feature delays sharing images to OBS until you manually trigger them. This 
 - Having more control over timing
 - Avoiding premature scene changes
 
-## Advanced Features {#advanced-features}
+## Funzionalità Avanzate {#advanced-features}
 
 ### :cloud: How does folder monitoring work? {#folder-monitoring}
 

@@ -134,7 +134,7 @@ Background music automatically plays before meetings and stops at the appropriat
 4. **Manual Control** - Use the music button in the status bar to start/stop manually
 5. **Restart** - Resume music after meetings with one click
 
-## Zoom Integration {#zoom-integration}
+## Integrazione di Zoom {#zoom-integration}
 
 M³ can integrate with Zoom for automatic screen sharing:
 
@@ -143,7 +143,7 @@ M³ can integrate with Zoom for automatic screen sharing:
 3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
 4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
 
-## OBS Studio Integration {#obs-integration}
+## Integrazione di OBS Studio {#obs-integration}
 
 ### Setting Up OBS Integration {#obs-setup}
 
@@ -293,7 +293,7 @@ Share the official website on external displays:
 - **Refresh** - Reload the current page
 - **Close** - Exit website presentation mode
 
-## Advanced Features {#advanced-features}
+## Funzionalità Avanzate {#advanced-features}
 
 ### Multiple Congregations {#multiple-congregations}
 

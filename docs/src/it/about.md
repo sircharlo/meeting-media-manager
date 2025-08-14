@@ -4,7 +4,7 @@
 
 ## Cos'è questa app? {#what-is-this-app}
 
-**Meeting Media Manager**, o **M³** in breve, è un'applicazione multi-piattaforma completa per Windows, macOS e Linux che scarica automaticamente, organizza e presenta immagini e video per le riunioni di congregazione dei Testimoni di Geova. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
+**Meeting Media Manager**, o **M³** in breve, è un'applicazione multi-piattaforma completa per Windows, macOS e Linux che scarica automaticamente, organizza e presenta immagini e video per le riunioni di congregazione dei Testimoni di Geova. Supporta qualsiasi lingua disponibile sul sito ufficiale dei Testimoni di Geova e fornisce potenti strumenti per la gestione dei media sia durante le riunioni ibride che di persona.
 
 M³ features support for managing regular and custom meeting media, multiple congregations and/or groups using the same computer account, and advanced presentation capabilities that make media sharing effortless.
 
@@ -34,7 +34,7 @@ M3 è lo strumento definitivo per gestire i media di un adunanza, offrendo un'es
 
 ## Cosa può fare M³? {#what-can-m3-do}
 
-M³ is a comprehensive media management solution that allows you to easily and automatically download, synchronize, share, and present all meeting media. Here's what makes M³ powerful:
+M³ is a comprehensive media management solution that allows you to easily and automatically download, synchronize, share, and present all meeting media. Ecco ciò che rende M³ potente:
 
 ### Core Media Management {#core-media-management}
 
@@ -50,7 +50,7 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - **Advanced media controls**: Media thumbnails with zoom and pan capabilities
 - **Custom timing**: Set custom start and end times for media playback
 - **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
-- **Multi-monitor support**: Automatic external monitor detection and management
+- **Supporto multi-monitor**: Rilevamento e gestione automatici dei monitor esterni
 - **Clean presentation**: Distraction-free media presentation interface
 
 ### Background Music {#background-music}
@@ -59,11 +59,11 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - **One-click restart**: Resume background music with a single click after meetings
 - **Volume control**: Adjustable background music volume with fade-out capabilities
 
-### Zoom Integration {#zoom-integration}
+### Integrazione di Zoom {#zoom-integration}
 
 - **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
 
-### OBS Studio Integration {#obs-integration}
+### Integrazione di OBS Studio {#obs-integration}
 
 - **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
 - **Scene management**: Automatic switching between camera, media, and other scenes
@@ -76,7 +76,7 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - **Audio Bible**: Import Study Bible media and audio recordings of the New World Translation
 - **Public talks**: Always have public talk media overview ready to use with the S-34 importer
 
-### Advanced Features {#advanced-features}
+### Funzionalità Avanzate {#advanced-features}
 
 - **Folder monitoring**: Automatically sync media from watched folders (Dropbox, OneDrive, etc.)
 - **Media export**: Automatically export media to folders, organized by date
@@ -96,14 +96,14 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 
 Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of languages available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need during setup.
 
-### Interface Languages {#interface-languages}
+### Lingue dell'Interfaccia {#interface-languages}
 
-M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
+M³ è stato tradotto in molte lingue da volontari. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
 
 ### Language Features {#language-features}
 
-- **Dynamic language detection**: Automatically detects available languages
-- **Fallback languages**: Configure fallback languages for when primary language content isn't available
+- **Rilevamento della lingua dinamico**: Rileva automaticamente le lingue disponibili
+- **Lingue di Fallback**: Configura le lingue di ripiego per quando il contenuto non è disponibile nella lingua principale
 - **Subtitle support**: Download and display subtitles in different languages
 - **Localized interface**: Complete interface translation for many languages
 
@@ -120,10 +120,10 @@ M³ is designed to work on a wide range of systems:
 ### Hardware Requirements {#hardware-requirements}
 
 - **Minimum**: 4GB RAM, 6GB free disk space
-- **Recommended**: 8GB RAM, 15GB free disk space for media caching
-- **Network**: Internet connection for media downloads
+- **Consigliati**: 8GB di RAM, 15GB di spazio libero su disco per la cache dei media
+- **Rete**: Connessione internet per il download dei contenuti multimediali
 
-### Additional Requirements {#additional-requirements}
+### Requisiti Aggiuntivi {#additional-requirements}
 
-- **Zoom**: Required only if using Zoom integration features
-- **OBS Studio**: Required only if using OBS integration features
+- **Zoom**: Richiesto solo se si utilizzano le funzionalità di integrazione Zoom
+- **OBS Studio**: Richiesto solo se si utilizzano le funzionalità di integrazione OBS
