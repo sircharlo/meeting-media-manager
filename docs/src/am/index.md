@@ -12,13 +12,13 @@ hero:
       link: /am/about
     - theme: brand
       text: User Guide
-      link: /am/user-guide
+      link: /user-guide
     - theme: brand
       text: Settings Guide
-      link: /am/settings-guide
+      link: /settings-guide
     - theme: brand
       text: FAQ
-      link: /am/faq
+      link: /faq
 
 features:
   - icon: 🚀
