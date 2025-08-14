@@ -277,11 +277,6 @@ defineExpose({
   }
 }
 
-.sortable-selected {
-  opacity: 0.7;
-  transform: scale(0.98);
-}
-
 [data-dragging='true'] {
   opacity: 0.5;
   transform: rotate(2deg);

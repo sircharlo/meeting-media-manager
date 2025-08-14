@@ -101,7 +101,7 @@ span.etitle {
   font-weight: 500;
 }
 
-.sortable-selected {
+.sortable-selected:not(.media-children) {
   background-color: $sorting-bg !important;
   border-color: $sorting-border !important;
 }
@@ -281,7 +281,7 @@ body.body--dark {
     border-color: $accent-200-dark;
   }
 
-  .sortable-selected {
+  .sortable-selected:not(.media-children) {
     background-color: $sorting-bg-dark !important;
     border-color: $sorting-border-dark !important;
   }

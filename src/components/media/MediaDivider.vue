@@ -2,8 +2,11 @@
   <q-item
     ref="dividerElement"
     :class="['media-divider', { 'is-editing': isEditing }]"
-    :dense="!divider.title"
-    :style="dividerStyles"
+    dense
+    :style="{
+      ...dividerStyles,
+      '--divider-bg-color': divider.bgColor || 'var(--q-secondary)',
+    }"
   >
     <q-item-section>
       <q-input
@@ -13,6 +16,7 @@
         borderless
         class="custom-text-color"
         dense
+        style="height: 30px; margin-top: -10px"
         @keyup.enter="saveTitle"
         @keyup.esc="cancelEdit"
       />
@@ -24,29 +28,32 @@
     <q-item-section side>
       <div class="row items-center">
         <q-btn
+          :disabled="isEditing"
+          flat
+          icon="mmm-edit"
+          round
+          size="sm"
+          :style="{
+            visibility: !isEditing && isHovering ? 'visible' : 'hidden',
+            color: divider.textColor,
+          }"
+          @click="startEdit"
+        />
+        <q-btn
           v-if="isEditing"
           flat
           icon="mmm-check"
           round
-          size="xs"
+          size="sm"
           :style="{ color: divider.textColor }"
           @click="saveTitle"
-        />
-        <q-btn
-          v-if="!isEditing && isHovering"
-          flat
-          icon="mmm-edit"
-          round
-          size="xs"
-          :style="{ color: divider.textColor }"
-          @click="startEdit"
         />
         <q-btn
           v-if="isEditing"
           flat
           icon="mmm-palette"
           round
-          size="xs"
+          size="sm"
           :style="{ color: divider.textColor }"
         >
           <q-popup-proxy cover transition-hide="scale" transition-show="scale">
@@ -64,7 +71,7 @@
           flat
           icon="mmm-delete"
           round
-          size="xs"
+          size="sm"
           :style="{ color: divider.textColor }"
           @click="deleteDivider"
         />
@@ -137,7 +144,7 @@ const dividerStyles = computed(() => {
 
   if (!selectedDateObject?.mediaSections)
     return {
-      backgroundColor: props.divider.bgColor || 'var(--q-secondary)',
+      backgroundColor: `${props.divider.bgColor || 'var(--q-secondary)'} !important`,
       color: props.divider.textColor || 'white',
     };
 
@@ -147,12 +154,12 @@ const dividerStyles = computed(() => {
   );
   if (!section?.config)
     return {
-      backgroundColor: props.divider.bgColor || 'var(--q-secondary)',
+      backgroundColor: `${props.divider.bgColor || 'var(--q-secondary)'} !important`,
       color: props.divider.textColor || 'white',
     };
 
   return {
-    backgroundColor: props.divider.bgColor || getSectionBgColor(section.config),
+    backgroundColor: `${props.divider.bgColor || getSectionBgColor(section.config)} !important`,
     color: props.divider.textColor || 'white',
   };
 });
@@ -193,6 +200,12 @@ const deleteDivider = () => {
   border-radius: 8px;
   transition: all 0.2s ease;
   border-radius: 0px;
+
+  &.sortable-selected {
+    transform: none;
+    background-color: unset !important;
+    background-color: var(--divider-bg-color) !important;
+  }
 
   &.is-editing {
     box-shadow: 0 0 0 2px var(--q-primary);
