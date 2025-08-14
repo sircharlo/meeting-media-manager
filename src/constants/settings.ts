@@ -354,6 +354,12 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'keyboardShortcuts',
     type: 'shortcut',
   },
+  enableMediaWindowFadeTransitions: {
+    depends: 'enableMediaDisplayButton',
+    group: 'advanced',
+    subgroup: 'media-display',
+    type: 'toggle',
+  },
   hideMediaLogo: {
     depends: 'enableMediaDisplayButton',
     group: 'advanced',
@@ -472,6 +478,7 @@ export const defaultSettings: SettingsValues = {
   enableKeyboardShortcuts: false,
   enableMediaAutoExport: false,
   enableMediaDisplayButton: false,
+  enableMediaWindowFadeTransitions: false,
   enableMusicButton: true,
   enableSubtitles: false,
   excludeFootnotes: false,

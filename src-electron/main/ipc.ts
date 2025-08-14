@@ -79,12 +79,6 @@ handleIpcSend(
   'toggleMediaWindow',
   async (_e, show: boolean, enableFadeTransitions = false) => {
     if (!mediaWindow) return;
-    console.log(
-      '🔍 [toggleMediaWindow] Fade transitions enabled:',
-      enableFadeTransitions,
-      'show:',
-      show,
-    );
     if (show) {
       moveMediaWindow();
       if (!mediaWindow.isVisible()) {
