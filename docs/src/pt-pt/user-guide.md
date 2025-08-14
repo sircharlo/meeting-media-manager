@@ -180,6 +180,55 @@ Configure how M³ handles scene changes:
 - **Switch After Media** - Automatically return to previous scene
 - **Remember Previous Scene** - Restore the scene that was active before media
 
+### Audio Configuration for Hybrid Meetings {#audio-configuration}
+
+When using M³ with OBS Studio for hybrid meetings (in-person + Zoom), you need to configure audio settings to ensure meeting participants can hear the media:
+
+#### Zoom Audio Settings {#zoom-audio-settings}
+
+**Before every meeting, you must enable Original Audio in Zoom:**
+
+1. **Open Zoom** and go to Settings
+2. **Navigate to Audio** → **Advanced**
+3. **Enable "Show in-meeting option to 'Enable Original Sound'"**
+4. **Check "Disable echo cancellation"** (first checkbox)
+5. **Check "Disable noise suppression"** (second checkbox)
+6. **Uncheck "Disable high-fidelity music mode"** (third checkbox)
+7. **Before starting each meeting**, click the "Original Audio" button in the meeting controls
+
+**Alternative: Share Computer Sound**
+If Original Audio doesn't work well in your setup:
+
+1. **Before playing media**, go to **Advanced** tab in Zoom screen sharing options
+2. **Check "Share computer sound"**
+3. **Note**: This option must be enabled every time you start a new Zoom session
+
+**Best Alternative**: Consider using M³'s Zoom integration instead of OBS Studio, as it uses Zoom's native screen sharing which handles audio more seamlessly and doesn't require complex audio configuration.
+
+#### Why Audio Configuration is Necessary {#why-audio-config}
+
+M³ plays media with sound on your computer, but this audio is **not automatically transmitted** through the video stream to OBS Studio. This is the same behavior you would experience with any other media player.
+
+**The audio issue is not related to M³** - it's a limitation of how OBS Studio video streaming works with Zoom. The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
+
+**Alternative Solution**: Consider using the Zoom integration instead, as it uses Zoom's native screen and audio sharing, which handles audio more seamlessly.
+
+#### Troubleshooting Audio Issues {#audio-troubleshooting}
+
+**Common Problems:**
+
+- **No audio in Zoom**: Check if Original Audio is enabled and properly configured
+- **Poor audio quality**: Verify the three Original Audio checkboxes are set correctly
+- **Audio not working after Zoom restart**: Original Audio settings must be re-enabled for each new Zoom session
+
+**Best Practices:**
+
+- Test audio configuration and sharing before meetings
+- Create a checklist for audio setup
+- Consider using "Share Computer Sound" as a backup option
+- **Consider using Zoom integration instead of OBS Studio** for simpler audio handling
+- Ensure all AV operators are familiar with these settings
+
 ## Media Import and Management {#media-import}
 
 ### Importing Custom Media {#importing-custom-media}
@@ -280,6 +329,13 @@ Configure custom keyboard shortcuts for efficient operation:
 - Check port and password settings
 - Ensure OBS is running
 
+#### Audio Issues in Zoom/OBS {#audio-issues}
+
+- **No audio in Zoom**: Enable Original Audio in Zoom settings and before each meeting
+- **Poor audio quality**: Check the three Original Audio checkboxes (first two enabled, third disabled)
+- **Audio not working after restart**: Original Audio must be re-enabled for each new Zoom session
+- **Alternative solution**: Use "Share Computer Sound" option in Zoom screen sharing
+
 #### Performance Issues {#performance-issues}
 
 - Enable extra cache
@@ -309,6 +365,7 @@ If you encounter issues:
 1. **Check Downloads** - Ensure all media is downloaded
 2. **Test Equipment** - Verify displays and audio work
 3. **Prepare Media** - Review and organize media for the meeting; make sure no media files are missing
+4. **Configure Audio** - For hybrid meetings, enable Original Audio in Zoom or set up "Share Computer Sound"
 
 ### During Meetings {#during-meetings}
 
@@ -316,6 +373,7 @@ If you encounter issues:
 2. **Use Shortcuts** - Master keyboard shortcuts for smooth operation
 3. **Monitor Audio** - Keep an eye on volume levels, if that's part of your responsibilities
 4. **Be Prepared** - Have the next media item ready
+5. **Verify Audio** - For hybrid meetings, ensure Zoom participants can hear the media
 
 ### After Meetings {#after-meetings}
 
