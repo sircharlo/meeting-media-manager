@@ -169,6 +169,51 @@ const {
 updateMemorials(online.value);
 updateJwLanguages(online.value);
 
+const hasActiveDownloads = () => {
+  return Object.values(downloadProgress.value).some(
+    (item) =>
+      !item.complete &&
+      !item.error &&
+      (!item.loaded || !item.total || item.loaded < item.total),
+  );
+};
+
+let cacheClearTriggered = false;
+
+const delayedCacheClear = () => {
+  if (!currentSettings.value?.enableCacheAutoClear || cacheClearTriggered) return;
+
+  cacheClearTriggered = true;
+  console.group('🗑️ Cache Auto-Clear');
+  console.log(
+    '🗑️ Waiting 30 seconds and for downloads to complete before clearing cache...',
+  );
+
+  // Wait at least 30 seconds and until no active downloads
+  const checkAndClear = () => {
+    if (hasActiveDownloads()) {
+      console.log('⏳ Downloads still in progress, waiting...');
+      setTimeout(checkAndClear, 1000); // Check again in 1 second
+      return;
+    }
+
+    console.log('✅ No active downloads, proceeding with cache clear...');
+    deleteCacheFiles('smart')
+      .then(() => {
+        console.log('✅ Cache files cleared successfully');
+        console.groupEnd();
+      })
+      .catch((error) => {
+        console.log('❌ Error clearing cache:', error);
+        errorCatcher(error);
+        console.groupEnd();
+      });
+  };
+
+  // Start checking after 30 seconds
+  setTimeout(checkAndClear, 30000);
+};
+
 watch(currentCongregation, (newCongregation, oldCongregation) => {
   try {
     if (oldCongregation && queues.meetings[oldCongregation]) {
@@ -198,22 +243,8 @@ watch(currentCongregation, (newCongregation, oldCongregation) => {
       updateLookupPeriod();
       downloadBackgroundMusic();
 
-      if (currentSettings.value?.enableCacheAutoClear) {
-        console.group('🗑️ Cache Auto-Clear');
-        console.log(
-          '🗑️ Clearing cache files automatically based on user settings...',
-        );
-        deleteCacheFiles('smart')
-          .then(() => {
-            console.log('✅ Cache files cleared successfully');
-            console.groupEnd();
-          })
-          .catch((error) => {
-            console.log('❌ Error clearing cache:', error);
-            errorCatcher(error);
-            console.groupEnd();
-          });
-      }
+      // Trigger delayed cache clear instead of immediate execution
+      delayedCacheClear();
 
       if (queues.meetings[newCongregation]) {
         queues.meetings[newCongregation].start();
