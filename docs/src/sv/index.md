@@ -12,13 +12,13 @@ hero:
       link: /sv/about
     - theme: brand
       text: User Guide
-      link: /user-guide
+      link: /sv/user-guide
     - theme: brand
       text: Settings Guide
-      link: /settings-guide
+      link: /sv/settings-guide
     - theme: brand
       text: FAQ
-      link: /faq
+      link: /sv/faq
 
 features:
   - icon: 🚀
