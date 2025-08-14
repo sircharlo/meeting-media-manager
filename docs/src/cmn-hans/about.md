@@ -4,7 +4,7 @@
 
 ## 这个应用程序是什么？ {#what-is-this-app}
 
-**Meeting Media Manager**，简称**M³**，是一个适用于Windows、macOS和Linux的综合性跨平台应用程序，可自动下载、组织和播放耶和华见证人会众聚会的图片和视频。它支持耶和华见证人官方网站上提供的任何语言，并为混合聚会和现场聚会期间的媒体管理提供强大的工具。 It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
+**Meeting Media Manager**，简称**M³**，是一个适用于Windows、macOS和Linux的综合性跨平台应用程序，可自动下载、组织和播放耶和华见证人会众聚会的图片和视频。它支持耶和华见证人官方网站上提供的任何语言，并为混合聚会和现场聚会期间的媒体管理提供强大的工具。 It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
 
 M³具有管理常规和自定义聚会媒体的功能，支持使用同一计算机账户的多个会众和/或小组，以及使媒体共享变得轻松的高级演示功能。
 
@@ -34,7 +34,7 @@ M3是管理聚会媒体的最终工具，为各平台提供无缝、可靠和丰
 
 ## M³能做什么？ {#what-can-m3-do}
 
-M³是一个综合性媒体管理解决方案，让您能够轻松自动地下载、同步、共享和演示所有聚会媒体。 以下是M³的强大之处： 以下是M³的强大之处：
+M³是一个综合性媒体管理解决方案，让您能够轻松自动地下载、同步、共享和演示所有聚会媒体。 以下是M³的强大之处：
 
 ### 核心媒体管理 {#core-media-management}
 
@@ -98,7 +98,7 @@ M³是一个综合性媒体管理解决方案，让您能够轻松自动地下�
 
 ### 界面语言 {#interface-languages}
 
-M³本身已被志愿者翻译成多种语言。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 M³本身已被志愿者翻译成多种语言。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 这意味着您可以使用首选语言使用M³，同时下载任何其他支持语言的媒体。
+M³本身已被志愿者翻译成多种语言。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 这意味着您可以使用首选语言使用M³，同时下载任何其他支持语言的媒体。
 
 ### 语言功能 {#language-features}
 
