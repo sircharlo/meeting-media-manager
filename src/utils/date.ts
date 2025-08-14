@@ -61,6 +61,11 @@ export const dateFromString = (
     }
     // If it's some other object, try to convert it to a Date
     else if (typeof lookupDate === 'object' && lookupDate !== null) {
+      // Check if it's an empty object or has no useful properties
+      if (Object.keys(lookupDate).length === 0) {
+        throw new Error('Cannot convert empty object to date');
+      }
+
       try {
         date = new Date(lookupDate as unknown as Date);
         // Check if the result is valid
@@ -68,7 +73,9 @@ export const dateFromString = (
           throw new Error('Invalid date object');
         }
       } catch {
-        throw new Error(`Cannot convert object to date: ${typeof lookupDate}`);
+        throw new Error(
+          `Cannot convert object to date: ${typeof lookupDate} with keys: ${Object.keys(lookupDate).join(', ')}`,
+        );
       }
     }
     // Handle ISO strings or other formats
@@ -93,6 +100,15 @@ export const dateFromString = (
           }
           date = new Date(year, month - 1, day); // Month is 0-indexed
         }
+      }
+
+      // Additional validation for string dates that don't match expected formats
+      if (
+        isNaN(date.getTime()) &&
+        !/^\d{8}$/.test(parsedDate) &&
+        !/^\d{4}-\d{2}-\d{2}$/.test(parsedDate)
+      ) {
+        throw new Error(`Unsupported date string format: ${parsedDate}`);
       }
     } else {
       throw new Error(`Unsupported input type: ${typeof lookupDate}`);

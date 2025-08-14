@@ -223,7 +223,7 @@ const runMigrations = async () => {
     'moveAdditionalMediaMaps',
     '25.3.2-refreshDynamicMedia',
     '25.4.3-refreshDynamicMedia',
-    '25.8.1-newMediaSections',
+    '25.8.4-newMediaSections',
   ];
 
   for (const migration of migrationsToRun) {
