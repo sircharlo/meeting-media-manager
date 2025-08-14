@@ -1,36 +1,48 @@
 ---
+# https://vitepress.dev/reference/default-theme-home-page
 layout: home
+
 hero:
-  name: M³文库
-  text: 帮助设置和使用Meeting Media Manager
+  name: 'M³ Documentation'
+  text: 'Complete guide to setting up and using Meeting Media Manager'
   image: /logo.svg
   actions:
     - theme: brand
-      text: 安装M³
-      link: /cmn-hans/using-at-a-kingdom-hall#download-and-install
-    - theme: alt
-      text: 在王国聚会所使用
-      link: /cmn-hans/using-at-a-kingdom-hall
-    - theme: alt
       text: 关于
       link: /cmn-hans/about
+    - theme: brand
+      text: User Guide
+      link: /user-guide
+    - theme: brand
+      text: Settings Guide
+      link: /settings-guide
+    - theme: brand
+      text: 常见问题（FAQ）
+      link: /faq
+
 features:
   - icon: 🚀
-    title: 自动下载媒体
-    details: 自动下载耶和华见证人官方网站上可用任何语言提供的会众聚会图片和录像。
+    title: Automatic Media Management
+    details: Automatically downloads and organizes pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
   - icon: 🎦
-    title: 媒体播放
-    details: 帮助你在混合聚会或现场聚会中轻松分享媒体。
+    title: Media Presentation
+    details: Present media with ease during hybrid or in-person meetings with advanced controls, zoom/pan capabilities, and custom timing options.
   - icon: 🎵
-    title: 背景音乐
-    details: 自动播放背景音乐。 在聚会开始前停止播放。 聚会接受后，轻松点击可以重启背景音乐。
+    title: Background Music System
+    details: Intelligent background music that automatically stops before meetings start and can be restarted with one click after meetings.
   - icon: 🖥️
-    title: 支持外部屏幕
-    details: 自动检测和管理外部显示器以顺利播放媒体节目。
+    title: Multi-Monitor Support
+    details: Automatically detects and manages external monitors for seamless media presentations and website sharing.
   - icon: 🌐
-    title: 多国语言
+    title: Multi-Language Support
     details: 下载数百种语言的聚会媒体，使用M³的接口，使用多种可用语言中的任何一种。
   - icon: 🧩
-    title: 支持OBS工作室
-    details: 与OBS工作室集成以加强媒体管理和播放能力。
+    title: 集成
+    details: Seamlessly integrates with Zoom or OBS Studio for enhanced media management and playback during meetings.
+  - icon: 📁
+    title: Folder Monitoring
+    details: Automatically sync media from watched folders (like Dropbox or OneDrive) and export media to folders.
+  - icon: 🎯
+    title: Advanced Features
+    details: Import custom media, JWPUB files, playlists, audio Bible recordings, and manage multiple congregations.
 ---

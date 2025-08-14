@@ -3,10 +3,10 @@
   "arrowDown": "down arrow",
   "arrowUp": "up arrow",
   "backButtonTitle": "Back",
+  "closeText": "isara",
   "codeCopyButtonTitle": "Kopyahin",
   "copied": "Nakopya",
   "copyright": "Copyright",
-  "closeText": "isara",
   "darkModeSwitchLabel": "Appearance",
   "darkModeSwitchTitle": "Gawing dark theme",
   "description": "Documentation website ng Meeting Media Manager (M³).",
@@ -32,10 +32,9 @@
   "returnToTopLabel": "Bumalik sa itaas",
   "search": "Hanapin",
   "selectText": "to select",
+  "settingsGuide": "Settings Guide",
   "sidebarMenuLabel": "Menu",
   "skipToContentLabel": "Laktawan",
   "title": "M³ documentation",
-
-  "settingsGuide": "Settings Guide",
   "userGuide": "User Guide"
 }

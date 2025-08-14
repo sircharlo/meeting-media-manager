@@ -1,36 +1,48 @@
 ---
+# https://vitepress.dev/reference/default-theme-home-page
 layout: home
+
 hero:
-  name: M³ dokumentáció
-  text: Súgó a Meeting Media Manager beállításához és használatához
+  name: 'M³ Documentation'
+  text: 'Complete guide to setting up and using Meeting Media Manager'
   image: /logo.svg
   actions:
     - theme: brand
-      text: M³ telepítése
-      link: /hu/using-at-a-kingdom-hall#download-and-install
-    - theme: alt
-      text: Használat egy Királyság-teremben
-      link: /hu/using-at-a-kingdom-hall
-    - theme: alt
       text: A honlapról
       link: /hu/about
+    - theme: brand
+      text: User Guide
+      link: /user-guide
+    - theme: brand
+      text: Settings Guide
+      link: /settings-guide
+    - theme: brand
+      text: GYIK
+      link: /faq
+
 features:
   - icon: 🚀
-    title: Automatikus médialetöltés
-    details: Automatikusan letölti a gyülekezeti összejövetelek képeit és videóit a Jehova Tanúi hivatalos honlapján elérhető nyelveken.
+    title: Automatic Media Management
+    details: Automatically downloads and organizes pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
   - icon: 🎦
-    title: Média megjelenítése
-    details: Lehetővé teszi a médiatartalom egyszerű megosztását a hibrid vagy személyes összejövetelek során.
+    title: Media Presentation
+    details: Present media with ease during hybrid or in-person meetings with advanced controls, zoom/pan capabilities, and custom timing options.
   - icon: 🎵
-    title: Háttérzene
-    details: Automatikusan lejátssza a háttérzenét. Leállítja a lejátszást az összejövetel kezdete előtt. A háttérzene egy kattintással újraindítható az összejövetel után.
+    title: Background Music System
+    details: Intelligent background music that automatically stops before meetings start and can be restarted with one click after meetings.
   - icon: 🖥️
-    title: Külső képernyők támogatása
-    details: Automatikusan felismeri és kezeli a külső kijelzőket a zökkenőmentes média-megjelenítésért.
+    title: Multi-Monitor Support
+    details: Automatically detects and manages external monitors for seamless media presentations and website sharing.
   - icon: 🌐
-    title: Több nyelven
+    title: Multi-Language Support
     details: Töltse le az összejövetel anyagát több száz nyelven, és használja az M³ felületét a rendelkezésre álló számos nyelv bármelyikén.
   - icon: 🧩
-    title: OBS Studio integráció
-    details: Integrálható az OBS Studióval a továbbfejlesztett médiakezelési és megjelenítési képességek érdekében.
+    title: Integrációk
+    details: Seamlessly integrates with Zoom or OBS Studio for enhanced media management and playback during meetings.
+  - icon: 📁
+    title: Folder Monitoring
+    details: Automatically sync media from watched folders (like Dropbox or OneDrive) and export media to folders.
+  - icon: 🎯
+    title: Advanced Features
+    details: Import custom media, JWPUB files, playlists, audio Bible recordings, and manage multiple congregations.
 ---

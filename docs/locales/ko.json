@@ -3,10 +3,10 @@
   "arrowDown": "아래 방향키",
   "arrowUp": "위 방향키",
   "backButtonTitle": "이전",
+  "closeText": "닫기",
   "codeCopyButtonTitle": "코드 복사",
   "copied": "복사 완료",
   "copyright": "Copyright",
-  "closeText": "닫기",
   "darkModeSwitchLabel": "화면 모드",
   "darkModeSwitchTitle": "어두운 모드로 변경",
   "description": "Meeting Media Manager (M³) 가이드 웹사이트",
@@ -32,10 +32,9 @@
   "returnToTopLabel": "처음으로",
   "search": "검색",
   "selectText": "선택",
+  "settingsGuide": "Settings Guide",
   "sidebarMenuLabel": "메뉴",
   "skipToContentLabel": "본문으로",
   "title": "M³ 가이드",
-
-  "settingsGuide": "Settings Guide",
   "userGuide": "User Guide"
 }

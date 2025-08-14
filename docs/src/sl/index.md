@@ -1,36 +1,48 @@
 ---
+# https://vitepress.dev/reference/default-theme-home-page
 layout: home
+
 hero:
-  name: Dokumentacija M³
-  text: Pomoč pri nastavitvi in uporabi aplikacije Meeting Media Manager
+  name: 'M³ Documentation'
+  text: 'Complete guide to setting up and using Meeting Media Manager'
   image: /logo.svg
   actions:
     - theme: brand
-      text: Namesti M³
-      link: /sl/using-at-a-kingdom-hall#download-and-install
-    - theme: alt
-      text: Za uporabo v kraljestveni dvorani
-      link: /sl/using-at-a-kingdom-hall
-    - theme: alt
       text: O programu
       link: /sl/about
+    - theme: brand
+      text: User Guide
+      link: /user-guide
+    - theme: brand
+      text: Settings Guide
+      link: /settings-guide
+    - theme: brand
+      text: Pogosto zastavljena vprašanja
+      link: /faq
+
 features:
   - icon: 🚀
-    title: Samodejno prenašanje multimedijske vsebine
-    details: Samodejno prenaša slike in videoposnetke za občinske shode v katerem koli jeziku, ki je na voljo na uradnem spletnem mestu Jehovovih prič.
+    title: Automatic Media Management
+    details: Automatically downloads and organizes pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
   - icon: 🎦
-    title: Predvajanje multimedijske vsebine
-    details: Omogoča enostavno predvajanje multimedijske vsebine med hibridnimi shodi ali shodi v živo.
+    title: Media Presentation
+    details: Present media with ease during hybrid or in-person meetings with advanced controls, zoom/pan capabilities, and custom timing options.
   - icon: 🎵
-    title: Glasba v ozadju
-    details: Omogoča samodejno predvajanje glasbe v ozadju. Pred začetkom shoda jo neha predvajati. Glasbo v ozadju se lahko po shodu ponovno zažene z enim klikom.
+    title: Background Music System
+    details: Intelligent background music that automatically stops before meetings start and can be restarted with one click after meetings.
   - icon: 🖥️
-    title: Podpora za zunanji monitor
-    details: Samodejno zaznava in upravlja zunanje monitorje za nemoteno predvajanje multimedijske vsebine.
+    title: Multi-Monitor Support
+    details: Automatically detects and manages external monitors for seamless media presentations and website sharing.
   - icon: 🌐
-    title: Več jezikov
+    title: Multi-Language Support
     details: Multimedijsko vsebino za shode je mogoče prenesti v več sto jezikih in za jezik vmesnika M³ uporabiti katerega koli od številnih razpoložljivih jezikov.
   - icon: 🧩
-    title: Povezava s programom OBS Studio
-    details: Povezava s programom OBS Studio za izboljšano upravljanje multimedijske vsebine in boljše možnosti predvajanja te vsebine.
+    title: Združevanje
+    details: Seamlessly integrates with Zoom or OBS Studio for enhanced media management and playback during meetings.
+  - icon: 📁
+    title: Folder Monitoring
+    details: Automatically sync media from watched folders (like Dropbox or OneDrive) and export media to folders.
+  - icon: 🎯
+    title: Advanced Features
+    details: Import custom media, JWPUB files, playlists, audio Bible recordings, and manage multiple congregations.
 ---

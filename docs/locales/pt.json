@@ -3,10 +3,10 @@
   "arrowDown": "seta para baixo",
   "arrowUp": "seta para cima",
   "backButtonTitle": "Voltar",
+  "closeText": "para fechar",
   "codeCopyButtonTitle": "Copiar código",
   "copied": "Copiado",
   "copyright": "Copyright",
-  "closeText": "para fechar",
   "darkModeSwitchLabel": "Aparência",
   "darkModeSwitchTitle": "Trocar para o tema escuro",
   "description": "Site da documentação do Meeting Media Manager (M³).",
@@ -32,10 +32,9 @@
   "returnToTopLabel": "Retornar ao topo",
   "search": "Procurar",
   "selectText": "para selecionar",
+  "settingsGuide": "Settings Guide",
   "sidebarMenuLabel": "Menu",
   "skipToContentLabel": "Ir para o conteúdo",
   "title": "Documentação do M³",
-
-  "settingsGuide": "Settings Guide",
   "userGuide": "User Guide"
 }

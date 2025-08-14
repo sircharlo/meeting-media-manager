@@ -1,36 +1,48 @@
 ---
+# https://vitepress.dev/reference/default-theme-home-page
 layout: home
+
 hero:
-  name: Nyaraka za M³
-  text: Usaidizi wa kusanidi na kutumia Meeting Media Manager
+  name: 'M³ Documentation'
+  text: 'Complete guide to setting up and using Meeting Media Manager'
   image: /logo.svg
   actions:
     - theme: brand
-      text: Pakua M³
-      link: /sw/using-at-a-kingdom-hall#download-and-install
-    - theme: alt
-      text: Kutumia kwenye Mikutano
-      link: /sw/using-at-a-kingdom-hall
-    - theme: alt
       text: Kuhusu
       link: /sw/about
+    - theme: brand
+      text: User Guide
+      link: /user-guide
+    - theme: brand
+      text: Settings Guide
+      link: /settings-guide
+    - theme: brand
+      text: Maswali Yanayoulizwa Sana
+      link: /faq
+
 features:
   - icon: 🚀
-    title: Upakuaji wa midia otomatiki
-    details: Hupakua kiotomatiki picha na video za mikutano ya kutaniko katika lugha yoyote inayopatikana kwenye tovuti rasmi ya Mashahidi wa Yehova.
+    title: Automatic Media Management
+    details: Automatically downloads and organizes pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
   - icon: 🎦
-    title: Kuwasilisha midia
-    details: Inaruhusu kuonyesha midia kwa urahisi wakati wa mikutano ya mtandao au ya ana kwa ana.
+    title: Media Presentation
+    details: Present media with ease during hybrid or in-person meetings with advanced controls, zoom/pan capabilities, and custom timing options.
   - icon: 🎵
-    title: Muziki wa usuli
-    details: Hucheza muziki wa usuli moja kwa moja. Huacha kucheza kabla mikutano huanza. Muziki wa usuli unaweza kuanzishwa upya kwa mbofyo mmoja baada ya mkutano.
+    title: Background Music System
+    details: Intelligent background music that automatically stops before meetings start and can be restarted with one click after meetings.
   - icon: 🖥️
-    title: Usaidizi wa scrini ya nje
-    details: Hutambua na kudhibiti scrini za nje kiotomatiki kwa mawasilisho laini ya media.
+    title: Multi-Monitor Support
+    details: Automatically detects and manages external monitors for seamless media presentations and website sharing.
   - icon: 🌐
-    title: Lugha mbalimbali
+    title: Multi-Language Support
     details: Pakua midia ya mkutano katika mamia ya lugha na utumie M³ katika lugha yoyote kati ya nyingi zinazopatikana.
   - icon: 🧩
-    title: Utumiaji wa OBS na M3
-    details: Huunganishwa na Studio ya OBS kwa usimamizi ulioboreshwa wa midia na uwezo wa kuwasilisha.
+    title: Programu za ziada
+    details: Seamlessly integrates with Zoom or OBS Studio for enhanced media management and playback during meetings.
+  - icon: 📁
+    title: Folder Monitoring
+    details: Automatically sync media from watched folders (like Dropbox or OneDrive) and export media to folders.
+  - icon: 🎯
+    title: Advanced Features
+    details: Import custom media, JWPUB files, playlists, audio Bible recordings, and manage multiple congregations.
 ---

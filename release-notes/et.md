@@ -4,18 +4,34 @@
 
 Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGELOG.md GitHubis.
 
+## v25.8.1
+
+### ✨ Uued funktsioonid
+
+- ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
+- ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
+- ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
+- ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
+
+### 🛠️ Parandused ja täiustused
+
+- 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
+- ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
+- 🛠️ **Improved Navigation**: Better keyboard shortcuts with scroll-to-selected functionality and enhanced media navigation.
+- 🛠️ **Visual Enhancements**: Animation support during sorting operations and improved drag-and-drop visual feedback.
+
 ## 25.6.0
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
-- ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
+- ✨ **Mobiilse ühenduse seaded**: Lisatud uus säte, mis vähendab allalaadimisribalaiuse kasutust mobiilsetel internetiühendustel.
+- ✨ **Parandatud voogesituse meediahaldus**: Parem tugi voogesituse meediale, vähendades viivitustega seotud probleeme.
 
 ### 🛠️ Parandused ja täiustused
 
-- 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
-- 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
-- 🛠️ **Linux compatibility**: Forced GTK 3 usage on Linux to prevent UI and launch issues.
+- 🛠️ **Parandatud mime-tüübi käsitlemine**: Parem meedia ühilduvus tänu täiustatud MIME-tüüpide toele.
+- 🛠️ **Täiustatud navigeerimismenüü**: parandatud mini-oleku käsitlemine ja lisatud abiteate kuvamine, et parandada kasutaja navigeerimist.
+- 🛠️ **Linuxi ühilduvus**: Linuxis on GTK 3 kasutamine kohustuslik, et vältida kasutajaliidese ja käivitamisega seotud probleeme.
 
 ## 25.5.0
 
@@ -27,7 +43,7 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 ### 🛠️ Parandused ja täiustused
 
 - 🔍 **Suurenduse taastamine klahvikombinatsiooniga `Ctrl` + `Scroll`**: Võimaldab uuesti koheselt suumi juhtimist + kerimist, et navigeerimine oleks lihtsam.
-- 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
+- 👤 **Peida kasutamata RÜ-meedia**: Peida kasutamata meedia ringkonaülevaataja külastuste ajal, et säilitada puhtam esitus.
 - 🎵 **Parandatud dubleeritud laulude indikaatorit**: Parandatud duplikaatlaulude visuaalset märki, et neid oleks lihtsam tuvastada.
 
 ## 25.4.3

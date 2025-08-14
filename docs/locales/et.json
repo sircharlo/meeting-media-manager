@@ -3,10 +3,10 @@
   "arrowDown": "nool alla",
   "arrowUp": "nool üles",
   "backButtonTitle": "Tagasi",
+  "closeText": "sulge",
   "codeCopyButtonTitle": "Kopeeri kood",
   "copied": "Kopeeritud",
   "copyright": "Autoriõigused",
-  "closeText": "sulge",
   "darkModeSwitchLabel": "Välimus",
   "darkModeSwitchTitle": "Vaheta tumedale teemale",
   "description": "Meeting Media Manager-i (M³) dokumentatsiooni veebisait.",
@@ -32,10 +32,9 @@
   "returnToTopLabel": "Mine üles tagasi",
   "search": "Otsi",
   "selectText": "et valida",
+  "settingsGuide": "Settings Guide",
   "sidebarMenuLabel": "Menüü",
   "skipToContentLabel": "Otse sisu juurde",
   "title": "M³ dokumentatsioon",
-
-  "settingsGuide": "Settings Guide",
   "userGuide": "User Guide"
 }
