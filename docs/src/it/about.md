@@ -4,7 +4,7 @@
 
 ## Cos'è questa app? {#what-is-this-app}
 
-**Meeting Media Manager**, or **M³** for short, is a comprehensive cross-platform application for Windows, macOS and Linux that automatically downloads, organizes, and presents pictures and videos for congregation meetings of Jehovah's Witnesses. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
+**Meeting Media Manager**, o **M³** in breve, è un'applicazione multi-piattaforma completa per Windows, macOS e Linux che scarica automaticamente, organizza e presenta immagini e video per le riunioni di congregazione dei Testimoni di Geova. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
 
 M³ features support for managing regular and custom meeting media, multiple congregations and/or groups using the same computer account, and advanced presentation capabilities that make media sharing effortless.
 
@@ -24,13 +24,13 @@ M3 è lo strumento definitivo per gestire i media di un adunanza, offrendo un'es
 
 - **Supporto multi-congregazione**: Gestisci le impostazioni per più congregazioni o gruppi facilmente all'interno di una singola applicazione.
 
-- **Advanced features**: Easily add extra media, import custom content, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Funzioni avanzate**: Aggiungi facilmente altri media, importa contenuti personalizzati e condividi automaticamente ciò che succede alla Sala del Regno con i partecipanti su Zoom.
 
 - **Prestazioni ottimizzate multipiattaforma**: Goditi un'esperienza fluida e reattiva su Windows, macOS e Linux, anche su vecchi sistemi o computer con risorse limitate.
 
 - **Affidabile e stabile**: Costruito per funzionare quando ne hai più bisogno. Hai trovato un bug? Segnalalo, e sarà gestito prontamente.
 
-- **Advanced presentation tools**: Advanced media controls, zoom/pan capabilities, custom timing, and seamless Zoom and OBS Studio integration.
+- **Strumenti di presentazione avanzati**: Controlli multimediali avanzati, funzionalità zoom/pan, sincronizzazione personalizzata e integrazione di Zoom e OBS Studio.
 
 ## Cosa può fare M³? {#what-can-m3-do}
 
