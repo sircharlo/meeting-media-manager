@@ -208,6 +208,21 @@ Check these OBS-related issues:
 3. **Port and Password**: Check your OBS port and password settings
 4. **Firewall**: Ensure the firewall isn't blocking the connection
 
+### :speaker: Does Meeting Media Manager automatically send the media audio to Zoom when using OBS Studio? {#audio-to-zoom}
+
+**No.** M³ does not automatically send media audio to Zoom or OBS Studio. The video stream works like a virtual camera with no sound, just like a webcam. To have the music/video sound available in Zoom automatically, you need to ensure that Zoom 'hears' the audio feed coming from the computer, and then you should enable the **Original Audio** setting in Zoom.
+
+**Important Notes:**
+
+- You must enable Original Audio **every time** before starting a Zoom meeting
+- This setting is not related to M³ - you would face the same audio issue when using any other media player and not using Zoom's screen and audio sharing features
+- The Original Audio setting has three sub-options - typically the first two should be enabled and the third disabled for optimal audio quality
+- If you're still experiencing audio issues, you may need to use Zoom's "Share Computer Sound" option instead
+- Alternatively, look into using the Zoom integration instead, as it uses Zoom's native screen sharing.
+
+**Why is this necessary?**
+M³ plays media with sound on your computer, but this audio is not automatically transmitted through the video stream to Zoom when using OBS Studio. The Original Audio setting allows Zoom to capture the audio playing on your computer during screen sharing, if your computer is configured properly (for example: the computer has a second sound card that is used for media playback which Zoom listens to as a microphone.)
+
 ### :snail: M³ is running slowly. How can I improve performance? {#performance-issues}
 
 Try these performance optimizations:
