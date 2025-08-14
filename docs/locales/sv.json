@@ -3,10 +3,10 @@
   "arrowDown": "pil nedåt",
   "arrowUp": "pil uppåt",
   "backButtonTitle": "Tillbaka",
+  "closeText": "för att stänga",
   "codeCopyButtonTitle": "Kopiera kod",
   "copied": "Kopierad",
   "copyright": "Copyright",
-  "closeText": "för att stänga",
   "darkModeSwitchLabel": "Utseende",
   "darkModeSwitchTitle": "Växla till mörkt tema",
   "description": "Meeting Media Managers (M³) webbplats för dokumentation.",
@@ -32,10 +32,9 @@
   "returnToTopLabel": "Tillbaka till toppen",
   "search": "Sök",
   "selectText": "för att välja",
+  "settingsGuide": "Settings Guide",
   "sidebarMenuLabel": "Meny",
   "skipToContentLabel": "Hoppa till innehåll",
   "title": "M³ dokumentation",
-
-  "settingsGuide": "Settings Guide",
   "userGuide": "User Guide"
 }
