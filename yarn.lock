@@ -204,6 +204,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@borewit/text-codec@npm:^0.1.0":
+  version: 0.1.1
+  resolution: "@borewit/text-codec@npm:0.1.1"
+  checksum: 10c0/c92606b355111053f9db47d485c8679cc09a5be0eb2738aad5b922d3744465f2fce47144ffb27d5106fa431d1d2e5a2e0140d0a22351dccf49693098702c0274
+  languageName: node
+  linkType: hard
+
 "@bufbuild/protobuf@npm:^2.5.0":
   version: 2.6.3
   resolution: "@bufbuild/protobuf@npm:2.6.3"
@@ -1501,13 +1508,6 @@ __metadata:
     "@jridgewell/resolve-uri": "npm:^3.1.0"
     "@jridgewell/sourcemap-codec": "npm:^1.4.14"
   checksum: 10c0/fb547ba31658c4d74eb17e7389f4908bf7c44cef47acb4c5baa57289daf68e6fe53c639f41f751b3923aca67010501264f70e7b49978ad1f040294b22c37b333
-  languageName: node
-  linkType: hard
-
-"@kayahr/text-encoding@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "@kayahr/text-encoding@npm:2.0.1"
-  checksum: 10c0/1bb7f677eaac834b63a4e30f39421c53faab515db7bff072fd8b9c5b1b5a6f1694680b9241cd0e85dbf4b61cacc62653e16130f0469fe073388afb9783faa4bc
   languageName: node
   linkType: hard
 
@@ -10427,7 +10427,7 @@ __metadata:
     mime: "npm:^4.0.7"
     mousetrap: "npm:^1.6.5"
     msw: "npm:^2.10.4"
-    music-metadata: "npm:^11.8.1"
+    music-metadata: "npm:^11.8.2"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.1.0"
     pdfjs-dist: "npm:^5.3.93"
@@ -10949,19 +10949,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^11.8.1":
-  version: 11.8.1
-  resolution: "music-metadata@npm:11.8.1"
+"music-metadata@npm:^11.8.2":
+  version: 11.8.2
+  resolution: "music-metadata@npm:11.8.2"
   dependencies:
-    "@kayahr/text-encoding": "npm:^2.0.1"
+    "@borewit/text-codec": "npm:^0.1.0"
     "@tokenizer/token": "npm:^0.3.0"
     content-type: "npm:^1.0.5"
     debug: "npm:^4.4.1"
     file-type: "npm:^21.0.0"
     media-typer: "npm:^1.1.0"
     strtok3: "npm:^10.3.4"
-    token-types: "npm:^6.1.0"
-  checksum: 10c0/e53715a5152e3b0ee3faab034235a7ebb92a8bca6514b6e0764a004ebd1181e09faff6e0bdf3ee2c94c399ba4d7d794e1cb6fe5202d1f08ae1e29a134b577843
+    token-types: "npm:^6.1.1"
+  checksum: 10c0/8fd9beed9d9243ee93e8477a9814d4516cc1d14c93ab2191889a5190339dd16bacb8bb1c0f0fc80cc1645b6820e4a7eb3ac17c85055b9644eec0a12ee32081e5
   languageName: node
   linkType: hard
 
@@ -14531,14 +14531,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"token-types@npm:^6.1.0":
-  version: 6.1.0
-  resolution: "token-types@npm:6.1.0"
+"token-types@npm:^6.1.1":
+  version: 6.1.1
+  resolution: "token-types@npm:6.1.1"
   dependencies:
-    "@kayahr/text-encoding": "npm:^2.0.1"
+    "@borewit/text-codec": "npm:^0.1.0"
     "@tokenizer/token": "npm:^0.3.0"
     ieee754: "npm:^1.2.1"
-  checksum: 10c0/3611f516db2ab6ac2497aad4baba700c9a0edf4f1fadb029d1657cd24100be04e8202f9fec96194778873188a53a01424464f31a358fd9a656e4f739a2f5c3fd
+  checksum: 10c0/e2405e7789d41693a09c478b53c47ffadd735a5f4c826d9885787d022ab10e26cc4a67b03593285748bf3b0c0237e0ea2ab268abcb953ea314727201d0f6504d
   languageName: node
   linkType: hard
 
