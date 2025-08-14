@@ -1,4 +1,4 @@
-# User Guide {#user-guide}
+# 用户指南 {#user-guide}
 
 This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
 
@@ -122,7 +122,7 @@ Configure custom keyboard shortcuts for quick access. Note that no keyboard shor
 
 **Note (\*):** Global shortcut - available even when the app is not focused
 
-## Background Music {#background-music}
+## 背景音乐 {#background-music}
 
 ### Setting Up Background Music {#background-music-setup}
 
@@ -134,7 +134,7 @@ Background music automatically plays before meetings and stops at the appropriat
 4. **Manual Control** - Use the music button in the status bar to start/stop manually
 5. **Restart** - Resume music after meetings with one click
 
-## Zoom Integration {#zoom-integration}
+## Zoom集成 {#zoom-integration}
 
 M³ can integrate with Zoom for automatic screen sharing:
 
@@ -143,7 +143,7 @@ M³ can integrate with Zoom for automatic screen sharing:
 3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
 4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
 
-## OBS Studio Integration {#obs-integration}
+## OBS Studio集成 {#obs-integration}
 
 ### Setting Up OBS Integration {#obs-setup}
 
@@ -229,7 +229,7 @@ M³ plays media with sound on your computer, but this audio is **not automatical
 - **Consider using Zoom integration instead of OBS Studio** for simpler audio handling
 - Ensure all AV operators are familiar with these settings
 
-## Media Import and Management {#media-import}
+## 媒体导入和管理 {#media-import}
 
 ### Importing Custom Media {#importing-custom-media}
 
@@ -293,7 +293,7 @@ Share the official website on external displays:
 - **Refresh** - Reload the current page
 - **Close** - Exit website presentation mode
 
-## Advanced Features {#advanced-features}
+## 高级功能 {#advanced-features}
 
 ### Multiple Congregations {#multiple-congregations}
 
