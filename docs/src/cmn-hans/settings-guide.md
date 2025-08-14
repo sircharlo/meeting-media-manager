@@ -165,7 +165,7 @@ Enable the media display functionality. This is required to present media on a s
 
 **Default**: `false`
 
-### Background Music {#background-music}
+### 背景音乐 {#background-music}
 
 #### Enable Music {#enable-music-button}
 
@@ -247,7 +247,7 @@ The folder path to monitor for new media files.
 
 ## Integrations {#integrations}
 
-### Zoom Integration {#zoom-integration}
+### Zoom集成 {#zoom-integration}
 
 #### Enable Zoom {#enable-zoom}
 
@@ -265,7 +265,7 @@ Keyboard shortcut to trigger Zoom screen sharing.
 
 **Default**: None
 
-### OBS Studio Integration {#obs-integration}
+### OBS Studio集成 {#obs-integration}
 
 #### Enable OBS {#enable-obs}
 
