@@ -3,10 +3,10 @@
   "arrowDown": "puščica dol",
   "arrowUp": "puščica gor",
   "backButtonTitle": "Nazaj",
+  "closeText": "zapreti",
   "codeCopyButtonTitle": "Kopiraj kodo",
   "copied": "Kopirano",
   "copyright": "Avtorske pravice",
-  "closeText": "zapreti",
   "darkModeSwitchLabel": "Videz",
   "darkModeSwitchTitle": "Preklopi na temno temo",
   "description": "Spletna stran z dokumentacijo za Meeting Media Manager (M³).",
@@ -32,10 +32,9 @@
   "returnToTopLabel": "Nazaj na vrh",
   "search": "Išči",
   "selectText": "izbrati",
+  "settingsGuide": "Settings Guide",
   "sidebarMenuLabel": "Meni",
   "skipToContentLabel": "Preskoči na vsebino",
   "title": "Dokumentacija aplikacije M³",
-
-  "settingsGuide": "Settings Guide",
   "userGuide": "User Guide"
 }
