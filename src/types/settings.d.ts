@@ -178,8 +178,8 @@ export interface SettingsValues {
   enableFolderWatcher: boolean;
   enableKeyboardShortcuts: boolean;
   enableMediaAutoExport: boolean;
-  // disableHardwareAcceleration: boolean;
   enableMediaDisplayButton: boolean;
+  enableMediaWindowFadeTransitions: boolean;
   enableMusicButton: boolean;
   enableSubtitles: boolean;
   excludeFootnotes: boolean;

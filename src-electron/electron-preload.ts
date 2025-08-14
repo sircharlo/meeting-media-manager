@@ -90,7 +90,7 @@ const electronApi: ElectronApi = {
   setElectronUrlVariables: (v) => send('setElectronUrlVariables', v),
 
   startWebsiteStream,
-  toggleMediaWindow: (s) => send('toggleMediaWindow', s),
+  toggleMediaWindow: (s, f) => send('toggleMediaWindow', s, f),
   unregisterAllShortcuts: () => send('unregisterAllShortcuts'),
   unregisterShortcut: (s) => send('unregisterShortcut', s),
   unwatchFolders: () => send('unwatchFolders'),

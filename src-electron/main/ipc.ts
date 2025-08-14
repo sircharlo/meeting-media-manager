@@ -37,7 +37,12 @@ import { triggerUpdateCheck } from 'main/updater';
 import { isSelf } from 'main/utils';
 import { logToWindow } from 'main/window/window-base';
 import { mainWindow, toggleAuthorizedClose } from 'main/window/window-main';
-import { mediaWindow, moveMediaWindow } from 'main/window/window-media';
+import {
+  fadeInMediaWindow,
+  fadeOutMediaWindow,
+  mediaWindow,
+  moveMediaWindow,
+} from 'main/window/window-media';
 import {
   askForMediaAccess,
   createWebsiteWindow,
@@ -70,16 +75,34 @@ function handleIpcSend(
   });
 }
 
-handleIpcSend('toggleMediaWindow', (_e, show: boolean) => {
-  if (!mediaWindow) return;
-
-  if (show) {
-    moveMediaWindow();
-    if (!mediaWindow.isVisible()) mediaWindow.show();
-  } else {
-    mediaWindow.hide();
-  }
-});
+handleIpcSend(
+  'toggleMediaWindow',
+  async (_e, show: boolean, enableFadeTransitions = false) => {
+    if (!mediaWindow) return;
+    console.log(
+      '🔍 [toggleMediaWindow] Fade transitions enabled:',
+      enableFadeTransitions,
+      'show:',
+      show,
+    );
+    if (show) {
+      moveMediaWindow();
+      if (!mediaWindow.isVisible()) {
+        if (enableFadeTransitions) {
+          await fadeInMediaWindow(300);
+        } else {
+          mediaWindow.show();
+        }
+      }
+    } else {
+      if (enableFadeTransitions) {
+        await fadeOutMediaWindow(300);
+      } else {
+        mediaWindow.hide();
+      }
+    }
+  },
+);
 
 handleIpcSend('askForMediaAccess', askForMediaAccess);
 

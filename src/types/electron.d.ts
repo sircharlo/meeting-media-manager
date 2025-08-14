@@ -162,7 +162,7 @@ export interface ElectronApi {
   setElectronUrlVariables: (variables: string) => void;
 
   startWebsiteStream: () => void;
-  toggleMediaWindow: (show: boolean) => void;
+  toggleMediaWindow: (show: boolean, enableFadeTransitions?: boolean) => void;
   unregisterAllShortcuts: () => void;
   unregisterShortcut: (shortcut: string) => void;
   unwatchFolders: () => void;

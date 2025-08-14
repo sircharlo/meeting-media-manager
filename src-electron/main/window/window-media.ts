@@ -26,6 +26,7 @@ export function createMediaWindow() {
     icon: getIconPath('media-player'),
     minHeight: 110,
     minWidth: 195,
+    opacity: 1,
     roundedCorners: PLATFORM === 'darwin',
     thickFrame: false,
     title: 'Media Player - M³',
@@ -115,6 +116,140 @@ export function createMediaWindow() {
 
   mediaWindow.on('closed', () => {
     mediaWindow = null;
+  });
+}
+
+/**
+ * Fade in the media window with opacity transition
+ * @param duration Transition duration in milliseconds (default: 300ms)
+ */
+export function fadeInMediaWindow(duration = 300): Promise<void> {
+  return new Promise((resolve) => {
+    if (!mediaWindow || mediaWindow.isDestroyed()) {
+      resolve();
+      return;
+    }
+
+    try {
+      // Set initial opacity to 0
+      mediaWindow.setOpacity(0);
+
+      // Show the window first if it's not visible
+      if (!mediaWindow.isVisible()) {
+        mediaWindow.show();
+      }
+
+      // Gradually increase opacity
+      const steps = Math.max(10, Math.floor(duration / 30));
+      const stepDuration = duration / steps;
+      const opacityStep = 1 / steps;
+      let currentStep = 0;
+
+      const fadeInterval = setInterval(() => {
+        currentStep++;
+        const newOpacity = Math.min(currentStep * opacityStep, 1);
+
+        try {
+          mediaWindow?.setOpacity(newOpacity);
+        } catch {
+          // Fallback: just show the window normally
+          if (mediaWindow && !mediaWindow.isDestroyed()) {
+            mediaWindow.setOpacity(1);
+          }
+          clearInterval(fadeInterval);
+          resolve();
+          return;
+        }
+
+        if (currentStep >= steps) {
+          clearInterval(fadeInterval);
+          if (mediaWindow && !mediaWindow.isDestroyed()) {
+            mediaWindow.setOpacity(1);
+          }
+          resolve();
+        }
+      }, stepDuration);
+
+      // Fallback timeout
+      setTimeout(() => {
+        clearInterval(fadeInterval);
+        if (mediaWindow && !mediaWindow.isDestroyed()) {
+          mediaWindow.setOpacity(1);
+        }
+        resolve();
+      }, duration + 100);
+    } catch {
+      // Fallback: just show the window normally
+      if (mediaWindow && !mediaWindow.isDestroyed()) {
+        mediaWindow.show();
+        mediaWindow.setOpacity(1);
+      }
+      resolve();
+    }
+  });
+}
+
+/**
+ * Fade out the media window with opacity transition
+ * @param duration Transition duration in milliseconds (default: 300ms)
+ */
+export function fadeOutMediaWindow(duration = 300): Promise<void> {
+  return new Promise((resolve) => {
+    if (!mediaWindow || mediaWindow.isDestroyed()) {
+      resolve();
+      return;
+    }
+
+    try {
+      // Gradually decrease opacity
+      const steps = Math.max(10, Math.floor(duration / 30));
+      const stepDuration = duration / steps;
+      const opacityStep = 1 / steps;
+      let currentStep = 0;
+
+      const fadeInterval = setInterval(() => {
+        currentStep++;
+        const newOpacity = Math.max(1 - currentStep * opacityStep, 0);
+
+        try {
+          mediaWindow?.setOpacity(newOpacity);
+        } catch {
+          // Fallback: just hide the window normally
+          if (mediaWindow && !mediaWindow.isDestroyed()) {
+            mediaWindow.hide();
+          }
+          clearInterval(fadeInterval);
+          resolve();
+          return;
+        }
+
+        if (currentStep >= steps) {
+          clearInterval(fadeInterval);
+          if (mediaWindow && !mediaWindow.isDestroyed()) {
+            mediaWindow.hide();
+            mediaWindow.setOpacity(1);
+          }
+          resolve();
+        }
+      }, stepDuration);
+
+      // Fallback timeout
+      setTimeout(() => {
+        clearInterval(fadeInterval);
+        if (mediaWindow && !mediaWindow.isDestroyed()) {
+          mediaWindow.hide();
+          mediaWindow.setOpacity(1);
+        }
+        resolve();
+      }, duration + 100);
+    } catch {
+      // Fallback: just hide the window normally
+      if (mediaWindow && !mediaWindow.isDestroyed()) {
+        mediaWindow.hide();
+        mediaWindow.setOpacity(1);
+      }
+      resolve();
+    }
   });
 }
 

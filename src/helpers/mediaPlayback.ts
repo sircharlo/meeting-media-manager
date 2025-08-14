@@ -232,7 +232,10 @@ export const showMediaWindow = (state?: boolean) => {
       state = !currentState.mediaWindowVisible;
     }
     currentState.mediaWindowVisible = state;
-    toggleMediaWindow(state);
+    toggleMediaWindow(
+      state,
+      currentState.currentSettings?.enableMediaWindowFadeTransitions,
+    );
   } catch (error) {
     errorCatcher(error);
   }
