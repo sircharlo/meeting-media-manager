@@ -4,6 +4,13 @@
 
 Para a lista completa de alterações entre versões, consulte o ficheiro CHANGELOG.md no GitHub.
 
+## v25.8.3
+
+### ✨ Novas Funcionalidades
+
+- ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
+- ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
+
 ## v25.8.1
 
 ### ✨ Novas Funcionalidades
