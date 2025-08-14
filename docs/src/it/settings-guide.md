@@ -247,7 +247,7 @@ The folder path to monitor for new media files.
 
 ## Integrations {#integrations}
 
-### Zoom Integration {#zoom-integration}
+### Integrazione di Zoom {#zoom-integration}
 
 #### Enable Zoom {#enable-zoom}
 
@@ -265,7 +265,7 @@ Keyboard shortcut to trigger Zoom screen sharing.
 
 **Default**: None
 
-### OBS Studio Integration {#obs-integration}
+### Integrazione di OBS Studio {#obs-integration}
 
 #### Enable OBS {#enable-obs}
 
