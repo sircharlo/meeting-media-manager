@@ -566,7 +566,15 @@ export const useJwStore = defineStore('jw-store', {
       });
       Object.entries(state.lookupPeriod).forEach(([, period]) => {
         period?.forEach((day: { date: Date | string }) => {
-          if (day.date) day.date = dateFromString(day.date);
+          try {
+            if (day.date && typeof day.date === 'string') {
+              // Convert the string back to a Date object
+              day.date = new Date(day.date);
+            }
+          } catch (error) {
+            errorCatcher(error);
+            day.date = new Date();
+          }
         });
       });
     },
