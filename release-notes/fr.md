@@ -1,119 +1,100 @@
 <!-- markdownlint-disable no-duplicate-heading -->
 
-# What's New
+# Quoi de neuf
 
-For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
+Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
 ## v25.8.3
 
-### ✨ New Features
+### ✨ Nouvelles fonctionnalités
 
-- ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
-- ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
+- ✨ **Transitions en fondu de la fenêtre multimédia** : Ajout d'un nouveau paramètre avancé pour faire apparaître et disparaître la fenêtre multimédia en fondu, offrant des transitions visuelles plus fluides.
+- ✨ **Contrôle de la durée des images et suivi de la progression** : Ajout du contrôle de la durée des images et des capacités de suivi de la progression pour les sections répétées.
 
 ## v25.8.1
 
-### ✨ New Features
+### ✨ Nouvelles fonctionnalités
 
-- ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
-- ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
-- ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
-- ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
+- ✨ **Sections de médias personnalisées** : Système complet pour créer, modifier et gérer des sections de médias personnalisées avec personnalisation des couleurs et réorganisation par glisser-déposer.
+- ✨ **Séparateurs de médias** : Ajoutez des séparateurs titrés dans les listes de médias pour une meilleure organisation avec des options de positionnement haut/bas.
+- ✨ **Mode de répétition de section** : Activez la lecture en boucle dans des sections spécifiques pour des boucles de médias fluides.
+- ✨ **Intégration Zoom** : Coordination automatique du démarrage/arrêt du partage d'écran avec la lecture des médias.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Améliorations et ajustements
 
-- 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
-- ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
-- 🛠️ **Improved Navigation**: Better keyboard shortcuts with scroll-to-selected functionality and enhanced media navigation.
-- 🛠️ **Visual Enhancements**: Animation support during sorting operations and improved drag-and-drop visual feedback.
+- 🛠️ **En-têtes de section améliorés** : Nouveau système de menu à trois points avec sélecteur de couleur, contrôles de déplacement haut/bas, options de répétition et fonctionnalité de suppression.
+- ✨ **Édition de titre en ligne** : Modifiez les titres des éléments multimédias directement dans l'interface sans ouvrir de boîtes de dialogue séparées.
+- 🛠️ **Navigation améliorée** : Meilleurs raccourcis clavier avec fonctionnalité de défilement vers la sélection et navigation multimédia améliorée.
+- 🛠️ **Améliorations visuelles** : Support d'animation pendant les opérations de tri et retour visuel amélioré du glisser-déposer.
 
 ## 25.6.0
 
-### ✨ New Features
+### ✨ Nouvelles fonctionnalités
 
-- ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
-- ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
+- ✨ **Paramètre de connexion limitée** : Ajout d'un nouveau paramètre pour réduire l'utilisation de la bande passante de téléchargement sur les connexions limitées.
+- ✨ **Gestion améliorée des médias diffusés** : Meilleur support pour les médias diffusés, réduisant les problèmes liés à la latence.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Améliorations et ajustements
 
-- 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
-- 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
-- 🛠️ **Linux compatibility**: Forced GTK 3 usage on Linux to prevent UI and launch issues.
+- 🛠️ **Meilleure gestion des types MIME** : Support amélioré des types MIME pour une meilleure compatibilité des médias.
+- 🛠️ **Tiroir de navigation amélioré** : Gestion améliorée de l'état mini et ajout de l'affichage des infobulles pour une meilleure navigation utilisateur.
+- 🛠️ **Compatibilité Linux** : Utilisation forcée de GTK 3 sur Linux pour éviter les problèmes d'interface et de lancement.
 
 ## 25.5.0
 
-### ✨ New Features
+### ✨ Nouvelles fonctionnalités
 
-- 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
-- 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
+- 🖼️ **Option de délai OBS pour les images** : Ajout d'un paramètre OBS Studio pour retarder les changements de scène lors de l'affichage d'images, améliorant les transitions.
+- 🔊 **Support du format audio `.m4a`** : Ajout de la compatibilité pour les fichiers audio `.m4a` pour étendre les types de médias pris en charge.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Améliorations et ajustements
 
-- 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
-- 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
-- 🎵 **Improve Duplicate Song Indicator**: Enhance the visual cue for duplicate songs to make them easier to identify.
+- 🔍 **Restaurer le zoom avec `Ctrl` + `Défilement`** : Réactiver le zoom immédiat avec le geste contrôle + défilement pour une navigation plus facile.
+- 👤 **Masquer les médias CO inutilisés** : Masquer plutôt que d'ignorer les médias inutilisés pour les visites du responsable de circonscription pour maintenir une présentation plus propre.
+- 🎵 **Améliorer l'indicateur de cantique en double** : Améliorer l'indice visuel pour les cantiques en double pour les rendre plus faciles à identifier.
 
 ## 25.4.3
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Améliorations et ajustements
 
-- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+- ➕ **Nettoyer les médias de v25.4.x** : Nettoyer automatiquement les médias orphelins ou mal placés de v25.4.1 à v25.4.2 pour s'assurer qu'aucun média ne manque ou n'est au mauvais endroit dans la liste des médias.
 
 ## 25.4.2
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Améliorations et ajustements
 
-- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+- ➕ **Prévenir les médias en double** : Éviter d'ajouter plusieurs fois certains éléments multimédias à la liste des médias.
 
 ## 25.4.1
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Améliorations et ajustements
 
-- 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
-- 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
-- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
-- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
-- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
-- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
+- 🎬 **Corriger l'assignation des temps de début/fin personnalisés** : Empêcher les temps de début et de fin personnalisés d'être incorrectement appliqués à la mauvaise vidéo.
+- 📝 **Permettre les sous-titres non assortis** : Permettre l'utilisation de sous-titres même lorsqu'ils ne correspondent pas parfaitement au fichier multimédia.
+- 🪟 **Désactiver les coins arrondis sur Windows** : Supprimer les coins arrondis pour la fenêtre multimédia sur Windows.
+- 🖼 **Inclure les images non référencées dans la liste des médias** : S'assurer que toutes les images non référencées sont ajoutées à la liste des médias pour la complétude.
+- ➕ **Prévenir les sections de médias en double** : Éviter de créer plusieurs sections de médias pour le même élément multimédia.
+- 📥 **Préserver l'ordre de la liste de lecture lors de l'import** : Maintenir l'ordre original des listes de lecture JWL pendant le processus d'import.
 
 ## 25.4.0
 
-### ✨ New Features
+### ✨ Nouvelles fonctionnalités
 
-- 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
-- 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
+- 🇵🇭 **Nouvelle langue : Tagalog** : Ajout du support pour le tagalog, étendant les capacités multilingues de l'application.
+- 🎞 **Support du format vidéo `.m4v`** : Support maintenant la lecture des fichiers `.m4v` pour améliorer la compatibilité des médias.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Améliorations et ajustements
 
-- 🎬 **Multiple Start/End Times for Single Video**: Allow a single video to appear in the media list multiple times with different custom start/end times.
-- 📤 **Include Grouped Media in Auto Export**: Automatically export grouped media items along with others.
-- 📡 **Correct `.m4v` Fetching from JW API**: Ensure `.m4v` files are correctly fetched from the JW API.
+- 🎬 **Temps de début/fin multiples pour une seule vidéo** : Permettre à une seule vidéo d'apparaître plusieurs fois dans la liste des médias avec différents temps de début/fin personnalisés.
+- 📤 **Inclure les médias groupés dans l'export automatique** : Exporter automatiquement les éléments multimédias groupés avec les autres.
+- 📡 **Corriger la récupération `.m4v` depuis l'API JW** : S'assurer que les fichiers `.m4v` sont correctement récupérés depuis l'API JW.
 
 ## 25.3.1
 
-### ✨ New Features
+### ✨ Nouvelles fonctionnalités
 
-- 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
+- 🌏 **Nouvelle langue : Coréen** : Ajout du support pour la langue coréenne, étendant l'accessibilité pour plus d'utilisateurs.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Améliorations et ajustements
 
-- ⚡ **Improve Performance & CPU Usage**: Optimize performance to reduce CPU usage and enhance efficiency.
-- 🔄 **Fix Synchronization & Crash Issues**: Resolve various sync-related and stability issues to improve reliability.
-- 📜 **Show Release Notes for Existing Congregations**: Ensure release notes are only displayed for congregations that are already loaded.
-
-## 25.3.0
-
-### ✨ New Features
-
-- 🎵 **Play Background Music with Videos**: Allow background music to continue playing while videos are being viewed.
-- 🎥 **Camera Feed for Sign Language Media**: Add the ability to display a camera feed on the media window specifically for sign language users.
-- 📅 **Automatic Memorial Date & Background**: Automatically detect and set the Memorial date and prepare the Memorial background image.
-- 📜 **Show Release Notes In-App**: Display release notes directly in the application so users can easily review changes after an update.
-
-### 🛠️ Improvements and Tweaks
-
-- ⚡ **Optimize Smart Cache Clearing**: Improve the smart cache-clearing mechanism for better performance and efficiency.
-- 📂 **Correct Circuit Overseer Media Placement**: Ensure Circuit Overseer media is placed in the correct section.
-- 📅 **Exclude Regular Meeting Media for Memorial**: Prevent fetching standard meeting media for the Memorial to prevent errors.
-- 📅 **Hide Regular Meeting Sections on Memorial**: Remove unnecessary meeting sections during the Memorial event for a cleaner layout.
-- 📖 **Fix Sign Language Bible Video Downloads**: Correctly download Sign Language Bible chapter videos from JWL playlists.
+- ⚡ **Améliorer les performances et l'utilisation du CPU** : Optimiser les performances pour réduire l'utilisation du CPU et améliorer l'efficacité.
