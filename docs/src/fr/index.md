@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: 'M³ Documentation'
+  name: 'Documentation pour M³'
   text: 'Guide complet pour configurer et utiliser Meeting Media Manager'
   image: /logo.svg
   actions:
@@ -37,7 +37,7 @@ features:
     title: Support multilingue
     details: Téléchargez les médias pour les réunions dans des centaines de langues et utilisez l'interface de M³ dans l'une des nombreuses langues disponibles.
   - icon: 🧩
-    title: Integrations
+    title: Intégrations
     details: S'intègre parfaitement avec Zoom ou OBS Studio pour une gestion et une lecture de médias améliorées lors des réunions.
   - icon: 📁
     title: Surveillance de dossiers
