@@ -16,7 +16,7 @@ Le code source de cette application est disponible afin de donner à tous la pos
 
 **Non.** Les [conditions d'utilisation](https://www.jw.org/finder?docid=1011511&prefer=content) du site officiel des Témoins de Jéhovah autorisent spécifiquement le type d'utilisation que nous faisons. Voici l'extrait pertinent de ces conditions :
 
-> Il n'est pas permis de :
+> Il n’est pas permis de :
 >
 > Créer à des fins de diffusion des applications ou des techniques permettant de collecter, de copier, de télécharger, d'extraire des données, du HTML, des images ou du texte de ce site. (Cela n'interdit **pas** la diffusion d'applications gratuites et non commerciales conçues pour télécharger des fichiers électroniques depuis la partie publique du site, par exemple des fichiers EPUB, PDF, MP3 et MP4.)
 
@@ -98,6 +98,8 @@ Pour présenter des médias :
 1. Sélectionnez la date
 2. Cliquez sur le bouton de lecture sur l'élément multimédia que vous voulez présenter ou utilisez les raccourcis clavier
 3. Utilisez les contrôles du lecteur multimédia pour mettre en pause, naviguer ou arrêter la lecture
+4. Use zoom/pan features for images
+5. Set custom timing if needed
 
 ### :keyboard: Quels raccourcis clavier sont disponibles ? {#keyboard-shortcuts}
 
@@ -108,7 +110,7 @@ M³ prend en charge les raccourcis clavier personnalisables pour :
 - Contrôles de lecture/pause/arrêt
 - Basculement de la musique de fond
 
-<!-- - Mode plein écran -->
+<!-- - Fullscreen mode -->
 
 ### :music: Comment fonctionne la musique de fond ? {#background-music}
 
@@ -195,7 +197,7 @@ Vérifiez ces problèmes courants :
 3. **Connexion Internet** : Vérifiez votre connexion Internet
 4. **Disponibilité de la langue** : Vérifiez que la langue est disponible sur le site officiel des Témoins de Jéhovah
 
-<!-- 5. **Actualisation manuelle** : Essayez d'actualiser pour vérifier les nouveaux médias -->
+<!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
 ### :video_camera: L'intégration OBS n'est pas fonctionnelle. Que dois-je vérifier ? {#obs-not-working}
 
@@ -237,7 +239,7 @@ Vérifiez ces paramètres de langue :
 1. **Langue de l'interface** : Vérifiez votre paramètre de langue d'affichage
 2. **Langue des médias** : Vérifiez la langue de téléchargement de vos médias
 3. **Disponibilité de la langue** : Assurez-vous que la langue est disponible sur le site officiel des Témoins de Jéhovah
-4. **Langue de secours** : Essayez de définir une langue de secours
+4. **Fallback Language**: Try setting a fallback language
 
 ## Support et communauté {#support-community}
 
@@ -268,7 +270,7 @@ M³ utilise Crowdin pour la gestion des traductions. Vous pouvez contribuer aux 
 
 1. Visitant le [projet Crowdin](https://crowdin.com/project/meeting-media-manager)
 2. Sélectionnant votre langue
-3. Traduisant les chaînes qui ont besoin d'être améliorées
+3. Translating strings that need work
 4. Examinant les traductions existantes
 
 ### :x: Puis-je faire un don pour soutenir le projet ? {#can-i-make-a-donation-to-the-project}
