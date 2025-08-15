@@ -4,7 +4,7 @@
 
 ## 这个应用程序是什么？ {#what-is-this-app}
 
-**Meeting Media Manager**，简称**M³**，是一个适用于Windows、macOS和Linux的综合性跨平台应用程序，可自动下载、组织和播放耶和华见证人会众聚会的图片和视频。它支持耶和华见证人官方网站上提供的任何语言，并为混合聚会和现场聚会期间的媒体管理提供强大的工具。 It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
+**Meeting Media Manager**，简称**M³**，是一个适用于Windows、macOS和Linux的综合性跨平台应用程序，可自动下载、组织和播放耶和华见证人会众聚会的图片和视频。它支持耶和华见证人官方网站上提供的任何语言，并为混合聚会和现场聚会期间的媒体管理提供强大的工具。 It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
 
 M³具有管理常规和自定义聚会媒体的功能，支持使用同一计算机账户的多个会众和/或小组，以及使媒体共享变得轻松的高级演示功能。
 
@@ -16,7 +16,7 @@ M³具有管理常规和自定义聚会媒体的功能，支持使用同一计�
 
 ## 为什么选择M3？ {#why-choose-m3}
 
-M3是管理聚会媒体的最终工具，为各平台提供无缝、可靠和丰富特色的经验。 It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
+M3是管理聚会媒体的最终工具，为各平台提供无缝、可靠和丰富特色的经验。 It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
 
 ### 主要功能 {#key-benefits}
 
@@ -32,9 +32,9 @@ M3是管理聚会媒体的最终工具，为各平台提供无缝、可靠和丰
 
 - **高级播放工具**: 高级媒体控制、缩放/平移功能、自定义计时以及无缝的Zoom和OBS Studio集成。
 
-## M³能做什么？ {#what-can-m3-do}
+## M³能做什么？ {#what-can-m3-do} {#what-can-m3-do}
 
-M³是一个综合性媒体管理解决方案，让您能够轻松自动地下载、同步、共享和演示所有聚会媒体。 以下是M³的强大之处：
+M³是一个综合性媒体管理解决方案，让您能够轻松自动地下载、同步、共享和演示所有聚会媒体。 以下是M³的强大之处： 以下是M³的强大之处：
 
 ### 核心媒体管理 {#core-media-management}
 
@@ -84,11 +84,11 @@ M³是一个综合性媒体管理解决方案，让您能够轻松自动地下�
 - **键盘快捷键**：许多功能的可自定义键盘快捷键
 - **多个配置文件**：使用单独的配置文件管理不同的会众或小组
 
-**今天给M³一次尝试，看看它能做些什么！  在会众聚会上播放媒体的工作从来没有那么容易。**
+**今天给M³一次尝试，看看它能做些什么！  在会众聚会上播放媒体的工作从来没有那么容易。** 在会众聚会上播放媒体的工作从来没有那么容易。\*\*
 
 ![M³ preview](./../assets/m3-preview.png)
 
-## M³支持我的语言吗？ {#does-m3-work-in-my-language}
+## M³支持我的语言吗？ {#does-m3-work-in-my-language} {#does-m3-work-in-my-language}
 
 **是的！** M³提供全面的多语言支持：
 
@@ -98,7 +98,7 @@ M³是一个综合性媒体管理解决方案，让您能够轻松自动地下�
 
 ### 界面语言 {#interface-languages}
 
-M³本身已被志愿者翻译成多种语言。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 这意味着您可以使用首选语言使用M³，同时下载任何其他支持语言的媒体。
+M³本身已被志愿者翻译成多种语言。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 M³本身已被志愿者翻译成多种语言。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 这意味着您可以使用首选语言使用M³，同时下载任何其他支持语言的媒体。
 
 ### 语言功能 {#language-features}
 
