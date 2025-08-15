@@ -38,10 +38,10 @@ M³ is a comprehensive media management solution that allows you to easily and a
 
 ### Core Media Management {#core-media-management}
 
-- **Automatic media downloads**: Automatically fetches and downloads all media needed for upcoming meetings
-- **Multi-language support**: Download media in any of hundreds of available languages
-- **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
-- **Media organization**: Automatically organizes media by date and meeting section
+- **Download automatico dei media**: Recupera e scarica automaticamente tutti i media necessari per le prossime adunanze
+- **Supporto multi-lingua**: Scarica i media in qualsiasi delle centinaia di lingue disponibili
+- **Smart caching**: Sistema di cache intelligente che mantiene i media organizzati e aggiornati
+- **Organizzazione media**: Organizza automaticamente i media per data e sezione adunanza
 
 ### Media Presentation Features {#presentation-features}
 
