@@ -7027,16 +7027,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^37.2.6":
-  version: 37.2.6
-  resolution: "electron@npm:37.2.6"
+"electron@npm:^37.3.0":
+  version: 37.3.0
+  resolution: "electron@npm:37.3.0"
   dependencies:
     "@electron/get": "npm:^2.0.0"
     "@types/node": "npm:^22.7.7"
     extract-zip: "npm:^2.0.1"
   bin:
     electron: cli.js
-  checksum: 10c0/d0653bbaf6b449260d65d51aa12717ad8acaffce337d32e9892aea5cb70e1dc70f0da54393548595dd3a57cce1dbf699e3fa5d9155427f4151ada572f4430778
+  checksum: 10c0/6f08ca2955c65591368cb0dadbd637d86749040c8d4cd616d7265e1c71ece854f23c678b7cfc23746100327dcdb34f4815504745e97ca3ac2f40c72b951e1044
   languageName: node
   linkType: hard
 
@@ -10408,7 +10408,7 @@ __metadata:
     countries-and-timezones: "npm:^3.8.0"
     decompress: "npm:^4.2.1"
     dompurify: "npm:^3.2.6"
-    electron: "npm:^37.2.6"
+    electron: "npm:^37.3.0"
     electron-builder: "npm:26.0.16"
     electron-dl-manager: "npm:^4.0.0"
     electron-updater: "npm:^6.6.7"
