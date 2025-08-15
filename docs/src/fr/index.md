@@ -12,10 +12,10 @@ hero:
       link: /fr/about
     - theme: brand
       text: Guide de l'utilisateur
-      link: /fr/user-guide
+      link: /user-guide
     - theme: brand
       text: Guide des paramètres
-      link: /fr/settings-guide
+      link: /settings-guide
     - theme: brand
       text: Foire aux questions
       link: /faq
@@ -37,7 +37,7 @@ features:
     title: Support multilingue
     details: Téléchargez les médias pour les réunions dans des centaines de langues et utilisez l'interface de M³ dans l'une des nombreuses langues disponibles.
   - icon: 🧩
-    title: Intégrations
+    title: Integrations
     details: S'intègre parfaitement avec Zoom ou OBS Studio pour une gestion et une lecture de médias améliorées lors des réunions.
   - icon: 📁
     title: Surveillance de dossiers
