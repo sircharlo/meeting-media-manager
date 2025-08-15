@@ -2,7 +2,7 @@
 
 ## General Questions {#general-questions}
 
-### :earth_americas: 此应用是否依赖外部站点、源或“管理员”下载出版物和聚会媒体或其他文档？ {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies}
+### :earth_americas: 此应用是否依赖外部站点、源或“管理员”下载出版物和聚会媒体或其他文档？ {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies}
 
 \*\*不。\*\*此应用程序的运转方式酷似JW Library应用。 它直接从耶和华见证人的官方网站及其内容提供网络下载出版物、媒体和其他内容。 应用程序自动决定需要下载的内容以及先前下载的内容不再是最新的，应该重新下载。
 
@@ -12,9 +12,9 @@
 
 :::
 
-### :thinking: 此应用是否违反了耶和华见证人官方网站的使用条款？ {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use}
+### :thinking: 此应用是否违反了耶和华见证人官方网站的使用条款？ {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use}
 
-\*\*不。\*\*[耶和华见证人官方网站使用条款](https://www.jw.org/finder?docid=1011511&prefer=content)明确允许我们正在做的用法。 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）：
+\*\*不。\*\*[耶和华见证人官方网站使用条款](https://www.jw.org/finder?docid=1011511&prefer=content)明确允许我们正在做的用法。 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）：
 
 > 你不得：
 >
@@ -245,7 +245,7 @@ Verify these language settings:
 
 ### :tv: How do I present media during meetings? {#how-do-i-report-an-issue}
 
-请在官方的 GitHub 仓库上[反馈问题](https://github.com/sircharlo/meeting-media-manager/issues)。 Include: Include: Include: Include: Include: Include: Include: Include:
+请在官方的 GitHub 仓库上[反馈问题](https://github.com/sircharlo/meeting-media-manager/issues)。 Include: Include: Include: Include: Include: Include: Include: Include: Include:
 
 - Detailed description of the problem
 - Steps to reproduce the issue
@@ -254,13 +254,13 @@ Verify these language settings:
 
 ### :new: 如何请求新功能或优化功能？ {#how-can-i-request-a-new-feature-or-enhancement}
 
-请在官方的 GitHub 仓库 [打开讨论](https://github.com/sircharlo/meeting-media-manager/discussions) Describe: Describe: Describe: Describe: Describe: Describe:
+请在官方的 GitHub 仓库 [打开讨论](https://github.com/sircharlo/meeting-media-manager/discussions) Describe: Describe: Describe: Describe: Describe: Describe: Describe:
 
 - The feature you'd like to see
 - How it would benefit users
 - Any specific requirements or preferences
 
-### :handshake: 如何贡献一些代码？ {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code}
+### :handshake: 如何贡献一些代码？ {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code}
 
 请查看官方GitHub 仓库的[贡献指南](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md)。 We welcome code contributions and Pull Requests! We welcome code contributions and Pull Requests!
 
