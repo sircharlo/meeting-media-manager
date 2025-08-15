@@ -17,7 +17,7 @@ hero:
       text: Settings Guide
       link: /settings-guide
     - theme: brand
-      text: ЧаВо
+      text: FAQ
       link: /faq
 
 features:

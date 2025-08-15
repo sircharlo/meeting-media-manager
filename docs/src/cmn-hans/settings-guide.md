@@ -438,7 +438,7 @@ Convert exported media files to MP4 format for better compatibility.
 
 ### Danger Zone {#danger-zone}
 
-:::warning 提示
+:::warning 小贴士
 
 These settings should only be changed if you understand their implications.
 
