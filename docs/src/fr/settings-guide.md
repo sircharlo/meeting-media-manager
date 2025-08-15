@@ -106,7 +106,7 @@ Le jour de la semaine où votre réunion de fin de semaine a lieu.
 
 **Par défaut** : Aucun (doit être défini lors de la configuration)
 
-### Weekend Meeting Time {#weekend-meeting-time}
+### Heure de réunion de fin de semaine {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
