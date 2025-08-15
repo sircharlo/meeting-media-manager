@@ -94,7 +94,7 @@ L'heure de début de votre réunion de semaine.
 
 **Format** : HH:MM (format 24 heures)
 
-**Par défaut** : Aucune (doit être définie lors de la configuration)
+**Par défaut** : Aucun (doit être défini lors de la configuration)
 
 ### Jour de réunion de fin de semaine {#weekend-meeting-day}
 
@@ -114,7 +114,7 @@ L'heure de début de votre réunion de fin de semaine.
 
 **Format** : HH:MM (format 24 heures)
 
-**Par défaut** : Aucune (doit être définie lors de la configuration)
+**Par défaut** : Aucun (doit être défini lors de la configuration)
 
 ### Semaine du responsable de circonscription {#circuit-overseer-week}
 
@@ -263,7 +263,7 @@ Activez les fonctionnalités d'intégration des réunions Zoom.
 
 Raccourci clavier pour déclencher le partage d'écran Zoom.
 
-**Par défaut** : Aucun
+**Par défaut** : Aucune
 
 ### Intégration OBS Studio {#obs-integration}
 
@@ -277,7 +277,7 @@ Activez l'intégration OBS Studio pour le changement automatique de scène.
 
 :::warning Note importante
 
-**Configuration audio requise** : L'intégration OBS Studio ne gère que le changement de vidéo/scène. L'audio des médias M³ **n'est pas automatiquement transmis** à Zoom ou OBS. Le flux vidéo fonctionne comme une caméra virtuelle sans son, tout comme une webcam. Vous devez configurer les paramètres Audio original de Zoom ou utiliser « Partager le son de l'ordinateur » pour vous assurer que les participants à la réunion peuvent entendre les médias. Voir le [Guide de l'utilisateur](/user-guide#audio-configuration) pour les instructions détaillées de configuration audio.
+**Configuration audio requise** : L'intégration OBS Studio ne gère que le changement de vidéo/scène. L'audio des médias M³ **n'est pas automatiquement transmis** à Zoom ou OBS. Vous devez configurer les paramètres Audio original de Zoom ou utiliser « Partager le son de l'ordinateur » pour vous assurer que les participants à la réunion peuvent entendre les médias. Voir le [Guide de l'utilisateur](/user-guide#audio-configuration) pour les instructions détaillées de configuration audio.
 
 **Alternative** : Envisagez d'utiliser l'intégration Zoom à la place, car elle utilise le partage d'écran natif de Zoom qui gère l'audio plus facilement.
 
@@ -289,7 +289,7 @@ Activez l'intégration OBS Studio pour le changement automatique de scène.
 
 Le numéro de port pour se connecter au WebSocket OBS Studio.
 
-**Par défaut** : Aucun
+**Par défaut** : Aucune
 
 #### Mot de passe OBS {#obs-password}
 
@@ -297,7 +297,7 @@ Le numéro de port pour se connecter au WebSocket OBS Studio.
 
 Le mot de passe pour la connexion WebSocket OBS Studio.
 
-**Par défaut** : Aucun
+**Par défaut** : Aucune
 
 #### Scènes OBS {#obs-scenes}
 
