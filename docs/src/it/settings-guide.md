@@ -165,7 +165,7 @@ Enable the media display functionality. This is required to present media on a s
 
 **Default**: `false`
 
-### Background Music {#background-music}
+### Musica di Sottofondo {#background-music}
 
 #### Enable Music {#enable-music-button}
 
