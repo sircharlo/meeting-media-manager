@@ -254,7 +254,7 @@ Verify these language settings:
 
 ### :new: 如何请求新功能或优化功能？ {#how-can-i-request-a-new-feature-or-enhancement}
 
-请在官方的 GitHub 仓库 [打开讨论](https://github.com/sircharlo/meeting-media-manager/discussions) Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe:
+请在官方的 GitHub 仓库上[反馈问题](https://github.com/sircharlo/meeting-media-manager/issues)。 Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Describe:
 
 - The feature you'd like to see
 - How it would benefit users

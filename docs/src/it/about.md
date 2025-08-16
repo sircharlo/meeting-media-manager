@@ -43,34 +43,34 @@ M³ is a comprehensive media management solution that allows you to easily and a
 - **Smart caching**: Sistema di cache intelligente che mantiene i media organizzati e aggiornati
 - **Organizzazione media**: Organizza automaticamente i media per data e sezione adunanza
 
-### Media Presentation Features {#presentation-features}
+### Funzionalità di Presentazione Multimediale {#presentation-features}
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
+Per adunanze di congregazione **ibride** o **di persona** la modalità di presentazione integrata dei media comprende:
 
-- **Advanced media controls**: Media thumbnails with zoom and pan capabilities
-- **Custom timing**: Set custom start and end times for media playback
-- **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
+- **Controlli multimediali avanzati**: Miniature multimediali con capacità di zoom e panoramica
+- **Timing personalizzato**: imposta i tempi di inizio e fine personalizzati per la riproduzione multimediale
+- **Controlli di riproduzione**: Pulsanti di pausa/riproduzione/stop facili da usare con tasti scorciatoia
 - **Supporto multi-monitor**: Rilevamento e gestione automatici dei monitor esterni
-- **Clean presentation**: Distraction-free media presentation interface
+- **Presentazione Pulita**: interfaccia di presentazione multimediale senza distrazioni
 
-### Background Music {#background-music}
+### Musica di Sottofondo {#background-music}
 
-- **Intelligent playback**: Background music that automatically stops before meetings start
-- **One-click restart**: Resume background music with a single click after meetings
-- **Volume control**: Adjustable background music volume with fade-out capabilities
+- **Riproduzione intelligente**: Musica di sottofondo che si ferma automaticamente prima dell'inizio delle adunanze
+- **Riavvio con un clic**: Riprendi la musica di sottofondo con un solo clic dopo le adunanze
+- **Controllo del volume**: Volume musicale di sottofondo regolabile con funzionalità di dissolvenza
 
 ### Integrazione di Zoom {#zoom-integration}
 
-- **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
+- **Condivisione automatica dello schermo**: Avvia e ferma automaticamente la condivisione dello schermo di Zoom quando riproduci o interrompi i media
 
 ### Integrazione di OBS Studio {#obs-integration}
 
-- **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
-- **Scene management**: Automatic switching between camera, media, and other scenes
+- **Cambio automatico della scena**: Integrazione perfetta con OBS Studio per adunanze ibride
+- **Gestione delle scene**: Cambio automatico tra fotocamera, media e altre scene
 
-### Media Import and Management {#media-import}
+### Importazione e gestione multimediale {#media-import}
 
-- **JWPUB files**: Import and manage JWPUB files with ease
+- **File JWPUB**: Importa e gestisci i file JWPUB con facilità
 - **JWLPLAYLIST files**: Support for JW Library playlist files
 - **Custom media**: Import custom videos, pictures, audio files, and PDF files
 - **Audio Bible**: Import Study Bible media and audio recordings of the New World Translation
