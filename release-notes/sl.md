@@ -8,8 +8,8 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
-- ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
+- ✨ **Prehodi pri prikazovanju multimedijskega okna**: Dodana je nova napredna nastavitev, ki omogoča pojavljanje in izginjanje multimedijskega okna, kar zagotavlja bolj gladke vizualne prehode.
+- ✨ **Nadzor časa trajanja slike in sledenje napredka**: Dodana sta bila nadzor časa trajanja slike in sledenje napredka za ponavljajoče se dele.
 
 ## v25.8.1
 
