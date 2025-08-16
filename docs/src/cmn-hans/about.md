@@ -20,7 +20,7 @@ M3是管理聚会媒体的最终工具，为各平台提供无缝、可靠和丰
 
 ### 主要功能 {#key-benefits}
 
-- **今天给M³一次尝试，看看它能做些什么！  在会众聚会上播放媒体的工作从来没有那么容易。** 在会众聚会上播放媒体的工作从来没有那么容易。\*\* 在会众聚会上播放媒体的工作从来没有那么容易。\*\* 不需要复杂的设置或额外的步骤。
+- **今天给M³一次尝试，看看它能做些什么！  在会众聚会上播放媒体的工作从来没有那么容易。** 在会众聚会上播放媒体的工作从来没有那么容易。\*\* 在会众聚会上播放媒体的工作从来没有那么容易。\*\* 不需要复杂的设置或额外的步骤。 不需要复杂的设置或额外的步骤。
 
 - **支持多会众操作：** 在单个应用程序内管理多个会众或小组的设置。
 
@@ -88,7 +88,7 @@ M³是一个综合性媒体管理解决方案，让您能够轻松自动地下�
 
 ![M³ preview](./../assets/m3-preview.png)
 
-## M³支持我的语言吗？ {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language}
+## M³支持我的语言吗？ {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language}
 
 **是的！** M³提供全面的多语言支持：
 
