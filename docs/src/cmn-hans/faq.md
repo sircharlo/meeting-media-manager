@@ -12,7 +12,7 @@
 
 :::
 
-### :thinking: 此应用是否违反了耶和华见证人官方网站的使用条款？ {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use}
+### :thinking: 此应用是否违反了耶和华见证人官方网站的使用条款？ {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use}
 
 \*\*不。\*\*[耶和华见证人官方网站使用条款](https://www.jw.org/finder?docid=1011511&prefer=content)明确允许我们正在做的用法。 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）：
 
@@ -245,7 +245,7 @@ Verify these language settings:
 
 ### :tv: How do I present media during meetings? {#how-do-i-report-an-issue}
 
-请在官方的 GitHub 仓库上[反馈问题](https://github.com/sircharlo/meeting-media-manager/issues)。 Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include:
+请在官方的 GitHub 仓库上[反馈问题](https://github.com/sircharlo/meeting-media-manager/issues)。 Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include:
 
 - Detailed description of the problem
 - Steps to reproduce the issue
@@ -254,7 +254,7 @@ Verify these language settings:
 
 ### :new: 如何请求新功能或优化功能？ {#how-can-i-request-a-new-feature-or-enhancement}
 
-请在官方的 GitHub 仓库 [打开讨论](https://github.com/sircharlo/meeting-media-manager/discussions) Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe:
+请在官方的 GitHub 仓库 [打开讨论](https://github.com/sircharlo/meeting-media-manager/discussions) Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe:
 
 - The feature you'd like to see
 - How it would benefit users
