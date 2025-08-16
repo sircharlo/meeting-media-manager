@@ -14,7 +14,7 @@ hero:
       text: Guida Utente
       link: /user-guide
     - theme: brand
-      text: Settings Guide
+      text: Guida Impostazioni
       link: /settings-guide
     - theme: brand
       text: FAQ
