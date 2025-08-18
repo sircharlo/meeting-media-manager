@@ -6985,15 +6985,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-dl-manager@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "electron-dl-manager@npm:4.0.0"
+"electron-dl-manager@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "electron-dl-manager@npm:4.2.0"
   dependencies:
     ext-name: "npm:^5.0.0"
     unused-filename: "npm:^3.0.1"
   peerDependencies:
     electron: ">=26"
-  checksum: 10c0/75913e39ff802fdeae8621c07888fcba30f0ccca89552ec39ca8effff7ecb3a8c92e3f9a5b0da445fe6c6134c8b4b5059c87d06ca98656fd1514d3520cb2ac91
+  checksum: 10c0/7088f528418f93d4c1d216534486e54d605434386081f3c15351eb42d566404832f6a0a88ef03180d61cb87a1f13353be15fa11ad91ce827ed61ed1cff5a5426
   languageName: node
   linkType: hard
 
@@ -10419,7 +10419,7 @@ __metadata:
     dompurify: "npm:^3.2.6"
     electron: "npm:^37.3.0"
     electron-builder: "npm:26.0.16"
-    electron-dl-manager: "npm:^4.0.0"
+    electron-dl-manager: "npm:^4.2.0"
     electron-updater: "npm:^6.6.7"
     eslint: "npm:^9.32.0"
     eslint-plugin-perfectionist: "npm:^4.15.0"
