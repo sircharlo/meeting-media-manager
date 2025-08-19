@@ -211,6 +211,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@borewit/text-codec@npm:^0.2.0":
+  version: 0.2.0
+  resolution: "@borewit/text-codec@npm:0.2.0"
+  checksum: 10c0/831a96fcd15eb9f8f5390f95a1dccb1c28e2aea7b5cbf17ac8606091d6934bb10a560daa13bca4572cb0a09e19cfefd9e12ca7a29d95d5a330b3f5b9e1dbb005
+  languageName: node
+  linkType: hard
+
 "@bufbuild/protobuf@npm:^2.5.0":
   version: 2.6.3
   resolution: "@bufbuild/protobuf@npm:2.6.3"
@@ -10436,7 +10443,7 @@ __metadata:
     mime: "npm:^4.0.7"
     mousetrap: "npm:^1.6.5"
     msw: "npm:^2.10.5"
-    music-metadata: "npm:^11.8.2"
+    music-metadata: "npm:^11.8.3"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.1.0"
     pdfjs-dist: "npm:^5.3.93"
@@ -10958,11 +10965,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^11.8.2":
-  version: 11.8.2
-  resolution: "music-metadata@npm:11.8.2"
+"music-metadata@npm:^11.8.3":
+  version: 11.8.3
+  resolution: "music-metadata@npm:11.8.3"
   dependencies:
-    "@borewit/text-codec": "npm:^0.1.0"
+    "@borewit/text-codec": "npm:^0.2.0"
     "@tokenizer/token": "npm:^0.3.0"
     content-type: "npm:^1.0.5"
     debug: "npm:^4.4.1"
@@ -10970,7 +10977,8 @@ __metadata:
     media-typer: "npm:^1.1.0"
     strtok3: "npm:^10.3.4"
     token-types: "npm:^6.1.1"
-  checksum: 10c0/8fd9beed9d9243ee93e8477a9814d4516cc1d14c93ab2191889a5190339dd16bacb8bb1c0f0fc80cc1645b6820e4a7eb3ac17c85055b9644eec0a12ee32081e5
+    uint8array-extras: "npm:^1.4.1"
+  checksum: 10c0/ce29aee57638b56032a7309168e757185befec506b2a4861b8ccaa8083210c520323b4b9b4499e8d750fc178ac23d1fd215042fcc0a2271d48612d7c9488d391
   languageName: node
   linkType: hard
 
@@ -14823,6 +14831,13 @@ __metadata:
   version: 1.4.0
   resolution: "uint8array-extras@npm:1.4.0"
   checksum: 10c0/eaffd3388634b7e5e1496073b878dd19136043137d3e7e0d2a453e37f566a5a551e640819e1a6596c6df9b9d1f7b70884cc29db6a357bdd424811f3598d504dd
+  languageName: node
+  linkType: hard
+
+"uint8array-extras@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "uint8array-extras@npm:1.4.1"
+  checksum: 10c0/28419bd94bc43ea013054d0fcdc2ab14f944c178861039bf2997d09e114f4114fd83aeecbee3b57b33cdf21a51808e45638635d8af10336caea005b1b269f919
   languageName: node
   linkType: hard
 
