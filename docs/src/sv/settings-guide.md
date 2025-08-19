@@ -438,7 +438,7 @@ Convert exported media files to MP4 format for better compatibility.
 
 ### Danger Zone {#danger-zone}
 
-:::warning Warning
+:::warning Varning
 
 These settings should only be changed if you understand their implications.
 
@@ -475,7 +475,7 @@ Completely disable automatic media downloads. Use this only for profiles that wi
 3. Configure cache auto-clear to manage disk space
 4. Consider metered connection setting if on limited bandwidth
 
-### Troubleshooting {#troubleshooting}
+### Felsökning {#troubleshooting}
 
 - If media isn't downloading, check your meeting schedule settings
 - If OBS integration isn't working, verify port and password settings
