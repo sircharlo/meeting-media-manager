@@ -30,7 +30,7 @@ The main M³ interface consists of several key areas:
 - **Toolbar** - Quick access to common functions
 - **Status Bar** - Shows download progress, and background music and OBS Studio connection status
 
-## Media Management {#user-guide-media-management}
+## Gestione Media {#user-guide-media-management}
 
 ### Understanding the Calendar View {#calendar-view}
 
@@ -101,7 +101,7 @@ For images and videos:
 - **Pan** - Click and drag the thumbnail to move the image around
 - **Reset Zoom** - Click to return to original zoom
 
-#### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
+#### Scorciatoie da Tastiera {#user-guide-keyboard-shortcuts}
 
 Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
 
@@ -257,7 +257,7 @@ Import audio recordings of Bible verses:
 4. Download the audio files
 5. Use them
 
-## Folder Monitoring and Export {#user-guide-folder-monitoring}
+## Monitoraggio ed Esportazione Cartelle {#user-guide-folder-monitoring}
 
 ### Setting Up Folder Monitoring {#folder-monitoring-setup}
 
@@ -268,7 +268,7 @@ Monitor a folder for new media files:
 3. **Automatic Import** - New files are automatically added to M³
 4. **Organization** - Files are organized by date based on folder structure
 
-### Media Export {#user-guide-media-export}
+### Esportazione Media {#user-guide-media-export}
 
 Automatically export media to organized folders:
 
@@ -295,7 +295,7 @@ Share the official website on external displays:
 
 ## Funzionalità Avanzate {#user-guide-advanced-features}
 
-### Multiple Congregations {#user-guide-multiple-congregations}
+### Congregazioni Multiple {#user-guide-multiple-congregations}
 
 Manage multiple congregations or groups:
 
@@ -323,7 +323,7 @@ Configure custom keyboard shortcuts for efficient operation:
 - Verify internet connection
 - Check if media is available in your selected language
 
-#### OBS Integration Not Working {#user-guide-obs-not-working}
+#### Integrazione OBS Non Funzionante {#user-guide-obs-not-working}
 
 - Verify OBS WebSocket plugin is installed
 - Check port and password settings
@@ -336,7 +336,7 @@ Configure custom keyboard shortcuts for efficient operation:
 - **Audio not working after restart**: Original Audio must be re-enabled for each new Zoom session
 - **Alternative solution**: Use "Share Computer Sound" option in Zoom screen sharing
 
-#### Performance Issues {#user-guide-performance-issues}
+#### Problemi di Prestazioni {#user-guide-performance-issues}
 
 - Enable extra cache
 - Reduce maximum resolution
