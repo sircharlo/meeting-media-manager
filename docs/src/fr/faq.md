@@ -52,7 +52,7 @@ M³ inclut un assistant de configuration qui vous guide à travers la configurat
 4. Configurez l'horaire des réunions
 5. Configurez les fonctionnalités optionnelles comme l'intégration OBS
 
-## Gestion des médias {#faq-media-management}
+## Media Management {#faq-media-management}
 
 ### :download: Comment M³ télécharge-t-il les médias ? {#media-download}
 
@@ -89,7 +89,7 @@ Oui ! M³ inclut une fonctionnalité Bible audio qui vous permet de :
 3. Télécharger des enregistrements audio
 4. Les utiliser lors des réunions
 
-## Fonctionnalités de présentation {#faq-presentation-features}
+## Presentation Features {#faq-presentation-features}
 
 ### :tv: Comment présenter des médias pendant les réunions ? {#present-media}
 
@@ -130,7 +130,7 @@ Pour intégrer avec Zoom :
 2. Configurez le raccourci de partage d'écran qui est défini dans Zoom. Assurez-vous que le raccourci est "global" dans les paramètres de Zoom.
 3. M³ démarrera et arrêtera automatiquement le partage d'écran Zoom lors des présentations de médias
 
-## Intégration OBS Studio {#faq-obs-integration}
+## OBS Studio Integration {#faq-obs-integration}
 
 ### :video_camera: Comment configurer l'intégration OBS Studio ? {#faq-obs-setup}
 
@@ -159,7 +159,7 @@ Cette fonction retarde le partage des images vers OBS jusqu'à ce que vous les d
 - Avoir plus de contrôle sur le timing
 - Éviter les changements de scène précoces
 
-## Fonctionnalités avancées {#faq-advanced-features}
+## Advanced Features {#faq-advanced-features}
 
 ### :cloud: Comment fonctionne la surveillance de dossiers ? {#faq-folder-monitoring}
 
@@ -186,7 +186,7 @@ Oui ! M³ prend en charge plusieurs profils pour :
 - Différents groupes
 - Paramètres et médias séparés pour chaque
 
-## Dépannage {#faq-troubleshooting}
+## Troubleshooting {#faq-troubleshooting}
 
 ### :warning: Les médias ne téléchargent pas. Que dois-je vérifier ? {#faq-media-not-downloading}
 
