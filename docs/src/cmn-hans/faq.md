@@ -2,7 +2,7 @@
 
 ## General Questions {#general-questions}
 
-### :earth_americas: 此应用是否依赖外部站点、源或“管理员”下载出版物和聚会媒体或其他文档？ {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies}
+### :earth_americas: 此应用是否依赖外部站点、源或“管理员”下载出版物和聚会媒体或其他文档？  {#faq-external-dependencies}
 
 \*\*不。\*\*此应用程序的运转方式酷似JW Library应用。 它直接从耶和华见证人的官方网站及其内容提供网络下载出版物、媒体和其他内容。 应用程序自动决定需要下载的内容以及先前下载的内容不再是最新的，应该重新下载。
 
@@ -12,9 +12,9 @@
 
 :::
 
-### :thinking: 此应用是否违反了耶和华见证人官方网站的使用条款？ {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use}
+### :thinking: 此应用是否违反了耶和华见证人官方网站的使用条款？  {#faq-terms-of-use}
 
-\*\*不。\*\*[耶和华见证人官方网站使用条款](https://www.jw.org/finder?docid=1011511&prefer=content)明确允许我们正在做的用法。 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）：
+\*\*不。\*\*[耶和华见证人官方网站使用条款](https://www.jw.org/finder?docid=1011511&prefer=content)明确允许我们正在做的用法。 以下是相关摘录（重要部分已标明）：
 
 > 你不得：
 >
@@ -168,15 +168,6 @@ Folder monitoring allows you to:
 1. Select a folder to watch for new files
 2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
 
-### :file_folder: What is media auto-export? {#faq-media-export}
-
-Media auto-export automatically:
-
-1. Exports media files to a specified folder
-2. Organizes files by date and section
-3. Converts files to MP4 format (optional)
-4. Maintains an organized backup of meeting media files
-
 ### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
 
 Yes! M³ supports multiple profiles for:
@@ -245,7 +236,7 @@ Verify these language settings:
 
 ### :tv: How do I present media during meetings? {#how-do-i-report-an-issue}
 
-请在官方的 GitHub 仓库上[反馈问题](https://github.com/sircharlo/meeting-media-manager/issues)。 Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include:
+请在官方的 GitHub 仓库上[反馈问题](https://github.com/sircharlo/meeting-media-manager/issues)。 Include:
 
 - Detailed description of the problem
 - Steps to reproduce the issue
@@ -254,15 +245,15 @@ Verify these language settings:
 
 ### :new: 如何请求新功能或优化功能？ {#how-can-i-request-a-new-feature-or-enhancement}
 
-请在官方的 GitHub 仓库上[反馈问题](https://github.com/sircharlo/meeting-media-manager/issues)。 Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe:
+请在官方的 GitHub 仓库上[反馈问题](https://github.com/sircharlo/meeting-media-manager/issues)。 Include:
 
 - The feature you'd like to see
 - How it would benefit users
 - Any specific requirements or preferences
 
-### :handshake: 如何贡献一些代码？ {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code}
+### :handshake: 如何贡献一些代码？ 
 
-请查看官方GitHub 仓库的[贡献指南](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md)。 We welcome code contributions and Pull Requests! We welcome code contributions and Pull Requests!
+请查看官方GitHub 仓库的[贡献指南](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md)。 We welcome code contributions and Pull Requests!
 
 ### :globe_with_meridians: How can I help with translations? {#translations}
 
@@ -273,7 +264,7 @@ M³ uses Crowdin for translation management. You can contribute translations by:
 3. Translating strings that need work
 4. Reviewing existing translations
 
-### :x: 如何为该项目做出捐献？ {#faq-can-i-make-a-donation-to-the-project} {#faq-can-i-make-a-donation-to-the-project}
+### :x: 如何为该项目做出捐献？ 
 
 感谢您对支持该项目的兴趣！ 然而，本着马太福音10:8的精神，我们**不接受**捐款，永远不会接受。 这个应用程序是用爱心和花费一些时间制作的。 希望您喜欢！ :tada:
 
