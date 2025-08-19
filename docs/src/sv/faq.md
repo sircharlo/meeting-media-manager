@@ -52,7 +52,7 @@ M³ innehåller en installationsguide som guidar dig genom den viktiga konfigura
 4. Ställ in mötesschema
 5. Konfigurera valfria funktioner såsom OBS-integration
 
-## Media Management {#media-management}
+## Media Management {#faq-media-management}
 
 ### :download: How does M³ download media? {#media-download}
 
@@ -89,7 +89,7 @@ Yes! M³ includes an Audio Bible feature that allows you to:
 3. Download audio recordings
 4. Use them at the meetings
 
-## Presentation Features {#presentation-features}
+## Presentation Features {#faq-presentation-features}
 
 ### :tv: How do I present media during meetings? {#present-media}
 
@@ -101,7 +101,7 @@ To present media:
 4. Use zoom/pan features for images
 5. Set custom timing if needed
 
-### :keyboard: What keyboard shortcuts are available? {#keyboard-shortcuts}
+### :keyboard: What keyboard shortcuts are available? {#faq-keyboard-shortcuts}
 
 M³ supports customizable keyboard shortcuts for:
 
@@ -112,7 +112,7 @@ M³ supports customizable keyboard shortcuts for:
 
 <!-- - Fullscreen mode -->
 
-### :music: How does background music work? {#background-music}
+### :music: How does background music work? {#faq-background-music}
 
 Background music features include:
 
@@ -130,9 +130,9 @@ To integrate with Zoom:
 2. Configure the screen sharing shortcut that is set up in Zoom. Se till att genvägen är "global" i Zooms inställningar.
 3. M³ startar och stoppar automatiskt Zoom-skärmdelning under mediapresentationer
 
-## OBS Studio Integration {#obs-integration}
+## OBS Studio Integration {#faq-obs-integration}
 
-### :video_camera: Hur ställer jag in OBS Studio-integrationen? {#obs-setup}
+### :video_camera: Hur ställer jag in OBS Studio-integrationen? {#faq-obs-setup}
 
 Integrera M³ med OBS Studio:
 
@@ -142,7 +142,7 @@ Integrera M³ med OBS Studio:
 4. Konfigurera scener för kamera, media och bilder
 5. Testa uppspelning
 
-### :arrows_counterclockwise: Hur fungerar automatisk byte av scen? {#scene-switching}
+### :arrows_counterclockwise: Hur fungerar automatisk byte av scen? {#faq-scene-switching}
 
 M³ växlar automatiskt OBS scener baserade på:
 
@@ -151,7 +151,7 @@ M³ växlar automatiskt OBS scener baserade på:
 - Inställningar som "Skjut upp bilder"
 - Om du vill återvända till föregående scen efter media
 
-### :pause_button: Vad är funktionen "Skjut upp bilder"? {#postpone-images}
+### :pause_button: Vad är funktionen "Skjut upp bilder"? {#faq-postpone-images}
 
 Denna funktion försenar delning av bilder till OBS tills du manuellt utlöser dem. Detta är användbart för:
 
@@ -159,16 +159,16 @@ Denna funktion försenar delning av bilder till OBS tills du manuellt utlöser d
 - Mer kontroll över timing
 - Undvika för tidiga scenförändringar
 
-## Avancerade funktioner {#advanced-features}
+## Avancerade funktioner {#faq-advanced-features}
 
-### :cloud: Hur fungerar mappövervakning? {#folder-monitoring}
+### :cloud: Hur fungerar mappövervakning? {#faq-folder-monitoring}
 
 Mappövervakning låter dig att:
 
 1. Välj en mapp att bevaka för nya filer
 2. Importera automatiskt nya mediefiler som synkroniseras med molnlagring som Dropbox eller OneDrive
 
-### :file_folder: Vad är automatisk mediaexport? {#media-export}
+### :file_folder: Vad är automatisk mediaexport? {#faq-media-export}
 
 Automatisk media-export automatiskt:
 
@@ -177,7 +177,7 @@ Automatisk media-export automatiskt:
 3. Konverterar filer till MP4-format (valfritt)
 4. Upprätthåller en organiserad säkerhetskopiering av mötesmediefiler
 
-### :family: Kan jag hantera flera församlingar? {#multiple-congregations}
+### :family: Kan jag hantera flera församlingar? {#faq-multiple-congregations}
 
 Yes! M³ stöder flera profiler för:
 
@@ -186,9 +186,9 @@ Yes! M³ stöder flera profiler för:
 - Olika grupper
 - Separata inställningar och media för varje
 
-## Felsökning {#troubleshooting}
+## Felsökning {#faq-troubleshooting}
 
-### :warning: Media laddas inte ned. Vad ska jag kontrollera? {#media-not-downloading}
+### :warning: Media laddas inte ned. Vad ska jag kontrollera? {#faq-media-not-downloading}
 
 Kontrollera dessa vanliga problem:
 
@@ -199,7 +199,7 @@ Kontrollera dessa vanliga problem:
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: OBS-integrationen fungerar inte. Vad ska jag kontrollera? {#obs-not-working}
+### :video_camera: OBS-integrationen fungerar inte. Vad ska jag kontrollera? {#faq-obs-not-working}
 
 Kontrollera dessa OBS-relaterade problem:
 
@@ -232,7 +232,7 @@ Try these performance optimizations:
 3. **Check Disk Space**: Ensure you have sufficient free disk space
 4. **Reduce Resolution**: Lower the maximum resolution setting
 
-### :speech_balloon: I'm having language issues. Vad ska jag kontrollera? {#language-issues}
+### :speech_balloon: I'm having language issues. Vad ska jag kontrollera? {#faq-language-issues}
 
 Verify these language settings:
 

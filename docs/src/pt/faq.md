@@ -52,7 +52,7 @@ M³ includes a setup wizard that guides you through the essential configuration:
 4. Set up meeting schedule
 5. Configure optional features like OBS integration
 
-## Media Management {#media-management}
+## Media Management {#faq-media-management}
 
 ### :download: How does M³ download media? {#media-download}
 
@@ -89,7 +89,7 @@ Yes! M³ includes an Audio Bible feature that allows you to:
 3. Download audio recordings
 4. Use them at the meetings
 
-## Presentation Features {#presentation-features}
+## Presentation Features {#faq-presentation-features}
 
 ### :tv: How do I present media during meetings? {#present-media}
 
@@ -101,7 +101,7 @@ To present media:
 4. Use zoom/pan features for images
 5. Set custom timing if needed
 
-### :keyboard: What keyboard shortcuts are available? {#keyboard-shortcuts}
+### :keyboard: What keyboard shortcuts are available? {#faq-keyboard-shortcuts}
 
 M³ supports customizable keyboard shortcuts for:
 
@@ -112,7 +112,7 @@ M³ supports customizable keyboard shortcuts for:
 
 <!-- - Fullscreen mode -->
 
-### :music: How does background music work? {#background-music}
+### :music: How does background music work? {#faq-background-music}
 
 Background music features include:
 
@@ -130,9 +130,9 @@ To integrate with Zoom:
 2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
 3. M³ will automatically start and stop Zoom screen sharing during media presentations
 
-## OBS Studio Integration {#obs-integration}
+## OBS Studio Integration {#faq-obs-integration}
 
-### :video_camera: How do I set up the OBS Studio integration? {#obs-setup}
+### :video_camera: How do I set up the OBS Studio integration? {#faq-obs-setup}
 
 To integrate with OBS Studio:
 
@@ -142,7 +142,7 @@ To integrate with OBS Studio:
 4. Configure scenes for camera, media, and images
 5. Test playback
 
-### :arrows_counterclockwise: How does automatic scene switching work? {#scene-switching}
+### :arrows_counterclockwise: How does automatic scene switching work? {#faq-scene-switching}
 
 M³ automatically switches OBS scenes based on:
 
@@ -151,7 +151,7 @@ M³ automatically switches OBS scenes based on:
 - Settings like "Postpone Images"
 - Whether to return to previous scene after media
 
-### :pause_button: What is the "Postpone Images" feature? {#postpone-images}
+### :pause_button: What is the "Postpone Images" feature? {#faq-postpone-images}
 
 This feature delays sharing images to OBS until you manually trigger them. This is useful for:
 
@@ -159,16 +159,16 @@ This feature delays sharing images to OBS until you manually trigger them. This 
 - Having more control over timing
 - Avoiding premature scene changes
 
-## Advanced Features {#advanced-features}
+## Advanced Features {#faq-advanced-features}
 
-### :cloud: How does folder monitoring work? {#folder-monitoring}
+### :cloud: How does folder monitoring work? {#faq-folder-monitoring}
 
 Folder monitoring allows you to:
 
 1. Select a folder to watch for new files
 2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
 
-### :file_folder: What is media auto-export? {#media-export}
+### :file_folder: What is media auto-export? {#faq-media-export}
 
 Media auto-export automatically:
 
@@ -177,7 +177,7 @@ Media auto-export automatically:
 3. Converts files to MP4 format (optional)
 4. Maintains an organized backup of meeting media files
 
-### :family: Can I manage multiple congregations? {#multiple-congregations}
+### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
 
 Yes! M³ supports multiple profiles for:
 
@@ -186,9 +186,9 @@ Yes! M³ supports multiple profiles for:
 - Different groups
 - Separate settings and media for each
 
-## Troubleshooting {#troubleshooting}
+## Troubleshooting {#faq-troubleshooting}
 
-### :warning: Media isn't downloading. What should I check? {#media-not-downloading}
+### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
 
 Check these common issues:
 
@@ -199,7 +199,7 @@ Check these common issues:
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: The OBS integration isn't working. What should I verify? {#obs-not-working}
+### :video_camera: The OBS integration isn't working. What should I verify? {#faq-obs-not-working}
 
 Check these OBS-related issues:
 
@@ -232,7 +232,7 @@ Try these performance optimizations:
 3. **Check Disk Space**: Ensure you have sufficient free disk space
 4. **Reduce Resolution**: Lower the maximum resolution setting
 
-### :speech_balloon: I'm having language issues. What should I check? {#language-issues}
+### :speech_balloon: I'm having language issues. What should I check? {#faq-language-issues}
 
 Verify these language settings:
 

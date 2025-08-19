@@ -2,7 +2,7 @@
 
 ## General Questions {#general-questions}
 
-### :earth_americas: 此应用是否依赖外部站点、源或“管理员”下载出版物和聚会媒体或其他文档？ {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies}
+### :earth_americas: 此应用是否依赖外部站点、源或“管理员”下载出版物和聚会媒体或其他文档？ {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies} {#faq-external-dependencies}
 
 \*\*不。\*\*此应用程序的运转方式酷似JW Library应用。 它直接从耶和华见证人的官方网站及其内容提供网络下载出版物、媒体和其他内容。 应用程序自动决定需要下载的内容以及先前下载的内容不再是最新的，应该重新下载。
 
@@ -12,7 +12,7 @@
 
 :::
 
-### :thinking: 此应用是否违反了耶和华见证人官方网站的使用条款？ {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use}
+### :thinking: 此应用是否违反了耶和华见证人官方网站的使用条款？ {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use} {#faq-terms-of-use}
 
 \*\*不。\*\*[耶和华见证人官方网站使用条款](https://www.jw.org/finder?docid=1011511&prefer=content)明确允许我们正在做的用法。 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）：
 
@@ -52,7 +52,7 @@ M³ includes a setup wizard that guides you through the essential configuration:
 4. Set up meeting schedule
 5. Configure optional features like OBS integration
 
-## Media Management {#media-management}
+## Media Management {#faq-media-management}
 
 ### :download: How does M³ download media? {#media-download}
 
@@ -91,7 +91,7 @@ Yes! M³ includes an Audio Bible feature that allows you to:
 
 ## Presentation Features {#presentation-features}
 
-### :file_folder: What is media auto-export? {#media-export}
+### :file_folder: What is media auto-export? {#faq-media-export}
 
 To present media:
 
@@ -101,7 +101,7 @@ To present media:
 4. Use zoom/pan features for images
 5. Set custom timing if needed
 
-### :keyboard: What keyboard shortcuts are available? {#keyboard-shortcuts}
+### :keyboard: What keyboard shortcuts are available? {#faq-keyboard-shortcuts}
 
 M³ supports customizable keyboard shortcuts for:
 
@@ -112,7 +112,7 @@ M³ supports customizable keyboard shortcuts for:
 
 <!-- - Fullscreen mode -->
 
-### :music: How does background music work? {#background-music}
+### :music: How does background music work? {#faq-background-music}
 
 Background music features include:
 
@@ -130,9 +130,9 @@ To integrate with Zoom:
 2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
 3. M³ will automatically start and stop Zoom screen sharing during media presentations
 
-## OBS Studio集成 {#obs-integration}
+## OBS Studio集成 {#faq-obs-integration}
 
-### :video_camera: How do I set up the OBS Studio integration? {#obs-setup}
+### :video_camera: How do I set up the OBS Studio integration? {#faq-obs-setup}
 
 To integrate with OBS Studio:
 
@@ -142,7 +142,7 @@ To integrate with OBS Studio:
 4. Configure scenes for camera, media, and images
 5. Test playback
 
-### :arrows_counterclockwise: How does automatic scene switching work? {#scene-switching}
+### :arrows_counterclockwise: How does automatic scene switching work? {#faq-scene-switching}
 
 M³ automatically switches OBS scenes based on:
 
@@ -151,7 +151,7 @@ M³ automatically switches OBS scenes based on:
 - Settings like "Postpone Images"
 - Whether to return to previous scene after media
 
-### :pause_button: What is the "Postpone Images" feature? {#postpone-images}
+### :pause_button: What is the "Postpone Images" feature? {#faq-postpone-images}
 
 This feature delays sharing images to OBS until you manually trigger them. This is useful for:
 
@@ -159,16 +159,16 @@ This feature delays sharing images to OBS until you manually trigger them. This 
 - Having more control over timing
 - Avoiding premature scene changes
 
-## 高级功能 {#advanced-features}
+## 高级功能 {#faq-advanced-features}
 
-### :cloud: How does folder monitoring work? {#folder-monitoring}
+### :cloud: How does folder monitoring work? {#faq-folder-monitoring}
 
 Folder monitoring allows you to:
 
 1. Select a folder to watch for new files
 2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
 
-### :file_folder: What is media auto-export? {#media-export}
+### :file_folder: What is media auto-export? {#faq-media-export}
 
 Media auto-export automatically:
 
@@ -177,7 +177,7 @@ Media auto-export automatically:
 3. Converts files to MP4 format (optional)
 4. Maintains an organized backup of meeting media files
 
-### :family: Can I manage multiple congregations? {#multiple-congregations}
+### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
 
 Yes! M³ supports multiple profiles for:
 
@@ -186,9 +186,9 @@ Yes! M³ supports multiple profiles for:
 - Different groups
 - Separate settings and media for each
 
-## Troubleshooting {#troubleshooting}
+## Troubleshooting {#faq-troubleshooting}
 
-### :warning: Media isn't downloading. What should I check? {#media-not-downloading}
+### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
 
 Check these common issues:
 
@@ -199,7 +199,7 @@ Check these common issues:
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: The OBS integration isn't working. What should I verify? {#obs-not-working}
+### :video_camera: The OBS integration isn't working. What should I verify? {#faq-obs-not-working}
 
 Check these OBS-related issues:
 
@@ -232,7 +232,7 @@ Try these performance optimizations:
 3. **Check Disk Space**: Ensure you have sufficient free disk space
 4. **Reduce Resolution**: Lower the maximum resolution setting
 
-### :speech_balloon: I'm having language issues. What should I check? {#language-issues}
+### :speech_balloon: I'm having language issues. What should I check? {#faq-language-issues}
 
 Verify these language settings:
 
@@ -260,7 +260,7 @@ Verify these language settings:
 - How it would benefit users
 - Any specific requirements or preferences
 
-### :handshake: 如何贡献一些代码？ {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code}
+### :handshake: 如何贡献一些代码？ {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code} {#faq-how-can-i-contribute-some-code}
 
 请查看官方GitHub 仓库的[贡献指南](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md)。 We welcome code contributions and Pull Requests! We welcome code contributions and Pull Requests!
 
@@ -273,7 +273,7 @@ M³ uses Crowdin for translation management. You can contribute translations by:
 3. Translating strings that need work
 4. Reviewing existing translations
 
-### :x: 如何为该项目做出捐献？ {#can-i-make-a-donation-to-the-project} {#can-i-make-a-donation-to-the-project}
+### :x: 如何为该项目做出捐献？ {#faq-can-i-make-a-donation-to-the-project} {#faq-can-i-make-a-donation-to-the-project}
 
 感谢您对支持该项目的兴趣！ 然而，本着马太福音10:8的精神，我们**不接受**捐款，永远不会接受。 这个应用程序是用爱心和花费一些时间制作的。 希望您喜欢！ :tada:
 

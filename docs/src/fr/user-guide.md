@@ -30,7 +30,7 @@ L'interface principale de M³ se compose de plusieurs zones clés :
 - **Barre d'outils** - Accès rapide aux fonctions communes
 - **Barre d'état** - Affiche la progression des téléchargements, la musique de fond et le statut de connexion OBS Studio
 
-## Gestion des médias {#media-management}
+## Gestion des médias {#user-guide-media-management}
 
 ### Comprendre la vue calendrier {#calendar-view}
 
@@ -101,7 +101,7 @@ Pour les images et vidéos :
 - **Panoramique** - Cliquez et faites glisser la miniature pour déplacer l'image
 - **Réinitialiser le zoom** - Cliquez pour revenir au zoom original
 
-#### Raccourcis clavier {#keyboard-shortcuts}
+#### Raccourcis clavier {#user-guide-keyboard-shortcuts}
 
 Configurez des raccourcis clavier personnalisés pour un accès rapide. Notez qu'aucun raccourci clavier n'est défini par défaut.
 
@@ -122,7 +122,7 @@ Configurez des raccourcis clavier personnalisés pour un accès rapide. Notez qu
 
 **Note (\*):** Raccourci global - disponible même lorsque l'application n'est pas focalisée
 
-## Musique de fond {#background-music}
+## Musique de fond {#user-guide-background-music}
 
 ### Configuration de la musique de fond {#background-music-setup}
 
@@ -134,7 +134,7 @@ La musique de fond joue automatiquement avant les réunions et s'arrête au mome
 4. **Contrôle manuel** - Utilisez le bouton de musique dans la barre d'état pour démarrer/arrêter manuellement
 5. **Redémarrage** - Reprenez la musique après les réunions d'un clic
 
-## Intégration Zoom {#zoom-integration}
+## Intégration Zoom {#user-guide-zoom-integration}
 
 M³ peut s'intégrer avec Zoom pour le partage d'écran automatique :
 
@@ -143,9 +143,9 @@ M³ peut s'intégrer avec Zoom pour le partage d'écran automatique :
 3. **Contrôle automatique** - M³ basculera automatiquement le partage d'écran dans Zoom selon les besoins
 4. **Contrôle manuel** - Vous pouvez toujours contrôler manuellement le partage d'écran en utilisant Zoom si nécessaire
 
-## Intégration OBS Studio {#obs-integration}
+## Intégration OBS Studio {#user-guide-obs-integration}
 
-### Configuration de l'intégration OBS {#obs-setup}
+### Configuration de l'intégration OBS {#user-guide-obs-setup}
 
 Pour utiliser M³ avec OBS Studio pour les réunions hybrides :
 
@@ -166,14 +166,14 @@ M³ change automatiquement les scènes OBS pendant les présentations :
 
 ### Fonctionnalités OBS avancées {#advanced-obs}
 
-#### Reporter les images {#postpone-images}
+#### Reporter les images {#user-guide-postpone-images}
 
 Activez cette option pour retarder le partage d'images vers OBS jusqu'à ce qu'il soit déclenché manuellement :
 
 1. Activez « Reporter les images » dans les paramètres OBS
 2. Les images ne seront partagées que lorsque vous cliquez sur le bouton pour les afficher en utilisant OBS Studio. Ceci est utile pour montrer les images à l'auditoire en personne en premier.
 
-#### Comportement de changement de scène {#scene-switching}
+#### Comportement de changement de scène {#user-guide-scene-switching}
 
 Configurez comment M³ gère les changements de scène :
 
@@ -257,7 +257,7 @@ Importez des enregistrements audio de versets bibliques :
 4. Téléchargez les fichiers audio
 5. Utilisez-les
 
-## Surveillance et export de dossiers {#folder-monitoring}
+## Surveillance et export de dossiers {#user-guide-folder-monitoring}
 
 ### Configuration de la surveillance de dossiers {#folder-monitoring-setup}
 
@@ -268,7 +268,7 @@ Surveillez un dossier pour les nouveaux fichiers multimédias :
 3. **Import automatique** - Les nouveaux fichiers sont automatiquement ajoutés à M³
 4. **Organisation** - Les fichiers sont organisés par date selon la structure du dossier
 
-### Exportation des médias {#media-export}
+### Exportation des médias {#user-guide-media-export}
 
 Exportez automatiquement les médias vers des dossiers organisés :
 
@@ -293,9 +293,9 @@ Partagez le site officiel sur des écrans externes :
 - **Actualiser** - Recharger la page actuelle
 - **Fermer** - Quitter le mode de présentation du site web
 
-## Fonctionnalités avancées {#advanced-features}
+## Fonctionnalités avancées {#user-guide-advanced-features}
 
-### Assemblées locales multiples {#multiple-congregations}
+### Assemblées locales multiples {#user-guide-multiple-congregations}
 
 Gérez plusieurs assemblées locales ou groupes :
 
@@ -317,13 +317,13 @@ Configurez des raccourcis clavier personnalisés pour une utilisation efficace :
 
 ### Problèmes courants {#common-issues}
 
-#### Les médias ne se téléchargent pas {#media-not-downloading}
+#### Les médias ne se téléchargent pas {#user-guide-media-not-downloading}
 
 - Vérifiez vos paramètres d'horaire de réunions
 - Vérifiez votre connexion Internet
 - Vérifiez si les médias sont disponibles dans votre langue sélectionnée
 
-#### L'intégration OBS ne fonctionne pas {#obs-not-working}
+#### L'intégration OBS ne fonctionne pas {#user-guide-obs-not-working}
 
 - Vérifiez que le plugin OBS WebSocket est installé
 - Vérifiez les paramètres de port et de mot de passe
@@ -336,14 +336,14 @@ Configurez des raccourcis clavier personnalisés pour une utilisation efficace :
 - **Audio ne fonctionne pas après redémarrage** : L'Audio original doit être réactivé pour chaque nouvelle session Zoom
 - **Solution alternative** : Utilisez l'option « Partager le son de l'ordinateur » dans le partage d'écran Zoom
 
-#### Problèmes de performance {#performance-issues}
+#### Problèmes de performance {#user-guide-performance-issues}
 
 - Activez le cache supplémentaire
 - Réduisez la résolution maximale
 - Effacez les anciens fichiers mis en cache
 - Vérifiez l'espace disque disponible
 
-#### Problèmes de langue {#language-issues}
+#### Problèmes de langue {#user-guide-language-issues}
 
 - Vérifiez le paramètre de langue des médias
 - Assurez-vous que la langue est disponible sur JW.org

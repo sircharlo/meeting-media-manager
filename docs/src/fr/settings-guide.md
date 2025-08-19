@@ -165,7 +165,7 @@ Activez la fonctionnalité d'affichage des médias. Ceci est requis pour présen
 
 **Par défaut** : `false`
 
-### Musique de fond {#background-music}
+### Musique de fond {#settings-guide-background-music}
 
 #### Activer la musique {#enable-music-button}
 
@@ -227,7 +227,7 @@ Effacez automatiquement les anciens fichiers mis en cache pour économiser l'esp
 
 **Par défaut** : `true`
 
-### Surveillance de dossiers {#folder-monitoring}
+### Surveillance de dossiers {#settings-guide-folder-monitoring}
 
 #### Activer le surveillant de dossier {#enable-folder-watcher}
 
@@ -247,7 +247,7 @@ Le chemin du dossier à surveiller pour les nouveaux fichiers multimédias.
 
 ## Intégrations {#integrations}
 
-### Intégration Zoom {#zoom-integration}
+### Intégration Zoom {#settings-guide-zoom-integration}
 
 #### Activer Zoom {#enable-zoom}
 
@@ -265,7 +265,7 @@ Raccourci clavier pour déclencher le partage d'écran Zoom.
 
 **Par défaut** : Aucune
 
-### Intégration OBS Studio {#obs-integration}
+### Intégration OBS Studio {#settings-guide-obs-integration}
 
 #### Activer OBS {#enable-obs}
 
@@ -325,7 +325,7 @@ Configurez quelles scènes OBS utiliser pour différents usages :
 
 ## Paramètres avancés {#advanced-settings}
 
-### Raccourcis clavier {#keyboard-shortcuts}
+### Raccourcis clavier {#settings-guide-keyboard-shortcuts}
 
 #### Activer les raccourcis clavier {#enable-keyboard-shortcuts}
 
@@ -410,7 +410,7 @@ Langue pour les sous-titres (peut être différente de la langue des médias).
 
 **Par défaut** : Aucune
 
-### Exportation des médias {#media-export}
+### Exportation des médias {#settings-guide-media-export}
 
 #### Activer l'exportation automatique des médias {#enable-media-auto-export}
 
@@ -475,7 +475,7 @@ Désactiver complètement le téléchargement automatique des médias. Utilisez 
 3. Configurer l'effacement automatique du cache pour gérer l'espace disque
 4. Considérez le paramètre de connexion limitée si sur une bande passante limitée
 
-### Dépannage {#troubleshooting}
+### Dépannage {#settings-guide-troubleshooting}
 
 - Si les médias ne téléchargent pas, vérifiez les paramètres de votre horaire de réunion
 - Si l'intégration OBS ne fonctionne pas, vérifiez les paramètres du port et du mot de passe

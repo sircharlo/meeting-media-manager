@@ -14,7 +14,7 @@ This app used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed t
 
 :::
 
-## M³를 사용하는 이유 {#why-choose-m3} {#why-choose-m3}
+## M³를 사용하는 이유 {#about-about-why-choose-m3} {#about-about-why-choose-m3}
 
 M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
 
@@ -43,7 +43,7 @@ M³ is a comprehensive media management solution that allows you to easily and a
 - **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
 - **Media organization**: Automatically organizes media by date and meeting section
 
-### Media Presentation Features {#presentation-features}
+### Media Presentation Features {#about-presentation-features}
 
 For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
 
@@ -53,22 +53,22 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - **Multi-monitor support**: Automatic external monitor detection and management
 - **Clean presentation**: Distraction-free media presentation interface
 
-### Background Music {#background-music}
+### Background Music {#about-background-music}
 
 - **Intelligent playback**: Background music that automatically stops before meetings start
 - **One-click restart**: Resume background music with a single click after meetings
 - **Volume control**: Adjustable background music volume with fade-out capabilities
 
-### Zoom Integration {#zoom-integration}
+### Zoom Integration {#about-zoom-integration}
 
 - **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
 
-### OBS Studio Integration {#obs-integration}
+### OBS Studio Integration {#about-obs-integration}
 
 - **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
 - **Scene management**: Automatic switching between camera, media, and other scenes
 
-### Media Import and Management {#media-import}
+### Media Import and Management {#about-media-import}
 
 - **JWPUB files**: Import and manage JWPUB files with ease
 - **JWLPLAYLIST files**: Support for JW Library playlist files
@@ -76,7 +76,7 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - **Audio Bible**: Import Study Bible media and audio recordings of the New World Translation
 - **Public talks**: Always have public talk media overview ready to use with the S-34 importer
 
-### Advanced Features {#advanced-features}
+### Advanced Features {#about-advanced-features}
 
 - **Folder monitoring**: Automatically sync media from watched folders (Dropbox, OneDrive, etc.)
 - **Media export**: Automatically export media to folders, organized by date

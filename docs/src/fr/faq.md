@@ -52,7 +52,7 @@ M³ inclut un assistant de configuration qui vous guide à travers la configurat
 4. Configurez l'horaire des réunions
 5. Configurez les fonctionnalités optionnelles comme l'intégration OBS
 
-## Gestion des médias {#media-management}
+## Gestion des médias {#faq-media-management}
 
 ### :download: Comment M³ télécharge-t-il les médias ? {#media-download}
 
@@ -89,7 +89,7 @@ Oui ! M³ inclut une fonctionnalité Bible audio qui vous permet de :
 3. Télécharger des enregistrements audio
 4. Les utiliser lors des réunions
 
-## Fonctionnalités de présentation {#presentation-features}
+## Fonctionnalités de présentation {#faq-presentation-features}
 
 ### :tv: Comment présenter des médias pendant les réunions ? {#present-media}
 
@@ -101,7 +101,7 @@ Pour présenter des médias :
 4. Use zoom/pan features for images
 5. Set custom timing if needed
 
-### :keyboard: Quels raccourcis clavier sont disponibles ? {#keyboard-shortcuts}
+### :keyboard: Quels raccourcis clavier sont disponibles ? {#faq-keyboard-shortcuts}
 
 M³ prend en charge les raccourcis clavier personnalisables pour :
 
@@ -112,7 +112,7 @@ M³ prend en charge les raccourcis clavier personnalisables pour :
 
 <!-- - Fullscreen mode -->
 
-### :music: Comment fonctionne la musique de fond ? {#background-music}
+### :music: Comment fonctionne la musique de fond ? {#faq-background-music}
 
 Les fonctionnalités de musique de fond incluent :
 
@@ -130,9 +130,9 @@ Pour intégrer avec Zoom :
 2. Configurez le raccourci de partage d'écran qui est défini dans Zoom. Assurez-vous que le raccourci est "global" dans les paramètres de Zoom.
 3. M³ démarrera et arrêtera automatiquement le partage d'écran Zoom lors des présentations de médias
 
-## Intégration OBS Studio {#obs-integration}
+## Intégration OBS Studio {#faq-obs-integration}
 
-### :video_camera: Comment configurer l'intégration OBS Studio ? {#obs-setup}
+### :video_camera: Comment configurer l'intégration OBS Studio ? {#faq-obs-setup}
 
 Pour intégrer avec OBS Studio :
 
@@ -142,7 +142,7 @@ Pour intégrer avec OBS Studio :
 4. Configurez les scènes pour la caméra, les médias et les images
 5. Testez la lecture
 
-### :arrows_counterclockwise: Comment fonctionne le basculement automatique des scènes ? {#scene-switching}
+### :arrows_counterclockwise: Comment fonctionne le basculement automatique des scènes ? {#faq-scene-switching}
 
 M³ bascule automatiquement les scènes OBS en fonction de :
 
@@ -151,7 +151,7 @@ M³ bascule automatiquement les scènes OBS en fonction de :
 - Paramètres comme "Différer les images"
 - Si vous revenez à la scène précédente après le média
 
-### :pause_button: Qu'est-ce que la fonction "Différer les images" ? {#postpone-images}
+### :pause_button: Qu'est-ce que la fonction "Différer les images" ? {#faq-postpone-images}
 
 Cette fonction retarde le partage des images vers OBS jusqu'à ce que vous les déclenchez manuellement. C'est utile pour :
 
@@ -159,16 +159,16 @@ Cette fonction retarde le partage des images vers OBS jusqu'à ce que vous les d
 - Avoir plus de contrôle sur le timing
 - Éviter les changements de scène précoces
 
-## Fonctionnalités avancées {#advanced-features}
+## Fonctionnalités avancées {#faq-advanced-features}
 
-### :cloud: Comment fonctionne la surveillance de dossiers ? {#folder-monitoring}
+### :cloud: Comment fonctionne la surveillance de dossiers ? {#faq-folder-monitoring}
 
 La surveillance de dossiers vous permet de :
 
 1. Sélectionner un dossier à surveiller pour les nouveaux fichiers
 2. Importer automatiquement les nouveaux fichiers multimédias qui sont synchronisés avec le stockage cloud comme Dropbox ou OneDrive
 
-### :file_folder: Qu'est-ce que l'exportation automatique des médias ? {#media-export}
+### :file_folder: Qu'est-ce que l'exportation automatique des médias ? {#faq-media-export}
 
 L'exportation automatique des médias :
 
@@ -177,7 +177,7 @@ L'exportation automatique des médias :
 3. Convertit les fichiers en format MP4 (optionnel)
 4. Maintenir une sauvegarde organisée des fichiers multimédias de la réunion
 
-### :family: Puis-je gérer plusieurs assemblées ? {#multiple-congregations}
+### :family: Puis-je gérer plusieurs assemblées ? {#faq-multiple-congregations}
 
 Oui ! M³ prend en charge plusieurs profils pour :
 
@@ -186,9 +186,9 @@ Oui ! M³ prend en charge plusieurs profils pour :
 - Différents groupes
 - Paramètres et médias séparés pour chaque
 
-## Dépannage {#troubleshooting}
+## Dépannage {#faq-troubleshooting}
 
-### :warning: Les médias ne téléchargent pas. Que dois-je vérifier ? {#media-not-downloading}
+### :warning: Les médias ne téléchargent pas. Que dois-je vérifier ? {#faq-media-not-downloading}
 
 Vérifiez ces problèmes courants :
 
@@ -199,7 +199,7 @@ Vérifiez ces problèmes courants :
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: L'intégration OBS n'est pas fonctionnelle. Que dois-je vérifier ? {#obs-not-working}
+### :video_camera: L'intégration OBS n'est pas fonctionnelle. Que dois-je vérifier ? {#faq-obs-not-working}
 
 Vérifiez ces problèmes liés à OBS :
 
@@ -232,7 +232,7 @@ Essayez ces optimisations de performances :
 3. **Vérifier l'espace disque** : Assurez-vous d'avoir suffisamment d'espace disque libre
 4. **Réduire la résolution** : Réduisez la résolution maximale
 
-### :speech_balloon: J'ai des problèmes de langue. Que dois-je vérifier ? {#language-issues}
+### :speech_balloon: J'ai des problèmes de langue. Que dois-je vérifier ? {#faq-language-issues}
 
 Vérifiez ces paramètres de langue :
 

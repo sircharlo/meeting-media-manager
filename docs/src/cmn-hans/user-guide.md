@@ -30,7 +30,7 @@ The main M³ interface consists of several key areas:
 - **Toolbar** - Quick access to common functions
 - **Status Bar** - Shows download progress, and background music and OBS Studio connection status
 
-## Media Management {#media-management}
+## Media Management {#user-guide-media-management}
 
 ### Understanding the Calendar View {#calendar-view}
 
@@ -101,7 +101,7 @@ For images and videos:
 - **Pan** - Click and drag the thumbnail to move the image around
 - **Reset Zoom** - Click to return to original zoom
 
-#### Keyboard Shortcuts {#keyboard-shortcuts}
+#### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
 
 Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
 
@@ -122,7 +122,7 @@ Configure custom keyboard shortcuts for quick access. Note that no keyboard shor
 
 **Note (\*):** Global shortcut - available even when the app is not focused
 
-## 背景音乐 {#background-music}
+## 背景音乐 {#user-guide-background-music}
 
 ### Setting Up Background Music {#background-music-setup}
 
@@ -134,7 +134,7 @@ Background music automatically plays before meetings and stops at the appropriat
 4. **Manual Control** - Use the music button in the status bar to start/stop manually
 5. **Restart** - Resume music after meetings with one click
 
-## Zoom集成 {#zoom-integration}
+## Zoom集成 {#user-guide-zoom-integration}
 
 M³ can integrate with Zoom for automatic screen sharing:
 
@@ -143,9 +143,9 @@ M³ can integrate with Zoom for automatic screen sharing:
 3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
 4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
 
-## OBS Studio集成 {#obs-integration}
+## OBS Studio集成 {#user-guide-obs-integration}
 
-### Setting Up OBS Integration {#obs-setup}
+### Setting Up OBS Integration {#user-guide-obs-setup}
 
 To use M³ with OBS Studio for hybrid meetings:
 
@@ -166,14 +166,14 @@ M³ automatically switches OBS scenes during presentations:
 
 ### Advanced OBS Features {#advanced-obs}
 
-#### Postpone Images {#postpone-images}
+#### Postpone Images {#user-guide-postpone-images}
 
 Enable this option to delay sharing images to OBS until manually triggered:
 
 1. Enable "Postpone Images" in OBS settings
 2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
 
-#### Scene Switching Behavior {#scene-switching}
+#### Scene Switching Behavior {#user-guide-scene-switching}
 
 Configure how M³ handles scene changes:
 
@@ -257,7 +257,7 @@ Import audio recordings of Bible verses:
 4. Download the audio files
 5. Use them
 
-## Folder Monitoring and Export {#folder-monitoring}
+## Folder Monitoring and Export {#user-guide-folder-monitoring}
 
 ### Setting Up Folder Monitoring {#folder-monitoring-setup}
 
@@ -268,7 +268,7 @@ Monitor a folder for new media files:
 3. **Automatic Import** - New files are automatically added to M³
 4. **Organization** - Files are organized by date based on folder structure
 
-### Media Export {#media-export}
+### Media Export {#user-guide-media-export}
 
 Automatically export media to organized folders:
 
@@ -293,9 +293,9 @@ Share the official website on external displays:
 - **Refresh** - Reload the current page
 - **Close** - Exit website presentation mode
 
-## 高级功能 {#advanced-features}
+## 高级功能 {#user-guide-advanced-features}
 
-### Multiple Congregations {#multiple-congregations}
+### Multiple Congregations {#user-guide-multiple-congregations}
 
 Manage multiple congregations or groups:
 
@@ -323,7 +323,7 @@ Configure custom keyboard shortcuts for efficient operation:
 - Verify internet connection
 - Check if media is available in your selected language
 
-#### OBS Integration Not Working {#obs-not-working}
+#### OBS Integration Not Working {#user-guide-obs-not-working}
 
 - Verify OBS WebSocket plugin is installed
 - Check port and password settings
@@ -336,14 +336,14 @@ Configure custom keyboard shortcuts for efficient operation:
 - **Audio not working after restart**: Original Audio must be re-enabled for each new Zoom session
 - **Alternative solution**: Use "Share Computer Sound" option in Zoom screen sharing
 
-#### Performance Issues {#performance-issues}
+#### Performance Issues {#user-guide-performance-issues}
 
 - Enable extra cache
 - Reduce maximum resolution
 - Clear old cached files
 - Check available disk space
 
-#### Language Issues {#language-issues}
+#### Language Issues {#user-guide-language-issues}
 
 - Check media language setting
 - Ensure language is available on JW.org
