@@ -52,7 +52,7 @@ M³ includes a setup wizard that guides you through the essential configuration:
 4. Set up meeting schedule
 5. Configure optional features like OBS integration
 
-## Media Management {#faq-media-management}
+## Gestione Media Principale {#faq-media-management}
 
 ### :download: How does M³ download media? {#media-download}
 
@@ -89,7 +89,7 @@ Yes! M³ includes an Audio Bible feature that allows you to:
 3. Download audio recordings
 4. Use them at the meetings
 
-## Presentation Features {#faq-presentation-features}
+## Funzionalità di Presentazione {#faq-presentation-features}
 
 ### :tv: How do I present media during meetings? {#present-media}
 
@@ -186,7 +186,7 @@ Yes! M³ supports multiple profiles for:
 - Different groups
 - Separate settings and media for each
 
-## Troubleshooting {#faq-troubleshooting}
+## Risoluzione Problemi {#faq-troubleshooting}
 
 ### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
 
