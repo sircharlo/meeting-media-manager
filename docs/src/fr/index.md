@@ -12,7 +12,7 @@ hero:
       link: /fr/about
     - theme: brand
       text: Guide de l'utilisateur
-      link: /user-guide
+      link: /fr/user-guide
     - theme: brand
       text: Guide des paramètres
       link: /settings-guide
