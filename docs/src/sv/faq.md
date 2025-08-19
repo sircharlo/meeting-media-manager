@@ -1,6 +1,6 @@
 # Vanliga frågor {#frequently-asked-questions}
 
-## General Questions {#general-questions}
+## Allmänna frågor {#general-questions}
 
 ### :earth_americas: Är den här appen beroende av externa sajter eller källor för att ladda ner publikationer och mötesmedia? {#external-dependencies}
 
@@ -20,37 +20,37 @@ Källkoden för denna app är tillgänglig för alla att undersöka och verifier
 >
 > Skapa eller distribuera programvaror, verktyg eller tekniker som är utformade för att samla in, kopiera, ladda ner, extrahera, utvinna eller skrapa data, html, bilder eller text från den här webbplatsen. (Det här förbjuder **inte** distribuering av gratis, icke-kommersiella program som laddar ner digitala filer i format som epub, pdf, mp3 och mp4 från allmänna delar av den här webbplatsen.)
 
-### :question: What operating systems does M³ support? {#operating-systems}
+### :question: Vilka operativsystem stödjer M³? {#operating-systems}
 
-M³ supports Windows, macOS, and Linux:
+M³ stöder Windows, macOS och Linux:
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 och senare (64-bitars och 32-bitars versioner tillgängliga)
+- **macOS**: macOS 10.15 (Catalina) och senare (Intel- och Apple Silicon stöd)
+- **Linux**: De flesta moderna Linuxdistributioner (AppImage format)
 
-### :globe_with_meridians: Does M³ work in my language? {#language-support}
+### :globe_with_meridians: Fungerar M³ på mitt språk? {#language-support}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Ja!** M³ ger omfattande stöd för flera språk:
 
-- **Media Languages**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
-- **Interface Languages**: Use M³'s interface in many different languages
-- **Independent Settings**: You can use the interface in one language while downloading media in another
+- **Mediaspråk**: Ladda ner media på något av hundratals språk som finns på Jehovas officiella hemsida
+- **Gränssnittsspråk**: Använd M³:s gränssnitt på många olika språk
+- **Oberoende inställningar**: Du kan använda gränssnittet på ett språk när du laddar ner media i ett annat
 
-## Installation and Setup {#installation-setup}
+## Installation {#installation-setup}
 
-### :computer: How do I install M³? {#installation}
+### :computer: Hur installerar jag M³? {#installation}
 
-Download the appropriate version for your operating system from the [releases page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and follow the installation instructions in the [setup guide](/using-at-a-kingdom-hall#download-and-install).
+Ladda ner lämplig version för ditt operativsystem från [releasessidan](https://github.com/sircharlo/meeting-media-manager/releases/latest) och följ installationsinstruktionerna i [installationsguiden](/using-at-a-kingdom-hall#download-and-install).
 
-### :gear: How do I set up M³ for the first time? {#first-time-setup}
+### :gear: Hur ställer jag in M³ för första gången? {#first-time-setup}
 
-M³ includes a setup wizard that guides you through the essential configuration:
+M³ innehåller en installationsguide som guidar dig genom den viktiga konfigurationen:
 
-1. Choose your interface language
-2. Select profile type (Regular or Other)
-3. Configure congregation information
-4. Set up meeting schedule
-5. Configure optional features like OBS integration
+1. Språk för användargränssnitt
+2. Välj profiltyp (ordinarie eller annat)
+3. Konfigurera församlingsinformation
+4. Ställ in mötesschema
+5. Konfigurera valfria funktioner såsom OBS-integration
 
 ## Media Management {#media-management}
 
@@ -127,81 +127,81 @@ Background music features include:
 To integrate with Zoom:
 
 1. Enable Zoom integration in M³ settings
-2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
-3. M³ will automatically start and stop Zoom screen sharing during media presentations
+2. Configure the screen sharing shortcut that is set up in Zoom. Se till att genvägen är "global" i Zooms inställningar.
+3. M³ startar och stoppar automatiskt Zoom-skärmdelning under mediapresentationer
 
 ## OBS Studio Integration {#obs-integration}
 
-### :video_camera: How do I set up the OBS Studio integration? {#obs-setup}
+### :video_camera: Hur ställer jag in OBS Studio-integrationen? {#obs-setup}
 
-To integrate with OBS Studio:
+Integrera M³ med OBS Studio:
 
-1. Install OBS Studio and the WebSocket plugin
-2. Enable OBS integration in M³ settings
-3. Enter the OBS port and password
-4. Configure scenes for camera, media, and images
-5. Test playback
+1. Installera OBS Studio och WebSocket-pluginen
+2. Aktivera OBS-integration i inställningarna för M³
+3. Ange OBS port och lösenord
+4. Konfigurera scener för kamera, media och bilder
+5. Testa uppspelning
 
-### :arrows_counterclockwise: How does automatic scene switching work? {#scene-switching}
+### :arrows_counterclockwise: Hur fungerar automatisk byte av scen? {#scene-switching}
 
-M³ automatically switches OBS scenes based on:
+M³ växlar automatiskt OBS scener baserade på:
 
-- Media type (video, image, etc.)
-- Your scene configuration
-- Settings like "Postpone Images"
-- Whether to return to previous scene after media
+- Mediatyp (video, bild, etc.)
+- Din scenkonfiguration
+- Inställningar som "Skjut upp bilder"
+- Om du vill återvända till föregående scen efter media
 
-### :pause_button: What is the "Postpone Images" feature? {#postpone-images}
+### :pause_button: Vad är funktionen "Skjut upp bilder"? {#postpone-images}
 
-This feature delays sharing images to OBS until you manually trigger them. This is useful for:
+Denna funktion försenar delning av bilder till OBS tills du manuellt utlöser dem. Detta är användbart för:
 
-- Showing images to in-person audience first
-- Having more control over timing
-- Avoiding premature scene changes
+- Visar bilder för åhörarna i Rikets sal först
+- Mer kontroll över timing
+- Undvika för tidiga scenförändringar
 
-## Advanced Features {#advanced-features}
+## Avancerade funktioner {#advanced-features}
 
-### :cloud: How does folder monitoring work? {#folder-monitoring}
+### :cloud: Hur fungerar mappövervakning? {#folder-monitoring}
 
-Folder monitoring allows you to:
+Mappövervakning låter dig att:
 
-1. Select a folder to watch for new files
-2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
+1. Välj en mapp att bevaka för nya filer
+2. Importera automatiskt nya mediefiler som synkroniseras med molnlagring som Dropbox eller OneDrive
 
-### :file_folder: What is media auto-export? {#media-export}
+### :file_folder: Vad är automatisk mediaexport? {#media-export}
 
-Media auto-export automatically:
+Automatisk media-export automatiskt:
 
-1. Exports media files to a specified folder
-2. Organizes files by date and section
-3. Converts files to MP4 format (optional)
-4. Maintains an organized backup of meeting media files
+1. Exporterar mediefiler till en angiven mapp
+2. Organiserar filer efter datum och avsnitt
+3. Konverterar filer till MP4-format (valfritt)
+4. Upprätthåller en organiserad säkerhetskopiering av mötesmediefiler
 
-### :family: Can I manage multiple congregations? {#multiple-congregations}
+### :family: Kan jag hantera flera församlingar? {#multiple-congregations}
 
-Yes! M³ supports multiple profiles for:
+Yes! M³ stöder flera profiler för:
 
-- Different congregations
-- Special events
-- Different groups
-- Separate settings and media for each
+- Olika församlingar
+- Särskilda händelser
+- Olika grupper
+- Separata inställningar och media för varje
 
-## Troubleshooting {#troubleshooting}
+## Felsökning {#troubleshooting}
 
-### :warning: Media isn't downloading. What should I check? {#media-not-downloading}
+### :warning: Media laddas inte ned. Vad ska jag kontrollera? {#media-not-downloading}
 
-Check these common issues:
+Kontrollera dessa vanliga problem:
 
-1. **Meeting Schedule**: Verify your meeting days and times are correct
-2. **Language Settings**: Ensure your media language is set correctly
-3. **Internet Connection**: Check your internet connection
-4. **Language Availability**: Verify media is available in your selected language
+1. **Mötesschema**: Kontrollera att dina mötesdagar och mötestider är korrekta
+2. **Språkinställningar**: Se till att ditt mediaspråk är korrekt inställt
+3. **Internetanslutning**: Kontrollera din internetanslutning
+4. **Språktillgänglighet**: Verifiera media är tillgängligt på ditt valda språk
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: The OBS integration isn't working. What should I verify? {#obs-not-working}
+### :video_camera: OBS-integrationen fungerar inte. Vad ska jag kontrollera? {#obs-not-working}
 
-Check these OBS-related issues:
+Kontrollera dessa OBS-relaterade problem:
 
 1. **OBS Installation**: Ensure OBS Studio is installed and running
 2. **WebSocket Plugin**: Verify the WebSocket plugin is installed
@@ -232,7 +232,7 @@ Try these performance optimizations:
 3. **Check Disk Space**: Ensure you have sufficient free disk space
 4. **Reduce Resolution**: Lower the maximum resolution setting
 
-### :speech_balloon: I'm having language issues. What should I check? {#language-issues}
+### :speech_balloon: I'm having language issues. Vad ska jag kontrollera? {#language-issues}
 
 Verify these language settings:
 
@@ -289,26 +289,26 @@ Tack för ditt intresse för att stötta projektet! Men enligt tanken i Matteus 
 
 Disk space usage depends on:
 
-- **Media Resolution**: Higher resolutions use more space
-- **Cached Content**: Media files are cached locally
-- **Extra Cache**: Additional caching can increase usage
-- **Exported Media**: Auto-export features use additional space
+- **Mediarösning**: Högre upplösning använder mer utrymme
+- **Cachat innehåll**: Mediefiler cachas lokalt
+- **Extra cache**: Ytterligare caching kan öka användningen
+- **Exporterade media**: Automatisk export funktioner använder ytterligare utrymme
 
-Typical usage ranges from 2-10GB depending on settings and usage.
+Typisk användning varierar från 2-10GB beroende på inställningar och användning.
 
-### :shield: Is M³ secure and private? {#security-privacy}
+### :shield: Är M³ säker och sluten? {#security-privacy}
 
-Yes! M³ is designed with security and privacy in mind:
+Yes! M³ är utformad med säkerhet och integritet i åtanke:
 
-- **Local Storage**: All meeting data is stored locally on your computer
-- **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
-- **Open Source**: The code is open for review and verification
-- **Bug Reports**: Limited data may be collected for bug reporting purposes
+- **Lokal lagring**: Alla mötesdata lagras lokalt på din dator
+- **Direktnedladdningar**: Media laddas ner direkt från Jehovas officiella hemsida
+- **Öppen källkod**: Koden är öppen för granskning och verifiering
+- **Felrapporter**: Begränsad mängd data samlas in för felrapporteringsändamål
 
-### :arrows_clockwise: How often does M³ check for updates? {#update-frequency}
+### :arrows_clockwise: Hur ofta letar M³ efter uppdateringar? {#update-frequency}
 
-M³ checks for updates:
+M³ söker efter uppdateringar:
 
-- **Application Updates**: Automatically checks for new versions every time the app is opened
-- **Media Updates**: Automatically checks for new meeting media every time the app is opened
-- **Language Updates**: Dynamic detection of new languages as needed
+- **Applikationsuppdateringar**: Kontrollera automatiskt nya versioner varje gång appen öppnas
+- **Media-uppdateringar**: Kontrollera automatiskt efter nya mötesmedier varje gång appen öppnas
+- **Språkuppdateringar**: Dynamisk identifiering av nya språk efter behov

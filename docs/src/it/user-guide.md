@@ -122,7 +122,7 @@ Configure custom keyboard shortcuts for quick access. Note that no keyboard shor
 
 **Note (\*):** Global shortcut - available even when the app is not focused
 
-## Background Music {#background-music}
+## Musica di Sottofondo {#background-music}
 
 ### Setting Up Background Music {#background-music-setup}
 
@@ -229,7 +229,7 @@ M³ plays media with sound on your computer, but this audio is **not automatical
 - **Consider using Zoom integration instead of OBS Studio** for simpler audio handling
 - Ensure all AV operators are familiar with these settings
 
-## Media Import and Management {#media-import}
+## Importazione e gestione multimediale {#media-import}
 
 ### Importing Custom Media {#importing-custom-media}
 

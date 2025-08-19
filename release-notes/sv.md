@@ -8,8 +8,8 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 ### ✨ Nya funktioner
 
-- ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
-- ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
+- ✨ **Tonade övergångar för mediafönster**: Lagt till en ny avancerad inställning för att tona in/ut mediafönstret, detta ger em snyggare visuell övergång.
+- ✨ **Bildvaraktighetskontroll och framstegsspårning**: Lagt till kontroll av bildens varaktighet och förloppsspårningskapacitet för upprepade sektioner.
 
 ## v25.8.1
 

@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: 'Documentazione M³'
-  text: 'Complete guide to setting up and using Meeting Media Manager'
+  text: 'Guida completa alla configurazione e all''utilizzo di Meeting Media Manager'
   image: /logo.svg
   actions:
     - theme: brand
@@ -14,7 +14,7 @@ hero:
       text: Guida Utente
       link: /it/user-guide
     - theme: brand
-      text: Settings Guide
+      text: Guida Impostazioni
       link: /it/settings-guide
     - theme: brand
       text: FAQ
@@ -22,27 +22,27 @@ hero:
 
 features:
   - icon: 🚀
-    title: Automatic Media Management
-    details: Automatically downloads and organizes pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
+    title: Gestione Automatica dei Media
+    details: Scarica automaticamente e organizza immagini e video per adunanze di congregazione in qualsiasi lingua disponibile sul sito ufficiale dei Testimoni di Geova.
   - icon: 🎦
-    title: Media Presentation
-    details: Present media with ease during hybrid or in-person meetings with advanced controls, zoom/pan capabilities, and custom timing options.
+    title: Presentazione dei Media
+    details: Presenta i media facilmente durante adunanze ibride o di persona con controlli avanzati, capacità di zoom/pan e opzioni di sincronizzazione personalizzate.
   - icon: 🎵
-    title: Background Music System
-    details: Intelligent background music that automatically stops before meetings start and can be restarted with one click after meetings.
+    title: Sistema Musica in Sottofondo
+    details: Musica di sottofondo intelligente che si interrompe automaticamente prima dell'inizio delle adunanze e può essere riavviata con un clic dopo le adunanze.
   - icon: 🖥️
-    title: Multi-Monitor Support
-    details: Automatically detects and manages external monitors for seamless media presentations and website sharing.
+    title: Supporto Multi-Monitor
+    details: Rileva e gestisce automaticamente monitor esterni per presentazioni multimediali e condivisione di siti web.
   - icon: 🌐
-    title: Multi-Language Support
+    title: Supporto Multi-Lingua
     details: Scaricare i media di riunione in centinaia di lingue e utilizzare l'interfaccia di M³ in una delle molte lingue disponibili.
   - icon: 🧩
     title: Integrazioni
-    details: Seamlessly integrates with Zoom or OBS Studio for enhanced media management and playback during meetings.
+    details: Si integra perfettamente con Zoom o OBS Studio per migliorare la gestione e la riproduzione dei media durante le adunanze.
   - icon: 📁
-    title: Folder Monitoring
-    details: Automatically sync media from watched folders (like Dropbox or OneDrive) and export media to folders.
+    title: Monitoraggio Cartelle
+    details: Sincronizza automaticamente i media dalle cartelle monitorate (come Dropbox o OneDrive) ed esporta i media in cartelle.
   - icon: 🎯
-    title: Advanced Features
-    details: Import custom media, JWPUB files, playlists, audio Bible recordings, and manage multiple congregations.
+    title: Funzionalità avanzate
+    details: Importa media personalizzati, file JWPUB, playlist, registrazioni audio della Bibbia e gestisce più congregazioni.
 ---
