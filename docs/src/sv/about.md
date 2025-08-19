@@ -80,9 +80,9 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 
 - **Folder monitoring**: Automatically sync media from watched folders (Dropbox, OneDrive, etc.)
 - **Media export**: Automatically export media to folders, organized by date
-- **Website presentation**: Present the official website on external monitors
-- **Keyboard shortcuts**: Customizable keyboard shortcuts for many functions
-- **Multiple profiles**: Manage different congregations or groups with separate profiles
+- **Webbplatspresentation**: Visa den officiella hemsidan på externa skärmar
+- **Tangentbordsgenvägar**: Anpassningsbara kortkommandon för många funktioner
+- **Flera profiler**: Hantera olika församlingar eller grupper med separata profiler
 
 **Prova M³ idag och se med egna ögon vad den kan göra! Det har aldrig varit enklare att presentera media på församlingsmöten.**
 
@@ -90,40 +90,40 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 
 ## Fungerar M³ på mitt språk? {#does-m3-work-in-my-language}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Ja!** M³ ger omfattande stöd för flera språk:
 
-### Media Languages {#media-languages}
+### Mediaspråk {#media-languages}
 
-Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of languages available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need during setup.
+Mediaför Jehovas vittnens möten kan laddas ner automatiskt på något av de hundratals språk som finns på Jehovas vittnens officiella hemsida. Listan över tillgängliga språk uppdateras dynamiskt, allt du behöver göra är att välja önskad språk vid installationen.
 
-### Interface Languages {#interface-languages}
+### Gränssnittsspråk {#interface-languages}
 
-M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
+M³ har översatts till många språk av frivilliga hjälpare. Du kan konfigurera det språk du vill ska visas i M³:s gränssnitt, oberoende av det språk som används för medianedladdningar. Detta innebär att du kan använda M³ på ditt föredragna språk när du laddar ner media på något annat språk som stöds.
 
-### Language Features {#language-features}
+### Språkfunktioner {#language-features}
 
-- **Dynamic language detection**: Automatically detects available languages
-- **Fallback languages**: Configure fallback languages for when primary language content isn't available
-- **Subtitle support**: Download and display subtitles in different languages
-- **Localized interface**: Complete interface translation for many languages
+- **Dynamisk språkdetektering**: Identifierar automatiskt tillgängliga språk
+- **Reservspråk**: Konfigurera reservspråk när det primära språket inte är tillgängligt
+- **Undertextstöd**: Ladda ner och visa undertexter på olika språk
+- **Lokaliserat gränssnitt**: Fullständig gränssnittsöversättning för många språk
 
-## System Requirements {#system-requirements}
+## Systemkrav {#system-requirements}
 
-M³ is designed to work on a wide range of systems:
+M³ är utformad för att fungera på ett brett spektrum av system:
 
-### Supported Operating Systems {#supported-operating-systems}
+### Operativsystem som stöds {#supported-operating-systems}
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 och senare (64-bitars och 32-bitars versioner tillgängliga)
+- **macOS**: macOS 10.15 (Catalina) och senare (Intel- och Apple Silicon stöd)
+- **Linux**: De flesta moderna Linuxdistributioner (AppImage format)
 
-### Hardware Requirements {#hardware-requirements}
+### Hårdvarukrav {#hardware-requirements}
 
-- **Minimum**: 4GB RAM, 6GB free disk space
-- **Recommended**: 8GB RAM, 15GB free disk space for media caching
-- **Network**: Internet connection for media downloads
+- **Minimum**: 4 GB RAM, 6 GB ledigt diskutrymme
+- **Rekommenderas**: 8 GB RAM, 15 GB ledigt diskutrymme för mediacachning
+- **Nätverk**: Internetanslutning för medianedladdning
 
-### Additional Requirements {#additional-requirements}
+### Ytterligare krav {#additional-requirements}
 
-- **Zoom**: Required only if using Zoom integration features
-- **OBS Studio**: Required only if using OBS integration features
+- **Zoom**: Krävs endast om du använder Zoom integrationsfunktioner
+- **OBS Studio**: Krävs endast om OBS integrationsfunktioner
