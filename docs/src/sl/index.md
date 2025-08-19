@@ -12,13 +12,13 @@ hero:
       link: /sl/about
     - theme: brand
       text: User Guide
-      link: /user-guide
+      link: /sl/user-guide
     - theme: brand
       text: Settings Guide
-      link: /settings-guide
+      link: /sl/settings-guide
     - theme: brand
       text: Pogosto zastavljena vprašanja
-      link: /faq
+      link: /sl/faq
 
 features:
   - icon: 🚀

@@ -12,13 +12,13 @@ hero:
       link: /et/about
     - theme: brand
       text: User Guide
-      link: /user-guide
+      link: /et/user-guide
     - theme: brand
       text: Settings Guide
-      link: /settings-guide
+      link: /et/settings-guide
     - theme: brand
       text: KKK
-      link: /faq
+      link: /et/faq
 
 features:
   - icon: 🚀

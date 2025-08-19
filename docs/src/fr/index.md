@@ -18,7 +18,7 @@ hero:
       link: /fr/settings-guide
     - theme: brand
       text: Foire aux questions
-      link: /faq
+      link: /fr/faq
 
 features:
   - icon: 🚀
