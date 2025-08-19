@@ -165,7 +165,7 @@ Activez la fonctionnalité d'affichage des médias. Ceci est requis pour présen
 
 **Par défaut** : `false`
 
-### Musique de fond {#settings-guide-background-music}
+### Background Music {#settings-guide-background-music}
 
 #### Activer la musique {#enable-music-button}
 
@@ -227,7 +227,7 @@ Effacez automatiquement les anciens fichiers mis en cache pour économiser l'esp
 
 **Par défaut** : `true`
 
-### Surveillance de dossiers {#settings-guide-folder-monitoring}
+### Folder Monitoring {#settings-guide-folder-monitoring}
 
 #### Activer le surveillant de dossier {#enable-folder-watcher}
 
@@ -247,7 +247,7 @@ Le chemin du dossier à surveiller pour les nouveaux fichiers multimédias.
 
 ## Intégrations {#integrations}
 
-### Intégration Zoom {#settings-guide-zoom-integration}
+### Zoom Integration {#settings-guide-zoom-integration}
 
 #### Activer Zoom {#enable-zoom}
 
@@ -265,7 +265,7 @@ Raccourci clavier pour déclencher le partage d'écran Zoom.
 
 **Par défaut** : Aucune
 
-### Intégration OBS Studio {#settings-guide-obs-integration}
+### OBS Studio Integration {#settings-guide-obs-integration}
 
 #### Activer OBS {#enable-obs}
 
@@ -277,7 +277,7 @@ Activez l'intégration OBS Studio pour le changement automatique de scène.
 
 :::warning Note importante
 
-**Configuration audio requise** : L'intégration OBS Studio ne gère que le changement de vidéo/scène. L'audio des médias M³ **n'est pas automatiquement transmis** à Zoom ou OBS. Vous devez configurer les paramètres Audio original de Zoom ou utiliser « Partager le son de l'ordinateur » pour vous assurer que les participants à la réunion peuvent entendre les médias. Voir le [Guide de l'utilisateur](/fr/user-guide#audio-configuration) pour les instructions détaillées de configuration audio.
+**Configuration audio requise** : L'intégration OBS Studio ne gère que le changement de vidéo/scène. L'audio des médias M³ **n'est pas automatiquement transmis** à Zoom ou OBS. Vous devez configurer les paramètres Audio original de Zoom ou utiliser « Partager le son de l'ordinateur » pour vous assurer que les participants à la réunion peuvent entendre les médias. Voir le [Guide de l'utilisateur](/user-guide#audio-configuration) pour les instructions détaillées de configuration audio.
 
 **Alternative** : Envisagez d'utiliser l'intégration Zoom à la place, car elle utilise le partage d'écran natif de Zoom qui gère l'audio plus facilement.
 
@@ -317,7 +317,7 @@ Configurez quelles scènes OBS utiliser pour différents usages :
 
 :::warning Note importante
 
-**Configuration audio requise** : L'intégration OBS Studio ne gère que le changement de vidéo/scène. L'audio des médias M³ **n'est pas automatiquement transmis** à Zoom ou OBS. Le flux vidéo fonctionne comme une caméra virtuelle sans son, tout comme une webcam. Vous devez configurer les paramètres Audio original de Zoom ou utiliser « Partager le son de l'ordinateur » pour vous assurer que les participants à la réunion peuvent entendre les médias. Voir le [Guide de l'utilisateur](/fr/user-guide#audio-configuration) pour les instructions détaillées de configuration audio.
+**Configuration audio requise** : L'intégration OBS Studio ne gère que le changement de vidéo/scène. L'audio des médias M³ **n'est pas automatiquement transmis** à Zoom ou OBS. Le flux vidéo fonctionne comme une caméra virtuelle sans son, tout comme une webcam. Vous devez configurer les paramètres Audio original de Zoom ou utiliser « Partager le son de l'ordinateur » pour vous assurer que les participants à la réunion peuvent entendre les médias. Voir le [Guide de l'utilisateur](/user-guide#audio-configuration) pour les instructions détaillées de configuration audio.
 
 **Alternative** : Envisagez d'utiliser l'intégration Zoom à la place, car elle utilise le partage d'écran natif de Zoom qui gère l'audio plus facilement.
 
@@ -325,7 +325,7 @@ Configurez quelles scènes OBS utiliser pour différents usages :
 
 ## Paramètres avancés {#advanced-settings}
 
-### Raccourcis clavier {#settings-guide-keyboard-shortcuts}
+### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
 
 #### Activer les raccourcis clavier {#enable-keyboard-shortcuts}
 
@@ -410,7 +410,7 @@ Langue pour les sous-titres (peut être différente de la langue des médias).
 
 **Par défaut** : Aucune
 
-### Exportation des médias {#settings-guide-media-export}
+### Media Export {#settings-guide-media-export}
 
 #### Activer l'exportation automatique des médias {#enable-media-auto-export}
 
@@ -475,7 +475,7 @@ Désactiver complètement le téléchargement automatique des médias. Utilisez 
 3. Configurer l'effacement automatique du cache pour gérer l'espace disque
 4. Considérez le paramètre de connexion limitée si sur une bande passante limitée
 
-### Dépannage {#settings-guide-troubleshooting}
+### Troubleshooting {#settings-guide-troubleshooting}
 
 - Si les médias ne téléchargent pas, vérifiez les paramètres de votre horaire de réunion
 - Si l'intégration OBS ne fonctionne pas, vérifiez les paramètres du port et du mot de passe
