@@ -227,7 +227,7 @@ Automatically clear old cached files to save disk space.
 
 **Default**: `true`
 
-### Folder Monitoring {#settings-guide-folder-monitoring}
+### Monitoraggio Cartelle {#settings-guide-folder-monitoring}
 
 #### Enable Folder Watcher {#enable-folder-watcher}
 
@@ -277,7 +277,7 @@ Enable OBS Studio integration for automatic scene switching.
 
 :::warning Important Note
 
-**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/it/user-guide#audio-configuration) for detailed audio setup instructions.
+**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
 
 **Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
 
@@ -317,7 +317,7 @@ Configure which OBS scenes to use for different purposes:
 
 :::warning Important Note
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/it/user-guide#audio-configuration) for detailed audio setup instructions.
+**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
 
 **Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
 
@@ -325,7 +325,7 @@ Configure which OBS scenes to use for different purposes:
 
 ## Advanced Settings {#advanced-settings}
 
-### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
+### Scorciatoie da Tastiera {#settings-guide-keyboard-shortcuts}
 
 #### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
 
@@ -410,7 +410,7 @@ Language for subtitles (can be different from media language).
 
 **Default**: None
 
-### Media Export {#settings-guide-media-export}
+### Esportazione Media {#settings-guide-media-export}
 
 #### Enable Media Auto-Export {#enable-media-auto-export}
 
@@ -475,7 +475,7 @@ Completely disable automatic media downloads. Use this only for profiles that wi
 3. Configure cache auto-clear to manage disk space
 4. Consider metered connection setting if on limited bandwidth
 
-### Troubleshooting {#settings-guide-troubleshooting}
+### Risoluzione Problemi {#settings-guide-troubleshooting}
 
 - If media isn't downloading, check your meeting schedule settings
 - If OBS integration isn't working, verify port and password settings
