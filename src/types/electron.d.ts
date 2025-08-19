@@ -62,9 +62,9 @@ export interface ElectronApi {
    *   // => '/home/user/document.pdf'
    */
   fileUrlToPath: (url?: string) => string;
+  focusMediaWindow: () => void;
   fs: typeof FsExtra;
   getAllScreens: () => Promise<Display[]>;
-
   getAppDataPath: () => Promise<string>;
   getLocales: () => Promise<string[]>;
   getLocalPathFromFileObject: (fileObject: File | string | undefined) => string;
@@ -160,7 +160,6 @@ export interface ElectronApi {
   robot: typeof robot;
   setAutoStartAtLogin: (value: boolean) => void;
   setElectronUrlVariables: (variables: string) => void;
-
   startWebsiteStream: () => void;
   toggleMediaWindow: (show: boolean, enableFadeTransitions?: boolean) => void;
   unregisterAllShortcuts: () => void;
@@ -204,6 +203,7 @@ export type ElectronIpcSendKey =
   | 'askForMediaAccess'
   | 'authorizedClose'
   | 'checkForUpdates'
+  | 'focusMediaWindow'
   | 'moveMediaWindow'
   | 'navigateWebsiteWindow'
   | 'openDiscussion'

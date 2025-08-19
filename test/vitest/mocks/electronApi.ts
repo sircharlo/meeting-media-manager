@@ -41,6 +41,9 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   fileUrlToPath,
+  focusMediaWindow: function () {
+    throw new Error('Function not implemented.');
+  },
   fs,
   getAllScreens: function () {
     throw new Error('Function not implemented.');

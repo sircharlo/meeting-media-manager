@@ -693,3 +693,23 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
     captureElectronError(err);
   }
 };
+
+/**
+ * Focuses the media window if it exists and is visible
+ */
+export function focusMediaWindow() {
+  try {
+    if (mediaWindow && !mediaWindow.isDestroyed() && mediaWindow.isVisible()) {
+      console.log('🔍 [focusMediaWindow] Focusing media window');
+      mediaWindow.focus();
+      mediaWindow.show();
+    } else {
+      console.log(
+        '🔍 [focusMediaWindow] Media window not available for focusing',
+      );
+    }
+  } catch (err) {
+    console.error('❌ [focusMediaWindow] Error:', err);
+    captureElectronError(err);
+  }
+}

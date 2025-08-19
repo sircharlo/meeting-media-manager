@@ -63,6 +63,40 @@ export const triggerZoomScreenShare = (startSharing: boolean) => {
     }
 
     console.log(`✅ [Zoom] Screen sharing shortcut sent successfully`);
+
+    // Focus the media window after a short delay to regain focus from Zoom
+    setTimeout(() => {
+      try {
+        window.electronApi.focusMediaWindow();
+        console.log(
+          `🎯 [Zoom] Media window focus requested after screen sharing toggle (250ms)`,
+        );
+      } catch (focusError) {
+        console.warn(`⚠️ [Zoom] Failed to focus media window:`, focusError);
+      }
+    }, 250);
+
+    setTimeout(() => {
+      try {
+        window.electronApi.focusMediaWindow();
+        console.log(
+          `🎯 [Zoom] Media window focus requested after screen sharing toggle (500ms)`,
+        );
+      } catch (focusError) {
+        console.warn(`⚠️ [Zoom] Failed to focus media window:`, focusError);
+      }
+    }, 500);
+
+    setTimeout(() => {
+      try {
+        window.electronApi.focusMediaWindow();
+        console.log(
+          `🎯 [Zoom] Media window focus requested after screen sharing toggle (1000ms)`,
+        );
+      } catch (focusError) {
+        console.warn(`⚠️ [Zoom] Failed to focus media window:`, focusError);
+      }
+    }, 1000);
   } catch (error) {
     errorCatcher(error, {
       contexts: {
