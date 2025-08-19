@@ -12,13 +12,13 @@ hero:
       link: /hu/about
     - theme: brand
       text: User Guide
-      link: /user-guide
+      link: /hu/user-guide
     - theme: brand
       text: Settings Guide
-      link: /settings-guide
+      link: /hu/settings-guide
     - theme: brand
       text: GYIK
-      link: /faq
+      link: /hu/faq
 
 features:
   - icon: 🚀
