@@ -122,7 +122,7 @@ Configure custom keyboard shortcuts for quick access. Note that no keyboard shor
 
 **Note (\*):** Global shortcut - available even when the app is not focused
 
-## 背景音乐 {#user-guide-background-music}
+## Background Music {#user-guide-background-music}
 
 ### Setting Up Background Music {#background-music-setup}
 
@@ -134,7 +134,7 @@ Background music automatically plays before meetings and stops at the appropriat
 4. **Manual Control** - Use the music button in the status bar to start/stop manually
 5. **Restart** - Resume music after meetings with one click
 
-## Zoom集成 {#user-guide-zoom-integration}
+## Zoom Integration {#user-guide-zoom-integration}
 
 M³ can integrate with Zoom for automatic screen sharing:
 
@@ -143,7 +143,7 @@ M³ can integrate with Zoom for automatic screen sharing:
 3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
 4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
 
-## OBS Studio集成 {#user-guide-obs-integration}
+## OBS Studio Integration {#user-guide-obs-integration}
 
 ### Setting Up OBS Integration {#user-guide-obs-setup}
 
@@ -293,7 +293,7 @@ Share the official website on external displays:
 - **Refresh** - Reload the current page
 - **Close** - Exit website presentation mode
 
-## 高级功能 {#user-guide-advanced-features}
+## Advanced Features {#user-guide-advanced-features}
 
 ### Multiple Congregations {#user-guide-multiple-congregations}
 
@@ -317,7 +317,7 @@ Configure custom keyboard shortcuts for efficient operation:
 
 ### Common Issues {#common-issues}
 
-#### Media Not Downloading {#media-not-downloading}
+#### Media Not Downloading {#user-guide-media-not-downloading}
 
 - Check your meeting schedule settings
 - Verify internet connection

@@ -14,7 +14,7 @@ This app used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed t
 
 :::
 
-## M³를 사용하는 이유 {#about-about-why-choose-m3} {#about-about-why-choose-m3}
+## M³를 사용하는 이유 {#why-choose-m3} {#why-choose-m3}
 
 M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
 

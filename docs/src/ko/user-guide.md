@@ -229,7 +229,7 @@ M³ plays media with sound on your computer, but this audio is **not automatical
 - **Consider using Zoom integration instead of OBS Studio** for simpler audio handling
 - Ensure all AV operators are familiar with these settings
 
-## Media Import and Management {#user-guide-media-import}
+## Media Import and Management {#media-import}
 
 ### Importing Custom Media {#importing-custom-media}
 

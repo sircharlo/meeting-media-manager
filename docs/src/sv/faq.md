@@ -159,7 +159,7 @@ Denna funktion försenar delning av bilder till OBS tills du manuellt utlöser d
 - Mer kontroll över timing
 - Undvika för tidiga scenförändringar
 
-## Avancerade funktioner {#faq-advanced-features}
+## Advanced Features {#faq-advanced-features}
 
 ### :cloud: Hur fungerar mappövervakning? {#faq-folder-monitoring}
 
@@ -186,7 +186,7 @@ Yes! M³ stöder flera profiler för:
 - Olika grupper
 - Separata inställningar och media för varje
 
-## Felsökning {#faq-troubleshooting}
+## Troubleshooting {#faq-troubleshooting}
 
 ### :warning: Media laddas inte ned. Vad ska jag kontrollera? {#faq-media-not-downloading}
 
