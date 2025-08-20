@@ -114,7 +114,7 @@ Configure custom keyboard shortcuts for quick access. Note that no keyboard shor
 
 **Customizable Shortcuts** (when enabled in settings):
 
-- **Media Window** - Open/close media window
+- **Multimedijsko okno** - Odpri/zapri multimedijsko okno
 - **Previous/Next Media** - Navigate between media items
 - **Pause/Resume** - Control media playback
 - **Stop Media** - Stop media playback
