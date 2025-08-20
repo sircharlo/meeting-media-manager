@@ -30,56 +30,56 @@ M³ är det ultimata verktyget för att hantera mötesmedier och erbjuder en sö
 
 - **Pålitlig och stabil**: Byggd för att leverera när du behöver det som mest. Hittat en bugg? Rapportera det, och det kommer att tas upp omedelbart.
 
-- **Advanced presentation tools**: Advanced media controls, zoom/pan capabilities, custom timing, and seamless Zoom and OBS Studio integration.
+- **Avancerade presentationsverktyg**: Avancerade mediekontroller, zoom/panoreringsmöjligheter, anpassad timing och sömlös Zoom och OBS Studio-integration.
 
 ## Vad kan M³ göra? {#what-can-m3-do}
 
-M³ is a comprehensive media management solution that allows you to easily and automatically download, synchronize, share, and present all meeting media. Here's what makes M³ powerful:
+M³ är en omfattande mediehanteringslösning som gör att du enkelt och automatiskt kan ladda ner, synkronisera, dela och presentera alla mötesmedier. Här är vad som gör M³ kraftfull:
 
-### Core Media Management {#core-media-management}
+### Kärnmediehantering {#core-media-management}
 
-- **Automatic media downloads**: Automatically fetches and downloads all media needed for upcoming meetings
-- **Multi-language support**: Download media in any of hundreds of available languages
-- **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
-- **Media organization**: Automatically organizes media by date and meeting section
+- **Automatisk medianedladdning**: Hämtar och laddar automatiskt ner alla medier som behövs för kommande möten
+- **Flerspråkigt stöd**: Ladda ner media på hundratals tillgängliga språk
+- **Smart caching**: Intelligent cachingsystem som håller media organiserade och uppdaterade
+- **Medieorganisation**: Organiserar automatiskt media efter datum och mötesdel
 
-### Media Presentation Features {#about-presentation-features}
+### Media presentationsfunktioner {#about-presentation-features}
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
+För **hybrid** eller **vanliga** församlingsmöten, innehåller det integrerade mediepresentationsläget följande:
 
-- **Advanced media controls**: Media thumbnails with zoom and pan capabilities
-- **Custom timing**: Set custom start and end times for media playback
-- **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
-- **Multi-monitor support**: Automatic external monitor detection and management
-- **Clean presentation**: Distraction-free media presentation interface
+- \*\*Avancerade mediekontroller \*\*: Media-miniatyrer med zoom och panoreringsmöjligheter
+- **Anpassad tid**: Ställ in anpassade start- och sluttider för medieuppspelning
+- **Uppspelningskontroller**: Lätt att spela/pausa/stoppa med kortkommandon
+- **Stöd för flera bildskärmar**: Automatisk detektering och hantering av externa bildskärmar
+- **Ren presentation**: Distraktionsfritt mediepresentationsgränssnitt
 
-### Background Music {#about-background-music}
+### Bakgrundsmusik {#about-background-music}
 
-- **Intelligent playback**: Background music that automatically stops before meetings start
-- **One-click restart**: Resume background music with a single click after meetings
-- **Volume control**: Adjustable background music volume with fade-out capabilities
+- **Intelligent uppspelning**: Bakgrundsmusiken stoppas automatiskt innan möten börjar
+- **Snabb omstart**: Återuppta bakgrundsmusiken med ett enda klick efter mötet
+- **Volymkontroll**: Justerbar bakgrundsmusikvolym med tona ut-funktioner
 
-### Zoom Integration {#about-zoom-integration}
+### Zoomintegration {#about-zoom-integration}
 
-- **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
+- **Automatisk skärmdelning**: Starta och stoppa skärmdelning i Zoom automatiskt när du spelar eller stoppar media
 
-### OBS Studio Integration {#about-obs-integration}
+### OBS Studiointegration {#about-obs-integration}
 
-- **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
-- **Scene management**: Automatic switching between camera, media, and other scenes
+- **Automatisk scenbyte**: Sömlös integration med OBS Studio för hybridmöten
+- **Scenhantering**: Automatisk växling mellan kamera, media och andra scener
 
-### Media Import and Management {#about-media-import}
+### Importera och hantera media {#about-media-import}
 
-- **JWPUB files**: Import and manage JWPUB files with ease
-- **JWLPLAYLIST files**: Support for JW Library playlist files
-- **Custom media**: Import custom videos, pictures, audio files, and PDF files
-- **Audio Bible**: Import Study Bible media and audio recordings of the New World Translation
-- **Public talks**: Always have public talk media overview ready to use with the S-34 importer
+- **JWPUB-filer**: Importera och hantera JWPUB-filer enkelt
+- **JWLPLAYLIST-filer**: Stöd för spellistor från JW Library
+- **Anpassad media**: Importera egna videor, bilder, ljudfiler och PDF-filer
+- **Ljudbibel**: Importera bibelmedier och ljudinspelningar av Nya Världens översättning
+- **Offentliga föreläsningar**: Ha alltid media för föreläsningarna klara med hjälp av S-34-importeraren
 
-### Advanced Features {#about-advanced-features}
+### Avancerade funktioner {#about-advanced-features}
 
-- **Folder monitoring**: Automatically sync media from watched folders (Dropbox, OneDrive, etc.)
-- **Media export**: Automatically export media to folders, organized by date
+- **Mappövervakning**: Synkronisera automatiskt media från bevakade mappar (Dropbox, OneDrive, etc.)
+- **Mediaexport**: Exportera media automatiskt till mappar, organiserat efter datum
 - **Webbplatspresentation**: Visa den officiella hemsidan på externa skärmar
 - **Tangentbordsgenvägar**: Anpassningsbara kortkommandon för många funktioner
 - **Flera profiler**: Hantera olika församlingar eller grupper med separata profiler
