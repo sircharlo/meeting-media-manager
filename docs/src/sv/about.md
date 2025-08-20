@@ -4,19 +4,19 @@
 
 ## Vad är det för app? {#what-is-this-app}
 
-**Meeting Media Manager**, or **M³** for short, is a comprehensive cross-platform application for Windows, macOS and Linux that automatically downloads, organizes, and presents pictures and videos for congregation meetings of Jehovah's Witnesses. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
+**Meeting Media Manager**, eller förkortat som **M3**, är en omfattande plattformsoberoende applikation för Windows, macOS och Linux som automatiskt laddar, organiserar och presenterar bilder och videor för Jehovas vittnens församlingsmöten. Den stöder alla språk som finns på den officiella webbplatsen för Jehovas vittnen och ger kraftfulla verktyg för att hantera media under både hybrid- och personmöten.
 
-M³ features support for managing regular and custom meeting media, multiple congregations and/or groups using the same computer account, and advanced presentation capabilities that make media sharing effortless.
+M³ har stöd för att hantera regelbundna och anpassade mötesmedier, flera församlingar och/eller grupper som använder samma datorkonto, och avancerade presentationsmöjligheter som gör mediedelning enkelt.
 
 :::info Info
 
-This app used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed to Meeting Media Manager in May 2022.
+Appen hade tidigare namnet JWMMF (JW Meeting Media Fetcher), men döptes om till Meeting Media Manager i maj 2022.
 
 :::
 
 ## Varför välja M³? {#why-choose-m3}
 
-M³ är det ultimata verktyget för att hantera mötesmedier och erbjuder en sömlös, tillförlitlig och funktionsrik upplevelse med olika plattformar. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
+M³ är det ultimata verktyget för att hantera mötesmedier och erbjuder en sömlös, tillförlitlig och funktionsrik upplevelse med olika plattformar. Den är speciellt utformad för alla församlingsmötens behov och ger allt som behövs för en effektiv mediepresentation.
 
 ### Viktiga fördelar {#key-benefits}
 
@@ -24,7 +24,7 @@ M³ är det ultimata verktyget för att hantera mötesmedier och erbjuder en sö
 
 - **Stöd för flera församlingar**: Hantera inställningar för flera församlingar eller grupper enkelt i ett enda program.
 
-- **Advanced features**: Easily add extra media, import custom content, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Avancerade funktioner**: Lägg enkelt till extra media och dela automatiskt det som händer i Rikets sal med deltagarna på Zoom.
 
 - **Optimerad plattformsoberoende prestanda**: Njut av en smidig och responsiv upplevelse på Windows, macOS och Linux, även på äldre system eller datorer med begränsade resurser.
 
