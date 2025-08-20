@@ -114,13 +114,13 @@ Configurez des raccourcis clavier personnalisés pour un accès rapide. Notez qu
 
 **Raccourcis personnalisables** (lorsqu'ils sont activés dans les paramètres) :
 
-- **Fenêtre multimédia**\* - Ouvrir/fermer la fenêtre multimédia
-- **Média précédent/suivant**\* - Naviguer entre les éléments multimédia
-- **Pause/Reprendre**\* - Contrôler la lecture des médias
-- **Arrêter les médias**\* - Arrêter la lecture des médias
-- **Basculer la musique**\* - Contrôler la musique de fond
+- **Fenêtre multimédia** - Ouvrir/fermer la fenêtre multimédia
+- **Média précédent/suivant** - Naviguer entre les éléments multimédia
+- **Pause/Reprendre** - Contrôler la lecture des médias
+- **Arrêter les médias** - Arrêter la lecture des médias
+- **Basculer la musique** - Contrôler la musique de fond
 
-**Note (\*):** Raccourci global - disponible même lorsque l'application n'est pas focalisée
+**Note (*):** Raccourci global - disponible même lorsque l'application n'est pas focalisée
 
 ## Background Music {#user-guide-background-music}
 

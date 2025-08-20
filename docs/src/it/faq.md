@@ -4,7 +4,7 @@
 
 ### Questa app dipende da siti esterni, fonti o "curatori" per scaricare pubblicazioni e media per l'adunanza? {#external-dependencies}
 
-\*\*No. L'app si comporta in modo simile a JW Library. Scarica pubblicazioni, media e altri contenuti direttamente dal sito ufficiale dei Testimoni di Geova e dalla sua rete di distribuzione di contenuti. L'applicazione determina automaticamente ciò che deve essere scaricato e quando il contenuto precedentemente scaricato non è più aggiornato e dovrebbe essere nuovamente scaricato.
+**No. L'app si comporta in modo simile a JW Library. Scarica pubblicazioni, media e altri contenuti direttamente dal sito ufficiale dei Testimoni di Geova e dalla sua rete di distribuzione di contenuti. L'applicazione determina automaticamente ciò che deve essere scaricato e quando il contenuto precedentemente scaricato non è più aggiornato e dovrebbe essere nuovamente scaricato.
 
 :::info Nota
 

@@ -115,7 +115,7 @@ Järgmine samm on **profiili tüübi** valimine. Kuningriigi saali tavapärase k
 
 Sa peaksid valima **Muu** ainult siis, kui te lood profiili, mille puhul ei tohiks meediat automaatselt alla laadida. Selle profiili kasutamiseks tuleb meediafailid käsitsi importida. Seda tüüpi profiili kasutatakse peamiselt M³'i kasutamiseks teokraatlikes koolides, kogunemistel, kokkutulekutel ja muudel eriüritustel.
 
-Profiiltüüpi **Muu** kasutatakse harva. \*\*Koguduse koosolekute ajal tavapäraseks kasutamiseks valige palun _Regulaarne_. \*\*
+Profiiltüüpi **Muu** kasutatakse harva. **Koguduse koosolekute ajal tavapäraseks kasutamiseks valige palun _Regulaarne_. **
 
 :::
 

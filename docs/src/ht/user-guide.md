@@ -114,13 +114,13 @@ Configure custom keyboard shortcuts for quick access. Note that no keyboard shor
 
 **Customizable Shortcuts** (when enabled in settings):
 
-- **Media Window**\* - Open/close media window
-- **Previous/Next Media**\* - Navigate between media items
-- **Pause/Resume**\* - Control media playback
-- **Stop Media**\* - Stop media playback
-- **Music Toggle**\* - Control background music
+- **Media Window** - Open/close media window
+- **Previous/Next Media** - Navigate between media items
+- **Pause/Resume** - Control media playback
+- **Stop Media** - Stop media playback
+- **Music Toggle** - Control background music
 
-**Note (\*):** Global shortcut - available even when the app is not focused
+**Note (*):** Global shortcut - available even when the app is not focused
 
 ## Background Music {#user-guide-background-music}
 

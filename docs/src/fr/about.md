@@ -84,7 +84,7 @@ Pour les réunions de l'assemblée locale **hybrides** ou **en personne**, le mo
 - **Raccourcis clavier** : Raccourcis clavier personnalisables pour de nombreuses fonctions
 - **Profils multiples** : Gérez différentes assemblées locales ou groupes avec des profils séparés
 
-Essayez M³ aujourd'hui et voyez par vous-même ce qu'elle peut faire ! Il n’a jamais été aussi facile de présenter les médias lors des réunions de l'assemblée locale.\*\*
+Essayez M³ aujourd'hui et voyez par vous-même ce qu'elle peut faire ! Il n’a jamais été aussi facile de présenter les médias lors des réunions de l'assemblée locale.**
 
 ![M³ preview](./../assets/m3-preview.png)
 
