@@ -120,7 +120,7 @@ Configure custom keyboard shortcuts for quick access. Note that no keyboard shor
 - **Stop Media** - Stop media playback
 - **Music Toggle** - Control background music
 
-**Note (*):** Global shortcut - available even when the app is not focused
+**Note (\*):** Global shortcut - available even when the app is not focused
 
 ## Background Music {#user-guide-background-music}
 
