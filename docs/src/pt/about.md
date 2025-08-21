@@ -90,15 +90,15 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 
 ## O M³ está disponível no meu idioma? {#does-m3-work-in-my-language}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Sim!** O M³ oferece suporte abrangente em vários idiomas:
 
 ### Media Languages {#media-languages}
 
-Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of languages available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need during setup.
+Mídias para as reuniões das Testemunhas de Jeová podem ser baixadas automaticamente em quaisquer dos centenas de idiomas disponíveis no site oficial das Testemunhas de Jeová. A lista de idiomas disponíveis é sempre atualizada; tudo que você precisa fazer é selecionar qual você precisa durante a configuração.
 
-### Interface Languages {#interface-languages}
+### Idiomas de interface {#interface-languages}
 
-M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
+O próprio M³ foi traduzido para vários idiomas por voluntários. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
 
 ### Language Features {#language-features}
 
@@ -107,7 +107,7 @@ M³ itself has been translated into many languages by volunteers. You can config
 - **Subtitle support**: Download and display subtitles in different languages
 - **Localized interface**: Complete interface translation for many languages
 
-## System Requirements {#system-requirements}
+## Requisitos de Sistema {#system-requirements}
 
 M³ is designed to work on a wide range of systems:
 
