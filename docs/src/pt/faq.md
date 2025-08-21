@@ -30,7 +30,7 @@ M³ supports Windows, macOS, and Linux:
 
 ### :globe_with_meridians: Does M³ work in my language? {#language-support}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Sim!** O M³ oferece suporte abrangente em vários idiomas:
 
 - **Media Languages**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
 - **Interface Languages**: Use M³'s interface in many different languages
@@ -64,12 +64,12 @@ M³ automatically downloads media for upcoming meetings by:
 4. Organizing media by date and meeting type
 5. Caching files for offline use
 
-### :calendar: Can I download media for specific dates? {#specific-dates}
+### :calendar: Posso baixar mídia para datas específicas? {#specific-dates}
 
-Yes! M³ allows you to:
+Sim! O M³ permite que você:
 
-- Download media for upcoming meetings automatically
-- Import custom media for any date
+- Baixe mídia para as próximas reuniões automaticamente
+- Importe mídia personalizada para qualquer data
 
 ### :folder: How do I import my own media files? {#import-media}
 
@@ -80,14 +80,14 @@ You can import custom media in several ways:
 - **Folder Monitoring**: Set up a watched folder for automatic imports
 - **JWPUB Files and Playlists**: Import publications and playlists
 
-### :speaker: Can I import audio Bible recordings? {#audio-bible}
+### :speaker: Posso importar gravações de áudio da Bíblia? {#audio-bible}
 
-Yes! M³ includes an Audio Bible feature that allows you to:
+Sim! O M³ inclui um recurso de Áudio da Bíblia que permite que você:
 
-1. Select Bible books and chapters
-2. Choose specific verses or verse ranges
-3. Download audio recordings
-4. Use them at the meetings
+1. Selecione livros e capítulos da Bíblia
+2. Escolha versículos específicos ou intervalo de versículos
+3. Baixe as gravações de áudio
+4. Use-as nas reuniões
 
 ## Presentation Features {#faq-presentation-features}
 
@@ -179,7 +179,7 @@ Media auto-export automatically:
 
 ### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
 
-Yes! M³ supports multiple profiles for:
+Sim! M³ supports multiple profiles for:
 
 - Different congregations
 - Special events
@@ -298,7 +298,7 @@ Typical usage ranges from 2-10GB depending on settings and usage.
 
 ### :shield: Is M³ secure and private? {#security-privacy}
 
-Yes! M³ is designed with security and privacy in mind:
+Sim! M³ is designed with security and privacy in mind:
 
 - **Local Storage**: All meeting data is stored locally on your computer
 - **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
