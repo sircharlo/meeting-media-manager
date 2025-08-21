@@ -263,17 +263,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docsearch/css@npm:^4.0.0-beta.6":
-  version: 4.0.0-beta.6
-  resolution: "@docsearch/css@npm:4.0.0-beta.6"
-  checksum: 10c0/29fd33828f5ad3d638321890786a065cf0fd28e77abdeef354e6387e7803267818d6c84b9f6ec596867745c9fecebd7e920850349ebc54372a03abf5e7b729b0
+"@docsearch/css@npm:^4.0.0-beta.7":
+  version: 4.0.0-beta.7
+  resolution: "@docsearch/css@npm:4.0.0-beta.7"
+  checksum: 10c0/2b4c149ff568ab23ce243c4c8fd45036b1425b3fe842cdc29c99933ba765d996272d128728e97ceb8186df504136da78a9f3f3b1031a1212d5fbe08955136d31
   languageName: node
   linkType: hard
 
-"@docsearch/js@npm:^4.0.0-beta.6":
-  version: 4.0.0-beta.6
-  resolution: "@docsearch/js@npm:4.0.0-beta.6"
-  checksum: 10c0/f5544b1a5c2357b0f76c54753d89d50781f5f76020b54326bd4314f6cf765fe380e7427ebbec15973244769336c1606cd9af003d8d5bde7a41bb64c940a01021
+"@docsearch/js@npm:^4.0.0-beta.7":
+  version: 4.0.0-beta.7
+  resolution: "@docsearch/js@npm:4.0.0-beta.7"
+  checksum: 10c0/d2791b22f59a388cadbb66ee084837ac72f90238fc89393177c74530a7c7b796737f623864abfbded9397175700e539eacdea260f134be76c1865a452f9670c9
   languageName: node
   linkType: hard
 
@@ -10458,7 +10458,7 @@ __metadata:
     typescript: "npm:~5.8.3"
     upath: "npm:^2.0.1"
     vite: "npm:^6.3.5"
-    vitepress: "npm:^2.0.0-alpha.11"
+    vitepress: "npm:^2.0.0-alpha.12"
     vitest: "npm:^3.2.4"
     vue: "npm:^3.5.18"
     vue-eslint-parser: "npm:^10.2.0"
@@ -15301,12 +15301,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitepress@npm:^2.0.0-alpha.11":
-  version: 2.0.0-alpha.11
-  resolution: "vitepress@npm:2.0.0-alpha.11"
+"vitepress@npm:^2.0.0-alpha.12":
+  version: 2.0.0-alpha.12
+  resolution: "vitepress@npm:2.0.0-alpha.12"
   dependencies:
-    "@docsearch/css": "npm:^4.0.0-beta.6"
-    "@docsearch/js": "npm:^4.0.0-beta.6"
+    "@docsearch/css": "npm:^4.0.0-beta.7"
+    "@docsearch/js": "npm:^4.0.0-beta.7"
     "@iconify-json/simple-icons": "npm:^1.2.47"
     "@shikijs/core": "npm:^3.9.2"
     "@shikijs/transformers": "npm:^3.9.2"
@@ -15321,11 +15321,11 @@ __metadata:
     mark.js: "npm:8.11.1"
     minisearch: "npm:^7.1.2"
     shiki: "npm:^3.9.2"
-    vite: "npm:^7.1.1"
+    vite: "npm:^7.1.2"
     vue: "npm:^3.5.18"
   peerDependencies:
     markdown-it-mathjax3: ^4
-    oxc-minify: ^0.81.0
+    oxc-minify: ^0.82.1
     postcss: ^8
   peerDependenciesMeta:
     markdown-it-mathjax3:
@@ -15336,7 +15336,7 @@ __metadata:
       optional: true
   bin:
     vitepress: bin/vitepress.js
-  checksum: 10c0/898be40ea9eb97c19cd061df862372ddb48d14e54518850eeb43d22f6e07301193a3a1ba956915368c8f807dfd836fbcf63997b71a50544f8475ccb490ba5422
+  checksum: 10c0/ef77a4bba919738663cfc6cf84da371ca7ec02a9bb9be453958d46c6d8dd5202686724a2049bcd42ce4c40992e0d0b414010022fdcbfdc5b2bb3081f313edb77
   languageName: node
   linkType: hard
 
