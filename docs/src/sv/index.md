@@ -12,13 +12,13 @@ hero:
       link: /sv/about
     - theme: brand
       text: Användarguide
-      link: /sv/user-guide
+      link: /user-guide
     - theme: brand
       text: Inställningsguide
-      link: /sv/settings-guide
+      link: /settings-guide
     - theme: brand
       text: Vanliga frågor (FAQ)
-      link: /sv/faq
+      link: /faq
 
 features:
   - icon: 🚀
@@ -26,7 +26,7 @@ features:
     details: Laddar ner och organiserar automatiskt bilder och videor för församlingsmöten på vilket språk som helst som finns på Jehovas vittnens officiella hemsida.
   - icon: 🎦
     title: Mediapresentation
-    details: Presentera media med lätthet under hybrid- eller personmöten med avancerade kontroller, zoom/panoreringsmöjligheter och anpassade tidsmöjligheter.
+    details: Visa media med lätthet under hybrid- eller personmöten med avancerade kontroller, zoom/panoreringsmöjligheter och anpassade tidsmöjligheter.
   - icon: 🎵
     title: Bakgrundsmusik
     details: Intelligent bakgrundsmusik som automatiskt stannar innan mötet börjar och kan startas igen med ett klick efter mötet.
