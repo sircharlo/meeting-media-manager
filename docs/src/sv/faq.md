@@ -47,7 +47,7 @@ Ladda ner lämplig version för ditt operativsystem från [releasessidan](https:
 M³ innehåller en installationsguide som guidar dig genom den viktiga konfigurationen:
 
 1. Språk för användargränssnitt
-2. Välj profiltyp (ordinarie eller annat)
+2. Välj profiltyp (vanlig eller annan)
 3. Konfigurera församlingsinformation
 4. Ställ in mötesschema
 5. Konfigurera valfria funktioner såsom OBS-integration
@@ -91,12 +91,12 @@ Ja! M³ innehåller en ljudbibel funktion som låter dig att:
 
 ## Presentationsfunktioner {#faq-presentation-features}
 
-### :tv: Hur presenterar jag media under mötena? {#present-media}
+### :tv: Hur visa jag media under mötena? {#present-media}
 
-För att presentera media:
+För att visa media:
 
 1. Välj ett datum
-2. Klicka på play-knappen på det medieobjekt du vill presentera eller använd kortkommandot
+2. Klicka på play-knappen på det medieobjekt du vill visa eller använd kortkommandot
 3. Använd mediaspelarkontrollerna för att pausa, navigera eller stoppa uppspelning
 4. Använd zoom/panorering för bilder
 5. Ange anpassad tid om det behövs
