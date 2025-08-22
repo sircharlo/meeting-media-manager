@@ -1,44 +1,44 @@
-# User Guide {#user-guide}
+# Användarhandbok {#user-guide}
 
-This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
+Denna omfattande användarhandbok hjälper dig att bemästra alla funktioner i M³, från grundläggande inställning till avancerade media presentationstekniker.
 
-## Getting Started {#getting-started}
+## Komma igång {#getting-started}
 
-### First Launch {#first-launch}
+### Första starten {#first-launch}
 
-When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
+När du först startar M³, kommer du att guidas genom en installationsguide som kommer att konfigurera de viktigaste inställningarna för din församling:
 
-1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
-2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
-3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
-4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
-5. **Optional features** - Configure OBS integration, background music, and other advanced features
+1. **Välj ditt gränssnittsspråk** - Detta avgör vilket språk M³:s menyer och knappar kommer att visas i
+2. **Välj profiltyp** - Välj "vanlig" för normal församlingsanvändning eller "Annat" för speciella evenemang
+3. **Konfigurera församlingsinformation** - Ange din församlingsinformation eller använd funktionen automatisk uppslagning
+4. **Konfigurera mötestid** - Konfigurera dag oc tid för vecko- och helgmötet
+5. **Valfria funktioner** - Konfigurera OBS-integration, bakgrundsmusik och andra avancerade funktioner
 
 :::tip Tips
 
-Take your time during setup - but you can always change these settings later in the Settings menu.
+Låt installationen ta sin tid - men har du bråttom så kan du alltid ändra dessa inställningar senare i inställningsmenyn.
 
 :::
 
-### Main Interface Overview {#main-interface}
+### Översikt av gränssnittet {#main-interface}
 
-The main M³ interface consists of several key areas:
+Huvudgränssnittet i M³ består av flera viktiga områden:
 
-- **Navigation Drawer** - Access different sections and settings
-- **Calendar View** - Browse media by date
-- **Media List** - View and manage media for selected dates
-- **Toolbar** - Quick access to common functions
-- **Status Bar** - Shows download progress, and background music and OBS Studio connection status
+- **Sidnavigering** - Få tillgång till olika sektioner och inställningar
+- **Kalendervy** - Bläddra media efter datum
+- **Medielista** - Visa och hantera media för valda datum
+- **Verktygsfältet** - Snabb åtkomst till vanliga funktioner
+- **Statusfält** - Visar nedladdningsförlopp, och bakgrundsmusik och OBS Studio anslutningsstatus
 
-## Media Management {#user-guide-media-management}
+## Mediehantering {#user-guide-media-management}
 
-### Understanding the Calendar View {#calendar-view}
+### Förstå kalendervyn {#calendar-view}
 
-The calendar view shows your meeting schedule and available media:
+Kalendervyn visar ditt mötesschema och tillgänglig media:
 
-- **Meeting Days** - Highlighted days show when meetings are scheduled
-- **Media Indicators** - Icons show what types of media are available
-- **Date Navigation** - Use arrow keys to navigate between months
+- **Mötesdagar** - Markerade dagar visas när möten är schemalagda
+- **Mediaindikatorer** - Ikoner visar vilka typer av media som är tillgängliga
+- **Datumnavigering** - Använd piltangenterna för att navigera mellan månader
 
 <!-- ### Downloading Media {#downloading-media}
 
@@ -48,73 +48,73 @@ Download speed depends on your internet connection and the size of media files. 
 
 ::: -->
 
-### Organizing Media {#organizing-media}
+### Organisera media {#organizing-media}
 
-M³ automatically organizes media by meeting type and section:
+M³ organiserar automatiskt media efter typ och mötesdel:
 
-- **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
-- **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
+- **Mötesdelar** - Media grupperas efter mötesdelar (Föreläsning, Guldkorn, etc.)
+- **Anpassade mötesdelar** - Du kan skapa anpassade mötesdelar för ytterligare media om inget möte är planerat den dagen
 
-## Media Presentation {#media-presentation}
+## Mediapresentation {#media-presentation}
 
-### Opening the Media Player {#opening-media-player}
+### Öppna mediaspelaren {#opening-media-player}
 
-To present media during a meeting:
+Att visa media under ett möte:
 
-1. Select the date and media item you want to present
-2. Click the play button or use the keyboard shortcut
-3. The media will start playing on the media display
-4. Use the controls to play, pause, or navigate through media
+1. Välj datum och media som du vill visa
+2. Klicka på play-knappen eller använd kortkommandot
+3. Mediet kommer att börja spela upp på mediedisplayen
+4. Använd kontrollerna för att spela, pausa eller navigera genom media
 
-### Media Player Controls {#media-player-controls}
+### Mediaspelarinställningar {#media-player-controls}
 
-The media player provides comprehensive controls:
+Mediaspelaren erbjuder omfattande inställningsmöjligheter:
 
-- **Play/Pause** - Start or pause media playback
-- **Stop** - Stop playback
+- **Spela/Pausa** - Startar eller pausar medieuppspelning
+- **Stopp** - Stoppa uppspelning
 
 <!-- - **Previous/Next** - Navigate between media items
 - **Volume** - Adjust playback volume -->
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Zoom/Pan** - Use mouse wheel to zoom, drag to pan (for images)
+- **Zoom/Pan** - Använd mushjulet för att zooma, dra för att panorera (bilder)
 
-### Advanced Presentation Features {#advanced-presentation}
+### Avancerade visningsfunktioner{#advanced-presentation}
 
-#### Custom Timing {#custom-timing}
+#### Anpassad tidsinställning {#custom-timing}
 
-Set custom start and end times for media:
+Ställ in anpassade start- och sluttider för media:
 
 <!-- 1. Right-click on a media item
 2. Select "Edit Timing" -->
 
-1. Click on the duration of a video on the top left of its thumbnail
-2. Set start and end times
-3. Save your changes
+1. Klicka på varaktigheten av en video längst upp till vänster i miniatyrbilden
+2. Ange start- och sluttider
+3. Spara dina ändringar
 
-#### Zoom and Pan {#zoom-pan}
+#### Zooma och panorera {#zoom-pan}
 
-For images and videos:
+För bilder och videor:
 
-- **Zoom In/Out** - Use mouse wheel or zoom controls on the thumbnail
-- **Pan** - Click and drag the thumbnail to move the image around
-- **Reset Zoom** - Click to return to original zoom
+- \*\*Zooma in/ut \*\* - Använd mushjulet eller används kontrollerna på miniatyrbilden
+- **Pan** - Klicka och dra miniatyren för att flytta runt bilden
+- **Återställ Zoom** - Klicka för att återgå till original zoom
 
-#### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
+#### Kortkommandon {#user-guide-keyboard-shortcuts}
 
-Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
+Ställ in anpassade kortkommandon för snabbare åtkomst. Observera att inga kortkommandon är inställda som standard.
 
-**Built-in Media Controls** (when main window is focused and showing the media list):
+\*\*Inbyggda mediekontroller \*\* (när huvudfönstret är fokuserat och visar medielistan):
 
-- **Tab/Shift+Tab** - Navigate between media items
-- **Up/Down Arrow** - Navigate between media items
-- **Space** - Play/Pause media
-- **Escape** - Stop media
+- **Tab/Shift+Tab** - Navigera mellan medieobjekt
+- **Upp/Ner pil** - Navigera mellan medieobjekt
+- **Mellanslag** - Spela/Pausa media
+- **Esc** - Stoppa media
 
-**Customizable Shortcuts** (when enabled in settings):
+**Anpassningsbara genvägar** (när aktiverat i inställningar):
 
-- **Mediafönster** - Öppna/stäng mediafönstret
+- **Mediefönster** - Öppna/stäng mediefönstret
 - **Föregående/Nästa media** - Navigera mellan medieobjekt
 - **Pausa/Återuppspela** - Kontrollera uppspelning av media
 - **Stoppa media** - Stoppa medieuppspelning
@@ -122,160 +122,160 @@ Configure custom keyboard shortcuts for quick access. Note that no keyboard shor
 
 **Note (\*):** Global shortcut - available even when the app is not focused
 
-## Background Music {#user-guide-background-music}
+## Bakgrundsmusik {#user-guide-background-music}
 
-### Setting Up Background Music {#background-music-setup}
+### Ställa in bakgrundsmusik {#background-music-setup}
 
-Background music automatically plays before meetings and stops at the appropriate time:
+Bakgrundsmusik spelas automatiskt före möten och stannar vid lämplig tidpunkt:
 
-1. **Enable Music** - Turn on background music in settings
-2. **Auto-Start** - Music will start automatically when M³ launches, if appropriate
-3. **Meeting Stop** - Music stops automatically before meeting start time
-4. **Manual Control** - Use the music button in the status bar to start/stop manually
-5. **Restart** - Resume music after meetings with one click
+1. **Aktivera musik** - Aktivera bakgrundsmusik i inställningarna
+2. **Autostart** - Musiken startar automatiskt när M³ startar
+3. **Mötesstopp** - Musiken stannar automatiskt innan mötet börjar
+4. **Manuell kontroll** - Använd musikknappen i statusfältet för att starta/stoppa manuellt
+5. **Omstart** - Återuppta musik efter mötet med ett klick
 
-## Zoom Integration {#user-guide-zoom-integration}
+## Zoomintegration {#user-guide-zoom-integration}
 
-M³ can integrate with Zoom for automatic screen sharing:
+M³ kan integreras med Zoom för automatisk skärmdelning:
 
-1. **Enable Integration** - Turn on Zoom integration in settings
-2. **Configure Shortcut** - Set up the screen sharing keyboard shortcut that is configured in Zoom. Make sure that the "global" checkbox is checked in Zoom.
-3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
-4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
+1. **Aktivera integration** - Slå på Zoom-integration i inställningar
+2. **Konfigurera genväg** - Ställ in kortkommandot för skärmdelning som du angett i Zoom. Se till att kryssrutan "global" är markerad i Zoom.
+3. **Automatisk kontroll** - M³ växlar automatiskt skärmdelning i Zoom efter behov
+4. **Manuell åsidosättning** - Du kan fortfarande manuellt styra skärmdelning med Zoom om det behövs
 
-## OBS Studio Integration {#user-guide-obs-integration}
+## OBS Studiointegration {#user-guide-obs-integration}
 
-### Setting Up OBS Integration {#user-guide-obs-setup}
+### Ställa in OBS Integration {#user-guide-obs-setup}
 
-To use M³ with OBS Studio for hybrid meetings:
+Att använda M³ med OBS Studio för hybridmöten:
 
-1. **Install OBS Studio** - Download and install OBS Studio
-2. **Enable WebSocket** - Install the WebSocket plugin in OBS
-3. **Configure M³** - Enter OBS port and password in M³ settings
-4. **Set Up Scenes** - Create scenes for camera, media, and other content
-5. **Test** - Verify playback works properly
+1. **Installera OBS Studio** - Ladda ner och installera OBS Studio
+2. **Aktivera WebSocket** - Installera WebSocket-insticksmodulen i OBS
+3. **Konfigurera M³** - Ange OBS-port och lösenord i M³-inställningarna
+4. **Ställ in scener** - Skapa scener för kamera, media och annat innehåll
+5. **Testa** - Kontrollera att uppspelningen fungerar korrekt
 
-### OBS Scene Management {#obs-scene-management}
+### OBS Scenhantering {#obs-scene-management}
 
-M³ automatically switches OBS scenes during presentations:
+M³ växlar automatiskt OBS scener baserade på:
 
-- **Camera Scene** - Shows the lectern/camera view
-- **Media Scene** - Displays media content
-- **Image Scene** - Shows images (can be postponed if enabled)
-- **Automatic Switching** - Scenes change based on media type and settings
+- **Kamerascen** - Visar podiet/kameravyn
+- **Mediescen** - Visar medieinnehåll
+- **Bildscen** - Visar bilder (kan skjutas upp om aktiverat)
+- **Automatisk växling** - Scener ändras baserat på mediatyp och inställningar
 
-### Advanced OBS Features {#advanced-obs}
+### Avancerade OBS-funktioner {#advanced-obs}
 
-#### Postpone Images {#user-guide-postpone-images}
+#### Skjut upp bildvisning {#user-guide-postpone-images}
 
-Enable this option to delay sharing images to OBS until manually triggered:
+Aktivera detta alternativ för att fördröja delning av bilder till OBS tills manuellt aktiveras:
 
-1. Enable "Postpone Images" in OBS settings
-2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
+1. Aktivera "Skjut upp bilder" i OBS-inställningar
+2. Bilder kommer endast att delas när du klickar på knappen för att visa dem med OBS Studio. Detta är användbart för att visa bilder för åhörarna först.
 
-#### Scene Switching Behavior {#user-guide-scene-switching}
+#### Scenväxlingsbeteende {#user-guide-scene-switching}
 
-Configure how M³ handles scene changes:
+Konfigurera hur M³ hanterar scenförändringar:
 
-- **Switch After Media** - Automatically return to previous scene
-- **Remember Previous Scene** - Restore the scene that was active before media
+- **Byt efter Media** - Återvänd automatiskt till föregående scen
+- **Kom ihåg föregående scen** - Återställ scenen som var aktiv innan media
 
-### Audio Configuration for Hybrid Meetings {#audio-configuration}
+### Ljudkonfiguration för hybridmöten {#audio-configuration}
 
-When using M³ with OBS Studio for hybrid meetings (in-person + Zoom), you need to configure audio settings to ensure meeting participants can hear the media:
+När du använder M³ med OBS Studio för hybridmöten (På plats + Zoom), måste du konfigurera ljudinställningar för att säkerställa att mötesdeltagarna kan höra ev. ljud:
 
-#### Zoom Audio Settings {#zoom-audio-settings}
+#### Zoom ljudinställningar {#zoom-audio-settings}
 
-**Before every meeting, you must enable Original Audio in Zoom:**
+**Före varje möte måste du aktivera Original Audio i Zoom:**
 
-1. **Open Zoom** and go to Settings
-2. **Navigate to Audio** → **Advanced**
+1. **Öppna Zoom** och gå till Inställningar
+2. **Navigera till Audio** → **Avancerat**
 3. **Enable "Show in-meeting option to 'Enable Original Sound'"**
 4. **Check "Disable echo cancellation"** (first checkbox)
 5. **Check "Disable noise suppression"** (second checkbox)
 6. **Uncheck "Disable high-fidelity music mode"** (third checkbox)
 7. **Before starting each meeting**, click the "Original Audio" button in the meeting controls
 
-**Alternative: Share Computer Sound**
-If Original Audio doesn't work well in your setup:
+**Alternativ: Dela datorljud**
+Om Original Audio inte fungerar bra i din inställning:
 
 1. **Before playing media**, go to **Advanced** tab in Zoom screen sharing options
-2. **Check "Share computer sound"**
-3. **Note**: This option must be enabled every time you start a new Zoom session
+2. **Bocka i "Datorljud"**
+3. **Observera**: Det här alternativet måste aktiveras varje gång du startar en ny Zoom-session
 
-**Best Alternative**: Consider using M³'s Zoom integration instead of OBS Studio, as it uses Zoom's native screen sharing which handles audio more seamlessly and doesn't require complex audio configuration.
+**Bästa alternativ**: Överväg att använda M³:s Zoom-integration istället för OBS Studio, eftersom den använder Zooms inbyggda skärmdelning som hanterar ljud mer sömlöst och inte kräver en komplex ljudkonfiguration.
 
-#### Why Audio Configuration is Necessary {#why-audio-config}
+#### Varför ljudkonfiguration är nödvändig {#why-audio-config}
 
-M³ plays media with sound on your computer, but this audio is **not automatically transmitted** through the video stream to OBS Studio. This is the same behavior you would experience with any other media player.
+M³ spelar upp media med ljud på din dator, men detta ljud överförs **inte automatiskt** via videoströmmen till OBS Studio. Detta är samma beteende du skulle uppleva med någon annan mediaspelare.
 
-**The audio issue is not related to M³** - it's a limitation of how OBS Studio video streaming works with Zoom. The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
+**Ljudfrågan är inte relaterad till M³** - det är en begränsning av hur OBS Studio-videoströmning fungerar med Zoom. Videoströmmen fungerar som en virtuell kamera utan ljud, precis som en webbkamera, så du måste uttryckligen konfigurera Zoom för att fånga datorns ljud. Detta innebär att din dator har två ljudkort, och om inte kommer du förmodligen inte att kunna använda OBS Studio-integrationen framgångsrikt.
 
-**Alternative Solution**: Consider using the Zoom integration instead, as it uses Zoom's native screen and audio sharing, which handles audio more seamlessly.
+**Alternativ lösning**: Överväg att använda Zoomintegrationen istället, eftersom den använder Zooms inbyggda skärm och ljuddelning, som hanterar ljudet mer sömlöst.
 
-#### Troubleshooting Audio Issues {#audio-troubleshooting}
+#### Felsökning av ljudproblem {#audio-troubleshooting}
 
-**Common Problems:**
+**Vanliga problem:**
 
-- **No audio in Zoom**: Check if Original Audio is enabled and properly configured
-- **Poor audio quality**: Verify the three Original Audio checkboxes are set correctly
-- **Audio not working after Zoom restart**: Original Audio settings must be re-enabled for each new Zoom session
+- **Inget ljud i Zoom**: Kontrollera om Original Audio är aktiverat och korrekt konfigurerat
+- **Dålig ljudkvalitet**: Verifiera de tre kryssrutorna för Original Audio är korrekt inställda
+- **Ljud fungerar inte efter omstart av zoom**: Ursprungliga ljudinställningar måste vara aktiverade igen för varje ny Zoom-session
 
-**Best Practices:**
+**Bästa praxis:**
 
-- Test audio configuration and sharing before meetings
-- Create a checklist for audio setup
-- Consider using "Share Computer Sound" as a backup option
-- **Consider using Zoom integration instead of OBS Studio** for simpler audio handling
-- Ensure all AV operators are familiar with these settings
+- Testa ljudkonfiguration och delning innan mötet
+- Skapa en checklista för ljudinställningar
+- Överväg att använda "Dela datorljud" som backup
+- **Överväg att använda Zoom-integration istället för OBS Studio** för enklare ljudhantering
+- Se till att alla som sköter ljud/media känner till dessa inställningar
 
-## Media Import and Management {#media-import}
+## Importera och hantera media {#media-import}
 
-### Importing Custom Media {#importing-custom-media}
+### Importera anpassad media {#importing-custom-media}
 
-Add your own media files to M³:
+Lägg till dina egna mediefiler till M³:
 
-1. **File Import** - Use the import button to add videos, images, or audio files
-2. **Drag and Drop** - Drag files directly into M³
-3. **Folder Monitoring** - Set up a watched folder for automatic imports
-4. **JWPUB Files and Playlists** - Import publications and playlists
+1. **Filimport** - Använd importknappen för att lägga till videor, bilder eller ljudfiler
+2. **Dra och släpp** - Dra filer direkt till M³
+3. **Mappövervakning**: Ställ in en bevakad mapp för automatisk import
+4. **JWPUB-filer och spellistor**: Importera publikationer och spellistor
 
-### Managing Imported Media {#managing-imported-media}
+### Hantera importerad media {#managing-imported-media}
 
-- **Organize by Date** - Assign imported media to specific dates
-- **Custom Sections** - Create custom sections for organization
-- **Edit Properties** - Modify titles, descriptions, and timing
-- **Remove Media** - Delete unwanted media items
+- **Organisera efter datum** - Tilldela importerad media till specifika datum
+- **Anpassade sektioner** - Skapa anpassade sektioner för bättre organisering
+- **Redigera egenskaper** - Ändra rubriker, beskrivningar och timing
+- **Ta bort media** - Ta bort oönskade medieobjekt
 
-### Audio Bible Import {#audio-bible-import}
+### Importera ljudbibeln {#audio-bible-import}
 
-Import audio recordings of Bible verses:
+Importera ljudinspelningar av Bibelverser:
 
-1. Click the "Audio Bible" button
-2. Select the Bible book and chapter
+1. Klicka på knappen "Ljudbibel"
+2. Välja Bibelbok och kapitel
 3. Välj specifika verser eller versintervall
-4. Download the audio files
-5. Use them
+4. Ladda ner ljudfilerna
+5. Använd dem
 
-## Folder Monitoring and Export {#user-guide-folder-monitoring}
+## Mappbevakning och export {#user-guide-folder-monitoring}
 
-### Setting Up Folder Monitoring {#folder-monitoring-setup}
+### Ställa in mappbevakning {#folder-monitoring-setup}
 
-Monitor a folder for new media files:
+Bevaka en mapp för nya mediefiler:
 
-1. **Enable Folder Watcher** - Turn on folder monitoring in settings
-2. **Select Folder** - Choose the folder to monitor
-3. **Automatic Import** - New files are automatically added to M³
-4. **Organization** - Files are organized by date based on folder structure
+1. **Aktivera mappbevakning** - Slå på mappbevakning i inställningar
+2. **Välj mapp** - Välj den mapp som ska bevakas
+3. **Automatisk import** - Nya filer läggs automatiskt till i M³
+4. **Organiserat** - Filerna organiseras efter datum baserat på mappstrukturen
 
-### Media Export {#user-guide-media-export}
+### Mediaexport {#user-guide-media-export}
 
-Automatically export media to organized folders:
+Exportera media automatiskt till organiserade mappar:
 
-1. **Enable Auto-Export** - Turn on media export in settings
-2. **Select Export Folder** - Choose where to save exported files
-3. **Automatic Organization** - Files are organized by date and section
-4. **Format Options** - Convert files to MP4 for better compatibility
+1. **Aktivera automatisk export** - Slå på mediaexport i inställningar
+2. **Välj exportera mapp** - Välj var du vill spara exporterade filer
+3. **Automatisk organisering** - Filer organiseras efter datum och mötesdel
+4. **Formatalternativ** - Konvertera filer till MP4 för bättre kompatibilitet
 
 ## Website Presentation {#website-presentation}
 
