@@ -37,7 +37,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 ### 🛠️ Förbättringar och justeringar
 
 - 🛠️ **Bättre hantering av mime-typer**: Förbättrat stöd för MIME-typer för bättre mediekompatibilitet.
-- 🛠️ **Förbättrad navigation drawer**: Förbättrad hantering av miniläge och tillsatt verktygstips för bättre användarnavigering.
+- 🛠️ **Förbättrad navigation**: Förbättrad hantering av miniläge och tillsatt verktygstips för bättre användarnavigering.
 - 🛠️ **Linuxkompatibilitet**: Tvingad användning av GTK 3 på Linux för att förhindra problem med UI och uppstart.
 
 ## 25.5.0
