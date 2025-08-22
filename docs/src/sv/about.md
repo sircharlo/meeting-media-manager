@@ -4,7 +4,7 @@
 
 ## Vad är det för app? {#what-is-this-app}
 
-**Meeting Media Manager**, eller förkortat som **M3**, är en omfattande plattformsoberoende applikation för Windows, macOS och Linux som automatiskt laddar, organiserar och presenterar bilder och videor för Jehovas vittnens församlingsmöten. Den stöder alla språk som finns på den officiella webbplatsen för Jehovas vittnen och ger kraftfulla verktyg för att hantera media under både hybrid- och personmöten.
+**Meeting Media Manager**, eller förkortat som **M³**, är en omfattande plattformsoberoende applikation för Windows, macOS och Linux som automatiskt laddar, organiserar och visar bilder och videor för Jehovas vittnens församlingsmöten. Den stöder alla språk som finns på den officiella webbplatsen för Jehovas vittnen och ger kraftfulla verktyg för att hantera media under både hybrid- och personmöten.
 
 M³ har stöd för att hantera regelbundna och anpassade mötesmedier, flera församlingar och/eller grupper som använder samma datorkonto, och avancerade presentationsmöjligheter som gör mediedelning enkelt.
 
@@ -20,7 +20,7 @@ M³ är det ultimata verktyget för att hantera mötesmedier och erbjuder en sö
 
 ### Viktiga fördelar {#key-benefits}
 
-- **Enkel mediepresentation**: Presentera media på bästa sätt – bara öppna M³ och allt fungerar. Inga komplicerade inställningar eller extra steg krävs.
+- **Enkel medievisning**: Visa media på bästa sätt – bara öppna M³ och allt fungerar. Inga komplicerade inställningar eller extra steg krävs.
 
 - **Stöd för flera församlingar**: Hantera inställningar för flera församlingar eller grupper enkelt i ett enda program.
 
@@ -34,7 +34,7 @@ M³ är det ultimata verktyget för att hantera mötesmedier och erbjuder en sö
 
 ## Vad kan M³ göra? {#what-can-m3-do}
 
-M³ är en omfattande mediehanteringslösning som gör att du enkelt och automatiskt kan ladda ner, synkronisera, dela och presentera alla mötesmedier. Här är vad som gör M³ kraftfull:
+M³ är en omfattande mediehanteringslösning som gör att du enkelt och automatiskt kan ladda ner, synkronisera, dela och visa alla mötesmedier. Här är vad som gör M³ kraftfull:
 
 ### Kärnmediehantering {#core-media-management}
 
@@ -84,7 +84,7 @@ För **hybrid** eller **vanliga** församlingsmöten, innehåller det integrerad
 - **Tangentbordsgenvägar**: Anpassningsbara kortkommandon för många funktioner
 - **Flera profiler**: Hantera olika församlingar eller grupper med separata profiler
 
-**Prova M³ idag och se med egna ögon vad den kan göra! Det har aldrig varit enklare att presentera media på församlingsmöten.**
+**Prova M³ idag och se med egna ögon vad den kan göra! Det har aldrig varit enklare att visa media på församlingsmöten.**
 
 ![M³ preview](./../assets/m3-preview.png)
 
