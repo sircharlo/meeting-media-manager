@@ -1,10 +1,10 @@
-# User Guide {#user-guide}
+# Guida Utente {#user-guide}
 
-This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
+Questa guida completa vi aiuterà a padroneggiare tutte le caratteristiche di M³, dalla configurazione di base alle tecniche avanzate di presentazione dei media.
 
-## Getting Started {#getting-started}
+## Per Iniziare {#getting-started}
 
-### First Launch {#first-launch}
+### Primo Avvio {#first-launch}
 
 When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
 
@@ -20,7 +20,7 @@ Take your time during setup - but you can always change these settings later in 
 
 :::
 
-### Main Interface Overview {#main-interface}
+### Panoramica Interfaccia Principale {#main-interface}
 
 The main M³ interface consists of several key areas:
 
