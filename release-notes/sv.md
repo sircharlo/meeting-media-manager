@@ -50,7 +50,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 ### 🛠️ Förbättringar och justeringar
 
 - 🔍 **Återställ Zoomning med Ctrl + Scroll**: Nollställning av zoomning för enklare navigering.
-- 👤 **Dölj oanvänd media för kretsbesöket**: Dölj istället för att hoppa över media som inte används för kretsbesöket, för att hålla en renare presentation.
+- 👤 **Dölj oanvänd media för kretsbesöket**: Dölj istället för att hoppa över media som inte används för kretsbesöket, för att hålla en renare visning.
 - 🎵 **Hitta dubletter av sånger**: Gör det lättare att hitta dubletter av sånger.
 
 ## 25.4.3

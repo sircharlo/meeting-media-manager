@@ -1,6 +1,6 @@
 # Användarhandbok {#user-guide}
 
-Denna omfattande användarhandbok hjälper dig att bemästra alla funktioner i M³, från grundläggande inställning till avancerade media presentationstekniker.
+Denna omfattande användarhandbok hjälper dig att bemästra alla funktioner i M³, från grundläggande inställning till avancerade mediavisningstekniker.
 
 ## Komma igång {#getting-started}
 
@@ -55,7 +55,7 @@ M³ organiserar automatiskt media efter typ och mötesdel:
 - **Mötesdelar** - Media grupperas efter mötesdelar (Föreläsning, Guldkorn, etc.)
 - **Anpassade mötesdelar** - Du kan skapa anpassade mötesdelar för ytterligare media om inget möte är planerat den dagen
 
-## Mediapresentation {#media-presentation}
+## Mediavisning {#media-presentation}
 
 ### Öppna mediaspelaren {#opening-media-player}
 
@@ -157,7 +157,7 @@ Att använda M³ med OBS Studio för hybridmöten:
 
 ### OBS Scenhantering {#obs-scene-management}
 
-M³ växlar automatiskt OBS scener baserade på:
+M³ växlar automatiskt OBS scener under visning:
 
 - **Kamerascen** - Visar podiet/kameravyn
 - **Mediescen** - Visar medieinnehåll
@@ -190,16 +190,16 @@ När du använder M³ med OBS Studio för hybridmöten (På plats + Zoom), måst
 
 1. **Öppna Zoom** och gå till Inställningar
 2. **Navigera till Audio** → **Avancerat**
-3. **Enable "Show in-meeting option to 'Enable Original Sound'"**
-4. **Check "Disable echo cancellation"** (first checkbox)
-5. **Check "Disable noise suppression"** (second checkbox)
-6. **Uncheck "Disable high-fidelity music mode"** (third checkbox)
-7. **Before starting each meeting**, click the "Original Audio" button in the meeting controls
+3. **Aktivera "Visa mötesalternativ för att "Aktivera Original Sound""**
+4. **Bocka i "Inaktivera ekodämpning"** (första kryssrutan)
+5. **Bocka i "Inaktivera brusdämpning"** (andra kryssrutan)
+6. **Avmarkera "Inaktivera originalljud för musiker"** (tredje kryssrutan)
+7. **Innan du startar varje möte**, klicka på knappen "Original Audio" i mötets kontroller
 
 **Alternativ: Dela datorljud**
 Om Original Audio inte fungerar bra i din inställning:
 
-1. **Before playing media**, go to **Advanced** tab in Zoom screen sharing options
+1. **Innan uppspelning av media**, gå till **Avancerat** fliken i Zooms skärmdelnings alternativ
 2. **Bocka i "Datorljud"**
 3. **Observera**: Det här alternativet måste aktiveras varje gång du startar en ny Zoom-session
 
@@ -277,7 +277,7 @@ Exportera media automatiskt till organiserade mappar:
 3. **Automatisk organisering** - Filer organiseras efter datum och mötesdel
 4. **Formatalternativ** - Konvertera filer till MP4 för bättre kompatibilitet
 
-## Visning websida {#website-presentation}
+## Visning av websida {#website-presentation}
 
 ### Visa den officiella websidan {#presenting-the-website}
 

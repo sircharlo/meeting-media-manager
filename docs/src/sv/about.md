@@ -6,7 +6,7 @@
 
 **Meeting Media Manager**, eller förkortat som **M³**, är en omfattande plattformsoberoende applikation för Windows, macOS och Linux som automatiskt laddar, organiserar och visar bilder och videor för Jehovas vittnens församlingsmöten. Den stöder alla språk som finns på den officiella webbplatsen för Jehovas vittnen och ger kraftfulla verktyg för att hantera media under både hybrid- och personmöten.
 
-M³ har stöd för att hantera regelbundna och anpassade mötesmedier, flera församlingar och/eller grupper som använder samma datorkonto, och avancerade presentationsmöjligheter som gör mediedelning enkelt.
+M³ har stöd för att hantera regelbundna och anpassade mötesmedier, flera församlingar och/eller grupper som använder samma datorkonto, och avancerade visningsmöjligheter som gör mediedelning enkelt.
 
 :::info Info
 
@@ -16,7 +16,7 @@ Appen hade tidigare namnet JWMMF (JW Meeting Media Fetcher), men döptes om till
 
 ## Varför välja M³? {#why-choose-m3}
 
-M³ är det ultimata verktyget för att hantera mötesmedier och erbjuder en sömlös, tillförlitlig och funktionsrik upplevelse med olika plattformar. Den är speciellt utformad för alla församlingsmötens behov och ger allt som behövs för en effektiv mediepresentation.
+M³ är det ultimata verktyget för att hantera mötesmedier och erbjuder en sömlös, tillförlitlig och funktionsrik upplevelse med olika plattformar. Den är speciellt utformad för alla församlingsmötens behov och ger allt som behövs för en effektiv medievisning.
 
 ### Viktiga fördelar {#key-benefits}
 
@@ -30,7 +30,7 @@ M³ är det ultimata verktyget för att hantera mötesmedier och erbjuder en sö
 
 - **Pålitlig och stabil**: Byggd för att leverera när du behöver det som mest. Hittat en bugg? Rapportera det, och det kommer att tas upp omedelbart.
 
-- **Avancerade presentationsverktyg**: Avancerade mediekontroller, zoom/panoreringsmöjligheter, anpassad timing och sömlös Zoom och OBS Studio-integration.
+- **Avancerade visningsverktyg**: Avancerade mediekontroller, zoom/panoreringsmöjligheter, anpassad timing och sömlös Zoom och OBS Studio-integration.
 
 ## Vad kan M³ göra? {#what-can-m3-do}
 
@@ -43,15 +43,15 @@ M³ är en omfattande mediehanteringslösning som gör att du enkelt och automat
 - **Smart caching**: Intelligent cachingsystem som håller media organiserade och uppdaterade
 - **Medieorganisation**: Organiserar automatiskt media efter datum och mötesdel
 
-### Media presentationsfunktioner {#about-presentation-features}
+### Mediavisningsfunktioner {#about-presentation-features}
 
-För **hybrid** eller **vanliga** församlingsmöten, innehåller det integrerade mediepresentationsläget följande:
+För **hybrid** eller **vanliga** församlingsmöten, innehåller det integrerade medievisningsläget följande:
 
 - \*\*Avancerade mediekontroller \*\*: Media-miniatyrer med zoom och panoreringsmöjligheter
 - **Anpassad tid**: Ställ in anpassade start- och sluttider för medieuppspelning
 - **Uppspelningskontroller**: Lätt att spela/pausa/stoppa med kortkommandon
 - **Stöd för flera bildskärmar**: Automatisk detektering och hantering av externa bildskärmar
-- **Ren presentation**: Distraktionsfritt mediepresentationsgränssnitt
+- **Ren presentation**: Distraktionsfritt medievisning
 
 ### Bakgrundsmusik {#about-background-music}
 
@@ -80,7 +80,7 @@ För **hybrid** eller **vanliga** församlingsmöten, innehåller det integrerad
 
 - **Mappövervakning**: Synkronisera automatiskt media från bevakade mappar (Dropbox, OneDrive, etc.)
 - **Mediaexport**: Exportera media automatiskt till mappar, organiserat efter datum
-- **Webbplatspresentation**: Visa den officiella hemsidan på externa skärmar
+- **Websidesvisning**: Visa den officiella websidan på externa skärmar
 - **Tangentbordsgenvägar**: Anpassningsbara kortkommandon för många funktioner
 - **Flera profiler**: Hantera olika församlingar eller grupper med separata profiler
 
@@ -94,7 +94,7 @@ För **hybrid** eller **vanliga** församlingsmöten, innehåller det integrerad
 
 ### Mediaspråk {#media-languages}
 
-Mediaför Jehovas vittnens möten kan laddas ner automatiskt på något av de hundratals språk som finns på Jehovas vittnens officiella hemsida. Listan över tillgängliga språk uppdateras dynamiskt, allt du behöver göra är att välja önskad språk vid installationen.
+Media för Jehovas vittnens möten kan laddas ner automatiskt på något av de hundratals språk som finns på Jehovas vittnens officiella websida. Listan över tillgängliga språk uppdateras dynamiskt, allt du behöver göra är att välja önskad språk vid installationen.
 
 ### Gränssnittsspråk {#interface-languages}
 
