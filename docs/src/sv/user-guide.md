@@ -277,112 +277,112 @@ Exportera media automatiskt till organiserade mappar:
 3. **Automatisk organisering** - Filer organiseras efter datum och mötesdel
 4. **Formatalternativ** - Konvertera filer till MP4 för bättre kompatibilitet
 
-## Website Presentation {#website-presentation}
+## Visning websida {#website-presentation}
 
-### Presenting the Official Website {#presenting-the-website}
+### Visa den officiella websidan {#presenting-the-website}
 
-Share the official website on external displays:
+Dela den officiella websidan på externa skärmar:
 
-1. **Open Website Mode** - Click the website presentation button
-2. **External Display** - The website opens in a new window
-3. **Navigation** - Use the browser controls to navigate
+1. **Öppna i webläget** - Klicka på visningsknappen för websidan
+2. **Extern skärm** - Websidan öppnas i ett nytt fönster
+3. **Navigering** - Använd webbläsarkontrollerna för att navigera
 
-### Website Controls {#website-controls}
+### Webinställningar {#website-controls}
 
-- **Navigation** - Standard browser navigation controls
-- **Refresh** - Reload the current page
-- **Close** - Exit website presentation mode
+- **Navigering** - Vanliga webbläsarkontroller
+- **Uppdatera** - Ladda om den aktuella sidan
+- **Stäng** - Avsluta websidan visningsläge
 
-## Advanced Features {#user-guide-advanced-features}
+## Avancerade funktioner {#user-guide-advanced-features}
 
-### Multiple Congregations {#user-guide-multiple-congregations}
+### Flera församlingar {#user-guide-multiple-congregations}
 
-Manage multiple congregations or groups:
+Hantera flera församlingar eller grupper:
 
-1. **Create Profiles** - Set up separate profiles for different congregations
-2. **Switch Profiles** - Use the congregation selector to switch between profiles
-3. **Separate Settings** - Each profile has its own settings and media
-4. **Shared Resources** - Media files are shared between profiles whenever possible
+1. **Skapa profiler** - Ställ in separata profiler för olika församlingar
+2. **Växla profiler** - Använd församlingsväljaren för att växla mellan profiler
+3. **Separata inställningar** - Varje profil har sina egna inställningar och media
+4. **Delade resurser** - Mediefiler delas mellan profiler när det är möjligt
 
-### Keyboard Shortcuts {#keyboard-shortcuts-guide}
+### Kortkommandon {#keyboard-shortcuts-guide}
 
-Configure custom keyboard shortcuts for efficient operation:
+Ställ in anpassade kortkommandon för snabbare åtkomst:
 
-1. **Enable Shortcuts** - Turn on keyboard shortcuts in settings
-2. **Configure Shortcuts** - Set up shortcuts for common actions
-3. **Practice** - Learn your shortcuts for faster operation
-4. **Customize** - Adjust shortcuts to match your preferences
+1. **Aktivera genvägar** - Aktivera kortkommandon i inställningarna
+2. **Konfigurera genvägar** - Ställ in genvägar för vanliga åtgärder
+3. **Öva** - Lär dig dina genvägar för snabbare hantering
+4. **Anpassa** - Justera genvägar för att passa dina behov
 
-## Troubleshooting {#troubleshooting-guide}
+## Felsökning {#troubleshooting-guide}
 
-### Common Issues {#common-issues}
+### Vanliga problem {#common-issues}
 
-#### Media Not Downloading {#user-guide-media-not-downloading}
+#### Media laddas inte ner {#user-guide-media-not-downloading}
 
-- Check your meeting schedule settings
-- Verify internet connection
-- Check if media is available in your selected language
+- Kontrollera dina inställningar för mötesschemat
+- Verifiera internetanslutning
+- Kontrollera om media är tillgängligt på ditt valda språk
 
-#### OBS Integration Not Working {#user-guide-obs-not-working}
+#### OBS Integrationen fungerar inte {#user-guide-obs-not-working}
 
-- Verify OBS WebSocket plugin is installed
-- Check port and password settings
-- Ensure OBS is running
+- Verifiera att OBS WebSocket plugin är installerad
+- Kontrollera port- och lösenordsinställningar
+- Kontrollera att OBS körs
 
-#### Audio Issues in Zoom/OBS {#audio-issues}
+#### Ljudproblem i Zoom/OBS {#audio-issues}
 
-- **No audio in Zoom**: Enable Original Audio in Zoom settings and before each meeting
-- **Poor audio quality**: Check the three Original Audio checkboxes (first two enabled, third disabled)
-- **Audio not working after restart**: Original Audio must be re-enabled for each new Zoom session
-- **Alternative solution**: Use "Share Computer Sound" option in Zoom screen sharing
+- **Inget ljud i Zoom**: Aktivera Original Audio i Zoom-inställningarna och före varje möte
+- **Dålig ljudkvalitet**: Kontrollera de tre ursprungliga ljudrutorna (första två aktiverade, tredje inaktiverade)
+- **Ljud fungerar inte efter omstart av zoom**: Ursprungliga ljudinställningar måste vara aktiverade igen för varje ny Zoom-session
+- **Alternativ lösning**: Använd alternativet "Dela datorljud" i Zoom skärmdelning
 
-#### Performance Issues {#user-guide-performance-issues}
+#### Prestandaproblem {#user-guide-performance-issues}
 
-- Enable extra cache
-- Reduce maximum resolution
-- Clear old cached files
-- Check available disk space
+- Aktivera extra cache
+- Minska maximal upplösning
+- Rensa gamla cachade filer
+- Kontrollera tillgängligt diskutrymme
 
-#### Language Issues {#user-guide-language-issues}
+#### Språkproblem {#user-guide-language-issues}
 
-- Check media language setting
-- Ensure language is available on JW.org
-- Try a fallback language
-- Verify interface language setting
+- Kontrollera inställningar för mediaspråk
+- Se till att språket är tillgängligt på JW.org
+- Prova ett reservspråk
+- Verifiera dessa språkinställningar
 
-### Getting Help {#getting-help}
+### Få hjälp {#getting-help}
 
-If you encounter issues:
+Om du stöter på problem:
 
-1. **Check Documentation** - Review this guide and other available documentation
-2. **Search Issues** - Look for similar issues on GitHub
-3. **Report Problems** - Create a new issue with detailed information
+1. **Kontrollera dokumentation** - Granska denna guide och annan tillgänglig dokumentation
+2. **Sökproblem** - Leta efter liknande ärenden på GitHub
+3. **Rapportera problem** - Skapa ett nytt ärende med detaljerad information
 
-## Best Practices {#best-practices}
+## Bästa praxis {#best-practices}
 
-### Before Meetings {#before-meetings}
+### Före möten {#before-meetings}
 
-1. **Check Downloads** - Ensure all media is downloaded
-2. **Test Equipment** - Verify displays and audio work
-3. **Prepare Media** - Review and organize media for the meeting; make sure no media files are missing
-4. **Configure Audio** - For hybrid meetings, enable Original Audio in Zoom or set up "Share Computer Sound"
+1. **Kontrollera nerladdningar** - Se till att alla medier är hämtade
+2. **Testa utrustningen** - Verifiera bildskärmar och ljudarbeten
+3. **Förbered Media** - Granska och organisera media för mötet, se till att inga mediefiler saknas
+4. **Konfigurera Audio** - För hybridmöten, aktivera Original Audio i Zoom eller konfigurera "Dela datorljud"
 
-### During Meetings {#during-meetings}
+### Under möten {#during-meetings}
 
-1. **Stay Focused** - Use the clean and distraction-free interface
-2. **Use Shortcuts** - Master keyboard shortcuts for smooth operation
-3. **Monitor Audio** - Keep an eye on volume levels, if that's part of your responsibilities
-4. **Be Prepared** - Have the next media item ready
-5. **Verify Audio** - For hybrid meetings, ensure Zoom participants can hear the media
+1. **Håll dig fokuserad** - Använd det rena och störningsfria gränssnittet
+2. **Använd genvägar** - Använd tangentbordsgenvägar för en smidig drift
+3. **Övervaka Audio** - Håll ett öga på volymnivåerna, om det är en del av ditt ansvar
+4. **Förbered dig** - Ha nästa medieobjekt redo
+5. **Verifiera ljud** - För hybridmöten, se till att zoomdeltagarna kan höra media
 
-### After Meetings {#after-meetings}
+### Efter möten {#after-meetings}
 
-1. **Start Background Music** - Start the playback of background music
-2. **Plan Ahead** - Prepare for the next meeting by making sure everything is in place
-3. **Clean Up** - Close media player when you're ready to leave
+1. **Starta bakgrundsmusik** - Starta uppspelning av bakgrundsmusik
+2. **Planera framåt** - Förbered dig för nästa möte genom att se till att allt är på plats
+3. **Städa upp** - Stäng mediaspelaren när du är redo att lämna
 
-### Regular Maintenance {#regular-maintenance}
+### Regelbundet underhåll {#regular-maintenance}
 
-1. **Update M³** - Keep the application updated
-2. **Clear Cache** - Periodically clear old cached files
-3. **Check Settings** - Review and update settings as needed
+1. **Uppdatera M³** - Håll programmet uppdaterat
+2. **Rensa cache** - Rensa gamla cachade filer regelbundet
+3. **Kontrollera inställningar** - Granska och uppdatera inställningarna efter behov
