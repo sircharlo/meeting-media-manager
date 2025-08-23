@@ -4,7 +4,7 @@
 
 ### :earth_americas: Är den här appen beroende av externa sajter eller källor för att ladda ner publikationer och mötesmedia? {#external-dependencies}
 
-**Nej.** Appen beter sig på samma sätt som JW Library. Den laddar ner publikationer och media direkt från Jehovas vittnens officiella hemsida. Appen bestämmer automatiskt vad som behöver laddas ner och när tidigare hämtat innehåll inte längre är uppdaterat och ska laddas ner.
+**Nej.** Appen beter sig på samma sätt som JW Library. Den laddar ner publikationer och media direkt från Jehovas vittnens officiella websida. Appen bestämmer automatiskt vad som behöver laddas ner och när tidigare hämtat innehåll inte längre är uppdaterat och ska laddas ner.
 
 :::info Info
 
@@ -12,9 +12,9 @@ Källkoden för denna app är tillgänglig för alla att undersöka och verifier
 
 :::
 
-### :thinking: Kränker denna app användningsvillkoren för Jehovas vittnens officiella hemsida? {#terms-of-use}
+### :thinking: Kränker denna app användningsvillkoren för Jehovas vittnens officiella websida? {#terms-of-use}
 
-**Nej.** [Användarvillkor](https://www.jw.org/finder?docid=1011511&prefer=content) på Jehovas officiella hemsida tillåter uttryckligen den typ av användning som vi gör. Här är ett utdrag från dessa villkor (fetstilt av mig):
+**Nej.** [Användarvillkor](https://www.jw.org/finder?docid=1011511&prefer=content) på Jehovas officiella websida tillåter uttryckligen den typ av användning som vi gör. Här är ett utdrag från dessa villkor (fetstilt av mig):
 
 > Du får inte:
 >
@@ -32,7 +32,7 @@ M³ stöder Windows, macOS och Linux:
 
 **Ja!** M³ ger omfattande stöd för flera språk:
 
-- **Mediaspråk**: Ladda ner media på något av hundratals språk som finns på Jehovas officiella hemsida
+- **Mediaspråk**: Ladda ner media på något av hundratals språk som finns på Jehovas officiella websida
 - **Gränssnittsspråk**: Använd M³:s gränssnitt på många olika språk
 - **Oberoende inställningar**: Du kan använda gränssnittet på ett språk när du laddar ner media i ett annat
 
@@ -60,7 +60,7 @@ M³ laddar automatiskt ner media för kommande möten genom att:
 
 1. Kontrollera ditt mötesschema
 2. Fastställer vilka medier som behövs
-3. Ladda ner från den officiella hemsidan för Jehovas vittnen på ditt valda språk
+3. Ladda ner från den officiella websidan för Jehovas vittnen på ditt valda språk
 4. Organiserar media efter datum och mötestyp
 5. Cachning av filer för offline-användning
 
@@ -89,7 +89,7 @@ Ja! M³ innehåller en ljudbibel funktion som låter dig att:
 3. Ladda ner ljudinspelning
 4. Använd dem på mötena
 
-## Presentationsfunktioner {#faq-presentation-features}
+## Visningsfunktioner {#faq-presentation-features}
 
 ### :tv: Hur visa jag media under mötena? {#present-media}
 
@@ -128,7 +128,7 @@ Integrera med Zoom:
 
 1. Aktivera Zoom-integration i M³-inställningar
 2. Konfigurera genvägen för skärmdelning som är konfigurerad i Zoom. Se till att genvägen är "global" i Zooms inställningar.
-3. M³ startar och stoppar automatiskt Zoom-skärmdelning under mediapresentationer
+3. M³ startar och stoppar automatiskt Zoom-skärmdelning under mediavisning
 
 ## OBS Studiointegration {#faq-obs-integration}
 
@@ -238,7 +238,7 @@ Verifiera dessa språkinställningar:
 
 1. **Gränssnittsspråk**: Kontrollera dina inställningar för visningsspråk
 2. **Mediespråk**: Verifiera ditt medianedladdningsspråk
-3. **Språktillgänglighet**: Se till att mediespråket finns tillgängligt på Jehovas Vittnens officiella hemsida
+3. **Språktillgänglighet**: Se till att mediespråket finns tillgängligt på Jehovas Vittnens officiella websida
 4. **Fallback Språk**: Försök att ställa in ett reservspråk
 
 ## Stöd {#support-community}
@@ -301,7 +301,7 @@ Typisk användning varierar från 2-10GB beroende på inställningar och använd
 Ja! M³ är utformad med säkerhet och integritet i åtanke:
 
 - **Lokal lagring**: Alla mötesdata lagras lokalt på din dator
-- **Direktnedladdningar**: Media laddas ner direkt från Jehovas officiella hemsida
+- **Direktnedladdningar**: Media laddas ner direkt från Jehovas officiella websida
 - **Öppen källkod**: Koden är öppen för granskning och verifiering
 - **Felrapporter**: Begränsad mängd data samlas in för felrapporteringsändamål
 
