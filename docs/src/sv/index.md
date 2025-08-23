@@ -23,16 +23,16 @@ hero:
 features:
   - icon: 🚀
     title: Automatisk mediahantering
-    details: Laddar ner och organiserar automatiskt bilder och videor för församlingsmöten på vilket språk som helst som finns på Jehovas vittnens officiella hemsida.
+    details: Laddar ner och organiserar automatiskt bilder och videor för församlingsmöten på vilket språk som helst som finns på Jehovas vittnens officiella websida.
   - icon: 🎦
-    title: Mediapresentation
+    title: Mediavisning
     details: Visa media med lätthet under hybrid- eller personmöten med avancerade kontroller, zoom/panoreringsmöjligheter och anpassade tidsmöjligheter.
   - icon: 🎵
     title: Bakgrundsmusik
     details: Intelligent bakgrundsmusik som automatiskt stannar innan mötet börjar och kan startas igen med ett klick efter mötet.
   - icon: 🖥️
     title: Stöd för flera skärmar
-    details: Identifierar och hanterar automatiskt externa bildskärmar för smidiga mediepresentationer och delning av websidor.
+    details: Identifierar och hanterar automatiskt externa bildskärmar för smidig mediavisning och delning av websidor.
   - icon: 🌐
     title: Stöd för flera språk
     details: Ladda ner mötesmedia på hundratals språk och använd M³:s gränssnitt i något av de många tillgängliga språken.
