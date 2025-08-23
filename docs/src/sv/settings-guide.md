@@ -1,187 +1,187 @@
-# Settings Guide {#settings-guide}
+# Inställningsguide {#settings-guide}
 
-This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+Denna omfattande guide förklarar alla inställningar som finns i M³, organiserade efter kategori. Att förstå dessa inställningar hjälper dig att konfigurera M³ för att fungera perfekt för din församlings behov.
 
-## Application Configuration {#application-configuration}
+## Programinställningar {#application-configuration}
 
-### Display Language {#display-language}
+### Appens visningsspråk {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Choose the language for M³'s interface. This is independent of the language used for media downloads.
+Välj språk för M³:s gränssnitt. Detta är oberoende av språket som används för medianedladdningar.
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+**Alternativ**: Alla tillgängliga gränssnittsspråk (engelska, spanska, franska osv.)
 
-**Default**: English
+**Standard**: Engelska
 
-### Dark Mode {#dark-mode}
+### Mörkt läge {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-Control the appearance theme of M³.
+Ställ in utseendet för M³.
 
-**Options**:
+**Alternativ**:
 
-- Automatically switch based on system preference
-- Always use dark mode
-- Always use light mode
+- Välj automatiskt efter datorns systeminställningar
+- Använd alltid mörkt läge
+- Använd alltid ljust läge
 
-**Default**: Auto
+**Standard**: Auto
 
-### First Day of Week {#first-day-of-week}
+### Veckans första dag {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the calendar view.
+Ange vilken veckodag som ska vara första dagen i veckan i kalendervyn.
 
-**Options**: Sunday through Saturday
+**Alternativ**: Söndag till lördag
 
-**Default**: Sunday
+**Standard**: Söndag
 
-### Auto-Start at Login {#auto-start-at-login}
+### Auto-start vid inloggning {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-Automatically start M³ when the computer boots up.
+Starta automatiskt M³ när datorn startas.
 
-**Default**: `false`
+**Standard**: `nej`
 
-## Congregation Meetings {#congregation-meetings}
+## Församlingsmöten {#congregation-meetings}
 
-### Congregation Name {#congregation-name}
+### Församlingsnamn {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
-The name of your congregation. This is used for organization and display purposes.
+Namnet på din församling. Detta används för organiserings- och visningsändamål.
 
-**Default**: Empty (must be set during setup)
+**Standard**: Tom (måste ställas in under installationen)
 
-### Meeting Language {#meeting-language}
+### Mötesspråk {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
-The primary language for media downloads. This should match the language used in your congregation's meetings.
+Det primära språket för nedladdning av media. Detta bör matcha språket som används vid församlingens möten.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Alternativ**: Alla tillgängliga språk som finns på Jehovas vittnens officiella websida
 
-**Default**: English (E)
+**Standard**: Engelska (E)
 
-### Fallback Language {#fallback-language}
+### Reservspråk {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
-A secondary language to use when media isn't available in the primary language.
+Ett reservspråk att använda när mediat inte finns tillgängligt på det primära språket.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Alternativ**: Alla tillgängliga språk som finns på Jehovas vittnens officiella websida
 
-**Default**: None
+**Standard**: Inget
 
-### Midweek Meeting Day {#midweek-meeting-day}
+### Dag för veckomötet {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-The day of the week when your midweek meeting is held.
+Veckodagen då veckomötet äger rum.
 
-**Options**: Sunday through Saturday
+**Alternativ**: Söndag till lördag
 
-**Default**: None (must be set during setup)
+**Standard**: Inget (måste ställas in under installationen)
 
-### Midweek Meeting Time {#midweek-meeting-time}
+### Klockslag för veckomötet
 
 <!-- **Setting**: `mwStartTime` -->
 
-The start time of your midweek meeting.
+Klockslaget när veckomötet börjar.
 
-**Format**: HH:MM (24-hour format)
+**Format**: HH:MM (24-timmarsformat)
 
-**Default**: None (must be set during setup)
+**Standard**: Inget (måste ställas in under installationen)
 
-### Weekend Meeting Day {#weekend-meeting-day}
+### Dag för helgmötet {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-The day of the week when your weekend meeting is held.
+Veckodagen då helgmötet äger rum.
 
-**Options**: Sunday through Saturday
+**Alternativ**: Söndag till lördag
 
-**Default**: None (must be set during setup)
+**Standard**: Inget (måste ställas in under installationen)
 
-### Weekend Meeting Time {#weekend-meeting-time}
+### Klockslag för helgmötet
 
 <!-- **Setting**: `weStartTime` -->
 
-The start time of your weekend meeting.
+Klockslaget när helgmötet börjar.
 
-**Format**: HH:MM (24-hour format)
+**Format**: HH:MM (24-timmarsformat)
 
-**Default**: None (must be set during setup)
+**Standard**: Inget (måste ställas in under installationen)
 
-### Circuit Overseer Week {#circuit-overseer-week}
+### Kretsveckan {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
-The week of the next circuit overseer's visit.
+Veckan för nästa kretsvecka.
 
-**Format**: MM/DD/YYYY
+**Format**: MM/DD/ÅÅÅÅ
 
-**Default**: None
+**Standard**: Inget
 
-### Memorial Date {#memorial-date}
+### Minneshögtiden {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
-The date of the next Memorial celebration (beta feature).
+Datum för nästa minneshögtid (beta-funktion).
 
-**Format**: MM/DD/YYYY
+**Format**: MM/DD/ÅÅÅÅ
 
-**Default**: Automatically retrieved periodically
+**Standard**: Hämtas automatiskt
 
-### Meeting Schedule Changes {#meeting-schedule-changes}
+### Ändringar av mötesschemat {#meeting-schedule-changes}
 
-These settings allow you to configure temporary changes to your meeting schedule:
+Med dessa inställningar kan du ställa in tillfälliga ändringar av mötesschemat:
 
-- **Change Date**: When the change takes effect
-- **One-time Change**: Whether this is a permanent or temporary change
-- **New Midweek Day**: New day for midweek meeting
-- **New Midweek Time**: New time for midweek meeting
-- **New Weekend Day**: New day for weekend meeting
-- **New Weekend Time**: New time for weekend meeting
+- **Ändra datum**: När ändringen börjar gälla
+- **Engångsändring**: Oavsett om detta är en permanent eller tillfällig ändring
+- **Ny veckomötesdag**: Ny veckodag för veckomötet
+- **Ny klockslag för veckomötet**: Ny tid för veckomötet
+- **Ny helgmötesdag**: Ny veckodag för helgmötet
+- **Ny klockslag för helgmötet**: Ny tid för helgmötet
 
-## Media Retrieval and Playback {#media-retrieval-and-playback}
+## Mediahämtning och uppspelning {#media-retrieval-and-playback}
 
-### Metered Connection {#metered-connection}
+### Anslutning med datapriser {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
-Enable this if you're on a limited data connection to reduce bandwidth usage.
+Aktivera detta om du är på en begränsad dataanslutning för att minska bandbreddsanvändningen.
 
-**Default**: `false`
+**Standard**: `nej`
 
-### Media Display {#media-display-button}
+### Mediavisning {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-Enable the media display functionality. This is required to present media on a second monitor.
+Aktivera medievisningsfunktion. Detta krävs för att presentera media på en andra bildskärm.
 
-**Default**: `false`
+**Standard**: `nej`
 
-### Background Music {#settings-guide-background-music}
+### Bakgrundsmusik {#settings-guide-background-music}
 
-#### Enable Music {#enable-music-button}
+#### Aktivera musik {#enable-music-button}
 
 <!-- **Setting**: `enableMusicButton` -->
 
-Enable background music functionality.
+Aktivera bakgrundsmusik.
 
-**Default**: `true`
+**Standard**: `Ja`
 
-#### Auto-Start Music {#auto-start-music}
+#### Autostart av musik {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-Automatically start background music when M³ launches if appropriate.
+Starta bakgrundsmusik automatiskt när M³ startar.
 
-**Default**: `true`
+**Standard**: `Ja`
 
 #### Meeting Stop Buffer {#meeting-stop-buffer}
 
@@ -209,7 +209,7 @@ Volume level for background music (1-100%).
 
 Enable additional caching for better performance.
 
-**Default**: `false`
+**Standard**: `nej`
 
 #### Cache Folder {#cache-folder}
 
@@ -225,7 +225,7 @@ Custom location for storing cached media files.
 
 Automatically clear old cached files to save disk space.
 
-**Default**: `true`
+**Standard**: `Ja`
 
 ### Folder Monitoring {#settings-guide-folder-monitoring}
 
@@ -235,7 +235,7 @@ Automatically clear old cached files to save disk space.
 
 Monitor a folder for new media files and automatically add them to M³.
 
-**Default**: `false`
+**Standard**: `nej`
 
 #### Folder to Watch {#folder-to-watch}
 
@@ -255,7 +255,7 @@ The folder path to monitor for new media files.
 
 Enable Zoom meeting integration features.
 
-**Default**: `false`
+**Standard**: `nej`
 
 #### Screen Share Shortcut {#screen-share-shortcut}
 
@@ -263,7 +263,7 @@ Enable Zoom meeting integration features.
 
 Keyboard shortcut to trigger Zoom screen sharing.
 
-**Default**: None
+**Standard**: Inget
 
 ### OBS Studio Integration {#settings-guide-obs-integration}
 
@@ -273,7 +273,7 @@ Keyboard shortcut to trigger Zoom screen sharing.
 
 Enable OBS Studio integration for automatic scene switching.
 
-**Default**: `false`
+**Standard**: `nej`
 
 :::warning Important Note
 
@@ -289,7 +289,7 @@ Enable OBS Studio integration for automatic scene switching.
 
 The port number for connecting to OBS Studio WebSocket.
 
-**Default**: None
+**Standard**: Inget
 
 #### OBS Password {#obs-password}
 
@@ -297,7 +297,7 @@ The port number for connecting to OBS Studio WebSocket.
 
 The password for OBS Studio WebSocket connection.
 
-**Default**: None
+**Standard**: Inget
 
 #### OBS Scenes {#obs-scenes}
 
@@ -333,7 +333,7 @@ Configure which OBS scenes to use for different purposes:
 
 Enable customizable keyboard shortcuts for media control.
 
-**Default**: `false`
+**Standard**: `nej`
 
 #### Media Control Shortcuts {#media-control-shortcuts}
 
@@ -354,7 +354,7 @@ Configure shortcuts for media playback:
 
 Hide the logo in the media window.
 
-**Default**: `false`
+**Standard**: `nej`
 
 #### Maximum Resolution {#maximum-resolution}
 
@@ -372,7 +372,7 @@ Maximum resolution for downloaded media files.
 
 Include media from the printed publications in media downloads.
 
-**Default**: `true`
+**Standard**: `Ja`
 
 #### Exclude Footnotes {#exclude-footnotes}
 
@@ -380,7 +380,7 @@ Include media from the printed publications in media downloads.
 
 Exclude footnote images from media downloads when possible.
 
-**Default**: `false`
+**Standard**: `nej`
 
 #### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
 
@@ -388,7 +388,7 @@ Exclude footnote images from media downloads when possible.
 
 Exclude media from the Teaching (th) brochure from media downloads.
 
-**Default**: `true`
+**Standard**: `Ja`
 
 ### Subtitles {#subtitles}
 
@@ -398,7 +398,7 @@ Exclude media from the Teaching (th) brochure from media downloads.
 
 Enable subtitle support for media playback.
 
-**Default**: `false`
+**Standard**: `nej`
 
 #### Subtitle Language {#subtitle-language}
 
@@ -406,9 +406,9 @@ Enable subtitle support for media playback.
 
 Language for subtitles (can be different from media language).
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Alternativ**: Alla tillgängliga språk som finns på Jehovas vittnens officiella websida
 
-**Default**: None
+**Standard**: Inget
 
 ### Media Export {#settings-guide-media-export}
 
@@ -418,7 +418,7 @@ Language for subtitles (can be different from media language).
 
 Automatically export media files to a specified folder.
 
-**Default**: `false`
+**Standard**: `nej`
 
 #### Media Export Folder {#media-export-folder}
 
@@ -434,7 +434,7 @@ Folder path where media files will be automatically exported.
 
 Convert exported media files to MP4 format for better compatibility.
 
-**Default**: `false`
+**Standard**: `nej`
 
 ### Danger Zone {#danger-zone}
 
@@ -450,7 +450,7 @@ These settings should only be changed if you understand their implications.
 
 Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
 
-**Default**: `false`
+**Standard**: `nej`
 
 ## Tips for Optimal Configuration {#configuration-tips}
 
