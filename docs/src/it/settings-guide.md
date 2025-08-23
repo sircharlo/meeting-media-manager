@@ -1,4 +1,4 @@
-# Settings Guide {#settings-guide}
+# Guida Impostazioni {#settings-guide}
 
 This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
 
@@ -126,7 +126,7 @@ The week of the next circuit overseer's visit.
 
 **Default**: None
 
-### Memorial Date {#memorial-date}
+### Data Commemorazione {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
