@@ -143,7 +143,7 @@ export const dateFromString = (
 export const isInPast = (lookupDate: Date | string, includeToday = false) => {
   try {
     if (!lookupDate) return false;
-    const now = dateFromString();
+    const now = new Date();
     return (
       getDateDiff(dateFromString(lookupDate), now, 'days') <
       (includeToday ? 1 : 0)

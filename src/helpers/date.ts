@@ -71,7 +71,8 @@ export function isCoWeek(
   }
 }
 
-const shouldUseChangedMeetingSchedule = (lookupDate: Date | string) => {
+const shouldUseChangedMeetingSchedule = (lookupDate?: Date | string) => {
+  if (!lookupDate) return false;
   lookupDate = dateFromString(lookupDate);
   if (isInPast(lookupDate)) return false;
 
@@ -244,7 +245,7 @@ export function updateLookupPeriod(
         })
         .map((d) => formatDate(d.date, 'YYYY/MM/DD')),
     );
-    const currentDate = dateFromString();
+    const currentDate = new Date();
 
     const futureDates: DateInfo[] = Array.from(
       {
