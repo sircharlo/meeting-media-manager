@@ -1712,9 +1712,10 @@ export const watchedItemMapper: (
     } else {
       // If no section specified in filename, check if it's a weekend meeting day
       const meetingDate = dateFromString(parentDate);
-      const isWeekendMeeting = isWeMeetingDay(meetingDate);
-      if (isWeekendMeeting) {
-        section = 'pt'; // Default to 'pt' for weekend meetings
+      if (isWeMeetingDay(meetingDate)) {
+        section = 'pt'; // Default to 'pt' for WE meetings
+      } else if (isMwMeetingDay(meetingDate)) {
+        section = 'lac'; // Default to 'lac' for MW meetings
       }
     }
 
