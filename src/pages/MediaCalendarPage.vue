@@ -329,6 +329,61 @@ const updateMediaListItems = (
       'to section:',
       sectionId,
     );
+
+    // Try to add section information to filenames for watched items
+    movedItems.forEach(async (item) => {
+      console.log('🔄 [updateMediaListItems] item', item.source, item.fileUrl);
+      if (item.source === 'watched' && item.fileUrl) {
+        try {
+          const localPath = fileUrlToPath(item.fileUrl);
+          if (localPath && (await exists(localPath))) {
+            const filename = basename(localPath);
+            const dir = dirname(localPath);
+
+            // Check if filename already has section information and update it if needed
+            const sectionMatch = filename.match(/^Section-([^-]+) - (.+)$/);
+            if (sectionMatch) {
+              // Filename already has section info, update it if different
+              const existingSection = sectionMatch[1];
+              const actualFilename = sectionMatch[2];
+
+              if (existingSection !== sectionId) {
+                // Section changed, update the filename
+                const newFilename = `Section-${sectionId} - ${actualFilename}`;
+                const newPath = join(dir, newFilename);
+
+                // Try to rename the file
+                await fs.rename(localPath, newPath);
+
+                // Update the item's fileUrl and title
+                item.fileUrl = pathToFileURL(newPath);
+                item.title = newFilename;
+
+                console.log(
+                  `✅ Updated section info in filename: ${newFilename}`,
+                );
+              }
+            } else {
+              // No section info, add it
+              const newFilename = `Section-${sectionId} - ${filename}`;
+              const newPath = join(dir, newFilename);
+
+              // Try to rename the file
+              await fs.rename(localPath, newPath);
+
+              // Update the item's fileUrl and title
+              item.fileUrl = pathToFileURL(newPath);
+              item.title = newFilename;
+
+              console.log(`✅ Added section info to filename: ${newFilename}`);
+            }
+          }
+        } catch (error) {
+          // Fail gracefully - file might be readonly or locked
+          console.warn(`⚠️ Could not add section info to filename: ${error}`);
+        }
+      }
+    });
   }
 
   // Update the target section with the new items
@@ -347,6 +402,7 @@ const {
   convertPdfToImages,
   decompress,
   executeQuery,
+  fileUrlToPath,
   fs,
   getLocalPathFromFileObject,
   inferExtension,
@@ -355,7 +411,7 @@ const {
   readdir,
 } = window.electronApi;
 const { ensureDir, exists, remove, writeFile } = fs;
-const { basename, join } = path;
+const { basename, dirname, join } = path;
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
   name: 'main-window-media-action',
