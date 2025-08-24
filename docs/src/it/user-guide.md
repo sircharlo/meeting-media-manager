@@ -6,17 +6,17 @@ Questa guida completa vi aiuterà a padroneggiare tutte le caratteristiche di M�
 
 ### Primo Avvio {#first-launch}
 
-When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
+Quando avvii per la prima volta M³, sarai guidato attraverso una procedura guidata che configurerà le impostazioni essenziali per la tua congregazione:
 
-1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
-2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
-3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
-4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
-5. **Optional features** - Configure OBS integration, background music, and other advanced features
+1. **Scegli la lingua dell'interfaccia** - Questo determina in quale lingua verranno visualizzati i menu e i pulsanti di M³
+2. **Seleziona il tipo di profilo** - Scegli "Regolare" per l'uso normale della congregazione o "Altro" per eventi speciali
+3. **Configura informazioni congregazione** - Inserisci i dettagli della tua congregazione o utilizza la funzione di ricerca automatica
+4. **Imposta il calendario delle riunioni** - Configura gli orari delle adunanze infrasettimanali e del fine settimana
+5. **Funzioni opzionali** - Configura l'integrazione di OBS, musica di sottofondo e altre funzionalità avanzate
 
 :::tip Suggerimento
 
-Take your time during setup - but you can always change these settings later in the Settings menu.
+Prenditi tutto il tempo necessario durante la configurazione, ma potrai sempre modificare queste impostazioni in seguito nel menu Impostazioni.
 
 :::
 
