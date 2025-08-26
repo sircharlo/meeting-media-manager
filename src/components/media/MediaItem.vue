@@ -1134,7 +1134,7 @@ const setMediaPlaying = async (
   mediaPlaying.value = {
     action: 'play',
     currentPosition: 0,
-    pan: mediaPan.value,
+    pan: calculatedPan.value,
     seekTo: 0,
     subtitlesUrl: media.subtitlesUrl ?? '',
     uniqueId: media.uniqueId,
@@ -1269,8 +1269,7 @@ const zoomReset = (forced = false) => {
   if (mediaZoom.value < 1.05 || forced) {
     // Reset zoom and pan to initial state
     mediaZoom.value = 1;
-    mediaPan.value.x = 0;
-    mediaPan.value.y = 0;
+    mediaPan.value = { x: 0, y: 0 };
   }
 };
 
@@ -1312,18 +1311,22 @@ const mediaPan = ref<{ x: number; y: number }>({
 });
 const mediaZoom = ref(1);
 
+const calculatedPan = computed(() => {
+  return {
+    x:
+      ((mediaPan.value.x ?? 0) / (mediaImage.value?.$el?.clientWidth ?? 0)) *
+      (1 / (mediaZoom.value ?? 1)),
+    y:
+      ((mediaPan.value.y ?? 0) / (mediaImage.value?.$el?.clientHeight ?? 0)) *
+      (1 / (mediaZoom.value ?? 1)),
+  };
+});
+
 watch(
   () => [mediaZoom.value, mediaPan.value.x, mediaPan.value.y],
-  ([newZoom, newX, newY]) => {
+  ([newZoom]) => {
     mediaPlaying.value.zoom = newZoom ?? 1;
-    mediaPlaying.value.pan = {
-      x:
-        ((newX ?? 0) / (mediaImage.value?.$el?.clientWidth ?? 0)) *
-        (1 / (newZoom ?? 1)),
-      y:
-        ((newY ?? 0) / (mediaImage.value?.$el?.clientHeight ?? 0)) *
-        (1 / (newZoom ?? 1)),
-    };
+    mediaPlaying.value.pan = calculatedPan.value;
   },
 );
 
