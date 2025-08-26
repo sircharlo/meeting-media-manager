@@ -3,46 +3,46 @@
 layout: home
 
 hero:
-  name: 'M³ Documentation'
-  text: 'Complete guide to setting up and using Meeting Media Manager'
+  name: 'M³ dokumentatsioon'
+  text: 'Täielik juhend Meeting Media Manageri seadistamiseks ja kasutamiseks'
   image: /logo.svg
   actions:
     - theme: brand
       text: Info
       link: /et/about
     - theme: brand
-      text: User Guide
-      link: /et/user-guide
+      text: Kasutusjuhend
+      link: /user-guide
     - theme: brand
-      text: Settings Guide
-      link: /et/settings-guide
+      text: Sättete juhend
+      link: /settings-guide
     - theme: brand
       text: KKK
-      link: /et/faq
+      link: /faq
 
 features:
   - icon: 🚀
-    title: Automatic Media Management
-    details: Automatically downloads and organizes pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
+    title: Automaatne meediafailide haldus
+    details: Laadib automaatselt alla pildid ja videod koguduse koosolekute jaoks mis tahes keeles, mis on saadaval Jehoova tunnistajate ametlikul veebisaidil.
   - icon: 🎦
-    title: Media Presentation
-    details: Present media with ease during hybrid or in-person meetings with advanced controls, zoom/pan capabilities, and custom timing options.
+    title: Meedia esitlemine
+    details: Esitage meediat hõlpsalt hübriid- või näost-näkku kohtumistel tänu täiustatud juhtimisfunktsioonidele, suumimis-/panorameerimisvõimalustele ja kohandatav aja haldus.
   - icon: 🎵
-    title: Background Music System
-    details: Intelligent background music that automatically stops before meetings start and can be restarted with one click after meetings.
+    title: Taustamuusika
+    details: Intelligentne taustamuusika, mis peatub automaatselt enne koosoleku algust ja mida saab pärast koosolekut ühe klõpsuga uuesti käivitada.
   - icon: 🖥️
-    title: Multi-Monitor Support
-    details: Automatically detects and manages external monitors for seamless media presentations and website sharing.
+    title: Mitme monitori kasutamine
+    details: Automaatselt tuvastab ja haldab lisamonitore sujuva meediaesituse jaoks.
   - icon: 🌐
-    title: Multi-Language Support
-    details: Laadige koosolekute meediat sadades keeltes ja kasutage M³ kasutajaliidest ükskõik millises olemasolevatest keeltest.
+    title: Mitmekeelne tugi
+    details: Laadige koosolekute meediat sadades keeltes ja kasutage M³ kasutajaliidest ükskõik millises olemasolevas keeles.
   - icon: 🧩
-    title: Koostöö
-    details: Seamlessly integrates with Zoom or OBS Studio for enhanced media management and playback during meetings.
+    title: Koostöö teiste rakendustega
+    details: M3 teeb sujuvalt koostööd Zoomiga või OBS Studioga, et parandada meedia haldamist ja taasesitamist koosolekute ajal.
   - icon: 📁
-    title: Folder Monitoring
-    details: Automatically sync media from watched folders (like Dropbox or OneDrive) and export media to folders.
+    title: Kausta jälgimine
+    details: Sünkroniseeri automaatselt meedia jälgitavatest kaustadest (nagu Dropbox või OneDrive) ja eksportige meedia kaustadesse.
   - icon: 🎯
-    title: Advanced Features
-    details: Import custom media, JWPUB files, playlists, audio Bible recordings, and manage multiple congregations.
+    title: Lisafunktsioonid
+    details: Impordi lisameediat, JWPUB-faile, esitusloendeid, Piibli helisalvestusi ja halda mitut kogudust.
 ---
