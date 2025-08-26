@@ -1,20 +1,20 @@
-# Settings Guide {#settings-guide}
+# Sättete juhend {#settings-guide}
 
-This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+See põhjalik juhend selgitab kõiki M³-s saadaval olevaid sätteid, mis on järjestatud kategooriate kaupa. Nende sättete mõistmine aitab sul M³ seadistada nii, et see vastaks täielikult teie koguduse vajadustele.
 
-## Application Configuration {#application-configuration}
+## Rakenduse seadistamine {#application-configuration}
 
-### Display Language {#display-language}
+### Rakenduse keel {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Choose the language for M³'s interface. This is independent of the language used for media downloads.
+Vali M³ kasutatav keel. See ei sõltu meedia allalaadimiseks kasutatavast keelest.
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+**Valikud**: Kõik saadaval olevad rakenduse keeled (inglise, hispaania, prantsuse jne)
 
-**Default**: English
+**Vaikimisi**: inglise keel
 
-### Dark Mode {#dark-mode}
+### Tume režiim {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
@@ -438,7 +438,7 @@ Convert exported media files to MP4 format for better compatibility.
 
 ### Danger Zone {#danger-zone}
 
-:::warning Warning
+:::warning Hoiatus
 
 These settings should only be changed if you understand their implications.
 
