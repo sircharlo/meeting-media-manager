@@ -4,21 +4,28 @@
 
 För den fullständiga listan över ändringar mellan versioner, se vår CHANGELOG.md-fil på GitHub.
 
+## v25.8.3
+
+### ✨ Nya funktioner
+
+- ✨ **Tonade övergångar för mediafönster**: Lagt till en ny avancerad inställning för att tona in/ut mediafönstret, detta ger em snyggare visuell övergång.
+- ✨ **Bildvaraktighetskontroll och framstegsspårning**: Lagt till kontroll av bildens varaktighet och förloppsspårningskapacitet för upprepade sektioner.
+
 ## v25.8.1
 
 ### ✨ Nya funktioner
 
-- ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
-- ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
-- ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
-- ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
+- ✨ **Anpassade mediesektioner**: Komplett system för att skapa, redigera och hantera anpassade mediesektioner med färganpassning och dra-och-släpp-beställning.
+- ✨ **Mediaavdelares**: Lägg till avdelare i medielistor för bättre organisation med alternativ för topp/bottenpositionering.
+- ✨ **Avsnitt Upprepningsläge**: Aktivera kontinuerlig uppspelning inom specifika sektioner för sömlösa media-loopar.
+- ✨ **Zoomintegration**: Automatisk skärmdelning starta/stoppa koordination med medieuppspelning.
 
 ### 🛠️ Förbättringar och justeringar
 
-- 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
-- ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
-- 🛠️ **Improved Navigation**: Better keyboard shortcuts with scroll-to-selected functionality and enhanced media navigation.
-- 🛠️ **Visual Enhancements**: Animation support during sorting operations and improved drag-and-drop visual feedback.
+- 🛠️ **Förbättrade sektionshuvuden**: Nytt menysystem med tre prickar med färgväljare, flytta upp/ner kontroller, upprepa alternativ och ta bort funktionalitet.
+- ✨ **Inline titelredigering**: Redigera medietitlar direkt i gränssnittet utan att öppna separata dialogrutor.
+- 🛠️ **Förbättrad navigering**: Bättre kortkommandon med scroll-till-vald funktionalitet och förbättrad medienavigering.
+- 🛠️ **Visuella förbättringar**: Animeringsstöd vid sortering och förbättrad dra-och-släpp-visuell feedback.
 
 ## 25.6.0
 
@@ -30,7 +37,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 ### 🛠️ Förbättringar och justeringar
 
 - 🛠️ **Bättre hantering av mime-typer**: Förbättrat stöd för MIME-typer för bättre mediekompatibilitet.
-- 🛠️ **Förbättrad navigation drawer**: Förbättrad hantering av miniläge och tillsatt verktygstips för bättre användarnavigering.
+- 🛠️ **Förbättrad navigation**: Förbättrad hantering av miniläge och tillsatt verktygstips för bättre användarnavigering.
 - 🛠️ **Linuxkompatibilitet**: Tvingad användning av GTK 3 på Linux för att förhindra problem med UI och uppstart.
 
 ## 25.5.0
@@ -43,7 +50,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 ### 🛠️ Förbättringar och justeringar
 
 - 🔍 **Återställ Zoomning med Ctrl + Scroll**: Nollställning av zoomning för enklare navigering.
-- 👤 **Dölj oanvänd media för kretsbesöket**: Dölj istället för att hoppa över media som inte används för kretsbesöket, för att hålla en renare presentation.
+- 👤 **Dölj oanvänd media för kretsbesöket**: Dölj istället för att hoppa över media som inte används för kretsbesöket, för att hålla en renare visning.
 - 🎵 **Hitta dubletter av sånger**: Gör det lättare att hitta dubletter av sånger.
 
 ## 25.4.3

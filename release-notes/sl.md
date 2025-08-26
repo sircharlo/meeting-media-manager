@@ -4,6 +4,13 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
+## v25.8.3
+
+### ✨ Nove funkcije
+
+- ✨ **Prehodi pri prikazovanju multimedijskega okna**: Dodana je nova napredna nastavitev, ki omogoča pojavljanje in izginjanje multimedijskega okna, kar zagotavlja bolj gladke vizualne prehode.
+- ✨ **Nadzor časa trajanja slike in sledenje napredka**: Dodana sta bila nadzor časa trajanja slike in sledenje napredka za ponavljajoče se dele.
+
 ## v25.8.1
 
 ### ✨ Nove funkcije

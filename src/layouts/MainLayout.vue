@@ -548,28 +548,30 @@ const updateWatchFolderRef = async ({
 
         watchedItem.sortOrderOriginal = 'watched-' + watchedItem.title;
 
-        // Add to additional section
+        // Determine which section to add the item to
+        const targetSectionId = watchedItem.originalSection || 'imported-media';
+
         dayObj.mediaSections ??= [];
-        const additionalSection = getOrCreateMediaSection(
+        const targetSection = getOrCreateMediaSection(
           dayObj.mediaSections,
-          'imported-media',
+          targetSectionId,
         );
 
-        additionalSection.items ??= [];
+        targetSection.items ??= [];
 
         // Find the correct index to insert the item in the sorted order
         const insertIndex =
-          additionalSection.items.findIndex(
+          targetSection.items.findIndex(
             (existingItem: MediaItem) =>
               SORTER.compare(existingItem.title, watchedItem.title) > 0,
           ) ?? -1;
 
         if (insertIndex === -1) {
           // If no larger item is found, push to the end
-          additionalSection.items.push(watchedItem);
+          targetSection.items.push(watchedItem);
         } else {
           // Otherwise, insert at the correct index
-          additionalSection.items.splice(insertIndex, 0, watchedItem);
+          targetSection.items.splice(insertIndex, 0, watchedItem);
         }
       }
     } else if (event === 'unlink') {

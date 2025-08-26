@@ -1701,6 +1701,24 @@ export const watchedItemMapper: (
     );
     const thumbnailUrl = await getThumbnailUrl(watchedItemPath);
 
+    // Parse section information from filename
+    let section: MediaSectionIdentifier | undefined;
+    const filename = basename(watchedItemPath);
+
+    // Check if filename already has section information
+    const sectionMatch = filename.match(/^Section-([^-]+) - /);
+    if (sectionMatch) {
+      section = sectionMatch[1] as MediaSectionIdentifier;
+    } else {
+      // If no section specified in filename, check if it's a weekend meeting day
+      const meetingDate = dateFromString(parentDate);
+      if (isWeMeetingDay(meetingDate)) {
+        section = 'pt'; // Default to 'pt' for WE meetings
+      } else if (isMwMeetingDay(meetingDate)) {
+        section = 'lac'; // Default to 'lac' for MW meetings
+      }
+    }
+
     return [
       {
         duration,
@@ -1708,6 +1726,7 @@ export const watchedItemMapper: (
         isAudio: audio,
         isImage: image,
         isVideo: video,
+        originalSection: section,
         sortOrderOriginal: 'watched',
         source: 'watched',
         thumbnailUrl,

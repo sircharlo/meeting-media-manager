@@ -37,7 +37,7 @@ features:
     title: Multi-Language Support
     details: Download meeting media in hundreds of languages and use M³'s interface in any of the many available languages.
   - icon: 🧩
-    title: 연동 기능
+    title: Integrations
     details: Seamlessly integrates with Zoom or OBS Studio for enhanced media management and playback during meetings.
   - icon: 📁
     title: Folder Monitoring

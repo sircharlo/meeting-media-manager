@@ -4,6 +4,35 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v25.8.3
+
+### ✨ New Features
+
+- ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
+- ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Enhanced Media Playback with Zoom Integration**: Improved media playback handling, notably when videos end and when switching between images.
+- 🛠️ **Media Divider and MediaList Styling**: Updated MediaDivider and MediaList components with improved styling.
+- 🛠️ **Add Media Shortcut Styling**: Reduced border-radius for the add media shortcut button.
+- 🛠️ **Section Handling**: Fixed an issue where adding media when less than 2 sections existed didn't work as expected.
+
+### 🔧 Improvements to Codebase
+
+- 🔧 **Date Conversion Logic Simplification**: Simplified date conversion logic in state hydration for better performance and reliability; improved date handling and related logging across multiple components for better debugging and reliability.
+- 🔧 **Smart Cache Clearing Improvements**: Enhanced automatic smart cache clearing functionality for better memory management.
+- 🔧 **Magazine Issue Handling**: Improved error handling in `getWtIssue` function to return default results instead of throwing errors when no week is found, which is expected at times and not a catastrophic error.
+- 🔧 **Key Mapping Validation**: Enhanced key mapping validation for Zoom screen sharing to improve compatibility across different platforms.
+
+### 📚 Documentation
+
+- 📚 **Audio Configuration Instructions**: Updated audio configuration instructions for OBS Studio and Zoom integrations to provide better guidance.
+
+### 🧪 Testing
+
+- 🧪 **Test Coverage**: Added several new tests to improve code coverage and reliability.
+
 ## v25.8.2
 
 ### 🐞 Bug Fixes

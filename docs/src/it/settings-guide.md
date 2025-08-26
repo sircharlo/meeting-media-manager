@@ -1,4 +1,4 @@
-# Settings Guide {#settings-guide}
+# Guida Impostazioni {#settings-guide}
 
 This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
 
@@ -126,7 +126,7 @@ The week of the next circuit overseer's visit.
 
 **Default**: None
 
-### Memorial Date {#memorial-date}
+### Data Commemorazione {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
@@ -165,7 +165,7 @@ Enable the media display functionality. This is required to present media on a s
 
 **Default**: `false`
 
-### Background Music {#background-music}
+### Musica di Sottofondo {#settings-guide-background-music}
 
 #### Enable Music {#enable-music-button}
 
@@ -227,7 +227,7 @@ Automatically clear old cached files to save disk space.
 
 **Default**: `true`
 
-### Folder Monitoring {#folder-monitoring}
+### Monitoraggio Cartelle {#settings-guide-folder-monitoring}
 
 #### Enable Folder Watcher {#enable-folder-watcher}
 
@@ -247,7 +247,7 @@ The folder path to monitor for new media files.
 
 ## Integrations {#integrations}
 
-### Zoom Integration {#zoom-integration}
+### Integrazione di Zoom {#settings-guide-zoom-integration}
 
 #### Enable Zoom {#enable-zoom}
 
@@ -265,7 +265,7 @@ Keyboard shortcut to trigger Zoom screen sharing.
 
 **Default**: None
 
-### OBS Studio Integration {#obs-integration}
+### Integrazione di OBS Studio {#settings-guide-obs-integration}
 
 #### Enable OBS {#enable-obs}
 
@@ -325,7 +325,7 @@ Configure which OBS scenes to use for different purposes:
 
 ## Advanced Settings {#advanced-settings}
 
-### Keyboard Shortcuts {#keyboard-shortcuts}
+### Scorciatoie da Tastiera {#settings-guide-keyboard-shortcuts}
 
 #### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
 
@@ -410,7 +410,7 @@ Language for subtitles (can be different from media language).
 
 **Default**: None
 
-### Media Export {#media-export}
+### Esportazione Media {#settings-guide-media-export}
 
 #### Enable Media Auto-Export {#enable-media-auto-export}
 
@@ -438,7 +438,7 @@ Convert exported media files to MP4 format for better compatibility.
 
 ### Danger Zone {#danger-zone}
 
-:::warning Attenzione
+:::warning Warning
 
 These settings should only be changed if you understand their implications.
 
@@ -475,7 +475,7 @@ Completely disable automatic media downloads. Use this only for profiles that wi
 3. Configure cache auto-clear to manage disk space
 4. Consider metered connection setting if on limited bandwidth
 
-### Troubleshooting {#troubleshooting}
+### Risoluzione Problemi {#settings-guide-troubleshooting}
 
 - If media isn't downloading, check your meeting schedule settings
 - If OBS integration isn't working, verify port and password settings

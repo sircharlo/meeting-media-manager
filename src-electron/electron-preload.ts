@@ -51,6 +51,7 @@ const electronApi: ElectronApi = {
   downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
   executeQuery,
   fileUrlToPath,
+  focusMediaWindow: () => send('focusMediaWindow'),
   fs,
   getAllScreens: () => invoke('getAllScreens'),
 

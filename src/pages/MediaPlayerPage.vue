@@ -4,13 +4,8 @@
     padding
     style="align-content: center; height: 100vh; -webkit-app-region: drag"
   >
-    <!-- <pre>
-      {{ urlVariables }}
-      {{ online }}
-      {{ hideMediaLogo }}
-      {{ yeartext }}
-      {{ mediaPlayingUrl }}
-      {{ mediaAction }}
+    <!-- <pre style="position: absolute; top: 0; left: 0; z-index: 1000">
+      {{ zoomPanState }}
     </pre> -->
     <q-resize-observer debounce="50" @resize="postMediaWindowSize" />
     <transition
@@ -27,7 +22,7 @@
         fit="contain"
         no-spinner
         :src="mediaPlayingUrl"
-        @load="initiatePanzoom()"
+        @load="handleImageLoad()"
       />
       <video
         v-else-if="isVideo(mediaPlayingUrl) || videoStreaming"
@@ -78,7 +73,6 @@
   </q-page-container>
 </template>
 <script setup lang="ts">
-import Panzoom, { type PanzoomObject } from '@panzoom/panzoom';
 import {
   useBroadcastChannel,
   watchDeep,
@@ -117,23 +111,7 @@ $q.iconMapFn = (iconName) => {
   };
 };
 
-const panzoom = ref<PanzoomObject | undefined>();
 const isEnding = ref(false);
-
-const initiatePanzoom = () => {
-  try {
-    const imageElem = document.getElementById('mediaImage');
-    if (!imageElem) return;
-    panzoom.value = Panzoom(imageElem, {
-      animate: true,
-      maxScale: 5,
-      minScale: 1,
-    });
-    setPanzoom(panzoomState.value, false);
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
 
 const mediaElement = useTemplateRef<HTMLAudioElement | HTMLVideoElement>(
   'mediaElement',
@@ -210,33 +188,41 @@ whenever(
   },
 );
 
-const setPanzoom = (panzoomState: Record<string, number>, animate = true) => {
-  const panzoomOptions = { animate: !!animate, duration: 1000 };
+const handleImageLoad = () => {
+  // Image loaded - apply current zoom/pan state if available
+  if (zoomPanState.value && Object.keys(zoomPanState.value).length > 0) {
+    applyZoomPanState(zoomPanState.value);
+  }
+};
+
+const applyZoomPanState = (zoomPanState: Record<string, number>) => {
   try {
-    if (!mediaElement.value) {
-      const imageElem = document.getElementById('mediaImage');
-      const width = imageElem?.clientWidth || 0;
-      const height = imageElem?.clientHeight || 0;
-      panzoom.value?.zoom(panzoomState?.scale ?? 1, panzoomOptions);
-      setTimeout(() => {
-        if (width > 0 && height > 0)
-          panzoom.value?.pan(
-            (panzoomState?.x ?? 0) * width,
-            (panzoomState?.y ?? 0) * height,
-            panzoomOptions,
-          );
-      });
+    const imageElem = document.getElementById('mediaImage');
+    if (!imageElem) return;
+
+    const width = imageElem.clientWidth || 0;
+    const height = imageElem.clientHeight || 0;
+
+    if (width > 0 && height > 0) {
+      // Apply zoom and pan using CSS transforms for smooth animation
+      const scale = zoomPanState.scale || 1;
+      const x = (zoomPanState.x || 0) * width;
+      const y = (zoomPanState.y || 0) * height;
+
+      // Use CSS transforms for smooth animation
+      imageElem.style.transform = `scale(${scale}) translate(${x}px, ${y}px)`;
+      imageElem.style.transition = 'transform 0.3s ease-out';
     }
   } catch (error) {
     errorCatcher(error);
   }
 };
 
-const { data: panzoomState } = useBroadcastChannel<
+const { data: zoomPanState } = useBroadcastChannel<
   Record<string, number>,
   Record<string, number>
 >({
-  name: 'panzoom',
+  name: 'zoom-pan',
 });
 
 const { data: webStreamData } = useBroadcastChannel<boolean, boolean>({
@@ -514,9 +500,9 @@ const { data: yeartext } = useBroadcastChannel<string, string>({
 });
 
 watchDeep(
-  () => panzoomState.value,
-  (newPanzoomState) => {
-    setPanzoom(newPanzoomState);
+  () => zoomPanState.value,
+  (newZoomPanState) => {
+    applyZoomPanState(newZoomPanState);
   },
 );
 

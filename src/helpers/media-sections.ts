@@ -181,6 +181,18 @@ function getMeetingSectionConfigs(section: MediaSectionIdentifier | undefined) {
 export const createMeetingSections = (day: DateInfo) => {
   const meetingType = day.meeting;
   console.log('🔍 [createMeetingSections] meetingType', meetingType, day);
+
+  // Debug logging to help identify the issue
+  if (day.date && typeof day.date === 'object' && !(day.date instanceof Date)) {
+    console.warn('🔍 [createMeetingSections] day.date is not a Date object:', {
+      constructor: (day.date as unknown as { constructor: { name: string } })
+        .constructor?.name,
+      keys: Object.keys(day.date),
+      type: typeof day.date,
+      value: day.date,
+    });
+  }
+
   const sections = getMeetingSections(meetingType, isCoWeek(day.date));
   console.log('🔍 [createMeetingSections] sections', sections);
   sections.forEach((section) => {

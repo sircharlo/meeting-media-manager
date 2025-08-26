@@ -4,21 +4,28 @@
 
 Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGELOG.md GitHubis.
 
+## v25.8.3
+
+### ✨ Uued funktsioonid
+
+- ✨ **Meediaakna üleminekud**: Lisatud on uus täiustatud säte, mis võimaldab meediaaknal sujuvalt sisse ja välja tuhmuda, pakkudes sõbralikumat visuaalseid üleminekuid.
+- ✨ **Pildi kestuse kontroll ja esituse jälgimine**: Lisatud pildi kestuse kontroll ja esituse jälgimise võimalus korduvate osade jaoks.
+
 ## v25.8.1
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
-- ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
-- ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
-- ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
+- ✨ **Kohandatud meediajaotised**: Täielik süsteem kohandatud meediajaotiste loomiseks, redigeerimiseks ja haldamiseks, värvide kohandamise ja drag-and-drop-funktsiooniga ümberjärjestamise võimalusega.
+- ✨ **Meedia jaotised**: Lisage meedia nimekirjadesse pealkirjadega jaotised, et neid paremini organiseerida, kasutades ülemise/alumise paigutuse valikuid.
+- ✨ **Jaotise kordusrežiim**: võimaldab pidevat taasesitust kindlate jaotiste piires, et saavutada sujuv meedia esitus.
+- ✨ **Zoom-koostöö**: ekraani jagamise automaatne käivitamine/peatamine kooskõlas meedia taasesitusega.
 
 ### 🛠️ Parandused ja täiustused
 
-- 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
-- ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
-- 🛠️ **Improved Navigation**: Better keyboard shortcuts with scroll-to-selected functionality and enhanced media navigation.
-- 🛠️ **Visual Enhancements**: Animation support during sorting operations and improved drag-and-drop visual feedback.
+- 🛠️ **Täiustatud jaotise pealkirjad**: uus kolmepunktiline menüüsüsteem värvivalijaga, üles/alla liigutamise nuppude, kordamisvalikute ja kustutamise funktsiooniga.
+- ✨ **Pealkirjade redigeerimine**: redigeerige meediaelementide pealkirju otse kasutajaliideses, ilma eraldi dialoogaknaid avamata.
+- 🛠️ **Parem navigeerimine**: Paremad klaviatuurikombinatsioonid valitud kohani kerimise funktsiooniga ja täiustatud meedianavigeerimine.
+- 🛠️ **Visuaalsed täiustused**: Animaatsiooni tugi sorteerimistoimingute ajal ja parandatud drag-and-drop visuaalne tagasiside.
 
 ## 25.6.0
 

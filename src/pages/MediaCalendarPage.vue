@@ -329,6 +329,61 @@ const updateMediaListItems = (
       'to section:',
       sectionId,
     );
+
+    // Try to add section information to filenames for watched items
+    movedItems.forEach(async (item) => {
+      console.log('🔄 [updateMediaListItems] item', item.source, item.fileUrl);
+      if (item.source === 'watched' && item.fileUrl) {
+        try {
+          const localPath = fileUrlToPath(item.fileUrl);
+          if (localPath && (await exists(localPath))) {
+            const filename = basename(localPath);
+            const dir = dirname(localPath);
+
+            // Check if filename already has section information and update it if needed
+            const sectionMatch = filename.match(/^Section-([^-]+) - (.+)$/);
+            if (sectionMatch) {
+              // Filename already has section info, update it if different
+              const existingSection = sectionMatch[1];
+              const actualFilename = sectionMatch[2];
+
+              if (existingSection !== sectionId) {
+                // Section changed, update the filename
+                const newFilename = `Section-${sectionId} - ${actualFilename}`;
+                const newPath = join(dir, newFilename);
+
+                // Try to rename the file
+                await fs.rename(localPath, newPath);
+
+                // Update the item's fileUrl and title
+                item.fileUrl = pathToFileURL(newPath);
+                item.title = newFilename;
+
+                console.log(
+                  `✅ Updated section info in filename: ${newFilename}`,
+                );
+              }
+            } else {
+              // No section info, add it
+              const newFilename = `Section-${sectionId} - ${filename}`;
+              const newPath = join(dir, newFilename);
+
+              // Try to rename the file
+              await fs.rename(localPath, newPath);
+
+              // Update the item's fileUrl and title
+              item.fileUrl = pathToFileURL(newPath);
+              item.title = newFilename;
+
+              console.log(`✅ Added section info to filename: ${newFilename}`);
+            }
+          }
+        } catch (error) {
+          // Fail gracefully - file might be readonly or locked
+          console.warn(`⚠️ Could not add section info to filename: ${error}`);
+        }
+      }
+    });
   }
 
   // Update the target section with the new items
@@ -347,6 +402,7 @@ const {
   convertPdfToImages,
   decompress,
   executeQuery,
+  fileUrlToPath,
   fs,
   getLocalPathFromFileObject,
   inferExtension,
@@ -355,7 +411,7 @@ const {
   readdir,
 } = window.electronApi;
 const { ensureDir, exists, remove, writeFile } = fs;
-const { basename, join } = path;
+const { basename, dirname, join } = path;
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
   name: 'main-window-media-action',
@@ -400,37 +456,47 @@ watch(
   },
 );
 
-const { post: postPanzoom } = useBroadcastChannel<
+const { post: postZoomPan } = useBroadcastChannel<
   Partial<Record<string, number>>,
   Partial<Record<string, number>>
->({ name: 'panzoom' });
+>({ name: 'zoom-pan' });
 
 watch(
-  () => mediaPlaying.value.panzoom,
-  (newPanzoom, oldPanzoom) => {
+  () => [mediaPlaying.value.zoom, mediaPlaying.value.pan],
+  (newValues, oldValues) => {
     try {
-      // Only pass the serializable panzoom state (scale, x, y)
-      const serializablePanzoom = newPanzoom
-        ? {
-            scale: newPanzoom.scale,
-            x: newPanzoom.x,
-            y: newPanzoom.y,
-          }
-        : undefined;
+      const [newZoom, newPan] = newValues as [
+        number,
+        Partial<{ x: number; y: number }>,
+      ];
+      const [oldZoom, oldPan] = oldValues as [
+        number,
+        Partial<{ x: number; y: number }>,
+      ];
+      // Only pass the serializable zoomPan state (scale, x, y)
+      const serializableZoomPan =
+        newZoom && newPan
+          ? {
+              scale: newZoom,
+              x: newPan.x,
+              y: newPan.y,
+            }
+          : undefined;
 
-      const serializableOldPanzoom = oldPanzoom
-        ? {
-            scale: oldPanzoom.scale,
-            x: oldPanzoom.x,
-            y: oldPanzoom.y,
-          }
-        : undefined;
+      const serializableOldZoomPan =
+        oldZoom && oldPan
+          ? {
+              scale: oldZoom,
+              x: oldPan.x,
+              y: oldPan.y,
+            }
+          : undefined;
 
       if (
-        JSON.stringify(serializablePanzoom) !==
-        JSON.stringify(serializableOldPanzoom)
+        JSON.stringify(serializableZoomPan) !==
+        JSON.stringify(serializableOldZoomPan)
       ) {
-        postPanzoom(serializablePanzoom ?? {});
+        postZoomPan(serializableZoomPan ?? {});
       }
     } catch (error) {
       errorCatcher(error);
@@ -506,8 +572,7 @@ watch(
       mediaPlaying.value = {
         action: '',
         currentPosition: 0,
-        panzoom: {
-          scale: 1,
+        pan: {
           x: 0,
           y: 0,
         },
@@ -515,6 +580,7 @@ watch(
         subtitlesUrl: '',
         uniqueId: '',
         url: '',
+        zoom: 1,
       };
 
       // Clear custom duration when media ends
@@ -839,15 +905,16 @@ watchImmediate(
     postMediaAction(mediaPlaying.value.action);
     postSubtitlesUrl(mediaPlaying.value.subtitlesUrl);
 
-    // Only pass the serializable panzoom state
-    const serializablePanzoom = mediaPlaying.value.panzoom
-      ? {
-          scale: mediaPlaying.value.panzoom.scale,
-          x: mediaPlaying.value.panzoom.x,
-          y: mediaPlaying.value.panzoom.y,
-        }
-      : undefined;
-    postPanzoom(serializablePanzoom ?? {});
+    // Only pass the serializable zoom and pan state
+    const serializableZoomPan =
+      mediaPlaying.value.zoom && mediaPlaying.value.pan
+        ? {
+            scale: mediaPlaying.value.zoom,
+            x: mediaPlaying.value.pan.x,
+            y: mediaPlaying.value.pan.y,
+          }
+        : undefined;
+    postZoomPan(serializableZoomPan ?? {});
 
     postMediaUrl(mediaPlaying.value.url);
     postCustomDuration(JSON.stringify(customDuration.value));

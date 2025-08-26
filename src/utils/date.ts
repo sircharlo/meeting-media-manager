@@ -14,28 +14,68 @@ import { capitalize, pad } from 'src/utils/general';
  * dateFromString('2021/02/30')
  * dateFromString('2021-02-30T12:34:56')
  */
-export const dateFromString = (lookupDate?: Date | string | undefined) => {
+export const dateFromString = (
+  lookupDate?: Date | string | { getTime: () => number },
+) => {
   try {
+    // Debug logging to help identify the issue
+    if (
+      lookupDate &&
+      typeof lookupDate === 'object' &&
+      !(lookupDate instanceof Date)
+    ) {
+      console.warn('🔍 [dateFromString] Received non-Date object:', {
+        constructor: lookupDate.constructor?.name,
+        keys: Object.keys(lookupDate),
+        type: typeof lookupDate,
+        value: lookupDate,
+      });
+    }
+
     let date: Date;
 
     // If no input, default to today's date
     if (!lookupDate) {
+      console.warn("🔍 [dateFromString] No input, defaulting to today's date");
       date = new Date();
     }
-    // If it's already a Date object or a date-like object
+    // If it's already a Date object
+    else if (lookupDate instanceof Date) {
+      date = new Date(lookupDate);
+    }
+    // If it's a date-like object (has getTime method)
     else if (
-      lookupDate instanceof Date ||
-      (typeof lookupDate === 'object' && lookupDate !== null)
+      typeof lookupDate === 'object' &&
+      lookupDate !== null &&
+      typeof lookupDate.getTime === 'function'
     ) {
-      // Try to create a new Date from the object
       try {
-        date = new Date(lookupDate);
+        date = new Date(lookupDate.getTime());
         // Check if the result is valid
         if (isNaN(date.getTime())) {
           throw new Error('Invalid date object');
         }
       } catch {
         throw new Error(`Cannot convert object to date: ${typeof lookupDate}`);
+      }
+    }
+    // If it's some other object, try to convert it to a Date
+    else if (typeof lookupDate === 'object' && lookupDate !== null) {
+      // Check if it's an empty object or has no useful properties
+      if (Object.keys(lookupDate).length === 0) {
+        throw new Error('Cannot convert empty object to date');
+      }
+
+      try {
+        date = new Date(lookupDate as unknown as Date);
+        // Check if the result is valid
+        if (isNaN(date.getTime())) {
+          throw new Error('Invalid date object');
+        }
+      } catch {
+        throw new Error(
+          `Cannot convert object to date: ${typeof lookupDate} with keys: ${Object.keys(lookupDate).join(', ')}`,
+        );
       }
     }
     // Handle ISO strings or other formats
@@ -60,6 +100,15 @@ export const dateFromString = (lookupDate?: Date | string | undefined) => {
           }
           date = new Date(year, month - 1, day); // Month is 0-indexed
         }
+      }
+
+      // Additional validation for string dates that don't match expected formats
+      if (
+        isNaN(date.getTime()) &&
+        !/^\d{8}$/.test(parsedDate) &&
+        !/^\d{4}-\d{2}-\d{2}$/.test(parsedDate)
+      ) {
+        throw new Error(`Unsupported date string format: ${parsedDate}`);
       }
     } else {
       throw new Error(`Unsupported input type: ${typeof lookupDate}`);
@@ -94,7 +143,7 @@ export const dateFromString = (lookupDate?: Date | string | undefined) => {
 export const isInPast = (lookupDate: Date | string, includeToday = false) => {
   try {
     if (!lookupDate) return false;
-    const now = dateFromString();
+    const now = new Date();
     return (
       getDateDiff(dateFromString(lookupDate), now, 'days') <
       (includeToday ? 1 : 0)

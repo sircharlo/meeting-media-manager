@@ -1,20 +1,20 @@
-# Settings Guide {#settings-guide}
+# Sättete juhend {#settings-guide}
 
-This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+See põhjalik juhend selgitab kõiki M³-s saadaval olevaid sätteid, mis on järjestatud kategooriate kaupa. Nende sättete mõistmine aitab sul M³ seadistada nii, et see vastaks täielikult teie koguduse vajadustele.
 
-## Application Configuration {#application-configuration}
+## Rakenduse seadistamine {#application-configuration}
 
-### Display Language {#display-language}
+### Rakenduse keel {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Choose the language for M³'s interface. This is independent of the language used for media downloads.
+Vali M³ kasutatav keel. See ei sõltu meedia allalaadimiseks kasutatavast keelest.
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+**Valikud**: Kõik saadaval olevad rakenduse keeled (inglise, hispaania, prantsuse jne)
 
-**Default**: English
+**Vaikimisi**: inglise keel
 
-### Dark Mode {#dark-mode}
+### Tume režiim {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
@@ -165,7 +165,7 @@ Enable the media display functionality. This is required to present media on a s
 
 **Default**: `false`
 
-### Background Music {#background-music}
+### Background Music {#settings-guide-background-music}
 
 #### Enable Music {#enable-music-button}
 
@@ -227,7 +227,7 @@ Automatically clear old cached files to save disk space.
 
 **Default**: `true`
 
-### Folder Monitoring {#folder-monitoring}
+### Folder Monitoring {#settings-guide-folder-monitoring}
 
 #### Enable Folder Watcher {#enable-folder-watcher}
 
@@ -247,7 +247,7 @@ The folder path to monitor for new media files.
 
 ## Integrations {#integrations}
 
-### Zoom Integration {#zoom-integration}
+### Zoom Integration {#settings-guide-zoom-integration}
 
 #### Enable Zoom {#enable-zoom}
 
@@ -265,7 +265,7 @@ Keyboard shortcut to trigger Zoom screen sharing.
 
 **Default**: None
 
-### OBS Studio Integration {#obs-integration}
+### OBS Studio Integration {#settings-guide-obs-integration}
 
 #### Enable OBS {#enable-obs}
 
@@ -325,7 +325,7 @@ Configure which OBS scenes to use for different purposes:
 
 ## Advanced Settings {#advanced-settings}
 
-### Keyboard Shortcuts {#keyboard-shortcuts}
+### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
 
 #### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
 
@@ -410,7 +410,7 @@ Language for subtitles (can be different from media language).
 
 **Default**: None
 
-### Media Export {#media-export}
+### Media Export {#settings-guide-media-export}
 
 #### Enable Media Auto-Export {#enable-media-auto-export}
 
@@ -475,7 +475,7 @@ Completely disable automatic media downloads. Use this only for profiles that wi
 3. Configure cache auto-clear to manage disk space
 4. Consider metered connection setting if on limited bandwidth
 
-### Troubleshooting {#troubleshooting}
+### Troubleshooting {#settings-guide-troubleshooting}
 
 - If media isn't downloading, check your meeting schedule settings
 - If OBS integration isn't working, verify port and password settings

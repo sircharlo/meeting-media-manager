@@ -1,26 +1,26 @@
-# User Guide {#user-guide}
+# Guida Utente {#user-guide}
 
-This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
+Questa guida completa vi aiuterà a padroneggiare tutte le caratteristiche di M³, dalla configurazione di base alle tecniche avanzate di presentazione dei media.
 
-## Getting Started {#getting-started}
+## Per Iniziare {#getting-started}
 
-### First Launch {#first-launch}
+### Primo Avvio {#first-launch}
 
-When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
+Quando avvii per la prima volta M³, sarai guidato attraverso una procedura guidata che configurerà le impostazioni essenziali per la tua congregazione:
 
-1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
-2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
-3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
-4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
-5. **Optional features** - Configure OBS integration, background music, and other advanced features
+1. **Scegli la lingua dell'interfaccia** - Questo determina in quale lingua verranno visualizzati i menu e i pulsanti di M³
+2. **Seleziona il tipo di profilo** - Scegli "Regolare" per l'uso normale della congregazione o "Altro" per eventi speciali
+3. **Configura informazioni congregazione** - Inserisci i dettagli della tua congregazione o utilizza la funzione di ricerca automatica
+4. **Imposta il calendario delle riunioni** - Configura gli orari delle adunanze infrasettimanali e del fine settimana
+5. **Funzioni opzionali** - Configura l'integrazione di OBS, musica di sottofondo e altre funzionalità avanzate
 
 :::tip Suggerimento
 
-Take your time during setup - but you can always change these settings later in the Settings menu.
+Prenditi tutto il tempo necessario durante la configurazione, ma potrai sempre modificare queste impostazioni in seguito nel menu Impostazioni.
 
 :::
 
-### Main Interface Overview {#main-interface}
+### Panoramica Interfaccia Principale {#main-interface}
 
 The main M³ interface consists of several key areas:
 
@@ -30,7 +30,7 @@ The main M³ interface consists of several key areas:
 - **Toolbar** - Quick access to common functions
 - **Status Bar** - Shows download progress, and background music and OBS Studio connection status
 
-## Media Management {#media-management}
+## Gestione Media {#user-guide-media-management}
 
 ### Understanding the Calendar View {#calendar-view}
 
@@ -101,7 +101,7 @@ For images and videos:
 - **Pan** - Click and drag the thumbnail to move the image around
 - **Reset Zoom** - Click to return to original zoom
 
-#### Keyboard Shortcuts {#keyboard-shortcuts}
+#### Scorciatoie da Tastiera {#user-guide-keyboard-shortcuts}
 
 Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
 
@@ -114,15 +114,15 @@ Configure custom keyboard shortcuts for quick access. Note that no keyboard shor
 
 **Customizable Shortcuts** (when enabled in settings):
 
-- **Media Window**\* - Open/close media window
-- **Previous/Next Media**\* - Navigate between media items
-- **Pause/Resume**\* - Control media playback
-- **Stop Media**\* - Stop media playback
-- **Music Toggle**\* - Control background music
+- **Media Window** - Open/close media window
+- **Previous/Next Media** - Navigate between media items
+- **Pause/Resume** - Control media playback
+- **Stop Media** - Stop media playback
+- **Music Toggle** - Control background music
 
 **Note (\*):** Global shortcut - available even when the app is not focused
 
-## Background Music {#background-music}
+## Musica di Sottofondo {#user-guide-background-music}
 
 ### Setting Up Background Music {#background-music-setup}
 
@@ -134,7 +134,7 @@ Background music automatically plays before meetings and stops at the appropriat
 4. **Manual Control** - Use the music button in the status bar to start/stop manually
 5. **Restart** - Resume music after meetings with one click
 
-## Zoom Integration {#zoom-integration}
+## Integrazione di Zoom {#user-guide-zoom-integration}
 
 M³ can integrate with Zoom for automatic screen sharing:
 
@@ -143,9 +143,9 @@ M³ can integrate with Zoom for automatic screen sharing:
 3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
 4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
 
-## OBS Studio Integration {#obs-integration}
+## Integrazione di OBS Studio {#user-guide-obs-integration}
 
-### Setting Up OBS Integration {#obs-setup}
+### Setting Up OBS Integration {#user-guide-obs-setup}
 
 To use M³ with OBS Studio for hybrid meetings:
 
@@ -166,14 +166,14 @@ M³ automatically switches OBS scenes during presentations:
 
 ### Advanced OBS Features {#advanced-obs}
 
-#### Postpone Images {#postpone-images}
+#### Postpone Images {#user-guide-postpone-images}
 
 Enable this option to delay sharing images to OBS until manually triggered:
 
 1. Enable "Postpone Images" in OBS settings
 2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
 
-#### Scene Switching Behavior {#scene-switching}
+#### Scene Switching Behavior {#user-guide-scene-switching}
 
 Configure how M³ handles scene changes:
 
@@ -229,7 +229,7 @@ M³ plays media with sound on your computer, but this audio is **not automatical
 - **Consider using Zoom integration instead of OBS Studio** for simpler audio handling
 - Ensure all AV operators are familiar with these settings
 
-## Media Import and Management {#media-import}
+## Importazione e gestione multimediale {#media-import}
 
 ### Importing Custom Media {#importing-custom-media}
 
@@ -257,7 +257,7 @@ Import audio recordings of Bible verses:
 4. Download the audio files
 5. Use them
 
-## Folder Monitoring and Export {#folder-monitoring}
+## Monitoraggio ed Esportazione Cartelle {#user-guide-folder-monitoring}
 
 ### Setting Up Folder Monitoring {#folder-monitoring-setup}
 
@@ -268,7 +268,7 @@ Monitor a folder for new media files:
 3. **Automatic Import** - New files are automatically added to M³
 4. **Organization** - Files are organized by date based on folder structure
 
-### Media Export {#media-export}
+### Esportazione Media {#user-guide-media-export}
 
 Automatically export media to organized folders:
 
@@ -293,9 +293,9 @@ Share the official website on external displays:
 - **Refresh** - Reload the current page
 - **Close** - Exit website presentation mode
 
-## Advanced Features {#advanced-features}
+## Funzionalità Avanzate {#user-guide-advanced-features}
 
-### Multiple Congregations {#multiple-congregations}
+### Congregazioni Multiple {#user-guide-multiple-congregations}
 
 Manage multiple congregations or groups:
 
@@ -317,13 +317,13 @@ Configure custom keyboard shortcuts for efficient operation:
 
 ### Common Issues {#common-issues}
 
-#### Media Not Downloading {#media-not-downloading}
+#### Media Not Downloading {#user-guide-media-not-downloading}
 
 - Check your meeting schedule settings
 - Verify internet connection
 - Check if media is available in your selected language
 
-#### OBS Integration Not Working {#obs-not-working}
+#### Integrazione OBS Non Funzionante {#user-guide-obs-not-working}
 
 - Verify OBS WebSocket plugin is installed
 - Check port and password settings
@@ -336,14 +336,14 @@ Configure custom keyboard shortcuts for efficient operation:
 - **Audio not working after restart**: Original Audio must be re-enabled for each new Zoom session
 - **Alternative solution**: Use "Share Computer Sound" option in Zoom screen sharing
 
-#### Performance Issues {#performance-issues}
+#### Problemi di Prestazioni {#user-guide-performance-issues}
 
 - Enable extra cache
 - Reduce maximum resolution
 - Clear old cached files
 - Check available disk space
 
-#### Language Issues {#language-issues}
+#### Language Issues {#user-guide-language-issues}
 
 - Check media language setting
 - Ensure language is available on JW.org
