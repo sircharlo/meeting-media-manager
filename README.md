@@ -35,17 +35,19 @@ In short, M³ allows you to easily and automatically download, synchronize, shar
 
 For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode has all the features needed to simplify the task of sharing media with the congregation, including:
 
-- Media thumbnails with the ability to zoom and pan, as well as set custom start and end times for media
-- Easy-to-use pause/play/stop buttons to manage playback of media files
-- Easy background music playback, with automatic stop before the start of regularly scheduled meetings
+- Media thumbnails with zoom, pan, and custom start/end time controls
+- Easy-to-use pause/play/stop buttons for media playback
+- Background music playback with automatic stop before scheduled meetings
 - Automatic external monitor recognition and management
-- OBS Studio integration with automatic scene switching during media presentation
-- Presenting the official website of Jehovah's Witnesses on an external monitor
-- Import JWPUB files, JWLPLAYLIST files and videos from the official website of Jehovah's Witnesses in a few clicks.
-- Import Study Bible media and audio recordings of the New World Translation of the Bible in seconds.
-- Always have a public talks media overview (S-34) one click away and ready to be used any minute you need it.
-- Custom videos, pictures, audio files and even PDF files can be easily imported too!
-- Automatic sync of media and playlists from a watched folder, like Dropbox, OneDrive, or others, so you can upload from home and they’ll be added to M³ in the Kingdom Hall.
+- OBS Studio integration with automatic scene switching
+- Present the official website of Jehovah's Witnesses on external monitors
+- Import JWPUB files, JWLPLAYLIST files, and videos from the official website in a few clicks
+- Import Study Bible media and New World Translation audio recordings in seconds
+- Quick access to public talks media overview (S-34) ready for immediate use
+- Import custom videos, pictures, audio files, and PDF files
+- Automatic sync from watched folders (Dropbox, OneDrive, etc.) for seamless home-to-Kingdom Hall workflow
+- Special events mode with custom sections, colors, repeat items, custom titles, and drag-and-drop sorting
+- Automatic Zoom screen sharing when media is presented
 
 **Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
 
@@ -63,7 +65,6 @@ In addition, M³ itself has been translated into several languages by many volun
 <!-- markdownlint-disable -->
 <!-- prettier-ignore-start -->
 <!-- CROWDIN-TRANSLATIONS-PROGRESS-ACTION-START -->
-
 
 #### Available
 
