@@ -64,39 +64,26 @@ export const triggerZoomScreenShare = (startSharing: boolean) => {
 
     console.log(`✅ [Zoom] Screen sharing shortcut sent successfully`);
 
-    // Focus the media window after a short delay to regain focus from Zoom
-    setTimeout(() => {
+    // Helper function to focus the media window with error handling
+    function focusMediaWindow(context = '') {
       try {
         window.electronApi.focusMediaWindow();
-        console.log(
-          `🎯 [Zoom] Media window focus requested after screen sharing toggle (250ms)`,
-        );
+        console.log(`🎯 [Zoom] Media window focus requested${context}`);
       } catch (focusError) {
         console.warn(`⚠️ [Zoom] Failed to focus media window:`, focusError);
       }
-    }, 250);
+    }
 
-    setTimeout(() => {
-      try {
-        window.electronApi.focusMediaWindow();
-        console.log(
-          `🎯 [Zoom] Media window focus requested after screen sharing toggle (500ms)`,
-        );
-      } catch (focusError) {
-        console.warn(`⚠️ [Zoom] Failed to focus media window:`, focusError);
-      }
-    }, 500);
+    // Focus immediately to counter potential focus steal
+    focusMediaWindow(' (immediate)');
 
-    setTimeout(() => {
-      try {
-        window.electronApi.focusMediaWindow();
-        console.log(
-          `🎯 [Zoom] Media window focus requested after screen sharing toggle (1000ms)`,
-        );
-      } catch (focusError) {
-        console.warn(`⚠️ [Zoom] Failed to focus media window:`, focusError);
-      }
-    }, 1000);
+    // Schedule additional focus attempts to handle unpredictable timing
+    const focusDelays = [50, 250, 500, 1000];
+    focusDelays.forEach((delay) => {
+      setTimeout(() => {
+        focusMediaWindow(` after screen sharing toggle (${delay}ms)`);
+      }, delay);
+    });
   } catch (error) {
     errorCatcher(error, {
       contexts: {

@@ -4,6 +4,25 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v25.8.4
+
+### 🛠️ Improvements and Tweaks
+
+- ✨ **Focus Media Window**: Improved screen sharing experience, ensuring the media window stays visible and focused after screen sharing stops in Zoom.
+- 🔧 **UI Styling**: Removed drop area dashed border in MediaList component for sleeker UI appearance.
+- 🛠️ **Enhanced Section Assignment**: Improved section assignment for watched items based on meeting days when possible, providing better media organization.
+- 🛠️ **Section Handling for Watched Items**: Enhanced section handling for watched items, persisting sections when possible.
+- 🛠️ **Migration Improvements**: Enhanced migration validation and error handling for better reliability during updates.
+
+### 🔧 Improvements to Codebase
+
+- 🔧 **Image Panning Bug Fixes**: Fixed bugs in panning images for improved user experience.
+- 🔧 **Date Logic**: Updated date retrieval logic to use new Date() when appropriate and gracefully handle missing lookupDate in shouldUseChangedMeetingSchedule.
+
+### 📚 Documentation
+
+- 📚 **Documentation Site Revamp**: Significantly revamped docs site content to provide better user guidance and information.
+
 ## v25.8.3
 
 ### ✨ New Features
