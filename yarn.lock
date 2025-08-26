@@ -205,7 +205,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/types@npm:^7.27.1, @babel/types@npm:^7.28.0, @babel/types@npm:^7.28.2":
+"@babel/types@npm:^7.22.5, @babel/types@npm:^7.27.1, @babel/types@npm:^7.28.0, @babel/types@npm:^7.28.2":
   version: 7.28.2
   resolution: "@babel/types@npm:7.28.2"
   dependencies:
@@ -2264,13 +2264,6 @@ __metadata:
   peerDependencies:
     "@opentelemetry/api": ^1.1.0
   checksum: 10c0/60a70358f0c94f610e2995333e96b406626d67d03d38ed03b15a3461ad0f8d64afbf6275cca7cb58fe955ecdce832f3ffc9b73f9d88503bba5d2a620bbd6d351
-  languageName: node
-  linkType: hard
-
-"@panzoom/panzoom@npm:^4.6.0":
-  version: 4.6.0
-  resolution: "@panzoom/panzoom@npm:4.6.0"
-  checksum: 10c0/682d0e4763b7356f4682eeacf2de7f1be4e55272e6d25d833af88757f734008565b88bde683c664cb80b7f30054fcbe674de4361e943aa65a2fbd1f6452b986c
   languageName: node
   linkType: hard
 
@@ -10497,7 +10490,6 @@ __metadata:
     "@intlify/unplugin-vue-i18n": "npm:^6.0.8"
     "@jitsi/robotjs": "npm:^0.6.17"
     "@numairawan/video-duration": "npm:^1.0.0"
-    "@panzoom/panzoom": "npm:^4.6.0"
     "@pinia/testing": "npm:^1.0.2"
     "@quasar/app-vite": "npm:^2.3.0"
     "@quasar/extras": "npm:^1.17.0"
@@ -10576,6 +10568,7 @@ __metadata:
     vue-i18n: "npm:^11.1.11"
     vue-router: "npm:^4.5.1"
     vue-tsc: "npm:^3.0.6"
+    vue-zoomable: "npm:^1.2.8"
     webpack-iconfont-plugin-nodejs: "npm:^1.0.36"
   languageName: unknown
   linkType: soft
@@ -15585,6 +15578,17 @@ __metadata:
   bin:
     vue-tsc: ./bin/vue-tsc.js
   checksum: 10c0/339f7518f4bff25a4b466e52d5db42670441c831aa2d53049ed3c7e7cf738e3b613cd249b6c48823f2731efb9344c9ca86df7e660f99328cac55139ca3a61a04
+  languageName: node
+  linkType: hard
+
+"vue-zoomable@npm:^1.2.8":
+  version: 1.2.8
+  resolution: "vue-zoomable@npm:1.2.8"
+  dependencies:
+    "@babel/types": "npm:^7.22.5"
+  peerDependencies:
+    vue: ^3.2
+  checksum: 10c0/696c9fcff19a945a3e1c1e02c460ad1ccd137620e45d5a1c9eb2cab37de1d0992fcfc0b17d05cede81a626ec0cf73fc2b626e68a40a01248b632f84416ff7902
   languageName: node
   linkType: hard
 

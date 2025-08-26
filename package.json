@@ -36,7 +36,6 @@
     "@formkit/drag-and-drop": "^0.5.3",
     "@jitsi/robotjs": "^0.6.17",
     "@numairawan/video-duration": "^1.0.0",
-    "@panzoom/panzoom": "^4.6.0",
     "@quasar/extras": "^1.17.0",
     "@sentry/electron": "^5.12.0",
     "@sentry/vue": "8.55.0",
@@ -69,7 +68,8 @@
     "upath": "^2.0.1",
     "vue": "^3.5.20",
     "vue-i18n": "^11.1.11",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.5.1",
+    "vue-zoomable": "^1.2.8"
   },
   "devDependencies": {
     "@electron/rebuild": "^3.7.2",

@@ -27,11 +27,12 @@ const { join } = path;
 export interface MediaPlayingState {
   action: '' | 'pause' | 'play' | 'website';
   currentPosition: number;
-  panzoom: Partial<{ scale: number; x: number; y: number }>;
+  pan: Partial<{ x: number; y: number }>;
   seekTo: number;
   subtitlesUrl: string;
   uniqueId: string;
   url: string;
+  zoom: number;
 }
 
 export interface Songbook {
@@ -322,11 +323,12 @@ export const useCurrentStateStore = defineStore('current-state', {
       mediaPlaying: {
         action: '',
         currentPosition: 0,
-        panzoom: { scale: 1, x: 0, y: 0 },
+        pan: { x: 0, y: 0 },
         seekTo: 0,
         subtitlesUrl: '',
         uniqueId: '',
         url: '',
+        zoom: 1,
       },
       mediaWindowCustomBackground: '',
       mediaWindowVisible: true,

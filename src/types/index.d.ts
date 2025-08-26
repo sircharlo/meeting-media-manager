@@ -9,5 +9,4 @@ export * from './jw/publications';
 export * from './jw/sqlite';
 export * from './media';
 export * from './obs';
-export * from './panzoom';
 export * from './settings';
