@@ -43,7 +43,7 @@ M³ is a comprehensive media management solution that allows you to easily and a
 - **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
 - **Media organization**: Automatically organizes media by date and meeting section
 
-### Media Presentation Features {#presentation-features}
+### Media Presentation Features {#about-presentation-features}
 
 For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
 
@@ -53,22 +53,22 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - **Multi-monitor support**: Automatic external monitor detection and management
 - **Clean presentation**: Distraction-free media presentation interface
 
-### Background Music {#background-music}
+### Background Music {#about-background-music}
 
 - **Intelligent playback**: Background music that automatically stops before meetings start
 - **One-click restart**: Resume background music with a single click after meetings
 - **Volume control**: Adjustable background music volume with fade-out capabilities
 
-### Zoom Integration {#zoom-integration}
+### Zoom Integration {#about-zoom-integration}
 
 - **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
 
-### OBS Studio Integration {#obs-integration}
+### OBS Studio Integration {#about-obs-integration}
 
 - **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
 - **Scene management**: Automatic switching between camera, media, and other scenes
 
-### Media Import and Management {#media-import}
+### Media Import and Management {#about-media-import}
 
 - **JWPUB files**: Import and manage JWPUB files with ease
 - **JWLPLAYLIST files**: Support for JW Library playlist files
@@ -76,7 +76,7 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - **Audio Bible**: Import Study Bible media and audio recordings of the New World Translation
 - **Public talks**: Always have public talk media overview ready to use with the S-34 importer
 
-### Advanced Features {#advanced-features}
+### Advanced Features {#about-advanced-features}
 
 - **Folder monitoring**: Automatically sync media from watched folders (Dropbox, OneDrive, etc.)
 - **Media export**: Automatically export media to folders, organized by date
@@ -90,15 +90,15 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 
 ## O M³ está disponível no meu idioma? {#does-m3-work-in-my-language}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Sim!** O M³ oferece suporte abrangente em vários idiomas:
 
 ### Media Languages {#media-languages}
 
-Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of languages available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need during setup.
+Mídias para as reuniões das Testemunhas de Jeová podem ser baixadas automaticamente em quaisquer dos centenas de idiomas disponíveis no site oficial das Testemunhas de Jeová. A lista de idiomas disponíveis é sempre atualizada; tudo que você precisa fazer é selecionar qual você precisa durante a configuração.
 
-### Interface Languages {#interface-languages}
+### Idiomas de interface {#interface-languages}
 
-M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
+O próprio M³ foi traduzido para vários idiomas por voluntários. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
 
 ### Language Features {#language-features}
 
@@ -107,7 +107,7 @@ M³ itself has been translated into many languages by volunteers. You can config
 - **Subtitle support**: Download and display subtitles in different languages
 - **Localized interface**: Complete interface translation for many languages
 
-## System Requirements {#system-requirements}
+## Requisitos de Sistema {#system-requirements}
 
 M³ is designed to work on a wide range of systems:
 

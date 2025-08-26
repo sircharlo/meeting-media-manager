@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "25.8.4-beta.4",
+  "version": "25.8.4-beta.10",
   "description": "A cross platform app to download and present media for congregation meetings of Jehovah’s Witnesses.",
   "keywords": [
     "M³",
@@ -36,7 +36,6 @@
     "@formkit/drag-and-drop": "^0.5.3",
     "@jitsi/robotjs": "^0.6.17",
     "@numairawan/video-duration": "^1.0.0",
-    "@panzoom/panzoom": "^4.6.0",
     "@quasar/extras": "^1.17.0",
     "@sentry/electron": "^5.12.0",
     "@sentry/vue": "8.55.0",
@@ -57,7 +56,7 @@
     "is-online": "^11.0.0",
     "mime": "^4.0.7",
     "mousetrap": "^1.6.5",
-    "music-metadata": "^11.8.2",
+    "music-metadata": "^11.8.3",
     "obs-websocket-js": "^5.0.6",
     "p-queue": "^8.1.0",
     "pdfjs-dist": "^5.3.93",
@@ -67,9 +66,10 @@
     "quasar": "^2.18.2",
     "sanitize-filename": "^1.6.3",
     "upath": "^2.0.1",
-    "vue": "^3.5.18",
+    "vue": "^3.5.20",
     "vue-i18n": "^11.1.11",
-    "vue-router": "^4.5.1"
+    "vue-router": "^4.5.1",
+    "vue-zoomable": "^1.2.8"
   },
   "devDependencies": {
     "@electron/rebuild": "^3.7.2",
@@ -92,7 +92,7 @@
     "@types/heic-convert": "^2.1.0",
     "@types/lodash-es": "^4.17.12",
     "@types/mousetrap": "^1.6.15",
-    "@types/node": "^22.17.2",
+    "@types/node": "^22.18.0",
     "@types/pretty-bytes": "^5.2.0",
     "@typescript-eslint/utils": "^8.40.0",
     "@vitejs/plugin-vue": "^6.0.1",
@@ -101,9 +101,9 @@
     "@vue/eslint-config-typescript": "^14.6.0",
     "@vue/test-utils": "^2.4.6",
     "autoprefixer": "^10.4.21",
-    "electron": "^37.3.0",
+    "electron": "^37.3.1",
     "electron-builder": "26.0.16",
-    "eslint": "^9.32.0",
+    "eslint": "^9.34.0",
     "eslint-plugin-perfectionist": "^4.15.0",
     "eslint-plugin-vue": "^10.4.0",
     "globals": "^16.3.0",
@@ -116,10 +116,10 @@
     "rollup-plugin-visualizer": "^6.0.3",
     "typescript": "~5.8.3",
     "vite": "^6.3.5",
-    "vitepress": "^2.0.0-alpha.11",
+    "vitepress": "^2.0.0-alpha.12",
     "vitest": "^3.2.4",
     "vue-eslint-parser": "^10.2.0",
-    "vue-tsc": "^3.0.5",
+    "vue-tsc": "^3.0.6",
     "webpack-iconfont-plugin-nodejs": "^1.0.36"
   },
   "resolutions": {

@@ -16,8 +16,167 @@
         class="q-pr-none rounded-borders overflow-hidden relative-position bg-black"
         :style="{ opacity: isFileUrl(media.fileUrl) ? undefined : 0.64 }"
       >
+        <template v-if="media.isImage">
+          <VueZoomable
+            v-if="media.isImage"
+            v-model:pan="mediaPan"
+            v-model:zoom="mediaZoom"
+            :button-pan-step="15"
+            :button-zoom-step="0.2"
+            :dbl-click-zoom-step="0.2"
+            :enable-control-button="false"
+            :initial-pan-x="0"
+            :initial-pan-y="0"
+            :initial-zoom="1"
+            :max-zoom="5"
+            :min-zoom="1"
+            :pan-enabled="false"
+            :selector="'#' + randomId"
+            style="width: 150px; height: 84px"
+            :wheel-zoom-step="0.1"
+          >
+            <div
+              :id="randomId"
+              class="media-image-container"
+              style="
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <q-img
+                ref="mediaImage"
+                fit="contain"
+                :ratio="16 / 9"
+                :src="
+                  thumbnailFromMetadata ||
+                  (media.isImage ? media.fileUrl : media.thumbnailUrl)
+                "
+                width="150px"
+                @error="imageLoadingError"
+              >
+                <q-badge
+                  v-if="media.duration"
+                  class="q-mt-sm q-ml-sm cursor-pointer rounded-borders-sm bg-semi-black"
+                  style="padding: 5px !important"
+                  @click="showMediaDurationPopup()"
+                >
+                  <q-icon
+                    class="q-mr-xs"
+                    color="white"
+                    :name="
+                      !!hoveringMediaItem || customDurationIsSet
+                        ? 'mmm-edit'
+                        : media.isAudio
+                          ? 'mmm-music-note'
+                          : 'mmm-play'
+                    "
+                  />
+                  {{
+                    customDurationIsSet
+                      ? formatTime(mediaCustomDuration.min ?? 0) + ' - '
+                      : ''
+                  }}
+                  {{ formatTime(mediaCustomDuration.max ?? media.duration) }}
+                </q-badge>
+              </q-img>
+            </div>
+          </VueZoomable>
+
+          <transition
+            appear
+            enter-active-class="animated fadeIn"
+            leave-active-class="animated fadeOut"
+            mode="out-in"
+            name="fade"
+          >
+            <template
+              v-if="media.isImage && (hoveringMediaItem || mediaZoom > 1.01)"
+            >
+              <div>
+                <template v-if="mediaZoom > 1.01">
+                  <div class="absolute-top-right q-mr-xs q-mt-xs row">
+                    <div class="bg-semi-black row rounded-borders">
+                      <q-badge
+                        color="transparent"
+                        style="padding: 5px !important; cursor: pointer"
+                        @click="mediaPan.y = mediaPan.y + 5"
+                      >
+                        <q-icon color="white" name="mmm-up" />
+                      </q-badge>
+                      <q-separator class="bg-grey-8 q-my-xs" vertical />
+                      <q-badge
+                        color="transparent"
+                        style="padding: 5px !important; cursor: pointer"
+                        @click="mediaPan.y = mediaPan.y - 5"
+                      >
+                        <q-icon color="white" name="mmm-down" />
+                      </q-badge>
+                      <q-separator class="bg-grey-8 q-my-xs" vertical />
+                      <q-badge
+                        color="transparent"
+                        style="padding: 5px !important; cursor: pointer"
+                        @click="mediaPan.x = mediaPan.x + 5"
+                      >
+                        <q-icon color="white" name="mmm-left" />
+                      </q-badge>
+                      <q-separator class="bg-grey-8 q-my-xs" vertical />
+                      <q-badge
+                        color="transparent"
+                        style="padding: 5px !important; cursor: pointer"
+                        @click="mediaPan.x = mediaPan.x - 5"
+                      >
+                        <q-icon color="white" name="mmm-right" />
+                      </q-badge>
+                    </div>
+                  </div>
+                </template>
+                <div class="absolute-bottom-right q-mr-xs q-mb-xs row">
+                  <template v-if="mediaZoom > 1.01">
+                    <q-badge
+                      class="q-mr-xs"
+                      color="warning"
+                      style="padding: 5px !important; cursor: pointer"
+                      @click="zoomReset(true)"
+                    >
+                      <q-icon color="white" name="mmm-refresh" />
+                    </q-badge>
+                  </template>
+                  <div class="bg-semi-black row rounded-borders">
+                    <q-badge
+                      color="transparent"
+                      :disabled="!mediaZoom || mediaZoom < 1.01 || undefined"
+                      style="padding: 5px !important; cursor: pointer"
+                      @click="
+                        mediaZoom > 1.01 &&
+                        (mediaZoom = Math.max(mediaZoom / 1.2, 1))
+                      "
+                    >
+                      <q-icon color="white" name="mmm-minus" />
+                    </q-badge>
+                    <q-separator class="bg-grey-8 q-my-xs" vertical />
+                    <q-badge
+                      color="transparent"
+                      :disabled="!mediaZoom || mediaZoom > 4.99 || undefined"
+                      style="padding: 5px !important; cursor: pointer"
+                      @click="
+                        mediaZoom < 4.99 &&
+                        (mediaZoom = Math.min(mediaZoom * 1.2, 5))
+                      "
+                    >
+                      <q-icon color="white" name="mmm-plus" />
+                    </q-badge>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </transition>
+        </template>
+
         <q-img
-          :id="media.uniqueId"
+          v-else
           ref="mediaImage"
           fit="contain"
           :ratio="16 / 9"
@@ -26,10 +185,7 @@
             (media.isImage ? media.fileUrl : media.thumbnailUrl)
           "
           width="150px"
-          @dblclick="zoomIn($event)"
           @error="imageLoadingError"
-          @mouseenter="setHoveredBadge(true)"
-          @mouseleave="setHoveredBadge(false)"
         >
           <q-badge
             v-if="media.duration"
@@ -41,7 +197,7 @@
               class="q-mr-xs"
               color="white"
               :name="
-                !!hoveredBadge || customDurationIsSet
+                !!hoveringMediaItem || customDurationIsSet
                   ? 'mmm-edit'
                   : media.isAudio
                     ? 'mmm-music-note'
@@ -153,59 +309,6 @@
             </q-card>
           </BaseDialog>
         </q-img>
-        <transition
-          appear
-          enter-active-class="animated fadeIn"
-          leave-active-class="animated fadeOut"
-          mode="out-in"
-          name="fade"
-        >
-          <template v-if="media.isImage && (hoveredBadge || getScale() > 1.01)">
-            <div
-              class="absolute-bottom-right q-mr-xs q-mb-xs row"
-              @mouseenter="setHoveredBadge(true)"
-              @mouseleave="setHoveredBadge(false)"
-            >
-              <template v-if="mediaPanzoom.scale && mediaPanzoom.scale > 1.01">
-                <q-badge
-                  class="q-mr-xs"
-                  color="warning"
-                  style="padding: 5px !important; cursor: pointer"
-                  @click="zoomReset(true)"
-                >
-                  <q-icon color="white" name="mmm-refresh" />
-                </q-badge>
-              </template>
-              <div class="bg-semi-black row rounded-borders">
-                <q-badge
-                  color="transparent"
-                  :disabled="
-                    !mediaPanzoom.scale ||
-                    mediaPanzoom.scale < 1.01 ||
-                    undefined
-                  "
-                  style="padding: 5px !important; cursor: pointer"
-                  @click="zoomOut()"
-                >
-                  <q-icon color="white" name="mmm-minus" />
-                </q-badge>
-                <q-separator class="bg-grey-8 q-my-xs" vertical />
-                <q-badge
-                  color="transparent"
-                  :disabled="
-                    !mediaPanzoom.scale ||
-                    mediaPanzoom?.scale > 4.99 ||
-                    undefined
-                  "
-                  style="padding: 5px !important; cursor: pointer"
-                  @click="zoomIn()"
-                >
-                  <q-icon color="white" name="mmm-plus" />
-                </q-badge>
-              </div>
-            </div>
-          </template>
-        </transition>
       </div>
     </div>
     <div class="col">
@@ -741,10 +844,6 @@
 <script setup lang="ts">
 import type { MediaItem, Tag, VideoMarker } from 'src/types';
 
-import Panzoom, {
-  type PanzoomObject,
-  type PanzoomOptions,
-} from '@panzoom/panzoom';
 import {
   useBroadcastChannel,
   useElementHover,
@@ -755,29 +854,23 @@ import {
 } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
-import { debounce, type QBtn, type QImg, QItem, useQuasar } from 'quasar';
+import { type QBtn, type QImg, QItem, useQuasar } from 'quasar';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { triggerZoomScreenShare } from 'src/helpers/zoom';
 import { isFileUrl } from 'src/utils/fs';
+import { uuid } from 'src/utils/general';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
 import { formatTime, timeToSeconds } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
-import {
-  computed,
-  nextTick,
-  onMounted,
-  onUnmounted,
-  ref,
-  useTemplateRef,
-  watch,
-} from 'vue';
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import VueZoomable from 'vue-zoomable';
 
 const currentState = useCurrentStateStore();
 const { currentSettings, highlightedMediaId, mediaPlaying } =
@@ -789,17 +882,11 @@ const currentlyHighlighted = computed(
 
 const jwStore = useJwStore();
 const { removeFromAdditionMediaMap } = jwStore;
-const hoveredBadge = ref(false);
-
-const setHoveredBadge = debounce((value: boolean) => {
-  hoveredBadge.value = value;
-}, 300);
 
 const obsState = useObsStateStore();
 const { currentSceneType, obsConnectionState } = storeToRefs(obsState);
 
 const mediaDurationPopup = ref(false);
-const panzoom = ref<null | PanzoomObject>(null);
 const mediaToStop = ref('');
 const mediaStopPending = computed(() => !!mediaToStop.value);
 const mediaToDelete = ref('');
@@ -859,7 +946,10 @@ const emit = defineEmits<{
 }>();
 
 const mediaItem = useTemplateRef<QItem>('mediaItem');
-const hoveringMediaItem = useElementHover(() => mediaItem.value?.$el);
+const hoveringMediaItem = useElementHover(() => mediaItem.value?.$el, {
+  delayEnter: 300,
+  delayLeave: 0,
+});
 
 const moreButton = useTemplateRef<QBtn>('moreButton');
 const contextMenu = ref(false);
@@ -1039,20 +1129,19 @@ const setMediaPlaying = async (
     } else {
       updateMediaCustomDuration();
     }
-    // } else {
-    //   if (mediaPanzoom.value) mediaPlaying.value.panzoom = mediaPanzoom.value;
   }
   localFile.value = fileIsLocal();
   mediaPlaying.value = {
     action: 'play',
     currentPosition: 0,
-    panzoom: mediaPanzoom.value,
+    pan: mediaPan.value,
     seekTo: 0,
     subtitlesUrl: media.subtitlesUrl ?? '',
     uniqueId: media.uniqueId,
     url: localFile.value
       ? (media.fileUrl ?? '')
       : (media.streamUrl ?? media.fileUrl ?? ''),
+    zoom: mediaZoom.value,
   };
 
   nextTick(() => {
@@ -1176,44 +1265,12 @@ const seekTo = (newSeekTo: null | number) => {
   }
 };
 
-function zoomIn(click?: MouseEvent) {
-  if (!panzoom.value) return;
-  const zoomFactor = 0.2;
-  try {
-    const scale = getScale();
-    if (!click?.clientX && !click?.clientY) {
-      if (scale === 1) {
-        panzoom.value.zoomIn({ step: 0.001 });
-        setTimeout(() => {
-          zoomIn();
-        }, 100);
-      } else {
-        panzoom.value.zoomIn({ step: zoomFactor });
-      }
-    } else {
-      panzoom.value.zoomToPoint(scale * (1 + zoomFactor), {
-        clientX: click?.clientX || 0,
-        clientY: click?.clientY || 0,
-      });
-    }
-  } catch (error) {
-    errorCatcher(error);
-  }
-}
-
-function zoomOut() {
-  try {
-    panzoom.value?.zoomOut();
-    zoomReset();
-  } catch (error) {
-    errorCatcher(error);
-  }
-}
-
-const zoomReset = (forced = false, animate = true) => {
-  if (!panzoom.value) return;
-  if (getScale() < 1.05 || forced) {
-    panzoom.value.reset({ animate });
+const zoomReset = (forced = false) => {
+  if (mediaZoom.value < 1.05 || forced) {
+    // Reset zoom and pan to initial state
+    mediaZoom.value = 1;
+    mediaPan.value.x = 0;
+    mediaPan.value.y = 0;
   }
 };
 
@@ -1221,11 +1278,12 @@ function stopMedia(forOtherMediaItem = false) {
   mediaPlaying.value = {
     action: '',
     currentPosition: 0,
-    panzoom: mediaPanzoom.value,
+    pan: { x: 0, y: 0 },
     seekTo: 0,
     subtitlesUrl: '',
     uniqueId: '',
     url: '',
+    zoom: 1,
   };
   mediaToStop.value = '';
   localFile.value = fileIsLocal();
@@ -1248,97 +1306,29 @@ const isCurrentlyPlaying = computed(() => {
   );
 });
 
-const destroyPanzoom = () => {
-  try {
-    if (!panzoom.value || !props.media.uniqueId) return;
-    panzoom.value.resetStyle();
-    panzoom.value.reset({ animate: false });
-    panzoom.value.destroy();
-    panzoom.value = null;
-  } catch (e) {
-    errorCatcher(e);
-  }
-};
-
-const mediaPanzoom = ref<{ scale: number; x: number; y: number }>({
-  scale: 1,
+const mediaPan = ref<{ x: number; y: number }>({
   x: 0,
   y: 0,
 });
+const mediaZoom = ref(1);
+
+watch(
+  () => [mediaZoom.value, mediaPan.value.x, mediaPan.value.y],
+  ([newZoom, newX, newY]) => {
+    mediaPlaying.value.zoom = newZoom ?? 1;
+    mediaPlaying.value.pan = {
+      x:
+        ((newX ?? 0) / (mediaImage.value?.$el?.clientWidth ?? 0)) *
+        (1 / (newZoom ?? 1)),
+      y:
+        ((newY ?? 0) / (mediaImage.value?.$el?.clientHeight ?? 0)) *
+        (1 / (newZoom ?? 1)),
+    };
+  },
+);
 
 const mediaImage = useTemplateRef<QImg>('mediaImage');
-
-const getScale = () => {
-  if (!panzoom.value) return 1;
-  return panzoom.value.getScale();
-};
-
-const initiatePanzoom = () => {
-  try {
-    if (
-      !props.media.uniqueId ||
-      !isImage(props.media.fileUrl) ||
-      !mediaImage.value?.$el
-    )
-      return;
-
-    const options: PanzoomOptions = {
-      animate: true,
-      contain: 'outside',
-      handleStartEvent: (e) => {
-        if (getScale() > 1.01) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-      },
-      maxScale: 5,
-      minScale: 1,
-      panOnlyWhenZoomed: true,
-      pinchAndPan: true,
-      step: 0.1, // for wheel / trackpad zoom
-    };
-    panzoom.value = Panzoom(mediaImage.value.$el, options);
-
-    useEventListener(
-      mediaImage.value.$el,
-      'panzoomend',
-      () => {
-        zoomReset();
-      },
-      { passive: true },
-    );
-
-    useEventListener(
-      mediaImage.value.$el,
-      'wheel',
-      (e) => {
-        if (!e.ctrlKey) return;
-        panzoom.value?.zoomWithWheel(e);
-      },
-      { passive: true },
-    );
-
-    useEventListener(
-      mediaImage.value.$el,
-      'panzoomchange',
-      (e: HTMLElementEventMap['panzoomchange']) => {
-        const width = mediaImage.value?.$el?.clientWidth;
-        const height = mediaImage.value?.$el?.clientHeight;
-        if (!width || !height) return;
-        mediaPanzoom.value = {
-          scale: e.detail.scale,
-          x: e.detail.x / width,
-          y: e.detail.y / height,
-        };
-        if (!isCurrentlyPlaying.value) return;
-        mediaPlaying.value.panzoom = mediaPanzoom.value;
-      },
-      { passive: true },
-    );
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
+const randomId = ref('mediaImage-' + uuid());
 
 function deleteMedia() {
   if (!mediaToDelete.value) return;
@@ -1350,14 +1340,8 @@ function deleteMedia() {
   mediaToDelete.value = '';
 }
 
-onMounted(async () => {
-  await nextTick();
-  initiatePanzoom();
+onMounted(() => {
   initializeImageDuration();
-});
-
-onUnmounted(() => {
-  destroyPanzoom();
 });
 
 const playButton = useTemplateRef<QBtn>('playButton');

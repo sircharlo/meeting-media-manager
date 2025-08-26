@@ -40,6 +40,7 @@ import { mainWindow, toggleAuthorizedClose } from 'main/window/window-main';
 import {
   fadeInMediaWindow,
   fadeOutMediaWindow,
+  focusMediaWindow,
   mediaWindow,
   moveMediaWindow,
 } from 'main/window/window-media';
@@ -97,6 +98,10 @@ handleIpcSend(
     }
   },
 );
+
+handleIpcSend('focusMediaWindow', () => {
+  focusMediaWindow();
+});
 
 handleIpcSend('askForMediaAccess', askForMediaAccess);
 

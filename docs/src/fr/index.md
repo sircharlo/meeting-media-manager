@@ -15,7 +15,7 @@ hero:
       link: /fr/user-guide
     - theme: brand
       text: Guide des paramètres
-      link: /settings-guide
+      link: /fr/settings-guide
     - theme: brand
       text: Foire aux questions
       link: /fr/faq

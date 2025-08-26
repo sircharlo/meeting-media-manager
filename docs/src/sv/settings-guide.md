@@ -1,285 +1,285 @@
-# Settings Guide {#settings-guide}
+# Inställningsguide {#settings-guide}
 
-This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+Denna omfattande guide förklarar alla inställningar som finns i M³, organiserade efter kategori. Att förstå dessa inställningar hjälper dig att konfigurera M³ för att fungera perfekt för din församlings behov.
 
-## Application Configuration {#application-configuration}
+## Programinställningar {#application-configuration}
 
-### Display Language {#display-language}
+### Appens visningsspråk {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Choose the language for M³'s interface. This is independent of the language used for media downloads.
+Välj språk för M³:s gränssnitt. Detta är oberoende av språket som används för medianedladdningar.
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+**Alternativ**: Alla tillgängliga gränssnittsspråk (engelska, spanska, franska osv.)
 
-**Default**: English
+**Standard**: Engelska
 
-### Dark Mode {#dark-mode}
+### Mörkt läge {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-Control the appearance theme of M³.
+Ställ in utseendet för M³.
 
-**Options**:
+**Alternativ**:
 
-- Automatically switch based on system preference
-- Always use dark mode
-- Always use light mode
+- Välj automatiskt efter datorns systeminställningar
+- Använd alltid mörkt läge
+- Använd alltid ljust läge
 
-**Default**: Auto
+**Standard**: Auto
 
-### First Day of Week {#first-day-of-week}
+### Veckans första dag {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the calendar view.
+Ange vilken veckodag som ska vara första dagen i veckan i kalendervyn.
 
-**Options**: Sunday through Saturday
+**Alternativ**: Söndag till lördag
 
-**Default**: Sunday
+**Standard**: Söndag
 
-### Auto-Start at Login {#auto-start-at-login}
+### Auto-start vid inloggning {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-Automatically start M³ when the computer boots up.
+Starta automatiskt M³ när datorn startas.
 
-**Default**: `false`
+**Standard**: `nej`
 
-## Congregation Meetings {#congregation-meetings}
+## Församlingsmöten {#congregation-meetings}
 
-### Congregation Name {#congregation-name}
+### Församlingsnamn {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
-The name of your congregation. This is used for organization and display purposes.
+Namnet på din församling. Detta används för organiserings- och visningsändamål.
 
-**Default**: Empty (must be set during setup)
+**Standard**: Tom (måste ställas in under installationen)
 
-### Meeting Language {#meeting-language}
+### Mötesspråk {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
-The primary language for media downloads. This should match the language used in your congregation's meetings.
+Det primära språket för nedladdning av media. Detta bör matcha språket som används vid församlingens möten.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Alternativ**: Alla tillgängliga språk som finns på Jehovas vittnens officiella websida
 
-**Default**: English (E)
+**Standard**: Engelska (E)
 
-### Fallback Language {#fallback-language}
+### Reservspråk {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
-A secondary language to use when media isn't available in the primary language.
+Ett reservspråk att använda när mediat inte finns tillgängligt på det primära språket.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Alternativ**: Alla tillgängliga språk som finns på Jehovas vittnens officiella websida
 
-**Default**: None
+**Standard**: Inget
 
-### Midweek Meeting Day {#midweek-meeting-day}
+### Dag för veckomötet {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-The day of the week when your midweek meeting is held.
+Veckodagen då veckomötet äger rum.
 
-**Options**: Sunday through Saturday
+**Alternativ**: Söndag till lördag
 
-**Default**: None (must be set during setup)
+**Standard**: Inget (måste ställas in under installationen)
 
-### Midweek Meeting Time {#midweek-meeting-time}
+### Klockslag för veckomötet
 
 <!-- **Setting**: `mwStartTime` -->
 
-The start time of your midweek meeting.
+Klockslaget när veckomötet börjar.
 
-**Format**: HH:MM (24-hour format)
+**Format**: HH:MM (24-timmarsformat)
 
-**Default**: None (must be set during setup)
+**Standard**: Inget (måste ställas in under installationen)
 
-### Weekend Meeting Day {#weekend-meeting-day}
+### Dag för helgmötet {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-The day of the week when your weekend meeting is held.
+Veckodagen då helgmötet äger rum.
 
-**Options**: Sunday through Saturday
+**Alternativ**: Söndag till lördag
 
-**Default**: None (must be set during setup)
+**Standard**: Inget (måste ställas in under installationen)
 
-### Weekend Meeting Time {#weekend-meeting-time}
+### Klockslag för helgmötet
 
 <!-- **Setting**: `weStartTime` -->
 
-The start time of your weekend meeting.
+Klockslaget när helgmötet börjar.
 
-**Format**: HH:MM (24-hour format)
+**Format**: HH:MM (24-timmarsformat)
 
-**Default**: None (must be set during setup)
+**Standard**: Inget (måste ställas in under installationen)
 
-### Circuit Overseer Week {#circuit-overseer-week}
+### Kretsveckan {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
-The week of the next circuit overseer's visit.
+Veckan för nästa kretsvecka.
 
-**Format**: MM/DD/YYYY
+**Format**: MM/DD/ÅÅÅÅ
 
-**Default**: None
+**Standard**: Inget
 
-### Memorial Date {#memorial-date}
+### Minneshögtiden {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
-The date of the next Memorial celebration (beta feature).
+Datum för nästa minneshögtid (beta-funktion).
 
-**Format**: MM/DD/YYYY
+**Format**: MM/DD/ÅÅÅÅ
 
-**Default**: Automatically retrieved periodically
+**Standard**: Hämtas automatiskt
 
-### Meeting Schedule Changes {#meeting-schedule-changes}
+### Ändringar av mötesschemat {#meeting-schedule-changes}
 
-These settings allow you to configure temporary changes to your meeting schedule:
+Med dessa inställningar kan du ställa in tillfälliga ändringar av mötesschemat:
 
-- **Change Date**: When the change takes effect
-- **One-time Change**: Whether this is a permanent or temporary change
-- **New Midweek Day**: New day for midweek meeting
-- **New Midweek Time**: New time for midweek meeting
-- **New Weekend Day**: New day for weekend meeting
-- **New Weekend Time**: New time for weekend meeting
+- **Ändra datum**: När ändringen börjar gälla
+- **Engångsändring**: Oavsett om detta är en permanent eller tillfällig ändring
+- **Ny veckomötesdag**: Ny veckodag för veckomötet
+- **Ny klockslag för veckomötet**: Ny tid för veckomötet
+- **Ny helgmötesdag**: Ny veckodag för helgmötet
+- **Ny klockslag för helgmötet**: Ny tid för helgmötet
 
-## Media Retrieval and Playback {#media-retrieval-and-playback}
+## Mediahämtning och uppspelning {#media-retrieval-and-playback}
 
-### Metered Connection {#metered-connection}
+### Anslutning med datapriser {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
-Enable this if you're on a limited data connection to reduce bandwidth usage.
+Aktivera detta om du är på en begränsad dataanslutning för att minska bandbreddsanvändningen.
 
-**Default**: `false`
+**Standard**: `nej`
 
-### Media Display {#media-display-button}
+### Mediavisning {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-Enable the media display functionality. This is required to present media on a second monitor.
+Aktivera medievisningsfunktion. Detta krävs för att presentera media på en andra bildskärm.
 
-**Default**: `false`
+**Standard**: `nej`
 
-### Background Music {#background-music}
+### Bakgrundsmusik {#settings-guide-background-music}
 
-#### Enable Music {#enable-music-button}
+#### Aktivera musik {#enable-music-button}
 
 <!-- **Setting**: `enableMusicButton` -->
 
-Enable background music functionality.
+Aktivera bakgrundsmusik.
 
-**Default**: `true`
+**Standard**: `Ja`
 
-#### Auto-Start Music {#auto-start-music}
+#### Autostart av musik {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-Automatically start background music when M³ launches if appropriate.
+Starta bakgrundsmusik automatiskt när M³ startar.
 
-**Default**: `true`
+**Standard**: `Ja`
 
-#### Meeting Stop Buffer {#meeting-stop-buffer}
+#### Buffert för mötestopp av musik {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
-How many seconds before meeting start time to stop background music.
+Ställ in hur många sekunder innan mötet börjar som bakgrundsmusiken ska stoppas.
 
-**Range**: 0-300 seconds
+**Område**: 0-300 sekunder
 
-**Default**: 60 seconds
+**Standard**: 60 sekunder
 
-#### Music Volume {#music-volume}
+#### Musikvolym {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
-Volume level for background music (1-100%).
+Volymnivå för bakgrundsmusik (1-100%).
 
-**Default**: 100%
+**Standard**: 100%
 
-### Cache Management {#cache-management}
+### Cachehantering {#cache-management}
 
-#### Enable Extra Cache {#enable-extra-cache}
+#### Aktivera extra cache {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Enable additional caching for better performance.
+Aktivera extra cache för bättre prestanda.
 
-**Default**: `false`
+**Standard**: `nej`
 
-#### Cache Folder {#cache-folder}
+#### Cachemapp {#cache-folder}
 
 <!-- **Setting**: `cacheFolder` -->
 
-Custom location for storing cached media files.
+Anpassad plats för att lagra cachade mediefiler.
 
-**Default**: System default location
+**Standard**: Systemets standardplats
 
-#### Enable Cache Auto-Clear {#enable-cache-auto-clear}
+#### Aktivera automatisk rensning av cache {#enable-cache-auto-clear}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
-Automatically clear old cached files to save disk space.
+Rensa automatiskt gamla cachade filer för att spara diskutrymme.
 
-**Default**: `true`
+**Standard**: `Ja`
 
-### Folder Monitoring {#folder-monitoring}
+### Mappbevakning {#settings-guide-folder-monitoring}
 
-#### Enable Folder Watcher {#enable-folder-watcher}
+#### Aktivera mappbevakning {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Monitor a folder for new media files and automatically add them to M³.
+Övervaka en mapp för nya mediefiler och lägg automatiskt till dem i M³.
 
-**Default**: `false`
+**Standard**: `nej`
 
-#### Folder to Watch {#folder-to-watch}
+#### Mapp att bevaka {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder path to monitor for new media files.
+Mappsökvägen att övervaka för nya mediefiler.
 
-**Default**: Empty
+**Standard**: Tomt
 
-## Integrations {#integrations}
+## Integrationer {#integrations}
 
-### Zoom Integration {#zoom-integration}
+### Zoomintegration {#settings-guide-zoom-integration}
 
-#### Enable Zoom {#enable-zoom}
+#### Aktivera Zoom {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
-Enable Zoom meeting integration features.
+Aktivera funktioner för Zoom mötesintegrering.
 
-**Default**: `false`
+**Standard**: `nej`
 
-#### Screen Share Shortcut {#screen-share-shortcut}
+#### Genväg för skärmdelning {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
-Keyboard shortcut to trigger Zoom screen sharing.
+Genväg till tangentbordet för att starta Zoom:s skärmdelning.
 
-**Default**: None
+**Standard**: Inget
 
-### OBS Studio Integration {#obs-integration}
+### OBS Studiointegration {#settings-guide-obs-integration}
 
-#### Enable OBS {#enable-obs}
+#### Aktivera OBS {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
-Enable OBS Studio integration for automatic scene switching.
+Aktivera OBS Studio-integration för automatisk scenbyte.
 
-**Default**: `false`
+**Standard**: `nej`
 
-:::warning Important Note
+:::warning Viktig information
 
-**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/sv/user-guide#audio-configuration) for detailed audio setup instructions.
+**Ljudkonfiguration krävs**: OBS Studio-integrationen hanterar endast skärmdelning. Ljud från M³ överförs inte automatiskt\*\* till deltagarna på Zoom vid användning av OBS Studio. Du måste konfigurera Zooms ursprungliga ljudinställningar eller använda "Dela datorljud" för att säkerställa att mötesdeltagarna kan höra medierna. Se [Användarhandbok](/user-guide#audio-configuration) för detaljerade instruktioner för ljudinställningar.
 
-**Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
+**Obs**: Zoomintegrationen använder Zooms inbyggda skärmdelning som hanterar ljud mer sömlöst än OBS Studio-integration.
 
 :::
 
@@ -287,199 +287,199 @@ Enable OBS Studio integration for automatic scene switching.
 
 <!-- **Setting**: `obsPort` -->
 
-The port number for connecting to OBS Studio WebSocket.
+Portnumret för anslutning till OBS Studio WebSocket.
 
-**Default**: None
+**Standard**: Inget
 
-#### OBS Password {#obs-password}
+#### OBS Lösenord {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
-The password for OBS Studio WebSocket connection.
+Lösenordet för OBS Studio WebSocket-anslutning.
 
-**Default**: None
+**Standard**: Inget
 
-#### OBS Scenes {#obs-scenes}
+#### OBS Scener {#obs-scenes}
 
-Configure which OBS scenes to use for different purposes:
+Konfigurera vilka OBS-scener som ska användas för olika ändamål:
 
-- **Camera Scene**: Scene showing the camera/lectern
-- **Media Scene**: Scene for displaying media
-- **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
+- **Kamerascen**: Scen som visar kameran/podiet
+- **Mediescen**: Scen för visning av media
+- **Bildscen**: Scen för att visa bilder (till exempel en BIB-scen som visar både media och talaren)
 
-#### OBS Advanced Options {#obs-advanced-options}
+#### OBS Avancerade alternativ {#obs-advanced-options}
 
-- **Postpone Images**: Delay sharing images to OBS until manually triggered
-- **Quick Toggle**: Enable quick on/off toggle for OBS integration
-- **Switch Scene After Media**: Automatically return to previous scene after media
-- **Remember Previous Scene**: Remember and restore the previous scene
-- **Hide Icons**: Hide OBS-related icons in the interface
+- **Skjut upp bildvisning**: Fördröj delning av bilder till OBS
+- **Snabbväxla**: Aktivera snabbväxling på/av för OBS-integration
+- **Byt scen efter media**: Återvänd automatiskt till föregående scen efter media
+- **Kom ihåg föregående scen**: Kom ihåg och återställ föregående scen
+- **Dölj ikoner**: Dölj OBS-relaterade ikoner i gränssnittet
 
-:::warning Important Note
+:::warning Viktig information
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/sv/user-guide#audio-configuration) for detailed audio setup instructions.
+**Ljudkonfiguration krävs**: OBS Studio integration hanterar endast video/scenbyte. Ljud från M³ överförs inte automatiskt\*\* till Zoom eller OBS Studio. Videoströmmen fungerar som en virtuell kamera utan ljud, precis som en webbkamera. Du måste konfigurera Zooms ursprungliga ljudinställningar eller använda "Dela datorljud" för att säkerställa att mötesdeltagarna kan höra medierna. Se [Användarhandbok](/user-guide#audio-configuration) för detaljerade instruktioner för ljudinställningar.
 
-**Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
+**Alternativ lösning**: Överväg att använda Zoomintegrationen istället, eftersom den använder Zooms inbyggda skärm och ljuddelning, som hanterar ljudet mer sömlöst.
 
 :::
 
-## Advanced Settings {#advanced-settings}
+## Avancerade inställningar {#advanced-settings}
 
-### Keyboard Shortcuts {#keyboard-shortcuts}
+### Kortkommandon {#settings-guide-keyboard-shortcuts}
 
-#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
+#### Aktivera kortkommandon {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-Enable customizable keyboard shortcuts for media control.
+Aktivera anpassningsbara kortkommandon för mediekontroll.
 
-**Default**: `false`
+**Standard**: `nej`
 
-#### Media Control Shortcuts {#media-control-shortcuts}
+#### Genvägar för mediakontroll {#media-control-shortcuts}
 
-Configure shortcuts for media playback:
+Ställ in genvägar för uppspelning av media:
 
-- **Media Window**: Open/close media window
-- **Previous Media**: Go to previous media item
-- **Next Media**: Go to next media item
-- **Pause/Resume**: Pause or resume media playback
-- **Stop Media**: Stop media playback
-- **Music Toggle**: Toggle background music
+- **Mediefönster** - Öppna/stäng mediefönstret
+- **Föregående media**: Gå till föregående medieobjekt
+- **Nästa media**: Gå till nästa medieobjekt
+- **Pausa/Återuppspela** - Kontrollera uppspelning av media
+- **Stoppa media** - Stoppa medieuppspelning
+- **Musikväxling** - Styr bakgrundsmusiken
 
-### Media Display {#media-display}
+### Mediavisning {#media-display}
 
-#### Hide Media Logo {#hide-media-logo}
+#### Dölj medialogotyp {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
-Hide the logo in the media window.
+Dölj logotypen i mediefönstret.
 
-**Default**: `false`
+**Standard**: `nej`
 
-#### Maximum Resolution {#maximum-resolution}
+#### Maximal upplösning {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
-Maximum resolution for downloaded media files.
+Maximal upplösning för nedladdade mediafiler.
 
-**Options**: 240p, 360p, 480p, 720p
+**Alternativ**: 240p, 360p, 480p, 720p
 
-**Default**: 720p
+**Standard**: 720p
 
-#### Include Printed Media {#include-printed-media}
+#### Inkludera tryckt media {#include-printed-media}
 
 <!-- **Setting**: `includePrinted` -->
 
-Include media from the printed publications in media downloads.
+Inkludera media från tryckta publikationer i medienedladdningar.
 
-**Default**: `true`
+**Standard**: `Ja`
 
-#### Exclude Footnotes {#exclude-footnotes}
+#### Uteslut fotnoter {#exclude-footnotes}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
-Exclude footnote images from media downloads when possible.
+Uteslut fotnotsbilder från medianedladdningar när det är möjligt.
 
-**Default**: `false`
+**Standard**: `nej`
 
-#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
+#### Uteslut media från broschyren Bli bättre på att... {#exclude-theocratic-ministry-school}
 
 <!-- **Setting**: `excludeTh` -->
 
-Exclude media from the Teaching (th) brochure from media downloads.
+Uteslut media från broschyren Bli bättre på att högläsa och undervisa (th) från medianedladdningar.
 
-**Default**: `true`
+**Standard**: `Ja`
 
-### Subtitles {#subtitles}
+### Undertexter {#subtitles}
 
-#### Enable Subtitles {#enable-subtitles}
+#### Aktivera undertexter {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
-Enable subtitle support for media playback.
+Aktivera undertextstöd för medieuppspelning.
 
-**Default**: `false`
+**Standard**: `nej`
 
-#### Subtitle Language {#subtitle-language}
+#### Undertextspråk {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
-Language for subtitles (can be different from media language).
+Språk för undertexter (behöver inte vara samma som mediespråk).
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Alternativ**: Alla tillgängliga språk som finns på Jehovas vittnens officiella websida
 
-**Default**: None
+**Standard**: Inget
 
-### Media Export {#media-export}
+### Mediaexport {#settings-guide-media-export}
 
-#### Enable Media Auto-Export {#enable-media-auto-export}
+#### Aktivera automatisk mediaexport {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-Automatically export media files to a specified folder.
+Exporterar mediefiler till en angiven mapp.
 
-**Default**: `false`
+**Standard**: `nej`
 
-#### Media Export Folder {#media-export-folder}
+#### Mapp för mediaexport {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
-Folder path where media files will be automatically exported.
+Mappsökväg dit mediefiler kommer att exporteras automatiskt.
 
-**Default**: Empty
+**Standard**: Tomt
 
-#### Convert Files to MP4 {#convert-files-to-mp4}
+#### Konvertera filer till MP4 {#convert-files-to-mp4}
 
-**Setting**: `convertFilesToMp4`
+**Inställningar**: `konverteraFilerTillMp4`
 
-Convert exported media files to MP4 format for better compatibility.
+Konvertera exporterade mediefiler till MP4-format för bättre kompatibilitet.
 
-**Default**: `false`
+**Standard**: `nej`
 
-### Danger Zone {#danger-zone}
+### Farozon {#danger-zone}
 
 :::warning Varning
 
-These settings should only be changed if you understand their implications.
+Dessa inställningar bör endast ändras om du förstår deras innebörd.
 
 :::
 
-#### Disable Media Fetching {#disable-media-fetching}
+#### Inaktivera mediahämtning {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
+Inaktivera helt automatiska medianedladdningar. Använd detta endast för profiler som kommer att användas för speciella händelser eller andra anpassade inställningar.
 
-**Default**: `false`
+**Standard**: `nej`
 
-## Tips for Optimal Configuration {#configuration-tips}
+## Tips för optimala inställningar {#configuration-tips}
 
-### For New Users {#new-users}
+### För nya användare {#new-users}
 
-1. Start with the setup wizard to configure basic settings
-2. Enable "Media Display Button" to access presentation features
-3. Configure your meeting schedule accurately
-4. Set up OBS integration if you use hybrid meetings
+1. Börja med installationsguiden för att konfigurera grundläggande inställningar
+2. Aktivera "Mediavisningsknappen" för att komma åt visningsfunktioner
+3. Ställ in mötesschemat noggrant
+4. Konfigurera OBS-integration om du använder hybrida möten
 
-### For Advanced Users {#advanced-users}
+### För avancerade användare {#advanced-users}
 
-1. Use folder monitoring to sync media from cloud storage
-2. Enable media auto-export for backup purposes
-3. Configure keyboard shortcuts for efficient operation
-4. Configure Zoom integration for automatic screen sharing
+1. Använd mappövervakning för att synkronisera media från molnlagring
+2. Aktivera automatisk export av media för säkerhetskopieringsändamål
+3. Ställ in anpassade kortkommandon för snabbare åtkomst
+4. Ställ in Zoom-integration för automatisk skärmdelning
 
-### Performance Optimization {#performance-optimization}
+### Prestandaoptimering {#performance-optimization}
 
-1. Enable extra cache for better performance
-2. Use appropriate maximum resolution for your needs
-3. Configure cache auto-clear to manage disk space
-4. Consider metered connection setting if on limited bandwidth
+1. Aktivera extra cache för bättre prestanda
+2. Använd lämplig maximal upplösning för dina behov
+3. Konfigurera automatisk rensning för att hantera diskutrymme
+4. Använd funktionen för datapriser vid begränsad bandbredd
 
-### Felsökning {#troubleshooting}
+### Felsökning {#settings-guide-troubleshooting}
 
-- If media isn't downloading, check your meeting schedule settings
-- If OBS integration isn't working, verify port and password settings
-- If performance is slow, try enabling extra cache or reducing resolution
-- If you're having language issues, check both interface and media language settings
-- If Zoom participants can't hear media audio, configure Zoom's Original Audio settings or use "Share Computer Sound"
-- **Tip**: Consider using Zoom integration instead of OBS Studio for simpler audio handling
+- Om media inte laddas ner, kontrollera dina inställningar för mötesschemat
+- Om OBS-integration inte fungerar, kontrollera port- och lösenordsinställningar
+- Om prestandan är långsam, försök aktivera extra cache eller minska upplösningen
+- Om du har språkproblem, kontrollera både gränssnittet och språkinställningarna
+- Om deltagarna på Zoom inte kan höra mediats ljud, konfigurera Zooms ursprungliga ljudinställningar eller använd "Dela datorljud"
+- **Tip**: Överväg att använda Zoom-integration istället för OBS Studio för enklare ljudhantering

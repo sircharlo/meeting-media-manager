@@ -271,10 +271,10 @@ defineExpose({
 .sortable-media {
   transition: background-color 0.2s ease;
 
-  &.drop-here {
-    background-color: rgba(var(--q-primary), 0.1);
-    border: 2px dashed var(--q-primary);
-  }
+  // &.drop-here {
+  //   background-color: rgba(var(--q-primary), 0.1);
+  //   border: 2px dashed var(--q-primary);
+  // }
 }
 
 [data-dragging='true'] {

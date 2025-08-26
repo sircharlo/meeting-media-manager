@@ -197,8 +197,7 @@ export function useMediaSectionRepeat() {
     mediaPlaying.value = {
       action: 'play',
       currentPosition: 0,
-      panzoom: {
-        scale: 1,
+      pan: {
         x: 0,
         y: 0,
       },
@@ -206,6 +205,7 @@ export function useMediaSectionRepeat() {
       subtitlesUrl: nextItem.subtitlesUrl || '',
       uniqueId: nextItem.uniqueId,
       url: nextItem.fileUrl || nextItem.streamUrl || '',
+      zoom: 1,
     };
 
     // // If this is an image, set up a timer to move to the next item

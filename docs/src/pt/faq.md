@@ -30,7 +30,7 @@ M³ supports Windows, macOS, and Linux:
 
 ### :globe_with_meridians: Does M³ work in my language? {#language-support}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Sim!** O M³ oferece suporte abrangente em vários idiomas:
 
 - **Media Languages**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
 - **Interface Languages**: Use M³'s interface in many different languages
@@ -52,7 +52,7 @@ M³ includes a setup wizard that guides you through the essential configuration:
 4. Set up meeting schedule
 5. Configure optional features like OBS integration
 
-## Media Management {#media-management}
+## Media Management {#faq-media-management}
 
 ### :download: How does M³ download media? {#media-download}
 
@@ -64,12 +64,12 @@ M³ automatically downloads media for upcoming meetings by:
 4. Organizing media by date and meeting type
 5. Caching files for offline use
 
-### :calendar: Can I download media for specific dates? {#specific-dates}
+### :calendar: Posso baixar mídia para datas específicas? {#specific-dates}
 
-Yes! M³ allows you to:
+Sim! O M³ permite que você:
 
-- Download media for upcoming meetings automatically
-- Import custom media for any date
+- Baixe mídia para as próximas reuniões automaticamente
+- Importe mídia personalizada para qualquer data
 
 ### :folder: How do I import my own media files? {#import-media}
 
@@ -80,16 +80,16 @@ You can import custom media in several ways:
 - **Folder Monitoring**: Set up a watched folder for automatic imports
 - **JWPUB Files and Playlists**: Import publications and playlists
 
-### :speaker: Can I import audio Bible recordings? {#audio-bible}
+### :speaker: Posso importar gravações de áudio da Bíblia? {#audio-bible}
 
-Yes! M³ includes an Audio Bible feature that allows you to:
+Sim! O M³ inclui um recurso de Áudio da Bíblia que permite que você:
 
-1. Select Bible books and chapters
-2. Choose specific verses or verse ranges
-3. Download audio recordings
-4. Use them at the meetings
+1. Selecione livros e capítulos da Bíblia
+2. Escolha versículos específicos ou intervalo de versículos
+3. Baixe as gravações de áudio
+4. Use-as nas reuniões
 
-## Presentation Features {#presentation-features}
+## Presentation Features {#faq-presentation-features}
 
 ### :tv: How do I present media during meetings? {#present-media}
 
@@ -101,7 +101,7 @@ To present media:
 4. Use zoom/pan features for images
 5. Set custom timing if needed
 
-### :keyboard: What keyboard shortcuts are available? {#keyboard-shortcuts}
+### :keyboard: What keyboard shortcuts are available? {#faq-keyboard-shortcuts}
 
 M³ supports customizable keyboard shortcuts for:
 
@@ -112,7 +112,7 @@ M³ supports customizable keyboard shortcuts for:
 
 <!-- - Fullscreen mode -->
 
-### :music: How does background music work? {#background-music}
+### :music: How does background music work? {#faq-background-music}
 
 Background music features include:
 
@@ -130,9 +130,9 @@ To integrate with Zoom:
 2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
 3. M³ will automatically start and stop Zoom screen sharing during media presentations
 
-## OBS Studio Integration {#obs-integration}
+## OBS Studio Integration {#faq-obs-integration}
 
-### :video_camera: How do I set up the OBS Studio integration? {#obs-setup}
+### :video_camera: How do I set up the OBS Studio integration? {#faq-obs-setup}
 
 To integrate with OBS Studio:
 
@@ -142,7 +142,7 @@ To integrate with OBS Studio:
 4. Configure scenes for camera, media, and images
 5. Test playback
 
-### :arrows_counterclockwise: How does automatic scene switching work? {#scene-switching}
+### :arrows_counterclockwise: How does automatic scene switching work? {#faq-scene-switching}
 
 M³ automatically switches OBS scenes based on:
 
@@ -151,7 +151,7 @@ M³ automatically switches OBS scenes based on:
 - Settings like "Postpone Images"
 - Whether to return to previous scene after media
 
-### :pause_button: What is the "Postpone Images" feature? {#postpone-images}
+### :pause_button: What is the "Postpone Images" feature? {#faq-postpone-images}
 
 This feature delays sharing images to OBS until you manually trigger them. This is useful for:
 
@@ -159,16 +159,16 @@ This feature delays sharing images to OBS until you manually trigger them. This 
 - Having more control over timing
 - Avoiding premature scene changes
 
-## Advanced Features {#advanced-features}
+## Advanced Features {#faq-advanced-features}
 
-### :cloud: How does folder monitoring work? {#folder-monitoring}
+### :cloud: How does folder monitoring work? {#faq-folder-monitoring}
 
 Folder monitoring allows you to:
 
 1. Select a folder to watch for new files
 2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
 
-### :file_folder: What is media auto-export? {#media-export}
+### :file_folder: What is media auto-export? {#faq-media-export}
 
 Media auto-export automatically:
 
@@ -177,18 +177,18 @@ Media auto-export automatically:
 3. Converts files to MP4 format (optional)
 4. Maintains an organized backup of meeting media files
 
-### :family: Can I manage multiple congregations? {#multiple-congregations}
+### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
 
-Yes! M³ supports multiple profiles for:
+Sim! M³ supports multiple profiles for:
 
 - Different congregations
 - Special events
 - Different groups
 - Separate settings and media for each
 
-## Troubleshooting {#troubleshooting}
+## Troubleshooting {#faq-troubleshooting}
 
-### :warning: Media isn't downloading. What should I check? {#media-not-downloading}
+### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
 
 Check these common issues:
 
@@ -199,7 +199,7 @@ Check these common issues:
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: The OBS integration isn't working. What should I verify? {#obs-not-working}
+### :video_camera: The OBS integration isn't working. What should I verify? {#faq-obs-not-working}
 
 Check these OBS-related issues:
 
@@ -232,7 +232,7 @@ Try these performance optimizations:
 3. **Check Disk Space**: Ensure you have sufficient free disk space
 4. **Reduce Resolution**: Lower the maximum resolution setting
 
-### :speech_balloon: I'm having language issues. What should I check? {#language-issues}
+### :speech_balloon: I'm having language issues. What should I check? {#faq-language-issues}
 
 Verify these language settings:
 
@@ -298,7 +298,7 @@ Typical usage ranges from 2-10GB depending on settings and usage.
 
 ### :shield: Is M³ secure and private? {#security-privacy}
 
-Yes! M³ is designed with security and privacy in mind:
+Sim! M³ is designed with security and privacy in mind:
 
 - **Local Storage**: All meeting data is stored locally on your computer
 - **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses

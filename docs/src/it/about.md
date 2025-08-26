@@ -43,7 +43,7 @@ M³ è una soluzione completa di gestione dei media che consente di scaricare fa
 - **Smart caching**: Sistema di cache intelligente che mantiene i media organizzati e aggiornati
 - **Organizzazione media**: Organizza automaticamente i media per data e sezione adunanza
 
-### Funzionalità di Presentazione Multimediale {#presentation-features}
+### Funzionalità di Presentazione Multimediale {#about-presentation-features}
 
 Per adunanze di congregazione **ibride** o **di persona** la modalità di presentazione integrata dei media comprende:
 
@@ -53,22 +53,22 @@ Per adunanze di congregazione **ibride** o **di persona** la modalità di presen
 - **Supporto multi-monitor**: Rilevamento e gestione automatici dei monitor esterni
 - **Presentazione Pulita**: interfaccia di presentazione multimediale senza distrazioni
 
-### Musica di Sottofondo {#background-music}
+### Musica di Sottofondo {#about-background-music}
 
 - **Riproduzione intelligente**: Musica di sottofondo che si ferma automaticamente prima dell'inizio delle adunanze
 - **Riavvio con un clic**: Riprendi la musica di sottofondo con un solo clic dopo le adunanze
 - **Controllo del volume**: Volume musicale di sottofondo regolabile con funzionalità di dissolvenza
 
-### Integrazione di Zoom {#zoom-integration}
+### Integrazione di Zoom {#about-zoom-integration}
 
 - **Condivisione automatica dello schermo**: Avvia e ferma automaticamente la condivisione dello schermo di Zoom quando riproduci o interrompi i media
 
-### Integrazione di OBS Studio {#obs-integration}
+### Integrazione di OBS Studio {#about-obs-integration}
 
 - **Cambio automatico della scena**: Integrazione perfetta con OBS Studio per adunanze ibride
 - **Gestione delle scene**: Cambio automatico tra fotocamera, media e altre scene
 
-### Importazione e gestione multimediale {#media-import}
+### Importazione e gestione multimediale {#about-media-import}
 
 - **File JWPUB**: Importa e gestisci i file JWPUB con facilità
 - **File JWLPLAYLIST**: Supporto per i file JW Library playlist
@@ -76,7 +76,7 @@ Per adunanze di congregazione **ibride** o **di persona** la modalità di presen
 - **Bibbia Audio**: Importa i media della Bibbia di studio e le registrazioni audio della Traduzione del Nuovo Mondo
 - **Discussioni pubbliche**: Avere sempre una panoramica sui media pronta del discorso pubblico pronta all'uso con l'importatore S-34
 
-### Funzionalità Avanzate {#advanced-features}
+### Funzionalità Avanzate {#about-advanced-features}
 
 - **Monitoraggio delle cartelle**: Sincronizza automaticamente i supporti dalle cartelle monitorate (Dropbox, OneDrive, ecc.)
 - **Esportazione media**: Esporta automaticamente i media in cartelle, organizzati per data
