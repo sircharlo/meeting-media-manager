@@ -5,7 +5,10 @@
     style="align-content: center; height: 100vh; -webkit-app-region: drag"
   >
     <!-- <pre style="position: absolute; top: 0; left: 0; z-index: 1000">
-      {{ zoomPanState }}
+      mediaPlayingUrl: {{ mediaPlayingUrl }}
+      videoStreaming: {{ videoStreaming }}
+      cameraStreamId: {{ cameraStreamId }}
+      mediaAction: {{ mediaAction }}
     </pre> -->
     <q-resize-observer debounce="50" @resize="postMediaWindowSize" />
     <transition
@@ -511,7 +514,7 @@ watch(
   async (newWebStreamData) => {
     videoStreaming.value = newWebStreamData;
     if (newWebStreamData) {
-      cameraStreamId.value = '';
+      if (cameraStreamId.value) cameraStreamId.value = '';
       const screenAccessStatus = await getScreenAccessStatus();
       if (!screenAccessStatus || screenAccessStatus !== 'granted') {
         try {
@@ -592,7 +595,7 @@ watch(
           errorCatcher(e, {
             contexts: { fn: { name: 'requestCameraAccess' } },
           });
-          cameraStreamId.value = '';
+          if (cameraStreamId.value) cameraStreamId.value = '';
           videoStreaming.value = false;
           createTemporaryNotification({
             caption: t('camera-access-required-explain'),
@@ -644,7 +647,7 @@ watch(
         playMediaElement();
       } catch (e) {
         errorCatcher(e, { contexts: { fn: { name: 'streamCamera' } } });
-        cameraStreamId.value = '';
+        if (cameraStreamId.value) cameraStreamId.value = '';
         videoStreaming.value = false;
         createTemporaryNotification({
           caption: t('camera-access-required-explain'),
