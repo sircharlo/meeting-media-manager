@@ -1236,14 +1236,7 @@ const dropActive = (event: DragEvent) => {
 const handleDrop = (event: DragEvent) => {
   event.preventDefault();
   event.stopPropagation();
-  // if (
-  //     (isWeMeetingDay(selectedDateObject.value?.date) ||
-  //       isMwMeetingDay(selectedDateObject.value?.date)) &&
-  //     !event.detail?.section
-  //   ) {
-  //     pendingFiles.value = event.detail?.files ?? [];
-  //     showSectionPicker.value = true;
-  //   } else {
+
   try {
     if (event.dataTransfer?.files?.length) {
       const droppedStuff: (File | string)[] = Array.from(
@@ -1266,8 +1259,11 @@ const handleDrop = (event: DragEvent) => {
         if (src) droppedStuff[0] = src;
       }
 
-      // Show section picker if more than one section exists
-      if ((selectedDateObject.value?.mediaSections?.length || 0) > 1) {
+      // Show section picker if more than one section exists and it's not a WE meeting
+      if (
+        (selectedDateObject.value?.mediaSections?.length || 0) > 1 &&
+        !isWeMeetingDay(selectedDateObject.value?.date)
+      ) {
         pendingFiles.value = droppedStuff;
         showSectionPicker.value = true;
       } else {
