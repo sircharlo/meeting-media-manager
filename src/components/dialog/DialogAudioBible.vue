@@ -203,14 +203,19 @@ import type {
 
 import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   downloadAdditionalRemoteVideo,
   getAudioBibleMedia,
 } from 'src/helpers/jw-media';
+import { useCurrentStateStore } from 'src/stores/current-state';
 import { timeToSeconds } from 'src/utils/time';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+
+const currentState = useCurrentStateStore();
+const { selectedDate } = storeToRefs(currentState);
 
 const { t } = useI18n();
 
@@ -358,6 +363,7 @@ const addSelectedVerses = async () => {
 
   await downloadAdditionalRemoteVideo(
     selectedChapterMedia.value,
+    selectedDate.value,
     undefined,
     false,
     bibleAudioMedia.value?.[selectedBibleBook.value - 1]?.pubName +
