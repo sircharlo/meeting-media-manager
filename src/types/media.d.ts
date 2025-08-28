@@ -28,6 +28,7 @@ export interface DownloadProgressItem {
   error?: boolean;
   filename: string;
   loaded?: number;
+  meetingDate?: string;
   total?: number;
 }
 
@@ -37,6 +38,7 @@ export interface FileDownloader {
   dir: string;
   filename?: string;
   lowPriority?: boolean;
+  meetingDate?: string;
   notify?: boolean;
   size?: number;
   url: string;

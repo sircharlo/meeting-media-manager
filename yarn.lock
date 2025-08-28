@@ -2877,10 +2877,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/babel-plugin-component-annotate@npm:4.1.0":
-  version: 4.1.0
-  resolution: "@sentry/babel-plugin-component-annotate@npm:4.1.0"
-  checksum: 10c0/32fa0bcf4abf5309d9f8eaf3b1f1d01a0175718e91d04cb11c656c8f3189615c6d320d8b40be12ec397e0058d24d706fcd7eae8b66581487036979fdde90bc0f
+"@sentry/babel-plugin-component-annotate@npm:4.1.1":
+  version: 4.1.1
+  resolution: "@sentry/babel-plugin-component-annotate@npm:4.1.1"
+  checksum: 10c0/ee2ad4fad13362a35554f1ed7e1f5dfe4cbccdf35064bdd36bb658c0c785dffc3110ebecd11690cff3f4906a512bae3bc4bb9d488b4c71767ea7ed235efa1b5e
   languageName: node
   linkType: hard
 
@@ -2897,19 +2897,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/bundler-plugin-core@npm:4.1.0":
-  version: 4.1.0
-  resolution: "@sentry/bundler-plugin-core@npm:4.1.0"
+"@sentry/bundler-plugin-core@npm:4.1.1":
+  version: 4.1.1
+  resolution: "@sentry/bundler-plugin-core@npm:4.1.1"
   dependencies:
     "@babel/core": "npm:^7.18.5"
-    "@sentry/babel-plugin-component-annotate": "npm:4.1.0"
+    "@sentry/babel-plugin-component-annotate": "npm:4.1.1"
     "@sentry/cli": "npm:^2.51.0"
     dotenv: "npm:^16.3.1"
     find-up: "npm:^5.0.0"
     glob: "npm:^9.3.2"
     magic-string: "npm:0.30.8"
     unplugin: "npm:1.0.1"
-  checksum: 10c0/ed59c9cfbdc37fd4f81fbeb474a51f5948c1bf7232d6295965b89aad8f80d78d7a38d69a6f19a305cee619c9a074e3177b053c36720d37d3dfacabfa2b25790c
+  checksum: 10c0/3603b9347a7db4dd4a4596e79339239ad7a5c34d2a65037298aff9d140a08088c1116341cf534c31669f5938b32803ce435a9c0b3dc0c0b99bafecef706cc129
   languageName: node
   linkType: hard
 
@@ -3028,14 +3028,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/esbuild-plugin@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "@sentry/esbuild-plugin@npm:4.1.0"
+"@sentry/esbuild-plugin@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "@sentry/esbuild-plugin@npm:4.1.1"
   dependencies:
-    "@sentry/bundler-plugin-core": "npm:4.1.0"
+    "@sentry/bundler-plugin-core": "npm:4.1.1"
     unplugin: "npm:1.0.1"
     uuid: "npm:^9.0.0"
-  checksum: 10c0/3305c67f449b609cec5fe050332194cfff3cf720cebfb4cbc50758fbc0d4537db9cfcf67eb543fd9d6d831a295fff2d08ceb797c152a68bb5d0909ebecea515d
+  checksum: 10c0/2e23d5dda0bd135d7e12ee1f5e9f80c1c33be105af13f7952955395915bab28bb2292ad1cf407e3db217eee259fead389e48eac86f22e49e5635b36da42118c0
   languageName: node
   linkType: hard
 
@@ -3098,13 +3098,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/vite-plugin@npm:^4.1.0":
-  version: 4.1.0
-  resolution: "@sentry/vite-plugin@npm:4.1.0"
+"@sentry/vite-plugin@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "@sentry/vite-plugin@npm:4.1.1"
   dependencies:
-    "@sentry/bundler-plugin-core": "npm:4.1.0"
+    "@sentry/bundler-plugin-core": "npm:4.1.1"
     unplugin: "npm:1.0.1"
-  checksum: 10c0/4003497e33da18c6b79a1105786cf2f97a6cc39e5738f6d90c9b0d0cd8b0fe76c05f846b3bee363947b77093ff731b494db5fa93e6b75a236d70e1fd00f6e922
+  checksum: 10c0/28ebb6be1c87284331b8b297c0c6e3dd87b9295795f5a7b6e49775770c809ac9b33b1b6ac3b204ffef926c12c46c873aeed8e4bfe45df2cf169743fe96c2f760
   languageName: node
   linkType: hard
 
@@ -10528,8 +10528,8 @@ __metadata:
     "@quasar/vite-plugin": "npm:^1.10.0"
     "@rollup/plugin-inject": "npm:^5.0.5"
     "@sentry/electron": "npm:^5.12.0"
-    "@sentry/esbuild-plugin": "npm:^4.1.0"
-    "@sentry/vite-plugin": "npm:^4.1.0"
+    "@sentry/esbuild-plugin": "npm:^4.1.1"
+    "@sentry/vite-plugin": "npm:^4.1.1"
     "@sentry/vue": "npm:8.55.0"
     "@types/better-sqlite3": "npm:^7.6.13"
     "@types/decompress": "npm:^4.2.7"

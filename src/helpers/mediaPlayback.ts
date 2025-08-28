@@ -10,6 +10,7 @@ import {
   dynamicMediaMapper,
   processMissingMediaInfo,
 } from 'src/helpers/jw-media';
+import { formatDate } from 'src/utils/date';
 import { getTempPath } from 'src/utils/fs';
 import { isJwpub } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
@@ -212,7 +213,11 @@ export const getMediaFromJwPlaylist = async (
       }),
     );
 
-    await processMissingMediaInfo(playlistMediaItems, true);
+    await processMissingMediaInfo(
+      playlistMediaItems,
+      formatDate(selectedDateValue, 'YYYYMMDD'),
+      true,
+    );
     const mappedPlaylistMediaItems = await dynamicMediaMapper(
       playlistMediaItems.filter((m) => m.KeySymbol !== 'nwt'),
       selectedDateValue,

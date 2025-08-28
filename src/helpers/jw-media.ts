@@ -248,6 +248,7 @@ export const addJwpubDocumentMediaToFiles = async (
   document: DocumentItem,
   section: MediaSectionIdentifier | undefined,
   pubFolder?: PublicationFetcher,
+  meetingDate?: string,
 ) => {
   const jwStore = useJwStore();
   const { addToAdditionMediaMap } = jwStore;
@@ -269,7 +270,10 @@ export const addJwpubDocumentMediaToFiles = async (
         pubFolder ?? publication,
       );
     }
-    await processMissingMediaInfo(multimediaItems);
+    await processMissingMediaInfo(
+      multimediaItems,
+      meetingDate || currentStateStore.selectedDate,
+    );
     const mediaItems = currentStateStore.selectedDateObject
       ? await dynamicMediaMapper(
           multimediaItems,
@@ -293,6 +297,7 @@ export const downloadFileIfNeeded = async ({
   dir,
   filename,
   lowPriority = false,
+  meetingDate,
   size,
   url,
 }: FileDownloader): Promise<DownloadedFile> => {
@@ -327,6 +332,17 @@ export const downloadFileIfNeeded = async ({
     }
   }
   const downloadId = await downloadFile(url, dir, filename, lowPriority);
+
+  // Seed meeting date on progress right away so UI can group even before onDownloadStarted
+  if (downloadId) {
+    const seed = currentStateStore.downloadProgress[downloadId] || {};
+    currentStateStore.downloadProgress[downloadId] = {
+      ...(seed as Record<string, unknown>),
+      filename,
+      meetingDate:
+        (seed as { meetingDate?: string })?.meetingDate || meetingDate,
+    } as never;
+  }
 
   const result = await new Promise<DownloadedFile>((resolve) => {
     const interval = setInterval(() => {
@@ -599,9 +615,12 @@ export const fetchMedia = async () => {
   }
 };
 
-const getDbFromJWPUB = async (publication: PublicationFetcher) => {
+const getDbFromJWPUB = async (
+  publication: PublicationFetcher,
+  meetingDate?: string,
+) => {
   try {
-    const jwpub = await downloadJwpub(publication);
+    const jwpub = await downloadJwpub(publication, meetingDate);
     if (jwpub.error) return null;
     const publicationDirectory = await getPublicationDirectory(
       publication,
@@ -652,7 +671,11 @@ async function addFullFilePathToMultimediaItem(
   }
 }
 
-const getDocumentExtractItems = async (db: string, docId: number) => {
+const getDocumentExtractItems = async (
+  db: string,
+  docId: number,
+  meetingDate: string,
+) => {
   try {
     const currentStateStore = useCurrentStateStore();
     const extracts = executeQuery<MultimediaExtractItem>(
@@ -709,18 +732,24 @@ const getDocumentExtractItems = async (db: string, docId: number) => {
         symbol = 'wp';
       }
       let extractLang = extract.Lang ?? currentStateStore.currentSettings?.lang;
-      let extractDb = await getDbFromJWPUB({
-        issue: extract.IssueTagNumber,
-        langwritten: extractLang,
-        pub: symbol,
-      });
+      let extractDb = await getDbFromJWPUB(
+        {
+          issue: extract.IssueTagNumber,
+          langwritten: extractLang,
+          pub: symbol,
+        },
+        meetingDate,
+      );
       const langFallback = currentStateStore.currentSettings?.langFallback;
       if (!extractDb && langFallback) {
-        extractDb = await getDbFromJWPUB({
-          issue: extract.IssueTagNumber,
-          langwritten: langFallback,
-          pub: symbol,
-        });
+        extractDb = await getDbFromJWPUB(
+          {
+            issue: extract.IssueTagNumber,
+            langwritten: langFallback,
+            pub: symbol,
+          },
+          meetingDate,
+        );
         extractLang = langFallback;
       }
 
@@ -790,8 +819,11 @@ const getStudyBible = async () => {
       langwritten: 'E',
       pub: 'nwtsty',
     };
-    const nwtStyDb_E = getDbFromJWPUB(nwtStyPublication_E);
     const currentStateStore = useCurrentStateStore();
+    const nwtStyDb_E = getDbFromJWPUB(
+      nwtStyPublication_E,
+      currentStateStore.selectedDate,
+    );
     const languages = [
       ...new Set([
         currentStateStore.currentSettings?.lang,
@@ -813,7 +845,10 @@ const getStudyBible = async () => {
         langwritten,
         pub: 'nwtsty',
       };
-      nwtStyDb = await getDbFromJWPUB(nwtStyPublication);
+      nwtStyDb = await getDbFromJWPUB(
+        nwtStyPublication,
+        currentStateStore.selectedDate,
+      );
       if (nwtStyDb) break;
     }
     if (!nwtStyDb) {
@@ -828,7 +863,10 @@ const getStudyBible = async () => {
           langwritten,
           pub: 'nwt',
         };
-        nwtDb = await getDbFromJWPUB(nwtPublication);
+        nwtDb = await getDbFromJWPUB(
+          nwtPublication,
+          currentStateStore.selectedDate,
+        );
         if (nwtDb) break;
       }
     }
@@ -1304,7 +1342,10 @@ export const getMemorialBackground = async () => {
         langwritten,
         pub: `mi${year}`,
       };
-      const db = await getDbFromJWPUB(pub);
+      const db = await getDbFromJWPUB(
+        pub,
+        currentStateStore.currentSettings?.memorialDate || undefined,
+      );
 
       if (!db) continue;
 
@@ -1327,6 +1368,7 @@ const getWtIssue = async (
   monday: Date,
   weeksInPast: number,
   langwritten?: JwLangCode,
+  lookupDate?: Date,
   lastChance = false,
 ): Promise<{
   db: string;
@@ -1362,7 +1404,10 @@ const getWtIssue = async (
       langwritten,
       pub: 'w',
     };
-    const db = await getDbFromJWPUB(publication);
+    const db = await getDbFromJWPUB(
+      publication,
+      formatDate(lookupDate ?? monday, 'YYYYMMDD'),
+    );
     if (!db) throw new Error('No db file found: ' + issueString);
     const datedTexts = executeQuery<DatedTextItem>(
       db,
@@ -1765,7 +1810,12 @@ export const getWeMedia = async (lookupDate: Date) => {
       // First try primary language for all week offsets
       if (primaryLang) {
         for (const weeks of weeksToTry) {
-          const result = await getWtIssue(monday, weeks, primaryLang);
+          const result = await getWtIssue(
+            monday,
+            weeks,
+            primaryLang,
+            lookupDate,
+          );
           if (result.db?.length > 0) {
             return result;
           }
@@ -1775,7 +1825,13 @@ export const getWeMedia = async (lookupDate: Date) => {
       // If no match with primary language, try fallback language
       if (fallbackLang) {
         for (const weeks of weeksToTry) {
-          const result = await getWtIssue(monday, weeks, fallbackLang, true);
+          const result = await getWtIssue(
+            monday,
+            weeks,
+            fallbackLang,
+            lookupDate,
+            true,
+          );
           if (result.db?.length > 0) {
             return result;
           }
@@ -2032,7 +2088,7 @@ export const getWeMedia = async (lookupDate: Date) => {
       );
       if (videoMarkers) media.VideoMarkers = videoMarkers;
     }
-    await processMissingMediaInfo(allMedia);
+    await processMissingMediaInfo(allMedia, formatDate(lookupDate, 'YYYYMMDD'));
     const mediaForDay = await dynamicMediaMapper(
       allMedia,
       lookupDate,
@@ -2074,7 +2130,10 @@ export const getMwMedia = async (lookupDate: Date) => {
       publication.issue = issueString;
       publication.langwritten = langwritten;
       publication.pub = 'mwb';
-      return await getDbFromJWPUB(publication);
+      return await getDbFromJWPUB(
+        publication,
+        formatDate(lookupDate, 'YYYYMMDD'),
+      );
     };
 
     let db = await getMwbIssue(currentStateStore.currentSettings?.lang);
@@ -2133,7 +2192,11 @@ export const getMwMedia = async (lookupDate: Date) => {
     //   },
     // );
 
-    const extracts = await getDocumentExtractItems(db, docId);
+    const extracts = await getDocumentExtractItems(
+      db,
+      docId,
+      formatDate(lookupDate, 'YYYYMMDD'),
+    );
 
     const allMedia: MultimediaItem[] = mms
       .concat(extracts)
@@ -2158,7 +2221,11 @@ export const getMwMedia = async (lookupDate: Date) => {
         if (mepsLang) media.AlternativeLanguage = mepsLang;
       }
     }
-    const errors = (await processMissingMediaInfo(allMedia)) || [];
+    const errors =
+      (await processMissingMediaInfo(
+        allMedia,
+        formatDate(lookupDate, 'YYYYMMDD'),
+      )) || [];
     const mediaForDay = await dynamicMediaMapper(
       allMedia,
       lookupDate,
@@ -2187,6 +2254,7 @@ export const getMwMedia = async (lookupDate: Date) => {
 
 export async function processMissingMediaInfo(
   allMedia: MultimediaItem[],
+  meetingDate?: string,
   keepMediaLabels = false,
 ) {
   try {
@@ -2278,6 +2346,7 @@ export async function processMissingMediaInfo(
 
           const uniqueId = await downloadAdditionalRemoteVideo(
             chapterMedia,
+            meetingDate,
             media.ThumbnailFilePath,
             false,
             media.Label,
@@ -2298,7 +2367,10 @@ export async function processMissingMediaInfo(
                 StreamDuration,
                 StreamThumbnailUrl,
                 StreamUrl,
-              } = await downloadMissingMedia(publicationFetcher);
+              } = await downloadMissingMedia(
+                publicationFetcher,
+                meetingDate || currentStateStore.selectedDate,
+              );
               media.FilePath = FilePath ?? media.FilePath;
               media.Label = keepMediaLabels
                 ? media.Label || Label || ''
@@ -2331,7 +2403,10 @@ export async function processMissingMediaInfo(
   }
 }
 
-export const getPubMediaLinks = async (publication: PublicationFetcher) => {
+export const getPubMediaLinks = async (
+  publication: PublicationFetcher,
+  meetingDate?: string,
+) => {
   const jwStore = useJwStore();
   const { urlVariables } = jwStore;
   try {
@@ -2359,6 +2434,7 @@ export const getPubMediaLinks = async (publication: PublicationFetcher) => {
       currentStateStore.downloadProgress[downloadId] = {
         error: true,
         filename: downloadId,
+        meetingDate,
       };
     }
     return response;
@@ -2408,13 +2484,16 @@ export const getJwMepsInfo = async () => {
   }
 };
 
-const downloadMissingMedia = async (publication: PublicationFetcher) => {
+const downloadMissingMedia = async (
+  publication: PublicationFetcher,
+  meetingDate?: string,
+) => {
   try {
     const pubDir = await getPublicationDirectory(
       publication,
       useCurrentStateStore().currentSettings?.cacheFolder,
     );
-    const responseObject = await getPubMediaLinks(publication);
+    const responseObject = await getPubMediaLinks(publication, meetingDate);
     if (!responseObject?.files) {
       if (!(await pathExists(pubDir))) return { FilePath: '' };
       const files: string[] = [];
@@ -2475,6 +2554,7 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
     const jwMediaInfo = await getJwMediaInfo(publication);
     const downloadedFile = await downloadFileIfNeeded({
       dir: pubDir,
+      meetingDate,
       size: bestItem.filesize,
       url: bestItem.file.url,
     });
@@ -2496,6 +2576,7 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
         await downloadFileIfNeeded({
           dir: pubDir,
           filename: itemFilename,
+          meetingDate,
           url: itemUrl,
         });
       }
@@ -2515,6 +2596,7 @@ const downloadMissingMedia = async (publication: PublicationFetcher) => {
 
 export const downloadAdditionalRemoteVideo = async (
   mediaItemLinks: MediaItemsMediatorFile[] | MediaLink[],
+  meetingDate?: string,
   thumbnailUrl?: string,
   song: false | number | string = false,
   title?: string,
@@ -2553,6 +2635,7 @@ export const downloadAdditionalRemoteVideo = async (
 
     downloadFileIfNeeded({
       dir: await currentStateStore.getDatedAdditionalMediaDirectory(),
+      meetingDate,
       size: bestItem.filesize,
       url: bestItemUrl,
     });
@@ -2748,6 +2831,7 @@ export const downloadSongbookVideos = () => {
 
 const downloadJwpub = async (
   publication: PublicationFetcher,
+  meetingDate?: string,
 ): Promise<DownloadedFile> => {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -2763,7 +2847,7 @@ const downloadJwpub = async (
         path: '',
       };
     };
-    const publicationInfo = await getPubMediaLinks(publication);
+    const publicationInfo = await getPubMediaLinks(publication, meetingDate);
     if (!publicationInfo?.files) {
       return handleDownloadError();
     }
@@ -2788,6 +2872,7 @@ const downloadJwpub = async (
         publication,
         currentStateStore.currentSettings?.cacheFolder,
       ),
+      meetingDate,
       size: mediaLinks[0]?.filesize,
       url: mediaLinks[0]?.file.url ?? '',
     });

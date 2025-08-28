@@ -303,7 +303,7 @@ const { t } = useI18n();
 
 // Stores
 const currentState = useCurrentStateStore();
-const { currentSettings } = storeToRefs(currentState);
+const { currentSettings, selectedDate } = storeToRefs(currentState);
 
 // Props
 const props = defineProps<{
@@ -571,6 +571,7 @@ const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
       const { thumbnail, title } = mediaInfo;
       downloadAdditionalRemoteVideo(
         mediaItemFiles?.files?.[mediaLookup.langwritten]?.['MP4'] || [],
+        selectedDate.value,
         thumbnail,
         false,
         title.replace(/^\d+\.\s*/, ''),

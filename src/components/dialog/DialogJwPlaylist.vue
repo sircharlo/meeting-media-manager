@@ -193,7 +193,8 @@ const selectedItems = ref<number[]>([]);
 const playlistName = ref<string>('');
 
 const currentState = useCurrentStateStore();
-const { currentCongregation, selectedDateObject } = storeToRefs(currentState);
+const { currentCongregation, selectedDate, selectedDateObject } =
+  storeToRefs(currentState);
 const jwStore = useJwStore();
 
 const { decompress, executeQuery, fs, path } = window.electronApi;
@@ -441,6 +442,7 @@ const addSelectedItems = async () => {
 
         await downloadAdditionalRemoteVideo(
           pubDownload?.files[lang]?.['MP4'],
+          selectedDate.value,
           item.ThumbnailFilePath || undefined,
           false, // song parameter
           itemLabel,
@@ -481,7 +483,11 @@ const addSelectedItems = async () => {
         };
 
         // Process single item and wait for completion
-        await processMissingMediaInfo([multimediaItem], true);
+        await processMissingMediaInfo(
+          [multimediaItem],
+          selectedDate.value,
+          true,
+        );
 
         if (multimediaItem.KeySymbol !== 'nwt') {
           const mediaItems = await dynamicMediaMapper(

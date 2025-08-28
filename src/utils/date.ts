@@ -181,7 +181,10 @@ export const getLocalDate = (
   dateObj: Date | string,
   locale: Required<DateLocale>,
 ) => {
-  const parsedDate = typeof dateObj === 'string' ? new Date(dateObj) : dateObj;
+  const parsedDate =
+    typeof dateObj === 'string'
+      ? new Date(dateObj.replace(/(\d{4})(\d{2})(\d{2})/, '$1/$2/$3'))
+      : dateObj;
   return formatDate(parsedDate, 'D MMMM YYYY', locale);
 };
 
