@@ -165,7 +165,7 @@ Activez la fonctionnalité d'affichage des médias. Ceci est requis pour présen
 
 **Par défaut** : `false`
 
-### Background Music {#settings-guide-background-music}
+### Musique de fond {#settings-guide-background-music}
 
 #### Activer la musique {#enable-music-button}
 
@@ -227,7 +227,7 @@ Effacez automatiquement les anciens fichiers mis en cache pour économiser l'esp
 
 **Par défaut** : `true`
 
-### Folder Monitoring {#settings-guide-folder-monitoring}
+### Surveillance de dossiers {#settings-guide-folder-monitoring}
 
 #### Activer le surveillant de dossier {#enable-folder-watcher}
 
@@ -247,7 +247,7 @@ Le chemin du dossier à surveiller pour les nouveaux fichiers multimédias.
 
 ## Intégrations {#integrations}
 
-### Zoom Integration {#settings-guide-zoom-integration}
+### Intégration Zoom {#settings-guide-zoom-integration}
 
 #### Activer Zoom {#enable-zoom}
 
@@ -265,7 +265,7 @@ Raccourci clavier pour déclencher le partage d'écran Zoom.
 
 **Par défaut** : Aucune
 
-### OBS Studio Integration {#settings-guide-obs-integration}
+### Intégration OBS Studio {#settings-guide-obs-integration}
 
 #### Activer OBS {#enable-obs}
 
@@ -325,7 +325,7 @@ Configurez quelles scènes OBS utiliser pour différents usages :
 
 ## Paramètres avancés {#advanced-settings}
 
-### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
+### Raccourcis clavier {#settings-guide-keyboard-shortcuts}
 
 #### Activer les raccourcis clavier {#enable-keyboard-shortcuts}
 
@@ -410,7 +410,7 @@ Langue pour les sous-titres (peut être différente de la langue des médias).
 
 **Par défaut** : Aucune
 
-### Media Export {#settings-guide-media-export}
+### Exportation des médias {#settings-guide-media-export}
 
 #### Activer l'exportation automatique des médias {#enable-media-auto-export}
 
@@ -430,7 +430,7 @@ Chemin du dossier où les fichiers multimédias seront exportés automatiquement
 
 #### Convertir les fichiers en MP4 {#convert-files-to-mp4}
 
-**Setting**: `convertFilesToMp4`
+**Paramètre**: `convertFilesToMp4`
 
 Convertir les fichiers multimédias exportés au format MP4 pour une meilleure compatibilité.
 
@@ -438,7 +438,7 @@ Convertir les fichiers multimédias exportés au format MP4 pour une meilleure c
 
 ### Zone de danger {#danger-zone}
 
-:::warning Warning
+:::warning Avertissement
 
 Ces paramètres ne doivent être modifiés que si vous comprenez leurs implications.
 
@@ -475,7 +475,7 @@ Désactiver complètement le téléchargement automatique des médias. Utilisez 
 3. Configurer l'effacement automatique du cache pour gérer l'espace disque
 4. Considérez le paramètre de connexion limitée si sur une bande passante limitée
 
-### Troubleshooting {#settings-guide-troubleshooting}
+### Résolution des problèmes {#settings-guide-troubleshooting}
 
 - Si les médias ne téléchargent pas, vérifiez les paramètres de votre horaire de réunion
 - Si l'intégration OBS ne fonctionne pas, vérifiez les paramètres du port et du mot de passe
