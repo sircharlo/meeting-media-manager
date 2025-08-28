@@ -1368,6 +1368,7 @@ const getWtIssue = async (
   monday: Date,
   weeksInPast: number,
   langwritten?: JwLangCode,
+  lookupDate?: Date,
   lastChance = false,
 ): Promise<{
   db: string;
@@ -1405,7 +1406,7 @@ const getWtIssue = async (
     };
     const db = await getDbFromJWPUB(
       publication,
-      formatDate(monday, 'YYYYMMDD'),
+      formatDate(lookupDate ?? monday, 'YYYYMMDD'),
     );
     if (!db) throw new Error('No db file found: ' + issueString);
     const datedTexts = executeQuery<DatedTextItem>(
@@ -1809,7 +1810,12 @@ export const getWeMedia = async (lookupDate: Date) => {
       // First try primary language for all week offsets
       if (primaryLang) {
         for (const weeks of weeksToTry) {
-          const result = await getWtIssue(monday, weeks, primaryLang);
+          const result = await getWtIssue(
+            monday,
+            weeks,
+            primaryLang,
+            lookupDate,
+          );
           if (result.db?.length > 0) {
             return result;
           }
@@ -1819,7 +1825,13 @@ export const getWeMedia = async (lookupDate: Date) => {
       // If no match with primary language, try fallback language
       if (fallbackLang) {
         for (const weeks of weeksToTry) {
-          const result = await getWtIssue(monday, weeks, fallbackLang, true);
+          const result = await getWtIssue(
+            monday,
+            weeks,
+            fallbackLang,
+            lookupDate,
+            true,
+          );
           if (result.db?.length > 0) {
             return result;
           }

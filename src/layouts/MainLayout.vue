@@ -659,7 +659,7 @@ const initListeners = () => {
       error: existing?.error,
       filename: args.filename,
       loaded: existing?.loaded,
-      meetingDate: existing?.meetingDate || currentState.selectedDate,
+      meetingDate: existing?.meetingDate || '',
       total: args.totalBytes,
     };
   });
