@@ -2,8 +2,6 @@ import type {
   MultimediaItem,
   MultimediaItemsFetcher,
   PublicationFetcher,
-  PublicationItem,
-  TableItem,
   TableItemCount,
   VideoMarker,
 } from 'src/types';
@@ -25,7 +23,7 @@ export const getMediaVideoMarkers = (
   try {
     const mediaVideoMarkers = executeQuery<VideoMarker>(
       source.db,
-      `SELECT * from VideoMarker WHERE MultimediaId = ${mediaId} ORDER by StartTimeTicks`,
+      `SELECT VideoMarkerId, Label, StartTimeTicks, DurationTicks, EndTransitionDurationTicks from VideoMarker WHERE MultimediaId = ${mediaId} ORDER by StartTimeTicks`,
     );
     return mediaVideoMarkers;
   } catch (error) {
@@ -36,9 +34,13 @@ export const getMediaVideoMarkers = (
 
 export const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
   try {
-    const pubQuery = executeQuery<PublicationItem>(
+    const pubQuery = executeQuery<{
+      IssueTagNumber: number;
+      MepsLanguageIndex: number;
+      UndatedSymbol: string;
+    }>(
       db,
-      'SELECT * FROM Publication',
+      'SELECT IssueTagNumber, MepsLanguageIndex, UndatedSymbol FROM Publication',
     )[0];
 
     if (!pubQuery) return { issue: '', langwritten: '', pub: '' };
@@ -59,7 +61,12 @@ export const getPublicationInfoFromDb = (db: string): PublicationFetcher => {
 export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
   try {
     if (!source.db) return [];
-    const multimediaMepsLangs: MultimediaItem[] = [];
+    const multimediaMepsLangs: {
+      IssueTagNumber: number;
+      KeySymbol: null | string;
+      MepsLanguageIndex: number;
+      Track: null | number;
+    }[] = [];
     for (const table of [
       'Multimedia',
       'DocumentMultimedia',
@@ -68,9 +75,9 @@ export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
       // exists
       try {
         const tableExists =
-          executeQuery<TableItem>(
+          executeQuery<{ name: string }>(
             source.db,
-            `SELECT * FROM sqlite_master WHERE type='table' AND name='${table}'`,
+            `SELECT name FROM sqlite_master WHERE type='table' AND name='${table}'`,
           ).length > 0;
         if (!tableExists) continue;
       } catch (error) {
@@ -79,7 +86,7 @@ export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
         });
         continue;
       }
-      const columnQueryResult = executeQuery<TableItem>(
+      const columnQueryResult = executeQuery<{ name: string }>(
         source.db,
         `PRAGMA table_info(${table})`,
       );
@@ -93,9 +100,14 @@ export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
 
       if (columnKSExists && columnMLIExists)
         multimediaMepsLangs.push(
-          ...executeQuery<MultimediaItem>(
+          ...executeQuery<{
+            IssueTagNumber: number;
+            KeySymbol: null | string;
+            MepsLanguageIndex: number;
+            Track: null | number;
+          }>(
             source.db,
-            `SELECT DISTINCT KeySymbol, Track, IssueTagNumber, MepsLanguageIndex from ${table} ORDER by KeySymbol, IssueTagNumber, Track`,
+            `SELECT DISTINCT IssueTagNumber, KeySymbol, MepsLanguageIndex, Track from ${table} ORDER by KeySymbol, IssueTagNumber, Track`,
           ),
         );
     }
@@ -113,16 +125,18 @@ export const getDocumentMultimediaItems = (
   try {
     if (!source.db) return [];
     const DocumentMultimediaTable = window.electronApi
-      .executeQuery<TableItem>(
+      .executeQuery<{
+        name: string;
+      }>(
         source.db,
-        "SELECT * FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'",
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'",
       )
       .map((item) => item.name);
     const mmTable =
       DocumentMultimediaTable.length === 0
         ? 'Multimedia'
         : DocumentMultimediaTable[0];
-    const columnQueryResult = executeQuery<TableItem>(
+    const columnQueryResult = executeQuery<{ name: string }>(
       source.db,
       `PRAGMA table_info(${mmTable})`,
     );
@@ -133,7 +147,9 @@ export const getDocumentMultimediaItems = (
 
     const targetParNrExists =
       window.electronApi
-        .executeQuery<TableItem>(source.db, "PRAGMA table_info('Question')")
+        .executeQuery<{
+          name: string;
+        }>(source.db, "PRAGMA table_info('Question')")
         .some((item) => item.name === 'TargetParagraphNumberLabel') &&
       !!executeQuery<TableItemCount>(
         source.db,
@@ -141,14 +157,24 @@ export const getDocumentMultimediaItems = (
       )[0]?.count;
 
     const LinkMultimediaIdExists = window.electronApi
-      .executeQuery<TableItem>(source.db, "PRAGMA table_info('Multimedia')")
+      .executeQuery<{
+        name: string;
+      }>(source.db, "PRAGMA table_info('Multimedia')")
       .some((item) => item.name === 'LinkMultimediaId');
 
     const suppressZoomExists = window.electronApi
-      .executeQuery<TableItem>(source.db, "PRAGMA table_info('Multimedia')")
+      .executeQuery<{ name: string }>(
+        source.db,
+        "PRAGMA table_info('Multimedia')",
+      )
       .map((item) => item.name)
       .includes('SuppressZoom');
 
+    // Complex query with multiple joins - using SELECT * because the returned MultimediaItem objects
+    // are used throughout the codebase and require all properties to be present.
+    // The objects are passed to functions like addFullFilePathToMultimediaItem, dynamicMediaMapper,
+    // processMissingMediaInfo, etc. which access various properties dynamically.
+    // Optimizing this would require extensive refactoring of function signatures across the codebase.
     let select = 'SELECT Document.*, Multimedia.*';
     select += mmTable === 'DocumentMultimedia' ? ', DocumentMultimedia.*' : '';
     select += ParagraphColumnsExist ? ', DocumentParagraph.*' : '';

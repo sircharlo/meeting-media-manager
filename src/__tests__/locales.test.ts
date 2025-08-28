@@ -46,6 +46,8 @@ describe('Locales', () => {
     );
 
     const keys = new Set(Object.keys(appMessages.en));
+    const unusedKeys: string[] = [];
+
     keys.forEach((key) => {
       if (key.endsWith('-explain') && keys.has(key.replace('-explain', ''))) {
         return;
@@ -54,7 +56,16 @@ describe('Locales', () => {
       const content = files.join(' ');
       const match =
         content.includes(`'${key}'`) || content.includes(`${key}: {`);
-      expect(match, `${key} not found`).toBe(true);
+
+      if (!match) {
+        unusedKeys.push(key);
+      }
     });
+
+    if (unusedKeys.length > 0) {
+      expect.fail(
+        `The following translation keys are unused: ${unusedKeys.join(', ')}`,
+      );
+    }
   });
 });

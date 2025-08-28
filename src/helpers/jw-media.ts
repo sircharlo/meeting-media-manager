@@ -1,5 +1,4 @@
 import type {
-  DatedTextItem,
   DateInfo,
   DocumentItem,
   DownloadedFile,
@@ -9,7 +8,6 @@ import type {
   JwLangCode,
   JwLangSymbol,
   JwMepsLanguage,
-  JwPlaylistItem,
   MediaItem,
   MediaItemsMediatorFile,
   MediaLink,
@@ -942,17 +940,17 @@ export const getStudyBibleBooks: () => Promise<
 
     if (nwtDb) {
       const bibleBooksSimpleQuery = `
-      SELECT *
+      SELECT ChapterNumber, Title
       FROM 
           Document
       WHERE
           Class = 1
     `;
 
-      const bibleBookLocalNames = executeQuery<JwPlaylistItem>(
-        nwtDb,
-        bibleBooksSimpleQuery,
-      );
+      const bibleBookLocalNames = executeQuery<{
+        ChapterNumber: number;
+        Title: string;
+      }>(nwtDb, bibleBooksSimpleQuery);
 
       bibleBookLocalNames.forEach((localItem) => {
         const styItem = bibleBookItems.find(
@@ -991,14 +989,14 @@ export const getStudyBibleCategories = async () => {
     if (!nwtStyDb || !nwtStyPublication) return [];
 
     const bibleMediaCategoriesQuery = `
-      select *
+      select Title
       from PublicationViewItem
       where PublicationViewId = 2
         and DefaultDocumentId < 0
         and ParentPublicationViewItemId < 0
     `;
 
-    const bibleMediaCategories = executeQuery<MultimediaItem>(
+    const bibleMediaCategories = executeQuery<{ Title: string }>(
       nwtStyDb,
       bibleMediaCategoriesQuery,
     );
@@ -1293,17 +1291,17 @@ export const getAudioBibleMedia = async (
       if (!(nwtStyDb || nwtDb)) return;
 
       const bibleBooksSimpleQuery = `
-        SELECT *
+        SELECT ChapterNumber, Title
         FROM 
             Document
         WHERE
             Class = 1
       `;
 
-      const bibleBookLocalNames = executeQuery<JwPlaylistItem>(
-        (nwtStyDb || nwtDb) as string,
-        bibleBooksSimpleQuery,
-      );
+      const bibleBookLocalNames = executeQuery<{
+        ChapterNumber: number;
+        Title: string;
+      }>((nwtStyDb || nwtDb) as string, bibleBooksSimpleQuery);
       for (const booknum of backupNameNeeded) {
         const pubName = bibleBookLocalNames.find(
           (item) => item.ChapterNumber === booknum,
@@ -1409,9 +1407,9 @@ const getWtIssue = async (
       formatDate(lookupDate ?? monday, 'YYYYMMDD'),
     );
     if (!db) throw new Error('No db file found: ' + issueString);
-    const datedTexts = executeQuery<DatedTextItem>(
+    const datedTexts = executeQuery<{ FirstDateOffset: number }>(
       db,
-      'SELECT * FROM DatedText',
+      'SELECT FirstDateOffset FROM DatedText',
     );
     const weekNr = datedTexts
       ? datedTexts.findIndex((weekItem) => {
@@ -1976,16 +1974,20 @@ export const getWeMedia = async (lookupDate: Date) => {
 
     // Watchtowers before Feb 2023 don't include songs in DocumentMultimedia
     if (+issueString < FEB_2023) {
+      // Using SELECT * because the returned MultimediaItem objects are merged with other media
+      // and passed to functions that expect full MultimediaItem objects with all properties.
+      // The songs are combined with other media items and processed through dynamicMediaMapper
+      // which requires all MultimediaItem properties to be present.
       songs = executeQuery<MultimediaItem>(
         db,
         `SELECT *
-            FROM Multimedia
-            INNER JOIN DocumentMultimedia
-              ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId
-            WHERE DataType = 2
-            AND DocumentId = ${docId}
-            ORDER BY BeginParagraphOrdinal
-            LIMIT 2`,
+          FROM Multimedia
+          INNER JOIN DocumentMultimedia
+            ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId
+          WHERE DataType = 2
+          AND DocumentId = ${docId}
+          ORDER BY BeginParagraphOrdinal
+          LIMIT 2`,
       );
     } else {
       songs = videosNotInParagraphs
@@ -2469,7 +2471,10 @@ export const getJwMepsInfo = async () => {
     const mepsunit = await findFile(join(dir, 'Data'), '.db');
     if (!mepsunit) return;
     const mepsLangs = window.electronApi
-      .executeQuery<JwMepsLanguage>(mepsunit, 'SELECT * FROM Language')
+      .executeQuery<JwMepsLanguage>(
+        mepsunit,
+        'SELECT LanguageId, PrimaryIetfCode, Symbol FROM Language',
+      )
       .map((l) => ({
         ...l,
         PrimaryIetfCode: l.PrimaryIetfCode.toLowerCase() as JwLangSymbol,

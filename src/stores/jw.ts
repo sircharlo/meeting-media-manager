@@ -116,21 +116,9 @@ export function replaceMissingMediaByPubMediaId(
 ): void {
   // Iterate through all new media items from all sections
   if (!newMediaItems) return;
-  console.log(
-    '🔍 [replaceMissingMediaByPubMediaId] newMediaItems',
-    newMediaItems,
-  );
-  console.log(
-    '🔍 [replaceMissingMediaByPubMediaId] targetDay.mediaSections',
-    targetDay.mediaSections,
-  );
   for (const sectionId in newMediaItems) {
     const sectionItems = newMediaItems[sectionId];
     if (!sectionItems || !targetDay.mediaSections) continue;
-    console.log(
-      '🔍 [replaceMissingMediaByPubMediaId] sourceArray',
-      sectionItems,
-    );
 
     // Process each item in the section
     sectionItems.forEach((item) => {
@@ -197,16 +185,6 @@ export function replaceMissingMediaByPubMediaId(
   // Sort all sections by sortOrderOriginal to maintain paragraph order
   Object.values(targetDay.mediaSections).forEach((section) => {
     if (section?.items) {
-      // Debug logging for sorting
-      console.log(
-        '🔍 [replaceMissingMediaByPubMediaId] Before sorting section items:',
-        section.items.map((item) => ({
-          isSong: item.tag?.type === 'song',
-          sortOrderOriginal: item.sortOrderOriginal,
-          title: item.title,
-        })),
-      );
-
       section.items.sort((a, b) => {
         const aOrder =
           typeof a.sortOrderOriginal === 'number' ? a.sortOrderOriginal : 0;
@@ -214,16 +192,6 @@ export function replaceMissingMediaByPubMediaId(
           typeof b.sortOrderOriginal === 'number' ? b.sortOrderOriginal : 0;
         return aOrder - bOrder;
       });
-
-      // Debug logging after sorting
-      console.log(
-        '🔍 [replaceMissingMediaByPubMediaId] After sorting section items:',
-        section.items.map((item) => ({
-          isSong: item.tag?.type === 'song',
-          sortOrderOriginal: item.sortOrderOriginal,
-          title: item.title,
-        })),
-      );
     }
   });
 }

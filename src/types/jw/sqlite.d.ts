@@ -1,20 +1,4 @@
 import type { JwLangCode } from './lang';
-
-export interface DatedTextItem {
-  BeginParagraphOrdinal: number;
-  Caption: string;
-  CaptionRich: string;
-  DocumentId: number;
-  EndParagraphOrdinal: null | number;
-  FirstBibleCitationId: null | number;
-  FirstDateOffset: number;
-  FirstFootnoteId: null | number;
-  LastBibleCitationId: null | number;
-  LastDateOffset: number;
-  LastFootnoteId: null | number;
-  Link: string;
-}
-
 export interface DocumentItem {
   DocumentId: number;
   FeatureTitle: string;
@@ -161,7 +145,6 @@ export interface PublicationItem {
 }
 
 export type QueryResponseItem =
-  | DatedTextItem
   | DocumentItem
   | JwPlaylistItem
   | MultimediaExtractItem
@@ -183,21 +166,9 @@ export interface TableItemCount {
 }
 
 export interface VideoMarker {
-  BaseDurationTicks?: number;
-  BeginTransitionDurationTicks: number;
-  BeginTransitionFrameCount: number;
-  Caption: string;
-  CaptionRich: string;
   DurationTicks: number;
   EndTransitionDurationTicks: number;
-  EndTransitionFrameCount: number;
-  FrameCount: number;
   Label: string;
-  LabelRich: string;
-  MultimediaId: number;
-  SegmentFormat: number;
-  StartFrame: number;
   StartTimeTicks: number;
-  Style: string;
   VideoMarkerId: number;
 }
