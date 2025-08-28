@@ -652,8 +652,14 @@ const initListeners = () => {
   });
 
   onDownloadStarted((args) => {
+    const existing = downloadProgress.value[args.id];
     downloadProgress.value[args.id] = {
+      ...(existing || {}),
+      complete: existing?.complete,
+      error: existing?.error,
       filename: args.filename,
+      loaded: existing?.loaded,
+      meetingDate: existing?.meetingDate || currentState.selectedDate,
       total: args.totalBytes,
     };
   });

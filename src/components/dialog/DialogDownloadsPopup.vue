@@ -17,7 +17,7 @@
         <div class="col-shrink">
           <q-btn
             color="negative"
-            :disable="refreshDisabled || refreshing"
+            :disable="refreshing"
             icon="mmm-reset"
             :label="t('refresh-all-meeting-media')"
             :loading="refreshing"
@@ -52,47 +52,59 @@
               {{ t(statusObject.label) }}
             </p>
             <template
-              v-for="(item, id) in filteredDownloads(statusObject.status)"
-              :key="id"
+              v-for="(group, dateKey) in groupedByDate(statusObject.status)"
+              :key="dateKey"
             >
-              <div class="row flex-center q-px-md row">
-                <div class="col ellipsis text-weight-medium text-dark-grey">
-                  {{ getBasename(item.filename) }}
-                </div>
-                <div class="col-shrink">
-                  <q-icon
-                    v-if="statusObject.icon"
-                    :color="statusColor(statusObject.status)"
-                    :name="statusObject.icon"
-                    size="sm"
-                  >
-                    <q-tooltip v-if="statusObject.status === 'error'">
-                      {{ t('errorDownloadingMeetingMedia') }}.
-                      {{ t('tryConfiguringFallbackLanguage') }}.
-                    </q-tooltip>
-                  </q-icon>
-                  <q-circular-progress
-                    v-else-if="showProgress(item)"
+              <div class="row items-center q-px-md q-pt-xs q-pb-xs">
+                <div class="col-auto">
+                  <span class="text-subtitle2">
+                    {{
+                      getLocalDate(dateKey, dateLocale) ||
+                      dateKey ||
+                      t('unknown-date')
+                    }}
+                  </span>
+                  <q-btn
+                    class="q-ml-xs"
                     color="primary"
-                    size="sm"
-                    :thickness="0.3"
-                    :value="progressValue(item)"
+                    flat
+                    icon="mmm-arrow-outward"
+                    round
+                    size="xs"
+                    @click="navigateToDate(dateKey)"
                   />
                 </div>
               </div>
-              <div class="row q-px-md">
-                <q-separator
-                  v-if="
-                    Object.keys(filteredDownloads(statusObject.status) || {})
-                      ?.length > 1 &&
-                    id <
-                      Object.keys(filteredDownloads(statusObject.status) || {})
-                        ?.length -
-                        1
-                  "
-                  class="bg-accent-200"
-                />
-              </div>
+
+              <template v-for="(item, id) in group" :key="id">
+                <div class="row flex-center q-px-md row">
+                  <div class="col ellipsis text-weight-medium text-dark-grey">
+                    {{ getBasename(item.filename) }}
+                  </div>
+                  <div class="col-shrink">
+                    <q-icon
+                      v-if="statusObject.icon"
+                      :color="statusColor(statusObject.status)"
+                      :name="statusObject.icon"
+                      size="sm"
+                    >
+                      <q-tooltip v-if="statusObject.status === 'error'">
+                        {{ errorTooltipText(item) }}
+                      </q-tooltip>
+                    </q-icon>
+                    <q-circular-progress
+                      v-else-if="showProgress(item)"
+                      color="primary"
+                      size="sm"
+                      :thickness="0.3"
+                      :value="progressValue(item)"
+                    />
+                  </div>
+                </div>
+                <div class="row q-px-md">
+                  <q-separator class="bg-accent-200" />
+                </div>
+              </template>
             </template>
           </template>
         </template>
@@ -108,8 +120,10 @@ import type { DownloadProgressItems } from 'src/types';
 import { watchImmediate } from '@vueuse/core';
 import { queues } from 'boot/globals';
 import { storeToRefs } from 'pinia';
+import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
 import { fetchMedia } from 'src/helpers/jw-media';
+import { getDateDiff, getLocalDate } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { computed, ref, useTemplateRef } from 'vue';
@@ -136,6 +150,46 @@ const filteredDownloads = (status: 'complete' | 'error' | 'loaded') =>
     .filter(([, item]) => item[status])
     .sort((a, b) => SORTER.compare(a[1].filename, b[1].filename))
     .map(([, item]) => item);
+
+const { dateLocale } = useLocale();
+
+const groupedByDate = (
+  status: 'complete' | 'error' | 'loaded',
+): Record<string, ReturnType<typeof filteredDownloads>> => {
+  const items = filteredDownloads(status);
+  return items.reduce(
+    (acc, item) => {
+      const key = item.meetingDate || '';
+      if (!acc[key]) acc[key] = [] as typeof items;
+      acc[key].push(item);
+      return acc;
+    },
+    {} as Record<string, typeof items>,
+  );
+};
+
+const navigateToDate = (dateKey?: string) => {
+  if (!dateKey) return;
+  if (!dateKey.includes('/')) {
+    dateKey = dateKey.replace(/(\d{4})(\d{2})(\d{2})/, '$1/$2/$3');
+  }
+  currentState.selectedDate = dateKey;
+};
+
+const errorTooltipText = (item: { meetingDate?: string }) => {
+  try {
+    const dateKey = item.meetingDate;
+    if (!dateKey)
+      return `${t('errorDownloadingMeetingMedia')}. ${t('tryConfiguringFallbackLanguage')}.`;
+    const daysUntil = getDateDiff(dateKey, new Date(), 'days');
+    if (daysUntil > 7) {
+      return `${t('errorDownloadingMeetingMedia')}. This media may become available later.`;
+    }
+    return `${t('errorDownloadingMeetingMedia')}. ${t('tryConfiguringFallbackLanguage')}.`;
+  } catch {
+    return `${t('errorDownloadingMeetingMedia')}. ${t('tryConfiguringFallbackLanguage')}.`;
+  }
+};
 
 const downloadPopup = useTemplateRef<QMenu>('downloadPopup');
 
@@ -185,8 +239,7 @@ const fetchIsRunning = computed(() => {
   try {
     const q = queues.meetings[currentState.currentCongregation];
     const size = q?.size || 0;
-    const pending = q?.pending || 0;
-    return size > 0 || pending > 0;
+    return size > 0;
   } catch {
     return false;
   }
