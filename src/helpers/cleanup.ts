@@ -17,6 +17,7 @@ import {
   getTempPath,
   removeEmptyDirs,
 } from 'src/utils/fs';
+import { getPubId } from 'src/utils/jw';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -95,12 +96,24 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
 
     const getDirectory = async (
       pub: string,
-      issue?: number | string,
+      issue?: 'any' | number | string,
       lang?: '' | JwLangCode,
     ) => {
+      const langwritten = lang ?? currentState.currentSettings?.lang ?? 'E';
+
+      // Special handling for "any" issue: protect all issue-tagged folders for this pub symbol
+      if (issue === 'any') {
+        const baseId = getPubId({ langwritten, pub } as PublicationFetcher);
+        const pubsRootDefault = await getPublicationsPath();
+        const pubsRootCache = await getPublicationsPath(
+          currentState.currentSettings?.cacheFolder,
+        );
+        return [join(pubsRootDefault, baseId), join(pubsRootCache, baseId)];
+      }
+
       const directoryParams: PublicationFetcher = {
         issue,
-        langwritten: lang ?? currentState.currentSettings?.lang ?? 'E',
+        langwritten,
         pub,
       };
 
@@ -116,15 +129,24 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
     };
 
     const directories = [
+      // Meeting music and videos
       await getDirectory(currentState.currentSongbook.pub), // Background music
       await getDirectory(currentState.currentSongbook.pub, 0), // Songbook videos
-      await getDirectory('nwtsty'), // Study Bible
-      await getDirectory('nwtsty', undefined, 'E'), // Study Bible in English
+      // Study Bible
+      await getDirectory('nwtsty'),
+      await getDirectory('nwtsty', undefined, 'E'), // In English, default fallback
+      // Frequently used during MW meetings
       await getDirectory('it', 0), // Insight
       await getDirectory('lmd', 0), // Love People
       await getDirectory('lmdv', 0), // Love People Videos
-      await getDirectory('jwlb', undefined, 'E'), // JW Library
-      await getDirectory('S-34mp', currentState.currentCongregation, ''), // Public Talk Publication
+      // Public Talk Media Playlist
+      await getDirectory('S-34mp', currentState.currentCongregation, ''),
+      // Magazines, low disk usage
+      await getDirectory('wp', 'any'), // Public Watchtower
+      await getDirectory('w', 'any'), // Study Watchtower
+      await getDirectory('g', 'any'), // Awake
+      // Various publication info, shouldn't be refreshed often
+      await getDirectory('jwlb', undefined, 'E'),
     ].flat();
 
     return new Set<string>(directories.filter(Boolean));
