@@ -10,8 +10,24 @@
     transition-show="jump-up"
   >
     <div class="action-popup flex q-py-md" style="flex-flow: column">
-      <div class="card-title row q-px-md q-mb-none">
-        {{ t('media-sync') }}
+      <div class="card-title row q-px-md q-mb-none items-center">
+        <div class="col">
+          {{ t('media-sync') }}
+        </div>
+        <div class="col-shrink">
+          <q-btn
+            color="negative"
+            :disable="refreshDisabled || refreshing"
+            icon="mmm-reset"
+            :label="t('refresh-all-meeting-media')"
+            :loading="refreshing"
+            outline
+            size="sm"
+            @click="onRefreshMeetingMedia"
+          >
+            <q-tooltip>{{ t('refresh-all-meeting-media') }}</q-tooltip>
+          </q-btn>
+        </div>
       </div>
       <div class="col overflow-auto q-col-gutter-y-sm">
         <template v-if="Object.values(downloadProgress).length === 0">
@@ -90,10 +106,13 @@ import type { QMenu } from 'quasar';
 import type { DownloadProgressItems } from 'src/types';
 
 import { watchImmediate } from '@vueuse/core';
+import { queues } from 'boot/globals';
 import { storeToRefs } from 'pinia';
 import { SORTER } from 'src/constants/general';
+import { fetchMedia } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'stores/current-state';
-import { useTemplateRef } from 'vue';
+import { useJwStore } from 'stores/jw';
+import { computed, ref, useTemplateRef } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -104,6 +123,7 @@ const { basename } = path;
 const open = defineModel<boolean>({ default: false });
 
 const currentState = useCurrentStateStore();
+const jwStore = useJwStore();
 const { downloadProgress } = storeToRefs(currentState);
 
 const getBasename = (filename: string) => {
@@ -157,4 +177,57 @@ const statusConfig: {
   { icon: 'mmm-error', label: 'errors', status: 'error' },
   { icon: 'mmm-cloud-done', label: 'complete', status: 'complete' },
 ];
+
+// Refresh button state and handler
+const refreshing = ref(false);
+
+const fetchIsRunning = computed(() => {
+  try {
+    const q = queues.meetings[currentState.currentCongregation];
+    const size = q?.size || 0;
+    const pending = q?.pending || 0;
+    return size > 0 || pending > 0;
+  } catch {
+    return false;
+  }
+});
+
+const hasActiveDownloads = computed(() =>
+  hasStatus(downloadProgress.value, 'loaded'),
+);
+
+const refreshDisabled = computed(() => {
+  return (
+    hasActiveDownloads.value ||
+    currentState.mediaIsPlaying ||
+    fetchIsRunning.value
+  );
+});
+
+const onRefreshMeetingMedia = async () => {
+  if (refreshDisabled.value) return;
+  try {
+    refreshing.value = true;
+
+    // 1) Clear all dynamic media from meeting days in lookupPeriod for current congregation
+    const congregation = currentState.currentCongregation;
+    const period = jwStore.lookupPeriod[congregation] || [];
+    for (const day of period) {
+      if (!day?.mediaSections || !day.meeting) continue;
+      day.complete = false;
+      day.error = false;
+      for (const section of day.mediaSections) {
+        if (!section?.items) continue;
+        section.items = section.items.filter(
+          (item) => item.source !== 'dynamic',
+        );
+      }
+    }
+
+    // 2) Fetch media
+    await fetchMedia();
+  } finally {
+    refreshing.value = false;
+  }
+};
 </script>

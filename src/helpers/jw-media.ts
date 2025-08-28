@@ -588,6 +588,7 @@ export const fetchMedia = async () => {
     }
     await queue?.onIdle();
     console.log('✅ All media processing completed');
+    queue?.clear();
     console.groupEnd();
     exportAllDays();
   } catch (error) {
