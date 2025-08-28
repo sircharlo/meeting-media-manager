@@ -52,7 +52,7 @@ M³ inclut un assistant de configuration qui vous guide à travers la configurat
 4. Configurez l'horaire des réunions
 5. Configurez les fonctionnalités optionnelles comme l'intégration OBS
 
-## Media Management {#faq-media-management}
+## Gestion des médias {#faq-media-management}
 
 ### :download: Comment M³ télécharge-t-il les médias ? {#media-download}
 
@@ -89,7 +89,7 @@ Oui ! M³ inclut une fonctionnalité Bible audio qui vous permet de :
 3. Télécharger des enregistrements audio
 4. Les utiliser lors des réunions
 
-## Presentation Features {#faq-presentation-features}
+## Fonctionnalités de présentation des médias {#faq-presentation-features}
 
 ### :tv: Comment présenter des médias pendant les réunions ? {#present-media}
 
@@ -98,8 +98,8 @@ Pour présenter des médias :
 1. Sélectionnez la date
 2. Cliquez sur le bouton de lecture sur l'élément multimédia que vous voulez présenter ou utilisez les raccourcis clavier
 3. Utilisez les contrôles du lecteur multimédia pour mettre en pause, naviguer ou arrêter la lecture
-4. Use zoom/pan features for images
-5. Set custom timing if needed
+4. Utiliser les fonctionnalités de zoom/pan pour les images
+5. Couper une vidéo si nécessaire
 
 ### :keyboard: Quels raccourcis clavier sont disponibles ? {#faq-keyboard-shortcuts}
 
@@ -130,7 +130,7 @@ Pour intégrer avec Zoom :
 2. Configurez le raccourci de partage d'écran qui est défini dans Zoom. Assurez-vous que le raccourci est "global" dans les paramètres de Zoom.
 3. M³ démarrera et arrêtera automatiquement le partage d'écran Zoom lors des présentations de médias
 
-## OBS Studio Integration {#faq-obs-integration}
+## Intégration OBS Studio {#faq-obs-integration}
 
 ### :video_camera: Comment configurer l'intégration OBS Studio ? {#faq-obs-setup}
 
@@ -159,7 +159,7 @@ Cette fonction retarde le partage des images vers OBS jusqu'à ce que vous les d
 - Avoir plus de contrôle sur le timing
 - Éviter les changements de scène précoces
 
-## Advanced Features {#faq-advanced-features}
+## Fonctionnalités avancées {#faq-advanced-features}
 
 ### :cloud: Comment fonctionne la surveillance de dossiers ? {#faq-folder-monitoring}
 
@@ -186,7 +186,7 @@ Oui ! M³ prend en charge plusieurs profils pour :
 - Différents groupes
 - Paramètres et médias séparés pour chaque
 
-## Troubleshooting {#faq-troubleshooting}
+## Résolution des problèmes {#faq-troubleshooting}
 
 ### :warning: Les médias ne téléchargent pas. Que dois-je vérifier ? {#faq-media-not-downloading}
 
@@ -239,7 +239,7 @@ Vérifiez ces paramètres de langue :
 1. **Langue de l'interface** : Vérifiez votre paramètre de langue d'affichage
 2. **Langue des médias** : Vérifiez la langue de téléchargement de vos médias
 3. **Disponibilité de la langue** : Assurez-vous que la langue est disponible sur le site officiel des Témoins de Jéhovah
-4. **Fallback Language**: Try setting a fallback language
+4. **Langue de secours** : Essayez de définir une langue de secours
 
 ## Support et communauté {#support-community}
 
@@ -270,7 +270,7 @@ M³ utilise Crowdin pour la gestion des traductions. Vous pouvez contribuer aux 
 
 1. Visitant le [projet Crowdin](https://crowdin.com/project/meeting-media-manager)
 2. Sélectionnant votre langue
-3. Translating strings that need work
+3. Traduction des phrases non traduites
 4. Examinant les traductions existantes
 
 ### :x: Puis-je faire un don pour soutenir le projet ? {#can-i-make-a-donation-to-the-project}
