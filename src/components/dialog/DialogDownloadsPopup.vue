@@ -140,7 +140,7 @@ import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
 import { fetchMedia } from 'src/helpers/jw-media';
-import { getDateDiff, getLocalDate } from 'src/utils/date';
+import { dateFromString, getDateDiff, getLocalDate } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { computed, ref, useTemplateRef, watch } from 'vue';
@@ -223,7 +223,7 @@ const initializeExpansionState = () => {
 
 // Watch for changes in download progress and update expansion states
 watch(
-  () => downloadProgress.value,
+  () => Object.keys(downloadProgress.value || {}).length,
   () => {
     const newExpandedDates = new Set<string>();
     Object.keys(groupedByDate.value).forEach((dateKey) => {
@@ -231,10 +231,13 @@ watch(
       const wasExpanded = expandedDates.value.has(dateKey);
 
       // Auto-open if loading or error, auto-close if all complete
-      if (status === 'loading' || status === 'error') {
-        newExpandedDates.add(dateKey);
-      } else if (status === 'complete' && wasExpanded) {
-        // Keep expanded if it was already open (user preference)
+      const shouldExpand =
+        status === 'loading' ||
+        (status === 'error' &&
+          getDateDiff(dateFromString(dateKey), new Date(), 'days') <= 7) ||
+        (status === 'complete' && wasExpanded);
+
+      if (shouldExpand) {
         newExpandedDates.add(dateKey);
       }
     });
@@ -306,7 +309,10 @@ const getDateStatus = (dateKey: string) => {
 
 const shouldAutoOpen = (dateKey: string) => {
   const status = getDateStatus(dateKey);
-  return status === 'loading' || status === 'error';
+  if (status === 'error') {
+    return getDateDiff(dateFromString(dateKey), new Date(), 'days') < 7;
+  }
+  return status === 'loading';
 };
 
 const getStatusIcon = (dateKey: string) => {
