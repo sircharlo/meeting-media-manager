@@ -1078,7 +1078,12 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         const db = await findDb(unzipDir);
         if (!db) return;
         jwpubImportDb.value = db;
-        if (executeQuery(db, 'SELECT * FROM Multimedia;').length === 0) {
+        if (
+          executeQuery<{ count: number }>(
+            db,
+            'SELECT COUNT(*) as count FROM Multimedia;',
+          )?.[0]?.count === 0
+        ) {
           createTemporaryNotification({
             caption: basename(filepath),
             icon: 'mmm-jwpub',

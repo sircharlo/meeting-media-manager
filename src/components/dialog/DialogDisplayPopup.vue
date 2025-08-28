@@ -349,7 +349,7 @@ const getFileUrlFromPath = (filepath: string) => {
 };
 
 const jwpubImportFilePath = ref('');
-const jwpubImages = ref<MultimediaItem[]>([]);
+const jwpubImages = ref<{ FilePath: string }[]>([]);
 
 const showCustomBackgroundPicker = computed(
   () => !!jwpubImportFilePath.value || jwpubImages.value.length > 0,
@@ -375,13 +375,11 @@ const chooseCustomBackground = async (reset?: boolean) => {
             const db = await findDb(unzipDir);
             if (!db) throw new Error('No db file found: ' + filepath);
             jwpubImages.value = window.electronApi
-              .executeQuery<MultimediaItem>(
-                db,
-                "SELECT * FROM Multimedia WHERE CategoryType >= 0 AND CategoryType <> 9 AND FilePath <> '';",
-              )
+              .executeQuery<
+                Partial<MultimediaItem>
+              >(db, "SELECT FilePath FROM Multimedia WHERE CategoryType >= 0 AND CategoryType <> 9 AND FilePath <> '';")
               .map((multimediaItem) => {
                 return {
-                  ...multimediaItem,
                   FilePath: join(unzipDir, multimediaItem.FilePath),
                 };
               });
