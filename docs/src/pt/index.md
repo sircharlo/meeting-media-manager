@@ -32,17 +32,17 @@ features:
     details: Música de fundo inteligente que para automaticamente antes do início das reuniões e pode ser reiniciada com um clique após o término.
   - icon: 🖥️
     title: Suporte a Múltiplos Monitores
-    details: Automatically detects and manages external monitors for seamless media presentations and website sharing.
+    details: Detecta e gerencia automaticamente monitores externos para apresentações de mídia e compartilhamento de sites sem interrupções.
   - icon: 🌐
-    title: Multi-Language Support
+    title: Suporte a Múltiplos Idiomas
     details: Baixe as mídias das reuniões em vários idiomas. Use o M³ em seu idioma ou em vários disponíveis.
   - icon: 🧩
     title: Integrações
-    details: Seamlessly integrates with Zoom or OBS Studio for enhanced media management and playback during meetings.
+    details: Integra-se perfeitamente ao Zoom ou ao OBS Studio para melhor gerenciamento e reprodução de mídia durante as reuniões.
   - icon: 📁
-    title: Folder Monitoring
-    details: Automatically sync media from watched folders (like Dropbox or OneDrive) and export media to folders.
+    title: Monitoramento de Pasta
+    details: Sincroniza automaticamente mídias de pastas monitoradas (como Dropbox ou OneDrive) e exporta mídias para pastas.
   - icon: 🎯
-    title: Advanced Features
-    details: Import custom media, JWPUB files, playlists, audio Bible recordings, and manage multiple congregations.
+    title: Recursos Avançados
+    details: Importe mídias personalizadas, arquivos JWPUB, playlists, gravações da Bíblia em áudio e gerencie múltiplas congregações.
 ---
