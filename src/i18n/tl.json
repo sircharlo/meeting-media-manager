@@ -354,6 +354,7 @@
   "receive-beta-updates": "Tumanggap patiuna ng mga beta version",
   "receive-beta-updates-explain": "Maaaring may mga hindi maayos na feature at bug sa mga beta updates. Huwag i-enable ang opsyon na ito sa computer na ginagamit sa pagpupulong.",
   "refresh": "Refresh",
+  "refresh-all-meeting-media": "Refresh all meeting media",
   "regular": "Regular",
   "remind-me-later": "Ipaalala mamaya",
   "remove-all-cache": "Burahin lahat ng file sa cache",

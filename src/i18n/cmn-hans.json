@@ -354,6 +354,7 @@
   "receive-beta-updates": "获取更早访问测试版",
   "receive-beta-updates-explain": "测试版更新可能包含不稳定的功能和潜在的错误。请不要在用于现场会议的计算机上启用此选项。",
   "refresh": "刷新",
+  "refresh-all-meeting-media": "Refresh all meeting media",
   "regular": "正规",
   "remind-me-later": "稍后提醒",
   "remove-all-cache": "从缓存中删除所有文件",
