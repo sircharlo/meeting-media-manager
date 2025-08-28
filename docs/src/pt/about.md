@@ -61,7 +61,7 @@ Para reuniões congregacionais **híbridas** ou **presenciais**, o modo integrad
 
 ### Integração com Zoom {#about-zoom-integration}
 
-- **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
+- **Compartilhamento de tela automático**: Inicie e interrompa o compartilhamento de tela no Zoom automaticamente ao reproduzir ou parar a mídia
 
 ### OBS Studio Integration {#about-obs-integration}
 
