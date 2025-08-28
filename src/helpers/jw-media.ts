@@ -2380,10 +2380,6 @@ export async function processMissingMediaInfo(
               media.ThumbnailUrl = StreamThumbnailUrl ?? media.ThumbnailUrl;
             }
             if (!media.FilePath && !media.StreamUrl) {
-              console.log(
-                'ERROR Downloading missing media for',
-                publicationFetcher,
-              );
               errors.push(publicationFetcher);
               continue;
             }

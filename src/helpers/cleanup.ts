@@ -93,39 +93,63 @@ const cleanDateFolders = async (root?: string) => {
 const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
   try {
     const currentState = useCurrentStateStore();
+    const congregationStore = useCongregationSettingsStore();
+
+    // Get all languages used by any congregation
+    const allLanguages = new Set<JwLangCode>();
+    Object.values(congregationStore.congregations).forEach((congSettings) => {
+      if (congSettings?.lang) {
+        allLanguages.add(congSettings.lang);
+      }
+      if (congSettings?.langFallback) {
+        allLanguages.add(congSettings.langFallback);
+      }
+    });
+
+    // If no congregations exist, fall back to current language or English
+    if (allLanguages.size === 0) {
+      allLanguages.add(currentState.currentSettings?.lang ?? 'E');
+    }
 
     const getDirectory = async (
       pub: string,
       issue?: 'any' | number | string,
-      lang?: '' | JwLangCode,
     ) => {
-      const langwritten = lang ?? currentState.currentSettings?.lang ?? 'E';
+      // Always protect directories for all languages, ignoring the lang parameter
+      const directories: string[] = [];
 
-      // Special handling for "any" issue: protect all issue-tagged folders for this pub symbol
-      if (issue === 'any') {
-        const baseId = getPubId({ langwritten, pub } as PublicationFetcher);
-        const pubsRootDefault = await getPublicationsPath();
-        const pubsRootCache = await getPublicationsPath(
-          currentState.currentSettings?.cacheFolder,
-        );
-        return [join(pubsRootDefault, baseId), join(pubsRootCache, baseId)];
+      for (const langwritten of allLanguages) {
+        // Special handling for "any" issue: protect all issue-tagged folders for this pub symbol
+        if (issue === 'any') {
+          const baseId = getPubId({ langwritten, pub } as PublicationFetcher);
+          const pubsRootDefault = await getPublicationsPath();
+          const pubsRootCache = await getPublicationsPath(
+            currentState.currentSettings?.cacheFolder,
+          );
+          directories.push(
+            join(pubsRootDefault, baseId),
+            join(pubsRootCache, baseId),
+          );
+        } else {
+          const directoryParams: PublicationFetcher = {
+            issue,
+            langwritten,
+            pub,
+          };
+
+          if (currentState.currentSettings) {
+            directories.push(
+              await getPublicationDirectory(directoryParams),
+              await getPublicationDirectory(
+                directoryParams,
+                currentState.currentSettings?.cacheFolder,
+              ),
+            );
+          }
+        }
       }
 
-      const directoryParams: PublicationFetcher = {
-        issue,
-        langwritten,
-        pub,
-      };
-
-      return currentState.currentSettings
-        ? [
-            await getPublicationDirectory(directoryParams),
-            await getPublicationDirectory(
-              directoryParams,
-              currentState.currentSettings?.cacheFolder,
-            ),
-          ]
-        : '';
+      return directories;
     };
 
     const directories = [
@@ -134,19 +158,18 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
       await getDirectory(currentState.currentSongbook.pub, 0), // Songbook videos
       // Study Bible
       await getDirectory('nwtsty'),
-      await getDirectory('nwtsty', undefined, 'E'), // In English, default fallback
       // Frequently used during MW meetings
       await getDirectory('it', 0), // Insight
       await getDirectory('lmd', 0), // Love People
       await getDirectory('lmdv', 0), // Love People Videos
       // Public Talk Media Playlist
-      await getDirectory('S-34mp', currentState.currentCongregation, ''),
+      await getDirectory('S-34mp', 'any'),
       // Magazines, low disk usage
       await getDirectory('wp', 'any'), // Public Watchtower
       await getDirectory('w', 'any'), // Study Watchtower
       await getDirectory('g', 'any'), // Awake
       // Various publication info, shouldn't be refreshed often
-      await getDirectory('jwlb', undefined, 'E'),
+      await getDirectory('jwlb', undefined),
     ].flat();
 
     return new Set<string>(directories.filter(Boolean));
