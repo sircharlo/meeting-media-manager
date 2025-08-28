@@ -4,19 +4,19 @@
 
 ## O que é esse aplicativo? {#what-is-this-app}
 
-**Meeting Media Manager**, or **M³** for short, is a comprehensive cross-platform application for Windows, macOS and Linux that automatically downloads, organizes, and presents pictures and videos for congregation meetings of Jehovah's Witnesses. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
+**Meeting Media Manager**, ou **M³** para abreviar, é um aplicativo completo e multiplataforma para Windows, macOS e Linux que baixa, organiza e apresenta fotos e vídeos para as reuniões congregacionais das Testemunhas de Jeová. Suporta qualquer idioma disponível no site oficial das Testemunhas de Jeová e oferece ferramentas poderosas para gerenciar mídias durante reuniões híbridas e presenciais.
 
-M³ features support for managing regular and custom meeting media, multiple congregations and/or groups using the same computer account, and advanced presentation capabilities that make media sharing effortless.
+O M³ oferece suporte para gerenciar mídias de reuniões normais e personalizadas, múltiplas congregações e/ou grupos usando a mesma conta do computador, além de recursos avançados de apresentação que tornam fácil o compartilhamento de.
 
 :::info Nota
 
-This app used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed to Meeting Media Manager in May 2022.
+Este aplicativo era conhecido como JWMMF (JW Meeting Media Fetcher), mas foi renomeado para Meeting Media Manager em maio de 2022.
 
 :::
 
 ## Por que escolher o M³? {#why-choose-m3}
 
-O M³ é a ferramenta mais completa para gerenciar as mídias das reuniões, oferecendo uma experiência suave, confiável e com muitos recursos em diversas plataformas. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
+O M³ é a ferramenta mais completa para gerenciar as mídias das reuniões, oferecendo uma experiência suave, confiável e com muitos recursos em diversas plataformas. Ele foi desenvolvido especificamente para as necessidades das reuniões de congregação e oferece tudo o que é necessário para uma apresentação de mídia eficaz.
 
 ### Principais benefícios {#key-benefits}
 
@@ -24,17 +24,17 @@ O M³ é a ferramenta mais completa para gerenciar as mídias das reuniões, ofe
 
 - **Suporte para várias congregações**: Gerencie facilmente configurações para diversas congregações ou grupos dentro de um único aplicativo.
 
-- **Advanced features**: Easily add extra media, import custom content, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Recursos avançados**: Adicione facilmente mídias extras, importe conteúdos personalizados e compartilhe automaticamente o que acontece no Salão do Reino com os participantes no Zoom.
 
 - **Desempenho otimizado em várias plataformas**: Desfrute de uma experiência suave e responsiva no Windows, macOS e Linux, mesmo em sistemas antigos ou computadores com recursos limitados.
 
 - **Confiável e estável**: Feito para funcionar bem quando você mais precisa. Encontrou um problema? Reporte-o e ele será tratado rapidamente.
 
-- **Advanced presentation tools**: Advanced media controls, zoom/pan capabilities, custom timing, and seamless Zoom and OBS Studio integration.
+- **Ferramentas avançadas de apresentação**: Controles avançados de mídia, recursos de zoom e movimentação, temporização personalizada e integração perfeita com Zoom e OBS Studio.
 
 ## O que o M³ faz? {#what-can-m3-do}
 
-M³ is a comprehensive media management solution that allows you to easily and automatically download, synchronize, share, and present all meeting media. Here's what makes M³ powerful:
+O M³ é uma solução completa de gerenciamento de mídias que permite baixar, sincronizar, compartilhar e apresentar todas as mídias das reuniões de forma fácil e automática. Veja o que torna o M³ poderoso:
 
 ### Core Media Management {#core-media-management}
 
