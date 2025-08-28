@@ -396,7 +396,11 @@ export const analyzeCacheFiles = async (): Promise<CacheAnalysis> => {
 
 export const deleteCacheFiles = async (
   type: 'all' | 'smart' = 'smart',
-): Promise<void> => {
+): Promise<{
+  bytesFreed: number;
+  itemsDeleted: number;
+  mode: 'all' | 'smart';
+}> => {
   const { updateLookupPeriod } = await import('src/helpers/date');
   try {
     const analysis = await analyzeCacheFiles();
@@ -408,23 +412,61 @@ export const deleteCacheFiles = async (
 
     // Delete cache files/directories
     try {
-      await Promise.allSettled(filepathsToDelete.map((f) => remove(f)));
-    } catch (e) {
-      errorCatcher(e);
-    }
-
-    // Remove empty directories
-    try {
-      await Promise.allSettled(
-        [...analysis.untouchableDirectories].map((d) => removeEmptyDirs(d)),
+      const results = await Promise.allSettled(
+        filepathsToDelete.map((f) => remove(f)),
       );
+
+      // Calculate deleted count and bytes freed
+      const itemsDeleted = results.filter(
+        (r) => r.status === 'fulfilled',
+      ).length;
+
+      let bytesFreed = 0;
+      if (type === 'smart') {
+        // Sum sizes for successfully deleted directories based on the analysis map
+        for (let i = 0; i < results.length; i++) {
+          if (results[i]?.status === 'fulfilled') {
+            const p = filepathsToDelete[i] as string;
+            if (typeof p === 'string') {
+              const sizeForDir = analysis.unusedParentDirectories[p] || 0;
+              bytesFreed += sizeForDir;
+            }
+          }
+        }
+      } else {
+        // Build a quick lookup for file sizes
+        const sizeByPath = new Map<string, number>();
+        for (const f of analysis.cacheFiles) {
+          sizeByPath.set(f.path, f.size || 0);
+        }
+        for (let i = 0; i < results.length; i++) {
+          if (results[i]?.status === 'fulfilled') {
+            const p = filepathsToDelete[i] as string;
+            if (typeof p === 'string') {
+              bytesFreed += sizeByPath.get(p) || 0;
+            }
+          }
+        }
+      }
+
+      // Remove empty directories
+      try {
+        await Promise.allSettled(
+          [...analysis.untouchableDirectories].map((d) => removeEmptyDirs(d)),
+        );
+      } catch (e) {
+        errorCatcher(e);
+      }
+
+      // Update lookup period if deleting all cache
+      if (type === 'all') {
+        updateLookupPeriod(true);
+      }
+
+      return { bytesFreed, itemsDeleted, mode: type };
     } catch (e) {
       errorCatcher(e);
-    }
-
-    // Update lookup period if deleting all cache
-    if (type === 'all') {
-      updateLookupPeriod(true);
+      throw e;
     }
   } catch (error) {
     errorCatcher(error);

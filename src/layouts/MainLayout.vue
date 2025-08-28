@@ -200,8 +200,12 @@ const delayedCacheClear = () => {
 
     console.log('✅ No active downloads, proceeding with cache clear...');
     deleteCacheFiles('smart')
-      .then(() => {
-        console.log('✅ Cache files cleared successfully');
+      .then(({ itemsDeleted }) => {
+        if (!itemsDeleted) {
+          console.log('ℹ️ No cache items needed clearing');
+        } else {
+          console.log(`✅ Cleared ${itemsDeleted} cache item(s)`);
+        }
         console.groupEnd();
       })
       .catch((error) => {
