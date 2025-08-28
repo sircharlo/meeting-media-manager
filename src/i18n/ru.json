@@ -354,6 +354,7 @@
   "receive-beta-updates": "Заранее получить доступ к бета-версиям",
   "receive-beta-updates-explain": "Бета-версии могут содержать нестабильные функции и возможные ошибки. Не включайте эту опцию на компьютере, который используется для проведения встреч.",
   "refresh": "Обновить",
+  "refresh-all-meeting-media": "Refresh all meeting media",
   "regular": "Обычный",
   "remind-me-later": "Не сейчас",
   "remove-all-cache": "Удалить все файлы из кэша",
