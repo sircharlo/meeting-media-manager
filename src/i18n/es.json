@@ -354,6 +354,7 @@
   "receive-beta-updates": "Recibir acceso anticipado a versiones beta",
   "receive-beta-updates-explain": "Las actualizaciones beta pueden contener características inestables y posibles errores. No habilite esta opción en el equipo utilizado para reuniones en vivo.",
   "refresh": "Actualizar",
+  "refresh-all-meeting-media": "Refresh all meeting media",
   "regular": "Regular",
   "remind-me-later": "Recuérdamelo más tarde",
   "remove-all-cache": "Eliminar todos los archivos de la caché",

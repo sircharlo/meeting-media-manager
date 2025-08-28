@@ -354,6 +354,7 @@
   "receive-beta-updates": "Saa varajane juurdepääs beetaversioonidele",
   "receive-beta-updates-explain": "Beeta-uuendused võivad sisaldada ebastabiilseid funktsioone ja võimalikke vigu. Ära luba seda valikut arvutis, mida kasutatakse live-kohtumisteks.",
   "refresh": "Värskenda",
+  "refresh-all-meeting-media": "Refresh all meeting media",
   "regular": "Regulaarne",
   "remind-me-later": "Tuleta mulle hiljem meelde",
   "remove-all-cache": "Eemalda kõik vahemälus olevad failid",

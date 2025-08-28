@@ -354,6 +354,7 @@
   "receive-beta-updates": "Receive early access to beta versions",
   "receive-beta-updates-explain": "Beta updates may contain unstable features and potential bugs. Do not enable this option on the computer used for live meetings.",
   "refresh": "Refresh",
+  "refresh-all-meeting-media": "Refresh all meeting media",
   "regular": "Regular",
   "remind-me-later": "Remind me later",
   "remove-all-cache": "Remove all files from cache",

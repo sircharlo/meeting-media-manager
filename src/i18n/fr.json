@@ -354,6 +354,7 @@
   "receive-beta-updates": "Recevoir un accès anticipé aux versions bêta",
   "receive-beta-updates-explain": "Les mises à jour bêta peuvent contenir des fonctionnalités instables et des bogues potentiels. N'activez pas cette option sur l'ordinateur utilisé pour les réunions en direct.",
   "refresh": "Rafraîchir",
+  "refresh-all-meeting-media": "Refresh all meeting media",
   "regular": "Régulier",
   "remind-me-later": "Pas maintenant",
   "remove-all-cache": "Supprimer tous les fichiers du cache",
