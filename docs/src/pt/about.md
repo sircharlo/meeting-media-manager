@@ -36,30 +36,30 @@ O M³ é a ferramenta mais completa para gerenciar as mídias das reuniões, ofe
 
 O M³ é uma solução completa de gerenciamento de mídias que permite baixar, sincronizar, compartilhar e apresentar todas as mídias das reuniões de forma fácil e automática. Veja o que torna o M³ poderoso:
 
-### Core Media Management {#core-media-management}
+### Gerenciamento Central de Mídia {#core-media-management}
 
-- **Automatic media downloads**: Automatically fetches and downloads all media needed for upcoming meetings
-- **Multi-language support**: Download media in any of hundreds of available languages
-- **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
-- **Media organization**: Automatically organizes media by date and meeting section
+- **Download automático de mídias**: Baixa automaticamente todas as mídias necessárias para as próximas reuniões
+- **Suporte a múltiplos idiomas**: Baixe mídias em qualquer um dos centenas de idiomas disponíveis
+- **Cache inteligente**: Sistema de cache inteligente que mantém as mídias organizadas e atualizadas
+- **Organização de mídias**: Organiza automaticamente as mídias por data e seção da reunião
 
-### Media Presentation Features {#about-presentation-features}
+### Recursos de Apresentação de Mídia {#about-presentation-features}
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
+Para reuniões congregacionais **híbridas** ou **presenciais**, o modo integrado de apresentação de mídia inclui:
 
-- **Advanced media controls**: Media thumbnails with zoom and pan capabilities
-- **Custom timing**: Set custom start and end times for media playback
-- **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
-- **Multi-monitor support**: Automatic external monitor detection and management
-- **Clean presentation**: Distraction-free media presentation interface
+- **Controles avançados de mídia**: Miniaturas de mídia com recursos de zoom e movimentação
+- **Temporização personalizada**: Defina pontos de início e fim específicos para a reprodução da mídia
+- **Controles de reprodução**: Botões de reproduzir/pausar/parar fáceis de usar, com atalhos de teclado
+- **Suporte a múltiplos monitores**: Detecção e gerenciamento automático de monitores externos
+- **Apresentação limpa**: Interface de apresentação de mídia sem distrações
 
-### Background Music {#about-background-music}
+### Música de Fundo {#about-background-music}
 
-- **Intelligent playback**: Background music that automatically stops before meetings start
-- **One-click restart**: Resume background music with a single click after meetings
-- **Volume control**: Adjustable background music volume with fade-out capabilities
+- **Reprodução inteligente**: Música de fundo que para automaticamente antes do início das reuniões
+- **Reinício com um clique**: Retoma a música de fundo com um único clique após as reuniões
+- **Controle de volume**: Volume da música de fundo ajustável, com recurso de fade-out
 
-### Zoom Integration {#about-zoom-integration}
+### Integração com Zoom {#about-zoom-integration}
 
 - **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
 
