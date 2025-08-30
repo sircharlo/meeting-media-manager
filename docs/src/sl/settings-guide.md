@@ -161,49 +161,49 @@ To možnost vklopite, če imate omejeno podatkovno povezavo, da zmanjšate porab
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-Enable the media display functionality. This is required to present media on a second monitor.
+Omogoči funkcijo prikazovanja multimedijske vsebine. To je potrebno za prikazovanje multimedijske vsebine na drugem zaslonu.
 
 **Privzeto**: `false`
 
-### Background Music {#settings-guide-background-music}
+### Glasba v ozadju {#settings-guide-background-music}
 
-#### Enable Music {#enable-music-button}
+#### Omogoči glasbo {#enable-music-button}
 
 <!-- **Setting**: `enableMusicButton` -->
 
-Enable background music functionality.
+Omogoči glasbo v ozadju.
 
-**Default**: `true`
+**Privzeto**: `true`
 
-#### Auto-Start Music {#auto-start-music}
+#### Samodejni zagon glasbe {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-Automatically start background music when M³ launches if appropriate.
+Če je primerno, samodejno zaženi glasbo v ozadju ob zagonu programa M³.
 
-**Default**: `true`
+**Privzeto**: `true`
 
-#### Meeting Stop Buffer {#meeting-stop-buffer}
+#### Ustavitev glasbe pred shodom {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
 How many seconds before meeting start time to stop background music.
 
-**Range**: 0-300 seconds
+**Obseg**: 0-300 sekund
 
-**Default**: 60 seconds
+**Privzeto**: 60 sekund
 
-#### Music Volume {#music-volume}
+#### Glasnost glasbe {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
-Volume level for background music (1-100%).
+Nastavitev glasnosti za glasbo v ozadju (1–100 %).
 
-**Default**: 100%
+**Privzeto**: 100 %
 
-### Cache Management {#cache-management}
+### Upravljanje predpomnilnika {#cache-management}
 
-#### Enable Extra Cache {#enable-extra-cache}
+#### Omogoči dodatni predpomnilnik {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
@@ -225,7 +225,7 @@ Custom location for storing cached media files.
 
 Automatically clear old cached files to save disk space.
 
-**Default**: `true`
+**Privzeto**: `true`
 
 ### Folder Monitoring {#settings-guide-folder-monitoring}
 
@@ -372,7 +372,7 @@ Maximum resolution for downloaded media files.
 
 Include media from the printed publications in media downloads.
 
-**Default**: `true`
+**Privzeto**: `true`
 
 #### Exclude Footnotes {#exclude-footnotes}
 
@@ -388,7 +388,7 @@ Exclude footnote images from media downloads when possible.
 
 Exclude media from the Teaching (th) brochure from media downloads.
 
-**Default**: `true`
+**Privzeto**: `true`
 
 ### Subtitles {#subtitles}
 
