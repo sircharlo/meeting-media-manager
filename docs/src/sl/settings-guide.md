@@ -1,169 +1,169 @@
-# Settings Guide {#settings-guide}
+# Vodnik po nastavitvah {#settings-guide}
 
-This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+Ta izčrpen vodnik pojasnjuje vse nastavitve, ki so na voljo v M³, razvrščene po kategorijah. Razumevanje teh nastavitev vam bo pomagalo nastaviti M³ tako, da bo popolnoma ustrezal potrebam vaše občine.
 
-## Application Configuration {#application-configuration}
+## Nastavitev aplikacije {#application-configuration}
 
-### Display Language {#display-language}
+### Jezik uporabniškega vmesnika {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Choose the language for M³'s interface. This is independent of the language used for media downloads.
+Izberite jezik za uporabniški vmesnik M³. Ta je neodvisen od jezika, ki se uporablja za prenos multimedijske vsebine.
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+**Možnosti**: Vsi razpoložljivi jeziki uporabniškega vmesnika (angleščina, španščina, francoščina itd.)
 
-**Default**: English
+**Privzeto**: angleščina
 
-### Dark Mode {#dark-mode}
+### Temni način {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-Control the appearance theme of M³.
+Nadzorujte temo aplikacije M³.
 
-**Options**:
+**Možnosti**:
 
-- Automatically switch based on system preference
-- Always use dark mode
-- Always use light mode
+- Samodejno preklopite glede na nastavitve sistema
+- Vedno uporabljajte temni način
+- Vedno uporabljajte svetli način
 
-**Default**: Auto
+**Privzeto**: Samodejno
 
-### First Day of Week {#first-day-of-week}
+### Prvi dan v tednu {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the calendar view.
+Nastavite, kateri dan naj se v koledarju šteje za prvi dan v tednu.
 
-**Options**: Sunday through Saturday
+**Možnosti**: od nedelje do sobote
 
-**Default**: Sunday
+**Privzeto**: nedelja
 
-### Auto-Start at Login {#auto-start-at-login}
+### Samodejni zagon ob prijavi {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-Automatically start M³ when the computer boots up.
+Samodejno zaženi M³ ob zagonu računalnika.
 
-**Default**: `false`
+**Privzeto**: `false`
 
-## Congregation Meetings {#congregation-meetings}
+## Občinski shodi {#congregation-meetings}
 
-### Congregation Name {#congregation-name}
+### Ime občine {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
-The name of your congregation. This is used for organization and display purposes.
+Ime vaše občine. To se uporablja za organizacijske in predstavitvene namene.
 
-**Default**: Empty (must be set during setup)
+**Privzeto**: Prazno (treba nastaviti med nastavitvijo)
 
-### Meeting Language {#meeting-language}
+### Jezik shoda {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
-The primary language for media downloads. This should match the language used in your congregation's meetings.
+Glavni jezik za prenos multimedijske vsebine. To bi moralo ustrezati jeziku, ki se uporablja na shodih vaše občine.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Možnosti**: Vsi jeziki, ki so na voljo na uradnem spletnem mestu Jehovovih prič.
 
-**Default**: English (E)
+**Privzeto**: angleščina (E)
 
-### Fallback Language {#fallback-language}
+### Nadomestni jezik {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
-A secondary language to use when media isn't available in the primary language.
+Dodatni jezik, ki se uporablja, kadar multimedijska vsebina ni na voljo v osnovnem jeziku.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Možnosti**: Vsi jeziki, ki so na voljo na uradnem spletnem mestu Jehovovih prič.
 
-**Default**: None
+**Privzeto**: Prazno
 
-### Midweek Meeting Day {#midweek-meeting-day}
+### Dan shoda med tednom {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-The day of the week when your midweek meeting is held.
+Dan v tednu, ko poteka vaš shod med tednom.
 
-**Options**: Sunday through Saturday
+**Možnosti**: od nedelje do sobote
 
-**Default**: None (must be set during setup)
+**Privzeto**: Prazno (treba nastaviti med nastavitvijo)
 
-### Midweek Meeting Time {#midweek-meeting-time}
+### Čas shoda med tednom {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
-The start time of your midweek meeting.
+Ura začetka vašega shoda med tednom.
 
-**Format**: HH:MM (24-hour format)
+**Oblika**: HH:MM (24-urni format)
 
-**Default**: None (must be set during setup)
+**Privzeto**: Prazno (treba nastaviti med nastavitvijo)
 
-### Weekend Meeting Day {#weekend-meeting-day}
+### Dan shoda ob koncu tedna {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-The day of the week when your weekend meeting is held.
+Dan v tednu, ko poteka vaš shod ob koncu tedna.
 
-**Options**: Sunday through Saturday
+**Možnosti**: od nedelje do sobote
 
-**Default**: None (must be set during setup)
+**Privzeto**: Prazno (treba nastaviti med nastavitvijo)
 
-### Weekend Meeting Time {#weekend-meeting-time}
+### Čas shoda ob koncu tedna {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
-The start time of your weekend meeting.
+Ura začetka vašega shoda ob koncu tedna.
 
-**Format**: HH:MM (24-hour format)
+**Oblika**: HH:MM (24-urni format)
 
-**Default**: None (must be set during setup)
+**Privzeto**: Prazno (treba nastaviti med nastavitvijo)
 
-### Circuit Overseer Week {#circuit-overseer-week}
+### Teden obiska okrajnega nadzornika {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
-The week of the next circuit overseer's visit.
+Teden naslednjega obiska okrajnega nadzornika.
 
-**Format**: MM/DD/YYYY
+**Oblika**: DD.MM.LLLL
 
-**Default**: None
+**Privzeto**: Prazno
 
-### Memorial Date {#memorial-date}
+### Datum spominske slovesnosti {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
-The date of the next Memorial celebration (beta feature).
+Datum naslednje spominske slovesnosti (možnost v razvoju).
 
-**Format**: MM/DD/YYYY
+**Oblika**: DD.MM.LLLL
 
-**Default**: Automatically retrieved periodically
+**Privzeto**: Samodejno občasno pridobljeno
 
-### Meeting Schedule Changes {#meeting-schedule-changes}
+### Spremembe razporeda shodov {#meeting-schedule-changes}
 
-These settings allow you to configure temporary changes to your meeting schedule:
+Te nastavitve vam omogočajo nastavitev začasnih sprememb urnika shodov:
 
-- **Change Date**: When the change takes effect
-- **One-time Change**: Whether this is a permanent or temporary change
-- **New Midweek Day**: New day for midweek meeting
-- **New Midweek Time**: New time for midweek meeting
-- **New Weekend Day**: New day for weekend meeting
-- **New Weekend Time**: New time for weekend meeting
+- **Datum spremembe**: Ko sprememba začne veljati
+- **Enkratna sprememba**: Ali gre za trajno ali začasno spremembo
+- **Nov dan sredi tedna**: Nov dan za shod sredi tedna
+- **Novi čas sredi tedna**: Nov čas za shod sredi tedna
+- **Nov dan ob koncu tedna**: Nov dan za shod ob koncu tedna
+- **Nov čas ob koncu tedna**: Nov čas za shod ob koncu tedna
 
-## Media Retrieval and Playback {#media-retrieval-and-playback}
+## Pridobivanje in predvajanje multimedijske vsebine {#media-retrieval-and-playback}
 
-### Metered Connection {#metered-connection}
+### Merjena povezava {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
-Enable this if you're on a limited data connection to reduce bandwidth usage.
+To možnost vklopite, če imate omejeno podatkovno povezavo, da zmanjšate porabo pasovne širine.
 
-**Default**: `false`
+**Privzeto**: `false`
 
-### Media Display {#media-display-button}
+### Prikaz multimedijske vsebine {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
 Enable the media display functionality. This is required to present media on a second monitor.
 
-**Default**: `false`
+**Privzeto**: `false`
 
 ### Background Music {#settings-guide-background-music}
 
@@ -209,7 +209,7 @@ Volume level for background music (1-100%).
 
 Enable additional caching for better performance.
 
-**Default**: `false`
+**Privzeto**: `false`
 
 #### Cache Folder {#cache-folder}
 
@@ -235,7 +235,7 @@ Automatically clear old cached files to save disk space.
 
 Monitor a folder for new media files and automatically add them to M³.
 
-**Default**: `false`
+**Privzeto**: `false`
 
 #### Folder to Watch {#folder-to-watch}
 
@@ -255,7 +255,7 @@ The folder path to monitor for new media files.
 
 Enable Zoom meeting integration features.
 
-**Default**: `false`
+**Privzeto**: `false`
 
 #### Screen Share Shortcut {#screen-share-shortcut}
 
@@ -263,7 +263,7 @@ Enable Zoom meeting integration features.
 
 Keyboard shortcut to trigger Zoom screen sharing.
 
-**Default**: None
+**Privzeto**: Prazno
 
 ### OBS Studio Integration {#settings-guide-obs-integration}
 
@@ -273,7 +273,7 @@ Keyboard shortcut to trigger Zoom screen sharing.
 
 Enable OBS Studio integration for automatic scene switching.
 
-**Default**: `false`
+**Privzeto**: `false`
 
 :::warning Important Note
 
@@ -289,7 +289,7 @@ Enable OBS Studio integration for automatic scene switching.
 
 The port number for connecting to OBS Studio WebSocket.
 
-**Default**: None
+**Privzeto**: Prazno
 
 #### OBS Password {#obs-password}
 
@@ -297,7 +297,7 @@ The port number for connecting to OBS Studio WebSocket.
 
 The password for OBS Studio WebSocket connection.
 
-**Default**: None
+**Privzeto**: Prazno
 
 #### OBS Scenes {#obs-scenes}
 
@@ -333,7 +333,7 @@ Configure which OBS scenes to use for different purposes:
 
 Enable customizable keyboard shortcuts for media control.
 
-**Default**: `false`
+**Privzeto**: `false`
 
 #### Media Control Shortcuts {#media-control-shortcuts}
 
@@ -354,7 +354,7 @@ Configure shortcuts for media playback:
 
 Hide the logo in the media window.
 
-**Default**: `false`
+**Privzeto**: `false`
 
 #### Maximum Resolution {#maximum-resolution}
 
@@ -380,7 +380,7 @@ Include media from the printed publications in media downloads.
 
 Exclude footnote images from media downloads when possible.
 
-**Default**: `false`
+**Privzeto**: `false`
 
 #### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
 
@@ -398,7 +398,7 @@ Exclude media from the Teaching (th) brochure from media downloads.
 
 Enable subtitle support for media playback.
 
-**Default**: `false`
+**Privzeto**: `false`
 
 #### Subtitle Language {#subtitle-language}
 
@@ -406,9 +406,9 @@ Enable subtitle support for media playback.
 
 Language for subtitles (can be different from media language).
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Možnosti**: Vsi jeziki, ki so na voljo na uradnem spletnem mestu Jehovovih prič.
 
-**Default**: None
+**Privzeto**: Prazno
 
 ### Media Export {#settings-guide-media-export}
 
@@ -418,7 +418,7 @@ Language for subtitles (can be different from media language).
 
 Automatically export media files to a specified folder.
 
-**Default**: `false`
+**Privzeto**: `false`
 
 #### Media Export Folder {#media-export-folder}
 
@@ -434,7 +434,7 @@ Folder path where media files will be automatically exported.
 
 Convert exported media files to MP4 format for better compatibility.
 
-**Default**: `false`
+**Privzeto**: `false`
 
 ### Danger Zone {#danger-zone}
 
@@ -450,7 +450,7 @@ These settings should only be changed if you understand their implications.
 
 Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
 
-**Default**: `false`
+**Privzeto**: `false`
 
 ## Tips for Optimal Configuration {#configuration-tips}
 
