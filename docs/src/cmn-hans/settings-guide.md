@@ -1,26 +1,26 @@
-# Settings Guide {#settings-guide}
+# 设置指南 {#settings-guide}
 
-This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+本综合指南按类别解释了M3中所有可用的设置。 了解这些设置将有助于配置M3来完全满足您会众的需要。
 
-## Application Configuration {#application-configuration}
+## 应用程序配置 {#application-configuration}
 
-### Display Language {#display-language}
+### 显示语言 {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Choose the language for M³'s interface. This is independent of the language used for media downloads.
+选择 M3 界面语言。 这只适用于媒体下载的语言。
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+**选项**：所有可用的界面语言 (英语、西班牙语、法语等)
 
-**Default**: English
+**默认**：英文
 
-### Dark Mode {#dark-mode}
+### 暗色模式 {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-Control the appearance theme of M³.
+控制 M3 的外观主题。
 
-**Options**:
+**选项**：
 
 - Automatically switch based on system preference
 - Always use dark mode
