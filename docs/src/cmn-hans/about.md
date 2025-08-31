@@ -4,7 +4,7 @@
 
 ## 这个应用程序是什么？ {#what-is-this-app}
 
-**Meeting Media Manager**，简称**M³**，是一个适用于Windows、macOS和Linux的综合性跨平台应用程序，可自动下载、组织和播放耶和华见证人会众聚会的图片和视频。它支持耶和华见证人官方网站上提供的任何语言，并为混合聚会和现场聚会期间的媒体管理提供强大的工具。 It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
+**Meeting Media Manager**，简称**M³**，是一个适用于Windows、macOS和Linux的综合性跨平台应用程序，可自动下载、组织和播放耶和华见证人会众聚会的图片和视频。它支持耶和华见证人官方网站上提供的任何语言，并为混合聚会和现场聚会期间的媒体管理提供强大的工具。 It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings. 它支持耶和华见证人官方网站上的任何语言，并为混合聚会和线下聚会期间管理媒体，提供强有力的工具。
 
 M³具有管理常规和自定义聚会媒体的功能，支持使用同一计算机账户的多个会众和/或小组，以及使媒体共享变得轻松的高级演示功能。
 
@@ -16,19 +16,19 @@ M³具有管理常规和自定义聚会媒体的功能，支持使用同一计�
 
 ## 为什么选择M3？ {#why-choose-m3}
 
-M3是管理聚会媒体的最终工具，为各平台提供无缝、可靠和丰富特色的经验。 It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
+M3是管理聚会媒体的最终工具，为各平台提供无缝、可靠和丰富特色的经验。 It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation. 它是专门为了满足聚会的需要而设计的，并为有效的媒体报道提供了一切必要的手段。
 
 ### 主要功能 {#key-benefits}
 
-- **今天给M³一次尝试，看看它能做些什么！  在会众聚会上播放媒体的工作从来没有那么容易。** 在会众聚会上播放媒体的工作从来没有那么容易。** 在会众聚会上播放媒体的工作从来没有那么容易。** 不需要复杂的设置或额外的步骤。 不需要复杂的设置或额外的步骤。 不需要复杂的设置或额外的步骤。
+- **今天给M³一次尝试，看看它能做些什么！  在会众聚会上播放媒体的工作从来没有那么容易。** 在会众聚会上播放媒体的工作从来没有那么容易。\*\* 在会众聚会上播放媒体的工作从来没有那么容易。\*\* 不需要复杂的设置或额外的步骤。 不需要复杂的设置或额外的步骤。 不需要复杂的设置或额外的步骤。
 
 - **支持多会众操作：** 在单个应用程序内管理多个会众或小组的设置。
 
 - **高级功能**: 轻松添加额外媒体，导入自定义内容，并自动与Zoom上的参与者共享王国聚会所中发生的事情。
 
-- **优化跨平台性能：**即使在资源有限的旧系统或计算机上，也享受Windows、 macOS和Linux的顺畅和响应性体验。
+- \*\*优化跨平台性能：\*\*即使在资源有限的旧系统或计算机上，也享受Windows、 macOS和Linux的顺畅和响应性体验。
 
-- **可靠和稳定：**非常可靠和稳定，选择它就不会有错。 遇到了问题吗？ 请报告，问题将迅速予以处理。
+- \*\*可靠和稳定：\*\*非常可靠和稳定，选择它就不会有错。 遇到了问题吗？ 请报告，问题将迅速予以处理。
 
 - **高级播放工具**: 高级媒体控制、缩放/平移功能、自定义计时以及无缝的Zoom和OBS Studio集成。
 
@@ -43,7 +43,7 @@ M³是一个综合性媒体管理解决方案，让您能够轻松自动地下�
 - **智能缓存**: 智能缓存系统，保持媒体的组织性和时效性
 - **媒体管理**: 按日期和聚会部分自动组织媒体
 
-### Media Presentation Features {#about-presentation-features}
+### 媒体播放功能 {#about-presentation-features}
 
 对于**混合**或**现场**的会众聚会，集成的媒体演示模式包括：
 
@@ -53,22 +53,22 @@ M³是一个综合性媒体管理解决方案，让您能够轻松自动地下�
 - **多显示器支持**: 自动外部显示器检测和管理
 - **干净的播放**: 无干扰的媒体演示界面
 
-### Background Music {#about-background-music}
+### 背景音乐 {#about-background-music}
 
 - **智能播放**：背景音乐在聚会开始前自动停止
 - **一键重启**：聚会结束后一键恢复背景音乐
 - **音量控制**：可调节的背景音乐音量，带淡出功能
 
-### Zoom Integration {#about-zoom-integration}
+### Zoom集成 {#about-zoom-integration}
 
 - **自动屏幕共享**：当您播放或停止媒体时，自动开始和停止Zoom屏幕共享
 
-### OBS Studio Integration {#about-obs-integration}
+### OBS Studio集成 {#about-obs-integration}
 
 - **自动场景切换**：与OBS Studio无缝集成，用于混合聚会
 - **场景管理**：在摄像头、媒体和其他场景之间自动切换
 
-### Media Import and Management {#about-media-import}
+### 媒体导入和管理 {#about-media-import}
 
 - **JWPUB文件**：轻松导入和管理JWPUB文件
 - **JWLPLAYLIST文件**：支持JW Library播放列表文件
@@ -76,7 +76,7 @@ M³是一个综合性媒体管理解决方案，让您能够轻松自动地下�
 - **音频圣经**：导入研读版圣经媒体和新世界译本的音频录音
 - **公众演讲**：通过S-34导入器，始终准备好公众演讲媒体概览以供使用
 
-### Advanced Features {#about-advanced-features}
+### 高级功能 {#about-advanced-features}
 
 - **文件夹监控**：自动从监控的文件夹（Dropbox、OneDrive等）同步媒体
 - **媒体导出**：自动将媒体导出到文件夹，按日期组织
@@ -84,7 +84,7 @@ M³是一个综合性媒体管理解决方案，让您能够轻松自动地下�
 - **键盘快捷键**：许多功能的可自定义键盘快捷键
 - **多个配置文件**：使用单独的配置文件管理不同的会众或小组
 
-**今天给M³一次尝试，看看它能做些什么！  在会众聚会上播放媒体的工作从来没有那么容易。** 在会众聚会上播放媒体的工作从来没有那么容易。** 在会众聚会上播放媒体的工作从来没有那么容易。**
+**今天给M³一次尝试，看看它能做些什么！  在会众聚会上播放媒体的工作从来没有那么容易。** 在会众聚会上播放媒体的工作从来没有那么容易。\*\* 在会众聚会上播放媒体的工作从来没有那么容易。\*\*
 
 ![M³ preview](./../assets/m3-preview.png)
 
