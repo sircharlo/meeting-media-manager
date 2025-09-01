@@ -15,10 +15,10 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
-- ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
-- ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
-- ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
+- ✨ **Prilagojeni multimedijski razdelki**: Popoln sistem za ustvarjanje, urejanje in upravljanje razdelkov z možnostjo barvne prilagoditve in razvrščanja z vlečenjem.
+- ✨ **Medijski ločilniki**: Dodajte naslovljene ločilnike znotraj seznama multimedijske vsebine za boljšo organizacijo, z možnostjo pozicioniranja zgoraj ali spodaj.
+- ✨ **Način ponavljanja razdelka**: Omogočite neprekinjeno predvajanje znotraj določenih razdelkov za nemoteno predvajanje multimedije v zanki.
+- ✨ **Združevanje z Zoomom**: Samodejna uskladitev začetka in konca deljenja zaslona predvajanjem multimedije.
 
 ### 🛠️ Izboljšave in popravki
 
