@@ -390,96 +390,96 @@ Iz prenosov izključi multimedijsko vsebino iz brošure Branje in poučevanje (t
 
 **Privzeto**: `true`
 
-### Subtitles {#subtitles}
+### Podnapisi {#subtitles}
 
-#### Enable Subtitles {#enable-subtitles}
+#### Omogoči podnapise {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
-Enable subtitle support for media playback.
+Omogoči podporo za podnapise med predvajanjem multimedijske vsebine.
 
 **Privzeto**: `false`
 
-#### Subtitle Language {#subtitle-language}
+#### Jezik podnapisov {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
-Language for subtitles (can be different from media language).
+Jezik podnapisov (lahko se razlikuje od jezika multimedijske vsebine).
 
 **Možnosti**: Vsi jeziki, ki so na voljo na uradnem spletnem mestu Jehovovih prič.
 
 **Privzeto**: Prazno
 
-### Media Export {#settings-guide-media-export}
+### Izvoz multimedijske vsebine {#settings-guide-media-export}
 
-#### Enable Media Auto-Export {#enable-media-auto-export}
+#### Omogoči samodejni izvoz multimedijske vsebine {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-Automatically export media files to a specified folder.
+Samodejno izvozi multimedijsko vsebino v izbrano mapo.
 
 **Privzeto**: `false`
 
-#### Media Export Folder {#media-export-folder}
+#### Mapa za izvoz multimedijske vsebine {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
-Folder path where media files will be automatically exported.
+Pot do mape, kamor se multimedijska vsebina samodejno izvozi.
 
 **Privzeto**: Prazno
 
-#### Convert Files to MP4 {#convert-files-to-mp4}
+#### Pretvori datoteke v MP4 {#convert-files-to-mp4}
 
-**Setting**: `convertFilesToMp4`
+**Nastavitve**: `convertFilesToMp4`
 
-Convert exported media files to MP4 format for better compatibility.
+Pretvori izvoženo multimedijsko vsebino v format MP4 za boljšo združljivost.
 
 **Privzeto**: `false`
 
-### Danger Zone {#danger-zone}
+### Nevarno območje {#danger-zone}
 
 :::warning Opozorilo
 
-These settings should only be changed if you understand their implications.
+Te nastavitve spreminjajte le, če razumete njihove posledice.
 
 :::
 
-#### Disable Media Fetching {#disable-media-fetching}
+#### Onemogoči pridobivanje vsebine {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
+Popolnoma onemogoči samodejni prenos multimedijske vsebine. To možnost uporabi le za profile, namenjene posebnim dogodkom ali drugim prilagojenim nastavitvam.
 
 **Privzeto**: `false`
 
-## Tips for Optimal Configuration {#configuration-tips}
+## Nasveti za optimalno nastavitev {#configuration-tips}
 
-### For New Users {#new-users}
+### Za nove uporabnike {#new-users}
 
-1. Start with the setup wizard to configure basic settings
-2. Enable "Media Display Button" to access presentation features
-3. Configure your meeting schedule accurately
-4. Set up OBS integration if you use hybrid meetings
+1. Da bi nastavili osnovne nastavitve, začnite z nastavitvenim čarovnikom
+2. Omogočite gumb za »Multimedijski zaslon«
+3. Natančno nastavite urnik shodov
+4. Nastavite združevanje s programom OBS, če uporabljate hibridne shode
 
-### For Advanced Users {#advanced-users}
+### Za napredne uporabnike {#advanced-users}
 
-1. Use folder monitoring to sync media from cloud storage
-2. Enable media auto-export for backup purposes
-3. Configure keyboard shortcuts for efficient operation
-4. Configure Zoom integration for automatic screen sharing
+1. Uporabite spremljanje map za sinhronizacijo multimedijske vsebine iz oblačne shrambe
+2. Omogočite samodejni izvoz multimedijske vsebine zaradi varnostnega kopiranja
+3. Nastavite bližnjice na tipkovnici za učinkovito upravljanje
+4. Nastavite združevanje z Zoomom za samodejno deljenje zaslona
 
-### Performance Optimization {#performance-optimization}
+### Optimizacija zmogljivosti {#performance-optimization}
 
-1. Enable extra cache for better performance
-2. Use appropriate maximum resolution for your needs
-3. Configure cache auto-clear to manage disk space
-4. Consider metered connection setting if on limited bandwidth
+1. Omogočite dodatni predpomnilnik za boljše delovanje
+2. Uporabite ustrezno največjo ločljivost glede na vaše potrebe
+3. Nastavite samodejno čiščenje predpomnilnika, da varčujete s prostorom na disku
+4. Razmislite o omejeni povezavi, če imate omejeno pasovno širino
 
-### Troubleshooting {#settings-guide-troubleshooting}
+### Odpravljanje težav {#settings-guide-troubleshooting}
 
-- If media isn't downloading, check your meeting schedule settings
-- If OBS integration isn't working, verify port and password settings
-- If performance is slow, try enabling extra cache or reducing resolution
-- If you're having language issues, check both interface and media language settings
-- If Zoom participants can't hear media audio, configure Zoom's Original Audio settings or use "Share Computer Sound"
-- **Tip**: Consider using Zoom integration instead of OBS Studio for simpler audio handling
+- Če se multimedijska vsebina ne prenaša, preverite nastavitve urnika shodov
+- Če združevanje z OBS ne deluje, preverite nastavitve vrat in gesla
+- Če je delovanje počasno, poskusite omogočiti dodatni predpomnilnik ali zmanjšati ločljivost
+- Če imate težave z jezikom, preverite tako jezik uporabniškega vmesnika kot jezik multimedijske vsebine
+- Če udeleženci na Zoomu ne slišijo zvoka multimedijske vsebine, nastavite avdio nastavitve Zooma ali uporabite možnost »Share Computer Sound«
+- **Nasvet**: Razmislite o združevanju z Zoomom namesto s programom OBS Studio, saj je upravljanje zvoka pri Zoomu enostavnejše
