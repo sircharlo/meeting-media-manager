@@ -4528,7 +4528,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/router@npm:13.9.0":
+"@vueuse/router@npm:^13.9.0":
   version: 13.9.0
   resolution: "@vueuse/router@npm:13.9.0"
   dependencies:
@@ -10423,7 +10423,7 @@ __metadata:
     "@vue/eslint-config-typescript": "npm:^14.6.0"
     "@vue/test-utils": "npm:^2.4.6"
     "@vueuse/core": "npm:^13.9.0"
-    "@vueuse/router": "npm:13.9.0"
+    "@vueuse/router": "npm:^13.9.0"
     autoprefixer: "npm:^10.4.21"
     better-sqlite3: "npm:^12.2.0"
     cheerio: "npm:^1.1.2"

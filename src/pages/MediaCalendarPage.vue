@@ -154,8 +154,6 @@ import type {
 import {
   useBroadcastChannel,
   useEventListener,
-  useMouse,
-  usePointer,
   watchImmediate,
 } from '@vueuse/core';
 import { Buffer } from 'buffer';
@@ -1189,37 +1187,8 @@ const handleSectionSelected = (section: MediaSectionIdentifier) => {
   pendingFiles.value = [];
 };
 
-const stopScrolling = ref(true);
-const { pressure } = usePointer();
-const { y } = useMouse();
-const marginToEdge = Math.max(window.innerHeight / 4, 150);
-
-watch(pressure, () => {
-  if (!pressure.value) stopScrolling.value = true;
-});
-
-const scroll = (step?: number) => {
-  const el = document.querySelector('.q-page-container');
-  if (!el) return;
-  if (!step) {
-    el.scrollTop = 0;
-    stopScrolling.value = true;
-    return;
-  }
-  if (stopScrolling.value) return;
-  el.scrollBy(0, step);
-  setTimeout(() => scroll(step), 20);
-};
 const dropActive = (event: DragEvent) => {
   sectionToAddTo.value = undefined;
-  const step =
-    y.value < marginToEdge
-      ? -1
-      : window.innerHeight - y.value < marginToEdge
-        ? 1
-        : 0;
-  stopScrolling.value = step === 0;
-  if (step) scroll(step);
   if (['all', 'copyLink'].includes(event?.dataTransfer?.effectAllowed || '')) {
     event.preventDefault();
 
@@ -1227,8 +1196,6 @@ const dropActive = (event: DragEvent) => {
     // if (!selectedDateObject.value || !isWeMeetingDay(selectedDateObject.value.date)) {
     showFileImport.value = true;
     // }
-
-    stopScrolling.value = true;
   }
 };
 
