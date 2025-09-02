@@ -1,5 +1,6 @@
 import type {
   DateInfo,
+  MediaItem,
   MediaSection,
   MediaSectionIdentifier,
   MediaSectionWithConfig,
@@ -250,4 +251,166 @@ export const getTextColor = (section?: MediaSectionWithConfig) => {
 
   // Return white or black based on contrast
   return lum > 0.3 ? '#000000' : '#ffffff';
+};
+
+/**
+ * Save section order information for watched media items to a file
+ * This replaces the file renaming approach to avoid issues with drag and drop positioning
+ */
+export const saveWatchedMediaSectionOrder = async (
+  datedFolderPath: string,
+  sectionId: MediaSectionIdentifier,
+  mediaItems: MediaItem[],
+): Promise<void> => {
+  try {
+    // Access electron API functions
+    const { fileUrlToPath, fs, path } = window.electronApi;
+    const { join } = path;
+    const { exists, readFile, writeFile } = fs;
+
+    const sectionOrderFilePath = join(datedFolderPath, '.section-order.json');
+
+    // Read existing section order data if it exists
+    let existingData: Record<
+      string,
+      { order: number; section: MediaSectionIdentifier }
+    > = {};
+    try {
+      if (await exists(sectionOrderFilePath)) {
+        const fileContent = await readFile(sectionOrderFilePath, 'utf-8');
+        existingData = JSON.parse(fileContent);
+      }
+    } catch (error) {
+      console.warn('⚠️ Could not read existing section order file:', error);
+    }
+
+    // Update section order data for watched items
+    mediaItems.forEach((item, index) => {
+      console.log(
+        '🔍 [saveWatchedMediaSectionOrder] Overwriting sortOrderOriginal',
+        item,
+        index,
+      );
+      item.sortOrderOriginal = index;
+      if (item.source === 'watched' && item.fileUrl) {
+        const localPath = fileUrlToPath(item.fileUrl);
+        if (localPath) {
+          const filename = path.basename(localPath);
+          existingData[filename] = {
+            order: index,
+            section: sectionId,
+          };
+        }
+      }
+    });
+
+    // Write updated data back to file
+    await writeFile(
+      sectionOrderFilePath,
+      JSON.stringify(existingData, null, 2),
+      'utf-8',
+    );
+
+    console.log(
+      `✅ Saved section order for ${sectionId} to ${sectionOrderFilePath}`,
+    );
+  } catch (error) {
+    // Fail gracefully - if we can't save the order file, it's not a big deal
+    console.warn(`⚠️ Could not save section order file: ${error}`);
+  }
+};
+
+/**
+ * Get section information for a watched media item from the section order file
+ */
+export const getWatchedMediaSectionInfo = async (
+  datedFolderPath: string,
+  filename: string,
+): Promise<null | { order: number; section: MediaSectionIdentifier }> => {
+  try {
+    // Access electron API functions
+    const { fs, path } = window.electronApi;
+    const { join } = path;
+    const { exists, readFile } = fs;
+
+    const sectionOrderFilePath = join(datedFolderPath, '.section-order.json');
+
+    if (!(await exists(sectionOrderFilePath))) {
+      return null;
+    }
+
+    const fileContent = await readFile(sectionOrderFilePath, 'utf-8');
+    const sectionOrderData: Record<
+      string,
+      { order: number; section: MediaSectionIdentifier }
+    > = JSON.parse(fileContent);
+
+    return sectionOrderData[filename] || null;
+  } catch (error) {
+    console.warn(`⚠️ Could not read section order file: ${error}`);
+    return null;
+  }
+};
+
+/**
+ * Remove section information for a watched media item when it's moved or deleted
+ */
+export const removeWatchedMediaSectionInfo = async (
+  datedFolderPath: string,
+  filename: string,
+): Promise<void> => {
+  try {
+    // Access electron API functions
+    const { fs, path } = window.electronApi;
+    const { join } = path;
+    const { exists, readFile, writeFile } = fs;
+
+    const sectionOrderFilePath = join(datedFolderPath, '.section-order.json');
+
+    if (!(await exists(sectionOrderFilePath))) {
+      return;
+    }
+
+    const fileContent = await readFile(sectionOrderFilePath, 'utf-8');
+    const sectionOrderData: Record<
+      string,
+      { order: number; section: MediaSectionIdentifier }
+    > = JSON.parse(fileContent);
+
+    if (sectionOrderData[filename]) {
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete sectionOrderData[filename];
+      await writeFile(
+        sectionOrderFilePath,
+        JSON.stringify(sectionOrderData, null, 2),
+        'utf-8',
+      );
+      console.log(`✅ Removed section info for ${filename}`);
+    }
+  } catch (error) {
+    console.warn(`⚠️ Could not update section order file: ${error}`);
+  }
+};
+
+/**
+ * Sort all media sections by their sortOrderOriginal property
+ * This should be called when loading media sections for a specific date
+ */
+export const sortMediaSectionsByOrder = (day: DateInfo): void => {
+  if (!day.mediaSections) return;
+
+  // Sort all sections by sortOrderOriginal to maintain proper order
+  day.mediaSections.forEach((section) => {
+    if (section?.items) {
+      section.items.sort((a, b) => {
+        const aOrder =
+          typeof a.sortOrderOriginal === 'number' ? a.sortOrderOriginal : 0;
+        const bOrder =
+          typeof b.sortOrderOriginal === 'number' ? b.sortOrderOriginal : 0;
+        return aOrder - bOrder;
+      });
+    }
+  });
+
+  console.log('✅ Sorted media sections by order for date:', day.date);
 };

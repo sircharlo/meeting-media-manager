@@ -5,9 +5,13 @@
     @dragover="dropActive"
     @dragstart="dropActive"
   >
-    <!-- <pre>{{
-      selectedDateObject?.mediaSections.map((s) => s.config.uniqueId)
-    }}</pre> -->
+    <!-- <pre>
+      {{
+        selectedDateObject?.mediaSections.map((s) =>
+          s.items?.map((i) => [i.sortOrderOriginal, i.title]),
+        )
+      }}
+    </pre> -->
     <!-- <pre>Section to add to:   {{ sectionToAddTo }}</pre> -->
     <div v-if="showBannerColumn" class="col">
       <q-slide-transition>
@@ -96,7 +100,8 @@
               updateMediaListDragging(mediaList.sectionId, isDragging)
           "
           @update:sortable-items="
-            (items) => updateMediaListItems(items, mediaList.sectionId)
+            async (items) =>
+              await updateMediaListItems(items, mediaList.sectionId)
           "
         />
       </template>
@@ -182,6 +187,8 @@ import {
   addSection,
   findMediaSection,
   getOrCreateMediaSection,
+  saveWatchedMediaSectionOrder,
+  sortMediaSectionsByOrder,
 } from 'src/helpers/media-sections';
 import { decompressJwpub, showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -280,7 +287,7 @@ const updateMediaListDragging = (sectionId: string, isDragging: boolean) => {
   mediaListDragging.value = isDragging;
 };
 
-const updateMediaListItems = (
+const updateMediaListItems = async (
   items: MediaItem[],
   sectionId: MediaSectionIdentifier,
 ) => {
@@ -298,6 +305,44 @@ const updateMediaListItems = (
 
   // Get the current items in this section before the update
   const currentItems = section.items || [];
+
+  // Save section order information for watched media items instead of renaming files
+  // This prevents the drag and drop positioning issue where files disappear and reappear
+  if (currentItems.some((item) => item.source === 'watched')) {
+    try {
+      // Find the watched day folder from the watched media items
+      const watchedItems = currentItems.filter(
+        (item) => item.source === 'watched' && item.fileUrl,
+      );
+      const watchedItem = watchedItems[0];
+      if (watchedItem) {
+        // Get the first watched item's file path to determine the watched day folder
+        const { fileUrlToPath, path } = window.electronApi;
+        const { dirname } = path;
+
+        const firstWatchedItemPath = fileUrlToPath(watchedItem.fileUrl);
+        if (firstWatchedItemPath) {
+          const watchedDayFolder = dirname(firstWatchedItemPath);
+          if (watchedDayFolder) {
+            console.log(
+              '🔍 [updateMediaListItems] Saving section order for watched media items:',
+              watchedDayFolder,
+              sectionId,
+              items,
+            );
+            await saveWatchedMediaSectionOrder(
+              watchedDayFolder,
+              sectionId,
+              items,
+            );
+          }
+        }
+      }
+    } catch (error) {
+      // Fail gracefully - if we can't save the order file, it's not a big deal
+      console.warn(`⚠️ Could not save section order: ${error}`);
+    }
+  }
 
   // Find items that were moved from other sections (items that are in the new list but weren't in the current list)
   const movedItems = items.filter(
@@ -329,61 +374,6 @@ const updateMediaListItems = (
       'to section:',
       sectionId,
     );
-
-    // Try to add section information to filenames for watched items
-    movedItems.forEach(async (item) => {
-      console.log('🔄 [updateMediaListItems] item', item.source, item.fileUrl);
-      if (item.source === 'watched' && item.fileUrl) {
-        try {
-          const localPath = fileUrlToPath(item.fileUrl);
-          if (localPath && (await exists(localPath))) {
-            const filename = basename(localPath);
-            const dir = dirname(localPath);
-
-            // Check if filename already has section information and update it if needed
-            const sectionMatch = filename.match(/^Section-([^-]+) - (.+)$/);
-            if (sectionMatch) {
-              // Filename already has section info, update it if different
-              const existingSection = sectionMatch[1];
-              const actualFilename = sectionMatch[2];
-
-              if (existingSection !== sectionId) {
-                // Section changed, update the filename
-                const newFilename = `Section-${sectionId} - ${actualFilename}`;
-                const newPath = join(dir, newFilename);
-
-                // Try to rename the file
-                await fs.rename(localPath, newPath);
-
-                // Update the item's fileUrl and title
-                item.fileUrl = pathToFileURL(newPath);
-                item.title = newFilename;
-
-                console.log(
-                  `✅ Updated section info in filename: ${newFilename}`,
-                );
-              }
-            } else {
-              // No section info, add it
-              const newFilename = `Section-${sectionId} - ${filename}`;
-              const newPath = join(dir, newFilename);
-
-              // Try to rename the file
-              await fs.rename(localPath, newPath);
-
-              // Update the item's fileUrl and title
-              item.fileUrl = pathToFileURL(newPath);
-              item.title = newFilename;
-
-              console.log(`✅ Added section info to filename: ${newFilename}`);
-            }
-          }
-        } catch (error) {
-          // Fail gracefully - file might be readonly or locked
-          console.warn(`⚠️ Could not add section info to filename: ${error}`);
-        }
-      }
-    });
   }
 
   // Update the target section with the new items
@@ -402,7 +392,6 @@ const {
   convertPdfToImages,
   decompress,
   executeQuery,
-  fileUrlToPath,
   fs,
   getLocalPathFromFileObject,
   inferExtension,
@@ -411,7 +400,7 @@ const {
   readdir,
 } = window.electronApi;
 const { ensureDir, exists, remove, writeFile } = fs;
-const { basename, dirname, join } = path;
+const { basename, join } = path;
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
   name: 'main-window-media-action',
@@ -924,7 +913,7 @@ watchImmediate(
 
 watchImmediate(
   () => selectedDate.value,
-  (newVal) => {
+  async (newVal) => {
     mediaListDragging.value = false;
     if (!newVal || !selectedDateObject.value?.mediaSections) return;
     checkMemorialDate();
@@ -935,6 +924,11 @@ watchImmediate(
         jwIcon: '',
         label: t('pt'),
       });
+    }
+
+    // Sort media sections by their sortOrderOriginal to apply section order
+    if (selectedDateObject.value) {
+      sortMediaSectionsByOrder(selectedDateObject.value);
     }
   },
 );
@@ -1680,7 +1674,7 @@ const mediaLists = computed(() => {
     .map((sectionData) => ({
       config: sectionData?.config,
       items: sectionData?.items || [],
-      sectionId: sectionData.config.uniqueId as MediaSectionIdentifier,
+      sectionId: (sectionData.config?.uniqueId || '') as MediaSectionIdentifier,
     }));
 });
 </script>
