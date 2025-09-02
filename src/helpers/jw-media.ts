@@ -1745,16 +1745,43 @@ export const watchedItemMapper: (
     );
     const thumbnailUrl = await getThumbnailUrl(watchedItemPath);
 
-    // Parse section information from filename
+    // Parse section information and order from filename or section order file
     let section: MediaSectionIdentifier | undefined;
+    let order: number | undefined;
     const filename = basename(watchedItemPath);
 
-    // Check if filename already has section information
-    const sectionMatch = filename.match(/^Section-([^-]+) - /);
-    if (sectionMatch) {
-      section = sectionMatch[1] as MediaSectionIdentifier;
-    } else {
-      // If no section specified in filename, check if it's a weekend meeting day
+    // First, try to get section info and order from the section order file in the watched day folder
+    try {
+      const watchedDayFolder = dirname(watchedItemPath);
+      console.log('🔍 [watchedItemMapper] watchedDayFolder:', watchedDayFolder);
+      if (watchedDayFolder) {
+        const { getWatchedMediaSectionInfo } = await import(
+          'src/helpers/media-sections'
+        );
+        const sectionInfo = await getWatchedMediaSectionInfo(
+          watchedDayFolder,
+          filename,
+        );
+        console.log('🔍 [watchedItemMapper] sectionInfo:', sectionInfo);
+        if (sectionInfo) {
+          section = sectionInfo.section;
+          order = sectionInfo.order;
+        }
+      }
+    } catch (error) {
+      console.warn(`⚠️ Could not read section order file: ${error}`);
+    }
+
+    // Fallback: Check if filename already has section information (legacy support)
+    if (!section) {
+      const sectionMatch = filename.match(/^Section-([^-]+) - /);
+      if (sectionMatch) {
+        section = sectionMatch[1] as MediaSectionIdentifier;
+      }
+    }
+
+    // Final fallback: Default section based on meeting day
+    if (!section) {
       const meetingDate = dateFromString(parentDate);
       if (isWeMeetingDay(meetingDate)) {
         section = 'pt'; // Default to 'pt' for WE meetings
@@ -1771,7 +1798,7 @@ export const watchedItemMapper: (
         isImage: image,
         isVideo: video,
         originalSection: section,
-        sortOrderOriginal: 'watched',
+        sortOrderOriginal: order !== undefined ? order : 'watched',
         source: 'watched',
         thumbnailUrl,
         title,
