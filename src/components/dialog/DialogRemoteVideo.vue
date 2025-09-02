@@ -61,6 +61,7 @@
               @click="
                 downloadAdditionalRemoteVideo(
                   video.files,
+                  selectedDate,
                   getBestImageUrl(video.images, 'md'),
                   false,
                   video.title,
@@ -157,7 +158,7 @@ const jwStore = useJwStore();
 const { urlVariables } = storeToRefs(jwStore);
 
 const currentState = useCurrentStateStore();
-const { currentSettings } = storeToRefs(currentState);
+const { currentSettings, selectedDate } = storeToRefs(currentState);
 
 // Props
 const props = defineProps<{
