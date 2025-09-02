@@ -143,6 +143,6 @@
   ],
   "private": true,
   "type": "module",
-  "packageManager": "yarn@4.9.2",
+  "packageManager": "yarn@4.9.4",
   "productName": "Meeting Media Manager"
 }
