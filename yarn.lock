@@ -4075,9 +4075,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/eslint-plugin@npm:^1.3.5":
-  version: 1.3.5
-  resolution: "@vitest/eslint-plugin@npm:1.3.5"
+"@vitest/eslint-plugin@npm:^1.3.6":
+  version: 1.3.6
+  resolution: "@vitest/eslint-plugin@npm:1.3.6"
   dependencies:
     "@typescript-eslint/scope-manager": "npm:^8.41.0"
     "@typescript-eslint/utils": "npm:^8.24.1"
@@ -4090,7 +4090,7 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 10c0/67e34a774e5a77812152c8a9f33aa4940bfce74e3ffc978e4bf4dce63511760012dd301b85b339b27dacc30d2c7cfc931f58f86c0281cd770f6ad7c0efdac6c7
+  checksum: 10c0/b086b6cf4b78e7c6658d7cbd5ef03ebccfc3a44d432e5f780192c9f28742a233f24691763af137880b3b3d035c18c543e906a2991d662940a7fc3af28beb8b84
   languageName: node
   linkType: hard
 
@@ -10534,7 +10534,7 @@ __metadata:
     "@types/pretty-bytes": "npm:^5.2.0"
     "@typescript-eslint/utils": "npm:^8.41.0"
     "@vitejs/plugin-vue": "npm:^6.0.1"
-    "@vitest/eslint-plugin": "npm:^1.3.5"
+    "@vitest/eslint-plugin": "npm:^1.3.6"
     "@vue/eslint-config-prettier": "npm:^10.2.0"
     "@vue/eslint-config-typescript": "npm:^14.6.0"
     "@vue/test-utils": "npm:^2.4.6"
