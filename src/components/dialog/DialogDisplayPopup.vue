@@ -450,9 +450,8 @@ const { post: postCameraStream } = useBroadcastChannel<
 
 watch(displayCameraId, (newCameraId) => {
   if (currentState.mediaIsPlaying) return;
-  if (newCameraId) {
-    postCameraStream(newCameraId);
-  } else {
+  postCameraStream(newCameraId);
+  if (!newCameraId) {
     currentState.mediaPlaying.url = '';
   }
 });

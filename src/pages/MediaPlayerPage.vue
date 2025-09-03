@@ -306,7 +306,7 @@ const playMediaElement = (wasPaused = false, websiteStream = false) => {
 
   mediaElement.value.oncanplaythrough = () => {
     console.log('🎬 [playMediaElement] Video can play through');
-    triggerPlay();
+    triggerPlay(websiteStream);
   };
 
   // For videos, add an additional check to ensure playback starts
@@ -644,7 +644,7 @@ watch(
           return;
         }
         mediaElement.value.srcObject = stream;
-        playMediaElement();
+        playMediaElement(false, true);
       } catch (e) {
         errorCatcher(e, { contexts: { fn: { name: 'streamCamera' } } });
         if (cameraStreamId.value) cameraStreamId.value = '';
@@ -688,7 +688,7 @@ watchImmediate(
       oldValues?.[0] !== newValues?.[0] || oldValues?.[1] !== newValues?.[1];
     const onlineChanged = oldValues?.[2] !== newValues?.[2];
     const yeartextChanged = oldValues?.[3] !== newValues?.[3];
-    const newYeartextIsEmpty = !newValues?.[3];
+    const newYeartextIsEmpty = !newValues?.[3] && oldValues?.[3];
     if (
       urlVariablesChanged ||
       onlineChanged ||
