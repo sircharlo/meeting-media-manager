@@ -8,7 +8,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ### ✨ Nuove Funzionalità
 
-- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
+- ✨ **Miglioramenti del Popup di Download**: Aggiunto il pulsante di aggiornamento e download raggruppati per data nel popup di download.
 - ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
 
 ## v25.8.3
