@@ -60,7 +60,7 @@ const getThumbnailFromMetadata = async (mediaPath: string) => {
         errorCatcher(error);
       }
       return URL.createObjectURL(
-        new Blob([thumbnailData], {
+        new Blob([new Uint8Array(thumbnailData)], {
           type: thumbnailFormat,
         }),
       );
