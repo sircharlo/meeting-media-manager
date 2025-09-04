@@ -409,7 +409,7 @@
               size="sm"
             >
               <q-tooltip :delay="500">
-                {{ $t('this-song-is-duplicated') }}
+                {{ t('this-song-is-duplicated') }}
               </q-tooltip>
             </q-icon>
             <q-btn

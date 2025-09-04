@@ -205,6 +205,14 @@ const errorTooltipText = (item: { meetingDate?: string }) => {
   }
 };
 
+const shouldAutoOpen = (dateKey: string) => {
+  const status = getDateStatus(dateKey);
+  if (status === 'error') {
+    return getDateDiff(dateFromString(dateKey), new Date(), 'days') < 7;
+  }
+  return status === 'loading';
+};
+
 const downloadPopup = useTemplateRef<QMenu>('downloadPopup');
 
 // Track expansion state for each date group
@@ -305,14 +313,6 @@ const getDateStatus = (dateKey: string) => {
   if (hasLoading) return 'loading';
   if (allComplete) return 'complete';
   return 'none';
-};
-
-const shouldAutoOpen = (dateKey: string) => {
-  const status = getDateStatus(dateKey);
-  if (status === 'error') {
-    return getDateDiff(dateFromString(dateKey), new Date(), 'days') < 7;
-  }
-  return status === 'loading';
 };
 
 const getStatusIcon = (dateKey: string) => {

@@ -448,14 +448,6 @@ const { post: postCameraStream } = useBroadcastChannel<
   name: 'camera-stream',
 });
 
-watch(displayCameraId, (newCameraId) => {
-  if (currentState.mediaIsPlaying) return;
-  postCameraStream(newCameraId);
-  if (!newCameraId) {
-    currentState.mediaPlaying.url = '';
-  }
-});
-
 // Listen for requests to get current media window variables
 const { data: getCurrentMediaWindowVariables } = useBroadcastChannel<
   string,

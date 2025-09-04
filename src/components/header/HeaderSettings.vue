@@ -55,7 +55,7 @@
           <q-item-section>
             <q-item-label>{{ t('remove-unused-cache') }} </q-item-label>
             <q-item-label caption>{{
-              calculatingCacheSize ? $t('calculating') : unusedCacheFoldersSize
+              calculatingCacheSize ? t('calculating') : unusedCacheFoldersSize
             }}</q-item-label>
           </q-item-section>
         </q-item>
@@ -71,7 +71,7 @@
           <q-item-section>
             <q-item-label>{{ t('remove-all-cache') }} </q-item-label>
             <q-item-label caption>{{
-              calculatingCacheSize ? $t('calculating') : allCacheFilesSize
+              calculatingCacheSize ? t('calculating') : allCacheFilesSize
             }}</q-item-label>
           </q-item-section>
         </q-item>

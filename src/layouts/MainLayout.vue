@@ -81,6 +81,7 @@ import { getOrCreateMediaSection } from 'src/helpers/media-sections';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
+import { useAppSettingsStore } from 'src/stores/app-settings';
 import { formatDate, getSpecificWeekday, isInPast } from 'src/utils/date';
 import { kebabToCamelCase } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
@@ -130,6 +131,9 @@ const congregationSettings = useCongregationSettingsStore();
 // congregationSettings.$subscribe((_, state) => {
 //   saveSettingsStoreToFile('congregations', state);
 // });
+
+const appSettings = useAppSettingsStore();
+const { displayCameraId } = storeToRefs(appSettings);
 
 const currentState = useCurrentStateStore();
 const {
@@ -349,6 +353,30 @@ watchDebounced(
     }
   },
   { debounce: 500 },
+);
+
+const { post: postCameraStream } = useBroadcastChannel<
+  null | string,
+  null | string
+>({
+  name: 'camera-stream',
+});
+
+watch(displayCameraId, (newCameraId) => {
+  if (currentState.mediaIsPlaying) return;
+  postCameraStream(newCameraId);
+  if (!newCameraId) {
+    currentState.mediaPlaying.url = '';
+  }
+});
+
+watch(
+  () => currentState?.currentLangObject?.isSignLanguage,
+  (newIsSignLanguage) => {
+    if (!newIsSignLanguage) {
+      displayCameraId.value = null;
+    }
+  },
 );
 
 watch(
