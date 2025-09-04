@@ -8,8 +8,8 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 ### ✨ Nya funktioner
 
-- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
-- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
+- ✨ **Ladda ner Popup förbättringar**: Tillagt uppdateringsknapp och nedladdningsgruppering i datumordning i nedladdnings-popupen.
+- ✨ **Bevakad mediaordningsminne**: Tillagd sektion ordningsminne för bevakade medieobjekt.
 
 ## v25.8.3
 

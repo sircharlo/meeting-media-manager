@@ -8,8 +8,8 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
-- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
+- ✨ **Allalaadimise hüpikakna täiustused**: Lisati värskendamise nupp ja allalaadimise hüpikaknas allalaadimiste rühmitamine kuupäeva järgi.
+- ✨ **Vaadatud meedia järjekorra mälu**: Lisati vaadatud meediaelementide järjekorra mälu.
 
 ## v25.8.3
 
