@@ -3631,7 +3631,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.18.0, @types/node@npm:^22.7.7":
+"@types/node@npm:^22.18.1":
+  version: 22.18.1
+  resolution: "@types/node@npm:22.18.1"
+  dependencies:
+    undici-types: "npm:~6.21.0"
+  checksum: 10c0/1912b0ea6cb9ef59722b0fed64652388e13b41d52569c16198f1278a882837bbf4c8a4ec913e852893356f07c0c44b4e00fbca289ac7222741d03449104e22fe
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^22.7.7":
   version: 22.18.0
   resolution: "@types/node@npm:22.18.0"
   dependencies:
@@ -10262,7 +10271,7 @@ __metadata:
     "@types/heic-convert": "npm:^2.1.0"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/mousetrap": "npm:^1.6.15"
-    "@types/node": "npm:^22.18.0"
+    "@types/node": "npm:^22.18.1"
     "@types/pretty-bytes": "npm:^5.2.0"
     "@typescript-eslint/utils": "npm:^8.42.0"
     "@vitejs/plugin-vue": "npm:^6.0.1"
