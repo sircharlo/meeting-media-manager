@@ -277,134 +277,134 @@ Luba OBS Studio koostöö automaatseks stseenide vahetamiseks.
 
 :::warning Oluline märkus
 
-**Audio seadistamine vajalik**: OBS Studio koostöö toetab ainult ekraani jagamist. M³ meediafailide heli **ei edastata automaatselt** Zoom osalejatele, kui kasutatakse OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Audio seadistamine vajalik**: OBS Studio koostöö toetab ainult ekraani jagamist. M³ meediafailide heli **ei edastata automaatselt** Zoom osalejatele, kui kasutatakse OBS Studio. Sul on vaja seadistada Zoom'i originaalheli seaded või kasuta funktsiooni „Jaga arvuti heli”, tagamaks, et koosoleku osalejad kuuleksid meedia heli. Täpsed heliseadete juhised leiate [kasutusjuhendist](/user-guide#audio-configuration).
 
-**Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
+**Märkus**: Zoom-koostöö kasutab Zoom-i enda ekraani jagamise funktsiooni, mis töötleb heli sujuvamalt kui OBS Studio koostöö.
 
 :::
 
-#### OBS Port {#obs-port}
+#### OBS Studio port {#obs-port}
 
 <!-- **Setting**: `obsPort` -->
 
-The port number for connecting to OBS Studio WebSocket.
+OBS Studio WebSocketiga ühenduse loomiseks kasutatav pordi number.
 
 **Vaikimisi**: Tühi
 
-#### OBS Password {#obs-password}
+#### OBS Studio salasõna {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
-The password for OBS Studio WebSocket connection.
+OBS Studio WebSocket-ühenduse salasõna.
 
 **Vaikimisi**: Tühi
 
-#### OBS Scenes {#obs-scenes}
+#### OBS Studio stseenid {#obs-scenes}
 
-Configure which OBS scenes to use for different purposes:
+Määra, milliseid OBS-stseene kasutada erinevateks eesmärkideks:
 
-- **Camera Scene**: Scene showing the camera/lectern
-- **Media Scene**: Scene for displaying media
-- **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
+- **Kaamera stseen**: Stseen, milles on näha kaamera/kõnepult
+- **Meedia stseen**: Meedia kuvamiseks mõeldud stseen
+- **Pildistseen**: piltide kuvamiseks mõeldud stseen (näiteks Pilt-Pildis-stseen, mis näitab nii meediat kui ka kõnelejat)
 
-#### OBS Advanced Options {#obs-advanced-options}
+#### OBS Studio lisasätted {#obs-advanced-options}
 
-- **Postpone Images**: Delay sharing images to OBS until manually triggered
-- **Quick Toggle**: Enable quick on/off toggle for OBS integration
-- **Switch Scene After Media**: Automatically return to previous scene after media
-- **Remember Previous Scene**: Remember and restore the previous scene
-- **Hide Icons**: Hide OBS-related icons in the interface
+- **Pildid edasi lükkamine**: lükka piltide jagamine OBS-iga edasi, kuni see käsitsi käivitatakse
+- **Kiirlüliti**: Lülita sisse OBS-i koostöö kiirelt sisse-/välja nupu abil
+- **Vaheta stseeni pärast meediat**: naase automaatselt eelmisele stseenile pärast meediat
+- **Eelmise stseeni meeldejätmine**: Eelmise stseeni meeldejätmine ja taastamine
+- **Peida ikoonid**: Peida OBS-iga seotud ikoonid kasutajaliidesest
 
 :::warning Oluline märkus
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Audio seadistamine vajalik**: OBS Studio koostöö toetab ainult meedia ja stseenide vahetamist. M³ meediafailide heli **ei edastata automaatselt** Zoomi või OBS Studiosse. Videovoog töötab nagu virtuaalne kaamera ilma helita, täpselt nagu veebikaamera. Sul on vaja seadistada Zoom'i originaalheli seaded või kasuta funktsiooni „Jaga arvuti heli”, tagamaks, et koosoleku osalejad kuuleksid meedia heli. Täpsed heliseadete juhised leiate [kasutusjuhendist](/user-guide#audio-configuration).
 
-**Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
+**Alternatiiv**: Kaaluge Zoom-koostöö kasutamist, kuna see kasutab Zoom-i enda ekraani jagamise funktsiooni, mis töötab heliga sujuvamalt.
 
 :::
 
-## Advanced Settings {#advanced-settings}
+## Lisasätted {#advanced-settings}
 
-### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
+### Kiirklahvid {#settings-guide-keyboard-shortcuts}
 
-#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
+#### Luba kiirklahvid {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-Enable customizable keyboard shortcuts for media control.
+Luba meedia juhtimiseks kohandatavad kiirklahvid.
 
 **Vaikimisi**: `väljas`
 
-#### Media Control Shortcuts {#media-control-shortcuts}
+#### Meedia esitamise kiirklahvid {#media-control-shortcuts}
 
-Configure shortcuts for media playback:
+Meedia esitamise kiirklahvide seadistamine:
 
-- **Media Window**: Open/close media window
-- **Previous Media**: Go to previous media item
-- **Next Media**: Go to next media item
-- **Pause/Resume**: Pause or resume media playback
-- **Stop Media**: Stop media playback
-- **Music Toggle**: Toggle background music
+- **Meedia aken**: ava/sulge meedia aken
+- **Eelmine meedia**: Mine eelmise meediaelemendi juurde
+- **Järgmine meedia**: Mine järgmise meediaelemendi juurde
+- **Paus/Jätka**: Meedia esitamise paus või jätkamine
+- **Stop Media**: Peata meedia taasesitus
+- **Taustamuusika lüliti**: Lülita taustamuusika sisse või välja
 
-### Media Display {#media-display}
+### Meedia ekraan {#media-display}
 
-#### Hide Media Logo {#hide-media-logo}
+#### Peida meedia logo {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
-Hide the logo in the media window.
+Peida logo meediaaknas.
 
 **Vaikimisi**: `väljas`
 
-#### Maximum Resolution {#maximum-resolution}
+#### Maksimaalne resolutsioon {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
-Maximum resolution for downloaded media files.
+Allalaaditud meediafailide maksimaalne resolutsioon.
 
-**Options**: 240p, 360p, 480p, 720p
+**Valikud**: 240p, 360p, 480p, 720p
 
-**Default**: 720p
+**Vaikimisi**: 720p
 
-#### Include Printed Media {#include-printed-media}
+#### Kaasa trükitud meediafialid {#include-printed-media}
 
 <!-- **Setting**: `includePrinted` -->
 
-Include media from the printed publications in media downloads.
+Kaasa trükitud väljaannete meedia allalaadimiste hulka.
 
 **Vaikimisi**: `lubatud`
 
-#### Exclude Footnotes {#exclude-footnotes}
+#### Ära kaasa allmärkusi {#exclude-footnotes}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
-Exclude footnote images from media downloads when possible.
+Võimaluse korral jäta allmärkuste pildid meedia allalaadimistest välja.
 
 **Vaikimisi**: `väljas`
 
-#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
+#### Ära kaasa meediat "Õpeta armastusega" brošüürist {#exclude-theocratic-ministry-school}
 
 <!-- **Setting**: `excludeTh` -->
 
-Exclude media from the Teaching (th) brochure from media downloads.
+Ära kaasa meediafaile "Õpeta armastusega" (th) brošüürist allalaadimiste hulka.
 
 **Vaikimisi**: `lubatud`
 
-### Subtitles {#subtitles}
+### Subtiitrid {#subtitles}
 
-#### Enable Subtitles {#enable-subtitles}
+#### Luba subtiitrid {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
-Enable subtitle support for media playback.
+Luba subtiitrid meedia taasesitamisel.
 
 **Vaikimisi**: `väljas`
 
-#### Subtitle Language {#subtitle-language}
+#### Subtiitrite keel {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
-Language for subtitles (can be different from media language).
+Subtiitrite keel (võib erineda meedia keelest).
 
 **Valikud**: Kõik Jehoova tunnistajate ametlikul veebisaidil kättesaadavad keeled
 
@@ -412,74 +412,74 @@ Language for subtitles (can be different from media language).
 
 ### Media Export {#settings-guide-media-export}
 
-#### Enable Media Auto-Export {#enable-media-auto-export}
+#### Luba meedia automaatne eksportimine {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-Automatically export media files to a specified folder.
+Ekspordi meediafailid automaatselt määratud kausta.
 
 **Vaikimisi**: `väljas`
 
-#### Media Export Folder {#media-export-folder}
+#### Meedia ekspordi kaust {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
-Folder path where media files will be automatically exported.
+Kaust, kuhu meediumifailid automaatselt eksporditakse.
 
 **Vaikimisi**: Tühi
 
-#### Convert Files to MP4 {#convert-files-to-mp4}
+#### Salvesta failid MP4-vormingus {#convert-files-to-mp4}
 
-**Setting**: `convertFilesToMp4`
+**Sätted**: `convertFilesToMp4`
 
-Convert exported media files to MP4 format for better compatibility.
+Salvesta eksporditud meediafailid MP4-vormingusse, et saavutada parem ühilduvus.
 
 **Vaikimisi**: `väljas`
 
-### Danger Zone {#danger-zone}
+### Ohutsoon {#danger-zone}
 
 :::warning Hoiatus
 
-These settings should only be changed if you understand their implications.
+Neid seadeid tuleks muuta ainult juhul, kui mõistad nende mõju.
 
 :::
 
-#### Disable Media Fetching {#disable-media-fetching}
+#### Meedia allalaadimise keelamine {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
+Lülita automaatne meedia allalaadimine täielikult välja. Kasuta seda ainult profiilide puhul, mida kasutatakse erisündmusteks või muudeks eriseadistusteks.
 
 **Vaikimisi**: `väljas`
 
-## Tips for Optimal Configuration {#configuration-tips}
+## Nõuanded optimaalseks seadistamiseks {#configuration-tips}
 
-### For New Users {#new-users}
+### Uutele kasutajatele {#new-users}
 
-1. Start with the setup wizard to configure basic settings
-2. Enable "Media Display Button" to access presentation features
-3. Configure your meeting schedule accurately
-4. Set up OBS integration if you use hybrid meetings
+1. Alusta määramiste abil, et seadistada põhilised sätted
+2. Lülita sisse „Meedia kuvamise nupp“, et pääseda juurde nende esitluse funktsioonidele
+3. Seadista koosolekute ajakava
+4. Kui sa kasutad hübriidkoosolekuid, siis seadista OBS Studio koostöö
 
-### For Advanced Users {#advanced-users}
+### Edasijõudnud kasutajatele {#advanced-users}
 
-1. Use folder monitoring to sync media from cloud storage
-2. Enable media auto-export for backup purposes
-3. Configure keyboard shortcuts for efficient operation
-4. Configure Zoom integration for automatic screen sharing
+1. Kasuta kausta jälgimist, et sünkroonida meediat pilvesalvestusest
+2. Luba meedia automaatne eksportimine varundamise eesmärgil
+3. Seadista kiirklahvid tõhusaks tööks
+4. Zoom-koostöö seadistamine automaatseks ekraani jagamiseks
 
-### Performance Optimization {#performance-optimization}
+### Jõudluse parandamise nipid {#performance-optimization}
 
-1. Enable extra cache for better performance
-2. Use appropriate maximum resolution for your needs
-3. Configure cache auto-clear to manage disk space
-4. Consider metered connection setting if on limited bandwidth
+1. Luba lisavahemälu rakenduse paremaks toimimiseks
+2. Kasuta oma vajadustele vastavat maksimaalset resolutsiooni
+3. Seadista vahemälu automaatne tühjendamine, et hallata kettaruumi
+4. Kui andmemaht on piiratud, kaalu mõõdetud ühenduse seadistamist
 
-### Troubleshooting {#settings-guide-troubleshooting}
+### Probleemide lahendamine {#settings-guide-troubleshooting}
 
-- If media isn't downloading, check your meeting schedule settings
-- If OBS integration isn't working, verify port and password settings
-- If performance is slow, try enabling extra cache or reducing resolution
-- If you're having language issues, check both interface and media language settings
-- If Zoom participants can't hear media audio, configure Zoom's Original Audio settings or use "Share Computer Sound"
-- **Tip**: Consider using Zoom integration instead of OBS Studio for simpler audio handling
+- Kui meedia ei lae alla, kontrolli koosoleku ajakava seadeid
+- Kui OBS Studio koostöö ei tööta, kontrolli porti ja parooli seadeid
+- Kui programmi jõudlus on aeglane, proovi lisada täiendavat vahemälu või vähendada resolutsiooni
+- Kui on keelega probleeme, kontrolli nii kasutajaliidese kui ka meedia keelesätteid
+- Kui Zoom osalejad ei kuule meediaheli, vaata üle Zoom'i originaalheli seaded või kasutage funktsiooni „Jaga arvuti heli”
+- **Nipp**: Kaalu OBS Studio asemel Zoom-i koostöö kasutamist, et heliga oleks lihtsam töötada
