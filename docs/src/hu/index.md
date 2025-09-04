@@ -3,7 +3,7 @@
 layout: home
 
 hero:
-  name: 'M³ Documentation'
+  name: 'M³ dokumentáció'
   text: 'Complete guide to setting up and using Meeting Media Manager'
   image: /logo.svg
   actions:
@@ -11,10 +11,10 @@ hero:
       text: A honlapról
       link: /hu/about
     - theme: brand
-      text: User Guide
+      text: Felhasználói útmutató
       link: /hu/user-guide
     - theme: brand
-      text: Settings Guide
+      text: Beállítási útmutató
       link: /hu/settings-guide
     - theme: brand
       text: GYIK
@@ -25,7 +25,7 @@ features:
     title: Automatic Media Management
     details: Automatically downloads and organizes pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
   - icon: 🎦
-    title: Media Presentation
+    title: Média megjelenítése
     details: Present media with ease during hybrid or in-person meetings with advanced controls, zoom/pan capabilities, and custom timing options.
   - icon: 🎵
     title: Background Music System
@@ -40,9 +40,9 @@ features:
     title: Integrációk
     details: Seamlessly integrates with Zoom or OBS Studio for enhanced media management and playback during meetings.
   - icon: 📁
-    title: Folder Monitoring
+    title: Mappa figyelése
     details: Automatically sync media from watched folders (like Dropbox or OneDrive) and export media to folders.
   - icon: 🎯
-    title: Advanced Features
+    title: Haladó funkciók
     details: Import custom media, JWPUB files, playlists, audio Bible recordings, and manage multiple congregations.
 ---

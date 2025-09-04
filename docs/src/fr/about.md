@@ -43,7 +43,7 @@ M³ est une solution complète de gestion de médias qui vous permet de téléch
 - **Mise en cache intelligente** : Système de mise en cache intelligent qui maintient les médias organisés et à jour
 - **Organisation des médias** : Organise automatiquement les médias par date et section de réunion
 
-### Media Presentation Features {#about-presentation-features}
+### Fonctionnalités de présentation des médias {#about-presentation-features}
 
 Pour les réunions de l'assemblée locale **hybrides** ou **en personne**, le mode de présentation de médias intégré comprend :
 
@@ -53,22 +53,22 @@ Pour les réunions de l'assemblée locale **hybrides** ou **en personne**, le mo
 - **Support multi-écrans** : Détection et gestion automatiques des écrans externes
 - **Présentation épurée** : Interface de présentation de médias sans distraction
 
-### Background Music {#about-background-music}
+### Musique de fond {#about-background-music}
 
 - **Lecture intelligente** : Musique de fond qui s'arrête automatiquement avant le début des réunions
 - **Redémarrage d'un clic** : Reprenez la musique de fond d'un seul clic après les réunions
 - **Contrôle du volume** : Volume de musique de fond réglable avec capacités de fondu
 
-### Zoom Integration {#about-zoom-integration}
+### Intégration Zoom {#about-zoom-integration}
 
 - **Partage d'écran automatique** : Démarrez et arrêtez automatiquement le partage d'écran Zoom lorsque vous jouez ou arrêtez les médias
 
-### OBS Studio Integration {#about-obs-integration}
+### Intégration OBS Studio {#about-obs-integration}
 
 - **Changement de scène automatique** : Intégration fluide avec OBS Studio pour les réunions hybrides
 - **Gestion des scènes** : Changement automatique entre caméra, médias et autres scènes
 
-### Media Import and Management {#about-media-import}
+### Import et gestion des médias {#about-media-import}
 
 - **Fichiers JWPUB** : Importez et gérez facilement les fichiers JWPUB
 - **Fichiers JWLPLAYLIST** : Support pour les fichiers de liste de lecture JW Library
@@ -76,7 +76,7 @@ Pour les réunions de l'assemblée locale **hybrides** ou **en personne**, le mo
 - **Bible audio** : Importez les médias de la Bible d'étude et les enregistrements audio de la Traduction du monde nouveau
 - **Causeries publiques** : Ayez toujours un aperçu des médias de causerie publique prêt à utiliser avec l'importateur S-34
 
-### Advanced Features {#about-advanced-features}
+### Fonctionnalités avancées {#about-advanced-features}
 
 - **Surveillance de dossiers** : Synchronisez automatiquement les médias depuis des dossiers surveillés (Dropbox, OneDrive, etc.)
 - **Exportation de médias** : Exportez automatiquement les médias vers des dossiers, organisés par date
@@ -84,7 +84,7 @@ Pour les réunions de l'assemblée locale **hybrides** ou **en personne**, le mo
 - **Raccourcis clavier** : Raccourcis clavier personnalisables pour de nombreuses fonctions
 - **Profils multiples** : Gérez différentes assemblées locales ou groupes avec des profils séparés
 
-Essayez M³ aujourd'hui et voyez par vous-même ce qu'elle peut faire ! Il n’a jamais été aussi facile de présenter les médias lors des réunions de l'assemblée locale.**
+Essayez M³ aujourd'hui et voyez par vous-même ce qu'elle peut faire ! Il n’a jamais été aussi facile de présenter les médias lors des réunions de l'assemblée locale.\*\*
 
 ![M³ preview](./../assets/m3-preview.png)
 

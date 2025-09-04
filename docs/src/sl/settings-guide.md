@@ -1,485 +1,485 @@
-# Settings Guide {#settings-guide}
+# Vodnik po nastavitvah {#settings-guide}
 
-This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+Ta izčrpen vodnik pojasnjuje vse nastavitve, ki so na voljo v M³, razvrščene po kategorijah. Razumevanje teh nastavitev vam bo pomagalo nastaviti M³ tako, da bo popolnoma ustrezal potrebam vaše občine.
 
-## Application Configuration {#application-configuration}
+## Nastavitev aplikacije {#application-configuration}
 
-### Display Language {#display-language}
+### Jezik uporabniškega vmesnika {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Choose the language for M³'s interface. This is independent of the language used for media downloads.
+Izberite jezik za uporabniški vmesnik M³. Ta je neodvisen od jezika, ki se uporablja za prenos multimedijske vsebine.
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+**Možnosti**: Vsi razpoložljivi jeziki uporabniškega vmesnika (angleščina, španščina, francoščina itd.)
 
-**Default**: English
+**Privzeto**: angleščina
 
-### Dark Mode {#dark-mode}
+### Temni način {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-Control the appearance theme of M³.
+Nadzorujte temo aplikacije M³.
 
-**Options**:
+**Možnosti**:
 
-- Automatically switch based on system preference
-- Always use dark mode
-- Always use light mode
+- Samodejno preklopite glede na nastavitve sistema
+- Vedno uporabljajte temni način
+- Vedno uporabljajte svetli način
 
-**Default**: Auto
+**Privzeto**: Samodejno
 
-### First Day of Week {#first-day-of-week}
+### Prvi dan v tednu {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the calendar view.
+Nastavite, kateri dan naj se v koledarju šteje za prvi dan v tednu.
 
-**Options**: Sunday through Saturday
+**Možnosti**: od nedelje do sobote
 
-**Default**: Sunday
+**Privzeto**: nedelja
 
-### Auto-Start at Login {#auto-start-at-login}
+### Samodejni zagon ob prijavi {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-Automatically start M³ when the computer boots up.
+Samodejno zaženi M³ ob zagonu računalnika.
 
-**Default**: `false`
+**Privzeto**: `false`
 
-## Congregation Meetings {#congregation-meetings}
+## Občinski shodi {#congregation-meetings}
 
-### Congregation Name {#congregation-name}
+### Ime občine {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
-The name of your congregation. This is used for organization and display purposes.
+Ime vaše občine. To se uporablja za organizacijske in predstavitvene namene.
 
-**Default**: Empty (must be set during setup)
+**Privzeto**: Prazno (treba nastaviti med nastavitvijo)
 
-### Meeting Language {#meeting-language}
+### Jezik shoda {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
-The primary language for media downloads. This should match the language used in your congregation's meetings.
+Glavni jezik za prenos multimedijske vsebine. To bi moralo ustrezati jeziku, ki se uporablja na shodih vaše občine.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Možnosti**: Vsi jeziki, ki so na voljo na uradnem spletnem mestu Jehovovih prič.
 
-**Default**: English (E)
+**Privzeto**: angleščina (E)
 
-### Fallback Language {#fallback-language}
+### Nadomestni jezik {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
-A secondary language to use when media isn't available in the primary language.
+Dodatni jezik, ki se uporablja, kadar multimedijska vsebina ni na voljo v osnovnem jeziku.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Možnosti**: Vsi jeziki, ki so na voljo na uradnem spletnem mestu Jehovovih prič.
 
-**Default**: None
+**Privzeto**: Prazno
 
-### Midweek Meeting Day {#midweek-meeting-day}
+### Dan shoda med tednom {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-The day of the week when your midweek meeting is held.
+Dan v tednu, ko poteka vaš shod med tednom.
 
-**Options**: Sunday through Saturday
+**Možnosti**: od nedelje do sobote
 
-**Default**: None (must be set during setup)
+**Privzeto**: Prazno (treba nastaviti med nastavitvijo)
 
-### Midweek Meeting Time {#midweek-meeting-time}
+### Čas shoda med tednom {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
-The start time of your midweek meeting.
+Ura začetka vašega shoda med tednom.
 
-**Format**: HH:MM (24-hour format)
+**Oblika**: HH:MM (24-urni format)
 
-**Default**: None (must be set during setup)
+**Privzeto**: Prazno (treba nastaviti med nastavitvijo)
 
-### Weekend Meeting Day {#weekend-meeting-day}
+### Dan shoda ob koncu tedna {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-The day of the week when your weekend meeting is held.
+Dan v tednu, ko poteka vaš shod ob koncu tedna.
 
-**Options**: Sunday through Saturday
+**Možnosti**: od nedelje do sobote
 
-**Default**: None (must be set during setup)
+**Privzeto**: Prazno (treba nastaviti med nastavitvijo)
 
-### Weekend Meeting Time {#weekend-meeting-time}
+### Čas shoda ob koncu tedna {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
-The start time of your weekend meeting.
+Ura začetka vašega shoda ob koncu tedna.
 
-**Format**: HH:MM (24-hour format)
+**Oblika**: HH:MM (24-urni format)
 
-**Default**: None (must be set during setup)
+**Privzeto**: Prazno (treba nastaviti med nastavitvijo)
 
-### Circuit Overseer Week {#circuit-overseer-week}
+### Teden obiska okrajnega nadzornika {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
-The week of the next circuit overseer's visit.
+Teden naslednjega obiska okrajnega nadzornika.
 
-**Format**: MM/DD/YYYY
+**Oblika**: DD.MM.LLLL
 
-**Default**: None
+**Privzeto**: Prazno
 
-### Memorial Date {#memorial-date}
+### Datum spominske slovesnosti {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
-The date of the next Memorial celebration (beta feature).
+Datum naslednje spominske slovesnosti (možnost v razvoju).
 
-**Format**: MM/DD/YYYY
+**Oblika**: DD.MM.LLLL
 
-**Default**: Automatically retrieved periodically
+**Privzeto**: Samodejno občasno pridobljeno
 
-### Meeting Schedule Changes {#meeting-schedule-changes}
+### Spremembe razporeda shodov {#meeting-schedule-changes}
 
-These settings allow you to configure temporary changes to your meeting schedule:
+Te nastavitve vam omogočajo nastavitev začasnih sprememb urnika shodov:
 
-- **Change Date**: When the change takes effect
-- **One-time Change**: Whether this is a permanent or temporary change
-- **New Midweek Day**: New day for midweek meeting
-- **New Midweek Time**: New time for midweek meeting
-- **New Weekend Day**: New day for weekend meeting
-- **New Weekend Time**: New time for weekend meeting
+- **Datum spremembe**: Ko sprememba začne veljati
+- **Enkratna sprememba**: Ali gre za trajno ali začasno spremembo
+- **Nov dan sredi tedna**: Nov dan za shod sredi tedna
+- **Novi čas sredi tedna**: Nov čas za shod sredi tedna
+- **Nov dan ob koncu tedna**: Nov dan za shod ob koncu tedna
+- **Nov čas ob koncu tedna**: Nov čas za shod ob koncu tedna
 
-## Media Retrieval and Playback {#media-retrieval-and-playback}
+## Pridobivanje in predvajanje multimedijske vsebine {#media-retrieval-and-playback}
 
-### Metered Connection {#metered-connection}
+### Merjena povezava {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
-Enable this if you're on a limited data connection to reduce bandwidth usage.
+To možnost vklopite, če imate omejeno podatkovno povezavo, da zmanjšate porabo pasovne širine.
 
-**Default**: `false`
+**Privzeto**: `false`
 
-### Media Display {#media-display-button}
+### Prikaz multimedijske vsebine {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-Enable the media display functionality. This is required to present media on a second monitor.
+Omogoči funkcijo prikazovanja multimedijske vsebine. To je potrebno za prikazovanje multimedijske vsebine na drugem zaslonu.
 
-**Default**: `false`
+**Privzeto**: `false`
 
-### Background Music {#settings-guide-background-music}
+### Glasba v ozadju {#settings-guide-background-music}
 
-#### Enable Music {#enable-music-button}
+#### Omogoči glasbo {#enable-music-button}
 
 <!-- **Setting**: `enableMusicButton` -->
 
-Enable background music functionality.
+Omogoči glasbo v ozadju.
 
-**Default**: `true`
+**Privzeto**: `true`
 
-#### Auto-Start Music {#auto-start-music}
+#### Samodejni zagon glasbe {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-Automatically start background music when M³ launches if appropriate.
+Če je primerno, samodejno zaženi glasbo v ozadju ob zagonu programa M³.
 
-**Default**: `true`
+**Privzeto**: `true`
 
-#### Meeting Stop Buffer {#meeting-stop-buffer}
+#### Ustavitev glasbe pred shodom {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
 How many seconds before meeting start time to stop background music.
 
-**Range**: 0-300 seconds
+**Obseg**: 0-300 sekund
 
-**Default**: 60 seconds
+**Privzeto**: 60 sekund
 
-#### Music Volume {#music-volume}
+#### Glasnost glasbe {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
-Volume level for background music (1-100%).
+Nastavitev glasnosti za glasbo v ozadju (1–100 %).
 
-**Default**: 100%
+**Privzeto**: 100 %
 
-### Cache Management {#cache-management}
+### Upravljanje predpomnilnika {#cache-management}
 
-#### Enable Extra Cache {#enable-extra-cache}
+#### Omogoči dodatni predpomnilnik {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Enable additional caching for better performance.
+Omogoči dodatno shranjevanje v predpomnilniku za boljšo zmogljivost.
 
-**Default**: `false`
+**Privzeto**: `false`
 
-#### Cache Folder {#cache-folder}
+#### Mapa za predpomnilnik {#cache-folder}
 
 <!-- **Setting**: `cacheFolder` -->
 
-Custom location for storing cached media files.
+Izbrana lokacija za shranjevanje multimedijske vsebine v predpomnilniku.
 
-**Default**: System default location
+**Privzeto**: Sistemska privzeta lokacija
 
-#### Enable Cache Auto-Clear {#enable-cache-auto-clear}
+#### Omogoči samodejno čiščenje predpomnilnika {#enable-cache-auto-clear}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
-Automatically clear old cached files to save disk space.
+Samodejno odstranjevanje stare multimedijske vsebine iz predpomnilnika za prihranek prostora na disku.
 
-**Default**: `true`
+**Privzeto**: `true`
 
-### Folder Monitoring {#settings-guide-folder-monitoring}
+### Spremljanje map {#settings-guide-folder-monitoring}
 
-#### Enable Folder Watcher {#enable-folder-watcher}
+#### Omogoči spremljanje mape {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Monitor a folder for new media files and automatically add them to M³.
+Spremlja mapo glede nove multimedijske vsebine in jo samodejno doda v M³.
 
-**Default**: `false`
+**Privzeto**: `false`
 
-#### Folder to Watch {#folder-to-watch}
+#### Mapa za spremljanje {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder path to monitor for new media files.
+Pot do mape, ki jo je treba spremljati za novo multimedijsko vsebino.
 
-**Default**: Empty
+**Privzeto**: Prazno
 
-## Integrations {#integrations}
+## Povezovanje {#integrations}
 
-### Zoom Integration {#settings-guide-zoom-integration}
+### Združevanje z Zoomom {#settings-guide-zoom-integration}
 
-#### Enable Zoom {#enable-zoom}
+#### Omogoči Zoom {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
-Enable Zoom meeting integration features.
+Omogoči združevanje funkcij za shode po Zoomu.
 
-**Default**: `false`
+**Privzeto**: `false`
 
-#### Screen Share Shortcut {#screen-share-shortcut}
+#### Bližnjica za deljenje zaslona {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
-Keyboard shortcut to trigger Zoom screen sharing.
+Bližnjica na tipkovnici za sprožitev deljenja zaslona prek Zooma.
 
-**Default**: None
+**Privzeto**: Prazno
 
-### OBS Studio Integration {#settings-guide-obs-integration}
+### Združevanje s programom OBS Studio {#settings-guide-obs-integration}
 
-#### Enable OBS {#enable-obs}
+#### Omogoči OBS {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
-Enable OBS Studio integration for automatic scene switching.
+Omogoči združevanje s programom OBS Studio za samodejno preklapljanje prizorov.
 
-**Default**: `false`
+**Privzeto**: `false`
 
-:::warning Important Note
+:::warning Pomembno obvestilo
 
-**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Potrebna je prilagoditev zvoka**: Združevanje s programom OBS Studio podpira samo deljenje zaslona. Zvok multimedijske vsebine v M³ se ne prenaša samodejno udeležencem na Zoomu. Da bi lahko udeleženci shoda slišali zvok, morate nastaviti avdionastavitve v Zoomu ali uporabiti možnost »Share Computer Sound«. Podrobna navodila najdete v [uporabniškem priročniku](/user-guide#audio-configuration).
 
-**Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
+**Opomba**: Združevanje z Zoomom uporablja Zoomovo lastno deljenje zaslona, ki zvok obdeluje bolje kot združevanje s programom OBS Studio.
 
 :::
 
-#### OBS Port {#obs-port}
+#### Vrata OBS {#obs-port}
 
 <!-- **Setting**: `obsPort` -->
 
-The port number for connecting to OBS Studio WebSocket.
+Številka vrat za povezavo z OBS Studio WebSocket.
 
-**Default**: None
+**Privzeto**: Prazno
 
-#### OBS Password {#obs-password}
+#### OBS geslo {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
-The password for OBS Studio WebSocket connection.
+Geslo za povezavo z OBS Studio WebSocket.
 
-**Default**: None
+**Privzeto**: Prazno
 
-#### OBS Scenes {#obs-scenes}
+#### Prizori OBS {#obs-scenes}
 
-Configure which OBS scenes to use for different purposes:
+Nastavite, kateri prizori OBS se uporabljajo za različne namene:
 
-- **Camera Scene**: Scene showing the camera/lectern
-- **Media Scene**: Scene for displaying media
-- **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
+- **Prizor kamere**: Prikazuje kamero/govorniški pult
+- **Prizor multimedijske vsebine**: Prikazuje multimedijsko vsebino
+- **Prizor slike**: Prikazuje slike (npr. PIP prizor z multimedijsko vsebino in govornikom)
 
-#### OBS Advanced Options {#obs-advanced-options}
+#### Napredne možnosti OBS {#obs-advanced-options}
 
-- **Postpone Images**: Delay sharing images to OBS until manually triggered
-- **Quick Toggle**: Enable quick on/off toggle for OBS integration
-- **Switch Scene After Media**: Automatically return to previous scene after media
-- **Remember Previous Scene**: Remember and restore the previous scene
-- **Hide Icons**: Hide OBS-related icons in the interface
+- **Odloži slike**: Slike se delijo z OBS šele ob ročnem sproženju
+- **Hitro preklapljanje**: Omogoči hiter vklop/izklop za združevanje z OBS
+- **Preklopi prizor po predvajanju multimedijske vsebine**: Samodejno se vrne na prejšnji prizor po predvajanju multimedijske vsebine
+- **Zapomni si prejšnji prizor**: Shrani in obnovi prejšnji prizor
+- **Skrij ikone**: V uporabniškem vmesniku skrije ikone, povezane z OBS
 
-:::warning Important Note
+:::warning Pomembno obvestilo
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Potrebna je prilagoditev zvoka**: Združevanje z OBS Studio podpira le preklapljanje prizorov. Zvok multimedijske vsebine v M³ se ne prenaša samodejno v Zoom ali OBS. Video prenos deluje kot virtualna kamera brez zvoka, podobno kot spletna kamera. Da bi lahko udeleženci shoda slišali zvok, morate nastaviti avdionastavitve v Zoomu ali uporabiti možnost »Share Computer Sound«. Podrobna navodila najdete v [uporabniškem priročniku](/user-guide#audio-configuration).
 
-**Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
+**Alternativa**: Razmislite raje o združevanju z Zoomom, saj ta uporablja Zoomovo lastno deljenje zaslona, ki zvok obdeluje bolj brezhibno.
 
 :::
 
-## Advanced Settings {#advanced-settings}
+## Napredne nastavitve {#advanced-settings}
 
-### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
+### Bližnjice na tipkovnici {#settings-guide-keyboard-shortcuts}
 
-#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
+#### Omogoči bližnjice na tipkovnici {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-Enable customizable keyboard shortcuts for media control.
+Omogoči prilagodljive bližnjice na tipkovnici za nadzor multimedijske vsebine.
 
-**Default**: `false`
+**Privzeto**: `false`
 
-#### Media Control Shortcuts {#media-control-shortcuts}
+#### Bližnjice za upravljanje multimedijske vsebine {#media-control-shortcuts}
 
-Configure shortcuts for media playback:
+Nastavite bližnjice za predvajanje multimedijske vsebine:
 
-- **Media Window**: Open/close media window
-- **Previous Media**: Go to previous media item
-- **Next Media**: Go to next media item
-- **Pause/Resume**: Pause or resume media playback
-- **Stop Media**: Stop media playback
-- **Music Toggle**: Toggle background music
+- **Multimedijsko okno** - Odpri/zapri multimedijsko okno
+- **Prejšnja multimedijska datoteka**: Pojdi na prejšnjo multimedijsko datoteko
+- **Naslednja multimedijska datoteka**: Pojdi na naslednjo multimedijsko datoteko
+- **Premor/Nadaljuj**: Začasno ustavi ali nadaljuj predvajanje
+- **Ustavi predvajanje**: Ustavi predvajanje multimedijske vsebine
+- **Vklop/izklop glasbe**: Vklopi/izklopi glasbo v ozadju
 
-### Media Display {#media-display}
+### Prikaz multimedijske vsebine {#media-display}
 
-#### Hide Media Logo {#hide-media-logo}
+#### Skrij logotip multimedijske vsebine {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
-Hide the logo in the media window.
+Skrij logotip v oknu z multimedijsko vsebino.
 
-**Default**: `false`
+**Privzeto**: `false`
 
-#### Maximum Resolution {#maximum-resolution}
+#### Največja ločljivost {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
-Maximum resolution for downloaded media files.
+Največja ločljivost za preneseno multimedijsko vsebino.
 
-**Options**: 240p, 360p, 480p, 720p
+**Možnosti**: 240p, 360p, 480p, 720p
 
-**Default**: 720p
+**Privzeto**: 720p
 
-#### Include Printed Media {#include-printed-media}
+#### Vključi tiskane medije {#include-printed-media}
 
 <!-- **Setting**: `includePrinted` -->
 
-Include media from the printed publications in media downloads.
+Vključi multimedijsko vsebino iz tiskanih publikacij v prenose.
 
-**Default**: `true`
+**Privzeto**: `true`
 
-#### Exclude Footnotes {#exclude-footnotes}
+#### Izključi podčrtne opombe {#exclude-footnotes}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
-Exclude footnote images from media downloads when possible.
+Iz prenosov izključi slike v podčrtnih opombah, kadar je to mogoče.
 
-**Default**: `false`
+**Privzeto**: `false`
 
-#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
+#### Izključi multimedijsko vsebino iz brošure Branje in poučevanje {#exclude-theocratic-ministry-school}
 
 <!-- **Setting**: `excludeTh` -->
 
-Exclude media from the Teaching (th) brochure from media downloads.
+Iz prenosov izključi multimedijsko vsebino iz brošure Branje in poučevanje (th).
 
-**Default**: `true`
+**Privzeto**: `true`
 
-### Subtitles {#subtitles}
+### Podnapisi {#subtitles}
 
-#### Enable Subtitles {#enable-subtitles}
+#### Omogoči podnapise {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
-Enable subtitle support for media playback.
+Omogoči podporo za podnapise med predvajanjem multimedijske vsebine.
 
-**Default**: `false`
+**Privzeto**: `false`
 
-#### Subtitle Language {#subtitle-language}
+#### Jezik podnapisov {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
-Language for subtitles (can be different from media language).
+Jezik podnapisov (lahko se razlikuje od jezika multimedijske vsebine).
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Možnosti**: Vsi jeziki, ki so na voljo na uradnem spletnem mestu Jehovovih prič.
 
-**Default**: None
+**Privzeto**: Prazno
 
-### Media Export {#settings-guide-media-export}
+### Izvoz multimedijske vsebine {#settings-guide-media-export}
 
-#### Enable Media Auto-Export {#enable-media-auto-export}
+#### Omogoči samodejni izvoz multimedijske vsebine {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-Automatically export media files to a specified folder.
+Samodejno izvozi multimedijsko vsebino v izbrano mapo.
 
-**Default**: `false`
+**Privzeto**: `false`
 
-#### Media Export Folder {#media-export-folder}
+#### Mapa za izvoz multimedijske vsebine {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
-Folder path where media files will be automatically exported.
+Pot do mape, kamor se multimedijska vsebina samodejno izvozi.
 
-**Default**: Empty
+**Privzeto**: Prazno
 
-#### Convert Files to MP4 {#convert-files-to-mp4}
+#### Pretvori datoteke v MP4 {#convert-files-to-mp4}
 
-**Setting**: `convertFilesToMp4`
+**Nastavitve**: `convertFilesToMp4`
 
-Convert exported media files to MP4 format for better compatibility.
+Pretvori izvoženo multimedijsko vsebino v format MP4 za boljšo združljivost.
 
-**Default**: `false`
+**Privzeto**: `false`
 
-### Danger Zone {#danger-zone}
+### Nevarno območje {#danger-zone}
 
 :::warning Opozorilo
 
-These settings should only be changed if you understand their implications.
+Te nastavitve spreminjajte le, če razumete njihove posledice.
 
 :::
 
-#### Disable Media Fetching {#disable-media-fetching}
+#### Onemogoči pridobivanje vsebine {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
+Popolnoma onemogoči samodejni prenos multimedijske vsebine. To možnost uporabi le za profile, namenjene posebnim dogodkom ali drugim prilagojenim nastavitvam.
 
-**Default**: `false`
+**Privzeto**: `false`
 
-## Tips for Optimal Configuration {#configuration-tips}
+## Nasveti za optimalno nastavitev {#configuration-tips}
 
-### For New Users {#new-users}
+### Za nove uporabnike {#new-users}
 
-1. Start with the setup wizard to configure basic settings
-2. Enable "Media Display Button" to access presentation features
-3. Configure your meeting schedule accurately
-4. Set up OBS integration if you use hybrid meetings
+1. Da bi nastavili osnovne nastavitve, začnite z nastavitvenim čarovnikom
+2. Omogočite gumb za »Multimedijski zaslon«
+3. Natančno nastavite urnik shodov
+4. Nastavite združevanje s programom OBS, če uporabljate hibridne shode
 
-### For Advanced Users {#advanced-users}
+### Za napredne uporabnike {#advanced-users}
 
-1. Use folder monitoring to sync media from cloud storage
-2. Enable media auto-export for backup purposes
-3. Configure keyboard shortcuts for efficient operation
-4. Configure Zoom integration for automatic screen sharing
+1. Uporabite spremljanje map za sinhronizacijo multimedijske vsebine iz oblačne shrambe
+2. Omogočite samodejni izvoz multimedijske vsebine zaradi varnostnega kopiranja
+3. Nastavite bližnjice na tipkovnici za učinkovito upravljanje
+4. Nastavite združevanje z Zoomom za samodejno deljenje zaslona
 
-### Performance Optimization {#performance-optimization}
+### Optimizacija zmogljivosti {#performance-optimization}
 
-1. Enable extra cache for better performance
-2. Use appropriate maximum resolution for your needs
-3. Configure cache auto-clear to manage disk space
-4. Consider metered connection setting if on limited bandwidth
+1. Omogočite dodatni predpomnilnik za boljše delovanje
+2. Uporabite ustrezno največjo ločljivost glede na vaše potrebe
+3. Nastavite samodejno čiščenje predpomnilnika, da varčujete s prostorom na disku
+4. Razmislite o omejeni povezavi, če imate omejeno pasovno širino
 
-### Troubleshooting {#settings-guide-troubleshooting}
+### Odpravljanje težav {#settings-guide-troubleshooting}
 
-- If media isn't downloading, check your meeting schedule settings
-- If OBS integration isn't working, verify port and password settings
-- If performance is slow, try enabling extra cache or reducing resolution
-- If you're having language issues, check both interface and media language settings
-- If Zoom participants can't hear media audio, configure Zoom's Original Audio settings or use "Share Computer Sound"
-- **Tip**: Consider using Zoom integration instead of OBS Studio for simpler audio handling
+- Če se multimedijska vsebina ne prenaša, preverite nastavitve urnika shodov
+- Če združevanje z OBS ne deluje, preverite nastavitve vrat in gesla
+- Če je delovanje počasno, poskusite omogočiti dodatni predpomnilnik ali zmanjšati ločljivost
+- Če imate težave z jezikom, preverite tako jezik uporabniškega vmesnika kot jezik multimedijske vsebine
+- Če udeleženci na Zoomu ne slišijo zvoka multimedijske vsebine, nastavite avdio nastavitve Zooma ali uporabite možnost »Share Computer Sound«
+- **Nasvet**: Razmislite o združevanju z Zoomom namesto s programom OBS Studio, saj je upravljanje zvoka pri Zoomu enostavnejše

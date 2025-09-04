@@ -136,7 +136,7 @@ const dialogValue = computed({
 
 // Setup logic
 const currentState = useCurrentStateStore();
-const { currentSettings, currentSongbook, currentSongs, online } =
+const { currentSettings, currentSongbook, currentSongs, online, selectedDate } =
   storeToRefs(currentState);
 
 const jwStore = useJwStore();
@@ -202,6 +202,7 @@ const addSong = async (songTrack: number) => {
       downloadAdditionalRemoteVideo(
         songTrackFiles?.files?.[currentSettings.value?.lang || 'E']?.['MP4'] ||
           [],
+        selectedDate.value,
         thumbnail,
         songTrack,
         title.replace(/^\d+\.\s*/, ''),

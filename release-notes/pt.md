@@ -4,6 +4,13 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
+## v25.9.0
+
+### ✨ Novos Recursos
+
+- ✨ **Melhoria no Pop-up de Downloads**: Adicionado botão de atualização e agrupamento de downloads por data no pop-up de download.
+- ✨ **Memória da ordem de mídias assistidas**: adicionada a função de lembrar a ordem das seções para mídias já assistidas.
+
 ## v25.8.3
 
 ### ✨ Novos Recursos

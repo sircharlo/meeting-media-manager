@@ -45,6 +45,7 @@ export function createWindow(
 
   // Create the browser window
   const opts: BrowserWindowConstructorOptions = {
+    acceptFirstMouse: true,
     autoHideMenuBar: true,
     backgroundColor: 'grey',
     height: defaultSize.height,

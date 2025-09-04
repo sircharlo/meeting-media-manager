@@ -17,6 +17,7 @@ import {
   getTempPath,
   removeEmptyDirs,
 } from 'src/utils/fs';
+import { getPubId } from 'src/utils/jw';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -92,39 +93,83 @@ const cleanDateFolders = async (root?: string) => {
 const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
   try {
     const currentState = useCurrentStateStore();
+    const congregationStore = useCongregationSettingsStore();
+
+    // Get all languages used by any congregation
+    const allLanguages = new Set<JwLangCode>();
+    Object.values(congregationStore.congregations).forEach((congSettings) => {
+      if (congSettings?.lang) {
+        allLanguages.add(congSettings.lang);
+      }
+      if (congSettings?.langFallback) {
+        allLanguages.add(congSettings.langFallback);
+      }
+    });
+
+    // If no congregations exist, fall back to current language or English
+    if (allLanguages.size === 0) {
+      allLanguages.add(currentState.currentSettings?.lang ?? 'E');
+    }
 
     const getDirectory = async (
       pub: string,
-      issue?: number | string,
-      lang?: '' | JwLangCode,
+      issue?: 'any' | number | string,
     ) => {
-      const directoryParams: PublicationFetcher = {
-        issue,
-        langwritten: lang ?? currentState.currentSettings?.lang ?? 'E',
-        pub,
-      };
+      // Always protect directories for all languages, ignoring the lang parameter
+      const directories: string[] = [];
 
-      return currentState.currentSettings
-        ? [
-            await getPublicationDirectory(directoryParams),
-            await getPublicationDirectory(
-              directoryParams,
-              currentState.currentSettings?.cacheFolder,
-            ),
-          ]
-        : '';
+      for (const langwritten of allLanguages) {
+        // Special handling for "any" issue: protect all issue-tagged folders for this pub symbol
+        if (issue === 'any') {
+          const baseId = getPubId({ langwritten, pub } as PublicationFetcher);
+          const pubsRootDefault = await getPublicationsPath();
+          const pubsRootCache = await getPublicationsPath(
+            currentState.currentSettings?.cacheFolder,
+          );
+          directories.push(
+            join(pubsRootDefault, baseId),
+            join(pubsRootCache, baseId),
+          );
+        } else {
+          const directoryParams: PublicationFetcher = {
+            issue,
+            langwritten,
+            pub,
+          };
+
+          if (currentState.currentSettings) {
+            directories.push(
+              await getPublicationDirectory(directoryParams),
+              await getPublicationDirectory(
+                directoryParams,
+                currentState.currentSettings?.cacheFolder,
+              ),
+            );
+          }
+        }
+      }
+
+      return directories;
     };
 
     const directories = [
+      // Meeting music and videos
       await getDirectory(currentState.currentSongbook.pub), // Background music
       await getDirectory(currentState.currentSongbook.pub, 0), // Songbook videos
-      await getDirectory('nwtsty'), // Study Bible
-      await getDirectory('nwtsty', undefined, 'E'), // Study Bible in English
+      // Study Bible
+      await getDirectory('nwtsty'),
+      // Frequently used during MW meetings
       await getDirectory('it', 0), // Insight
       await getDirectory('lmd', 0), // Love People
       await getDirectory('lmdv', 0), // Love People Videos
-      await getDirectory('jwlb', undefined, 'E'), // JW Library
-      await getDirectory('S-34mp', currentState.currentCongregation, ''), // Public Talk Publication
+      // Public Talk Media Playlist
+      await getDirectory('S-34mp', 'any'),
+      // Magazines, low disk usage
+      await getDirectory('wp', 'any'), // Public Watchtower
+      await getDirectory('w', 'any'), // Study Watchtower
+      await getDirectory('g', 'any'), // Awake
+      // Various publication info, shouldn't be refreshed often
+      await getDirectory('jwlb', undefined),
     ].flat();
 
     return new Set<string>(directories.filter(Boolean));
@@ -374,7 +419,11 @@ export const analyzeCacheFiles = async (): Promise<CacheAnalysis> => {
 
 export const deleteCacheFiles = async (
   type: 'all' | 'smart' = 'smart',
-): Promise<void> => {
+): Promise<{
+  bytesFreed: number;
+  itemsDeleted: number;
+  mode: 'all' | 'smart';
+}> => {
   const { updateLookupPeriod } = await import('src/helpers/date');
   try {
     const analysis = await analyzeCacheFiles();
@@ -386,23 +435,61 @@ export const deleteCacheFiles = async (
 
     // Delete cache files/directories
     try {
-      await Promise.allSettled(filepathsToDelete.map((f) => remove(f)));
-    } catch (e) {
-      errorCatcher(e);
-    }
-
-    // Remove empty directories
-    try {
-      await Promise.allSettled(
-        [...analysis.untouchableDirectories].map((d) => removeEmptyDirs(d)),
+      const results = await Promise.allSettled(
+        filepathsToDelete.map((f) => remove(f)),
       );
+
+      // Calculate deleted count and bytes freed
+      const itemsDeleted = results.filter(
+        (r) => r.status === 'fulfilled',
+      ).length;
+
+      let bytesFreed = 0;
+      if (type === 'smart') {
+        // Sum sizes for successfully deleted directories based on the analysis map
+        for (let i = 0; i < results.length; i++) {
+          if (results[i]?.status === 'fulfilled') {
+            const p = filepathsToDelete[i] as string;
+            if (typeof p === 'string') {
+              const sizeForDir = analysis.unusedParentDirectories[p] || 0;
+              bytesFreed += sizeForDir;
+            }
+          }
+        }
+      } else {
+        // Build a quick lookup for file sizes
+        const sizeByPath = new Map<string, number>();
+        for (const f of analysis.cacheFiles) {
+          sizeByPath.set(f.path, f.size || 0);
+        }
+        for (let i = 0; i < results.length; i++) {
+          if (results[i]?.status === 'fulfilled') {
+            const p = filepathsToDelete[i] as string;
+            if (typeof p === 'string') {
+              bytesFreed += sizeByPath.get(p) || 0;
+            }
+          }
+        }
+      }
+
+      // Remove empty directories
+      try {
+        await Promise.allSettled(
+          [...analysis.untouchableDirectories].map((d) => removeEmptyDirs(d)),
+        );
+      } catch (e) {
+        errorCatcher(e);
+      }
+
+      // Update lookup period if deleting all cache
+      if (type === 'all') {
+        updateLookupPeriod(true);
+      }
+
+      return { bytesFreed, itemsDeleted, mode: type };
     } catch (e) {
       errorCatcher(e);
-    }
-
-    // Update lookup period if deleting all cache
-    if (type === 'all') {
-      updateLookupPeriod(true);
+      throw e;
     }
   } catch (error) {
     errorCatcher(error);

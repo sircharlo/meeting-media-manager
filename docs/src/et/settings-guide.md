@@ -1,485 +1,485 @@
-# Settings Guide {#settings-guide}
+# Sättete juhend {#settings-guide}
 
-This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+See põhjalik juhend selgitab kõiki M³-s saadaval olevaid sätteid, mis on järjestatud kategooriate kaupa. Nende sättete mõistmine aitab sul M³ seadistada nii, et see vastaks täielikult teie koguduse vajadustele.
 
-## Application Configuration {#application-configuration}
+## Rakenduse seadistamine {#application-configuration}
 
-### Display Language {#display-language}
+### Rakenduse keel {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Choose the language for M³'s interface. This is independent of the language used for media downloads.
+Vali M³ kasutatav keel. See ei sõltu meedia allalaadimiseks kasutatavast keelest.
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+**Valikud**: Kõik saadaval olevad rakenduse keeled (inglise, hispaania, prantsuse jne)
 
-**Default**: English
+**Vaikimisi**: inglise keel
 
-### Dark Mode {#dark-mode}
+### Tume režiim {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-Control the appearance theme of M³.
+Kontrolli M³ välimuse teemat.
 
-**Options**:
+**Valikud**:
 
-- Automatically switch based on system preference
-- Always use dark mode
-- Always use light mode
+- Vaheta automaatselt vastavalt süsteemi eelistustele
+- Kasuta alati tumedat režiimi
+- Kasuta alati heledat režiimi
 
-**Default**: Auto
+**Vaikimisi**: Auto
 
-### First Day of Week {#first-day-of-week}
+### Nädala esimene päev {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the calendar view.
+Määra, millist päeva tuleks kalendri vaates pidada nädala esimeseks päevaks.
 
-**Options**: Sunday through Saturday
+**Valikud**: pühapäevast laupäevani
 
-**Default**: Sunday
+**Vaikimisi**: Pühapäev
 
-### Auto-Start at Login {#auto-start-at-login}
+### Automaatne käivitamine sisselogimisel {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-Automatically start M³ when the computer boots up.
+Käivita M³ automaatselt kui arvuti käivitub.
 
-**Default**: `false`
+**Vaikimisi**: `väljas`
 
-## Congregation Meetings {#congregation-meetings}
+## Koguduse koosolekud {#congregation-meetings}
 
-### Congregation Name {#congregation-name}
+### Koguduse nimi {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
-The name of your congregation. This is used for organization and display purposes.
+Koguduse nimi. Seda kasutatakse organiseerimiseks ja kuvamiseks.
 
-**Default**: Empty (must be set during setup)
+**Vaikimisi**: tühi (tuleb määrata seadistamise ajal)
 
-### Meeting Language {#meeting-language}
+### Koosoleku keel {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
-The primary language for media downloads. This should match the language used in your congregation's meetings.
+Meediafailide allalaadimise peamine keel. See peaks vastama koguduse koosolekutel kasutatavale keelele.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Valikud**: Kõik Jehoova tunnistajate ametlikul veebisaidil kättesaadavad keeled
 
-**Default**: English (E)
+**Vaikimisi**: inglise keel (Eng)
 
-### Fallback Language {#fallback-language}
+### Varukeel {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
-A secondary language to use when media isn't available in the primary language.
+Teine keel, mida kasutatakse, kui meedia ei ole kättesaadav esimeses keeles.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Valikud**: Kõik Jehoova tunnistajate ametlikul veebisaidil kättesaadavad keeled
 
-**Default**: None
+**Vaikimisi**: Tühi
 
-### Midweek Meeting Day {#midweek-meeting-day}
+### Nädalasisene koosoleku päev {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-The day of the week when your midweek meeting is held.
+Nädala päev, mil toimub nädalasisene koosolek.
 
-**Options**: Sunday through Saturday
+**Valikud**: pühapäevast laupäevani
 
-**Default**: None (must be set during setup)
+**Vaikimisi**: tühi (tuleb määrata seadistamise ajal)
 
-### Midweek Meeting Time {#midweek-meeting-time}
+### Nädalasisene koosoleku aeg {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
-The start time of your midweek meeting.
+Nädalasisese koosoleku algusaeg.
 
-**Format**: HH:MM (24-hour format)
+**Formaat**: HH:MM (24-tundi)
 
-**Default**: None (must be set during setup)
+**Vaikimisi**: tühi (tuleb määrata seadistamise ajal)
 
-### Weekend Meeting Day {#weekend-meeting-day}
+### Nädalavahetuse koosoleku päev {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-The day of the week when your weekend meeting is held.
+Nädala päev, mil toimub nädalavahetuse koosolek.
 
-**Options**: Sunday through Saturday
+**Valikud**: pühapäevast laupäevani
 
-**Default**: None (must be set during setup)
+**Vaikimisi**: tühi (tuleb määrata seadistamise ajal)
 
-### Weekend Meeting Time {#weekend-meeting-time}
+### Nädalavahetuse koosoleku aeg {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
-The start time of your weekend meeting.
+Nädalavahetuse koosoleku algusaeg.
 
-**Format**: HH:MM (24-hour format)
+**Formaat**: HH:MM (24-tundi)
 
-**Default**: None (must be set during setup)
+**Vaikimisi**: tühi (tuleb määrata seadistamise ajal)
 
-### Circuit Overseer Week {#circuit-overseer-week}
+### Ringkonnaülevaataja külastusnädal {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
-The week of the next circuit overseer's visit.
+Nädal, millal toimub järgmine ringkonnaülevaataja külastus.
 
-**Format**: MM/DD/YYYY
+**Formaat**: MM/DD/YYYY
 
-**Default**: None
+**Vaikimisi**: Tühi
 
-### Memorial Date {#memorial-date}
+### Mälestusõhtu kuupäev {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
-The date of the next Memorial celebration (beta feature).
+Järgmise mälestusõhtu kuupäev (beeta-funktsioon).
 
-**Format**: MM/DD/YYYY
+**Formaat**: MM/DD/YYYY
 
-**Default**: Automatically retrieved periodically
+**Vaikimisi**: laaditakse alla regulaarselt
 
-### Meeting Schedule Changes {#meeting-schedule-changes}
+### Koosoleku aegade muudatused {#meeting-schedule-changes}
 
-These settings allow you to configure temporary changes to your meeting schedule:
+Need seaded võimaldavad seadistada ajutisi muudatusi koosolekute ajakavas:
 
-- **Change Date**: When the change takes effect
-- **One-time Change**: Whether this is a permanent or temporary change
-- **New Midweek Day**: New day for midweek meeting
-- **New Midweek Time**: New time for midweek meeting
-- **New Weekend Day**: New day for weekend meeting
-- **New Weekend Time**: New time for weekend meeting
+- **Muutmise kuupäev**: Millal muutus jõustub
+- **Ühekordne muudatus**: kas tegemist on püsiva või ajutise muudatusega
+- **Uus nädalasisese koosoleku päev**: uus päev nädalasiseseks koosolekuks
+- **Uus nädalasisese koosoleku aeg**: uus aeg nädalasiseseks koosolekuks
+- **Uus nädalavahetuse koosoleku päev**: uus päev nädalavahetuse koosolekuks
+- **Uus nädalavahetuse koosoleku aeg**: uus aeg nädalavahetuse koosolekuks
 
-## Media Retrieval and Playback {#media-retrieval-and-playback}
+## Meediafailide allalaadimine ja esitamine {#media-retrieval-and-playback}
 
-### Metered Connection {#metered-connection}
+### Mõõdetav ühendus {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
-Enable this if you're on a limited data connection to reduce bandwidth usage.
+Luba see, kui kasutad piiratud andmesidet, et vähendada andmekasutust.
 
-**Default**: `false`
+**Vaikimisi**: `väljas`
 
-### Media Display {#media-display-button}
+### Meedia esitamine {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-Enable the media display functionality. This is required to present media on a second monitor.
+Luba meedia esitamise funktsioon. See on vajalik, kui soovid esitada meediafaile teisel monitoril.
 
-**Default**: `false`
+**Vaikimisi**: `väljas`
 
-### Background Music {#settings-guide-background-music}
+### Taustamuusika {#settings-guide-background-music}
 
-#### Enable Music {#enable-music-button}
+#### Luba taustamuusika {#enable-music-button}
 
 <!-- **Setting**: `enableMusicButton` -->
 
-Enable background music functionality.
+Luba taustamuusika esitamise funktsioon.
 
-**Default**: `true`
+**Vaikimisi**: `lubatud`
 
-#### Auto-Start Music {#auto-start-music}
+#### Automaatne taustamuusika {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-Automatically start background music when M³ launches if appropriate.
+Käivita taustamuusika automaatselt, kui M³ käivitub, kui see on asjakohane.
 
-**Default**: `true`
+**Vaikimisi**: `lubatud`
 
-#### Meeting Stop Buffer {#meeting-stop-buffer}
+#### Taustamuusika lõpp {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
-How many seconds before meeting start time to stop background music.
+Mitu sekundit enne koosoleku algust taustamuusika lõppeb.
 
-**Range**: 0-300 seconds
+**Vahemik**: 0–300 sekundit
 
-**Default**: 60 seconds
+**Vaikimisi**: 60 sekundit
 
-#### Music Volume {#music-volume}
+#### Taustamuusika helitugevus {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
-Volume level for background music (1-100%).
+Taustamuusika helitugevus (1–100%).
 
-**Default**: 100%
+**Vaikimisi**: 100%
 
-### Cache Management {#cache-management}
+### Vahemälu haldamine {#cache-management}
 
-#### Enable Extra Cache {#enable-extra-cache}
+#### Lisavahemälu lubamine {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Enable additional caching for better performance.
+Luba lisavahemälu rakenduse paremaks toimimiseks.
 
-**Default**: `false`
+**Vaikimisi**: `väljas`
 
-#### Cache Folder {#cache-folder}
+#### Vahemälu kaust {#cache-folder}
 
 <!-- **Setting**: `cacheFolder` -->
 
-Custom location for storing cached media files.
+Kohandatud asukoht vahemällu salvestatud meediafailide hoidmiseks.
 
-**Default**: System default location
+**Vaikimisi**: Süsteemi vaikimisi valitud asukoht
 
-#### Enable Cache Auto-Clear {#enable-cache-auto-clear}
+#### Luba vahemälu automaatne kustutamine {#enable-cache-auto-clear}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
-Automatically clear old cached files to save disk space.
+Kustuta automaatselt vanad vahemällu salvestatud failid, et säästa kettaruumi.
 
-**Default**: `true`
+**Vaikimisi**: `lubatud`
 
-### Folder Monitoring {#settings-guide-folder-monitoring}
+### Kausta jälgimine {#settings-guide-folder-monitoring}
 
-#### Enable Folder Watcher {#enable-folder-watcher}
+#### Luba kausta jälgimine {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Monitor a folder for new media files and automatically add them to M³.
+Jälgi kausta uute meediafailide lisandumist ja lisa need automaatselt M³-e.
 
-**Default**: `false`
+**Vaikimisi**: `väljas`
 
-#### Folder to Watch {#folder-to-watch}
+#### Jälgitav kaust {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder path to monitor for new media files.
+Kausta tee, mida jälgida uute meediafailide jaoks.
 
-**Default**: Empty
+**Vaikimisi**: Tühi
 
-## Integrations {#integrations}
+## Koostöö {#integrations}
 
-### Zoom Integration {#settings-guide-zoom-integration}
+### Koostöö Zoomiga {#settings-guide-zoom-integration}
 
-#### Enable Zoom {#enable-zoom}
+#### Luba Zoom {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
-Enable Zoom meeting integration features.
+Luba Zoom-koosolekute koostöö funktsioonid.
 
-**Default**: `false`
+**Vaikimisi**: `väljas`
 
-#### Screen Share Shortcut {#screen-share-shortcut}
+#### Ekraani jagamise kiirklahvid {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
-Keyboard shortcut to trigger Zoom screen sharing.
+Klaviatuuri kiirklahv Zoom ekraani jagamise käivitamiseks.
 
-**Default**: None
+**Vaikimisi**: Tühi
 
-### OBS Studio Integration {#settings-guide-obs-integration}
+### Koostöö OBS Studioga {#settings-guide-obs-integration}
 
-#### Enable OBS {#enable-obs}
+#### Luba OBS Studio {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
-Enable OBS Studio integration for automatic scene switching.
+Luba OBS Studio koostöö automaatseks stseenide vahetamiseks.
 
-**Default**: `false`
+**Vaikimisi**: `väljas`
 
-:::warning Important Note
+:::warning Oluline märkus
 
-**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Audio seadistamine vajalik**: OBS Studio koostöö toetab ainult ekraani jagamist. M³ meediafailide heli **ei edastata automaatselt** Zoom osalejatele, kui kasutatakse OBS Studio. Sul on vaja seadistada Zoom'i originaalheli seaded või kasuta funktsiooni „Jaga arvuti heli”, tagamaks, et koosoleku osalejad kuuleksid meedia heli. Täpsed heliseadete juhised leiate [kasutusjuhendist](/user-guide#audio-configuration).
 
-**Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
+**Märkus**: Zoom-koostöö kasutab Zoom-i enda ekraani jagamise funktsiooni, mis töötleb heli sujuvamalt kui OBS Studio koostöö.
 
 :::
 
-#### OBS Port {#obs-port}
+#### OBS Studio port {#obs-port}
 
 <!-- **Setting**: `obsPort` -->
 
-The port number for connecting to OBS Studio WebSocket.
+OBS Studio WebSocketiga ühenduse loomiseks kasutatav pordi number.
 
-**Default**: None
+**Vaikimisi**: Tühi
 
-#### OBS Password {#obs-password}
+#### OBS Studio salasõna {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
-The password for OBS Studio WebSocket connection.
+OBS Studio WebSocket-ühenduse salasõna.
 
-**Default**: None
+**Vaikimisi**: Tühi
 
-#### OBS Scenes {#obs-scenes}
+#### OBS Studio stseenid {#obs-scenes}
 
-Configure which OBS scenes to use for different purposes:
+Määra, milliseid OBS-stseene kasutada erinevateks eesmärkideks:
 
-- **Camera Scene**: Scene showing the camera/lectern
-- **Media Scene**: Scene for displaying media
-- **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
+- **Kaamera stseen**: Stseen, milles on näha kaamera/kõnepult
+- **Meedia stseen**: Meedia kuvamiseks mõeldud stseen
+- **Pildistseen**: piltide kuvamiseks mõeldud stseen (näiteks Pilt-Pildis-stseen, mis näitab nii meediat kui ka kõnelejat)
 
-#### OBS Advanced Options {#obs-advanced-options}
+#### OBS Studio lisasätted {#obs-advanced-options}
 
-- **Postpone Images**: Delay sharing images to OBS until manually triggered
-- **Quick Toggle**: Enable quick on/off toggle for OBS integration
-- **Switch Scene After Media**: Automatically return to previous scene after media
-- **Remember Previous Scene**: Remember and restore the previous scene
-- **Hide Icons**: Hide OBS-related icons in the interface
+- **Pildid edasi lükkamine**: lükka piltide jagamine OBS-iga edasi, kuni see käsitsi käivitatakse
+- **Kiirlüliti**: Lülita sisse OBS-i koostöö kiirelt sisse-/välja nupu abil
+- **Vaheta stseeni pärast meediat**: naase automaatselt eelmisele stseenile pärast meediat
+- **Eelmise stseeni meeldejätmine**: Eelmise stseeni meeldejätmine ja taastamine
+- **Peida ikoonid**: Peida OBS-iga seotud ikoonid kasutajaliidesest
 
-:::warning Important Note
+:::warning Oluline märkus
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Audio seadistamine vajalik**: OBS Studio koostöö toetab ainult meedia ja stseenide vahetamist. M³ meediafailide heli **ei edastata automaatselt** Zoomi või OBS Studiosse. Videovoog töötab nagu virtuaalne kaamera ilma helita, täpselt nagu veebikaamera. Sul on vaja seadistada Zoom'i originaalheli seaded või kasuta funktsiooni „Jaga arvuti heli”, tagamaks, et koosoleku osalejad kuuleksid meedia heli. Täpsed heliseadete juhised leiate [kasutusjuhendist](/user-guide#audio-configuration).
 
-**Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
+**Alternatiiv**: Kaaluge Zoom-koostöö kasutamist, kuna see kasutab Zoom-i enda ekraani jagamise funktsiooni, mis töötab heliga sujuvamalt.
 
 :::
 
-## Advanced Settings {#advanced-settings}
+## Lisasätted {#advanced-settings}
 
-### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
+### Kiirklahvid {#settings-guide-keyboard-shortcuts}
 
-#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
+#### Luba kiirklahvid {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-Enable customizable keyboard shortcuts for media control.
+Luba meedia juhtimiseks kohandatavad kiirklahvid.
 
-**Default**: `false`
+**Vaikimisi**: `väljas`
 
-#### Media Control Shortcuts {#media-control-shortcuts}
+#### Meedia esitamise kiirklahvid {#media-control-shortcuts}
 
-Configure shortcuts for media playback:
+Meedia esitamise kiirklahvide seadistamine:
 
-- **Media Window**: Open/close media window
-- **Previous Media**: Go to previous media item
-- **Next Media**: Go to next media item
-- **Pause/Resume**: Pause or resume media playback
-- **Stop Media**: Stop media playback
-- **Music Toggle**: Toggle background music
+- **Meedia aken**: ava/sulge meedia aken
+- **Eelmine meedia**: Mine eelmise meediaelemendi juurde
+- **Järgmine meedia**: Mine järgmise meediaelemendi juurde
+- **Paus/Jätka**: Meedia esitamise paus või jätkamine
+- **Stop Media**: Peata meedia taasesitus
+- **Taustamuusika lüliti**: Lülita taustamuusika sisse või välja
 
-### Media Display {#media-display}
+### Meedia ekraan {#media-display}
 
-#### Hide Media Logo {#hide-media-logo}
+#### Peida meedia logo {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
-Hide the logo in the media window.
+Peida logo meediaaknas.
 
-**Default**: `false`
+**Vaikimisi**: `väljas`
 
-#### Maximum Resolution {#maximum-resolution}
+#### Maksimaalne resolutsioon {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
-Maximum resolution for downloaded media files.
+Allalaaditud meediafailide maksimaalne resolutsioon.
 
-**Options**: 240p, 360p, 480p, 720p
+**Valikud**: 240p, 360p, 480p, 720p
 
-**Default**: 720p
+**Vaikimisi**: 720p
 
-#### Include Printed Media {#include-printed-media}
+#### Kaasa trükitud meediafialid {#include-printed-media}
 
 <!-- **Setting**: `includePrinted` -->
 
-Include media from the printed publications in media downloads.
+Kaasa trükitud väljaannete meedia allalaadimiste hulka.
 
-**Default**: `true`
+**Vaikimisi**: `lubatud`
 
-#### Exclude Footnotes {#exclude-footnotes}
+#### Ära kaasa allmärkusi {#exclude-footnotes}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
-Exclude footnote images from media downloads when possible.
+Võimaluse korral jäta allmärkuste pildid meedia allalaadimistest välja.
 
-**Default**: `false`
+**Vaikimisi**: `väljas`
 
-#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
+#### Ära kaasa meediat "Õpeta armastusega" brošüürist {#exclude-theocratic-ministry-school}
 
 <!-- **Setting**: `excludeTh` -->
 
-Exclude media from the Teaching (th) brochure from media downloads.
+Ära kaasa meediafaile "Õpeta armastusega" (th) brošüürist allalaadimiste hulka.
 
-**Default**: `true`
+**Vaikimisi**: `lubatud`
 
-### Subtitles {#subtitles}
+### Subtiitrid {#subtitles}
 
-#### Enable Subtitles {#enable-subtitles}
+#### Luba subtiitrid {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
-Enable subtitle support for media playback.
+Luba subtiitrid meedia taasesitamisel.
 
-**Default**: `false`
+**Vaikimisi**: `väljas`
 
-#### Subtitle Language {#subtitle-language}
+#### Subtiitrite keel {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
-Language for subtitles (can be different from media language).
+Subtiitrite keel (võib erineda meedia keelest).
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Valikud**: Kõik Jehoova tunnistajate ametlikul veebisaidil kättesaadavad keeled
 
-**Default**: None
+**Vaikimisi**: Tühi
 
 ### Media Export {#settings-guide-media-export}
 
-#### Enable Media Auto-Export {#enable-media-auto-export}
+#### Luba meedia automaatne eksportimine {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-Automatically export media files to a specified folder.
+Ekspordi meediafailid automaatselt määratud kausta.
 
-**Default**: `false`
+**Vaikimisi**: `väljas`
 
-#### Media Export Folder {#media-export-folder}
+#### Meedia ekspordi kaust {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
-Folder path where media files will be automatically exported.
+Kaust, kuhu meediumifailid automaatselt eksporditakse.
 
-**Default**: Empty
+**Vaikimisi**: Tühi
 
-#### Convert Files to MP4 {#convert-files-to-mp4}
+#### Salvesta failid MP4-vormingus {#convert-files-to-mp4}
 
-**Setting**: `convertFilesToMp4`
+**Sätted**: `convertFilesToMp4`
 
-Convert exported media files to MP4 format for better compatibility.
+Salvesta eksporditud meediafailid MP4-vormingusse, et saavutada parem ühilduvus.
 
-**Default**: `false`
+**Vaikimisi**: `väljas`
 
-### Danger Zone {#danger-zone}
+### Ohutsoon {#danger-zone}
 
-:::warning Warning
+:::warning Hoiatus
 
-These settings should only be changed if you understand their implications.
+Neid seadeid tuleks muuta ainult juhul, kui mõistad nende mõju.
 
 :::
 
-#### Disable Media Fetching {#disable-media-fetching}
+#### Meedia allalaadimise keelamine {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
+Lülita automaatne meedia allalaadimine täielikult välja. Kasuta seda ainult profiilide puhul, mida kasutatakse erisündmusteks või muudeks eriseadistusteks.
 
-**Default**: `false`
+**Vaikimisi**: `väljas`
 
-## Tips for Optimal Configuration {#configuration-tips}
+## Nõuanded optimaalseks seadistamiseks {#configuration-tips}
 
-### For New Users {#new-users}
+### Uutele kasutajatele {#new-users}
 
-1. Start with the setup wizard to configure basic settings
-2. Enable "Media Display Button" to access presentation features
-3. Configure your meeting schedule accurately
-4. Set up OBS integration if you use hybrid meetings
+1. Alusta määramiste abil, et seadistada põhilised sätted
+2. Lülita sisse „Meedia kuvamise nupp“, et pääseda juurde nende esitluse funktsioonidele
+3. Seadista koosolekute ajakava
+4. Kui sa kasutad hübriidkoosolekuid, siis seadista OBS Studio koostöö
 
-### For Advanced Users {#advanced-users}
+### Edasijõudnud kasutajatele {#advanced-users}
 
-1. Use folder monitoring to sync media from cloud storage
-2. Enable media auto-export for backup purposes
-3. Configure keyboard shortcuts for efficient operation
-4. Configure Zoom integration for automatic screen sharing
+1. Kasuta kausta jälgimist, et sünkroonida meediat pilvesalvestusest
+2. Luba meedia automaatne eksportimine varundamise eesmärgil
+3. Seadista kiirklahvid tõhusaks tööks
+4. Zoom-koostöö seadistamine automaatseks ekraani jagamiseks
 
-### Performance Optimization {#performance-optimization}
+### Jõudluse parandamise nipid {#performance-optimization}
 
-1. Enable extra cache for better performance
-2. Use appropriate maximum resolution for your needs
-3. Configure cache auto-clear to manage disk space
-4. Consider metered connection setting if on limited bandwidth
+1. Luba lisavahemälu rakenduse paremaks toimimiseks
+2. Kasuta oma vajadustele vastavat maksimaalset resolutsiooni
+3. Seadista vahemälu automaatne tühjendamine, et hallata kettaruumi
+4. Kui andmemaht on piiratud, kaalu mõõdetud ühenduse seadistamist
 
-### Troubleshooting {#settings-guide-troubleshooting}
+### Probleemide lahendamine {#settings-guide-troubleshooting}
 
-- If media isn't downloading, check your meeting schedule settings
-- If OBS integration isn't working, verify port and password settings
-- If performance is slow, try enabling extra cache or reducing resolution
-- If you're having language issues, check both interface and media language settings
-- If Zoom participants can't hear media audio, configure Zoom's Original Audio settings or use "Share Computer Sound"
-- **Tip**: Consider using Zoom integration instead of OBS Studio for simpler audio handling
+- Kui meedia ei lae alla, kontrolli koosoleku ajakava seadeid
+- Kui OBS Studio koostöö ei tööta, kontrolli porti ja parooli seadeid
+- Kui programmi jõudlus on aeglane, proovi lisada täiendavat vahemälu või vähendada resolutsiooni
+- Kui on keelega probleeme, kontrolli nii kasutajaliidese kui ka meedia keelesätteid
+- Kui Zoom osalejad ei kuule meediaheli, vaata üle Zoom'i originaalheli seaded või kasutage funktsiooni „Jaga arvuti heli”
+- **Nipp**: Kaalu OBS Studio asemel Zoom-i koostöö kasutamist, et heliga oleks lihtsam töötada

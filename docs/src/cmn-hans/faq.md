@@ -1,10 +1,10 @@
 # 常见问题 {#frequently-asked-questions}
 
-## General Questions {#general-questions}
+## 常规问题 {#general-questions}
 
 ### :earth_americas: 此应用是否依赖外部站点、源或“管理员”下载出版物和聚会媒体或其他文档？ {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies}
 
-**不。**此应用程序的运转方式酷似JW Library应用。 它直接从耶和华见证人的官方网站及其内容提供网络下载出版物、媒体和其他内容。 应用程序自动决定需要下载的内容以及先前下载的内容不再是最新的，应该重新下载。
+\*\*不。\*\*此应用程序的运转方式酷似JW Library应用。 它直接从耶和华见证人的官方网站及其内容提供网络下载出版物、媒体和其他内容。 应用程序自动决定需要下载的内容以及先前下载的内容不再是最新的，应该重新下载。
 
 :::info 备注
 
@@ -14,7 +14,7 @@
 
 ### :thinking: 此应用是否违反了耶和华见证人官方网站的使用条款？ {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use}
 
-**不。**[耶和华见证人官方网站使用条款](https://www.jw.org/finder?docid=1011511&prefer=content)明确允许我们正在做的用法。 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）：
+\*\*不。\*\*[耶和华见证人官方网站使用条款](https://www.jw.org/finder?docid=1011511&prefer=content)明确允许我们正在做的用法。 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）：
 
 > 你不得：
 >
@@ -22,21 +22,21 @@
 
 ### :question: What operating systems does M³ support? {#operating-systems}
 
-M³ supports Windows, macOS, and Linux:
+M³ 支持Windows，macOS和Linux：
 
 - **Windows**：Windows 10及更高版本（提供64位和32位版本）
 - **macOS**：macOS 10.15 (Catalina)及更高版本（支持Intel和Apple Silicon）
 - **Linux**：大多数现代Linux发行版（AppImage格式）
 
-### :globe_with_meridians: Does M³ work in my language? {#language-support}
+### :globe_with_meridians:  M³支持我的语言吗？ {#language-support}
 
 **是的！** M³提供全面的多语言支持：
 
-- **Media Languages**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
-- **Interface Languages**: Use M³'s interface in many different languages
-- **Independent Settings**: You can use the interface in one language while downloading media in another
+- **媒体语言**：下载耶和华见证人的官方网站上数百种语言的任何媒体
+- **界面语言**：用多种不同语言使用 M³ 的接口
+- **独立设置**：您可以在下载另一种媒体时使用一种语言的界面
 
-## Installation and Setup {#installation-setup}
+## 安装和设置 {#installation-setup}
 
 ### :computer: How do I install M³? {#installation}
 

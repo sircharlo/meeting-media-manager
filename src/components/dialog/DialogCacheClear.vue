@@ -56,8 +56,10 @@
 import type { CacheAnalysis } from 'src/types';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import prettyBytes from 'pretty-bytes';
 import { deleteCacheFiles } from 'src/helpers/cleanup';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -102,9 +104,31 @@ const handleDeleteCacheFiles = async (type: '' | 'all' | 'smart') => {
 
   try {
     deletingCacheFiles.value = true;
-    await deleteCacheFiles(type);
+    const { bytesFreed, itemsDeleted, mode } = await deleteCacheFiles(type);
     dialogValue.value = false;
     emit('hide');
+
+    const sizeStr = prettyBytes(bytesFreed || 0);
+    if (!itemsDeleted) {
+      createTemporaryNotification({
+        icon: 'mmm-info',
+        message:
+          mode === 'all'
+            ? t('no-cache-items-found-to-clear')
+            : t('no-unused-cache-items-found-to-clear'),
+        type: 'info',
+      });
+    } else {
+      createTemporaryNotification({
+        icon: 'mmm-shimmer',
+        message: t('cleared-item-s-from-cache', {
+          itemsDeleted,
+          sizeStr,
+        }),
+        timeout: 5000,
+        type: 'positive',
+      });
+    }
   } catch (error) {
     errorCatcher(error);
     deletingCacheFiles.value = false;

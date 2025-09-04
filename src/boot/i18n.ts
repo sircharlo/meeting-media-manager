@@ -5,16 +5,15 @@ import { createI18n } from 'vue-i18n';
 export type MessageLanguages = keyof typeof messages;
 export type MessageSchema = (typeof messages)['en'];
 
-let i18n: ReturnType<typeof createI18n> = createI18n({});
+const i18n: ReturnType<typeof createI18n> = createI18n({
+  allowComposition: true,
+  fallbackLocale: 'en',
+  legacy: false,
+  locale: 'en',
+  messages,
+});
 
 export default defineBoot(({ app }) => {
-  i18n = createI18n({
-    allowComposition: true,
-    fallbackLocale: 'en',
-    legacy: false,
-    locale: 'en',
-    messages,
-  });
   app.use(i18n);
 });
 

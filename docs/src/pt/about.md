@@ -4,19 +4,19 @@
 
 ## O que é esse aplicativo? {#what-is-this-app}
 
-**Meeting Media Manager**, or **M³** for short, is a comprehensive cross-platform application for Windows, macOS and Linux that automatically downloads, organizes, and presents pictures and videos for congregation meetings of Jehovah's Witnesses. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
+**Meeting Media Manager**, ou **M³** para abreviar, é um aplicativo completo e multiplataforma para Windows, macOS e Linux que baixa, organiza e apresenta fotos e vídeos para as reuniões congregacionais das Testemunhas de Jeová. Suporta qualquer idioma disponível no site oficial das Testemunhas de Jeová e oferece ferramentas poderosas para gerenciar mídias durante reuniões híbridas e presenciais.
 
-M³ features support for managing regular and custom meeting media, multiple congregations and/or groups using the same computer account, and advanced presentation capabilities that make media sharing effortless.
+O M³ oferece suporte para gerenciar mídias de reuniões normais e personalizadas, múltiplas congregações e/ou grupos usando a mesma conta do computador, além de recursos avançados de apresentação que tornam fácil o compartilhamento de.
 
 :::info Nota
 
-This app used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed to Meeting Media Manager in May 2022.
+Este aplicativo era conhecido como JWMMF (JW Meeting Media Fetcher), mas foi renomeado para Meeting Media Manager em maio de 2022.
 
 :::
 
 ## Por que escolher o M³? {#why-choose-m3}
 
-O M³ é a ferramenta mais completa para gerenciar as mídias das reuniões, oferecendo uma experiência suave, confiável e com muitos recursos em diversas plataformas. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
+O M³ é a ferramenta mais completa para gerenciar as mídias das reuniões, oferecendo uma experiência suave, confiável e com muitos recursos em diversas plataformas. Ele foi desenvolvido especificamente para as necessidades das reuniões de congregação e oferece tudo o que é necessário para uma apresentação de mídia eficaz.
 
 ### Principais benefícios {#key-benefits}
 
@@ -24,44 +24,44 @@ O M³ é a ferramenta mais completa para gerenciar as mídias das reuniões, ofe
 
 - **Suporte para várias congregações**: Gerencie facilmente configurações para diversas congregações ou grupos dentro de um único aplicativo.
 
-- **Advanced features**: Easily add extra media, import custom content, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Recursos avançados**: Adicione facilmente mídias extras, importe conteúdos personalizados e compartilhe automaticamente o que acontece no Salão do Reino com os participantes no Zoom.
 
 - **Desempenho otimizado em várias plataformas**: Desfrute de uma experiência suave e responsiva no Windows, macOS e Linux, mesmo em sistemas antigos ou computadores com recursos limitados.
 
 - **Confiável e estável**: Feito para funcionar bem quando você mais precisa. Encontrou um problema? Reporte-o e ele será tratado rapidamente.
 
-- **Advanced presentation tools**: Advanced media controls, zoom/pan capabilities, custom timing, and seamless Zoom and OBS Studio integration.
+- **Ferramentas avançadas de apresentação**: Controles avançados de mídia, recursos de zoom e movimentação, temporização personalizada e integração perfeita com Zoom e OBS Studio.
 
 ## O que o M³ faz? {#what-can-m3-do}
 
-M³ is a comprehensive media management solution that allows you to easily and automatically download, synchronize, share, and present all meeting media. Here's what makes M³ powerful:
+O M³ é uma solução completa de gerenciamento de mídias que permite baixar, sincronizar, compartilhar e apresentar todas as mídias das reuniões de forma fácil e automática. Veja o que torna o M³ poderoso:
 
-### Core Media Management {#core-media-management}
+### Gerenciamento Central de Mídia {#core-media-management}
 
-- **Automatic media downloads**: Automatically fetches and downloads all media needed for upcoming meetings
-- **Multi-language support**: Download media in any of hundreds of available languages
-- **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
-- **Media organization**: Automatically organizes media by date and meeting section
+- **Download automático de mídias**: Baixa automaticamente todas as mídias necessárias para as próximas reuniões
+- **Suporte a múltiplos idiomas**: Baixe mídias em qualquer um dos centenas de idiomas disponíveis
+- **Cache inteligente**: Sistema de cache inteligente que mantém as mídias organizadas e atualizadas
+- **Organização de mídias**: Organiza automaticamente as mídias por data e seção da reunião
 
-### Media Presentation Features {#about-presentation-features}
+### Recursos de Apresentação de Mídia {#about-presentation-features}
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
+Para reuniões congregacionais **híbridas** ou **presenciais**, o modo integrado de apresentação de mídia inclui:
 
-- **Advanced media controls**: Media thumbnails with zoom and pan capabilities
-- **Custom timing**: Set custom start and end times for media playback
-- **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
-- **Multi-monitor support**: Automatic external monitor detection and management
-- **Clean presentation**: Distraction-free media presentation interface
+- **Controles avançados de mídia**: Miniaturas de mídia com recursos de zoom e movimentação
+- **Temporização personalizada**: Defina pontos de início e fim específicos para a reprodução da mídia
+- **Controles de reprodução**: Botões de reproduzir/pausar/parar fáceis de usar, com atalhos de teclado
+- **Suporte a múltiplos monitores**: Detecção e gerenciamento automático de monitores externos
+- **Apresentação limpa**: Interface de apresentação de mídia sem distrações
 
-### Background Music {#about-background-music}
+### Música de Fundo {#about-background-music}
 
-- **Intelligent playback**: Background music that automatically stops before meetings start
-- **One-click restart**: Resume background music with a single click after meetings
-- **Volume control**: Adjustable background music volume with fade-out capabilities
+- **Reprodução inteligente**: Música de fundo que para automaticamente antes do início das reuniões
+- **Reinício com um clique**: Retoma a música de fundo com um único clique após as reuniões
+- **Controle de volume**: Volume da música de fundo ajustável, com recurso de fade-out
 
-### Zoom Integration {#about-zoom-integration}
+### Integração com Zoom {#about-zoom-integration}
 
-- **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
+- **Compartilhamento de tela automático**: Inicie e interrompa o compartilhamento de tela no Zoom automaticamente ao reproduzir ou parar a mídia
 
 ### OBS Studio Integration {#about-obs-integration}
 

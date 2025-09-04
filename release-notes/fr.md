@@ -4,6 +4,13 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
+## v25.9.0
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
+- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
+
 ## v25.8.3
 
 ### ✨ Nouvelles fonctionnalités
@@ -98,22 +105,22 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 ### 🛠️ Améliorations et ajustements
 
 - ⚡ **Améliorer les performances et l'utilisation du CPU** : Optimiser les performances pour réduire l'utilisation du CPU et améliorer l'efficacité.
-- 🔄 **Fix Synchronization & Crash Issues**: Resolve various sync-related and stability issues to improve reliability.
-- 📜 **Show Release Notes for Existing Congregations**: Ensure release notes are only displayed for congregations that are already loaded.
+- 🔄 **Corriger les problèmes de synchronisation et de plantage** : résoudre divers problèmes liés à la synchronisation et à la stabilité pour améliorer la fiabilité.
+- 📜 **Afficher les notes de version pour les assemblées locales existantes** : S'assurer que les notes de publication ne sont affichées que pour les congrégations déjà chargées.
 
 ## 25.3.0
 
 ### ✨ Nouvelles fonctionnalités
 
-- 🎵 **Play Background Music with Videos**: Allow background music to continue playing while videos are being viewed.
-- 🎥 **Camera Feed for Sign Language Media**: Add the ability to display a camera feed on the media window specifically for sign language users.
-- 📅 **Automatic Memorial Date & Background**: Automatically detect and set the Memorial date and prepare the Memorial background image.
-- 📜 **Show Release Notes In-App**: Display release notes directly in the application so users can easily review changes after an update.
+- 🎵 **Jouer de la musique de fond avec des vidéos** : Permettre à la musique de fond de continuer à jouer pendant que des vidéos sont visionnées.
+- 🎥 **Feed de la caméra pour les médias en langue des signes** : Ajoute la possibilité d'afficher un flux de caméra sur la fenêtre multimédia spécifiquement pour les réunions en langue des signes.
+- 📅 **Date et fond pour mémorial** : Détecte et définit automatiquement la date du mémorial et prépare l'image de fond pour le mémorial.
+- 📜 **Afficher les notes de version dans l'application** : afficher les notes de version directement dans l'application afin que les utilisateurs puissent facilement revoir les changements après une mise à jour.
 
 ### 🛠️ Améliorations et ajustements
 
-- ⚡ **Optimize Smart Cache Clearing**: Improve the smart cache-clearing mechanism for better performance and efficiency.
-- 📂 **Correct Circuit Overseer Media Placement**: Ensure Circuit Overseer media is placed in the correct section.
-- 📅 **Exclude Regular Meeting Media for Memorial**: Prevent fetching standard meeting media for the Memorial to prevent errors.
-- 📅 **Hide Regular Meeting Sections on Memorial**: Remove unnecessary meeting sections during the Memorial event for a cleaner layout.
-- 📖 **Fix Sign Language Bible Video Downloads**: Correctly download Sign Language Bible chapter videos from JWL playlists.
+- ⚡ **Optimiser le nettoyage intelligent du cache** : Améliore le mécanisme intelligent de nettoyage du cache pour une meilleure performance et efficacité.
+- 📂 **Visite du responsable** : S'assurer que les médias pour la visite du responsable de circonscription sont placés dans la bonne section.
+- 📅 **Exclure les médias de réunions régulières pour le mémorial** : Empêcher la tentative de récupération des médias de réunions normales pendant la semaine du mémorial pour éviter des erreurs.
+- 📅 **Cacher les sections de réunions régulières pendant le mémorial** : cacher les sections de réunions non utilisées pendant le mémorial pour une mise en page plus propre.
+- 📖 **Correction des téléchargements de la Bible en langue des signes** : Télécharger correctement les vidéos de la Bible en langue des signes à partir de listes de lecture.

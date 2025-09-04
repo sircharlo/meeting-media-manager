@@ -4,6 +4,13 @@
 
 För den fullständiga listan över ändringar mellan versioner, se vår CHANGELOG.md-fil på GitHub.
 
+## v25.9.0
+
+### ✨ Nya funktioner
+
+- ✨ **Ladda ner Popup förbättringar**: Tillagt uppdateringsknapp och nedladdningsgruppering i datumordning i nedladdnings-popupen.
+- ✨ **Bevakad mediaordningsminne**: Tillagd sektion ordningsminne för bevakade medieobjekt.
+
 ## v25.8.3
 
 ### ✨ Nya funktioner

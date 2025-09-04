@@ -72,7 +72,7 @@ yarn test:unit
 
 ### Build Tools
 
-This project is built with [Quasar](https://quasar.dev/). Documentation about the directory structure can be found [here](https://quasar.dev/quasar-cli-webpack/directory-structure).
+This project is built with [Quasar](https://quasar.dev/). Documentation about the directory structure can be found in the [Quasar directory structure guide](https://quasar.dev/quasar-cli-webpack/directory-structure).
 
 This project uses [Electron.js](https://www.electronjs.org/) to create the desktop application. The Electron.js framework is a cross-platform framework for building native applications.
 
@@ -175,7 +175,7 @@ To disable a language, you need to perform the same steps, but in reverse.
 
 ### Contribute to the documentation site
 
-The documentation website lives in the `docs` folder. It is built with [VitePress](https://vitepress.dev/). Information about the directory structure can be found [here](https://vitepress.dev/guide/getting-started#file-structure). To work on the documentation site, you can use the following commands:
+The documentation website lives in the `docs` folder. It is built with [VitePress](https://vitepress.dev/). Information about the directory structure can be found in the [VitePress file structure guide](https://vitepress.dev/guide/getting-started#file-structure). To work on the documentation site, you can use the following commands:
 
 ```bash
 # Install dependencies

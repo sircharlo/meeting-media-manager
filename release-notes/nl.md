@@ -4,6 +4,13 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## v25.9.0
+
+### ✨ Nieuwe functies
+
+- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
+- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
+
 ## v25.8.3
 
 ### ✨ Nieuwe functies

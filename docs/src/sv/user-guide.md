@@ -189,7 +189,7 @@ När du använder M³ med OBS Studio för hybridmöten (På plats + Zoom), måst
 **Före varje möte måste du aktivera Original Audio i Zoom:**
 
 1. **Öppna Zoom** och gå till Inställningar
-2. **Navigera till Audio** → **Avancerat**
+2. **Navigera till Audio** → **Avancerat**For
 3. **Aktivera "Visa mötesalternativ för att "Aktivera Original Sound""**
 4. **Bocka i "Inaktivera ekodämpning"** (första kryssrutan)
 5. **Bocka i "Inaktivera brusdämpning"** (andra kryssrutan)

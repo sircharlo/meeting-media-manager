@@ -146,7 +146,6 @@ const { post: postWebStream } = useBroadcastChannel<boolean, boolean>({
 watchImmediate(
   () => getCurrentMediaWindowVariables.value,
   () => {
-    // Push current web streaming state when requested
     postWebStream(streaming.value);
   },
 );

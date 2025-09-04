@@ -42,12 +42,7 @@
       {{ t('edit-sections') }}
     </q-tooltip>
   </q-btn>
-  <q-btn
-    v-if="selectedDate"
-    color="white-transparent"
-    unelevated
-    @click="section = undefined"
-  >
+  <q-btn v-if="selectedDate" color="white-transparent" unelevated>
     <q-icon
       :class="{ 'q-mr-sm': $q.screen.gt.xs }"
       name="mmm-add-media"
@@ -308,7 +303,7 @@
 import type { QMenu } from 'quasar';
 import type { MediaItem, MediaSectionIdentifier } from 'src/types';
 
-import { useEventListener } from '@vueuse/core';
+import { useEventListener, watchImmediate } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import DialogAudioBible from 'components/dialog/DialogAudioBible.vue';
 import DialogCustomSectionEdit from 'components/dialog/DialogCustomSectionEdit.vue';
@@ -321,6 +316,7 @@ import DialogStudyBible from 'components/dialog/DialogStudyBible.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
+import { isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   datesAreSame,
@@ -836,4 +832,15 @@ const canEditCustomSections = computed(() => {
 const hasMultipleSections = computed(() => {
   return (selectedDateObject.value?.mediaSections?.length || 0) > 1;
 });
+
+watchImmediate(
+  () => selectedDateObject.value?.date,
+  (newDate) => {
+    if (isWeMeetingDay(newDate)) {
+      section.value = 'pt';
+    } else {
+      section.value = undefined;
+    }
+  },
+);
 </script>

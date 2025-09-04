@@ -4,12 +4,19 @@
 
 关于不同版本之间更改的完整清单，请参阅我们在 GitHub 上的 CHANGELOG.md文件。
 
+## v25.9.0
+
+### ✨ 新功能
+
+- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
+- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
+
 ## v25.8.3
 
 ### ✨ 新功能
 
-- ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
-- ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
+- ✨ **媒体窗口淡入淡出**: 添加了一个新的高级设置，使媒体窗口淡入淡出, 提供更安全的视觉过渡.
+- ✨ **图像持续时间控制和进度跟踪**：为重复的章节增加图像持续时间控制和进度跟踪能力。
 
 ## v25.8.1
 

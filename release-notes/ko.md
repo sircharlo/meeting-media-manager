@@ -4,6 +4,13 @@
 
 버전별 전체 변경 사항은, GitHub 의 CHANGELOG.md 파일을 확인해주세요.
 
+## v25.9.0
+
+### ✨ 새로운 기능
+
+- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
+- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
+
 ## v25.8.3
 
 ### ✨ 새로운 기능

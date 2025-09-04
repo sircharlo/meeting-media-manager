@@ -81,6 +81,7 @@ import { getOrCreateMediaSection } from 'src/helpers/media-sections';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
+import { useAppSettingsStore } from 'src/stores/app-settings';
 import { formatDate, getSpecificWeekday, isInPast } from 'src/utils/date';
 import { kebabToCamelCase } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
@@ -131,6 +132,9 @@ const congregationSettings = useCongregationSettingsStore();
 //   saveSettingsStoreToFile('congregations', state);
 // });
 
+const appSettings = useAppSettingsStore();
+const { displayCameraId } = storeToRefs(appSettings);
+
 const currentState = useCurrentStateStore();
 const {
   currentCongregation,
@@ -160,12 +164,13 @@ const {
   onLog,
   onShortcut,
   onWatchFolderUpdate,
+  path,
   pathToFileURL,
   removeListeners,
   setAutoStartAtLogin,
   setElectronUrlVariables,
 } = window.electronApi;
-
+const { basename, dirname } = path;
 updateMemorials(online.value);
 updateJwLanguages(online.value);
 
@@ -200,8 +205,12 @@ const delayedCacheClear = () => {
 
     console.log('✅ No active downloads, proceeding with cache clear...');
     deleteCacheFiles('smart')
-      .then(() => {
-        console.log('✅ Cache files cleared successfully');
+      .then(({ itemsDeleted }) => {
+        if (!itemsDeleted) {
+          console.log('ℹ️ No cache items needed clearing');
+        } else {
+          console.log(`✅ Cleared ${itemsDeleted} cache item(s)`);
+        }
         console.groupEnd();
       })
       .catch((error) => {
@@ -344,6 +353,30 @@ watchDebounced(
     }
   },
   { debounce: 500 },
+);
+
+const { post: postCameraStream } = useBroadcastChannel<
+  null | string,
+  null | string
+>({
+  name: 'camera-stream',
+});
+
+watch(displayCameraId, (newCameraId) => {
+  if (currentState.mediaIsPlaying) return;
+  postCameraStream(newCameraId);
+  if (!newCameraId) {
+    currentState.mediaPlaying.url = '';
+  }
+});
+
+watch(
+  () => currentState?.currentLangObject?.isSignLanguage,
+  (newIsSignLanguage) => {
+    if (!newIsSignLanguage) {
+      displayCameraId.value = null;
+    }
+  },
 );
 
 watch(
@@ -532,6 +565,7 @@ const updateWatchFolderRef = async ({
     } else if (event === 'add') {
       if (!changedPath) return;
       const watchedItems = (await watchedItemMapper(day, changedPath)) || [];
+      console.log('🔍 [MainLayout] watchedItems:', watchedItems);
 
       for (const watchedItem of watchedItems) {
         // Check if item already exists in any section
@@ -545,8 +579,6 @@ const updateWatchFolderRef = async ({
         });
 
         if (itemExists) continue;
-
-        watchedItem.sortOrderOriginal = 'watched-' + watchedItem.title;
 
         // Determine which section to add the item to
         const targetSectionId = watchedItem.originalSection || 'imported-media';
@@ -573,23 +605,51 @@ const updateWatchFolderRef = async ({
           // Otherwise, insert at the correct index
           targetSection.items.splice(insertIndex, 0, watchedItem);
         }
+
+        targetSection.items.sort((a, b) => {
+          const aOrder =
+            typeof a.sortOrderOriginal === 'number' ? a.sortOrderOriginal : 0;
+          const bOrder =
+            typeof b.sortOrderOriginal === 'number' ? b.sortOrderOriginal : 0;
+          return aOrder - bOrder;
+        });
+
+        console.log(
+          '🔍 [MainLayout] targetSection.items:',
+          targetSection.items,
+        );
       }
     } else if (event === 'unlink') {
       if (!changedPath) return;
       const targetUrl = pathToFileURL(changedPath);
 
       // Remove watched items with matching fileUrl from all sections
-      dayObj.mediaSections.forEach((section) => {
-        if (!section.items) return;
+      for (const section of dayObj.mediaSections) {
+        if (!section.items) continue;
         for (let i = section.items.length - 1; i >= 0; i--) {
           if (
             section.items[i]?.source === 'watched' &&
             section.items[i]?.fileUrl === targetUrl
           ) {
+            // Remove section order information for this file
+            try {
+              const filename = basename(changedPath);
+              // Remove from the watched day folder itself, not from the destination folder
+              const watchedDayFolder = dirname(changedPath);
+              if (watchedDayFolder) {
+                const { removeWatchedMediaSectionInfo } = await import(
+                  'src/helpers/media-sections'
+                );
+                await removeWatchedMediaSectionInfo(watchedDayFolder, filename);
+              }
+            } catch (error) {
+              console.warn(`⚠️ Could not remove section order info: ${error}`);
+            }
+
             section.items.splice(i, 1);
           }
         }
-      });
+      }
     }
   } catch (error) {
     errorCatcher(error);
@@ -648,8 +708,14 @@ const initListeners = () => {
   });
 
   onDownloadStarted((args) => {
+    const existing = downloadProgress.value[args.id];
     downloadProgress.value[args.id] = {
+      ...(existing || {}),
+      complete: existing?.complete,
+      error: existing?.error,
       filename: args.filename,
+      loaded: existing?.loaded,
+      meetingDate: existing?.meetingDate || '',
       total: args.totalBytes,
     };
   });
