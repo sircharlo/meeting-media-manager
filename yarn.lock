@@ -4914,13 +4914,13 @@ __metadata:
   linkType: hard
 
 "axios@npm:^1.6.0":
-  version: 1.12.0
-  resolution: "axios@npm:1.12.0"
+  version: 1.12.1
+  resolution: "axios@npm:1.12.1"
   dependencies:
     follow-redirects: "npm:^1.15.6"
     form-data: "npm:^4.0.4"
     proxy-from-env: "npm:^1.1.0"
-  checksum: 10c0/44a1e4cfb69a2d59aa12bbc441a336e5c18e87c02b904c509fd33607d94e8cb8cc221c17e9d53f67841a4efe13abf1aa1497c85df390cdb8681ee723998d11b0
+  checksum: 10c0/eda4dff56c02d13b950fd9487b678ac197ce5f21dfc98df73632df29e45d8dd24602a34e8d9b6e016d84a41ef7fd7fc4a7618060a72cc536b91cda1eaa9cd907
   languageName: node
   linkType: hard
 
@@ -4951,8 +4951,8 @@ __metadata:
   linkType: hard
 
 "bare-fs@npm:^4.0.1":
-  version: 4.4.1
-  resolution: "bare-fs@npm:4.4.1"
+  version: 4.4.4
+  resolution: "bare-fs@npm:4.4.4"
   dependencies:
     bare-events: "npm:^2.5.4"
     bare-path: "npm:^3.0.0"
@@ -4964,7 +4964,7 @@ __metadata:
   peerDependenciesMeta:
     bare-buffer:
       optional: true
-  checksum: 10c0/fc1e18339287c579447bc1b05201f4ebf593b1e16324bfae64a20ef514504a3e8fe45852d1fa538a44e79085b453c99a8dabc4fd590dbeedce085b82b865734b
+  checksum: 10c0/18cbd227166db186f0c4b9d699665b02b5fbbd813ec594e02e6c5d4307f93f0083d3450688d2597d2b6465b88ea6d95c80cf36b431f7da1e5a1a4fab6671b8be
   languageName: node
   linkType: hard
 
@@ -6915,9 +6915,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.5.211":
-  version: 1.5.217
-  resolution: "electron-to-chromium@npm:1.5.217"
-  checksum: 10c0/e63eab55c0bd5d08e878f90c1adec384f701d51763ecb7c08a951adc49b97483d5cd93595d2166c7072ed1ba314a65d27efca99aa611669f9d9a89e351fd9529
+  version: 1.5.218
+  resolution: "electron-to-chromium@npm:1.5.218"
+  checksum: 10c0/d625e825834d862a33ed17da60d607267569cea6ff7c498c181dac285e037cce18b46ae810e8328a4dc26559a358d22b77d0a5c75aba182d39621947a7c62a34
   languageName: node
   linkType: hard
 
@@ -6937,16 +6937,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:^37.4.0":
-  version: 37.5.0
-  resolution: "electron@npm:37.5.0"
+"electron@npm:^38.0.0":
+  version: 38.1.0
+  resolution: "electron@npm:38.1.0"
   dependencies:
     "@electron/get": "npm:^2.0.0"
     "@types/node": "npm:^22.7.7"
     extract-zip: "npm:^2.0.1"
   bin:
     electron: cli.js
-  checksum: 10c0/559cd659ab1313be43e89575974e3aaa6e90816b7d0aaf4f1aa4c1e74a8f183a534f94b63b1ea8a01d7999c955b204d5abc3ae3a59364be1efcebeae637c5079
+  checksum: 10c0/186082b15862b0e9617828ca395a79311ebe2a713bb2eb15a67cf6bea208e8cda892395a143e72915e189088ac71e91b29c1a46a0c4d343022cbc33004d4d302
   languageName: node
   linkType: hard
 
@@ -11079,9 +11079,9 @@ __metadata:
   linkType: hard
 
 "node-releases@npm:^2.0.19":
-  version: 2.0.20
-  resolution: "node-releases@npm:2.0.20"
-  checksum: 10c0/24c5b1f5aa16d042c47a651ca2e022ca27320f95e4d2b76b9e543cc470eadd01032646383212ec373f1a3dd15cccce83d77c318ee99585366dbd25db4366abd8
+  version: 2.0.21
+  resolution: "node-releases@npm:2.0.21"
+  checksum: 10c0/0eb94916eeebbda9d51da6a9ea47428a12b2bb0dd94930c949632b0c859356abf53b2e5a2792021f96c5fda4f791a8e195f2375b78ae7dba8d8bc3141baa1469
   languageName: node
   linkType: hard
 
