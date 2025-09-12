@@ -46,6 +46,10 @@ export const settingsDefinitions: SettingsItems = {
     rules: ['notEmpty'],
     type: 'list',
   },
+  localDateFormat: {
+    group: 'app',
+    type: 'text',
+  },
   darkMode: {
     group: 'app',
     list: 'darkModes',
@@ -491,6 +495,7 @@ export const defaultSettings: SettingsValues = {
   langFallback: null,
   langSubtitles: null,
   localAppLang: 'en',
+  localDateFormat: 'D MMMM YYYY',
   maxRes: '720p',
   mediaAutoExportFolder: '',
   meetingScheduleChangeDate: null,
