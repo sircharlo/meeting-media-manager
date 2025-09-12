@@ -192,6 +192,7 @@ export interface SettingsValues {
   langFallback: JwLangCode | null;
   langSubtitles: JwLangCode | null;
   localAppLang: LanguageValue;
+  localDateFormat: string;
   maxRes: MaxRes;
   mediaAutoExportFolder: string;
   meetingScheduleChangeDate: `${number}/${number}/${number}` | null;
