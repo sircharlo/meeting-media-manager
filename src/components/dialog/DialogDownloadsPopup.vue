@@ -51,7 +51,11 @@
               :icon="getStatusIcon(dateKey)"
               :icon-color="getStatusColor(dateKey)"
               :label="
-                getLocalDate(dateKey, dateLocale) ||
+                getLocalDate(
+                  dateKey,
+                  dateLocale,
+                  currentSettings?.localDateFormat,
+                ) ||
                 dateKey ||
                 t('unknown-date')
               "
@@ -65,7 +69,11 @@
                   <div class="col">
                     <q-item-section>
                       <q-item-label>{{
-                        getLocalDate(dateKey, dateLocale) ||
+                        getLocalDate(
+                          dateKey,
+                          dateLocale,
+                          currentSettings?.localDateFormat,
+                        ) ||
                         dateKey ||
                         t('unknown-date')
                       }}</q-item-label>
@@ -155,7 +163,7 @@ const open = defineModel<boolean>({ default: false });
 
 const currentState = useCurrentStateStore();
 const jwStore = useJwStore();
-const { downloadProgress } = storeToRefs(currentState);
+const { currentSettings, downloadProgress } = storeToRefs(currentState);
 
 const getBasename = (filename: string) => {
   if (!filename) return '';
