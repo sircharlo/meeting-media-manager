@@ -7771,6 +7771,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fetch-extras@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "fetch-extras@npm:1.0.0"
+  checksum: 10c0/ea6ddc0cb5bb3624f23c70d3475e4a74f6417c451fcf7dde09e372cd78b097d96ba6cf56ac532e348519e472baa240ca26ea71f1071ab615e1533600825b1c83
+  languageName: node
+  linkType: hard
+
 "fflate@npm:^0.8.2":
   version: 0.8.2
   resolution: "fflate@npm:0.8.2"
@@ -9305,15 +9312,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-online@npm:^11.0.0":
-  version: 11.0.0
-  resolution: "is-online@npm:11.0.0"
+"is-online@npm:^12.0.1":
+  version: 12.0.1
+  resolution: "is-online@npm:12.0.1"
   dependencies:
-    got: "npm:^13.0.0"
+    fetch-extras: "npm:^1.0.0"
     p-any: "npm:^4.0.0"
-    p-timeout: "npm:^6.1.2"
+    p-timeout: "npm:^6.1.4"
     public-ip: "npm:^7.0.1"
-  checksum: 10c0/a8522f64b1b010fca06ddbf445845280ef5d32b972aa5b47936758b11d1ce18b113ab754c8bc69491b29350f7c3a4187bcfbce24cd776c20497ae7389a242ff2
+  checksum: 10c0/1fd6f9aecb6c56245a03721d30bd20b4cea65af212740d2bc86af242990aaf59037ba9c72381e0c086f7f501dd2e298bbe9603138a37c6d92fa72aa70c0b8bea
   languageName: node
   linkType: hard
 
@@ -10320,7 +10327,7 @@ __metadata:
     heic-convert: "npm:^2.1.0"
     husky: "npm:^9.1.7"
     image-size: "npm:^2.0.2"
-    is-online: "npm:^11.0.0"
+    is-online: "npm:^12.0.1"
     lint-staged: "npm:^16.1.6"
     lodash-es: "npm:^4.17.21"
     mime: "npm:^4.0.7"
@@ -11570,7 +11577,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-timeout@npm:^6.1.2":
+"p-timeout@npm:^6.1.2, p-timeout@npm:^6.1.4":
   version: 6.1.4
   resolution: "p-timeout@npm:6.1.4"
   checksum: 10c0/019edad1c649ab07552aa456e40ce7575c4b8ae863191477f02ac8d283ac8c66cedef0ca93422735130477a051dfe952ba717641673fd3599befdd13f63bcc33
