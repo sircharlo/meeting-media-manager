@@ -180,11 +180,15 @@ export const friendlyDayToJsDay = (day?: number) => {
 export const getLocalDate = (
   dateObj: Date | string,
   locale: Required<DateLocale>,
+  mask?: null | string,
 ) => {
   const parsedDate =
     typeof dateObj === 'string'
       ? new Date(dateObj.replace(/(\d{4})(\d{2})(\d{2})/, '$1/$2/$3'))
       : dateObj;
+  // Fallback safely if mask is invalid or produces empty
+  const desired = formatDate(parsedDate, mask || 'D MMMM YYYY', locale);
+  if (desired && desired.trim()) return desired;
   return formatDate(parsedDate, 'D MMMM YYYY', locale);
 };
 

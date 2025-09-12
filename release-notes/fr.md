@@ -8,8 +8,8 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
-- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
+- ✨ **Améliorations de la fenêtre contextuelle de téléchargements** : Ajout d'un bouton d'actualisation et regroupement des téléchargements par date dans la fenêtre contextuelle de téléchargements.
+- ✨ **Mémorisation de l'ordre des médias** : Ajout de la mémorisation de l'ordre des éléments multimédias de dossiers surveillés.
 
 ## v25.8.3
 

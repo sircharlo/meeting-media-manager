@@ -2,39 +2,75 @@
   <q-page-container
     class="vertical-middle overflow-hidden"
     padding
-    style="align-content: center; height: 100vh; -webkit-app-region: drag"
+    style="
+      align-content: center;
+      height: 100vh;
+      -webkit-app-region: drag;
+      background-color: black;
+    "
   >
     <!-- <pre style="position: absolute; top: 0; left: 0; z-index: 1000">
-      mediaPlayingUrl: {{ mediaPlayingUrl }}
-      videoStreaming: {{ videoStreaming }}
-      cameraStreamId: {{ cameraStreamId }}
-      mediaAction: {{ mediaAction }}
+      displayLayer1: {{ displayLayer1 }}
+      displayLayer2: {{ displayLayer2 }}
+      isTransitioning: {{ isTransitioning }}
+      mediaElement1: {{ mediaElement1 }}
+      mediaElement2: {{ mediaElement2 }}
+      currentMediaElement: {{ currentMediaElement }}
     </pre> -->
     <q-resize-observer debounce="50" @resize="postMediaWindowSize" />
-    <transition
-      appear
-      enter-active-class="animated fadeIn slow"
-      leave-active-class="animated fadeOut slow"
-      mode="out-in"
-      name="fade"
+
+    <!-- Base yeartext layer - always visible with black background -->
+    <div
+      v-if="fontsSet && !mediaPlayerCustomBackground"
+      class="base-layer"
+      :class="{ 'blank-screen': isTransitioning }"
+    >
+      <!-- eslint-disable next-line vue/no-v-html -->
+      <div id="yeartext" class="q-pa-md center" v-html="yeartext" />
+      <div v-if="!hideMediaLogo" id="yeartextLogoContainer">
+        <p id="yeartextLogo"></p>
+      </div>
+    </div>
+
+    <!-- Custom background layer - always visible when set -->
+    <div
+      v-if="mediaPlayerCustomBackground"
+      class="base-layer"
+      :class="{ 'blank-screen': isTransitioning }"
     >
       <q-img
-        v-if="isImage(mediaPlayingUrl)"
-        id="mediaImage"
         class="fit-snugly"
         fit="contain"
         no-spinner
-        :src="mediaPlayingUrl"
+        :src="mediaPlayerCustomBackground"
+      />
+    </div>
+
+    <!-- Display layer 1 -->
+    <div
+      class="display-layer"
+      :class="{
+        'is-live': displayLayer1.isLive,
+        'is-audio': isAudio(displayLayer1.url),
+      }"
+    >
+      <q-img
+        v-if="isImage(displayLayer1.url)"
+        id="mediaImage1"
+        class="fit-snugly"
+        fit="contain"
+        no-spinner
+        :src="displayLayer1.url"
         @load="handleImageLoad()"
       />
       <video
-        v-else-if="isVideo(mediaPlayingUrl) || videoStreaming"
-        :key="mediaPlayingUrl"
-        ref="mediaElement"
+        v-else-if="isVideo(displayLayer1.url)"
+        :key="displayLayer1.url"
+        ref="mediaElement1"
         class="fit-snugly"
         disableRemotePlayback
         preload="metadata"
-        :src="mediaPlayingUrl"
+        :src="displayLayer1.url"
         @canplay="handleVideoCanPlay()"
         @ended="endOrLoop()"
         @loadedmetadata="playMedia()"
@@ -47,34 +83,65 @@
           :src="mediaPlayerSubtitlesUrl"
         />
       </video>
-      <div v-else>
-        <audio
-          v-if="isAudio(mediaPlayingUrl)"
-          ref="mediaElement"
-          style="display: none"
-          @loadedmetadata="playMedia()"
-        >
-          <source :src="mediaPlayingUrl" />
-        </audio>
-        <template v-if="mediaPlayerCustomBackground">
-          <q-img
-            class="fit-snugly"
-            fit="contain"
-            no-spinner
-            :src="mediaPlayerCustomBackground"
-          />
-        </template>
-        <template v-else-if="fontsSet">
-          <!-- eslint-disable next-line vue/no-v-html -->
-          <div id="yeartext" class="q-pa-md center" v-html="yeartext" />
-          <div v-if="!hideMediaLogo" id="yeartextLogoContainer">
-            <p id="yeartextLogo"></p>
-          </div>
-        </template>
-      </div>
-    </transition>
+      <audio
+        v-else-if="isAudio(displayLayer1.url)"
+        ref="mediaElement1"
+        style="display: none"
+        @loadedmetadata="playMedia()"
+      >
+        <source :src="displayLayer1.url" />
+      </audio>
+    </div>
+
+    <!-- Display layer 2 -->
+    <div
+      class="display-layer"
+      :class="{
+        'is-live': displayLayer2.isLive,
+        'is-audio': isAudio(displayLayer2.url),
+      }"
+    >
+      <q-img
+        v-if="isImage(displayLayer2.url)"
+        id="mediaImage2"
+        class="fit-snugly"
+        fit="contain"
+        no-spinner
+        :src="displayLayer2.url"
+        @load="handleImageLoad()"
+      />
+      <video
+        v-else-if="isVideo(displayLayer2.url)"
+        :key="displayLayer2.url"
+        ref="mediaElement2"
+        class="fit-snugly"
+        disableRemotePlayback
+        preload="metadata"
+        :src="displayLayer2.url"
+        @canplay="handleVideoCanPlay()"
+        @ended="endOrLoop()"
+        @loadedmetadata="playMedia()"
+        @pause="handleVideoPause()"
+      >
+        <track
+          v-if="mediaPlayerSubtitlesUrl && subtitlesVisible"
+          default
+          kind="subtitles"
+          :src="mediaPlayerSubtitlesUrl"
+        />
+      </video>
+      <audio
+        v-else-if="isAudio(displayLayer2.url)"
+        ref="mediaElement2"
+        style="display: none"
+        @loadedmetadata="playMedia()"
+      >
+        <source :src="displayLayer2.url" />
+      </audio>
+    </div>
   </q-page-container>
 </template>
+
 <script setup lang="ts">
 import {
   useBroadcastChannel,
@@ -87,7 +154,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { setElementFont } from 'src/helpers/fonts';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
-import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { computed, onMounted, ref, type Ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -116,8 +183,22 @@ $q.iconMapFn = (iconName) => {
 
 const isEnding = ref(false);
 
-const mediaElement = useTemplateRef<HTMLAudioElement | HTMLVideoElement>(
-  'mediaElement',
+// Display layer state management
+const displayLayer1 = ref({
+  isLive: false,
+  url: '',
+});
+
+const displayLayer2 = ref({
+  isLive: false,
+  url: '',
+});
+
+const mediaElement1 = useTemplateRef<HTMLAudioElement | HTMLVideoElement>(
+  'mediaElement1',
+);
+const mediaElement2 = useTemplateRef<HTMLAudioElement | HTMLVideoElement>(
+  'mediaElement2',
 );
 
 const videoStreaming = ref(false);
@@ -150,8 +231,8 @@ const { data: seekToData } = useBroadcastChannel<
 whenever(
   () => seekToData.value,
   (newSeekTo) => {
-    if (mediaElement.value) {
-      mediaElement.value.currentTime = newSeekTo;
+    if (currentMediaElement.value) {
+      currentMediaElement.value.currentTime = newSeekTo;
     }
   },
 );
@@ -183,7 +264,7 @@ whenever(
   () => mediaAction.value,
   (newMediaAction, oldMediaAction) => {
     if (newMediaAction === 'pause') {
-      mediaElement.value?.pause();
+      currentMediaElement.value?.pause();
     } else if (newMediaAction === 'play') {
       playMediaElement(oldMediaAction === 'pause');
       if (cameraStreamId.value) cameraStreamId.value = '';
@@ -200,7 +281,11 @@ const handleImageLoad = () => {
 
 const applyZoomPanState = (zoomPanState: Record<string, number>) => {
   try {
-    const imageElem = document.getElementById('mediaImage');
+    // Try to find the active image element from either layer
+    const imageElem1 = document.getElementById('mediaImage1');
+    const imageElem2 = document.getElementById('mediaImage2');
+    const imageElem = imageElem1 || imageElem2;
+
     if (!imageElem) return;
 
     const width = imageElem.clientWidth || 0;
@@ -248,17 +333,25 @@ const customMax = computed(() => {
   return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.max;
 });
 
+const currentMediaElement: Ref<HTMLAudioElement | HTMLVideoElement | null> =
+  computed(() => {
+    return mediaElement1.value || mediaElement2.value || null;
+  });
+
 const triggerPlay = (force = false) => {
   if (!force && mediaAction.value !== 'play') {
     return;
   }
 
-  if (!mediaElement.value) {
+  if (!currentMediaElement.value) {
     return;
   }
 
   // For videos, ensure we're ready to play
-  if (isVideo(mediaPlayingUrl.value) && mediaElement.value.readyState < 2) {
+  if (
+    (isVideo(mediaPlayingUrl.value) || isAudio(mediaPlayingUrl.value)) &&
+    currentMediaElement.value.readyState < 2
+  ) {
     // Video not ready yet, wait a bit and try again
     setTimeout(() => {
       triggerPlay(force);
@@ -267,10 +360,10 @@ const triggerPlay = (force = false) => {
   }
 
   console.log(
-    `🎬 [triggerPlay] Attempting to play video: ${mediaPlayingUrl.value}, readyState: ${mediaElement.value.readyState}, paused: ${mediaElement.value.paused}`,
+    `🎬 [triggerPlay] Attempting to play video: ${mediaPlayingUrl.value}, readyState: ${currentMediaElement.value.readyState}, paused: ${currentMediaElement.value.paused}`,
   );
 
-  mediaElement.value.play().catch((error: Error) => {
+  currentMediaElement.value.play().catch((error: Error) => {
     const ignoredErrors = [
       'removed from the document',
       'new load request',
@@ -289,7 +382,7 @@ const triggerPlay = (force = false) => {
 };
 
 const playMediaElement = (wasPaused = false, websiteStream = false) => {
-  if (!mediaElement.value) {
+  if (!currentMediaElement.value) {
     return;
   }
 
@@ -304,7 +397,7 @@ const playMediaElement = (wasPaused = false, websiteStream = false) => {
     triggerPlay(websiteStream);
   }
 
-  mediaElement.value.oncanplaythrough = () => {
+  currentMediaElement.value.oncanplaythrough = () => {
     console.log('🎬 [playMediaElement] Video can play through');
     triggerPlay(websiteStream);
   };
@@ -313,11 +406,8 @@ const playMediaElement = (wasPaused = false, websiteStream = false) => {
   if (isVideo(mediaPlayingUrl.value) && mediaAction.value === 'play') {
     // Set up a fallback mechanism to ensure video starts playing
     const checkAndPlay = () => {
-      if (
-        mediaElement.value &&
-        mediaAction.value === 'play' &&
-        mediaElement.value.paused
-      ) {
+      const element = currentMediaElement.value;
+      if (element && mediaAction.value === 'play' && element.paused) {
         console.log('🎬 [playMediaElement] Fallback: triggering play');
         triggerPlay();
       }
@@ -326,7 +416,7 @@ const playMediaElement = (wasPaused = false, websiteStream = false) => {
     // Check after a short delay to allow the video to load
     setTimeout(checkAndPlay, 200);
     // Also check when the video becomes ready
-    mediaElement.value.oncanplay = checkAndPlay;
+    currentMediaElement.value.oncanplay = checkAndPlay;
   }
 };
 
@@ -339,8 +429,8 @@ const endOrLoop = () => {
     // It will be cleared when the media state is handled by the main window
   } else {
     console.log('🎬 [endOrLoop] Looping video');
-    if (mediaElement.value) {
-      mediaElement.value.currentTime = customMin.value;
+    if (currentMediaElement.value) {
+      currentMediaElement.value.currentTime = customMin.value;
       playMediaElement();
     }
   }
@@ -348,35 +438,31 @@ const endOrLoop = () => {
 
 const handleVideoPause = () => {
   console.log('⏸️ [handleVideoPause] Video paused');
-  postCurrentTime(mediaElement.value?.currentTime || 0);
+  try {
+    postCurrentTime(currentMediaElement.value?.currentTime || 0);
+  } catch (e) {
+    errorCatcher(e);
+  }
 };
 
 const handleVideoCanPlay = () => {
   console.log(
     '🔄 [handleVideoCanPlay] Video can play',
     mediaAction.value,
-    mediaElement.value?.paused,
-    mediaElement.value?.readyState,
+    currentMediaElement.value?.paused,
+    currentMediaElement.value?.readyState,
   );
   // Ensure video starts playing when it's ready, especially for videos that might not start immediately
-  if (
-    mediaAction.value === 'play' &&
-    mediaElement.value &&
-    !mediaElement.value.paused
-  ) {
+  if (mediaAction.value === 'play' && !currentMediaElement.value?.paused) {
     // Video is already playing, no action needed
     return;
   }
 
-  if (mediaAction.value === 'play' && mediaElement.value) {
+  if (mediaAction.value === 'play' && currentMediaElement) {
     // Try to start playing if the action is 'play' but video isn't playing yet
     // Add a small delay to ensure the video is fully ready
     setTimeout(() => {
-      if (
-        mediaAction.value === 'play' &&
-        mediaElement.value &&
-        mediaElement.value.paused
-      ) {
+      if (mediaAction.value === 'play' && currentMediaElement.value?.paused) {
         console.log('🎬 [handleVideoCanPlay] Triggering play after delay');
         triggerPlay();
       }
@@ -384,19 +470,22 @@ const handleVideoCanPlay = () => {
   }
 };
 
+const fadeOutDurationInSeconds = 0.3;
+const fadeOutDurationInMilliseconds = fadeOutDurationInSeconds * 1000;
+
 const playMedia = () => {
   console.log(
     '🔄 [playMedia] Playing media',
     mediaAction.value,
-    mediaElement.value?.paused,
+    currentMediaElement.value?.paused,
   );
   try {
-    if (!mediaElement.value) {
+    if (!currentMediaElement.value) {
       return;
     }
 
     let lastUpdate = 0;
-    const updateInterval = 300;
+    const updateInterval = fadeOutDurationInMilliseconds;
     let rafId = 0;
 
     const updateTime = () => {
@@ -405,12 +494,16 @@ const playMedia = () => {
         return;
       }
 
-      const currentTime = mediaElement.value?.currentTime || 0;
+      const currentTime = currentMediaElement.value?.currentTime || 0;
 
       if (Date.now() - lastUpdate > updateInterval) {
         // Throttle time updates
-        postCurrentTime(currentTime);
-        lastUpdate = Date.now();
+        try {
+          postCurrentTime(currentTime);
+          lastUpdate = Date.now();
+        } catch (e) {
+          errorCatcher(e);
+        }
       }
 
       if (
@@ -427,7 +520,7 @@ const playMedia = () => {
       rafId = requestAnimationFrame(updateTime);
     };
 
-    mediaElement.value.ontimeupdate = () => {
+    currentMediaElement.value.ontimeupdate = () => {
       try {
         if (!rafId) {
           rafId = requestAnimationFrame(updateTime);
@@ -437,10 +530,86 @@ const playMedia = () => {
       }
     };
 
-    mediaElement.value.currentTime = customMin.value;
+    currentMediaElement.value.currentTime = customMin.value;
     playMediaElement();
   } catch (e) {
     errorCatcher(e);
+  }
+};
+
+const isTransitioning = ref(false);
+
+// Crossfade function to handle layer transitions
+const crossfadeToNewMedia = (newUrl: string) => {
+  console.log('🎬 [crossfadeToNewMedia] Starting crossfade to:', newUrl);
+
+  // Determine which layer is currently live and which is not
+  const currentLiveLayer = displayLayer1.value.isLive
+    ? displayLayer1
+    : displayLayer2;
+  const nextLayer = displayLayer1.value.isLive ? displayLayer2 : displayLayer1;
+
+  // Set the new URL on the non-live layer
+  nextLayer.value.url = newUrl;
+
+  // Fade in the new layer
+  setTimeout(() => {
+    nextLayer.value.isLive = true;
+    currentLiveLayer.value.isLive = false;
+
+    // After transition completes, clean up the old layer
+    setTimeout(() => {
+      currentLiveLayer.value.url = '';
+      isTransitioning.value = false;
+    }, fadeOutDurationInMilliseconds); // Match the CSS transition duration
+  }, 50); // Small delay to ensure the new media starts loading
+};
+
+// Handle clearing media (fade out current layer)
+const clearCurrentMedia = () => {
+  console.log('🎬 [clearCurrentMedia] Clearing current media');
+
+  const currentLiveLayer = displayLayer1.value.isLive
+    ? displayLayer1
+    : displayLayer2;
+
+  if (currentLiveLayer.value.url) {
+    // Fade out the current layer
+    currentLiveLayer.value.isLive = false;
+
+    // If the current media element is a video, fade out the volume over the next 300ms
+    if (
+      currentMediaElement.value &&
+      (isVideo(currentLiveLayer.value.url) ||
+        isAudio(currentLiveLayer.value.url))
+    ) {
+      const videoElement = currentMediaElement.value as HTMLVideoElement;
+      const initialVolume = videoElement.volume;
+      const volumeStep = initialVolume / (fadeOutDurationInMilliseconds / 16); // 16ms intervals for smooth fade
+      let currentVolume = initialVolume;
+
+      const fadeOutInterval = setInterval(() => {
+        currentVolume -= volumeStep;
+        if (currentVolume <= 0) {
+          currentVolume = 0;
+          clearInterval(fadeOutInterval);
+        }
+        videoElement.volume = currentVolume;
+      }, 16); // 60fps for smooth fade
+    }
+
+    // After transition completes, clear the URL
+    setTimeout(() => {
+      currentLiveLayer.value.url = '';
+      if (
+        currentMediaElement.value &&
+        (isVideo(currentLiveLayer.value.url) ||
+          isAudio(currentLiveLayer.value.url))
+      ) {
+        const videoElement = currentMediaElement.value as HTMLVideoElement;
+        videoElement.volume = 1;
+      }
+    }, fadeOutDurationInMilliseconds); // Match the CSS transition duration
   }
 };
 
@@ -451,20 +620,33 @@ watch(
     console.log('🔄 [mediaPlayingUrl] URL changed:', oldUrl, '->', newUrl);
     isEnding.value = false;
 
+    if (oldUrl && newUrl && !isAudio(newUrl)) {
+      isTransitioning.value = true;
+    }
+
+    // Handle crossfade logic
+    if (newUrl && newUrl !== oldUrl) {
+      // New media URL - start crossfade
+      crossfadeToNewMedia(newUrl);
+    } else if (!newUrl && oldUrl) {
+      // Media URL cleared - fade out current media
+      clearCurrentMedia();
+    }
+
     // Clean up any existing event handlers when media URL changes
-    if (mediaElement.value) {
-      mediaElement.value.oncanplay = null;
-      mediaElement.value.oncanplaythrough = null;
+    if (currentMediaElement.value) {
+      currentMediaElement.value.oncanplay = null;
+      currentMediaElement.value.oncanplaythrough = null;
 
       // For videos, ensure the element is properly reset when URL changes
-      if (isVideo(newUrl) && newUrl !== oldUrl) {
+      if ((isVideo(newUrl) || isAudio(newUrl)) && newUrl !== oldUrl) {
         console.log('🎬 [mediaPlayingUrl] Resetting video element for new URL');
         // Pause current playback
-        mediaElement.value.pause();
+        currentMediaElement.value.pause();
         // Reset current time
-        mediaElement.value.currentTime = 0;
+        currentMediaElement.value.currentTime = 0;
         // Force reload of the video
-        mediaElement.value.load();
+        currentMediaElement.value.load();
       }
     }
   },
@@ -549,30 +731,30 @@ watch(
           video: true,
         });
         let timeouts = 0;
-        while (!mediaElement.value) {
+        while (!currentMediaElement.value) {
           await new Promise((resolve) => {
             setTimeout(resolve, 100);
           });
           if (++timeouts > 50) break;
         }
-        if (!mediaElement.value || !stream) {
+        if (!currentMediaElement.value || !stream) {
           videoStreaming.value = false;
           postMediaPlayingAction('');
-          mediaElement.value?.pause();
-          if (mediaElement?.value?.srcObject) {
-            mediaElement.value.srcObject = null;
+          currentMediaElement.value?.pause();
+          if (currentMediaElement.value?.srcObject) {
+            currentMediaElement.value.srcObject = null;
           }
           return;
         }
-        mediaElement.value.srcObject = stream;
+        currentMediaElement.value.srcObject = stream;
         playMediaElement(false, true);
       } catch (e) {
         errorCatcher(e, { contexts: { fn: { name: 'streamDisplay' } } });
       }
     } else {
-      if (mediaElement.value) {
-        mediaElement.value.pause();
-        mediaElement.value.srcObject = null;
+      if (currentMediaElement.value) {
+        currentMediaElement.value.pause();
+        currentMediaElement.value.srcObject = null;
       }
       postMediaPlayingAction('');
     }
@@ -628,22 +810,22 @@ watch(
           video: { deviceId },
         });
         let timeouts = 0;
-        while (!mediaElement.value) {
+        while (!currentMediaElement.value) {
           await new Promise((resolve) => {
             setTimeout(resolve, 100);
           });
           if (++timeouts > 10) break;
         }
-        if (!mediaElement.value || !stream) {
+        if (!currentMediaElement.value || !stream) {
           videoStreaming.value = false;
           postMediaPlayingAction('');
-          mediaElement.value?.pause();
-          if (mediaElement?.value?.srcObject) {
-            mediaElement.value.srcObject = null;
+          currentMediaElement.value?.pause();
+          if (currentMediaElement.value?.srcObject) {
+            currentMediaElement.value.srcObject = null;
           }
           return;
         }
-        mediaElement.value.srcObject = stream;
+        currentMediaElement.value.srcObject = stream;
         playMediaElement(false, true);
       } catch (e) {
         errorCatcher(e, { contexts: { fn: { name: 'streamCamera' } } });
@@ -659,9 +841,9 @@ watch(
         return;
       }
     } else {
-      if (mediaElement.value) {
-        mediaElement.value.pause();
-        mediaElement.value.srcObject = null;
+      if (currentMediaElement.value) {
+        currentMediaElement.value.pause();
+        currentMediaElement.value.srcObject = null;
       }
       postMediaPlayingAction('');
     }
@@ -708,3 +890,45 @@ onMounted(() => {
   postGetCurrentState(new Date().getTime().toString());
 });
 </script>
+
+<style scoped>
+.base-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.base-layer.blank-screen {
+  display: none;
+}
+
+.display-layer.is-audio {
+  background-color: green;
+  opacity: 0 !important;
+}
+
+.display-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  z-index: 2;
+}
+
+.display-layer.is-live {
+  opacity: 1;
+  z-index: 3;
+}
+</style>

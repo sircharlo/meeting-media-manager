@@ -36,7 +36,11 @@ import { initializeElectronApi } from 'src/helpers/electron-api-manager';
 initializeElectronApi('MainLayout');
 
 import type { LanguageValue } from 'src/constants/locales';
-import type { ElectronIpcListenKey, MediaItem } from 'src/types';
+import type {
+  ElectronIpcListenKey,
+  MediaItem,
+  MediaSectionWithConfig,
+} from 'src/types';
 
 import {
   useBroadcastChannel,
@@ -50,7 +54,7 @@ import ActionIsland from 'components/ui/ActionIsland.vue';
 import AnnouncementBanner from 'components/ui/AnnouncementBanner.vue';
 import NavDrawer from 'components/ui/NavDrawer.vue';
 import { storeToRefs } from 'pinia';
-import { useMeta, useQuasar } from 'quasar';
+import { debounce, useMeta, useQuasar } from 'quasar';
 import { SORTER } from 'src/constants/general';
 import {
   cleanCache,
@@ -540,6 +544,32 @@ watchImmediate(
   },
 );
 
+async function handleUnlinkCleanup(changedPath: string) {
+  try {
+    const filename = basename(changedPath);
+    const watchedDayFolder = dirname(changedPath);
+    if (watchedDayFolder) {
+      const { removeWatchedMediaSectionInfo } = await import(
+        'src/helpers/media-sections'
+      );
+      await removeWatchedMediaSectionInfo(watchedDayFolder, filename);
+    }
+  } catch (error) {
+    console.warn(`⚠️ Could not remove section order info: ${error}`);
+  }
+}
+
+function removeWatchedItems(
+  sections: MediaSectionWithConfig[],
+  predicate: (item: MediaItem) => boolean,
+) {
+  for (const section of sections) {
+    if (!section.items) continue;
+    // reassign instead of splicing to reduce reactive churn
+    section.items = section.items.filter((item) => !predicate(item));
+  }
+}
+
 const updateWatchFolderRef = async ({
   changedPath,
   day,
@@ -548,112 +578,106 @@ const updateWatchFolderRef = async ({
   try {
     day = day?.replace(/-/g, '/');
     if (!day) return;
+
     const dayObj = lookupPeriod.value[currentCongregation.value]?.find(
       (d) => formatDate(d.date, 'YYYY/MM/DD') === day,
     );
     if (!dayObj) return;
-    if (event === 'addDir' || event === 'unlinkDir') {
-      // Remove watched items from all sections
-      dayObj.mediaSections.forEach((section) => {
-        if (!section.items) return;
-        for (let i = section.items.length - 1; i >= 0; i--) {
-          if (section.items[i]?.source === 'watched') {
-            section.items.splice(i, 1);
+
+    switch (event) {
+      case 'add':
+        if (!changedPath) return;
+        {
+          const watchedItems =
+            (await watchedItemMapper(day, changedPath)) || [];
+          console.log('🔍 [MainLayout] watchedItems:', watchedItems);
+
+          for (const watchedItem of watchedItems) {
+            // Skip if already exists
+            const exists = dayObj.mediaSections.some((s) =>
+              s.items?.some((i) => i.uniqueId === watchedItem.uniqueId),
+            );
+            if (exists) continue;
+
+            const weMeeting = dayObj.meeting === 'we';
+            const mwMeeting = dayObj.meeting === 'mw';
+            const targetSectionId =
+              watchedItem.originalSection ||
+              (weMeeting ? 'pt' : mwMeeting ? 'lac' : 'imported-media');
+
+            dayObj.mediaSections ??= [];
+            const targetSection = getOrCreateMediaSection(
+              dayObj.mediaSections,
+              targetSectionId,
+            );
+            targetSection.items ??= [];
+
+            // Add, then we’ll sort once after all inserts
+            targetSection.items.push(watchedItem);
+
+            console.log(
+              '🔍 [MainLayout] targetSection.items:',
+              targetSection.items,
+            );
+          }
+
+          // Sort sections once after adding
+          for (const section of dayObj.mediaSections) {
+            if (!section.items) continue;
+            section.items.sort((a, b) => {
+              const aOrder =
+                typeof a.sortOrderOriginal === 'number'
+                  ? a.sortOrderOriginal
+                  : 0;
+              const bOrder =
+                typeof b.sortOrderOriginal === 'number'
+                  ? b.sortOrderOriginal
+                  : 0;
+              return aOrder - bOrder || SORTER.compare(a.title, b.title);
+            });
           }
         }
-      });
-    } else if (event === 'add') {
-      if (!changedPath) return;
-      const watchedItems = (await watchedItemMapper(day, changedPath)) || [];
-      console.log('🔍 [MainLayout] watchedItems:', watchedItems);
+        break;
 
-      for (const watchedItem of watchedItems) {
-        // Check if item already exists in any section
-        let itemExists = false;
-        Object.values(dayObj.mediaSections).forEach((sectionMedia) => {
-          if (
-            sectionMedia.items?.find((i) => i.uniqueId === watchedItem.uniqueId)
-          ) {
-            itemExists = true;
-          }
-        });
+      case 'addDir':
+      /* falls through */
 
-        if (itemExists) continue;
-
-        // Determine which section to add the item to
-        const targetSectionId = watchedItem.originalSection || 'imported-media';
-
-        dayObj.mediaSections ??= [];
-        const targetSection = getOrCreateMediaSection(
+      case 'unlinkDir':
+        removeWatchedItems(
           dayObj.mediaSections,
-          targetSectionId,
+          (item) => item?.source === 'watched',
         );
+        break;
 
-        targetSection.items ??= [];
-
-        // Find the correct index to insert the item in the sorted order
-        const insertIndex =
-          targetSection.items.findIndex(
-            (existingItem: MediaItem) =>
-              SORTER.compare(existingItem.title, watchedItem.title) > 0,
-          ) ?? -1;
-
-        if (insertIndex === -1) {
-          // If no larger item is found, push to the end
-          targetSection.items.push(watchedItem);
-        } else {
-          // Otherwise, insert at the correct index
-          targetSection.items.splice(insertIndex, 0, watchedItem);
+      case 'unlink':
+        if (!changedPath) return;
+        {
+          const targetUrl = pathToFileURL(changedPath).toString();
+          removeWatchedItems(
+            dayObj.mediaSections,
+            (item) => item?.source === 'watched' && item?.fileUrl === targetUrl,
+          );
+          await handleUnlinkCleanup(changedPath);
         }
-
-        targetSection.items.sort((a, b) => {
-          const aOrder =
-            typeof a.sortOrderOriginal === 'number' ? a.sortOrderOriginal : 0;
-          const bOrder =
-            typeof b.sortOrderOriginal === 'number' ? b.sortOrderOriginal : 0;
-          return aOrder - bOrder;
-        });
-
-        console.log(
-          '🔍 [MainLayout] targetSection.items:',
-          targetSection.items,
-        );
-      }
-    } else if (event === 'unlink') {
-      if (!changedPath) return;
-      const targetUrl = pathToFileURL(changedPath);
-
-      // Remove watched items with matching fileUrl from all sections
-      for (const section of dayObj.mediaSections) {
-        if (!section.items) continue;
-        for (let i = section.items.length - 1; i >= 0; i--) {
-          if (
-            section.items[i]?.source === 'watched' &&
-            section.items[i]?.fileUrl === targetUrl
-          ) {
-            // Remove section order information for this file
-            try {
-              const filename = basename(changedPath);
-              // Remove from the watched day folder itself, not from the destination folder
-              const watchedDayFolder = dirname(changedPath);
-              if (watchedDayFolder) {
-                const { removeWatchedMediaSectionInfo } = await import(
-                  'src/helpers/media-sections'
-                );
-                await removeWatchedMediaSectionInfo(watchedDayFolder, filename);
-              }
-            } catch (error) {
-              console.warn(`⚠️ Could not remove section order info: ${error}`);
-            }
-
-            section.items.splice(i, 1);
-          }
-        }
-      }
+        break;
     }
   } catch (error) {
     errorCatcher(error);
   }
+};
+
+const processWatchFolderEvents = debounce(async (pendingEvents) => {
+  for (const evt of pendingEvents) {
+    await updateWatchFolderRef(evt);
+  }
+  pendingEvents.length = 0;
+}, 100);
+
+const pendingEvents: Record<string, string>[] = [];
+
+const queueWatchFolderEvent = (event: Record<string, string>) => {
+  pendingEvents.push(event);
+  processWatchFolderEvents(pendingEvents);
 };
 
 cleanCache();
@@ -704,7 +728,7 @@ const initListeners = () => {
   });
 
   onWatchFolderUpdate(({ changedPath, day, event }) => {
-    updateWatchFolderRef({ changedPath, day, event });
+    queueWatchFolderEvent({ changedPath, day, event });
   });
 
   onDownloadStarted((args) => {
