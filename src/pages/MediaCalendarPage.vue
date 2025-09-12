@@ -666,7 +666,11 @@ watch(
       )
         return;
       createTemporaryNotification({
-        caption: getLocalDate(errorVal, dateLocale.value),
+        caption: getLocalDate(
+          errorVal,
+          dateLocale.value,
+          currentSettings.value?.localDateFormat,
+        ),
         group: 'meetingMediaDownloadError',
         icon: 'mmm-error',
         message: t('errorDownloadingMeetingMedia'),
