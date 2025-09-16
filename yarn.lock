@@ -6438,6 +6438,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"debug@npm:^4.4.3":
+  version: 4.4.3
+  resolution: "debug@npm:4.4.3"
+  dependencies:
+    ms: "npm:^2.1.3"
+  peerDependenciesMeta:
+    supports-color:
+      optional: true
+  checksum: 10c0/d79136ec6c83ecbefd0f6a5593da6a9c91ec4d7ddc4b54c883d6e71ec9accb5f67a1a5e96d00a328196b5b5c86d365e98d8a3a70856aaf16b4e7b1985e67f5a6
+  languageName: node
+  linkType: hard
+
 "decode-uri-component@npm:^0.2.0":
   version: 0.2.2
   resolution: "decode-uri-component@npm:0.2.2"
@@ -10437,7 +10449,7 @@ __metadata:
     mime: "npm:^4.1.0"
     mousetrap: "npm:^1.6.5"
     msw: "npm:^2.11.2"
-    music-metadata: "npm:^11.8.3"
+    music-metadata: "npm:^11.9.0"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.1.1"
     pdfjs-dist: "npm:^5.4.149"
@@ -10961,20 +10973,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^11.8.3":
-  version: 11.8.3
-  resolution: "music-metadata@npm:11.8.3"
+"music-metadata@npm:^11.9.0":
+  version: 11.9.0
+  resolution: "music-metadata@npm:11.9.0"
   dependencies:
     "@borewit/text-codec": "npm:^0.2.0"
     "@tokenizer/token": "npm:^0.3.0"
     content-type: "npm:^1.0.5"
-    debug: "npm:^4.4.1"
+    debug: "npm:^4.4.3"
     file-type: "npm:^21.0.0"
     media-typer: "npm:^1.1.0"
     strtok3: "npm:^10.3.4"
     token-types: "npm:^6.1.1"
-    uint8array-extras: "npm:^1.4.1"
-  checksum: 10c0/ce29aee57638b56032a7309168e757185befec506b2a4861b8ccaa8083210c520323b4b9b4499e8d750fc178ac23d1fd215042fcc0a2271d48612d7c9488d391
+    uint8array-extras: "npm:^1.5.0"
+  checksum: 10c0/7aee2faf8d231e6b56371ac4ee56e4bd8ce2fd57f72d387974cef2c7ba2a79741ed938a9d7b334ca0b153db1059f87aecf648ce2f30553b0ce75af389baf2b56
   languageName: node
   linkType: hard
 
@@ -14788,7 +14800,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uint8array-extras@npm:^1.4.0, uint8array-extras@npm:^1.4.1":
+"uint8array-extras@npm:^1.4.0, uint8array-extras@npm:^1.5.0":
   version: 1.5.0
   resolution: "uint8array-extras@npm:1.5.0"
   checksum: 10c0/0e74641ac7dadb02eadefc1ccdadba6010e007757bda824960de3c72bbe2b04e6d3af75648441f412148c4103261d54fcb60be45a2863beb76643a55fddba3bd
