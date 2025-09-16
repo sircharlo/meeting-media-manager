@@ -1,34 +1,34 @@
-# User Guide {#user-guide}
+# Uporabniški priročnik {#user-guide}
 
-This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
+Ta izčrpen uporabniški priročnik ti bo pomagal osvojiti vse funkcije M³, od osnovne nastavitve do naprednih tehnik predstavitve multimedijske vsebine.
 
-## Getting Started {#getting-started}
+## Začetek {#getting-started}
 
-### First Launch {#first-launch}
+### Prvi zagon {#first-launch}
 
-When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
+Ko boš prvič zagnal M³, te bo vodil čarovnik za nastavitev, ki bo nastavil bistvene nastavitve za vašo občino:
 
-1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
-2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
-3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
-4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
-5. **Optional features** - Configure OBS integration, background music, and other advanced features
+1. **Izberi jezik vmesnika** – to določa, v katerem jeziku se bodo prikazovali meniji in gumbi v M³.
+2. **Izberi vrsto profila** – izberi »Običajno« za običajno občinsko uporabo ali »Drugo« za posebne dogodke.
+3. **Nastavi občinske podatke** - vnesi podatke o vaši občini ali uporabi funkcijo samodejnega iskanja.
+4. **Nastavi urnik shodov** – nastavi urnik shodov med tednom in ob koncu tedna.
+5. **Izbirne funkcije** – nastavi povezovanje s programom OBS, glasbo v ozadju in druge napredne funkcije.
 
 :::tip Namig
 
-Take your time during setup - but you can always change these settings later in the Settings menu.
+Vzemi si čas za nastavitev – vseeno pa lahko te nastavitve kadar koli spremeniš v meniju Nastavitve.
 
 :::
 
-### Main Interface Overview {#main-interface}
+### Pregled glavnega vmesnika {#main-interface}
 
-The main M³ interface consists of several key areas:
+Glavni vmesnik M³ je sestavljen iz več ključnih področij:
 
-- **Navigation Drawer** - Access different sections and settings
-- **Calendar View** - Browse media by date
-- **Media List** - View and manage media for selected dates
-- **Toolbar** - Quick access to common functions
-- **Status Bar** - Shows download progress, and background music and OBS Studio connection status
+- **Navigacijski predal** - dostop do različnih razdelkov in nastavitev
+- **Koledarski pogled** - brskanje po multimedijski vsebini po datumu
+- **Seznam multimedijske vsebine** - ogled in upravljanje multimedijske vsebine za izbrane datume
+- **Orodna vrstica** - hiter dostop do običajnih funkcij
+- **Vrstica stanja** - prikazuje potek prenosa in glasbo v ozadju ter stanje povezave s programom OBS Studio
 
 ## Media Management {#user-guide-media-management}
 
