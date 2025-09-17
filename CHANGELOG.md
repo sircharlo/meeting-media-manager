@@ -4,6 +4,20 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v25.9.1
+
+### ✨ New Features
+
+- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
+- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
+- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
+- ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
+
+### 🔧 Improvements to Codebase
+
+- 🔧 **Watch Folder Performance**: Refactored and improved performance of the watch folder logic.
+- 🔧 **i18n & Dialog Cleanup**: Streamlined i18n initialization and cleaned up dialog components.
+
 ## v25.9.0
 
 ### ✨ New Features
