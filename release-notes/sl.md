@@ -4,12 +4,21 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
+## v25.9.1
+
+### ✨ Nove funkcije
+
+- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
+- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
+- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
+- ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
+
 ## v25.9.0
 
 ### ✨ Nove funkcije
 
-- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
-- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
+- ✨ **Izboljšave pojavnega okna za prenose**: Dodan gumb za osvežitev in razvrščanje prenosov po datumu v pojavnem oknu za prenose.
+- ✨ **Pomnjenje vrstnega reda ogledane multimedijske vsebine**: Dodano pomnjenje vrstnega reda razdelkov za že ogledano multimedijsko vsebino.
 
 ## v25.8.3
 
