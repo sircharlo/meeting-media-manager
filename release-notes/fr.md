@@ -8,10 +8,10 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
-- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
-- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
-- ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
+- ✨ **Comportement de la fenêtre multimédia** : correction et amélioration du comportement « toujours au premier plan » de la fenêtre multimédia, qui s'ajuste désormais dynamiquement en fonction du mode plein écran.
+- ✨ **Paramètre d'affichage de la date** : ajout d'un paramètre utilisateur permettant de configurer le format d'affichage de la date.
+- ✨ **Transition en fondu enchaîné pour les médias** : mise en place de transitions en fondu enchaîné pour l'affichage des médias, au lieu de la transition plus brusque qui était présente auparavant.
+- ✨ **Clics sur les fenêtres inactives sous macOS** : désormais, les clics de souris sont pris en charge dans la fenêtre principale sous macOS même si elle n'est pas au premier plan, ce qui devrait faciliter le contrôle de l'application.
 
 ## v25.9.0
 
