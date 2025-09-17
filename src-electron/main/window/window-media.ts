@@ -20,6 +20,7 @@ export function createMediaWindow() {
 
   // Create the browser window
   mediaWindow = createWindow('media', {
+    alwaysOnTop: true, // Always on top by default
     backgroundColor: 'black',
     frame: false,
     height: HD_RESOLUTION[1],
@@ -270,12 +271,31 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
     const screens = getAllScreens();
     console.log('🔍 [moveMediaWindow] Available screens:', screens.length);
 
+    const currentBounds = mediaWindow.getBounds();
+    const currentDisplayNr = getWindowScreen(mediaWindow);
+
+    const currentScreen = screens[currentDisplayNr];
+    const screenBounds = currentScreen?.bounds;
+
     // Set maximizable based on screen count
     mediaWindow.setMaximizable(screens.length > 1);
 
+    // Set always on top based on fullscreen parameter and current fullscreen state
+    const isEffectivelyFullscreen =
+      screenBounds &&
+      currentBounds.width >= screenBounds.width - 10 &&
+      currentBounds.height >= screenBounds.height - 10;
+
+    const alwaysOnTop =
+      PLATFORM !== 'darwin' && !!(isEffectivelyFullscreen || fullscreen);
+
+    console.log('🔍 [moveMediaWindow] Setting always on top:', alwaysOnTop);
+    mediaWindow.setAlwaysOnTop(
+      alwaysOnTop,
+      alwaysOnTop ? 'screen-saver' : undefined,
+    );
+
     // Get current window state
-    const currentBounds = mediaWindow.getBounds();
-    const currentDisplayNr = getWindowScreen(mediaWindow);
     const isCurrentlyFullscreen = mediaWindow.isFullScreen();
 
     console.log('🔍 [moveMediaWindow] Window state details:', {
@@ -303,13 +323,6 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
       );
 
       // Check if media window is fullscreen, maximized, or effectively fullscreen
-      const currentScreen = screens[currentDisplayNr];
-      const screenBounds = currentScreen?.bounds;
-      const isEffectivelyFullscreen =
-        screenBounds &&
-        currentBounds.width >= screenBounds.width - 10 &&
-        currentBounds.height >= screenBounds.height - 10;
-
       const isFullscreenOrMaximized =
         isCurrentlyFullscreen ||
         mediaWindow.isMaximized() ||
@@ -557,9 +570,6 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
         return;
       }
 
-      const alwaysOnTop = PLATFORM !== 'darwin' && fullScreen;
-      console.log('🔍 [setWindowBounds] Always on top:', alwaysOnTop);
-
       // Get current state
       const currentBounds = mediaWindow.getBounds();
       const wasFullscreen = mediaWindow.isFullScreen();
@@ -583,10 +593,6 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
           fullScreen,
         );
       }
-
-      // Set always on top
-      console.log('🔍 [setWindowBounds] Setting always on top:', alwaysOnTop);
-      mediaWindow.setAlwaysOnTop(alwaysOnTop);
 
       // Set bounds
       console.log('🔍 [setWindowBounds] Setting bounds:', bounds);
