@@ -30,15 +30,15 @@ Glavni vmesnik M³ je sestavljen iz več ključnih področij:
 - **Orodna vrstica** - hiter dostop do običajnih funkcij
 - **Vrstica stanja** - prikazuje potek prenosa in glasbo v ozadju ter stanje povezave s programom OBS Studio
 
-## Media Management {#user-guide-media-management}
+## Upravljanje multimedijske vsebine {#user-guide-media-management}
 
-### Understanding the Calendar View {#calendar-view}
+### Razumevanje pogleda koledarja {#calendar-view}
 
-The calendar view shows your meeting schedule and available media:
+V pogledu koledarja so prikazani urnik shodov in razpoložljiva multimedijska vsebina:
 
-- **Meeting Days** - Highlighted days show when meetings are scheduled
-- **Media Indicators** - Icons show what types of media are available
-- **Date Navigation** - Use arrow keys to navigate between months
+- **Dnevi shodov** - označeni dnevi kažejo, kdaj so na razporedu shodi.
+- **Indikatorji multimedijske vsebine** - ikone prikazujejo, katera vrsta multimedijske vsebine je na voljo.
+- **Navigacija po datumu** - za premikanje med meseci uporabi smerne tipke.
 
 <!-- ### Downloading Media {#downloading-media}
 
@@ -48,12 +48,12 @@ Download speed depends on your internet connection and the size of media files. 
 
 ::: -->
 
-### Organizing Media {#organizing-media}
+### Organiziranje multimedijske vsebine {#organizing-media}
 
-M³ automatically organizes media by meeting type and section:
+M³ samodejno organizira multimedijsko vsebino glede na vrsto shoda in razdelek:
 
-- **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
-- **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
+- **Deli shodov** - multimedijska vsebina je razvrščena po delih shoda (javni govor, Zakladi iz Božje Besede itd.).
+- **Deli po meri** - ustvarite lahko dele po meri za dodatne multimedijsko vsebino, če na določen dan ni načrtovan noben shod.
 
 ## Media Presentation {#media-presentation}
 
