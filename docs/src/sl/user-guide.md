@@ -55,18 +55,18 @@ M³ samodejno organizira multimedijsko vsebino glede na vrsto shoda in razdelek:
 - **Deli shodov** - multimedijska vsebina je razvrščena po delih shoda (javni govor, Zakladi iz Božje Besede itd.).
 - **Deli po meri** - ustvarite lahko dele po meri za dodatne multimedijsko vsebino, če na določen dan ni načrtovan noben shod.
 
-## Media Presentation {#media-presentation}
+## Predvajanje multimedijske vsebine {#media-presentation}
 
-### Opening the Media Player {#opening-media-player}
+### Odpiranje multimedijskega predvajalnika {#opening-media-player}
 
-To present media during a meeting:
+Za predvajanje multimedijske vsebine med shodom:
 
-1. Select the date and media item you want to present
-2. Click the play button or use the keyboard shortcut
-3. The media will start playing on the media display
-4. Use the controls to play, pause, or navigate through media
+1. Izberi datum in multimedijsko vsebino, ki jo želiš predstaviti.
+2. Klikni gumb za predvajanje ali uporabi bližnjico na tipkovnici.
+3. Multimedijska vsebina se bo začela predvajati na multimedijskem zaslonu.
+4. Za predvajanje, začasno zaustavitev ali premikanje po multimedijski vsebini uporabi upravljalne elemente.
 
-### Media Player Controls {#media-player-controls}
+### Nadzor multimedijskega predvajalnika {#media-player-controls}
 
 The media player provides comprehensive controls:
 
