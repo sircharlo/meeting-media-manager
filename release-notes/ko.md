@@ -4,6 +4,15 @@
 
 버전별 전체 변경 사항은, GitHub 의 CHANGELOG.md 파일을 확인해주세요.
 
+## v25.9.1
+
+### ✨ 새로운 기능
+
+- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
+- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
+- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
+- ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
+
 ## v25.9.0
 
 ### ✨ 새로운 기능
