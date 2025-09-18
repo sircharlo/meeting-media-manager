@@ -8,9 +8,9 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
-- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
-- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
+- ✨ **Multimedijsko okno vedno na vrhu in delovanje v polnem zaslonu**: Popravljeno in izboljšano delovanje mulzimedijskega okna, ki je vedno na vrhu, in se dinamično prilagaja glede na stanje polnega zaslona.
+- ✨ **Nastavitev formata prikaza datuma**: Dodana je bila uporabniška nastavitev za konfiguracijo formata prikaza datuma.
+- ✨ **Prehod med multimedijsko vsebino**: Namesto ostrega prehoda v črno se zdaj uporablja prelivanje za bolj prijeten vizualni učinek.
 - ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
 
 ## v25.9.0
