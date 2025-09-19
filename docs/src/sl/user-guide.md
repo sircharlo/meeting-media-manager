@@ -68,10 +68,10 @@ Za predvajanje multimedijske vsebine med shodom:
 
 ### Nadzor multimedijskega predvajalnika {#media-player-controls}
 
-The media player provides comprehensive controls:
+Multimedijski predvajalnik omogoča celovito upravljanje:
 
-- **Play/Pause** - Start or pause media playback
-- **Stop** - Stop playback
+- **Predvajanje/premor** - začetek ali začasna prekinitev predvajanja multimedijske datoteke
+- **Stop** - zaustavitev predvajanja
 
 <!-- - **Previous/Next** - Navigate between media items
 - **Volume** - Adjust playback volume -->
