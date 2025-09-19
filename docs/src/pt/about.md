@@ -63,26 +63,26 @@ Para reuniões congregacionais **híbridas** ou **presenciais**, o modo integrad
 
 - **Compartilhamento de tela automático**: Inicie e interrompa o compartilhamento de tela no Zoom automaticamente ao reproduzir ou parar a mídia
 
-### OBS Studio Integration {#about-obs-integration}
+### Integração com OBS Studio {#about-obs-integration}
 
-- **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
-- **Scene management**: Automatic switching between camera, media, and other scenes
+- **Troca automática de cenas**: integração sem interrupções com o OBS Studio para reuniões híbridas
+- **Gerenciamento de cenas**: Troca automática entre câmera, mídia e outras cenas
 
-### Media Import and Management {#about-media-import}
+### Importação e Gerenciamento de Mídias {#about-media-import}
 
-- **JWPUB files**: Import and manage JWPUB files with ease
-- **JWLPLAYLIST files**: Support for JW Library playlist files
-- **Custom media**: Import custom videos, pictures, audio files, and PDF files
-- **Audio Bible**: Import Study Bible media and audio recordings of the New World Translation
-- **Public talks**: Always have public talk media overview ready to use with the S-34 importer
+- **Arquivos JWPUB**: Importe e gerencie arquivos JWPUB facilmente
+- **Arquivos JWLPLAYLIST**: Suporte para arquivos de playlist do JW Library
+- **Mídia personalizada**: Importar vídeos personalizados, imagens, arquivos de áudio e PDF.
+- **Áudio da Bíblia**: importar mídia da Bíblia de Estudo e gravações de áudio da Tradução do Novo Mundo
+- **Discursos públicos**: tenha sempre uma visão geral da mídia de discursos públicos pronta para uso com o importador do S-34
 
-### Advanced Features {#about-advanced-features}
+### Recursos Avançados {#about-advanced-features}
 
-- **Folder monitoring**: Automatically sync media from watched folders (Dropbox, OneDrive, etc.)
-- **Media export**: Automatically export media to folders, organized by date
-- **Website presentation**: Present the official website on external monitors
-- **Keyboard shortcuts**: Customizable keyboard shortcuts for many functions
-- **Multiple profiles**: Manage different congregations or groups with separate profiles
+- **Monitoramento de pastas**: sincronizar automaticamente as mídias das pastas selecionadas(Dropbox, OneDrive, etc.)
+- **Exportação de mídia**: Exportar mídias automaticamente para pastas, organizadas por data
+- **Apresentação do site**: Apresente o site oficial em monitores externos
+- **Atalhos de teclado**: Atalhos de teclado personalizáveis para muitas funções
+- **Vários perfis**: gerenciar congregações diferentes ou grupos com perfis separados
 
 **Experimente hoje o M³ e veja com os próprios olhos o que ele pode fazer! A exibição de mídias nas reuniões congregacionais nunca foi tão fácil.**
 
@@ -92,38 +92,38 @@ Para reuniões congregacionais **híbridas** ou **presenciais**, o modo integrad
 
 **Sim!** O M³ oferece suporte abrangente em vários idiomas:
 
-### Media Languages {#media-languages}
+### Idiomas de Mídia {#media-languages}
 
 Mídias para as reuniões das Testemunhas de Jeová podem ser baixadas automaticamente em quaisquer dos centenas de idiomas disponíveis no site oficial das Testemunhas de Jeová. A lista de idiomas disponíveis é sempre atualizada; tudo que você precisa fazer é selecionar qual você precisa durante a configuração.
 
 ### Idiomas de interface {#interface-languages}
 
-O próprio M³ foi traduzido para vários idiomas por voluntários. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
+O próprio M³ foi traduzido para vários idiomas por voluntários. Você pode configurar o idioma que gostaria de ser exibido na interface do M3, independente do idioma usado para downloads de mídia. Isso significa que você pode usar o M3 no seu idioma de preferência, enquanto baixa mídia em qualquer outro idioma suportado.
 
-### Language Features {#language-features}
+### Recursos de Idioma {#language-features}
 
-- **Dynamic language detection**: Automatically detects available languages
-- **Fallback languages**: Configure fallback languages for when primary language content isn't available
-- **Subtitle support**: Download and display subtitles in different languages
-- **Localized interface**: Complete interface translation for many languages
+- **Detecção dinâmica de idioma**: Detecta automaticamente idiomas disponíveis
+- **Idiomas secundários**: Configurar idiomas secundários quando o conteúdo do idioma principal não está disponível
+- **Suporte a legendas**: Baixe e exiba legendas em idiomas diferentes
+- **Interface localizada**: tradução completa da interface para vários idiomas
 
 ## Requisitos de Sistema {#system-requirements}
 
-M³ is designed to work on a wide range of systems:
+O M3 foi projetado para funcionar em uma grande variedade de sistemas:
 
-### Supported Operating Systems {#supported-operating-systems}
+### Sistemas operacionais suportados {#supported-operating-systems}
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 e posterior (versões 64 bits e 32-bit disponíveis)
+- **macOS**: macOS 10.15 (Catalina) e posterior (Suporte para Intel e Apple Silicon)
+- **Linux**: Distribuições Linux mais modernas (AppImage format)
 
-### Hardware Requirements {#hardware-requirements}
+### Requisitos de Hardware {#hardware-requirements}
 
-- **Minimum**: 4GB RAM, 6GB free disk space
-- **Recommended**: 8GB RAM, 15GB free disk space for media caching
-- **Network**: Internet connection for media downloads
+- **Mínimo**: 4GB RAM, 6GB de espaço livre em disco
+- **Recomendado**: 8GB RAM, 15GB de espaço livre em disco para cache de mídia
+- **Rede**: conexão com a Internet para downloads de mídia
 
-### Additional Requirements {#additional-requirements}
+### Requisitos Adicionais {#additional-requirements}
 
-- **Zoom**: Required only if using Zoom integration features
-- **OBS Studio**: Required only if using OBS integration features
+- **Zoom**: Necessário apenas se usar os recursos de integração Zoom
+- **OBS Studio**: Requerido apenas se estiver usando recursos de integração do OBS
