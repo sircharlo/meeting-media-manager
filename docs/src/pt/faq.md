@@ -38,7 +38,7 @@ M³ supports Windows, macOS, and Linux:
 
 ## Installation and Setup {#installation-setup}
 
-### :computer: How do I install M³? {#installation}
+### :computer: Como faço para instalar o M3? {#installation}
 
 Download the appropriate version for your operating system from the [releases page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and follow the installation instructions in the [setup guide](/using-at-a-kingdom-hall#download-and-install).
 
