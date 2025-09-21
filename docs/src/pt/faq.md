@@ -165,74 +165,74 @@ Este recurso atrasa o compartilhamento de imagens no OBS até você ativá-las m
 
 Monitoramento de pastas permite que você:
 
-1. Select a folder to watch for new files
-2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
+1. Selecione uma pasta para ver os novos arquivos
+2. Importar automaticamente novos arquivos de mídia que são sincronizados com armazenamento em nuvem, como Dropbox ou OneDrive
 
-### :file_folder: What is media auto-export? {#faq-media-export}
+### :file_folder: O que é a exportação automática de mídia? {#faq-media-export}
 
-Media auto-export automatically:
+Exportar automaticamente as mídias:
 
-1. Exports media files to a specified folder
-2. Organizes files by date and section
-3. Converts files to MP4 format (optional)
-4. Maintains an organized backup of meeting media files
+1. Exporta arquivos de mídia para uma pasta específica
+2. Organiza arquivos por data e seção
+3. Converte arquivos para o formato MP4 (opcional)
+4. Mantém um backup organizado de arquivos de mídia de reuniões
 
-### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
+### :family: Posso gerenciar várias congregações? {#faq-multiple-congregations}
 
-Sim! M³ supports multiple profiles for:
+Sim! O M³ suporta vários perfis para:
 
-- Different congregations
-- Special events
-- Different groups
-- Separate settings and media for each
+- Congregações diferentes
+- Eventos especiais
+- Grupos diferentes
+- Configurações e mídia separadas para cada um
 
-## Troubleshooting {#faq-troubleshooting}
+## Solução de problemas {#faq-troubleshooting}
 
-### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
+### O :warning: Mídia não está baixando. O que devo verificar? {#faq-media-not-downloading}
 
-Check these common issues:
+Verifique estes problemas comuns:
 
-1. **Meeting Schedule**: Verify your meeting days and times are correct
-2. **Language Settings**: Ensure your media language is set correctly
-3. **Internet Connection**: Check your internet connection
-4. **Language Availability**: Verify media is available in your selected language
+1. **Programação da Reunião**: verifique os dias e os horários da sua reunião
+2. **Configurações de Idioma**: Certifique-se de que seu idioma de mídia esteja definido corretamente
+3. **Conexão de Internet**: Verifique sua conexão com a internet
+4. **Disponibilidade de Idiomas**: Verifique se a mídia está disponível no idioma selecionado
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: The OBS integration isn't working. What should I verify? {#faq-obs-not-working}
+### :video_camera: A integração OBS não está funcionando. O que devo verificar? {#faq-obs-not-working}
 
-Check these OBS-related issues:
+Verifique estes problemas relacionados ao OBS:
 
-1. **OBS Installation**: Ensure OBS Studio is installed and running
-2. **WebSocket Plugin**: Verify the WebSocket plugin is installed
-3. **Port and Password**: Check your OBS port and password settings
-4. **Firewall**: Ensure the firewall isn't blocking the connection
+1. **Instalação do OBS**: Certifique-se de que o OBS Studio está instalado e em execução
+2. **Plugin WebSocket**: verifique se o plugin WebSocket está instalado
+3. **Porta e Senha**: verifique suas configurações de porta e senha do OBS
+4. **Firewall**: Certifique-se de que o firewall não está bloqueando a conexão
 
-### :speaker: Does Meeting Media Manager automatically send the media audio to Zoom when using OBS Studio? {#audio-to-zoom}
+### :speaker: O M³ envia automaticamente o áudio da mídia para o Zoom ao usar o OBS Studio? {#audio-to-zoom}
 
-**No.** M³ does not automatically send media audio to Zoom or OBS Studio. The video stream works like a virtual camera with no sound, just like a webcam. To have the music/video sound available in Zoom automatically, you need to ensure that Zoom 'hears' the audio feed coming from the computer, and then you should enable the **Original Audio** setting in Zoom.
+**Não.** M³ não envia automaticamente áudio de mídia para Zoom ou OBS Studio. O stream de vídeo funciona como uma câmera virtual sem som, como uma webcam. Para ter o som de música/vídeo disponível automaticamente no Zoom, você precisa garantir que o Zoom 'ouve' o feed de áudio vindo do computador, e então você deve ativar as configurações de **Áudio original** no Zoom.
 
-**Important Notes:**
+**Notas importantes:**
 
-- You must enable Original Audio **every time** before starting a Zoom meeting
-- This setting is not related to M³ - you would face the same audio issue when using any other media player and not using Zoom's screen and audio sharing features
-- The Original Audio setting has three sub-options - typically the first two should be enabled and the third disabled for optimal audio quality
-- If you're still experiencing audio issues, you may need to use Zoom's "Share Computer Sound" option instead
-- Alternatively, look into using the Zoom integration instead, as it uses Zoom's native screen sharing.
+- Você deve ativar o Áudio Original **toda vez** antes de iniciar uma reunião Zoom
+- Esta configuração não está relacionada ao M³ - você enfrentará o mesmo problema de áudio ao usar qualquer outro reprodutor de mídia e não usar recursos de compartilhamento de tela e áudio do Zoom
+- A configuração Áudio original tem três sub-opções - tipicamente os dois primeiros devem ser ativados e o terceiro deve ser desativado para melhor qualidade de áudio
+- Se ainda estiver com problemas de áudio, talvez precise usar a opção "Compartilhar som do computador" do Zoom
+- Como alternativa, procure usar a integração com o Zoom, enquanto usa o compartilhamento de tela nativo do Zoom.
 
-**Why is this necessary?**
-M³ plays media with sound on your computer, but this audio is not automatically transmitted through the video stream to Zoom when using OBS Studio. The Original Audio setting allows Zoom to capture the audio playing on your computer during screen sharing, if your computer is configured properly (for example: the computer has a second sound card that is used for media playback which Zoom listens to as a microphone.)
+\*\*Por que isso é preciso? \*
+M³ reproduz mídia com som em seu computador, mas este áudio não é transmitido automaticamente através do stream do vídeo para o Zoom quando usando o OBS Studio. A configuração Áudio original permite que o Zoom capture a reprodução de áudio no seu computador durante o compartilhamento de tela se o seu computador está configurado corretamente (por exemplo: o computador tem uma segunda placa de som usada para reprodução de mídia que o Zoom escuta como um microfone.)
 
-### :snail: M³ is running slowly. How can I improve performance? {#performance-issues}
+### :snail: M³ está rodando lentamente. Como posso melhorar o desempenho? {#performance-issues}
 
-Try these performance optimizations:
+Experimente essas otimizações de desempenho:
 
-1. **Enable Extra Cache**: Turn on additional caching in settings
-2. **Close Other Apps**: Close unnecessary applications
+1. **Habilitar cache extra**: ative cache adicional nas configurações
+2. **Fechar outros aplicativos**: Feche aplicativos desnecessários
 3. **Check Disk Space**: Ensure you have sufficient free disk space
 4. **Reduce Resolution**: Lower the maximum resolution setting
 
-### :speech_balloon: I'm having language issues. What should I check? {#faq-language-issues}
+### :speech_balloon: I'm having language issues. O que devo verificar? {#faq-language-issues}
 
 Verify these language settings:
 
