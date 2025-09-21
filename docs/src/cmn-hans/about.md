@@ -16,7 +16,7 @@ M³具有管理常规和自定义聚会媒体的功能，支持使用同一计�
 
 ## 为什么选择M3？ {#why-choose-m3}
 
-M3是管理聚会媒体的最终工具，为各平台提供无缝、可靠和丰富特色的经验。 It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation. 它是专门为了满足聚会的需要而设计的，并为有效的媒体报道提供了一切必要的手段。
+M3是管理聚会媒体的最终工具，为各平台提供无缝、可靠和丰富特色的经验。 It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation. 它是专门为了满足聚会的需要而设计的，并为有效的媒体播放提供了一切必要的手段。
 
 ### 主要功能 {#key-benefits}
 
@@ -94,7 +94,7 @@ M³是一个综合性媒体管理解决方案，让您能够轻松自动地下�
 
 ### 媒体语言 {#media-languages}
 
-耶和华见证人聚会的媒体可以自动下载耶和华见证人官方网站上提供的数百种语言中的任何一种。可用语言列表会动态更新；您只需在设置期间选择所需的语言即可。 可用语言列表会动态更新；您只需在设置期间选择所需的语言即可。
+耶和华见证人聚会的媒体可以自动下载官方网站上提供的数百种语言中的任何一种。可用语言列表会动态更新；您只需在设置期间选择所需的语言即可。 可用语言列表会动态更新；您只需在设置期间选择所需的语言即可。
 
 ### 界面语言 {#interface-languages}
 
