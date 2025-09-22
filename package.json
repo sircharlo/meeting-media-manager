@@ -41,7 +41,7 @@
     "@sentry/vue": "^10.11.0",
     "@vueuse/core": "^13.9.0",
     "@vueuse/router": "^13.9.0",
-    "better-sqlite3": "^12.2.0",
+    "better-sqlite3": "^12.3.0",
     "cheerio": "^1.1.2",
     "chokidar": "^4.0.3",
     "countries-and-timezones": "^3.8.0",
