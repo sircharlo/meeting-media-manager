@@ -1759,7 +1759,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@open-draft/until@npm:^2.0.0, @open-draft/until@npm:^2.1.0":
+"@open-draft/until@npm:^2.0.0":
   version: 2.1.0
   resolution: "@open-draft/until@npm:2.1.0"
   checksum: 10c0/61d3f99718dd86bb393fee2d7a785f961dcaf12f2055f0c693b27f4d0cd5f7a03d498a6d9289773b117590d794a43cd129366fd8e99222e4832f67b1653d54cf
@@ -10424,7 +10424,7 @@ __metadata:
     lodash-es: "npm:^4.17.21"
     mime: "npm:^4.1.0"
     mousetrap: "npm:^1.6.5"
-    msw: "npm:^2.11.2"
+    msw: "npm:^2.11.3"
     music-metadata: "npm:^11.9.0"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^8.1.1"
@@ -10908,16 +10908,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msw@npm:^2.11.2":
-  version: 2.11.2
-  resolution: "msw@npm:2.11.2"
+"msw@npm:^2.11.3":
+  version: 2.11.3
+  resolution: "msw@npm:2.11.3"
   dependencies:
     "@bundled-es-modules/cookie": "npm:^2.0.1"
     "@bundled-es-modules/statuses": "npm:^1.0.1"
     "@inquirer/confirm": "npm:^5.0.0"
     "@mswjs/interceptors": "npm:^0.39.1"
     "@open-draft/deferred-promise": "npm:^2.2.0"
-    "@open-draft/until": "npm:^2.1.0"
     "@types/cookie": "npm:^0.6.0"
     "@types/statuses": "npm:^2.0.4"
     graphql: "npm:^16.8.1"
@@ -10930,6 +10929,7 @@ __metadata:
     strict-event-emitter: "npm:^0.5.1"
     tough-cookie: "npm:^6.0.0"
     type-fest: "npm:^4.26.1"
+    until-async: "npm:^3.0.2"
     yargs: "npm:^17.7.2"
   peerDependencies:
     typescript: ">= 4.8.x"
@@ -10938,7 +10938,7 @@ __metadata:
       optional: true
   bin:
     msw: cli/index.js
-  checksum: 10c0/56f9549fbba4a7fdf638c79484fee637bcd85696450e3192f7998506c318a1057a84ceed4596c8af87d544d5d4cc218d10d65c32cea2d11cac5b26f601030bc0
+  checksum: 10c0/847cb0e66152328d898474cd12e2ea0b9c11ed997b3a1129018a99afd7ff1134e45aed7158d0a57a1052b7a80b241e91952285f915142bd70c905316dbe9a49d
   languageName: node
   linkType: hard
 
@@ -14947,6 +14947,13 @@ __metadata:
     picomatch: "npm:^4.0.3"
     webpack-virtual-modules: "npm:^0.6.2"
   checksum: 10c0/29dcd738772aeff91c6f0154f156c95c58a37a4674fcb7cc34d6868af763834f0f447a1c3af074818c0c5602baead49bd3b9399a13f0425d69a00a527e58ddda
+  languageName: node
+  linkType: hard
+
+"until-async@npm:^3.0.2":
+  version: 3.0.2
+  resolution: "until-async@npm:3.0.2"
+  checksum: 10c0/61c8b03895dbe18fe3d90316d0a1894e0c131ea4b1673f6ce78eed993d0bb81bbf4b7adf8477e9ff7725782a76767eed9d077561cfc9f89b4a1ebe61f7c9828e
   languageName: node
   linkType: hard
 
