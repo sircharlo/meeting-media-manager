@@ -8,10 +8,10 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
-- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
-- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
-- ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
+- ✨ **Meediaaken alati esikohal ja täisekraani režiim**: parandatud ja täiustatud meediaakna alati esikohal olemise funktsioon, mis kohandub dünaamiliselt vastavalt täisekraani režiimile.
+- ✨ **Kuupäeva kuvamise formaadi seadistus**: Lisatud seadistus kuupäeva kuvamise formaadi määramiseks.
+- ✨ **Meedia üleminekud**: Rakendatud on meedia kuvamise üleminekud, mis asendavad varem kasutatud järsemaid üleminekuid mustaks.
+- ✨ **macOS klõpsamine mitteaktiivsetel akendel**: lubatud hiireklõpsamine macOS-i peaaknas, mis peaks lihtsustama rakenduse juhtimist isegi siis, kui see ei ole fookuses.
 
 ## v25.9.0
 
