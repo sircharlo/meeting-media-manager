@@ -187,7 +187,7 @@ Omogoči glasbo v ozadju.
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
-How many seconds before meeting start time to stop background music.
+Koliko sekund pred začetkom shoda naj se ustavi glasba v ozadju.
 
 **Obseg**: 0-300 sekund
 
