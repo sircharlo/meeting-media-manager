@@ -4323,9 +4323,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/language-core@npm:3.0.7":
-  version: 3.0.7
-  resolution: "@vue/language-core@npm:3.0.7"
+"@vue/language-core@npm:3.0.8":
+  version: 3.0.8
+  resolution: "@vue/language-core@npm:3.0.8"
   dependencies:
     "@volar/language-core": "npm:2.4.23"
     "@vue/compiler-dom": "npm:^3.5.0"
@@ -4340,7 +4340,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/7cc7ecdc2306365b6548fd9e4e2fc3fa3e7390defdfec0a4a022a1f030a7c89586b479ab01bdf03979f4fce0062b0f0e5d12adee7636fa9cd56d928795dacbd0
+  checksum: 10c0/abcf441f22c43422635789cd8970b04c9c35fb95f965dbebe81a0ed1227af1f405b88b9e037bd8fe555eb0f21293d73ac8da6b624f779bff14db2163f96d6991
   languageName: node
   linkType: hard
 
@@ -10432,7 +10432,7 @@ __metadata:
     vue-eslint-parser: "npm:^10.2.0"
     vue-i18n: "npm:^11.1.12"
     vue-router: "npm:^4.5.1"
-    vue-tsc: "npm:^3.0.7"
+    vue-tsc: "npm:^3.0.8"
     vue-zoomable: "npm:^1.2.8"
     webpack-iconfont-plugin-nodejs: "npm:^1.0.36"
   languageName: unknown
@@ -15390,17 +15390,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-tsc@npm:^3.0.7":
-  version: 3.0.7
-  resolution: "vue-tsc@npm:3.0.7"
+"vue-tsc@npm:^3.0.8":
+  version: 3.0.8
+  resolution: "vue-tsc@npm:3.0.8"
   dependencies:
     "@volar/typescript": "npm:2.4.23"
-    "@vue/language-core": "npm:3.0.7"
+    "@vue/language-core": "npm:3.0.8"
   peerDependencies:
     typescript: ">=5.0.0"
   bin:
     vue-tsc: ./bin/vue-tsc.js
-  checksum: 10c0/2c5ae1ab66eed020ca5ebe49cbc9807658da1a79ad1ee9af5126d8b19d2d7209fd368d8f9e091176e99053a8e4e9e32824826242a13108e331a2fb6b67a67a7a
+  checksum: 10c0/2593722116a0ac7ace8540b3c911413dc60e5e7b33cba3938f2cd3ca6efb46b916eecda3b55b5f43fa5713030e12005c18d05cef28626284cda51a5fe67de091
   languageName: node
   linkType: hard
 
