@@ -8,17 +8,17 @@ Para a lista completa de alterações entre versões, consulte o ficheiro CHANGE
 
 ### ✨ Novas Funcionalidades
 
-- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
-- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
-- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
-- ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
+- ✨ Janela de Multimédia Sempre em Primeiro Plano & Comportamento em Ecrã Inteiro: Corrigido e melhorado o comportamento de manter a janela de média sempre em primeiro plano, ajustando-se dinamicamente consoante o estado de ecrã inteiro.
+- ✨ **Configurações de Formato de Data**: Adicionado uma configuração de usuário para configurar um formato de exibição de data.
+- ✨ **Media Crossfade**: transições de crossfade implementadas para a exibição de mídia, em vez da transição mais brusca para preta que estava presente antes.
+- ✨ **macOS Click-Through no Windows Inativo**: Clique com o mouse habilitado sobre a janela principal para macOS, o que deve tornar mais fácil o controle do aplicativo, mesmo quando ele não está focado.
 
 ## v25.9.0
 
 ### ✨ Novas Funcionalidades
 
-- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
-- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
+- ✨ **Download Popup Enhancements**: Adicionado botão atualizar e baixar o agrupamento por data no pop-up de download.
+- ✨ **Memória da Ordem de Mídia Acompanhada**: Memória da ordem de seção adicionada para itens de mídia assistidos.
 
 ## v25.8.3
 
