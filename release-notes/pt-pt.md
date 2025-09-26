@@ -11,7 +11,7 @@ Para a lista completa de alterações entre versões, consulte o ficheiro CHANGE
 - ✨ Janela de Multimédia Sempre em Primeiro Plano & Comportamento em Ecrã Inteiro: Corrigido e melhorado o comportamento de manter a janela de média sempre em primeiro plano, ajustando-se dinamicamente consoante o estado de ecrã inteiro.
 - ✨ **Configurações de Formato de Data**: Adicionado uma configuração de usuário para configurar um formato de exibição de data.
 - ✨ **Media Crossfade**: transições de crossfade implementadas para a exibição de mídia, em vez da transição mais brusca para preta que estava presente antes.
-- - ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not
+- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not.
 - ✨ **macOS Click-Through no Windows Inativo**: Clique com o mouse habilitado sobre a janela principal para macOS, o que deve tornar mais fácil o controle do aplicativo, mesmo quando ele não está focado.
 
 ## v25.9.0

@@ -11,7 +11,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 - ✨ **Multimedijsko okno vedno na vrhu in delovanje v polnem zaslonu**: Popravljeno in izboljšano delovanje mulzimedijskega okna, ki je vedno na vrhu, in se dinamično prilagaja glede na stanje polnega zaslona.
 - ✨ **Nastavitev formata prikaza datuma**: Dodana je bila uporabniška nastavitev za konfiguracijo formata prikaza datuma.
 - ✨ **Prehod med multimedijsko vsebino**: Namesto ostrega prehoda v črno se zdaj uporablja prelivanje za bolj prijeten vizualni učinek.
-- - ✨ **Samodejno ustavljanje glasbe**: Optimizirano delovanje samodejnega ustavljanja glasbe v ozadju, da se obnaša enako, ne glede na to, ali je bila glasba samodejno zagnana ali ne.
+- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not.
 - ✨ \*\*Podpora za klike skozi neaktivna okna v macOS \*\*: Glavno okno aplikacije zdaj sprejema miškine klike tudi, ko ni aktivno, kar omogoča bolj tekoče upravljanje.
 
 ## v25.9.0
