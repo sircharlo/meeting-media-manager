@@ -72,7 +72,7 @@
             color="primary"
             :disable="mediaIsPlaying || musicState === 'music.starting'"
             unelevated
-            @click="playMusic(true)"
+            @click="playMusic()"
           >
             {{ t('play-music') }}
           </q-btn>
@@ -173,7 +173,7 @@ const musicState = ref<
 
 const musicPlayingTitle = ref('');
 const songList = ref<SongItem[]>([]);
-const wasStartedManually = ref(false); // Track if music was started manually
+// const wasStartedManually = ref(false); // Track if music was started manually
 
 // Time calculations - cleaner and more predictable
 
@@ -236,7 +236,8 @@ const shouldAutoStart = computed(() => {
 });
 
 const shouldAutoStop = computed(() => {
-  if (!musicPlaying.value || wasStartedManually.value) {
+  // if (!musicPlaying.value || wasStartedManually.value) {
+  if (!musicPlaying.value) {
     return false;
   }
 
@@ -268,7 +269,7 @@ const timeUntilMusicStops = computed(() => {
 const shouldShowMeetingCountdown = computed(() => {
   return (
     musicState.value !== 'music.stopping' &&
-    !wasStartedManually.value &&
+    // !wasStartedManually.value &&
     !isMeetingOver.value
   );
 });
@@ -280,8 +281,8 @@ const displayStatusText = computed(() => {
     case 'music.playing':
       if (
         !isMeetingToday.value ||
-        isMeetingOver.value ||
-        wasStartedManually.value
+        isMeetingOver.value
+        // || wasStartedManually.value
       ) {
         return currentSongRemainingTime.value;
       }
@@ -321,7 +322,7 @@ watchImmediate(
       state !== 'music.playing'
     ) {
       console.log('🎵 Auto-starting background music');
-      wasStartedManually.value = false;
+      // wasStartedManually.value = false;
       playMusic();
     }
   },
@@ -351,7 +352,7 @@ watch(
 const musicPopup = useTemplateRef<QMenu>('musicPopup');
 
 // Music player functions
-async function playMusic(manualStart = false) {
+async function playMusic() {
   console.group('🎵 Background Music Playback');
   try {
     if (
@@ -366,10 +367,10 @@ async function playMusic(manualStart = false) {
 
     console.log('🎵 Starting background music');
     musicState.value = 'music.starting';
-    if (manualStart) {
-      console.log('👆 Music started manually');
-      wasStartedManually.value = true;
-    }
+    // if (manualStart) {
+    //   console.log('👆 Music started manually');
+    // wasStartedManually.value = true;
+    // }
     downloadBackgroundMusic();
     songList.value = [];
     musicPlayer.value.appendChild(musicPlayerSource.value);
@@ -632,7 +633,7 @@ const fadeToVolumeLevel = (targetVolume: number, fadeSeconds: number) => {
           if (musicPlayer.value.volume === 0) {
             musicPlayer.value.pause();
             musicState.value = '';
-            wasStartedManually.value = false; // Reset manual flag when stopped
+            // wasStartedManually.value = false; // Reset manual flag when stopped
           }
         }
       } catch (error) {
@@ -670,7 +671,7 @@ const toggleMusicListener = () => {
       stopMusic();
     } else {
       console.log('👆 Music started manually');
-      wasStartedManually.value = true;
+      // wasStartedManually.value = true;
       playMusic();
     }
   } catch (error) {
