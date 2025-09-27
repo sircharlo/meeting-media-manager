@@ -114,7 +114,9 @@ export class StatefulBrowserWindow {
       ensureDirSync(dirname(this.fullStoreFileName));
       writeJsonSync(this.fullStoreFileName, this.state);
     } catch (e) {
-      captureElectronError(e);
+      captureElectronError(e, {
+        contexts: { fn: { name: 'StatefulBrowserWindow.saveState' } },
+      });
     }
   };
 
@@ -144,7 +146,9 @@ export class StatefulBrowserWindow {
       this.state.displayBounds = display.bounds;
       this.state.displayScaleFactor = display.scaleFactor;
     } catch (e) {
-      captureElectronError(e);
+      captureElectronError(e, {
+        contexts: { fn: { name: 'StatefulBrowserWindow.updateState' } },
+      });
     }
   };
 }

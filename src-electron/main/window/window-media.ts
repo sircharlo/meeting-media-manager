@@ -519,7 +519,9 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
     console.log('🔍 [moveMediaWindow] END - Changes applied');
   } catch (e) {
     console.error('❌ [moveMediaWindow] Error:', e);
-    captureElectronError(e);
+    captureElectronError(e, {
+      contexts: { fn: { name: 'moveMediaWindow' } },
+    });
   }
 };
 
@@ -696,7 +698,9 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
     console.log('🔍 [setWindowPosition] END - All changes queued');
   } catch (err) {
     console.error('❌ [setWindowPosition] Error:', err);
-    captureElectronError(err);
+    captureElectronError(err, {
+      contexts: { fn: { name: 'setWindowPosition' } },
+    });
   }
 };
 
@@ -716,6 +720,8 @@ export function focusMediaWindow() {
     }
   } catch (err) {
     console.error('❌ [focusMediaWindow] Error:', err);
-    captureElectronError(err);
+    captureElectronError(err, {
+      contexts: { fn: { name: 'focusMediaWindow' } },
+    });
   }
 }

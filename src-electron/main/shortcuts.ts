@@ -16,7 +16,11 @@ export const registerShortcut = (
       sendToWindow(mainWindow, 'shortcut', { shortcut: name });
     });
   } catch (e) {
-    captureElectronError(e);
+    captureElectronError(e, {
+      contexts: {
+        fn: { keySequence, name: 'registerShortcut', shortcut: name },
+      },
+    });
   }
 };
 
@@ -27,7 +31,9 @@ export const unregisterShortcut = (keySequence: string) => {
       globalShortcut.unregister(keySequence);
     }
   } catch (e) {
-    captureElectronError(e);
+    captureElectronError(e, {
+      contexts: { fn: { keySequence, name: 'unregisterShortcut' } },
+    });
   }
 };
 
@@ -35,6 +41,8 @@ export const unregisterAllShortcuts = () => {
   try {
     globalShortcut.unregisterAll();
   } catch (e) {
-    captureElectronError(e);
+    captureElectronError(e, {
+      contexts: { fn: { name: 'unregisterAllShortcuts' } },
+    });
   }
 };

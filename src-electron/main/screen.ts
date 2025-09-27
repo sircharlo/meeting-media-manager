@@ -31,7 +31,9 @@ export const getAllScreens = (): Display[] => {
       );
       if (mainWindowScreen) mainWindowScreen.mainWindow = true;
     } catch (e) {
-      captureElectronError(e);
+      captureElectronError(e, {
+        contexts: { fn: { name: 'getAllScreens', window: 'mainWindow' } },
+      });
     }
   }
   if (mediaWindow) {
@@ -43,7 +45,9 @@ export const getAllScreens = (): Display[] => {
       );
       if (mediaWindowScreen) mediaWindowScreen.mediaWindow = true;
     } catch (e) {
-      captureElectronError(e);
+      captureElectronError(e, {
+        contexts: { fn: { name: 'getAllScreens', window: 'mediaWindow' } },
+      });
     }
   }
 

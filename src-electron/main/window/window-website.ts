@@ -114,7 +114,9 @@ export const askForMediaAccess = async () => {
         logToWindow(mainWindow, `${type} result:`, result, 'debug');
       }
     } catch (e) {
-      captureElectronError(e);
+      captureElectronError(e, {
+        contexts: { fn: { name: 'askForMediaAccess' } },
+      });
     }
   }
 };
@@ -129,7 +131,9 @@ export const zoomWebsiteWindow = (direction: 'in' | 'out') => {
       websiteWindow.webContents.zoomFactor = Math.max(0.1, currentZoom - 0.2);
     }
   } catch (e) {
-    captureElectronError(e);
+    captureElectronError(e, {
+      contexts: { fn: { name: 'zoomWebsiteWindow' } },
+    });
   }
 };
 
