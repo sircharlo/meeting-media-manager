@@ -11,6 +11,7 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 - ✨ **Meediaaken alati esikohal ja täisekraani režiim**: parandatud ja täiustatud meediaakna alati esikohal olemise funktsioon, mis kohandub dünaamiliselt vastavalt täisekraani režiimile.
 - ✨ **Kuupäeva kuvamise formaadi seadistus**: Lisatud seadistus kuupäeva kuvamise formaadi määramiseks.
 - ✨ **Meedia üleminekud**: Rakendatud on meedia kuvamise üleminekud, mis asendavad varem kasutatud järsemaid üleminekuid mustaks.
+- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not.
 - ✨ **macOS klõpsamine mitteaktiivsetel akendel**: lubatud hiireklõpsamine macOS-i peaaknas, mis peaks lihtsustama rakenduse juhtimist isegi siis, kui see ei ole fookuses.
 
 ## v25.9.0

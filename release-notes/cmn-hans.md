@@ -11,6 +11,7 @@
 - ✨ **媒体窗口总是在顶部 & 全屏行为**：修复并改进媒体窗口的顶部行为，并根据全屏状态动态调整。
 - ✨ **日期显示格式设置**: 添加了一个用户设置来配置日期显示格式。
 - ✨ **媒体相互淡入淡出** : 实现媒体显示的交叉淡入淡出的过渡，而不是以前存在的更突然淡出到黑色的过渡。
+- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not.
 - ✨ **macOS点击不活跃窗口**: 启用鼠标单击主窗口的 macOS, 这将使它更容易控制应用程序，即使它没有对准。
 
 ## v25.9.0
