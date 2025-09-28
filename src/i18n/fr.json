@@ -426,6 +426,8 @@
   "stage": "Estrade",
   "start-mirroring": "Démarrer le partage",
   "start-over": "Recommencer",
+  "beginPlaybackPaused": "Begin playback paused",
+  "beginPlaybackPaused-explain": "When enabled, audio and video will start in a paused state, allowing you to prepare other operations (like Zoom screen sharing) before beginning playback.",
   "stop": "Arrêter",
   "stop-media": "Arrêter la lecture",
   "stop-mirroring": "Arrêter le partage",
