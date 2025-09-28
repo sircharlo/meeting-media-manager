@@ -426,6 +426,8 @@
   "stage": "Lava",
   "start-mirroring": "Alusta peegeldamist",
   "start-over": "Alusta uuesti",
+  "beginPlaybackPaused": "Begin playback paused",
+  "beginPlaybackPaused-explain": "When enabled, audio and video will start in a paused state, allowing you to prepare other operations (like Zoom screen sharing) before beginning playback.",
   "stop": "Peata",
   "stop-media": "Peata meedia esitamine",
   "stop-mirroring": "Peata peegeldamine",

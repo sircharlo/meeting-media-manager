@@ -426,6 +426,8 @@
   "stage": "Oder",
   "start-mirroring": "Začni zrcaljenje",
   "start-over": "Začni znova",
+  "beginPlaybackPaused": "Begin playback paused",
+  "beginPlaybackPaused-explain": "When enabled, audio and video will start in a paused state, allowing you to prepare other operations (like Zoom screen sharing) before beginning playback.",
   "stop": "Ustavi",
   "stop-media": "Ustavi predvajanje multimedijske vsebine",
   "stop-mirroring": "Ustavi zrcaljenje",

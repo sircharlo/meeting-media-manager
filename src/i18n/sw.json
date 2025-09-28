@@ -426,6 +426,8 @@
   "stage": "Jukwaa",
   "start-mirroring": "Anza kuonyesha",
   "start-over": "Anza tena",
+  "beginPlaybackPaused": "Begin playback paused",
+  "beginPlaybackPaused-explain": "When enabled, audio and video will start in a paused state, allowing you to prepare other operations (like Zoom screen sharing) before beginning playback.",
   "stop": "Acha",
   "stop-media": "Acha kucheza midia",
   "stop-mirroring": "Acha kuonyesha",

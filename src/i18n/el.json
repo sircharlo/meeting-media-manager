@@ -426,6 +426,8 @@
   "stage": "Stage",
   "start-mirroring": "Start mirroring",
   "start-over": "Start over",
+  "beginPlaybackPaused": "Begin playback paused",
+  "beginPlaybackPaused-explain": "When enabled, audio and video will start in a paused state, allowing you to prepare other operations (like Zoom screen sharing) before beginning playback.",
   "stop": "Stop",
   "stop-media": "Stop media",
   "stop-mirroring": "Stop mirroring",
