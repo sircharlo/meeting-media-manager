@@ -182,6 +182,11 @@ export const settingsDefinitions: SettingsItems = {
     group: 'mediaRetrievalPlayback',
     type: 'toggle',
   },
+  beginPlaybackPaused: {
+    depends: 'enableMediaDisplayButton',
+    group: 'mediaRetrievalPlayback',
+    type: 'toggle',
+  },
   enableMusicButton: {
     group: 'mediaRetrievalPlayback',
     subgroup: 'setupWizard.backgroundMusic',
@@ -470,6 +475,7 @@ export const defaultSettings: SettingsValues = {
   autoStartAtLogin: false,
   autoStartMusic: true,
   baseUrl: 'jw.org',
+  beginPlaybackPaused: false,
   cacheFolder: null,
   congregationName: null,
   convertFilesToMp4: false,

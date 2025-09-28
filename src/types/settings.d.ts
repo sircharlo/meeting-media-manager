@@ -167,6 +167,7 @@ export interface SettingsValues {
   autoStartAtLogin: boolean;
   autoStartMusic: boolean;
   baseUrl: string;
+  beginPlaybackPaused: boolean;
   cacheFolder: null | string;
   congregationName: null | string;
   convertFilesToMp4: boolean;

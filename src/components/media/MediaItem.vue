@@ -1132,7 +1132,11 @@ const setMediaPlaying = async (
   }
   localFile.value = fileIsLocal();
   mediaPlaying.value = {
-    action: 'play',
+    action:
+      isImage(props.media.fileUrl) ||
+      !currentSettings.value?.beginPlaybackPaused
+        ? 'play'
+        : 'pause',
     currentPosition: 0,
     pan: calculatedPan.value,
     seekTo: 0,
