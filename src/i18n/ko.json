@@ -426,6 +426,8 @@
   "stage": "연단",
   "start-mirroring": "미러링 시작",
   "start-over": "처음으로",
+  "beginPlaybackPaused": "Begin playback paused",
+  "beginPlaybackPaused-explain": "When enabled, audio and video will start in a paused state, allowing you to prepare other operations (like Zoom screen sharing) before beginning playback.",
   "stop": "중지",
   "stop-media": "미디어 중지",
   "stop-mirroring": "미러링 중지",
