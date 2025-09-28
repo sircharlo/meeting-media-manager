@@ -426,6 +426,8 @@
   "stage": "舞台",
   "start-mirroring": "开始镜像",
   "start-over": "重新开始",
+  "beginPlaybackPaused": "Begin playback paused",
+  "beginPlaybackPaused-explain": "When enabled, audio and video will start in a paused state, allowing you to prepare other operations (like Zoom screen sharing) before beginning playback.",
   "stop": "停止",
   "stop-media": "停止媒体",
   "stop-mirroring": "停止镜像",
