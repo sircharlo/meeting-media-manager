@@ -426,6 +426,8 @@
   "stage": "Podium",
   "start-mirroring": "Begin met presenteren",
   "start-over": "Opnieuw beginnen",
+  "beginPlaybackPaused": "Begin playback paused",
+  "beginPlaybackPaused-explain": "When enabled, audio and video will start in a paused state, allowing you to prepare other operations (like Zoom screen sharing) before beginning playback.",
   "stop": "Stop",
   "stop-media": "Stop media",
   "stop-mirroring": "Stop met presenteren",
