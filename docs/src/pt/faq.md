@@ -229,49 +229,49 @@ Experimente essas otimizações de desempenho:
 
 1. **Habilitar cache extra**: ative cache adicional nas configurações
 2. **Fechar outros aplicativos**: Feche aplicativos desnecessários
-3. **Check Disk Space**: Ensure you have sufficient free disk space
-4. **Reduce Resolution**: Lower the maximum resolution setting
+3. **Verifique o espaço em disco**: certifique-se de que você tem espaço em disco livre suficiente
+4. \*\*Reduzir resolução \*\*: Diminuir a configuração de resolução máxima
 
-### :speech_balloon: I'm having language issues. O que devo verificar? {#faq-language-issues}
+### :speech_balloon: Estou tendo problemas com idiomas. O que devo verificar? {#faq-language-issues}
 
-Verify these language settings:
+Verifique estas configurações de idioma:
 
-1. **Interface Language**: Check your display language setting
-2. **Media Language**: Verify your media download language
-3. **Language Availability**: Ensure the media language is available on the official website of Jehovah's Witnesses
-4. **Fallback Language**: Try setting a fallback language
+1. **Idioma da interface**: Verifique sua configuração de idioma para exibição
+2. **Idioma de Mídia**: Verifique o idioma do download da sua mídia
+3. **Disponibilidade de Idiomas**: Certifique-se de que o idioma da mídia esteja disponível no site oficial das Testemunhas de Jeová
+4. **Idioma de Origem**: Tente definir um idioma de retorno
 
-## Support and Community {#support-community}
+## Suporte e Comunidade {#support-community}
 
 ### :radioactive: Como faço para reportar um problema? {#how-do-i-report-an-issue}
 
-Por favor, [registre uma issue](https://github.com/sircharlo/meeting-media-manager/issues) no repositório oficial do GitHub. Include:
+Por favor, [registre uma issue](https://github.com/sircharlo/meeting-media-manager/issues) no repositório oficial do GitHub. Incluído:
 
-- Detailed description of the problem
-- Steps to reproduce the issue
-- Your operating system and M³ version
-- Any error messages, logs and screenshots
+- Descrição detalhada do problema
+- Passos para reproduzir o problema
+- Seu sistema operacional e versão M³
+- Qualquer mensagem de erro, logs e capturas de tela
 
 ### :new: Como posso solicitar um novo recurso ou melhoria? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Por favor, [abra uma discussão](https://github.com/sircharlo/meeting-media-manager/discussions) no repositório oficial do GitHub. Describe:
+Por favor, [abra uma discussão](https://github.com/sircharlo/meeting-media-manager/discussions) no repositório oficial do GitHub. Descrição:
 
-- The feature you'd like to see
-- How it would benefit users
-- Any specific requirements or preferences
+- O recurso que você gostaria de ver
+- Como beneficiaria os usuários
+- Todos os requisitos ou preferências específicos
 
 ### :handshake: Como posso contribuir com algum código? {#how-can-i-contribute-some-code}
 
 Por favor, [veja o guia de contribuições](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) no repositório oficial do GitHub. We welcome code contributions and Pull Requests!
 
-### :globe_with_meridians: How can I help with translations? {#translations}
+### :globe_with_meridians: Como posso ajudar com as traduções? {#translations}
 
-M³ uses Crowdin for translation management. You can contribute translations by:
+A M³ usa o Crowdin para o gerenciamento de tradução. Pode contribuir com traduções por:
 
-1. Visiting the [Crowdin project](https://crowdin.com/project/meeting-media-manager)
-2. Selecting your language
-3. Translating strings that need work
-4. Reviewing existing translations
+1. Visitando o [projeto Crowdin](https://crowdin.com/project/meeting-media-manager)
+2. Selecionando seu idioma
+3. Traduzindo frases que precisam ser usadas
+4. Revisando traduções existentes
 
 ### :x: Posso fazer uma doação para o projeto? {#can-i-make-a-donation-to-the-project}
 
@@ -283,22 +283,22 @@ Obrigado pelo seu interesse em apoiar o projeto! No entanto, com base em Mateus 
 
 :::
 
-## Technical Questions {#technical-questions}
+## Questões técnicas {#technical-questions}
 
-### :floppy_disk: How much disk space does M³ use? {#disk-space}
+### :floppy_disk: Quanto espaço em disco é usado pelo M³? {#disk-space}
 
-Disk space usage depends on:
+O uso do espaço em disco depende de:
 
-- **Media Resolution**: Higher resolutions use more space
-- **Cached Content**: Media files are cached locally
-- **Extra Cache**: Additional caching can increase usage
-- **Exported Media**: Auto-export features use additional space
+- **Resolução de mídia**: Resoluções mais altas usam mais espaço
+- **Conteúdo em cache**: arquivos de mídia são armazenados localmente
+- **Cache extra**: Cache adicional pode aumentar o uso
+- **Mídia exportada**: Exportação automática de recursos usa espaço adicional
 
-Typical usage ranges from 2-10GB depending on settings and usage.
+O uso típico varia de 2-10GB, dependendo das configurações e do uso.
 
-### :shield: Is M³ secure and private? {#security-privacy}
+### :shield: O M³ é seguro e privado? {#security-privacy}
 
-Sim! M³ is designed with security and privacy in mind:
+Sim! O M³ foi projetado para segurança e privacidade em mente:
 
 - **Local Storage**: All meeting data is stored locally on your computer
 - **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
