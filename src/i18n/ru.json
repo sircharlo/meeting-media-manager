@@ -426,6 +426,8 @@
   "stage": "Сцена",
   "start-mirroring": "Начать зеркалирование",
   "start-over": "Начать заново",
+  "beginPlaybackPaused": "Begin playback paused",
+  "beginPlaybackPaused-explain": "When enabled, audio and video will start in a paused state, allowing you to prepare other operations (like Zoom screen sharing) before beginning playback.",
   "stop": "Остановка",
   "stop-media": "Остановить воспроизведение",
   "stop-mirroring": "Остановить зеркалирование",
