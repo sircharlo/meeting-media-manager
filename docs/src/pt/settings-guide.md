@@ -1,187 +1,187 @@
-# Settings Guide {#settings-guide}
+# Guia de Configurações {#settings-guide}
 
-This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+Este guia abrangente explica todas as configurações disponíveis em M³, organizadas por categoria. Compreender essas configurações irá ajudá-lo a configurar o M3 para funcionar perfeitamente para as necessidades da sua congregação.
 
-## Application Configuration {#application-configuration}
+## Configuração do aplicativo {#application-configuration}
 
-### Display Language {#display-language}
+### Exibir Idioma {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Choose the language for M³'s interface. This is independent of the language used for media downloads.
+Escolha o idioma para a interface do M³'s Isso é independente do idioma usado para downloads de mídia.
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+**Opções**: Todos os idiomas da interface disponíveis (Inglês, Espanhol, Francês, etc.)
 
-**Default**: English
+**Padrão**: Inglês
 
-### Dark Mode {#dark-mode}
+### Modo Escuro {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-Control the appearance theme of M³.
+Controle a aparência do tema do M³.
 
-**Options**:
+**Opções**:
 
-- Automatically switch based on system preference
-- Always use dark mode
-- Always use light mode
+- Ativar automaticamente com base na preferência do sistema
+- Sempre usar o modo escuro
+- Sempre usar o modo claro
 
-**Default**: Auto
+**Padrão**: Automático
 
-### First Day of Week {#first-day-of-week}
+### Primeiro dia da semana {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the calendar view.
+Configura qual dia deve ser considerado o primeiro dia da semana na visualização do calendário.
 
-**Options**: Sunday through Saturday
+**Opções**: Domingo a Sábado
 
-**Default**: Sunday
+**Padrão**: Domingo
 
-### Auto-Start at Login {#auto-start-at-login}
+### Início automático no login {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-Automatically start M³ when the computer boots up.
+Automaticamente inicia o M³ quando o computador for iniciado.
 
-**Default**: `false`
+**Padrão**: `false`
 
-## Congregation Meetings {#congregation-meetings}
+## Reuniões de Congregação {#congregation-meetings}
 
-### Congregation Name {#congregation-name}
+### Nome da Congregação {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
-The name of your congregation. This is used for organization and display purposes.
+O nome da sua congregação. Isto é usado para fins de organização e exibição.
 
-**Default**: Empty (must be set during setup)
+**Padrão**: Vazio (deve ser definido durante a configuração)
 
-### Meeting Language {#meeting-language}
+### Idioma da reunião {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
-The primary language for media downloads. This should match the language used in your congregation's meetings.
+O idioma principal para downloads de mídia. Isto deve corresponder ao idioma usado nas reuniões da sua congregação.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Opções**: Todas as línguas disponíveis no site oficial das Testemunhas de Jeová
 
-**Default**: English (E)
+**Padrão**: Inglês (E)
 
-### Fallback Language {#fallback-language}
+### Idioma secundário {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
-A secondary language to use when media isn't available in the primary language.
+Um idioma secundário a ser usado quando a mídia não está disponível no idioma principal.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Opções**: Todas as línguas disponíveis no site oficial das Testemunhas de Jeová
 
-**Default**: None
+**Padrão**: Nenhum
 
-### Midweek Meeting Day {#midweek-meeting-day}
+### Reunião do Meio de Semana {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-The day of the week when your midweek meeting is held.
+O dia da semana em que é realizada a reunião do meio de semana.
 
-**Options**: Sunday through Saturday
+**Opções**: Domingo a Sábado
 
-**Default**: None (must be set during setup)
+**Padrão**: Nenhum (deve ser definido durante a configuração)
 
-### Midweek Meeting Time {#midweek-meeting-time}
+### Horário da reunião de meio de semana {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
-The start time of your midweek meeting.
+O horário de início da sua reunião de meio de semana.
 
-**Format**: HH:MM (24-hour format)
+**Formato**: HH:MM (formato 24 horas)
 
-**Default**: None (must be set during setup)
+**Padrão**: Nenhum (deve ser definido durante a configuração)
 
-### Weekend Meeting Day {#weekend-meeting-day}
+### Dia da Reunião do Fim de Semana {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-The day of the week when your weekend meeting is held.
+O dia da semana em que é realizada a reunião do fim de semana.
 
-**Options**: Sunday through Saturday
+**Opções**: Domingo a Sábado
 
-**Default**: None (must be set during setup)
+**Padrão**: Nenhum (deve ser definido durante a configuração)
 
-### Weekend Meeting Time {#weekend-meeting-time}
+### Horário da reunião de fim de semana {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
-The start time of your weekend meeting.
+O horário de início da sua reunião de fim de semana.
 
-**Format**: HH:MM (24-hour format)
+**Formato**: HH:MM (formato 24 horas)
 
-**Default**: None (must be set during setup)
+**Padrão**: Nenhum (deve ser definido durante a configuração)
 
-### Circuit Overseer Week {#circuit-overseer-week}
+### Semana do Superintendente de Circuito {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
-The week of the next circuit overseer's visit.
+A semana da próxima visita do superintendente de circuito.
 
-**Format**: MM/DD/YYYY
+**Formato**: MM/DD/YYYY
 
-**Default**: None
+**Padrão**: Nenhum
 
-### Memorial Date {#memorial-date}
+### Data da Celebração {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
-The date of the next Memorial celebration (beta feature).
+A data da próxima Celebração (recurso beta).
 
-**Format**: MM/DD/YYYY
+**Formato**: MM/DD/YYYY
 
-**Default**: Automatically retrieved periodically
+**Padrão**: obtida automaticamente periodicamente
 
-### Meeting Schedule Changes {#meeting-schedule-changes}
+### Mudanças na Programação das Reuniões
 
-These settings allow you to configure temporary changes to your meeting schedule:
+Estas configurações permitem que você configure mudanças temporárias na sua programação de reuniões:
 
-- **Change Date**: When the change takes effect
-- **One-time Change**: Whether this is a permanent or temporary change
-- **New Midweek Day**: New day for midweek meeting
-- **New Midweek Time**: New time for midweek meeting
-- **New Weekend Day**: New day for weekend meeting
-- **New Weekend Time**: New time for weekend meeting
+- **Data de alteração**: Quando a alteração entra em vigor
+- **Mudança única**: Se esta é uma mudança permanente ou temporária
+- **Novo Dia do Meio de Semana**: novo dia para a reunião do meio de semana
+- **Novo Horário do Meio de Semana**: novo horário para a reunião do meio de semana
+- **Nova Dia do Fim de Semana**: Novo dia para a reunião do fim de semana
+- \*\*Novo Horário do Fim de Semana \*\*: novo horário da reunião do fim de semana
 
-## Media Retrieval and Playback {#media-retrieval-and-playback}
+## Recuperação de mídia e reprodução {#media-retrieval-and-playback}
 
-### Metered Connection {#metered-connection}
+### Conexão limitada {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
-Enable this if you're on a limited data connection to reduce bandwidth usage.
+Ative isto se você estiver em uma conexão de dados limitada para reduzir o uso de largura de banda.
 
-**Default**: `false`
+**Padrão**: `false`
 
-### Media Display {#media-display-button}
+### Visualização de mídia {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-Enable the media display functionality. This is required to present media on a second monitor.
+Habilita a funcionalidade de exibição de mídia. Isto é necessário para apresentar mídia num segundo monitor.
 
-**Default**: `false`
+**Padrão**: `false`
 
-### Background Music {#settings-guide-background-music}
+### Música de Fundo {#settings-guide-background-music}
 
-#### Enable Music {#enable-music-button}
+#### Habilitar música {#enable-music-button}
 
 <!-- **Setting**: `enableMusicButton` -->
 
-Enable background music functionality.
+Habilitar a funcionalidade de música de fundo.
 
-**Default**: `true`
+**Padrão**: `true`
 
-#### Auto-Start Music {#auto-start-music}
+#### Iniciar música automaticamente {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-Automatically start background music when M³ launches if appropriate.
+Iniciar automaticamente a música de fundo quando o M³ abrir, se apropriado.
 
-**Default**: `true`
+**Padrão**: `true`
 
 #### Meeting Stop Buffer {#meeting-stop-buffer}
 
@@ -209,7 +209,7 @@ Volume level for background music (1-100%).
 
 Enable additional caching for better performance.
 
-**Default**: `false`
+**Padrão**: `false`
 
 #### Cache Folder {#cache-folder}
 
@@ -225,7 +225,7 @@ Custom location for storing cached media files.
 
 Automatically clear old cached files to save disk space.
 
-**Default**: `true`
+**Padrão**: `true`
 
 ### Folder Monitoring {#settings-guide-folder-monitoring}
 
@@ -235,7 +235,7 @@ Automatically clear old cached files to save disk space.
 
 Monitor a folder for new media files and automatically add them to M³.
 
-**Default**: `false`
+**Padrão**: `false`
 
 #### Folder to Watch {#folder-to-watch}
 
@@ -255,7 +255,7 @@ The folder path to monitor for new media files.
 
 Enable Zoom meeting integration features.
 
-**Default**: `false`
+**Padrão**: `false`
 
 #### Screen Share Shortcut {#screen-share-shortcut}
 
@@ -263,7 +263,7 @@ Enable Zoom meeting integration features.
 
 Keyboard shortcut to trigger Zoom screen sharing.
 
-**Default**: None
+**Padrão**: Nenhum
 
 ### OBS Studio Integration {#settings-guide-obs-integration}
 
@@ -273,7 +273,7 @@ Keyboard shortcut to trigger Zoom screen sharing.
 
 Enable OBS Studio integration for automatic scene switching.
 
-**Default**: `false`
+**Padrão**: `false`
 
 :::warning Important Note
 
@@ -289,7 +289,7 @@ Enable OBS Studio integration for automatic scene switching.
 
 The port number for connecting to OBS Studio WebSocket.
 
-**Default**: None
+**Padrão**: Nenhum
 
 #### OBS Password {#obs-password}
 
@@ -297,7 +297,7 @@ The port number for connecting to OBS Studio WebSocket.
 
 The password for OBS Studio WebSocket connection.
 
-**Default**: None
+**Padrão**: Nenhum
 
 #### OBS Scenes {#obs-scenes}
 
@@ -333,7 +333,7 @@ Configure which OBS scenes to use for different purposes:
 
 Enable customizable keyboard shortcuts for media control.
 
-**Default**: `false`
+**Padrão**: `false`
 
 #### Media Control Shortcuts {#media-control-shortcuts}
 
@@ -354,7 +354,7 @@ Configure shortcuts for media playback:
 
 Hide the logo in the media window.
 
-**Default**: `false`
+**Padrão**: `false`
 
 #### Maximum Resolution {#maximum-resolution}
 
@@ -372,7 +372,7 @@ Maximum resolution for downloaded media files.
 
 Include media from the printed publications in media downloads.
 
-**Default**: `true`
+**Padrão**: `true`
 
 #### Exclude Footnotes {#exclude-footnotes}
 
@@ -380,7 +380,7 @@ Include media from the printed publications in media downloads.
 
 Exclude footnote images from media downloads when possible.
 
-**Default**: `false`
+**Padrão**: `false`
 
 #### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
 
@@ -388,7 +388,7 @@ Exclude footnote images from media downloads when possible.
 
 Exclude media from the Teaching (th) brochure from media downloads.
 
-**Default**: `true`
+**Padrão**: `true`
 
 ### Subtitles {#subtitles}
 
@@ -398,7 +398,7 @@ Exclude media from the Teaching (th) brochure from media downloads.
 
 Enable subtitle support for media playback.
 
-**Default**: `false`
+**Padrão**: `false`
 
 #### Subtitle Language {#subtitle-language}
 
@@ -406,9 +406,9 @@ Enable subtitle support for media playback.
 
 Language for subtitles (can be different from media language).
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Opções**: Todas as línguas disponíveis no site oficial das Testemunhas de Jeová
 
-**Default**: None
+**Padrão**: Nenhum
 
 ### Media Export {#settings-guide-media-export}
 
@@ -418,7 +418,7 @@ Language for subtitles (can be different from media language).
 
 Automatically export media files to a specified folder.
 
-**Default**: `false`
+**Padrão**: `false`
 
 #### Media Export Folder {#media-export-folder}
 
@@ -434,7 +434,7 @@ Folder path where media files will be automatically exported.
 
 Convert exported media files to MP4 format for better compatibility.
 
-**Default**: `false`
+**Padrão**: `false`
 
 ### Danger Zone {#danger-zone}
 
@@ -450,7 +450,7 @@ These settings should only be changed if you understand their implications.
 
 Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
 
-**Default**: `false`
+**Padrão**: `false`
 
 ## Tips for Optimal Configuration {#configuration-tips}
 

@@ -300,15 +300,15 @@ O uso típico varia de 2-10GB, dependendo das configurações e do uso.
 
 Sim! O M³ foi projetado para segurança e privacidade em mente:
 
-- **Local Storage**: All meeting data is stored locally on your computer
-- **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
-- **Open Source**: The code is open for review and verification
-- **Bug Reports**: Limited data may be collected for bug reporting purposes
+- **Armazenamento local**: Todos os dados da reunião são armazenados localmente no seu computador
+- **Downloads diretos**: A mídia é baixada diretamente do site oficial das Testemunhas de Jeová
+- **Código aberto**: O código está aberto para revisão e verificação
+- **Relatórios de erro**: dados limitados podem ser coletados para fins de relatório de erros
 
-### :arrows_clockwise: How often does M³ check for updates? {#update-frequency}
+### :arrows_clockwise: Com que frequência o M³ verifica se há atualizações? {#update-frequency}
 
-M³ checks for updates:
+M³ procura por atualizações:
 
-- **Application Updates**: Automatically checks for new versions every time the app is opened
-- **Media Updates**: Automatically checks for new meeting media every time the app is opened
-- **Language Updates**: Dynamic detection of new languages as needed
+- **Atualizações do aplicativo**: Verifica automaticamente novas versões toda vez que o aplicativo é aberto
+- **Atualizações de Mídia**: Verifica automaticamente novas mídias de reuniões toda vez que o app for aberto
+- **Atualizações de Idioma**: Detecção dinâmica de novos idiomas conforme necessário
