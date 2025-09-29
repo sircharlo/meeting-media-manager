@@ -8,11 +8,11 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 
 ### ✨ Novos Recursos
 
-- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
-- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
-- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
-- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not.
-- ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
+- ✨ **Janela de Mídia sempre na parte superior e comportamento Fullscreen**: Corrigido e melhorado sempre no topo da janela de mídia, ajustando dinamicamente com base no estado em tela cheia.
+- ✨ \*\*Configuração de Formato de Data \*\*: Adicionado uma configuração de usuário para configurar um formato de exibição de data.
+- ✨ **Mídia Crossfade**: transições de crossfade implementadas para a exibição de mídia, em vez da transição mais brusca para preta que estava presente antes.
+- ✨ **Música AutoStop**: Otimizou o comportamento da música de fundo para auto-parar para se comportar da mesma maneira que a música foi auto-iniciada ou não.
+- ✨ **macOS Click-Through no Windows Inativo**: Habilitado clique no mouse sobre a janela principal para macOS, o que deve facilitar o controle do aplicativo, mesmo quando ele não está focado.
 
 ## v25.9.0
 
@@ -25,24 +25,24 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 
 ### ✨ Novos Recursos
 
-- ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
-- ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
+- ✨ **Transições de Fade da Janela de Mídia**: Adicionada uma nova configuração avançada para fazer a janela de mídia desaparecer e para fora, fornecendo transições visuais mais fáceis.
+- ✨ **Controle de Duração da Imagem e Progresso**: Adicionado controle de duração da imagem e capacidade de acompanhamento do progresso para seções repetidas.
 
 ## v25.8.1
 
 ### ✨ Novos Recursos
 
-- ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
-- ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
-- ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
-- ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
+- ✨ **Seções Personalizadas de Mídia**: Sistema completo para criar, editar e gerenciar seções de mídia personalizadas com personalização de cor e reordenação de arrastar e soltar.
+- ✨ **Divisores de Mídia**: Adicione divisores titulares dentro das listas de mídia para uma melhor organização com opções de posicionamento de topo/inferior.
+- ✨ **Modo repita a seção**: Ativar reprodução contínua em seções específicas para loops de mídia perfeitos.
+- ✨ **Zoom Integração**: Iniciar/Parar automaticamente o compartilhamento de tela com a reprodução de mídia.
 
 ### 🛠️ Melhorias e Ajustes
 
-- 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
-- ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
-- 🛠️ **Improved Navigation**: Better keyboard shortcuts with scroll-to-selected functionality and enhanced media navigation.
-- 🛠️ **Visual Enhancements**: Animation support during sorting operations and improved drag-and-drop visual feedback.
+- 🛠️ **Cabeçalhos de Seção Aprimoradas**: Novo sistema de menu de três pontos com a barra de cores, mover controles para cima/para baixo, repetir opções e excluir funcionalidade.
+- ✨ **Edição de Título Inline**: Editar títulos de itens de mídia diretamente na interface sem abrir diálogos separados.
+- 🛠️ **Navegação melhorada**: Melhores atalhos de teclado com funcionalidade de scroll-to-selected e navegação aprimorada de mídia.
+- 🛠️ **Melhorias Visuais**: Suporte de animação durante a classificação de operações e melhoramento do feedback visual de arrastar e soltar.
 
 ## 25.6.0
 
