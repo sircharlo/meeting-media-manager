@@ -4269,16 +4269,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/compiler-vue2@npm:^2.7.16":
-  version: 2.7.16
-  resolution: "@vue/compiler-vue2@npm:2.7.16"
-  dependencies:
-    de-indent: "npm:^1.0.2"
-    he: "npm:^1.2.0"
-  checksum: 10c0/c76c3fad770b9a7da40b314116cc9da173da20e5fd68785c8ed8dd8a87d02f239545fa296e16552e040ec86b47bfb18283b39447b250c2e76e479bd6ae475bb3
-  languageName: node
-  linkType: hard
-
 "@vue/devtools-api@npm:^6.5.0, @vue/devtools-api@npm:^6.6.4":
   version: 6.6.4
   resolution: "@vue/devtools-api@npm:6.6.4"
@@ -4384,15 +4374,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/language-core@npm:3.0.8":
-  version: 3.0.8
-  resolution: "@vue/language-core@npm:3.0.8"
+"@vue/language-core@npm:3.1.0":
+  version: 3.1.0
+  resolution: "@vue/language-core@npm:3.1.0"
   dependencies:
     "@volar/language-core": "npm:2.4.23"
     "@vue/compiler-dom": "npm:^3.5.0"
-    "@vue/compiler-vue2": "npm:^2.7.16"
     "@vue/shared": "npm:^3.5.0"
-    alien-signals: "npm:^2.0.5"
+    alien-signals: "npm:^3.0.0"
     muggle-string: "npm:^0.4.1"
     path-browserify: "npm:^1.0.1"
     picomatch: "npm:^4.0.2"
@@ -4401,7 +4390,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/abcf441f22c43422635789cd8970b04c9c35fb95f965dbebe81a0ed1227af1f405b88b9e037bd8fe555eb0f21293d73ac8da6b624f779bff14db2163f96d6991
+  checksum: 10c0/e8ff90870416b56bccd12597984f4a96958013b6fe3b8d3031598fc5ac0dcd856112ce538d613b33fe7ee31d40dbf02c7835d44402c83344e32f690ae535de90
   languageName: node
   linkType: hard
 
@@ -4759,10 +4748,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"alien-signals@npm:^2.0.5":
-  version: 2.0.7
-  resolution: "alien-signals@npm:2.0.7"
-  checksum: 10c0/91b299929cb5a59578e5a028615644a65453f87b54e2134b62a2b4d2c2c473f498a657e22a38d277814a630d312629e033980638c5841ff8c7194d8261b0c0ff
+"alien-signals@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "alien-signals@npm:3.0.0"
+  checksum: 10c0/c27218d3c03fad3e7a653030549825ce41488a00ecd3b5220cf46da2c3d70202ab3fcc1df98fc8fd50b119ae195ca8bbbc57327cf516fe7c2d7004d157b7d739
   languageName: node
   linkType: hard
 
@@ -6482,13 +6471,6 @@ __metadata:
   version: 1.2.1
   resolution: "cubic2quad@npm:1.2.1"
   checksum: 10c0/6be433131510b5468a940c3ebc5ae74300f7a223cf3e13003c54e1b0648b0c99e585bb159cfc1bca3c26e2f9bdf1bcbcc7b5547ccde45d11180c2364c3dfd0f7
-  languageName: node
-  linkType: hard
-
-"de-indent@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "de-indent@npm:1.0.2"
-  checksum: 10c0/7058ce58abd6dfc123dd204e36be3797abd419b59482a634605420f47ae97639d0c183ec5d1b904f308a01033f473673897afc2bd59bc620ebf1658763ef4291
   languageName: node
   linkType: hard
 
@@ -8891,15 +8873,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"he@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "he@npm:1.2.0"
-  bin:
-    he: bin/he
-  checksum: 10c0/a27d478befe3c8192f006cdd0639a66798979dfa6e2125c6ac582a19a5ebfec62ad83e8382e6036170d873f46e4536a7e795bf8b95bf7c247f4cc0825ccc8c17
-  languageName: node
-  linkType: hard
-
 "headers-polyfill@npm:^4.0.2":
   version: 4.0.3
   resolution: "headers-polyfill@npm:4.0.3"
@@ -10543,7 +10516,7 @@ __metadata:
     vue-eslint-parser: "npm:^10.2.0"
     vue-i18n: "npm:^11.1.12"
     vue-router: "npm:^4.5.1"
-    vue-tsc: "npm:^3.0.8"
+    vue-tsc: "npm:^3.1.0"
     vue-zoomable: "npm:^1.2.8"
     webpack-iconfont-plugin-nodejs: "npm:^1.0.36"
   languageName: unknown
@@ -15501,17 +15474,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-tsc@npm:^3.0.8":
-  version: 3.0.8
-  resolution: "vue-tsc@npm:3.0.8"
+"vue-tsc@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "vue-tsc@npm:3.1.0"
   dependencies:
     "@volar/typescript": "npm:2.4.23"
-    "@vue/language-core": "npm:3.0.8"
+    "@vue/language-core": "npm:3.1.0"
   peerDependencies:
     typescript: ">=5.0.0"
   bin:
     vue-tsc: ./bin/vue-tsc.js
-  checksum: 10c0/2593722116a0ac7ace8540b3c911413dc60e5e7b33cba3938f2cd3ca6efb46b916eecda3b55b5f43fa5713030e12005c18d05cef28626284cda51a5fe67de091
+  checksum: 10c0/32a676f5c349948b1fc5bf9de4af7ebfe94efa8baba6f402f42abca9bc461d26e3b798854cf851121ac03e5a2beeace93d42d590f2fddd9aeaacd9e9c62b70c9
   languageName: node
   linkType: hard
 
