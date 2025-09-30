@@ -11,7 +11,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 - ✨ **Comportement de la fenêtre multimédia** : correction et amélioration du comportement « toujours au premier plan » de la fenêtre multimédia, qui s'ajuste désormais dynamiquement en fonction du mode plein écran.
 - ✨ **Paramètre d'affichage de la date** : ajout d'un paramètre utilisateur permettant de configurer le format d'affichage de la date.
 - ✨ **Transition en fondu enchaîné pour les médias** : mise en place de transitions en fondu enchaîné pour l'affichage des médias, au lieu de la transition plus brusque qui était présente auparavant.
-- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not.
+- ✨ **Arrêt automatique de la musique** : Optimisation du comportement de l'arrêt automatique de la musique de fond afin qu'il se comporte de la même manière, que la musique ait été lancée automatiquement ou non.
 - ✨ **Clics sur les fenêtres inactives sous macOS** : désormais, les clics de souris sont pris en charge dans la fenêtre principale sous macOS même si elle n'est pas au premier plan, ce qui devrait faciliter le contrôle de l'application.
 
 ## v25.9.0
