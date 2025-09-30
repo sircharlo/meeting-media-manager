@@ -4,19 +4,19 @@
 
 ## Mis rakendus see on? {#what-is-this-app}
 
-**Meeting Media Manager**, or **M³** for short, is a comprehensive cross-platform application for Windows, macOS and Linux that automatically downloads, organizes, and presents pictures and videos for congregation meetings of Jehovah's Witnesses. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
+**Meeting Media Manager**, lühidalt **M³**, on Windowsile, macOS-ile ja Linuxile mõeldud mitmekülgne platvormiülene rakendus, mis automaatselt laadib alla, korraldab ja esitab pilte ja videoid Jehoova tunnistajate koguduse koosolekute jaoks. See toetab kõiki Jehova tunnistajate ametlikul veebisaidil kättesaadavaid keeli ja pakub võimsaid vahendeid meedia haldamiseks nii hübriid- kui ka isiklikel kohtumistel.
 
-M³ features support for managing regular and custom meeting media, multiple congregations and/or groups using the same computer account, and advanced presentation capabilities that make media sharing effortless.
+M³ toetab regulaarse ja kohandatud koosolekumeedia haldamist, mitme koguduse ja/või keelegrupi haldamist sama arvutikonto abil ning pakub täiustatud esitlusvõimalusi, mis muudavad meedia jagamise lihtsaks.
 
 :::info Märkus
 
-This app used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed to Meeting Media Manager in May 2022.
+Märkus: M³ tunti varem nimega JWMMF (JW Meeting Media Fetcher), kuid nimetati ümber Mai 2022.
 
 :::
 
 ## Miks kasutada M³-e? {#why-choose-m3}
 
-M³ on parim vahend koosolekute meedia haldamiseks, pakkudes sujuvat, usaldusväärset ja funktsionaalset kogemust kõikidel platvormidel. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
+M³ on parim vahend koosolekute meedia haldamiseks, pakkudes sujuvat, usaldusväärset ja funktsionaalset kogemust kõikidel platvormidel. See on spetsiaalselt loodud koguduse koosolekute vajaduste jaoks ja pakub kõike, mis on vajalik tõhusaks meediaesitluseks.
 
 ### Olulisemad eelised {#key-benefits}
 
@@ -24,24 +24,24 @@ M³ on parim vahend koosolekute meedia haldamiseks, pakkudes sujuvat, usaldusvä
 
 - **Mitme koguduse toetus**: Haldae mitme koguduse või grupi seadeid hõlpsasti ühes rakenduses.
 
-- **Advanced features**: Easily add extra media, import custom content, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Täiustatud funktsioonid**: Lisage hõlpsasti lisameediat, importige kohandatud sisu ja jagage automaatselt Zoomis osalejatega teavet selle kohta, mis toimub kuningriigisaalis.
 
 - **Optimeeritud platvormidevaheline jõudlus**: Nautige sujuvat ja maugavat kasutuskogemust Windowsis, macOSis ja Linuxis - isegi vanemates süsteemides või piiratud ressurssidega arvutites.
 
 - **Usaldusväärne ja stabiilne**: Loodud töötama siis, kui seda kõige rohkem vajate. Koged probleemi? Teata sellest ja sellega tegeletakse kohe.
 
-- **Advanced presentation tools**: Advanced media controls, zoom/pan capabilities, custom timing, and seamless Zoom and OBS Studio integration.
+- **Täiustatud esitlusvahendid**: täiustatud meediajuhtimisfunktsioonid, suumimis-/panorameerimisvõimalused, kohandatav ajastus ning sujuv koostöö Zoomiga ja OBS Studioga.
 
 ## Mida saab M³-ga teha? {#what-can-m3-do}
 
-M³ is a comprehensive media management solution that allows you to easily and automatically download, synchronize, share, and present all meeting media. Here's what makes M³ powerful:
+M³, terviklik meediahalduslahendus, võimaldab teil lihtsalt ja automaatselt alla laadida, sünkroonida, jagada ja esitleda kogu koosolekute meediat. M³-e teeb võimsaks tööriistaks:
 
-### Core Media Management {#core-media-management}
+### Põhimeedia haldus {#core-media-management}
 
-- **Automatic media downloads**: Automatically fetches and downloads all media needed for upcoming meetings
-- **Multi-language support**: Download media in any of hundreds of available languages
-- **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
-- **Media organization**: Automatically organizes media by date and meeting section
+- **Automaatne meedia allalaadimine**: laadib automaatselt alla kõik eelseisvate koosolekute jaoks vajalikud meediafailid
+- **Mitmekeelne tugi**: Lae alla meedia sadades erinevates keeltes
+- **Nutikas vahemällu salvestamine**: intelligentne vahemällu salvestamise süsteem, mis hoiab meedia korrastatud ja ajakohasena
+- **Organiseeritud meedia**: Korraldab meedia automaatselt kuupäeva ja koosoleku osa järgi
 
 ### Media Presentation Features {#about-presentation-features}
 
