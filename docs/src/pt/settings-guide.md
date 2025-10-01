@@ -189,93 +189,93 @@ Iniciar automaticamente a música de fundo quando o M³ abrir, se apropriado.
 
 How many seconds before meeting start time to stop background music.
 
-**Range**: 0-300 seconds
+**Intervalo**: 0-300 segundos
 
-**Default**: 60 seconds
+**Padrão**: 60 segundos
 
-#### Music Volume {#music-volume}
+#### Volume da música {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
-Volume level for background music (1-100%).
+Nível de volume para música de fundo (1-100%).
 
-**Default**: 100%
+**Padrão**: 100%
 
-### Cache Management {#cache-management}
+### Gerenciamento de cache {#cache-management}
 
-#### Enable Extra Cache {#enable-extra-cache}
+#### Habilitar Cache Extra {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Enable additional caching for better performance.
+Ativar cache adicional para melhor desempenho.
 
 **Padrão**: `false`
 
-#### Cache Folder {#cache-folder}
+#### Pasta de cache {#cache-folder}
 
 <!-- **Setting**: `cacheFolder` -->
 
-Custom location for storing cached media files.
+Local personalizado para armazenar arquivos de mídia em cache.
 
-**Default**: System default location
+**Padrão**: Localização padrão do sistema
 
-#### Enable Cache Auto-Clear {#enable-cache-auto-clear}
+#### Habilitar o Cache Auto-Limpar {#enable-cache-auto-clear}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
-Automatically clear old cached files to save disk space.
+Limpa automaticamente arquivos em cache antigos para economizar espaço em disco.
 
 **Padrão**: `true`
 
-### Folder Monitoring {#settings-guide-folder-monitoring}
+### Monitoramento de pasta {#settings-guide-folder-monitoring}
 
-#### Enable Folder Watcher {#enable-folder-watcher}
+#### Habilitar pasta Monitorada {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Monitor a folder for new media files and automatically add them to M³.
+Monitore uma pasta para novos arquivos de mídia e adicione-os automaticamente ao M³.
 
 **Padrão**: `false`
 
-#### Folder to Watch {#folder-to-watch}
+#### Pasta para Monitorar {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder path to monitor for new media files.
+O caminho da pasta para monitorar novos arquivos de mídia.
 
-**Default**: Empty
+**Padrão**: Vazio
 
-## Integrations {#integrations}
+## Integrações {#integrations}
 
-### Zoom Integration {#settings-guide-zoom-integration}
+### Integração com Zoom {#settings-guide-zoom-integration}
 
-#### Enable Zoom {#enable-zoom}
+#### Habilitar Zoom {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
-Enable Zoom meeting integration features.
+Habilita recursos de integração de Zoom
 
 **Padrão**: `false`
 
-#### Screen Share Shortcut {#screen-share-shortcut}
+#### Atalho de compartilhamento de tela {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
-Keyboard shortcut to trigger Zoom screen sharing.
+Atalho de teclado para ativar o compartilhamento de tela do Zoom.
 
 **Padrão**: Nenhum
 
-### OBS Studio Integration {#settings-guide-obs-integration}
+### Integração OBS Studio {#settings-guide-obs-integration}
 
-#### Enable OBS {#enable-obs}
+#### Habilitar OBS {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
-Enable OBS Studio integration for automatic scene switching.
+Ativa integração do OBS Studio para troca automática de cena.
 
 **Padrão**: `false`
 
-:::warning Important Note
+:::warning Nota importante:
 
 **Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
 
@@ -315,7 +315,7 @@ Configure which OBS scenes to use for different purposes:
 - **Remember Previous Scene**: Remember and restore the previous scene
 - **Hide Icons**: Hide OBS-related icons in the interface
 
-:::warning Important Note
+:::warning Nota importante:
 
 **Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
 
@@ -426,7 +426,7 @@ Automatically export media files to a specified folder.
 
 Folder path where media files will be automatically exported.
 
-**Default**: Empty
+**Padrão**: Vazio
 
 #### Convert Files to MP4 {#convert-files-to-mp4}
 
