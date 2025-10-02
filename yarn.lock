@@ -10505,11 +10505,11 @@ __metadata:
     prettier: "npm:^3.6.2"
     pretty-bytes: "npm:^7.1.0"
     quasar: "npm:^2.18.5"
-    rollup-plugin-visualizer: "npm:^6.0.3"
+    rollup-plugin-visualizer: "npm:^6.0.4"
     sanitize-filename: "npm:^1.6.3"
     typescript: "npm:~5.9.3"
     upath: "npm:^2.0.1"
-    vite: "npm:^7.1.7"
+    vite: "npm:^7.1.8"
     vitepress: "npm:^2.0.0-alpha.12"
     vitest: "npm:^3.2.4"
     vue: "npm:^3.5.22"
@@ -12964,9 +12964,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-visualizer@npm:^6.0.3":
-  version: 6.0.3
-  resolution: "rollup-plugin-visualizer@npm:6.0.3"
+"rollup-plugin-visualizer@npm:^6.0.4":
+  version: 6.0.4
+  resolution: "rollup-plugin-visualizer@npm:6.0.4"
   dependencies:
     open: "npm:^8.0.0"
     picomatch: "npm:^4.0.2"
@@ -12982,7 +12982,7 @@ __metadata:
       optional: true
   bin:
     rollup-plugin-visualizer: dist/bin/cli.js
-  checksum: 10c0/595d68936a6338744e8facd165fceedf7f2ebedc44863e640e725198001ed62948cc4a5d8403aa74e679de92957e4def3b1dffc4a9f8de71e4245929566553a3
+  checksum: 10c0/e5d472bec0c863c9c3c46f55b303a9457e854bf1b654215e727a586da12897e2cfc30029f029c6c44dd8e9e61ce0d22f113a68ed8e5fe2256abeb58f265c0a89
   languageName: node
   linkType: hard
 
@@ -15284,9 +15284,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:7.1.7":
-  version: 7.1.7
-  resolution: "vite@npm:7.1.7"
+"vite@npm:7.1.8":
+  version: 7.1.8
+  resolution: "vite@npm:7.1.8"
   dependencies:
     esbuild: "npm:^0.25.0"
     fdir: "npm:^6.5.0"
@@ -15335,7 +15335,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/3f6bd61a65aaa81368f4dda804f0e23b103664724218ccb5a0b1a0c7e284df498107b57ced951dc40ae4c5d472435bc8fb5c836414e729ee7e102809eaf6ff80
+  checksum: 10c0/fcbd6582c84c4e4ce744b0c51f5c6db94905074a7aadeee8abf27c6211d0d660da2becab28f5b80bb17fe90213e50a2830f3d791bf16b2e6bc790c1b9aa55c73
   languageName: node
   linkType: hard
 
