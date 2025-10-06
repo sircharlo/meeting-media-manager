@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@formkit/drag-and-drop": "^0.5.3",
-    "@jitsi/robotjs": "^0.6.17",
+    "@jitsi/robotjs": "^0.6.18",
     "@numairawan/video-duration": "^1.0.0",
     "@quasar/extras": "^1.17.0",
     "@sentry/electron": "^7.1.1",

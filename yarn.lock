@@ -1444,14 +1444,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jitsi/robotjs@npm:^0.6.17":
-  version: 0.6.17
-  resolution: "@jitsi/robotjs@npm:0.6.17"
+"@jitsi/robotjs@npm:^0.6.18":
+  version: 0.6.18
+  resolution: "@jitsi/robotjs@npm:0.6.18"
   dependencies:
     node-addon-api: "npm:^8.3.0"
     node-gyp: "npm:latest"
     node-gyp-build: "npm:^4.8.4"
-  checksum: 10c0/ef6e0a57ae02386a2bc1252bca57e2c36acafd9680aa3872f7f83ca71ce4734672b8388b76da3b46616b6750aeb2b7733e93b9776217b87380cb1dd9f4c89fcd
+  checksum: 10c0/8e5c5e2503c205ef4c5e383899d3225acd103a24087e8fa187acf44cb2fd9265071b43c4afe7d0b4c065c060c4471b56168d2339c835e6f651334ff948bbcae6
   languageName: node
   linkType: hard
 
@@ -10437,7 +10437,7 @@ __metadata:
     "@eslint/compat": "npm:^1.4.0"
     "@formkit/drag-and-drop": "npm:^0.5.3"
     "@intlify/unplugin-vue-i18n": "npm:^11.0.1"
-    "@jitsi/robotjs": "npm:^0.6.17"
+    "@jitsi/robotjs": "npm:^0.6.18"
     "@numairawan/video-duration": "npm:^1.0.0"
     "@pinia/testing": "npm:^1.0.2"
     "@quasar/app-vite": "npm:^2.4.0"
