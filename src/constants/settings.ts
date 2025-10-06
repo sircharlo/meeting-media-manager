@@ -320,6 +320,35 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'obsStudio',
     type: 'toggle',
   },
+  customEvents: {
+    group: 'integrations',
+    subgroup: 'customIntegration',
+    type: 'toggle',
+  },
+  customEventMediaPlayShortcut: {
+    depends: 'customEvents',
+    group: 'integrations',
+    subgroup: 'customIntegration',
+    type: 'shortcut',
+  },
+  customEventMediaPauseShortcut: {
+    depends: 'customEvents',
+    group: 'integrations',
+    subgroup: 'customIntegration',
+    type: 'shortcut',
+  },
+  customEventMediaStopShortcut: {
+    depends: 'customEvents',
+    group: 'integrations',
+    subgroup: 'customIntegration',
+    type: 'shortcut',
+  },
+  customEventLastSongShortcut: {
+    depends: 'customEvents',
+    group: 'integrations',
+    subgroup: 'customIntegration',
+    type: 'shortcut',
+  },
   // Advanced
 
   enableKeyboardShortcuts: {
@@ -480,6 +509,11 @@ export const defaultSettings: SettingsValues = {
   congregationName: null,
   convertFilesToMp4: false,
   coWeek: null,
+  customEventLastSongShortcut: null,
+  customEventMediaPauseShortcut: null,
+  customEventMediaPlayShortcut: null,
+  customEventMediaStopShortcut: null,
+  customEvents: false,
   darkMode: 'auto',
   disableMediaFetching: false,
   enableCacheAutoClear: true,

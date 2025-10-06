@@ -180,6 +180,7 @@ import {
   fetchMedia,
   getMemorialBackground,
 } from 'src/helpers/jw-media';
+import { sendKeyboardShortcut } from 'src/helpers/keyboard-shortcuts';
 import { executeLocalShortcut } from 'src/helpers/keyboardShortcuts';
 import {
   addSection,
@@ -611,7 +612,104 @@ watch(
     [newMediaPlaying, newMediaPaused, newMediaPlayingUrl],
     [, , oldMediaPlayingUrl],
   ) => {
-    // Clear any existing timeout
+    console.log('🔄 [MediaCalendarPage] Media state watcher triggered:', {
+      currentMediaPlayingId: mediaPlaying.value.uniqueId,
+      customEvents: currentSettings.value?.customEvents,
+      newMediaPaused,
+      newMediaPlaying,
+      newMediaPlayingUrl,
+      oldMediaPlayingUrl,
+    });
+
+    // Custom integration events
+    if (currentSettings.value?.customEvents) {
+      console.log(
+        '🔄 [CustomIntegration] Custom integration enabled, checking events',
+      );
+
+      // Media started playing (from nothing to something)
+      if (newMediaPlaying && !oldMediaPlayingUrl) {
+        console.log('🔄 [CustomIntegration] Media started playing event');
+        sendKeyboardShortcut(
+          currentSettings.value?.customEventMediaPlayShortcut,
+          'CustomIntegration',
+        );
+      }
+
+      // Media paused
+      if (newMediaPaused && newMediaPlayingUrl) {
+        console.log('🔄 [CustomIntegration] Media paused event');
+        sendKeyboardShortcut(
+          currentSettings.value?.customEventMediaPauseShortcut,
+          'CustomIntegration',
+        );
+      }
+
+      // Media stopped (from something to nothing)
+      if (!newMediaPlaying && oldMediaPlayingUrl) {
+        console.log('🔄 [CustomIntegration] Media stopped event');
+        sendKeyboardShortcut(
+          currentSettings.value?.customEventMediaStopShortcut,
+          'CustomIntegration',
+        );
+
+        // Check if this was the last song in the meeting
+        if (selectedDateObject.value?.meeting && oldMediaPlayingUrl) {
+          console.log(
+            '🔄 [CustomIntegration] Checking for last song in meeting',
+          );
+
+          // Check if the stopped media was a song and if it's the last one
+          const allSongs: MediaItem[] = [];
+          if (selectedDateObject.value.mediaSections) {
+            Object.values(selectedDateObject.value.mediaSections).forEach(
+              (section) => {
+                if (section.items) {
+                  section.items.forEach((item) => {
+                    if (item.tag?.type === 'song' && !item.hidden) {
+                      allSongs.push(item);
+                    }
+                  });
+                }
+              },
+            );
+          }
+
+          console.log(
+            '🔄 [CustomIntegration] Found songs in meeting:',
+            allSongs.length,
+          );
+
+          // Check if the stopped media was the last song
+          const stoppedWasLastSong =
+            allSongs.length > 0 &&
+            (allSongs[allSongs.length - 1]?.fileUrl ||
+              allSongs[allSongs.length - 1]?.streamUrl) === oldMediaPlayingUrl;
+
+          console.log('🔄 [CustomIntegration] Last song detection:', {
+            allSongsCount: allSongs.length,
+            lastSongId:
+              allSongs[allSongs.length - 1]?.fileUrl ||
+              allSongs[allSongs.length - 1]?.streamUrl,
+            previousMediaUrl: oldMediaPlayingUrl,
+            stoppedWasLastSong,
+          });
+
+          if (stoppedWasLastSong) {
+            console.log('🔄 [CustomIntegration] Last song completed event');
+            sendKeyboardShortcut(
+              currentSettings.value?.customEventLastSongShortcut,
+              'CustomIntegration',
+            );
+          }
+        }
+      }
+    } else {
+      console.log(
+        '🔄 [CustomIntegration] Custom integration disabled, skipping events',
+      );
+    }
+
     if (mediaSceneTimeout) {
       clearTimeout(mediaSceneTimeout);
       mediaSceneTimeout = null;
@@ -624,6 +722,9 @@ watch(
       typeof newMediaPlayingUrl === 'string' &&
       isImage(newMediaPlayingUrl)
     ) {
+      console.log(
+        '🔄 [MediaCalendarPage] OBS image postponement active, skipping scene change',
+      );
       return;
     }
 
@@ -634,18 +735,34 @@ watch(
         : 'camera';
     const wasPlayingBefore = !!oldMediaPlayingUrl;
 
+    console.log('🔄 [MediaCalendarPage] OBS scene decision:', {
+      newMediaPaused,
+      newMediaPlaying,
+      oldMediaPlayingUrl,
+      targetScene,
+      wasPlayingBefore,
+    });
+
     if (targetScene === 'media') {
       if (wasPlayingBefore) {
         // If something was playing before, we change the scene immediately
+        console.log(
+          '🔄 [MediaCalendarPage] Switching to media scene immediately',
+        );
         sendObsSceneEvent('media');
       } else {
         // If nothing was already playing, we wait a bit before changing the scene to prevent seeing the fade effect in OBS
+        console.log('🔄 [MediaCalendarPage] Waiting for scene change delay');
         mediaSceneTimeout = setTimeout(() => {
+          console.log(
+            '🔄 [MediaCalendarPage] Executing delayed media scene change',
+          );
           sendObsSceneEvent('media');
           mediaSceneTimeout = null;
         }, changeDelay);
       }
     } else {
+      console.log('🔄 [MediaCalendarPage] Switching to camera scene');
       sendObsSceneEvent('camera');
     }
   },

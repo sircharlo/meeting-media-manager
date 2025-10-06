@@ -172,6 +172,11 @@ export interface SettingsValues {
   congregationName: null | string;
   convertFilesToMp4: boolean;
   coWeek: `${number}/${number}/${number}` | null;
+  customEventLastSongShortcut: null | string;
+  customEventMediaPauseShortcut: null | string;
+  customEventMediaPlayShortcut: null | string;
+  customEventMediaStopShortcut: null | string;
+  customEvents: boolean;
   darkMode: 'auto' | boolean;
   disableMediaFetching: boolean;
   enableCacheAutoClear: boolean;

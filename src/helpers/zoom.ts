@@ -1,6 +1,7 @@
 import { useCurrentStateStore } from 'stores/current-state';
 
 import { errorCatcher } from './error-catcher';
+import { sendKeyboardShortcut } from './keyboard-shortcuts';
 
 /**
  * Triggers the configured Zoom screen sharing shortcut
@@ -22,45 +23,8 @@ export const triggerZoomScreenShare = (startSharing: boolean) => {
       `🎥 [Zoom] ${startSharing ? 'Starting' : 'Stopping'} screen sharing with shortcut: ${zoomScreenShareShortcut}`,
     );
 
-    // Use robotjs to send the configured keyboard shortcut
-    const { robot } = window.electronApi;
-
-    // Parse the shortcut string (e.g., "ctrl+shift+s" or "cmd+shift+s")
-    const keys = zoomScreenShareShortcut.toLowerCase().split('+');
-
-    // Map common key names to robotjs key names
-    const keyMap: Record<string, string> = {
-      cmd: 'command',
-      ctrl: 'control',
-      meta: 'command',
-    };
-
-    // Convert keys to robotjs format
-    const robotKeys = keys.map((key: number | string) =>
-      (keyMap[key] || key)?.toString(),
-    );
-
-    // Send the key combination
-    if (robotKeys.length === 1 && robotKeys[0]) {
-      robot.keyTap(robotKeys[0]);
-    } else if (robotKeys.length === 2 && robotKeys[0] && robotKeys[1]) {
-      robot.keyTap(robotKeys[1], [robotKeys[0]]);
-    } else if (
-      robotKeys.length === 3 &&
-      robotKeys[0] &&
-      robotKeys[1] &&
-      robotKeys[2]
-    ) {
-      robot.keyTap(robotKeys[2], [robotKeys[0], robotKeys[1]]);
-    } else if (
-      robotKeys.length === 4 &&
-      robotKeys[0] &&
-      robotKeys[1] &&
-      robotKeys[2] &&
-      robotKeys[3]
-    ) {
-      robot.keyTap(robotKeys[3], [robotKeys[0], robotKeys[1], robotKeys[2]]);
-    }
+    // Send the keyboard shortcut
+    sendKeyboardShortcut(zoomScreenShareShortcut, 'Zoom');
 
     console.log(`✅ [Zoom] Screen sharing shortcut sent successfully`);
 
