@@ -138,7 +138,7 @@ describe('Settings Utilities', () => {
 
       performActions(actions);
 
-      expect(dispatchEventSpy).toHaveBeenCalledWith(
+      expect(dispatchEventSpy).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({
           type: 'obsConnectFromSettings',
         }),
