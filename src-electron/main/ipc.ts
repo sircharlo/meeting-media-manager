@@ -18,6 +18,8 @@ import {
   shell,
   systemPreferences,
 } from 'electron';
+import electronUpdater from 'electron-updater';
+const { autoUpdater } = electronUpdater;
 import { downloadFile, isDownloadErrorExpected } from 'main/downloads';
 import { createVideoFromNonVideo } from 'main/ffmpeg';
 import {
@@ -259,3 +261,7 @@ handleIpcInvoke(
 );
 
 handleIpcInvoke('openFolderDialog', async () => openFolderDialog());
+
+handleIpcSend('quitAndInstall', () => {
+  autoUpdater.quitAndInstall(false, true);
+});

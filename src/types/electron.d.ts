@@ -115,6 +115,8 @@ export interface ElectronApi {
   onShortcut: (
     callback: (args: { shortcut: keyof SettingsValues }) => void,
   ) => void;
+  onUpdateAvailable: (callback: () => void) => void;
+  onUpdateDownloaded: (callback: () => void) => void;
   onWatchFolderUpdate: (
     callback: (args: {
       changedPath: string;
@@ -150,6 +152,7 @@ export interface ElectronApi {
    *   // => 'file:///home/user/document.pdf'
    */
   pathToFileURL: (path: string) => string;
+  quitAndInstall: () => void;
   readdir: (
     path: string,
     withSizes?: boolean,
@@ -195,6 +198,8 @@ export type ElectronIpcListenKey =
   | 'screenChange'
   | 'screenPrefsChange'
   | 'shortcut'
+  | 'update-available'
+  | 'update-downloaded'
   | 'watchFolderUpdate'
   | 'websiteWindowClosed';
 
@@ -208,6 +213,7 @@ export type ElectronIpcSendKey =
   | 'navigateWebsiteWindow'
   | 'openDiscussion'
   | 'openExternal'
+  | 'quitAndInstall'
   | 'setElectronUrlVariables'
   | 'toggleMediaWindow'
   | 'toggleOpenAtLogin'

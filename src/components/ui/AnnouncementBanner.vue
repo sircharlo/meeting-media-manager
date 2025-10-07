@@ -137,7 +137,7 @@ const newUpdateAnnouncement = computed((): Announcement => {
     actions: ['update'],
     id: 'new-update',
     maxVersion: getPreviousVersion(latestVersion.value || '1.1.0'),
-    message: 'update-available',
+    message: 'update-available-please-update',
     persistent: true,
     platform: updatesEnabled.value && !isTestVersion ? [] : undefined,
   };

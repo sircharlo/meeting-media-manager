@@ -22,7 +22,7 @@
   },
   {
     "id": "new-update",
-    "message": "update-available",
+    "message": "update-available-please-update",
     "type": "info",
     "maxVersion": "24.11.4",
     "persistent": true,
@@ -30,7 +30,7 @@
   },
   {
     "id": "new-update",
-    "message": "update-available",
+    "message": "update-available-please-update",
     "type": "info",
     "platform": ["linux", "win"],
     "minVersion": "24.11.5",

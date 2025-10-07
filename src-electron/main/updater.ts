@@ -4,6 +4,8 @@ const { autoUpdater } = electronUpdater;
 import fse from 'fs-extra';
 const { exists } = fse;
 import { captureElectronError } from 'main/utils';
+import { sendToWindow } from 'main/window/window-base';
+import { mainWindow } from 'main/window/window-main';
 import { join } from 'node:path';
 import { IS_TEST } from 'src-electron/constants';
 
@@ -34,6 +36,16 @@ export async function initUpdater() {
         },
       });
     }
+  });
+
+  autoUpdater.on('update-available', (info) => {
+    console.log('Update available:', info);
+    sendToWindow(mainWindow, 'update-available');
+  });
+
+  autoUpdater.on('update-downloaded', (info) => {
+    console.log('Update downloaded:', info);
+    sendToWindow(mainWindow, 'update-downloaded');
   });
 
   triggerUpdateCheck();

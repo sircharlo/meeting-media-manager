@@ -72,6 +72,57 @@
           </q-banner>
         </div>
       </q-slide-transition>
+      <q-slide-transition>
+        <div v-if="showUpdateAvailableBanner" class="row">
+          <q-banner
+            class="bg-info text-white full-width"
+            inline-actions
+            rounded
+          >
+            {{ t('update-downloading') }}
+            <template #avatar>
+              <q-avatar class="bg-white text-info" size="lg">
+                <q-icon name="mmm-download" size="sm" />
+              </q-avatar>
+            </template>
+            <template #action>
+              <q-btn
+                flat
+                :label="t('dismiss')"
+                @click="showUpdateAvailableBanner = false"
+              />
+            </template>
+          </q-banner>
+        </div>
+      </q-slide-transition>
+      <q-slide-transition>
+        <div v-if="showUpdateDownloadedBanner" class="row">
+          <q-banner
+            class="bg-positive text-white full-width"
+            inline-actions
+            rounded
+          >
+            {{ t('update-downloaded') }}
+            <template #avatar>
+              <q-avatar class="bg-white text-positive" size="lg">
+                <q-icon name="mmm-check" size="sm" />
+              </q-avatar>
+            </template>
+            <template #action>
+              <q-btn
+                flat
+                :label="t('quit-and-install')"
+                @click="quitAndInstall()"
+              />
+              <q-btn
+                flat
+                :label="t('dismiss')"
+                @click="showUpdateDownloadedBanner = false"
+              />
+            </template>
+          </q-banner>
+        </div>
+      </q-slide-transition>
       <MediaEmptyState
         v-if="showEmptyState"
         :go-to-next-day-with-media="goToNextDayWithMedia"
@@ -265,6 +316,10 @@ const currentFile = ref(0);
 const showFileImport = ref(false);
 const showSectionPicker = ref(false);
 const pendingFiles = ref<(File | string)[]>([]);
+
+// Update status state
+const showUpdateAvailableBanner = ref(true);
+const showUpdateDownloadedBanner = ref(true);
 
 // Watch for file import dialog closing to reset progress tracking
 watch(
@@ -1658,6 +1713,23 @@ const updateMediaSectionLabel = ({
 };
 
 // Computed conditions
+
+// Update event listeners
+useEventListener(window, 'update-available', () => {
+  showUpdateAvailableBanner.value = true;
+  showUpdateDownloadedBanner.value = false;
+});
+
+useEventListener(window, 'update-downloaded', () => {
+  showUpdateAvailableBanner.value = false;
+  showUpdateDownloadedBanner.value = true;
+});
+
+// Update handler functions
+const quitAndInstall = () => {
+  window.electronApi.quitAndInstall();
+};
+
 const showObsBanner = computed(
   () =>
     currentSettings.value?.obsEnable &&
@@ -1699,6 +1771,8 @@ const showBannerColumn = computed(
     showObsBanner.value ||
     showHiddenItemsBanner.value ||
     showDuplicateSongsBanner.value ||
+    showUpdateAvailableBanner.value ||
+    showUpdateDownloadedBanner.value ||
     showEmptyState.value,
 );
 
