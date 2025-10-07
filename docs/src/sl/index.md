@@ -8,7 +8,7 @@ hero:
   image: /logo.svg
   actions:
     - theme: brand
-      text: Download
+      text: Prenesi
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: brand
       text: O programu
