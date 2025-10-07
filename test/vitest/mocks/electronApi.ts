@@ -94,6 +94,12 @@ export const electronApi: ElectronApi = {
   onShortcut: function (callback) {
     throw new Error('Function not implemented.');
   },
+  onUpdateAvailable: function (callback) {
+    throw new Error('Function not implemented.');
+  },
+  onUpdateDownloaded: function (callback) {
+    throw new Error('Function not implemented.');
+  },
   onWatchFolderUpdate: function (callback) {
     throw new Error('Function not implemented.');
   },
@@ -117,6 +123,9 @@ export const electronApi: ElectronApi = {
   },
   path: upath,
   pathToFileURL,
+  quitAndInstall: function () {
+    throw new Error('Function not implemented.');
+  },
   readdir: readDirectory,
   registerShortcut: function (name, shortcut) {
     throw new Error('Function not implemented.');
