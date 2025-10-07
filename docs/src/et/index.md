@@ -8,17 +8,20 @@ hero:
   image: /logo.svg
   actions:
     - theme: brand
+      text: Download
+      link: https://github.com/sircharlo/meeting-media-manager/releases/latest
+    - theme: brand
       text: Info
       link: /et/about
     - theme: brand
       text: Kasutusjuhend
-      link: /et/user-guide
+      link: /user-guide
     - theme: brand
       text: Sättete juhend
-      link: /et/settings-guide
+      link: /settings-guide
     - theme: brand
       text: KKK
-      link: /et/faq
+      link: /faq
 
 features:
   - icon: 🚀
