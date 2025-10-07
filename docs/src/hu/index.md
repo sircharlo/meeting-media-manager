@@ -8,17 +8,20 @@ hero:
   image: /logo.svg
   actions:
     - theme: brand
+      text: Download
+      link: https://github.com/sircharlo/meeting-media-manager/releases/latest
+    - theme: brand
       text: A honlapról
       link: /hu/about
     - theme: brand
       text: Felhasználói útmutató
-      link: /hu/user-guide
+      link: /user-guide
     - theme: brand
       text: Beállítási útmutató
-      link: /hu/settings-guide
+      link: /settings-guide
     - theme: brand
       text: GYIK
-      link: /hu/faq
+      link: /faq
 
 features:
   - icon: 🚀

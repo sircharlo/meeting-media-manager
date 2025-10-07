@@ -8,17 +8,20 @@ hero:
   image: /logo.svg
   actions:
     - theme: brand
+      text: Download
+      link: https://github.com/sircharlo/meeting-media-manager/releases/latest
+    - theme: brand
       text: À propos
       link: /fr/about
     - theme: brand
       text: Guide de l'utilisateur
-      link: /fr/user-guide
+      link: /user-guide
     - theme: brand
       text: Guide des paramètres
-      link: /fr/settings-guide
+      link: /settings-guide
     - theme: brand
       text: Foire aux questions
-      link: /fr/faq
+      link: /faq
 
 features:
   - icon: 🚀

@@ -4,7 +4,7 @@
 
 ### Questa app dipende da siti esterni, fonti o "curatori" per scaricare pubblicazioni e media per l'adunanza? {#external-dependencies}
 
-**No. L'app si comporta in modo simile a JW Library. Scarica pubblicazioni, media e altri contenuti direttamente dal sito ufficiale dei Testimoni di Geova e dalla sua rete di distribuzione di contenuti. L'applicazione determina automaticamente ciò che deve essere scaricato e quando il contenuto precedentemente scaricato non è più aggiornato e dovrebbe essere nuovamente scaricato.
+\*\*No. L'app si comporta in modo simile a JW Library. Scarica pubblicazioni, media e altri contenuti direttamente dal sito ufficiale dei Testimoni di Geova e dalla sua rete di distribuzione di contenuti. L'applicazione determina automaticamente ciò che deve essere scaricato e quando il contenuto precedentemente scaricato non è più aggiornato e dovrebbe essere nuovamente scaricato.
 
 :::info Nota
 
@@ -37,6 +37,10 @@ M³ supports Windows, macOS, and Linux:
 - **Independent Settings**: You can use the interface in one language while downloading media in another
 
 ## Installation and Setup {#installation-setup}
+
+### :inbox_tray: Download M³ {#download}
+
+Download the appropriate version for your operating system from the [releases page](https://github.com/sircharlo/meeting-media-manager/releases/latest).
 
 ### :computer: How do I install M³? {#installation}
 
