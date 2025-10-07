@@ -522,7 +522,7 @@ export const defaultSettings: SettingsValues = {
   enableKeyboardShortcuts: false,
   enableMediaAutoExport: false,
   enableMediaDisplayButton: false,
-  enableMediaWindowFadeTransitions: false,
+  enableMediaWindowFadeTransitions: true,
   enableMusicButton: true,
   enableSubtitles: false,
   excludeFootnotes: false,
