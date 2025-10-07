@@ -72,7 +72,7 @@
     "vue-zoomable": "^1.2.8"
   },
   "devDependencies": {
-    "@electron/rebuild": "^3.7.2",
+    "@electron/rebuild": "^4.0.1",
     "@eslint/compat": "^1.4.0",
     "@intlify/unplugin-vue-i18n": "^11.0.1",
     "@pinia/testing": "^1.0.2",
