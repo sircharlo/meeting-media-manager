@@ -5,15 +5,7 @@
     @dragover="dropActive"
     @dragstart="dropActive"
   >
-    <!-- <pre>
-      {{
-        selectedDateObject?.mediaSections.map((s) =>
-          s.items?.map((i) => [i.sortOrderOriginal, i.title]),
-        )
-      }}
-    </pre> -->
-    <!-- <pre>Section to add to:   {{ sectionToAddTo }}</pre> -->
-    <div v-if="showBannerColumn" class="col">
+    <div v-if="bannerColumnVisible" class="col">
       <q-slide-transition>
         <div v-if="showObsBanner" class="row">
           <q-banner
@@ -318,10 +310,13 @@ const showSectionPicker = ref(false);
 const pendingFiles = ref<(File | string)[]>([]);
 
 // Update status state
-const showUpdateAvailableBanner = ref(true);
-const showUpdateDownloadedBanner = ref(true);
+const showUpdateAvailableBanner = ref(false);
+const showUpdateDownloadedBanner = ref(false);
 
-// Watch for file import dialog closing to reset progress tracking
+// Banner visibility state for transitions
+const bannerColumnVisible = ref(false);
+
+// Reset progress tracking when file import dialog closes
 watch(
   () => showFileImport.value,
   (isOpen) => {
@@ -1766,7 +1761,8 @@ const showEmptyState = computed(() => {
   );
 });
 
-const showBannerColumn = computed(
+// Banner column management for transitions
+const shouldShowBannerColumn = computed(
   () =>
     showObsBanner.value ||
     showHiddenItemsBanner.value ||
@@ -1774,6 +1770,22 @@ const showBannerColumn = computed(
     showUpdateAvailableBanner.value ||
     showUpdateDownloadedBanner.value ||
     showEmptyState.value,
+);
+
+// Watch for banner column changes and manage visibility for transitions
+watch(
+  shouldShowBannerColumn,
+  (shouldShow) => {
+    if (shouldShow) {
+      bannerColumnVisible.value = true;
+    } else {
+      // Delay hiding to allow transition to complete
+      setTimeout(() => {
+        bannerColumnVisible.value = false;
+      }, 300); // Match transition duration
+    }
+  },
+  { immediate: true },
 );
 
 const mediaLists = computed(() => {
