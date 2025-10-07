@@ -40,7 +40,7 @@ M³ supports Windows, macOS, and Linux:
 
 ### :inbox_tray: Download M³ {#download}
 
-Download the appropriate version for your operating system from the [releases page](https://github.com/sircharlo/meeting-media-manager/releases/latest).
+Scarica la versione appropriata per il tuo sistema operativo dalla [pagina delle release](https://github.com/sircharlo/meeting-media-manager/releases/latest).
 
 ### :computer: How do I install M³? {#installation}
 
