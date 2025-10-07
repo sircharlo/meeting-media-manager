@@ -38,9 +38,9 @@ M³ prend en charge Windows, macOS et Linux :
 
 ## Installation et configuration {#installation-setup}
 
-### :inbox_tray: Download M³ {#download}
+### :inbox_tray: Télécharger M³ {#download}
 
-Download the appropriate version for your operating system from the [releases page](https://github.com/sircharlo/meeting-media-manager/releases/latest).
+Téléchargez la version appropriée pour votre système d'exploitation à partir de la [page des versions](https://github.com/sircharlo/meeting-media-manager/releases/latest).
 
 ### :computer: Comment installer M³ ? {#installation}
 
