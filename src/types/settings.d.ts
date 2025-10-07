@@ -176,10 +176,10 @@ export interface SettingsValues {
   customEventMediaPauseShortcut: null | string;
   customEventMediaPlayShortcut: null | string;
   customEventMediaStopShortcut: null | string;
-  customEvents: boolean;
   darkMode: 'auto' | boolean;
   disableMediaFetching: boolean;
   enableCacheAutoClear: boolean;
+  enableCustomEvents: boolean;
   enableExtraCache: boolean;
   enableFolderWatcher: boolean;
   enableKeyboardShortcuts: boolean;

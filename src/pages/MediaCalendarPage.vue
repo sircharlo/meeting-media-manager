@@ -663,8 +663,7 @@ watch(
     [, , oldMediaPlayingUrl],
   ) => {
     console.log('🔄 [MediaCalendarPage] Media state watcher triggered:', {
-      currentMediaPlayingId: mediaPlaying.value.uniqueId,
-      customEvents: currentSettings.value?.customEvents,
+      enableCustomEvents: currentSettings.value?.enableCustomEvents,
       newMediaPaused,
       newMediaPlaying,
       newMediaPlayingUrl,
@@ -672,92 +671,103 @@ watch(
     });
 
     // Custom integration events
-    if (currentSettings.value?.customEvents) {
-      console.log(
-        '🔄 [CustomIntegration] Custom integration enabled, checking events',
-      );
+    if (currentSettings.value?.enableCustomEvents) {
+      console.log('🔄 [CustomEvents] Custom events enabled');
 
-      // Media started playing (from nothing to something)
       if (newMediaPlaying && !oldMediaPlayingUrl) {
-        console.log('🔄 [CustomIntegration] Media started playing event');
-        sendKeyboardShortcut(
-          currentSettings.value?.customEventMediaPlayShortcut,
-          'CustomIntegration',
-        );
-      }
-
-      // Media paused
-      if (newMediaPaused && newMediaPlayingUrl) {
-        console.log('🔄 [CustomIntegration] Media paused event');
-        sendKeyboardShortcut(
-          currentSettings.value?.customEventMediaPauseShortcut,
-          'CustomIntegration',
-        );
-      }
-
-      // Media stopped (from something to nothing)
-      if (!newMediaPlaying && oldMediaPlayingUrl) {
-        console.log('🔄 [CustomIntegration] Media stopped event');
-        sendKeyboardShortcut(
-          currentSettings.value?.customEventMediaStopShortcut,
-          'CustomIntegration',
-        );
-
-        // Check if this was the last song in the meeting
-        if (selectedDateObject.value?.meeting && oldMediaPlayingUrl) {
+        // Media started playing (from nothing to something)
+        if (currentSettings.value?.customEventMediaPlayShortcut) {
           console.log(
-            '🔄 [CustomIntegration] Checking for last song in meeting',
+            '🔄 [CustomEvents] Sending media play event shortcut:',
+            currentSettings.value?.customEventMediaPlayShortcut,
           );
+          sendKeyboardShortcut(
+            currentSettings.value?.customEventMediaPlayShortcut,
+            'CustomEvents',
+          );
+        }
+      } else if (newMediaPaused && newMediaPlayingUrl) {
+        // Media paused
+        if (currentSettings.value?.customEventMediaPauseShortcut) {
+          console.log(
+            '🔄 [CustomEvents] Sending media pause event shortcut:',
+            currentSettings.value?.customEventMediaPauseShortcut,
+          );
+          sendKeyboardShortcut(
+            currentSettings.value?.customEventMediaPauseShortcut,
+            'CustomEvents',
+          );
+        }
+      } else if (!newMediaPlaying && oldMediaPlayingUrl) {
+        // Media stopped (from something to nothing)
+        if (currentSettings.value?.customEventMediaStopShortcut) {
+          console.log(
+            '🔄 [CustomEvents] Sending media stop event shortcut:',
+            currentSettings.value?.customEventMediaStopShortcut,
+          );
+          sendKeyboardShortcut(
+            currentSettings.value?.customEventMediaStopShortcut,
+            'CustomEvents',
+          );
+        }
 
-          // Check if the stopped media was a song and if it's the last one
-          const allSongs: MediaItem[] = [];
-          if (selectedDateObject.value.mediaSections) {
-            Object.values(selectedDateObject.value.mediaSections).forEach(
-              (section) => {
-                if (section.items) {
-                  section.items.forEach((item) => {
-                    if (item.tag?.type === 'song' && !item.hidden) {
-                      allSongs.push(item);
-                    }
-                  });
-                }
+        if (currentSettings.value?.customEventLastSongShortcut) {
+          // Since the shortcut is set, check if this was the last song in the meeting
+          if (selectedDateObject.value?.meeting && oldMediaPlayingUrl) {
+            // This is a meeting day and something was playing before
+            console.log(
+              '🔄 [CustomEvents Verbose] Checking if the last played media item was the last song in the meeting',
+            );
+
+            // Check if the stopped media was a song and if it's the last one
+            const allSongs: MediaItem[] = [];
+            if (selectedDateObject.value.mediaSections) {
+              Object.values(selectedDateObject.value.mediaSections).forEach(
+                (section) => {
+                  if (section.items) {
+                    section.items.forEach((item) => {
+                      if (item.tag?.type === 'song' && !item.hidden) {
+                        allSongs.push(item);
+                      }
+                    });
+                  }
+                },
+              );
+            }
+
+            console.log(
+              '🔄 [CustomEvents Verbose] Total songs found in meeting:',
+              allSongs.length,
+            );
+
+            // Check if the stopped media was the last song
+            const lastSongUrl =
+              allSongs[allSongs.length - 1]?.fileUrl ||
+              allSongs[allSongs.length - 1]?.streamUrl;
+            const stoppedWasLastSong =
+              allSongs.length > 0 && lastSongUrl === oldMediaPlayingUrl;
+
+            console.log(
+              '🔄 [CustomEvents Verbose] Last song detection variables:',
+              {
+                lastSongUrl,
+                oldMediaPlayingUrl,
+                stoppedWasLastSong,
               },
             );
-          }
 
-          console.log(
-            '🔄 [CustomIntegration] Found songs in meeting:',
-            allSongs.length,
-          );
-
-          // Check if the stopped media was the last song
-          const stoppedWasLastSong =
-            allSongs.length > 0 &&
-            (allSongs[allSongs.length - 1]?.fileUrl ||
-              allSongs[allSongs.length - 1]?.streamUrl) === oldMediaPlayingUrl;
-
-          console.log('🔄 [CustomIntegration] Last song detection:', {
-            allSongsCount: allSongs.length,
-            lastSongId:
-              allSongs[allSongs.length - 1]?.fileUrl ||
-              allSongs[allSongs.length - 1]?.streamUrl,
-            previousMediaUrl: oldMediaPlayingUrl,
-            stoppedWasLastSong,
-          });
-
-          if (stoppedWasLastSong) {
-            console.log('🔄 [CustomIntegration] Last song completed event');
-            sendKeyboardShortcut(
-              currentSettings.value?.customEventLastSongShortcut,
-              'CustomIntegration',
-            );
+            if (stoppedWasLastSong) {
+              console.log(
+                '🔄 [CustomEvents] Sending last song played event shortcut:',
+              );
+              sendKeyboardShortcut(
+                currentSettings.value?.customEventLastSongShortcut,
+                'CustomEvents',
+              );
+            }
           }
         }
       }
-    } else {
-      console.log(
-        '🔄 [CustomIntegration] Custom integration disabled, skipping events',
-      );
     }
 
     if (mediaSceneTimeout) {

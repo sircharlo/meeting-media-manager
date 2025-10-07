@@ -320,35 +320,36 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'obsStudio',
     type: 'toggle',
   },
-  customEvents: {
+  enableCustomEvents: {
     group: 'integrations',
-    subgroup: 'customIntegration',
+    subgroup: 'customEvents',
     type: 'toggle',
   },
   customEventMediaPlayShortcut: {
-    depends: 'customEvents',
+    depends: 'enableCustomEvents',
     group: 'integrations',
-    subgroup: 'customIntegration',
+    subgroup: 'customEvents',
     type: 'shortcut',
   },
   customEventMediaPauseShortcut: {
-    depends: 'customEvents',
+    depends: 'enableCustomEvents',
     group: 'integrations',
-    subgroup: 'customIntegration',
+    subgroup: 'customEvents',
     type: 'shortcut',
   },
   customEventMediaStopShortcut: {
-    depends: 'customEvents',
+    depends: 'enableCustomEvents',
     group: 'integrations',
-    subgroup: 'customIntegration',
+    subgroup: 'customEvents',
     type: 'shortcut',
   },
   customEventLastSongShortcut: {
-    depends: 'customEvents',
+    depends: 'enableCustomEvents',
     group: 'integrations',
-    subgroup: 'customIntegration',
+    subgroup: 'customEvents',
     type: 'shortcut',
   },
+
   // Advanced
 
   enableKeyboardShortcuts: {
@@ -513,10 +514,10 @@ export const defaultSettings: SettingsValues = {
   customEventMediaPauseShortcut: null,
   customEventMediaPlayShortcut: null,
   customEventMediaStopShortcut: null,
-  customEvents: false,
   darkMode: 'auto',
   disableMediaFetching: false,
   enableCacheAutoClear: true,
+  enableCustomEvents: false,
   enableExtraCache: false,
   enableFolderWatcher: false,
   enableKeyboardShortcuts: false,
