@@ -82,7 +82,7 @@
             color="primary"
             :disable="musicState === 'music.stopping'"
             unelevated
-            @click="stopMusic"
+            @click="stopMusic(true)"
           >
             {{ t('stop-music') }}
           </q-btn>
@@ -137,7 +137,8 @@ const MEETING_STOP_BUFFER_SECONDS = computed(
   () => currentSettings.value?.meetingStopBufferSeconds ?? 60,
 ); // Stop music a user-defined number of seconds before meeting; default to 60 seconds
 const AUTO_START_WINDOW_HOURS = 1.25; // Auto-start within 1 hour 15 minutes of meeting
-const MEETING_DURATION_HOURS = 1.75; // Assume meeting lasts 1 hour 45 minutes
+// const MEETING_DURATION_HOURS = 1.75; // Assume meeting lasts 1 hour 45 minutes
+// const EARLY_END_TIME_TOLERANCE_HOURS = 0.25; // Allow 15 minutes of buffer before meeting starts
 
 // Music player setup
 const musicPlayerSource = ref<HTMLSourceElement>(
@@ -158,9 +159,15 @@ const timeUntilMeeting = ref(remainingTimeBeforeMeetingStart());
 
 watch(
   () => [currentTime.value, currentState.selectedDateObject?.date],
-  ([newTime, selectedDate]) => {
-    if (newTime || selectedDate) {
+  (values, oldValues) => {
+    const [newTime, newSelectedDate] = values;
+    const [, oldSelectedDate] = oldValues || [];
+
+    if (newTime || newSelectedDate) {
       timeUntilMeeting.value = remainingTimeBeforeMeetingStart();
+    }
+    if (oldSelectedDate !== newSelectedDate) {
+      musicAlreadyStoppedManually.value = false;
     }
   },
   { immediate: true },
@@ -183,14 +190,11 @@ const isMeetingToday = computed(() => {
   );
 });
 
-// const isMeetingActive = computed(() => {
-//   const timeUntil = timeUntilMeeting.value;
-//   return timeUntil <= 0 && timeUntil > -(MEETING_DURATION_HOURS * 3600);
-// });
-
-const isMeetingOver = computed(() => {
-  return timeUntilMeeting.value <= -(MEETING_DURATION_HOURS * 3600);
+const isMeetingStartTimeInPast = computed(() => {
+  return timeUntilMeeting.value <= 0;
 });
+
+const musicAlreadyStoppedManually = ref(false);
 
 const shouldAutoStart = computed(() => {
   console.log('[shouldAutoStart] Checking auto start conditions...');
@@ -213,6 +217,11 @@ const shouldAutoStart = computed(() => {
         musicPlaying: musicPlaying.value,
       },
     );
+    return false;
+  }
+
+  if (musicAlreadyStoppedManually.value) {
+    console.log('[shouldAutoStart] Music already stopped manually');
     return false;
   }
 
@@ -244,7 +253,7 @@ const shouldAutoStop = computed(() => {
   return (
     isMeetingToday.value &&
     timeUntilMeeting.value <= MEETING_STOP_BUFFER_SECONDS.value &&
-    !isMeetingOver.value
+    !isMeetingStartTimeInPast.value
   );
 });
 
@@ -257,7 +266,7 @@ const currentSongRemainingTime = computed(() => {
 });
 
 const timeUntilMusicStops = computed(() => {
-  if (!isMeetingToday.value || isMeetingOver.value) {
+  if (!isMeetingToday.value || isMeetingStartTimeInPast.value) {
     return '';
   }
 
@@ -268,9 +277,7 @@ const timeUntilMusicStops = computed(() => {
 
 const shouldShowMeetingCountdown = computed(() => {
   return (
-    musicState.value !== 'music.stopping' &&
-    // !wasStartedManually.value &&
-    !isMeetingOver.value
+    musicState.value !== 'music.stopping' && !isMeetingStartTimeInPast.value
   );
 });
 
@@ -279,11 +286,7 @@ const displayStatusText = computed(() => {
     case 'music.error':
       return '';
     case 'music.playing':
-      if (
-        !isMeetingToday.value ||
-        isMeetingOver.value
-        // || wasStartedManually.value
-      ) {
+      if (!isMeetingToday.value || isMeetingStartTimeInPast.value) {
         return currentSongRemainingTime.value;
       }
       return timeUntilMusicStops.value;
@@ -403,7 +406,7 @@ async function playMusic() {
   }
 }
 
-function stopMusic() {
+function stopMusic(manualStop = false) {
   console.group('⏹️ Background Music Stop');
   try {
     console.log('⏹️ Stopping background music');
@@ -420,6 +423,10 @@ function stopMusic() {
     errorCatcher(error);
   } finally {
     console.groupEnd();
+    if (manualStop) {
+      console.log('⏹️ Music stopped manually');
+      musicAlreadyStoppedManually.value = true;
+    }
   }
 }
 
