@@ -137,8 +137,6 @@ const MEETING_STOP_BUFFER_SECONDS = computed(
   () => currentSettings.value?.meetingStopBufferSeconds ?? 60,
 ); // Stop music a user-defined number of seconds before meeting; default to 60 seconds
 const AUTO_START_WINDOW_HOURS = 1.25; // Auto-start within 1 hour 15 minutes of meeting
-// const MEETING_DURATION_HOURS = 1.75; // Assume meeting lasts 1 hour 45 minutes
-// const EARLY_END_TIME_TOLERANCE_HOURS = 0.25; // Allow 15 minutes of buffer before meeting starts
 
 // Music player setup
 const musicPlayerSource = ref<HTMLSourceElement>(
@@ -180,9 +178,6 @@ const musicState = ref<
 
 const musicPlayingTitle = ref('');
 const songList = ref<SongItem[]>([]);
-// const wasStartedManually = ref(false); // Track if music was started manually
-
-// Time calculations - cleaner and more predictable
 
 const isMeetingToday = computed(() => {
   return (
@@ -245,7 +240,6 @@ const shouldAutoStart = computed(() => {
 });
 
 const shouldAutoStop = computed(() => {
-  // if (!musicPlaying.value || wasStartedManually.value) {
   if (!musicPlaying.value) {
     return false;
   }
@@ -325,7 +319,6 @@ watchImmediate(
       state !== 'music.playing'
     ) {
       console.log('🎵 Auto-starting background music');
-      // wasStartedManually.value = false;
       playMusic();
     }
   },
@@ -370,10 +363,6 @@ async function playMusic() {
 
     console.log('🎵 Starting background music');
     musicState.value = 'music.starting';
-    // if (manualStart) {
-    //   console.log('👆 Music started manually');
-    // wasStartedManually.value = true;
-    // }
     downloadBackgroundMusic();
     songList.value = [];
     musicPlayer.value.appendChild(musicPlayerSource.value);
@@ -640,7 +629,6 @@ const fadeToVolumeLevel = (targetVolume: number, fadeSeconds: number) => {
           if (musicPlayer.value.volume === 0) {
             musicPlayer.value.pause();
             musicState.value = '';
-            // wasStartedManually.value = false; // Reset manual flag when stopped
           }
         }
       } catch (error) {
@@ -678,7 +666,6 @@ const toggleMusicListener = () => {
       stopMusic();
     } else {
       console.log('👆 Music started manually');
-      // wasStartedManually.value = true;
       playMusic();
     }
   } catch (error) {
