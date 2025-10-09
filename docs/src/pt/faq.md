@@ -38,9 +38,9 @@ M3 suporta Windows, macOS e Linux:
 
 ## Instalação e configuração {#installation-setup}
 
-### :inbox_tray: Download M³ {#download}
+### :inbox_tray: Baixar M³ {#download}
 
-Download the appropriate version for your operating system from the [releases page](https://github.com/sircharlo/meeting-media-manager/releases/latest).
+Baixe a versão apropriada para o seu sistema operacional a partir da [página de lançamentos](https://github.com/sircharlo/meeting-media-manager/releases/latest).
 
 ### :computer: Como faço para instalar o M3? {#installation}
 
@@ -266,7 +266,7 @@ Por favor, [abra uma discussão](https://github.com/sircharlo/meeting-media-mana
 
 ### :handshake: Como posso contribuir com algum código? {#how-can-i-contribute-some-code}
 
-Por favor, [veja o guia de contribuições](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) no repositório oficial do GitHub. We welcome code contributions and Pull Requests!
+Por favor, [veja o guia de contribuições](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) no repositório oficial do GitHub. Agradecemos as contribuições de código e os Pull Requests!
 
 ### :globe_with_meridians: Como posso ajudar com as traduções? {#translations}
 
