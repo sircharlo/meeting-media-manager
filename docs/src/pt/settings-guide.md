@@ -183,11 +183,11 @@ Iniciar automaticamente a música de fundo quando o M³ abrir, se apropriado.
 
 **Padrão**: `true`
 
-#### Meeting Stop Buffer {#meeting-stop-buffer}
+#### Buffer de parada {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
-How many seconds before meeting start time to stop background music.
+Quantos segundos antes da hora inicial da reunião para parar o cântico de fundo.
 
 **Intervalo**: 0-300 segundos
 
@@ -277,33 +277,33 @@ Ativa integração do OBS Studio para troca automática de cena.
 
 :::warning Nota importante:
 
-**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Configuração de áudio necessária**: a integração do OBS Studio apenas lida com o compartilhamento de tela. Áudio de mídia M³ **não é transmitido automaticamente** para Zoom para os participantes ao usar o OBS Studio. Você deve configurar as configurações de áudio originais do Zoom ou usar "Compartilhar som do computador" para garantir que os participantes da reunião possam ouvir a mídia. Veja o [Guia do Usuário](/user-guide#audio-configuration) para instruções detalhadas de configuração de áudio.
 
-**Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
+**Nota**: A integração Zoom usa o compartilhamento de tela nativo do Zoom, o que lida com o áudio de forma mais transparente do que a integração do OBS Studio.
 
 :::
 
-#### OBS Port {#obs-port}
+#### Porta OBS {#obs-port}
 
 <!-- **Setting**: `obsPort` -->
 
-The port number for connecting to OBS Studio WebSocket.
+O número da porta para conectar ao OBS Studio WebSocket.
 
 **Padrão**: Nenhum
 
-#### OBS Password {#obs-password}
+#### Senha OBS {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
-The password for OBS Studio WebSocket connection.
+A senha para a conexão WebSocket do OBS Studio.
 
 **Padrão**: Nenhum
 
-#### OBS Scenes {#obs-scenes}
+#### Cenas OBS {#obs-scenes}
 
-Configure which OBS scenes to use for different purposes:
+Configurar quais cenas OBS usar para diferentes fins:
 
-- **Camera Scene**: Scene showing the camera/lectern
+- **Cena da câmera**: A cena mostra a câmera/lectern
 - **Media Scene**: Scene for displaying media
 - **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
 
@@ -317,7 +317,7 @@ Configure which OBS scenes to use for different purposes:
 
 :::warning Nota importante:
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. Você deve configurar as configurações de áudio originais do Zoom ou usar "Compartilhar som do computador" para garantir que os participantes da reunião possam ouvir a mídia. Veja o [Guia do Usuário](/user-guide#audio-configuration) para instruções detalhadas de configuração de áudio.
 
 **Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
 
