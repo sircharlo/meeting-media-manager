@@ -3707,7 +3707,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.18.8, @types/node@npm:^22.7.7":
+"@types/node@npm:^22.18.9":
+  version: 22.18.9
+  resolution: "@types/node@npm:22.18.9"
+  dependencies:
+    undici-types: "npm:~6.21.0"
+  checksum: 10c0/0d342e17e0b36a4475ba36f0a0b9d7e28cf85ae44b1ea1f218c8cffe8c9519820eef9b97c171b0b93d8066c8710d7660e31660678bac0842655dff2118a23248
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^22.7.7":
   version: 22.18.8
   resolution: "@types/node@npm:22.18.8"
   dependencies:
@@ -10360,7 +10369,7 @@ __metadata:
     "@types/heic-convert": "npm:^2.1.0"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/mousetrap": "npm:^1.6.15"
-    "@types/node": "npm:^22.18.8"
+    "@types/node": "npm:^22.18.9"
     "@types/pretty-bytes": "npm:^5.2.0"
     "@typescript-eslint/utils": "npm:^8.45.0"
     "@vitejs/plugin-vue": "npm:^6.0.1"
@@ -10395,7 +10404,7 @@ __metadata:
     lodash-es: "npm:^4.17.21"
     mime: "npm:^4.1.0"
     mousetrap: "npm:^1.6.5"
-    msw: "npm:^2.11.4"
+    msw: "npm:^2.11.5"
     music-metadata: "npm:^11.9.0"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^9.0.0"
@@ -10870,9 +10879,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msw@npm:^2.11.4":
-  version: 2.11.4
-  resolution: "msw@npm:2.11.4"
+"msw@npm:^2.11.5":
+  version: 2.11.5
+  resolution: "msw@npm:2.11.5"
   dependencies:
     "@inquirer/confirm": "npm:^5.0.0"
     "@mswjs/interceptors": "npm:^0.39.1"
@@ -10899,7 +10908,7 @@ __metadata:
       optional: true
   bin:
     msw: cli/index.js
-  checksum: 10c0/bfaf5ea1badba7109a296e230ecb8dd538e8ba98514e8c62139b7e9a78ce6c9a799d2b260597383c87dcf2a2093288c5068dfcb654a165ffceb816b0ad7d7706
+  checksum: 10c0/6e7bf559e7da85996df063e5cdc1befea5ab253e6b49d9a7910952b76cc28a53f0ed3581e4deb15b05b282289337cae13abc6a75e8273b017e916ee003dfd15a
   languageName: node
   linkType: hard
 
