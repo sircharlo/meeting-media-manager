@@ -4,19 +4,19 @@
 
 ## Wat is dit voor app? {#what-is-this-app}
 
-**Meeting Media Manager**, or **M³** for short, is a comprehensive cross-platform application for Windows, macOS and Linux that automatically downloads, organizes, and presents pictures and videos for congregation meetings of Jehovah's Witnesses. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
+**Meeting Media Manager**, of **M³** in het kort, is een uitgebreide cross-platform applicatie voor Windows, macOS en Linux die automatisch foto's en video's downloadt, organiseert en presenteert voor gemeentevergaderingen van Jehovah's Getuigen. Het ondersteunt elke taal die beschikbaar is op de officiële website van Jehovah’s Getuigen en biedt krachtige hulpmiddelen voor het beheren van media tijdens zowel hybride als fysieke vergaderingen.
 
-M³ features support for managing regular and custom meeting media, multiple congregations and/or groups using the same computer account, and advanced presentation capabilities that make media sharing effortless.
+M³ biedt ondersteuning voor het beheren van reguliere en aangepaste vergadermedia, meerdere gemeenten en/of groepen die hetzelfde computeraccount gebruiken, en geavanceerde presentatiemogelijkheden die het delen van media moeiteloos maken.
 
 :::info Opmerking
 
-This app used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed to Meeting Media Manager in May 2022.
+Deze app stond vroeger bekend als JWMMF (JW Meeting Media Fetcher), maar werd in mei 2022 hernoemd naar Meeting Media Manager.
 
 :::
 
 ## Waarom M³? {#why-choose-m3}
 
-M³ is de ultieme tool om vergadering media te beheren en biedt een naadloos, betrouwbaar en veelzijdige ervaring op verschillende platformen. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
+M³ is de ultieme tool om vergadering media te beheren en biedt een naadloos, betrouwbaar en veelzijdige ervaring op verschillende platformen. Het is speciaal ontworpen voor de behoeften van gemeentevergaderingen en biedt alles wat nodig is voor een effectieve mediapresentatie.
 
 ### Belangrijke voordelen {#key-benefits}
 
@@ -24,32 +24,32 @@ M³ is de ultieme tool om vergadering media te beheren en biedt een naadloos, be
 
 - **Ondersteuning voor meerdere gemeenten**: Beheer instellingen voor meerdere gemeenten of groepen binnen een enkele applicatie.
 
-- **Advanced features**: Easily add extra media, import custom content, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Geavanceerde functies**: Voeg eenvoudig extra media toe, importeer aangepast materiaal en deel automatisch wat er in de Koninkrijkszaal gebeurt met deelnemers op Zoom.
 
 - **Geoptimaliseerde cross-platform prestaties**: Geniet van een soepele en responsieve ervaring op Windows, macOS en Linux, zelfs op oudere systemen of computers met beperkte capaciteiten.
 
 - **Betrouwbaar en stabiel**: Gebouwd om te werken wanneer je het het hardst nodig hebt. Een fout gevonden? Rapporteer het en het zal snel worden aangepakt.
 
-- **Advanced presentation tools**: Advanced media controls, zoom/pan capabilities, custom timing, and seamless Zoom and OBS Studio integration.
+- **Geavanceerde presentatietools**: Geavanceerde mediabediening, zoom- en panmogelijkheden, aangepaste timing en naadloze integratie met Zoom en OBS Studio.
 
 ## Wat kan M³? {#what-can-m3-do}
 
-M³ is a comprehensive media management solution that allows you to easily and automatically download, synchronize, share, and present all meeting media. Here's what makes M³ powerful:
+M³ is een uitgebreide mediabeheeroplossing waarmee je eenvoudig en automatisch alle vergadermedia kunt downloaden, synchroniseren, delen en presenteren. Hierdoor is M³ zo krachtig:
 
-### Core Media Management {#core-media-management}
+### Kernmediabeheer {#core-media-management}
 
-- **Automatic media downloads**: Automatically fetches and downloads all media needed for upcoming meetings
-- **Multi-language support**: Download media in any of hundreds of available languages
-- **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
-- **Media organization**: Automatically organizes media by date and meeting section
+- **Automatische mediadownloads**: Haalt automatisch alle benodigde media op en downloadt deze voor aankomende vergaderingen
+- **Ondersteuning voor meerdere talen**: Download media in een van de honderden beschikbare talen
+- **Slimme caching**: Intelligent cachesysteem dat media georganiseerd en up-to-date houdt
+- **Mediaorganisatie**: Organiseert media automatisch op datum en vergaderingsgedeelte
 
-### Media Presentation Features {#about-presentation-features}
+### Presentatiefuncties voor media {#about-presentation-features}
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
+Voor **hybride** of **fysieke** gemeentevergaderingen bevat de geïntegreerde mediapresentatiemodus:
 
-- **Advanced media controls**: Media thumbnails with zoom and pan capabilities
-- **Custom timing**: Set custom start and end times for media playback
-- **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
+- **Geavanceerde mediabediening**: Media-miniaturen met zoom- en panmogelijkheden
+- **Aangepaste timing**: Stel aangepaste start- en eindtijden in voor het afspelen van media
+- **Afspeelbediening**: Gebruiksvriendelijke pauze-/afspelen-/stopknoppen met sneltoetsen
 - **Multi-monitor support**: Automatic external monitor detection and management
 - **Clean presentation**: Distraction-free media presentation interface
 
