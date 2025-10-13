@@ -8,9 +8,9 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
-- ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
-- ✨ **Custom Events**: Added optional events hooks that can trigger keyboard shortcuts when certain events are detected. This can be useful for AV operators to execute actions automatically outside of the app. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
+- ✨ **Démarrer la lecture en mode pause** : Ajout d'un nouveau paramètre permettant de démarrer la lecture en mode pause, ce qui peut être utile aux opérateurs audiovisuels, afin qu'ils puissent se préparer (par exemple, démarrer le partage Zoom) avant que le média ne commence à être lu dans la fenêtre multimédia.
+- ✨ **Notifications de mise à jour** : Les utilisateurs seront désormais informés des mises à jour via une bannière intégrée à l'application, qui leur permettra également d'installer les mises à jour immédiatement, sans avoir à attendre le prochain redémarrage de l'application.
+- ✨ **Événements personnalisés** : Ajout d'un système d'événements pouvant déclencher des raccourcis clavier lorsque certains événements sont détectés. Cela peut être utile pour les opérateurs audiovisuels afin d'exécuter automatiquement des actions en dehors de l'application. Par exemple, des lumières intelligentes pourraient être allumées et éteintes avant et après la lecture de médias dans les auditoriums où des projecteurs sont utilisés ; ou bien un script pourrait être lancé après la lecture du dernier cantique d'une réunion afin d'automatiser diverses actions dans une réunion Zoom.
 
 ## v25.9.1
 

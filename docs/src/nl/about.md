@@ -50,39 +50,39 @@ Voor **hybride** of **fysieke** gemeentevergaderingen bevat de geïntegreerde me
 - **Geavanceerde mediabediening**: Media-miniaturen met zoom- en panmogelijkheden
 - **Aangepaste timing**: Stel aangepaste start- en eindtijden in voor het afspelen van media
 - **Afspeelbediening**: Gebruiksvriendelijke pauze-/afspelen-/stopknoppen met sneltoetsen
-- **Multi-monitor support**: Automatic external monitor detection and management
-- **Clean presentation**: Distraction-free media presentation interface
+- **Ondersteuning voor meerdere monitoren**: Automatische detectie en beheer van externe monitoren
+- **Schone presentatie**: Afleidingsvrije mediapresentatie-interface
 
-### Background Music {#about-background-music}
+### Achtergrondmuziek {#about-background-music}
 
-- **Intelligent playback**: Background music that automatically stops before meetings start
-- **One-click restart**: Resume background music with a single click after meetings
-- **Volume control**: Adjustable background music volume with fade-out capabilities
+- **Intelligente weergave**: Achtergrondmuziek die automatisch stopt voordat vergaderingen beginnen
+- **Herstart met één klik**: Hervat achtergrondmuziek met één klik na vergaderingen
+- **Volumeregeling**: Aanpasbaar volume van achtergrondmuziek met fade-out mogelijkheden
 
-### Zoom Integration {#about-zoom-integration}
+### Zoom-integratie {#about-zoom-integration}
 
-- **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
+- **Automatisch scherm delen**: Start en stop Zoom-schermdeling automatisch wanneer je media afspeelt of stopt
 
-### OBS Studio Integration {#about-obs-integration}
+### OBS Studio-integratie {#about-obs-integration}
 
-- **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
-- **Scene management**: Automatic switching between camera, media, and other scenes
+- **Automatisch schakelen van scènes**: Naadloze integratie met OBS Studio voor hybride vergaderingen
+- **Scènebeheer**: Automatisch schakelen tussen camera-, media- en andere scènes
 
-### Media Import and Management {#about-media-import}
+### Media-import en -beheer {#about-media-import}
 
-- **JWPUB files**: Import and manage JWPUB files with ease
-- **JWLPLAYLIST files**: Support for JW Library playlist files
-- **Custom media**: Import custom videos, pictures, audio files, and PDF files
-- **Audio Bible**: Import Study Bible media and audio recordings of the New World Translation
-- **Public talks**: Always have public talk media overview ready to use with the S-34 importer
+- **JWPUB-bestanden**: Importeer en beheer JWPUB-bestanden eenvoudig
+- **JWLPLAYLIST-bestanden**: Ondersteuning voor JW Library-afspeellijstbestanden
+- **Aangepaste media**: Importeer eigen video's, afbeeldingen, audiobestanden en PDF-bestanden
+- **Audiobijbel**: Importeer Studiebijbelmedia en geluidsopnamen van de Nieuwe-Wereldvertaling
+- **Openbare lezingen**: Altijd een overzicht van openbarelezingmedia klaar voor gebruik met de S-34-importeur
 
-### Advanced Features {#about-advanced-features}
+### Geavanceerde functies {#about-advanced-features}
 
-- **Folder monitoring**: Automatically sync media from watched folders (Dropbox, OneDrive, etc.)
-- **Media export**: Automatically export media to folders, organized by date
-- **Website presentation**: Present the official website on external monitors
-- **Keyboard shortcuts**: Customizable keyboard shortcuts for many functions
-- **Multiple profiles**: Manage different congregations or groups with separate profiles
+- **Mapbewaking**: Synchroniseer automatisch media uit bewaakte mappen (Dropbox, OneDrive, enz.)
+- **Media-export**: Exporteer automatisch media naar mappen, georganiseerd op datum
+- **Websitepresentatie**: Presenteer de officiële website op externe monitoren
+- **Sneltoetsen**: Aanpasbare sneltoetsen voor veel functies
+- **Meerdere profielen**: Beheer verschillende gemeenten of groepen met aparte profielen
 
 **Probeer M³ vandaag nog en kijk zelf wat het kan doen! Het is nog nooit zo eenvoudig geweest om media te presenteren bij vergaderingen.**
 
@@ -90,40 +90,40 @@ Voor **hybride** of **fysieke** gemeentevergaderingen bevat de geïntegreerde me
 
 ## Werkt M³ in mijn eigen taal? {#does-m3-work-in-my-language}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Ja!** M³ biedt uitgebreide meertalige ondersteuning:
 
-### Media Languages {#media-languages}
+### Mediatalen {#media-languages}
 
-Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of languages available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need during setup.
+Media voor vergaderingen van Jehovah’s Getuigen kan automatisch worden gedownload in een van de honderden talen die beschikbaar zijn op de officiële website van Jehovah’s Getuigen. De lijst met beschikbare talen wordt dynamisch bijgewerkt; je hoeft alleen maar te kiezen welke je nodig hebt tijdens de installatie.
 
-### Interface Languages {#interface-languages}
+### Interface-talen {#interface-languages}
 
-M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
+M³ zelf is door vrijwilligers in veel talen vertaald. Je kunt de taal instellen die je wilt weergeven in de interface van M³, onafhankelijk van de taal die wordt gebruikt voor het downloaden van media. Dit betekent dat je M³ in je voorkeurstaal kunt gebruiken terwijl je media downloadt in elke andere ondersteunde taal.
 
-### Language Features {#language-features}
+### Taalfuncties {#language-features}
 
-- **Dynamic language detection**: Automatically detects available languages
-- **Fallback languages**: Configure fallback languages for when primary language content isn't available
-- **Subtitle support**: Download and display subtitles in different languages
-- **Localized interface**: Complete interface translation for many languages
+- **Dynamische taalherkenning**: Detecteert automatisch beschikbare talen
+- **Vertaaltalen**: Stel vertaaltalen in voor wanneer inhoud in de primaire taal niet beschikbaar is
+- **Ondertitelondersteuning**: Download en toon ondertitels in verschillende talen
+- **Gelokaliseerde interface**: Volledige interfacevertaling voor veel talen
 
-## System Requirements {#system-requirements}
+## Systeemvereisten {#system-requirements}
 
-M³ is designed to work on a wide range of systems:
+M³ is ontworpen om op een breed scala aan systemen te werken:
 
-### Supported Operating Systems {#supported-operating-systems}
+### Ondersteunde besturingssystemen {#supported-operating-systems}
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 en later (64-bits- en 32-bitsversies beschikbaar)
+- **macOS**: macOS 10.15 (Catalina) en later (ondersteuning voor Intel en Apple Silicon)
+- **Linux**: De meeste moderne Linux-distributies (AppImage-formaat)
 
-### Hardware Requirements {#hardware-requirements}
+### Hardwarevereisten {#hardware-requirements}
 
-- **Minimum**: 4GB RAM, 6GB free disk space
-- **Recommended**: 8GB RAM, 15GB free disk space for media caching
-- **Network**: Internet connection for media downloads
+- **Minimaal**: 4GB RAM, 6GB vrije schijfruimte
+- **Aanbevolen**: 8GB RAM, 15GB vrije schijfruimte voor mediacaching
+- **Netwerk**: Internetverbinding voor het downloaden van media
 
-### Additional Requirements {#additional-requirements}
+### Aanvullende vereisten {#additional-requirements}
 
-- **Zoom**: Required only if using Zoom integration features
-- **OBS Studio**: Required only if using OBS integration features
+- **Zoom**: Alleen vereist bij gebruik van Zoom-integratiefuncties
+- **OBS Studio**: Alleen vereist bij gebruik van OBS-integratiefuncties
