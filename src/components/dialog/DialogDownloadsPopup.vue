@@ -213,6 +213,20 @@ const errorTooltipText = (item: { meetingDate?: string }) => {
   }
 };
 
+const getDateStatus = (dateKey: string) => {
+  const group = groupedByDate.value[dateKey];
+  if (!group || group.length === 0) return 'none';
+
+  const hasError = group.some((item) => item.error);
+  const hasLoading = group.some((item) => !item.complete && !item.error);
+  const allComplete = group.every((item) => item.complete);
+
+  if (hasError) return 'error';
+  if (hasLoading) return 'loading';
+  if (allComplete) return 'complete';
+  return 'none';
+};
+
 const shouldAutoOpen = (dateKey: string) => {
   const status = getDateStatus(dateKey);
   if (status === 'error') {
@@ -307,21 +321,6 @@ const progressValue = (item: { loaded?: number; total?: number }) =>
 
 const showProgress = (item: { loaded?: number; total?: number }) =>
   item.loaded && item.total;
-
-// New functions for expansion item logic
-const getDateStatus = (dateKey: string) => {
-  const group = groupedByDate.value[dateKey];
-  if (!group || group.length === 0) return 'none';
-
-  const hasError = group.some((item) => item.error);
-  const hasLoading = group.some((item) => !item.complete && !item.error);
-  const allComplete = group.every((item) => item.complete);
-
-  if (hasError) return 'error';
-  if (hasLoading) return 'loading';
-  if (allComplete) return 'complete';
-  return 'none';
-};
 
 const getStatusIcon = (dateKey: string) => {
   const status = getDateStatus(dateKey);
