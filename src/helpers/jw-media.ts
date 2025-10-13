@@ -1619,6 +1619,7 @@ export const dynamicMediaMapper = async (
 
       return {
         cbs:
+          calculatedSource !== 'additional' &&
           isMwMeetingDay(lookupDate) &&
           m.BeginParagraphOrdinal >= lastParagraphOrdinal - 2 &&
           m.BeginParagraphOrdinal < lastParagraphOrdinal,
@@ -1650,7 +1651,9 @@ export const dynamicMediaMapper = async (
 
     if (isCoWeek(lookupDate)) {
       // Hide the last song for both MW and WE meetings during the CO visit
-      const lastSong = allMediaPromises.at(-1);
+      const lastSong = allMediaPromises
+        .filter((m) => m.source !== 'additional')
+        .at(-1);
       if (lastSong) lastSong.hidden = true;
 
       // Hide CBS media
