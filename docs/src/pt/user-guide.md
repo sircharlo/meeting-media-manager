@@ -1,32 +1,32 @@
-# User Guide {#user-guide}
+# Guia do Usuário {#user-guide}
 
-This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
+Este guia completo do usuário irá ajudá-lo a dominar todos os recursos do M³, desde a configuração básica até técnicas avançadas de apresentação de mídia.
 
-## Getting Started {#getting-started}
+## Primeiros passos {#getting-started}
 
-### First Launch {#first-launch}
+### Primeira inicialização {#first-launch}
 
-When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
+Quando você iniciar o M³, você será guiado por um assistente de configuração que irá configurar as configurações essenciais para sua congregação:
 
-1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
-2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
-3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
-4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
-5. **Optional features** - Configure OBS integration, background music, and other advanced features
+1. **Escolha o idioma da sua interface** - Determina em que idioma os menus e botões do M³ serão exibidos
+2. **Selecione o tipo de perfil** - Escolha "Regular" para uso normal de congregação ou "Outro" para eventos especiais
+3. **Configurar informações de congregação** - Digite os detalhes da sua congregação ou use o recurso de pesquisa automática
+4. **Defina a programação de reuniões** - Configure os seus horários de reuniões de meio de semana e de fim de semana
+5. **Recursos opcionais** - Configure a integração do OBS, cântico de fundo e outros recursos avançados
 
 :::tip Dica
 
-Take your time during setup - but you can always change these settings later in the Settings menu.
+Reserve um tempo para essa configuração - mas você sempre poderá alterar essas configurações mais tarde no menu Configurações.
 
 :::
 
-### Main Interface Overview {#main-interface}
+### Visão Geral da Interface Principal {#main-interface}
 
-The main M³ interface consists of several key areas:
+A interface M³ principal consiste em várias áreas principais:
 
-- **Navigation Drawer** - Access different sections and settings
-- **Calendar View** - Browse media by date
-- **Media List** - View and manage media for selected dates
+- **Gaveta de navegação** - Acesse diferentes seções e configurações
+- **Visão do calendário** - Procurar mídia por data
+- **Lista de mídia** - Ver e gerenciar mídia para datas selecionadas
 - **Toolbar** - Quick access to common functions
 - **Status Bar** - Shows download progress, and background music and OBS Studio connection status
 

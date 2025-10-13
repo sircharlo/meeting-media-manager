@@ -8,9 +8,9 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 ### ✨ Nya funktioner
 
-- ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
-- ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
-- ✨ **Custom Events**: Added optional events hooks that can trigger keyboard shortcuts when certain events are detected. This can be useful for AV operators to execute actions automatically outside of the app. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
+- ✨ **Börja uppspelningen pausad**: En ny inställning som tillåter att uppspelningen börjar pausad, vilket kan vara användbart för att förbereda allt (såsom starta Zoomdelning) innan media börjar spela i mediafönstret.
+- ✨ **Uppdatera aviseringar**: Användare kommer nu att meddelas om uppdateringar via en i-app banner, vilket också kommer att tillåta användaren att installera uppdateringar omedelbart, istället för att vänta på nästa app omstart.
+- ✨ **Anpassade händelser**: Tillvalsknappar som kan starta kortkommandon när vissa händelser upptäcks. Detta kan vara användbart för de vid ljudbordet som kan utföra åtgärder automatiskt utanför appen. Till exempel kan smarta lampor tändas och stängas av före och efter media spelas i lokaler där projektorer används. Eller ett skript kan anropas efter att mötets sista sång har spelats för att automatisera olika åtgärder i ett Zoom-möte.
 
 ## v25.9.1
 
