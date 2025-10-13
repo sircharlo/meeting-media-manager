@@ -253,7 +253,7 @@ Import audio recordings of Bible verses:
 
 1. Click the "Audio Bible" button
 2. Select the Bible book and chapter
-3. Choose specific verses or verse ranges
+3. Kies specifieke verzen of versbereiken
 4. Download the audio files
 5. Use them
 
