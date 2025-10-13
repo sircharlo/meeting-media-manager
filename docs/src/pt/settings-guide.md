@@ -277,7 +277,7 @@ Ativa integração do OBS Studio para troca automática de cena.
 
 :::warning Nota importante:
 
-**Configuração de áudio necessária**: a integração do OBS Studio apenas lida com o compartilhamento de tela. Áudio de mídia M³ **não é transmitido automaticamente** para Zoom para os participantes ao usar o OBS Studio. Você deve configurar as configurações de áudio originais do Zoom ou usar "Compartilhar som do computador" para garantir que os participantes da reunião possam ouvir a mídia. Veja o [Guia do Usuário](/user-guide#audio-configuration) para instruções detalhadas de configuração de áudio.
+**Configuração de áudio necessária**: a integração do OBS Studio apenas lida com o compartilhamento de tela. Áudio de mídia M³ **não é transmitido automaticamente** para Zoom para os participantes ao usar o OBS Studio. Você deve configurar as configurações de áudio originais do Zoom ou usar "Compartilhar som do computador" para garantir que os participantes da reunião possam ouvir a mídia. Veja o [Guia do Usuário](/pt/user-guide#audio-configuration) para instruções detalhadas de configuração de áudio.
 
 **Nota**: A integração Zoom usa o compartilhamento de tela nativo do Zoom, o que lida com o áudio de forma mais transparente do que a integração do OBS Studio.
 
@@ -317,7 +317,7 @@ Configurar quais cenas OBS usar para diferentes fins:
 
 :::warning Nota importante:
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. Você deve configurar as configurações de áudio originais do Zoom ou usar "Compartilhar som do computador" para garantir que os participantes da reunião possam ouvir a mídia. Veja o [Guia do Usuário](/user-guide#audio-configuration) para instruções detalhadas de configuração de áudio.
+**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. Você deve configurar as configurações de áudio originais do Zoom ou usar "Compartilhar som do computador" para garantir que os participantes da reunião possam ouvir a mídia. Veja o [Guia do Usuário](/pt/user-guide#audio-configuration) para instruções detalhadas de configuração de áudio.
 
 **Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
 

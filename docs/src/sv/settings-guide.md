@@ -277,7 +277,7 @@ Aktivera OBS Studio-integration för automatisk scenbyte.
 
 :::warning Viktig information
 
-**Ljudkonfiguration krävs**: OBS Studio-integrationen hanterar endast skärmdelning. Ljud från M³ överförs inte automatiskt\*\* till deltagarna på Zoom vid användning av OBS Studio. Du måste konfigurera Zooms ursprungliga ljudinställningar eller använda "Dela datorljud" för att säkerställa att mötesdeltagarna kan höra medierna. Se [Användarhandbok](/user-guide#audio-configuration) för detaljerade instruktioner för ljudinställningar.
+**Ljudkonfiguration krävs**: OBS Studio-integrationen hanterar endast skärmdelning. Ljud från M³ överförs inte automatiskt\*\* till deltagarna på Zoom vid användning av OBS Studio. Du måste konfigurera Zooms ursprungliga ljudinställningar eller använda "Dela datorljud" för att säkerställa att mötesdeltagarna kan höra medierna. Se [Användarhandbok](/sv/user-guide#audio-configuration) för detaljerade instruktioner för ljudinställningar.
 
 **Obs**: Zoomintegrationen använder Zooms inbyggda skärmdelning som hanterar ljud mer sömlöst än OBS Studio-integration.
 
@@ -317,7 +317,7 @@ Konfigurera vilka OBS-scener som ska användas för olika ändamål:
 
 :::warning Viktig information
 
-**Ljudkonfiguration krävs**: OBS Studio integration hanterar endast video/scenbyte. Ljud från M³ överförs inte automatiskt\*\* till Zoom eller OBS Studio. Videoströmmen fungerar som en virtuell kamera utan ljud, precis som en webbkamera. Du måste konfigurera Zooms ursprungliga ljudinställningar eller använda "Dela datorljud" för att säkerställa att mötesdeltagarna kan höra medierna. Se [Användarhandbok](/user-guide#audio-configuration) för detaljerade instruktioner för ljudinställningar.
+**Ljudkonfiguration krävs**: OBS Studio integration hanterar endast video/scenbyte. Ljud från M³ överförs inte automatiskt\*\* till Zoom eller OBS Studio. Videoströmmen fungerar som en virtuell kamera utan ljud, precis som en webbkamera. Du måste konfigurera Zooms ursprungliga ljudinställningar eller använda "Dela datorljud" för att säkerställa att mötesdeltagarna kan höra medierna. Se [Användarhandbok](/sv/user-guide#audio-configuration) för detaljerade instruktioner för ljudinställningar.
 
 **Alternativ lösning**: Överväg att använda Zoomintegrationen istället, eftersom den använder Zooms inbyggda skärm och ljuddelning, som hanterar ljudet mer sömlöst.
 

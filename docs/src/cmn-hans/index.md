@@ -15,13 +15,13 @@ hero:
       link: /cmn-hans/about
     - theme: brand
       text: User Guide
-      link: /user-guide
+      link: /cmn-hans/user-guide
     - theme: brand
       text: Settings Guide
-      link: /settings-guide
+      link: /cmn-hans/settings-guide
     - theme: brand
       text: 常见问题（FAQ）
-      link: /faq
+      link: /cmn-hans/faq
 
 features:
   - icon: 🚀
