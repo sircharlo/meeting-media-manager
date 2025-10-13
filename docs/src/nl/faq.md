@@ -1,6 +1,6 @@
 # Veelgestelde vragen {#frequently-asked-questions}
 
-## General Questions {#general-questions}
+## Algemene vragen {#general-questions}
 
 ### :earth_americas: Maakt deze applicatie gebruik van externe websites, bronnen of diensten om de publicaties en vergadering media te downloaden? {#external-dependencies}
 
@@ -20,89 +20,89 @@ De broncode voor deze app is voor iedereen beschikbaar om te onderzoeken en cont
 >
 > voor distributiedoeleinden software-applicaties, tools of technieken te ontwikkelen die specifiek worden gemaakt om gegevens, HTML, afbeeldingen of tekst van deze site te verzamelen, te kopiëren, te downloaden of te extraheren. (het is **wel** toegestaan om gratis, niet-commerciële sofware-applicaties te distribueren die ontwikkeld zijn om elektronische bestanden zoals EPUB, PDF, MP3 en MP4 te downloaden van openbare delen van deze site.)
 
-### :question: What operating systems does M³ support? {#operating-systems}
+### :question: Welke besturingssystemen ondersteunt M³? {#operating-systems}
 
-M³ supports Windows, macOS, and Linux:
+M³ ondersteunt Windows, macOS en Linux:
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 en later (64-bits- en 32-bitsversies beschikbaar)
+- **macOS**: macOS 10.15 (Catalina) en later (ondersteuning voor Intel en Apple Silicon)
+- **Linux**: De meeste moderne Linux-distributies (AppImage-formaat)
 
-### :globe_with_meridians: Does M³ work in my language? {#language-support}
+### :globe_with_meridians: Werkt M³ in mijn taal? {#language-support}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Ja!** M³ biedt uitgebreide meertalige ondersteuning:
 
-- **Media Languages**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
-- **Interface Languages**: Use M³'s interface in many different languages
-- **Independent Settings**: You can use the interface in one language while downloading media in another
+- **Media Talen**: Download media in een van de honderden talen die beschikbaar zijn op de officiële website van Jehovah’s Getuigen
+- **Interface Talen**: Gebruik de interface van M³ in veel verschillende talen
+- **Onafhankelijke Instellingen**: Je kunt de interface in de ene taal gebruiken terwijl je media in een andere taal downloadt
 
-## Installation and Setup {#installation-setup}
+## Installatie en Setup {#installation-setup}
 
 ### :inbox_tray: Download M³ {#download}
 
-Download the appropriate version for your operating system from the [releases page](https://github.com/sircharlo/meeting-media-manager/releases/latest).
+Download de juiste versie voor jouw besturingssysteem vanaf de [releases-pagina](https://github.com/sircharlo/meeting-media-manager/releases/latest).
 
-### :computer: How do I install M³? {#installation}
+### :computer: Hoe installeer ik M³? {#installation}
 
-Download the appropriate version for your operating system from the [releases page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and follow the installation instructions in the [setup guide](/using-at-a-kingdom-hall#download-and-install).
+Download de juiste versie voor jouw besturingssysteem vanaf de [releases-pagina](https://github.com/sircharlo/meeting-media-manager/releases/latest) en volg de installatie-instructies in de [installatiegids](/using-at-a-kingdom-hall#download-and-install).
 
-### :gear: How do I set up M³ for the first time? {#first-time-setup}
+### :gear: Hoe stel ik M³ voor de eerste keer in? {#first-time-setup}
 
-M³ includes a setup wizard that guides you through the essential configuration:
+M³ bevat een configuratiewizard die je door de essentiële instellingen leidt:
 
-1. Choose your interface language
-2. Select profile type (Regular or Other)
-3. Configure congregation information
-4. Set up meeting schedule
-5. Configure optional features like OBS integration
+1. Kies je interfacetaal
+2. Selecteer het profieltype (Standaard of Anders)
+3. Congregatiegegevens configureren
+4. Vergaderschema instellen
+5. Optionele functies configureren, zoals OBS-integratie
 
-## Media Management {#faq-media-management}
+## Mediabeheer {#faq-media-management}
 
-### :download: How does M³ download media? {#media-download}
+### :download: Hoe downloadt M³ media? {#media-download}
 
-M³ automatically downloads media for upcoming meetings by:
+M³ downloadt automatisch media voor komende vergaderingen door:
 
-1. Checking your meeting schedule
-2. Determining what media is needed
-3. Downloading from the official website of Jehovah's Witnesses in your selected language
-4. Organizing media by date and meeting type
-5. Caching files for offline use
+1. Je vergaderschema controleren
+2. Bepalen welke media nodig is
+3. Downloaden van de officiële website van Jehovah’s Getuigen in de door jou geselecteerde taal
+4. Media organiseren op datum en vergadertype
+5. Bestanden cachen voor offline gebruik
 
-### :calendar: Can I download media for specific dates? {#specific-dates}
+### :calendar: Kan ik media downloaden voor specifieke data? {#specific-dates}
 
-Yes! M³ allows you to:
+Ja! Met M³ kun je:
 
-- Download media for upcoming meetings automatically
-- Import custom media for any date
+- Media voor komende vergaderingen automatisch downloaden
+- Aangepaste media importeren voor elke datum
 
-### :folder: How do I import my own media files? {#import-media}
+### :folder: Hoe importeer ik mijn eigen mediabestanden? {#import-media}
 
-You can import custom media in several ways:
+Je kunt op verschillende manieren aangepaste media importeren:
 
-- **File Import**: Use the import button to add videos, images, or audio files
-- **Drag and Drop**: Drag files directly into M³
-- **Folder Monitoring**: Set up a watched folder for automatic imports
-- **JWPUB Files and Playlists**: Import publications and playlists
+- **Bestanden importeren**: Gebruik de importknop om video's, afbeeldingen of audiobestanden toe te voegen
+- **Slepen en neerzetten**: Sleep bestanden direct naar M³
+- **Mapbewaking**: Stel een bewaakte map in voor automatische import
+- **JWPUB-bestanden en afspeellijsten**: Publicaties en afspeellijsten importeren
 
-### :speaker: Can I import audio Bible recordings? {#audio-bible}
+### :speaker: Kan ik audiobijbelopnamen importeren? {#audio-bible}
 
-Yes! M³ includes an Audio Bible feature that allows you to:
+Ja! M³ bevat een Audio Bijbel-functie waarmee je:
 
-1. Select Bible books and chapters
-2. Choose specific verses or verse ranges
-3. Download audio recordings
-4. Use them at the meetings
+1. Selecteer bijbelboeken en hoofdstukken
+2. Kies specifieke verzen of versbereiken
+3. Audio-opnamen downloaden
+4. Gebruik ze tijdens de vergaderingen
 
-## Presentation Features {#faq-presentation-features}
+## Presentatiefuncties {#faq-presentation-features}
 
-### :tv: How do I present media during meetings? {#present-media}
+### :tv: Hoe presenteer ik media tijdens vergaderingen? {#present-media}
 
-To present media:
+Om media te presenteren:
 
-1. Select the date
-2. Click the play button on the media item you want to present or use keyboard shortcuts
-3. Use the media player controls to pause, navigate, or stop playback
-4. Use zoom/pan features for images
+1. Selecteer de datum
+2. Klik op de afspeelknop van het media-item dat je wilt presenteren of gebruik sneltoetsen
+3. Gebruik de mediabediening om het afspelen te pauzeren, te navigeren of te stoppen
+4. Gebruik zoom- en panfuncties voor afbeeldingen
 5. Set custom timing if needed
 
 ### :keyboard: What keyboard shortcuts are available? {#faq-keyboard-shortcuts}
@@ -183,7 +183,7 @@ Media auto-export automatically:
 
 ### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
 
-Yes! M³ supports multiple profiles for:
+Ja! M³ supports multiple profiles for:
 
 - Different congregations
 - Special events
@@ -302,7 +302,7 @@ Typical usage ranges from 2-10GB depending on settings and usage.
 
 ### :shield: Is M³ secure and private? {#security-privacy}
 
-Yes! M³ is designed with security and privacy in mind:
+Ja! M³ is designed with security and privacy in mind:
 
 - **Local Storage**: All meeting data is stored locally on your computer
 - **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
