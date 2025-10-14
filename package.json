@@ -37,7 +37,7 @@
     "@jitsi/robotjs": "^0.6.17",
     "@numairawan/video-duration": "^1.0.0",
     "@quasar/extras": "^1.17.0",
-    "@sentry/electron": "^7.1.1",
+    "@sentry/electron": "^7.2.0",
     "@sentry/vue": "^10.11.0",
     "@vueuse/core": "^13.9.0",
     "@vueuse/router": "^13.9.0",
