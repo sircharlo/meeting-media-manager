@@ -27,16 +27,16 @@ A interface M³ principal consiste em várias áreas principais:
 - **Gaveta de navegação** - Acesse diferentes seções e configurações
 - **Visão do calendário** - Procurar mídia por data
 - **Lista de mídia** - Ver e gerenciar mídia para datas selecionadas
-- **Toolbar** - Quick access to common functions
-- **Status Bar** - Shows download progress, and background music and OBS Studio connection status
+- **Barra de Ferramentas** - Acesso rápido a funções comuns
+- **Barra de Status** - Mostra o progresso do download, e cântico de fundo e status da conexão do OBS Studio
 
-## Media Management {#user-guide-media-management}
+## Gerenciamento de Mídia {#user-guide-media-management}
 
-### Understanding the Calendar View {#calendar-view}
+### Entendendo a Visualização do Calendário {#calendar-view}
 
-The calendar view shows your meeting schedule and available media:
+A visualização do calendário mostra sua programação de reunião e as mídias disponíveis:
 
-- **Meeting Days** - Highlighted days show when meetings are scheduled
+- **Dias da Reunião** - Dias em destaque quando as reuniões são programadas
 - **Media Indicators** - Icons show what types of media are available
 - **Date Navigation** - Use arrow keys to navigate between months
 
