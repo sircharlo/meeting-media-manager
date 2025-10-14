@@ -68,7 +68,7 @@
     "upath": "^2.0.1",
     "vue": "^3.5.22",
     "vue-i18n": "^11.1.12",
-    "vue-router": "^4.5.1",
+    "vue-router": "^4.6.0",
     "vue-zoomable": "^1.2.8"
   },
   "devDependencies": {
