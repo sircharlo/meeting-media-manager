@@ -8,9 +8,9 @@
 
 ### ✨ 新功能
 
-- ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
-- ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
-- ✨ **Custom Events**: Added optional events hooks that can trigger keyboard shortcuts when certain events are detected. This can be useful for AV operators to execute actions automatically outside of the app. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
+- ✨ **开始播放停止**：添加了一个新的设置，允许播放开始暂停。这可能有助于AV操作员在媒体窗口开始播放之前准备他们的其他程序(例如开始Zoom共享)。
+- ✨ **更新通知**：用户现在将通过应用内横幅通知更新， 这也将允许用户立即安装更新，而不是等待下一个应用程序重启。
+- ✨ **自定义事件**：在检测到某些事件时添加了可触发键盘快捷键的可选事件。 这可能有助于AV操作员自动在应用之外执行操作。 例如，在媒体在使用投影仪的讲堂聚会之前和之后可以打开和关闭智能灯； 或者一个脚本可以在聚会最后一首歌曲播放后自动在Zoom会议上调用。
 
 ## v25.9.1
 
@@ -19,7 +19,7 @@
 - ✨ **媒体窗口总是在顶部 & 全屏行为**：修复并改进媒体窗口的顶部行为，并根据全屏状态动态调整。
 - ✨ **日期显示格式设置**: 添加了一个用户设置来配置日期显示格式。
 - ✨ **媒体相互淡入淡出** : 实现媒体显示的交叉淡入淡出的过渡，而不是以前存在的更突然淡出到黑色的过渡。
-- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not.
+- ✨ **音乐自动停止**：优化后台音乐自动停止的行为，不论音乐是否自动启动。
 - ✨ **macOS点击不活跃窗口**: 启用鼠标单击主窗口的 macOS, 这将使它更容易控制应用程序，即使它没有对准。
 
 ## v25.9.0
