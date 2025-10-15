@@ -105,7 +105,7 @@
     "electron-builder": "26.1.0",
     "eslint": "^9.37.0",
     "eslint-plugin-perfectionist": "^4.15.0",
-    "eslint-plugin-vue": "^10.5.0",
+    "eslint-plugin-vue": "^10.5.1",
     "globals": "^16.4.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.4",
