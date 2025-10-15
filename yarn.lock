@@ -10198,7 +10198,7 @@ __metadata:
     vue: "npm:^3.5.22"
     vue-eslint-parser: "npm:^10.2.0"
     vue-i18n: "npm:^11.1.12"
-    vue-router: "npm:^4.6.0"
+    vue-router: "npm:^4.6.2"
     vue-tsc: "npm:^3.1.0"
     vue-zoomable: "npm:^1.2.8"
     webpack-iconfont-plugin-nodejs: "npm:^1.0.36"
@@ -15021,14 +15021,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-router@npm:^4.6.0":
-  version: 4.6.0
-  resolution: "vue-router@npm:4.6.0"
+"vue-router@npm:^4.6.2":
+  version: 4.6.2
+  resolution: "vue-router@npm:4.6.2"
   dependencies:
     "@vue/devtools-api": "npm:^6.6.4"
   peerDependencies:
     vue: ^3.5.0
-  checksum: 10c0/6ba0ecc3fd5a80cfdf701a9bd2547aed849728cd2ac37a37cad9898803981574cd4c7e3b181fe09805f75db64cb6dc3ca06bcf6a089ee098f40106be67505422
+  checksum: 10c0/51609dddba73e7c13bf05997bb7f966451484216821ab0d362f601855570c8bfca36fb242a61d0baba073f7a4c91561fbd9feab0ec531f9f3e53243478dc99f5
   languageName: node
   linkType: hard
 
