@@ -3,49 +3,49 @@
 layout: home
 
 hero:
-  name: 'M³ Documentation'
-  text: 'Complete guide to setting up and using Meeting Media Manager'
+  name: 'M³ Documentatie'
+  text: 'Volledige gids voor het opzetten en gebruiken van Meeting Media Manager'
   image: /logo.svg
   actions:
     - theme: brand
-      text: Download
+      text: Downloaden
       link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: brand
       text: Over M³
       link: /nl/about
     - theme: brand
-      text: User Guide
-      link: /nl/user-guide
+      text: Gebruikersgids
+      link: /user-guide
     - theme: brand
-      text: Settings Guide
-      link: /nl/settings-guide
+      text: Instellingengids
+      link: /settings-guide
     - theme: brand
       text: Veelgestelde vragen
-      link: /nl/faq
+      link: /faq
 
 features:
   - icon: 🚀
-    title: Automatic Media Management
-    details: Automatically downloads and organizes pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
+    title: Automatisch Mediabeheer
+    details: Automatisch downloadt en organiseert afbeeldingen en video's voor gemeentebijeenkomsten in elke taal beschikbaar op de officiële website van Jehovah's Getuigen.
   - icon: 🎦
-    title: Media Presentation
-    details: Present media with ease during hybrid or in-person meetings with advanced controls, zoom/pan capabilities, and custom timing options.
+    title: Mediaprensentatie
+    details: Presenteer media eenvoudig tijdens hybride of persoonlijke bijeenkomsten met geavanceerde bediening, zoom-/pan-mogelijkheden en aangepaste timingopties.
   - icon: 🎵
-    title: Background Music System
-    details: Intelligent background music that automatically stops before meetings start and can be restarted with one click after meetings.
+    title: Achtergrondmuzieksysteem
+    details: Intelligente achtergrondmuziek die automatisch stopt voordat bijeenkomsten beginnen en met één klik opnieuw kan worden gestart na bijeenkomsten.
   - icon: 🖥️
-    title: Multi-Monitor Support
-    details: Automatically detects and manages external monitors for seamless media presentations and website sharing.
+    title: Ondersteuning voor meerdere monitoren
+    details: Automatisch detecteert en beheert externe monitoren voor naadloze mediaprensentaties en website delen.
   - icon: 🌐
-    title: Multi-Language Support
+    title: Meertalige Ondersteuning
     details: Download vergadering media in honderden talen en gebruik de interface van M³ in een van de vele beschikbare talen.
   - icon: 🧩
     title: Integraties
-    details: Seamlessly integrates with Zoom or OBS Studio for enhanced media management and playback during meetings.
+    details: Naadloos integreert met Zoom of OBS Studio voor verbeterd mediabeheer en afspelen tijdens vergaderingen.
   - icon: 📁
-    title: Folder Monitoring
-    details: Automatically sync media from watched folders (like Dropbox or OneDrive) and export media to folders.
+    title: Mapbewaking
+    details: Automatisch media synchroniseren vanuit bewaakte mappen (zoals Dropbox of OneDrive) en media exporteren naar mappen.
   - icon: 🎯
-    title: Advanced Features
-    details: Import custom media, JWPUB files, playlists, audio Bible recordings, and manage multiple congregations.
+    title: Geavanceerde functies
+    details: Importeer aangepaste media, JWPUB bestanden, afspeellijsten, audio Bijbelopnamen en beheer meerdere gemeenten.
 ---
