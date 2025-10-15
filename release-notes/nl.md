@@ -8,49 +8,49 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 ### ✨ Nieuwe functies
 
-- ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
-- ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
-- ✨ **Custom Events**: Added optional events hooks that can trigger keyboard shortcuts when certain events are detected. This can be useful for AV operators to execute actions automatically outside of the app. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
+- ✨ **Afspelen begint gepauzeerd**: Er is een nieuwe instelling toegevoegd om afspelen te laten beginnen in gepauzeerde toestand, wat nuttig kan zijn voor AV-operators om hun setup voor te bereiden (zoals het starten van Zoom delen) voordat de media begint te spelen in het mediavenster.
+- ✨ **Update Meldingen**: Gebruikers worden nu op de hoogte gebracht van updates via een banner in de app, die ook de gebruiker toelaat om updates onmiddellijk te installeren, in plaats van te wachten op de volgende app herstart.
+- ✨ **Aangepaste Gebeurtenissen**: Er zijn optionele gebeurtenishaken toegevoegd die sneltoetsen kunnen activeren wanneer bepaalde gebeurtenissen worden gedetecteerd. Dit kan nuttig zijn voor AV-operators om acties automatisch buiten de app uit te voeren. Bijvoorbeeld, slimme lichten kunnen worden aangezet en uitgezet voor en na het afspelen van media in auditoria waar projectors worden gebruikt; of een script kan worden aangeroepen nadat het laatste lied van een vergadering is afgespeeld om verschillende acties in een Zoom-vergadering te automatiseren.
 
 ## v25.9.1
 
 ### ✨ Nieuwe functies
 
-- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
-- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
-- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
-- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not.
-- ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
+- ✨ **Mediavenster Altijd Boven & Volledig Scherm Gedrag**: Het altijd-boven-gedrag voor het mediavenster is opgelost en verbeterd, met dynamische aanpassingen gebaseerd op de volledig-scherm-status.
+- ✨ **Datumweergave Indelingsinstelling**: Er is een gebruikersinstelling toegevoegd om een datumweergave-indeling te configureren.
+- ✨ **Media Overvloeien**: Er zijn overvloei-overgangen geïmplementeerd voor mediaweergave, in plaats van de meer abrupte vervagen-naar-zwart overgang die eerder aanwezig was.
+- ✨ **Muziek Auto-Stop**: Het gedrag van de achtergrondmuziek auto-stop is geoptimaliseerd om zich hetzelfde te gedragen of de muziek automatisch werd gestart of niet.
+- ✨ **macOS Klikken Door op Inactieve Vensters**: Muisklikken doorgang ingeschakeld op het hoofdvenster voor macOS, wat het eenvoudiger moet maken om de app te bedienen zelfs wanneer het niet gefocust is.
 
 ## v25.9.0
 
 ### ✨ Nieuwe functies
 
-- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
-- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
+- ✨ **Download Popup Verbeteringen**: Er is een vernieuwingsknop toegevoegd en downloads gegroepeerd op datum in de download popup.
+- ✨ **Bekeken Media Volgorde Geheugen**: Sectie volgorde geheugen toegevoegd voor bekeken media items.
 
 ## v25.8.3
 
 ### ✨ Nieuwe functies
 
-- ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
-- ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
+- ✨ **Mediavenster Vervagingsovergangen**: Er is een nieuwe geavanceerde instelling toegevoegd om het mediavenster in en uit te laten vervagen, waardoor vloeiendere visuele overgangen worden geboden.
+- ✨ **Afbeelding Duur Controle en Voortgang Bijhouden**: Afbeelding duur controle en voortgang bijhouden mogelijkheden toegevoegd voor herhaalde secties.
 
 ## v25.8.1
 
 ### ✨ Nieuwe functies
 
-- ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
-- ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
-- ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
-- ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
+- ✨ **Aangepaste Media Secties**: Compleet systeem voor het maken, bewerken en beheren van aangepaste media secties met kleur aanpassing en slepen en neerzetten herschikking.
+- ✨ **Media Scheidingen**: Voeg getitelde scheidingen toe binnen medialijsten voor betere organisatie met boven/onder positioneringsopties.
+- ✨ **Sectie Herhaal Modus**: Schakel continue afspelen in binnen specifieke secties voor naadloze media loops.
+- ✨ **Zoom Integratie**: Automatische scherm delen start/stop coördinatie met media afspelen.
 
 ### 🛠️ Verbeteringen en tweaks
 
-- 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
-- ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
-- 🛠️ **Improved Navigation**: Better keyboard shortcuts with scroll-to-selected functionality and enhanced media navigation.
-- 🛠️ **Visual Enhancements**: Animation support during sorting operations and improved drag-and-drop visual feedback.
+- 🛠️ **Verbeterde Sectie Koppen**: Nieuw drie-punten menu systeem met kleur kiezer, omhoog/omlaag verplaatsingscontroles, herhaal opties, en verwijder functionaliteit.
+- ✨ **Inline Titel Bewerken**: Bewerk media item titels direct in de interface zonder aparte dialogen te openen.
+- 🛠️ **Verbeterde Navigatie**: Betere sneltoetsen met scroll-naar-geselecteerd functionaliteit en verbeterde media navigatie.
+- 🛠️ **Visuele Verbeteringen**: Animatie ondersteuning tijdens sorteeroperaties en verbeterde slepen-en-neerzetten visuele feedback.
 
 ## 25.6.0
 
