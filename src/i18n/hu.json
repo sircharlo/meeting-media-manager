@@ -122,7 +122,7 @@
   "disableMediaFetching": "A hagyományos összejövetelek és az automatikus médialetöltés funkcióinak letiltása",
   "disableMediaFetching-explain": "Ennek a beállításnak szinte minden esetben kikapcsolva kell maradnia, hogy a szokásos összejöveteli média automatikusan letöltődjön. Ha engedélyezed ezt a beállítást, akkor minden médiát manuálisan kell hozzáadni. Ezt a beállítást csak olyan profilokban kell engedélyezni, amelyeket kizárólag különleges eseményekre, például teokratikus iskolákra vagy kongresszusokra használnak.",
   "dismiss": "Elvetés",
-  "display": "Megjelenítés",
+  "display": "Screen",
   "does-your-kingdom-hall-use-a-program-called-obs-studio": "A királyságtermetek használja az OBS Studio nevű programot?",
   "doing-so-will-greatly-simplify-and-facilitate-sharing-media-during-hybrid-meetings": "Ez jelentősen leegyszerűsíti és megkönnyíti a média megosztását a hibrid összejövetelek alatt.",
   "dont-forget-add-missing-media": "Ne felejtsd el hozzáadni a hiányzó énekeket vagy médiát.",

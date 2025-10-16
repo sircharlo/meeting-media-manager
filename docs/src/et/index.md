@@ -15,13 +15,13 @@ hero:
       link: /et/about
     - theme: brand
       text: Kasutusjuhend
-      link: /et/user-guide
+      link: /user-guide
     - theme: brand
       text: Sättete juhend
-      link: /et/settings-guide
+      link: /settings-guide
     - theme: brand
       text: KKK
-      link: /et/faq
+      link: /faq
 
 features:
   - icon: 🚀
