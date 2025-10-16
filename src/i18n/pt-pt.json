@@ -122,7 +122,7 @@
   "disableMediaFetching": "Desativar funcionalidades para reuniões regulares e a transferência automática de multimédia",
   "disableMediaFetching-explain": "Esta configuração deve permanecer desativada na maioria dos casos para garantir que a multimédia das reuniões regulares seja descarregada automaticamente. Ativar esta opção exigirá que toda a multimédia seja adicionada manualmente. Esta opção só deve ser ativada em perfis utlizados exclusivamente para eventos especiais, como escolas teocráticas, assembleias ou congressos.",
   "dismiss": "Ignorar",
-  "display": "Exibir",
+  "display": "Screen",
   "does-your-kingdom-hall-use-a-program-called-obs-studio": "O seu Salão do Reino usa um programa chamado 'OBS Studio'?",
   "doing-so-will-greatly-simplify-and-facilitate-sharing-media-during-hybrid-meetings": "Ao fazê-lo, irá simplificar e facilitar significativamente a partilha de multimédia durante reuniões híbridas.",
   "dont-forget-add-missing-media": "Não se esqueça de adicionar quaisquer cânticos ou multimédia em falta.",
