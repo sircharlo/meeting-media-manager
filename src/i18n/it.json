@@ -122,7 +122,7 @@
   "disableMediaFetching": "Disabilita le funzioni per il recupero automatico dei media",
   "disableMediaFetching-explain": "Questa impostazione dovrebbe rimanere disabilitata in quasi tutti i casi per garantire che i file multimediali delle adunanze vengano scaricati automaticamente. Abilitando questa impostazione sarà necessario aggiungere manualmente tutti i file multimediali. Questa impostazione dovrebbe essere abilitata solo in profili che saranno utilizzati esclusivamente per eventi speciali come scuole teocratiche, assemblee o convenzioni.",
   "dismiss": "Ignora",
-  "display": "Schermo",
+  "display": "Screen",
   "does-your-kingdom-hall-use-a-program-called-obs-studio": "Nella tua Sala del Regno si usa un programma chiamato OBS Studio?",
   "doing-so-will-greatly-simplify-and-facilitate-sharing-media-during-hybrid-meetings": "Questo semplificherà notevolmente la condivisione dei contenuti multimediali durante le adunanze ibride.",
   "dont-forget-add-missing-media": "Non dimenticare di aggiungere brani o media mancanti.",

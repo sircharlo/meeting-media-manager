@@ -122,7 +122,7 @@
   "disableMediaFetching": "I-disable ang mga feature para sa regular na mga pulong at automatic media fetching",
   "disableMediaFetching-explain": "Dapat naka-disable ang setting na ito palagi upang masigurong naka-download ang media para sa pagpupulong. Kapag naka-enable, kailangan na isa-isang idagdag lahat ng media.\n\nDapat manatiling naka-disable ang setting na ito sa halos lahat ng pagkakataon upang matiyak na awtomatikong naka-download ang media para sa pagpupulong. Kapag in-enable ang setting na ito, kinakailangan na manu-manong idagdag ang lahat ng media. Dapat lamang itong i-enable sa mga profile na gagamitin espesipiko para sa mga espesyal na okasyon gaya ng mga teokratikong paaralan, mga asamblea, o mga kombensyon.",
   "dismiss": "I-cancel",
-  "display": "Display",
+  "display": "Screen",
   "does-your-kingdom-hall-use-a-program-called-obs-studio": "Gumagamit ba ang Kingdom Hall ninyo ng program na OBS Studio?",
   "doing-so-will-greatly-simplify-and-facilitate-sharing-media-during-hybrid-meetings": "Sa paggawa nito ay lubos na mapapadali at mapapasimple sa pagbabahagi ng media sa mga hybrid na pulong.",
   "dont-forget-add-missing-media": "Huwag kalimutang magdagdag ng awit o media.",

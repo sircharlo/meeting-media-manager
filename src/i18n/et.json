@@ -122,7 +122,7 @@
   "disableMediaFetching": "Regulaarsete koosolekute ja automaatse meedia kättesaamise funktsioonide väljalülitamine",
   "disableMediaFetching-explain": "See funktsioon peaks peaaegu alati olema välja lülitatud, et tagada regulaarse koosoleku meedia automaatne allalaadimine. Selle funktsiooni sisselülitamine nõuab kogu meedia käsitsi lisamist. See funktsioon tuleks lubada ainult nende profiilide puhul, mida kasutatakse eriüritustel, näiteks teokraatlikes koolides, eri koosolekutel või kokkutulekutel.",
   "dismiss": "Loobu",
-  "display": "Ekraan",
+  "display": "Screen",
   "does-your-kingdom-hall-use-a-program-called-obs-studio": "Kas sinu kuningriigisaalis kasutatakse OBS Studio rakendust?",
   "doing-so-will-greatly-simplify-and-facilitate-sharing-media-during-hybrid-meetings": "See lihtsustab ja hõlbustab oluliselt meedia jagamist hübriidkoosolekute ajal.",
   "dont-forget-add-missing-media": "Ära unusta lisada puuduolevaid laule või meediafaile.",

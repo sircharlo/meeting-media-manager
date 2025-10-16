@@ -15,13 +15,13 @@ hero:
       link: /gaa/about
     - theme: brand
       text: User Guide
-      link: /gaa/user-guide
+      link: /user-guide
     - theme: brand
       text: Settings Guide
-      link: /gaa/settings-guide
+      link: /settings-guide
     - theme: brand
       text: FAQ
-      link: /gaa/faq
+      link: /faq
 
 features:
   - icon: 🚀

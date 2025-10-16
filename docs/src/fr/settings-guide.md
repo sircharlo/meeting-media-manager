@@ -277,7 +277,7 @@ Activez l'intégration OBS Studio pour le changement automatique de scène.
 
 :::warning Note importante
 
-**Configuration audio requise** : L'intégration OBS Studio ne gère que le changement de vidéo/scène. L'audio des médias M³ **n'est pas automatiquement transmis** à Zoom ou OBS. Vous devez configurer les paramètres Audio original de Zoom ou utiliser « Partager le son de l'ordinateur » pour vous assurer que les participants à la réunion peuvent entendre les médias. Voir le [Guide de l'utilisateur](/fr/user-guide#audio-configuration) pour les instructions détaillées de configuration audio.
+**Configuration audio requise** : L'intégration OBS Studio ne gère que le changement de vidéo/scène. L'audio des médias M³ **n'est pas automatiquement transmis** à Zoom ou OBS. Vous devez configurer les paramètres Audio original de Zoom ou utiliser « Partager le son de l'ordinateur » pour vous assurer que les participants à la réunion peuvent entendre les médias. Voir le [Guide de l'utilisateur](/user-guide#audio-configuration) pour les instructions détaillées de configuration audio.
 
 **Alternative** : Envisagez d'utiliser l'intégration Zoom à la place, car elle utilise le partage d'écran natif de Zoom qui gère l'audio plus facilement.
 
@@ -317,7 +317,7 @@ Configurez quelles scènes OBS utiliser pour différents usages :
 
 :::warning Note importante
 
-**Configuration audio requise** : L'intégration OBS Studio ne gère que le changement de vidéo/scène. L'audio des médias M³ **n'est pas automatiquement transmis** à Zoom ou OBS. Le flux vidéo fonctionne comme une caméra virtuelle sans son, tout comme une webcam. Vous devez configurer les paramètres Audio original de Zoom ou utiliser « Partager le son de l'ordinateur » pour vous assurer que les participants à la réunion peuvent entendre les médias. Voir le [Guide de l'utilisateur](/fr/user-guide#audio-configuration) pour les instructions détaillées de configuration audio.
+**Configuration audio requise** : L'intégration OBS Studio ne gère que le changement de vidéo/scène. L'audio des médias M³ **n'est pas automatiquement transmis** à Zoom ou OBS. Le flux vidéo fonctionne comme une caméra virtuelle sans son, tout comme une webcam. Vous devez configurer les paramètres Audio original de Zoom ou utiliser « Partager le son de l'ordinateur » pour vous assurer que les participants à la réunion peuvent entendre les médias. Voir le [Guide de l'utilisateur](/user-guide#audio-configuration) pour les instructions détaillées de configuration audio.
 
 **Alternative** : Envisagez d'utiliser l'intégration Zoom à la place, car elle utilise le partage d'écran natif de Zoom qui gère l'audio plus facilement.
 
