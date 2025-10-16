@@ -15,13 +15,13 @@ hero:
       link: /rw/about
     - theme: brand
       text: User Guide
-      link: /rw/user-guide
+      link: /user-guide
     - theme: brand
       text: Settings Guide
-      link: /rw/settings-guide
+      link: /settings-guide
     - theme: brand
       text: FAQ
-      link: /rw/faq
+      link: /faq
 
 features:
   - icon: 🚀
