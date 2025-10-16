@@ -277,7 +277,7 @@ Ativa integração do OBS Studio para troca automática de cena.
 
 :::warning Nota importante:
 
-**Configuração de áudio necessária**: a integração do OBS Studio apenas lida com o compartilhamento de tela. Áudio de mídia M³ **não é transmitido automaticamente** para Zoom para os participantes ao usar o OBS Studio. Você deve configurar as configurações de áudio originais do Zoom ou usar "Compartilhar som do computador" para garantir que os participantes da reunião possam ouvir a mídia. Veja o [Guia do Usuário](/pt/user-guide#audio-configuration) para instruções detalhadas de configuração de áudio.
+**Configuração de áudio necessária**: a integração do OBS Studio apenas lida com o compartilhamento de tela. Áudio de mídia M³ **não é transmitido automaticamente** para Zoom para os participantes ao usar o OBS Studio. Você deve configurar as configurações de áudio originais do Zoom ou usar "Compartilhar som do computador" para garantir que os participantes da reunião possam ouvir a mídia. Veja o [Guia do Usuário](/user-guide#audio-configuration) para instruções detalhadas de configuração de áudio.
 
 **Nota**: A integração Zoom usa o compartilhamento de tela nativo do Zoom, o que lida com o áudio de forma mais transparente do que a integração do OBS Studio.
 
@@ -304,182 +304,182 @@ A senha para a conexão WebSocket do OBS Studio.
 Configurar quais cenas OBS usar para diferentes fins:
 
 - **Cena da câmera**: A cena mostra a câmera/lectern
-- **Media Scene**: Scene for displaying media
-- **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
+- **Cena de mídia**: cena para exibir a mídia
+- **Cena de Imagem**: Cena para exibir imagens (por exemplo, uma cena PIP mostrando a mídia e o orador)
 
-#### OBS Advanced Options {#obs-advanced-options}
+#### Opções Avançadas do OBS {#obs-advanced-options}
 
-- **Postpone Images**: Delay sharing images to OBS until manually triggered
-- **Quick Toggle**: Enable quick on/off toggle for OBS integration
-- **Switch Scene After Media**: Automatically return to previous scene after media
-- **Remember Previous Scene**: Remember and restore the previous scene
-- **Hide Icons**: Hide OBS-related icons in the interface
+- **Postpone Imagens**: Atrasar compartilhamento de imagens no OBS até ser acionado manualmente
+- **Alternador rápido**: Ativa o alternador rápido para a integração do OBS
+- **Mudar a cena após a mídia**: retornar automaticamente para a cena anterior após a mídia
+- **Lembra da cena anterior**: lembre-se e restaure a cena anterior
+- **Ocultar Ícones**: Esconder ícones relacionados ao OBS na interface
 
 :::warning Nota importante:
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. Você deve configurar as configurações de áudio originais do Zoom ou usar "Compartilhar som do computador" para garantir que os participantes da reunião possam ouvir a mídia. Veja o [Guia do Usuário](/pt/user-guide#audio-configuration) para instruções detalhadas de configuração de áudio.
+**Configuração de áudio necessária**: integração do OBS Studio lida apenas com a mudança de vídeo/cena. Áudio de mídia M³ **não é transmitido automaticamente** para Zoom ou OBS. O stream de vídeo funciona como uma câmera virtual sem som, como uma webcam. Você deve configurar as configurações de áudio originais do Zoom ou usar "Compartilhar som do computador" para garantir que os participantes da reunião possam ouvir a mídia. Veja o [Guia do Usuário](/user-guide#audio-configuration) para instruções detalhadas de configuração de áudio.
 
-**Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
+**Alternativa**: Considere usar a integração com o Zoom, pois usa o compartilhamento de tela nativo do Zoom, o que lida com o áudio mais facilmente.
 
 :::
 
-## Advanced Settings {#advanced-settings}
+## Configurações Avançadas {#advanced-settings}
 
-### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
+### Atalhos de teclado {#settings-guide-keyboard-shortcuts}
 
-#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
+#### Habilitar atalhos de teclado {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-Enable customizable keyboard shortcuts for media control.
+Ativar atalhos personalizáveis de teclado para controle de mídia.
 
 **Padrão**: `false`
 
-#### Media Control Shortcuts {#media-control-shortcuts}
+#### Atalhos de Controle de Mídia {#media-control-shortcuts}
 
-Configure shortcuts for media playback:
+Configurar atalhos para reprodução de mídia:
 
-- **Media Window**: Open/close media window
-- **Previous Media**: Go to previous media item
-- **Next Media**: Go to next media item
-- **Pause/Resume**: Pause or resume media playback
-- **Stop Media**: Stop media playback
-- **Music Toggle**: Toggle background music
+- **Janela de Mídia**: Abrir/fechar janela de mídia
+- **Mídia Anterior**: Ir para o item de mídia anterior
+- **Próxima mídia**: Ir para o próximo item de mídia
+- **Pausar/Reproduzir**:  Controlar a reprodução de mídia
+- **Parar Mídia**: Parar reprodução de mídia
+- **Mudança de cântico**: Mudar o cântico de fundo
 
-### Media Display {#media-display}
+### Visualização de mídia {#media-display}
 
-#### Hide Media Logo {#hide-media-logo}
+#### Ocultar miniatura de mídia {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
-Hide the logo in the media window.
+Ocultar a miniatura na janela de mídia.
 
 **Padrão**: `false`
 
-#### Maximum Resolution {#maximum-resolution}
+#### Resolução Máxima {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
-Maximum resolution for downloaded media files.
+Resolução máxima para arquivos de mídia baixados.
 
-**Options**: 240p, 360p, 480p, 720p
+**Opções**: 240p, 360p, 480p, 720p
 
-**Default**: 720p
+**Padrão**: 720p
 
-#### Include Printed Media {#include-printed-media}
+#### Incluir Mídia Impressa {#include-printed-media}
 
 <!-- **Setting**: `includePrinted` -->
 
-Include media from the printed publications in media downloads.
+Incluir mídia nas publicações impressas nos downloads de mídia.
 
 **Padrão**: `true`
 
-#### Exclude Footnotes {#exclude-footnotes}
+#### Excluir Notas de Rodapé {#exclude-footnotes}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
-Exclude footnote images from media downloads when possible.
+Excluir imagens de rodapé dos downloads de mídia quando possível.
 
 **Padrão**: `false`
 
-#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
+#### Excluir mídia da brochura Melhore {#exclude-theocratic-ministry-school}
 
 <!-- **Setting**: `excludeTh` -->
 
-Exclude media from the Teaching (th) brochure from media downloads.
+Excluir a mídia da brochura Melhore (th) dos downloads de mídia.
 
 **Padrão**: `true`
 
-### Subtitles {#subtitles}
+### Legendas {#subtitles}
 
-#### Enable Subtitles {#enable-subtitles}
+#### Habilitar Legendas {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
-Enable subtitle support for media playback.
+Ativar suporte a legendas para reprodução de mídia.
 
 **Padrão**: `false`
 
-#### Subtitle Language {#subtitle-language}
+#### Idioma da legenda {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
-Language for subtitles (can be different from media language).
+Idioma para legendas (pode ser diferente do idioma da mídia).
 
 **Opções**: Todas as línguas disponíveis no site oficial das Testemunhas de Jeová
 
 **Padrão**: Nenhum
 
-### Media Export {#settings-guide-media-export}
+### Exportação de Mídia {#settings-guide-media-export}
 
-#### Enable Media Auto-Export {#enable-media-auto-export}
+#### Habilitar Exportação Automática de Mídia {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-Automatically export media files to a specified folder.
+Exporta arquivos de mídia para uma pasta específica.
 
 **Padrão**: `false`
 
-#### Media Export Folder {#media-export-folder}
+#### Pasta de exportação de mídia {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
-Folder path where media files will be automatically exported.
+Caminho da pasta onde os arquivos de mídia serão exportados automaticamente.
 
 **Padrão**: Vazio
 
-#### Convert Files to MP4 {#convert-files-to-mp4}
+#### Converter arquivos para MP4 {#convert-files-to-mp4}
 
-**Setting**: `convertFilesToMp4`
+**Configuração**: `convertFilesToMp4`
 
-Convert exported media files to MP4 format for better compatibility.
+Converta arquivos de mídia exportados para o formato MP4 para uma melhor compatibilidade.
 
 **Padrão**: `false`
 
-### Danger Zone {#danger-zone}
+### Zona de perigo {#danger-zone}
 
 :::warning Aviso
 
-These settings should only be changed if you understand their implications.
+Estas configurações só devem ser alteradas se você entender suas implicações.
 
 :::
 
-#### Disable Media Fetching {#disable-media-fetching}
+#### Desativar busca de mídia {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
+Desativar completamente downloads automáticos de mídia. Use isto apenas para perfis que serão usados para eventos especiais ou outras configurações personalizadas.
 
 **Padrão**: `false`
 
-## Tips for Optimal Configuration {#configuration-tips}
+## Dicas para configuração ideal {#configuration-tips}
 
-### For New Users {#new-users}
+### Para novos usuários {#new-users}
 
-1. Start with the setup wizard to configure basic settings
-2. Enable "Media Display Button" to access presentation features
-3. Configure your meeting schedule accurately
-4. Set up OBS integration if you use hybrid meetings
+1. Comece com o assistente de configuração para configurar as configurações básicas
+2. Ative "Botão de Exibição de Mídia" para acessar os recursos de apresentação
+3. Configure com precisão a sua programação de reunião
+4. Configure a integração do OBS se você usar reuniões híbridas
 
-### For Advanced Users {#advanced-users}
+### Para usuários avançados {#advanced-users}
 
-1. Use folder monitoring to sync media from cloud storage
-2. Enable media auto-export for backup purposes
-3. Configure keyboard shortcuts for efficient operation
-4. Configure Zoom integration for automatic screen sharing
+1. Usar monitoramento de pastas para sincronizar mídias do armazenamento na nuvem
+2. Habilitar a exportação automática de mídia para backup
+3. Configurar atalhos de teclado para operação eficiente
+4. Configurar integração de Zoom para compartilhamento automático de tela
 
-### Performance Optimization {#performance-optimization}
+### Otimização de desempenho {#performance-optimization}
 
-1. Enable extra cache for better performance
-2. Use appropriate maximum resolution for your needs
-3. Configure cache auto-clear to manage disk space
-4. Consider metered connection setting if on limited bandwidth
+1. Ativar cache adicional para melhor desempenho
+2. Use a resolução máxima apropriada para suas necessidades
+3. Configurar a limpeza automática de cache para gerenciar o espaço em disco
+4. Considere configuração de conexão limitada se você usa uma largura de banda limitada
 
-### Troubleshooting {#settings-guide-troubleshooting}
+### Solução de problemas {#settings-guide-troubleshooting}
 
-- If media isn't downloading, check your meeting schedule settings
-- If OBS integration isn't working, verify port and password settings
-- If performance is slow, try enabling extra cache or reducing resolution
-- If you're having language issues, check both interface and media language settings
-- If Zoom participants can't hear media audio, configure Zoom's Original Audio settings or use "Share Computer Sound"
-- **Tip**: Consider using Zoom integration instead of OBS Studio for simpler audio handling
+- Se a mídia não estiver sendo baixada, verifique suas configurações de programação de reunião
+- Se a integração do OBS não funcionar, verifique as configurações da porta e da senha
+- Se o desempenho estiver lento, tente ativar o cache extra ou reduzir a resolução
+- Se estiver tendo problemas com o idioma, verifique as configurações de idioma da interface e mídia
+- Se os participantes do Zoom não conseguirem ouvir o áudio da mídia, verifique as configurações originais do Zoom ou use "Compartilhar som do computador"
+- **Dica**: Considere usar a integração de Zoom em vez do OBS Studio para um processamento de áudio mais simples
