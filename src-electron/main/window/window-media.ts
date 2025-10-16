@@ -1,9 +1,10 @@
-import type { BrowserWindow } from 'electron';
-
+import { app, type BrowserWindow, type Rectangle } from 'electron';
+import { pathExistsSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
 import { getAllScreens, getWindowScreen } from 'main/screen';
 import { captureElectronError, getIconPath } from 'main/utils';
 import { createWindow, sendToWindow } from 'main/window/window-base';
 import { mainWindow } from 'main/window/window-main';
+import { join } from 'node:path';
 import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
 
 export let mediaWindow: BrowserWindow | null = null;
@@ -317,6 +318,30 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
     let targetDisplayNr = displayNr;
     let targetFullscreen = fullscreen;
 
+    let preferredIndex = -1;
+    const mediaWindowPrefs = loadMediaWindowPrefs();
+    if (mediaWindowPrefs) {
+      preferredIndex = screens.findIndex((s) => {
+        const b = s.bounds;
+        return (
+          b.x === mediaWindowPrefs.x &&
+          b.y === mediaWindowPrefs.y &&
+          b.width === mediaWindowPrefs.width &&
+          b.height === mediaWindowPrefs.height
+        );
+      });
+      if (preferredIndex !== -1) {
+        console.log(
+          '🔍 [moveMediaWindow] Preferred display index:',
+          preferredIndex,
+        );
+      } else {
+        console.log('🔍 [moveMediaWindow] Preferred display index not found');
+      }
+    } else {
+      console.log('🔍 [moveMediaWindow] No preferred display geometry found');
+    }
+
     if (targetDisplayNr === undefined || targetFullscreen === undefined) {
       console.log(
         '🔍 [moveMediaWindow] No parameters provided - checking if media window should move',
@@ -403,6 +428,22 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
           mediaWindow: s.mediaWindow,
         })),
       });
+
+      // Prefer saved screen when applicable (fullscreen/maximized, 3+ displays, saved exists)
+      if (
+        (isFullscreenOrMaximized || isCurrentlyFullscreen) &&
+        screens.length >= 3 &&
+        preferredIndex !== -1 &&
+        preferredIndex !== mainWindowScreen
+      ) {
+        targetDisplayNr = preferredIndex;
+        targetFullscreen = true;
+        console.log('🔍 [moveMediaWindow] Using preferred screen:', {
+          preferredIndex,
+        });
+      } else {
+        console.log('🔍 [moveMediaWindow] Not using preferred screen');
+      }
 
       // Only move if media window is on the same screen as main window
       if (currentDisplayNr === mainWindowScreen) {
@@ -525,6 +566,37 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
   }
 };
 
+function loadMediaWindowPrefs(): null | Rectangle {
+  try {
+    const file = join(app.getPath('userData'), 'media-window-prefs.json');
+    if (!pathExistsSync(file)) {
+      console.log('🔍 [loadMediaWindowPrefs] File does not exist:', file);
+      return null;
+    }
+    console.log('🔍 [loadMediaWindowPrefs] Loading prefs from:', file);
+    return readJsonSync(file);
+  } catch (e) {
+    console.error('❌ [loadMediaWindowPrefs] Error:', e);
+    captureElectronError(e, {
+      contexts: { fn: { name: 'loadMediaWindowPrefs' } },
+    });
+    return null;
+  }
+}
+
+function saveMediaWindowPrefs(prefs: Rectangle) {
+  try {
+    const file = join(app.getPath('userData'), 'media-window-prefs.json');
+    console.log('🔍 [saveMediaWindowPrefs] Saving prefs to:', file);
+    writeJsonSync(file, prefs);
+  } catch (e) {
+    console.error('❌ [saveMediaWindowPrefs] Error:', e);
+    captureElectronError(e, {
+      contexts: { fn: { name: 'saveMediaWindowPrefs' } },
+    });
+  }
+}
+
 const setWindowPosition = (displayNr?: number, fullscreen = true) => {
   console.log('🔍 [setWindowPosition] START - Called with:', {
     displayNr,
@@ -644,6 +716,21 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
       console.log('🔍 [setWindowPosition] Going fullscreen');
       handleMacFullScreenTransition(() => {
         setWindowBounds(targetScreenBounds, true);
+        try {
+          saveMediaWindowPrefs(targetDisplay.bounds);
+          console.log(
+            '🔍 [setWindowPosition] Saved preferred display geometry:',
+            targetDisplay.bounds,
+          );
+        } catch (e) {
+          console.error(
+            '❌ [setWindowPosition] Error saving preferred display geometry:',
+            e,
+          );
+          captureElectronError(e, {
+            contexts: { fn: { name: 'setWindowPosition.savePrefs' } },
+          });
+        }
       });
     } else {
       console.log('🔍 [setWindowPosition] Going windowed');
