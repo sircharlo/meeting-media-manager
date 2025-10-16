@@ -122,7 +122,7 @@
   "disableMediaFetching": "Inaktivera funktioner för regelbundna möten och automatisk hämtning av media",
   "disableMediaFetching-explain": "Denna inställning bör förbli inaktiverad i nästan alla fall för att säkerställa att vanliga mötesmedier laddas ner automatiskt. Aktivera denna inställning kommer att kräva att alla medier läggs till manuellt. Denna inställning bör endast aktiveras i profiler som uteslutande kommer att användas för speciella evenemang som teokratiska skolor, församlingar eller konventioner.",
   "dismiss": "Avfärda",
-  "display": "Screen",
+  "display": "Skärm",
   "does-your-kingdom-hall-use-a-program-called-obs-studio": "Använder din Rikets sal ett program som heter OBS Studio?",
   "doing-so-will-greatly-simplify-and-facilitate-sharing-media-during-hybrid-meetings": "Att göra det kommer att förenkla och underlätta delning av media under hybridmöten.",
   "dont-forget-add-missing-media": "Glöm inte att lägga till några saknade sånger eller media.",
