@@ -154,6 +154,9 @@ const browse = async () => {
   const s34mpFileSelection = await openFileDialog(true, 'jwpub');
   if (!s34mpFileSelection || !s34mpFileSelection.filePaths.length) return;
   s34mpFile.value = s34mpFileSelection.filePaths[0];
+  if (!s34mpDir.value) {
+    await setS34mp();
+  }
   if (s34mpDir.value) await ensureDir(s34mpDir.value);
   if (s34mpFile.value) {
     await decompressJwpub(s34mpFile.value, s34mpDir.value, true);
@@ -201,9 +204,7 @@ const resetDialogState = () => {
   // Reset all dialog state
   filter.value = '';
   publicTalks.value = [];
-  s34mpBasename.value = undefined;
   s34mpFile.value = undefined;
-  s34mpDir.value = undefined;
   s34mpDb.value = undefined;
   s34mpInfo.value = null;
 };
@@ -215,6 +216,8 @@ watch(
     if (!isOpen) {
       // Reset state when dialog closes
       resetDialogState();
+    } else {
+      setS34mp().then(() => populatePublicTalks());
     }
   },
 );
