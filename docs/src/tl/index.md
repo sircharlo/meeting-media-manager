@@ -15,13 +15,13 @@ hero:
       link: /tl/about
     - theme: brand
       text: User Guide
-      link: /tl/user-guide
+      link: /user-guide
     - theme: brand
       text: Settings Guide
-      link: /tl/settings-guide
+      link: /settings-guide
     - theme: brand
       text: FAQ
-      link: /tl/faq
+      link: /faq
 
 features:
   - icon: 🚀
