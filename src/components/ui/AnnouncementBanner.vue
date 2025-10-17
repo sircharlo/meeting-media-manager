@@ -1,10 +1,49 @@
 <template>
   <q-slide-transition>
     <q-banner
+      v-if="showAutoUpdateAvailableBanner"
+      class="bg-info q-ma-md"
+      inline-actions
+      rounded
+    >
+      {{ t('update-downloading') }}
+      <template #avatar>
+        <q-icon name="mmm-download" />
+      </template>
+      <template #action>
+        <q-btn
+          flat
+          :label="t('dismiss')"
+          @click="showAutoUpdateAvailableBanner = false"
+        />
+      </template>
+    </q-banner>
+    <q-banner
+      v-else-if="showAutoUpdateDownloadedBanner"
+      class="bg-positive q-ma-md"
+      inline-actions
+      rounded
+    >
+      {{ t('update-downloaded') }}
+      <template #avatar>
+        <q-icon name="mmm-check" />
+      </template>
+      <template #action>
+        <q-btn flat :label="t('quit-and-install')" @click="quitAndInstall()" />
+        <q-btn
+          flat
+          :label="t('dismiss')"
+          @click="showAutoUpdateDownloadedBanner = false"
+        />
+      </template>
+    </q-banner>
+  </q-slide-transition>
+  <q-slide-transition>
+    <q-banner
       v-for="announcement in activeAnnouncements"
       :key="announcement.id"
       :class="`q-ma-md ${bgColor(announcement.type)}`"
-      dense
+      inline-actions
       rounded
     >
       {{ t(announcement.message) }}
@@ -29,6 +68,7 @@
 <script setup lang="ts">
 import type { Announcement, AnnouncementAction } from 'src/types';
 
+import { useEventListener } from '@vueuse/core';
 import { useQuasar } from 'quasar';
 import { localeOptions } from 'src/i18n';
 import { fetchAnnouncements, fetchLatestVersion } from 'src/utils/api';
@@ -44,7 +84,7 @@ const { t } = useI18n();
 const currentStateStore = useCurrentStateStore();
 const congregationStore = useCongregationSettingsStore();
 
-const { openDiscussion, openExternal } = window.electronApi;
+const { openDiscussion, openExternal, quitAndInstall } = window.electronApi;
 
 const version = process.env.version;
 const latestVersion = ref('');
@@ -70,7 +110,7 @@ const dismiss = (id: string) => {
 
 const typeToBg: Record<NonNullable<Announcement['type']>, string> = {
   error: 'bg-negative',
-  info: 'bg-primary-semi-transparent',
+  info: 'bg-info',
   warning: 'bg-warning',
 };
 const bgColor = (type?: Announcement['type']) =>
@@ -82,6 +122,19 @@ const loadAnnouncements = async () => {
   if (announcements.value.length) return;
   announcements.value = await fetchAnnouncements();
 };
+
+const showAutoUpdateAvailableBanner = ref(false);
+const showAutoUpdateDownloadedBanner = ref(false);
+
+useEventListener(window, 'update-available', () => {
+  showAutoUpdateAvailableBanner.value = true;
+  showAutoUpdateDownloadedBanner.value = false;
+});
+
+useEventListener(window, 'update-downloaded', () => {
+  showAutoUpdateAvailableBanner.value = false;
+  showAutoUpdateDownloadedBanner.value = true;
+});
 
 const isTestVersion = process.env.IS_TEST;
 

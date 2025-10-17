@@ -6,110 +6,23 @@
     @dragstart="dropActive"
   >
     <div v-if="bannerColumnVisible" class="col">
-      <q-slide-transition>
-        <div v-if="showObsBanner" class="row">
-          <q-banner
-            class="bg-negative text-white full-width"
-            inline-actions
-            rounded
-          >
-            {{ t('obs-studio-disconnected-banner') }}
+      <q-slide-transition v-for="b in pageBanners" :key="b.key">
+        <div class="row">
+          <q-banner :class="b.className" inline-actions rounded>
+            {{ t(b.textKey) }}
             <template #avatar>
-              <q-icon name="mmm-obs-studio" size="lg" />
-            </template>
-          </q-banner>
-        </div>
-      </q-slide-transition>
-      <q-slide-transition>
-        <div v-if="showHiddenItemsBanner" class="row">
-          <q-banner
-            class="bg-warning text-white full-width"
-            inline-actions
-            rounded
-          >
-            {{ t('some-media-items-are-hidden') }}
-            <template #avatar>
-              <q-avatar class="bg-white text-warning" size="lg">
-                <q-icon name="mmm-file-hidden" size="sm" />
+              <q-avatar v-if="b.avatarClass" :class="b.avatarClass" size="lg">
+                <q-icon :name="b.icon" size="sm" />
               </q-avatar>
+              <q-icon v-else :name="b.icon" size="lg" />
             </template>
             <template #action>
               <q-btn
+                v-for="a in b.actions || []"
+                :key="a.labelKey"
                 flat
-                :label="t('show-all-media')"
-                @click="
-                  showHiddenMediaForSelectedDate(
-                    currentCongregation,
-                    selectedDateObject,
-                  )
-                "
-              />
-            </template>
-          </q-banner>
-        </div>
-      </q-slide-transition>
-      <q-slide-transition>
-        <div v-if="showDuplicateSongsBanner" class="row">
-          <q-banner
-            class="bg-warning text-white full-width"
-            inline-actions
-            rounded
-          >
-            {{ t('some-songs-are-duplicated') }}
-            <template #avatar>
-              <q-avatar class="bg-white text-warning" size="lg">
-                <q-icon name="mmm-music-note" size="sm" />
-              </q-avatar>
-            </template>
-          </q-banner>
-        </div>
-      </q-slide-transition>
-      <q-slide-transition>
-        <div v-if="showUpdateAvailableBanner" class="row">
-          <q-banner
-            class="bg-info text-white full-width"
-            inline-actions
-            rounded
-          >
-            {{ t('update-downloading') }}
-            <template #avatar>
-              <q-avatar class="bg-white text-info" size="lg">
-                <q-icon name="mmm-download" size="sm" />
-              </q-avatar>
-            </template>
-            <template #action>
-              <q-btn
-                flat
-                :label="t('dismiss')"
-                @click="showUpdateAvailableBanner = false"
-              />
-            </template>
-          </q-banner>
-        </div>
-      </q-slide-transition>
-      <q-slide-transition>
-        <div v-if="showUpdateDownloadedBanner" class="row">
-          <q-banner
-            class="bg-positive text-white full-width"
-            inline-actions
-            rounded
-          >
-            {{ t('update-downloaded') }}
-            <template #avatar>
-              <q-avatar class="bg-white text-positive" size="lg">
-                <q-icon name="mmm-check" size="sm" />
-              </q-avatar>
-            </template>
-            <template #action>
-              <q-btn
-                flat
-                :label="t('quit-and-install')"
-                @click="quitAndInstall()"
-              />
-              <q-btn
-                flat
-                :label="t('dismiss')"
-                @click="showUpdateDownloadedBanner = false"
+                :label="t(a.labelKey)"
+                @click="a.onClick()"
               />
             </template>
           </q-banner>
@@ -308,10 +221,6 @@ const currentFile = ref(0);
 const showFileImport = ref(false);
 const showSectionPicker = ref(false);
 const pendingFiles = ref<(File | string)[]>([]);
-
-// Update status state
-const showUpdateAvailableBanner = ref(false);
-const showUpdateDownloadedBanner = ref(false);
 
 // Banner visibility state for transitions
 const bannerColumnVisible = ref(false);
@@ -570,6 +479,58 @@ const customDuration = computed(() => {
     allMedia.find((item) => item.uniqueId === mediaPlaying.value.uniqueId)
       ?.customDuration || undefined
   );
+});
+
+const pageBanners = computed(() => {
+  const banners: {
+    actions?: { labelKey: string; onClick: () => void }[];
+    avatarClass?: string;
+    className: string;
+    icon: string;
+    key: string;
+    textKey: string;
+  }[] = [];
+
+  if (showObsBanner.value) {
+    banners.push({
+      className: 'bg-negative text-white full-width',
+      icon: 'mmm-obs-studio',
+      key: 'obs',
+      textKey: 'obs-studio-disconnected-banner',
+    });
+  }
+
+  if (someItemsHiddenForSelectedDate.value) {
+    banners.push({
+      actions: [
+        {
+          labelKey: 'show-all-media',
+          onClick: () =>
+            showHiddenMediaForSelectedDate(
+              currentCongregation.value,
+              selectedDateObject.value,
+            ),
+        },
+      ],
+      avatarClass: 'bg-white text-warning',
+      className: 'bg-warning text-white full-width',
+      icon: 'mmm-file-hidden',
+      key: 'hidden-items',
+      textKey: 'some-media-items-are-hidden',
+    });
+  }
+
+  if (duplicateSongsForWeMeeting.value) {
+    banners.push({
+      avatarClass: 'bg-white text-warning',
+      className: 'bg-warning text-white full-width',
+      icon: 'mmm-music-note',
+      key: 'duplicate-songs',
+      textKey: 'some-songs-are-duplicated',
+    });
+  }
+
+  return banners;
 });
 
 watch(
@@ -1719,35 +1680,11 @@ const updateMediaSectionLabel = ({
 
 // Computed conditions
 
-// Update event listeners
-useEventListener(window, 'update-available', () => {
-  showUpdateAvailableBanner.value = true;
-  showUpdateDownloadedBanner.value = false;
-});
-
-useEventListener(window, 'update-downloaded', () => {
-  showUpdateAvailableBanner.value = false;
-  showUpdateDownloadedBanner.value = true;
-});
-
-// Update handler functions
-const quitAndInstall = () => {
-  window.electronApi.quitAndInstall();
-};
-
 const showObsBanner = computed(
   () =>
     currentSettings.value?.obsEnable &&
     ['disconnected', 'notConnected'].includes(obsConnectionState.value) &&
     selectedDateObject.value?.today,
-);
-
-const showHiddenItemsBanner = computed(
-  () => someItemsHiddenForSelectedDate.value,
-);
-
-const showDuplicateSongsBanner = computed(
-  () => duplicateSongsForWeMeeting.value,
 );
 
 const showEmptyState = computed(() => {
@@ -1775,10 +1712,8 @@ const showEmptyState = computed(() => {
 const shouldShowBannerColumn = computed(
   () =>
     showObsBanner.value ||
-    showHiddenItemsBanner.value ||
-    showDuplicateSongsBanner.value ||
-    showUpdateAvailableBanner.value ||
-    showUpdateDownloadedBanner.value ||
+    someItemsHiddenForSelectedDate.value ||
+    duplicateSongsForWeMeeting.value ||
     showEmptyState.value,
 );
 
