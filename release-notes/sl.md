@@ -10,7 +10,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 - ✨ **Začni predvajanje v začasno ustavljenem načinu**: Dodana je nova nastavitev, ki omogoča začetek predvajanja v začasno ustavljenem načinu, kar je lahko koristno za AV upravljavce, da pripravijo vse potrebno (na primer začetek deljenja Zooma) pred začetkom predvajanja multimedijske vsebine.
 - ✨ **Obvestila o posodobitvah**: Uporabniki bodo odslej obveščeni o posodobitvah prek pasice v aplikaciji, ki jim bo omogočila tudi takojšnjo namestitev posodobitev, namesto da bi morali čakati na naslednji zagon aplikacije.
-- ✨ **Dogodki po meri**: Dodani so bili izbirni dogodki, ki lahko sprožijo bližnjice na tipkovnici, ko se zaznajo določeni dogodki. To je lahko koristno za AV upravljavce, da lahko dejanja izvajajo samodejno zunaj aplikacije. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
+- ✨ **Dogodki po meri**: Dodani so bili izbirni dogodki, ki lahko sprožijo bližnjice na tipkovnici, ko se zaznajo določeni dogodki. To je lahko koristno za AV upravljavce, da lahko dejanja izvajajo samodejno zunaj aplikacije. Na primer, pametne luči se lahko vklopijo in izklopijo pred in po predvajanju multimedijske vsebine v dvoranah, kjer se uporabljajo projektorji; ali pa se po predvajanju zadnje pesmi na shodu lahko zažene program, ki avtomatizira različne postopke na videokonferenci v Zoomu.
 
 ## v25.9.1
 
