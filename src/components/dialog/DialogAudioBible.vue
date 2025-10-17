@@ -36,7 +36,6 @@
         <q-tabs
           v-model="selectedBibleBook"
           active-color="primary"
-          class="text-grey"
           dense
           indicator-color="primary"
           narrow-indicator
@@ -67,7 +66,7 @@
           <template v-if="selectedBibleBook && selectedBookChapters.length">
             <div class="row q-px-md col">
               <div class="col q-pr-scroll overflow-auto">
-                <div class="text-grey text-uppercase q-my-sm">
+                <div class="text-secondary text-uppercase q-my-sm">
                   {{ t('chapter') }}
                 </div>
                 <div class="overflow-auto row q-col-gutter-xs">
@@ -95,7 +94,7 @@
               </div>
               <q-separator class="q-mx-sm" vertical />
               <div class="col q-px-md q-pb-md">
-                <div class="text-grey text-uppercase q-my-sm">
+                <div class="text-secondary text-uppercase q-my-sm">
                   {{ t('verse-or-verses') }}
                 </div>
                 <div
@@ -133,7 +132,7 @@
               :key="sectionIndex"
               class="row q-px-md"
             >
-              <div class="text-grey text-uppercase q-my-sm row">
+              <div class="text-secondary text-uppercase q-my-sm row">
                 {{ t(sectionInfo.title) }}
               </div>
               <div class="row q-col-gutter-xs">

@@ -21,12 +21,12 @@
         <div class="text-subtitle2 q-mb-sm">{{ t('position') }}:</div>
         <q-btn-group spread>
           <q-btn
-            :color="addToTop ? 'primary' : 'grey'"
+            :color="addToTop ? 'primary' : 'secondary'"
             :label="t('top')"
             @click="addToTop = true"
           />
           <q-btn
-            :color="!addToTop ? 'primary' : 'grey'"
+            :color="!addToTop ? 'primary' : 'secondary'"
             :label="t('bottom')"
             @click="addToTop = false"
           />

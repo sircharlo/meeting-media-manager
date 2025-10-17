@@ -346,7 +346,7 @@ const getStatusColor = (dateKey: string) => {
     case 'loading':
       return 'primary';
     default:
-      return 'grey';
+      return 'secondary';
   }
 };
 

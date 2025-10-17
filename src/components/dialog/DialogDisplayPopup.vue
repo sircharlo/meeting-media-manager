@@ -107,24 +107,37 @@
                 position: 'relative',
                 width: '100%',
                 aspectRatio: virtualBounds.width + ' / ' + virtualBounds.height,
-                background: 'var(--q-color-grey-2)',
-                borderRadius: '8px',
                 overflow: 'hidden',
-                border: '1px solid var(--q-color-grey-4)',
+                '--screen-gap': '1%',
               }"
             >
               <template v-for="(screen, index) in screenList" :key="screen.id">
                 <q-btn
                   class="screen-rect column items-center justify-center"
-                  :color="!screen.mainWindow ? 'primary' : 'grey'"
+                  :class="{
+                    'border-dashed': screen.mainWindow,
+                  }"
+                  :color="!screen.mainWindow ? 'primary' : 'secondary'"
                   :disable="screen.mainWindow"
                   :outline="!isScreenSelected(index, screen)"
                   :style="{
                     position: 'absolute',
-                    left: screenRects[index]?.left + '%',
-                    top: screenRects[index]?.top + '%',
-                    width: screenRects[index]?.width + '%',
-                    height: screenRects[index]?.height + '%',
+                    left:
+                      'calc(' +
+                      (screenRects[index]?.left ?? 0) +
+                      '% + var(--screen-gap))',
+                    top:
+                      'calc(' +
+                      (screenRects[index]?.top ?? 0) +
+                      '% + var(--screen-gap))',
+                    width:
+                      'calc(' +
+                      (screenRects[index]?.width ?? 0) +
+                      '% - (var(--screen-gap) * 2))',
+                    height:
+                      'calc(' +
+                      (screenRects[index]?.height ?? 0) +
+                      '% - (var(--screen-gap) * 2))',
                     borderRadius: '6px',
                   }"
                   unelevated
@@ -142,19 +155,39 @@
                     }
                   "
                 >
+                  <q-tooltip v-if="screen.mainWindow" :delay="1000">
+                    {{ t('main-window-is-on-this-screen') }}
+                  </q-tooltip>
+                  <div
+                    v-if="screen.mainWindow && scaledMainWindowRect(index)"
+                    :style="{
+                      position: 'absolute',
+                      left: scaledMainWindowRect(index)?.left + '%',
+                      top: scaledMainWindowRect(index)?.top + '%',
+                      width: scaledMainWindowRect(index)?.width + '%',
+                      height: scaledMainWindowRect(index)?.height + '%',
+                      border: '2px dashed var(--q-primary)',
+                      borderRadius: '4px',
+                      pointerEvents: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }"
+                  >
+                    <q-icon
+                      name="mmm-logo"
+                      size="sm"
+                      style="pointer-events: none; color: var(--q-primary)"
+                    />
+                  </div>
                   <q-icon
+                    v-if="!screen.mainWindow"
                     class="q-mr-sm"
-                    :name="
-                      screen.mainWindow
-                        ? 'mmm-display-current'
-                        : 'mmm-media-display-active'
-                    "
+                    name="mmm-media-display-active"
                     size="xs"
                   />
                   {{
-                    screen.mainWindow
-                      ? t('current')
-                      : t('display') + ' ' + (index + 1)
+                    !screen.mainWindow ? t('display') + ' ' + (index + 1) : ''
                   }}
                 </q-btn>
               </template>
@@ -408,9 +441,33 @@ const screenRects = computed(() => {
       left: Number.isFinite(left) ? left : 0,
       top: Number.isFinite(top) ? top : 0,
       width: Number.isFinite(width) ? width : 0,
-    } as { height: number; left: number; top: number; width: number };
+    };
   });
 });
+
+const scaledMainWindowRect = (index: number) => {
+  const list = screenList.value ?? [];
+  const screen = list[index];
+  if (!screen || !screen.mainWindowBounds) return undefined;
+
+  const b = screen.bounds;
+  const mw = screen.mainWindowBounds;
+
+  const inset = 3;
+  const minSize = 4;
+
+  let left = ((mw.x - b.x) / b.width) * 100 + inset;
+  let top = ((mw.y - b.y) / b.height) * 100 + inset;
+  let width = (mw.width / b.width) * 100 - inset * 2;
+  let height = (mw.height / b.height) * 100 - inset * 2;
+
+  left = Math.max(inset, Math.min(left, 100 - inset));
+  top = Math.max(inset, Math.min(top, 100 - inset));
+  width = Math.max(minSize, Math.min(width, 100 - left - inset));
+  height = Math.max(minSize, Math.min(height, 100 - top - inset));
+
+  return { height, left, top, width };
+};
 
 // Selected when media window is on this screen and it's not the app's main window
 const isScreenSelected = (index: number, screen: Display) => {
@@ -636,3 +693,8 @@ watch(
   },
 );
 </script>
+<style scoped>
+.border-dashed::before {
+  border-style: dashed;
+}
+</style>

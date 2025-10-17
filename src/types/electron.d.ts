@@ -20,6 +20,7 @@ export type DiscussionCategory =
 
 export type Display = Electron.Display & {
   mainWindow?: boolean;
+  mainWindowBounds?: Electron.Rectangle;
   mediaWindow?: boolean;
 };
 

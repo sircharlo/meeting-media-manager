@@ -35,7 +35,7 @@
           v-model="tab"
           active-color="primary"
           align="justify"
-          class="text-grey full-width"
+          class="text-secondary full-width"
           dense
           indicator-color="primary"
           narrow-indicator

@@ -24,7 +24,7 @@
             >
               {{ congregations[id]?.congregationName || t('noName') }}
             </div>
-            <div class="row text-caption text-grey">
+            <div class="row text-caption text-secondary">
               <template v-if="congregations[id]?.disableMediaFetching">
                 {{ t('no-regular-meetings') }}
               </template>
