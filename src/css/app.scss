@@ -515,14 +515,16 @@ body.body--dark {
   color: $apply;
 }
 
+.bg-circuit-overseer,
 .bg-imported-media,
 .bg-pt,
-.bg-circuit-overseer,
 .bg-website {
   background: $additional;
 }
 
 .text-circuit-overseer,
+.text-imported-media,
+.text-pt,
 .text-website {
   color: $additional;
 }
