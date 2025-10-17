@@ -15,14 +15,13 @@ hero:
       link: /ko/about
     - theme: brand
       text: User Guide
-      link: /user-guide
+      link: /ko/user-guide
     - theme: brand
       text: Settings Guide
-      link: /settings-guide
+      link: /ko/settings-guide
     - theme: brand
       text: FAQ
-      link: /faq
-
+      link: /ko/faq
 features:
   - icon: 🚀
     title: Automatic Media Management

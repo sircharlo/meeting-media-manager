@@ -15,14 +15,13 @@ hero:
       link: /ru/about
     - theme: brand
       text: Руководство пользователя
-      link: /user-guide
+      link: /ru/user-guide
     - theme: brand
       text: Инструкция по настройкам
-      link: /settings-guide
+      link: /ru/settings-guide
     - theme: brand
       text: ЧАВО
-      link: /faq
-
+      link: /ru/faq
 features:
   - icon: 🚀
     title: Автоматическое управление медиафайлами
