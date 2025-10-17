@@ -1,7 +1,11 @@
 import { app, type BrowserWindow, type Rectangle } from 'electron';
 import { pathExistsSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
 import { getAllScreens, getWindowScreen } from 'main/screen';
-import { captureElectronError, getIconPath } from 'main/utils';
+import {
+  captureElectronError,
+  getIconPath,
+  throttleWithTrailing,
+} from 'main/utils';
 import { createWindow, sendToWindow } from 'main/window/window-base';
 import { mainWindow } from 'main/window/window-main';
 import { join } from 'node:path';
@@ -255,6 +259,13 @@ export function fadeOutMediaWindow(duration = 300): Promise<void> {
   });
 }
 
+const notifyMainWindowAboutScreenOrWindowChange = throttleWithTrailing(() => {
+  console.log(
+    '🔍 [notifyMainWindowAboutScreenOrWindowChange] Sending screenChange event',
+  );
+  sendToWindow(mainWindow, 'screenChange');
+}, 100);
+
 export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
   console.log('🔍 [moveMediaWindow] START - Called with:', {
     displayNr,
@@ -268,6 +279,7 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
       );
       return;
     }
+    notifyMainWindowAboutScreenOrWindowChange();
 
     const screens = getAllScreens();
     console.log('🔍 [moveMediaWindow] Available screens:', screens.length);
@@ -625,11 +637,6 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
       targetScreenBounds,
     );
 
-    const updateScreenAndPrefs = () => {
-      console.log('🔍 [setWindowPosition] Sending screenChange event');
-      sendToWindow(mainWindow, 'screenChange');
-    };
-
     const setWindowBounds = (
       bounds: Partial<Electron.Rectangle>,
       fullScreen = false,
@@ -680,7 +687,7 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
         newFullscreen,
       });
 
-      updateScreenAndPrefs();
+      notifyMainWindowAboutScreenOrWindowChange();
 
       // Bring media window to front if it's visible
       if (mediaWindow.isVisible()) {
