@@ -240,6 +240,7 @@
   "localDateFormat-explain": "Kohanda kuupäevade kuvamist rakenduses.",
   "look-for-this-button-in-m-s-footer": "Otsi seda nuppu M³-e programmi alaosas:",
   "m-is-now-ready-to-be-used": "M³ on nüüd kasutamiseks valmis.",
+  "main-window-is-on-this-screen": "The media window cannot be moved here, because the main M³ window is currently on this screen.",
   "make-sure-that-m-is-in-not-use-before-quitting": "Veendu, et M³ ei ole enne sulgemist kasutusel.",
   "maxRes": "Maksimaalne eraldusvõime videote jaoks",
   "maxRes-explain": "Vali videote maksimaalne resolutsioon. Seda resolutsiooni ületavaid videoid ei laadita alla.",

@@ -240,6 +240,7 @@
   "localDateFormat-explain": "Customize how dates are shown in the app.",
   "look-for-this-button-in-m-s-footer": "M³ 하단의 다음 버튼을 확인하십시오:",
   "m-is-now-ready-to-be-used": "이제 M³ 를 사용할 준비가 되었습니다.",
+  "main-window-is-on-this-screen": "The media window cannot be moved here, because the main M³ window is currently on this screen.",
   "make-sure-that-m-is-in-not-use-before-quitting": "M³ 을 종료해도 괜찮은 상태인지 확인해주십시오.",
   "maxRes": "동영상 최대 해상도",
   "maxRes-explain": "다운로드할 동영상의 최대 해상도를 지정하십시오. 지정한 해상도보다 큰 동영상은 다운로드하지 않습니다.",

@@ -240,6 +240,7 @@
   "localDateFormat-explain": "Personalizar como as datas são exibidas no aplicativo.",
   "look-for-this-button-in-m-s-footer": "Procure por este botão no rodapé do M³:",
   "m-is-now-ready-to-be-used": "O M³ está agora pronto para ser usado.",
+  "main-window-is-on-this-screen": "The media window cannot be moved here, because the main M³ window is currently on this screen.",
   "make-sure-that-m-is-in-not-use-before-quitting": "Certifique-se de que o M³ não está a ser usado antes de fechá-lo.",
   "maxRes": "Resolução máxima para os vídeos",
   "maxRes-explain": "Escolha a resolução máxima para os vídeos. Vídeos com uma resolução superior a esta não serão descarregados.",
