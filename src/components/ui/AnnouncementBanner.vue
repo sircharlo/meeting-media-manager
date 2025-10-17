@@ -122,6 +122,7 @@ const loadAnnouncements = async () => {
 
 const isTestVersion = process.env.IS_TEST;
 
+// Test version banner for users who are using a test version
 const testVersionAnnouncement = computed((): Announcement => {
   return {
     id: 'test-version',
@@ -132,6 +133,7 @@ const testVersionAnnouncement = computed((): Announcement => {
   };
 });
 
+// Update banner for users who do not have updates enabled
 const newUpdateAnnouncement = computed((): Announcement => {
   return {
     actions: ['update'],
@@ -139,14 +141,14 @@ const newUpdateAnnouncement = computed((): Announcement => {
     maxVersion: getPreviousVersion(latestVersion.value || '1.1.0'),
     message: 'update-available-please-update',
     persistent: true,
-    platform: updatesEnabled.value && !isTestVersion ? [] : undefined,
+    platform: !updatesEnabled.value && !isTestVersion ? undefined : [],
   };
 });
 
 const currentJwLang = computed(() => currentStateStore.currentLangObject);
-const langIsSupported = computed(() => {
+const langIsNotSupported = computed(() => {
   if (!currentJwLang.value) return true;
-  return localeOptions.some(
+  return !localeOptions.some(
     (l) =>
       l.langcode === currentJwLang.value?.langcode ||
       (currentJwLang.value &&
@@ -154,13 +156,14 @@ const langIsSupported = computed(() => {
   );
 });
 
+// Untranslated language banner for users who are using an unsupported language, asking them to translate
 const untranslatedAnnouncement = computed((): Announcement => {
   return {
     actions: ['translate'],
     icon: 'ui-language',
     id: `untranslated-${currentJwLang.value?.langcode}`,
     message: 'help-translate-new',
-    platform: langIsSupported.value ? [] : undefined,
+    platform: langIsNotSupported.value ? undefined : [],
   };
 });
 
