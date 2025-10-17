@@ -26,11 +26,7 @@
         {{ t('add-media-audio-bible-explain') }}
       </div>
       <div
-        v-if="
-          !loading &&
-          selectedBibleBook &&
-          bibleAudioMediaHebrew.concat(bibleAudioMediaGreek).length
-        "
+        v-if="!loading && selectedBibleBook && bibleAudioMediaComplete.length"
         class="row q-px-md full-width"
       >
         <q-tabs
@@ -43,7 +39,7 @@
           style="width: -webkit-fill-available; max-width: 100%"
         >
           <q-tab
-            v-for="book in bibleAudioMediaHebrew.concat(bibleAudioMediaGreek)"
+            v-for="book in bibleAudioMediaComplete"
             :key="book.booknum || 0"
             :disable="!book.files"
             :label="book.pubName"
@@ -130,7 +126,7 @@
                 { title: 'greek-scriptures', books: bibleAudioMediaGreek },
               ]"
               :key="sectionIndex"
-              class="row q-px-md"
+              class="row q-px-md q-pb-md"
             >
               <div class="text-secondary text-uppercase q-my-sm row">
                 {{ t(sectionInfo.title) }}
@@ -240,20 +236,44 @@ const selectedBibleBook = ref<number>(0);
 const selectedChapter = ref(0);
 const bibleAudioMedia = ref<Partial<Publication>[] | undefined>([]);
 
+const decodeEntities = (input?: string) => {
+  try {
+    if (!input) return input ?? '';
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = input;
+    const decoded = textarea.value;
+    textarea.remove();
+    return decoded;
+  } catch (error) {
+    errorCatcher(error);
+    return input ?? '';
+  }
+};
+
 const bibleAudioMediaHebrew = computed(() => {
   return (
-    bibleAudioMedia.value?.filter(
-      (item) => item?.booknum && item?.booknum < 40,
-    ) || []
+    bibleAudioMedia.value
+      ?.filter((item) => item?.booknum && item?.booknum < 40)
+      .map((item) => ({
+        ...item,
+        pubName: decodeEntities(item?.pubName as string),
+      })) || []
   );
 });
 
 const bibleAudioMediaGreek = computed(() => {
   return (
-    bibleAudioMedia.value?.filter(
-      (item) => item?.booknum && item?.booknum >= 40,
-    ) || []
+    bibleAudioMedia.value
+      ?.filter((item) => item?.booknum && item?.booknum >= 40)
+      .map((item) => ({
+        ...item,
+        pubName: decodeEntities(item?.pubName as string),
+      })) || []
   );
+});
+
+const bibleAudioMediaComplete = computed(() => {
+  return bibleAudioMediaHebrew.value.concat(bibleAudioMediaGreek.value);
 });
 
 const selectedBookMedia = computed(() => {
@@ -365,7 +385,9 @@ const addSelectedVerses = async () => {
     selectedDate.value,
     undefined,
     false,
-    bibleAudioMedia.value?.[selectedBibleBook.value - 1]?.pubName +
+    decodeEntities(
+      bibleAudioMedia.value?.[selectedBibleBook.value - 1]?.pubName,
+    ) +
       ' ' +
       selectedChapter.value +
       ':' +
