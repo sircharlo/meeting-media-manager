@@ -588,9 +588,7 @@
         <q-btn
           v-if="isImage(mediaPlaying.url) && obsConnectionState === 'connected'"
           :color="currentSceneType === 'media' ? 'negative' : 'primary'"
-          icon="
-                    mmm-picture-for-zoom-participants
-                "
+          icon="mmm-picture-for-zoom-participants"
           rounded
           @click="
             sendObsSceneEvent(currentSceneType === 'media' ? 'camera' : 'media')

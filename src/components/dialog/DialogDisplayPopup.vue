@@ -210,7 +210,9 @@
           <q-icon
             class="q-mr-sm"
             :name="
-              'mmm-background' + (mediaWindowCustomBackground ? '-remove' : '')
+              mediaWindowCustomBackground
+                ? 'mmm-background-remove'
+                : 'mmm-background'
             "
             size="xs"
           />
