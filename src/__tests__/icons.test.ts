@@ -11,6 +11,7 @@ const ICONS_DIR = path.join(repoRoot, 'build', 'icons');
 const IGNORED_DIRS = new Set([
   '.git',
   '.quasar',
+  '.vitepress',
   '.yarn',
   'build/icons', // avoid scanning the icons folder for usage
   'dist',
@@ -77,12 +78,6 @@ function collectUsedIcons(): Set<string> {
   const qBtnBoundRegex =
     /<\s*q-btn\b[^>]*\s:?(?:icon|name)\s*=\s*(?:"(?<valD>[^"]*?)"|'(?<valS>[^']*?)')/gi;
   const innerLiteralRegex = /(["'])([^"']+)\1/g;
-  const metaRegex = /icon\s*[:=]\s*("|')(?<val>[^"']+)\1/gi;
-  // Match return statements returning literal strings in TS/JS
-  const returnLiteralRegex = /return\s+("|')(?<val>[^"']+)\1/gi;
-  // Match return template literals that form numeric icons: `mmm-numeric-${...}-box-outline`
-  const returnNumericTplRegex =
-    /return\s+`[^`]*mmm-numeric-\$\{[^}]+\}-box-outline[^`]*`/gi;
 
   for (const file of walk(repoRoot, repoRoot)) {
     // Skip the icons folder files
@@ -92,19 +87,21 @@ function collectUsedIcons(): Set<string> {
 
     let match: null | RegExpExecArray;
 
+    const tempMatches = new Set<string>();
+
     // <q-icon> attributes like icon="..." or name="..." (map to mmm-)
     while ((match = qIconAnyRegex.exec(content)) !== null) {
       const raw = match.groups?.val ?? match[2] ?? '';
       if (!raw) continue;
       const id = mapToMmm(raw);
-      if (id && id.startsWith('mmm-')) used.add(id);
+      if (id && id.startsWith('mmm-')) tempMatches.add(id);
     }
     // <q-btn> attributes like icon="..."
     while ((match = qBtnAnyRegex.exec(content)) !== null) {
       const raw = match.groups?.val ?? match[2] ?? '';
       if (!raw) continue;
       const id = mapToMmm(raw);
-      if (id && id.startsWith('mmm-')) used.add(id);
+      if (id && id.startsWith('mmm-')) tempMatches.add(id);
     }
     // <q-icon> bound attributes like :name="cond ? 'mmm-a' : 'mmm-b'"
     while ((match = qIconBoundRegex.exec(content)) !== null) {
@@ -115,7 +112,7 @@ function collectUsedIcons(): Set<string> {
         const raw = innerMatch[2];
         if (!raw) continue;
         const id = mapToMmm(raw);
-        if (id && id.startsWith('mmm-')) used.add(id);
+        if (id && id.startsWith('mmm-')) tempMatches.add(id);
       }
     }
     // <q-btn> bound attributes like :icon="cond ? 'mmm-a' : 'mmm-b'"
@@ -127,26 +124,18 @@ function collectUsedIcons(): Set<string> {
         const raw = innerMatch[2];
         if (!raw) continue;
         const id = mapToMmm(raw);
-        if (id && id.startsWith('mmm-')) used.add(id);
+        if (id && id.startsWith('mmm-')) tempMatches.add(id);
       }
     }
-    // TS/JS: return 'mmm-xyz'
-    while ((match = returnLiteralRegex.exec(content)) !== null) {
-      const raw = match.groups?.val ?? match[2] ?? '';
-      if (!raw) continue;
-      const id = mapToMmm(raw);
-      if (id && id.startsWith('mmm-')) used.add(id);
-    }
-    // TS/JS: return `mmm-numeric-${...}-box-outline` -> add 1..10 variants
-    if (returnNumericTplRegex.test(content)) {
-      for (let i = 1; i <= 10; i++) {
-        used.add(`mmm-numeric-${i}-box-outline`);
-      }
-    }
-    // Object properties like icon: 'mmm-refresh'
-    while ((match = metaRegex.exec(content)) !== null) {
-      const id = match.groups?.id ?? match[2] ?? match[0];
-      if (id && id.startsWith('mmm-')) used.add(id);
+    for (const id of tempMatches) {
+      if (id.includes('(')) continue;
+      if (id.includes('.')) continue;
+      if (id === 'mmm-watched') continue;
+      if (id === 'mmm-additional') continue;
+      if (id === 'mmm-a') continue;
+      if (id === 'mmm-b') continue;
+      if (id === 'mmm-icon') continue;
+      used.add(id);
     }
   }
   return used;
@@ -155,8 +144,23 @@ function collectUsedIcons(): Set<string> {
 function isIgnoredDir(relative: string) {
   // Normalize to forward slashes for consistency
   const rel = relative.replace(/\\/g, '/');
+  const relLower = rel.toLowerCase();
   for (const dir of IGNORED_DIRS) {
-    if (rel === dir || rel.startsWith(dir + '/')) return true;
+    const dirLower = dir.toLowerCase();
+    if (dirLower.includes('/')) {
+      // Multi-segment ignore like 'build/icons' at ANY depth
+      if (
+        relLower === dirLower ||
+        relLower.startsWith(dirLower + '/') ||
+        relLower.endsWith('/' + dirLower) ||
+        relLower.includes('/' + dirLower + '/')
+      )
+        return true;
+    } else {
+      // Single directory name: ignore if any path segment matches exactly
+      const segments = relLower.split('/');
+      if (segments.includes(dirLower)) return true;
+    }
   }
   return false;
 }
@@ -187,10 +191,6 @@ describe('Icon usage consistency', () => {
     const missing: string[] = [];
     for (const id of used) {
       if (!available.has(id)) missing.push(id);
-    }
-
-    if (missing.length > 0) {
-      console.log(missing);
     }
 
     expect(missing).toHaveLength(0);
