@@ -8,9 +8,9 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
-- ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
-- ✨ **Custom Events**: Added optional events hooks that can trigger keyboard shortcuts when certain events are detected. This can be useful for AV operators to execute actions automatically outside of the app. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
+- ✨ **Začni predvajanje v začasno ustavljenem načinu**: Dodana je nova nastavitev, ki omogoča začetek predvajanja v začasno ustavljenem načinu, kar je lahko koristno za AV upravljavce, da pripravijo vse potrebno (na primer začetek deljenja Zooma) pred začetkom predvajanja multimedijske vsebine.
+- ✨ **Obvestila o posodobitvah**: Uporabniki bodo odslej obveščeni o posodobitvah prek pasice v aplikaciji, ki jim bo omogočila tudi takojšnjo namestitev posodobitev, namesto da bi morali čakati na naslednji zagon aplikacije.
+- ✨ **Dogodki po meri**: Dodani so bili izbirni dogodki, ki lahko sprožijo bližnjice na tipkovnici, ko se zaznajo določeni dogodki. To je lahko koristno za AV upravljavce, da lahko dejanja izvajajo samodejno zunaj aplikacije. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
 
 ## v25.9.1
 
