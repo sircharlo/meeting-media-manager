@@ -16,37 +16,19 @@
       <template #action>
         <q-btn flat :label="t('dismiss')" @click="dismiss(announcement.id)" />
         <q-btn
-          v-if="announcement.actions?.includes('docs')"
+          v-for="action in announcement.actions || []"
+          :key="action"
           flat
-          :label="t('user-guide')"
-          @click="openExternal('docs')"
-        />
-        <q-btn
-          v-if="announcement.actions?.includes('repo')"
-          flat
-          :label="t('github-repo')"
-          @click="openExternal('repo')"
-        />
-        <q-btn
-          v-if="announcement.actions?.includes('update')"
-          flat
-          :label="t('update')"
-          @click="openExternal('latestRelease')"
-        />
-        <q-btn
-          v-if="announcement.actions?.includes('translate')"
-          flat
-          :label="t('help-translate')"
-          @click="openTranslateDiscussion"
+          :label="t(actionDefs[action].labelKey)"
+          @click="actionDefs[action].onClick"
         />
       </template>
     </q-banner>
   </q-slide-transition>
 </template>
 <script setup lang="ts">
-import type { Announcement } from 'src/types';
+import type { Announcement, AnnouncementAction } from 'src/types';
 
-import { whenever } from '@vueuse/core';
 import { useQuasar } from 'quasar';
 import { localeOptions } from 'src/i18n';
 import { fetchAnnouncements, fetchLatestVersion } from 'src/utils/api';
@@ -54,7 +36,7 @@ import { updatesDisabled } from 'src/utils/fs';
 import { getPreviousVersion, isVersionWithinBounds } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const $q = useQuasar();
@@ -76,22 +58,6 @@ const loadLatestVersion = async () => {
   if (latestVersion.value) return;
   latestVersion.value = (await fetchLatestVersion()) || '';
 };
-
-onMounted(() => {
-  if (currentStateStore.online) {
-    loadLatestVersion();
-    loadAnnouncements();
-  }
-});
-
-whenever(
-  () => currentStateStore.online,
-  () => {
-    loadLatestVersion();
-    loadAnnouncements();
-  },
-);
-
 const dismissed = ref<Set<string>>(new Set());
 
 const dismiss = (id: string) => {
@@ -102,16 +68,13 @@ const dismiss = (id: string) => {
   );
 };
 
-const bgColor = (type?: 'error' | 'info' | 'warning') => {
-  switch (type) {
-    case 'error':
-      return 'bg-negative';
-    case 'warning':
-      return 'bg-warning';
-    default:
-      return 'bg-primary-semi-transparent';
-  }
+const typeToBg: Record<NonNullable<Announcement['type']>, string> = {
+  error: 'bg-negative',
+  info: 'bg-primary-semi-transparent',
+  warning: 'bg-warning',
 };
+const bgColor = (type?: Announcement['type']) =>
+  type ? typeToBg[type] : typeToBg.info;
 
 const announcements = ref<Announcement[]>([]);
 
@@ -128,7 +91,7 @@ const testVersionAnnouncement = computed((): Announcement => {
     id: 'test-version',
     message: 'this-is-a-test-version',
     persistent: true,
-    platform: isTestVersion ? undefined : [],
+    platform: isTestVersion ? 'all' : 'none',
     type: 'error',
   };
 });
@@ -141,7 +104,7 @@ const newUpdateAnnouncement = computed((): Announcement => {
     maxVersion: getPreviousVersion(latestVersion.value || '1.1.0'),
     message: 'update-available-please-update',
     persistent: true,
-    platform: !updatesEnabled.value && !isTestVersion ? undefined : [],
+    platform: !updatesEnabled.value && !isTestVersion ? 'all' : 'none',
   };
 });
 
@@ -163,7 +126,7 @@ const untranslatedAnnouncement = computed((): Announcement => {
     icon: 'ui-language',
     id: `untranslated-${currentJwLang.value?.langcode}`,
     message: 'help-translate-new',
-    platform: langIsNotSupported.value ? undefined : [],
+    platform: langIsNotSupported.value ? 'all' : 'none',
   };
 });
 
@@ -178,53 +141,60 @@ const openTranslateDiscussion = () => {
   );
 };
 
-const activeAnnouncements = computed(() => {
-  return announcements.value
-    .concat([
-      newUpdateAnnouncement.value,
-      untranslatedAnnouncement.value,
-      testVersionAnnouncement.value,
-    ])
-    .filter((a) => {
-      if (!currentStateStore.currentCongregation) return false;
-      if (dismissed.value.has(a.id)) return false;
-      if (
-        a.platform &&
-        !a.platform.some((p) => $q.platform.is.platform === p)
-      ) {
-        return false;
-      }
-
-      if (
-        a.scope?.includes('obs') &&
-        !currentStateStore.currentSettings?.obsEnable
-      ) {
-        return false;
-      }
-
-      if (
-        !a.persistent &&
-        congregationStore.announcements[
-          currentStateStore.currentCongregation
-        ]?.includes(a.id)
-      ) {
-        return false;
-      }
-
-      if (version) {
-        return isVersionWithinBounds(version, a.minVersion, a.maxVersion);
-      } else {
-        return true;
-      }
-    });
-});
-
-whenever(
-  () => activeAnnouncements.value.length,
-  () => {
-    getUpdatesEnabled();
+const actionDefs: Record<
+  AnnouncementAction,
+  { labelKey: string; onClick: () => void }
+> = {
+  docs: { labelKey: 'user-guide', onClick: () => openExternal('docs') },
+  repo: { labelKey: 'github-repo', onClick: () => openExternal('repo') },
+  translate: {
+    labelKey: 'help-translate',
+    onClick: () => openTranslateDiscussion(),
   },
+  update: { labelKey: 'update', onClick: () => openExternal('latestRelease') },
+};
+
+const matchesPlatform = (a: Announcement) => {
+  if (!a.platform || a.platform === 'all') return true;
+  if (a.platform === 'none') return false;
+  return a.platform.some((p) => Boolean($q.platform.is[p]));
+};
+
+const isDismissed = (a: Announcement) =>
+  dismissed.value.has(a.id) ||
+  (!a.persistent &&
+    congregationStore.announcements[
+      currentStateStore.currentCongregation
+    ]?.includes(a.id));
+
+const matchesScope = (a: Announcement) =>
+  !(a.scope?.includes('obs') && !currentStateStore.currentSettings?.obsEnable);
+
+const isVersionOk = (a: Announcement) =>
+  !version || isVersionWithinBounds(version, a.minVersion, a.maxVersion);
+
+const systemAnnouncements = computed(() => [
+  newUpdateAnnouncement.value,
+  untranslatedAnnouncement.value,
+  testVersionAnnouncement.value,
+]);
+
+const activeAnnouncements = computed(() =>
+  [...announcements.value, ...systemAnnouncements.value].filter((a) => {
+    if (!currentStateStore.currentCongregation) return false;
+    if (!matchesPlatform(a)) return false;
+    if (isDismissed(a)) return false;
+    if (!matchesScope(a)) return false;
+    return isVersionOk(a);
+  }),
 );
+
+watchEffect(() => {
+  if (!currentStateStore.online) return;
+  loadLatestVersion();
+  loadAnnouncements();
+  getUpdatesEnabled();
+});
 
 if (import.meta.env.NEVER) {
   defineExpose({});
