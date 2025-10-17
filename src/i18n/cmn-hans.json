@@ -240,6 +240,7 @@
   "localDateFormat-explain": "自定义应用中显示日期的方式。",
   "look-for-this-button-in-m-s-footer": "在 M³ 页脚中查找此按钮：",
   "m-is-now-ready-to-be-used": "M3 现已准备就绪。",
+  "main-window-is-on-this-screen": "The media window cannot be moved here, because the main M³ window is currently on this screen.",
   "make-sure-that-m-is-in-not-use-before-quitting": "请确认M3在关闭前不在被使用。",
   "maxRes": "视频最大分辨率",
   "maxRes-explain": "选择视频的最大分辨率。此分辨率以上的视频将不会被下载。",

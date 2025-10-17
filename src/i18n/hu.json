@@ -240,6 +240,7 @@
   "localDateFormat-explain": "Customize how dates are shown in the app.",
   "look-for-this-button-in-m-s-footer": "Keresd ezt a gombot az M³ alsó részén:",
   "m-is-now-ready-to-be-used": "Az M³ most már készen áll a használatra.",
+  "main-window-is-on-this-screen": "The media window cannot be moved here, because the main M³ window is currently on this screen.",
   "make-sure-that-m-is-in-not-use-before-quitting": "Győződj meg róla, hogy az M³ nincs használatban, mielőtt bezárnád.",
   "maxRes": "Videók maximális felbontása",
   "maxRes-explain": "Válaszd ki a videók maximális felbontását. Ennél a felbontásnál nagyobb videók nem kerülnek letöltésre.",

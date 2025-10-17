@@ -240,6 +240,7 @@
   "localDateFormat-explain": "Customize how dates are shown in the app.",
   "look-for-this-button-in-m-s-footer": "Шукайте цю кнопку в нижній частині M³:",
   "m-is-now-ready-to-be-used": "M³ готовий до використання.",
+  "main-window-is-on-this-screen": "The media window cannot be moved here, because the main M³ window is currently on this screen.",
   "make-sure-that-m-is-in-not-use-before-quitting": "Переконайтесь, що M³ не використовується перед тим, як її закрити.",
   "maxRes": "Максимальна роздільна здатність для відео",
   "maxRes-explain": "Виберіть максимальну роздільну здатність для відео. Відео з роздільною здатністю вище цієї не будуть завантажені.",
