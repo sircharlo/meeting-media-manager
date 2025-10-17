@@ -92,7 +92,7 @@
     "@types/heic-convert": "^2.1.0",
     "@types/lodash-es": "^4.17.12",
     "@types/mousetrap": "^1.6.15",
-    "@types/node": "^22.18.10",
+    "@types/node": "^22.18.11",
     "@types/pretty-bytes": "^5.2.0",
     "@typescript-eslint/utils": "^8.46.1",
     "@vitejs/plugin-vue": "^6.0.1",
