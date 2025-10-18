@@ -156,7 +156,8 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
       // Meeting music and videos
       await getDirectory(currentState.currentSongbook.pub), // Background music
       await getDirectory(currentState.currentSongbook.pub, 0), // Songbook videos
-      // Study Bible
+      // Bibles
+      await getDirectory('nwt'),
       await getDirectory('nwtsty'),
       // Frequently used during MW meetings
       await getDirectory('it', 0), // Insight
@@ -171,6 +172,27 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
       // Various publication info, shouldn't be refreshed often
       await getDirectory('jwlb', undefined),
     ].flat();
+
+    // Add S-34mp directories
+    try {
+      const pubsRootDefault = await getPublicationsPath();
+      const pubsRootCache = await getPublicationsPath(
+        currentState.currentSettings?.cacheFolder,
+      );
+      const roots = [pubsRootDefault, pubsRootCache];
+      for (const root of roots) {
+        try {
+          const items = await readdir(root);
+          items
+            .filter((i) => i.isDirectory && i.name.startsWith('S-34mp_'))
+            .forEach((i) => directories.push(join(root, i.name)));
+        } catch (error) {
+          errorCatcher(error);
+        }
+      }
+    } catch (error) {
+      errorCatcher(error);
+    }
 
     return new Set<string>(directories.filter(Boolean));
   } catch (error) {
@@ -197,7 +219,6 @@ const fetchUntouchableDirectories = async (): Promise<Set<string>> => {
 
 const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
   try {
-    const currentState = useCurrentStateStore();
     const jwStore = useJwStore();
 
     // Get all media items from all congregations and all dates in the lookup period
@@ -266,11 +287,9 @@ const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
           const filePath = join(item.parentPath, item.name);
           if (item.isFile) {
             const parentFolder = item.parentPath.split('/').pop() || '';
-            if (
-              !parentFolder.startsWith('S-34mp') ||
-              parentFolder === `S-34mp_${currentState.currentCongregation}` ||
-              /^S-34mp_[A-Z]+_0$/.test(parentFolder)
-            ) {
+            // Exclude files inside any S-34mp_* folder from deletion consideration
+            const isProtectedS34mp = parentFolder.startsWith('S-34mp_');
+            if (!isProtectedS34mp) {
               const fileParentDirectoryUrl = pathToFileURL(item.parentPath);
               const isReferenced = referencedParentDirectories.has(
                 fileParentDirectoryUrl,

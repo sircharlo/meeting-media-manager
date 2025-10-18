@@ -3,46 +3,48 @@
 layout: home
 
 hero:
-  name: 'M³ Documentation'
-  text: 'Complete guide to setting up and using Meeting Media Manager'
+  name: 'Документация М3'
+  text: 'Полное руководство по настройке и использованию медиа-менеджера встречи'
   image: /logo.svg
   actions:
+    - theme: brand
+      text: Скачать
+      link: https://github.com/sircharlo/meeting-media-manager/releases/latest
     - theme: brand
       text: О программе
       link: /ru/about
     - theme: brand
-      text: User Guide
+      text: Руководство пользователя
       link: /ru/user-guide
     - theme: brand
-      text: Settings Guide
+      text: Инструкция по настройкам
       link: /ru/settings-guide
     - theme: brand
-      text: FAQ
+      text: ЧАВО
       link: /ru/faq
-
 features:
   - icon: 🚀
-    title: Automatic Media Management
-    details: Automatically downloads and organizes pictures and videos for congregation meetings in any language available on the official website of Jehovah's Witnesses.
+    title: Автоматическое управление медиафайлами
+    details: Автоматически загружает и организует фотографии и видеоролики для конгрегационных встреч на любом языке, доступном на официальном сайте Свидетелей Иеговы.
   - icon: 🎦
-    title: Media Presentation
-    details: Present media with ease during hybrid or in-person meetings with advanced controls, zoom/pan capabilities, and custom timing options.
+    title: Презентация Медиа
+    details: Предоставляйте средства массовой информации с легкостью во время гибридных или личных встреч с продвинутыми элементами управления, расширение/перенос возможностей и настраиваемых параметров времени.
   - icon: 🎵
-    title: Background Music System
-    details: Intelligent background music that automatically stops before meetings start and can be restarted with one click after meetings.
+    title: Фоновая музыкальная система
+    details: Интеллектуальная фоновая музыка, которая автоматически останавливается перед началом встреч и может быть перезапущена одним щелчком после встречи.
   - icon: 🖥️
-    title: Multi-Monitor Support
-    details: Automatically detects and manages external monitors for seamless media presentations and website sharing.
+    title: Поддержка мульти-монитора
+    details: Автоматически обнаруживает и управляет внешними мониторами для бесшовных презентаций и обмена сайтами.
   - icon: 🌐
-    title: Multi-Language Support
+    title: Поддержка нескольких языков
     details: Загружайте медиа материалы для собраний на сотнях языков и используйте интерфейс M³ на любом из множества доступных языков.
   - icon: 🧩
     title: Интеграции
-    details: Seamlessly integrates with Zoom or OBS Studio for enhanced media management and playback during meetings.
+    details: Бесконечно интегрируется с Zoom или OBS Studio для улучшения управления медиа и воспроизведения во время встреч.
   - icon: 📁
-    title: Folder Monitoring
-    details: Automatically sync media from watched folders (like Dropbox or OneDrive) and export media to folders.
+    title: Мониторинг папок
+    details: Автоматически синхронизировать носители из наблюдаемых папок (например, Dropbox или OneDrive) и экспортировать носители в папки.
   - icon: 🎯
-    title: Advanced Features
-    details: Import custom media, JWPUB files, playlists, audio Bible recordings, and manage multiple congregations.
+    title: Дополнительные возможности
+    details: Импортируйте пользовательские медиа, файлы JWPUB, плейлисты, записи аудио Библии и управление множеством конгрегаций.
 ---

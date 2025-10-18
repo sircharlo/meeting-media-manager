@@ -8,6 +8,9 @@ hero:
   image: /logo.svg
   actions:
     - theme: brand
+      text: Download
+      link: https://github.com/sircharlo/meeting-media-manager/releases/latest
+    - theme: brand
       text: Info
       link: /et/about
     - theme: brand
@@ -19,7 +22,6 @@ hero:
     - theme: brand
       text: KKK
       link: /et/faq
-
 features:
   - icon: 🚀
     title: Automaatne meediafailide haldus

@@ -29,9 +29,22 @@ export const getAllScreens = (): Display[] => {
           mainWindow &&
           display.id === screen.getDisplayMatching(mainWindow.getBounds()).id,
       );
-      if (mainWindowScreen) mainWindowScreen.mainWindow = true;
+      if (mainWindowScreen) {
+        mainWindowScreen.mainWindow = true;
+        try {
+          mainWindowScreen.mainWindowBounds = mainWindow.getBounds();
+        } catch (e) {
+          captureElectronError(e, {
+            contexts: {
+              fn: { name: 'getAllScreens', window: 'mainWindowBounds' },
+            },
+          });
+        }
+      }
     } catch (e) {
-      captureElectronError(e);
+      captureElectronError(e, {
+        contexts: { fn: { name: 'getAllScreens', window: 'mainWindow' } },
+      });
     }
   }
   if (mediaWindow) {
@@ -43,7 +56,9 @@ export const getAllScreens = (): Display[] => {
       );
       if (mediaWindowScreen) mediaWindowScreen.mediaWindow = true;
     } catch (e) {
-      captureElectronError(e);
+      captureElectronError(e, {
+        contexts: { fn: { name: 'getAllScreens', window: 'mediaWindow' } },
+      });
     }
   }
 

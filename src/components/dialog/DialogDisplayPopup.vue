@@ -1,5 +1,6 @@
 <template>
   <q-menu
+    ref="displayPopup"
     v-model="open"
     anchor="top middle"
     no-parent-event
@@ -13,56 +14,6 @@
         {{ t('media-display-settings') }}
       </div>
       <template v-if="screenList?.length > 1">
-        <template
-          v-if="!screenPreferences.preferWindowed && screenList?.length > 2"
-        >
-          <div class="card-section-title row q-px-md">
-            {{ t('display') }}
-          </div>
-          <div class="row q-px-md q-pb-sm q-col-gutter-sm">
-            <template v-for="(screen, index) in screenList" :key="screen.id">
-              <div class="col">
-                <q-btn
-                  class="full-width full-height"
-                  color="primary"
-                  :disable="screen.mainWindow"
-                  :outline="screen.mainWindow || !screen.mediaWindow"
-                  @click="
-                    () => {
-                      console.log(
-                        '🔍 [Screen Button] Clicked for index:',
-                        index,
-                      );
-                      screenPreferences.preferredScreenNumber = index;
-                      const isFullscreen = !screenPreferences.preferWindowed;
-                      console.log(
-                        '🔍 [Screen Button] Calling moveMediaWindow with:',
-                        { index, isFullscreen },
-                      );
-                      moveMediaWindow(index, isFullscreen);
-                    }
-                  "
-                >
-                  <q-icon
-                    class="q-mr-sm"
-                    :name="
-                      screen.mainWindow
-                        ? 'mmm-display-current'
-                        : 'mmm-media-display-active'
-                    "
-                    size="xs"
-                  />
-                  {{
-                    screen.mainWindow
-                      ? t('current')
-                      : t('display') + ' ' + (index + 1)
-                  }}
-                </q-btn>
-              </div>
-            </template>
-          </div>
-          <q-separator class="bg-accent-200 q-mb-md" />
-        </template>
         <div class="card-section-title row q-px-md">
           {{ t('window-type') }}
         </div>
@@ -143,6 +94,107 @@
           </div>
         </div>
         <q-separator class="bg-accent-200 q-mb-md" />
+        <template
+          v-if="!screenPreferences.preferWindowed && screenList?.length > 2"
+        >
+          <div class="card-section-title row q-px-md">
+            {{ t('display') }}
+          </div>
+          <div class="q-px-md q-pb-sm">
+            <div
+              class="display-map"
+              :style="{
+                position: 'relative',
+                width: '100%',
+                aspectRatio: virtualBounds.width + ' / ' + virtualBounds.height,
+                overflow: 'hidden',
+                '--screen-gap': '1%',
+              }"
+            >
+              <template v-for="(screen, index) in screenList" :key="screen.id">
+                <q-btn
+                  class="screen-rect column items-center justify-center"
+                  :class="{
+                    'border-dashed': screen.mainWindow,
+                  }"
+                  :color="!screen.mainWindow ? 'primary' : 'secondary'"
+                  :disable="screen.mainWindow"
+                  :outline="!isScreenSelected(index, screen)"
+                  :style="{
+                    position: 'absolute',
+                    left:
+                      'calc(' +
+                      (screenRects[index]?.left ?? 0) +
+                      '% + var(--screen-gap))',
+                    top:
+                      'calc(' +
+                      (screenRects[index]?.top ?? 0) +
+                      '% + var(--screen-gap))',
+                    width:
+                      'calc(' +
+                      (screenRects[index]?.width ?? 0) +
+                      '% - (var(--screen-gap) * 2))',
+                    height:
+                      'calc(' +
+                      (screenRects[index]?.height ?? 0) +
+                      '% - (var(--screen-gap) * 2))',
+                    borderRadius: '6px',
+                  }"
+                  unelevated
+                  @click="
+                    () => {
+                      if (screen.mainWindow) return;
+                      console.log('🔍 [Screen Map] Clicked for index:', index);
+                      screenPreferences.preferredScreenNumber = index;
+                      const isFullscreen = !screenPreferences.preferWindowed;
+                      console.log(
+                        '🔍 [Screen Map] Calling moveMediaWindow with:',
+                        { index, isFullscreen },
+                      );
+                      moveMediaWindow(index, isFullscreen);
+                    }
+                  "
+                >
+                  <q-tooltip v-if="screen.mainWindow" :delay="1000">
+                    {{ t('main-window-is-on-this-screen') }}
+                  </q-tooltip>
+                  <div
+                    v-if="screen.mainWindow && scaledMainWindowRect(index)"
+                    :style="{
+                      position: 'absolute',
+                      left: scaledMainWindowRect(index)?.left + '%',
+                      top: scaledMainWindowRect(index)?.top + '%',
+                      width: scaledMainWindowRect(index)?.width + '%',
+                      height: scaledMainWindowRect(index)?.height + '%',
+                      border: '2px dashed var(--q-primary)',
+                      borderRadius: '4px',
+                      pointerEvents: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }"
+                  >
+                    <q-icon
+                      name="mmm-logo"
+                      size="sm"
+                      style="pointer-events: none; color: var(--q-primary)"
+                    />
+                  </div>
+                  <q-icon
+                    v-if="!screen.mainWindow"
+                    class="q-mr-sm"
+                    name="mmm-media-display-active"
+                    size="xs"
+                  />
+                  {{
+                    !screen.mainWindow ? t('display') + ' ' + (index + 1) : ''
+                  }}
+                </q-btn>
+              </template>
+            </div>
+          </div>
+          <q-separator class="bg-accent-200 q-mb-md" />
+        </template>
       </template>
       <div class="card-section-title row q-px-md q-pb-sm">
         {{ t('custom-background') }}
@@ -158,7 +210,9 @@
           <q-icon
             class="q-mr-sm"
             :name="
-              'mmm-background' + (mediaWindowCustomBackground ? '-remove' : '')
+              mediaWindowCustomBackground
+                ? 'mmm-background-remove'
+                : 'mmm-background'
             "
             size="xs"
           />
@@ -291,6 +345,7 @@ import {
 } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
+import { QMenu } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getMemorialBackground } from 'src/helpers/jw-media';
 import { decompressJwpub, showMediaWindow } from 'src/helpers/mediaPlayback';
@@ -301,8 +356,10 @@ import { isImage, isJwpub } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
 import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+
+const displayPopup = useTemplateRef<QMenu>('displayPopup');
 
 const { t } = useI18n();
 
@@ -346,6 +403,78 @@ const getBasename = (filename: string) => {
 const getFileUrlFromPath = (filepath: string) => {
   if (!filepath) return '';
   return pathToFileURL(filepath);
+};
+
+// Virtual desktop extents across all displays (in physical pixels as provided by Electron)
+const virtualBounds = computed(() => {
+  const list = screenList.value;
+  if (!list || list.length === 0) {
+    return { height: 9, width: 16, x: 0, y: 0 };
+  }
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const d of list) {
+    const b = d.bounds;
+    if (!b) continue;
+    minX = Math.min(minX, b.x);
+    minY = Math.min(minY, b.y);
+    maxX = Math.max(maxX, b.x + b.width);
+    maxY = Math.max(maxY, b.y + b.height);
+  }
+  const width = Math.max(1, maxX - minX);
+  const height = Math.max(1, maxY - minY);
+  return { height, width, x: minX, y: minY };
+});
+
+// Percentage-based rectangles for each screen relative to the virtual desktop
+const screenRects = computed(() => {
+  const vb = virtualBounds.value;
+  const list = screenList.value ?? [];
+  return list.map((d) => {
+    const b = d.bounds;
+    const left = ((b.x - vb.x) / vb.width) * 100;
+    const top = ((b.y - vb.y) / vb.height) * 100;
+    const width = (b.width / vb.width) * 100;
+    const height = (b.height / vb.height) * 100;
+    return {
+      height: Number.isFinite(height) ? height : 0,
+      left: Number.isFinite(left) ? left : 0,
+      top: Number.isFinite(top) ? top : 0,
+      width: Number.isFinite(width) ? width : 0,
+    };
+  });
+});
+
+const scaledMainWindowRect = (index: number) => {
+  const list = screenList.value ?? [];
+  const screen = list[index];
+  if (!screen || !screen.mainWindowBounds) return undefined;
+
+  const b = screen.bounds;
+  const mw = screen.mainWindowBounds;
+
+  const inset = 3;
+  const minSize = 4;
+
+  let left = ((mw.x - b.x) / b.width) * 100 + inset;
+  let top = ((mw.y - b.y) / b.height) * 100 + inset;
+  let width = (mw.width / b.width) * 100 - inset * 2;
+  let height = (mw.height / b.height) * 100 - inset * 2;
+
+  left = Math.max(inset, Math.min(left, 100 - inset));
+  top = Math.max(inset, Math.min(top, 100 - inset));
+  width = Math.max(minSize, Math.min(width, 100 - left - inset));
+  height = Math.max(minSize, Math.min(height, 100 - top - inset));
+
+  return { height, left, top, width };
+};
+
+// Selected when media window is on this screen and it's not the app's main window
+const isScreenSelected = (index: number, screen: Display) => {
+  void index; // index kept for potential future preference logic
+  return !!screen.mediaWindow && !screen.mainWindow;
 };
 
 const jwpubImportFilePath = ref('');
@@ -553,4 +682,21 @@ const { data: mediaWindowSize } = useBroadcastChannel<
 >({
   name: 'media-window-size',
 });
+
+// UI update handler
+watch(
+  () => [screenPreferences.value.preferWindowed],
+  () => {
+    setTimeout(() => {
+      if (displayPopup.value) {
+        displayPopup.value.updatePosition();
+      }
+    }, 10);
+  },
+);
 </script>
+<style scoped>
+.border-dashed::before {
+  border-style: dashed;
+}
+</style>

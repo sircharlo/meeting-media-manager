@@ -359,7 +359,7 @@
               :label="t('no')"
               @click="
                 obsUsed = false;
-                step = 300;
+                step = 200;
               "
             />
             <q-btn
@@ -369,6 +369,61 @@
                 obsUsed = true;
                 step++;
               "
+            />
+          </q-stepper-navigation>
+        </q-step>
+        <q-step
+          v-if="step >= 200 && !obsUsed"
+          :disable="obsUsed"
+          :done="step > 200"
+          icon="mmm-integrations"
+          :name="200"
+          :title="t('zoomEnable')"
+        >
+          <p class="text-subtitle1">
+            {{ t('would-you-like-to-integrate-zoom') }}
+          </p>
+          <p>
+            {{ t('zoom-integration-explain') }}
+          </p>
+          <q-stepper-navigation class="q-gutter-sm">
+            <q-btn flat :label="t('no')" @click="step = 300" />
+            <q-btn
+              color="primary"
+              :label="t('yes')"
+              @click="
+                currentSettings.zoomEnable = true;
+                step = 201;
+              "
+            />
+          </q-stepper-navigation>
+        </q-step>
+        <q-step
+          v-if="step >= 201 && currentSettings?.zoomEnable && !obsUsed"
+          :disable="!currentSettings?.zoomEnable || obsUsed"
+          :done="step > 201"
+          icon="mmm-integrations"
+          :name="201"
+          :title="t('zoomScreenShareShortcut')"
+        >
+          <p>{{ t('zoomScreenShareShortcut-explain') }}</p>
+          <ShortcutInput
+            v-model="currentSettings.zoomScreenShareShortcut"
+            :dialog-id="'setup-wizard-zoom-shortcut'"
+            shortcut-name="zoomScreenShareShortcut"
+          />
+          <q-stepper-navigation class="q-gutter-sm">
+            <q-btn
+              color="negative"
+              flat
+              :label="t('back')"
+              @click="step = 200"
+            />
+            <q-btn
+              color="primary"
+              :disable="!currentSettings?.zoomScreenShareShortcut"
+              :label="t('continue')"
+              @click="step = 300"
             />
           </q-stepper-navigation>
         </q-step>
@@ -563,6 +618,7 @@ import { watchImmediate } from '@vueuse/core';
 import DialogCongregationLookup from 'components/dialog/DialogCongregationLookup.vue';
 import FolderInput from 'components/form-inputs/FolderInput.vue';
 import SelectInput from 'components/form-inputs/SelectInput.vue';
+import ShortcutInput from 'components/form-inputs/ShortcutInput.vue';
 import TextInput from 'components/form-inputs/TextInput.vue';
 import TimeInput from 'components/form-inputs/TimeInput.vue';
 import { storeToRefs } from 'pinia';

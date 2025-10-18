@@ -71,7 +71,9 @@ export async function unwatchFolders() {
       if (!watcher?.closed) await watcher?.close();
       watchers.delete(watcher);
     } catch (error) {
-      captureElectronError(error);
+      captureElectronError(error, {
+        contexts: { fn: { name: 'unwatchFolders' } },
+      });
     }
   }
 }
@@ -89,14 +91,20 @@ export async function watchFolder(folderPath: string) {
           const dirOfNote = basename(dirPath); // Get the name of the directory
           return !datePattern.test(dirOfNote); // Ignore files in a directory whose name doesn't match YYYY-MM-DD
         } catch (error) {
-          captureElectronError(error);
+          captureElectronError(error, {
+            contexts: {
+              fn: { folderPath, fp, name: 'watchFolder.ignored', stats },
+            },
+          });
           return true;
         }
       },
       ignorePermissionErrors: true,
     })
       .on('error', (e) => {
-        captureElectronError(e);
+        captureElectronError(e, {
+          contexts: { fn: { folderPath, name: 'watchFolder.error' } },
+        });
       })
       .on('all', (event, changedPath, stats) => {
         try {
@@ -113,7 +121,11 @@ export async function watchFolder(folderPath: string) {
             event,
           });
         } catch (error) {
-          captureElectronError(error);
+          captureElectronError(error, {
+            contexts: {
+              fn: { changedPath, event, name: 'watchFolder.all', stats },
+            },
+          });
           return true;
         }
       }),

@@ -1,8 +1,6 @@
 <template>
   <q-item>
-    <q-item-section
-      class="align-center text-secondary text-grey text-subtitle2"
-    >
+    <q-item-section class="align-center text-grey text-subtitle2">
       <div class="row items-center">
         <q-icon class="q-mr-sm" name="mmm-info" size="sm" />
         <span>{{ message }}</span>

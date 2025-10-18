@@ -38,6 +38,10 @@ M³ supports Windows, macOS, and Linux:
 
 ## Installation and Setup {#installation-setup}
 
+### :inbox_tray: Download M³ {#download}
+
+Download the appropriate version for your operating system from the [releases page](https://github.com/sircharlo/meeting-media-manager/releases/latest).
+
 ### :computer: How do I install M³? {#installation}
 
 Download the appropriate version for your operating system from the [releases page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and follow the installation instructions in the [setup guide](/using-at-a-kingdom-hall#download-and-install).
@@ -128,7 +132,6 @@ To integrate with Zoom:
 1. Enable Zoom integration in M³ settings
 2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
 3. M³ will automatically start and stop Zoom screen sharing during media presentations
-
 
 ## OBS Studio Integration {#faq-obs-integration}
 

@@ -6,7 +6,7 @@ export interface Announcement {
   message: string;
   minVersion?: string;
   persistent?: boolean;
-  platform?: ('linux' | 'mac' | 'win')[];
+  platform?: 'all' | 'none' | ('linux' | 'mac' | 'win')[];
   scope?: 'obs'[];
   type?: 'error' | 'info' | 'warning';
 }

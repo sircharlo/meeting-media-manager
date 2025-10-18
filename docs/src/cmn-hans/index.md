@@ -8,6 +8,9 @@ hero:
   image: /logo.svg
   actions:
     - theme: brand
+      text: Download
+      link: https://github.com/sircharlo/meeting-media-manager/releases/latest
+    - theme: brand
       text: 关于
       link: /cmn-hans/about
     - theme: brand
@@ -19,7 +22,6 @@ hero:
     - theme: brand
       text: 常见问题（FAQ）
       link: /cmn-hans/faq
-
 features:
   - icon: 🚀
     title: Automatic Media Management

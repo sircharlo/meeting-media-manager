@@ -39,7 +39,7 @@
         </div>
         <template v-else>
           <div v-if="playlistItems.length" class="col q-px-md full-width">
-            <div class="text-grey text-uppercase q-my-sm">
+            <div class="text-secondary text-uppercase q-my-sm">
               {{ t('playlist-items') }}
             </div>
             <div class="col full-width">
@@ -85,8 +85,8 @@
           </div>
           <div v-else-if="!loading" class="row q-px-md col flex-center">
             <div class="text-center">
-              <q-icon color="grey" name="mmm-jwlplaylist" size="xl" />
-              <div class="text-grey q-mt-md">
+              <q-icon color="secondary" name="mmm-jwlplaylist" size="xl" />
+              <div class="text-secondary q-mt-md">
                 {{ t('no-playlist-items-found') }}
               </div>
             </div>

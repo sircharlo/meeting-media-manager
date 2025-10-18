@@ -4,7 +4,7 @@
 
 ### :earth_americas: Kas see rakendus kasutab väljaannete ja koosolekute meedia allalaadimiseks väliseid saite, allikaid või "kuraatoreid"? {#external-dependencies}
 
-**Ei. See rakendus töötab sarnaselt JW Library rakendusele. Väljaanded ja meedia laetakse alla Jw. org ametlikult lehelt ja serveritest. Rakendus määrab automaatselt kindlaks, mida on vaja alla laadida ja millal varem alla laaditud sisu ei ole enam ajakohane ja tuleks uuesti alla laadida.
+\*\*Ei. See rakendus töötab sarnaselt JW Library rakendusele. Väljaanded ja meedia laetakse alla Jw. org ametlikult lehelt ja serveritest. Rakendus määrab automaatselt kindlaks, mida on vaja alla laadida ja millal varem alla laaditud sisu ei ole enam ajakohane ja tuleks uuesti alla laadida.
 
 :::info Märkus
 
@@ -37,6 +37,10 @@ M³ supports Windows, macOS, and Linux:
 - **Independent Settings**: You can use the interface in one language while downloading media in another
 
 ## Installation and Setup {#installation-setup}
+
+### :inbox_tray: Download M³ {#download}
+
+Download the appropriate version for your operating system from the [releases page](https://github.com/sircharlo/meeting-media-manager/releases/latest).
 
 ### :computer: How do I install M³? {#installation}
 

@@ -4,6 +4,54 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v25.10.0
+
+### ✨ New Features
+
+- ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
+- ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
+- ✨ **Custom Events**: Added optional events hooks that can trigger keyboard shortcuts when certain events are detected. This can be useful for AV operators to execute actions automatically outside of the app. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Background Music Behavior**: Improved background music start logic for better control and reliability.
+- 🛠️ **Media Window Transitions**: Enabled media window fade transitions by default on new installations.
+
+### 🐞 Bug Fixes
+
+- 🐞 **CO Week Playlists**: Ensured playlists are correctly processed during CO weeks.
+- 🐞 **Initialization Order**: Declared `getDateStatus` before usage to prevent potential runtime issues.
+- 🐞 **Banner Visibility**: Improved banner visibility when using transitions for clearer UI feedback.
+- 🐞 **Error Reporting**: Enhanced Electron error capturing with additional context across multiple modules for better diagnostic capabilities.
+
+### 📚 Documentation & Localization
+
+- 📚 **Downloads Section**: Added a new downloads section to the docs and linked to the releases page for easier access to installers.
+
+### 🧪 Testing
+
+- 🧪 **Expectation Refinement**: Updated tests to assert correct single-call behavior in `performActions`.
+
+### 🔧 Chores
+
+- 🔧 **Dependencies**: Updated `yarn.lock` to reflect dependency changes.
+
+## v25.9.1
+
+### ✨ New Features
+
+- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
+- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
+- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
+- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not
+- ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
+
+### 🔧 Improvements and Tweaks
+
+- 🔧 **Watch Folder Performance**: Refactored and improved performance of the watch folder logic.
+- 🔧 **i18n & Dialog Cleanup**: Streamlined i18n initialization and cleaned up dialog components.
+- 🔧 **Memorial Dates**: Removed past Memorial dates.
+
 ## v25.9.0
 
 ### ✨ New Features

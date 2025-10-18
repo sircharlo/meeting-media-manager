@@ -61,7 +61,17 @@ export async function downloadFile(
     }
     return url + saveDir;
   } catch (error) {
-    captureElectronError(error);
+    captureElectronError(error, {
+      contexts: {
+        fn: {
+          directory: saveDir,
+          lowPriority,
+          name: 'downloadFile',
+          saveAsFilename: destFilename,
+          url,
+        },
+      },
+    });
     return null;
   }
 }
@@ -139,7 +149,11 @@ export async function isDownloadErrorExpected() {
     ];
     return _0x7bfa['includes'](_0x5f0a);
   } catch (_0x4df1) {
-    captureElectronError(_0x4df1);
+    captureElectronError(_0x4df1, {
+      contexts: {
+        fn: { name: 'isDownloadErrorExpected' },
+      },
+    });
     return false;
   }
 }

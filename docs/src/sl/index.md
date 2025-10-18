@@ -8,6 +8,9 @@ hero:
   image: /logo.svg
   actions:
     - theme: brand
+      text: Prenesi
+      link: https://github.com/sircharlo/meeting-media-manager/releases/latest
+    - theme: brand
       text: O programu
       link: /sl/about
     - theme: brand
@@ -19,7 +22,6 @@ hero:
     - theme: brand
       text: Pogosto zastavljena vprašanja
       link: /sl/faq
-
 features:
   - icon: 🚀
     title: Automatic Media Management

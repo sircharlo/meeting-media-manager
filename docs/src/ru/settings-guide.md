@@ -1,485 +1,485 @@
-# Settings Guide {#settings-guide}
+# Руководство по настройкам {#settings-guide}
 
-This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+Это всеобъемлющее руководство объясняет все параметры, доступные в M³, организованные по категориям. Понимание этих настроек поможет вам настроить M3 для идеальной работы в соответствии с потребностями вашей конгрегации.
 
-## Application Configuration {#application-configuration}
+## Конфигурация приложения {#application-configuration}
 
-### Display Language {#display-language}
+### Язык приложения {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Choose the language for M³'s interface. This is independent of the language used for media downloads.
+Выберите язык интерфейса M³. Это не зависит от языка, используемого для загрузки медиа файлов.
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+**Параметры**: Все доступные языки интерфейса (английский, испанский, французский и т. д.)
 
-**Default**: English
+**По умолчанию**: Английский
 
-### Dark Mode {#dark-mode}
+### Тёмный режим {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-Control the appearance theme of M³.
+Управление темой внешнего вида M3.
 
-**Options**:
+**Параметры**:
 
-- Automatically switch based on system preference
-- Always use dark mode
-- Always use light mode
+- Автоматически переключаться на основе системных настроек
+- Всегда использовать темный режим
+- Всегда использовать светлый режим
 
-**Default**: Auto
+**По умолчанию**: Авто
 
-### First Day of Week {#first-day-of-week}
+### Первый день недели {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the calendar view.
+Укажите, какой день в календаре должен считаться первый день недели.
 
-**Options**: Sunday through Saturday
+**Параметры**: с воскресенья по субботу
 
-**Default**: Sunday
+**По умолчанию**: Воскресенье
 
-### Auto-Start at Login {#auto-start-at-login}
+### Автозапуск при входе {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-Automatically start M³ when the computer boots up.
+Автоматически запускать M3 при загрузке компьютера.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-## Congregation Meetings {#congregation-meetings}
+## Согласованные встречи {#congregation-meetings}
 
-### Congregation Name {#congregation-name}
+### Имя конгрегации {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
-The name of your congregation. This is used for organization and display purposes.
+Имя вашей приходы. Используется для организации и целей отображения.
 
-**Default**: Empty (must be set during setup)
+**По умолчанию**: Пустое (должно быть установлено во время установки)
 
-### Meeting Language {#meeting-language}
+### Язык встречи {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
-The primary language for media downloads. This should match the language used in your congregation's meetings.
+Основной язык загрузки медиафайлов. Это должно соответствовать языку, используемому в совещаниях вашей общины.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Параметры**: все языки на официальном сайте Свидетелей Иеговы
 
-**Default**: English (E)
+**По умолчанию**: Английский (E)
 
-### Fallback Language {#fallback-language}
+### Резервный язык {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
-A secondary language to use when media isn't available in the primary language.
+Дополнительный язык для использования при недоступности носителя на основном языке.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Параметры**: все языки на официальном сайте Свидетелей Иеговы
 
-**Default**: None
+**По умолчанию**: нет
 
 ### Midweek Meeting Day {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-The day of the week when your midweek meeting is held.
+День недели, когда проводится ваше полунедельное совещание.
 
-**Options**: Sunday through Saturday
+**Параметры**: с воскресенья по субботу
 
-**Default**: None (must be set during setup)
+**По умолчанию**: нет (необходимо установить во время установки)
 
-### Midweek Meeting Time {#midweek-meeting-time}
+### Полунедельное время встречи {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
-The start time of your midweek meeting.
+Время начала вашей полунедельной встречи.
 
-**Format**: HH:MM (24-hour format)
+**Формат**: ЧЧЧ:ММ (в формате 24 часа)
 
-**Default**: None (must be set during setup)
+**По умолчанию**: нет (необходимо установить во время установки)
 
-### Weekend Meeting Day {#weekend-meeting-day}
+### Выходные дни {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-The day of the week when your weekend meeting is held.
+День недели, когда проводится ваша встреча выходных.
 
-**Options**: Sunday through Saturday
+**Параметры**: с воскресенья по субботу
 
-**Default**: None (must be set during setup)
+**По умолчанию**: нет (необходимо установить во время установки)
 
 ### Weekend Meeting Time {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
-The start time of your weekend meeting.
+Время начала вашей выходной встречи.
 
-**Format**: HH:MM (24-hour format)
+**Формат**: ЧЧЧ:ММ (в формате 24 часа)
 
-**Default**: None (must be set during setup)
+**По умолчанию**: нет (необходимо установить во время установки)
 
-### Circuit Overseer Week {#circuit-overseer-week}
+### Цепочка за неделю {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
-The week of the next circuit overseer's visit.
+Неделя следующего визита наблюдателя за контуром.
 
-**Format**: MM/DD/YYYY
+**Формат**: ММ/ДД/ГГГГ
 
-**Default**: None
+**По умолчанию**: нет
 
-### Memorial Date {#memorial-date}
+### Дата памяти {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
-The date of the next Memorial celebration (beta feature).
+Дата следующего мемориального праздника (бета-функция).
 
-**Format**: MM/DD/YYYY
+**Формат**: ММ/ДД/ГГГГ
 
-**Default**: Automatically retrieved periodically
+**По умолчанию**: Периодическое извлечение
 
-### Meeting Schedule Changes {#meeting-schedule-changes}
+### Расписание встреч {#meeting-schedule-changes}
 
-These settings allow you to configure temporary changes to your meeting schedule:
+Эти настройки позволяют настроить временные изменения в расписании встреч:
 
-- **Change Date**: When the change takes effect
-- **One-time Change**: Whether this is a permanent or temporary change
-- **New Midweek Day**: New day for midweek meeting
-- **New Midweek Time**: New time for midweek meeting
-- **New Weekend Day**: New day for weekend meeting
-- **New Weekend Time**: New time for weekend meeting
+- **Изменить дату**: Когда изменение вступает в силу
+- **Одноразовое изменение**: является ли это изменение постоянным или временным
+- **Новый полунедельный день**: Новый день для полунедельной встречи
+- **Новое полунедельное время**: Новое время для полунедельной встречи
+- **Новый день выходных**: Новый день для встречи выходных
+- **Новое время выходных**: Новое время для встречи в выходные
 
-## Media Retrieval and Playback {#media-retrieval-and-playback}
+## Воспроизведение и извлечение файлов {#media-retrieval-and-playback}
 
-### Metered Connection {#metered-connection}
+### Ограниченное соединение {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
-Enable this if you're on a limited data connection to reduce bandwidth usage.
+Включите эту опцию, если вы используете ограниченную передачу данных, чтобы уменьшить использование пропускной способности.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-### Media Display {#media-display-button}
+### Медиа-дисплей {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-Enable the media display functionality. This is required to present media on a second monitor.
+Включите функцию медиа дисплея. Это необходимо для представления средств массовой информации на втором мониторе.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-### Background Music {#settings-guide-background-music}
+### Фоновая музыка {#settings-guide-background-music}
 
-#### Enable Music {#enable-music-button}
+#### Включить музыку {#enable-music-button}
 
 <!-- **Setting**: `enableMusicButton` -->
 
-Enable background music functionality.
+Включить фоновую музыку.
 
-**Default**: `true`
+**По умолчанию**: `true`
 
-#### Auto-Start Music {#auto-start-music}
+#### Автозапуск музыки {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-Automatically start background music when M³ launches if appropriate.
+Автоматически запускать фоновую музыку при запуске M3 при необходимости.
 
-**Default**: `true`
+**По умолчанию**: `true`
 
-#### Meeting Stop Buffer {#meeting-stop-buffer}
+#### Остановить буфер встречи {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
-How many seconds before meeting start time to stop background music.
+Сколько секунд до начала встречи, чтобы остановить фоновую музыку.
 
-**Range**: 0-300 seconds
+**Диапазон**: 0-300 секунд
 
-**Default**: 60 seconds
+**По умолчанию**: 60 секунд
 
-#### Music Volume {#music-volume}
+#### Громкость музыки {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
-Volume level for background music (1-100%).
+Уровень громкости фоновой музыки (1-100%).
 
-**Default**: 100%
+**По умолчанию**: 100%
 
-### Cache Management {#cache-management}
+### Управление кэшем {#cache-management}
 
-#### Enable Extra Cache {#enable-extra-cache}
+#### Включить дополнительный кэш {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Enable additional caching for better performance.
+Включите дополнительное кэширование для улучшения производительности.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Cache Folder {#cache-folder}
+#### Папка кэша {#cache-folder}
 
 <!-- **Setting**: `cacheFolder` -->
 
-Custom location for storing cached media files.
+Пользовательское расположение для хранения кэшированных медиа-файлов.
 
-**Default**: System default location
+**По умолчанию**: Система по умолчанию
 
-#### Enable Cache Auto-Clear {#enable-cache-auto-clear}
+#### Включить автоочистку кэша {#enable-cache-auto-clear}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
-Automatically clear old cached files to save disk space.
+Автоматически очищать старые кэшированные файлы для сохранения дискового пространства.
 
-**Default**: `true`
+**По умолчанию**: `true`
 
-### Folder Monitoring {#settings-guide-folder-monitoring}
+### Мониторинг папок {#settings-guide-folder-monitoring}
 
-#### Enable Folder Watcher {#enable-folder-watcher}
+#### Включить наблюдатель за папками {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Monitor a folder for new media files and automatically add them to M³.
+Мониторинг папки для новых медиа файлов и автоматическое добавление их в M3.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Folder to Watch {#folder-to-watch}
+#### Папка для просмотра {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder path to monitor for new media files.
+Путь к папке для отслеживания новых медиа-файлов.
 
-**Default**: Empty
+**По умолчанию**: пусто
 
-## Integrations {#integrations}
+## Интеграции {#integrations}
 
-### Zoom Integration {#settings-guide-zoom-integration}
+### Масштаб интеграции {#settings-guide-zoom-integration}
 
-#### Enable Zoom {#enable-zoom}
+#### Включить масштаб {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
-Enable Zoom meeting integration features.
+Включить интеграцию с Zoom встреч.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Screen Share Shortcut {#screen-share-shortcut}
+#### Ярлык для демонстрации экрана {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
-Keyboard shortcut to trigger Zoom screen sharing.
+Ярлык клавиатуры для увеличения масштаба экрана.
 
-**Default**: None
+**По умолчанию**: нет
 
-### OBS Studio Integration {#settings-guide-obs-integration}
+### Интеграция OBS Studio {#settings-guide-obs-integration}
 
-#### Enable OBS {#enable-obs}
+#### Включить OBS {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
-Enable OBS Studio integration for automatic scene switching.
+Включите интеграцию OBS Studio для автоматического переключения сцен.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-:::warning Important Note
+:::warning Важная заметка
 
-**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Требуется настройка звука**: Интеграция OBS Studio обрабатывает только демонстрацию экрана. Аудио с M3 медиа-носителя **не передается автоматически** участникам Zoom при использовании OBS Studio. Вы должны настроить оригинальные настройки звука Zoom или использовать "Share Computer Sound" для того, чтобы участники встречи могли услышать носитель. Подробные инструкции по настройке звука смотрите в [Руководство пользователя](/user-guide#audio-configuration).
 
-**Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
+**Примечание**: Интеграция с масштабом использует общий доступ к экрану Zoom, который обрабатывает аудио более просто, чем интеграция с OBS Studio.
 
 :::
 
-#### OBS Port {#obs-port}
+#### Порт OBS {#obs-port}
 
 <!-- **Setting**: `obsPort` -->
 
-The port number for connecting to OBS Studio WebSocket.
+Номер порта для подключения к OBS Studio WebSocket.
 
-**Default**: None
+**По умолчанию**: нет
 
-#### OBS Password {#obs-password}
+#### Пароль OBS {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
-The password for OBS Studio WebSocket connection.
+Пароль для соединения с OBS Studio WebSocket.
 
-**Default**: None
+**По умолчанию**: нет
 
-#### OBS Scenes {#obs-scenes}
+#### Сцены OBS {#obs-scenes}
 
-Configure which OBS scenes to use for different purposes:
+Настройте сценарии OBS для различных целей:
 
-- **Camera Scene**: Scene showing the camera/lectern
-- **Media Scene**: Scene for displaying media
-- **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
+- **Сцена камеры**: Сцена с камерой/лекторной камерой
+- \*\*Сцена медиа \*\*: Сцена отображения медиа
+- **Сцена изображения**: Сцена отображения изображений (например, PIP сцена, показывающая носители и динамик)
 
-#### OBS Advanced Options {#obs-advanced-options}
+#### Дополнительные настройки OBS {#obs-advanced-options}
 
-- **Postpone Images**: Delay sharing images to OBS until manually triggered
-- **Quick Toggle**: Enable quick on/off toggle for OBS integration
-- **Switch Scene After Media**: Automatically return to previous scene after media
-- **Remember Previous Scene**: Remember and restore the previous scene
-- **Hide Icons**: Hide OBS-related icons in the interface
+- **Отложенные изображения**: Задержка обмена изображениями в OBS до тех пор, пока не будет запущена вручную
+- **Быстрое переключение**: Быстрое вкл/выкл переключатель для интеграции OBS
+- **Переключить сцену после медиа**: после медиа автоматически вернуться на предыдущую сцену
+- **Запомнить предыдущую сцену**: Запомнить и восстановить предыдущую сцену
+- **Скрыть иконки**: скрыть иконки с OBS в интерфейсе
 
-:::warning Important Note
+:::warning Важная заметка
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Требуется настройка звука**: интеграция OBS Studio только обрабатывает переключение видео/сцены. Аудио с M3 носителя **не передается автоматически** в Zoom или OBS. Видео поток работает как виртуальная камера без звука, так же как и веб-камера. Вы должны настроить оригинальные настройки звука Zoom или использовать "Share Computer Sound" для того, чтобы участники встречи могли услышать носитель. Подробные инструкции по настройке звука смотрите в [Руководство пользователя](/user-guide#audio-configuration).
 
-**Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
+**Альтернатива**: Рассмотрим использование интеграции масштабов, так как используется родной обмен экраном Zoom, который бесшовно обрабатывает звук.
 
 :::
 
-## Advanced Settings {#advanced-settings}
+## Расширенные настройки {#advanced-settings}
 
-### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
+### Горячие клавиши {#settings-guide-keyboard-shortcuts}
 
-#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
+#### Включить горячие клавиши {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-Enable customizable keyboard shortcuts for media control.
+Включить настраиваемые сочетания клавиш для управления мультимедиа.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Media Control Shortcuts {#media-control-shortcuts}
+#### Ярлыки для управления медиа {#media-control-shortcuts}
 
-Configure shortcuts for media playback:
+Настройка ярлыков для воспроизведения медиа:
 
-- **Media Window**: Open/close media window
-- **Previous Media**: Go to previous media item
-- **Next Media**: Go to next media item
-- **Pause/Resume**: Pause or resume media playback
-- **Stop Media**: Stop media playback
-- **Music Toggle**: Toggle background music
+- **Медиа окно**: Открыть/закрыть окно медиа
+- **Предыдущие медиа-файлы**: Перейти к предыдущему медиа-элементу
+- **Следующий материал**: Перейти к следующему элементу медиа
+- \*\*Пауза/Возобновить \*\*: остановить или возобновить воспроизведение медиа
+- **Стоп медиа**: Остановить воспроизведение медиа
+- **Переключить музыку**: Переключить фоновую музыку
 
-### Media Display {#media-display}
+### Медиа-дисплей {#media-display}
 
-#### Hide Media Logo {#hide-media-logo}
+#### Скрыть логотип медиа {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
-Hide the logo in the media window.
+Скрыть логотип в окне медиа.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Maximum Resolution {#maximum-resolution}
+#### Максимальное разрешение {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
-Maximum resolution for downloaded media files.
+Максимальное разрешение для загруженных медиа-файлов.
 
-**Options**: 240p, 360p, 480p, 720p
+**Параметры**: 240p, 360p, 480p, 720p
 
-**Default**: 720p
+**По умолчанию**: 720p
 
-#### Include Printed Media {#include-printed-media}
+#### Включать печатные носители {#include-printed-media}
 
 <!-- **Setting**: `includePrinted` -->
 
-Include media from the printed publications in media downloads.
+Включать средства массовой информации из печатных изданий в загрузки медиа.
 
-**Default**: `true`
+**По умолчанию**: `true`
 
-#### Exclude Footnotes {#exclude-footnotes}
+#### Исключить заметки {#exclude-footnotes}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
-Exclude footnote images from media downloads when possible.
+Исключить изображения сноски из загрузок медиа, когда это возможно.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
+#### Исключить медиа из педагогической брошюры {#exclude-theocratic-ministry-school}
 
 <!-- **Setting**: `excludeTh` -->
 
-Exclude media from the Teaching (th) brochure from media downloads.
+Исключить медиа из брошюры «Преподавание» из файлов мультимедиа.
 
-**Default**: `true`
+**По умолчанию**: `true`
 
-### Subtitles {#subtitles}
+### Субтитры {#subtitles}
 
-#### Enable Subtitles {#enable-subtitles}
+#### Включить субтитры {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
-Enable subtitle support for media playback.
+Включить поддержку субтитров для воспроизведения медиа.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Subtitle Language {#subtitle-language}
+#### Язык субтитров {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
-Language for subtitles (can be different from media language).
+Язык субтитров (может отличаться от медиа-языка).
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Параметры**: все языки на официальном сайте Свидетелей Иеговы
 
-**Default**: None
+**По умолчанию**: нет
 
-### Media Export {#settings-guide-media-export}
+### Экспорт файлов {#settings-guide-media-export}
 
-#### Enable Media Auto-Export {#enable-media-auto-export}
+#### Включить автоэкспорт медиа {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-Automatically export media files to a specified folder.
+Автоматически экспортировать медиа-файлы в указанную папку.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-#### Media Export Folder {#media-export-folder}
+#### Экспорт в папку медиа {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
-Folder path where media files will be automatically exported.
+Путь к папке, на которой будут автоматически экспортированы медиа файлы.
 
-**Default**: Empty
+**По умолчанию**: пусто
 
-#### Convert Files to MP4 {#convert-files-to-mp4}
+#### Конвертировать файлы в MP4 {#convert-files-to-mp4}
 
-**Setting**: `convertFilesToMp4`
+**Настройка**: `convertFilesToMp4`
 
-Convert exported media files to MP4 format for better compatibility.
+Конвертируйте экспортированные медиа-файлы в формат MP4 для лучшей совместимости.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-### Danger Zone {#danger-zone}
+### Опасная зона {#danger-zone}
 
-:::warning Warning
+:::warning Предупреждение
 
-These settings should only be changed if you understand their implications.
+Эти настройки должны быть изменены только в том случае, если вы понимаете их последствия.
 
 :::
 
-#### Disable Media Fetching {#disable-media-fetching}
+#### Отключить выборку медиа {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
+Полностью отключить автоматические загрузки медиафайлов. Используйте это только для профилей, которые будут использоваться для специальных событий или других пользовательских настроек.
 
-**Default**: `false`
+**По умолчанию**: `false`
 
-## Tips for Optimal Configuration {#configuration-tips}
+## Советы по оптимальной конфигурации {#configuration-tips}
 
-### For New Users {#new-users}
+### Для новых пользователей {#new-users}
 
-1. Start with the setup wizard to configure basic settings
-2. Enable "Media Display Button" to access presentation features
-3. Configure your meeting schedule accurately
-4. Set up OBS integration if you use hybrid meetings
+1. Начните с мастера настройки базовых настроек
+2. Включите кнопку "Media Display Button" для доступа к функциям презентации
+3. Правильно настройте график встречи
+4. Настройте интеграцию OBS, если вы используете гибридные встречи
 
-### For Advanced Users {#advanced-users}
+### Для продвинутых пользователей {#advanced-users}
 
-1. Use folder monitoring to sync media from cloud storage
-2. Enable media auto-export for backup purposes
-3. Configure keyboard shortcuts for efficient operation
-4. Configure Zoom integration for automatic screen sharing
+1. Использовать мониторинг папок для синхронизации мультимедиа с облачного хранилища
+2. Включить автоэкспорт медиа для резервных копий
+3. Настроить горячие клавиши для эффективной работы
+4. Настроить интеграцию масштабирования для автоматического совместного использования экрана
 
-### Performance Optimization {#performance-optimization}
+### Оптимизация производительности {#performance-optimization}
 
-1. Enable extra cache for better performance
-2. Use appropriate maximum resolution for your needs
-3. Configure cache auto-clear to manage disk space
-4. Consider metered connection setting if on limited bandwidth
+1. Включить дополнительный кэш для лучшей производительности
+2. Используйте соответствующее максимальное разрешение для ваших потребностей
+3. Настройка автоочистки кэша для управления дисковым пространством
+4. Рассмотрим настройку лимита соединения, если на ограниченной пропускной способности
 
-### Troubleshooting {#settings-guide-troubleshooting}
+### Устранение неполадок {#settings-guide-troubleshooting}
 
-- If media isn't downloading, check your meeting schedule settings
-- If OBS integration isn't working, verify port and password settings
-- If performance is slow, try enabling extra cache or reducing resolution
-- If you're having language issues, check both interface and media language settings
-- If Zoom participants can't hear media audio, configure Zoom's Original Audio settings or use "Share Computer Sound"
-- **Tip**: Consider using Zoom integration instead of OBS Studio for simpler audio handling
+- Если медиа-файл не загружается, проверьте настройки расписания встреч
+- Если интеграция OBS не работает, проверьте настройки порта и пароля
+- Если производительность медленно, попробуйте включить дополнительный кэш или уменьшить разрешение
+- Если у вас проблемы с языком, проверьте настройки интерфейса и языка мультимедиа
+- Если участники масштаба не смогут услышать аудио, настройте оригинальные настройки звука Zoom или воспользуйтесь функцией "Поделиться компьютерным звуком"
+- **Подсказка**: Рассмотрим использование интеграции Zoom вместо OBS Studio для упрощения обработки аудио

@@ -167,13 +167,19 @@ export interface SettingsValues {
   autoStartAtLogin: boolean;
   autoStartMusic: boolean;
   baseUrl: string;
+  beginPlaybackPaused: boolean;
   cacheFolder: null | string;
   congregationName: null | string;
   convertFilesToMp4: boolean;
   coWeek: `${number}/${number}/${number}` | null;
+  customEventLastSongShortcut: null | string;
+  customEventMediaPauseShortcut: null | string;
+  customEventMediaPlayShortcut: null | string;
+  customEventMediaStopShortcut: null | string;
   darkMode: 'auto' | boolean;
   disableMediaFetching: boolean;
   enableCacheAutoClear: boolean;
+  enableCustomEvents: boolean;
   enableExtraCache: boolean;
   enableFolderWatcher: boolean;
   enableKeyboardShortcuts: boolean;
@@ -192,6 +198,7 @@ export interface SettingsValues {
   langFallback: JwLangCode | null;
   langSubtitles: JwLangCode | null;
   localAppLang: LanguageValue;
+  localDateFormat: string;
   maxRes: MaxRes;
   mediaAutoExportFolder: string;
   meetingScheduleChangeDate: `${number}/${number}/${number}` | null;

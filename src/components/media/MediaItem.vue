@@ -588,9 +588,7 @@
         <q-btn
           v-if="isImage(mediaPlaying.url) && obsConnectionState === 'connected'"
           :color="currentSceneType === 'media' ? 'negative' : 'primary'"
-          icon="
-                    mmm-picture-for-zoom-participants
-                "
+          icon="mmm-picture-for-zoom-participants"
           rounded
           @click="
             sendObsSceneEvent(currentSceneType === 'media' ? 'camera' : 'media')
@@ -1132,7 +1130,11 @@ const setMediaPlaying = async (
   }
   localFile.value = fileIsLocal();
   mediaPlaying.value = {
-    action: 'play',
+    action:
+      isImage(props.media.fileUrl) ||
+      !currentSettings.value?.beginPlaybackPaused
+        ? 'play'
+        : 'pause',
     currentPosition: 0,
     pan: calculatedPan.value,
     seekTo: 0,

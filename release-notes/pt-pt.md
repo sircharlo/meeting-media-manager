@@ -4,12 +4,30 @@
 
 Para a lista completa de alterações entre versões, consulte o ficheiro CHANGELOG.md no GitHub.
 
+## v25.10.0
+
+### ✨ Novas Funcionalidades
+
+- ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
+- ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
+- ✨ **Custom Events**: Added optional events hooks that can trigger keyboard shortcuts when certain events are detected. This can be useful for AV operators to execute actions automatically outside of the app. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
+
+## v25.9.1
+
+### ✨ Novas Funcionalidades
+
+- ✨ Janela de Multimédia Sempre em Primeiro Plano & Comportamento em Ecrã Inteiro: Corrigido e melhorado o comportamento de manter a janela de média sempre em primeiro plano, ajustando-se dinamicamente consoante o estado de ecrã inteiro.
+- ✨ **Configurações de Formato de Data**: Adicionado uma configuração de usuário para configurar um formato de exibição de data.
+- ✨ **Media Crossfade**: transições de crossfade implementadas para a exibição de mídia, em vez da transição mais brusca para preta que estava presente antes.
+- ✨ **Música AutoStop**: Otimizou o comportamento da música de fundo auto-parar para se comportar da mesma maneira que a música foi auto-iniciada ou não.
+- ✨ **macOS Click-Through no Windows Inativo**: Clique com o mouse habilitado sobre a janela principal para macOS, o que deve tornar mais fácil o controle do aplicativo, mesmo quando ele não está focado.
+
 ## v25.9.0
 
 ### ✨ Novas Funcionalidades
 
-- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
-- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
+- ✨ **Download Popup Enhancements**: Adicionado botão atualizar e baixar o agrupamento por data no pop-up de download.
+- ✨ **Memória da Ordem de Mídia Acompanhada**: Memória da ordem de seção adicionada para itens de mídia assistidos.
 
 ## v25.8.3
 

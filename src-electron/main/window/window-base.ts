@@ -24,7 +24,9 @@ export function closeOtherWindows(source: BrowserWindow) {
       if (win !== source && !win.isDestroyed()) win.close();
     }
   } catch (e) {
-    captureElectronError(e);
+    captureElectronError(e, {
+      contexts: { fn: { name: 'closeOtherWindows' } },
+    });
   }
 }
 

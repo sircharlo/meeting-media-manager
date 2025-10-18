@@ -5,69 +5,25 @@
     @dragover="dropActive"
     @dragstart="dropActive"
   >
-    <!-- <pre>
-      {{
-        selectedDateObject?.mediaSections.map((s) =>
-          s.items?.map((i) => [i.sortOrderOriginal, i.title]),
-        )
-      }}
-    </pre> -->
-    <!-- <pre>Section to add to:   {{ sectionToAddTo }}</pre> -->
-    <div v-if="showBannerColumn" class="col">
-      <q-slide-transition>
-        <div v-if="showObsBanner" class="row">
-          <q-banner
-            class="bg-negative text-white full-width"
-            inline-actions
-            rounded
-          >
-            {{ t('obs-studio-disconnected-banner') }}
+    <div v-if="bannerColumnVisible" class="col">
+      <q-slide-transition v-for="b in pageBanners" :key="b.key">
+        <div class="row">
+          <q-banner :class="b.className" inline-actions rounded>
+            {{ t(b.textKey) }}
             <template #avatar>
-              <q-icon name="mmm-obs-studio" size="lg" />
-            </template>
-          </q-banner>
-        </div>
-      </q-slide-transition>
-      <q-slide-transition>
-        <div v-if="showHiddenItemsBanner" class="row">
-          <q-banner
-            class="bg-warning text-white full-width"
-            inline-actions
-            rounded
-          >
-            {{ t('some-media-items-are-hidden') }}
-            <template #avatar>
-              <q-avatar class="bg-white text-warning" size="lg">
-                <q-icon name="mmm-file-hidden" size="sm" />
+              <q-avatar v-if="b.avatarClass" :class="b.avatarClass" size="lg">
+                <q-icon :name="b.icon" size="sm" />
               </q-avatar>
+              <q-icon v-else :name="b.icon" size="lg" />
             </template>
             <template #action>
               <q-btn
+                v-for="a in b.actions || []"
+                :key="a.labelKey"
                 flat
-                :label="t('show-all-media')"
-                @click="
-                  showHiddenMediaForSelectedDate(
-                    currentCongregation,
-                    selectedDateObject,
-                  )
-                "
+                :label="t(a.labelKey)"
+                @click="a.onClick()"
               />
-            </template>
-          </q-banner>
-        </div>
-      </q-slide-transition>
-      <q-slide-transition>
-        <div v-if="showDuplicateSongsBanner" class="row">
-          <q-banner
-            class="bg-warning text-white full-width"
-            inline-actions
-            rounded
-          >
-            {{ t('some-songs-are-duplicated') }}
-            <template #avatar>
-              <q-avatar class="bg-white text-warning" size="lg">
-                <q-icon name="mmm-music-note" size="sm" />
-              </q-avatar>
             </template>
           </q-banner>
         </div>
@@ -180,6 +136,7 @@ import {
   fetchMedia,
   getMemorialBackground,
 } from 'src/helpers/jw-media';
+import { sendKeyboardShortcut } from 'src/helpers/keyboard-shortcuts';
 import { executeLocalShortcut } from 'src/helpers/keyboardShortcuts';
 import {
   addSection,
@@ -265,7 +222,10 @@ const showFileImport = ref(false);
 const showSectionPicker = ref(false);
 const pendingFiles = ref<(File | string)[]>([]);
 
-// Watch for file import dialog closing to reset progress tracking
+// Banner visibility state for transitions
+const bannerColumnVisible = ref(false);
+
+// Reset progress tracking when file import dialog closes
 watch(
   () => showFileImport.value,
   (isOpen) => {
@@ -521,6 +481,58 @@ const customDuration = computed(() => {
   );
 });
 
+const pageBanners = computed(() => {
+  const banners: {
+    actions?: { labelKey: string; onClick: () => void }[];
+    avatarClass?: string;
+    className: string;
+    icon: string;
+    key: string;
+    textKey: string;
+  }[] = [];
+
+  if (showObsBanner.value) {
+    banners.push({
+      className: 'bg-negative text-white full-width',
+      icon: 'mmm-obs-studio',
+      key: 'obs',
+      textKey: 'obs-studio-disconnected-banner',
+    });
+  }
+
+  if (someItemsHiddenForSelectedDate.value) {
+    banners.push({
+      actions: [
+        {
+          labelKey: 'show-all-media',
+          onClick: () =>
+            showHiddenMediaForSelectedDate(
+              currentCongregation.value,
+              selectedDateObject.value,
+            ),
+        },
+      ],
+      avatarClass: 'bg-white text-warning',
+      className: 'bg-warning text-white full-width',
+      icon: 'mmm-file-hidden',
+      key: 'hidden-items',
+      textKey: 'some-media-items-are-hidden',
+    });
+  }
+
+  if (duplicateSongsForWeMeeting.value) {
+    banners.push({
+      avatarClass: 'bg-white text-warning',
+      className: 'bg-warning text-white full-width',
+      icon: 'mmm-music-note',
+      key: 'duplicate-songs',
+      textKey: 'some-songs-are-duplicated',
+    });
+  }
+
+  return banners;
+});
+
 watch(
   () => [mediaPlaying.value.url, customDuration.value],
   ([newUrl, newCustomDuration], [oldUrl, oldCustomDuration]) => {
@@ -611,7 +623,114 @@ watch(
     [newMediaPlaying, newMediaPaused, newMediaPlayingUrl],
     [, , oldMediaPlayingUrl],
   ) => {
-    // Clear any existing timeout
+    console.log('🔄 [MediaCalendarPage] Media state watcher triggered:', {
+      enableCustomEvents: currentSettings.value?.enableCustomEvents,
+      newMediaPaused,
+      newMediaPlaying,
+      newMediaPlayingUrl,
+      oldMediaPlayingUrl,
+    });
+
+    // Custom integration events
+    if (currentSettings.value?.enableCustomEvents) {
+      console.log('🔄 [CustomEvents] Custom events enabled');
+
+      if (newMediaPlaying && !oldMediaPlayingUrl) {
+        // Media started playing (from nothing to something)
+        if (currentSettings.value?.customEventMediaPlayShortcut) {
+          console.log(
+            '🔄 [CustomEvents] Sending media play event shortcut:',
+            currentSettings.value?.customEventMediaPlayShortcut,
+          );
+          sendKeyboardShortcut(
+            currentSettings.value?.customEventMediaPlayShortcut,
+            'CustomEvents',
+          );
+        }
+      } else if (newMediaPaused && newMediaPlayingUrl) {
+        // Media paused
+        if (currentSettings.value?.customEventMediaPauseShortcut) {
+          console.log(
+            '🔄 [CustomEvents] Sending media pause event shortcut:',
+            currentSettings.value?.customEventMediaPauseShortcut,
+          );
+          sendKeyboardShortcut(
+            currentSettings.value?.customEventMediaPauseShortcut,
+            'CustomEvents',
+          );
+        }
+      } else if (!newMediaPlaying && oldMediaPlayingUrl) {
+        // Media stopped (from something to nothing)
+        if (currentSettings.value?.customEventMediaStopShortcut) {
+          console.log(
+            '🔄 [CustomEvents] Sending media stop event shortcut:',
+            currentSettings.value?.customEventMediaStopShortcut,
+          );
+          sendKeyboardShortcut(
+            currentSettings.value?.customEventMediaStopShortcut,
+            'CustomEvents',
+          );
+        }
+
+        if (currentSettings.value?.customEventLastSongShortcut) {
+          // Since the shortcut is set, check if this was the last song in the meeting
+          if (selectedDateObject.value?.meeting && oldMediaPlayingUrl) {
+            // This is a meeting day and something was playing before
+            console.log(
+              '🔄 [CustomEvents Verbose] Checking if the last played media item was the last song in the meeting',
+            );
+
+            // Check if the stopped media was a song and if it's the last one
+            const allSongs: MediaItem[] = [];
+            if (selectedDateObject.value.mediaSections) {
+              Object.values(selectedDateObject.value.mediaSections).forEach(
+                (section) => {
+                  if (section.items) {
+                    section.items.forEach((item) => {
+                      if (item.tag?.type === 'song' && !item.hidden) {
+                        allSongs.push(item);
+                      }
+                    });
+                  }
+                },
+              );
+            }
+
+            console.log(
+              '🔄 [CustomEvents Verbose] Total songs found in meeting:',
+              allSongs.length,
+            );
+
+            // Check if the stopped media was the last song
+            const lastSongUrl =
+              allSongs[allSongs.length - 1]?.fileUrl ||
+              allSongs[allSongs.length - 1]?.streamUrl;
+            const stoppedWasLastSong =
+              allSongs.length > 0 && lastSongUrl === oldMediaPlayingUrl;
+
+            console.log(
+              '🔄 [CustomEvents Verbose] Last song detection variables:',
+              {
+                lastSongUrl,
+                oldMediaPlayingUrl,
+                stoppedWasLastSong,
+              },
+            );
+
+            if (stoppedWasLastSong) {
+              console.log(
+                '🔄 [CustomEvents] Sending last song played event shortcut:',
+              );
+              sendKeyboardShortcut(
+                currentSettings.value?.customEventLastSongShortcut,
+                'CustomEvents',
+              );
+            }
+          }
+        }
+      }
+    }
+
     if (mediaSceneTimeout) {
       clearTimeout(mediaSceneTimeout);
       mediaSceneTimeout = null;
@@ -624,6 +743,9 @@ watch(
       typeof newMediaPlayingUrl === 'string' &&
       isImage(newMediaPlayingUrl)
     ) {
+      console.log(
+        '🔄 [MediaCalendarPage] OBS image postponement active, skipping scene change',
+      );
       return;
     }
 
@@ -634,18 +756,34 @@ watch(
         : 'camera';
     const wasPlayingBefore = !!oldMediaPlayingUrl;
 
+    console.log('🔄 [MediaCalendarPage] OBS scene decision:', {
+      newMediaPaused,
+      newMediaPlaying,
+      oldMediaPlayingUrl,
+      targetScene,
+      wasPlayingBefore,
+    });
+
     if (targetScene === 'media') {
       if (wasPlayingBefore) {
         // If something was playing before, we change the scene immediately
+        console.log(
+          '🔄 [MediaCalendarPage] Switching to media scene immediately',
+        );
         sendObsSceneEvent('media');
       } else {
         // If nothing was already playing, we wait a bit before changing the scene to prevent seeing the fade effect in OBS
+        console.log('🔄 [MediaCalendarPage] Waiting for scene change delay');
         mediaSceneTimeout = setTimeout(() => {
+          console.log(
+            '🔄 [MediaCalendarPage] Executing delayed media scene change',
+          );
           sendObsSceneEvent('media');
           mediaSceneTimeout = null;
         }, changeDelay);
       }
     } else {
+      console.log('🔄 [MediaCalendarPage] Switching to camera scene');
       sendObsSceneEvent('camera');
     }
   },
@@ -666,7 +804,11 @@ watch(
       )
         return;
       createTemporaryNotification({
-        caption: getLocalDate(errorVal, dateLocale.value),
+        caption: getLocalDate(
+          errorVal,
+          dateLocale.value,
+          currentSettings.value?.localDateFormat,
+        ),
         group: 'meetingMediaDownloadError',
         icon: 'mmm-error',
         message: t('errorDownloadingMeetingMedia'),
@@ -1537,19 +1679,12 @@ const updateMediaSectionLabel = ({
 };
 
 // Computed conditions
+
 const showObsBanner = computed(
   () =>
     currentSettings.value?.obsEnable &&
     ['disconnected', 'notConnected'].includes(obsConnectionState.value) &&
     selectedDateObject.value?.today,
-);
-
-const showHiddenItemsBanner = computed(
-  () => someItemsHiddenForSelectedDate.value,
-);
-
-const showDuplicateSongsBanner = computed(
-  () => duplicateSongsForWeMeeting.value,
 );
 
 const showEmptyState = computed(() => {
@@ -1573,12 +1708,29 @@ const showEmptyState = computed(() => {
   );
 });
 
-const showBannerColumn = computed(
+// Banner column management for transitions
+const shouldShowBannerColumn = computed(
   () =>
     showObsBanner.value ||
-    showHiddenItemsBanner.value ||
-    showDuplicateSongsBanner.value ||
+    someItemsHiddenForSelectedDate.value ||
+    duplicateSongsForWeMeeting.value ||
     showEmptyState.value,
+);
+
+// Watch for banner column changes and manage visibility for transitions
+watch(
+  shouldShowBannerColumn,
+  (shouldShow) => {
+    if (shouldShow) {
+      bannerColumnVisible.value = true;
+    } else {
+      // Delay hiding to allow transition to complete
+      setTimeout(() => {
+        bannerColumnVisible.value = false;
+      }, 300); // Match transition duration
+    }
+  },
+  { immediate: true },
 );
 
 const mediaLists = computed(() => {

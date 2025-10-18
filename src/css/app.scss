@@ -515,14 +515,16 @@ body.body--dark {
   color: $apply;
 }
 
+.bg-circuit-overseer,
 .bg-imported-media,
 .bg-pt,
-.bg-circuit-overseer,
 .bg-website {
   background: $additional;
 }
 
 .text-circuit-overseer,
+.text-imported-media,
+.text-pt,
 .text-website {
   color: $additional;
 }
@@ -611,7 +613,7 @@ a {
   max-width: 450px;
   width: 50vw;
   min-width: 400px;
-  max-height: 400px;
+  max-height: 600px;
 }
 
 .media-tag {

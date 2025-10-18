@@ -102,7 +102,7 @@
         <q-pagination
           v-model="currentPage"
           active-color="primary"
-          color="grey"
+          color="secondary"
           direction-links
           flat
           :max="Math.ceil(remoteVideosFiltered.length / videosPerPage)"

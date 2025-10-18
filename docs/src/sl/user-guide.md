@@ -1,44 +1,44 @@
-# User Guide {#user-guide}
+# Uporabniški priročnik {#user-guide}
 
-This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
+Ta izčrpen uporabniški priročnik ti bo pomagal osvojiti vse funkcije M³, od osnovne nastavitve do naprednih tehnik predstavitve multimedijske vsebine.
 
-## Getting Started {#getting-started}
+## Začetek {#getting-started}
 
-### First Launch {#first-launch}
+### Prvi zagon {#first-launch}
 
-When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
+Ko boš prvič zagnal M³, te bo vodil čarovnik za nastavitev, ki bo nastavil bistvene nastavitve za vašo občino:
 
-1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
-2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
-3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
-4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
-5. **Optional features** - Configure OBS integration, background music, and other advanced features
+1. **Izberi jezik vmesnika** – to določa, v katerem jeziku se bodo prikazovali meniji in gumbi v M³.
+2. **Izberi vrsto profila** – izberi »Običajno« za običajno občinsko uporabo ali »Drugo« za posebne dogodke.
+3. **Nastavi občinske podatke** - vnesi podatke o vaši občini ali uporabi funkcijo samodejnega iskanja.
+4. **Nastavi urnik shodov** – nastavi urnik shodov med tednom in ob koncu tedna.
+5. **Izbirne funkcije** – nastavi povezovanje s programom OBS, glasbo v ozadju in druge napredne funkcije.
 
 :::tip Namig
 
-Take your time during setup - but you can always change these settings later in the Settings menu.
+Vzemi si čas za nastavitev – vseeno pa lahko te nastavitve kadar koli spremeniš v meniju Nastavitve.
 
 :::
 
-### Main Interface Overview {#main-interface}
+### Pregled glavnega vmesnika {#main-interface}
 
-The main M³ interface consists of several key areas:
+Glavni vmesnik M³ je sestavljen iz več ključnih področij:
 
-- **Navigation Drawer** - Access different sections and settings
-- **Calendar View** - Browse media by date
-- **Media List** - View and manage media for selected dates
-- **Toolbar** - Quick access to common functions
-- **Status Bar** - Shows download progress, and background music and OBS Studio connection status
+- **Navigacijski predal** - dostop do različnih razdelkov in nastavitev
+- **Koledarski pogled** - brskanje po multimedijski vsebini po datumu
+- **Seznam multimedijske vsebine** - ogled in upravljanje multimedijske vsebine za izbrane datume
+- **Orodna vrstica** - hiter dostop do običajnih funkcij
+- **Vrstica stanja** - prikazuje potek prenosa in glasbo v ozadju ter stanje povezave s programom OBS Studio
 
-## Media Management {#user-guide-media-management}
+## Upravljanje multimedijske vsebine {#user-guide-media-management}
 
-### Understanding the Calendar View {#calendar-view}
+### Razumevanje pogleda koledarja {#calendar-view}
 
-The calendar view shows your meeting schedule and available media:
+V pogledu koledarja so prikazani urnik shodov in razpoložljiva multimedijska vsebina:
 
-- **Meeting Days** - Highlighted days show when meetings are scheduled
-- **Media Indicators** - Icons show what types of media are available
-- **Date Navigation** - Use arrow keys to navigate between months
+- **Dnevi shodov** - označeni dnevi kažejo, kdaj so na razporedu shodi.
+- **Indikatorji multimedijske vsebine** - ikone prikazujejo, katera vrsta multimedijske vsebine je na voljo.
+- **Navigacija po datumu** - za premikanje med meseci uporabi smerne tipke.
 
 <!-- ### Downloading Media {#downloading-media}
 
@@ -48,30 +48,30 @@ Download speed depends on your internet connection and the size of media files. 
 
 ::: -->
 
-### Organizing Media {#organizing-media}
+### Organiziranje multimedijske vsebine {#organizing-media}
 
-M³ automatically organizes media by meeting type and section:
+M³ samodejno organizira multimedijsko vsebino glede na vrsto shoda in razdelek:
 
-- **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
-- **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
+- **Deli shodov** - multimedijska vsebina je razvrščena po delih shoda (javni govor, Zakladi iz Božje Besede itd.).
+- **Deli po meri** - ustvarite lahko dele po meri za dodatne multimedijsko vsebino, če na določen dan ni načrtovan noben shod.
 
-## Media Presentation {#media-presentation}
+## Predvajanje multimedijske vsebine {#media-presentation}
 
-### Opening the Media Player {#opening-media-player}
+### Odpiranje multimedijskega predvajalnika {#opening-media-player}
 
-To present media during a meeting:
+Za predvajanje multimedijske vsebine med shodom:
 
-1. Select the date and media item you want to present
-2. Click the play button or use the keyboard shortcut
-3. The media will start playing on the media display
-4. Use the controls to play, pause, or navigate through media
+1. Izberi datum in multimedijsko vsebino, ki jo želiš predstaviti.
+2. Klikni gumb za predvajanje ali uporabi bližnjico na tipkovnici.
+3. Multimedijska vsebina se bo začela predvajati na multimedijskem zaslonu.
+4. Za predvajanje, začasno zaustavitev ali premikanje po multimedijski vsebini uporabi upravljalne elemente.
 
-### Media Player Controls {#media-player-controls}
+### Nadzor multimedijskega predvajalnika {#media-player-controls}
 
-The media player provides comprehensive controls:
+Multimedijski predvajalnik omogoča celovito upravljanje:
 
-- **Play/Pause** - Start or pause media playback
-- **Stop** - Stop playback
+- **Predvajanje/premor** - začetek ali začasna prekinitev predvajanja multimedijske datoteke
+- **Stop** - zaustavitev predvajanja
 
 <!-- - **Previous/Next** - Navigate between media items
 - **Volume** - Adjust playback volume -->

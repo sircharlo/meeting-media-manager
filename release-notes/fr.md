@@ -4,12 +4,30 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
+## v25.10.0
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Démarrer la lecture en mode pause** : Ajout d'un nouveau paramètre permettant de démarrer la lecture en mode pause, ce qui peut être utile aux opérateurs audiovisuels, afin qu'ils puissent se préparer (par exemple, démarrer le partage Zoom) avant que le média ne commence à être lu dans la fenêtre multimédia.
+- ✨ **Notifications de mise à jour** : Les utilisateurs seront désormais informés des mises à jour via une bannière intégrée à l'application, qui leur permettra également d'installer les mises à jour immédiatement, sans avoir à attendre le prochain redémarrage de l'application.
+- ✨ **Événements personnalisés** : Ajout d'un système d'événements pouvant déclencher des raccourcis clavier lorsque certains événements sont détectés. Cela peut être utile pour les opérateurs audiovisuels afin d'exécuter automatiquement des actions en dehors de l'application. Par exemple, des lumières intelligentes pourraient être allumées et éteintes avant et après la lecture de médias dans les auditoriums où des projecteurs sont utilisés ; ou bien un script pourrait être lancé après la lecture du dernier cantique d'une réunion afin d'automatiser diverses actions dans une réunion Zoom.
+
+## v25.9.1
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Comportement de la fenêtre multimédia** : correction et amélioration du comportement « toujours au premier plan » de la fenêtre multimédia, qui s'ajuste désormais dynamiquement en fonction du mode plein écran.
+- ✨ **Paramètre d'affichage de la date** : ajout d'un paramètre utilisateur permettant de configurer le format d'affichage de la date.
+- ✨ **Transition en fondu enchaîné pour les médias** : mise en place de transitions en fondu enchaîné pour l'affichage des médias, au lieu de la transition plus brusque qui était présente auparavant.
+- ✨ **Arrêt automatique de la musique** : Optimisation du comportement de l'arrêt automatique de la musique de fond afin qu'il se comporte de la même manière, que la musique ait été lancée automatiquement ou non.
+- ✨ **Clics sur les fenêtres inactives sous macOS** : désormais, les clics de souris sont pris en charge dans la fenêtre principale sous macOS même si elle n'est pas au premier plan, ce qui devrait faciliter le contrôle de l'application.
+
 ## v25.9.0
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
-- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
+- ✨ **Améliorations de la fenêtre contextuelle de téléchargements** : Ajout d'un bouton d'actualisation et regroupement des téléchargements par date dans la fenêtre contextuelle de téléchargements.
+- ✨ **Mémorisation de l'ordre des médias** : Ajout de la mémorisation de l'ordre des éléments multimédias de dossiers surveillés.
 
 ## v25.8.3
 

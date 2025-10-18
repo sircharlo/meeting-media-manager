@@ -1,18 +1,18 @@
-# Settings Guide {#settings-guide}
+# Instellingen Gids {#settings-guide}
 
-This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+Deze uitgebreide gids legt alle instellingen uit die beschikbaar zijn in M³, georganiseerd per categorie. Het begrijpen van deze instellingen zal je helpen om M³ perfect te configureren voor de behoeften van je gemeente.
 
-## Application Configuration {#application-configuration}
+## Applicatie Configuratie {#application-configuration}
 
-### Display Language {#display-language}
+### Weergave Taal {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Choose the language for M³'s interface. This is independent of the language used for media downloads.
+Kies de taal voor de interface van M³. Dit is onafhankelijk van de taal die wordt gebruikt voor media downloads.
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+**Opties**: Alle beschikbare interface talen (English, Spanish, French, etc.)
 
-**Default**: English
+**Standaard**: Engels
 
 ### Dark Mode {#dark-mode}
 

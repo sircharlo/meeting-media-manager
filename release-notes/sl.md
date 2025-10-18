@@ -4,12 +4,30 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
+## v25.10.0
+
+### ✨ Nove funkcije
+
+- ✨ **Začni predvajanje v začasno ustavljenem načinu**: Dodana je nova nastavitev, ki omogoča začetek predvajanja v začasno ustavljenem načinu, kar je lahko koristno za AV upravljavce, da pripravijo vse potrebno (na primer začetek deljenja Zooma) pred začetkom predvajanja multimedijske vsebine.
+- ✨ **Obvestila o posodobitvah**: Uporabniki bodo odslej obveščeni o posodobitvah prek pasice v aplikaciji, ki jim bo omogočila tudi takojšnjo namestitev posodobitev, namesto da bi morali čakati na naslednji zagon aplikacije.
+- ✨ **Dogodki po meri**: Dodani so bili izbirni dogodki, ki lahko sprožijo bližnjice na tipkovnici, ko se zaznajo določeni dogodki. To je lahko koristno za AV upravljavce, da lahko dejanja izvajajo samodejno zunaj aplikacije. Na primer, pametne luči se lahko vklopijo in izklopijo pred in po predvajanju multimedijske vsebine v dvoranah, kjer se uporabljajo projektorji; ali pa se po predvajanju zadnje pesmi na shodu lahko zažene program, ki avtomatizira različne postopke na videokonferenci v Zoomu.
+
+## v25.9.1
+
+### ✨ Nove funkcije
+
+- ✨ **Multimedijsko okno vedno na vrhu in delovanje v polnem zaslonu**: Popravljeno in izboljšano delovanje mulzimedijskega okna, ki je vedno na vrhu, in se dinamično prilagaja glede na stanje polnega zaslona.
+- ✨ **Nastavitev formata prikaza datuma**: Dodana je bila uporabniška nastavitev za konfiguracijo formata prikaza datuma.
+- ✨ **Prehod med multimedijsko vsebino**: Namesto ostrega prehoda v črno se zdaj uporablja prelivanje za bolj prijeten vizualni učinek.
+- ✨ **Samodejno ustavljanje glasbe**: Optimizirano delovanje samodejnega ustavljanja glasbe v ozadju, da se obnaša enako, ne glede na to, ali je bila glasba samodejno zagnana ali ne.
+- ✨ \*\*Podpora za klike skozi neaktivna okna v macOS \*\*: Glavno okno aplikacije zdaj sprejema miškine klike tudi, ko ni aktivno, kar omogoča bolj tekoče upravljanje.
+
 ## v25.9.0
 
 ### ✨ Nove funkcije
 
-- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
-- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
+- ✨ **Izboljšave pojavnega okna za prenose**: Dodan gumb za osvežitev in razvrščanje prenosov po datumu v pojavnem oknu za prenose.
+- ✨ **Pomnjenje vrstnega reda ogledane multimedijske vsebine**: Dodano pomnjenje vrstnega reda razdelkov za že ogledano multimedijsko vsebino.
 
 ## v25.8.3
 

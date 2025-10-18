@@ -51,7 +51,11 @@
               :icon="getStatusIcon(dateKey)"
               :icon-color="getStatusColor(dateKey)"
               :label="
-                getLocalDate(dateKey, dateLocale) ||
+                getLocalDate(
+                  dateKey,
+                  dateLocale,
+                  currentSettings?.localDateFormat,
+                ) ||
                 dateKey ||
                 t('unknown-date')
               "
@@ -65,7 +69,11 @@
                   <div class="col">
                     <q-item-section>
                       <q-item-label>{{
-                        getLocalDate(dateKey, dateLocale) ||
+                        getLocalDate(
+                          dateKey,
+                          dateLocale,
+                          currentSettings?.localDateFormat,
+                        ) ||
                         dateKey ||
                         t('unknown-date')
                       }}</q-item-label>
@@ -155,7 +163,7 @@ const open = defineModel<boolean>({ default: false });
 
 const currentState = useCurrentStateStore();
 const jwStore = useJwStore();
-const { downloadProgress } = storeToRefs(currentState);
+const { currentSettings, downloadProgress } = storeToRefs(currentState);
 
 const getBasename = (filename: string) => {
   if (!filename) return '';
@@ -203,6 +211,20 @@ const errorTooltipText = (item: { meetingDate?: string }) => {
   } catch {
     return `${t('errorDownloadingMeetingMedia')}. ${t('tryConfiguringFallbackLanguage')}.`;
   }
+};
+
+const getDateStatus = (dateKey: string) => {
+  const group = groupedByDate.value[dateKey];
+  if (!group || group.length === 0) return 'none';
+
+  const hasError = group.some((item) => item.error);
+  const hasLoading = group.some((item) => !item.complete && !item.error);
+  const allComplete = group.every((item) => item.complete);
+
+  if (hasError) return 'error';
+  if (hasLoading) return 'loading';
+  if (allComplete) return 'complete';
+  return 'none';
 };
 
 const shouldAutoOpen = (dateKey: string) => {
@@ -300,21 +322,6 @@ const progressValue = (item: { loaded?: number; total?: number }) =>
 const showProgress = (item: { loaded?: number; total?: number }) =>
   item.loaded && item.total;
 
-// New functions for expansion item logic
-const getDateStatus = (dateKey: string) => {
-  const group = groupedByDate.value[dateKey];
-  if (!group || group.length === 0) return 'none';
-
-  const hasError = group.some((item) => item.error);
-  const hasLoading = group.some((item) => !item.complete && !item.error);
-  const allComplete = group.every((item) => item.complete);
-
-  if (hasError) return 'error';
-  if (hasLoading) return 'loading';
-  if (allComplete) return 'complete';
-  return 'none';
-};
-
 const getStatusIcon = (dateKey: string) => {
   const status = getDateStatus(dateKey);
   switch (status) {
@@ -339,7 +346,7 @@ const getStatusColor = (dateKey: string) => {
     case 'loading':
       return 'primary';
     default:
-      return 'grey';
+      return 'secondary';
   }
 };
 

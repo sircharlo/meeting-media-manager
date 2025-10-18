@@ -20,7 +20,7 @@
 >
 > 从本网站收集、翻印、下载、撷取或采集数据、HTML、图像或文字，并制作应用程序、工具或技术，向公众分发 （**不限**本网站设计的非营利应用程序，提供大众免费下载电子档，如EPUB、PDF、MP3和MP4）。
 
-### :question: What operating systems does M³ support? {#operating-systems}
+### :question: M³支持哪些OS？ {#operating-systems}
 
 M³ 支持Windows，macOS和Linux：
 
@@ -38,40 +38,44 @@ M³ 支持Windows，macOS和Linux：
 
 ## 安装和设置 {#installation-setup}
 
-### :computer: How do I install M³? {#installation}
+### :inbox_tray: 下载 M³ {#download}
 
-Download the appropriate version for your operating system from the [releases page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and follow the installation instructions in the [setup guide](/using-at-a-kingdom-hall#download-and-install).
+从 [发布页面](https://github.com/sircharlo/meeting-media-manager/releases/latest)下载您操作系统的适当版本。
 
-### :gear: How do I set up M³ for the first time? {#first-time-setup}
+### :computer: 如何安装 M³？ {#installation}
 
-M³ includes a setup wizard that guides you through the essential configuration:
+从 [发布页面](https://github.com/sircharlo/meeting-media-manager/releases/latest) 下载您操作系统的适当版本，并遵循 [设置指南](/using-at-a-kingdom-hall#download-and-install) 中的安装说明。
 
-1. Choose your interface language
-2. Select profile type (Regular or Other)
-3. Configure congregation information
-4. Set up meeting schedule
-5. Configure optional features like OBS integration
+### :gear: 如何进行 M³ 初始设置？ {#first-time-setup}
 
-## Media Management {#faq-media-management}
+M³ 包含一个引导您完成基本配置的安装向导：
 
-### :download: How does M³ download media? {#media-download}
+1. 选择你的界面语言
+2. 选择配置文件类型（正规或其他）
+3. 配置聚合信息
+4. 设置聚会时间
+5. 配置可选功能，如OBS集成
 
-M³ automatically downloads media for upcoming meetings by:
+## 媒体管理 {#faq-media-management}
 
-1. Checking your meeting schedule
-2. Determining what media is needed
-3. Downloading from the official website of Jehovah's Witnesses in your selected language
-4. Organizing media by date and meeting type
-5. Caching files for offline use
+### :download: M³ 如何下载媒体？ {#media-download}
 
-### :calendar: Can I download media for specific dates? {#specific-dates}
+M³ 自动下载聚会媒体的方法包括：
 
-Yes! M³ allows you to:
+1. 检查您的聚会时间
+2. 决定需要什么媒体
+3. 从耶和华见证会官方网站下载你所选语言的资料
+4. 按日期和聚会类型编排媒体
+5. 缓存文件供离线使用
 
-- Download media for upcoming meetings automatically
-- Import custom media for any date
+### :calendar: 我可以下载特定日期的媒体吗？ {#specific-dates}
 
-### :folder: How do I import my own media files? {#import-media}
+是! M3 允许您：
+
+- 自动下载即将举行的聚会媒体
+- 导入任何日期的自定义媒体
+
+### :folder: 如何导入我自己的媒体文档？ {#import-media}
 
 You can import custom media in several ways:
 
@@ -82,7 +86,7 @@ You can import custom media in several ways:
 
 ### :speaker: Can I import audio Bible recordings? {#audio-bible}
 
-Yes! M³ includes an Audio Bible feature that allows you to:
+是! M³ includes an Audio Bible feature that allows you to:
 
 1. Select Bible books and chapters
 2. Choose specific verses or verse ranges
@@ -179,7 +183,7 @@ Media auto-export automatically:
 
 ### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
 
-Yes! M³ supports multiple profiles for:
+是! M³ supports multiple profiles for:
 
 - Different congregations
 - Special events
@@ -298,7 +302,7 @@ Typical usage ranges from 2-10GB depending on settings and usage.
 
 ### :shield: Is M³ secure and private? {#security-privacy}
 
-Yes! M³ is designed with security and privacy in mind:
+是! M³ is designed with security and privacy in mind:
 
 - **Local Storage**: All meeting data is stored locally on your computer
 - **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses

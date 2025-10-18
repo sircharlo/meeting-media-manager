@@ -234,11 +234,21 @@
       size="xs"
     />
     <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
-      {{ getLocalDate(selectedDate, dateLocale) || t('select-a-date') }}
+      {{
+        getLocalDate(
+          selectedDate,
+          dateLocale,
+          currentSettings?.localDateFormat,
+        ) || t('select-a-date')
+      }}
     </q-tooltip>
     {{
       $q.screen.gt.xs
-        ? getLocalDate(selectedDate, dateLocale) || t('select-a-date')
+        ? getLocalDate(
+            selectedDate,
+            dateLocale,
+            currentSettings?.localDateFormat,
+          ) || t('select-a-date')
         : ''
     }}
     <q-popup-proxy v-model="datePickerActive" :offset="[0, 11]">

@@ -8,6 +8,9 @@ hero:
   image: /logo.svg
   actions:
     - theme: brand
+      text: Ladda ned
+      link: https://github.com/sircharlo/meeting-media-manager/releases/latest
+    - theme: brand
       text: Om
       link: /sv/about
     - theme: brand
@@ -19,7 +22,6 @@ hero:
     - theme: brand
       text: Vanliga frågor (FAQ)
       link: /sv/faq
-
 features:
   - icon: 🚀
     title: Automatisk mediahantering
