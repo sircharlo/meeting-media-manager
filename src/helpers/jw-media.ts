@@ -1488,31 +1488,6 @@ export const dynamicMediaMapper = async (
           : 0;
     }
 
-    // For weekend meetings, find the song with the highest paragraph ordinal and move it to the end
-    if (!isMwMeetingDay(lookupDate)) {
-      const songs = allMedia.filter((m) => isSong(m));
-      if (songs.length >= 2) {
-        // Find the song with the highest paragraph ordinal
-        const lastSong = songs.reduce((highest, current) => {
-          return (current.BeginParagraphOrdinal || 0) >
-            (highest.BeginParagraphOrdinal || 0)
-            ? current
-            : highest;
-        });
-
-        // Give it a much higher paragraph ordinal to ensure it appears at the end
-        const maxParagraphOrdinal = Math.max(
-          ...allMedia.map((m) => m.BeginParagraphOrdinal || 0),
-        );
-        lastSong.BeginParagraphOrdinal = maxParagraphOrdinal + 1000;
-
-        console.log('🔍 [WE] Moved last song to end:', {
-          newParagraphOrdinal: lastSong.BeginParagraphOrdinal,
-          originalParagraphOrdinal: lastSong.BeginParagraphOrdinal - 1000,
-          title: lastSong.Label || lastSong.Caption,
-        });
-      }
-    }
     const mediaPromises = allMedia.map(async (m, index): Promise<MediaItem> => {
       m.FilePath = await convertImageIfNeeded(m.FilePath);
       const pubMediaId = (
@@ -2020,9 +1995,20 @@ export const getWeMedia = async (lookupDate: Date) => {
           LIMIT 2`,
       );
     } else {
-      songs = videosNotInParagraphs
-        .filter((item) => item.BeginPosition)
-        .slice(0, 2); // after FEB_2023, the first two videos from DocumentMultimedia are the songs
+      if (!videosNotInParagraphs?.length) {
+        songs = [];
+      } else {
+        const sortedVideos = videosNotInParagraphs.sort(
+          (a, b) => (a.MultimediaId || 0) - (b.MultimediaId || 0),
+        );
+        if (sortedVideos.length <= 2) {
+          songs = sortedVideos;
+        } else {
+          const firstVideo = sortedVideos[0];
+          const lastVideo = sortedVideos[sortedVideos.length - 1];
+          songs = [firstVideo, lastVideo].filter((v) => !!v);
+        }
+      }
     }
 
     let songLangs: ('' | JwLangCode)[] = [];
@@ -2060,13 +2046,11 @@ export const getWeMedia = async (lookupDate: Date) => {
         ...song,
         ...(songLangs[index] ? { AlternativeLanguage: songLangs[index] } : {}),
       }))
-      .sort(
-        (a, b) =>
-          (a.BeginParagraphOrdinal ?? 0) - (b.BeginParagraphOrdinal ?? 0),
-      );
+      .sort((a, b) => (a.MultimediaId || 0) - (b.MultimediaId || 0));
 
     const allMedia = finalMedia;
     if (mergedSongs[0]) {
+      mergedSongs[0].BeginParagraphOrdinal = 0;
       const index0 = allMedia.findIndex(
         (item) =>
           item.Track === mergedSongs[0]?.Track &&
@@ -2080,6 +2064,7 @@ export const getWeMedia = async (lookupDate: Date) => {
       }
 
       if (mergedSongs[1]) {
+        mergedSongs[1].BeginParagraphOrdinal = 2000;
         const index1 = allMedia.findIndex(
           (item) =>
             item.Track === mergedSongs[1]?.Track &&
