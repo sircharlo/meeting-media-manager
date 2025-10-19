@@ -64,23 +64,6 @@
   padding-right: 10px;
 }
 
-::-webkit-scrollbar {
-  width: 0.5em;
-  border-radius: 1em;
-}
-::-webkit-scrollbar-thumb {
-  border-radius: 1em;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-  border-radius: 1em;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  cursor: grab;
-}
-
 .dotted-borders {
   border: 1px dashed $accent-300;
 }
@@ -112,6 +95,7 @@ span.etitle {
 
 body.body--light {
   background: $primary-bg;
+  scrollbar-color: $scrollbar-thumb-inactive $scrollbar-track-inactive;
 
   .bg-primary-light {
     background-color: $primary-bg;
@@ -169,11 +153,6 @@ body.body--light {
     background: white;
     border-color: $accent-300;
     border: 1px solid $accent-300;
-    // & .q-list {
-    //   & .q-item {
-    //     // margin-left: 0.25em;
-    //   }
-    // }
 
     & .q-item.selected-to-drag {
       background-color: $accent-200;
@@ -184,17 +163,14 @@ body.body--light {
     background-color: $secondary-contrast;
   }
 
-  ::-webkit-scrollbar-track {
-    background: $scrollbar-track;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: $scrollbar-thumb;
+  &:hover {
+    scrollbar-color: $scrollbar-thumb-active $scrollbar-track-active;
   }
 }
 
 body.body--dark {
   background: $primary-bg-dark;
+  scrollbar-color: $scrollbar-thumb-dark-inactive $scrollbar-track-dark-inactive;
 
   .bg-primary-light {
     background-color: $primary-bg-dark;
@@ -269,12 +245,8 @@ body.body--dark {
     background-color: $accent-300-dark;
   }
 
-  ::-webkit-scrollbar-track {
-    background: $scrollbar-track-dark;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: $scrollbar-thumb-dark;
+  &:hover {
+    scrollbar-color: $scrollbar-thumb-dark-active $scrollbar-track-dark-active;
   }
 
   .media-children {
