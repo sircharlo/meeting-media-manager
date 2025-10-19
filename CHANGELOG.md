@@ -4,6 +4,35 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v25.10.1
+
+### ✨ New Features
+
+- ✨ **Setup Wizard – Zoom Step**: Added a Zoom integration step to the setup wizard for easier initial configuration.
+- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. This makes it easier to choose the correct screen on which the media window should be displayed.
+- ✨ **Media Window Preference**: The app will now remember the preferred screen on which the media window should be displayed, if specified by the user.
+
+### 🛠️ Improvements and Tweaks
+
+- 🐞 **Update Banner**: The update banner was not showing for users with automatic updates enabled. This was changed for consistency.
+- 🛠️ **Banners**: Simplified in-app/announcements banners for a cleaner experience.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Public Talk Additional Media Button**: Fixed color not being applied in some cases.
+- 🐞 **Audio Bible Listing**: Prevent HTML entities from appearing in Bible book names.
+- 🐞 **Smart Cache Clearing**: Fixed cases where the S-34mp could be deleted during smart cache clear causing issues until app restart.
+- 🐞 **Icons**: Fixed missing code in some icons.
+
+### 📚 Documentation & Localization
+
+- 📚 **English Strings**: Fixed a few English strings.
+- 📚 **Docs Links**: Fixed broken documentation links.
+
+### 🔧 Chores
+
+- 🔧 **Dependencies**: Pinned Electron version to work around a window resize bug ([electron#48576](https://github.com/electron/electron/issues/48576)).
+
 ## v25.10.0
 
 ### ✨ New Features
