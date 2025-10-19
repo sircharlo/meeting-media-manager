@@ -68,7 +68,6 @@
 <script setup lang="ts">
 import type { Announcement, AnnouncementAction } from 'src/types';
 
-import { useEventListener } from '@vueuse/core';
 import { useQuasar } from 'quasar';
 import { localeOptions } from 'src/i18n';
 import { fetchAnnouncements, fetchLatestVersion } from 'src/utils/api';
@@ -76,7 +75,7 @@ import { updatesDisabled } from 'src/utils/fs';
 import { getPreviousVersion, isVersionWithinBounds } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, ref, watchEffect } from 'vue';
+import { computed, onMounted, ref, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const $q = useQuasar();
@@ -126,14 +125,15 @@ const loadAnnouncements = async () => {
 const showAutoUpdateAvailableBanner = ref(false);
 const showAutoUpdateDownloadedBanner = ref(false);
 
-useEventListener(window, 'update-available', () => {
-  showAutoUpdateAvailableBanner.value = true;
-  showAutoUpdateDownloadedBanner.value = false;
-});
-
-useEventListener(window, 'update-downloaded', () => {
-  showAutoUpdateAvailableBanner.value = false;
-  showAutoUpdateDownloadedBanner.value = true;
+onMounted(() => {
+  window.electronApi.onUpdateAvailable(() => {
+    showAutoUpdateAvailableBanner.value = true;
+    showAutoUpdateDownloadedBanner.value = false;
+  });
+  window.electronApi.onUpdateDownloaded(() => {
+    showAutoUpdateAvailableBanner.value = false;
+    showAutoUpdateDownloadedBanner.value = true;
+  });
 });
 
 const isTestVersion = process.env.IS_TEST;
