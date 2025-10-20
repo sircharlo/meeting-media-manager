@@ -5,6 +5,8 @@
     "jsx": "preserve",
     "module": "esnext",
     "moduleResolution": "node",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "baseUrl": ".",
     "types": ["vite/client", "vitepress"],
     "resolveJsonModule": true,
