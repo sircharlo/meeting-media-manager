@@ -32,262 +32,279 @@ M³ stöder Windows, macOS och Linux:
 
 **Ja!** M³ ger omfattande stöd för flera språk:
 
-- **Mediaspråk**: Ladda ner media på något av hundratals språk som finns på Jehovas officiella websida
-- **Gränssnittsspråk**: Använd M³:s gränssnitt på många olika språk
+- **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
+- **App Interface**: Use M³'s interface in many different languages
 - **Oberoende inställningar**: Du kan använda gränssnittet på ett språk när du laddar ner media i ett annat
+- **Fallback languages**: Configure fallback languages for when media isn't available in the primary language
+- **Subtitle support**: Download and display subtitles in various languages
 
 ## Installation {#installation-setup}
 
-### :inbox_tray: Ladda ned M³ {#download}
+### :computer: How do I download and install M³? {#installation}
 
-Ladda ner lämplig version för ditt operativsystem från [releases sidan](https://github.com/sircharlo/meeting-media-manager/releases/latest).
+Download the appropriate version from the [Download page](download) and follow the steps in the [User Guide](user-guide).
 
-### :computer: Hur installerar jag M³? {#installation}
+### :gear: How do I set up M³ for the first time? {#first-time-setup}
 
-Ladda ner lämplig version för ditt operativsystem från [releasessidan](https://github.com/sircharlo/meeting-media-manager/releases/latest) och följ installationsinstruktionerna i [installationsguiden](/using-at-a-kingdom-hall#download-and-install).
+M³ includes a setup wizard that guides you through the essential configuration:
 
-### :gear: Hur ställer jag in M³ för första gången? {#first-time-setup}
+1. Choose your interface language
+2. Select profile type (Regular or Other)
+3. Configure congregation information
+4. Set up meeting schedule
+5. Configure optional features like OBS integration
 
-M³ innehåller en installationsguide som guidar dig genom den viktiga konfigurationen:
+## Media Management {#faq-media-management}
 
-1. Språk för användargränssnitt
-2. Välj profiltyp (vanlig eller annan)
-3. Konfigurera församlingsinformation
-4. Ställ in mötesschema
-5. Konfigurera valfria funktioner såsom OBS-integration
+### :download: How does M³ download media? {#media-download}
 
-## Mediehantering {#faq-media-management}
+M³ automatically downloads media for upcoming meetings by:
 
-### :download: Hur laddar M³ ner media? {#media-download}
+1. Checking your meeting schedule
+2. Determining what media is needed
+3. Downloading from the official website of Jehovah's Witnesses in your selected language
+4. Organizing media by date and meeting type
+5. Caching files for offline use
 
-M³ laddar automatiskt ner media för kommande möten genom att:
+### :calendar: Can I download media for specific dates? {#specific-dates}
 
-1. Kontrollera ditt mötesschema
-2. Fastställer vilka medier som behövs
-3. Ladda ner från den officiella websidan för Jehovas vittnen på ditt valda språk
-4. Organiserar media efter datum och mötestyp
-5. Cachning av filer för offline-användning
+Yes! M³ allows you to:
 
-### :calendar: Kan jag ladda ner media för specifika datum? {#specific-dates}
+- Download media for upcoming meetings automatically
+- Import custom media for any date
 
-Ja! M³ låter dig:
+### :folder: How do I import my own media files? {#import-media}
 
-- Ladda ner media för kommande möten automatiskt
-- Importera anpassat media för valfritt datum
+You can import custom media in several ways:
 
-### :folder: Hur importerar jag mina egna mediefiler? {#import-media}
+- **File Import**: Use the import button to add videos, images, or audio files
+- **Drag and Drop**: Drag files directly into M³
+- **Folder Monitoring**: Set up a watched folder for automatic imports
+- **JWPUB Files and Playlists**: Import publications and playlists
 
-Du kan importera anpassade medier på flera sätt:
+### :speaker: Can I import audio Bible recordings? {#audio-bible}
 
-- **Filimport**: Använd importknappen för att lägga till videor, bilder eller ljudfiler
-- **Dra och släpp**: Dra filer direkt till M³
-- **Mappövervakning**: Ställ in en bevakad mapp för automatisk import
-- **JWPUB-filer och spellistor**: Importera publikationer och spellistor
+Yes! M³ includes an Audio Bible feature that allows you to:
 
-### :speaker: Kan jag importera bibelinspelningar? {#audio-bible}
+1. Select Bible books and chapters
+2. Choose specific verses or verse ranges
+3. Download audio recordings
+4. Use them at the meetings
 
-Ja! M³ innehåller en ljudbibel funktion som låter dig att:
+## Presentation Features {#faq-presentation-features}
 
-1. Välja bibelböcker och kapitel
-2. Välj specifika verser eller versintervall
-3. Ladda ner ljudinspelning
-4. Använd dem på mötena
+### :tv: How do I present media during meetings? {#present-media}
 
-## Visningsfunktioner {#faq-presentation-features}
+To present media:
 
-### :tv: Hur visa jag media under mötena? {#present-media}
+1. Select the date
+2. Click the play button on the media item you want to present or use keyboard shortcuts
+3. Use the media player controls to pause, navigate, or stop playback
+4. Use zoom/pan features for images
+5. Set custom timing if needed
 
-För att visa media:
+### :keyboard: What keyboard shortcuts are available? {#faq-keyboard-shortcuts}
 
-1. Välj ett datum
-2. Klicka på play-knappen på det medieobjekt du vill visa eller använd kortkommandot
-3. Använd mediaspelarkontrollerna för att pausa, navigera eller stoppa uppspelning
-4. Använd zoom/panorering för bilder
-5. Ange anpassad tid om det behövs
+M³ supports customizable keyboard shortcuts for:
 
-### :keyboard: Vilka kortkommandon finns tillgängliga? {#faq-keyboard-shortcuts}
-
-M³ stöder anpassningsbara kortkommandon för:
-
-- Öppna/stänga mediafönster
-- Föregående/nästa mediasavigering
-- Spela/pausa/stoppa kontroller
-- Växla bakgrundsmusik
+- Opening/closing media window
+- Previous/next media navigation
+- Play/pause/stop controls
+- Background music toggle
 
 <!-- - Fullscreen mode -->
 
-### :music: Hur fungerar bakgrundsmusiken? {#faq-background-music}
+### :music: How does background music work? {#faq-background-music}
 
-Bakgrundsmusik funktioner inkluderar:
+Background music features include:
 
-- Automatisk uppspelning när M³ startar, innan mötet börjar
-- Automatisk stopp innan möten börjar
-- Omstart med ett klick efter möten
-- Oberoende volymkontroll
-- Konfigurerbar stoppbufferttid
+- Automatic playback when M³ starts, before the meeting begins
+- Automatic stop before meetings begin
+- One-click restart after meetings
+- Independent volume control
+- Configurable stop buffer time
 
-### :video_camera: Hur ställer jag in Zoomintegrationen? {#zoom-setup}
+### :video_camera: How do I set up the Zoom integration? {#zoom-setup}
 
-Integrera med Zoom:
+To integrate with Zoom:
 
-1. Aktivera Zoom-integration i M³-inställningar
-2. Konfigurera genvägen för skärmdelning som är konfigurerad i Zoom. Se till att genvägen är "global" i Zooms inställningar.
-3. M³ startar och stoppar automatiskt Zoom-skärmdelning under mediavisning
+1. Enable Zoom integration in M³ settings
+2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
+3. M³ will automatically start and stop Zoom screen sharing during media presentations
 
-## OBS Studiointegration {#faq-obs-integration}
+## OBS Studio Integration {#faq-obs-integration}
 
-### :video_camera: Hur ställer jag in OBS Studio-integrationen? {#faq-obs-setup}
+### :video_camera: How do I set up the OBS Studio integration? {#faq-obs-setup}
 
-Integrera M³ med OBS Studio:
+To integrate with OBS Studio:
 
-1. Installera OBS Studio och WebSocket-pluginen
-2. Aktivera OBS-integration i inställningarna för M³
-3. Ange OBS port och lösenord
-4. Konfigurera scener för kamera, media och bilder
-5. Testa uppspelning
+1. Install OBS Studio and the WebSocket plugin
+2. Enable OBS integration in M³ settings
+3. Enter the OBS port and password
+4. Configure scenes for camera, media, and images
+5. Test playback
 
-### :arrows_counterclockwise: Hur fungerar automatisk byte av scen? {#faq-scene-switching}
+### :arrows_counterclockwise: How does automatic scene switching work? {#faq-scene-switching}
 
-M³ växlar automatiskt OBS scener baserade på:
+M³ automatically switches OBS scenes based on:
 
-- Mediatyp (video, bild, etc.)
-- Din scenkonfiguration
-- Inställningar som "Skjut upp bilder"
-- Om du vill återvända till föregående scen efter media
+- Media type (video, image, etc.)
+- Your scene configuration
+- Settings like "Postpone Images"
+- Whether to return to previous scene after media
 
-### :pause_button: Vad är funktionen "Skjut upp bilder"? {#faq-postpone-images}
+### :pause_button: What is the "Postpone Images" feature? {#faq-postpone-images}
 
-Denna funktion försenar delning av bilder till OBS tills du manuellt utlöser dem. Detta är användbart för:
+This feature delays sharing images to OBS until you manually trigger them. This is useful for:
 
-- Visar bilder för åhörarna i Rikets sal först
-- Mer kontroll över timing
-- Undvika för tidiga scenförändringar
+- Showing images to in-person audience first
+- Having more control over timing
+- Avoiding premature scene changes
 
-## Avancerade funktioner {#faq-advanced-features}
+## Advanced Features {#faq-advanced-features}
 
-### :cloud: Hur fungerar mappövervakning? {#faq-folder-monitoring}
+### :cloud: How does folder monitoring work? {#faq-folder-monitoring}
 
-Mappövervakning låter dig att:
+Folder monitoring allows you to:
 
-1. Välj en mapp att bevaka för nya filer
-2. Importera automatiskt nya mediefiler som synkroniseras med molnlagring som Dropbox eller OneDrive
+1. Select a folder to watch for new files
+2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
 
-### :file_folder: Vad är automatisk mediaexport? {#faq-media-export}
+### :file_folder: What is media auto-export? {#faq-media-export}
 
-Automatisk media-export automatiskt:
+Media auto-export automatically:
 
-1. Exporterar mediefiler till en angiven mapp
-2. Organiserar filer efter datum och avsnitt
-3. Konverterar filer till MP4-format (valfritt)
-4. Upprätthåller en organiserad säkerhetskopiering av mötesmediefiler
+1. Exports media files to a specified folder
+2. Organizes files by date and section
+3. Converts files to MP4 format (optional)
+4. Maintains an organized backup of meeting media files
 
-### :family: Kan jag hantera flera församlingar? {#faq-multiple-congregations}
+### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
 
-Ja! M³ stöder flera profiler för:
+Yes! M³ supports multiple profiles for:
 
-- Olika församlingar
-- Särskilda händelser
-- Olika grupper
-- Separata inställningar och media för varje
+- Different congregations
+- Special events
+- Different groups
+- Separate settings and media for each
 
-## Felsökning {#faq-troubleshooting}
+## Troubleshooting {#faq-troubleshooting}
 
-### :warning: Media laddas inte ned. Vad ska jag kontrollera? {#faq-media-not-downloading}
+### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
 
-Kontrollera dessa vanliga problem:
+Check these common issues:
 
-1. **Mötesschema**: Kontrollera att dina mötesdagar och mötestider är korrekta
-2. **Språkinställningar**: Se till att ditt mediaspråk är korrekt inställt
-3. **Internetanslutning**: Kontrollera din internetanslutning
-4. **Språktillgänglighet**: Verifiera media är tillgängligt på ditt valda språk
+1. **Meeting Schedule**: Verify your meeting days and times are correct
+2. **Language Settings**: Ensure your media language is set correctly
+3. **Internet Connection**: Check your internet connection
+4. **Language Availability**: Verify media is available in your selected language
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: OBS-integrationen fungerar inte. Vad ska jag kontrollera? {#faq-obs-not-working}
+### :video_camera: The OBS integration isn't working. What should I verify? {#faq-obs-not-working}
 
-Kontrollera dessa OBS-relaterade problem:
+Check these OBS-related issues:
 
-1. **OBS Installation**: Se till att OBS Studio är installerat och körs
-2. **WebSocket Plugin**: Verifiera WebSocket plugin är installerad
-3. **Port och Lösenord**: Kontrollera inställningarna för OBS port och lösenord
-4. **Brandvägg**: Se till att brandväggen inte blockerar anslutningen
+1. **OBS Installation**: Ensure OBS Studio is installed and running
+2. **WebSocket Plugin**: Verify the WebSocket plugin is installed
+3. **Port and Password**: Check your OBS port and password settings
+4. **Firewall**: Ensure the firewall isn't blocking the connection
 
-### :speaker: Skickar Meeting Media Manager automatiskt medieljud till Zoom när du använder OBS Studio? {#audio-to-zoom}
+### :speaker: Does Meeting Media Manager automatically send the media audio to Zoom when using OBS Studio? {#audio-to-zoom}
 
-**Nej.** M³ skickar inte automatiskt medialjud till Zoom eller OBS Studio. Videoströmmen fungerar som en virtuell kamera utan ljud, precis som en webbkamera. För att automatiskt ha musik/videoljudet tillgängligt i Zoom, måste du se till att Zoom "hör" ljudflödet som kommer från datorn. och sedan bör du aktivera **Original Audio**-inställningen i Zoom.
+**No.** M³ does not automatically send media audio to Zoom or OBS Studio. The video stream works like a virtual camera with no sound, just like a webcam. To have the music/video sound available in Zoom automatically, you need to ensure that Zoom 'hears' the audio feed coming from the computer, and then you should enable the **Original Audio** setting in Zoom.
 
-**Viktigt:**
+**Important Notes:**
 
-- Du måste aktivera Original Audio **varje gång** innan du startar ett Zoom-möte
-- Den här inställningen är inte relaterad till M³ - du skulle möta samma ljudproblem när du använder någon annan mediaspelare och inte använder Zooms skärm- och ljuddelningsfunktioner
-- Den ursprungliga ljudinställningen har tre delalternativ - typiskt de två första bör aktiveras och den tredje inaktiverade för optimal ljudkvalitet
-- Om du fortfarande upplever ljudproblem, kan du behöva använda Zooms "Dela datorns ljud" alternativ istället
-- Alternativt, titta in i att använda Zoom-integrationen istället, eftersom den använder Zooms inbyggda skärmdelning.
+- You must enable Original Audio **every time** before starting a Zoom meeting
+- This setting is not related to M³ - you would face the same audio issue when using any other media player and not using Zoom's screen and audio sharing features
+- The Original Audio setting has three sub-options - typically the first two should be enabled and the third disabled for optimal audio quality
+- If you're still experiencing audio issues, you may need to use Zoom's "Share Computer Sound" option instead
+- Alternatively, look into using the Zoom integration instead, as it uses Zoom's native screen sharing.
 
-\*\*Varför är detta nödvändigt? \*
-M³ spelar upp media med ljud på datorn, men detta ljud överförs inte automatiskt genom videoströmmen till Zoom när du använder OBS Studio. Med den ursprungliga ljudinställningen kan Zoom spela in ljudet på din dator under skärmdelning, om din dator är korrekt konfigurerad (till exempel: datorn har ett andra ljudkort som används för medieuppspelning som Zoom lyssnar på som mikrofon.)
+**Why is this necessary?**
+M³ plays media with sound on your computer, but this audio is not automatically transmitted through the video stream to Zoom when using OBS Studio. The Original Audio setting allows Zoom to capture the audio playing on your computer during screen sharing, if your computer is configured properly (for example: the computer has a second sound card that is used for media playback which Zoom listens to as a microphone.)
 
-### :snail: M³ går långsamt. Hur kan jag förbättra prestandan? {#performance-issues}
+### :snail: M³ is running slowly. How can I improve performance? {#performance-issues}
 
-Prova dessa prestandaoptimeringar:
+Try these performance optimizations:
 
-1. **Aktivera extra cache**: Slå på ytterligare cachelagring i inställningarna
-2. **Stäng andra appar**: Stäng onödiga applikationer
-3. **Kontrollera diskutrymme**: Se till att du har tillräckligt med ledigt diskutrymme
-4. **Minska upplösning**: Sänk inställningen för maximal upplösning
+1. **Enable Extra Cache**: Turn on additional caching in settings
+2. **Close Other Apps**: Close unnecessary applications
+3. **Check Disk Space**: Ensure you have sufficient free disk space
+4. **Reduce Resolution**: Lower the maximum resolution setting
 
-### :speech_balloon: Jag har språkproblem. Vad ska jag kontrollera? {#faq-language-issues}
+### :speech_balloon: I'm having language issues. What should I check? {#faq-language-issues}
 
-Verifiera dessa språkinställningar:
+Verify these language settings:
 
-1. **Gränssnittsspråk**: Kontrollera dina inställningar för visningsspråk
-2. **Mediespråk**: Verifiera ditt medianedladdningsspråk
-3. **Språktillgänglighet**: Se till att mediespråket finns tillgängligt på Jehovas Vittnens officiella websida
-4. **Fallback Språk**: Försök att ställa in ett reservspråk
+1. **Interface Language**: Check your display language setting
+2. **Media Language**: Verify your media download language
+3. **Language Availability**: Ensure the media language is available on the official website of Jehovah's Witnesses
+4. **Fallback Language**: Try setting a fallback language
 
-## Stöd {#support-community}
+## Support and Community {#support-community}
 
-### :radioactive: Hur rapporterar jag ett problem? {#how-do-i-report-an-issue}
+### :radioactive: How do I report an issue? {#how-do-i-report-an-issue}
 
-Vänligen skicka in en [issue](https://github.com/sircharlo/meeting-media-manager/issues) på det officiella GitHub-repositoriet. Inklusive:
+Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository. Include:
 
-- Detaljerad beskrivning av felet
-- Steg för att reproducera problemet
-- Ditt operativsystem och version M³
-- Eventuella felmeddelanden, loggar och skärmdumpar
+- Detailed description of the problem
+- Steps to reproduce the issue
+- Your operating system and M³ version
+- Any error messages, logs and screenshots
 
-### :new: Hur kan jag önska en ny funktion eller förbättring? {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: How can I request a new feature or enhancement? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Vänligen öppna en [discussion](https://github.com/sircharlo/meeting-media-manager/diskussioner) på det officiella GitHub-repositoriet. Beskriv:
+Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository. Describe:
 
-- Funktionen du vill se
-- Hur det skulle gynna användare
-- Specifika krav eller preferenser
+- The feature you'd like to see
+- How it would benefit users
+- Any specific requirements or preferences
 
-### :handshake: Hur kan jag bidra med kodning? {#how-can-i-contribute-some-code}
+### :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
 
-[Se hur du kan bidra på] (https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) på det officiella GitHub-repositoriet. Vi välkomnar kodbidrag och Pull-förfrågningar!
+Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository. We welcome code contributions and Pull Requests!
 
-### :globe_with_meridians: Hur kan jag hjälpa till med översättningen? {#translations}
+### :globe_with_meridians: How can I help with translations? {#translations}
 
-M³ använder Crowdin för översättningshantering. Du kan bidra med översättningar genom att:
+M³ uses Crowdin for translation management. You can contribute translations by:
 
-1. Besöka [Crowdin-projektet](https://crowdin.com/project/meeting-media-manager)
-2. Välj ditt språk
-3. Översätt de strängar som behöver förbättras
-4. Granska befintliga översättningar
+1. Visiting the [Crowdin project](https://crowdin.com/project/meeting-media-manager)
+2. Selecting your language
+3. Translating strings that need work
+4. Reviewing existing translations
 
-### :x: Kan jag donera till projektet? {#can-i-make-a-donation-to-the-project}
+### :x: Can I make a donation to the project? {#can-i-make-a-donation-to-the-project}
 
-Tack för ditt intresse för att stötta projektet! Men enligt tanken i Matteus 10:8 är donationer **inte** accepterade och kommer aldrig att bli det. Denna program är gjord med mycket kärlek och lite fritid. Njut! :tada:
+Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
 
-:::tip :book: Matteus 10:8
+:::tip :book: Matthew 10:8
 
-"Det ni fått som gåva ska ni ge som gåva"
+"You received free, give free."
 
 :::
 
-## Tekniska frågor {#technical-questions}
+## Technical Questions {#technical-questions}
+
+### :computer: What hardware and software requirements does M³ have? {#hardware-and-software-requirements}
+
+M³ is designed to work on a wide range of operating systems:
+
+- **Windows**: Windows 10 och senare (64-bitars och 32-bitars versioner tillgängliga)
+- **macOS**: macOS 10.15 (Catalina) och senare (Intel- och Apple Silicon stöd)
+- **Linux**: De flesta moderna Linuxdistributioner (AppImage format)
+
+M³ has the following hardware requirements:
+
+- **Minimum**: 4GB RAM, 6GB free disk space
+- **Recommended**: 8GB RAM, 15GB free disk space for media caching
+- **Network**: Internet connection for media downloads
+
+Depending on the features you use, M³ also requires the following additional software:
+
+- **Zoom**: Required only if using Zoom integration features
+- **OBS Studio**: Required only if using OBS integration features
 
 ### :floppy_disk: Hur mycket diskutrymme använder M³? {#disk-space}
 
@@ -302,7 +319,7 @@ Typisk användning varierar från 2-10GB beroende på inställningar och använd
 
 ### :shield: Är M³ säker och sluten? {#security-privacy}
 
-Ja! M³ är utformad med säkerhet och integritet i åtanke:
+Yes! M³ är utformad med säkerhet och integritet i åtanke:
 
 - **Lokal lagring**: Alla mötesdata lagras lokalt på din dator
 - **Direktnedladdningar**: Media laddas ner direkt från Jehovas officiella websida
