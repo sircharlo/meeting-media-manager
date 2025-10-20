@@ -9,19 +9,20 @@ hero:
   actions:
     - theme: brand
       text: Скачать
-      link: https://github.com/sircharlo/meeting-media-manager/releases/latest
+      link: /download
     - theme: brand
       text: О программе
       link: /ru/about
     - theme: brand
       text: Руководство пользователя
-      link: /ru/user-guide
+      link: /user-guide
     - theme: brand
       text: Инструкция по настройкам
-      link: /ru/settings-guide
+      link: /settings-guide
     - theme: brand
       text: ЧАВО
-      link: /ru/faq
+      link: /faq
+
 features:
   - icon: 🚀
     title: Автоматическое управление медиафайлами

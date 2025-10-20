@@ -9,19 +9,20 @@ hero:
   actions:
     - theme: brand
       text: Download
-      link: https://github.com/sircharlo/meeting-media-manager/releases/latest
+      link: /download
     - theme: brand
       text: Über
       link: /de/about
     - theme: brand
       text: User Guide
-      link: /de/user-guide
+      link: /user-guide
     - theme: brand
       text: Settings Guide
-      link: /de/settings-guide
+      link: /settings-guide
     - theme: brand
       text: FAQ
-      link: /de/faq
+      link: /faq
+
 features:
   - icon: 🚀
     title: Automatic Media Management

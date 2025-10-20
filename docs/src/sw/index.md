@@ -9,19 +9,20 @@ hero:
   actions:
     - theme: brand
       text: Download
-      link: https://github.com/sircharlo/meeting-media-manager/releases/latest
+      link: /download
     - theme: brand
       text: Kuhusu
       link: /sw/about
     - theme: brand
       text: User Guide
-      link: /sw/user-guide
+      link: /user-guide
     - theme: brand
       text: Settings Guide
-      link: /sw/settings-guide
+      link: /settings-guide
     - theme: brand
       text: Maswali Yanayoulizwa Sana
-      link: /sw/faq
+      link: /faq
+
 features:
   - icon: 🚀
     title: Automatic Media Management
