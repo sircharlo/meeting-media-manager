@@ -114,11 +114,15 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
     const getDirectory = async (
       pub: string,
       issue?: 'any' | number | string,
+      includeEnglish?: boolean,
     ) => {
-      // Always protect directories for all languages, ignoring the lang parameter
       const directories: string[] = [];
 
-      for (const langwritten of allLanguages) {
+      // Always start with all congregation languages; optionally add English
+      const languagesToUse = new Set<JwLangCode>(allLanguages);
+      if (includeEnglish) languagesToUse.add('E' as JwLangCode);
+
+      for (const langwritten of languagesToUse) {
         // Special handling for "any" issue: protect all issue-tagged folders for this pub symbol
         if (issue === 'any') {
           const baseId = getPubId({ langwritten, pub } as PublicationFetcher);
@@ -154,11 +158,11 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
 
     const directories = [
       // Meeting music and videos
-      await getDirectory(currentState.currentSongbook.pub), // Background music
-      await getDirectory(currentState.currentSongbook.pub, 0), // Songbook videos
+      await getDirectory(currentState.currentSongbook.pub, undefined, true), // Background music
+      await getDirectory(currentState.currentSongbook.pub, 0, true), // Songbook videos
       // Bibles
       await getDirectory('nwt'),
-      await getDirectory('nwtsty'),
+      await getDirectory('nwtsty', undefined, true),
       // Frequently used during MW meetings
       await getDirectory('it', 0), // Insight
       await getDirectory('lmd', 0), // Love People
@@ -447,10 +451,14 @@ export const deleteCacheFiles = async (
   try {
     const analysis = await analyzeCacheFiles();
 
+    console.log('[Cache] Analyzed cache:', analysis);
+
     const filepathsToDelete =
       type === 'smart'
         ? Object.keys(analysis.unusedParentDirectories)
         : analysis.cacheFiles.map((f) => f.path);
+
+    console.log('[Cache] Filepaths to delete:', filepathsToDelete);
 
     // Delete cache files/directories
     try {
@@ -502,8 +510,14 @@ export const deleteCacheFiles = async (
 
       // Update lookup period if deleting all cache
       if (type === 'all') {
+        console.log('[Cache] Updating lookup period (all cache cleared)');
         updateLookupPeriod(true);
       }
+      console.log('[Cache] Cleared successfully', {
+        bytesFreed,
+        itemsDeleted,
+        mode: type,
+      });
 
       return { bytesFreed, itemsDeleted, mode: type };
     } catch (e) {
