@@ -84,15 +84,9 @@ Voor **hybride** of **fysieke** gemeentevergaderingen bevat de geïntegreerde me
 - **Sneltoetsen**: Aanpasbare sneltoetsen voor veel functies
 - **Meerdere profielen**: Beheer verschillende gemeenten of groepen met aparte profielen
 
-**Probeer M³ vandaag nog en kijk zelf wat het kan doen! Het is nog nooit zo eenvoudig geweest om media te presenteren bij vergaderingen.**
-
-![M³ preview](./../assets/m3-preview.png)
-
 ## Werkt M³ in mijn eigen taal? {#does-m3-work-in-my-language}
 
 **Ja!** M³ biedt uitgebreide meertalige ondersteuning:
-
-### Mediatalen {#media-languages}
 
 Media voor vergaderingen van Jehovah’s Getuigen kan automatisch worden gedownload in een van de honderden talen die beschikbaar zijn op de officiële website van Jehovah’s Getuigen. De lijst met beschikbare talen wordt dynamisch bijgewerkt; je hoeft alleen maar te kiezen welke je nodig hebt tijdens de installatie.
 
@@ -100,30 +94,12 @@ Media voor vergaderingen van Jehovah’s Getuigen kan automatisch worden gedownl
 
 M³ zelf is door vrijwilligers in veel talen vertaald. Je kunt de taal instellen die je wilt weergeven in de interface van M³, onafhankelijk van de taal die wordt gebruikt voor het downloaden van media. Dit betekent dat je M³ in je voorkeurstaal kunt gebruiken terwijl je media downloadt in elke andere ondersteunde taal.
 
-### Taalfuncties {#language-features}
-
-- **Dynamische taalherkenning**: Detecteert automatisch beschikbare talen
-- **Vertaaltalen**: Stel vertaaltalen in voor wanneer inhoud in de primaire taal niet beschikbaar is
-- **Ondertitelondersteuning**: Download en toon ondertitels in verschillende talen
-- **Gelokaliseerde interface**: Volledige interfacevertaling voor veel talen
+For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
 
 ## Systeemvereisten {#system-requirements}
 
-M³ is ontworpen om op een breed scala aan systemen te werken:
+For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
 
-### Ondersteunde besturingssystemen {#supported-operating-systems}
+**Probeer M³ vandaag nog en kijk zelf wat het kan doen! Het is nog nooit zo eenvoudig geweest om media te presenteren bij vergaderingen.**
 
-- **Windows**: Windows 10 en later (64-bits- en 32-bitsversies beschikbaar)
-- **macOS**: macOS 10.15 (Catalina) en later (ondersteuning voor Intel en Apple Silicon)
-- **Linux**: De meeste moderne Linux-distributies (AppImage-formaat)
-
-### Hardwarevereisten {#hardware-requirements}
-
-- **Minimaal**: 4GB RAM, 6GB vrije schijfruimte
-- **Aanbevolen**: 8GB RAM, 15GB vrije schijfruimte voor mediacaching
-- **Netwerk**: Internetverbinding voor het downloaden van media
-
-### Aanvullende vereisten {#additional-requirements}
-
-- **Zoom**: Alleen vereist bij gebruik van Zoom-integratiefuncties
-- **OBS Studio**: Alleen vereist bij gebruik van OBS-integratiefuncties
+![M³ preview](./../assets/m3-preview.png)
