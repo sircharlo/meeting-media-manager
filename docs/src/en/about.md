@@ -84,16 +84,9 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 - **Keyboard shortcuts**: Customizable keyboard shortcuts for many functions
 - **Multiple profiles**: Manage different congregations or groups with separate profiles
 
-
-**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
-
-![M³ preview](./../assets/m3-preview.png)
-
 ## Does M³ work in my language? {#does-m3-work-in-my-language}
 
 **Yes!** M³ provides comprehensive multi-language support:
-
-### Media Languages {#media-languages}
 
 Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of languages available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need during setup.
 
@@ -101,30 +94,12 @@ Media for meetings of Jehovah's Witnesses can be automatically downloaded in any
 
 M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
 
-### Language Features {#language-features}
-
-- **Dynamic language detection**: Automatically detects available languages
-- **Fallback languages**: Configure fallback languages for when primary language content isn't available
-- **Subtitle support**: Download and display subtitles in different languages
-- **Localized interface**: Complete interface translation for many languages
+For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
 
 ## System Requirements {#system-requirements}
 
-M³ is designed to work on a wide range of systems:
+For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
 
-### Supported Operating Systems {#supported-operating-systems}
+**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
-- **Linux**: Most modern Linux distributions (AppImage format)
-
-### Hardware Requirements {#hardware-requirements}
-
-- **Minimum**: 4GB RAM, 6GB free disk space
-- **Recommended**: 8GB RAM, 15GB free disk space for media caching
-- **Network**: Internet connection for media downloads
-
-### Additional Requirements {#additional-requirements}
-
-- **Zoom**: Required only if using Zoom integration features
-- **OBS Studio**: Required only if using OBS integration features
+![M³ preview](./../assets/m3-preview.png)

@@ -1,14 +1,14 @@
 name: Crowdin translations progress
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - docs/locales/*.json
-      - docs/src/**/*.md
-      - release-notes/*.md
-      - src/i18n/*.json
+  # push:
+  #   branches:
+  #     - master
+  #   paths:
+  #     - docs/locales/*.json
+  #     - docs/src/**/*.md
+  #     - release-notes/*.md
+  #     - src/i18n/*.json
   workflow_dispatch:
 
 concurrency:

@@ -1,21 +1,33 @@
 <!-- markdownlint-disable no-inline-html -->
-
-# About Meeting Media Manager (M³)
+<!-- markdownlint-disable MD041 -->
 
 ![M³ banner](./docs/src/assets/m3-banner.png)
 
-## What is this app?
+# Meeting Media Manager (M³)
 
-**Meeting Media Manager**, or **M³** for short, is an app for Windows, macOS and Linux, that automatically downloads pictures and videos that will be considered during congregation meetings of Jehovah's Witnesses, in any language found on the official website of Jehovah's Witnesses.
+## Overview
 
-It features support for managing regular and custom meeting media, and support for multiple congregations and/or groups using the same computer account.
+**Meeting Media Manager (M³)** is a cross‑platform app that automatically downloads and helps present pictures, videos, and audio files for congregation meetings of Jehovah's Witnesses, in any language available on the official website of Jehovah's Witnesses.
 
-> [!NOTE]  
-> M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.
+## Download and documentation
+
+Here are the links to download M³ and access its documentation:
+
+- [Download M³](https://sircharlo.github.io/meeting-media-manager/download)
+- [Documentation site](https://sircharlo.github.io/meeting-media-manager/)
+
+## Quick overview
+
+- **Automatic media management**: Download, organize, and keep meeting media up to date.
+- **Media presentation tools**: Thumbnails, playback controls, timers, and external monitor handling.
+- **Hybrid meetings support**: Built-in integrations for Zoom screen sharing and OBS Studio scene switching.
+- **Cross‑platform**: Optimized for Windows, macOS, and Linux.
+- **Multilingual**: App UI available in many languages; media can be downloaded in any language available on the official website of Jehovah's Witnesses.
+- **Multiple congregations**: Support for multiple congregations or groups in one app.
 
 ## Why choose M³?
 
-M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms.
+M³ offers a seamless, reliable, and feature‑rich experience across platforms.
 
 ### Key benefits
 
@@ -35,19 +47,20 @@ In short, M³ allows you to easily and automatically download, synchronize, shar
 
 For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode has all the features needed to simplify the task of sharing media with the congregation, including:
 
-- Media thumbnails with zoom, pan, and custom start/end time controls
 - Easy-to-use pause/play/stop buttons for media playback
+- Media thumbnails with zoom, pan, and custom start and end time controls
+- Intuitive drag-and-drop sorting of media items
 - Background music playback with automatic stop before scheduled meetings
 - Automatic external monitor recognition and management
+- Zoom screen sharing integration
 - OBS Studio integration with automatic scene switching
-- Present the official website of Jehovah's Witnesses on external monitors
-- Import JWPUB files, JWLPLAYLIST files, and videos from the official website in a few clicks
-- Import Study Bible media and New World Translation audio recordings in seconds
-- Quick access to public talks media overview (S-34) ready for immediate use
-- Import custom videos, pictures, audio files, and PDF files
-- Automatic sync from watched folders (Dropbox, OneDrive, etc.) for seamless home-to-Kingdom Hall workflow
-- Special events mode with custom sections, colors, repeat items, custom titles, and drag-and-drop sorting
-- Automatic Zoom screen sharing when media is presented
+- Ability to present the official website of Jehovah's Witnesses on external monitors
+- Support for adding JWPUB files, JWLPLAYLIST files, and videos from the official website in a few clicks
+- Ability to add Study Bible media and New World Translation audio recordings in seconds
+- Easy management of public talk media with either the S-34 or the S-34mp JWPUB files
+- Ability to easily import videos, pictures, audio files, and PDF files from other sources
+- Automatic sync from cloud folders (Dropbox, OneDrive, etc.) for seamless home-to-Kingdom Hall workflow
+- Special events support, complete with customizable titles and colors and the ability to repeat items and entire sections
 
 **Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
 
@@ -59,33 +72,13 @@ For **hybrid** or **in-person** congregation meetings, the integrated media pres
 
 In addition, M³ itself has been translated into several languages by many volunteers; you can therefore configure the language you would like to be displayed in M³'s interface.
 
-### Translation Progress
-
-<!-- markdownlint-capture -->
-<!-- markdownlint-disable -->
-<!-- prettier-ignore-start -->
-<!-- CROWDIN-TRANSLATIONS-PROGRESS-ACTION-START -->
-
-
-#### Available
-
-<table><tr><td align="center" valign="top"><img width="30px" height="30px" title="French" alt="French" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/fr.png"></div><div align="center" valign="top">97%</td><td align="center" valign="top"><img width="30px" height="30px" title="Swedish" alt="Swedish" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/sv-SE.png"></div><div align="center" valign="top">97%</td><td align="center" valign="top"><img width="30px" height="30px" title="Russian" alt="Russian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/ru.png"></div><div align="center" valign="top">96%</td><td align="center" valign="top"><img width="30px" height="30px" title="Portuguese, Brazilian" alt="Portuguese, Brazilian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/pt-BR.png"></div><div align="center" valign="top">81%</td><td align="center" valign="top"><img width="30px" height="30px" title="Dutch" alt="Dutch" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/nl.png"></div><div align="center" valign="top">70%</td></tr><tr><td align="center" valign="top"><img width="30px" height="30px" title="Slovenian" alt="Slovenian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/sl.png"></div><div align="center" valign="top">65%</td><td align="center" valign="top"><img width="30px" height="30px" title="Estonian" alt="Estonian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/et.png"></div><div align="center" valign="top">62%</td><td align="center" valign="top"><img width="30px" height="30px" title="Chinese Simplified" alt="Chinese Simplified" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/zh-CN.png"></div><div align="center" valign="top">60%</td><td align="center" valign="top"><img width="30px" height="30px" title="Italian" alt="Italian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/it.png"></div><div align="center" valign="top">55%</td></table>
-
-#### In progress
-
-<table><tr><td align="center" valign="top"><img width="30px" height="30px" title="Portuguese" alt="Portuguese" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/pt-PT.png"></div><div align="center" valign="top">48%</td><td align="center" valign="top"><img width="30px" height="30px" title="Spanish" alt="Spanish" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/es-ES.png"></div><div align="center" valign="top">45%</td><td align="center" valign="top"><img width="30px" height="30px" title="Hungarian" alt="Hungarian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/hu.png"></div><div align="center" valign="top">42%</td><td align="center" valign="top"><img width="30px" height="30px" title="German" alt="German" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/de.png"></div><div align="center" valign="top">41%</td><td align="center" valign="top"><img width="30px" height="30px" title="Tagalog" alt="Tagalog" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/tl.png"></div><div align="center" valign="top">40%</td></tr><tr><td align="center" valign="top"><img width="30px" height="30px" title="Ukrainian" alt="Ukrainian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/uk.png"></div><div align="center" valign="top">40%</td><td align="center" valign="top"><img width="30px" height="30px" title="Swahili" alt="Swahili" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/sw.png"></div><div align="center" valign="top">34%</td><td align="center" valign="top"><img width="30px" height="30px" title="Korean" alt="Korean" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/ko.png"></div><div align="center" valign="top">32%</td><td align="center" valign="top"><img width="30px" height="30px" title="Slovak" alt="Slovak" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/sk.png"></div><div align="center" valign="top">7%</td><td align="center" valign="top"><img width="30px" height="30px" title="Kinyarwanda" alt="Kinyarwanda" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/rw.png"></div><div align="center" valign="top">3%</td></tr><tr><td align="center" valign="top"><img width="30px" height="30px" title="Amharic" alt="Amharic" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/am.png"></div><div align="center" valign="top">2%</td><td align="center" valign="top"><img width="30px" height="30px" title="Finnish" alt="Finnish" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/fi.png"></div><div align="center" valign="top">2%</td><td align="center" valign="top"><img width="30px" height="30px" title="Haitian Creole" alt="Haitian Creole" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/ht.png"></div><div align="center" valign="top">2%</td><td align="center" valign="top"><img width="30px" height="30px" title="Ga" alt="Ga" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/gaa.png"></div><div align="center" valign="top">0%</td><td align="center" valign="top"><img width="30px" height="30px" title="Greek" alt="Greek" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/el.png"></div><div align="center" valign="top">0%</td></tr><tr><td align="center" valign="top"><img width="30px" height="30px" title="Malagasy" alt="Malagasy" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/mg.png"></div><div align="center" valign="top">0%</td><td align="center" valign="top"><img width="30px" height="30px" title="Romanian" alt="Romanian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/ro.png"></div><div align="center" valign="top">0%</td></table>
-<!-- CROWDIN-TRANSLATIONS-PROGRESS-ACTION-END -->
-<!-- prettier-ignore-end -->
-<!-- markdownlint-restore -->
-
-## Where can I find help about downloading and using M³?
-
-Check out our [SUPPORT.md](https://github.com/sircharlo/meeting-media-manager/blob/master/SUPPORT.md) file for guidance or go directly to our [documentation website](https://sircharlo.github.io/meeting-media-manager/).
-
 ## Does this app go against the Terms of Use of the official website of Jehovah's Witnesses?
 
-**No.** Our use complies with the [Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) of the official website of Jehovah's Witnesses. For more details, please refer to our [documentation website](https://sircharlo.github.io/meeting-media-manager/faq#terms-of-use).
+**No.** Our use complies with the Terms of Use of the official website of Jehovah's Witnesses. For more details, please refer to our [documentation website](https://sircharlo.github.io/meeting-media-manager/faq#terms-of-use).
 
 ## Want to help improve M³?
 
 We'd love that! Please read [how to help us](https://github.com/sircharlo/meeting-media-manager/discussions/2771) in the corresponding discussion.
+
+> [!NOTE]  
+> M³ used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed in May 2022.
