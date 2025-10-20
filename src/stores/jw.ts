@@ -50,13 +50,27 @@ export const shouldUpdateList = (
   cacheList: CacheList | undefined,
   months: number,
 ) => {
-  if (!cacheList) return true;
-  if (!cacheList.updated) return true;
-  if (isNaN(cacheList.updated.getTime())) return true;
-  return (
-    !cacheList?.list?.length ||
-    getDateDiff(new Date(), cacheList.updated, 'months') > months
-  );
+  try {
+    if (!cacheList) return true; // No cache list, update
+    if (!cacheList.updated) return true; // No update date, update
+    try {
+      if (isNaN(new Date(cacheList.updated).getTime())) return true; // Invalid date, update
+    } catch (error) {
+      console.log(
+        'cacheList.updated is not a valid date',
+        cacheList.updated,
+        error,
+      );
+      return true; // Error parsing date, update
+    }
+    return (
+      !cacheList?.list?.length ||
+      getDateDiff(new Date(), cacheList.updated, 'months') > months
+    ); // True if list is empty or old enough, false otherwise
+  } catch (error) {
+    console.log('Error checking cache list', error);
+    return true; // Error checking, update
+  }
 };
 
 interface Store {
