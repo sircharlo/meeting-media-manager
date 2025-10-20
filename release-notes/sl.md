@@ -8,9 +8,9 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **Setup Wizard – Zoom Step**: Added a Zoom integration step to the setup wizard for easier initial configuration.
-- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. This makes it easier to choose the correct screen on which the media window should be displayed.
-- ✨ **Media Window Preference**: The app will now remember the preferred screen on which the media window should be displayed, if specified by the user.
+- ✨ **Čarovnik za nastavitev – korak za Zoom**: V čarovniku za nastavitev je bil dodan korak za povezovanje z Zoomom, kar omogoča lažjo začetno nastavitev.
+- ✨ **Izboljšave izbirnika zaslona**: V pojavnem oknu za prikaz se zdaj prikaže natančna vizualna predstavitev vseh zaslonov ter trenutna velikost in položaj glavnega okna. To olajša izbiro ustreznega zaslona za prikaz okna z multimedijsko vsebino.
+- ✨ **Prednostni zaslon za multimedijsko vsebino**: Aplikacija si bo zdaj zapomnila prednostni zaslon za prikaz okna z multimedijsko vsebino, če ga uporabnik določi.
 
 ## v25.10.0
 
