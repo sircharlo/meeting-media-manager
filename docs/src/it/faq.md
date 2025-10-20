@@ -56,7 +56,7 @@ M³ includes a setup wizard that guides you through the essential configuration:
 
 ## Media Management {#faq-media-management}
 
-### :download: How does M³ download media? {#media-download}
+### :desktop_computer: How does M³ download media? {#media-download}
 
 M³ automatically downloads media for upcoming meetings by:
 
@@ -68,12 +68,12 @@ M³ automatically downloads media for upcoming meetings by:
 
 ### :calendar: Can I download media for specific dates? {#specific-dates}
 
-Yes! M³ allows you to:
+Sì! M³ allows you to:
 
 - Download media for upcoming meetings automatically
 - Import custom media for any date
 
-### :folder: How do I import my own media files? {#import-media}
+### :open_file_folder: How do I import my own media files? {#import-media}
 
 You can import custom media in several ways:
 
@@ -84,7 +84,7 @@ You can import custom media in several ways:
 
 ### :speaker: Can I import audio Bible recordings? {#audio-bible}
 
-Yes! M³ includes an Audio Bible feature that allows you to:
+Sì! M³ includes an Audio Bible feature that allows you to:
 
 1. Select Bible books and chapters
 2. Choose specific verses or verse ranges
@@ -97,7 +97,7 @@ Yes! M³ includes an Audio Bible feature that allows you to:
 
 To present media:
 
-1. Select the date
+1. Seleziona la data
 2. Click the play button on the media item you want to present or use keyboard shortcuts
 3. Use the media player controls to pause, navigate, or stop playback
 4. Use zoom/pan features for images
@@ -114,7 +114,7 @@ M³ supports customizable keyboard shortcuts for:
 
 <!-- - Fullscreen mode -->
 
-### :music: How does background music work? {#faq-background-music}
+### :notes: How does background music work? {#faq-background-music}
 
 Background music features include:
 
@@ -181,7 +181,7 @@ Media auto-export automatically:
 
 ### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
 
-Yes! M³ supports multiple profiles for:
+Sì! M³ supports multiple profiles for:
 
 - Different congregations
 - Special events
@@ -319,7 +319,7 @@ Typical usage ranges from 2-10GB depending on settings and usage.
 
 ### :shield: Is M³ secure and private? {#security-privacy}
 
-Yes! M³ is designed with security and privacy in mind:
+Sì! M³ is designed with security and privacy in mind:
 
 - **Local Storage**: All meeting data is stored locally on your computer
 - **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
