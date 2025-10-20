@@ -364,10 +364,13 @@ export const useAppSettingsStore = defineStore('app-settings', {
             }
           }
 
-          let parsedJwLanguages: { list: JwLanguage[]; updated: Date };
+          let parsedJwLanguages: {
+            list: JwLanguage[];
+            updated: Date | null | undefined;
+          };
           let parsedJwSongs: Record<
             string,
-            { list: MediaLink[]; updated: Date }
+            { list: MediaLink[]; updated: Date | null | undefined }
           >;
           let parsedYeartexts: Partial<Record<number, Record<string, string>>>;
 
@@ -377,7 +380,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
             );
             parsedJwLanguages = parseJsonSafe<{
               list: JwLanguage[];
-              updated: Date;
+              updated: Date | null | undefined;
             }>(jwLanguagesString, jwStore.jwLanguages);
           } catch (error) {
             console.warn(
@@ -392,7 +395,10 @@ export const useAppSettingsStore = defineStore('app-settings', {
               QuasarStorage.getItem('jwSongs') || '{}',
             );
             parsedJwSongs = parseJsonSafe<
-              Record<string, { list: MediaLink[]; updated: Date }>
+              Record<
+                string,
+                { list: MediaLink[]; updated: Date | null | undefined }
+              >
             >(jwSongsString, jwStore.jwSongs);
           } catch (error) {
             console.warn(
