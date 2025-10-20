@@ -38,6 +38,16 @@ Ange vilken veckodag som ska vara första dagen i veckan i kalendervyn.
 
 **Standard**: Söndag
 
+### Date Format {#date-format}
+
+<!-- **Setting**: `localDateFormat` -->
+
+Format used to display dates in the app.
+
+**Example**: D MMMM YYYY
+
+**Default**: D MMMM YYYY
+
 ### Auto-start vid inloggning {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
@@ -162,6 +172,14 @@ Aktivera detta om du är på en begränsad dataanslutning för att minska bandbr
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
 Aktivera medievisningsfunktion. Detta krävs för att presentera media på en andra bildskärm.
+
+**Standard**: `nej`
+
+#### Begin Playback Paused {#begin-playback-paused}
+
+<!-- **Setting**: `beginPlaybackPaused` -->
+
+Start videos in a paused state when playback begins.
 
 **Standard**: `nej`
 
@@ -323,6 +341,50 @@ Konfigurera vilka OBS-scener som ska användas för olika ändamål:
 
 :::
 
+### Custom Events {#custom-events}
+
+#### Enable Custom Events {#enable-custom-events}
+
+<!-- **Setting**: `enableCustomEvents` -->
+
+Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+
+**Standard**: `nej`
+
+#### Custom Event Shortcuts {#custom-event-shortcuts}
+
+##### Play Media Shortcut {#custom-event-media-play-shortcut}
+
+<!-- **Setting**: `customEventMediaPlayShortcut` -->
+
+Shortcut that is triggered when media is played.
+
+**Standard**: Inget
+
+##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+
+<!-- **Setting**: `customEventMediaPauseShortcut` -->
+
+Shortcut that is triggered when media is paused.
+
+**Standard**: Inget
+
+##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+
+<!-- **Setting**: `customEventMediaStopShortcut` -->
+
+Shortcut that is triggered when media is stopped.
+
+**Standard**: Inget
+
+##### Last Song Shortcut {#custom-event-last-song-shortcut}
+
+<!-- **Setting**: `customEventLastSongShortcut` -->
+
+Shortcut that is triggered when the last song is played during a meeting.
+
+**Standard**: Inget
+
 ## Avancerade inställningar {#advanced-settings}
 
 ### Kortkommandon {#settings-guide-keyboard-shortcuts}
@@ -347,6 +409,14 @@ Ställ in genvägar för uppspelning av media:
 - **Musikväxling** - Styr bakgrundsmusiken
 
 ### Mediavisning {#media-display}
+
+#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+
+<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+
+Enable fade-in/out transitions when showing or hiding the media window.
+
+**Standard**: `Ja`
 
 #### Dölj medialogotyp {#hide-media-logo}
 
@@ -443,6 +513,14 @@ Konvertera exporterade mediefiler till MP4-format för bättre kompatibilitet.
 Dessa inställningar bör endast ändras om du förstår deras innebörd.
 
 :::
+
+#### Base URL {#base-url}
+
+<!-- **Setting**: `baseUrl` -->
+
+Base domain used to download publications and media.
+
+**Default**: `jw.org`
 
 #### Inaktivera mediahämtning {#disable-media-fetching}
 
