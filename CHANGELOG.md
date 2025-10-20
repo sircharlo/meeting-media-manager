@@ -4,6 +4,17 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v25.10.2
+
+### 🛠️ Improvements and Tweaks
+
+- Widened app's main scrollbar.
+
+### 🐞 Bug Fixes
+
+- Fixed rare issue where songs could be ordered incorrectly for the Watchtower study.
+- Fixed automatic update banner glitch that sometimes prevented it from appearing.
+
 ## v25.10.1
 
 ### ✨ New Features
