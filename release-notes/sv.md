@@ -8,9 +8,9 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 ### ✨ Nya funktioner
 
-- ✨ **Setup Wizard – Zoom Step**: Added a Zoom integration step to the setup wizard for easier initial configuration.
-- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. This makes it easier to choose the correct screen on which the media window should be displayed.
-- ✨ **Media Window Preference**: The app will now remember the preferred screen on which the media window should be displayed, if specified by the user.
+- ✨ **Installationsguiden – Zoom-steg**: Lade till ett steg för Zoom integration till installationsguiden för enklare konfiguration.
+- ✨ **Skärmvalsförbättringar**: Visa en exakt visuell representation av alla skärmar, samt huvudfönstrets nuvarande storlek och plats, i skärm popuppen. Detta gör det enklare att välja rätt skärm där mediafönstret ska visas.
+- ✨ **Mediafönster inställning**: Appen kommer nu ihåg den föredragna skärmen som mediafönstret ska visas på, om den anges av användaren.
 
 ## v25.10.0
 
