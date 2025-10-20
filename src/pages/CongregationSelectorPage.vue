@@ -224,6 +224,7 @@ const runMigrations = async () => {
     '25.3.2-refreshDynamicMedia',
     '25.4.3-refreshDynamicMedia',
     '25.8.4-newMediaSections',
+    '25.10.1-refreshDynamicMedia',
   ];
 
   for (const migration of migrationsToRun) {
