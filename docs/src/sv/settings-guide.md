@@ -38,15 +38,15 @@ Ange vilken veckodag som ska vara första dagen i veckan i kalendervyn.
 
 **Standard**: Söndag
 
-### Date Format {#date-format}
+### Datumformat {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
-Format used to display dates in the app.
+Format som används för att visa datum i appen.
 
-**Example**: D MMMM YYYY
+**Exempel**: D MMMM ÅÅÅÅ
 
-**Default**: D MMMM YYYY
+**Exempel**: D MMMM ÅÅÅÅ
 
 ### Auto-start vid inloggning {#auto-start-at-login}
 
@@ -175,11 +175,11 @@ Aktivera medievisningsfunktion. Detta krävs för att presentera media på en an
 
 **Standard**: `nej`
 
-#### Begin Playback Paused {#begin-playback-paused}
+#### Börja uppspelning pausad {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
-Start videos in a paused state when playback begins.
+Starta videor i ett pausat tillstånd när uppspelningen börjar.
 
 **Standard**: `nej`
 
@@ -341,47 +341,47 @@ Konfigurera vilka OBS-scener som ska användas för olika ändamål:
 
 :::
 
-### Custom Events {#custom-events}
+### Anpassade händelser {#custom-events}
 
-#### Enable Custom Events {#enable-custom-events}
+#### Aktivera anpassade händelser {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+Aktivera anpassade genvägar som kommer att utlösas när en specifik händelse upptäcks (t.ex. spelas media upp, pausas eller stoppas).
 
 **Standard**: `nej`
 
-#### Custom Event Shortcuts {#custom-event-shortcuts}
+#### Anpassade händelsegenvägar {#custom-event-shortcuts}
 
-##### Play Media Shortcut {#custom-event-media-play-shortcut}
+##### Genväg för spela media {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
-Shortcut that is triggered when media is played.
+Genvägen aktiveras när media spelas.
 
 **Standard**: Inget
 
-##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+##### Genväg för att pausa media {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
-Shortcut that is triggered when media is paused.
+Genvägen aktiveras när media pausas.
 
 **Standard**: Inget
 
-##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+##### Genväg för stoppa media {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
-Shortcut that is triggered when media is stopped.
+Genvägen aktiveras när media stoppas.
 
 **Standard**: Inget
 
-##### Last Song Shortcut {#custom-event-last-song-shortcut}
+##### Genväg för sista sången {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-Shortcut that is triggered when the last song is played during a meeting.
+Genvägen aktiveras när sista sången spelas under ett möte.
 
 **Standard**: Inget
 
@@ -410,11 +410,11 @@ Ställ in genvägar för uppspelning av media:
 
 ### Mediavisning {#media-display}
 
-#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+#### Aktivera tonade övergångar för mediafönster {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-Enable fade-in/out transitions when showing or hiding the media window.
+Aktivera mjuk övergång när du döljer eller visar mediafönstret.
 
 **Standard**: `Ja`
 
@@ -514,11 +514,11 @@ Dessa inställningar bör endast ändras om du förstår deras innebörd.
 
 :::
 
-#### Base URL {#base-url}
+#### Bas URL {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
-Base domain used to download publications and media.
+Basdomän som används för att ladda ner publikationer och medier.
 
 **Default**: `jw.org`
 
