@@ -24,42 +24,40 @@ describe('friendlyDayToJsDay', () => {
 
 describe('datesAreSame', () => {
   it('should return true if dates are the same', () => {
-    const date1 = new Date();
+    const date1 = new Date(2025, 0, 15, 12, 0, 0, 0); // Jan 15, 2025 12:00
     const date2 = new Date(date1.getTime());
     const date3 = new Date(date1.getTime());
-    date3.setHours(date1.getHours() + 1);
-    expect(datesAreSame(date1, date2)).toBe(true);
-    expect(datesAreSame(date1, date3)).toBe(true);
+    date3.setHours(13); // Jan 15, 2025 13:00
+    expect(datesAreSame(date1, date2)).toBe(true); // same calendar day
+    expect(datesAreSame(date1, date3)).toBe(true); // same calendar day
   });
 
   it('should return false if dates are not the same', () => {
-    const date1 = new Date();
+    const date1 = new Date(2025, 0, 15, 12, 0, 0, 0); // Jan 15, 2025 12:00
     const date2 = new Date(date1.getTime());
     const date3 = new Date(date1.getTime());
-    date2.setFullYear(date1.getFullYear() - 1);
-    date3.setDate(date1.getDate() + 1);
-    expect(datesAreSame(date1, date2)).toBe(false);
-    expect(datesAreSame(date1, date3)).toBe(false);
+    date2.setFullYear(date1.getFullYear() - 1); // Dec 15, 2024 12:00
+    date3.setDate(date1.getDate() + 1); // Jan 16, 2025 12:00
+    expect(datesAreSame(date1, date2)).toBe(false); // different calendar day
+    expect(datesAreSame(date1, date3)).toBe(false); // different calendar day
   });
 });
 
 describe('isInPast', () => {
   it('should work for past dates', () => {
-    const date = new Date();
-    date.setFullYear(date.getFullYear() - 1);
-    expect(isInPast(date)).toBe(true);
+    const date = new Date(2024, 11, 15, 12, 0, 0, 0); // Dec 15, 2024 12:00
+    expect(isInPast(date)).toBe(true); // Dec 15, 2024 12:00 is in the past
   });
 
   it('should work for future dates', () => {
-    const date = new Date();
-    date.setFullYear(date.getFullYear() + 1);
-    expect(isInPast(date)).toBe(false);
+    const date = new Date(2035, 0, 15, 12, 0, 0, 0); // Jan 15, 2035 12:00
+    expect(isInPast(date)).toBe(false); // Jan 15, 2035 12:00 is not in the past
   });
 
   it('should work for today', () => {
     const today = new Date();
-    expect(isInPast(today)).toBe(false);
-    expect(isInPast(today, true)).toBe(true);
+    expect(isInPast(today)).toBe(false); // today is not in the past
+    expect(isInPast(today, true)).toBe(true); // today is in the past when including today param
   });
 });
 
