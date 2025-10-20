@@ -18,3 +18,31 @@ export const fetchLatestVersion = async (): Promise<string> => {
     return fallbackVersion;
   }
 };
+
+interface GithubRelease {
+  prerelease: boolean;
+  published_at: string;
+  tag_name: string;
+}
+
+export const fetchLatestRelease = async (): Promise<{
+  publishedAt: string;
+  tag: string;
+}> => {
+  try {
+    const response = await fetch(
+      `https://api.github.com/repos/${GH_AUTHOR}/${GH_REPO}/releases`,
+    );
+    const result: GithubRelease[] = await response.json();
+    if (!Array.isArray(result) || !result.length)
+      return { publishedAt: '', tag: fallbackVersion };
+    const latest = result.find((r) => !r.prerelease);
+    return {
+      publishedAt: latest?.published_at || '',
+      tag: latest?.tag_name || fallbackVersion,
+    };
+  } catch (e) {
+    console.error(e);
+    return { publishedAt: '', tag: fallbackVersion };
+  }
+};

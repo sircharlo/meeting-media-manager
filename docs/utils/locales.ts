@@ -173,7 +173,7 @@ export const mapThemeConfig = (
   outline: { label: msg.outline, level: 'deep' },
   returnToTopLabel: msg.returnToTopLabel,
   sidebar: [
-    // { link: link(locale, 'about'), text: msg.about },
+    { link: link(locale, 'download'), text: msg.download },
     {
       link: link(locale, 'user-guide'),
       text: msg.userGuide,
