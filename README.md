@@ -66,7 +66,6 @@ In addition, M³ itself has been translated into several languages by many volun
 <!-- prettier-ignore-start -->
 <!-- CROWDIN-TRANSLATIONS-PROGRESS-ACTION-START -->
 
-
 #### Available
 
 <table><tr><td align="center" valign="top"><img width="30px" height="30px" title="French" alt="French" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/fr.png"></div><div align="center" valign="top">100%</td><td align="center" valign="top"><img width="30px" height="30px" title="Swedish" alt="Swedish" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/sv-SE.png"></div><div align="center" valign="top">100%</td><td align="center" valign="top"><img width="30px" height="30px" title="Russian" alt="Russian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/ru.png"></div><div align="center" valign="top">99%</td><td align="center" valign="top"><img width="30px" height="30px" title="Portuguese, Brazilian" alt="Portuguese, Brazilian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/pt-BR.png"></div><div align="center" valign="top">83%</td><td align="center" valign="top"><img width="30px" height="30px" title="Dutch" alt="Dutch" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/nl.png"></div><div align="center" valign="top">72%</td></tr><tr><td align="center" valign="top"><img width="30px" height="30px" title="Slovenian" alt="Slovenian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/sl.png"></div><div align="center" valign="top">67%</td><td align="center" valign="top"><img width="30px" height="30px" title="Estonian" alt="Estonian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/et.png"></div><div align="center" valign="top">64%</td><td align="center" valign="top"><img width="30px" height="30px" title="Chinese Simplified" alt="Chinese Simplified" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/zh-CN.png"></div><div align="center" valign="top">62%</td><td align="center" valign="top"><img width="30px" height="30px" title="Italian" alt="Italian" src="https://raw.githubusercontent.com/benjaminjonard/crowdin-translations-progress-action/1.0/flags/it.png"></div><div align="center" valign="top">57%</td></table>
@@ -81,17 +80,6 @@ In addition, M³ itself has been translated into several languages by many volun
 ## Where can I find help about downloading and using M³?
 
 Check out our [SUPPORT.md](https://github.com/sircharlo/meeting-media-manager/blob/master/SUPPORT.md) file for guidance or go directly to our [documentation website](https://sircharlo.github.io/meeting-media-manager/).
-
-## Additional steps for macOS users to open the app without errors
-
-If M³ won't open and displays an error like _“The app is damaged and can't be opened”_ or _“The app is damaged and can't be opened. You should move it to the Trash”_, follow these steps in Terminal (adjust the path as needed):
-
-```bash
-codesign --force --deep --sign - "/Applications/Meeting Media Manager.app"
-sudo xattr -r -d com.apple.quarantine "/Applications/Meeting Media Manager.app"
-```
-
-If issues persist, please refer to our [documentation website](https://sircharlo.github.io/meeting-media-manager/using-at-a-kingdom-hall#additional-steps-for-macos-users) for more details.
 
 ## Does this app go against the Terms of Use of the official website of Jehovah's Witnesses?
 
