@@ -94,11 +94,11 @@ Les médias pour les réunions des Témoins de Jéhovah peuvent être téléchar
 
 M³ lui-même a été traduit dans de nombreuses langues par des bénévoles. Vous pouvez configurer la langue que vous souhaitez afficher dans l'interface de M³, indépendamment de la langue utilisée pour les téléchargements de médias. Cela signifie que vous pouvez utiliser M³ dans votre langue préférée tout en téléchargeant des médias dans toute autre langue prise en charge.
 
-For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
+Pour plus de détails sur les langues et les sous-titres, voir la [FAQ](faq#language-support).
 
 ## Exigences système {#system-requirements}
 
-For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
+Pour les systèmes d'exploitation pris en charge et les spécifications matérielles requises, voir les réponses dans la [FAQ](faq#technical-questions).
 
 Essayez M³ aujourd'hui et voyez par vous-même ce qu'elle peut faire ! Il n’a jamais été aussi facile de présenter les médias lors des réunions de l'assemblée locale.\*\*
 
