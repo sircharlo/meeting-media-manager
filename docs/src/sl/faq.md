@@ -32,19 +32,17 @@ M³ supports Windows, macOS, and Linux:
 
 **Yes!** M³ provides comprehensive multi-language support:
 
-- **Media Languages**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
-- **Interface Languages**: Use M³'s interface in many different languages
+- **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
+- **App Interface**: Use M³'s interface in many different languages
 - **Independent Settings**: You can use the interface in one language while downloading media in another
+- **Fallback languages**: Configure fallback languages for when media isn't available in the primary language
+- **Subtitle support**: Download and display subtitles in various languages
 
 ## Installation and Setup {#installation-setup}
 
-### :inbox_tray: Prenesi M³ {#download}
+### :computer: How do I download and install M³? {#installation}
 
-Prenesi ustrezno različico za svoj operacijski sistem s [strani z izdajami](https://github.com/sircharlo/meeting-media-manager/releases/latest).
-
-### :computer: How do I install M³? {#installation}
-
-Download the appropriate version for your operating system from the [releases page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and follow the installation instructions in the [setup guide](/using-at-a-kingdom-hall#download-and-install).
+Download the appropriate version from the [Download page](download) and follow the steps in the [User Guide](user-guide).
 
 ### :gear: How do I set up M³ for the first time? {#first-time-setup}
 
@@ -247,26 +245,26 @@ Verify these language settings:
 
 ## Support and Community {#support-community}
 
-### :radioactive: Kako prijavim težavo? {#how-do-i-report-an-issue}
+### :radioactive: How do I report an issue? {#how-do-i-report-an-issue}
 
-[Težavo prijavi](https://github.com/sircharlo/meeting-media-manager/issues) na uradni spletni strani GitHub repository. Include:
+Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository. Include:
 
 - Detailed description of the problem
 - Steps to reproduce the issue
 - Your operating system and M³ version
 - Any error messages, logs and screenshots
 
-### :new: Kako lahko zaprosim za novo funkcijo ali izboljšavo? {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: How can I request a new feature or enhancement? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Na uradni spletni strani GitHub repository [odpri razpravo](https://github.com/sircharlo/meeting-media-manager/discussions). Describe:
+Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository. Describe:
 
 - The feature you'd like to see
 - How it would benefit users
 - Any specific requirements or preferences
 
-### :handshake: Kako lahko prispevam k pisanju kode? {#how-can-i-contribute-some-code}
+### :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
 
-[Oglej si vodnik za prispevanje](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) na uradni spletni strani GitHub repository. We welcome code contributions and Pull Requests!
+Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository. We welcome code contributions and Pull Requests!
 
 ### :globe_with_meridians: How can I help with translations? {#translations}
 
@@ -277,17 +275,36 @@ M³ uses Crowdin for translation management. You can contribute translations by:
 3. Translating strings that need work
 4. Reviewing existing translations
 
-### :x: Ali lahko doniram za projekt? {#can-i-make-a-donation-to-the-project}
+### :x: Can I make a donation to the project? {#can-i-make-a-donation-to-the-project}
 
-Zahvaljujemo se ti za tvoje zanimanje za podporo projekta! Vendar v duhu tega, kar piše v Mateju 10:8, donacij **ne** sprejemamo in jih tudi nikoli ne bomo. Ta program je bil narejen z ljubeznijo in nekaj prostega časa. Uživaj v uporabi programa! :tada:
+Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
 
-:::tip :book: Matej 10:8
+:::tip :book: Matthew 10:8
 
-"Zastonj ste prejeli, zastonj dajajte."
+"You received free, give free."
 
 :::
 
 ## Technical Questions {#technical-questions}
+
+### :computer: What hardware and software requirements does M³ have? {#hardware-and-software-requirements}
+
+M³ is designed to work on a wide range of operating systems:
+
+- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
+- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
+- **Linux**: Most modern Linux distributions (AppImage format)
+
+M³ has the following hardware requirements:
+
+- **Minimum**: 4GB RAM, 6GB free disk space
+- **Recommended**: 8GB RAM, 15GB free disk space for media caching
+- **Network**: Internet connection for media downloads
+
+Depending on the features you use, M³ also requires the following additional software:
+
+- **Zoom**: Required only if using Zoom integration features
+- **OBS Studio**: Required only if using OBS integration features
 
 ### :floppy_disk: How much disk space does M³ use? {#disk-space}
 
