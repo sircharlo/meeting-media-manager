@@ -258,7 +258,7 @@ Importera ljudinspelningar av Bibelverser:
 
 1. Klicka på knappen "Ljudbibel"
 2. Välja Bibelbok och kapitel
-3. Choose specific verses or verse ranges
+3. Välj specifika verser eller versintervall
 4. Ladda ner ljudfilerna
 5. Använd dem
 
