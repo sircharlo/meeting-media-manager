@@ -95,10 +95,10 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   onUpdateAvailable: function (callback) {
-    throw new Error('Function not implemented.');
+    console.log('onUpdateAvailable called but not implemented');
   },
   onUpdateDownloaded: function (callback) {
-    throw new Error('Function not implemented.');
+    console.log('onUpdateDownloaded called but not implemented');
   },
   onWatchFolderUpdate: function (callback) {
     throw new Error('Function not implemented.');
