@@ -38,6 +38,16 @@ Määra, millist päeva tuleks kalendri vaates pidada nädala esimeseks päevaks
 
 **Vaikimisi**: Pühapäev
 
+### Date Format {#date-format}
+
+<!-- **Setting**: `localDateFormat` -->
+
+Format used to display dates in the app.
+
+**Example**: D MMMM YYYY
+
+**Default**: D MMMM YYYY
+
 ### Automaatne käivitamine sisselogimisel {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
@@ -162,6 +172,14 @@ Luba see, kui kasutad piiratud andmesidet, et vähendada andmekasutust.
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
 Luba meedia esitamise funktsioon. See on vajalik, kui soovid esitada meediafaile teisel monitoril.
+
+**Vaikimisi**: `väljas`
+
+#### Begin Playback Paused {#begin-playback-paused}
+
+<!-- **Setting**: `beginPlaybackPaused` -->
+
+Start videos in a paused state when playback begins.
 
 **Vaikimisi**: `väljas`
 
@@ -323,6 +341,50 @@ Määra, milliseid OBS-stseene kasutada erinevateks eesmärkideks:
 
 :::
 
+### Custom Events {#custom-events}
+
+#### Enable Custom Events {#enable-custom-events}
+
+<!-- **Setting**: `enableCustomEvents` -->
+
+Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+
+**Vaikimisi**: `väljas`
+
+#### Custom Event Shortcuts {#custom-event-shortcuts}
+
+##### Play Media Shortcut {#custom-event-media-play-shortcut}
+
+<!-- **Setting**: `customEventMediaPlayShortcut` -->
+
+Shortcut that is triggered when media is played.
+
+**Vaikimisi**: Tühi
+
+##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+
+<!-- **Setting**: `customEventMediaPauseShortcut` -->
+
+Shortcut that is triggered when media is paused.
+
+**Vaikimisi**: Tühi
+
+##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+
+<!-- **Setting**: `customEventMediaStopShortcut` -->
+
+Shortcut that is triggered when media is stopped.
+
+**Vaikimisi**: Tühi
+
+##### Last Song Shortcut {#custom-event-last-song-shortcut}
+
+<!-- **Setting**: `customEventLastSongShortcut` -->
+
+Shortcut that is triggered when the last song is played during a meeting.
+
+**Vaikimisi**: Tühi
+
 ## Lisasätted {#advanced-settings}
 
 ### Kiirklahvid {#settings-guide-keyboard-shortcuts}
@@ -347,6 +409,14 @@ Meedia esitamise kiirklahvide seadistamine:
 - **Taustamuusika lüliti**: Lülita taustamuusika sisse või välja
 
 ### Meedia ekraan {#media-display}
+
+#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+
+<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+
+Enable fade-in/out transitions when showing or hiding the media window.
+
+**Vaikimisi**: `lubatud`
 
 #### Peida meedia logo {#hide-media-logo}
 
@@ -443,6 +513,14 @@ Salvesta eksporditud meediafailid MP4-vormingusse, et saavutada parem ühilduvus
 Neid seadeid tuleks muuta ainult juhul, kui mõistad nende mõju.
 
 :::
+
+#### Base URL {#base-url}
+
+<!-- **Setting**: `baseUrl` -->
+
+Base domain used to download publications and media.
+
+**Default**: `jw.org`
 
 #### Meedia allalaadimise keelamine {#disable-media-fetching}
 

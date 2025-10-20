@@ -84,15 +84,9 @@ För **hybrid** eller **vanliga** församlingsmöten, innehåller det integrerad
 - **Tangentbordsgenvägar**: Anpassningsbara kortkommandon för många funktioner
 - **Flera profiler**: Hantera olika församlingar eller grupper med separata profiler
 
-**Prova M³ idag och se med egna ögon vad den kan göra! Det har aldrig varit enklare att visa media på församlingsmöten.**
-
-![M³ preview](./../assets/m3-preview.png)
-
 ## Fungerar M³ på mitt språk? {#does-m3-work-in-my-language}
 
 **Ja!** M³ ger omfattande stöd för flera språk:
-
-### Mediaspråk {#media-languages}
 
 Media för Jehovas vittnens möten kan laddas ner automatiskt på något av de hundratals språk som finns på Jehovas vittnens officiella websida. Listan över tillgängliga språk uppdateras dynamiskt, allt du behöver göra är att välja önskad språk vid installationen.
 
@@ -100,30 +94,12 @@ Media för Jehovas vittnens möten kan laddas ner automatiskt på något av de h
 
 M³ har översatts till många språk av frivilliga hjälpare. Du kan konfigurera det språk du vill ska visas i M³:s gränssnitt, oberoende av det språk som används för medianedladdningar. Detta innebär att du kan använda M³ på ditt föredragna språk när du laddar ner media på något annat språk som stöds.
 
-### Språkfunktioner {#language-features}
-
-- **Dynamisk språkdetektering**: Identifierar automatiskt tillgängliga språk
-- **Reservspråk**: Konfigurera reservspråk när det primära språket inte är tillgängligt
-- **Undertextstöd**: Ladda ner och visa undertexter på olika språk
-- **Lokaliserat gränssnitt**: Fullständig gränssnittsöversättning för många språk
+For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
 
 ## Systemkrav {#system-requirements}
 
-M³ är utformad för att fungera på ett brett spektrum av system:
+For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
 
-### Operativsystem som stöds {#supported-operating-systems}
+**Prova M³ idag och se med egna ögon vad den kan göra! Det har aldrig varit enklare att visa media på församlingsmöten.**
 
-- **Windows**: Windows 10 och senare (64-bitars och 32-bitars versioner tillgängliga)
-- **macOS**: macOS 10.15 (Catalina) och senare (Intel- och Apple Silicon stöd)
-- **Linux**: De flesta moderna Linuxdistributioner (AppImage format)
-
-### Hårdvarukrav {#hardware-requirements}
-
-- **Minimum**: 4 GB RAM, 6 GB ledigt diskutrymme
-- **Rekommenderas**: 8 GB RAM, 15 GB ledigt diskutrymme för mediacachning
-- **Nätverk**: Internetanslutning för medianedladdning
-
-### Ytterligare krav {#additional-requirements}
-
-- **Zoom**: Krävs endast om du använder Zoom integrationsfunktioner
-- **OBS Studio**: Krävs endast om OBS integrationsfunktioner
+![M³ preview](./../assets/m3-preview.png)

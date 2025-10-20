@@ -32,50 +32,48 @@ M³ 支持Windows，macOS和Linux：
 
 **是的！** M³提供全面的多语言支持：
 
-- **媒体语言**：下载耶和华见证人的官方网站上数百种语言的任何媒体
-- **界面语言**：用多种不同语言使用 M³ 的接口
+- **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
+- **App Interface**: Use M³'s interface in many different languages
 - **独立设置**：您可以在下载另一种媒体时使用一种语言的界面
+- **Fallback languages**: Configure fallback languages for when media isn't available in the primary language
+- **Subtitle support**: Download and display subtitles in various languages
 
 ## 安装和设置 {#installation-setup}
 
-### :inbox_tray: 下载 M³ {#download}
+### :computer: How do I download and install M³? {#installation}
 
-从 [发布页面](https://github.com/sircharlo/meeting-media-manager/releases/latest)下载您操作系统的适当版本。
+Download the appropriate version from the [Download page](download) and follow the steps in the [User Guide](user-guide).
 
-### :computer: 如何安装 M³？ {#installation}
+### :gear: How do I set up M³ for the first time? {#first-time-setup}
 
-从 [发布页面](https://github.com/sircharlo/meeting-media-manager/releases/latest) 下载您操作系统的适当版本，并遵循 [设置指南](/using-at-a-kingdom-hall#download-and-install) 中的安装说明。
+M³ includes a setup wizard that guides you through the essential configuration:
 
-### :gear: 如何进行 M³ 初始设置？ {#first-time-setup}
+1. Choose your interface language
+2. Select profile type (Regular or Other)
+3. Configure congregation information
+4. Set up meeting schedule
+5. Configure optional features like OBS integration
 
-M³ 包含一个引导您完成基本配置的安装向导：
+## Media Management {#faq-media-management}
 
-1. 选择你的界面语言
-2. 选择配置文件类型（正规或其他）
-3. 配置聚合信息
-4. 设置聚会时间
-5. 配置可选功能，如OBS集成
+### :download: How does M³ download media? {#media-download}
 
-## 媒体管理 {#faq-media-management}
+M³ automatically downloads media for upcoming meetings by:
 
-### :download: M³ 如何下载媒体？ {#media-download}
+1. Checking your meeting schedule
+2. Determining what media is needed
+3. Downloading from the official website of Jehovah's Witnesses in your selected language
+4. Organizing media by date and meeting type
+5. Caching files for offline use
 
-M³ 自动下载聚会媒体的方法包括：
+### :calendar: Can I download media for specific dates? {#specific-dates}
 
-1. 检查您的聚会时间
-2. 决定需要什么媒体
-3. 从耶和华见证会官方网站下载你所选语言的资料
-4. 按日期和聚会类型编排媒体
-5. 缓存文件供离线使用
+Yes! M³ allows you to:
 
-### :calendar: 我可以下载特定日期的媒体吗？ {#specific-dates}
+- Download media for upcoming meetings automatically
+- Import custom media for any date
 
-是! M3 允许您：
-
-- 自动下载即将举行的聚会媒体
-- 导入任何日期的自定义媒体
-
-### :folder: 如何导入我自己的媒体文档？ {#import-media}
+### :folder: How do I import my own media files? {#import-media}
 
 You can import custom media in several ways:
 
@@ -86,7 +84,7 @@ You can import custom media in several ways:
 
 ### :speaker: Can I import audio Bible recordings? {#audio-bible}
 
-是! M³ includes an Audio Bible feature that allows you to:
+Yes! M³ includes an Audio Bible feature that allows you to:
 
 1. Select Bible books and chapters
 2. Choose specific verses or verse ranges
@@ -95,7 +93,7 @@ You can import custom media in several ways:
 
 ## Presentation Features {#faq-presentation-features}
 
-### :file_folder: What is media auto-export? {#media-export}
+### :tv: How do I present media during meetings? {#present-media}
 
 To present media:
 
@@ -183,7 +181,7 @@ Media auto-export automatically:
 
 ### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
 
-是! M³ supports multiple profiles for:
+Yes! M³ supports multiple profiles for:
 
 - Different congregations
 - Special events
@@ -247,26 +245,26 @@ Verify these language settings:
 
 ## Support and Community {#support-community}
 
-### :tv: How do I present media during meetings? {#how-do-i-report-an-issue}
+### :radioactive: How do I report an issue? {#how-do-i-report-an-issue}
 
-请在官方的 GitHub 仓库上[反馈问题](https://github.com/sircharlo/meeting-media-manager/issues)。 Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include:
+Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository. Include:
 
 - Detailed description of the problem
 - Steps to reproduce the issue
 - Your operating system and M³ version
 - Any error messages, logs and screenshots
 
-### :new: 如何请求新功能或优化功能？ {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: How can I request a new feature or enhancement? {#how-can-i-request-a-new-feature-or-enhancement}
 
-请在官方的 GitHub 仓库上[反馈问题](https://github.com/sircharlo/meeting-media-manager/issues)。 Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Include: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe: Describe:
+Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository. Describe:
 
 - The feature you'd like to see
 - How it would benefit users
 - Any specific requirements or preferences
 
-### :handshake: 如何贡献一些代码？ {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code} {#how-can-i-contribute-some-code}
+### :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
 
-请查看官方GitHub 仓库的[贡献指南](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md)。 We welcome code contributions and Pull Requests! We welcome code contributions and Pull Requests!
+Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository. We welcome code contributions and Pull Requests!
 
 ### :globe_with_meridians: How can I help with translations? {#translations}
 
@@ -277,17 +275,36 @@ M³ uses Crowdin for translation management. You can contribute translations by:
 3. Translating strings that need work
 4. Reviewing existing translations
 
-### :x: 如何为该项目做出捐献？ {#can-i-make-a-donation-to-the-project} {#can-i-make-a-donation-to-the-project}
+### :x: Can I make a donation to the project? {#can-i-make-a-donation-to-the-project}
 
-感谢您对支持该项目的兴趣！ 然而，本着马太福音10:8的精神，我们**不接受**捐款，永远不会接受。 这个应用程序是用爱心和花费一些时间制作的。 希望您喜欢！ :tada:
+Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
 
-:::tip :book: 马太福音10:8
+:::tip :book: Matthew 10:8
 
-“你们​免费​得​来，也​要​无偿​施与”
+"You received free, give free."
 
 :::
 
 ## Technical Questions {#technical-questions}
+
+### :computer: What hardware and software requirements does M³ have? {#hardware-and-software-requirements}
+
+M³ is designed to work on a wide range of operating systems:
+
+- **Windows**：Windows 10及更高版本（提供64位和32位版本）
+- **macOS**：macOS 10.15 (Catalina)及更高版本（支持Intel和Apple Silicon）
+- **Linux**：大多数现代Linux发行版（AppImage格式）
+
+M³ has the following hardware requirements:
+
+- **Minimum**: 4GB RAM, 6GB free disk space
+- **Recommended**: 8GB RAM, 15GB free disk space for media caching
+- **Network**: Internet connection for media downloads
+
+Depending on the features you use, M³ also requires the following additional software:
+
+- **Zoom**: Required only if using Zoom integration features
+- **OBS Studio**: Required only if using OBS integration features
 
 ### :floppy_disk: How much disk space does M³ use? {#disk-space}
 
@@ -302,7 +319,7 @@ Typical usage ranges from 2-10GB depending on settings and usage.
 
 ### :shield: Is M³ secure and private? {#security-privacy}
 
-是! M³ is designed with security and privacy in mind:
+Yes! M³ is designed with security and privacy in mind:
 
 - **Local Storage**: All meeting data is stored locally on your computer
 - **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses

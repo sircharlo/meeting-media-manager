@@ -38,6 +38,16 @@
 
 **По умолчанию**: Воскресенье
 
+### Date Format {#date-format}
+
+<!-- **Setting**: `localDateFormat` -->
+
+Format used to display dates in the app.
+
+**Example**: D MMMM YYYY
+
+**Default**: D MMMM YYYY
+
 ### Автозапуск при входе {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
@@ -162,6 +172,14 @@
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
 Включите функцию медиа дисплея. Это необходимо для представления средств массовой информации на втором мониторе.
+
+**По умолчанию**: `false`
+
+#### Begin Playback Paused {#begin-playback-paused}
+
+<!-- **Setting**: `beginPlaybackPaused` -->
+
+Start videos in a paused state when playback begins.
 
 **По умолчанию**: `false`
 
@@ -323,6 +341,50 @@
 
 :::
 
+### Custom Events {#custom-events}
+
+#### Enable Custom Events {#enable-custom-events}
+
+<!-- **Setting**: `enableCustomEvents` -->
+
+Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+
+**По умолчанию**: `false`
+
+#### Custom Event Shortcuts {#custom-event-shortcuts}
+
+##### Play Media Shortcut {#custom-event-media-play-shortcut}
+
+<!-- **Setting**: `customEventMediaPlayShortcut` -->
+
+Shortcut that is triggered when media is played.
+
+**По умолчанию**: нет
+
+##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+
+<!-- **Setting**: `customEventMediaPauseShortcut` -->
+
+Shortcut that is triggered when media is paused.
+
+**По умолчанию**: нет
+
+##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+
+<!-- **Setting**: `customEventMediaStopShortcut` -->
+
+Shortcut that is triggered when media is stopped.
+
+**По умолчанию**: нет
+
+##### Last Song Shortcut {#custom-event-last-song-shortcut}
+
+<!-- **Setting**: `customEventLastSongShortcut` -->
+
+Shortcut that is triggered when the last song is played during a meeting.
+
+**По умолчанию**: нет
+
 ## Расширенные настройки {#advanced-settings}
 
 ### Горячие клавиши {#settings-guide-keyboard-shortcuts}
@@ -347,6 +409,14 @@
 - **Переключить музыку**: Переключить фоновую музыку
 
 ### Медиа-дисплей {#media-display}
+
+#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+
+<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+
+Enable fade-in/out transitions when showing or hiding the media window.
+
+**По умолчанию**: `true`
 
 #### Скрыть логотип медиа {#hide-media-logo}
 
@@ -443,6 +513,14 @@
 Эти настройки должны быть изменены только в том случае, если вы понимаете их последствия.
 
 :::
+
+#### Base URL {#base-url}
+
+<!-- **Setting**: `baseUrl` -->
+
+Base domain used to download publications and media.
+
+**Default**: `jw.org`
 
 #### Отключить выборку медиа {#disable-media-fetching}
 

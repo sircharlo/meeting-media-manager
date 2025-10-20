@@ -32,262 +32,279 @@ M3 поддерживает Windows, macOS и Linux:
 
 **Да!** M3 обеспечивает полную поддержку многоязычных языков:
 
-- **Медиа языки**: Скачать средства массовой информации на любом из сотен языков на официальном сайте Свидетелей Иеговы
-- **Языки интерфейса**: Использование M3 интерфейса на разных языках
+- **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
+- **App Interface**: Use M³'s interface in many different languages
 - **Независимые настройки**: Вы можете использовать интерфейс на одном языке при загрузке мультимедиа на другой
+- **Fallback languages**: Configure fallback languages for when media isn't available in the primary language
+- **Subtitle support**: Download and display subtitles in various languages
 
 ## Установка и установка {#installation-setup}
 
-### :inbox_tray: Скачать M3 {#download}
+### :computer: How do I download and install M³? {#installation}
 
-Загрузите соответствующую версию вашей операционной системы с [страницы релизов](https://github.com/sircharlo/meeting-media-manager/releases/latest).
+Download the appropriate version from the [Download page](download) and follow the steps in the [User Guide](user-guide).
 
-### :computer: Как мне установить M3? {#installation}
+### :gear: How do I set up M³ for the first time? {#first-time-setup}
 
-Загрузите соответствующую версию вашей операционной системы с [страницы релизов](https://github.com/sircharlo/meeting-media-manager/releases/latest) и следуйте инструкциям по установке в [руководстве по установке](/using-at-a-kingdom-hall#download-and-install).
+M³ includes a setup wizard that guides you through the essential configuration:
 
-### :gear: Как мне установить M3 в первый раз? {#first-time-setup}
+1. Choose your interface language
+2. Select profile type (Regular or Other)
+3. Configure congregation information
+4. Set up meeting schedule
+5. Configure optional features like OBS integration
 
-M3 включает в себя мастер установки, который поможет вам в основной конфигурации:
+## Media Management {#faq-media-management}
 
-1. Выберите язык интерфейса
-2. Выберите тип профиля (обычный или другой)
-3. Настройка сведений о конгрегации
-4. Настроить график встречи
-5. Настройка дополнительных функций, таких как OBS интеграция
+### :download: How does M³ download media? {#media-download}
 
-## Управление файлами {#faq-media-management}
+M³ automatically downloads media for upcoming meetings by:
 
-### :download: Как M3 скачать медиафайл? {#media-download}
+1. Checking your meeting schedule
+2. Determining what media is needed
+3. Downloading from the official website of Jehovah's Witnesses in your selected language
+4. Organizing media by date and meeting type
+5. Caching files for offline use
 
-M3 автоматически загружает средства массовой информации для предстоящих совещаний:
+### :calendar: Can I download media for specific dates? {#specific-dates}
 
-1. Проверка расписания встречи
-2. Определяет, какой медиа-файл необходим
-3. Загрузка с официального сайта Свидетелей Иеговы на выбранном вами языке
-4. Организация медиафайлов по дате и типу встреч
-5. Кэширование файлов для использования в автономном режиме
+Yes! M³ allows you to:
 
-### :calendar: Могу ли я загрузить медиа на определённые даты? {#specific-dates}
+- Download media for upcoming meetings automatically
+- Import custom media for any date
 
-Да! М3 позволяет:
+### :folder: How do I import my own media files? {#import-media}
 
-- Автоматически загружать средства массовой информации для предстоящих встреч
-- Импортировать пользовательские файлы на любую дату
+You can import custom media in several ways:
 
-### :folder: Как импортировать свои собственные медиафайлы? {#import-media}
+- **File Import**: Use the import button to add videos, images, or audio files
+- **Drag and Drop**: Drag files directly into M³
+- **Folder Monitoring**: Set up a watched folder for automatic imports
+- **JWPUB Files and Playlists**: Import publications and playlists
 
-Вы можете импортировать пользовательские файлы несколькими способами:
+### :speaker: Can I import audio Bible recordings? {#audio-bible}
 
-- **Импорт файлов**: Используйте кнопку импорта для добавления видео, изображений или аудио файлов
-- \*\*Перетащите файлы непосредственно в M3
-- **Мониторинг папок**: Настройте наблюдаемую папку для автоматического импорта
-- **JWPUB Файлы и плейлисты**: Импорт публикаций и плейлистов
+Yes! M³ includes an Audio Bible feature that allows you to:
 
-### :speaker: Могу ли я импортировать записи аудио Библии? {#audio-bible}
+1. Select Bible books and chapters
+2. Choose specific verses or verse ranges
+3. Download audio recordings
+4. Use them at the meetings
 
-Да! M3 включает в себя функцию Аудио Библии, которая позволяет:
+## Presentation Features {#faq-presentation-features}
 
-1. Выберите книги Библии и главы
-2. Выберите отдельные стихи или диапазоны стихов
-3. Скачать аудиозаписи
-4. Использовать их на совещаниях
+### :tv: How do I present media during meetings? {#present-media}
 
-## Функции презентации {#faq-presentation-features}
+To present media:
 
-### :tv: Как представить средства массовой информации на встречах? {#present-media}
+1. Select the date
+2. Click the play button on the media item you want to present or use keyboard shortcuts
+3. Use the media player controls to pause, navigate, or stop playback
+4. Use zoom/pan features for images
+5. Set custom timing if needed
 
-Представление СМИ:
+### :keyboard: What keyboard shortcuts are available? {#faq-keyboard-shortcuts}
 
-1. Выберите дату
-2. Нажмите на кнопку воспроизведения на элементе, который вы хотите представить, или используйте сочетания клавиш
-3. Используйте элементы управления медиаплеера для паузы, навигации или остановки воспроизведения
-4. Использовать Zoom/Pan функции для изображений
-5. Установить время при необходимости
+M³ supports customizable keyboard shortcuts for:
 
-### :keyboard: Какие клавиши доступны для клавиатуры? {#faq-keyboard-shortcuts}
-
-M3 поддерживает настраиваемые сочетания клавиш для:
-
-- Открытие/закрытие окна медиа
-- Предыдущий/следующая медиа навигация
-- Воспроизведение/остановка управления
-- Переключение фоновой музыки
+- Opening/closing media window
+- Previous/next media navigation
+- Play/pause/stop controls
+- Background music toggle
 
 <!-- - Fullscreen mode -->
 
-### :music: Как работает фоновая музыка? {#faq-background-music}
+### :music: How does background music work? {#faq-background-music}
 
-Функции фоновой музыки:
+Background music features include:
 
-- Автоматическое воспроизведение при запуске M3 до начала встречи
-- Автоматическая остановка перед началом встреч
-- Перезапустить один клик после встреч
-- Контроль громкости
-- Настраиваемое время остановки буфера
+- Automatic playback when M³ starts, before the meeting begins
+- Automatic stop before meetings begin
+- One-click restart after meetings
+- Independent volume control
+- Configurable stop buffer time
 
-### :video_camera: Как настроить интеграцию масштабов? {#zoom-setup}
+### :video_camera: How do I set up the Zoom integration? {#zoom-setup}
 
-Для интеграции с Zoom:
+To integrate with Zoom:
 
-1. Включить интеграцию масштаба в настройках M3
-2. Настройте ярлык совместного использования экрана, который настроен в Zoom. Убедитесь, что ярлык «глобальный» в настройках Zoom.
-3. M3 автоматически запустит и прекратит совместное использование экрана при медиа презентации
+1. Enable Zoom integration in M³ settings
+2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
+3. M³ will automatically start and stop Zoom screen sharing during media presentations
 
-## Интеграция OBS Studio {#faq-obs-integration}
+## OBS Studio Integration {#faq-obs-integration}
 
-### :video_camera: Как мне установить интеграцию с OBS Studio? {#faq-obs-setup}
+### :video_camera: How do I set up the OBS Studio integration? {#faq-obs-setup}
 
-Для интеграции с OBS Studio:
+To integrate with OBS Studio:
 
-1. Установить OBS Studio и плагин WebSocket
-2. Включить интеграцию OBS в настройках M3
-3. Введите порт и пароль OBS
-4. Настройка сцен для камеры, медиа и изображений
-5. Проверить воспроизведение
+1. Install OBS Studio and the WebSocket plugin
+2. Enable OBS integration in M³ settings
+3. Enter the OBS port and password
+4. Configure scenes for camera, media, and images
+5. Test playback
 
-### :arrows_counterclockwise: Как работает автоматическое переключение сцен? {#faq-scene-switching}
+### :arrows_counterclockwise: How does automatic scene switching work? {#faq-scene-switching}
 
-M3 автоматически переключает сцены OBS на основе:
+M³ automatically switches OBS scenes based on:
 
-- Тип медиа (видео, изображение и т. д.)
-- Конфигурация вашей сцены
-- Настройки типа "Отложить изображения"
-- Вернуться ли к предыдущей сцене после медиа
+- Media type (video, image, etc.)
+- Your scene configuration
+- Settings like "Postpone Images"
+- Whether to return to previous scene after media
 
-### :pause_button: Что такое "Изображения Postpone"? {#faq-postpone-images}
+### :pause_button: What is the "Postpone Images" feature? {#faq-postpone-images}
 
-Эта функция задерживает передачу изображений в OBS, пока вы не запустите их вручную. Это полезно для:
+This feature delays sharing images to OBS until you manually trigger them. This is useful for:
 
-- Сначала показываются изображения для личной аудитории
-- Иметь больше контроля над таймингом
-- Избегаем преждевременных изменений сцены
+- Showing images to in-person audience first
+- Having more control over timing
+- Avoiding premature scene changes
 
-## Дополнительные возможности {#faq-advanced-features}
+## Advanced Features {#faq-advanced-features}
 
-### :cloud: Как работает мониторинг папок? {#faq-folder-monitoring}
+### :cloud: How does folder monitoring work? {#faq-folder-monitoring}
 
-Мониторинг папок позволяет:
+Folder monitoring allows you to:
 
-1. Выберите папку для просмотра новых файлов
-2. Автоматически импортировать новые медиа-файлы, которые синхронизируются с облачным хранилищем: Dropbox или OneDrive
+1. Select a folder to watch for new files
+2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
 
-### :file_folder: Что такое медиа-автоэкспорт? {#faq-media-export}
+### :file_folder: What is media auto-export? {#faq-media-export}
 
-Автоматический экспорт медиа:
+Media auto-export automatically:
 
-1. Экспорт медиа файлов в указанную папку
-2. Упорядочивает файлы по дате и разделу
-3. Преобразует файлы в формат MP4 (опционально)
-4. Обеспечивает организованное резервное копирование файлов встреч
+1. Exports media files to a specified folder
+2. Organizes files by date and section
+3. Converts files to MP4 format (optional)
+4. Maintains an organized backup of meeting media files
 
-### :family: Могу ли я управлять несколькими конгрегациями? {#faq-multiple-congregations}
+### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
 
-Да! M3 поддерживает несколько профилей для:
+Yes! M³ supports multiple profiles for:
 
-- Различные конгрегации
-- Специальные мероприятия
-- Различные группы
-- Разделяйте настройки и медиа для каждого
+- Different congregations
+- Special events
+- Different groups
+- Separate settings and media for each
 
-## Устранение неполадок {#faq-troubleshooting}
+## Troubleshooting {#faq-troubleshooting}
 
-### :warning: медиа не загружается. Что мне проверить? {#faq-media-not-downloading}
+### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
 
-Проверьте эти общие проблемы:
+Check these common issues:
 
-1. **Расписание встречи**: Проверьте правильность времени и времени встречи
-2. **Настройки языка**: Убедитесь, что медиа-язык установлен правильно
-3. **Интернет-соединение**: Проверьте подключение к Интернету
-4. **Доступность языка**: Проверьте наличие медиафайлов на выбранном языке
+1. **Meeting Schedule**: Verify your meeting days and times are correct
+2. **Language Settings**: Ensure your media language is set correctly
+3. **Internet Connection**: Check your internet connection
+4. **Language Availability**: Verify media is available in your selected language
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### Интеграция с :video_camera: не работает. Что я должен проверить? {#faq-obs-not-working}
+### :video_camera: The OBS integration isn't working. What should I verify? {#faq-obs-not-working}
 
-Проверьте эти проблемы, связанные с OBS:
+Check these OBS-related issues:
 
-1. **Установка OBS**: Убедитесь, что OBS Studio установлен и запущен
-2. **Плагин WebSock**: Проверьте установленный плагин WebSocket
-3. **Порт и пароль**: Проверьте настройки порта и пароля OBS
-4. **Брандмауэр**: Убедитесь, что брандмауэр не блокирует соединение
+1. **OBS Installation**: Ensure OBS Studio is installed and running
+2. **WebSocket Plugin**: Verify the WebSocket plugin is installed
+3. **Port and Password**: Check your OBS port and password settings
+4. **Firewall**: Ensure the firewall isn't blocking the connection
 
-### :speaker: При использовании OBS Studio? Медиа менеджер встреч автоматически отправляет медиа-аудио в Zoom? {#audio-to-zoom}
+### :speaker: Does Meeting Media Manager automatically send the media audio to Zoom when using OBS Studio? {#audio-to-zoom}
 
-**Нет.** M3 не отправляет аудио автоматически в Zoom или OBS Studio. Видео поток работает как виртуальная камера без звука, так же как и веб-камера. Чтобы музыка/видео звук был доступен в масштабе автоматически, необходимо убедиться в том, что масштаб 'слышит' аудио канал, исходящий с компьютера, , после чего вы должны включить настройку **Original Audio** в Zoom.
+**No.** M³ does not automatically send media audio to Zoom or OBS Studio. The video stream works like a virtual camera with no sound, just like a webcam. To have the music/video sound available in Zoom automatically, you need to ensure that Zoom 'hears' the audio feed coming from the computer, and then you should enable the **Original Audio** setting in Zoom.
 
-**Важные заметки:**
+**Important Notes:**
 
-- Вы должны включить оригинальный звук **каждый раз** перед началом встречи
-- Этот параметр не связан с M3 - при использовании любого медиаплеера и не используя функции совместного доступа к экрану и аудио у Zoom вы столкнетесь с такой же проблемой
-- Оригинальные настройки звука содержат три подпараметра - обычно первые два должны быть включены, а третье отключено для оптимального качества звука
-- Если вы все еще сталкиваетесь с проблемами звука, вам может потребоваться использовать опцию «Поделиться компьютерным звуком»
-- Альтернативно, взгляните на использование интеграции масштабирования, так как используется собственное распределение экрана Zoom.
+- You must enable Original Audio **every time** before starting a Zoom meeting
+- This setting is not related to M³ - you would face the same audio issue when using any other media player and not using Zoom's screen and audio sharing features
+- The Original Audio setting has three sub-options - typically the first two should be enabled and the third disabled for optimal audio quality
+- If you're still experiencing audio issues, you may need to use Zoom's "Share Computer Sound" option instead
+- Alternatively, look into using the Zoom integration instead, as it uses Zoom's native screen sharing.
 
 **Why is this necessary?**
-M³ plays media with sound on your computer, but this audio is not automatically transmitted through the video stream to Zoom when using OBS Studio. Настройки оригинального звука позволяют масштабировать звук, воспроизводимый на вашем компьютере во время совместного использования экрана, если ваш компьютер настроен правильно (например, на компьютере есть вторая звуковая карта, которая используется для воспроизведения медиа, который Zoom прослушивает как микрофон)
+M³ plays media with sound on your computer, but this audio is not automatically transmitted through the video stream to Zoom when using OBS Studio. The Original Audio setting allows Zoom to capture the audio playing on your computer during screen sharing, if your computer is configured properly (for example: the computer has a second sound card that is used for media playback which Zoom listens to as a microphone.)
 
-### :snail: M3 работает медленно. Как я могу повысить производительность? {#performance-issues}
+### :snail: M³ is running slowly. How can I improve performance? {#performance-issues}
 
-Попробуйте эти оптимизации производительности:
+Try these performance optimizations:
 
-1. **Включить дополнительный кэш**: включить дополнительное кэширование в настройках
-2. **Закройте другие приложения**: Закройте ненужные приложения
-3. **Проверьте место на диске**: убедитесь, что достаточно свободного места на диске
-4. **Уменьшить разрешение**: понизить значение максимального разрешения
+1. **Enable Extra Cache**: Turn on additional caching in settings
+2. **Close Other Apps**: Close unnecessary applications
+3. **Check Disk Space**: Ensure you have sufficient free disk space
+4. **Reduce Resolution**: Lower the maximum resolution setting
 
-### :speech_balloon: у меня проблемы с языком. Что мне проверить? {#faq-language-issues}
+### :speech_balloon: I'm having language issues. What should I check? {#faq-language-issues}
 
-Проверьте эти языковые настройки:
+Verify these language settings:
 
-1. **Язык интерфейса**: проверьте язык отображения
-2. **Язык мультимедиа**: Проверьте язык загрузки мультимедиа
-3. **Доступность языка**: обеспечение наличия средств массовой информации на официальном сайте Свидетелей Иеговы
-4. **Язык резервной копии**: Попробуйте установить запасной язык
+1. **Interface Language**: Check your display language setting
+2. **Media Language**: Verify your media download language
+3. **Language Availability**: Ensure the media language is available on the official website of Jehovah's Witnesses
+4. **Fallback Language**: Try setting a fallback language
 
-## Поддержка и сообщество {#support-community}
+## Support and Community {#support-community}
 
-### :radioactive: Как мне сообщить о проблеме? {#how-do-i-report-an-issue}
+### :radioactive: How do I report an issue? {#how-do-i-report-an-issue}
 
-[Пожалуйста, сообщите о проблеме](https://github.com/sircharlo/meeting-media-manager/issues) в официальном репозитории GitHub. Включено:
+Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository. Include:
 
-- Подробное описание проблемы
-- Шаги для воспроизведения проблемы
-- Ваша операционная система и версия M3
-- Любые сообщения об ошибках, журналы и скриншоты
+- Detailed description of the problem
+- Steps to reproduce the issue
+- Your operating system and M³ version
+- Any error messages, logs and screenshots
 
-### :new: Как я могу попросить о новой функции или улучшении? {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: How can I request a new feature or enhancement? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Пожалуйста, [откройте обсуждение](https://github.com/sircharlo/meeting-media-manager/discussions) в официальном репозитории GitHub. Описание:
+Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository. Describe:
 
-- Функция, которую вы хотите видеть
-- Как это будет полезно пользователям
-- Любые конкретные требования или предпочтения
+- The feature you'd like to see
+- How it would benefit users
+- Any specific requirements or preferences
 
-### :handshake: Как я могу помочь с кодом? {#how-can-i-contribute-some-code}
+### :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
 
-Пожалуйста, смотрите [руководство по внесению вкладов](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) в официальном репозитории GitHub. Мы приветствуем участие в коде и просим Pull Request!
+Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository. We welcome code contributions and Pull Requests!
 
-### :globe_with_meridians: Как я могу помочь с переводом? {#translations}
+### :globe_with_meridians: How can I help with translations? {#translations}
 
-М3 использует Crowdin для управления переводом. Вы можете сделать перевод:
+M³ uses Crowdin for translation management. You can contribute translations by:
 
-1. Посещение [проекта Crowdin](https://crowdin.com/project/meeting-media-manager)
-2. Выбор языка
-3. Перевод строк, требующих работы
-4. Просмотр существующих переводов
+1. Visiting the [Crowdin project](https://crowdin.com/project/meeting-media-manager)
+2. Selecting your language
+3. Translating strings that need work
+4. Reviewing existing translations
 
-### :x: Могу ли я сделать пожертвование проекту? {#can-i-make-a-donation-to-the-project}
+### :x: Can I make a donation to the project? {#can-i-make-a-donation-to-the-project}
 
-Благодарим вас за желание поддержать проект! Однако, в соответствии с мыслью из Матфея 10:8, пожертвования **не принимаются** и никогда не будут приниматься. Это приложение было создано в наше свободное время с любовью. Пожалуйста, наслаждайтесь! :tada:
+Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
 
-:::tip :book: Матфея 10:8
+:::tip :book: Matthew 10:8
 
-"Даром получили — даром давайте."
+"You received free, give free."
 
 :::
 
-## Технические вопросы {#technical-questions}
+## Technical Questions {#technical-questions}
+
+### :computer: What hardware and software requirements does M³ have? {#hardware-and-software-requirements}
+
+M³ is designed to work on a wide range of operating systems:
+
+- **Windows**: Windows 10 и выше (64-разрядная и 32-разрядная версия)
+- **macOS**: macOS 10.15 (Катализатор) и выше (Intel и Apple Silicon support)
+- **Linux**: Самые современные дистрибутивы Linux (в формате AppImage)
+
+M³ has the following hardware requirements:
+
+- **Minimum**: 4GB RAM, 6GB free disk space
+- **Recommended**: 8GB RAM, 15GB free disk space for media caching
+- **Network**: Internet connection for media downloads
+
+Depending on the features you use, M³ also requires the following additional software:
+
+- **Zoom**: Required only if using Zoom integration features
+- **OBS Studio**: Required only if using OBS integration features
 
 ### :floppy_disk: Сколько дискового пространства M3 используется? {#disk-space}
 
@@ -302,7 +319,7 @@ M³ plays media with sound on your computer, but this audio is not automatically
 
 ### :shield: Безопасный и приватный M3? {#security-privacy}
 
-Да! М3 разработан с учетом безопасности и конфиденциальности:
+Yes! М3 разработан с учетом безопасности и конфиденциальности:
 
 - **Локальное хранилище**: Все данные встречи хранятся локально на вашем компьютере
 - **Прямые закачки**: Медиа загружаются непосредственно с официального сайта Свидетелей Иеговы

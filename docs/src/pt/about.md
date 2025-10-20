@@ -84,15 +84,9 @@ Para reuniões congregacionais **híbridas** ou **presenciais**, o modo integrad
 - **Atalhos de teclado**: Atalhos de teclado personalizáveis para muitas funções
 - **Vários perfis**: gerenciar congregações diferentes ou grupos com perfis separados
 
-**Experimente hoje o M³ e veja com os próprios olhos o que ele pode fazer! A exibição de mídias nas reuniões congregacionais nunca foi tão fácil.**
-
-![M³ preview](./../assets/m3-preview.png)
-
 ## O M³ está disponível no meu idioma? {#does-m3-work-in-my-language}
 
 **Sim!** O M³ oferece suporte abrangente em vários idiomas:
-
-### Idiomas de Mídia {#media-languages}
 
 Mídias para as reuniões das Testemunhas de Jeová podem ser baixadas automaticamente em quaisquer dos centenas de idiomas disponíveis no site oficial das Testemunhas de Jeová. A lista de idiomas disponíveis é sempre atualizada; tudo que você precisa fazer é selecionar qual você precisa durante a configuração.
 
@@ -100,30 +94,12 @@ Mídias para as reuniões das Testemunhas de Jeová podem ser baixadas automatic
 
 O próprio M³ foi traduzido para vários idiomas por voluntários. Você pode configurar o idioma que gostaria de ser exibido na interface do M3, independente do idioma usado para downloads de mídia. Isso significa que você pode usar o M3 no seu idioma de preferência, enquanto baixa mídia em qualquer outro idioma suportado.
 
-### Recursos de Idioma {#language-features}
-
-- **Detecção dinâmica de idioma**: Detecta automaticamente idiomas disponíveis
-- **Idiomas secundários**: Configurar idiomas secundários quando o conteúdo do idioma principal não está disponível
-- **Suporte a legendas**: Baixe e exiba legendas em idiomas diferentes
-- **Interface localizada**: tradução completa da interface para vários idiomas
+For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
 
 ## Requisitos de Sistema {#system-requirements}
 
-O M3 foi projetado para funcionar em uma grande variedade de sistemas:
+For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
 
-### Sistemas operacionais suportados {#supported-operating-systems}
+**Experimente hoje o M³ e veja com os próprios olhos o que ele pode fazer! A exibição de mídias nas reuniões congregacionais nunca foi tão fácil.**
 
-- **Windows**: Windows 10 e posterior (versões 64 bits e 32-bit disponíveis)
-- **macOS**: macOS 10.15 (Catalina) e posterior (Suporte para Intel e Apple Silicon)
-- **Linux**: Distribuições Linux mais modernas (AppImage format)
-
-### Requisitos de Hardware {#hardware-requirements}
-
-- **Mínimo**: 4GB RAM, 6GB de espaço livre em disco
-- **Recomendado**: 8GB RAM, 15GB de espaço livre em disco para cache de mídia
-- **Rede**: conexão com a Internet para downloads de mídia
-
-### Requisitos Adicionais {#additional-requirements}
-
-- **Zoom**: Necessário apenas se usar os recursos de integração Zoom
-- **OBS Studio**: Requerido apenas se estiver usando recursos de integração do OBS
+![M³ preview](./../assets/m3-preview.png)

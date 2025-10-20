@@ -4,6 +4,10 @@ Denna omfattande användarhandbok hjälper dig att bemästra alla funktioner i M
 
 ## Komma igång {#getting-started}
 
+### Download and Install {#download-and-install}
+
+Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
+
 ### Första starten {#first-launch}
 
 När du först startar M³, kommer du att guidas genom en installationsguide som kommer att konfigurera de viktigaste inställningarna för din församling:
@@ -239,6 +243,7 @@ Lägg till dina egna mediefiler till M³:
 2. **Dra och släpp** - Dra filer direkt till M³
 3. **Mappövervakning**: Ställ in en bevakad mapp för automatisk import
 4. **JWPUB-filer och spellistor**: Importera publikationer och spellistor
+5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
 
 ### Hantera importerad media {#managing-imported-media}
 
@@ -253,7 +258,7 @@ Importera ljudinspelningar av Bibelverser:
 
 1. Klicka på knappen "Ljudbibel"
 2. Välja Bibelbok och kapitel
-3. Välj specifika verser eller versintervall
+3. Choose specific verses or verse ranges
 4. Ladda ner ljudfilerna
 5. Använd dem
 

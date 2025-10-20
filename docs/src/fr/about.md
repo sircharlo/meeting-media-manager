@@ -84,15 +84,9 @@ Pour les réunions de l'assemblée locale **hybrides** ou **en personne**, le mo
 - **Raccourcis clavier** : Raccourcis clavier personnalisables pour de nombreuses fonctions
 - **Profils multiples** : Gérez différentes assemblées locales ou groupes avec des profils séparés
 
-Essayez M³ aujourd'hui et voyez par vous-même ce qu'elle peut faire ! Il n’a jamais été aussi facile de présenter les médias lors des réunions de l'assemblée locale.\*\*
-
-![M³ preview](./../assets/m3-preview.png)
-
 ## Est-ce que M³ fonctionne dans ma langue ? {#does-m3-work-in-my-language}
 
 **Oui !** M³ offre un support multilingue complet :
-
-### Langues des médias {#media-languages}
 
 Les médias pour les réunions des Témoins de Jéhovah peuvent être téléchargés automatiquement dans l'une des centaines de langues disponibles sur le site officiel des Témoins de Jéhovah. La liste des langues disponibles est mise à jour dynamiquement ; il vous suffit de sélectionner celle dont vous avez besoin lors de la configuration.
 
@@ -100,30 +94,12 @@ Les médias pour les réunions des Témoins de Jéhovah peuvent être téléchar
 
 M³ lui-même a été traduit dans de nombreuses langues par des bénévoles. Vous pouvez configurer la langue que vous souhaitez afficher dans l'interface de M³, indépendamment de la langue utilisée pour les téléchargements de médias. Cela signifie que vous pouvez utiliser M³ dans votre langue préférée tout en téléchargeant des médias dans toute autre langue prise en charge.
 
-### Fonctionnalités linguistiques {#language-features}
-
-- **Détection dynamique des langues** : Détecte automatiquement les langues disponibles
-- **Langues secondaires** : Configurez des langues secondaires pour quand le contenu de la langue principale n'est pas disponible
-- **Support des sous-titres** : Téléchargez et affichez des sous-titres dans différentes langues
-- **Interface localisée** : Traduction complète de l'interface pour de nombreuses langues
+For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
 
 ## Exigences système {#system-requirements}
 
-M³ est conçu pour fonctionner sur une large gamme de systèmes :
+For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
 
-### Systèmes d'exploitation pris en charge {#supported-operating-systems}
+Essayez M³ aujourd'hui et voyez par vous-même ce qu'elle peut faire ! Il n’a jamais été aussi facile de présenter les médias lors des réunions de l'assemblée locale.\*\*
 
-- **Windows** : Windows 10 et versions ultérieures (versions 64 bits et 32 bits disponibles)
-- **macOS** : macOS 10.15 (Catalina) et versions ultérieures (support Intel et Apple Silicon)
-- **Linux** : La plupart des distributions Linux modernes (format AppImage)
-
-### Exigences matérielles {#hardware-requirements}
-
-- **Minimum** : 4 Go de RAM, 6 Go d'espace disque libre
-- **Recommandé** : 8 Go de RAM, 15 Go d'espace disque libre pour la mise en cache des médias
-- **Réseau** : Connexion Internet pour les téléchargements de médias
-
-### Exigences supplémentaires {#additional-requirements}
-
-- **Zoom** : Requis uniquement si vous utilisez les fonctionnalités d'intégration Zoom
-- **OBS Studio** : Requis uniquement si vous utilisez les fonctionnalités d'intégration OBS
+![M³ preview](./../assets/m3-preview.png)

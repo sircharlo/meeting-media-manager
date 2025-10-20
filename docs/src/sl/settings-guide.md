@@ -38,6 +38,16 @@ Nastavite, kateri dan naj se v koledarju šteje za prvi dan v tednu.
 
 **Privzeto**: nedelja
 
+### Date Format {#date-format}
+
+<!-- **Setting**: `localDateFormat` -->
+
+Format used to display dates in the app.
+
+**Example**: D MMMM YYYY
+
+**Default**: D MMMM YYYY
+
 ### Samodejni zagon ob prijavi {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
@@ -162,6 +172,14 @@ To možnost vklopite, če imate omejeno podatkovno povezavo, da zmanjšate porab
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
 Omogoči funkcijo prikazovanja multimedijske vsebine. To je potrebno za prikazovanje multimedijske vsebine na drugem zaslonu.
+
+**Privzeto**: `false`
+
+#### Begin Playback Paused {#begin-playback-paused}
+
+<!-- **Setting**: `beginPlaybackPaused` -->
+
+Start videos in a paused state when playback begins.
 
 **Privzeto**: `false`
 
@@ -323,6 +341,50 @@ Nastavite, kateri prizori OBS se uporabljajo za različne namene:
 
 :::
 
+### Custom Events {#custom-events}
+
+#### Enable Custom Events {#enable-custom-events}
+
+<!-- **Setting**: `enableCustomEvents` -->
+
+Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+
+**Privzeto**: `false`
+
+#### Custom Event Shortcuts {#custom-event-shortcuts}
+
+##### Play Media Shortcut {#custom-event-media-play-shortcut}
+
+<!-- **Setting**: `customEventMediaPlayShortcut` -->
+
+Shortcut that is triggered when media is played.
+
+**Privzeto**: Prazno
+
+##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+
+<!-- **Setting**: `customEventMediaPauseShortcut` -->
+
+Shortcut that is triggered when media is paused.
+
+**Privzeto**: Prazno
+
+##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+
+<!-- **Setting**: `customEventMediaStopShortcut` -->
+
+Shortcut that is triggered when media is stopped.
+
+**Privzeto**: Prazno
+
+##### Last Song Shortcut {#custom-event-last-song-shortcut}
+
+<!-- **Setting**: `customEventLastSongShortcut` -->
+
+Shortcut that is triggered when the last song is played during a meeting.
+
+**Privzeto**: Prazno
+
 ## Napredne nastavitve {#advanced-settings}
 
 ### Bližnjice na tipkovnici {#settings-guide-keyboard-shortcuts}
@@ -347,6 +409,14 @@ Nastavite bližnjice za predvajanje multimedijske vsebine:
 - **Vklop/izklop glasbe**: Vklopi/izklopi glasbo v ozadju
 
 ### Prikaz multimedijske vsebine {#media-display}
+
+#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+
+<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+
+Enable fade-in/out transitions when showing or hiding the media window.
+
+**Privzeto**: `true`
 
 #### Skrij logotip multimedijske vsebine {#hide-media-logo}
 
@@ -443,6 +513,14 @@ Pretvori izvoženo multimedijsko vsebino v format MP4 za boljšo združljivost.
 Te nastavitve spreminjajte le, če razumete njihove posledice.
 
 :::
+
+#### Base URL {#base-url}
+
+<!-- **Setting**: `baseUrl` -->
+
+Base domain used to download publications and media.
+
+**Default**: `jw.org`
 
 #### Onemogoči pridobivanje vsebine {#disable-media-fetching}
 
