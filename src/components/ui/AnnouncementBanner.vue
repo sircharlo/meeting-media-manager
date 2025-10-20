@@ -234,6 +234,7 @@ const systemAnnouncements = computed(() => [
 
 const activeAnnouncements = computed(() =>
   [...announcements.value, ...systemAnnouncements.value].filter((a) => {
+    if (!a.id || !a.message) return false;
     if (!currentStateStore.currentCongregation) return false;
     if (!matchesPlatform(a)) return false;
     if (isDismissed(a)) return false;
