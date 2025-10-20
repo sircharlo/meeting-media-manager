@@ -38,6 +38,16 @@ Set which day should be considered the first day of the week in the calendar vie
 
 **Default**: Sunday
 
+### Date Format {#date-format}
+
+<!-- **Setting**: `localDateFormat` -->
+
+Format used to display dates in the app.
+
+**Example**: D MMMM YYYY
+
+**Default**: D MMMM YYYY
+
 ### Auto-Start at Login {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
@@ -162,6 +172,14 @@ Enable this if you're on a limited data connection to reduce bandwidth usage.
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
 Enable the media display functionality. This is required to present media on a second monitor.
+
+**Default**: `false`
+
+#### Begin Playback Paused {#begin-playback-paused}
+
+<!-- **Setting**: `beginPlaybackPaused` -->
+
+Start videos in a paused state when playback begins.
 
 **Default**: `false`
 
@@ -323,6 +341,50 @@ Configure which OBS scenes to use for different purposes:
 
 :::
 
+### Custom Events {#custom-events}
+
+#### Enable Custom Events {#enable-custom-events}
+
+<!-- **Setting**: `enableCustomEvents` -->
+
+Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+
+**Default**: `false`
+
+#### Custom Event Shortcuts {#custom-event-shortcuts}
+
+##### Play Media Shortcut {#custom-event-media-play-shortcut}
+
+<!-- **Setting**: `customEventMediaPlayShortcut` -->
+
+Shortcut that is triggered when media is played.
+
+**Default**: None
+
+##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+
+<!-- **Setting**: `customEventMediaPauseShortcut` -->
+
+Shortcut that is triggered when media is paused.
+
+**Default**: None
+
+##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+
+<!-- **Setting**: `customEventMediaStopShortcut` -->
+
+Shortcut that is triggered when media is stopped.
+
+**Default**: None
+
+##### Last Song Shortcut {#custom-event-last-song-shortcut}
+
+<!-- **Setting**: `customEventLastSongShortcut` -->
+
+Shortcut that is triggered when the last song is played during a meeting.
+
+**Default**: None
+
 ## Advanced Settings {#advanced-settings}
 
 ### Scorciatoie da Tastiera {#settings-guide-keyboard-shortcuts}
@@ -347,6 +409,14 @@ Configure shortcuts for media playback:
 - **Music Toggle**: Toggle background music
 
 ### Media Display {#media-display}
+
+#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+
+<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+
+Enable fade-in/out transitions when showing or hiding the media window.
+
+**Default**: `true`
 
 #### Hide Media Logo {#hide-media-logo}
 
@@ -443,6 +513,14 @@ Convert exported media files to MP4 format for better compatibility.
 These settings should only be changed if you understand their implications.
 
 :::
+
+#### Base URL {#base-url}
+
+<!-- **Setting**: `baseUrl` -->
+
+Base domain used to download publications and media.
+
+**Default**: `jw.org`
 
 #### Disable Media Fetching {#disable-media-fetching}
 
