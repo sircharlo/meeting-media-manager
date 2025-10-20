@@ -13,7 +13,7 @@
   "displayDetails": "Visa detaljerad lista",
   "docFooterNext": "Nästa sida",
   "docFooterPrev": "Föregående sida",
-  "download": "Download",
+  "download": "Ladda ned",
   "editLink": "Redigera denna sida på Crowdin",
   "enter": "för att välja",
   "esc": "för att stänga",
@@ -31,10 +31,10 @@
   "notFoundQuote": "Vänligen verifiera webbadressen och försök igen. Om du känner att detta är ett fel, vänligen rapportera det.",
   "notFoundTitle": "SIDAN HITTADES INTE",
   "outline": "På denna sida",
-  "recommendedFor": "Recommended for",
-  "released1DayAgo": "released 1 day ago",
-  "releasedToday": "released today",
-  "releasedXDaysAgo": "released {days} days ago",
+  "recommendedFor": "Rekommenderas för",
+  "released1DayAgo": "släpptes för 1 dag sedan",
+  "releasedToday": "släpptes idag",
+  "releasedXDaysAgo": "släpptes {days} dagar sedan",
   "reportIssue": "Anmäla ett fel",
   "resetButtonTitle": "Återställ sökning",
   "returnToTopLabel": "Tillbaka till toppen",
@@ -45,6 +45,6 @@
   "skipToContentLabel": "Hoppa till innehåll",
   "title": "M³ dokumentation",
   "userGuide": "Användarguide",
-  "windows32Bit": "Windows 32-bit",
-  "windows64Bit": "Windows 64-bit"
+  "windows32Bit": "Windows 32-bitars",
+  "windows64Bit": "Windows 64-bitars"
 }
