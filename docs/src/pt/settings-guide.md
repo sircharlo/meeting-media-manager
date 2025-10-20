@@ -38,6 +38,16 @@ Configura qual dia deve ser considerado o primeiro dia da semana na visualizaç�
 
 **Padrão**: Domingo
 
+### Date Format {#date-format}
+
+<!-- **Setting**: `localDateFormat` -->
+
+Format used to display dates in the app.
+
+**Example**: D MMMM YYYY
+
+**Default**: D MMMM YYYY
+
 ### Início automático no login {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
@@ -162,6 +172,14 @@ Ative isto se você estiver em uma conexão de dados limitada para reduzir o uso
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
 Habilita a funcionalidade de exibição de mídia. Isto é necessário para apresentar mídia num segundo monitor.
+
+**Padrão**: `false`
+
+#### Begin Playback Paused {#begin-playback-paused}
+
+<!-- **Setting**: `beginPlaybackPaused` -->
+
+Start videos in a paused state when playback begins.
 
 **Padrão**: `false`
 
@@ -323,6 +341,50 @@ Configurar quais cenas OBS usar para diferentes fins:
 
 :::
 
+### Custom Events {#custom-events}
+
+#### Enable Custom Events {#enable-custom-events}
+
+<!-- **Setting**: `enableCustomEvents` -->
+
+Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+
+**Padrão**: `false`
+
+#### Custom Event Shortcuts {#custom-event-shortcuts}
+
+##### Play Media Shortcut {#custom-event-media-play-shortcut}
+
+<!-- **Setting**: `customEventMediaPlayShortcut` -->
+
+Shortcut that is triggered when media is played.
+
+**Padrão**: Nenhum
+
+##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+
+<!-- **Setting**: `customEventMediaPauseShortcut` -->
+
+Shortcut that is triggered when media is paused.
+
+**Padrão**: Nenhum
+
+##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+
+<!-- **Setting**: `customEventMediaStopShortcut` -->
+
+Shortcut that is triggered when media is stopped.
+
+**Padrão**: Nenhum
+
+##### Last Song Shortcut {#custom-event-last-song-shortcut}
+
+<!-- **Setting**: `customEventLastSongShortcut` -->
+
+Shortcut that is triggered when the last song is played during a meeting.
+
+**Padrão**: Nenhum
+
 ## Configurações Avançadas {#advanced-settings}
 
 ### Atalhos de teclado {#settings-guide-keyboard-shortcuts}
@@ -347,6 +409,14 @@ Configurar atalhos para reprodução de mídia:
 - **Mudança de cântico**: Mudar o cântico de fundo
 
 ### Visualização de mídia {#media-display}
+
+#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+
+<!-- **Setting**: `enableMediaWindowFadeTransitions` -->
+
+Enable fade-in/out transitions when showing or hiding the media window.
+
+**Padrão**: `true`
 
 #### Ocultar miniatura de mídia {#hide-media-logo}
 
@@ -443,6 +513,14 @@ Converta arquivos de mídia exportados para o formato MP4 para uma melhor compat
 Estas configurações só devem ser alteradas se você entender suas implicações.
 
 :::
+
+#### Base URL {#base-url}
+
+<!-- **Setting**: `baseUrl` -->
+
+Base domain used to download publications and media.
+
+**Default**: `jw.org`
 
 #### Desativar busca de mídia {#disable-media-fetching}
 
