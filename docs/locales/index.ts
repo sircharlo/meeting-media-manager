@@ -37,7 +37,7 @@ import sw from './sw.json';
 import tl from './tl.json';
 import uk from './uk.json';
 
-const messages: Record<LanguageValue, typeof en> = {
+const messages: Record<LanguageValue, Partial<typeof en>> = {
   am,
   cmnHans,
   de,

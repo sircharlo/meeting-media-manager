@@ -6,11 +6,16 @@ import type {
 import type { LocalSearchTranslations } from 'vitepress/types/local-search';
 
 import messages, { enabled, localeOptions } from './../locales';
+import enBase from './../locales/en.json';
 import { fetchLatestVersion } from './api';
 import { AUTHOR, GH_ISSUES, GH_REPO_URL } from './constants';
 import { camelToKebabCase } from './general';
 
-export type MessageSchema = (typeof messages)['en'];
+export type MessageSchema = typeof enBase;
+
+const withDefaults = (
+  msg: Partial<MessageSchema> | undefined,
+): MessageSchema => ({ ...enBase, ...(msg ?? {}) });
 
 const latestVersion = await fetchLatestVersion();
 
@@ -58,14 +63,16 @@ const mapLocale = (
 
 export const mapLocales = (): LocaleConfig<DefaultTheme.Config> => {
   const locales: LocaleConfig<DefaultTheme.Config> = {
-    root: mapLocale('en', 'English', messages.en),
+    root: mapLocale('en', 'English', withDefaults(messages.en)),
   };
 
   localeOptions
     .filter((l) => enabled.includes(l.value))
     .forEach((locale) => {
       const lang = camelToKebabCase(locale.value);
-      const msg = messages[locale.value];
+      const msg = withDefaults(
+        messages[locale.value] as Partial<MessageSchema> | undefined,
+      );
       locales[lang] = mapLocale(lang, locale.label, msg);
     });
 
@@ -106,7 +113,9 @@ export const mapSearch = (): {
     .filter((l) => enabled.includes(l.value))
     .forEach((locale) => {
       const lang = camelToKebabCase(locale.value);
-      const msg = messages[locale.value];
+      const msg = withDefaults(
+        messages[locale.value] as Partial<MessageSchema> | undefined,
+      );
       locales[lang] = { translations: mapSearchTranslations(msg) };
     });
 
@@ -114,7 +123,7 @@ export const mapSearch = (): {
     options: {
       detailedView: true,
       locales,
-      translations: mapSearchTranslations(messages.en),
+      translations: mapSearchTranslations(withDefaults(messages.en)),
     },
     provider: 'local',
   };
