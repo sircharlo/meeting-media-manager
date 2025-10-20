@@ -1,12 +1,12 @@
 ---
-title: Downloads
+title: Nedladdningar
 ---
 
 <!-- markdownlint-disable MD025 MD033 -->
 
-# Downloads
+# Nedladdningar
 
-Use the links below to download the latest version of Meeting Media Manager for your operating system. These links always point to the newest stable release.
+Använd länkarna nedan för att ladda ner den senaste versionen av Meeting Media Manager för ditt operativsystem. Dessa länkar pekar alltid på den senaste stabila utgåvan.
 
 <script setup lang="ts">
 import { data as downloads } from '../../data/version.data.mts'
@@ -77,27 +77,27 @@ onMounted(() => {
 })
 </script>
 
-## Latest release
+## Senaste utgåvan
 
 - **Version**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
 
 <div v-if="recommended" style="margin: 1rem 0; padding: 1rem; border: 1px solid var(--vp-c-brand-1); border-radius: 8px; background: var(--vp-c-brand-soft);"><strong>{{ msg.recommendedFor }} {{ recommended.label }}</strong>
   <div style="margin-top: .5rem;"><a :href="recommended.href" style="display:inline-block; padding:.5rem 1rem; border-radius:6px; background: var(--vp-c-brand-1); color: white; text-decoration:none;">{{ msg.download }}</a>
   </div>
-  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">If this doesn’t match your system, pick from the options below.</div>
+  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">Om detta inte matchar ditt system, välj från alternativen nedan.</div>
 </div>
 
 ## Windows
 
-- **Windows 64-bit (.exe)**: <a :href="downloads.win64">Download</a>
-- **Windows 32-bit (.exe)**: <a :href="downloads.win32">Download</a>
-- **Windows Portable (.exe)**: <a :href="downloads.winPortable">Download</a>
+- **Windows 64-bitars (.exe)**: <a :href="downloads.win64">Ladda ner</a>
+- **Windows 32-bitars (.exe)**: <a :href="downloads.win32">Ladda ner</a>
+- **Windows Portabel (.exe)**: <a :href="downloads.winPortable">Ladda ner</a>
 
 ## macOS
 
-- **Apple Silicon (arm64) (.dmg)**: <a :href="downloads.macArm">Download</a>
-- **Intel (x64) (.dmg)**: <a :href="downloads.macIntel">Download</a>
+- **Apple Silicon (arm64) (.dmg)**: <a :href="downloads.macArm">Ladda ner</a>
+- **Intel (x64) (.dmg)**: <a :href="downloads.macIntel">Ladda ner</a>
 
 ## Linux
 
-- **x86_64 (AppImage)**: <a :href="downloads.linux">Download</a>
+- **x86_64 (AppImage)**: <a :href="downloads.linux">Ladda ner</a>
