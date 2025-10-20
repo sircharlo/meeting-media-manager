@@ -85,7 +85,7 @@ onMounted(() => {
   <div style="margin-top: .5rem;"><a :href="recommended.href" style="display:inline-block; padding:.5rem 1rem; border-radius:6px; background: var(--vp-c-brand-1); color: white; text-decoration:none;">{{ msg.download }}</a>
   </div>
   <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">If this doesn’t match your system, pick from the options below.</div>
-  </div>
+</div>
 
 ## Windows
 
