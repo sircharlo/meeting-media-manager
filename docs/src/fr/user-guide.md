@@ -4,9 +4,9 @@ Ce guide utilisateur complet vous aidera à maîtriser toutes les fonctionnalit�
 
 ## Pour commencer {#getting-started}
 
-### Download and Install {#download-and-install}
+### Téléchargement et installation {#download-and-install}
 
-Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
+Obtenez la dernière version de la [page de téléchargement](download). Elle recommande la meilleure version pour votre appareil et affiche la dernière version.
 
 ### Premier lancement {#first-launch}
 
@@ -243,7 +243,7 @@ Ajoutez vos propres fichiers multimédias à M³ :
 2. **Glisser-déposer** - Faites glisser les fichiers directement dans M³
 3. **Surveillance de dossiers** - Configurez un dossier surveillé pour les imports automatiques
 4. **Fichiers JWPUB et listes de lecture** - Importez des publications et des listes de lecture
-5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
+5. **Médias pour discours publics (S-34 / S-34mp)** - Importez des médias pour discours publics à l'aide de fichiers JWPUB S‑34 ou S‑34mp
 
 ### Gérer les médias importés {#managing-imported-media}
 
@@ -258,7 +258,7 @@ Importez des enregistrements audio de versets bibliques :
 
 1. Cliquez sur le bouton « Bible audio »
 2. Sélectionnez le livre et le chapitre de la Bible
-3. Choose specific verses or verse ranges
+3. Choisir des versets spécifiques ou des plages de versets
 4. Téléchargez les fichiers audio
 5. Utilisez-les
 
