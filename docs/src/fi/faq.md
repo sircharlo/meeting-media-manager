@@ -32,19 +32,17 @@ M³ supports Windows, macOS, and Linux:
 
 **Yes!** M³ provides comprehensive multi-language support:
 
-- **Media Languages**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
-- **Interface Languages**: Use M³'s interface in many different languages
+- **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
+- **App Interface**: Use M³'s interface in many different languages
 - **Independent Settings**: You can use the interface in one language while downloading media in another
+- **Fallback languages**: Configure fallback languages for when media isn't available in the primary language
+- **Subtitle support**: Download and display subtitles in various languages
 
 ## Installation and Setup {#installation-setup}
 
-### :inbox_tray: Download M³ {#download}
+### :computer: How do I download and install M³? {#installation}
 
-Download the appropriate version for your operating system from the [releases page](https://github.com/sircharlo/meeting-media-manager/releases/latest).
-
-### :computer: How do I install M³? {#installation}
-
-Download the appropriate version for your operating system from the [releases page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and follow the installation instructions in the [setup guide](/using-at-a-kingdom-hall#download-and-install).
+Download the appropriate version from the [Download page](download) and follow the steps in the [User Guide](user-guide).
 
 ### :gear: How do I set up M³ for the first time? {#first-time-setup}
 
@@ -288,6 +286,25 @@ Thank you for your interest in supporting the project! However, in the spirit of
 :::
 
 ## Technical Questions {#technical-questions}
+
+### :computer: What hardware and software requirements does M³ have? {#hardware-and-software-requirements}
+
+M³ is designed to work on a wide range of operating systems:
+
+- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
+- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
+- **Linux**: Most modern Linux distributions (AppImage format)
+
+M³ has the following hardware requirements:
+
+- **Minimum**: 4GB RAM, 6GB free disk space
+- **Recommended**: 8GB RAM, 15GB free disk space for media caching
+- **Network**: Internet connection for media downloads
+
+Depending on the features you use, M³ also requires the following additional software:
+
+- **Zoom**: Required only if using Zoom integration features
+- **OBS Studio**: Required only if using OBS integration features
 
 ### :floppy_disk: How much disk space does M³ use? {#disk-space}
 
