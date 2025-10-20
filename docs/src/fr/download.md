@@ -1,12 +1,12 @@
 ---
-title: Downloads
+title: Téléchargements
 ---
 
 <!-- markdownlint-disable MD025 MD033 -->
 
-# Downloads
+# Téléchargements
 
-Use the links below to download the latest version of Meeting Media Manager for your operating system. These links always point to the newest stable release.
+Utilisez les liens ci-dessous pour télécharger la dernière version de Meeting Media Manager pour votre système d'exploitation. Ces liens pointent toujours vers la version stable la plus récente.
 
 <script setup lang="ts">
 import { data as downloads } from '../../data/version.data.mts'
@@ -77,27 +77,27 @@ onMounted(() => {
 })
 </script>
 
-## Latest release
+## Dernière version
 
-- **Version**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
+- **Version** : {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
 
 <div v-if="recommended" style="margin: 1rem 0; padding: 1rem; border: 1px solid var(--vp-c-brand-1); border-radius: 8px; background: var(--vp-c-brand-soft);"><strong>{{ msg.recommendedFor }} {{ recommended.label }}</strong>
   <div style="margin-top: .5rem;"><a :href="recommended.href" style="display:inline-block; padding:.5rem 1rem; border-radius:6px; background: var(--vp-c-brand-1); color: white; text-decoration:none;">{{ msg.download }}</a>
   </div>
-  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">If this doesn’t match your system, pick from the options below.</div>
-  </div>
+  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">Si cela ne correspond pas à votre système, choisissez parmi les options ci-dessous.</div>
+</div>
 
 ## Windows
 
-- **Windows 64-bit (.exe)**: <a :href="downloads.win64">Download</a>
-- **Windows 32-bit (.exe)**: <a :href="downloads.win32">Download</a>
-- **Windows Portable (.exe)**: <a :href="downloads.winPortable">Download</a>
+- **Windows 64-bit (.exe)** : <a :href="downloads.win64">Télécharger</a>
+- **Windows 32-bit (.exe)** : <a :href="downloads.win32">Télécharger</a>
+- **Windows Portable (.exe)** : <a :href="downloads.winPortable">Télécharger</a>
 
 ## macOS
 
-- **Apple Silicon (arm64) (.dmg)**: <a :href="downloads.macArm">Download</a>
-- **Intel (x64) (.dmg)**: <a :href="downloads.macIntel">Download</a>
+- **Apple Silicon (arm64) (.dmg)** : <a :href="downloads.macArm">Télécharger</a>
+- **Intel (x64) (.dmg)**: <a :href="downloads.macIntel">Télécharger</a>
 
 ## Linux
 
-- **x86_64 (AppImage)**: <a :href="downloads.linux">Download</a>
+- **x86_64 (AppImage)** : <a :href="downloads.linux">Télécharger</a>
