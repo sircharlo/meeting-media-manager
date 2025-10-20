@@ -46,6 +46,5 @@
   "title": "M³ documentation",
   "userGuide": "User Guide",
   "windows32Bit": "Windows 32-bit",
-  "windows64Bit": "Windows 64-bit",
-  "windowsPortable": "Windows Portable"
+  "windows64Bit": "Windows 64-bit"
 }

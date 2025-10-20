@@ -62,6 +62,7 @@ describe('Locales', () => {
     const files = await Promise.all([
       readFile(resolve(__dirname, '../locales.ts'), 'utf-8'),
       readFile(resolve(__dirname, '../../.vitepress/config.mts'), 'utf-8'),
+      readFile(resolve(__dirname, '../../src/en/download.md'), 'utf-8'),
     ]);
 
     const keys = Object.keys(docsMessages.en);
