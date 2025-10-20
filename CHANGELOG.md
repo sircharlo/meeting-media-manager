@@ -4,6 +4,12 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v25.10.3
+
+### 🐞 Bug Fixes
+
+- Fixed possible short circuit in `shouldUpdateList` helper function.
+
 ## v25.10.2
 
 ### 🛠️ Improvements and Tweaks
