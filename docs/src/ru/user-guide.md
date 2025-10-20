@@ -4,6 +4,10 @@
 
 ## Приступая к работе {#getting-started}
 
+### Download and Install {#download-and-install}
+
+Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
+
 ### Первый запуск {#first-launch}
 
 При первом запуске M3, вы увидите мастер настройки, который настроит основные параметры для вашей консоли:
@@ -239,6 +243,7 @@ M3 воспроизводит мультимедиа со звуком на ва
 2. **Перетащите и выпадайте** — Перетащите файлы непосредственно в M3
 3. **Мониторинг папок** — установка наблюдаемой папки для автоматического импорта
 4. **JWPUB Файлы и плейлисты** — импорт публикаций и плейлистов
+5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
 
 ### Управление импортированными медиафайлами {#managing-imported-media}
 
@@ -253,7 +258,7 @@ M3 воспроизводит мультимедиа со звуком на ва
 
 1. Нажмите кнопку «Библия»
 2. Выберите книгу Библии и главу
-3. Выберите отдельные стихи или диапазоны стихов
+3. Choose specific verses or verse ranges
 4. Скачать аудио файлы
 5. Использовать их
 
