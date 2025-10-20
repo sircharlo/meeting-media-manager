@@ -8,9 +8,9 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Setup Wizard – Zoom Step**: Added a Zoom integration step to the setup wizard for easier initial configuration.
-- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. This makes it easier to choose the correct screen on which the media window should be displayed.
-- ✨ **Media Window Preference**: The app will now remember the preferred screen on which the media window should be displayed, if specified by the user.
+- ✨ **Assistant de configuration – Étape Zoom** : ajout d'une étape d'intégration Zoom à l'assistant de configuration pour faciliter la configuration initiale.
+- ✨ **Améliorations apportées au sélecteur d'écran** : Affiche une représentation visuelle fidèle de tous les écrans, ainsi que la taille et l'emplacement actuels de la fenêtre principale, dans la fenêtre contextuelle d'affichage. Cela facilite le choix de l'écran sur lequel la fenêtre multimédia devrait s'afficher.
+- ✨ **Préférence d'écran pour la fenêtre multimédia** : L'application mémorisera désormais l'écran préféré sur lequel la fenêtre multimédia devrait s'afficher, si l'utilisateur l'a spécifié.
 
 ## v25.10.0
 
