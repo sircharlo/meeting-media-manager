@@ -84,15 +84,9 @@ M³是一个综合性媒体管理解决方案，让您能够轻松自动地下�
 - **键盘快捷键**：许多功能的可自定义键盘快捷键
 - **多个配置文件**：使用单独的配置文件管理不同的会众或小组
 
-**今天给M³一次尝试，看看它能做些什么！  在会众聚会上播放媒体的工作从来没有那么容易。** 在会众聚会上播放媒体的工作从来没有那么容易。\*\* 在会众聚会上播放媒体的工作从来没有那么容易。\*\*
-
-![M³ preview](./../assets/m3-preview.png)
-
 ## M³支持我的语言吗？ {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language} {#does-m3-work-in-my-language}
 
 **是的！** M³提供全面的多语言支持：
-
-### 媒体语言 {#media-languages}
 
 耶和华见证人聚会的媒体可以自动下载官方网站上提供的数百种语言中的任何一种。可用语言列表会动态更新；您只需在设置期间选择所需的语言即可。 可用语言列表会动态更新；您只需在设置期间选择所需的语言即可。
 
@@ -100,30 +94,12 @@ M³是一个综合性媒体管理解决方案，让您能够轻松自动地下�
 
 M³本身已被志愿者翻译成多种语言。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 M³本身已被志愿者翻译成多种语言。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 这意味着您可以使用首选语言使用M³，同时下载任何其他支持语言的媒体。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 M³本身已被志愿者翻译成多种语言。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 这意味着您可以使用首选语言使用M³，同时下载任何其他支持语言的媒体。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 M³本身已被志愿者翻译成多种语言。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 这意味着您可以使用首选语言使用M³，同时下载任何其他支持语言的媒体。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 M³本身已被志愿者翻译成多种语言。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 M³本身已被志愿者翻译成多种语言。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 这意味着您可以使用首选语言使用M³，同时下载任何其他支持语言的媒体。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 M³本身已被志愿者翻译成多种语言。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 这意味着您可以使用首选语言使用M³，同时下载任何其他支持语言的媒体。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 M³本身已被志愿者翻译成多种语言。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 这意味着您可以使用首选语言使用M³，同时下载任何其他支持语言的媒体。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 M³本身已被志愿者翻译成多种语言。 您可以配置希望在M³界面中显示的语言，独立于用于媒体下载的语言。 这意味着您可以使用首选语言使用M³，同时下载任何其他支持语言的媒体。
 
-### 语言功能 {#language-features}
-
-- **动态语言检测**：自动检测可用语言
-- **备用语言**：配置当主要语言内容不可用时的备用语言
-- **字幕支持**：下载并显示不同语言的字幕
-- **本地化界面**：许多语言的完整界面翻译
+For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
 
 ## 系统要求 {#system-requirements}
 
-M³设计用于在各种系统上运行：
+For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
 
-### 支持的操作系统 {#supported-operating-systems}
+**今天给M³一次尝试，看看它能做些什么！  在会众聚会上播放媒体的工作从来没有那么容易。** 在会众聚会上播放媒体的工作从来没有那么容易。\*\* 在会众聚会上播放媒体的工作从来没有那么容易。\*\*
 
-- **Windows**：Windows 10及更高版本（提供64位和32位版本）
-- **macOS**：macOS 10.15 (Catalina)及更高版本（支持Intel和Apple Silicon）
-- **Linux**：大多数现代Linux发行版（AppImage格式）
-
-### 硬件要求 {#hardware-requirements}
-
-- **最低配置**：4GB内存，6GB可用磁盘空间
-- **推荐配置**：8GB内存，15GB可用磁盘空间用于媒体缓存
-- **网络**：用于媒体下载的互联网连接
-
-### 其他要求 {#additional-requirements}
-
-- **Zoom**：仅在使用Zoom集成功能时需要
-- **OBS Studio**：仅在使用OBS集成功能时需要
+![M³ preview](./../assets/m3-preview.png)
