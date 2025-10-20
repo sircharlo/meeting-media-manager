@@ -51,9 +51,11 @@ export const shouldUpdateList = (
   months: number,
 ) => {
   if (!cacheList) return true;
+  if (!cacheList.updated) return true;
+  if (isNaN(cacheList.updated.getTime())) return true;
   return (
     !cacheList?.list?.length ||
-    getDateDiff(new Date(), cacheList?.updated, 'months') > months
+    getDateDiff(new Date(), cacheList.updated, 'months') > months
   );
 };
 
@@ -376,7 +378,7 @@ export const useJwStore = defineStore('jw-store', {
             const now = new Date();
             const monthsSinceUpdated = getDateDiff(
               now,
-              this.jwSongs[langwritten].updated,
+              this.jwSongs[langwritten].updated || oldDate,
               'months',
             );
 
@@ -530,7 +532,7 @@ export const useJwStore = defineStore('jw-store', {
       if (state.jwLanguages.updated)
         state.jwLanguages.updated = dateFromString(state.jwLanguages.updated);
       Object.values(state.jwSongs).forEach((lang) => {
-        lang.updated = dateFromString(lang.updated);
+        lang.updated = lang.updated ? dateFromString(lang.updated) : oldDate;
       });
       Object.entries(state.lookupPeriod).forEach(([, period]) => {
         period?.forEach((day: { date: Date | string }) => {

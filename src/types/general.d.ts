@@ -14,7 +14,7 @@ export type AnnouncementAction = 'docs' | 'repo' | 'translate' | 'update';
 
 export interface CacheList<T = unknown> {
   list: T[];
-  updated: Date;
+  updated: Date | null | undefined;
 }
 
 export type FontName = 'JW-Icons' | 'Wt-ClearText-Bold';
