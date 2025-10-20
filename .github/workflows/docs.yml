@@ -35,6 +35,8 @@ jobs:
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install
+      - name: Prepare Quasar (generate .quasar/tsconfig.json)
+        run: yarn quasar prepare
       - name: Lint files
         run: yarn docs:lint
   test:
@@ -70,6 +72,8 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Install dependencies
         run: yarn install
+      - name: Prepare Quasar (generate .quasar/tsconfig.json)
+        run: yarn quasar prepare
       - name: Build with VitePress
         run: |
           yarn generate:logos
