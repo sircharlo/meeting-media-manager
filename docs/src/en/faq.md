@@ -56,7 +56,7 @@ M³ includes a setup wizard that guides you through the essential configuration:
 
 ## Media Management {#faq-media-management}
 
-### :download: How does M³ download media? {#media-download}
+### :desktop_computer: How does M³ download media? {#media-download}
 
 M³ automatically downloads media for upcoming meetings by:
 
@@ -73,7 +73,7 @@ Yes! M³ allows you to:
 - Download media for upcoming meetings automatically
 - Import custom media for any date
 
-### :folder: How do I import my own media files? {#import-media}
+### :open_file_folder: How do I import my own media files? {#import-media}
 
 You can import custom media in several ways:
 
@@ -113,7 +113,7 @@ M³ supports customizable keyboard shortcuts for:
 - Background music toggle
 <!-- - Fullscreen mode -->
 
-### :music: How does background music work? {#faq-background-music}
+### :notes: How does background music work? {#faq-background-music}
 
 Background music features include:
 
