@@ -4,6 +4,10 @@ This comprehensive user guide will help you master all the features of M³, from
 
 ## Getting Started {#getting-started}
 
+### Download and Install {#download-and-install}
+
+Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
+
 ### First Launch {#first-launch}
 
 When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
@@ -239,6 +243,7 @@ Add your own media files to M³:
 2. **Drag and Drop** - Drag files directly into M³
 3. **Folder Monitoring** - Set up a watched folder for automatic imports
 4. **JWPUB Files and Playlists** - Import publications and playlists
+5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
 
 ### Managing Imported Media {#managing-imported-media}
 
