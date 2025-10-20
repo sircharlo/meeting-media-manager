@@ -94,11 +94,11 @@ Media för Jehovas vittnens möten kan laddas ner automatiskt på något av de h
 
 M³ har översatts till många språk av frivilliga hjälpare. Du kan konfigurera det språk du vill ska visas i M³:s gränssnitt, oberoende av det språk som används för medianedladdningar. Detta innebär att du kan använda M³ på ditt föredragna språk när du laddar ner media på något annat språk som stöds.
 
-For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
+För detaljer om reservspråk och undertexter, se [FAQ](faq#language-support).
 
 ## Systemkrav {#system-requirements}
 
-For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
+För operativsystem och krav som stöds, se svaren i [FAQ](faq#technical-questions).
 
 **Prova M³ idag och se med egna ögon vad den kan göra! Det har aldrig varit enklare att visa media på församlingsmöten.**
 

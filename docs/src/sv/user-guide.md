@@ -4,9 +4,9 @@ Denna omfattande användarhandbok hjälper dig att bemästra alla funktioner i M
 
 ## Komma igång {#getting-started}
 
-### Download and Install {#download-and-install}
+### Ladda ned och installera {#download-and-install}
 
-Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
+Hämta den senaste versionen från [nedladdningssidan](download). Den rekommenderar den bästa typen för din enhet och visar den senaste versionen.
 
 ### Första starten {#first-launch}
 
@@ -243,7 +243,7 @@ Lägg till dina egna mediefiler till M³:
 2. **Dra och släpp** - Dra filer direkt till M³
 3. **Mappövervakning**: Ställ in en bevakad mapp för automatisk import
 4. **JWPUB-filer och spellistor**: Importera publikationer och spellistor
-5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
+5. **Spellistan för offentliga föredrag (S-34 / S-34mp)** - Importera media med S‐34 eller S‐34mp JWPUB-filer
 
 ### Hantera importerad media {#managing-imported-media}
 
