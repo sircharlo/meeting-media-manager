@@ -38,15 +38,15 @@ Définissez quel jour doit être considéré comme le premier jour de la semaine
 
 **Par défaut** : Dimanche
 
-### Date Format {#date-format}
+### Format de date {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
-Format used to display dates in the app.
+Format utilisé pour afficher les dates dans l'application.
 
-**Example**: D MMMM YYYY
+**Exemple** : D MMMM AAAA
 
-**Default**: D MMMM YYYY
+**Par défaut** : D MMMM AAAA
 
 ### Démarrage automatique à la connexion {#auto-start-at-login}
 
@@ -54,7 +54,7 @@ Format used to display dates in the app.
 
 Démarrer automatiquement M³ lorsque l'ordinateur démarre.
 
-**Par défaut** : `false`
+**Par défaut** : `faux`
 
 ## Réunions de l'assemblée locale {#congregation-meetings}
 
@@ -165,7 +165,7 @@ Ces paramètres vous permettent de configurer des changements temporaires à vot
 
 Activez ceci si vous êtes sur une connexion de données limitée pour réduire l'utilisation de la bande passante.
 
-**Par défaut** : `false`
+**Par défaut** : `faux`
 
 ### Affichage des médias {#media-display-button}
 
@@ -173,15 +173,15 @@ Activez ceci si vous êtes sur une connexion de données limitée pour réduire 
 
 Activez la fonctionnalité d'affichage des médias. Ceci est requis pour présenter les médias sur un deuxième écran.
 
-**Par défaut** : `false`
+**Par défaut** : `faux`
 
-#### Begin Playback Paused {#begin-playback-paused}
+#### Démarrer la lecture en pause {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
-Start videos in a paused state when playback begins.
+Les vidéos démarrent en mode pause au moment où leur lecture commence.
 
-**Par défaut** : `false`
+**Par défaut** : `faux`
 
 ### Musique de fond {#settings-guide-background-music}
 
@@ -191,7 +191,7 @@ Start videos in a paused state when playback begins.
 
 Activez la fonctionnalité de musique de fond.
 
-**Par défaut** : `true`
+**Par défaut** : `vrai`
 
 #### Démarrage automatique de la musique {#auto-start-music}
 
@@ -199,7 +199,7 @@ Activez la fonctionnalité de musique de fond.
 
 Démarrer automatiquement la musique de fond lorsque M³ se lance si approprié.
 
-**Par défaut** : `true`
+**Par défaut** : `vrai`
 
 #### Tampon d'arrêt de réunion {#meeting-stop-buffer}
 
@@ -227,7 +227,7 @@ Niveau de volume pour la musique de fond (1-100%).
 
 Activez la mise en cache supplémentaire pour de meilleures performances.
 
-**Par défaut** : `false`
+**Par défaut** : `faux`
 
 #### Dossier de cache {#cache-folder}
 
@@ -243,7 +243,7 @@ Emplacement personnalisé pour stocker les fichiers multimédias mis en cache.
 
 Effacez automatiquement les anciens fichiers mis en cache pour économiser l'espace disque.
 
-**Par défaut** : `true`
+**Par défaut** : `vrai`
 
 ### Surveillance de dossiers {#settings-guide-folder-monitoring}
 
@@ -253,7 +253,7 @@ Effacez automatiquement les anciens fichiers mis en cache pour économiser l'esp
 
 Surveillez un dossier pour les nouveaux fichiers multimédias et ajoutez-les automatiquement à M³.
 
-**Par défaut** : `false`
+**Par défaut** : `faux`
 
 #### Dossier à surveiller {#folder-to-watch}
 
@@ -273,7 +273,7 @@ Le chemin du dossier à surveiller pour les nouveaux fichiers multimédias.
 
 Activez les fonctionnalités d'intégration des réunions Zoom.
 
-**Par défaut** : `false`
+**Par défaut** : `faux`
 
 #### Raccourci de partage d'écran {#screen-share-shortcut}
 
@@ -291,7 +291,7 @@ Raccourci clavier pour déclencher le partage d'écran Zoom.
 
 Activez l'intégration OBS Studio pour le changement automatique de scène.
 
-**Par défaut** : `false`
+**Par défaut** : `faux`
 
 :::warning Note importante
 
@@ -341,47 +341,47 @@ Configurez quelles scènes OBS utiliser pour différents usages :
 
 :::
 
-### Custom Events {#custom-events}
+### Événements personnalisés {#custom-events}
 
-#### Enable Custom Events {#enable-custom-events}
+#### Activer les événements personnalisés {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+Activer les raccourcis personnalisés qui seront déclenchés lorsqu'un événement spécifique est détecté (par exemple, les médias sont lus, mis en pause ou arrêtés).
 
-**Par défaut** : `false`
+**Par défaut** : `faux`
 
-#### Custom Event Shortcuts {#custom-event-shortcuts}
+#### Raccourcis d'événements personnalisés {#custom-event-shortcuts}
 
-##### Play Media Shortcut {#custom-event-media-play-shortcut}
+##### Raccourci de l'évènement de lecture de média {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
-Shortcut that is triggered when media is played.
+Raccourci qui est déclenché lorsque le média est lu.
 
 **Par défaut** : Aucune
 
-##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+##### Raccourci de l'événement de mise en pause {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
-Shortcut that is triggered when media is paused.
+Raccourci déclenché lorsque le média est mis en pause.
 
 **Par défaut** : Aucune
 
-##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+##### Raccourci de l'évènement de média arrêté {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
-Shortcut that is triggered when media is stopped.
+Raccourci qui est déclenché lorsque le média est arrêté.
 
 **Par défaut** : Aucune
 
-##### Last Song Shortcut {#custom-event-last-song-shortcut}
+##### Raccourci de l'événement de cantique final d'une réunion {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-Shortcut that is triggered when the last song is played during a meeting.
+Raccourci qui est déclenché lorsque la lecture du dernier cantique se termine pendant une réunion.
 
 **Par défaut** : Aucune
 
@@ -395,7 +395,7 @@ Shortcut that is triggered when the last song is played during a meeting.
 
 Activez les raccourcis clavier personnalisables pour le contrôle des médias.
 
-**Par défaut** : `false`
+**Par défaut** : `faux`
 
 #### Raccourcis de contrôle des médias {#media-control-shortcuts}
 
@@ -410,13 +410,13 @@ Configurez les raccourcis pour la lecture des médias :
 
 ### Affichage des médias {#media-display}
 
-#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+#### Activer la transition en fondu lors du masquage ou de l'affichage de la fenêtre des médias {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-Enable fade-in/out transitions when showing or hiding the media window.
+Lorsque activé, la fenêtre des médias se cachera et apparaîtra en douceur au lieu de ce faire instantanément. Cela offre une expérience visuelle plus raffinée.
 
-**Par défaut** : `true`
+**Par défaut** : `vrai`
 
 #### Masquer le logo des médias {#hide-media-logo}
 
@@ -424,7 +424,7 @@ Enable fade-in/out transitions when showing or hiding the media window.
 
 Masquer le logo dans la fenêtre multimédia.
 
-**Par défaut** : `false`
+**Par défaut** : `faux`
 
 #### Résolution maximale {#maximum-resolution}
 
@@ -442,7 +442,7 @@ Résolution maximale pour les fichiers multimédias téléchargés.
 
 Inclure les médias des publications imprimées dans les téléchargements de médias.
 
-**Par défaut** : `true`
+**Par défaut** : `vrai`
 
 #### Exclure les notes de bas de page {#exclude-footnotes}
 
@@ -450,7 +450,7 @@ Inclure les médias des publications imprimées dans les téléchargements de m�
 
 Exclure les images de notes de bas de page des téléchargements de médias quand c'est possible.
 
-**Par défaut** : `false`
+**Par défaut** : `faux`
 
 #### Exclure les médias de la brochure Enseignement {#exclude-theocratic-ministry-school}
 
@@ -458,7 +458,7 @@ Exclure les images de notes de bas de page des téléchargements de médias quan
 
 Exclure les médias de la brochure Enseignement (th) des téléchargements de médias.
 
-**Par défaut** : `true`
+**Par défaut** : `vrai`
 
 ### Sous-titres {#subtitles}
 
@@ -468,7 +468,7 @@ Exclure les médias de la brochure Enseignement (th) des téléchargements de m�
 
 Activez le support des sous-titres pour la lecture des médias.
 
-**Par défaut** : `false`
+**Par défaut** : `faux`
 
 #### Langue des sous-titres {#subtitle-language}
 
@@ -488,7 +488,7 @@ Langue pour les sous-titres (peut être différente de la langue des médias).
 
 Exporter automatiquement les fichiers multimédias vers un dossier spécifié.
 
-**Par défaut** : `false`
+**Par défaut** : `faux`
 
 #### Dossier d'exportation des médias {#media-export-folder}
 
@@ -504,7 +504,7 @@ Chemin du dossier où les fichiers multimédias seront exportés automatiquement
 
 Convertir les fichiers multimédias exportés au format MP4 pour une meilleure compatibilité.
 
-**Par défaut** : `false`
+**Par défaut** : `faux`
 
 ### Zone de danger {#danger-zone}
 
@@ -514,13 +514,13 @@ Ces paramètres ne doivent être modifiés que si vous comprenez leurs implicati
 
 :::
 
-#### Base URL {#base-url}
+#### Adresse du site Web {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
-Base domain used to download publications and media.
+Entrez l'adresse utilisée pour accéder au site officiel des Témoins de Jéhovah.
 
-**Default**: `jw.org`
+**Par défaut** : `jw.org`
 
 #### Désactiver le téléchargement des médias {#disable-media-fetching}
 
@@ -528,7 +528,7 @@ Base domain used to download publications and media.
 
 Désactiver complètement le téléchargement automatique des médias. Utilisez ceci uniquement pour les profils qui seront utilisés pour des événements spéciaux ou des configurations personnalisées.
 
-**Par défaut** : `false`
+**Par défaut** : `faux`
 
 ## Conseils pour une configuration optimale {#configuration-tips}
 
