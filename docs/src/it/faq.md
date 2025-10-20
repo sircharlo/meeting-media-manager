@@ -32,19 +32,17 @@ M³ supports Windows, macOS, and Linux:
 
 **Sì!** M³ fornisce un supporto multi-lingua completo:
 
-- **Media Languages**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
-- **Interface Languages**: Use M³'s interface in many different languages
+- **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
+- **App Interface**: Use M³'s interface in many different languages
 - **Independent Settings**: You can use the interface in one language while downloading media in another
+- **Fallback languages**: Configure fallback languages for when media isn't available in the primary language
+- **Subtitle support**: Download and display subtitles in various languages
 
 ## Installation and Setup {#installation-setup}
 
-### :inbox_tray: Download M³ {#download}
+### :computer: How do I download and install M³? {#installation}
 
-Scarica la versione appropriata per il tuo sistema operativo dalla [pagina delle release](https://github.com/sircharlo/meeting-media-manager/releases/latest).
-
-### :computer: How do I install M³? {#installation}
-
-Download the appropriate version for your operating system from the [releases page](https://github.com/sircharlo/meeting-media-manager/releases/latest) and follow the installation instructions in the [setup guide](/using-at-a-kingdom-hall#download-and-install).
+Download the appropriate version from the [Download page](download) and follow the steps in the [User Guide](user-guide).
 
 ### :gear: How do I set up M³ for the first time? {#first-time-setup}
 
@@ -56,7 +54,7 @@ M³ includes a setup wizard that guides you through the essential configuration:
 4. Set up meeting schedule
 5. Configure optional features like OBS integration
 
-## Gestione Media Principale {#faq-media-management}
+## Media Management {#faq-media-management}
 
 ### :download: How does M³ download media? {#media-download}
 
@@ -93,7 +91,7 @@ Yes! M³ includes an Audio Bible feature that allows you to:
 3. Download audio recordings
 4. Use them at the meetings
 
-## Funzionalità di Presentazione {#faq-presentation-features}
+## Presentation Features {#faq-presentation-features}
 
 ### :tv: How do I present media during meetings? {#present-media}
 
@@ -134,7 +132,7 @@ To integrate with Zoom:
 2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
 3. M³ will automatically start and stop Zoom screen sharing during media presentations
 
-## Integrazione di OBS Studio {#faq-obs-integration}
+## OBS Studio Integration {#faq-obs-integration}
 
 ### :video_camera: How do I set up the OBS Studio integration? {#faq-obs-setup}
 
@@ -163,7 +161,7 @@ This feature delays sharing images to OBS until you manually trigger them. This 
 - Having more control over timing
 - Avoiding premature scene changes
 
-## Funzionalità Avanzate {#faq-advanced-features}
+## Advanced Features {#faq-advanced-features}
 
 ### :cloud: How does folder monitoring work? {#faq-folder-monitoring}
 
@@ -190,7 +188,7 @@ Yes! M³ supports multiple profiles for:
 - Different groups
 - Separate settings and media for each
 
-## Risoluzione Problemi {#faq-troubleshooting}
+## Troubleshooting {#faq-troubleshooting}
 
 ### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
 
@@ -247,26 +245,26 @@ Verify these language settings:
 
 ## Support and Community {#support-community}
 
-### :radioactive: Come faccio a segnalare un problema? {#how-do-i-report-an-issue}
+### :radioactive: How do I report an issue? {#how-do-i-report-an-issue}
 
-Per favore [segnala un problema](https://github.com/sircharlo/meeting-media-manager/issues) sul repository ufficiale di GitHub. Include:
+Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository. Include:
 
 - Detailed description of the problem
 - Steps to reproduce the issue
 - Your operating system and M³ version
 - Any error messages, logs and screenshots
 
-### :new: Come posso richiedere una nuova funzionalità o miglioramento? {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: How can I request a new feature or enhancement? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Per favore [apri una discussione](https://github.com/sircharlo/meeting-media-manager/discussions) sul repository ufficiale di GitHub. Describe:
+Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository. Describe:
 
 - The feature you'd like to see
 - How it would benefit users
 - Any specific requirements or preferences
 
-### :handshake: Come posso contribuire con qualche codice? {#how-can-i-contribute-some-code}
+### :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
 
-Si prega di [vedere la guida contributiva](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) sul repository ufficiale di GitHub. We welcome code contributions and Pull Requests!
+Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository. We welcome code contributions and Pull Requests!
 
 ### :globe_with_meridians: How can I help with translations? {#translations}
 
@@ -277,17 +275,36 @@ M³ uses Crowdin for translation management. You can contribute translations by:
 3. Translating strings that need work
 4. Reviewing existing translations
 
-### :x: Posso fare una donazione al progetto? {#can-i-make-a-donation-to-the-project}
+### :x: Can I make a donation to the project? {#can-i-make-a-donation-to-the-project}
 
-Grazie per il vostro interesse a sostenere il progetto! Tuttavia, nello spirito di Matteo 10:8, le donazioni sono **non** accettate e mai lo saranno. Questa app è fatta con amore e un po' di tempo libero. Per piacere, divertiti! :tada:
+Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
 
-:::tip :book: Matteo 10:8
+:::tip :book: Matthew 10:8
 
-"Gratuitamente avete ricevuto, gratuitamente date"
+"You received free, give free."
 
 :::
 
 ## Technical Questions {#technical-questions}
+
+### :computer: What hardware and software requirements does M³ have? {#hardware-and-software-requirements}
+
+M³ is designed to work on a wide range of operating systems:
+
+- **Windows**: Windows 10 e versioni successive (64-bit e 32-bit disponibili)
+- **macOS**: macOS 10.15 (Catalina) e successivi (supporto per Intel e Apple Silicon)
+- **Linux**: La maggior parte delle distribuzioni Linux moderne (formato Appimage)
+
+M³ has the following hardware requirements:
+
+- **Minimum**: 4GB RAM, 6GB free disk space
+- **Recommended**: 8GB RAM, 15GB free disk space for media caching
+- **Network**: Internet connection for media downloads
+
+Depending on the features you use, M³ also requires the following additional software:
+
+- **Zoom**: Required only if using Zoom integration features
+- **OBS Studio**: Required only if using OBS integration features
 
 ### :floppy_disk: How much disk space does M³ use? {#disk-space}
 
