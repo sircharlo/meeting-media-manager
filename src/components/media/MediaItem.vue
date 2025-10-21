@@ -561,26 +561,11 @@
             (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))
           "
           icon="mmm-play-sign-language"
+          :outline="markersPanelOpen"
           push
           rounded
-        >
-          <q-menu>
-            <q-list>
-              <q-item clickable @click="setMediaPlaying(media, true)">
-                <q-item-section>{{ t('entireFile') }}</q-item-section>
-              </q-item>
-              <q-separator />
-              <q-item
-                v-for="marker in media.markers"
-                :key="marker.VideoMarkerId"
-                clickable
-                @click="setMediaPlaying(media, true, marker)"
-              >
-                <q-item-section>{{ marker.Label }}</q-item-section>
-              </q-item>
-            </q-list>
-          </q-menu>
-        </q-btn>
+          @click="markersPanelOpen = !markersPanelOpen"
+        />
       </template>
     </div>
     <template v-else>
@@ -740,6 +725,82 @@
     </q-menu>
   </q-item>
 
+  <q-slide-transition>
+    <div v-show="markersPanelOpen" ref="markersPanel" class="q-mt-sm">
+      <q-list bordered class="q-mx-md q-mb-lg">
+        <q-item clickable @click="setMediaPlaying(media, true)">
+          <q-item-section>{{ t('entireFile') }}</q-item-section>
+        </q-item>
+      </q-list>
+      <q-list bordered class="q-mx-md q-mb-lg" separator>
+        <q-item
+          v-for="marker in media.markers"
+          :key="marker.VideoMarkerId"
+          :active="
+            (startSelectedMarker &&
+              startSelectedMarker.VideoMarkerId === marker.VideoMarkerId) ||
+            (endSelectedMarker &&
+              endSelectedMarker.VideoMarkerId === marker.VideoMarkerId)
+          "
+          :class="{
+            'bg-grey-3': playedMarkerIds.has(marker.VideoMarkerId),
+            'bg-accent-100':
+              startSelectedMarker &&
+              startSelectedMarker.VideoMarkerId === marker.VideoMarkerId,
+            'bg-accent-100-transparent': isBetweenSelectedAndHovered(marker),
+          }"
+          clickable
+          @click="onMarkerClick(marker)"
+          @mouseenter="hoveredMarker = marker"
+          @mouseleave="hoveredMarker = null"
+        >
+          <q-item-section>{{ marker.Label }}</q-item-section>
+          <q-item-section side>
+            <q-btn
+              v-if="
+                hoveredMarker === marker &&
+                (!startSelectedMarker ||
+                  (startSelectedMarker &&
+                    !endSelectedMarker &&
+                    startSelectedMarker.VideoMarkerId === marker.VideoMarkerId))
+              "
+              color="primary"
+              outline
+              push
+              rounded
+              size="sm"
+              @click.stop="playMarkerOnly(marker)"
+            >
+              <q-icon name="mmm-play" />
+              <q-icon name="mmm-numeric-1" />
+              <q-tooltip>{{ t('play-only-this-clip') }}</q-tooltip>
+            </q-btn>
+          </q-item-section>
+          <q-item-section v-if="playedMarkerIds.has(marker.VideoMarkerId)" side>
+            <q-icon name="mmm-check" size="xs">
+              <q-tooltip>{{ t('clip-played') }}</q-tooltip>
+            </q-icon>
+          </q-item-section>
+          <q-item-section
+            v-if="
+              hoveredMarker !== startSelectedMarker &&
+              hoveredMarker !== endSelectedMarker &&
+              isBetweenSelectedAndHovered(marker)
+            "
+            side
+          >
+            <q-icon name="mmm-play" size="xs">
+              <q-tooltip>{{
+                t('all-clips-with-this-icon-will-play')
+              }}</q-tooltip>
+            </q-icon>
+          </q-item-section>
+        </q-item>
+      </q-list>
+      <q-separator />
+    </div>
+  </q-slide-transition>
+
   <BaseDialog
     v-model="mediaEditTagDialog"
     :dialog-id="'media-edit-tag-dialog-' + props.media.uniqueId"
@@ -843,6 +904,7 @@
 import type { MediaItem, Tag, VideoMarker } from 'src/types';
 
 import {
+  onClickOutside,
   useBroadcastChannel,
   useElementHover,
   useEventListener,
@@ -1102,6 +1164,14 @@ whenever(
   { immediate: true },
 );
 
+const markersPanelOpen = ref(false);
+const startSelectedMarker = ref<null | VideoMarker>(null);
+const endSelectedMarker = ref<null | VideoMarker>(null);
+const skipCustomDurationUpdateOnce = ref(false);
+const hoveredMarker = ref<null | VideoMarker>(null);
+const playedMarkerIds = ref<Set<number>>(new Set());
+const markersPanel = ref<HTMLElement | null>(null);
+
 const setMediaPlaying = async (
   media: MediaItem,
   signLanguage = false,
@@ -1125,9 +1195,12 @@ const setMediaPlaying = async (
         min: marker.StartTimeTicks / 10000 / 1000,
       });
     } else {
-      updateMediaCustomDuration();
+      if (!skipCustomDurationUpdateOnce.value) {
+        updateMediaCustomDuration();
+      }
     }
   }
+  skipCustomDurationUpdateOnce.value = false;
   localFile.value = fileIsLocal();
   mediaPlaying.value = {
     action:
@@ -1150,6 +1223,114 @@ const setMediaPlaying = async (
     window.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
   });
 };
+
+const getMarkerTimes = (m: VideoMarker) => {
+  const max =
+    (m.StartTimeTicks + m.DurationTicks - m.EndTransitionDurationTicks) /
+    10000 /
+    1000;
+  const min = m.StartTimeTicks / 10000 / 1000;
+  return { max, min };
+};
+
+const setRangeAndPlay = (min: number, max: number) => {
+  updateMediaCustomDuration({ max, min });
+  skipCustomDurationUpdateOnce.value = true;
+  setMediaPlaying(props.media, true);
+  // mark all markers in this range as played
+  if (props.media.markers && props.media.markers.length) {
+    props.media.markers.forEach((m) => {
+      const { max: mMax, min: mMin } = getMarkerTimes(m);
+      if (mMin >= min && mMax <= max) {
+        playedMarkerIds.value.add(m.VideoMarkerId);
+      }
+    });
+  }
+  startSelectedMarker.value = null;
+  endSelectedMarker.value = null;
+};
+
+const playMarkerOnly = (marker: VideoMarker) => {
+  const playMarker = () => {
+    const { max, min } = getMarkerTimes(marker);
+    setRangeAndPlay(min, max);
+    playedMarkerIds.value.add(marker.VideoMarkerId);
+  };
+  if (!playedMarkerIds.value.has(marker.VideoMarkerId)) {
+    playMarker();
+    return;
+  }
+  $q.dialog({
+    cancel: true,
+    message: t('play-only-this-clip-question'),
+    persistent: true,
+    title: t('confirm'),
+  }).onOk(() => {
+    playMarker();
+  });
+};
+
+const onMarkerClick = (marker: VideoMarker) => {
+  if (!startSelectedMarker.value) {
+    startSelectedMarker.value = marker;
+    endSelectedMarker.value = null;
+    return;
+  }
+  if (!endSelectedMarker.value) {
+    if (startSelectedMarker.value.VideoMarkerId === marker.VideoMarkerId) {
+      playMarkerOnly(marker);
+      return;
+    }
+    const aStart = startSelectedMarker.value.StartTimeTicks;
+    const bStart = marker.StartTimeTicks;
+    const first = aStart <= bStart ? startSelectedMarker.value : marker;
+    const last = aStart <= bStart ? marker : startSelectedMarker.value;
+    const firstTimes = getMarkerTimes(first);
+    const lastTimes = getMarkerTimes(last);
+    endSelectedMarker.value = last;
+    setRangeAndPlay(firstTimes.min, lastTimes.max);
+    return;
+  }
+  startSelectedMarker.value = marker;
+  endSelectedMarker.value = null;
+};
+
+const isBetweenSelectedAndHovered = (marker: VideoMarker) => {
+  if (!startSelectedMarker.value || !hoveredMarker.value) return false;
+  const a = startSelectedMarker.value.StartTimeTicks;
+  const b = hoveredMarker.value.StartTimeTicks;
+  const m = marker.StartTimeTicks;
+  return (m >= Math.min(a, b) && m <= Math.max(a, b)) as boolean;
+};
+
+// Cancel selection on click outside the markers panel
+onClickOutside(markersPanel, () => {
+  if (
+    markersPanelOpen.value &&
+    startSelectedMarker.value &&
+    !endSelectedMarker.value
+  ) {
+    startSelectedMarker.value = null;
+    endSelectedMarker.value = null;
+  }
+});
+
+// Cancel selection on Escape
+useEventListener(
+  window,
+  'keydown',
+  (e: KeyboardEvent) => {
+    if (
+      e.key === 'Escape' &&
+      markersPanelOpen.value &&
+      startSelectedMarker.value
+    ) {
+      startSelectedMarker.value = null;
+      endSelectedMarker.value = null;
+    }
+  },
+  { passive: true },
+);
 
 const { post: postRepeat } = useBroadcastChannel<string, boolean>({
   name: 'repeat',
