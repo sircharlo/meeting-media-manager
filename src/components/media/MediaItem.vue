@@ -770,7 +770,12 @@
               @mouseenter="hoveredMarker = marker"
               @mouseleave="hoveredMarker = null"
             >
-              <q-item-section>{{ marker.Label }}</q-item-section>
+              <q-item-section>
+                <q-item-label>{{ marker.Label }}</q-item-label>
+                <q-item-label caption>
+                  {{ getMarkerDuration(marker) }}
+                </q-item-label>
+              </q-item-section>
               <q-item-section side>
                 <q-btn
                   v-if="
@@ -1309,6 +1314,16 @@ const onPlayEntireFileClick = () => {
   }).onOk(() => {
     setMediaPlaying(props.media, true);
   });
+};
+
+const getMarkerDuration = (marker: VideoMarker) => {
+  try {
+    const { max, min } = getMarkerTimes(marker);
+    return formatTime(max - min);
+  } catch (error) {
+    errorCatcher(error);
+    return '';
+  }
 };
 
 const onMarkerClick = (marker: VideoMarker) => {

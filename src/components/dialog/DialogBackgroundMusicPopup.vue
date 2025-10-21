@@ -155,6 +155,8 @@ const {
 
 const timeUntilMeeting = ref(remainingTimeBeforeMeetingStart());
 
+const musicAlreadyStoppedManually = ref(false);
+
 watch(
   () => [currentTime.value, currentState.selectedDateObject?.date],
   (values, oldValues) => {
@@ -188,8 +190,6 @@ const isMeetingToday = computed(() => {
 const isMeetingStartTimeInPast = computed(() => {
   return timeUntilMeeting.value <= 0;
 });
-
-const musicAlreadyStoppedManually = ref(false);
 
 const shouldAutoStart = computed(() => {
   console.log('[shouldAutoStart] Checking auto start conditions...');
