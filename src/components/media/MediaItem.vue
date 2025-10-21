@@ -954,8 +954,15 @@ import { useI18n } from 'vue-i18n';
 import VueZoomable from 'vue-zoomable';
 
 const currentState = useCurrentStateStore();
-const { currentSettings, highlightedMediaId, mediaPlaying } =
-  storeToRefs(currentState);
+const {
+  currentCongregation,
+  currentLangObject,
+  currentSettings,
+  highlightedMediaId,
+  mediaPlaying,
+  mediaWindowVisible,
+  selectedDateObject,
+} = storeToRefs(currentState);
 
 const currentlyHighlighted = computed(
   () => highlightedMediaId.value === props.media.uniqueId,
@@ -1463,7 +1470,7 @@ const { post } = useBroadcastChannel<number, number>({ name: 'seek-to' });
 const seekTo = (newSeekTo: null | number) => {
   if (newSeekTo !== null) {
     post(newSeekTo);
-    if (!currentState.mediaWindowVisible) {
+    if (!mediaWindowVisible.value) {
       showMediaWindow(true);
     }
   }
@@ -1541,8 +1548,8 @@ function deleteMedia() {
   if (!mediaToDelete.value) return;
   removeFromAdditionMediaMap(
     mediaToDelete.value,
-    currentState.currentCongregation,
-    currentState.selectedDateObject,
+    currentCongregation.value,
+    selectedDateObject.value,
   );
   mediaToDelete.value = '';
 }
@@ -1581,7 +1588,11 @@ useEventListener(
 );
 
 window.addEventListener('scrollToSelectedMedia', () => {
-  if (currentlyHighlighted.value && mediaItem.value?.$el) {
+  if (
+    currentlyHighlighted.value &&
+    mediaItem.value?.$el &&
+    !currentLangObject.value?.isSignLanguage
+  ) {
     mediaItem.value.$el.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
@@ -1594,8 +1605,8 @@ const currentSongIsDuplicated = computed(() => {
   if (!currentSong) return false;
 
   const songNumbers: MediaItem[] = [];
-  if (currentState.selectedDateObject?.mediaSections) {
-    Object.values(currentState.selectedDateObject.mediaSections).forEach(
+  if (selectedDateObject.value?.mediaSections) {
+    Object.values(selectedDateObject.value.mediaSections).forEach(
       (sectionMedia) => {
         sectionMedia.items?.forEach((m) => {
           if (

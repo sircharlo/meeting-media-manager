@@ -1,4 +1,6 @@
 import type {
+  JwLangCode,
+  MultimediaExtractItem,
   MultimediaItem,
   MultimediaItemsFetcher,
   PublicationFetcher,
@@ -10,7 +12,12 @@ const { executeQuery } = window.electronApi;
 
 import mepslangs from 'src/constants/mepslangs';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import {
+  addFullFilePathToMultimediaItem,
+  getDbFromJWPUB,
+} from 'src/helpers/jw-media';
 import { findFile } from 'src/utils/fs';
+import { useCurrentStateStore } from 'stores/current-state';
 
 export const findDb = async (publicationDirectory: string | undefined) => {
   return findFile(publicationDirectory, '.db');
@@ -229,9 +236,165 @@ export const getDocumentMultimediaItems = (
       source.db,
       `${select} ${from} ${where} ${groupAndSort}`,
     );
+    for (const item of items) {
+      if (!item) continue;
+      const videoMarkers = getMediaVideoMarkers(
+        { db: source.db },
+        item.MultimediaId,
+      );
+      if (videoMarkers) item.VideoMarkers = videoMarkers;
+    }
     return items;
   } catch (error) {
     errorCatcher(error);
+    return [];
+  }
+};
+
+export const getDocumentExtractItems = async (
+  db: string,
+  docId: number,
+  meetingDate: string,
+) => {
+  try {
+    const currentStateStore = useCurrentStateStore();
+    const extracts = executeQuery<MultimediaExtractItem>(
+      // ${currentStateStore.currentSongbook?.pub === 'sjjm'
+      //   ? "AND NOT UniqueEnglishSymbol = 'sjj' "
+      //   : ''
+      // }
+      db,
+      `SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,
+      Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UniqueEnglishSymbol,IssueTagNumber,
+      Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal, Extract.Link, Extract.Caption as ExtractCaption
+    FROM DocumentExtract
+      INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId
+      INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId
+      INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId
+    WHERE DocumentExtract.DocumentId = ${docId}
+    AND NOT UniqueEnglishSymbol LIKE 'mwbr%'
+    AND NOT UniqueEnglishSymbol = 'sjj'
+    ${
+      currentStateStore.currentSettings?.excludeTh
+        ? "AND NOT UniqueEnglishSymbol = 'th' "
+        : ''
+    }
+      ORDER BY DocumentExtract.BeginParagraphOrdinal`,
+    );
+
+    // AND NOT RefPublication.PublicationCategorySymbol = 'web'
+    // To think about: should we add a toggle to enable/disable web publication multimedia?
+
+    const allExtractItems = [];
+    for (const extract of extracts) {
+      extract.Lang = currentStateStore.currentSettings?.lang || 'E';
+      if (extract.Link) {
+        try {
+          const matches = extract.Link.match(/\/(.*)\//);
+          if (matches && matches.length > 0) {
+            extract.Lang = (matches.pop()?.split(':')[0] || '') as JwLangCode;
+          }
+        } catch (e: unknown) {
+          errorCatcher(e);
+        }
+      }
+
+      let symbol = /[^a-zA-Z0-9]/.test(extract.UniqueEnglishSymbol)
+        ? extract.UniqueEnglishSymbol
+        : extract.UniqueEnglishSymbol.replace(/\d/g, '');
+      if (['it', 'snnw'].includes(symbol)) continue; // Exclude Insight and the "old new songs" songbook; we don't need images from that
+      if (
+        symbol === 'w' &&
+        extract.IssueTagNumber &&
+        parseInt(extract.IssueTagNumber.toString()) >= 20080101 &&
+        extract.IssueTagNumber.toString().slice(-2) === '01'
+      ) {
+        symbol = 'wp';
+      }
+      let extractLang = extract.Lang ?? currentStateStore.currentSettings?.lang;
+      let extractDb = await getDbFromJWPUB(
+        {
+          issue: extract.IssueTagNumber,
+          langwritten: extractLang,
+          pub: symbol,
+        },
+        meetingDate,
+      );
+      const langFallback = currentStateStore.currentSettings?.langFallback;
+      if (!extractDb && langFallback) {
+        extractDb = await getDbFromJWPUB(
+          {
+            issue: extract.IssueTagNumber,
+            langwritten: langFallback,
+            pub: symbol,
+          },
+          meetingDate,
+        );
+        extractLang = langFallback;
+      }
+
+      if (!extractDb) continue;
+
+      const extractItems = getDocumentMultimediaItems(
+        {
+          db: extractDb,
+          lang: extractLang,
+          mepsId: extract.RefMepsDocumentId,
+          ...(extract.RefBeginParagraphOrdinal
+            ? {
+                // Hack to show intro picture when appropriate from:
+                // - the Love People brochure
+                // - the Enjoy Life Forever book
+                // - the Bearing Thorough Witness book
+                BeginParagraphOrdinal:
+                  ['bt', 'lff', 'lmd'].includes(symbol) &&
+                  extract.RefBeginParagraphOrdinal < 8
+                    ? 1
+                    : extract.RefBeginParagraphOrdinal,
+              }
+            : {}),
+          ...(extract.RefEndParagraphOrdinal
+            ? { EndParagraphOrdinal: extract.RefEndParagraphOrdinal }
+            : {}),
+        },
+        currentStateStore.currentSettings?.includePrinted,
+      )
+        .map((extractItem): MultimediaItem => {
+          return {
+            ...extractItem,
+            BeginParagraphOrdinal: extract.BeginParagraphOrdinal,
+            EndParagraphOrdinal: extract.EndParagraphOrdinal,
+            ExtractCaption: extract.ExtractCaption,
+          };
+        })
+        .filter(
+          (extractItem) =>
+            currentStateStore.currentLangObject?.isSignLanguage ||
+            !(symbol === 'lmd' && extractItem.MimeType.includes('video')),
+        );
+      for (let i = 0; i < extractItems.length; i++) {
+        const multimediaItem = extractItems[i];
+        if (!multimediaItem) continue;
+        const videoMarkers = getMediaVideoMarkers(
+          { db: extractDb },
+          multimediaItem.MultimediaId,
+        );
+        if (videoMarkers) multimediaItem.VideoMarkers = videoMarkers;
+
+        extractItems[i] = await addFullFilePathToMultimediaItem(
+          multimediaItem,
+          {
+            issue: extract.IssueTagNumber,
+            langwritten: extractLang,
+            pub: symbol,
+          },
+        );
+      }
+      allExtractItems.push(...extractItems);
+    }
+    return allExtractItems;
+  } catch (e: unknown) {
+    errorCatcher(e);
     return [];
   }
 };

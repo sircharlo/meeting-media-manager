@@ -56,6 +56,7 @@ import {
 } from 'src/utils/media';
 import {
   findDb,
+  getDocumentExtractItems,
   getDocumentMultimediaItems,
   getMediaVideoMarkers,
   getMultimediaMepsLangs,
@@ -613,7 +614,7 @@ export const fetchMedia = async () => {
   }
 };
 
-const getDbFromJWPUB = async (
+export const getDbFromJWPUB = async (
   publication: PublicationFetcher,
   meetingDate?: string,
 ) => {
@@ -639,7 +640,7 @@ const getDbFromJWPUB = async (
   }
 };
 
-async function addFullFilePathToMultimediaItem(
+export async function addFullFilePathToMultimediaItem(
   multimediaItem: MultimediaItem,
   publication: PublicationFetcher,
 ): Promise<MultimediaItem> {
@@ -668,147 +669,6 @@ async function addFullFilePathToMultimediaItem(
     return multimediaItem;
   }
 }
-
-const getDocumentExtractItems = async (
-  db: string,
-  docId: number,
-  meetingDate: string,
-) => {
-  try {
-    const currentStateStore = useCurrentStateStore();
-    const extracts = executeQuery<MultimediaExtractItem>(
-      // ${currentStateStore.currentSongbook?.pub === 'sjjm'
-      //   ? "AND NOT UniqueEnglishSymbol = 'sjj' "
-      //   : ''
-      // }
-      db,
-      `SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,
-      Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UniqueEnglishSymbol,IssueTagNumber,
-      Extract.RefBeginParagraphOrdinal,Extract.RefEndParagraphOrdinal, Extract.Link, Extract.Caption as ExtractCaption
-    FROM DocumentExtract
-      INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId
-      INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId
-      INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId
-    WHERE DocumentExtract.DocumentId = ${docId}
-    AND NOT UniqueEnglishSymbol LIKE 'mwbr%'
-    AND NOT UniqueEnglishSymbol = 'sjj'
-    ${
-      currentStateStore.currentSettings?.excludeTh
-        ? "AND NOT UniqueEnglishSymbol = 'th' "
-        : ''
-    }
-      ORDER BY DocumentExtract.BeginParagraphOrdinal`,
-    );
-
-    // AND NOT RefPublication.PublicationCategorySymbol = 'web'
-    // To think about: should we add a toggle to enable/disable web publication multimedia?
-
-    const allExtractItems = [];
-    for (const extract of extracts) {
-      extract.Lang = currentStateStore.currentSettings?.lang || 'E';
-      if (extract.Link) {
-        try {
-          const matches = extract.Link.match(/\/(.*)\//);
-          if (matches && matches.length > 0) {
-            extract.Lang = (matches.pop()?.split(':')[0] || '') as JwLangCode;
-          }
-        } catch (e: unknown) {
-          errorCatcher(e);
-        }
-      }
-
-      let symbol = /[^a-zA-Z0-9]/.test(extract.UniqueEnglishSymbol)
-        ? extract.UniqueEnglishSymbol
-        : extract.UniqueEnglishSymbol.replace(/\d/g, '');
-      if (['it', 'snnw'].includes(symbol)) continue; // Exclude Insight and the "old new songs" songbook; we don't need images from that
-      if (
-        symbol === 'w' &&
-        extract.IssueTagNumber &&
-        parseInt(extract.IssueTagNumber.toString()) >= 20080101 &&
-        extract.IssueTagNumber.toString().slice(-2) === '01'
-      ) {
-        symbol = 'wp';
-      }
-      let extractLang = extract.Lang ?? currentStateStore.currentSettings?.lang;
-      let extractDb = await getDbFromJWPUB(
-        {
-          issue: extract.IssueTagNumber,
-          langwritten: extractLang,
-          pub: symbol,
-        },
-        meetingDate,
-      );
-      const langFallback = currentStateStore.currentSettings?.langFallback;
-      if (!extractDb && langFallback) {
-        extractDb = await getDbFromJWPUB(
-          {
-            issue: extract.IssueTagNumber,
-            langwritten: langFallback,
-            pub: symbol,
-          },
-          meetingDate,
-        );
-        extractLang = langFallback;
-      }
-
-      if (!extractDb) continue;
-
-      const extractItems = getDocumentMultimediaItems(
-        {
-          db: extractDb,
-          lang: extractLang,
-          mepsId: extract.RefMepsDocumentId,
-          ...(extract.RefBeginParagraphOrdinal
-            ? {
-                // Hack to show intro picture when appropriate from:
-                // - the Love People brochure
-                // - the Enjoy Life Forever book
-                // - the Bearing Thorough Witness book
-                BeginParagraphOrdinal:
-                  ['bt', 'lff', 'lmd'].includes(symbol) &&
-                  extract.RefBeginParagraphOrdinal < 8
-                    ? 1
-                    : extract.RefBeginParagraphOrdinal,
-              }
-            : {}),
-          ...(extract.RefEndParagraphOrdinal
-            ? { EndParagraphOrdinal: extract.RefEndParagraphOrdinal }
-            : {}),
-        },
-        currentStateStore.currentSettings?.includePrinted,
-      )
-        .map((extractItem): MultimediaItem => {
-          return {
-            ...extractItem,
-            BeginParagraphOrdinal: extract.BeginParagraphOrdinal,
-            EndParagraphOrdinal: extract.EndParagraphOrdinal,
-            ExtractCaption: extract.ExtractCaption,
-          };
-        })
-        .filter(
-          (extractItem) =>
-            currentStateStore.currentLangObject?.isSignLanguage ||
-            !(symbol === 'lmd' && extractItem.MimeType.includes('video')),
-        );
-      for (let i = 0; i < extractItems.length; i++) {
-        extractItems[i] = await addFullFilePathToMultimediaItem(
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          extractItems[i]!,
-          {
-            issue: extract.IssueTagNumber,
-            langwritten: extractLang,
-            pub: symbol,
-          },
-        );
-      }
-      allExtractItems.push(...extractItems);
-    }
-    return allExtractItems;
-  } catch (e: unknown) {
-    errorCatcher(e);
-    return [];
-  }
-};
 
 const getStudyBible = async () => {
   try {
@@ -2184,13 +2044,8 @@ export const getMwMedia = async (lookupDate: Date) => {
       currentStateStore.currentSettings?.includePrinted,
     );
     for (let i = 0; i < mms.length; i++) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const multimediaItem = mms[i]!;
-      const videoMarkers = getMediaVideoMarkers(
-        { db, docId },
-        multimediaItem.MultimediaId,
-      );
-      if (videoMarkers) multimediaItem.VideoMarkers = videoMarkers;
+      const multimediaItem = mms[i];
+      if (!multimediaItem) continue;
       mms[i] = await addFullFilePathToMultimediaItem(
         multimediaItem,
         publication,
@@ -2200,11 +2055,6 @@ export const getMwMedia = async (lookupDate: Date) => {
     // To think about: Enabling InternalLink lookups: is this needed?
     // const internalLinkMedia = getInternalLinkItems({ db, docId }).map(
     //   (multimediaItem) => {
-    //     const videoMarkers = getMediaVideoMarkers(
-    //       { db, docId } as MultimediaItemsFetcher,
-    //       multimediaItem.MultimediaId,
-    //     );
-    //     if (videoMarkers) multimediaItem.VideoMarkers = videoMarkers;
     //     return addFullFilePathToMultimediaItem(multimediaItem, publication);
     //   },
     // );
