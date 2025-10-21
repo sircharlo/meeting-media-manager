@@ -74,6 +74,7 @@
       </q-item-section>
       <q-item-section>{{ t('titles.presentWebsite') }}</q-item-section>
     </q-item>
+    <q-space />
     <q-item
       v-ripple
       :class="
@@ -99,7 +100,6 @@
         {{ t('titles.profileSelection') }}
       </q-item-section>
     </q-item>
-    <q-space />
     <q-item
       v-ripple
       :class="route.path.startsWith('/settings') ? navActiveClass : ''"
