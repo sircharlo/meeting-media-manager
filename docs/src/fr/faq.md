@@ -56,7 +56,7 @@ M³ inclut un assistant de configuration qui vous guide à travers la configurat
 
 ## Gestion des médias {#faq-media-management}
 
-### :desktop_computer: How does M³ download media? {#media-download}
+### :desktop_computer: Comment M³ télécharge-t-il les médias ? {#media-download}
 
 M³ télécharge automatiquement les médias pour les réunions à venir en :
 
@@ -73,7 +73,7 @@ Oui ! M³ vous permet de :
 - Télécharger automatiquement des médias pour les réunions à venir
 - Importer des médias personnalisés pour n'importe quelle date
 
-### :open_file_folder: How do I import my own media files? {#import-media}
+### :open_file_folder: Comment importer mes propres fichiers multimédias ? {#import-media}
 
 Vous pouvez importer des médias personnalisés de plusieurs façons :
 
@@ -114,7 +114,7 @@ M³ prend en charge les raccourcis clavier personnalisables pour :
 
 <!-- - Fullscreen mode -->
 
-### :notes: How does background music work? {#faq-background-music}
+### :notes: Comment la musique de fond fonctionne-t-elle ? {#faq-background-music}
 
 Les fonctionnalités de musique de fond incluent :
 
