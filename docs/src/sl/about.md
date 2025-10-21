@@ -94,11 +94,11 @@ Media for meetings of Jehovah's Witnesses can be automatically downloaded in any
 
 M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
 
-For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
+Podrobnosti o nadomestnih jezikih in podnapisih najdeš med [Pogostimi vprašanji](faq#language-support).
 
 ## System Requirements {#system-requirements}
 
-For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
+Za podprte operacijske sisteme in zahteve glej odgovore v [Pogostih vprašanjih](faq#technical-questions).
 
 **Preizkusite M³ še danes in se prepričajte, kaj vse zmore! Predvajanje multimedijske vsebina na občinskih shodih ni bilo še nikoli tako enostavno.**
 
