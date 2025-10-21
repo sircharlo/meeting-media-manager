@@ -742,7 +742,11 @@
           class="q-mt-md full-width"
         >
           <q-list bordered class="q-mb-lg">
-            <q-item clickable @click="setMediaPlaying(media, true)">
+            <q-item
+              class="clip"
+              clickable
+              @click="setMediaPlaying(media, true)"
+            >
               <q-item-section>{{ t('entireFile') }}</q-item-section>
             </q-item>
           </q-list>
@@ -757,12 +761,13 @@
                   endSelectedMarker.VideoMarkerId === marker.VideoMarkerId)
               "
               :class="{
-                'bg-grey-3': playedMarkerIds.has(marker.VideoMarkerId),
+                'bg-accent-200': playedMarkerIds.has(marker.VideoMarkerId),
                 'bg-accent-100':
                   startSelectedMarker &&
                   startSelectedMarker.VideoMarkerId === marker.VideoMarkerId,
                 'bg-accent-100-transparent':
                   isBetweenSelectedAndHovered(marker),
+                clip: true,
               }"
               clickable
               @click="onMarkerClick(marker)"

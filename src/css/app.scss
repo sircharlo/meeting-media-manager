@@ -157,6 +157,13 @@ body.body--light {
     & .q-item.selected-to-drag {
       background-color: $accent-200;
     }
+
+    &
+      .clip:not(.bg-accent-100):not(.bg-accent-100-transparent):not(
+        .bg-accent-200
+      ) {
+      background-color: white;
+    }
   }
 
   .bg-secondary-contrast {
@@ -227,6 +234,13 @@ body.body--dark {
   .media-section {
     background: $dark;
     border-color: $accent-100-dark;
+
+    &
+      .clip:not(.bg-accent-100):not(.bg-accent-100-transparent):not(
+        .bg-accent-200
+      ) {
+      background-color: $dark;
+    }
   }
 
   .bg-secondary-contrast {
