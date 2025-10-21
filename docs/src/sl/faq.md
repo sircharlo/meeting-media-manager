@@ -32,10 +32,10 @@ M³ supports Windows, macOS, and Linux:
 
 **Yes!** M³ provides comprehensive multi-language support:
 
-- **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
-- **App Interface**: Use M³'s interface in many different languages
+- **Multimedijska vsebina**: Prenesi multimedijsko vsebino v katerem koli od več sto jezikov, ki so na voljo na uradnem spletnem mestu Jehovovih prič
+- **Vmesnik aplikacije**: Uporabi vmesnik M³ v več različnih jezikih
 - **Independent Settings**: You can use the interface in one language while downloading media in another
-- **Fallback languages**: Configure fallback languages for when media isn't available in the primary language
+- **Nadomestni jeziki**: Nastavi nadomestne jezike za primere, ko multimedijska vsebina ni na voljo v glavnem jeziku
 - **Subtitle support**: Download and display subtitles in various languages
 
 ## Installation and Setup {#installation-setup}
@@ -56,7 +56,7 @@ M³ includes a setup wizard that guides you through the essential configuration:
 
 ## Media Management {#faq-media-management}
 
-### :desktop_computer: How does M³ download media? {#media-download}
+### :desktop_computer: Kako M³ prenese multimedijsko vsebino? {#media-download}
 
 M³ automatically downloads media for upcoming meetings by:
 
@@ -73,7 +73,7 @@ Yes! M³ allows you to:
 - Download media for upcoming meetings automatically
 - Import custom media for any date
 
-### :open_file_folder: How do I import my own media files? {#import-media}
+### :open_file_folder: Kako lahko uvozim lastne multimedijske datoteke? {#import-media}
 
 You can import custom media in several ways:
 
@@ -114,7 +114,7 @@ M³ supports customizable keyboard shortcuts for:
 
 <!-- - Fullscreen mode -->
 
-### :notes: How does background music work? {#faq-background-music}
+### :notes: Kako deluje glasba v ozadju? {#faq-background-music}
 
 Background music features include:
 
