@@ -742,11 +742,7 @@
           class="q-mt-md full-width"
         >
           <q-list bordered class="q-mb-lg">
-            <q-item
-              class="clip"
-              clickable
-              @click="setMediaPlaying(media, true)"
-            >
+            <q-item class="clip" clickable @click="onPlayEntireFileClick()">
               <q-item-section>{{ t('entireFile') }}</q-item-section>
             </q-item>
           </q-list>
@@ -1300,6 +1296,18 @@ const playMarkerOnly = (marker: VideoMarker) => {
     title: t('confirm'),
   }).onOk(() => {
     playMarker();
+  });
+};
+
+const onPlayEntireFileClick = () => {
+  $q.dialog({
+    cancel: { label: t('cancel') },
+    message: t('entireFile-question'),
+    ok: { label: t('play-entire-file') },
+    persistent: true,
+    title: t('confirm'),
+  }).onOk(() => {
+    setMediaPlaying(props.media, true);
   });
 };
 
