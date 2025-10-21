@@ -13,6 +13,25 @@ import {
 } from 'src-electron/constants';
 import { urlVariables } from 'src-electron/main/session';
 
+const captureElectronErrorState: {
+  globalWindowMs: number;
+  lastSentAt: number;
+  title: Map<string, { lastSent: number; suppressed: number }>;
+  titleWindowMs: number;
+  trailingPayload: null | {
+    context?: ExclusiveEventHintOrCaptureContext;
+    error: unknown;
+  };
+  trailingTimeout: null | ReturnType<typeof setTimeout>;
+} = {
+  globalWindowMs: 1000,
+  lastSentAt: 0,
+  title: new Map<string, { lastSent: number; suppressed: number }>(),
+  titleWindowMs: 2 * 60 * 1000,
+  trailingPayload: null,
+  trailingTimeout: null,
+};
+
 /**
  * Gets the current app version
  * @returns The app version
@@ -199,11 +218,122 @@ export function captureElectronError(
     captureElectronError(error.cause, context);
   }
 
-  if (IS_DEV) {
-    console.error(error);
-    console.warn('context', context);
+  const now = Date.now();
+  const key = ((): string => {
+    if (error instanceof Error) return `${error.name}: ${error.message}`;
+    if (typeof error === 'string') return error;
+    try {
+      return JSON.stringify(error);
+    } catch {
+      return String(error);
+    }
+  })();
+
+  if (!captureElectronErrorState.title.has(key)) {
+    captureElectronErrorState.title.set(key, { lastSent: 0, suppressed: 0 });
+  }
+  const tState = captureElectronErrorState.title.get(key) || {
+    lastSent: 0,
+    suppressed: 0,
+  };
+
+  if (now - tState.lastSent < captureElectronErrorState.titleWindowMs) {
+    tState.suppressed += 1;
+    return;
+  }
+
+  const suppressed = tState.suppressed;
+  tState.lastSent = now;
+  tState.suppressed = 0;
+
+  const augmentedContext: ExclusiveEventHintOrCaptureContext | undefined =
+    suppressed > 0
+      ? (() => {
+          const baseCtx =
+            context && typeof context === 'object'
+              ? (context as Record<string, unknown>)
+              : {};
+          const baseContexts =
+            baseCtx.contexts && typeof baseCtx.contexts === 'object'
+              ? (baseCtx.contexts as Record<string, unknown>)
+              : {};
+          const baseExtra =
+            baseCtx.extra && typeof baseCtx.extra === 'object'
+              ? (baseCtx.extra as Record<string, unknown>)
+              : {};
+          const baseTags =
+            baseCtx.tags && typeof baseCtx.tags === 'object'
+              ? (baseCtx.tags as Record<string, unknown>)
+              : {};
+          return {
+            ...(baseCtx as ExclusiveEventHintOrCaptureContext),
+            contexts: {
+              ...baseContexts,
+              rateLimit: {
+                suppressedSinceLastSend: suppressed,
+                titleKey: key,
+                windowMs: captureElectronErrorState.titleWindowMs,
+              },
+            },
+            extra: { ...baseExtra, rate_limit_suppressed_count: suppressed },
+            tags: { ...baseTags, rate_limited: 'per-title' },
+          } as ExclusiveEventHintOrCaptureContext;
+        })()
+      : context;
+
+  const bypass = (() => {
+    const c: unknown = augmentedContext || {};
+    const anyC = c as {
+      forceSend?: boolean;
+      level?: string;
+      mechanism?: { handled?: boolean };
+    };
+    return (
+      anyC?.forceSend === true ||
+      anyC?.level === 'fatal' ||
+      anyC?.mechanism?.handled === false
+    );
+  })();
+
+  const sendNow = () => {
+    if (IS_DEV) {
+      console.error(error);
+      console.warn('context', augmentedContext);
+    } else {
+      captureException(error, augmentedContext);
+    }
+  };
+
+  const elapsed = now - captureElectronErrorState.lastSentAt;
+  if (bypass || elapsed >= captureElectronErrorState.globalWindowMs) {
+    captureElectronErrorState.lastSentAt = now;
+    sendNow();
+    if (captureElectronErrorState.trailingTimeout) {
+      clearTimeout(captureElectronErrorState.trailingTimeout);
+      captureElectronErrorState.trailingTimeout = null;
+      captureElectronErrorState.trailingPayload = null;
+    }
   } else {
-    captureException(error, context);
+    captureElectronErrorState.trailingPayload = {
+      context: augmentedContext,
+      error,
+    };
+    if (!captureElectronErrorState.trailingTimeout) {
+      captureElectronErrorState.trailingTimeout = setTimeout(() => {
+        const payload = captureElectronErrorState.trailingPayload;
+        if (payload) {
+          captureElectronErrorState.lastSentAt = Date.now();
+          if (IS_DEV) {
+            console.error(payload.error);
+            console.warn('context', payload.context);
+          } else {
+            captureException(payload.error, payload.context);
+          }
+          captureElectronErrorState.trailingPayload = null;
+        }
+        captureElectronErrorState.trailingTimeout = null;
+      }, captureElectronErrorState.globalWindowMs - elapsed);
+    }
   }
 }
 
