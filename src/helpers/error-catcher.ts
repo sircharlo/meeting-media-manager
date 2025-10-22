@@ -1,11 +1,11 @@
-import type { ExclusiveEventHintOrCaptureContext } from 'app/node_modules/@sentry/core/build/types/utils/prepareEvent';
-
 import { captureException } from '@sentry/electron/renderer';
+
+type CaptureCtx = Parameters<typeof captureException>[1];
 
 let lastSentAt = 0;
 let trailingTimeout: null | ReturnType<typeof setTimeout> = null;
 let trailingPayload: null | {
-  context?: ExclusiveEventHintOrCaptureContext;
+  context?: CaptureCtx;
   error: Error | string | unknown;
 } = null;
 
@@ -13,10 +13,7 @@ const TITLE_SUPPRESSION_WINDOW_MS = 2 * 60 * 1000;
 const titleState: Map<string, { lastSent: number; suppressed: number }> =
   new Map<string, { lastSent: number; suppressed: number }>();
 
-function sendNow(
-  error: Error | string | unknown,
-  context?: ExclusiveEventHintOrCaptureContext,
-) {
+function sendNow(error: Error | string | unknown, context?: CaptureCtx) {
   if (!process.env.IS_DEV) {
     captureException(error, context);
   } else {
@@ -27,7 +24,7 @@ function sendNow(
 
 function sendWithGlobalThrottle(
   error: Error | string | unknown,
-  context?: ExclusiveEventHintOrCaptureContext,
+  context?: CaptureCtx,
 ) {
   const now = Date.now();
   if (shouldBypassThrottle(context)) {
@@ -60,9 +57,7 @@ function sendWithGlobalThrottle(
   }
 }
 
-function shouldBypassThrottle(
-  context?: ExclusiveEventHintOrCaptureContext,
-): boolean {
+function shouldBypassThrottle(context?: CaptureCtx): boolean {
   const c: unknown = context || {};
   const anyC = c as {
     forceSend?: boolean;
@@ -90,7 +85,7 @@ function titleFrom(error: Error | string | unknown): string {
 
 export const errorCatcher = async (
   error: Error | string | unknown,
-  context?: ExclusiveEventHintOrCaptureContext,
+  context?: CaptureCtx,
 ) => {
   if (!error) return;
 
@@ -114,7 +109,7 @@ export const errorCatcher = async (
   state.suppressed = 0;
   titleState.set(key, state);
 
-  const augmentedContext: ExclusiveEventHintOrCaptureContext | undefined =
+  const augmentedContext: CaptureCtx | undefined =
     suppressed > 0
       ? (() => {
           const baseCtx =
@@ -134,7 +129,7 @@ export const errorCatcher = async (
               ? (baseCtx.tags as Record<string, unknown>)
               : {};
           return {
-            ...(baseCtx as ExclusiveEventHintOrCaptureContext),
+            ...(baseCtx as CaptureCtx),
             contexts: {
               ...baseContexts,
               rateLimit: {
@@ -145,7 +140,7 @@ export const errorCatcher = async (
             },
             extra: { ...baseExtra, rate_limit_suppressed_count: suppressed },
             tags: { ...baseTags, rate_limited: 'per-title' },
-          } as ExclusiveEventHintOrCaptureContext;
+          } as CaptureCtx;
         })()
       : context;
 
