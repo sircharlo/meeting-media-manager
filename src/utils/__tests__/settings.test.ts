@@ -4,7 +4,7 @@ import type {
   SettingsItemRule,
 } from 'src/types';
 
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   getDateOptions,
@@ -25,6 +25,10 @@ vi.mock('src/utils/date', () => ({
   getSpecificWeekday: vi.fn(),
   isInPast: vi.fn(),
 }));
+
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
 describe('Settings Utilities', () => {
   describe('portNumberValidator', () => {
