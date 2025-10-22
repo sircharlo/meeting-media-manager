@@ -23,11 +23,29 @@ export const findDb = async (publicationDirectory: string | undefined) => {
   return findFile(publicationDirectory, '.db');
 };
 
+export const tableExists = (db: string, tableName: string) => {
+  try {
+    if (!db || !tableName) return false;
+    return (
+      executeQuery<{ name: string }>(
+        db,
+        `SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}'`,
+      ).length > 0
+    );
+  } catch (error) {
+    errorCatcher(error);
+    return false;
+  }
+};
+
 export const getMediaVideoMarkers = (
   source: MultimediaItemsFetcher,
   mediaId: number,
 ) => {
   try {
+    if (!source.db || !mediaId) return [];
+    const videoMarkerTableExists = tableExists(source.db, 'VideoMarker');
+    if (!videoMarkerTableExists) return [];
     const mediaVideoMarkers = executeQuery<VideoMarker>(
       source.db,
       `SELECT VideoMarkerId, Label, StartTimeTicks, DurationTicks, EndTransitionDurationTicks from VideoMarker WHERE MultimediaId = ${mediaId} ORDER by StartTimeTicks`,
@@ -79,14 +97,9 @@ export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
       'DocumentMultimedia',
       'ExtractMultimedia',
     ]) {
-      // exists
       try {
-        const tableExists =
-          executeQuery<{ name: string }>(
-            source.db,
-            `SELECT name FROM sqlite_master WHERE type='table' AND name='${table}'`,
-          ).length > 0;
-        if (!tableExists) continue;
+        const thisTableExists = tableExists(source.db, table);
+        if (!thisTableExists) continue;
       } catch (error) {
         errorCatcher(error, {
           contexts: { fn: { name: 'getMultimediaMepsLangs', source, table } },

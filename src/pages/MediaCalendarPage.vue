@@ -104,7 +104,6 @@ import type {
   DocumentItem,
   MediaItem,
   MediaSectionIdentifier,
-  TableItem,
 } from 'src/types';
 
 import {
@@ -171,7 +170,11 @@ import {
   isVideo,
 } from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
-import { findDb, getPublicationInfoFromDb } from 'src/utils/sqlite';
+import {
+  findDb,
+  getPublicationInfoFromDb,
+  tableExists,
+} from 'src/utils/sqlite';
 import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -1228,11 +1231,10 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
           jwpubImportDocuments.value = [];
           showFileImport.value = false;
         } else {
-          const documentMultimediaTableExists =
-            executeQuery<TableItem>(
-              db,
-              'PRAGMA table_info(DocumentMultimedia);',
-            ).length > 0;
+          const documentMultimediaTableExists = tableExists(
+            db,
+            'DocumentMultimedia',
+          );
           const mmTable = documentMultimediaTableExists
             ? 'DocumentMultimedia'
             : 'Multimedia';
