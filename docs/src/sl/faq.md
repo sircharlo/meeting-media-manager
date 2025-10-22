@@ -36,15 +36,15 @@ M³ supports Windows, macOS, and Linux:
 - **Vmesnik aplikacije**: Uporabi vmesnik M³ v več različnih jezikih
 - **Independent Settings**: You can use the interface in one language while downloading media in another
 - **Nadomestni jeziki**: Nastavi nadomestne jezike za primere, ko multimedijska vsebina ni na voljo v glavnem jeziku
-- **Subtitle support**: Download and display subtitles in various languages
+- **Podpora za podnapise**: Prenesi in prikaži podnapise v različnih jezikih
 
 ## Installation and Setup {#installation-setup}
 
-### :computer: How do I download and install M³? {#installation}
+### :computer: Kako prenesem in namestim program M³? {#installation}
 
-Download the appropriate version from the [Download page](download) and follow the steps in the [User Guide](user-guide).
+Ustrezno različico prenesi s strani za [Prenos] (download) in sledi korakom v [Uporabniškem vodniku] (user-guide).
 
-### :gear: How do I set up M³ for the first time? {#first-time-setup}
+### :gear: Kako prvič nastavim M³? {#first-time-setup}
 
 M³ includes a setup wizard that guides you through the essential configuration:
 
