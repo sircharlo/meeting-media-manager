@@ -4373,7 +4373,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/core@npm:13.9.0, @vueuse/core@npm:^13.6.0, @vueuse/core@npm:^13.9.0":
+"@vueuse/core@npm:13.9.0, @vueuse/core@npm:^13.6.0":
   version: 13.9.0
   resolution: "@vueuse/core@npm:13.9.0"
   dependencies:
@@ -4383,6 +4383,19 @@ __metadata:
   peerDependencies:
     vue: ^3.5.0
   checksum: 10c0/f1e6c5e02584e018e53e0e5f93844afbcd33742c5a2454e57aaa3433e9068efbe84b7b423f34628738e28e3ba4bfe7d648f2edaae39706a236ae48bc1a22709b
+  languageName: node
+  linkType: hard
+
+"@vueuse/core@npm:^14.0.0":
+  version: 14.0.0
+  resolution: "@vueuse/core@npm:14.0.0"
+  dependencies:
+    "@types/web-bluetooth": "npm:^0.0.21"
+    "@vueuse/metadata": "npm:14.0.0"
+    "@vueuse/shared": "npm:14.0.0"
+  peerDependencies:
+    vue: ^3.5.0
+  checksum: 10c0/f82c8c7f8fcf62881982a98090bc4790eb0b781d8dec9f060b56759f0c252c681ad0e52aaebe59d82a97d54f180c3586524e905a92a2ab0a21d2d07a42af9299
   languageName: node
   linkType: hard
 
@@ -4442,15 +4455,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/router@npm:^13.9.0":
-  version: 13.9.0
-  resolution: "@vueuse/router@npm:13.9.0"
+"@vueuse/metadata@npm:14.0.0":
+  version: 14.0.0
+  resolution: "@vueuse/metadata@npm:14.0.0"
+  checksum: 10c0/04868a4b366e096f59edac78b95f743a80bea16a14966323f6b6bdb017333871598a7e9c68089a01fa439fe850e50fd3f8eddcbc87a820583629652e307bc4d8
+  languageName: node
+  linkType: hard
+
+"@vueuse/router@npm:^14.0.0":
+  version: 14.0.0
+  resolution: "@vueuse/router@npm:14.0.0"
   dependencies:
-    "@vueuse/shared": "npm:13.9.0"
+    "@vueuse/shared": "npm:14.0.0"
   peerDependencies:
     vue: ^3.5.0
     vue-router: ^4.0.0
-  checksum: 10c0/44c1f89e82f2afde84eaa8e12542810f79f6c8794dc483d18074d31812b9c5251531d6cd71129bb46d33a7abc004831b3844ee0620e133cd86450cb15c5a54ac
+  checksum: 10c0/d535479e294a9dba22353b2b2921b22432e88270d63e7f03ff9ff0dbce53786186ddae67cd634fab596471bd8cd69114bda942ddfb303f5c0f2ad62c5194a094
   languageName: node
   linkType: hard
 
@@ -4460,6 +4480,15 @@ __metadata:
   peerDependencies:
     vue: ^3.5.0
   checksum: 10c0/4820f71caab3c94bc88343270bb4408d8818baa9c0223e6f7499aeb05f9227a87724c15b792f2aaf308137ac996cccd93c0cbe338f7cf3ae50045981abc223a3
+  languageName: node
+  linkType: hard
+
+"@vueuse/shared@npm:14.0.0":
+  version: 14.0.0
+  resolution: "@vueuse/shared@npm:14.0.0"
+  peerDependencies:
+    vue: ^3.5.0
+  checksum: 10c0/4d3e017782965fc9e317ac3574af6af8140a7f618980d7d207f4b92fe6665a34bccd2d8fcfa654833af5c051a832f0670d510eb9c3cf09d2b9989def742e76a8
   languageName: node
   linkType: hard
 
@@ -10156,8 +10185,8 @@ __metadata:
     "@vue/eslint-config-prettier": "npm:^10.2.0"
     "@vue/eslint-config-typescript": "npm:^14.6.0"
     "@vue/test-utils": "npm:^2.4.6"
-    "@vueuse/core": "npm:^13.9.0"
-    "@vueuse/router": "npm:^13.9.0"
+    "@vueuse/core": "npm:^14.0.0"
+    "@vueuse/router": "npm:^14.0.0"
     autoprefixer: "npm:^10.4.21"
     better-sqlite3: "npm:^12.4.1"
     cheerio: "npm:^1.1.2"
