@@ -66,7 +66,7 @@ if (!gotTheLock) {
   }
 
   initSentry({
-    dsn: 'https://0f2ab1c7ddfb118d25704c85957b8188@o1401005.ingest.us.sentry.io/4507449197920256',
+    dsn: 'https://40b7d92d692d42814570d217655198db@o1401005.ingest.us.sentry.io/4507449197920256',
     environment: IS_TEST ? 'test' : process.env.NODE_ENV,
     release: `${name}@${version}`,
     tracesSampleRate: 1.0,

@@ -65,7 +65,7 @@ export const initSessionListeners = () => {
           'img-src': `'self' ${trustedDomains} file: data: blob:`,
           'media-src': `'self' ${trustedDomains} file: data:`,
           'object-src': "'none'",
-          'report-uri': `https://o1401005.ingest.us.sentry.io/api/4507449197920256/security/?sentry_key=0f2ab1c7ddfb118d25704c85957b8188&sentry_environment=${process.env.NODE_ENV}&sentry_release=${getAppVersion()}`,
+          'report-uri': `https://o1401005.ingest.us.sentry.io/api/4507449197920256/security/?sentry_key=40b7d92d692d42814570d217655198db&sentry_environment=${process.env.NODE_ENV}&sentry_release=${getAppVersion()}`,
           'script-src': "'self' 'unsafe-inline' 'unsafe-eval'",
           'style-src': "'self' https://fonts.googleapis.com 'unsafe-inline'",
           'worker-src': "'self' file: blob:",
