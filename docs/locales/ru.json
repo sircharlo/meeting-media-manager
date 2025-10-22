@@ -13,7 +13,7 @@
   "displayDetails": "Показать подробный список",
   "docFooterNext": "Следующая страница",
   "docFooterPrev": "Предыдущая страница",
-  "download": "Download",
+  "download": "Скачать",
   "editLink": "Редактировать эту страницу на Crowdin",
   "enter": "ввести",
   "esc": "выход",
@@ -31,10 +31,10 @@
   "notFoundQuote": "Пожалуйста, проверьте адрес и повторите попытку. Если вы считаете, что это ошибка, пожалуйста, сообщите об этом.",
   "notFoundTitle": "СТРАНИЦА НЕ НАЙДЕНА",
   "outline": "На этой странице",
-  "recommendedFor": "Recommended for",
-  "released1DayAgo": "released 1 day ago",
-  "releasedToday": "released today",
-  "releasedXDaysAgo": "released {days} days ago",
+  "recommendedFor": "Рекомендуется для",
+  "released1DayAgo": "выпущено 1 день назад",
+  "releasedToday": "выпущено сегодня",
+  "releasedXDaysAgo": "выпущено {days} дней назад",
   "reportIssue": "Сообщить об ошибке",
   "resetButtonTitle": "Сбросить поиск",
   "returnToTopLabel": "Вернуться наверх",
@@ -45,6 +45,6 @@
   "skipToContentLabel": "Перейти к содержанию",
   "title": "Документация M³",
   "userGuide": "Руководство пользователя",
-  "windows32Bit": "Windows 32-bit",
-  "windows64Bit": "Windows 64-bit"
+  "windows32Bit": "Windows 32-бит",
+  "windows64Bit": "Windows 64-бит"
 }
