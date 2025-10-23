@@ -46,71 +46,71 @@ Ustrezno različico prenesi s strani za [Prenos] (download) in sledi korakom v [
 
 ### :gear: Kako prvič nastavim M³? {#first-time-setup}
 
-M³ includes a setup wizard that guides you through the essential configuration:
+M³ vključuje čarovnik za nastavitev, ki te vodi skozi osnovno konfiguracijo:
 
-1. Choose your interface language
-2. Select profile type (Regular or Other)
-3. Configure congregation information
-4. Set up meeting schedule
-5. Configure optional features like OBS integration
+1. Izberi jezik uporabniškega vmesnika
+2. Izberi vrsto profila (običajen ali drug)
+3. Nastavi podatke o občini
+4. Nastavi urnik shodov
+5. Nastavi dodatne funkcije, kot je povezovanje z OBS
 
-## Media Management {#faq-media-management}
+## Upravljanje multimedijske vsebine {#faq-media-management}
 
 ### :desktop_computer: Kako M³ prenese multimedijsko vsebino? {#media-download}
 
-M³ automatically downloads media for upcoming meetings by:
+M³ samodejno prenese multimedijsko vsebino za prihajajoče shode:
 
-1. Checking your meeting schedule
-2. Determining what media is needed
-3. Downloading from the official website of Jehovah's Witnesses in your selected language
-4. Organizing media by date and meeting type
-5. Caching files for offline use
+1. Preverjanje urnika shodov
+2. Ugotavljanje, katera multimedijska vsebina je potrebna
+3. Prenašanje s spletnega mesta Jehovovih prič v izbranem jeziku
+4. Razvrščanje multimedijske vsebine po datumu in vrsti shoda
+5. Shranjevanje datotek v predpomnilnik za uporabo brez internetne povezave
 
-### :calendar: Can I download media for specific dates? {#specific-dates}
+### :calendar: Ali lahko prenesem multimedijsko vsebino za določene datume? {#specific-dates}
 
-Yes! M³ allows you to:
+Da! M³ ti omogoča:
 
-- Download media for upcoming meetings automatically
-- Import custom media for any date
+- Samodejno prenesi multimedijsko vsebino za prihajajoče shode
+- Uvozi prilagojeno multimedijsko vsebino za kateri koli datum
 
 ### :open_file_folder: Kako lahko uvozim lastne multimedijske datoteke? {#import-media}
 
-You can import custom media in several ways:
+Prilagojeno multimedijsko vsebino lahko uvoziš na več načinov:
 
-- **File Import**: Use the import button to add videos, images, or audio files
-- **Drag and Drop**: Drag files directly into M³
-- **Folder Monitoring**: Set up a watched folder for automatic imports
-- **JWPUB Files and Playlists**: Import publications and playlists
+- **Uvoz datotek**: Uporabi gumb za uvoz, da dodaš videoposnetke, slike ali zvočne datoteke
+- **Povleci in spusti**: Povleci datoteke neposredno v M³
+- **Nadzorovanje mape**: Nastavi nadzorovano mapo za samodejni uvoz
+- **Datoteke JWPUB in seznami predvajanja**: Uvozi publikacije in sezname predvajanja
 
-### :speaker: Can I import audio Bible recordings? {#audio-bible}
+### :speaker: Ali lahko uvozim zvočne posnetke Svetega pisma? {#audio-bible}
 
-Yes! M³ includes an Audio Bible feature that allows you to:
+Da! M³ vključuje funkcijo Avdio Biblija, ki ti omogoča:
 
-1. Select Bible books and chapters
-2. Choose specific verses or verse ranges
-3. Download audio recordings
-4. Use them at the meetings
+1. izbiro svetopisemskih knjig in poglavij,
+2. izbiro posameznih vrstic ali razpone vrstic,
+3. prenašanje zvočnih posnetkov,
+4. uporabo na shodih.
 
-## Presentation Features {#faq-presentation-features}
+## Funkcije predstavitve {#faq-presentation-features}
 
-### :tv: How do I present media during meetings? {#present-media}
+### :tv: Kako predvajam multimedijsko vsebino med shodi? {#present-media}
 
-To present media:
+Če želiš predvajati multimedijsko vsebino:
 
-1. Select the date
-2. Click the play button on the media item you want to present or use keyboard shortcuts
-3. Use the media player controls to pause, navigate, or stop playback
-4. Use zoom/pan features for images
-5. Set custom timing if needed
+1. izberi datum,
+2. klikni gumb za predvajanje ob želeni vsebini ali uporabi bližnjice na tipkovnici,
+3. Uporabi kontrolnike predvajalnika za premor, pomikanje ali zaustavitev,
+4. uporabi funkcije povečave/pomanjšave za slike,
+5. po potrebi nastavi časovni razpored po meri.
 
-### :keyboard: What keyboard shortcuts are available? {#faq-keyboard-shortcuts}
+### :keyboard: Katere bližnjice na tipkovnici so na voljo? {#faq-keyboard-shortcuts}
 
-M³ supports customizable keyboard shortcuts for:
+M³ podpira prilagodljive bližnjice za:
 
-- Opening/closing media window
-- Previous/next media navigation
-- Play/pause/stop controls
-- Background music toggle
+- odprtje/zaprtje okna z mediji,
+- premik na prejšnjo/naslednjo vsebino,
+- predvajanje/premor/zaustavitev,
+- vklop/izklop glasbe v ozadju.
 
 <!-- - Fullscreen mode -->
 
@@ -181,23 +181,23 @@ Media auto-export automatically:
 
 ### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
 
-Yes! M³ supports multiple profiles for:
+Da! M³ podpira več profilov za:
 
-- Different congregations
-- Special events
-- Different groups
-- Separate settings and media for each
+- različne občine,
+- posebne dogodke,
+- različne skupine,
+- ločene nastavitve in medije za vsako od teh.
 
-## Troubleshooting {#faq-troubleshooting}
+## Odpravljanje težav {#faq-troubleshooting}
 
-### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
+### :warning: Multimedijska vsebina se ne prenaša s spleta. Kaj naj preverim? {#faq-media-not-downloading}
 
-Check these common issues:
+Preveri naslednje pogoste težave:
 
-1. **Meeting Schedule**: Verify your meeting days and times are correct
-2. **Language Settings**: Ensure your media language is set correctly
-3. **Internet Connection**: Check your internet connection
-4. **Language Availability**: Verify media is available in your selected language
+1. **Razpored shodov**: Preveri, ali so dnevi in ure shodov pravilno nastavljeni
+2. **Jezikovne nastavitve**: Preveri, ali je izbran pravilen jezik multimedijske vsebine
+3. **Internetna povezava**: Preveri internetno povezavo
+4. **Razpoložljivost jezika**: Preveri, ali je vsebina na voljo v izbranem jeziku
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
@@ -234,7 +234,7 @@ Try these performance optimizations:
 3. **Check Disk Space**: Ensure you have sufficient free disk space
 4. **Reduce Resolution**: Lower the maximum resolution setting
 
-### :speech_balloon: I'm having language issues. What should I check? {#faq-language-issues}
+### :speech_balloon: I'm having language issues. Kaj naj preverim? {#faq-language-issues}
 
 Verify these language settings:
 
@@ -319,7 +319,7 @@ Typical usage ranges from 2-10GB depending on settings and usage.
 
 ### :shield: Is M³ secure and private? {#security-privacy}
 
-Yes! M³ is designed with security and privacy in mind:
+Da! M³ is designed with security and privacy in mind:
 
 - **Local Storage**: All meeting data is stored locally on your computer
 - **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
