@@ -205,6 +205,7 @@ import {
   getAudioBibleMedia,
 } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { decodeEntities } from 'src/utils/general';
 import { timeToSeconds } from 'src/utils/time';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -235,20 +236,6 @@ const dialogValue = computed({
 const selectedBibleBook = ref<number>(0);
 const selectedChapter = ref(0);
 const bibleAudioMedia = ref<Partial<Publication>[] | undefined>([]);
-
-const decodeEntities = (input?: string) => {
-  try {
-    if (!input) return input ?? '';
-    const textarea = document.createElement('textarea');
-    textarea.innerHTML = input;
-    const decoded = textarea.value;
-    textarea.remove();
-    return decoded;
-  } catch (error) {
-    errorCatcher(error);
-    return input ?? '';
-  }
-};
 
 const bibleAudioMediaHebrew = computed(() => {
   return (

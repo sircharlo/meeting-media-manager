@@ -22,7 +22,7 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
-const { fs, path, pathToFileURL, readdir } = window.electronApi;
+const { fs, path, readdir } = window.electronApi;
 const { exists, pathExists, remove } = fs;
 const { join, normalize } = path;
 
@@ -276,10 +276,12 @@ const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
       }
     });
 
-    // Get parent directories of all referenced files
+    // Get parent directories of all referenced files (using normalized paths for consistency)
     const referencedParentDirectories = new Set<string>();
     referencedFileUrls.forEach((fileUrl) => {
-      const parentDir = pathToFileURL(getParentDirectory(fileUrl));
+      const parentDir = normalize(getParentDirectory(fileUrl))
+        .replace(/[\\/]+/g, '\\')
+        .toLowerCase();
       referencedParentDirectories.add(parentDir);
     });
 
@@ -294,9 +296,14 @@ const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
             // Exclude files inside any S-34mp_* folder from deletion consideration
             const isProtectedS34mp = parentFolder.startsWith('S-34mp_');
             if (!isProtectedS34mp) {
-              const fileParentDirectoryUrl = pathToFileURL(item.parentPath);
-              const isReferenced = referencedParentDirectories.has(
-                fileParentDirectoryUrl,
+              // Use normalized paths for comparison
+              const normalizedParentPath = normalize(item.parentPath)
+                .replace(/[\\/]+/g, '\\')
+                .toLowerCase();
+
+              // Check if this parent path matches any referenced parent directory
+              const isReferenced = Array.from(referencedParentDirectories).some(
+                (refDir) => normalizedParentPath === refDir,
               );
 
               files.push({
@@ -369,24 +376,35 @@ export const analyzeCacheFiles = async (): Promise<CacheAnalysis> => {
     // Calculate unused parent directories
     const unusedParentDirectories = cacheFiles.reduce<Record<string, number>>(
       (acc, file) => {
+        // Normalize paths for robust, cross-platform, case-insensitive comparisons
+        const nf = normalize(file.parentPath)
+          .replace(/[\\/]+/g, '\\')
+          .toLowerCase();
+
         const isInUsed = Object.keys(usedParentDirectories).some((dir) => {
-          // Use normalized paths for comparison to handle different path separators
-          const normalizedFileParent = normalize(file.parentPath);
-          const normalizedUsedDir = normalize(dir);
-          return normalizedFileParent.startsWith(normalizedUsedDir);
+          const nu = normalize(dir)
+            .replace(/[\\/]+/g, '\\')
+            .toLowerCase();
+          // Consider used if the file's parent is inside a used dir OR contains a used dir
+          return nf.startsWith(nu) || nu.startsWith(nf);
         });
 
         const isInFrequentlyUsed = [...frequentlyUsedDirectories].some(
           (dir) => {
-            const normalizedFileParent = normalize(file.parentPath);
-            const normalizedFreqDir = normalize(dir);
-            return normalizedFileParent.startsWith(normalizedFreqDir);
+            const nd = normalize(dir)
+              .replace(/[\\/]+/g, '\\')
+              .toLowerCase();
+            // Also bi-directional: inside or contains a frequently used dir
+            return nf.startsWith(nd) || nd.startsWith(nf);
           },
         );
 
-        const isInUntouchable = [...untouchableDirectories].some(
-          (dir) => normalize(file.parentPath) === normalize(dir),
-        );
+        const isInUntouchable = [...untouchableDirectories].some((dir) => {
+          const nd = normalize(dir)
+            .replace(/[\\/]+/g, '\\')
+            .toLowerCase();
+          return nf === nd;
+        });
 
         if (!isInUsed && !isInFrequentlyUsed && !isInUntouchable) {
           // Add debugging for files that are being marked as unused

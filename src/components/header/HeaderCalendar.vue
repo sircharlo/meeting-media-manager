@@ -89,6 +89,22 @@
           v-close-popup
           clickable
           :disable="!online"
+          @click="openPublicationMediaWithSectionCheck"
+        >
+          <q-item-section avatar>
+            <q-icon color="primary" name="mmm-bookshelf" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ t('publication-media') }}</q-item-label>
+            <q-item-label caption>{{
+              t('publication-media-explain')
+            }}</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item
+          v-close-popup
+          clickable
+          :disable="!online"
           @click="openStudyBibleWithSectionCheck"
         >
           <q-item-section avatar>
@@ -302,6 +318,11 @@
     :dialog-id="'header-calendar-pt-media-picker'"
     :section="section"
   />
+  <DialogPublicationMedia
+    v-model="showPublicationMedia"
+    :dialog-id="'header-calendar-publication-media'"
+    :section="section"
+  />
   <DialogJwPlaylist
     v-model="showJwPlaylist"
     :dialog-id="'header-calendar-jw-playlist'"
@@ -318,6 +339,7 @@ import BaseDialog from 'components/dialog/BaseDialog.vue';
 import DialogAudioBible from 'components/dialog/DialogAudioBible.vue';
 import DialogCustomSectionEdit from 'components/dialog/DialogCustomSectionEdit.vue';
 import DialogJwPlaylist from 'components/dialog/DialogJwPlaylist.vue';
+import DialogPublicationMedia from 'components/dialog/DialogPublicationMedia.vue';
 import DialogPublicTalkMediaPicker from 'components/dialog/DialogPublicTalkMediaPicker.vue';
 import DialogRemoteVideo from 'components/dialog/DialogRemoteVideo.vue';
 import DialogSectionPicker from 'components/dialog/DialogSectionPicker.vue';
@@ -370,6 +392,7 @@ const showCustomSectionEdit = ref(false);
 const showRemoteVideo = ref(false);
 const showStudyBible = ref(false);
 const showAudioBible = ref(false);
+const showPublicationMedia = ref(false);
 const showSongPicker = ref(false);
 const showPublicTalkMediaPicker = ref(false);
 const showJwPlaylist = ref(false);
@@ -804,6 +827,20 @@ const openPublicTalkMediaPickerWithSectionCheck = () => {
   } else {
     // If only one section exists, use it directly
     showPublicTalkMediaPicker.value = true;
+  }
+};
+
+const openPublicationMediaWithSectionCheck = () => {
+  if (section.value) {
+    showPublicationMedia.value = true;
+  } else if (hasMultipleSections.value) {
+    pendingDialogAction.value = () => {
+      showPublicationMedia.value = true;
+    };
+    showSectionPicker.value = true;
+  } else {
+    // If only one section exists, use it directly
+    showPublicationMedia.value = true;
   }
 };
 

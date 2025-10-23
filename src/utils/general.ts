@@ -223,3 +223,21 @@ export const parseJsonSafe = <T>(json: null | string | T, fallback: T): T => {
     return fallback;
   }
 };
+
+/**
+ * Decodes HTML entities safely using a temporary textarea element.
+ * @param input The string possibly containing HTML entities.
+ * @returns The decoded string.
+ */
+export const decodeEntities = (input?: string) => {
+  try {
+    if (!input) return input ?? '';
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = input;
+    const decoded = textarea.value;
+    textarea.remove();
+    return decoded;
+  } catch {
+    return input ?? '';
+  }
+};
