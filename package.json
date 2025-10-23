@@ -116,7 +116,7 @@
     "prettier": "^3.6.2",
     "rollup-plugin-visualizer": "^6.0.5",
     "typescript": "~5.9.3",
-    "vite": "^7.1.11",
+    "vite": "^7.1.12",
     "vitepress": "^2.0.0-alpha.12",
     "vitest": "^4.0.0",
     "vue-eslint-parser": "^10.2.0",
@@ -124,7 +124,7 @@
     "webpack-iconfont-plugin-nodejs": "^1.0.36"
   },
   "resolutions": {
-    "vite": "7.1.11"
+    "vite": "7.1.12"
   },
   "browserslist": [
     "Electron >= 37"
