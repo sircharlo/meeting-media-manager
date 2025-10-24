@@ -88,7 +88,7 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/decompress": "^4.2.7",
     "@types/dompurify": "^3.2.0",
-    "@types/fluent-ffmpeg": "^2.1.27",
+    "@types/fluent-ffmpeg": "^2.1.28",
     "@types/fs-extra": "^11.0.4",
     "@types/heic-convert": "^2.1.0",
     "@types/lodash-es": "^4.17.12",
