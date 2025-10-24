@@ -241,6 +241,7 @@
           />
         </div>
       </template>
+      <q-separator class="bg-accent-200" />
       <div class="q-px-md q-pt-md row">
         <div class="col">
           <div class="row text-subtitle1 text-weight-medium">
@@ -685,7 +686,7 @@ const { data: mediaWindowSize } = useBroadcastChannel<
 
 // UI update handler
 watch(
-  () => [screenPreferences.value.preferWindowed],
+  () => [screenPreferences.value.preferWindowed, mediaWindowVisible.value],
   () => {
     setTimeout(() => {
       if (displayPopup.value) {

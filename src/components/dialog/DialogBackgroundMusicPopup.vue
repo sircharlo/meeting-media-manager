@@ -23,7 +23,7 @@
         <p class="card-section-title text-dark-grey row q-px-md q-pt-sm">
           {{ t('current-song') }}
         </p>
-        <div class="row q-px-md q-pt-xs row">
+        <div class="row q-px-md q-pt-xs q-pb-sm">
           <div class="col text-weight-medium">
             {{ musicPlayingTitle }}
           </div>
@@ -31,9 +31,7 @@
             {{ currentSongRemainingTime }}
           </div>
         </div>
-        <div class="row q-px-md q-pt-sm">
-          <q-separator class="bg-accent-200" />
-        </div>
+        <q-separator class="bg-accent-200" />
         <p class="row card-section-title text-dark-grey q-px-md q-pt-sm">
           {{ t('upcoming-songs') }}
         </p>
@@ -49,9 +47,7 @@
             </div>
           </template>
         </div>
-        <div class="row q-px-md q-pt-sm">
-          <q-separator class="bg-accent-200" />
-        </div>
+        <q-separator class="bg-accent-200" />
       </template>
       <div class="row q-px-md q-pt-md">
         <div class="col">

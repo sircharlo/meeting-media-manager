@@ -14,20 +14,6 @@
         <div class="col">
           {{ t('media-sync') }}
         </div>
-        <div class="col-shrink">
-          <q-btn
-            color="negative"
-            :disable="refreshing"
-            icon="mmm-reset"
-            :label="t('refresh-all-meeting-media')"
-            :loading="refreshing"
-            outline
-            size="sm"
-            @click="onRefreshMeetingMedia"
-          >
-            <q-tooltip>{{ t('refresh-all-meeting-media') }}</q-tooltip>
-          </q-btn>
-        </div>
       </div>
       <div class="col overflow-auto q-col-gutter-y-sm">
         <template v-if="Object.values(downloadProgress).length === 0">
@@ -134,17 +120,32 @@
           </q-list>
         </template>
       </div>
+      <q-separator class="bg-accent-200" />
+      <div class="q-px-md q-pt-md row">
+        <q-space />
+        <q-btn
+          color="negative"
+          :disable="refreshing"
+          icon="mmm-reset"
+          :label="t('refresh-all-meeting-media')"
+          :loading="refreshing"
+          outline
+          @click="onRefreshMeetingMedia"
+        >
+          <q-tooltip>{{ t('refresh-all-meeting-media') }}</q-tooltip>
+        </q-btn>
+      </div>
     </div>
   </q-menu>
 </template>
 
 <script setup lang="ts">
-import type { QMenu } from 'quasar';
 import type { DownloadProgressItems } from 'src/types';
 
 import { watchImmediate } from '@vueuse/core';
 import { queues } from 'boot/globals';
 import { storeToRefs } from 'pinia';
+import { type QMenu, useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
 import { fetchMedia } from 'src/helpers/jw-media';
@@ -155,6 +156,7 @@ import { computed, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+const $q = useQuasar();
 
 const { path } = window.electronApi;
 const { basename } = path;
@@ -390,30 +392,36 @@ const refreshDisabled = computed(() => {
   );
 });
 
-const onRefreshMeetingMedia = async () => {
+const onRefreshMeetingMedia = () => {
   if (refreshDisabled.value) return;
-  try {
-    refreshing.value = true;
-
-    // 1) Clear all dynamic media from meeting days in lookupPeriod for current congregation
-    const congregation = currentState.currentCongregation;
-    const period = jwStore.lookupPeriod[congregation] || [];
-    for (const day of period) {
-      if (!day?.mediaSections || !day.meeting) continue;
-      day.complete = false;
-      day.error = false;
-      for (const section of day.mediaSections) {
-        if (!section?.items) continue;
-        section.items = section.items.filter(
-          (item) => item.source !== 'dynamic',
-        );
+  $q.dialog({
+    cancel: { label: t('cancel') },
+    message: t('refresh-all-meeting-media-confirm'),
+    ok: { label: t('confirm') },
+    persistent: true,
+    title: t('refresh-all-meeting-media'),
+  }).onOk(async () => {
+    try {
+      refreshing.value = true;
+      // 1) Clear all dynamic media from meeting days in lookupPeriod for current congregation
+      const congregation = currentState.currentCongregation;
+      const period = jwStore.lookupPeriod[congregation] || [];
+      for (const day of period) {
+        if (!day?.mediaSections || !day.meeting) continue;
+        day.complete = false;
+        day.error = false;
+        for (const section of day.mediaSections) {
+          if (!section?.items) continue;
+          section.items = section.items.filter(
+            (item) => item.source !== 'dynamic',
+          );
+        }
       }
+      // 2) Fetch media
+      await fetchMedia();
+    } finally {
+      refreshing.value = false;
     }
-
-    // 2) Fetch media
-    await fetchMedia();
-  } finally {
-    refreshing.value = false;
-  }
+  });
 };
 </script>

@@ -1295,8 +1295,9 @@ const playMarkerOnly = (marker: VideoMarker) => {
     return;
   }
   $q.dialog({
-    cancel: true,
+    cancel: { label: t('cancel') },
     message: t('play-only-this-clip-question'),
+    ok: { label: t('confirm') },
     persistent: true,
     title: t('confirm'),
   }).onOk(() => {
