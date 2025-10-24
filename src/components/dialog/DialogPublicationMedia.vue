@@ -175,9 +175,6 @@
                         : m.label
                     }}
                   </q-item-label>
-                  <q-item-label v-if="m.available === false" caption>
-                    {{ t('no-issue-found') }}
-                  </q-item-label>
                 </q-item-section>
                 <q-item-section side>
                   <q-icon
