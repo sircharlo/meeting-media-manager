@@ -38,65 +38,65 @@ M³ je celovita rešitev za upravljanje multimedijske vsebine, ki ti omogoča en
 
 ### Osnovno upravljanje multimedijske vsebine {#core-media-management}
 
-- **Automatic media downloads**: Automatically fetches and downloads all media needed for upcoming meetings
-- **Multi-language support**: Download media in any of hundreds of available languages
-- **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
-- **Media organization**: Automatically organizes media by date and meeting section
+- **Samodejni prenosi multimedijske vsebine**: Samodejno pridobi in prenese vso multimedijsko vsebino, ki je potrebna za prihajajoče shode
+- **Večjezična podpora**: Prenese lahko multimedijsko vsebino v katerem koli od stotin razpoložljivih jezikov
+- **Pametno predpomnjenje**: Pametni sistem predpomnjenja, ki ohranja multimedijsko vsebino urejeno in posodobljeno
+- **Organizacija vsebine**: Samodejno razporedi multimedijsko vsebino po datumu in delu shoda
 
-### Media Presentation Features {#about-presentation-features}
+### Možnosti predstavitve multimedijske vsebine {#about-presentation-features}
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
+Za **hibridne** občinske shode ali za shode **v živo** aplikacija omogoča:
 
-- **Advanced media controls**: Media thumbnails with zoom and pan capabilities
-- **Custom timing**: Set custom start and end times for media playback
-- **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
-- **Multi-monitor support**: Automatic external monitor detection and management
-- **Clean presentation**: Distraction-free media presentation interface
+- **Napredno upravljanje multimedijske vsebine**: Predogledi multimedijske vsebine z možnostjo približevanja in premikanja slike
+- **Prilagajanje časa**: Nastavi začetni in končni čas predvajanja multimedijske vsebine
+- **Nadzor predvajanja**: Enostavni gumbi za pavzo/predvajanje/ustavitev ter bližnjice na tipkovnici
+- **Podpora za več zaslonov**: Samodejno zaznavanje in upravljanje zunanjih zaslonov
+- **Čista predstavitev**: Enostaven vmesnik za predstavitev multimedijske vsebine
 
-### Background Music {#about-background-music}
+### Glasba v ozadju {#about-background-music}
 
-- **Intelligent playback**: Background music that automatically stops before meetings start
-- **One-click restart**: Resume background music with a single click after meetings
-- **Volume control**: Adjustable background music volume with fade-out capabilities
+- **Pametno predvajanje**: Glasba v ozadju se samodejno ustavi pred začetkom shoda
+- **Ponovni zagon z enim klikom**: Glasbo v ozadju lahko po shodu ponovno zaženeš z enim klikom
+- **Nadzor glasnosti**: Nastavljiva glasnost z možnostjo postopnega utišanja
 
-### Zoom Integration {#about-zoom-integration}
+### Združevanje z Zoomom {#about-zoom-integration}
 
-- **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
+- **Samodejno deljenje zaslona**: Deljenje zaslona v Zoomu se samodejno začne, ko predvajaš multimedijsko vsebino, in ustavi, ko jo zaključiš
 
-### OBS Studio Integration {#about-obs-integration}
+### Združevanje z OBS Studiem {#about-obs-integration}
 
-- **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
-- **Scene management**: Automatic switching between camera, media, and other scenes
+- **Samodejno preklapljanje prizorov**: Brezhibno združevanje z OBS Studiem za hibridne shode
+- **Upravljanje prizorov**: Samodejno preklapljanje med kamero, multimedijsko vsebino in drugimi prizori
 
-### Media Import and Management {#about-media-import}
+### Uvoz in upravljanje multimedijske vsebine {#about-media-import}
 
-- **JWPUB files**: Import and manage JWPUB files with ease
-- **JWLPLAYLIST files**: Support for JW Library playlist files
-- **Custom media**: Import custom videos, pictures, audio files, and PDF files
-- **Audio Bible**: Import Study Bible media and audio recordings of the New World Translation
-- **Public talks**: Always have public talk media overview ready to use with the S-34 importer
+- **Datoteke JWPUB**: Enostavno uvažanje in upravljanje datotek JWPUB
+- **Datoteke JWLPLAYLIST**: Podpora za seznam predvajanja iz aplikacije JW Library
+- **Prilagojena multimedijska vsebina**: Uvozi svoje videoposnetke, slike, zvočne datoteke in PDF dokumente
+- **Zvočna Biblija**: Uvozi multimedijsko vsebino iz Study Bible in zvočne posnetke iz Prevoda novi svet
+- **Javni govori**: Predogled multimedijske vsebine za javne govore imej vedno pripravljen za uporabo z uvoznikom S-34
 
-### Advanced Features {#about-advanced-features}
+### Napredne možnosti {#about-advanced-features}
 
-- **Folder monitoring**: Automatically sync media from watched folders (Dropbox, OneDrive, etc.)
-- **Media export**: Automatically export media to folders, organized by date
-- **Website presentation**: Present the official website on external monitors
-- **Keyboard shortcuts**: Customizable keyboard shortcuts for many functions
-- **Multiple profiles**: Manage different congregations or groups with separate profiles
+- **Spremljanje map**: Samodejno sinhroniziraj multimedijsko vsebino iz spremljanih map (Dropbox, OneDrive itd.)
+- **Izvoz multimedijske vsebine**: Multimedijsko vsebino samodejno izvozi v mape, razporejene po datumu
+- **Predstavitev spletnega mesta**: Prikaži uradno spletno mesto na zunanjih zaslonih
+- **Bližnjice na tipkovnici**: Prilagodi bližnjice za različne funkcije po svojih željah
+- **Več profilov**: Upravljaj različne občine ali skupine z ločenimi profili
 
 ## Ali M³ deluje v mojem jeziku? {#does-m3-work-in-my-language}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Da!** M³ ponuja celovito večjezično podporo:
 
-Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of languages available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need during setup.
+Multimedijska vsebino za shode Jehovovih prič se lahko samodejno prenese v katerem koli od več sto jezikov, ki so na voljo na uradnem spletnem mestu Jehovovih prič. Seznam razpoložljivih jezikov se nenehno posodablja, zato moraš med nastavitvijo aplikacije le izbrati jezik, ki ga potrebuješ.
 
-### Interface Languages {#interface-languages}
+### Jeziki vmesnika {#interface-languages}
 
-M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
+Aplikacijo M³ so v številne jezike prevedli prostovoljci. Jezik vmesnika lahko nastaviš po svojih željah neodvisno od jezika, v katerem se prenese multimedijska vsebina. To pomeni, da lahko uporabljaš M³ v svojem priljubljenem jeziku, medtem ko preneseš vsebino v katerem koli drugem podprtem jeziku.
 
 Podrobnosti o nadomestnih jezikih in podnapisih najdeš med [Pogostimi vprašanji](faq#language-support).
 
-## System Requirements {#system-requirements}
+## Sistemske zahteve {#system-requirements}
 
 Za podprte operacijske sisteme in zahteve glej odgovore v [Pogostih vprašanjih](faq#technical-questions).
 
