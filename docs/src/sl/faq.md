@@ -116,42 +116,42 @@ M³ podpira prilagodljive bližnjice za:
 
 ### :notes: Kako deluje glasba v ozadju? {#faq-background-music}
 
-Background music features include:
+Funkcije glasbe v ozadju vključujejo:
 
-- Automatic playback when M³ starts, before the meeting begins
-- Automatic stop before meetings begin
-- One-click restart after meetings
-- Independent volume control
-- Configurable stop buffer time
+- samodejno predvajanje ob zagonu M³ pred začetkom shoda,
+- samodejna zaustavitev pred začetkom shoda,
+- ponovni zagon z enim klikom po koncu shoda,
+- neodvisen nadzor glasnosti,
+- nastavljiv časovni zamik za zaustavitev.
 
-### :video_camera: How do I set up the Zoom integration? {#zoom-setup}
+### :video_camera: Kako nastavim združevanje z Zoomom? {#zoom-setup}
 
-To integrate with Zoom:
+Za združevanje z Zoomom:
 
-1. Enable Zoom integration in M³ settings
-2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
-3. M³ will automatically start and stop Zoom screen sharing during media presentations
+1. V nastavitvah M³ omogoči združevanje z Zoomom.
+2. Nastavi bližnjico za deljenje zaslona, ki je nastavljena v Zoomu. Poskrbi, da bo ta bližnjica v Zoomu označena kot »globalna«.
+3. M³ bo samodejno začel in končal deljenje zaslona v Zoomu med predstavitvijo multimedijske vsebine.
 
-## OBS Studio Integration {#faq-obs-integration}
+## Združevanje z OBS Studio {#faq-obs-integration}
 
-### :video_camera: How do I set up the OBS Studio integration? {#faq-obs-setup}
+### :video_camera: Kako nastavim združevanje z OBS Studio? {#faq-obs-setup}
 
-To integrate with OBS Studio:
+Za združevanje z OBS Studio:
 
-1. Install OBS Studio and the WebSocket plugin
-2. Enable OBS integration in M³ settings
-3. Enter the OBS port and password
-4. Configure scenes for camera, media, and images
-5. Test playback
+1. Namesti OBS Studio in vtičnik WebSocket
+2. V nastavitvah M³ omogoči združevanje z OBS
+3. Vnesi vrata (port) in geslo za OBS
+4. Nastavi prizore za kamero, multimedijsko vsebino in slike
+5. Preizkusi predvajanje
 
-### :arrows_counterclockwise: How does automatic scene switching work? {#faq-scene-switching}
+### :arrows_counterclockwise: Kako deluje samodejno preklapljanje prizorov v OBS? {#faq-scene-switching}
 
-M³ automatically switches OBS scenes based on:
+M³ samodejno preklaplja prizore v OBS glede na:
 
-- Media type (video, image, etc.)
-- Your scene configuration
-- Settings like "Postpone Images"
-- Whether to return to previous scene after media
+- Vrsto multimedijske vsebine (video, slika itd.)
+- Tvojo nastavitev prizorov
+- Nastavitve, kot je »Odloži slike« (Postpone Images)
+- To, ali naj se po predvajanju multimedijske vsebine vrne na prejšnji prizor
 
 ### :pause_button: What is the "Postpone Images" feature? {#faq-postpone-images}
 
