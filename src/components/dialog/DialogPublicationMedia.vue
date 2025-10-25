@@ -21,9 +21,109 @@
         </q-breadcrumbs>
       </div>
 
+      <!-- Search Input -->
+      <div
+        v-if="step === 'search' || step === 'category'"
+        class="q-px-md q-pb-md"
+      >
+        <q-input
+          v-model="searchQuery"
+          clearable
+          dense
+          :loading="loading"
+          outlined
+          :placeholder="t('search-placeholder')"
+          @clear="clearSearch"
+          @keyup="onSearchInput"
+        >
+          <!-- <template #append>
+            <q-btn
+              :disable="!searchQuery.trim() || loading"
+              flat
+              icon="search"
+              @click="performSearch"
+            />
+          </template> -->
+        </q-input>
+      </div>
+
       <div class="q-px-md overflow-auto row" style="flex: 1 1 auto">
         <div class="col-12">
-          <div v-if="step === 'category'" class="row q-pt-sm q-pb-sm">
+          <template v-if="searchQuery && step === 'search'">
+            <!-- No Results -->
+            <div
+              v-if="!loading && searchResults.length === 0"
+              class="row q-pt-sm q-pb-sm"
+            >
+              <q-list class="full-width">
+                <q-item disable>
+                  <q-item-section>
+                    <q-item-label>{{ t('no-search-results') }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </div>
+
+            <!-- Search Results Grid -->
+            <div
+              v-else-if="searchResults.length > 0"
+              class="row q-pt-sm q-pb-sm"
+            >
+              <div class="col-12">
+                <div class="text-subtitle2 q-pb-sm">
+                  {{
+                    t('search-results-count', { count: searchResults.length })
+                  }}
+                </div>
+                <div class="row q-col-gutter-md">
+                  <div
+                    v-for="result in searchResults"
+                    :key="`${result.type}-${result.subtype}-${result.insight.rank}`"
+                    class="col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-1"
+                  >
+                    <q-card
+                      class="search-result-card cursor-pointer overflow-hidden"
+                      @click="selectSearchResult(result)"
+                    >
+                      <!-- {{ result }} -->
+                      <q-card-section class="q-pa-none">
+                        <q-img
+                          :alt="result.title"
+                          class="search-result-image"
+                          fit="contain"
+                          :ratio="1 / 1"
+                          :src="result.image.url || 'error'"
+                        >
+                          <template #error>
+                            <div
+                              class="absolute-full flex flex-center text-secondary"
+                            >
+                              <q-icon name="mmm-image-broken" size="10vw" />
+                            </div>
+                          </template>
+                        </q-img>
+                      </q-card-section>
+                      <q-card-section class="q-pt-md">
+                        <div class="text-caption text-grey-6 q-mb-xs">
+                          {{ decodeEntities(result.context) }}
+                        </div>
+                        <div class="text-body2 text-weight-medium q-mb-sm">
+                          {{ decodeEntities(result.title) }}
+                        </div>
+                        <div class="text-caption text-grey-7">
+                          {{ decodeEntities(result.snippet) }}
+                        </div>
+                      </q-card-section>
+                    </q-card>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+          <div
+            v-if="step === 'category' || (step === 'search' && !searchQuery)"
+            class="row q-pt-sm q-pb-sm"
+          >
             <q-list class="full-width">
               <q-item
                 v-for="cat in categoryItems"
@@ -222,6 +322,47 @@
               </q-item>
             </q-list>
           </div>
+
+          <div v-else-if="step === 'media'" class="row q-pt-sm q-pb-sm">
+            <template v-for="video in mediaItems" :key="video.guid">
+              <div class="col col-xs-6 col-sm-4 col-md-3 col-lg-2">
+                <div
+                  v-ripple
+                  :class="{
+                    'cursor-pointer': true,
+                    'rounded-borders-lg': true,
+                    'full-height': true,
+                    'bg-accent-100': hoveredRemoteVideo === video.file.url,
+                  }"
+                  flat
+                  @click="downloadMediaItem(video)"
+                  @mouseout="hoveredRemoteVideo = ''"
+                  @mouseover="hoveredRemoteVideo = video.file.url"
+                >
+                  <q-card-section class="q-pa-sm">
+                    <q-img
+                      class="rounded-borders"
+                      :ratio="1"
+                      :src="video.trackImage.url"
+                    >
+                      <q-badge
+                        class="q-mt-sm q-ml-sm bg-semi-black rounded-borders-sm"
+                        style="padding: 5px !important"
+                      >
+                        <q-icon class="q-mr-xs" color="white" name="mmm-play" />
+                        {{ formatTime(video.duration) }}
+                      </q-badge>
+                      <div
+                        class="absolute-bottom text-caption gradient-transparent-to-black"
+                      >
+                        {{ video.title }}
+                      </div>
+                    </q-img>
+                  </q-card-section>
+                </div>
+              </div>
+            </template>
+          </div>
         </div>
       </div>
 
@@ -254,7 +395,11 @@ import type {
   JwLangCode,
   MediaSectionIdentifier,
   PublicationFetcher,
+  PublicationFiles,
+  SearchResultItem,
+  SearchResults,
 } from 'src/types';
+import type { MediaLink } from 'src/types/jw/publications';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
@@ -262,12 +407,17 @@ import { useLocale } from 'src/composables/useLocale';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   addJwpubDocumentMediaToFiles,
+  downloadAdditionalRemoteVideo,
   getDbFromJWPUB,
+  getJwMediaInfo,
+  getPubMediaLinks,
 } from 'src/helpers/jw-media';
 import { fetchJson, fetchPubMediaLinks } from 'src/utils/api';
 import { getLocalDate } from 'src/utils/date';
 import { getPublicationDirectoryContents } from 'src/utils/fs';
 import { decodeEntities } from 'src/utils/general';
+import { findBestResolutions } from 'src/utils/jw';
+import { formatTime } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { computed, reactive, ref, watch } from 'vue';
@@ -299,7 +449,8 @@ const jwStore = useJwStore();
 const { urlVariables } = storeToRefs(jwStore);
 
 const currentState = useCurrentStateStore();
-const { currentLangObject, currentSettings } = storeToRefs(currentState);
+const { currentLangObject, currentSettings, selectedDate } =
+  storeToRefs(currentState);
 
 const { t } = useI18n();
 const { dateLocale } = useLocale();
@@ -308,8 +459,10 @@ const step = ref<
   | 'article'
   | 'category'
   | 'magazineType'
+  | 'media'
   | 'month'
   | 'publicationListing'
+  | 'search'
   | 'year'
 >('category');
 const loading = ref(false);
@@ -337,6 +490,20 @@ const documents = ref<DocumentItem[]>([]);
 const docPreviews = ref<Record<number, string>>({});
 const docHasMedia = ref<Set<number>>(new Set());
 
+// Search state
+const searchQuery = ref('');
+const searchResults = ref<SearchResultItem[]>([]);
+const searchLoading = ref(false);
+const searchTimeout = ref<NodeJS.Timeout | null>(null);
+
+// JWT token management
+const jwtToken = ref<null | string>(null);
+const tokenExpiry = ref<null | number>(null);
+
+// Media items for search results (when no JWPUB available)
+const mediaItems = ref<MediaLink[]>([]);
+const hoveredRemoteVideo = ref('');
+
 watch(
   () => dialogValue.value,
   async (isOpen) => {
@@ -348,6 +515,16 @@ watch(
 
 const breadcrumbs = computed(() => {
   const items: string[] = [];
+  if (
+    searchQuery.value &&
+    (step.value === 'search' || step.value === 'media')
+  ) {
+    items.push(t('search'));
+    if (selection.brochureLabel) {
+      items.push(selection.brochureLabel);
+    }
+    return items;
+  }
   if (selection.category) {
     items.push(t(selection.category));
   }
@@ -466,6 +643,16 @@ const magazineTypeIcons = new Map([
   ['ws', '\ue6eb'],
 ]);
 
+// Search endpoints configuration
+const searchEndpoints = ref([
+  {
+    enabled: true,
+    name: 'Publications',
+    queryParam: 'q',
+    url: `https://b.jw-cdn.org/apis/search/results/${currentSettings.value?.lang}/publications`,
+  },
+]);
+
 const categoryItems: readonly {
   icon: string;
   key: string;
@@ -560,13 +747,80 @@ function cancelDialog() {
   emit('cancel');
 }
 
+function clearSearch() {
+  searchQuery.value = '';
+  searchResults.value = [];
+  searchLoading.value = false;
+  step.value = 'category';
+}
+
+async function downloadMediaItem(media: MediaLink) {
+  try {
+    loading.value = true;
+    dialogValue.value = false;
+    emit('ok');
+
+    // Use downloadAdditionalRemoteVideo to download the media
+    await downloadAdditionalRemoteVideo(
+      [media],
+      selectedDate.value,
+      media.trackImage.url,
+      false,
+      media.title || selection.brochureLabel,
+      props.section,
+    );
+  } catch (error) {
+    errorCatcher(error);
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function fetchJwtToken(): Promise<boolean> {
+  try {
+    // Check if we have a valid token that hasn't expired
+    if (jwtToken.value && tokenExpiry.value && Date.now() < tokenExpiry.value) {
+      return true;
+    }
+
+    const response = await fetch('https://b.jw-cdn.org/tokens/jworg.jwt', {
+      headers: {
+        Accept: 'text/plain',
+      },
+      method: 'GET',
+    });
+
+    if (!response.ok) {
+      throw new Error(`JWT token fetch failed: ${response.status}`);
+    }
+
+    const token = await response.text();
+    if (!token || token.length < 10) {
+      throw new Error('Invalid JWT token received');
+    }
+
+    jwtToken.value = token;
+    // Set expiry to 1 hour from now (tokens typically expire in 1 hour)
+    tokenExpiry.value = Date.now() + 60 * 60 * 1000;
+
+    return true;
+  } catch (error) {
+    jwtToken.value = null;
+    tokenExpiry.value = null;
+    errorCatcher(error);
+    return false;
+  }
+}
+
 function goBack() {
   if (step.value === 'article') {
     documents.value = [];
     docPreviews.value = {};
     docHasMedia.value = new Set();
     selection.dbPath = '';
-    if (
+    if (searchQuery.value) {
+      step.value = 'search';
+    } else if (
       selection.category === 'brochures-and-booklets' ||
       selection.category === 'tracts-and-invitations' ||
       selection.category === 'programs'
@@ -578,8 +832,17 @@ function goBack() {
       selection.month = 0;
     }
     return;
-  }
-  if (step.value === 'month') {
+  } else if (step.value === 'search') {
+    searchQuery.value = '';
+    searchResults.value = [];
+    step.value = 'category';
+    return;
+  } else if (step.value === 'media') {
+    // Go back to search results
+    mediaItems.value = [];
+    step.value = 'search';
+    return;
+  } else if (step.value === 'month') {
     documents.value = [];
     docPreviews.value = {};
     docHasMedia.value = new Set();
@@ -588,8 +851,7 @@ function goBack() {
     selection.year = '';
     step.value = 'year';
     return;
-  }
-  if (step.value === 'year') {
+  } else if (step.value === 'year') {
     documents.value = [];
     docPreviews.value = {};
     docHasMedia.value = new Set();
@@ -602,8 +864,10 @@ function goBack() {
     step.value =
       selection.category === 'magazines' ? 'magazineType' : 'category';
     return;
-  }
-  if (step.value === 'magazineType' || step.value === 'publicationListing') {
+  } else if (
+    step.value === 'magazineType' ||
+    step.value === 'publicationListing'
+  ) {
     documents.value = [];
     docPreviews.value = {};
     docHasMedia.value = new Set();
@@ -630,6 +894,108 @@ async function importDocument(doc: DocumentItem) {
   }
 }
 
+function onSearchInput() {
+  // Debounce search input
+  if (searchTimeout.value) {
+    clearTimeout(searchTimeout.value);
+  }
+
+  if (!searchQuery.value.trim()) {
+    searchResults.value = [];
+    return;
+  }
+
+  searchTimeout.value = setTimeout(() => {
+    performSearch();
+  }, 500);
+}
+
+async function performAuthenticatedSearch(
+  url: string,
+  params: URLSearchParams,
+): Promise<SearchResults> {
+  // Ensure we have a valid token
+  const hasValidToken = await fetchJwtToken();
+  if (!hasValidToken || !jwtToken.value) {
+    throw new Error('Failed to obtain authentication token');
+  }
+
+  const searchUrl = `${url}?${params.toString()}`;
+
+  const response = await fetch(searchUrl, {
+    headers: {
+      Accept: 'application/json',
+      Authorization: `Bearer ${jwtToken.value}`,
+      'Content-Type': 'application/json',
+    },
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    // If token is expired (401), try to refresh and retry once
+    if (response.status === 401) {
+      jwtToken.value = null;
+      tokenExpiry.value = null;
+
+      const retrySuccess = await fetchJwtToken();
+      if (retrySuccess && jwtToken.value) {
+        const retryResponse = await fetch(searchUrl, {
+          headers: {
+            Accept: 'application/json',
+            Authorization: `Bearer ${jwtToken.value}`,
+            'Content-Type': 'application/json',
+          },
+          method: 'GET',
+        });
+
+        if (retryResponse.ok) {
+          return await retryResponse.json();
+        }
+      }
+    }
+    throw new Error(`Search request failed: ${response.status}`);
+  }
+
+  return await response.json();
+}
+
+async function performSearch() {
+  if (!searchQuery.value.trim() || searchLoading.value) return;
+
+  searchLoading.value = true;
+  searchResults.value = [];
+  step.value = 'search';
+
+  try {
+    const query = searchQuery.value.trim();
+    const enabledEndpoints = searchEndpoints.value.filter(
+      (endpoint) => endpoint.enabled && endpoint.url,
+    );
+
+    // Search all enabled endpoints in parallel
+    const searchPromises = enabledEndpoints.map(async (endpoint) => {
+      const params = new URLSearchParams({
+        [endpoint.queryParam]: query,
+      });
+
+      const result = await performAuthenticatedSearch(endpoint.url, params);
+
+      return result?.results || [];
+    });
+
+    const resultsArrays = await Promise.all(searchPromises);
+    searchResults.value = resultsArrays.flat();
+
+    // Sort results by rank
+    searchResults.value.sort((a, b) => a.insight.rank - b.insight.rank);
+  } catch (error) {
+    console.error('Search error:', error);
+    // Handle search error - could show a notification
+  } finally {
+    searchLoading.value = false;
+  }
+}
+
 function resetState() {
   step.value = 'category';
   loading.value = false;
@@ -644,6 +1010,18 @@ function resetState() {
   publicationItems.value = [];
   yearChoices.value = [];
   monthChoices.value = [];
+  // Reset search state
+  searchQuery.value = '';
+  searchResults.value = [];
+  searchLoading.value = false;
+  mediaItems.value = [];
+  if (searchTimeout.value) {
+    clearTimeout(searchTimeout.value);
+    searchTimeout.value = null;
+  }
+  // Clear JWT token on reset
+  jwtToken.value = null;
+  tokenExpiry.value = null;
 }
 
 async function selectCategory(key: string) {
@@ -792,7 +1170,6 @@ async function selectMonth(m: number) {
       return;
     }
     selection.dbPath = db;
-    console.log(' [selectMonth] DB path:', db);
     // Load articles (documents)
     const docs = window.electronApi.executeQuery<DocumentItem>(
       db,
@@ -814,31 +1191,14 @@ async function selectPublication(choice: FilterChoice) {
     loading.value = true;
     selection.publication = String(choice.optionValue);
     selection.brochureLabel = decodeEntities(choice.optionName);
-    // Fetch media links to discover a valid JWPUB issue for the brochure
-    const lang = (currentSettings.value?.lang || 'E') as JwLangCode;
-    const info = await fetchPubMediaLinks(
-      { fileformat: 'JWPUB', langwritten: lang, pub: selection.publication },
-      urlVariables.value.pubMedia,
-      true,
-    );
-    console.log(
-      '🔄 [selectPublication] info:',
-      info,
-      selection.publication,
-      lang,
-    );
-    const jwpubList = info?.files?.[lang]?.JWPUB as
-      | undefined
-      | { issue?: string }[];
-    console.log('🔄 [selectPublication] jwpubList:', jwpubList);
     // Download jwpub and open DB
+    const lang = (currentSettings.value?.lang || 'E') as JwLangCode;
     const db = await getDbFromJWPUB({
       fileformat: 'JWPUB',
       issue: 0,
       langwritten: lang,
       pub: selection.publication,
     });
-    console.log('🔄 [selectPublication] db:', db);
     if (!db) {
       loading.value = false;
       return;
@@ -848,11 +1208,130 @@ async function selectPublication(choice: FilterChoice) {
       db,
       `SELECT DocumentId, Title FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
     );
-    console.log('🔄 [selectPublication] docs:', docs);
     documents.value = docs;
     await buildDocumentHasMedia(db);
     await buildDocumentPreviews(db);
     step.value = 'article';
+  } catch (e) {
+    errorCatcher(e);
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function selectSearchResult(result: SearchResultItem) {
+  try {
+    loading.value = true;
+    const jwOrgLink = result.links['jw.org'];
+    if (!jwOrgLink) {
+      loading.value = false;
+      return;
+    }
+    const url = new URL(jwOrgLink);
+    let publication = url.searchParams.get('pub');
+
+    let issue = url.searchParams.get('issue');
+    if (!publication) {
+      loading.value = false;
+      return;
+    }
+
+    // if pub format is g##, ws##, wp## or w##, strip the digits
+    if (
+      publication.startsWith('g') ||
+      publication.startsWith('ws') ||
+      publication.startsWith('wp') ||
+      publication.startsWith('w')
+    ) {
+      publication = publication.replace(/\d+/, '');
+    }
+
+    if (!issue) {
+      issue = '0';
+    }
+
+    selection.publication = publication;
+    selection.brochureLabel = result.title;
+    const lang = (currentSettings.value?.lang || 'E') as JwLangCode;
+
+    const mediaFetcher: PublicationFetcher = {
+      issue,
+      langwritten: lang,
+      pub: publication,
+    };
+
+    const pubMediaLinks = await getPubMediaLinks(mediaFetcher);
+
+    const jwpubFileArray = pubMediaLinks?.files?.[lang]?.JWPUB;
+    const jwpubFileIsPresent = jwpubFileArray?.length;
+    if (!jwpubFileIsPresent) {
+      // Find the best media format (prefer MP4, then others)
+      let mediaFiles: MediaLink[] = [];
+      const formatPriority: (keyof PublicationFiles)[] = ['MP4', 'M4V', 'MP3'];
+
+      for (const format of formatPriority) {
+        const mediaFileLookup = pubMediaLinks?.files?.[lang]?.[
+          format as keyof PublicationFiles
+        ] as MediaLink[] | undefined;
+        if (mediaFileLookup) {
+          for (const mediaFile of mediaFileLookup) {
+            if (pubMediaLinks?.pubImage?.url) {
+              mediaFile.trackImage.url = pubMediaLinks.pubImage.url;
+            } else {
+              const mediaFetcherCopy: PublicationFetcher = { ...mediaFetcher };
+              mediaFetcherCopy.fileformat = format;
+              mediaFetcherCopy.track = mediaFile.track;
+              const mediaInfo = await getJwMediaInfo(mediaFetcherCopy);
+              mediaFile.trackImage.url = mediaInfo.thumbnail;
+            }
+          }
+          mediaFiles = mediaFileLookup;
+          break;
+        }
+      }
+
+      mediaFiles = findBestResolutions(
+        mediaFiles,
+        currentSettings.value?.maxRes,
+      );
+
+      if (mediaFiles.length > 0) {
+        // Set media items and switch to media step
+        mediaItems.value = mediaFiles.map((mediaLink, index) => ({
+          ...mediaLink,
+          downloaded: false, // TODO: Check if already downloaded
+          title: mediaLink.title || result.title || `Media ${index + 1}`,
+        }));
+        step.value = 'media';
+        loading.value = false;
+        return;
+      } else {
+        // No media files available
+        console.log('❌ No media files available for:', publication);
+        loading.value = false;
+        return;
+      }
+    } else {
+      const dbPath = await getDbFromJWPUB({
+        fileformat: 'JWPUB',
+        issue,
+        langwritten: lang,
+        pub: selection.publication,
+      });
+      if (!dbPath) {
+        loading.value = false;
+        return;
+      }
+      selection.dbPath = dbPath;
+      const docs = window.electronApi.executeQuery<DocumentItem>(
+        dbPath,
+        `SELECT DocumentId, Title FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
+      );
+      documents.value = docs;
+      await buildDocumentHasMedia(dbPath);
+      await buildDocumentPreviews(dbPath);
+      step.value = 'article';
+    }
   } catch (e) {
     errorCatcher(e);
   } finally {
