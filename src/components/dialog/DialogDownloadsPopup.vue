@@ -148,10 +148,10 @@ import { storeToRefs } from 'pinia';
 import { type QMenu, useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
+import { updateLookupPeriod } from 'src/helpers/date';
 import { fetchMedia } from 'src/helpers/jw-media';
 import { dateFromString, getDateDiff, getLocalDate } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
-import { useJwStore } from 'stores/jw';
 import { computed, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -164,7 +164,6 @@ const { basename } = path;
 const open = defineModel<boolean>({ default: false });
 
 const currentState = useCurrentStateStore();
-const jwStore = useJwStore();
 const { currentSettings, downloadProgress } = storeToRefs(currentState);
 
 const getBasename = (filename: string) => {
@@ -403,20 +402,8 @@ const onRefreshMeetingMedia = () => {
   }).onOk(async () => {
     try {
       refreshing.value = true;
-      // 1) Clear all dynamic media from meeting days in lookupPeriod for current congregation
-      const congregation = currentState.currentCongregation;
-      const period = jwStore.lookupPeriod[congregation] || [];
-      for (const day of period) {
-        if (!day?.mediaSections || !day.meeting) continue;
-        day.complete = false;
-        day.error = false;
-        for (const section of day.mediaSections) {
-          if (!section?.items) continue;
-          section.items = section.items.filter(
-            (item) => item.source !== 'dynamic',
-          );
-        }
-      }
+      // 1) Reset lookup period for current congregation
+      updateLookupPeriod(true);
       // 2) Fetch media
       await fetchMedia();
     } finally {

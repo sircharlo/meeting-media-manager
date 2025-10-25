@@ -226,11 +226,6 @@ export function updateLookupPeriod(
       lookupPeriod[currentCongregation] = [];
     }
 
-    const isRelevantMedia = (meeting: string, media: MediaItem[]) => {
-      // Since MediaItem doesn't have section property, we'll just check if there's any media
-      return media.length > 0;
-    };
-
     const existingDates = new Set(
       lookupPeriod[currentCongregation]
         .filter((d) => {
@@ -241,7 +236,7 @@ export function updateLookupPeriod(
               allMedia.push(...(sectionMedia.items || []));
             });
           }
-          return isRelevantMedia(d.meeting, allMedia);
+          return allMedia.length > 0;
         })
         .map((d) => formatDate(d.date, 'YYYY/MM/DD')),
     );

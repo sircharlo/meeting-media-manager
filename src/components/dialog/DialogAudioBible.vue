@@ -17,7 +17,7 @@
             round
             @click="
               loading = true;
-              fetchMedia(true);
+              fetchAudioBibleMedia(true);
             "
           />
         </div>
@@ -333,7 +333,7 @@ const toggleVerse = (verse: number) => {
   }
 };
 
-const fetchMedia = async (force = false) => {
+const fetchAudioBibleMedia = async (force = false) => {
   try {
     loading.value = true;
     bibleAudioMedia.value = await getAudioBibleMedia(force);
@@ -423,6 +423,6 @@ const getVerseClass = (verse: number) => {
 // Watch for dialog opening to get JW videos and reset state
 whenever(dialogValue, () => {
   resetBibleBook(true);
-  fetchMedia();
+  fetchAudioBibleMedia();
 });
 </script>
