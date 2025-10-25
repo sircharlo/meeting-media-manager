@@ -393,7 +393,7 @@
   "receive-beta-updates": "Prejmi zgodnji dostop do beta različic",
   "receive-beta-updates-explain": "Beta posodobitve lahko vsebujejo nestabilne funkcije in morebitne napake. Te možnosti ne omogoči na računalniku, ki se uporablja za shode v živo.",
   "refresh": "Osveži",
-  "refresh-all-meeting-media": "Refresh meeting media",
+  "refresh-all-meeting-media": "Osveži multimedijske elemente za shode",
   "refresh-all-meeting-media-confirm": "This will force a refresh of all meetings and download new versions of any media that has been updated. Note that this will not affect any media that has been manually added. Are you sure you want to proceed?",
   "regular": "Običajno",
   "remind-me-later": "Opomni me kasneje",
