@@ -1,6 +1,6 @@
 # Pogosto zastavljena vprašanja {#frequently-asked-questions}
 
-## General Questions {#general-questions}
+## Splošna vprašanja {#general-questions}
 
 ### :earth_americas: Ali je ta program odvisen od zunanjih spletnih mest, virov ali „skrbnikov“ za prenašanje publikacij, multimedijske vsebine za shode ali drugih vsebin? {#external-dependencies}
 
@@ -20,25 +20,25 @@ Izvorna koda tega programa je na voljo vsem, da jo lahko preučijo in preverijo,
 >
 > z namenom razširjanja razviti kakršne koli aplikacije programske opreme, orodja ali tehnike, ki je namensko narejena za zbiranje, kopiranje, prenašanje, izvlačenje, nabiranje ali luščenje podatkov, HTML-ja, slik ali besedila s tega spletnega mesta (to **ne** prepoveduje razširjanja brezplačnih, nekomercialnih aplikacij, ki so namenjene prenašanju elektronskih datotek, na primer datotek EPUB, PDF, MP3 in MP4, z javno dostopnih strani tega spletnega mesta)
 
-### :question: What operating systems does M³ support? {#operating-systems}
+### :question: Katere operacijske sisteme podpira M³? {#operating-systems}
 
-M³ supports Windows, macOS, and Linux:
+M³ deluje na Windows, macOS in Linux:
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 in novejši (na voljo 64-bitna in 32-bitna različica)
+- **macOS**: macOS 10.15 (Catalina) in novejši (podpira Intel in Apple Silicon)
+- **Linux**: Večina sodobnih distribucij Linuxa (v formatu AppImage)
 
-### :globe_with_meridians: Does M³ work in my language? {#language-support}
+### :globe_with_meridians: Ali M³ deluje v mojem jeziku? {#language-support}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Da!** M³ ponuja celovito večjezično podporo:
 
 - **Multimedijska vsebina**: Prenesi multimedijsko vsebino v katerem koli od več sto jezikov, ki so na voljo na uradnem spletnem mestu Jehovovih prič
 - **Vmesnik aplikacije**: Uporabi vmesnik M³ v več različnih jezikih
-- **Independent Settings**: You can use the interface in one language while downloading media in another
+- **Neodvisne nastavitve**: Vmesnik lahko uporabljaš v enem jeziku, medtem ko preneseš multimedijsko vsebino v drugem jeziku
 - **Nadomestni jeziki**: Nastavi nadomestne jezike za primere, ko multimedijska vsebina ni na voljo v glavnem jeziku
 - **Podpora za podnapise**: Prenesi in prikaži podnapise v različnih jezikih
 
-## Installation and Setup {#installation-setup}
+## Namestitev in nastavitev {#installation-setup}
 
 ### :computer: Kako prenesem in namestim program M³? {#installation}
 
@@ -153,33 +153,33 @@ M³ samodejno preklaplja prizore v OBS glede na:
 - Nastavitve, kot je »Odloži slike« (Postpone Images)
 - To, ali naj se po predvajanju multimedijske vsebine vrne na prejšnji prizor
 
-### :pause_button: What is the "Postpone Images" feature? {#faq-postpone-images}
+### :pause_button: Kaj pomeni funkcija »Odloži slike«? {#faq-postpone-images}
 
-This feature delays sharing images to OBS until you manually trigger them. This is useful for:
+Ta funkcija odloži deljenje slik z OBS Studiem, dokler jih ročno ne sprožiš. To je uporabno za:
 
-- Showing images to in-person audience first
-- Having more control over timing
-- Avoiding premature scene changes
+- Prikaz slik najprej občinstvu v kraljestveni dvorani
+- Večji nadzor nad časom prikaza
+- Izogibanje prezgodnjim spremembam prizorov
 
-## Advanced Features {#faq-advanced-features}
+## Napredne funkcije {#faq-advanced-features}
 
-### :cloud: How does folder monitoring work? {#faq-folder-monitoring}
+### :cloud: Kako deluje spremljanje map? {#faq-folder-monitoring}
 
-Folder monitoring allows you to:
+Spremljanje map ti omogoča, da:
 
-1. Select a folder to watch for new files
-2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
+1. Izbereš mapo, ki jo želiš spremljati za nove datoteke
+2. Samodejno uvoziš novo multimedijsko vsebino, ki se sinhronizira prek oblačnih storitev, kot sta Dropbox ali OneDrive
 
-### :file_folder: What is media auto-export? {#faq-media-export}
+### :file_folder: Kaj pomeni samodejni izvoz multimedijske vsebine? {#faq-media-export}
 
-Media auto-export automatically:
+S samodejnim izvozom multimedijske vsebine se zgodi naslednje:
 
-1. Exports media files to a specified folder
-2. Organizes files by date and section
-3. Converts files to MP4 format (optional)
-4. Maintains an organized backup of meeting media files
+1. Multimedijska vsebina se samodejno izvozi v izbrano mapo
+2. Datoteke se razporedijo glede na datum in del shoda
+3. Po želji se datoteke pretvorijo v format MP4
+4. Ohranja se urejena varnostna kopija multimedijske vsebine za shode
 
-### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
+### :family: Ali lahko upravljam več občin? {#faq-multiple-congregations}
 
 Da! M³ podpira več profilov za:
 
@@ -201,14 +201,14 @@ Preveri naslednje pogoste težave:
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: The OBS integration isn't working. What should I verify? {#faq-obs-not-working}
+### :video_camera: Združevanje z OBS Studiem ne deluje. Kaj naj preverim? {#faq-obs-not-working}
 
-Check these OBS-related issues:
+Preveri naslednje nastavitve, povezane z OBS Studiem:
 
-1. **OBS Installation**: Ensure OBS Studio is installed and running
-2. **WebSocket Plugin**: Verify the WebSocket plugin is installed
-3. **Port and Password**: Check your OBS port and password settings
-4. **Firewall**: Ensure the firewall isn't blocking the connection
+1. **Namestitev OBS Studia**: Preveri, ali je OBS Studio nameščen in ali deluje
+2. **Vtičnik WebSocket**: Preveri, ali je vtičnik WebSocket nameščen
+3. **Vrata in geslo**: Preveri nastavitve vrat in gesla v OBS Studiu
+4. **Požarni zid**: Prepričaj se, da požarni zid ne blokira povezave
 
 ### :speaker: Does Meeting Media Manager automatically send the media audio to Zoom when using OBS Studio? {#audio-to-zoom}
 
@@ -291,9 +291,9 @@ Thank you for your interest in supporting the project! However, in the spirit of
 
 M³ is designed to work on a wide range of operating systems:
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 in novejši (na voljo 64-bitna in 32-bitna različica)
+- **macOS**: macOS 10.15 (Catalina) in novejši (podpira Intel in Apple Silicon)
+- **Linux**: Večina sodobnih distribucij Linuxa (v formatu AppImage)
 
 M³ has the following hardware requirements:
 
