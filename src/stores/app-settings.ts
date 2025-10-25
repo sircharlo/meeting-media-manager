@@ -102,23 +102,33 @@ export const useAppSettingsStore = defineStore('app-settings', {
             );
             currentLookupPeriods = {};
           }
+
+          // Get all congregation IDs that have data in lookupPeriod
+          const congregationIds = Object.keys(currentLookupPeriods).filter(
+            (congId) => congId && currentLookupPeriods[congId],
+          );
+
+          console.log(
+            `🔄 [refreshDynamicMedia] Resetting dynamic media for ${congregationIds.length} congregations:`,
+            congregationIds,
+          );
+
           try {
-            for (const [congId, dateInfo] of Object.entries(
-              currentLookupPeriods,
-            )) {
-              if (!congId || !dateInfo) continue;
+            for (const congId of congregationIds) {
+              if (!congId || !currentLookupPeriods[congId]) continue;
 
               // Ensure dateInfo is an array
-              if (!Array.isArray(dateInfo)) {
+              if (!Array.isArray(currentLookupPeriods[congId])) {
                 console.warn(
                   '🔍 [refreshDynamicMedia] Invalid dateInfo structure for congregation:',
                   congId,
-                  dateInfo,
+                  currentLookupPeriods[congId],
                 );
                 continue;
               }
 
-              dateInfo
+              // Reset all meeting days for this congregation
+              currentLookupPeriods[congId]
                 .filter((day) => !!day.meeting)
                 .forEach((day, dayIndex) => {
                   // Validate day object structure
@@ -149,13 +159,15 @@ export const useAppSettingsStore = defineStore('app-settings', {
                     }
                   }
 
-                  // Remove dynamic media from all sections
+                  // Remove dynamic media from all sections (same logic as updateLookupPeriod)
                   try {
                     day.mediaSections?.forEach((section) => {
                       if (section && section.items) {
-                        section.items = section.items.filter(
-                          (item) => item && item.source !== 'dynamic',
-                        );
+                        for (let i = section.items.length - 1; i >= 0; i--) {
+                          if (section.items[i]?.source === 'dynamic') {
+                            section.items.splice(i, 1);
+                          }
+                        }
                       }
                     });
                   } catch (error) {
@@ -165,8 +177,17 @@ export const useAppSettingsStore = defineStore('app-settings', {
                       error,
                     );
                   }
+
+                  // Reset status flags
                   day.complete = false;
                   day.error = false;
+
+                  // Remove empty sections for meeting days
+                  if (day.meeting) {
+                    day.mediaSections = day.mediaSections?.filter((section) => {
+                      return !!section.items?.length;
+                    });
+                  }
                 });
             }
           } catch (error) {
@@ -177,6 +198,9 @@ export const useAppSettingsStore = defineStore('app-settings', {
           }
 
           jwStore.lookupPeriod = currentLookupPeriods;
+          console.log(
+            '✅ [refreshDynamicMedia] Dynamic media reset completed for all congregations',
+          );
         };
 
         if (type === 'firstRun') {
