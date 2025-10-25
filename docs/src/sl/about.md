@@ -6,17 +6,17 @@
 
 **Meeting Media Manager** ali skrajšano **M³** je celovita večplatformna aplikacija za operacijske sisteme Windows, macOS in Linux, ki samodejno prenese, organizira in prikazuje slike in videoposnetke za shode Jehovovih prič. Podpira vse jezike, ki so na voljo na uradni spletni strani Jehovovih prič, in ponuja zmogljiva orodja za upravljanje multimedijske vsebine med hibridnimi shodi in shodi v živo.
 
-M³ features support for managing regular and custom meeting media, multiple congregations and/or groups using the same computer account, and advanced presentation capabilities that make media sharing effortless.
+M³ omogoča upravljanje redne in prilagojene multimedijske vsebine za shode, uporabo več občin in/ali skupin z istim računalniškim računom ter napredne predstavitvene zmožnosti, ki olajšajo deljenje vsebine.
 
 :::info Opomba
 
-This app used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed to Meeting Media Manager in May 2022.
+Ta aplikacija je bila znana kot JWMMF (JW Meeting Media Fetcher), vendar je bila maja 2022 preimenovana v Meeting Media Manager.
 
 :::
 
 ## Zakaj izbrati M³? {#why-choose-m3}
 
-M³ je najboljše orodje za upravljanje multimedijske vsebine za shode, saj ponuja veliko funkcij ter brezhibno in zanesljivo izkušnjo na vseh platformah. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
+M³ je najboljše orodje za upravljanje multimedijske vsebine za shode, saj ponuja veliko funkcij ter brezhibno in zanesljivo izkušnjo na vseh platformah. Zasnovan je posebej za potrebe občinskih shodov in ponuja vse, kar je potrebno za učinkovito predstavitev multimedijske vsebine.
 
 ### Ključne prednosti {#key-benefits}
 
@@ -24,19 +24,19 @@ M³ je najboljše orodje za upravljanje multimedijske vsebine za shode, saj ponu
 
 - **Podpora za več občin**: V eni sami aplikaciji enostavno upravljajte nastavitve za več občin ali skupin.
 
-- **Advanced features**: Easily add extra media, import custom content, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Napredne zmožnosti**: Preprosto dodaj dodatno multimedijsko vsebino, uvozi prilagojeno vsebino in samodejno deli dogajanje v kraljestveni dvorani z udeleženci na Zoomu.
 
 - **Optimizirano delovanje na različnih platformah**: Uživajte v gladki in odzivni izkušnji v operacijskih sistemih Windows, macOS in Linux, tudi na starejših sistemih ali računalnikih z omejenimi viri.
 
 - **Zanesljiv in stabilen**: Ustvarjen za delovanje, ko ga najbolj potrebujete. Ste naleteli na napako? Prijavite jo, pa jo bomo nemudoma obravnavali.
 
-- **Advanced presentation tools**: Advanced media controls, zoom/pan capabilities, custom timing, and seamless Zoom and OBS Studio integration.
+- **Napredna orodja za predstavitve**: Napredni nadzor nad multimedijsko vsebino, možnost približevanja in premikanja slike, prilagajanje časa prikaza ter brezhibno združevanje z Zoomom in OBS Studiem.
 
 ## Kaj zmore M³? {#what-can-m3-do}
 
-M³ is a comprehensive media management solution that allows you to easily and automatically download, synchronize, share, and present all meeting media. Here's what makes M³ powerful:
+M³ je celovita rešitev za upravljanje multimedijske vsebine, ki ti omogoča enostavno in samodejno prenašanje, sinhronizacijo, deljenje in prikazovanje vse multimedijske vsebine za shode. M³ je tako zmogljiv zaradi naslednjega:
 
-### Core Media Management {#core-media-management}
+### Osnovno upravljanje multimedijske vsebine {#core-media-management}
 
 - **Automatic media downloads**: Automatically fetches and downloads all media needed for upcoming meetings
 - **Multi-language support**: Download media in any of hundreds of available languages
