@@ -59,7 +59,7 @@ export const CO_WEEK_ADDITIONAL_SECTION: MediaSectionIdentifier =
 
 // Helper function to get sections for a meeting type
 export function getMeetingSections(
-  meeting: 'mw' | 'we' | false,
+  meeting: 'mw' | 'we' | null,
   isCoWeek = false,
 ): MediaSectionIdentifier[] {
   console.log('🔍 [getMeetingSections] meeting', meeting);

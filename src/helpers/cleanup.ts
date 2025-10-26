@@ -529,7 +529,7 @@ export const deleteCacheFiles = async (
       // Update lookup period if deleting all cache
       if (type === 'all') {
         console.log('[Cache] Updating lookup period (all cache cleared)');
-        updateLookupPeriod(true);
+        updateLookupPeriod({ reset: true });
       }
       console.log('[Cache] Cleared successfully', {
         bytesFreed,

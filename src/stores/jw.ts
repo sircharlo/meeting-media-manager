@@ -18,7 +18,7 @@ import type { Songbook } from 'stores/current-state';
 
 import { defineStore } from 'pinia';
 import { MAX_SONGS } from 'src/constants/jw';
-import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
+import { isMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   findMediaSection,
@@ -251,8 +251,7 @@ export const useJwStore = defineStore('jw-store', {
         if (coWeek) {
           targetSection =
             section ||
-            (isMwMeetingDay(selectedDateObject.date) ||
-            isWeMeetingDay(selectedDateObject.date)
+            (isMeetingDay(selectedDateObject.date)
               ? 'circuit-overseer'
               : 'imported-media');
         } else if (section) {

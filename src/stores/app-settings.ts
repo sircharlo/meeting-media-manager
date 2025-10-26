@@ -27,6 +27,8 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 import { toRaw } from 'vue';
 
+import { useCurrentStateStore } from './current-state';
+
 const { fs, getAppDataPath, path } = window.electronApi;
 const { exists } = fs;
 const { join } = path;
@@ -78,6 +80,8 @@ export const useAppSettingsStore = defineStore('app-settings', {
          * needed after certain updates to reset the state of the dynamic media items.
          */
         const refreshDynamicMedia = () => {
+          const currentState = useCurrentStateStore();
+          const { getMeetingType } = currentState;
           // Validate that jwStore.lookupPeriod exists and is properly initialized
           if (
             !jwStore.lookupPeriod ||
@@ -129,7 +133,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
 
               // Reset all meeting days for this congregation
               currentLookupPeriods[congId]
-                .filter((day) => !!day.meeting)
+                .filter((day) => getMeetingType(day.date))
                 .forEach((day, dayIndex) => {
                   // Validate day object structure
                   if (!day || typeof day !== 'object') {
@@ -183,7 +187,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
                   day.error = false;
 
                   // Remove empty sections for meeting days
-                  if (day.meeting) {
+                  if (getMeetingType(day.date)) {
                     day.mediaSections = day.mediaSections?.filter((section) => {
                       return !!section.items?.length;
                     });
@@ -865,8 +869,6 @@ export const useAppSettingsStore = defineStore('app-settings', {
                     date: parsedDate,
                     error: false,
                     mediaSections: [],
-                    meeting: false,
-                    today: false,
                   });
                 } catch (error) {
                   console.warn(

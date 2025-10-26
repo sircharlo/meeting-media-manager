@@ -10,7 +10,7 @@
   >
     <q-avatar
       :class="[
-        isCustom && currentState.selectedDateObject?.meeting !== 'we'
+        isCustom && selectedDayMeetingType !== 'we'
           ? 'custom-bg-color'
           : 'text-white bg-' + mediaList.config?.uniqueId,
         { 'jw-icon': mediaList.config?.jwIcon },
@@ -54,7 +54,7 @@
     <q-item-section side>
       <div class="row items-center">
         <!-- Three-dots menu for other controls -->
-        <template v-if="isCustom && !currentState.selectedDateObject?.meeting">
+        <template v-if="isCustom && !selectedDayMeetingType">
           <q-btn class="custom-text-color" flat icon="mmm-dots" round size="sm">
             <q-menu>
               <q-list style="min-width: 150px">
@@ -181,8 +181,7 @@
                 : 'bg-' + mediaList.config?.uniqueId,
             ]"
             :color="
-              !isCustom ||
-              (isCustom && currentState.selectedDateObject?.meeting === 'we')
+              !isCustom || (isCustom && selectedDayMeetingType === 'we')
                 ? mediaList.config?.uniqueId
                 : undefined
             "
@@ -208,6 +207,7 @@
 import type { MediaSectionWithConfig } from 'src/types';
 
 import { useElementHover } from '@vueuse/core';
+import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { useMediaSection } from 'src/composables/useMediaSection';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
@@ -240,6 +240,7 @@ const emit = defineEmits<{
 const $q = useQuasar();
 const { t } = useI18n();
 const currentState = useCurrentStateStore();
+const { selectedDayMeetingType } = storeToRefs(currentState);
 
 // Section repeat functionality
 const { isSectionRepeating, toggleSectionRepeat } = useMediaSectionRepeat();

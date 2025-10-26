@@ -63,9 +63,7 @@
       </template>
     </template>
     <q-btn
-      v-if="
-        selectedDateObject && !selectedDateObject.meeting && !showEmptyState
-      "
+      v-if="selectedDateObject && !selectedDayMeetingType && !showEmptyState"
       :class="{
         'full-width': true,
         'dashed-border': !mediaListDragging,
@@ -125,7 +123,7 @@ import { defaultAdditionalSection } from 'src/composables/useMediaSection';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { SORTER } from 'src/constants/general';
 import { getMeetingSections } from 'src/constants/media';
-import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
+import { isCoWeek, isMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
 import {
@@ -204,16 +202,21 @@ const jwStore = useJwStore();
 const { showHiddenMediaForSelectedDate } = jwStore;
 const { lookupPeriod, urlVariables } = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
+const { getMeetingType } = currentState;
 const {
   currentCongregation,
+  currentLangObject,
   currentSettings,
   highlightedMediaId,
+  isSelectedDayToday,
   mediaIsPlaying,
   mediaPaused,
   mediaPlaying,
+  mediaWindowCustomBackground,
   missingMedia,
   selectedDate,
   selectedDateObject,
+  selectedDayMeetingType,
   someItemsHiddenForSelectedDate,
 } = storeToRefs(currentState);
 const obsState = useObsStateStore();
@@ -380,7 +383,7 @@ watch(
   () => mediaPlaying.value.action,
   (newAction, oldAction) => {
     if (newAction !== oldAction) postMediaAction(newAction);
-    if (currentState.currentLangObject?.isSignLanguage) {
+    if (currentLangObject.value?.isSignLanguage) {
       if (newAction !== 'play') {
         const cameraId = appSettingsStore.displayCameraId;
         if (cameraId) {
@@ -677,7 +680,11 @@ watch(
 
         if (currentSettings.value?.customEventLastSongShortcut) {
           // Since the shortcut is set, check if this was the last song in the meeting
-          if (selectedDateObject.value?.meeting && oldMediaPlayingUrl) {
+          if (
+            selectedDateObject.value &&
+            selectedDayMeetingType.value &&
+            oldMediaPlayingUrl
+          ) {
             // This is a meeting day and something was playing before
             console.log(
               '🔄 [CustomEvents Verbose] Checking if the last played media item was the last song in the meeting',
@@ -857,7 +864,7 @@ const goToNextDayWithMedia = (ignoreTodaysDate = false) => {
             const hasMedia = (day.mediaSections ?? []).some(
               (section) => !!section.items?.length,
             );
-            return day.meeting || hasMedia;
+            return getMeetingType(day.date) || hasMedia;
           })
           .map((day) => day.date)
           .filter(Boolean)
@@ -978,7 +985,7 @@ useEventListener<
 );
 
 const checkMemorialDate = async () => {
-  let bg: string | undefined = currentState.mediaWindowCustomBackground;
+  let bg: string | undefined = mediaWindowCustomBackground.value;
   if (
     selectedDate.value &&
     selectedDate.value === currentSettings.value?.memorialDate
@@ -1050,7 +1057,7 @@ watchImmediate(
 
     postMediaUrl(mediaPlaying.value.url);
     postCustomDuration(JSON.stringify(customDuration.value));
-    postCustomBackground(currentState.mediaWindowCustomBackground);
+    postCustomBackground(mediaWindowCustomBackground.value);
   },
 );
 
@@ -1208,7 +1215,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         const publication = getPublicationInfoFromDb(tempDbFilePath);
         const publicationDirectory = await getPublicationDirectory(
           publication,
-          currentState.currentSettings?.cacheFolder,
+          currentSettings.value?.cacheFolder,
         );
         if (!publicationDirectory) return;
         const unzipDir = await decompressJwpub(filepath, publicationDirectory);
@@ -1389,7 +1396,8 @@ const handleDrop = (event: DragEvent) => {
 };
 
 const duplicateSongsForWeMeeting = computed(() => {
-  if (selectedDateObject.value?.meeting !== 'we') return false;
+  if (!selectedDateObject.value || selectedDayMeetingType.value !== 'we')
+    return false;
 
   // Get all media from all sections
   const allMedia = (selectedDateObject.value.mediaSections ?? []).flatMap(
@@ -1686,7 +1694,7 @@ const showObsBanner = computed(
   () =>
     currentSettings.value?.obsEnable &&
     ['disconnected', 'notConnected'].includes(obsConnectionState.value) &&
-    selectedDateObject.value?.today,
+    isSelectedDayToday.value,
 );
 
 const showEmptyState = computed(() => {
@@ -1703,10 +1711,9 @@ const showEmptyState = computed(() => {
   return (
     (currentSettings.value?.disableMediaFetching && noMediaSections) ||
     (!currentSettings.value?.disableMediaFetching &&
-      ((selectedDateObject.value.meeting &&
-        !selectedDateObject.value.complete) ||
-        (selectedDateObject.value.meeting && totalMediaCount === 0) ||
-        (!selectedDateObject.value.meeting && noMediaSections)))
+      ((selectedDayMeetingType.value &&
+        (!selectedDateObject.value.complete || totalMediaCount === 0)) ||
+        (!selectedDayMeetingType.value && noMediaSections)))
   );
 });
 
@@ -1740,7 +1747,7 @@ const mediaLists = computed(() => {
 
   // Get the appropriate meeting sections based on meeting type (MW vs WE)
   const meetingSections = getMeetingSections(
-    selectedDateObject.value?.meeting,
+    selectedDayMeetingType.value,
     isCoWeek(selectedDateObject.value?.date),
   );
 
@@ -1750,16 +1757,11 @@ const mediaLists = computed(() => {
   // Add any custom sections that have items (not already in meeting sections)
   selectedDateObject.value.mediaSections.forEach((sectionData) => {
     const sectionId = sectionData.config.uniqueId;
-    const isMeetingToday =
-      isWeMeetingDay(selectedDateObject.value?.date) ||
-      isMwMeetingDay(selectedDateObject.value?.date);
+    const isMeetingToday = isMeetingDay(selectedDateObject.value?.date);
     if (
       !sectionsToShow.includes(sectionId) &&
       ((!isMeetingToday && !meetingSections.includes(sectionId)) ||
         (isMeetingToday && sectionData?.items?.length))
-      // sectionData?.items?.filter((item) => !item.hidden).length &&
-      // !meetingSections.includes(sectionId) &&
-      // !sectionsToShow.includes(sectionId)
     ) {
       sectionsToShow.push(sectionId);
     }

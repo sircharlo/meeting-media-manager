@@ -374,6 +374,7 @@ const { lookupPeriod } = storeToRefs(jwStore);
 const { dateLocale } = useLocale();
 
 const currentState = useCurrentStateStore();
+const { getMeetingType } = currentState;
 const {
   currentCongregation,
   currentSettings,
@@ -381,6 +382,7 @@ const {
   online,
   selectedDate,
   selectedDateObject,
+  selectedDayMeetingType,
   someItemsHiddenForSelectedDate,
 } = storeToRefs(currentState);
 
@@ -466,7 +468,7 @@ const getEventDates = () => {
     if (!lookupPeriod.value || !currentCongregation.value) return [];
     const meetingDates =
       lookupPeriod.value[currentCongregation.value]
-        ?.filter((day) => day.meeting)
+        ?.filter((day) => getMeetingType(day.date))
         .map((day) => formatDate(day.date, 'YYYY/MM/DD')) || [];
     return meetingDates.concat(additionalMediaDates.value);
   } catch (error) {
@@ -590,7 +592,7 @@ useEventListener<
 const mediaSortCanBeReset = computed<boolean>(() => {
   if (
     !selectedDateObject.value?.mediaSections ||
-    !(selectedDateObject.value?.meeting && selectedDateObject.value?.complete)
+    !(selectedDayMeetingType.value && selectedDateObject.value?.complete)
   )
     return false;
 
@@ -867,7 +869,7 @@ const openJwPlaylistPickerWithSectionCheck = (
 
 const canEditCustomSections = computed(() => {
   return !!(
-    !selectedDateObject.value?.meeting &&
+    !selectedDayMeetingType.value &&
     selectedDateObject.value?.mediaSections &&
     selectedDateObject.value.mediaSections.some(
       (section) => !!section.items?.length,

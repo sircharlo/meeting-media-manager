@@ -43,7 +43,7 @@ import type { MediaSectionIdentifier } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { getMeetingSections } from 'src/constants/media';
-import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
+import { isCoWeek, isMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { getTextColor } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed } from 'vue';
@@ -95,10 +95,7 @@ const availableSections = computed(() => {
     .filter((section) => section.config)
     .filter((section) => {
       if (!section.config) return false;
-      if (
-        isWeMeetingDay(selectedDateObject.value?.date) ||
-        isMwMeetingDay(selectedDateObject.value?.date)
-      ) {
+      if (isMeetingDay(selectedDateObject.value?.date)) {
         return getMeetingSections(
           isWeMeetingDay(selectedDateObject.value?.date) ? 'we' : 'mw',
           isCoWeek(selectedDateObject.value?.date),
@@ -110,8 +107,7 @@ const availableSections = computed(() => {
   // Sort sections by the order they appear in getMeetingSections
   if (
     selectedDateObject.value?.date &&
-    (isWeMeetingDay(selectedDateObject.value.date) ||
-      isMwMeetingDay(selectedDateObject.value.date))
+    isMeetingDay(selectedDateObject.value.date)
   ) {
     const meetingSections = getMeetingSections(
       isWeMeetingDay(selectedDateObject.value.date) ? 'we' : 'mw',

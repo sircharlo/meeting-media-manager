@@ -12,6 +12,7 @@ import type {
 
 import { defineStore } from 'pinia';
 import { settingsDefinitions } from 'src/constants/settings';
+import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { datesAreSame, formatDate } from 'src/utils/date';
 import { getAdditionalMediaPath, isFileUrl } from 'src/utils/fs';
@@ -139,6 +140,28 @@ export const useCurrentStateStore = defineStore('current-state', {
         return [];
       }
     },
+    getMeetingType(lookupDate?: Date): 'mw' | 'we' | null {
+      try {
+        if (!lookupDate || !(lookupDate instanceof Date)) return null;
+        const jwStore = useJwStore();
+        if (!this.currentCongregation || !jwStore.lookupPeriod) return null;
+        const congregationLookupPeriod =
+          jwStore.lookupPeriod[this.currentCongregation];
+        if (!congregationLookupPeriod) return null;
+        const dateInfo = congregationLookupPeriod.find((day) =>
+          datesAreSame(day.date, lookupDate),
+        );
+        if (!dateInfo?.date || !(dateInfo.date instanceof Date)) return null;
+        return isMwMeetingDay(dateInfo.date)
+          ? 'mw'
+          : isWeMeetingDay(dateInfo.date)
+            ? 'we'
+            : null;
+      } catch (error) {
+        errorCatcher(error);
+        return null;
+      }
+    },
     invalidSettings(congregation?: number | string) {
       if (!congregation) congregation = this.currentCongregation;
       if (!congregation) return false;
@@ -237,6 +260,16 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!currentLanguage) return [];
       return jwStore.jwSongs[currentLanguage]?.list || [];
     },
+    isSelectedDayToday(): boolean {
+      try {
+        const selectedDateObj = this.selectedDateObject as DateInfo | null;
+        if (!selectedDateObj?.date) return false;
+        return datesAreSame(selectedDateObj.date, new Date());
+      } catch (error) {
+        errorCatcher(error);
+        return false;
+      }
+    },
     // Direct access to media sections - no need for getter methods anymore
     // Use selectedDateObject.mediaSections directly for all media
     // Use selectedDateObject.mediaSections.find(s => s.config.uniqueId === section)?.items.filter(item => !item.hidden) for visible media
@@ -285,6 +318,21 @@ export const useCurrentStateStore = defineStore('current-state', {
         null
       );
     },
+    selectedDayMeetingType(): 'mw' | 'we' | null {
+      try {
+        const selectedDateObj = this.selectedDateObject as DateInfo | null;
+        if (!selectedDateObj?.date) return null;
+        return isMwMeetingDay(selectedDateObj.date)
+          ? 'mw'
+          : isWeMeetingDay(selectedDateObj.date)
+            ? 'we'
+            : null;
+      } catch (error) {
+        errorCatcher(error);
+        return null;
+      }
+    },
+
     someItemsHiddenForSelectedDate(): boolean {
       if (!this.selectedDateObject?.mediaSections) return false;
 

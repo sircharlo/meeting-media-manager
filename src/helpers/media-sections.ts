@@ -180,7 +180,9 @@ function getMeetingSectionConfigs(section: MediaSectionIdentifier | undefined) {
 }
 
 export const createMeetingSections = (day: DateInfo) => {
-  const meetingType = day.meeting;
+  const currentState = useCurrentStateStore();
+  const { getMeetingType } = currentState;
+  const meetingType = getMeetingType(day.date);
   console.log('🔍 [createMeetingSections] meetingType', meetingType, day);
 
   // Debug logging to help identify the issue

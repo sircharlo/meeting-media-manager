@@ -62,6 +62,8 @@ import {
   deleteCacheFiles,
 } from 'src/helpers/cleanup';
 import {
+  isMwMeetingDay,
+  isWeMeetingDay,
   remainingTimeBeforeMeetingStart,
   updateLookupPeriod,
 } from 'src/helpers/date';
@@ -142,13 +144,16 @@ const { displayCameraId } = storeToRefs(appSettings);
 const currentState = useCurrentStateStore();
 const {
   currentCongregation,
+  currentLangObject,
   currentSettings,
   downloadProgress,
+  isSelectedDayToday,
   mediaIsPlaying,
   mediaPlaying,
   online,
   selectedDate,
-  selectedDateObject,
+  selectedDayMeetingType,
+  yeartext,
 } = storeToRefs(currentState);
 
 const jwStore = useJwStore();
@@ -284,7 +289,7 @@ watch(online, (isNowOnline) => {
       jwStore.updateYeartext(
         online.value,
         currentSettings.value,
-        currentState.currentLangObject,
+        currentLangObject.value,
       );
       jwStore.updateJwLanguages(online.value);
     } else {
@@ -367,15 +372,15 @@ const { post: postCameraStream } = useBroadcastChannel<
 });
 
 watch(displayCameraId, (newCameraId) => {
-  if (currentState.mediaIsPlaying) return;
+  if (mediaIsPlaying.value) return;
   postCameraStream(newCameraId);
   if (!newCameraId) {
-    currentState.mediaPlaying.url = '';
+    mediaPlaying.value.url = '';
   }
 });
 
 watch(
-  () => currentState?.currentLangObject?.isSignLanguage,
+  () => currentLangObject.value?.isSignLanguage,
   (newIsSignLanguage) => {
     if (!newIsSignLanguage) {
       displayCameraId.value = null;
@@ -417,7 +422,7 @@ watch(
         console.log(
           '⚙️ Settings changed (congregation unchanged), updating lookup period',
         );
-        updateLookupPeriod(true);
+        updateLookupPeriod({ reset: true });
       }
     }
   },
@@ -461,9 +466,9 @@ watch(
       for (const changedWeek of weeksToUpdate) {
         if (!changedWeek) continue;
         console.log(`🎯 Updating lookup period for CO week: ${changedWeek}`);
-        updateLookupPeriod(true, {
+        updateLookupPeriod({
           onlyForWeekIncluding: changedWeek,
-          targeted: true,
+          reset: true,
         });
       }
 
@@ -599,8 +604,8 @@ const updateWatchFolderRef = async ({
             );
             if (exists) continue;
 
-            const weMeeting = dayObj.meeting === 'we';
-            const mwMeeting = dayObj.meeting === 'mw';
+            const weMeeting = isWeMeetingDay(dayObj.date);
+            const mwMeeting = isMwMeetingDay(dayObj.date);
             const targetSectionId =
               watchedItem.originalSection ||
               (weMeeting ? 'pt' : mwMeeting ? 'lac' : 'imported-media');
@@ -689,7 +694,7 @@ const bcClose = new BroadcastChannel('closeAttempts');
 bcClose.onmessage = (event) => {
   if (event?.data?.attemptedClose) {
     const meetingDay =
-      !!selectedDateObject.value?.today && !!selectedDateObject.value?.meeting;
+      isSelectedDayToday.value && !!selectedDayMeetingType.value;
     if (
       (mediaIsPlaying.value ||
         (currentCongregation.value && // a congregation is selected
@@ -829,7 +834,7 @@ watchImmediate(
   (): [string | undefined, string | undefined, boolean] => [
     jwStore.urlVariables?.base,
     jwStore.urlVariables?.mediator,
-    currentState.online,
+    online.value,
   ],
   ([base, mediator, online]: [
     string | undefined,
@@ -882,7 +887,7 @@ const { post: postYeartext } = useBroadcastChannel<
 });
 
 watchImmediate(
-  () => currentState.yeartext,
+  () => yeartext.value,
   (newYeartext) => {
     postYeartext(newYeartext);
   },
@@ -923,9 +928,9 @@ watchImmediate(
       base: jwStore.urlVariables?.base,
       mediator: jwStore.urlVariables?.mediator,
     });
-    postOnline(currentState.online);
+    postOnline(online.value);
     postHideMediaLogo(currentSettings.value?.hideMediaLogo);
-    postYeartext(currentState.yeartext);
+    postYeartext(yeartext.value);
   },
 );
 </script>

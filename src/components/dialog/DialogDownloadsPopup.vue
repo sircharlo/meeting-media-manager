@@ -403,7 +403,7 @@ const onRefreshMeetingMedia = () => {
     try {
       refreshing.value = true;
       // 1) Reset lookup period for current congregation
-      updateLookupPeriod(true);
+      updateLookupPeriod({ reset: true });
       // 2) Fetch media
       await fetchMedia();
     } finally {

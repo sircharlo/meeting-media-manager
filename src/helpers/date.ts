@@ -171,21 +171,29 @@ export const isWeMeetingDay = (lookupDate?: Date) => {
   }
 };
 
-export function updateLookupPeriod(
-  reset = false,
-  {
-    onlyForWeekIncluding,
-    targeted,
-  }: {
-    onlyForWeekIncluding: string;
-    targeted: boolean;
-  } = {
-    onlyForWeekIncluding: '',
-    targeted: false,
-  },
-) {
+export const isMeetingDay = (lookupDate?: Date) => {
   try {
-    const { currentCongregation, currentSettings } = useCurrentStateStore();
+    const currentState = useCurrentStateStore();
+    if (!lookupDate || currentState.currentSettings?.disableMediaFetching) {
+      return false;
+    }
+    return isMwMeetingDay(lookupDate) || isWeMeetingDay(lookupDate);
+  } catch (error) {
+    errorCatcher(error);
+    return false;
+  }
+};
+
+export function updateLookupPeriod({
+  onlyForWeekIncluding,
+  reset,
+}: {
+  onlyForWeekIncluding?: string;
+  reset?: boolean;
+} = {}) {
+  try {
+    const { currentCongregation, currentSettings, getMeetingType } =
+      useCurrentStateStore();
     if (!currentCongregation || !currentSettings) return;
 
     if (
@@ -229,7 +237,7 @@ export function updateLookupPeriod(
     const existingDates = new Set(
       lookupPeriod[currentCongregation]
         .filter((d) => {
-          if (!d.meeting) return true;
+          if (!getMeetingType(d.date)) return true;
           const allMedia: MediaItem[] = [];
           if (d.mediaSections) {
             d.mediaSections.forEach((sectionMedia) => {
@@ -257,12 +265,6 @@ export function updateLookupPeriod(
           date: dayDate,
           error: false,
           mediaSections: [],
-          meeting: isMwMeetingDay(dayDate)
-            ? 'mw'
-            : isWeMeetingDay(dayDate)
-              ? 'we'
-              : false,
-          today: datesAreSame(dayDate, new Date()),
         } satisfies DateInfo;
       },
     ).filter((day) => !existingDates.has(formatDate(day.date, 'YYYY/MM/DD')));
@@ -274,11 +276,6 @@ export function updateLookupPeriod(
       (day) =>
         getDateDiff(day.date, getSpecificWeekday(currentDate, 0), 'days') >= 0,
     );
-
-    const todayDate = lookupPeriod[currentCongregation].find((d) =>
-      datesAreSame(d.date, new Date()),
-    );
-    if (todayDate) todayDate.today = true;
 
     function getTargetedDays() {
       console.group('🎯 Targeted Days Selection');
@@ -366,7 +363,7 @@ export function updateLookupPeriod(
       }
 
       // Remove all sections that have no items if they are meeting sections and its a meeting day
-      if (day.meeting) {
+      if (getMeetingType(day.date)) {
         day.mediaSections = day.mediaSections.filter((section) => {
           return !!section.items?.length;
         });
@@ -377,19 +374,6 @@ export function updateLookupPeriod(
         console.log(`🗑️ Removed ${removedCount} dynamic media items`);
       }
 
-      // Set meeting type
-      day.meeting = isMwMeetingDay(day.date)
-        ? 'mw'
-        : isWeMeetingDay(day.date)
-          ? 'we'
-          : false;
-
-      // Update today flag
-      day.today = datesAreSame(day.date, new Date());
-
-      console.log(
-        `📝 Set meeting type: ${day.meeting || 'none'}, today: ${day.today}`,
-      );
       console.groupEnd();
     }
 
@@ -397,10 +381,12 @@ export function updateLookupPeriod(
       console.group('🔄 Lookup Period Reset');
       console.log('📋 Reset parameters:', {
         currentCongregation,
-        targeted,
+        onlyForWeekIncluding,
       });
 
-      const daysToReset = targeted ? getTargetedDays() : getAllDays() || [];
+      const daysToReset = onlyForWeekIncluding
+        ? getTargetedDays()
+        : getAllDays() || [];
       if (!daysToReset.length) {
         console.log('⚠️ No days found to reset');
         console.groupEnd();
@@ -434,11 +420,11 @@ export const remainingTimeBeforeMeetingStart = () => {
   try {
     const currentState = useCurrentStateStore();
     const meetingDay =
-      !!currentState.selectedDateObject?.today &&
-      !!currentState.selectedDateObject?.meeting;
+      !!currentState.isSelectedDayToday &&
+      !!currentState.selectedDayMeetingType;
     if (meetingDay) {
       const now = new Date();
-      const weMeeting = currentState.selectedDateObject?.meeting === 'we';
+      const weMeeting = currentState.selectedDayMeetingType === 'we';
       const meetingStartTimes = shouldUseChangedMeetingSchedule(now)
         ? {
             mw:

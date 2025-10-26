@@ -5,8 +5,6 @@ export interface DateInfo {
   date: Date;
   error: boolean;
   mediaSections: MediaSectionWithConfig[];
-  meeting: 'mw' | 'we' | false;
-  today: boolean;
 }
 
 export interface MediaSectionWithConfig {

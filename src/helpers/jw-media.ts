@@ -366,6 +366,8 @@ export const downloadFileIfNeeded = async ({
 };
 
 export const fetchMedia = async () => {
+  const currentStateStore = useCurrentStateStore();
+  const { getMeetingType } = currentStateStore;
   console.group('📥 Media Fetching');
   try {
     const currentStateStore = useCurrentStateStore();
@@ -438,13 +440,13 @@ export const fetchMedia = async () => {
             // console.log(`\nChecking day at index ${index}:`, day);
 
             // Skip non-meeting days entirely
-            if (!day.meeting) {
+            if (!getMeetingType(day.date)) {
               return null;
             }
 
             // Condition 1: Incomplete or error meeting
             const hasIncompleteOrErrorMeeting =
-              day.meeting && (!day.complete || day.error);
+              getMeetingType(day.date) && (!day.complete || day.error);
             if (hasIncompleteOrErrorMeeting) {
               console.group(
                 `📅 Day ${index + 1} - ${day.date.toISOString().split('T')[0]}`,
@@ -452,7 +454,7 @@ export const fetchMedia = async () => {
               console.log('🔍 Incomplete or error meeting detected:', {
                 complete: day.complete,
                 error: day.error,
-                meeting: day.meeting,
+                meeting: getMeetingType(day.date),
               });
             }
 
@@ -547,8 +549,9 @@ export const fetchMedia = async () => {
       try {
         queue
           ?.add(async () => {
+            const meetingType = getMeetingType(day.date);
             console.group(
-              `📅 Processing ${day.meeting === 'we' ? 'Weekend' : day.meeting === 'mw' ? 'Midweek' : 'Unknown'} Meeting - ${day.date.toISOString().split('T')[0]}`,
+              `📅 Processing ${meetingType === 'we' ? 'Weekend' : meetingType === 'mw' ? 'Midweek' : 'Unknown'} Meeting - ${day.date.toISOString().split('T')[0]}`,
             );
             if (!day) {
               console.log('⚠️ No day data');
@@ -564,10 +567,10 @@ export const fetchMedia = async () => {
               return;
             }
             let fetchResult = null;
-            if (day.meeting === 'we') {
+            if (meetingType === 'we') {
               console.log('🌅 Fetching weekend meeting media');
               fetchResult = await getWeMedia(dayDate);
-            } else if (day.meeting === 'mw') {
+            } else if (meetingType === 'mw') {
               console.log('🌆 Fetching midweek meeting media');
               fetchResult = await getMwMedia(dayDate);
             }
@@ -576,11 +579,7 @@ export const fetchMedia = async () => {
               // Get all media from all sections for replacement
               if (!day.mediaSections) day.mediaSections = [];
               createMeetingSections(day);
-              if (isMwMeetingDay(dayDate)) {
-                replaceMissingMediaByPubMediaId(day, fetchResult.media);
-              } else {
-                replaceMissingMediaByPubMediaId(day, fetchResult.media);
-              }
+              replaceMissingMediaByPubMediaId(day, fetchResult.media);
               day.error = fetchResult.error;
               day.complete = true;
             } else {

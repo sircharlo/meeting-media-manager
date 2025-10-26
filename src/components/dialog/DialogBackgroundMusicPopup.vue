@@ -123,9 +123,11 @@ const currentState = useCurrentStateStore();
 const {
   currentCongregation,
   currentSettings,
+  isSelectedDayToday,
   mediaIsPlaying,
   meetingDay,
   selectedDateObject,
+  selectedDayMeetingType,
 } = storeToRefs(currentState);
 
 // Constants
@@ -178,9 +180,7 @@ const musicPlayingTitle = ref('');
 const songList = ref<SongItem[]>([]);
 
 const isMeetingToday = computed(() => {
-  return (
-    !!selectedDateObject.value?.today && !!selectedDateObject.value?.meeting
-  );
+  return isSelectedDayToday.value && !!selectedDayMeetingType.value;
 });
 
 const isMeetingStartTimeInPast = computed(() => {

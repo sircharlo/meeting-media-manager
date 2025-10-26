@@ -16,7 +16,7 @@
             <q-spinner
               v-if="
                 !currentSettings?.disableMediaFetching &&
-                selectedDateObject?.meeting &&
+                selectedDayMeetingType &&
                 !selectedDateObject?.complete &&
                 !selectedDateObject?.error
               "
@@ -37,7 +37,7 @@
               !selectedDate
                 ? t('noDateSelected')
                 : !currentSettings?.disableMediaFetching &&
-                    selectedDateObject?.meeting &&
+                    selectedDayMeetingType &&
                     !selectedDateObject?.error
                   ? t('please-wait')
                   : t('there-are-no-media-items-for-the-selected-date')
@@ -48,7 +48,7 @@
               !selectedDate
                 ? t('select-a-date-to-begin')
                 : !currentSettings?.disableMediaFetching &&
-                    selectedDateObject?.meeting &&
+                    selectedDayMeetingType &&
                     !selectedDateObject?.error
                   ? t('currently-loading')
                   : t(
@@ -59,7 +59,7 @@
           <div
             v-if="
               currentSettings?.disableMediaFetching ||
-              !selectedDateObject?.meeting ||
+              !selectedDayMeetingType ||
               selectedDateObject?.error
             "
             class="row items-center justify-center q-mt-lg q-gutter-md"
@@ -111,6 +111,7 @@ watch(
 );
 
 const currentState = useCurrentStateStore();
+const { selectedDayMeetingType } = storeToRefs(currentState);
 const { currentSettings, selectedDate, selectedDateObject } =
   storeToRefs(currentState);
 </script>
