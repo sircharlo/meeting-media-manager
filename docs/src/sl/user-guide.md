@@ -4,9 +4,9 @@ Ta izčrpen uporabniški priročnik ti bo pomagal osvojiti vse funkcije M³, od 
 
 ## Začetek {#getting-started}
 
-### Download and Install {#download-and-install}
+### Prenesi in namesti {#download-and-install}
 
-Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
+Najnovejšo različico lahko preneseš s [strani za prenos](download). Stran ti bo priporočala najboljšo različico za tvojo napravo in prikazala najnovejšo različico.
 
 ### Prvi zagon {#first-launch}
 
@@ -82,70 +82,70 @@ Multimedijski predvajalnik omogoča celovito upravljanje:
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Zoom/Pan** - Use mouse wheel to zoom, drag to pan (for images)
+- **Povečanje/premikanje slike** – za povečanje slike uporabi kolesce miške, za premikanje slike pa povleci z miško
 
-### Advanced Presentation Features {#advanced-presentation}
+### Napredne možnosti predstavitve multimedijske vsebine {#advanced-presentation}
 
-#### Custom Timing {#custom-timing}
+#### Časovni razpored po meri {#custom-timing}
 
-Set custom start and end times for media:
+Za multimedijsko vsebino nastavi začetni in končni čas po meri:
 
 <!-- 1. Right-click on a media item
 2. Select "Edit Timing" -->
 
-1. Click on the duration of a video on the top left of its thumbnail
-2. Set start and end times
-3. Save your changes
+1. Klikni na trajanje videa v zgornjem levem kotu njegove sličice
+2. Nastavi začetni in končni čas
+3. Shrani spremembe
 
-#### Zoom and Pan {#zoom-pan}
+#### Povečevanje in premikanje {#zoom-pan}
 
-For images and videos:
+Za slike in videoposnetke:
 
-- **Zoom In/Out** - Use mouse wheel or zoom controls on the thumbnail
-- **Pan** - Click and drag the thumbnail to move the image around
-- **Reset Zoom** - Click to return to original zoom
+- **Povečaj/Pomanjšaj** - Uporabi kolesce miške ali gumbe za povečavo na sličici
+- **Premikanje** - Klikni in povleci sličico, da jo premaknete
+- **Ponastavi povečavo** - Klikni, da se vrneš na prvotno povečavo
 
-#### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
+#### Bližnjice na tipkovnici {#user-guide-keyboard-shortcuts}
 
-Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
+Nastavi prilagojene bližnjice na tipkovnici za hiter dostop. Privzeto niso nastavljene nobene bližnjice na tipkovnici.
 
-**Built-in Media Controls** (when main window is focused and showing the media list):
+**Vgrajeni upravljalniki multimedijske vsebine** (ko je glavno okno v ospredju in prikazuje seznam multimedijske vsebine):
 
-- **Tab/Shift+Tab** - Navigate between media items
-- **Up/Down Arrow** - Navigate between media items
-- **Space** - Play/Pause media
-- **Escape** - Stop media
+- **Tab/Shift+Tab** - Premikanje med multimedijskimi elementi
+- **Puščica navzgor/navzdol** - Premikanje med multimedijskimi elementi
+- **Preslednica** - Predvajanje/zaustavitev predvajanja multimedijske vsebine
+- **Escape** - Ustavitev predvajanja multimedijske vsebine
 
-**Customizable Shortcuts** (when enabled in settings):
+**Prilagodljive bližnjice** (če so omogočene v nastavitvah):
 
 - **Multimedijsko okno** - Odpri/zapri multimedijsko okno
-- **Previous/Next Media** - Navigate between media items
-- **Pause/Resume** - Control media playback
-- **Stop Media** - Stop media playback
-- **Music Toggle** - Control background music
+- **Pojdi na prejšnjo/naslednjo multimedijsko datoteko** - Premikanje med multimedijskimi datotekami
+- **Začasno zaustavi/nadaljuj predvajanje multimedijske vsebine**: Nadzoruj predvajanje multimedijske vsebine
+- **Ustavi predvajanje multimedijske vsebine** - Ustavi predvajanje
+- **Zagon/zaustavitev glasbe v ozadju** - Nadzoruj predvajanje glasbe v ozadju
 
-**Note (\*):** Global shortcut - available even when the app is not focused
+**Opomba (\*):** Globalna bližnjica – na voljo tudi, ko aplikacija ni v ospredju.
 
-## Background Music {#user-guide-background-music}
+## Glasba v ozadju {#user-guide-background-music}
 
-### Setting Up Background Music {#background-music-setup}
+### Nastavitev glasbe v ozadju {#background-music-setup}
 
-Background music automatically plays before meetings and stops at the appropriate time:
+Glasba v ozadju se samodejno predvaja pred shodi in se ustavi ob pravem času:
 
-1. **Enable Music** - Turn on background music in settings
-2. **Auto-Start** - Music will start automatically when M³ launches, if appropriate
-3. **Meeting Stop** - Music stops automatically before meeting start time
-4. **Manual Control** - Use the music button in the status bar to start/stop manually
-5. **Restart** - Resume music after meetings with one click
+1. **Vklopi glasbo** – V nastavitvah vklopi glasbo v ozadju
+2. **Samodejni zagon** – Glasba se bo samodejno zagnala ob zagonu M³, če je to primerno
+3. **Ustavitev pred shodom** – Glasba se samodejno ustavi pred začetkom shoda
+4. **Ročni nadzor** – Uporabi gumb za glasbo v vrstici stanja za ročni zagon/ustavitev
+5. **Ponovni zagon** – Po shodu lahko glasbo znova zaženeš z enim klikom
 
-## Zoom Integration {#user-guide-zoom-integration}
+## Povezava z Zoomom {#user-guide-zoom-integration}
 
-M³ can integrate with Zoom for automatic screen sharing:
+M³ se lahko poveže z Zoomom za samodejno deljenje zaslona:
 
-1. **Enable Integration** - Turn on Zoom integration in settings
-2. **Configure Shortcut** - Set up the screen sharing keyboard shortcut that is configured in Zoom. Make sure that the "global" checkbox is checked in Zoom.
-3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
-4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
+1. **Vklopi povezavo** – V nastavitvah vklopi povezavo z Zoomom
+2. **Nastavi bližnjico** – Nastavi tipkovno bližnjico za deljenje zaslona, kot je določena v Zoomu. Poskrbi, da bo v Zoomu označena možnost »globalno« (angl. global).
+3. **Samodejni nadzor** – M³ bo samodejno vklapljal in izklapljal deljenje zaslona v Zoomu, ko bo to potrebno
+4. **Ročni nadzor** – Če je treba, lahko deljenje zaslona še vedno ročno upravljaš v Zoomu
 
 ## OBS Studio Integration {#user-guide-obs-integration}
 
