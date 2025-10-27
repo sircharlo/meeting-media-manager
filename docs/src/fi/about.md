@@ -1,105 +1,105 @@
-# About Meeting Media Manager (M³) {#about-meeting-media-manager-m3}
+# Tietoja Meeting Media Managerista (M³) {#about-meeting-media-manager-m3}
 
 ![M³ banner](./../assets/m3-banner.png)
 
-## What is this app? {#what-is-this-app}
+## Mikä tämä sovellus on? {#what-is-this-app}
 
-**Meeting Media Manager**, or **M³** for short, is a comprehensive cross-platform application for Windows, macOS and Linux that automatically downloads, organizes, and presents pictures and videos for congregation meetings of Jehovah's Witnesses. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
+**Meeting Media Manager**, tai **M³** lyhyeksi, on kattava poikkialustainen sovellus joka tukee Windows, macOS ja Linuxia, jotka lataavat, järjestävät ja esittelevät automaattisesti kuvia ja videoita Jehovan todistajien seurakuntakokouksiin. Se tukee kaikkia Jehovan todistajien virallisilla verkkosivuilla olevia kieliä ja tarjoaa tehokkaita työkaluja median hallintaan sekä hybridi- että tavallisia kokouksia.
 
-M³ features support for managing regular and custom meeting media, multiple congregations and/or groups using the same computer account, and advanced presentation capabilities that make media sharing effortless.
+M³ tukee säännöllisen ja mukautetun kokouksen median, useiden seurakuntien ja / tai ryhmien hallintaa käyttäen samaa tietokonetiliä, ja kehittyneitä esitysvalmiuksia, jotka tekevät median jakamisesta vaivattoman.
 
-:::info Note
+:::info Huomio
 
-This app used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed to Meeting Media Manager in May 2022.
+Tämä sovellus tunnettiin nimellä JWMMF (JW Meeting Media Fetcher), mutta nimettiin Meeting Media Manageriksi toukokuussa 2022.
 
 :::
 
-## Why choose M³? {#why-choose-m3}
+## Miksi valita M³? {#why-choose-m3}
 
-M³ is the ultimate tool for managing meeting media, offering a seamless, reliable, and feature-rich experience across platforms. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
+M³ on paras työkalu hoitaa mediaa, joka tarjoaa saumattoman, luotettavan ja monipuolisen kokemuksen eri alustoilla. Se on suunniteltu erityisesti seurakuntakokousten tarpeisiin ja tarjoaa kaiken tarvittavan tehokkaan tiedotusvälineiden esittelyn.
 
-### Key benefits {#key-benefits}
+### Tärkeimmät hyödyt {#key-benefits}
 
-- **Effortless media presentation**: Presenting media at its finest — just open M³ and everything works. No complex setup or extra steps required.
+- **Vaivaton mediaesittely**: Tiedotusvälineiden esittäminen hienoimmissa – avaa M³ ja kaikki toimii. Ei monimutkaisia asetuksia tai lisävaiheita.
 
-- **Multi-congregation support**: Manage settings for multiple congregations or groups easily within a single application.
+- **Moniseurakunnan tuki**: Hallitse asetuksia useille seurakunnille tai ryhmille helposti yhdessä sovelluksessa.
 
-- **Advanced features**: Easily add extra media, import custom content, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Kehittyneet ominaisuudet**: Lisää helposti ylimääräisiä medioita, tuo mukautettua sisältöä ja jaa automaattisesti mitä tapahtuu Valtakunnansalilla myös Zoomin osallistujen kanssa.
 
-- **Optimized cross-platform performance**: Enjoy a smooth and responsive experience on Windows, macOS, and Linux, even on older systems or computers with limited resources.
+- **Optimoitu monialustainen suorituskyky**: Nauti sileästä ja reagoivasta kokemuksesta Windowsissa, macOSissa ja Linuxissa, jopa vanhemmissa järjestelmissä tai tietokoneissa, joilla on rajalliset resurssit.
 
-- **Reliable and stable**: Built to perform when you need it most. Encounter a bug? Report it, and it will be addressed promptly.
+- **Luotettava ja vakaa**: Rakennettu suorittamaan, kun tarvitset sitä eniten. Löytyikö bugi? Raportoi se, ja siihen puututaan viipymättä.
 
-- **Advanced presentation tools**: Advanced media controls, zoom/pan capabilities, custom timing, and seamless Zoom and OBS Studio integration.
+- **Edistyneet esitysvälineet**: Edistyneet mediasäätimet, zoom/Pan-ominaisuudet, mukautettu ajoitus, saumaton zoom- ja OBS Studio -integraatio.
 
-## What can M³ do? {#what-can-m3-do}
+## Mitä M³ voi tehdä? {#what-can-m3-do}
 
-M³ is a comprehensive media management solution that allows you to easily and automatically download, synchronize, share, and present all meeting media. Here's what makes M³ powerful:
+M³ on kattava medianhallinnan ratkaisu, jonka avulla voit helposti ja automaattisesti ladata, synkronoida, jakaa ja esitellä kaikki kokouksen mediat. Tässä mikä tekee M³ tehokkaan:
 
-### Core Media Management {#core-media-management}
+### Keskeinen mediahallinta {#core-media-management}
 
-- **Automatic media downloads**: Automatically fetches and downloads all media needed for upcoming meetings
-- **Multi-language support**: Download media in any of hundreds of available languages
-- **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
-- **Media organization**: Automatically organizes media by date and meeting section
+- **Automaattiset median lataukset**: automaattisesti hakee ja lataa kaikki mediat tuleviin kokouksiin
+- **Monikielinen tuki**: Lataa mediaa millä tahansa sadoilla saatavilla olevilla kielillä
+- **Älykäs välimuisti**: Älykäs välimuistijärjestelmä, joka pitää median organisoidun ja ajan tasalla
+- **Median organisointi**: Järjestä media automaattisesti päivämäärän ja kokouksen mukaan
 
-### Media Presentation Features {#about-presentation-features}
+### Median esitysominaisuudet {#about-presentation-features}
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
+Integroitu median esitystila sisältää **hybridi** tai **tavalliset** seurakuntakokoukset:
 
-- **Advanced media controls**: Media thumbnails with zoom and pan capabilities
-- **Custom timing**: Set custom start and end times for media playback
-- **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
-- **Multi-monitor support**: Automatic external monitor detection and management
-- **Clean presentation**: Distraction-free media presentation interface
+- **Edistyneet mediaohjaukset**: zoomaus- ja Pan-ominaisuuksilla varustetut mediakuvat
+- **Mukautettu ajoitus**: Aseta mukautetut aloitus- ja lopetusajat mediasoittimelle
+- **Toistoasetukset**: Helppokäyttöinen tauko/play/stop -painikkeet näppäimistöllä
+- **Moninäyttötuki**: Automaattinen ulkoisen näytön havaitseminen ja hallinta
+- **Puhtaat esitykset**: Häiriötön median esityskäyttöliittymä
 
-### Background Music {#about-background-music}
+### Taustamusiikki {#about-background-music}
 
-- **Intelligent playback**: Background music that automatically stops before meetings start
-- **One-click restart**: Resume background music with a single click after meetings
-- **Volume control**: Adjustable background music volume with fade-out capabilities
+- **Älykäs soitto**: Taustamusiikki, joka pysähtyy automaattisesti ennen kokousten alkamista
+- **Yhden napsautuksen käynnistys**: Jatka taustamusiikkia yhdellä napsautuksella kokousten jälkeen
+- **Äänenvoimakkuuden säätö**: Säädettävä taustamusiikin äänenvoimakkuus fade-out ominaisuuksilla
 
-### Zoom Integration {#about-zoom-integration}
+### Zoomaus Integraatio {#about-zoom-integration}
 
-- **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
+- **Automaattinen näytön jakaminen**: Käynnistä ja lopeta näytön jakaminen automaattisesti, kun toistat tai pysäytät median
 
-### OBS Studio Integration {#about-obs-integration}
+### OBS Studion Integraatio {#about-obs-integration}
 
-- **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
-- **Scene management**: Automatic switching between camera, media, and other scenes
+- **Automaattinen kohtauksen vaihtaminen**: Saumaton integrointi OBS Studion hybridikokouksiin
+- **Kohtauksen hallinta**: Automaattinen vaihtaminen kameran, median ja muiden tilanteiden välillä
 
-### Media Import and Management {#about-media-import}
+### Median tuonti ja hallinta {#about-media-import}
 
-- **JWPUB files**: Import and manage JWPUB files with ease
-- **JWLPLAYLIST files**: Support for JW Library playlist files
-- **Custom media**: Import custom videos, pictures, audio files, and PDF files
-- **Audio Bible**: Import Study Bible media and audio recordings of the New World Translation
-- **Public talks**: Always have public talk media overview ready to use with the S-34 importer
+- **JWPUB tiedostot**: Tuo ja hallitse JWPUB tiedostoja helposti
+- **JWLPLAYLIST-tiedostot**: Tuki JW Library -soittolistoille
+- **Mukautettu media**: Tuo mukautettuja videoita, kuvia, äänitiedostoja ja PDF-tiedostoja
+- **Ääni Raamattue**: Tuo Tutkimusraamatun mediat ja äänitallenteet
+- **Yleisöesitelmät**: Yleisöesitelmän mediat heti valmiina käyttöön hakemalla ne suoraan S-34 tiedostosta
 
-### Advanced Features {#about-advanced-features}
+### Edistyneet Ominaisuudet {#about-advanced-features}
 
-- **Folder monitoring**: Automatically sync media from watched folders (Dropbox, OneDrive, etc.)
-- **Media export**: Automatically export media to folders, organized by date
-- **Website presentation**: Present the official website on external monitors
-- **Keyboard shortcuts**: Customizable keyboard shortcuts for many functions
-- **Multiple profiles**: Manage different congregations or groups with separate profiles
+- **Kansion seuranta**: Synkronoi automaattisesti mediaa katsotuista kansioista (Dropbox, OneDrive, jne.)
+- **Median vienti**: Vie median automaattisesti päivämäärän mukaan järjestettyihin kansioihin
+- **Verkkosivujen esittely**: Esittele viralliset sivut ulkoisilla näytöillä
+- **Näppäimistön pikakuvakkeet**: Mukautettavat näppäimistön pikakuvakkeet monille toiminnoille
+- **Useita profiileja**: Hallitse eri seurakuntia tai ryhmiä erillisillä profiileilla
 
-## Does M³ work in my language? {#does-m3-work-in-my-language}
+## Toimiiko M³ kielelläni? {#does-m3-work-in-my-language}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Kyllä!** M3 tarjoaa kattavan monikielisen tuen:
 
-Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of languages available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need during setup.
+Jehovan todistajien kokouksiin tarkoitetut tiedotusvälineet voidaan ladata automaattisesti millä tahansa sadoilla kielellä Jehovan todistajien verkkosivuistoilta. Käytettävissä olevien kielten luettelo on dynaamisesti päivitetty; sinun tarvitsee vain valita haluamasi kieli.
 
-### Interface Languages {#interface-languages}
+### Käyttöliittymän kielet {#interface-languages}
 
-M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
+Vapaaehtoiset ovat kääntäneet M³ monille kielille. Voit määrittää kielen, jonka haluat näytettävän M³:n käyttöliittymässä riippumatta siitä, mitä kieltä median lataamiseen käytetään. Tämä tarkoittaa, että voit käyttää M³:a haluamallasi kielellä ja ladata mediaa millä tahansa muulla tuetulla kielellä.
 
-For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
+Lisätietoja varmennuskielistä ja tekstityksistä on [FAQ](faq#language-support).
 
-## System Requirements {#system-requirements}
+## Järjestelmävaatimukset {#system-requirements}
 
-For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
+Tuettujen käyttöjärjestelmien ja vaatimusten osalta katso vastaukset [FAQ](faq#technical-questions).
 
-**Give M³ a try today and see for yourself what it can do! Presenting media at congregation meetings has never been easier.**
+**Kokeile M³:a tänään ja näe itse, mitä se voi tehdä! Median esittäminen seurakuntakokouksissa ei ole koskaan ollut helpompaa.**
 
 ![M³ preview](./../assets/m3-preview.png)
