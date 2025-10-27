@@ -1712,8 +1712,7 @@ const showEmptyState = computed(() => {
     (currentSettings.value?.disableMediaFetching && noMediaSections) ||
     (!currentSettings.value?.disableMediaFetching &&
       ((selectedDayMeetingType.value &&
-        (selectedDateObject.value.status !== 'complete' ||
-          totalMediaCount === 0)) ||
+        (!selectedDateObject.value.status || totalMediaCount === 0)) ||
         (!selectedDayMeetingType.value && noMediaSections)))
   );
 });
