@@ -10,6 +10,7 @@ import type {
 
 import { defineStore } from 'pinia';
 import { LocalStorage as QuasarStorage } from 'quasar';
+import { updateLookupPeriod } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   createMeetingSections,
@@ -26,8 +27,6 @@ import {
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 import { toRaw } from 'vue';
-
-import { useCurrentStateStore } from './current-state';
 
 const { fs, getAppDataPath, path } = window.electronApi;
 const { exists } = fs;
@@ -73,138 +72,6 @@ export const useAppSettingsStore = defineStore('app-settings', {
           console.warn('🔍 [migration] Invalid jwStore structure:', jwStore);
           return false;
         }
-
-        /**
-         * Removes all dynamic media entries from the lookupPeriod store, and sets the
-         * complete and error flags to false for all days that have a meeting. This is
-         * needed after certain updates to reset the state of the dynamic media items.
-         */
-        const refreshDynamicMedia = () => {
-          const currentState = useCurrentStateStore();
-          const { getMeetingType } = currentState;
-          // Validate that jwStore.lookupPeriod exists and is properly initialized
-          if (
-            !jwStore.lookupPeriod ||
-            typeof jwStore.lookupPeriod !== 'object' ||
-            Array.isArray(jwStore.lookupPeriod)
-          ) {
-            console.warn(
-              '🔍 [refreshDynamicMedia] Invalid jwStore.lookupPeriod structure:',
-              jwStore.lookupPeriod,
-            );
-            return;
-          }
-
-          let currentLookupPeriods;
-          try {
-            const rawLookupPeriod = toRawDeep(jwStore.lookupPeriod);
-            currentLookupPeriods = structuredClone(rawLookupPeriod);
-          } catch (error) {
-            console.warn(
-              '🔍 [refreshDynamicMedia] Failed to clone lookupPeriod:',
-              error,
-            );
-            currentLookupPeriods = {};
-          }
-
-          // Get all congregation IDs that have data in lookupPeriod
-          const congregationIds = Object.keys(currentLookupPeriods).filter(
-            (congId) => congId && currentLookupPeriods[congId],
-          );
-
-          console.log(
-            `🔄 [refreshDynamicMedia] Resetting dynamic media for ${congregationIds.length} congregations:`,
-            congregationIds,
-          );
-
-          try {
-            for (const congId of congregationIds) {
-              if (!congId || !currentLookupPeriods[congId]) continue;
-
-              // Ensure dateInfo is an array
-              if (!Array.isArray(currentLookupPeriods[congId])) {
-                console.warn(
-                  '🔍 [refreshDynamicMedia] Invalid dateInfo structure for congregation:',
-                  congId,
-                  currentLookupPeriods[congId],
-                );
-                continue;
-              }
-
-              // Reset all meeting days for this congregation
-              currentLookupPeriods[congId]
-                .filter((day) => getMeetingType(day.date))
-                .forEach((day, dayIndex) => {
-                  // Validate day object structure
-                  if (!day || typeof day !== 'object') {
-                    console.warn(
-                      '🔍 [refreshDynamicMedia] Skipping invalid day object at index:',
-                      dayIndex,
-                      day,
-                    );
-                    return;
-                  }
-
-                  // Ensure the date is properly converted to a Date object
-                  if (day.date && !(day.date instanceof Date)) {
-                    try {
-                      console.warn(
-                        '🔍 [refreshDynamicMedia] Converting corrupted date object:',
-                        day.date,
-                      );
-                      day.date = dateFromString(day.date);
-                    } catch (error) {
-                      console.warn(
-                        '🔍 [refreshDynamicMedia] Failed to convert corrupted date object, skipping day:',
-                        day.date,
-                        error,
-                      );
-                      return;
-                    }
-                  }
-
-                  // Remove dynamic media from all sections (same logic as updateLookupPeriod)
-                  try {
-                    day.mediaSections?.forEach((section) => {
-                      if (section && section.items) {
-                        for (let i = section.items.length - 1; i >= 0; i--) {
-                          if (section.items[i]?.source === 'dynamic') {
-                            section.items.splice(i, 1);
-                          }
-                        }
-                      }
-                    });
-                  } catch (error) {
-                    console.warn(
-                      '🔍 [refreshDynamicMedia] Failed to process media sections for day:',
-                      day.date,
-                      error,
-                    );
-                  }
-
-                  // Reset status flag
-                  day.status = null;
-
-                  // Remove empty sections for meeting days
-                  if (getMeetingType(day.date)) {
-                    day.mediaSections = day.mediaSections?.filter((section) => {
-                      return !!section.items?.length;
-                    });
-                  }
-                });
-            }
-          } catch (error) {
-            console.warn(
-              '🔍 [refreshDynamicMedia] Failed to process lookupPeriods:',
-              error,
-            );
-          }
-
-          jwStore.lookupPeriod = currentLookupPeriods;
-          console.log(
-            '✅ [refreshDynamicMedia] Dynamic media reset completed for all congregations',
-          );
-        };
 
         if (type === 'firstRun') {
           // Validate that congregationStore.congregations exists and is properly initialized
@@ -885,7 +752,8 @@ export const useAppSettingsStore = defineStore('app-settings', {
           }
           jwStore.lookupPeriod = currentLookupPeriods;
         } else if (type.endsWith('refreshDynamicMedia')) {
-          refreshDynamicMedia();
+          // Refresh dynamic media for all congregations
+          updateLookupPeriod({ allCongregations: true, reset: true });
         } else if (type === '25.8.4-newMediaSections') {
           // Validate that jwStore.lookupPeriod exists and is properly initialized
           if (

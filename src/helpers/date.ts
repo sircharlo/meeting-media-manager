@@ -185,16 +185,70 @@ export const isMeetingDay = (lookupDate?: Date) => {
 };
 
 export function updateLookupPeriod({
+  allCongregations,
   onlyForWeekIncluding,
   reset,
 }: {
+  allCongregations?: boolean;
   onlyForWeekIncluding?: string;
   reset?: boolean;
 } = {}) {
   try {
-    const { currentCongregation, currentSettings } = useCurrentStateStore();
     const { lookupPeriod } = useJwStore();
 
+    if (!lookupPeriod || typeof lookupPeriod !== 'object') return;
+
+    // --- Handle "reset for all congregations" mode ---
+    if (reset && allCongregations) {
+      const congregationIds = Object.keys(lookupPeriod).filter(
+        (id) => id && Array.isArray(lookupPeriod[id]),
+      );
+
+      console.log(
+        `🔄 [updateLookupPeriod] Resetting dynamic media for ${congregationIds.length} congregations`,
+      );
+
+      for (const congId of congregationIds) {
+        console.log(
+          `🔄 [updateLookupPeriod] Resetting dynamic media for congregation ${congId}`,
+        );
+        try {
+          const days = lookupPeriod[congId];
+          if (!Array.isArray(days)) {
+            console.log(
+              `🔄 [updateLookupPeriod] Invalid days for congregation ${congId}`,
+            );
+            continue;
+          }
+          console.log(
+            `🔄 [updateLookupPeriod] Found ${days.length} days for congregation ${congId}`,
+          );
+
+          for (const day of days) {
+            console.log(
+              `🔄 [updateLookupPeriod] Resetting dynamic media for day ${day.date}`,
+            );
+            resetDay(day);
+          }
+
+          lookupPeriod[congId] = days.filter(Boolean);
+        } catch (error) {
+          console.error(
+            `🔄 [updateLookupPeriod] Failed to reset dynamic media for congregation ${congId}:`,
+            error,
+          );
+          errorCatcher(error);
+        }
+      }
+
+      console.log(
+        '✅ [updateLookupPeriod] Dynamic media reset completed for all congregations',
+      );
+      return; // Exit early — no need for single-congregation flow
+    }
+
+    // --- Single-congregation logic ---
+    const { currentCongregation, currentSettings } = useCurrentStateStore();
     if (!currentCongregation || !currentSettings) return;
 
     updateMeetingScheduleIfNeeded(currentSettings);
@@ -277,18 +331,22 @@ function getDaysForWeek(days: DateInfo[], dateStr: string) {
 }
 
 function resetDay(day: DateInfo) {
-  const totalBefore = countMedia(day);
-  day.status = null;
+  try {
+    const totalBefore = countMedia(day);
+    day.status = null;
 
-  if (day.mediaSections) {
-    day.mediaSections.forEach((s) => {
-      s.items = (s.items || []).filter((i) => i.source !== 'dynamic');
-    });
-    day.mediaSections = day.mediaSections.filter((s) => s.items?.length);
+    if (day.mediaSections) {
+      day.mediaSections.forEach((s) => {
+        s.items = (s.items || []).filter((i) => i.source !== 'dynamic');
+      });
+      day.mediaSections = day.mediaSections.filter((s) => s.items?.length);
+    }
+
+    const removed = totalBefore - countMedia(day);
+    if (removed > 0) console.log(`🗑️ Removed ${removed} dynamic items`);
+  } catch (error) {
+    errorCatcher(error);
   }
-
-  const removed = totalBefore - countMedia(day);
-  if (removed > 0) console.log(`🗑️ Removed ${removed} dynamic items`);
 }
 
 function updateMeetingScheduleIfNeeded(settings: SettingsValues) {
