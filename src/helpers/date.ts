@@ -1,4 +1,4 @@
-import type { DateInfo, MediaItem } from 'src/types';
+import type { DateInfo, SettingsValues } from 'src/types';
 
 import { DAYS_IN_FUTURE } from 'src/constants/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -192,226 +192,135 @@ export function updateLookupPeriod({
   reset?: boolean;
 } = {}) {
   try {
-    const { currentCongregation, currentSettings, getMeetingType } =
-      useCurrentStateStore();
+    const { currentCongregation, currentSettings } = useCurrentStateStore();
+    const { lookupPeriod } = useJwStore();
+
     if (!currentCongregation || !currentSettings) return;
 
-    if (
-      currentSettings.meetingScheduleChangeDate &&
-      ((!currentSettings.meetingScheduleChangeOnce &&
-        isInPast(currentSettings.meetingScheduleChangeDate, true)) ||
-        (currentSettings.meetingScheduleChangeOnce &&
-          isInPast(
-            addToDate(currentSettings.meetingScheduleChangeDate, { day: 7 }),
-            true,
-          )))
-    ) {
-      // Update meeting schedule
-      if (!currentSettings.meetingScheduleChangeOnce) {
-        currentSettings.mwDay =
-          currentSettings.meetingScheduleChangeMwDay ?? currentSettings.mwDay;
-        currentSettings.mwStartTime =
-          currentSettings.meetingScheduleChangeMwStartTime ??
-          currentSettings.mwStartTime;
-        currentSettings.weDay =
-          currentSettings.meetingScheduleChangeWeDay ?? currentSettings.weDay;
-        currentSettings.weStartTime =
-          currentSettings.meetingScheduleChangeWeStartTime ??
-          currentSettings.weStartTime;
-      }
+    updateMeetingScheduleIfNeeded(currentSettings);
 
-      // Clear meeting schedule change settings
-      currentSettings.meetingScheduleChangeDate = null;
-      currentSettings.meetingScheduleChangeOnce = false;
-      currentSettings.meetingScheduleChangeMwDay = null;
-      currentSettings.meetingScheduleChangeMwStartTime = null;
-      currentSettings.meetingScheduleChangeWeDay = null;
-      currentSettings.meetingScheduleChangeWeStartTime = null;
-    }
-
-    const { lookupPeriod } = useJwStore();
     if (!lookupPeriod[currentCongregation]) {
       lookupPeriod[currentCongregation] = [];
     }
 
-    const existingDates = new Set(
-      lookupPeriod[currentCongregation]
-        .filter((d) => {
-          if (!getMeetingType(d.date)) return true;
-          const allMedia: MediaItem[] = [];
-          if (d.mediaSections) {
-            d.mediaSections.forEach((sectionMedia) => {
-              allMedia.push(...(sectionMedia.items || []));
-            });
-          }
-          return allMedia.length > 0;
-        })
-        .map((d) => formatDate(d.date, 'YYYY/MM/DD')),
-    );
     const currentDate = new Date();
-
-    const futureDates: DateInfo[] = Array.from(
-      {
-        length:
-          (currentSettings?.meteredConnection ? 1 : DAYS_IN_FUTURE) +
-          currentDate.getDay(),
-      },
-      (_, i) => {
-        const dayDate = addToDate(getSpecificWeekday(currentDate, 0), {
-          day: i,
-        });
-        return {
-          date: dayDate,
-          mediaSections: [],
-          status: null,
-        } satisfies DateInfo;
-      },
-    ).filter((day) => !existingDates.has(formatDate(day.date, 'YYYY/MM/DD')));
-
-    lookupPeriod[currentCongregation] = [
-      ...lookupPeriod[currentCongregation],
-      ...futureDates,
-    ].filter(
-      (day) =>
-        getDateDiff(day.date, getSpecificWeekday(currentDate, 0), 'days') >= 0,
+    extendLookupPeriod(
+      currentCongregation,
+      currentDate,
+      currentSettings,
+      lookupPeriod,
     );
-
-    function getTargetedDays() {
-      console.group('🎯 Targeted Days Selection');
-      if (!lookupPeriod[currentCongregation]) {
-        console.log('⚠️ No lookup period found for current congregation');
-        return [];
-      }
-
-      console.log(
-        '📅 Getting targeted days for week including:',
-        onlyForWeekIncluding,
-      );
-
-      const mondayOfTargetedWeek = getSpecificWeekday(
-        dateFromString(onlyForWeekIncluding),
-        0,
-      );
-
-      console.log(
-        '📍 Target week Monday:',
-        mondayOfTargetedWeek.toISOString().split('T')[0],
-      );
-
-      const result = lookupPeriod[currentCongregation].filter((day) => {
-        const mondayOfLookupWeek = getSpecificWeekday(day.date, 0);
-        const isTargetWeek =
-          datesAreSame(mondayOfTargetedWeek, mondayOfLookupWeek) ||
-          datesAreSame(mondayOfTargetedWeek, day.date);
-
-        if (isTargetWeek) {
-          console.log(
-            `  ✓ Including day: ${day.date.toISOString().split('T')[0]}`,
-          );
-        }
-
-        return isTargetWeek;
-      });
-      console.groupEnd();
-      return result;
-    }
-
-    function getAllDays() {
-      console.group('🌍 All Days Selection');
-      console.log('📋 Getting all days for congregation');
-      const result = lookupPeriod[currentCongregation];
-      console.groupEnd();
-      return result;
-    }
-
-    function resetDay(day: DateInfo) {
-      console.group(
-        `📅 Resetting Day - ${day.date.toISOString().split('T')[0]}`,
-      );
-      // Get total media count before reset
-      let beforeDynamicCount = 0;
-      if (day.mediaSections) {
-        day.mediaSections.forEach((sectionMedia) => {
-          beforeDynamicCount += sectionMedia.items?.length || 0;
-        });
-      }
-
-      // Reset status flag
-      day.status = null;
-
-      // Remove dynamic media from all sections
-      if (day.mediaSections) {
-        day.mediaSections.forEach((sectionMedia) => {
-          if (sectionMedia?.items?.length) {
-            for (let i = sectionMedia.items?.length - 1; i >= 0; i--) {
-              if (sectionMedia.items?.[i]?.source === 'dynamic') {
-                sectionMedia.items?.splice(i, 1);
-              }
-            }
-          }
-        });
-      }
-
-      // Get total media count after reset
-      let afterDynamicCount = 0;
-      if (day.mediaSections) {
-        day.mediaSections.forEach((sectionMedia) => {
-          afterDynamicCount += sectionMedia.items?.length || 0;
-        });
-      }
-
-      // Remove all sections that have no items if they are meeting sections and its a meeting day
-      if (getMeetingType(day.date)) {
-        day.mediaSections = day.mediaSections.filter((section) => {
-          return !!section.items?.length;
-        });
-      }
-
-      const removedCount = beforeDynamicCount - afterDynamicCount;
-      if (removedCount > 0) {
-        console.log(`🗑️ Removed ${removedCount} dynamic media items`);
-      }
-
-      console.groupEnd();
-    }
 
     if (reset) {
-      console.group('🔄 Lookup Period Reset');
-      console.log('📋 Reset parameters:', {
-        currentCongregation,
-        onlyForWeekIncluding,
-      });
+      const days = onlyForWeekIncluding
+        ? getDaysForWeek(
+            lookupPeriod[currentCongregation],
+            onlyForWeekIncluding,
+          )
+        : lookupPeriod[currentCongregation];
 
-      const daysToReset = onlyForWeekIncluding
-        ? getTargetedDays()
-        : getAllDays() || [];
-      if (!daysToReset.length) {
-        console.log('⚠️ No days found to reset');
-        console.groupEnd();
-        return;
-      }
+      if (!days.length) return;
 
-      console.log(`📅 Found ${daysToReset.length} days to reset`);
-
-      daysToReset.forEach((day, index) => {
-        console.log(
-          `🛠️  Resetting day ${index + 1}/${daysToReset.length}:`,
-          day?.date?.toISOString().split('T')[0],
-        );
-        resetDay(day);
-      });
-
-      console.log('✅ Reset process completed');
-      console.groupEnd();
+      days.forEach(resetDay);
     }
   } catch (error) {
     errorCatcher(error);
-  } finally {
-    // Ensure any open console groups are closed
-    if (reset) {
-      console.groupEnd();
-    }
   }
+}
+
+function countMedia(day: DateInfo) {
+  return (
+    day.mediaSections?.reduce((sum, s) => sum + (s.items?.length || 0), 0) || 0
+  );
+}
+
+function extendLookupPeriod(
+  congregation: string,
+  currentDate: Date,
+  settings: SettingsValues,
+  lookupPeriod: Partial<Record<string, DateInfo[]>>,
+) {
+  if (!lookupPeriod?.[congregation]) return;
+  const { getMeetingType } = useCurrentStateStore();
+  const DAYS_AHEAD =
+    (settings.meteredConnection ? 1 : DAYS_IN_FUTURE) + currentDate.getDay();
+
+  const existingDates = new Set(
+    lookupPeriod[congregation]
+      .filter((d) => {
+        if (!getMeetingType(d.date)) return true;
+        const items = d.mediaSections?.flatMap((s) => s.items || []);
+        return items?.length > 0;
+      })
+      .map((d) => formatDate(d.date, 'YYYY/MM/DD')),
+  );
+
+  const newDays = Array.from({ length: DAYS_AHEAD }, (_, i) => {
+    const date = addToDate(getSpecificWeekday(currentDate, 0), { day: i });
+    return { date, mediaSections: [], status: null } satisfies DateInfo;
+  }).filter((d) => !existingDates.has(formatDate(d.date, 'YYYY/MM/DD')));
+
+  lookupPeriod[congregation] = [
+    ...lookupPeriod[congregation],
+    ...newDays,
+  ].filter(
+    (d) => getDateDiff(d.date, getSpecificWeekday(currentDate, 0), 'days') >= 0,
+  );
+}
+
+function getDaysForWeek(days: DateInfo[], dateStr: string) {
+  const monday = getSpecificWeekday(dateFromString(dateStr), 0);
+  return days.filter((d) => {
+    const weekMonday = getSpecificWeekday(d.date, 0);
+    return datesAreSame(monday, weekMonday) || datesAreSame(monday, d.date);
+  });
+}
+
+function resetDay(day: DateInfo) {
+  const totalBefore = countMedia(day);
+  day.status = null;
+
+  if (day.mediaSections) {
+    day.mediaSections.forEach((s) => {
+      s.items = (s.items || []).filter((i) => i.source !== 'dynamic');
+    });
+    day.mediaSections = day.mediaSections.filter((s) => s.items?.length);
+  }
+
+  const removed = totalBefore - countMedia(day);
+  if (removed > 0) console.log(`🗑️ Removed ${removed} dynamic items`);
+}
+
+function updateMeetingScheduleIfNeeded(settings: SettingsValues) {
+  const { meetingScheduleChangeDate: changeDate } = settings;
+  if (!changeDate) return;
+
+  const hasExpired =
+    (!settings.meetingScheduleChangeOnce && isInPast(changeDate, true)) ||
+    (settings.meetingScheduleChangeOnce &&
+      isInPast(addToDate(changeDate, { day: 7 }), true));
+
+  if (!hasExpired) return;
+
+  // Apply new schedule (if not one-time)
+  if (!settings.meetingScheduleChangeOnce) {
+    settings.mwDay = settings.meetingScheduleChangeMwDay ?? settings.mwDay;
+    settings.mwStartTime =
+      settings.meetingScheduleChangeMwStartTime ?? settings.mwStartTime;
+    settings.weDay = settings.meetingScheduleChangeWeDay ?? settings.weDay;
+    settings.weStartTime =
+      settings.meetingScheduleChangeWeStartTime ?? settings.weStartTime;
+  }
+
+  // Clear change fields
+  Object.assign(settings, {
+    meetingScheduleChangeDate: null,
+    meetingScheduleChangeMwDay: null,
+    meetingScheduleChangeMwStartTime: null,
+    meetingScheduleChangeOnce: false,
+    meetingScheduleChangeWeDay: null,
+    meetingScheduleChangeWeStartTime: null,
+  });
 }
 
 export const remainingTimeBeforeMeetingStart = () => {
