@@ -177,7 +177,7 @@ jobs:
           rm -f $RUNNER_TEMP/build_certificate.p12
           security delete-keychain $RUNNER_TEMP/app-signing.keychain-db
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: M³ test build for ${{ matrix.os == 'macos-13' && 'Intel-based macOS' || matrix.os == 'macos-latest' && 'M-series (Apple Silicon) macOS' || matrix.os == 'windows-latest' && 'Windows' || 'Linux' }}
           path: |
