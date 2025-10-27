@@ -6,6 +6,7 @@ import type {
   PublicationFetcher,
 } from 'src/types';
 
+import { updateLookupPeriod } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getSpecificWeekday, isInPast } from 'src/utils/date';
 import {
@@ -465,7 +466,6 @@ export const deleteCacheFiles = async (
   itemsDeleted: number;
   mode: 'all' | 'smart';
 }> => {
-  const { updateLookupPeriod } = await import('src/helpers/date');
   try {
     const analysis = await analyzeCacheFiles();
 
