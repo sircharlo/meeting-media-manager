@@ -17,8 +17,7 @@
               v-if="
                 !currentSettings?.disableMediaFetching &&
                 selectedDayMeetingType &&
-                !selectedDateObject?.complete &&
-                !selectedDateObject?.error
+                !selectedDateObject?.status
               "
               color="primary"
               size="lg"
@@ -38,7 +37,7 @@
                 ? t('noDateSelected')
                 : !currentSettings?.disableMediaFetching &&
                     selectedDayMeetingType &&
-                    !selectedDateObject?.error
+                    selectedDateObject?.status !== 'error'
                   ? t('please-wait')
                   : t('there-are-no-media-items-for-the-selected-date')
             }}
@@ -49,7 +48,7 @@
                 ? t('select-a-date-to-begin')
                 : !currentSettings?.disableMediaFetching &&
                     selectedDayMeetingType &&
-                    !selectedDateObject?.error
+                    selectedDateObject?.status !== 'error'
                   ? t('currently-loading')
                   : t(
                       'use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media',
@@ -60,7 +59,7 @@
             v-if="
               currentSettings?.disableMediaFetching ||
               !selectedDayMeetingType ||
-              selectedDateObject?.error
+              selectedDateObject?.status === 'error'
             "
             class="row items-center justify-center q-mt-lg q-gutter-md"
           >

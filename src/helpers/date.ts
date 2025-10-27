@@ -261,10 +261,9 @@ export function updateLookupPeriod({
           day: i,
         });
         return {
-          complete: false,
           date: dayDate,
-          error: false,
           mediaSections: [],
+          status: null,
         } satisfies DateInfo;
       },
     ).filter((day) => !existingDates.has(formatDate(day.date, 'YYYY/MM/DD')));
@@ -337,9 +336,8 @@ export function updateLookupPeriod({
         });
       }
 
-      // Reset status flags
-      day.complete = false;
-      day.error = false;
+      // Reset status flag
+      day.status = null;
 
       // Remove dynamic media from all sections
       if (day.mediaSections) {

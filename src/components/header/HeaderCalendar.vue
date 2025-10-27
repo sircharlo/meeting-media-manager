@@ -551,9 +551,9 @@ const getEventDayColor = (eventDate: string) => {
     const lookupDate = lookupPeriod.value[currentCongregation.value]?.find(
       (d) => datesAreSame(eventDate, d.date),
     );
-    if (lookupDate?.error) {
+    if (lookupDate?.status === 'error') {
       return 'negative';
-    } else if (lookupDate?.complete) {
+    } else if (lookupDate?.status === 'complete') {
       return 'primary';
     }
     if (additionalMediaForDayExists(eventDate)) return 'imported-media';
@@ -592,7 +592,10 @@ useEventListener<
 const mediaSortCanBeReset = computed<boolean>(() => {
   if (
     !selectedDateObject.value?.mediaSections ||
-    !(selectedDayMeetingType.value && selectedDateObject.value?.complete)
+    !(
+      selectedDayMeetingType.value &&
+      selectedDateObject.value?.status === 'complete'
+    )
   )
     return false;
 

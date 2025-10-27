@@ -1,10 +1,9 @@
 import type { MediaItem, MediaSection } from './media';
 
 export interface DateInfo {
-  complete: boolean;
   date: Date;
-  error: boolean;
   mediaSections: MediaSectionWithConfig[];
+  status: 'complete' | 'error' | null;
 }
 
 export interface MediaSectionWithConfig {

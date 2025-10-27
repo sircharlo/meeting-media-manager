@@ -803,7 +803,7 @@ const seenErrors = new Set<string>();
 watch(
   () =>
     lookupPeriod.value[currentCongregation.value]
-      ?.filter((d) => d.error)
+      ?.filter((d) => d.status === 'error')
       .map((d) => formatDate(d.date, 'YYYY/MM/DD')),
   (errorVals) => {
     errorVals?.forEach((errorVal) => {
@@ -1712,7 +1712,8 @@ const showEmptyState = computed(() => {
     (currentSettings.value?.disableMediaFetching && noMediaSections) ||
     (!currentSettings.value?.disableMediaFetching &&
       ((selectedDayMeetingType.value &&
-        (!selectedDateObject.value.complete || totalMediaCount === 0)) ||
+        (selectedDateObject.value.status !== 'complete' ||
+          totalMediaCount === 0)) ||
         (!selectedDayMeetingType.value && noMediaSections)))
   );
 });

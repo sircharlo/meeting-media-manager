@@ -182,9 +182,8 @@ export const useAppSettingsStore = defineStore('app-settings', {
                     );
                   }
 
-                  // Reset status flags
-                  day.complete = false;
-                  day.error = false;
+                  // Reset status flag
+                  day.status = null;
 
                   // Remove empty sections for meeting days
                   if (getMeetingType(day.date)) {
@@ -730,8 +729,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
                   error,
                 );
               }
-              day.complete = false;
-              day.error = false;
+              day.status = null;
             });
             for (const [targetDate, additionalItems] of Object.entries(dates)) {
               if (!targetDate || !additionalItems) continue;
@@ -865,10 +863,9 @@ export const useAppSettingsStore = defineStore('app-settings', {
                 try {
                   const parsedDate = dateFromString(targetDate);
                   lookupPeriodForCongregation.push({
-                    complete: true,
                     date: parsedDate,
-                    error: false,
                     mediaSections: [],
+                    status: 'complete',
                   });
                 } catch (error) {
                   console.warn(
@@ -980,12 +977,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
               }
 
               day.mediaSections = [];
-              if (day.complete) {
-                day.complete = false;
-              }
-              if (day.error) {
-                day.error = false;
-              }
+              day.status = null;
 
               try {
                 createMeetingSections(day);

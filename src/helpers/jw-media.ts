@@ -403,8 +403,8 @@ export const fetchMedia = async () => {
             if (!existing) continue;
 
             const preferCurrent =
-              (day.complete && !day.error) ||
-              (!existing.complete && existing.error && day.error);
+              day.status === 'complete' ||
+              (existing.status === 'error' && day.status === 'error');
 
             if (preferCurrent) {
               dayMap.set(dateKey, day);
@@ -446,15 +446,14 @@ export const fetchMedia = async () => {
 
             // Condition 1: Incomplete or error meeting
             const hasIncompleteOrErrorMeeting =
-              getMeetingType(day.date) && (!day.complete || day.error);
+              getMeetingType(day.date) && day.status !== 'complete';
             if (hasIncompleteOrErrorMeeting) {
               console.group(
                 `📅 Day ${index + 1} - ${day.date.toISOString().split('T')[0]}`,
               );
               console.log('🔍 Incomplete or error meeting detected:', {
-                complete: day.complete,
-                error: day.error,
                 meeting: getMeetingType(day.date),
+                status: day.status,
               });
             }
 
@@ -526,8 +525,7 @@ export const fetchMedia = async () => {
     console.groupEnd();
 
     meetingsToFetch.forEach((day) => {
-      day.error = false;
-      day.complete = false;
+      day.status = null;
     });
     if (!queues.meetings[currentStateStore.currentCongregation]) {
       const { default: PQueue } = await import('p-queue');
@@ -560,8 +558,7 @@ export const fetchMedia = async () => {
             }
             const dayDate = day.date;
             if (!dayDate) {
-              day.complete = false;
-              day.error = true;
+              day.status = 'error';
               console.log('❌ No date for day');
               console.groupEnd();
               return;
@@ -580,24 +577,22 @@ export const fetchMedia = async () => {
               if (!day.mediaSections) day.mediaSections = [];
               createMeetingSections(day);
               replaceMissingMediaByPubMediaId(day, fetchResult.media);
-              day.error = fetchResult.error;
-              day.complete = true;
+              day.status = fetchResult.error ? 'error' : 'complete';
             } else {
               console.log('❌ Failed to fetch media');
-              day.error = true;
-              day.complete = false;
+              day.status = 'error';
             }
             console.groupEnd();
           })
           .catch((error) => {
             console.log('❌ Error during media processing:', error);
-            day.error = true;
+            day.status = 'error';
             console.groupEnd();
             throw error;
           });
       } catch (error) {
         errorCatcher(error);
-        day.error = true;
+        day.status = 'error';
       }
     }
     await queue?.onIdle();
