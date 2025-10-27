@@ -1,28 +1,28 @@
 <!-- markdownlint-disable no-duplicate-heading -->
 
-# What's New
+# Mitä uutta?
 
-For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
+Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELOG.md tiedosto GitHubissa.
 
 ## v25.10.1
 
-### ✨ New Features
+### ✨ Uudet Ominaisuudet
 
-- ✨ **Setup Wizard – Zoom Step**: Added a Zoom integration step to the setup wizard for easier initial configuration.
-- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. This makes it easier to choose the correct screen on which the media window should be displayed.
-- ✨ **Media Window Preference**: The app will now remember the preferred screen on which the media window should be displayed, if specified by the user.
+- ✨ **Asennusohjelma – Zoom-askel**: Lisätty Zoom integraatio ohjattuun asetukseen, jotta alkuperäinen konfiguraatio on helpompaa.
+- ✨ **Näytönvalinnan parannukset**: Näytä tarkka visuaalinen edustus kaikista näytöistä, sekä pääikkunan nykyisen koon ja sijainnin, näytön ponnahdusikkunassa. Tämän ansiosta on helpompi valita oikea näyttö, jossa media-ikkunan pitäisi näyttää.
+- ✨ **Mediaikkunan asetus**: Sovellus muistaa nyt halutun näytön, jossa media-ikkuna tulisi näyttää, jos käyttäjä sen määrittää.
 
 ## v25.10.0
 
-### ✨ New Features
+### ✨ Uudet Ominaisuudet
 
-- ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
-- ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
-- ✨ **Custom Events**: Added optional events hooks that can trigger keyboard shortcuts when certain events are detected. This can be useful for AV operators to execute actions automatically outside of the app. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
+- ✨ **Aloita toisto keskeytettynä**: Lisätty uusi asetus, jotta toisto voidaan aloittaa keskeytettynä, joka voi olla hyödyllinen kun valmistellaan asennuksen (kuten käynnistäminen Zoom jakaminen) ennen kuin media alkaa soittaa media-ikkunassa.
+- ✨ **Päivitysilmoitukset**: Käyttäjille ilmoitetaan päivityksistä sovelluksen sisäisen mainospalkin kautta, jonka avulla käyttäjä voi asentaa päivitykset välittömästi, sen sijaan että odottaisi seuraavan sovelluksen uudelleenkäynnistystä.
+- ✨ **Mukautettu tapahtuma**: Lisätty valinnaisia nappeja, jotka voivat laukaista näppäimistön pikanäppäimiä, kun tiettyjä tapahtumia havaitaan. Tämä voi olla hyödyllistä äänipöydän käyttäjille, jotka voivat suorittaa toimenpiteitä automaattisesti sovelluksen ulkopuolella. Esimerkiksi älyvaloja voitaisiin kytkeä päälle taipois päältä ennen ja jälkeen mediatiedostojen näyttämissä jos projektoreita käytetään. tai skriptiä voidaan soittaa kokouksen viimeisen laulun jälkeen, jotta eri toiminnot voidaan automatisoida Zoom kokouksessa.
 
 ## v25.9.1
 
-### ✨ New Features
+### ✨ Uudet Ominaisuudet
 
 - ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
 - ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
@@ -32,21 +32,21 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ## v25.9.0
 
-### ✨ New Features
+### ✨ Uudet Ominaisuudet
 
 - ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
 - ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
 
 ## v25.8.3
 
-### ✨ New Features
+### ✨ Uudet Ominaisuudet
 
 - ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
 - ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
 
 ## v25.8.1
 
-### ✨ New Features
+### ✨ Uudet Ominaisuudet
 
 - ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
 - ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
@@ -62,7 +62,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ## 25.6.0
 
-### ✨ New Features
+### ✨ Uudet Ominaisuudet
 
 - ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
 - ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
@@ -75,7 +75,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ## 25.5.0
 
-### ✨ New Features
+### ✨ Uudet Ominaisuudet
 
 - 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
 - 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
@@ -111,7 +111,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ## 25.4.0
 
-### ✨ New Features
+### ✨ Uudet Ominaisuudet
 
 - 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
 - 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
@@ -124,7 +124,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ## 25.3.1
 
-### ✨ New Features
+### ✨ Uudet Ominaisuudet
 
 - 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
 
@@ -136,7 +136,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ## 25.3.0
 
-### ✨ New Features
+### ✨ Uudet Ominaisuudet
 
 - 🎵 **Play Background Music with Videos**: Allow background music to continue playing while videos are being viewed.
 - 🎥 **Camera Feed for Sign Language Media**: Add the ability to display a camera feed on the media window specifically for sign language users.
