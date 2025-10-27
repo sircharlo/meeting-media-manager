@@ -6,7 +6,7 @@
 
 **No.** The app behaves similarly to JW Library. It downloads publications, media and other content directly from the official website of Jehovah's Witnesses and its content delivery network. The app automatically determines what needs to be downloaded and when previously-downloaded content is no longer up-to-date and should be re-downloaded.
 
-:::info Note
+:::info Huomio
 
 The source code for this app is available for all to examine and verify what goes on under the hood.
 
@@ -30,7 +30,7 @@ M³ supports Windows, macOS, and Linux:
 
 ### :globe_with_meridians: Does M³ work in my language? {#language-support}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Kyllä!** M3 tarjoaa kattavan monikielisen tuen:
 
 - **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
 - **App Interface**: Use M³'s interface in many different languages
