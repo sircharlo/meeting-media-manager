@@ -1,5 +1,5 @@
 <template>
-  <BaseDialog v-model="dialogValue" :dialog-id="dialogId" persistent>
+  <BaseDialog v-model="dialogValue" :dialog-id="dialogId">
     <div
       class="items-center q-pb-lg q-px-lg q-gutter-y-md bg-secondary-contrast"
     >
@@ -31,43 +31,71 @@
         </div>
       </div>
       <div class="row">
-        <q-expansion-item
-          class="full-width bg-accent-200"
-          default-opened
-          dense
-          group="about"
-          icon="mmm-info"
-          :label="t('about-this-app')"
+        <p>
+          {{ t('app-description') }}
+        </p>
+        <p>
+          {{ t('here-are-some-of-the-newest-features') }}
+        </p>
+        <q-carousel
+          v-if="parsedFeatures.length > 0"
+          ref="carousel"
+          v-model="spotlitFeature"
+          animated
+          autoplay
+          class="bg-accent-100 rounded-borders"
+          infinite
+          padding
+          style="height: 200px"
+          vertical
         >
-          <q-card>
-            <q-card-section class="bg-accent-100">
-              <p>
-                {{ t('app-description') }}
-              </p>
-              <p>
-                {{ t('app-issues') }}
-              </p>
-            </q-card-section>
-          </q-card>
-        </q-expansion-item>
-        <q-expansion-item
-          v-if="releaseNotes"
-          v-model="releaseNotesExpansionItem"
-          class="full-width bg-accent-200"
-          dense
-          group="about"
-          icon="mmm-shimmer"
-          :label="t('whats-new')"
-        >
-          <q-card>
-            <q-card-section class="bg-accent-100">
-              <q-scroll-area style="height: 200px; max-width: 100%">
-                <q-markdown no-heading-anchor-links :src="releaseNotes" />
-              </q-scroll-area>
-            </q-card-section>
-          </q-card>
-        </q-expansion-item>
+          <q-carousel-slide
+            v-for="(feature, index) in parsedFeatures"
+            :key="index"
+            class="column no-wrap flex-center q-gutter-md q-pa-lg position-relative"
+            :name="index + 1"
+          >
+            <div class="text-subtitle2 text-center">
+              {{ feature.text }}
+            </div>
+            <q-badge
+              class="absolute-bottom-left q-mb-md text-caption"
+              color="accent-300"
+              :label="feature.version"
+              text-color="dark"
+            />
+          </q-carousel-slide>
+          <template #control>
+            <q-carousel-control
+              class="q-gutter-xs"
+              :offset="[18, 18]"
+              position="bottom-right"
+            >
+              <q-btn
+                color="primary"
+                dense
+                icon="mmm-up"
+                round
+                size="sm"
+                text-color="white"
+                @click="carousel.previous()"
+              />
+              <q-btn
+                color="primary"
+                dense
+                icon="mmm-down"
+                round
+                size="sm"
+                text-color="white"
+                @click="carousel.next()"
+              />
+            </q-carousel-control>
+          </template>
+        </q-carousel>
       </div>
+      <p>
+        {{ t('app-issues') }}
+      </p>
       <div class="row q-gutter-x-md">
         <div class="col">
           <q-btn
@@ -240,6 +268,7 @@ const checkLastVersion = async (congId: string) => {
 whenever(dialogValue, () => {
   getUpdatesEnabled();
   getBetaUpdatesEnabled();
+  spotlitFeature.value = 1;
 });
 
 const { currentCongregation } = storeToRefs(useCurrentStateStore());
@@ -250,10 +279,39 @@ watch(currentCongregation, (val) => {
 
 const releaseNotes = ref('');
 const releaseNotesExpansionItem = ref(false);
+const parsedFeatures = ref<{ text: string; version: string }[]>([]);
+const spotlitFeature = ref(1);
+
+const carousel = ref();
+
+const parseReleaseNotes = () => {
+  const md = releaseNotes.value;
+  if (!md) return;
+
+  parsedFeatures.value = [];
+  const lines = md.split('\n');
+  let currentVersion = '';
+
+  for (const line of lines) {
+    const versionMatch = line.match(/^## (.+)$/);
+    if (versionMatch) {
+      currentVersion = versionMatch[1] || '';
+      if (!currentVersion.startsWith('v')) {
+        currentVersion = `v${currentVersion}`;
+      }
+    } else if (line.startsWith('- ')) {
+      parsedFeatures.value.push({
+        text: line.replace(/^- ✨?\s*/, '').replace(/\*\*(.*?)\*\*/, '$1'),
+        version: currentVersion,
+      });
+    }
+  }
+};
 
 const loadReleaseNotes = async () => {
   const result = await fetchReleaseNotes(camelToKebabCase(locale.value));
   releaseNotes.value = result ?? '';
+  parseReleaseNotes();
 };
 
 watchImmediate(locale, () => {
