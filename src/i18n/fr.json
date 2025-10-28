@@ -16,8 +16,8 @@
   "all-clips-with-this-icon-will-play": "Tous les clips avec cette icône seront joués un après l'autre",
   "almost-done": "Presque fini!",
   "also-look-for-this-button-in-m-s-footer": "Recherchez également ce bouton dans le pied de page de M³ :",
-  "app-description": "Meeting Media Manager is a cross-platform app for displaying media at congregation meetings of Jehovah's Witnesses.",
-  "app-issues": "If you're facing any issues or have found a bug, please create an issue or a discussion on our GitHub repository page.",
+  "app-description": "Meeting Media Manager est une application multiplateforme permettant d'afficher des médias lors des réunions des assemblées locales des Témoins de Jéhovah.",
+  "app-issues": "Si vous rencontrez des problèmes ou avez trouvé un bogue, veuillez créer un ticket ou lancer une discussion sur notre page GitHub.",
   "app-updates": "Mises à jour de l'application",
   "applicationConfiguration": "Configuration de l'application",
   "applicationConfigurationDescription": "Personnaliser le comportement et l'apparence de cette application",
@@ -538,5 +538,5 @@
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Raccourci pour le partage d'écran de Zoom",
   "zoomScreenShareShortcut-explain": "Entrez le raccourci clavier configuré dans le paramètre « Démarrer/arrêter le partage d'écran » de Zoom. M³ enverra ce raccourci lorsque les médias commencent à jouer (pour démarrer le partage d'écran) et lorsqu'ils s'arrêtent (pour arrêter le partage d'écran). Pour utiliser cette fonctionnalité, vous devez activer le paramètre « Raccourci global » pour ce raccourci particulier dans les paramètres de Zoom.",
-  "here-are-some-of-the-newest-features": "Here are just a few of the latest features and updates:"
+  "here-are-some-of-the-newest-features": "Voici un aperçu des dernières fonctionnalités et mises à jour :"
 }
