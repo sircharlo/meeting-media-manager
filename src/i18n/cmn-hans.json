@@ -17,8 +17,8 @@
   "all-clips-with-this-icon-will-play": "所有有这个图标的视频将会连续播放",
   "almost-done": "差不多完成了 ！",
   "also-look-for-this-button-in-m-s-footer": "另外，在M³'页脚中查找此按钮：",
-  "app-description": "Meeting Media Manager是在耶和华见证会聚会上展示媒体的跨平台应用程序。 它与OBS Studio集成，在王国聚会所和Zoom一键显示媒体。M³具有丰富的功能和直观界面，降低了影像服务人员的工作量。 它支持所有有关崇拜的文件格式以及PDF文件和通用的媒体文件。它可以根据您的会众需要补充甚至替换JW Library。",
-  "app-issues": "如果您面临任何问题或发现了问题，请在我们的 GitHub仓库页面上创建一个问题，或通过 GitHub 讨论联系我们，详细描述问题。 我们将尽快与你联系。",
+  "app-description": "Meeting Media Manager is a cross-platform app for displaying media at congregation meetings of Jehovah's Witnesses.",
+  "app-issues": "If you're facing any issues or have found a bug, please create an issue or a discussion on our GitHub repository page.",
   "app-updates": "应用更新",
   "applicationConfiguration": "应用配置",
   "applicationConfigurationDescription": "自定义此应用的行为和外观",
@@ -539,5 +539,6 @@
   "zoomEnable-explain": "当媒体开始并停止播放时，自动开始并停止Zoom共享。",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "共享Zoom屏幕快捷键",
-  "zoomScreenShareShortcut-explain": "输入Zoom的“开始/停止屏幕共享”设置中配置的键盘快捷方式。 当媒体开始播放时(启动屏幕共享)和停止时(停止屏幕共享)，M3将发送此快捷方式。 为了使用此功能，您需要在Zoom设置中启用\"全局快捷键\"设置。"
+  "zoomScreenShareShortcut-explain": "输入Zoom的“开始/停止屏幕共享”设置中配置的键盘快捷方式。 当媒体开始播放时(启动屏幕共享)和停止时(停止屏幕共享)，M3将发送此快捷方式。 为了使用此功能，您需要在Zoom设置中启用\"全局快捷键\"设置。",
+  "here-are-some-of-the-newest-features": "Here are just a few of the latest features and updates:"
 }
