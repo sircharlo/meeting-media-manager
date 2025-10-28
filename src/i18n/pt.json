@@ -17,8 +17,8 @@
   "all-clips-with-this-icon-will-play": "All clips with this icon will be played consecutively",
   "almost-done": "Quase pronto!",
   "also-look-for-this-button-in-m-s-footer": "Procure por este botão no rodapé do M³:",
-  "app-description": "O Meeting Media Manager é um aplicativo multiplataforma desenvolvido para exibir mídias durante as reuniões congregacionais das Testemunhas de Jeová. Ele pode ser integrado ao OBS Studio, permitindo a exibição de mídias com apenas um clique, tanto no Salão do Reino quanto no Zoom. Com uma interface simples e recursos práticos, o M³ torna o trabalho dos operadores de áudio e vídeo mais eficiente. Ele é compatível com diversos formatos de arquivos, como PDFs e diferentes tipos de mídia, e pode complementar ou, se necessário, substituir o JW Library para atender às necessidades da congregação.",
-  "app-issues": "Se você tiver algum problema ou identificar um erro, registre uma issue na página do nosso repositório no GitHub ou entre em contato diretamente por lá, descrevendo o problema com detalhes. Faremos o possível para responder o mais rápido possível.",
+  "app-description": "Meeting Media Manager is a cross-platform app for displaying media at congregation meetings of Jehovah's Witnesses.",
+  "app-issues": "If you're facing any issues or have found a bug, please create an issue or a discussion on our GitHub repository page.",
   "app-updates": "Atualizações do aplicativo",
   "applicationConfiguration": "Configuração do aplicativo",
   "applicationConfigurationDescription": "Personalizar o comportamento e a aparência",
@@ -539,5 +539,6 @@
   "zoomEnable-explain": "Inicia e interrompe automaticamente o compartilhamento de tela do Zoom quando a mídia começa e termina.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Atalho para compartilhamento de tela no Zoom",
-  "zoomScreenShareShortcut-explain": "Insira o atalho do Zoom para 'Iniciar/interromper compartilhamento de tela' (configurado nos Atalhos de teclado). O M³ usará esse comando quando a mídia começar (inicia o compartilhamento) e quando parar (encerra o compartilhamento). Para funcionar, ative a opção 'Atalho global' para esse comando nas configurações do Zoom."
+  "zoomScreenShareShortcut-explain": "Insira o atalho do Zoom para 'Iniciar/interromper compartilhamento de tela' (configurado nos Atalhos de teclado). O M³ usará esse comando quando a mídia começar (inicia o compartilhamento) e quando parar (encerra o compartilhamento). Para funcionar, ative a opção 'Atalho global' para esse comando nas configurações do Zoom.",
+  "here-are-some-of-the-newest-features": "Here are just a few of the latest features and updates:"
 }

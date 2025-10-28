@@ -17,8 +17,8 @@
   "all-clips-with-this-icon-will-play": "Alla klipp med denna ikon kommer att spelas i följd",
   "almost-done": "Nästan klar!",
   "also-look-for-this-button-in-m-s-footer": "Titta efter denna knapp i sidfoten för M³:",
-  "app-description": "Meeting Media Manager är en plattformsoberoende app för att visa media på församlingsmöten för Jehovas vittnen. Den samspelar med med OBS Studio för enkel medievisning i både Rikets sal och på Zoom. Med sin rika funktionalitet och intuitiva gränssnitt minskar M³ arbetsbelastningen för ljud/bildtjänaren. Den stöder alla teokratiska filformat, liksom PDF-filer och vanliga mediefiler. Den kan komplettera eller till och med ersätta JW-Library, efter församlingens behov.",
-  "app-issues": "Om du upplever några problem eller har hittat en bugg, skapa ett ärende på vår GitHub-sida eller kontakta oss via GitHub. Beskriv problemet i detalj. Vi kommer att återkomma till dig så snart som möjligt.",
+  "app-description": "Meeting Media Manager is a cross-platform app for displaying media at congregation meetings of Jehovah's Witnesses.",
+  "app-issues": "If you're facing any issues or have found a bug, please create an issue or a discussion on our GitHub repository page.",
   "app-updates": "Programuppdateringar",
   "applicationConfiguration": "Appinställning",
   "applicationConfigurationDescription": "Anpassa appens beteende och utseende",
@@ -539,5 +539,6 @@
   "zoomEnable-explain": "Starta och stoppa automatiskt Zoom-skärmdelning när media startar och slutar.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom-genväg för skärmdelning",
-  "zoomScreenShareShortcut-explain": "Ange kortkommandot som konfigurerats i inställningar för Zoom \"Starta/stoppa skärmdelning\". M³ skickar genvägen när media börjar spelas upp (för att starta skärmdelning) och när den slutar (för att stoppa skärmdelning). För att använda den här funktionen måste du aktivera inställningen \"Global genväg\" för just den genvägen i Zooms inställningar."
+  "zoomScreenShareShortcut-explain": "Ange kortkommandot som konfigurerats i inställningar för Zoom \"Starta/stoppa skärmdelning\". M³ skickar genvägen när media börjar spelas upp (för att starta skärmdelning) och när den slutar (för att stoppa skärmdelning). För att använda den här funktionen måste du aktivera inställningen \"Global genväg\" för just den genvägen i Zooms inställningar.",
+  "here-are-some-of-the-newest-features": "Here are just a few of the latest features and updates:"
 }

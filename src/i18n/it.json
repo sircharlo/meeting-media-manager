@@ -17,8 +17,8 @@
   "all-clips-with-this-icon-will-play": "Tutte le clip con questa icona verranno riprodotte consecutivamente",
   "almost-done": "Quasi fatto!",
   "also-look-for-this-button-in-m-s-footer": "Inoltre, cerca questo pulsante in fondo alla pagina di M³:",
-  "app-description": "Meeting Media Manager è un'app multipiattaforma per la visualizzazione dei contenuti multimediali alle adunanze di congregazione dei Testimoni di Geova. Si integra con OBS Studio per mostrare con un clic i contenuti sia in Sala del Regno che su Zoom. Con le sue numerose funzionalità e l'interfaccia intuitiva, M³ riduce il lavoro dei tecnici audio/video. Supporta tutti i formati di file teocratici, nonché file PDF e file multimediali comuni. Può integrare o persino sostituire JW Library, secondo le vostre esigenze di congregazione.",
-  "app-issues": "Se hai problemi o hai trovato un bug, crea un Issue sulla nostra pagina di GitHub o contattaci tramite Discussion su GitHub, descrivendo il problema nel dettaglio. Vi risponderemo il prima possibile.",
+  "app-description": "Meeting Media Manager is a cross-platform app for displaying media at congregation meetings of Jehovah's Witnesses.",
+  "app-issues": "If you're facing any issues or have found a bug, please create an issue or a discussion on our GitHub repository page.",
   "app-updates": "Aggiornamento del programma",
   "applicationConfiguration": "Configurazione dell'applicazione",
   "applicationConfigurationDescription": "Personalizza il comportamento e l'aspetto di questa app",
@@ -539,5 +539,6 @@
   "zoomEnable-explain": "Avvia e ferma automaticamente la condivisione dello schermo di Zoom quando i media iniziano e smettono di riprodurre.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Scorciatoia condivisione schermo di Zoom",
-  "zoomScreenShareShortcut-explain": "Inserisci la scorciatoia da tastiera configurata nell'impostazione \"Avvia/ferma condivisione schermo\" di Zoom. M³ invierà questa scorciatoia quando il media inizia a riprodurre (per iniziare la condivisione dello schermo) e quando si ferma (per interrompere la condivisione dello schermo). Per poter utilizzare questa funzione, è necessario abilitare l'impostazione \"Scorciatoie globali\" per quella particolare scorciatoia nelle impostazioni di Zoom."
+  "zoomScreenShareShortcut-explain": "Inserisci la scorciatoia da tastiera configurata nell'impostazione \"Avvia/ferma condivisione schermo\" di Zoom. M³ invierà questa scorciatoia quando il media inizia a riprodurre (per iniziare la condivisione dello schermo) e quando si ferma (per interrompere la condivisione dello schermo). Per poter utilizzare questa funzione, è necessario abilitare l'impostazione \"Scorciatoie globali\" per quella particolare scorciatoia nelle impostazioni di Zoom.",
+  "here-are-some-of-the-newest-features": "Here are just a few of the latest features and updates:"
 }

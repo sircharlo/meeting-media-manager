@@ -17,8 +17,8 @@
   "all-clips-with-this-icon-will-play": "All clips with this icon will be played consecutively",
   "almost-done": "거의 끝났습니다!",
   "also-look-for-this-button-in-m-s-footer": "또한 M³' 하단에 있는 다음 버튼을 확인하십시오:",
-  "app-description": "Meeting Media Manager는 여호와의 증인 집회에서 미디어를 재생하기 위해 만들어진 크로스플랫폼 애플리케이션입니다. 왕국회관과 Zoom에서 원클릭으로 미디어를 재생할 수 있도록 OBS Studio와 연동되는 기능을 제공합니다. 풍부한 기능과 직관적인 인터페이스를 갖춘 M³는 오디오/비디오 담당자의 업무량을 줄여줍니다. M³는 모든 신권 파일 포맷 뿐 아니라 PDF 및 일반적인 미디어 파일을 지원합니다. 회중의 필요에 따라 JW Library를 보완하거나 대체할 수 있습니다.",
-  "app-issues": "문제가 있거나 오류가 발생한 경우, GitHub 리포지터리 페이지에 이슈를 생성하거나 GitHub Discussions 페이지에 문제를 자세히 설명하여 문의해 주십시오. 최대한 빠른 시일 내에 답변 드리겠습니다.",
+  "app-description": "Meeting Media Manager is a cross-platform app for displaying media at congregation meetings of Jehovah's Witnesses.",
+  "app-issues": "If you're facing any issues or have found a bug, please create an issue or a discussion on our GitHub repository page.",
   "app-updates": "애플리케이션 업데이트",
   "applicationConfiguration": "애플리케이션 설정",
   "applicationConfigurationDescription": "애플리케이션의 기본 동작을 변경합니다",
@@ -539,5 +539,6 @@
   "zoomEnable-explain": "Automatically start and stop Zoom screen sharing when media starts and stops playing.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom screen sharing shortcut",
-  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings."
+  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings.",
+  "here-are-some-of-the-newest-features": "Here are just a few of the latest features and updates:"
 }

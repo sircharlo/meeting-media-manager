@@ -17,8 +17,8 @@
   "all-clips-with-this-icon-will-play": "All clips with this icon will be played consecutively",
   "almost-done": "Fast fertig!",
   "also-look-for-this-button-in-m-s-footer": "Achte auch auf diese Schaltfläche in der Fußzeile von M³:",
-  "app-description": "Meeting Media Manager ist eine plattformübergreifende App zur Anzeige von Medien bei Zusammenkünften der Zeugen Jehovas. Es nutzt OBS Studio, um Medien sowohl in der Königreichssaal als auch auf Zoom anzuzeigen. Mit seiner umfangreichen Funktionalität und benutzerfreundlichen Oberfläche reduziert M³ die Arbeitsbelastung für die Audio- und Videobediener. Es unterstützt alle theokratischen Dateiformate sowie PDF-Dateien und gängige Mediendateien. Es kann die JW Library ergänzen oder sogar vollständig ersetzen, je nach Bedarf der Versammlung.",
-  "app-issues": "Wenn du Probleme hast oder einen Fehler gefunden hast, erstelle bitte einen Fall auf unserer GitHub-Repository-Seite oder kontaktiere uns über die GitHub-Diskussionen und beschreibe das Problem detailliert. Wir melden uns so schnell wie möglich bei dir.",
+  "app-description": "Meeting Media Manager is a cross-platform app for displaying media at congregation meetings of Jehovah's Witnesses.",
+  "app-issues": "If you're facing any issues or have found a bug, please create an issue or a discussion on our GitHub repository page.",
   "app-updates": "App-Updates",
   "applicationConfiguration": "Anwendungseinstellungen",
   "applicationConfigurationDescription": "Passen Sie das Verhalten und Aussehen dieser App an",
@@ -539,5 +539,6 @@
   "zoomEnable-explain": "Automatically start and stop Zoom screen sharing when media starts and stops playing.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Link zur Zoom-Bildschirmfreigabe",
-  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings."
+  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings.",
+  "here-are-some-of-the-newest-features": "Here are just a few of the latest features and updates:"
 }
