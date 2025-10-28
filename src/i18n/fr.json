@@ -17,8 +17,8 @@
   "all-clips-with-this-icon-will-play": "Tous les clips avec cette icône seront joués un après l'autre",
   "almost-done": "Presque fini!",
   "also-look-for-this-button-in-m-s-footer": "Recherchez également ce bouton dans le pied de page de M³ :",
-  "app-description": "Meeting Media Manager est une application multiplateforme pour les réunions des assemblées locales des Témoins de Jéhovah, tant en personne que hybrides. Elle s'intègre à OBS Studio pour afficher les médias à la fois à la salle du Royaume et dans Zoom. M³ facilite la tâche de ceux qui travaillent au service audio/vidéo grâce à ses fonctionnalités pratiques et son interface intuitive. Elle prend en charge tous les formats de fichiers théocratiques, ainsi que les fichiers PDF et les fichiers multimédias communément utilisés. Cette appli peut accompagner JW Library, ou même remplacer celle-ci, selon les besoins de votre assemblée locale.",
-  "app-issues": "Si vous rencontrez des problèmes ou avez trouvé un bug, veuillez le signaler sur notre page GitHub, en vous assurant de décrire le problème en détail. Nous vous répondrons dans les plus brefs délais.",
+  "app-description": "Meeting Media Manager is a cross-platform app for displaying media at congregation meetings of Jehovah's Witnesses.",
+  "app-issues": "If you're facing any issues or have found a bug, please create an issue or a discussion on our GitHub repository page.",
   "app-updates": "Mises à jour de l'application",
   "applicationConfiguration": "Configuration de l'application",
   "applicationConfigurationDescription": "Personnaliser le comportement et l'apparence de cette application",
@@ -539,5 +539,6 @@
   "zoomEnable-explain": "Démarrer et arrêter automatiquement le partage d'écran dans Zoom lorsque les médias commencent et arrêtent de jouer dans M³.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Raccourci pour le partage d'écran de Zoom",
-  "zoomScreenShareShortcut-explain": "Entrez le raccourci clavier configuré dans le paramètre « Démarrer/arrêter le partage d'écran » de Zoom. M³ enverra ce raccourci lorsque les médias commencent à jouer (pour démarrer le partage d'écran) et lorsqu'ils s'arrêtent (pour arrêter le partage d'écran). Pour utiliser cette fonctionnalité, vous devez activer le paramètre « Raccourci global » pour ce raccourci particulier dans les paramètres de Zoom."
+  "zoomScreenShareShortcut-explain": "Entrez le raccourci clavier configuré dans le paramètre « Démarrer/arrêter le partage d'écran » de Zoom. M³ enverra ce raccourci lorsque les médias commencent à jouer (pour démarrer le partage d'écran) et lorsqu'ils s'arrêtent (pour arrêter le partage d'écran). Pour utiliser cette fonctionnalité, vous devez activer le paramètre « Raccourci global » pour ce raccourci particulier dans les paramètres de Zoom.",
+  "here-are-some-of-the-newest-features": "Here are just a few of the latest features and updates:"
 }

@@ -17,8 +17,8 @@
   "all-clips-with-this-icon-will-play": "All clips with this icon will be played consecutively",
   "almost-done": "Peaaegu valmis!",
   "also-look-for-this-button-in-m-s-footer": "Samuti võid otsida seda nuppu M³-e programmi alaosas:",
-  "app-description": "\"Meeting Media Manager\" on platvormideülene rakendus meedia kuvamiseks Jehoova tunnistajate koguduse koosolekutel. See teeb koostööd OBS Studio'ga, et ühe klikiga kuvada meediat nii kuningriigisaalis kui ka Zoomis. Tänu oma rikkalikule funktsionaalsusele ja intuitiivsele kasutajaliidesele vähendab M³ audio/video vendade töökoormust. See toetab kõiki teokraatlikke failivorminguid, samuti PDF-faile ja tavalisi meediafaile. See võib vastavalt teie koguduse vajadustele täiendada või isegi asendada JW Library'd.",
-  "app-issues": "Kui sul on probleeme või oled leidnud vea, palun loo probleem meie GitHubi lehel või võta meiega ühendust GitHubi arutelude kaudu, kirjeldades probleemi üksikasjalikult. Me võtame sinuga ühendust niipea kui võimalik.",
+  "app-description": "Meeting Media Manager is a cross-platform app for displaying media at congregation meetings of Jehovah's Witnesses.",
+  "app-issues": "If you're facing any issues or have found a bug, please create an issue or a discussion on our GitHub repository page.",
   "app-updates": "Rakenduse uuendused",
   "applicationConfiguration": "Rakenduse seadistamine",
   "applicationConfigurationDescription": "Kohanda rakenduse käitumist ja välimust",
@@ -539,5 +539,6 @@
   "zoomEnable-explain": "Zoom ekraani jagamine käivitub ja peatub automaatselt, kui meedia esitamine algab ja lõpeb.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoomi ekraanijagamise kiirklahv",
-  "zoomScreenShareShortcut-explain": "Sisestage klahvikombinatsioon, mis on konfigureeritud Zoom'i seadetes „Ekraani jagamise alustamine/lõpetamine”. M³ edastab selle klahvikombinatsiooni, kui meedia hakkab mängima (ekraani jagamise alustamiseks) ja kui see peatub (ekraani jagamise lõpetamiseks). Selle funktsiooni kasutamiseks peate Zoom'i seadetes aktiveerima selle konkreetse klahvikombinatsiooni jaoks seadistuse „Globaalne klahvikombinatsioon”."
+  "zoomScreenShareShortcut-explain": "Sisestage klahvikombinatsioon, mis on konfigureeritud Zoom'i seadetes „Ekraani jagamise alustamine/lõpetamine”. M³ edastab selle klahvikombinatsiooni, kui meedia hakkab mängima (ekraani jagamise alustamiseks) ja kui see peatub (ekraani jagamise lõpetamiseks). Selle funktsiooni kasutamiseks peate Zoom'i seadetes aktiveerima selle konkreetse klahvikombinatsiooni jaoks seadistuse „Globaalne klahvikombinatsioon”.",
+  "here-are-some-of-the-newest-features": "Here are just a few of the latest features and updates:"
 }

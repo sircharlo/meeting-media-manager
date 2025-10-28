@@ -17,8 +17,8 @@
   "all-clips-with-this-icon-will-play": "All clips with this icon will be played consecutively",
   "almost-done": "Majdnem kész!",
   "also-look-for-this-button-in-m-s-footer": "Keresd ezt a gombot az M³ alsó részén:",
-  "app-description": "A Meeting Media Manager egy többplatformos alkalmazás média megjelenítésére Jehova Tanúi gyülekezeti összejövetelein. Integrálható az OBS Studio-val az egy kattintással történő médiamegjelenítéshez mind a Királyságteremben, mind a Zoom-on. Gazdag funkcionalitásával és intuitív felületével az M³ csökkenti az hang/kép technikusok terheit. Támogatja az összes teokratikus fájlformátumot, a PDF-fájlokat és az általános médiafájlokat. A gyülekezet igényeinek megfelelően kiegészítheti vagy akár helyettesítheti is a JW Library-t.",
-  "app-issues": "Ha bármilyen problémát tapasztalsz, vagy hibát találsz, hozz létre egy Issue-t a GitHub oldalunkon vagy lépj kapcsolatba velünk a GitHub Discussions-on keresztül, és írd le részletesen a problémát. Igyekszünk a lehető leghamarabb válaszolni.",
+  "app-description": "Meeting Media Manager is a cross-platform app for displaying media at congregation meetings of Jehovah's Witnesses.",
+  "app-issues": "If you're facing any issues or have found a bug, please create an issue or a discussion on our GitHub repository page.",
   "app-updates": "Alkalmazásfrissítések",
   "applicationConfiguration": "Alkalmazás konfigurációja",
   "applicationConfigurationDescription": "Az alkalmazás működésének és megjelenésének testreszabása",
@@ -539,5 +539,6 @@
   "zoomEnable-explain": "Zoom képernyőmegosztás automatikus indítása és leállítása a média lejátszásának megkezdésekor és leállításakor.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Billentyűparancs a Zoom képernyőmegosztáshoz",
-  "zoomScreenShareShortcut-explain": "Add meg a Zoom „Képernyőmegosztás indítása/leállítása” beállításában konfigurált billentyűparancsot. Az M³ elküldi ezt a parancsot, amikor a média lejátszása elindul (a képernyő megosztásának elindításához) és amikor leáll (a képernyő megosztásának leállításához). Ahhoz, hogy ezt a funkciót használni tudd, engedélyezned kell a „Globális parancs” (Global shortcut) beállítást az adott parancshoz a Zoom beállításaiban."
+  "zoomScreenShareShortcut-explain": "Add meg a Zoom „Képernyőmegosztás indítása/leállítása” beállításában konfigurált billentyűparancsot. Az M³ elküldi ezt a parancsot, amikor a média lejátszása elindul (a képernyő megosztásának elindításához) és amikor leáll (a képernyő megosztásának leállításához). Ahhoz, hogy ezt a funkciót használni tudd, engedélyezned kell a „Globális parancs” (Global shortcut) beállítást az adott parancshoz a Zoom beállításaiban.",
+  "here-are-some-of-the-newest-features": "Here are just a few of the latest features and updates:"
 }

@@ -17,8 +17,8 @@
   "all-clips-with-this-icon-will-play": "All clips with this icon will be played consecutively",
   "almost-done": "¡Ya casi está!",
   "also-look-for-this-button-in-m-s-footer": "Además, busque este botón en el pie de página de M³:",
-  "app-description": "Meeting Media Manager es una aplicación multiplataforma para la visualización de multimedia en las reuniones de la congregación de los testigos de Jehová. Se integra con OBS Studio para la visualización de multimedia con un solo clic, tanto en el Salón del Reino y en Zoom. Con su amplia funcionalidad y una interfaz intuitiva, M³ reduce la carga de trabajo de los operadores de audio / vídeo. Admite todos los formatos de archivo teocráticos, así como archivos PDF y archivos multimedia comunes. Puede complementar o incluso sustituir a JW Library, según las necesidades de su congregación.",
-  "app-issues": "Si tiene algún problema o ha encontrado un error, por favor, cree una incidencia en nuestra página del repositorio de GitHub o póngase en contacto con nosotros a través de GitHub Discussion, describiendo el problema en detalle. Nos pondremos en contacto con usted lo antes posible.",
+  "app-description": "Meeting Media Manager is a cross-platform app for displaying media at congregation meetings of Jehovah's Witnesses.",
+  "app-issues": "If you're facing any issues or have found a bug, please create an issue or a discussion on our GitHub repository page.",
   "app-updates": "Actualización del programa",
   "applicationConfiguration": "Configuración de la aplicación",
   "applicationConfigurationDescription": "Personalice el comportamiento y la apariencia de esta aplicación",
@@ -539,5 +539,6 @@
   "zoomEnable-explain": "Iniciar y detener automáticamente el uso compartido de la pantalla de zoom cuando la multimedia se inicia y deja de reproducir.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Atajo para compartir pantalla de Zoom",
-  "zoomScreenShareShortcut-explain": "Introduzca el acceso directo del teclado configurado en el ajuste de Zoom \"Iniciar/Detener compartir pantalla\". M3 enviará este acceso directo cuando la multimedia comience a reproducir (para iniciar el uso compartido de la pantalla) y cuando se detenga (para detener el uso compartido de la pantalla). Para poder utilizar esta función, necesita habilitar la opción \"Acceso directo global\" para ese acceso directo en particular en los ajustes de Zoom."
+  "zoomScreenShareShortcut-explain": "Introduzca el acceso directo del teclado configurado en el ajuste de Zoom \"Iniciar/Detener compartir pantalla\". M3 enviará este acceso directo cuando la multimedia comience a reproducir (para iniciar el uso compartido de la pantalla) y cuando se detenga (para detener el uso compartido de la pantalla). Para poder utilizar esta función, necesita habilitar la opción \"Acceso directo global\" para ese acceso directo en particular en los ajustes de Zoom.",
+  "here-are-some-of-the-newest-features": "Here are just a few of the latest features and updates:"
 }
