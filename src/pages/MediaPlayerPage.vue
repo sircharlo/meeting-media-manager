@@ -64,7 +64,9 @@
         @load="handleImageLoad()"
       />
       <video
-        v-else-if="isVideo(displayLayer1.url)"
+        v-else-if="
+          isVideo(displayLayer1.url) || (videoStreaming && displayLayer1.isLive)
+        "
         :key="displayLayer1.url"
         ref="mediaElement1"
         class="fit-snugly"
@@ -84,7 +86,7 @@
         />
       </video>
       <audio
-        v-else-if="isAudio(displayLayer1.url)"
+        v-else-if="isAudio(displayLayer1.url) && !videoStreaming"
         ref="mediaElement1"
         style="display: none"
         @loadedmetadata="playMedia()"
@@ -313,7 +315,10 @@ const { data: zoomPanState } = useBroadcastChannel<
   name: 'zoom-pan',
 });
 
-const { data: webStreamData } = useBroadcastChannel<boolean, boolean>({
+const { data: webStreamData } = useBroadcastChannel<
+  'inactive' | 'mirroringWebsite' | 'previewingWebsite',
+  'inactive' | 'mirroringWebsite' | 'previewingWebsite'
+>({
   name: 'web-stream',
 });
 
@@ -694,9 +699,14 @@ watchDeep(
 watch(
   () => webStreamData.value,
   async (newWebStreamData) => {
-    videoStreaming.value = newWebStreamData;
-    if (newWebStreamData) {
+    videoStreaming.value = newWebStreamData === 'mirroringWebsite';
+    if (newWebStreamData === 'mirroringWebsite') {
       if (cameraStreamId.value) cameraStreamId.value = '';
+
+      // Activate a display layer for streaming
+      displayLayer1.value.isLive = true;
+      displayLayer1.value.url = ''; // No URL for streaming, just activate the layer
+
       const screenAccessStatus = await getScreenAccessStatus();
       if (!screenAccessStatus || screenAccessStatus !== 'granted') {
         try {
@@ -705,6 +715,10 @@ watch(
             video: true,
           });
         } catch (e) {
+          console.error(
+            '[MediaPlayerPage] First screen access request failed:',
+            e,
+          );
           errorCatcher(e, {
             contexts: { fn: { name: 'requestDisplayAccess' } },
           });
@@ -714,6 +728,9 @@ watch(
           !screenAccessStatusSecondTry ||
           screenAccessStatusSecondTry !== 'granted'
         ) {
+          console.error(
+            '[MediaPlayerPage] Screen access not granted - cannot stream',
+          );
           createTemporaryNotification({
             caption: t('screen-access-required-explain'),
             message: t('screen-access-required'),
@@ -735,9 +752,17 @@ watch(
           await new Promise((resolve) => {
             setTimeout(resolve, 100);
           });
-          if (++timeouts > 50) break;
+          if (++timeouts > 50) {
+            console.error(
+              '[MediaPlayerPage] Timed out waiting for media element',
+            );
+            break;
+          }
         }
         if (!currentMediaElement.value || !stream) {
+          console.error(
+            '[MediaPlayerPage] No media element or stream available',
+          );
           videoStreaming.value = false;
           postMediaPlayingAction('');
           currentMediaElement.value?.pause();
@@ -751,12 +776,16 @@ watch(
       } catch (e) {
         errorCatcher(e, { contexts: { fn: { name: 'streamDisplay' } } });
       }
-    } else {
+    } else if (newWebStreamData !== 'previewingWebsite') {
       if (currentMediaElement.value) {
         currentMediaElement.value.pause();
         currentMediaElement.value.srcObject = null;
       }
       postMediaPlayingAction('');
+
+      // Deactivate display layer
+      displayLayer1.value.isLive = false;
+      displayLayer1.value.url = '';
     }
   },
 );

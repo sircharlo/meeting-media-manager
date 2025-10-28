@@ -2,20 +2,15 @@ import type { NavigateWebsiteAction } from 'src/types';
 
 import { listen, send } from 'preload/ipc';
 
-const webStreamBroadcastChannel = new BroadcastChannel('web-stream');
-
 export const initWebsiteListeners = () => {
   listen('websiteWindowClosed', () => {
-    webStreamBroadcastChannel.postMessage(false);
+    console.log('[Electron] Website window closed, sending IPC event');
+    send('websiteWindowClosed');
   });
 };
 
 export const openWebsiteWindow = (lang?: string) => {
   send('toggleWebsiteWindow', true, lang);
-};
-
-export const startWebsiteStream = () => {
-  webStreamBroadcastChannel.postMessage(true);
 };
 
 export const navigateWebsiteWindow = (action: NavigateWebsiteAction) =>

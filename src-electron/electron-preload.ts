@@ -31,7 +31,6 @@ import {
   initWebsiteListeners,
   navigateWebsiteWindow,
   openWebsiteWindow,
-  startWebsiteStream,
   zoomWebsiteWindow,
 } from 'src-electron/preload/website';
 import path from 'upath';
@@ -77,6 +76,7 @@ const electronApi: ElectronApi = {
   onUpdateAvailable: (cb) => listen('update-available', cb),
   onUpdateDownloaded: (cb) => listen('update-downloaded', cb),
   onWatchFolderUpdate: (cb) => listen('watchFolderUpdate', cb),
+  onWebsiteWindowClosed: (cb) => listen('websiteWindowClosed', cb),
   openDiscussion: (c, t, p) => send('openDiscussion', c, t, p),
   openExternal: (w) => send('openExternal', w),
   openFileDialog: (s, f) => invoke('openFileDialog', s, f),
@@ -92,8 +92,6 @@ const electronApi: ElectronApi = {
   robot,
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
   setElectronUrlVariables: (v) => send('setElectronUrlVariables', v),
-
-  startWebsiteStream,
   toggleMediaWindow: (s, f) => send('toggleMediaWindow', s, f),
   unregisterAllShortcuts: () => send('unregisterAllShortcuts'),
   unregisterShortcut: (s) => send('unregisterShortcut', s),

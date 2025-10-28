@@ -125,6 +125,7 @@ export interface ElectronApi {
       event: string;
     }) => void,
   ) => void;
+  onWebsiteWindowClosed: (callback: () => void) => void;
   openDiscussion: (
     category: DiscussionCategory,
     title: string,
@@ -164,7 +165,6 @@ export interface ElectronApi {
   robot: typeof robot;
   setAutoStartAtLogin: (value: boolean) => void;
   setElectronUrlVariables: (variables: string) => void;
-  startWebsiteStream: () => void;
   toggleMediaWindow: (show: boolean, enableFadeTransitions?: boolean) => void;
   unregisterAllShortcuts: () => void;
   unregisterShortcut: (shortcut: string) => void;
@@ -223,6 +223,7 @@ export type ElectronIpcSendKey =
   | 'unregisterShortcut'
   | 'unwatchFolders'
   | 'watchFolder'
+  | 'websiteWindowClosed'
   | 'zoomWebsiteWindow';
 
 export type ExternalWebsite = 'docs' | 'latestRelease' | 'repo';

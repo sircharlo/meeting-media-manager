@@ -103,6 +103,9 @@ export const electronApi: ElectronApi = {
   onWatchFolderUpdate: function (callback) {
     throw new Error('Function not implemented.');
   },
+  onWebsiteWindowClosed: function (callback) {
+    console.log('onWebsiteWindowClosed called but not implemented');
+  },
   openDiscussion: function (category, title, params) {
     throw new Error('Function not implemented.');
   },
@@ -138,9 +141,6 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   setElectronUrlVariables: function (variables) {
-    throw new Error('Function not implemented.');
-  },
-  startWebsiteStream: function () {
     throw new Error('Function not implemented.');
   },
   toggleMediaWindow: function (show) {
