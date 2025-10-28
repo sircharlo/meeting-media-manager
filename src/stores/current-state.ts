@@ -26,7 +26,7 @@ const { ensureDir } = fs;
 const { join } = path;
 
 export interface MediaPlayingState {
-  action: '' | 'pause' | 'play' | 'website';
+  action: MediaPlayingStateAction;
   currentPosition: number;
   pan: Partial<{ x: number; y: number }>;
   seekTo: number;
@@ -35,6 +35,13 @@ export interface MediaPlayingState {
   url: string;
   zoom: number;
 }
+
+export type MediaPlayingStateAction =
+  | ''
+  | 'mirroringWebsite'
+  | 'pause'
+  | 'play'
+  | 'previewingWebsite';
 
 export interface Songbook {
   fileformat: 'MP3' | 'MP4';
@@ -275,7 +282,9 @@ export const useCurrentStateStore = defineStore('current-state', {
     // Use selectedDateObject.mediaSections.find(s => s.config.uniqueId === section)?.items.filter(item => !item.hidden) for visible media
     mediaIsPlaying: (state) => {
       return (
-        state.mediaPlaying.url !== '' || state.mediaPlaying.action === 'website'
+        state.mediaPlaying.url !== '' ||
+        state.mediaPlaying.action === 'mirroringWebsite' ||
+        state.mediaPlaying.action === 'previewingWebsite'
       );
     },
     mediaPaused: (state) => {

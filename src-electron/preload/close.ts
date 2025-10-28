@@ -1,13 +1,20 @@
 import { listen, send } from 'preload/ipc';
 
-const bcClose = new BroadcastChannel('closeAttempts');
-
 export const initCloseListeners = () => {
+  const bcClose = new BroadcastChannel('closeAttempts');
   listen('attemptedClose', () => {
-    bcClose.postMessage({ attemptedClose: true });
+    try {
+      bcClose.postMessage({ attemptedClose: true });
+    } catch (error) {
+      console.error('Error posting message to closeAttempts channel:', error);
+    }
   });
 
   bcClose.onmessage = (event) => {
-    if (event.data.authorizedClose) send('authorizedClose');
+    try {
+      if (event.data.authorizedClose) send('authorizedClose');
+    } catch (error) {
+      console.error('Error handling authorizedClose message:', error);
+    }
   };
 };

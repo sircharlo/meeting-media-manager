@@ -91,7 +91,10 @@ import { useAppSettingsStore } from 'src/stores/app-settings';
 import { formatDate, getSpecificWeekday, isInPast } from 'src/utils/date';
 import { kebabToCamelCase } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
-import { useCurrentStateStore } from 'stores/current-state';
+import {
+  type MediaPlayingStateAction,
+  useCurrentStateStore,
+} from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -895,8 +898,8 @@ watchImmediate(
 
 // Receive media playing action from the media player page using useBroadcastChannel
 const { data: mediaPlayingAction } = useBroadcastChannel<
-  '' | 'pause' | 'play' | 'website',
-  '' | 'pause' | 'play' | 'website'
+  MediaPlayingStateAction,
+  MediaPlayingStateAction
 >({
   name: 'media-window-media-action',
 });
