@@ -136,6 +136,7 @@ export interface ElectronApi {
     single?: boolean,
     filter?: FileDialogFilter,
   ) => Promise<Electron.OpenDialogReturnValue | undefined>;
+  openFolder: (path: string) => Promise<string>;
   openFolderDialog: () => Promise<Electron.OpenDialogReturnValue | undefined>;
   openWebsiteWindow: (lang?: string) => void;
   parseMediaFile: (
@@ -184,6 +185,7 @@ export type ElectronIpcInvokeKey =
   | 'getUserDataPath'
   | 'isDownloadErrorExpected'
   | 'openFileDialog'
+  | 'openFolder'
   | 'openFolderDialog'
   | 'registerShortcut';
 

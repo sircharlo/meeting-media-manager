@@ -224,6 +224,10 @@ export interface SettingsValues {
   obsQuickToggle: boolean;
   obsRememberPreviouslyUsedScene: boolean;
   obsSwitchSceneAfterMedia: boolean;
+  recordingEnable: boolean;
+  recordingFolder: null | string;
+  recordingStartShortcut: null | string;
+  recordingStopShortcut: null | string;
   shortcutMediaNext: null | string;
   shortcutMediaPauseResume: null | string;
   shortcutMediaPrevious: null | string;

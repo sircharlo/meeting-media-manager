@@ -80,6 +80,7 @@ const electronApi: ElectronApi = {
   openDiscussion: (c, t, p) => send('openDiscussion', c, t, p),
   openExternal: (w) => send('openExternal', w),
   openFileDialog: (s, f) => invoke('openFileDialog', s, f),
+  openFolder: (path) => invoke('openFolder', path),
   openFolderDialog: () => invoke('openFolderDialog'),
   openWebsiteWindow,
   parseMediaFile,

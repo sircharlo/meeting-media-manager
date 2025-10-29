@@ -55,6 +55,8 @@ import {
 } from 'main/window/window-website';
 import { PLATFORM } from 'src-electron/constants';
 
+const { openExternal, openPath } = shell;
+
 // IPC send/on
 
 function handleIpcSend(
@@ -166,7 +168,7 @@ handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
       break;
   }
 
-  if (url) shell.openExternal(url);
+  if (url) openExternal(url);
 });
 
 handleIpcSend(
@@ -177,7 +179,7 @@ handleIpcSend(
       title,
       ...JSON.parse(params),
     }).toString();
-    shell.openExternal(
+    openExternal(
       `${repository.url.replace('.git', '/discussions/new')}?${search}`,
     );
   },
@@ -261,6 +263,8 @@ handleIpcInvoke(
 );
 
 handleIpcInvoke('openFolderDialog', async () => openFolderDialog());
+
+handleIpcInvoke('openFolder', async (_e, path: string) => openPath(path));
 
 handleIpcSend('quitAndInstall', () => {
   autoUpdater.quitAndInstall(false, true);

@@ -350,8 +350,32 @@ export const settingsDefinitions: SettingsItems = {
     type: 'shortcut',
   },
 
-  // Advanced
+  // Meeting Recording
+  recordingEnable: {
+    group: 'integrations',
+    subgroup: 'meetingRecording',
+    type: 'toggle',
+  },
+  recordingStartShortcut: {
+    depends: 'recordingEnable',
+    group: 'integrations',
+    subgroup: 'meetingRecording',
+    type: 'shortcut',
+  },
+  recordingStopShortcut: {
+    depends: ['recordingEnable', 'recordingStartShortcut'],
+    group: 'integrations',
+    subgroup: 'meetingRecording',
+    type: 'shortcut',
+  },
+  recordingFolder: {
+    depends: ['recordingEnable', 'recordingStartShortcut'],
+    group: 'integrations',
+    subgroup: 'meetingRecording',
+    type: 'path',
+  },
 
+  // Advanced
   enableKeyboardShortcuts: {
     group: 'advanced',
     subgroup: 'keyboardShortcuts',
@@ -562,6 +586,10 @@ export const defaultSettings: SettingsValues = {
   obsQuickToggle: false,
   obsRememberPreviouslyUsedScene: true,
   obsSwitchSceneAfterMedia: false,
+  recordingEnable: false,
+  recordingFolder: null,
+  recordingStartShortcut: null,
+  recordingStopShortcut: null,
   shortcutMediaNext: null,
   shortcutMediaPauseResume: null,
   shortcutMediaPrevious: null,

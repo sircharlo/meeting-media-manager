@@ -115,6 +115,9 @@ export const electronApi: ElectronApi = {
   openFileDialog: function (single, filter) {
     throw new Error('Function not implemented.');
   },
+  openFolder: function (path) {
+    throw new Error('Function not implemented.');
+  },
   openFolderDialog: function () {
     throw new Error('Function not implemented.');
   },
