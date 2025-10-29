@@ -43,11 +43,98 @@ export async function createWebsiteWindow(lang?: string) {
   websiteWindow.webContents.on('did-finish-load', () => {
     try {
       websiteWindow?.webContents.insertCSS(
-        `.cursor{position:fixed;border-radius:50%;transform:translateX(-50%) translateY(-50%);pointer-events:none;left:-100px;top:50%;background-color:transparent;z-index:10000;border:5px solid rgba(255, 0, 0, 0.8);height:50px;width:50px;transition:transform 0.25s ease-out, background-color 0.25s ease-out}.cursor-clicked{transform:translateX(-50%) translateY(-50%) scale(1.5);background-color:rgba(255, 0, 0, 0.8)}`,
+        `
+        .cursor {
+          position: fixed;
+          border-radius: 50%;
+          pointer-events: none;
+          left: -100px;
+          top: 50%;
+          background-color: transparent;
+          z-index: 10000;
+          border: 10px solid rgba(0, 123, 255, 0.8);
+          height: 100px;
+          width: 100px;
+          box-sizing: border-box;
+          transition: transform 0.2s ease-out, background-color 0.2s ease-out, border-color 0.2s ease-out;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 24px;
+          font-weight: bold;
+          color: white;
+          text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .cursor-left {
+          border-color: rgba(40, 167, 69, 0.8);
+          background-color: rgba(40, 167, 69, 0.3);
+        }
+        .cursor-right {
+          border-color: rgba(255, 165, 0, 0.8);
+          background-color: rgba(255, 165, 0, 0.3);
+        }
+        .cursor-double {
+          border-color: rgba(128, 0, 128, 0.8);
+          background-color: rgba(128, 0, 128, 0.3);
+        }
+        .cursor-clicked {
+          transform: scale(1.2);
+        }
+        .cursor-pulse {
+          animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+          0% { transform: scale(1); }
+          50% { transform: scale(1.05); }
+          100% { transform: scale(1); }
+        }`,
       );
 
       websiteWindow?.webContents.executeJavaScript(
-        `const cursor=document.createElement('div');cursor.className='cursor';document.body.appendChild(cursor);const onMouseMove=(e)=>{cursor.style.left=e.clientX+'px';cursor.style.top=e.clientY+'px'};const onMouseDown=()=>{cursor.classList.add('cursor-clicked')};const onMouseUp=()=>{setTimeout(()=>{cursor.classList.remove('cursor-clicked')},250)};document.body.removeEventListener('mousemove',onMouseMove);document.body.addEventListener('mousemove',onMouseMove,{passive:true});document.body.removeEventListener('mousedown',onMouseDown);document.body.addEventListener('mousedown',onMouseDown,{passive:true});document.body.removeEventListener('mouseup',onMouseUp);document.body.addEventListener('mouseup',onMouseUp,{passive:true});`,
+        `
+        const cursor = document.createElement('div');
+        cursor.className = 'cursor cursor-pulse';
+        document.body.appendChild(cursor);
+        
+        let clickTimeout;
+        let lastClickTime = 0;
+        
+        const onMouseMove = (e) => {
+          cursor.style.left = (e.clientX - 50) + 'px';
+          cursor.style.top = (e.clientY - 50) + 'px';
+        };
+        
+        const clearClick = () => {
+          cursor.classList.remove('cursor-left', 'cursor-right', 'cursor-double', 'cursor-clicked');
+          cursor.innerHTML = '';
+          clearTimeout(clickTimeout);
+        };
+        
+        const onMouseDown = (e) => {
+          clearClick();
+          cursor.classList.add('cursor-clicked');
+          if (e.button === 0) {
+            cursor.classList.add('cursor-left');
+          } else if (e.button === 2) {
+            cursor.classList.add('cursor-right');
+          }
+        };
+        
+        const onMouseUp = () => {
+          clickTimeout = setTimeout(clearClick, 500);
+        };
+        
+        const onDblClick = (e) => {
+          clearClick();
+          cursor.classList.add('cursor-clicked', 'cursor-double');
+          clickTimeout = setTimeout(clearClick, 1000);
+        };
+        
+        document.body.addEventListener('mousemove', onMouseMove, { passive: true });
+        document.body.addEventListener('mousedown', onMouseDown, { passive: true });
+        document.body.addEventListener('mouseup', onMouseUp, { passive: true });
+        document.body.addEventListener('dblclick', onDblClick, { passive: true });
+        document.body.addEventListener('contextmenu', (e) => e.preventDefault());`,
       );
     } catch (e) {
       captureElectronError(e, {
