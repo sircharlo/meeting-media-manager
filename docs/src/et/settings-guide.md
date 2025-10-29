@@ -38,15 +38,15 @@ Määra, millist päeva tuleks kalendri vaates pidada nädala esimeseks päevaks
 
 **Vaikimisi**: Pühapäev
 
-### Date Format {#date-format}
+### Kuupäeva vorming {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
-Format used to display dates in the app.
+Rakenduses kuupäevade kuvamiseks kasutatav formaat.
 
-**Example**: D MMMM YYYY
+**Näiteks**: D MMMM YYYY
 
-**Default**: D MMMM YYYY
+**Vaikimisi**: D MMMM YYYY
 
 ### Automaatne käivitamine sisselogimisel {#auto-start-at-login}
 
@@ -175,11 +175,11 @@ Luba meedia esitamise funktsioon. See on vajalik, kui soovid esitada meediafaile
 
 **Vaikimisi**: `väljas`
 
-#### Begin Playback Paused {#begin-playback-paused}
+#### Alusta taasesitust - peatatud {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
-Start videos in a paused state when playback begins.
+Alusta videote taasesitamist pausi seisundis, kui taasesitus algab.
 
 **Vaikimisi**: `väljas`
 
@@ -341,47 +341,47 @@ Määra, milliseid OBS-stseene kasutada erinevateks eesmärkideks:
 
 :::
 
-### Custom Events {#custom-events}
+### Kohandatud sündmused {#custom-events}
 
-#### Enable Custom Events {#enable-custom-events}
+#### Luba Kohandatud sündmused {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+Luba kohandatud otseteed, mis käivituvad, kui tuvastatakse teatud sündmus (nt meedia esitamine, pausile panemine või peatamine).
 
 **Vaikimisi**: `väljas`
 
-#### Custom Event Shortcuts {#custom-event-shortcuts}
+#### Kohandatud sündmuste otseteed {#custom-event-shortcuts}
 
-##### Play Media Shortcut {#custom-event-media-play-shortcut}
+##### Esita meedia - otsetee {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
-Shortcut that is triggered when media is played.
+Meedia mängimisel käivituv otsetee.
 
 **Vaikimisi**: Tühi
 
-##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+##### Pausil meedia - otsetee {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
-Shortcut that is triggered when media is paused.
+Meedia pausil käivituv otsetee.
 
 **Vaikimisi**: Tühi
 
-##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+##### Peata meedia - otsetee {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
-Shortcut that is triggered when media is stopped.
+Meedia peatamisel käivituv otsetee.
 
 **Vaikimisi**: Tühi
 
-##### Last Song Shortcut {#custom-event-last-song-shortcut}
+##### Viimane laul - otsetee {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-Shortcut that is triggered when the last song is played during a meeting.
+Klahvide otsetee, mis käivitub, kui koosoleku ajal mängitakse viimane laul.
 
 **Vaikimisi**: Tühi
 
@@ -410,11 +410,11 @@ Meedia esitamise kiirklahvide seadistamine:
 
 ### Meedia ekraan {#media-display}
 
-#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+#### Luba meediaakna üleminekud {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-Enable fade-in/out transitions when showing or hiding the media window.
+Luba üleminekuga varjamine või näitamine meediaaknas.
 
 **Vaikimisi**: `lubatud`
 
@@ -514,13 +514,13 @@ Neid seadeid tuleks muuta ainult juhul, kui mõistad nende mõju.
 
 :::
 
-#### Base URL {#base-url}
+#### Baas-URL {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
-Base domain used to download publications and media.
+Põhidomeen, mida kasutatakse väljaannete ja meedia allalaadimiseks.
 
-**Default**: `jw.org`
+**Vaikimisi**: `jw.org`
 
 #### Meedia allalaadimise keelamine {#disable-media-fetching}
 
