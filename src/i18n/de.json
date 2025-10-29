@@ -538,5 +538,18 @@
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Link zur Zoom-Bildschirmfreigabe",
   "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings.",
-  "here-are-some-of-the-newest-features": "Here are just a few of the latest features and updates:"
+  "here-are-some-of-the-newest-features": "Here are just a few of the latest features and updates:",
+  "recordingEnable": "Meeting recording",
+  "recordingEnable-explain": "Enable this to allow M³ to send keyboard shortcuts to an external application to start and stop recording when media starts and stops playing.",
+  "recordingFolder": "Recording folder",
+  "recordingFolder-explain": "Enter the path to the folder where recordings are saved by the external application. This is not mandatory, but if entered, M³ will add a button that will allow you to open this folder.",
+  "recordingStartShortcut": "Recording start shortcut",
+  "recordingStartShortcut-explain": "Enter the keyboard shortcut configured in the external application that starts the recording. M³ will send this shortcut when the Start Recording button is pressed.",
+  "recordingStopShortcut": "Recording stop shortcut",
+  "recordingStopShortcut-explain": "Enter the keyboard shortcut configured in the external application that stops the recording. M³ will send this shortcut when the Stop Recording button is pressed. If this is not configured, M³ will send the same shortcut as the Start Recording button.",
+  "meetingRecording": "Meeting recording",
+  "recording-duration": "Recording duration",
+  "open-recording-folder": "Open recording folder",
+  "start-recording": "Start recording",
+  "stop-recording": "Stop recording"
 }
