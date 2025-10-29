@@ -359,6 +359,7 @@ export const settingsDefinitions: SettingsItems = {
   recordingStartShortcut: {
     depends: 'recordingEnable',
     group: 'integrations',
+    rules: ['notEmpty'],
     subgroup: 'meetingRecording',
     type: 'shortcut',
   },

@@ -126,11 +126,12 @@ const showAutoUpdateAvailableBanner = ref(false);
 const showAutoUpdateDownloadedBanner = ref(false);
 
 onMounted(() => {
-  window.electronApi.onUpdateAvailable(() => {
+  const { onUpdateAvailable, onUpdateDownloaded } = window.electronApi;
+  onUpdateAvailable(() => {
     showAutoUpdateAvailableBanner.value = true;
     showAutoUpdateDownloadedBanner.value = false;
   });
-  window.electronApi.onUpdateDownloaded(() => {
+  onUpdateDownloaded(() => {
     showAutoUpdateAvailableBanner.value = false;
     showAutoUpdateDownloadedBanner.value = true;
   });

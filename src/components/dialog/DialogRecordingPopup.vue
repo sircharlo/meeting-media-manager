@@ -64,6 +64,8 @@ import { useI18n } from 'vue-i18n';
 const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
 
+const { openFolder } = window.electronApi;
+
 const open = defineModel<boolean>({ default: false });
 const props = defineProps<{
   isRecording: boolean;
@@ -113,6 +115,6 @@ const toggleRecording = () => {
 
 const openRecordingFolder = () => {
   if (!currentSettings.value?.recordingFolder) return;
-  window.electronApi.openFolder(currentSettings.value.recordingFolder);
+  openFolder(currentSettings.value.recordingFolder);
 };
 </script>

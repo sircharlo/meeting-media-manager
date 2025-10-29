@@ -82,7 +82,7 @@ describe('fs edge cases', () => {
   describe('removeEmptyDirs - resilient to partial failures', () => {
     it('removes empty and leaves non-empty; continues after errors', async () => {
       const root = join(
-        window.electronApi.path.join(__dirname, '..'),
+        join(__dirname, '..'),
         'fs-edge-remove',
         String(Date.now()),
       );

@@ -9,6 +9,7 @@
           ? 'negative'
           : 'white-transparent'
     "
+    :disable="!currentSettings?.recordingStartShortcut"
     no-caps
     rounded
     :style="props.isRecording ? 'min-width: 110px;' : ''"

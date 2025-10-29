@@ -452,6 +452,8 @@ const currentState = useCurrentStateStore();
 const { currentLangObject, currentSettings, selectedDate } =
   storeToRefs(currentState);
 
+const { executeQuery, path, pathToFileURL } = window.electronApi;
+
 const { t } = useI18n();
 const { dateLocale } = useLocale();
 
@@ -551,7 +553,6 @@ const breadcrumbs = computed(() => {
 
 async function buildDocumentHasMedia(db: string) {
   try {
-    const { executeQuery } = window.electronApi;
     const hasDocMM = !!executeQuery<{ name: string }>(
       db,
       "SELECT name FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'",
@@ -584,7 +585,6 @@ async function buildDocumentPreviews(db: string) {
   try {
     docPreviews.value = {};
     if (!db || !documents.value?.length) return;
-    const { executeQuery, path, pathToFileURL } = window.electronApi;
     // Check if DocumentMultimedia table exists
     const hasDocMM = !!executeQuery<{ name: string }>(
       db,
@@ -1171,7 +1171,7 @@ async function selectMonth(m: number) {
     }
     selection.dbPath = db;
     // Load articles (documents)
-    const docs = window.electronApi.executeQuery<DocumentItem>(
+    const docs = executeQuery<DocumentItem>(
       db,
       `SELECT DocumentId, Title FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
     );
@@ -1204,7 +1204,7 @@ async function selectPublication(choice: FilterChoice) {
       return;
     }
     selection.dbPath = db;
-    const docs = window.electronApi.executeQuery<DocumentItem>(
+    const docs = executeQuery<DocumentItem>(
       db,
       `SELECT DocumentId, Title FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
     );
@@ -1323,7 +1323,7 @@ async function selectSearchResult(result: SearchResultItem) {
         return;
       }
       selection.dbPath = dbPath;
-      const docs = window.electronApi.executeQuery<DocumentItem>(
+      const docs = executeQuery<DocumentItem>(
         dbPath,
         `SELECT DocumentId, Title FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
       );

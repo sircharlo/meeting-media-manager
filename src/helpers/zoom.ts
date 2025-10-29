@@ -31,7 +31,8 @@ export const triggerZoomScreenShare = (startSharing: boolean) => {
     // Helper function to focus the media window with error handling
     function focusMediaWindow(context = '') {
       try {
-        window.electronApi.focusMediaWindow();
+        const { focusMediaWindow } = window.electronApi;
+        focusMediaWindow();
         console.log(`🎯 [Zoom] Media window focus requested${context}`);
       } catch (focusError) {
         console.warn(`⚠️ [Zoom] Failed to focus media window:`, focusError);

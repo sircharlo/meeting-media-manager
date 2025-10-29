@@ -75,6 +75,7 @@ import { useI18n } from 'vue-i18n';
 const {
   closeWebsiteWindow,
   navigateWebsiteWindow,
+  onWebsiteWindowClosed,
   openWebsiteWindow,
   zoomWebsiteWindow,
 } = window.electronApi;
@@ -128,7 +129,7 @@ const { post: postWebStream } = useBroadcastChannel<
 });
 
 // Listen for window close IPC event
-window.electronApi.onWebsiteWindowClosed(() => {
+onWebsiteWindowClosed(() => {
   stopStreaming();
 });
 
