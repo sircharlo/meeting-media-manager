@@ -538,5 +538,18 @@
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "共享Zoom屏幕快捷键",
   "zoomScreenShareShortcut-explain": "输入Zoom的“开始/停止屏幕共享”设置中配置的键盘快捷方式。 当媒体开始播放时(启动屏幕共享)和停止时(停止屏幕共享)，M3将发送此快捷方式。 为了使用此功能，您需要在Zoom设置中启用\"全局快捷键\"设置。",
-  "here-are-some-of-the-newest-features": "Here are just a few of the latest features and updates:"
+  "here-are-some-of-the-newest-features": "Here are just a few of the latest features and updates:",
+  "recordingEnable": "Meeting recording",
+  "recordingEnable-explain": "Enable this to allow M³ to send keyboard shortcuts to an external application to start and stop recording when media starts and stops playing.",
+  "recordingFolder": "Recording folder",
+  "recordingFolder-explain": "Enter the path to the folder where recordings are saved by the external application. This is not mandatory, but if entered, M³ will add a button that will allow you to open this folder.",
+  "recordingStartShortcut": "Recording start shortcut",
+  "recordingStartShortcut-explain": "Enter the keyboard shortcut configured in the external application that starts the recording. M³ will send this shortcut when the Start Recording button is pressed.",
+  "recordingStopShortcut": "Recording stop shortcut",
+  "recordingStopShortcut-explain": "Enter the keyboard shortcut configured in the external application that stops the recording. M³ will send this shortcut when the Stop Recording button is pressed. If this is not configured, M³ will send the same shortcut as the Start Recording button.",
+  "meetingRecording": "Meeting recording",
+  "recording-duration": "Recording duration",
+  "open-recording-folder": "Open recording folder",
+  "start-recording": "Start recording",
+  "stop-recording": "Stop recording"
 }
