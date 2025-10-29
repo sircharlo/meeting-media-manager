@@ -8,7 +8,7 @@ hero:
   image: /logo.svg
   actions:
     - theme: brand
-      text: Download
+      text: Allalaadimine
       link: /et/download
     - theme: brand
       text: Info

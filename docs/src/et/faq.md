@@ -30,7 +30,7 @@ M³ supports Windows, macOS, and Linux:
 
 ### :globe_with_meridians: Does M³ work in my language? {#language-support}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Jah!** M³ pakub laiaulatuslikku mitmekeelset tuge:
 
 - **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
 - **App Interface**: Use M³'s interface in many different languages

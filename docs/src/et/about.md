@@ -43,62 +43,62 @@ M³, terviklik meediahalduslahendus, võimaldab teil lihtsalt ja automaatselt al
 - **Nutikas vahemällu salvestamine**: intelligentne vahemällu salvestamise süsteem, mis hoiab meedia korrastatud ja ajakohasena
 - **Organiseeritud meedia**: Korraldab meedia automaatselt kuupäeva ja koosoleku osa järgi
 
-### Media Presentation Features {#about-presentation-features}
+### Meedia esitluse funktsioonid {#about-presentation-features}
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
+**Hübriidsete** või **kohapealsete** koguduse koosolekute puhul hõlmab integreeritud meedia esitlusrežiim järgmist:
 
-- **Advanced media controls**: Media thumbnails with zoom and pan capabilities
-- **Custom timing**: Set custom start and end times for media playback
-- **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
-- **Multi-monitor support**: Automatic external monitor detection and management
-- **Clean presentation**: Distraction-free media presentation interface
+- **Täiustatud meediajuhtimisfunktsioonid**: meedia pisipildid koos suumimis- ja nihutamisvõimalustega
+- **Kohandatud ajastus**: seadke meedia taasesituse algus- ja lõppkellaajad
+- **Esitusfunktsioonid**: lihtsalt kasutatavad pausi-/esitus-/peatamisnupud koos kiirklahvidega
+- **Mitme monitori tugi**: välise monitori automaatne tuvastamine ja haldamine
+- **Selge esitus**: häiringuideta meediaesituse liides
 
-### Background Music {#about-background-music}
+### Taustamuusika {#about-background-music}
 
-- **Intelligent playback**: Background music that automatically stops before meetings start
-- **One-click restart**: Resume background music with a single click after meetings
-- **Volume control**: Adjustable background music volume with fade-out capabilities
+- **Intelligentne taustamuusika esitus**: taustamuusika, mis peatub automaatselt enne koosoleku algust
+- **Ühe klõpsuga taaskäivitamine**: taaskäivita taustamuusika ühe klõpsuga pärast koosolekuid
+- **Helitugevuse reguleerimine**: reguleeritav taustamuusika helitugevus koos helitugevuse järkjärgulise vähendamise võimalusega
 
-### Zoom Integration {#about-zoom-integration}
+### Koostöö Zoomiga {#about-zoom-integration}
 
-- **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
+- **Automaatne ekraani jagamine**: alusta ja lõpeta Zoom ekraani jagamine automaatselt, kui mängid või peatad meediat
 
-### OBS Studio Integration {#about-obs-integration}
+### Koostöö OBS Studioga {#about-obs-integration}
 
-- **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
-- **Scene management**: Automatic switching between camera, media, and other scenes
+- **Automaatne stseenide vahetamine**: sujuv koostöö OBS Studio programmiga hübriidkoosolekute jaoks
+- **Stseenide haldamine**: automaatne ümberlülitamine kaamera, meedia ja muude stseenide vahel
 
-### Media Import and Management {#about-media-import}
+### Media Import ja haldamine {#about-media-import}
 
-- **JWPUB files**: Import and manage JWPUB files with ease
-- **JWLPLAYLIST files**: Support for JW Library playlist files
-- **Custom media**: Import custom videos, pictures, audio files, and PDF files
-- **Audio Bible**: Import Study Bible media and audio recordings of the New World Translation
-- **Public talks**: Always have public talk media overview ready to use with the S-34 importer
+- **JWPUB-failid**: JWPUB-failide lihtne importimine ja haldamine
+- **JWLPLAYLIST-failid**: JW Library esitusloendi failide tugi
+- **Kohandatud meedia**: impordi videod, pildid, helifailid ja PDF-failid
+- **Audio Piibel**: Impordi õppepiibli meedia ja Uue maailma tõlke helisalvestised
+- **Avalikud kõned**: hoidke alati valmis avaliku kõnede meedia esitusloend, mida saab kasutada koos S-34 importijaga
 
-### Advanced Features {#about-advanced-features}
+### Lisasätted {#about-advanced-features}
 
-- **Folder monitoring**: Automatically sync media from watched folders (Dropbox, OneDrive, etc.)
-- **Media export**: Automatically export media to folders, organized by date
-- **Website presentation**: Present the official website on external monitors
-- **Keyboard shortcuts**: Customizable keyboard shortcuts for many functions
-- **Multiple profiles**: Manage different congregations or groups with separate profiles
+- **Kausta jälgimine**: sünkroniseerib automaatselt meediafailid jälgitavatest kaustadest (Dropbox, OneDrive jne)
+- **Meedia eksport**: ekspordi meedia automaatselt kaustadesse, korraldatuna kuupäeva järgi
+- **Veebisaidi esitlus**: Esita ametlikku veebisaiti välistel monitoridel
+- **Klaviatuuri kiirklahvid**: paljude funktsioonide jaoks kohandatavad klaviatuuri kiirklahvid
+- **Mitmed profiilid**: halda erinevaid kogudusi või rühmi eraldi profiilidega
 
 ## Kas M³ töötab minu keeles? {#does-m3-work-in-my-language}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Jah!** M³ pakub laiaulatuslikku mitmekeelset tuge:
 
-Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of languages available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need during setup.
+Jehoova tunnistajate koosolekute meediat saab alla laadida sadades keeltes, mis on olemas Jw. org lehel. Keelte nimekirja värskendatakse aeg-ajalt; lihtsalt pead valima neist ühe, mis sulle sobib.
 
-### Interface Languages {#interface-languages}
+### Rakenduse keeled {#interface-languages}
 
-M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
+M³ ise on vabatahtlike poolt tõlgitud paljudesse keeltesse. Saad valida keele, mida soovid M³ kasutajaliideses kuvada, sõltumata meedia allalaadimiseks kasutatavast keelest. See tähendab, et saad kasutada M³-i oma eelistatud keeles, samal ajal alla laadides meediat mis tahes muus toetatud keeles.
 
-For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
+Lisateavet varukeelte ja subtiitrite kohta leiate [KKK-st](faq#language-support).
 
-## System Requirements {#system-requirements}
+## Süsteemi nõuded {#system-requirements}
 
-For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
+Toetatud operatsioonisüsteemide ja nõuete kohta vaata vastuseid [KKK-s](faq#technical-questions).
 
 **Proovige M³ juba täna ja veendu ise, mida see suudab! Meedia esitlemine koguduse koosolekutel ei ole kunagi varem olnud nii lihtne.**
 
