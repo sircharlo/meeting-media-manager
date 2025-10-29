@@ -905,10 +905,7 @@ const checkCoDate = () => {
           label: t('go-to-settings'),
         },
       ],
-      caption: t('dont-forget-to-add-circuit-overseer-date', {
-        congregationMeetings: t('congregationMeetings'),
-        settings: t('titles.settings'),
-      }),
+      caption: t('dont-forget-to-add-circuit-overseer-date'),
       color: 'primary',
       icon: 'mmm-error',
       message: t('no-circuit-overseer-date-set'),
