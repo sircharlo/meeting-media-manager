@@ -45,6 +45,15 @@ describe('Locales', () => {
         .map((f) => readFile(resolve(__dirname, '..', f), 'utf-8')),
     );
 
+    const i18nFiles = await Promise.all(
+      (await readdir(resolve(__dirname, '../i18n')))
+        .filter((f) => f.endsWith('.json'))
+        .map((f) => readFile(resolve(__dirname, '../i18n', f), 'utf-8')),
+    );
+
+    const allContents = [...files, ...i18nFiles];
+    const content = allContents.join(' ');
+
     const keys = new Set(Object.keys(appMessages.en));
     const unusedKeys: string[] = [];
 
@@ -53,9 +62,10 @@ describe('Locales', () => {
         return;
       }
 
-      const content = files.join(' ');
       const match =
-        content.includes(`'${key}'`) || content.includes(`${key}: {`);
+        content.includes(`'${key}'`) ||
+        content.includes(`${key}: {`) ||
+        content.includes(`@:${key}`);
 
       if (!match) {
         unusedKeys.push(key);
