@@ -12,9 +12,6 @@ pull_request_rules:
         bot_account: github-actions[bot]
       merge:
         method: squash
-        strict: smart     # Rebase before merging if necessary
-        strict_method: rebase
-      delete_head_branch: true  # Delete branch after successful merge
 
   - name: Automatically merge Crowdin PRs (only if all checks pass)
     conditions:
@@ -29,6 +26,3 @@ pull_request_rules:
         bot_account: github-actions[bot]
       merge:
         method: squash
-        strict: smart
-        strict_method: rebase
-      delete_head_branch: true
