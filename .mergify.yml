@@ -6,10 +6,9 @@ pull_request_rules:
               - author = dependabot[bot]
               - author = github-actions[bot]
           - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+ to \4\.
-          - check-success ~= ^build
+          - check-success = *
     actions:
-      update:
-        bot_account: github-actions[bot]
+      update: {}
       merge:
         method: squash
 
@@ -20,9 +19,8 @@ pull_request_rules:
               - author = sircharlo
               - author = github-actions[bot]
           - title ~= (new translations|update translations progress)
-          - check-success ~= ^build
+          - check-success = *
     actions:
-      update:
-        bot_account: github-actions[bot]
+      update: {}
       merge:
         method: squash
