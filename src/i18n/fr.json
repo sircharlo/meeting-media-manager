@@ -548,6 +548,8 @@
   "zoom-in": "Agrandir",
   "zoom-integration-explain": "Activez cette option pour permettre à M³ de démarrer et d'arrêter automatiquement le partage d'écran Zoom lorsque la lecture des médias démarre et s'arrête.",
   "zoom-out": "Réduire",
+  "zoomAutoFocusMediaWindow": "Automatically focus media window after Zoom screen sharing starts",
+  "zoomAutoFocusMediaWindow-explain": "This is usually not required, but could be helpful on some systems if the media window regularly loses focus after Zoom screen sharing starts.",
   "zoomEnable": "Intégrer M³ avec la fonction de partage d'écran de Zoom",
   "zoomEnable-explain": "Démarrer et arrêter automatiquement le partage d'écran dans Zoom lorsque les médias commencent et arrêtent de jouer dans M³.",
   "zoomIntegration": "Zoom",

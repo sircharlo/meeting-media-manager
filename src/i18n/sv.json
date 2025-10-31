@@ -548,6 +548,8 @@
   "zoom-in": "Zooma in",
   "zoom-integration-explain": "Aktivera detta för att låta M³ automatiskt starta och stoppa skärmdelning på Zoom när media startar och slutar.",
   "zoom-out": "Zooma ut",
+  "zoomAutoFocusMediaWindow": "Automatically focus media window after Zoom screen sharing starts",
+  "zoomAutoFocusMediaWindow-explain": "This is usually not required, but could be helpful on some systems if the media window regularly loses focus after Zoom screen sharing starts.",
   "zoomEnable": "Integrera M³ med Zoom-skärmdelning",
   "zoomEnable-explain": "Starta och stoppa automatiskt Zoom-skärmdelning när media startar och slutar.",
   "zoomIntegration": "Zoom",
