@@ -548,6 +548,8 @@
   "zoom-in": "Suurenda",
   "zoom-integration-explain": "Luba see, et M³ saaks automaatselt alustada ja lõpetada Zoom ekraani jagamist, kui meedia hakkab mängima ja lõpetab mängimise.",
   "zoom-out": "Vaata kaugemalt",
+  "zoomAutoFocusMediaWindow": "Automatically focus media window after Zoom screen sharing starts",
+  "zoomAutoFocusMediaWindow-explain": "This is usually not required, but could be helpful on some systems if the media window regularly loses focus after Zoom screen sharing starts.",
   "zoomEnable": "Kasuta M³ rakendust Zoomi ekraani jagamisega",
   "zoomEnable-explain": "Zoom ekraani jagamine käivitub ja peatub automaatselt, kui meedia esitamine algab ja lõpeb.",
   "zoomIntegration": "Zoom",
