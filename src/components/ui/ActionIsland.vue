@@ -56,14 +56,15 @@ import DialogDownloadsPopup from '../dialog/DialogDownloadsPopup.vue';
 import DialogObsPopup from '../dialog/DialogObsPopup.vue';
 import DialogRecordingPopup from '../dialog/DialogRecordingPopup.vue';
 
+// Popups
 const downloadPopup = ref(false);
 const musicPopup = ref(false);
 const obsPopup = ref(false);
 const recordingPopup = ref(false);
 const displayPopup = ref(false);
-const isRecording = ref(false);
 
-// Recording timer
+// Recording variables
+const isRecording = ref(false);
 const recordingStartTime = ref<null | number>(null);
 const recordingDurationSeconds = ref(0);
 
@@ -100,6 +101,7 @@ const popups = {
   downloadPopup,
   musicPopup,
   obsPopup,
+  recordingPopup,
 } as const;
 
 // Define a type for the keys of the `popups` object
