@@ -242,6 +242,12 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'zoomIntegration',
     type: 'shortcut',
   },
+  zoomAutoFocusMediaWindow: {
+    depends: 'zoomEnable',
+    group: 'integrations',
+    subgroup: 'zoomIntegration',
+    type: 'toggle',
+  },
   obsEnable: {
     actions: ['obsConnect'],
     group: 'integrations',
@@ -599,6 +605,7 @@ export const defaultSettings: SettingsValues = {
   shortcutMusic: null,
   weDay: null,
   weStartTime: null,
+  zoomAutoFocusMediaWindow: false,
   zoomEnable: false,
   zoomScreenShareShortcut: null,
 };

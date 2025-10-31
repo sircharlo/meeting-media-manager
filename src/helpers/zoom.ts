@@ -11,7 +11,7 @@ export const triggerZoomScreenShare = (startSharing: boolean) => {
   try {
     const congSettings = useCurrentStateStore();
     if (!congSettings.currentSettings) return;
-    const { zoomEnable, zoomScreenShareShortcut } =
+    const { zoomAutoFocusMediaWindow, zoomEnable, zoomScreenShareShortcut } =
       congSettings.currentSettings;
 
     // Only proceed if zoom integration is enabled and shortcut is configured
@@ -20,35 +20,38 @@ export const triggerZoomScreenShare = (startSharing: boolean) => {
     }
 
     console.log(
-      `🎥 [Zoom] ${startSharing ? 'Starting' : 'Stopping'} screen sharing with shortcut: ${zoomScreenShareShortcut}`,
+      ` [Zoom] ${startSharing ? 'Starting' : 'Stopping'} screen sharing with shortcut: ${zoomScreenShareShortcut}`,
     );
 
     // Send the keyboard shortcut
     sendKeyboardShortcut(zoomScreenShareShortcut, 'Zoom');
 
-    console.log(`✅ [Zoom] Screen sharing shortcut sent successfully`);
+    console.log(` [Zoom] Screen sharing shortcut sent successfully`);
 
-    // Helper function to focus the media window with error handling
-    function focusMediaWindow(context = '') {
-      try {
-        const { focusMediaWindow } = window.electronApi;
-        focusMediaWindow();
-        console.log(`🎯 [Zoom] Media window focus requested${context}`);
-      } catch (focusError) {
-        console.warn(`⚠️ [Zoom] Failed to focus media window:`, focusError);
+    // Only attempt to focus media window if the setting is enabled
+    if (zoomAutoFocusMediaWindow) {
+      // Helper function to focus the media window with error handling
+      const { focusMediaWindow } = window.electronApi;
+      function triggerFocusMediaWindow(context = '') {
+        try {
+          focusMediaWindow();
+          console.log(` [Zoom] Media window focus requested${context}`);
+        } catch (focusError) {
+          console.warn(` [Zoom] Failed to focus media window:`, focusError);
+        }
       }
+
+      // Focus immediately to counter potential focus steal
+      triggerFocusMediaWindow(' (immediate)');
+
+      // Schedule additional focus attempts to handle unpredictable timing
+      const focusDelays = [50, 250, 500, 1000];
+      focusDelays.forEach((delay) => {
+        setTimeout(() => {
+          triggerFocusMediaWindow(` after screen sharing toggle (${delay}ms)`);
+        }, delay);
+      });
     }
-
-    // Focus immediately to counter potential focus steal
-    focusMediaWindow(' (immediate)');
-
-    // Schedule additional focus attempts to handle unpredictable timing
-    const focusDelays = [50, 250, 500, 1000];
-    focusDelays.forEach((delay) => {
-      setTimeout(() => {
-        focusMediaWindow(` after screen sharing toggle (${delay}ms)`);
-      }, delay);
-    });
   } catch (error) {
     errorCatcher(error, {
       contexts: {
