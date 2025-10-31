@@ -17,13 +17,13 @@
       </div>
       <div class="col overflow-auto q-col-gutter-y-sm">
         <template v-if="Object.values(downloadProgress).length === 0">
-          <div class="row flex-center q-px-md row">
+          <div class="row flex-center q-px-md q-mb-sm row">
             <div class="col ellipsis text-weight-medium text-dark-grey">
               {{ t('noDownloadsInProgress') }}
             </div>
-            <div class="col-shrink">
+            <!-- <div class="col-shrink">
               <q-icon color="positive" name="mmm-cloud-done" size="sm" />
-            </div>
+            </div> -->
           </div>
         </template>
         <template v-else>
@@ -124,12 +124,11 @@
       <div class="q-px-md q-pt-md row">
         <q-space />
         <q-btn
-          color="negative"
+          color="warning"
           :disable="refreshing"
           icon="mmm-reset"
           :label="t('refresh-all-meeting-media')"
           :loading="refreshing"
-          outline
           @click="onRefreshMeetingMedia"
         >
           <q-tooltip>{{ t('refresh-all-meeting-media') }}</q-tooltip>
