@@ -548,6 +548,8 @@
   "zoom-in": "Увеличить",
   "zoom-integration-explain": "Включите эту функцию, чтобы M³ автоматически запускал и останавливал совместное использование экрана в Zoom при запуске и остановке воспроизведения мультимедиа.",
   "zoom-out": "Уменьшить",
+  "zoomAutoFocusMediaWindow": "Automatically focus media window after Zoom screen sharing starts",
+  "zoomAutoFocusMediaWindow-explain": "This is usually not required, but could be helpful on some systems if the media window regularly loses focus after Zoom screen sharing starts.",
   "zoomEnable": "Интеграция M³ с функцией совместного использования экрана Zoom",
   "zoomEnable-explain": "Автоматически запускать и останавливать совместное использование экрана Zoom при запуске и остановке воспроизведении мультимедиа.",
   "zoomIntegration": "Zoom",
