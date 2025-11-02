@@ -175,7 +175,7 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
       await getDirectory('w', 'any'), // Study Watchtower
       await getDirectory('g', 'any'), // Awake
       // Various publication info, shouldn't be refreshed often
-      await getDirectory('jwlb', undefined),
+      await getDirectory('jwlb', undefined, true),
     ].flat();
 
     // Add S-34mp directories
