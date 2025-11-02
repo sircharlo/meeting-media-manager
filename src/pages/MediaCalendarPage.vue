@@ -383,17 +383,19 @@ watch(
   () => mediaPlaying.value.action,
   (newAction, oldAction) => {
     if (newAction !== oldAction) postMediaAction(newAction);
-    if (currentLangObject.value?.isSignLanguage) {
-      if (newAction !== 'play') {
-        const cameraId = appSettingsStore.displayCameraId;
-        if (cameraId) {
-          postCameraStream(cameraId);
-        } else {
-          showMediaWindow(false);
-        }
-      } else {
-        showMediaWindow(true);
-      }
+
+    const isPlay = newAction === 'play';
+    const isSignLang = currentLangObject.value?.isSignLanguage;
+
+    // Always show media window when playing
+    if (isPlay) showMediaWindow(true);
+
+    // Handle sign language special cases
+    if (isSignLang) {
+      if (isPlay) return showMediaWindow(true);
+
+      const cameraId = appSettingsStore.displayCameraId;
+      return cameraId ? postCameraStream(cameraId) : showMediaWindow(false);
     }
   },
 );
