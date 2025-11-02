@@ -35,6 +35,7 @@ import { convertImageIfNeeded } from 'src/utils/converters';
 import {
   dateFromString,
   formatDate,
+  getDateDiff,
   getSpecificWeekday,
   subtractFromDate,
 } from 'src/utils/date';
@@ -441,6 +442,17 @@ export const fetchMedia = async () => {
 
             // Skip non-meeting days entirely
             if (!getMeetingType(day.date)) {
+              return null;
+            }
+
+            // Skip if metered connection is enabled and target date is after tomorrow
+            if (
+              currentStateStore.currentSettings?.meteredConnection &&
+              getDateDiff(day.date, new Date(), 'days') > 1
+            ) {
+              console.log(
+                `Skipping day ${index + 1} - ${day.date.toISOString().split('T')[0]} because metered connection is enabled and target date is after tomorrow`,
+              );
               return null;
             }
 

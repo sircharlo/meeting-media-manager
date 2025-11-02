@@ -13,15 +13,7 @@
       >
         <div class="col-6 text-center">
           <div class="row items-center justify-center q-my-lg">
-            <q-spinner
-              v-if="
-                !currentSettings?.disableMediaFetching &&
-                selectedDayMeetingType &&
-                !selectedDateObject?.status
-              "
-              color="primary"
-              size="lg"
-            />
+            <q-spinner v-if="shouldShowSpinner" color="primary" size="lg" />
             <q-img
               v-else
               fit="contain"
@@ -32,28 +24,10 @@
           <div
             class="row items-center justify-center text-subtitle1 text-semibold"
           >
-            {{
-              !selectedDate
-                ? t('noDateSelected')
-                : !currentSettings?.disableMediaFetching &&
-                    selectedDayMeetingType &&
-                    selectedDateObject?.status !== 'error'
-                  ? t('please-wait')
-                  : t('there-are-no-media-items-for-the-selected-date')
-            }}
+            {{ primaryEmptyStateMessage }}
           </div>
           <div class="row items-center justify-center text-center">
-            {{
-              !selectedDate
-                ? t('select-a-date-to-begin')
-                : !currentSettings?.disableMediaFetching &&
-                    selectedDayMeetingType &&
-                    selectedDateObject?.status !== 'error'
-                  ? t('currently-loading')
-                  : t(
-                      'use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media',
-                    )
-            }}
+            {{ secondaryEmptyStateMessage }}
           </div>
           <div
             v-if="
@@ -85,8 +59,9 @@
 import type { DocumentItem, MediaSectionIdentifier } from 'src/types';
 
 import { storeToRefs } from 'pinia';
+import { getDateDiff } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -113,4 +88,77 @@ const currentState = useCurrentStateStore();
 const { selectedDayMeetingType } = storeToRefs(currentState);
 const { currentSettings, selectedDate, selectedDateObject } =
   storeToRefs(currentState);
+
+const shouldShowSpinner = computed(() => {
+  if (
+    currentSettings.value?.disableMediaFetching ||
+    !selectedDayMeetingType.value ||
+    selectedDateObject.value?.status
+  ) {
+    return false;
+  }
+
+  if (!currentSettings.value?.meteredConnection) {
+    return true;
+  }
+
+  const selectedDate = selectedDateObject.value?.date;
+  if (!selectedDate) {
+    return false;
+  }
+
+  return getDateDiff(selectedDate, new Date(), 'days') <= 1;
+});
+
+const primaryEmptyStateMessage = computed(() => {
+  if (!selectedDate.value) {
+    return t('noDateSelected');
+  }
+
+  const fetchingEnabled = !currentSettings.value?.disableMediaFetching;
+  const hasMeetingType = !!selectedDayMeetingType.value;
+  const status = selectedDateObject.value?.status;
+
+  if (fetchingEnabled && hasMeetingType && status !== 'error') {
+    if (currentSettings.value?.meteredConnection) {
+      const selectedDateValue = selectedDateObject.value?.date;
+      if (
+        selectedDateValue &&
+        getDateDiff(selectedDateValue, new Date(), 'days') > 1
+      ) {
+        return t('this-meeting-is-far-in-the-future');
+      }
+    }
+    return t('please-wait');
+  }
+
+  return t('there-are-no-media-items-for-the-selected-date');
+});
+
+const secondaryEmptyStateMessage = computed(() => {
+  if (!selectedDate.value) {
+    return t('select-a-date-to-begin');
+  }
+
+  const fetchingEnabled = !currentSettings.value?.disableMediaFetching;
+  const hasMeetingType = !!selectedDayMeetingType.value;
+  const status = selectedDateObject.value?.status;
+
+  if (fetchingEnabled && hasMeetingType && status !== 'error') {
+    if (currentSettings.value?.meteredConnection) {
+      const selectedDateValue = selectedDateObject.value?.date;
+      if (
+        selectedDateValue &&
+        getDateDiff(selectedDateValue, new Date(), 'days') > 1
+      ) {
+        return t('not-yet-available-due-to-metered-connection');
+      }
+    }
+    return t('currently-loading');
+  }
+
+  return t(
+    'use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media',
+  );
+});
 </script>
