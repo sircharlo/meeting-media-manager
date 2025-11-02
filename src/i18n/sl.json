@@ -548,6 +548,8 @@
   "zoom-in": "Približaj",
   "zoom-integration-explain": "Omogoči to možnost, če želiš da M³ samodejno zažene in ustavi deljenje zaslona v Zoomu, ko se predvajanje multimedijske vsebine začne in ustavi.",
   "zoom-out": "Pomanjšaj",
+  "zoomAutoFocusMediaWindow": "Automatically focus media window after Zoom screen sharing starts",
+  "zoomAutoFocusMediaWindow-explain": "This is usually not required, but could be helpful on some systems if the media window regularly loses focus after Zoom screen sharing starts.",
   "zoomEnable": "Poveži M³ s funkcijo deljenja zaslona v Zoomu",
   "zoomEnable-explain": "Samodejno zaženi in ustavi deljenje zaslona v Zoomu, ko se predvajanje multimedijske vsebine začne in ustavi.",
   "zoomIntegration": "Zoom",
