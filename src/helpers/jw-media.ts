@@ -264,11 +264,13 @@ export const addJwpubDocumentMediaToFiles = async (
       currentStateStore.currentSettings?.includePrinted,
     );
     for (let i = 0; i < multimediaItems.length; i++) {
-      multimediaItems[i] = await addFullFilePathToMultimediaItem(
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        multimediaItems[i]!,
-        pubFolder ?? publication,
-      );
+      const item = multimediaItems[i];
+      if (item) {
+        multimediaItems[i] = await addFullFilePathToMultimediaItem(
+          item,
+          pubFolder ?? publication,
+        );
+      }
     }
     await processMissingMediaInfo(
       multimediaItems,
@@ -1772,11 +1774,13 @@ export const getWeMedia = async (lookupDate: Date) => {
          ORDER BY DocumentParagraph.BeginPosition`, // pictures
     );
     for (let i = 0; i < mediaWithoutVideos.length; i++) {
-      mediaWithoutVideos[i] = await addFullFilePathToMultimediaItem(
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        mediaWithoutVideos[i]!,
-        publication,
-      );
+      const item = mediaWithoutVideos[i];
+      if (item) {
+        mediaWithoutVideos[i] = await addFullFilePathToMultimediaItem(
+          item,
+          publication,
+        );
+      }
     }
 
     const combined = [

@@ -1188,77 +1188,176 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         // await addToFiles(convertedImages);
         files.push(...convertedImages);
       } else if (isJwpub(filepath)) {
+        console.log('🎯 [addToFiles] Processing JWPUB file:', filepath);
         // First, only decompress the db in memory to get the publication info and derive the destination path
+        console.log('🎯 [addToFiles] Decompressing JWPUB for db extraction');
         const tempJwpubContents = await decompress(filepath);
+        console.log(
+          '🎯 [addToFiles] Decompressed JWPUB contents:',
+          tempJwpubContents.length,
+          'files',
+        );
         const tempContentFile = tempJwpubContents.find((tempJwpubContent) =>
           tempJwpubContent.path.endsWith('contents'),
         );
-        if (!tempContentFile) return;
+        console.log(
+          '🎯 [addToFiles] Found contents file:',
+          tempContentFile ? 'yes' : 'no',
+        );
+        if (!tempContentFile) {
+          console.log('🎯 [addToFiles] No contents file found, returning');
+          return;
+        }
+        console.log('🎯 [addToFiles] Getting temp directory');
         const tempDir = await getTempPath();
-        if (!tempDir) return;
+        console.log('🎯 [addToFiles] Temp dir:', tempDir);
+        if (!tempDir) {
+          console.log('🎯 [addToFiles] No temp dir, returning');
+          return;
+        }
         await ensureDir(tempDir);
-        const tempFilePath = join(tempDir, basename(filepath) + '-contents');
-        await writeFile(tempFilePath, tempContentFile.data);
-        const tempJwpubFileContents = await decompress(tempFilePath);
-        const tempDbFile = tempJwpubFileContents.find((tempJwpubFileContent) =>
-          tempJwpubFileContent.path.endsWith('.db'),
-        );
-        if (!tempDbFile) return;
-        const tempDbFilePath = join(
-          await getTempPath(),
-          basename(filepath) + '.db',
-        );
-        await writeFile(tempDbFilePath, tempDbFile.data);
-        remove(tempFilePath);
-        if (!(await exists(tempDbFilePath))) return;
-        const publication = getPublicationInfoFromDb(tempDbFilePath);
-        const publicationDirectory = await getPublicationDirectory(
-          publication,
-          currentSettings.value?.cacheFolder,
-        );
-        if (!publicationDirectory) return;
-        const unzipDir = await decompressJwpub(filepath, publicationDirectory);
-        const db = await findDb(unzipDir);
-        if (!db) return;
-        jwpubImportDb.value = db;
-        if (
-          executeQuery<{ count: number }>(
-            db,
-            'SELECT COUNT(*) as count FROM Multimedia;',
-          )?.[0]?.count === 0
-        ) {
-          createTemporaryNotification({
-            caption: basename(filepath),
-            icon: 'mmm-jwpub',
-            message: t('jwpubNoMultimedia'),
-            type: 'warning',
-          });
-          jwpubImportDb.value = '';
-          jwpubImportDocuments.value = [];
-          showFileImport.value = false;
-        } else {
-          const documentMultimediaTableExists = tableExists(
-            db,
-            'DocumentMultimedia',
+        console.log('🎯 [addToFiles] Ensured temp dir exists');
+
+        let tempFilePath: string | undefined;
+        let tempDbFilePath: string | undefined;
+
+        try {
+          tempFilePath = join(tempDir, basename(filepath) + '-contents');
+          console.log(
+            '🎯 [addToFiles] Writing contents to temp file:',
+            tempFilePath,
           );
-          const mmTable = documentMultimediaTableExists
-            ? 'DocumentMultimedia'
-            : 'Multimedia';
-          jwpubImportDocuments.value = executeQuery<DocumentItem>(
-            db,
-            `SELECT DISTINCT Document.DocumentId, Title FROM Document JOIN ${mmTable} ON Document.DocumentId = ${mmTable}.DocumentId;`,
+          await writeFile(tempFilePath, tempContentFile.data);
+          console.log('🎯 [addToFiles] Decompressing temp contents file');
+          const tempJwpubFileContents = await decompress(tempFilePath);
+          console.log(
+            '🎯 [addToFiles] Decompressed temp contents:',
+            tempJwpubFileContents.length,
+            'files',
           );
+          const tempDbFile = tempJwpubFileContents.find(
+            (tempJwpubFileContent) => tempJwpubFileContent.path.endsWith('.db'),
+          );
+          console.log(
+            '🎯 [addToFiles] Found db file:',
+            tempDbFile ? 'yes' : 'no',
+          );
+          if (!tempDbFile) {
+            console.log('🎯 [addToFiles] No db file found, returning');
+            return;
+          }
+          tempDbFilePath = join(tempDir, basename(filepath) + '.db');
+          console.log(
+            '🎯 [addToFiles] Writing db to temp path:',
+            tempDbFilePath,
+          );
+          await writeFile(tempDbFilePath, tempDbFile.data);
+          console.log('🎯 [addToFiles] Checking if db file exists');
+          if (!(await exists(tempDbFilePath))) {
+            console.log('🎯 [addToFiles] Db file does not exist, returning');
+            return;
+          }
+          console.log('🎯 [addToFiles] Getting publication info from db');
+          const publication = getPublicationInfoFromDb(tempDbFilePath);
+          console.log('🎯 [addToFiles] Publication info:', publication);
+          console.log('🎯 [addToFiles] Getting publication directory');
+          const publicationDirectory = await getPublicationDirectory(
+            publication,
+            currentSettings.value?.cacheFolder,
+          );
+          console.log(
+            '🎯 [addToFiles] Publication directory:',
+            publicationDirectory,
+          );
+          if (!publicationDirectory) {
+            console.log('🎯 [addToFiles] No publication directory, returning');
+            return;
+          }
+          console.log(
+            '🎯 [addToFiles] Decompressing JWPUB to publication directory',
+          );
+          const unzipDir = await decompressJwpub(
+            filepath,
+            publicationDirectory,
+          );
+          console.log('🎯 [addToFiles] Unzip dir:', unzipDir);
+          console.log('🎯 [addToFiles] Finding db in unzip dir');
+          const db = await findDb(unzipDir);
+          console.log('🎯 [addToFiles] Db found:', db ? 'yes' : 'no');
+          if (!db) {
+            console.log('🎯 [addToFiles] No db found, returning');
+            return;
+          }
+          jwpubImportDb.value = db;
+          console.log('🎯 [addToFiles] Set jwpubImportDb');
+          console.log('🎯 [addToFiles] Checking multimedia count');
           if (
-            jwpubImportDocuments.value.length === 1 &&
-            jwpubImportDocuments.value[0]
+            executeQuery<{ count: number }>(
+              db,
+              'SELECT COUNT(*) as count FROM Multimedia;',
+            )?.[0]?.count === 0
           ) {
-            await addJwpubDocumentMediaToFiles(
-              jwpubImportDb.value,
-              jwpubImportDocuments.value[0],
-              sectionToAddTo.value,
-            );
+            console.log('🎯 [addToFiles] No multimedia, showing notification');
+            createTemporaryNotification({
+              caption: basename(filepath),
+              icon: 'mmm-jwpub',
+              message: t('jwpubNoMultimedia'),
+              type: 'warning',
+            });
             jwpubImportDb.value = '';
             jwpubImportDocuments.value = [];
+            showFileImport.value = false;
+          } else {
+            console.log('🎯 [addToFiles] Has multimedia, checking tables');
+            const documentMultimediaTableExists = tableExists(
+              db,
+              'DocumentMultimedia',
+            );
+            console.log(
+              '🎯 [addToFiles] DocumentMultimedia table exists:',
+              documentMultimediaTableExists,
+            );
+            const mmTable = documentMultimediaTableExists
+              ? 'DocumentMultimedia'
+              : 'Multimedia';
+            console.log('🎯 [addToFiles] Using mmTable:', mmTable);
+            console.log('🎯 [addToFiles] Executing query for documents');
+            jwpubImportDocuments.value = executeQuery<DocumentItem>(
+              db,
+              `SELECT DISTINCT Document.DocumentId, Title FROM Document JOIN ${mmTable} ON Document.DocumentId = ${mmTable}.DocumentId;`,
+            );
+            console.log(
+              '🎯 [addToFiles] Documents found:',
+              jwpubImportDocuments.value.length,
+            );
+            if (
+              jwpubImportDocuments.value.length === 1 &&
+              jwpubImportDocuments.value[0]
+            ) {
+              console.log('🎯 [addToFiles] Single document, adding media');
+              await addJwpubDocumentMediaToFiles(
+                jwpubImportDb.value,
+                jwpubImportDocuments.value[0],
+                sectionToAddTo.value,
+              );
+              console.log('🎯 [addToFiles] Media added, resetting');
+              jwpubImportDb.value = '';
+              jwpubImportDocuments.value = [];
+            }
+          }
+        } finally {
+          // Clean up temp files
+          if (tempFilePath) {
+            console.log('🎯 [addToFiles] Removing temp contents file');
+            remove(tempFilePath).catch((err) =>
+              console.error('Failed to remove temp contents file:', err),
+            );
+          }
+          if (tempDbFilePath) {
+            console.log('🎯 [addToFiles] Removing temp db file');
+            remove(tempDbFilePath).catch((err) =>
+              console.error('Failed to remove temp db file:', err),
+            );
           }
         }
       } else if (isJwPlaylist(filepath) && selectedDateObject.value) {

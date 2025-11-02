@@ -312,16 +312,14 @@ const loading = ref<boolean>(false);
 const chosenVerses = ref<number[]>([]);
 const hoveredVerse = ref<null | number>(null);
 const totalChosenVerses = computed(() => {
-  return !chosenVerses.value.length
-    ? ''
-    : ' (' +
-        (chosenVerses.value.length === 2
-          ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            Math.abs(chosenVerses.value[0]! - chosenVerses.value[1]!) + 1
-          : chosenVerses.value.length === 1
-            ? 1
-            : '') +
-        ')';
+  if (!chosenVerses.value.length) return '';
+  if (chosenVerses.value.length === 1) return ' (1)';
+  if (chosenVerses.value.length === 2) {
+    const [start, end] = chosenVerses.value;
+    if (!start || !end) return '';
+    return ' (' + (Math.abs(start - end) + 1) + ')';
+  }
+  return '';
 });
 
 const toggleVerse = (verse: number) => {
