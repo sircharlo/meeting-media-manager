@@ -517,7 +517,7 @@
         class="col-shrink"
         style="align-content: center"
       >
-        <template v-if="!media.markers || media.markers.length === 0">
+        <template v-if="!media.markers || media.markers.length <= 1">
           <div class="row items-center q-gutter-xs">
             <!-- Duration dropdown for images in repeated sections -->
             <q-select
