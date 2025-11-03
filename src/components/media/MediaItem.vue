@@ -1733,7 +1733,6 @@ watch(
       requestAnimationFrame(updateProgress);
     } else {
       // Reset progress
-      console.debug('[MediaItem.vue] Resetting image progress');
       imageStartTime.value = null;
       imageProgressPercentage.value = 0;
     }
