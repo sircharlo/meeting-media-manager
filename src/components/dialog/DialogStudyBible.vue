@@ -296,7 +296,7 @@ import {
 } from 'src/helpers/jw-media';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, onMounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -464,13 +464,15 @@ const hoveredMediaItem = ref<MultimediaItem>();
 
 const selectedMediaItems = ref<MultimediaItem[]>([]);
 
-// Initialize when component mounts
-onMounted(async () => {
-  await getBibleMediaCategories();
-  await getBibleBooks();
-  await getBibleMedia();
-  resetBibleBook(true);
-});
+whenever(
+  () => props.modelValue,
+  async () => {
+    await getBibleMediaCategories();
+    await getBibleBooks();
+    await getBibleMedia();
+    resetBibleBook(true);
+  },
+);
 
 const getBibleMediaCategories = async () => {
   try {
