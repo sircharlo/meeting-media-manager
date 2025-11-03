@@ -158,12 +158,12 @@ const deletePending = computed(() => {
 const dialogId = 'congregation-delete-dialog';
 const hoveredCongregation = ref<number | string>('');
 
-function chooseCongregation(
+async function chooseCongregation(
   congregation: number | string,
   initialLoad?: boolean,
 ) {
   try {
-    const invalidSettings = setCongregation(congregation);
+    const invalidSettingsConfigured = await setCongregation(congregation);
     if (congregation) {
       updateYeartext(
         currentState.online,
@@ -175,7 +175,7 @@ function chooseCongregation(
         // if (initialLoad || invalidSettings)
         router.push('/setup-wizard');
       } else {
-        if (invalidSettings) {
+        if (invalidSettingsConfigured) {
           router.push('/settings');
         } else {
           router.push('/media-calendar/initial');

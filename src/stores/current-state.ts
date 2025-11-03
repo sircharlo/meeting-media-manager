@@ -15,7 +15,11 @@ import { settingsDefinitions } from 'src/constants/settings';
 import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { datesAreSame, formatDate } from 'src/utils/date';
-import { getAdditionalMediaPath, isFileUrl } from 'src/utils/fs';
+import {
+  getAdditionalMediaPath,
+  isFileUrl,
+  setCachedUserDataPath,
+} from 'src/utils/fs';
 import { isEmpty, isUUID } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
@@ -174,9 +178,10 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!congregation) return false;
       return this.getInvalidSettings(congregation).length > 0;
     },
-    setCongregation(value: number | string) {
+    setCongregation: async function (value: number | string) {
       if (!value) return false;
       this.currentCongregation = value.toString();
+      await setCachedUserDataPath();
       return this.getInvalidSettings(this.currentCongregation).length > 0;
     },
   },
