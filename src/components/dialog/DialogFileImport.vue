@@ -135,7 +135,6 @@ import {
   VIDEO_EXTENSIONS,
 } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { computed, onUnmounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -192,7 +191,7 @@ watch(
     if (!isOpen) {
       // Reset loading states and data when dialog closes
       jwpubLoading.value = false;
-      jwpubDb.value = '';
+      // Don't clear jwpubDb here as it might be needed by the media picker
       jwpubDocuments.value = [];
     }
   },
@@ -290,22 +289,23 @@ const { isOverDropZone } = useDropZone(dropArea, {
   preventDefaultForUnhandled: true,
 });
 
-const handleJwpubImport = async (jwpubImportDocument: DocumentItem) => {
-  try {
-    jwpubLoading.value = true;
-    await addJwpubDocumentMediaToFiles(
-      jwpubDb.value,
-      jwpubImportDocument,
-      props.section,
-    );
-    dialogValue.value = false;
-    emit('ok');
-  } catch (error) {
-    console.error('❌ JW Playlist import failed:', error);
-    errorCatcher(error);
-  } finally {
-    jwpubLoading.value = false;
-  }
+const handleJwpubImport = (jwpubImportDocument: DocumentItem) => {
+  console.log(
+    '🎯 Emitting openJwpubMediaPicker event for document:',
+    jwpubImportDocument,
+  );
+  window.dispatchEvent(
+    new CustomEvent<{
+      dbPath: string;
+      document: DocumentItem;
+    }>('openJwpubMediaPicker', {
+      detail: {
+        dbPath: jwpubDb.value,
+        document: jwpubImportDocument,
+      },
+    }),
+  );
+  dialogValue.value = false;
 };
 
 const handleCancel = () => {

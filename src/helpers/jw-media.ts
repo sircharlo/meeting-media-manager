@@ -249,6 +249,7 @@ export const addJwpubDocumentMediaToFiles = async (
   section: MediaSectionIdentifier | undefined,
   pubFolder?: PublicationFetcher,
   meetingDate?: string,
+  selectedMultimediaIds?: number[],
 ) => {
   const jwStore = useJwStore();
   const { addToAdditionMediaMap } = jwStore;
@@ -263,22 +264,29 @@ export const addJwpubDocumentMediaToFiles = async (
       },
       currentStateStore.currentSettings?.includePrinted,
     );
-    for (let i = 0; i < multimediaItems.length; i++) {
-      const item = multimediaItems[i];
+    console.log('🎯 Multimedia items:', multimediaItems);
+    const filteredMultimediaItems = selectedMultimediaIds
+      ? multimediaItems.filter((item) =>
+          selectedMultimediaIds.includes(item.MultimediaId),
+        )
+      : multimediaItems;
+    console.log('🎯 Filtered multimedia items:', filteredMultimediaItems);
+    for (let i = 0; i < filteredMultimediaItems.length; i++) {
+      const item = filteredMultimediaItems[i];
       if (item) {
-        multimediaItems[i] = await addFullFilePathToMultimediaItem(
+        filteredMultimediaItems[i] = await addFullFilePathToMultimediaItem(
           item,
           pubFolder ?? publication,
         );
       }
     }
     await processMissingMediaInfo(
-      multimediaItems,
+      filteredMultimediaItems,
       meetingDate || currentStateStore.selectedDate,
     );
     const mediaItems = currentStateStore.selectedDateObject
       ? await dynamicMediaMapper(
-          multimediaItems,
+          filteredMultimediaItems,
           currentStateStore.selectedDateObject?.date,
           'additional',
         )

@@ -94,6 +94,16 @@
       :files="pendingFiles"
       @section-selected="handleSectionSelected"
     />
+    <DialogJwpubMediaPicker
+      :db-path="jwpubImportDb"
+      :dialog-id="'media-calendar-jwpub-media-picker'"
+      :document="selectedDocument!"
+      :model-value="showMediaPicker"
+      :section="sectionToAddTo"
+      @cancel="onMediaPickerCancel"
+      @ok="onMediaPickerOk"
+      @update:model-value="showMediaPicker = $event"
+    />
   </q-page>
 </template>
 
@@ -111,6 +121,7 @@ import {
 } from '@vueuse/core';
 import { Buffer } from 'buffer';
 import DialogFileImport from 'components/dialog/DialogFileImport.vue';
+import DialogJwpubMediaPicker from 'components/dialog/DialogJwpubMediaPicker.vue';
 import DialogSectionPicker from 'components/dialog/DialogSectionPicker.vue';
 import MediaEmptyState from 'components/media/MediaEmptyState.vue';
 import MediaList from 'components/media/MediaList.vue';
@@ -127,7 +138,6 @@ import { isCoWeek, isMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
 import {
-  addJwpubDocumentMediaToFiles,
   copyToDatedAdditionalMedia,
   downloadFileIfNeeded,
   fetchMedia,
@@ -226,6 +236,8 @@ const totalFiles = ref(0);
 const currentFile = ref(0);
 const showFileImport = ref(false);
 const showSectionPicker = ref(false);
+const showMediaPicker = ref(false);
+const selectedDocument = ref<DocumentItem | undefined>();
 const pendingFiles = ref<(File | string)[]>([]);
 
 // Banner visibility state for transitions
@@ -983,6 +995,23 @@ useEventListener<
   { passive: true },
 );
 
+useEventListener<
+  CustomEvent<{
+    dbPath: string;
+    document: DocumentItem;
+  }>
+>(
+  window,
+  'openJwpubMediaPicker',
+  (e) => {
+    console.log('🎯 openJwpubMediaPicker event received:', e.detail);
+    jwpubImportDb.value = e.detail?.dbPath;
+    selectedDocument.value = e.detail?.document;
+    showMediaPicker.value = true;
+  },
+  { passive: true },
+);
+
 const checkMemorialDate = async () => {
   let bg: string | undefined = mediaWindowCustomBackground.value;
   if (
@@ -1330,20 +1359,6 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
               '🎯 [addToFiles] Documents found:',
               jwpubImportDocuments.value.length,
             );
-            if (
-              jwpubImportDocuments.value.length === 1 &&
-              jwpubImportDocuments.value[0]
-            ) {
-              console.log('🎯 [addToFiles] Single document, adding media');
-              await addJwpubDocumentMediaToFiles(
-                jwpubImportDb.value,
-                jwpubImportDocuments.value[0],
-                sectionToAddTo.value,
-              );
-              console.log('🎯 [addToFiles] Media added, resetting');
-              jwpubImportDb.value = '';
-              jwpubImportDocuments.value = [];
-            }
           }
         } finally {
           // Clean up temp files
@@ -1434,6 +1449,20 @@ const handleSectionSelected = (section: MediaSectionIdentifier) => {
     errorCatcher(error);
   });
   pendingFiles.value = [];
+};
+
+const onMediaPickerOk = () => {
+  showMediaPicker.value = false;
+  selectedDocument.value = undefined;
+  jwpubImportDb.value = '';
+  showFileImport.value = false;
+};
+
+const onMediaPickerCancel = () => {
+  showMediaPicker.value = false;
+  selectedDocument.value = undefined;
+  jwpubImportDb.value = '';
+  showFileImport.value = false;
 };
 
 const dropActive = (event: DragEvent) => {
