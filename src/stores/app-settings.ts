@@ -6,6 +6,7 @@ import type {
   OldAppConfig,
   ScreenPreferences,
   SettingsValues,
+  TimerPreferences,
 } from 'src/types';
 
 import { defineStore } from 'pinia';
@@ -36,6 +37,7 @@ interface Store {
   displayCameraId: null | string;
   migrations: string[];
   screenPreferences: ScreenPreferences;
+  timerPreferences: TimerPreferences;
 }
 
 function toRawDeep<T>(observed: T): T {
@@ -879,6 +881,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
       displayCameraId: null,
       migrations: [],
       screenPreferences: { preferredScreenNumber: 0, preferWindowed: false },
+      timerPreferences: { preferredScreenNumber: 0, preferWindowed: true },
     };
   },
 });

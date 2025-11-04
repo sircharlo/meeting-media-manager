@@ -46,7 +46,11 @@ import {
   mediaWindow,
   moveMediaWindow,
 } from 'main/window/window-media';
-import { createTimerWindow, timerWindow } from 'main/window/window-timer';
+import {
+  createTimerWindow,
+  moveTimerWindow,
+  timerWindow,
+} from 'main/window/window-timer';
 import {
   askForMediaAccess,
   createWebsiteWindow,
@@ -163,8 +167,7 @@ handleIpcSend('moveMediaWindow', (_e, displayNr, fullscreen) => {
 });
 
 handleIpcSend('moveTimerWindow', (_e, displayNr, fullscreen) => {
-  // TODO: implement moveTimerWindow similar to moveMediaWindow
-  console.log('moveTimerWindow called with', displayNr, fullscreen);
+  moveTimerWindow(displayNr, fullscreen);
 });
 
 handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {

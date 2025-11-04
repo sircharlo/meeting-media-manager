@@ -4,6 +4,7 @@ import { app, type BrowserWindow, screen } from 'electron';
 import { captureElectronError } from 'main/utils';
 import { mainWindow } from 'main/window/window-main';
 import { mediaWindow, moveMediaWindow } from 'main/window/window-media';
+import { moveTimerWindow } from 'main/window/window-timer';
 
 export const initScreenListeners = () => {
   app.on('ready', () => {
@@ -11,9 +12,18 @@ export const initScreenListeners = () => {
     screen.removeAllListeners('display-removed');
     screen.removeAllListeners('display-metrics-changed');
 
-    screen.on('display-added', () => moveMediaWindow());
-    screen.on('display-removed', () => moveMediaWindow());
-    screen.on('display-metrics-changed', () => moveMediaWindow());
+    screen.on('display-added', () => {
+      moveMediaWindow();
+      moveTimerWindow();
+    });
+    screen.on('display-removed', () => {
+      moveMediaWindow();
+      moveTimerWindow();
+    });
+    screen.on('display-metrics-changed', () => {
+      moveMediaWindow();
+      moveTimerWindow();
+    });
   });
 };
 

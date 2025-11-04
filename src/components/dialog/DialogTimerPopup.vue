@@ -33,6 +33,137 @@
           unelevated
         />
       </div>
+
+      <!-- Window Type Selection -->
+      <q-separator class="bg-accent-200 q-mb-md" />
+      <div class="card-section-title row q-px-md">
+        {{ t('window-type') }}
+      </div>
+      <div class="row q-px-md q-pb-sm q-col-gutter-sm">
+        <div class="col-6">
+          <q-btn
+            class="full-width full-height"
+            color="primary"
+            :disable="screenList?.length < 2"
+            :outline="screenList?.length < 2 || timerPreferences.preferWindowed"
+            unelevated
+            @click="
+              () => {
+                console.log('🔍 [Timer Full Screen Button] Clicked');
+                timerPreferences.preferWindowed = false;
+                console.log(
+                  '🔍 [Timer Full Screen Button] Calling moveTimerWindow with:',
+                  {
+                    screen: timerPreferences.preferredScreenNumber,
+                    fullscreen: true,
+                  },
+                );
+                moveTimerWindow(timerPreferences.preferredScreenNumber, true);
+              }
+            "
+          >
+            <q-icon class="q-mr-sm" name="mmm-fullscreen" size="xs" />
+            {{ t('full-screen') }}
+          </q-btn>
+        </div>
+        <div class="col-6">
+          <q-btn
+            class="full-width full-height"
+            color="primary"
+            :disable="screenList?.length < 2"
+            :outline="
+              !(screenList?.length < 2 || timerPreferences.preferWindowed)
+            "
+            :text-color="
+              screenList?.length < 2 || timerPreferences.preferWindowed
+                ? ''
+                : 'primary'
+            "
+            unelevated
+            @click="
+              () => {
+                console.log('🔍 [Timer Windowed Button] Clicked');
+                timerPreferences.preferWindowed = true;
+                console.log(
+                  '🔍 [Timer Windowed Button] Calling moveTimerWindow with:',
+                  {
+                    screen: timerPreferences.preferredScreenNumber,
+                    fullscreen: false,
+                  },
+                );
+                moveTimerWindow(timerPreferences.preferredScreenNumber, false);
+              }
+            "
+          >
+            <q-icon class="q-mr-sm" name="mmm-window" size="xs" />
+            {{ t('windowed') }}
+          </q-btn>
+        </div>
+      </div>
+
+      <template
+        v-if="!timerPreferences.preferWindowed && screenList?.length > 2"
+      >
+        <q-separator class="bg-accent-200 q-mb-md" />
+        <div class="card-section-title row q-px-md">
+          {{ t('display') }}
+        </div>
+        <div class="q-px-md q-pb-sm">
+          <div
+            class="display-map"
+            :style="{
+              position: 'relative',
+              width: '100%',
+              aspectRatio: virtualBounds.width + ' / ' + virtualBounds.height,
+              overflow: 'hidden',
+              '--screen-gap': '1%',
+            }"
+          >
+            <template v-for="(screen, index) in screenList" :key="screen.id">
+              <q-btn
+                class="screen-rect column items-center justify-center"
+                :class="{
+                  'border-dashed': screen.mainWindow,
+                }"
+                :color="!screen.mainWindow ? 'primary' : 'secondary'"
+                :disable="screen.mainWindow"
+                :outline="!isTimerScreenSelected(index, screen)"
+                :style="{
+                  position: 'absolute',
+                  left:
+                    'calc(' +
+                    (screenRects[index]?.left ?? 0) +
+                    '% + var(--screen-gap))',
+                  top:
+                    'calc(' +
+                    (screenRects[index]?.top ?? 0) +
+                    '% + var(--screen-gap))',
+                  width:
+                    'calc(' +
+                    (screenRects[index]?.width ?? 0) +
+                    '% - (var(--screen-gap) * 2))',
+                  height:
+                    'calc(' +
+                    (screenRects[index]?.height ?? 0) +
+                    '% - (var(--screen-gap) * 2))',
+                }"
+              >
+                <q-tooltip v-if="screen.mainWindow">
+                  {{ t('main-window-is-on-this-screen') }}
+                </q-tooltip>
+                <q-icon
+                  v-if="!screen.mainWindow"
+                  class="q-mr-sm"
+                  name="mmm-timer"
+                  size="xs"
+                />
+                {{ !screen.mainWindow ? t('display') + ' ' + (index + 1) : '' }}
+              </q-btn>
+            </template>
+          </div>
+        </div>
+        <q-separator class="bg-accent-200 q-mb-md" />
+      </template>
       <template v-if="timerMode === 'countdown'">
         <!-- Meeting Part Selection (only on meeting days) -->
         <template v-if="isWeMeetingDay(selectedDateObject?.date)">
@@ -119,7 +250,13 @@
             {{ timerWindowVisible ? t('projecting') : t('inactive') }}
           </div>
           <div class="row text-dark-grey">
-            {{ t('windowed') }}
+            {{
+              t(
+                screenList?.length < 2 || timerPreferences.preferWindowed
+                  ? 'windowed'
+                  : 'external-screen',
+              )
+            }}
           </div>
         </div>
         <div class="col-grow">
@@ -161,6 +298,7 @@ import {
 import { storeToRefs } from 'pinia';
 import { QMenu } from 'quasar';
 import { isMeetingDay, isWeMeetingDay } from 'src/helpers/date';
+import { useAppSettingsStore } from 'src/stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -174,6 +312,9 @@ const screenList = ref<Display[]>([]);
 const currentState = useCurrentStateStore();
 const { currentSettings, selectedDateObject, timerWindowVisible } =
   storeToRefs(currentState);
+
+const appSettingsStore = useAppSettingsStore();
+const { timerPreferences } = storeToRefs(appSettingsStore);
 
 defineProps<{
   dialogId?: string;
@@ -193,7 +334,8 @@ const timerMode = ref<'countdown' | 'countup'>('countup');
 const currentPart = ref<'public-talk' | 'wt'>('public-talk');
 const countdownTarget = ref<number>(0); // Target time in seconds for countdown
 
-const { getAllScreens, toggleTimerWindow } = window.electronApi;
+const { getAllScreens, moveTimerWindow, toggleTimerWindow } =
+  window.electronApi;
 
 // Broadcast channel for timer data
 const { post: postTimerData } = useBroadcastChannel<TimerData, TimerData>({
@@ -219,9 +361,62 @@ useEventListener(window, 'screen-trigger-update', fetchScreens, {
   passive: true,
 });
 
+// Virtual desktop extents across all displays (in physical pixels as provided by Electron)
+const virtualBounds = computed(() => {
+  const list = screenList.value;
+  if (!list || list.length === 0) {
+    return { height: 9, width: 16, x: 0, y: 0 };
+  }
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  for (const d of list) {
+    const b = d.bounds;
+    if (!b) continue;
+    minX = Math.min(minX, b.x);
+    minY = Math.min(minY, b.y);
+    maxX = Math.max(maxX, b.x + b.width);
+    maxY = Math.max(maxY, b.y + b.height);
+  }
+  const width = Math.max(1, maxX - minX);
+  const height = Math.max(1, maxY - minY);
+  return { height, width, x: minX, y: minY };
+});
+
+// Percentage-based rectangles for each screen relative to the virtual desktop
+const screenRects = computed(() => {
+  const vb = virtualBounds.value;
+  const list = screenList.value ?? [];
+  return list.map((d) => {
+    const b = d.bounds;
+    const left = ((b.x - vb.x) / vb.width) * 100;
+    const top = ((b.y - vb.y) / vb.height) * 100;
+    const width = (b.width / vb.width) * 100;
+    const height = (b.height / vb.height) * 100;
+    return {
+      height: Number.isFinite(height) ? height : 0,
+      left: Number.isFinite(left) ? left : 0,
+      top: Number.isFinite(top) ? top : 0,
+      width: Number.isFinite(width) ? width : 0,
+    };
+  });
+});
+
+// Selected when timer window is on this screen and it's not the app's main window
+const isTimerScreenSelected = (index: number, screen: Display) => {
+  void index; // index kept for potential future preference logic
+  return !!screen.timerWindow && !screen.mainWindow;
+};
+
 // UI update handler
 watch(
-  () => [timerWindowVisible.value, timerRunning.value, timerMode.value],
+  () => [
+    timerWindowVisible.value,
+    timerRunning.value,
+    timerMode.value,
+    timerPreferences.value?.preferWindowed,
+  ],
   () => {
     setTimeout(() => {
       if (timerPopup.value) {
@@ -391,6 +586,10 @@ const showTimerWindow = () => {
 <style scoped>
 .blink {
   animation: gentle-blink 2s infinite;
+}
+
+.border-dashed::before {
+  border-style: dashed;
 }
 
 @keyframes gentle-blink {
