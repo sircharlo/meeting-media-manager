@@ -3,10 +3,8 @@ import { pathExistsSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
 import { getAllScreens, getWindowScreen } from 'main/screen';
 import { getIconPath } from 'main/utils';
 import { createWindow } from 'main/window/window-base';
+import { join } from 'node:path';
 import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
-
-const { path } = window.electronApi;
-const { join } = path;
 
 export let timerWindow: BrowserWindow | null = null;
 
