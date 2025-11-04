@@ -51,7 +51,10 @@ export interface ElectronApi {
     destFilename?: string,
     lowPriority?: boolean,
   ) => Promise<null | string>;
-  executeQuery: <T = QueryResponseItem>(dbPath: string, query: string) => T[];
+  executeQuery: <T extends object = QueryResponseItem>(
+    dbPath: string,
+    query: string,
+  ) => T[];
   /**
    * Converts a file URL to a file path.
    *

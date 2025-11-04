@@ -343,6 +343,7 @@ import {
   useBroadcastChannel,
   useEventListener,
   watchImmediate,
+  whenever,
 } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
@@ -357,7 +358,7 @@ import { isImage, isJwpub } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
 import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
+import { computed, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const displayPopup = useTemplateRef<QMenu>('displayPopup');
@@ -554,10 +555,13 @@ const fetchScreens = async () => {
   }
 };
 
-onMounted(() => {
-  fetchScreens();
-  getCameras();
-});
+whenever(
+  () => open.value,
+  async () => {
+    fetchScreens();
+    getCameras();
+  },
+);
 
 const cameras = ref<{ label: string; value: string }[]>([]);
 

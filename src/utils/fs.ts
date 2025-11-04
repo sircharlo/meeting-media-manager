@@ -16,6 +16,12 @@ const {
 } = fs;
 const { dirname, extname, join } = path;
 
+let cachedUserDataPath: null | string = null;
+
+export const setCachedUserDataPath = async () => {
+  if (!cachedUserDataPath) cachedUserDataPath = await getUserDataPath();
+};
+
 export const isFileUrl = (path?: string) => path?.startsWith('file://');
 
 // Paths
@@ -37,7 +43,7 @@ const getCachePath = async (
   cacheDir?: null | string,
 ) => {
   const dir = join(
-    cacheDir || (await getUserDataPath()),
+    cacheDir || cachedUserDataPath || (await getUserDataPath()),
     ...paths.filter((p) => !!p),
   );
   if (create) {
