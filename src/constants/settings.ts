@@ -382,6 +382,35 @@ export const settingsDefinitions: SettingsItems = {
     type: 'path',
   },
 
+  // Timer
+  enableTimerDisplay: {
+    group: 'integrations',
+    subgroup: 'timer',
+    type: 'toggle',
+  },
+  timerBackgroundColor: {
+    group: 'integrations',
+    rules: ['notEmpty'],
+    depends: 'enableTimerDisplay',
+    subgroup: 'timer',
+    type: 'color',
+  },
+  timerTextColor: {
+    depends: 'enableTimerDisplay',
+    rules: ['notEmpty'],
+    group: 'integrations',
+    subgroup: 'timer',
+    type: 'color',
+  },
+  timerTextSize: {
+    depends: 'enableTimerDisplay',
+    rules: ['notEmpty'],
+    group: 'integrations',
+    subgroup: 'timer',
+    list: 'fontSizes',
+    type: 'list',
+  },
+
   // Advanced
   enableKeyboardShortcuts: {
     group: 'advanced',
@@ -557,6 +586,7 @@ export const defaultSettings: SettingsValues = {
   enableMediaWindowFadeTransitions: true,
   enableMusicButton: true,
   enableSubtitles: false,
+  enableTimerDisplay: false,
   excludeFootnotes: false,
   excludeTh: true,
   firstDayOfWeek: 0,
@@ -603,6 +633,9 @@ export const defaultSettings: SettingsValues = {
   shortcutMediaStop: null,
   shortcutMediaWindow: null,
   shortcutMusic: null,
+  timerBackgroundColor: '#000000',
+  timerTextColor: '#ffffff',
+  timerTextSize: '10vw',
   weDay: null,
   weStartTime: null,
   zoomAutoFocusMediaWindow: false,

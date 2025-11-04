@@ -143,6 +143,7 @@ export type SettingsItemListKey =
   | 'appLanguages'
   | 'darkModes'
   | 'days'
+  | 'fontSizes'
   | 'jwLanguages'
   | 'obsAllScenes'
   | 'obsScenes'
@@ -154,6 +155,7 @@ export type SettingsItemRule = 'notEmpty' | 'portNumber' | 'regular';
 export type SettingsItems = Record<keyof SettingsValues, SettingsItem>;
 
 export type SettingsItemType =
+  | 'color'
   | 'date'
   | 'list'
   | 'path'
@@ -188,6 +190,7 @@ export interface SettingsValues {
   enableMediaWindowFadeTransitions: boolean;
   enableMusicButton: boolean;
   enableSubtitles: boolean;
+  enableTimerDisplay: boolean;
   excludeFootnotes: boolean;
   excludeTh: boolean;
   firstDayOfWeek: number;
@@ -234,6 +237,9 @@ export interface SettingsValues {
   shortcutMediaStop: null | string;
   shortcutMediaWindow: null | string;
   shortcutMusic: null | string;
+  timerBackgroundColor: string;
+  timerTextColor: string;
+  timerTextSize: string;
   weDay: `${number}` | null;
   weStartTime: `${number}:${number}` | null;
   zoomAutoFocusMediaWindow: boolean;

@@ -57,6 +57,18 @@ const routes: RouteRecordRaw[] = [
   {
     children: [
       {
+        component: () => import('pages/TimerPage.vue'),
+        name: 'timer',
+        path: '',
+      },
+    ],
+    component: () => import('layouts/TimerLayout.vue'),
+    meta: { title: 'Timer' },
+    path: '/timer',
+  },
+  {
+    children: [
+      {
         component: () => import('pages/SetupWizard.vue'),
         name: 'setup-wizard',
         path: '',

@@ -51,7 +51,10 @@ export interface ElectronApi {
     destFilename?: string,
     lowPriority?: boolean,
   ) => Promise<null | string>;
-  executeQuery: <T = QueryResponseItem>(dbPath: string, query: string) => T[];
+  executeQuery: <T extends object = QueryResponseItem>(
+    dbPath: string,
+    query: string,
+  ) => T[];
   /**
    * Converts a file URL to a file path.
    *
@@ -83,6 +86,10 @@ export interface ElectronApi {
   inferExtension: (filename: string, filetype?: string) => Promise<string>;
   isDownloadErrorExpected: () => Promise<boolean>;
   moveMediaWindow: (
+    targetScreenNumber?: number,
+    windowedMode?: boolean,
+  ) => void;
+  moveTimerWindow: (
     targetScreenNumber?: number,
     windowedMode?: boolean,
   ) => void;
@@ -167,6 +174,7 @@ export interface ElectronApi {
   setAutoStartAtLogin: (value: boolean) => void;
   setElectronUrlVariables: (variables: string) => void;
   toggleMediaWindow: (show: boolean, enableFadeTransitions?: boolean) => void;
+  toggleTimerWindow: (show: boolean) => void;
   unregisterAllShortcuts: () => void;
   unregisterShortcut: (shortcut: string) => void;
   unwatchFolders: () => void;
@@ -213,6 +221,7 @@ export type ElectronIpcSendKey =
   | 'checkForUpdates'
   | 'focusMediaWindow'
   | 'moveMediaWindow'
+  | 'moveTimerWindow'
   | 'navigateWebsiteWindow'
   | 'openDiscussion'
   | 'openExternal'
@@ -220,6 +229,7 @@ export type ElectronIpcSendKey =
   | 'setElectronUrlVariables'
   | 'toggleMediaWindow'
   | 'toggleOpenAtLogin'
+  | 'toggleTimerWindow'
   | 'toggleWebsiteWindow'
   | 'unregisterAllShortcuts'
   | 'unregisterShortcut'

@@ -69,6 +69,7 @@ interface Store {
   online: boolean;
   onlyShowInvalidSettings: boolean;
   selectedDate: string;
+  timerWindowVisible: boolean;
 }
 
 const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
@@ -183,6 +184,9 @@ export const useCurrentStateStore = defineStore('current-state', {
       this.currentCongregation = value.toString();
       await setCachedUserDataPath();
       return this.getInvalidSettings(this.currentCongregation).length > 0;
+    },
+    setTimerWindowVisible(visible: boolean) {
+      this.timerWindowVisible = visible;
     },
   },
   getters: {
@@ -398,6 +402,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       online: true,
       onlyShowInvalidSettings: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
+      timerWindowVisible: false,
     };
   },
 });

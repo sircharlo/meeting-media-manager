@@ -23,6 +23,8 @@
           :is-recording="isRecording"
           :recording-duration="formattedRecordingDuration"
         />
+        <TimerButton v-model="timerPopup" />
+        <q-separator class="bg-semi-white-24" vertical />
         <MediaDisplayButton v-model="displayPopup" />
       </div>
       <DialogDownloadsPopup v-model="downloadPopup" />
@@ -35,6 +37,7 @@
         @update:is-recording="isRecording = $event"
       />
       <DialogDisplayPopup v-model="displayPopup" dialog-id="display-popup" />
+      <DialogTimerPopup v-model="timerPopup" dialog-id="timer-popup" />
     </q-chip>
   </div>
 </template>
@@ -47,6 +50,7 @@ import MusicButton from 'components/media/MusicButton.vue';
 import ObsStatus from 'components/media/ObsStatus.vue';
 import RecordingStatus from 'components/media/RecordingStatus.vue';
 import SubtitlesButton from 'components/media/SubtitlesButton.vue';
+import TimerButton from 'components/media/TimerButton.vue';
 import { formatTime } from 'src/utils/time';
 import { computed, ref } from 'vue';
 
@@ -55,6 +59,7 @@ import DialogDisplayPopup from '../dialog/DialogDisplayPopup.vue';
 import DialogDownloadsPopup from '../dialog/DialogDownloadsPopup.vue';
 import DialogObsPopup from '../dialog/DialogObsPopup.vue';
 import DialogRecordingPopup from '../dialog/DialogRecordingPopup.vue';
+import DialogTimerPopup from '../dialog/DialogTimerPopup.vue';
 
 // Popups
 const downloadPopup = ref(false);
@@ -62,6 +67,7 @@ const musicPopup = ref(false);
 const obsPopup = ref(false);
 const recordingPopup = ref(false);
 const displayPopup = ref(false);
+const timerPopup = ref(false);
 
 // Recording variables
 const isRecording = ref(false);
@@ -102,6 +108,7 @@ const popups = {
   musicPopup,
   obsPopup,
   recordingPopup,
+  timerPopup,
 } as const;
 
 // Define a type for the keys of the `popups` object
