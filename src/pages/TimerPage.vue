@@ -55,6 +55,7 @@ const containerStyles = computed(() => ({
 
 const textStyles = computed(() => ({
   fontSize: timerData.value?.timerTextSize || '10vw',
+  fontVariantNumeric: 'tabular-nums',
   fontWeight: 'bold',
 }));
 
