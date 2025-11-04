@@ -265,7 +265,7 @@
             class="full-width"
             color="primary"
             unelevated
-            @click="hideTimerWindow()"
+            @click="handleTimerWindowVisibility(false)"
           >
             {{ t('hide-timer-display') }}
           </q-btn>
@@ -274,7 +274,7 @@
             class="full-width"
             color="primary"
             unelevated
-            @click="showTimerWindow()"
+            @click="handleTimerWindowVisibility(true)"
           >
             {{ t('show-timer-display') }}
           </q-btn>
@@ -340,6 +340,11 @@ const { getAllScreens, moveTimerWindow, toggleTimerWindow } =
 // Broadcast channel for timer data
 const { post: postTimerData } = useBroadcastChannel<TimerData, TimerData>({
   name: 'timer-display-data',
+});
+
+// Listen for timer page ready
+const { data: timerPageReady } = useBroadcastChannel<string, string>({
+  name: 'timerpageready',
 });
 
 const fetchScreens = async () => {
@@ -562,6 +567,31 @@ watchImmediate(
   },
 );
 
+// Watch for timer page ready
+watch(timerPageReady, (timestamp) => {
+  console.log('🔍 [DialogTimerPopup] Timer page ready:', timestamp);
+  if (timestamp) {
+    handleTimerWindowVisibility(true);
+  }
+});
+
+const handleTimerWindowVisibility = (visible: boolean) => {
+  toggleTimerWindow(visible);
+  currentState.setTimerWindowVisible(visible);
+  if (visible) {
+    // Broadcast initial timer settings
+    postTimerData({
+      mode: 'countup',
+      paused: false,
+      running: false,
+      time: '',
+      timerBackgroundColor: currentSettings.value?.timerBackgroundColor,
+      timerTextColor: currentSettings.value?.timerTextColor,
+      timerTextSize: currentSettings.value?.timerTextSize,
+    });
+  }
+};
+
 // Initialize timer when window becomes visible
 watch(timerWindowVisible, (visible) => {
   if (visible) {
@@ -569,18 +599,6 @@ watch(timerWindowVisible, (visible) => {
     updateTimerWindow();
   }
 });
-
-const hideTimerWindow = () => {
-  toggleTimerWindow(false);
-  currentState.setTimerWindowVisible(false);
-};
-
-const showTimerWindow = () => {
-  toggleTimerWindow(true);
-  currentState.setTimerWindowVisible(true);
-};
-
-// TODO: fix color and text size initialization logic
 </script>
 
 <style scoped>

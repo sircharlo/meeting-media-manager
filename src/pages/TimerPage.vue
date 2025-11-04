@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { useBroadcastChannel, useIntervalFn } from '@vueuse/core';
-import { computed, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 // Simple timer page for now
 
@@ -75,6 +75,15 @@ const { pause: pauseClock, resume: resumeClock } = useIntervalFn(
   updateTime,
   1000,
 );
+
+const { post } = useBroadcastChannel<string, string>({
+  name: 'timerpageready',
+});
+
+// Post timerpageready when component is mounted
+onMounted(() => {
+  post(new Date().toISOString());
+});
 
 // Start the clock on load
 updateTime();

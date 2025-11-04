@@ -36,7 +36,6 @@ import { initializeElectronApi } from 'src/helpers/electron-api-manager';
 initializeElectronApi('MainLayout');
 
 import type { LanguageValue } from 'src/constants/locales';
-import type { TimerData } from 'src/pages/TimerPage.vue';
 import type {
   ElectronIpcListenKey,
   MediaItem,
@@ -182,7 +181,6 @@ const {
   removeListeners,
   setAutoStartAtLogin,
   setElectronUrlVariables,
-  toggleTimerWindow,
 } = window.electronApi;
 const { basename, dirname } = path;
 updateMemorials(online.value);
@@ -505,27 +503,6 @@ watch(
       }
     } catch (error) {
       errorCatcher(error);
-    }
-  },
-);
-
-watch(
-  () => currentSettings.value?.enableTimerDisplay,
-  (newEnableTimingDisplay) => {
-    const visible = !!newEnableTimingDisplay;
-    toggleTimerWindow(visible);
-    currentState.setTimerWindowVisible(visible);
-    if (visible) {
-      // Broadcast initial timer settings
-      postTimerSettings({
-        mode: 'countdown',
-        paused: false,
-        running: false,
-        time: '',
-        timerBackgroundColor: currentSettings.value?.timerBackgroundColor,
-        timerTextColor: currentSettings.value?.timerTextColor,
-        timerTextSize: currentSettings.value?.timerTextSize,
-      });
     }
   },
 );
@@ -909,11 +886,6 @@ const { post: postYeartext } = useBroadcastChannel<
   string | undefined
 >({
   name: 'yeartext',
-});
-
-// Send timer settings to the timer window using useBroadcastChannel
-const { post: postTimerSettings } = useBroadcastChannel<TimerData, TimerData>({
-  name: 'timer-display-data',
 });
 
 watchImmediate(

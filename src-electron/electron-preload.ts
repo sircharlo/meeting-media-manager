@@ -53,7 +53,6 @@ const electronApi: ElectronApi = {
   focusMediaWindow: () => send('focusMediaWindow'),
   fs,
   getAllScreens: () => invoke('getAllScreens'),
-
   getAppDataPath: () => invoke('getAppDataPath'),
   getLocales: () => invoke('getLocales'),
   getLocalPathFromFileObject: (fo) =>
