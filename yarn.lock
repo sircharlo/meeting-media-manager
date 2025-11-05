@@ -10198,7 +10198,7 @@ __metadata:
     lodash-es: "npm:^4.17.21"
     mime: "npm:^4.1.0"
     mousetrap: "npm:^1.6.5"
-    msw: "npm:^2.11.6"
+    msw: "npm:^2.12.0"
     music-metadata: "npm:^11.9.0"
     obs-websocket-js: "npm:^5.0.6"
     p-queue: "npm:^9.0.0"
@@ -10649,9 +10649,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msw@npm:^2.11.6":
-  version: 2.11.6
-  resolution: "msw@npm:2.11.6"
+"msw@npm:^2.12.0":
+  version: 2.12.0
+  resolution: "msw@npm:2.12.0"
   dependencies:
     "@inquirer/confirm": "npm:^5.0.0"
     "@mswjs/interceptors": "npm:^0.40.0"
@@ -10678,7 +10678,7 @@ __metadata:
       optional: true
   bin:
     msw: cli/index.js
-  checksum: 10c0/a19e9af0ca880bddbdfa7a852c40d7b8db8e04cd1d745575346cef5ee313acd65cadd0a1c48c6945b020235048168dce8e0ad856c3e14a0c1bb4b26618c5fb3c
+  checksum: 10c0/d6167cb7f51dbb0a0b313c707cb17e363186918e248f02e1d8ea144a25aaf1492a621de3035986859628abd9fac423f265d4f5df99c41ae9451379c8d7642532
   languageName: node
   linkType: hard
 
