@@ -1,563 +1,563 @@
-# Settings Guide {#settings-guide}
+# Asetusopas {#settings-guide}
 
-This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+Tämä kattava opas selittää kaikki M³-sovelluksessa saatavilla olevat asetukset, järjestettynä eri kategorioihin. Kun ymmärrät nämä asetukset, voit määrittää M³:n toimimaan täydellisesti seurakuntasi tarpeiden mukaan.
 
-## Application Configuration {#application-configuration}
+## Sovelluksen määritykset {#application-configuration}
 
-### Display Language {#display-language}
+### Näyttökieli {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Choose the language for M³'s interface. This is independent of the language used for media downloads.
+Valitse kieli, jota M³:n käyttöliittymä käyttää. Tämä on erillinen kieli siitä, jota käytetään median latauksissa.
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+**Vaihtoehdot**: Kaikki saatavilla olevat käyttöliittymäkielet (englanti, espanja, ranska jne.)
 
-**Default**: English
+**Oletus**: Englanti
 
-### Dark Mode {#dark-mode}
+### Tumma tila {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-Control the appearance theme of M³.
+Hallitse M³:n ulkoasuteemaa.
 
-**Options**:
+**Vaihtoehdot**:
 
-- Automatically switch based on system preference
-- Always use dark mode
-- Always use light mode
+- Vaihda automaattisesti järjestelmäasetuksen mukaan
+- Käytä aina tummaa tilaa
+- Käytä aina vaaleaa tilaa
 
-**Default**: Auto
+**Oletus**: Automaattinen
 
-### First Day of Week {#first-day-of-week}
+### Viikon ensimmäinen päivä {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the calendar view.
+Määritä, mikä viikonpäivä näytetään kalenterinäkymässä viikon ensimmäisenä päivänä.
 
-**Options**: Sunday through Saturday
+**Vaihtoehdot**: Sunnuntaista lauantaihin
 
-**Default**: Sunday
+**Oletus**: Sunnuntai
 
-### Date Format {#date-format}
+### Päivämäärän muoto {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
-Format used to display dates in the app.
+Muoto, jota sovellus käyttää päivämäärien näyttämiseen.
 
-**Example**: D MMMM YYYY
+**Esimerkki**: D MMMM YYYY
 
-**Default**: D MMMM YYYY
+**Oletus**: D MMMM YYYY
 
-### Auto-Start at Login {#auto-start-at-login}
+### Käynnistä automaattisesti sisäänkirjautumisen yhteydessä {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-Automatically start M³ when the computer boots up.
+Käynnistä M³ automaattisesti, kun tietokone käynnistyy.
 
-**Default**: `false`
+**Oletus**: `false`
 
-## Congregation Meetings {#congregation-meetings}
+## Seurakunnan kokoukset {#congregation-meetings}
 
-### Congregation Name {#congregation-name}
+### Seurakunnan nimi {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
-The name of your congregation. This is used for organization and display purposes.
+Seurakuntasi nimi. Tätä käytetään järjestely- ja näyttötarkoituksiin.
 
-**Default**: Empty (must be set during setup)
+**Oletus**: Tyhjä (määritettävä käyttöönoton yhteydessä)
 
-### Meeting Language {#meeting-language}
+### Kokouksen kieli {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
-The primary language for media downloads. This should match the language used in your congregation's meetings.
+Pääkieli, jota käytetään median latauksissa. Tämän tulisi vastata seurakuntasi kokouksissa käytettyä kieltä.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Vaihtoehdot**: Kaikki kielet, jotka ovat saatavilla Jehovan todistajien virallisella verkkosivustolla
 
-**Default**: English (E)
+**Oletus**: Englanti (E)
 
-### Fallback Language {#fallback-language}
+### Varakieli {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
-A secondary language to use when media isn't available in the primary language.
+Toissijainen kieli, jota käytetään, kun media ei ole saatavilla ensisijaisella kielellä.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Vaihtoehdot**: Kaikki kielet, jotka ovat saatavilla Jehovan todistajien virallisella verkkosivustolla
 
-**Default**: None
+**Oletus**: Ei mitään
 
-### Midweek Meeting Day {#midweek-meeting-day}
+### Viikkokokouksen päivä {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-The day of the week when your midweek meeting is held.
+Viikonpäivä, jolloin seurakunnan **viikkokokous** pidetään.
 
-**Options**: Sunday through Saturday
+**Vaihtoehdot**: Sunnuntaista lauantaihin
 
-**Default**: None (must be set during setup)
+**Oletus**: Ei mitään (määritettävä käyttöönoton yhteydessä)
 
-### Midweek Meeting Time {#midweek-meeting-time}
+### Viikkokokouksen alkamisaika {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
-The start time of your midweek meeting.
+**viikkokokouksen** alkamisaika.
 
-**Format**: HH:MM (24-hour format)
+**Muoto**: HH:MM (24 tunnin kellonaika)
 
-**Default**: None (must be set during setup)
+**Oletus**: Ei mitään (määritettävä käyttöönoton yhteydessä)
 
-### Weekend Meeting Day {#weekend-meeting-day}
+### Viikonlopun kokouksen päivä {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-The day of the week when your weekend meeting is held.
+Viikonpäivä, jolloin **viikonlopun kokous** pidetään.
 
-**Options**: Sunday through Saturday
+**Vaihtoehdot**: Sunnuntaista lauantaihin
 
-**Default**: None (must be set during setup)
+**Oletus**: Ei mitään (määritettävä käyttöönoton yhteydessä)
 
-### Weekend Meeting Time {#weekend-meeting-time}
+### Viikonlopun kokouksen alkamisaika {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
-The start time of your weekend meeting.
+**viikonlopun kokouksen** alkamisaika.
 
-**Format**: HH:MM (24-hour format)
+**Muoto**: HH:MM (24 tunnin kellonaika)
 
-**Default**: None (must be set during setup)
+**Oletus**: Ei mitään (määritettävä käyttöönoton yhteydessä)
 
-### Circuit Overseer Week {#circuit-overseer-week}
+### Kierrosviikko {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
-The week of the next circuit overseer's visit.
+Seuraava **kierrosvalvojan** vierailuviikko.
 
-**Format**: MM/DD/YYYY
+**Muoto**: KK/PP/VVVV
 
-**Default**: None
+**Oletus**: Ei mitään
 
-### Memorial Date {#memorial-date}
+### Muistotilaisuuden päivämäärä {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
-The date of the next Memorial celebration (beta feature).
+Seuraavan **muistotilaisuuden** päivämäärä (beta-ominaisuus).
 
-**Format**: MM/DD/YYYY
+**Muoto**: KK/PP/VVVV
 
-**Default**: Automatically retrieved periodically
+**Oletus**: Haetaan automaattisesti säännöllisin väliajoin
 
-### Meeting Schedule Changes {#meeting-schedule-changes}
+### Kokousaikataulun muutokset {#meeting-schedule-changes}
 
-These settings allow you to configure temporary changes to your meeting schedule:
+Näillä asetuksilla voit määrittää tilapäisiä muutoksia kokousaikatauluun:
 
-- **Change Date**: When the change takes effect
-- **One-time Change**: Whether this is a permanent or temporary change
-- **New Midweek Day**: New day for midweek meeting
-- **New Midweek Time**: New time for midweek meeting
-- **New Weekend Day**: New day for weekend meeting
-- **New Weekend Time**: New time for weekend meeting
+- **Muutospäivämäärä**: Päivä, jona muutos astuu voimaan
+- **Kertaluonteinen muutos**: Onko kyseessä pysyvä vai tilapäinen muutos
+- **Uusi viikkokokouksen päivä**: Uusi päivä **viikkokokoukselle**
+- **Uusi viikkokokouksen aika**: Uusi alkamisaika **viikkokokoukselle**
+- **Uusi viikonlopun kokouksen päivä**: Uusi päivä **viikonlopun kokoukselle**
+- **Uusi viikonlopun kokouksen aika**: Uusi alkamisaika **viikonlopun kokoukselle**
 
-## Media Retrieval and Playback {#media-retrieval-and-playback}
+## Median haku ja toisto {#media-retrieval-and-playback}
 
-### Metered Connection {#metered-connection}
+### Mittaroitu yhteys {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
-Enable this if you're on a limited data connection to reduce bandwidth usage.
+Ota tämä asetus käyttöön, jos käytät rajoitettua datayhteyttä, jotta kaistanleveyden käyttöä voidaan vähentää.
 
-**Default**: `false`
+**Oletus**: `false`
 
-### Media Display {#media-display-button}
+### Medianäyttö {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-Enable the media display functionality. This is required to present media on a second monitor.
+Ota käyttöön medianäyttötoiminto. Tämä on välttämätöntä median esittämiseksi toisella näytöllä.
 
-**Default**: `false`
+**Oletus**: `false`
 
-#### Begin Playback Paused {#begin-playback-paused}
+#### Aloita toisto keskeytettynä {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
-Start videos in a paused state when playback begins.
+Käynnistä videot taukotilassa, kun toisto alkaa.
 
-**Default**: `false`
+**Oletus**: `false`
 
-### Background Music {#settings-guide-background-music}
+### Taustamusiikki {#settings-guide-background-music}
 
-#### Enable Music {#enable-music-button}
+#### Ota musiikki käyttöön {#enable-music-button}
 
 <!-- **Setting**: `enableMusicButton` -->
 
-Enable background music functionality.
+Ota käyttöön taustamusiikkitoiminto.
 
-**Default**: `true`
+**Oletus**: `true`
 
-#### Auto-Start Music {#auto-start-music}
+#### Käynnistä musiikki automaattisesti {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-Automatically start background music when M³ launches if appropriate.
+Käynnistä taustamusiikki automaattisesti, kun M³ avataan, jos se on tarkoituksenmukaista.
 
-**Default**: `true`
+**Oletus**: `true`
 
-#### Meeting Stop Buffer {#meeting-stop-buffer}
+#### Musiikin pysäytyspuskuri ennen kokousta {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
-How many seconds before meeting start time to stop background music.
+Kuinka monta sekuntia ennen kokouksen alkua taustamusiikki pysäytetään.
 
-**Range**: 0-300 seconds
+**Vaihteluväli**: 0–300 sekuntia
 
-**Default**: 60 seconds
+**Oletus**: 60 sekuntia
 
-#### Music Volume {#music-volume}
+#### Musiikin äänenvoimakkuus {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
-Volume level for background music (1-100%).
+Taustamusiikin äänenvoimakkuus (1–100 %).
 
-**Default**: 100%
+**Oletus**: 100 %
 
-### Cache Management {#cache-management}
+### Välimuistin hallinta {#cache-management}
 
-#### Enable Extra Cache {#enable-extra-cache}
+#### Ota lisävälimuisti käyttöön {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Enable additional caching for better performance.
+Ota käyttöön lisävälimuisti suorituskyvyn parantamiseksi.
 
-**Default**: `false`
+**Oletus**: `false`
 
-#### Cache Folder {#cache-folder}
+#### Välimuistikansio {#cache-folder}
 
 <!-- **Setting**: `cacheFolder` -->
 
-Custom location for storing cached media files.
+Mukautettu sijainti, johon välimuistitetut mediatiedostot tallennetaan.
 
-**Default**: System default location
+**Oletus**: Järjestelmän oletussijainti
 
-#### Enable Cache Auto-Clear {#enable-cache-auto-clear}
+#### Ota automaattinen välimuistin tyhjennys käyttöön {#enable-cache-auto-clear}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
-Automatically clear old cached files to save disk space.
+Tyhjennä automaattisesti vanhat välimuistitiedostot levytilan säästämiseksi.
 
-**Default**: `true`
+**Oletus**: `true`
 
-### Folder Monitoring {#settings-guide-folder-monitoring}
+### Kansion seuranta {#settings-guide-folder-monitoring}
 
-#### Enable Folder Watcher {#enable-folder-watcher}
+#### Ota kansioseuranta käyttöön {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Monitor a folder for new media files and automatically add them to M³.
+Seuraa kansiota uusien mediatiedostojen varalta ja lisää ne automaattisesti M³:een.
 
-**Default**: `false`
+**Oletus**: `false`
 
-#### Folder to Watch {#folder-to-watch}
+#### Seurattava kansio {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder path to monitor for new media files.
+Kansion polku, jota seurataan uusien mediatiedostojen varalta.
 
-**Default**: Empty
+**Oletus**: Tyhjä
 
-## Integrations {#integrations}
+## Integraatiot {#integrations}
 
-### Zoom Integration {#settings-guide-zoom-integration}
+### Zoom-integraatio {#settings-guide-zoom-integration}
 
-#### Enable Zoom {#enable-zoom}
+#### Ota Zoom käyttöön {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
-Enable Zoom meeting integration features.
+Ota käyttöön Zoom-kokouksiin liittyvät integraatio-ominaisuudet.
 
-**Default**: `false`
+**Oletus**: `false`
 
-#### Screen Share Shortcut {#screen-share-shortcut}
+#### Näytönjakopikanäppäin {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
-Keyboard shortcut to trigger Zoom screen sharing.
+Pikanäppäin Zoomin näytönjaon käynnistämiseksi.
 
-**Default**: None
+**Oletus**: Ei mitään
 
-### OBS Studio Integration {#settings-guide-obs-integration}
+### OBS Studio -integraatio {#settings-guide-obs-integration}
 
-#### Enable OBS {#enable-obs}
+#### Ota OBS käyttöön {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
-Enable OBS Studio integration for automatic scene switching.
+Ota käyttöön OBS Studion integraatio automaattista kohtauksenvaihtoa varten.
 
-**Default**: `false`
+**Oletus**: `false`
 
-:::warning Important Note
+:::warning Varoitus
 
-**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+_Äänimääritykset vaaditaan_\*: OBS Studio -integraatio hallitsee vain näytönjakoa. M³:n median ääni **ei siirry automaattisesti** Zoom-osallistujille OBS Studion kautta. Zoomin alkuperäiset ääniasetukset on määritettävä tai käytettävä vaihtoehtoa ”Jaa tietokoneen ääni”, jotta osallistujat kuulevat median. Katso tarkemmat ohjeet [Käyttöoppaasta](/user-guide#audio-configuration).
 
-**Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
+**Huom**: Zoom-integraatio käyttää Zoomin omaa näytönjakoa, joka käsittelee äänen sujuvammin kuin OBS Studio -integraatio.
 
 :::
 
-#### OBS Port {#obs-port}
+#### OBS-portti {#obs-port}
 
 <!-- **Setting**: `obsPort` -->
 
-The port number for connecting to OBS Studio WebSocket.
+Porttinumero, jota käytetään yhteyteen OBS Studion WebSocketiin.
 
-**Default**: None
+**Oletus**: Ei mitään
 
-#### OBS Password {#obs-password}
+#### OBS-salasana {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
-The password for OBS Studio WebSocket connection.
+Salasana OBS Studion WebSocket-yhteyttä varten.
 
-**Default**: None
+**Oletus**: Ei mitään
 
-#### OBS Scenes {#obs-scenes}
+#### OBS-kohtaukset {#obs-scenes}
 
-Configure which OBS scenes to use for different purposes:
+Määritä, mitä OBS-kohtauksia käytetään eri tarkoituksiin:
 
-- **Camera Scene**: Scene showing the camera/lectern
-- **Media Scene**: Scene for displaying media
-- **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
+- **Kamerakohtaus**: Näyttää kameran tai puhujalavan
+- **Mediakohtaus**: Näyttää median
+- **Kuvakohtaus**: Näyttää kuvia (esimerkiksi kuva-kuvassa-tilassa, jossa näkyvät sekä media että puhuja)
 
-#### OBS Advanced Options {#obs-advanced-options}
+#### OBS:n lisäasetukset {#obs-advanced-options}
 
-- **Postpone Images**: Delay sharing images to OBS until manually triggered
-- **Quick Toggle**: Enable quick on/off toggle for OBS integration
-- **Switch Scene After Media**: Automatically return to previous scene after media
-- **Remember Previous Scene**: Remember and restore the previous scene
-- **Hide Icons**: Hide OBS-related icons in the interface
+- **Viivästetyt kuvat**: Viivästää kuvien jakamisen OBS:iin, kunnes se käynnistetään manuaalisesti
+- **Pikatila**: Ota käyttöön nopea päälle/pois-kytkin OBS-integraatiolle
+- **Vaihda kohtaus median jälkeen**: Palaa automaattisesti edelliseen kohtaukseen median päätyttyä
+- **Muista edellinen kohtaus**: Muistaa ja palauttaa edellisen kohtauksen
+- **Piilota kuvakkeet**: Piilottaa OBS:iin liittyvät kuvakkeet käyttöliittymästä
 
-:::warning Important Note
+:::warning Varoitus
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Äänimääritykset vaaditaan**: OBS Studio -integraatio hallitsee vain video- ja kohtauksenvaihtoa. M³:n median ääni **ei siirry automaattisesti** Zoomiin tai OBS:iin. Videovirta toimii kuten virtuaalikamera ilman ääntä, kuten verkkokamera. Zoomin alkuperäiset ääniasetukset on määritettävä tai käytettävä vaihtoehtoa ”Jaa tietokoneen ääni”, jotta osallistujat kuulevat median. Katso tarkemmat ohjeet [Käyttöoppaasta](/user-guide#audio-configuration).
 
-**Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
+**Vaihtoehto**: Harkitse Zoom-integraation käyttöä, sillä se käsittelee ääntä sujuvammin.
 
 :::
 
-### Custom Events {#custom-events}
+### Mukautetut tapahtumat {#custom-events}
 
-#### Enable Custom Events {#enable-custom-events}
+#### Ota mukautetut tapahtumat käyttöön {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+Ota käyttöön mukautetut pikanäppäimet, jotka laukeavat tiettyjen tapahtumien yhteydessä (esimerkiksi kun media toistetaan, keskeytetään tai pysäytetään).
 
-**Default**: `false`
+**Oletus**: `false`
 
-#### Custom Event Shortcuts {#custom-event-shortcuts}
+#### Mukautetut tapahtumapikanäppäimet {#custom-event-shortcuts}
 
-##### Play Media Shortcut {#custom-event-media-play-shortcut}
+##### Median toistopikanäppäin {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
-Shortcut that is triggered when media is played.
+Pikanäppäin, joka laukeaa, kun mediaa toistetaan.
 
-**Default**: None
+**Oletus**: Ei mitään
 
-##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+##### Median taukopikanäppäin {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
-Shortcut that is triggered when media is paused.
+Pikanäppäin, joka laukeaa, kun media keskeytetään.
 
-**Default**: None
+**Oletus**: Ei mitään
 
-##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+##### Median pysäytyspikanäppäin {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
-Shortcut that is triggered when media is stopped.
+Pikanäppäin, joka laukeaa, kun media pysäytetään.
 
-**Default**: None
+**Oletus**: Ei mitään
 
-##### Last Song Shortcut {#custom-event-last-song-shortcut}
+##### Viimeisen laulun pikanäppäin {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-Shortcut that is triggered when the last song is played during a meeting.
+Pikanäppäin, joka laukeaa, kun kokouksen viimeinen laulu toistetaan.
 
-**Default**: None
+**Oletus**: Ei mitään
 
-## Advanced Settings {#advanced-settings}
+## Lisäasetukset {#advanced-settings}
 
-### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
+### Pikanäppäimet {#settings-guide-keyboard-shortcuts}
 
-#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
+#### Ota pikanäppäimet käyttöön {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-Enable customizable keyboard shortcuts for media control.
+Ota käyttöön mukautettavat pikanäppäimet median hallintaa varten.
 
-**Default**: `false`
+**Oletus**: `false`
 
-#### Media Control Shortcuts {#media-control-shortcuts}
+#### Medianhallinnan pikanäppäimet {#media-control-shortcuts}
 
-Configure shortcuts for media playback:
+Määritä pikanäppäimet median toistamiseen:
 
-- **Media Window**: Open/close media window
-- **Previous Media**: Go to previous media item
-- **Next Media**: Go to next media item
-- **Pause/Resume**: Pause or resume media playback
-- **Stop Media**: Stop media playback
-- **Music Toggle**: Toggle background music
+- **Medianäyttö**: Avaa tai sulje medianäyttö
+- **Edellinen media**: Siirry edelliseen mediatiedostoon
+- **Seuraava media**: Siirry seuraavaan mediatiedostoon
+- **Tauko/Jatka**: Keskeytä tai jatka median toistoa
+- **Pysäytä media**: Pysäytä median toisto
+- **Musiikki päälle/pois**: Vaihda taustamusiikin tila
 
-### Media Display {#media-display}
+### Median näyttö {#media-display}
 
-#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+#### Ota mediaikkunan himmennys siirtymissä käyttöön {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-Enable fade-in/out transitions when showing or hiding the media window.
+Ota käyttöön himmennys siirtymissä, kun mediaikkuna näytetään tai piilotetaan.
 
-**Default**: `true`
+**Oletus**: `true`
 
-#### Hide Media Logo {#hide-media-logo}
+#### Piilota median logo {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
-Hide the logo in the media window.
+Piilota logo medianäytössä.
 
-**Default**: `false`
+**Oletus**: `false`
 
-#### Maximum Resolution {#maximum-resolution}
+#### Suurin resoluutio {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
-Maximum resolution for downloaded media files.
+Ladattujen mediatiedostojen suurin resoluutio.
 
-**Options**: 240p, 360p, 480p, 720p
+**Vaihtoehdot**: 240p, 360p, 480p, 720p
 
-**Default**: 720p
+**Oletus**: 720p
 
-#### Include Printed Media {#include-printed-media}
+#### Sisällytä painettu media {#include-printed-media}
 
 <!-- **Setting**: `includePrinted` -->
 
-Include media from the printed publications in media downloads.
+Sisällytä painetuista julkaisuista peräisin oleva media ladattaviin tiedostoihin.
 
-**Default**: `true`
+**Oletus**: `true`
 
-#### Exclude Footnotes {#exclude-footnotes}
+#### Jätä alaviitteet pois {#exclude-footnotes}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
-Exclude footnote images from media downloads when possible.
+Jätä alaviitteiden kuvat pois median latauksista, jos mahdollista.
 
-**Default**: `false`
+**Oletus**: `false`
 
-#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
+#### Jätä opetusesitteen media pois {#exclude-theocratic-ministry-school}
 
 <!-- **Setting**: `excludeTh` -->
 
-Exclude media from the Teaching (th) brochure from media downloads.
+Jätä **Opetusesitteestä (th)** peräisin oleva media pois median latauksista.
 
-**Default**: `true`
+**Oletus**: `true`
 
-### Subtitles {#subtitles}
+### Tekstitykset {#subtitles}
 
-#### Enable Subtitles {#enable-subtitles}
+#### Ota tekstitykset käyttöön {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
-Enable subtitle support for media playback.
+Ota käyttöön tekstitysten tuki median toistossa.
 
-**Default**: `false`
+**Oletus**: `false`
 
-#### Subtitle Language {#subtitle-language}
+#### Tekstitysten kieli {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
-Language for subtitles (can be different from media language).
+Tekstitysten kieli (voi olla eri kuin median kieli).
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Vaihtoehdot**: Kaikki kielet, jotka ovat saatavilla Jehovan todistajien virallisella verkkosivustolla
 
-**Default**: None
+**Oletus**: Ei mitään
 
-### Media Export {#settings-guide-media-export}
+### Median vienti {#settings-guide-media-export}
 
-#### Enable Media Auto-Export {#enable-media-auto-export}
+#### Ota median automaattinen vienti käyttöön {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-Automatically export media files to a specified folder.
+Vie mediatiedostot automaattisesti määritettyyn kansioon.
 
-**Default**: `false`
+**Oletus**: `false`
 
-#### Media Export Folder {#media-export-folder}
+#### Median vientikansio {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
-Folder path where media files will be automatically exported.
+Kansio, johon mediatiedostot viedään automaattisesti.
 
-**Default**: Empty
+**Oletus**: Tyhjä
 
-#### Convert Files to MP4 {#convert-files-to-mp4}
+#### Muunna tiedostot MP4-muotoon {#convert-files-to-mp4}
 
 **Setting**: `convertFilesToMp4`
 
-Convert exported media files to MP4 format for better compatibility.
+Muunna viedyt mediatiedostot MP4-muotoon paremman yhteensopivuuden saavuttamiseksi.
 
-**Default**: `false`
+**Oletus**: `false`
 
-### Danger Zone {#danger-zone}
+### Vaaravyöhyke {#danger-zone}
 
 :::warning Warning
 
-These settings should only be changed if you understand their implications.
+Näitä asetuksia tulisi muuttaa vain, jos ymmärrät muutosten vaikutukset.
 
 :::
 
-#### Base URL {#base-url}
+#### Perus-URL {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
-Base domain used to download publications and media.
+Perusverkkotunnus, jota käytetään julkaisujen ja median lataamiseen.
 
-**Default**: `jw.org`
+**Oletus**: `jw.org`
 
-#### Disable Media Fetching {#disable-media-fetching}
+#### Poista median lataus käytöstä {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
 Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
 
-**Default**: `false`
+**Oletus**: `false`
 
-## Tips for Optimal Configuration {#configuration-tips}
+## Vinkkejä optimaaliseen asetukseen {#configuration-tips}
 
-### For New Users {#new-users}
+### Uusille käyttäjille {#new-users}
 
-1. Start with the setup wizard to configure basic settings
-2. Enable "Media Display Button" to access presentation features
-3. Configure your meeting schedule accurately
-4. Set up OBS integration if you use hybrid meetings
+1. Aloita määritysoppaalla perusasetusten määrittämiseksi
+2. Ota käyttöön **"Medianäyttöpainike"** esitystoimintojen käyttöön
+3. Määritä kokousaikataulu tarkasti
+4. Ota käyttöön OBS-integraatio, jos käytät hybridikokouksia
 
-### For Advanced Users {#advanced-users}
+### Edistyneille käyttäjille {#advanced-users}
 
-1. Use folder monitoring to sync media from cloud storage
-2. Enable media auto-export for backup purposes
-3. Configure keyboard shortcuts for efficient operation
-4. Configure Zoom integration for automatic screen sharing
+1. Käytä kansioseurantaa median synkronoimiseksi pilvitallennuksen kanssa
+2. Ota käyttöön median automaattinen vienti varmuuskopiointia varten
+3. Määritä pikanäppäimet tehokkaaseen käyttöön
+4. Ota käyttöön Zoom-integraatio automaattista näytönjakoa varten
 
-### Performance Optimization {#performance-optimization}
+### Suorituskyvyn optimointi {#performance-optimization}
 
-1. Enable extra cache for better performance
-2. Use appropriate maximum resolution for your needs
-3. Configure cache auto-clear to manage disk space
-4. Consider metered connection setting if on limited bandwidth
+1. Ota käyttöön lisävälimuisti suorituskyvyn parantamiseksi
+2. Valitse tarpeitasi vastaava enimmäisresoluutio
+3. Ota käyttöön automaattinen välimuistin tyhjennys levytilan hallitsemiseksi
+4. Ota mittaroitu yhteys käyttöön, jos käytät rajoitettua kaistaa
 
-### Troubleshooting {#settings-guide-troubleshooting}
+### Vianmääritys {#settings-guide-troubleshooting}
 
-- If media isn't downloading, check your meeting schedule settings
-- If OBS integration isn't working, verify port and password settings
-- If performance is slow, try enabling extra cache or reducing resolution
-- If you're having language issues, check both interface and media language settings
-- If Zoom participants can't hear media audio, configure Zoom's Original Audio settings or use "Share Computer Sound"
-- **Tip**: Consider using Zoom integration instead of OBS Studio for simpler audio handling
+- Jos media ei lataudu, tarkista kokousaikatauluasetukset
+- Jos OBS-integraatio ei toimi, tarkista portti- ja salasana-asetukset
+- Jos suorituskyky on hidas, kokeile lisätä välimuistia tai alentaa resoluutiota
+- Jos kohtaat kieliongelmia, tarkista sekä käyttöliittymän että median kieliasetukset
+- Jos Zoom-osallistujat eivät kuule mediaääntä, määritä Zoomin alkuperäiset ääniasetukset tai käytä vaihtoehtoa **"Jaa tietokoneen ääni"**
+- **Vinkki**: Harkitse Zoom-integraation käyttöä OBS Studion sijaan helpompaa äänenhallintaa varten
