@@ -526,7 +526,7 @@ Perusverkkotunnus, jota käytetään julkaisujen ja median lataamiseen.
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
+Poista automaattiset medialataukset kokonaan käytöstä. Käytä tätä vain profiileissa, jotka on tarkoitettu erityistapahtumiin tai mukautettuihin kokoonpanoihin.
 
 **Oletus**: `false`
 
