@@ -10350,7 +10350,7 @@ __metadata:
     sanitize-filename: "npm:^1.6.3"
     typescript: "npm:~5.9.3"
     upath: "npm:^2.0.1"
-    vite: "npm:^7.2.0"
+    vite: "npm:^7.2.1"
     vitepress: "npm:^2.0.0-alpha.12"
     vitest: "npm:^4.0.7"
     vue: "npm:^3.5.23"
@@ -10536,11 +10536,11 @@ __metadata:
   linkType: hard
 
 "min-document@npm:^2.19.0":
-  version: 2.19.0
-  resolution: "min-document@npm:2.19.0"
+  version: 2.19.1
+  resolution: "min-document@npm:2.19.1"
   dependencies:
     dom-walk: "npm:^0.1.0"
-  checksum: 10c0/783724da716fc73a51c171865d7b29bf2b855518573f82ef61c40d214f6898d7b91b5c5419e4d22693cdb78d4615873ebc3b37d7639d3dd00ca283e5a07c7af9
+  checksum: 10c0/3924861e38e820428c1076c42f2eacff7dcbf1aeff0ddcd5bc8a22c47ac338505c87e6fd66ebe97378207ea3a410e4f639d1de652a9e64b8ef738002909e1b8f
   languageName: node
   linkType: hard
 
@@ -14935,9 +14935,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:7.2.0":
-  version: 7.2.0
-  resolution: "vite@npm:7.2.0"
+"vite@npm:7.2.1":
+  version: 7.2.1
+  resolution: "vite@npm:7.2.1"
   dependencies:
     esbuild: "npm:^0.25.0"
     fdir: "npm:^6.5.0"
@@ -14986,7 +14986,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/ab2579dffa1bc3dd169a9360499827920d83218b2e9b512c6e2c5220d58306abd238e0c87b4292a40b0b48de3323bda2ac418f6df8dcc3459d6cdb148b287619
+  checksum: 10c0/25fbcfc67b1598fa6152f3ed0a7355144a2ac203859ad3b6a2e466b0930ec1081c19cc6f0d83104897517ecf30c0aac3e4a50c4e5e2980d3659decb1d9e41a28
   languageName: node
   linkType: hard
 
