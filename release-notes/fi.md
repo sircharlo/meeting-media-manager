@@ -6,147 +6,147 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 
 ## v25.10.1
 
-### ✨ Uudet Ominaisuudet
+### ✨ Mitä uutta
 
-- ✨ **Asennusohjelma – Zoom-askel**: Lisätty Zoom integraatio ohjattuun asetukseen, jotta alkuperäinen konfiguraatio on helpompaa.
+- ✨ **Asennusohjelma – Zoom-vaihe**: Lisätty Zoom-integraatio ohjattuun asetukseen, jotta alkuperäinen määritys on helpompaa.
 - ✨ **Näytönvalinnan parannukset**: Näytä tarkka visuaalinen edustus kaikista näytöistä, sekä pääikkunan nykyisen koon ja sijainnin, näytön ponnahdusikkunassa. Tämän ansiosta on helpompi valita oikea näyttö, jossa media-ikkunan pitäisi näyttää.
-- ✨ **Mediaikkunan asetus**: Sovellus muistaa nyt halutun näytön, jossa media-ikkuna tulisi näyttää, jos käyttäjä sen määrittää.
+- ✨ **Mediaikkunan asetus**: Sovellus muistaa nyt halutun näytön, jolla mediaikkuna tulee näkyviin, jos käyttäjä määrittää sen.
 
 ## v25.10.0
 
-### ✨ Uudet Ominaisuudet
+### ✨ Mitä uutta
 
 - ✨ **Aloita toisto keskeytettynä**: Lisätty uusi asetus, jotta toisto voidaan aloittaa keskeytettynä, joka voi olla hyödyllinen kun valmistellaan asennuksen (kuten käynnistäminen Zoom jakaminen) ennen kuin media alkaa soittaa media-ikkunassa.
-- ✨ **Päivitysilmoitukset**: Käyttäjille ilmoitetaan päivityksistä sovelluksen sisäisen mainospalkin kautta, jonka avulla käyttäjä voi asentaa päivitykset välittömästi, sen sijaan että odottaisi seuraavan sovelluksen uudelleenkäynnistystä.
+- ✨ **Päivitysilmoitukset**: Käyttäjille ilmoitetaan sovelluksen päivityksistä sisäisen ilmoituspalkin kautta, jolloin päivitykset voi asentaa heti odottamatta seuraavaa sovelluksen uudelleenkäynnistystä.
 - ✨ **Mukautettu tapahtuma**: Lisätty valinnaisia nappeja, jotka voivat laukaista näppäimistön pikanäppäimiä, kun tiettyjä tapahtumia havaitaan. Tämä voi olla hyödyllistä äänipöydän käyttäjille, jotka voivat suorittaa toimenpiteitä automaattisesti sovelluksen ulkopuolella. Esimerkiksi älyvaloja voitaisiin kytkeä päälle taipois päältä ennen ja jälkeen mediatiedostojen näyttämissä jos projektoreita käytetään. tai skriptiä voidaan soittaa kokouksen viimeisen laulun jälkeen, jotta eri toiminnot voidaan automatisoida Zoom kokouksessa.
 
 ## v25.9.1
 
-### ✨ Uudet Ominaisuudet
+### ✨ Mitä uutta
 
-- ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
-- ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
-- ✨ **Media Crossfade**: Implemented crossfade transitions for media display, instead of the more abrupt fade-to-black transition that was present before.
+- ✨ **Mediaikkuna aina päällimmäisenä & koko näytön tila**: Korjattu ja parannettu mediaikkunan aina päällimmäisenä -käyttäytymistä niin, että se mukautuu dynaamisesti koko näytön tilan mukaan.
+- ✨ **Päivämäärän näyttömuoto**: Lisätty käyttäjäasetus päivämäärän näyttömuodon määrittämistä varten.
+- ✨ **Median ristihäivytys**: Toteutettu ristihäivytyssiirtymät medianäyttöön aiemman äkillisen mustaan häivytyksen sijaan.
 - ✨ **Musiikin auto-stop**: Optimoitu taustamusiikin automaattisen pysähdys. Toimii samalla tavalla riippumatta siitä, onko musiikki käynnistetty automaattisesti vai ei.
-- ✨ **macOS Click-Through on Inactive Windows**: Enabled mouse click passthrough on the main window for macOS, which should make it easier to control the app even when it's not focused.
+- ✨ **macOS:in napsautus passiivisissa ikkunoissa**: Mahdollistettu hiiren napsautusten läpivienti macOS:in pääikkunassa, jotta sovelluksen käyttö on helpompaa, vaikka ikkuna ei olisi aktiivinen.
 
 ## v25.9.0
 
-### ✨ Uudet Ominaisuudet
+### ✨ Mitä uutta
 
-- ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
-- ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
+- ✨ **Latausikkunan parannukset**: Lisätty päivityspainike ja latausten ryhmittely päivämäärän mukaan latausponnahdusikkunassa.
+- ✨ **Katsotun median järjestyksen muisti**: Lisätty osioiden järjestyksen muisti katsotuille mediaelementeille.
 
 ## v25.8.3
 
-### ✨ Uudet Ominaisuudet
+### ✨ Mitä uutta
 
-- ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
-- ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
+- ✨ **Mediaikkunan häivytyssiirtymät**: Lisätty uusi lisäasetus, jolla mediaikkuna häivytetään sisään ja ulos pehmeämpien visuaalisten siirtymien luomiseksi.
+- ✨ **Kuvien keston hallinta ja etenemisen seuranta**: Lisätty mahdollisuus säätää kuvan näyttöaikaa ja seurata etenemistä toistettavissa osioissa.
 
 ## v25.8.1
 
-### ✨ Uudet Ominaisuudet
+### ✨ Mitä uutta
 
-- ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
-- ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
-- ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
-- ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
+- ✨ **Mukautetut mediaosiot**: Täydellinen järjestelmä mukautettujen mediaosioiden luomiseen, muokkaamiseen ja hallintaan väriasetuksilla ja vedä-ja-pudota-järjestelyllä.
+- ✨ **Mediajakajat**: Lisää otsikoituja jakajia medialistoihin paremman järjestyksen takaamiseksi, sekä ylä- että ala-asetuksin.
+- ✨ **Osion toistotila**: Mahdollistaa jatkuvan toiston tietyissä osioissa, jotta toistosta tulee saumaton.
+- ✨ **Zoom-integraatio**: Automaattinen näytönjaon käynnistys ja pysäytys median toiston yhteydessä.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parannuksia ja hienosäätöjä
 
-- 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
-- ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
-- 🛠️ **Improved Navigation**: Better keyboard shortcuts with scroll-to-selected functionality and enhanced media navigation.
-- 🛠️ **Visual Enhancements**: Animation support during sorting operations and improved drag-and-drop visual feedback.
+- 🛠️ **Parannetut osioiden otsikot**: Uusi kolmen pisteen valikko, jossa on värivalitsin, siirrä ylös/alas -komennot, toistovaihtoehdot ja poisto-toiminto.
+- ✨ **Otsikoiden muokkaus suoraan**: Mahdollisuus muokata median otsikoita suoraan käyttöliittymässä ilman erillisiä valintaikkunoita.
+- 🛠️ **Parannettu navigointi**: Paremmat pikanäppäimet, “siirry valittuun” -toiminto ja parannettu medianavigointi.
+- 🛠️ **Visuaaliset parannukset**: Animaatiot lajittelun aikana ja parannettu vedä-ja-pudota -palautteen visuaalisuus.
 
 ## 25.6.0
 
-### ✨ Uudet Ominaisuudet
+### ✨ Mitä uutta
 
-- ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
-- ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
+- ✨ **Rajoitetun yhteyden asetus**: Lisätty uusi asetus, joka vähentää latauskaistan käyttöä rajoitetuilla yhteyksillä.
+- ✨ **Parannettu suoratoistetun median käsittely**: Parempi tuki suoratoistetulle medialle viiveongelmien vähentämiseksi.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parannuksia ja hienosäätöjä
 
-- 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
-- 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
-- 🛠️ **Linux compatibility**: Forced GTK 3 usage on Linux to prevent UI and launch issues.
+- 🛠️ **Parempi MIME-tyyppien käsittely**: Parannettu MIME-tyyppien tuki median parempaa yhteensopivuutta varten.
+- 🛠️ **Parannettu navigointipaneeli**: Parannettu pienennetyn tilan hallinta ja lisätty työkaluvihjeet käyttäjäkokemuksen parantamiseksi.
+- 🛠️ **Linux-yhteensopivuus**: Pakotettu GTK 3:n käyttö Linuxissa käyttöliittymä- ja käynnistysongelmien estämiseksi.
 
 ## 25.5.0
 
-### ✨ Uudet Ominaisuudet
+### ✨ Mitä uutta
 
-- 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
-- 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
+- 🖼️ **OBS-viivekuvien asetus**: Lisätty OBS Studio -asetus, jolla voidaan viivästyttää näkymien vaihtoa kuvien näyttämisen yhteydessä, mikä tekee siirtymistä sulavampia.
+- 🔊 **Tuki `.m4a`-äänitiedostoille**: Lisätty yhteensopivuus `.m4a`-äänitiedostomuodon kanssa tuettujen mediatyyppien laajentamiseksi.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parannuksia ja hienosäätöjä
 
-- 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
-- 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
-- 🎵 **Improve Duplicate Song Indicator**: Enhance the visual cue for duplicate songs to make them easier to identify.
+- 🔍 **Zoomin palautus `Ctrl` + `Scroll` -yhdistelmällä**: Palautettu välitön zoomaus ohjausnäppäin + vieritys -eleellä helpompaa navigointia varten.
+- 👤 **Piilota käyttämätön Kierrosvalvojan media**: Piilota käyttämätön media Kierrosvalvojan vierailuissa siistimmän esityksen takaamiseksi.
+- 🎵 **Parannettu kaksoiskappaleiden ilmaisin**: Parannettu visuaalista merkintää päällekkäisten laulujen tunnistamisen helpottamiseksi.
 
 ## 25.4.3
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parannuksia ja hienosäätöjä
 
-- ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
+- ➕ **Siivoa media v25.4.x-versioista**: Poistaa automaattisesti orvot tai väärin sijoitetut mediat versioista v25.4.1–v25.4.2 varmistaen, ettei media puutu tai ole väärässä paikassa medialistassa.
 
 ## 25.4.2
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parannuksia ja hienosäätöjä
 
-- ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
+- ➕ **Estä päällekkäinen media**: Estää joidenkin mediaelementtien lisäämisen useaan kertaan medialuetteloon.
 
 ## 25.4.1
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parannuksia ja hienosäätöjä
 
-- 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
-- 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
-- 🪟 **Disable Rounded Corners on Windows**: Remove rounded corners for the media window on Windows.
-- 🖼 **Include Non-Referenced Images in Media List**: Ensure all non-referenced images are added to the media list for completeness.
-- ➕ **Prevent Duplicate Media Sections**: Avoid creating multiple media sections for the same media item.
-- 📥 **Preserve Playlist Order on Import**: Maintain the original order of JWL playlists during the import process.
+- 🎬 **Korjaa mukautettujen alku-/loppuaikojen määritys**: Estää mukautettujen alku- ja loppuaikojen väärän kohdistamisen videoihin.
+- 📝 **Salli yhteensopimattomat tekstitykset**: Mahdollistaa tekstitysten käytön, vaikka ne eivät täysin vastaisi mediatiedostoa.
+- 🪟 **Poista pyöristetyt kulmat Windowsissa**: Poistaa mediaikkunan pyöristetyt kulmat Windowsissa.
+- 🖼 **Sisällytä viittauksettomat kuvat medialuetteloon**: Varmistaa, että kaikki kuvat lisätään medialuetteloon täydellisyyden vuoksi.
+- ➕ **Estä päällekkäiset mediaosiot**: Estää saman mediatiedoston useiden osioiden luonnin.
+- 📥 **Säilytä soittolistan järjestys tuonnissa**: Säilyttää JWL-soittolistojen alkuperäisen järjestyksen tuonnin aikana.
 
 ## 25.4.0
 
-### ✨ Uudet Ominaisuudet
+### ✨ Mitä uutta
 
-- 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
-- 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
+- 🇵🇭 **Uusi kieli: Tagalog**: Lisätty tuki Tagalogin kielelle, mikä laajentaa sovelluksen monikielisiä ominaisuuksia.
+- 🎞 **Tuki `.m4v`-videomuodolle**: Nyt tuetaan `.m4v`-tiedostojen toistoa median yhteensopivuuden parantamiseksi.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parannuksia ja hienosäätöjä
 
-- 🎬 **Multiple Start/End Times for Single Video**: Allow a single video to appear in the media list multiple times with different custom start/end times.
-- 📤 **Include Grouped Media in Auto Export**: Automatically export grouped media items along with others.
-- 📡 **Correct `.m4v` Fetching from JW API**: Ensure `.m4v` files are correctly fetched from the JW API.
+- 🎬 **Useita alku-/loppuaikoja yhdelle videolle**: Mahdollistaa yhden videon esiintymisen medialuettelossa useita kertoja eri mukautetuilla alku- ja loppuajoilla.
+- 📤 **Sisällytä ryhmitelty media automaattiseen vientiin**: Vie automaattisesti myös ryhmitetyt mediaelementit muiden mukana.
+- 📡 **Korjaa `.m4v`-tiedostojen haku JW API:sta**: Varmistaa, että `.m4v`-tiedostot haetaan oikein JW API:n kautta.
 
 ## 25.3.1
 
-### ✨ Uudet Ominaisuudet
+### ✨ Mitä uutta
 
-- 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
+- 🌏 **Uusi kieli: korea**: Lisätty tuki korean kielelle, jotta sovellus olisi käytettävissä laajemmalle käyttäjäkunnalle.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parannuksia ja hienosäätöjä
 
-- ⚡ **Improve Performance & CPU Usage**: Optimize performance to reduce CPU usage and enhance efficiency.
-- 🔄 **Fix Synchronization & Crash Issues**: Resolve various sync-related and stability issues to improve reliability.
-- 📜 **Show Release Notes for Existing Congregations**: Ensure release notes are only displayed for congregations that are already loaded.
+- ⚡ **Parempi suorituskyky ja pienempi prosessorin käyttö**: Optimoitu suorituskykyä CPU:n kuormituksen vähentämiseksi ja tehokkuuden parantamiseksi.
+- 🔄 **Korjattu synkronointi- ja kaatumisongelmat**: Ratkaistu useita synkronointiin ja vakauteen liittyviä ongelmia luotettavuuden parantamiseksi.
+- 📜 **Näytä julkaisutiedot vain olemassa oleville seurakunnille**: Varmistaa, että julkaisutiedot näytetään vain jo ladatuille seurakunnille.
 
 ## 25.3.0
 
-### ✨ Uudet Ominaisuudet
+### ✨ Mitä uutta
 
-- 🎵 **Play Background Music with Videos**: Allow background music to continue playing while videos are being viewed.
-- 🎥 **Camera Feed for Sign Language Media**: Add the ability to display a camera feed on the media window specifically for sign language users.
-- 📅 **Automatic Memorial Date & Background**: Automatically detect and set the Memorial date and prepare the Memorial background image.
-- 📜 **Show Release Notes In-App**: Display release notes directly in the application so users can easily review changes after an update.
+- 🎵 **Toista taustamusiikki videoiden kanssa**: Mahdollistaa taustamusiikin jatkumisen myös videoiden toiston aikana.
+- 🎥 **Kamerakuva viittomakieliselle medialle**: Lisää mahdollisuuden näyttää kamerakuvaa mediaikkunassa erityisesti viittomakielisille käyttäjille.
+- 📅 **Automaattinen muistojuhlan päivämäärä ja tausta**: Havaitsee automaattisesti muistojuhlan päivämäärän ja asettaa taustakuvan valmiiksi.
+- 📜 **Näytä julkaisutiedot sovelluksessa**: Näyttää julkaisutiedot suoraan sovelluksessa, jotta käyttäjät voivat helposti tarkastella muutoksia päivityksen jälkeen.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parannuksia ja hienosäätöjä
 
-- ⚡ **Optimize Smart Cache Clearing**: Improve the smart cache-clearing mechanism for better performance and efficiency.
-- 📂 **Correct Circuit Overseer Media Placement**: Ensure Circuit Overseer media is placed in the correct section.
-- 📅 **Exclude Regular Meeting Media for Memorial**: Prevent fetching standard meeting media for the Memorial to prevent errors.
-- 📅 **Hide Regular Meeting Sections on Memorial**: Remove unnecessary meeting sections during the Memorial event for a cleaner layout.
-- 📖 **Fix Sign Language Bible Video Downloads**: Correctly download Sign Language Bible chapter videos from JWL playlists.
+- ⚡ **Optimoitu älykäs välimuistin tyhjennys**: Parannettu älykkään välimuistin tyhjennysmekanismia suorituskyvyn parantamiseksi.
+- 📂 **Korjattu Kierrosvalvojan median sijoittelu**: Varmistaa, että Kierrosvalvojan media sijoittuu oikeaan osioon.
+- 📅 **Poissulje tavallinen kokousmedia muistojuhlan aikana**: Estää tavallisen kokousmateriaalin noutamisen muistojuhlan yhteydessä virheiden välttämiseksi.
+- 📅 **Piilota tavalliset kokousosiot muistojuhlassa**: Poistaa tarpeettomat kokousosiot muistojuhlan aikana siistimmän ulkoasun takaamiseksi.
+- 📖 **Korjattu viittomakielisten Raamatun videoiden lataus**: Lataa viittomakieliset Raamatun luvun videot oikein JWL-soittolistoista.
