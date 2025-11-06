@@ -4,6 +4,20 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## v25.11.0
+
+### ✨ Nieuwe functies
+
+- ✨ **JWPUB Media Selection**: Added a way to select individual media from JWPUB files.
+- ✨ **Auto-Focus Media Window**: Added an optional setting to automatically focus the media window after Zoom screen sharing.
+- ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
+- ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
+- ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
+- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from JW.org, such as magazine, books, programs and invitations.
+- ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
+- ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
+- 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
+
 ## v25.10.1
 
 ### ✨ Nieuwe functies
