@@ -4,6 +4,53 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v25.11.0
+
+### ✨ New Features
+
+- ✨ **JWPUB Media Selection**: Added a way to select individual media from JWPUB files.
+- ✨ **Auto-Focus Media Window**: Added an optional setting to automatically focus the media window after Zoom screen sharing.
+- ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
+- ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
+- ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
+- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from JW.org, such as magazine, books, programs and invitations.
+- ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
+- ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
+- 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **UI Consistency**: Moved profile selector button to the bottom of the sidebar.
+- 🛠️ **Cache Management**: Cached user data path to reduce Electron API calls.
+- 🛠️ **Dialog Behavior**: Improved dialog behavior.
+- 🛠️ **Date Handling**: Refactored date handling to prevent stale data and improve reliability.
+- 🛠️ **Lookup Period**: Added support for `allCongregations` in `updateLookupPeriod`.
+- 🛠️ **Sentry Integration**: Enhanced Sentry integration to prevent issue flooding.
+- 🛠️ **Metered Connections**: Metered connection limits are now respected on future media, as expected.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Website Feature**: Fixed website presentation feature that broke after media crossfade was enabled.
+- 🐞 **Query Execution**: Fixed type issues in `executeQuery` and improved debug logging.
+- 🐞 **JWPUB Processing**: Fixed issues with custom JWPUB file processing.
+- 🐞 **Cache Protection**: Added missing jwlb_E to cache protection.
+- 🐞 **UI Layout**: Fixed margin in download popup and recording popup accordion grouping.
+- 🐞 **Sign Language**: Markers should not be visible if fewer than 2 markers are available.
+- 🐞 **Sign Language**: Ensured video markers are properly added to child media items.
+- 🐞 **Cache Clearing**: Fixed issue preventing deletion of certain English publications during cache clearing.
+- 🐞 **Media Reset**: Prevented media reset when metered connection setting is changed.
+
+### 📚 Documentation & Localization
+
+- 📚 **String Management**: Simplified string management by reusing strings dynamically.
+- 📚 **Documentation**: Fixed broken documentation links and added auto-fix for docs workflow.
+
+### 🔧 Chores
+
+- 🔧 **Database**: Added `tableExists` helper function and improved database operations.
+- 🔧 **Mergify**: Updated and simplified Mergify rules for Dependabot and Crowdin PRs.
+- 🔧 **Dependencies**: Updated dependencies and improved dependency management.
+
 ## v25.10.3
 
 ### 🐞 Bug Fixes
