@@ -4,6 +4,20 @@
 
 Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELOG.md tiedosto GitHubissa.
 
+## v25.11.0
+
+### ✨ Mitä uutta
+
+- ✨ **JWPUB-median valinta**: Lisätty mahdollisuus valita yksittäisiä medioita JWPUB-tiedostoista.
+- ✨ **Automaattinen mediaikkunan kohdistus**: Lisätty valinnainen asetus, joka kohdistaa mediaikkunan automaattisesti Zoom-näytönjaon jälkeen.
+- ✨ **Osoitinkorostus TV-näytöille**: Parannettu verkkosivun ikkunan osoitinkorostusta, jotta hiiren osoitin näkyy selkeämmin TV-näytöillä.
+- ✨ **Kokouksen tallennus**: Lisätty uusi kokouksen tallennustoiminto, jolla voidaan ohjata ulkoista tallennussovellusta.
+- ✨ **Sivustohaku**: Lisätty mahdollisuus hakea mediaa tai julkaisuja sivustolta älyhaun avulla.
+- ✨ **Helppo manuaalinen julkaisujen tuonti**: Lisätty toiminto, jolla voidaan helposti tuoda julkaisuja JW.org-sivustolta, kuten aikakauslehtiä, kirjoja, ohjelmia ja kutsuja.
+- ✨ **Viittomakielen parannukset**: Lisätty vahvistus ennen koko tiedoston toistoa viittomakielille sekä tuki useiden klippien valitsemiselle, esimerkiksi kun useita kappaleita luetaan peräkkäin.
+- ✨ **Klipin navigointi**: Lisätty keston näyttö klippiluettelon kohtiin ja parannettu klippien navigointia.
+- 🛠️ **Median näyttö**: Varmistettu, että median näyttö tulee näkyviin toiston alkaessa, vaikka se olisi aiemmin piilotettu.
+
 ## v25.10.1
 
 ### ✨ Mitä uutta
