@@ -8,15 +8,15 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **JWPUB Media Selection**: Added a way to select individual media from JWPUB files.
-- ✨ **Auto-Focus Media Window**: Added an optional setting to automatically focus the media window after Zoom screen sharing.
-- ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
-- ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
-- ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from JW.org, such as magazine, books, programs and invitations.
-- ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
-- ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
-- 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
+- ✨ **Izbor multimedijske vsebine iz JWPUB**: Dodana možnost izbire posamezne multimedijske vsebine iz datotek JWPUB.
+- ✨ **Samodejno usmerjanje na multimedijsko okno**: Dodana neobvezna nastavitev za samodejno usmerjanje pozornosti na multimedijsko okno po začetku deljenja zaslona v Zoomu.
+- ✨ **Prekrivanje miškinega kazalca za TV zaslonu**: Izboljšano prekrivanje kazalca v oknu spletne strani za boljšo vidnost miškinega kazalca na TV zaslonih.
+- ✨ **Snemanje shodov**: Dodana nova funkcija snemanja shodov za nadzor zunanje aplikacije za snemanje.
+- ✨ **Iskanje po spletnem mestu**: Dodana možnost pametnega iskanja multimedijske vsebine ali publikacij na spletnem mestu.
+- ✨ **Enostaven ročni uvoz publikacij**: Dodana funkcionalnost za enostaven uvoz publikacij z jw.org, kot so revije, knjige, programi in vabila.
+- ✨ **Izboljšave za znakovni jezik**: Dodano potrjevanje pred predvajanjem celotnih datotek v znakovnem jeziku in podpora za izbiro več posnetkov, na primer kadar je treba zapored prebrati več odstavkov.
+- ✨ **Navigacija med posnetki**: Dodan prikaz trajanja pri elementih seznama posnetkov in izboljšana navigacija.
+- 🛠️ **Prikaz multimedijske vsebine**: Poskrbljeno, da se prikaz multimedijske vsebine ob začetku predvajanja prikaže, tudi če je bil prej skrit.
 
 ## v25.10.1
 
