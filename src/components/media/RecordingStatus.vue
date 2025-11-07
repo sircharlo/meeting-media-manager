@@ -1,6 +1,12 @@
 <template>
   <q-btn
-    v-if="currentSettings?.recordingEnable"
+    v-if="
+      currentSettings?.recordingEnable &&
+      !(
+        currentSettings?.obsEnable &&
+        currentSettings?.obsEnableRecordingControls
+      )
+    "
     class="super-rounded"
     :color="
       recordingPopup

@@ -14,7 +14,7 @@
         {{ t('meetingRecording') }}
       </div>
       <template v-if="props.isRecording">
-        <p class="card-section-title text-dark-grey row q-px-md q-pt-sm">
+        <p class="card-section-title text-dark-grey row q-px-md">
           {{ t('recording-duration') }}
         </p>
         <div class="row q-px-md q-pt-xs q-pb-sm">
@@ -25,7 +25,7 @@
       </template>
       <div class="overflow-auto col full-width q-px-md">
         <div class="row q-col-gutter-xs">
-          <div class="col-12 q-mt-sm">
+          <div class="col-12 q-mb-sm">
             <q-btn
               v-if="currentSettings?.recordingFolder"
               class="full-width"

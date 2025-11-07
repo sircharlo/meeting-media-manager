@@ -58,3 +58,63 @@ export const obsConnect = async (setup?: boolean) => {
     errorCatcher(error);
   }
 };
+
+export const obsStartRecording = async (): Promise<boolean> => {
+  try {
+    if (!obsWebSocket) {
+      console.warn('OBS WebSocket not connected');
+      return false;
+    }
+
+    await obsWebSocket.call('StartRecord');
+    return true;
+  } catch (error) {
+    errorCatcher(error);
+    return false;
+  }
+};
+
+export const obsStopRecording = async (): Promise<boolean> => {
+  try {
+    if (!obsWebSocket) {
+      console.warn('OBS WebSocket not connected');
+      return false;
+    }
+
+    await obsWebSocket.call('StopRecord');
+    return true;
+  } catch (error) {
+    errorCatcher(error);
+    return false;
+  }
+};
+
+export const obsGetRecordingDirectory = async (): Promise<null | string> => {
+  try {
+    if (!obsWebSocket) {
+      console.warn('OBS WebSocket not connected');
+      return null;
+    }
+
+    const response = await obsWebSocket.call('GetRecordDirectory');
+    return response.recordDirectory || null;
+  } catch (error) {
+    errorCatcher(error);
+    return null;
+  }
+};
+
+export const obsGetRecordingState = async (): Promise<boolean> => {
+  try {
+    if (!obsWebSocket) {
+      console.warn('OBS WebSocket not connected');
+      return false;
+    }
+
+    const response = await obsWebSocket.call('GetRecordStatus');
+    return response?.outputActive || false;
+  } catch (error) {
+    errorCatcher(error);
+    return false;
+  }
+};

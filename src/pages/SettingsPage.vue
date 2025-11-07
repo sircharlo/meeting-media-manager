@@ -28,52 +28,13 @@
         >
           <div>
             <template
-              v-for="([settingId, item], index) in settingDefinitionEntries
-                .filter(
-                  ([settingId, item]) =>
-                    (!item.depends ||
-                      (Array.isArray(item.depends)
-                        ? item.depends.every((dep) => currentSettings?.[dep])
-                        : currentSettings?.[item.depends])) &&
-                    (!onlyShowInvalidSettings ||
-                      !invalidSettingsLength ||
-                      invalidSettings.includes(settingId)) &&
-                    (!item.unless ||
-                      (Array.isArray(item.unless)
-                        ? item.unless.every((dep) => !currentSettings?.[dep])
-                        : !currentSettings?.[item.unless])),
-                )
-                .filter(([, item]) => item.group === groupId)"
-              :key="settingId"
+              v-for="([settingId, item], index) in filteredSettingsByGroup[
+                groupId
+              ] || []"
+              :key="`${settingId}-${index}`"
             >
               <template
-                v-if="
-                  item.subgroup &&
-                  (index === 0 ||
-                    item.subgroup !==
-                      settingDefinitionEntries
-                        .filter(
-                          ([settingId, item]) =>
-                            (!item.depends ||
-                              (Array.isArray(item.depends)
-                                ? item.depends.every(
-                                    (dep) => currentSettings?.[dep],
-                                  )
-                                : currentSettings?.[item.depends])) &&
-                            (!onlyShowInvalidSettings ||
-                              !invalidSettingsLength ||
-                              invalidSettings.includes(settingId)) &&
-                            (!item.unless ||
-                              (Array.isArray(item.unless)
-                                ? item.unless.every(
-                                    (dep) => !currentSettings?.[dep],
-                                  )
-                                : !currentSettings?.[item.unless])),
-                        )
-                        .filter(([, item]) => item.group === groupId)[
-                        index - 1
-                      ]?.[1].subgroup)
-                "
+                v-if="item.subgroup && isFirstInSubgroup(index, groupId)"
               >
                 <q-separator class="bg-accent-200" spaced />
                 <q-item-label
@@ -89,19 +50,6 @@
                 spaced
               />
               <q-item
-                v-if="
-                  (!item.depends ||
-                    (Array.isArray(item.depends)
-                      ? item.depends.every((dep) => currentSettings?.[dep])
-                      : currentSettings[item.depends])) &&
-                  (!onlyShowInvalidSettings ||
-                    !invalidSettingsLength ||
-                    invalidSettings.includes(settingId)) &&
-                  (!item.unless ||
-                    (Array.isArray(item.unless)
-                      ? item.unless.every((dep) => !currentSettings?.[dep])
-                      : !currentSettings[item.unless]))
-                "
                 :id="settingId"
                 :class="{
                   'bg-error': invalidSettings.includes(settingId),
@@ -198,6 +146,35 @@ const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
   SettingsItem,
 ][];
 
+// Computed property for filtered settings by group
+const filteredSettingsByGroup = computed(() => {
+  const result: Record<string, [keyof SettingsItems, SettingsItem][]> = {};
+
+  for (const [settingId, item] of settingDefinitionEntries) {
+    if (shouldShowSetting(item, settingId)) {
+      const subgroups = Array.isArray(item.subgroup)
+        ? item.subgroup
+        : [item.subgroup || ''];
+      for (const subgroup of subgroups) {
+        if (!result[item.group]) {
+          result[item.group] = [];
+        }
+        result[item.group]?.push([settingId, { ...item, subgroup }]);
+      }
+    }
+  }
+
+  return result;
+});
+
+// Helper method to check if this is the first item in a subgroup
+const isFirstInSubgroup = (index: number, groupId: string) => {
+  if (index === 0) return true;
+  const groupSettings = filteredSettingsByGroup.value[groupId] || [];
+  const prevItem = groupSettings[index - 1]?.[1];
+  return prevItem && prevItem.subgroup !== groupSettings[index]?.[1].subgroup;
+};
+
 // Validation function
 const validateSettingsLocal = () => {
   try {
@@ -216,6 +193,51 @@ const validateSettingsLocal = () => {
     }
   } catch (error) {
     errorCatcher(error);
+  }
+};
+
+const shouldShowSetting = (
+  item: SettingsItem,
+  settingId: keyof SettingsValues,
+): boolean => {
+  // Check dependencies
+  const dependenciesSatisfied =
+    !item.depends ||
+    (Array.isArray(item.depends)
+      ? item.depends.every((dep) => currentSettings.value?.[dep])
+      : currentSettings.value?.[item.depends]);
+
+  if (!dependenciesSatisfied) return false;
+
+  // Check invalid settings filter
+  const shouldShowInvalid =
+    !onlyShowInvalidSettings.value ||
+    !invalidSettingsLength.value ||
+    invalidSettings.value.includes(settingId);
+
+  if (!shouldShowInvalid) return false;
+
+  // Check unless logic
+  if (!item.unless) return true;
+
+  const checkUnlessEffective = (unlessKey: keyof SettingsValues): boolean => {
+    const unlessSetting = settingsDefinitions[unlessKey];
+    if (!currentSettings.value?.[unlessKey]) return false; // disabled, so not effective
+    // enabled, check if dependencies are satisfied
+    return (
+      !unlessSetting?.depends ||
+      (Array.isArray(unlessSetting.depends)
+        ? unlessSetting.depends.every((d) => currentSettings.value?.[d])
+        : !!currentSettings.value?.[unlessSetting.depends])
+    );
+  };
+
+  if (Array.isArray(item.unless)) {
+    // All unless settings must NOT be effective for the item to be shown
+    return item.unless.every((dep) => !checkUnlessEffective(dep));
+  } else {
+    // Single unless setting must NOT be effective for the item to be shown
+    return !checkUnlessEffective(item.unless);
   }
 };
 
