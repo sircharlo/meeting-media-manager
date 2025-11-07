@@ -4,6 +4,20 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
+## v25.11.0
+
+### ✨ Nove funkcije
+
+- ✨ **Izbor multimedijske vsebine iz JWPUB**: Dodana možnost izbire posamezne multimedijske vsebine iz datotek JWPUB.
+- ✨ **Samodejno usmerjanje na multimedijsko okno**: Dodana neobvezna nastavitev za samodejno usmerjanje pozornosti na multimedijsko okno po začetku deljenja zaslona v Zoomu.
+- ✨ **Prekrivanje miškinega kazalca za TV zaslonu**: Izboljšano prekrivanje kazalca v oknu spletne strani za boljšo vidnost miškinega kazalca na TV zaslonih.
+- ✨ **Snemanje shodov**: Dodana nova funkcija snemanja shodov za nadzor zunanje aplikacije za snemanje.
+- ✨ **Iskanje po spletnem mestu**: Dodana možnost pametnega iskanja multimedijske vsebine ali publikacij na spletnem mestu.
+- ✨ **Enostaven ročni uvoz publikacij**: Dodana funkcionalnost za enostaven uvoz publikacij z jw.org, kot so revije, knjige, programi in vabila.
+- ✨ **Izboljšave za znakovni jezik**: Dodano potrjevanje pred predvajanjem celotnih datotek v znakovnem jeziku in podpora za izbiro več posnetkov, na primer kadar je treba zapored prebrati več odstavkov.
+- ✨ **Navigacija med posnetki**: Dodan prikaz trajanja pri elementih seznama posnetkov in izboljšana navigacija.
+- 🛠️ **Prikaz multimedijske vsebine**: Poskrbljeno, da se prikaz multimedijske vsebine ob začetku predvajanja prikaže, tudi če je bil prej skrit.
+
 ## v25.10.1
 
 ### ✨ Nove funkcije
