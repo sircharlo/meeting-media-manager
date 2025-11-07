@@ -399,7 +399,7 @@
   "receive-beta-updates-explain": "Beta-uppdateringar kan innehålla instabila funktioner och potentiella buggar. Aktivera inte detta alternativ på datorn som används för möten.",
   "recording-duration": "Inspelningslängd",
   "recordingEnable": "Integrera M³ med en extern inspelningsapplikation",
-  "recordingEnable-explain": "Eftersom M³ inte innehåller en inbyggd inspelningsfunktion, aktivering av det här alternativet låter det styra en extern inspelningsapp med kortkommandon för att starta och stoppa inspelningen.",
+  "recordingEnable-explain": "Since M³ doesn’t include a built-in recording feature, enabling this option lets it control an external recording app using keyboard shortcuts to start and stop recording. Note: this option is not compatible with @:obsStudio. If you are using OBS Studio, please use the @:obsStudio recording feature in the @:obsStudio integation instead.",
   "recordingFolder": "Inspelningsmapp",
   "recordingFolder-explain": "Ange den mapp där det externa programmet sparar inspelningar. Valfritt, men om den anges kommer M³ att visa en knapp för att öppna mappen.",
   "recordingStartShortcut": "Genväg för starta inspelning",

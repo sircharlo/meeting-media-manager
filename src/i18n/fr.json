@@ -399,7 +399,7 @@
   "receive-beta-updates-explain": "Les mises à jour bêta peuvent contenir des fonctionnalités instables et des bogues potentiels. N'activez pas cette option sur l'ordinateur utilisé pour les réunions en direct.",
   "recording-duration": "Durée de l'enregistrement",
   "recordingEnable": "Intégrer M³ à une application d'enregistrement externe",
-  "recordingEnable-explain": "Comme M³ ne dispose pas d'une fonction d'enregistrement intégrée, l'activation de cette option lui permet de contrôler une application d'enregistrement externe à l'aide de raccourcis clavier pour démarrer et arrêter l'enregistrement.",
+  "recordingEnable-explain": "Since M³ doesn’t include a built-in recording feature, enabling this option lets it control an external recording app using keyboard shortcuts to start and stop recording. Note: this option is not compatible with @:obsStudio. If you are using OBS Studio, please use the @:obsStudio recording feature in the @:obsStudio integation instead.",
   "recordingFolder": "Dossier d'enregistrements",
   "recordingFolder-explain": "Indiquez le dossier dans lequel l'application externe sauvegarde les enregistrements. Cette option est facultative, mais si elle est fournie, M³ affichera un bouton permettant d'ouvrir ce dossier.",
   "recordingStartShortcut": "Raccourci de démarrage de l'enregistrement",

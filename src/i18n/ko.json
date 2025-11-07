@@ -399,7 +399,7 @@
   "receive-beta-updates-explain": "베타 버전은 불안정한 기능 및 버그가 있을 수 있습니다. 집회에서 사용하는 컴퓨터에는 이 기능을 사용해서는 안됩니다.",
   "recording-duration": "Recording duration",
   "recordingEnable": "Integrate M³ with an external recording application",
-  "recordingEnable-explain": "Since M³ doesn’t include a built-in recording feature, enabling this option lets it control an external recording app using keyboard shortcuts to start and stop recording.",
+  "recordingEnable-explain": "Since M³ doesn’t include a built-in recording feature, enabling this option lets it control an external recording app using keyboard shortcuts to start and stop recording. Note: this option is not compatible with @:obsStudio. If you are using OBS Studio, please use the @:obsStudio recording feature in the @:obsStudio integation instead.",
   "recordingFolder": "Recording folder",
   "recordingFolder-explain": "Specify the folder where the external application saves recordings. Optional, but if provided, M³ will display a button to open this folder.",
   "recordingStartShortcut": "Start recording shortcut",

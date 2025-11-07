@@ -399,7 +399,7 @@
   "receive-beta-updates-explain": "Beta posodobitve lahko vsebujejo nestabilne funkcije in morebitne napake. Te možnosti ne omogoči na računalniku, ki se uporablja za shode v živo.",
   "recording-duration": "Trajanje snemanja",
   "recordingEnable": "Poveži M³ z zunanjo aplikacijo za snemanje",
-  "recordingEnable-explain": "Ker M³ nima vgrajene funkcije za snemanje, ti omogočanje te možnosti omogoča nadzor zunanje aplikacije za snemanje prek tipkovnih bližnjic za začetek in ustavitev snemanja.",
+  "recordingEnable-explain": "Since M³ doesn’t include a built-in recording feature, enabling this option lets it control an external recording app using keyboard shortcuts to start and stop recording. Note: this option is not compatible with @:obsStudio. If you are using OBS Studio, please use the @:obsStudio recording feature in the @:obsStudio integation instead.",
   "recordingFolder": "Mapa s posnetki",
   "recordingFolder-explain": "Izberi mapo, v katero zunanja aplikacija shranjuje posnetke. To je neobvezno, vendar če jo izbereš, bo M³ prikazal gumb za odpiranje te mape.",
   "recordingStartShortcut": "Bližnjica za začetek snemanja",
