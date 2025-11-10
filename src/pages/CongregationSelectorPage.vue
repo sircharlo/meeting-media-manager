@@ -148,7 +148,8 @@ const { updateYeartext } = jwStore;
 const { congregationCount, congregations } = storeToRefs(congregationSettings);
 const { createCongregation, deleteCongregation } = congregationSettings;
 const { invalidSettings, setCongregation } = currentState;
-const { currentCongregation } = storeToRefs(currentState);
+const { currentCongregation, currentLangObject, currentSettings, online } =
+  storeToRefs(currentState);
 const route = useRoute();
 const router = useRouter();
 const congToDelete = ref<number | string>('');
@@ -166,9 +167,9 @@ async function chooseCongregation(
     const invalidSettingsConfigured = await setCongregation(congregation);
     if (congregation) {
       updateYeartext(
-        currentState.online,
-        currentState.currentSettings,
-        currentState.currentLangObject,
+        online.value,
+        currentSettings.value,
+        currentLangObject.value,
       );
       downloadSongbookVideos();
       if (initialLoad) {

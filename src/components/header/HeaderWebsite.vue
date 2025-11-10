@@ -71,6 +71,7 @@ import { sendObsSceneEvent } from 'src/utils/obs';
 import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useI18n } from 'vue-i18n';
+import { useRouter } from 'vue-router';
 
 const {
   closeWebsiteWindow,
@@ -82,12 +83,16 @@ const {
 
 const { t } = useI18n();
 const currentState = useCurrentStateStore();
+const { autoReturnFromWebsite, currentLangObject, mediaWindowVisible } =
+  storeToRefs(currentState);
+
+const router = useRouter();
 const { mediaIsPlaying, mediaPlaying } = storeToRefs(currentState);
 
 const startStreaming = () => {
   mediaPlaying.value.action = 'mirroringWebsite';
   postWebStream(mediaPlaying.value.action);
-  if (!currentState.mediaWindowVisible) {
+  if (!mediaWindowVisible.value) {
     showMediaWindow();
   }
   sendObsSceneEvent('media');
@@ -98,7 +103,7 @@ const stopStreaming = () => {
   postWebStream('inactive');
   closeWebsiteWindow();
   sendObsSceneEvent('camera');
-  if (currentState.currentLangObject?.isSignLanguage) {
+  if (currentLangObject.value?.isSignLanguage) {
     const cameraId = useAppSettingsStore().displayCameraId;
     if (cameraId) {
       postCameraStream(cameraId);
@@ -106,12 +111,15 @@ const stopStreaming = () => {
       showMediaWindow(false);
     }
   }
+  if (autoReturnFromWebsite.value) {
+    router.push({ name: 'media-calendar' });
+  }
 };
 
 const previewWebsite = () => {
   mediaPlaying.value.action = 'previewingWebsite';
   postWebStream(mediaPlaying.value.action);
-  openWebsiteWindow(currentState.currentLangObject?.symbol);
+  openWebsiteWindow(currentLangObject.value?.symbol);
 };
 
 const { post: postCameraStream } = useBroadcastChannel<

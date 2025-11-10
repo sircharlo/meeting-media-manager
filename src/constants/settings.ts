@@ -326,6 +326,12 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'obsStudio',
     type: 'toggle',
   },
+  obsEnableRecordingControls: {
+    depends: ['obsEnable', 'obsPort', 'obsPassword'],
+    group: 'integrations',
+    subgroup: 'obsStudio',
+    type: 'toggle',
+  },
   enableCustomEvents: {
     group: 'integrations',
     subgroup: 'customEvents',
@@ -361,6 +367,7 @@ export const settingsDefinitions: SettingsItems = {
     group: 'integrations',
     subgroup: 'meetingRecording',
     type: 'toggle',
+    unless: 'obsEnableRecordingControls',
   },
   recordingStartShortcut: {
     depends: 'recordingEnable',
@@ -368,18 +375,21 @@ export const settingsDefinitions: SettingsItems = {
     rules: ['notEmpty'],
     subgroup: 'meetingRecording',
     type: 'shortcut',
+    unless: 'obsEnableRecordingControls',
   },
   recordingStopShortcut: {
     depends: ['recordingEnable', 'recordingStartShortcut'],
     group: 'integrations',
     subgroup: 'meetingRecording',
     type: 'shortcut',
+    unless: 'obsEnableRecordingControls',
   },
   recordingFolder: {
     depends: ['recordingEnable', 'recordingStartShortcut'],
     group: 'integrations',
     subgroup: 'meetingRecording',
     type: 'path',
+    unless: 'obsEnableRecordingControls',
   },
 
   // Timer
@@ -614,6 +624,7 @@ export const defaultSettings: SettingsValues = {
   mwStartTime: null,
   obsCameraScene: null,
   obsEnable: false,
+  obsEnableRecordingControls: false,
   obsHideIcons: false,
   obsImageScene: null,
   obsMediaScene: null,

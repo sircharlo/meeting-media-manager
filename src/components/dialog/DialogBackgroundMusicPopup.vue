@@ -156,7 +156,7 @@ const timeUntilMeeting = ref(remainingTimeBeforeMeetingStart());
 const musicAlreadyStoppedManually = ref(false);
 
 watch(
-  () => [currentTime.value, currentState.selectedDateObject?.date],
+  () => [currentTime.value, selectedDateObject.value?.date],
   (values, oldValues) => {
     const [newTime, newSelectedDate] = values;
     const [, oldSelectedDate] = oldValues || [];
@@ -479,7 +479,7 @@ const getNextSong = async () => {
           await getPublicationDirectoryContents(
             { langwritten: currentSettings.value?.lang || 'E', pub: 'sjjm' },
             'mp3',
-            currentState.currentSettings?.cacheFolder,
+            currentSettings.value?.cacheFolder,
           )
         ).sort(() => Math.random() - 0.5);
 

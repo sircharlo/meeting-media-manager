@@ -82,6 +82,7 @@ import type {
 } from 'src/types';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
+import { storeToRefs } from 'pinia';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { decompressJwpub } from 'src/helpers/mediaPlayback';
 import { getPublicationsPath } from 'src/utils/fs';
@@ -109,6 +110,7 @@ const dialogValue = computed({
 });
 
 const currentState = useCurrentStateStore();
+const { currentCongregation, currentSettings } = storeToRefs(currentState);
 
 const filter = ref('');
 const publicTalks = ref<DocumentItem[]>([]);
@@ -174,7 +176,7 @@ const dismissPopup = () => {
 const addPublicTalkMedia = (publicTalkDocId: DocumentItem) => {
   if (!s34mpDb.value || !publicTalkDocId) return;
   addJwpubDocumentMediaToFiles(s34mpDb.value, publicTalkDocId, props.section, {
-    issue: currentState.currentCongregation,
+    issue: currentCongregation.value,
     langwritten: '',
     pub: 'S-34mp',
   }).then(() => {
@@ -183,9 +185,9 @@ const addPublicTalkMedia = (publicTalkDocId: DocumentItem) => {
 };
 
 const setS34mp = async () => {
-  s34mpBasename.value = `S-34mp_${currentState.currentCongregation}`;
+  s34mpBasename.value = `S-34mp_${currentCongregation.value}`;
   s34mpDir.value = join(
-    await getPublicationsPath(currentState.currentSettings?.cacheFolder),
+    await getPublicationsPath(currentSettings.value?.cacheFolder),
     s34mpBasename.value,
   );
 };
@@ -223,7 +225,7 @@ watch(
 );
 
 // Initialize when component mounts
-if (currentState.currentSettings?.lang) {
+if (currentSettings.value?.lang) {
   setS34mp().then(() => {
     populatePublicTalks();
   });

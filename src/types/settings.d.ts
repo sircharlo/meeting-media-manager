@@ -134,7 +134,7 @@ export interface SettingsItem {
   order?: number;
   rules?: SettingsItemRule[];
   step?: number;
-  subgroup?: string;
+  subgroup?: SettingsItemSubgroup;
   type: SettingsItemType;
   unless?: (keyof SettingsValues)[] | keyof SettingsValues;
 }
@@ -156,6 +156,22 @@ export type SettingsItemOption = 'coTuesdays' | 'futureDate' | 'meetingTime';
 export type SettingsItemRule = 'notEmpty' | 'portNumber' | 'regular';
 
 export type SettingsItems = Record<keyof SettingsValues, SettingsItem>;
+
+export type SettingsItemSubgroup =
+  | 'cache'
+  | 'customEvents'
+  | 'dangerZone'
+  | 'folderWatcher'
+  | 'keyboardShortcuts'
+  | 'media-display'
+  | 'mediaExport'
+  | 'meetingRecording'
+  | 'meetingScheduleChange'
+  | 'obsStudio'
+  | 'setupWizard'
+  | 'setupWizard.backgroundMusic'
+  | 'subtitles'
+  | 'zoomIntegration';
 
 export type SettingsItemType =
   | 'color'
@@ -221,6 +237,7 @@ export interface SettingsValues {
   mwStartTime: `${number}:${number}` | null;
   obsCameraScene: null | string;
   obsEnable: boolean;
+  obsEnableRecordingControls: boolean;
   obsHideIcons: boolean;
   obsImageScene: null | string;
   obsMediaScene: null | string;

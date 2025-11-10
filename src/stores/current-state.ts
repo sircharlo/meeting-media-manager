@@ -54,6 +54,7 @@ export interface Songbook {
 }
 
 interface Store {
+  autoReturnFromWebsite: boolean;
   currentCongregation: string;
   downloadedFiles: Partial<
     Record<string, DownloadedFile | Promise<DownloadedFile>>
@@ -380,6 +381,7 @@ export const useCurrentStateStore = defineStore('current-state', {
   },
   state: (): Store => {
     return {
+      autoReturnFromWebsite: false,
       currentCongregation: '',
       downloadedFiles: {},
       downloadProgress: {},

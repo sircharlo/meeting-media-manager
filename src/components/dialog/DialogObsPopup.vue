@@ -19,6 +19,43 @@
       <div class="card-title col-shrink full-width q-px-md q-mb-none">
         {{ t('scene-selection') }}
       </div>
+      <template v-if="currentSettings?.obsEnableRecordingControls">
+        <q-separator
+          v-if="sceneList.length > 0"
+          class="bg-accent-200 q-mx-md q-mb-sm"
+        />
+        <div class="q-px-md">
+          <div class="row q-col-gutter-xs">
+            <div class="col-12 q-mb-sm">
+              <q-btn
+                class="full-width"
+                :color="isRecording ? 'negative' : 'primary'"
+                :icon="isRecording ? 'mmm-stop' : 'mmm-record'"
+                :label="
+                  isRecording ? t('stop-recording') : t('start-recording')
+                "
+                unelevated
+                @click="toggleObsRecording"
+              />
+            </div>
+            <div class="col-12 q-mb-sm">
+              <q-btn
+                v-if="obsRecordingFolder"
+                class="full-width"
+                color="secondary"
+                icon="mmm-folder-open"
+                :label="t('open-recording-folder')"
+                unelevated
+                @click="openObsRecordingFolder"
+              />
+            </div>
+          </div>
+        </div>
+        <q-separator
+          v-if="sceneList.length > 0"
+          class="bg-accent-200 q-mx-md q-mb-sm"
+        />
+      </template>
       <div class="overflow-auto col full-width q-px-md">
         <div class="row q-col-gutter-xs">
           <template v-for="scene in sceneList.concat([])" :key="scene">
@@ -62,13 +99,19 @@ import { useEventListener } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
-import { obsConnect } from 'src/helpers/obs';
+import {
+  obsConnect,
+  obsGetRecordingDirectory,
+  obsGetRecordingState,
+  obsStartRecording,
+  obsStopRecording,
+} from 'src/helpers/obs';
 import { isUUID } from 'src/utils/general';
 import { isImage } from 'src/utils/media';
 import { obsWebSocket } from 'src/utils/obs';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
-import { computed } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const open = defineModel<boolean>({ default: false });
@@ -94,6 +137,12 @@ const obsSettingsConnect = () => obsConnect(true);
 
 const { t } = useI18n();
 
+// Recording state for OBS controls
+const isRecording = ref(false);
+const obsRecordingFolder = ref<null | string>(null);
+
+const { openFolder } = window.electronApi;
+
 const notifySceneNotFound = () =>
   createTemporaryNotification({
     caption: t('scene-not-found-explain'),
@@ -103,6 +152,60 @@ const notifySceneNotFound = () =>
     timeout: 10000,
     type: 'negative',
   });
+
+// OBS Recording functions
+const toggleObsRecording = async () => {
+  if (isRecording.value) {
+    // Stop recording
+    const success = await obsStopRecording();
+    if (success) {
+      isRecording.value = false;
+    }
+  } else {
+    // Start recording
+    const success = await obsStartRecording();
+    if (success) {
+      isRecording.value = true;
+    }
+  }
+};
+
+const openObsRecordingFolder = async () => {
+  if (obsRecordingFolder.value) {
+    openFolder(obsRecordingFolder.value);
+  }
+};
+
+// Check initial recording status and get recording directory on mount
+onMounted(async () => {
+  if (currentSettings.value?.obsEnableRecordingControls) {
+    // Check initial recording status
+    const status = await obsGetRecordingState();
+    if (status !== null) {
+      isRecording.value = status;
+    }
+
+    // Get recording directory
+    const folder = await obsGetRecordingDirectory();
+    obsRecordingFolder.value = folder;
+  }
+});
+
+// Listen for OBS recording state changes
+onMounted(() => {
+  if (currentSettings.value?.obsEnableRecordingControls && obsWebSocket) {
+    const handleRecordStateChanged = (data: { outputActive: boolean }) => {
+      console.log('RecordStateChanged', data);
+      isRecording.value = data.outputActive;
+    };
+
+    obsWebSocket.on('RecordStateChanged', handleRecordStateChanged);
+
+    onUnmounted(() => {
+      obsWebSocket?.off('RecordStateChanged', handleRecordStateChanged);
+    });
+  }
+});
 
 const resolvedScene = computed(() => {
   if (!currentSettings.value) return currentScene.value;

@@ -46,25 +46,30 @@ jobs:
         uses: actions/checkout@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.head_ref || github.ref_name }}
+
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: 'yarn'
+
       - name: Install dependencies
         run: yarn install
+
       - name: Fix documentation links
         run: yarn docs:fix-links
+
       - name: Commit and push fixes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add docs/src/
           if git diff --staged --quiet; then
-            echo "No link fixes needed"
+          echo "No link fixes needed"
           else
             git commit -m "fix: automatically fix documentation links [skip ci]"
-            git push
+            git push origin HEAD:${{ github.head_ref || github.ref_name }}
           fi
   test:
     runs-on: ubuntu-latest
