@@ -28,15 +28,34 @@
           }}
         </q-item>
       </div>
+      <q-separator />
+      <div class="q-pa-md">
+        <q-item>
+          <q-item-section>
+            <q-item-label>{{ t('autoReturnFromWebsite') }}</q-item-label>
+            <q-item-label caption>
+              {{ t('autoReturnFromWebsiteDescription') }}
+            </q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-toggle v-model="autoReturnFromWebsite" color="primary" />
+          </q-item-section>
+        </q-item>
+      </div>
     </q-list>
   </q-page>
 </template>
 <script setup lang="ts">
+import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
+import { useCurrentStateStore } from 'stores/current-state';
 import { onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+const currentState = useCurrentStateStore();
+const { autoReturnFromWebsite } = storeToRefs(currentState);
+
 useMeta({ title: t('titles.presentWebsite') });
 
 const { askForMediaAccess } = window.electronApi;
