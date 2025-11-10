@@ -37,6 +37,8 @@
   "autoStartAtLogin-explain": "M³ sa môže spustiť automaticky pri spustení počítača.",
   "autoStartMusic": "Automaticky spustiť hudbu na pozadí pred zhromaždením",
   "autoStartMusic-explain": "Hudba na pozadí sa začne prehrávať automaticky, ak je naplánované začatie zhromaždenia niekoľko minút alebo hodín po spustení M³.",
+  "autoReturnFromWebsite": "Automatically go to media list after stopping website mirroring",
+  "autoReturnFromWebsiteDescription": "When enabled, the app will automatically navigate to the media list after you stop mirroring the website.",
   "ayfm": "Zlepšujme sa v službe",
   "back": "Naspäť",
   "baseUrl": "Adresa webovej stránky",
