@@ -72,7 +72,9 @@ if (!gotTheLock) {
     tracesSampleRate: 1.0,
   });
 
-  initUpdater();
+  if (!process.env.PORTABLE_EXECUTABLE_DIR) {
+    initUpdater();
+  }
   initScreenListeners();
   createApplicationMenu();
   initSessionListeners();
