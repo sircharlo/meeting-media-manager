@@ -8,15 +8,15 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 ### ✨ Nya funktioner
 
-- ✨ **JWPUB Media Selection**: Added a way to select individual media from JWPUB files.
-- ✨ **Auto-Focus Media Window**: Added an optional setting to automatically focus the media window after Zoom screen sharing.
-- ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
-- ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
-- ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from JW.org, such as magazine, books, programs and invitations.
-- ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
-- ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
-- 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
+- ✨ **JWPUB val av media**: Lade till ett sätt att välja enskild media från JWPUB-filer.
+- ✨ **Autofokus på mediafönstret**: Lade till en valfri inställning för att automatiskt fokusera mediafönstret efter Zoom-skärmdelning.
+- ✨ **Överlägg för TV-skärmar**: Förbättrad överlägg för webbsidans markör för bättre synlighet av muspekaren på TV-skärmar.
+- ✨ **Mötesinspelning**: Lade till en ny mötesinspelningsfunktion, för att styra en extern inspelningsapp.
+- ✨ **Sajtsök**: Tillagd möjlighet att söka efter media eller publikationer på webbplatsen med hjälp av smart sökning.
+- ✨ **Enkel manuell publikationsimport**: Tillagd funktionalitet för att enkelt importera publikationer från JW.org, såsom tidskrifter, böcker, program och inbjudningar.
+- ✨ **Teckenspråksförbättringar**: Tillagd bekräftelse innan du spelar upp hela filer för teckenspråk och stöd för att välja flera klipp, till exempel när flera stycken ska läsas i följd.
+- ✨ **Klippnavigering**: Lade till visning av varaktighet för klipp i listan och förbättrade navigeringen mellan klipp.
+- 🛠️ **Mediaskärm**: Säkerställt att mediaskärm blir synlig när uppspelningen startar, även om den var dold tidigare.
 
 ## v25.10.1
 
