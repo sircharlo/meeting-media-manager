@@ -642,7 +642,8 @@ const { t } = useI18n();
 useMeta({ title: t('setup-wizard') });
 
 const currentState = useCurrentStateStore();
-const { currentCongregation, currentSettings } = storeToRefs(currentState);
+const { currentCongregation, currentLangObject, currentSettings, online } =
+  storeToRefs(currentState);
 
 const congregationSettings = useCongregationSettingsStore();
 const { deleteCongregation } = congregationSettings;
@@ -679,9 +680,9 @@ watch(
   ],
   () =>
     updateYeartext(
-      currentState.online,
+      online.value,
       currentSettings.value,
-      currentState.currentLangObject,
+      currentLangObject.value,
     ),
 );
 

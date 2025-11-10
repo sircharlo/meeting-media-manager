@@ -163,7 +163,13 @@ const { basename } = path;
 const open = defineModel<boolean>({ default: false });
 
 const currentState = useCurrentStateStore();
-const { currentSettings, downloadProgress } = storeToRefs(currentState);
+const {
+  currentCongregation,
+  currentSettings,
+  downloadProgress,
+  mediaIsPlaying,
+  selectedDate,
+} = storeToRefs(currentState);
 
 const getBasename = (filename: string) => {
   if (!filename) return '';
@@ -195,7 +201,7 @@ const navigateToDate = (dateKey?: string) => {
   if (!dateKey.includes('/')) {
     dateKey = dateKey.replace(/(\d{4})(\d{2})(\d{2})/, '$1/$2/$3');
   }
-  currentState.selectedDate = dateKey;
+  selectedDate.value = dateKey;
 };
 
 const errorTooltipText = (item: { meetingDate?: string }) => {
@@ -370,7 +376,7 @@ const refreshing = ref(false);
 
 const fetchIsRunning = computed(() => {
   try {
-    const q = queues.meetings[currentState.currentCongregation];
+    const q = queues.meetings[currentCongregation.value];
     const size = q?.size || 0;
     return size > 0;
   } catch {
@@ -384,9 +390,7 @@ const hasActiveDownloads = computed(() =>
 
 const refreshDisabled = computed(() => {
   return (
-    hasActiveDownloads.value ||
-    currentState.mediaIsPlaying ||
-    fetchIsRunning.value
+    hasActiveDownloads.value || mediaIsPlaying.value || fetchIsRunning.value
   );
 });
 

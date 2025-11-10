@@ -158,7 +158,7 @@ const jwStore = useJwStore();
 const { urlVariables } = storeToRefs(jwStore);
 
 const currentState = useCurrentStateStore();
-const { currentSettings, selectedDate } = storeToRefs(currentState);
+const { currentSettings, online, selectedDate } = storeToRefs(currentState);
 
 // Props
 const props = defineProps<{
@@ -250,7 +250,7 @@ const getJwVideos = async () => {
           detailed: '1',
           mediaLimit: '0',
         }),
-        currentState.online,
+        online.value,
       );
     };
     const subcategories: {
@@ -279,7 +279,7 @@ const getJwVideos = async () => {
           clientType: 'www',
           detailed: '0',
         }),
-        currentState.online,
+        online.value,
       );
       const newVideos = (request?.category?.media || []).filter(
         (video) => !remoteVideos.value.find((v) => v.guid === video.guid),

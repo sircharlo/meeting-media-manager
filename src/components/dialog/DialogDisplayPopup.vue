@@ -377,6 +377,7 @@ const {
   currentSettings,
   mediaWindowCustomBackground,
   mediaWindowVisible,
+  selectedDate,
 } = storeToRefs(currentState);
 
 const props = defineProps<{
@@ -662,8 +663,8 @@ const loadMemorialBackground = async (newMediaBackground?: string) => {
   let bg: string | undefined = newMediaBackground;
   if (
     !newMediaBackground &&
-    currentState.selectedDate &&
-    currentState.selectedDate === currentSettings.value?.memorialDate
+    selectedDate.value &&
+    selectedDate.value === currentSettings.value?.memorialDate
   ) {
     bg = await getMemorialBackground();
   }

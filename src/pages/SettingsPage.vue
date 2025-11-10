@@ -125,7 +125,8 @@ const $q = useQuasar();
 
 // Store initializations
 const currentState = useCurrentStateStore();
-const { currentSettings, onlyShowInvalidSettings } = storeToRefs(currentState);
+const { currentLangObject, currentSettings, online, onlyShowInvalidSettings } =
+  storeToRefs(currentState);
 const { getInvalidSettings } = currentState;
 
 const jwStore = useJwStore();
@@ -247,7 +248,7 @@ const settingParam = useRouteParams<keyof SettingsValues | undefined>(
 
 // Lifecycle hooks
 onMounted(() => {
-  updateJwLanguages(currentState.online);
+  updateJwLanguages(online.value);
   validateSettingsLocal();
 
   if (invalidSettings.value.length === 1) {
@@ -278,9 +279,9 @@ watch(
   ],
   () =>
     updateYeartext(
-      currentState.online,
+      online.value,
       currentSettings.value,
-      currentState.currentLangObject,
+      currentLangObject.value,
     ),
 );
 

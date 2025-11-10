@@ -28,8 +28,7 @@
           }}
         </q-item>
       </div>
-      <q-separator />
-      <div class="q-pa-md">
+      <div class="media-section website">
         <q-item>
           <q-item-section>
             <q-item-label>{{ t('autoReturnFromWebsite') }}</q-item-label>
