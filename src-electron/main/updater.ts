@@ -13,8 +13,10 @@ export async function initUpdater() {
   autoUpdater.allowDowngrade = true;
   autoUpdater.autoDownload = !IS_TEST;
   autoUpdater.autoInstallOnAppQuit = !IS_TEST;
+
   autoUpdater.on('error', (error, message) => {
     if (IS_TEST) return;
+
     const ignoreErrors = [
       'ENOENT',
       'EPERM',
@@ -23,13 +25,20 @@ export async function initUpdater() {
       'Code signature at URL',
       'HttpError: 504',
       'YAMLException',
+      'ECONNRESET',
+      'ERR_CONNECTION_RESET',
+      'ECONNREFUSED',
+      'ENOTFOUND',
+      'EAI_AGAIN',
+      'SELF_SIGNED_CERT_IN_CHAIN',
     ];
-    if (
-      !ignoreErrors.some(
-        (ignoreError) =>
-          message?.includes(ignoreError) || error.message.includes(ignoreError),
-      )
-    ) {
+
+    const shouldIgnore = ignoreErrors.some(
+      (ignoreError) =>
+        message?.includes(ignoreError) || error?.message?.includes(ignoreError),
+    );
+
+    if (!shouldIgnore) {
       captureElectronError(error, {
         contexts: {
           fn: { errorMessage: error.message, message, name: 'initUpdater' },
