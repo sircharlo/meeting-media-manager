@@ -109,6 +109,7 @@ export interface ElectronApi {
       totalBytes: number;
     }) => void,
   ) => void;
+  onGpuCrashDetected: (callback: () => void) => void;
   onLog: (
     callback: (args: {
       ctx: Record<string, unknown>;
@@ -200,6 +201,7 @@ export type ElectronIpcListenKey =
   | 'downloadError'
   | 'downloadProgress'
   | 'downloadStarted'
+  | 'gpu-crash-detected'
   | 'log'
   | 'screenChange'
   | 'screenPrefsChange'

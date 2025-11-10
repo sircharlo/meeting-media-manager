@@ -71,6 +71,7 @@ const electronApi: ElectronApi = {
   onDownloadError: (cb) => listen('downloadError', cb),
   onDownloadProgress: (cb) => listen('downloadProgress', cb),
   onDownloadStarted: (cb) => listen('downloadStarted', cb),
+  onGpuCrashDetected: (cb) => listen('gpu-crash-detected', cb),
   onLog: (cb) => listen('log', cb),
   onShortcut: (cb) => listen('shortcut', cb),
   onUpdateAvailable: (cb) => listen('update-available', cb),

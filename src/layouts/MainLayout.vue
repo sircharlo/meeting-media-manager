@@ -173,6 +173,7 @@ const {
   onDownloadError,
   onDownloadProgress,
   onDownloadStarted,
+  onGpuCrashDetected,
   onLog,
   onShortcut,
   onWatchFolderUpdate,
@@ -778,6 +779,16 @@ const initListeners = () => {
       downloadProgress.value[args.id]!.loaded = args.bytesReceived;
     }
   });
+
+  onGpuCrashDetected(() => {
+    createTemporaryNotification({
+      caption: t('gpu-crash-detected-restarting'),
+      icon: 'mmm-error',
+      message: t('gpu-crash-detected'),
+      timeout: 10000,
+      type: 'negative',
+    });
+  });
 };
 
 const removeListenersLocal = () => {
@@ -790,6 +801,7 @@ const removeListenersLocal = () => {
     'downloadCompleted',
     'downloadError',
     'downloadProgress',
+    'gpu-crash-detected',
   ];
 
   listeners.forEach((listener) => {
