@@ -37,6 +37,8 @@
   "autoStartAtLogin-explain": "M³ може автоматично запускатися під час увімкнення комп’ютера.",
   "autoStartMusic": "Автоматично запускати фонову музику перед початком зібрань",
   "autoStartMusic-explain": "Фонова музика почне автоматично грати, якщо зібрання заплановане через кілька хвилин або годин після запуску M³.",
+  "autoReturnFromWebsite": "Automatically go to media list after stopping website mirroring",
+  "autoReturnFromWebsiteDescription": "When enabled, the app will automatically navigate to the media list after you stop mirroring the website.",
   "ayfm": "Вдосконалюймо своє служіння",
   "back": "Назад",
   "baseUrl": "Адреса веб-сайту",
