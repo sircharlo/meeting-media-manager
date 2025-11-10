@@ -37,6 +37,8 @@
   "autoStartAtLogin-explain": "O M³ pode iniciar automaticamente quando o computador é iniciado.",
   "autoStartMusic": "Reproduzir automaticamente música de fundo antes das reuniões",
   "autoStartMusic-explain": "A música de fundo começará a ser reproduzida automaticamente se uma reunião estiver programada para começar em minutos ou horas depois do M³ ser iniciada.",
+  "autoReturnFromWebsite": "Automatically go to media list after stopping website mirroring",
+  "autoReturnFromWebsiteDescription": "When enabled, the app will automatically navigate to the media list after you stop mirroring the website.",
   "ayfm": "Empenhe-se no Ministério",
   "back": "Voltar",
   "baseUrl": "Endereço do site",

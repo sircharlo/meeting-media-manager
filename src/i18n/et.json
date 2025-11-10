@@ -37,6 +37,8 @@
   "autoStartAtLogin-explain": "M³ rakendus avaneb automaatselt, kui arvuti käivitub.",
   "autoStartMusic": "Alusta automaatselt taustamuusika mängimist enne koosolekuid",
   "autoStartMusic-explain": "Taustamuusika hakkab automaatselt mängima, kui koosolek on planeeritud algama mõne minuti või tunni jooksul pärast M³ käivitamist.",
+  "autoReturnFromWebsite": "Automatically go to media list after stopping website mirroring",
+  "autoReturnFromWebsiteDescription": "When enabled, the app will automatically navigate to the media list after you stop mirroring the website.",
   "ayfm": "Valmistu Kuulutustööks",
   "back": "Tagasi",
   "baseUrl": "Veebisaidi aadress",

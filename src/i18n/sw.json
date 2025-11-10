@@ -37,6 +37,8 @@
   "autoStartAtLogin-explain": "M³ inaweza kuwaka moja kwa moja kompyuta inapowashwa.",
   "autoStartMusic": "Anzisha muziki wa chinichini moja kwa moja kabla ya mikutano",
   "autoStartMusic-explain": "Muziki wa chinichini utaanza kucheza kiotomatiki ikiwa mkutano umeratibiwa kuanza ndani ya dakika au saa baada ya M³ kuwashwa.",
+  "autoReturnFromWebsite": "Automatically go to media list after stopping website mirroring",
+  "autoReturnFromWebsiteDescription": "When enabled, the app will automatically navigate to the media list after you stop mirroring the website.",
   "ayfm": "Boresha Huduma Yako",
   "back": "Rudi",
   "baseUrl": "Anwani ya tovuti",
