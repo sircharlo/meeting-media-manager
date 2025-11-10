@@ -58,7 +58,7 @@
     "mime": "^4.1.0",
     "mousetrap": "^1.6.5",
     "music-metadata": "^11.9.0",
-    "obs-websocket-js": "^5.0.6",
+    "obs-websocket-js": "^5.0.7",
     "p-queue": "^9.0.0",
     "pdfjs-dist": "^5.4.394",
     "pinia": "^3.0.4",
