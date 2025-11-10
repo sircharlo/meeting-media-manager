@@ -10,9 +10,9 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 - ✨ **Sélection de médias JWPUB** : Ajout d'une fonctionnalité permettant de sélectionner des médias individuels à partir de fichiers JWPUB.
 - ✨ **Focus automatique sur la fenêtre multimédia** : Ajout d'un paramètre facultatif permettant d'amener la fenêtre multimédia au premier plan automatiquement après le partage d'écran Zoom.
-- ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
-- ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
-- ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
+- ✨ **Superposition du curseur pour l'affichage sur télévision** : Affichage amélioré du curseur dans la fenêtre du site Web pour une meilleure visibilité du curseur de la souris sur les écrans de télévision.
+- ✨ **Enregistrement des réunions** : Ajout d'une nouvelle fonctionnalité d'enregistrement des réunions, permettant de contrôler une application d'enregistrement externe.
+- ✨ **Recherche sur le site** : Ajout d'une fonctionnalité permettant de rechercher des médias ou des publications sur le site à l'aide d'une recherche intelligente.
 - ✨ **Importation manuelle facile des publications** : Ajout d'une fonctionnalité permettant d'importer facilement des publications depuis JW.org, telles que des revues, des livres, des programmes et des invitations.
 - ✨ **Améliorations apportées pour les langues des signes** : Ajout d'une confirmation avant la lecture intégrale des fichiers pour les langues des signes et prise en charge de la sélection de plusieurs clips, par exemple lorsque plusieurs paragraphes doivent être lus consécutivement.
 - ✨ **Navigation entre clips** : Ajout de l'affichage de la durée aux éléments de la liste des clips et amélioration de la navigation entre clips.
