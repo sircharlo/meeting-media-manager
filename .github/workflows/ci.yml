@@ -29,6 +29,9 @@ concurrency:
 
 jobs:
   build:
+    # ✅ Skip Dependabot and Crowdin PRs (built via Mergify queues)
+    if: ${{ github.actor != 'dependabot[bot]' && github.actor != 'github-actions[bot]' }}
+
     uses: ./.github/workflows/build.yml
     secrets:
       APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
