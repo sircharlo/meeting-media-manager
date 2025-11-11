@@ -1,23 +1,16 @@
 pull_request_rules:
-  - name: Automatically merge Dependabot PRs (minor/patch only, including -dev and
-      prereleases)
+  - name: Automatically merge Dependabot PRs (minor/patch only, including -dev and prereleases)
     conditions:
       - and:
           - or:
               - author = dependabot[bot]
               - author = github-actions[bot]
-          - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from
-            ([1-9][\d]*)\..+ to \4\.
-          - check-success = "build / lint"
-          - check-success = "build / test"
-          - check-success = "build / build (ubuntu-latest)"
-          - check-success = "build / build (macos-latest)"
-          - check-success = "build / build (macos-15-intel)"
-          - check-success = "build / build (windows-latest)"
+          - title ~= ^((chore|build)(\(deps(?:-dev)*\))*:) bump [^\s]+ from ([1-9][\d]*)\..+ to \4\.
     actions:
       update: {}
-      merge:
-        method: squash
+      queue:
+        name: dependabot
+
   - name: Automatically merge Crowdin PRs (only if all checks pass)
     conditions:
       - and:
@@ -25,15 +18,30 @@ pull_request_rules:
               - author = sircharlo
               - author = github-actions[bot]
           - title ~= (new translations|update translations progress)
-          - check-success = "build / lint"
-          - check-success = "build / test"
-          - check-success = "build / build (ubuntu-latest)"
-          - check-success = "build / build (macos-latest)"
-          - check-success = "build / build (macos-15-intel)"
-          - check-success = "build / build (windows-latest)"
     actions:
       update: {}
-      merge:
-        method: squash
+      queue:
+        name: default
+
 queue_rules:
-  - name: Default
+  # Queue for Dependabot updates (autoqueued)
+  - name: dependabot
+    autoqueue: true
+    merge_conditions:
+      - check-success = "build / lint"
+      - check-success = "build / test"
+      - check-success = "build / build (ubuntu-latest)"
+      - check-success = "build / build (macos-latest)"
+      - check-success = "build / build (macos-15-intel)"
+      - check-success = "build / build (windows-latest)"
+
+  # Default queue (for Crowdin PRs or others you might add)
+  - name: default
+    autoqueue: true
+    merge_conditions:
+      - check-success = "build / lint"
+      - check-success = "build / test"
+      - check-success = "build / build (ubuntu-latest)"
+      - check-success = "build / build (macos-latest)"
+      - check-success = "build / build (macos-15-intel)"
+      - check-success = "build / build (windows-latest)"
