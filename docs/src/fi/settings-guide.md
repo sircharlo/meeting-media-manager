@@ -289,7 +289,7 @@ Pikanäppäin Zoomin näytönjaon käynnistämiseksi.
 
 <!-- **Setting**: `obsEnable` -->
 
-Ota käyttöön OBS Studion integraatio automaattista kohtauksenvaihtoa varten.
+Ota käyttöön OBS Studion integraatio automaattista näyttämön vaihtoa varten.
 
 **Oletus**: `false`
 
@@ -317,25 +317,25 @@ Salasana OBS Studion WebSocket-yhteyttä varten.
 
 **Oletus**: Ei mitään
 
-#### OBS-kohtaukset {#obs-scenes}
+#### OBS näyttämöt {#obs-scenes}
 
-Määritä, mitä OBS-kohtauksia käytetään eri tarkoituksiin:
+Määritä, mitä OBS näyttämöitä käytetään eri tarkoituksiin:
 
-- **Kamerakohtaus**: Näyttää kameran tai puhujalavan
-- **Mediakohtaus**: Näyttää median
-- **Kuvakohtaus**: Näyttää kuvia (esimerkiksi kuva-kuvassa-tilassa, jossa näkyvät sekä media että puhuja)
+- **Kameranäyttämö**: Näyttää kameran tai puhujalavan
+- **Medianäyttämö**: Näyttää median
+- **Kuvanäyttämö**: Näyttää kuvia (esimerkiksi kuva-kuvassa, jossa näkyvät sekä media että puhuja)
 
 #### OBS:n lisäasetukset {#obs-advanced-options}
 
 - **Viivästetyt kuvat**: Viivästää kuvien jakamisen OBS:iin, kunnes se käynnistetään manuaalisesti
 - **Pikatila**: Ota käyttöön nopea päälle/pois-kytkin OBS-integraatiolle
-- **Vaihda kohtaus median jälkeen**: Palaa automaattisesti edelliseen kohtaukseen median päätyttyä
-- **Muista edellinen kohtaus**: Muistaa ja palauttaa edellisen kohtauksen
+- **Vaihda näyttämö median jälkeen**: Palaa automaattisesti edelliseen näyttämön median päätyttyä
+- **Muista edellinen näyttämö**: Muistaa ja palauttaa edellisen näyttämön
 - **Piilota kuvakkeet**: Piilottaa OBS:iin liittyvät kuvakkeet käyttöliittymästä
 
 :::warning Varoitus
 
-**Äänimääritykset vaaditaan**: OBS Studio -integraatio hallitsee vain video- ja kohtauksenvaihtoa. M³:n median ääni **ei siirry automaattisesti** Zoomiin tai OBS:iin. Videovirta toimii kuten virtuaalikamera ilman ääntä, kuten verkkokamera. Zoomin alkuperäiset ääniasetukset on määritettävä tai käytettävä vaihtoehtoa ”Jaa tietokoneen ääni”, jotta osallistujat kuulevat median. Katso tarkemmat ohjeet [Käyttöoppaasta](/user-guide#audio-configuration).
+**Äänimääritykset vaaditaan**: OBS Studio -integraatio hallitsee vain video- ja näyttämön vaihtoa. M³:n median ääni **ei siirry automaattisesti** Zoomiin tai OBS:iin. Videovirta toimii kuten virtuaalikamera ilman ääntä, kuten verkkokamera. Zoomin alkuperäiset ääniasetukset on määritettävä tai käytettävä vaihtoehtoa ”Jaa tietokoneen ääni”, jotta osallistujat kuulevat median. Katso tarkemmat ohjeet [Käyttöoppaasta](/user-guide#audio-configuration).
 
 **Vaihtoehto**: Harkitse Zoom-integraation käyttöä, sillä se käsittelee ääntä sujuvammin.
 
@@ -508,7 +508,7 @@ Muunna viedyt mediatiedostot MP4-muotoon paremman yhteensopivuuden saavuttamisek
 
 ### Vaaravyöhyke {#danger-zone}
 
-:::warning Warning
+:::warning Varoitus
 
 Näitä asetuksia tulisi muuttaa vain, jos ymmärrät muutosten vaikutukset.
 
