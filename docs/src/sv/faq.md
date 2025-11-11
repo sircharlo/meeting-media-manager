@@ -150,10 +150,10 @@ M³ växlar automatiskt OBS scener baserade på:
 
 - Mediatyp (video, bild, etc.)
 - Din scenkonfiguration
-- Inställningar som "Skjut upp bilder"
+- Inställningar som "Fördröjd bildvisning"
 - Om du vill återvända till föregående scen efter media
 
-### :pause_button: Vad är funktionen "Skjut upp bilder"? {#faq-postpone-images}
+### :pause_button: Vad är funktionen "Fördröj bildvisning"? {#faq-postpone-images}
 
 Denna funktion försenar delning av bilder till OBS tills du manuellt utlöser dem. Detta är användbart för:
 

@@ -65,8 +65,8 @@ Integroitu median esitystila sisältää **hybridi** tai **tavalliset** seurakun
 
 ### OBS Studion Integraatio {#about-obs-integration}
 
-- **Automaattinen kohtauksen vaihtaminen**: Saumaton integrointi OBS Studion hybridikokouksiin
-- **Kohtauksen hallinta**: Automaattinen vaihtaminen kameran, median ja muiden tilanteiden välillä
+- **Automaattinen näyttämön vaihtaminen**: Saumaton integrointi OBS Studiolla hybridikokouksiin
+- **Näyttämö hallinta**: Automaattinen vaihtaminen kameran, median ja muiden näyttämöiden välillä
 
 ### Median tuonti ja hallinta {#about-media-import}
 
