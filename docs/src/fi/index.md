@@ -9,20 +9,19 @@ hero:
   actions:
     - theme: brand
       text: Lataa
-      link: /download
+      link: /fi/download
     - theme: brand
       text: Tietoa
       link: /fi/about
     - theme: brand
       text: Käyttöopas
-      link: /user-guide
+      link: /fi/user-guide
     - theme: brand
       text: Asetustopas
-      link: /settings-guide
+      link: /fi/settings-guide
     - theme: brand
       text: UKK
-      link: /faq
-
+      link: /fi/faq
 features:
   - icon: 🚀
     title: Automaattinen mediahallinta
