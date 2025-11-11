@@ -8,31 +8,31 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 
 ### ✨ Uued funktsioonid
 
-- ✨ **JWPUB Media Selection**: Added a way to select individual media from JWPUB files.
-- ✨ **Auto-Focus Media Window**: Added an optional setting to automatically focus the media window after Zoom screen sharing.
-- ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
-- ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
-- ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from JW.org, such as magazine, books, programs and invitations.
-- ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
-- ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
-- 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
+- ✨ **JWPUB meedia valik**: Lisatud võimalus valida JWPUB failidest üksikuid meediafaile.
+- ✨ **Meediaakna automaatne teravustamine**: Lisatud valikuline seade, mis teravustab meediaakna automaatselt pärast ekraani jagamist Zoomis.
+- ✨ **Kursori ülekanne teleriekraanile**: täiustatud veebisaidi akna kursori ülekanne, mis tagab hiirekursori parema nähtavuse teleriekraanil.
+- ✨ **Koosoleku salvestamine**: Lisatud uus koosoleku salvestamise funktsioon, millega saab juhtida välist salvestusrakendust.
+- ✨ **Saidi otsing**: Lisatud võimalus otsida saidil meediat või väljaandeid nutika otsingu abil.
+- ✨ **Lihtne käsitsi väljaannete importimine**: Lisatud funktsioon, mis võimaldab hõlpsasti importida JW.org-ist väljaandeid, nagu ajakirjad, raamatud, kokkutuleku kavalehed ja kutsed.
+- ✨ **Viipekeele parandused**: Lisatud kinnitus enne viipekeele failide terviklikku esitamist ja tugi mitme klippi valimiseks, näiteks kui mitu lõiku tuleb järjest lugeda.
+- ✨ **Klipi navigeerimine**: Lisati klippide loendi elementidele kestuse kuvamine ja parandati klippide navigeerimist.
+- 🛠️ **Meedia kuvamine**: tagab, et meedia kuvatakse taasesituse alguses, isegi kui see oli varem peidetud.
 
 ## v25.10.1
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Setup Wizard – Zoom Step**: Added a Zoom integration step to the setup wizard for easier initial configuration.
-- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. This makes it easier to choose the correct screen on which the media window should be displayed.
-- ✨ **Media Window Preference**: The app will now remember the preferred screen on which the media window should be displayed, if specified by the user.
+- ✨ **Seadistusviisard – suumimise samm**: Seadistusviisardisse lisati suumimise integreerimise samm, et hõlbustada esialgset konfigureerimist.
+- ✨ **Ekraanivalija täiustused**: Näita ekraani hüpikaknas täpne visuaalne esitus kõigist ekraanidest, samuti peaakna praegune suurus ja asukoht. See lihtsustab õige ekraani valimist, millel meediaaken peaks kuvatama.
+- ✨ **Meediaakna eelistus**: Rakendus mäletab nüüd eelistatud ekraani, millel meediaaken peaks kuvatama, kui kasutaja on selle määranud.
 
 ## v25.10.0
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
-- ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
-- ✨ **Custom Events**: Added optional events hooks that can trigger keyboard shortcuts when certain events are detected. This can be useful for AV operators to execute actions automatically outside of the app. For example, smart lights could be turned on and off before and after media plays in auditoriums where projectors are used; or a script can be called after a meeting's last song has been played to automate various actions in a Zoom meeting.
+- ✨ **Esitus alustatakse pausiga**: Lisati uus seade, mis võimaldab esitust alustada pausiga, mis võib olla kasulik AV-operaatoritele, et nad saaksid enne meedia esituse alustamist meediaaknas oma seadistused valmis seada (nt alustada Zoom-i jagamist).
+- ✨ **Uuenduste teated**: kasutajad saavad nüüd uuendustest teateid rakenduse siseselt kuvatava bänneri kaudu, mis võimaldab kasutajal uuendused kohe installida, selle asemel et oodata rakenduse järgmist taaskäivitamist.
+- ✨ **Kohandatud sündmused**: Lisatud valikulised sündmuste jaoks ühendused, mis võivad käivitada klaviatuurilühendeid, kui tuvastatakse teatud sündmused. See võib olla kasulik AV-operaatoritele, et teha automaatselt toiminguid väljaspool rakendust. Näiteks võiks projektoreid kasutavates auditooriumides lülitada nutikad tuled sisse ja välja enne ja pärast meedia esitamist või käivitada pärast koosoleku viimase laulu esitamist skript, et automatiseerida erinevad toimingud Zoom-koosolekul.
 
 ## v25.9.1
 
@@ -41,7 +41,7 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 - ✨ **Meediaaken alati esikohal ja täisekraani režiim**: parandatud ja täiustatud meediaakna alati esikohal olemise funktsioon, mis kohandub dünaamiliselt vastavalt täisekraani režiimile.
 - ✨ **Kuupäeva kuvamise formaadi seadistus**: Lisatud seadistus kuupäeva kuvamise formaadi määramiseks.
 - ✨ **Meedia üleminekud**: Rakendatud on meedia kuvamise üleminekud, mis asendavad varem kasutatud järsemaid üleminekuid mustaks.
-- ✨ **Music Auto-Stop**: Optimized the behavior of the background music auto-stop to behave the same whether music was auto-started or not.
+- ✨ **Muusika automaatne peatamine**: Optimeeritud taustamuusika automaatse peatamise toimimine, et see toimiks ühtmoodi olenemata sellest, kas muusika käivitati automaatselt või mitte.
 - ✨ **macOS klõpsamine mitteaktiivsetel akendel**: lubatud hiireklõpsamine macOS-i peaaknas, mis peaks lihtsustama rakenduse juhtimist isegi siis, kui see ei ole fookuses.
 
 ## v25.9.0
