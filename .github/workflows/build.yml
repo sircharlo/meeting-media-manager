@@ -117,7 +117,7 @@ jobs:
     needs: [lint, test]
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-13, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-15-intel, macos-latest, windows-latest]
     steps:
       - name: Check out master branch
         if: ${{ inputs.checkout-latest == true }}
@@ -184,7 +184,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v5
         with:
-          name: M³ test build for ${{ matrix.os == 'macos-13' && 'Intel-based macOS' || matrix.os == 'macos-latest' && 'M-series (Apple Silicon) macOS' || matrix.os == 'windows-latest' && 'Windows' || 'Linux' }}
+          name: M³ test build for ${{ matrix.os == 'macos-15-intel' && 'Intel-based macOS' || matrix.os == 'macos-latest' && 'M-series (Apple Silicon) macOS' || matrix.os == 'windows-latest' && 'Windows' || 'Linux' }}
           path: |
             dist/electron/Packaged/*.exe
             dist/electron/Packaged/*.dmg
