@@ -10,12 +10,7 @@
     "
   >
     <!-- <pre style="position: absolute; top: 0; left: 0; z-index: 1000">
-      displayLayer1: {{ displayLayer1 }}
-      displayLayer2: {{ displayLayer2 }}
-      isTransitioning: {{ isTransitioning }}
-      mediaElement1: {{ mediaElement1 }}
-      mediaElement2: {{ mediaElement2 }}
-      currentMediaElement: {{ currentMediaElement }}
+      jwIconsFontLoaded: {{ jwIconsFontLoaded }}
     </pre> -->
     <q-resize-observer debounce="50" @resize="postMediaWindowSize" />
 

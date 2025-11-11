@@ -14,6 +14,7 @@ export const jwIcons: Record<string, string> = {
   pt: '\ue6c2',
   tgw: '\ue65c',
   'tracts-and-invitations': '\ue6dc',
+  'tv-logo': '\ue66b',
   w: '\ue6ea',
   wp: '\ue6ea',
   ws: '\ue6eb',
