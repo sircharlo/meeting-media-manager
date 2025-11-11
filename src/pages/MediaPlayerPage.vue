@@ -27,8 +27,11 @@
     >
       <!-- eslint-disable next-line vue/no-v-html -->
       <div id="yeartext" class="q-pa-md center" v-html="yeartext" />
-      <div v-if="!hideMediaLogo" id="yeartextLogoContainer">
-        <p id="yeartextLogo"></p>
+      <div
+        v-if="!hideMediaLogo && jwIconsFontLoaded"
+        id="yeartextLogoContainer"
+      >
+        <p id="yeartextLogo">{{ jwIcons['tv-logo'] }}</p>
       </div>
     </div>
 
@@ -152,6 +155,7 @@ import {
   whenever,
 } from '@vueuse/core';
 import { useQuasar } from 'quasar';
+import { jwIcons } from 'src/constants/jw-icons';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setElementFont } from 'src/helpers/fonts';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -885,6 +889,28 @@ const { post: postGetCurrentState } = useBroadcastChannel<string, string>({
 });
 
 const fontsSet = ref(false);
+const clearTextFontLoaded = ref(false);
+const jwIconsFontLoaded = ref(false);
+
+const loadFonts = async () => {
+  try {
+    await setElementFont('Wt-ClearText-Bold');
+    clearTextFontLoaded.value = true;
+  } catch {
+    // Fallback to Noto or system font will be used
+    clearTextFontLoaded.value = true;
+  }
+
+  try {
+    await setElementFont('JW-Icons');
+    jwIconsFontLoaded.value = true;
+  } catch {
+    // No fallback for JW-Icons - logo won't show
+    jwIconsFontLoaded.value = false;
+  }
+
+  fontsSet.value = true;
+};
 
 // Listen for initial value updates from other components
 watchImmediate(
@@ -908,9 +934,7 @@ watchImmediate(
     ) {
       console.log('🔄 [MediaPlayerPage] Setting initial values');
       postGetCurrentState(new Date().getTime().toString());
-      setElementFont('Wt-ClearText-Bold');
-      setElementFont('JW-Icons');
-      fontsSet.value = true;
+      loadFonts();
     }
   },
 );
