@@ -111,15 +111,20 @@ export interface YeartextResult {
  * Fetches the yeartext.
  * @param wtlocale The yeartext locale.
  * @param base The base domain to fetch the yeartext from.
+ * @param year The year to fetch the yeartext for. Defaults to current year.
  * @returns The yeartext.
  */
-export const fetchYeartext = async (wtlocale: JwLangCode, base: string) => {
+export const fetchYeartext = async (
+  wtlocale: JwLangCode,
+  base: string,
+  year?: number,
+) => {
   if (!base) return { wtlocale };
   const url = `https://wol.${base}/wol/finder`;
   const result = await fetchJson<YeartextResult>(
     url,
     new URLSearchParams({
-      docid: `110${new Date().getFullYear()}800`,
+      docid: `110${year || new Date().getFullYear()}800`,
       format: 'json',
       snip: 'yes',
       wtlocale,

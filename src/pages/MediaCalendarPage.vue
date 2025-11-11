@@ -1100,7 +1100,7 @@ watchImmediate(
     if (isWeMeetingDay(selectedDateObject.value.date)) {
       getOrCreateMediaSection(selectedDateObject.value.mediaSections, 'pt', {
         ...defaultAdditionalSection.config,
-        jwIcon: jwIcons['pt'],
+        jwIcon: jwIcons.pt,
         label: t('pt'),
       });
     }
