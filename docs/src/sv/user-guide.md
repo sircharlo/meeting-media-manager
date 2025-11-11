@@ -165,7 +165,7 @@ M³ växlar automatiskt OBS scener under visning:
 
 - **Kamerascen** - Visar podiet/kameravyn
 - **Mediescen** - Visar medieinnehåll
-- **Bildscen** - Visar bilder (kan skjutas upp om aktiverat)
+- **Bildscen** - Visar bilder (kan fördröjas om aktiverat)
 - **Automatisk växling** - Scener ändras baserat på mediatyp och inställningar
 
 ### Avancerade OBS-funktioner {#advanced-obs}
@@ -174,7 +174,7 @@ M³ växlar automatiskt OBS scener under visning:
 
 Aktivera detta alternativ för att fördröja delning av bilder till OBS tills manuellt aktiveras:
 
-1. Aktivera "Skjut upp bilder" i OBS-inställningar
+1. Aktivera "Fördröjd bildvisning" i OBS-inställningar
 2. Bilder kommer endast att delas när du klickar på knappen för att visa dem med OBS Studio. Detta är användbart för att visa bilder för åhörarna först.
 
 #### Scenväxlingsbeteende {#user-guide-scene-switching}

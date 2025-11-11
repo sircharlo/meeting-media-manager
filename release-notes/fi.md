@@ -91,7 +91,7 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 
 ### ✨ Mitä uutta
 
-- 🖼️ **OBS-viivekuvien asetus**: Lisätty OBS Studio -asetus, jolla voidaan viivästyttää näkymien vaihtoa kuvien näyttämisen yhteydessä, mikä tekee siirtymistä sulavampia.
+- 🖼️ **OBS-viivekuvien asetus**: Lisätty OBS Studio -asetus, jolla voidaan viivästyttää näyttämön vaihtoa kuvien näyttämisen yhteydessä, mikä tekee siirtymistä sulavampaa.
 - 🔊 **Tuki `.m4a`-äänitiedostoille**: Lisätty yhteensopivuus `.m4a`-äänitiedostomuodon kanssa tuettujen mediatyyppien laajentamiseksi.
 
 ### 🛠️ Parannuksia ja hienosäätöjä
