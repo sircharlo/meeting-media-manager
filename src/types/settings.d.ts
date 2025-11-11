@@ -259,6 +259,7 @@ export interface SettingsValues {
   shortcutMediaWindow: null | string;
   shortcutMusic: null | string;
   timerBackgroundColor: string;
+  timerShowOnActionIsland: boolean;
   timerTextColor: string;
   timerTextSize: string;
   weDay: `${number}` | null;

@@ -420,6 +420,12 @@ export const settingsDefinitions: SettingsItems = {
     list: 'fontSizes',
     type: 'list',
   },
+  timerShowOnActionIsland: {
+    depends: 'enableTimerDisplay',
+    group: 'integrations',
+    subgroup: 'timer',
+    type: 'toggle',
+  },
 
   // Advanced
   enableKeyboardShortcuts: {
@@ -645,6 +651,7 @@ export const defaultSettings: SettingsValues = {
   shortcutMediaWindow: null,
   shortcutMusic: null,
   timerBackgroundColor: '#000000',
+  timerShowOnActionIsland: false,
   timerTextColor: '#ffffff',
   timerTextSize: '10vw',
   weDay: null,

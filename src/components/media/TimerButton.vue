@@ -9,7 +9,6 @@
           ? 'white-transparent'
           : 'negative'
     "
-    :icon="timerWindowVisible ? 'mmm-alarm' : 'mmm-alarm-off'"
     rounded
     :text-color="
       timerPopup ? (timerWindowVisible ? 'primary' : 'negative') : ''
@@ -17,6 +16,12 @@
     unelevated
     @click="timerPopup = !timerPopup"
   >
+    <template v-if="currentSettings?.timerShowOnActionIsland && timerDisplay">
+      {{ timerDisplay }}
+    </template>
+    <template v-else>
+      <q-icon :name="timerWindowVisible ? 'mmm-alarm' : 'mmm-alarm-off'" />
+    </template>
     <q-tooltip
       v-if="!timerPopup"
       anchor="bottom left"
@@ -30,13 +35,38 @@
 </template>
 
 <script setup lang="ts">
+import { useBroadcastChannel } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { useCurrentStateStore } from 'stores/current-state';
+import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+
+interface TimerData {
+  mode: 'countdown' | 'countup';
+  paused: boolean;
+  running: boolean;
+  time: string;
+  timerBackgroundColor?: string;
+  timerTextColor?: string;
+  timerTextSize?: string;
+}
 
 const { t } = useI18n();
 const currentState = useCurrentStateStore();
 const { currentSettings, timerWindowVisible } = storeToRefs(currentState);
 
 const timerPopup = defineModel<boolean>({ required: true });
+
+const timerDisplay = ref<string>('');
+
+// Listen to timer data
+const { data } = useBroadcastChannel<TimerData, TimerData>({
+  name: 'timer-display-data',
+});
+
+watch(data, (newData) => {
+  if (newData) {
+    timerDisplay.value = newData.time || '';
+  }
+});
 </script>

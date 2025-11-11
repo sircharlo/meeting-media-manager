@@ -178,7 +178,7 @@
             >
               <q-separator class="bg-accent-200 q-mb-md" />
               <div class="card-section-title row q-px-md">
-                AYFM Configuration
+                {{ t('ayfm-configuration') }}
               </div>
               <div class="row q-px-md q-pb-sm">
                 <q-btn-toggle
@@ -212,11 +212,10 @@
                   type="number"
                 />
               </div>
-              à
               <!-- LAC Configuration -->
               <q-separator class="bg-accent-200 q-mb-md" />
               <div class="card-section-title row q-px-md">
-                LAC Configuration
+                {{ t('lac-configuration') }}
               </div>
               <div class="row q-px-md q-pb-sm">
                 <q-btn-toggle
@@ -407,11 +406,9 @@
           </div>
           <div class="row text-dark-grey">
             {{
-              t(
-                screenList?.length < 2 || timerPreferences.preferWindowed
-                  ? 'windowed'
-                  : 'external-screen',
-              )
+              screenList?.length < 2 || timerPreferences.preferWindowed
+                ? t('windowed')
+                : t('external-screen')
             }}
           </div>
         </div>
