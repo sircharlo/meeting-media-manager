@@ -7,6 +7,7 @@ import type {
 } from 'src/types';
 
 import { defaultAdditionalSection } from 'src/composables/useMediaSection';
+import { jwIcons } from 'src/constants/jw-icons';
 import { getMeetingSections, standardSections } from 'src/constants/media';
 import { isCoWeek } from 'src/helpers/date';
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -138,45 +139,33 @@ export const isStandardSection = (section: string) => {
   return standardSections.includes(section);
 };
 
-function getMeetingSectionConfigs(section: MediaSectionIdentifier | undefined) {
-  if (!section) return { bgColor: getRandomColor(), uniqueId: '' };
-  if (section === 'ayfm') {
+function getMeetingSectionConfigs(section?: MediaSectionIdentifier) {
+  if (!section) {
+    return { bgColor: getRandomColor(), uniqueId: '' };
+  }
+
+  // Sections that have icons
+  const iconSections = [
+    'ayfm',
+    'lac',
+    'tgw',
+    'wt',
+    'pt',
+    'circuit-overseer',
+  ] as const;
+
+  if ((iconSections as readonly string[]).includes(section)) {
     return {
-      jwIcon: '',
+      jwIcon: jwIcons[section],
       uniqueId: section,
     };
   }
-  if (section === 'lac') {
-    return {
-      jwIcon: '',
-      uniqueId: section,
-    };
-  }
-  if (section === 'tgw') {
-    return {
-      jwIcon: '',
-      uniqueId: section,
-    };
-  }
-  if (section === 'wt') {
-    return {
-      jwIcon: '',
-      uniqueId: section,
-    };
-  }
-  if (section === 'pt') {
-    return {
-      jwIcon: '',
-      uniqueId: section,
-    };
-  }
-  if (section === 'circuit-overseer') {
-    return {
-      jwIcon: '',
-      uniqueId: section,
-    };
-  }
-  return { bgColor: getRandomColor(), uniqueId: section };
+
+  // Fallback for unknown sections
+  return {
+    bgColor: getRandomColor(),
+    uniqueId: section,
+  };
 }
 
 export const createMeetingSections = (day: DateInfo) => {

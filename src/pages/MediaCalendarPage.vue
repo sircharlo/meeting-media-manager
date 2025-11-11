@@ -133,6 +133,7 @@ import { useLocale } from 'src/composables/useLocale';
 import { defaultAdditionalSection } from 'src/composables/useMediaSection';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { SORTER } from 'src/constants/general';
+import { jwIcons } from 'src/constants/jw-icons';
 import { getMeetingSections } from 'src/constants/media';
 import { isCoWeek, isMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -1099,7 +1100,7 @@ watchImmediate(
     if (isWeMeetingDay(selectedDateObject.value.date)) {
       getOrCreateMediaSection(selectedDateObject.value.mediaSections, 'pt', {
         ...defaultAdditionalSection.config,
-        jwIcon: '',
+        jwIcon: jwIcons['pt'],
         label: t('pt'),
       });
     }
