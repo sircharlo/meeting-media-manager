@@ -170,11 +170,11 @@ M³ automatically switches OBS scenes during presentations:
 
 ### Advanced OBS Features {#advanced-obs}
 
-#### Postpone Images {#user-guide-postpone-images}
+#### Viivytä kuvia {#user-guide-postpone-images}
 
 Enable this option to delay sharing images to OBS until manually triggered:
 
-1. Enable "Postpone Images" in OBS settings
+1. Ota käyttöön "Viivytä kuvien näyttöä" OBS asetuksissa
 2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
 
 #### Scene Switching Behavior {#user-guide-scene-switching}
@@ -258,7 +258,7 @@ Import audio recordings of Bible verses:
 
 1. Click the "Audio Bible" button
 2. Select the Bible book and chapter
-3. Choose specific verses or verse ranges
+3. Valita tietyt jakeet tai jaealueet
 4. Download the audio files
 5. Use them
 
