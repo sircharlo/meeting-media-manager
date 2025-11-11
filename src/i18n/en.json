@@ -62,7 +62,7 @@
   "camera-as-background": "Camera as background",
   "cancel": "Cancel",
   "cbs": "Congregation Bible Study",
-  "cbs-end-time": "@:cbs - End:",
+  "cbs-end-time": "@:cbs - End: {endTime}",
   "change-color": "Change color",
   "change-tag": "Change tag",
   "change-tag-explain": "Change the tag type and label for this media item.",
@@ -541,8 +541,7 @@
   "this-song-is-duplicated": "This song appears more than once in the media list.",
   "this-will-only-delete-media-for-this-day": "This action will only remove items that were added manually for the selected day",
   "this-will-speed-up-media-retrieval-for-meetings": "This will speed up media retrieval for meeting media, but is not mandatory.",
-  "time-between-start-plus-36-min-and-start-plus-100-min": "Time between meeting start + 36 min and meeting start + 100 min",
-  "time-between-start-plus-68-min-and-start-plus-97-min": "Time between meeting start + 68 min and meeting start + 97 min",
+  "time-must-be-between": "Time must be between {minTime} and {maxTime}",
   "timer": "Meeting timer",
   "timer-controls": "Timer controls",
   "timer-mode": "Timer mode",
@@ -592,7 +591,7 @@
   "would-you-like-to-integrate-m-with-obs-studio": "Would you like to integrate M³ with @:obsStudio?",
   "would-you-like-to-integrate-zoom": "Would you like to integrate M³ with Zoom?",
   "wt": "Watchtower Study",
-  "wt-end-time": "@:wt - End:",
+  "wt-end-time": "@:wt - End: {endTime}",
   "yeartext": "Yeartext",
   "yes": "Yes",
   "you-can-navigate-the-website-before-presenting-it": "If necessary, you can navigate to a specific page before presenting it to the audience. When you're ready, press the \"Start Mirroring\" button on the top right corner of this window. What you see in the website window will now be displayed in the media window for the audience to see.",
@@ -605,5 +604,7 @@
   "zoomEnable-explain": "Automatically start and stop Zoom screen sharing when media starts and stops playing.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom screen sharing shortcut",
-  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings."
+  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings.",
+  "cbs-adaptive-end-time": "@:cbs adaptive end time",
+  "wt-adaptive-end-time": "@:wt adaptive end time"
 }

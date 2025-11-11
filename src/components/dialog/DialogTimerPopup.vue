@@ -248,6 +248,9 @@
                 />
               </div>
               <template v-if="!isCoWeek(selectedDateObject?.date)">
+                <div class="row q-px-md q-py-sm">
+                  {{ t('cbs-adaptive-end-time') }}
+                </div>
                 <div class="row q-px-md q-pb-sm">
                   <q-input
                     v-model="cbsAdaptiveEndTime"
@@ -274,9 +277,12 @@
                         );
                         return (
                           (endTime >= minTime && endTime <= maxTime) ||
-                          t(
-                            'time-between-start-plus-68-min-and-start-plus-97-min',
-                          )
+                          t('time-must-be-between', {
+                            minTime:
+                              minTime.getHours() + ':' + minTime.getMinutes(),
+                            maxTime:
+                              maxTime.getHours() + ':' + maxTime.getMinutes(),
+                          })
                         );
                       },
                     ]"
@@ -285,6 +291,9 @@
               </template>
             </template>
             <template v-else-if="isWeMeetingDay(selectedDateObject?.date)">
+              <div class="row q-px-md q-py-sm">
+                {{ t('wt-adaptive-end-time') }}
+              </div>
               <div class="row q-px-md q-pb-sm">
                 <q-input
                   v-model="wtAdaptiveEndTime"
@@ -311,9 +320,12 @@
                       );
                       return (
                         (endTime >= minTime && endTime <= maxTime) ||
-                        t(
-                          'time-between-start-plus-36-min-and-start-plus-100-min',
-                        )
+                        t('time-must-be-between', {
+                          minTime:
+                            minTime.getHours() + ':' + minTime.getMinutes(),
+                          maxTime:
+                            maxTime.getHours() + ':' + maxTime.getMinutes(),
+                        })
                       );
                     },
                   ]"
@@ -784,7 +796,8 @@ const calculateCountdownTarget = () => {
       endTime.setHours(h, m, 0, 0);
       const now = new Date();
       const remaining = Math.max(0, endTime.getTime() - now.getTime()) / 1000;
-      return remaining;
+      const remainingWholeSeconds = Math.floor(remaining);
+      return remainingWholeSeconds;
     } else if (currentPart.value === 'co-final-talk') {
       return 30 * 60;
     } else if (currentPart.value === 'co-service-talk') {
@@ -829,7 +842,8 @@ const calculateCountdownTarget = () => {
       endTime.setHours(h, m, 0, 0);
       const now = new Date();
       const remaining = Math.max(0, endTime.getTime() - now.getTime()) / 1000;
-      return remaining;
+      const remainingWholeSeconds = Math.floor(remaining);
+      return remainingWholeSeconds;
     }
   }
 
@@ -966,8 +980,8 @@ watch(timerPageReady, (timestamp) => {
   }
 });
 
-// Watch selected date to set default CBS adaptive end time
-watch(selectedDateObject, () => {
+// Watch selected date to set default adaptive end times
+watchImmediate(selectedDateObject, () => {
   cbsAdaptiveEndTime.value = cbsAdaptiveDefaultEndTime.value;
   wtAdaptiveEndTime.value = wtAdaptiveDefaultEndTime.value;
 });
