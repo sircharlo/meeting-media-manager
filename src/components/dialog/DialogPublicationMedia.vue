@@ -126,18 +126,18 @@
           >
             <q-list class="full-width">
               <q-item
-                v-for="cat in categoryItems"
-                :key="cat.key"
+                v-for="category in categoryItems"
+                :key="category"
                 v-ripple
                 clickable
                 :disable="loading"
-                @click="selectCategory(cat.key)"
+                @click="selectCategory(category)"
               >
                 <q-item-section avatar class="jw-icon">
-                  <q-avatar>{{ cat.icon }}</q-avatar>
+                  <q-avatar>{{ jwIcons[category] }}</q-avatar>
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label>{{ t(cat.key) }}</q-item-label>
+                  <q-item-label>{{ t(category) }}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -155,7 +155,7 @@
               >
                 <q-item-section avatar class="jw-icon">
                   <q-avatar>
-                    {{ magazineTypeIcons.get(choice.optionValue.toString()) }}
+                    {{ jwIcons[choice.optionValue.toString()] }}
                   </q-avatar>
                 </q-item-section>
                 <q-item-section>
@@ -404,6 +404,7 @@ import type { MediaLink } from 'src/types/jw/publications';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
+import { jwIcons } from 'src/constants/jw-icons';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   addJwpubDocumentMediaToFiles,
@@ -636,13 +637,6 @@ async function buildDocumentPreviews(db: string) {
   }
 }
 
-const magazineTypeIcons = new Map([
-  ['g', '\ue61b'],
-  ['w', '\ue6ea'],
-  ['wp', '\ue6ea'],
-  ['ws', '\ue6eb'],
-]);
-
 // Search endpoints configuration
 const searchEndpoints = ref([
   {
@@ -653,15 +647,12 @@ const searchEndpoints = ref([
   },
 ]);
 
-const categoryItems: readonly {
-  icon: string;
-  key: string;
-}[] = [
-  { icon: '\ue67c', key: 'magazines' },
-  { icon: '\ue680', key: 'meeting-workbooks' },
-  { icon: '\ue62d', key: 'brochures-and-booklets' },
-  { icon: '\ue6dc', key: 'tracts-and-invitations' },
-  { icon: '\ue601', key: 'programs' },
+const categoryItems = [
+  'magazines',
+  'meeting-workbooks',
+  'brochures-and-booklets',
+  'tracts-and-invitations',
+  'programs',
 ];
 
 async function buildMonthChoices() {
