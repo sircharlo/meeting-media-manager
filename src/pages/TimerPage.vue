@@ -78,10 +78,10 @@ const { pause: pauseClock, resume: resumeClock } = useIntervalFn(
 );
 
 const { post } = useBroadcastChannel<string, string>({
-  name: 'timerpageready',
+  name: 'timer-page-ready',
 });
 
-// Post timerpageready when component is mounted
+// Post timer-page-ready when component is mounted
 onMounted(() => {
   post(new Date().toISOString());
 });

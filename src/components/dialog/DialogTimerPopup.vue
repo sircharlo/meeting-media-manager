@@ -529,7 +529,7 @@ const { post: postTimerData } = useBroadcastChannel<TimerData, TimerData>({
 
 // Listen for timer page ready
 const { data: timerPageReady } = useBroadcastChannel<string, string>({
-  name: 'timerpageready',
+  name: 'timer-page-ready',
 });
 
 const fetchScreens = async () => {
