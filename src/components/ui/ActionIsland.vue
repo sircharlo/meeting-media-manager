@@ -80,7 +80,7 @@ const { pause: pauseTimer, resume: resumeTimer } = useIntervalFn(() => {
       (Date.now() - recordingStartTime.value) / 1000,
     );
   }
-}, 1000);
+}, 500);
 
 whenever(isRecording, (recording) => {
   if (recording) {

@@ -74,7 +74,7 @@ const updateTime = () => {
 
 const { pause: pauseClock, resume: resumeClock } = useIntervalFn(
   updateTime,
-  1000,
+  500,
 );
 
 const { post } = useBroadcastChannel<string, string>({

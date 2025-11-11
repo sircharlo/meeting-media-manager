@@ -828,7 +828,7 @@ const { pause: pauseInterval, resume: resumeInterval } = useIntervalFn(() => {
       updateTimerWindow(); // Update the timer window with new time
     }
   }
-}, 1000);
+}, 500);
 
 const formattedTime = computed(() => {
   const totalSeconds =
