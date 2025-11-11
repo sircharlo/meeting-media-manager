@@ -508,6 +508,7 @@ import {
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { QMenu } from 'quasar';
+import { jwIcons } from 'src/constants/jw-icons';
 import {
   isCoWeek,
   isMeetingDay,
@@ -706,14 +707,18 @@ const meetingPartsOptions: ComputedRef<
       value: MeetingPart;
       warning?: boolean;
     }[] = [
-      { icon: '\uE6C3', label: t('public-talk'), value: 'public-talk' },
+      {
+        icon: jwIcons['pt'],
+        label: t('public-talk'),
+        value: 'public-talk',
+      },
       {
         caption: wtAdaptiveEnabled.value
           ? t('latest-ending', {
               endTime: wtAdaptiveEndTime.value || t('adaptive'),
             })
           : '',
-        icon: '\uE6EA',
+        icon: jwIcons['wt'],
         label: t('wt'),
         value: 'wt',
       },
@@ -721,7 +726,7 @@ const meetingPartsOptions: ComputedRef<
 
     if (isCoWeek(date)) {
       options.push({
-        icon: '\uE6C2',
+        icon: jwIcons['circuit-overseer'],
         label: t('co-final-talk'),
         value: 'co-final-talk',
       });
@@ -737,9 +742,17 @@ const meetingPartsOptions: ComputedRef<
       value: MeetingPart;
       warning?: boolean;
     }[] = [
-      { icon: '\uE65C', label: t('treasures-talk'), value: 'treasures' },
-      { icon: '\uE694', label: t('gems'), value: 'gems' },
-      { icon: '\uE61F', label: t('bible-reading'), value: 'bible-reading' },
+      {
+        icon: jwIcons['tgw'],
+        label: t('treasures-talk'),
+        value: 'treasures',
+      },
+      { icon: jwIcons['gems'], label: t('gems'), value: 'gems' },
+      {
+        icon: jwIcons['bible-reading'],
+        label: t('bible-reading'),
+        value: 'bible-reading',
+      },
     ];
     // Add AYFM parts
     for (let i = 1; i <= ayfmPartsCount.value; i++) {
@@ -747,7 +760,7 @@ const meetingPartsOptions: ComputedRef<
       const warning = totalDuration !== 15 - ayfmPartsCount.value;
       const dur = ayfmDurations.value[i - 1] || 15;
       options.push({
-        icon: '\uE698',
+        icon: jwIcons['ayfm-part'],
         label: t('ayfm-part', { duration: dur, part: i }),
         value: `ayfm-${i}` as MeetingPart,
         warning,
@@ -759,7 +772,7 @@ const meetingPartsOptions: ComputedRef<
       const warning = totalDuration !== 15;
       const dur = lacDurations.value[i - 1] || 15;
       options.push({
-        icon: '\uE6D8',
+        icon: jwIcons['lac-part'],
         label: t('lac-part', { duration: dur, part: i }),
         value: `lac-${i}` as MeetingPart,
         warning,
@@ -767,7 +780,7 @@ const meetingPartsOptions: ComputedRef<
     }
     if (isCo) {
       options.push({
-        icon: '\uE6C2',
+        icon: jwIcons['circuit-overseer'],
         label: t('co-service-talk'),
         value: 'co-service-talk',
       });
@@ -778,7 +791,7 @@ const meetingPartsOptions: ComputedRef<
               endTime: cbsAdaptiveEndTime.value || t('adaptive'),
             })
           : '',
-        icon: '\uE6C3',
+        icon: jwIcons['cbs'],
         label: t('cbs'),
         value: 'cbs',
       });
