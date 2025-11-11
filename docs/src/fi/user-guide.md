@@ -1,48 +1,48 @@
-# User Guide {#user-guide}
+# Käyttöopas {#user-guide}
 
-This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
+Tämä kattava käyttöopas auttaa sinua hallitsemaan kaikki M³:n ominaisuudet perusasetuksista edistyneisiin mediatoiston tekniikoihin.
 
-## Getting Started {#getting-started}
+## Aloittaminen {#getting-started}
 
-### Download and Install {#download-and-install}
+### Lataus ja asennus {#download-and-install}
 
-Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
+Hanki uusin versio [Lataussivulta](download). Se suosittelee laitteellesi parhaiten sopivaa versiota ja näyttää uusimman versionumeron.
 
-### First Launch {#first-launch}
+### Ensimmäinen käynnistys {#first-launch}
 
-When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
+Kun käynnistät M³:n ensimmäisen kerran, sinut ohjataan asennusvelhon kautta, joka määrittää seurakuntasi perusasetukset:
 
-1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
-2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
-3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
-4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
-5. **Optional features** - Configure OBS integration, background music, and other advanced features
+1. **Valitse käyttöliittymän kieli** – Tämä määrittää, millä kielellä M³:n valikot ja painikkeet näytetään
+2. **Valitse profiilityyppi** – Valitse "Säännöllinen" seurakunnan normaaliin käyttöön tai "Muu" erityistapahtumiin
+3. **Määritä seurakunnan tiedot** – Syötä seurakuntasi tiedot tai käytä automaattista hakuominaisuutta
+4. **Aseta kokousaikataulu** – Määritä keskiviikon ja viikonlopun kokousten ajat
+5. **Valinnaiset ominaisuudet** – Määritä OBS-integraatio, taustamusiikki ja muut edistyneet toiminnot
 
-:::tip Tip
+:::tip Vinkki
 
-Take your time during setup - but you can always change these settings later in the Settings menu.
+Käytä aikaa asetuksiin – mutta voit aina muuttaa näitä myöhemmin Asetukset-valikosta.
 
 :::
 
-### Main Interface Overview {#main-interface}
+### Pääkäyttöliittymän yleiskatsaus {#main-interface}
 
-The main M³ interface consists of several key areas:
+M³:n pääkäyttöliittymä koostuu useista keskeisistä osista:
 
-- **Navigation Drawer** - Access different sections and settings
-- **Calendar View** - Browse media by date
-- **Media List** - View and manage media for selected dates
-- **Toolbar** - Quick access to common functions
-- **Status Bar** - Shows download progress, and background music and OBS Studio connection status
+- **Navigointivalikko** – Pääsy eri osioihin ja asetuksiin
+- **Kalenterinäkymä** – Selaa mediaa päivämäärän mukaan
+- **Medialista** – Näytä ja hallitse valitun päivän mediaa
+- **Työkalupalkki** – Nopea pääsy yleisiin toimintoihin
+- **Tilarivi** – Näyttää latauksen edistymisen sekä taustamusiikin ja OBS Studion yhteyden tilan
 
-## Media Management {#user-guide-media-management}
+## Median hallinta {#user-guide-media-management}
 
-### Understanding the Calendar View {#calendar-view}
+### Kalenterinäkymän ymmärtäminen {#calendar-view}
 
-The calendar view shows your meeting schedule and available media:
+Kalenterinäkymä näyttää kokousaikataulusi ja saatavilla olevan median:
 
-- **Meeting Days** - Highlighted days show when meetings are scheduled
-- **Media Indicators** - Icons show what types of media are available
-- **Date Navigation** - Use arrow keys to navigate between months
+- **Kokouspäivät** – Korostetut päivät osoittavat, milloin kokouksia on aikataulutettu
+- **Mediailmaisimet** – Kuvakkeet osoittavat, mitä mediatyyppejä on saatavilla
+- **Päivänavigointi** – Käytä nuolinäppäimiä siirtyäksesi kuukausien välillä
 
 <!-- ### Downloading Media {#downloading-media}
 
@@ -52,342 +52,342 @@ Download speed depends on your internet connection and the size of media files. 
 
 ::: -->
 
-### Organizing Media {#organizing-media}
+### Median järjestäminen {#organizing-media}
 
-M³ automatically organizes media by meeting type and section:
+M³ järjestää median automaattisesti kokoustyypin ja osion mukaan:
 
-- **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
-- **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
+- **Kokousosiot** – Media ryhmitellään kokouksen osien mukaan (Julkinen puhe, Aarteita Jumalan sanasta jne.)
+- **Mukautetut osiot** – Voit luoda omia osioita lisämedialle, jos kokousta ei ole aikataulutettu kyseiselle päivälle
 
-## Media Presentation {#media-presentation}
+## Median esittäminen {#media-presentation}
 
-### Opening the Media Player {#opening-media-player}
+### Median toistimen avaaminen {#opening-media-player}
 
-To present media during a meeting:
+Median esittämiseksi kokouksen aikana:
 
-1. Select the date and media item you want to present
-2. Click the play button or use the keyboard shortcut
-3. The media will start playing on the media display
-4. Use the controls to play, pause, or navigate through media
+1. Valitse päivämäärä ja media, jonka haluat esittää
+2. Napsauta toistopainiketta tai käytä pikanäppäintä
+3. Media alkaa toistua mediatoistossa
+4. Käytä ohjaimia toistamiseen, tauottamiseen tai selaamiseen
 
-### Media Player Controls {#media-player-controls}
+### Mediatoistimen ohjaimet {#media-player-controls}
 
-The media player provides comprehensive controls:
+Mediatoistin tarjoaa kattavat ohjaimet:
 
-- **Play/Pause** - Start or pause media playback
-- **Stop** - Stop playback
+- **Toista/Tauko** – Käynnistä tai keskeytä toisto
+- **Pysäytä** – Lopeta toisto
 
 <!-- - **Previous/Next** - Navigate between media items
 - **Volume** - Adjust playback volume -->
 
 <!-- - **Fullscreen** - Toggle fullscreen mode -->
 
-- **Zoom/Pan** - Use mouse wheel to zoom, drag to pan (for images)
+- **Zoom/Pan** – Käytä hiiren rullaa zoomaukseen, vedä hiirellä panorointiin (kuvia varten)
 
-### Advanced Presentation Features {#advanced-presentation}
+### Edistyneet esitysominaisuudet {#advanced-presentation}
 
-#### Custom Timing {#custom-timing}
+#### Mukautettu ajoitus {#custom-timing}
 
-Set custom start and end times for media:
+Aseta mukautetut aloitus- ja lopetusajat medialle:
 
 <!-- 1. Right-click on a media item
 2. Select "Edit Timing" -->
 
-1. Click on the duration of a video on the top left of its thumbnail
-2. Set start and end times
-3. Save your changes
+1. Napsauta videon keston kohdalla sen pikkukuvan vasemmassa yläkulmassa
+2. Aseta aloitus- ja lopetusajat
+3. Tallenna muutokset
 
-#### Zoom and Pan {#zoom-pan}
+#### Zoomaus ja panorointi {#zoom-pan}
 
-For images and videos:
+Kuvia ja videoita varten:
 
-- **Zoom In/Out** - Use mouse wheel or zoom controls on the thumbnail
-- **Pan** - Click and drag the thumbnail to move the image around
-- **Reset Zoom** - Click to return to original zoom
+- **Zoomaa sisään/ulos** – Käytä hiiren rullaa tai zoomausohjaimia pikkukuvassa
+- **Panoroi** – Napsauta ja vedä pikkukuvaa siirtääksesi kuvaa
+- **Palauta zoomaus** – Napsauta palataksesi alkuperäiseen näkymään
 
-#### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
+#### Pikanäppäimet {#user-guide-keyboard-shortcuts}
 
-Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
+Määritä mukautettuja pikanäppäimiä nopeaa käyttöä varten. Huomaa, että oletuksena pikanäppäimiä ei ole asetettu.
 
-**Built-in Media Controls** (when main window is focused and showing the media list):
+**Sisäänrakennetut mediaohjaimet** (kun pääikkuna on aktiivinen ja näyttää medialistan):
 
-- **Tab/Shift+Tab** - Navigate between media items
-- **Up/Down Arrow** - Navigate between media items
-- **Space** - Play/Pause media
-- **Escape** - Stop media
+- **Tab/Shift+Tab** – Siirry median välillä
+- **Ylös/Alas-nuoli** – Siirry median välillä
+- **Välilyönti** – Toista/tauota media
+- **Escape** – Pysäytä media
 
-**Customizable Shortcuts** (when enabled in settings):
+**Mukautettavat pikanäppäimet** (kun käytössä asetuksissa):
 
-- **Media Window** - Open/close media window
-- **Previous/Next Media** - Navigate between media items
-- **Pause/Resume** - Control media playback
-- **Stop Media** - Stop media playback
-- **Music Toggle** - Control background music
+- **Mediaikkuna** – Avaa/sulje mediaikkuna
+- **Edellinen/Seuraava media** – Siirry median välillä
+- **Tauota/Jatka** – Hallitse toistoa
+- **Pysäytä media** – Lopeta toisto
+- **Musiikin vaihto** – Hallitse taustamusiikkia
 
-**Note (\*):** Global shortcut - available even when the app is not focused
+**Huomautus (\*):** Globaali pikanäppäin – käytettävissä myös silloin, kun sovellus ei ole aktiivinen
 
-## Background Music {#user-guide-background-music}
+## Taustamusiikki {#user-guide-background-music}
 
-### Setting Up Background Music {#background-music-setup}
+### Taustamusiikin asettaminen {#background-music-setup}
 
-Background music automatically plays before meetings and stops at the appropriate time:
+Taustamusiikki soi automaattisesti ennen kokouksia ja pysähtyy oikeaan aikaan:
 
-1. **Enable Music** - Turn on background music in settings
-2. **Auto-Start** - Music will start automatically when M³ launches, if appropriate
-3. **Meeting Stop** - Music stops automatically before meeting start time
-4. **Manual Control** - Use the music button in the status bar to start/stop manually
-5. **Restart** - Resume music after meetings with one click
+1. **Ota musiikki käyttöön** – Aktivoi taustamusiikki asetuksissa
+2. **Automaattinen käynnistys** – Musiikki alkaa automaattisesti, kun M³ käynnistyy (jos sopivaa)
+3. **Kokouksen pysäytys** – Musiikki pysähtyy automaattisesti ennen kokouksen alkua
+4. **Manuaalinen ohjaus** – Käytä tilarivin musiikkipainiketta aloittaaksesi tai pysäyttääksesi musiikin
+5. **Uudelleenkäynnistys** – Käynnistä musiikki uudelleen kokouksen jälkeen yhdellä napsautuksella
 
-## Zoom Integration {#user-guide-zoom-integration}
+## Zoom-integraatio {#user-guide-zoom-integration}
 
-M³ can integrate with Zoom for automatic screen sharing:
+M³ voidaan integroida Zoomin kanssa automaattista näytönjakoa varten:
 
-1. **Enable Integration** - Turn on Zoom integration in settings
-2. **Configure Shortcut** - Set up the screen sharing keyboard shortcut that is configured in Zoom. Make sure that the "global" checkbox is checked in Zoom.
-3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
-4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
+1. **Ota integraatio käyttöön** – Aktivoi Zoom-integraatio asetuksissa
+2. **Määritä pikanäppäin** – Aseta näytönjaon pikanäppäin, joka on määritetty Zoomissa. Varmista, että "global"-valintaruutu on valittuna Zoomissa.
+3. **Automaattinen ohjaus** – M³ kytkee Zoomin näytönjaon automaattisesti päälle ja pois tarpeen mukaan
+4. **Manuaalinen ohitus** – Voit silti hallita näytönjakoa manuaalisesti Zoomissa tarvittaessa
 
-## OBS Studio Integration {#user-guide-obs-integration}
+## OBS Studio -integraatio {#user-guide-obs-integration}
 
-### Setting Up OBS Integration {#user-guide-obs-setup}
+### OBS-integraation määrittäminen {#user-guide-obs-setup}
 
-To use M³ with OBS Studio for hybrid meetings:
+Käyttääksesi M³:ta yhdessä OBS Studion kanssa hybridikokouksissa:
 
-1. **Install OBS Studio** - Download and install OBS Studio
-2. **Enable WebSocket** - Install the WebSocket plugin in OBS
-3. **Configure M³** - Enter OBS port and password in M³ settings
-4. **Set Up Scenes** - Create scenes for camera, media, and other content
-5. **Test** - Verify playback works properly
+1. **Asenna OBS Studio** – Lataa ja asenna OBS Studio
+2. **Ota WebSocket käyttöön** – Asenna WebSocket plugin OBS:iin
+3. **Määritä M³** – Syötä OBS:n portti ja salasana M³:n asetuksissa
+4. **Luo näyttämöt** – Luo näyttämöä kameralle, medialle ja muulle sisällölle
+5. **Testaa** – Varmista, että toisto toimii oikein
 
-### OBS Scene Management {#obs-scene-management}
+### OBS näyttämön hallinta {#obs-scene-management}
 
-M³ automatically switches OBS scenes during presentations:
+M³ vaihtaa OBS näyttämön automaattisesti esitysten aikana:
 
-- **Camera Scene** - Shows the lectern/camera view
-- **Media Scene** - Displays media content
-- **Image Scene** - Shows images (can be postponed if enabled)
-- **Automatic Switching** - Scenes change based on media type and settings
+- **Kameranäyttämö** – Näyttää puhujan tai kameran näkymän
+- **Medianäyttämö** – Näyttää mediatoiston
+- **Kuvanäyttämö** – Näyttää kuvat (voi olla viivästetty, jos toiminto on käytössä)
+- **Automaattinen vaihto** – Näyttämöt vaihtuvat mediatyypin ja asetusten perusteella
 
-### Advanced OBS Features {#advanced-obs}
+### Edistyneet OBS-ominaisuudet {#advanced-obs}
 
 #### Viivytä kuvia {#user-guide-postpone-images}
 
-Enable this option to delay sharing images to OBS until manually triggered:
+Ota tämä vaihtoehto käyttöön viivästyttääksesi kuvien jakamista OBS:lle, kunnes aktivoit ne manuaalisesti:
 
-1. Ota käyttöön "Viivytä kuvien näyttöä" OBS asetuksissa
-2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
+1. Ota käyttöön "Viivytä kuvien näyttöä" OBS-asetuksissa
+2. Kuvat jaetaan vasta, kun napsautat painiketta niiden näyttämiseksi OBS Studiossa. Tämä on hyödyllistä, jos haluat näyttää kuvat ensin paikan päällä olevalle yleisölle.
 
-#### Scene Switching Behavior {#user-guide-scene-switching}
+#### Näyttämön vaihtoasetukset {#user-guide-scene-switching}
 
-Configure how M³ handles scene changes:
+Määritä, miten M³ käsittelee näyttämön vaihtamisen:
 
-- **Switch After Media** - Automatically return to previous scene
-- **Remember Previous Scene** - Restore the scene that was active before media
+- **Vaihda median jälkeen** – Palaa automaattisesti edelliseen näyttämöön
+- **Muista edellinen näyttämö** – Palauttaa näyttämön, joka oli aktiivinen ennen mediaa
 
-### Audio Configuration for Hybrid Meetings {#audio-configuration}
+### Ääniasetukset hybridikokouksia varten {#audio-configuration}
 
-When using M³ with OBS Studio for hybrid meetings (in-person + Zoom), you need to configure audio settings to ensure meeting participants can hear the media:
+Kun käytät M³:ta OBS Studion kanssa hybridikokouksissa (paikan päällä + Zoom), sinun on määritettävä ääniasetukset, jotta osallistujat kuulevat median äänen:
 
-#### Zoom Audio Settings {#zoom-audio-settings}
+#### Zoomin ääniasetukset {#zoom-audio-settings}
 
-**Before every meeting, you must enable Original Audio in Zoom:**
+**Ennen jokaista kokousta sinun on otettava käyttöön Original Audio Zoomissa:**
 
-1. **Open Zoom** and go to Settings
-2. **Navigate to Audio** → **Advanced**
-3. **Enable "Show in-meeting option to 'Enable Original Sound'"**
-4. **Check "Disable echo cancellation"** (first checkbox)
-5. **Check "Disable noise suppression"** (second checkbox)
-6. **Uncheck "Disable high-fidelity music mode"** (third checkbox)
-7. **Before starting each meeting**, click the "Original Audio" button in the meeting controls
+1. **Avaa Zoom** ja siirry Asetuksiin
+2. **Siirry kohtaan Ääni** → **Lisäasetukset (Advanced)**
+3. **Ota käyttöön "Näytä kokouksen aikana vaihtoehto 'Ota käyttöön alkuperäinen ääni (Enable Original Sound)'"**
+4. **Valitse "Poista kaiunvaimennus käytöstä"** (ensimmäinen valintaruutu)
+5. **Valitse "Poista kohinanvaimennus käytöstä"** (toinen valintaruutu)
+6. **Poista valinta kohdasta "Poista korkean äänenlaadun musiikkitila käytöstä"** (kolmas valintaruutu)
+7. **Ennen jokaista kokousta**, napsauta "Original Audio" -painiketta kokouksen ohjaimissa
 
-**Alternative: Share Computer Sound**
-If Original Audio doesn't work well in your setup:
+**Vaihtoehto: Jaa tietokoneen ääni**  
+Jos Original Audio ei toimi kunnolla kokoonpanossasi:
 
-1. **Before playing media**, go to **Advanced** tab in Zoom screen sharing options
-2. **Check "Share computer sound"**
-3. **Note**: This option must be enabled every time you start a new Zoom session
+1. **Ennen median toistamista**, siirry Zoomin näytönjaon asetusten **Lisäasetukset (Advanced)**-välilehdelle
+2. **Valitse "Share computer sound"**
+3. **Huomio**: Tämä vaihtoehto on otettava käyttöön joka kerta, kun aloitat uuden Zoom-istunnon
 
-**Best Alternative**: Consider using M³'s Zoom integration instead of OBS Studio, as it uses Zoom's native screen sharing which handles audio more seamlessly and doesn't require complex audio configuration.
+**Paras vaihtoehto**: Harkitse M³:n Zoom-integraation käyttöä OBS Studion sijaan, sillä se käyttää Zoomin omaa näytönjakoa, joka käsittelee äänen sujuvammin eikä vaadi monimutkaisia ääniasetuksia.
 
-#### Why Audio Configuration is Necessary {#why-audio-config}
+#### Miksi ääniasetukset ovat tarpeellisia {#why-audio-config}
 
-M³ plays media with sound on your computer, but this audio is **not automatically transmitted** through the video stream to OBS Studio. This is the same behavior you would experience with any other media player.
+M³ toistaa ääntä tietokoneellasi, mutta tämä ääni **ei siirry automaattisesti** videovirran mukana OBS Studioon. Sama tapahtuu, jos käytät mitä tahansa muuta mediasoitinta.
 
-**The audio issue is not related to M³** - it's a limitation of how OBS Studio video streaming works with Zoom. The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
+**Ääniongelma ei liity M³:een** – se on rajoitus, joka johtuu siitä, miten OBS Studion videolähetys toimii Zoomin kanssa. Videovirta toimii kuten virtuaalikamera ilman ääntä, aivan kuten verkkokamera, joten sinun on erikseen määritettävä Zoom kuulemaan tietokoneen ääni. Tämä edellyttää, että tietokoneessasi on kaksi äänikorttia, ja jos näin ei ole, OBS Studio -integraatio ei todennäköisesti toimi oikein.
 
-**Alternative Solution**: Consider using the Zoom integration instead, as it uses Zoom's native screen and audio sharing, which handles audio more seamlessly.
+**Vaihtoehtoinen ratkaisu**: Harkitse Zoom-integraation käyttöä sen sijaan, sillä se hyödyntää Zoomin omaa näytön- ja äänijakoa, joka käsittelee äänen huomattavasti sujuvammin.
 
-#### Troubleshooting Audio Issues {#audio-troubleshooting}
+#### Ääniongelmien vianmääritys {#audio-troubleshooting}
 
-**Common Problems:**
+**Yleiset ongelmat:**
 
-- **No audio in Zoom**: Check if Original Audio is enabled and properly configured
-- **Poor audio quality**: Verify the three Original Audio checkboxes are set correctly
-- **Audio not working after Zoom restart**: Original Audio settings must be re-enabled for each new Zoom session
+- **Ei ääntä Zoomissa**: Tarkista, että Original Audio on otettu käyttöön ja määritetty oikein
+- **Huono äänenlaatu**: Varmista, että kolme Original Audio -valintaruutua on asetettu oikein
+- **Ääni ei toimi Zoomin uudelleenkäynnistyksen jälkeen**: Original Audio -asetukset on aktivoitava uudelleen jokaisessa uudessa Zoom-istunnossa
 
-**Best Practices:**
+**Parhaat käytännöt:**
 
-- Test audio configuration and sharing before meetings
-- Create a checklist for audio setup
-- Consider using "Share Computer Sound" as a backup option
-- **Consider using Zoom integration instead of OBS Studio** for simpler audio handling
-- Ensure all AV operators are familiar with these settings
+- Testaa ääniasetukset ja jakaminen ennen kokouksia
+- Luo tarkistuslista ääniasennusta varten
+- Harkitse "Jaa tietokoneen ääni"-vaihtoehdon käyttöä vararatkaisuna
+- **Harkitse Zoom-integraation käyttöä OBS Studion sijaan**, jotta äänenhallinta on helpompaa
+- Varmista, että kaikki AV-operaattorit tuntevat nämä asetukset
 
-## Media Import and Management {#media-import}
+## Median tuonti ja hallinta {#media-import}
 
-### Importing Custom Media {#importing-custom-media}
+### Oman median tuominen {#importing-custom-media}
 
-Add your own media files to M³:
+Lisää omat mediatiedostosi M³:een:
 
-1. **File Import** - Use the import button to add videos, images, or audio files
-2. **Drag and Drop** - Drag files directly into M³
-3. **Folder Monitoring** - Set up a watched folder for automatic imports
-4. **JWPUB Files and Playlists** - Import publications and playlists
-5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
+1. **Tiedostotuonti** – Käytä tuontipainiketta videoiden, kuvien tai äänitiedostojen lisäämiseen
+2. **Raahaa ja pudota** – Vedä tiedostot suoraan M³:een
+3. **Kansion valvonta** – Aseta valvottu kansio automaattista tuontia varten
+4. **JWPUB-tiedostot ja soittolistat** – Tuo julkaisuja ja soittolistoja
+5. **Julkisen puheen media (S-34 / S-34mp)** – Tuo julkisten puheiden mediaa S-34- tai S-34mp-JWPUB-tiedostojen avulla
 
-### Managing Imported Media {#managing-imported-media}
+### Tuodun median hallinta {#managing-imported-media}
 
-- **Organize by Date** - Assign imported media to specific dates
-- **Custom Sections** - Create custom sections for organization
-- **Edit Properties** - Modify titles, descriptions, and timing
-- **Remove Media** - Delete unwanted media items
+- **Järjestä päivämäärän mukaan** – Liitä tuotu media tiettyihin päivämääriin
+- **Mukautetut osiot** – Luo mukautettuja osioita median hallintaa varten
+- **Muokkaa ominaisuuksia** – Muuta otsikoita, kuvauksia ja ajoituksia
+- **Poista media** – Poista tarpeettomat mediatiedostot
 
-### Audio Bible Import {#audio-bible-import}
+### Ääniraamatun tuonti {#audio-bible-import}
 
-Import audio recordings of Bible verses:
+Tuo raamatunjakeiden äänitallenteita:
 
-1. Click the "Audio Bible" button
-2. Select the Bible book and chapter
+1. Napsauta "Audio Bible" -painiketta
+2. Valitse raamatun kirja ja luku
 3. Valita tietyt jakeet tai jaealueet
-4. Download the audio files
-5. Use them
+4. Lataa äänitiedostot
+5. Käytä niitä
 
-## Folder Monitoring and Export {#user-guide-folder-monitoring}
+## Kansion valvonta ja vienti {#user-guide-folder-monitoring}
 
-### Setting Up Folder Monitoring {#folder-monitoring-setup}
+### Kansion valvonnan määrittäminen {#folder-monitoring-setup}
 
-Monitor a folder for new media files:
+Seuraa kansiota uusien mediatiedostojen varalta:
 
-1. **Enable Folder Watcher** - Turn on folder monitoring in settings
-2. **Select Folder** - Choose the folder to monitor
-3. **Automatic Import** - New files are automatically added to M³
-4. **Organization** - Files are organized by date based on folder structure
+1. **Ota kansiovalvonta käyttöön** – Aktivoi kansion valvonta asetuksissa
+2. **Valitse kansio** – Valitse kansio, jota valvotaan
+3. **Automaattinen tuonti** – Uudet tiedostot lisätään automaattisesti M³:een
+4. **Järjestäminen** – Tiedostot järjestetään päivämäärän mukaan kansion rakenteen perusteella
 
-### Media Export {#user-guide-media-export}
+### Median vienti {#user-guide-media-export}
 
-Automatically export media to organized folders:
+Vie mediat automaattisesti järjestettyihin kansioihin:
 
-1. **Enable Auto-Export** - Turn on media export in settings
-2. **Select Export Folder** - Choose where to save exported files
-3. **Automatic Organization** - Files are organized by date and section
-4. **Format Options** - Convert files to MP4 for better compatibility
+1. **Ota automaattivienti käyttöön** – Aktivoi median vienti asetuksissa
+2. **Valitse vientikansio** – Valitse, minne viedyt tiedostot tallennetaan
+3. **Automaattinen järjestäminen** – Tiedostot järjestetään päivämäärän ja osion mukaan
+4. **Muotoiluasetukset** – Muunna tiedostot MP4-muotoon paremman yhteensopivuuden takaamiseksi
 
-## Website Presentation {#website-presentation}
+## Verkkosivun esitys {#website-presentation}
 
-### Presenting the Official Website {#presenting-the-website}
+### Virallisen verkkosivuston esittäminen {#presenting-the-website}
 
-Share the official website on external displays:
+Jaa virallinen verkkosivusto ulkoisilla näytöillä:
 
-1. **Open Website Mode** - Click the website presentation button
-2. **External Display** - The website opens in a new window
-3. **Navigation** - Use the browser controls to navigate
+1. **Avaa verkkosivutila** – Napsauta verkkosivun esityspainiketta
+2. **Ulkoinen näyttö** – Verkkosivusto avautuu uuteen ikkunaan
+3. **Navigointi** – Käytä selaimen ohjaimia siirtymiseen
 
-### Website Controls {#website-controls}
+### Verkkosivun ohjaimet {#website-controls}
 
-- **Navigation** - Standard browser navigation controls
-- **Refresh** - Reload the current page
-- **Close** - Exit website presentation mode
+- **Navigointi** – Tavanomaiset selaimen siirtymäohjaimet
+- **Päivitä** – Lataa nykyinen sivu uudelleen
+- **Sulje** – Poistu verkkosivun esitystilasta
 
-## Advanced Features {#user-guide-advanced-features}
+## Edistyneet ominaisuudet {#user-guide-advanced-features}
 
-### Multiple Congregations {#user-guide-multiple-congregations}
+### Useat seurakunnat {#user-guide-multiple-congregations}
 
-Manage multiple congregations or groups:
+Hallitse useita seurakuntia tai ryhmiä:
 
-1. **Create Profiles** - Set up separate profiles for different congregations
-2. **Switch Profiles** - Use the congregation selector to switch between profiles
-3. **Separate Settings** - Each profile has its own settings and media
-4. **Shared Resources** - Media files are shared between profiles whenever possible
+1. **Luo profiilit** – Määritä erilliset profiilit eri seurakunnille
+2. **Vaihda profiilia** – Käytä seurakuntavalitsinta profiilien välillä siirtymiseen
+3. **Erilliset asetukset** – Jokaisella profiililla on omat asetukset ja mediat
+4. **Jaetut resurssit** – Mediatiedostot jaetaan profiilien välillä aina kun mahdollista
 
-### Keyboard Shortcuts {#keyboard-shortcuts-guide}
+### Pikanäppäimet {#keyboard-shortcuts-guide}
 
-Configure custom keyboard shortcuts for efficient operation:
+Määritä mukautettuja pikanäppäimiä tehokkaaseen käyttöön:
 
-1. **Enable Shortcuts** - Turn on keyboard shortcuts in settings
-2. **Configure Shortcuts** - Set up shortcuts for common actions
-3. **Practice** - Learn your shortcuts for faster operation
-4. **Customize** - Adjust shortcuts to match your preferences
+1. **Ota pikanäppäimet käyttöön** – Aktivoi pikanäppäimet asetuksissa
+2. **Määritä pikanäppäimet** – Aseta pikanäppäimet yleisille toiminnoille
+3. **Harjoittele** – Opettele pikanäppäimet sujuvaa käyttöä varten
+4. **Mukauta** – Säädä pikanäppäimet mieltymystesi mukaan
 
-## Troubleshooting {#troubleshooting-guide}
+## Vianmääritys {#troubleshooting-guide}
 
-### Common Issues {#common-issues}
+### Yleiset ongelmat {#common-issues}
 
-#### Media Not Downloading {#user-guide-media-not-downloading}
+#### Media ei lataudu {#user-guide-media-not-downloading}
 
-- Check your meeting schedule settings
-- Verify internet connection
-- Check if media is available in your selected language
+- Tarkista kokousaikataulun asetukset
+- Varmista internet-yhteys
+- Tarkista, onko media saatavilla valitsemallasi kielellä
 
-#### OBS Integration Not Working {#user-guide-obs-not-working}
+#### OBS-integraatio ei toimi {#user-guide-obs-not-working}
 
-- Verify OBS WebSocket plugin is installed
-- Check port and password settings
-- Ensure OBS is running
+- Tarkista, että OBS WebSocket plugin on asennettu
+- Tarkista portti- ja salasana-asetukset
+- Varmista, että OBS on käynnissä
 
-#### Audio Issues in Zoom/OBS {#audio-issues}
+#### Ääniongelmat Zoomissa/OBS:ssa {#audio-issues}
 
-- **No audio in Zoom**: Enable Original Audio in Zoom settings and before each meeting
-- **Poor audio quality**: Check the three Original Audio checkboxes (first two enabled, third disabled)
-- **Audio not working after restart**: Original Audio must be re-enabled for each new Zoom session
-- **Alternative solution**: Use "Share Computer Sound" option in Zoom screen sharing
+- **Ei ääntä Zoomissa**: Ota Original Audio käyttöön Zoomin asetuksissa ja ennen jokaista kokousta
+- **Huono äänenlaatu**: Tarkista kolme Original Audio -valintaruutua (kaksi ensimmäistä päällä, kolmas pois)
+- **Ääni ei toimi uudelleenkäynnistyksen jälkeen**: Original Audio on aktivoitava uudelleen jokaisessa Zoom-istunnossa
+- **Vaihtoehtoinen ratkaisu**: Käytä Zoomin näytönjaon "Share Computer Sound" -vaihtoehtoa
 
-#### Performance Issues {#user-guide-performance-issues}
+#### Suorituskykyongelmat {#user-guide-performance-issues}
 
-- Enable extra cache
-- Reduce maximum resolution
-- Clear old cached files
-- Check available disk space
+- Ota lisävälimuisti käyttöön
+- Pienennä suurinta resoluutiota
+- Tyhjennä vanhat välimuistitiedostot
+- Tarkista käytettävissä oleva levytila
 
-#### Language Issues {#user-guide-language-issues}
+#### Kieliongelmat {#user-guide-language-issues}
 
-- Check media language setting
-- Ensure language is available on JW.org
-- Try a fallback language
-- Verify interface language setting
+- Tarkista median kieliasetus
+- Varmista, että kieli on saatavilla JW.org-sivustolla
+- Kokeile varakieltä
+- Varmista käyttöliittymän kieliasetus
 
-### Getting Help {#getting-help}
+### Apua ongelmatilanteissa {#getting-help}
 
-If you encounter issues:
+Jos kohtaat ongelmia:
 
-1. **Check Documentation** - Review this guide and other available documentation
-2. **Search Issues** - Look for similar issues on GitHub
-3. **Report Problems** - Create a new issue with detailed information
+1. **Tarkista dokumentaatio** – Lue tämä opas ja muut saatavilla olevat ohjeet
+2. **Etsi ongelmia** – Katso GitHubista, onko vastaavia tapauksia
+3. **Ilmoita ongelmista** – Luo uusi ongelmaraportti ja lisää yksityiskohtaiset tiedot
 
-## Best Practices {#best-practices}
+## Parhaat käytännöt {#best-practices}
 
-### Before Meetings {#before-meetings}
+### Ennen kokouksia {#before-meetings}
 
-1. **Check Downloads** - Ensure all media is downloaded
-2. **Test Equipment** - Verify displays and audio work
-3. **Prepare Media** - Review and organize media for the meeting; make sure no media files are missing
-4. **Configure Audio** - For hybrid meetings, enable Original Audio in Zoom or set up "Share Computer Sound"
+1. **Tarkista lataukset** – Varmista, että kaikki mediat on ladattu
+2. **Testaa laitteet** – Varmista, että näytöt ja äänet toimivat
+3. **Valmistele media** – Tarkista ja järjestä kokouksen media; varmista, ettei mitään puutu
+4. **Määritä ääni** – Hybridikokouksissa ota käyttöön Original Audio Zoomissa tai määritä "Jaa tietokoneen ääni"
 
-### During Meetings {#during-meetings}
+### Kokousten aikana {#during-meetings}
 
-1. **Stay Focused** - Use the clean and distraction-free interface
-2. **Use Shortcuts** - Master keyboard shortcuts for smooth operation
-3. **Monitor Audio** - Keep an eye on volume levels, if that's part of your responsibilities
-4. **Be Prepared** - Have the next media item ready
-5. **Verify Audio** - For hybrid meetings, ensure Zoom participants can hear the media
+1. **Pysy keskittyneenä** – Käytä selkeää ja häiriötöntä käyttöliittymää
+2. **Käytä pikanäppäimiä** – Hallitse esitystä sujuvasti pikanäppäimillä
+3. **Tarkkaile ääntä** – Seuraa äänenvoimakkuutta, jos se kuuluu tehtäviisi
+4. **Ole valmistautunut** – Pidä seuraava media valmiina
+5. **Varmista ääni** – Hybridikokouksissa varmista, että Zoom-osallistujat kuulevat median
 
-### After Meetings {#after-meetings}
+### Kokousten jälkeen {#after-meetings}
 
-1. **Start Background Music** - Start the playback of background music
-2. **Plan Ahead** - Prepare for the next meeting by making sure everything is in place
-3. **Clean Up** - Close media player when you're ready to leave
+1. **Käynnistä taustamusiikki** – Aloita taustamusiikin toisto
+2. **Suunnittele eteenpäin** – Valmistaudu seuraavaan kokoukseen varmistamalla, että kaikki on kunnossa
+3. **Siivoa** – Sulje mediatoistin, kun olet valmis lähtemään
 
-### Regular Maintenance {#regular-maintenance}
+### Säännöllinen ylläpito {#regular-maintenance}
 
-1. **Update M³** - Keep the application updated
-2. **Clear Cache** - Periodically clear old cached files
-3. **Check Settings** - Review and update settings as needed
+1. **Päivitä M³** – Pidä sovellus ajan tasalla
+2. **Tyhjennä välimuisti** – Poista säännöllisesti vanhat välimuistitiedostot
+3. **Tarkista asetukset** – Tarkista ja päivitä asetuksia tarvittaessa
