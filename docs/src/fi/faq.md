@@ -141,17 +141,17 @@ OBS Studion integroimiseksi:
 1. Asenna OBS Studio ja WebSocket plugin
 2. Ota OBS-integraatio käyttöön M³:n asetuksissa
 3. Syötä OBS:n portti ja salasana
-4. Määritä kohtaukset (scenes) kameralle, medialle ja kuville
+4. Määritä näyttämöt kameralle, medialle ja kuville
 5. Testaa toisto
 
-### :arrows_counterclockwise: Kuinka automaattinen kohtauksen vaihto toimii? {#faq-scene-switching}
+### :arrows_counterclockwise: Kuinka automaattinen näyttämön vaihto toimii? {#faq-scene-switching}
 
-M³ vaihtaa OBS-kohtauksia automaattisesti seuraavien perusteella:
+M³ vaihtaa OBS näyttämön automaattisesti seuraavien perusteella:
 
 - Median tyyppi (video, image, jne.)
-- Kohtausasetuksesi
+- Näyttämöasetuksesi
 - Asetukset kuten "Postpone Images"
-- Palataanko edelliseen kohtaukseen median jälkeen
+- Palataanko edelliseen näyttämö median jälkeen
 
 ### :pause_button: Mikä on "viivytä kuvia"? {#faq-postpone-images}
 
@@ -159,7 +159,7 @@ Tämä ominaisuus viivästyttää kuvien jakamista OBS:lle, kunnes aktivoit ne m
 
 - Näyttää kuvat ensin läsnäolevalle yleisölle
 - Antaa paremman ajoituksen hallinnan
-- Välttää ennenaikaiset kohtauksen vaihdot
+- Välttää ennenaikaiset näyttämön vaihdot
 
 ## Edistyneet ominaisuudet {#faq-advanced-features}
 
