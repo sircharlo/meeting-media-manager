@@ -260,8 +260,8 @@
                     v-model="cbsAdaptiveEnabled"
                     :disable="timerRunning"
                     :options="[
-                      { label: t('fixed'), value: false },
                       { label: t('adaptive'), value: true },
+                      { label: t('fixed'), value: false },
                     ]"
                     toggle-color="primary"
                   />
@@ -319,8 +319,8 @@
                   v-model="wtAdaptiveEnabled"
                   :disable="timerRunning"
                   :options="[
-                    { label: t('fixed'), value: false },
                     { label: t('adaptive'), value: true },
+                    { label: t('fixed'), value: false },
                   ]"
                   toggle-color="primary"
                 />
@@ -375,7 +375,7 @@
           {{ t('meeting-part') }}
         </div>
         <div class="row q-px-md q-pb-sm">
-          <q-list bordered>
+          <q-list bordered class="full-width">
             <q-item
               v-for="part in meetingPartsOptions"
               :key="part.value"
@@ -384,14 +384,21 @@
               :disable="timerRunning"
               @click="selectPart(part.value)"
             >
-              <q-item-section avatar>
-                <q-icon />
+              <q-item-section avatar class="jw-icon text-h6">
+                {{ part.icon }}
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{ part.label }}</q-item-label>
                 <q-item-label v-if="part.caption" caption>
                   {{ part.caption }}
                 </q-item-label>
+              </q-item-section>
+              <q-item-section side>
+                <q-icon
+                  v-if="usedParts.has(part.value)"
+                  color="grey-5"
+                  name="check"
+                />
               </q-item-section>
             </q-item>
           </q-list>
@@ -565,10 +572,11 @@ const ayfmPartsCount = ref<number>(1);
 const ayfmDurations = ref<number[]>([15]);
 const lacPartsCount = ref<number>(1);
 const lacDurations = ref<number[]>([15]);
-const cbsAdaptiveEnabled = ref(false);
+const cbsAdaptiveEnabled = ref(true);
 const cbsAdaptiveEndTime = ref('');
-const wtAdaptiveEnabled = ref(false);
+const wtAdaptiveEnabled = ref(true);
 const wtAdaptiveEndTime = ref<string>('');
+const usedParts = ref<Set<MeetingPart>>(new Set());
 
 const { getAllScreens, moveTimerWindow, toggleTimerWindow } =
   window.electronApi;
@@ -683,6 +691,7 @@ const wtAdaptiveDefaultEndTime = computed(() => {
 const meetingPartsOptions: ComputedRef<
   {
     caption?: string;
+    icon?: string;
     label: string;
     value: MeetingPart;
     warning?: boolean;
@@ -692,24 +701,30 @@ const meetingPartsOptions: ComputedRef<
   if (isWeMeetingDay(date)) {
     const options: {
       caption?: string;
+      icon?: string;
       label: string;
       value: MeetingPart;
       warning?: boolean;
     }[] = [
-      { label: t('public-talk'), value: 'public-talk' },
+      { icon: '\uE6C3', label: t('public-talk'), value: 'public-talk' },
       {
         caption: wtAdaptiveEnabled.value
           ? t('latest-ending', {
               endTime: wtAdaptiveEndTime.value || t('adaptive'),
             })
           : '',
+        icon: '\uE6EA',
         label: t('wt'),
         value: 'wt',
       },
     ];
 
     if (isCoWeek(date)) {
-      options.push({ label: t('co-final-talk'), value: 'co-final-talk' });
+      options.push({
+        icon: '\uE6C2',
+        label: t('co-final-talk'),
+        value: 'co-final-talk',
+      });
     }
 
     return options;
@@ -717,13 +732,14 @@ const meetingPartsOptions: ComputedRef<
     const isCo = isCoWeek(date);
     const options: {
       caption?: string;
+      icon?: string;
       label: string;
       value: MeetingPart;
       warning?: boolean;
     }[] = [
-      { label: t('treasures-talk'), value: 'treasures' },
-      { label: t('gems'), value: 'gems' },
-      { label: t('bible-reading'), value: 'bible-reading' },
+      { icon: '\uE65C', label: t('treasures-talk'), value: 'treasures' },
+      { icon: '\uE694', label: t('gems'), value: 'gems' },
+      { icon: '\uE61F', label: t('bible-reading'), value: 'bible-reading' },
     ];
     // Add AYFM parts
     for (let i = 1; i <= ayfmPartsCount.value; i++) {
@@ -731,6 +747,7 @@ const meetingPartsOptions: ComputedRef<
       const warning = totalDuration !== 15 - ayfmPartsCount.value;
       const dur = ayfmDurations.value[i - 1] || 15;
       options.push({
+        icon: '\uE698',
         label: t('ayfm-part', { duration: dur, part: i }),
         value: `ayfm-${i}` as MeetingPart,
         warning,
@@ -742,6 +759,7 @@ const meetingPartsOptions: ComputedRef<
       const warning = totalDuration !== 15;
       const dur = lacDurations.value[i - 1] || 15;
       options.push({
+        icon: '\uE6D8',
         label: t('lac-part', { duration: dur, part: i }),
         value: `lac-${i}` as MeetingPart,
         warning,
@@ -749,6 +767,7 @@ const meetingPartsOptions: ComputedRef<
     }
     if (isCo) {
       options.push({
+        icon: '\uE6C2',
         label: t('co-service-talk'),
         value: 'co-service-talk',
       });
@@ -759,6 +778,7 @@ const meetingPartsOptions: ComputedRef<
               endTime: cbsAdaptiveEndTime.value || t('adaptive'),
             })
           : '',
+        icon: '\uE6C3',
         label: t('cbs'),
         value: 'cbs',
       });
@@ -958,6 +978,7 @@ const stopTimer = () => {
 const selectPart = (value: MeetingPart) => {
   selectingPart.value = true;
   currentPart.value = value;
+  usedParts.value.add(value);
   startTimer();
   selectingPart.value = false;
 };
