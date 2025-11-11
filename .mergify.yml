@@ -12,13 +12,12 @@ pull_request_rules:
           - check-success = "build / test"
           - check-success = "build / build (ubuntu-latest)"
           - check-success = "build / build (macos-latest)"
-          - check-success = "build / build (macos-13)"
+          - check-success = "build / build (macos-15-intel)"
           - check-success = "build / build (windows-latest)"
     actions:
       update: {}
       merge:
         method: squash
-
 
   - name: Automatically merge Crowdin PRs (only if all checks pass)
     conditions:
@@ -31,7 +30,7 @@ pull_request_rules:
           - check-success = "build / test"
           - check-success = "build / build (ubuntu-latest)"
           - check-success = "build / build (macos-latest)"
-          - check-success = "build / build (macos-13)"
+          - check-success = "build / build (macos-15-intel)"
           - check-success = "build / build (windows-latest)"
     actions:
       update: {}
