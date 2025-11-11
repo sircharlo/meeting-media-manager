@@ -12,9 +12,9 @@
 
 :::
 
-### :thinking: 此应用是否违反了耶和华见证人官方网站的使用条款？ {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use} {#terms-of-use}
+### :thinking: 本应用是否违反了耶和华见证人官方网站的使用条款？ {#terms-of-use} {#terms-of-use}
 
-\*\*不。\*\*[耶和华见证人官方网站使用条款](https://www.jw.org/finder?docid=1011511&prefer=content)明确允许我们正在做的用法。 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）：
+**不**。[耶和华见证人官方网站使用条款](https://www.jw.org/finder?docid=1011511&prefer=content)明确允许我们正在做的用法。  以下是相关摘录（重要部分已标明）：
 
 > 你不得：
 >
@@ -28,7 +28,7 @@ M³ 支持 Windows、macOS 和 Linux：
 - **macOS**：macOS 10.15 (Catalina)及更高版本（支持Intel和Apple Silicon）
 - **Linux**：大多数现代Linux发行版（AppImage格式）
 
-### :globe_with_meridians: M³ 支持我的语言吗？ {#language-support} {#language-support}
+### :globe_with_meridians: M³ 支持我的语言吗？ {#language-support}
 
 **是的！** M³提供全面的多语言支持：
 
@@ -40,11 +40,11 @@ M³ 支持 Windows、macOS 和 Linux：
 
 ## 安装与设置 {#installation-setup}
 
-### :computer: 如何下载并安装 M³？ {#installation} {#installation}
+### :computer: 如何下载并安装 M³？ {#installation}
 
 请前往[下载页面](download)获取适用于您系统的版本，并参照[用户指南](user-guide)完成安装。
 
-### :gear: 第一次如何进行设置？ {#first-time-setup} {#first-time-setup}
+### :gear: 第一次如何进行设置？ {#first-time-setup}
 
 M³ 提供向导，帮助完成关键配置：
 
@@ -56,7 +56,7 @@ M³ 提供向导，帮助完成关键配置：
 
 ## 媒体管理 {#faq-media-management}
 
-### :desktop_computer: M³ 如何下载媒体？ {#media-download} {#media-download}
+### :desktop_computer: M³ 如何下载媒体？ {#media-download}
 
 M³ 会自动为即将到来的聚会下载媒体：
 
@@ -66,14 +66,14 @@ M³ 会自动为即将到来的聚会下载媒体：
 4. 以日期与聚会类型组织媒体
 5. 缓存文件以便离线使用
 
-### :calendar: 可以为特定日期下载媒体吗？ {#specific-dates} {#specific-dates}
+### :calendar: 可以为特定日期下载媒体吗？ {#specific-dates}
 
 是! 可以。M³ 的多配置文件可用于：
 
 - 自动为即将到来的聚会下载媒体
 - 任何日期均可导入自定义媒体
 
-### :open_file_folder: 如何导入我自己的媒体文件？ {#import-media} {#import-media}
+### :open_file_folder: 如何导入我自己的媒体文件？ {#import-media}
 
 可通过多种方式导入：
 
@@ -82,7 +82,7 @@ M³ 会自动为即将到来的聚会下载媒体：
 - **文件夹监控**：监控文件夹以自动导入
 - **JWPUB/播放列表**：导入出版物与播放列表
 
-### :speaker: 可以导入“音频圣经”吗？ {#audio-bible} {#audio-bible}
+### :speaker: 可以导入“音频圣经”吗？ {#audio-bible}
 
 是! M3包含一个音频圣经功能，允许您：
 
@@ -93,7 +93,7 @@ M³ 会自动为即将到来的聚会下载媒体：
 
 ## 演示功能 {#faq-presentation-features}
 
-### :tv: 聚会中如何演示媒体？ {#present-media} {#present-media}
+### :tv: 聚会中如何演示媒体？  {#present-media}
 
 播放媒体:
 
@@ -103,9 +103,9 @@ M³ 会自动为即将到来的聚会下载媒体：
 4. 对图片使用缩放/平移
 5. 必要时设置自定义起止时间
 
-### :keyboard: 有哪些键盘快捷键？ {#faq-keyboard-shortcuts} {#faq-keyboard-shortcuts}
+### :keyboard: 有哪些键盘快捷键？ {#faq-keyboard-shortcuts}
 
-M³ supports customizable keyboard shortcuts for:
+可自定义以下快捷键：
 
 - 打开/关闭媒体窗口
 - 上一项/下一项导航
@@ -114,9 +114,9 @@ M³ supports customizable keyboard shortcuts for:
 
 <!-- - Fullscreen mode -->
 
-### :notes: 背景音乐如何工作？ {#faq-background-music} {#faq-background-music}
+### :notes: 背景音乐如何工作？  {#faq-background-music}
 
-Background music features include:
+背景音乐功能包括：
 
 - 应用启动后、聚会开始前自动播放
 - 聚会开始前自动停止
@@ -124,12 +124,12 @@ Background music features include:
 - 独立音量控制
 - 可配置提前停止缓冲时间
 
-### :video_camera: 如何设置 Zoom 集成？ {#zoom-setup} {#zoom-setup}
+### :video_camera: 如何设置 Zoom 集成？ {#zoom-setup}
 
-To integrate with Zoom:
+在设置中启用 Zoom 集成
 
-1. 在设置中启用 Zoom 集成
-2. 在 Zoom 中配置屏幕共享快捷键并勾选“全局快捷键” Ensure that shortcut is "global" in Zoom's settings.
+1. 或考虑改用 M³ 的 Zoom 集成（使用 Zoom 原生共享）
+2. 在 Zoom 中配置屏幕共享快捷键并勾选“全局快捷键” 确保缩放设置中的快捷方式为“全局”。
 3. 演示媒体时，M³ 会自动开始/停止 Zoom 屏幕共享
 
 ## OBS Studio 集成 {#faq-obs-integration}
@@ -190,7 +190,7 @@ M³ 根据以下因素自动切换 OBS 场景：
 
 ## 疑难解答 {#faq-troubleshooting}
 
-### :warning: Media isn't downloading. What should I check? :warning: 媒体没有下载，我该检查什么？ {#faq-media-not-downloading}
+### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
 
 Check these common issues:
 
@@ -210,7 +210,7 @@ Check these OBS-related issues:
 3. **端口与密码**：设置是否匹配
 4. **防火墙**：是否拦截了连接
 
-### :speaker: 使用 OBS 时，M³ 会自动把媒体声音发送到 Zoom 吗？ {#audio-to-zoom} {#audio-to-zoom}
+### :speaker: 使用 OBS 时，M³ 会自动把媒体声音发送到 Zoom 吗？ {#audio-to-zoom}
 
 **不会。** M³ 不会自动把媒体音频发送到 Zoom 或 OBS。视频流像摄像头一样是无声的。若要让 Zoom 自动“听到”电脑播放的音频，请确保 Zoom 能接收到电脑的音频输入，并在 Zoom 中启用 **原始音频（Original Audio）**。 The video stream works like a virtual camera with no sound, just like a webcam. To have the music/video sound available in Zoom automatically, you need to ensure that Zoom 'hears' the audio feed coming from the computer, and then you should enable the **Original Audio** setting in Zoom.
 
@@ -295,7 +295,7 @@ Thank you for your interest in supporting the project! However, in the spirit of
 - **macOS**：macOS 10.15 (Catalina)及更高版本（支持Intel和Apple Silicon）
 - **Linux**：大多数现代Linux发行版（AppImage格式）
 
-硬件要求：
+:computer: M³ 的软硬件要求是什么？ {#hardware-and-software-requirements}
 
 - **最低**：4GB 内存，6GB 可用磁盘空间
 - **推荐**：8GB 内存，媒体缓存建议 15GB 可用空间
