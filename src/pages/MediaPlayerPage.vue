@@ -28,7 +28,7 @@
       <!-- eslint-disable next-line vue/no-v-html -->
       <div id="yeartext" class="q-pa-md center" v-html="yeartext" />
       <div v-if="!hideMediaLogo" id="yeartextLogoContainer">
-        <p id="yeartextLogo"></p>
+        <p id="yeartextLogo">{{ jwIcons['tv-logo'] }}</p>
       </div>
     </div>
 
@@ -152,6 +152,7 @@ import {
   whenever,
 } from '@vueuse/core';
 import { useQuasar } from 'quasar';
+import { jwIcons } from 'src/constants/jw-icons';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setElementFont } from 'src/helpers/fonts';
 import { createTemporaryNotification } from 'src/helpers/notifications';

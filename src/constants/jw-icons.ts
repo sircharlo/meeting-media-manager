@@ -19,6 +19,7 @@ export type jwIconsKeys =
   | 'pt'
   | 'tgw'
   | 'tracts-and-invitations'
+  | 'tv-logo'
   | 'w'
   | 'wp'
   | 'ws'
@@ -41,6 +42,7 @@ export const jwIcons: Record<jwIconsKeys, string> = {
   pt: '\ue6c2',
   tgw: '\ue65c',
   'tracts-and-invitations': '\ue6dc',
+  'tv-logo': '\ue66b',
   w: '\ue6ea',
   wp: '\ue6ea',
   ws: '\ue6eb',
