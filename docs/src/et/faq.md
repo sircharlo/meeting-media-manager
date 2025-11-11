@@ -1,6 +1,6 @@
 # Korduma kippuvad küsimused {#frequently-asked-questions}
 
-## General Questions {#general-questions}
+## Üldised küsimused {#general-questions}
 
 ### :earth_americas: Kas see rakendus kasutab väljaannete ja koosolekute meedia allalaadimiseks väliseid saite, allikaid või "kuraatoreid"? {#external-dependencies}
 
@@ -20,19 +20,19 @@ Selle rakenduse lähtekood on kõigile kättesaadav, et uurida ja kontrollida, m
 >
 > Luua levitamise eesmärgil tarkvararakendusi, tööriistu või muid tehnilisi lahendusi, mis võimaldavad koguda, kaasa arvatud scraping ja harvesting, kopeerida, alla laadida või lahti pakkida andmeid, HTML-i, pilte või teksti sellelt saidilt. (Keeld **ei kehti** tasuta, mitteärilistel eesmärkidel loodud rakenduste kohta, mille eesmärk on võimaldada alla laadida elektroonilisi faile, näiteks EPUB-, PDF-, MP3- ja MP4-vormingus faile selle saidi avalikust osast.)
 
-### :question: What operating systems does M³ support? {#operating-systems}
+### :question: Milliseid operatsioonisüsteeme M³ toetab? {#operating-systems}
 
-M³ supports Windows, macOS, and Linux:
+M³ toetab Windowsit, macOS-i ja Linuxit:
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 ja uuemad versioonid (saadaval 64-bitine ja 32-bitine versioon)
+- **macOS**: macOS 10.15 (Catalina) ja uuemad versioonid (toetab Intel ja Apple Silicon protsessoreid)
+- **Linux**: enamik kaasaegseid Linuxi distributsioone (AppImage-vorming)
 
-### :globe_with_meridians: Does M³ work in my language? {#language-support}
+### :globe_with_meridians: Kas M³ töötab minu keeles? {#language-support}
 
 **Jah!** M³ pakub laiaulatuslikku mitmekeelset tuge:
 
-- **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
+- **Meedia**: Lae alla meedia sadades keeltes, mis on saadaval Jehoova tunnistajate ametlikul veebisaidil
 - **App Interface**: Use M³'s interface in many different languages
 - **Independent Settings**: You can use the interface in one language while downloading media in another
 - **Fallback languages**: Configure fallback languages for when media isn't available in the primary language
@@ -291,9 +291,9 @@ Thank you for your interest in supporting the project! However, in the spirit of
 
 M³ is designed to work on a wide range of operating systems:
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 ja uuemad versioonid (saadaval 64-bitine ja 32-bitine versioon)
+- **macOS**: macOS 10.15 (Catalina) ja uuemad versioonid (toetab Intel ja Apple Silicon protsessoreid)
+- **Linux**: enamik kaasaegseid Linuxi distributsioone (AppImage-vorming)
 
 M³ has the following hardware requirements:
 
