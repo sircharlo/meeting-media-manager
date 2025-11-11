@@ -169,7 +169,6 @@
         <!-- Meeting Part Selection (only on meeting days) -->
         <template v-if="isMeetingDay(selectedDateObject?.date)">
           <template v-if="isMwMeetingDay(selectedDateObject?.date)">
-            <!-- AYFM Configuration -->
             <template
               v-if="
                 timerMode === 'countdown' &&
@@ -178,7 +177,10 @@
             >
               <q-separator class="bg-accent-200 q-mb-md" />
               <div class="card-section-title row q-px-md">
-                {{ t('ayfm-configuration') }}
+                {{ t('ayfm') }}
+              </div>
+              <div class="row q-px-md q-py-sm">
+                {{ t('number-of-ayfm-parts') }}
               </div>
               <div class="row q-px-md q-pb-sm">
                 <q-btn-toggle
@@ -212,10 +214,12 @@
                   type="number"
                 />
               </div>
-              <!-- LAC Configuration -->
               <q-separator class="bg-accent-200 q-mb-md" />
               <div class="card-section-title row q-px-md">
-                {{ t('lac-configuration') }}
+                {{ t('lac') }}
+              </div>
+              <div class="row q-px-md q-py-sm">
+                {{ t('number-of-lac-parts') }}
               </div>
               <div class="row q-px-md q-pb-sm">
                 <q-btn-toggle
@@ -249,11 +253,85 @@
               </div>
               <template v-if="!isCoWeek(selectedDateObject?.date)">
                 <div class="row q-px-md q-py-sm">
-                  {{ t('cbs-adaptive-end-time') }}
+                  {{ t('adapt-cbs-duration-dynamically') }}
+                </div>
+                <div class="row q-px-md q-pb-sm">
+                  <q-btn-toggle
+                    v-model="cbsAdaptiveEnabled"
+                    :disable="timerRunning"
+                    :options="[
+                      { label: t('fixed'), value: false },
+                      { label: t('adaptive'), value: true },
+                    ]"
+                    toggle-color="primary"
+                  />
+                </div>
+                <template v-if="cbsAdaptiveEnabled">
+                  <div class="row q-px-md q-py-sm">
+                    {{ t('cbs-adaptive-end-time') }}
+                  </div>
+                  <div class="row q-px-md q-pb-sm">
+                    <q-input
+                      v-model="cbsAdaptiveEndTime"
+                      class="full-width"
+                      :disable="timerRunning"
+                      filled
+                      :label="t('end-time')"
+                      mask="##:##"
+                      :rules="[
+                        (val: string) => !!val || t('required'),
+                        (val: string) => {
+                          const parts = val.split(':');
+                          const h = Number(parts[0]);
+                          const m = Number(parts[1]);
+                          const endTime = new Date(
+                            meetingStartTime?.getTime() || 0,
+                          );
+                          endTime.setHours(h, m, 0, 0);
+                          const minTime = new Date(
+                            (meetingStartTime?.getTime() || 0) + 68 * 60 * 1000,
+                          );
+                          const maxTime = new Date(
+                            (meetingStartTime?.getTime() || 0) + 97 * 60 * 1000,
+                          );
+                          return (
+                            (endTime >= minTime && endTime <= maxTime) ||
+                            t('time-must-be-between', {
+                              minTime:
+                                minTime.getHours() + ':' + minTime.getMinutes(),
+                              maxTime:
+                                maxTime.getHours() + ':' + maxTime.getMinutes(),
+                            })
+                          );
+                        },
+                      ]"
+                    />
+                  </div>
+                </template>
+              </template>
+            </template>
+            <template v-else-if="isWeMeetingDay(selectedDateObject?.date)">
+              <div class="row q-px-md q-py-sm">
+                {{ t('adapt-wt-duration-dynamically') }}
+              </div>
+              <div class="row q-px-md q-pb-sm">
+                <q-btn-toggle
+                  v-model="wtAdaptiveEnabled"
+                  :disable="timerRunning"
+                  :options="[
+                    { label: t('fixed'), value: false },
+                    { label: t('adaptive'), value: true },
+                  ]"
+                  toggle-color="primary"
+                />
+              </div>
+              <template v-if="wtAdaptiveEnabled">
+                <div class="row q-px-md q-py-sm">
+                  {{ t('wt-adaptive-end-time') }}
                 </div>
                 <div class="row q-px-md q-pb-sm">
                   <q-input
-                    v-model="cbsAdaptiveEndTime"
+                    v-model="wtAdaptiveEndTime"
                     class="full-width"
                     :disable="timerRunning"
                     filled
@@ -270,10 +348,10 @@
                         );
                         endTime.setHours(h, m, 0, 0);
                         const minTime = new Date(
-                          (meetingStartTime?.getTime() || 0) + 68 * 60 * 1000,
+                          (meetingStartTime?.getTime() || 0) + 36 * 60 * 1000,
                         );
                         const maxTime = new Date(
-                          (meetingStartTime?.getTime() || 0) + 97 * 60 * 1000,
+                          (meetingStartTime?.getTime() || 0) + 100 * 60 * 1000,
                         );
                         return (
                           (endTime >= minTime && endTime <= maxTime) ||
@@ -289,48 +367,6 @@
                   />
                 </div>
               </template>
-            </template>
-            <template v-else-if="isWeMeetingDay(selectedDateObject?.date)">
-              <div class="row q-px-md q-py-sm">
-                {{ t('wt-adaptive-end-time') }}
-              </div>
-              <div class="row q-px-md q-pb-sm">
-                <q-input
-                  v-model="wtAdaptiveEndTime"
-                  class="full-width"
-                  :disable="timerRunning"
-                  filled
-                  :label="t('end-time')"
-                  mask="##:##"
-                  :rules="[
-                    (val: string) => !!val || t('required'),
-                    (val: string) => {
-                      const parts = val.split(':');
-                      const h = Number(parts[0]);
-                      const m = Number(parts[1]);
-                      const endTime = new Date(
-                        meetingStartTime?.getTime() || 0,
-                      );
-                      endTime.setHours(h, m, 0, 0);
-                      const minTime = new Date(
-                        (meetingStartTime?.getTime() || 0) + 36 * 60 * 1000,
-                      );
-                      const maxTime = new Date(
-                        (meetingStartTime?.getTime() || 0) + 100 * 60 * 1000,
-                      );
-                      return (
-                        (endTime >= minTime && endTime <= maxTime) ||
-                        t('time-must-be-between', {
-                          minTime:
-                            minTime.getHours() + ':' + minTime.getMinutes(),
-                          maxTime:
-                            maxTime.getHours() + ':' + maxTime.getMinutes(),
-                        })
-                      );
-                    },
-                  ]"
-                />
-              </div>
             </template>
           </template>
         </template>
@@ -353,6 +389,9 @@
               </q-item-section>
               <q-item-section>
                 <q-item-label>{{ part.label }}</q-item-label>
+                <q-item-label v-if="part.caption" caption>
+                  {{ part.caption }}
+                </q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
@@ -509,7 +548,6 @@ type MeetingPart =
   | 'ayfm-5'
   | 'bible-reading'
   | 'cbs'
-  | 'cbs-adaptive'
   | 'co-final-talk'
   | 'co-service-talk'
   | 'gems'
@@ -518,8 +556,7 @@ type MeetingPart =
   | 'lac-3'
   | 'public-talk'
   | 'treasures'
-  | 'wt'
-  | 'wt-adaptive';
+  | 'wt';
 
 const currentPart = ref<MeetingPart>('public-talk');
 const countdownTarget = ref<number>(0); // Target time in seconds for countdown
@@ -528,7 +565,9 @@ const ayfmPartsCount = ref<number>(1);
 const ayfmDurations = ref<number[]>([15]);
 const lacPartsCount = ref<number>(1);
 const lacDurations = ref<number[]>([15]);
-const cbsAdaptiveEndTime = ref<string>('');
+const cbsAdaptiveEnabled = ref(false);
+const cbsAdaptiveEndTime = ref('');
+const wtAdaptiveEnabled = ref(false);
 const wtAdaptiveEndTime = ref<string>('');
 
 const { getAllScreens, moveTimerWindow, toggleTimerWindow } =
@@ -642,43 +681,50 @@ const wtAdaptiveDefaultEndTime = computed(() => {
 });
 
 const meetingPartsOptions: ComputedRef<
-  { label: string; value: MeetingPart; warning?: boolean }[]
+  {
+    caption?: string;
+    label: string;
+    value: MeetingPart;
+    warning?: boolean;
+  }[]
 > = computed(() => {
   const date = selectedDateObject.value?.date;
   if (isWeMeetingDay(date)) {
-    const isCo = isCoWeek(date);
-    if (isCo) {
-      return [
-        { label: t('public-talk'), value: 'public-talk' },
-        { label: t('wt'), value: 'wt' },
-        {
-          label: t('wt-end-time', {
-            endTime: wtAdaptiveEndTime.value || t('adaptive'),
-          }),
-          value: 'wt-adaptive',
-        },
-        { label: t('co-final-talk'), value: 'co-final-talk' },
-      ];
-    } else {
-      return [
-        { label: t('public-talk'), value: 'public-talk' },
-        { label: t('wt'), value: 'wt' },
-        {
-          label: t('wt-end-time', {
-            endTime: wtAdaptiveEndTime.value || t('adaptive'),
-          }),
-          value: 'wt-adaptive',
-        },
-      ];
+    const options: {
+      caption?: string;
+      label: string;
+      value: MeetingPart;
+      warning?: boolean;
+    }[] = [
+      { label: t('public-talk'), value: 'public-talk' },
+      {
+        caption: wtAdaptiveEnabled.value
+          ? t('latest-ending', {
+              endTime: wtAdaptiveEndTime.value || t('adaptive'),
+            })
+          : '',
+        label: t('wt'),
+        value: 'wt',
+      },
+    ];
+
+    if (isCoWeek(date)) {
+      options.push({ label: t('co-final-talk'), value: 'co-final-talk' });
     }
+
+    return options;
   } else if (isMwMeetingDay(date)) {
     const isCo = isCoWeek(date);
-    const options: { label: string; value: MeetingPart; warning?: boolean }[] =
-      [
-        { label: t('treasures-talk'), value: 'treasures' },
-        { label: t('gems'), value: 'gems' },
-        { label: t('bible-reading'), value: 'bible-reading' },
-      ];
+    const options: {
+      caption?: string;
+      label: string;
+      value: MeetingPart;
+      warning?: boolean;
+    }[] = [
+      { label: t('treasures-talk'), value: 'treasures' },
+      { label: t('gems'), value: 'gems' },
+      { label: t('bible-reading'), value: 'bible-reading' },
+    ];
     // Add AYFM parts
     for (let i = 1; i <= ayfmPartsCount.value; i++) {
       const totalDuration = ayfmDurations.value.reduce((a, b) => a + b, 0);
@@ -707,15 +753,15 @@ const meetingPartsOptions: ComputedRef<
         value: 'co-service-talk',
       });
     } else {
-      options.push(
-        { label: t('cbs'), value: 'cbs' },
-        {
-          label: t('cbs-end-time', {
-            endTime: cbsAdaptiveEndTime.value || t('adaptive'),
-          }),
-          value: 'cbs-adaptive',
-        },
-      );
+      options.push({
+        caption: cbsAdaptiveEnabled.value
+          ? t('latest-ending', {
+              endTime: cbsAdaptiveEndTime.value || t('adaptive'),
+            })
+          : '',
+        label: t('cbs'),
+        value: 'cbs',
+      });
     }
     return options;
   }
@@ -775,29 +821,32 @@ const calculateCountdownTarget = () => {
       return 30 * 60;
     } else if (currentPart.value === 'wt') {
       const isCo = isCoWeek(selectedDateObject.value?.date);
-      return (isCo ? 30 : 60) * 60;
-    } else if (currentPart.value === 'wt-adaptive') {
-      // Custom end time
-      const configuredMeetingStartTime = currentSettings.value?.weStartTime;
-      if (!configuredMeetingStartTime || !wtAdaptiveEndTime.value) return 0;
-      const [startHour, startMinute] = configuredMeetingStartTime.split(':');
-      const meetingStartTime = new Date(selectedDateObject.value.date);
-      if (!startHour || !startMinute) return 0;
-      meetingStartTime.setHours(
-        parseInt(startHour),
-        parseInt(startMinute),
-        0,
-        0,
-      );
-      const parts = wtAdaptiveEndTime.value.split(':');
-      const h = Number(parts[0]);
-      const m = Number(parts[1]);
-      const endTime = new Date(meetingStartTime.getTime());
-      endTime.setHours(h, m, 0, 0);
-      const now = new Date();
-      const remaining = Math.max(0, endTime.getTime() - now.getTime()) / 1000;
-      const remainingWholeSeconds = Math.floor(remaining);
-      return remainingWholeSeconds;
+      const wtMaxDuration = (isCo ? 30 : 60) * 60;
+      if (wtAdaptiveEnabled.value) {
+        // Custom end time
+        const configuredMeetingStartTime = currentSettings.value?.weStartTime;
+        if (!configuredMeetingStartTime || !wtAdaptiveEndTime.value) return 0;
+        const [startHour, startMinute] = configuredMeetingStartTime.split(':');
+        const meetingStartTime = new Date(selectedDateObject.value.date);
+        if (!startHour || !startMinute) return 0;
+        meetingStartTime.setHours(
+          parseInt(startHour),
+          parseInt(startMinute),
+          0,
+          0,
+        );
+        const parts = wtAdaptiveEndTime.value.split(':');
+        const h = Number(parts[0]);
+        const m = Number(parts[1]);
+        const endTime = new Date(meetingStartTime.getTime());
+        endTime.setHours(h, m, 0, 0);
+        const now = new Date();
+        const remaining = Math.max(0, endTime.getTime() - now.getTime()) / 1000;
+        const remainingWholeSeconds = Math.floor(remaining);
+        return Math.min(remainingWholeSeconds, wtMaxDuration);
+      } else {
+        return wtMaxDuration;
+      }
     } else if (currentPart.value === 'co-final-talk') {
       return 30 * 60;
     } else if (currentPart.value === 'co-service-talk') {
@@ -821,29 +870,32 @@ const calculateCountdownTarget = () => {
     } else if (currentPart.value === 'co-service-talk') {
       return 30 * 60;
     } else if (currentPart.value === 'cbs') {
-      return 30 * 60;
-    } else if (currentPart.value === 'cbs-adaptive') {
-      // Custom end time
-      const configuredMeetingStartTime = currentSettings.value?.mwStartTime;
-      if (!configuredMeetingStartTime || !cbsAdaptiveEndTime.value) return 0;
-      const [startHour, startMinute] = configuredMeetingStartTime.split(':');
-      const meetingStartTime = new Date(selectedDateObject.value.date);
-      if (!startHour || !startMinute) return 0;
-      meetingStartTime.setHours(
-        parseInt(startHour),
-        parseInt(startMinute),
-        0,
-        0,
-      );
-      const parts = cbsAdaptiveEndTime.value.split(':');
-      const h = Number(parts[0]);
-      const m = Number(parts[1]);
-      const endTime = new Date(meetingStartTime.getTime());
-      endTime.setHours(h, m, 0, 0);
-      const now = new Date();
-      const remaining = Math.max(0, endTime.getTime() - now.getTime()) / 1000;
-      const remainingWholeSeconds = Math.floor(remaining);
-      return remainingWholeSeconds;
+      const cbsMaxDuration = 30 * 60;
+      if (cbsAdaptiveEnabled.value) {
+        // Custom end time
+        const configuredMeetingStartTime = currentSettings.value?.mwStartTime;
+        if (!configuredMeetingStartTime || !cbsAdaptiveEndTime.value) return 0;
+        const [startHour, startMinute] = configuredMeetingStartTime.split(':');
+        const meetingStartTime = new Date(selectedDateObject.value.date);
+        if (!startHour || !startMinute) return 0;
+        meetingStartTime.setHours(
+          parseInt(startHour),
+          parseInt(startMinute),
+          0,
+          0,
+        );
+        const parts = cbsAdaptiveEndTime.value.split(':');
+        const h = Number(parts[0]);
+        const m = Number(parts[1]);
+        const endTime = new Date(meetingStartTime.getTime());
+        endTime.setHours(h, m, 0, 0);
+        const now = new Date();
+        const remaining = Math.max(0, endTime.getTime() - now.getTime()) / 1000;
+        const remainingWholeSeconds = Math.floor(remaining);
+        return Math.min(remainingWholeSeconds, cbsMaxDuration);
+      } else {
+        return cbsMaxDuration;
+      }
     }
   }
 
