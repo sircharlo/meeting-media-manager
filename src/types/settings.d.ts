@@ -171,6 +171,7 @@ export type SettingsItemSubgroup =
   | 'setupWizard'
   | 'setupWizard.backgroundMusic'
   | 'subtitles'
+  | 'timer'
   | 'zoomIntegration';
 
 export type SettingsItemType =
