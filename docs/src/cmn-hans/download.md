@@ -1,12 +1,12 @@
 ---
-title: Downloads
+title: 下载
 ---
 
 <!-- markdownlint-disable MD025 MD033 -->
 
-# Downloads
+# 下载
 
-Use the links below to download the latest version of Meeting Media Manager for your operating system. These links always point to the newest stable release.
+请根据您的操作系统从下方链接下载 Meeting Media Manager 的最新版本。这些链接始终指向最新的稳定版。 这些链接总是指最新的稳定版本。
 
 <script setup lang="ts">
 import { data as downloads } from '../../data/version.data.mts'
@@ -77,27 +77,27 @@ onMounted(() => {
 })
 </script>
 
-## Latest release
+## 最新版本
 
-- **Version**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
+- **版本**: {{ downloads.version }} <span v-if="daysAgoText">（{{ daysAgoText }}）</span>
 
 <div v-if="recommended" style="margin: 1rem 0; padding: 1rem; border: 1px solid var(--vp-c-brand-1); border-radius: 8px; background: var(--vp-c-brand-soft);"><strong>{{ msg.recommendedFor }} {{ recommended.label }}</strong>
   <div style="margin-top: .5rem;"><a :href="recommended.href" style="display:inline-block; padding:.5rem 1rem; border-radius:6px; background: var(--vp-c-brand-1); color: white; text-decoration:none;">{{ msg.download }}</a>
   </div>
-  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">If this doesn’t match your system, pick from the options below.</div>
+  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">如果与您的系统不符，请从下方选项中手动选择。</div>
 </div>
 
 ## Windows
 
-- **Windows 64-bit (.exe)**: <a :href="downloads.win64">Download</a>
-- **Windows 32-bit (.exe)**: <a :href="downloads.win32">Download</a>
-- **Windows Portable (.exe)**: <a :href="downloads.winPortable">Download</a>
+- **Windows 64位 (.exe)**：<a :href="downloads.win64">下载</a>
+- **Windows 32位 (.exe)**：<a :href="downloads.win32">下载</a>
+- **Windows 便携版 (.exe)**：<a :href="downloads.winPortable">下载</a>
 
 ## macOS
 
-- **Apple Silicon (arm64) (.dmg)**: <a :href="downloads.macArm">Download</a>
-- **Intel (x64) (.dmg)**: <a :href="downloads.macIntel">Download</a>
+- **Apple Silicon (arm64) (.dmg)**：<a :href="downloads.macArm">下载</a>
+- **Intel (x64) (.dmg)**：<a :href="downloads.macIntel">下载</a>
 
 ## Linux
 
-- **x86_64 (AppImage)**: <a :href="downloads.linux">Download</a>
+- **x86_64 (AppImage)**：<a :href="downloads.linux">下载</a>

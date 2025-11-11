@@ -37,7 +37,7 @@ export async function downloadFile(
   destFilename?: string,
   lowPriority = false,
 ) {
-  if (!mainWindow || !url || !saveDir) return null;
+  if (!mainWindow || mainWindow.isDestroyed() || !url || !saveDir) return null;
   try {
     await ensureDir(saveDir);
 
@@ -178,7 +178,7 @@ async function processQueue() {
     return; // No downloads to process
   }
 
-  if (!download || !mainWindow || cancelAll) return;
+  if (!download || !mainWindow || mainWindow.isDestroyed() || cancelAll) return;
   const { destFilename, saveDir, url } = download;
   activeDownloadIds.push(url + saveDir);
 

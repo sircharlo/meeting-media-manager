@@ -188,6 +188,13 @@ export const fetchJson = async <T>(
   } catch (e) {
     const { default: isOnline } = await import('is-online');
     const online = await isOnline();
+
+    // Ignore transient DNS errors
+    if (e instanceof Error && e.message.includes('ENOTFOUND ipinfo.io')) {
+      console.warn('[fetchJson] Ignored transient DNS error for ipinfo.io');
+      return null;
+    }
+
     if (online) {
       captureElectronError(e, {
         contexts: {

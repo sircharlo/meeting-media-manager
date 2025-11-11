@@ -1,6 +1,6 @@
 # Korduma kippuvad küsimused {#frequently-asked-questions}
 
-## General Questions {#general-questions}
+## Üldised küsimused {#general-questions}
 
 ### :earth_americas: Kas see rakendus kasutab väljaannete ja koosolekute meedia allalaadimiseks väliseid saite, allikaid või "kuraatoreid"? {#external-dependencies}
 
@@ -20,71 +20,71 @@ Selle rakenduse lähtekood on kõigile kättesaadav, et uurida ja kontrollida, m
 >
 > Luua levitamise eesmärgil tarkvararakendusi, tööriistu või muid tehnilisi lahendusi, mis võimaldavad koguda, kaasa arvatud scraping ja harvesting, kopeerida, alla laadida või lahti pakkida andmeid, HTML-i, pilte või teksti sellelt saidilt. (Keeld **ei kehti** tasuta, mitteärilistel eesmärkidel loodud rakenduste kohta, mille eesmärk on võimaldada alla laadida elektroonilisi faile, näiteks EPUB-, PDF-, MP3- ja MP4-vormingus faile selle saidi avalikust osast.)
 
-### :question: What operating systems does M³ support? {#operating-systems}
+### :question: Milliseid operatsioonisüsteeme M³ toetab? {#operating-systems}
 
-M³ supports Windows, macOS, and Linux:
+M³ toetab Windowsit, macOS-i ja Linuxit:
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 ja uuemad versioonid (saadaval 64-bitine ja 32-bitine versioon)
+- **macOS**: macOS 10.15 (Catalina) ja uuemad versioonid (toetab Intel ja Apple Silicon protsessoreid)
+- **Linux**: enamik kaasaegseid Linuxi distributsioone (AppImage-vorming)
 
-### :globe_with_meridians: Does M³ work in my language? {#language-support}
+### :globe_with_meridians: Kas M³ töötab minu keeles? {#language-support}
 
 **Jah!** M³ pakub laiaulatuslikku mitmekeelset tuge:
 
-- **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
-- **App Interface**: Use M³'s interface in many different languages
-- **Independent Settings**: You can use the interface in one language while downloading media in another
-- **Fallback languages**: Configure fallback languages for when media isn't available in the primary language
-- **Subtitle support**: Download and display subtitles in various languages
+- **Meedia**: Lae alla meedia sadades keeltes, mis on saadaval Jehoova tunnistajate ametlikul veebisaidil
+- **Rakenduse liides**: Kasutage M³ liidest paljudes erinevates keeltes
+- **Sõltumatud seaded**: saate kasutada liidest ühes keeles, samal ajal kui meedia alla laadite teises keeles
+- **Varukeeled**: konfigureerige varukeeled juhuks, kui meedia ei ole saadaval esimeses keeles
+- **Subtiitrite tugi**: erinevates keeltes subtiitrite allalaadimine ja kuvamine
 
-## Installation and Setup {#installation-setup}
+## Paigaldamine ja seadistamine {#installation-setup}
 
-### :computer: How do I download and install M³? {#installation}
+### :computer: Kuidas saan M³ alla laadida ja paigaldada? {#installation}
 
-Download the appropriate version from the [Download page](download) and follow the steps in the [User Guide](user-guide).
+Lae alla sobiv versioon [alla laadimise lehelt](download) ja järgi [kasutusjuhendis](user-guide) toodud juhiseid.
 
-### :gear: How do I set up M³ for the first time? {#first-time-setup}
+### :gear: Kuidas seadistada M³ esimest korda? {#first-time-setup}
 
-M³ includes a setup wizard that guides you through the essential configuration:
+M³ sisaldab seadistusviisardit, mis juhendab teid oluliste seadistuste tegemisel:
 
-1. Choose your interface language
-2. Select profile type (Regular or Other)
-3. Configure congregation information
-4. Set up meeting schedule
-5. Configure optional features like OBS integration
+1. Vali oma kasutajaliidese keel
+2. Vali profiili tüüp (tavaline või muu)
+3. Konfigureeri koguduse andmed
+4. Koosta koosolekute ajakava
+5. Seadista valikulised funktsioonid, nagu OBS-iga koostöö
 
-## Media Management {#faq-media-management}
+## Põhimeedia haldus {#faq-media-management}
 
-### :desktop_computer: How does M³ download media? {#media-download}
+### :desktop_computer: Kuidas M³ meediat alla laadib? {#media-download}
 
-M³ automatically downloads media for upcoming meetings by:
+M³ laadib automaatselt alla meedia eelseisvate koosolekute jaoks järgmiselt:
 
-1. Checking your meeting schedule
-2. Determining what media is needed
-3. Downloading from the official website of Jehovah's Witnesses in your selected language
-4. Organizing media by date and meeting type
-5. Caching files for offline use
+1. Kontrollib koosolekute ajakava
+2. Määrab kindlaks millist meediaüksusi on vaja
+3. Laeb alla meediaüksused Jehoova tunnistajate ametlikult veebilehelt valitud keeles
+4. Organiseerib meediaüksused vatavalt kuupäevale ja koosolekule
+5. Failide salvestamine offline-kasutamiseks
 
-### :calendar: Can I download media for specific dates? {#specific-dates}
+### :calendar: Kas ma saan alla laadida meediat kindlate kuupäevade jaoks? {#specific-dates}
 
-Yes! M³ allows you to:
+Jah! M³ võimaldab sul:
 
-- Download media for upcoming meetings automatically
-- Import custom media for any date
+- Laadida automaatselt alla eelseisvate koosolekute meediafailid
+- Importida kohandatud meedia mis tahes kuupäeva jaoks
 
-### :open_file_folder: How do I import my own media files? {#import-media}
+### :open_file_folder: Kuidas importida oma meediafailid? {#import-media}
 
-You can import custom media in several ways:
+Sa saad importida kohandatud meediat mitmel viisil:
 
-- **File Import**: Use the import button to add videos, images, or audio files
-- **Drag and Drop**: Drag files directly into M³
-- **Folder Monitoring**: Set up a watched folder for automatic imports
-- **JWPUB Files and Playlists**: Import publications and playlists
+- **Failide importimine**: Kasutage importimise nuppu, et lisada videoid, pilte või helifaile
+- **Lohistamine ja kleepimine**: Lohistage failid otse M³-e
+- **Kausta jälgimine**: seadista jälgitav kaust automaatseks importimiseks
+- **JWPUB-failid ja esitusloendid**: importige väljaanded ja esitusloendid
 
 ### :speaker: Can I import audio Bible recordings? {#audio-bible}
 
-Yes! M³ includes an Audio Bible feature that allows you to:
+Jah! M³ includes an Audio Bible feature that allows you to:
 
 1. Select Bible books and chapters
 2. Choose specific verses or verse ranges
@@ -181,7 +181,7 @@ Media auto-export automatically:
 
 ### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
 
-Yes! M³ supports multiple profiles for:
+Jah! M³ supports multiple profiles for:
 
 - Different congregations
 - Special events
@@ -291,9 +291,9 @@ Thank you for your interest in supporting the project! However, in the spirit of
 
 M³ is designed to work on a wide range of operating systems:
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 ja uuemad versioonid (saadaval 64-bitine ja 32-bitine versioon)
+- **macOS**: macOS 10.15 (Catalina) ja uuemad versioonid (toetab Intel ja Apple Silicon protsessoreid)
+- **Linux**: enamik kaasaegseid Linuxi distributsioone (AppImage-vorming)
 
 M³ has the following hardware requirements:
 
@@ -319,7 +319,7 @@ Typical usage ranges from 2-10GB depending on settings and usage.
 
 ### :shield: Is M³ secure and private? {#security-privacy}
 
-Yes! M³ is designed with security and privacy in mind:
+Jah! M³ is designed with security and privacy in mind:
 
 - **Local Storage**: All meeting data is stored locally on your computer
 - **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses

@@ -91,6 +91,9 @@ export const electronApi: ElectronApi = {
   onDownloadStarted: function (callback) {
     throw new Error('Function not implemented.');
   },
+  onGpuCrashDetected: function (callback) {
+    throw new Error('Function not implemented.');
+  },
   onLog: function (callback) {
     throw new Error('Function not implemented.');
   },

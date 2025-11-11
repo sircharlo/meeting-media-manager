@@ -1,6 +1,6 @@
 # 设置指南 {#settings-guide}
 
-本综合指南按类别解释了M3中所有可用的设置。 了解这些设置将有助于配置M3来完全满足您会众的需要。
+本综合指南按类别解释了M3中所有可用的设置。 了解这些设置将有助于配置M3来完全满足您会众的需要。 了解这些设置将有助于配置M3来完全满足您会众的需要。
 
 ## 应用程序配置 {#application-configuration}
 
@@ -8,7 +8,7 @@
 
 <!-- **Setting**: `localAppLang` -->
 
-选择 M3 界面语言。 这只适用于媒体下载的语言。
+选择 M3 界面语言。 这只适用于媒体下载的语言。 这只适用于媒体下载的语言。
 
 **选项**：所有可用的界面语言 (英语、西班牙语、法语等)
 
@@ -22,23 +22,23 @@
 
 **选项**：
 
-- Automatically switch based on system preference
+- 自动matically switch based on system preference
 - Always use dark mode
 - Always use light mode
 
-**Default**: Auto
+**Default**: 自动
 
-### First Day of Week {#first-day-of-week}
+### 一周的第一天 {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the calendar view.
+设置在日历视图中一周的起始日。
 
-**Options**: Sunday through Saturday
+**Options**: 星期日 至 星期六
 
 **Default**: Sunday
 
-### Date Format {#date-format}
+### 日期格式 {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
@@ -48,17 +48,17 @@ Format used to display dates in the app.
 
 **Default**: D MMMM YYYY
 
-### Auto-Start at Login {#auto-start-at-login}
+### 登录时自动启动 {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-Automatically start M³ when the computer boots up.
+计算机启动时自动启动 M³。
 
 **Default**: `false`
 
-## Congregation Meetings {#congregation-meetings}
+## 会众聚会 {#congregation-meetings}
 
-### Congregation Name {#congregation-name}
+### 会众名称 {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
@@ -66,7 +66,7 @@ The name of your congregation. This is used for organization and display purpose
 
 **Default**: Empty (must be set during setup)
 
-### Meeting Language {#meeting-language}
+### 聚会语言 {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
@@ -76,7 +76,7 @@ The primary language for media downloads. This should match the language used in
 
 **Default**: English (E)
 
-### Fallback Language {#fallback-language}
+### 后备语言 {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
@@ -86,47 +86,47 @@ A secondary language to use when media isn't available in the primary language.
 
 **Default**: None
 
-### Midweek Meeting Day {#midweek-meeting-day}
+### 周中聚会（星期几）{#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-The day of the week when your midweek meeting is held.
+周中聚会举行的星期几。
 
-**Options**: Sunday through Saturday
+**Options**: 星期日 至 星期六
 
-**Default**: None (must be set during setup)
+**Default**: 无（需在设置向导中设定）
 
-### Midweek Meeting Time {#midweek-meeting-time}
+### 周中聚会开始时间 {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
-The start time of your midweek meeting.
+周中聚会的开始时间。
 
-**Format**: HH:MM (24-hour format)
+**Format**: HH:MM（24小时制）
 
-**Default**: None (must be set during setup)
+**Default**: 无（需在设置向导中设定）
 
-### Weekend Meeting Day {#weekend-meeting-day}
+### 周末聚会（星期几）{#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-The day of the week when your weekend meeting is held.
+周末聚会举行的星期几。
 
-**Options**: Sunday through Saturday
+**Options**: 星期日 至 星期六
 
-**Default**: None (must be set during setup)
+**Default**: 无（需在设置向导中设定）
 
-### Weekend Meeting Time {#weekend-meeting-time}
+### 周末聚会开始时间 {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
-The start time of your weekend meeting.
+周末聚会的开始时间。
 
-**Format**: HH:MM (24-hour format)
+**Format**: HH:MM（24小时制）
 
-**Default**: None (must be set during setup)
+**Default**: 无（需在设置向导中设定）
 
-### Circuit Overseer Week {#circuit-overseer-week}
+### 分区监督探访周 {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
@@ -136,7 +136,7 @@ The week of the next circuit overseer's visit.
 
 **Default**: None
 
-### Memorial Date {#memorial-date}
+### 纪念晚餐日期 {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
@@ -144,9 +144,9 @@ The date of the next Memorial celebration (beta feature).
 
 **Format**: MM/DD/YYYY
 
-**Default**: Automatically retrieved periodically
+**Default**: 自动matically retrieved periodically
 
-### Meeting Schedule Changes {#meeting-schedule-changes}
+### 聚会议程变更 {#meeting-schedule-changes}
 
 These settings allow you to configure temporary changes to your meeting schedule:
 
@@ -159,7 +159,7 @@ These settings allow you to configure temporary changes to your meeting schedule
 
 ## Media Retrieval and Playback {#media-retrieval-and-playback}
 
-### Metered Connection {#metered-connection}
+### 计量连接 {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
@@ -167,7 +167,7 @@ Enable this if you're on a limited data connection to reduce bandwidth usage.
 
 **Default**: `false`
 
-### Media Display {#media-display-button}
+### 媒体显示按钮 {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
@@ -183,7 +183,7 @@ Start videos in a paused state when playback begins.
 
 **Default**: `false`
 
-### Background Music {#settings-guide-background-music}
+### 背景音乐 {#settings-guide-background-music}
 
 #### Enable Music {#enable-music-button}
 
@@ -193,11 +193,11 @@ Enable background music functionality.
 
 **Default**: `true`
 
-#### Auto-Start Music {#auto-start-music}
+#### 自动-Start Music {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-Automatically start background music when M³ launches if appropriate.
+自动matically start background music when M³ launches if appropriate.
 
 **Default**: `true`
 
@@ -219,7 +219,7 @@ Volume level for background music (1-100%).
 
 **Default**: 100%
 
-### Cache Management {#cache-management}
+### 缓存管理 {#cache-management}
 
 #### Enable Extra Cache {#enable-extra-cache}
 
@@ -237,15 +237,15 @@ Custom location for storing cached media files.
 
 **Default**: System default location
 
-#### Enable Cache Auto-Clear {#enable-cache-auto-clear}
+#### Enable Cache 自动-Clear {#enable-cache-auto-clear}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
-Automatically clear old cached files to save disk space.
+自动matically clear old cached files to save disk space.
 
 **Default**: `true`
 
-### Folder Monitoring {#settings-guide-folder-monitoring}
+### 文件夹监控 {#settings-guide-folder-monitoring}
 
 #### Enable Folder Watcher {#enable-folder-watcher}
 
@@ -265,7 +265,7 @@ The folder path to monitor for new media files.
 
 ## Integrations {#integrations}
 
-### Zoom Integration {#settings-guide-zoom-integration}
+### Zoom 集成 {#settings-guide-zoom-integration}
 
 #### Enable Zoom {#enable-zoom}
 
@@ -283,7 +283,7 @@ Keyboard shortcut to trigger Zoom screen sharing.
 
 **Default**: None
 
-### OBS Studio Integration {#settings-guide-obs-integration}
+### OBS Studio 集成 {#settings-guide-obs-integration}
 
 #### Enable OBS {#enable-obs}
 
@@ -329,7 +329,7 @@ Configure which OBS scenes to use for different purposes:
 
 - **Postpone Images**: Delay sharing images to OBS until manually triggered
 - **Quick Toggle**: Enable quick on/off toggle for OBS integration
-- **Switch Scene After Media**: Automatically return to previous scene after media
+- **Switch Scene After Media**: 自动matically return to previous scene after media
 - **Remember Previous Scene**: Remember and restore the previous scene
 - **Hide Icons**: Hide OBS-related icons in the interface
 
@@ -341,7 +341,7 @@ Configure which OBS scenes to use for different purposes:
 
 :::
 
-### Custom Events {#custom-events}
+### 自定义事件 {#custom-events}
 
 #### Enable Custom Events {#enable-custom-events}
 
@@ -387,7 +387,7 @@ Shortcut that is triggered when the last song is played during a meeting.
 
 ## Advanced Settings {#advanced-settings}
 
-### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
+### 键盘快捷键 {#settings-guide-keyboard-shortcuts}
 
 #### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
 
@@ -408,7 +408,7 @@ Configure shortcuts for media playback:
 - **Stop Media**: Stop media playback
 - **Music Toggle**: Toggle background music
 
-### Media Display {#media-display}
+### 媒体显示 {#media-display}
 
 #### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
 
@@ -460,7 +460,7 @@ Exclude media from the Teaching (th) brochure from media downloads.
 
 **Default**: `true`
 
-### Subtitles {#subtitles}
+### 字幕 {#subtitles}
 
 #### Enable Subtitles {#enable-subtitles}
 
@@ -480,13 +480,13 @@ Language for subtitles (can be different from media language).
 
 **Default**: None
 
-### Media Export {#settings-guide-media-export}
+### 媒体导出 {#settings-guide-media-export}
 
-#### Enable Media Auto-Export {#enable-media-auto-export}
+#### Enable Media 自动-Export {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-Automatically export media files to a specified folder.
+自动matically export media files to a specified folder.
 
 **Default**: `false`
 
@@ -506,7 +506,7 @@ Convert exported media files to MP4 format for better compatibility.
 
 **Default**: `false`
 
-### Danger Zone {#danger-zone}
+### 危险区域 {#danger-zone}
 
 :::warning 小贴士
 
@@ -532,28 +532,28 @@ Completely disable automatic media downloads. Use this only for profiles that wi
 
 ## Tips for Optimal Configuration {#configuration-tips}
 
-### For New Users {#new-users}
+### 新手提示 {#new-users}
 
 1. Start with the setup wizard to configure basic settings
 2. Enable "Media Display Button" to access presentation features
 3. Configure your meeting schedule accurately
 4. Set up OBS integration if you use hybrid meetings
 
-### For Advanced Users {#advanced-users}
+### 进阶提示 {#advanced-users}
 
 1. Use folder monitoring to sync media from cloud storage
 2. Enable media auto-export for backup purposes
 3. Configure keyboard shortcuts for efficient operation
 4. Configure Zoom integration for automatic screen sharing
 
-### Performance Optimization {#performance-optimization}
+### 性能优化 {#performance-optimization}
 
 1. Enable extra cache for better performance
 2. Use appropriate maximum resolution for your needs
 3. Configure cache auto-clear to manage disk space
 4. Consider metered connection setting if on limited bandwidth
 
-### Troubleshooting {#settings-guide-troubleshooting}
+### 疑难解答 {#settings-guide-troubleshooting}
 
 - If media isn't downloading, check your meeting schedule settings
 - If OBS integration isn't working, verify port and password settings

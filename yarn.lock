@@ -4040,9 +4040,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/eslint-plugin@npm:^1.4.1":
-  version: 1.4.1
-  resolution: "@vitest/eslint-plugin@npm:1.4.1"
+"@vitest/eslint-plugin@npm:^1.4.2":
+  version: 1.4.2
+  resolution: "@vitest/eslint-plugin@npm:1.4.2"
   dependencies:
     "@typescript-eslint/scope-manager": "npm:^8.46.1"
     "@typescript-eslint/utils": "npm:^8.46.1"
@@ -4055,7 +4055,7 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 10c0/93906a6ff8a8da192803a7ecb16c7abba13749537e0d20016e58b9cdb5ee79697fdb33a8027e70935159a54be23acbd1b37de93e00bee78d2ec5b4b62dd30008
+  checksum: 10c0/39659ba137be75d664cd1e6fb7699dc1784a5c913e479bd92d7ad1ac0f4fb9718be0d281666c8019de5e024328bb97ac6393a1fcd39066744415ebc5ceba11ec
   languageName: node
   linkType: hard
 
@@ -10304,7 +10304,7 @@ __metadata:
     "@types/pretty-bytes": "npm:^5.2.0"
     "@typescript-eslint/utils": "npm:^8.46.3"
     "@vitejs/plugin-vue": "npm:^6.0.1"
-    "@vitest/eslint-plugin": "npm:^1.4.1"
+    "@vitest/eslint-plugin": "npm:^1.4.2"
     "@vue/eslint-config-prettier": "npm:^10.2.0"
     "@vue/eslint-config-typescript": "npm:^14.6.0"
     "@vue/test-utils": "npm:^2.4.6"
@@ -10335,9 +10335,9 @@ __metadata:
     lodash-es: "npm:^4.17.21"
     mime: "npm:^4.1.0"
     mousetrap: "npm:^1.6.5"
-    msw: "npm:^2.12.0"
-    music-metadata: "npm:^11.9.0"
-    obs-websocket-js: "npm:^5.0.6"
+    msw: "npm:^2.12.1"
+    music-metadata: "npm:^11.10.0"
+    obs-websocket-js: "npm:^5.0.7"
     p-queue: "npm:^9.0.0"
     pdfjs-dist: "npm:^5.4.394"
     pinia: "npm:^3.0.4"
@@ -10786,9 +10786,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msw@npm:^2.12.0":
-  version: 2.12.0
-  resolution: "msw@npm:2.12.0"
+"msw@npm:^2.12.1":
+  version: 2.12.1
+  resolution: "msw@npm:2.12.1"
   dependencies:
     "@inquirer/confirm": "npm:^5.0.0"
     "@mswjs/interceptors": "npm:^0.40.0"
@@ -10815,7 +10815,7 @@ __metadata:
       optional: true
   bin:
     msw: cli/index.js
-  checksum: 10c0/d6167cb7f51dbb0a0b313c707cb17e363186918e248f02e1d8ea144a25aaf1492a621de3035986859628abd9fac423f265d4f5df99c41ae9451379c8d7642532
+  checksum: 10c0/822f4fc0cb2bdade39a67045d56b32fc7b15f30814a64c637a3c55d99358a4c1d61ed00d21fafafbbee320ad600e5a048d938b195e0cef5c59e016a040595176
   languageName: node
   linkType: hard
 
@@ -10826,9 +10826,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^11.9.0":
-  version: 11.9.0
-  resolution: "music-metadata@npm:11.9.0"
+"music-metadata@npm:^11.10.0":
+  version: 11.10.0
+  resolution: "music-metadata@npm:11.10.0"
   dependencies:
     "@borewit/text-codec": "npm:^0.2.0"
     "@tokenizer/token": "npm:^0.3.0"
@@ -10839,7 +10839,7 @@ __metadata:
     strtok3: "npm:^10.3.4"
     token-types: "npm:^6.1.1"
     uint8array-extras: "npm:^1.5.0"
-  checksum: 10c0/7aee2faf8d231e6b56371ac4ee56e4bd8ce2fd57f72d387974cef2c7ba2a79741ed938a9d7b334ca0b153db1059f87aecf648ce2f30553b0ce75af389baf2b56
+  checksum: 10c0/f5b43a20702f73549564bfd4729b61bb03ea1c3d0a2c5221d174ad0391dd76cb3b214152d29a37780c0ea1c98a4f36b87b337654fe6df0d78bbcbea2f7a99796
   languageName: node
   linkType: hard
 
@@ -11210,9 +11210,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"obs-websocket-js@npm:^5.0.6":
-  version: 5.0.6
-  resolution: "obs-websocket-js@npm:5.0.6"
+"obs-websocket-js@npm:^5.0.7":
+  version: 5.0.7
+  resolution: "obs-websocket-js@npm:5.0.7"
   dependencies:
     "@msgpack/msgpack": "npm:^2.7.1"
     crypto-js: "npm:^4.1.1"
@@ -11221,7 +11221,7 @@ __metadata:
     isomorphic-ws: "npm:^5.0.0"
     type-fest: "npm:^3.11.0"
     ws: "npm:^8.13.0"
-  checksum: 10c0/a0484e002296c7fa30275d27a1fb2925058b494e2ee9eb75769a9c908318ca5290b7ab09148b9f8e100de4b718a24694b115918756852debecd56c0c5281d2f1
+  checksum: 10c0/9b815986d51ac5341d24df283f6f1dbb5a19a3583e37f6761674faa24a513b5a4285ffe07b57313f3bb669d1f001f1794bbd21db8fd5e79413d1a0b290b55136
   languageName: node
   linkType: hard
 

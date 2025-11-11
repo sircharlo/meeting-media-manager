@@ -1,4 +1,4 @@
-import { init as initSentry } from '@sentry/electron/main';
+import { captureException, init as initSentry } from '@sentry/electron/main';
 import { bugs, homepage, name, repository, version } from 'app/package.json';
 import {
   app,
@@ -7,9 +7,7 @@ import {
   type MenuItemConstructorOptions,
   shell,
 } from 'electron';
-import upath from 'upath';
-const { join } = upath;
-
+import { pathExistsSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
 import {
   APP_ID,
   IS_TEST,
@@ -26,82 +24,13 @@ import {
   createMainWindow,
   mainWindow,
 } from 'src-electron/main/window/window-main';
+import upath from 'upath';
 import 'src-electron/main/ipc';
 import 'src-electron/main/security';
 
+const { join } = upath;
+
 const gotTheLock = app.requestSingleInstanceLock();
-
-if (!gotTheLock) {
-  app.exit(2);
-} else {
-  app.on('second-instance', () => {
-    // Someone tried to run a second instance, we should focus our window.
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      if (mainWindow.isMinimized()) mainWindow.restore();
-      mainWindow.show();
-    }
-  });
-
-  if (PLATFORM === 'win32') {
-    app.setAppUserModelId(`${APP_ID}`);
-  } else if (PLATFORM === 'linux') {
-    app.commandLine.appendSwitch('gtk-version', '3'); // Force GTK 3 on Linux (Workaround for https://github.com/electron/electron/issues/46538)
-  }
-
-  if (process.env.PORTABLE_EXECUTABLE_DIR) {
-    app.setPath('appData', process.env.PORTABLE_EXECUTABLE_DIR);
-    app.setPath(
-      'userData',
-      join(process.env.PORTABLE_EXECUTABLE_DIR, `${PRODUCT_NAME} - User Data`),
-    );
-    app.setPath(
-      'temp',
-      join(
-        process.env.PORTABLE_EXECUTABLE_DIR,
-        `${PRODUCT_NAME} - Temporary Files`,
-      ),
-    );
-  } else if (IS_TEST) {
-    app.setPath('userData', join(app.getPath('appData'), PRODUCT_NAME));
-  }
-
-  initSentry({
-    dsn: 'https://40b7d92d692d42814570d217655198db@o1401005.ingest.us.sentry.io/4507449197920256',
-    environment: IS_TEST ? 'test' : process.env.NODE_ENV,
-    release: `${name}@${version}`,
-    tracesSampleRate: 1.0,
-  });
-
-  if (!process.env.PORTABLE_EXECUTABLE_DIR) {
-    initUpdater();
-  }
-  initScreenListeners();
-  createApplicationMenu();
-  initSessionListeners();
-
-  // macOS default behavior is to keep the app running even after all windows are closed
-  app.on('window-all-closed', () => {
-    if (PLATFORM !== 'darwin') app.quit();
-  });
-
-  app.on('before-quit', (e) => {
-    if (PLATFORM !== 'darwin') return;
-    if (!mainWindow || mainWindow.isDestroyed()) return;
-    if (authorizedClose) {
-      mainWindow.close();
-    } else {
-      e.preventDefault();
-      setShouldQuit(true);
-      sendToWindow(mainWindow, 'attemptedClose');
-    }
-  });
-
-  app.on('activate', () => {
-    createWindowAndCaptureErrors();
-  });
-
-  createWindowAndCaptureErrors();
-}
 
 function createApplicationMenu() {
   const appMenu: MenuItem | MenuItemConstructorOptions = { role: 'appMenu' };
@@ -159,6 +88,128 @@ function createApplicationMenu() {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
+if (!gotTheLock) {
+  app.exit(2);
+} else {
+  // Check if hardware acceleration should be disabled
+  if (isHwAccelDisabled()) {
+    app.disableHardwareAcceleration();
+  }
+
+  app.on('second-instance', () => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.show();
+    }
+  });
+
+  if (PLATFORM === 'win32') {
+    app.setAppUserModelId(`${APP_ID}`);
+  } else if (PLATFORM === 'linux') {
+    app.commandLine.appendSwitch('gtk-version', '3'); // Force GTK 3 on Linux (Workaround for https://github.com/electron/electron/issues/46538)
+  }
+
+  if (process.env.PORTABLE_EXECUTABLE_DIR) {
+    app.setPath('appData', process.env.PORTABLE_EXECUTABLE_DIR);
+    app.setPath(
+      'userData',
+      join(process.env.PORTABLE_EXECUTABLE_DIR, `${PRODUCT_NAME} - User Data`),
+    );
+    app.setPath(
+      'temp',
+      join(
+        process.env.PORTABLE_EXECUTABLE_DIR,
+        `${PRODUCT_NAME} - Temporary Files`,
+      ),
+    );
+  } else if (IS_TEST) {
+    app.setPath('userData', join(app.getPath('appData'), PRODUCT_NAME));
+  }
+
+  initSentry({
+    dsn: 'https://40b7d92d692d42814570d217655198db@o1401005.ingest.us.sentry.io/4507449197920256',
+    environment: IS_TEST ? 'test' : process.env.NODE_ENV,
+    release: `${name}@${version}`,
+    tracesSampleRate: 1.0,
+  });
+
+  if (!process.env.PORTABLE_EXECUTABLE_DIR) {
+    initUpdater();
+  }
+  initScreenListeners();
+  createApplicationMenu();
+  initSessionListeners();
+
+  // Listen for child process crashes, especially GPU
+  app.on('child-process-gone', (_, details) => {
+    if (details.type === 'GPU' && !isHwAccelDisabled()) {
+      // Send to telemetry
+      captureException(new Error(`GPU process crashed: ${details.reason}`), {
+        extra: { ...details },
+        tags: { reason: details.reason, type: details.type },
+      });
+      // Persist to user prefs for next run
+      setHwAccelDisabled(true);
+      // Disable HW accel for future windows
+      app.disableHardwareAcceleration();
+      // Notify user (will be handled by sending to renderer)
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('gpu-crash-detected');
+      }
+    }
+  });
+
+  // macOS default behavior is to keep the app running even after all windows are closed
+  app.on('window-all-closed', () => {
+    if (PLATFORM !== 'darwin') app.quit();
+  });
+
+  app.on('before-quit', (e) => {
+    if (PLATFORM !== 'darwin') return;
+    if (!mainWindow || mainWindow.isDestroyed()) return;
+    if (authorizedClose) {
+      mainWindow.close();
+    } else {
+      e.preventDefault();
+      setShouldQuit(true);
+      sendToWindow(mainWindow, 'attemptedClose');
+    }
+  });
+
+  app.on('activate', () => {
+    createWindowAndCaptureErrors();
+  });
+
+  createWindowAndCaptureErrors();
+}
+
 function createWindowAndCaptureErrors() {
   app.whenReady().then(createMainWindow).catch(captureElectronError);
+}
+
+function getHwAccelFilePath() {
+  return join(app.getPath('userData'), 'hw-accel-disabled.json');
+}
+
+function isHwAccelDisabled() {
+  try {
+    const filePath = getHwAccelFilePath();
+    if (pathExistsSync(filePath)) {
+      const data = readJsonSync(filePath);
+      return data.disabled === true;
+    }
+  } catch (error) {
+    console.warn('Failed to read hw accel setting:', error);
+  }
+  return false;
+}
+
+function setHwAccelDisabled(disabled: boolean) {
+  try {
+    const filePath = getHwAccelFilePath();
+    writeJsonSync(filePath, { disabled });
+  } catch (error) {
+    console.warn('Failed to write hw accel setting:', error);
+  }
 }
