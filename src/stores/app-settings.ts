@@ -38,6 +38,7 @@ interface Store {
   migrations: string[];
   screenPreferences: ScreenPreferences;
   timerPreferences: TimerPreferences;
+  yeartextPreviewDismissed: Record<number, boolean>;
 }
 
 function toRawDeep<T>(observed: T): T {
@@ -882,6 +883,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
       migrations: [],
       screenPreferences: { preferredScreenNumber: 0, preferWindowed: false },
       timerPreferences: { preferredScreenNumber: 0, preferWindowed: true },
+      yeartextPreviewDismissed: {},
     };
   },
 });

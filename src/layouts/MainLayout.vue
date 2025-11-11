@@ -88,6 +88,7 @@ import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
 import { useAppSettingsStore } from 'src/stores/app-settings';
+import { fetchYeartext } from 'src/utils/api';
 import { formatDate, getSpecificWeekday, isInPast } from 'src/utils/date';
 import { kebabToCamelCase } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
@@ -102,6 +103,9 @@ import { useRoute, useRouter } from 'vue-router';
 
 // Local state
 const miniState = ref(true);
+
+// Pause flag for yeartext watcher during preview
+const yeartextWatcherPaused = ref(false);
 
 const productName = process.env.PRODUCT_NAME;
 
@@ -900,10 +904,163 @@ const { post: postYeartext } = useBroadcastChannel<
   name: 'yeartext',
 });
 
+// Function to check if we should show the yeartext preview notification
+const checkYeartextPreview = async () => {
+  try {
+    console.log(
+      '🔍 [checkYeartextPreview] Checking if we should show the yeartext preview notification',
+    );
+    // Only run if congregation is selected
+    if (!currentCongregation.value) return;
+
+    if (!currentSettings.value) return;
+
+    // Only run if media display is enabled
+    if (!currentSettings.value?.enableMediaDisplayButton) return;
+
+    const now = new Date();
+    const month = now.getMonth() + 1; // getMonth is 0-based
+
+    // Only run if we're in December
+    if (month !== 12) return;
+
+    // Get current and next year
+    const currentYear = now.getFullYear();
+    const nextYear = currentYear + 1;
+
+    // Check if yeartext is available (current year)
+    const { yeartexts } = jwStore;
+    if (!yeartexts[currentYear]) return;
+
+    const appSettingsStore = appSettings;
+
+    // Check if already dismissed for next year
+    if (appSettingsStore.yeartextPreviewDismissed[nextYear]) return;
+
+    // Check if online
+    if (!online.value) return;
+
+    // Check if base URL available
+    if (!jwStore.urlVariables?.base) return;
+
+    // Get the current language
+    const lang = currentSettings.value.lang;
+
+    // Check if language is configured
+    if (!lang) return;
+
+    // Show notification
+    createTemporaryNotification({
+      actions: [
+        {
+          color: 'primary',
+          handler: () => {
+            // Session dismissal handled by not showing again until app restart
+          },
+          label: t('later'),
+        },
+        {
+          color: 'negative',
+          handler: () => {
+            appSettingsStore.yeartextPreviewDismissed[nextYear] = true;
+          },
+          label: t('no'),
+        },
+        {
+          color: 'positive',
+          handler: async () => {
+            try {
+              // Fetch next year's yeartext
+              const result = await fetchYeartext(
+                lang,
+                jwStore.urlVariables.base,
+                nextYear,
+              );
+              if (result.yeartext) {
+                // Pause the yeartext watcher to prevent immediate override
+                yeartextWatcherPaused.value = true;
+
+                // Post the next year yeartext temporarily
+                postYeartext(result.yeartext);
+
+                // Show success notification
+                createTemporaryNotification({
+                  icon: 'mmm-check',
+                  message: t('yeartext-preview-success', { year: nextYear }),
+                  timeout: 5000,
+                  type: 'positive',
+                });
+
+                // Auto-dismiss after 10 seconds
+                setTimeout(() => {
+                  // Restore the current yeartext
+                  const currentYeartext = currentState.yeartext || '';
+                  postYeartext(currentYeartext);
+                  createTemporaryNotification({
+                    icon: 'mmm-check',
+                    message: t('yeartext-cleared', {
+                      currentYear: currentYear,
+                    }),
+                    timeout: 5000,
+                    type: 'positive',
+                  });
+                  // Save to prevent asking every time
+                  appSettingsStore.yeartextPreviewDismissed[nextYear] = true;
+                  // Resume the watcher after a brief delay to allow the current yeartext to be posted
+                  setTimeout(() => {
+                    yeartextWatcherPaused.value = false;
+                  }, 100);
+                }, 10000);
+              } else {
+                createTemporaryNotification({
+                  message: t('yeartext-preview-failed'),
+                  type: 'negative',
+                });
+              }
+            } catch (error) {
+              errorCatcher(error);
+              createTemporaryNotification({
+                message: t('yeartext-preview-failed'),
+                type: 'negative',
+              });
+            } finally {
+              // Resume the watcher
+              yeartextWatcherPaused.value = false;
+            }
+          },
+          label: t('yes'),
+        },
+      ],
+      message: t('yeartext-preview-next-year', { year: nextYear }),
+      timeout: 0, // Don't auto-dismiss
+    });
+  } catch (error) {
+    errorCatcher(error);
+  } finally {
+    // Resume the watcher
+    yeartextWatcherPaused.value = false;
+  }
+};
+
+// Watch for congregation selection and trigger yeartext preview check
+watch(
+  [currentCongregation, yeartext, online],
+  ([newCongregation, newYeartext, newOnline]) => {
+    if (newCongregation && newYeartext && newOnline) {
+      // Small delay to ensure all data is ready
+      setTimeout(() => {
+        checkYeartextPreview();
+      }, 1000);
+    }
+  },
+);
+
 watchImmediate(
   () => yeartext.value,
   (newYeartext) => {
-    postYeartext(newYeartext);
+    if (!yeartextWatcherPaused.value) {
+      postYeartext(newYeartext);
+    }
   },
 );
 
@@ -944,7 +1101,9 @@ watchImmediate(
     });
     postOnline(online.value);
     postHideMediaLogo(currentSettings.value?.hideMediaLogo);
-    postYeartext(yeartext.value);
+    if (!yeartextWatcherPaused.value) {
+      postYeartext(yeartext.value);
+    }
   },
 );
 </script>

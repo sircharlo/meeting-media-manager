@@ -10,12 +10,7 @@
     "
   >
     <!-- <pre style="position: absolute; top: 0; left: 0; z-index: 1000">
-      displayLayer1: {{ displayLayer1 }}
-      displayLayer2: {{ displayLayer2 }}
-      isTransitioning: {{ isTransitioning }}
-      mediaElement1: {{ mediaElement1 }}
-      mediaElement2: {{ mediaElement2 }}
-      currentMediaElement: {{ currentMediaElement }}
+      jwIconsFontLoaded: {{ jwIconsFontLoaded }}
     </pre> -->
     <q-resize-observer debounce="50" @resize="postMediaWindowSize" />
 
@@ -27,7 +22,10 @@
     >
       <!-- eslint-disable next-line vue/no-v-html -->
       <div id="yeartext" class="q-pa-md center" v-html="yeartext" />
-      <div v-if="!hideMediaLogo" id="yeartextLogoContainer">
+      <div
+        v-if="!hideMediaLogo && jwIconsFontLoaded"
+        id="yeartextLogoContainer"
+      >
         <p id="yeartextLogo">{{ jwIcons['tv-logo'] }}</p>
       </div>
     </div>
@@ -886,6 +884,28 @@ const { post: postGetCurrentState } = useBroadcastChannel<string, string>({
 });
 
 const fontsSet = ref(false);
+const clearTextFontLoaded = ref(false);
+const jwIconsFontLoaded = ref(false);
+
+const loadFonts = async () => {
+  try {
+    await setElementFont('Wt-ClearText-Bold');
+    clearTextFontLoaded.value = true;
+  } catch {
+    // Fallback to Noto or system font will be used
+    clearTextFontLoaded.value = true;
+  }
+
+  try {
+    await setElementFont('JW-Icons');
+    jwIconsFontLoaded.value = true;
+  } catch {
+    // No fallback for JW-Icons - logo won't show
+    jwIconsFontLoaded.value = false;
+  }
+
+  fontsSet.value = true;
+};
 
 // Listen for initial value updates from other components
 watchImmediate(
@@ -909,9 +929,7 @@ watchImmediate(
     ) {
       console.log('🔄 [MediaPlayerPage] Setting initial values');
       postGetCurrentState(new Date().getTime().toString());
-      setElementFont('Wt-ClearText-Bold');
-      setElementFont('JW-Icons');
-      fontsSet.value = true;
+      loadFonts();
     }
   },
 );
