@@ -9,8 +9,10 @@ export type jwIconsKeys =
   | 'brochures-and-booklets'
   | 'cbs'
   | 'circuit-overseer'
+  | 'concluding-comments'
   | 'g'
   | 'gems'
+  | 'introduction'
   | 'lac'
   | 'lac-part'
   | 'magazines'
@@ -32,8 +34,10 @@ export const jwIcons: Record<jwIconsKeys, string> = {
   'brochures-and-booklets': '\ue62d',
   cbs: '\ue6c3',
   'circuit-overseer': '\ue6c2',
+  'concluding-comments': '\ue6c2',
   g: '\ue61b',
   gems: '\ue694',
+  introduction: '\ue6c2',
   lac: '\ue6bb',
   'lac-part': '\ue6d8',
   magazines: '\ue67c',

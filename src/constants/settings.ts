@@ -432,6 +432,12 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'timer',
     type: 'toggle',
   },
+  enableMeetingAheadBehind: {
+    depends: 'enableTimerDisplay',
+    group: 'integrations',
+    subgroup: 'timer',
+    type: 'toggle',
+  },
   meetingCountdownMinutes: {
     depends: ['enableTimerDisplay', 'enableMeetingCountdown'],
     group: 'integrations',
@@ -615,6 +621,7 @@ export const defaultSettings: SettingsValues = {
   enableMediaAutoExport: false,
   enableMediaDisplayButton: false,
   enableMediaWindowFadeTransitions: true,
+  enableMeetingAheadBehind: false,
   enableMeetingCountdown: false,
   enableMusicButton: true,
   enableSubtitles: false,

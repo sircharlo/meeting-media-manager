@@ -208,6 +208,7 @@ export interface SettingsValues {
   enableMediaAutoExport: boolean;
   enableMediaDisplayButton: boolean;
   enableMediaWindowFadeTransitions: boolean;
+  enableMeetingAheadBehind: boolean;
   enableMeetingCountdown: boolean;
   enableMusicButton: boolean;
   enableSubtitles: boolean;

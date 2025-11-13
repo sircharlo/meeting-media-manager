@@ -4,22 +4,36 @@
     padding
     :style="containerStyles"
   >
+    <!-- <pre>aheadBehindMinutes: {{ timerData?.aheadBehindMinutes }}</pre> -->
     <transition mode="out-in" name="scale">
       <div :key="currentMode" :class="{ blink: paused }" :style="textStyles">
         {{ displayTime }}
       </div>
     </transition>
+
+    <!-- Ahead/Behind overlay -->
+    <div
+      v-if="aheadBehindText"
+      class="ahead-behind-overlay"
+      :style="overlayStyles"
+    >
+      {{ aheadBehindText }}
+    </div>
   </q-page-container>
 </template>
 
 <script setup lang="ts">
 import { useBroadcastChannel, useIntervalFn } from '@vueuse/core';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, type CSSProperties, onMounted, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 // Simple timer page for now
 
 // Timer data from main dialog
 export interface TimerData {
+  aheadBehindMinutes?: null | number;
   enableMeetingCountdown?: boolean;
   meetingCountdownMinutes?: number;
   meetingStartTime?: string;
@@ -39,6 +53,21 @@ export interface TimerData {
 const displayTime = ref<string>('');
 const paused = ref<boolean>(false);
 const currentTime = ref<string>('');
+const aheadBehindText = computed(() => {
+  const minutes = timerData.value?.aheadBehindMinutes;
+  if (minutes === null || minutes === undefined) return '';
+
+  const humanFriendlyMinutes = Math.round(Math.abs(minutes));
+  if (humanFriendlyMinutes < 1) {
+    return t('on-time');
+  } else {
+    const direction =
+      minutes > 0
+        ? t('minutes-behind', { humanFriendlyMinutes })
+        : t('minutes-ahead', { humanFriendlyMinutes });
+    return direction;
+  }
+});
 
 // Listen for timer updates from the dialog
 const { data: timerData } = useBroadcastChannel<TimerData, TimerData>({
@@ -64,6 +93,19 @@ const textStyles = computed(() => ({
   fontSize: timerData.value?.timerTextSize || '10vw',
   fontVariantNumeric: 'tabular-nums',
   fontWeight: 'bold',
+}));
+
+const overlayStyles = computed<CSSProperties>(() => ({
+  backgroundColor: 'rgba(0, 0, 0, 0.7)',
+  borderRadius: '8px',
+  color: timerData.value?.timerTextColor || '#ffffff',
+  fontSize: '24px',
+  fontWeight: 'bold',
+  left: '20px',
+  padding: '8px 16px',
+  position: 'absolute',
+  textAlign: 'left',
+  top: '20px',
 }));
 
 // Format time (HH:mm:ss, 24h)
@@ -185,6 +227,10 @@ watch(timerData, (newData) => {
 <style scoped>
 .blink {
   animation: gentle-blink 2s infinite;
+}
+
+.ahead-behind-overlay {
+  z-index: 10;
 }
 
 .scale-enter-active,

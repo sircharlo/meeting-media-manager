@@ -28,15 +28,7 @@
             unelevated
             @click="
               () => {
-                console.log('🔍 [Timer Full Screen Button] Clicked');
                 timerPreferences.preferWindowed = false;
-                console.log(
-                  '🔍 [Timer Full Screen Button] Calling moveTimerWindow with:',
-                  {
-                    screen: timerPreferences.preferredScreenNumber,
-                    fullscreen: true,
-                  },
-                );
                 moveTimerWindow(timerPreferences.preferredScreenNumber, true);
               }
             "
@@ -61,15 +53,7 @@
             unelevated
             @click="
               () => {
-                console.log('🔍 [Timer Windowed Button] Clicked');
                 timerPreferences.preferWindowed = true;
-                console.log(
-                  '🔍 [Timer Windowed Button] Calling moveTimerWindow with:',
-                  {
-                    screen: timerPreferences.preferredScreenNumber,
-                    fullscreen: false,
-                  },
-                );
                 moveTimerWindow(timerPreferences.preferredScreenNumber, false);
               }
             "
@@ -197,23 +181,6 @@
                   spread
                 />
               </div>
-              <div class="row q-px-md q-py-sm">
-                {{ t('durations-for-ayfm-parts') }}
-              </div>
-              <div class="row q-px-md q-pb-sm q-gutter-sm">
-                <q-input
-                  v-for="(dur, index) in ayfmDurations"
-                  :key="index"
-                  v-model.number="ayfmDurations[index]"
-                  class="col"
-                  :disable="timerRunning"
-                  filled
-                  :label="(index + 1).toString()"
-                  :max="15"
-                  :min="1"
-                  type="number"
-                />
-              </div>
               <q-separator class="bg-accent-200 q-mb-md" />
               <div class="card-section-title row q-px-md">
                 {{ t('lac') }}
@@ -232,23 +199,6 @@
                     { label: '3', value: 3 },
                   ]"
                   spread
-                />
-              </div>
-              <div class="row q-px-md q-py-sm">
-                {{ t('durations-for-lac-parts') }}
-              </div>
-              <div class="row q-px-md q-pb-sm q-gutter-sm">
-                <q-input
-                  v-for="(dur, index) in lacDurations"
-                  :key="index"
-                  v-model.number="lacDurations[index]"
-                  class="col"
-                  :disable="timerRunning"
-                  filled
-                  :label="(index + 1).toString()"
-                  :max="15"
-                  :min="1"
-                  type="number"
                 />
               </div>
               <template v-if="!isCoWeek(selectedDateObject?.date)">
@@ -383,6 +333,7 @@
               clickable
               :disable="timerRunning"
               @click="selectPart(part.value)"
+              @contextmenu.prevent="openEditDialog(part)"
             >
               <q-item-section avatar class="jw-icon text-h6">
                 {{ part.icon }}
@@ -493,6 +444,29 @@
       </div>
     </div>
   </q-menu>
+
+  <!-- Edit Dialog -->
+  <q-dialog v-model="editDialogOpen">
+    <q-card>
+      <q-card-section>
+        <div class="text-h6">{{ editPart?.label }}</div>
+      </q-card-section>
+
+      <q-card-section class="q-pt-none">
+        <q-input
+          v-model.number="editDuration"
+          label="Duration (minutes)"
+          min="1"
+          type="number"
+        />
+      </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn v-close-popup flat label="Cancel" @click="cancelEdit" />
+        <q-btn v-close-popup flat label="Save" @click="saveEdit" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
@@ -549,6 +523,7 @@ const elapsedSeconds = ref(0);
 // Timer configuration
 const timerMode = ref<'countdown' | 'countup'>('countup');
 type MeetingPart =
+  | 'abbreviated-wt'
   | 'ayfm-1'
   | 'ayfm-2'
   | 'ayfm-3'
@@ -558,26 +533,267 @@ type MeetingPart =
   | 'cbs'
   | 'co-final-talk'
   | 'co-service-talk'
+  | 'concluding-comments'
   | 'gems'
+  | 'introduction'
   | 'lac-1'
   | 'lac-2'
   | 'lac-3'
   | 'public-talk'
+  | 'song-and-optional-prayer'
   | 'treasures'
   | 'wt';
 
 const currentPart = ref<MeetingPart>('public-talk');
+const currentPartStartTime = ref<null | number>(null);
 const countdownTarget = ref<number>(0); // Target time in seconds for countdown
 const selectingPart = ref(false);
 const ayfmPartsCount = ref<number>(1);
-const ayfmDurations = ref<number[]>([15]);
 const lacPartsCount = ref<number>(1);
-const lacDurations = ref<number[]>([15]);
 const cbsAdaptiveEnabled = ref(true);
 const cbsAdaptiveEndTime = ref('');
 const wtAdaptiveEnabled = ref(true);
 const wtAdaptiveEndTime = ref<string>('');
+
 const usedParts = ref<Set<MeetingPart>>(new Set());
+
+// Edit dialog
+const editDialogOpen = ref(false);
+const editPart = ref<null | { label: string; value: MeetingPart }>(null);
+const editDuration = ref(0);
+
+// Part durations in minutes (reactive)
+const partDurations = ref<Record<MeetingPart, number>>({
+  'abbreviated-wt': 30,
+  'ayfm-1': 14, // 15 minutes total, minus 1 minute for counsel
+  'ayfm-2': 0,
+  'ayfm-3': 0,
+  'ayfm-4': 0,
+  'ayfm-5': 0,
+  'bible-reading': 4,
+  cbs: 30,
+  'co-final-talk': 30,
+  'co-service-talk': 30,
+  'concluding-comments': 3,
+  gems: 10,
+  introduction: 1,
+  'lac-1': 15, // 15 minutes total
+  'lac-2': 0,
+  'lac-3': 0,
+  'public-talk': 30,
+  'song-and-optional-prayer': 5,
+  treasures: 10,
+  wt: 60,
+});
+
+// Open edit dialog for a part
+const openEditDialog = (part: { label: string; value: MeetingPart }) => {
+  editPart.value = part;
+  editDuration.value = partDurations.value[part.value] || 0;
+  editDialogOpen.value = true;
+};
+
+// Save edits
+const saveEdit = () => {
+  if (!editPart.value) return;
+  partDurations.value[editPart.value.value] = editDuration.value;
+  editDialogOpen.value = false;
+};
+
+// Cancel edit
+const cancelEdit = () => {
+  editDialogOpen.value = false;
+};
+
+// Calculate ahead/behind minutes
+const calculateAheadBehindMinutes = (): null | number => {
+  if (!currentSettings.value?.enableMeetingAheadBehind) {
+    return null;
+  }
+
+  const date = selectedDateObject.value?.date;
+
+  let sequence: MeetingPart[];
+  let offset = 0;
+  if (isWeMeetingDay(date)) {
+    const isCo = isCoWeek(date);
+    sequence = isCo
+      ? [
+          'song-and-optional-prayer',
+          'public-talk',
+          'song-and-optional-prayer',
+          'abbreviated-wt',
+          'co-final-talk',
+          'song-and-optional-prayer',
+        ]
+      : [
+          'song-and-optional-prayer',
+          'public-talk',
+          'song-and-optional-prayer',
+          'wt',
+          'song-and-optional-prayer',
+        ];
+  } else if (isMwMeetingDay(date)) {
+    sequence = [
+      'song-and-optional-prayer',
+      'introduction',
+      'treasures',
+      'gems',
+      'bible-reading',
+      'ayfm-1',
+      'ayfm-2',
+      'ayfm-3',
+      'ayfm-4',
+      'ayfm-5',
+      'song-and-optional-prayer',
+      'lac-1',
+      'lac-2',
+      'lac-3',
+      isCoWeek(date) ? 'co-service-talk' : 'cbs',
+      'concluding-comments',
+      'song-and-optional-prayer',
+    ];
+  } else {
+    sequence = [];
+  }
+
+  const currentPartIndex = sequence.indexOf(currentPart.value);
+  if (currentPartIndex === -1) return null;
+
+  const currentPartInfo = sequence[currentPartIndex];
+  if (!currentPartInfo) return null;
+
+  if (!currentPartStartTime.value) return null;
+
+  const plannedStartTime = getPlannedStartTime(currentPartInfo);
+  if (!plannedStartTime) return null;
+
+  // Detailed logging
+  const meetingStart = meetingStartTime.value?.getTime();
+  console.log(
+    '🔍 [calculateAheadBehindMinutes] Meeting start time:',
+    new Date(meetingStart || 0).toLocaleTimeString(),
+  );
+
+  console.log(
+    '🔍 [calculateAheadBehindMinutes] Sequence up to',
+    currentPartInfo,
+    ':',
+    sequence.slice(0, currentPartIndex),
+  );
+  for (let i = 0; i < currentPartIndex; i++) {
+    const prevPart = sequence[i];
+    if (!prevPart) continue;
+    const dur = partDurations.value[prevPart];
+    offset += dur;
+    // Add 1 minute for counsel after each non-zero AYFM or LAC part
+    if (
+      (prevPart === 'bible-reading' ||
+        prevPart.startsWith('ayfm-') ||
+        prevPart.startsWith('lac-')) &&
+      dur > 0
+    ) {
+      offset += 1;
+    }
+    console.log(
+      `🔍 [calculateAheadBehindMinutes] Part ${prevPart}: ${dur} minutes, cumulative offset: ${offset} minutes`,
+    );
+  }
+  console.log(
+    '🔍 [calculateAheadBehindMinutes] Final calculated planned start time:',
+    new Date(plannedStartTime).toLocaleTimeString(),
+  );
+  console.log(
+    '🔍 [calculateAheadBehindMinutes] Actual start time:',
+    new Date(currentPartStartTime.value).toLocaleTimeString(),
+  );
+
+  // Return difference in minutes (positive = behind, negative = ahead)
+  const diffMinutes =
+    (currentPartStartTime.value - plannedStartTime) / (1000 * 60);
+  console.log(
+    '🔍 [calculateAheadBehindMinutes] Ahead/Behind calculation:',
+    diffMinutes > 0
+      ? `${diffMinutes} minutes behind`
+      : `${Math.abs(diffMinutes)} minutes ahead`,
+  );
+  return diffMinutes;
+};
+
+// Get planned start time for a meeting part
+const getPlannedStartTime = (part: MeetingPart): null | number => {
+  const date = selectedDateObject.value?.date;
+  if (!date || (!isWeMeetingDay(date) && !isMwMeetingDay(date))) return null;
+
+  const meetingStart = meetingStartTime.value?.getTime();
+  if (!meetingStart) return null;
+
+  let sequence: MeetingPart[];
+  if (isWeMeetingDay(date)) {
+    const isCo = isCoWeek(date);
+    sequence = isCo
+      ? [
+          'song-and-optional-prayer',
+          'public-talk',
+          'song-and-optional-prayer',
+          'abbreviated-wt',
+          'co-final-talk',
+          'song-and-optional-prayer',
+        ]
+      : [
+          'song-and-optional-prayer',
+          'public-talk',
+          'song-and-optional-prayer',
+          'wt',
+          'song-and-optional-prayer',
+        ];
+  } else if (isMwMeetingDay(date)) {
+    const isCo = isCoWeek(date);
+    sequence = [
+      'song-and-optional-prayer',
+      'introduction',
+      'treasures',
+      'gems',
+      'bible-reading',
+      'ayfm-1',
+      'ayfm-2',
+      'ayfm-3',
+      'ayfm-4',
+      'ayfm-5',
+      'song-and-optional-prayer',
+      'lac-1',
+      'lac-2',
+      'lac-3',
+      isCo ? 'co-service-talk' : 'cbs',
+      'concluding-comments',
+      'song-and-optional-prayer',
+    ];
+  } else {
+    return null;
+  }
+
+  const index = sequence.indexOf(part);
+  if (index === -1) return null;
+
+  let offset = 0;
+  for (let i = 0; i < index; i++) {
+    const prevPart = sequence[i];
+    if (!prevPart) continue;
+    const dur = partDurations.value[prevPart] ?? 0;
+    offset += dur;
+    // Add 1 minute for counsel after each non-zero AYFM or LAC part
+    if (
+      (prevPart === 'bible-reading' ||
+        prevPart.startsWith('ayfm-') ||
+        prevPart.startsWith('lac-')) &&
+      dur > 0
+    ) {
+      offset += 1;
+    }
+  }
+
+  return meetingStart + offset * 60 * 1000;
+};
 
 const { getAllScreens, moveTimerWindow, toggleTimerWindow } =
   window.electronApi;
@@ -708,16 +924,38 @@ const meetingPartsOptions: ComputedRef<
       warning?: boolean;
     }[] = [
       {
+        caption: (() => {
+          const startTime = getPlannedStartTime('public-talk');
+          return startTime
+            ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+            : '';
+        })(),
         icon: jwIcons['pt'],
         label: t('public-talk'),
         value: 'public-talk',
       },
       {
         caption: wtAdaptiveEnabled.value
-          ? t('latest-ending', {
-              endTime: wtAdaptiveEndTime.value || t('adaptive'),
-            })
-          : '',
+          ? (() => {
+              const startTime = getPlannedStartTime('wt');
+              const startStr = startTime
+                ? new Date(startTime).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                : '';
+              const endStr = wtAdaptiveEndTime.value || t('adaptive');
+              return (
+                t('latest-ending', { endTime: endStr }) +
+                (startStr ? ` (${t('start')}: ${startStr})` : '')
+              );
+            })()
+          : (() => {
+              const startTime = getPlannedStartTime('wt');
+              return startTime
+                ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                : '';
+            })(),
         icon: jwIcons['wt'],
         label: t('wt'),
         value: 'wt',
@@ -726,6 +964,12 @@ const meetingPartsOptions: ComputedRef<
 
     if (isCoWeek(date)) {
       options.push({
+        caption: (() => {
+          const startTime = getPlannedStartTime('co-final-talk');
+          return startTime
+            ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+            : '';
+        })(),
         icon: jwIcons['circuit-overseer'],
         label: t('co-final-talk'),
         value: 'co-final-talk',
@@ -743,12 +987,45 @@ const meetingPartsOptions: ComputedRef<
       warning?: boolean;
     }[] = [
       {
+        caption: (() => {
+          const startTime = getPlannedStartTime('introduction');
+          return startTime
+            ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+            : '';
+        })(),
+        icon: jwIcons['introduction'],
+        label: t('introduction'),
+        value: 'introduction',
+      },
+      {
+        caption: (() => {
+          const startTime = getPlannedStartTime('treasures');
+          return startTime
+            ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+            : '';
+        })(),
         icon: jwIcons['tgw'],
         label: t('treasures-talk'),
         value: 'treasures',
       },
-      { icon: jwIcons['gems'], label: t('gems'), value: 'gems' },
       {
+        caption: (() => {
+          const startTime = getPlannedStartTime('gems');
+          return startTime
+            ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+            : '';
+        })(),
+        icon: jwIcons['gems'],
+        label: t('gems'),
+        value: 'gems',
+      },
+      {
+        caption: (() => {
+          const startTime = getPlannedStartTime('bible-reading');
+          return startTime
+            ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+            : '';
+        })(),
         icon: jwIcons['bible-reading'],
         label: t('bible-reading'),
         value: 'bible-reading',
@@ -756,10 +1033,18 @@ const meetingPartsOptions: ComputedRef<
     ];
     // Add AYFM parts
     for (let i = 1; i <= ayfmPartsCount.value; i++) {
-      const totalDuration = ayfmDurations.value.reduce((a, b) => a + b, 0);
+      const totalDuration = Array.from(
+        { length: ayfmPartsCount.value },
+        (_, idx) => partDurations.value[`ayfm-${idx + 1}` as MeetingPart] || 0,
+      ).reduce((a, b) => a + b, 0);
       const warning = totalDuration !== 15 - ayfmPartsCount.value;
-      const dur = ayfmDurations.value[i - 1] || 15;
+      const dur = partDurations.value[`ayfm-${i}` as MeetingPart] || 14;
+      const startTime = getPlannedStartTime(`ayfm-${i}` as MeetingPart);
+      const startStr = startTime
+        ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+        : '';
       options.push({
+        caption: startStr,
         icon: jwIcons['ayfm-part'],
         label: t('ayfm-part', { duration: dur, part: i }),
         value: `ayfm-${i}` as MeetingPart,
@@ -768,10 +1053,18 @@ const meetingPartsOptions: ComputedRef<
     }
     // Add LAC parts
     for (let i = 1; i <= lacPartsCount.value; i++) {
-      const totalDuration = lacDurations.value.reduce((a, b) => a + b, 0);
+      const totalDuration = Array.from(
+        { length: lacPartsCount.value },
+        (_, idx) => partDurations.value[`lac-${idx + 1}` as MeetingPart] || 0,
+      ).reduce((a, b) => a + b, 0);
       const warning = totalDuration !== 15;
-      const dur = lacDurations.value[i - 1] || 15;
+      const dur = partDurations.value[`lac-${i}` as MeetingPart] || 15;
+      const startTime = getPlannedStartTime(`lac-${i}` as MeetingPart);
+      const startStr = startTime
+        ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+        : '';
       options.push({
+        caption: startStr,
         icon: jwIcons['lac-part'],
         label: t('lac-part', { duration: dur, part: i }),
         value: `lac-${i}` as MeetingPart,
@@ -780,6 +1073,12 @@ const meetingPartsOptions: ComputedRef<
     }
     if (isCo) {
       options.push({
+        caption: (() => {
+          const startTime = getPlannedStartTime('co-service-talk');
+          return startTime
+            ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+            : '';
+        })(),
         icon: jwIcons['circuit-overseer'],
         label: t('co-service-talk'),
         value: 'co-service-talk',
@@ -787,15 +1086,42 @@ const meetingPartsOptions: ComputedRef<
     } else {
       options.push({
         caption: cbsAdaptiveEnabled.value
-          ? t('latest-ending', {
-              endTime: cbsAdaptiveEndTime.value || t('adaptive'),
-            })
-          : '',
+          ? (() => {
+              const startTime = getPlannedStartTime('cbs');
+              const startStr = startTime
+                ? new Date(startTime).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                : '';
+              const endStr = cbsAdaptiveEndTime.value || t('adaptive');
+              return (
+                t('latest-ending', { endTime: endStr }) +
+                (startStr ? ` (${t('start')}: ${startStr})` : '')
+              );
+            })()
+          : (() => {
+              const startTime = getPlannedStartTime('cbs');
+              return startTime
+                ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                : '';
+            })(),
         icon: jwIcons['cbs'],
         label: t('cbs'),
         value: 'cbs',
       });
     }
+    options.push({
+      caption: (() => {
+        const startTime = getPlannedStartTime('concluding-comments');
+        return startTime
+          ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+          : '';
+      })(),
+      icon: jwIcons['concluding-comments'],
+      label: t('concluding-comments'),
+      value: 'concluding-comments',
+    });
     return options;
   }
   return [];
@@ -851,10 +1177,13 @@ const calculateCountdownTarget = () => {
 
   if (isWeMeetingDay(selectedDateObject.value?.date)) {
     if (currentPart.value === 'public-talk') {
-      return 30 * 60;
+      return partDurations.value['public-talk'] * 60;
     } else if (currentPart.value === 'wt') {
       const isCo = isCoWeek(selectedDateObject.value?.date);
-      const wtMaxDuration = (isCo ? 30 : 60) * 60;
+      const wtMaxDuration =
+        (isCo
+          ? partDurations.value['abbreviated-wt']
+          : partDurations.value.wt) * 60;
       if (wtAdaptiveEnabled.value) {
         // Custom end time
         const configuredMeetingStartTime = currentSettings.value?.weStartTime;
@@ -881,29 +1210,25 @@ const calculateCountdownTarget = () => {
         return wtMaxDuration;
       }
     } else if (currentPart.value === 'co-final-talk') {
-      return 30 * 60;
+      return partDurations.value['co-final-talk'] * 60;
     } else if (currentPart.value === 'co-service-talk') {
-      return 30 * 60;
+      return partDurations.value['co-service-talk'] * 60;
     }
   } else if (isMwMeetingDay(selectedDateObject.value?.date)) {
     if (currentPart.value === 'treasures') {
-      return 10 * 60;
+      return partDurations.value.treasures * 60;
     } else if (currentPart.value === 'gems') {
-      return 10 * 60;
+      return partDurations.value.gems * 60;
     } else if (currentPart.value === 'bible-reading') {
-      return 4 * 60;
+      return partDurations.value['bible-reading'] * 60;
     } else if (currentPart.value.startsWith('ayfm-')) {
-      const parts = currentPart.value.split('-');
-      const index = parseInt(parts[1] || '1') - 1;
-      return (ayfmDurations.value[index] || 15) * 60;
+      return partDurations.value[currentPart.value] * 60;
     } else if (currentPart.value.startsWith('lac-')) {
-      const parts = currentPart.value.split('-');
-      const index = parseInt(parts[1] || '1') - 1;
-      return (lacDurations.value[index] || 15) * 60;
+      return partDurations.value[currentPart.value] * 60;
     } else if (currentPart.value === 'co-service-talk') {
-      return 30 * 60;
+      return partDurations.value['co-service-talk'] * 60;
     } else if (currentPart.value === 'cbs') {
-      const cbsMaxDuration = 30 * 60;
+      const cbsMaxDuration = partDurations.value.cbs * 60;
       if (cbsAdaptiveEnabled.value) {
         // Custom end time
         const configuredMeetingStartTime = currentSettings.value?.mwStartTime;
@@ -944,6 +1269,8 @@ const startTimer = () => {
   timerPaused.value = false;
   timerStartTime.value = Date.now() - elapsedSeconds.value * 1000;
   timerPausedTime.value = null;
+
+  currentPartStartTime.value = Date.now();
 
   resumeInterval();
   updateTimerWindow();
@@ -999,6 +1326,7 @@ const selectPart = (value: MeetingPart) => {
 const updateTimerWindow = () => {
   // Send timer data to the timer window via broadcast channel
   const timerData = {
+    aheadBehindMinutes: calculateAheadBehindMinutes(),
     enableMeetingCountdown: currentSettings.value?.enableMeetingCountdown,
     meetingCountdownMinutes: currentSettings.value?.meetingCountdownMinutes,
     mode: timerMode.value,
@@ -1034,6 +1362,7 @@ watchImmediate(
     currentSettings.value?.timerBackgroundColor,
     currentSettings.value?.timerTextColor,
     currentSettings.value?.timerTextSize,
+    currentSettings.value?.enableMeetingAheadBehind,
     currentSettings.value?.enableMeetingCountdown,
     currentSettings.value?.meetingCountdownMinutes,
     currentSettings.value?.mwDay,
@@ -1047,32 +1376,43 @@ watchImmediate(
 );
 
 // Watch AYFM parts count to adjust durations
-watch(ayfmPartsCount, (newCount) => {
-  const totalMinutes = 15 - newCount;
+watchImmediate(ayfmPartsCount, (newCount) => {
+  const totalMinutes = 15 - newCount; // 15 minutes total, minus number of parts for 1 min of counsel each
   const base = Math.floor(totalMinutes / newCount);
   const remainder = totalMinutes % newCount;
-  const durations = [];
-  for (let i = 0; i < newCount; i++) {
-    durations.push(base + (i < remainder ? 1 : 0));
+  for (let i = 1; i <= 5; i++) {
+    if (i <= newCount) {
+      const dur = base + (i <= remainder ? 1 : 0);
+      partDurations.value[`ayfm-${i}` as MeetingPart] = dur;
+    } else {
+      partDurations.value[`ayfm-${i}` as MeetingPart] = 0;
+    }
   }
-  ayfmDurations.value = durations;
+  console.log(
+    'AYFM parts count changed to',
+    newCount,
+    'durations:',
+    partDurations.value,
+  );
 });
 
 // Watch LAC parts count to adjust durations
-watch(lacPartsCount, (newCount) => {
+watchImmediate(lacPartsCount, (newCount) => {
   const totalMinutes = 15;
   const base = Math.floor(totalMinutes / newCount);
   const remainder = totalMinutes % newCount;
-  const durations = [];
-  for (let i = 0; i < newCount; i++) {
-    durations.push(base + (i < remainder ? 1 : 0));
+  for (let i = 1; i <= 3; i++) {
+    if (i <= newCount) {
+      const dur = base + (i <= remainder ? 1 : 0);
+      partDurations.value[`lac-${i}` as MeetingPart] = dur;
+    } else {
+      partDurations.value[`lac-${i}` as MeetingPart] = 0;
+    }
   }
-  lacDurations.value = durations;
 });
 
 // Watch for timer page ready
 watch(timerPageReady, (timestamp) => {
-  console.log('🔍 [DialogTimerPopup] Timer page ready:', timestamp);
   if (timestamp) {
     handleTimerWindowVisibility(true);
   }
@@ -1090,6 +1430,7 @@ const handleTimerWindowVisibility = (visible: boolean) => {
   if (visible) {
     // Broadcast initial timer settings
     postTimerData({
+      aheadBehindMinutes: calculateAheadBehindMinutes(),
       enableMeetingCountdown: currentSettings.value?.enableMeetingCountdown,
       meetingCountdownMinutes: currentSettings.value?.meetingCountdownMinutes,
       mode: 'countup',
