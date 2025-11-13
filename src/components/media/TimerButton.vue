@@ -42,13 +42,20 @@ import { ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 interface TimerData {
+  enableMeetingCountdown?: boolean;
+  meetingCountdownMinutes?: number;
+  meetingStartTime?: string; // ISO string
   mode: 'countdown' | 'countup';
+  mwDay?: null | string;
+  mwStartTime?: null | string;
   paused: boolean;
   running: boolean;
   time: string;
   timerBackgroundColor?: string;
   timerTextColor?: string;
   timerTextSize?: string;
+  weDay?: null | string;
+  weStartTime?: null | string;
 }
 
 const { t } = useI18n();

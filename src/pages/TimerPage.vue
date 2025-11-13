@@ -20,13 +20,20 @@ import { computed, onMounted, ref, watch } from 'vue';
 
 // Timer data from main dialog
 export interface TimerData {
+  enableMeetingCountdown?: boolean;
+  meetingCountdownMinutes?: number;
+  meetingStartTime?: string;
   mode: 'countdown' | 'countup';
+  mwDay?: null | string;
+  mwStartTime?: null | string;
   paused: boolean;
   running: boolean;
   time: string;
   timerBackgroundColor?: string;
   timerTextColor?: string;
   timerTextSize?: string;
+  weDay?: null | string;
+  weStartTime?: null | string;
 }
 
 const displayTime = ref<string>('');
@@ -59,17 +66,84 @@ const textStyles = computed(() => ({
   fontWeight: 'bold',
 }));
 
-// Update current time every second
-const updateTime = () => {
-  currentTime.value = new Date().toLocaleTimeString('en-US', {
+// Format time (HH:mm:ss, 24h)
+const formatTime = (date: Date) =>
+  date.toLocaleTimeString('en-US', {
     hour: '2-digit',
     hour12: false,
     minute: '2-digit',
     second: '2-digit',
   });
-  if (!timerData.value?.time) {
-    displayTime.value = currentTime.value;
-  }
+
+// Update current time every second
+const updateTime = () => {
+  const now = new Date();
+  currentTime.value = formatTime(now);
+
+  const countdown = getMeetingCountdown(now);
+  displayTime.value = countdown ?? currentTime.value;
+};
+
+// Return countdown string or null if not active
+const getMeetingCountdown = (now: Date): null | string => {
+  const data = timerData.value;
+  if (!data?.enableMeetingCountdown || !data.meetingCountdownMinutes)
+    return null;
+
+  const today = normalizeDay(now.getDay());
+  const meetingInfo = getTodayMeetingInfo(today, data);
+  if (!meetingInfo) return null;
+
+  const { countdownMinutes, startTime } = meetingInfo;
+
+  if (!countdownMinutes || !startTime) return null;
+
+  const meetingTime = parseTime(startTime, now);
+  const minutesUntil = (meetingTime.getTime() - now.getTime()) / 60000;
+
+  if (minutesUntil <= 0 || minutesUntil > countdownMinutes) return null;
+
+  return formatCountdown(meetingTime, now);
+};
+
+// Convert Sunday-based (0–6) day to Monday-based (0–6)
+const normalizeDay = (day: number) => (day === 0 ? 6 : day - 1);
+
+// Determine which meeting applies today
+const getTodayMeetingInfo = (today: number, data: TimerData) => {
+  const { meetingCountdownMinutes, mwDay, mwStartTime, weDay, weStartTime } =
+    data;
+  if (parseInt(mwDay ?? '-1') === today && mwStartTime)
+    return {
+      countdownMinutes: meetingCountdownMinutes,
+      startTime: mwStartTime,
+    };
+  if (parseInt(weDay ?? '-1') === today && weStartTime)
+    return {
+      countdownMinutes: meetingCountdownMinutes,
+      startTime: weStartTime,
+    };
+  return null;
+};
+
+// Parse "HH:mm" into a Date object for today
+const parseTime = (timeStr: string, base: Date) => {
+  const [h, m] = timeStr.split(':').map(Number);
+  const d = new Date(base);
+  if (!h || !m) return d;
+  d.setHours(h, m, 0, 0);
+  return d;
+};
+
+// Format countdown as MM:SS
+const formatCountdown = (meetingTime: Date, now: Date) => {
+  const diff = Math.max(0, meetingTime.getTime() - now.getTime());
+  const totalSeconds = Math.floor(diff / 1000);
+  const m = Math.floor(totalSeconds / 60)
+    .toString()
+    .padStart(2, '0');
+  const s = (totalSeconds % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
 };
 
 const { pause: pauseClock, resume: resumeClock } = useIntervalFn(

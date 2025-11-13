@@ -208,6 +208,7 @@ export interface SettingsValues {
   enableMediaAutoExport: boolean;
   enableMediaDisplayButton: boolean;
   enableMediaWindowFadeTransitions: boolean;
+  enableMeetingCountdown: boolean;
   enableMusicButton: boolean;
   enableSubtitles: boolean;
   enableTimerDisplay: boolean;
@@ -224,6 +225,7 @@ export interface SettingsValues {
   localDateFormat: string;
   maxRes: MaxRes;
   mediaAutoExportFolder: string;
+  meetingCountdownMinutes: number;
   meetingScheduleChangeDate: `${number}/${number}/${number}` | null;
   meetingScheduleChangeMwDay: `${number}` | null;
   meetingScheduleChangeMwStartTime: `${number}:${number}` | null;

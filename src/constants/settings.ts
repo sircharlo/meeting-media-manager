@@ -426,6 +426,21 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'timer',
     type: 'toggle',
   },
+  enableMeetingCountdown: {
+    depends: 'enableTimerDisplay',
+    group: 'integrations',
+    subgroup: 'timer',
+    type: 'toggle',
+  },
+  meetingCountdownMinutes: {
+    depends: ['enableTimerDisplay', 'enableMeetingCountdown'],
+    group: 'integrations',
+    max: 10,
+    min: 1,
+    step: 1,
+    subgroup: 'timer',
+    type: 'slider',
+  },
 
   // Advanced
   enableKeyboardShortcuts: {
@@ -600,6 +615,7 @@ export const defaultSettings: SettingsValues = {
   enableMediaAutoExport: false,
   enableMediaDisplayButton: false,
   enableMediaWindowFadeTransitions: true,
+  enableMeetingCountdown: false,
   enableMusicButton: true,
   enableSubtitles: false,
   enableTimerDisplay: false,
@@ -616,6 +632,7 @@ export const defaultSettings: SettingsValues = {
   localDateFormat: 'D MMMM YYYY',
   maxRes: '720p',
   mediaAutoExportFolder: '',
+  meetingCountdownMinutes: 5,
   meetingScheduleChangeDate: null,
   meetingScheduleChangeMwDay: null,
   meetingScheduleChangeMwStartTime: null,

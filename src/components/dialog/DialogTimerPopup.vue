@@ -999,13 +999,19 @@ const selectPart = (value: MeetingPart) => {
 const updateTimerWindow = () => {
   // Send timer data to the timer window via broadcast channel
   const timerData = {
+    enableMeetingCountdown: currentSettings.value?.enableMeetingCountdown,
+    meetingCountdownMinutes: currentSettings.value?.meetingCountdownMinutes,
     mode: timerMode.value,
+    mwDay: currentSettings.value?.mwDay,
+    mwStartTime: currentSettings.value?.mwStartTime,
     paused: timerPaused.value,
     running: timerRunning.value,
     time: timerRunning.value ? formattedTime.value : '',
     timerBackgroundColor: currentSettings.value?.timerBackgroundColor,
     timerTextColor: currentSettings.value?.timerTextColor,
     timerTextSize: currentSettings.value?.timerTextSize,
+    weDay: currentSettings.value?.weDay,
+    weStartTime: currentSettings.value?.weStartTime,
   };
 
   postTimerData(timerData);
@@ -1028,6 +1034,12 @@ watchImmediate(
     currentSettings.value?.timerBackgroundColor,
     currentSettings.value?.timerTextColor,
     currentSettings.value?.timerTextSize,
+    currentSettings.value?.enableMeetingCountdown,
+    currentSettings.value?.meetingCountdownMinutes,
+    currentSettings.value?.mwDay,
+    currentSettings.value?.weDay,
+    currentSettings.value?.mwStartTime,
+    currentSettings.value?.weStartTime,
   ],
   () => {
     updateTimerWindow();
@@ -1078,13 +1090,19 @@ const handleTimerWindowVisibility = (visible: boolean) => {
   if (visible) {
     // Broadcast initial timer settings
     postTimerData({
+      enableMeetingCountdown: currentSettings.value?.enableMeetingCountdown,
+      meetingCountdownMinutes: currentSettings.value?.meetingCountdownMinutes,
       mode: 'countup',
+      mwDay: currentSettings.value?.mwDay,
+      mwStartTime: currentSettings.value?.mwStartTime,
       paused: false,
       running: false,
       time: '',
       timerBackgroundColor: currentSettings.value?.timerBackgroundColor,
       timerTextColor: currentSettings.value?.timerTextColor,
       timerTextSize: currentSettings.value?.timerTextSize,
+      weDay: currentSettings.value?.weDay,
+      weStartTime: currentSettings.value?.weStartTime,
     });
   }
 };
