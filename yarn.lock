@@ -10383,7 +10383,7 @@ __metadata:
     postcss: "npm:^8.5.6"
     prettier: "npm:^3.6.2"
     pretty-bytes: "npm:^7.1.0"
-    quasar: "npm:^2.18.5"
+    quasar: "npm:^2.18.6"
     rollup-plugin-visualizer: "npm:^6.0.5"
     sanitize-filename: "npm:^1.6.3"
     typescript: "npm:~5.9.3"
@@ -12336,10 +12336,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"quasar@npm:^2.18.5":
-  version: 2.18.5
-  resolution: "quasar@npm:2.18.5"
-  checksum: 10c0/a18372b0101746e38de973047d03bc3e60b4e65f28fafc6eae56ac5557148281a36828a69c4cff15fe9003749d126681dbf0dd2f18d581e17524a54cf74c4a4b
+"quasar@npm:^2.18.6":
+  version: 2.18.6
+  resolution: "quasar@npm:2.18.6"
+  checksum: 10c0/f55a30b9da73a3b91e385afec5ab13480f49e259918966e37eccf8c826bcb3946c2e31bd8cee9697bf04aa19ff4d80d464f7dcb1fefc762ccab76e08014b11e4
   languageName: node
   linkType: hard
 
