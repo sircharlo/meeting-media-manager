@@ -111,7 +111,9 @@ export function createWindow(
   } else if (process.env.DEV) {
     win.loadURL(process.env.APP_URL + `?page=${page}`);
   } else {
-    win.loadFile('index.html', { query: { page } });
+    // Use absolute path for index.html in production builds
+    const indexPath = resolve(app.getAppPath(), 'index.html');
+    win.loadFile(indexPath, { query: { page } });
   }
 
   // Devtools
