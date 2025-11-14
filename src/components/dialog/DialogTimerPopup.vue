@@ -149,134 +149,178 @@
         />
       </div>
 
-      <template v-if="timerMode === 'countdown'">
-        <!-- Meeting Part Selection (only on meeting days) -->
-        <template v-if="isMeetingDay(selectedDateObject?.date)">
-          <template v-if="isMwMeetingDay(selectedDateObject?.date)">
-            <template
-              v-if="
-                timerMode === 'countdown' &&
-                isMwMeetingDay(selectedDateObject?.date)
-              "
-            >
-              <q-separator class="bg-accent-200 q-mb-md" />
-              <div class="card-section-title row q-px-md">
-                {{ t('ayfm') }}
+      <!-- <template v-if="timerMode === 'countdown'"> -->
+      <!-- Meeting Part Selection (only on meeting days) -->
+      <template v-if="isMeetingDay(selectedDateObject?.date)">
+        <template v-if="isMwMeetingDay(selectedDateObject?.date)">
+          <template
+            v-if="
+              timerMode === 'countdown' &&
+              isMwMeetingDay(selectedDateObject?.date)
+            "
+          >
+            <q-separator class="bg-accent-200 q-mb-md" />
+            <div class="card-section-title row q-px-md">
+              {{ t('ayfm') }}
+            </div>
+            <div class="row q-px-md q-py-sm">
+              {{ t('number-of-ayfm-parts') }}
+            </div>
+            <div class="row q-px-md q-pb-sm">
+              <q-btn-toggle
+                v-model="ayfmPartsCount"
+                class="full-width"
+                :disable="timerRunning"
+                :options="[
+                  { label: '1', value: 1 },
+                  { label: '2', value: 2 },
+                  { label: '3', value: 3 },
+                  { label: '4', value: 4 },
+                  { label: '5', value: 5 },
+                ]"
+                spread
+              />
+            </div>
+            <q-separator class="bg-accent-200 q-mb-md" />
+            <div class="card-section-title row q-px-md">
+              {{ t('lac') }}
+            </div>
+            <div class="row q-px-md q-py-sm">
+              {{ t('number-of-lac-parts') }}
+            </div>
+            <div class="row q-px-md q-pb-sm">
+              <q-btn-toggle
+                v-model="lacPartsCount"
+                class="full-width"
+                :disable="timerRunning"
+                :options="[
+                  { label: '1', value: 1 },
+                  { label: '2', value: 2 },
+                  { label: '3', value: 3 },
+                ]"
+                spread
+              />
+            </div>
+            <template v-if="!isCoWeek(selectedDateObject?.date)">
+              <div class="row q-px-md q-py-sm">
+                {{ t('adapt-cbs-duration-dynamically') }}
               </div>
               <div class="row q-px-md q-py-sm">
-                {{ t('number-of-ayfm-parts') }}
-              </div>
-              <div class="row q-px-md q-pb-sm">
-                <q-btn-toggle
-                  v-model="ayfmPartsCount"
-                  class="full-width"
-                  :disable="timerRunning"
-                  :options="[
-                    { label: '1', value: 1 },
-                    { label: '2', value: 2 },
-                    { label: '3', value: 3 },
-                    { label: '4', value: 4 },
-                    { label: '5', value: 5 },
-                  ]"
-                  spread
-                />
-              </div>
-              <q-separator class="bg-accent-200 q-mb-md" />
-              <div class="card-section-title row q-px-md">
-                {{ t('lac') }}
-              </div>
-              <div class="row q-px-md q-py-sm">
-                {{ t('number-of-lac-parts') }}
-              </div>
-              <div class="row q-px-md q-pb-sm">
-                <q-btn-toggle
-                  v-model="lacPartsCount"
-                  class="full-width"
-                  :disable="timerRunning"
-                  :options="[
-                    { label: '1', value: 1 },
-                    { label: '2', value: 2 },
-                    { label: '3', value: 3 },
-                  ]"
-                  spread
-                />
-              </div>
-              <template v-if="!isCoWeek(selectedDateObject?.date)">
-                <div class="row q-px-md q-py-sm">
-                  {{ t('adapt-cbs-duration-dynamically') }}
-                </div>
-                <div class="row q-px-md q-py-sm">
-                  {{ t('cbs-custom-end-time') }}
-                </div>
-                <div class="row q-px-md q-pb-sm">
-                  <q-input
-                    v-model="cbsCustomEndTime"
-                    class="full-width"
-                    :disable="timerRunning"
-                    filled
-                    :label="t('end-time')"
-                    mask="##:##"
-                    :rules="cbsEndTimeRules"
-                  />
-                </div>
-              </template>
-            </template>
-            <template v-else-if="isWeMeetingDay(selectedDateObject?.date)">
-              <div class="row q-px-md q-py-sm">
-                {{ t('adapt-wt-duration-dynamically') }}
-              </div>
-              <div class="row q-px-md q-py-sm">
-                {{ t('wt-custom-end-time') }}
+                {{ t('cbs-custom-end-time') }}
               </div>
               <div class="row q-px-md q-pb-sm">
                 <q-input
-                  v-model="wtCustomEndTime"
+                  v-model="cbsCustomEndTime"
                   class="full-width"
                   :disable="timerRunning"
                   filled
                   :label="t('end-time')"
                   mask="##:##"
-                  :rules="wtEndTimeRules"
+                  :rules="cbsEndTimeRules"
                 />
               </div>
             </template>
           </template>
+          <template v-else-if="isWeMeetingDay(selectedDateObject?.date)">
+            <div class="row q-px-md q-py-sm">
+              {{ t('adapt-wt-duration-dynamically') }}
+            </div>
+            <div class="row q-px-md q-py-sm">
+              {{ t('wt-custom-end-time') }}
+            </div>
+            <div class="row q-px-md q-pb-sm">
+              <q-input
+                v-model="wtCustomEndTime"
+                class="full-width"
+                :disable="timerRunning"
+                filled
+                :label="t('end-time')"
+                mask="##:##"
+                :rules="wtEndTimeRules"
+              />
+            </div>
+          </template>
         </template>
-        <q-separator class="bg-accent-200 q-mb-md" />
-        <div class="card-section-title row q-px-md">
-          {{ t('meeting-part') }}
-        </div>
-        <div class="row q-px-md q-pb-sm">
-          <q-list bordered class="full-width">
-            <q-item
-              v-for="part in meetingPartsOptions"
-              :key="part.value"
-              :class="{ 'text-warning': part.warning }"
-              clickable
-              :disable="timerRunning"
-              @click="selectPart(part.value)"
-              @contextmenu.prevent="openEditDialog(part)"
-            >
-              <q-item-section avatar class="jw-icon text-h6">
-                {{ part.icon }}
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{ part.label }}</q-item-label>
-                <q-item-label v-if="part.caption" caption>
-                  {{ part.caption }}
-                </q-item-label>
-              </q-item-section>
-              <q-item-section side>
-                <q-icon
-                  v-if="usedParts.has(part.value)"
-                  color="grey-5"
-                  name="check"
-                />
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </div>
       </template>
+      <q-separator class="bg-accent-200 q-mb-md" />
+      <div class="card-section-title row q-px-md">
+        {{ t('meeting-part') }}
+      </div>
+      <div class="row q-px-md q-pb-sm">
+        <q-list bordered class="full-width">
+          <q-item
+            v-for="part in meetingPartsOptions"
+            :key="part.value"
+            :class="{ 'text-warning': part.warning }"
+            @contextmenu.prevent="openEditDialog(part)"
+          >
+            <q-item-section avatar class="jw-icon text-h6">
+              {{ part.icon }}
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ part.label }}</q-item-label>
+              <q-item-label caption>
+                {{
+                  partTimings[part.value]?.startTime
+                    ? partTimings[part.value]?.endTime
+                      ? getDuration(
+                          partTimings[part.value],
+                          partDurations[part.value],
+                        )
+                      : `${t('start-time')}: ${getTimeString(partTimings[part.value]?.startTime, true)}`
+                    : `${t('planned-start-time')}: ${getTimeString(getPlannedStartTime(part.value))}`
+                }}
+              </q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              <div class="row q-gutter-xs">
+                <q-btn
+                  v-if="
+                    (partTimings[part.value]?.startTime ||
+                      partTimings[part.value]?.endTime) &&
+                    !timerRunning
+                  "
+                  color="warning"
+                  dense
+                  icon="mmm-reset"
+                  round
+                  size="sm"
+                  @click="
+                    () => {
+                      partTimings[part.value].startTime = null;
+                      partTimings[part.value].endTime = null;
+                    }
+                  "
+                >
+                </q-btn>
+                <q-btn
+                  v-if="!timerRunning && !partTimings[part.value]?.startTime"
+                  color="positive"
+                  dense
+                  icon="mmm-play"
+                  round
+                  size="sm"
+                  @click="selectPart(part.value)"
+                >
+                  <q-tooltip>{{ t('start-timer') }}</q-tooltip>
+                </q-btn>
+                <q-btn
+                  v-if="currentPart === part.value && timerRunning"
+                  color="negative"
+                  dense
+                  icon="mmm-stop"
+                  round
+                  size="sm"
+                  @click="stopTimer()"
+                >
+                  <q-tooltip>{{ t('stop-timer') }}</q-tooltip>
+                </q-btn>
+              </div>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </div>
+      <!-- </template> -->
 
       <!-- Timer Controls -->
       <q-separator class="bg-accent-200 q-mb-md" />
@@ -316,6 +360,15 @@
             </q-btn>
           </div>
         </template>
+        <q-btn
+          class="full-width q-mb-sm"
+          color="info"
+          unelevated
+          @click="exportPdfReport"
+        >
+          <q-icon class="q-mr-sm" name="picture_as_pdf" />
+          {{ t('export-pdf-report') }}
+        </q-btn>
 
         <!-- Timer Display -->
         <div v-if="timerRunning" class="text-center q-py-md">
@@ -402,6 +455,7 @@ import {
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { QMenu } from 'quasar';
+import 'jspdf-autotable'; // Import jspdf-autotable
 import useTimer from 'src/composables/useTimer';
 import {
   isCoWeek,
@@ -439,10 +493,14 @@ const {
   cbsEndTimeRules,
   currentPart,
   formattedTime,
+  getDuration,
+  getPlannedStartTime,
+  getTimeString,
   handleTimerWindowVisibility,
   lacPartsCount,
   meetingPartsOptions,
   partDurations,
+  partTimings,
   pauseTimer,
   resumeTimer,
   startTimer,
@@ -549,6 +607,64 @@ const saveEdit = () => {
 // Cancel edit
 const cancelEdit = () => {
   editDialogOpen.value = false;
+};
+
+// PDF Report Generation
+const exportPdfReport = async () => {
+  const { jsPDF } = await import('jspdf');
+  const { autoTable } = await import('jspdf-autotable');
+
+  const doc = new jsPDF();
+
+  const meetingDate = selectedDateObject.value?.date
+    ? new Date(selectedDateObject.value.date).toLocaleDateString()
+    : 'N/A';
+
+  doc.setFontSize(18);
+  doc.text(`Meeting Report - ${meetingDate}`, 14, 22);
+
+  const tableColumn = [
+    'Part',
+    'Start (hh:mm:ss)',
+    'End (hh:mm:ss)',
+    'Duration (mm:ss)',
+  ];
+  const tableRows: (number | string)[][] = [];
+
+  for (const partOption of meetingPartsOptions.value) {
+    const partValue = partOption.value;
+    const timings = partTimings.value[partValue];
+    const duration = partDurations.value[partValue];
+
+    const formattedStartTime = getTimeString(timings?.startTime);
+    const formattedEndTime = getTimeString(timings?.endTime);
+    const formattedDuration = getDuration(timings, duration);
+
+    tableRows.push([
+      partOption.label,
+      formattedStartTime,
+      formattedEndTime,
+      formattedDuration,
+    ]);
+  }
+
+  autoTable(doc, {
+    body: tableRows,
+    columnStyles: {
+      0: { cellWidth: 60 },
+      1: { cellWidth: 40 },
+      2: { cellWidth: 40 },
+      3: { cellWidth: 30 },
+    },
+    head: [tableColumn],
+    headStyles: { fillColor: '#42A5F5' }, // Quasar primary color
+    startY: 30,
+    styles: { cellPadding: 3, fontSize: 10 },
+    theme: 'grid',
+  });
+
+  // doc.save();
+  doc.save(`Meeting_Report_${meetingDate}.pdf`);
 };
 
 const { getAllScreens, moveTimerWindow } = window.electronApi;

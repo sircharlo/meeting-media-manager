@@ -195,7 +195,6 @@
   "filetypeNotSupported": "This file type is not yet supported",
   "firstDayOfWeek": "First day of the week",
   "firstDayOfWeek-explain": "Select which day of the week should be displayed first in a calendar week.",
-  "fixed": "Fixed",
   "folderToWatch": "Folder to monitor",
   "folderToWatch-explain": "The folder that will be monitored for new media files. This folder must contain subfolders named by date (format: YYYY-MM-DD). Files in folders that don’t follow this convention will be ignored.",
   "folderWatcher": "Folder monitoring",
@@ -260,9 +259,9 @@
   "langSubtitles-explain": "This is the language in which subtitles will be downloaded and played.",
   "large": "Large",
   "later": "Later",
-  "latest-ending": "Ending at {endTime} (latest)",
   "latest-videos-from-jw-org": "Latest videos from the official website of Jehovah's Witnesses",
   "light": "Light",
+  "planned-start-time": "Planned start time",
   "loading": "Loading",
   "local-media-explain-1": "Add photos, videos, audio files, JW Library playlists, JWPUB files, or PDF documents from your computer and they will appear in the media list.",
   "local-media-explain-2": "All common media formats are supported.",
@@ -520,6 +519,7 @@
   "songbook-video-caching": "Songbook video caching",
   "stage": "Stage",
   "start": "Start",
+  "start-time": "Start time",
   "start-mirroring": "Start mirroring",
   "start-over": "Start over",
   "start-recording": "Start Recording",
@@ -619,5 +619,7 @@
   "minutes-ahead": "{humanFriendlyMinutes} min. ahead",
   "on-time": "On time",
   "introduction": "Introduction",
-  "concluding-comments": "Concluding comments"
+  "concluding-comments": "Concluding comments",
+  "start-timer": "Start timer",
+  "stop-timer": "Stop timer"
 }

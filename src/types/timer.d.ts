@@ -20,6 +20,11 @@ export type MeetingPart =
   | 'treasures'
   | 'wt';
 
+export interface MeetingPartTimings {
+  endTime: null | number;
+  startTime: null | number;
+}
+
 // Timer data from main dialog
 export interface TimerData {
   aheadBehindMinutes?: null | number;

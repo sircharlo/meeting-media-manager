@@ -1,4 +1,4 @@
-import type { MeetingPart, TimerData } from 'src/types';
+import type { MeetingPart, MeetingPartTimings, TimerData } from 'src/types';
 
 import {
   useBroadcastChannel,
@@ -25,12 +25,52 @@ const useTimer = () => {
   const elapsedSeconds = ref(0);
   const countdownTarget = ref<number>(0);
   const timerMode = ref<'countdown' | 'countup'>('countup');
-  const currentPartStartTime = ref<null | number>(null);
   const currentPart = ref<MeetingPart>('public-talk');
   const wtCustomEndTime = ref<string>('');
   const cbsCustomEndTime = ref('');
   const ayfmPartsCount = ref<number>(1);
   const lacPartsCount = ref<number>(1);
+
+  const getTimeString = (timestamp: null | number, seconds = false): string => {
+    try {
+      return timestamp
+        ? new Date(timestamp).toLocaleTimeString([], {
+            hour: '2-digit',
+            hour12: false,
+            minute: '2-digit',
+            second: seconds ? '2-digit' : undefined,
+          })
+        : '';
+    } catch {
+      return '';
+    }
+  };
+
+  const initialPartTimings: Record<MeetingPart, MeetingPartTimings> = {
+    'abbreviated-wt': { endTime: null, startTime: null },
+    'ayfm-1': { endTime: null, startTime: null },
+    'ayfm-2': { endTime: null, startTime: null },
+    'ayfm-3': { endTime: null, startTime: null },
+    'ayfm-4': { endTime: null, startTime: null },
+    'ayfm-5': { endTime: null, startTime: null },
+    'bible-reading': { endTime: null, startTime: null },
+    cbs: { endTime: null, startTime: null },
+    'co-final-talk': { endTime: null, startTime: null },
+    'co-service-talk': { endTime: null, startTime: null },
+    'concluding-comments': { endTime: null, startTime: null },
+    gems: { endTime: null, startTime: null },
+    introduction: { endTime: null, startTime: null },
+    'lac-1': { endTime: null, startTime: null },
+    'lac-2': { endTime: null, startTime: null },
+    'lac-3': { endTime: null, startTime: null },
+    'public-talk': { endTime: null, startTime: null },
+    'song-and-optional-prayer': { endTime: null, startTime: null },
+    treasures: { endTime: null, startTime: null },
+    wt: { endTime: null, startTime: null },
+  };
+
+  const partTimings =
+    ref<Record<MeetingPart, MeetingPartTimings>>(initialPartTimings);
 
   const { t } = useI18n();
 
@@ -66,7 +106,6 @@ const useTimer = () => {
 
   const meetingPartsOptions = computed<
     {
-      caption?: string;
       icon?: string;
       label: string;
       value: MeetingPart;
@@ -76,34 +115,17 @@ const useTimer = () => {
     const date = selectedDateObject.value?.date;
     if (isWeMeetingDay(date)) {
       const options: {
-        caption?: string;
         icon?: string;
         label: string;
         value: MeetingPart;
         warning?: boolean;
       }[] = [
         {
-          caption: (() => {
-            const startTime = getPlannedStartTime('public-talk');
-            return startTime
-              ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-              : '';
-          })(),
           icon: jwIcons['pt'],
           label: t('public-talk'),
           value: 'public-talk',
         },
         {
-          caption: (() => {
-            const startTime = getPlannedStartTime('wt');
-            const startStr = startTime
-              ? new Date(startTime).toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })
-              : '';
-            return startStr ? ` (${t('start')}: ${startStr})` : '';
-          })(),
           icon: jwIcons['wt'],
           label: t('wt'),
           value: 'wt',
@@ -112,12 +134,6 @@ const useTimer = () => {
 
       if (isCoWeek(date)) {
         options.push({
-          caption: (() => {
-            const startTime = getPlannedStartTime('co-final-talk');
-            return startTime
-              ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-              : '';
-          })(),
           icon: jwIcons['circuit-overseer'],
           label: t('co-final-talk'),
           value: 'co-final-talk',
@@ -128,52 +144,27 @@ const useTimer = () => {
     } else if (isMwMeetingDay(date)) {
       const isCo = isCoWeek(date);
       const options: {
-        caption?: string;
         icon?: string;
         label: string;
         value: MeetingPart;
         warning?: boolean;
       }[] = [
         {
-          caption: (() => {
-            const startTime = getPlannedStartTime('introduction');
-            return startTime
-              ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-              : '';
-          })(),
           icon: jwIcons['introduction'],
           label: t('introduction'),
           value: 'introduction',
         },
         {
-          caption: (() => {
-            const startTime = getPlannedStartTime('treasures');
-            return startTime
-              ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-              : '';
-          })(),
           icon: jwIcons['tgw'],
           label: t('treasures-talk'),
           value: 'treasures',
         },
         {
-          caption: (() => {
-            const startTime = getPlannedStartTime('gems');
-            return startTime
-              ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-              : '';
-          })(),
           icon: jwIcons['gems'],
           label: t('gems'),
           value: 'gems',
         },
         {
-          caption: (() => {
-            const startTime = getPlannedStartTime('bible-reading');
-            return startTime
-              ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-              : '';
-          })(),
           icon: jwIcons['bible-reading'],
           label: t('bible-reading'),
           value: 'bible-reading',
@@ -188,12 +179,7 @@ const useTimer = () => {
         ).reduce((a, b) => a + b, 0);
         const warning = totalDuration !== 15 - ayfmPartsCount.value;
         const dur = partDurations.value[`ayfm-${i}` as MeetingPart] || 14;
-        const startTime = getPlannedStartTime(`ayfm-${i}` as MeetingPart);
-        const startStr = startTime
-          ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-          : '';
         options.push({
-          caption: startStr,
           icon: jwIcons['ayfm-part'],
           label: t('ayfm-part', { duration: dur, part: i }),
           value: `ayfm-${i}` as MeetingPart,
@@ -208,12 +194,7 @@ const useTimer = () => {
         ).reduce((a, b) => a + b, 0);
         const warning = totalDuration !== 15;
         const dur = partDurations.value[`lac-${i}` as MeetingPart] || 15;
-        const startTime = getPlannedStartTime(`lac-${i}` as MeetingPart);
-        const startStr = startTime
-          ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-          : '';
         options.push({
-          caption: startStr,
           icon: jwIcons['lac-part'],
           label: t('lac-part', { duration: dur, part: i }),
           value: `lac-${i}` as MeetingPart,
@@ -222,36 +203,18 @@ const useTimer = () => {
       }
       if (isCo) {
         options.push({
-          caption: (() => {
-            const startTime = getPlannedStartTime('co-service-talk');
-            return startTime
-              ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-              : '';
-          })(),
           icon: jwIcons['circuit-overseer'],
           label: t('co-service-talk'),
           value: 'co-service-talk',
         });
       } else {
         options.push({
-          caption: (() => {
-            const startTime = getPlannedStartTime('cbs');
-            return startTime
-              ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-              : '';
-          })(),
           icon: jwIcons['cbs'],
           label: t('cbs'),
           value: 'cbs',
         });
       }
       options.push({
-        caption: (() => {
-          const startTime = getPlannedStartTime('concluding-comments');
-          return startTime
-            ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-            : '';
-        })(),
         icon: jwIcons['concluding-comments'],
         label: t('concluding-comments'),
         value: 'concluding-comments',
@@ -369,7 +332,9 @@ const useTimer = () => {
         return partDurations.value['co-service-talk'] * 60;
       }
     } else if (isMwMeetingDay(selectedDateObject.value?.date)) {
-      if (currentPart.value === 'treasures') {
+      if (currentPart.value === 'introduction') {
+        return partDurations.value.introduction * 60;
+      } else if (currentPart.value === 'treasures') {
         return partDurations.value.treasures * 60;
       } else if (currentPart.value === 'gems') {
         return partDurations.value.gems * 60;
@@ -428,7 +393,11 @@ const useTimer = () => {
     timerStartTime.value = Date.now() - elapsedSeconds.value * 1000;
     timerPausedTime.value = null;
 
-    currentPartStartTime.value = Date.now();
+    // Log the start time for the current part
+    partTimings.value[currentPart.value] = {
+      ...partTimings.value[currentPart.value],
+      startTime: Date.now(),
+    };
 
     resumeInterval();
     updateTimerWindow();
@@ -470,19 +439,56 @@ const useTimer = () => {
     timerStartTime.value = null;
     timerPausedTime.value = null;
     countdownTarget.value = 0;
+
+    // Log the end time for the current part
+    partTimings.value[currentPart.value] = {
+      ...partTimings.value[currentPart.value],
+      endTime: Date.now(),
+    };
+
     updateTimerWindow();
   };
 
   const formattedTime = computed(() => {
-    const totalSeconds =
-      timerMode.value === 'countup'
-        ? elapsedSeconds.value
-        : Math.max(0, countdownTarget.value - elapsedSeconds.value);
+    let totalSeconds = 0;
+    let isOvertime = false;
+
+    if (timerMode.value === 'countup') {
+      totalSeconds = elapsedSeconds.value;
+    } else {
+      const remaining = countdownTarget.value - elapsedSeconds.value;
+      if (remaining < 0) {
+        isOvertime = true;
+        totalSeconds = Math.abs(remaining);
+      } else {
+        totalSeconds = remaining;
+      }
+    }
 
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    const sign = isOvertime ? '-' : '';
+    return `${sign}${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   });
+
+  const getDuration = (
+    timings: MeetingPartTimings | null,
+    duration?: number,
+  ): string => {
+    let formattedDuration = '';
+    if (timings?.startTime && timings?.endTime) {
+      const diffSeconds = Math.floor(
+        (timings.endTime - timings.startTime) / 1000,
+      );
+      const minutes = Math.floor(diffSeconds / 60);
+      const seconds = diffSeconds % 60;
+      formattedDuration = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    } else if (duration) {
+      // If no actual start/end time, use the planned duration
+      formattedDuration = `${duration.toString().padStart(2, '0')}:00`;
+    }
+    return formattedDuration;
+  };
 
   // Timer logic
   const { pause: pauseInterval, resume: resumeInterval } = useIntervalFn(() => {
@@ -532,7 +538,6 @@ const useTimer = () => {
     const date = selectedDateObject.value?.date;
 
     let sequence: MeetingPart[];
-    let offset = 0;
     if (isWeMeetingDay(date)) {
       const isCo = isCoWeek(date);
       sequence = isCo
@@ -581,58 +586,14 @@ const useTimer = () => {
     const currentPartInfo = sequence[currentPartIndex];
     if (!currentPartInfo) return null;
 
-    if (!currentPartStartTime.value) return null;
+    const actualStartTime = partTimings.value[currentPart.value]?.startTime;
+    if (!actualStartTime) return null;
 
     const plannedStartTime = getPlannedStartTime(currentPartInfo);
     if (!plannedStartTime) return null;
 
-    // Detailed logging
-    const meetingStart = meetingStartTime.value?.getTime();
-    console.log(
-      '🔍 [calculateAheadBehindMinutes] Meeting start time:',
-      new Date(meetingStart || 0).toLocaleTimeString(),
-    );
-
-    console.log(
-      '🔍 [calculateAheadBehindMinutes] Sequence up to',
-      currentPartInfo,
-      ':',
-      sequence.slice(0, currentPartIndex),
-    );
-    for (let i = 0; i < currentPartIndex; i++) {
-      const prevPart = sequence[i];
-      if (!prevPart) continue;
-      const dur = partDurations.value[prevPart];
-      offset += dur;
-      // Add 1 minute for counsel after each non-zero Bible reading or AYFM part
-      if (
-        (prevPart === 'bible-reading' || prevPart.startsWith('ayfm-')) &&
-        dur > 0
-      ) {
-        offset += 1;
-      }
-      console.log(
-        `🔍 [calculateAheadBehindMinutes] Part ${prevPart}: ${dur} minutes, cumulative offset: ${offset} minutes`,
-      );
-    }
-    console.log(
-      '🔍 [calculateAheadBehindMinutes] Final calculated planned start time:',
-      new Date(plannedStartTime).toLocaleTimeString(),
-    );
-    console.log(
-      '🔍 [calculateAheadBehindMinutes] Actual start time:',
-      new Date(currentPartStartTime.value).toLocaleTimeString(),
-    );
-
     // Return difference in minutes (positive = behind, negative = ahead)
-    const diffMinutes =
-      (currentPartStartTime.value - plannedStartTime) / (1000 * 60);
-    console.log(
-      '🔍 [calculateAheadBehindMinutes] Ahead/Behind calculation:',
-      diffMinutes > 0
-        ? `${diffMinutes} minutes behind`
-        : `${Math.abs(diffMinutes)} minutes ahead`,
-    );
+    const diffMinutes = (actualStartTime - plannedStartTime) / (1000 * 60);
     return diffMinutes;
   };
 
@@ -803,11 +764,14 @@ const useTimer = () => {
     currentPart,
     elapsedSeconds,
     formattedTime,
+    getDuration,
     getPlannedStartTime,
+    getTimeString,
     handleTimerWindowVisibility,
     lacPartsCount,
     meetingPartsOptions,
     partDurations,
+    partTimings, // Expose partTimings
     pauseTimer,
     resumeTimer,
     startTimer,
