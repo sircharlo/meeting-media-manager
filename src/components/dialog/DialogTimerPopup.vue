@@ -205,118 +205,40 @@
                 <div class="row q-px-md q-py-sm">
                   {{ t('adapt-cbs-duration-dynamically') }}
                 </div>
+                <div class="row q-px-md q-py-sm">
+                  {{ t('cbs-custom-end-time') }}
+                </div>
                 <div class="row q-px-md q-pb-sm">
-                  <q-btn-toggle
-                    v-model="cbsAdaptiveEnabled"
+                  <q-input
+                    v-model="cbsCustomEndTime"
+                    class="full-width"
                     :disable="timerRunning"
-                    :options="[
-                      { label: t('adaptive'), value: true },
-                      { label: t('fixed'), value: false },
-                    ]"
-                    toggle-color="primary"
+                    filled
+                    :label="t('end-time')"
+                    mask="##:##"
+                    :rules="cbsEndTimeRules"
                   />
                 </div>
-                <template v-if="cbsAdaptiveEnabled">
-                  <div class="row q-px-md q-py-sm">
-                    {{ t('cbs-adaptive-end-time') }}
-                  </div>
-                  <div class="row q-px-md q-pb-sm">
-                    <q-input
-                      v-model="cbsAdaptiveEndTime"
-                      class="full-width"
-                      :disable="timerRunning"
-                      filled
-                      :label="t('end-time')"
-                      mask="##:##"
-                      :rules="[
-                        (val: string) => !!val || t('required'),
-                        (val: string) => {
-                          const parts = val.split(':');
-                          const h = Number(parts[0]);
-                          const m = Number(parts[1]);
-                          const endTime = new Date(
-                            meetingStartTime?.getTime() || 0,
-                          );
-                          endTime.setHours(h, m, 0, 0);
-                          const minTime = new Date(
-                            (meetingStartTime?.getTime() || 0) + 68 * 60 * 1000,
-                          );
-                          const maxTime = new Date(
-                            (meetingStartTime?.getTime() || 0) + 97 * 60 * 1000,
-                          );
-                          return (
-                            (endTime >= minTime && endTime <= maxTime) ||
-                            t('time-must-be-between', {
-                              minTime:
-                                minTime.getHours() + ':' + minTime.getMinutes(),
-                              maxTime:
-                                maxTime.getHours() + ':' + maxTime.getMinutes(),
-                            })
-                          );
-                        },
-                      ]"
-                    />
-                  </div>
-                </template>
               </template>
             </template>
             <template v-else-if="isWeMeetingDay(selectedDateObject?.date)">
               <div class="row q-px-md q-py-sm">
                 {{ t('adapt-wt-duration-dynamically') }}
               </div>
+              <div class="row q-px-md q-py-sm">
+                {{ t('wt-custom-end-time') }}
+              </div>
               <div class="row q-px-md q-pb-sm">
-                <q-btn-toggle
-                  v-model="wtAdaptiveEnabled"
+                <q-input
+                  v-model="wtCustomEndTime"
+                  class="full-width"
                   :disable="timerRunning"
-                  :options="[
-                    { label: t('adaptive'), value: true },
-                    { label: t('fixed'), value: false },
-                  ]"
-                  toggle-color="primary"
+                  filled
+                  :label="t('end-time')"
+                  mask="##:##"
+                  :rules="wtEndTimeRules"
                 />
               </div>
-              <template v-if="wtAdaptiveEnabled">
-                <div class="row q-px-md q-py-sm">
-                  {{ t('wt-adaptive-end-time') }}
-                </div>
-                <div class="row q-px-md q-pb-sm">
-                  <q-input
-                    v-model="wtAdaptiveEndTime"
-                    class="full-width"
-                    :disable="timerRunning"
-                    filled
-                    :label="t('end-time')"
-                    mask="##:##"
-                    :rules="[
-                      (val: string) => !!val || t('required'),
-                      (val: string) => {
-                        const parts = val.split(':');
-                        const h = Number(parts[0]);
-                        const m = Number(parts[1]);
-                        const endTime = new Date(
-                          meetingStartTime?.getTime() || 0,
-                        );
-                        endTime.setHours(h, m, 0, 0);
-                        const minTime = new Date(
-                          (meetingStartTime?.getTime() || 0) + 36 * 60 * 1000,
-                        );
-                        const maxTime = new Date(
-                          (meetingStartTime?.getTime() || 0) + 100 * 60 * 1000,
-                        );
-                        return (
-                          (endTime >= minTime && endTime <= maxTime) ||
-                          t('time-must-be-between', {
-                            minTime:
-                              minTime.getHours() + ':' + minTime.getMinutes(),
-                            maxTime:
-                              maxTime.getHours() + ':' + maxTime.getMinutes(),
-                          })
-                        );
-                      },
-                    ]"
-                  />
-                </div>
-              </template>
             </template>
           </template>
         </template>
@@ -470,19 +392,17 @@
 </template>
 
 <script setup lang="ts">
-import type { TimerData } from 'src/pages/TimerPage.vue';
-import type { Display } from 'src/types';
+import type { Display, MeetingPart } from 'src/types';
 
 import {
   useBroadcastChannel,
   useEventListener,
-  useIntervalFn,
   watchImmediate,
   whenever,
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { QMenu } from 'quasar';
-import { jwIcons } from 'src/constants/jw-icons';
+import useTimer from 'src/composables/useTimer';
 import {
   isCoWeek,
   isMeetingDay,
@@ -491,7 +411,7 @@ import {
 } from 'src/helpers/date';
 import { useAppSettingsStore } from 'src/stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
-import { computed, type ComputedRef, ref, useTemplateRef, watch } from 'vue';
+import { computed, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const timerPopup = useTemplateRef<QMenu>('timerPopup');
@@ -513,47 +433,29 @@ defineProps<{
 
 const open = defineModel<boolean>({ required: true });
 
-// Timer state
-const timerRunning = ref(false);
-const timerPaused = ref(false);
-const timerStartTime = ref<null | number>(null);
-const timerPausedTime = ref<null | number>(null);
-const elapsedSeconds = ref(0);
+const {
+  ayfmPartsCount,
+  cbsCustomEndTime,
+  cbsEndTimeRules,
+  currentPart,
+  formattedTime,
+  handleTimerWindowVisibility,
+  lacPartsCount,
+  meetingPartsOptions,
+  partDurations,
+  pauseTimer,
+  resumeTimer,
+  startTimer,
+  stopTimer,
+  timerMode,
+  timerPaused,
+  timerRunning,
+  updateTimerWindow,
+  wtCustomEndTime,
+  wtEndTimeRules,
+} = useTimer();
 
-// Timer configuration
-const timerMode = ref<'countdown' | 'countup'>('countup');
-type MeetingPart =
-  | 'abbreviated-wt'
-  | 'ayfm-1'
-  | 'ayfm-2'
-  | 'ayfm-3'
-  | 'ayfm-4'
-  | 'ayfm-5'
-  | 'bible-reading'
-  | 'cbs'
-  | 'co-final-talk'
-  | 'co-service-talk'
-  | 'concluding-comments'
-  | 'gems'
-  | 'introduction'
-  | 'lac-1'
-  | 'lac-2'
-  | 'lac-3'
-  | 'public-talk'
-  | 'song-and-optional-prayer'
-  | 'treasures'
-  | 'wt';
-
-const currentPart = ref<MeetingPart>('public-talk');
-const currentPartStartTime = ref<null | number>(null);
-const countdownTarget = ref<number>(0); // Target time in seconds for countdown
 const selectingPart = ref(false);
-const ayfmPartsCount = ref<number>(1);
-const lacPartsCount = ref<number>(1);
-const cbsAdaptiveEnabled = ref(true);
-const cbsAdaptiveEndTime = ref('');
-const wtAdaptiveEnabled = ref(true);
-const wtAdaptiveEndTime = ref<string>('');
 
 const usedParts = ref<Set<MeetingPart>>(new Set());
 
@@ -561,30 +463,6 @@ const usedParts = ref<Set<MeetingPart>>(new Set());
 const editDialogOpen = ref(false);
 const editPart = ref<null | { label: string; value: MeetingPart }>(null);
 const editDuration = ref(0);
-
-// Part durations in minutes (reactive)
-const partDurations = ref<Record<MeetingPart, number>>({
-  'abbreviated-wt': 30,
-  'ayfm-1': 14, // 15 minutes total, minus 1 minute for counsel
-  'ayfm-2': 0,
-  'ayfm-3': 0,
-  'ayfm-4': 0,
-  'ayfm-5': 0,
-  'bible-reading': 4,
-  cbs: 30,
-  'co-final-talk': 30,
-  'co-service-talk': 30,
-  'concluding-comments': 3,
-  gems: 10,
-  introduction: 1,
-  'lac-1': 15, // 15 minutes total
-  'lac-2': 0,
-  'lac-3': 0,
-  'public-talk': 30,
-  'song-and-optional-prayer': 5,
-  treasures: 10,
-  wt: 60,
-});
 
 // Open edit dialog for a part
 const openEditDialog = (part: { label: string; value: MeetingPart }) => {
@@ -596,7 +474,75 @@ const openEditDialog = (part: { label: string; value: MeetingPart }) => {
 // Save edits
 const saveEdit = () => {
   if (!editPart.value) return;
-  partDurations.value[editPart.value.value] = editDuration.value;
+
+  const editedPartValue = editPart.value.value;
+  const newDuration = editDuration.value;
+
+  // Update the edited part's duration
+  partDurations.value[editedPartValue] = newDuration;
+
+  // Check if it's an AYFM or LAC part
+  const splitEditedPart = editedPartValue.split('-');
+  const partIndexString = splitEditedPart[1];
+  const partIndex = parseInt(partIndexString || '0');
+  if (editedPartValue.startsWith('ayfm-')) {
+    const totalAyfmParts = ayfmPartsCount.value;
+    const totalAyfmMinutes = 15 - totalAyfmParts; // 15 minutes total, minus 1 minute for counsel per part
+
+    let consumedMinutes = 0;
+    for (let i = 1; i <= partIndex; i++) {
+      consumedMinutes += partDurations.value[`ayfm-${i}` as MeetingPart] || 0;
+    }
+
+    const remainingMinutes = totalAyfmMinutes - consumedMinutes;
+    const remainingParts = totalAyfmParts - partIndex;
+
+    if (remainingParts > 0) {
+      const baseDuration = Math.floor(remainingMinutes / remainingParts);
+      let remainder = remainingMinutes % remainingParts;
+
+      for (let i = partIndex + 1; i <= totalAyfmParts; i++) {
+        partDurations.value[`ayfm-${i}` as MeetingPart] =
+          baseDuration + (remainder > 0 ? 1 : 0);
+        if (remainder > 0) {
+          remainder--;
+        }
+      }
+    } else if (remainingParts === 0 && consumedMinutes !== totalAyfmMinutes) {
+      // If it's the last part and total time is off, adjust the last part
+      partDurations.value[editedPartValue] =
+        newDuration + (totalAyfmMinutes - consumedMinutes);
+    }
+  } else if (editedPartValue.startsWith('lac-')) {
+    const totalLacParts = lacPartsCount.value;
+    const totalLacMinutes = 15; // 15 minutes total
+
+    let consumedMinutes = 0;
+    for (let i = 1; i <= partIndex; i++) {
+      consumedMinutes += partDurations.value[`lac-${i}` as MeetingPart] || 0;
+    }
+
+    const remainingMinutes = totalLacMinutes - consumedMinutes;
+    const remainingParts = totalLacParts - partIndex;
+
+    if (remainingParts > 0) {
+      const baseDuration = Math.floor(remainingMinutes / remainingParts);
+      let remainder = remainingMinutes % remainingParts;
+
+      for (let i = partIndex + 1; i <= totalLacParts; i++) {
+        partDurations.value[`lac-${i}` as MeetingPart] =
+          baseDuration + (remainder > 0 ? 1 : 0);
+        if (remainder > 0) {
+          remainder--;
+        }
+      }
+    } else if (remainingParts === 0 && consumedMinutes !== totalLacMinutes) {
+      // If it's the last part and total time is off, adjust the last part
+      partDurations.value[editedPartValue] =
+        newDuration + (totalLacMinutes - consumedMinutes);
+    }
+  }
+
   editDialogOpen.value = false;
 };
 
@@ -605,203 +551,7 @@ const cancelEdit = () => {
   editDialogOpen.value = false;
 };
 
-// Calculate ahead/behind minutes
-const calculateAheadBehindMinutes = (): null | number => {
-  if (!currentSettings.value?.enableMeetingAheadBehind) {
-    return null;
-  }
-
-  const date = selectedDateObject.value?.date;
-
-  let sequence: MeetingPart[];
-  let offset = 0;
-  if (isWeMeetingDay(date)) {
-    const isCo = isCoWeek(date);
-    sequence = isCo
-      ? [
-          'song-and-optional-prayer',
-          'public-talk',
-          'song-and-optional-prayer',
-          'abbreviated-wt',
-          'co-final-talk',
-          'song-and-optional-prayer',
-        ]
-      : [
-          'song-and-optional-prayer',
-          'public-talk',
-          'song-and-optional-prayer',
-          'wt',
-          'song-and-optional-prayer',
-        ];
-  } else if (isMwMeetingDay(date)) {
-    sequence = [
-      'song-and-optional-prayer',
-      'introduction',
-      'treasures',
-      'gems',
-      'bible-reading',
-      'ayfm-1',
-      'ayfm-2',
-      'ayfm-3',
-      'ayfm-4',
-      'ayfm-5',
-      'song-and-optional-prayer',
-      'lac-1',
-      'lac-2',
-      'lac-3',
-      isCoWeek(date) ? 'co-service-talk' : 'cbs',
-      'concluding-comments',
-      'song-and-optional-prayer',
-    ];
-  } else {
-    sequence = [];
-  }
-
-  const currentPartIndex = sequence.indexOf(currentPart.value);
-  if (currentPartIndex === -1) return null;
-
-  const currentPartInfo = sequence[currentPartIndex];
-  if (!currentPartInfo) return null;
-
-  if (!currentPartStartTime.value) return null;
-
-  const plannedStartTime = getPlannedStartTime(currentPartInfo);
-  if (!plannedStartTime) return null;
-
-  // Detailed logging
-  const meetingStart = meetingStartTime.value?.getTime();
-  console.log(
-    '🔍 [calculateAheadBehindMinutes] Meeting start time:',
-    new Date(meetingStart || 0).toLocaleTimeString(),
-  );
-
-  console.log(
-    '🔍 [calculateAheadBehindMinutes] Sequence up to',
-    currentPartInfo,
-    ':',
-    sequence.slice(0, currentPartIndex),
-  );
-  for (let i = 0; i < currentPartIndex; i++) {
-    const prevPart = sequence[i];
-    if (!prevPart) continue;
-    const dur = partDurations.value[prevPart];
-    offset += dur;
-    // Add 1 minute for counsel after each non-zero AYFM or LAC part
-    if (
-      (prevPart === 'bible-reading' ||
-        prevPart.startsWith('ayfm-') ||
-        prevPart.startsWith('lac-')) &&
-      dur > 0
-    ) {
-      offset += 1;
-    }
-    console.log(
-      `🔍 [calculateAheadBehindMinutes] Part ${prevPart}: ${dur} minutes, cumulative offset: ${offset} minutes`,
-    );
-  }
-  console.log(
-    '🔍 [calculateAheadBehindMinutes] Final calculated planned start time:',
-    new Date(plannedStartTime).toLocaleTimeString(),
-  );
-  console.log(
-    '🔍 [calculateAheadBehindMinutes] Actual start time:',
-    new Date(currentPartStartTime.value).toLocaleTimeString(),
-  );
-
-  // Return difference in minutes (positive = behind, negative = ahead)
-  const diffMinutes =
-    (currentPartStartTime.value - plannedStartTime) / (1000 * 60);
-  console.log(
-    '🔍 [calculateAheadBehindMinutes] Ahead/Behind calculation:',
-    diffMinutes > 0
-      ? `${diffMinutes} minutes behind`
-      : `${Math.abs(diffMinutes)} minutes ahead`,
-  );
-  return diffMinutes;
-};
-
-// Get planned start time for a meeting part
-const getPlannedStartTime = (part: MeetingPart): null | number => {
-  const date = selectedDateObject.value?.date;
-  if (!date || (!isWeMeetingDay(date) && !isMwMeetingDay(date))) return null;
-
-  const meetingStart = meetingStartTime.value?.getTime();
-  if (!meetingStart) return null;
-
-  let sequence: MeetingPart[];
-  if (isWeMeetingDay(date)) {
-    const isCo = isCoWeek(date);
-    sequence = isCo
-      ? [
-          'song-and-optional-prayer',
-          'public-talk',
-          'song-and-optional-prayer',
-          'abbreviated-wt',
-          'co-final-talk',
-          'song-and-optional-prayer',
-        ]
-      : [
-          'song-and-optional-prayer',
-          'public-talk',
-          'song-and-optional-prayer',
-          'wt',
-          'song-and-optional-prayer',
-        ];
-  } else if (isMwMeetingDay(date)) {
-    const isCo = isCoWeek(date);
-    sequence = [
-      'song-and-optional-prayer',
-      'introduction',
-      'treasures',
-      'gems',
-      'bible-reading',
-      'ayfm-1',
-      'ayfm-2',
-      'ayfm-3',
-      'ayfm-4',
-      'ayfm-5',
-      'song-and-optional-prayer',
-      'lac-1',
-      'lac-2',
-      'lac-3',
-      isCo ? 'co-service-talk' : 'cbs',
-      'concluding-comments',
-      'song-and-optional-prayer',
-    ];
-  } else {
-    return null;
-  }
-
-  const index = sequence.indexOf(part);
-  if (index === -1) return null;
-
-  let offset = 0;
-  for (let i = 0; i < index; i++) {
-    const prevPart = sequence[i];
-    if (!prevPart) continue;
-    const dur = partDurations.value[prevPart] ?? 0;
-    offset += dur;
-    // Add 1 minute for counsel after each non-zero AYFM or LAC part
-    if (
-      (prevPart === 'bible-reading' ||
-        prevPart.startsWith('ayfm-') ||
-        prevPart.startsWith('lac-')) &&
-      dur > 0
-    ) {
-      offset += 1;
-    }
-  }
-
-  return meetingStart + offset * 60 * 1000;
-};
-
-const { getAllScreens, moveTimerWindow, toggleTimerWindow } =
-  window.electronApi;
-
-// Broadcast channel for timer data
-const { post: postTimerData } = useBroadcastChannel<TimerData, TimerData>({
-  name: 'timer-display-data',
-});
+const { getAllScreens, moveTimerWindow } = window.electronApi;
 
 // Listen for timer page ready
 const { data: timerPageReady } = useBroadcastChannel<string, string>({
@@ -875,262 +625,9 @@ const isTimerScreenSelected = (index: number, screen: Display) => {
   return !!screen.timerWindow && !screen.mainWindow;
 };
 
-const meetingStartTime = computed(() => {
-  const date = selectedDateObject.value?.date;
-  if (!date || (!isWeMeetingDay(date) && !isMwMeetingDay(date))) return null;
-  const startTimeStr = isMwMeetingDay(date)
-    ? currentSettings.value?.mwStartTime
-    : currentSettings.value?.weStartTime;
-  if (!startTimeStr) return null;
-  const parts = startTimeStr.split(':');
-  const hour = Number(parts[0]);
-  const min = Number(parts[1]);
-  const start = new Date(date);
-  start.setHours(hour, min, 0, 0);
-  return start;
-});
-
-const cbsAdaptiveDefaultEndTime = computed(() => {
-  if (!meetingStartTime.value) return '';
-  const end = new Date(meetingStartTime.value.getTime() + 97 * 60 * 1000);
-  return end.toTimeString().slice(0, 5); // hh:mm
-});
-
-const wtAdaptiveDefaultEndTime = computed(() => {
-  if (!meetingStartTime.value) return '';
-  const date = selectedDateObject.value?.date;
-  const isCo = date ? isCoWeek(date) : false;
-  const minutes = isCo ? 70 : 100;
-  const end = new Date(meetingStartTime.value.getTime() + minutes * 60 * 1000);
-  return end.toTimeString().slice(0, 5); // hh:mm
-});
-
-const meetingPartsOptions: ComputedRef<
-  {
-    caption?: string;
-    icon?: string;
-    label: string;
-    value: MeetingPart;
-    warning?: boolean;
-  }[]
-> = computed(() => {
-  const date = selectedDateObject.value?.date;
-  if (isWeMeetingDay(date)) {
-    const options: {
-      caption?: string;
-      icon?: string;
-      label: string;
-      value: MeetingPart;
-      warning?: boolean;
-    }[] = [
-      {
-        caption: (() => {
-          const startTime = getPlannedStartTime('public-talk');
-          return startTime
-            ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-            : '';
-        })(),
-        icon: jwIcons['pt'],
-        label: t('public-talk'),
-        value: 'public-talk',
-      },
-      {
-        caption: wtAdaptiveEnabled.value
-          ? (() => {
-              const startTime = getPlannedStartTime('wt');
-              const startStr = startTime
-                ? new Date(startTime).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })
-                : '';
-              const endStr = wtAdaptiveEndTime.value || t('adaptive');
-              return (
-                t('latest-ending', { endTime: endStr }) +
-                (startStr ? ` (${t('start')}: ${startStr})` : '')
-              );
-            })()
-          : (() => {
-              const startTime = getPlannedStartTime('wt');
-              return startTime
-                ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-                : '';
-            })(),
-        icon: jwIcons['wt'],
-        label: t('wt'),
-        value: 'wt',
-      },
-    ];
-
-    if (isCoWeek(date)) {
-      options.push({
-        caption: (() => {
-          const startTime = getPlannedStartTime('co-final-talk');
-          return startTime
-            ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-            : '';
-        })(),
-        icon: jwIcons['circuit-overseer'],
-        label: t('co-final-talk'),
-        value: 'co-final-talk',
-      });
-    }
-
-    return options;
-  } else if (isMwMeetingDay(date)) {
-    const isCo = isCoWeek(date);
-    const options: {
-      caption?: string;
-      icon?: string;
-      label: string;
-      value: MeetingPart;
-      warning?: boolean;
-    }[] = [
-      {
-        caption: (() => {
-          const startTime = getPlannedStartTime('introduction');
-          return startTime
-            ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-            : '';
-        })(),
-        icon: jwIcons['introduction'],
-        label: t('introduction'),
-        value: 'introduction',
-      },
-      {
-        caption: (() => {
-          const startTime = getPlannedStartTime('treasures');
-          return startTime
-            ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-            : '';
-        })(),
-        icon: jwIcons['tgw'],
-        label: t('treasures-talk'),
-        value: 'treasures',
-      },
-      {
-        caption: (() => {
-          const startTime = getPlannedStartTime('gems');
-          return startTime
-            ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-            : '';
-        })(),
-        icon: jwIcons['gems'],
-        label: t('gems'),
-        value: 'gems',
-      },
-      {
-        caption: (() => {
-          const startTime = getPlannedStartTime('bible-reading');
-          return startTime
-            ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-            : '';
-        })(),
-        icon: jwIcons['bible-reading'],
-        label: t('bible-reading'),
-        value: 'bible-reading',
-      },
-    ];
-    // Add AYFM parts
-    for (let i = 1; i <= ayfmPartsCount.value; i++) {
-      const totalDuration = Array.from(
-        { length: ayfmPartsCount.value },
-        (_, idx) => partDurations.value[`ayfm-${idx + 1}` as MeetingPart] || 0,
-      ).reduce((a, b) => a + b, 0);
-      const warning = totalDuration !== 15 - ayfmPartsCount.value;
-      const dur = partDurations.value[`ayfm-${i}` as MeetingPart] || 14;
-      const startTime = getPlannedStartTime(`ayfm-${i}` as MeetingPart);
-      const startStr = startTime
-        ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-        : '';
-      options.push({
-        caption: startStr,
-        icon: jwIcons['ayfm-part'],
-        label: t('ayfm-part', { duration: dur, part: i }),
-        value: `ayfm-${i}` as MeetingPart,
-        warning,
-      });
-    }
-    // Add LAC parts
-    for (let i = 1; i <= lacPartsCount.value; i++) {
-      const totalDuration = Array.from(
-        { length: lacPartsCount.value },
-        (_, idx) => partDurations.value[`lac-${idx + 1}` as MeetingPart] || 0,
-      ).reduce((a, b) => a + b, 0);
-      const warning = totalDuration !== 15;
-      const dur = partDurations.value[`lac-${i}` as MeetingPart] || 15;
-      const startTime = getPlannedStartTime(`lac-${i}` as MeetingPart);
-      const startStr = startTime
-        ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-        : '';
-      options.push({
-        caption: startStr,
-        icon: jwIcons['lac-part'],
-        label: t('lac-part', { duration: dur, part: i }),
-        value: `lac-${i}` as MeetingPart,
-        warning,
-      });
-    }
-    if (isCo) {
-      options.push({
-        caption: (() => {
-          const startTime = getPlannedStartTime('co-service-talk');
-          return startTime
-            ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-            : '';
-        })(),
-        icon: jwIcons['circuit-overseer'],
-        label: t('co-service-talk'),
-        value: 'co-service-talk',
-      });
-    } else {
-      options.push({
-        caption: cbsAdaptiveEnabled.value
-          ? (() => {
-              const startTime = getPlannedStartTime('cbs');
-              const startStr = startTime
-                ? new Date(startTime).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })
-                : '';
-              const endStr = cbsAdaptiveEndTime.value || t('adaptive');
-              return (
-                t('latest-ending', { endTime: endStr }) +
-                (startStr ? ` (${t('start')}: ${startStr})` : '')
-              );
-            })()
-          : (() => {
-              const startTime = getPlannedStartTime('cbs');
-              return startTime
-                ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-                : '';
-            })(),
-        icon: jwIcons['cbs'],
-        label: t('cbs'),
-        value: 'cbs',
-      });
-    }
-    options.push({
-      caption: (() => {
-        const startTime = getPlannedStartTime('concluding-comments');
-        return startTime
-          ? `${t('start')}: ${new Date(startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-          : '';
-      })(),
-      icon: jwIcons['concluding-comments'],
-      label: t('concluding-comments'),
-      value: 'concluding-comments',
-    });
-    return options;
-  }
-  return [];
-});
-
 // UI update handler
 watch(
   () => [
-    timerWindowVisible.value,
     timerRunning.value,
     timerMode.value,
     timerPreferences.value?.preferWindowed,
@@ -1144,205 +641,12 @@ watch(
   },
 );
 
-// Timer logic
-const { pause: pauseInterval, resume: resumeInterval } = useIntervalFn(() => {
-  if (timerRunning.value && !timerPaused.value) {
-    const now = Date.now();
-    const startTime = timerStartTime.value;
-    if (startTime) {
-      elapsedSeconds.value = Math.floor((now - startTime) / 1000);
-      updateTimerWindow(); // Update the timer window with new time
-    }
-  }
-}, 500);
-
-const formattedTime = computed(() => {
-  const totalSeconds =
-    timerMode.value === 'countup'
-      ? elapsedSeconds.value
-      : Math.max(0, countdownTarget.value - elapsedSeconds.value);
-
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-});
-
-const calculateCountdownTarget = () => {
-  if (
-    !selectedDateObject.value ||
-    !isMeetingDay(selectedDateObject.value?.date) ||
-    timerMode.value === 'countup'
-  )
-    return 0;
-
-  if (isWeMeetingDay(selectedDateObject.value?.date)) {
-    if (currentPart.value === 'public-talk') {
-      return partDurations.value['public-talk'] * 60;
-    } else if (currentPart.value === 'wt') {
-      const isCo = isCoWeek(selectedDateObject.value?.date);
-      const wtMaxDuration =
-        (isCo
-          ? partDurations.value['abbreviated-wt']
-          : partDurations.value.wt) * 60;
-      if (wtAdaptiveEnabled.value) {
-        // Custom end time
-        const configuredMeetingStartTime = currentSettings.value?.weStartTime;
-        if (!configuredMeetingStartTime || !wtAdaptiveEndTime.value) return 0;
-        const [startHour, startMinute] = configuredMeetingStartTime.split(':');
-        const meetingStartTime = new Date(selectedDateObject.value.date);
-        if (!startHour || !startMinute) return 0;
-        meetingStartTime.setHours(
-          parseInt(startHour),
-          parseInt(startMinute),
-          0,
-          0,
-        );
-        const parts = wtAdaptiveEndTime.value.split(':');
-        const h = Number(parts[0]);
-        const m = Number(parts[1]);
-        const endTime = new Date(meetingStartTime.getTime());
-        endTime.setHours(h, m, 0, 0);
-        const now = new Date();
-        const remaining = Math.max(0, endTime.getTime() - now.getTime()) / 1000;
-        const remainingWholeSeconds = Math.floor(remaining);
-        return Math.min(remainingWholeSeconds, wtMaxDuration);
-      } else {
-        return wtMaxDuration;
-      }
-    } else if (currentPart.value === 'co-final-talk') {
-      return partDurations.value['co-final-talk'] * 60;
-    } else if (currentPart.value === 'co-service-talk') {
-      return partDurations.value['co-service-talk'] * 60;
-    }
-  } else if (isMwMeetingDay(selectedDateObject.value?.date)) {
-    if (currentPart.value === 'treasures') {
-      return partDurations.value.treasures * 60;
-    } else if (currentPart.value === 'gems') {
-      return partDurations.value.gems * 60;
-    } else if (currentPart.value === 'bible-reading') {
-      return partDurations.value['bible-reading'] * 60;
-    } else if (currentPart.value.startsWith('ayfm-')) {
-      return partDurations.value[currentPart.value] * 60;
-    } else if (currentPart.value.startsWith('lac-')) {
-      return partDurations.value[currentPart.value] * 60;
-    } else if (currentPart.value === 'co-service-talk') {
-      return partDurations.value['co-service-talk'] * 60;
-    } else if (currentPart.value === 'cbs') {
-      const cbsMaxDuration = partDurations.value.cbs * 60;
-      if (cbsAdaptiveEnabled.value) {
-        // Custom end time
-        const configuredMeetingStartTime = currentSettings.value?.mwStartTime;
-        if (!configuredMeetingStartTime || !cbsAdaptiveEndTime.value) return 0;
-        const [startHour, startMinute] = configuredMeetingStartTime.split(':');
-        const meetingStartTime = new Date(selectedDateObject.value.date);
-        if (!startHour || !startMinute) return 0;
-        meetingStartTime.setHours(
-          parseInt(startHour),
-          parseInt(startMinute),
-          0,
-          0,
-        );
-        const parts = cbsAdaptiveEndTime.value.split(':');
-        const h = Number(parts[0]);
-        const m = Number(parts[1]);
-        const endTime = new Date(meetingStartTime.getTime());
-        endTime.setHours(h, m, 0, 0);
-        const now = new Date();
-        const remaining = Math.max(0, endTime.getTime() - now.getTime()) / 1000;
-        const remainingWholeSeconds = Math.floor(remaining);
-        return Math.min(remainingWholeSeconds, cbsMaxDuration);
-      } else {
-        return cbsMaxDuration;
-      }
-    }
-  }
-
-  return 0;
-};
-
-const startTimer = () => {
-  if (timerMode.value === 'countdown') {
-    countdownTarget.value = calculateCountdownTarget();
-  }
-
-  timerRunning.value = true;
-  timerPaused.value = false;
-  timerStartTime.value = Date.now() - elapsedSeconds.value * 1000;
-  timerPausedTime.value = null;
-
-  currentPartStartTime.value = Date.now();
-
-  resumeInterval();
-  updateTimerWindow();
-};
-
-const pauseTimer = () => {
-  timerPaused.value = true;
-  timerPausedTime.value = Date.now();
-  pauseInterval();
-  updateTimerWindow();
-};
-
-const resumeTimer = () => {
-  const pauseDuration = Date.now() - (timerPausedTime.value || 0);
-  if (timerStartTime.value !== null) {
-    timerStartTime.value += pauseDuration;
-  }
-  timerPaused.value = false;
-  timerPausedTime.value = null;
-  resumeInterval();
-  updateTimerWindow();
-};
-
-const stopTimer = () => {
-  pauseInterval();
-  // Immediately send cleared timer data to external window
-  postTimerData({
-    mode: timerMode.value,
-    paused: false,
-    running: false,
-    time: '',
-    timerBackgroundColor: currentSettings.value?.timerBackgroundColor,
-    timerTextColor: currentSettings.value?.timerTextColor,
-    timerTextSize: currentSettings.value?.timerTextSize,
-  });
-  timerRunning.value = false;
-  timerPaused.value = false;
-  elapsedSeconds.value = 0;
-  timerStartTime.value = null;
-  timerPausedTime.value = null;
-  countdownTarget.value = 0;
-  updateTimerWindow();
-};
-
 const selectPart = (value: MeetingPart) => {
   selectingPart.value = true;
   currentPart.value = value;
   usedParts.value.add(value);
   startTimer();
   selectingPart.value = false;
-};
-
-const updateTimerWindow = () => {
-  // Send timer data to the timer window via broadcast channel
-  const timerData = {
-    aheadBehindMinutes: calculateAheadBehindMinutes(),
-    enableMeetingCountdown: currentSettings.value?.enableMeetingCountdown,
-    meetingCountdownMinutes: currentSettings.value?.meetingCountdownMinutes,
-    mode: timerMode.value,
-    mwDay: currentSettings.value?.mwDay,
-    mwStartTime: currentSettings.value?.mwStartTime,
-    paused: timerPaused.value,
-    running: timerRunning.value,
-    time: timerRunning.value ? formattedTime.value : '',
-    timerBackgroundColor: currentSettings.value?.timerBackgroundColor,
-    timerTextColor: currentSettings.value?.timerTextColor,
-    timerTextSize: currentSettings.value?.timerTextSize,
-    weDay: currentSettings.value?.weDay,
-    weStartTime: currentSettings.value?.weStartTime,
-  };
-
-  postTimerData(timerData);
 };
 
 // Watch for timer mode changes
@@ -1375,78 +679,12 @@ watchImmediate(
   },
 );
 
-// Watch AYFM parts count to adjust durations
-watchImmediate(ayfmPartsCount, (newCount) => {
-  const totalMinutes = 15 - newCount; // 15 minutes total, minus number of parts for 1 min of counsel each
-  const base = Math.floor(totalMinutes / newCount);
-  const remainder = totalMinutes % newCount;
-  for (let i = 1; i <= 5; i++) {
-    if (i <= newCount) {
-      const dur = base + (i <= remainder ? 1 : 0);
-      partDurations.value[`ayfm-${i}` as MeetingPart] = dur;
-    } else {
-      partDurations.value[`ayfm-${i}` as MeetingPart] = 0;
-    }
-  }
-  console.log(
-    'AYFM parts count changed to',
-    newCount,
-    'durations:',
-    partDurations.value,
-  );
-});
-
-// Watch LAC parts count to adjust durations
-watchImmediate(lacPartsCount, (newCount) => {
-  const totalMinutes = 15;
-  const base = Math.floor(totalMinutes / newCount);
-  const remainder = totalMinutes % newCount;
-  for (let i = 1; i <= 3; i++) {
-    if (i <= newCount) {
-      const dur = base + (i <= remainder ? 1 : 0);
-      partDurations.value[`lac-${i}` as MeetingPart] = dur;
-    } else {
-      partDurations.value[`lac-${i}` as MeetingPart] = 0;
-    }
-  }
-});
-
 // Watch for timer page ready
 watch(timerPageReady, (timestamp) => {
   if (timestamp) {
     handleTimerWindowVisibility(true);
   }
 });
-
-// Watch selected date to set default adaptive end times
-watchImmediate(selectedDateObject, () => {
-  cbsAdaptiveEndTime.value = cbsAdaptiveDefaultEndTime.value;
-  wtAdaptiveEndTime.value = wtAdaptiveDefaultEndTime.value;
-});
-
-const handleTimerWindowVisibility = (visible: boolean) => {
-  toggleTimerWindow(visible);
-  currentState.setTimerWindowVisible(visible);
-  if (visible) {
-    // Broadcast initial timer settings
-    postTimerData({
-      aheadBehindMinutes: calculateAheadBehindMinutes(),
-      enableMeetingCountdown: currentSettings.value?.enableMeetingCountdown,
-      meetingCountdownMinutes: currentSettings.value?.meetingCountdownMinutes,
-      mode: 'countup',
-      mwDay: currentSettings.value?.mwDay,
-      mwStartTime: currentSettings.value?.mwStartTime,
-      paused: false,
-      running: false,
-      time: '',
-      timerBackgroundColor: currentSettings.value?.timerBackgroundColor,
-      timerTextColor: currentSettings.value?.timerTextColor,
-      timerTextSize: currentSettings.value?.timerTextSize,
-      weDay: currentSettings.value?.weDay,
-      weStartTime: currentSettings.value?.weStartTime,
-    });
-  }
-};
 
 // Initialize timer when window becomes visible
 watch(timerWindowVisible, (visible) => {

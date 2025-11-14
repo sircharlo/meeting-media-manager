@@ -23,32 +23,13 @@
 </template>
 
 <script setup lang="ts">
+import type { TimerData } from 'src/types';
+
 import { useBroadcastChannel, useIntervalFn } from '@vueuse/core';
 import { computed, type CSSProperties, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-
-// Simple timer page for now
-
-// Timer data from main dialog
-export interface TimerData {
-  aheadBehindMinutes?: null | number;
-  enableMeetingCountdown?: boolean;
-  meetingCountdownMinutes?: number;
-  meetingStartTime?: string;
-  mode: 'countdown' | 'countup';
-  mwDay?: null | string;
-  mwStartTime?: null | string;
-  paused: boolean;
-  running: boolean;
-  time: string;
-  timerBackgroundColor?: string;
-  timerTextColor?: string;
-  timerTextSize?: string;
-  weDay?: null | string;
-  weStartTime?: null | string;
-}
 
 const displayTime = ref<string>('');
 const paused = ref<boolean>(false);
