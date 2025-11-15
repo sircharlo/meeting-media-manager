@@ -653,6 +653,7 @@
         :target="menuTarget"
         touch-position
         @before-show="handleMultipleSelections()"
+        @hide="clearMultipleSelections()"
       >
         <q-list>
           <template v-if="multipleMediaItemsSelected">
@@ -1048,6 +1049,14 @@ const multipleMediaItemsSelected = computed(() => {
   return selectedMediaItems.value.length >= 2;
 });
 
+const clearMultipleSelections = () => {
+  selectedMediaItems.value = [];
+  const selectedElements = document.querySelectorAll('.sortable-selected');
+  selectedElements.forEach((el) => {
+    el.classList.remove('sortable-selected');
+  });
+};
+
 const handleMultipleSelections = () => {
   const selectedElements = document.querySelectorAll('.sortable-selected');
   try {
@@ -1061,10 +1070,6 @@ const handleMultipleSelections = () => {
   } catch (e) {
     errorCatcher(e);
     selectedMediaItems.value = [];
-  } finally {
-    selectedElements.forEach((el) => {
-      el.classList.remove('sortable-selected');
-    });
   }
 };
 
