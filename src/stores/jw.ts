@@ -300,6 +300,61 @@ export const useJwStore = defineStore('jw-store', {
         }
       });
     },
+    deleteMediaItems(
+      uniqueIds: string[],
+      currentCongregation: string,
+      selectedDateObject: DateInfo | null,
+    ) {
+      try {
+        if (
+          !uniqueIds.length ||
+          !currentCongregation ||
+          !selectedDateObject?.mediaSections
+        )
+          return;
+
+        selectedDateObject.mediaSections.forEach((section) => {
+          if (!section.items) return;
+          section.items = section.items.filter(
+            (item: MediaItem) => !uniqueIds.includes(item.uniqueId),
+          );
+        });
+      } catch (e) {
+        errorCatcher(e);
+      }
+    },
+    hideMediaItems(
+      uniqueIds: string[],
+      currentCongregation: string,
+      selectedDateObject: DateInfo | null,
+    ) {
+      try {
+        if (
+          !uniqueIds.length ||
+          !currentCongregation ||
+          !selectedDateObject?.mediaSections
+        )
+          return;
+
+        selectedDateObject.mediaSections.forEach((section) => {
+          if (!section.items) return;
+          section.items.forEach((item: MediaItem) => {
+            if (uniqueIds.includes(item.uniqueId)) {
+              item.hidden = true;
+            }
+            if (item.children?.length) {
+              item.children.forEach((child: MediaItem) => {
+                if (uniqueIds.includes(child.uniqueId)) {
+                  child.hidden = true;
+                }
+              });
+            }
+          });
+        });
+      } catch (e) {
+        errorCatcher(e);
+      }
+    },
     removeFromAdditionMediaMap(
       uniqueId: string,
       currentCongregation: string,

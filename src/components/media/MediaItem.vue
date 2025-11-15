@@ -9,6 +9,7 @@
       'bg-accent-100': mediaPlaying.uniqueId === '' && currentlyHighlighted,
       'q-px-sm': child,
     }"
+    :data-id="media.uniqueId"
     :style="{
       'padding: 8px 6px': child,
       'flex-direction': 'column',
@@ -651,86 +652,146 @@
         style="overflow-x: hidden"
         :target="menuTarget"
         touch-position
+        @before-show="handleMultipleSelections()"
       >
         <q-list>
-          <q-item-label header>{{ displayMediaTitle }}</q-item-label>
-          <q-item
-            v-close-popup
-            clickable
-            :disable="isCurrentlyPlaying"
-            @click="emit('update:hidden', true)"
-          >
-            <q-item-section avatar>
-              <q-icon name="mmm-file-hidden" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ t('hide-from-list') }}</q-item-label>
-              <q-item-label caption>
-                {{ t('hide-from-list-explain') }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item
-            v-close-popup
-            clickable
-            :disable="isCurrentlyPlaying"
-            @click="handleTitleEdit(true)"
-          >
-            <q-item-section avatar>
-              <q-icon name="mmm-edit" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ t('rename') }}</q-item-label>
-              <q-item-label caption>{{ t('rename-explain') }}</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item v-close-popup clickable @click="mediaEditTagDialog = true">
-            <q-item-section avatar>
-              <q-icon name="mmm-tag" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ t('change-tag') }}</q-item-label>
-              <q-item-label caption>
-                {{ t('change-tag-explain') }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item v-if="media.duration" clickable @click="repeat = !repeat">
-            <q-item-section avatar>
-              <q-icon :name="repeat ? 'mmm-repeat-off' : 'mmm-repeat'" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>
-                {{
-                  repeat ? t('stop-repeat-media-item') : t('repeat-media-item')
-                }}
-              </q-item-label>
-              <q-item-label caption>
-                {{
-                  repeat
-                    ? t('stop-repeat-media-item-explain')
-                    : t('repeat-media-item-explain')
-                }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item
-            v-if="media.source === 'additional'"
-            v-close-popup
-            clickable
-            :disable="isCurrentlyPlaying"
-            @click="mediaToDelete = media.uniqueId"
-          >
-            <q-item-section avatar>
-              <q-icon color="negative" name="mmm-delete" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ t('delete-media') }}</q-item-label>
-              <q-item-label caption>
-                {{ t('delete-media-explain') }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
+          <template v-if="multipleMediaItemsSelected">
+            <q-item-label header>
+              {{ t('selected-media-items') }} ({{ selectedMediaItems.length }})
+            </q-item-label>
+            <q-item
+              v-if="canDeleteSelected"
+              v-close-popup
+              clickable
+              :disable="isCurrentlyPlaying"
+              @click="
+                deleteMediaItems(
+                  deletableSelectedMediaItemIds,
+                  currentCongregation,
+                  selectedDateObject,
+                )
+              "
+            >
+              <q-item-section avatar>
+                <q-icon color="negative" name="mmm-delete-smart" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  {{ t('delete-selected-media', selectedMediaItems.length) }}
+                </q-item-label>
+                <q-item-label caption>
+                  {{ t('delete-selected-media-explain') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-if="canHideSelected"
+              v-close-popup
+              clickable
+              :disable="isCurrentlyPlaying"
+              @click="
+                hideMediaItems(
+                  selectedMediaItemIds,
+                  currentCongregation,
+                  selectedDateObject,
+                )
+              "
+            >
+              <q-item-section avatar>
+                <q-icon name="mmm-file-hidden" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  {{ t('hide-selected-media', selectedMediaItems.length) }}
+                </q-item-label>
+                <q-item-label caption>
+                  {{ t('hide-selected-media-explain') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-else>
+            <q-item-label header>{{ displayMediaTitle }}</q-item-label>
+            <q-item
+              v-close-popup
+              clickable
+              :disable="isCurrentlyPlaying"
+              @click="emit('update:hidden', true)"
+            >
+              <q-item-section avatar>
+                <q-icon name="mmm-file-hidden" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('hide-from-list') }}</q-item-label>
+                <q-item-label caption>
+                  {{ t('hide-from-list-explain') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-close-popup
+              clickable
+              :disable="isCurrentlyPlaying"
+              @click="handleTitleEdit(true)"
+            >
+              <q-item-section avatar>
+                <q-icon name="mmm-edit" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('rename') }}</q-item-label>
+                <q-item-label caption>{{ t('rename-explain') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item v-close-popup clickable @click="mediaEditTagDialog = true">
+              <q-item-section avatar>
+                <q-icon name="mmm-tag" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('change-tag') }}</q-item-label>
+                <q-item-label caption>
+                  {{ t('change-tag-explain') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item v-if="media.duration" clickable @click="repeat = !repeat">
+              <q-item-section avatar>
+                <q-icon :name="repeat ? 'mmm-repeat-off' : 'mmm-repeat'" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  {{
+                    repeat
+                      ? t('stop-repeat-media-item')
+                      : t('repeat-media-item')
+                  }}
+                </q-item-label>
+                <q-item-label caption>
+                  {{
+                    repeat
+                      ? t('stop-repeat-media-item-explain')
+                      : t('repeat-media-item-explain')
+                  }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-if="media.source === 'additional'"
+              v-close-popup
+              clickable
+              :disable="isCurrentlyPlaying"
+              @click="mediaToDelete = media.uniqueId"
+            >
+              <q-item-section avatar>
+                <q-icon color="negative" name="mmm-delete" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('delete-media') }}</q-item-label>
+                <q-item-label caption>
+                  {{ t('delete-media-explain') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
         </q-list>
       </q-menu>
     </div>
@@ -974,8 +1035,64 @@ const currentlyHighlighted = computed(
   () => highlightedMediaId.value === props.media.uniqueId,
 );
 
+const allMediaItemsOnPage = computed(() => {
+  if (!selectedDateObject.value?.mediaSections) return [];
+  return selectedDateObject.value.mediaSections.flatMap(
+    (section) => section.items || [],
+  );
+});
+
+const selectedMediaItems = ref<MediaItem[]>([]);
+
+const multipleMediaItemsSelected = computed(() => {
+  return selectedMediaItems.value.length >= 2;
+});
+
+const handleMultipleSelections = () => {
+  const selectedElements = document.querySelectorAll('.sortable-selected');
+  try {
+    if (!selectedElements.length) selectedMediaItems.value = [];
+    const selectedIds = Array.from(selectedElements).map((el) =>
+      el.getAttribute('data-id'),
+    );
+    selectedMediaItems.value = allMediaItemsOnPage.value.filter(
+      (item) => item.uniqueId && selectedIds.includes(item.uniqueId),
+    );
+  } catch (e) {
+    errorCatcher(e);
+    selectedMediaItems.value = [];
+  } finally {
+    selectedElements.forEach((el) => {
+      el.classList.remove('sortable-selected');
+    });
+  }
+};
+
+const selectedMediaItemIds = computed(() => {
+  return selectedMediaItems.value.map((item) => item.uniqueId);
+});
+
+const deletableSelectedMediaItems = computed(() => {
+  return selectedMediaItems.value.filter(
+    (item) => item.source === 'additional',
+  );
+});
+
+const deletableSelectedMediaItemIds = computed(() => {
+  return deletableSelectedMediaItems.value.map((item) => item.uniqueId);
+});
+
+const canDeleteSelected = computed(() => {
+  return deletableSelectedMediaItems.value.length >= 2;
+});
+
+const canHideSelected = computed(() => {
+  return selectedMediaItems.value.length >= 2;
+});
+
 const jwStore = useJwStore();
-const { removeFromAdditionMediaMap } = jwStore;
+const { deleteMediaItems, hideMediaItems, removeFromAdditionMediaMap } =
+  jwStore;
 
 const obsState = useObsStateStore();
 const { currentSceneType, obsConnectionState } = storeToRefs(obsState);
