@@ -329,36 +329,43 @@
       </div>
 
       <div class="q-px-md q-pt-md">
-        <template v-if="!timerRunning">
-          <q-btn
-            class="full-width q-mb-sm"
-            color="primary"
-            unelevated
-            @click="startTimer()"
-          >
-            <q-icon class="q-mr-sm" name="play_arrow" />
-            {{ t('start') }}
-          </q-btn>
-        </template>
-        <template v-else>
-          <div class="row q-gutter-sm q-mb-sm">
+        <template v-if="!isMeetingDay(selectedDateObject?.date)">
+          <template v-if="!timerRunning">
             <q-btn
-              class="col"
-              :color="timerPaused ? 'positive' : 'warning'"
+              class="full-width q-mb-sm"
+              color="primary"
               unelevated
-              @click="timerPaused ? resumeTimer() : pauseTimer()"
+              @click="startTimer()"
             >
-              <q-icon
-                class="q-mr-sm"
-                :name="timerPaused ? 'play_arrow' : 'pause'"
-              />
-              {{ timerPaused ? t('resume') : t('pause') }}
+              <q-icon class="q-mr-sm" name="play_arrow" />
+              {{ t('start') }}
             </q-btn>
-            <q-btn class="col" color="negative" unelevated @click="stopTimer()">
-              <q-icon class="q-mr-sm" name="stop" />
-              {{ t('stop') }}
-            </q-btn>
-          </div>
+          </template>
+          <template v-else>
+            <div class="row q-gutter-sm q-mb-sm">
+              <q-btn
+                class="col"
+                :color="timerPaused ? 'positive' : 'warning'"
+                unelevated
+                @click="timerPaused ? resumeTimer() : pauseTimer()"
+              >
+                <q-icon
+                  class="q-mr-sm"
+                  :name="timerPaused ? 'play_arrow' : 'pause'"
+                />
+                {{ timerPaused ? t('resume') : t('pause') }}
+              </q-btn>
+              <q-btn
+                class="col"
+                color="negative"
+                unelevated
+                @click="stopTimer()"
+              >
+                <q-icon class="q-mr-sm" name="stop" />
+                {{ t('stop') }}
+              </q-btn>
+            </div>
+          </template>
         </template>
         <q-btn
           class="full-width q-mb-sm"
