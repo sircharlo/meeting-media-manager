@@ -8,6 +8,7 @@ import {
   sendToWindow,
 } from 'main/window/window-base';
 import { createMediaWindow, moveMediaWindow } from 'main/window/window-media';
+import { moveTimerWindow } from 'main/window/window-timer';
 import { PLATFORM } from 'src-electron/constants';
 
 import { setShouldQuit } from '../session';
@@ -33,8 +34,19 @@ export function createMainWindow() {
     () => moveMediaWindow(),
     100,
   );
-  mainWindow.on('move', moveMediaWindowThrottled);
-  if (PLATFORM !== 'darwin') mainWindow.on('moved', moveMediaWindowThrottled); // On macOS, the 'moved' event is just an alias for 'move'
+  const moveTimerWindowThrottled = throttleWithTrailing(
+    () => moveTimerWindow(),
+    100,
+  );
+  mainWindow.on('move', () => {
+    moveMediaWindowThrottled();
+    moveTimerWindowThrottled();
+  });
+  if (PLATFORM !== 'darwin')
+    mainWindow.on('moved', () => {
+      moveMediaWindowThrottled();
+      moveTimerWindowThrottled();
+    }); // On macOS, the 'moved' event is just an alias for 'move'
 
   mainWindow.on('close', (e) => {
     if (mainWindow && (authorizedClose || closeAttempts > 2)) {
