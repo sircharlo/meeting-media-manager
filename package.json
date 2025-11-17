@@ -54,7 +54,7 @@
     "fs-extra": "^11.3.2",
     "heic-convert": "^2.1.0",
     "image-size": "^2.0.2",
-    "is-online": "^12.0.1",
+    "is-online": "^12.0.2",
     "mime": "^4.1.0",
     "mousetrap": "^1.6.5",
     "music-metadata": "^11.10.1",

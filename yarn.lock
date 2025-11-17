@@ -9377,15 +9377,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-online@npm:^12.0.1":
-  version: 12.0.1
-  resolution: "is-online@npm:12.0.1"
+"is-online@npm:^12.0.2":
+  version: 12.0.2
+  resolution: "is-online@npm:12.0.2"
   dependencies:
     fetch-extras: "npm:^1.0.0"
     p-any: "npm:^4.0.0"
     p-timeout: "npm:^6.1.4"
     public-ip: "npm:^7.0.1"
-  checksum: 10c0/1fd6f9aecb6c56245a03721d30bd20b4cea65af212740d2bc86af242990aaf59037ba9c72381e0c086f7f501dd2e298bbe9603138a37c6d92fa72aa70c0b8bea
+  checksum: 10c0/00bdc944d7c26460f962fddafd07d885d518ae2906accbdc345017295092a7ba7cfb2ff50c6c75e05f6ca89272331147a8f988ca44cb039301e89e6496aea977
   languageName: node
   linkType: hard
 
@@ -10355,7 +10355,7 @@ __metadata:
     heic-convert: "npm:^2.1.0"
     husky: "npm:^9.1.7"
     image-size: "npm:^2.0.2"
-    is-online: "npm:^12.0.1"
+    is-online: "npm:^12.0.2"
     lint-staged: "npm:^16.2.6"
     lodash-es: "npm:^4.17.21"
     mime: "npm:^4.1.0"
