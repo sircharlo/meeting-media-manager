@@ -68,11 +68,11 @@
           :selected="selectedMediaItems?.includes(element.uniqueId)"
           :selected-media-items="selectedMediaItems"
           @item-clicked="
-            (evt) =>
+            (payload) =>
               emit('item-clicked', {
-                event: evt as unknown as MouseEvent,
-                mediaItemId: element.uniqueId,
-                sectionId: props.mediaList.config?.uniqueId,
+                event: payload.event as MouseEvent,
+                mediaItemId: payload.mediaItemId,
+                sectionId: element.uniqueId,
               })
           "
           @update:child-hidden="
