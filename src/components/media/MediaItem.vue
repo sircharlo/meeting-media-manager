@@ -8,12 +8,14 @@
       'bg-accent-100-transparent': currentlyHighlighted,
       'bg-accent-100': mediaPlaying.uniqueId === '' && currentlyHighlighted,
       'q-px-sm': child,
+      'sortable-selected': props.selected,
     }"
     :data-id="media.uniqueId"
     :style="{
       'padding: 8px 6px': child,
       'flex-direction': 'column',
     }"
+    @mouseup.left.passive="(evt) => emit('click', evt)"
   >
     <div class="row full-width items-center justify-center">
       <div class="col-shrink">
@@ -652,8 +654,6 @@
         style="overflow-x: hidden"
         :target="menuTarget"
         touch-position
-        @before-show="handleMultipleSelections()"
-        @hide="clearMultipleSelections()"
       >
         <q-list>
           <template v-if="multipleMediaItemsSelected">
@@ -667,7 +667,7 @@
               :disable="isCurrentlyPlaying"
               @click="
                 deleteMediaItems(
-                  deletableSelectedMediaItemIds,
+                  deletableSelectedMediaItems,
                   currentCongregation,
                   selectedDateObject,
                 )
@@ -692,7 +692,7 @@
               :disable="isCurrentlyPlaying"
               @click="
                 hideMediaItems(
-                  selectedMediaItemIds,
+                  selectedMediaItems,
                   currentCongregation,
                   selectedDateObject,
                 )
@@ -1036,63 +1036,31 @@ const currentlyHighlighted = computed(
   () => highlightedMediaId.value === props.media.uniqueId,
 );
 
-const allMediaItemsOnPage = computed(() => {
-  if (!selectedDateObject.value?.mediaSections) return [];
-  return selectedDateObject.value.mediaSections.flatMap(
-    (section) => section.items || [],
-  );
-});
-
-const selectedMediaItems = ref<MediaItem[]>([]);
-
 const multipleMediaItemsSelected = computed(() => {
-  return selectedMediaItems.value.length >= 2;
-});
-
-const clearMultipleSelections = () => {
-  selectedMediaItems.value = [];
-  const selectedElements = document.querySelectorAll('.sortable-selected');
-  selectedElements.forEach((el) => {
-    el.classList.remove('sortable-selected');
-  });
-};
-
-const handleMultipleSelections = () => {
-  const selectedElements = document.querySelectorAll('.sortable-selected');
-  try {
-    if (!selectedElements.length) selectedMediaItems.value = [];
-    const selectedIds = Array.from(selectedElements).map((el) =>
-      el.getAttribute('data-id'),
-    );
-    selectedMediaItems.value = allMediaItemsOnPage.value.filter(
-      (item) => item.uniqueId && selectedIds.includes(item.uniqueId),
-    );
-  } catch (e) {
-    errorCatcher(e);
-    selectedMediaItems.value = [];
-  }
-};
-
-const selectedMediaItemIds = computed(() => {
-  return selectedMediaItems.value.map((item) => item.uniqueId);
+  return props.selectedMediaItems.length >= 2;
 });
 
 const deletableSelectedMediaItems = computed(() => {
-  return selectedMediaItems.value.filter(
-    (item) => item.source === 'additional',
+  const mediaItemsForDay = Object.values(
+    selectedDateObject.value.mediaSections,
+  ).flatMap((sectionMedia) =>
+    sectionMedia.items.filter((item) => item.source === 'additional'),
   );
-});
 
-const deletableSelectedMediaItemIds = computed(() => {
-  return deletableSelectedMediaItems.value.map((item) => item.uniqueId);
+  return props.selectedMediaItems
+    ?.map((selectedId) =>
+      mediaItemsForDay.find((item) => item.uniqueId === selectedId),
+    )
+    ?.filter((item) => item && item.source === 'additional')
+    .map((item) => item.uniqueId);
 });
 
 const canDeleteSelected = computed(() => {
-  return deletableSelectedMediaItems.value.length >= 2;
+  return deletableSelectedMediaItems.value.length >= 1;
 });
 
 const canHideSelected = computed(() => {
-  return selectedMediaItems.value.length >= 2;
+  return props.selectedMediaItems?.length >= 2;
 });
 
 const jwStore = useJwStore();
@@ -1150,6 +1118,8 @@ const imageStartTime = ref<null | number>(null);
 const props = defineProps<{
   child?: boolean;
   media: MediaItem;
+  selected?: boolean;
+  selectedMediaItems: string[];
 }>();
 
 const repeat = defineModel<boolean | undefined>('repeat', { required: true });
@@ -1158,7 +1128,7 @@ const emit = defineEmits<{
   (e: 'update:hidden', value: boolean): void;
   (e: 'update:tag', value: Tag): void;
   (e: 'update:customDuration' | 'update:title', value: string): void;
-  (e: 'media-stopped'): void;
+  (e: 'click', value: Event): void;
 }>();
 
 const mediaItem = useTemplateRef<QItem>('mediaItem');

@@ -225,6 +225,41 @@ export const useCurrentStateStore = defineStore('current-state', {
     congregationIsSelected: (state) => {
       return state.currentCongregation;
     },
+    countItemsForSelectedDate(): number {
+      if (!this.selectedDateObject?.mediaSections) return 0;
+
+      let count = 0;
+
+      Object.values(this.selectedDateObject.mediaSections).forEach(
+        (sectionMedia) => {
+          count += sectionMedia.items?.length || 0;
+        },
+      );
+
+      return count;
+    },
+    countItemsHiddenForSelectedDate(): number {
+      if (!this.selectedDateObject?.mediaSections) return 0;
+
+      let count = 0;
+
+      Object.values(this.selectedDateObject.mediaSections).forEach(
+        (sectionMedia) => {
+          sectionMedia.items?.forEach((item: MediaItem) => {
+            if (item.hidden) count++;
+
+            if (item.children) {
+              count += item.children.filter(
+                (child: MediaItem) => child.hidden,
+              ).length;
+            }
+          });
+        },
+      );
+
+      return count;
+    },
+
     currentLangObject(): JwLanguage | undefined {
       const jwStore = useJwStore();
       return jwStore.jwLanguages.list.find(
@@ -347,7 +382,6 @@ export const useCurrentStateStore = defineStore('current-state', {
         return null;
       }
     },
-
     someItemsHiddenForSelectedDate(): boolean {
       if (!this.selectedDateObject?.mediaSections) return false;
 

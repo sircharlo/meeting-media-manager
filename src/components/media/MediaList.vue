@@ -33,7 +33,6 @@
       :is-dragging="isDragging"
       :selected-date="selectedDateObject"
     />
-
     <!-- Media Items -->
     <div
       ref="dragDropContainer"
@@ -77,6 +76,16 @@
           v-else
           v-model:repeat="element.repeat"
           :media="element"
+          :selected="selectedMediaItems?.includes(element.uniqueId)"
+          :selected-media-items="selectedMediaItems"
+          @click="
+            (evt) =>
+              emit('item-clicked', {
+                event: evt as MouseEvent,
+                mediaItemId: element.uniqueId,
+                sectionId: props.mediaList.config?.uniqueId,
+              })
+          "
           @update:custom-duration="
             element.customDuration = JSON.parse($event) || undefined
           "
@@ -123,6 +132,7 @@ import SectionEmptyState from './SectionEmptyState.vue';
 const props = defineProps<{
   mediaList: MediaSectionWithConfig;
   openImportMenu: (section: string) => void;
+  selectedMediaItems?: string[];
 }>();
 
 const currentState = useCurrentStateStore();
@@ -277,6 +287,16 @@ const handleUpdateDividerColor = (
 ) => {
   updateDividerColors(dividerId, bgColor, textColor);
 };
+
+const emit = defineEmits<{
+  'item-clicked': [
+    payload: {
+      event: MouseEvent;
+      mediaItemId: string;
+      sectionId: string | undefined;
+    },
+  ];
+}>();
 
 defineExpose({
   expandedGroups,

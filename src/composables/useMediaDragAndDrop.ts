@@ -12,7 +12,8 @@ export function useMediaDragAndDrop(items: MediaItem[]) {
     group: 'mediaList', // Shared group to allow cross-section dragging
     multiDrag: true,
     plugins: [animations()],
-    selectedClass: 'sortable-selected',
+    // Don't use a selected class since we're handling selection independently with click events
+    selectedClass: undefined,
   });
 
   // Handle drag state

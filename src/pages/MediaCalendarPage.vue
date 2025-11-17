@@ -49,6 +49,8 @@
           :ref="(el) => (mediaListRefs[mediaList.sectionId] = el)"
           :media-list="mediaList"
           :open-import-menu="openImportMenu"
+          :selected-media-items="selectedMediaItems"
+          @item-clicked="handleMediaItemClick"
           @update-media-section-bg-color="updateMediaSectionBgColor"
           @update-media-section-label="updateMediaSectionLabel"
         />
@@ -58,11 +60,10 @@
       v-if="selectedDateObject && !selectedDayMeetingType && !showEmptyState"
       :class="{
         'full-width': true,
-        'dashed-border': !mediaListDragging,
+        'dashed-border': true,
         'big-button': true,
       }"
       color="accent-100"
-      :disable="mediaListDragging"
       icon="mmm-plus"
       :label="t('new-section')"
       text-color="primary"
@@ -205,6 +206,8 @@ const { lookupPeriod, urlVariables } = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
 const { getMeetingType } = currentState;
 const {
+  countItemsForSelectedDate,
+  countItemsHiddenForSelectedDate,
   currentCongregation,
   currentLangObject,
   currentSettings,
@@ -245,9 +248,6 @@ watch(
     }
   },
 );
-
-// Track dragging state for each media list
-const mediaListDragging = ref(false);
 
 const {
   convertPdfToImages,
@@ -974,10 +974,14 @@ watchImmediate(
   },
 );
 
+// Selected media items state
+const selectedMediaItems = ref<string[]>([]); // Array of selected media item IDs
+
 watchImmediate(
   () => selectedDate.value,
   async (newVal) => {
-    mediaListDragging.value = false;
+    selectedMediaItems.value = [];
+
     if (!newVal || !selectedDateObject.value?.mediaSections) return;
     checkMemorialDate();
 
@@ -1807,4 +1811,55 @@ const mediaLists = computed(() => {
       sectionId: (sectionData.config?.uniqueId || '') as MediaSectionIdentifier,
     }));
 });
+
+// Handle item click events from MediaList components
+const handleMediaItemClick = (payload: {
+  event: MouseEvent;
+  mediaItemId: string;
+  sectionId: string | undefined;
+}) => {
+  console.log('Media item clicked:', payload.mediaItemId);
+  // Check if Ctrl/Cmd or Shift key is pressed for multiple selection
+  const isCtrlPressed = payload.event.ctrlKey || payload.event.metaKey;
+  const isShiftPressed = payload.event.shiftKey;
+
+  // If no modifier keys, clear existing selection and select only this item
+  if (isCtrlPressed) {
+    const index = selectedMediaItems.value.indexOf(payload.mediaItemId);
+    if (index === -1) {
+      selectedMediaItems.value.push(payload.mediaItemId);
+    } else {
+      selectedMediaItems.value.splice(index, 1);
+    }
+  } else if (isShiftPressed) {
+    // Find all media items across all sections to determine the range
+    const allMediaItems = mediaLists.value
+      .flatMap((section) => (section.items || []).map((item) => item.uniqueId))
+      .filter((id) => id) as string[];
+
+    const lastSelectedId =
+      selectedMediaItems.value[selectedMediaItems.value.length - 1];
+    const startIndex = allMediaItems.indexOf(lastSelectedId);
+    const endIndex = allMediaItems.indexOf(payload.mediaItemId);
+
+    if (startIndex !== -1 && endIndex !== -1) {
+      const [from, to] =
+        startIndex < endIndex ? [startIndex, endIndex] : [endIndex, startIndex];
+      const rangeIds = allMediaItems.slice(from, to + 1);
+      selectedMediaItems.value = Array.from(
+        new Set([...rangeIds, ...selectedMediaItems.value]),
+      );
+    }
+  } else {
+    selectedMediaItems.value = [payload.mediaItemId];
+  }
+};
+
+watch(
+  () => [countItemsHiddenForSelectedDate.value, countItemsForSelectedDate],
+  () => {
+    // Clear selected media items when date changes
+    selectedMediaItems.value = [];
+  },
+);
 </script>
