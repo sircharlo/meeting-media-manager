@@ -121,6 +121,7 @@
   "delete-media": "Ta bort mediaobjekt",
   "delete-media-explain": "Välj det här alternativet för att ta bort det valda medieobjektet.",
   "delete-selected-media": "Ta bort valda mediaelement",
+  "delete-selected-media-confirmation": "Are you sure you want to delete {count} selected media item(s)? This action cannot be undone.",
   "delete-selected-media-explain": "Detta kommer att permanent ta bort valda mediaobjekt från din dator om de lades till manuellt. Detta kommer inte att ta bort någon media som laddats ner automatiskt.",
   "deselect-all": "Avmarkera alla",
   "directories": "Mappar",
