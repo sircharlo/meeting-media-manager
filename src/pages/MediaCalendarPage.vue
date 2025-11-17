@@ -201,7 +201,7 @@ const route = useRoute();
 const router = useRouter();
 
 const jwStore = useJwStore();
-const { showHiddenMediaForSelectedDate } = jwStore;
+const { deleteMediaItems, showHiddenMediaForSelectedDate } = jwStore;
 const { lookupPeriod, urlVariables } = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
 const { getMeetingType } = currentState;
@@ -1601,6 +1601,34 @@ Mousetrap.bind('space', () => {
 Mousetrap.bind('esc', () => {
   executeLocalShortcut('shortcutMediaStop');
 });
+Mousetrap.bind('del', () => {
+  if (selectedMediaItems.value.length > 0) {
+    // Filter to only include additional media items (similar to MediaItem.vue)
+    const deletableSelectedMediaItems = keyboardShortcutMediaList.value
+      .filter(
+        (item) =>
+          selectedMediaItems.value.includes(item.uniqueId) &&
+          item.source === 'additional',
+      )
+      .map((item) => item.uniqueId);
+
+    if (deletableSelectedMediaItems.length > 0) {
+      deleteMediaItems(
+        deletableSelectedMediaItems,
+        currentCongregation.value,
+        selectedDateObject.value,
+      );
+      // Clear selection after deletion
+      selectedMediaItems.value = [];
+    }
+  }
+});
+Mousetrap.bind('shift+up', () => {
+  extendSelection('up');
+});
+Mousetrap.bind('shift+down', () => {
+  extendSelection('down');
+});
 
 // Listen for force calendar update event
 // useEventListener(
@@ -1839,6 +1867,8 @@ const handleMediaItemClick = (payload: {
 
     const lastSelectedId =
       selectedMediaItems.value[selectedMediaItems.value.length - 1];
+    if (!lastSelectedId) return;
+
     const startIndex = allMediaItems.indexOf(lastSelectedId);
     const endIndex = allMediaItems.indexOf(payload.mediaItemId);
 
@@ -1854,6 +1884,54 @@ const handleMediaItemClick = (payload: {
     selectedMediaItems.value = [payload.mediaItemId];
   }
 };
+
+// Function to extend selection using Shift+Up/Shift+Down
+function extendSelection(direction: 'down' | 'up') {
+  if (!selectedMediaItems.value.length) return;
+
+  // Get all media items in order
+  const allMediaItems = keyboardShortcutMediaList.value
+    .filter((item) => !item.hidden) // Only consider non-hidden items
+    .map((item) => item.uniqueId)
+    .filter((id): id is string => !!id);
+
+  if (!allMediaItems.length) return;
+
+  // Find the index of the last selected item
+  const lastSelectedId =
+    selectedMediaItems.value[selectedMediaItems.value.length - 1];
+  if (!lastSelectedId) return;
+
+  let currentIndex = allMediaItems.indexOf(lastSelectedId);
+
+  if (currentIndex === -1) {
+    // If the last selected item is not in the list, use the first item
+    currentIndex = 0;
+  }
+
+  // Calculate the new index based on direction
+  let newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+
+  // Handle boundary conditions (wrap around if needed)
+  if (newIndex < 0) {
+    newIndex = allMediaItems.length - 1; // Wrap to last item
+  } else if (newIndex >= allMediaItems.length) {
+    newIndex = 0; // Wrap to first item
+  }
+
+  // Get the new item ID to select
+  const newMediaItemId = allMediaItems[newIndex];
+
+  if (newMediaItemId) {
+    // Add the new item to the selection
+    if (!selectedMediaItems.value.includes(newMediaItemId)) {
+      selectedMediaItems.value.push(newMediaItemId);
+    }
+
+    // Update the highlighted media ID to the newly selected item
+    highlightedMediaId.value = newMediaItemId;
+  }
+}
 
 watch(
   () => [countItemsHiddenForSelectedDate.value, countItemsForSelectedDate],

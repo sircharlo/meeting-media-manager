@@ -15,7 +15,7 @@
       'padding: 8px 6px': child,
       'flex-direction': 'column',
     }"
-    @mouseup.left.passive="(evt) => emit('click', evt)"
+    @mouseup.left.passive="(evt: MouseEvent) => emit('click', evt)"
   >
     <div class="row full-width items-center justify-center">
       <div class="col-shrink">
@@ -656,9 +656,11 @@
         touch-position
       >
         <q-list>
-          <template v-if="multipleMediaItemsSelected">
+          <template v-if="selectedMediaItems && multipleMediaItemsSelected">
             <q-item-label header>
-              {{ t('selected-media-items') }} ({{ selectedMediaItems.length }})
+              {{ t('selected-media-items') }} ({{
+                selectedMediaItems?.length || 0
+              }})
             </q-item-label>
             <q-item
               v-if="canDeleteSelected"
@@ -678,7 +680,9 @@
               </q-item-section>
               <q-item-section>
                 <q-item-label>
-                  {{ t('delete-selected-media', selectedMediaItems.length) }}
+                  {{
+                    t('delete-selected-media', selectedMediaItems?.length || 0)
+                  }}
                 </q-item-label>
                 <q-item-label caption>
                   {{ t('delete-selected-media-explain') }}
@@ -686,7 +690,6 @@
               </q-item-section>
             </q-item>
             <q-item
-              v-if="canHideSelected"
               v-close-popup
               clickable
               :disable="isCurrentlyPlaying"
@@ -703,7 +706,9 @@
               </q-item-section>
               <q-item-section>
                 <q-item-label>
-                  {{ t('hide-selected-media', selectedMediaItems.length) }}
+                  {{
+                    t('hide-selected-media', selectedMediaItems?.length || 0)
+                  }}
                 </q-item-label>
                 <q-item-label caption>
                   {{ t('hide-selected-media-explain') }}
@@ -1037,30 +1042,28 @@ const currentlyHighlighted = computed(
 );
 
 const multipleMediaItemsSelected = computed(() => {
-  return props.selectedMediaItems.length >= 2;
+  return (props.selectedMediaItems?.length || 0) >= 2;
 });
 
 const deletableSelectedMediaItems = computed(() => {
+  if (!props.selectedMediaItems || !selectedDateObject.value) return [];
   const mediaItemsForDay = Object.values(
     selectedDateObject.value.mediaSections,
   ).flatMap((sectionMedia) =>
-    sectionMedia.items.filter((item) => item.source === 'additional'),
+    sectionMedia.items?.filter((item) => item.source === 'additional'),
   );
 
   return props.selectedMediaItems
     ?.map((selectedId) =>
-      mediaItemsForDay.find((item) => item.uniqueId === selectedId),
+      mediaItemsForDay.find((item) => item?.uniqueId === selectedId),
     )
     ?.filter((item) => item && item.source === 'additional')
-    .map((item) => item.uniqueId);
+    .map((item) => item?.uniqueId)
+    .filter((id): id is string => !!id);
 });
 
 const canDeleteSelected = computed(() => {
   return deletableSelectedMediaItems.value.length >= 1;
-});
-
-const canHideSelected = computed(() => {
-  return props.selectedMediaItems?.length >= 2;
 });
 
 const jwStore = useJwStore();
@@ -1119,7 +1122,7 @@ const props = defineProps<{
   child?: boolean;
   media: MediaItem;
   selected?: boolean;
-  selectedMediaItems: string[];
+  selectedMediaItems?: string[];
 }>();
 
 const repeat = defineModel<boolean | undefined>('repeat', { required: true });
