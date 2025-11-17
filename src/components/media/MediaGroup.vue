@@ -61,6 +61,16 @@
             v-model:repeat="childElement.repeat"
             child
             :media="childElement"
+            :selected="selectedMediaItems?.includes(childElement.uniqueId)"
+            :selected-media-items="selectedMediaItems"
+            @click="
+              (evt) =>
+                emit('item-clicked', {
+                  event: evt as MouseEvent,
+                  mediaItemId: childElement.uniqueId,
+                  sectionId: element.uniqueId,
+                })
+            "
             @update:custom-duration="
               emit('update:custom-duration', $event, childElement.uniqueId)
             "
@@ -93,9 +103,19 @@ const { mediaPlaying } = storeToRefs(currentState);
 const props = defineProps<{
   element: MediaItemType;
   expanded: boolean;
+  selected?: boolean;
+  selectedMediaItems?: string[];
 }>();
 
 const emit = defineEmits<{
+  click: [value: Event];
+  'item-clicked': [
+    payload: {
+      event: Event;
+      mediaItemId: string;
+      sectionId: string | undefined;
+    },
+  ];
   'update:child-hidden': [value: boolean, uniqueId: string];
   'update:custom-duration': [value: string, uniqueId: string];
   'update:expanded': [value: boolean];

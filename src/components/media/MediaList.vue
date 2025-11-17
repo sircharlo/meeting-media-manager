@@ -65,6 +65,16 @@
           v-else-if="element.children"
           :element="element"
           :expanded="expandedGroups[element.uniqueId] ?? false"
+          :selected="selectedMediaItems?.includes(element.uniqueId)"
+          :selected-media-items="selectedMediaItems"
+          @item-clicked="
+            (evt) =>
+              emit('item-clicked', {
+                event: evt as unknown as MouseEvent,
+                mediaItemId: element.uniqueId,
+                sectionId: props.mediaList.config?.uniqueId,
+              })
+          "
           @update:child-hidden="
             element.children.forEach((child) => (child.hidden = !!$event))
           "

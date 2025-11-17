@@ -213,7 +213,6 @@ const {
   currentCongregation,
   currentLangObject,
   currentSettings,
-  highlightedMediaId,
   isSelectedDayToday,
   mediaIsPlaying,
   mediaPaused,
@@ -978,11 +977,13 @@ watchImmediate(
 
 // Selected media items state
 const selectedMediaItems = ref<string[]>([]); // Array of selected media item IDs
+const lastExtendDirection = ref<'down' | 'up' | null>(null); // Track the last extension direction
 
 watchImmediate(
   () => selectedDate.value,
   async (newVal) => {
     selectedMediaItems.value = [];
+    lastExtendDirection.value = null;
 
     if (!newVal || !selectedDateObject.value?.mediaSections) return;
     checkMemorialDate();
@@ -1513,11 +1514,11 @@ useEventListener(
       .map((item) => item.uniqueId);
     if (!sortedMediaIds?.[0]) return;
 
-    const currentId = highlightedMediaId.value;
+    const currentId = selectedMediaItems.value[0];
 
     // If no current selection, return first item
     if (!currentId) {
-      highlightedMediaId.value = sortedMediaIds[0];
+      selectedMediaItems.value = [sortedMediaIds[0]];
       return;
     }
 
@@ -1525,16 +1526,17 @@ useEventListener(
 
     // If current item not found, reset to first
     if (currentIndex === -1) {
-      highlightedMediaId.value = sortedMediaIds[0];
+      selectedMediaItems.value = [sortedMediaIds[0]];
       return;
     }
 
     // Find next selectable media item
     const nextSelectableId = findNextSelectableMedia(mediaList, currentIndex);
     if (!nextSelectableId) return;
-    highlightedMediaId.value = nextSelectableId;
+    selectedMediaItems.value = [nextSelectableId];
     if (event.detail?.scrollToSelectedMedia)
       window.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
+    anchorId.value = nextSelectableId;
   },
   { passive: true },
 );
@@ -1554,13 +1556,21 @@ useEventListener(
       .map((item) => item.uniqueId);
     if (!sortedMediaIds?.[0]) return;
 
-    const currentId = highlightedMediaId.value;
+    if (selectedMediaItems.value?.length > 1) {
+      // If multiple items are selected, reduce to the first one
+      const firstSelected = selectedMediaItems.value[0];
+      if (!firstSelected) return;
+      selectedMediaItems.value = [firstSelected];
+      return;
+    }
+
+    const currentId = selectedMediaItems.value[0];
 
     const lastItem = sortedMediaIds[sortedMediaIds.length - 1];
 
     // If no current selection, return last item if possible, otherwise first
     if (!currentId) {
-      highlightedMediaId.value = lastItem || sortedMediaIds[0];
+      selectedMediaItems.value = [lastItem || sortedMediaIds[0]];
       return;
     }
 
@@ -1568,7 +1578,7 @@ useEventListener(
 
     // If current item not found, reset to last item if possible, otherwise first
     if (currentIndex === -1) {
-      highlightedMediaId.value = lastItem || sortedMediaIds[0];
+      selectedMediaItems.value = [lastItem || sortedMediaIds[0]];
       return;
     }
 
@@ -1578,9 +1588,10 @@ useEventListener(
       currentIndex,
     );
     if (!previousSelectableId) return;
-    highlightedMediaId.value = previousSelectableId;
+    selectedMediaItems.value = [previousSelectableId];
     if (event.detail?.scrollToSelectedMedia)
       window.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
+    anchorId.value = previousSelectableId;
   },
   { passive: true },
 );
@@ -1642,24 +1653,6 @@ Mousetrap.bind('shift+down', () => {
   extendSelection('down');
 });
 
-// Listen for force calendar update event
-// useEventListener(
-//   window,
-//   'force-calendar-update',
-//   () => {
-//     // Force a reactive update by triggering a change in the selectedDateObject
-//     if (selectedDateObject.value) {
-//       // Create a new reference to force Vue to re-render
-//       const currentDate = selectedDate.value;
-//       selectedDate.value = '';
-//       nextTick(() => {
-//         selectedDate.value = currentDate;
-//       });
-//     }
-//   },
-//   { passive: true },
-// );
-
 function findNextSelectableMedia(mediaList: MediaItem[], startIndex: number) {
   // Search from next item onwards
   for (let i = startIndex + 1; i < mediaList.length; i++) {
@@ -1701,7 +1694,7 @@ function isMediaSelectable(mediaItem: MediaItem) {
 watch(
   () => mediaPlaying.value.uniqueId,
   (newMediaUniqueId) => {
-    if (newMediaUniqueId) highlightedMediaId.value = newMediaUniqueId;
+    if (newMediaUniqueId) selectedMediaItems.value = [newMediaUniqueId];
   },
 );
 
@@ -1852,6 +1845,8 @@ const mediaLists = computed(() => {
     }));
 });
 
+const anchorId = ref<null | string>(null);
+
 // Handle item click events from MediaList components
 const handleMediaItemClick = (payload: {
   event: MouseEvent;
@@ -1895,31 +1890,58 @@ const handleMediaItemClick = (payload: {
   } else {
     selectedMediaItems.value = [payload.mediaItemId];
   }
+  anchorId.value = payload.mediaItemId; // new anchor
 };
 
 // Function to extend selection using Shift+Up/Shift+Down
 function extendSelection(direction: 'down' | 'up') {
-  if (!selectedMediaItems.value.length) return;
+  console.trace('extendSelection triggered');
+
+  console.log('🔄 [extendSelection] Starting function', {
+    direction,
+    selectedItemsCount: selectedMediaItems.value.length,
+  });
+
+  if (!selectedMediaItems.value.length) {
+    console.log('🔄 [extendSelection] No selected items, returning');
+    return;
+  }
 
   // Get all media items in order
   const allMediaItems = keyboardShortcutMediaList.value
-    .filter((item) => !item.hidden) // Only consider non-hidden items
-    .map((item) => item.uniqueId)
-    .filter((id): id is string => !!id);
+    .filter((item) => !item.hidden) // or keep hidden — but be consistent
+    .map((item) => item.uniqueId);
 
-  if (!allMediaItems.length) return;
-
-  // Find the index of the last selected item
-  const lastSelectedId =
-    selectedMediaItems.value[selectedMediaItems.value.length - 1];
-  if (!lastSelectedId) return;
-
-  let currentIndex = allMediaItems.indexOf(lastSelectedId);
-
-  if (currentIndex === -1) {
-    // If the last selected item is not in the list, use the first item
-    currentIndex = 0;
+  if (!allMediaItems.length) {
+    console.log('🔄 [extendSelection] No media items available, returning');
+    return;
   }
+
+  // Find the index of the last selected item (the cursor position)
+  const lastSelectedId =
+    selectedMediaItems.value[
+      direction === 'up' ? 0 : selectedMediaItems.value.length - 1
+    ];
+  if (!lastSelectedId) {
+    console.log('🔄 [extendSelection] No last selected item, returning');
+    return;
+  }
+
+  const currentIndex = allMediaItems.indexOf(lastSelectedId);
+  if (currentIndex === -1) {
+    console.log(
+      '🔄 [extendSelection] Current index not found in allMediaItems, returning',
+    );
+    return;
+  }
+
+  console.log('🔄 [extendSelection] Initial state', {
+    allMediaItemsCount: allMediaItems.length,
+    currentIndex,
+    direction,
+    lastSelectedId,
+    selectedItems: selectedMediaItems.value,
+  });
 
   // Calculate the new index based on direction
   let newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
@@ -1927,22 +1949,122 @@ function extendSelection(direction: 'down' | 'up') {
   // Handle boundary conditions (wrap around if needed)
   if (newIndex < 0) {
     newIndex = allMediaItems.length - 1; // Wrap to last item
+    console.log(
+      '🔄 [extendSelection] Wrapping newIndex to last item:',
+      newIndex,
+    );
   } else if (newIndex >= allMediaItems.length) {
     newIndex = 0; // Wrap to first item
+    console.log(
+      '🔄 [extendSelection] Wrapping newIndex to first item:',
+      newIndex,
+    );
   }
 
-  // Get the new item ID to select
   const newMediaItemId = allMediaItems[newIndex];
-
-  if (newMediaItemId) {
-    // Add the new item to the selection
-    if (!selectedMediaItems.value.includes(newMediaItemId)) {
-      selectedMediaItems.value.push(newMediaItemId);
-    }
-
-    // Update the highlighted media ID to the newly selected item
-    highlightedMediaId.value = newMediaItemId;
+  if (!newMediaItemId) {
+    console.log('🔄 [extendSelection] No new media item ID found, returning');
+    return;
   }
+
+  // Find the anchor point (the first selected item that doesn't move)
+  if (!anchorId.value) {
+    console.log(
+      '🔄 [extendSelection] No anchorId set, cannot extend selection, returning',
+    );
+    return;
+  }
+  const anchorIndex = allMediaItems.indexOf(anchorId.value);
+  if (anchorIndex === -1) {
+    console.log(
+      '🔄 [extendSelection] Anchor index not found in allMediaItems, returning',
+    );
+    return;
+  }
+
+  console.log('🔄 [extendSelection] Anchor and current info', {
+    anchorId,
+    anchorIndex,
+    currentIndex,
+    newIndex,
+    newMediaItemId,
+  });
+
+  // Determine if we're moving in the same direction as the last extension or opposite
+  // Only set the last extension direction when selection grows from 1 to 2 items
+  if (selectedMediaItems.value.length === 1) {
+    // This is the first extension (going from 1 item to 2 items), set the direction
+    lastExtendDirection.value = direction;
+    console.log(
+      '🔄 [extendSelection] Setting lastExtendDirection to',
+      direction,
+    );
+  }
+
+  let shouldExpand = true;
+  if (lastExtendDirection.value !== null) {
+    // If we have a previous extension direction, determine if we're continuing or reversing
+    shouldExpand = direction === lastExtendDirection.value;
+
+    // If we're reversing direction, update the last extension direction
+    // if (!shouldExpand) {
+    //   // We're shrinking, so update the direction to the current one for next time
+    //   // lastExtendDirection.value = direction;
+    //   console.log(
+    //     '🔄 [extendSelection] Reversing direction, updating lastExtendDirection to',
+    //     direction,
+    //   );
+    // }
+  }
+
+  console.log('🔄 [extendSelection] Expansion decision', {
+    currentDirection: direction,
+    lastExtendDirection: lastExtendDirection.value,
+    shouldExpand,
+  });
+
+  if (shouldExpand) {
+    // Expanding the selection
+    console.log('🔄 [extendSelection] EXPANDING selection');
+    const newStartIndex = Math.min(anchorIndex, newIndex);
+    const newEndIndex = Math.max(anchorIndex, newIndex);
+    const newSelection = allMediaItems.slice(newStartIndex, newEndIndex + 1);
+    console.log('🔄 [extendSelection] New selection (expansion)', {
+      newSelection,
+    });
+    selectedMediaItems.value = newSelection;
+  } else {
+    // SHRINKING selection
+    console.log('🔄 [extendSelection] SHRINKING selection');
+
+    const sel = selectedMediaItems.value;
+
+    // If we have more than 1 item selected, shrink by removing the end closer to direction reversal
+    if (sel.length > 1) {
+      if (direction === 'up') {
+        // Moving up — remove the FIRST item (bottom of list visually)
+        sel.pop();
+      } else {
+        // Moving down — remove the LAST item (top of list visually)
+        sel.shift();
+      }
+      selectedMediaItems.value = [...sel];
+    } else {
+      // If only one item left, switch to expansion like normal
+      const newStartIndex = Math.min(anchorIndex, newIndex);
+      const newEndIndex = Math.max(anchorIndex, newIndex);
+      selectedMediaItems.value = allMediaItems.slice(
+        newStartIndex,
+        newEndIndex + 1,
+      );
+    }
+  }
+
+  console.log('🔄 [extendSelection] Final state', {
+    newHighlightedId: newMediaItemId,
+    selectedItems: selectedMediaItems.value,
+    selectedItemsCount: selectedMediaItems.value.length,
+  });
 }
 
 watch(

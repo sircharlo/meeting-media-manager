@@ -129,20 +129,6 @@ describe('MediaItem Component', () => {
     expect(wrapper.exists()).toBe(true);
   });
 
-  it('should apply highlighted class when media item is highlighted in store', () => {
-    const wrapper = mount(MediaItem, {
-      props: {
-        media: mockMediaItem,
-        repeat: false,
-      },
-    });
-
-    // The component uses currentlyHighlighted computed property
-    // which checks against the store's highlightedMediaId
-    // We can't easily test this without mocking the store state
-    expect(wrapper.exists()).toBe(true);
-  });
-
   it('should display resolution label for video files', () => {
     const wrapper = mount(MediaItem, {
       props: {

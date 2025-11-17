@@ -5,8 +5,6 @@
     :class="{
       'items-center': true,
       'justify-center': true,
-      'bg-accent-100-transparent': currentlyHighlighted,
-      'bg-accent-100': mediaPlaying.uniqueId === '' && currentlyHighlighted,
       'q-px-sm': child,
       'sortable-selected': props.selected,
     }"
@@ -1025,14 +1023,15 @@ const {
   currentCongregation,
   currentLangObject,
   currentSettings,
-  highlightedMediaId,
   mediaPlaying,
   mediaWindowVisible,
   selectedDateObject,
 } = storeToRefs(currentState);
 
-const currentlyHighlighted = computed(
-  () => highlightedMediaId.value === props.media.uniqueId,
+const currentlySpotlit = computed(
+  () =>
+    props.selectedMediaItems?.length === 1 &&
+    props.selectedMediaItems[0] === props.media.uniqueId,
 );
 
 const multipleMediaItemsSelected = computed(() => {
@@ -1702,14 +1701,12 @@ useEventListener(
   window,
   'shortcutMediaPauseResume',
   () => {
-    if (currentlyHighlighted.value) {
-      if (pauseResumeButton.value) {
-        pauseResumeButton.value.click();
-      } else if (playButton.value) {
-        playButton.value.click();
-      } else if (isImage(props.media.fileUrl) && stopButton.value) {
-        stopButton.value.click();
-      }
+    if (pauseResumeButton.value) {
+      pauseResumeButton.value.click();
+    } else if (isImage(props.media.fileUrl) && stopButton.value) {
+      stopButton.value.click();
+    } else if (currentlySpotlit.value && playButton.value) {
+      playButton.value.click();
     }
   },
   { passive: true },
@@ -1718,14 +1715,14 @@ useEventListener(
   window,
   'shortcutMediaStop',
   () => {
-    if (stopButton.value && currentlyHighlighted) stopButton.value.click();
+    if (stopButton.value && currentlySpotlit.value) stopButton.value.click();
   },
   { passive: true },
 );
 
 window.addEventListener('scrollToSelectedMedia', () => {
   if (
-    currentlyHighlighted.value &&
+    props.selected &&
     mediaItem.value?.$el &&
     !currentLangObject.value?.isSignLanguage
   ) {

@@ -62,7 +62,6 @@ interface Store {
   downloadProgress: DownloadProgressItems;
   extractedFiles: Partial<Record<string, string>>;
   ffmpegPath: string;
-  highlightedMediaId: string;
   mediaPlaying: MediaPlayingState;
   mediaWindowCustomBackground: string;
   mediaWindowVisible: boolean;
@@ -417,7 +416,6 @@ export const useCurrentStateStore = defineStore('current-state', {
       downloadProgress: {},
       extractedFiles: {},
       ffmpegPath: '',
-      highlightedMediaId: '',
       mediaPlaying: {
         action: '',
         currentPosition: 0,
