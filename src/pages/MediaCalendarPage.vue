@@ -49,16 +49,10 @@
           :ref="(el) => (mediaListRefs[mediaList.sectionId] = el)"
           :media-list="mediaList"
           :open-import-menu="openImportMenu"
+          :selected-media-items="selectedMediaItems"
+          @item-clicked="handleMediaItemClick"
           @update-media-section-bg-color="updateMediaSectionBgColor"
           @update-media-section-label="updateMediaSectionLabel"
-          @update:is-dragging="
-            (isDragging) =>
-              updateMediaListDragging(mediaList.sectionId, isDragging)
-          "
-          @update:sortable-items="
-            async (items) =>
-              await updateMediaListItems(items, mediaList.sectionId)
-          "
         />
       </template>
     </template>
@@ -66,11 +60,10 @@
       v-if="selectedDateObject && !selectedDayMeetingType && !showEmptyState"
       :class="{
         'full-width': true,
-        'dashed-border': !mediaListDragging,
+        'dashed-border': true,
         'big-button': true,
       }"
       color="accent-100"
-      :disable="mediaListDragging"
       icon="mmm-plus"
       :label="t('new-section')"
       text-color="primary"
@@ -128,7 +121,7 @@ import MediaList from 'components/media/MediaList.vue';
 import DOMPurify from 'dompurify';
 import Mousetrap from 'mousetrap';
 import { storeToRefs } from 'pinia';
-import { useMeta } from 'quasar';
+import { useMeta, useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
 import { defaultAdditionalSection } from 'src/composables/useMediaSection';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
@@ -150,8 +143,6 @@ import {
   addSection,
   findMediaSection,
   getOrCreateMediaSection,
-  saveWatchedMediaSectionOrder,
-  sortMediaSectionsByOrder,
 } from 'src/helpers/media-sections';
 import { decompressJwpub, showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -191,6 +182,8 @@ import { useObsStateStore } from 'stores/obs-state';
 import { computed, nextTick, onMounted, ref, type Ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
+const $q = useQuasar();
+
 const jwpubImportDb = ref('');
 const jwpubImportDocuments = ref<DocumentItem[]>([]);
 
@@ -210,11 +203,13 @@ const route = useRoute();
 const router = useRouter();
 
 const jwStore = useJwStore();
-const { showHiddenMediaForSelectedDate } = jwStore;
+const { deleteMediaItems, showHiddenMediaForSelectedDate } = jwStore;
 const { lookupPeriod, urlVariables } = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
 const { getMeetingType } = currentState;
 const {
+  countItemsForSelectedDate,
+  countItemsHiddenForSelectedDate,
   currentCongregation,
   currentLangObject,
   currentSettings,
@@ -255,115 +250,6 @@ watch(
     }
   },
 );
-
-// Track dragging state for each media list
-const mediaListDragging = ref(false);
-
-// Function to update dragging state for a specific media list
-const updateMediaListDragging = (sectionId: string, isDragging: boolean) => {
-  mediaListDragging.value = isDragging;
-};
-
-const updateMediaListItems = async (
-  items: MediaItem[],
-  sectionId: MediaSectionIdentifier,
-) => {
-  if (!selectedDateObject.value) return;
-
-  // Update the section's media items with the new order
-  if (!selectedDateObject.value.mediaSections) {
-    selectedDateObject.value.mediaSections = [];
-  }
-
-  const section = getOrCreateMediaSection(
-    selectedDateObject.value.mediaSections,
-    sectionId,
-  );
-
-  // Get the current items in this section before the update
-  const currentItems = section.items || [];
-
-  // Save section order information for watched media items instead of renaming files
-  // This prevents the drag and drop positioning issue where files disappear and reappear
-  if (currentItems.some((item) => item.source === 'watched')) {
-    try {
-      // Find the watched day folder from the watched media items
-      const watchedItems = currentItems.filter(
-        (item) => item.source === 'watched' && item.fileUrl,
-      );
-      const watchedItem = watchedItems[0];
-      if (watchedItem) {
-        // Get the first watched item's file path to determine the watched day folder
-        const { fileUrlToPath, path } = window.electronApi;
-        const { dirname } = path;
-
-        const firstWatchedItemPath = fileUrlToPath(watchedItem.fileUrl);
-        if (firstWatchedItemPath) {
-          const watchedDayFolder = dirname(firstWatchedItemPath);
-          if (watchedDayFolder) {
-            console.log(
-              '🔍 [updateMediaListItems] Saving section order for watched media items:',
-              watchedDayFolder,
-              sectionId,
-              items,
-            );
-            await saveWatchedMediaSectionOrder(
-              watchedDayFolder,
-              sectionId,
-              items,
-            );
-          }
-        }
-      }
-    } catch (error) {
-      // Fail gracefully - if we can't save the order file, it's not a big deal
-      console.warn(`⚠️ Could not save section order: ${error}`);
-    }
-  }
-
-  // Find items that were moved from other sections (items that are in the new list but weren't in the current list)
-  const movedItems = items.filter(
-    (newItem) =>
-      !currentItems.some(
-        (currentItem) => currentItem.uniqueId === newItem.uniqueId,
-      ),
-  );
-
-  // Remove moved items from their original sections
-  if (movedItems.length > 0) {
-    selectedDateObject.value.mediaSections.forEach((otherSection) => {
-      if (otherSection.config.uniqueId !== sectionId) {
-        if (otherSection?.items) {
-          // Remove items that were moved to the new section
-          otherSection.items = otherSection.items.filter(
-            (item) =>
-              !movedItems.some(
-                (movedItem) => movedItem.uniqueId === item.uniqueId,
-              ),
-          );
-        }
-      }
-    });
-
-    console.log(
-      '🔄 Moved items between sections:',
-      movedItems.map((item) => item.title),
-      'to section:',
-      sectionId,
-    );
-  }
-
-  // Update the target section with the new items
-  section.items = items;
-
-  console.log(
-    '🔄 Updated items in section:',
-    sectionId,
-    'with',
-    items.length,
-    'items',
-  );
-};
 
 const {
   convertPdfToImages,
@@ -1090,10 +976,14 @@ watchImmediate(
   },
 );
 
+// Selected media items state
+const selectedMediaItems = ref<string[]>([]); // Array of selected media item IDs
+
 watchImmediate(
   () => selectedDate.value,
   async (newVal) => {
-    mediaListDragging.value = false;
+    selectedMediaItems.value = [];
+
     if (!newVal || !selectedDateObject.value?.mediaSections) return;
     checkMemorialDate();
 
@@ -1103,11 +993,6 @@ watchImmediate(
         jwIcon: jwIcons.pt,
         label: t('pt'),
       });
-    }
-
-    // Sort media sections by their sortOrderOriginal to apply section order
-    if (selectedDateObject.value) {
-      sortMediaSectionsByOrder(selectedDateObject.value);
     }
   },
 );
@@ -1718,6 +1603,44 @@ Mousetrap.bind('space', () => {
 Mousetrap.bind('esc', () => {
   executeLocalShortcut('shortcutMediaStop');
 });
+Mousetrap.bind('del', () => {
+  if (selectedMediaItems.value.length > 0) {
+    // Filter to only include additional media items (similar to MediaItem.vue)
+    const deletableSelectedMediaItems = keyboardShortcutMediaList.value
+      .filter(
+        (item) =>
+          selectedMediaItems.value.includes(item.uniqueId) &&
+          item.source === 'additional',
+      )
+      .map((item) => item.uniqueId);
+
+    if (deletableSelectedMediaItems.length > 0) {
+      $q.dialog({
+        cancel: { label: t('cancel') },
+        message: t('delete-selected-media-confirmation', {
+          count: deletableSelectedMediaItems?.length || 0,
+        }),
+        ok: { color: 'negative', label: t('delete') },
+        persistent: true,
+        title: t('confirm'),
+      }).onOk(() => {
+        deleteMediaItems(
+          deletableSelectedMediaItems,
+          currentCongregation.value,
+          selectedDateObject.value,
+        );
+        // Clear selection after deletion
+        selectedMediaItems.value = [];
+      });
+    }
+  }
+});
+Mousetrap.bind('shift+up', () => {
+  extendSelection('up');
+});
+Mousetrap.bind('shift+down', () => {
+  extendSelection('down');
+});
 
 // Listen for force calendar update event
 // useEventListener(
@@ -1928,4 +1851,105 @@ const mediaLists = computed(() => {
       sectionId: (sectionData.config?.uniqueId || '') as MediaSectionIdentifier,
     }));
 });
+
+// Handle item click events from MediaList components
+const handleMediaItemClick = (payload: {
+  event: MouseEvent;
+  mediaItemId: string;
+  sectionId: string | undefined;
+}) => {
+  console.log('Media item clicked:', payload.mediaItemId);
+  // Check if Ctrl/Cmd or Shift key is pressed for multiple selection
+  const isCtrlPressed = payload.event.ctrlKey || payload.event.metaKey;
+  const isShiftPressed = payload.event.shiftKey;
+
+  // If no modifier keys, clear existing selection and select only this item
+  if (isCtrlPressed) {
+    const index = selectedMediaItems.value.indexOf(payload.mediaItemId);
+    if (index === -1) {
+      selectedMediaItems.value.push(payload.mediaItemId);
+    } else {
+      selectedMediaItems.value.splice(index, 1);
+    }
+  } else if (isShiftPressed) {
+    // Find all media items across all sections to determine the range
+    const allMediaItems = mediaLists.value
+      .flatMap((section) => (section.items || []).map((item) => item.uniqueId))
+      .filter((id) => id) as string[];
+
+    const lastSelectedId =
+      selectedMediaItems.value[selectedMediaItems.value.length - 1];
+    if (!lastSelectedId) return;
+
+    const startIndex = allMediaItems.indexOf(lastSelectedId);
+    const endIndex = allMediaItems.indexOf(payload.mediaItemId);
+
+    if (startIndex !== -1 && endIndex !== -1) {
+      const [from, to] =
+        startIndex < endIndex ? [startIndex, endIndex] : [endIndex, startIndex];
+      const rangeIds = allMediaItems.slice(from, to + 1);
+      selectedMediaItems.value = Array.from(
+        new Set([...rangeIds, ...selectedMediaItems.value]),
+      );
+    }
+  } else {
+    selectedMediaItems.value = [payload.mediaItemId];
+  }
+};
+
+// Function to extend selection using Shift+Up/Shift+Down
+function extendSelection(direction: 'down' | 'up') {
+  if (!selectedMediaItems.value.length) return;
+
+  // Get all media items in order
+  const allMediaItems = keyboardShortcutMediaList.value
+    .filter((item) => !item.hidden) // Only consider non-hidden items
+    .map((item) => item.uniqueId)
+    .filter((id): id is string => !!id);
+
+  if (!allMediaItems.length) return;
+
+  // Find the index of the last selected item
+  const lastSelectedId =
+    selectedMediaItems.value[selectedMediaItems.value.length - 1];
+  if (!lastSelectedId) return;
+
+  let currentIndex = allMediaItems.indexOf(lastSelectedId);
+
+  if (currentIndex === -1) {
+    // If the last selected item is not in the list, use the first item
+    currentIndex = 0;
+  }
+
+  // Calculate the new index based on direction
+  let newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+
+  // Handle boundary conditions (wrap around if needed)
+  if (newIndex < 0) {
+    newIndex = allMediaItems.length - 1; // Wrap to last item
+  } else if (newIndex >= allMediaItems.length) {
+    newIndex = 0; // Wrap to first item
+  }
+
+  // Get the new item ID to select
+  const newMediaItemId = allMediaItems[newIndex];
+
+  if (newMediaItemId) {
+    // Add the new item to the selection
+    if (!selectedMediaItems.value.includes(newMediaItemId)) {
+      selectedMediaItems.value.push(newMediaItemId);
+    }
+
+    // Update the highlighted media ID to the newly selected item
+    highlightedMediaId.value = newMediaItemId;
+  }
+}
+
+watch(
+  () => [countItemsHiddenForSelectedDate.value, countItemsForSelectedDate],
+  () => {
+    // Clear selected media items when date changes
+    selectedMediaItems.value = [];
+  },
+);
 </script>

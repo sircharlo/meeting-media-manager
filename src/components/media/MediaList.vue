@@ -33,7 +33,6 @@
       :is-dragging="isDragging"
       :selected-date="selectedDateObject"
     />
-
     <!-- Media Items -->
     <div
       ref="dragDropContainer"
@@ -77,6 +76,16 @@
           v-else
           v-model:repeat="element.repeat"
           :media="element"
+          :selected="selectedMediaItems?.includes(element.uniqueId)"
+          :selected-media-items="selectedMediaItems"
+          @click="
+            (evt) =>
+              emit('item-clicked', {
+                event: evt as MouseEvent,
+                mediaItemId: element.uniqueId,
+                sectionId: props.mediaList.config?.uniqueId,
+              })
+          "
           @update:custom-duration="
             element.customDuration = JSON.parse($event) || undefined
           "
@@ -101,17 +110,16 @@
 </template>
 
 <script setup lang="ts">
-import type {
-  MediaItem as MediaItemType,
-  MediaSectionIdentifier,
-  MediaSectionWithConfig,
-} from 'src/types';
+import type { MediaSectionWithConfig } from 'src/types';
 
 import DialogAddDivider from 'components/dialog/DialogAddDivider.vue';
 import { storeToRefs } from 'pinia';
 import { useMediaDragAndDrop } from 'src/composables/useMediaDragAndDrop';
 import { useMediaSection } from 'src/composables/useMediaSection';
-import { getTextColor } from 'src/helpers/media-sections';
+import {
+  getTextColor,
+  saveWatchedMediaSectionOrder,
+} from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, nextTick, ref, watch } from 'vue';
 
@@ -123,13 +131,8 @@ import SectionEmptyState from './SectionEmptyState.vue';
 
 const props = defineProps<{
   mediaList: MediaSectionWithConfig;
-  openImportMenu: (section: MediaSectionIdentifier) => void;
-}>();
-
-const emit = defineEmits<{
-  'media-stopped': [];
-  'update:is-dragging': [isDragging: boolean];
-  'update:sortable-items': [items: MediaItemType[]];
+  openImportMenu: (section: string) => void;
+  selectedMediaItems?: string[];
 }>();
 
 const currentState = useCurrentStateStore();
@@ -156,21 +159,91 @@ const {
   isRenaming,
   isSongButton,
   moveSection,
+  sectionData,
   updateSectionColor,
   updateSectionLabel,
-  visibleItems,
 } = useMediaSection(props.mediaList);
 
+import { useEventListener } from '@vueuse/core';
 // Use the media dividers composable
 import { useMediaDividers } from 'src/composables/useMediaDividers';
 const { addDivider, deleteDivider, updateDividerColors, updateDividerTitle } =
   useMediaDividers(props.mediaList.config?.uniqueId);
 
-// Use the drag and drop composable
+// Use the drag and drop composable - pass the reactive sectionData items directly
 const { dragDropContainer, isDragging, sortableItems } = useMediaDragAndDrop(
-  visibleItems.value,
-  props.mediaList.config?.uniqueId || '',
+  sectionData.value?.items || [],
 );
+
+// Efficient watcher to ensure changes are persisted to the store
+// Only triggers when the actual array content changes, not on every re-render
+watch(
+  () => [sortableItems.value?.map((item) => item.uniqueId), isDragging.value],
+  ([, isDragging]) => {
+    if (isDragging) return; // Avoid updating while dragging
+    if (!sectionData.value || !sortableItems.value || !selectedDateObject.value)
+      return;
+
+    // Save section order information for watched media items
+    if (sortableItems.value.some((item) => item.source === 'watched')) {
+      try {
+        const watchedItems = sortableItems.value.filter(
+          (item) => item.source === 'watched' && item.fileUrl,
+        );
+        // Get the first watched item's file path to determine the watched day folder
+        const watchedItem = watchedItems[0];
+        if (watchedItem) {
+          const { fileUrlToPath, path } = window.electronApi;
+          const { dirname } = path;
+
+          const firstWatchedItemPath = fileUrlToPath(watchedItem.fileUrl);
+          if (firstWatchedItemPath) {
+            const watchedDayFolder = dirname(firstWatchedItemPath);
+            if (watchedDayFolder) {
+              console.log(
+                '🔍 [updateMediaListItems] Saving section order for watched media items:',
+                watchedDayFolder,
+                props.mediaList.config?.uniqueId,
+                watchedItems,
+              );
+              saveWatchedMediaSectionOrder(
+                watchedDayFolder,
+                props.mediaList.config?.uniqueId,
+                watchedItems,
+              );
+            }
+          }
+        }
+      } catch (error) {
+        // Fail gracefully - if we can't save the order file, it's not a big deal
+        console.warn(`⚠️ Could not save section order: ${error}`);
+      }
+    }
+
+    // Update the section data to match the sorted order
+    if (selectedDateObject.value && props.mediaList.config) {
+      const sectionIndex = selectedDateObject.value.mediaSections.findIndex(
+        (section) =>
+          section.config.uniqueId === props.mediaList.config.uniqueId,
+      );
+      if (
+        sectionIndex !== -1 &&
+        selectedDateObject.value.mediaSections[sectionIndex]
+      ) {
+        selectedDateObject.value.mediaSections[sectionIndex].items =
+          sortableItems.value;
+      }
+    }
+  },
+  { flush: 'post' },
+);
+
+// Listen for sort order reset events
+useEventListener(window, 'reset-sort-order', () => {
+  // Reset the sortable items to the original order from mediaList.items
+  if (!sortableItems.value?.length || !props.mediaList.items?.length) return;
+  sortableItems.value = props.mediaList.items;
+});
 
 // Computed styles
 const sectionStyles = computed(() => ({
@@ -215,33 +288,15 @@ const handleUpdateDividerColor = (
   updateDividerColors(dividerId, bgColor, textColor);
 };
 
-// const handleMediaStopped = () => {
-//   console.log(
-//     '🛑 [handleMediaStopped] Media stopped, updating section repeat to false',
-//   );
-//   // Update section repeat to false when media is stopped
-//   if (sectionHeaderRef.value) {
-//     sectionHeaderRef.value.updateSectionRepeatState(false);
-//   }
-// };
-
-// Watch for changes in isDragging and emit to parent
-watch(
-  () => isDragging.value,
-  (newIsDragging) => {
-    console.log('🔄 isDragging changed, emitting to parent:', {
-      isDragging: newIsDragging,
-      sectionId: props.mediaList.config?.uniqueId,
-      sortableItems: sortableItems.value,
-    });
-    emit('update:is-dragging', newIsDragging);
-    if (!newIsDragging) {
-      // Note: MediaItem no longer has a section property
-      // The section is now determined by the key in mediaSections
-      emit('update:sortable-items', sortableItems.value);
-    }
-  },
-);
+const emit = defineEmits<{
+  'item-clicked': [
+    payload: {
+      event: MouseEvent;
+      mediaItemId: string;
+      sectionId: string | undefined;
+    },
+  ];
+}>();
 
 defineExpose({
   expandedGroups,

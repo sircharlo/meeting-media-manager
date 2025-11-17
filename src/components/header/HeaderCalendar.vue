@@ -607,11 +607,21 @@ const mediaSortCanBeReset = computed<boolean>(() => {
 
   const hasSectionChange =
     selectedDateObject.value?.mediaSections?.some((section) =>
-      section.items?.some(
-        (item) =>
+      section.items?.some((item) => {
+        // Check if the item itself has a different original section
+        const itemHasSectionChange =
           item.originalSection &&
-          item.originalSection !== section.config.uniqueId,
-      ),
+          item.originalSection !== section.config.uniqueId;
+
+        // Check if any children have a different original section
+        const childHasSectionChange = item.children?.some(
+          (child) =>
+            child.originalSection &&
+            child.originalSection !== section.config.uniqueId,
+        );
+
+        return itemHasSectionChange || childHasSectionChange;
+      }),
     ) ?? false;
 
   if (hasSectionChange) {
@@ -680,6 +690,23 @@ const resetSort = () => {
           toSection: item.originalSection,
         });
       }
+
+      // Check if any children have originalSection different from current section
+      if (item.children?.length) {
+        if (item.children.length < 1) return;
+        const child = item.children[0]; // Check the first child for originalSection
+        if (!child) return;
+        if (
+          child.originalSection &&
+          child.originalSection !== sectionData.config.uniqueId
+        ) {
+          itemsToMove.push({
+            fromSection: sectionData.config.uniqueId,
+            item,
+            toSection: child.originalSection,
+          });
+        }
+      }
     });
   });
 
@@ -733,14 +760,7 @@ const resetSort = () => {
       ),
     );
   });
-
-  // Trigger visual update by dispatching events
   window.dispatchEvent(new CustomEvent('reset-sort-order'));
-
-  // Add a small delay to ensure the reset-sort-order event is processed first
-  // setTimeout(() => {
-  //   window.dispatchEvent(new CustomEvent('force-calendar-update'));
-  // }, 100);
 };
 
 const openCustomSectionEdit = () => {

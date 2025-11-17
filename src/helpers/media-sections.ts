@@ -382,26 +382,3 @@ export const removeWatchedMediaSectionInfo = async (
     console.warn(`⚠️ Could not update section order file: ${error}`);
   }
 };
-
-/**
- * Sort all media sections by their sortOrderOriginal property
- * This should be called when loading media sections for a specific date
- */
-export const sortMediaSectionsByOrder = (day: DateInfo): void => {
-  if (!day.mediaSections) return;
-
-  // Sort all sections by sortOrderOriginal to maintain proper order
-  day.mediaSections.forEach((section) => {
-    if (section?.items) {
-      section.items.sort((a, b) => {
-        const aOrder =
-          typeof a.sortOrderOriginal === 'number' ? a.sortOrderOriginal : 0;
-        const bOrder =
-          typeof b.sortOrderOriginal === 'number' ? b.sortOrderOriginal : 0;
-        return aOrder - bOrder;
-      });
-    }
-  });
-
-  console.log('✅ Sorted media sections by order for date:', day.date);
-};
