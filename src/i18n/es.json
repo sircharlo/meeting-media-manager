@@ -121,6 +121,7 @@
   "delete-media": "Eliminar elemento multimedia",
   "delete-media-explain": "Seleccione esta opción para eliminar el elemento multimedia seleccionado.",
   "delete-selected-media": "Eliminar elementos multimedia seleccionados",
+  "delete-selected-media-confirmation": "Are you sure you want to delete {count} selected media item(s)? This action cannot be undone.",
   "delete-selected-media-explain": "Esto eliminará permanentemente los elementos multimedia seleccionados de su equipo si se añadieron manualmente. Esto no eliminará ningún medio que se haya descargado automáticamente.",
   "deselect-all": "Deseleccionar todo",
   "directories": "Carpetas",
