@@ -121,6 +121,7 @@
   "delete-media": "删除媒体项",
   "delete-media-explain": "选择此选项以删除选中的媒体项。",
   "delete-selected-media": "Delete selected media elements",
+  "delete-selected-media-confirmation": "Are you sure you want to delete {count} selected media item(s)? This action cannot be undone.",
   "delete-selected-media-explain": "This will permanently delete the selected media items from your computer if they were added manually. This will not delete any media that was downloaded automatically.",
   "deselect-all": "取消全选",
   "directories": "文件夹",

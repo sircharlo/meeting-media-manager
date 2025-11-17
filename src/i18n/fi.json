@@ -121,6 +121,7 @@
   "delete-media": "Poista median kohde",
   "delete-media-explain": "Valitse tämä vaihtoehto, jos haluat poistaa valitun mediatiedon.",
   "delete-selected-media": "Poista valitut mediaelementit",
+  "delete-selected-media-confirmation": "Are you sure you want to delete {count} selected media item(s)? This action cannot be undone.",
   "delete-selected-media-explain": "Tämä poistaa pysyvästi valitut mediatiedot tietokoneelta, jos ne on lisätty manuaalisesti. Tämä ei poista automaattisesti ladattua mediaa.",
   "deselect-all": "Poista valinnat",
   "directories": "Kansiot",
