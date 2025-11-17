@@ -121,6 +121,7 @@
   "delete-media": "Médiaelem törlése",
   "delete-media-explain": "Válaszd ezt a lehetőséget a kiválasztott médiaelem törléséhez.",
   "delete-selected-media": "Delete selected media elements",
+  "delete-selected-media-confirmation": "Are you sure you want to delete {count} selected media item(s)? This action cannot be undone.",
   "delete-selected-media-explain": "This will permanently delete the selected media items from your computer if they were added manually. This will not delete any media that was downloaded automatically.",
   "deselect-all": "Kijelölés elvetése",
   "directories": "Mappák",

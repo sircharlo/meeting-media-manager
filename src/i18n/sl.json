@@ -121,6 +121,7 @@
   "delete-media": "Izbriši multimedijsko datoteko",
   "delete-media-explain": "To možnost izberi, če želiš izbrisati izbrano multimedijsko datoteko.",
   "delete-selected-media": "Izbriši izbrane multimedijske elemente",
+  "delete-selected-media-confirmation": "Are you sure you want to delete {count} selected media item(s)? This action cannot be undone.",
   "delete-selected-media-explain": "S tem bodo iz tvojega računalnika trajno izbrisani izbrani multimedijski elementi, če so bili dodani ročno. Multimedijski elementi, ki so bili preneseni samodejno, ne bodo izbrisani.",
   "deselect-all": "Odznači vse",
   "directories": "Mape",
