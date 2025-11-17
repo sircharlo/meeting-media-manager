@@ -121,6 +121,7 @@
   "delete-media": "미디어 항목 삭제",
   "delete-media-explain": "선택한 미디어를 삭제합니다",
   "delete-selected-media": "Delete selected media elements",
+  "delete-selected-media-confirmation": "Are you sure you want to delete {count} selected media item(s)? This action cannot be undone.",
   "delete-selected-media-explain": "This will permanently delete the selected media items from your computer if they were added manually. This will not delete any media that was downloaded automatically.",
   "deselect-all": "모두 선택 취소",
   "directories": "폴더",
