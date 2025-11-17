@@ -22,24 +22,34 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     () => currentStateStore.selectedDateObject,
   );
 
-  // Get section items from the new structure
-  const sectionItems = computed(() => {
-    if (!selectedDateObject.value?.mediaSections) return [];
-    const section = findMediaSection(
-      selectedDateObject.value.mediaSections,
-      mediaList.config?.uniqueId || '',
-    );
-    return section?.items || [];
-  });
+  const sectionData = ref<MediaSectionWithConfig>();
+
+  // Watch for changes in selectedDateObject or mediaList.config.uniqueId to update sectionData
+  watch(
+    [selectedDateObject, () => mediaList.config?.uniqueId],
+    ([newSelectedDateObject, newUniqueId]) => {
+      if (newSelectedDateObject?.mediaSections && newUniqueId) {
+        sectionData.value = findMediaSection(
+          newSelectedDateObject.mediaSections,
+          newUniqueId,
+        );
+      }
+    },
+    { immediate: true },
+  );
 
   // Get visible items (filtered out hidden items)
   const visibleItems = computed(() => {
-    return sectionItems.value.filter((item) => !item.hidden);
+    return sectionData.value?.items?.filter((item) => !item.hidden) || [];
+  });
+
+  const someItemsAreHidden = computed(() => {
+    return sectionData.value?.items?.some((item) => item.hidden) || false;
   });
 
   // Check if section is empty
   const isEmpty = computed(() => {
-    return sectionItems.value.length === 0;
+    return (sectionData.value?.items?.length || 0) === 0;
   });
 
   const hasAddMediaButton = computed(() => {
@@ -55,9 +65,9 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   // Check if this is a song button section
   const isSongButton = computed(() => {
     if (!mediaList.config) return false;
+    if (someItemsAreHidden.value) return false;
     const isCircuitOverseerSection =
-      mediaList.config.uniqueId === 'circuit-overseer' &&
-      !sectionItems.value.some((m) => m.hidden);
+      mediaList.config.uniqueId === 'circuit-overseer';
     return (
       (!sectionContainsSongs.value && mediaList.config.uniqueId === 'pt') ||
       isCircuitOverseerSection
@@ -66,12 +76,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
   // Get section config from the new structure
   const sectionConfig = computed(() => {
-    if (!selectedDateObject.value?.mediaSections) return null;
-    const section = findMediaSection(
-      selectedDateObject.value.mediaSections,
-      mediaList.config?.uniqueId || '',
-    );
-    return section?.config || null;
+    return sectionData.value?.config || null;
   });
 
   // Check if this is a custom section (not a standard meeting section)
@@ -84,7 +89,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     const currentSongbook = currentStateStore.currentSongbook;
     if (!currentSongbook?.pub) return false;
 
-    return sectionItems.value.some(
+    return visibleItems.value.some(
       (m) =>
         m.streamUrl?.includes(currentSongbook?.pub) ||
         m.fileUrl?.includes(currentSongbook?.pub),
@@ -96,7 +101,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     const isPublicTalkSection = mediaList.config?.uniqueId === 'pt';
     const isCircuitOverseerSection =
       mediaList.config?.uniqueId === 'circuit-overseer';
-    const sectionContainsAtLeastOneSong = sectionItems.value.some(
+    const sectionContainsAtLeastOneSong = visibleItems.value.some(
       (m) => m.streamUrl?.includes('sjj') || m.fileUrl?.includes('sjj'),
     );
     const result =
@@ -142,7 +147,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
   // Initialize expanded groups
   watch(
-    () => [sectionItems.value, selectedDateObject.value?.date],
+    () => [sectionData.value?.items, selectedDateObject.value?.date], // Use sectionData.value?.items
     (newValues, oldValues) => {
       const [items, newDate] = newValues || [];
       const [, oldDate] = oldValues || [];
@@ -186,29 +191,19 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
       sectionId: mediaList.config?.uniqueId,
     });
 
-    if (!selectedDateObject.value?.mediaSections || !isCustomSection.value) {
+    if (!sectionData.value?.config || !isCustomSection.value) {
+      // Use sectionData.value?.config
       console.warn('⚠️ No custom sections found for label update');
       return;
     }
 
-    const sectionData = findMediaSection(
-      selectedDateObject.value.mediaSections,
-      mediaList.config?.uniqueId || '',
-    );
-    if (sectionData && sectionData.config) {
-      const oldLabel = sectionData.config.label;
-      sectionData.config.label = label;
-      console.log('✅ Section label updated:', {
-        newLabel: label,
-        oldLabel,
-        sectionId: mediaList.config?.uniqueId,
-      });
-    } else {
-      console.warn(
-        '⚠️ Section not found for label update:',
-        mediaList.config?.uniqueId,
-      );
-    }
+    const oldLabel = sectionData.value.config.label;
+    sectionData.value.config.label = label;
+    console.log('✅ Section label updated:', {
+      newLabel: label,
+      oldLabel,
+      sectionId: mediaList.config?.uniqueId,
+    });
   };
 
   const updateSectionColor = (bgColor: string) => {
@@ -218,29 +213,19 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
       sectionId: mediaList.config?.uniqueId,
     });
 
-    if (!selectedDateObject.value?.mediaSections || !isCustomSection.value) {
+    if (!sectionData.value?.config || !isCustomSection.value) {
+      // Use sectionData.value?.config
       console.warn('⚠️ No custom sections found for color update');
       return;
     }
 
-    const sectionData = findMediaSection(
-      selectedDateObject.value.mediaSections,
-      mediaList.config?.uniqueId || '',
-    );
-    if (sectionData && sectionData.config) {
-      const oldColor = sectionData.config.bgColor;
-      sectionData.config.bgColor = bgColor;
-      console.log('✅ Section color updated:', {
-        newColor: bgColor,
-        oldColor,
-        sectionId: mediaList.config?.uniqueId,
-      });
-    } else {
-      console.warn(
-        '⚠️ Section not found for color update:',
-        mediaList.config?.uniqueId,
-      );
-    }
+    const oldColor = sectionData.value.config.bgColor;
+    sectionData.value.config.bgColor = bgColor;
+    console.log('✅ Section color updated:', {
+      newColor: bgColor,
+      oldColor,
+      sectionId: mediaList.config?.uniqueId,
+    });
   };
 
   const updateSectionRepeat = (repeat: boolean, interval?: number) => {
@@ -251,7 +236,8 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
       sectionId: mediaList.config?.uniqueId,
     });
 
-    if (!selectedDateObject.value?.mediaSections || !isCustomSection.value) {
+    if (!sectionData.value?.config || !isCustomSection.value) {
+      // Use sectionData.value?.config
       console.warn(
         '⚠️ No custom sections found for repeat update',
         selectedDateObject.value?.mediaSections,
@@ -260,30 +246,19 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
       return;
     }
 
-    const sectionData = findMediaSection(
-      selectedDateObject.value.mediaSections,
-      mediaList.config?.uniqueId || '',
-    );
-    if (sectionData && sectionData.config) {
-      const oldRepeat = sectionData.config.repeat;
-      const oldInterval = sectionData.config.repeatInterval;
-      sectionData.config.repeat = repeat;
-      if (interval !== undefined) {
-        sectionData.config.repeatInterval = interval;
-      }
-      console.log('✅ Section repeat updated:', {
-        newInterval: interval,
-        newRepeat: repeat,
-        oldInterval,
-        oldRepeat,
-        sectionId: mediaList.config?.uniqueId,
-      });
-    } else {
-      console.warn(
-        '⚠️ Section not found for repeat update:',
-        mediaList.config?.uniqueId,
-      );
+    const oldRepeat = sectionData.value.config.repeat;
+    const oldInterval = sectionData.value.config.repeatInterval;
+    sectionData.value.config.repeat = repeat;
+    if (interval !== undefined) {
+      sectionData.value.config.repeatInterval = interval;
     }
+    console.log('✅ Section repeat updated:', {
+      newInterval: interval,
+      newRepeat: repeat,
+      oldInterval,
+      oldRepeat,
+      sectionId: mediaList.config?.uniqueId,
+    });
   };
 
   const moveSection = (direction: 'down' | 'up') => {
@@ -359,13 +334,10 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
       return;
     }
 
-    const sectionData = findMediaSection(
-      selectedDateObject.value.mediaSections,
-      mediaList.config?.uniqueId || '',
-    );
-    if (sectionData) {
+    if (sectionData.value) {
+      // Use sectionData.value
       // Move all items to additional section
-      const itemsToMove = sectionData.items;
+      const itemsToMove = sectionData.value.items;
       if (!itemsToMove) return;
       const additionalSection = getOrCreateMediaSection(
         selectedDateObject.value.mediaSections,
@@ -375,8 +347,16 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
       additionalSection.items.push(...itemsToMove);
 
       // Empty the section
-      if (sectionData.items) {
-        sectionData.items = [];
+      if (sectionData.value.items) {
+        sectionData.value.items = [];
+      }
+
+      // Remove the section from mediaSections
+      const index = selectedDateObject.value.mediaSections.findIndex(
+        (s) => s.config.uniqueId === mediaList.config?.uniqueId,
+      );
+      if (index > -1) {
+        selectedDateObject.value.mediaSections.splice(index, 1);
       }
 
       console.log('✅ Section deleted:', {
@@ -426,13 +406,10 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     isRenaming,
     isSongButton,
     moveSection,
-
     sectionConfig,
     sectionContainsSongs,
-    // State
-    sectionItems,
+    sectionData,
     updateSectionColor,
-    // Actions
     updateSectionLabel,
     updateSectionRepeat,
     visibleItems,

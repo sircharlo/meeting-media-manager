@@ -51,14 +51,6 @@
           :open-import-menu="openImportMenu"
           @update-media-section-bg-color="updateMediaSectionBgColor"
           @update-media-section-label="updateMediaSectionLabel"
-          @update:is-dragging="
-            (isDragging) =>
-              updateMediaListDragging(mediaList.sectionId, isDragging)
-          "
-          @update:sortable-items="
-            async (items) =>
-              await updateMediaListItems(items, mediaList.sectionId)
-          "
         />
       </template>
     </template>
@@ -150,8 +142,6 @@ import {
   addSection,
   findMediaSection,
   getOrCreateMediaSection,
-  saveWatchedMediaSectionOrder,
-  sortMediaSectionsByOrder,
 } from 'src/helpers/media-sections';
 import { decompressJwpub, showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -258,112 +248,6 @@ watch(
 
 // Track dragging state for each media list
 const mediaListDragging = ref(false);
-
-// Function to update dragging state for a specific media list
-const updateMediaListDragging = (sectionId: string, isDragging: boolean) => {
-  mediaListDragging.value = isDragging;
-};
-
-const updateMediaListItems = async (
-  items: MediaItem[],
-  sectionId: MediaSectionIdentifier,
-) => {
-  if (!selectedDateObject.value) return;
-
-  // Update the section's media items with the new order
-  if (!selectedDateObject.value.mediaSections) {
-    selectedDateObject.value.mediaSections = [];
-  }
-
-  const section = getOrCreateMediaSection(
-    selectedDateObject.value.mediaSections,
-    sectionId,
-  );
-
-  // Get the current items in this section before the update
-  const currentItems = section.items || [];
-
-  // Save section order information for watched media items instead of renaming files
-  // This prevents the drag and drop positioning issue where files disappear and reappear
-  if (currentItems.some((item) => item.source === 'watched')) {
-    try {
-      // Find the watched day folder from the watched media items
-      const watchedItems = currentItems.filter(
-        (item) => item.source === 'watched' && item.fileUrl,
-      );
-      const watchedItem = watchedItems[0];
-      if (watchedItem) {
-        // Get the first watched item's file path to determine the watched day folder
-        const { fileUrlToPath, path } = window.electronApi;
-        const { dirname } = path;
-
-        const firstWatchedItemPath = fileUrlToPath(watchedItem.fileUrl);
-        if (firstWatchedItemPath) {
-          const watchedDayFolder = dirname(firstWatchedItemPath);
-          if (watchedDayFolder) {
-            console.log(
-              '🔍 [updateMediaListItems] Saving section order for watched media items:',
-              watchedDayFolder,
-              sectionId,
-              items,
-            );
-            await saveWatchedMediaSectionOrder(
-              watchedDayFolder,
-              sectionId,
-              items,
-            );
-          }
-        }
-      }
-    } catch (error) {
-      // Fail gracefully - if we can't save the order file, it's not a big deal
-      console.warn(`⚠️ Could not save section order: ${error}`);
-    }
-  }
-
-  // Find items that were moved from other sections (items that are in the new list but weren't in the current list)
-  const movedItems = items.filter(
-    (newItem) =>
-      !currentItems.some(
-        (currentItem) => currentItem.uniqueId === newItem.uniqueId,
-      ),
-  );
-
-  // Remove moved items from their original sections
-  if (movedItems.length > 0) {
-    selectedDateObject.value.mediaSections.forEach((otherSection) => {
-      if (otherSection.config.uniqueId !== sectionId) {
-        if (otherSection?.items) {
-          // Remove items that were moved to the new section
-          otherSection.items = otherSection.items.filter(
-            (item) =>
-              !movedItems.some(
-                (movedItem) => movedItem.uniqueId === item.uniqueId,
-              ),
-          );
-        }
-      }
-    });
-
-    console.log(
-      '🔄 Moved items between sections:',
-      movedItems.map((item) => item.title),
-      'to section:',
-      sectionId,
-    );
-  }
-
-  // Update the target section with the new items
-  section.items = items;
-
-  console.log(
-    '🔄 Updated items in section:',
-    sectionId,
-    'with',
-    items.length,
-    'items',
-  );
-};
 
 const {
   convertPdfToImages,
@@ -1103,11 +987,6 @@ watchImmediate(
         jwIcon: jwIcons.pt,
         label: t('pt'),
       });
-    }
-
-    // Sort media sections by their sortOrderOriginal to apply section order
-    if (selectedDateObject.value) {
-      sortMediaSectionsByOrder(selectedDateObject.value);
     }
   },
 );
