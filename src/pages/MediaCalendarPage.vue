@@ -121,7 +121,7 @@ import MediaList from 'components/media/MediaList.vue';
 import DOMPurify from 'dompurify';
 import Mousetrap from 'mousetrap';
 import { storeToRefs } from 'pinia';
-import { useMeta } from 'quasar';
+import { useMeta, useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
 import { defaultAdditionalSection } from 'src/composables/useMediaSection';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
@@ -181,6 +181,8 @@ import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
 import { computed, nextTick, onMounted, ref, type Ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+
+const $q = useQuasar();
 
 const jwpubImportDb = ref('');
 const jwpubImportDocuments = ref<DocumentItem[]>([]);
@@ -1613,13 +1615,23 @@ Mousetrap.bind('del', () => {
       .map((item) => item.uniqueId);
 
     if (deletableSelectedMediaItems.length > 0) {
-      deleteMediaItems(
-        deletableSelectedMediaItems,
-        currentCongregation.value,
-        selectedDateObject.value,
-      );
-      // Clear selection after deletion
-      selectedMediaItems.value = [];
+      $q.dialog({
+        cancel: { label: t('cancel') },
+        message: t('delete-selected-media-confirmation', {
+          count: deletableSelectedMediaItems?.length || 0,
+        }),
+        ok: { color: 'negative', label: t('delete') },
+        persistent: true,
+        title: t('confirm'),
+      }).onOk(() => {
+        deleteMediaItems(
+          deletableSelectedMediaItems,
+          currentCongregation.value,
+          selectedDateObject.value,
+        );
+        // Clear selection after deletion
+        selectedMediaItems.value = [];
+      });
     }
   }
 });

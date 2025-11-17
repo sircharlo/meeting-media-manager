@@ -667,13 +667,7 @@
               v-close-popup
               clickable
               :disable="isCurrentlyPlaying"
-              @click="
-                deleteMediaItems(
-                  deletableSelectedMediaItems,
-                  currentCongregation,
-                  selectedDateObject,
-                )
-              "
+              @click="confirmDeleteSelectedMedia()"
             >
               <q-item-section avatar>
                 <q-icon color="negative" name="mmm-delete-smart" />
@@ -1677,6 +1671,24 @@ function deleteMedia() {
   );
   mediaToDelete.value = '';
 }
+
+const confirmDeleteSelectedMedia = () => {
+  $q.dialog({
+    cancel: { label: t('cancel') },
+    message: t('delete-selected-media-confirmation', {
+      count: deletableSelectedMediaItems.value?.length || 0,
+    }),
+    ok: { color: 'negative', label: t('delete') },
+    persistent: true,
+    title: t('confirm'),
+  }).onOk(() => {
+    deleteMediaItems(
+      deletableSelectedMediaItems.value,
+      currentCongregation.value,
+      selectedDateObject.value,
+    );
+  });
+};
 
 onMounted(() => {
   initializeImageDuration();
