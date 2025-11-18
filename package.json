@@ -59,7 +59,7 @@
     "mousetrap": "^1.6.5",
     "music-metadata": "^11.10.1",
     "obs-websocket-js": "^5.0.7",
-    "p-queue": "^9.0.0",
+    "p-queue": "^9.0.1",
     "pdfjs-dist": "^5.4.394",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
