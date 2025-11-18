@@ -1500,19 +1500,6 @@ export const dynamicMediaMapper = async (
     });
     const allMediaPromises = await Promise.all(mediaPromises);
 
-    if (isCoWeek(lookupDate)) {
-      // Hide the last song for both MW and WE meetings during the CO visit
-      const lastSong = allMediaPromises
-        .filter((m) => m.source !== 'additional')
-        .at(-1);
-      if (lastSong) lastSong.hidden = true;
-
-      // Hide CBS media
-      allMediaPromises.forEach((m) => {
-        if (m.cbs) m.hidden = true;
-      });
-    }
-
     // Group mediaPromises by extractCaption
     const groupedMediaPromises: MediaItem[] = Object.values(
       allMediaPromises.reduce<Record<string, MediaItem>>((acc, media) => {
@@ -1543,6 +1530,26 @@ export const dynamicMediaMapper = async (
         return acc;
       }, {}),
     );
+
+    if (isCoWeek(lookupDate)) {
+      // Hide the last song for both MW and WE meetings during the CO visit
+      const allAdditionalMediaPromisesSorted = allMediaPromises
+        .filter((m) => m.source !== 'additional')
+        .sort(
+          (a, b) =>
+            parseInt(a.sortOrderOriginal?.toString() ?? '0') -
+            parseInt(b.sortOrderOriginal?.toString() ?? '0'),
+        );
+      const lastSong = allAdditionalMediaPromisesSorted.at(-1);
+      if (lastSong) lastSong.hidden = true;
+
+      // Hide CBS media
+      allMediaPromises.forEach((m) => {
+        if (m.cbs) {
+          m.hidden = true;
+        }
+      });
+    }
     return groupedMediaPromises;
   } catch (e) {
     errorCatcher(e);
