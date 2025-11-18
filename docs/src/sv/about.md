@@ -72,7 +72,7 @@ För **hybrid** eller **vanliga** församlingsmöten, innehåller det integrerad
 
 - **JWPUB-filer**: Importera och hantera JWPUB-filer enkelt
 - **JWLPLAYLIST-filer**: Stöd för spellistor från JW Library
-- **Anpassad media**: Importera egna videor, bilder, ljudfiler och PDF-filer
+- **Egna mediefiler**: Importera egna videor, bilder, ljudfiler och PDF-filer
 - **Ljudbibel**: Importera bibelmedier och ljudinspelningar av Nya Världens översättning
 - **Offentliga föreläsningar**: Ha alltid media för föreläsningarna klara med hjälp av S-34-importeraren
 

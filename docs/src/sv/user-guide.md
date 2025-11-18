@@ -119,9 +119,9 @@ Ställ in anpassade kortkommandon för snabbare åtkomst. Observera att inga kor
 **Anpassningsbara genvägar** (när aktiverat i inställningar):
 
 - **Mediefönster** - Öppna/stäng mediefönstret
-- **Föregående/Nästa media** - Navigera mellan medieobjekt
+- **Föregående/Nästa medie** - Navigera mellan medieobjekt
 - **Pausa/Återuppspela** - Kontrollera uppspelning av media
-- **Stoppa media** - Stoppa medieuppspelning
+- **Stoppa mediet** - Stoppa medieuppspelning
 - **Musikväxling** - Styr bakgrundsmusiken
 
 **Note (\*):** Global shortcut - available even when the app is not focused
@@ -181,7 +181,7 @@ Aktivera detta alternativ för att fördröja delning av bilder till OBS tills m
 
 Konfigurera hur M³ hanterar scenförändringar:
 
-- **Byt efter Media** - Återvänd automatiskt till föregående scen
+- **Byt efter Mediet** - Återvänd automatiskt till föregående scen
 - **Kom ihåg föregående scen** - Återställ scenen som var aktiv innan media
 
 ### Ljudkonfiguration för hybridmöten {#audio-configuration}
@@ -203,7 +203,7 @@ När du använder M³ med OBS Studio för hybridmöten (På plats + Zoom), måst
 **Alternativ: Dela datorljud**
 Om Original Audio inte fungerar bra i din inställning:
 
-1. **Innan uppspelning av media**, gå till **Avancerat** fliken i Zooms skärmdelnings alternativ
+1. **Innan uppspelning av mediet**, gå till **Avancerat** fliken i Zooms skärmdelnings alternativ
 2. **Bocka i "Datorljud"**
 3. **Observera**: Det här alternativet måste aktiveras varje gång du startar en ny Zoom-session
 
@@ -250,7 +250,7 @@ Lägg till dina egna mediefiler till M³:
 - **Organisera efter datum** - Tilldela importerad media till specifika datum
 - **Anpassade sektioner** - Skapa anpassade sektioner för bättre organisering
 - **Redigera egenskaper** - Ändra rubriker, beskrivningar och timing
-- **Ta bort media** - Ta bort oönskade medieobjekt
+- **Ta bort mediefiler** - Ta bort oönskade medieobjekt
 
 ### Importera ljudbibeln {#audio-bible-import}
 
@@ -369,7 +369,7 @@ Om du stöter på problem:
 
 1. **Kontrollera nerladdningar** - Se till att alla medier är hämtade
 2. **Testa utrustningen** - Verifiera bildskärmar och ljudarbeten
-3. **Förbered Media** - Granska och organisera media för mötet, se till att inga mediefiler saknas
+3. **Förbered Mediavisning** - Granska och organisera mediet för mötet, se till att inga mediefiler saknas
 4. **Konfigurera Audio** - För hybridmöten, aktivera Original Audio i Zoom eller konfigurera "Dela datorljud"
 
 ### Under möten {#during-meetings}

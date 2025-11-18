@@ -8,7 +8,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 ### ✨ Nya funktioner
 
-- ✨ **JWPUB val av media**: Lade till ett sätt att välja enskild media från JWPUB-filer.
+- ✨ **JWPUB mediefiler**: Lagt till ett sätt att välja enskilda mediefiler från JWPUB-filer.
 - ✨ **Autofokus på mediafönstret**: Lade till en valfri inställning för att automatiskt fokusera mediafönstret efter Zoom-skärmdelning.
 - ✨ **Överlägg för TV-skärmar**: Förbättrad överlägg för webbsidans markör för bättre synlighet av muspekaren på TV-skärmar.
 - ✨ **Mötesinspelning**: Lade till en ny mötesinspelningsfunktion, för att styra en extern inspelningsapp.
@@ -97,20 +97,20 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 ### 🛠️ Förbättringar och justeringar
 
 - 🔍 **Återställ Zoomning med Ctrl + Scroll**: Nollställning av zoomning för enklare navigering.
-- 👤 **Dölj oanvänd media för kretsbesöket**: Dölj istället för att hoppa över media som inte används för kretsbesöket, för att hålla en renare visning.
+- 👤 **Dölj medieobjekt för kretsbesöket**: Dölj istället för att hoppa över mediefiler som inte används för kretsbesöket, för att hålla en renare visning.
 - 🎵 **Hitta dubletter av sånger**: Gör det lättare att hitta dubletter av sånger.
 
 ## 25.4.3
 
 ### 🛠️ Förbättringar och justeringar
 
-- ➕ **Rensa media från v25.4.x**: Städa automatiskt upp övergivna eller felplacerade medier från v25.4.1 till v25.4.2 för att säkerställa att inga medier saknas eller är på fel plats i medialistan.
+- ➕ **Rensa mediefiler från v25.4.x**: Rensa automatiskt övergivna eller felplacerade mediefiler från v25.4.1 till v25.4.2 för att säkerställa att inga mediefiler saknas eller är på fel plats i medielistan.
 
 ## 25.4.2
 
 ### 🛠️ Förbättringar och justeringar
 
-- ➕ **Förhindra mediaduplicering**: Undvik att lägga till några medieobjekt flera gånger i medialistan.
+- ➕ **Förhindra duplicerade mediefiler**: Undvik att lägga till vissa medieobjekt flera gånger i medielistan.
 
 ## 25.4.1
 
@@ -153,7 +153,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 ### ✨ Nya funktioner
 
 - 🎵 **Spela bakgrundsmusik med videor**: Tillåt bakgrundsmusik att fortsätta spela medan videor visas.
-- 🎥 **Kameraflöde för teckenspråk**: Lägg till möjligheten att visa ett kameraflöde i mediafönstret speciellt för teckenspråksanvändare.
+- 🎥 **Kameraflöde för teckenspråk**: Lägg till möjligheten att visa ett kameraflöde i mediefönstret speciellt för teckenspråksanvändare.
 - 📅 **Automatisk datum och bakgrund för minneshögtiden**: Ställ in automatiskt bakgrundsbild och datum för minneshögtiden.
 - 📜 **Visa versionsinfo i appen**: Visa versionsinformation direkt i programmet så att användarna enkelt kan se vad som är ändrats efter en uppdatering.
 
