@@ -1548,25 +1548,26 @@ export const dynamicMediaMapper = async (
         acc[item.extractCaption]?.children?.push(item);
         return acc;
       }, {}),
-    );
+    ).sort((a, b) => {
+      const aOrder =
+        typeof a.sortOrderOriginal === 'number' ? a.sortOrderOriginal : 0;
+      const bOrder =
+        typeof b.sortOrderOriginal === 'number' ? b.sortOrderOriginal : 0;
+      return aOrder - bOrder;
+    });
 
     // --- CO Week modifications --------------------------------------------
     if (isCoWeek(lookupDate)) {
       // Hide the last song for both MW and WE meetings during the CO visit
-      const nonAdditionalSorted = mediaItems
-        .filter((m) => m.source !== 'additional')
-        .sort(
-          (a, b) =>
-            parseInt(a.sortOrderOriginal?.toString() ?? '0') -
-            parseInt(b.sortOrderOriginal?.toString() ?? '0'),
-        );
+      const nonAdditional = grouped.filter((m) => m.source !== 'additional');
 
-      const lastSong = nonAdditionalSorted.at(-1);
+      const lastSong = nonAdditional.at(-1);
       if (lastSong) lastSong.hidden = true;
 
       // Hide CBS media
-      mediaItems.forEach((m) => {
-        if (m.cbs) m.hidden = true;
+      const cbsMedia = nonAdditional.filter((m) => m.cbs);
+      cbsMedia.forEach((m) => {
+        m.hidden = true;
       });
     }
 
