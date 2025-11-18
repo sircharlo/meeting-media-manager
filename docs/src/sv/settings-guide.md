@@ -329,7 +329,7 @@ Konfigurera vilka OBS-scener som ska användas för olika ändamål:
 
 - **Skjut upp bildvisning**: Fördröj delning av bilder till OBS
 - **Snabbväxla**: Aktivera snabbväxling på/av för OBS-integration
-- **Byt scen efter media**: Återvänd automatiskt till föregående scen efter media
+- **Byt scen efter media**: Återvänd automatiskt till föregående scen efter mediet
 - **Kom ihåg föregående scen**: Kom ihåg och återställ föregående scen
 - **Dölj ikoner**: Dölj OBS-relaterade ikoner i gränssnittet
 
@@ -402,10 +402,10 @@ Aktivera anpassningsbara kortkommandon för mediekontroll.
 Ställ in genvägar för uppspelning av media:
 
 - **Mediefönster** - Öppna/stäng mediefönstret
-- **Föregående media**: Gå till föregående medieobjekt
-- **Nästa media**: Gå till nästa medieobjekt
+- **Föregående medieobjekt**: Gå till föregående medieobjekt
+- **Nästa medieobjekt**: Gå till nästa medieobjekt
 - **Pausa/Återuppspela** - Kontrollera uppspelning av media
-- **Stoppa media** - Stoppa medieuppspelning
+- **Stoppa mediet** - Stoppa uppspelningen
 - **Musikväxling** - Styr bakgrundsmusiken
 
 ### Mediavisning {#media-display}
@@ -430,7 +430,7 @@ Dölj logotypen i mediefönstret.
 
 <!-- **Setting**: `maxRes` -->
 
-Maximal upplösning för nedladdade mediafiler.
+Maximal upplösning för nedladdade mediefiler.
 
 **Alternativ**: 240p, 360p, 480p, 720p
 
