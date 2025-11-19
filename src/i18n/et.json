@@ -574,5 +574,6 @@
   "zoomEnable-explain": "Zoom ekraani jagamine käivitub ja peatub automaatselt, kui meedia esitamine algab ja lõpeb.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoomi ekraanijagamise kiirklahv",
-  "zoomScreenShareShortcut-explain": "Sisestage klahvikombinatsioon, mis on konfigureeritud Zoom'i seadetes „Ekraani jagamise alustamine/lõpetamine”. M³ edastab selle klahvikombinatsiooni, kui meedia hakkab mängima (ekraani jagamise alustamiseks) ja kui see peatub (ekraani jagamise lõpetamiseks). Selle funktsiooni kasutamiseks peate Zoom'i seadetes aktiveerima selle konkreetse klahvikombinatsiooni jaoks seadistuse „Globaalne klahvikombinatsioon”."
+  "zoomScreenShareShortcut-explain": "Sisestage klahvikombinatsioon, mis on konfigureeritud Zoom'i seadetes „Ekraani jagamise alustamine/lõpetamine”. M³ edastab selle klahvikombinatsiooni, kui meedia hakkab mängima (ekraani jagamise alustamiseks) ja kui see peatub (ekraani jagamise lõpetamiseks). Selle funktsiooni kasutamiseks peate Zoom'i seadetes aktiveerima selle konkreetse klahvikombinatsiooni jaoks seadistuse „Globaalne klahvikombinatsioon”.",
+  "perSecond": "/s"
 }

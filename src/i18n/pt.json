@@ -574,5 +574,6 @@
   "zoomEnable-explain": "Inicia e interrompe automaticamente o compartilhamento de tela do Zoom quando a mídia começa e termina.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Atalho para compartilhamento de tela no Zoom",
-  "zoomScreenShareShortcut-explain": "Insira o atalho do Zoom para 'Iniciar/interromper compartilhamento de tela' (configurado nos Atalhos de teclado). O M³ usará esse comando quando a mídia começar (inicia o compartilhamento) e quando parar (encerra o compartilhamento). Para funcionar, ative a opção 'Atalho global' para esse comando nas configurações do Zoom."
+  "zoomScreenShareShortcut-explain": "Insira o atalho do Zoom para 'Iniciar/interromper compartilhamento de tela' (configurado nos Atalhos de teclado). O M³ usará esse comando quando a mídia começar (inicia o compartilhamento) e quando parar (encerra o compartilhamento). Para funcionar, ative a opção 'Atalho global' para esse comando nas configurações do Zoom.",
+  "perSecond": "/s"
 }

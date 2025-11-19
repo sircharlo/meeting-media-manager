@@ -574,5 +574,6 @@
   "zoomEnable-explain": "Samodejno zaženi in ustavi deljenje zaslona v Zoomu, ko se predvajanje multimedijske vsebine začne in ustavi.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Bližnjica za deljenje zaslona v Zoomu",
-  "zoomScreenShareShortcut-explain": "Vnesi bližnjico na tipkovnici, ki je nastavljena v Zoomovi nastavitvi »Start/stop screen sharing«. M³ bo to bližnjico poslal, ko se bo začelo predvajanje multimedijske vsebine (za začetek deljenja zaslona) in ko se bo ustavilo (za ustavitev deljenja zaslona). Da bi lahko uporabljal to funkcijo, moraš v Zoomovih nastavitvah omogočiti nastavitev »Global shortcut« za to bližnjico."
+  "zoomScreenShareShortcut-explain": "Vnesi bližnjico na tipkovnici, ki je nastavljena v Zoomovi nastavitvi »Start/stop screen sharing«. M³ bo to bližnjico poslal, ko se bo začelo predvajanje multimedijske vsebine (za začetek deljenja zaslona) in ko se bo ustavilo (za ustavitev deljenja zaslona). Da bi lahko uporabljal to funkcijo, moraš v Zoomovih nastavitvah omogočiti nastavitev »Global shortcut« za to bližnjico.",
+  "perSecond": "/s"
 }

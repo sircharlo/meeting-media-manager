@@ -574,5 +574,6 @@
   "zoomEnable-explain": "Aloita ja lopeta Zoom-näytönjako automaattisesti, kun media alkaa ja päättyy.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom-näytönjaon pikanäppäin",
-  "zoomScreenShareShortcut-explain": "Anna näppäimistön pikanäppäin, joka on määritetty Zoomissa toiminnolle ”Start/Stop Share”. Voit poistaa ’Global’-asetuksen kyseiseltä pikanäppäimeltä Zoomin asetuksissa."
+  "zoomScreenShareShortcut-explain": "Anna näppäimistön pikanäppäin, joka on määritetty Zoomissa toiminnolle ”Start/Stop Share”. Voit poistaa ’Global’-asetuksen kyseiseltä pikanäppäimeltä Zoomin asetuksissa.",
+  "perSecond": "/s"
 }
