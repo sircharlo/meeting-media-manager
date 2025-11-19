@@ -122,6 +122,15 @@ export interface ElectronApi {
   ) => void;
   onUpdateAvailable: (callback: () => void) => void;
   onUpdateDownloaded: (callback: () => void) => void;
+  onUpdateDownloadProgress: (
+    callback: (args: {
+      bytesPerSecond: number;
+      delta: number;
+      percent: number;
+      total: number;
+      transferred: number;
+    }) => void,
+  ) => void;
   onWatchFolderUpdate: (
     callback: (args: {
       changedPath: string;
@@ -207,6 +216,7 @@ export type ElectronIpcListenKey =
   | 'screenPrefsChange'
   | 'shortcut'
   | 'update-available'
+  | 'update-download-progress'
   | 'update-downloaded'
   | 'watchFolderUpdate'
   | 'websiteWindowClosed';

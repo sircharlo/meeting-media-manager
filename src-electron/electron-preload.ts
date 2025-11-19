@@ -76,6 +76,7 @@ const electronApi: ElectronApi = {
   onShortcut: (cb) => listen('shortcut', cb),
   onUpdateAvailable: (cb) => listen('update-available', cb),
   onUpdateDownloaded: (cb) => listen('update-downloaded', cb),
+  onUpdateDownloadProgress: (cb) => listen('update-download-progress', cb),
   onWatchFolderUpdate: (cb) => listen('watchFolderUpdate', cb),
   onWebsiteWindowClosed: (cb) => listen('websiteWindowClosed', cb),
   openDiscussion: (c, t, p) => send('openDiscussion', c, t, p),

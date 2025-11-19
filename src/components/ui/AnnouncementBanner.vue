@@ -6,7 +6,21 @@
       inline-actions
       rounded
     >
-      {{ t('update-downloading') }}
+      <div>
+        {{ t('update-downloading') }}
+        <div v-if="downloadProgress" class="q-mt-sm">
+          <q-linear-progress
+            color="primary"
+            rounded
+            size="md"
+            stripe
+            :value="(downloadProgress.percent || 0) / 100"
+          />
+          <div v-if="downloadProgressText" class="text-caption q-mt-xs">
+            {{ downloadProgressText }}
+          </div>
+        </div>
+      </div>
       <template #avatar>
         <q-icon name="mmm-download" />
       </template>
@@ -68,7 +82,9 @@
 <script setup lang="ts">
 import type { Announcement, AnnouncementAction } from 'src/types';
 
+import prettyBytes from 'pretty-bytes';
 import { useQuasar } from 'quasar';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { localeOptions } from 'src/i18n';
 import { fetchAnnouncements, fetchLatestVersion } from 'src/utils/api';
 import { updatesDisabled } from 'src/utils/fs';
@@ -124,17 +140,90 @@ const loadAnnouncements = async () => {
 
 const showAutoUpdateAvailableBanner = ref(false);
 const showAutoUpdateDownloadedBanner = ref(false);
+const downloadProgress = ref<null | {
+  bytesPerSecond: number;
+  delta: number;
+  percent: number;
+  total: number;
+  transferred: number;
+}>(null);
+
+const downloadProgressText = computed(() => {
+  if (!downloadProgress.value) return '';
+
+  const parts: string[] = [];
+
+  // Add percentage if available
+  if (downloadProgress.value.percent != null) {
+    parts.push(`${Math.round(downloadProgress.value.percent)}%`);
+  }
+
+  // Add transferred/total if both are available
+  if (
+    downloadProgress.value.transferred != null &&
+    downloadProgress.value.total != null
+  ) {
+    parts.push(
+      `${prettyBytes(downloadProgress.value.transferred)} / ${prettyBytes(downloadProgress.value.total)}`,
+    );
+  }
+
+  // Add speed if available
+  if (
+    downloadProgress.value.bytesPerSecond != null &&
+    downloadProgress.value.bytesPerSecond > 0
+  ) {
+    parts.push(
+      `(${prettyBytes(downloadProgress.value.bytesPerSecond)}${t('perSecond')})`,
+    );
+  }
+
+  return parts.join(' - ');
+});
 
 onMounted(() => {
-  const { onUpdateAvailable, onUpdateDownloaded } = window.electronApi;
-  onUpdateAvailable(() => {
-    showAutoUpdateAvailableBanner.value = true;
-    showAutoUpdateDownloadedBanner.value = false;
-  });
-  onUpdateDownloaded(() => {
-    showAutoUpdateAvailableBanner.value = false;
-    showAutoUpdateDownloadedBanner.value = true;
-  });
+  try {
+    const { onUpdateAvailable, onUpdateDownloaded, onUpdateDownloadProgress } =
+      window.electronApi;
+
+    onUpdateAvailable(() => {
+      try {
+        showAutoUpdateAvailableBanner.value = true;
+        showAutoUpdateDownloadedBanner.value = false;
+        downloadProgress.value = null;
+      } catch (error) {
+        errorCatcher(error, {
+          contexts: { fn: { name: 'onUpdateAvailable' } },
+        });
+      }
+    });
+
+    onUpdateDownloadProgress((info) => {
+      try {
+        downloadProgress.value = info;
+      } catch (error) {
+        errorCatcher(error, {
+          contexts: { fn: { info, name: 'onUpdateDownloadProgress' } },
+        });
+      }
+    });
+
+    onUpdateDownloaded(() => {
+      try {
+        showAutoUpdateAvailableBanner.value = false;
+        showAutoUpdateDownloadedBanner.value = true;
+        downloadProgress.value = null;
+      } catch (error) {
+        errorCatcher(error, {
+          contexts: { fn: { name: 'onUpdateDownloaded' } },
+        });
+      }
+    });
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: { fn: { name: 'onUpdateListeners' } },
+    });
+  }
 });
 
 const isTestVersion = process.env.IS_TEST;

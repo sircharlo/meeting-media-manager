@@ -52,6 +52,11 @@ export async function initUpdater() {
     sendToWindow(mainWindow, 'update-available');
   });
 
+  autoUpdater.on('download-progress', (info) => {
+    console.log('Update download progress:', info);
+    sendToWindow(mainWindow, 'update-download-progress', info);
+  });
+
   autoUpdater.on('update-downloaded', (info) => {
     console.log('Update downloaded:', info);
     sendToWindow(mainWindow, 'update-downloaded');
