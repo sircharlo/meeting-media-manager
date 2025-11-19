@@ -29,8 +29,12 @@ const ENABLE_SOURCE_MAPS = !!SENTRY_AUTH_TOKEN && !IS_TEST;
 
 const repoURL = repository.url.replace('.git', '');
 
-const getIconPath = (ext: 'icns' | 'ico' | 'png') =>
-  `icons/${IS_BETA ? 'beta' : 'icon'}.${ext}`;
+const getIconPath = (iconType: 'icns' | 'ico' | 'png' | 'splash') => {
+  if (iconType === 'splash') {
+    return `build/logos/splash-portable.bmp`;
+  }
+  return `icons/${IS_BETA ? 'beta' : 'icon'}.${iconType}`;
+};
 
 export default defineConfig((ctx) => {
   return {
@@ -158,6 +162,8 @@ export default defineConfig((ctx) => {
         portable: {
           // eslint-disable-next-line no-template-curly-in-string
           artifactName: APP_NAME + '-${version}-portable.${ext}',
+          splashImage: getIconPath('splash'),
+          useZip: true,
         },
         productName: PRODUCT_NAME,
         publish: ['github'],
