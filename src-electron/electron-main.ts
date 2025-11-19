@@ -150,9 +150,9 @@ if (!gotTheLock) {
       });
       // Persist to user prefs for next run
       setHwAccelDisabled(true);
-      // Disable HW accel for future windows
-      app.disableHardwareAcceleration();
-      // Notify user (will be handled by sending to renderer)
+      // Note: app.disableHardwareAcceleration() can only be called before app is ready.
+      // The setting is persisted above and will take effect on next app launch.
+      // Notify user that a restart is recommended
       if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.webContents.send('gpu-crash-detected');
       }
