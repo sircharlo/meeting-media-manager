@@ -574,5 +574,6 @@
   "zoomEnable-explain": "Automatisch Zoom-schermdeling starten en stoppen wanneer media begint en stopt met afspelen.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom-schermdelingsnelkoppeling",
-  "zoomScreenShareShortcut-explain": "Voer de sneltoets in die is ingesteld in Zoom onder \"Scherm delen starten/stoppen\". M³ zal deze sneltoets versturen wanneer media begint met afspelen (om scherm delen te starten) en wanneer het stopt (om scherm delen te stoppen). Om deze functie te gebruiken, moet je de optie \"Globale sneltoets\" inschakelen voor deze sneltoets in de Zoom-instellingen."
+  "zoomScreenShareShortcut-explain": "Voer de sneltoets in die is ingesteld in Zoom onder \"Scherm delen starten/stoppen\". M³ zal deze sneltoets versturen wanneer media begint met afspelen (om scherm delen te starten) en wanneer het stopt (om scherm delen te stoppen). Om deze functie te gebruiken, moet je de optie \"Globale sneltoets\" inschakelen voor deze sneltoets in de Zoom-instellingen.",
+  "perSecond": "/s"
 }
