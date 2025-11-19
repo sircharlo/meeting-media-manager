@@ -574,5 +574,6 @@
   "zoomEnable-explain": "Avvia e ferma automaticamente la condivisione dello schermo di Zoom quando i media iniziano e smettono di riprodurre.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Scorciatoia condivisione schermo di Zoom",
-  "zoomScreenShareShortcut-explain": "Inserisci la scorciatoia da tastiera configurata nell'impostazione \"Avvia/ferma condivisione schermo\" di Zoom. M³ invierà questa scorciatoia quando il media inizia a riprodurre (per iniziare la condivisione dello schermo) e quando si ferma (per interrompere la condivisione dello schermo). Per poter utilizzare questa funzione, è necessario abilitare l'impostazione \"Scorciatoie globali\" per quella particolare scorciatoia nelle impostazioni di Zoom."
+  "zoomScreenShareShortcut-explain": "Inserisci la scorciatoia da tastiera configurata nell'impostazione \"Avvia/ferma condivisione schermo\" di Zoom. M³ invierà questa scorciatoia quando il media inizia a riprodurre (per iniziare la condivisione dello schermo) e quando si ferma (per interrompere la condivisione dello schermo). Per poter utilizzare questa funzione, è necessario abilitare l'impostazione \"Scorciatoie globali\" per quella particolare scorciatoia nelle impostazioni di Zoom.",
+  "perSecond": "/s"
 }

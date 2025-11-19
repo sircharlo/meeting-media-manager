@@ -574,5 +574,6 @@
   "zoomEnable-explain": "Iniciar e parar automaticamente a partilha de ecrã do Zoom quando a reprodução de multimédia começar e terminar.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Atalho para partilha de ecrã do Zoom",
-  "zoomScreenShareShortcut-explain": "Introduza o atalho de teclado configurado na definição “Iniciar/parar partilha de ecrã” do Zoom. O M³ enviará este atalho quando a reprodução de multimédia começar (para iniciar a partilha de ecrã) e quando terminar (para parar a partilha de ecrã). Para utilizar esta funcionalidade, é necessário ativar a opção “Atalho global” para esse atalho específico nas definições do Zoom."
+  "zoomScreenShareShortcut-explain": "Introduza o atalho de teclado configurado na definição “Iniciar/parar partilha de ecrã” do Zoom. O M³ enviará este atalho quando a reprodução de multimédia começar (para iniciar a partilha de ecrã) e quando terminar (para parar a partilha de ecrã). Para utilizar esta funcionalidade, é necessário ativar a opção “Atalho global” para esse atalho específico nas definições do Zoom.",
+  "perSecond": "/s"
 }

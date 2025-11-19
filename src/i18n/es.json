@@ -574,5 +574,6 @@
   "zoomEnable-explain": "Iniciar y detener automáticamente el uso compartido de la pantalla de zoom cuando la multimedia se inicia y deja de reproducir.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Atajo para compartir pantalla de Zoom",
-  "zoomScreenShareShortcut-explain": "Introduzca el acceso directo del teclado configurado en el ajuste de Zoom \"Iniciar/Detener compartir pantalla\". M3 enviará este acceso directo cuando la multimedia comience a reproducir (para iniciar el uso compartido de la pantalla) y cuando se detenga (para detener el uso compartido de la pantalla). Para poder utilizar esta función, necesita habilitar la opción \"Acceso directo global\" para ese acceso directo en particular en los ajustes de Zoom."
+  "zoomScreenShareShortcut-explain": "Introduzca el acceso directo del teclado configurado en el ajuste de Zoom \"Iniciar/Detener compartir pantalla\". M3 enviará este acceso directo cuando la multimedia comience a reproducir (para iniciar el uso compartido de la pantalla) y cuando se detenga (para detener el uso compartido de la pantalla). Para poder utilizar esta función, necesita habilitar la opción \"Acceso directo global\" para ese acceso directo en particular en los ajustes de Zoom.",
+  "perSecond": "/s"
 }
