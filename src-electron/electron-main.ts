@@ -28,7 +28,14 @@ import upath from 'upath';
 import 'src-electron/main/ipc';
 import 'src-electron/main/security';
 
-const { join } = upath;
+initSentry({
+  dsn: 'https://40b7d92d692d42814570d217655198db@o1401005.ingest.us.sentry.io/4507449197920256',
+  environment: IS_TEST ? 'test' : process.env.NODE_ENV,
+  release: `${name}@${version}`,
+  tracesSampleRate: 1.0,
+});
+
+const { join, resolve } = upath;
 
 const gotTheLock = app.requestSingleInstanceLock();
 
@@ -111,32 +118,24 @@ if (!gotTheLock) {
   }
 
   if (process.env.PORTABLE_EXECUTABLE_DIR) {
-    app.setPath('appData', process.env.PORTABLE_EXECUTABLE_DIR);
+    const portableExecutableDir = resolve(process.env.PORTABLE_EXECUTABLE_DIR);
+    app.setPath('appData', portableExecutableDir);
     app.setPath(
       'userData',
-      join(process.env.PORTABLE_EXECUTABLE_DIR, `${PRODUCT_NAME} - User Data`),
+      join(portableExecutableDir, `${PRODUCT_NAME} - User Data`),
     );
     app.setPath(
       'temp',
-      join(
-        process.env.PORTABLE_EXECUTABLE_DIR,
-        `${PRODUCT_NAME} - Temporary Files`,
-      ),
+      join(portableExecutableDir, `${PRODUCT_NAME} - Temporary Files`),
     );
   } else if (IS_TEST) {
     app.setPath('userData', join(app.getPath('appData'), PRODUCT_NAME));
   }
 
-  initSentry({
-    dsn: 'https://40b7d92d692d42814570d217655198db@o1401005.ingest.us.sentry.io/4507449197920256',
-    environment: IS_TEST ? 'test' : process.env.NODE_ENV,
-    release: `${name}@${version}`,
-    tracesSampleRate: 1.0,
-  });
-
   if (!process.env.PORTABLE_EXECUTABLE_DIR) {
     initUpdater();
   }
+
   initScreenListeners();
   createApplicationMenu();
   initSessionListeners();
