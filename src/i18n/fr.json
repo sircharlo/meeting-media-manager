@@ -574,5 +574,6 @@
   "zoomEnable-explain": "Démarrer et arrêter automatiquement le partage d'écran dans Zoom lorsque les médias commencent et arrêtent de jouer dans M³.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Raccourci pour le partage d'écran de Zoom",
-  "zoomScreenShareShortcut-explain": "Entrez le raccourci clavier configuré dans le paramètre « Démarrer/arrêter le partage d'écran » de Zoom. M³ enverra ce raccourci lorsque les médias commencent à jouer (pour démarrer le partage d'écran) et lorsqu'ils s'arrêtent (pour arrêter le partage d'écran). Pour utiliser cette fonctionnalité, vous devez activer le paramètre « Raccourci global » pour ce raccourci particulier dans les paramètres de Zoom."
+  "zoomScreenShareShortcut-explain": "Entrez le raccourci clavier configuré dans le paramètre « Démarrer/arrêter le partage d'écran » de Zoom. M³ enverra ce raccourci lorsque les médias commencent à jouer (pour démarrer le partage d'écran) et lorsqu'ils s'arrêtent (pour arrêter le partage d'écran). Pour utiliser cette fonctionnalité, vous devez activer le paramètre « Raccourci global » pour ce raccourci particulier dans les paramètres de Zoom.",
+  "perSecond": "/s"
 }
