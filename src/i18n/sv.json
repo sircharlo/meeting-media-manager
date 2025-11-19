@@ -574,5 +574,6 @@
   "zoomEnable-explain": "Starta och stoppa automatiskt Zoom-skärmdelning när media startar och slutar.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom-genväg för skärmdelning",
-  "zoomScreenShareShortcut-explain": "Ange kortkommandot som konfigurerats i inställningar för Zoom \"Starta/stoppa skärmdelning\". M³ skickar genvägen när media börjar spelas upp (för att starta skärmdelning) och när den slutar (för att stoppa skärmdelning). För att använda den här funktionen måste du aktivera inställningen \"Global genväg\" för just den genvägen i Zooms inställningar."
+  "zoomScreenShareShortcut-explain": "Ange kortkommandot som konfigurerats i inställningar för Zoom \"Starta/stoppa skärmdelning\". M³ skickar genvägen när media börjar spelas upp (för att starta skärmdelning) och när den slutar (för att stoppa skärmdelning). För att använda den här funktionen måste du aktivera inställningen \"Global genväg\" för just den genvägen i Zooms inställningar.",
+  "perSecond": "/s"
 }
