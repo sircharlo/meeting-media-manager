@@ -574,5 +574,6 @@
   "zoomEnable-explain": "当媒体开始并停止播放时，自动开始并停止Zoom共享。",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "共享Zoom屏幕快捷键",
-  "zoomScreenShareShortcut-explain": "输入Zoom的“开始/停止屏幕共享”设置中配置的键盘快捷方式。 当媒体开始播放时(启动屏幕共享)和停止时(停止屏幕共享)，M3将发送此快捷方式。 为了使用此功能，您需要在Zoom设置中启用\"全局快捷键\"设置。"
+  "zoomScreenShareShortcut-explain": "输入Zoom的“开始/停止屏幕共享”设置中配置的键盘快捷方式。 当媒体开始播放时(启动屏幕共享)和停止时(停止屏幕共享)，M3将发送此快捷方式。 为了使用此功能，您需要在Zoom设置中启用\"全局快捷键\"设置。",
+  "perSecond": "/s"
 }
