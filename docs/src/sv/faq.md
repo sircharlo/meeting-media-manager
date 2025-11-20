@@ -32,7 +32,7 @@ M³ stöder Windows, macOS och Linux:
 
 **Ja!** M³ ger omfattande stöd för flera språk:
 
-- **Media**: Ladda ner media på något av hundratals språk som finns på Jehovas officiella websida
+- **Mediefiler**: Ladda ned mediefiler på något av hundratals språk som finns på Jehovas vittnens officiella websida
 - **Gränssnitt**: Använd M³:s gränssnitt på många olika språk
 - **Oberoende inställningar**: Du kan använda gränssnittet på ett språk medan du laddar ner media på ett annat språk
 - **Reservspråk**: Konfigurera reservspråk för när media inte är tillgängligt på det primära språket
@@ -313,7 +313,7 @@ Användningen av diskutrymme beror på:
 - **Mediarösning**: Högre upplösning använder mer utrymme
 - **Cachat innehåll**: Mediefiler cachas lokalt
 - **Extra cache**: Ytterligare caching kan öka användningen
-- **Exporterade media**: Automatisk export funktioner använder ytterligare utrymme
+- **Exporterade mediefiler**: Funktionen för automatisk export använder extra lagringsutrymme
 
 Typisk användning varierar från 2-10GB beroende på inställningar och användning.
 

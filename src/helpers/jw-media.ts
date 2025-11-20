@@ -1351,199 +1351,227 @@ export const dynamicMediaMapper = async (
   source: 'additional' | 'dynamic' | 'playlist' | 'watched',
 ): Promise<MediaItem[]> => {
   const { currentSettings } = useCurrentStateStore();
+
   try {
     const calculatedSource = source === 'playlist' ? 'additional' : source;
-    const lastParagraphOrdinal =
-      allMedia[allMedia.length - 1]?.BeginParagraphOrdinal || 0;
-    let middleSongParagraphOrdinal = 0;
-    if (calculatedSource !== 'additional') {
-      const songs = allMedia.filter((m) => isSong(m));
-      middleSongParagraphOrdinal =
-        isMwMeetingDay(lookupDate) && songs?.length >= 2 && songs[1]
-          ? songs[1].BeginParagraphOrdinal
-          : 0;
-    }
+    const isMeetingMw = isMwMeetingDay(lookupDate);
+    const isMeetingWe = isWeMeetingDay(lookupDate);
+    const isAdditional = calculatedSource === 'additional';
 
-    const mediaPromises = allMedia.map(async (m, index): Promise<MediaItem> => {
-      m.FilePath = await convertImageIfNeeded(m.FilePath);
-      const pubMediaId = (
-        [m.KeySymbol, m.IssueTagNumber].filter(Boolean).length
-          ? [m.KeySymbol, m.IssueTagNumber]
-          : [m.MepsDocumentId]
-      )
-        .concat([
-          (m.MepsLanguageIndex !== undefined &&
-            getJwLangCode(m.MepsLanguageIndex)) ||
-            '',
-          m.Track,
-        ])
-        .filter(Boolean)
-        .join('_');
-      const fileUrl = isLikelyFile(m.FilePath)
-        ? pathToFileURL(m.FilePath)
-        : pubMediaId;
-      const mediaIsSong = isSong(m);
-      const thumbnailUrl =
-        m.ThumbnailUrl ??
-        pathToFileURL(m.LinkedPreviewFilePath || '') ??
-        (await getThumbnailUrl(m.ThumbnailFilePath || m.FilePath));
-      const video = isVideo(m.FilePath);
-      const audio = isAudio(m.FilePath);
-      let duration = 0;
-      if (video || audio) {
-        if (m.Duration) {
-          duration = m.Duration;
-        } else if (await exists(m.FilePath)) {
-          duration =
-            (await getMetadataFromMediaPath(m.FilePath))?.format.duration || 0;
-        }
-        if (duration === 0 && m.KeySymbol) {
-          const lang = currentSettings?.lang || currentSettings?.langFallback;
-          if (lang) {
-            duration =
-              (
-                await getJwMediaInfo({
-                  langwritten: lang,
-                  pub: m.KeySymbol,
-                  ...(m.Track && { track: m.Track }),
-                  ...(m.IssueTagNumber && { issue: m.IssueTagNumber }),
-                  fileformat: video ? 'MP4' : 'MP3',
-                })
-              )?.duration || 0;
-          }
-        }
+    const lastParagraph = allMedia.at(-1)?.BeginParagraphOrdinal || 0;
+
+    // --- Determine middle song paragraph ----------------------------------
+    const songs = allMedia.filter(isSong);
+    const middleSongParagraph =
+      !isAdditional && isMeetingMw && songs.length >= 2
+        ? songs[1]?.BeginParagraphOrdinal || 0
+        : 0;
+
+    // --- Helper: resolve duration -----------------------------------------
+    const resolveDuration = async (
+      m: MultimediaItem,
+      isVideo: boolean,
+      isAudio: boolean,
+    ) => {
+      if (!isVideo && !isAudio) return 0;
+
+      if (m.Duration) return m.Duration;
+
+      if (await exists(m.FilePath)) {
+        const meta = await getMetadataFromMediaPath(m.FilePath);
+        if (meta?.format.duration) return meta.format.duration;
       }
-      const customDuration =
-        m.EndTime || m.StartTime
-          ? {
-              max: m.EndTime ?? duration,
-              min: m.StartTime ?? 0,
-            }
-          : undefined;
 
-      const tagType = mediaIsSong
-        ? 'song'
-        : getParagraphNumbers(m.TargetParagraphNumberLabel, m.Caption)
-          ? 'paragraph'
-          : undefined;
+      if (!m.KeySymbol) return 0;
 
-      const tagValue =
-        tagType === 'song' && mediaIsSong
-          ? mediaIsSong
-          : tagType === 'paragraph'
-            ? getParagraphNumbers(m.TargetParagraphNumberLabel, m.Caption)
+      const lang = currentSettings?.lang || currentSettings?.langFallback;
+      if (!lang) return 0;
+
+      const mediaInfo = await getJwMediaInfo({
+        langwritten: lang,
+        pub: m.KeySymbol,
+        ...(m.Track && { track: m.Track }),
+        ...(m.IssueTagNumber && { issue: m.IssueTagNumber }),
+        fileformat: isVideo ? 'MP4' : 'MP3',
+      });
+
+      return mediaInfo?.duration || 0;
+    };
+
+    // --- Helper: generate pubMediaId --------------------------------------
+    const createPubMediaId = (m: MultimediaItem) => {
+      const base =
+        m.KeySymbol || m.IssueTagNumber
+          ? [m.KeySymbol, m.IssueTagNumber]
+          : [m.MepsDocumentId];
+
+      const extra = [
+        m.MepsLanguageIndex !== undefined
+          ? getJwLangCode(m.MepsLanguageIndex)
+          : '',
+        m.Track,
+      ];
+
+      return [...base, ...extra].filter(Boolean).join('_');
+    };
+
+    // --- Map media ---------------------------------------------------------
+    const mediaItems = await Promise.all(
+      allMedia.map(async (m, index) => {
+        m.FilePath = await convertImageIfNeeded(m.FilePath);
+
+        const pubMediaId = createPubMediaId(m);
+        const isSongItem = isSong(m);
+
+        const fileUrl = isLikelyFile(m.FilePath)
+          ? pathToFileURL(m.FilePath)
+          : pubMediaId;
+
+        const isVideoFile = isVideo(m.FilePath);
+        const isAudioFile = isAudio(m.FilePath);
+
+        const duration = await resolveDuration(m, isVideoFile, isAudioFile);
+
+        const customDuration =
+          m.StartTime || m.EndTime
+            ? {
+                max: m.EndTime ?? duration,
+                min: m.StartTime ?? 0,
+              }
             : undefined;
 
-      const tag = tagType ? { type: tagType, value: tagValue } : undefined;
+        // --- Tagging -------------------------------------------------------
+        const paragraphNumbers = getParagraphNumbers(
+          m.TargetParagraphNumberLabel,
+          m.Caption,
+        );
 
-      const datePart = formatDate(lookupDate, 'YYYYMMDD');
-      const durationPart =
-        calculatedSource === 'additional' &&
-        (customDuration?.min || customDuration?.max)
-          ? `${customDuration.min ?? ''}_${customDuration.max ?? ''}-`
-          : '';
-      const idRaw = `${datePart}-${durationPart}${fileUrl}`;
-      const uniqueId = sanitizeId(idRaw);
+        const tagType = isSongItem
+          ? 'song'
+          : paragraphNumbers
+            ? 'paragraph'
+            : undefined;
 
-      let section: MediaSectionIdentifier =
-        calculatedSource === 'additional'
-          ? isWeMeetingDay(lookupDate)
+        const tagValue =
+          tagType === 'song'
+            ? isSongItem
+            : tagType === 'paragraph'
+              ? paragraphNumbers
+              : undefined;
+
+        const tag = tagType ? { type: tagType, value: tagValue } : undefined;
+
+        // --- Unique ID -----------------------------------------------------
+        const datePart = formatDate(lookupDate, 'YYYYMMDD');
+        const durationPart =
+          isAdditional && (customDuration?.min || customDuration?.max)
+            ? `${customDuration.min ?? ''}_${customDuration.max ?? ''}-`
+            : '';
+
+        const uniqueId = sanitizeId(`${datePart}-${durationPart}${fileUrl}`);
+
+        // --- Section determination -----------------------------------------
+        let section: MediaSectionIdentifier = isAdditional
+          ? isMeetingWe
             ? 'pt'
             : 'imported-media'
           : 'wt';
 
-      if (isMwMeetingDay(lookupDate)) {
-        if (middleSongParagraphOrdinal > 0) {
-          // this is a meeting with 3 songs
-          if (m.BeginParagraphOrdinal >= middleSongParagraphOrdinal) {
-            // LAC
+        if (isMeetingMw && middleSongParagraph > 0) {
+          if (m.BeginParagraphOrdinal >= middleSongParagraph) {
             section = 'lac';
           } else if (m.BeginParagraphOrdinal >= 18) {
-            // AYFM
             section = 'ayfm';
           } else {
-            // TGW
             section = 'tgw';
           }
         }
-      }
 
-      return {
-        cbs:
-          calculatedSource !== 'additional' &&
-          isMwMeetingDay(lookupDate) &&
-          m.BeginParagraphOrdinal >= lastParagraphOrdinal - 2 &&
-          m.BeginParagraphOrdinal < lastParagraphOrdinal,
-        customDuration,
-        duration,
-        extractCaption: m.ExtractCaption,
-        fileUrl,
-        isAudio: audio,
-        isImage: isImage(m.FilePath),
-        isVideo: video,
-        markers: m.VideoMarkers,
-        originalSection: section,
-        pubMediaId,
-        repeat: !!m.Repeat,
-        sortOrderOriginal: m.BeginParagraphOrdinal || index, // Use paragraph ordinal for proper ordering
-        source: calculatedSource,
-        streamUrl: m.StreamUrl,
-        subtitlesUrl: video ? await getSubtitlesUrl(m, duration) : '',
-        tag,
-        thumbnailUrl,
-        title: mediaIsSong
-          ? m.Label.replace(/^\d+\.\s*/, '')
-          : m.Label || m.Caption,
-        type: 'media',
-        uniqueId,
-      };
+        const thumbnailUrl =
+          m.ThumbnailUrl ||
+          pathToFileURL(m.LinkedPreviewFilePath || '') ||
+          (await getThumbnailUrl(m.ThumbnailFilePath || m.FilePath));
+
+        return {
+          cbs:
+            !isAdditional &&
+            isMeetingMw &&
+            m.BeginParagraphOrdinal >= lastParagraph - 2 &&
+            m.BeginParagraphOrdinal < lastParagraph,
+          customDuration,
+          duration,
+          extractCaption: m.ExtractCaption,
+          fileUrl,
+          isAudio: isAudioFile,
+          isImage: isImage(m.FilePath),
+          isVideo: isVideoFile,
+          markers: m.VideoMarkers,
+          originalSection: section,
+          pubMediaId,
+          repeat: !!m.Repeat,
+          sortOrderOriginal: m.BeginParagraphOrdinal || index,
+          source: calculatedSource,
+          streamUrl: m.StreamUrl,
+          subtitlesUrl: isVideoFile ? await getSubtitlesUrl(m, duration) : '',
+          tag,
+          thumbnailUrl,
+          title: isSongItem
+            ? m.Label.replace(/^\d+\.\s*/, '')
+            : m.Label || m.Caption,
+          type: 'media',
+          uniqueId,
+        } as MediaItem;
+      }),
+    );
+
+    // --- Group by extractCaption ------------------------------------------
+    const grouped = Object.values(
+      mediaItems.reduce<Record<string, MediaItem>>((acc, item) => {
+        if (!item.extractCaption) {
+          acc[item.uniqueId] = acc[item.uniqueId] || item;
+          return acc;
+        }
+
+        if (!acc[item.extractCaption]) {
+          acc[item.extractCaption] = {
+            cbs: item.cbs,
+            children: [],
+            extractCaption: item.extractCaption,
+            sortOrderOriginal: item.sortOrderOriginal,
+            source: item.source,
+            title: item.extractCaption,
+            type: 'media',
+            uniqueId: `group-${item.extractCaption}`,
+          };
+        }
+
+        acc[item.extractCaption]?.children?.push(item);
+        return acc;
+      }, {}),
+    ).sort((a, b) => {
+      const aOrder =
+        typeof a.sortOrderOriginal === 'number' ? a.sortOrderOriginal : 0;
+      const bOrder =
+        typeof b.sortOrderOriginal === 'number' ? b.sortOrderOriginal : 0;
+      return aOrder - bOrder;
     });
-    const allMediaPromises = await Promise.all(mediaPromises);
 
+    // --- CO Week modifications --------------------------------------------
     if (isCoWeek(lookupDate)) {
       // Hide the last song for both MW and WE meetings during the CO visit
-      const lastSong = allMediaPromises
-        .filter((m) => m.source !== 'additional')
-        .at(-1);
+      const nonAdditional = grouped.filter((m) => m.source !== 'additional');
+
+      const lastSong = nonAdditional.at(-1);
       if (lastSong) lastSong.hidden = true;
 
       // Hide CBS media
-      allMediaPromises.forEach((m) => {
-        if (m.cbs) m.hidden = true;
+      const cbsMedia = nonAdditional.filter((m) => m.cbs);
+      cbsMedia.forEach((m) => {
+        m.hidden = true;
       });
     }
 
-    // Group mediaPromises by extractCaption
-    const groupedMediaPromises: MediaItem[] = Object.values(
-      allMediaPromises.reduce<Record<string, MediaItem>>((acc, media) => {
-        if (!media.extractCaption) {
-          // If there's no extractCaption, keep the item as is
-          acc[media.uniqueId] = acc[media.uniqueId] || media;
-        } else {
-          // If a group for this extractCaption doesn't exist, create it
-          if (!acc[media.extractCaption]) {
-            acc[media.extractCaption] = {
-              cbs: media.cbs,
-              children: [],
-              extractCaption: media.extractCaption,
-              sortOrderOriginal: media.sortOrderOriginal,
-              source: media.source,
-              title: media.extractCaption,
-              type: 'media',
-              uniqueId: `group-${media.extractCaption}`, // Unique ID for the group
-            };
-          }
-          if (!acc[media.extractCaption]?.children)
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            acc[media.extractCaption]!.children = [];
-          // Add the media item as a child
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          acc[media.extractCaption]!.children!.push(media);
-        }
-        return acc;
-      }, {}),
-    );
-    return groupedMediaPromises;
+    return grouped;
   } catch (e) {
     errorCatcher(e);
     return [];

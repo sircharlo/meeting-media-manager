@@ -23,6 +23,7 @@ export async function initUpdater() {
       'Command failed: mv -f',
       '504 Gateway Time-out',
       'Code signature at URL',
+      'HttpError: 503',
       'HttpError: 504',
       'YAMLException',
       'ECONNRESET',
@@ -50,6 +51,11 @@ export async function initUpdater() {
   autoUpdater.on('update-available', (info) => {
     console.log('Update available:', info);
     sendToWindow(mainWindow, 'update-available');
+  });
+
+  autoUpdater.on('download-progress', (info) => {
+    console.log('Update download progress:', info);
+    sendToWindow(mainWindow, 'update-download-progress', info);
   });
 
   autoUpdater.on('update-downloaded', (info) => {

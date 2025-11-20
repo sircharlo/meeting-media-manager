@@ -1,6 +1,6 @@
 import { getCountriesForTimezone as _0x2d6c } from 'countries-and-timezones';
 import { ElectronDownloadManager } from 'electron-dl-manager';
-import { ensureDir } from 'fs-extra/esm';
+import { ensureDir, pathExists } from 'fs-extra/esm';
 import upath from 'upath';
 const { basename } = upath;
 
@@ -39,7 +39,9 @@ export async function downloadFile(
 ) {
   if (!mainWindow || mainWindow.isDestroyed() || !url || !saveDir) return null;
   try {
-    await ensureDir(saveDir);
+    if (!(await pathExists(saveDir))) {
+      await ensureDir(saveDir);
+    }
 
     if (!destFilename) destFilename = basename(url);
 

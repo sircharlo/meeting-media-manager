@@ -59,6 +59,8 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       // @ts-expect-error: coWeek is a string
       coWeek: oldPrefs.meeting?.coWeek || '',
       darkMode: 'auto',
+      disableHardwareAcceleration:
+        oldPrefs.app?.disableHardwareAcceleration || false,
       disableMediaFetching: oldPrefs.meeting?.specialCong || false,
       enableExtraCache: false,
       enableFolderWatcher: false,

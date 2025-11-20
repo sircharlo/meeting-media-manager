@@ -115,6 +115,7 @@ export interface ElectronApi {
     }) => void,
   ) => void;
   onGpuCrashDetected: (callback: () => void) => void;
+  onHardwareAccelerationTemporaryDisabled: (callback: () => void) => void;
   onLog: (
     callback: (args: {
       ctx: Record<string, unknown>;
@@ -127,6 +128,15 @@ export interface ElectronApi {
   ) => void;
   onUpdateAvailable: (callback: () => void) => void;
   onUpdateDownloaded: (callback: () => void) => void;
+  onUpdateDownloadProgress: (
+    callback: (args: {
+      bytesPerSecond: number;
+      delta: number;
+      percent: number;
+      total: number;
+      transferred: number;
+    }) => void,
+  ) => void;
   onWatchFolderUpdate: (
     callback: (args: {
       changedPath: string;
@@ -175,6 +185,7 @@ export interface ElectronApi {
   robot: typeof robot;
   setAutoStartAtLogin: (value: boolean) => void;
   setElectronUrlVariables: (variables: string) => void;
+  setHardwareAcceleration: (disabled: boolean) => void;
   toggleMediaWindow: (show: boolean, enableFadeTransitions?: boolean) => void;
   toggleTimerWindow: (show: boolean) => void;
   unregisterAllShortcuts: () => void;
@@ -197,7 +208,8 @@ export type ElectronIpcInvokeKey =
   | 'openFileDialog'
   | 'openFolder'
   | 'openFolderDialog'
-  | 'registerShortcut';
+  | 'registerShortcut'
+  | 'set-hardware-acceleration';
 
 // BrowserWindow.webContents.send / ipcRenderer.on channels
 export type ElectronIpcListenKey =
@@ -208,11 +220,13 @@ export type ElectronIpcListenKey =
   | 'downloadProgress'
   | 'downloadStarted'
   | 'gpu-crash-detected'
+  | 'hardware-acceleration-temporary-disabled'
   | 'log'
   | 'screenChange'
   | 'screenPrefsChange'
   | 'shortcut'
   | 'update-available'
+  | 'update-download-progress'
   | 'update-downloaded'
   | 'watchFolderUpdate'
   | 'websiteWindowClosed';

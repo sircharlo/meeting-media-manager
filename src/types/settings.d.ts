@@ -199,6 +199,7 @@ export interface SettingsValues {
   customEventMediaPlayShortcut: null | string;
   customEventMediaStopShortcut: null | string;
   darkMode: 'auto' | boolean;
+  disableHardwareAcceleration: boolean;
   disableMediaFetching: boolean;
   enableCacheAutoClear: boolean;
   enableCustomEvents: boolean;
@@ -261,6 +262,7 @@ export interface SettingsValues {
   shortcutMediaStop: null | string;
   shortcutMediaWindow: null | string;
   shortcutMusic: null | string;
+  suppressHardwareAccelerationReminder: boolean;
   timerBackgroundColor: string;
   timerShowOnActionIsland: boolean;
   timerTextColor: string;

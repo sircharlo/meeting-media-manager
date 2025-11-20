@@ -5,14 +5,15 @@
     :class="{
       'items-center': true,
       'justify-center': true,
-      'bg-accent-100-transparent': currentlyHighlighted,
-      'bg-accent-100': mediaPlaying.uniqueId === '' && currentlyHighlighted,
       'q-px-sm': child,
+      'sortable-selected': props.selected,
     }"
+    :data-id="media.uniqueId"
     :style="{
       'padding: 8px 6px': child,
       'flex-direction': 'column',
     }"
+    @mouseup.left.passive="(evt: MouseEvent) => emit('click', evt)"
   >
     <div class="row full-width items-center justify-center">
       <div class="col-shrink">
@@ -653,84 +654,142 @@
         touch-position
       >
         <q-list>
-          <q-item-label header>{{ displayMediaTitle }}</q-item-label>
-          <q-item
-            v-close-popup
-            clickable
-            :disable="isCurrentlyPlaying"
-            @click="emit('update:hidden', true)"
-          >
-            <q-item-section avatar>
-              <q-icon name="mmm-file-hidden" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ t('hide-from-list') }}</q-item-label>
-              <q-item-label caption>
-                {{ t('hide-from-list-explain') }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item
-            v-close-popup
-            clickable
-            :disable="isCurrentlyPlaying"
-            @click="handleTitleEdit(true)"
-          >
-            <q-item-section avatar>
-              <q-icon name="mmm-edit" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ t('rename') }}</q-item-label>
-              <q-item-label caption>{{ t('rename-explain') }}</q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item v-close-popup clickable @click="mediaEditTagDialog = true">
-            <q-item-section avatar>
-              <q-icon name="mmm-tag" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ t('change-tag') }}</q-item-label>
-              <q-item-label caption>
-                {{ t('change-tag-explain') }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item v-if="media.duration" clickable @click="repeat = !repeat">
-            <q-item-section avatar>
-              <q-icon :name="repeat ? 'mmm-repeat-off' : 'mmm-repeat'" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>
-                {{
-                  repeat ? t('stop-repeat-media-item') : t('repeat-media-item')
-                }}
-              </q-item-label>
-              <q-item-label caption>
-                {{
-                  repeat
-                    ? t('stop-repeat-media-item-explain')
-                    : t('repeat-media-item-explain')
-                }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-          <q-item
-            v-if="media.source === 'additional'"
-            v-close-popup
-            clickable
-            :disable="isCurrentlyPlaying"
-            @click="mediaToDelete = media.uniqueId"
-          >
-            <q-item-section avatar>
-              <q-icon color="negative" name="mmm-delete" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ t('delete-media') }}</q-item-label>
-              <q-item-label caption>
-                {{ t('delete-media-explain') }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
+          <template v-if="selectedMediaItems && multipleMediaItemsSelected">
+            <q-item-label header>
+              {{ t('selected-media-items') }} ({{
+                selectedMediaItems?.length || 0
+              }})
+            </q-item-label>
+            <q-item
+              v-if="canDeleteSelected"
+              v-close-popup
+              clickable
+              :disable="isCurrentlyPlaying"
+              @click="confirmDeleteSelectedMedia()"
+            >
+              <q-item-section avatar>
+                <q-icon color="negative" name="mmm-delete-smart" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  {{
+                    t('delete-selected-media', selectedMediaItems?.length || 0)
+                  }}
+                </q-item-label>
+                <q-item-label caption>
+                  {{ t('delete-selected-media-explain') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-close-popup
+              clickable
+              :disable="isCurrentlyPlaying"
+              @click="
+                hideMediaItems(
+                  selectedMediaItems,
+                  currentCongregation,
+                  selectedDateObject,
+                )
+              "
+            >
+              <q-item-section avatar>
+                <q-icon name="mmm-file-hidden" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  {{
+                    t('hide-selected-media', selectedMediaItems?.length || 0)
+                  }}
+                </q-item-label>
+                <q-item-label caption>
+                  {{ t('hide-selected-media-explain') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+          <template v-else>
+            <q-item-label header>{{ displayMediaTitle }}</q-item-label>
+            <q-item
+              v-close-popup
+              clickable
+              :disable="isCurrentlyPlaying"
+              @click="emit('update:hidden', true)"
+            >
+              <q-item-section avatar>
+                <q-icon name="mmm-file-hidden" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('hide-from-list') }}</q-item-label>
+                <q-item-label caption>
+                  {{ t('hide-from-list-explain') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-close-popup
+              clickable
+              :disable="isCurrentlyPlaying"
+              @click="handleTitleEdit(true)"
+            >
+              <q-item-section avatar>
+                <q-icon name="mmm-edit" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('rename') }}</q-item-label>
+                <q-item-label caption>{{ t('rename-explain') }}</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item v-close-popup clickable @click="mediaEditTagDialog = true">
+              <q-item-section avatar>
+                <q-icon name="mmm-tag" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('change-tag') }}</q-item-label>
+                <q-item-label caption>
+                  {{ t('change-tag-explain') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item v-if="media.duration" clickable @click="repeat = !repeat">
+              <q-item-section avatar>
+                <q-icon :name="repeat ? 'mmm-repeat-off' : 'mmm-repeat'" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>
+                  {{
+                    repeat
+                      ? t('stop-repeat-media-item')
+                      : t('repeat-media-item')
+                  }}
+                </q-item-label>
+                <q-item-label caption>
+                  {{
+                    repeat
+                      ? t('stop-repeat-media-item-explain')
+                      : t('repeat-media-item-explain')
+                  }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-if="media.source === 'additional'"
+              v-close-popup
+              clickable
+              :disable="isCurrentlyPlaying"
+              @click="mediaToDelete = media.uniqueId"
+            >
+              <q-item-section avatar>
+                <q-icon color="negative" name="mmm-delete" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ t('delete-media') }}</q-item-label>
+                <q-item-label caption>
+                  {{ t('delete-media-explain') }}
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
         </q-list>
       </q-menu>
     </div>
@@ -964,18 +1023,45 @@ const {
   currentCongregation,
   currentLangObject,
   currentSettings,
-  highlightedMediaId,
   mediaPlaying,
   mediaWindowVisible,
   selectedDateObject,
 } = storeToRefs(currentState);
 
-const currentlyHighlighted = computed(
-  () => highlightedMediaId.value === props.media.uniqueId,
+const currentlySpotlit = computed(
+  () =>
+    props.selectedMediaItems?.length === 1 &&
+    props.selectedMediaItems[0] === props.media.uniqueId,
 );
 
+const multipleMediaItemsSelected = computed(() => {
+  return (props.selectedMediaItems?.length || 0) >= 2;
+});
+
+const deletableSelectedMediaItems = computed(() => {
+  if (!props.selectedMediaItems || !selectedDateObject.value) return [];
+  const mediaItemsForDay = Object.values(
+    selectedDateObject.value.mediaSections,
+  ).flatMap((sectionMedia) =>
+    sectionMedia.items?.filter((item) => item.source === 'additional'),
+  );
+
+  return props.selectedMediaItems
+    ?.map((selectedId) =>
+      mediaItemsForDay.find((item) => item?.uniqueId === selectedId),
+    )
+    ?.filter((item) => item && item.source === 'additional')
+    .map((item) => item?.uniqueId)
+    .filter((id): id is string => !!id);
+});
+
+const canDeleteSelected = computed(() => {
+  return deletableSelectedMediaItems.value.length >= 1;
+});
+
 const jwStore = useJwStore();
-const { removeFromAdditionMediaMap } = jwStore;
+const { deleteMediaItems, hideMediaItems, removeFromAdditionMediaMap } =
+  jwStore;
 
 const obsState = useObsStateStore();
 const { currentSceneType, obsConnectionState } = storeToRefs(obsState);
@@ -1028,6 +1114,8 @@ const imageStartTime = ref<null | number>(null);
 const props = defineProps<{
   child?: boolean;
   media: MediaItem;
+  selected?: boolean;
+  selectedMediaItems?: string[];
 }>();
 
 const repeat = defineModel<boolean | undefined>('repeat', { required: true });
@@ -1036,7 +1124,7 @@ const emit = defineEmits<{
   (e: 'update:hidden', value: boolean): void;
   (e: 'update:tag', value: Tag): void;
   (e: 'update:customDuration' | 'update:title', value: string): void;
-  (e: 'media-stopped'): void;
+  (e: 'click', value: Event): void;
 }>();
 
 const mediaItem = useTemplateRef<QItem>('mediaItem');
@@ -1583,6 +1671,24 @@ function deleteMedia() {
   mediaToDelete.value = '';
 }
 
+const confirmDeleteSelectedMedia = () => {
+  $q.dialog({
+    cancel: { label: t('cancel') },
+    message: t('delete-selected-media-confirmation', {
+      count: deletableSelectedMediaItems.value?.length || 0,
+    }),
+    ok: { color: 'negative', label: t('delete') },
+    persistent: true,
+    title: t('confirm'),
+  }).onOk(() => {
+    deleteMediaItems(
+      deletableSelectedMediaItems.value,
+      currentCongregation.value,
+      selectedDateObject.value,
+    );
+  });
+};
+
 onMounted(() => {
   initializeImageDuration();
 });
@@ -1595,14 +1701,12 @@ useEventListener(
   window,
   'shortcutMediaPauseResume',
   () => {
-    if (currentlyHighlighted.value) {
-      if (pauseResumeButton.value) {
-        pauseResumeButton.value.click();
-      } else if (playButton.value) {
-        playButton.value.click();
-      } else if (isImage(props.media.fileUrl) && stopButton.value) {
-        stopButton.value.click();
-      }
+    if (pauseResumeButton.value) {
+      pauseResumeButton.value.click();
+    } else if (isImage(props.media.fileUrl) && stopButton.value) {
+      stopButton.value.click();
+    } else if (currentlySpotlit.value && playButton.value) {
+      playButton.value.click();
     }
   },
   { passive: true },
@@ -1611,14 +1715,14 @@ useEventListener(
   window,
   'shortcutMediaStop',
   () => {
-    if (stopButton.value && currentlyHighlighted) stopButton.value.click();
+    if (stopButton.value && currentlySpotlit.value) stopButton.value.click();
   },
   { passive: true },
 );
 
 window.addEventListener('scrollToSelectedMedia', () => {
   if (
-    currentlyHighlighted.value &&
+    props.selected &&
     mediaItem.value?.$el &&
     !currentLangObject.value?.isSignLanguage
   ) {

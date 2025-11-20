@@ -94,6 +94,9 @@ export const electronApi: ElectronApi = {
   onGpuCrashDetected: function (callback) {
     throw new Error('Function not implemented.');
   },
+  onHardwareAccelerationTemporaryDisabled: function (callback) {
+    throw new Error('Function not implemented.');
+  },
   onLog: function (callback) {
     throw new Error('Function not implemented.');
   },
@@ -105,6 +108,9 @@ export const electronApi: ElectronApi = {
   },
   onUpdateDownloaded: function (callback) {
     console.log('onUpdateDownloaded called but not implemented');
+  },
+  onUpdateDownloadProgress: function (callback) {
+    console.log('onUpdateDownloadProgress called but not implemented');
   },
   onWatchFolderUpdate: function (callback) {
     throw new Error('Function not implemented.');
@@ -150,6 +156,9 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   setElectronUrlVariables: function (variables) {
+    throw new Error('Function not implemented.');
+  },
+  setHardwareAcceleration: function (disabled) {
     throw new Error('Function not implemented.');
   },
   toggleMediaWindow: function (show) {

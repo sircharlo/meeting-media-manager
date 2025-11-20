@@ -115,7 +115,7 @@
         :delay="1000"
         self="center left"
       >
-        {{ t('titles.settings') }}
+        {{ t('settings') }}
       </q-tooltip>
       <q-item-section avatar>
         <q-icon
@@ -124,7 +124,7 @@
         />
       </q-item-section>
       <q-item-section :class="invalidSettings() ? 'text-negative' : ''">
-        {{ t('titles.settings') }}
+        {{ t('settings') }}
       </q-item-section>
     </q-item>
   </q-drawer>
