@@ -2,6 +2,7 @@ import { captureException, init as initSentry } from '@sentry/electron/main';
 import { bugs, homepage, name, repository, version } from 'app/package.json';
 import {
   app,
+  ipcMain,
   Menu,
   type MenuItem,
   type MenuItemConstructorOptions,
@@ -114,6 +115,9 @@ if (!gotTheLock) {
   // Check if hardware acceleration should be disabled
   if (isHwAccelDisabled()) {
     app.disableHardwareAcceleration();
+    console.log('Hardware acceleration disabled');
+  } else {
+    console.log('Hardware acceleration enabled');
   }
 
   app.on('second-instance', () => {
@@ -155,16 +159,18 @@ if (!gotTheLock) {
 
   // Listen for child process crashes, especially GPU
   app.on('child-process-gone', (_, details) => {
-    if (details.type === 'GPU' && !isHwAccelDisabled()) {
+    if (details.type === 'GPU') {
       // Send to telemetry
       captureException(new Error(`GPU process crashed: ${details.reason}`), {
         extra: { ...details },
         tags: { reason: details.reason, type: details.type },
       });
-      // Persist to user prefs for next run
-      setHwAccelDisabled(true);
-      // Note: app.disableHardwareAcceleration() can only be called before app is ready.
-      // The setting is persisted above and will take effect on next app launch.
+      if (!isHwAccelDisabled()) {
+        // Persist to user prefs for next run
+        setHwAccelDisabled(true, true);
+        // Note: app.disableHardwareAcceleration() can only be called before app is ready.
+        // The setting is persisted above and will take effect on next app launch.
+      }
       // Notify user that a restart is recommended
       if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.webContents.send('gpu-crash-detected');
@@ -217,11 +223,39 @@ function isHwAccelDisabled() {
   return false;
 }
 
-function setHwAccelDisabled(disabled: boolean) {
+function setHwAccelDisabled(disabled: boolean, temporary = false) {
   try {
     const filePath = getHwAccelFilePath();
-    writeJsonSync(filePath, { disabled });
+    writeJsonSync(filePath, { disabled, temporary });
   } catch (error) {
     console.warn('Failed to write hw accel setting:', error);
   }
+}
+
+// IPC handler to update hardware acceleration setting from renderer
+ipcMain.handle('set-hardware-acceleration', (_, disabled: boolean) => {
+  setHwAccelDisabled(disabled, false);
+});
+
+// Check if hardware acceleration was temporarily disabled due to a crash
+function wasHwAccelTemporarilyDisabled() {
+  try {
+    const filePath = getHwAccelFilePath();
+    if (pathExistsSync(filePath)) {
+      const data = readJsonSync(filePath);
+      return data.disabled === true && data.temporary === true;
+    }
+  } catch (error) {
+    console.warn('Failed to read hw accel setting:', error);
+  }
+  return false;
+}
+
+if (wasHwAccelTemporarilyDisabled()) {
+  setHwAccelDisabled(false);
+  app.on('browser-window-created', (_, window) => {
+    window.webContents.on('did-finish-load', () => {
+      window.webContents.send('hardware-acceleration-temporary-disabled');
+    });
+  });
 }

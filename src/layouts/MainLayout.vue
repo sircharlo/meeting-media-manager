@@ -513,6 +513,39 @@ watch(
 );
 
 watchImmediate(
+  () => currentSettings.value?.disableHardwareAcceleration,
+  (newDisableHardwareAcceleration) => {
+    if (newDisableHardwareAcceleration !== undefined) {
+      window.electronApi.setHardwareAcceleration(
+        newDisableHardwareAcceleration,
+      );
+      // Check if hardware acceleration is disabled via settings on startup
+      if (
+        newDisableHardwareAcceleration &&
+        !currentSettings.value?.suppressHardwareAccelerationReminder
+      ) {
+        createTemporaryNotification({
+          actions: [
+            {
+              color: 'white',
+              handler: () => {
+                router.push('/settings/disableHardwareAcceleration');
+              },
+              label: t('go-to-settings'),
+            },
+          ],
+          caption: t('hardwareAccelerationDisabledExplain'),
+          icon: 'mmm-info',
+          message: t('hardwareAccelerationDisabled'),
+          timeout: 10000,
+          type: 'info',
+        });
+      }
+    }
+  },
+);
+
+watchImmediate(
   () => [
     currentCongregation.value,
     currentSettings.value?.enableKeyboardShortcuts,
@@ -791,6 +824,16 @@ const initListeners = () => {
       message: t('gpu-crash-detected'),
       timeout: 10000,
       type: 'negative',
+    });
+  });
+
+  window.electronApi.onHardwareAccelerationTemporaryDisabled(() => {
+    createTemporaryNotification({
+      caption: t('gpu-crash-detected-explain'),
+      icon: 'mmm-warning',
+      message: t('gpu-crash-detected'),
+      timeout: 10000,
+      type: 'warning',
     });
   });
 };

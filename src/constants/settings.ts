@@ -539,6 +539,17 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'dangerZone',
     type: 'toggle',
   },
+  disableHardwareAcceleration: {
+    group: 'advanced',
+    subgroup: 'dangerZone',
+    type: 'toggle',
+  },
+  suppressHardwareAccelerationReminder: {
+    group: 'advanced',
+    depends: 'disableHardwareAcceleration',
+    subgroup: 'dangerZone',
+    type: 'toggle',
+  },
 };
 /* eslint-enable perfectionist/sort-objects */
 
@@ -556,6 +567,7 @@ export const defaultSettings: SettingsValues = {
   customEventMediaPlayShortcut: null,
   customEventMediaStopShortcut: null,
   darkMode: 'auto',
+  disableHardwareAcceleration: false,
   disableMediaFetching: false,
   enableCacheAutoClear: true,
   enableCustomEvents: false,
@@ -614,6 +626,7 @@ export const defaultSettings: SettingsValues = {
   shortcutMediaStop: null,
   shortcutMediaWindow: null,
   shortcutMusic: null,
+  suppressHardwareAccelerationReminder: false,
   weDay: null,
   weStartTime: null,
   zoomAutoFocusMediaWindow: false,

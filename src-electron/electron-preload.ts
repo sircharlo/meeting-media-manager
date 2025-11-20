@@ -72,6 +72,8 @@ const electronApi: ElectronApi = {
   onDownloadProgress: (cb) => listen('downloadProgress', cb),
   onDownloadStarted: (cb) => listen('downloadStarted', cb),
   onGpuCrashDetected: (cb) => listen('gpu-crash-detected', cb),
+  onHardwareAccelerationTemporaryDisabled: (cb) =>
+    listen('hardware-acceleration-temporary-disabled', cb),
   onLog: (cb) => listen('log', cb),
   onShortcut: (cb) => listen('shortcut', cb),
   onUpdateAvailable: (cb) => listen('update-available', cb),
@@ -95,6 +97,7 @@ const electronApi: ElectronApi = {
   robot,
   setAutoStartAtLogin: (v) => send('toggleOpenAtLogin', v),
   setElectronUrlVariables: (v) => send('setElectronUrlVariables', v),
+  setHardwareAcceleration: (v) => invoke('set-hardware-acceleration', v),
   toggleMediaWindow: (s, f) => send('toggleMediaWindow', s, f),
   unregisterAllShortcuts: () => send('unregisterAllShortcuts'),
   unregisterShortcut: (s) => send('unregisterShortcut', s),

@@ -590,7 +590,7 @@
             <q-btn
               color="primary"
               flat
-              :label="t('titles.settings')"
+              :label="t('settings')"
               @click="goToPage('/settings')"
             />
             <q-btn

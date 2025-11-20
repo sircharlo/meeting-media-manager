@@ -75,7 +75,7 @@ const routes: RouteRecordRaw[] = [
       },
     ],
     component: () => import('layouts/MainLayout.vue'),
-    meta: { icon: 'mmm-settings', title: 'titles.settings' },
+    meta: { icon: 'mmm-settings', title: 'settings' },
     path: '/settings/:setting?',
   },
 
