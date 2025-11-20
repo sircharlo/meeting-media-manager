@@ -29,6 +29,19 @@ import 'src-electron/main/ipc';
 import 'src-electron/main/security';
 
 initSentry({
+  beforeSend(event) {
+    try {
+      const crashpad = event.contexts?.crashpad ?? event.contexts?.electron;
+      const dumpFile = crashpad?.['DumpWithoutCrashing-file'];
+      // Ignore known non-fatal native crash reports
+      if (typeof dumpFile === 'string' && dumpFile.includes('site_info.cc')) {
+        return null;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+    return event;
+  },
   dsn: 'https://40b7d92d692d42814570d217655198db@o1401005.ingest.us.sentry.io/4507449197920256',
   environment: IS_TEST ? 'test' : process.env.NODE_ENV,
   release: `${name}@${version}`,
