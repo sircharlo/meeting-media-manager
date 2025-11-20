@@ -23,6 +23,7 @@ export async function initUpdater() {
       'Command failed: mv -f',
       '504 Gateway Time-out',
       'Code signature at URL',
+      'HttpError: 503',
       'HttpError: 504',
       'YAMLException',
       'ECONNRESET',
