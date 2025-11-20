@@ -101,10 +101,19 @@ export async function watchFolder(folderPath: string) {
       },
       ignorePermissionErrors: true,
     })
-      .on('error', (e) => {
-        captureElectronError(e, {
-          contexts: { fn: { folderPath, name: 'watchFolder.error' } },
-        });
+      .on('error', (error: unknown) => {
+        try {
+          const e = error as Error & { code?: string; syscall?: string };
+          if (e.code === 'EINVAL' && e.syscall === 'stat') return;
+        } catch (newError) {
+          captureElectronError(newError, {
+            contexts: { fn: { folderPath, name: 'watchFolder.error catch' } },
+          });
+        } finally {
+          captureElectronError(error, {
+            contexts: { fn: { folderPath, name: 'watchFolder.error' } },
+          });
+        }
       })
       .on('all', (event, changedPath, stats) => {
         try {
