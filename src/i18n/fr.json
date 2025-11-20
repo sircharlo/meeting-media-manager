@@ -125,7 +125,7 @@
   "delete-selected-media-explain": "Cela supprimera définitivement les éléments de média sélectionnés de votre ordinateur s'ils ont été ajoutés manuellement, mais ne supprimera pas les médias qui ont été téléchargés automatiquement.",
   "deselect-all": "Désélectionner tout",
   "directories": "Dossiers",
-  "disableHardwareAcceleration": "Disable hardware acceleration",
+  "disableHardwareAcceleration": "Désactiver l'accélération matérielle",
   "disableHardwareAcceleration-explain": "Cela désactive l'accélération matérielle dans M³. Pour tout changement à ce réglage, il faudra relancer l'appli. Cela pourrait résoudre certains problèmes graphiques ou plantages sur certains systèmes, mais ce n'est pas recommandé.",
   "disableMediaFetching": "Désactiver les fonctions pour les réunions régulières et le téléchargement automatique des médias",
   "disableMediaFetching-explain": "Ce paramètre doit rester désactivé dans presque tous les cas afin de permettre le téléchargement automatique des médias pour les réunions habituelles. Si ce paramètre est activé, tous les médias devront être ajoutés manuellement. Ce paramètre ne doit être activé que dans les profils qui seront utilisés exclusivement pour des événements spéciaux tels que des écoles théocratiques ou des assemblées de circonscription ou régionales.",
