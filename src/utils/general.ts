@@ -1,3 +1,5 @@
+import { toRaw } from 'vue';
+
 /**
  * Converts a camelCase string to kebab-case.
  * @param str The camelCase string to convert.
@@ -241,3 +243,29 @@ export const decodeEntities = (input?: string) => {
     return input ?? '';
   }
 };
+
+/**
+ * Recursively converts an observed object to its raw form.
+ * @param observed The observed object to convert.
+ * @returns The raw object.
+ */
+export function toRawDeep<T>(observed: T): T {
+  const val = toRaw(observed);
+
+  if (Array.isArray(val)) {
+    return val.map(toRawDeep) as T;
+  }
+
+  if (val === null) return null as T;
+
+  if (typeof val === 'object') {
+    const entries = Object.entries(val).map(([key, val]) => [
+      key,
+      toRawDeep(val),
+    ]);
+
+    return Object.fromEntries(entries);
+  }
+
+  return val;
+}
