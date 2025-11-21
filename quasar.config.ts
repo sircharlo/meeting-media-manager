@@ -211,6 +211,7 @@ export default defineConfig((ctx) => {
         const electronDeps = new Set([
           '@jitsi/robotjs',
           '@numairawan/video-duration',
+          '@sentry/core',
           '@sentry/electron',
           'better-sqlite3',
           'chokidar',

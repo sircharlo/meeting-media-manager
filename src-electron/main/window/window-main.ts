@@ -1,6 +1,7 @@
 import type { BrowserWindow } from 'electron';
 
 import { cancelAllDownloads } from 'main/downloads';
+import { setShouldQuit } from 'main/session';
 import { throttleWithTrailing } from 'main/utils';
 import {
   closeOtherWindows,
@@ -9,8 +10,6 @@ import {
 } from 'main/window/window-base';
 import { createMediaWindow, moveMediaWindow } from 'main/window/window-media';
 import { PLATFORM } from 'src-electron/constants';
-
-import { setShouldQuit } from '../session';
 
 export let mainWindow: BrowserWindow | null = null;
 let closeAttempts = 0;

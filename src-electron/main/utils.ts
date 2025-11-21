@@ -1,4 +1,4 @@
-import type { ExclusiveEventHintOrCaptureContext } from 'app/node_modules/@sentry/core/build/types/utils/prepareEvent';
+import type { CaptureContext } from '@sentry/core';
 
 import { captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
@@ -200,7 +200,7 @@ export const fetchJson = async <T>(
  */
 export function captureElectronError(
   error: Error | string | unknown,
-  context?: ExclusiveEventHintOrCaptureContext,
+  context?: CaptureContext,
 ) {
   if (error instanceof Error && error.cause) {
     captureElectronError(error.cause, context);
