@@ -1,4 +1,4 @@
-import type { NavigateWebsiteAction } from 'src/types';
+import type { JwSiteParams, NavigateWebsiteAction } from 'src/types';
 
 import { type BrowserWindow, systemPreferences, type Video } from 'electron';
 import { captureElectronError } from 'main/utils';
@@ -15,7 +15,7 @@ export let websiteWindow: BrowserWindow | null = null;
 /**
  * Creates the website window
  */
-export async function createWebsiteWindow(lang?: string) {
+export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
   // If the window is already open, just focus it
   if (websiteWindow && !websiteWindow.isDestroyed()) {
     websiteWindow.show();
@@ -35,7 +35,7 @@ export async function createWebsiteWindow(lang?: string) {
       useContentSize: PLATFORM !== 'darwin',
       width: HD_RESOLUTION[0],
     },
-    lang,
+    websiteParams,
   );
 
   websiteWindow.center();

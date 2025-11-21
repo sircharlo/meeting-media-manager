@@ -1,4 +1,4 @@
-import type { NavigateWebsiteAction } from 'src/types';
+import type { JwSiteParams, NavigateWebsiteAction } from 'src/types';
 
 import { listen, send } from 'preload/ipc';
 
@@ -9,8 +9,8 @@ export const initWebsiteListeners = () => {
   });
 };
 
-export const openWebsiteWindow = (lang?: string) => {
-  send('toggleWebsiteWindow', true, lang);
+export const openWebsiteWindow = (websiteParams?: JwSiteParams) => {
+  send('toggleWebsiteWindow', true, websiteParams);
 };
 
 export const navigateWebsiteWindow = (action: NavigateWebsiteAction) =>

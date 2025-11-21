@@ -1,4 +1,4 @@
-import type { ElectronIpcListenKey } from 'src/types';
+import type { ElectronIpcListenKey, JwSiteParams } from 'src/types';
 
 import {
   app,
@@ -41,7 +41,7 @@ export function closeOtherWindows(source: BrowserWindow) {
 export function createWindow(
   name: 'main' | 'media' | 'website' = 'main',
   options?: BrowserWindowConstructorOptions,
-  lang = '',
+  websiteParams?: JwSiteParams,
 ) {
   const defaultSize = { height: 600, width: 1000 };
 
@@ -103,7 +103,11 @@ export function createWindow(
       page = 'media-player';
       break;
     case 'website':
-      page = `https://www.${urlVariables?.base || 'jw.org'}/${lang}`;
+      if (websiteParams?.site) {
+        page = `https://www.${websiteParams.site}.org/?lang=${websiteParams?.langSymbol || ''}`;
+      } else {
+        page = `https://www.${urlVariables?.base || 'jw.org'}/${websiteParams?.langSymbol || ''}`;
+      }
       break;
   }
   if (page.startsWith('https://')) {

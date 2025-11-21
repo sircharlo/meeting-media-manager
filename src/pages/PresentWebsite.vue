@@ -29,6 +29,34 @@
         </q-item>
       </div>
       <div class="media-section website">
+        <q-item class="text-website items-center">
+          <q-avatar class="text-white bg-website" size="md">
+            <q-icon name="mmm-sites" size="sm" />
+          </q-avatar>
+          <div class="text-bold text-uppercase text-spaced">
+            {{ t('websiteSelection') }}
+          </div>
+        </q-item>
+        <q-item>
+          <q-item-section>
+            <q-option-group
+              v-model="websiteSelection"
+              color="primary"
+              :disable="websiteIsVisible"
+              :options="websiteOptions"
+            />
+          </q-item-section>
+        </q-item>
+      </div>
+      <div class="media-section website">
+        <q-item class="text-website items-center">
+          <q-avatar class="text-white bg-website" size="md">
+            <q-icon name="mmm-tune" size="sm" />
+          </q-avatar>
+          <div class="text-bold text-uppercase text-spaced">
+            {{ t('settings') }}
+          </div>
+        </q-item>
         <q-item>
           <q-item-section>
             <q-item-label>{{ t('autoReturnFromWebsite') }}</q-item-label>
@@ -48,12 +76,22 @@
 import { storeToRefs } from 'pinia';
 import { useMeta } from 'quasar';
 import { useCurrentStateStore } from 'stores/current-state';
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const currentState = useCurrentStateStore();
-const { autoReturnFromWebsite } = storeToRefs(currentState);
+const { autoReturnFromWebsite, mediaPlaying, websiteSelection } =
+  storeToRefs(currentState);
+
+const websiteIsVisible = computed(() => {
+  return (mediaPlaying.value?.action || '').toLowerCase().includes('website');
+});
+
+const websiteOptions = [
+  { label: t('mainOfficialWebsite'), value: undefined },
+  { label: t('jweventSite'), value: 'jwevent' },
+];
 
 useMeta({ title: t('titles.presentWebsite') });
 
