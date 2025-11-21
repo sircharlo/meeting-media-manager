@@ -88,17 +88,19 @@ describe('Electron Dependencies', () => {
     files.forEach((file) => {
       const imports = getImportsFromFile(file);
       for (const imp of imports) {
-        // Skip dependencies that aren't external packages
+        // Skip dependencies that are internal import, not external packages
         if (imp.startsWith('app/')) continue;
         if (imp.startsWith('main/')) continue;
         if (imp.startsWith('preload/')) continue;
         if (imp.startsWith('src/')) continue;
-        if (imp.startsWith('node:')) continue;
-        if (imp.startsWith('src-electron')) continue;
+        if (imp.startsWith('src-electron/')) continue;
 
         // Skip electron dependencies
         if (imp === 'electron') continue;
         if (imp === 'electron/renderer') continue;
+
+        // Skip built-in node dependencies
+        if (imp.startsWith('node:')) continue;
 
         // Check if import starts with a production dependency name
         // e.g. 'fs-extra' or 'fs-extra/esm' matches 'fs-extra'
@@ -137,7 +139,7 @@ describe('Electron Dependencies', () => {
 
     if (undeclaredDeps.length > 0) {
       console.error(
-        'The following dependencies are used in src-electron but listed in package.json, and not whitelisted in quasar.config.ts:',
+        'The following dependencies are used in src-electron but missing from package.json:',
         undeclaredDeps,
       );
     }
