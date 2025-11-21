@@ -754,7 +754,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@iconify-json/simple-icons@npm:^1.2.58":
+"@iconify-json/simple-icons@npm:^1.2.59":
   version: 1.2.59
   resolution: "@iconify-json/simple-icons@npm:1.2.59"
   dependencies:
@@ -4118,7 +4118,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/devtools-api@npm:^8.0.3":
+"@vue/devtools-api@npm:^8.0.5":
   version: 8.0.5
   resolution: "@vue/devtools-api@npm:8.0.5"
   dependencies:
@@ -10174,7 +10174,7 @@ __metadata:
     typescript: "npm:~5.9.3"
     upath: "npm:^2.0.1"
     vite: "npm:^7.2.4"
-    vitepress: "npm:^2.0.0-alpha.13"
+    vitepress: "npm:^2.0.0-alpha.14"
     vitest: "npm:^4.0.12"
     vue: "npm:^3.5.24"
     vue-eslint-parser: "npm:^10.2.0"
@@ -14878,19 +14878,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitepress@npm:^2.0.0-alpha.13":
-  version: 2.0.0-alpha.13
-  resolution: "vitepress@npm:2.0.0-alpha.13"
+"vitepress@npm:^2.0.0-alpha.14":
+  version: 2.0.0-alpha.14
+  resolution: "vitepress@npm:2.0.0-alpha.14"
   dependencies:
     "@docsearch/css": "npm:^4.3.2"
     "@docsearch/js": "npm:^4.3.2"
-    "@iconify-json/simple-icons": "npm:^1.2.58"
+    "@iconify-json/simple-icons": "npm:^1.2.59"
     "@shikijs/core": "npm:^3.15.0"
     "@shikijs/transformers": "npm:^3.15.0"
     "@shikijs/types": "npm:^3.15.0"
     "@types/markdown-it": "npm:^14.1.2"
     "@vitejs/plugin-vue": "npm:^6.0.1"
-    "@vue/devtools-api": "npm:^8.0.3"
+    "@vue/devtools-api": "npm:^8.0.5"
     "@vue/shared": "npm:^3.5.24"
     "@vueuse/core": "npm:^14.0.0"
     "@vueuse/integrations": "npm:^14.0.0"
@@ -14913,7 +14913,7 @@ __metadata:
       optional: true
   bin:
     vitepress: bin/vitepress.js
-  checksum: 10c0/f87593fa5a3e6cd569cc0707e53c8ce2ed3edb43fc3b72ffe40ff0e1c7cd57f60a0b966b3323c32011aba495d11e1d7c321617800ec57e6c76dcb0eda0e6e4ba
+  checksum: 10c0/0ea032cdb5b02839aad95052caf7f28a057389a0f3d41f5d597ce75d9077f26cf32a0fd39c5da058362f83042b0950b0116c3f0177770baef7c2ad876ee8ba4a
   languageName: node
   linkType: hard
 
