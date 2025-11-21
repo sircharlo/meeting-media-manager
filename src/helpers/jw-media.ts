@@ -1568,6 +1568,9 @@ export const dynamicMediaMapper = async (
       const cbsMedia = nonAdditional.filter((m) => m.cbs);
       cbsMedia.forEach((m) => {
         m.hidden = true;
+        m.children?.forEach((c) => {
+          c.hidden = true;
+        });
       });
     }
 
