@@ -163,4 +163,4 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 - 📂 **Korjattu Kierrosvalvojan median sijoittelu**: Varmistaa, että Kierrosvalvojan media sijoittuu oikeaan osioon.
 - 📅 **Poissulje tavallinen kokousmedia muistojuhlan aikana**: Estää tavallisen kokousmateriaalin noutamisen muistojuhlan yhteydessä virheiden välttämiseksi.
 - 📅 **Piilota tavalliset kokousosiot muistojuhlassa**: Poistaa tarpeettomat kokousosiot muistojuhlan aikana siistimmän ulkoasun takaamiseksi.
-- 📖 **Korjattu viittomakielisten Raamatun videoiden lataus**: Lataa viittomakieliset Raamatun luvun videot oikein JWL-soittolistoista.
+- 📖 **Korjaa viittomakielisen Raamatuin Video Downloads**: Oikein lataa Sign Language Bible chapter videos from JWL playlists.
