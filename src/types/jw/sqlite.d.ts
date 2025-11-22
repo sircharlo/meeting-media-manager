@@ -63,6 +63,7 @@ export interface MultimediaItem {
   CaptionContent?: null | string;
   CaptionRich?: null | string;
   CategoryType: number;
+  ChapterCount?: number;
   ChapterNumber?: number;
   CoverPictureFilePath?: string;
   CreditLine?: string;
@@ -109,7 +110,7 @@ export interface MultimediaItem {
   Title?: string;
   Track?: null | number;
   VerseLabel?: string;
-  VerseNumber?: number;
+  VerseNumber?: null | number;
   VerseNumbers?: number[];
   VideoMarkers?: VideoMarker[];
   Width?: null | number;
