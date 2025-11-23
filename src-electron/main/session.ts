@@ -12,8 +12,39 @@ import { TRUSTED_DOMAINS } from 'src-electron/constants';
 
 export let urlVariables: undefined | UrlVariables;
 
+const updateSessionHeadersListener = () => {
+  const trustedDomains = TRUSTED_DOMAINS.concat(
+    [
+      urlVariables?.mediator,
+      urlVariables?.pubMedia,
+      urlVariables?.base ? `https://${urlVariables.base}/` : undefined,
+    ]
+      .filter((d): d is string => !!d && isValidUrl(d))
+      .map((d) => new URL(d).hostname),
+  );
+
+  const urls = trustedDomains.flatMap((domain) => [
+    `*://*.${domain}/*`,
+    `*://${domain}/*`,
+  ]);
+
+  session.defaultSession.webRequest.onBeforeSendHeaders(
+    { urls },
+    (details, callback) => {
+      if (isTrustedDomain(details.url) && details.requestHeaders) {
+        const url = new URL(details.url);
+        const baseUrl = `${url.protocol}//${url.hostname}`;
+        details.requestHeaders['Referer'] = baseUrl;
+        details.requestHeaders['Origin'] = baseUrl;
+      }
+      callback({ requestHeaders: details.requestHeaders });
+    },
+  );
+};
+
 export const setElectronUrlVariables = (variables: UrlVariables) => {
   urlVariables = variables;
+  updateSessionHeadersListener();
 };
 
 export let shouldQuit = false;
@@ -29,17 +60,7 @@ export const initSessionListeners = () => {
       currentUserAgent.replace(/Electron[/\d.\s]*/g, ''),
     );
 
-    session.defaultSession.webRequest.onBeforeSendHeaders(
-      (details, callback) => {
-        if (isTrustedDomain(details.url) && details.requestHeaders) {
-          const url = new URL(details.url);
-          const baseUrl = `${url.protocol}//${url.hostname}`;
-          details.requestHeaders['Referer'] = baseUrl;
-          details.requestHeaders['Origin'] = baseUrl;
-        }
-        callback({ requestHeaders: details.requestHeaders });
-      },
-    );
+    updateSessionHeadersListener();
 
     session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
       // Define a Content Security Policy
