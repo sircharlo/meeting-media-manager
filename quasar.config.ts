@@ -143,10 +143,14 @@ export default defineConfig((ctx) => {
             'com.apple.security.device.audio-input': true,
             'com.apple.security.device.camera': true,
             'com.apple.security.device.microphone': true,
+            NSAppleEventsUsageDescription:
+              'Apple Events access is required to control media playback and window management. Please note that this app will never access or control other applications on your device without your explicit permission.',
             NSCameraUsageDescription:
               "Camera access is required in order to use the website mirroring feature, as screen recording is treated as camera and microphone access. Please note that your device's camera will never be accessed or used in any way by this app.",
             NSMicrophoneUsageDescription:
               "Microphone access is required in order to use the website mirroring feature, as screen recording is treated as camera and microphone access. Please note that your device's microphone will never be accessed or used in any way by this app.",
+            NSScreenCaptureUsageDescription:
+              'Screen recording access is required in order to use the website mirroring feature. Please note that this app will never record your screen content.',
           },
           hardenedRuntime: true,
           icon: getIconPath('icns'),
