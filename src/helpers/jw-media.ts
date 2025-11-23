@@ -264,13 +264,11 @@ export const addJwpubDocumentMediaToFiles = async (
       },
       currentStateStore.currentSettings?.includePrinted,
     );
-    console.log('🎯 Multimedia items:', multimediaItems);
     const filteredMultimediaItems = selectedMultimediaIds
       ? multimediaItems.filter((item) =>
           selectedMultimediaIds.includes(item.MultimediaId),
         )
       : multimediaItems;
-    console.log('🎯 Filtered multimedia items:', filteredMultimediaItems);
     for (let i = 0; i < filteredMultimediaItems.length; i++) {
       const item = filteredMultimediaItems[i];
       if (item) {
@@ -661,25 +659,23 @@ export async function addFullFilePathToMultimediaItem(
   publication: PublicationFetcher,
 ): Promise<MultimediaItem> {
   try {
-    const paths: (keyof MultimediaItem)[] = [
+    const paths = [
       'FilePath',
       'LinkedPreviewFilePath',
       'CoverPictureFilePath',
-    ];
+    ] as const;
+
     const baseDir = await getPublicationDirectory(
       publication,
       useCurrentStateStore().currentSettings?.cacheFolder,
     );
 
-    const resolvedPaths = Object.fromEntries(
-      paths.map((key) =>
-        multimediaItem[key] ? [key, join(baseDir, multimediaItem[key])] : [],
-      ),
-    );
-    return {
-      ...multimediaItem,
-      ...resolvedPaths,
-    };
+    for (const path of paths) {
+      if (multimediaItem[path]) {
+        multimediaItem[path] = join(baseDir, multimediaItem[path]);
+      }
+    }
+    return multimediaItem;
   } catch (error) {
     errorCatcher(error);
     return multimediaItem;
@@ -2223,6 +2219,19 @@ export async function processMissingMediaInfo(
   try {
     const currentStateStore = useCurrentStateStore();
     const errors = [];
+
+    // Special handling for wp
+    for (const m of allMedia) {
+      if (
+        m.KeySymbol === 'w' &&
+        m.IssueTagNumber &&
+        parseInt(m.IssueTagNumber.toString()) >= 20080101 &&
+        m.IssueTagNumber.toString().slice(-2) === '01'
+      ) {
+        m.KeySymbol = 'wp';
+        console.log('Updated magazine symbol to wp', m);
+      }
+    }
 
     const mediaExistenceChecks = allMedia.map(async (m) => {
       if (m.KeySymbol || m.MepsDocumentId) {

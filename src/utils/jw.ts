@@ -18,8 +18,18 @@ import { isEmpty } from './general';
 export const getPubId = (
   { docid, fileformat, issue, langwritten, pub, track }: PublicationFetcher,
   full?: boolean,
-) =>
-  [
+) => {
+  // Special handling for wp
+  if (
+    pub === 'w' &&
+    issue &&
+    parseInt(issue.toString()) >= 20080101 &&
+    issue.toString().slice(-2) === '01'
+  ) {
+    pub = 'wp';
+  }
+
+  return [
     ...(full ? [docid, pub] : [pub || docid]),
     langwritten,
     issue,
@@ -27,6 +37,7 @@ export const getPubId = (
   ]
     .filter((p) => !isEmpty(p))
     .join('_');
+};
 
 /**
  * Gets the resolution of a media item.
