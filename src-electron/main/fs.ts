@@ -110,6 +110,8 @@ export async function watchFolder(folderPath: string) {
           const e = error as Error & { code?: string; syscall?: string };
           // Ignore harmless "stat" EINVAL errors
           if (e.code === 'EINVAL' && e.syscall === 'stat') return;
+          // Ignore "UNKNOWN" watch errors (common with network drives)
+          if (e.code === 'UNKNOWN' && e.syscall === 'watch') return;
           captureElectronError(error, context);
         } catch (err) {
           // Log the failure of the original try
