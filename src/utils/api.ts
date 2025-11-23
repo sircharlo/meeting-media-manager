@@ -65,12 +65,6 @@ export const fetchJson = async <T>(
       });
     }
   } catch (e) {
-    // Ignore known transient DNS errors
-    if (e instanceof Error && e.message.includes('ENOTFOUND ipinfo.io')) {
-      console.warn('[fetchJson] Ignored transient DNS error for ipinfo.io');
-      return null;
-    }
-
     if (online && !(await window.electronApi?.isDownloadErrorExpected())) {
       errorCatcher(e, {
         contexts: {
