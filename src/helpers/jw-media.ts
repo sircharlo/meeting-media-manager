@@ -1956,9 +1956,16 @@ export const getWeMedia = async (lookupDate: Date) => {
         if (sortedVideos.length <= 2) {
           songs = sortedVideos;
         } else {
-          const firstVideo = sortedVideos[0];
-          const lastVideo = sortedVideos[sortedVideos.length - 1];
-          songs = [firstVideo, lastVideo].filter((v) => !!v);
+          // There are more than 2 videos for this WE meeting
+          // First, try to remove non-songs
+          songs = sortedVideos.filter(
+            (v) => !!v.Track && v.Track > 0 && v.KeySymbol?.includes('sjj'),
+          );
+
+          // If still more than 2, just take the first two
+          if (songs.length > 2) {
+            songs = sortedVideos.slice(0, 2).filter(Boolean);
+          }
         }
       }
     }
