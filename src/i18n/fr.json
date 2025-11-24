@@ -172,6 +172,8 @@
   "excludeFootnotes-explain": "Ne pas inclure de vidéos ou d'autres médias en provenance des notes de bas de page pour les articles de la Tour de Garde.",
   "excludeTh": "Exclure tous les médias de la brochure th",
   "excludeTh-explain": "N'incluez pas de vidéos ou d'autres médias de la brochure Enseignement.",
+  "excludeWtParagraphVideos": "Exclude additional Watchtower Study videos",
+  "excludeWtParagraphVideos-explain": "Do not include extra videos that are referenced in the Watchtower Study paragraphs.",
   "expand-sidebar": "Agrandir la barre latérale",
   "external-screen": "Écran externe",
   "extra-media": "Ajouter des médias",
