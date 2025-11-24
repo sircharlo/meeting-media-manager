@@ -8,19 +8,6 @@
         <div class="col">
           {{ t('jw-playlist-import') }}
         </div>
-        <div class="col-shrink">
-          <q-btn
-            color="primary"
-            flat
-            icon="mmm-cloud-done"
-            :loading="loading"
-            round
-            @click="
-              loading = true;
-              loadPlaylistItems();
-            "
-          />
-        </div>
       </div>
       <div class="row q-px-md q-py-md">
         {{ t('jw-playlist-import-explain') }}
@@ -519,22 +506,18 @@ const addSelectedItems = async () => {
     }
 
     console.log('✅ All items processed successfully');
-    dialogValue.value = false;
     emit('ok');
   } catch (error) {
     console.log('❌ Error processing playlist items:', error);
     errorCatcher(error);
   } finally {
+    dialogValue.value = false;
     loading.value = false;
-    resetSelection();
     console.groupEnd();
   }
 };
 
 const handleCancel = () => {
-  // Reset loading states
-  loading.value = false;
-  resetSelection();
   dialogValue.value = false;
   emit('cancel');
 };
@@ -560,21 +543,15 @@ watch(
 watch(
   () => dialogValue.value,
   (isOpen) => {
+    resetSelection();
     if (!isOpen) {
       // Reset loading states when dialog closes
       loading.value = false;
+    } else if (props.jwPlaylistPath) {
+      // Load items when dialog opens if path is present
+      // This handles the case where the same file is dropped twice
+      loadPlaylistItems();
     }
   },
 );
-
-// Initialize when component mounts
-resetSelection();
-console.log(
-  '🎯 DialogJwPlaylist mounted with jwPlaylistPath:',
-  props.jwPlaylistPath,
-);
-if (props.jwPlaylistPath) {
-  console.log('🎯 Loading playlist items for path:', props.jwPlaylistPath);
-  loadPlaylistItems();
-}
 </script>
