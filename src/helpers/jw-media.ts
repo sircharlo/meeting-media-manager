@@ -1934,11 +1934,31 @@ export const getWeMedia = async (lookupDate: Date) => {
       })
       .filter((item) => !!item)
       .filter((v) => {
-        // Include all items if footnote media is not to be excluded
-        if (!currentStateStore.currentSettings?.excludeFootnotes) return true;
+        try {
+          // Exclude videos from paragraphs in the WT study if setting is enabled
+          if (
+            currentStateStore.currentSettings?.excludeWtParagraphVideos &&
+            v.IsInNumberedParagraphs === 1 &&
+            v.MimeType.includes('video')
+          ) {
+            return false;
+          }
 
-        // Otherwise, only include items that are not explicitly marked as footnotes
-        return v.TargetParagraphNumberLabel !== FOOTNOTE_TARGET_PARAGRAPH;
+          // Exclude items from footnotes in the WT study if setting is enabled
+          if (
+            currentStateStore.currentSettings?.excludeFootnotes &&
+            v.TargetParagraphNumberLabel === FOOTNOTE_TARGET_PARAGRAPH
+          ) {
+            return false;
+          }
+
+          // Include all other items
+          return true;
+        } catch (e) {
+          // In case of error, include the item to be safe
+          errorCatcher(e);
+          return true;
+        }
       });
 
     const updatedMedia = final.map((item) => {

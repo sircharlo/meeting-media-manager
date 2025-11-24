@@ -460,6 +460,12 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'media-display',
     type: 'toggle',
   },
+  excludeWtParagraphVideos: {
+    depends: 'enableMediaDisplayButton',
+    group: 'advanced',
+    subgroup: 'media-display',
+    type: 'toggle',
+  },
   excludeFootnotes: {
     depends: 'enableMediaDisplayButton',
     group: 'advanced',
@@ -581,6 +587,7 @@ export const defaultSettings: SettingsValues = {
   enableSubtitles: false,
   excludeFootnotes: false,
   excludeTh: true,
+  excludeWtParagraphVideos: false,
   firstDayOfWeek: 0,
   folderToWatch: '',
   hideMediaLogo: false,

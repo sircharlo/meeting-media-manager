@@ -208,6 +208,7 @@ export interface SettingsValues {
   enableSubtitles: boolean;
   excludeFootnotes: boolean;
   excludeTh: boolean;
+  excludeWtParagraphVideos: boolean;
   firstDayOfWeek: number;
   folderToWatch: string;
   hideMediaLogo: boolean;

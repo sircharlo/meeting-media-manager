@@ -412,6 +412,7 @@ watch(
     currentSettings.value?.meetingScheduleChangeWeDay,
     currentSettings.value?.disableMediaFetching,
     currentSettings.value?.excludeFootnotes,
+    currentSettings.value?.excludeWtParagraphVideos,
   ],
   (newValues, oldValues) => {
     // Skip if this is the initial run (oldValues is undefined)
