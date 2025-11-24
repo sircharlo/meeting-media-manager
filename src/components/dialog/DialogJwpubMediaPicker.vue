@@ -174,7 +174,7 @@ const { pathToFileURL } = window.electronApi;
 const props = defineProps<{
   dbPath: string;
   dialogId: string;
-  document: DocumentItem;
+  document: DocumentItem | undefined;
   modelValue: boolean;
   section: MediaSectionIdentifier | undefined;
 }>();
@@ -250,6 +250,8 @@ const getMediaIcon = (item: MultimediaItem) => {
 
 const addSelectedItems = async () => {
   try {
+    if (!props.dbPath || !props.document) return;
+
     loading.value = true;
     if (!selectedItems.value.length) return;
 

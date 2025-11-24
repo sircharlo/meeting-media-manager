@@ -90,7 +90,7 @@
     <DialogJwpubMediaPicker
       :db-path="jwpubImportDb"
       :dialog-id="'media-calendar-jwpub-media-picker'"
-      :document="selectedDocument!"
+      :document="selectedDocument"
       :model-value="showMediaPicker"
       :section="sectionToAddTo"
       @cancel="onMediaPickerCancel"
