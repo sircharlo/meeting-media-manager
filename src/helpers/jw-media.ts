@@ -1715,10 +1715,12 @@ export const watchedItemMapper: (
     // Final fallback: Default section based on meeting day
     if (!section) {
       const meetingDate = dateFromString(parentDate);
-      if (isWeMeetingDay(meetingDate)) {
-        section = 'pt'; // Default to 'pt' for WE meetings
+      const isCo = isCoWeek(meetingDate);
+
+      if (isWeMeetingDay(meetingDate) && !isCo) {
+        section = 'pt';
       } else if (isMwMeetingDay(meetingDate)) {
-        section = 'lac'; // Default to 'lac' for MW meetings
+        section = isCo ? 'circuit-overseer' : 'lac';
       }
     }
 

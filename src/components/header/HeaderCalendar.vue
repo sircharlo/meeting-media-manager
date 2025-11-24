@@ -348,7 +348,7 @@ import DialogStudyBible from 'components/dialog/DialogStudyBible.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
-import { isWeMeetingDay } from 'src/helpers/date';
+import { isCoWeek, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   datesAreSame,
@@ -908,11 +908,9 @@ const hasMultipleSections = computed(() => {
 watchImmediate(
   () => selectedDateObject.value?.date,
   (newDate) => {
-    if (isWeMeetingDay(newDate)) {
-      section.value = 'pt';
-    } else {
-      section.value = undefined;
-    }
+    // Set default section to pt (public talk) for normal WE meetings
+    const isNormalWeMeeting = isWeMeetingDay(newDate) && !isCoWeek(newDate);
+    section.value = isNormalWeMeeting ? 'pt' : undefined;
   },
 );
 </script>
