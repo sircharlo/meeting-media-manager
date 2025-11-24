@@ -112,6 +112,24 @@ function createApplicationMenu() {
 if (!gotTheLock) {
   app.exit(2);
 } else {
+  // Check for crash loop on startup
+  const crashCount = incrementCrashCount();
+  console.log(`Startup crash count: ${crashCount}`);
+
+  if (crashCount >= 3) {
+    if (!isHwAccelDisabled()) {
+      console.error(
+        'Detected crash loop (3+ crashes). Disabling hardware acceleration.',
+      );
+      setHwAccelDisabled(true, true);
+    }
+  }
+
+  // If we survive for 10 seconds, reset the crash count
+  setTimeout(() => {
+    resetCrashCount();
+  }, 10000);
+
   // Check if hardware acceleration should be disabled
   if (isHwAccelDisabled()) {
     app.disableHardwareAcceleration();
@@ -166,14 +184,8 @@ if (!gotTheLock) {
         tags: { reason: details.reason, type: details.type },
       });
       if (!isHwAccelDisabled()) {
-        // Persist to user prefs for next run
+        // Persist to user prefs for next run and notify user
         setHwAccelDisabled(true, true);
-        // Note: app.disableHardwareAcceleration() can only be called before app is ready.
-        // The setting is persisted above and will take effect on next app launch.
-      }
-      // Notify user that a restart is recommended
-      if (mainWindow && !mainWindow.isDestroyed()) {
-        mainWindow.webContents.send('gpu-crash-detected');
       }
     }
   });
@@ -206,8 +218,36 @@ function createWindowAndCaptureErrors() {
   app.whenReady().then(createMainWindow).catch(captureElectronError);
 }
 
+function getCrashCount() {
+  try {
+    const filePath = getCrashCountFilePath();
+    if (pathExistsSync(filePath)) {
+      const data = readJsonSync(filePath);
+      return typeof data.count === 'number' ? data.count : 0;
+    }
+  } catch (error) {
+    console.warn('Failed to read crash count:', error);
+  }
+  return 0;
+}
+
+function getCrashCountFilePath() {
+  return join(app.getPath('userData'), 'crash-count.json');
+}
+
 function getHwAccelFilePath() {
   return join(app.getPath('userData'), 'hw-accel-disabled.json');
+}
+
+function incrementCrashCount() {
+  try {
+    const count = getCrashCount() + 1;
+    writeJsonSync(getCrashCountFilePath(), { count });
+    return count;
+  } catch (error) {
+    console.warn('Failed to write crash count:', error);
+    return 0;
+  }
 }
 
 function isHwAccelDisabled() {
@@ -223,10 +263,25 @@ function isHwAccelDisabled() {
   return false;
 }
 
+function resetCrashCount() {
+  try {
+    writeJsonSync(getCrashCountFilePath(), { count: 0 });
+    console.log('Crash count reset to 0');
+  } catch (error) {
+    console.warn('Failed to reset crash count:', error);
+  }
+}
+
 function setHwAccelDisabled(disabled: boolean, temporary = false) {
   try {
     const filePath = getHwAccelFilePath();
     writeJsonSync(filePath, { disabled, temporary });
+    if (disabled) {
+      // Notify user that a restart is recommended
+      if (mainWindow && !mainWindow.isDestroyed()) {
+        mainWindow.webContents.send('gpu-crash-detected');
+      }
+    }
   } catch (error) {
     console.warn('Failed to write hw accel setting:', error);
   }
