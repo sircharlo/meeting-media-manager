@@ -43,7 +43,7 @@
     "@sentry/vue": "^10.22.0",
     "@vueuse/core": "^14.0.0",
     "@vueuse/router": "^14.0.0",
-    "better-sqlite3": "^12.4.5",
+    "better-sqlite3": "^12.4.6",
     "cheerio": "^1.1.2",
     "chokidar": "^4.0.3",
     "countries-and-timezones": "^3.8.0",
@@ -70,7 +70,7 @@
     "sanitize-filename": "^1.6.3",
     "upath": "^2.0.1",
     "vue": "^3.5.24",
-    "vue-i18n": "^11.1.12",
+    "vue-i18n": "^11.2.1",
     "vue-router": "^4.6.3",
     "vue-zoomable": "^1.2.8"
   },
@@ -121,9 +121,9 @@
     "typescript": "~5.9.3",
     "vite": "^7.2.4",
     "vitepress": "^2.0.0-alpha.14",
-    "vitest": "^4.0.12",
+    "vitest": "^4.0.13",
     "vue-eslint-parser": "^10.2.0",
-    "vue-tsc": "^3.1.4",
+    "vue-tsc": "^3.1.5",
     "webpack-iconfont-plugin-nodejs": "^1.0.36"
   },
   "resolutions": {
