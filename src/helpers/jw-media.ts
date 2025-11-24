@@ -1819,7 +1819,7 @@ export const getWeMedia = async (lookupDate: Date) => {
     }
     const videos = executeQuery<MultimediaItem>(
       db,
-      `SELECT m.*, dm.*, dp.*,
+      `SELECT m.*, dm.*, dp.*, q.*,
          CASE
            WHEN dp.BeginPosition IS NULL THEN 0
            WHEN dp.BeginPosition < (
@@ -1844,6 +1844,9 @@ export const getWeMedia = async (lookupDate: Date) => {
          INNER JOIN DocumentParagraph dp
            ON dm.BeginParagraphOrdinal = dp.ParagraphIndex
            AND dm.DocumentId = dp.DocumentId
+    		 LEFT JOIN Question q
+           ON q.DocumentId = dm.DocumentId
+           AND q.TargetParagraphOrdinal = dm.BeginParagraphOrdinal
          WHERE dm.DocumentId = ${docId}
            AND m.CategoryType = -1
          ORDER BY dp.BeginPosition;`,
