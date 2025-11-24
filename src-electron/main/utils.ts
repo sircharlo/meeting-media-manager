@@ -1,4 +1,4 @@
-import type { ExclusiveEventHintOrCaptureContext } from 'app/node_modules/@sentry/core/build/types/utils/prepareEvent';
+import type { CaptureContext } from '@sentry/core';
 
 import { captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
@@ -136,45 +136,51 @@ export const fetchRaw = async (url: string, init?: RequestInit) => {
 export const fetchJson = async <T>(
   url: string,
   params?: URLSearchParams,
+  options: { timeout?: number } = {},
 ): Promise<null | T> => {
   try {
     if (!url) return null;
-    const response = await fetchRaw(
-      `${url}${params ? '?' + params.toString() : ''}`,
-    );
-    if (response.ok || response.status === 304) {
-      return await response.json();
-    } else if (
-      ![403, 404, 429, 502].includes(response.status) &&
-      !(
-        response.status === 400 &&
-        ['S', 'CO'].some((p) => params?.get('pub')?.startsWith(`${p}-`))
-      )
-    ) {
-      captureElectronError(new Error('Failed to fetch json!'), {
-        contexts: {
-          fn: {
-            headers: response.headers,
-            name: 'fetchJson',
-            params: Object.fromEntries(params || []),
-            responseUrl: response.url,
-            status: response.status,
-            statusText: response.statusText,
-            type: response.type,
-            url,
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+    }, options.timeout ?? 30000);
+
+    try {
+      const response = await fetchRaw(
+        `${url}${params ? '?' + params.toString() : ''}`,
+        { signal: controller.signal },
+      );
+      if (response.ok || response.status === 304) {
+        return await response.json();
+      } else if (
+        ![403, 404, 429, 502].includes(response.status) &&
+        !(
+          response.status === 400 &&
+          ['S', 'CO'].some((p) => params?.get('pub')?.startsWith(`${p}-`))
+        )
+      ) {
+        captureElectronError(new Error('Failed to fetch json!'), {
+          contexts: {
+            fn: {
+              headers: response.headers,
+              name: 'fetchJson',
+              params: Object.fromEntries(params || []),
+              responseUrl: response.url,
+              status: response.status,
+              statusText: response.statusText,
+              type: response.type,
+              url,
+            },
           },
-        },
-      });
+        });
+      }
+    } finally {
+      clearTimeout(timeoutId);
     }
   } catch (e) {
     const { default: isOnline } = await import('is-online');
     const online = await isOnline();
-
-    // Ignore transient DNS errors
-    if (e instanceof Error && e.message.includes('ENOTFOUND ipinfo.io')) {
-      console.warn('[fetchJson] Ignored transient DNS error for ipinfo.io');
-      return null;
-    }
 
     if (online) {
       captureElectronError(e, {
@@ -200,7 +206,7 @@ export const fetchJson = async <T>(
  */
 export function captureElectronError(
   error: Error | string | unknown,
-  context?: ExclusiveEventHintOrCaptureContext,
+  context?: CaptureContext,
 ) {
   if (error instanceof Error && error.cause) {
     captureElectronError(error.cause, context);

@@ -245,10 +245,8 @@ export const getDocumentMultimediaItems = (
     if (suppressZoomExists) {
       where += ' AND Multimedia.SuppressZoom <> 1';
     }
-    const items = executeQuery<MultimediaItem>(
-      source.db,
-      `${select} ${from} ${where} ${groupAndSort}`,
-    );
+    const finalQuery = `${select} ${from} ${where} ${groupAndSort}`;
+    const items = executeQuery<MultimediaItem>(source.db, finalQuery);
     for (const item of items) {
       if (!item) continue;
       const videoMarkers = getMediaVideoMarkers(
@@ -312,10 +310,13 @@ export const getDocumentExtractItems = async (
         }
       }
 
+      // Get the symbol from the unique English symbol; if it contains any non-alphanumeric symbol, use it as-is; otherwise remove digits
       let symbol = /[^a-zA-Z0-9]/.test(extract.UniqueEnglishSymbol)
         ? extract.UniqueEnglishSymbol
         : extract.UniqueEnglishSymbol.replace(/\d/g, '');
       if (['it', 'snnw'].includes(symbol)) continue; // Exclude Insight and the "old new songs" songbook; we don't need images from that
+
+      // Special handling for wp
       if (
         symbol === 'w' &&
         extract.IssueTagNumber &&
@@ -324,6 +325,7 @@ export const getDocumentExtractItems = async (
       ) {
         symbol = 'wp';
       }
+
       let extractLang = extract.Lang ?? currentStateStore.currentSettings?.lang;
       let extractDb = await getDbFromJWPUB(
         {

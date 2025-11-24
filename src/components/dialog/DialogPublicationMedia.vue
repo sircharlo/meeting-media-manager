@@ -1241,6 +1241,31 @@ async function selectSearchResult(result: SearchResultItem) {
       issue = '0';
     }
 
+    // Special handling for wp
+    if (
+      publication === 'w' &&
+      issue &&
+      parseInt(issue.toString()) >= 20080101 &&
+      issue.toString().slice(-2) === '01'
+    ) {
+      publication = 'wp';
+    }
+
+    // Special issue handling for w, wp and ws
+    if (['w', 'wp', 'ws'].includes(publication)) {
+      if (issue?.length < 8) {
+        if (parseInt(issue?.slice(0, 4) || '0') <= 2015) {
+          if (['w', 'ws'].includes(publication)) {
+            issue = `${issue}15`;
+          } else {
+            issue = `${issue}01`;
+          }
+        } else {
+          issue = `${issue}00`;
+        }
+      }
+    }
+
     selection.publication = publication;
     selection.brochureLabel = result.title;
     const lang = (currentSettings.value?.lang || 'E') as JwLangCode;

@@ -5,6 +5,7 @@ import type robot from 'robotjs';
 import type { ConversionOptions } from 'src-electron/preload/converters';
 import type {
   FileItem,
+  JwSiteParams,
   QueryResponseItem,
   SettingsValues,
   VideoDuration,
@@ -157,7 +158,7 @@ export interface ElectronApi {
   ) => Promise<Electron.OpenDialogReturnValue | undefined>;
   openFolder: (path: string) => Promise<string>;
   openFolderDialog: () => Promise<Electron.OpenDialogReturnValue | undefined>;
-  openWebsiteWindow: (lang?: string) => void;
+  openWebsiteWindow: (websiteParams?: JwSiteParams) => void;
   parseMediaFile: (
     filePath: string,
     options?: IOptions,

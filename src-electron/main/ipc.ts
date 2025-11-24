@@ -4,6 +4,7 @@ import type {
   ElectronIpcSendKey,
   ExternalWebsite,
   FileDialogFilter,
+  JwSiteParams,
   MediaAccessStatus,
   NavigateWebsiteAction,
   SettingsValues,
@@ -138,13 +139,16 @@ handleIpcSend('toggleOpenAtLogin', (_e, openAtLogin: boolean) => {
   app.setLoginItemSettings({ openAtLogin });
 });
 
-handleIpcSend('toggleWebsiteWindow', (_e, show: boolean, lang?: string) => {
-  if (show) {
-    createWebsiteWindow(lang);
-  } else {
-    websiteWindow?.close();
-  }
-});
+handleIpcSend(
+  'toggleWebsiteWindow',
+  (_e, show: boolean, websiteParams?: JwSiteParams) => {
+    if (show) {
+      createWebsiteWindow(websiteParams);
+    } else {
+      websiteWindow?.close();
+    }
+  },
+);
 
 handleIpcSend('zoomWebsiteWindow', (_e, direction: 'in' | 'out') => {
   zoomWebsiteWindow(direction);

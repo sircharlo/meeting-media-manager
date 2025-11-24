@@ -1,3 +1,6 @@
+import DOMPurify from 'dompurify';
+import { toRaw } from 'vue';
+
 /**
  * Converts a camelCase string to kebab-case.
  * @param str The camelCase string to convert.
@@ -225,19 +228,53 @@ export const parseJsonSafe = <T>(json: null | string | T, fallback: T): T => {
 };
 
 /**
- * Decodes HTML entities safely using a temporary textarea element.
- * @param input The string possibly containing HTML entities.
- * @returns The decoded string.
+ * Decodes HTML entities and removes all HTML tags.
+ * @param input The string possibly containing HTML entities and tags.
+ * @returns The decoded string with all HTML tags removed.
  */
 export const decodeEntities = (input?: string) => {
   try {
-    if (!input) return input ?? '';
+    let output = input;
+    if (!output) return output ?? '';
+
+    // First, remove all HTML tags
+    output = DOMPurify.sanitize(output, { ALLOWED_TAGS: [] });
+
+    // Then, decode HTML entities
     const textarea = document.createElement('textarea');
-    textarea.innerHTML = input;
-    const decoded = textarea.value;
+    textarea.innerHTML = output;
+    output = textarea.value;
     textarea.remove();
-    return decoded;
+
+    // Finally, return the sanitized string
+    return output;
   } catch {
     return input ?? '';
   }
 };
+
+/**
+ * Recursively converts an observed object to its raw form.
+ * @param observed The observed object to convert.
+ * @returns The raw object.
+ */
+export function toRawDeep<T>(observed: T): T {
+  const val = toRaw(observed);
+
+  if (Array.isArray(val)) {
+    return val.map(toRawDeep) as T;
+  }
+
+  if (val === null) return null as T;
+
+  if (typeof val === 'object') {
+    const entries = Object.entries(val).map(([key, val]) => [
+      key,
+      toRawDeep(val),
+    ]);
+
+    return Object.fromEntries(entries);
+  }
+
+  return val;
+}

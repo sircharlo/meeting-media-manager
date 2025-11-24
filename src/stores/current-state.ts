@@ -3,6 +3,7 @@ import type {
   DownloadedFile,
   DownloadProgressItems,
   JwLanguage,
+  JwSite,
   MediaItem,
   MediaLink,
   SettingsItem,
@@ -70,6 +71,7 @@ interface Store {
   onlyShowInvalidSettings: boolean;
   selectedDate: string;
   timerWindowVisible: boolean;
+  websiteSelection: JwSite;
 }
 
 const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
@@ -437,6 +439,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       onlyShowInvalidSettings: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
       timerWindowVisible: false,
+      websiteSelection: undefined,
     };
   },
 });

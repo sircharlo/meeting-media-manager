@@ -83,8 +83,12 @@ const {
 
 const { t } = useI18n();
 const currentState = useCurrentStateStore();
-const { autoReturnFromWebsite, currentLangObject, mediaWindowVisible } =
-  storeToRefs(currentState);
+const {
+  autoReturnFromWebsite,
+  currentLangObject,
+  mediaWindowVisible,
+  websiteSelection,
+} = storeToRefs(currentState);
 
 const router = useRouter();
 const { mediaIsPlaying, mediaPlaying } = storeToRefs(currentState);
@@ -119,7 +123,12 @@ const stopStreaming = () => {
 const previewWebsite = () => {
   mediaPlaying.value.action = 'previewingWebsite';
   postWebStream(mediaPlaying.value.action);
-  openWebsiteWindow(currentLangObject.value?.symbol);
+
+  openWebsiteWindow({
+    langCode: currentLangObject.value?.langcode,
+    langSymbol: currentLangObject.value?.symbol,
+    site: websiteSelection.value,
+  });
 };
 
 const { post: postCameraStream } = useBroadcastChannel<

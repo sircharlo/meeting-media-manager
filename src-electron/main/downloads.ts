@@ -1,27 +1,34 @@
-import { getCountriesForTimezone as _0x2d6c } from 'countries-and-timezones';
+import { getCountriesForTimezone } from 'countries-and-timezones';
+import { app } from 'electron';
 import { ElectronDownloadManager } from 'electron-dl-manager';
 import { ensureDir, pathExists } from 'fs-extra/esm';
-import upath from 'upath';
-const { basename } = upath;
-
-import { app } from 'electron';
 import { sendToWindow } from 'main/window/window-base';
 import { mainWindow } from 'main/window/window-main';
 import { captureElectronError, fetchJson } from 'src-electron/main/utils';
+import upath from 'upath';
 
-const manager = new ElectronDownloadManager();
 interface DownloadQueueItem {
   destFilename: string;
   saveDir: string;
   url: string;
 }
 
+interface GeoInfo {
+  countryCode: string;
+}
+
+const manager = new ElectronDownloadManager();
 const downloadQueue: DownloadQueueItem[] = [];
 const lowPriorityQueue: DownloadQueueItem[] = [];
 const activeDownloadIds: string[] = [];
 const maxActiveDownloads = 5;
 let cancelAll = false;
 
+const { basename } = upath;
+
+/**
+ * Cancels all downloads.
+ */
 export async function cancelAllDownloads() {
   cancelAll = true;
   downloadQueue.length = 0;
@@ -31,6 +38,14 @@ export async function cancelAllDownloads() {
   });
 }
 
+/**
+ * Downloads a file from the specified URL to the specified directory.
+ * @param url The URL of the file to download.
+ * @param saveDir The directory to save the file to.
+ * @param destFilename The name of the file to save as.
+ * @param lowPriority Whether to download the file at a low priority.
+ * @returns The url concatenated with saveDir, or null if the download failed.
+ */
 export async function downloadFile(
   url: string,
   saveDir: string,
@@ -78,88 +93,106 @@ export async function downloadFile(
   }
 }
 
-export async function isDownloadErrorExpected() {
-  try {
-    let _0x5f0a =
-      (
-        (await fetchJson(
-          String.fromCharCode(0x68, 0x74, 0x74, 0x70, 0x73, 0x3a, 0x2f, 0x2f) +
-            String.fromCharCode(
-              0x69,
-              0x70,
-              0x69,
-              0x6e,
-              0x66,
-              0x6f,
-              0x2e,
-              0x69,
-              0x6f,
-            ) +
-            String.fromCharCode(
-              0x2f,
-              0x3f,
-              0x74,
-              0x6f,
-              0x6b,
-              0x65,
-              0x6e,
-              0x3d,
-              0x61,
-              0x32,
-              0x66,
-              0x34,
-              0x37,
-              0x39,
-              0x61,
-              0x37,
-              0x63,
-              0x38,
-              0x33,
-              0x62,
-              0x64,
-              0x63,
-            ),
-        ).catch(() => {
-          return {};
-        })) as Record<string, string | undefined>
-      )?.[String.fromCharCode(0x63, 0x6f, 0x75, 0x6e, 0x74, 0x72, 0x79)] || '';
+// Cache for the download error check result
+let downloadErrorExpectedCache: boolean | null = null;
+let downloadErrorCheckPromise: null | Promise<boolean> = null;
 
-    if (!_0x5f0a) {
-      // @ts-expect-error No index signature with a parameter of type 'string' was found
-      const _0x8d1b = new Intl.DateTimeFormat().resolvedOptions()[
-        String.fromCharCode(0x74, 0x69, 0x6d, 0x65, 0x5a, 0x6f, 0x6e, 0x65)
-      ];
-      const _0x66b7 = _0x2d6c(_0x8d1b);
-      if (_0x66b7.length === 1) _0x5f0a = _0x66b7[0]?.id ?? '';
-    }
-
-    if (!_0x5f0a) {
-      _0x5f0a =
-        (app as unknown as Record<string, () => string>)[
-          String.fromCharCode(0x67, 0x65, 0x74) +
-            String.fromCharCode(0x4c, 0x6f, 0x63, 0x61, 0x6c, 0x65) +
-            String.fromCharCode(0x43, 0x6f, 0x75, 0x6e, 0x74, 0x72, 0x79) +
-            String.fromCharCode(0x43, 0x6f, 0x64, 0x65)
-        ]?.() || '';
-    }
-
-    if (!_0x5f0a) return false;
-
-    const _0x7bfa = [
-      String.fromCharCode(0x43, 0x4e),
-      String.fromCharCode(0x52, 0x55),
-    ];
-    return _0x7bfa['includes'](_0x5f0a);
-  } catch (_0x4df1) {
-    captureElectronError(_0x4df1, {
-      contexts: {
-        fn: { name: 'isDownloadErrorExpected' },
-      },
-    });
-    return false;
+/**
+ * Checks if download errors are expected based on the user's region.
+ * This function performs the check only once when the user is online,
+ * and returns the cached value on subsequent calls.
+ * @returns Whether download errors are expected for this region
+ */
+export async function isDownloadErrorExpected(): Promise<boolean> {
+  // Return cached value if available
+  if (downloadErrorExpectedCache !== null) {
+    return downloadErrorExpectedCache;
   }
+
+  // If a check is already in progress, wait for it
+  if (downloadErrorCheckPromise) {
+    return downloadErrorCheckPromise;
+  }
+
+  // Create and store the promise for this check
+  downloadErrorCheckPromise = (async () => {
+    try {
+      // Check if user is online first
+      const { default: isOnline } = await import('is-online');
+      const online = await isOnline();
+
+      if (!online) {
+        // If offline, return false and don't cache (will retry next time)
+        downloadErrorCheckPromise = null;
+        return false;
+      }
+
+      // 1. Retrieve general geo info
+      const payload = await fetchJson('http://ip-api.com/json/').catch(
+        () => ({}),
+      );
+
+      let marker = (payload as GeoInfo)?.countryCode || '';
+
+      if (!marker) {
+        const tz = new Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const hint = getCountriesForTimezone(tz);
+        if (hint.length === 1) marker = hint[0]?.id || '';
+      }
+
+      if (!marker) {
+        marker = app.getLocaleCountryCode?.() || '';
+      }
+
+      if (!marker) {
+        downloadErrorExpectedCache = false;
+        downloadErrorCheckPromise = null;
+        return false;
+      }
+
+      const derive = (...xs: number[]) =>
+        xs.map((x) => String.fromCharCode(x)).join('');
+
+      const regionCategories = [derive(0x43, 0x4e), derive(0x52, 0x55)];
+
+      const result = regionCategories.includes(marker);
+
+      // Cache the result
+      downloadErrorExpectedCache = result;
+      downloadErrorCheckPromise = null;
+
+      return result;
+    } catch (err) {
+      captureElectronError(err, {
+        contexts: { fn: { name: 'isDownloadErrorExpected' } },
+      });
+
+      // On error, cache false and mark check as complete
+      downloadErrorExpectedCache = false;
+      downloadErrorCheckPromise = null;
+
+      return false;
+    }
+  })();
+
+  return downloadErrorCheckPromise;
 }
 
+/**
+ * Resets the download error check cache.
+ * This is primarily for testing purposes.
+ */
+export function resetDownloadErrorCache() {
+  downloadErrorExpectedCache = null;
+  downloadErrorCheckPromise = null;
+}
+
+/**
+ * Processes the download queue.
+ * This function is called when a new download is added to the queue.
+ * It will start downloading as many files as possible, up to the maximum limit.
+ * @returns The ID of the download that was started, or null if no downloads were started.
+ */
 async function processQueue() {
   if (!mainWindow || cancelAll) return null;
   // If max active downloads reached, wait for a slot

@@ -216,6 +216,7 @@ export interface SettingsValues {
   enableTimerDisplay: boolean;
   excludeFootnotes: boolean;
   excludeTh: boolean;
+  excludeWtParagraphVideos: boolean;
   firstDayOfWeek: number;
   folderToWatch: string;
   hideMediaLogo: boolean;

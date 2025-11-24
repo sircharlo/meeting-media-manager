@@ -14,15 +14,20 @@ vi.mock('electron', () => ({
   app: { getLocaleCountryCode: vi.fn(() => 'US') },
 }));
 
+vi.mock('is-online', () => ({
+  default: vi.fn(() => Promise.resolve(true)),
+}));
+
 import { getCountriesForTimezone } from 'countries-and-timezones';
 import { app } from 'electron';
 import { fetchJson } from 'src-electron/main/utils';
 
-import { isDownloadErrorExpected } from '../downloads';
+import { isDownloadErrorExpected, resetDownloadErrorCache } from '../downloads';
 
 describe('downloads.isDownloadErrorExpected', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    resetDownloadErrorCache();
   });
 
   it('true when IP service returns RU', async () => {

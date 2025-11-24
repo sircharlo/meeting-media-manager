@@ -138,9 +138,6 @@ useMeta({ title: t('titles.profileSelection') });
 
 const appSettings = useAppSettingsStore();
 
-const { migrations } = storeToRefs(appSettings);
-const { runMigration } = appSettings;
-
 const congregationSettings = useCongregationSettingsStore();
 const currentState = useCurrentStateStore();
 const jwStore = useJwStore();
@@ -216,34 +213,19 @@ const removeCongregation = async (id: number | string) => {
   deleteCongregation(id);
 };
 
-const runMigrations = async () => {
-  const migrationsToRun = [
-    'firstRun',
-    'localStorageToPiniaPersist',
-    'addBaseUrlToAllCongregations',
-    'moveAdditionalMediaMaps',
-    '25.3.2-refreshDynamicMedia',
-    '25.4.3-refreshDynamicMedia',
-    '25.8.4-newMediaSections',
-    '25.10.1-refreshDynamicMedia',
-  ];
+onMounted(async () => {
+  const executedMigrations = await appSettings.ensureMigrations();
 
-  for (const migration of migrationsToRun) {
-    if (!migrations.value?.includes(migration)) {
-      const success = await runMigration(migration);
-      if (migration === 'firstRun' && success) {
-        createTemporaryNotification({
-          caption: t('successfully-migrated-from-the-previous-version'),
-          icon: 'mmm-info',
-          message: t('welcome-to-mmm'),
-          timeout: 15000,
-          type: 'positive',
-        });
-      }
-    }
+  if (executedMigrations.includes('firstRun')) {
+    createTemporaryNotification({
+      caption: t('successfully-migrated-from-the-previous-version'),
+      icon: 'mmm-info',
+      message: t('welcome-to-mmm'),
+      timeout: 15000,
+      type: 'positive',
+    });
   }
-};
-onMounted(() => {
-  runMigrations().then(autoSelectCongregation);
+
+  autoSelectCongregation();
 });
 </script>
