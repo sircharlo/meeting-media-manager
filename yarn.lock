@@ -10291,7 +10291,7 @@ __metadata:
     typescript: "npm:~5.9.3"
     upath: "npm:^2.0.1"
     vite: "npm:^7.2.4"
-    vitepress: "npm:^2.0.0-alpha.14"
+    vitepress: "npm:^2.0.0-alpha.15"
     vitest: "npm:^4.0.13"
     vue: "npm:^3.5.25"
     vue-eslint-parser: "npm:^10.2.0"
@@ -15011,9 +15011,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitepress@npm:^2.0.0-alpha.14":
-  version: 2.0.0-alpha.14
-  resolution: "vitepress@npm:2.0.0-alpha.14"
+"vitepress@npm:^2.0.0-alpha.15":
+  version: 2.0.0-alpha.15
+  resolution: "vitepress@npm:2.0.0-alpha.15"
   dependencies:
     "@docsearch/css": "npm:^4.3.2"
     "@docsearch/js": "npm:^4.3.2"
@@ -15046,7 +15046,7 @@ __metadata:
       optional: true
   bin:
     vitepress: bin/vitepress.js
-  checksum: 10c0/0ea032cdb5b02839aad95052caf7f28a057389a0f3d41f5d597ce75d9077f26cf32a0fd39c5da058362f83042b0950b0116c3f0177770baef7c2ad876ee8ba4a
+  checksum: 10c0/d60f5568bfdf008d1b49902b5717e2b267a2c024fbce9397ae97ae4a655c99e78a96d0a57fa9457b893a2e019630ae216e625b21290c21826bcb2a23c13fc5e4
   languageName: node
   linkType: hard
 
