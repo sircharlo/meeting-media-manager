@@ -172,6 +172,8 @@
   "excludeFootnotes-explain": "Voeg geen video's of andere media van voetnoten uit de Wachttoren toe.",
   "excludeTh": "Sluit alle media van de th brochure uit",
   "excludeTh-explain": "Voeg geen video's of andere media toe uit de th brochure.",
+  "excludeWtParagraphVideos": "Exclude additional Watchtower Study videos",
+  "excludeWtParagraphVideos-explain": "Do not include extra videos that are referenced in the Watchtower Study paragraphs.",
   "expand-sidebar": "Zijbalk uitvouwen",
   "external-screen": "Extern scherm",
   "extra-media": "Media toevoegen",
