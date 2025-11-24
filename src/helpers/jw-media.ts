@@ -23,6 +23,7 @@ import { queues } from 'boot/globals';
 import {
   FEB_2023,
   FOOTNOTE_TARGET_PARAGRAPH,
+  LAST_SONG_ORDINAL,
   MAX_SONGS,
 } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
@@ -2077,7 +2078,7 @@ export const getWeMedia = async (lookupDate: Date) => {
       }
 
       if (mergedSongs[1]) {
-        mergedSongs[1].BeginParagraphOrdinal = 2000;
+        mergedSongs[1].BeginParagraphOrdinal = LAST_SONG_ORDINAL;
         const index1 = allMedia.findIndex(
           (item) =>
             item.Track === mergedSongs[1]?.Track &&
