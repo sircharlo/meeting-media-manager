@@ -172,6 +172,8 @@
   "excludeFootnotes-explain": "Исключить видео или другие медиа из сносок в статьях Сторожевой башни.",
   "excludeTh": "Исключить все мультимедиа из брошюры «Развивай навыки»",
   "excludeTh-explain": "Не включать видеоролики или другие медиа материалы из брошюры «Развивай навыки».",
+  "excludeWtParagraphVideos": "Exclude additional Watchtower Study videos",
+  "excludeWtParagraphVideos-explain": "Do not include extra videos that are referenced in the Watchtower Study paragraphs.",
   "expand-sidebar": "Развернуть боковую панель",
   "external-screen": "Внешний экран",
   "extra-media": "Добавить медиа",

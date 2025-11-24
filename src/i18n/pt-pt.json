@@ -172,6 +172,8 @@
   "excludeFootnotes-explain": "Não inclua vídeos ou outras multimédias de notas de rodapé nos artigos de 'A Sentinela'.",
   "excludeTh": "Eliminar todas as multimédias da brochura: Melhore a Sua Leitura e o Seu Ensino",
   "excludeTh-explain": "Não inclua vídeos ou outras multimédias da brochura: Melhore a Sua Leitura e o Seu Ensino.",
+  "excludeWtParagraphVideos": "Exclude additional Watchtower Study videos",
+  "excludeWtParagraphVideos-explain": "Do not include extra videos that are referenced in the Watchtower Study paragraphs.",
   "expand-sidebar": "Expandir barra lateral",
   "external-screen": "Ecrã externo",
   "extra-media": "Adicionar multimédia",
