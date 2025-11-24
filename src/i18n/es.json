@@ -172,6 +172,8 @@
   "excludeFootnotes-explain": "No incluya vídeos u otros medios a partir de notas a pie de página en los artículos de la Atalaya.",
   "excludeTh": "Excluir todos los medios de comunicación del folleto Maestros",
   "excludeTh-explain": "No incluya vídeos ni otros medios del folleto Maestros.",
+  "excludeWtParagraphVideos": "Exclude additional Watchtower Study videos",
+  "excludeWtParagraphVideos-explain": "Do not include extra videos that are referenced in the Watchtower Study paragraphs.",
   "expand-sidebar": "Ampliar la barra lateral",
   "external-screen": "Pantalla externa",
   "extra-media": "Añadir multimedia",

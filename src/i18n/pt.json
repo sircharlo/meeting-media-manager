@@ -172,6 +172,8 @@
   "excludeFootnotes-explain": "Não incluir vídeos ou outras mídias das notas de rodapé dos artigos de A Sentinela.",
   "excludeTh": "Excluir todas as mídias da brochura Melhore",
   "excludeTh-explain": "Não incluir vídeos ou outras mídias da brochura Melhore.",
+  "excludeWtParagraphVideos": "Exclude additional Watchtower Study videos",
+  "excludeWtParagraphVideos-explain": "Do not include extra videos that are referenced in the Watchtower Study paragraphs.",
   "expand-sidebar": "Expandir barra lateral",
   "external-screen": "Segunda tela",
   "extra-media": "Adicionar mídia",
