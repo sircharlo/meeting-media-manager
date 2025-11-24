@@ -1375,8 +1375,9 @@ const getParagraphNumbers = (
       return paragraphLabel;
     if (numbers.length === 1) return numbers[0];
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const max = numbers[numbers.length - 1]!; // Find the last number
+    const max = numbers[numbers.length - 1]; // Find the last number
+
+    if (!max) return paragraphLabel;
 
     // Find the first number less than or equal to max
     const firstNumber = numbers.find((n) => n <= max);

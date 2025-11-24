@@ -503,11 +503,11 @@ export const useJwStore = defineStore('jw-store', {
       if (!online) return;
       try {
         let year = new Date().getFullYear();
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        if (this.memorials[year] && isInPast(this.memorials[year]!)) {
+        const memorialDate = this.memorials[year];
+        if (memorialDate && isInPast(memorialDate)) {
           year++;
         }
-        if (!this.memorials[year]) {
+        if (!memorialDate) {
           const result = await fetchMemorials();
           if (result) this.memorials = result;
         }

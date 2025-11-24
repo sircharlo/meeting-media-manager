@@ -252,19 +252,16 @@ watch(currentCongregation, (newCongregation, oldCongregation) => {
     } else {
       setElectronUrlVariables(JSON.stringify(jwStore.urlVariables));
       let year = new Date().getFullYear();
-      if (
-        jwStore.memorials[year] &&
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        isInPast(getSpecificWeekday(jwStore.memorials[year]!, 6))
-      ) {
+      const memorialDate = jwStore.memorials[year];
+      if (memorialDate && isInPast(getSpecificWeekday(memorialDate, 6))) {
         year++;
       }
       if (
         currentSettings.value &&
-        jwStore.memorials[year] &&
-        currentSettings.value.memorialDate !== jwStore.memorials[year]
+        memorialDate &&
+        currentSettings.value.memorialDate !== memorialDate
       ) {
-        currentSettings.value.memorialDate = jwStore.memorials[year] ?? null;
+        currentSettings.value.memorialDate = memorialDate ?? null;
       }
       downloadProgress.value = {};
       updateLookupPeriod();
@@ -792,31 +789,26 @@ const initListeners = () => {
   });
 
   onDownloadCancelled((args) => {
-    if (downloadProgress.value[args.id])
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      downloadProgress.value[args.id]!.error = true;
+    const existing = downloadProgress.value[args.id];
+    if (existing) existing.error = true;
   });
 
   onDownloadCompleted((args) => {
-    if (downloadProgress.value[args.id]) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      downloadProgress.value[args.id]!.complete = true;
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      delete downloadProgress.value[args.id]!.loaded;
+    const existing = downloadProgress.value[args.id];
+    if (existing) {
+      existing.complete = true;
+      delete existing.loaded;
     }
   });
 
   onDownloadError((args) => {
-    if (downloadProgress.value[args.id])
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      downloadProgress.value[args.id]!.error = true;
+    const existing = downloadProgress.value[args.id];
+    if (existing) existing.error = true;
   });
 
   onDownloadProgress((args) => {
-    if (downloadProgress.value[args.id]) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      downloadProgress.value[args.id]!.loaded = args.bytesReceived;
-    }
+    const existing = downloadProgress.value[args.id];
+    if (existing) existing.loaded = args.bytesReceived;
   });
 
   onGpuCrashDetected(() => {
