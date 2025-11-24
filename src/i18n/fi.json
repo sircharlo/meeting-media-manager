@@ -172,6 +172,8 @@
   "excludeFootnotes-explain": "Älä sisällytä videoita tai muita median alaviitteistä Vartiotornista.",
   "excludeTh": "Poista kaikki mediat th esitteestä",
   "excludeTh-explain": "Älä sisällytä videoita tai muuta mediaa th-esitteestä.",
+  "excludeWtParagraphVideos": "Jätä pois Vartiotornitutkistelun videot",
+  "excludeWtParagraphVideos-explain": "Älä sisällytä ylimääräisiä videoita, joihin Vartiotornin tutkimusjaksoissa viitataan.",
   "expand-sidebar": "Laajenna sivupalkki",
   "external-screen": "Ulkoinen näyttö",
   "extra-media": "Lisää media",

@@ -172,6 +172,8 @@
   "excludeFootnotes-explain": "Do not include videos or other media from footnotes in Watchtower articles.",
   "excludeTh": "Exclude all media from the Teaching brochure",
   "excludeTh-explain": "Do not include videos or other media from the Teaching brochure.",
+  "excludeWtParagraphVideos": "Exclude additional Watchtower Study videos",
+  "excludeWtParagraphVideos-explain": "Do not include extra videos that are referenced in the Watchtower Study paragraphs.",
   "expand-sidebar": "Expand sidebar",
   "external-screen": "External screen",
   "extra-media": "Add media",

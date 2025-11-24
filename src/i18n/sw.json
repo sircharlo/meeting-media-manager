@@ -172,6 +172,8 @@
   "excludeFootnotes-explain": "Usipakue media za maelezo ya chini ya makala ya Mnara wa Mlinzi.",
   "excludeTh": "Usipakue media zozote za Broshua ya kufundisha",
   "excludeTh-explain": "Usipakue media zozote za Broshua ya kufundisha.",
+  "excludeWtParagraphVideos": "Exclude additional Watchtower Study videos",
+  "excludeWtParagraphVideos-explain": "Do not include extra videos that are referenced in the Watchtower Study paragraphs.",
   "expand-sidebar": "Fungua kisehemu",
   "external-screen": "Scrini ya kando",
   "extra-media": "Ongeza Midia",

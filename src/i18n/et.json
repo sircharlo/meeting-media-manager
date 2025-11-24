@@ -172,6 +172,8 @@
   "excludeFootnotes-explain": "Ära impordi videoid või muid meedifaile Vahitorni artiklitest.",
   "excludeTh": "Ära arvesta \"Õpeta armastusega\" brošüürist meediafaile",
   "excludeTh-explain": "Ära impordi videoid või muid meedifaile \"Õpeta armastusega\" brošüürist.",
+  "excludeWtParagraphVideos": "Exclude additional Watchtower Study videos",
+  "excludeWtParagraphVideos-explain": "Do not include extra videos that are referenced in the Watchtower Study paragraphs.",
   "expand-sidebar": "Laienda külgriba",
   "external-screen": "Teine ekraan",
   "extra-media": "Lisa meediafail",
