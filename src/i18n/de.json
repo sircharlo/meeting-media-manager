@@ -172,6 +172,8 @@
   "excludeFootnotes-explain": "Videos oder andere Medien aus Fußnoten von Wachtturm-Artikeln ausschließen.",
   "excludeTh": "Medien der Lesen-und-Lehren-Broschüre ausnehmen",
   "excludeTh-explain": "Keine Videos oder andere Medien aus der Lesen-und-Lehren-Broschüre einbinden.",
+  "excludeWtParagraphVideos": "Exclude additional Watchtower Study videos",
+  "excludeWtParagraphVideos-explain": "Do not include extra videos that are referenced in the Watchtower Study paragraphs.",
   "expand-sidebar": "Seitenleiste ausklappen",
   "external-screen": "Externer Bildschirm",
   "extra-media": "Medien hinzufügen",

@@ -172,6 +172,8 @@
   "excludeFootnotes-explain": "Non includere video o altri supporti da note a piè di pagina in articoli Watchtower.",
   "excludeTh": "Escludi tutti i media dell'opuscolo Lettura e insegnamento (th)",
   "excludeTh-explain": "Non includere video o altri media dall'opuscolo Lettura e insegnamento.",
+  "excludeWtParagraphVideos": "Exclude additional Watchtower Study videos",
+  "excludeWtParagraphVideos-explain": "Do not include extra videos that are referenced in the Watchtower Study paragraphs.",
   "expand-sidebar": "Espandi barra laterale",
   "external-screen": "Schermo esterno",
   "extra-media": "Aggiungi elemento multimediale",
