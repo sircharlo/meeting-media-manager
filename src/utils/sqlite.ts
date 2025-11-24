@@ -143,6 +143,47 @@ export const getMultimediaMepsLangs = (source: MultimediaItemsFetcher) => {
   }
 };
 
+/**
+ * Get BeginParagraphOrdinal and EndParagraphOrdinal from DocumentExtract for sjj items
+ * This is used to fix unreliable ordinals in DocumentMultimedia for sjjm items
+ * @param db Database path
+ * @param docId Document ID
+ * @returns Array of ordinals sorted by SortPosition
+ */
+export const getSjjExtractOrdinals = (db: string, docId: number) => {
+  try {
+    if (!db || !docId) return [];
+
+    // Check if required tables exist
+    if (
+      !tableExists(db, 'DocumentExtract') ||
+      !tableExists(db, 'Extract') ||
+      !tableExists(db, 'RefPublication')
+    ) {
+      return [];
+    }
+
+    const ordinals = executeQuery<{
+      BeginParagraphOrdinal: number;
+      EndParagraphOrdinal: number;
+    }>(
+      db,
+      `SELECT DocumentExtract.BeginParagraphOrdinal, DocumentExtract.EndParagraphOrdinal
+       FROM DocumentExtract
+       INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId
+       INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId
+       WHERE DocumentExtract.DocumentId = ${docId}
+       AND RefPublication.UndatedSymbol = 'sjj'
+       ORDER BY DocumentExtract.SortPosition`,
+    );
+
+    return ordinals;
+  } catch (error) {
+    errorCatcher(error);
+    return [];
+  }
+};
+
 export const getDocumentMultimediaItems = (
   source: MultimediaItemsFetcher,
   includePrinted: boolean | undefined,
@@ -210,7 +251,8 @@ export const getDocumentMultimediaItems = (
     if (mmTable === 'DocumentMultimedia') {
       from +=
         ' INNER JOIN DocumentMultimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId';
-      from += ` LEFT JOIN DocumentParagraph ON ${mmTable}.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex`;
+      from += ` LEFT JOIN DocumentParagraph ON ${mmTable}.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex
+                  AND DocumentParagraph.DocumentId = ${mmTable}.DocumentId`;
     }
     from += ` INNER JOIN Document ON ${mmTable}.DocumentId = Document.DocumentId`;
     if (LinkMultimediaIdExists)
@@ -241,7 +283,7 @@ export const getDocumentMultimediaItems = (
     }
 
     const groupAndSort = ParagraphColumnsExist
-      ? 'GROUP BY Multimedia.MultimediaId ORDER BY DocumentParagraph.BeginPosition'
+      ? 'GROUP BY Multimedia.MultimediaId ORDER BY DocumentMultimedia.BeginParagraphOrdinal'
       : '';
 
     if (targetParNrExists && ParagraphColumnsExist) {
@@ -260,6 +302,56 @@ export const getDocumentMultimediaItems = (
       );
       if (videoMarkers) item.VideoMarkers = videoMarkers;
     }
+
+    // Hack: Fix unreliable BeginParagraphOrdinal and EndParagraphOrdinal for sjjm items
+    // by mapping them from DocumentExtract (sjj) ordinals sequentially
+    const sjjmItems = items.filter(
+      (item) => item.KeySymbol && item.KeySymbol.includes('sjj'),
+    );
+
+    if (sjjmItems.length > 0 && (source.docId || source.docId === 0)) {
+      const sjjOrdinals = getSjjExtractOrdinals(source.db, source.docId);
+
+      if (sjjOrdinals.length > 0) {
+        // Map ordinals sequentially: 1st sjjm item gets 1st sjj ordinal, etc.
+        sjjmItems.forEach((item, index) => {
+          const ordinal = sjjOrdinals[index];
+          if (ordinal) {
+            if (ordinal.BeginParagraphOrdinal !== item.BeginParagraphOrdinal) {
+              console.log(
+                '⚠️ BeginParagraphOrdinal mismatch for sjjm item; updating:',
+                item.MultimediaId,
+                'from',
+                item.BeginParagraphOrdinal,
+                'to',
+                ordinal.BeginParagraphOrdinal,
+              );
+              item.BeginParagraphOrdinal = ordinal.BeginParagraphOrdinal;
+            }
+            if (ordinal.EndParagraphOrdinal !== item.EndParagraphOrdinal) {
+              console.log(
+                '⚠️ EndParagraphOrdinal mismatch for sjjm item; updating:',
+                item.MultimediaId,
+                'from',
+                item.EndParagraphOrdinal,
+                'to',
+                ordinal.EndParagraphOrdinal,
+              );
+              item.EndParagraphOrdinal = ordinal.EndParagraphOrdinal;
+            }
+          }
+        });
+
+        // Re-sort all items by BeginParagraphOrdinal after mapping
+        if (ParagraphColumnsExist) {
+          items.sort(
+            (a, b) =>
+              (a.BeginParagraphOrdinal || 0) - (b.BeginParagraphOrdinal || 0),
+          );
+        }
+      }
+    }
+
     return items;
   } catch (error) {
     errorCatcher(error);
