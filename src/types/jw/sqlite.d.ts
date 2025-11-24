@@ -81,6 +81,7 @@ export interface MultimediaItem {
   FormattedVerseLabel?: string;
   HasMediaLinks?: number;
   Height?: null | number;
+  IsInNumberedParagraphs?: number;
   IssueTagNumber?: number;
   KeySymbol?: null | string;
   Label: string;

@@ -351,7 +351,7 @@
                         isFileUrl(media.fileUrl)
                       ? 'mmm-add-media'
                       : media.tag?.type === 'paragraph'
-                        ? media.tag.value !== 9999
+                        ? media.tag.value !== FOOTNOTE_TARGET_PARAGRAPH
                           ? 'mmm-paragraph'
                           : 'mmm-footnote'
                         : 'mmm-music-note'
@@ -362,7 +362,8 @@
               </q-tooltip>
               <template v-if="media?.tag?.type">
                 {{
-                  media.tag?.type === 'paragraph' && media.tag.value === 9999
+                  media.tag?.type === 'paragraph' &&
+                  media.tag.value === FOOTNOTE_TARGET_PARAGRAPH
                     ? t('footnote')
                     : media.tag?.value
                 }}
@@ -1002,6 +1003,7 @@ import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { type QBtn, type QImg, QItem, useQuasar } from 'quasar';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
+import { FOOTNOTE_TARGET_PARAGRAPH } from 'src/constants/jw';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';

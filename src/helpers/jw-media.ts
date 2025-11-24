@@ -20,7 +20,11 @@ import type {
 } from 'src/types';
 
 import { queues } from 'boot/globals';
-import { FEB_2023, FOOTNOTE_TAR_PAR, MAX_SONGS } from 'src/constants/jw';
+import {
+  FEB_2023,
+  FOOTNOTE_TARGET_PARAGRAPH,
+  MAX_SONGS,
+} from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
 import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -1815,19 +1819,34 @@ export const getWeMedia = async (lookupDate: Date) => {
     }
     const videos = executeQuery<MultimediaItem>(
       db,
-      `SELECT *
-         FROM DocumentMultimedia
-         INNER JOIN Multimedia
-           ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId
-         INNER JOIN DocumentParagraph
-           ON DocumentMultimedia.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex
-         LEFT JOIN Question
-           ON Question.DocumentId = DocumentMultimedia.DocumentId
-           AND Question.TargetParagraphOrdinal = DocumentMultimedia.BeginParagraphOrdinal
-         WHERE DocumentMultimedia.DocumentId = ${docId}
-           AND CategoryType = -1
-         GROUP BY DocumentMultimedia.MultimediaId
-         ORDER BY DocumentParagraph.BeginPosition`,
+      `SELECT m.*, dm.*, dp.*,
+         CASE
+           WHEN dp.BeginPosition IS NULL THEN 0
+           WHEN dp.BeginPosition < (
+             SELECT MIN(BeginPosition)
+             FROM DocumentParagraph
+             WHERE DocumentId = ${docId}
+               AND ParagraphNumberLabel IS NOT NULL
+               AND ParagraphNumberLabel != ''
+           ) THEN 0
+           WHEN dp.BeginPosition > (
+             SELECT MAX(EndPosition)
+             FROM DocumentParagraph
+             WHERE DocumentId = ${docId}
+               AND ParagraphNumberLabel IS NOT NULL
+               AND ParagraphNumberLabel != ''
+           ) THEN 0
+           ELSE 1
+         END AS IsInNumberedParagraphs
+         FROM Multimedia m
+         INNER JOIN DocumentMultimedia dm
+           ON dm.MultimediaId = m.MultimediaId
+         INNER JOIN DocumentParagraph dp
+           ON dm.BeginParagraphOrdinal = dp.ParagraphIndex
+           AND dm.DocumentId = dp.DocumentId
+         WHERE dm.DocumentId = ${docId}
+           AND m.CategoryType = -1
+         ORDER BY dp.BeginPosition;`,
     );
     const videosInParagraphs = videos.filter(
       (video) => !!video.TargetParagraphNumberLabel,
@@ -1894,20 +1913,30 @@ export const getWeMedia = async (lookupDate: Date) => {
     }
 
     final = final
-      .map((mediaObj) =>
-        mediaObj?.TargetParagraphNumberLabel === null &&
-        mediaObj?.BeginPosition === null
-          ? { ...mediaObj, TargetParagraphNumberLabel: FOOTNOTE_TAR_PAR }
-          : mediaObj,
-      )
-      .filter((v) => {
-        return (
-          !currentStateStore.currentSettings?.excludeFootnotes ||
-          (v?.TargetParagraphNumberLabel &&
-            v.TargetParagraphNumberLabel < FOOTNOTE_TAR_PAR)
-        );
+      .map((mediaObj) => {
+        // Mark media as being in a footnote if it's outside numbered paragraphs
+        // IsInNumberedParagraphs will be 0 for footnotes, 1 for regular content
+        if (
+          mediaObj &&
+          'IsInNumberedParagraphs' in mediaObj &&
+          mediaObj.IsInNumberedParagraphs === 0 &&
+          !mediaObj.TargetParagraphNumberLabel
+        ) {
+          return {
+            ...mediaObj,
+            TargetParagraphNumberLabel: FOOTNOTE_TARGET_PARAGRAPH,
+          };
+        }
+        return mediaObj;
       })
-      .filter((item) => !!item);
+      .filter((item) => !!item)
+      .filter((v) => {
+        // Include all items if footnote media is not to be excluded
+        if (!currentStateStore.currentSettings?.excludeFootnotes) return true;
+
+        // Otherwise, only include items that are not explicitly marked as footnotes
+        return v.TargetParagraphNumberLabel !== FOOTNOTE_TARGET_PARAGRAPH;
+      });
 
     const updatedMedia = final.map((item) => {
       if (item.MultimediaId !== null && item.LinkMultimediaId !== null) {
