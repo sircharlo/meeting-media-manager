@@ -343,13 +343,20 @@ export const analyzeCacheFiles = async (): Promise<CacheAnalysis> => {
         await getPublicationsPath(),
         await getPublicationsPath(currentState.currentSettings?.cacheFolder),
         await getTempPath(),
-        join(await getAdditionalMediaPath(), currentState.currentCongregation),
-        join(
-          await getAdditionalMediaPath(
-            currentState.currentSettings?.cacheFolder,
-          ),
-          currentState.currentCongregation,
-        ),
+        ...(currentState.currentCongregation
+          ? [
+              join(
+                await getAdditionalMediaPath(),
+                currentState.currentCongregation,
+              ),
+              join(
+                await getAdditionalMediaPath(
+                  currentState.currentSettings?.cacheFolder,
+                ),
+                currentState.currentCongregation,
+              ),
+            ]
+          : []),
       ]),
     ];
 
