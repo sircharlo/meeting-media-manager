@@ -172,6 +172,8 @@
   "excludeFootnotes-explain": "Не включати відео або інше медіа з приміток у статтях з Вартової Башти.",
   "excludeTh": "Виключити усі медіа з навчальної брошури",
   "excludeTh-explain": "Не додавати медіа з брошури \"Удосконалюймо вміння читати і навчати\".",
+  "excludeWtParagraphVideos": "Exclude additional Watchtower Study videos",
+  "excludeWtParagraphVideos-explain": "Do not include extra videos that are referenced in the Watchtower Study paragraphs.",
   "expand-sidebar": "Розгорнути бічну панель",
   "external-screen": "Зовнішній екран",
   "extra-media": "Додати медіа",

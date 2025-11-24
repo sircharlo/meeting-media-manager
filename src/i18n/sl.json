@@ -172,6 +172,8 @@
   "excludeFootnotes-explain": "Ne vključi videoposnetkov ali druge multimedijske vsebine iz podčrtnih opomb v Stražnem stolpu.",
   "excludeTh": "Ne vključi nobene multimedijske vsebine iz brošure Posvečaj se branju in poučevanju",
   "excludeTh-explain": "Ne vključi videoposnetkov ali druge multimedijske vsebine iz brošure Posvečaj se branju in poučevanju.",
+  "excludeWtParagraphVideos": "Izključi dodatne videoposnetke pri Preučevanju Stražnega stolpa",
+  "excludeWtParagraphVideos-explain": "Ne vključi dodatnih videoposnetkov, ki so navedeni v odstavkih Preučevanja Stražnega stolpa.",
   "expand-sidebar": "Razširi stransko vrstico",
   "external-screen": "Zunanji zaslon",
   "extra-media": "Dodaj multimedijo",

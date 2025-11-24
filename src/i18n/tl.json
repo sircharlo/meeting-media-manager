@@ -172,6 +172,8 @@
   "excludeFootnotes-explain": "Huwag isama ang mga video o iba pang media mula sa mga footnote sa mga artikulo ng Bantayan.",
   "excludeTh": "Huwag isama ang lahat ng media mula sa brosyur na Pagtuturo",
   "excludeTh-explain": "Huwag isama ang mga video o iba pang media mula sa brosyur na Pagtuturo.",
+  "excludeWtParagraphVideos": "Exclude additional Watchtower Study videos",
+  "excludeWtParagraphVideos-explain": "Do not include extra videos that are referenced in the Watchtower Study paragraphs.",
   "expand-sidebar": "Expand sidebar",
   "external-screen": "External screen",
   "extra-media": "Add media",

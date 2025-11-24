@@ -172,6 +172,8 @@
   "excludeFootnotes-explain": "Inkludera inte videor eller andra medier från fotnoten i Vakttornets artiklar.",
   "excludeTh": "Exkludera all media från skolboken",
   "excludeTh-explain": "Inkludera inte videor eller andra medier från skolboken.",
+  "excludeWtParagraphVideos": "Exkludera videor för Vakttornsstudiet",
+  "excludeWtParagraphVideos-explain": "Inkluderar inte extra videor från Vakttornsstudiet.",
   "expand-sidebar": "Visa sidomeny",
   "external-screen": "Extern skärm",
   "extra-media": "Lägg till media",
