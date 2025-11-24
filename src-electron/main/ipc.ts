@@ -24,6 +24,7 @@ const { autoUpdater } = electronUpdater;
 import { downloadFile, isDownloadErrorExpected } from 'main/downloads';
 import { createVideoFromNonVideo } from 'main/ffmpeg';
 import {
+  decompressFile,
   openFileDialog,
   openFolderDialog,
   unwatchFolders,
@@ -258,6 +259,10 @@ handleIpcInvoke(
     destFilename?: string,
     lowPriority = false,
   ) => downloadFile(url, saveDir, destFilename, lowPriority),
+);
+
+handleIpcInvoke('decompress', async (_e, input: string, output: string) =>
+  decompressFile(input, output),
 );
 
 handleIpcInvoke(

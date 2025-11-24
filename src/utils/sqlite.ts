@@ -19,6 +19,11 @@ import {
 import { findFile } from 'src/utils/fs';
 import { useCurrentStateStore } from 'stores/current-state';
 
+/**
+ * Find the .db file in the publication directory
+ * @param publicationDirectory
+ * @returns path to the .db file
+ */
 export const findDb = async (publicationDirectory: string | undefined) => {
   return findFile(publicationDirectory, '.db');
 };
