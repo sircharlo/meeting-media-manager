@@ -172,6 +172,8 @@
   "excludeFootnotes-explain": "不包括《守望台》文章脚注中的视频或其他媒体。",
   "excludeTh": "排除《教导》册子的所有媒体",
   "excludeTh-explain": "不包括《教导》册子的所有媒体.",
+  "excludeWtParagraphVideos": "Exclude additional Watchtower Study videos",
+  "excludeWtParagraphVideos-explain": "Do not include extra videos that are referenced in the Watchtower Study paragraphs.",
   "expand-sidebar": "展开侧栏",
   "external-screen": "外部屏幕",
   "extra-media": "添加媒体",
