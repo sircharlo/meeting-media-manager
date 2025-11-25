@@ -1,11 +1,11 @@
-import type OBSWebSocket from 'obs-websocket-js';
 import type { ObsSceneType } from 'src/types';
+
+import OBSWebSocket from 'obs-websocket-js';
 
 export let obsWebSocket: OBSWebSocket | undefined;
 
 export const initObsWebSocket = async () => {
   if (!obsWebSocket) {
-    const { default: OBSWebSocket } = await import('obs-websocket-js');
     obsWebSocket = new OBSWebSocket();
   }
 };

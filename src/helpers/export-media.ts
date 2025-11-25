@@ -1,7 +1,8 @@
-import type PQueue from 'p-queue';
 import type { MediaItem, MediaSectionIdentifier } from 'src/types';
 
 import { i18n } from 'boot/i18n';
+import PQueue from 'p-queue';
+import sanitize from 'sanitize-filename';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setupFFmpeg } from 'src/helpers/fs';
 import { datesAreSame, formatDate } from 'src/utils/date';
@@ -17,7 +18,6 @@ const { basename, extname, join } = path;
 
 export const addDayToExportQueue = async (targetDate?: Date) => {
   if (!folderExportQueue) {
-    const { default: PQueue } = await import('p-queue');
     folderExportQueue = new PQueue({ concurrency: 1 });
   }
   folderExportQueue.add(() => exportDayToFolder(targetDate));
@@ -82,7 +82,6 @@ const exportDayToFolder = async (targetDate?: Date) => {
 
   const expectedFiles = new Set<string>();
 
-  const { default: sanitize } = await import('sanitize-filename');
   const sections: Partial<Record<MediaSectionIdentifier, number>> = {}; // Object to store dynamic section prefixes
   for (let i = 0; i < dayMediaLength; i++) {
     try {
@@ -183,7 +182,6 @@ export const exportAllDays = async () => {
       .filter((d): d is Date => !!d);
 
     if (!folderExportQueue) {
-      const { default: PQueue } = await import('p-queue');
       folderExportQueue = new PQueue({ concurrency: 1 });
     }
     await folderExportQueue.addAll(

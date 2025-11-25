@@ -20,6 +20,9 @@ import type {
 } from 'src/types';
 
 import { queues } from 'boot/globals';
+import { load } from 'cheerio';
+import PQueue from 'p-queue';
+import sanitize from 'sanitize-filename';
 import {
   FEB_2023,
   FOOTNOTE_TARGET_PARAGRAPH,
@@ -76,7 +79,10 @@ import {
   useJwStore,
 } from 'stores/jw';
 
-import { createMeetingSections } from './media-sections';
+import {
+  createMeetingSections,
+  getWatchedMediaSectionInfo,
+} from './media-sections';
 
 const {
   decompress,
@@ -324,7 +330,6 @@ export const downloadFileIfNeeded = async ({
   const currentStateStore = useCurrentStateStore();
   await ensureDir(dir);
   if (!filename) filename = basename(url);
-  const { default: sanitize } = await import('sanitize-filename');
   filename = sanitize(filename);
   const destinationPath = join(dir, filename);
   const remoteSize: number =
@@ -553,7 +558,6 @@ export const fetchMedia = async () => {
       day.status = null;
     });
     if (!queues.meetings[currentStateStore.currentCongregation]) {
-      const { default: PQueue } = await import('p-queue');
       queues.meetings[currentStateStore.currentCongregation] = new PQueue({
         concurrency: 2,
       });
@@ -1689,9 +1693,6 @@ export const watchedItemMapper: (
       const watchedDayFolder = dirname(watchedItemPath);
       console.log('🔍 [watchedItemMapper] watchedDayFolder:', watchedDayFolder);
       if (watchedDayFolder) {
-        const { getWatchedMediaSectionInfo } = await import(
-          'src/helpers/media-sections'
-        );
         const sectionInfo = await getWatchedMediaSectionInfo(
           watchedDayFolder,
           filename,
@@ -2982,7 +2983,6 @@ export const setUrlVariables = async (baseUrl: string | undefined) => {
       return;
     }
 
-    const { load } = await import('cheerio');
     const $ = load(homePage);
     const div = $('div#pageConfig');
     if (!div?.[0]?.attribs) {

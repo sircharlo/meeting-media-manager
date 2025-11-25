@@ -2,6 +2,7 @@ import { app } from 'electron';
 import electronUpdater from 'electron-updater';
 const { autoUpdater } = electronUpdater;
 import fse from 'fs-extra';
+import isOnline from 'is-online';
 const { exists } = fse;
 import { captureElectronError } from 'main/utils';
 import { sendToWindow } from 'main/window/window-base';
@@ -82,7 +83,6 @@ export const triggerUpdateCheck = async (attempt = 1) => {
   }
 
   try {
-    const { default: isOnline } = await import('is-online');
     const online = await isOnline();
     if (online) {
       await autoUpdater.checkForUpdatesAndNotify();
