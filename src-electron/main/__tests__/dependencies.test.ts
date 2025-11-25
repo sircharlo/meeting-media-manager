@@ -26,6 +26,8 @@ function getAllFiles(
       }
     }
   }
+  // Dedupe using a Set
+  results = [...new Set(results)];
   return results;
 }
 
@@ -92,7 +94,8 @@ describe('Electron Dependencies', () => {
         if (imp.startsWith('app/')) continue;
         if (imp.startsWith('main/')) continue;
         if (imp.startsWith('preload/')) continue;
-        if (imp.startsWith('src/')) continue;
+        if (imp.startsWith('src/constants')) continue;
+        if (imp.startsWith('src/types')) continue;
         if (imp.startsWith('src-electron/')) continue;
 
         // Skip electron dependencies
@@ -122,6 +125,7 @@ describe('Electron Dependencies', () => {
         missingDeps.push(dep);
       }
     });
+    missingDeps.sort();
 
     if (missingDeps.length > 0) {
       console.error(
@@ -136,6 +140,7 @@ describe('Electron Dependencies', () => {
         undeclaredDeps.push(dep);
       }
     });
+    undeclaredDeps.sort();
 
     if (undeclaredDeps.length > 0) {
       console.error(

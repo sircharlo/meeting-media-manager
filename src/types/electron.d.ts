@@ -8,7 +8,7 @@ import type {
   QueryResponseItem,
   SettingsValues,
   VideoDuration,
-} from 'src/types';
+} from 'src/types/electron';
 import type Path from 'upath';
 
 export type DiscussionCategory =
