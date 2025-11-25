@@ -1,3 +1,5 @@
+import type { CaptureContext, ScopeContext } from '@sentry/core';
+import type { EventHint } from '@sentry/electron';
 import type { default as FsExtra } from 'fs-extra';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
 import type robot from 'robotjs';
@@ -8,7 +10,7 @@ import type {
   QueryResponseItem,
   SettingsValues,
   VideoDuration,
-} from 'src/types';
+} from 'src/types/electron';
 import type Path from 'upath';
 
 export type DiscussionCategory =
@@ -247,6 +249,16 @@ export type ElectronIpcSendKey =
   | 'watchFolder'
   | 'websiteWindowClosed'
   | 'zoomWebsiteWindow';
+
+export type ExclusiveEventHintOrCaptureContext =
+  | (CaptureContext &
+      Partial<{
+        [key in keyof EventHint]: never;
+      }>)
+  | (EventHint &
+      Partial<{
+        [key in keyof ScopeContext]: never;
+      }>);
 
 export type ExternalWebsite = 'docs' | 'latestRelease' | 'repo';
 
