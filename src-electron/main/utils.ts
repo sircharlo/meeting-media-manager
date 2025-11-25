@@ -3,6 +3,7 @@ import type { CaptureContext } from '@sentry/core';
 import { captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
+import isOnline from 'is-online';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -179,7 +180,6 @@ export const fetchJson = async <T>(
       clearTimeout(timeoutId);
     }
   } catch (e) {
-    const { default: isOnline } = await import('is-online');
     const online = await isOnline();
 
     if (online) {

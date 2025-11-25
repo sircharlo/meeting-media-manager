@@ -16,6 +16,7 @@ import type {
 } from 'src/types';
 import type { Songbook } from 'stores/current-state';
 
+import DOMPurify from 'dompurify';
 import { defineStore } from 'pinia';
 import { MAX_SONGS } from 'src/constants/jw';
 import { isMeetingDay } from 'src/helpers/date';
@@ -543,7 +544,6 @@ export const useJwStore = defineStore('jw-store', {
 
         const results = await Promise.allSettled(promises);
 
-        const { default: DOMPurify } = await import('dompurify');
         for (const result of results) {
           if (result.status === 'fulfilled') {
             const { wtlocale, yeartext } = result.value;

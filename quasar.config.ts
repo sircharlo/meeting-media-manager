@@ -229,10 +229,8 @@ export default defineConfig((ctx) => {
           'image-size',
           'is-online',
           'mime',
-          'ms',
           'music-metadata',
           'pdfjs-dist',
-          'readable-stream',
           'upath',
         ]);
 
