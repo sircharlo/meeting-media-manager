@@ -65,13 +65,6 @@ export const inferExtension = async (filename: string, filetype?: string) => {
   }
 };
 
-/**
- * Reads a directory and returns an array of file items.
- * @param dir The directory to read.
- * @param withSizes Whether to include file sizes.
- * @param recursive Whether to read subdirectories recursively.
- * @returns An array of file items.
- */
 export const readDirectory = async (
   dir: string,
   withSizes?: boolean,

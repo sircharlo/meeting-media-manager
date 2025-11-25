@@ -25,11 +25,10 @@ const {
   parseMediaFile,
   path,
   pathToFileURL,
-  readdir,
   unwatchFolders,
   watchFolder,
 } = window.electronApi;
-const { exists, pathExists, stat, writeFile } = fs;
+const { exists, pathExists, readdir, stat, writeFile } = fs;
 const { basename, dirname, extname, join, resolve } = path;
 
 const getThumbnailFromMetadata = async (mediaPath: string) => {
@@ -354,13 +353,15 @@ async function decompressAndFindFFmpeg(
   zipPath: string,
   dir: string,
 ): Promise<string> {
-  const ffmpegDir = await decompress(zipPath, dir);
-  const ffmpegPaths = await readdir(ffmpegDir);
-  const ffmpegPath = ffmpegPaths.find((f) => f.name.includes('ffmpeg'));
-  if (!ffmpegPath) {
+  const ffmpegPaths = await decompress(zipPath, dir);
+  if (!ffmpegPaths?.length) {
+    throw new Error('Could not decompress FFmpeg.');
+  }
+  const ffmpegFile = ffmpegPaths.find((f) => f.path.includes('ffmpeg'));
+  if (!ffmpegFile) {
     throw new Error('Could not find FFmpeg.');
   }
-  return join(dir, ffmpegPath);
+  return join(dir, ffmpegFile.path);
 }
 
 // Download FFmpeg
@@ -428,8 +429,7 @@ async function validateExistingFile(
     const zipStat = await stat(zipPath);
     if (zipStat.size === size) {
       const exeName =
-        (await readdir(dir)).find((f) => f.name !== basename(zipPath))?.name ||
-        '';
+        (await readdir(dir)).find((f) => f !== basename(zipPath)) || '';
       if (exeName) {
         const exePath = join(dir, exeName);
         useCurrentStateStore().ffmpegPath = exePath;

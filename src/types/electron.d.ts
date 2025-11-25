@@ -1,3 +1,4 @@
+import type decompress from 'decompress';
 import type { default as FsExtra } from 'fs-extra';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
 import type robot from 'robotjs';
@@ -44,7 +45,7 @@ export interface ElectronApi {
     originalFile: string,
     ffmpegPath: string,
   ) => Promise<string>;
-  decompress: (input: string, output: string) => Promise<string>;
+  decompress: typeof decompress;
   downloadFile: (
     url: string,
     saveDir: string,
@@ -192,7 +193,6 @@ export interface ElectronApi {
 // ipcMain.handle / ipcRenderer.invoke channels
 export type ElectronIpcInvokeKey =
   | 'createVideoFromNonVideo'
-  | 'decompress'
   | 'downloadFile'
   | 'getAllScreens'
   | 'getAppDataPath'

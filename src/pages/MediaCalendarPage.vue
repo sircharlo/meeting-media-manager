@@ -144,11 +144,7 @@ import {
   findMediaSection,
   getOrCreateMediaSection,
 } from 'src/helpers/media-sections';
-import {
-  decompressJwpub,
-  jwpubDecompressor,
-  showMediaWindow,
-} from 'src/helpers/mediaPlayback';
+import { decompressJwpub, showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { triggerZoomScreenShare } from 'src/helpers/zoom';
 import { convertImageIfNeeded } from 'src/utils/converters';
@@ -256,6 +252,7 @@ watch(
 
 const {
   convertPdfToImages,
+  decompress,
   executeQuery,
   fs,
   getLocalPathFromFileObject,
@@ -264,7 +261,7 @@ const {
   pathToFileURL,
   readdir,
 } = window.electronApi;
-const { ensureDir, remove, writeFile } = fs;
+const { ensureDir, exists, remove, writeFile } = fs;
 const { basename, join } = path;
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
@@ -1109,23 +1106,76 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         files.push(...convertedImages);
       } else if (isJwpub(filepath)) {
         console.log('🎯 [addToFiles] Processing JWPUB file:', filepath);
-
+        // First, only decompress the db in memory to get the publication info and derive the destination path
+        console.log('🎯 [addToFiles] Decompressing JWPUB for db extraction');
+        const tempJwpubContents = await decompress(filepath);
+        console.log(
+          '🎯 [addToFiles] Decompressed JWPUB contents:',
+          tempJwpubContents.length,
+          'files',
+        );
+        const tempContentFile = tempJwpubContents.find((tempJwpubContent) =>
+          tempJwpubContent.path.endsWith('contents'),
+        );
+        console.log(
+          '🎯 [addToFiles] Found contents file:',
+          tempContentFile ? 'yes' : 'no',
+        );
+        if (!tempContentFile) {
+          console.log('🎯 [addToFiles] No contents file found, returning');
+          return;
+        }
+        console.log('🎯 [addToFiles] Getting temp directory');
         const tempDir = await getTempPath();
-        const tempExtractDir = join(tempDir, uuid());
-        await ensureDir(tempExtractDir);
+        console.log('🎯 [addToFiles] Temp dir:', tempDir);
+        if (!tempDir) {
+          console.log('🎯 [addToFiles] No temp dir, returning');
+          return;
+        }
+        await ensureDir(tempDir);
+        console.log('🎯 [addToFiles] Ensured temp dir exists');
+
+        let tempFilePath: string | undefined;
+        let tempDbFilePath: string | undefined;
 
         try {
-          console.log('🎯 [addToFiles] Decompressing JWPUB to temp dir');
-          await jwpubDecompressor(filepath, tempExtractDir);
-          const tempDbFile = await findDb(tempExtractDir);
-
+          tempFilePath = join(tempDir, basename(filepath) + '-contents');
+          console.log(
+            '🎯 [addToFiles] Writing contents to temp file:',
+            tempFilePath,
+          );
+          await writeFile(tempFilePath, tempContentFile.data);
+          console.log('🎯 [addToFiles] Decompressing temp contents file');
+          const tempJwpubFileContents = await decompress(tempFilePath);
+          console.log(
+            '🎯 [addToFiles] Decompressed temp contents:',
+            tempJwpubFileContents.length,
+            'files',
+          );
+          const tempDbFile = tempJwpubFileContents.find(
+            (tempJwpubFileContent) => tempJwpubFileContent.path.endsWith('.db'),
+          );
+          console.log(
+            '🎯 [addToFiles] Found db file:',
+            tempDbFile ? 'yes' : 'no',
+          );
           if (!tempDbFile) {
             console.log('🎯 [addToFiles] No db file found, returning');
             return;
           }
-
+          tempDbFilePath = join(tempDir, basename(filepath) + '.db');
+          console.log(
+            '🎯 [addToFiles] Writing db to temp path:',
+            tempDbFilePath,
+          );
+          await writeFile(tempDbFilePath, tempDbFile.data);
+          console.log('🎯 [addToFiles] Checking if db file exists');
+          if (!(await exists(tempDbFilePath))) {
+            console.log('🎯 [addToFiles] Db file does not exist, returning');
+            return;
+          }
           console.log('🎯 [addToFiles] Getting publication info from db');
-          const publication = getPublicationInfoFromDb(tempDbFile);
+          const publication = getPublicationInfoFromDb(tempDbFilePath);
           console.log('🎯 [addToFiles] Publication info:', publication);
           console.log('🎯 [addToFiles] Getting publication directory');
           const publicationDirectory = await getPublicationDirectory(
@@ -1200,9 +1250,18 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
           }
         } finally {
           // Clean up temp files
-          await remove(tempExtractDir).catch((err) =>
-            console.error('Failed to remove temp extract dir:', err),
-          );
+          if (tempFilePath) {
+            console.log('🎯 [addToFiles] Removing temp contents file');
+            remove(tempFilePath).catch((err) =>
+              console.error('Failed to remove temp contents file:', err),
+            );
+          }
+          if (tempDbFilePath) {
+            console.log('🎯 [addToFiles] Removing temp db file');
+            remove(tempDbFilePath).catch((err) =>
+              console.error('Failed to remove temp db file:', err),
+            );
+          }
         }
       } else if (isJwPlaylist(filepath) && selectedDateObject.value) {
         // Show playlist selection dialog

@@ -21,16 +21,7 @@ const { decompress, executeQuery, fs, path, toggleMediaWindow } =
 const { pathExists, remove, rename } = fs;
 const { basename, extname, join } = path;
 
-/**
- * Decompress a JWPUB file to a specified output directory.
- * @param jwpubPath - The path to the JWPUB file to decompress.
- * @param outputPath - The directory to decompress the JWPUB file to.
- * @returns The path to the decompressed JWPUB file.
- */
-export const jwpubDecompressor = async (
-  jwpubPath: string,
-  outputPath: string,
-) => {
+const jwpubDecompressor = async (jwpubPath: string, outputPath: string) => {
   try {
     await decompress(jwpubPath, outputPath);
     await decompress(join(outputPath, 'contents'), outputPath);
