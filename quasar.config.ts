@@ -232,7 +232,7 @@ export default defineConfig((ctx) => {
           'ms',
           'music-metadata',
           'pdfjs-dist',
-          'process-nextick-args',
+          'readable-stream',
           'upath',
         ]);
 
