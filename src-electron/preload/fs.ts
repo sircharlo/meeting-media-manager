@@ -1,9 +1,11 @@
 // eslint-env node
 
-import type { IOptions } from 'music-metadata';
 import type { FileItem, VideoDuration } from 'src/types';
 
+import { videoDuration } from '@numairawan/video-duration';
 import { type Dirent, exists, readdir, stat } from 'fs-extra';
+import mime from 'mime';
+import { type IOptions, parseFile } from 'music-metadata';
 import url from 'node:url';
 import { capturePreloadError } from 'preload/log';
 import { join, normalize } from 'upath';
@@ -11,13 +13,11 @@ import { join, normalize } from 'upath';
 export const getVideoDuration = async (
   filePath: string,
 ): Promise<VideoDuration> => {
-  const { videoDuration } = await import('@numairawan/video-duration');
   return videoDuration(filePath);
 };
 
 export const parseMediaFile = async (filePath: string, options?: IOptions) => {
-  const musicMetadata = await import('music-metadata');
-  return musicMetadata.parseFile(filePath, options);
+  return parseFile(filePath, options);
 };
 
 const isFileUrl = (testpath: string) => {
@@ -57,7 +57,6 @@ export const inferExtension = async (filename: string, filetype?: string) => {
   if (!filetype || /\.[0-9a-z]+$/i.test(filename)) return filename;
 
   try {
-    const { default: mime } = await import('mime');
     const extractedExtension = mime.getExtension(filetype);
     return extractedExtension ? `${filename}.${extractedExtension}` : filename;
   } catch (e) {

@@ -40,6 +40,7 @@ import type {
   ElectronIpcListenKey,
   MediaItem,
   MediaSectionWithConfig,
+  SettingsValues,
 } from 'src/types';
 
 import {
@@ -83,7 +84,10 @@ import {
   registerAllCustomShortcuts,
   unregisterAllCustomShortcuts,
 } from 'src/helpers/keyboardShortcuts';
-import { getOrCreateMediaSection } from 'src/helpers/media-sections';
+import {
+  getOrCreateMediaSection,
+  removeWatchedMediaSectionInfo,
+} from 'src/helpers/media-sections';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
@@ -593,9 +597,6 @@ async function handleUnlinkCleanup(changedPath: string) {
     const filename = basename(changedPath);
     const watchedDayFolder = dirname(changedPath);
     if (watchedDayFolder) {
-      const { removeWatchedMediaSectionInfo } = await import(
-        'src/helpers/media-sections'
-      );
       await removeWatchedMediaSectionInfo(watchedDayFolder, filename);
     }
   } catch (error) {
@@ -768,7 +769,7 @@ const initListeners = () => {
 
   onShortcut(({ shortcut }) => {
     if (!currentSettings.value?.enableKeyboardShortcuts) return;
-    executeShortcut(shortcut);
+    executeShortcut(shortcut as keyof SettingsValues);
   });
 
   onWatchFolderUpdate(({ changedPath, day, event }) => {
