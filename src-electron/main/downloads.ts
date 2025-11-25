@@ -218,63 +218,82 @@ async function processQueue() {
   activeDownloadIds.push(url + saveDir);
 
   // Start the download
-  const downloadId = await manager.download({
-    callbacks: {
-      onDownloadCancelled: async ({ id }) => {
-        sendToWindow(mainWindow, 'downloadCancelled', { id });
-        activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
-        processQueue(); // Process next download
-      },
-      onDownloadCompleted: async ({ item }) => {
-        sendToWindow(mainWindow, 'downloadCompleted', {
-          filePath: item.getSavePath(),
-          id: url + saveDir,
-        });
-        activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
-        processQueue(); // Process next download
-      },
-      onDownloadProgress: async ({ item, percentCompleted }) => {
-        sendToWindow(mainWindow, 'downloadProgress', {
-          bytesReceived: item.getReceivedBytes(),
-          id: url + saveDir,
-          percentCompleted,
-        });
-      },
-      onDownloadStarted: async ({ item, resolvedFilename }) => {
-        sendToWindow(mainWindow, 'downloadStarted', {
-          filename: resolvedFilename,
-          id: url + saveDir,
-          totalBytes: item.getTotalBytes(),
-        });
-      },
-      onError: async (err, downloadData) => {
-        captureElectronError(err, {
-          contexts: {
-            fn: {
-              name: 'src-electron/downloads processQueue onError',
-              params: {
-                directory: saveDir,
-                isDownloadErrorExpected: await isDownloadErrorExpected(),
-                saveAsFilename: destFilename,
-                window: mainWindow?.id,
-              },
-              url,
-            },
-          },
-        });
-        if (downloadData) {
-          sendToWindow(mainWindow, 'downloadError', {
-            id: downloadData.id,
+  try {
+    const downloadId = await manager.download({
+      callbacks: {
+        onDownloadCancelled: async ({ id }) => {
+          sendToWindow(mainWindow, 'downloadCancelled', { id });
+          activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
+          processQueue(); // Process next download
+        },
+        onDownloadCompleted: async ({ item }) => {
+          sendToWindow(mainWindow, 'downloadCompleted', {
+            filePath: item.getSavePath(),
+            id: url + saveDir,
           });
-        }
-        activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
-        processQueue(); // Process next download
+          activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
+          processQueue(); // Process next download
+        },
+        onDownloadProgress: async ({ item, percentCompleted }) => {
+          sendToWindow(mainWindow, 'downloadProgress', {
+            bytesReceived: item.getReceivedBytes(),
+            id: url + saveDir,
+            percentCompleted,
+          });
+        },
+        onDownloadStarted: async ({ item, resolvedFilename }) => {
+          sendToWindow(mainWindow, 'downloadStarted', {
+            filename: resolvedFilename,
+            id: url + saveDir,
+            totalBytes: item.getTotalBytes(),
+          });
+        },
+        onError: async (err, downloadData) => {
+          captureElectronError(err, {
+            contexts: {
+              fn: {
+                name: 'src-electron/downloads processQueue onError',
+                params: {
+                  directory: saveDir,
+                  isDownloadErrorExpected: await isDownloadErrorExpected(),
+                  saveAsFilename: destFilename,
+                  window: mainWindow?.id,
+                },
+                url,
+              },
+            },
+          });
+          if (downloadData) {
+            sendToWindow(mainWindow, 'downloadError', {
+              id: downloadData.id,
+            });
+          }
+          activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
+          processQueue(); // Process next download
+        },
       },
-    },
-    directory: saveDir,
-    saveAsFilename: destFilename,
-    url,
-    window: mainWindow,
-  });
-  return downloadId;
+      directory: saveDir,
+      saveAsFilename: destFilename,
+      url,
+      window: mainWindow,
+    });
+    return downloadId;
+  } catch (error) {
+    captureElectronError(error, {
+      contexts: {
+        fn: {
+          name: 'src-electron/downloads processQueue catch',
+          params: {
+            directory: saveDir,
+            saveAsFilename: destFilename,
+            window: mainWindow?.id,
+          },
+          url,
+        },
+      },
+    });
+    activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
+    processQueue(); // Process next download
+    return null;
+  }
 }
