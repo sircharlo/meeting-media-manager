@@ -1,4 +1,4 @@
-import type { ElectronApi } from 'src/types';
+import type { ElectronApi } from 'src/types/electron';
 
 import robot from '@jitsi/robotjs';
 import { contextBridge, webUtils } from 'electron/renderer';
