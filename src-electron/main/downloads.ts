@@ -2,7 +2,6 @@ import { getCountriesForTimezone } from 'countries-and-timezones';
 import { app } from 'electron';
 import { ElectronDownloadManager } from 'electron-dl-manager';
 import { ensureDir, pathExists } from 'fs-extra/esm';
-import isOnline from 'is-online';
 import { sendToWindow } from 'main/window/window-base';
 import { mainWindow } from 'main/window/window-main';
 import { captureElectronError, fetchJson } from 'src-electron/main/utils';
@@ -119,6 +118,7 @@ export async function isDownloadErrorExpected(): Promise<boolean> {
   downloadErrorCheckPromise = (async () => {
     try {
       // Check if user is online first
+      const { default: isOnline } = await import('is-online');
       const online = await isOnline();
 
       if (!online) {

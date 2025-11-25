@@ -1,4 +1,3 @@
-import { OBSWebSocketError } from 'obs-websocket-js';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { sleep } from 'src/utils/general';
 import { initObsWebSocket, obsWebSocket } from 'src/utils/obs';
@@ -45,6 +44,7 @@ export const obsConnect = async (setup?: boolean) => {
           break;
         }
       } catch (err) {
+        const { OBSWebSocketError } = await import('obs-websocket-js');
         if (err instanceof OBSWebSocketError) obsState.obsErrorHandler(err);
         else errorCatcher(err);
       } finally {

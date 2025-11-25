@@ -1,14 +1,13 @@
+import type Decompress from 'decompress';
+import type { PDFPageProxy } from 'pdfjs-dist';
 import type { RenderParameters } from 'pdfjs-dist/types/src/display/api';
 
 import fse from 'fs-extra';
-import { getDocument, type PDFPageProxy } from 'pdfjs-dist';
 const { ensureDir, writeFile } = fse;
-import decompressPackage from 'decompress';
 import { FULL_HD } from 'src/constants/media';
 import upath from 'upath';
 const { basename, join } = upath;
 
-import convert from 'heic-convert';
 import { capturePreloadError } from 'preload/log';
 
 export interface ConversionOptions {
@@ -27,20 +26,20 @@ export interface ConversionOptions {
   quality?: number;
 }
 
-export const decompress: typeof decompressPackage = async (
-  input,
-  output,
-  opts,
-) => {
+export const decompress: typeof Decompress = async (input, output, opts) => {
+  const { default: decompressPackage } = await import('decompress');
   return decompressPackage(input, output, opts);
 };
 
 export const convertHeic = async (image: ConversionOptions) => {
+  const { default: convert } = await import('heic-convert');
   return convert(image);
 };
 
 export const getNrOfPdfPages = async (pdfPath: string): Promise<number> => {
   try {
+    const { getDocument } = await import('pdfjs-dist/webpack.mjs');
+
     const loadingTask = getDocument(pdfPath);
     const pdfDocument = await loadingTask.promise;
     return pdfDocument.numPages;
@@ -56,6 +55,8 @@ export const convertPdfToImages = async (
 ): Promise<string[]> => {
   const outputImages: string[] = [];
   try {
+    const { getDocument } = await import('pdfjs-dist/webpack.mjs');
+
     const loadingTask = getDocument(pdfPath);
     const pdfDocument = await loadingTask.promise;
     const numPages = pdfDocument.numPages;

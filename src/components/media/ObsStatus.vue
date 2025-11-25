@@ -41,7 +41,6 @@
 </template>
 
 <script setup lang="ts">
-import { OBSWebSocketError } from 'obs-websocket-js';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -98,6 +97,7 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
       }
     } catch (error) {
       attempts++;
+      const { OBSWebSocketError } = await import('obs-websocket-js');
       if (
         attempts < maxRetries &&
         error instanceof OBSWebSocketError &&

@@ -1,6 +1,4 @@
-import ffmpeg from 'fluent-ffmpeg';
 import { exists } from 'fs-extra';
-import { imageSizeFromFile } from 'image-size/fromFile';
 import { FULL_HD } from 'src/constants/media';
 import path from 'upath';
 
@@ -15,6 +13,8 @@ export const createVideoFromNonVideo = async (
   if (await exists(convertedFilePath)) {
     return convertedFilePath;
   }
+
+  const { default: ffmpeg } = await import('fluent-ffmpeg');
 
   ffmpeg.setFfmpegPath(ffmpegPath);
 
@@ -31,6 +31,7 @@ export const createVideoFromNonVideo = async (
         });
     });
   } else {
+    const { imageSizeFromFile } = await import('image-size/fromFile');
     const { height, orientation, width } =
       await imageSizeFromFile(originalFile);
 
