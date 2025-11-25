@@ -54,28 +54,31 @@ describe('Locales', () => {
     const allContents = [...files, ...i18nFiles];
     const content = allContents.join(' ');
 
-    const keys = new Set(Object.keys(appMessages.en));
+    const keys = Object.keys(appMessages.en);
     const unusedKeys: string[] = [];
 
-    keys.forEach((key) => {
-      if (key.endsWith('-explain') && keys.has(key.replace('-explain', ''))) {
-        return;
+    for (const key of keys) {
+      // Skip foo-explain when foo exists
+      if (
+        key.endsWith('-explain') &&
+        keys.includes(key.replace('-explain', ''))
+      ) {
+        continue;
       }
 
-      const match =
+      const isUsed =
         content.includes(`'${key}'`) ||
         content.includes(`${key}: {`) ||
         content.includes(`@:${key}`);
 
-      if (!match) {
+      if (!isUsed) {
         unusedKeys.push(key);
       }
-    });
-
-    if (unusedKeys.length > 0) {
-      expect.fail(
-        `The following translation keys are unused: ${unusedKeys.join(', ')}`,
-      );
     }
+
+    expect(
+      unusedKeys,
+      `The following translation keys are unused: ${unusedKeys.join(', ')}`,
+    ).toHaveLength(0);
   });
 });

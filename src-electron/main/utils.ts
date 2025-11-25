@@ -1,6 +1,6 @@
-import type { CaptureContext } from '@sentry/core';
+import type { CaptureContext, ScopeContext } from '@sentry/core';
 
-import { captureException } from '@sentry/electron/main';
+import { captureException, type EventHint } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
 import isOnline from 'is-online';
@@ -13,6 +13,16 @@ import {
   TRUSTED_DOMAINS,
 } from 'src-electron/constants';
 import { urlVariables } from 'src-electron/main/session';
+
+type ExclusiveEventHintOrCaptureContext =
+  | (CaptureContext &
+      Partial<{
+        [key in keyof EventHint]: never;
+      }>)
+  | (EventHint &
+      Partial<{
+        [key in keyof ScopeContext]: never;
+      }>);
 
 /**
  * Gets the current app version
@@ -206,7 +216,7 @@ export const fetchJson = async <T>(
  */
 export function captureElectronError(
   error: Error | string | unknown,
-  context?: CaptureContext,
+  context?: ExclusiveEventHintOrCaptureContext,
 ) {
   if (error instanceof Error && error.cause) {
     captureElectronError(error.cause, context);
