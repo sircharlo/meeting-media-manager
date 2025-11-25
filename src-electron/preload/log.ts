@@ -1,6 +1,6 @@
-import type { CaptureContext } from '@sentry/core';
+import type { ExclusiveEventHintOrCaptureContext } from 'src/types';
 
-import { captureException } from '@sentry/electron/renderer';
+import { captureException } from '@sentry/electron';
 
 /**
  * Logs an error to the console or to Sentry
@@ -9,7 +9,7 @@ import { captureException } from '@sentry/electron/renderer';
  */
 export function capturePreloadError(
   error: Error | string | unknown,
-  context?: CaptureContext,
+  context?: ExclusiveEventHintOrCaptureContext,
 ) {
   if (error instanceof Error && error.cause) {
     capturePreloadError(error.cause, context);

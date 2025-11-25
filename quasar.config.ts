@@ -231,6 +231,7 @@ export default defineConfig((ctx) => {
           'mime',
           'music-metadata',
           'pdfjs-dist',
+          'robotjs',
           'upath',
         ]);
 
