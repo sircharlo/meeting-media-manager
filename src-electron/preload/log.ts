@@ -1,16 +1,6 @@
-import type { CaptureContext, ScopeContext } from '@sentry/core';
+import { captureException } from '@sentry/electron/renderer';
 
-import { captureException, type EventHint } from '@sentry/electron/renderer';
-
-type ExclusiveEventHintOrCaptureContext =
-  | (CaptureContext &
-      Partial<{
-        [key in keyof EventHint]: never;
-      }>)
-  | (EventHint &
-      Partial<{
-        [key in keyof ScopeContext]: never;
-      }>);
+type CaptureCtx = Parameters<typeof captureException>[1];
 
 /**
  * Logs an error to the console or to Sentry
@@ -19,7 +9,7 @@ type ExclusiveEventHintOrCaptureContext =
  */
 export function capturePreloadError(
   error: Error | string | unknown,
-  context?: ExclusiveEventHintOrCaptureContext,
+  context?: CaptureCtx,
 ) {
   if (error instanceof Error && error.cause) {
     capturePreloadError(error.cause, context);

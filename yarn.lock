@@ -3738,15 +3738,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/readable-stream@npm:^4":
-  version: 4.0.22
-  resolution: "@types/readable-stream@npm:4.0.22"
-  dependencies:
-    "@types/node": "npm:*"
-  checksum: 10c0/92cfee9362ddea15ef0d2a5daf71ce0cb035a8556432428479eaaf2ef73b3dd345fa08b81cfa7eefe805eff48f9f81b297c46cc8ff2a77b49b013876bc02216e
-  languageName: node
-  linkType: hard
-
 "@types/responselike@npm:^1.0.0":
   version: 1.0.3
   resolution: "@types/responselike@npm:1.0.3"

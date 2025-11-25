@@ -1,6 +1,4 @@
-import type { CaptureContext, ScopeContext } from '@sentry/core';
-
-import { captureException, type EventHint } from '@sentry/electron/main';
+import { captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
 import { join, resolve } from 'node:path';
@@ -13,15 +11,7 @@ import {
 } from 'src-electron/constants';
 import { urlVariables } from 'src-electron/main/session';
 
-type ExclusiveEventHintOrCaptureContext =
-  | (CaptureContext &
-      Partial<{
-        [key in keyof EventHint]: never;
-      }>)
-  | (EventHint &
-      Partial<{
-        [key in keyof ScopeContext]: never;
-      }>);
+type CaptureCtx = Parameters<typeof captureException>[1];
 
 /**
  * Gets the current app version
@@ -216,7 +206,7 @@ export const fetchJson = async <T>(
  */
 export function captureElectronError(
   error: Error | string | unknown,
-  context?: ExclusiveEventHintOrCaptureContext,
+  context?: CaptureCtx,
 ) {
   if (error instanceof Error && error.cause) {
     captureElectronError(error.cause, context);

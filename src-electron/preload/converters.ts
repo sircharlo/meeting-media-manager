@@ -27,13 +27,23 @@ export interface ConversionOptions {
 }
 
 export const decompress: typeof Decompress = async (input, output, opts) => {
-  const { default: decompressPackage } = await import('decompress');
-  return decompressPackage(input, output, opts);
+  try {
+    const { default: decompressPackage } = await import('decompress');
+    return decompressPackage(input, output, opts);
+  } catch (e) {
+    capturePreloadError(e);
+    return [];
+  }
 };
 
 export const convertHeic = async (image: ConversionOptions) => {
-  const { default: convert } = await import('heic-convert');
-  return convert(image);
+  try {
+    const { default: convert } = await import('heic-convert');
+    return convert(image);
+  } catch (e) {
+    capturePreloadError(e);
+    return new ArrayBuffer(0);
+  }
 };
 
 export const getNrOfPdfPages = async (pdfPath: string): Promise<number> => {
