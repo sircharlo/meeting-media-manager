@@ -1,6 +1,16 @@
-import type { ExclusiveEventHintOrCaptureContext } from 'src/types';
+import type { CaptureContext, ScopeContext } from '@sentry/core';
 
-import { captureException } from '@sentry/electron';
+import { captureException, type EventHint } from '@sentry/electron/renderer';
+
+type ExclusiveEventHintOrCaptureContext =
+  | (CaptureContext &
+      Partial<{
+        [key in keyof EventHint]: never;
+      }>)
+  | (EventHint &
+      Partial<{
+        [key in keyof ScopeContext]: never;
+      }>);
 
 /**
  * Logs an error to the console or to Sentry
