@@ -1,4 +1,3 @@
-import type Decompress from 'decompress';
 import type { PDFPageProxy } from 'pdfjs-dist';
 import type { RenderParameters } from 'pdfjs-dist/types/src/display/api';
 
@@ -25,16 +24,6 @@ export interface ConversionOptions {
    */
   quality?: number;
 }
-
-export const decompress: typeof Decompress = async (input, output, opts) => {
-  try {
-    const { default: decompressPackage } = await import('decompress');
-    return decompressPackage(input, output, opts);
-  } catch (e) {
-    capturePreloadError(e);
-    return [];
-  }
-};
 
 export const convertHeic = async (image: ConversionOptions) => {
   try {

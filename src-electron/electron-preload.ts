@@ -7,7 +7,6 @@ import { initCloseListeners } from 'src-electron/preload/close';
 import {
   convertHeic,
   convertPdfToImages,
-  decompress,
   getNrOfPdfPages,
 } from 'src-electron/preload/converters';
 import {
@@ -46,7 +45,7 @@ const electronApi: ElectronApi = {
   convertHeic,
   convertPdfToImages,
   createVideoFromNonVideo: (f, fP) => invoke('createVideoFromNonVideo', f, fP),
-  decompress,
+  decompress: (i, o, op) => invoke('decompress', i, o, op),
   downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
   executeQuery,
   fileUrlToPath,

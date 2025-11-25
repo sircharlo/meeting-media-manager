@@ -1285,17 +1285,21 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         );
         console.log('🎯 openJwPlaylistDialog event dispatched');
       } else if (isArchive(filepath)) {
+        console.log('🎯 Archive file detected:', filepath);
         const unzipDirectory = join(await getTempPath(), basename(filepath));
+        console.log('🎯 Unzip directory:', unzipDirectory);
         await remove(unzipDirectory);
-        await window.electronApi
-          .decompress(filepath, unzipDirectory)
-          .catch((error) => {
-            throw error;
-          });
+        console.log('🎯 Removed unzip directory');
+        await decompress(filepath, unzipDirectory);
+        console.log('🎯 Decompressed archive');
         const files = await readdir(unzipDirectory);
+        console.log('🎯 Reading unzip directory', files);
         const filePaths = files.map((file) => join(unzipDirectory, file.name));
+        console.log('🎯 Mapping files', filePaths);
         await addToFiles(filePaths);
+        console.log('🎯 Added files');
         await remove(unzipDirectory);
+        console.log('🎯 Removed unzip directory');
       } else {
         createTemporaryNotification({
           caption: filepath ? basename(filepath) : filepath,

@@ -2535,7 +2535,8 @@ const downloadMissingMedia = async (
     if (!responseObject?.files) {
       if (!(await pathExists(pubDir))) return { FilePath: '' };
       const files: string[] = [];
-      const items = (await readdir(pubDir)).filter((item) => item.isFile);
+      const dirItems = await readdir(pubDir);
+      const items = dirItems.filter((item) => item.isFile);
       for (const item of items) {
         const filePath = join(pubDir, item.name);
         const fileExtension = extname(filePath).toLowerCase();
