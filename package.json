@@ -66,6 +66,7 @@
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
     "pretty-bytes": "^7.1.0",
+    "process-nextick-args": "^2.0.1",
     "quasar": "^2.18.6",
     "sanitize-filename": "^1.6.3",
     "upath": "^2.0.1",

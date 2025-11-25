@@ -10162,6 +10162,7 @@ __metadata:
     postcss: "npm:^8.5.6"
     prettier: "npm:^3.6.2"
     pretty-bytes: "npm:^7.1.0"
+    process-nextick-args: "npm:^2.0.1"
     quasar: "npm:^2.18.6"
     rollup-plugin-visualizer: "npm:^6.0.5"
     sanitize-filename: "npm:^1.6.3"
@@ -12031,7 +12032,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"process-nextick-args@npm:~2.0.0":
+"process-nextick-args@npm:^2.0.1, process-nextick-args@npm:~2.0.0":
   version: 2.0.1
   resolution: "process-nextick-args@npm:2.0.1"
   checksum: 10c0/bec089239487833d46b59d80327a1605e1c5287eaad770a291add7f45fda1bb5e28b38e0e061add0a1d0ee0984788ce74fa394d345eed1c420cacf392c554367
