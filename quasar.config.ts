@@ -235,6 +235,9 @@ export default defineConfig((ctx) => {
           'upath',
         ]);
 
+        // Add hacky dependencies here
+        electronDeps.add('ms');
+
         // Remove unneeded dependencies from production build
         Object.keys(pkg.dependencies).forEach((dep) => {
           if (!electronDeps.has(dep)) {
