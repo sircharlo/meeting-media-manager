@@ -31,7 +31,7 @@ export const electronApi: ElectronApi = {
   createVideoFromNonVideo: function (originalFile, ffmpegPath) {
     throw new Error('Function not implemented.');
   },
-  decompress: function (input, output) {
+  decompress: function (input, output, opts) {
     throw new Error('Function not implemented.');
   },
   downloadFile: function (url, saveDir, destFilename, lowPriority) {
