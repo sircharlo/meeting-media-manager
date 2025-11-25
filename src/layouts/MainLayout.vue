@@ -40,6 +40,7 @@ import type {
   ElectronIpcListenKey,
   MediaItem,
   MediaSectionWithConfig,
+  SettingsValues,
 } from 'src/types';
 
 import {
@@ -768,7 +769,7 @@ const initListeners = () => {
 
   onShortcut(({ shortcut }) => {
     if (!currentSettings.value?.enableKeyboardShortcuts) return;
-    executeShortcut(shortcut);
+    executeShortcut(shortcut as keyof SettingsValues);
   });
 
   onWatchFolderUpdate(({ changedPath, day, event }) => {
