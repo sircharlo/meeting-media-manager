@@ -214,6 +214,7 @@
   "hide-media-display": "Hide media display",
   "hide-selected-media": "Hide selected media elements",
   "hide-selected-media-explain": "This will hide the selected media items from the media list for the currently selected day.",
+  "hide-selected-media-confirmation": "Are you sure you want to hide {count} selected media item(s)?",
   "hideMediaLogo": "Hide JW logo from media presentation window",
   "hideMediaLogo-explain": "This removes the square JW logo from the bottom right corner. If using at a Kingdom Hall, this should in most cases be disabled.",
   "how-will-the-app-be-used": "Profile type",
