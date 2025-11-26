@@ -300,7 +300,7 @@ const applyZoomPanState = (zoomPanState: Record<string, number>) => {
 
       // Use CSS transforms for smooth animation
       imageElem.style.transform = `scale(${scale}) translate(${x}px, ${y}px)`;
-      imageElem.style.transition = 'transform 0.3s ease-out';
+      imageElem.style.transition = 'transform 2s ease';
     }
   } catch (error) {
     errorCatcher(error);
