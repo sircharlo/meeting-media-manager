@@ -22,43 +22,46 @@ const props = defineProps<{
   isDragging: boolean;
   sectionType?: string;
   selectedDate: DateInfo | null;
+  someItemsAreHidden?: boolean;
 }>();
 
 const { t } = useI18n();
 
 const message = computed(() => {
-  // When dragging media files
-  if (props.isDragging) {
-    return t('drop-media-here');
-  }
+  const date = props.selectedDate?.date;
 
-  // When no date is selected
-  if (!props.selectedDate) {
-    return t('noDateSelected');
-  }
+  // 1. Dragging
+  if (props.isDragging) return t('drop-media-here');
 
-  // When it's a meeting day but no media is available
-  if (props.selectedDate && isWeMeetingDay(props.selectedDate.date)) {
-    // Check if there's any media at all for this date
-    const hasAnyMedia =
-      props.selectedDate.mediaSections &&
-      Object.values(props.selectedDate.mediaSections).some(
-        (section) => section.items?.length,
-      );
+  // 2. No date
+  if (!date) return t('noDateSelected');
+
+  // 3. Some items hidden (global check used many times)
+  const hidden = props.someItemsAreHidden;
+
+  // 4. Meeting-day logic
+  if (isWeMeetingDay(date)) {
+    const mediaSections = props.selectedDate.mediaSections || {};
+    const hasAnyMedia = Object.values(mediaSections).some(
+      (section) => section.items?.length,
+    );
 
     if (!hasAnyMedia) {
-      return t('there-are-no-media-items-for-the-selected-date');
+      return hidden
+        ? t('all-items-hidden')
+        : t('there-are-no-media-items-for-the-selected-date');
     }
 
-    return t('dont-forget-add-missing-media');
+    return hidden ? t('all-items-hidden') : t('dont-forget-add-missing-media');
   }
 
-  // For category-specific sections
-  if (props.isCategory) {
-    return t('no-media-for-this-category');
-  }
+  // 5. Category empty
+  if (props.isCategory) return t('no-media-for-this-category');
 
-  // Default case for section-specific empty state
+  // 6. Hidden items
+  if (hidden) return t('all-items-hidden');
+
+  // 7. Default
   return t('no-media-files-for-section');
 });
 </script>

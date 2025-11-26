@@ -29,9 +29,10 @@
     />
     <!-- Empty State -->
     <SectionEmptyState
-      v-if="isEmpty && !isDragging"
+      v-if="(isEmpty || someItemsAreHidden) && !isDragging"
       :is-dragging="isDragging"
       :selected-date="selectedDateObject"
+      :some-items-are-hidden="someItemsAreHidden"
     />
     <!-- Media Items -->
     <div
@@ -40,10 +41,11 @@
       :class="{ 'drop-here': isDragging }"
       :data-list="mediaList.config?.uniqueId"
     >
-      <template v-if="isEmpty && isDragging">
+      <template v-if="(isEmpty || someItemsAreHidden) && isDragging">
         <SectionEmptyState
           :is-dragging="isDragging"
           :selected-date="selectedDateObject"
+          :some-items-are-hidden="someItemsAreHidden"
         />
       </template>
       <template v-for="element in sortableItems" :key="element.uniqueId">
@@ -170,6 +172,7 @@ const {
   isSongButton,
   moveSection,
   sectionData,
+  someItemsAreHidden,
   updateSectionColor,
   updateSectionLabel,
 } = useMediaSection(props.mediaList);

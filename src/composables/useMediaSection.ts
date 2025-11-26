@@ -409,6 +409,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     sectionConfig,
     sectionContainsSongs,
     sectionData,
+    someItemsAreHidden,
     updateSectionColor,
     updateSectionLabel,
     updateSectionRepeat,
