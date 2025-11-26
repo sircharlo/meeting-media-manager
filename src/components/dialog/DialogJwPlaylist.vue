@@ -14,7 +14,7 @@
       </div>
 
       <div
-        v-if="playlistItems.length"
+        v-if="!loading && playlistItems.length"
         class="q-px-md q-gutter-x-md items-center"
       >
         <div class="row">
@@ -84,7 +84,15 @@
                     />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>{{ getItemLabel(index, item) }}</q-item-label>
+                    <q-item-label>
+                      <span
+                        v-if="getItemLabelParts(index, item).prefix"
+                        class="text-primary text-weight-bold"
+                      >
+                        {{ getItemLabelParts(index, item).prefix }}
+                      </span>
+                      {{ getItemLabelParts(index, item).rest }}
+                    </q-item-label>
                     <q-item-label v-if="!item.OriginalFilename" caption>
                       {{ item.OriginalFilename }}
                       {{ formatDuration(item) }}
@@ -388,17 +396,23 @@ const formatDuration = (item: JwPlaylistItem) => {
 };
 
 function getItemLabel(i: number, item: JwPlaylistItem) {
-  let label = item.Label;
+  const { prefix, rest } = getItemLabelParts(i, item);
+  return prefix + rest;
+}
 
-  if (includeNumbering.value) {
-    label = `${i + 1} - ${label}`;
-  }
+function getItemLabelParts(i: number, item: JwPlaylistItem) {
+  let prefix = '';
+  const rest = item.Label;
 
   if (includePrefix.value && customPrefix.value) {
-    label = `${customPrefix.value} - ${label}`;
+    prefix += `${customPrefix.value} - `;
   }
 
-  return label;
+  if (includeNumbering.value) {
+    prefix += `${i + 1} - `;
+  }
+
+  return { prefix, rest };
 }
 
 function getTrimmedTimes(item: JwPlaylistItem) {
