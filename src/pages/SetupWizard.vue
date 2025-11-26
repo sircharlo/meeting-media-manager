@@ -634,7 +634,7 @@ import { camelToKebabCase } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
-import { onMounted, ref, watch } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
@@ -733,6 +733,17 @@ const goToPage = (path: string) => {
 };
 
 const step = ref(1);
+
+watch(step, () => {
+  nextTick(() => {
+    const activeTab = document.querySelector('.q-stepper__tab--active');
+    const parentStep = activeTab?.closest('.q-stepper__step');
+
+    if (parentStep) {
+      parentStep.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+});
 
 const showCongregationLookup = ref(false);
 

@@ -155,9 +155,13 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
   });
 
   if (PLATFORM === 'darwin') {
-    websiteWindow.setAspectRatio(16 / 9, {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      height: websiteWindow.getSize()[1]! - websiteWindow.getContentSize()[1]!,
+    const websiteWindowSize = websiteWindow?.getSize();
+    const websiteWindowContentSize = websiteWindow?.getContentSize();
+    if (!websiteWindowSize || !websiteWindowContentSize) return;
+    const websiteWindowHeight = websiteWindowSize[1] ?? 0;
+    const websiteWindowContentHeight = websiteWindowContentSize[1] ?? 0;
+    websiteWindow?.setAspectRatio(16 / 9, {
+      height: websiteWindowHeight - websiteWindowContentHeight,
       width: 0,
     });
   } else {
@@ -240,14 +244,23 @@ const setAspectRatio = () => {
 
   // Compute the new aspect ratio that, when the frame is removed, results in a 16:9 aspect ratio for the content
   const size = websiteWindow.getSize();
+  const sizeWidth = size[0] ?? 0;
+  const sizeHeight = size[1] ?? 0;
+  if (!sizeWidth || !sizeHeight) return;
   const contentSize = websiteWindow.getContentSize();
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const frameSize = [size[0]! - contentSize[0]!, size[1]! - contentSize[1]!];
+  const contentSizeWidth = contentSize[0] ?? 0;
+  const contentSizeHeight = contentSize[1] ?? 0;
+  if (!contentSizeWidth) return;
+  const frameSize = [
+    sizeWidth - contentSizeWidth,
+    sizeHeight - contentSizeHeight,
+  ];
+  const frameSizeWidth = frameSize[0] ?? 0;
+  const frameSizeHeight = frameSize[1] ?? 0;
+  if (!frameSizeWidth || !frameSizeHeight) return;
   const aspectRatio = 16 / 9;
   const newAspectRatio =
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    (contentSize[0]! + frameSize[0]!) /
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    (contentSize[0]! / aspectRatio + frameSize[1]!);
+    (contentSizeWidth + frameSizeWidth) /
+    (contentSizeWidth / aspectRatio + frameSizeHeight);
   websiteWindow.setAspectRatio(newAspectRatio);
 };

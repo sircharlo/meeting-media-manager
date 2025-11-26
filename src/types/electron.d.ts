@@ -9,7 +9,7 @@ import type {
   QueryResponseItem,
   SettingsValues,
   VideoDuration,
-} from 'src/types';
+} from 'src/types/electron';
 import type Path from 'upath';
 
 export type DiscussionCategory =
@@ -193,6 +193,7 @@ export interface ElectronApi {
 // ipcMain.handle / ipcRenderer.invoke channels
 export type ElectronIpcInvokeKey =
   | 'createVideoFromNonVideo'
+  | 'decompress'
   | 'downloadFile'
   | 'getAllScreens'
   | 'getAppDataPath'

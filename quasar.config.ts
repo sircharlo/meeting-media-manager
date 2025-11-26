@@ -131,6 +131,7 @@ export default defineConfig((ctx) => {
         appId: APP_ID,
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: APP_NAME + '-${version}-${arch}.${ext}',
+        files: ['**/*'],
         generateUpdatesFilesForAllChannels: true,
         linux: {
           category: 'Utility',
@@ -229,11 +230,18 @@ export default defineConfig((ctx) => {
           'image-size',
           'is-online',
           'mime',
-          'ms',
           'music-metadata',
           'pdfjs-dist',
+          'robotjs',
           'upath',
         ]);
+
+        // Add hacky dependencies here
+        electronDeps.add('ms');
+        electronDeps.add('process-nextick-args');
+        electronDeps.add('readable-stream');
+        electronDeps.add('core-util-is');
+        electronDeps.add('wrappy');
 
         // Remove unneeded dependencies from production build
         Object.keys(pkg.dependencies).forEach((dep) => {

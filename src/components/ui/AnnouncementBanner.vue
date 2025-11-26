@@ -263,11 +263,12 @@ const langIsNotSupported = computed(() => {
 });
 
 // Untranslated language banner for users who are using an unsupported language, asking them to translate
-const untranslatedAnnouncement = computed((): Announcement => {
+const untranslatedAnnouncement = computed((): Announcement | null => {
+  if (!currentJwLang.value) return null;
   return {
     actions: ['translate'],
     icon: 'ui-language',
-    id: `untranslated-${currentJwLang.value?.langcode}`,
+    id: `untranslated-${currentJwLang.value.langcode}`,
     message: 'help-translate-new',
     platform: langIsNotSupported.value ? 'all' : 'none',
   };
@@ -277,9 +278,9 @@ const openTranslateDiscussion = () => {
   if (!currentJwLang.value) return;
   openDiscussion(
     'translations',
-    `New translation in ${currentJwLang.value?.name}`,
+    `New translation in ${currentJwLang.value.name}`,
     JSON.stringify({
-      language: `I would like to help translate M³ into a language I speak: ${currentJwLang.value?.vernacularName}/${currentJwLang.value.name} - ${currentJwLang.value.langcode}/${currentJwLang.value.symbol}`,
+      language: `I would like to help translate M³ into a language I speak: ${currentJwLang.value.vernacularName}/${currentJwLang.value.name} - ${currentJwLang.value.langcode}/${currentJwLang.value.symbol}`,
     }),
   );
 };
@@ -316,11 +317,13 @@ const matchesScope = (a: Announcement) =>
 const isVersionOk = (a: Announcement) =>
   !version || isVersionWithinBounds(version, a.minVersion, a.maxVersion);
 
-const systemAnnouncements = computed(() => [
-  newUpdateAnnouncement.value,
-  untranslatedAnnouncement.value,
-  testVersionAnnouncement.value,
-]);
+const systemAnnouncements = computed(() =>
+  [
+    newUpdateAnnouncement.value,
+    untranslatedAnnouncement.value,
+    testVersionAnnouncement.value,
+  ].filter((a) => !!a),
+);
 
 const activeAnnouncements = computed(() =>
   [...announcements.value, ...systemAnnouncements.value].filter((a) => {

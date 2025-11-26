@@ -8,19 +8,6 @@
         <div class="col">
           {{ t('jw-playlist-import') }}
         </div>
-        <div class="col-shrink">
-          <q-btn
-            color="primary"
-            flat
-            icon="mmm-cloud-done"
-            :loading="loading"
-            round
-            @click="
-              loading = true;
-              loadPlaylistItems();
-            "
-          />
-        </div>
       </div>
       <div class="row q-px-md q-py-md">
         {{ t('jw-playlist-import-explain') }}
@@ -58,9 +45,9 @@
                   </q-item-section>
                   <q-item-section avatar>
                     <q-img
-                      v-if="item.ThumbnailFilePath"
+                      v-if="item.ResolvedPreviewPath"
                       size="md"
-                      :src="'file://' + item.ThumbnailFilePath"
+                      :src="'file://' + item.ResolvedPreviewPath"
                     />
                     <q-icon
                       v-else
@@ -153,8 +140,10 @@ import {
   getJwLangCode,
   getPubMediaLinks,
   processMissingMediaInfo,
+  resolveFilePath,
 } from 'src/helpers/jw-media';
 import { getTempPath } from 'src/utils/fs';
+import { isImage } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -185,6 +174,7 @@ const dialogValue = computed({
 const loading = ref<boolean>(false);
 const playlistItems = ref<
   (JwPlaylistItem & {
+    ResolvedPreviewPath?: string;
     ThumbnailFilePath: string;
     VerseNumbers: number[];
   })[]
@@ -304,8 +294,18 @@ const loadPlaylistItems = async () => {
           ),
         );
 
+        // Resolve preview path
+        const targetPath =
+          isImage(item.IndependentMediaFilePath) &&
+          item.IndependentMediaFilePath
+            ? join(outputPath, item.IndependentMediaFilePath)
+            : item.ThumbnailFilePath;
+
+        const resolvedPreviewPath = await resolveFilePath(targetPath);
+
         return {
           ...item,
+          ResolvedPreviewPath: resolvedPreviewPath,
           ThumbnailFilePath: item.ThumbnailFilePath || '',
           VerseNumbers,
         };
@@ -519,22 +519,18 @@ const addSelectedItems = async () => {
     }
 
     console.log('✅ All items processed successfully');
-    dialogValue.value = false;
     emit('ok');
   } catch (error) {
     console.log('❌ Error processing playlist items:', error);
     errorCatcher(error);
   } finally {
+    dialogValue.value = false;
     loading.value = false;
-    resetSelection();
     console.groupEnd();
   }
 };
 
 const handleCancel = () => {
-  // Reset loading states
-  loading.value = false;
-  resetSelection();
   dialogValue.value = false;
   emit('cancel');
 };
@@ -560,21 +556,15 @@ watch(
 watch(
   () => dialogValue.value,
   (isOpen) => {
+    resetSelection();
     if (!isOpen) {
       // Reset loading states when dialog closes
       loading.value = false;
+    } else if (props.jwPlaylistPath) {
+      // Load items when dialog opens if path is present
+      // This handles the case where the same file is dropped twice
+      loadPlaylistItems();
     }
   },
 );
-
-// Initialize when component mounts
-resetSelection();
-console.log(
-  '🎯 DialogJwPlaylist mounted with jwPlaylistPath:',
-  props.jwPlaylistPath,
-);
-if (props.jwPlaylistPath) {
-  console.log('🎯 Loading playlist items for path:', props.jwPlaylistPath);
-  loadPlaylistItems();
-}
 </script>

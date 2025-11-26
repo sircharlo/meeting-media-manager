@@ -90,7 +90,7 @@
     <DialogJwpubMediaPicker
       :db-path="jwpubImportDb"
       :dialog-id="'media-calendar-jwpub-media-picker'"
-      :document="selectedDocument!"
+      :document="selectedDocument"
       :model-value="showMediaPicker"
       :section="sectionToAddTo"
       @cancel="onMediaPickerCancel"
@@ -1003,13 +1003,14 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
   totalFiles.value = files.length;
   if (!Array.isArray(files)) files = Array.from(files);
 
-  // Set default section for WE meetings if no section is specified
+  // Set a default section if...
   if (
-    selectedDateObject.value &&
-    isWeMeetingDay(selectedDateObject.value.date) &&
-    !sectionToAddTo.value
+    !sectionToAddTo.value && // ... a section is not already set AND
+    selectedDateObject.value && // ... a date is selected AND
+    isWeMeetingDay(selectedDateObject.value.date) && // ... this is a WE meeting AND
+    !isCoWeek(selectedDateObject.value.date) // ... and this is not a CO week
   ) {
-    sectionToAddTo.value = 'pt'; // Default to public talk section for WE meetings
+    sectionToAddTo.value = 'pt'; // ... set section to pt (public talk)
   }
   if (files.length > 1) {
     const jwPubFile = files.find((f) => isJwpub(getLocalPathFromFileObject(f)));
@@ -1284,17 +1285,21 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         );
         console.log('🎯 openJwPlaylistDialog event dispatched');
       } else if (isArchive(filepath)) {
+        console.log('🎯 Archive file detected:', filepath);
         const unzipDirectory = join(await getTempPath(), basename(filepath));
+        console.log('🎯 Unzip directory:', unzipDirectory);
         await remove(unzipDirectory);
-        await window.electronApi
-          .decompress(filepath, unzipDirectory)
-          .catch((error) => {
-            throw error;
-          });
+        console.log('🎯 Removed unzip directory');
+        await decompress(filepath, unzipDirectory);
+        console.log('🎯 Decompressed archive');
         const files = await readdir(unzipDirectory);
+        console.log('🎯 Reading unzip directory', files);
         const filePaths = files.map((file) => join(unzipDirectory, file.name));
+        console.log('🎯 Mapping files', filePaths);
         await addToFiles(filePaths);
+        console.log('🎯 Added files');
         await remove(unzipDirectory);
+        console.log('🎯 Removed unzip directory');
       } else {
         createTemporaryNotification({
           caption: filepath ? basename(filepath) : filepath,
@@ -1390,15 +1395,16 @@ const handleDrop = (event: DragEvent) => {
         if (src) droppedStuff[0] = src;
       }
 
-      // Show section picker if more than one section exists and it's not a WE meeting
+      // Show section picker if...
       if (
-        (selectedDateObject.value?.mediaSections?.length || 0) > 1 &&
-        !isWeMeetingDay(selectedDateObject.value?.date)
+        (selectedDateObject.value?.mediaSections?.length || 0) > 1 && // ... more than one section exists AND
+        (!isWeMeetingDay(selectedDateObject.value?.date) || // ... EITHER this is not a WE meeting
+          isCoWeek(selectedDateObject.value?.date)) // ... OR this is a CO week
       ) {
         pendingFiles.value = droppedStuff;
         showSectionPicker.value = true;
       } else {
-        // Otherwise, process files directly
+        // Otherwise, process files directly without showing the section picker
         addToFiles(droppedStuff).catch((error) => {
           errorCatcher(error);
         });

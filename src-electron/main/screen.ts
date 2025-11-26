@@ -1,4 +1,4 @@
-import type { Display } from 'src/types';
+import type { Display } from 'src/types/electron';
 
 import { app, type BrowserWindow, screen } from 'electron';
 import { captureElectronError } from 'main/utils';

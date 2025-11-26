@@ -19,8 +19,7 @@ export const camelToKebabCase = (str: string) =>
  * kebabToCamelCase('kebab-case') // 'kebabCase'
  */
 export const kebabToCamelCase = (str: string) =>
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  str.replace(/-./g, (x) => x[1]!.toUpperCase());
+  str.replace(/-./g, (x) => x[1]?.toUpperCase() ?? '');
 
 /**
  * Converts a kebab-case or snake_case string to title case.

@@ -23,6 +23,7 @@ import { queues } from 'boot/globals';
 import {
   FEB_2023,
   FOOTNOTE_TARGET_PARAGRAPH,
+  LAST_SONG_ORDINAL,
   MAX_SONGS,
 } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
@@ -685,6 +686,59 @@ export async function addFullFilePathToMultimediaItem(
     return multimediaItem;
   }
 }
+
+export const resolveFilePath = async (
+  targetPath: string,
+): Promise<string | undefined> => {
+  try {
+    if (!targetPath) return undefined;
+
+    // Check if the file exists
+    if (await exists(targetPath)) return targetPath;
+
+    // If it doesn't exist, try to find it (handling missing extension)
+    const dir = dirname(targetPath);
+    const name = path.basename(targetPath, extname(targetPath));
+
+    if (await pathExists(dir)) {
+      const files = await readdir(dir);
+      const match = files.find((file) => {
+        const fileNameWithoutExt = path.basename(
+          file.name,
+          path.extname(file.name),
+        );
+        return fileNameWithoutExt === name;
+      });
+
+      if (match) {
+        return join(dir, match.name);
+      }
+    }
+
+    return undefined;
+  } catch (error) {
+    errorCatcher(error);
+    return undefined;
+  }
+};
+
+export const resolveMultimediaPreviewPath = async (
+  item: MultimediaItem,
+): Promise<string | undefined> => {
+  try {
+    // Determine the preferred path
+    const targetPath = isImage(item.FilePath)
+      ? item.FilePath
+      : item.LinkedPreviewFilePath;
+
+    if (!targetPath) return undefined;
+
+    return resolveFilePath(targetPath);
+  } catch (error) {
+    errorCatcher(error);
+    return undefined;
+  }
+};
 
 const getStudyBible = async () => {
   try {
@@ -1374,8 +1428,9 @@ const getParagraphNumbers = (
       return paragraphLabel;
     if (numbers.length === 1) return numbers[0];
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const max = numbers[numbers.length - 1]!; // Find the last number
+    const max = numbers[numbers.length - 1]; // Find the last number
+
+    if (!max) return paragraphLabel;
 
     // Find the first number less than or equal to max
     const firstNumber = numbers.find((n) => n <= max);
@@ -1715,10 +1770,12 @@ export const watchedItemMapper: (
     // Final fallback: Default section based on meeting day
     if (!section) {
       const meetingDate = dateFromString(parentDate);
-      if (isWeMeetingDay(meetingDate)) {
-        section = 'pt'; // Default to 'pt' for WE meetings
+      const isCo = isCoWeek(meetingDate);
+
+      if (isWeMeetingDay(meetingDate) && !isCo) {
+        section = 'pt';
       } else if (isMwMeetingDay(meetingDate)) {
-        section = 'lac'; // Default to 'lac' for MW meetings
+        section = isCo ? 'circuit-overseer' : 'lac';
       }
     }
 
@@ -2075,7 +2132,7 @@ export const getWeMedia = async (lookupDate: Date) => {
       }
 
       if (mergedSongs[1]) {
-        mergedSongs[1].BeginParagraphOrdinal = 2000;
+        mergedSongs[1].BeginParagraphOrdinal = LAST_SONG_ORDINAL;
         const index1 = allMedia.findIndex(
           (item) =>
             item.Track === mergedSongs[1]?.Track &&
@@ -2531,7 +2588,8 @@ const downloadMissingMedia = async (
     if (!responseObject?.files) {
       if (!(await pathExists(pubDir))) return { FilePath: '' };
       const files: string[] = [];
-      const items = (await readdir(pubDir)).filter((item) => item.isFile);
+      const dirItems = await readdir(pubDir);
+      const items = dirItems.filter((item) => item.isFile);
       for (const item of items) {
         const filePath = join(pubDir, item.name);
         const fileExtension = extname(filePath).toLowerCase();

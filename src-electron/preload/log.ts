@@ -1,6 +1,6 @@
-import type { CaptureContext } from '@sentry/core';
-
 import { captureException } from '@sentry/electron/renderer';
+
+type CaptureCtx = Parameters<typeof captureException>[1];
 
 /**
  * Logs an error to the console or to Sentry
@@ -9,7 +9,7 @@ import { captureException } from '@sentry/electron/renderer';
  */
 export function capturePreloadError(
   error: Error | string | unknown,
-  context?: CaptureContext,
+  context?: CaptureCtx,
 ) {
   if (error instanceof Error && error.cause) {
     capturePreloadError(error.cause, context);

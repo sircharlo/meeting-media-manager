@@ -79,8 +79,7 @@ export function findBestResolution(
       return aRes - bRes;
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    let bestItem: MediaItemsMediatorFile | MediaLink = mediaLinks[0]!;
+    let bestItem = mediaLinks[0];
     const parsedMaxRes = parseInt(maxRes?.replace(/\D/g, '') || '720');
     mediaLinks.forEach((m) => {
       if (parsedMaxRes && getMediaResolution(m) <= parsedMaxRes) {

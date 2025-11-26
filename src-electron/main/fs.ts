@@ -2,6 +2,7 @@ import type { Stats } from 'fs-extra';
 import type { FileDialogFilter } from 'src/types';
 
 import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
+import decompress from 'decompress';
 import { dialog } from 'electron';
 import {
   IMG_EXTENSIONS,
@@ -14,6 +15,14 @@ const { basename, dirname, toUnix } = upath;
 import { sendToWindow } from 'main/window/window-base';
 import { mainWindow } from 'main/window/window-main';
 import { captureElectronError } from 'src-electron/main/utils';
+
+export async function decompressFile(
+  input: string,
+  output?: string,
+  opts?: decompress.DecompressOptions,
+) {
+  return decompress(input, output, opts);
+}
 
 export async function openFileDialog(
   single: boolean,

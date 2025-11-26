@@ -1,3 +1,4 @@
+import type decompress from 'decompress';
 import type {
   DiscussionCategory,
   ElectronIpcInvokeKey,
@@ -24,6 +25,7 @@ const { autoUpdater } = electronUpdater;
 import { downloadFile, isDownloadErrorExpected } from 'main/downloads';
 import { createVideoFromNonVideo } from 'main/ffmpeg';
 import {
+  decompressFile,
   openFileDialog,
   openFolderDialog,
   unwatchFolders,
@@ -269,6 +271,16 @@ handleIpcInvoke(
 handleIpcInvoke('openFolderDialog', async () => openFolderDialog());
 
 handleIpcInvoke('openFolder', async (_e, path: string) => openPath(path));
+
+handleIpcInvoke(
+  'decompress',
+  async (
+    _e,
+    input: string,
+    output?: string,
+    opts?: decompress.DecompressOptions,
+  ) => decompressFile(input, output, opts),
+);
 
 handleIpcSend('quitAndInstall', () => {
   autoUpdater.quitAndInstall(false, true);

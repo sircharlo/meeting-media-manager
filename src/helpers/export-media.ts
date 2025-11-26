@@ -11,8 +11,9 @@ import { isJwPlaylist, isVideo } from 'src/utils/media';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
-const { createVideoFromNonVideo, fileUrlToPath, fs, path } = window.electronApi;
-const { copy, ensureDir, exists, readdir, remove, stat } = fs;
+const { createVideoFromNonVideo, fileUrlToPath, fs, path, readdir } =
+  window.electronApi;
+const { copy, ensureDir, exists, remove, stat } = fs;
 const { basename, extname, join } = path;
 
 export const addDayToExportQueue = async (targetDate?: Date) => {
@@ -145,7 +146,8 @@ const exportDayToFolder = async (targetDate?: Date) => {
   }
 
   try {
-    const filesInDestFolder = await readdir(destFolder);
+    const dirItems = await readdir(destFolder);
+    const filesInDestFolder = dirItems.map((f) => f.name);
 
     await Promise.allSettled(
       filesInDestFolder
