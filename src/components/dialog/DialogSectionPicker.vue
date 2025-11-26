@@ -156,6 +156,11 @@ const selectSection = (section: MediaSectionIdentifier) => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   margin: 16px;
   max-width: 400px;
+
+  body.body--dark & {
+    background: rgba(30, 30, 30, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
 }
 
 .section-btn {

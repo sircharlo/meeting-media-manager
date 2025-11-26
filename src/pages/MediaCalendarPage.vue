@@ -63,10 +63,10 @@
         'dashed-border': true,
         'big-button': true,
       }"
-      color="accent-100"
+      :color="$q.dark.isActive ? 'grey-9' : 'accent-100'"
       icon="mmm-plus"
       :label="t('new-section')"
-      text-color="primary"
+      :text-color="$q.dark.isActive ? 'grey-4' : 'primary'"
       unelevated
       @click="addSection()"
     />
@@ -203,7 +203,8 @@ const route = useRoute();
 const router = useRouter();
 
 const jwStore = useJwStore();
-const { deleteMediaItems, showHiddenMediaForSelectedDate } = jwStore;
+const { deleteMediaItems, hideMediaItems, showHiddenMediaForSelectedDate } =
+  jwStore;
 const { lookupPeriod, urlVariables } = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
 const { getMeetingType } = currentState;
@@ -1657,6 +1658,39 @@ Mousetrap.bind('shift+up', () => {
 });
 Mousetrap.bind('shift+down', () => {
   extendSelection('down');
+});
+Mousetrap.bind('mod+a', (e) => {
+  e.preventDefault();
+  if (keyboardShortcutMediaList.value.length > 0) {
+    const allSelectableIds = keyboardShortcutMediaList.value
+      .filter((item) => isMediaSelectable(item))
+      .map((item) => item.uniqueId);
+
+    if (allSelectableIds.length > 0) {
+      selectedMediaItems.value = allSelectableIds;
+    }
+  }
+});
+Mousetrap.bind('h', () => {
+  if (selectedMediaItems.value.length > 0) {
+    $q.dialog({
+      cancel: { label: t('cancel') },
+      message: t('hide-selected-media-confirmation', {
+        count: selectedMediaItems.value.length,
+      }),
+      ok: { label: t('hide-from-list') },
+      persistent: true,
+      title: t('confirm'),
+    }).onOk(() => {
+      hideMediaItems(
+        selectedMediaItems.value,
+        currentCongregation.value,
+        selectedDateObject.value,
+      );
+      // Clear selection after hiding
+      selectedMediaItems.value = [];
+    });
+  }
 });
 
 function findNextSelectableMedia(mediaList: MediaItem[], startIndex: number) {
