@@ -47,6 +47,11 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     return sectionData.value?.items?.some((item) => item.hidden) || false;
   });
 
+  const allItemsAreHidden = computed(() => {
+    const items = sectionData.value?.items;
+    return !!items?.length && items.every((item) => item.hidden);
+  });
+
   // Check if section is empty
   const isEmpty = computed(() => {
     return (sectionData.value?.items?.length || 0) === 0;
@@ -393,6 +398,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
   return {
     addSong,
+    allItemsAreHidden,
     currentIndex,
     customSections,
     deleteSection,

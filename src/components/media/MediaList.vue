@@ -30,6 +30,7 @@
     <!-- Empty State -->
     <SectionEmptyState
       v-if="(isEmpty || someItemsAreHidden) && !isDragging"
+      :all-items-are-hidden="allItemsAreHidden"
       :is-dragging="isDragging"
       :selected-date="selectedDateObject"
       :some-items-are-hidden="someItemsAreHidden"
@@ -43,6 +44,7 @@
     >
       <template v-if="(isEmpty || someItemsAreHidden) && isDragging">
         <SectionEmptyState
+          :all-items-are-hidden="allItemsAreHidden"
           :is-dragging="isDragging"
           :selected-date="selectedDateObject"
           :some-items-are-hidden="someItemsAreHidden"
@@ -161,6 +163,7 @@ const showAddDividerDialog = ref(false);
 // Use the media section composable
 const {
   addSong,
+  allItemsAreHidden,
   deleteSection,
   expandedGroups,
   hasAddMediaButton,

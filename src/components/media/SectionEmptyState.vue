@@ -17,6 +17,7 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{
+  allItemsAreHidden?: boolean;
   isCategory?: boolean;
   isCustomSection?: boolean;
   isDragging: boolean;
@@ -36,8 +37,9 @@ const message = computed(() => {
   // 2. No date
   if (!date) return t('noDateSelected');
 
-  // 3. Some items hidden (global check used many times)
-  const hidden = props.someItemsAreHidden;
+  // 3. Hidden items logic
+  if (props.allItemsAreHidden) return t('all-items-hidden');
+  if (props.someItemsAreHidden) return t('some-media-items-are-hidden');
 
   // 4. Meeting-day logic
   if (isWeMeetingDay(date)) {
@@ -47,21 +49,16 @@ const message = computed(() => {
     );
 
     if (!hasAnyMedia) {
-      return hidden
-        ? t('all-items-hidden')
-        : t('there-are-no-media-items-for-the-selected-date');
+      return t('there-are-no-media-items-for-the-selected-date');
     }
 
-    return hidden ? t('all-items-hidden') : t('dont-forget-add-missing-media');
+    return t('dont-forget-add-missing-media');
   }
 
   // 5. Category empty
   if (props.isCategory) return t('no-media-for-this-category');
 
-  // 6. Hidden items
-  if (hidden) return t('all-items-hidden');
-
-  // 7. Default
+  // 6. Default
   return t('no-media-files-for-section');
 });
 </script>
