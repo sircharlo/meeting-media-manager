@@ -687,6 +687,59 @@ export async function addFullFilePathToMultimediaItem(
   }
 }
 
+export const resolveFilePath = async (
+  targetPath: string,
+): Promise<string | undefined> => {
+  try {
+    if (!targetPath) return undefined;
+
+    // Check if the file exists
+    if (await exists(targetPath)) return targetPath;
+
+    // If it doesn't exist, try to find it (handling missing extension)
+    const dir = dirname(targetPath);
+    const name = path.basename(targetPath, extname(targetPath));
+
+    if (await pathExists(dir)) {
+      const files = await readdir(dir);
+      const match = files.find((file) => {
+        const fileNameWithoutExt = path.basename(
+          file.name,
+          path.extname(file.name),
+        );
+        return fileNameWithoutExt === name;
+      });
+
+      if (match) {
+        return join(dir, match.name);
+      }
+    }
+
+    return undefined;
+  } catch (error) {
+    errorCatcher(error);
+    return undefined;
+  }
+};
+
+export const resolveMultimediaPreviewPath = async (
+  item: MultimediaItem,
+): Promise<string | undefined> => {
+  try {
+    // Determine the preferred path
+    const targetPath = isImage(item.FilePath)
+      ? item.FilePath
+      : item.LinkedPreviewFilePath;
+
+    if (!targetPath) return undefined;
+
+    return resolveFilePath(targetPath);
+  } catch (error) {
+    errorCatcher(error);
+    return undefined;
+  }
+};
+
 const getStudyBible = async () => {
   try {
     const nwtStyPublication_E: PublicationFetcher = {

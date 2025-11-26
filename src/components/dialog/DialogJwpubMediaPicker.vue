@@ -55,16 +55,12 @@
                   </q-item-section>
                   <q-item-section avatar>
                     <q-img
-                      v-if="item.LinkedPreviewFilePath || item.FilePath"
+                      v-if="item.ResolvedPreviewPath"
                       :alt="item.Label"
                       class="thumbnail"
                       fit="cover"
                       height="48px"
-                      :src="
-                        pathToFileURL(
-                          item.LinkedPreviewFilePath || item.FilePath,
-                        )
-                      "
+                      :src="pathToFileURL(item.ResolvedPreviewPath)"
                       width="48px"
                     />
                     <q-icon
@@ -160,6 +156,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   addFullFilePathToMultimediaItem,
   addJwpubDocumentMediaToFiles,
+  resolveMultimediaPreviewPath,
 } from 'src/helpers/jw-media';
 import {
   getDocumentMultimediaItems,
@@ -192,7 +189,9 @@ const dialogValue = computed({
 });
 
 const loading = ref<boolean>(false);
-const mediaItems = ref<MultimediaItem[]>([]);
+const mediaItems = ref<(MultimediaItem & { ResolvedPreviewPath?: string })[]>(
+  [],
+);
 const selectedItems = ref<number[]>([]);
 
 const loadMediaItems = async () => {
@@ -213,7 +212,18 @@ const loadMediaItems = async () => {
 
     // Resolve full file paths for all multimedia items
     const resolvedItems = await Promise.all(
-      items.map((item) => addFullFilePathToMultimediaItem(item, publication)),
+      items.map(async (item) => {
+        const fullPathItem = await addFullFilePathToMultimediaItem(
+          item,
+          publication,
+        );
+        const resolvedPreviewPath =
+          await resolveMultimediaPreviewPath(fullPathItem);
+        return {
+          ...fullPathItem,
+          ResolvedPreviewPath: resolvedPreviewPath,
+        };
+      }),
     );
 
     mediaItems.value = resolvedItems;

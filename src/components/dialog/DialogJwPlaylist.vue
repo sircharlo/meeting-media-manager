@@ -45,9 +45,9 @@
                   </q-item-section>
                   <q-item-section avatar>
                     <q-img
-                      v-if="item.ThumbnailFilePath"
+                      v-if="item.ResolvedPreviewPath"
                       size="md"
-                      :src="'file://' + item.ThumbnailFilePath"
+                      :src="'file://' + item.ResolvedPreviewPath"
                     />
                     <q-icon
                       v-else
@@ -140,8 +140,10 @@ import {
   getJwLangCode,
   getPubMediaLinks,
   processMissingMediaInfo,
+  resolveFilePath,
 } from 'src/helpers/jw-media';
 import { getTempPath } from 'src/utils/fs';
+import { isImage } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -172,6 +174,7 @@ const dialogValue = computed({
 const loading = ref<boolean>(false);
 const playlistItems = ref<
   (JwPlaylistItem & {
+    ResolvedPreviewPath?: string;
     ThumbnailFilePath: string;
     VerseNumbers: number[];
   })[]
@@ -291,8 +294,18 @@ const loadPlaylistItems = async () => {
           ),
         );
 
+        // Resolve preview path
+        const targetPath =
+          isImage(item.IndependentMediaFilePath) &&
+          item.IndependentMediaFilePath
+            ? join(outputPath, item.IndependentMediaFilePath)
+            : item.ThumbnailFilePath;
+
+        const resolvedPreviewPath = await resolveFilePath(targetPath);
+
         return {
           ...item,
+          ResolvedPreviewPath: resolvedPreviewPath,
           ThumbnailFilePath: item.ThumbnailFilePath || '',
           VerseNumbers,
         };
