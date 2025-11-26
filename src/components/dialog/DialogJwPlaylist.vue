@@ -192,35 +192,41 @@ const { pathExists, rename } = fs;
 const { basename, extname, join } = path;
 
 const loadPlaylistItems = async () => {
+  loading.value = true;
+
   try {
-    loading.value = true;
     if (!props.jwPlaylistPath) return;
 
-    const outputPath = join(
-      await getTempPath(),
-      basename(props.jwPlaylistPath),
-    );
+    // Extract package
+    const tempDir = await getTempPath();
+    const outputPath = join(tempDir, basename(props.jwPlaylistPath));
     await decompress(props.jwPlaylistPath, outputPath);
+
     const dbFile = await findDb(outputPath);
     if (!dbFile) return;
 
-    // Get playlist name
+    // ---- Get Playlist Name ----
     try {
-      const playlistNameQuery = executeQuery<PlaylistTagItem>(
+      const [tag] = executeQuery<PlaylistTagItem>(
         dbFile,
         'SELECT Name FROM Tag ORDER BY TagId ASC LIMIT 1;',
       );
-      if (playlistNameQuery[0]) {
-        playlistName.value = playlistNameQuery[0].Name;
-      }
-    } catch (error) {
-      errorCatcher(error);
+      playlistName.value = tag?.Name ?? '';
+    } catch (err) {
+      errorCatcher(err);
     }
 
-    // Get playlist items
-    const items = executeQuery<JwPlaylistItem>(
+    // ---- Get Playlist Items ----
+    const rawItems = executeQuery<
+      JwPlaylistItem & {
+        ResolvedPreviewPath?: string;
+        ThumbnailFilePath: string;
+        VerseNumbers: number[];
+      }
+    >(
       dbFile,
-      `SELECT
+      `
+      SELECT
         pi.PlaylistItemId,
         pi.Label,
         pi.StartTrimOffsetTicks,
@@ -244,68 +250,61 @@ const loadPlaylistItems = async () => {
         l.MepsLanguage,
         l.Type,
         l.Title
-      FROM
-        PlaylistItem pi
-      LEFT JOIN
-        PlaylistItemIndependentMediaMap pim ON pi.PlaylistItemId = pim.PlaylistItemId
-      LEFT JOIN
-        IndependentMedia im ON pim.IndependentMediaId = im.IndependentMediaId
-      LEFT JOIN
-        PlaylistItemLocationMap plm ON pi.PlaylistItemId = plm.PlaylistItemId
-      LEFT JOIN
-        Location l ON plm.LocationId = l.LocationId`,
+      FROM PlaylistItem pi
+      LEFT JOIN PlaylistItemIndependentMediaMap pim ON pi.PlaylistItemId = pim.PlaylistItemId
+      LEFT JOIN IndependentMedia im ON pim.IndependentMediaId = im.IndependentMediaId
+      LEFT JOIN PlaylistItemLocationMap plm ON pi.PlaylistItemId = plm.PlaylistItemId
+      LEFT JOIN Location l ON plm.LocationId = l.LocationId
+      `,
     );
 
-    // Process items
+    // ---- Process Items ----
     const processedItems = await Promise.all(
-      items.map(async (item) => {
-        // Handle thumbnail
+      rawItems.map(async (item) => {
         item.ThumbnailFilePath = item.ThumbnailFilePath
           ? join(outputPath, item.ThumbnailFilePath)
           : '';
+
+        // Normalize thumbnail extension → JPG
         if (
           item.ThumbnailFilePath &&
-          !JPG_EXTENSIONS.includes(
-            extname(item.ThumbnailFilePath).toLowerCase().replace('.', ''),
-          ) &&
           (await pathExists(item.ThumbnailFilePath))
         ) {
-          try {
-            await rename(
-              item.ThumbnailFilePath,
-              item.ThumbnailFilePath + '.jpg',
-            );
-            item.ThumbnailFilePath += '.jpg';
-          } catch (error) {
-            errorCatcher(error);
+          const ext = extname(item.ThumbnailFilePath).slice(1).toLowerCase();
+          if (!ext || !JPG_EXTENSIONS.includes(ext)) {
+            try {
+              const newPath = item.ThumbnailFilePath + '.jpg';
+              await rename(item.ThumbnailFilePath, newPath);
+              item.ThumbnailFilePath = newPath;
+            } catch (err) {
+              errorCatcher(err);
+            }
           }
         }
 
-        // Get verse numbers
-        const VerseNumbers = executeQuery<{ Label: string }>(
+        // Extract verse numbers
+        const verseRows = executeQuery<{ Label: string }>(
           dbFile,
           `SELECT Label FROM PlaylistItemMarker WHERE PlaylistItemId = ${item.PlaylistItemId}`,
-        ).map((v) =>
-          parseInt(
-            Array.from(
-              v.Label.matchAll(/\w+ (?:\d+:)?(\d+)/g),
-              (m) => m[1],
-            )[0] ?? '0',
-          ),
         );
 
-        // Resolve preview path
-        const targetPath =
+        const VerseNumbers = verseRows.map((v) => {
+          const match = v.Label.match(/\w+ (?:\d+:)?(\d+)/);
+          return match?.[1] ? parseInt(match[1]) : 0;
+        });
+
+        // Determine best preview path
+        const candidatePath =
           isImage(item.IndependentMediaFilePath) &&
           item.IndependentMediaFilePath
             ? join(outputPath, item.IndependentMediaFilePath)
             : item.ThumbnailFilePath;
 
-        const resolvedPreviewPath = await resolveFilePath(targetPath);
+        const ResolvedPreviewPath = await resolveFilePath(candidatePath);
 
         return {
           ...item,
-          ResolvedPreviewPath: resolvedPreviewPath,
+          ResolvedPreviewPath,
           ThumbnailFilePath: item.ThumbnailFilePath || '',
           VerseNumbers,
         };
@@ -313,8 +312,8 @@ const loadPlaylistItems = async () => {
     );
 
     playlistItems.value = processedItems;
-  } catch (error) {
-    errorCatcher(error);
+  } catch (err) {
+    errorCatcher(err);
   } finally {
     loading.value = false;
   }
@@ -356,170 +355,203 @@ const formatDuration = (item: JwPlaylistItem) => {
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 };
 
+function getItemLabel(i: number, item: JwPlaylistItem) {
+  const base = `${i + 1} - ${item.Label}`;
+  return playlistName.value ? `${playlistName.value} - ${base}` : base;
+}
+
+function getTrimmedTimes(item: JwPlaylistItem) {
+  const durationTicks = item.BaseDurationTicks ?? item.DurationTicks ?? 0;
+
+  const StartTime =
+    item.StartTrimOffsetTicks && item.StartTrimOffsetTicks >= 0
+      ? item.StartTrimOffsetTicks / 10000 / 1000
+      : null;
+
+  const EndTime =
+    item.EndTrimOffsetTicks && durationTicks >= item.EndTrimOffsetTicks
+      ? (durationTicks - item.EndTrimOffsetTicks) / 10000 / 1000
+      : null;
+
+  return { durationTicks, EndTime, StartTime };
+}
+
+async function processNonVideoItem(
+  item: JwPlaylistItem & {
+    ResolvedPreviewPath?: string;
+    ThumbnailFilePath: string;
+    VerseNumbers: number[];
+  },
+  itemLabel: string,
+  outputPath: string,
+  StartTime: null | number,
+  EndTime: null | number,
+) {
+  const filePath = item.IndependentMediaFilePath
+    ? join(outputPath, item.IndependentMediaFilePath)
+    : '';
+
+  const multimediaItem: MultimediaItem = {
+    BeginParagraphOrdinal: 0,
+    BookNumber: item.BookNumber,
+    Caption: '',
+    CategoryType: 0,
+    ChapterNumber: item.ChapterNumber,
+    DocumentId: 0,
+    EndTime: EndTime ?? undefined,
+    FilePath: filePath,
+    IssueTagNumber: item.IssueTagNumber,
+    KeySymbol: item.KeySymbol,
+    Label: itemLabel,
+    MajorType: 0,
+    MepsLanguageIndex: item.MepsLanguage,
+    MimeType: item.MimeType,
+    MultimediaId: 0,
+    Repeat: item.EndAction === 3,
+    StartTime: StartTime ?? undefined,
+    TargetParagraphNumberLabel: 0,
+    ThumbnailFilePath: item.ThumbnailFilePath || '',
+    Track: item.Track,
+    VerseNumbers: item.VerseNumbers,
+  };
+
+  await processMissingMediaInfo([multimediaItem], selectedDate.value, true);
+
+  // nwt is excluded from mapping
+  if (multimediaItem.KeySymbol === 'nwt') {
+    return { mapped: [], type: 'nonVideo' };
+  }
+
+  if (!selectedDateObject.value) return { mapped: [], type: 'nonVideo' };
+
+  const mapped = await dynamicMediaMapper(
+    [multimediaItem],
+    selectedDateObject.value.date,
+    'playlist',
+  );
+
+  return {
+    mapped,
+    multimediaItem,
+    type: 'nonVideo',
+  };
+}
+
+async function processSingleItem(
+  item: JwPlaylistItem & {
+    ResolvedPreviewPath?: string;
+    ThumbnailFilePath: string;
+    VerseNumbers: number[];
+  },
+  index: number,
+  outputPath: string,
+) {
+  const { durationTicks, EndTime, StartTime } = getTrimmedTimes(item);
+  const itemLabel = getItemLabel(index, item);
+  const isVideo = !item.OriginalFilename;
+
+  if (isVideo) {
+    await processVideoItem(
+      item,
+      itemLabel,
+      outputPath,
+      StartTime,
+      EndTime,
+      durationTicks,
+    );
+    return { mappedItems: [], order: index }; // no addition map for video
+  }
+
+  const result = await processNonVideoItem(
+    item,
+    itemLabel,
+    outputPath,
+    StartTime,
+    EndTime,
+  );
+  return { mappedItems: result.mapped, order: index };
+}
+async function processVideoItem(
+  item: JwPlaylistItem,
+  itemLabel: string,
+  outputPath: string,
+  StartTime: null | number,
+  EndTime: null | number,
+  durationTicks: number,
+) {
+  const lang = getJwLangCode(item.MepsLanguage) || 'E';
+
+  const pubDownload = await getPubMediaLinks({
+    booknum: item.BookNumber,
+    docid: item.DocumentId,
+    issue: item.IssueTagNumber,
+    langwritten: lang,
+    pub: item.KeySymbol,
+    track: item.Track,
+  });
+
+  const videoLinks = pubDownload?.files?.[lang]?.['MP4'];
+  if (!videoLinks) return { type: 'skip' };
+
+  const customDuration =
+    StartTime !== null || EndTime !== null
+      ? {
+          max: EndTime ?? durationTicks / 10000 / 1000,
+          min: StartTime ?? 0,
+        }
+      : undefined;
+
+  await downloadAdditionalRemoteVideo(
+    videoLinks,
+    selectedDate.value,
+    item.ThumbnailFilePath || undefined,
+    false,
+    itemLabel,
+    props.section,
+    customDuration,
+  );
+
+  return { type: 'video' };
+}
+
 const addSelectedItems = async () => {
   console.group('📋 JW Playlist Processing');
+  loading.value = true;
+
   try {
-    loading.value = true;
-    console.log(
-      '📋 Adding selected items',
-      selectedItems.value,
-      selectedDateObject.value,
-    );
     if (!selectedItems.value.length || !selectedDateObject.value) return;
 
     const selectedPlaylistItems = selectedItems.value
-      .map((index) => playlistItems.value[index])
+      .map((i) => playlistItems.value[i])
       .filter(Boolean);
 
-    console.log('📋 Selected playlist items', selectedPlaylistItems);
     const outputPath = join(
       await getTempPath(),
       basename(props.jwPlaylistPath),
     );
 
-    console.log('📁 Output path', outputPath);
+    // 🔥 Process all items *in parallel*
+    const results = await Promise.all(
+      selectedPlaylistItems
+        .filter((item) => !!item)
+        .map((item, idx) => processSingleItem(item, idx, outputPath)),
+    );
 
-    // Process items sequentially and wait for each to complete
-    for (let i = 0; i < selectedPlaylistItems.length; i++) {
-      const item = selectedPlaylistItems[i];
-      if (!item) continue;
+    // 🔥 Apply mappings SEQUENTIALLY (preserves order)
+    for (const result of results.sort((a, b) => a.order - b.order)) {
+      if (!result?.mappedItems?.length) continue;
 
-      const durationTicks = item?.BaseDurationTicks || item?.DurationTicks || 0;
-      const EndTime =
-        durationTicks &&
-        item?.EndTrimOffsetTicks &&
-        durationTicks >= item.EndTrimOffsetTicks
-          ? (durationTicks - item.EndTrimOffsetTicks) / 10000 / 1000
-          : null;
-
-      const StartTime =
-        item.StartTrimOffsetTicks && item.StartTrimOffsetTicks >= 0
-          ? item.StartTrimOffsetTicks / 10000 / 1000
-          : null;
-
-      const playlistItemName = `${i + 1} - ${item.Label}`;
-      const itemLabel = `${playlistName.value ? playlistName.value + ' - ' : ''}${playlistItemName}`;
-      console.group(
-        `🔄 Processing Item ${i + 1}/${selectedPlaylistItems.length} - ${item.Label}`,
+      jwStore.addToAdditionMediaMap(
+        result.mappedItems,
+        props.section,
+        currentCongregation.value,
+        selectedDateObject.value,
+        isCoWeek(selectedDateObject.value.date),
       );
-      console.log('📋 Item details:', item);
-
-      if (!item.OriginalFilename) {
-        // Handle video using downloadAdditionalRemoteVideo
-        console.log('🎥 Processing video item:', itemLabel);
-
-        // Create media link object for the video
-        const lang = getJwLangCode(item.MepsLanguage) || 'E';
-        const pubDownload = await getPubMediaLinks({
-          booknum: item.BookNumber,
-          docid: item.DocumentId,
-          issue: item.IssueTagNumber,
-          langwritten: lang,
-          pub: item.KeySymbol,
-          track: item.Track,
-        });
-        console.log('🔗 Pub download links:', pubDownload);
-
-        if (
-          !pubDownload?.files ||
-          !pubDownload.files[lang] ||
-          !pubDownload.files[lang]['MP4']
-        ) {
-          console.warn(
-            `No download links found for ${item.KeySymbol} in language ${lang}`,
-          );
-          continue;
-        }
-
-        // Use custom duration if we have trim offsets
-        const customDuration =
-          StartTime !== null || EndTime !== null
-            ? {
-                max: EndTime || durationTicks / 10000 / 1000,
-                min: StartTime || 0,
-              }
-            : undefined;
-
-        await downloadAdditionalRemoteVideo(
-          pubDownload?.files[lang]?.['MP4'],
-          selectedDate.value,
-          item.ThumbnailFilePath || undefined,
-          false, // song parameter
-          itemLabel,
-          props.section,
-          customDuration,
-        );
-
-        console.log('✅ Video item added:', itemLabel);
-        console.groupEnd();
-      } else {
-        // Handle non-video items (images, audio, etc.) as before
-        console.log('🖼️ Processing non-video item:', itemLabel);
-
-        const multimediaItem: MultimediaItem = {
-          BeginParagraphOrdinal: 0,
-          BookNumber: item.BookNumber,
-          Caption: '',
-          CategoryType: 0,
-          ChapterNumber: item.ChapterNumber,
-          DocumentId: 0,
-          EndTime: EndTime ?? undefined,
-          FilePath: item.IndependentMediaFilePath
-            ? join(outputPath, item.IndependentMediaFilePath)
-            : '',
-          IssueTagNumber: item.IssueTagNumber,
-          KeySymbol: item.KeySymbol,
-          Label: itemLabel,
-          MajorType: 0,
-          MepsLanguageIndex: item.MepsLanguage,
-          MimeType: item.MimeType,
-          MultimediaId: 0,
-          Repeat: item.EndAction === 3,
-          StartTime: StartTime ?? undefined,
-          TargetParagraphNumberLabel: 0,
-          ThumbnailFilePath: item.ThumbnailFilePath || '',
-          Track: item.Track,
-          VerseNumbers: item.VerseNumbers,
-        };
-
-        // Process single item and wait for completion
-        await processMissingMediaInfo(
-          [multimediaItem],
-          selectedDate.value,
-          true,
-        );
-
-        if (multimediaItem.KeySymbol !== 'nwt') {
-          const mediaItems = await dynamicMediaMapper(
-            [multimediaItem],
-            selectedDateObject.value.date,
-            'playlist',
-          );
-
-          console.log(
-            '📋 Adding media items:',
-            mediaItems,
-            props.section,
-            currentCongregation.value,
-            selectedDateObject.value,
-          );
-
-          jwStore.addToAdditionMediaMap(
-            mediaItems,
-            props.section,
-            currentCongregation.value,
-            selectedDateObject.value,
-            isCoWeek(selectedDateObject?.value.date),
-          );
-        }
-
-        console.log('✅ Non-video item added:', itemLabel);
-        console.groupEnd();
-      }
     }
 
-    console.log('✅ All items processed successfully');
     emit('ok');
+    console.log('✅ All items processed (parallel) and applied (ordered).');
   } catch (error) {
     console.log('❌ Error processing playlist items:', error);
     errorCatcher(error);
