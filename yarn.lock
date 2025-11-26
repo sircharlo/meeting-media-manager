@@ -879,13 +879,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@intlify/core-base@npm:11.2.1":
-  version: 11.2.1
-  resolution: "@intlify/core-base@npm:11.2.1"
+"@intlify/core-base@npm:11.2.2":
+  version: 11.2.2
+  resolution: "@intlify/core-base@npm:11.2.2"
   dependencies:
-    "@intlify/message-compiler": "npm:11.2.1"
-    "@intlify/shared": "npm:11.2.1"
-  checksum: 10c0/17a610a56f580fcd9e9cf10356c638a67662b1e03b847a3d50489f0b92e19e052cabac841048b5009b29f54017a538b25940701ff3059b269425d96cd2123b5b
+    "@intlify/message-compiler": "npm:11.2.2"
+    "@intlify/shared": "npm:11.2.2"
+  checksum: 10c0/69f8899f975237573daa4f6905df6f635005c59a7e2ebfd6af9a30d7814d2058dc713f155cb1bdfe0c847edb491563895e9fdb2be546cbb9e610f11cca051597
   languageName: node
   linkType: hard
 
@@ -899,7 +899,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@intlify/message-compiler@npm:11.2.1, @intlify/message-compiler@npm:^11.1.10":
+"@intlify/message-compiler@npm:11.2.2":
+  version: 11.2.2
+  resolution: "@intlify/message-compiler@npm:11.2.2"
+  dependencies:
+    "@intlify/shared": "npm:11.2.2"
+    source-map-js: "npm:^1.0.2"
+  checksum: 10c0/02cc586dfc75fb05990a61699aa89790eb38dfc2af6877366b04e3beb2b5a8929891cfc2cfb09778ed90e47e93017c345337cabc446a8db1807be57bbc9ab00f
+  languageName: node
+  linkType: hard
+
+"@intlify/message-compiler@npm:^11.1.10":
   version: 11.2.1
   resolution: "@intlify/message-compiler@npm:11.2.1"
   dependencies:
@@ -920,6 +930,13 @@ __metadata:
   version: 11.2.1
   resolution: "@intlify/shared@npm:11.2.1"
   checksum: 10c0/8033af4da4c13e32cf644943cfe608017ec3391627aef0c80d03f440b8365a95f9f1d05ed292b2621db3a3cdbc3963a03e1fc21ea9f57e93d0215a7e08900a75
+  languageName: node
+  linkType: hard
+
+"@intlify/shared@npm:11.2.2":
+  version: 11.2.2
+  resolution: "@intlify/shared@npm:11.2.2"
+  checksum: 10c0/cdf3e6df456e70fa7fa85aebe4c1aa08261be49f580483602d6a6c002b9b5e25c37c035bb140e2b3f065822862e4aa135908b5dd6365681cd7d66acabb56b341
   languageName: node
   linkType: hard
 
@@ -5678,12 +5695,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:^4.0.0, chokidar@npm:^4.0.3":
+"chokidar@npm:^4.0.0":
   version: 4.0.3
   resolution: "chokidar@npm:4.0.3"
   dependencies:
     readdirp: "npm:^4.0.1"
   checksum: 10c0/a58b9df05bb452f7d105d9e7229ac82fa873741c0c40ddcc7bb82f8a909fbe3f7814c9ebe9bc9a2bef9b737c0ec6e2d699d179048ef06ad3ec46315df0ebe6ad
+  languageName: node
+  linkType: hard
+
+"chokidar@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "chokidar@npm:5.0.0"
+  dependencies:
+    readdirp: "npm:^5.0.0"
+  checksum: 10c0/42fc907cb2a7ff5c9e220f84dae75380a77997f851c2a5e7865a2cf9ae45dd407a23557208cdcdbf3ac8c93341135a1748e4c48c31855f3bfa095e5159b6bdec
   languageName: node
   linkType: hard
 
@@ -6820,15 +6846,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-dl-manager@npm:^4.2.0":
-  version: 4.2.0
-  resolution: "electron-dl-manager@npm:4.2.0"
+"electron-dl-manager@npm:^4.2.2":
+  version: 4.2.2
+  resolution: "electron-dl-manager@npm:4.2.2"
   dependencies:
-    ext-name: "npm:^5.0.0"
-    unused-filename: "npm:^3.0.1"
+    ext-name: "npm:5.0.0"
+    unused-filename: "npm:3.0.1"
   peerDependencies:
-    electron: ">=26"
-  checksum: 10c0/7088f528418f93d4c1d216534486e54d605434386081f3c15351eb42d566404832f6a0a88ef03180d61cb87a1f13353be15fa11ad91ce827ed61ed1cff5a5426
+    electron: ">=30.3.0"
+  checksum: 10c0/3ccf090d878818c7c5006f8770bd230d9e7de8792d4281e978cf4942f015075cc2d280c040c57798888026a24750fd792b6bd594d60f50e526b60461bff7fb00
   languageName: node
   linkType: hard
 
@@ -7247,9 +7273,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-vue@npm:^10.6.0":
-  version: 10.6.0
-  resolution: "eslint-plugin-vue@npm:10.6.0"
+"eslint-plugin-vue@npm:^10.6.1":
+  version: 10.6.1
+  resolution: "eslint-plugin-vue@npm:10.6.1"
   dependencies:
     "@eslint-community/eslint-utils": "npm:^4.4.0"
     natural-compare: "npm:^1.4.0"
@@ -7267,7 +7293,7 @@ __metadata:
       optional: true
     "@typescript-eslint/parser":
       optional: true
-  checksum: 10c0/78fa8d69dbd65f6166a990f45f562b81d555bad5902437fbc3026ef2e90c76888e22e054eff592476a7e685e551a1d2aef49798ec74109ca98f1331c193bc7bd
+  checksum: 10c0/885312002825f8ddd595ecc5a1bced95dc454e31a9fcff6750974c4490c2b5c5a2ffd458ac29eda650df828ee4d1d1ea3c275875aec002e5b3ab484af79d822a
   languageName: node
   linkType: hard
 
@@ -7593,7 +7619,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ext-name@npm:^5.0.0":
+"ext-name@npm:5.0.0, ext-name@npm:^5.0.0":
   version: 5.0.0
   resolution: "ext-name@npm:5.0.0"
   dependencies:
@@ -10187,18 +10213,18 @@ __metadata:
     autoprefixer: "npm:^10.4.22"
     better-sqlite3: "npm:^12.4.6"
     cheerio: "npm:^1.1.2"
-    chokidar: "npm:^4.0.3"
+    chokidar: "npm:^5.0.0"
     core-util-is: "npm:^1.0.3"
     countries-and-timezones: "npm:^3.8.0"
     decompress: "npm:^4.2.1"
     dompurify: "npm:^3.3.0"
     electron: "npm:38.2.2"
     electron-builder: "npm:26.3.0"
-    electron-dl-manager: "npm:^4.2.0"
+    electron-dl-manager: "npm:^4.2.2"
     electron-updater: "npm:^6.7.2"
     eslint: "npm:^9.39.1"
     eslint-plugin-perfectionist: "npm:^4.15.1"
-    eslint-plugin-vue: "npm:^10.6.0"
+    eslint-plugin-vue: "npm:^10.6.1"
     fluent-ffmpeg: "npm:^2.1.3"
     fs-extra: "npm:^11.3.2"
     globals: "npm:^16.5.0"
@@ -10233,7 +10259,7 @@ __metadata:
     vitest: "npm:^4.0.14"
     vue: "npm:^3.5.25"
     vue-eslint-parser: "npm:^10.2.0"
-    vue-i18n: "npm:^11.2.1"
+    vue-i18n: "npm:^11.2.2"
     vue-router: "npm:^4.6.3"
     vue-tsc: "npm:^3.1.5"
     vue-zoomable: "npm:^1.2.8"
@@ -12391,6 +12417,13 @@ __metadata:
   version: 4.1.2
   resolution: "readdirp@npm:4.1.2"
   checksum: 10c0/60a14f7619dec48c9c850255cd523e2717001b0e179dc7037cfa0895da7b9e9ab07532d324bfb118d73a710887d1e35f79c495fa91582784493e085d18c72c62
+  languageName: node
+  linkType: hard
+
+"readdirp@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "readdirp@npm:5.0.0"
+  checksum: 10c0/faf1ec57cff2020f473128da3f8d2a57813cc3a08a36c38cae1c9af32c1579906cc50ba75578043b35bade77e945c098233665797cf9730ba3613a62d6e79219
   languageName: node
   linkType: hard
 
@@ -14719,7 +14752,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unused-filename@npm:^3.0.1":
+"unused-filename@npm:3.0.1":
   version: 3.0.1
   resolution: "unused-filename@npm:3.0.1"
   dependencies:
@@ -15116,16 +15149,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-i18n@npm:^11.2.1":
-  version: 11.2.1
-  resolution: "vue-i18n@npm:11.2.1"
+"vue-i18n@npm:^11.2.2":
+  version: 11.2.2
+  resolution: "vue-i18n@npm:11.2.2"
   dependencies:
-    "@intlify/core-base": "npm:11.2.1"
-    "@intlify/shared": "npm:11.2.1"
+    "@intlify/core-base": "npm:11.2.2"
+    "@intlify/shared": "npm:11.2.2"
     "@vue/devtools-api": "npm:^6.5.0"
   peerDependencies:
     vue: ^3.0.0
-  checksum: 10c0/f873aa8f295b4b007941d39849cc294e82506c003b908da240368f9b867e1d47be59bf2cb312897ec6d9c1a1bb3f52c0c5a72a9f2501f07013d5c86ad360c0b8
+  checksum: 10c0/2e5178fd0ca8c476dddc0b73b6554b4d5a120f109694630908f7dab802f58107e9d9258337841aa643b89f5fb95deef8518d24e7557a60701b3613fdc7248ea4
   languageName: node
   linkType: hard
 
