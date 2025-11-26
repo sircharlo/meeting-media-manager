@@ -510,4 +510,8 @@ const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
 .study-bible-item :deep(img) {
   background-color: white;
 }
+
+body.body--dark .study-bible-item :deep(img) {
+  background-color: #2a2a2a;
+}
 </style>

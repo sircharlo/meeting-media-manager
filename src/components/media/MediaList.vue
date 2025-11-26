@@ -359,5 +359,10 @@ defineExpose({
   border-radius: 4px;
   height: 60px;
   margin: 4px 0;
+
+  body.body--dark & {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #666;
+  }
 }
 </style>

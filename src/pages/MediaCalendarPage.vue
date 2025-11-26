@@ -63,10 +63,10 @@
         'dashed-border': true,
         'big-button': true,
       }"
-      color="accent-100"
+      :color="$q.dark.isActive ? 'grey-9' : 'accent-100'"
       icon="mmm-plus"
       :label="t('new-section')"
-      text-color="primary"
+      :text-color="$q.dark.isActive ? 'grey-4' : 'primary'"
       unelevated
       @click="addSection()"
     />
