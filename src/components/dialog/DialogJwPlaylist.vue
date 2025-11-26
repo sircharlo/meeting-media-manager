@@ -14,6 +14,33 @@
       </div>
 
       <div
+        v-if="playlistItems.length"
+        class="q-px-md q-gutter-x-md items-center"
+      >
+        <div class="row">
+          <div class="col text-secondary text-uppercase q-my-sm">
+            {{ t('item-names') }}
+          </div>
+        </div>
+        <div class="row q-gutter-x-md">
+          <q-checkbox v-model="includePrefix" :label="t('include-prefix')" />
+          <q-input
+            v-if="includePrefix"
+            v-model="customPrefix"
+            dense
+            outlined
+            style="min-width: 200px"
+          />
+        </div>
+        <div class="row q-gutter-x-md">
+          <q-checkbox
+            v-model="includeNumbering"
+            :label="t('include-numbering')"
+          />
+        </div>
+      </div>
+
+      <div
         class="q-pr-scroll overflow-auto col items-start q-pt-sm"
         :class="{ 'content-center': loading }"
       >
@@ -57,7 +84,7 @@
                     />
                   </q-item-section>
                   <q-item-section>
-                    <q-item-label>{{ item.Label }}</q-item-label>
+                    <q-item-label>{{ getItemLabel(index, item) }}</q-item-label>
                     <q-item-label v-if="!item.OriginalFilename" caption>
                       {{ item.OriginalFilename }}
                       {{ formatDuration(item) }}
@@ -182,6 +209,10 @@ const playlistItems = ref<
 const selectedItems = ref<number[]>([]);
 const playlistName = ref<string>('');
 
+const includePrefix = ref(true);
+const customPrefix = ref('');
+const includeNumbering = ref(true);
+
 const currentState = useCurrentStateStore();
 const { currentCongregation, selectedDate, selectedDateObject } =
   storeToRefs(currentState);
@@ -212,6 +243,7 @@ const loadPlaylistItems = async () => {
         'SELECT Name FROM Tag ORDER BY TagId ASC LIMIT 1;',
       );
       playlistName.value = tag?.Name ?? '';
+      customPrefix.value = playlistName.value;
     } catch (err) {
       errorCatcher(err);
     }
@@ -356,8 +388,17 @@ const formatDuration = (item: JwPlaylistItem) => {
 };
 
 function getItemLabel(i: number, item: JwPlaylistItem) {
-  const base = `${i + 1} - ${item.Label}`;
-  return playlistName.value ? `${playlistName.value} - ${base}` : base;
+  let label = item.Label;
+
+  if (includeNumbering.value) {
+    label = `${i + 1} - ${label}`;
+  }
+
+  if (includePrefix.value && customPrefix.value) {
+    label = `${customPrefix.value} - ${label}`;
+  }
+
+  return label;
 }
 
 function getTrimmedTimes(item: JwPlaylistItem) {
