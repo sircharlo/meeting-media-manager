@@ -1,6 +1,6 @@
 # Inställningsguide {#settings-guide}
 
-Denna omfattande guide förklarar alla inställningar som finns i M³, organiserade efter kategori. Att förstå dessa inställningar hjälper dig att konfigurera M³ för att fungera perfekt för din församlings behov.
+Denna omfattande guide förklarar alla inställningar som finns i M³, organiserade efter kategori. Att förstå dessa inställningar hjälper dig att ställa in M³ för att fungera perfekt för församlingens behov.
 
 ## Programinställningar {#application-configuration}
 
@@ -295,7 +295,7 @@ Aktivera OBS Studio-integration för automatisk scenbyte.
 
 :::warning Viktig information
 
-**Ljudkonfiguration krävs**: OBS Studio-integrationen hanterar endast skärmdelning. Ljud från M³ överförs inte automatiskt\*\* till deltagarna på Zoom vid användning av OBS Studio. Du måste konfigurera Zooms ursprungliga ljudinställningar eller använda "Dela datorljud" för att säkerställa att mötesdeltagarna kan höra medierna. Se [Användarhandbok](/user-guide#audio-configuration) för detaljerade instruktioner för ljudinställningar.
+**Ljudkonfiguration krävs**: OBS Studio-integrationen hanterar endast skärmdelning. Ljud från M³ överförs inte automatiskt\*\* till deltagarna på Zoom vid användning av OBS Studio. Du måste ställa in Zooms ursprungliga ljudinställningar eller använda "Dela datorljud" för att säkerställa att mötesdeltagarna kan höra medierna. Se [Användarhandbok](/user-guide#audio-configuration) för detaljerade instruktioner för ljudinställningar.
 
 **Obs**: Zoomintegrationen använder Zooms inbyggda skärmdelning som hanterar ljud mer sömlöst än OBS Studio-integration.
 
@@ -319,7 +319,7 @@ Lösenordet för OBS Studio WebSocket-anslutning.
 
 #### OBS Scener {#obs-scenes}
 
-Konfigurera vilka OBS-scener som ska användas för olika ändamål:
+Ställ in vilka OBS-scener som ska användas för olika ändamål:
 
 - **Kamerascen**: Scen som visar kameran/podiet
 - **Mediescen**: Scen för visning av media
@@ -335,7 +335,7 @@ Konfigurera vilka OBS-scener som ska användas för olika ändamål:
 
 :::warning Viktig information
 
-**Ljudkonfiguration krävs**: OBS Studio integration hanterar endast video/scenbyte. Ljud från M³ överförs inte automatiskt\*\* till Zoom eller OBS Studio. Videoströmmen fungerar som en virtuell kamera utan ljud, precis som en webbkamera. Du måste konfigurera Zooms ursprungliga ljudinställningar eller använda "Dela datorljud" för att säkerställa att mötesdeltagarna kan höra medierna. Se [Användarhandbok](/user-guide#audio-configuration) för detaljerade instruktioner för ljudinställningar.
+**Ljudkonfiguration krävs**: OBS Studio integration hanterar endast video/scenbyte. Ljud från M³ överförs inte automatiskt\*\* till Zoom eller OBS Studio. Videoströmmen fungerar som en virtuell kamera utan ljud, precis som en webbkamera. Du måste ställa in Zooms ursprungliga ljudinställningar eller använda "Dela datorljud" för att säkerställa att mötesdeltagarna kan höra medierna. Se [Användarhandbok](/user-guide#audio-configuration) för detaljerade instruktioner för ljudinställningar.
 
 **Alternativ lösning**: Överväg att använda Zoomintegrationen istället, eftersom den använder Zooms inbyggda skärm och ljuddelning, som hanterar ljudet mer sömlöst.
 
@@ -534,10 +534,10 @@ Inaktivera helt automatiska medianedladdningar. Använd detta endast för profil
 
 ### För nya användare {#new-users}
 
-1. Börja med installationsguiden för att konfigurera grundläggande inställningar
+1. Börja med installationsguiden för att ställa in grundläggande inställningar
 2. Aktivera "Mediavisningsknappen" för att komma åt visningsfunktioner
 3. Ställ in mötesschemat noggrant
-4. Konfigurera OBS-integration om du använder hybrida möten
+4. Ställ in OBS-integration om du använder hybridmöten
 
 ### För avancerade användare {#advanced-users}
 
@@ -550,7 +550,7 @@ Inaktivera helt automatiska medianedladdningar. Använd detta endast för profil
 
 1. Aktivera extra cache för bättre prestanda
 2. Använd lämplig maximal upplösning för dina behov
-3. Konfigurera automatisk rensning för att hantera diskutrymme
+3. Ställ in automatisk rensning för att hantera diskutrymme
 4. Använd funktionen för datapriser vid begränsad bandbredd
 
 ### Felsökning {#settings-guide-troubleshooting}
@@ -559,5 +559,5 @@ Inaktivera helt automatiska medianedladdningar. Använd detta endast för profil
 - Om OBS-integration inte fungerar, kontrollera port- och lösenordsinställningar
 - Om prestandan är långsam, försök aktivera extra cache eller minska upplösningen
 - Om du har språkproblem, kontrollera både gränssnittet och språkinställningarna
-- Om deltagarna på Zoom inte kan höra mediats ljud, konfigurera Zooms ursprungliga ljudinställningar eller använd "Dela datorljud"
+- Om deltagarna på Zoom inte kan höra ljud, ställ in Zooms ursprungliga ljudinställningar eller använd "Dela datorljud"
 - **Tip**: Överväg att använda Zoom-integration istället för OBS Studio för enklare ljudhantering

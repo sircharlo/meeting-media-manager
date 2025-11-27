@@ -39,7 +39,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 ### ✨ Nya funktioner
 
 - ✨ **Mediafönstret alltid överst och helskärmsvisning**: Förbättrad alltid överst-funktion för mediafönstret, justera dynamiskt beroende på fullskärmsläget.
-- ✨ **Inställningar för datumvisning**: Lagt till en användarinställning för att konfigurera formatet för datumvisning.
+- ✨ **Inställningar för datumvisning**: Lagt till en användarinställning för att ställa in formatet för datumvisning.
 - ✨ **Mediatoning**: Infört tonade övergångar för media, istället för den mer abrupta tona-till-svart övergången som fanns innan.
 - ✨ **Musik auto-stop**: Optimerat bakgrundsmusikens auto-stop för att bete sig på samma sätt oavsett om musiken startades automatiskt eller inte.
 - ✨ **macOS Click-through för inaktiva fönster**: Aktiverade musklick som går igenom till huvudfönstret i macOS, vilket bör göra det enklare att styra appen även när den inte är i fokus.

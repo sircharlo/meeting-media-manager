@@ -92,7 +92,7 @@ Media för Jehovas vittnens möten kan laddas ner automatiskt på något av de h
 
 ### Gränssnittsspråk {#interface-languages}
 
-M³ har översatts till många språk av frivilliga hjälpare. Du kan konfigurera det språk du vill ska visas i M³:s gränssnitt, oberoende av det språk som används för medianedladdningar. Detta innebär att du kan använda M³ på ditt föredragna språk när du laddar ner media på något annat språk som stöds.
+M³ har översatts till många språk av frivilliga hjälpare. Du kan ställa in det språk du vill ska visas i M³:s gränssnitt, oberoende av det språk som används för medienedladdningar. Detta innebär att du kan använda M³ på ditt föredragna språk när du laddar ner media på något annat språk som stöds.
 
 För detaljer om reservspråk och undertexter, se [FAQ](faq#language-support).
 
