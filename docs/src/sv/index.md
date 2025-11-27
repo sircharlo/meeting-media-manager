@@ -9,20 +9,19 @@ hero:
   actions:
     - theme: brand
       text: Ladda ned
-      link: /download
+      link: /sv/download
     - theme: brand
       text: Om
       link: /sv/about
     - theme: brand
       text: Användarguide
-      link: /user-guide
+      link: /sv/user-guide
     - theme: brand
       text: Inställningsguide
-      link: /settings-guide
+      link: /sv/settings-guide
     - theme: brand
       text: Vanliga frågor (FAQ)
-      link: /faq
-
+      link: /sv/faq
 features:
   - icon: 🚀
     title: Automatisk mediahantering
