@@ -10,13 +10,13 @@ Hämta den senaste versionen från [nedladdningssidan](download). Den rekommende
 
 ### Första starten {#first-launch}
 
-När du först startar M³, kommer du att guidas genom en installationsguide som kommer att konfigurera de viktigaste inställningarna för din församling:
+När du först startar M³, kommer du att guidas genom en installationsguide som kommer att ställa in de viktigaste inställningarna för din församling:
 
 1. **Välj ditt gränssnittsspråk** - Detta avgör vilket språk M³:s menyer och knappar kommer att visas i
 2. **Välj profiltyp** - Välj "vanlig" för normal församlingsanvändning eller "Annat" för speciella evenemang
-3. **Konfigurera församlingsinformation** - Ange din församlingsinformation eller använd funktionen automatisk uppslagning
-4. **Konfigurera mötestid** - Konfigurera dag oc tid för vecko- och helgmötet
-5. **Valfria funktioner** - Konfigurera OBS-integration, bakgrundsmusik och andra avancerade funktioner
+3. **Ställ in församlingsinformation** - Ange din församlingsinformation eller använd funktionen automatisk uppslagning
+4. **Ställ in mötestid** - Ställ in dag och tid för vecko- och helgmötet
+5. **Valfria funktioner** - Ställ in OBS-integration, bakgrundsmusik och andra avancerade funktioner
 
 :::tip Tips
 
@@ -143,7 +143,7 @@ Bakgrundsmusik spelas automatiskt före möten och stannar vid lämplig tidpunkt
 M³ kan integreras med Zoom för automatisk skärmdelning:
 
 1. **Aktivera integration** - Slå på Zoom-integration i inställningar
-2. **Konfigurera genväg** - Ställ in kortkommandot för skärmdelning som du angett i Zoom. Se till att kryssrutan "global" är markerad i Zoom.
+2. **Ställ in genväg** - Ställ in kortkommandot för skärmdelning som du angett i Zoom. Se till att kryssrutan "global" är markerad i Zoom.
 3. **Automatisk kontroll** - M³ växlar automatiskt skärmdelning i Zoom efter behov
 4. **Manuell åsidosättning** - Du kan fortfarande manuellt styra skärmdelning med Zoom om det behövs
 
@@ -155,7 +155,7 @@ Att använda M³ med OBS Studio för hybridmöten:
 
 1. **Installera OBS Studio** - Ladda ner och installera OBS Studio
 2. **Aktivera WebSocket** - Installera WebSocket-insticksmodulen i OBS
-3. **Konfigurera M³** - Ange OBS-port och lösenord i M³-inställningarna
+3. **Ställ in M³** - Ange OBS-port och lösenord i M³-inställningarna
 4. **Ställ in scener** - Skapa scener för kamera, media och annat innehåll
 5. **Testa** - Kontrollera att uppspelningen fungerar korrekt
 
@@ -179,14 +179,14 @@ Aktivera detta alternativ för att fördröja delning av bilder till OBS tills m
 
 #### Scenväxlingsbeteende {#user-guide-scene-switching}
 
-Konfigurera hur M³ hanterar scenförändringar:
+Ställ in hur M³ hanterar scenförändringar:
 
 - **Byt efter Mediet** - Återvänd automatiskt till föregående scen
 - **Kom ihåg föregående scen** - Återställ scenen som var aktiv innan media
 
 ### Ljudkonfiguration för hybridmöten {#audio-configuration}
 
-När du använder M³ med OBS Studio för hybridmöten (På plats + Zoom), måste du konfigurera ljudinställningar för att säkerställa att mötesdeltagarna kan höra ev. ljud:
+När du använder M³ med OBS Studio för hybridmöten (På plats + Zoom), måste du ställa in ljudinställningarna för att säkerställa att mötesdeltagarna kan höra ljudet:
 
 #### Zoom ljudinställningar {#zoom-audio-settings}
 
@@ -213,7 +213,7 @@ Om Original Audio inte fungerar bra i din inställning:
 
 M³ spelar upp media med ljud på din dator, men detta ljud överförs **inte automatiskt** via videoströmmen till OBS Studio. Detta är samma beteende du skulle uppleva med någon annan mediaspelare.
 
-**Ljudfrågan är inte relaterad till M³** - det är en begränsning av hur OBS Studio-videoströmning fungerar med Zoom. Videoströmmen fungerar som en virtuell kamera utan ljud, precis som en webbkamera, så du måste uttryckligen konfigurera Zoom för att fånga datorns ljud. Detta innebär att din dator har två ljudkort, och om inte kommer du förmodligen inte att kunna använda OBS Studio-integrationen framgångsrikt.
+**Ljudfrågan är inte relaterad till M³** - det är en begränsning av hur OBS Studio-videoströmning fungerar med Zoom. Videoströmmen fungerar som en virtuell kamera utan ljud, precis som en webbkamera, så du måste uttryckligen ställa in Zoom för att fånga datorns ljud. Detta innebär att din dator har två ljudkort, och om inte kommer du förmodligen inte att kunna använda OBS Studio-integrationen framgångsrikt.
 
 **Alternativ lösning**: Överväg att använda Zoomintegrationen istället, eftersom den använder Zooms inbyggda skärm och ljuddelning, som hanterar ljudet mer sömlöst.
 
@@ -314,7 +314,7 @@ Hantera flera församlingar eller grupper:
 Ställ in anpassade kortkommandon för snabbare åtkomst:
 
 1. **Aktivera genvägar** - Aktivera kortkommandon i inställningarna
-2. **Konfigurera genvägar** - Ställ in genvägar för vanliga åtgärder
+2. **Ställ in genvägar** - Ställ in genvägar för vanliga åtgärder
 3. **Öva** - Lär dig dina genvägar för snabbare hantering
 4. **Anpassa** - Justera genvägar för att passa dina behov
 
@@ -370,7 +370,7 @@ Om du stöter på problem:
 1. **Kontrollera nerladdningar** - Se till att alla medier är hämtade
 2. **Testa utrustningen** - Verifiera bildskärmar och ljudarbeten
 3. **Förbered Mediavisning** - Granska och organisera mediet för mötet, se till att inga mediefiler saknas
-4. **Konfigurera Audio** - För hybridmöten, aktivera Original Audio i Zoom eller konfigurera "Dela datorljud"
+4. **Ställ in ljud** - För hybridmöten, aktivera Original Audio i Zoom eller ställ in "Dela datorljud"
 
 ### Under möten {#during-meetings}
 
