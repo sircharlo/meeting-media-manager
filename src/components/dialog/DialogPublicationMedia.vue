@@ -478,6 +478,7 @@ import { getLocalDate } from 'src/utils/date';
 import { getPublicationDirectoryContents } from 'src/utils/fs';
 import { decodeEntities } from 'src/utils/general';
 import { findBestResolutions } from 'src/utils/jw';
+import { tableExists } from 'src/utils/sqlite';
 import { formatTime } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -643,55 +644,68 @@ async function buildDocumentHasMedia(db: string) {
 async function buildDocumentPreviews(db: string) {
   try {
     docPreviews.value = {};
+
     if (!db || !documents.value?.length) return;
-    // Check if DocumentMultimedia table exists
-    const hasDocMM = !!executeQuery<{ name: string }>(
-      db,
-      "SELECT name FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'",
-    )?.length;
 
     const baseDir = path.dirname(db);
+    const hasDocMM = tableExists(db, 'DocumentMultimedia');
+
+    const getFirstLinkedImage = (docId: number) => {
+      if (!hasDocMM) return null;
+
+      const sql = `
+        SELECT Multimedia.FilePath
+        FROM DocumentMultimedia
+        JOIN Multimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId
+        WHERE DocumentMultimedia.DocumentId = ${docId}
+          AND Multimedia.MimeType LIKE '%image%'
+        ORDER BY DocumentMultimedia.BeginParagraphOrdinal
+        LIMIT 1
+      `;
+
+      return executeQuery<{ FilePath: string }>(db, sql)?.[0]?.FilePath;
+    };
+
+    const getFallbackImage = (docId: number) => {
+      const join = hasDocMM
+        ? 'INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId'
+        : '';
+
+      const whereField = hasDocMM
+        ? 'DocumentMultimedia.DocumentId'
+        : 'Multimedia.DocumentId';
+
+      const sql = `
+        SELECT Multimedia.FilePath
+        FROM Multimedia
+        ${join}
+        WHERE ${whereField} = ${docId}
+          AND Multimedia.MimeType LIKE '%image%'
+        ORDER BY Multimedia.MultimediaId
+        LIMIT 1
+      `;
+
+      return executeQuery<{ FilePath: string }>(db, sql)?.[0]?.FilePath;
+    };
+
     for (const doc of documents.value) {
-      if (!doc?.DocumentId) continue;
-      let previewPath: string | undefined;
-      if (hasDocMM) {
-        // Prefer first image via DocumentMultimedia link
-        const res = executeQuery<{ FilePath: string }>(
-          db,
-          `SELECT Multimedia.FilePath
-           FROM DocumentMultimedia
-           JOIN Multimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId
-           WHERE DocumentMultimedia.DocumentId = ${doc.DocumentId}
-             AND Multimedia.MimeType LIKE '%image%'
-           ORDER BY DocumentMultimedia.BeginParagraphOrdinal
-           LIMIT 1`,
-        );
-        previewPath = res?.[0]?.FilePath;
-      }
-      if (!previewPath) {
-        // Fallback: any image directly linked to this Document
-        const res2 = executeQuery<{ FilePath: string }>(
-          db,
-          `SELECT FilePath
-           FROM Multimedia
-           WHERE DocumentId = ${doc.DocumentId}
-             AND MimeType LIKE '%image%'
-           ORDER BY MultimediaId
-           LIMIT 1`,
-        );
-        previewPath = res2?.[0]?.FilePath;
-      }
+      const docId = doc?.DocumentId;
+      if (!docId) continue;
+
+      const previewPath = getFirstLinkedImage(docId) || getFallbackImage(docId);
+
       if (!previewPath) continue;
+
       try {
         const abs = path.join(baseDir, previewPath);
         const url = pathToFileURL(abs)?.toString();
-        if (url) docPreviews.value[doc.DocumentId] = url;
+        if (url) docPreviews.value[docId] = url;
       } catch (err) {
         errorCatcher(err);
       }
     }
-  } catch (e) {
-    errorCatcher(e);
+  } catch (err) {
+    errorCatcher(err);
   }
 }
 
