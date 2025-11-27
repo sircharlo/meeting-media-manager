@@ -496,7 +496,6 @@ const docHasMedia = ref<Set<number>>(new Set());
 // Search state
 const searchQuery = ref('');
 const searchResults = ref<SearchResultItem[]>([]);
-const searchLoading = ref(false);
 const searchTimeout = ref<NodeJS.Timeout | null>(null);
 
 // JWT token management
@@ -741,7 +740,7 @@ function cancelDialog() {
 function clearSearch() {
   searchQuery.value = '';
   searchResults.value = [];
-  searchLoading.value = false;
+  loading.value = false;
   step.value = 'category';
 }
 
@@ -893,6 +892,7 @@ function onSearchInput() {
 
   if (!searchQuery.value.trim()) {
     searchResults.value = [];
+    loading.value = false;
     return;
   }
 
@@ -951,9 +951,9 @@ async function performAuthenticatedSearch(
 }
 
 async function performSearch() {
-  if (!searchQuery.value.trim() || searchLoading.value) return;
+  if (!searchQuery.value.trim() || loading.value) return;
 
-  searchLoading.value = true;
+  loading.value = true;
   searchResults.value = [];
   step.value = 'search';
 
@@ -983,7 +983,7 @@ async function performSearch() {
     console.error('Search error:', error);
     // Handle search error - could show a notification
   } finally {
-    searchLoading.value = false;
+    loading.value = false;
   }
 }
 
@@ -1004,7 +1004,6 @@ function resetState() {
   // Reset search state
   searchQuery.value = '';
   searchResults.value = [];
-  searchLoading.value = false;
   mediaItems.value = [];
   if (searchTimeout.value) {
     clearTimeout(searchTimeout.value);
