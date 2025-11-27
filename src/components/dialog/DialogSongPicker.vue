@@ -16,15 +16,7 @@
             :loading="loading || !filteredSongs?.length"
             round
             size="sm"
-            @click="
-              loading = true;
-              updateJwSongs(
-                online,
-                currentSettings,
-                currentSongbook,
-                true,
-              ).then(() => (loading = false));
-            "
+            @click="startSongUpdate()"
           />
         </div>
       </div>
@@ -110,6 +102,7 @@ import type {
   PublicationFetcher,
 } from 'src/types';
 
+import { watchOnce } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -229,7 +222,28 @@ const addSong = async (songTrack: number) => {
   }
 };
 
-// Initialize when component mounts
-if (online)
-  updateJwSongs(online.value, currentSettings.value, currentSongbook.value);
+const startSongUpdate = async () => {
+  const maxRes = currentSettings.value?.maxRes;
+  const lang = currentSettings.value?.lang;
+  const songbook = currentSongbook.value;
+  if (!maxRes || !lang || !songbook || !online.value) return;
+  loading.value = true;
+  await updateJwSongs({
+    currentSongbook: songbook,
+    force: true,
+    lang,
+    maxRes,
+    online: online.value,
+  });
+  loading.value = false;
+};
+
+// Initialize
+watchOnce(
+  () => online.value && currentSettings.value && currentSongbook.value,
+  () => {
+    startSongUpdate();
+  },
+  { immediate: true },
+);
 </script>
