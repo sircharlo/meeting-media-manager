@@ -9,6 +9,7 @@
       </div>
       <div class="row q-px-md q-py-md">
         <q-input
+          ref="congregationFilterInput"
           v-model="congregationFilter"
           clearable
           dense
@@ -28,7 +29,29 @@
           separator
           style="max-height: 20vh"
         >
-          <q-item v-if="!results?.length">
+          <!-- Loading skeletons -->
+          <template v-if="loading">
+            <q-item
+              v-for="skeletonIndex in 3"
+              :key="skeletonIndex"
+              class="items-center"
+            >
+              <q-item-section>
+                <q-item-label>
+                  <q-skeleton height="20px" type="text" width="50%" />
+                </q-item-label>
+                <q-item-label caption>
+                  <q-skeleton height="10px" type="text" width="50%" />
+                </q-item-label>
+              </q-item-section>
+              <q-item-section side top>
+                <q-item-label caption>
+                  <q-skeleton height="10px" type="text" width="50px" />
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+          <q-item v-else-if="!results?.length">
             <q-item-section>
               <q-item-label>
                 {{
@@ -130,8 +153,6 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  cancel: [];
-  ok: [];
   'update:modelValue': [value: boolean];
 }>();
 
@@ -141,16 +162,14 @@ const dialogValue = computed({
 });
 
 const congregationFilter = ref('');
+const congregationFilterInput = ref();
+const loading = ref(false);
 const results = ref<GeoRecord[]>([]);
-
-whenever(dialogValue, () => {
-  congregationFilter.value = currentSettings.value?.congregationName || '';
-  results.value = [];
-  lookupCongregation();
-});
 
 const lookupCongregation = async () => {
   try {
+    loading.value = true;
+    results.value = [];
     if (congregationFilter.value?.length > 2) {
       await fetchJson<{ geoLocationList: GeoRecord[] }>(
         `https://apps.${urlVariables.value.base || 'jw.org'}/api/public/meeting-search/weekly-meetings`,
@@ -182,6 +201,8 @@ const lookupCongregation = async () => {
   } catch (error) {
     errorCatcher(error);
     results.value = [];
+  } finally {
+    loading.value = false;
   }
 };
 
@@ -240,16 +261,23 @@ const selectCongregation = (congregation: GeoRecord) => {
   } catch (error) {
     errorCatcher(error);
   }
-  emit('update:modelValue', false);
-  emit('ok');
-  results.value = [];
-  congregationFilter.value = '';
+  dismissPopup();
 };
 
 const dismissPopup = () => {
-  emit('update:modelValue', false);
-  emit('cancel');
   results.value = [];
   congregationFilter.value = '';
+  dialogValue.value = false;
 };
+
+// Focus the input when dialog opens
+whenever(dialogValue, () => {
+  congregationFilter.value = currentSettings.value?.congregationName || '';
+  results.value = [];
+  lookupCongregation();
+  setTimeout(() => {
+    console.log('🔍 Focusing input', congregationFilterInput.value);
+    congregationFilterInput.value?.focus();
+  }, 100);
+});
 </script>
