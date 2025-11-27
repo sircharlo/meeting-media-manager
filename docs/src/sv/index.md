@@ -4,24 +4,25 @@ layout: home
 
 hero:
   name: 'M³ dokumentation'
-  text: 'Komplett guide för att konfigurera och använda Meeting Media Manager'
+  text: 'Komplett guide för att ställa in och använda Meeting Media Manager'
   image: /logo.svg
   actions:
     - theme: brand
       text: Ladda ned
-      link: /sv/download
+      link: /download
     - theme: brand
       text: Om
       link: /sv/about
     - theme: brand
       text: Användarguide
-      link: /sv/user-guide
+      link: /user-guide
     - theme: brand
       text: Inställningsguide
-      link: /sv/settings-guide
+      link: /settings-guide
     - theme: brand
       text: Vanliga frågor (FAQ)
-      link: /sv/faq
+      link: /faq
+
 features:
   - icon: 🚀
     title: Automatisk mediahantering
