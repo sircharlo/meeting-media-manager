@@ -1,6 +1,14 @@
 <template>
   <div class="row">
-    <div class="col content-center q-py-xl">
+    <div
+      :class="[
+        'col',
+        {
+          'content-center': !(shouldShowSpinner && selectedDayMeetingType),
+          'q-py-xl': !(shouldShowSpinner && selectedDayMeetingType),
+        },
+      ]"
+    >
       <div
         v-if="
           !currentSettings?.disableMediaFetching ||
@@ -11,8 +19,56 @@
         "
         class="row justify-center"
       >
-        <div class="col-6 text-center">
-          <div class="row items-center justify-center q-my-lg">
+        <div class="col-6 text-center full-width">
+          <div
+            v-if="shouldShowSpinner && selectedDayMeetingType"
+            class="q-my-lg"
+          >
+            <!-- Skeleton for media sections -->
+            <div
+              v-for="section in skeletonSections"
+              :key="section.id"
+              class="q-mb-lg"
+            >
+              <q-card bordered class="q-py-md q-px-lg" flat>
+                <!-- Section header skeleton -->
+                <div class="row items-center q-mb-sm">
+                  <q-skeleton class="q-mr-sm" size="40px" type="circle" />
+                  <q-skeleton height="20px" type="text" width="150px" />
+                </div>
+
+                <!-- Media items skeletons -->
+                <div
+                  v-for="item in section.itemCount"
+                  :key="item"
+                  class="row items-center q-mb-sm q-pa-sm"
+                >
+                  <!-- Thumbnail skeleton -->
+                  <q-skeleton
+                    class="q-mr-md"
+                    height="84px"
+                    type="rect"
+                    width="150px"
+                  />
+
+                  <!-- Title and info skeleton -->
+                  <div class="col">
+                    <q-skeleton height="16px" type="text" width="80%" />
+                    <q-skeleton
+                      class="q-mt-xs"
+                      height="14px"
+                      type="text"
+                      width="60%"
+                    />
+                  </div>
+
+                  <!-- Play button skeleton -->
+                  <q-skeleton class="q-ml-sm" size="40px" type="QBtn" />
+                </div>
+              </q-card>
+            </div>
+          </div>
+          <div v-else class="row items-center justify-center q-my-lg">
             <q-spinner v-if="shouldShowSpinner" color="primary" size="lg" />
             <q-img
               v-else
@@ -22,11 +78,15 @@
             />
           </div>
           <div
+            v-if="!(shouldShowSpinner && selectedDayMeetingType)"
             class="row items-center justify-center text-subtitle1 text-semibold"
           >
             {{ primaryEmptyStateMessage }}
           </div>
-          <div class="row items-center justify-center text-center">
+          <div
+            v-if="!(shouldShowSpinner && selectedDayMeetingType)"
+            class="row items-center justify-center text-center"
+          >
             {{ secondaryEmptyStateMessage }}
           </div>
           <div
@@ -108,6 +168,22 @@ const shouldShowSpinner = computed(() => {
   }
 
   return getDateDiff(selectedDate, new Date(), 'days') <= 1;
+});
+
+const skeletonSections = computed(() => {
+  const map = {
+    mw: [
+      { id: 1, itemCount: 2 },
+      { id: 2, itemCount: 1 },
+      { id: 3, itemCount: 4 },
+    ],
+    we: [
+      { id: 1, itemCount: 1 },
+      { id: 2, itemCount: 4 },
+    ],
+  };
+
+  return map[selectedDayMeetingType.value || 'we'];
 });
 
 const primaryEmptyStateMessage = computed(() => {
