@@ -23,11 +23,16 @@
           </div>
         </div>
         <div class="row q-gutter-x-md">
-          <q-checkbox v-model="includePrefix" :label="t('include-prefix')" />
+          <q-checkbox
+            v-model="includePrefix"
+            :disable="isProcessing"
+            :label="t('include-prefix')"
+          />
           <q-input
             v-if="includePrefix"
             v-model="customPrefix"
             dense
+            :disable="isProcessing"
             outlined
             style="min-width: 200px"
           />
@@ -35,6 +40,7 @@
         <div class="row q-gutter-x-md">
           <q-checkbox
             v-model="includeNumbering"
+            :disable="isProcessing"
             :label="t('include-numbering')"
           />
         </div>
@@ -45,11 +51,33 @@
         :class="{ 'content-center': loading }"
       >
         <div
-          v-if="loading"
-          class="row q-px-md col flex-center"
-          style="min-height: 100px"
+          v-if="loading && !playlistItems.length"
+          class="col q-px-md full-width"
         >
-          <q-spinner color="primary" size="md" />
+          <div class="text-secondary text-uppercase q-my-sm">
+            {{ t('playlist-items') }}
+          </div>
+          <div class="col full-width">
+            <q-list class="full-width" separator>
+              <q-item v-for="skeletonIndex in 8" :key="skeletonIndex">
+                <q-item-section avatar>
+                  <q-skeleton size="24px" type="QCheckbox" />
+                </q-item-section>
+                <q-item-section avatar>
+                  <q-skeleton size="md" type="rect" />
+                </q-item-section>
+                <q-item-section>
+                  <q-skeleton height="16px" type="text" width="80%" />
+                  <q-skeleton
+                    class="q-mt-xs"
+                    height="14px"
+                    type="text"
+                    width="60%"
+                  />
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
         </div>
         <template v-else>
           <div v-if="playlistItems.length" class="col q-px-md full-width">
@@ -62,10 +90,12 @@
                   v-for="(item, index) in playlistItems"
                   :key="item.PlaylistItemId"
                   clickable
+                  :disable="isProcessing"
                   @click="toggleItem(index)"
                 >
                   <q-item-section avatar>
                     <q-checkbox
+                      :disable="isProcessing"
                       :model-value="selectedItems.includes(index)"
                       @update:model-value="toggleItem(index)"
                     />
@@ -121,6 +151,7 @@
           <q-btn
             v-if="selectedItems.length < playlistItems.length"
             color="primary"
+            :disable="isProcessing"
             flat
             :label="t('select-all')"
             @click="selectAll"
@@ -131,6 +162,7 @@
               playlistItems.length > 0
             "
             color="primary"
+            :disable="isProcessing"
             flat
             :label="t('deselect-all')"
             @click="deselectAll"
@@ -141,11 +173,13 @@
             v-if="selectedItems.length"
             color="primary"
             :label="t('add') + ` (${selectedItems.length})`"
+            :loading="isProcessing"
             @click="addSelectedItems"
           />
           <q-btn
             v-else
             color="negative"
+            :disable="isProcessing"
             flat
             :label="t('cancel')"
             @click="handleCancel"
@@ -207,6 +241,7 @@ const dialogValue = computed({
 });
 
 const loading = ref<boolean>(false);
+const isProcessing = ref<boolean>(false);
 const playlistItems = ref<
   (JwPlaylistItem & {
     ResolvedPreviewPath?: string;
@@ -571,7 +606,7 @@ async function processVideoItem(
 
 const addSelectedItems = async () => {
   console.group('📋 JW Playlist Processing');
-  loading.value = true;
+  isProcessing.value = true;
 
   try {
     if (!selectedItems.value.length || !selectedDateObject.value) return;
@@ -612,7 +647,7 @@ const addSelectedItems = async () => {
     errorCatcher(error);
   } finally {
     dialogValue.value = false;
-    loading.value = false;
+    isProcessing.value = false;
     console.groupEnd();
   }
 };

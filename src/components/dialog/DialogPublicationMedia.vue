@@ -66,56 +66,93 @@
 
             <!-- Search Results Grid -->
             <div
-              v-else-if="searchResults.length > 0"
+              v-else-if="searchResults.length > 0 || loading"
               class="row q-pt-sm q-pb-sm"
             >
               <div class="col-12">
-                <div class="text-subtitle2 q-pb-sm">
+                <div v-if="!loading" class="text-subtitle2 q-pb-sm">
                   {{
                     t('search-results-count', { count: searchResults.length })
                   }}
                 </div>
                 <div class="row q-col-gutter-md">
-                  <div
-                    v-for="result in searchResults"
-                    :key="`${result.type}-${result.subtype}-${result.insight.rank}`"
-                    class="col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-1"
-                  >
-                    <q-card
-                      class="search-result-card cursor-pointer overflow-hidden"
-                      @click="selectSearchResult(result)"
+                  <!-- Loading skeletons -->
+                  <template v-if="loading && searchResults.length === 0">
+                    <div
+                      v-for="skeletonIndex in 6"
+                      :key="skeletonIndex"
+                      class="col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-1"
                     >
-                      <!-- {{ result }} -->
-                      <q-card-section class="q-pa-none">
-                        <q-img
-                          :alt="result.title"
-                          class="search-result-image"
-                          fit="contain"
-                          :ratio="1 / 1"
-                          :src="result.image.url || 'error'"
-                        >
-                          <template #error>
-                            <div
-                              class="absolute-full flex flex-center text-secondary"
-                            >
-                              <q-icon name="mmm-image-broken" size="10vw" />
-                            </div>
-                          </template>
-                        </q-img>
-                      </q-card-section>
-                      <q-card-section class="q-pt-md">
-                        <div class="text-caption text-grey-6 q-mb-xs">
-                          {{ decodeEntities(result.context) }}
+                      <div class="rounded-borders-lg overflow-hidden">
+                        <q-skeleton
+                          :ratio="1"
+                          style="height: 96px"
+                          type="rect"
+                        />
+                        <div class="q-pa-sm">
+                          <q-skeleton
+                            class="q-mb-xs"
+                            height="12px"
+                            type="text"
+                            width="60%"
+                          />
+                          <q-skeleton
+                            class="q-mb-xs"
+                            height="14px"
+                            type="text"
+                            width="90%"
+                          />
+                          <q-skeleton height="12px" type="text" width="70%" />
                         </div>
-                        <div class="text-body2 text-weight-medium q-mb-sm">
-                          {{ decodeEntities(result.title) }}
-                        </div>
-                        <div class="text-caption text-grey-7">
-                          {{ decodeEntities(result.snippet) }}
-                        </div>
-                      </q-card-section>
-                    </q-card>
-                  </div>
+                      </div>
+                    </div>
+                  </template>
+                  <!-- Actual results -->
+                  <template v-else>
+                    <div
+                      v-for="result in searchResults"
+                      :key="`${result.type}-${result.subtype}-${result.insight.rank}`"
+                      class="col-xs-6 col-sm-4 col-md-3 col-lg-2 col-xl-1"
+                    >
+                      <q-card
+                        class="search-result-card cursor-pointer overflow-hidden"
+                        :class="{
+                          disabled: loading,
+                        }"
+                        @click="!loading && selectSearchResult(result)"
+                      >
+                        <!-- {{ result }} -->
+                        <q-card-section class="q-pa-none">
+                          <q-img
+                            :alt="result.title"
+                            class="search-result-image"
+                            fit="contain"
+                            :ratio="1 / 1"
+                            :src="result.image.url || 'error'"
+                          >
+                            <template #error>
+                              <div
+                                class="absolute-full flex flex-center text-secondary"
+                              >
+                                <q-icon name="mmm-image-broken" size="10vw" />
+                              </div>
+                            </template>
+                          </q-img>
+                        </q-card-section>
+                        <q-card-section class="q-pt-md">
+                          <div class="text-caption text-grey-6 q-mb-xs">
+                            {{ decodeEntities(result.context) }}
+                          </div>
+                          <div class="text-body2 text-weight-medium q-mb-sm">
+                            {{ decodeEntities(result.title) }}
+                          </div>
+                          <div class="text-caption text-grey-7">
+                            {{ decodeEntities(result.snippet) }}
+                          </div>
+                        </q-card-section>
+                      </q-card>
+                    </div>
+                  </template>
                 </div>
               </div>
             </div>
@@ -299,7 +336,7 @@
                 :key="doc.DocumentId"
                 v-ripple
                 clickable
-                :disable="loading || !docHasMedia.has(doc.DocumentId)"
+                :disable="isProcessing || !docHasMedia.has(doc.DocumentId)"
                 @click="importDocument(doc)"
               >
                 <q-item-section avatar>
@@ -324,18 +361,39 @@
           </div>
 
           <div v-else-if="step === 'media'" class="row q-pt-sm q-pb-sm">
-            <template v-for="video in mediaItems" :key="video.guid">
-              <div class="col col-xs-6 col-sm-4 col-md-3 col-lg-2">
+            <!-- Loading skeletons -->
+            <template v-if="loading && mediaItems.length === 0">
+              <div
+                v-for="skeletonIndex in 12"
+                :key="skeletonIndex"
+                class="col col-xs-6 col-sm-4 col-md-3 col-lg-2"
+              >
+                <div class="rounded-borders-lg overflow-hidden">
+                  <q-skeleton :ratio="1" type="rect" />
+                  <div class="q-pa-sm">
+                    <q-skeleton height="14px" type="text" width="90%" />
+                  </div>
+                </div>
+              </div>
+            </template>
+            <!-- Actual media -->
+            <template v-else>
+              <div
+                v-for="video in mediaItems"
+                :key="video.file.url"
+                class="col col-xs-6 col-sm-4 col-md-3 col-lg-2"
+              >
                 <div
                   v-ripple
                   :class="{
-                    'cursor-pointer': true,
+                    'cursor-pointer': !isProcessing,
                     'rounded-borders-lg': true,
                     'full-height': true,
                     'bg-accent-100': hoveredRemoteVideo === video.file.url,
+                    disabled: isProcessing,
                   }"
                   flat
-                  @click="downloadMediaItem(video)"
+                  @click="!isProcessing && downloadMediaItem(video)"
                   @mouseout="hoveredRemoteVideo = ''"
                   @mouseover="hoveredRemoteVideo = video.file.url"
                 >
@@ -371,6 +429,7 @@
           <q-btn
             v-if="canGoBack"
             color="primary"
+            :disable="isProcessing"
             flat
             :label="t('back')"
             @click="goBack"
@@ -379,6 +438,7 @@
         <div class="q-gutter-sm">
           <q-btn
             color="negative"
+            :disable="isProcessing"
             flat
             :label="t('cancel')"
             @click="cancelDialog"
@@ -436,8 +496,6 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  cancel: [];
-  ok: [];
   'update:modelValue': [value: boolean];
 }>();
 
@@ -458,6 +516,8 @@ const { executeQuery, path, pathToFileURL } = window.electronApi;
 const { t } = useI18n();
 const { dateLocale } = useLocale();
 
+const loading = ref(false);
+const isProcessing = ref(false);
 const step = ref<
   | 'article'
   | 'category'
@@ -468,7 +528,6 @@ const step = ref<
   | 'search'
   | 'year'
 >('category');
-const loading = ref(false);
 const canGoBack = computed(() => step.value !== 'category');
 
 const magazineChoices = ref<FilterChoice[]>([]);
@@ -734,7 +793,6 @@ async function buildPublicationItemsWithStatus(
 function cancelDialog() {
   resetState();
   dialogValue.value = false;
-  emit('cancel');
 }
 
 function clearSearch() {
@@ -746,9 +804,7 @@ function clearSearch() {
 
 async function downloadMediaItem(media: MediaLink) {
   try {
-    loading.value = true;
-    dialogValue.value = false;
-    emit('ok');
+    isProcessing.value = true;
 
     // Use downloadAdditionalRemoteVideo to download the media
     await downloadAdditionalRemoteVideo(
@@ -762,7 +818,8 @@ async function downloadMediaItem(media: MediaLink) {
   } catch (error) {
     errorCatcher(error);
   } finally {
-    loading.value = false;
+    isProcessing.value = false;
+    dialogValue.value = false;
   }
 }
 
@@ -874,13 +931,13 @@ function goBack() {
 async function importDocument(doc: DocumentItem) {
   try {
     if (!selection.dbPath) return;
-    dialogValue.value = false;
-    emit('ok');
+    isProcessing.value = true;
     await addJwpubDocumentMediaToFiles(selection.dbPath, doc, props.section);
   } catch (e) {
     errorCatcher(e);
   } finally {
-    loading.value = false;
+    isProcessing.value = false;
+    dialogValue.value = false;
   }
 }
 

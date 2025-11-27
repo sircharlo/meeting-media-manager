@@ -52,10 +52,14 @@
       <q-slide-transition>
         <div
           v-if="loading && filteredSongs?.length === 0"
-          class="row q-pb-md flex-center flex"
-          style="min-height: 100px"
+          class="q-px-md q-pb-md row q-col-gutter-xs"
         >
-          <q-spinner color="primary" size="lg" />
+          <div v-for="songIndex in 50" :key="songIndex" class="col col-grid">
+            <q-skeleton
+              class="rounded-borders-sm aspect-ratio-1 full-width"
+              type="QBtn"
+            />
+          </div>
         </div>
       </q-slide-transition>
       <div class="q-px-md overflow-auto row q-col-gutter-xs content-start">
@@ -66,10 +70,14 @@
         >
           <q-btn
             class="rounded-borders-sm aspect-ratio-1 full-width"
-            :color="hoveredSong === song.track ? 'primary' : 'accent-200'"
-            :disable="loading"
+            :class="{
+              'bg-primary': hoveredSong === song.track,
+              'text-white': hoveredSong === song.track,
+              'bg-primary-light': hoveredSong !== song.track,
+            }"
+            :disable="isProcessing"
             :label="song.track"
-            :text-color="hoveredSong === song.track ? 'white' : 'black'"
+            :loading="isProcessing && hoveredSong === song.track"
             unelevated
             @click="addSong(song.track)"
             @mouseout="if (!loading) hoveredSong = null;"
@@ -143,6 +151,7 @@ const jwStore = useJwStore();
 const { updateJwSongs } = jwStore;
 
 const loading = ref(false);
+const isProcessing = ref(false);
 const hoveredSong = ref<null | number>(null);
 
 const filter = ref('');
@@ -152,6 +161,7 @@ const resetDialogState = () => {
   filter.value = '';
   hoveredSong.value = null;
   loading.value = false;
+  isProcessing.value = false;
 };
 
 // Watch for dialog closing to reset state
@@ -186,7 +196,7 @@ const dismissPopup = () => {
 
 const addSong = async (songTrack: number) => {
   try {
-    loading.value = true;
+    isProcessing.value = true;
     hoveredSong.value = songTrack;
     if (songTrack) {
       const songTrackItem: PublicationFetcher = {

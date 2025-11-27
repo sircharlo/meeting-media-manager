@@ -35,10 +35,20 @@
       </div>
       <div
         v-if="videosAreLoading && !remoteVideosFiltered?.length"
-        class="row q-pb-md flex-center flex"
-        style="min-height: 100px"
+        class="q-px-md row q-col-gutter-md"
       >
-        <q-spinner color="primary" size="lg" />
+        <div
+          v-for="videoIndex in 6"
+          :key="videoIndex"
+          class="col-xs-6 col-sm-4 col-md-3 col-lg-2"
+        >
+          <div class="rounded-borders-lg overflow-hidden">
+            <q-skeleton style="height: 150px" type="rect" />
+            <div class="q-pa-sm">
+              <q-skeleton height="14px" type="text" width="90%" />
+            </div>
+          </div>
+        </div>
       </div>
       <div class="q-px-md overflow-auto row">
         <template
@@ -52,23 +62,13 @@
             <div
               v-ripple
               :class="{
-                'cursor-pointer': true,
+                'cursor-pointer': !isProcessing,
                 'rounded-borders-lg': true,
                 'full-height': true,
                 'bg-accent-100': hoveredRemoteVideo === video.guid,
+                disabled: isProcessing,
               }"
-              flat
-              @click="
-                downloadAdditionalRemoteVideo(
-                  video.files,
-                  selectedDate,
-                  getBestImageUrl(video.images, 'md'),
-                  false,
-                  video.title,
-                  section,
-                );
-                closeDialog();
-              "
+              @click="!isProcessing && addVideo(video)"
               @mouseout="hoveredRemoteVideo = ''"
               @mouseover="hoveredRemoteVideo = video.guid"
             >
@@ -208,15 +208,9 @@ const remoteVideosFiltered = computed(() => {
   return useableVideos.value;
 });
 const videosAreLoading = ref(false);
+const isProcessing = ref(false);
 const currentPage = ref(1);
 const videosPerPage = ref(24);
-
-const closeDialog = () => {
-  // Reset state when dialog closes
-  resetDialogState();
-  dialogValue.value = false;
-  emit('ok');
-};
 
 const cancelDialog = () => {
   // Reset state when dialog is cancelled
@@ -292,6 +286,26 @@ const getJwVideos = async () => {
     videosAreLoading.value = false;
   } catch (error) {
     errorCatcher(error);
+  }
+};
+
+const addVideo = async (video: MediaItemsMediatorItem) => {
+  isProcessing.value = true;
+  try {
+    await downloadAdditionalRemoteVideo(
+      video.files,
+      selectedDate.value,
+      video.images?.lsr?.md,
+      false,
+      video.title,
+      props.section,
+    );
+    dialogValue.value = false;
+    emit('ok');
+  } catch (error) {
+    errorCatcher(error);
+  } finally {
+    isProcessing.value = false;
   }
 };
 

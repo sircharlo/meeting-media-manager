@@ -50,11 +50,27 @@
           </q-input>
         </div>
         <div class="col overflow-auto">
-          <template v-for="publicTalk in filteredPublicTalks" :key="publicTalk">
+          <!-- Loading skeletons -->
+          <template v-if="filteredPublicTalks.length === 0">
             <q-item
+              v-for="skeletonIndex in 6"
+              :key="skeletonIndex"
+              class="items-center q-mx-md"
+            >
+              <q-item-section>
+                <q-skeleton height="20px" type="text" width="100%" />
+              </q-item-section>
+            </q-item>
+          </template>
+          <!-- Actual talks -->
+          <template v-else>
+            <q-item
+              v-for="publicTalk in filteredPublicTalks"
+              :key="publicTalk.DocumentId"
               v-ripple
               class="items-center q-mx-md"
               clickable
+              :disable="isProcessing"
               @click="addPublicTalkMedia(publicTalk)"
             >
               {{ publicTalk.Title }}
@@ -132,6 +148,7 @@ const s34mpFile = ref<string | undefined>();
 const s34mpDir = ref<string | undefined>();
 const s34mpDb = ref<string | undefined>();
 const s34mpInfo = ref<null | PublicationInfo>(null);
+const isProcessing = ref<boolean>(false);
 
 const { executeQuery, fs, openFileDialog, path } = window.electronApi;
 const { basename, extname, join } = path;
@@ -173,15 +190,26 @@ const dismissPopup = () => {
   emit('cancel');
 };
 
-const addPublicTalkMedia = (publicTalkDocId: DocumentItem) => {
+const addPublicTalkMedia = async (publicTalkDocId: DocumentItem) => {
   if (!s34mpDb.value || !publicTalkDocId) return;
-  addJwpubDocumentMediaToFiles(s34mpDb.value, publicTalkDocId, props.section, {
-    issue: currentCongregation.value,
-    langwritten: '',
-    pub: 'S-34mp',
-  }).then(() => {
+  isProcessing.value = true;
+  try {
+    await addJwpubDocumentMediaToFiles(
+      s34mpDb.value,
+      publicTalkDocId,
+      props.section,
+      {
+        issue: currentCongregation.value,
+        langwritten: '',
+        pub: 'S-34mp',
+      },
+    );
     dismissPopup();
-  });
+  } catch (error) {
+    console.error(error);
+  } finally {
+    isProcessing.value = false;
+  }
 };
 
 const setS34mp = async () => {

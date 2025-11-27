@@ -8,16 +8,6 @@
         <div class="col">
           {{ t('select-media-items') }}
         </div>
-        <div class="col-shrink">
-          <q-btn
-            color="primary"
-            flat
-            icon="mmm-refresh"
-            :loading="loading"
-            round
-            @click="loadMediaItems"
-          />
-        </div>
       </div>
       <div class="row q-px-md q-py-md">
         {{ t('select-media-items-explain') }}
@@ -28,11 +18,33 @@
         :class="{ 'content-center': loading }"
       >
         <div
-          v-if="loading"
-          class="row q-px-md col flex-center"
-          style="min-height: 100px"
+          v-if="loading && !mediaItems.length"
+          class="col q-px-md full-width"
         >
-          <q-spinner color="primary" size="md" />
+          <div class="text-secondary text-uppercase q-my-sm">
+            {{ t('select-media-items') }}
+          </div>
+          <div class="col full-width">
+            <q-list class="full-width" separator>
+              <q-item v-for="skeletonIndex in 4" :key="skeletonIndex">
+                <q-item-section avatar>
+                  <q-skeleton size="24px" type="QCheckbox" />
+                </q-item-section>
+                <q-item-section avatar>
+                  <q-skeleton height="48px" type="rect" width="48px" />
+                </q-item-section>
+                <q-item-section>
+                  <q-skeleton height="16px" type="text" width="80%" />
+                  <q-skeleton
+                    class="q-mt-xs"
+                    height="14px"
+                    type="text"
+                    width="60%"
+                  />
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
         </div>
         <template v-else>
           <div v-if="mediaItems.length" class="col q-px-md full-width">
@@ -45,10 +57,12 @@
                   v-for="(item, index) in mediaItems"
                   :key="item.MultimediaId"
                   clickable
+                  :disable="isProcessing"
                   @click="toggleItem(index)"
                 >
                   <q-item-section avatar>
                     <q-checkbox
+                      :disable="isProcessing"
                       :model-value="selectedItems.includes(index)"
                       @update:model-value="toggleItem(index)"
                     />
@@ -109,6 +123,7 @@
           <q-btn
             v-if="selectedItems.length < mediaItems.length"
             color="primary"
+            :disable="isProcessing"
             flat
             :label="t('select-all')"
             @click="selectAll"
@@ -119,6 +134,7 @@
               mediaItems.length > 0
             "
             color="primary"
+            :disable="isProcessing"
             flat
             :label="t('deselect-all')"
             @click="deselectAll"
@@ -127,6 +143,7 @@
         <div class="col-shrink q-gutter-x-sm">
           <q-btn
             color="negative"
+            :disable="isProcessing"
             flat
             :label="t('cancel')"
             @click="handleCancel"
@@ -135,6 +152,7 @@
             v-if="selectedItems.length"
             color="primary"
             :label="t('add') + ` (${selectedItems.length})`"
+            :loading="isProcessing"
             @click="addSelectedItems"
           />
         </div>
@@ -189,6 +207,7 @@ const dialogValue = computed({
 });
 
 const loading = ref<boolean>(false);
+const isProcessing = ref<boolean>(false);
 const mediaItems = ref<(MultimediaItem & { ResolvedPreviewPath?: string })[]>(
   [],
 );
@@ -262,7 +281,7 @@ const addSelectedItems = async () => {
   try {
     if (!props.dbPath || !props.document) return;
 
-    loading.value = true;
+    isProcessing.value = true;
     if (!selectedItems.value.length) return;
 
     const selectedMultimediaIds = selectedItems.value
@@ -285,7 +304,7 @@ const addSelectedItems = async () => {
   } catch (error) {
     errorCatcher(error);
   } finally {
-    loading.value = false;
+    isProcessing.value = false;
   }
 };
 

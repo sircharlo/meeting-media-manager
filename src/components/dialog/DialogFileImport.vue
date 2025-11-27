@@ -39,6 +39,21 @@
           </q-list>
         </div>
       </template>
+      <template v-else-if="!!jwpubDb && jwpubLoading">
+        <div class="row q-px-md overflow-auto">
+          <q-list class="full-width">
+            <q-item
+              v-for="skeletonIndex in 6"
+              :key="skeletonIndex"
+              class="rounded-borders"
+            >
+              <q-item-section>
+                <q-skeleton height="20px" type="text" width="100%" />
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </div>
+      </template>
       <template v-else>
         <div class="row q-px-md">
           <p>{{ t('local-media-explain-1') }}</p>
