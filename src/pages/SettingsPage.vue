@@ -86,6 +86,7 @@
                     :item="item"
                     :setting-id="settingId"
                     :style="$q.screen.lt.sm ? 'width: 100%;max-width:100%' : ''"
+                    v-bind="$attrs"
                   />
                 </q-item-section>
               </q-item>
