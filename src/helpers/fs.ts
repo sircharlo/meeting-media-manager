@@ -1,5 +1,6 @@
 import type {
   Asset,
+  FileItem,
   MultimediaItem,
   PublicationFetcher,
   Release,
@@ -430,9 +431,11 @@ async function validateExistingFile(
     const zipStat = await stat(zipPath);
     if (zipStat.size === size) {
       const dirListing = await readdir(dir);
-      const exeName = dirListing.find((f) => f.name !== basename(zipPath));
-      if (exeName) {
-        const exePath = join(dir, exeName);
+      const exeFile: FileItem = dirListing.find(
+        (f) => f.name !== basename(zipPath),
+      );
+      if (exeFile) {
+        const exePath = join(dir, exeFile.name);
         useCurrentStateStore().ffmpegPath = exePath;
         return true;
       }
