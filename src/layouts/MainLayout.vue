@@ -242,38 +242,70 @@ const delayedCacheClear = () => {
   setTimeout(checkAndClear, 30000);
 };
 
-watch(currentCongregation, (newCongregation, oldCongregation) => {
+watch(currentCongregation, async (newCongregation, oldCongregation) => {
   try {
+    //
+    // --- Part 1: congregation-switch logic ---
+    //
     if (oldCongregation && queues.meetings[oldCongregation]) {
       queues.meetings[oldCongregation].pause();
     }
+
     if (!newCongregation) {
       showMediaWindow(false);
       navigateToCongregationSelector();
-    } else {
-      setElectronUrlVariables(JSON.stringify(jwStore.urlVariables));
-      let year = new Date().getFullYear();
-      const memorialDate = jwStore.memorials[year];
-      if (memorialDate && isInPast(getSpecificWeekday(memorialDate, 6))) {
-        year++;
-      }
-      if (
-        currentSettings.value &&
-        memorialDate &&
-        currentSettings.value.memorialDate !== memorialDate
-      ) {
-        currentSettings.value.memorialDate = memorialDate ?? null;
-      }
-      downloadProgress.value = {};
-      updateLookupPeriod();
-      downloadBackgroundMusic();
+      return; // exit early — no need to run notifications
+    }
 
-      // Trigger delayed cache clear instead of immediate execution
-      delayedCacheClear();
+    setElectronUrlVariables(JSON.stringify(jwStore.urlVariables));
 
-      if (queues.meetings[newCongregation]) {
-        queues.meetings[newCongregation].start();
-      }
+    let year = new Date().getFullYear();
+    const memorialDate = jwStore.memorials[year];
+    if (memorialDate && isInPast(getSpecificWeekday(memorialDate, 6))) {
+      year++;
+    }
+
+    if (
+      currentSettings.value &&
+      memorialDate &&
+      currentSettings.value.memorialDate !== memorialDate
+    ) {
+      currentSettings.value.memorialDate = memorialDate ?? null;
+    }
+
+    downloadProgress.value = {};
+    updateLookupPeriod();
+    downloadBackgroundMusic();
+    delayedCacheClear();
+
+    if (queues.meetings[newCongregation]) {
+      queues.meetings[newCongregation].start();
+    }
+
+    //
+    // --- Part 2: notifications ---
+    //
+
+    const { updatesDisabled } = await import('src/utils/fs');
+
+    const isBetaVersion = process.env.IS_BETA;
+    const areUpdatesDisabled = await updatesDisabled();
+
+    // Priority: beta warning first
+    if (isBetaVersion) {
+      createTemporaryNotification({
+        icon: 'mmm-warning',
+        message: t('beta-version-warning'),
+        timeout: 30000,
+        type: 'warning',
+      });
+    } else if (areUpdatesDisabled) {
+      createTemporaryNotification({
+        icon: 'mmm-info',
+        message: t('updates-disabled-warning'),
+        timeout: 10000,
+        type: 'info',
+      });
     }
   } catch (error) {
     errorCatcher(error);
