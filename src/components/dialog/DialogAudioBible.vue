@@ -51,12 +51,28 @@
         class="q-pr-scroll overflow-auto col items-start q-pt-sm"
         :class="{ 'content-center': loading }"
       >
-        <div
-          v-if="loading"
-          class="row q-px-md col flex-center"
-          style="min-height: 100px"
-        >
-          <q-spinner color="primary" size="md" />
+        <div v-if="loading && !bibleAudioMedia?.length">
+          <div
+            v-for="sectionIndex in 2"
+            :key="sectionIndex"
+            class="q-pb-md q-px-md"
+          >
+            <q-skeleton
+              class="q-my-sm"
+              height="20px"
+              type="text"
+              width="200px"
+            />
+            <div class="row q-col-gutter-xs">
+              <div
+                v-for="bookIndex in sectionIndex === 1 ? 39 : 27"
+                :key="bookIndex"
+                class="col-xs-4 col-sm-3 col-md-2 col-lg-1"
+              >
+                <q-skeleton class="full-width" height="36px" type="QBtn" />
+              </div>
+            </div>
+          </div>
         </div>
         <template v-else>
           <template v-if="selectedBibleBook && selectedBookChapters.length">
@@ -79,7 +95,7 @@
                         'text-white': selectedChapter === chapter,
                         'bg-primary-light': selectedChapter !== chapter,
                       }"
-                      :disable="loading"
+                      :disable="loading || isProcessing"
                       :label="chapter"
                       unelevated
                       @click="selectedChapter = chapter"
@@ -105,7 +121,7 @@
                     <q-btn
                       class="rounded-borders-sm aspect-ratio-1 full-width"
                       :class="getVerseClass(verse)"
-                      :disable="loading"
+                      :disable="loading || isProcessing"
                       :label="verse"
                       unelevated
                       @click="toggleVerse(verse)"
@@ -143,7 +159,7 @@
                       'dotted-borders': !book.files,
                     }"
                     :color="!book.files ? '' : 'accent-200'"
-                    :disable="!book.files"
+                    :disable="!book.files || isProcessing"
                     no-caps
                     :text-color="!book.files ? 'accent-400' : 'black'"
                     unelevated
@@ -164,6 +180,7 @@
           <q-btn
             v-if="selectedBibleBook"
             color="primary"
+            :disable="isProcessing"
             flat
             :label="t('back')"
             @click="resetBibleBook(!selectedChapter)"
@@ -173,12 +190,14 @@
             v-close-popup
             color="primary"
             :label="t('add') + totalChosenVerses"
+            :loading="isProcessing"
             @click="addSelectedVerses()"
           />
           <q-btn
             v-else
             v-close-popup
             color="negative"
+            :disable="isProcessing"
             flat
             :label="t('cancel')"
             @click="resetBibleBook(true, true)"
@@ -308,6 +327,7 @@ watch(
 );
 
 const loading = ref<boolean>(false);
+const isProcessing = ref<boolean>(false);
 
 const chosenVerses = ref<number[]>([]);
 const hoveredVerse = ref<null | number>(null);
@@ -343,50 +363,54 @@ const fetchAudioBibleMedia = async (force = false) => {
 };
 
 const addSelectedVerses = async () => {
-  loading.value = true;
-  if (!chosenVerses.value.length) return;
-  const startVerseNumber = chosenVerses.value[0];
-  const endVerseNumber = chosenVerses.value[1] || startVerseNumber;
+  try {
+    isProcessing.value = true;
+    if (!chosenVerses.value.length) return;
+    const startVerseNumber = chosenVerses.value[0];
+    const endVerseNumber = chosenVerses.value[1] || startVerseNumber;
 
-  const min = timeToSeconds(
-    selectedChapterMedia.value.map((item) =>
+    const min = timeToSeconds(
+      selectedChapterMedia.value.map((item) =>
+        item.markers.markers.find(
+          (marker) => marker.verseNumber === startVerseNumber,
+        ),
+      )?.[0]?.startTime || '0',
+    );
+
+    const endVerse = selectedChapterMedia.value.map((item) =>
       item.markers.markers.find(
-        (marker) => marker.verseNumber === startVerseNumber,
+        (marker) => marker.verseNumber === endVerseNumber,
       ),
-    )?.[0]?.startTime || '0',
-  );
+    )?.[0];
+    const max = endVerse
+      ? timeToSeconds(endVerse.startTime) + timeToSeconds(endVerse.duration)
+      : 0;
 
-  const endVerse = selectedChapterMedia.value.map((item) =>
-    item.markers.markers.find(
-      (marker) => marker.verseNumber === endVerseNumber,
-    ),
-  )?.[0];
-  const max = endVerse
-    ? timeToSeconds(endVerse.startTime) + timeToSeconds(endVerse.duration)
-    : 0;
+    await downloadAdditionalRemoteVideo(
+      selectedChapterMedia.value,
+      selectedDate.value,
+      undefined,
+      false,
+      decodeEntities(
+        bibleAudioMedia.value?.[selectedBibleBook.value - 1]?.pubName,
+      ) +
+        ' ' +
+        selectedChapter.value +
+        ':' +
+        chosenVerses.value
+          .filter((verse, index, self) => self.indexOf(verse) === index)
+          .join('-'),
+      props.section,
+      { max, min },
+    );
 
-  await downloadAdditionalRemoteVideo(
-    selectedChapterMedia.value,
-    selectedDate.value,
-    undefined,
-    false,
-    decodeEntities(
-      bibleAudioMedia.value?.[selectedBibleBook.value - 1]?.pubName,
-    ) +
-      ' ' +
-      selectedChapter.value +
-      ':' +
-      chosenVerses.value
-        .filter((verse, index, self) => self.indexOf(verse) === index)
-        .join('-'),
-    props.section,
-    { max, min },
-  );
-
-  resetBibleBook(true, true);
-  emit('ok');
-
-  loading.value = false;
+    resetBibleBook(true, true);
+    emit('ok');
+  } catch (error) {
+    errorCatcher(error);
+  } finally {
+    isProcessing.value = false;
+  }
 };
 
 const resetBibleBook = (closeBook = false, closeDialog = false) => {
