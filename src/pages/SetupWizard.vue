@@ -679,11 +679,12 @@ watch(
     () => currentSettings?.value?.langFallback,
   ],
   () =>
-    updateYeartext(
-      online.value,
-      currentSettings.value,
-      currentLangObject.value,
-    ),
+    updateYeartext({
+      isSignLanguage: currentLangObject.value?.isSignLanguage,
+      lang: currentSettings.value?.lang,
+      langFallback: currentSettings.value?.langFallback,
+      online: online.value,
+    }),
 );
 
 watchImmediate(

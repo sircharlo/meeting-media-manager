@@ -163,11 +163,12 @@ async function chooseCongregation(
   try {
     const invalidSettingsConfigured = await setCongregation(congregation);
     if (congregation) {
-      updateYeartext(
-        online.value,
-        currentSettings.value,
-        currentLangObject.value,
-      );
+      updateYeartext({
+        isSignLanguage: currentLangObject.value?.isSignLanguage,
+        lang: currentSettings.value?.lang,
+        langFallback: currentSettings.value?.langFallback,
+        online: online.value,
+      });
       downloadSongbookVideos();
       if (initialLoad) {
         // if (initialLoad || invalidSettings)
