@@ -12,3 +12,4 @@ export * from './media';
 export * from './obs';
 export * from './search';
 export * from './settings';
+export * from './timer';

@@ -23,6 +23,7 @@ export type Display = Electron.Display & {
   mainWindow?: boolean;
   mainWindowBounds?: Electron.Rectangle;
   mediaWindow?: boolean;
+  timerWindow?: boolean;
 };
 
 export interface ElectronApi {
@@ -87,6 +88,10 @@ export interface ElectronApi {
   inferExtension: (filename: string, filetype?: string) => Promise<string>;
   isDownloadErrorExpected: () => Promise<boolean>;
   moveMediaWindow: (
+    targetScreenNumber?: number,
+    windowedMode?: boolean,
+  ) => void;
+  moveTimerWindow: (
     targetScreenNumber?: number,
     windowedMode?: boolean,
   ) => void;
@@ -183,6 +188,7 @@ export interface ElectronApi {
   setElectronUrlVariables: (variables: string) => void;
   setHardwareAcceleration: (disabled: boolean) => void;
   toggleMediaWindow: (show: boolean, enableFadeTransitions?: boolean) => void;
+  toggleTimerWindow: (show: boolean) => void;
   unregisterAllShortcuts: () => void;
   unregisterShortcut: (shortcut: string) => void;
   unwatchFolders: () => void;
@@ -234,6 +240,7 @@ export type ElectronIpcSendKey =
   | 'checkForUpdates'
   | 'focusMediaWindow'
   | 'moveMediaWindow'
+  | 'moveTimerWindow'
   | 'navigateWebsiteWindow'
   | 'openDiscussion'
   | 'openExternal'
@@ -241,6 +248,7 @@ export type ElectronIpcSendKey =
   | 'setElectronUrlVariables'
   | 'toggleMediaWindow'
   | 'toggleOpenAtLogin'
+  | 'toggleTimerWindow'
   | 'toggleWebsiteWindow'
   | 'unregisterAllShortcuts'
   | 'unregisterShortcut'
