@@ -476,6 +476,7 @@ export const useJwStore = defineStore('jw-store', {
                 pubMediaLinks.files[lang]?.[fileformat] || []
               )
                 .filter(isMediaLink)
+                .filter((mediaLink) => mediaLink.track > 0)
                 .filter((mediaLink) => mediaLink.track < MAX_SONGS);
               const filteredMediaItemLinks = mediaItemLinks.reduce<MediaLink[]>(
                 (acc, mediaLink) => {
