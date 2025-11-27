@@ -1,5 +1,6 @@
 import type { PublicationFetcher } from 'src/types';
 
+import { Buffer } from 'buffer';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getPubId } from 'src/utils/jw';
 
@@ -191,32 +192,35 @@ export const getPublicationDirectoryContents = async (
 };
 
 /**
- * Trims a filepath to comply with the maximum path length.
+ * Trims a filepath to comply with the maximum path length (UTF-8 bytes).
  * @param filepath The filepath to trim.
+ * @param maxBytes Maximum allowed UTF-8 byte length.
  * @returns The trimmed filepath.
  */
-export const trimFilepathAsNeeded = (filepath: string) => {
+export const trimFilepathAsNeeded = (filepath: string, maxBytes = 230) => {
   const fileDir = dirname(filepath);
-  let filepathSize = new Blob([filepath]).size;
-  while (filepathSize > 230) {
-    const uniqueId =
-      '_' +
-      Math.floor(Math.random() * Date.now())
-        .toString(16)
-        .slice(0, 4);
+  const ext = extname(filepath);
 
-    const overBy = filepathSize - 230 + uniqueId.length;
+  const getSize = (str: string) => Buffer.byteLength(str, 'utf8');
 
-    const baseName = path
-      .basename(filepath)
-      .slice(0, -extname(filepath).length);
+  let size = getSize(filepath);
 
-    const newBaseName = baseName.slice(0, -overBy) + uniqueId;
+  while (size > maxBytes) {
+    const uniqueId = '_' + Math.random().toString(16).slice(2, 6);
 
-    filepath = join(fileDir, newBaseName + extname(filepath));
+    const baseName = path.basename(filepath, ext);
 
-    filepathSize = new Blob([filepath]).size;
+    const bytesOver = size - maxBytes + Buffer.byteLength(uniqueId, 'utf8');
+
+    // Ensure we don’t slice too much
+    const sliceAmount = Math.max(1, baseName.length - bytesOver);
+
+    const newBaseName = baseName.slice(0, sliceAmount) + uniqueId;
+
+    filepath = join(fileDir, newBaseName + ext);
+    size = getSize(filepath);
   }
+
   return filepath;
 };
 
