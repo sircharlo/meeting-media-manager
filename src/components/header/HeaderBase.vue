@@ -23,7 +23,7 @@
             width="40px"
           />
           <q-badge
-            v-if="!aboutInfo?.updatesEnabled"
+            v-if="updatesAreDisabled"
             color="warning"
             floating
             style="top: -1px; right: 0px"
@@ -31,7 +31,7 @@
             <q-icon name="mmm-updates-disabled" size="small" />
           </q-badge>
           <q-badge
-            v-else-if="aboutInfo?.betaUpdatesEnabled"
+            v-else-if="isBetaVersion"
             color="negative"
             floating
             label="β"
@@ -86,9 +86,10 @@
 <script setup lang="ts">
 import DialogAbout from 'components/dialog/DialogAbout.vue';
 import { storeToRefs } from 'pinia';
+import { updatesDisabled } from 'src/utils/fs';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
-import { ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute } from 'vue-router';
 
@@ -96,6 +97,10 @@ import HeaderCalendar from './HeaderCalendar.vue';
 import HeaderCongregation from './HeaderCongregation.vue';
 import HeaderSettings from './HeaderSettings.vue';
 import HeaderWebsite from './HeaderWebsite.vue';
+
+const isBetaVersion = process.env.IS_BETA;
+
+const updatesAreDisabled = ref(false);
 
 const { t } = useI18n();
 const route = useRoute();
@@ -109,8 +114,17 @@ const aboutModal = ref(false);
 const aboutInfo = ref<InstanceType<typeof DialogAbout> | null>(null);
 const dialogId = 'about-dialog';
 
-// const hoveredLogo = ref(false);
-// const activeLogo = computed(() => {
-//   return hoveredLogo.value || aboutModal.value;
-// });
+onMounted(async () => {
+  updatesAreDisabled.value = await updatesDisabled();
+});
+
+// Watch for changes to updatesEnabled from the DialogAbout component
+watch(
+  () => aboutInfo.value?.updatesEnabled,
+  (enabled) => {
+    if (enabled !== undefined) {
+      updatesAreDisabled.value = !enabled;
+    }
+  },
+);
 </script>
