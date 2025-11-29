@@ -17,12 +17,12 @@
             :delay="1000"
             self="center left"
           >
-            {{ t('expand-sidebar') }}
+            {{ t('expand') }}
           </q-tooltip>
           <q-item-section avatar>
             <q-icon name="mmm-menu" />
           </q-item-section>
-          <q-item-section>{{ t('collapse-sidebar') }}</q-item-section>
+          <q-item-section>{{ t('collapse') }}</q-item-section>
         </q-item>
       </div>
     </q-slide-transition>

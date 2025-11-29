@@ -11,6 +11,7 @@
     <MediaSectionHeader
       v-if="selectedDateObject"
       ref="sectionHeaderRef"
+      v-model:collapsed="isCollapsed"
       :has-add-media-button="hasAddMediaButton"
       :is-custom="isCustomSection"
       :is-first="isFirst"
@@ -37,6 +38,7 @@
     />
     <!-- Media Items -->
     <div
+      v-show="!isCollapsed"
       ref="dragDropContainer"
       class="sortable-media"
       :class="{ 'drop-here': isDragging }"
@@ -159,6 +161,9 @@ const sectionHeaderRef = ref<InstanceType<typeof MediaSectionHeader> | null>(
 
 // Dialog state
 const showAddDividerDialog = ref(false);
+
+// Collapse state
+const isCollapsed = ref(false);
 
 // Use the media section composable
 const {
