@@ -28,6 +28,7 @@
       ref="sectionHeader"
       class="text-bold text-uppercase text-spaced row justify-between col-grow"
       :class="{ 'cursor-pointer': isHovered && isCustom }"
+      @click.stop="isCustom && !canCollapse ? undefined : () => {}"
       @dblclick="isCustom ? handleDoubleClick() : undefined"
     >
       <q-input
@@ -55,7 +56,14 @@
       <div class="row items-center">
         <!-- Three-dots menu for other controls -->
         <template v-if="isCustom && !selectedDayMeetingType">
-          <q-btn class="custom-text-color" flat icon="mmm-dots" round size="sm">
+          <q-btn
+            class="custom-text-color"
+            flat
+            icon="mmm-dots"
+            round
+            size="sm"
+            @click.stop
+          >
             <q-menu>
               <q-list style="min-width: 150px">
                 <!-- Color Picker -->
@@ -163,7 +171,7 @@
             icon="mmm-repeat"
             round
             size="sm"
-            @click="handleRepeatClick"
+            @click.stop="handleRepeatClick"
           >
             <q-tooltip :delay="500">
               {{ t('stop-repeat-section') }}
@@ -191,10 +199,26 @@
             :outline="!!buttonLabel"
             :round="!buttonLabel"
             size="sm"
-            @click="handleAddClick"
+            @click.stop="handleAddClick"
           >
             <q-tooltip v-if="!$q.screen.gt.xs" :delay="500">
               {{ tooltipText }}
+            </q-tooltip>
+          </q-btn>
+        </template>
+        <!-- Chevron for collapsing (non-meeting days only) -->
+        <template v-if="canCollapse">
+          <q-btn
+            class="q-ml-sm"
+            color="primary"
+            :flat="!collapsed"
+            :icon="collapsed ? 'mmm-left' : 'mmm-down'"
+            round
+            size="sm"
+            @click="toggleCollapse()"
+          >
+            <q-tooltip :delay="500">
+              {{ collapsed ? t('expand') : t('collapse') }}
             </q-tooltip>
           </q-btn>
         </template>
@@ -216,6 +240,7 @@ import { computed, nextTick, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const props = defineProps<{
+  collapsed?: boolean;
   hasAddMediaButton: boolean;
   isCustom: boolean;
   isFirst: boolean;
@@ -235,6 +260,7 @@ const emit = defineEmits<{
   rename: [value: boolean];
   'update-color': [color: string];
   'update-label': [label: string];
+  'update:collapsed': [value: boolean];
 }>();
 
 const $q = useQuasar();
@@ -277,7 +303,17 @@ const tooltipText = computed(() => {
   return t('add-extra-media');
 });
 
+// Computed property to determine if section can be collapsed
+const canCollapse = computed(() => !selectedDayMeetingType.value);
+
 // Methods
+const toggleCollapse = () => {
+  console.log('🔄 toggleCollapse called', {
+    currentCollapsed: props.collapsed,
+    newCollapsed: !props.collapsed,
+  });
+  emit('update:collapsed', !props.collapsed);
+};
 const handleDoubleClick = () => {
   emit('rename', true);
   nextTick(() => {
