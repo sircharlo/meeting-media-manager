@@ -4,6 +4,22 @@
 
 Для повного списку змін між версіями перегляньте наш файл CHANGELOG.md на GitHub.
 
+## v25.12.0
+
+### ✨ Нові функції
+
+- ✨ **Multi-Select Context Menu**: Added support for right-click menu actions when multiple media items are selected.
+- ✨ **Keyboard Shortcuts**: Added `Ctrl/Cmd+A` to select all media, `H` to hide selected media, and `Shift+Up/Down` for keyboard selection navigation.
+- ✨ **Watchtower Study Video Settings**: Added a setting to exclude extra Watchtower study videos.
+- ✨ **Collapsible Sections**: Added ability to collapse sections on non-meeting days for a cleaner view.
+- ✨ **JW Events Website**: Added the ability to present the JW Events website in addition to the main official website.
+- ✨ **Playlist Import Customization**: Allowed ability to customize the prefix that is added to media items when importing JW playlists.
+- ✨ **Website Mirroring Navigation**: Added a toggle to automatically navigate to the media list after website mirroring is stopped.
+- ✨ **OBS Recording Controls**: Added the ability to control OBS recordings.
+- ✨ **Yeartext Preview**: Added the ability to preview next year's yeartext as of December of every year.
+- ✨ **Update Notifications**: Added warning notifications if running a beta version or if updates are disabled, and improved update download progress display.
+- ✨ **Hardware Acceleration Settings**: Added an option to permanently disable hardware acceleration if needed.
+
 ## v25.11.0
 
 ### ✨ Нові функції
