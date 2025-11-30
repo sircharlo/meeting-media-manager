@@ -8,17 +8,17 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 
 ### ✨ Mitä uutta
 
-- ✨ **Multi-Select Context Menu**: Added support for right-click menu actions when multiple media items are selected.
-- ✨ **Keyboard Shortcuts**: Added `Ctrl/Cmd+A` to select all media, `H` to hide selected media, and `Shift+Up/Down` for keyboard selection navigation.
-- ✨ **Watchtower Study Video Settings**: Added a setting to exclude extra Watchtower study videos.
-- ✨ **Collapsible Sections**: Added ability to collapse sections on non-meeting days for a cleaner view.
-- ✨ **JW Events Website**: Added the ability to present the JW Events website in addition to the main official website.
-- ✨ **Playlist Import Customization**: Allowed ability to customize the prefix that is added to media items when importing JW playlists.
-- ✨ **Website Mirroring Navigation**: Added a toggle to automatically navigate to the media list after website mirroring is stopped.
-- ✨ **OBS Recording Controls**: Added the ability to control OBS recordings.
-- ✨ **Yeartext Preview**: Added the ability to preview next year's yeartext as of December of every year.
-- ✨ **Update Notifications**: Added warning notifications if running a beta version or if updates are disabled, and improved update download progress display.
-- ✨ **Hardware Acceleration Settings**: Added an option to permanently disable hardware acceleration if needed.
+- ✨ **Monivalintakontekstivalikko**: Lisättiin tuki hiiren oikean painikkeen valikolle, kun useita mediaobjekteja on valittuna.
+- ✨ **Pikanäppäimet**: Lisättiin Ctrl/Cmd+A valitsemaan kaikki mediaobjektit, H (hide) piilottamaan valitut mediaobjektit sekä Shift+ylös/alas näppäimistön selausvalintaan.
+- ✨ **Vartiotornin tutkintovideon asetukset**: Lisättiin asetus, jolla voidaan jättää pois ylimääräiset Vartiotornin tutkintovideot.
+- ✨ **Kutistettavat osiot**: Lisättiin mahdollisuus kutistaa osiot päiviltä, joilla ei ole kokouksia, selkeämmän näkymän saavuttamiseksi.
+- ✨ **JW Events verkkosivusto**: Lisäsi mahdollisuuden esitellä JW Events -sivustoa tärkeimpien virallisten verkkosivujen lisäksi.
+- ✨ **Soittolistatuonnin mukautus**: Lisättiin mahdollisuus mukauttaa etuliite, joka lisätään mediaobjekteihin JW-soittolistojen tuonnin yhteydessä.
+- ✨ **Verkkosivunpeilauksen navigointi**: Lisättiin valitsin, joka siirtyy automaattisesti medialuetteloon, kun verkkosivun peilaus lopetetaan.
+- ✨ **OBS-tallennuksen ohjaimet**: Lisättiin mahdollisuus ohjata OBS-tallennuksia.
+- ✨ **Vuositekstin esikatselu**: Lisättiin mahdollisuus esikatsella seuraavan vuoden vuositekstiä jokaisen vuoden joulukuussa.
+- ✨ **Päivitysilmoitukset**: Lisättiin varoitusilmoituksia, jos käytössä on beta-versio tai jos päivitykset ovat pois käytöstä, sekä parannettiin päivityksen latausprosessin näyttöä.
+- ✨ **Laitteistokiihdytyksen asetukset**: Lisättiin asetus, jolla laitteistokiihdytys voidaan pysyvästi poistaa käytöstä tarvittaessa.
 
 ## v25.11.0
 
