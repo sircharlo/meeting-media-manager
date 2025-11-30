@@ -8,17 +8,17 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 ### ✨ Nya funktioner
 
-- ✨ **Multi-Select Context Menu**: Added support for right-click menu actions when multiple media items are selected.
-- ✨ **Keyboard Shortcuts**: Added `Ctrl/Cmd+A` to select all media, `H` to hide selected media, and `Shift+Up/Down` for keyboard selection navigation.
-- ✨ **Watchtower Study Video Settings**: Added a setting to exclude extra Watchtower study videos.
-- ✨ **Collapsible Sections**: Added ability to collapse sections on non-meeting days for a cleaner view.
-- ✨ **JW Events Website**: Added the ability to present the JW Events website in addition to the main official website.
-- ✨ **Playlist Import Customization**: Allowed ability to customize the prefix that is added to media items when importing JW playlists.
-- ✨ **Website Mirroring Navigation**: Added a toggle to automatically navigate to the media list after website mirroring is stopped.
-- ✨ **OBS Recording Controls**: Added the ability to control OBS recordings.
-- ✨ **Yeartext Preview**: Added the ability to preview next year's yeartext as of December of every year.
-- ✨ **Update Notifications**: Added warning notifications if running a beta version or if updates are disabled, and improved update download progress display.
-- ✨ **Hardware Acceleration Settings**: Added an option to permanently disable hardware acceleration if needed.
+- ✨ **Kontextmeny för flervalsmarkering**: Lade till stöd för åtgärder i högerklicksmenyn när flera medieobjekt är markerade.
+- ✨ **Kortkommandon**: Lade till `Ctrl/Cmd+A` för att markera alla medier, `H` (hide) för att dölja valda medier och `Skift+Upp/Ner` för navigera i markeringar med tangentbordet.
+- ✨ **Videoinställningar för Vakttornsstudiet**: Lade till en inställning för att utesluta extra videor för Vakttornsstudiet.
+- ✨ **Hopfällbara sektioner**: Lade till möjlighet att fälla ihop sektioner på dagar utan möten för en renare vy.
+- ✨ **JW Events websida**: Lade till möjligheten att presentera JW Events hemsida utöver den viktigaste officiella hemsidan.
+- ✨ **Anpassning av spellisteimport**: Lade till möjlighet att anpassa det prefix som läggs till medieobjekt vid import av JW-spellistor.
+- ✨ **Navigering vid webbplats­spegling:**: Lade till ett reglage för att automatiskt gå till medielistan när webbplatsspeglingen stoppas.
+- ✨ **OBS Inspelningskontroller**: Lade till möjligheten att styra OBS inspelningar.
+- ✨ **Förhandsgranskning årstext**: Lade till möjligheten att förhandsgranska nästa års årstext från och med december.
+- ✨ **Uppdateringsaviseringar**: Lade till varningsaviseringar om du kör en betaversion eller om uppdateringar är inaktiverade och förbättrad visning av nedladdningsförlopp för uppdateringar.
+- ✨ **Inställningar för hårdvaruaccelerationr**: Lade till ett alternativ för att permanent inaktivera hårdvaruacceleration vid behov.
 
 ## v25.11.0
 
