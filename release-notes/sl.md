@@ -8,17 +8,17 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **Multi-Select Context Menu**: Added support for right-click menu actions when multiple media items are selected.
-- ✨ **Keyboard Shortcuts**: Added `Ctrl/Cmd+A` to select all media, `H` to hide selected media, and `Shift+Up/Down` for keyboard selection navigation.
-- ✨ **Watchtower Study Video Settings**: Added a setting to exclude extra Watchtower study videos.
-- ✨ **Collapsible Sections**: Added ability to collapse sections on non-meeting days for a cleaner view.
-- ✨ **JW Events Website**: Added the ability to present the JW Events website in addition to the main official website.
-- ✨ **Playlist Import Customization**: Allowed ability to customize the prefix that is added to media items when importing JW playlists.
-- ✨ **Website Mirroring Navigation**: Added a toggle to automatically navigate to the media list after website mirroring is stopped.
-- ✨ **OBS Recording Controls**: Added the ability to control OBS recordings.
-- ✨ **Yeartext Preview**: Added the ability to preview next year's yeartext as of December of every year.
-- ✨ **Update Notifications**: Added warning notifications if running a beta version or if updates are disabled, and improved update download progress display.
-- ✨ **Hardware Acceleration Settings**: Added an option to permanently disable hardware acceleration if needed.
+- ✨ **Kontekstni meni z več možnostmi izbire**: Dodana podpora za dejanja v meniju ob desnem kliku, ko je izbranih več medijskih elementov.
+- ✨ **Bližnjice na tipkovnici**: Dodane bližnjice `Ctrl/Cmd+A` za izbor vseh medijev, `H` za skrivanje izbranih medijev ter `Shift+Puščica gor/dol` za navigacijo po izboru s tipkovnico.
+- ✨ **Nastavitve za videoposnetke pri Preučevanju Stražnega stolpa**: Dodana je bila nastavitev za izključitev dodatnih videoposnetkov pri Preučevanju Stražnega stolpa.
+- ✨ **Zložljivi razdelki**: Dodana možnost zlaganja razdelkov za dneve brez shodov za čistejši prikaz.
+- ✨ **Spletno mesto JW Events**: Dodana možnost predstavitve spletnega mesta JW Events poleg glavnega uradnega spletnega mesta.
+- ✨ **Prilagoditev uvoza seznamov predvajanja**: Dodana možnost prilagoditve predpone, ki se doda medijskim elementom ob uvozu seznamov predvajanja JW.
+- ✨ **Navigacija po zrcaljenju spletnega mesta**: Dodano stikalo za samodejno preusmeritev na seznam medijev po končanem zrcaljenju spletnega mesta.
+- ✨ **Kontrole snemanja v OBS**: Dodana možnost upravljanja snemanja v OBS.
+- ✨ **Predogled letnega stavka**: Dodana možnost predogleda letnega stavka za naslednje leto od decembra dalje.
+- ✨ **Obvestila o posodobitvah**: Dodana opozorilna obvestila ob uporabi beta različice ali če so posodobitve onemogočene, ter izboljšan prikaz napredka prenosa posodobitev.
+- ✨ **Nastavitve strojnega pospeševanja**: Dodana možnost trajne deaktivacije strojnega pospeševanja, če je potrebno.
 
 ## v25.11.0
 
