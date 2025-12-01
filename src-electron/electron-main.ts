@@ -15,19 +15,20 @@ import {
   PLATFORM,
   PRODUCT_NAME,
 } from 'src-electron/constants';
+import { cancelAllDownloads } from 'src-electron/main/downloads';
 import { initScreenListeners } from 'src-electron/main/screen';
 import { initSessionListeners, setShouldQuit } from 'src-electron/main/session';
 import { initUpdater } from 'src-electron/main/updater';
 import { captureElectronError } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
+import 'src-electron/main/ipc';
+import 'src-electron/main/security';
 import {
   authorizedClose,
   createMainWindow,
   mainWindow,
 } from 'src-electron/main/window/window-main';
 import upath from 'upath';
-import 'src-electron/main/ipc';
-import 'src-electron/main/security';
 
 initSentry({
   beforeSend(event) {
@@ -192,6 +193,11 @@ if (!gotTheLock) {
 
   // macOS default behavior is to keep the app running even after all windows are closed
   app.on('window-all-closed', () => {
+    try {
+      cancelAllDownloads();
+    } catch (error) {
+      console.error('Failed to cancel downloads:', error);
+    }
     if (PLATFORM !== 'darwin') app.quit();
   });
 
