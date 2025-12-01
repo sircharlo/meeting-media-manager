@@ -551,6 +551,8 @@
   "update-available-please-update": "Er is een nieuwe versie van M³ beschikbaar! We raden aan om te updaten om de nieuwste functies, bugfixes en beveiligingsupdates te ontvangen.",
   "update-downloaded": "Een nieuwe versie van M³ is gedownload en is klaar om te worden geïnstalleerd.",
   "update-downloading": "Er is een nieuwe versie van M³ beschikbaar en deze wordt op de achtergrond gedownload.",
+  "update-error-read-only-volume": "M³ could not be updated because it is stored in a directory that is read-only. Please move M³ to a different location, such as the Applications folder.",
+  "update-failed": "Update failed",
   "updates-disabled-warning": "Please enable updates to receive new features, bug fixes, and important security updates.",
   "use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media": "Use the @:extra-media button to add media for this date, or select a different date to view the corresponding media for that day.",
   "use-the-slider-below-to-adjust-the-start-and-end-time-of-this-media-item": "Gebruik de schuifregelaar hieronder om de start- en eindtijd van dit media-item aan te passen. Dit is handig voor het afspelen van slechts bepaalde delen van een video.",
