@@ -131,7 +131,7 @@
     "webpack-iconfont-plugin-nodejs": "^1.0.36"
   },
   "resolutions": {
-    "vite": "7.2.4"
+    "vite": "7.2.6"
   },
   "browserslist": [
     "Electron >= 37"
