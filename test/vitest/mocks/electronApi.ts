@@ -109,6 +109,9 @@ export const electronApi: ElectronApi = {
   onUpdateDownloadProgress: function (callback) {
     console.log('onUpdateDownloadProgress called but not implemented');
   },
+  onUpdateError: function (callback) {
+    console.log('onUpdateError called but not implemented');
+  },
   onWatchFolderUpdate: function (callback) {
     throw new Error('Function not implemented.');
   },
