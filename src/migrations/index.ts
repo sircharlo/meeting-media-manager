@@ -7,6 +7,7 @@ import { moveAdditionalMediaMaps } from './move-additional-media';
 import { newMediaSections } from './new-media-sections';
 import { refreshDynamicMedia } from './refresh-dynamic-media';
 
+// In the migration registry, the version is the one that was live when the migration was added
 export const MIGRATION_REGISTRY: Record<string, MigrationFunction> = {
   '25.3.2-refreshDynamicMedia': refreshDynamicMedia,
   '25.4.3-refreshDynamicMedia': refreshDynamicMedia,
