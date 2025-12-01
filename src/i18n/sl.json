@@ -551,6 +551,8 @@
   "update-available-please-update": "Na voljo je nova različica M³! Priporočamo posodobitev, da boste prejeli najnovejše funkcije, popravke napak in varnostne posodobitve.",
   "update-downloaded": "Nova različica M³ je bila prenesena in je pripravljena za namestitev.",
   "update-downloading": "Na voljo je nova različica M³ in se prenaša v ozadju.",
+  "update-error-read-only-volume": "M³ could not be updated because it is stored in a directory that is read-only. Please move M³ to a different location, such as the Applications folder.",
+  "update-failed": "Update failed",
   "updates-disabled-warning": "Omogoči posodobitve, da boste prejemali nove funkcije, popravke napak in pomembne varnostne posodobitve.",
   "use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media": "Uporabi gumb @:extra-media, če želiš dodati multimedijsko vsebino za ta datum, ali pa izberi drug datum in si oglej multimedijsko vsebino za tisti dan.",
   "use-the-slider-below-to-adjust-the-start-and-end-time-of-this-media-item": "S spodnjim drsnikom prilagodi začetek in konec predvajanja videoposnetka. To je uporabno za predvajanje samo določenih delov videoposnetka.",

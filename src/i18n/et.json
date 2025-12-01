@@ -551,6 +551,8 @@
   "update-available-please-update": "Uus M³ versioon on saadaval! Me soovitame sul uuendada viimasele versioonile, et saada kasu parandustest, uutest funktsioonidest ja turvauuendustest.",
   "update-downloaded": "M³-e uus versioon on alla laaditud ja valmis installimiseks.",
   "update-downloading": "M³-e uus versioon on saadaval ja allalaadimine toimub taustal.",
+  "update-error-read-only-volume": "M³ could not be updated because it is stored in a directory that is read-only. Please move M³ to a different location, such as the Applications folder.",
+  "update-failed": "Update failed",
   "updates-disabled-warning": "Please enable updates to receive new features, bug fixes, and important security updates.",
   "use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media": "Use the @:extra-media button to add media for this date, or select a different date to view the corresponding media for that day.",
   "use-the-slider-below-to-adjust-the-start-and-end-time-of-this-media-item": "Selle meediaelemendi algus- ja lõpuaja reguleerimiseks kasuta allolevat liugurit. See on kasulik ainult teatud videoosade esitamiseks.",
