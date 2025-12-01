@@ -4,6 +4,13 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v25.12.1
+
+### 🐞 Bug Fixes
+
+- 🐞 **Yeartext Preview**: Fixed yeartext preview not displaying properly.
+- 🐞 **Migration Error Handling**: Improved error handling across all migration files.
+
 ## v25.12.0
 
 ### ✨ New Features
