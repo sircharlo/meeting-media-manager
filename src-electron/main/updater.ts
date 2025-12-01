@@ -39,6 +39,14 @@ export async function initUpdater() {
         message?.includes(ignoreError) || error?.message?.includes(ignoreError),
     );
 
+    if (
+      message?.includes('read-only volume') ||
+      error?.message?.includes('read-only volume')
+    ) {
+      sendToWindow(mainWindow, 'update-error');
+      return;
+    }
+
     if (!shouldIgnore) {
       captureElectronError(error, {
         contexts: {

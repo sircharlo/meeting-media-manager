@@ -133,6 +133,7 @@ export interface ElectronApi {
       transferred: number;
     }) => void,
   ) => void;
+  onUpdateError: (callback: () => void) => void;
   onWatchFolderUpdate: (
     callback: (args: {
       changedPath: string;
@@ -224,6 +225,7 @@ export type ElectronIpcListenKey =
   | 'update-available'
   | 'update-download-progress'
   | 'update-downloaded'
+  | 'update-error'
   | 'watchFolderUpdate'
   | 'websiteWindowClosed';
 
