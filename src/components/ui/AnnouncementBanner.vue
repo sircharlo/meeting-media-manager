@@ -85,6 +85,7 @@ import type { Announcement, AnnouncementAction } from 'src/types';
 import prettyBytes from 'pretty-bytes';
 import { useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
 import { fetchAnnouncements, fetchLatestVersion } from 'src/utils/api';
 import { updatesDisabled } from 'src/utils/fs';
@@ -99,7 +100,15 @@ const { t } = useI18n();
 const currentStateStore = useCurrentStateStore();
 const congregationStore = useCongregationSettingsStore();
 
-const { openDiscussion, openExternal, quitAndInstall } = window.electronApi;
+const {
+  onUpdateAvailable,
+  onUpdateDownloaded,
+  onUpdateDownloadProgress,
+  onUpdateError,
+  openDiscussion,
+  openExternal,
+  quitAndInstall,
+} = window.electronApi;
 
 const version = process.env.version;
 const latestVersion = ref('');
@@ -183,9 +192,6 @@ const downloadProgressText = computed(() => {
 
 onMounted(() => {
   try {
-    const { onUpdateAvailable, onUpdateDownloaded, onUpdateDownloadProgress } =
-      window.electronApi;
-
     onUpdateAvailable(() => {
       try {
         showAutoUpdateAvailableBanner.value = true;
@@ -218,6 +224,16 @@ onMounted(() => {
           contexts: { fn: { name: 'onUpdateDownloaded' } },
         });
       }
+    });
+
+    onUpdateError(() => {
+      createTemporaryNotification({
+        caption: t('update-failed'),
+        icon: 'mmm-error',
+        message: t('update-error-read-only-volume'),
+        timeout: 10000,
+        type: 'negative',
+      });
     });
   } catch (error) {
     errorCatcher(error, {
