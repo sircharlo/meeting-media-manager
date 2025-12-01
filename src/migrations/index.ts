@@ -6,6 +6,7 @@ import { localStorageToPiniaPersist } from './local-storage-to-pinia';
 import { moveAdditionalMediaMaps } from './move-additional-media';
 import { newMediaSections } from './new-media-sections';
 import { refreshDynamicMedia } from './refresh-dynamic-media';
+import { resetYeartextPreview2026 } from './reset-yeartext-preview-2026';
 
 // In the migration registry, the version is the one that was live when the migration was added
 export const MIGRATION_REGISTRY: Record<string, MigrationFunction> = {
@@ -14,6 +15,7 @@ export const MIGRATION_REGISTRY: Record<string, MigrationFunction> = {
   '25.8.4-newMediaSections': newMediaSections,
   '25.10.1-refreshDynamicMedia': refreshDynamicMedia,
   '25.11.0-refreshDynamicMedia': refreshDynamicMedia,
+  '25.12.0-resetYeartextPreview2026': resetYeartextPreview2026,
   addBaseUrlToAllCongregations,
   firstRun,
   localStorageToPiniaPersist,
