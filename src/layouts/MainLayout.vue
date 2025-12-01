@@ -1040,6 +1040,7 @@ const checkYeartextPreview = async () => {
         {
           color: 'positive',
           handler: async () => {
+            let success = false;
             try {
               // Fetch next year's yeartext
               const result = await fetchYeartext(
@@ -1048,6 +1049,7 @@ const checkYeartextPreview = async () => {
                 nextYear,
               );
               if (result.yeartext) {
+                success = true;
                 // Pause the yeartext watcher to prevent immediate override
                 yeartextWatcherPaused.value = true;
 
@@ -1095,8 +1097,10 @@ const checkYeartextPreview = async () => {
                 type: 'negative',
               });
             } finally {
-              // Resume the watcher
-              yeartextWatcherPaused.value = false;
+              // Only resume if we didn't succeed (if we succeeded, the timeout will handle it)
+              if (!success) {
+                yeartextWatcherPaused.value = false;
+              }
             }
           },
           label: t('yes'),
@@ -1107,9 +1111,6 @@ const checkYeartextPreview = async () => {
     });
   } catch (error) {
     errorCatcher(error);
-  } finally {
-    // Resume the watcher
-    yeartextWatcherPaused.value = false;
   }
 };
 
