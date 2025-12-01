@@ -551,6 +551,8 @@
   "update-available-please-update": "Вышла новая версия M³! Мы рекомендуем обновить программу, чтобы получить доступ к новейшим функциям, исправлениям ошибок и обновлениям безопасности.",
   "update-downloaded": "Новая версия M³ была загружена и готова к установке.",
   "update-downloading": "Доступна новая версия M³, которая загружается в фоновом режиме.",
+  "update-error-read-only-volume": "M³ could not be updated because it is stored in a directory that is read-only. Please move M³ to a different location, such as the Applications folder.",
+  "update-failed": "Update failed",
   "updates-disabled-warning": "Please enable updates to receive new features, bug fixes, and important security updates.",
   "use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media": "Use the @:extra-media button to add media for this date, or select a different date to view the corresponding media for that day.",
   "use-the-slider-below-to-adjust-the-start-and-end-time-of-this-media-item": "Используйте ползунок ниже, чтобы настроить время начала и окончания воспроизведения этого медиа файла. Это полезно если нужно воспроизвести только определенные части видео.",
