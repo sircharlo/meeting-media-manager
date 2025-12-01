@@ -2495,9 +2495,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@quasar/quasar-app-extension-testing-unit-vitest@npm:1.2.3":
-  version: 1.2.3
-  resolution: "@quasar/quasar-app-extension-testing-unit-vitest@npm:1.2.3"
+"@quasar/quasar-app-extension-testing-unit-vitest@npm:^1.2.4":
+  version: 1.2.4
+  resolution: "@quasar/quasar-app-extension-testing-unit-vitest@npm:1.2.4"
   dependencies:
     happy-dom: "npm:^15.0.0"
     lodash-es: "npm:^4.17.21"
@@ -2511,7 +2511,7 @@ __metadata:
   peerDependenciesMeta:
     "@vitest/ui":
       optional: true
-  checksum: 10c0/60757a6ff5dd16184e2644550611b1fba055cc9fcfd2b380fcfaefdecb8537c746ef057ec69f99d9d21065eb3412e2a7761bbda3cf18caede9b24634072642bf
+  checksum: 10c0/fd16231610e4a1ad267aba66f1f8f1cb275f687614b6c183cc2ebcc291e4ac448ca074e841069e4db651dac45c22ef0c1a2e8c90d782b4d8930f6f4c64305e64
   languageName: node
   linkType: hard
 
@@ -10099,7 +10099,7 @@ __metadata:
     "@quasar/extras": "npm:^1.17.0"
     "@quasar/icongenie": "npm:^4.0.0"
     "@quasar/quasar-app-extension-qmarkdown": "npm:^2.0.5"
-    "@quasar/quasar-app-extension-testing-unit-vitest": "npm:1.2.3"
+    "@quasar/quasar-app-extension-testing-unit-vitest": "npm:^1.2.4"
     "@quasar/vite-plugin": "npm:^1.10.0"
     "@rollup/plugin-inject": "npm:^5.0.5"
     "@sentry/core": "npm:^10.27.0"
