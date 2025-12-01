@@ -29,6 +29,8 @@ const { basename } = upath;
 let manager: EDMType | null = null;
 
 const loadElectronDownloadManager: () => Promise<EDMType | null> = async () => {
+  if (!mainWindow || mainWindow.isDestroyed()) return null; // window is closed
+
   if (manager) return manager; // already initialized
 
   const { ElectronDownloadManager } = await import('electron-dl-manager');
