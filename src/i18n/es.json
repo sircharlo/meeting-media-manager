@@ -551,6 +551,8 @@
   "update-available-please-update": "¡Una nueva versión de M³ está disponible! Recomendamos actualizar para recibir las últimas funciones, correcciones de errores y actualizaciones de seguridad.",
   "update-downloaded": "Una nueva versión de M3 ha sido descargada y está lista para ser instalada.",
   "update-downloading": "Una nueva versión de M3 está disponible y se está descargando en segundo plano.",
+  "update-error-read-only-volume": "M³ could not be updated because it is stored in a directory that is read-only. Please move M³ to a different location, such as the Applications folder.",
+  "update-failed": "Update failed",
   "updates-disabled-warning": "Por favor, habilite las actualizaciones para recibir nuevas características, correcciones de errores y actualizaciones de seguridad importantes.",
   "use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media": "Utilice el botón @:extra-media para añadir contenido multimedia para esta fecha, o seleccione una fecha diferente para ver la multimedia correspondientes a ese día.",
   "use-the-slider-below-to-adjust-the-start-and-end-time-of-this-media-item": "Utilice el control deslizante a continuación para ajustar la hora de inicio y finalización de este elemento multimedia. Esto es útil para reproducir solo ciertas partes de un video.",

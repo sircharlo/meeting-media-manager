@@ -551,6 +551,8 @@
   "update-available-please-update": "新版本的 M3 可用！我们建议更新以获取最新功能、错误修复和安全更新。",
   "update-downloaded": "新版本的 M3 已下载，已准备就绪。",
   "update-downloading": "新版本的 M3 可以在后台下载。",
+  "update-error-read-only-volume": "M³ could not be updated because it is stored in a directory that is read-only. Please move M³ to a different location, such as the Applications folder.",
+  "update-failed": "Update failed",
   "updates-disabled-warning": "Please enable updates to receive new features, bug fixes, and important security updates.",
   "use-the-import-button-to-add-media-for-this-date-or-select-another-date-to-view-the-corresponding-meeting-media": "Use the @:extra-media button to add media for this date, or select a different date to view the corresponding media for that day.",
   "use-the-slider-below-to-adjust-the-start-and-end-time-of-this-media-item": "使用下面的滑块来调整此媒体项的开始和结束时间。 这只用于播放视频的某些部分。",
