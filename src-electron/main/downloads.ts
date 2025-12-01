@@ -1,6 +1,7 @@
+import type { ElectronDownloadManager as EDMType } from 'electron-dl-manager';
+
 import { getCountriesForTimezone } from 'countries-and-timezones';
 import { app } from 'electron';
-import { ElectronDownloadManager } from 'electron-dl-manager';
 import { ensureDir, pathExists } from 'fs-extra/esm';
 import { sendToWindow } from 'main/window/window-base';
 import { mainWindow } from 'main/window/window-main';
@@ -17,7 +18,6 @@ interface GeoInfo {
   countryCode: string;
 }
 
-const manager = new ElectronDownloadManager();
 const downloadQueue: DownloadQueueItem[] = [];
 const lowPriorityQueue: DownloadQueueItem[] = [];
 const activeDownloadIds: string[] = [];
@@ -26,13 +26,29 @@ let cancelAll = false;
 
 const { basename } = upath;
 
+let manager: EDMType | null = null;
+
+const loadElectronDownloadManager: () => Promise<EDMType | null> = async () => {
+  if (manager) return manager; // already initialized
+
+  const { ElectronDownloadManager } = await import('electron-dl-manager');
+
+  // instantiate once and reuse
+  manager = new ElectronDownloadManager();
+  return manager;
+};
+
 /**
  * Cancels all downloads.
  */
 export async function cancelAllDownloads() {
+  const manager = await loadElectronDownloadManager();
+  if (!manager) return;
+
   cancelAll = true;
   downloadQueue.length = 0;
   lowPriorityQueue.length = 0;
+
   activeDownloadIds.forEach((id) => {
     manager.cancelDownload(id);
   });
@@ -194,7 +210,8 @@ export function resetDownloadErrorCache() {
  * @returns The ID of the download that was started, or null if no downloads were started.
  */
 async function processQueue() {
-  if (!mainWindow || cancelAll) return null;
+  const manager = await loadElectronDownloadManager();
+  if (!mainWindow || cancelAll || !manager) return null;
   // If max active downloads reached, wait for a slot
   while (activeDownloadIds.length >= maxActiveDownloads) {
     if (cancelAll) return;
