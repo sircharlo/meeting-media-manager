@@ -4,30 +4,30 @@
     <dict>
         <!-- Audio Input (Microphone) -->
         <key>com.apple.security.device.audio-input</key>
-        <true />
+        <true/>
         <!-- Camera -->
         <key>com.apple.security.device.camera</key>
-        <true />
+        <true/>
         <!-- Microphone -->
         <key>com.apple.security.device.microphone</key>
-        <true />
+        <true/>
         <!-- Allow unsigned executable memory (required for Electron) -->
         <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
-        <true />
+        <true/>
         <!-- Allow JIT (required for Electron) -->
         <key>com.apple.security.cs.allow-jit</key>
-        <true />
+        <true/>
         <!-- Disable Library Validation (required for Electron) -->
         <key>com.apple.security.cs.disable-library-validation</key>
-        <true />
+        <true/>
         <!-- Screen Recording -->
         <key>com.apple.security.device.screen-recording</key>
-        <true />
+        <true/>
         <!-- User-selected files -->
         <key>com.apple.security.files.user-selected.read-write</key>
-        <true />
+        <true/>
         <!-- Apple Events -->
         <key>com.apple.security.apple-events</key>
-        <true />
+        <true/>
     </dict>
 </plist>
