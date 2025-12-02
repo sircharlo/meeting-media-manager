@@ -45,7 +45,11 @@ export interface ElectronApi {
     originalFile: string,
     ffmpegPath: string,
   ) => Promise<string>;
-  decompress: typeof decompress;
+  decompress: (
+    input: string,
+    output: string,
+    opts?: decompress.DecompressOptions,
+  ) => Promise<Decompress.File[]>;
   downloadFile: (
     url: string,
     saveDir: string,

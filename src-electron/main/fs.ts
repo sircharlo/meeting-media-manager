@@ -1,7 +1,6 @@
 import type { Stats } from 'fs-extra';
 import type { FileDialogFilter } from 'src/types';
 
-import { captureException } from '@sentry/electron/main';
 import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
 import decompress from 'decompress';
 import { dialog } from 'electron';
@@ -19,26 +18,9 @@ import { captureElectronError } from 'src-electron/main/utils';
 
 export async function decompressFile(
   input: string,
-  output?: string,
+  output: string,
   opts?: decompress.DecompressOptions,
 ) {
-  if (!output) {
-    // Warn about potential memory issues when decompress is called without output directory
-    // This loads entire archive into memory and can cause OOM errors
-    captureException(
-      new Error(
-        `decompress called without output directory for ${input}. ` +
-          `This will load entire archive into memory and may cause OOM errors.`,
-      ),
-      {
-        level: 'warning',
-        tags: {
-          category: 'memory-usage',
-          function: 'decompressFile',
-        },
-      },
-    );
-  }
   return decompress(input, output, opts);
 }
 
