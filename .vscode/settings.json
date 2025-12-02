@@ -258,6 +258,6 @@
     "https://json.schemastore.org/pull-request-labeler-5.json": ".github/labeler.yml"
   },
   "[xml]": {
-    "editor.defaultFormatter": "redhat.vscode-xml"
+    "editor.defaultFormatter": "PrateekMahendrakar.prettyxml"
   }
 }

@@ -139,11 +139,8 @@ export default defineConfig((ctx) => {
           target: 'AppImage',
         },
         mac: {
+          entitlements: 'build/entitlements.mac.plist',
           extendInfo: {
-            //'com.apple.security.cs.allow-jit': true,
-            'com.apple.security.device.audio-input': true,
-            'com.apple.security.device.camera': true,
-            'com.apple.security.device.microphone': true,
             NSAppleEventsUsageDescription:
               'Apple Events access is required to control media playback and window management. Please note that this app will never access or control other applications on your device without your explicit permission.',
             NSCameraUsageDescription:
