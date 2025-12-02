@@ -277,7 +277,7 @@ handleIpcInvoke(
   async (
     _e,
     input: string,
-    output?: string,
+    output: string,
     opts?: decompress.DecompressOptions,
   ) => decompressFile(input, output, opts),
 );
