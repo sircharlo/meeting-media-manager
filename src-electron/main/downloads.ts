@@ -7,7 +7,9 @@ import { isAppQuitting } from 'src-electron/main/session';
 import { captureElectronError, fetchJson } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindow } from 'src-electron/main/window/window-main';
-import { basename } from 'upath';
+import upath from 'upath';
+
+const { basename } = upath;
 
 interface DownloadQueueItem {
   destFilename: string;

@@ -8,7 +8,9 @@ import { isDownloadErrorExpected } from 'src-electron/main/downloads';
 import { captureElectronError } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindow } from 'src-electron/main/window/window-main';
-import { join } from 'upath';
+import upath from 'upath';
+
+const { join } = upath;
 
 const getUpdatesDisabledPath = () =>
   join(app.getPath('userData'), 'Global Preferences', 'disable-updates');

@@ -4,7 +4,9 @@ import type { RenderParameters } from 'pdfjs-dist/types/src/display/api';
 import { ensureDir, writeFile } from 'fs-extra';
 import { capturePreloadError } from 'src-electron/preload/log';
 import { FULL_HD } from 'src/constants/media';
-import { basename, join } from 'upath';
+import upath from 'upath';
+
+const { basename, join } = upath;
 
 export interface ConversionOptions {
   /**

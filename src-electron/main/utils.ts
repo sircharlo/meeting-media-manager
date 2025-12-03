@@ -9,7 +9,9 @@ import {
   TRUSTED_DOMAINS,
 } from 'src-electron/constants';
 import { urlVariables } from 'src-electron/main/session';
-import { join, resolve } from 'upath';
+import upath from 'upath';
+
+const { join, resolve } = upath;
 
 type CaptureCtx = Parameters<typeof captureException>[1];
 

@@ -9,7 +9,9 @@ import {
   pathToFileURL,
   readDirectory,
 } from 'src-electron/preload/fs';
-import upath, { join } from 'upath';
+import upath from 'upath';
+
+const { join } = upath;
 
 export const basePath = join(__dirname, '..', 'fs');
 const fakePath = async (path: string) => {

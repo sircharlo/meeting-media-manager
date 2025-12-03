@@ -131,7 +131,6 @@ export default defineConfig((ctx) => {
         appId: APP_ID,
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: APP_NAME + '-${version}-${arch}.${ext}',
-        files: ['**/*'],
         generateUpdatesFilesForAllChannels: true,
         linux: {
           category: 'Utility',
@@ -234,6 +233,8 @@ export default defineConfig((ctx) => {
         ]);
 
         // Add hacky dependencies here
+        electronDeps.add('@opentelemetry/api-logs');
+        electronDeps.add('require-in-the-middle');
         electronDeps.add('ms');
         electronDeps.add('process-nextick-args');
         electronDeps.add('readable-stream');
