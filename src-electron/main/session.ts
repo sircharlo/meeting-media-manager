@@ -48,9 +48,14 @@ export const setElectronUrlVariables = (variables: UrlVariables) => {
 };
 
 export let shouldQuit = false;
+export let isAppQuitting = false;
 
 export const setShouldQuit = (quit: boolean) => {
   shouldQuit = quit;
+};
+
+export const setAppQuitting = (quitting: boolean) => {
+  isAppQuitting = quitting;
 };
 
 export const initSessionListeners = () => {

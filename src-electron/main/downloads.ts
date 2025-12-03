@@ -5,6 +5,7 @@ import { app } from 'electron';
 import { ensureDir, pathExists } from 'fs-extra/esm';
 import { sendToWindow } from 'main/window/window-base';
 import { mainWindow } from 'main/window/window-main';
+import { isAppQuitting } from 'src-electron/main/session';
 import { captureElectronError, fetchJson } from 'src-electron/main/utils';
 import upath from 'upath';
 
@@ -268,6 +269,7 @@ async function processQueue() {
           });
         },
         onError: async (err, downloadData) => {
+          if (isAppQuitting) return;
           captureElectronError(err, {
             contexts: {
               fn: {
@@ -298,6 +300,7 @@ async function processQueue() {
     });
     return downloadId;
   } catch (error) {
+    if (isAppQuitting) return null;
     captureElectronError(error, {
       contexts: {
         fn: {
