@@ -30,12 +30,12 @@ describe('downloads.isDownloadErrorExpected', () => {
     resetDownloadErrorCache();
   });
 
-  it('true when IP service returns RU', async () => {
+  it('true when IP service returns an expected value', async () => {
     vi.mocked(fetchJson).mockResolvedValue({ country: 'RU' });
     await expect(isDownloadErrorExpected()).resolves.toBe(true);
   });
 
-  it('falls back to timezone -> CN => true', async () => {
+  it('falls back to timezone -> expected value => true', async () => {
     vi.mocked(fetchJson).mockRejectedValue(new Error('network'));
     vi.mocked(getCountriesForTimezone).mockReturnValue([
       { id: 'CN', name: 'China', timezones: ['Asia/Shanghai'] },
@@ -43,7 +43,7 @@ describe('downloads.isDownloadErrorExpected', () => {
     await expect(isDownloadErrorExpected()).resolves.toBe(true);
   });
 
-  it('falls back to app locale -> US => false', async () => {
+  it('falls back to app locale -> unexpected value => false', async () => {
     vi.mocked(fetchJson).mockRejectedValue(new Error('network'));
     vi.mocked(getCountriesForTimezone).mockReturnValue([]);
     vi.mocked(app.getLocaleCountryCode).mockReturnValue('US');

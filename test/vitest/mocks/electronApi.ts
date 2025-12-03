@@ -4,12 +4,16 @@ import type { ElectronApi } from 'src/types';
 
 import robot from '@jitsi/robotjs';
 import fs, { ensureDir } from 'fs-extra';
-import { fileUrlToPath, pathToFileURL, readDirectory } from 'preload/fs';
-import upath from 'upath';
+import {
+  fileUrlToPath,
+  pathToFileURL,
+  readDirectory,
+} from 'src-electron/preload/fs';
+import upath, { join } from 'upath';
 
-export const basePath = upath.join(__dirname, '..', 'fs');
+export const basePath = join(__dirname, '..', 'fs');
 const fakePath = async (path: string) => {
-  const dir = upath.join(basePath, path);
+  const dir = join(basePath, path);
   await ensureDir(dir);
   return dir;
 };

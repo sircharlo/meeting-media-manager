@@ -3,19 +3,33 @@ import electronUpdater from 'electron-updater';
 const { autoUpdater } = electronUpdater;
 import fse from 'fs-extra';
 const { exists } = fse;
-import { captureElectronError } from 'main/utils';
-import { sendToWindow } from 'main/window/window-base';
-import { mainWindow } from 'main/window/window-main';
-import { join } from 'node:path';
 import { IS_TEST } from 'src-electron/constants';
+import { isDownloadErrorExpected } from 'src-electron/main/downloads';
+import { captureElectronError } from 'src-electron/main/utils';
+import { sendToWindow } from 'src-electron/main/window/window-base';
+import { mainWindow } from 'src-electron/main/window/window-main';
+import { join } from 'upath';
+
+const getUpdatesDisabledPath = () =>
+  join(app.getPath('userData'), 'Global Preferences', 'disable-updates');
+
+const getBetaUpdatesPath = () =>
+  join(app.getPath('userData'), 'Global Preferences', 'beta-updates');
+
+const isPortable = () => !!process.env.PORTABLE_EXECUTABLE_DIR;
 
 export async function initUpdater() {
+  if (await exists(getUpdatesDisabledPath())) return; // Skip updater if updates are disabled by user
+  if (isPortable()) return; // Skip updater for portable version
+
   autoUpdater.allowDowngrade = true;
   autoUpdater.autoDownload = !IS_TEST;
   autoUpdater.autoInstallOnAppQuit = !IS_TEST;
 
-  autoUpdater.on('error', (error, message) => {
+  autoUpdater.on('error', async (error, message) => {
     if (IS_TEST) return;
+
+    if (await isDownloadErrorExpected()) return;
 
     const ignoreErrors = [
       'ENOENT',
@@ -75,18 +89,12 @@ export async function initUpdater() {
 }
 
 export const triggerUpdateCheck = async (attempt = 1) => {
-  if (
-    await exists(
-      join(app.getPath('userData'), 'Global Preferences', 'disable-updates'),
-    )
-  ) {
+  if (await exists(getUpdatesDisabledPath())) {
     return;
   }
 
   if (attempt === 1) {
-    autoUpdater.allowPrerelease = await exists(
-      join(app.getPath('userData'), 'Global Preferences', 'beta-updates'),
-    );
+    autoUpdater.allowPrerelease = await exists(getBetaUpdatesPath());
   }
 
   try {

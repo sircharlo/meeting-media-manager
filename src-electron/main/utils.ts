@@ -1,7 +1,6 @@
 import { captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
-import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   IS_DEV,
@@ -10,6 +9,7 @@ import {
   TRUSTED_DOMAINS,
 } from 'src-electron/constants';
 import { urlVariables } from 'src-electron/main/session';
+import { join, resolve } from 'upath';
 
 type CaptureCtx = Parameters<typeof captureException>[1];
 

@@ -1,8 +1,6 @@
 import { exists } from 'fs-extra';
 import { FULL_HD } from 'src/constants/media';
-import path from 'upath';
-
-const { changeExt } = path;
+import { changeExt } from 'upath';
 
 export const createVideoFromNonVideo = async (
   originalFile: string,

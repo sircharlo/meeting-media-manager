@@ -1,4 +1,4 @@
-import { listen, send } from 'preload/ipc';
+import { listen, send } from 'src-electron/preload/ipc';
 
 export const initCloseListeners = () => {
   const bcClose = new BroadcastChannel('closeAttempts');

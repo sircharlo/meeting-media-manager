@@ -1,7 +1,7 @@
 import { app, session, shell } from 'electron';
-import { isSelf, isTrustedDomain } from 'main/utils';
-import { logToWindow } from 'main/window/window-base';
-import { mainWindow } from 'main/window/window-main';
+import { isSelf, isTrustedDomain } from 'src-electron/main/utils';
+import { logToWindow } from 'src-electron/main/window/window-base';
+import { mainWindow } from 'src-electron/main/window/window-main';
 
 app.on('ready', () => {
   // Handle session permission requests from remote content
