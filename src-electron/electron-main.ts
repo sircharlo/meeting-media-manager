@@ -33,7 +33,9 @@ import {
   createMainWindow,
   mainWindow,
 } from 'src-electron/main/window/window-main';
-import { join, resolve } from 'upath';
+import upath from 'upath';
+
+const { join, resolve } = upath;
 
 initSentry({
   beforeSend(event) {

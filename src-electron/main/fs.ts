@@ -12,7 +12,9 @@ import {
   JWPUB_EXTENSIONS,
   PDF_EXTENSIONS,
 } from 'src/constants/media';
-import { basename, dirname, toUnix } from 'upath';
+import upath from 'upath';
+
+const { basename, dirname, toUnix } = upath;
 
 export async function decompressFile(
   input: string,

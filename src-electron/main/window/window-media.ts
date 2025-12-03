@@ -12,7 +12,9 @@ import {
   sendToWindow,
 } from 'src-electron/main/window/window-base';
 import { mainWindow } from 'src-electron/main/window/window-main';
-import { join } from 'upath';
+import upath from 'upath';
+
+const { join } = upath;
 
 export let mediaWindow: BrowserWindow | null = null;
 
