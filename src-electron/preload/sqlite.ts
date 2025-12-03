@@ -1,7 +1,7 @@
 import type { QueryResponseItem } from 'src/types';
 
 import BetterSqlite3 from 'better-sqlite3';
-import { capturePreloadError } from 'preload/log';
+import { capturePreloadError } from 'src-electron/preload/log';
 
 export const executeQuery = <T extends object = QueryResponseItem>(
   dbPath: string,

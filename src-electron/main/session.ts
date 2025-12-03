@@ -1,14 +1,14 @@
 import type { UrlVariables } from 'src/types';
 
 import { app, session } from 'electron';
+import { TRUSTED_DOMAINS } from 'src-electron/constants';
 import {
   getAppVersion,
   isJwDomain,
   isSelf,
   isTrustedDomain,
   isValidUrl,
-} from 'main/utils';
-import { TRUSTED_DOMAINS } from 'src-electron/constants';
+} from 'src-electron/main/utils';
 
 export let urlVariables: undefined | UrlVariables;
 

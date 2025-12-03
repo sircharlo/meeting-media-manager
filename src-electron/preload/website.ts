@@ -1,6 +1,6 @@
 import type { JwSiteParams, NavigateWebsiteAction } from 'src/types';
 
-import { listen, send } from 'preload/ipc';
+import { listen, send } from 'src-electron/preload/ipc';
 
 export const initWebsiteListeners = () => {
   listen('websiteWindowClosed', () => {

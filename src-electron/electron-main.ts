@@ -33,7 +33,7 @@ import {
   createMainWindow,
   mainWindow,
 } from 'src-electron/main/window/window-main';
-import upath from 'upath';
+import { join, resolve } from 'upath';
 
 initSentry({
   beforeSend(event) {
@@ -62,8 +62,6 @@ initSentry({
   release: `${name}@${version}`,
   tracesSampleRate: 1.0,
 });
-
-const { join, resolve } = upath;
 
 const gotTheLock = app.requestSingleInstanceLock();
 
@@ -181,9 +179,7 @@ if (!gotTheLock) {
     app.setPath('userData', join(app.getPath('appData'), PRODUCT_NAME));
   }
 
-  if (!process.env.PORTABLE_EXECUTABLE_DIR) {
-    initUpdater();
-  }
+  initUpdater();
 
   initScreenListeners();
   createApplicationMenu();

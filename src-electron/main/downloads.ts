@@ -3,11 +3,11 @@ import type { ElectronDownloadManager as EDMType } from 'electron-dl-manager';
 import { getCountriesForTimezone } from 'countries-and-timezones';
 import { app } from 'electron';
 import { ensureDir, pathExists } from 'fs-extra/esm';
-import { sendToWindow } from 'main/window/window-base';
-import { mainWindow } from 'main/window/window-main';
 import { isAppQuitting } from 'src-electron/main/session';
 import { captureElectronError, fetchJson } from 'src-electron/main/utils';
-import upath from 'upath';
+import { sendToWindow } from 'src-electron/main/window/window-base';
+import { mainWindow } from 'src-electron/main/window/window-main';
+import { basename } from 'upath';
 
 interface DownloadQueueItem {
   destFilename: string;
@@ -24,8 +24,6 @@ const lowPriorityQueue: DownloadQueueItem[] = [];
 const activeDownloadIds: string[] = [];
 const maxActiveDownloads = 5;
 let cancelAll = false;
-
-const { basename } = upath;
 
 let manager: EDMType | null = null;
 

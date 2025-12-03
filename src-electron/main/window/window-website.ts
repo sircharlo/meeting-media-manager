@@ -1,14 +1,14 @@
 import type { JwSiteParams, NavigateWebsiteAction } from 'src/types';
 
 import { type BrowserWindow, systemPreferences, type Video } from 'electron';
-import { captureElectronError } from 'main/utils';
+import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
+import { captureElectronError } from 'src-electron/main/utils';
 import {
   createWindow,
   logToWindow,
   sendToWindow,
-} from 'main/window/window-base';
-import { mainWindow } from 'main/window/window-main';
-import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
+} from 'src-electron/main/window/window-base';
+import { mainWindow } from 'src-electron/main/window/window-main';
 
 export let websiteWindow: BrowserWindow | null = null;
 

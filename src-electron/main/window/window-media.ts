@@ -1,15 +1,18 @@
 import { app, type BrowserWindow, type Rectangle } from 'electron';
 import { pathExistsSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
-import { getAllScreens, getWindowScreen } from 'main/screen';
+import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
+import { getAllScreens, getWindowScreen } from 'src-electron/main/screen';
 import {
   captureElectronError,
   getIconPath,
   throttleWithTrailing,
-} from 'main/utils';
-import { createWindow, sendToWindow } from 'main/window/window-base';
-import { mainWindow } from 'main/window/window-main';
-import { join } from 'node:path';
-import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
+} from 'src-electron/main/utils';
+import {
+  createWindow,
+  sendToWindow,
+} from 'src-electron/main/window/window-base';
+import { mainWindow } from 'src-electron/main/window/window-main';
+import { join } from 'upath';
 
 export let mediaWindow: BrowserWindow | null = null;
 
