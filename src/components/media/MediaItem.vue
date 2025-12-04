@@ -1626,7 +1626,7 @@ function stopMedia(forOtherMediaItem = false) {
   if (!forOtherMediaItem) {
     // Stop Zoom screen sharing when media is stopped (unless it's a media switch instead of a stop)
     triggerZoomScreenShare(false);
-    zoomReset(true);
+    // zoomReset(true);
     nextTick(() => {
       window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
     });
