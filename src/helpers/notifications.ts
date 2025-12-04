@@ -1,49 +1,77 @@
 import { Notify, type QNotifyCreateOptions } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 
-export const createTemporaryNotification = ({
-  actions,
-  badgeStyle,
-  caption,
-  color,
-  group,
-  icon,
-  message,
-  noClose = false,
-  position,
-  textColor,
-  timeout = 5000,
-  type,
-}: QNotifyCreateOptions & { noClose?: boolean }) => {
+// 1. Strict allowed types
+const allowedTypes = [
+  'positive',
+  'negative',
+  'warning',
+  'info',
+  'ongoing',
+  'primary',
+] as const;
+
+// 2. Interface with strict type
+interface AllowedNotifyProps {
+  actions?: QNotifyCreateOptions['actions'];
+  caption?: QNotifyCreateOptions['caption'];
+  group?: QNotifyCreateOptions['group'];
+  icon?: QNotifyCreateOptions['icon'];
+  message?: QNotifyCreateOptions['message'];
+  noClose?: boolean;
+  position?: QNotifyCreateOptions['position'];
+  timeout?: QNotifyCreateOptions['timeout'];
+  type?: AllowedNotifyType; // 👈 strict union
+}
+
+type AllowedNotifyType = (typeof allowedTypes)[number];
+
+// 3. Reject extra keys
+type NoExtraKeys<T> = Record<
+  Exclude<keyof T, keyof AllowedNotifyProps>,
+  never
+> &
+  T;
+
+export const createTemporaryNotification = (
+  props: NoExtraKeys<AllowedNotifyProps>,
+) => {
   try {
+    const {
+      actions,
+      caption,
+      group,
+      icon,
+      message,
+      noClose = false,
+      position = 'top',
+      timeout = 5000,
+      type,
+    } = props;
+
+    // Runtime safety
+    if (type && !allowedTypes.includes(type)) {
+      throw new Error(`Unknown notify type: "${type}"`);
+    }
+
     return Notify.create({
-      // actions: [
-      //   {
-      //     color: 'white',
-      //     icon: 'mmm-minus',
-      //     round: true,
-      //   },
-      // ],
       group: false,
       message,
+      position,
       timeout,
       ...(caption && { caption }),
-      ...(color && { color }),
-      ...(textColor && { textColor }),
       ...(type && { type }),
       ...(icon && { icon }),
       ...(group && { group }),
-      ...(badgeStyle && { badgeStyle }),
       ...(!noClose && {
-        actions: actions || [
+        actions: actions ?? [
           {
-            color: 'white',
+            color: type === 'warning' ? 'dark' : 'white',
             icon: 'close',
             round: true,
           },
         ],
       }),
-      position: position || 'top',
     });
   } catch (error) {
     errorCatcher(error);
