@@ -280,6 +280,9 @@ const handleImageLoad = () => {
   }
 };
 
+let lastZoomPanTime = 0;
+const transitionDurationSeconds = 2.5;
+
 const applyZoomPanState = (zoomPanState: Record<string, number>) => {
   try {
     // Try to find the active image element from either layer
@@ -298,9 +301,19 @@ const applyZoomPanState = (zoomPanState: Record<string, number>) => {
       const x = (zoomPanState.x || 0) * width;
       const y = (zoomPanState.y || 0) * height;
 
+      const now = Date.now();
+      // If we are interrupting an active transition (less than 2s since last update),
+      // use ease-out to avoid the "slow start" jaggedness.
+      // Otherwise use standard ease for a smooth start from rest.
+      const isInterrupted =
+        now - lastZoomPanTime < transitionDurationSeconds * 1000;
+      const easing = isInterrupted ? 'ease-out' : 'ease';
+
       // Use CSS transforms for smooth animation
+      imageElem.style.transition = `transform ${transitionDurationSeconds}s ${easing}`;
       imageElem.style.transform = `scale(${scale}) translate(${x}px, ${y}px)`;
-      imageElem.style.transition = 'transform 2s ease';
+
+      lastZoomPanTime = now;
     }
   } catch (error) {
     errorCatcher(error);

@@ -1,4 +1,5 @@
 import { app, type BrowserWindow, type Rectangle } from 'electron';
+import fse from 'fs-extra';
 import { pathExistsSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
 import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
 import { getAllScreens, getWindowScreen } from 'src-electron/main/screen';
@@ -15,6 +16,7 @@ import { mainWindow } from 'src-electron/main/window/window-main';
 import upath from 'upath';
 
 const { join } = upath;
+const { readFileSync } = fse;
 
 export let mediaWindow: BrowserWindow | null = null;
 
@@ -626,18 +628,32 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
 };
 
 function loadMediaWindowPrefs(): null | Rectangle {
+  let filePath: string | undefined;
   try {
-    const file = join(app.getPath('userData'), 'media-window-prefs.json');
-    if (!pathExistsSync(file)) {
-      console.log('🔍 [loadMediaWindowPrefs] File does not exist:', file);
+    filePath = join(app.getPath('userData'), 'media-window-prefs.json');
+    if (!pathExistsSync(filePath)) {
+      console.log('🔍 [loadMediaWindowPrefs] File does not exist:', filePath);
       return null;
     }
-    console.log('🔍 [loadMediaWindowPrefs] Loading prefs from:', file);
-    return readJsonSync(file);
+    console.log('🔍 [loadMediaWindowPrefs] Loading prefs from:', filePath);
+    return readJsonSync(filePath);
   } catch (e) {
     console.error('❌ [loadMediaWindowPrefs] Error:', e);
+    let fileContent: null | string = null;
+    if (filePath) {
+      try {
+        fileContent = readFileSync(filePath, 'utf-8');
+      } catch (e) {
+        console.error('❌ [loadMediaWindowPrefs] Error reading file:', e);
+        captureElectronError(e, {
+          contexts: {
+            fn: { fileContent, name: 'loadMediaWindowPrefs (fallback)' },
+          },
+        });
+      }
+    }
     captureElectronError(e, {
-      contexts: { fn: { name: 'loadMediaWindowPrefs' } },
+      contexts: { fn: { fileContent, name: 'loadMediaWindowPrefs' } },
     });
     return null;
   }

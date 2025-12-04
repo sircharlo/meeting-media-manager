@@ -1,7 +1,8 @@
 import type { PDFPageProxy } from 'pdfjs-dist';
 import type { RenderParameters } from 'pdfjs-dist/types/src/display/api';
 
-import { ensureDir, writeFile } from 'fs-extra';
+import { writeFile } from 'fs-extra';
+import { ensureDir } from 'fs-extra/esm';
 import { capturePreloadError } from 'src-electron/preload/log';
 import { FULL_HD } from 'src/constants/media';
 import upath from 'upath';
