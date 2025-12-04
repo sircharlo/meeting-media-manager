@@ -33,6 +33,9 @@ type NoExtraKeys<T> = Record<
 > &
   T;
 
+// Track all active notification dismiss functions
+const activeTemporaryNotifications: (() => void)[] = [];
+
 export const createTemporaryNotification = (
   props: NoExtraKeys<AllowedNotifyProps>,
 ) => {
@@ -54,7 +57,7 @@ export const createTemporaryNotification = (
       throw new Error(`Unknown notify type: "${type}"`);
     }
 
-    return Notify.create({
+    const dismiss = Notify.create({
       group: false,
       message,
       position,
@@ -73,6 +76,38 @@ export const createTemporaryNotification = (
         ],
       }),
     });
+
+    // Track the dismiss function if it exists
+    if (dismiss) {
+      activeTemporaryNotifications.push(dismiss);
+
+      // Auto-remove from tracking after timeout (if not indefinite)
+      if (timeout > 0) {
+        setTimeout(() => {
+          const index = activeTemporaryNotifications.indexOf(dismiss);
+          if (index > -1) {
+            activeTemporaryNotifications.splice(index, 1);
+          }
+        }, timeout);
+      }
+    }
+
+    return dismiss;
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
+/**
+ * Dismisses all active temporary notifications
+ */
+export const dismissAllTemporaryNotifications = () => {
+  try {
+    // Call all dismiss functions
+    while (activeTemporaryNotifications.length > 0) {
+      const dismiss = activeTemporaryNotifications.pop();
+      dismiss?.();
+    }
   } catch (error) {
     errorCatcher(error);
   }
