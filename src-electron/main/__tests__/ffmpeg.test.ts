@@ -2,8 +2,8 @@ import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
 import { createVideoFromNonVideo } from '../ffmpeg';
 
-vi.mock('fs-extra', () => ({
-  exists: vi.fn(async () => false),
+vi.mock('fs-extra/esm', () => ({
+  pathExists: vi.fn(async () => false),
 }));
 
 const ffmpegOnMap: Record<string, (...args: unknown[]) => void> = {};
@@ -39,21 +39,21 @@ describe('ffmpeg.createVideoFromNonVideo', () => {
   });
 
   it('short-circuits if output already exists', async () => {
-    const { exists } = await import('fs-extra');
-    const existsMock = exists as unknown as Mock<
+    const { pathExists } = await import('fs-extra/esm');
+    const pathExistsMock = pathExists as unknown as Mock<
       (p: string) => Promise<boolean>
     >;
-    existsMock.mockResolvedValue(true);
+    pathExistsMock.mockResolvedValue(true);
     const out = await createVideoFromNonVideo('/tmp/a.mp3', '/bin/ffmpeg');
     expect(out.endsWith('.mp4')).toBe(true);
   });
 
   it('converts image to mp4 - missing dimensions throws', async () => {
-    const { exists } = await import('fs-extra');
-    const existsMock = exists as unknown as Mock<
+    const { pathExists } = await import('fs-extra/esm');
+    const pathExistsMock = pathExists as unknown as Mock<
       (p: string) => Promise<boolean>
     >;
-    existsMock.mockResolvedValue(false);
+    pathExistsMock.mockResolvedValue(false);
     const size = await import('image-size/fromFile');
     const imageSizeFromFileMock = size.imageSizeFromFile as unknown as Mock<
       (p: string) => Promise<{
