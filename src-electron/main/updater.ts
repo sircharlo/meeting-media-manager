@@ -1,8 +1,7 @@
 import { app } from 'electron';
 import electronUpdater from 'electron-updater';
 const { autoUpdater } = electronUpdater;
-import fse from 'fs-extra';
-const { exists } = fse;
+import { pathExists } from 'fs-extra/esm';
 import { IS_TEST } from 'src-electron/constants';
 import { isDownloadErrorExpected } from 'src-electron/main/downloads';
 import { captureElectronError } from 'src-electron/main/utils';
@@ -21,7 +20,7 @@ const getBetaUpdatesPath = () =>
 const isPortable = () => !!process.env.PORTABLE_EXECUTABLE_DIR;
 
 export async function initUpdater() {
-  if (await exists(getUpdatesDisabledPath())) return; // Skip updater if updates are disabled by user
+  if (await pathExists(getUpdatesDisabledPath())) return; // Skip updater if updates are disabled by user
   if (isPortable()) return; // Skip updater for portable version
 
   autoUpdater.allowDowngrade = true;
@@ -91,12 +90,12 @@ export async function initUpdater() {
 }
 
 export const triggerUpdateCheck = async (attempt = 1) => {
-  if (await exists(getUpdatesDisabledPath())) {
+  if (await pathExists(getUpdatesDisabledPath())) {
     return;
   }
 
   if (attempt === 1) {
-    autoUpdater.allowPrerelease = await exists(getBetaUpdatesPath());
+    autoUpdater.allowPrerelease = await pathExists(getBetaUpdatesPath());
   }
 
   try {
