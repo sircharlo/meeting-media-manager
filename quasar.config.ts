@@ -131,7 +131,6 @@ export default defineConfig((ctx) => {
         appId: APP_ID,
         // eslint-disable-next-line no-template-curly-in-string
         artifactName: APP_NAME + '-${version}-${arch}.${ext}',
-        files: ['**/*'],
         generateUpdatesFilesForAllChannels: true,
         linux: {
           category: 'Utility',
@@ -139,11 +138,8 @@ export default defineConfig((ctx) => {
           target: 'AppImage',
         },
         mac: {
+          entitlements: 'build/entitlements.mac.plist',
           extendInfo: {
-            //'com.apple.security.cs.allow-jit': true,
-            'com.apple.security.device.audio-input': true,
-            'com.apple.security.device.camera': true,
-            'com.apple.security.device.microphone': true,
             NSAppleEventsUsageDescription:
               'Apple Events access is required to control media playback and window management. Please note that this app will never access or control other applications on your device without your explicit permission.',
             NSCameraUsageDescription:
@@ -237,6 +233,8 @@ export default defineConfig((ctx) => {
         ]);
 
         // Add hacky dependencies here
+        electronDeps.add('@opentelemetry/api-logs');
+        electronDeps.add('require-in-the-middle');
         electronDeps.add('ms');
         electronDeps.add('process-nextick-args');
         electronDeps.add('readable-stream');

@@ -17,7 +17,12 @@ import {
 } from 'src-electron/constants';
 import { cancelAllDownloads } from 'src-electron/main/downloads';
 import { initScreenListeners } from 'src-electron/main/screen';
-import { initSessionListeners, setShouldQuit } from 'src-electron/main/session';
+import {
+  initSessionListeners,
+  isAppQuitting,
+  setAppQuitting,
+  setShouldQuit,
+} from 'src-electron/main/session';
 import { initUpdater } from 'src-electron/main/updater';
 import { captureElectronError } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
@@ -30,6 +35,8 @@ import {
 } from 'src-electron/main/window/window-main';
 import upath from 'upath';
 
+const { join, resolve } = upath;
+
 initSentry({
   beforeSend(event) {
     try {
@@ -38,6 +45,14 @@ initSentry({
       // Ignore known non-fatal native crash reports
       if (typeof dumpFile === 'string' && dumpFile.includes('site_info.cc')) {
         return null;
+      }
+
+      if (isAppQuitting) {
+        const error = event.exception?.values?.[0];
+        if (error?.value?.includes('Object has been destroyed')) {
+          // Ignore electron-dl-manager errors that occur after app quit
+          return null;
+        }
       }
     } catch (err) {
       console.error(err);
@@ -49,8 +64,6 @@ initSentry({
   release: `${name}@${version}`,
   tracesSampleRate: 1.0,
 });
-
-const { join, resolve } = upath;
 
 const gotTheLock = app.requestSingleInstanceLock();
 
@@ -168,9 +181,7 @@ if (!gotTheLock) {
     app.setPath('userData', join(app.getPath('appData'), PRODUCT_NAME));
   }
 
-  if (!process.env.PORTABLE_EXECUTABLE_DIR) {
-    initUpdater();
-  }
+  initUpdater();
 
   initScreenListeners();
   createApplicationMenu();
@@ -193,6 +204,7 @@ if (!gotTheLock) {
 
   // macOS default behavior is to keep the app running even after all windows are closed
   app.on('window-all-closed', () => {
+    setAppQuitting(true);
     try {
       cancelAllDownloads();
     } catch (error) {

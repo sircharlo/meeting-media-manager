@@ -1,6 +1,6 @@
 import type { ScreenPreferences } from 'src/types';
 
-import { listen } from 'preload/ipc';
+import { listen } from 'src-electron/preload/ipc';
 
 export const initScreenListeners = () => {
   listen('screenChange', () => {

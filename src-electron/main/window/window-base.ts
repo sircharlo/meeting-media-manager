@@ -5,10 +5,6 @@ import {
   BrowserWindow,
   type BrowserWindowConstructorOptions,
 } from 'electron';
-import { urlVariables } from 'main/session';
-import { captureElectronError, getIconPath } from 'main/utils';
-import { StatefulBrowserWindow } from 'main/window/window-state';
-import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   IS_BETA,
@@ -16,6 +12,12 @@ import {
   PLATFORM,
   PRODUCT_NAME,
 } from 'src-electron/constants';
+import { urlVariables } from 'src-electron/main/session';
+import { captureElectronError, getIconPath } from 'src-electron/main/utils';
+import { StatefulBrowserWindow } from 'src-electron/main/window/window-state';
+import upath from 'upath';
+
+const { join, resolve } = upath;
 
 export function closeOtherWindows(source: BrowserWindow) {
   try {

@@ -1,13 +1,13 @@
 import type { PDFPageProxy } from 'pdfjs-dist';
 import type { RenderParameters } from 'pdfjs-dist/types/src/display/api';
 
-import fse from 'fs-extra';
-const { ensureDir, writeFile } = fse;
+import { writeFile } from 'fs-extra';
+import { ensureDir } from 'fs-extra/esm';
+import { capturePreloadError } from 'src-electron/preload/log';
 import { FULL_HD } from 'src/constants/media';
 import upath from 'upath';
-const { basename, join } = upath;
 
-import { capturePreloadError } from 'preload/log';
+const { basename, join } = upath;
 
 export interface ConversionOptions {
   /**

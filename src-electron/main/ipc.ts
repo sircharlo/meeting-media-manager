@@ -22,41 +22,47 @@ import {
 } from 'electron';
 import electronUpdater from 'electron-updater';
 const { autoUpdater } = electronUpdater;
-import { downloadFile, isDownloadErrorExpected } from 'main/downloads';
-import { createVideoFromNonVideo } from 'main/ffmpeg';
+import { PLATFORM } from 'src-electron/constants';
+import {
+  downloadFile,
+  isDownloadErrorExpected,
+} from 'src-electron/main/downloads';
+import { createVideoFromNonVideo } from 'src-electron/main/ffmpeg';
 import {
   decompressFile,
   openFileDialog,
   openFolderDialog,
   unwatchFolders,
   watchFolder,
-} from 'main/fs';
-import { getAllScreens } from 'main/screen';
-import { setElectronUrlVariables, shouldQuit } from 'main/session';
+} from 'src-electron/main/fs';
+import { getAllScreens } from 'src-electron/main/screen';
+import { setElectronUrlVariables, shouldQuit } from 'src-electron/main/session';
 import {
   registerShortcut,
   unregisterAllShortcuts,
   unregisterShortcut,
-} from 'main/shortcuts';
-import { triggerUpdateCheck } from 'main/updater';
-import { isSelf } from 'main/utils';
-import { logToWindow } from 'main/window/window-base';
-import { mainWindow, toggleAuthorizedClose } from 'main/window/window-main';
+} from 'src-electron/main/shortcuts';
+import { triggerUpdateCheck } from 'src-electron/main/updater';
+import { isSelf } from 'src-electron/main/utils';
+import { logToWindow } from 'src-electron/main/window/window-base';
+import {
+  mainWindow,
+  toggleAuthorizedClose,
+} from 'src-electron/main/window/window-main';
 import {
   fadeInMediaWindow,
   fadeOutMediaWindow,
   focusMediaWindow,
   mediaWindow,
   moveMediaWindow,
-} from 'main/window/window-media';
+} from 'src-electron/main/window/window-media';
 import {
   askForMediaAccess,
   createWebsiteWindow,
   navigateWebsiteWindow,
   websiteWindow,
   zoomWebsiteWindow,
-} from 'main/window/window-website';
-import { PLATFORM } from 'src-electron/constants';
+} from 'src-electron/main/window/window-website';
 
 const { openExternal, openPath } = shell;
 
@@ -277,7 +283,7 @@ handleIpcInvoke(
   async (
     _e,
     input: string,
-    output?: string,
+    output: string,
     opts?: decompress.DecompressOptions,
   ) => decompressFile(input, output, opts),
 );

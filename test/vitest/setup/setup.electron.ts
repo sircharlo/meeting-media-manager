@@ -2,7 +2,7 @@ import { vi } from 'vitest';
 
 import { initHttpHandlers } from './../mocks/http';
 
-vi.mock('main/utils', async (importOriginal) => {
+vi.mock('src-electron/main/utils', async (importOriginal) => {
   const mod = await importOriginal<object>();
   return {
     ...mod,
@@ -17,7 +17,7 @@ vi.mock('main/utils', async (importOriginal) => {
   };
 });
 
-vi.mock('preload/log', async (importOriginal) => {
+vi.mock('src-electron/preload/log', async (importOriginal) => {
   const mod = await importOriginal<object>();
   return {
     ...mod,

@@ -28,7 +28,7 @@
               v-model:zoom="mediaZoom"
               :button-pan-step="15"
               :button-zoom-step="0.2"
-              :dbl-click-zoom-step="0.2"
+              :dbl-click-zoom-step="0.35"
               :enable-control-button="false"
               :initial-pan-x="0"
               :initial-pan-y="0"
@@ -107,7 +107,9 @@
                         <q-badge
                           color="transparent"
                           style="padding: 5px !important; cursor: pointer"
-                          @click="mediaPan.y = mediaPan.y + 5"
+                          @mousedown="startPan('up')"
+                          @mouseleave="stopPan"
+                          @mouseup="stopPan"
                         >
                           <q-icon color="white" name="mmm-up" />
                         </q-badge>
@@ -115,7 +117,9 @@
                         <q-badge
                           color="transparent"
                           style="padding: 5px !important; cursor: pointer"
-                          @click="mediaPan.y = mediaPan.y - 5"
+                          @mousedown="startPan('down')"
+                          @mouseleave="stopPan"
+                          @mouseup="stopPan"
                         >
                           <q-icon color="white" name="mmm-down" />
                         </q-badge>
@@ -123,7 +127,9 @@
                         <q-badge
                           color="transparent"
                           style="padding: 5px !important; cursor: pointer"
-                          @click="mediaPan.x = mediaPan.x + 5"
+                          @mousedown="startPan('left')"
+                          @mouseleave="stopPan"
+                          @mouseup="stopPan"
                         >
                           <q-icon color="white" name="mmm-left" />
                         </q-badge>
@@ -131,7 +137,9 @@
                         <q-badge
                           color="transparent"
                           style="padding: 5px !important; cursor: pointer"
-                          @click="mediaPan.x = mediaPan.x - 5"
+                          @mousedown="startPan('right')"
+                          @mouseleave="stopPan"
+                          @mouseup="stopPan"
                         >
                           <q-icon color="white" name="mmm-right" />
                         </q-badge>
@@ -154,10 +162,9 @@
                         color="transparent"
                         :disabled="!mediaZoom || mediaZoom < 1.01 || undefined"
                         style="padding: 5px !important; cursor: pointer"
-                        @click="
-                          mediaZoom > 1.01 &&
-                          (mediaZoom = Math.max(mediaZoom / 1.2, 1))
-                        "
+                        @mousedown="startZoom('out')"
+                        @mouseleave="stopZoom"
+                        @mouseup="stopZoom"
                       >
                         <q-icon color="white" name="mmm-minus" />
                       </q-badge>
@@ -166,10 +173,9 @@
                         color="transparent"
                         :disabled="!mediaZoom || mediaZoom > 4.99 || undefined"
                         style="padding: 5px !important; cursor: pointer"
-                        @click="
-                          mediaZoom < 4.99 &&
-                          (mediaZoom = Math.min(mediaZoom * 1.2, 5))
-                        "
+                        @mousedown="startZoom('in')"
+                        @mouseleave="stopZoom"
+                        @mouseup="stopZoom"
                       >
                         <q-icon color="white" name="mmm-plus" />
                       </q-badge>
@@ -1009,7 +1015,7 @@ import { getThumbnailUrl } from 'src/helpers/fs';
 import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { triggerZoomScreenShare } from 'src/helpers/zoom';
 import { isFileUrl } from 'src/utils/fs';
-import { uuid } from 'src/utils/general';
+import { throttleWithTrailing, uuid } from 'src/utils/general';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
 import { formatTime, timeToSeconds } from 'src/utils/time';
@@ -1620,7 +1626,7 @@ function stopMedia(forOtherMediaItem = false) {
   if (!forOtherMediaItem) {
     // Stop Zoom screen sharing when media is stopped (unless it's a media switch instead of a stop)
     triggerZoomScreenShare(false);
-    zoomReset(true);
+    // zoomReset(true);
     nextTick(() => {
       window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
     });
@@ -1641,6 +1647,118 @@ const mediaPan = ref<{ x: number; y: number }>({
 });
 const mediaZoom = ref(1);
 
+const panTimeout = ref<NodeJS.Timeout | null>(null);
+const panAnimationFrame = ref<null | number>(null);
+const zoomTimeout = ref<NodeJS.Timeout | null>(null);
+const zoomAnimationFrame = ref<null | number>(null);
+
+const panStep = 1.5;
+
+const pan = (direction: 'down' | 'left' | 'right' | 'up', step = panStep) => {
+  // Calculate new pan values
+  let newX = mediaPan.value.x || 0;
+  let newY = mediaPan.value.y || 0;
+
+  if (direction === 'up') newY += step;
+  if (direction === 'down') newY -= step;
+  if (direction === 'left') newX += step;
+  if (direction === 'right') newX -= step;
+
+  // Calculate maximum pan distance based on zoom level and image dimensions
+  // At zoom level 1, no panning is allowed
+  // At higher zoom levels, the max pan is half the difference between zoomed and original size
+  const zoom = mediaZoom.value;
+  const imageWidth = mediaImage.value?.$el?.clientWidth ?? 0;
+  const imageHeight = mediaImage.value?.$el?.clientHeight ?? 0;
+
+  if (zoom > 1 && imageWidth > 0 && imageHeight > 0) {
+    // Maximum pan = (zoomed_size - viewport_size) / 2
+    // Since zoomed_size = viewport_size * zoom, this becomes:
+    // max_pan = viewport_size * (zoom - 1) / 2
+    const maxPanX = (imageWidth * (zoom - 1)) / 2;
+    const maxPanY = (imageHeight * (zoom - 1)) / 2;
+
+    // Clamp pan values to prevent going past the edge
+    mediaPan.value.x = Math.max(-maxPanX, Math.min(maxPanX, newX));
+    mediaPan.value.y = Math.max(-maxPanY, Math.min(maxPanY, newY));
+  } else {
+    // No zoom or invalid dimensions - no panning allowed
+    mediaPan.value.x = 0;
+    mediaPan.value.y = 0;
+  }
+};
+
+const startPan = (direction: 'down' | 'left' | 'right' | 'up') => {
+  stopPan();
+  pan(direction, 5); // Initial big step
+
+  panTimeout.value = setTimeout(() => {
+    let currentStep = panStep;
+    const minStep = 0.5;
+    const decay = 1; // 0.95;
+
+    const animate = () => {
+      pan(direction, currentStep);
+      if (currentStep > minStep) {
+        currentStep *= decay;
+      }
+      panAnimationFrame.value = requestAnimationFrame(animate);
+    };
+    animate();
+  }, 500);
+};
+
+const stopPan = () => {
+  if (panTimeout.value) {
+    clearTimeout(panTimeout.value);
+    panTimeout.value = null;
+  }
+  if (panAnimationFrame.value) {
+    cancelAnimationFrame(panAnimationFrame.value);
+    panAnimationFrame.value = null;
+  }
+};
+
+const zoom = (type: 'in' | 'out', factor = 1.1) => {
+  if (type === 'in' && mediaZoom.value < 9.99) {
+    mediaZoom.value = Math.min(mediaZoom.value * factor, 10);
+  }
+  if (type === 'out' && mediaZoom.value > 1.01) {
+    mediaZoom.value = Math.max(mediaZoom.value / factor, 1);
+  }
+};
+
+const startZoom = (type: 'in' | 'out') => {
+  stopZoom();
+  zoom(type, 1.2); // Initial big step
+
+  zoomTimeout.value = setTimeout(() => {
+    let currentFactor = 1.02;
+    const minFactor = 1.002;
+    const decay = 1; //0.95;
+
+    const animate = () => {
+      zoom(type, currentFactor);
+      if (currentFactor > minFactor) {
+        currentFactor = 1 + (currentFactor - 1) * decay;
+      }
+      zoomAnimationFrame.value = requestAnimationFrame(animate);
+    };
+    animate();
+  }, 500);
+};
+
+const stopZoom = () => {
+  if (zoomTimeout.value) {
+    clearTimeout(zoomTimeout.value);
+    zoomTimeout.value = null;
+  }
+  if (zoomAnimationFrame.value) {
+    cancelAnimationFrame(zoomAnimationFrame.value);
+    zoomAnimationFrame.value = null;
+  }
+};
+
 const calculatedPan = computed(() => {
   return {
     x:
@@ -1652,11 +1770,19 @@ const calculatedPan = computed(() => {
   };
 });
 
-watch(
-  () => [mediaZoom.value, mediaPan.value.x, mediaPan.value.y],
-  ([newZoom]) => {
+const updateZoomPan = throttleWithTrailing(
+  (values: [number, number, number]) => {
+    const [newZoom] = values;
     mediaPlaying.value.zoom = newZoom ?? 1;
     mediaPlaying.value.pan = calculatedPan.value;
+  },
+  300,
+);
+
+watch(
+  () => [mediaZoom.value, mediaPan.value.x, mediaPan.value.y],
+  (newValues) => {
+    updateZoomPan(newValues as [number, number, number]);
   },
 );
 

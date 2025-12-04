@@ -1,8 +1,8 @@
-import { exists } from 'fs-extra';
+import { pathExists } from 'fs-extra/esm';
 import { FULL_HD } from 'src/constants/media';
-import path from 'upath';
+import upath from 'upath';
 
-const { changeExt } = path;
+const { changeExt } = upath;
 
 export const createVideoFromNonVideo = async (
   originalFile: string,
@@ -10,7 +10,7 @@ export const createVideoFromNonVideo = async (
 ) => {
   const convertedFilePath = changeExt(originalFile, '.mp4');
 
-  if (await exists(convertedFilePath)) {
+  if (await pathExists(convertedFilePath)) {
     return convertedFilePath;
   }
 

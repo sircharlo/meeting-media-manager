@@ -5,8 +5,10 @@ import type { FileItem, VideoDuration } from 'src/types';
 
 import { type Dirent, exists, readdir, stat } from 'fs-extra';
 import url from 'node:url';
-import { capturePreloadError } from 'preload/log';
-import { join, normalize } from 'upath';
+import { capturePreloadError } from 'src-electron/preload/log';
+import upath from 'upath';
+
+const { join, normalize } = upath;
 
 export const getVideoDuration = async (
   filePath: string,

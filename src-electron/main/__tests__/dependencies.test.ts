@@ -1,27 +1,29 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import { readdirSync, readFileSync, statSync } from 'node:fs';
+import upath from 'upath';
 import { describe, expect, it } from 'vitest';
 
-import packageJson from '../../../package.json';
+import { dependencies } from '../../../package.json';
 
-const projectRoot = path.resolve(__dirname, '../../..');
-const srcElectronDir = path.resolve(projectRoot, 'src-electron');
-const quasarConfigPath = path.resolve(projectRoot, 'quasar.config.ts');
+const { extname, join, resolve } = upath;
+
+const projectRoot = resolve(__dirname, '../../..');
+const srcElectronDir = resolve(projectRoot, 'src-electron');
+const quasarConfigPath = resolve(projectRoot, 'quasar.config.ts');
 
 function getAllFiles(
   dir: string,
   extensions: string[] = ['.ts', '.js'],
 ): string[] {
   let results: string[] = [];
-  const list = fs.readdirSync(dir);
+  const list = readdirSync(dir);
   for (const file of list) {
-    const filePath = path.join(dir, file);
-    const stat = fs.statSync(filePath);
+    const filePath = join(dir, file);
+    const stat = statSync(filePath);
     if (stat && stat.isDirectory()) {
       results = results.concat(getAllFiles(filePath, extensions));
     } else {
       if (filePath.includes('__tests__')) continue;
-      if (extensions.includes(path.extname(file))) {
+      if (extensions.includes(extname(file))) {
         results.push(filePath);
       }
     }
@@ -32,7 +34,7 @@ function getAllFiles(
 }
 
 function getElectronDepsFromConfig() {
-  const configContent = fs.readFileSync(quasarConfigPath, 'utf-8');
+  const configContent = readFileSync(quasarConfigPath, 'utf-8');
   const match = configContent.match(
     /const electronDeps = new Set\(\[([\s\S]*?)\]\);/,
   );
@@ -49,7 +51,7 @@ function getElectronDepsFromConfig() {
 }
 
 function getImportsFromFile(filePath: string): string[] {
-  const content = fs.readFileSync(filePath, 'utf-8');
+  const content = readFileSync(filePath, 'utf-8');
   const imports: string[] = [];
 
   // Match import ... from '...'
@@ -74,7 +76,7 @@ function getImportsFromFile(filePath: string): string[] {
 }
 
 function getProductionDependencies() {
-  return Object.keys(packageJson.dependencies);
+  return Object.keys(dependencies);
 }
 
 describe('Electron Dependencies', () => {
@@ -92,7 +94,7 @@ describe('Electron Dependencies', () => {
       for (const imp of imports) {
         // Skip dependencies that are internal import, not external packages
         if (imp.startsWith('app/')) continue;
-        if (imp.startsWith('main/')) continue;
+        if (imp.startsWith('src-electron/main/')) continue;
         if (imp.startsWith('preload/')) continue;
         if (imp.startsWith('src/constants')) continue;
         if (imp.startsWith('src/types')) continue;
