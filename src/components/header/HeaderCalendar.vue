@@ -14,12 +14,12 @@
       @click="resetSort"
     >
       <q-icon
-        :class="{ 'q-mr-sm': $q.screen.gt.sm }"
+        :class="{ 'q-mr-sm': $q.screen.gt.md }"
         name="mmm-reset"
         size="xs"
       />
-      {{ $q.screen.gt.sm ? t('reset-sort-order') : '' }}
-      <q-tooltip v-if="!$q.screen.gt.sm" :delay="1000">
+      {{ $q.screen.gt.md ? t('reset-sort-order') : '' }}
+      <q-tooltip v-if="!$q.screen.gt.md" :delay="1000">
         {{ t('reset-sort-order') }}
       </q-tooltip>
     </q-btn>
@@ -33,23 +33,23 @@
     @click="openCustomSectionEdit"
   >
     <q-icon
-      :class="{ 'q-mr-sm': $q.screen.gt.xs }"
+      :class="{ 'q-mr-sm': $q.screen.gt.md }"
       name="mmm-label-sort"
       size="xs"
     />
-    {{ $q.screen.gt.xs ? t('edit-sections') : '' }}
-    <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+    {{ $q.screen.gt.md ? t('edit-sections') : '' }}
+    <q-tooltip v-if="!$q.screen.gt.md" :delay="1000">
       {{ t('edit-sections') }}
     </q-tooltip>
   </q-btn>
   <q-btn v-if="selectedDate" color="white-transparent" unelevated>
     <q-icon
-      :class="{ 'q-mr-sm': $q.screen.gt.xs }"
+      :class="{ 'q-mr-sm': $q.screen.gt.sm }"
       name="mmm-add-media"
       size="xs"
     />
-    {{ $q.screen.gt.xs ? t('extra-media') : '' }}
-    <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+    {{ $q.screen.gt.sm ? t('extra-media') : '' }}
+    <q-tooltip v-if="!$q.screen.gt.sm" :delay="1000">
       {{ t('extra-media') }}
     </q-tooltip>
     <q-menu ref="importMenu" :offset="[0, 11]">
