@@ -28,7 +28,7 @@
               v-model:zoom="mediaZoom"
               :button-pan-step="15"
               :button-zoom-step="0.2"
-              :dbl-click-zoom-step="0.2"
+              :dbl-click-zoom-step="0.35"
               :enable-control-button="false"
               :initial-pan-x="0"
               :initial-pan-y="0"
@@ -1720,8 +1720,8 @@ const stopPan = () => {
 };
 
 const zoom = (type: 'in' | 'out', factor = 1.1) => {
-  if (type === 'in' && mediaZoom.value < 4.99) {
-    mediaZoom.value = Math.min(mediaZoom.value * factor, 5);
+  if (type === 'in' && mediaZoom.value < 9.99) {
+    mediaZoom.value = Math.min(mediaZoom.value * factor, 10);
   }
   if (type === 'out' && mediaZoom.value > 1.01) {
     mediaZoom.value = Math.max(mediaZoom.value / factor, 1);
