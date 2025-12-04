@@ -741,11 +741,11 @@ watch(
       if (seenErrors.has(currentCongregation.value + missingFileUrl)) return;
       createTemporaryNotification({
         caption: t('some-media-items-are-missing-explain'),
-        color: 'warning',
         group: 'missingMeetingMedia',
         icon: 'mmm-file-missing',
         message: t('some-media-items-are-missing'),
         timeout: 15000,
+        type: 'warning',
       });
       seenErrors.add(currentCongregation.value + missingFileUrl);
     });
@@ -807,11 +807,10 @@ const checkCoDate = () => {
         },
       ],
       caption: t('dont-forget-to-add-circuit-overseer-date'),
-      color: 'primary',
       icon: 'mmm-error',
       message: t('no-circuit-overseer-date-set'),
-      textColor: 'white',
       timeout: 30000,
+      type: 'primary',
     });
   }
 };

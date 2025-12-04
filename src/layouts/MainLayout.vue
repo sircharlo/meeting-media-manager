@@ -627,9 +627,8 @@ async function handleUnlinkCleanup(changedPath: string) {
     const filename = basename(changedPath);
     const watchedDayFolder = dirname(changedPath);
     if (watchedDayFolder) {
-      const { removeWatchedMediaSectionInfo } = await import(
-        'src/helpers/media-sections'
-      );
+      const { removeWatchedMediaSectionInfo } =
+        await import('src/helpers/media-sections');
       await removeWatchedMediaSectionInfo(watchedDayFolder, filename);
     }
   } catch (error) {
@@ -781,7 +780,6 @@ bcClose.onmessage = (event) => {
         icon: 'mmm-error',
         message: t('make-sure-that-m-is-in-not-use-before-quitting'),
         noClose: true,
-        progress: true,
         timeout: 10000,
         type: 'negative',
       });
