@@ -276,12 +276,15 @@ whenever(
 const handleImageLoad = () => {
   // Image loaded - apply current zoom/pan state if available
   if (zoomPanState.value && Object.keys(zoomPanState.value).length > 0) {
+    // Skip animation on initial load
+    skipZoomPanAnimation.value = true;
     applyZoomPanState(zoomPanState.value);
   }
 };
 
 let lastZoomPanTime = 0;
 const transitionDurationSeconds = 2.5;
+const skipZoomPanAnimation = ref(false);
 
 const applyZoomPanState = (zoomPanState: Record<string, number>) => {
   try {
@@ -301,19 +304,26 @@ const applyZoomPanState = (zoomPanState: Record<string, number>) => {
       const x = (zoomPanState.x || 0) * width;
       const y = (zoomPanState.y || 0) * height;
 
-      const now = Date.now();
-      // If we are interrupting an active transition (less than 2s since last update),
-      // use ease-out to avoid the "slow start" jaggedness.
-      // Otherwise use standard ease for a smooth start from rest.
-      const isInterrupted =
-        now - lastZoomPanTime < transitionDurationSeconds * 1000;
-      const easing = isInterrupted ? 'ease-out' : 'ease';
+      if (skipZoomPanAnimation.value) {
+        // Apply instantly without animation
+        imageElem.style.transition = 'none';
+        imageElem.style.transform = `scale(${scale}) translate(${x}px, ${y}px)`;
+        skipZoomPanAnimation.value = false;
+      } else {
+        const now = Date.now();
+        // If we are interrupting an active transition (less than 2s since last update),
+        // use ease-out to avoid the "slow start" jaggedness.
+        // Otherwise use standard ease for a smooth start from rest.
+        const isInterrupted =
+          now - lastZoomPanTime < transitionDurationSeconds * 1000;
+        const easing = isInterrupted ? 'ease-out' : 'ease';
 
-      // Use CSS transforms for smooth animation
-      imageElem.style.transition = `transform ${transitionDurationSeconds}s ${easing}`;
-      imageElem.style.transform = `scale(${scale}) translate(${x}px, ${y}px)`;
+        // Use CSS transforms for smooth animation
+        imageElem.style.transition = `transform ${transitionDurationSeconds}s ${easing}`;
+        imageElem.style.transform = `scale(${scale}) translate(${x}px, ${y}px)`;
 
-      lastZoomPanTime = now;
+        lastZoomPanTime = now;
+      }
     }
   } catch (error) {
     errorCatcher(error);
@@ -569,6 +579,11 @@ const crossfadeToNewMedia = (newUrl: string) => {
   // Set the new URL on the non-live layer
   nextLayer.value.url = newUrl;
 
+  // Skip zoom/pan animation when transitioning to new media
+  if (isImage(newUrl)) {
+    skipZoomPanAnimation.value = true;
+  }
+
   // Fade in the new layer
   setTimeout(() => {
     nextLayer.value.isLive = true;
@@ -591,6 +606,12 @@ const clearCurrentMedia = () => {
     : displayLayer2;
 
   if (currentLiveLayer.value.url) {
+    // Skip zoom/pan animation when clearing media
+    if (isImage(currentLiveLayer.value.url)) {
+      skipZoomPanAnimation.value = true;
+      console.log('🎬 [clearCurrentMedia] Skipping zoom/pan animation');
+    }
+
     // Fade out the current layer
     currentLiveLayer.value.isLive = false;
 
@@ -704,6 +725,7 @@ const { data: yeartext } = useBroadcastChannel<string, string>({
 watchDeep(
   () => zoomPanState.value,
   (newZoomPanState) => {
+    console.log('🎬 [zoomPanState] New zoom/pan state:', newZoomPanState);
     applyZoomPanState(newZoomPanState);
   },
 );
