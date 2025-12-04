@@ -1655,10 +1655,37 @@ const zoomAnimationFrame = ref<null | number>(null);
 const panStep = 1.5;
 
 const pan = (direction: 'down' | 'left' | 'right' | 'up', step = panStep) => {
-  if (direction === 'up') mediaPan.value.y = (mediaPan.value.y || 0) + step;
-  if (direction === 'down') mediaPan.value.y = (mediaPan.value.y || 0) - step;
-  if (direction === 'left') mediaPan.value.x = (mediaPan.value.x || 0) + step;
-  if (direction === 'right') mediaPan.value.x = (mediaPan.value.x || 0) - step;
+  // Calculate new pan values
+  let newX = mediaPan.value.x || 0;
+  let newY = mediaPan.value.y || 0;
+
+  if (direction === 'up') newY += step;
+  if (direction === 'down') newY -= step;
+  if (direction === 'left') newX += step;
+  if (direction === 'right') newX -= step;
+
+  // Calculate maximum pan distance based on zoom level and image dimensions
+  // At zoom level 1, no panning is allowed
+  // At higher zoom levels, the max pan is half the difference between zoomed and original size
+  const zoom = mediaZoom.value;
+  const imageWidth = mediaImage.value?.$el?.clientWidth ?? 0;
+  const imageHeight = mediaImage.value?.$el?.clientHeight ?? 0;
+
+  if (zoom > 1 && imageWidth > 0 && imageHeight > 0) {
+    // Maximum pan = (zoomed_size - viewport_size) / 2
+    // Since zoomed_size = viewport_size * zoom, this becomes:
+    // max_pan = viewport_size * (zoom - 1) / 2
+    const maxPanX = (imageWidth * (zoom - 1)) / 2;
+    const maxPanY = (imageHeight * (zoom - 1)) / 2;
+
+    // Clamp pan values to prevent going past the edge
+    mediaPan.value.x = Math.max(-maxPanX, Math.min(maxPanX, newX));
+    mediaPan.value.y = Math.max(-maxPanY, Math.min(maxPanY, newY));
+  } else {
+    // No zoom or invalid dimensions - no panning allowed
+    mediaPan.value.x = 0;
+    mediaPan.value.y = 0;
+  }
 };
 
 const startPan = (direction: 'down' | 'left' | 'right' | 'up') => {
