@@ -14,7 +14,6 @@ import {
   moveMediaWindow,
 } from 'src-electron/main/window/window-media';
 import { moveTimerWindow } from 'src-electron/main/window/window-timer';
-import { PLATFORM } from 'src-electron/constants';
 
 export let mainWindow: BrowserWindow | null = null;
 let closeAttempts = 0;
