@@ -60,7 +60,7 @@ import {
   createTimerWindow,
   moveTimerWindow,
   timerWindow,
-} from 'main/window/window-timer';
+} from 'src-electron/main/window/window-timer';
 import {
   askForMediaAccess,
   createWebsiteWindow,
