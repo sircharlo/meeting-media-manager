@@ -22,10 +22,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: sircharlo/github-translate-action@v1.0.3
+      - uses: sircharlo/github-translate-action@v1.0.4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           IS_MODIFY_TITLE: true
           APPEND_TRANSLATION: true
           SKIP_ACTORS: 'dependabot[bot],mergify[bot]'
+          SECTIONS_TO_SKIP: 'Confirmations,Screenshots,Relevant log output'
