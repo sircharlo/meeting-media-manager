@@ -1,10 +1,10 @@
 import { app, type BrowserWindow, type Rectangle } from 'electron';
 import { pathExistsSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
-import { getAllScreens, getWindowScreen } from 'main/screen';
-import { getIconPath } from 'main/utils';
-import { createWindow } from 'main/window/window-base';
 import { join } from 'node:path';
 import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
+import { getAllScreens, getWindowScreen } from 'src-electron/main/screen';
+import { getIconPath } from 'src-electron/main/utils';
+import { createWindow } from 'src-electron/main/window/window-base';
 
 export let timerWindow: BrowserWindow | null = null;
 
