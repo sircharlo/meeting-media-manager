@@ -95,7 +95,7 @@
 <script setup lang="ts">
 import type { ObsSceneType } from 'src/types';
 
-import { useEventListener } from '@vueuse/core';
+import { useEventListener, watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
@@ -111,7 +111,7 @@ import { isImage } from 'src/utils/media';
 import { obsWebSocket } from 'src/utils/obs';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const open = defineModel<boolean>({ default: false });
@@ -176,36 +176,41 @@ const openObsRecordingFolder = async () => {
   }
 };
 
-// Check initial recording status and get recording directory on mount
-onMounted(async () => {
-  if (currentSettings.value?.obsEnableRecordingControls) {
-    // Check initial recording status
+watchImmediate(
+  () => ({
+    enabled: currentSettings.value?.obsEnable,
+    recordingControls: currentSettings.value?.obsEnableRecordingControls,
+  }),
+  async ({ enabled, recordingControls }, _, onCleanup) => {
+    // If OBS not enabled or no websocket → stop everything
+    if (!enabled || !obsWebSocket) return;
+
+    // If recording controls disabled → stop everything
+    if (!recordingControls) return;
+
+    // --- 1. Setup event listener ---
+    const handleRecordStateChanged = (data: { outputActive: boolean }) => {
+      console.log('RecordStateChanged', data);
+      isRecording.value = data.outputActive;
+    };
+    obsWebSocket.on('RecordStateChanged', handleRecordStateChanged);
+
+    // Cleanup when settings change or component unmounts
+    onCleanup(() => {
+      obsWebSocket?.off('RecordStateChanged', handleRecordStateChanged);
+    });
+
+    // --- 2. Initial recording state ---
     const status = await obsGetRecordingState();
     if (status !== null) {
       isRecording.value = status;
     }
 
-    // Get recording directory
+    // --- 3. Recording directory ---
     const folder = await obsGetRecordingDirectory();
     obsRecordingFolder.value = folder;
-  }
-});
-
-// Listen for OBS recording state changes
-onMounted(() => {
-  if (currentSettings.value?.obsEnableRecordingControls && obsWebSocket) {
-    const handleRecordStateChanged = (data: { outputActive: boolean }) => {
-      console.log('RecordStateChanged', data);
-      isRecording.value = data.outputActive;
-    };
-
-    obsWebSocket.on('RecordStateChanged', handleRecordStateChanged);
-
-    onUnmounted(() => {
-      obsWebSocket?.off('RecordStateChanged', handleRecordStateChanged);
-    });
-  }
-});
+  },
+);
 
 const resolvedScene = computed(() => {
   if (!currentSettings.value) return currentScene.value;

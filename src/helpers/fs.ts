@@ -1,5 +1,6 @@
 import type {
   Asset,
+  FileItem,
   MultimediaItem,
   PublicationFetcher,
   Release,
@@ -25,10 +26,11 @@ const {
   parseMediaFile,
   path,
   pathToFileURL,
+  readdir,
   unwatchFolders,
   watchFolder,
 } = window.electronApi;
-const { exists, pathExists, readdir, stat, writeFile } = fs;
+const { exists, pathExists, stat, writeFile } = fs;
 const { basename, dirname, extname, join, resolve } = path;
 
 const getThumbnailFromMetadata = async (mediaPath: string) => {
@@ -428,10 +430,12 @@ async function validateExistingFile(
   if (await pathExists(zipPath)) {
     const zipStat = await stat(zipPath);
     if (zipStat.size === size) {
-      const exeName =
-        (await readdir(dir)).find((f) => f !== basename(zipPath)) || '';
-      if (exeName) {
-        const exePath = join(dir, exeName);
+      const dirListing = await readdir(dir);
+      const exeFile: FileItem = dirListing.find(
+        (f) => f.name !== basename(zipPath),
+      );
+      if (exeFile) {
+        const exePath = join(dir, exeFile.name);
         useCurrentStateStore().ffmpegPath = exePath;
         return true;
       }

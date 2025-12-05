@@ -11,6 +11,7 @@
     <MediaSectionHeader
       v-if="selectedDateObject"
       ref="sectionHeaderRef"
+      v-model:collapsed="isCollapsed"
       :has-add-media-button="hasAddMediaButton"
       :is-custom="isCustomSection"
       :is-first="isFirst"
@@ -29,21 +30,26 @@
     />
     <!-- Empty State -->
     <SectionEmptyState
-      v-if="isEmpty && !isDragging"
+      v-if="(isEmpty || someItemsAreHidden) && !isDragging"
+      :all-items-are-hidden="allItemsAreHidden"
       :is-dragging="isDragging"
       :selected-date="selectedDateObject"
+      :some-items-are-hidden="someItemsAreHidden"
     />
     <!-- Media Items -->
     <div
+      v-show="!isCollapsed"
       ref="dragDropContainer"
       class="sortable-media"
       :class="{ 'drop-here': isDragging }"
       :data-list="mediaList.config?.uniqueId"
     >
-      <template v-if="isEmpty && isDragging">
+      <template v-if="(isEmpty || someItemsAreHidden) && isDragging">
         <SectionEmptyState
+          :all-items-are-hidden="allItemsAreHidden"
           :is-dragging="isDragging"
           :selected-date="selectedDateObject"
+          :some-items-are-hidden="someItemsAreHidden"
         />
       </template>
       <template v-for="element in sortableItems" :key="element.uniqueId">
@@ -156,9 +162,13 @@ const sectionHeaderRef = ref<InstanceType<typeof MediaSectionHeader> | null>(
 // Dialog state
 const showAddDividerDialog = ref(false);
 
+// Collapse state
+const isCollapsed = ref(false);
+
 // Use the media section composable
 const {
   addSong,
+  allItemsAreHidden,
   deleteSection,
   expandedGroups,
   hasAddMediaButton,
@@ -170,6 +180,7 @@ const {
   isSongButton,
   moveSection,
   sectionData,
+  someItemsAreHidden,
   updateSectionColor,
   updateSectionLabel,
 } = useMediaSection(props.mediaList);
@@ -353,5 +364,10 @@ defineExpose({
   border-radius: 4px;
   height: 60px;
   margin: 4px 0;
+
+  body.body--dark & {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #666;
+  }
 }
 </style>

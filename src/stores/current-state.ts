@@ -183,6 +183,12 @@ export const useCurrentStateStore = defineStore('current-state', {
     },
     setCongregation: async function (value: number | string) {
       if (!value) return false;
+
+      // Dismiss all active notifications when changing congregation
+      const { dismissAllTemporaryNotifications } =
+        await import('src/helpers/notifications');
+      dismissAllTemporaryNotifications();
+
       this.currentCongregation = value.toString();
       await setCachedUserDataPath();
       return this.getInvalidSettings(this.currentCongregation).length > 0;

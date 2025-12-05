@@ -1,11 +1,15 @@
+import type { ElectronDownloadManager as EDMType } from 'electron-dl-manager';
+
 import { getCountriesForTimezone } from 'countries-and-timezones';
 import { app } from 'electron';
-import { ElectronDownloadManager } from 'electron-dl-manager';
 import { ensureDir, pathExists } from 'fs-extra/esm';
-import { sendToWindow } from 'main/window/window-base';
-import { mainWindow } from 'main/window/window-main';
+import { isAppQuitting } from 'src-electron/main/session';
 import { captureElectronError, fetchJson } from 'src-electron/main/utils';
+import { sendToWindow } from 'src-electron/main/window/window-base';
+import { mainWindow } from 'src-electron/main/window/window-main';
 import upath from 'upath';
+
+const { basename } = upath;
 
 interface DownloadQueueItem {
   destFilename: string;
@@ -17,22 +21,37 @@ interface GeoInfo {
   countryCode: string;
 }
 
-const manager = new ElectronDownloadManager();
 const downloadQueue: DownloadQueueItem[] = [];
 const lowPriorityQueue: DownloadQueueItem[] = [];
 const activeDownloadIds: string[] = [];
 const maxActiveDownloads = 5;
 let cancelAll = false;
 
-const { basename } = upath;
+let manager: EDMType | null = null;
+
+const loadElectronDownloadManager: () => Promise<EDMType | null> = async () => {
+  if (!mainWindow || mainWindow.isDestroyed()) return null; // window is closed
+
+  if (manager) return manager; // already initialized
+
+  const { ElectronDownloadManager } = await import('electron-dl-manager');
+
+  // instantiate once and reuse
+  manager = new ElectronDownloadManager();
+  return manager;
+};
 
 /**
  * Cancels all downloads.
  */
 export async function cancelAllDownloads() {
+  const manager = await loadElectronDownloadManager();
+  if (!manager) return;
+
   cancelAll = true;
   downloadQueue.length = 0;
   lowPriorityQueue.length = 0;
+
   activeDownloadIds.forEach((id) => {
     manager.cancelDownload(id);
   });
@@ -194,7 +213,8 @@ export function resetDownloadErrorCache() {
  * @returns The ID of the download that was started, or null if no downloads were started.
  */
 async function processQueue() {
-  if (!mainWindow || cancelAll) return null;
+  const manager = await loadElectronDownloadManager();
+  if (!mainWindow || cancelAll || !manager) return null;
   // If max active downloads reached, wait for a slot
   while (activeDownloadIds.length >= maxActiveDownloads) {
     if (cancelAll) return;
@@ -218,63 +238,84 @@ async function processQueue() {
   activeDownloadIds.push(url + saveDir);
 
   // Start the download
-  const downloadId = await manager.download({
-    callbacks: {
-      onDownloadCancelled: async ({ id }) => {
-        sendToWindow(mainWindow, 'downloadCancelled', { id });
-        activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
-        processQueue(); // Process next download
-      },
-      onDownloadCompleted: async ({ item }) => {
-        sendToWindow(mainWindow, 'downloadCompleted', {
-          filePath: item.getSavePath(),
-          id: url + saveDir,
-        });
-        activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
-        processQueue(); // Process next download
-      },
-      onDownloadProgress: async ({ item, percentCompleted }) => {
-        sendToWindow(mainWindow, 'downloadProgress', {
-          bytesReceived: item.getReceivedBytes(),
-          id: url + saveDir,
-          percentCompleted,
-        });
-      },
-      onDownloadStarted: async ({ item, resolvedFilename }) => {
-        sendToWindow(mainWindow, 'downloadStarted', {
-          filename: resolvedFilename,
-          id: url + saveDir,
-          totalBytes: item.getTotalBytes(),
-        });
-      },
-      onError: async (err, downloadData) => {
-        captureElectronError(err, {
-          contexts: {
-            fn: {
-              name: 'src-electron/downloads processQueue onError',
-              params: {
-                directory: saveDir,
-                isDownloadErrorExpected: await isDownloadErrorExpected(),
-                saveAsFilename: destFilename,
-                window: mainWindow?.id,
-              },
-              url,
-            },
-          },
-        });
-        if (downloadData) {
-          sendToWindow(mainWindow, 'downloadError', {
-            id: downloadData.id,
+  try {
+    const downloadId = await manager.download({
+      callbacks: {
+        onDownloadCancelled: async ({ id }) => {
+          sendToWindow(mainWindow, 'downloadCancelled', { id });
+          activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
+          processQueue(); // Process next download
+        },
+        onDownloadCompleted: async ({ item }) => {
+          sendToWindow(mainWindow, 'downloadCompleted', {
+            filePath: item.getSavePath(),
+            id: url + saveDir,
           });
-        }
-        activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
-        processQueue(); // Process next download
+          activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
+          processQueue(); // Process next download
+        },
+        onDownloadProgress: async ({ item, percentCompleted }) => {
+          sendToWindow(mainWindow, 'downloadProgress', {
+            bytesReceived: item.getReceivedBytes(),
+            id: url + saveDir,
+            percentCompleted,
+          });
+        },
+        onDownloadStarted: async ({ item, resolvedFilename }) => {
+          sendToWindow(mainWindow, 'downloadStarted', {
+            filename: resolvedFilename,
+            id: url + saveDir,
+            totalBytes: item.getTotalBytes(),
+          });
+        },
+        onError: async (err, downloadData) => {
+          if (isAppQuitting) return;
+          captureElectronError(err, {
+            contexts: {
+              fn: {
+                name: 'src-electron/downloads processQueue onError',
+                params: {
+                  directory: saveDir,
+                  isDownloadErrorExpected: await isDownloadErrorExpected(),
+                  saveAsFilename: destFilename,
+                  window: mainWindow?.id,
+                },
+                url,
+              },
+            },
+          });
+          if (downloadData) {
+            sendToWindow(mainWindow, 'downloadError', {
+              id: downloadData.id,
+            });
+          }
+          activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
+          processQueue(); // Process next download
+        },
       },
-    },
-    directory: saveDir,
-    saveAsFilename: destFilename,
-    url,
-    window: mainWindow,
-  });
-  return downloadId;
+      directory: saveDir,
+      saveAsFilename: destFilename,
+      url,
+      window: mainWindow,
+    });
+    return downloadId;
+  } catch (error) {
+    if (isAppQuitting) return null;
+    captureElectronError(error, {
+      contexts: {
+        fn: {
+          name: 'src-electron/downloads processQueue catch',
+          params: {
+            directory: saveDir,
+            saveAsFilename: destFilename,
+            window: mainWindow?.id,
+          },
+          url,
+        },
+      },
+    });
+    activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
+    processQueue(); // Process next download
+    return null;
+  }
 }

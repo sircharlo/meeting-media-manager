@@ -10,7 +10,7 @@ import pkg from './package.json';
 export default defineConfig({
   esbuild: {
     define: { global: 'window' },
-    target: ['chrome138', 'node22.17.1'],
+    target: ['chrome140', 'node22.19.0'],
   },
   plugins: [tsconfigPaths()],
   resolve: {

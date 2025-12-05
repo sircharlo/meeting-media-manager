@@ -8,6 +8,7 @@
     :error="customError"
     hide-bottom-space
     v-bind="{
+      ...$attrs,
       label:
         (settingId === 'localDateFormat'
           ? model

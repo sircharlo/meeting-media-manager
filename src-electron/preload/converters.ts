@@ -1,14 +1,13 @@
-import type Decompress from 'decompress';
 import type { PDFPageProxy } from 'pdfjs-dist';
 import type { RenderParameters } from 'pdfjs-dist/types/src/display/api';
 
-import fse from 'fs-extra';
-const { ensureDir, writeFile } = fse;
+import { writeFile } from 'fs-extra';
+import { ensureDir } from 'fs-extra/esm';
+import { capturePreloadError } from 'src-electron/preload/log';
 import { FULL_HD } from 'src/constants/media';
 import upath from 'upath';
-const { basename, join } = upath;
 
-import { capturePreloadError } from 'preload/log';
+const { basename, join } = upath;
 
 export interface ConversionOptions {
   /**
@@ -26,14 +25,14 @@ export interface ConversionOptions {
   quality?: number;
 }
 
-export const decompress: typeof Decompress = async (input, output, opts) => {
-  const { default: decompressPackage } = await import('decompress');
-  return decompressPackage(input, output, opts);
-};
-
 export const convertHeic = async (image: ConversionOptions) => {
-  const { default: convert } = await import('heic-convert');
-  return convert(image);
+  try {
+    const { default: convert } = await import('heic-convert');
+    return convert(image);
+  } catch (e) {
+    capturePreloadError(e);
+    return new ArrayBuffer(0);
+  }
 };
 
 export const getNrOfPdfPages = async (pdfPath: string): Promise<number> => {

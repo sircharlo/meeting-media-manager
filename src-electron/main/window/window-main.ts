@@ -1,15 +1,19 @@
 import type { BrowserWindow } from 'electron';
 
-import { cancelAllDownloads } from 'main/downloads';
-import { setShouldQuit } from 'main/session';
-import { throttleWithTrailing } from 'main/utils';
+import { PLATFORM } from 'src-electron/constants';
+import { cancelAllDownloads } from 'src-electron/main/downloads';
+import { setShouldQuit } from 'src-electron/main/session';
+import { throttleWithTrailing } from 'src-electron/main/utils';
 import {
   closeOtherWindows,
   createWindow,
   sendToWindow,
-} from 'main/window/window-base';
-import { createMediaWindow, moveMediaWindow } from 'main/window/window-media';
-import { moveTimerWindow } from 'main/window/window-timer';
+} from 'src-electron/main/window/window-base';
+import {
+  createMediaWindow,
+  moveMediaWindow,
+} from 'src-electron/main/window/window-media';
+import { moveTimerWindow } from 'src-electron/main/window/window-timer';
 import { PLATFORM } from 'src-electron/constants';
 
 export let mainWindow: BrowserWindow | null = null;

@@ -4,6 +4,22 @@
 
 Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELOG.md tiedosto GitHubissa.
 
+## v25.12.0
+
+### ✨ Mitä uutta
+
+- ✨ **Monivalintakontekstivalikko**: Lisättiin tuki hiiren oikean painikkeen valikolle, kun useita mediaobjekteja on valittuna.
+- ✨ **Pikanäppäimet**: Lisättiin Ctrl/Cmd+A valitsemaan kaikki mediaobjektit, H (hide) piilottamaan valitut mediaobjektit sekä Shift+ylös/alas näppäimistön selausvalintaan.
+- ✨ **Vartiotornin tutkintovideon asetukset**: Lisättiin asetus, jolla voidaan jättää pois ylimääräiset Vartiotornin tutkintovideot.
+- ✨ **Kutistettavat osiot**: Lisättiin mahdollisuus kutistaa osiot päiviltä, joilla ei ole kokouksia, selkeämmän näkymän saavuttamiseksi.
+- ✨ **JW Events verkkosivusto**: Lisäsi mahdollisuuden esitellä JW Events -sivustoa tärkeimpien virallisten verkkosivujen lisäksi.
+- ✨ **Soittolistatuonnin mukautus**: Lisättiin mahdollisuus mukauttaa etuliite, joka lisätään mediaobjekteihin JW-soittolistojen tuonnin yhteydessä.
+- ✨ **Verkkosivunpeilauksen navigointi**: Lisättiin valitsin, joka siirtyy automaattisesti medialuetteloon, kun verkkosivun peilaus lopetetaan.
+- ✨ **OBS-tallennuksen ohjaimet**: Lisättiin mahdollisuus ohjata OBS-tallennuksia.
+- ✨ **Vuositekstin esikatselu**: Lisättiin mahdollisuus esikatsella seuraavan vuoden vuositekstiä jokaisen vuoden joulukuussa.
+- ✨ **Päivitysilmoitukset**: Lisättiin varoitusilmoituksia, jos käytössä on beta-versio tai jos päivitykset ovat pois käytöstä, sekä parannettiin päivityksen latausprosessin näyttöä.
+- ✨ **Laitteistokiihdytyksen asetukset**: Lisättiin asetus, jolla laitteistokiihdytys voidaan pysyvästi poistaa käytöstä tarvittaessa.
+
 ## v25.11.0
 
 ### ✨ Mitä uutta

@@ -63,10 +63,10 @@
         'dashed-border': true,
         'big-button': true,
       }"
-      color="accent-100"
+      :color="$q.dark.isActive ? 'grey-9' : 'accent-100'"
       icon="mmm-plus"
       :label="t('new-section')"
-      text-color="primary"
+      :text-color="$q.dark.isActive ? 'grey-4' : 'primary'"
       unelevated
       @click="addSection()"
     />
@@ -90,7 +90,7 @@
     <DialogJwpubMediaPicker
       :db-path="jwpubImportDb"
       :dialog-id="'media-calendar-jwpub-media-picker'"
-      :document="selectedDocument!"
+      :document="selectedDocument"
       :model-value="showMediaPicker"
       :section="sectionToAddTo"
       @cancel="onMediaPickerCancel"
@@ -203,7 +203,8 @@ const route = useRoute();
 const router = useRouter();
 
 const jwStore = useJwStore();
-const { deleteMediaItems, showHiddenMediaForSelectedDate } = jwStore;
+const { deleteMediaItems, hideMediaItems, showHiddenMediaForSelectedDate } =
+  jwStore;
 const { lookupPeriod, urlVariables } = storeToRefs(jwStore);
 const currentState = useCurrentStateStore();
 const { getMeetingType } = currentState;
@@ -740,11 +741,11 @@ watch(
       if (seenErrors.has(currentCongregation.value + missingFileUrl)) return;
       createTemporaryNotification({
         caption: t('some-media-items-are-missing-explain'),
-        color: 'warning',
         group: 'missingMeetingMedia',
         icon: 'mmm-file-missing',
         message: t('some-media-items-are-missing'),
         timeout: 15000,
+        type: 'warning',
       });
       seenErrors.add(currentCongregation.value + missingFileUrl);
     });
@@ -806,11 +807,10 @@ const checkCoDate = () => {
         },
       ],
       caption: t('dont-forget-to-add-circuit-overseer-date'),
-      color: 'primary',
       icon: 'mmm-error',
       message: t('no-circuit-overseer-date-set'),
-      textColor: 'white',
       timeout: 30000,
+      type: 'primary',
     });
   }
 };
@@ -1003,13 +1003,14 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
   totalFiles.value = files.length;
   if (!Array.isArray(files)) files = Array.from(files);
 
-  // Set default section for WE meetings if no section is specified
+  // Set a default section if...
   if (
-    selectedDateObject.value &&
-    isWeMeetingDay(selectedDateObject.value.date) &&
-    !sectionToAddTo.value
+    !sectionToAddTo.value && // ... a section is not already set AND
+    selectedDateObject.value && // ... a date is selected AND
+    isWeMeetingDay(selectedDateObject.value.date) && // ... this is a WE meeting AND
+    !isCoWeek(selectedDateObject.value.date) // ... and this is not a CO week
   ) {
-    sectionToAddTo.value = 'pt'; // Default to public talk section for WE meetings
+    sectionToAddTo.value = 'pt'; // ... set section to pt (public talk)
   }
   if (files.length > 1) {
     const jwPubFile = files.find((f) => isJwpub(getLocalPathFromFileObject(f)));
@@ -1105,25 +1106,6 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         files.push(...convertedImages);
       } else if (isJwpub(filepath)) {
         console.log('🎯 [addToFiles] Processing JWPUB file:', filepath);
-        // First, only decompress the db in memory to get the publication info and derive the destination path
-        console.log('🎯 [addToFiles] Decompressing JWPUB for db extraction');
-        const tempJwpubContents = await decompress(filepath);
-        console.log(
-          '🎯 [addToFiles] Decompressed JWPUB contents:',
-          tempJwpubContents.length,
-          'files',
-        );
-        const tempContentFile = tempJwpubContents.find((tempJwpubContent) =>
-          tempJwpubContent.path.endsWith('contents'),
-        );
-        console.log(
-          '🎯 [addToFiles] Found contents file:',
-          tempContentFile ? 'yes' : 'no',
-        );
-        if (!tempContentFile) {
-          console.log('🎯 [addToFiles] No contents file found, returning');
-          return;
-        }
         console.log('🎯 [addToFiles] Getting temp directory');
         const tempDir = await getTempPath();
         console.log('🎯 [addToFiles] Temp dir:', tempDir);
@@ -1131,43 +1113,56 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
           console.log('🎯 [addToFiles] No temp dir, returning');
           return;
         }
-        await ensureDir(tempDir);
-        console.log('🎯 [addToFiles] Ensured temp dir exists');
 
-        let tempFilePath: string | undefined;
+        // Create unique temp directories to avoid conflicts
+        const tempExtractionDir = join(tempDir, `jwpub-${uuid()}`);
+        const tempContentsDir = join(tempDir, `jwpub-contents-${uuid()}`);
+
         let tempDbFilePath: string | undefined;
 
         try {
-          tempFilePath = join(tempDir, basename(filepath) + '-contents');
+          // Extract JWPUB to disk (not memory)
           console.log(
-            '🎯 [addToFiles] Writing contents to temp file:',
-            tempFilePath,
+            '🎯 [addToFiles] Extracting JWPUB to:',
+            tempExtractionDir,
           );
-          await writeFile(tempFilePath, tempContentFile.data);
-          console.log('🎯 [addToFiles] Decompressing temp contents file');
-          const tempJwpubFileContents = await decompress(tempFilePath);
+          await ensureDir(tempExtractionDir);
+          await decompress(filepath, tempExtractionDir);
+
+          // Check for 'contents' file
+          const contentsPath = join(tempExtractionDir, 'contents');
           console.log(
-            '🎯 [addToFiles] Decompressed temp contents:',
-            tempJwpubFileContents.length,
-            'files',
+            '🎯 [addToFiles] Looking for contents file at:',
+            contentsPath,
           );
-          const tempDbFile = tempJwpubFileContents.find(
-            (tempJwpubFileContent) => tempJwpubFileContent.path.endsWith('.db'),
-          );
+          if (!(await exists(contentsPath))) {
+            console.log('🎯 [addToFiles] No contents file found, returning');
+            return;
+          }
+
+          // Extract the 'contents' archive to disk (not memory)
           console.log(
-            '🎯 [addToFiles] Found db file:',
-            tempDbFile ? 'yes' : 'no',
+            '🎯 [addToFiles] Extracting contents to:',
+            tempContentsDir,
           );
-          if (!tempDbFile) {
+          await ensureDir(tempContentsDir);
+          await decompress(contentsPath, tempContentsDir);
+
+          // Find the .db file
+          console.log(
+            '🎯 [addToFiles] Looking for .db file in:',
+            tempContentsDir,
+          );
+          const files = await readdir(tempContentsDir);
+          const dbFile = files.find((f) => f.name.endsWith('.db'));
+          console.log('🎯 [addToFiles] Found db file:', dbFile ? 'yes' : 'no');
+          if (!dbFile) {
             console.log('🎯 [addToFiles] No db file found, returning');
             return;
           }
-          tempDbFilePath = join(tempDir, basename(filepath) + '.db');
-          console.log(
-            '🎯 [addToFiles] Writing db to temp path:',
-            tempDbFilePath,
-          );
-          await writeFile(tempDbFilePath, tempDbFile.data);
+
+          tempDbFilePath = join(tempContentsDir, dbFile.name);
+          console.log('🎯 [addToFiles] Using db at:', tempDbFilePath);
           console.log('🎯 [addToFiles] Checking if db file exists');
           if (!(await exists(tempDbFilePath))) {
             console.log('🎯 [addToFiles] Db file does not exist, returning');
@@ -1248,19 +1243,14 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             );
           }
         } finally {
-          // Clean up temp files
-          if (tempFilePath) {
-            console.log('🎯 [addToFiles] Removing temp contents file');
-            remove(tempFilePath).catch((err) =>
-              console.error('Failed to remove temp contents file:', err),
-            );
-          }
-          if (tempDbFilePath) {
-            console.log('🎯 [addToFiles] Removing temp db file');
-            remove(tempDbFilePath).catch((err) =>
-              console.error('Failed to remove temp db file:', err),
-            );
-          }
+          // Clean up temp directories
+          console.log('🎯 [addToFiles] Cleaning up temp directories');
+          remove(tempExtractionDir).catch((err) =>
+            console.error('Failed to remove temp extraction dir:', err),
+          );
+          remove(tempContentsDir).catch((err) =>
+            console.error('Failed to remove temp contents dir:', err),
+          );
         }
       } else if (isJwPlaylist(filepath) && selectedDateObject.value) {
         // Show playlist selection dialog
@@ -1284,17 +1274,21 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         );
         console.log('🎯 openJwPlaylistDialog event dispatched');
       } else if (isArchive(filepath)) {
+        console.log('🎯 Archive file detected:', filepath);
         const unzipDirectory = join(await getTempPath(), basename(filepath));
+        console.log('🎯 Unzip directory:', unzipDirectory);
         await remove(unzipDirectory);
-        await window.electronApi
-          .decompress(filepath, unzipDirectory)
-          .catch((error) => {
-            throw error;
-          });
+        console.log('🎯 Removed unzip directory');
+        await decompress(filepath, unzipDirectory);
+        console.log('🎯 Decompressed archive');
         const files = await readdir(unzipDirectory);
+        console.log('🎯 Reading unzip directory', files);
         const filePaths = files.map((file) => join(unzipDirectory, file.name));
+        console.log('🎯 Mapping files', filePaths);
         await addToFiles(filePaths);
+        console.log('🎯 Added files');
         await remove(unzipDirectory);
+        console.log('🎯 Removed unzip directory');
       } else {
         createTemporaryNotification({
           caption: filepath ? basename(filepath) : filepath,
@@ -1390,15 +1384,16 @@ const handleDrop = (event: DragEvent) => {
         if (src) droppedStuff[0] = src;
       }
 
-      // Show section picker if more than one section exists and it's not a WE meeting
+      // Show section picker if...
       if (
-        (selectedDateObject.value?.mediaSections?.length || 0) > 1 &&
-        !isWeMeetingDay(selectedDateObject.value?.date)
+        (selectedDateObject.value?.mediaSections?.length || 0) > 1 && // ... more than one section exists AND
+        (!isWeMeetingDay(selectedDateObject.value?.date) || // ... EITHER this is not a WE meeting
+          isCoWeek(selectedDateObject.value?.date)) // ... OR this is a CO week
       ) {
         pendingFiles.value = droppedStuff;
         showSectionPicker.value = true;
       } else {
-        // Otherwise, process files directly
+        // Otherwise, process files directly without showing the section picker
         addToFiles(droppedStuff).catch((error) => {
           errorCatcher(error);
         });
@@ -1651,6 +1646,39 @@ Mousetrap.bind('shift+up', () => {
 });
 Mousetrap.bind('shift+down', () => {
   extendSelection('down');
+});
+Mousetrap.bind('mod+a', (e) => {
+  e.preventDefault();
+  if (keyboardShortcutMediaList.value.length > 0) {
+    const allSelectableIds = keyboardShortcutMediaList.value
+      .filter((item) => isMediaSelectable(item))
+      .map((item) => item.uniqueId);
+
+    if (allSelectableIds.length > 0) {
+      selectedMediaItems.value = allSelectableIds;
+    }
+  }
+});
+Mousetrap.bind('h', () => {
+  if (selectedMediaItems.value.length > 0) {
+    $q.dialog({
+      cancel: { label: t('cancel') },
+      message: t('hide-selected-media-confirmation', {
+        count: selectedMediaItems.value.length,
+      }),
+      ok: { label: t('hide-from-list') },
+      persistent: true,
+      title: t('confirm'),
+    }).onOk(() => {
+      hideMediaItems(
+        selectedMediaItems.value,
+        currentCongregation.value,
+        selectedDateObject.value,
+      );
+      // Clear selection after hiding
+      selectedMediaItems.value = [];
+    });
+  }
 });
 
 function findNextSelectableMedia(mediaList: MediaItem[], startIndex: number) {

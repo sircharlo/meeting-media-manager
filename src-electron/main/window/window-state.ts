@@ -6,8 +6,10 @@ import {
   screen,
 } from 'electron';
 import { ensureDirSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
-import { captureElectronError } from 'main/utils';
-import { dirname, join } from 'node:path';
+import { captureElectronError } from 'src-electron/main/utils';
+import upath from 'upath';
+
+const { dirname, join } = upath;
 
 interface ExtraOptions {
   /** The name of file. Defaults to `window-state.json`. */

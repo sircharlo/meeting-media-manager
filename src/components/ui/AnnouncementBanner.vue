@@ -85,6 +85,7 @@ import type { Announcement, AnnouncementAction } from 'src/types';
 import prettyBytes from 'pretty-bytes';
 import { useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
 import { fetchAnnouncements, fetchLatestVersion } from 'src/utils/api';
 import { updatesDisabled } from 'src/utils/fs';
@@ -99,7 +100,15 @@ const { t } = useI18n();
 const currentStateStore = useCurrentStateStore();
 const congregationStore = useCongregationSettingsStore();
 
-const { openDiscussion, openExternal, quitAndInstall } = window.electronApi;
+const {
+  onUpdateAvailable,
+  onUpdateDownloaded,
+  onUpdateDownloadProgress,
+  onUpdateError,
+  openDiscussion,
+  openExternal,
+  quitAndInstall,
+} = window.electronApi;
 
 const version = process.env.version;
 const latestVersion = ref('');
@@ -183,9 +192,6 @@ const downloadProgressText = computed(() => {
 
 onMounted(() => {
   try {
-    const { onUpdateAvailable, onUpdateDownloaded, onUpdateDownloadProgress } =
-      window.electronApi;
-
     onUpdateAvailable(() => {
       try {
         showAutoUpdateAvailableBanner.value = true;
@@ -218,6 +224,16 @@ onMounted(() => {
           contexts: { fn: { name: 'onUpdateDownloaded' } },
         });
       }
+    });
+
+    onUpdateError(() => {
+      createTemporaryNotification({
+        caption: t('update-failed'),
+        icon: 'mmm-error',
+        message: t('update-error-read-only-volume'),
+        timeout: 10000,
+        type: 'negative',
+      });
     });
   } catch (error) {
     errorCatcher(error, {
@@ -263,11 +279,12 @@ const langIsNotSupported = computed(() => {
 });
 
 // Untranslated language banner for users who are using an unsupported language, asking them to translate
-const untranslatedAnnouncement = computed((): Announcement => {
+const untranslatedAnnouncement = computed((): Announcement | null => {
+  if (!currentJwLang.value) return null;
   return {
     actions: ['translate'],
     icon: 'ui-language',
-    id: `untranslated-${currentJwLang.value?.langcode}`,
+    id: `untranslated-${currentJwLang.value.langcode}`,
     message: 'help-translate-new',
     platform: langIsNotSupported.value ? 'all' : 'none',
   };
@@ -277,9 +294,9 @@ const openTranslateDiscussion = () => {
   if (!currentJwLang.value) return;
   openDiscussion(
     'translations',
-    `New translation in ${currentJwLang.value?.name}`,
+    `New translation in ${currentJwLang.value.name}`,
     JSON.stringify({
-      language: `I would like to help translate M³ into a language I speak: ${currentJwLang.value?.vernacularName}/${currentJwLang.value.name} - ${currentJwLang.value.langcode}/${currentJwLang.value.symbol}`,
+      language: `I would like to help translate M³ into a language I speak: ${currentJwLang.value.vernacularName}/${currentJwLang.value.name} - ${currentJwLang.value.langcode}/${currentJwLang.value.symbol}`,
     }),
   );
 };
@@ -316,11 +333,13 @@ const matchesScope = (a: Announcement) =>
 const isVersionOk = (a: Announcement) =>
   !version || isVersionWithinBounds(version, a.minVersion, a.maxVersion);
 
-const systemAnnouncements = computed(() => [
-  newUpdateAnnouncement.value,
-  untranslatedAnnouncement.value,
-  testVersionAnnouncement.value,
-]);
+const systemAnnouncements = computed(() =>
+  [
+    newUpdateAnnouncement.value,
+    untranslatedAnnouncement.value,
+    testVersionAnnouncement.value,
+  ].filter((a) => !!a),
+);
 
 const activeAnnouncements = computed(() =>
   [...announcements.value, ...systemAnnouncements.value].filter((a) => {

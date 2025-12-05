@@ -8,16 +8,6 @@
         <div class="col">
           {{ t('select-media-items') }}
         </div>
-        <div class="col-shrink">
-          <q-btn
-            color="primary"
-            flat
-            icon="mmm-refresh"
-            :loading="loading"
-            round
-            @click="loadMediaItems"
-          />
-        </div>
       </div>
       <div class="row q-px-md q-py-md">
         {{ t('select-media-items-explain') }}
@@ -28,11 +18,33 @@
         :class="{ 'content-center': loading }"
       >
         <div
-          v-if="loading"
-          class="row q-px-md col flex-center"
-          style="min-height: 100px"
+          v-if="loading && !mediaItems.length"
+          class="col q-px-md full-width"
         >
-          <q-spinner color="primary" size="md" />
+          <div class="text-secondary text-uppercase q-my-sm">
+            {{ t('select-media-items') }}
+          </div>
+          <div class="col full-width">
+            <q-list class="full-width" separator>
+              <q-item v-for="skeletonIndex in 4" :key="skeletonIndex">
+                <q-item-section avatar>
+                  <q-skeleton size="24px" type="QCheckbox" />
+                </q-item-section>
+                <q-item-section avatar>
+                  <q-skeleton height="48px" type="rect" width="48px" />
+                </q-item-section>
+                <q-item-section>
+                  <q-skeleton height="16px" type="text" width="80%" />
+                  <q-skeleton
+                    class="q-mt-xs"
+                    height="14px"
+                    type="text"
+                    width="60%"
+                  />
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </div>
         </div>
         <template v-else>
           <div v-if="mediaItems.length" class="col q-px-md full-width">
@@ -45,26 +57,24 @@
                   v-for="(item, index) in mediaItems"
                   :key="item.MultimediaId"
                   clickable
+                  :disable="isProcessing"
                   @click="toggleItem(index)"
                 >
                   <q-item-section avatar>
                     <q-checkbox
+                      :disable="isProcessing"
                       :model-value="selectedItems.includes(index)"
                       @update:model-value="toggleItem(index)"
                     />
                   </q-item-section>
                   <q-item-section avatar>
                     <q-img
-                      v-if="item.LinkedPreviewFilePath || item.FilePath"
+                      v-if="item.ResolvedPreviewPath"
                       :alt="item.Label"
                       class="thumbnail"
                       fit="cover"
                       height="48px"
-                      :src="
-                        pathToFileURL(
-                          item.LinkedPreviewFilePath || item.FilePath,
-                        )
-                      "
+                      :src="pathToFileURL(item.ResolvedPreviewPath)"
                       width="48px"
                     />
                     <q-icon
@@ -113,6 +123,7 @@
           <q-btn
             v-if="selectedItems.length < mediaItems.length"
             color="primary"
+            :disable="isProcessing"
             flat
             :label="t('select-all')"
             @click="selectAll"
@@ -123,6 +134,7 @@
               mediaItems.length > 0
             "
             color="primary"
+            :disable="isProcessing"
             flat
             :label="t('deselect-all')"
             @click="deselectAll"
@@ -131,6 +143,7 @@
         <div class="col-shrink q-gutter-x-sm">
           <q-btn
             color="negative"
+            :disable="isProcessing"
             flat
             :label="t('cancel')"
             @click="handleCancel"
@@ -139,6 +152,7 @@
             v-if="selectedItems.length"
             color="primary"
             :label="t('add') + ` (${selectedItems.length})`"
+            :loading="isProcessing"
             @click="addSelectedItems"
           />
         </div>
@@ -160,6 +174,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   addFullFilePathToMultimediaItem,
   addJwpubDocumentMediaToFiles,
+  resolveMultimediaPreviewPath,
 } from 'src/helpers/jw-media';
 import {
   getDocumentMultimediaItems,
@@ -174,7 +189,7 @@ const { pathToFileURL } = window.electronApi;
 const props = defineProps<{
   dbPath: string;
   dialogId: string;
-  document: DocumentItem;
+  document: DocumentItem | undefined;
   modelValue: boolean;
   section: MediaSectionIdentifier | undefined;
 }>();
@@ -192,7 +207,10 @@ const dialogValue = computed({
 });
 
 const loading = ref<boolean>(false);
-const mediaItems = ref<MultimediaItem[]>([]);
+const isProcessing = ref<boolean>(false);
+const mediaItems = ref<(MultimediaItem & { ResolvedPreviewPath?: string })[]>(
+  [],
+);
 const selectedItems = ref<number[]>([]);
 
 const loadMediaItems = async () => {
@@ -213,7 +231,18 @@ const loadMediaItems = async () => {
 
     // Resolve full file paths for all multimedia items
     const resolvedItems = await Promise.all(
-      items.map((item) => addFullFilePathToMultimediaItem(item, publication)),
+      items.map(async (item) => {
+        const fullPathItem = await addFullFilePathToMultimediaItem(
+          item,
+          publication,
+        );
+        const resolvedPreviewPath =
+          await resolveMultimediaPreviewPath(fullPathItem);
+        return {
+          ...fullPathItem,
+          ResolvedPreviewPath: resolvedPreviewPath,
+        };
+      }),
     );
 
     mediaItems.value = resolvedItems;
@@ -250,7 +279,9 @@ const getMediaIcon = (item: MultimediaItem) => {
 
 const addSelectedItems = async () => {
   try {
-    loading.value = true;
+    if (!props.dbPath || !props.document) return;
+
+    isProcessing.value = true;
     if (!selectedItems.value.length) return;
 
     const selectedMultimediaIds = selectedItems.value
@@ -273,7 +304,7 @@ const addSelectedItems = async () => {
   } catch (error) {
     errorCatcher(error);
   } finally {
-    loading.value = false;
+    isProcessing.value = false;
   }
 };
 

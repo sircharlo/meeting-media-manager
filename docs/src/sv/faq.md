@@ -35,7 +35,7 @@ M³ stöder Windows, macOS och Linux:
 - **Mediefiler**: Ladda ned mediefiler på något av hundratals språk som finns på Jehovas vittnens officiella websida
 - **Gränssnitt**: Använd M³:s gränssnitt på många olika språk
 - **Oberoende inställningar**: Du kan använda gränssnittet på ett språk medan du laddar ner media på ett annat språk
-- **Reservspråk**: Konfigurera reservspråk för när media inte är tillgängligt på det primära språket
+- **Reservspråk**: Ställ in reservspråk som används när media inte är tillgängligt på det primära språket
 - **Undertextstöd**: Ladda ner och visa undertexter på olika språk
 
 ## Installation {#installation-setup}
@@ -50,9 +50,9 @@ M³ innehåller en installationsguide som guidar dig genom installationen:
 
 1. Välj språk för gränssnittet
 2. Välj profiltyp (vanlig eller annan)
-3. Konfigurera församlingsinformation
+3. Ställ in församlingsinformation
 4. Ställ in mötesschema
-5. Konfigurera valfria funktioner såsom OBS-integration
+5. Ställ in valfria funktioner såsom OBS-integration
 
 ## Mediehantering {#faq-media-management}
 
@@ -129,7 +129,7 @@ Bakgrundsmusik funktioner inkluderar:
 Integrera med Zoom:
 
 1. Aktivera Zoom-integration i M³-inställningar
-2. Konfigurera genvägen för skärmdelning som är konfigurerad i Zoom. Se till att genvägen är "global" i Zooms inställningar.
+2. Ställ in genvägen för skärmdelning som är konfigurerad i Zoom. Se till att genvägen är "global" i Zooms inställningar.
 3. M³ startar och stoppar automatiskt Zoom-skärmdelning under mediavisning
 
 ## OBS Studiointegration {#faq-obs-integration}
@@ -141,7 +141,7 @@ Integrera M³ med OBS Studio:
 1. Installera OBS Studio och WebSocket-pluginen
 2. Aktivera OBS-integration i inställningarna för M³
 3. Ange OBS port och lösenord
-4. Konfigurera scener för kamera, media och bilder
+4. Ställ in scener för kamera, media och bilder
 5. Testa uppspelning
 
 ### :arrows_counterclockwise: Hur fungerar automatisk byte av scen? {#faq-scene-switching}

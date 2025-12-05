@@ -4,6 +4,22 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
+## v25.12.0
+
+### ✨ Nove funkcije
+
+- ✨ **Kontekstni meni z več možnostmi izbire**: Dodana podpora za dejanja v meniju ob desnem kliku, ko je izbranih več medijskih elementov.
+- ✨ **Bližnjice na tipkovnici**: Dodane bližnjice `Ctrl/Cmd+A` za izbor vseh medijev, `H` za skrivanje izbranih medijev ter `Shift+Puščica gor/dol` za navigacijo po izboru s tipkovnico.
+- ✨ **Nastavitve za videoposnetke pri Preučevanju Stražnega stolpa**: Dodana je bila nastavitev za izključitev dodatnih videoposnetkov pri Preučevanju Stražnega stolpa.
+- ✨ **Zložljivi razdelki**: Dodana možnost zlaganja razdelkov za dneve brez shodov za čistejši prikaz.
+- ✨ **Spletno mesto JW Events**: Dodana možnost predstavitve spletnega mesta JW Events poleg glavnega uradnega spletnega mesta.
+- ✨ **Prilagoditev uvoza seznamov predvajanja**: Dodana možnost prilagoditve predpone, ki se doda medijskim elementom ob uvozu seznamov predvajanja JW.
+- ✨ **Navigacija po zrcaljenju spletnega mesta**: Dodano stikalo za samodejno preusmeritev na seznam medijev po končanem zrcaljenju spletnega mesta.
+- ✨ **Kontrole snemanja v OBS**: Dodana možnost upravljanja snemanja v OBS.
+- ✨ **Predogled letnega stavka**: Dodana možnost predogleda letnega stavka za naslednje leto od decembra dalje.
+- ✨ **Obvestila o posodobitvah**: Dodana opozorilna obvestila ob uporabi beta različice ali če so posodobitve onemogočene, ter izboljšan prikaz napredka prenosa posodobitev.
+- ✨ **Nastavitve strojnega pospeševanja**: Dodana možnost trajne deaktivacije strojnega pospeševanja, če je potrebno.
+
 ## v25.11.0
 
 ### ✨ Nove funkcije

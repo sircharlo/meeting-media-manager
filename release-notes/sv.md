@@ -4,6 +4,22 @@
 
 För den fullständiga listan över ändringar mellan versioner, se vår CHANGELOG.md-fil på GitHub.
 
+## v25.12.0
+
+### ✨ Nya funktioner
+
+- ✨ **Kontextmeny för flervalsmarkering**: Lade till stöd för åtgärder i högerklicksmenyn när flera medieobjekt är markerade.
+- ✨ **Kortkommandon**: Lade till `Ctrl/Cmd+A` för att markera alla medier, `H` (hide) för att dölja valda medier och `Skift+Upp/Ner` för navigera i markeringar med tangentbordet.
+- ✨ **Videoinställningar för Vakttornsstudiet**: Lade till en inställning för att utesluta extra videor för Vakttornsstudiet.
+- ✨ **Hopfällbara sektioner**: Lade till möjlighet att fälla ihop sektioner på dagar utan möten för en renare vy.
+- ✨ **JW Events websida**: Lade till möjligheten att presentera JW Events hemsida utöver den viktigaste officiella hemsidan.
+- ✨ **Anpassning av spellisteimport**: Lade till möjlighet att anpassa det prefix som läggs till medieobjekt vid import av JW-spellistor.
+- ✨ **Navigering vid webbplats­spegling:**: Lade till ett reglage för att automatiskt gå till medielistan när webbplatsspeglingen stoppas.
+- ✨ **OBS Inspelningskontroller**: Lade till möjligheten att styra OBS inspelningar.
+- ✨ **Förhandsgranskning årstext**: Lade till möjligheten att förhandsgranska nästa års årstext från och med december.
+- ✨ **Uppdateringsaviseringar**: Lade till varningsaviseringar om du kör en betaversion eller om uppdateringar är inaktiverade och förbättrad visning av nedladdningsförlopp för uppdateringar.
+- ✨ **Inställningar för hårdvaruaccelerationr**: Lade till ett alternativ för att permanent inaktivera hårdvaruacceleration vid behov.
+
 ## v25.11.0
 
 ### ✨ Nya funktioner
@@ -39,7 +55,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 ### ✨ Nya funktioner
 
 - ✨ **Mediafönstret alltid överst och helskärmsvisning**: Förbättrad alltid överst-funktion för mediafönstret, justera dynamiskt beroende på fullskärmsläget.
-- ✨ **Inställningar för datumvisning**: Lagt till en användarinställning för att konfigurera formatet för datumvisning.
+- ✨ **Inställningar för datumvisning**: Lagt till en användarinställning för att ställa in formatet för datumvisning.
 - ✨ **Mediatoning**: Infört tonade övergångar för media, istället för den mer abrupta tona-till-svart övergången som fanns innan.
 - ✨ **Musik auto-stop**: Optimerat bakgrundsmusikens auto-stop för att bete sig på samma sätt oavsett om musiken startades automatiskt eller inte.
 - ✨ **macOS Click-through för inaktiva fönster**: Aktiverade musklick som går igenom till huvudfönstret i macOS, vilket bör göra det enklare att styra appen även när den inte är i fokus.

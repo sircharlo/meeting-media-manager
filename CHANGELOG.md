@@ -4,6 +4,62 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v25.12.1
+
+### 🐞 Bug Fixes
+
+- 🐞 **Yeartext Preview**: Fixed yeartext preview not displaying properly.
+- 🐞 **Migration Error Handling**: Improved error handling across all migration files.
+
+## v25.12.0
+
+### ✨ New Features
+
+- ✨ **Multi-Select Context Menu**: Added support for right-click menu actions when multiple media items are selected.
+- ✨ **Keyboard Shortcuts**: Added `Ctrl/Cmd+A` to select all media, `H` to hide selected media, and `Shift+Up/Down` for keyboard selection navigation.
+- ✨ **Watchtower Study Video Settings**: Added a setting to exclude extra Watchtower study videos.
+- ✨ **Collapsible Sections**: Added ability to collapse sections on non-meeting days for a cleaner view.
+- ✨ **JW Events Website**: Added the ability to present the JW Events website in addition to the main official website.
+- ✨ **Playlist Import Customization**: Allowed ability to customize the prefix that is added to media items when importing JW playlists.
+- ✨ **Website Mirroring Navigation**: Added a toggle to automatically navigate to the media list after website mirroring is stopped.
+- ✨ **OBS Recording Controls**: Added the ability to control OBS recordings.
+- ✨ **Yeartext Preview**: Added the ability to preview next year's yeartext as of December of every year.
+- ✨ **Update Notifications**: Added warning notifications if running a beta version or if updates are disabled, and improved update download progress display.
+- ✨ **Hardware Acceleration Settings**: Added an option to permanently disable hardware acceleration if needed.
+
+### 🛠️ Improvements and Tweaks
+
+- ✨ **Skeleton Loaders**: Implemented skeleton loaders across most dialogs and the media list for a smoother loading experience.
+- ✨ **Crash Detection & Recovery**: Implemented crash loop detection for hardware acceleration and attempts to gracefully recover from GPU crashes.
+- ✨ **Portable Build Enhancements**: Added a splash image for portable builds.
+- 🛠️ **Export Naming**: Fixed export folder naming convention to be easier to parse.
+- 🛠️ **Performance**: Greatly improved folder export and MP4 conversion performance.
+- 🛠️ **Performance**: Improved drag-and-drop sorting performance and logic.
+- 🛠️ **UI**: Various dark mode fixes and improvements, including the About dialog.
+- 🛠️ **UI**: Made zoom-pan transition smoother in the media player window.
+- 🛠️ **UI**: Added confirmation dialog when deleting media items.
+- 🛠️ **Logic**: Improved song detection for Weekend meetings and Watchtower footnote video detection.
+- 🛠️ **Logic**: OBS recording will now only start if OBS is enabled and connected.
+- 🛠️ **Logic**: Improved handling of sections and media during Circuit Overseer weeks.
+- 🛠️ **Logic**: Show a message if all media items for a section are hidden.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Song List**: Prevented invalid song tracks from appearing in the song list.
+- 🐞 **Search Loading**: Fixed the loading indicator during publication search.
+- 🐞 **Hidden Items Display**: Fixed display issues when only some items are hidden in a section.
+- 🐞 **Image Previews**: Fixed image previews in JWPUB and playlist files.
+- 🐞 **Portable Build**: Fixed path errors and auto-updater initialization issues in portable builds.
+- 🐞 **macOS Crashes**: Added missing usage descriptions to prevent crashes on macOS.
+- 🐞 **Study Bible**: Fixed various issues with Study Bible media.
+- 🐞 **Localization**: Fixed issues with i18n variables not expanding properly.
+- 🐞 **Auto-Updater**: Ignored transient network errors in the auto-updater.
+
+### 🔧 Chores
+
+- 🔧 **Dependencies**: Updated dependencies and internal libraries.
+- 🔧 **Refactor**: Various internal code refactors and cleanups.
+
 ## v25.11.0
 
 ### ✨ New Features

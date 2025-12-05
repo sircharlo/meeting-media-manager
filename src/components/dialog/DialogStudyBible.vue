@@ -10,6 +10,7 @@
           v-if="bibleBook"
           class="q-mr-sm"
           dense
+          :disable="isProcessing"
           flat
           icon="mmm-left"
           round
@@ -37,11 +38,49 @@
       <!-- Content -->
       <div class="q-px-md q-py-md col overflow-auto">
         <!-- Loading -->
-        <div
-          v-if="loadingBooks || loadingMedia"
-          class="row justify-center q-py-md"
-        >
-          <q-spinner color="primary" size="md" />
+        <div v-if="loadingBooks || loadingMedia">
+          <!-- Loading Books -->
+          <div v-if="loadingBooks">
+            <div v-for="sectionIndex in 2" :key="sectionIndex" class="q-pb-md">
+              <q-skeleton
+                class="q-my-sm"
+                height="20px"
+                type="text"
+                width="200px"
+              />
+              <div class="row q-col-gutter-xs">
+                <div
+                  v-for="bookIndex in sectionIndex === 1 ? 39 : 27"
+                  :key="bookIndex"
+                  class="col-xs-4 col-sm-3 col-md-2 col-lg-1"
+                >
+                  <q-skeleton class="full-width" height="36px" type="QBtn" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loading Media -->
+          <div v-else-if="loadingMedia" class="row q-col-gutter-sm">
+            <div
+              v-for="mediaIndex in 12"
+              :key="mediaIndex"
+              class="col-6 col-sm-4 col-md-3"
+            >
+              <div class="rounded-borders-lg overflow-hidden">
+                <q-skeleton height="120px" type="rect" />
+                <div class="q-pa-sm">
+                  <q-skeleton
+                    class="q-mb-xs"
+                    height="14px"
+                    type="text"
+                    width="80%"
+                  />
+                  <q-skeleton height="12px" type="text" width="60%" />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- View 1: Books -->
@@ -69,6 +108,7 @@
                 <q-btn
                   class="full-width"
                   color="accent-200"
+                  :disable="isProcessing"
                   no-caps
                   text-color="black"
                   unelevated
@@ -88,7 +128,7 @@
             <q-btn
               class="full-width"
               color="accent-200"
-              :disable="!chaptersWithMedia.has(0)"
+              :disable="!chaptersWithMedia.has(0) || isProcessing"
               :label="t('introduction')"
               text-color="black"
               unelevated
@@ -104,7 +144,7 @@
             <q-btn
               class="full-width aspect-ratio-1"
               color="accent-200"
-              :disable="!chaptersWithMedia.has(chapter)"
+              :disable="!chaptersWithMedia.has(chapter) || isProcessing"
               :label="chapter"
               text-color="black"
               unelevated
@@ -128,16 +168,15 @@
                 :key="mediaItem.MultimediaId"
                 class="col-6 col-sm-4 col-md-3"
               >
-                <div
+                <q-card
                   v-ripple
+                  class="cursor-pointer full-height"
                   :class="{
-                    'cursor-pointer': true,
-                    'rounded-borders-lg': true,
-                    'bg-accent-100': hoveredMediaItem === mediaItem,
-                    'relative-position': true,
-                    'overflow-hidden': true,
+                    'bg-accent-200': isSelected(mediaItem),
+                    disabled: isProcessing,
                   }"
-                  @click="toggleSelection(mediaItem)"
+                  flat
+                  @click="!isProcessing && toggleSelection(mediaItem)"
                   @mouseout="hoveredMediaItem = undefined"
                   @mouseover="hoveredMediaItem = mediaItem"
                 >
@@ -170,7 +209,7 @@
                       {{ mediaItem.Label }}
                     </div>
                   </q-img>
-                </div>
+                </q-card>
               </div>
             </div>
             <q-separator
@@ -186,13 +225,20 @@
 
       <!-- Footer Actions -->
       <div class="row q-px-md q-py-md justify-end q-gutter-sm">
-        <q-btn v-close-popup flat :label="t('cancel')" />
         <q-btn
-          v-if="selectedMediaItems.length"
-          v-close-popup
+          v-if="selectedMediaItems.length > 0"
           color="primary"
-          :label="`${t('add')} (${selectedMediaItems.length})`"
+          :label="t('add') + ` (${selectedMediaItems.length})`"
+          :loading="isProcessing"
           @click="addSelectedMediaItems"
+        />
+        <q-btn
+          v-else
+          color="negative"
+          :disable="isProcessing"
+          flat
+          :label="t('cancel')"
+          @click="dialogValue = false"
         />
       </div>
     </div>
@@ -238,8 +284,6 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  cancel: [];
-  ok: [];
   'update:modelValue': [value: boolean];
 }>();
 
@@ -253,6 +297,7 @@ const bibleBook = ref(0);
 const bibleBookChapter = ref(-1);
 const loadingBooks = ref(false);
 const loadingMedia = ref(false);
+const isProcessing = ref(false);
 const bibleBooks = ref<Record<number, MultimediaItem>>({});
 const allBibleMedia = ref<MultimediaItem[]>([]);
 const selectedMediaItems = ref<MultimediaItem[]>([]);
@@ -391,15 +436,29 @@ const fetchChapterMediaAvailability = async (bookNr: number) => {
   }
 };
 
-const selectBook = async (bookNr: number) => {
-  bibleBook.value = bookNr;
-  bibleBookChapter.value = -1;
-  await fetchChapterMediaAvailability(bookNr);
+const fetchBibleBookMedia = async () => {
+  if (bibleBook.value === 0) {
+    chaptersWithMedia.value = new Set();
+    allBibleMedia.value = [];
+    return;
+  }
+
+  if (bibleBookChapter.value === -1) {
+    await fetchChapterMediaAvailability(bibleBook.value);
+    allBibleMedia.value = [];
+  } else {
+    await fetchMedia();
+  }
 };
 
-const selectChapter = async (chapter: number) => {
+const selectBook = (bookNr: number) => {
+  bibleBook.value = bookNr;
+  fetchBibleBookMedia();
+};
+
+const selectChapter = (chapter: number) => {
   bibleBookChapter.value = chapter;
-  await fetchMedia();
+  fetchBibleBookMedia();
 };
 
 const fetchMedia = async () => {
@@ -439,11 +498,18 @@ const isSelected = (item: MultimediaItem) => {
 };
 
 const addSelectedMediaItems = async () => {
-  for (const mediaItem of selectedMediaItems.value) {
-    await addStudyBibleMedia(mediaItem);
+  isProcessing.value = true;
+  try {
+    for (const mediaItem of selectedMediaItems.value) {
+      await addStudyBibleMedia(mediaItem);
+    }
+  } catch (error) {
+    errorCatcher(error);
+  } finally {
+    isProcessing.value = false;
+    resetState();
+    dialogValue.value = false;
   }
-  resetState();
-  emit('ok');
 };
 
 const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
@@ -509,5 +575,9 @@ const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
 <style scoped>
 .study-bible-item :deep(img) {
   background-color: white;
+}
+
+body.body--dark .study-bible-item :deep(img) {
+  background-color: #2a2a2a;
 }
 </style>

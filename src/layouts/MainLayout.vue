@@ -40,6 +40,7 @@ import type {
   ElectronIpcListenKey,
   MediaItem,
   MediaSectionWithConfig,
+  SettingsValues,
 } from 'src/types';
 
 import {
@@ -241,41 +242,70 @@ const delayedCacheClear = () => {
   setTimeout(checkAndClear, 30000);
 };
 
-watch(currentCongregation, (newCongregation, oldCongregation) => {
+watch(currentCongregation, async (newCongregation, oldCongregation) => {
   try {
+    //
+    // --- Part 1: congregation-switch logic ---
+    //
     if (oldCongregation && queues.meetings[oldCongregation]) {
       queues.meetings[oldCongregation].pause();
     }
+
     if (!newCongregation) {
       showMediaWindow(false);
       navigateToCongregationSelector();
-    } else {
-      setElectronUrlVariables(JSON.stringify(jwStore.urlVariables));
-      let year = new Date().getFullYear();
-      if (
-        jwStore.memorials[year] &&
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        isInPast(getSpecificWeekday(jwStore.memorials[year]!, 6))
-      ) {
-        year++;
-      }
-      if (
-        currentSettings.value &&
-        jwStore.memorials[year] &&
-        currentSettings.value.memorialDate !== jwStore.memorials[year]
-      ) {
-        currentSettings.value.memorialDate = jwStore.memorials[year] ?? null;
-      }
-      downloadProgress.value = {};
-      updateLookupPeriod();
-      downloadBackgroundMusic();
+      return; // exit early — no need to run notifications
+    }
 
-      // Trigger delayed cache clear instead of immediate execution
-      delayedCacheClear();
+    setElectronUrlVariables(JSON.stringify(jwStore.urlVariables));
 
-      if (queues.meetings[newCongregation]) {
-        queues.meetings[newCongregation].start();
-      }
+    let year = new Date().getFullYear();
+    const memorialDate = jwStore.memorials[year];
+    if (memorialDate && isInPast(getSpecificWeekday(memorialDate, 6))) {
+      year++;
+    }
+
+    if (
+      currentSettings.value &&
+      memorialDate &&
+      currentSettings.value.memorialDate !== memorialDate
+    ) {
+      currentSettings.value.memorialDate = memorialDate ?? null;
+    }
+
+    downloadProgress.value = {};
+    updateLookupPeriod();
+    downloadBackgroundMusic();
+    delayedCacheClear();
+
+    if (queues.meetings[newCongregation]) {
+      queues.meetings[newCongregation].start();
+    }
+
+    //
+    // --- Part 2: notifications ---
+    //
+
+    const { updatesDisabled } = await import('src/utils/fs');
+
+    const isBetaVersion = process.env.IS_BETA;
+    const areUpdatesDisabled = await updatesDisabled();
+
+    // Priority: beta warning first
+    if (isBetaVersion) {
+      createTemporaryNotification({
+        icon: 'mmm-warning',
+        message: t('beta-version-warning'),
+        timeout: 30000,
+        type: 'warning',
+      });
+    } else if (areUpdatesDisabled) {
+      createTemporaryNotification({
+        icon: 'mmm-info',
+        message: t('updates-disabled-warning'),
+        timeout: 10000,
+        type: 'info',
+      });
     }
   } catch (error) {
     errorCatcher(error);
@@ -294,11 +324,12 @@ watch(online, (isNowOnline) => {
     if (isNowOnline) {
       // downloadQueue?.start();
       meetingQueue?.start();
-      jwStore.updateYeartext(
-        online.value,
-        currentSettings.value,
-        currentLangObject.value,
-      );
+      jwStore.updateYeartext({
+        isSignLanguage: currentLangObject.value?.isSignLanguage,
+        lang: currentSettings.value?.lang,
+        langFallback: currentSettings.value?.langFallback,
+        online: online.value,
+      });
       jwStore.updateJwLanguages(online.value);
     } else {
       // downloadQueue?.pause();
@@ -596,9 +627,8 @@ async function handleUnlinkCleanup(changedPath: string) {
     const filename = basename(changedPath);
     const watchedDayFolder = dirname(changedPath);
     if (watchedDayFolder) {
-      const { removeWatchedMediaSectionInfo } = await import(
-        'src/helpers/media-sections'
-      );
+      const { removeWatchedMediaSectionInfo } =
+        await import('src/helpers/media-sections');
       await removeWatchedMediaSectionInfo(watchedDayFolder, filename);
     }
   } catch (error) {
@@ -750,7 +780,6 @@ bcClose.onmessage = (event) => {
         icon: 'mmm-error',
         message: t('make-sure-that-m-is-in-not-use-before-quitting'),
         noClose: true,
-        progress: true,
         timeout: 10000,
         type: 'negative',
       });
@@ -771,7 +800,7 @@ const initListeners = () => {
 
   onShortcut(({ shortcut }) => {
     if (!currentSettings.value?.enableKeyboardShortcuts) return;
-    executeShortcut(shortcut);
+    executeShortcut(shortcut as keyof SettingsValues);
   });
 
   onWatchFolderUpdate(({ changedPath, day, event }) => {
@@ -792,31 +821,26 @@ const initListeners = () => {
   });
 
   onDownloadCancelled((args) => {
-    if (downloadProgress.value[args.id])
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      downloadProgress.value[args.id]!.error = true;
+    const existing = downloadProgress.value[args.id];
+    if (existing) existing.error = true;
   });
 
   onDownloadCompleted((args) => {
-    if (downloadProgress.value[args.id]) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      downloadProgress.value[args.id]!.complete = true;
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      delete downloadProgress.value[args.id]!.loaded;
+    const existing = downloadProgress.value[args.id];
+    if (existing) {
+      existing.complete = true;
+      delete existing.loaded;
     }
   });
 
   onDownloadError((args) => {
-    if (downloadProgress.value[args.id])
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      downloadProgress.value[args.id]!.error = true;
+    const existing = downloadProgress.value[args.id];
+    if (existing) existing.error = true;
   });
 
   onDownloadProgress((args) => {
-    if (downloadProgress.value[args.id]) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      downloadProgress.value[args.id]!.loaded = args.bytesReceived;
-    }
+    const existing = downloadProgress.value[args.id];
+    if (existing) existing.loaded = args.bytesReceived;
   });
 
   onGpuCrashDetected(() => {
@@ -1014,6 +1038,7 @@ const checkYeartextPreview = async () => {
         {
           color: 'positive',
           handler: async () => {
+            let success = false;
             try {
               // Fetch next year's yeartext
               const result = await fetchYeartext(
@@ -1022,6 +1047,7 @@ const checkYeartextPreview = async () => {
                 nextYear,
               );
               if (result.yeartext) {
+                success = true;
                 // Pause the yeartext watcher to prevent immediate override
                 yeartextWatcherPaused.value = true;
 
@@ -1069,8 +1095,10 @@ const checkYeartextPreview = async () => {
                 type: 'negative',
               });
             } finally {
-              // Resume the watcher
-              yeartextWatcherPaused.value = false;
+              // Only resume if we didn't succeed (if we succeeded, the timeout will handle it)
+              if (!success) {
+                yeartextWatcherPaused.value = false;
+              }
             }
           },
           label: t('yes'),
@@ -1081,9 +1109,6 @@ const checkYeartextPreview = async () => {
     });
   } catch (error) {
     errorCatcher(error);
-  } finally {
-    // Resume the watcher
-    yeartextWatcherPaused.value = false;
   }
 };
 

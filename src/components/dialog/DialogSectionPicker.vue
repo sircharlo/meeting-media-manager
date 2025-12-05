@@ -28,7 +28,7 @@
                 <span v-if="section.config?.jwIcon" class="jw-icon q-mr-sm">{{
                   section.config.jwIcon
                 }}</span>
-                {{ section.config?.label || t(section.config?.uniqueId || '') }}
+                {{ getSectionLabel(section) }}
               </template>
             </q-btn>
           </div>
@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MediaSectionIdentifier } from 'src/types';
+import type { MediaSectionIdentifier, MediaSectionWithConfig } from 'src/types';
 
 import { storeToRefs } from 'pinia';
 import { getMeetingSections } from 'src/constants/media';
@@ -135,6 +135,21 @@ const availableSections = computed(() => {
   return sections;
 });
 
+const getSectionLabel = (section: MediaSectionWithConfig) => {
+  const config = section.config;
+  if (!config) return '';
+
+  if (
+    !config.label &&
+    (config.uniqueId === 'imported-media' ||
+      config.uniqueId?.startsWith('custom-'))
+  ) {
+    return t('imported-media');
+  }
+
+  return config.label || t(config.uniqueId || '');
+};
+
 const selectSection = (section: MediaSectionIdentifier) => {
   // // Clear auto-close timer
   // if (autoCloseTimer.value) {
@@ -156,6 +171,11 @@ const selectSection = (section: MediaSectionIdentifier) => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   margin: 16px;
   max-width: 400px;
+
+  body.body--dark & {
+    background: rgba(30, 30, 30, 0.95);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
 }
 
 .section-btn {

@@ -60,9 +60,9 @@
             </div>
             <q-badge
               class="absolute-bottom-left q-mb-md text-caption"
-              color="accent-300"
+              color="accent-400"
               :label="feature.version"
-              text-color="dark"
+              text-color="white"
             />
           </q-carousel-slide>
           <template #control>

@@ -1,9 +1,6 @@
-import type { CaptureContext } from '@sentry/core';
-
 import { captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
-import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
   IS_DEV,
@@ -12,6 +9,11 @@ import {
   TRUSTED_DOMAINS,
 } from 'src-electron/constants';
 import { urlVariables } from 'src-electron/main/session';
+import upath from 'upath';
+
+const { join, resolve } = upath;
+
+type CaptureCtx = Parameters<typeof captureException>[1];
 
 /**
  * Gets the current app version
@@ -206,7 +208,7 @@ export const fetchJson = async <T>(
  */
 export function captureElectronError(
   error: Error | string | unknown,
-  context?: CaptureContext,
+  context?: CaptureCtx,
 ) {
   if (error instanceof Error && error.cause) {
     captureElectronError(error.cause, context);

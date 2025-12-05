@@ -14,12 +14,12 @@
       @click="resetSort"
     >
       <q-icon
-        :class="{ 'q-mr-sm': $q.screen.gt.sm }"
+        :class="{ 'q-mr-sm': $q.screen.gt.md }"
         name="mmm-reset"
         size="xs"
       />
-      {{ $q.screen.gt.sm ? t('reset-sort-order') : '' }}
-      <q-tooltip v-if="!$q.screen.gt.sm" :delay="1000">
+      {{ $q.screen.gt.md ? t('reset-sort-order') : '' }}
+      <q-tooltip v-if="!$q.screen.gt.md" :delay="1000">
         {{ t('reset-sort-order') }}
       </q-tooltip>
     </q-btn>
@@ -33,23 +33,23 @@
     @click="openCustomSectionEdit"
   >
     <q-icon
-      :class="{ 'q-mr-sm': $q.screen.gt.xs }"
+      :class="{ 'q-mr-sm': $q.screen.gt.md }"
       name="mmm-label-sort"
       size="xs"
     />
-    {{ $q.screen.gt.xs ? t('edit-sections') : '' }}
-    <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+    {{ $q.screen.gt.md ? t('edit-sections') : '' }}
+    <q-tooltip v-if="!$q.screen.gt.md" :delay="1000">
       {{ t('edit-sections') }}
     </q-tooltip>
   </q-btn>
   <q-btn v-if="selectedDate" color="white-transparent" unelevated>
     <q-icon
-      :class="{ 'q-mr-sm': $q.screen.gt.xs }"
+      :class="{ 'q-mr-sm': $q.screen.gt.sm }"
       name="mmm-add-media"
       size="xs"
     />
-    {{ $q.screen.gt.xs ? t('extra-media') : '' }}
-    <q-tooltip v-if="!$q.screen.gt.xs" :delay="1000">
+    {{ $q.screen.gt.sm ? t('extra-media') : '' }}
+    <q-tooltip v-if="!$q.screen.gt.sm" :delay="1000">
       {{ t('extra-media') }}
     </q-tooltip>
     <q-menu ref="importMenu" :offset="[0, 11]">
@@ -348,7 +348,7 @@ import DialogStudyBible from 'components/dialog/DialogStudyBible.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
-import { isWeMeetingDay } from 'src/helpers/date';
+import { isCoWeek, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   datesAreSame,
@@ -908,11 +908,9 @@ const hasMultipleSections = computed(() => {
 watchImmediate(
   () => selectedDateObject.value?.date,
   (newDate) => {
-    if (isWeMeetingDay(newDate)) {
-      section.value = 'pt';
-    } else {
-      section.value = undefined;
-    }
+    // Set default section to pt (public talk) for normal WE meetings
+    const isNormalWeMeeting = isWeMeetingDay(newDate) && !isCoWeek(newDate);
+    section.value = isNormalWeMeeting ? 'pt' : undefined;
   },
 );
 </script>

@@ -4,12 +4,18 @@ import type { ElectronApi } from 'src/types';
 
 import robot from '@jitsi/robotjs';
 import fs, { ensureDir } from 'fs-extra';
-import { fileUrlToPath, pathToFileURL, readDirectory } from 'preload/fs';
+import {
+  fileUrlToPath,
+  pathToFileURL,
+  readDirectory,
+} from 'src-electron/preload/fs';
 import upath from 'upath';
 
-export const basePath = upath.join(__dirname, '..', 'fs');
+const { join } = upath;
+
+export const basePath = join(__dirname, '..', 'fs');
 const fakePath = async (path: string) => {
-  const dir = upath.join(basePath, path);
+  const dir = join(basePath, path);
   await ensureDir(dir);
   return dir;
 };
@@ -111,6 +117,9 @@ export const electronApi: ElectronApi = {
   },
   onUpdateDownloadProgress: function (callback) {
     console.log('onUpdateDownloadProgress called but not implemented');
+  },
+  onUpdateError: function (callback) {
+    console.log('onUpdateError called but not implemented');
   },
   onWatchFolderUpdate: function (callback) {
     throw new Error('Function not implemented.');

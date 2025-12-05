@@ -4,6 +4,22 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
+## v25.12.0
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Menu contextuel à sélection multiple** : Ajout de la prise en charge des actions du menu contextuel lorsque plusieurs éléments multimédias sont sélectionnés.
+- ✨ **Raccourcis clavier** : Ajout de `Ctrl/Cmd+A` pour sélectionner tous les médias, `H` pour masquer les médias sélectionnés et `Maj+Haut/Bas` pour modifier la sélection.
+- ✨ **Paramètres pour les vidéos pour l'étude de la Tour de Garde** : Ajout d'un paramètre permettant d'exclure les vidéos supplémentaires pour l'étude de la Tour de Garde.
+- ✨ **Sections repliables** : Ajout de la possibilité de replier les sections pour les jours sans réunion pour un affichage plus clair.
+- ✨ **Site web pour les assemblées** : Ajout de la possibilité de présenter le site web pour assemblées internationales en plus du site web officiel principal.
+- ✨ **Personnalisation de l'importation des listes de lecture** : Possibilité de personnaliser le préfixe ajouté aux éléments multimédias lors de l'importation des listes de lecture JW.
+- ✨ **Navigation après la mise en miroir du site Web** : Ajout d'un bouton permettant de naviguer automatiquement vers la liste des médias une fois la mise en miroir du site Web terminée.
+- ✨ **Commandes d'enregistrement OBS Studio** : Ajout de la possibilité de contrôler les enregistrements dans OBS Studio.
+- ✨ **Aperçu du texte de l'année** : Ajout de la possibilité de prévisualiser le texte de l'année prochaine à partir du mois de décembre de chaque année.
+- ✨ **Notifications de mise à jour** : Ajout de notifications d'avertissement si une version bêta est utilisée ou si les mises à jour sont désactivées, et amélioration de l'affichage de la progression du téléchargement des mises à jour.
+- ✨ **Paramètres d'accélération matérielle** : Ajout d'une option permettant de désactiver définitivement l'accélération matérielle si nécessaire.
+
 ## v25.11.0
 
 ### ✨ Nouvelles fonctionnalités

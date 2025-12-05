@@ -9,7 +9,6 @@ import { MIGRATION_REGISTRY } from 'src/migrations';
 
 interface Store {
   displayCameraId: null | string;
-  migrationList: string[];
   migrations: string[];
   screenPreferences: ScreenPreferences;
   timerPreferences: TimerPreferences;
@@ -20,7 +19,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
   actions: {
     async ensureMigrations() {
       const executedMigrations: string[] = [];
-      for (const migration of this.migrationList) {
+      for (const migration of Object.keys(MIGRATION_REGISTRY)) {
         if (!this.migrations.includes(migration)) {
           const success = await this.runMigration(migration);
           if (success) {
@@ -55,17 +54,6 @@ export const useAppSettingsStore = defineStore('app-settings', {
   persist: true,
   state: (): Store => ({
     displayCameraId: null,
-    migrationList: [
-      'firstRun',
-      'localStorageToPiniaPersist',
-      'addBaseUrlToAllCongregations',
-      'moveAdditionalMediaMaps',
-      '25.3.2-refreshDynamicMedia',
-      '25.4.3-refreshDynamicMedia',
-      '25.8.4-newMediaSections',
-      '25.10.1-refreshDynamicMedia',
-      '25.11.0-refreshDynamicMedia',
-    ],
     migrations: [],
     screenPreferences: { preferredScreenNumber: 0, preferWindowed: false },
     timerPreferences: { preferredScreenNumber: 0, preferWindowed: true },

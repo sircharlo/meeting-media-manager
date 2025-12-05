@@ -1,3 +1,4 @@
+import type { RESOLUTIONS } from 'src/constants/settings';
 import type {
   CacheList,
   DateInfo,
@@ -11,7 +12,6 @@ import type {
   Publication,
   PublicationFetcher,
   PublicationFiles,
-  SettingsValues,
   UrlVariables,
 } from 'src/types';
 import type { Songbook } from 'stores/current-state';
@@ -424,29 +424,35 @@ export const useJwStore = defineStore('jw-store', {
         errorCatcher(e);
       }
     },
-    async updateJwSongs(
-      online: boolean,
-      currentSettings: null | SettingsValues | undefined,
-      currentSongbook: Songbook,
+    async updateJwSongs({
+      currentSongbook,
       force = false,
-    ) {
+      lang,
+      maxRes,
+      online,
+    }: {
+      currentSongbook: Songbook;
+      force?: boolean;
+      lang: JwLangCode;
+      maxRes: (typeof RESOLUTIONS)[number];
+      online: boolean;
+    }) {
       try {
         if (!online) return;
-        if (!currentSettings?.lang || !currentSongbook?.pub) {
+        if (!lang || !currentSongbook?.pub) {
           errorCatcher('No current settings or songbook defined');
           return;
         }
         const formats: (keyof PublicationFiles)[] = ['MP4', 'MP3'];
         for (const fileformat of formats) {
           try {
-            const langwritten = currentSettings.lang;
-            this.jwSongs[langwritten] ??= { list: [], updated: oldDate };
+            this.jwSongs[lang] ??= { list: [], updated: oldDate };
 
             // Check if the song list has been updated in the last month
             const now = new Date();
             const monthsSinceUpdated = getDateDiff(
               now,
-              this.jwSongs[langwritten].updated || oldDate,
+              this.jwSongs[lang].updated || oldDate,
               'months',
             );
 
@@ -454,7 +460,7 @@ export const useJwStore = defineStore('jw-store', {
             if (monthsSinceUpdated > 1 || force) {
               const songbook: PublicationFetcher = {
                 fileformat,
-                langwritten,
+                langwritten: lang,
                 pub: currentSongbook.pub,
               };
               const pubMediaLinks = await fetchPubMediaLinks(
@@ -467,16 +473,17 @@ export const useJwStore = defineStore('jw-store', {
               }
 
               const mediaItemLinks = (
-                pubMediaLinks.files[langwritten]?.[fileformat] || []
+                pubMediaLinks.files[lang]?.[fileformat] || []
               )
                 .filter(isMediaLink)
+                .filter((mediaLink) => mediaLink.track > 0)
                 .filter((mediaLink) => mediaLink.track < MAX_SONGS);
               const filteredMediaItemLinks = mediaItemLinks.reduce<MediaLink[]>(
                 (acc, mediaLink) => {
                   if (!acc.some((m) => m.track === mediaLink.track)) {
                     const bestItem = findBestResolution(
                       mediaItemLinks.filter((m) => m.track === mediaLink.track),
-                      currentSettings?.maxRes,
+                      maxRes,
                     );
                     if (isMediaLink(bestItem)) acc.push(bestItem);
                   }
@@ -484,7 +491,7 @@ export const useJwStore = defineStore('jw-store', {
                 },
                 [],
               );
-              this.jwSongs[langwritten] = {
+              this.jwSongs[lang] = {
                 list: filteredMediaItemLinks,
                 updated: now,
               };
@@ -503,11 +510,11 @@ export const useJwStore = defineStore('jw-store', {
       if (!online) return;
       try {
         let year = new Date().getFullYear();
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        if (this.memorials[year] && isInPast(this.memorials[year]!)) {
+        const memorialDate = this.memorials[year];
+        if (memorialDate && isInPast(memorialDate)) {
           year++;
         }
-        if (!this.memorials[year]) {
+        if (!memorialDate) {
           const result = await fetchMemorials();
           if (result) this.memorials = result;
         }
@@ -515,24 +522,28 @@ export const useJwStore = defineStore('jw-store', {
         errorCatcher(e);
       }
     },
-    async updateYeartext(
-      online: boolean,
-      currentSettings: null | SettingsValues | undefined,
-      currentLangObject: JwLanguage | undefined,
-    ) {
+    async updateYeartext({
+      isSignLanguage,
+      lang,
+      langFallback,
+      online,
+    }: {
+      isSignLanguage: boolean | undefined;
+      lang: JwLangCode | null | undefined;
+      langFallback: JwLangCode | null | undefined;
+      online: boolean;
+    }) {
       try {
-        if (!currentSettings || !online) return;
-
-        if (currentLangObject?.isSignLanguage) return;
+        if (!online || !lang || isSignLanguage) return;
 
         const year = new Date().getFullYear();
         const promises: Promise<{ wtlocale: JwLangCode; yeartext?: string }>[] =
           [];
 
-        const langs = new Set<JwLangCode>([currentSettings.lang, 'E']);
+        const langs = new Set<JwLangCode>(['E', lang]);
 
-        if (currentSettings.langFallback) {
-          langs.add(currentSettings.langFallback);
+        if (langFallback) {
+          langs.add(langFallback);
         }
 
         langs.forEach((lang) => {

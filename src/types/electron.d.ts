@@ -9,7 +9,7 @@ import type {
   QueryResponseItem,
   SettingsValues,
   VideoDuration,
-} from 'src/types';
+} from 'src/types/electron';
 import type Path from 'upath';
 
 export type DiscussionCategory =
@@ -46,7 +46,11 @@ export interface ElectronApi {
     originalFile: string,
     ffmpegPath: string,
   ) => Promise<string>;
-  decompress: typeof decompress;
+  decompress: (
+    input: string,
+    output: string,
+    opts?: decompress.DecompressOptions,
+  ) => Promise<Decompress.File[]>;
   downloadFile: (
     url: string,
     saveDir: string,
@@ -138,6 +142,7 @@ export interface ElectronApi {
       transferred: number;
     }) => void,
   ) => void;
+  onUpdateError: (callback: () => void) => void;
   onWatchFolderUpdate: (
     callback: (args: {
       changedPath: string;
@@ -199,6 +204,7 @@ export interface ElectronApi {
 // ipcMain.handle / ipcRenderer.invoke channels
 export type ElectronIpcInvokeKey =
   | 'createVideoFromNonVideo'
+  | 'decompress'
   | 'downloadFile'
   | 'getAllScreens'
   | 'getAppDataPath'
@@ -229,6 +235,7 @@ export type ElectronIpcListenKey =
   | 'update-available'
   | 'update-download-progress'
   | 'update-downloaded'
+  | 'update-error'
   | 'watchFolderUpdate'
   | 'websiteWindowClosed';
 

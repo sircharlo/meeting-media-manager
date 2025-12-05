@@ -4,6 +4,7 @@
     v-model="model"
     :actions="item.actions"
     :setting-id="settingId"
+    v-bind="$attrs"
   />
   <ColorInput
     v-else-if="item.type === 'color'"
@@ -17,15 +18,21 @@
     v-model="model"
     :actions="item.actions"
     :rules="item.rules"
+    v-bind="$attrs"
     :setting-id="settingId"
   />
-  <FolderInput v-else-if="item.type === 'path'" v-model="model" />
+  <FolderInput
+    v-else-if="item.type === 'path'"
+    v-model="model"
+    v-bind="$attrs"
+  />
   <SliderInput
     v-else-if="item.type === 'slider'"
     v-model="model"
     :actions="item.actions"
     :max="item.max"
     :min="item.min"
+    v-bind="$attrs"
     :step="item.step"
   />
   <DateInput
@@ -33,18 +40,21 @@
     v-model="model"
     :options="item.options"
     :rules="item.rules"
+    v-bind="$attrs"
   />
   <TimeInput
     v-else-if="item.type === 'time'"
     v-model="model"
     :options="item.options"
     :rules="item.rules"
+    v-bind="$attrs"
   />
   <SelectInput
     v-else-if="item.type === 'list'"
     v-model="model"
     :list="item.list"
     :rules="item.rules"
+    v-bind="$attrs"
     :setting-id="settingId"
     use-input
   />
@@ -54,6 +64,7 @@
     v-model="model"
     :dialog-id="`shortcut-input-${settingId}`"
     :shortcut-name="settingId"
+    v-bind="$attrs"
   />
   <pre v-else>{{ item }}</pre>
 </template>

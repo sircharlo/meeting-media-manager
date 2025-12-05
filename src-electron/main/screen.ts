@@ -1,10 +1,13 @@
-import type { Display } from 'src/types';
+import type { Display } from 'src/types/electron';
 
 import { app, type BrowserWindow, screen } from 'electron';
-import { captureElectronError } from 'main/utils';
-import { mainWindow } from 'main/window/window-main';
-import { mediaWindow, moveMediaWindow } from 'main/window/window-media';
-import { moveTimerWindow } from 'main/window/window-timer';
+import { captureElectronError } from 'src-electron/main/utils';
+import { mainWindow } from 'src-electron/main/window/window-main';
+import {
+  mediaWindow,
+  moveMediaWindow,
+} from 'src-electron/main/window/window-media';
+import { moveTimerWindow } from 'src-electron/main/window/window-timer';
 
 export const initScreenListeners = () => {
   app.on('ready', () => {

@@ -45,7 +45,7 @@ export default defineConfig((ctx) => {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: ['sentry', 'i18n', 'globals'],
+    boot: ['sentry', 'i18n', 'globals', 'notify-types'],
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#build
     build: {
@@ -95,7 +95,7 @@ export default defineConfig((ctx) => {
       },
       sourcemap: true,
       // See: https://www.electronjs.org/docs/latest/tutorial/electron-timelines#timeline
-      target: { browser: ['chrome138'], node: 'node22.17.1' },
+      target: { browser: ['chrome140'], node: 'node22.19.0' },
       typescript: {
         extendTsConfig: (tsConfig) => {
           tsConfig.exclude?.push('./../docs');
@@ -138,11 +138,8 @@ export default defineConfig((ctx) => {
           target: 'AppImage',
         },
         mac: {
+          entitlements: 'build/entitlements.mac.plist',
           extendInfo: {
-            //'com.apple.security.cs.allow-jit': true,
-            'com.apple.security.device.audio-input': true,
-            'com.apple.security.device.camera': true,
-            'com.apple.security.device.microphone': true,
             NSAppleEventsUsageDescription:
               'Apple Events access is required to control media playback and window management. Please note that this app will never access or control other applications on your device without your explicit permission.',
             NSCameraUsageDescription:
@@ -229,11 +226,20 @@ export default defineConfig((ctx) => {
           'image-size',
           'is-online',
           'mime',
-          'ms',
           'music-metadata',
           'pdfjs-dist',
+          'robotjs',
           'upath',
         ]);
+
+        // Add hacky dependencies here
+        electronDeps.add('@opentelemetry/api-logs');
+        electronDeps.add('require-in-the-middle');
+        electronDeps.add('ms');
+        electronDeps.add('process-nextick-args');
+        electronDeps.add('readable-stream');
+        electronDeps.add('core-util-is');
+        electronDeps.add('wrappy');
 
         // Remove unneeded dependencies from production build
         Object.keys(pkg.dependencies).forEach((dep) => {

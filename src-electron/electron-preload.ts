@@ -1,4 +1,4 @@
-import type { ElectronApi } from 'src/types';
+import type { ElectronApi } from 'src/types/electron';
 
 import robot from '@jitsi/robotjs';
 import { contextBridge, webUtils } from 'electron/renderer';
@@ -7,7 +7,6 @@ import { initCloseListeners } from 'src-electron/preload/close';
 import {
   convertHeic,
   convertPdfToImages,
-  decompress,
   getNrOfPdfPages,
 } from 'src-electron/preload/converters';
 import {
@@ -46,7 +45,7 @@ const electronApi: ElectronApi = {
   convertHeic,
   convertPdfToImages,
   createVideoFromNonVideo: (f, fP) => invoke('createVideoFromNonVideo', f, fP),
-  decompress,
+  decompress: (i, o, op) => invoke('decompress', i, o, op),
   downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
   executeQuery,
   fileUrlToPath,
@@ -79,6 +78,7 @@ const electronApi: ElectronApi = {
   onUpdateAvailable: (cb) => listen('update-available', cb),
   onUpdateDownloaded: (cb) => listen('update-downloaded', cb),
   onUpdateDownloadProgress: (cb) => listen('update-download-progress', cb),
+  onUpdateError: (cb) => listen('update-error', cb),
   onWatchFolderUpdate: (cb) => listen('watchFolderUpdate', cb),
   onWebsiteWindowClosed: (cb) => listen('websiteWindowClosed', cb),
   openDiscussion: (c, t, p) => send('openDiscussion', c, t, p),

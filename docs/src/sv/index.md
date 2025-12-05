@@ -4,7 +4,7 @@ layout: home
 
 hero:
   name: 'M³ dokumentation'
-  text: 'Komplett guide för att konfigurera och använda Meeting Media Manager'
+  text: 'Komplett guide för att ställa in och använda Meeting Media Manager'
   image: /logo.svg
   actions:
     - theme: brand

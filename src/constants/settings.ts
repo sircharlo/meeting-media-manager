@@ -557,6 +557,7 @@ export const settingsDefinitions: SettingsItems = {
   mediaAutoExportFolder: {
     depends: ['enableMediaDisplayButton', 'enableMediaAutoExport'],
     group: 'advanced',
+    rules: ['notEmpty'],
     subgroup: 'mediaExport',
     type: 'path',
     unless: 'disableMediaFetching',

@@ -19,8 +19,7 @@ export const camelToKebabCase = (str: string) =>
  * kebabToCamelCase('kebab-case') // 'kebabCase'
  */
 export const kebabToCamelCase = (str: string) =>
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  str.replace(/-./g, (x) => x[1]!.toUpperCase());
+  str.replace(/-./g, (x) => x[1]?.toUpperCase() ?? '');
 
 /**
  * Converts a kebab-case or snake_case string to title case.
@@ -278,3 +277,50 @@ export function toRawDeep<T>(observed: T): T {
 
   return val;
 }
+
+/**
+ * Throttles a function to run at regular intervals AND at the end
+ * @param func The function to throttle
+ * @param delay The delay in milliseconds
+ * @returns The throttled function with trailing execution
+ */
+export const throttleWithTrailing = <A extends unknown[]>(
+  func: (...args: A) => void,
+  delay: number,
+) => {
+  let lastExecTime = 0;
+  let timeoutId: null | ReturnType<typeof setTimeout> = null;
+  let lastArgs: A | null = null;
+
+  return (...args: A) => {
+    const now = Date.now();
+    lastArgs = args;
+
+    // Execute immediately if enough time has passed
+    if (now - lastExecTime >= delay) {
+      lastExecTime = now;
+      func(...args);
+
+      // Clear any pending trailing execution
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+        timeoutId = null;
+      }
+    } else {
+      // Schedule trailing execution if not already scheduled
+      if (!timeoutId) {
+        timeoutId = setTimeout(
+          () => {
+            if (lastArgs) {
+              lastExecTime = Date.now();
+              func(...lastArgs);
+              timeoutId = null;
+              lastArgs = null;
+            }
+          },
+          delay - (now - lastExecTime),
+        );
+      }
+    }
+  };
+};

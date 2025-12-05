@@ -1,15 +1,22 @@
 import { app, type BrowserWindow, type Rectangle } from 'electron';
+import fse from 'fs-extra';
 import { pathExistsSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
-import { getAllScreens, getWindowScreen } from 'main/screen';
+import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
+import { getAllScreens, getWindowScreen } from 'src-electron/main/screen';
 import {
   captureElectronError,
   getIconPath,
   throttleWithTrailing,
-} from 'main/utils';
-import { createWindow, sendToWindow } from 'main/window/window-base';
-import { mainWindow } from 'main/window/window-main';
-import { join } from 'node:path';
-import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
+} from 'src-electron/main/utils';
+import {
+  createWindow,
+  sendToWindow,
+} from 'src-electron/main/window/window-base';
+import { mainWindow } from 'src-electron/main/window/window-main';
+import upath from 'upath';
+
+const { join } = upath;
+const { readFileSync } = fse;
 
 export let mediaWindow: BrowserWindow | null = null;
 
@@ -487,9 +494,50 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
             );
           } else {
             console.log(
-              '🔍 [moveMediaWindow] No alternative screens available, keeping current position',
+              '🔍 [moveMediaWindow] No alternative screens available, checking if we need to resize for single screen',
             );
-            return;
+
+            if (screens.length === 1) {
+              console.log(
+                '🔍 [moveMediaWindow] Only one screen available, forcing windowed mode and resizing',
+              );
+              targetDisplayNr = 0;
+              targetFullscreen = false;
+
+              // Calculate windowed bounds (max 1/3 of screen size, 16:9 aspect ratio)
+              const screen = screens[0];
+              if (!screen) return;
+              const screenBounds = screen.bounds;
+              const maxWidth = Math.floor(screenBounds.width / 3);
+              const maxHeight = Math.floor(screenBounds.height / 3);
+
+              // Calculate dimensions maintaining 16:9 aspect ratio
+              let width = maxWidth;
+              let height = Math.floor(width * (9 / 16));
+
+              if (height > maxHeight) {
+                height = maxHeight;
+                width = Math.floor(height * (16 / 9));
+              }
+
+              // Position at top right
+              const x = screenBounds.x + screenBounds.width - width;
+              const y = screenBounds.y;
+
+              console.log('🔍 [moveMediaWindow] Calculated fallback bounds:', {
+                height,
+                maxHeight,
+                maxWidth,
+                width,
+                x,
+                y,
+              });
+
+              // Apply the calculated bounds immediately since we are about to call setWindowPosition
+              mediaWindow.setBounds({ height, width, x, y });
+            } else {
+              return;
+            }
           }
         }
       } else {
@@ -513,6 +561,8 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
       }
     }
 
+    const mainWindowScreen = screens.findIndex((s) => s.mainWindow);
+
     console.log('🔍 [moveMediaWindow] Target state:', {
       targetDisplayNr,
       targetFullscreen,
@@ -535,7 +585,6 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
     }
 
     // Prevent fullscreen on same monitor as main window
-    const mainWindowScreen = screens.findIndex((s) => s.mainWindow);
     if (
       targetFullscreen &&
       targetDisplayNr === mainWindowScreen &&
@@ -579,18 +628,32 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
 };
 
 function loadMediaWindowPrefs(): null | Rectangle {
+  let filePath: string | undefined;
   try {
-    const file = join(app.getPath('userData'), 'media-window-prefs.json');
-    if (!pathExistsSync(file)) {
-      console.log('🔍 [loadMediaWindowPrefs] File does not exist:', file);
+    filePath = join(app.getPath('userData'), 'media-window-prefs.json');
+    if (!pathExistsSync(filePath)) {
+      console.log('🔍 [loadMediaWindowPrefs] File does not exist:', filePath);
       return null;
     }
-    console.log('🔍 [loadMediaWindowPrefs] Loading prefs from:', file);
-    return readJsonSync(file);
+    console.log('🔍 [loadMediaWindowPrefs] Loading prefs from:', filePath);
+    return readJsonSync(filePath);
   } catch (e) {
     console.error('❌ [loadMediaWindowPrefs] Error:', e);
+    let fileContent: null | string = null;
+    if (filePath) {
+      try {
+        fileContent = readFileSync(filePath, 'utf-8');
+      } catch (e) {
+        console.error('❌ [loadMediaWindowPrefs] Error reading file:', e);
+        captureElectronError(e, {
+          contexts: {
+            fn: { fileContent, name: 'loadMediaWindowPrefs (fallback)' },
+          },
+        });
+      }
+    }
     captureElectronError(e, {
-      contexts: { fn: { name: 'loadMediaWindowPrefs' } },
+      contexts: { fn: { fileContent, name: 'loadMediaWindowPrefs' } },
     });
     return null;
   }
