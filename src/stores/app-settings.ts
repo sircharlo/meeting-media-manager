@@ -1,4 +1,7 @@
-import type { ScreenPreferences } from 'src/types';
+import type {
+  ScreenPreferences,
+  TimerPreferences,
+} from 'src/types';
 
 import { defineStore } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -8,6 +11,7 @@ interface Store {
   displayCameraId: null | string;
   migrations: string[];
   screenPreferences: ScreenPreferences;
+  timerPreferences: TimerPreferences;
   yeartextPreviewDismissed: Record<number, boolean>;
 }
 
@@ -52,6 +56,7 @@ export const useAppSettingsStore = defineStore('app-settings', {
     displayCameraId: null,
     migrations: [],
     screenPreferences: { preferredScreenNumber: 0, preferWindowed: false },
+    timerPreferences: { preferredScreenNumber: 0, preferWindowed: true },
     yeartextPreviewDismissed: {},
   }),
 });

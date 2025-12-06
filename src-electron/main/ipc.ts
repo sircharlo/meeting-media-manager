@@ -57,6 +57,11 @@ import {
   moveMediaWindow,
 } from 'src-electron/main/window/window-media';
 import {
+  createTimerWindow,
+  moveTimerWindow,
+  timerWindow,
+} from 'src-electron/main/window/window-timer';
+import {
   askForMediaAccess,
   createWebsiteWindow,
   navigateWebsiteWindow,
@@ -116,6 +121,14 @@ handleIpcSend('focusMediaWindow', () => {
   focusMediaWindow();
 });
 
+handleIpcSend('toggleTimerWindow', (_e, show: boolean) => {
+  if (show) {
+    createTimerWindow();
+  } else {
+    timerWindow?.close();
+  }
+});
+
 handleIpcSend('askForMediaAccess', askForMediaAccess);
 
 handleIpcSend('checkForUpdates', () => triggerUpdateCheck());
@@ -163,6 +176,10 @@ handleIpcSend('unregisterAllShortcuts', () => {
 
 handleIpcSend('moveMediaWindow', (_e, displayNr, fullscreen) => {
   moveMediaWindow(displayNr, fullscreen);
+});
+
+handleIpcSend('moveTimerWindow', (_e, displayNr, fullscreen) => {
+  moveTimerWindow(displayNr, fullscreen);
 });
 
 handleIpcSend('openExternal', (_e, website: ExternalWebsite) => {
