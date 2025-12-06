@@ -133,7 +133,8 @@
     "webpack-iconfont-plugin-nodejs": "^1.0.36"
   },
   "resolutions": {
-    "got": "11.8.5"
+    "got": "11.8.5",
+    "phin": "3.7.1"
   },
   "browserslist": [
     "Electron >= 37"
