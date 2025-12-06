@@ -11403,7 +11403,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"phin@npm:3.7.1":
+"phin@npm:^2.9.1":
+  version: 2.9.3
+  resolution: "phin@npm:2.9.3"
+  checksum: 10c0/5bb94493f1bf1f0b66ca08aee6aaa488c46f4a8af2722d94ef9c8e4aaa3a5952e19aeff37f832ed64a71c98124c73936a30caef42973be21350b36af5fc33ab8
+  languageName: node
+  linkType: hard
+
+"phin@npm:^3.7.1":
   version: 3.7.1
   resolution: "phin@npm:3.7.1"
   dependencies:
