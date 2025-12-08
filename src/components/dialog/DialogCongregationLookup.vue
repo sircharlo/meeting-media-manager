@@ -69,7 +69,10 @@
               </q-item-label>
             </q-item-section>
           </q-item>
-          <template v-for="congregation in results" :key="congregation">
+          <template
+            v-for="congregation in results"
+            :key="congregation.properties.orgGuid"
+          >
             <q-item clickable @click="selectCongregation(congregation)">
               <q-item-section>
                 <q-item-label>

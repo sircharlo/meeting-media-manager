@@ -169,7 +169,7 @@ import type {
 } from 'src/types';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
-import mepslangs from 'src/constants/mepslangs';
+import mepslangsImport from 'src/constants/mepslangs';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   addFullFilePathToMultimediaItem,
@@ -184,6 +184,9 @@ import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+
+// Explicitly declare mepslangs for template use
+const mepslangs = mepslangsImport;
 
 const { pathToFileURL } = window.electronApi;
 const props = defineProps<{
