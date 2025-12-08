@@ -50,7 +50,7 @@
     "core-util-is": "^1.0.3",
     "countries-and-timezones": "^3.8.0",
     "decompress": "^4.2.1",
-    "dompurify": "^3.3.0",
+    "dompurify": "^3.3.1",
     "electron-dl-manager": "^4.2.3",
     "electron-updater": "^6.7.2",
     "fluent-ffmpeg": "^2.1.3",
