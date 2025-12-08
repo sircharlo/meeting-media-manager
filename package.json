@@ -88,7 +88,7 @@
     "@quasar/app-vite": "^2.4.0",
     "@quasar/icongenie": "^4.0.0",
     "@quasar/quasar-app-extension-qmarkdown": "^2.0.5",
-    "@quasar/quasar-app-extension-testing-unit-vitest": "1.2.3",
+    "@quasar/quasar-app-extension-testing-unit-vitest": "^1.2.4",
     "@quasar/vite-plugin": "^1.10.0",
     "@rollup/plugin-inject": "^5.0.5",
     "@sentry/esbuild-plugin": "^4.6.1",
