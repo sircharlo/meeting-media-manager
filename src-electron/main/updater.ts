@@ -47,6 +47,7 @@ export async function initUpdater() {
       'ENOTFOUND',
       'EAI_AGAIN',
       'SELF_SIGNED_CERT_IN_CHAIN',
+      'OSStatus error -60006',
     ];
 
     const shouldIgnore = ignoreErrors.some(
