@@ -7,7 +7,7 @@ import type {
 } from 'src/types';
 
 import { defaultAdditionalSection } from 'src/composables/useMediaSection';
-import { jwIcons } from 'src/constants/jw-icons';
+import { jwIcons, type jwIconsKeys } from 'src/constants/jw-icons';
 import { getMeetingSections, standardSections } from 'src/constants/media';
 import { isCoWeek } from 'src/helpers/date';
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -134,7 +134,7 @@ export const getRandomColor = () => {
   return `rgb(${r}, ${g}, ${b})`;
 };
 
-export const isStandardSection = (section: string) => {
+export const isStandardSection = (section: MediaSectionIdentifier) => {
   if (!section) return false;
   return standardSections.includes(section);
 };
@@ -145,18 +145,18 @@ function getMeetingSectionConfigs(section?: MediaSectionIdentifier) {
   }
 
   // Sections that have icons
-  const iconSections = [
+  const iconSections: jwIconsKeys[] = [
     'ayfm',
     'lac',
     'tgw',
     'wt',
     'pt',
     'circuit-overseer',
-  ] as const;
+  ];
 
-  if ((iconSections as readonly string[]).includes(section)) {
+  if (iconSections.includes(section as jwIconsKeys)) {
     return {
-      jwIcon: jwIcons[section],
+      jwIcon: jwIcons[section as jwIconsKeys],
       uniqueId: section,
     };
   }

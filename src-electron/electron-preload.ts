@@ -52,7 +52,6 @@ const electronApi: ElectronApi = {
   focusMediaWindow: () => send('focusMediaWindow'),
   fs,
   getAllScreens: () => invoke('getAllScreens'),
-
   getAppDataPath: () => invoke('getAppDataPath'),
   getLocales: () => invoke('getLocales'),
   getLocalPathFromFileObject: (fo) =>
@@ -64,6 +63,7 @@ const electronApi: ElectronApi = {
   inferExtension,
   isDownloadErrorExpected: () => invoke('isDownloadErrorExpected'),
   moveMediaWindow: (t, w) => send('moveMediaWindow', t, w),
+  moveTimerWindow: (t, w) => send('moveTimerWindow', t, w),
   navigateWebsiteWindow,
   onDownloadCancelled: (cb) => listen('downloadCancelled', cb),
   onDownloadCompleted: (cb) => listen('downloadCompleted', cb),
@@ -99,6 +99,7 @@ const electronApi: ElectronApi = {
   setElectronUrlVariables: (v) => send('setElectronUrlVariables', v),
   setHardwareAcceleration: (v) => invoke('set-hardware-acceleration', v),
   toggleMediaWindow: (s, f) => send('toggleMediaWindow', s, f),
+  toggleTimerWindow: (s) => send('toggleTimerWindow', s),
   unregisterAllShortcuts: () => send('unregisterAllShortcuts'),
   unregisterShortcut: (s) => send('unregisterShortcut', s),
   unwatchFolders: () => send('unwatchFolders'),

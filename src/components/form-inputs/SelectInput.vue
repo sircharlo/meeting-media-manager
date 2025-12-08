@@ -216,6 +216,14 @@ const listOptions = computed(
               ? scene.sceneUuid.toString()
               : scene.sceneName?.toString() || 'Unknown scene',
         }));
+      } else if (props.list === 'fontSizes') {
+        return [
+          { label: t('small'), value: '5vw' },
+          { label: t('medium'), value: '7.5vw' },
+          { label: t('large'), value: '10vw' },
+          { label: t('extra-large'), value: '12.5vw' },
+          { label: t('huge'), value: '20vw' },
+        ];
       } else {
         throw new Error('List not found: ' + props.list);
       }

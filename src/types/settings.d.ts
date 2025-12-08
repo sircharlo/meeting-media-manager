@@ -111,12 +111,14 @@ export interface SettingsGroup {
   name: keyof MessageSchema;
   order?: number;
 }
+
 export type SettingsGroupKey =
   | 'advanced'
   | 'app'
   | 'congregationMeetings'
   | 'integrations'
   | 'mediaRetrievalPlayback';
+
 export type SettingsGroups = Record<SettingsGroupKey, SettingsGroup>;
 
 export interface SettingsItem {
@@ -143,6 +145,7 @@ export type SettingsItemListKey =
   | 'appLanguages'
   | 'darkModes'
   | 'days'
+  | 'fontSizes'
   | 'jwLanguages'
   | 'obsAllScenes'
   | 'obsScenes'
@@ -168,9 +171,11 @@ export type SettingsItemSubgroup =
   | 'setupWizard'
   | 'setupWizard.backgroundMusic'
   | 'subtitles'
+  | 'timer'
   | 'zoomIntegration';
 
 export type SettingsItemType =
+  | 'color'
   | 'date'
   | 'list'
   | 'path'
@@ -204,8 +209,11 @@ export interface SettingsValues {
   enableMediaAutoExport: boolean;
   enableMediaDisplayButton: boolean;
   enableMediaWindowFadeTransitions: boolean;
+  enableMeetingAheadBehind: boolean;
+  enableMeetingCountdown: boolean;
   enableMusicButton: boolean;
   enableSubtitles: boolean;
+  enableTimerDisplay: boolean;
   excludeFootnotes: boolean;
   excludeTh: boolean;
   excludeWtParagraphVideos: boolean;
@@ -220,6 +228,7 @@ export interface SettingsValues {
   localDateFormat: string;
   maxRes: MaxRes;
   mediaAutoExportFolder: string;
+  meetingCountdownMinutes: number;
   meetingScheduleChangeDate: `${number}/${number}/${number}` | null;
   meetingScheduleChangeMwDay: `${number}` | null;
   meetingScheduleChangeMwStartTime: `${number}:${number}` | null;
@@ -255,9 +264,18 @@ export interface SettingsValues {
   shortcutMediaWindow: null | string;
   shortcutMusic: null | string;
   suppressHardwareAccelerationReminder: boolean;
+  timerBackgroundColor: string;
+  timerShowOnActionIsland: boolean;
+  timerTextColor: string;
+  timerTextSize: string;
   weDay: `${number}` | null;
   weStartTime: `${number}:${number}` | null;
   zoomAutoFocusMediaWindow: boolean;
   zoomEnable: boolean;
   zoomScreenShareShortcut: null | string;
+}
+
+export interface TimerPreferences {
+  preferredScreenNumber: number | undefined;
+  preferWindowed: boolean | undefined;
 }

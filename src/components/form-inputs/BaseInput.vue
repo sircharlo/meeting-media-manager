@@ -6,6 +6,13 @@
     :setting-id="settingId"
     v-bind="$attrs"
   />
+  <ColorInput
+    v-else-if="item.type === 'color'"
+    v-model="model"
+    :actions="item.actions"
+    :rules="item.rules"
+    :setting-id="settingId"
+  />
   <TextInput
     v-else-if="item.type === 'text'"
     v-model="model"
@@ -64,6 +71,7 @@
 <script setup lang="ts">
 import type { SettingsItem, SettingsValues } from 'src/types';
 
+import ColorInput from 'components/form-inputs/ColorInput.vue';
 import DateInput from 'components/form-inputs/DateInput.vue';
 import FolderInput from 'components/form-inputs/FolderInput.vue';
 import SelectInput from 'components/form-inputs/SelectInput.vue';
