@@ -332,7 +332,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@electron/rebuild@npm:4.0.1, @electron/rebuild@npm:^4.0.1":
+"@electron/rebuild@npm:4.0.1":
   version: 4.0.1
   resolution: "@electron/rebuild@npm:4.0.1"
   dependencies:
@@ -353,6 +353,32 @@ __metadata:
   bin:
     electron-rebuild: lib/cli.js
   checksum: 10c0/4863d39c34515f3fb521ce5e976e25db20e89920574ca353efd0c3272d5f4d14546ba15ce28cee4299187160b2af02e3e130100ba8dc53f313b6eb685dc54928
+  languageName: node
+  linkType: hard
+
+"@electron/rebuild@npm:^4.0.2":
+  version: 4.0.2
+  resolution: "@electron/rebuild@npm:4.0.2"
+  dependencies:
+    "@malept/cross-spawn-promise": "npm:^2.0.0"
+    debug: "npm:^4.1.1"
+    detect-libc: "npm:^2.0.1"
+    got: "npm:^11.7.0"
+    graceful-fs: "npm:^4.2.11"
+    node-abi: "npm:^4.2.0"
+    node-api-version: "npm:^0.2.1"
+    node-gyp: "npm:^11.2.0"
+    ora: "npm:^5.1.0"
+    read-binary-file-arch: "npm:^1.0.6"
+    semver: "npm:^7.3.5"
+    tar: "npm:^6.0.5"
+    yargs: "npm:^17.0.1"
+  dependenciesMeta:
+    electron:
+      built: true
+  bin:
+    electron-rebuild: lib/cli.js
+  checksum: 10c0/e74af1d22c7ed155e8326c97ff1c05ff0b508252f3f9a3c86d0eedb0dbf2f34768ed2accc468d94c755bdf4dabb5dee6a59f7719652697223afa13235c62297b
   languageName: node
   linkType: hard
 
@@ -10199,7 +10225,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "meeting-media-manager@workspace:."
   dependencies:
-    "@electron/rebuild": "npm:^4.0.1"
+    "@electron/rebuild": "npm:^4.0.2"
     "@eslint/compat": "npm:^2.0.0"
     "@formkit/drag-and-drop": "npm:^0.5.3"
     "@intlify/unplugin-vue-i18n": "npm:^11.0.1"
