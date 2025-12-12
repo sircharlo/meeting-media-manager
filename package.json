@@ -76,7 +76,7 @@
     "upath": "^2.0.1",
     "vue": "^3.5.25",
     "vue-i18n": "^11.2.2",
-    "vue-router": "^4.6.3",
+    "vue-router": "^4.6.4",
     "vue-zoomable": "^1.2.8",
     "wrappy": "^1.0.2"
   },
