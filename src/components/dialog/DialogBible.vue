@@ -308,15 +308,31 @@ const selectedChapterMedia = computed(() => {
 });
 
 const selectedBookChapters = computed(() => {
-  return selectedBookMedia.value.map((item) => item.track || 0);
+  const chapters = selectedBookMedia.value
+    // Map to the 'track' property (a number)
+    .map((item) => item.track || 0)
+    // Sort the chapters in ascending order
+    .sort((a, b) => a - b);
+
+  // Ensure only unique chapter numbers are returned
+  return [...new Set(chapters)];
 });
 
 const selectedChapterVerses = computed(() => {
-  return selectedChapterMedia.value
+  const allVerses = selectedChapterMedia.value
+    // Map to the first 'markers' property (an array)
     .map((item) => item.markers)
+    // Flatten the nested 'markers' array into a single list of marker objects
     .flatMap((item) => item.markers)
+    // Extract the verseNumber from each marker
     .map((item) => item.verseNumber)
-    .filter((verse): verse is number => verse !== undefined && verse > 0);
+    // Filter out undefined, null, or zero/negative values
+    .filter((verse): verse is number => !!verse && verse > 0)
+    // Sort the verses in ascending order
+    .sort((a, b) => a - b);
+
+  // Ensure only unique verse numbers are returned
+  return [...new Set(allVerses)];
 });
 
 watch(
