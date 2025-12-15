@@ -110,7 +110,7 @@
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.6.0",
     "@vue/test-utils": "^2.4.6",
-    "autoprefixer": "^10.4.22",
+    "autoprefixer": "^10.4.23",
     "electron": "38.2.2",
     "electron-builder": "26.3.0",
     "eslint": "^9.39.1",
