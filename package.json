@@ -83,7 +83,7 @@
   "devDependencies": {
     "@electron/rebuild": "^4.0.2",
     "@eslint/compat": "^2.0.0",
-    "@intlify/unplugin-vue-i18n": "^11.0.1",
+    "@intlify/unplugin-vue-i18n": "^11.0.3",
     "@pinia/testing": "^1.0.3",
     "@quasar/app-vite": "^2.4.0",
     "@quasar/icongenie": "^4.0.0",
