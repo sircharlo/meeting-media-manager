@@ -125,9 +125,12 @@
           :title="t('lang')"
         >
           <p>{{ t('in-what-language-should-media-be-downloaded') }}</p>
-          <SelectInput v-model="currentSettings.lang" list="jwLanguages" />
-          <!-- use-input -->
-          <!-- :label="t('lang')" -->
+          <SelectInput
+            v-model="currentSettings.lang"
+            :label="t('lang')"
+            list="jwLanguages"
+            use-input
+          />
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn color="negative" flat :label="t('back')" @click="step--" />
             <q-btn
@@ -150,9 +153,9 @@
           <!-- This icon is from the Material Design Icons collection -->
           <p>
             {{
-              t(
-                'notice-the-yeartext-is-now-being-displayed-on-the-external-monitor-but-lets-keep-going',
-              )
+              currentLangObject?.isSignLanguage
+                ? t('notice-the-media-window-is-now-being-displayed')
+                : t('notice-the-yeartext-is-now-being-displayed')
             }}
           </p>
           <q-stepper-navigation class="q-gutter-sm">

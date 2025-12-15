@@ -1742,9 +1742,8 @@ export const watchedItemMapper: (
       const watchedDayFolder = dirname(watchedItemPath);
       console.log('🔍 [watchedItemMapper] watchedDayFolder:', watchedDayFolder);
       if (watchedDayFolder) {
-        const { getWatchedMediaSectionInfo } = await import(
-          'src/helpers/media-sections'
-        );
+        const { getWatchedMediaSectionInfo } =
+          await import('src/helpers/media-sections');
         const sectionInfo = await getWatchedMediaSectionInfo(
           watchedDayFolder,
           filename,
@@ -2366,20 +2365,18 @@ export async function processMissingMediaInfo(
     );
 
     for (const { media } of mediaToProcess) {
+      /* eslint-disable perfectionist/sort-sets */
+      // Languages to try, in order:
       const langsWritten = [
         ...new Set([
-          /* eslint-disable perfectionist/sort-sets */
-          currentStateStore.currentSettings?.langFallback &&
-            currentStateStore.currentSettings?.lang,
+          currentStateStore.currentSettings?.lang, // The language configured in the settings
           media.MepsLanguageIndex !== undefined &&
-            mepslangs[media.MepsLanguageIndex],
-          media.AlternativeLanguage,
-          !currentStateStore.currentSettings?.langFallback &&
-            currentStateStore.currentSettings?.lang,
-          currentStateStore.currentSettings?.langFallback,
-          /* eslint-enable perfectionist/sort-sets */
+            mepslangs[media.MepsLanguageIndex], // The language defined in the media item
+          media.AlternativeLanguage, // The alternative language defined in the media item
+          currentStateStore.currentSettings?.langFallback, // The language fallback configured in the settings
         ]),
       ];
+      /* eslint-enable perfectionist/sort-sets */
       for (const langwritten of langsWritten) {
         if (!langwritten || !(media.KeySymbol || media.MepsDocumentId)) {
           continue;

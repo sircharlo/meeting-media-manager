@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "25.12.2-beta.6",
+  "version": "25.12.2-beta.7",
   "description": "A cross platform app to download and present media for congregation meetings of Jehovah’s Witnesses.",
   "keywords": [
     "M³",
@@ -39,8 +39,8 @@
     "@numairawan/video-duration": "^1.0.0",
     "@opentelemetry/api-logs": "^0.208.0",
     "@quasar/extras": "^1.17.0",
-    "@sentry/core": "^10.29.0",
-    "@sentry/electron": "^7.4.0",
+    "@sentry/core": "^10.30.0",
+    "@sentry/electron": "^7.5.0",
     "@sentry/vue": "^10.27.0",
     "@vueuse/core": "^14.1.0",
     "@vueuse/router": "^14.1.0",
@@ -76,14 +76,14 @@
     "upath": "^2.0.1",
     "vue": "^3.5.25",
     "vue-i18n": "^11.2.2",
-    "vue-router": "^4.6.3",
+    "vue-router": "^4.6.4",
     "vue-zoomable": "^1.2.8",
     "wrappy": "^1.0.2"
   },
   "devDependencies": {
-    "@electron/rebuild": "^4.0.1",
+    "@electron/rebuild": "^4.0.2",
     "@eslint/compat": "^2.0.0",
-    "@intlify/unplugin-vue-i18n": "^11.0.1",
+    "@intlify/unplugin-vue-i18n": "^11.0.3",
     "@pinia/testing": "^1.0.3",
     "@quasar/app-vite": "^2.4.0",
     "@quasar/icongenie": "^4.0.0",
@@ -102,18 +102,18 @@
     "@types/lodash-es": "^4.17.12",
     "@types/mousetrap": "^1.6.15",
     "@types/ms": "^2",
-    "@types/node": "^22.19.2",
+    "@types/node": "^22.19.3",
     "@types/pretty-bytes": "^5.2.0",
     "@typescript-eslint/utils": "^8.49.0",
-    "@vitejs/plugin-vue": "^6.0.2",
+    "@vitejs/plugin-vue": "^6.0.3",
     "@vitest/eslint-plugin": "^1.5.2",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.6.0",
     "@vue/test-utils": "^2.4.6",
-    "autoprefixer": "^10.4.22",
+    "autoprefixer": "^10.4.23",
     "electron": "38.2.2",
     "electron-builder": "26.3.0",
-    "eslint": "^9.39.1",
+    "eslint": "^9.39.2",
     "eslint-plugin-perfectionist": "^4.15.1",
     "eslint-plugin-vue": "^10.6.2",
     "globals": "^16.5.0",
@@ -125,7 +125,7 @@
     "prettier": "^3.7.3",
     "rollup-plugin-visualizer": "^6.0.5",
     "typescript": "~5.9.3",
-    "vite": "^7.2.7",
+    "vite": "^7.3.0",
     "vitepress": "^2.0.0-alpha.15",
     "vitest": "^4.0.15",
     "vue-eslint-parser": "^10.2.0",
@@ -133,7 +133,7 @@
     "webpack-iconfont-plugin-nodejs": "^1.0.36"
   },
   "resolutions": {
-    "vite": "7.2.7"
+    "vite": "7.3.0"
   },
   "browserslist": [
     "Electron >= 37"
