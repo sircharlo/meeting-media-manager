@@ -1782,6 +1782,7 @@ const updateZoomPan = throttleWithTrailing(
 watch(
   () => [mediaZoom.value, mediaPan.value.x, mediaPan.value.y],
   (newValues) => {
+    if (!isCurrentlyPlaying.value) return;
     updateZoomPan(newValues as [number, number, number]);
   },
 );

@@ -310,55 +310,6 @@ watch(
   },
 );
 
-const { post: postZoomPan } = useBroadcastChannel<
-  Partial<Record<string, number>>,
-  Partial<Record<string, number>>
->({ name: 'zoom-pan' });
-
-watch(
-  () => [mediaPlaying.value.zoom, mediaPlaying.value.pan],
-  (newValues, oldValues) => {
-    try {
-      const [newZoom, newPan] = newValues as [
-        number,
-        Partial<{ x: number; y: number }>,
-      ];
-      const [oldZoom, oldPan] = oldValues as [
-        number,
-        Partial<{ x: number; y: number }>,
-      ];
-      // Only pass the serializable zoomPan state (scale, x, y)
-      const serializableZoomPan =
-        newZoom && newPan
-          ? {
-              scale: newZoom,
-              x: newPan.x,
-              y: newPan.y,
-            }
-          : undefined;
-
-      const serializableOldZoomPan =
-        oldZoom && oldPan
-          ? {
-              scale: oldZoom,
-              x: oldPan.x,
-              y: oldPan.y,
-            }
-          : undefined;
-
-      if (
-        JSON.stringify(serializableZoomPan) !==
-        JSON.stringify(serializableOldZoomPan)
-      ) {
-        postZoomPan(serializableZoomPan ?? {});
-      }
-    } catch (error) {
-      errorCatcher(error);
-    }
-  },
-  { deep: true },
-);
-
 const { post: postMediaUrl } = useBroadcastChannel<string, string>({
   name: 'media-url',
 });
@@ -454,6 +405,55 @@ watch(
     postMediaUrl(newUrl as string);
     postCustomDuration(JSON.stringify(newCustomDuration));
   },
+);
+
+const { post: postZoomPan } = useBroadcastChannel<
+  Partial<Record<string, number>>,
+  Partial<Record<string, number>>
+>({ name: 'zoom-pan' });
+
+watch(
+  () => [mediaPlaying.value.zoom, mediaPlaying.value.pan],
+  (newValues, oldValues) => {
+    try {
+      const [newZoom, newPan] = newValues as [
+        number,
+        Partial<{ x: number; y: number }>,
+      ];
+      const [oldZoom, oldPan] = oldValues as [
+        number,
+        Partial<{ x: number; y: number }>,
+      ];
+      // Only pass the serializable zoomPan state (scale, x, y)
+      const serializableZoomPan =
+        newZoom && newPan
+          ? {
+              scale: newZoom,
+              x: newPan.x,
+              y: newPan.y,
+            }
+          : undefined;
+
+      const serializableOldZoomPan =
+        oldZoom && oldPan
+          ? {
+              scale: oldZoom,
+              x: oldPan.x,
+              y: oldPan.y,
+            }
+          : undefined;
+
+      if (
+        JSON.stringify(serializableZoomPan) !==
+        JSON.stringify(serializableOldZoomPan)
+      ) {
+        postZoomPan(serializableZoomPan ?? {});
+      }
+    } catch (error) {
+      errorCatcher(error);
+    }
+  },
+  { deep: true },
 );
 
 const { data: lastEndTimestamp } = useBroadcastChannel<
