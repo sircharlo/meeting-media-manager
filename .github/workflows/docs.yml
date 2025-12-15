@@ -112,7 +112,7 @@ jobs:
           yarn generate:logos
           yarn docs:build
       - name: Upload dist artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: dist
           path: docs/.vitepress/dist
