@@ -39,9 +39,9 @@ export default defineStore((/* { ssrContext } */) => {
           // Transform the state to remove unneeded information that only takes up space
           const transformedState = {
             ...state,
-            jwBibleAudioFiles:
+            jwBibleFiles:
               'FILTERED (length: ' +
-              Object.keys(state.jwBibleAudioFiles || {}).length +
+              Object.keys(state.jwBibleFiles || {}).length +
               ')',
             jwLanguages:
               'FILTERED (length: ' +

@@ -1207,7 +1207,7 @@ export const getStudyBibleMedia = async (
   }
 };
 
-export const getAudioBibleMedia = async (
+export const getBibleMedia = async (
   force = false,
   langwritten?: JwLangCode,
 ) => {
@@ -1219,9 +1219,9 @@ export const getAudioBibleMedia = async (
     if (!lang) return;
 
     if (!force) {
-      const audioFilesList = jwStore.jwBibleAudioFiles?.[lang];
-      if (audioFilesList && !shouldUpdateList(audioFilesList, 3)) {
-        return audioFilesList.list;
+      const bibleFilesList = jwStore.jwBibleFiles?.[lang];
+      if (bibleFilesList && !shouldUpdateList(bibleFilesList, 3)) {
+        return bibleFilesList.list;
       }
     }
 
@@ -1252,13 +1252,13 @@ export const getAudioBibleMedia = async (
       for (const lang of languages) {
         publication.booknum = booknum;
         publication.langwritten = lang;
-        const audioBibleMediaItems = await getPubMediaLinks(publication);
-        if (!audioBibleMediaItems) {
+        const bibleMediaItems = await getPubMediaLinks(publication);
+        if (!bibleMediaItems) {
           backupNameNeeded.push(booknum);
           returnedItems.push({ booknum });
           break;
         }
-        returnedItems.push(audioBibleMediaItems);
+        returnedItems.push(bibleMediaItems);
       }
     }
 
@@ -1289,7 +1289,7 @@ export const getAudioBibleMedia = async (
         };
       }
     }
-    jwStore.jwBibleAudioFiles[lang] = {
+    jwStore.jwBibleFiles[lang] = {
       list: returnedItems,
       updated: new Date(),
     };
@@ -2393,7 +2393,7 @@ export async function processMissingMediaInfo(
         };
 
         if (media.KeySymbol === 'nwt') {
-          const pubs = await getAudioBibleMedia(false, langwritten);
+          const pubs = await getBibleMedia(false, langwritten);
           const bookMedia: MediaLink[] =
             Object.values(
               pubs?.find((p) => p.booknum === media.BookNumber)?.files?.[
