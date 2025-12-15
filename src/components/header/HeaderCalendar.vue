@@ -119,14 +119,29 @@
           v-close-popup
           clickable
           :disable="!online"
-          @click="openAudioBibleWithSectionCheck"
+          @click="openBibleWithSectionCheck"
         >
           <q-item-section avatar>
-            <q-icon color="primary" name="mmm-audio-bible" />
+            <q-icon
+              color="primary"
+              :name="
+                currentLangObject?.isSignLanguage
+                  ? 'mmm-play-sign-language'
+                  : 'mmm-audio-bible'
+              "
+            />
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ t('audio-bible') }}</q-item-label>
-            <q-item-label caption>{{ t('audio-bible-media') }}</q-item-label>
+            <q-item-label>{{
+              currentLangObject?.isSignLanguage
+                ? t('sign-language-bible')
+                : t('audio-bible')
+            }}</q-item-label>
+            <q-item-label caption>{{
+              currentLangObject?.isSignLanguage
+                ? t('sign-language-bible-media')
+                : t('audio-bible-media')
+            }}</q-item-label>
           </q-item-section>
         </q-item>
         <q-item-label header>{{ t('from-local-computer') }}</q-item-label>
@@ -303,9 +318,9 @@
     :dialog-id="'header-calendar-study-bible'"
     :section="section"
   />
-  <DialogAudioBible
-    v-model="showAudioBible"
-    :dialog-id="'header-calendar-audio-bible'"
+  <DialogBible
+    v-model="showBible"
+    :dialog-id="'header-calendar-bible'"
     :section="section"
   />
   <DialogSongPicker
@@ -336,7 +351,7 @@ import type { MediaItem, MediaSectionIdentifier } from 'src/types';
 
 import { useEventListener, watchImmediate } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
-import DialogAudioBible from 'components/dialog/DialogAudioBible.vue';
+import DialogBible from 'components/dialog/DialogBible.vue';
 import DialogCustomSectionEdit from 'components/dialog/DialogCustomSectionEdit.vue';
 import DialogJwPlaylist from 'components/dialog/DialogJwPlaylist.vue';
 import DialogPublicationMedia from 'components/dialog/DialogPublicationMedia.vue';
@@ -377,6 +392,7 @@ const currentState = useCurrentStateStore();
 const { getMeetingType } = currentState;
 const {
   currentCongregation,
+  currentLangObject,
   currentSettings,
   mediaIsPlaying,
   online,
@@ -393,7 +409,7 @@ const datePickerActive = ref(false);
 const showCustomSectionEdit = ref(false);
 const showRemoteVideo = ref(false);
 const showStudyBible = ref(false);
-const showAudioBible = ref(false);
+const showBible = ref(false);
 const showPublicationMedia = ref(false);
 const showSongPicker = ref(false);
 const showPublicTalkMediaPicker = ref(false);
@@ -810,17 +826,17 @@ const openStudyBibleWithSectionCheck = () => {
   }
 };
 
-const openAudioBibleWithSectionCheck = () => {
+const openBibleWithSectionCheck = () => {
   if (section.value) {
-    showAudioBible.value = true;
+    showBible.value = true;
   } else if (hasMultipleSections.value) {
     pendingDialogAction.value = () => {
-      showAudioBible.value = true;
+      showBible.value = true;
     };
     showSectionPicker.value = true;
   } else {
     // If only one section exists, use it directly
-    showAudioBible.value = true;
+    showBible.value = true;
   }
 };
 

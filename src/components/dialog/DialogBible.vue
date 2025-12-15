@@ -6,27 +6,35 @@
     >
       <div class="row q-px-md q-pt-lg text-h6">
         <div class="col">
-          {{ t('add-media-audio-bible') }}
+          {{
+            currentLangObject?.isSignLanguage
+              ? t('sign-language-bible')
+              : t('add-media-audio-bible')
+          }}
         </div>
         <div class="col-shrink">
           <q-btn
             color="primary"
             flat
             icon="mmm-cloud-done"
-            :loading="loading || !bibleAudioMedia?.length"
+            :loading="loading || !bibleMedia?.length"
             round
             @click="
               loading = true;
-              fetchAudioBibleMedia(true);
+              fetchBibleMedia(true);
             "
           />
         </div>
       </div>
       <div class="row q-px-md q-py-md">
-        {{ t('add-media-audio-bible-explain') }}
+        {{
+          currentLangObject?.isSignLanguage
+            ? t('add-bible-verses-sign-language-explain')
+            : t('add-media-audio-bible-explain')
+        }}
       </div>
       <div
-        v-if="!loading && selectedBibleBook && bibleAudioMediaComplete.length"
+        v-if="!loading && selectedBibleBook && bibleMediaComplete.length"
         class="row q-px-md full-width"
       >
         <q-tabs
@@ -39,7 +47,7 @@
           style="width: -webkit-fill-available; max-width: 100%"
         >
           <q-tab
-            v-for="book in bibleAudioMediaComplete"
+            v-for="book in bibleMediaComplete"
             :key="book.booknum || 0"
             :disable="!book.files"
             :label="book.pubName"
@@ -51,7 +59,7 @@
         class="q-pr-scroll overflow-auto col items-start q-pt-sm"
         :class="{ 'content-center': loading }"
       >
-        <div v-if="loading && !bibleAudioMedia?.length">
+        <div v-if="loading && !bibleMedia?.length">
           <div
             v-for="sectionIndex in 2"
             :key="sectionIndex"
@@ -132,14 +140,14 @@
               </div>
             </div>
           </template>
-          <template v-else-if="bibleAudioMedia?.length">
+          <template v-else-if="bibleMedia?.length">
             <div
               v-for="(sectionInfo, sectionIndex) in [
                 {
                   title: 'hebrew-aramaic-scriptures',
-                  books: bibleAudioMediaHebrew,
+                  books: bibleMediaHebrew,
                 },
-                { title: 'greek-scriptures', books: bibleAudioMediaGreek },
+                { title: 'greek-scriptures', books: bibleMediaGreek },
               ]"
               :key="sectionIndex"
               class="row q-px-md q-pb-md"
@@ -221,7 +229,7 @@ import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   downloadAdditionalRemoteVideo,
-  getAudioBibleMedia,
+  getBibleMedia,
 } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { decodeEntities } from 'src/utils/general';
@@ -230,7 +238,7 @@ import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
-const { selectedDate } = storeToRefs(currentState);
+const { currentLangObject, selectedDate } = storeToRefs(currentState);
 
 const { t } = useI18n();
 
@@ -254,11 +262,11 @@ const dialogValue = computed({
 
 const selectedBibleBook = ref<number>(0);
 const selectedChapter = ref(0);
-const bibleAudioMedia = ref<Partial<Publication>[] | undefined>([]);
+const bibleMedia = ref<Partial<Publication>[] | undefined>([]);
 
-const bibleAudioMediaHebrew = computed(() => {
+const bibleMediaHebrew = computed(() => {
   return (
-    bibleAudioMedia.value
+    bibleMedia.value
       ?.filter((item) => item?.booknum && item?.booknum < 40)
       .map((item) => ({
         ...item,
@@ -267,9 +275,9 @@ const bibleAudioMediaHebrew = computed(() => {
   );
 });
 
-const bibleAudioMediaGreek = computed(() => {
+const bibleMediaGreek = computed(() => {
   return (
-    bibleAudioMedia.value
+    bibleMedia.value
       ?.filter((item) => item?.booknum && item?.booknum >= 40)
       .map((item) => ({
         ...item,
@@ -278,16 +286,15 @@ const bibleAudioMediaGreek = computed(() => {
   );
 });
 
-const bibleAudioMediaComplete = computed(() => {
-  return bibleAudioMediaHebrew.value.concat(bibleAudioMediaGreek.value);
+const bibleMediaComplete = computed(() => {
+  return bibleMediaHebrew.value.concat(bibleMediaGreek.value);
 });
 
 const selectedBookMedia = computed(() => {
   if (!selectedBibleBook.value) return [];
   const allFiles: PublicationFiles[] = Object.values(
-    bibleAudioMedia.value?.find(
-      (item) => item?.booknum === selectedBibleBook.value,
-    )?.files || {},
+    bibleMedia.value?.find((item) => item?.booknum === selectedBibleBook.value)
+      ?.files || {},
   );
   const langFiles: PublicationFiles = allFiles[0] ?? {};
   const mediaFiles: MediaLink[] = Object.values(langFiles || {})[0];
@@ -301,15 +308,31 @@ const selectedChapterMedia = computed(() => {
 });
 
 const selectedBookChapters = computed(() => {
-  return selectedBookMedia.value.map((item) => item.track || 0);
+  const chapters = selectedBookMedia.value
+    // Map to the 'track' property (a number)
+    .map((item) => item.track || 0)
+    // Sort the chapters in ascending order
+    .sort((a, b) => a - b);
+
+  // Ensure only unique chapter numbers are returned
+  return [...new Set(chapters)];
 });
 
 const selectedChapterVerses = computed(() => {
-  return selectedChapterMedia.value
+  const allVerses = selectedChapterMedia.value
+    // Map to the first 'markers' property (an array)
     .map((item) => item.markers)
+    // Flatten the nested 'markers' array into a single list of marker objects
     .flatMap((item) => item.markers)
+    // Extract the verseNumber from each marker
     .map((item) => item.verseNumber)
-    .filter((verse): verse is number => verse !== undefined && verse > 0);
+    // Filter out undefined, null, or zero/negative values
+    .filter((verse): verse is number => !!verse && verse > 0)
+    // Sort the verses in ascending order
+    .sort((a, b) => a - b);
+
+  // Ensure only unique verse numbers are returned
+  return [...new Set(allVerses)];
 });
 
 watch(
@@ -351,10 +374,10 @@ const toggleVerse = (verse: number) => {
   }
 };
 
-const fetchAudioBibleMedia = async (force = false) => {
+const fetchBibleMedia = async (force = false) => {
   try {
     loading.value = true;
-    bibleAudioMedia.value = await getAudioBibleMedia(force);
+    bibleMedia.value = await getBibleMedia(force);
   } catch (error) {
     errorCatcher(error);
   } finally {
@@ -391,9 +414,7 @@ const addSelectedVerses = async () => {
       selectedDate.value,
       undefined,
       false,
-      decodeEntities(
-        bibleAudioMedia.value?.[selectedBibleBook.value - 1]?.pubName,
-      ) +
+      decodeEntities(bibleMedia.value?.[selectedBibleBook.value - 1]?.pubName) +
         ' ' +
         selectedChapter.value +
         ':' +
@@ -445,6 +466,6 @@ const getVerseClass = (verse: number) => {
 // Watch for dialog opening to get JW videos and reset state
 whenever(dialogValue, () => {
   resetBibleBook(true);
-  fetchAudioBibleMedia();
+  fetchBibleMedia();
 });
 </script>

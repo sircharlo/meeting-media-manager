@@ -74,9 +74,7 @@ export const shouldUpdateList = (
 };
 
 interface Store {
-  jwBibleAudioFiles: Partial<
-    Record<JwLangCode, CacheList<Partial<Publication>>>
-  >;
+  jwBibleFiles: Partial<Record<JwLangCode, CacheList<Partial<Publication>>>>;
   jwLanguages: CacheList<JwLanguage>;
   jwMepsLanguages: CacheList<JwMepsLanguage>;
   jwSongs: Partial<Record<JwLangCode, CacheList<MediaLink>>>;
@@ -630,7 +628,7 @@ export const useJwStore = defineStore('jw-store', {
   },
   state: (): Store => {
     return {
-      jwBibleAudioFiles: {},
+      jwBibleFiles: {},
       jwLanguages: { list: [], updated: oldDate },
       jwMepsLanguages: { list: [], updated: oldDate },
       jwSongs: {},
