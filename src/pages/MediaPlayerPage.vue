@@ -288,10 +288,13 @@ const skipZoomPanAnimation = ref(false);
 
 const applyZoomPanState = (zoomPanState: Record<string, number>) => {
   try {
-    // Try to find the active image element from either layer
-    const imageElem1 = document.getElementById('mediaImage1');
-    const imageElem2 = document.getElementById('mediaImage2');
-    const imageElem = imageElem1 || imageElem2;
+    // Try to find the active image element matching the current media URL
+    let imageElem: HTMLElement | null = null;
+    if (displayLayer1.value.url === mediaPlayingUrl.value) {
+      imageElem = document.getElementById('mediaImage1');
+    } else if (displayLayer2.value.url === mediaPlayingUrl.value) {
+      imageElem = document.getElementById('mediaImage2');
+    }
 
     if (!imageElem) return;
 
