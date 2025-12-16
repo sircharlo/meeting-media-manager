@@ -17,6 +17,9 @@ const { createVideoFromNonVideo, fileUrlToPath, fs, path, readdir } =
 const { copy, ensureDir, exists, remove, stat } = fs;
 const { basename, extname, join } = path;
 
+let folderExportQueue: PQueue | undefined;
+const pendingDays = new Set<string>();
+
 export const addDayToExportQueue = async (targetDate?: Date) => {
   if (!targetDate) return;
   const dateStr = formatDate(targetDate, 'YYYY-MM-DD');
@@ -237,9 +240,6 @@ const exportDayToFolder = async (targetDate?: Date) => {
     errorCatcher(error);
   }
 };
-
-let folderExportQueue: PQueue | undefined;
-const pendingDays = new Set<string>();
 
 export const exportAllDays = async () => {
   try {
