@@ -1,11 +1,12 @@
 import type PQueue from 'p-queue';
+import type { FileItem } from 'src/types';
 
 import { i18n } from 'boot/i18n';
 import { getMeetingSections } from 'src/constants/media';
 import { isCoWeek, isMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setupFFmpeg } from 'src/helpers/fs';
-import { datesAreSame, formatDate } from 'src/utils/date';
+import { datesAreSame, formatDate, getSpecificWeekday } from 'src/utils/date';
 import { trimFilepathAsNeeded } from 'src/utils/fs';
 import { pad } from 'src/utils/general';
 import { isJwPlaylist, isVideo } from 'src/utils/media';
@@ -150,8 +151,6 @@ const exportDayToFolder = async (targetDate?: Date) => {
       return aId.localeCompare(bId);
     });
 
-  console.log('sections', sortedSections);
-
   for (const section of sortedSections) {
     if (!section.items?.length) continue;
 
@@ -161,8 +160,6 @@ const exportDayToFolder = async (targetDate?: Date) => {
         Array.isArray(item.children) ? item.children : [item],
       )
       .filter((item) => !item.hidden);
-
-    console.log('visibleItems', visibleItems);
 
     if (!visibleItems.length) continue;
 
@@ -258,7 +255,44 @@ const exportDayToFolder = async (targetDate?: Date) => {
   }
 };
 
+const deleteOldExportFolders = async () => {
+  const currentStateStore = useCurrentStateStore();
+  if (
+    !currentStateStore.currentSettings?.enableMediaAutoExport ||
+    !currentStateStore.currentSettings?.mediaAutoExportFolder
+  ) {
+    return;
+  }
+
+  const destFolder = currentStateStore.currentSettings.mediaAutoExportFolder;
+
+  try {
+    if (!(await exists(destFolder))) return;
+
+    const dirItems: FileItem[] = await readdir(destFolder);
+    const today = new Date();
+    const lastMonday = getSpecificWeekday(today, 0);
+    const lastMondayStr = formatDate(lastMonday, 'YYYY-MM-DD');
+
+    await Promise.allSettled(
+      dirItems
+        .filter((f) => {
+          // Ensure it's a directory
+          if (f.isDirectory === false) return false;
+          // Ensure it's a valid date
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(f.name)) return false;
+          // Ensure it's older than last Monday
+          return f.name < lastMondayStr;
+        })
+        .map((f) => remove(join(destFolder, f.name))),
+    );
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
 export const exportAllDays = async () => {
+  await deleteOldExportFolders();
   try {
     const jwStore = useJwStore();
     const currentStateStore = useCurrentStateStore();
