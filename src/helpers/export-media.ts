@@ -17,14 +17,23 @@ const { createVideoFromNonVideo, fileUrlToPath, fs, path, readdir } =
 const { copy, ensureDir, exists, remove, stat } = fs;
 const { basename, extname, join } = path;
 
+// Create a queue to limit the number of exports running at the same time
 let folderExportQueue: PQueue | undefined;
-const pendingDays = new Set<string>();
+
+// Track days that are currently exporting
+export const pendingDays = new Set<string>();
+// Track days that requested another export while one was already running
+const dirtyDays = new Set<string>();
 
 export const addDayToExportQueue = async (targetDate?: Date) => {
   if (!targetDate) return;
   const dateStr = formatDate(targetDate, 'YYYY-MM-DD');
 
-  if (pendingDays.has(dateStr)) return;
+  if (pendingDays.has(dateStr)) {
+    // If already exporting, mark as dirty so it runs again after finishing
+    dirtyDays.add(dateStr);
+    return;
+  }
   pendingDays.add(dateStr);
 
   if (!folderExportQueue) {
@@ -34,9 +43,17 @@ export const addDayToExportQueue = async (targetDate?: Date) => {
 
   folderExportQueue.add(async () => {
     try {
+      // Run the export
       await exportDayToFolder(targetDate);
+
+      // If the day was marked as dirty while running, run it again until it's clean
+      while (dirtyDays.has(dateStr)) {
+        dirtyDays.delete(dateStr);
+        await exportDayToFolder(targetDate);
+      }
     } finally {
       pendingDays.delete(dateStr);
+      dirtyDays.delete(dateStr); // Just in case
     }
   });
 };
