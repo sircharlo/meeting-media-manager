@@ -185,12 +185,19 @@ const exportDayToFolder = async (targetDate?: Date) => {
 
         const mediaPrefix = pad(i + 1, visibleItems.length > 99 ? 3 : 2);
 
-        // Construct filename format: [SectionIndex] [SectionName] - [ItemIndex] [ItemName]
+        // Construct filename format: [SectionIndex] [SectionName] - [ItemIndex] [SongPrefix][ItemName]
         const mediaTitle = m.title
           ? sanitize(m.title.replace(extname(sourceFilePath), ''))
           : basename(sourceFilePath, extname(sourceFilePath));
 
-        const destFileName = `${sectionPrefix} ${sanitizedSectionName} - ${mediaPrefix} ${mediaTitle}${effectiveExt}`;
+        const songPrefix =
+          m.tag?.type === 'song' && m.tag?.value
+            ? `${(i18n.global.t as (key: string) => string)(
+                'song',
+              )} ${m.tag.value} - `
+            : '';
+
+        const destFileName = `${sectionPrefix} ${sanitizedSectionName} - ${mediaPrefix} ${songPrefix}${mediaTitle}${effectiveExt}`;
 
         const destFilePath = trimFilepathAsNeeded(
           join(destFolder, destFileName),
