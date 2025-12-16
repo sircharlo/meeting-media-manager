@@ -1,6 +1,5 @@
 import type {
   DateInfo,
-  DownloadedFile,
   DownloadProgressItems,
   JwLanguage,
   JwSite,
@@ -57,9 +56,6 @@ export interface Songbook {
 interface Store {
   autoReturnFromWebsite: boolean;
   currentCongregation: string;
-  downloadedFiles: Partial<
-    Record<string, DownloadedFile | Promise<DownloadedFile>>
-  >;
   downloadProgress: DownloadProgressItems;
   extractedFiles: Partial<Record<string, string>>;
   ffmpegPath: string;
@@ -420,7 +416,6 @@ export const useCurrentStateStore = defineStore('current-state', {
     return {
       autoReturnFromWebsite: false,
       currentCongregation: '',
-      downloadedFiles: {},
       downloadProgress: {},
       extractedFiles: {},
       ffmpegPath: '',

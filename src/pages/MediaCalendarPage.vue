@@ -214,6 +214,7 @@ const {
   currentCongregation,
   currentLangObject,
   currentSettings,
+  downloadProgress,
   isSelectedDayToday,
   mediaIsPlaying,
   mediaPaused,
@@ -1485,6 +1486,25 @@ watch(
       selectedDateObject.value?.date &&
       !arraysAreIdentical(newSortedMediaFileUrls, oldSortedMediaFileUrls)
     ) {
+      try {
+        addDayToExportQueue(selectedDateObject.value.date);
+      } catch (e) {
+        errorCatcher(e);
+      }
+    }
+  },
+);
+
+const filesDownloaded = computed(() =>
+  Object.values(downloadProgress.value)
+    .filter((p) => p.complete)
+    .map((p) => p.filename),
+);
+
+watch(
+  () => filesDownloaded.value,
+  () => {
+    if (selectedDateObject.value?.date) {
       try {
         addDayToExportQueue(selectedDateObject.value.date);
       } catch (e) {
