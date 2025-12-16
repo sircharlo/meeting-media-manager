@@ -1,6 +1,8 @@
 import type PQueue from 'p-queue';
 
 import { i18n } from 'boot/i18n';
+import { getMeetingSections } from 'src/constants/media';
+import { isCoWeek, isMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { setupFFmpeg } from 'src/helpers/fs';
 import { datesAreSame, formatDate } from 'src/utils/date';
@@ -14,6 +16,9 @@ const { createVideoFromNonVideo, fileUrlToPath, fs, path, readdir } =
   window.electronApi;
 const { copy, ensureDir, exists, remove, stat } = fs;
 const { basename, extname, join } = path;
+
+let folderExportQueue: PQueue | undefined;
+const pendingDays = new Set<string>();
 
 export const addDayToExportQueue = async (targetDate?: Date) => {
   if (!targetDate) return;
@@ -77,9 +82,60 @@ const exportDayToFolder = async (targetDate?: Date) => {
 
   // Iterate through sections to preserve order and structure
   let sectionIndex = 1;
-  const sections = day.mediaSections || [];
+  const { getMeetingType } = currentStateStore;
 
-  for (const section of sections) {
+  const meetingType = getMeetingType(day.date);
+
+  // Get the appropriate meeting sections based on meeting type (MW vs WE)
+  const meetingSections = getMeetingSections(meetingType, isCoWeek(day.date));
+
+  // Create a list of all sections that should be displayed
+  const sectionsToShow: string[] = [...meetingSections];
+
+  // Add any custom sections that have items (not already in meeting sections)
+  day.mediaSections.forEach((sectionData) => {
+    const sectionId = sectionData.config.uniqueId;
+    const isMeetingToday = isMeetingDay(day.date);
+    if (
+      !sectionsToShow.includes(sectionId) &&
+      ((!isMeetingToday && !meetingSections.includes(sectionId)) ||
+        (isMeetingToday && sectionData?.items?.length))
+    ) {
+      sectionsToShow.push(sectionId);
+    }
+  });
+
+  const sortedSections = day.mediaSections
+    .filter((m) => !!m.config)
+    .filter((m) => {
+      const sectionId = m.config?.uniqueId || '';
+      // Include if it's a meeting section OR if it has items
+      return sectionsToShow.includes(sectionId);
+    })
+    .sort((a, b) => {
+      const aId = a.config?.uniqueId || '';
+      const bId = b.config?.uniqueId || '';
+
+      // Get indices from our sectionsToShow array
+      const aIndex = sectionsToShow.indexOf(aId);
+      const bIndex = sectionsToShow.indexOf(bId);
+
+      // If both are in the list, sort by their position
+      if (aIndex !== -1 && bIndex !== -1) {
+        return aIndex - bIndex;
+      }
+
+      // If only one is in the list, prioritize the one in the list
+      if (aIndex !== -1) return -1;
+      if (bIndex !== -1) return 1;
+
+      // If neither is in the list, sort alphabetically
+      return aId.localeCompare(bId);
+    });
+
+  console.log('sections', sortedSections);
+
+  for (const section of sortedSections) {
     if (!section.items?.length) continue;
 
     // Filter visible items and flatten children
@@ -88,6 +144,8 @@ const exportDayToFolder = async (targetDate?: Date) => {
         Array.isArray(item.children) ? item.children : [item],
       )
       .filter((item) => !item.hidden);
+
+    console.log('visibleItems', visibleItems);
 
     if (!visibleItems.length) continue;
 
@@ -182,9 +240,6 @@ const exportDayToFolder = async (targetDate?: Date) => {
     errorCatcher(error);
   }
 };
-
-let folderExportQueue: PQueue | undefined;
-const pendingDays = new Set<string>();
 
 export const exportAllDays = async () => {
   try {
