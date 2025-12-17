@@ -71,12 +71,10 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
   const isSongButton = computed(() => {
     if (!mediaList.config) return false;
     if (someItemsAreHidden.value) return false;
-    const isCircuitOverseerSection =
-      mediaList.config.uniqueId === 'circuit-overseer';
-    return (
-      (!sectionContainsSongs.value && mediaList.config.uniqueId === 'pt') ||
-      isCircuitOverseerSection
+    const sectionSometimesContainSongs = ['circuit-overseer', 'pt'].includes(
+      mediaList.config.uniqueId,
     );
+    return !sectionContainsSongs.value && sectionSometimesContainSongs;
   });
 
   // Get section config from the new structure
