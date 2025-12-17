@@ -3185,10 +3185,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:^10.30.0":
-  version: 10.30.0
-  resolution: "@sentry/core@npm:10.30.0"
-  checksum: 10c0/91cfc25e34f6a16b6d20558fb267298eb83e0d92d01b8507e2583b56409139e82b92680753ca1b8f99510c7081a1923a4a29c3dbb53871534b45a5700b79720c
+"@sentry/core@npm:^10.31.0":
+  version: 10.31.0
+  resolution: "@sentry/core@npm:10.31.0"
+  checksum: 10c0/711a13d8c6e59f0052d263af100851cb202b13953013df5988aa7c59cdee6b9e9e899c6f4c90a0559784053038e8e063190e78f7b24bf2598c3c433796664afd
   languageName: node
   linkType: hard
 
@@ -4126,7 +4126,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/types@npm:8.48.0, @typescript-eslint/types@npm:^8.38.0, @typescript-eslint/types@npm:^8.48.0":
+"@typescript-eslint/types@npm:8.48.0, @typescript-eslint/types@npm:^8.48.0":
   version: 8.48.0
   resolution: "@typescript-eslint/types@npm:8.48.0"
   checksum: 10c0/865a8f4ae4a50aa8976f3d7e0f874f1a1c80227ec53ded68644d41011c729a489bb59f70683b29237ab945716ea0258e1d47387163379eab3edaaf5e5cc3b757
@@ -4178,7 +4178,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/utils@npm:8.48.0, @typescript-eslint/utils@npm:^8.35.1, @typescript-eslint/utils@npm:^8.38.0, @typescript-eslint/utils@npm:^8.46.1":
+"@typescript-eslint/utils@npm:8.48.0, @typescript-eslint/utils@npm:^8.35.1, @typescript-eslint/utils@npm:^8.46.1":
   version: 8.48.0
   resolution: "@typescript-eslint/utils@npm:8.48.0"
   dependencies:
@@ -7657,16 +7657,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-perfectionist@npm:^4.15.1":
-  version: 4.15.1
-  resolution: "eslint-plugin-perfectionist@npm:4.15.1"
+"eslint-plugin-perfectionist@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "eslint-plugin-perfectionist@npm:5.0.0"
   dependencies:
-    "@typescript-eslint/types": "npm:^8.38.0"
-    "@typescript-eslint/utils": "npm:^8.38.0"
+    "@typescript-eslint/utils": "npm:^8.50.0"
     natural-orderby: "npm:^5.0.0"
   peerDependencies:
     eslint: ">=8.45.0"
-  checksum: 10c0/65db8d0962c208578937cffa0da9678ce51bbecae2b8d2bd0eb4e9f9b691ac71fc85c0c14368584f02abda6c82cf19495d1fbe8584d7ef09c0d2126d62925d1c
+  checksum: 10c0/9b10805c19f46c820a9afab097ac5b8505cf023a936b4ed30cd901cd8e3f9e32235394ed714d27a82fc532126f45f435abec71166eb19c0b781b6243979c7832
   languageName: node
   linkType: hard
 
@@ -10217,6 +10216,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash-es@npm:^4.17.22":
+  version: 4.17.22
+  resolution: "lodash-es@npm:4.17.22"
+  checksum: 10c0/5f28a262183cca43e08c580622557f393cb889386df2d8adf7c852bfdff7a84c5e629df5aa6c5c6274e83b38172f239d3e4e72e1ad27352d9ae9766627338089
+  languageName: node
+  linkType: hard
+
 "lodash.escaperegexp@npm:^4.1.2":
   version: 4.1.2
   resolution: "lodash.escaperegexp@npm:4.1.2"
@@ -10608,7 +10614,7 @@ __metadata:
     "@quasar/quasar-app-extension-testing-unit-vitest": "npm:^1.2.4"
     "@quasar/vite-plugin": "npm:^1.10.0"
     "@rollup/plugin-inject": "npm:^5.0.5"
-    "@sentry/core": "npm:^10.30.0"
+    "@sentry/core": "npm:^10.31.0"
     "@sentry/electron": "npm:^7.5.0"
     "@sentry/esbuild-plugin": "npm:^4.6.1"
     "@sentry/vite-plugin": "npm:^4.6.1"
@@ -10645,7 +10651,7 @@ __metadata:
     electron-dl-manager: "npm:^4.2.3"
     electron-updater: "npm:^6.7.3"
     eslint: "npm:^9.39.2"
-    eslint-plugin-perfectionist: "npm:^4.15.1"
+    eslint-plugin-perfectionist: "npm:^5.0.0"
     eslint-plugin-vue: "npm:^10.6.2"
     fluent-ffmpeg: "npm:^2.1.3"
     fs-extra: "npm:^11.3.2"
@@ -10655,7 +10661,7 @@ __metadata:
     image-size: "npm:^2.0.2"
     is-online: "npm:^12.0.2"
     lint-staged: "npm:^16.2.7"
-    lodash-es: "npm:^4.17.21"
+    lodash-es: "npm:^4.17.22"
     mime: "npm:^4.1.0"
     mousetrap: "npm:^1.6.5"
     ms: "npm:^2.1.3"
