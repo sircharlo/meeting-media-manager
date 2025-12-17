@@ -127,7 +127,7 @@
     "typescript": "~5.9.3",
     "vite": "^7.3.0",
     "vitepress": "^2.0.0-alpha.15",
-    "vitest": "^4.0.15",
+    "vitest": "^4.0.16",
     "vue-eslint-parser": "^10.2.0",
     "vue-tsc": "^3.1.8",
     "webpack-iconfont-plugin-nodejs": "^1.0.36"
