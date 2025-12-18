@@ -24,8 +24,6 @@
           <template v-if="media.isImage">
             <VueZoomable
               v-if="media.isImage"
-              v-model:pan="mediaPan"
-              v-model:zoom="mediaZoom"
               :button-pan-step="15"
               :button-zoom-step="0.2"
               :dbl-click-zoom-step="0.35"
@@ -35,10 +33,21 @@
               :initial-zoom="1"
               :max-zoom="5"
               :min-zoom="1"
+              :pan="mediaPan"
               :pan-enabled="false"
               :selector="'#' + randomId"
               style="width: 150px; height: 84px"
               :wheel-zoom-step="0.1"
+              :zoom="mediaZoom"
+              :zoom-enabled="control || shift"
+              @pan="
+                mediaPan = $event.pan;
+                mediaZoom = $event.zoom;
+              "
+              @zoom="
+                mediaZoom = $event.zoom;
+                mediaPan = $event.pan;
+              "
             >
               <div
                 :id="randomId"
@@ -1001,6 +1010,7 @@ import {
   useBroadcastChannel,
   useElementHover,
   useEventListener,
+  useMagicKeys,
   useTimeoutPoll,
   watchImmediate,
   whenever,
@@ -1025,6 +1035,8 @@ import { useObsStateStore } from 'stores/obs-state';
 import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import VueZoomable from 'vue-zoomable';
+
+const { control, shift } = useMagicKeys();
 
 const currentState = useCurrentStateStore();
 const {
