@@ -1,6 +1,6 @@
 # Perguntas Frequentes {#frequently-asked-questions}
 
-## General Questions {#general-questions}
+## Perguntas Gerais {#general-questions}
 
 ### :earth_americas: Esta aplicação depende de sites externos, fontes ou "curadores" para descarregar publicações, multimédia de reuniões ou outros conteúdos? {#external-dependencies}
 
@@ -30,7 +30,7 @@ M³ supports Windows, macOS, and Linux:
 
 ### :globe_with_meridians: Does M³ work in my language? {#language-support}
 
-**Yes!** M³ provides comprehensive multi-language support:
+Sim! O M³ oferece um suporte multi-idioma abrangente:
 
 - **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
 - **App Interface**: Use M³'s interface in many different languages
