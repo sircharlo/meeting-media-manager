@@ -107,91 +107,109 @@
               name="fade"
             >
               <template
-                v-if="media.isImage && (hoveringMediaItem || mediaZoom > 1.01)"
+                v-if="media.isImage && mediaZoom > 1.01 && hoveringMediaItem"
               >
-                <div>
-                  <template v-if="mediaZoom > 1.01">
-                    <div class="absolute-top-right q-mr-xs q-mt-xs row">
-                      <div class="bg-semi-black row rounded-borders">
-                        <q-badge
-                          color="transparent"
-                          style="padding: 5px !important; cursor: pointer"
-                          @mousedown="startPan('up')"
-                          @mouseleave="stopPan"
-                          @mouseup="stopPan"
-                        >
-                          <q-icon color="white" name="mmm-up" />
-                        </q-badge>
-                        <q-separator class="bg-grey-8 q-my-xs" vertical />
-                        <q-badge
-                          color="transparent"
-                          style="padding: 5px !important; cursor: pointer"
-                          @mousedown="startPan('down')"
-                          @mouseleave="stopPan"
-                          @mouseup="stopPan"
-                        >
-                          <q-icon color="white" name="mmm-down" />
-                        </q-badge>
-                        <q-separator class="bg-grey-8 q-my-xs" vertical />
-                        <q-badge
-                          color="transparent"
-                          style="padding: 5px !important; cursor: pointer"
-                          @mousedown="startPan('left')"
-                          @mouseleave="stopPan"
-                          @mouseup="stopPan"
-                        >
-                          <q-icon color="white" name="mmm-left" />
-                        </q-badge>
-                        <q-separator class="bg-grey-8 q-my-xs" vertical />
-                        <q-badge
-                          color="transparent"
-                          style="padding: 5px !important; cursor: pointer"
-                          @mousedown="startPan('right')"
-                          @mouseleave="stopPan"
-                          @mouseup="stopPan"
-                        >
-                          <q-icon color="white" name="mmm-right" />
-                        </q-badge>
-                      </div>
-                    </div>
-                  </template>
-                  <div class="absolute-bottom-right q-mr-xs q-mb-xs row">
-                    <template v-if="mediaZoom > 1.01">
-                      <q-badge
-                        class="q-mr-xs"
-                        color="warning"
-                        style="padding: 5px !important; cursor: pointer"
-                        @click="zoomReset(true)"
-                      >
-                        <q-icon color="white" name="mmm-refresh" />
-                      </q-badge>
-                    </template>
-                    <div class="bg-semi-black row rounded-borders">
-                      <q-badge
-                        color="transparent"
-                        :disabled="!mediaZoom || mediaZoom < 1.01 || undefined"
-                        style="padding: 5px !important; cursor: pointer"
-                        @mousedown="startZoom('out')"
-                        @mouseleave="stopZoom"
-                        @mouseup="stopZoom"
-                      >
-                        <q-icon color="white" name="mmm-minus" />
-                      </q-badge>
-                      <q-separator class="bg-grey-8 q-my-xs" vertical />
-                      <q-badge
-                        color="transparent"
-                        :disabled="!mediaZoom || mediaZoom > 4.99 || undefined"
-                        style="padding: 5px !important; cursor: pointer"
-                        @mousedown="startZoom('in')"
-                        @mouseleave="stopZoom"
-                        @mouseup="stopZoom"
-                      >
-                        <q-icon color="white" name="mmm-plus" />
-                      </q-badge>
-                    </div>
+                <div class="absolute-top-right q-mr-xs q-mt-xs row">
+                  <div class="bg-semi-black row rounded-borders">
+                    <q-badge
+                      color="transparent"
+                      style="padding: 5px !important; cursor: pointer"
+                      @mousedown="startPan('up')"
+                      @mouseleave="stopPan"
+                      @mouseup="stopPan"
+                    >
+                      <q-icon color="white" name="mmm-up" />
+                    </q-badge>
+                    <q-separator class="bg-grey-8 q-my-xs" vertical />
+                    <q-badge
+                      color="transparent"
+                      style="padding: 5px !important; cursor: pointer"
+                      @mousedown="startPan('down')"
+                      @mouseleave="stopPan"
+                      @mouseup="stopPan"
+                    >
+                      <q-icon color="white" name="mmm-down" />
+                    </q-badge>
+                    <q-separator class="bg-grey-8 q-my-xs" vertical />
+                    <q-badge
+                      color="transparent"
+                      style="padding: 5px !important; cursor: pointer"
+                      @mousedown="startPan('left')"
+                      @mouseleave="stopPan"
+                      @mouseup="stopPan"
+                    >
+                      <q-icon color="white" name="mmm-left" />
+                    </q-badge>
+                    <q-separator class="bg-grey-8 q-my-xs" vertical />
+                    <q-badge
+                      color="transparent"
+                      style="padding: 5px !important; cursor: pointer"
+                      @mousedown="startPan('right')"
+                      @mouseleave="stopPan"
+                      @mouseup="stopPan"
+                    >
+                      <q-icon color="white" name="mmm-right" />
+                    </q-badge>
                   </div>
                 </div>
               </template>
+            </transition>
+            <transition
+              appear
+              enter-active-class="animated fadeIn"
+              leave-active-class="animated fadeOut"
+              mode="out-in"
+              name="fade"
+            >
+              <div
+                v-if="mediaZoom > 1.01"
+                class="absolute-bottom-left q-ml-xs q-mb-xs row"
+              >
+                <q-badge
+                  class="q-mr-xs"
+                  color="warning"
+                  style="padding: 5px !important; cursor: pointer"
+                  @click="zoomReset(true)"
+                >
+                  <q-icon color="white" name="mmm-refresh" />
+                </q-badge>
+              </div>
+            </transition>
+            <transition
+              appear
+              enter-active-class="animated fadeIn"
+              leave-active-class="animated fadeOut"
+              mode="out-in"
+              name="fade"
+            >
+              <div
+                v-if="hoveringMediaItem"
+                class="absolute-bottom-right q-mr-xs q-mb-xs row"
+              >
+                <div class="bg-semi-black row rounded-borders">
+                  <q-badge
+                    color="transparent"
+                    :disabled="!mediaZoom || mediaZoom < 1.01 || undefined"
+                    style="padding: 5px !important; cursor: pointer"
+                    @mousedown="startZoom('out')"
+                    @mouseleave="stopZoom"
+                    @mouseup="stopZoom"
+                  >
+                    <q-icon color="white" name="mmm-minus" />
+                  </q-badge>
+                  <q-separator class="bg-grey-8 q-my-xs" vertical />
+                  <q-badge
+                    color="transparent"
+                    :disabled="!mediaZoom || mediaZoom > 4.99 || undefined"
+                    style="padding: 5px !important; cursor: pointer"
+                    @mousedown="startZoom('in')"
+                    @mouseleave="stopZoom"
+                    @mouseup="stopZoom"
+                  >
+                    <q-icon color="white" name="mmm-plus" />
+                  </q-badge>
+                </div>
+              </div>
             </transition>
           </template>
 
