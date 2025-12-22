@@ -75,7 +75,7 @@
     "sanitize-filename": "^1.6.3",
     "upath": "^2.0.1",
     "vue": "^3.5.26",
-    "vue-i18n": "^11.2.2",
+    "vue-i18n": "^11.2.7",
     "vue-router": "^4.6.4",
     "vue-zoomable": "^1.2.8",
     "wrappy": "^1.0.2"
