@@ -155,7 +155,7 @@ export async function isDownloadErrorExpected(): Promise<boolean> {
         },
       );
 
-      let marker = (payload as GeoInfo)?.countryCode || '';
+      let marker = payload?.countryCode || '';
 
       if (!marker) {
         const tz = new Intl.DateTimeFormat().resolvedOptions().timeZone;
