@@ -173,6 +173,7 @@ const { updateJwLanguages, updateMemorials } = jwStore;
 const { lookupPeriod } = storeToRefs(jwStore);
 
 const {
+  isArchitectureMismatch,
   onDownloadCancelled,
   onDownloadCompleted,
   onDownloadError,
@@ -290,6 +291,7 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
 
     const isBetaVersion = process.env.IS_BETA;
     const areUpdatesDisabled = await updatesDisabled();
+    const hasArchitectureMismatch = await isArchitectureMismatch();
 
     // Priority: beta warning first
     if (isBetaVersion) {
@@ -304,6 +306,15 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
         icon: 'mmm-info',
         message: t('updates-disabled-warning'),
         timeout: 10000,
+        type: 'info',
+      });
+    }
+    if (hasArchitectureMismatch) {
+      createTemporaryNotification({
+        caption: t('architecture-mismatch-explain'),
+        icon: 'mmm-info',
+        message: t('architecture-mismatch'),
+        timeout: 30000,
         type: 'info',
       });
     }
