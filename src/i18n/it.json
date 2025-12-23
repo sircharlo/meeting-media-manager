@@ -47,6 +47,8 @@
   "baseUrl-explain": "Inserisci l'indirizzo utilizzato per accedere al sito ufficiale dei Testimoni di Geova.",
   "beginPlaybackPaused": "Inizia riproduzione in pausa",
   "beginPlaybackPaused-explain": "Se abilitato, audio e video inizieranno in uno stato di pausa, consentendo di preparare altre operazioni (come la condivisione dello schermo di zoom) prima di iniziare la riproduzione.",
+  "architecture-mismatch": "Architettura non corrispondente",
+  "architecture-mismatch-explain": "Sembra che tu stia eseguendo una versione a 32 bit di M³ su un sistema operativo a 64 bit. Per migliorare le prestazioni e la stabilità, si consiglia di scaricare e installare la versione a 64 bit di M³.",
   "beta-version-warning": "Questa è una versione beta e non dovrebbe essere utilizzata nelle Sale del Regno o per adunanze dal vivo.",
   "bottom": "Bottom",
   "brochures-and-booklets": "Opuscoli e volantini",
