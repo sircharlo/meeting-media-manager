@@ -26,7 +26,7 @@ import { isDownloadErrorExpected, resetDownloadErrorCache } from '../downloads';
 
 describe('downloads.isDownloadErrorExpected', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.resetAllMocks();
     resetDownloadErrorCache();
   });
 
@@ -36,7 +36,7 @@ describe('downloads.isDownloadErrorExpected', () => {
   });
 
   it('falls back to timezone -> expected value => true', async () => {
-    vi.mocked(fetchJson).mockRejectedValue(new Error('network'));
+    vi.mocked(fetchJson).mockResolvedValue(null);
     vi.mocked(getCountriesForTimezone).mockReturnValue([
       { id: 'CN', name: 'China', timezones: ['Asia/Shanghai'] },
     ]);
@@ -44,7 +44,7 @@ describe('downloads.isDownloadErrorExpected', () => {
   });
 
   it('falls back to app locale -> unexpected value => false', async () => {
-    vi.mocked(fetchJson).mockRejectedValue(new Error('network'));
+    vi.mocked(fetchJson).mockResolvedValue(null);
     vi.mocked(getCountriesForTimezone).mockReturnValue([]);
     vi.mocked(app.getLocaleCountryCode).mockReturnValue('US');
     await expect(isDownloadErrorExpected()).resolves.toBe(false);

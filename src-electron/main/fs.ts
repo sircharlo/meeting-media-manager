@@ -2,8 +2,9 @@ import type { FileDialogFilter, UnzipOptions, UnzipResult } from 'src/types';
 
 import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
 import { dialog } from 'electron';
-import { createWriteStream } from 'fs';
 import { ensureDir, type Stats } from 'fs-extra';
+import { createWriteStream } from 'node:fs';
+import { pipeline } from 'node:stream/promises';
 import { captureElectronError } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindow } from 'src-electron/main/window/window-main';
@@ -12,7 +13,6 @@ import {
   JWPUB_EXTENSIONS,
   PDF_EXTENSIONS,
 } from 'src/constants/media';
-import { pipeline } from 'stream/promises';
 import upath from 'upath';
 import yauzl from 'yauzl';
 
