@@ -18,7 +18,6 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
 const {
-  decompress,
   downloadFile,
   fileUrlToPath,
   fs,
@@ -28,6 +27,7 @@ const {
   pathToFileURL,
   readdir,
   unwatchFolders,
+  unzip,
   watchFolder,
 } = window.electronApi;
 const { exists, pathExists, stat, writeFile } = fs;
@@ -340,7 +340,7 @@ export const setupFFmpeg = async (): Promise<string> => {
       ffmpegZipPath,
       ffmpegDir,
     );
-    const ffmpegPath = await decompressAndFindFFmpeg(ffmpegZipPath, ffmpegDir);
+    const ffmpegPath = await unzipAndFindFFmpeg(ffmpegZipPath, ffmpegDir);
 
     currentState.ffmpegPath = ffmpegPath;
     return ffmpegPath;
@@ -349,22 +349,6 @@ export const setupFFmpeg = async (): Promise<string> => {
     return '';
   }
 };
-
-// Decompress FFmpeg and find executable
-async function decompressAndFindFFmpeg(
-  zipPath: string,
-  dir: string,
-): Promise<string> {
-  const ffmpegPaths = await decompress(zipPath, dir);
-  if (!ffmpegPaths?.length) {
-    throw new Error('Could not decompress FFmpeg.');
-  }
-  const ffmpegFile = ffmpegPaths.find((f) => f.path.includes('ffmpeg'));
-  if (!ffmpegFile) {
-    throw new Error('Could not find FFmpeg.');
-  }
-  return join(dir, ffmpegFile.path);
-}
 
 // Download FFmpeg
 async function downloadFfmpeg(
@@ -419,6 +403,22 @@ function getValidVersion(releases: Release, target: string): Asset {
     throw new Error(`Could not find valid FFmpeg versions for ${target}`);
   }
   return versions[0];
+}
+
+// Unzip FFmpeg and find executable
+async function unzipAndFindFFmpeg(
+  zipPath: string,
+  dir: string,
+): Promise<string> {
+  const ffmpegPaths = await unzip(zipPath, dir);
+  if (!ffmpegPaths?.length) {
+    throw new Error('Could not unzip FFmpeg.');
+  }
+  const ffmpegFile = ffmpegPaths.find((f) => f.path.includes('ffmpeg'));
+  if (!ffmpegFile) {
+    throw new Error('Could not find FFmpeg.');
+  }
+  return join(dir, ffmpegFile.path);
 }
 
 // Validate if an existing file is usable

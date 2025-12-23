@@ -217,7 +217,6 @@ export default defineConfig((ctx) => {
           'better-sqlite3',
           'chokidar',
           'countries-and-timezones',
-          'decompress',
           'electron-dl-manager',
           'electron-updater',
           'fluent-ffmpeg',
@@ -230,6 +229,7 @@ export default defineConfig((ctx) => {
           'pdfjs-dist',
           'robotjs',
           'upath',
+          'yauzl',
         ]);
 
         // Add hacky dependencies here

@@ -350,7 +350,7 @@ import { storeToRefs } from 'pinia';
 import { QMenu } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getMemorialBackground } from 'src/helpers/jw-media';
-import { decompressJwpub, showMediaWindow } from 'src/helpers/mediaPlayback';
+import { showMediaWindow, unzipJwpub } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import { getTempPath } from 'src/utils/fs';
@@ -503,7 +503,7 @@ const chooseCustomBackground = async (reset?: boolean) => {
           const filepath = backgroundPicker.filePaths[0];
           if (filepath && isJwpub(filepath)) {
             jwpubImportFilePath.value = filepath;
-            const unzipDir = await decompressJwpub(filepath);
+            const unzipDir = await unzipJwpub(filepath);
             const db = await findDb(unzipDir);
             if (!db) throw new Error('No db file found: ' + filepath);
             jwpubImages.value = window.electronApi

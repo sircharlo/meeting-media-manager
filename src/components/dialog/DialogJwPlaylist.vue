@@ -261,7 +261,7 @@ const { currentCongregation, selectedDate, selectedDateObject } =
   storeToRefs(currentState);
 const jwStore = useJwStore();
 
-const { decompress, executeQuery, fs, path } = window.electronApi;
+const { executeQuery, fs, path, unzip } = window.electronApi;
 const { pathExists, rename } = fs;
 const { basename, extname, join } = path;
 
@@ -274,7 +274,7 @@ const loadPlaylistItems = async () => {
     // Extract package
     const tempDir = await getTempPath();
     const outputPath = join(tempDir, basename(props.jwPlaylistPath));
-    await decompress(props.jwPlaylistPath, outputPath);
+    await unzip(props.jwPlaylistPath, outputPath);
 
     const dbFile = await findDb(outputPath);
     if (!dbFile) return;
