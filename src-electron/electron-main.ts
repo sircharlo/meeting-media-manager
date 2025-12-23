@@ -6,6 +6,7 @@ import {
   Menu,
   type MenuItem,
   type MenuItemConstructorOptions,
+  protocol,
   shell,
 } from 'electron';
 import { pathExistsSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
@@ -39,6 +40,19 @@ import {
 import upath from 'upath';
 
 const { join, resolve } = upath;
+
+protocol.registerSchemesAsPrivileged([
+  {
+    privileges: {
+      allowServiceWorkers: true,
+      corsEnabled: true,
+      secure: true,
+      standard: true,
+      supportFetchAPI: true,
+    },
+    scheme: 'app',
+  },
+]);
 
 initSentry({
   beforeSend(event) {
