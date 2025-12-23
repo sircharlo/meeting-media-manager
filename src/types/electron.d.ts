@@ -83,6 +83,7 @@ export interface ElectronApi {
    */
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
   inferExtension: (filename: string, filetype?: string) => Promise<string>;
+  isArchitectureMismatch: () => Promise<boolean>;
   isDownloadErrorExpected: () => Promise<boolean>;
   moveMediaWindow: (
     targetScreenNumber?: number,
@@ -203,6 +204,7 @@ export type ElectronIpcInvokeKey =
   | 'getLocales'
   | 'getScreenAccessStatus'
   | 'getUserDataPath'
+  | 'isArchitectureMismatch'
   | 'isDownloadErrorExpected'
   | 'openFileDialog'
   | 'openFolder'

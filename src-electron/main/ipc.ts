@@ -22,6 +22,8 @@ import {
 } from 'electron';
 import electronUpdater from 'electron-updater';
 const { autoUpdater } = electronUpdater;
+import { pathExistsSync } from 'fs-extra/esm';
+import { arch, platform } from 'os';
 import { PLATFORM } from 'src-electron/constants';
 import {
   downloadFile,
@@ -43,7 +45,7 @@ import {
   unregisterShortcut,
 } from 'src-electron/main/shortcuts';
 import { triggerUpdateCheck } from 'src-electron/main/updater';
-import { isSelf } from 'src-electron/main/utils';
+import { captureElectronError, isSelf } from 'src-electron/main/utils';
 import { logToWindow } from 'src-electron/main/window/window-base';
 import {
   mainWindow,
@@ -63,8 +65,10 @@ import {
   websiteWindow,
   zoomWebsiteWindow,
 } from 'src-electron/main/window/window-website';
+import upath from 'upath';
 
 const { openExternal, openPath } = shell;
+const { join } = upath;
 
 // IPC send/on
 
@@ -228,9 +232,44 @@ function handleIpcInvoke<T = unknown>(
   });
 }
 
+function isOS64Bit() {
+  try {
+    if (platform() === 'win32') {
+      // Check for the existence of the SysWOW64 directory
+      // PROGRAMFILES environment variable points to "C:\Program Files (x86)" for 32-bit apps on 64-bit systems
+      // process.env.SystemRoot points to the Windows directory (e.g., C:\Windows)
+      const sysWOW64Path = join(process.env.SystemRoot, 'SysWOW64');
+      return pathExistsSync(sysWOW64Path);
+    } else {
+      // For macOS and Linux, the os.arch() is usually reliable for the OS's capability
+      // (e.g., 'x64' or 'arm64')
+      return arch()?.includes('64') ?? false;
+    }
+  } catch (e) {
+    captureElectronError(e, {
+      contexts: {
+        fn: {
+          args: {
+            arch: arch(),
+            platform: platform(),
+            SystemRoot: process?.env?.SystemRoot,
+          },
+          name: 'isOS64Bit',
+        },
+      },
+    });
+    return false;
+  }
+}
+
 handleIpcInvoke('getAppDataPath', async () => app.getPath('appData'));
 handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
 handleIpcInvoke('getLocales', async () => app.getPreferredSystemLanguages());
+
+handleIpcInvoke(
+  'isArchitectureMismatch',
+  async () => process.arch === 'ia32' && isOS64Bit(),
+);
 
 handleIpcInvoke(
   'getScreenAccessStatus',
