@@ -37,9 +37,6 @@ export const electronApi: ElectronApi = {
   createVideoFromNonVideo: function (originalFile, ffmpegPath) {
     throw new Error('Function not implemented.');
   },
-  decompress: function (input, output, opts) {
-    throw new Error('Function not implemented.');
-  },
   downloadFile: function (url, saveDir, destFilename, lowPriority) {
     throw new Error('Function not implemented.');
   },
@@ -177,6 +174,9 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   unwatchFolders: function () {
+    throw new Error('Function not implemented.');
+  },
+  unzip: function (input, output, opts) {
     throw new Error('Function not implemented.');
   },
   watchFolder: function (path) {

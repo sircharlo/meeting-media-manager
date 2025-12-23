@@ -31,10 +31,7 @@ import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { exportAllDays } from 'src/helpers/export-media';
 import { getSubtitlesUrl, getThumbnailUrl } from 'src/helpers/fs';
-import {
-  decompressJwpub,
-  getMediaFromJwPlaylist,
-} from 'src/helpers/mediaPlayback';
+import { getMediaFromJwPlaylist, unzipJwpub } from 'src/helpers/mediaPlayback';
 import { fetchMediaItems, fetchPubMediaLinks, fetchRaw } from 'src/utils/api';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
@@ -79,7 +76,6 @@ import {
 import { createMeetingSections } from './media-sections';
 
 const {
-  decompress,
   downloadFile,
   executeQuery,
   fileUrlToPath,
@@ -88,6 +84,7 @@ const {
   pathToFileURL,
   readdir,
   setElectronUrlVariables,
+  unzip,
 } = window.electronApi;
 const { copy, ensureDir, exists, pathExists, remove, stat } = fs;
 const { basename, changeExt, dirname, extname, join } = path;
@@ -645,7 +642,7 @@ export const getDbFromJWPUB = async (
       useCurrentStateStore().currentSettings?.cacheFolder,
     );
     if (jwpub.new || !(await findDb(publicationDirectory))) {
-      await decompressJwpub(jwpub.path, publicationDirectory);
+      await unzipJwpub(jwpub.path, publicationDirectory);
     }
     const dbFile = await findDb(publicationDirectory);
     if (!dbFile) {
@@ -2544,13 +2541,13 @@ export const getJwMepsInfo = async () => {
     });
     if (!file.FilePath) return;
     const dir = dirname(file.FilePath);
-    await decompress(file.FilePath, dir);
+    await unzip(file.FilePath, dir);
     const msixbundle = await findFile(dir, '.msixbundle');
     if (!msixbundle) return;
-    await decompress(msixbundle, dir);
+    await unzip(msixbundle, dir);
     const msix = await findFile(dir, '_x64.msix');
     if (!msix) return;
-    await decompress(msix, dir);
+    await unzip(msix, dir);
     const mepsunit = await findFile(join(dir, 'Data'), '.db');
     if (!mepsunit) return;
     const mepsLangs = window.electronApi

@@ -271,7 +271,7 @@ const notifyMainWindowAboutScreenOrWindowChange = throttleWithTrailing(() => {
     '🔍 [notifyMainWindowAboutScreenOrWindowChange] Sending screenChange event',
   );
   sendToWindow(mainWindow, 'screenChange');
-}, 100);
+}, 250);
 
 export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
   console.log('🔍 [moveMediaWindow] START - Called with:', {

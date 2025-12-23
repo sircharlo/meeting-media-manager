@@ -45,14 +45,12 @@ const electronApi: ElectronApi = {
   convertHeic,
   convertPdfToImages,
   createVideoFromNonVideo: (f, fP) => invoke('createVideoFromNonVideo', f, fP),
-  decompress: (i, o, op) => invoke('decompress', i, o, op),
   downloadFile: (u, sD, dF, lP) => invoke('downloadFile', u, sD, dF, lP),
   executeQuery,
   fileUrlToPath,
   focusMediaWindow: () => send('focusMediaWindow'),
   fs,
   getAllScreens: () => invoke('getAllScreens'),
-
   getAppDataPath: () => invoke('getAppDataPath'),
   getLocales: () => invoke('getLocales'),
   getLocalPathFromFileObject: (fo) =>
@@ -102,6 +100,7 @@ const electronApi: ElectronApi = {
   unregisterAllShortcuts: () => send('unregisterAllShortcuts'),
   unregisterShortcut: (s) => send('unregisterShortcut', s),
   unwatchFolders: () => send('unwatchFolders'),
+  unzip: (i, o, op) => invoke('unzip', i, o, op),
   watchFolder: (p) => send('watchFolder', p),
   zoomWebsiteWindow,
 };
