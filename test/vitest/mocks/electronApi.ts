@@ -69,6 +69,7 @@ export const electronApi: ElectronApi = {
   inferExtension: async function (filename, filetype) {
     throw new Error('Function not implemented.');
   },
+  isArchitectureMismatch: async () => false,
   isDownloadErrorExpected: async () => false,
   moveMediaWindow: function (targetScreenNumber, windowedMode) {
     throw new Error('Function not implemented.');
