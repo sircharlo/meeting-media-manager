@@ -47,6 +47,8 @@
   "baseUrl-explain": "输入访问耶和华见证人的官方网站所用的地址。",
   "beginPlaybackPaused": "开始播放暂停",
   "beginPlaybackPaused-explain": "如果启用，音频和视频将以暂停状态启动，允许您在开始播放前准备其他操作 (例如Zoom屏幕共享)。",
+  "architecture-mismatch": "Architecture mismatch",
+  "architecture-mismatch-explain": "You seem to be running a 32-bit version of M³ on a 64-bit operating system. For better performance and stability, we recommend downloading and installing the 64-bit version of M³.",
   "beta-version-warning": "This is a beta version and should not be used at Kingdom Halls or for live meetings.",
   "bottom": "底部",
   "brochures-and-booklets": "册子和书刊",

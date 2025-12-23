@@ -47,6 +47,8 @@
   "baseUrl-explain": "Andika anwani inayotumiwa kupata tovuti rasmi ya Mashahidi wa Yehova.",
   "beginPlaybackPaused": "Begin playback paused",
   "beginPlaybackPaused-explain": "When enabled, audio and video will start in a paused state, allowing you to prepare other operations (like Zoom screen sharing) before beginning playback.",
+  "architecture-mismatch": "Architecture mismatch",
+  "architecture-mismatch-explain": "You seem to be running a 32-bit version of M³ on a 64-bit operating system. For better performance and stability, we recommend downloading and installing the 64-bit version of M³.",
   "beta-version-warning": "This is a beta version and should not be used at Kingdom Halls or for live meetings.",
   "bottom": "Bottom",
   "brochures-and-booklets": "Brochures and booklets",

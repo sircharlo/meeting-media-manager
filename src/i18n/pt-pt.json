@@ -47,6 +47,8 @@
   "baseUrl-explain": "Insira o endereço utilizado para aceder ao site oficial das Testemunhas de Jeová.",
   "beginPlaybackPaused": "Iniciar reprodução em pausa",
   "beginPlaybackPaused-explain": "Quando ativado, o áudio e o vídeo começarão num estado de pausa, permitindo-lhe preparar outras operações (como a partilha de ecrã do Zoom) antes de iniciar a reprodução.",
+  "architecture-mismatch": "Architecture mismatch",
+  "architecture-mismatch-explain": "You seem to be running a 32-bit version of M³ on a 64-bit operating system. For better performance and stability, we recommend downloading and installing the 64-bit version of M³.",
   "beta-version-warning": "Esta é uma versão beta e não deve ser utilizada em Salões do Reino ou em reuniões em direto.",
   "bottom": "Fundo",
   "brochures-and-booklets": "Brochuras e livretos",
