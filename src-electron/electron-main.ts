@@ -24,7 +24,10 @@ import {
   setShouldQuit,
 } from 'src-electron/main/session';
 import { initUpdater } from 'src-electron/main/updater';
-import { captureElectronError } from 'src-electron/main/utils';
+import {
+  captureElectronError,
+  isIgnoredUpdateError,
+} from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import 'src-electron/main/ipc';
 import 'src-electron/main/security';
@@ -53,6 +56,11 @@ initSentry({
           // Ignore electron-dl-manager errors that occur after app quit
           return null;
         }
+      }
+
+      const error = event.exception?.values?.[0];
+      if (error?.value && isIgnoredUpdateError(error.value)) {
+        return null;
       }
     } catch (err) {
       console.error(err);
