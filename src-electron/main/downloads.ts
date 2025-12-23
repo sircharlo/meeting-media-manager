@@ -147,8 +147,12 @@ export async function isDownloadErrorExpected(): Promise<boolean> {
       }
 
       // 1. Retrieve general geo info
-      const payload = await fetchJson('http://ip-api.com/json/').catch(
-        () => ({}),
+      const payload = await fetchJson<GeoInfo>(
+        'http://ip-api.com/json/',
+        undefined,
+        {
+          silent: true,
+        },
       );
 
       let marker = (payload as GeoInfo)?.countryCode || '';
