@@ -155,7 +155,15 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { setElementFont } from 'src/helpers/fonts';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
-import { computed, onMounted, ref, type Ref, useTemplateRef, watch } from 'vue';
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  type Ref,
+  useTemplateRef,
+  watch,
+} from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -180,6 +188,46 @@ $q.iconMapFn = (iconName) => {
   return {
     cls: iconName,
   };
+};
+
+/**
+ * Robustly cleans up a media element to prevent renderer crashes.
+ * @param element The HTMLAudioElement or HTMLVideoElement to clean up.
+ */
+const cleanupMediaElement = (element: HTMLMediaElement | null | undefined) => {
+  if (!element) return;
+
+  console.log('🎬 [cleanupMediaElement] Cleaning up media element');
+
+  try {
+    // Stop playback
+    element.pause();
+
+    // Clear sources to free up internal buffers/decoders
+    element.src = '';
+    element.removeAttribute('src');
+    element.srcObject = null;
+
+    // Remove all event listeners
+    element.oncanplay = null;
+    element.oncanplaythrough = null;
+    element.ontimeupdate = null;
+    element.onended = null;
+    element.onpause = null;
+    element.onerror = null;
+    element.onloadedmetadata = null;
+    element.onloadeddata = null;
+    element.onplaying = null;
+    element.onwaiting = null;
+    element.onstalled = null;
+    element.onseeking = null;
+    element.onseeked = null;
+
+    // Force a load to finalize clearing the previous source
+    element.load();
+  } catch (error) {
+    console.error('❌ [cleanupMediaElement] Error during cleanup:', error);
+  }
 };
 
 const isEnding = ref(false);
@@ -594,6 +642,14 @@ const crossfadeToNewMedia = (newUrl: string) => {
 
     // After transition completes, clean up the old layer
     setTimeout(() => {
+      // Explicitly cleanup the media element before clearing the URL
+      // to prevent crashes when the element is removed from DOM while active
+      if (currentLiveLayer.value === displayLayer1.value) {
+        cleanupMediaElement(mediaElement1.value);
+      } else {
+        cleanupMediaElement(mediaElement2.value);
+      }
+
       currentLiveLayer.value.url = '';
       isTransitioning.value = false;
     }, fadeOutDurationInMilliseconds); // Match the CSS transition duration
@@ -641,6 +697,13 @@ const clearCurrentMedia = () => {
 
     // After transition completes, clear the URL
     setTimeout(() => {
+      // Explicitly cleanup the media element before clearing the URL
+      if (currentLiveLayer.value === displayLayer1.value) {
+        cleanupMediaElement(mediaElement1.value);
+      } else {
+        cleanupMediaElement(mediaElement2.value);
+      }
+
       currentLiveLayer.value.url = '';
       if (
         currentMediaElement.value &&
@@ -974,6 +1037,12 @@ watchImmediate(
 
 onMounted(() => {
   postGetCurrentState(new Date().getTime().toString());
+});
+
+onBeforeUnmount(() => {
+  console.log('🎬 [MediaPlayerPage] onBeforeUnmount - cleaning up all media');
+  cleanupMediaElement(mediaElement1.value);
+  cleanupMediaElement(mediaElement2.value);
 });
 </script>
 
