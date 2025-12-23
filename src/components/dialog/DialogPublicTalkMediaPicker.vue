@@ -100,7 +100,7 @@ import type {
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
-import { decompressJwpub } from 'src/helpers/mediaPlayback';
+import { unzipJwpub } from 'src/helpers/mediaPlayback';
 import { getPublicationsPath } from 'src/utils/fs';
 import { findDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -178,7 +178,7 @@ const browse = async () => {
   }
   if (s34mpDir.value) await ensureDir(s34mpDir.value);
   if (s34mpFile.value) {
-    await decompressJwpub(s34mpFile.value, s34mpDir.value, true);
+    await unzipJwpub(s34mpFile.value, s34mpDir.value, true);
     populatePublicTalks();
   }
 };

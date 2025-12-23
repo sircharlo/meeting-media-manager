@@ -144,7 +144,7 @@ import {
   findMediaSection,
   getOrCreateMediaSection,
 } from 'src/helpers/media-sections';
-import { decompressJwpub, showMediaWindow } from 'src/helpers/mediaPlayback';
+import { showMediaWindow, unzipJwpub } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { triggerZoomScreenShare } from 'src/helpers/zoom';
 import { convertImageIfNeeded } from 'src/utils/converters';
@@ -254,7 +254,6 @@ watch(
 
 const {
   convertPdfToImages,
-  decompress,
   executeQuery,
   fs,
   getLocalPathFromFileObject,
@@ -262,6 +261,7 @@ const {
   path,
   pathToFileURL,
   readdir,
+  unzip,
 } = window.electronApi;
 const { ensureDir, exists, remove, writeFile } = fs;
 const { basename, join } = path;
@@ -1128,7 +1128,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             tempExtractionDir,
           );
           await ensureDir(tempExtractionDir);
-          await decompress(filepath, tempExtractionDir);
+          await unzip(filepath, tempExtractionDir);
 
           // Check for 'contents' file
           const contentsPath = join(tempExtractionDir, 'contents');
@@ -1147,7 +1147,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             tempContentsDir,
           );
           await ensureDir(tempContentsDir);
-          await decompress(contentsPath, tempContentsDir);
+          await unzip(contentsPath, tempContentsDir);
 
           // Find the .db file
           console.log(
@@ -1186,12 +1186,9 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             return;
           }
           console.log(
-            '🎯 [addToFiles] Decompressing JWPUB to publication directory',
+            '🎯 [addToFiles] Unzipping JWPUB to publication directory',
           );
-          const unzipDir = await decompressJwpub(
-            filepath,
-            publicationDirectory,
-          );
+          const unzipDir = await unzipJwpub(filepath, publicationDirectory);
           console.log('🎯 [addToFiles] Unzip dir:', unzipDir);
           console.log('🎯 [addToFiles] Finding db in unzip dir');
           const db = await findDb(unzipDir);
@@ -1280,8 +1277,8 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         console.log('🎯 Unzip directory:', unzipDirectory);
         await remove(unzipDirectory);
         console.log('🎯 Removed unzip directory');
-        await decompress(filepath, unzipDirectory);
-        console.log('🎯 Decompressed archive');
+        await unzip(filepath, unzipDirectory);
+        console.log('🎯 Unzipped archive');
         const files = await readdir(unzipDirectory);
         console.log('🎯 Reading unzip directory', files);
         const filePaths = files.map((file) => join(unzipDirectory, file.name));
