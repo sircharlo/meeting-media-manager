@@ -119,7 +119,7 @@ export function createWindow(
   } else {
     // Use absolute path for index.html in production builds
     const indexPath = resolve(app.getAppPath(), 'index.html');
-    win.loadFile(indexPath, { query: { page } });
+    win.loadFile(indexPath, { hash: `?page=${page}` });
   }
 
   // Devtools
