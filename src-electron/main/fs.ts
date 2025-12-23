@@ -1,9 +1,9 @@
-import type { Stats } from 'fs-extra';
-import type { FileDialogFilter } from 'src/types';
+import type { FileDialogFilter, UnzipOptions, UnzipResult } from 'src/types';
 
 import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
-import decompress from 'decompress';
 import { dialog } from 'electron';
+import { createWriteStream } from 'fs';
+import { ensureDir, type Stats } from 'fs-extra';
 import { captureElectronError } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindow } from 'src-electron/main/window/window-main';
@@ -12,17 +12,13 @@ import {
   JWPUB_EXTENSIONS,
   PDF_EXTENSIONS,
 } from 'src/constants/media';
+import { pipeline } from 'stream/promises';
 import upath from 'upath';
+import yauzl from 'yauzl';
 
-const { basename, dirname, toUnix } = upath;
+const { basename, dirname, join, toUnix } = upath;
 
-export async function decompressFile(
-  input: string,
-  output: string,
-  opts?: decompress.DecompressOptions,
-) {
-  return decompress(input, output, opts);
-}
+const ongoingDecompressions = new Map<string, Promise<UnzipResult[]>>();
 
 export async function openFileDialog(
   single: boolean,
@@ -69,6 +65,106 @@ export async function openFolderDialog() {
   return dialog.showOpenDialog(mainWindow, {
     properties: ['openDirectory'],
   });
+}
+
+/**
+ * Decompresses a file using yauzl for memory efficiency (avoids buffering entire zip)
+ */
+export async function unzipFile(
+  input: string,
+  output: string,
+  opts?: UnzipOptions,
+): Promise<UnzipResult[]> {
+  const existing = ongoingDecompressions.get(output);
+  if (existing) return existing;
+
+  const decompressionPromise = new Promise<UnzipResult[]>((resolve, reject) => {
+    const extractedFiles: UnzipResult[] = [];
+    yauzl.open(input, { lazyEntries: true }, (err, zipfile) => {
+      if (err) {
+        captureElectronError(err, {
+          contexts: {
+            fn: { args: { input, output }, name: 'unzipFile yauzl.open' },
+          },
+        });
+        return reject(err);
+      }
+      if (!zipfile) return reject(new Error('Zipfile not found'));
+
+      zipfile.readEntry();
+      zipfile.on('entry', async (entry: yauzl.Entry) => {
+        const fullPath = join(output, entry.fileName);
+
+        // Apply filter if provided
+        if (opts?.includes?.length && !opts.includes.includes(entry.fileName)) {
+          zipfile.readEntry();
+          return;
+        }
+
+        if (/\/$/.test(entry.fileName)) {
+          // Directory
+          try {
+            await ensureDir(fullPath);
+            zipfile.readEntry();
+          } catch (e) {
+            zipfile.close();
+            reject(e);
+          }
+        } else {
+          // File
+          try {
+            await ensureDir(dirname(fullPath));
+            zipfile.openReadStream(entry, async (err, readStream) => {
+              if (err) {
+                zipfile.close();
+                return reject(err);
+              }
+              if (!readStream) {
+                zipfile.close();
+                return reject(new Error('Read stream not found'));
+              }
+
+              const writeStream = createWriteStream(fullPath);
+              try {
+                await pipeline(readStream, writeStream);
+                extractedFiles.push({ path: entry.fileName });
+                zipfile.readEntry();
+              } catch (e) {
+                captureElectronError(e, {
+                  contexts: {
+                    fn: { args: { input, output }, name: 'unzipFile pipeline' },
+                  },
+                });
+                zipfile.close();
+                reject(e);
+              }
+            });
+          } catch (e) {
+            zipfile.close();
+            reject(e);
+          }
+        }
+      });
+
+      zipfile.on('end', () => {
+        resolve(extractedFiles);
+      });
+
+      zipfile.on('error', (err) => {
+        captureElectronError(err, {
+          contexts: {
+            fn: { args: { input, output }, name: 'unzipFile zipfile error' },
+          },
+        });
+        reject(err);
+      });
+    });
+  }).finally(() => {
+    ongoingDecompressions.delete(output);
+  });
+
+  ongoingDecompressions.set(output, decompressionPromise);
+  return decompressionPromise;
 }
 
 const watchers = new Set<FSWatcher>();

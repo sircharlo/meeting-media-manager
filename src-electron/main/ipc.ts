@@ -1,4 +1,3 @@
-import type decompress from 'decompress';
 import type {
   DiscussionCategory,
   ElectronIpcInvokeKey,
@@ -9,6 +8,7 @@ import type {
   MediaAccessStatus,
   NavigateWebsiteAction,
   SettingsValues,
+  UnzipOptions,
 } from 'src/types';
 
 import { homepage, repository } from 'app/package.json';
@@ -29,10 +29,10 @@ import {
 } from 'src-electron/main/downloads';
 import { createVideoFromNonVideo } from 'src-electron/main/ffmpeg';
 import {
-  decompressFile,
   openFileDialog,
   openFolderDialog,
   unwatchFolders,
+  unzipFile,
   watchFolder,
 } from 'src-electron/main/fs';
 import { getAllScreens } from 'src-electron/main/screen';
@@ -279,13 +279,9 @@ handleIpcInvoke('openFolderDialog', async () => openFolderDialog());
 handleIpcInvoke('openFolder', async (_e, path: string) => openPath(path));
 
 handleIpcInvoke(
-  'decompress',
-  async (
-    _e,
-    input: string,
-    output: string,
-    opts?: decompress.DecompressOptions,
-  ) => decompressFile(input, output, opts),
+  'unzip',
+  async (_e, input: string, output: string, opts?: UnzipOptions) =>
+    unzipFile(input, output, opts),
 );
 
 handleIpcSend('quitAndInstall', () => {

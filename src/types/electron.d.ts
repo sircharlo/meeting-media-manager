@@ -1,4 +1,3 @@
-import type decompress from 'decompress';
 import type { default as FsExtra } from 'fs-extra';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
 import type robot from 'robotjs';
@@ -45,11 +44,6 @@ export interface ElectronApi {
     originalFile: string,
     ffmpegPath: string,
   ) => Promise<string>;
-  decompress: (
-    input: string,
-    output: string,
-    opts?: decompress.DecompressOptions,
-  ) => Promise<Decompress.File[]>;
   downloadFile: (
     url: string,
     saveDir: string,
@@ -191,6 +185,11 @@ export interface ElectronApi {
   unregisterAllShortcuts: () => void;
   unregisterShortcut: (shortcut: string) => void;
   unwatchFolders: () => void;
+  unzip: (
+    input: string,
+    output: string,
+    opts?: UnzipOptions,
+  ) => Promise<UnzipResult[]>;
   watchFolder: (path: string) => void;
   zoomWebsiteWindow: (direction: 'in' | 'out') => void;
 }
@@ -198,7 +197,6 @@ export interface ElectronApi {
 // ipcMain.handle / ipcRenderer.invoke channels
 export type ElectronIpcInvokeKey =
   | 'createVideoFromNonVideo'
-  | 'decompress'
   | 'downloadFile'
   | 'getAllScreens'
   | 'getAppDataPath'
@@ -210,7 +208,8 @@ export type ElectronIpcInvokeKey =
   | 'openFolder'
   | 'openFolderDialog'
   | 'registerShortcut'
-  | 'set-hardware-acceleration';
+  | 'set-hardware-acceleration'
+  | 'unzip';
 
 // BrowserWindow.webContents.send / ipcRenderer.on channels
 export type ElectronIpcListenKey =
@@ -272,3 +271,11 @@ export type MediaAccessStatus =
   | 'unknown';
 
 export type NavigateWebsiteAction = 'back' | 'forward' | 'refresh';
+
+export interface UnzipOptions {
+  includes?: string[];
+}
+
+export interface UnzipResult {
+  path: string;
+}

@@ -16,15 +16,26 @@ import { isJwpub } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
 
-const { decompress, executeQuery, fs, path, toggleMediaWindow } =
-  window.electronApi;
+const { executeQuery, fs, path, toggleMediaWindow, unzip } = window.electronApi;
 const { pathExists, remove, rename } = fs;
 const { basename, extname, join } = path;
 
-const jwpubDecompressor = async (jwpubPath: string, outputPath: string) => {
+const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
   try {
-    await decompress(jwpubPath, outputPath);
-    await decompress(join(outputPath, 'contents'), outputPath);
+    const contentsPath = join(outputPath, 'contents');
+    // First, only extract 'contents' from the JWPUB zip if it doesn't exist
+    if (!(await pathExists(contentsPath))) {
+      await unzip(jwpubPath, outputPath, {
+        includes: ['contents'],
+      });
+    }
+
+    // Then, extract 'contents' into the output directory if needed
+    // We check if the database exists to determine if we need to unzip
+    const dbFile = await findDb(outputPath);
+    if (!dbFile) {
+      await unzip(contentsPath, outputPath);
+    }
     return outputPath;
   } catch (error) {
     errorCatcher(error);
@@ -32,7 +43,7 @@ const jwpubDecompressor = async (jwpubPath: string, outputPath: string) => {
   }
 };
 
-export const decompressJwpub = async (
+export const unzipJwpub = async (
   jwpubPath: string,
   outputPath?: string,
   force = false,
@@ -53,7 +64,7 @@ export const decompressJwpub = async (
       }
     }
     if (!currentState.extractedFiles[outputPath] || force) {
-      currentState.extractedFiles[outputPath] = await jwpubDecompressor(
+      currentState.extractedFiles[outputPath] = await jwpubExtractor(
         jwpubPath,
         outputPath,
       );
@@ -73,7 +84,7 @@ export const getMediaFromJwPlaylist = async (
   try {
     if (!jwPlaylistPath) return [];
     const outputPath = join(destPath, basename(jwPlaylistPath));
-    await decompress(jwPlaylistPath, outputPath);
+    await unzip(jwPlaylistPath, outputPath);
     const dbFile = await findDb(outputPath);
     if (!dbFile) return [];
     let playlistName = '';
