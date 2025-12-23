@@ -69,11 +69,14 @@ export function isSelf(url?: string): boolean {
     if (!url) return false;
     const parsedUrl = new URL(url);
 
+    if (process.env.DEV) {
+      return parsedUrl.origin === process.env.APP_URL;
+    }
+
     return (
-      (!!process.env.DEV && parsedUrl.origin === process.env.APP_URL) ||
-      (!process.env.DEV &&
-        parsedUrl.protocol === 'file:' &&
-        parsedUrl.pathname.endsWith('index.html'))
+      (parsedUrl.protocol === 'file:' &&
+        parsedUrl.pathname.toLowerCase().endsWith('index.html')) ||
+      parsedUrl.protocol === 'app:'
     );
   } catch {
     return false;
