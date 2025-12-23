@@ -19,6 +19,35 @@ const getBetaUpdatesPath = () =>
 
 const isPortable = () => !!process.env.PORTABLE_EXECUTABLE_DIR;
 
+const isIgnoredUpdateError = (
+  error: Error | string | unknown,
+  message?: string,
+) => {
+  const ignoreErrors = [
+    'ENOENT',
+    'EPERM',
+    'Command failed: mv -f',
+    '504 Gateway Time-out',
+    'Code signature at URL',
+    'HttpError: 503',
+    'HttpError: 504',
+    'YAMLException',
+    'ECONNRESET',
+    'ERR_CONNECTION_RESET',
+    'ECONNREFUSED',
+    'ENOTFOUND',
+    'EAI_AGAIN',
+    'SELF_SIGNED_CERT_IN_CHAIN',
+    'OSStatus error -60006',
+  ];
+
+  return ignoreErrors.some((ignoreError) => {
+    const errorMsg =
+      typeof error === 'string' ? error : (error as Error)?.message;
+    return message?.includes(ignoreError) || errorMsg?.includes(ignoreError);
+  });
+};
+
 export async function initUpdater() {
   if (await pathExists(getUpdatesDisabledPath())) return; // Skip updater if updates are disabled by user
   if (isPortable()) return; // Skip updater for portable version
@@ -32,29 +61,6 @@ export async function initUpdater() {
 
     if (await isDownloadErrorExpected()) return;
 
-    const ignoreErrors = [
-      'ENOENT',
-      'EPERM',
-      'Command failed: mv -f',
-      '504 Gateway Time-out',
-      'Code signature at URL',
-      'HttpError: 503',
-      'HttpError: 504',
-      'YAMLException',
-      'ECONNRESET',
-      'ERR_CONNECTION_RESET',
-      'ECONNREFUSED',
-      'ENOTFOUND',
-      'EAI_AGAIN',
-      'SELF_SIGNED_CERT_IN_CHAIN',
-      'OSStatus error -60006',
-    ];
-
-    const shouldIgnore = ignoreErrors.some(
-      (ignoreError) =>
-        message?.includes(ignoreError) || error?.message?.includes(ignoreError),
-    );
-
     if (
       message?.includes('read-only volume') ||
       error?.message?.includes('read-only volume')
@@ -63,7 +69,7 @@ export async function initUpdater() {
       return;
     }
 
-    if (!shouldIgnore) {
+    if (!isIgnoredUpdateError(error, message)) {
       captureElectronError(error, {
         contexts: {
           fn: { errorMessage: error.message, message, name: 'initUpdater' },
@@ -110,8 +116,10 @@ export const triggerUpdateCheck = async (attempt = 1) => {
       }
     }
   } catch (error) {
-    captureElectronError(error, {
-      contexts: { fn: { name: 'triggerUpdateCheck' } },
-    });
+    if (!isIgnoredUpdateError(error)) {
+      captureElectronError(error, {
+        contexts: { fn: { name: 'triggerUpdateCheck' } },
+      });
+    }
   }
 };
