@@ -119,6 +119,36 @@ export const isValidUrl = (url: string): boolean => {
 };
 
 /**
+ * Checks if an error is a network-related error that should not be reported to Sentry
+ * @param error The error to check
+ * @returns Whether the error is a network error
+ */
+export function isNetworkError(error: unknown): boolean {
+  try {
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') return true;
+      if (error.message.includes('fetch failed')) {
+        const cause = error.cause as Record<string, unknown> | undefined;
+        if (cause && typeof cause.code === 'string') {
+          const networkCodes = [
+            'ENOTFOUND',
+            'ETIMEDOUT',
+            'ECONNREFUSED',
+            'ECONNRESET',
+            'EAI_AGAIN',
+          ];
+          if (networkCodes.includes(cause.code)) return true;
+        }
+      }
+    }
+    return false;
+  } catch (e) {
+    captureElectronError(e);
+    return false;
+  }
+}
+
+/**
  * Fetches a raw response from a given url
  * @param url The url to fetch
  * @param init The fetch init options
@@ -138,7 +168,7 @@ export const fetchRaw = async (url: string, init?: RequestInit) => {
 export const fetchJson = async <T>(
   url: string,
   params?: URLSearchParams,
-  options: { timeout?: number } = {},
+  options: { silent?: boolean; timeout?: number } = {},
 ): Promise<null | T> => {
   try {
     if (!url) return null;
@@ -154,8 +184,9 @@ export const fetchJson = async <T>(
         { signal: controller.signal },
       );
       if (response.ok || response.status === 304) {
-        return await response.json();
+        return (await response.json()) as T;
       } else if (
+        !options.silent &&
         ![403, 404, 429, 502].includes(response.status) &&
         !(
           response.status === 400 &&
@@ -181,6 +212,8 @@ export const fetchJson = async <T>(
       clearTimeout(timeoutId);
     }
   } catch (e) {
+    if (options.silent || isNetworkError(e)) return null;
+
     const { default: isOnline } = await import('is-online');
     const online = await isOnline();
 
