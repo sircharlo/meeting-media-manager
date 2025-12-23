@@ -10833,7 +10833,7 @@ __metadata:
     "@types/node": "npm:^22.19.3"
     "@types/pretty-bytes": "npm:^5.2.0"
     "@types/yauzl": "npm:^2.10.3"
-    "@typescript-eslint/utils": "npm:^8.50.0"
+    "@typescript-eslint/utils": "npm:^8.50.1"
     "@vitejs/plugin-vue": "npm:^6.0.3"
     "@vitest/eslint-plugin": "npm:^1.6.3"
     "@vue/eslint-config-prettier": "npm:^10.2.0"
