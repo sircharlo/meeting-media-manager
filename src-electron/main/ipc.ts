@@ -23,7 +23,7 @@ import {
 import electronUpdater from 'electron-updater';
 const { autoUpdater } = electronUpdater;
 import { pathExistsSync } from 'fs-extra/esm';
-import { arch, platform } from 'os';
+import { arch, platform } from 'node:os';
 import { PLATFORM } from 'src-electron/constants';
 import {
   downloadFile,
