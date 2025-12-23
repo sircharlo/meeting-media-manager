@@ -119,6 +119,42 @@ export const isValidUrl = (url: string): boolean => {
 };
 
 /**
+ * Checks if an update error should be ignored (not reported to Sentry)
+ * @param error The error to check
+ * @param message An optional additional message
+ * @returns Whether the error should be ignored
+ */
+export function isIgnoredUpdateError(
+  error: Error | string | unknown,
+  message?: string,
+): boolean {
+  const ignoreErrors = [
+    'ENOENT',
+    'EPERM',
+    'Command failed: mv -f',
+    '504 Gateway Time-out',
+    'Code signature at URL',
+    'HttpError: 503',
+    'HttpError: 504',
+    'YAMLException',
+    'ECONNRESET',
+    'ERR_CONNECTION_RESET',
+    'ECONNREFUSED',
+    'ENOTFOUND',
+    'EAI_AGAIN',
+    'SELF_SIGNED_CERT_IN_CHAIN',
+    'OSStatus error -60006',
+    'read-only volume',
+  ];
+
+  const errorMsg =
+    typeof error === 'string' ? error : (error as Error)?.message;
+  return ignoreErrors.some((ignoreError) => {
+    return message?.includes(ignoreError) || errorMsg?.includes(ignoreError);
+  });
+}
+
+/**
  * Checks if an error is a network-related error that should not be reported to Sentry
  * @param error The error to check
  * @returns Whether the error is a network error
