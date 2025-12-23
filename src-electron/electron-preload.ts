@@ -60,6 +60,7 @@ const electronApi: ElectronApi = {
   getUserDataPath: () => invoke('getUserDataPath'),
   getVideoDuration,
   inferExtension,
+  isArchitectureMismatch: () => invoke('isArchitectureMismatch'),
   isDownloadErrorExpected: () => invoke('isDownloadErrorExpected'),
   moveMediaWindow: (t, w) => send('moveMediaWindow', t, w),
   navigateWebsiteWindow,
