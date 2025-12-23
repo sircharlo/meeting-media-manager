@@ -47,6 +47,8 @@
   "baseUrl-explain": "Add meg a címet, amelyen keresztül elérhető Jehova Tanúi hivatalos honlapja.",
   "beginPlaybackPaused": "Lejátszás megkezdése szüneteltetve",
   "beginPlaybackPaused-explain": "Ha engedélyezve van, az audio és a videó szüneteltetett állapotban indul el, így a lejátszás megkezdése előtt elvégezheti az egyéb műveleteket (például a Zoom képernyő-megosztást).",
+  "architecture-mismatch": "Architecture mismatch",
+  "architecture-mismatch-explain": "You seem to be running a 32-bit version of M³ on a 64-bit operating system. For better performance and stability, we recommend downloading and installing the 64-bit version of M³.",
   "beta-version-warning": "Ez egy béta verzió, ezért nem ajánlott használni a Királyság Termekben vagy élesben zajló összejöveteleken.",
   "bottom": "Alul",
   "brochures-and-booklets": "Folyóiratok és füzetek",

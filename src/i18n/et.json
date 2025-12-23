@@ -47,6 +47,8 @@
   "baseUrl-explain": "Sisesta ametlik Jehoova tunnistajate veebisaidi aadress.",
   "beginPlaybackPaused": "Käivita pausile pandud meediafail",
   "beginPlaybackPaused-explain": "Kui see on aktiveeritud, alustavad heli ja video pausitud olekus, mis võimaldab teil enne taasesituse alustamist ette valmistada muid toiminguid (nagu Zoom ekraani jagamine).",
+  "architecture-mismatch": "Architecture mismatch",
+  "architecture-mismatch-explain": "You seem to be running a 32-bit version of M³ on a 64-bit operating system. For better performance and stability, we recommend downloading and installing the 64-bit version of M³.",
   "beta-version-warning": "See on beetaversioon ja seda ei tohiks kasutada kuningriigisaalides ega reaalajas koosolekutel.",
   "bottom": "Alla",
   "brochures-and-booklets": "Brožüürid ja voldikud",

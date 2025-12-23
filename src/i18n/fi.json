@@ -47,6 +47,8 @@
   "baseUrl-explain": "Syötä osoite, jota käytetään Jehovan todistajien viralliselle verkkosivustolle.",
   "beginPlaybackPaused": "Aloita toisto keskeytetty",
   "beginPlaybackPaused-explain": "Kun käytössä, ääni ja video alkavat pysäytetyssä tilassa, jolloin voit valmistella muita toimintoja (kuten zoomausnäytön jakamista) ennen toiston aloittamista.",
+  "architecture-mismatch": "Architecture mismatch",
+  "architecture-mismatch-explain": "You seem to be running a 32-bit version of M³ on a 64-bit operating system. For better performance and stability, we recommend downloading and installing the 64-bit version of M³.",
   "beta-version-warning": "Tämä on beta-versio eikä sitä pitäisi käyttää Valtakunnan salilla tai live-kokouksiissa.",
   "bottom": "Alareuna",
   "brochures-and-booklets": "Kirjaset",
