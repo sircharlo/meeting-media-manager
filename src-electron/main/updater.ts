@@ -4,7 +4,10 @@ const { autoUpdater } = electronUpdater;
 import { pathExists } from 'fs-extra/esm';
 import { IS_TEST } from 'src-electron/constants';
 import { isDownloadErrorExpected } from 'src-electron/main/downloads';
-import { captureElectronError } from 'src-electron/main/utils';
+import {
+  captureElectronError,
+  isIgnoredUpdateError,
+} from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindow } from 'src-electron/main/window/window-main';
 import upath from 'upath';
@@ -19,35 +22,6 @@ const getBetaUpdatesPath = () =>
 
 const isPortable = () => !!process.env.PORTABLE_EXECUTABLE_DIR;
 
-const isIgnoredUpdateError = (
-  error: Error | string | unknown,
-  message?: string,
-) => {
-  const ignoreErrors = [
-    'ENOENT',
-    'EPERM',
-    'Command failed: mv -f',
-    '504 Gateway Time-out',
-    'Code signature at URL',
-    'HttpError: 503',
-    'HttpError: 504',
-    'YAMLException',
-    'ECONNRESET',
-    'ERR_CONNECTION_RESET',
-    'ECONNREFUSED',
-    'ENOTFOUND',
-    'EAI_AGAIN',
-    'SELF_SIGNED_CERT_IN_CHAIN',
-    'OSStatus error -60006',
-  ];
-
-  return ignoreErrors.some((ignoreError) => {
-    const errorMsg =
-      typeof error === 'string' ? error : (error as Error)?.message;
-    return message?.includes(ignoreError) || errorMsg?.includes(ignoreError);
-  });
-};
-
 export async function initUpdater() {
   if (await pathExists(getUpdatesDisabledPath())) return; // Skip updater if updates are disabled by user
   if (isPortable()) return; // Skip updater for portable version
@@ -61,21 +35,21 @@ export async function initUpdater() {
 
     if (await isDownloadErrorExpected()) return;
 
-    if (
-      message?.includes('read-only volume') ||
-      error?.message?.includes('read-only volume')
-    ) {
-      sendToWindow(mainWindow, 'update-error');
+    if (isIgnoredUpdateError(error, message)) {
+      if (
+        message?.includes('read-only volume') ||
+        error?.message?.includes('read-only volume')
+      ) {
+        sendToWindow(mainWindow, 'update-error');
+      }
       return;
     }
 
-    if (!isIgnoredUpdateError(error, message)) {
-      captureElectronError(error, {
-        contexts: {
-          fn: { errorMessage: error.message, message, name: 'initUpdater' },
-        },
-      });
-    }
+    captureElectronError(error, {
+      contexts: {
+        fn: { errorMessage: error.message, message, name: 'initUpdater' },
+      },
+    });
   });
 
   autoUpdater.on('update-available', (info) => {
