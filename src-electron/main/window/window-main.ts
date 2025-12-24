@@ -2,7 +2,7 @@ import type { BrowserWindow } from 'electron';
 
 import { PLATFORM } from 'src-electron/constants';
 import { cancelAllDownloads } from 'src-electron/main/downloads';
-import { setShouldQuit } from 'src-electron/main/session';
+import { setAppQuitting, setShouldQuit } from 'src-electron/main/session';
 import { throttleWithTrailing } from 'src-electron/main/utils';
 import {
   closeOtherWindows,
@@ -22,6 +22,9 @@ export let authorizedClose = false;
  * Creates the main window
  */
 export function createMainWindow() {
+  // Reset app quitting state
+  setAppQuitting(false);
+
   // If the window is already open, just focus it
   if (mainWindow && !mainWindow.isDestroyed()) {
     mainWindow.show();
