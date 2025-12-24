@@ -161,9 +161,10 @@ export const getSjjExtractOrdinals = (db: string, docId: number) => {
     const ordinals = executeQuery<{
       BeginParagraphOrdinal: number;
       EndParagraphOrdinal: number;
+      SortPosition: number;
     }>(
       db,
-      `SELECT DocumentExtract.BeginParagraphOrdinal, DocumentExtract.EndParagraphOrdinal
+      `SELECT DocumentExtract.BeginParagraphOrdinal, DocumentExtract.EndParagraphOrdinal, DocumentExtract.SortPosition
        FROM DocumentExtract
        INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId
        INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId
@@ -304,11 +305,20 @@ export const getDocumentMultimediaItems = (
       (item) => item.KeySymbol && item.KeySymbol.includes('sjj'),
     );
 
-    if (sjjmItems.length > 0 && (source.docId || source.docId === 0)) {
+    if (sjjmItems.length > 0 && source.docId !== undefined) {
       const sjjOrdinals = getSjjExtractOrdinals(source.db, source.docId);
 
       if (sjjOrdinals.length > 0) {
-        // Map ordinals sequentially: 1st sjjm item gets 1st sjj ordinal, etc.
+        // Capture original ordinals to reliably identify "between" items
+        const originalOrdinals = new Map<number, number>();
+        items.forEach((item) => {
+          originalOrdinals.set(
+            item.MultimediaId,
+            item.BeginParagraphOrdinal || 0,
+          );
+        });
+
+        // 1. Map sjjm items sequentially: 1st sjjm item gets 1st sjj ordinal, etc.
         sjjmItems.forEach((item, index) => {
           const ordinal = sjjOrdinals[index];
           if (ordinal) {
@@ -334,8 +344,68 @@ export const getDocumentMultimediaItems = (
               );
               item.EndParagraphOrdinal = ordinal.EndParagraphOrdinal;
             }
+            if (ordinal.SortPosition !== item.BeginPosition) {
+              console.log(
+                '⚠️ SortPosition mismatch for sjjm item; updating:',
+                item.MultimediaId,
+                'from',
+                item.BeginPosition,
+                'to',
+                ordinal.SortPosition,
+              );
+              item.BeginPosition = ordinal.SortPosition;
+            }
           }
         });
+
+        // 2. Fix items between sjjm items by incrementing ordinals
+        // "between" means they have original BeginParagraphOrdinal > current sjj and < next sjj
+        for (let i = 0; i < sjjmItems.length - 1; i++) {
+          const current = sjjmItems[i];
+          const next = sjjmItems[i + 1];
+
+          if (!current || !next) continue;
+
+          const currentOrigP = originalOrdinals.get(current.MultimediaId) || 0;
+          const nextOrigP = originalOrdinals.get(next.MultimediaId) || 0;
+
+          const betweenItems = items.filter((item) => {
+            const origP = originalOrdinals.get(item.MultimediaId) || 0;
+            return (
+              origP > currentOrigP &&
+              origP < nextOrigP &&
+              !sjjmItems.includes(item)
+            );
+          });
+
+          if (betweenItems.length > 0) {
+            // Sort by original ordinal to preserve intended sequence
+            betweenItems.sort((a, b) => {
+              const aP = originalOrdinals.get(a.MultimediaId) || 0;
+              const bP = originalOrdinals.get(b.MultimediaId) || 0;
+              return aP - bP;
+            });
+
+            let lastP = current.BeginParagraphOrdinal || 0;
+            let lastS = current.BeginPosition || 0;
+
+            betweenItems.forEach((item) => {
+              lastP++;
+              lastS++;
+              console.log(
+                '⚠️ Incrementing ordinals for item between sjjm items:',
+                item.MultimediaId,
+                'to p:',
+                lastP,
+                's:',
+                lastS,
+              );
+              item.BeginParagraphOrdinal = lastP;
+              item.EndParagraphOrdinal = lastP;
+              item.BeginPosition = lastS;
+            });
+          }
+        }
 
         // Re-sort all items by BeginParagraphOrdinal after mapping
         if (ParagraphColumnsExist) {

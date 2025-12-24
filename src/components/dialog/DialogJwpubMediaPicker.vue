@@ -93,7 +93,7 @@
                           item.KeySymbol,
                           item.IssueTagNumber,
                           item.MepsDocumentId,
-                          (item.MepsLanguageIndex &&
+                          (item.MepsLanguageIndex !== undefined &&
                             mepslangs[item.MepsLanguageIndex]) ||
                             '',
                           item.Track,
