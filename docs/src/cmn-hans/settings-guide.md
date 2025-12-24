@@ -94,7 +94,7 @@ The name of your congregation. This is used for organization and display purpose
 
 **选项**：星期日至星期六
 
-**Default**: 无（需在设置向导中设定）
+**默认**：无（需在设置向导中设置）
 
 ### 周中聚会开始时间 {#midweek-meeting-time}
 
@@ -114,7 +114,7 @@ The name of your congregation. This is used for organization and display purpose
 
 **选项**：星期日至星期六
 
-**Default**: 无（需在设置向导中设定）
+**默认**：无（需在设置向导中设置）
 
 ### 周末聚会开始时间 {#weekend-meeting-time}
 
