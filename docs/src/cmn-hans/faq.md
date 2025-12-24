@@ -220,14 +220,14 @@ Check these OBS-related issues:
 - 这与 M³ 无关；使用其他播放器也会遇到同样的问题，除非使用 Zoom 的“共享电脑声音”
 - “原始音频”有三个子选项——通常前两个启用、第三个禁用效果更佳
 - 若仍有问题，可改用 Zoom 的“共享电脑声音”功能
-- Alternatively, look into using the Zoom integration instead, as it uses Zoom's native screen sharing.
+- 或者，改用 Zoom 集成功能，因为它使用 Zoom 的原生屏幕共享。
 
 **为什么需要这样做？**  
 M³ 在您的电脑本地播放带声音的媒体，但当使用 OBS 时，这个音频并不会随着视频流自动传到 Zoom。若电脑已正确配置（例如：为媒体播放使用第二声卡，并让 Zoom 把它当作“麦克风”来听），启用“原始音频”可让 Zoom 捕获电脑正在播放的声音。 The Original Audio setting allows Zoom to capture the audio playing on your computer during screen sharing, if your computer is configured properly (for example: the computer has a second sound card that is used for media playback which Zoom listens to as a microphone.)
 
 ### :snail: M³ 运行缓慢，如何改善？ {#performance-issues} How can I improve performance? {#performance-issues}
 
-Try these performance optimizations:
+可尝试以下性能优化：
 
 1. **启用额外缓存**
 2. **关闭无关程序**
@@ -245,7 +245,7 @@ Verify these language settings:
 
 ## 支持与社区 {#support-community}
 
-### :radioactive: 如何反馈问题？ {#how-do-i-report-an-issue} {#how-do-i-report-an-issue}
+### :radioactive: 如何反馈问题？ {#how-do-i-report-an-issue} :radioactive: 如何反馈问题？ {#how-do-i-report-an-issue} {#how-do-i-report-an-issue}
 
 请到官方 GitHub 仓库[提交 Issue](https://github.com/sircharlo/meeting-media-manager/issues)，并附上： Include:
 
