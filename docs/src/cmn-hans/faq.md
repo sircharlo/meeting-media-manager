@@ -40,7 +40,7 @@ M³ 支持 Windows、macOS 和 Linux：
 
 ## 安装与设置 {#installation-setup}
 
-### :video_camera: How do I set up the OBS Studio integration? {#installation}
+### :video_camera: How do I set up the OBS Studio integration? {#faq-obs-setup}
 
 请前往[下载页面](download)获取适用于您系统的版本，并参照[用户指南](user-guide)完成安装。
 
