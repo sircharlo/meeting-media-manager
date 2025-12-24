@@ -906,8 +906,8 @@ export const getStudyBibleBooks: () => Promise<
             BibleBookId: localItem.ChapterNumber,
             CoverPictureFilePath: '',
             FilePath: '',
-            // Add other necessary default properties to avoid crashes
-            MepsLanguageIndex: 0, // Default to 0? Or undefined?
+            // Add other necessary default properties
+            MepsLanguageIndex: 0, // Default to English
             Title: localItem.Title,
           } as MultimediaItem);
         }
@@ -2285,7 +2285,7 @@ export const getMwMedia = async (lookupDate: Date) => {
           item.Track === media.Track &&
           item.IssueTagNumber === media.IssueTagNumber,
       );
-      if (multimediaMepsLangItem?.MepsLanguageIndex) {
+      if (multimediaMepsLangItem?.MepsLanguageIndex !== undefined) {
         const mepsLang = getJwLangCode(
           multimediaMepsLangItem.MepsLanguageIndex,
         );
