@@ -4,6 +4,12 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
+## v25.12.2
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Boutons pour zoom d'images** : Ajout de la possibilité d'appuyer et de maintenir enfoncés les boutons pour le zoom et déplacement d'images pour un réglage continu.
+
 ## v25.12.0
 
 ### ✨ Nouvelles fonctionnalités
