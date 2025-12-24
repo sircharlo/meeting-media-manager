@@ -4,6 +4,41 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v25.12.2
+
+### ✨ New Features
+
+- ✨ **Zoom/Pan buttons**: Added the ability to press and hold zoom and pan buttons for continuous adjustment.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Zoom functionality**: Increased the maximum zoom factor to 10x.
+- 🛠️ **Architecture check**: Added a warning notification when running the 32-bit version of the app on a 64-bit operating system.
+- 🛠️ **Export filenames**: Included the song number in exported media filenames for better identification.
+- 🛠️ **Export cleanup**: Automatically prune expired folders from the auto-export directory.
+- 🛠️ **Sign Language**: Improved visual indicators for downloadable Bible verses in sign language.
+- 🛠️ **Setup Wizard**: Added descriptions to better represent media window appearance regarding sign language.
+- 🛠️ **Publications**: Added the Isaiah book to the list of frequently used publications.
+- 🛠️ **Performance**: Dynamically load the `ElectronDownloadManager` only when required.
+- 🛠️ **Setup Wizard**: Added a search/filter to the language picker.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Stability**: Improved media element cleanup to prevent `EXCEPTION_ACCESS_VIOLATION_READ` crashes and addressed a potential memory leak in the decompression process.
+- 🐞 **Zoom/Pan**: Resolved crosstalk between zoom/pan actions, prevented accidental zooming while scrolling, prevented panning beyond image borders, and removed unwanted animations.
+- 🐞 **Auto-updater**: Improved error handling in the auto-updater to reduce noise from transient network issues and suppressed expected error messages.
+- 🐞 **Media fetching**: Optimized the order of language attempts when fetching media and fixed sorting issues for certain media items.
+- 🐞 **Export**: Ensured the export process is triggered once files finish downloading and respected visual section order in exported media.
+- 🐞 **Downloads**: Attempt to cancel all active downloads if all windows are closed and prevented errors when the application is closing.
+- 🐞 **Notifications**: Temporary notifications are now dismissed when switching congregations and fixed color glitches.
+- 🐞 **UI**: Fixed the "Add extra media" button visibility in the Circuit Overseer section header and addressed minor button length issues in the media list view.
+- 🐞 **Bible Dialog**: Prevented duplicate chapter or verse numbers from appearing in the Bible dialog.
+- 🐞 **Network**: Fixed errors occurring when the ip-api service is unavailable.
+
+### 🔧 Chores
+
+- 🔧 **Internal cleanup**: Various internal code cleanups, dependency updates, and logic improvements for better reliability.
+
 ## v25.12.1
 
 ### 🐞 Bug Fixes
