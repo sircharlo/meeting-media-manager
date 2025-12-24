@@ -48,7 +48,7 @@
   "beginPlaybackPaused": "Börja uppspelningen pausad",
   "beginPlaybackPaused-explain": "När den är aktiverad startar ljud och video i ett pausat tillstånd, så att du kan förbereda andra uppgifter (som Zoom skärmdelning) innan uppspelning.",
   "architecture-mismatch": "Arkitekturen matchar inte",
-  "architecture-mismatch-explain": "You seem to be running a 32-bit version of M³ on a 64-bit operating system. For better performance and stability, we recommend downloading and installing the 64-bit version of M³.",
+  "architecture-mismatch-explain": "Du verkar köra en 32-bitars version av M³ på ett 64-bitars operativsystem. För bättre prestanda och stabilitet rekommenderar vi att du hämtar och installerar 64-bitarsversionen av M³.",
   "beta-version-warning": "Detta är en betaversion och bör inte användas i Rikets sal eller för live-möten.",
   "bottom": "Nederst",
   "brochures-and-booklets": "Broschyrer",
