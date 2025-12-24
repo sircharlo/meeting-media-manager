@@ -4,6 +4,12 @@
 
 För den fullständiga listan över ändringar mellan versioner, se vår CHANGELOG.md-fil på GitHub.
 
+## v25.12.2
+
+### ✨ Nya funktioner
+
+- ✨ **Zoom/panoreringsknappar**: Lade till möjligheten att trycka på och hålla ned zoom- och panoreringsknappar för kontinuerlig justering.
+
 ## v25.12.0
 
 ### ✨ Nya funktioner
