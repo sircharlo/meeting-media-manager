@@ -226,6 +226,7 @@ if (!gotTheLock) {
 
   // macOS default behavior is to keep the app running even after all windows are closed
   app.on('window-all-closed', () => {
+    // Set app quitting state
     setAppQuitting(true);
     try {
       cancelAllDownloads();
