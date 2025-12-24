@@ -2,7 +2,7 @@
 
 ## 常规问题 {#general-questions}
 
-### :earth_americas: 此应用是否依赖外部站点、源或“管理员”下载出版物和聚会媒体或其他文档？ {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies} {#external-dependencies}
+### :earth_americas: 此应用是否依赖外部站点、源或“管理员”下载出版物和聚会媒体或其他文档？ {#external-dependencies} {#external-dependencies}
 
 \*\*不。\*\*此应用程序的运转方式酷似JW Library应用。 它直接从耶和华见证人的官方网站及其内容提供网络下载出版物、媒体和其他内容。 应用程序自动决定需要下载的内容以及先前下载的内容不再是最新的，应该重新下载。
 
@@ -14,13 +14,13 @@
 
 ### :thinking: 本应用是否违反了耶和华见证人官方网站的使用条款？ {#terms-of-use} {#terms-of-use}
 
-**不**。[耶和华见证人官方网站使用条款](https://www.jw.org/finder?docid=1011511&prefer=content)明确允许我们正在做的用法。  以下是相关摘录（重要部分已标明）：
+**不**。[耶和华见证人官方网站使用条款](https://www.jw.org/finder?docid=1011511&prefer=content)明确允许我们正在做的用法。  以下是相关摘录（重要部分已标明）： 以下是相关摘录（重要部分已标明）：
 
 > 你不得：
 >
 > 从本网站收集、翻印、下载、撷取或采集数据、HTML、图像或文字，并制作应用程序、工具或技术，向公众分发 （**不限**本网站设计的非营利应用程序，提供大众免费下载电子档，如EPUB、PDF、MP3和MP4）。
 
-### :question: M³支持哪些OS？ {#operating-systems}
+### :question: M³支持哪些OS？ {#operating-systems} {#operating-systems}
 
 M³ 支持 Windows、macOS 和 Linux：
 
@@ -28,7 +28,7 @@ M³ 支持 Windows、macOS 和 Linux：
 - **macOS**：macOS 10.15 (Catalina)及更高版本（支持Intel和Apple Silicon）
 - **Linux**：大多数现代Linux发行版（AppImage格式）
 
-### :globe_with_meridians: M³ 支持我的语言吗？ {#language-support}
+### :globe_with_meridians: M³ 支持我的语言吗？ {#language-support} {#language-support}
 
 **是的！** M³提供全面的多语言支持：
 
@@ -40,11 +40,11 @@ M³ 支持 Windows、macOS 和 Linux：
 
 ## 安装与设置 {#installation-setup}
 
-### :computer: 如何下载并安装 M³？ {#installation}
+### :video_camera: How do I set up the OBS Studio integration? {#installation}
 
 请前往[下载页面](download)获取适用于您系统的版本，并参照[用户指南](user-guide)完成安装。
 
-### :gear: 第一次如何进行设置？ {#first-time-setup}
+### :gear: 第一次如何进行设置？ {#first-time-setup} {#first-time-setup}
 
 M³ 提供向导，帮助完成关键配置：
 
@@ -56,7 +56,7 @@ M³ 提供向导，帮助完成关键配置：
 
 ## 媒体管理 {#faq-media-management}
 
-### :desktop_computer: M³ 如何下载媒体？ {#media-download}
+### :desktop_computer: M³ 如何下载媒体？ {#media-download} {#media-download}
 
 M³ 会自动为即将到来的聚会下载媒体：
 
@@ -66,14 +66,14 @@ M³ 会自动为即将到来的聚会下载媒体：
 4. 以日期与聚会类型组织媒体
 5. 缓存文件以便离线使用
 
-### :calendar: 可以为特定日期下载媒体吗？ {#specific-dates}
+### :calendar: 可以为特定日期下载媒体吗？ {#specific-dates} {#specific-dates}
 
 是! 可以。M³ 的多配置文件可用于：
 
 - 自动为即将到来的聚会下载媒体
 - 任何日期均可导入自定义媒体
 
-### :open_file_folder: 如何导入我自己的媒体文件？ {#import-media}
+### :open_file_folder: 如何导入我自己的媒体文件？ {#import-media} {#import-media}
 
 可通过多种方式导入：
 
@@ -82,7 +82,7 @@ M³ 会自动为即将到来的聚会下载媒体：
 - **文件夹监控**：监控文件夹以自动导入
 - **JWPUB/播放列表**：导入出版物与播放列表
 
-### :speaker: 可以导入“音频圣经”吗？ {#audio-bible}
+### :speaker: 可以导入“音频圣经”吗？ {#audio-bible} {#audio-bible}
 
 是! M3包含一个音频圣经功能，允许您：
 
@@ -93,7 +93,7 @@ M³ 会自动为即将到来的聚会下载媒体：
 
 ## 演示功能 {#faq-presentation-features}
 
-### :tv: 聚会中如何演示媒体？  {#present-media}
+### :tv: 聚会中如何演示媒体？  {#present-media} {#present-media}
 
 播放媒体:
 
@@ -103,7 +103,7 @@ M³ 会自动为即将到来的聚会下载媒体：
 4. 对图片使用缩放/平移
 5. 必要时设置自定义起止时间
 
-### :keyboard: 有哪些键盘快捷键？ {#faq-keyboard-shortcuts}
+### :keyboard: 有哪些键盘快捷键？ {#faq-keyboard-shortcuts} {#faq-keyboard-shortcuts}
 
 可自定义以下快捷键：
 
@@ -114,7 +114,7 @@ M³ 会自动为即将到来的聚会下载媒体：
 
 <!-- - Fullscreen mode -->
 
-### :notes: 背景音乐如何工作？  {#faq-background-music}
+### :notes: 背景音乐如何工作？  {#faq-background-music} {#faq-background-music}
 
 背景音乐功能包括：
 
@@ -124,12 +124,12 @@ M³ 会自动为即将到来的聚会下载媒体：
 - 独立音量控制
 - 可配置提前停止缓冲时间
 
-### :video_camera: 如何设置 Zoom 集成？ {#zoom-setup}
+### :video_camera: 如何设置 Zoom 集成？ {#zoom-setup} {#zoom-setup}
 
 在设置中启用 Zoom 集成
 
 1. 或考虑改用 M³ 的 Zoom 集成（使用 Zoom 原生共享）
-2. 在 Zoom 中配置屏幕共享快捷键并勾选“全局快捷键” 确保缩放设置中的快捷方式为“全局”。
+2. 在 Zoom 中配置屏幕共享快捷键并勾选“全局快捷键” 确保缩放设置中的快捷方式为“全局”。 确保缩放设置中的快捷方式为“全局”。
 3. 演示媒体时，M³ 会自动开始/停止 Zoom 屏幕共享
 
 ## OBS Studio 集成 {#faq-obs-integration}
@@ -155,7 +155,7 @@ M³ 根据以下因素自动切换 OBS 场景：
 
 ### :pause_button: 什么是“延迟图像（Postpone Images）”？ {#faq-postpone-images} {#faq-postpone-images}
 
-该功能会在您手动触发前，延迟把图片共享到 OBS。适用于： This is useful for:
+该功能会在您手动触发前，延迟把图片共享到 OBS。适用于： This is useful for: This is useful for:
 
 - Showing images to in-person audience first
 - 更灵活的演示时机控制
@@ -210,7 +210,7 @@ Check these OBS-related issues:
 3. **端口与密码**：设置是否匹配
 4. **防火墙**：是否拦截了连接
 
-### :speaker: 使用 OBS 时，M³ 会自动把媒体声音发送到 Zoom 吗？ {#audio-to-zoom}
+### :speaker: 使用 OBS 时，M³ 会自动把媒体声音发送到 Zoom 吗？ {#audio-to-zoom} {#audio-to-zoom}
 
 **不会。** M³ 不会自动把媒体音频发送到 Zoom 或 OBS。视频流像摄像头一样是无声的。若要让 Zoom 自动“听到”电脑播放的音频，请确保 Zoom 能接收到电脑的音频输入，并在 Zoom 中启用 **原始音频（Original Audio）**。 The video stream works like a virtual camera with no sound, just like a webcam. To have the music/video sound available in Zoom automatically, you need to ensure that Zoom 'hears' the audio feed coming from the computer, and then you should enable the **Original Audio** setting in Zoom.
 
@@ -222,8 +222,7 @@ Check these OBS-related issues:
 - 若仍有问题，可改用 Zoom 的“共享电脑声音”功能
 - 或者，改用 Zoom 集成功能，因为它使用 Zoom 的原生屏幕共享。
 
-**为什么需要这样做？**  
-M³ 在您的电脑本地播放带声音的媒体，但当使用 OBS 时，这个音频并不会随着视频流自动传到 Zoom。若电脑已正确配置（例如：为媒体播放使用第二声卡，并让 Zoom 把它当作“麦克风”来听），启用“原始音频”可让 Zoom 捕获电脑正在播放的声音。 The Original Audio setting allows Zoom to capture the audio playing on your computer during screen sharing, if your computer is configured properly (for example: the computer has a second sound card that is used for media playback which Zoom listens to as a microphone.)
+**不会。** M³ 不会自动把媒体音频发送到 Zoom 或 OBS。视频流像摄像头一样是无声的。若要让 Zoom 自动“听到”电脑播放的音频，请确保 Zoom 能接收到电脑的音频输入，并在 Zoom 中启用 **原始音频（Original Audio）**。 The video stream works like a virtual camera with no sound, just like a webcam. To have the music/video sound available in Zoom automatically, you need to ensure that Zoom 'hears' the audio feed coming from the computer, and then you should enable the **Original Audio** setting in Zoom.
 
 ### :snail: M³ 运行缓慢，如何改善？ {#performance-issues} How can I improve performance? {#performance-issues}
 
@@ -247,7 +246,7 @@ Verify these language settings:
 
 ### :radioactive: 如何反馈问题？ {#how-do-i-report-an-issue} :radioactive: 如何反馈问题？ {#how-do-i-report-an-issue} {#how-do-i-report-an-issue}
 
-请到官方 GitHub 仓库[提交 Issue](https://github.com/sircharlo/meeting-media-manager/issues)，并附上： Include:
+请到官方 GitHub 仓库[提交 Issue](https://github.com/sircharlo/meeting-media-manager/issues)，并附上： Include: Include:
 
 - 问题的详细描述
 - 复现步骤
@@ -256,7 +255,7 @@ Verify these language settings:
 
 ### :new: How can I request a new feature or enhancement? :new: 如何提出新功能建议？ {#how-can-i-request-a-new-feature-or-enhancement}
 
-请到官方 GitHub 仓库[发起讨论](https://github.com/sircharlo/meeting-media-manager/discussions)，并说明： Describe:
+请到官方 GitHub 仓库[发起讨论](https://github.com/sircharlo/meeting-media-manager/discussions)，并说明： Describe: Describe:
 
 - The feature you'd like to see
 - How it would benefit users
@@ -268,7 +267,7 @@ Verify these language settings:
 
 ### :globe_with_meridians: 我可以帮助翻译吗？ {#translations} {#translations}
 
-M³ 使用 Crowdin 管理翻译。参与方式： You can contribute translations by:
+M³ 使用 Crowdin 管理翻译。参与方式： You can contribute translations by: You can contribute translations by:
 
 1. 访问 [Crowdin 项目](https://crowdin.com/project/meeting-media-manager)
 2. 选择您的语言
