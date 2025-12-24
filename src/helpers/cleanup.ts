@@ -168,6 +168,8 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
       await getDirectory('it', 0), // Insight
       await getDirectory('lmd', 0), // Love People
       await getDirectory('lmdv', 0), // Love People Videos
+      await getDirectory('ip-1', 0), // Isaiah Book (1)
+      await getDirectory('ip-2', 0), // Isaiah Book (2)
       // Public Talk Media Playlist
       await getDirectory('S-34mp', 'any'),
       // Magazines, low disk usage
