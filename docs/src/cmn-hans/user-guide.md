@@ -6,7 +6,7 @@
 
 ### 下载与安装 {#download-and-install}
 
-从 [下载页面](download)获取最新版本。 它能为您的设备推荐最佳版本并显示最新版本。
+从 [下载页面](download)获取最新版本。 从 [下载页面](download) 获取最新版本。它能为您的设备推荐最佳版本并显示最新版本。
 
 ### 首次启动 {#first-launch}
 
@@ -107,21 +107,21 @@ M³ 会按聚会类型与分区自动整理媒体：
 
 #### 键盘快捷键 {#user-guide-keyboard-shortcuts}
 
-配置快速访问的自定义快捷键。 请注意，默认设置没有键盘快捷键。
+配置快速访问的自定义快捷键。 请注意，默认设置没有键盘快捷键。 请注意，默认设置没有键盘快捷键。
 
 **内置媒体列表控制**（主窗口聚焦且显示媒体列表时）：
 
 - **Tab/Shift+Tab** —— 在媒体项之间移动焦点
-- **上下方向键** —— 在媒体项之间移动焦点
+- **上一项/下一项** —— 媒体间导航
 - **空格** —— 播放/暂停
-- **Esc** —— 停止播放
+- **停止播放** —— 停止播放
 
 **可自定义快捷键**（在设置中启用后生效）：
 
 - **媒体窗口** —— 打开/关闭媒体窗口
-- **上一项/下一项** —— 媒体间导航
+- **上一项/下一项** —— 在媒体项之间导航
 - **暂停/继续** —— 控制播放
-- **停止播放** —— 停止播放
+- **Esc** —— 停止播放
 - **背景音乐开关** —— 控制背景音乐
 
 **注（\*）**：全局快捷键 —— 即使应用未聚焦也可使用。
@@ -144,8 +144,8 @@ M³ 可与 Zoom 集成以自动切换共享：
 
 1. **启用集成** —— 在设置中开启 Zoom 集成
 2. **配置快捷键** —— 在 Zoom 中设置屏幕共享快捷键 ，并勾选“全局快捷键”
-3. **自动控制** —— M³ 将按需自动切换 Zoom 屏幕共享
-4. **手动优先** —— 如有需要，仍可在 Zoom 内手动操作
+3. **自动控制** —— M³ 将按需自动切换 Zoom 屏幕共享。
+4. **配置快捷键** —— 在 Zoom 中设置屏幕共享快捷键 ，并勾选“全局快捷键”
 
 ## OBS Studio 集成 {#user-guide-obs-integration}
 
@@ -168,21 +168,21 @@ M³ 可与 Zoom 集成以自动切换共享：
 - **图片场景** —— 显示图片（若启用“延迟图片”，将等待手动触发）
 - **自动切换** —— 基于媒体类型与设置自动变更
 
-### M³ 在本机播放带声音的媒体，但这些声音**不会**自动随视频流传到 OBS/Zoom。就像把 OBS 当作“虚拟摄像头” —— 只有画面，没有声音。因此必须明确配置 Zoom 去“听见”电脑声音。
+### **手动优先** —— 如有需要，仍可在 Zoom 内操作。
 
 #### 延迟图像 {#user-guide-postpone-images}
 
 启用此选项以延迟共享图像到 OBS 直到手动触发：
 
-1. 在 OBS 设置中启用"延迟图像"
-2. 只有当您点击按钮以使用 OBS Studio 显示图像时，图像才会被共享。 这有助于首先将图像展示给亲自观看者。
+1. 在设置中启用“延迟图像”
+2. 只有当您点击按钮使用 OBS Studio 显示图像时，图像才会被共享。这有助于先将图像展示给现场听众。 这有助于首先将图像展示给亲自观看者。
 
 #### 场景切换行为 {#user-guide-scene-switching}
 
-配置 M3 如何处理场景变化：
+配置 M³ 如何处理场景变化。如果您使用混合聚会，请熟悉这些行为并进行练习，以确保演示顺畅。
 
-- **这不是 M³ 的限制**：使用任何播放器在 OBS+Zoom 的场景下都会有类似现象。若电脑音频路由设置合适（例如给媒体播放使用第二声卡，并让 Zoom 把它当“麦克风”采集），启用“原始音频”即可让 Zoom 捕获电脑正在播放的声音。
-- **反复练习** —— 熟悉并形成肌肉记忆
+- **上下方向键** —— 在媒体项之间移动焦点
+- **反复练习** —— 熟悉并形成肌肉记忆。
 
 ### 混合聚会音频配置 {#audio-configuration}
 
@@ -207,25 +207,25 @@ M³ 可与 Zoom 集成以自动切换共享：
 2. 勾选 **“共享电脑声音”**
 3. **注意**：每次新开 Zoom 会话都要重新开启
 
-**更简便的替代方案**：考虑改用 M³ 的 Zoom 集成。它使用 Zoom 原生屏幕共享，音频处理更直接，无需复杂设置。
+M³ 在您的电脑上播放带声音的媒体，但此音频**不会自动通过视频流传输**到 OBS Studio。这与您在使用任何其他媒体播放器时遇到的行为相同。
 
 #### 为什么需要这些设置 {#why-audio-config}
 
-M³ plays media with sound on your computer, but this audio is **not automatically transmitted** through the video stream to OBS Studio. This is the same behavior you would experience with any other media player.
+M³ 在本机播放带声音的媒体，但这些声音**不会**自动随视频流传到 OBS/Zoom。就像把 OBS 当作“虚拟摄像头” —— 只有画面，没有声音。因此必须明确配置 Zoom 去“听见”电脑声音。 This is the same behavior you would experience with any other media player.
 
-**The audio issue is not related to M³** - it's a limitation of how OBS Studio video streaming works with Zoom. The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
+**音频问题与 M³ 无关** —— 这是 OBS Studio 视频流与 Zoom 配合使用时的一个限制。视频流就像一个没有声音的虚拟摄像头，因此您必须明确配置 Zoom 以捕获计算机的音频。这通常意味着您的计算机需要两个声卡；如果不是这种情况，您可能无法成功使用 OBS Studio 集成。 The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
 
-**替代方案**：使用 Zoom 的“共享电脑声音”，或直接使用 M³ 的 Zoom 集成以简化音频流程。
+**更简便的替代方案**：考虑改用 M³ 的 Zoom 集成。它使用 Zoom 原生屏幕共享，音频处理更直接，无需复杂设置。
 
 #### 音频疑难解答 {#audio-troubleshooting}
 
-**常见问题：**
+**最佳实践：**
 
 - **Zoom 无声音**：检查是否已启用并正确设置“原始音频”
 - **音质差**：核对三项“原始音频”设置（前两项启用，第三项不启用）
 - **重启后无效**：每次新开 Zoom 会话都必须重新启用“原始音频”
 
-**最佳实践：**
+**常见问题：**
 
 - 在聚会前测试音频路径与共享设置
 - 准备音频设置清单，方便执勤交接
@@ -307,7 +307,7 @@ M³ plays media with sound on your computer, but this audio is **not automatical
 1. **创建配置文件** —— 为不同会众建立独立配置
 2. **切换配置** —— 使用会众选择器在配置间切换
 3. **独立设置** —— 每个配置有独立的设置与媒体
-4. **共享资源** —— 在可能的情况下共享媒体文件以节省空间
+4. **共享资源** —— 尽可能共享媒体文件以节省空间。
 
 ### 键盘快捷键 {#keyboard-shortcuts-guide}
 

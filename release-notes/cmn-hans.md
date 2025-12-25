@@ -4,6 +4,12 @@
 
 关于不同版本之间更改的完整清单，请参阅我们在 GitHub 上的 CHANGELOG.md文件。
 
+## v25.12.2
+
+### ✨ 新功能
+
+- ✨ **Zoom/Pan buttons**: Added the ability to press and hold zoom and pan buttons for continuous adjustment.
+
 ## v25.12.0
 
 ### ✨ 新功能

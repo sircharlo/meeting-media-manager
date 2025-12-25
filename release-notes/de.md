@@ -4,6 +4,12 @@
 
 Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in unserer CHANGELOG.md Datei auf GitHub.
 
+## v25.12.2
+
+### ✨ Neue Funktionen
+
+- ✨ **Zoom/Pan buttons**: Added the ability to press and hold zoom and pan buttons for continuous adjustment.
+
 ## v25.12.0
 
 ### ✨ Neue Funktionen

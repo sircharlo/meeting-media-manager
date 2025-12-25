@@ -4,12 +4,18 @@
 
 Kwa ajili ya orodha kamili ya mabadiliko baina ya toleo tofauti tofauti, ona CHANGELOG.md file kwenye GitHub.
 
+## v25.12.2
+
+### ✨ Vipengele Vipya
+
+- ✨ **Zoom/Pan buttons**: Added the ability to press and hold zoom and pan buttons for continuous adjustment.
+
 ## v25.12.0
 
 ### ✨ Vipengele Vipya
 
-- ✨ **Multi-Select Context Menu**: Added support for right-click menu actions when multiple media items are selected.
-- ✨ **Keyboard Shortcuts**: Added `Ctrl/Cmd+A` to select all media, `H` to hide selected media, and `Shift+Up/Down` for keyboard selection navigation.
+- ✨ **Chagua Menyu ya Muktadha Zaidi**: Usaidizi ulioongezwa kwa vitendo vya menyu ya kubofya kulia wakati vipengee vingi vya midia vimechaguliwa.
+- ✨ **Njia za Mkato za Kibodi**: Imeongezwa `Ctrl/Cmd+A` ili kuchagua midia yote, `H` kuficha midia iliyochaguliwa, na `Shift+Juu/Chini` kwa urambazaji wa uteuzi wa kibodi.
 - ✨ **Watchtower Study Video Settings**: Added a setting to exclude extra Watchtower study videos.
 - ✨ **Collapsible Sections**: Added ability to collapse sections on non-meeting days for a cleaner view.
 - ✨ **JW Events Website**: Added the ability to present the JW Events website in addition to the main official website.
