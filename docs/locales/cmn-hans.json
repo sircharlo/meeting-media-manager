@@ -13,7 +13,7 @@
   "displayDetails": "显示详细列表",
   "docFooterNext": "下一页",
   "docFooterPrev": "上一页",
-  "download": "Download",
+  "download": "下载",
   "editLink": "在 Crowdin 上编辑此页面",
   "enter": "进入",
   "esc": "ESC",
@@ -31,10 +31,10 @@
   "notFoundQuote": "请验证网址并再试一次。如果你觉得这是一个错误，请报告它。",
   "notFoundTitle": "未找到此页面",
   "outline": "在本页",
-  "recommendedFor": "Recommended for",
-  "released1DayAgo": "released 1 day ago",
-  "releasedToday": "released today",
-  "releasedXDaysAgo": "released {days} days ago",
+  "recommendedFor": "推荐给",
+  "released1DayAgo": "1 天前发布",
+  "releasedToday": "今天发布",
+  "releasedXDaysAgo": "发布于 {days}天前",
   "reportIssue": "报告问题",
   "resetButtonTitle": "重置搜索",
   "returnToTopLabel": "返回顶部",
@@ -45,6 +45,6 @@
   "skipToContentLabel": "跳转到内容",
   "title": "M³文库",
   "userGuide": "用户指南",
-  "windows32Bit": "Windows 32-bit",
-  "windows64Bit": "Windows 64-bit"
+  "windows32Bit": "Windows 32位",
+  "windows64Bit": "Windows 64位"
 }

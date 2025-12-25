@@ -4,6 +4,12 @@
 
 Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELOG.md tiedosto GitHubissa.
 
+## v25.12.2
+
+### ✨ Mitä uutta
+
+- ✨ **Zoomaus/Pan painikkeet**: Lisätty kyky painaa ja pitää zoomausta ja pannupainikkeita jatkuvatoimiseen säätöön.
+
 ## v25.12.0
 
 ### ✨ Mitä uutta
