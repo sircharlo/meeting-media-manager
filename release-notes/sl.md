@@ -8,7 +8,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **Zoom/Pan buttons**: Added the ability to press and hold zoom and pan buttons for continuous adjustment.
+- ✨ **Gumbi za povečavo/premikanje**: Dodana je bila možnost, da gumbe za povečavo in premikanje pritisneš in pridržiš za neprekinjeno nastavljanje.
 
 ## v25.12.0
 
