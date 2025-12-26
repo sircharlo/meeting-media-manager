@@ -145,6 +145,7 @@ export const electronApi: ElectronApi = {
   },
   path: upath,
   pathToFileURL,
+  PLATFORM: 'win32',
   quitAndInstall: function () {
     throw new Error('Function not implemented.');
   },
