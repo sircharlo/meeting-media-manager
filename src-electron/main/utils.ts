@@ -134,6 +134,7 @@ export function isIgnoredUpdateError(
   const ignoreErrors = [
     'ENOENT',
     'EPERM',
+    'rename',
     'Command failed: mv -f',
     '504 Gateway Time-out',
     'Code signature at URL',
@@ -152,8 +153,14 @@ export function isIgnoredUpdateError(
 
   const errorMsg =
     typeof error === 'string' ? error : (error as Error)?.message;
+  const errorCode = (error as { code?: string })?.code;
+
   return ignoreErrors.some((ignoreError) => {
-    return message?.includes(ignoreError) || errorMsg?.includes(ignoreError);
+    return (
+      message?.includes(ignoreError) ||
+      errorMsg?.includes(ignoreError) ||
+      (typeof errorCode === 'string' && errorCode.includes(ignoreError))
+    );
   });
 }
 
