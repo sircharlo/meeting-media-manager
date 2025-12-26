@@ -170,6 +170,7 @@ export interface ElectronApi {
    *   // => 'file:///home/user/document.pdf'
    */
   pathToFileURL: (path: string) => string;
+  PLATFORM: string;
   quitAndInstall: () => void;
   readdir: (
     path: string,

@@ -168,7 +168,7 @@ import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 
-const { getScreenAccessStatus } = window.electronApi;
+const { getScreenAccessStatus, PLATFORM } = window.electronApi;
 
 const $q = useQuasar();
 
@@ -812,7 +812,7 @@ watch(
         try {
           await navigator.mediaDevices.getDisplayMedia({
             audio: false,
-            video: true,
+            video: PLATFORM === 'linux' ? { cursor: 'never' } : true,
           });
         } catch (e) {
           console.error(
@@ -845,7 +845,7 @@ watch(
       try {
         const stream = await navigator.mediaDevices.getDisplayMedia({
           audio: false,
-          video: true,
+          video: PLATFORM === 'linux' ? { cursor: 'never' } : true,
         });
         let timeouts = 0;
         while (!currentMediaElement.value) {
