@@ -396,15 +396,16 @@ watch(
   () => [mediaPlaying.value.url, customDuration.value],
   ([newUrl, newCustomDuration], [oldUrl, oldCustomDuration]) => {
     console.log('🔄 [watch] mediaPlaying.value.url', newUrl, oldUrl);
+
+    if (newUrl !== oldUrl) {
+      postMediaUrl(newUrl as string);
+    }
+
     if (
-      newUrl === oldUrl ||
-      (newCustomDuration &&
-        oldCustomDuration &&
-        JSON.stringify(newCustomDuration) === JSON.stringify(oldCustomDuration))
-    )
-      return;
-    postMediaUrl(newUrl as string);
-    postCustomDuration(JSON.stringify(newCustomDuration));
+      JSON.stringify(newCustomDuration) !== JSON.stringify(oldCustomDuration)
+    ) {
+      postCustomDuration(JSON.stringify(newCustomDuration));
+    }
   },
 );
 

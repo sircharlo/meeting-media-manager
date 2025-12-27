@@ -2022,7 +2022,8 @@ watch(
   { immediate: true },
 );
 
-const mediaElapsed = computed(
-  () => mediaPlaying.value.currentPosition || imageElapsed.value || 0,
-);
+const mediaElapsed = computed({
+  get: () => mediaPlaying.value.currentPosition || imageElapsed.value || 0,
+  set: (val) => seekTo(val),
+});
 </script>

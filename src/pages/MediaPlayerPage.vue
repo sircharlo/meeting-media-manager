@@ -411,6 +411,20 @@ const customMax = computed(() => {
   return (JSON.parse(mediaCustomDuration.value || '{}') || {})?.max;
 });
 
+watch(
+  () => mediaCustomDuration.value,
+  (newVal, oldVal) => {
+    if (newVal !== oldVal && currentMediaElement.value) {
+      console.log(
+        '🎬 [mediaCustomDuration] Duration changed, seeking to:',
+        customMin.value,
+      );
+      isEnding.value = false;
+      currentMediaElement.value.currentTime = customMin.value;
+    }
+  },
+);
+
 const currentMediaElement: Ref<HTMLAudioElement | HTMLVideoElement | null> =
   computed(() => {
     return mediaElement1.value || mediaElement2.value || null;
