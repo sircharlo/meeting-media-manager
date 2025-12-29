@@ -172,7 +172,7 @@
   "entireFile": "Spela från början till slut",
   "entireFile-question": "Är du säker på att du vill spela upp hela filen från början till slut?",
   "error": "Fel",
-  "error-reading-playlist-file": "The JW Library playlist file could not be read. It may be corrupted or invalid.",
+  "error-reading-playlist-file": "Spellistan från JW Library kunde inte läsas. Den kan vara skadad eller ogiltig.",
   "errorDownloadingMeetingMedia": "Fel vid nedladdning av mötesmedia",
   "excludeFootnotes": "Exkludera media från fotnoter i studieutgåvan av Vakttornet",
   "excludeFootnotes-explain": "Inkludera inte videor eller andra medier från fotnoten i Vakttornets artiklar.",
