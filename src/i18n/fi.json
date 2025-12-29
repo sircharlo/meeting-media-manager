@@ -172,7 +172,7 @@
   "entireFile": "Toista alusta loppuun",
   "entireFile-question": "Haluatko varmasti toistaa koko tiedoston alusta loppuun?",
   "error": "Virhe",
-  "error-reading-playlist-file": "The JW Library playlist file could not be read. It may be corrupted or invalid.",
+  "error-reading-playlist-file": "JW Libraryn soittolistaa ei voitu lukea. Se voi olla viallinen tai virheellinen.",
   "errorDownloadingMeetingMedia": "Virhe ladattaessa kokousmediaa",
   "excludeFootnotes": "Jätä Vartiotornin alaviitteistä olevat mediat huomiotta",
   "excludeFootnotes-explain": "Älä sisällytä videoita tai muita median alaviitteistä Vartiotornista.",
