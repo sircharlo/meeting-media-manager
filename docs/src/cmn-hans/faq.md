@@ -40,7 +40,7 @@ M³ 支持 Windows、macOS 和 Linux：
 
 ## 安装与设置
 
-### :computer: 如何下载并安装 M³？ {#faq-obs-setup}
+### :computer: 如何下载并安装 M³？ {#installation}
 
 请前往[下载页面](download)获取适用于您系统的版本，并参照[用户指南](user-guide)完成安装。
 
