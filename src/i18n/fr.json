@@ -172,7 +172,7 @@
   "entireFile": "Jouer du début à la fin",
   "entireFile-question": "Êtes-vous sûr de vouloir lire le fichier dans son intégralité, du début à la fin ?",
   "error": "Erreur",
-  "error-reading-playlist-file": "The JW Library playlist file could not be read. It may be corrupted or invalid.",
+  "error-reading-playlist-file": "Le fichier de liste de lecture JW Library n'a pas pu être lu. Il est peut-être corrompu ou invalide.",
   "errorDownloadingMeetingMedia": "Erreur lors du téléchargement des médias pour la réunion",
   "excludeFootnotes": "Exclure les médias des notes de bas de page pour l'étude de la Tour de Garde",
   "excludeFootnotes-explain": "Ne pas inclure de vidéos ou d'autres médias en provenance des notes de bas de page pour les articles de la Tour de Garde.",
