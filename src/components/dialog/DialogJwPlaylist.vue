@@ -211,6 +211,7 @@ import {
   processMissingMediaInfo,
   resolveFilePath,
 } from 'src/helpers/jw-media';
+import { createTemporaryNotification } from 'src/helpers/notifications';
 import { getTempPath } from 'src/utils/fs';
 import { isImage } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
@@ -274,10 +275,27 @@ const loadPlaylistItems = async () => {
     // Extract package
     const tempDir = await getTempPath();
     const outputPath = join(tempDir, basename(props.jwPlaylistPath));
-    await unzip(props.jwPlaylistPath, outputPath);
+
+    try {
+      await unzip(props.jwPlaylistPath, outputPath);
+    } catch (err) {
+      createTemporaryNotification({
+        icon: 'mmm-error',
+        message: t('error-reading-playlist-file'),
+        type: 'negative',
+      });
+      throw err;
+    }
 
     const dbFile = await findDb(outputPath);
-    if (!dbFile) return;
+    if (!dbFile) {
+      createTemporaryNotification({
+        icon: 'mmm-error',
+        message: t('error-reading-playlist-file'),
+        type: 'negative',
+      });
+      return;
+    }
 
     // ---- Get Playlist Name ----
     try {
