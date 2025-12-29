@@ -8,16 +8,51 @@ import {
   moveMediaWindow,
 } from 'src-electron/main/window/window-media';
 
-export const initScreenListeners = () => {
-  app.on('ready', () => {
-    screen.removeAllListeners('display-added');
-    screen.removeAllListeners('display-removed');
-    screen.removeAllListeners('display-metrics-changed');
+let isScreenListenerInitialized = false;
 
-    screen.on('display-added', () => moveMediaWindow());
-    screen.on('display-removed', () => moveMediaWindow());
-    screen.on('display-metrics-changed', () => moveMediaWindow());
-  });
+/**
+ * Handles screen changes by moving the media window if necessary
+ */
+const onDisplayChanged = () => {
+  try {
+    moveMediaWindow();
+  } catch (e) {
+    captureElectronError(e, {
+      contexts: { fn: { name: 'onDisplayChanged' } },
+    });
+  }
+};
+
+export const initScreenListeners = () => {
+  if (isScreenListenerInitialized) {
+    console.log('🔍 [initScreenListeners] Already initialized, skipping');
+    return;
+  }
+
+  app
+    .whenReady()
+    .then(() => {
+      if (isScreenListenerInitialized) return;
+      isScreenListenerInitialized = true;
+
+      // Clean up any existing listeners just in case
+      screen.removeAllListeners('display-added');
+      screen.removeAllListeners('display-removed');
+      screen.removeAllListeners('display-metrics-changed');
+
+      // Add the listeners
+      screen.on('display-added', onDisplayChanged);
+      screen.on('display-removed', onDisplayChanged);
+      screen.on('display-metrics-changed', onDisplayChanged);
+
+      console.log('🔍 [initScreenListeners] Screen listeners initialized');
+    })
+    .catch((e) => {
+      isScreenListenerInitialized = false;
+      captureElectronError(e, {
+        contexts: { fn: { name: 'initScreenListeners.whenReady' } },
+      });
+    });
 };
 
 export const getAllScreens = (): Display[] => {
