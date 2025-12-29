@@ -672,17 +672,26 @@ function saveMediaWindowPrefs(prefs: Rectangle) {
   }
 }
 
+let isMovingWindow = false;
+
 const setWindowPosition = (displayNr?: number, fullscreen = true) => {
   console.log('🔍 [setWindowPosition] START - Called with:', {
     displayNr,
     fullscreen,
   });
 
+  if (isMovingWindow) {
+    console.log('🔍 [setWindowPosition] Already moving window, skipping');
+    return;
+  }
+
   try {
     if (!mediaWindow) {
       console.log('❌ [setWindowPosition] No mediaWindow, returning');
+      isMovingWindow = false;
       return;
     }
+    isMovingWindow = true;
 
     const screens = getAllScreens();
     const targetDisplay = screens[displayNr ?? 0];
@@ -691,6 +700,7 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
         '❌ [setWindowPosition] Target display not found:',
         displayNr,
       );
+      isMovingWindow = false;
       return;
     }
 
@@ -711,6 +721,7 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
 
       if (!mediaWindow) {
         console.log('❌ [setWindowBounds] No mediaWindow, returning');
+        isMovingWindow = false;
         return;
       }
 
@@ -738,9 +749,21 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
         );
       }
 
-      // Set bounds
-      console.log('🔍 [setWindowBounds] Setting bounds:', bounds);
-      mediaWindow.setBounds(bounds);
+      // Set bounds if changed
+      const boundsChanged =
+        currentBounds.x !== bounds.x ||
+        currentBounds.y !== bounds.y ||
+        currentBounds.width !== bounds.width ||
+        currentBounds.height !== bounds.height;
+
+      if (boundsChanged) {
+        console.log('🔍 [setWindowBounds] Setting bounds:', bounds);
+        mediaWindow.setBounds(bounds);
+      } else {
+        console.log(
+          '🔍 [setWindowBounds] Bounds already correct, skipping setBounds',
+        );
+      }
 
       // Verify the changes
       const newBounds = mediaWindow.getBounds();
@@ -760,6 +783,7 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
       }
 
       console.log('🔍 [setWindowBounds] END - Changes applied');
+      isMovingWindow = false;
     };
 
     const handleMacFullScreenTransition = (callback: () => void) => {
@@ -855,6 +879,7 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
     console.log('🔍 [setWindowPosition] END - All changes queued');
   } catch (err) {
     console.error('❌ [setWindowPosition] Error:', err);
+    isMovingWindow = false;
     captureElectronError(err, {
       contexts: { fn: { name: 'setWindowPosition' } },
     });
