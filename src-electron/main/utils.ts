@@ -149,6 +149,7 @@ export function isIgnoredUpdateError(
     'SELF_SIGNED_CERT_IN_CHAIN',
     'OSStatus error -60006',
     'read-only volume',
+    'ERR_CONNECTION_TIMED_OUT',
   ];
 
   const errorMsg =
