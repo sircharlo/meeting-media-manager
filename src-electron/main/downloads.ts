@@ -153,7 +153,7 @@ export async function isDownloadErrorExpected(): Promise<boolean> {
         {
           silent: true,
         },
-      );
+      ).catch(() => null);
 
       let marker = payload?.countryCode || '';
 

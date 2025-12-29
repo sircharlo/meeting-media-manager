@@ -172,7 +172,9 @@ export function isIgnoredUpdateError(
 export function isNetworkError(error: unknown): boolean {
   try {
     if (error instanceof Error) {
-      if (error.name === 'AbortError') return true;
+      if (error.name === 'AbortError' || error.name === 'ConnectTimeoutError') {
+        return true;
+      }
       if (error.message.includes('fetch failed')) {
         const cause = error.cause as Record<string, unknown> | undefined;
         if (cause && typeof cause.code === 'string') {
@@ -182,8 +184,16 @@ export function isNetworkError(error: unknown): boolean {
             'ECONNREFUSED',
             'ECONNRESET',
             'EAI_AGAIN',
+            'UND_ERR_CONNECT_TIMEOUT',
           ];
           if (networkCodes.includes(cause.code)) return true;
+        }
+        if (
+          cause &&
+          (cause.name === 'ConnectTimeoutError' ||
+            cause.name === 'TimeoutError')
+        ) {
+          return true;
         }
       }
     }
@@ -289,10 +299,6 @@ export function captureElectronError(
   error: Error | string | unknown,
   context?: CaptureCtx,
 ) {
-  if (error instanceof Error && error.cause) {
-    captureElectronError(error.cause, context);
-  }
-
   if (IS_DEV) {
     console.error(error);
     console.warn('context', context);
