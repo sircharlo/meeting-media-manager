@@ -172,7 +172,7 @@
   "entireFile": "Riproduci dall'inizio alla fine",
   "entireFile-question": "Sei sicuro di voler riprodurre l'intero file dall'inizio alla fine?",
   "error": "Errore",
-  "error-reading-playlist-file": "The JW Library playlist file could not be read. It may be corrupted or invalid.",
+  "error-reading-playlist-file": "Il file della playlist JW Library non può essere letto. Potrebbe essere danneggiato o non valido.",
   "errorDownloadingMeetingMedia": "Errore durante il download dei media riunione",
   "excludeFootnotes": "Escludi media contenuti nelle note in calce dello studio Torre di Guardia",
   "excludeFootnotes-explain": "Non includere video o altri supporti da note a piè di pagina in articoli Watchtower.",
