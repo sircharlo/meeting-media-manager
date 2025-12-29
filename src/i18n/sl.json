@@ -172,7 +172,7 @@
   "entireFile": "Predvajaj od začetka do konca",
   "entireFile-question": "Ali si prepričan, da želiš predvajati celotno datoteko od začetka do konca?",
   "error": "Napaka",
-  "error-reading-playlist-file": "The JW Library playlist file could not be read. It may be corrupted or invalid.",
+  "error-reading-playlist-file": "Datoteke seznama predvajanja JW Library ni mogoče prebrati. Morda je poškodovana ali neveljavna.",
   "errorDownloadingMeetingMedia": "Napaka pri prenosu multimedijske vsebine za shod",
   "excludeFootnotes": "Ne vključi multimedije iz podčrtnih opomb v preučevalni izdaji Stražnega stolpa",
   "excludeFootnotes-explain": "Ne vključi videoposnetkov ali druge multimedijske vsebine iz podčrtnih opomb v Stražnem stolpu.",
