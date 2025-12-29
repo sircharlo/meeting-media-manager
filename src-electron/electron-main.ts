@@ -209,19 +209,45 @@ if (!gotTheLock) {
   createApplicationMenu();
   initSessionListeners();
 
-  // Listen for child process crashes, especially GPU
-  app.on('child-process-gone', (_, details) => {
-    if (details.type === 'GPU') {
+  function handleProcessCrash(
+    type: string,
+    details: Electron.Details | Electron.RenderProcessGoneDetails,
+  ) {
+    const isFatalRendererCrash =
+      type === 'Renderer' &&
+      'reason' in details &&
+      details.reason === 'crashed';
+
+    const isGpuCrash = type === 'GPU';
+
+    if (isGpuCrash || isFatalRendererCrash) {
       // Send to telemetry
-      captureException(new Error(`GPU process crashed: ${details.reason}`), {
-        extra: { ...details },
-        tags: { reason: details.reason, type: details.type },
-      });
+      captureException(
+        new Error(`${type} process crashed: ${details.reason}`),
+        {
+          extra: { ...details },
+          tags: { reason: details.reason, type },
+        },
+      );
+
       if (!isHwAccelDisabled()) {
+        console.log(
+          `Detected ${type} crash. Disabling hardware acceleration for next run.`,
+        );
         // Persist to user prefs for next run and notify user
         setHwAccelDisabled(true, true);
       }
     }
+  }
+
+  // Listen for child process crashes, especially GPU
+  app.on('child-process-gone', (_, details) => {
+    handleProcessCrash(details.type, details);
+  });
+
+  // Listen for renderer crashes
+  app.on('render-process-gone', (_, __, details) => {
+    handleProcessCrash('Renderer', details);
   });
 
   // macOS default behavior is to keep the app running even after all windows are closed
