@@ -29,23 +29,11 @@ export const backfillLastUsed: MigrationFunction = async () => {
     // Add additional media path
     roots.push(await getAdditionalMediaPath());
 
-    // Basic recursion to find leaf folders (simplified: just 1 or 2 levels deep might be enough for typical structure)
-    // Publications/pubId
-    // Additional Media/CongId/YYYYMMDD
-
-    // Actually, updateLastUsedDate puts file in the folder passed.
-    // For publications, "root folder" is `Publications/pubId`.
-    // For additional media, it is `Additional Media/CongId/YYYYMMDD`?
-    // User said "in each additional media's folder".
-
-    // Let's iterate Publications directory
     const pubsPath = await getPublicationsPath();
     if (await fs.exists(pubsPath)) {
-      const items = await readdir(pubsPath, false, false); // non-recursive initial
+      const items = await readdir(pubsPath, false, false);
       for (const item of items) {
         if (item.isDirectory) {
-          // item.name is pubId usually (e.g. 'nwt', 'w_E_202301')
-          // This is the "publication's root folder".
           const fullPath = join(pubsPath, item.name);
           await updateLastUsedDate(fullPath, today);
         }
@@ -54,7 +42,6 @@ export const backfillLastUsed: MigrationFunction = async () => {
 
     const additionalMediaPath = await getAdditionalMediaPath();
     if (await fs.exists(additionalMediaPath)) {
-      // Structure: CongId/YYYYMMDD
       const congAdditionalMediaDirs = await readdir(
         additionalMediaPath,
         false,
@@ -84,7 +71,6 @@ export const backfillLastUsed: MigrationFunction = async () => {
       }
     }
 
-    // 2. Update with scheduled dates from Lookup Period
     const jwStore = useJwStore();
     const lookupPeriods = jwStore.lookupPeriod;
 
@@ -107,10 +93,6 @@ export const backfillLastUsed: MigrationFunction = async () => {
             if (item.fileUrl && isFileUrl(item.fileUrl)) {
               const filePath = fileUrlToPath(item.fileUrl);
               const folderPath = getParentDirectory(filePath);
-              // We want the "publication root folder" usually?
-              // But updateLastUsedDate just writes to the folder passed.
-              // If we write to `Publications/nwt/imgs`, cleanup checks `Publications/nwt/imgs` OR `Publications/nwt`.
-              // So writing to the specific folder containing the file is safer/more direct.
               if (folderPath) {
                 await updateLastUsedDate(folderPath, meetingDate);
               }

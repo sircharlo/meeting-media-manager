@@ -13,8 +13,9 @@ import { urlVariables } from 'src-electron/main/session';
 import upath from 'upath';
 
 const { join, resolve } = upath;
-import { access, constants } from 'fs-extra';
 import { pathExists } from 'fs-extra/esm';
+import { W_OK } from 'node:constants';
+import { access } from 'node:fs/promises';
 
 type CaptureCtx = Parameters<typeof captureException>[1];
 
@@ -75,7 +76,7 @@ export async function getSharedDataPath(): Promise<null | string> {
   // Verify write access to the shared path
   try {
     if (await pathExists(sharedPath)) {
-      await access(sharedPath, constants.W_OK);
+      await access(sharedPath, W_OK);
       return sharedPath;
     }
   } catch {

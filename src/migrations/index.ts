@@ -19,10 +19,11 @@ export const MIGRATION_REGISTRY: Record<string, MigrationFunction> = {
   '25.11.0-refreshDynamicMedia': refreshDynamicMedia,
   '25.12.0-resetYeartextPreview2026': resetYeartextPreview2026,
   '25.12.1-refreshDynamicMedia': refreshDynamicMedia,
+  '25.12.2 (1) moveCacheToMachineWide': moveCacheToMachineWide,
+  '25.12.2 (2) refreshDynamicMedia': refreshDynamicMedia,
+  '25.12.2 (3) backfillLastUsed': backfillLastUsed,
   addBaseUrlToAllCongregations,
-  backfillLastUsed,
   firstRun,
   localStorageToPiniaPersist,
   moveAdditionalMediaMaps,
-  moveCacheToMachineWide,
 };
