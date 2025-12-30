@@ -8,6 +8,7 @@ import type {
 
 import { updateLookupPeriod } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { getLastUsedDate } from 'src/helpers/usage';
 import { getSpecificWeekday, isInPast } from 'src/utils/date';
 import {
   congPreferencesPath,
@@ -298,16 +299,34 @@ const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
             const parentFolder = item.parentPath.split('/').pop() || '';
             // Exclude files inside any S-34mp_* folder from deletion consideration
             const isProtectedS34mp = parentFolder.startsWith('S-34mp_');
-            if (!isProtectedS34mp) {
+            if (item.name === '.last-used') {
+              // Never delete .last-used files directly
+              // They will be deleted if the parent folder is deleted
+            } else if (!isProtectedS34mp) {
               // Use normalized paths for comparison
               const normalizedParentPath = normalize(item.parentPath)
                 .replace(/[\\/]+/g, '\\')
                 .toLowerCase();
 
               // Check if this parent path matches any referenced parent directory
-              const isReferenced = Array.from(referencedParentDirectories).some(
+              let isReferenced = Array.from(referencedParentDirectories).some(
                 (refDir) => normalizedParentPath === refDir,
               );
+
+              // If not proactively referenced, check the "last used" date
+              if (!isReferenced) {
+                // Check current directory and parent directory (for subfolders)
+                const lastUsedDateStr =
+                  (await getLastUsedDate(item.parentPath)) ||
+                  (await getLastUsedDate(getParentDirectory(item.parentPath)));
+
+                if (lastUsedDateStr) {
+                  const lastUsedDate = new Date(lastUsedDateStr);
+                  if (!isInPast(lastUsedDate)) {
+                    isReferenced = true;
+                  }
+                }
+              }
 
               files.push({
                 orphaned: !isReferenced,

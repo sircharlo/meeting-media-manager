@@ -79,12 +79,6 @@ export async function getSharedDataPath(): Promise<null | string> {
       return sharedPath;
     }
   } catch {
-    // If it doesn't exist or isn't writable, we'll try to create it in the main process
-    // but here we just return the path if we think it's the right place.
-    // However, for the renderer to use it safely, we should probably only return it if we are sure.
-    // But since the setup might happen later or requires admin rights during install,
-    // let's just return the path if it's a machine-wide install and let the app try to use it.
-    // A better approach is to return it, and let the caller handle permission errors.
     return sharedPath;
   }
   return sharedPath;

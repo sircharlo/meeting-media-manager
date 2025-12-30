@@ -146,6 +146,7 @@ import {
 } from 'src/helpers/media-sections';
 import { showMediaWindow, unzipJwpub } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
+import { updateLastUsedDate } from 'src/helpers/usage';
 import { triggerZoomScreenShare } from 'src/helpers/zoom';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
@@ -155,7 +156,12 @@ import {
   getLocalDate,
   isInPast,
 } from 'src/utils/date';
-import { getPublicationDirectory, getTempPath } from 'src/utils/fs';
+import {
+  getParentDirectory,
+  getPublicationDirectory,
+  getTempPath,
+  isFileUrl,
+} from 'src/utils/fs';
 import { uuid } from 'src/utils/general';
 import {
   getMetadataFromMediaPath,
@@ -255,6 +261,7 @@ watch(
 const {
   convertPdfToImages,
   executeQuery,
+  fileUrlToPath,
   fs,
   getLocalPathFromFileObject,
   inferExtension,
@@ -752,6 +759,37 @@ watch(
       seenErrors.add(currentCongregation.value + missingFileUrl);
     });
   },
+);
+
+watch(
+  () => selectedDateObject.value,
+  async (newDateObject) => {
+    if (!newDateObject?.date || !newDateObject?.mediaSections) return;
+    const meetingDate = formatDate(newDateObject.date, 'YYYY-MM-DD');
+    const foldersToTouch = new Set<string>();
+
+    const collectFolders = (items: MediaItem[] | undefined) => {
+      items?.forEach((item) => {
+        if (item.fileUrl && isFileUrl(item.fileUrl)) {
+          const filePath = fileUrlToPath(item.fileUrl);
+          const folder = getParentDirectory(filePath);
+          if (folder) foldersToTouch.add(folder);
+        }
+        if (item.children) {
+          collectFolders(item.children);
+        }
+      });
+    };
+
+    Object.values(newDateObject.mediaSections).forEach((section) => {
+      collectFolders(section.items);
+    });
+
+    for (const folder of foldersToTouch) {
+      await updateLastUsedDate(folder, meetingDate);
+    }
+  },
+  { immediate: true },
 );
 
 const goToNextDayWithMedia = (ignoreTodaysDate = false) => {

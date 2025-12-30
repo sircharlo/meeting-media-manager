@@ -1,9 +1,11 @@
 import type { MigrationFunction } from './types';
 
 import { addBaseUrlToAllCongregations } from './add-base-url';
+import { backfillLastUsed } from './backfill-last-used';
 import { firstRun } from './first-run';
 import { localStorageToPiniaPersist } from './local-storage-to-pinia';
 import { moveAdditionalMediaMaps } from './move-additional-media';
+import { moveCacheToMachineWide } from './move-cache-to-machine-wide';
 import { newMediaSections } from './new-media-sections';
 import { refreshDynamicMedia } from './refresh-dynamic-media';
 import { resetYeartextPreview2026 } from './reset-yeartext-preview-2026';
@@ -18,7 +20,9 @@ export const MIGRATION_REGISTRY: Record<string, MigrationFunction> = {
   '25.12.0-resetYeartextPreview2026': resetYeartextPreview2026,
   '25.12.1-refreshDynamicMedia': refreshDynamicMedia,
   addBaseUrlToAllCongregations,
+  backfillLastUsed,
   firstRun,
   localStorageToPiniaPersist,
   moveAdditionalMediaMaps,
+  moveCacheToMachineWide,
 };
