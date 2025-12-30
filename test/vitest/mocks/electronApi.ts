@@ -62,6 +62,7 @@ export const electronApi: ElectronApi = {
   getScreenAccessStatus: function () {
     throw new Error('Function not implemented.');
   },
+  getSharedDataPath: async () => fakePath('/app/shared'),
   getUserDataPath: async () => fakePath('app/meeting-media-manager'),
   getVideoDuration: function (filePath) {
     throw new Error('Function not implemented.');

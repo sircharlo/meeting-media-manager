@@ -21,6 +21,7 @@ const {
   downloadFile,
   fileUrlToPath,
   fs,
+  getSharedDataPath,
   getUserDataPath,
   parseMediaFile,
   path,
@@ -390,7 +391,9 @@ async function fetchLatestRelease(): Promise<Release> {
 
 // Get the FFmpeg directory path
 async function getFFmpegDirectory(): Promise<string> {
-  const ffmpegDir = join(await getUserDataPath(), 'ffmpeg');
+  const sharedPath = await getSharedDataPath();
+  const userDataPath = await getUserDataPath();
+  const ffmpegDir = join(sharedPath || userDataPath, 'ffmpeg');
   return ffmpegDir;
 }
 

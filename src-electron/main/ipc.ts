@@ -45,7 +45,11 @@ import {
   unregisterShortcut,
 } from 'src-electron/main/shortcuts';
 import { triggerUpdateCheck } from 'src-electron/main/updater';
-import { captureElectronError, isSelf } from 'src-electron/main/utils';
+import {
+  captureElectronError,
+  getSharedDataPath,
+  isSelf,
+} from 'src-electron/main/utils';
 import { logToWindow } from 'src-electron/main/window/window-base';
 import {
   mainWindow,
@@ -263,6 +267,7 @@ function isOS64Bit() {
 }
 
 handleIpcInvoke('getAppDataPath', async () => app.getPath('appData'));
+handleIpcInvoke('getSharedDataPath', async () => getSharedDataPath());
 handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
 handleIpcInvoke('getLocales', async () => app.getPreferredSystemLanguages());
 

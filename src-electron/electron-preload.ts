@@ -58,6 +58,7 @@ const electronApi: ElectronApi = {
     fo ? (typeof fo === 'string' ? fo : webUtils.getPathForFile(fo)) : '',
   getNrOfPdfPages,
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),
+  getSharedDataPath: () => invoke('getSharedDataPath'),
   getUserDataPath: () => invoke('getUserDataPath'),
   getVideoDuration,
   inferExtension,

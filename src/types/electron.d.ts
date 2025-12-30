@@ -73,6 +73,7 @@ export interface ElectronApi {
   getLocalPathFromFileObject: (fileObject: File | string | undefined) => string;
   getNrOfPdfPages: (pdfPath: string) => Promise<number>;
   getScreenAccessStatus: () => Promise<MediaAccessStatus>;
+  getSharedDataPath: () => Promise<null | string>;
   getUserDataPath: () => Promise<string>;
   /**
    * Parses metadata from a media file.
@@ -204,6 +205,7 @@ export type ElectronIpcInvokeKey =
   | 'getAppDataPath'
   | 'getLocales'
   | 'getScreenAccessStatus'
+  | 'getSharedDataPath'
   | 'getUserDataPath'
   | 'isArchitectureMismatch'
   | 'isDownloadErrorExpected'

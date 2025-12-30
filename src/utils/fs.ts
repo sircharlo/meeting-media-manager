@@ -4,8 +4,15 @@ import { Buffer } from 'buffer';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getPubId } from 'src/utils/jw';
 
-const { checkForUpdates, fileUrlToPath, fs, getUserDataPath, path, readdir } =
-  window.electronApi;
+const {
+  checkForUpdates,
+  fileUrlToPath,
+  fs,
+  getSharedDataPath,
+  getUserDataPath,
+  path,
+  readdir,
+} = window.electronApi;
 const {
   ensureDir,
   ensureFile,
@@ -20,7 +27,10 @@ const { dirname, extname, join } = path;
 let cachedUserDataPath: null | string = null;
 
 export const setCachedUserDataPath = async () => {
-  if (!cachedUserDataPath) cachedUserDataPath = await getUserDataPath();
+  if (!cachedUserDataPath) {
+    cachedUserDataPath =
+      (await getSharedDataPath()) || (await getUserDataPath());
+  }
 };
 
 export const isFileUrl = (path?: string) => path?.startsWith('file://');
@@ -44,7 +54,10 @@ const getCachePath = async (
   cacheDir?: null | string,
 ) => {
   const dir = join(
-    cacheDir || cachedUserDataPath || (await getUserDataPath()),
+    cacheDir ||
+      cachedUserDataPath ||
+      (await getSharedDataPath()) ||
+      (await getUserDataPath()),
     ...paths.filter((p) => !!p),
   );
   if (create) {

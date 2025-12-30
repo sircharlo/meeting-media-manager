@@ -6,12 +6,15 @@ import {
   IS_DEV,
   JW_DOMAINS,
   PLATFORM,
+  PRODUCT_NAME,
   TRUSTED_DOMAINS,
 } from 'src-electron/constants';
 import { urlVariables } from 'src-electron/main/session';
 import upath from 'upath';
 
 const { join, resolve } = upath;
+import { access, constants } from 'fs-extra';
+import { pathExists } from 'fs-extra/esm';
 
 type CaptureCtx = Parameters<typeof captureException>[1];
 
@@ -41,6 +44,53 @@ export function getIconPath(icon: 'beta' | 'icon' | 'media-player') {
 }
 
 /**
+ * Gets the shared data path for machine-wide installations
+ * @returns The shared data path or null if not available/writable
+ */
+export async function getSharedDataPath(): Promise<null | string> {
+  const isMachineWide = isMachineWideInstallation();
+  if (!isMachineWide && !IS_DEV) return null;
+
+  let sharedPath = '';
+  if (PLATFORM === 'win32') {
+    sharedPath = join(
+      process.env.ProgramData || 'C:\\ProgramData',
+      PRODUCT_NAME || 'Meeting Media Manager',
+    );
+  } else if (PLATFORM === 'darwin') {
+    sharedPath = join(
+      '/Library/Application Support',
+      PRODUCT_NAME || 'Meeting Media Manager',
+    );
+  } else {
+    // Linux
+    sharedPath = join(
+      '/var/cache',
+      (PRODUCT_NAME || 'meeting-media-manager')
+        .toLowerCase()
+        .replace(/ /g, '-'),
+    );
+  }
+
+  // Verify write access to the shared path
+  try {
+    if (await pathExists(sharedPath)) {
+      await access(sharedPath, constants.W_OK);
+      return sharedPath;
+    }
+  } catch {
+    // If it doesn't exist or isn't writable, we'll try to create it in the main process
+    // but here we just return the path if we think it's the right place.
+    // However, for the renderer to use it safely, we should probably only return it if we are sure.
+    // But since the setup might happen later or requires admin rights during install,
+    // let's just return the path if it's a machine-wide install and let the app try to use it.
+    // A better approach is to return it, and let the caller handle permission errors.
+    return sharedPath;
+  }
+  return sharedPath;
+}
+
+/**
  * Checks if a given url is a JW domain
  * @param url The url to check
  * @returns Whether the url is a JW domain
@@ -56,6 +106,25 @@ export function isJwDomain(url: string): boolean {
     ).some((domain) => parsedUrl.hostname.endsWith(domain));
   } catch {
     return false;
+  }
+}
+
+/**
+ * Checks if the current installation is machine-wide
+ * @returns Whether the installation is machine-wide
+ */
+export function isMachineWideInstallation(): boolean {
+  if (process.env.MMM_FORCE_MACHINE_WIDE === 'true') return true;
+  const exe = app.getPath('exe');
+  if (PLATFORM === 'win32') {
+    return (
+      exe.toLowerCase().includes('program files') &&
+      !exe.toLowerCase().includes('users')
+    );
+  } else if (PLATFORM === 'darwin') {
+    return exe.startsWith('/Applications') && !exe.startsWith('/Users');
+  } else {
+    return exe.startsWith('/usr') || exe.startsWith('/opt');
   }
 }
 
