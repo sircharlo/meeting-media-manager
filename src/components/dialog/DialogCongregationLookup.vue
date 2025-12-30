@@ -73,7 +73,11 @@
             v-for="congregation in results"
             :key="congregation.properties.orgGuid"
           >
-            <q-item clickable @click="selectCongregation(congregation)">
+            <q-item
+              v-if="congregation.properties.schedule.current"
+              clickable
+              @click="selectCongregation(congregation)"
+            >
               <q-item-section>
                 <q-item-label>
                   {{ congregation.properties.orgName }}
@@ -227,6 +231,7 @@ const selectCongregation = (congregation: GeoRecord) => {
   try {
     if (!currentSettings.value) return;
 
+    currentState.lookupInProgress = true;
     const { properties } = congregation;
 
     // Language
@@ -240,7 +245,10 @@ const selectCongregation = (congregation: GeoRecord) => {
     }
 
     // Midweek day & time
-    const { midweek, weekend } = properties.schedule.current;
+    const { current } = properties.schedule;
+    if (!current) return;
+
+    const { midweek, weekend } = current;
 
     if (Number.isInteger(midweek?.weekday)) {
       currentSettings.value.mwDay = `${midweek.weekday - 1}`;
@@ -260,10 +268,12 @@ const selectCongregation = (congregation: GeoRecord) => {
     // Congregation name
     if (properties.orgName) {
       currentSettings.value.congregationName = properties.orgName;
+      currentSettings.value.congregationNameModified = false;
     }
   } catch (error) {
     errorCatcher(error);
   }
+  currentState.lookupInProgress = false;
   dismissPopup();
 };
 

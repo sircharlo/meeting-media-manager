@@ -202,6 +202,8 @@ const shouldShowSetting = (
   item: SettingsItem,
   settingId: keyof SettingsValues,
 ): boolean => {
+  if (item.hidden) return false;
+
   // Check dependencies
   const dependenciesSatisfied =
     !item.depends ||

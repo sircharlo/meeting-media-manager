@@ -124,6 +124,7 @@ export interface SettingsItem {
   beta?: true;
   depends?: (keyof SettingsValues)[] | keyof SettingsValues;
   group: SettingsGroupKey;
+  hidden?: boolean;
   icon?: string;
   list?: SettingsItemListKey;
   max?: number;
@@ -137,7 +138,10 @@ export interface SettingsItem {
   unless?: (keyof SettingsValues)[] | keyof SettingsValues;
 }
 
-export type SettingsItemAction = 'obsConnect' | 'setBackgroundMusicVolume';
+export type SettingsItemAction =
+  | 'obsConnect'
+  | 'setBackgroundMusicVolume'
+  | 'syncMeetingSchedule';
 
 export type SettingsItemListKey =
   | 'appLanguages'
@@ -171,6 +175,7 @@ export type SettingsItemSubgroup =
   | 'zoomIntegration';
 
 export type SettingsItemType =
+  | 'button'
   | 'date'
   | 'list'
   | 'path'
@@ -187,6 +192,7 @@ export interface SettingsValues {
   beginPlaybackPaused: boolean;
   cacheFolder: null | string;
   congregationName: null | string;
+  congregationNameModified: boolean;
   convertFilesToMp4: boolean;
   coWeek: `${number}/${number}/${number}` | null;
   customEventLastSongShortcut: null | string;
@@ -196,6 +202,7 @@ export interface SettingsValues {
   darkMode: 'auto' | boolean;
   disableHardwareAcceleration: boolean;
   disableMediaFetching: boolean;
+  enableAutomaticMeetingScheduleUpdates: boolean;
   enableCacheAutoClear: boolean;
   enableCustomEvents: boolean;
   enableExtraCache: boolean;
@@ -248,6 +255,7 @@ export interface SettingsValues {
   recordingFolder: null | string;
   recordingStartShortcut: null | string;
   recordingStopShortcut: null | string;
+  reSyncMeetingScheduleButton: boolean;
   shortcutMediaNext: null | string;
   shortcutMediaPauseResume: null | string;
   shortcutMediaPrevious: null | string;

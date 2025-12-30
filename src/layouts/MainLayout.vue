@@ -62,6 +62,7 @@ import {
   cleanPersistedStores,
   deleteCacheFiles,
 } from 'src/helpers/cleanup';
+import { syncMeetingSchedule } from 'src/helpers/congregation-schedule';
 import {
   isMwMeetingDay,
   isWeMeetingDay,
@@ -279,6 +280,8 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     downloadBackgroundMusic();
     delayedCacheClear();
 
+    syncMeetingSchedule();
+
     if (queues.meetings[newCongregation]) {
       queues.meetings[newCongregation].start();
     }
@@ -322,6 +325,20 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     errorCatcher(error);
   }
 });
+
+watch(
+  () => currentSettings.value?.congregationName,
+  (newVal, oldVal) => {
+    if (
+      !!oldVal &&
+      newVal !== oldVal &&
+      currentSettings.value &&
+      !currentState.lookupInProgress
+    ) {
+      currentSettings.value.congregationNameModified = true;
+    }
+  },
+);
 
 watch(online, (isNowOnline) => {
   try {

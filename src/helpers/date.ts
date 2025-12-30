@@ -1,5 +1,6 @@
 import type { DateInfo, SettingsValues } from 'src/types';
 
+import { i18n } from 'boot/i18n';
 import { DAYS_IN_FUTURE } from 'src/constants/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
@@ -13,6 +14,8 @@ import {
 } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
+
+import { createTemporaryNotification } from './notifications';
 
 const getWeekDay = (lookupDate: Date) => {
   try {
@@ -369,6 +372,16 @@ function updateMeetingScheduleIfNeeded(settings: SettingsValues) {
     settings.weStartTime =
       settings.meetingScheduleChangeWeStartTime ?? settings.weStartTime;
   }
+
+  // Notify user
+  createTemporaryNotification({
+    icon: 'mmm-info',
+    message: (i18n.global.t as (key: string) => string)(
+      'meeting-schedule-change-applied',
+    ),
+    timeout: 10000,
+    type: 'info',
+  });
 
   // Clear change fields
   Object.assign(settings, {

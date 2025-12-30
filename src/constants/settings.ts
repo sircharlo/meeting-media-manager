@@ -71,6 +71,11 @@ export const settingsDefinitions: SettingsItems = {
     rules: ['notEmpty'],
     type: 'text',
   },
+  congregationNameModified: {
+    group: 'congregationMeetings',
+    hidden: true,
+    type: 'toggle',
+  },
   lang: {
     group: 'congregationMeetings',
     list: 'jwLanguages',
@@ -172,6 +177,14 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'meetingScheduleChange',
     type: 'time',
     unless: 'disableMediaFetching',
+  },
+  reSyncMeetingScheduleButton: {
+    actions: ['syncMeetingSchedule'],
+    depends: 'enableAutomaticMeetingScheduleUpdates',
+    group: 'congregationMeetings',
+    subgroup: 'meetingScheduleChange',
+    type: 'button',
+    unless: ['disableMediaFetching', 'congregationNameModified'],
   },
   // Media Retrieval and Playback
   meteredConnection: {
@@ -541,6 +554,10 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'dangerZone',
     type: 'text',
   },
+  enableAutomaticMeetingScheduleUpdates: {
+    group: 'advanced',
+    type: 'toggle',
+  },
   disableMediaFetching: {
     group: 'advanced',
     subgroup: 'dangerZone',
@@ -567,6 +584,7 @@ export const defaultSettings: SettingsValues = {
   beginPlaybackPaused: false,
   cacheFolder: null,
   congregationName: null,
+  congregationNameModified: true,
   convertFilesToMp4: false,
   coWeek: null,
   customEventLastSongShortcut: null,
@@ -576,6 +594,7 @@ export const defaultSettings: SettingsValues = {
   darkMode: 'auto',
   disableHardwareAcceleration: false,
   disableMediaFetching: false,
+  enableAutomaticMeetingScheduleUpdates: true,
   enableCacheAutoClear: true,
   enableCustomEvents: false,
   enableExtraCache: false,
@@ -628,6 +647,7 @@ export const defaultSettings: SettingsValues = {
   recordingFolder: null,
   recordingStartShortcut: null,
   recordingStopShortcut: null,
+  reSyncMeetingScheduleButton: false,
   shortcutMediaNext: null,
   shortcutMediaPauseResume: null,
   shortcutMediaPrevious: null,

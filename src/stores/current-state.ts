@@ -59,6 +59,7 @@ interface Store {
   downloadProgress: DownloadProgressItems;
   extractedFiles: Partial<Record<string, string>>;
   ffmpegPath: string;
+  lookupInProgress: boolean;
   mediaPlaying: MediaPlayingState;
   mediaWindowCustomBackground: string;
   mediaWindowVisible: boolean;
@@ -419,6 +420,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       downloadProgress: {},
       extractedFiles: {},
       ffmpegPath: '',
+      lookupInProgress: false,
       mediaPlaying: {
         action: '',
         currentPosition: 0,

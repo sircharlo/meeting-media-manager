@@ -5,6 +5,7 @@ import type {
   SettingsItemRule,
 } from 'src/types';
 
+import { syncMeetingSchedule } from 'src/helpers/congregation-schedule';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getDateDiff, getSpecificWeekday, isInPast } from 'src/utils/date';
 
@@ -87,6 +88,8 @@ export const performActions = (actions: SettingsItemAction[] | undefined) => {
         window.dispatchEvent(
           new CustomEvent<undefined>('obsConnectFromSettings'),
         );
+      } else if (action === 'syncMeetingSchedule') {
+        syncMeetingSchedule(true);
       }
     } catch (error) {
       errorCatcher(error);
