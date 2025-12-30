@@ -557,6 +557,7 @@ export const settingsDefinitions: SettingsItems = {
   enableAutomaticMeetingScheduleUpdates: {
     group: 'advanced',
     type: 'toggle',
+    unless: ['congregationNameModified', 'disableMediaFetching'],
   },
   disableMediaFetching: {
     group: 'advanced',
