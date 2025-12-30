@@ -82,49 +82,49 @@ Sa saad importida kohandatud meediat mitmel viisil:
 - **Kausta jälgimine**: seadista jälgitav kaust automaatseks importimiseks
 - **JWPUB-failid ja esitusloendid**: importige väljaanded ja esitusloendid
 
-### :speaker: Can I import audio Bible recordings? {#audio-bible}
+### :speaker: Kas ma saan importida audiopiibli osi? {#audio-bible}
 
-Jah! M³ includes an Audio Bible feature that allows you to:
+Jah! M³ sisaldab audiopiibli funktsiooni, mis võimaldab sul:
 
-1. Select Bible books and chapters
-2. Choose specific verses or verse ranges
-3. Download audio recordings
-4. Use them at the meetings
+1. Valida piibli raamatuid ja peatükke
+2. Valida konkreetseid salme või salmide hulka
+3. Laadida alla helisalvestisi
+4. Kasutada neid koosolekutel
 
-## Presentation Features {#faq-presentation-features}
+## Meedia esitluse funktsioonid {#faq-presentation-features}
 
-### :tv: How do I present media during meetings? {#present-media}
+### :tv: Kuidas esitada koosolekute ajal meediafaile? {#present-media}
 
-To present media:
+Et esitada meediat:
 
-1. Select the date
-2. Click the play button on the media item you want to present or use keyboard shortcuts
-3. Use the media player controls to pause, navigate, or stop playback
-4. Use zoom/pan features for images
-5. Set custom timing if needed
+1. Vali kuupäev
+2. Klõpsa esitleda soovitud meediaelemendi esitusnuppu või kasuta klaviatuuril kiirklahve
+3. Kasuta meediapleieri juhtnuppe, et pausile panna, navigeerida või taasesitamine peatada
+4. Kasuta piltide suumimise/panorameerimise funktsioone
+5. Vajadusel seadista kohandatud ajastus
 
-### :keyboard: What keyboard shortcuts are available? {#faq-keyboard-shortcuts}
+### :keyboard: Millised klaviatuurikombinatsioonid on saadaval? {#faq-keyboard-shortcuts}
 
-M³ supports customizable keyboard shortcuts for:
+M³ toetab kohandatavaid klaviatuurikombinatsioone järgmisteks toiminguteks:
 
-- Opening/closing media window
-- Previous/next media navigation
-- Play/pause/stop controls
-- Background music toggle
+- Meediaakna avamine/sulgemine
+- Eelmise/järgmise meedia navigeerimine
+- Esita/paus/peata nupud
+- Taustamuusika lülitamine
 
 <!-- - Fullscreen mode -->
 
-### :notes: How does background music work? {#faq-background-music}
+### :notes: Kuidas taustamuusika toimib? {#faq-background-music}
 
-Background music features include:
+Taustamuusika funktsioon hõlmab:
 
-- Automatic playback when M³ starts, before the meeting begins
-- Automatic stop before meetings begin
-- One-click restart after meetings
-- Independent volume control
-- Configurable stop buffer time
+- Automaatne taasesitus, kui M³ käivitub, enne koosoleku algust
+- Automaatne peatamine enne koosolekute algust
+- Ühe klõpsuga taaskäivitamine pärast koosolekuid
+- Eraldi helitugevusregulaator
+- Konfigureeritav peatuspuhvri aeg
 
-### :video_camera: How do I set up the Zoom integration? {#zoom-setup}
+### :video_camera: Kuidas seadistada Zoom-iga koostöö? {#zoom-setup}
 
 To integrate with Zoom:
 
