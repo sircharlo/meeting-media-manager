@@ -1,5 +1,8 @@
+import type { MediaItem } from 'src/types';
+
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
+import { useJwStore } from 'stores/jw';
 
 import type { MigrationFunction } from './types';
 
@@ -35,6 +38,52 @@ export const moveCacheToMachineWide: MigrationFunction = async () => {
       if ((await exists(src)) && !(await exists(dest))) {
         await move(src, dest);
       }
+    }
+
+    try {
+      // Attempt to update paths for additional media in the lookup periods
+      const jwStore = useJwStore();
+      if (jwStore.lookupPeriod) {
+        Object.values(jwStore.lookupPeriod).forEach((dates) => {
+          if (!dates) return;
+          dates.forEach((dateInfo) => {
+            if (!dateInfo?.mediaSections) return;
+            Object.values(dateInfo.mediaSections).forEach((section) => {
+              if (!section?.items) return;
+
+              const updateItemPath = (item: MediaItem) => {
+                if (item?.source === 'additional') {
+                  const replacePath = (url: string | undefined) => {
+                    if (url && url.startsWith(userDataPath)) {
+                      return url.replace(userDataPath, sharedPath);
+                    }
+                    return url;
+                  };
+
+                  item.fileUrl = replacePath(item.fileUrl);
+                  item.thumbnailUrl = replacePath(item.thumbnailUrl);
+                  item.subtitlesUrl = replacePath(item.subtitlesUrl);
+                }
+
+                if (item?.children) {
+                  item.children.forEach(updateItemPath);
+                }
+              };
+
+              section?.items?.forEach(updateItemPath);
+            });
+          });
+        });
+      }
+    } catch (error) {
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            name: 'moveCacheToMachineWide',
+            subroutine: 'updateItemPath',
+          },
+        },
+      });
     }
 
     return true;
