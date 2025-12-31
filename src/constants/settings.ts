@@ -76,6 +76,12 @@ export const settingsDefinitions: SettingsItems = {
     hidden: true,
     type: 'toggle',
   },
+  relinkCongregationButton: {
+    actions: ['openCongregationLookup'],
+    depends: 'congregationNameModified',
+    group: 'congregationMeetings',
+    type: 'button',
+  },
   lang: {
     group: 'congregationMeetings',
     list: 'jwLanguages',
@@ -648,6 +654,7 @@ export const defaultSettings: SettingsValues = {
   recordingFolder: null,
   recordingStartShortcut: null,
   recordingStopShortcut: null,
+  relinkCongregationButton: false,
   reSyncMeetingScheduleButton: false,
   shortcutMediaNext: null,
   shortcutMediaPauseResume: null,

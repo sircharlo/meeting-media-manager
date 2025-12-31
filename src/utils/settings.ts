@@ -90,6 +90,10 @@ export const performActions = (actions: SettingsItemAction[] | undefined) => {
         );
       } else if (action === 'syncMeetingSchedule') {
         syncMeetingSchedule(true);
+      } else if (action === 'openCongregationLookup') {
+        window.dispatchEvent(
+          new CustomEvent<undefined>('openCongregationLookup'),
+        );
       }
     } catch (error) {
       errorCatcher(error);

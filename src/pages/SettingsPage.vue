@@ -96,6 +96,10 @@
       </template>
     </q-form>
   </q-page>
+  <DialogCongregationLookup
+    v-model="showCongregationLookup"
+    :dialog-id="'settings-congregation-lookup'"
+  />
 </template>
 
 <script setup lang="ts">
@@ -112,17 +116,39 @@ import { useRouteParams } from '@vueuse/router';
 import BaseInput from 'components/form-inputs/BaseInput.vue';
 import { storeToRefs } from 'pinia';
 import { type QForm, useMeta, useQuasar } from 'quasar';
+import DialogCongregationLookup from 'src/components/dialog/DialogCongregationLookup.vue';
 import { settingsDefinitions, settingsGroups } from 'src/constants/settings';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
-import { computed, onMounted, ref, useTemplateRef, watch } from 'vue';
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  useTemplateRef,
+  watch,
+} from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 useMeta({ title: t('settings') });
 
 const $q = useQuasar();
+
+const showCongregationLookup = ref(false);
+
+const openCongregationLookup = () => {
+  showCongregationLookup.value = true;
+};
+
+onMounted(() => {
+  window.addEventListener('openCongregationLookup', openCongregationLookup);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('openCongregationLookup', openCongregationLookup);
+});
 
 // Store initializations
 const currentState = useCurrentStateStore();

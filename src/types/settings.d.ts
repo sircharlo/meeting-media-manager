@@ -140,6 +140,7 @@ export interface SettingsItem {
 
 export type SettingsItemAction =
   | 'obsConnect'
+  | 'openCongregationLookup'
   | 'setBackgroundMusicVolume'
   | 'syncMeetingSchedule';
 
@@ -255,6 +256,7 @@ export interface SettingsValues {
   recordingFolder: null | string;
   recordingStartShortcut: null | string;
   recordingStopShortcut: null | string;
+  relinkCongregationButton: boolean;
   reSyncMeetingScheduleButton: boolean;
   shortcutMediaNext: null | string;
   shortcutMediaPauseResume: null | string;

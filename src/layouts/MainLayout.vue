@@ -340,6 +340,33 @@ watch(
   },
 );
 
+watch(
+  () => currentSettings.value?.congregationNameModified,
+  (newVal, oldVal) => {
+    if (!currentSettings.value || oldVal === undefined || newVal === undefined)
+      return;
+
+    if (newVal && !oldVal) {
+      // Automatic sync disabled
+      createTemporaryNotification({
+        caption: t('automatic-sync-disabled-explain'),
+        icon: 'mmm-warning',
+        message: t('automatic-sync-disabled'),
+        timeout: 10000,
+        type: 'warning',
+      });
+    } else if (!newVal && oldVal) {
+      // Automatic sync enabled
+      createTemporaryNotification({
+        icon: 'mmm-check',
+        message: t('automatic-sync-enabled'),
+        timeout: 10000,
+        type: 'positive',
+      });
+    }
+  },
+);
+
 watch(online, (isNowOnline) => {
   try {
     const congregation = currentCongregation.value;
