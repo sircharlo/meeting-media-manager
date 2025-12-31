@@ -1,6 +1,7 @@
 import type { MigrationFunction } from './types';
 
 import { addBaseUrlToAllCongregations } from './add-base-url';
+import { autoEnrollMeetingSync } from './auto-enroll-meeting-sync';
 import { backfillLastUsed } from './backfill-last-used';
 import { firstRun } from './first-run';
 import { localStorageToPiniaPersist } from './local-storage-to-pinia';
@@ -22,6 +23,7 @@ export const MIGRATION_REGISTRY: Record<string, MigrationFunction> = {
   '25.12.2 (1) moveCacheToMachineWide': moveCacheToMachineWide,
   '25.12.2 (2) refreshDynamicMedia': refreshDynamicMedia,
   '25.12.2 (3) backfillLastUsed': backfillLastUsed,
+  '25.12.2 (4) autoEnrollMeetingSync': autoEnrollMeetingSync,
   addBaseUrlToAllCongregations,
   firstRun,
   localStorageToPiniaPersist,
