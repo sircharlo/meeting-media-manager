@@ -1411,33 +1411,30 @@ const getParagraphNumbers = (
   caption: string,
 ) => {
   try {
-    if (!paragraphLabel) return '';
-    if (!caption) return paragraphLabel;
+    if (!caption) return paragraphLabel || '';
 
-    const numbers = [...caption.matchAll(/\d+/g)].map((match) =>
-      parseInt(match[0]),
-    ); // Find all numbers in the line
+    const numbers = [...caption.matchAll(/\d+/g)].map((m) => parseInt(m[0]));
 
-    if (
-      !numbers.length ||
-      !numbers.map((n) => n.toString()).includes(paragraphLabel.toString())
-    )
-      return paragraphLabel;
+    if (numbers.length === 0) return paragraphLabel || '';
     if (numbers.length === 1) return numbers[0];
 
-    const max = numbers[numbers.length - 1]; // Find the last number
+    // If paragraphLabel exists but isn't in caption, return it
+    if (paragraphLabel && !numbers.includes(Number(paragraphLabel))) {
+      return paragraphLabel;
+    }
 
-    if (!max) return paragraphLabel;
+    const first = numbers[0];
+    const last = numbers[numbers.length - 1];
 
-    // Find the first number less than or equal to max
-    const firstNumber = numbers.find((n) => n <= max);
-    if (!firstNumber) return paragraphLabel;
+    // Check if it's a simple range (no numbers between first and last that break the sequence)
+    const between = numbers.slice(1, -1);
+    if (last && between.some((n) => n > last)) return last;
 
-    const regex = new RegExp(`${firstNumber}.*${max}`);
-    const match = caption.match(regex);
-    if (match && match[0]?.length <= 15) return match[0];
+    // Try to extract the range string
+    const rangeMatch = caption.match(new RegExp(`${first}.*?${last}`));
+    if (rangeMatch && rangeMatch[0]?.length <= 15) return rangeMatch[0];
 
-    return paragraphLabel;
+    return paragraphLabel || '';
   } catch (e) {
     errorCatcher(e);
     return paragraphLabel || '';
