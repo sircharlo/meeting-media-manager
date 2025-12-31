@@ -1159,17 +1159,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fontsource/inter@npm:^5.2.8":
+"@fontsource-variable/inter@npm:^5.2.8":
   version: 5.2.8
-  resolution: "@fontsource/inter@npm:5.2.8"
-  checksum: 10c0/f737dd50005e4809887ba55ae0c9b7174216d6d14875d17a4fbb9a0ad75dec4265928b805a43fe16a23f14a878f1974a398bbfc84ad65c79fc4d4b9c3ea154e1
+  resolution: "@fontsource-variable/inter@npm:5.2.8"
+  checksum: 10c0/35b46df31c8c18f55f87228acf6297e4dac6cc9f38d0faaafdaf5a40e40c386cf1bfb115fb0fe0dcdb9b7e14f582843693ccf070d9c903072a5b2fc0f8dfde56
   languageName: node
   linkType: hard
 
-"@fontsource/noto-serif@npm:^5.2.9":
+"@fontsource-variable/noto-serif@npm:^5.2.9":
   version: 5.2.9
-  resolution: "@fontsource/noto-serif@npm:5.2.9"
-  checksum: 10c0/a98d78dd56319969af1f31f2f202f6ac9713db609dd92c9f15ed0e3555b09028f08ee022a859fbec45f87e98b4fe8ed9372d2ed8a182a8bfbcdd74839034a286
+  resolution: "@fontsource-variable/noto-serif@npm:5.2.9"
+  checksum: 10c0/403c2199aebc201fb04b85494c2d789089ae70c99313a066b985ef80219a3fc10b9eef5f490b88361d48d97c9142603fc1e429ae3a7ca393f53c7dec46f7faa2
   languageName: node
   linkType: hard
 
@@ -10845,8 +10845,8 @@ __metadata:
   dependencies:
     "@electron/rebuild": "npm:^4.0.2"
     "@eslint/compat": "npm:^2.0.0"
-    "@fontsource/inter": "npm:^5.2.8"
-    "@fontsource/noto-serif": "npm:^5.2.9"
+    "@fontsource-variable/inter": "npm:^5.2.8"
+    "@fontsource-variable/noto-serif": "npm:^5.2.9"
     "@formkit/drag-and-drop": "npm:^0.5.3"
     "@intlify/unplugin-vue-i18n": "npm:^11.0.3"
     "@jitsi/robotjs": "npm:^0.6.18"

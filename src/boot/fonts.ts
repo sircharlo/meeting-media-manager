@@ -1,2 +1,2 @@
-import '@fontsource/inter/variable.css';
-import '@fontsource/noto-serif/variable.css';
+import '@fontsource-variable/inter';
+import '@fontsource-variable/noto-serif';
