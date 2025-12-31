@@ -155,10 +155,8 @@ export default defineConfig((ctx) => {
           target: { target: 'default' },
         },
         nsis: {
+          deleteAppDataOnUninstall: true,
           oneClick: false,
-          // uninstallUrlHelp: `${repoURL}/blob/master/SUPPORT.md`,
-          // uninstallUrlReadme: `${repoURL}#readme`,
-          // uninstallUrlUpdateInfo: `${repoURL}/releases`,
         },
         portable: {
           // eslint-disable-next-line no-template-curly-in-string
