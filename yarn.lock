@@ -1159,6 +1159,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fontsource/inter@npm:^5.2.8":
+  version: 5.2.8
+  resolution: "@fontsource/inter@npm:5.2.8"
+  checksum: 10c0/f737dd50005e4809887ba55ae0c9b7174216d6d14875d17a4fbb9a0ad75dec4265928b805a43fe16a23f14a878f1974a398bbfc84ad65c79fc4d4b9c3ea154e1
+  languageName: node
+  linkType: hard
+
+"@fontsource/noto-serif@npm:^5.2.9":
+  version: 5.2.9
+  resolution: "@fontsource/noto-serif@npm:5.2.9"
+  checksum: 10c0/a98d78dd56319969af1f31f2f202f6ac9713db609dd92c9f15ed0e3555b09028f08ee022a859fbec45f87e98b4fe8ed9372d2ed8a182a8bfbcdd74839034a286
+  languageName: node
+  linkType: hard
+
 "@formkit/drag-and-drop@npm:^0.5.3":
   version: 0.5.3
   resolution: "@formkit/drag-and-drop@npm:0.5.3"
@@ -10831,6 +10845,8 @@ __metadata:
   dependencies:
     "@electron/rebuild": "npm:^4.0.2"
     "@eslint/compat": "npm:^2.0.0"
+    "@fontsource/inter": "npm:^5.2.8"
+    "@fontsource/noto-serif": "npm:^5.2.9"
     "@formkit/drag-and-drop": "npm:^0.5.3"
     "@intlify/unplugin-vue-i18n": "npm:^11.0.3"
     "@jitsi/robotjs": "npm:^0.6.18"
