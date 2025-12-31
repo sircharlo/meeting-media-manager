@@ -392,6 +392,9 @@ function updateMeetingScheduleIfNeeded(settings: SettingsValues) {
     meetingScheduleChangeWeDay: null,
     meetingScheduleChangeWeStartTime: null,
   });
+
+  // Update lookup period
+  updateLookupPeriod({ reset: true });
 }
 
 export const remainingTimeBeforeMeetingStart = () => {
