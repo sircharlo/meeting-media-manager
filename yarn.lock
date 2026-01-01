@@ -457,10 +457,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@borewit/text-codec@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@borewit/text-codec@npm:0.2.0"
-  checksum: 10c0/831a96fcd15eb9f8f5390f95a1dccb1c28e2aea7b5cbf17ac8606091d6934bb10a560daa13bca4572cb0a09e19cfefd9e12ca7a29d95d5a330b3f5b9e1dbb005
+"@borewit/text-codec@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "@borewit/text-codec@npm:0.2.1"
+  checksum: 10c0/aabd9c86497197aacc9ddb413857f112a98a9fd4be9ed56a24971a47bbec7c0d5d449efcad830f9895009c1a5914e5c448f972a0c968e97c4ebf99297dea7a6b
   languageName: node
   linkType: hard
 
@@ -1388,13 +1388,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@intlify/core-base@npm:11.2.7":
-  version: 11.2.7
-  resolution: "@intlify/core-base@npm:11.2.7"
+"@intlify/core-base@npm:11.2.8":
+  version: 11.2.8
+  resolution: "@intlify/core-base@npm:11.2.8"
   dependencies:
-    "@intlify/message-compiler": "npm:11.2.7"
-    "@intlify/shared": "npm:11.2.7"
-  checksum: 10c0/f3d748f81b5f84b50301fcc110c77d6daf71c27e23967856c3d2e058f132d5c12109aa6c743a4781eb738e3bf6e44186b980826e46fa5ae8a50492636b1795b6
+    "@intlify/message-compiler": "npm:11.2.8"
+    "@intlify/shared": "npm:11.2.8"
+  checksum: 10c0/fe225ca9026c920779fb92d9ba931d4451b715d2c64c27640777a547c085f6c79234ccd4d10136d638b807881a0e8ea55c13b46788856b4cc2ab4cb38ca34228
   languageName: node
   linkType: hard
 
@@ -1408,7 +1408,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@intlify/message-compiler@npm:11.2.7, @intlify/message-compiler@npm:^11.1.12":
+"@intlify/message-compiler@npm:11.2.8":
+  version: 11.2.8
+  resolution: "@intlify/message-compiler@npm:11.2.8"
+  dependencies:
+    "@intlify/shared": "npm:11.2.8"
+    source-map-js: "npm:^1.0.2"
+  checksum: 10c0/efb925f1989f127f0b2d8ee00aa3464c5490ce9db7d31ad0a76e8c68b224c48d93d7102b94cd9ff7f0144d9e56f9458ed18f1026d4bd4024f60d8a55e86bf8ae
+  languageName: node
+  linkType: hard
+
+"@intlify/message-compiler@npm:^11.1.12":
   version: 11.2.7
   resolution: "@intlify/message-compiler@npm:11.2.7"
   dependencies:
@@ -1429,6 +1439,13 @@ __metadata:
   version: 11.2.7
   resolution: "@intlify/shared@npm:11.2.7"
   checksum: 10c0/3aa6fcd3d9fc4d74a3a9d328dfdc7dcda2c687edc25e74257649f919abd610ab5a66f2c7f67971ff05f0edf27af8c90d92c494b2c1c089b5012a5e70ab478818
+  languageName: node
+  linkType: hard
+
+"@intlify/shared@npm:11.2.8":
+  version: 11.2.8
+  resolution: "@intlify/shared@npm:11.2.8"
+  checksum: 10c0/12158a551f68bd941b7ff1087f3666c3c40b8ad08d8eb597325a924ac47b3a926f996b87c27b9349b44a40a601c838b7d4bf108400f7947584b36725a69783c5
   languageName: node
   linkType: hard
 
@@ -8436,15 +8453,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"file-type@npm:^21.1.1":
-  version: 21.1.1
-  resolution: "file-type@npm:21.1.1"
+"file-type@npm:^21.2.0":
+  version: 21.2.0
+  resolution: "file-type@npm:21.2.0"
   dependencies:
     "@tokenizer/inflate": "npm:^0.4.1"
     strtok3: "npm:^10.3.4"
     token-types: "npm:^6.1.1"
     uint8array-extras: "npm:^1.4.0"
-  checksum: 10c0/2df4375a934ddb74ad071c70012d863c993a90792a01c6c9128c02dc47e0adf724e9eff8b0489d880ee345d34df713a34536564a39a9c6db780475710fb9f366
+  checksum: 10c0/af72f992fb8a6d9ff3a43dfe9293cab4f6b4faec7dc7f950e10c30fda9d5e5799e5fc45ad749fe5b2c1076699716f47ebcf0d573a6ad8640da82e35f36a481cf
   languageName: node
   linkType: hard
 
@@ -10911,7 +10928,7 @@ __metadata:
     mousetrap: "npm:^1.6.5"
     ms: "npm:^2.1.3"
     msw: "npm:^2.12.7"
-    music-metadata: "npm:^11.10.3"
+    music-metadata: "npm:^11.10.4"
     obs-websocket-js: "npm:^5.0.7"
     p-queue: "npm:^9.0.1"
     pdfjs-dist: "npm:^5.4.449"
@@ -10933,7 +10950,7 @@ __metadata:
     vitest: "npm:^4.0.16"
     vue: "npm:^3.5.26"
     vue-eslint-parser: "npm:^10.2.0"
-    vue-i18n: "npm:^11.2.7"
+    vue-i18n: "npm:^11.2.8"
     vue-router: "npm:^4.6.4"
     vue-tsc: "npm:^3.2.1"
     vue-zoomable: "npm:^1.2.8"
@@ -11405,20 +11422,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"music-metadata@npm:^11.10.3":
-  version: 11.10.3
-  resolution: "music-metadata@npm:11.10.3"
+"music-metadata@npm:^11.10.4":
+  version: 11.10.4
+  resolution: "music-metadata@npm:11.10.4"
   dependencies:
-    "@borewit/text-codec": "npm:^0.2.0"
+    "@borewit/text-codec": "npm:^0.2.1"
     "@tokenizer/token": "npm:^0.3.0"
     content-type: "npm:^1.0.5"
     debug: "npm:^4.4.3"
-    file-type: "npm:^21.1.1"
+    file-type: "npm:^21.2.0"
     media-typer: "npm:^1.1.0"
     strtok3: "npm:^10.3.4"
-    token-types: "npm:^6.1.1"
+    token-types: "npm:^6.1.2"
     uint8array-extras: "npm:^1.5.0"
-  checksum: 10c0/2363f9efc4db1eae7abf4d416372c3b98d9d3f4e7303e6128c107123809a008b0e4edbec88024ea3d35472c59a366cd09cb3253ac43f8d2c9486066f690e8169
+  checksum: 10c0/3135b037a12e3159cf4de31160f8e37c4d763d5b168801ad796cbee5aba20770fd8ba190385978ac443b7ce704aa79c5b06ca0ea5eda0a3b699546e07842eaa6
   languageName: node
   linkType: hard
 
@@ -14933,6 +14950,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"token-types@npm:^6.1.2":
+  version: 6.1.2
+  resolution: "token-types@npm:6.1.2"
+  dependencies:
+    "@borewit/text-codec": "npm:^0.2.1"
+    "@tokenizer/token": "npm:^0.3.0"
+    ieee754: "npm:^1.2.1"
+  checksum: 10c0/8786e28e3cb65b9e890bc3c38def98e6dfe4565538237f8c0e47dbe549ed8f5f00de8dc464717868308abb4729f1958f78f69e1c4c3deebbb685729113a6fee8
+  languageName: node
+  linkType: hard
+
 "tough-cookie@npm:^6.0.0":
   version: 6.0.0
   resolution: "tough-cookie@npm:6.0.0"
@@ -15790,16 +15818,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-i18n@npm:^11.2.7":
-  version: 11.2.7
-  resolution: "vue-i18n@npm:11.2.7"
+"vue-i18n@npm:^11.2.8":
+  version: 11.2.8
+  resolution: "vue-i18n@npm:11.2.8"
   dependencies:
-    "@intlify/core-base": "npm:11.2.7"
-    "@intlify/shared": "npm:11.2.7"
+    "@intlify/core-base": "npm:11.2.8"
+    "@intlify/shared": "npm:11.2.8"
     "@vue/devtools-api": "npm:^6.5.0"
   peerDependencies:
     vue: ^3.0.0
-  checksum: 10c0/e1d96f6360acd7cb3373c15cbe94a350d1c7793ae2c9e6fbd45b922147f3bf98685a3fabf0d0b7387dfc0c8c83d25a586919ef7c96219c032ccc2ab8cf9d82b3
+  checksum: 10c0/37717cbfea14d09587ca4c38eec3caa89ff4cf4b1af3e37181f770384db6bf38d93bf8626f5d20738a738a65098d38c8bb9ab3c99845942d5911b7a577e9b074
   languageName: node
   linkType: hard
 
