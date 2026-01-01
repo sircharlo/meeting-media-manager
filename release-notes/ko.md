@@ -4,6 +4,14 @@
 
 버전별 전체 변경 사항은, GitHub 의 CHANGELOG.md 파일을 확인해주세요.
 
+## v26.1.0
+
+### ✨ 새로운 기능
+
+- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
+- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
+- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+
 ## v25.12.2
 
 ### ✨ 새로운 기능
@@ -89,7 +97,7 @@
 - ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
 - ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
 
-### 🛠️ 개선 및 변경
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
 - ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
@@ -103,7 +111,7 @@
 - ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
 - ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
 
-### 🛠️ 개선 및 변경
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
 - 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
@@ -116,7 +124,7 @@
 - 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
 - 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
 
-### 🛠️ 개선 및 변경
+### 🛠️ Improvements and Tweaks
 
 - 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
 - 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
@@ -124,19 +132,19 @@
 
 ## 25.4.3
 
-### 🛠️ 개선 및 변경
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
 
 ## 25.4.2
 
-### 🛠️ 개선 및 변경
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
 
 ## 25.4.1
 
-### 🛠️ 개선 및 변경
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
 - 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
@@ -152,7 +160,7 @@
 - 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
 - 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
 
-### 🛠️ 개선 및 변경
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Multiple Start/End Times for Single Video**: Allow a single video to appear in the media list multiple times with different custom start/end times.
 - 📤 **자동 내보내기에 그룹화된 미디어 포함**: 다른 항목과 함께 그룹화된 미디어 항목을 자동으로 내보냅니다.
@@ -164,7 +172,7 @@
 
 - 🌏 **새 언어 지원: 한국어**: 안녕하세요! 더 많은 사용자가 쉽게 사용할 수 있도록 한국어 지원을 추가하였습니다.
 
-### 🛠️ 개선 및 변경
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **성능 및 CPU 사용량 개선**: 성능을 최적화하여 CPU 사용량을 줄이고 효율성을 높였습니다.
 - 🔄 **동기화 및 충돌 오류 수정**: 다양한 동기화 관련 및 안정성 문제를 수정하여 안정성을 높였습니다.
@@ -179,7 +187,7 @@
 - 📅 **기념식 배경 화면 자동 적용**: 기념식 일자를 자동으로 확인해 당일 기념식 배경 화면을 자동 적용하도록 하였습니다.
 - 📜 **애플리케이션 내 업데이트 내역 표시**: 애플리케이션 내에 업데이트 내역을 바로 표시하여 사용자가 변경사항을 쉽게 확인할 수 있도록 하였습니다.
 
-### 🛠️ 개선 및 변경
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **스마트 캐시 정리 최적화**: 스마트 캐시 정리 방식을 개선하여 성능과 효율성을 향상하였습니다.
 - 📂 **순회 감독자 미디어 변경 수정**: 순회 감독자 미디어가 올바른 위치에 배치되도록 수정하였습니다.
