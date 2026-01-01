@@ -4,6 +4,14 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
+## v26.1.0
+
+### ✨ Nove funkcije
+
+- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
+- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
+- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+
 ## v25.12.2
 
 ### ✨ Nove funkcije
@@ -89,7 +97,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 - ✨ **Način ponavljanja razdelka**: Omogočite neprekinjeno predvajanje znotraj določenih razdelkov za nemoteno predvajanje multimedije v zanki.
 - ✨ **Združevanje z Zoomom**: Samodejna uskladitev začetka in konca deljenja zaslona predvajanjem multimedije.
 
-### 🛠️ Izboljšave in popravki
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
 - ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
@@ -103,7 +111,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 - ✨ **Nastavitev omejene povezave**: Dodana je bila nova nastavitev za zmanjšanje porabe pasovne širine za prenos pri omejenih povezavah.
 - ✨ **Izboljšano upravljanje pretakanih medijev**: Boljša podpora za pretakane medije, kar zmanjšuje težave, povezane z zakasnitvijo.
 
-### 🛠️ Izboljšave in popravki
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Boljše upravljanje vrst MIME**: Izboljšana podpora za vrste MIME za boljšo združljivost z medijskimi vsebinami.
 - 🛠️ **Izboljšan navigacijski predal**: Izboljšano upravljanje pomanjšanega stanja in dodan prikaz orodnih namigov za lažjo navigacijo.
@@ -116,7 +124,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 - 🖼️ **Možnost zakasnitve za slike v programu OBS**: Dodaj nastavitev programa OBS Studio za zakasnitev spreminjanja scen pri prikazovanju slik, kar izboljša prehode.
 - 🔊 **Podpora za avdio format `.m4a`**: Dodajanje združljivosti za avdio datoteke `.m4a` za razširitev podprtih vrst multimedijskih datotek.
 
-### 🛠️ Izboljšave in popravki
+### 🛠️ Improvements and Tweaks
 
 - 🔍 **Povrnitev povečave s `Ctrl` + `Scroll`**: Za lažjo navigacijo je možno ponovno omogočiti takojšnjo povečavo s kombinacijo tipke Ctrl in vrtenjem koleščka na miški.
 - 👤 **Skrij neuporabljeno multimedijsko vsebino ON**: Neuporabljeno multimedijsko vsebino za obiske okrajnega nadzornika skrijte, namesto preskočite, da bo predstavitev bolj jasna.
@@ -124,19 +132,19 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ## 25.4.3
 
-### 🛠️ Izboljšave in popravki
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Čiščenje multimedijskih datotek iz verzije v25.4.x**: Samodejno čiščenje preostalih ali napačno umeščenih multimedijskih datotek iz verzije v25.4.1 v verzijo v25.4.2, da na seznamu multimedijske vsebine ne bo manjkala nobena datoteka ali da ne bo na napačnem mestu.
 
 ## 25.4.2
 
-### 🛠️ Izboljšave in popravki
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Preprečevanje podvojenih multimedijskih datotek**: Preprečitev večkratnega dodajanja nekaterih multimedijskih elementov na seznam multimedijske vsebine.
 
 ## 25.4.1
 
-### 🛠️ Izboljšave in popravki
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Popravek prilagoditve začetnega/končnega časa po meri**: Preprečite, da bi se začetni in končni čas nepravilno uporabila za napačen videoposnetek.
 - 📝 **Omogočanje neusklajenih podnapisov**: Omogočite uporabo podnapisov, tudi če se ne ujemajo popolnoma z multimedijsko datoteko.
@@ -152,7 +160,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 - 🇵🇭 **Nov jezik: tagalščina**: Dodana je bila podpora za tagalščino, s čimer so se razširile večjezične možnosti aplikacije.
 - 🎞 **Podpora za `.m4v` video format**: Zdaj podpira predvajanje datotek `.m4v`, s čimer je izboljšana združljivost multimedijskih vsebin.
 
-### 🛠️ Izboljšave in popravki
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Več začetnih/končnih časov za en videoposnetek**: Omogočeno je, da se en videoposnetek večkrat prikaže na multimedijskem seznamu z različnimi začetnimi/končnimi časi, nastavljenimi po meri.
 - 📤 **Vključitev združenih medijev v samodejni izvoz**: Samodejno izvozi združene multimedijske datoteke skupaj z drugimi.
@@ -164,7 +172,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 - 🌏 **Nov jezik: korejščina**: Dodana podpora za korejski jezik, s čimer se širi dostopnost za več uporabnikov.
 
-### 🛠️ Izboljšave in popravki
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **Izboljšana zmogljivost in uporaba procesorja**: Optimizacija delovanja za zmanjšanje porabe procesorja in povečanje učinkovitosti.
 - 🔄 **Odpravljene težave s sinhronizacijo in sesutjem**: Rešene so različne težave, povezane s sinhronizacijo in stabilnostjo, da se izboljša zanesljivost.
@@ -179,7 +187,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 - 📅 **Samodejni datum spominske slovesnosti in ozadje**: Samodejno zaznavanje in nastavitev datuma spominske slovesnosti ter priprava slike za prikaz na zaslonu med spominsko slovenostjo.
 - 📜 **V aplikaciji prikaži opombe ob izdaji**: Prikaz opomb ob izdaji neposredno v aplikaciji, tako da lahko uporabniki po posodobitvi enostavno pregledajo spremembe.
 
-### 🛠️ Izboljšave in popravki
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **Optimiziranje pametnega čiščenja predpomnilnika**: Izboljšan je mehanizem pametnega čiščenja predpomnilnika za boljšo zmogljivost in učinkovitost.
 - 📂 **Pravilna umestitev multimedijske vsebine okrajnega nadzornika**: Poskrbljeno je, da je multimedijska vsebina okrajnega nadzornika umeščena v pravi razdelek.
