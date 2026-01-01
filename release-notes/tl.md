@@ -4,6 +4,14 @@
 
 Para sa makita ang lahat ng mga update, tingnan ang aming CHANGELOG.md na file sa GitHub.
 
+## v26.1.0
+
+### ✨ Mga Bagong Feature
+
+- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
+- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
+- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+
 ## v25.12.2
 
 ### ✨ Mga Bagong Feature
@@ -89,7 +97,7 @@ Para sa makita ang lahat ng mga update, tingnan ang aming CHANGELOG.md na file s
 - ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
 - ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
 
-### 🛠️ Mga Pinahusay at Inayos
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
 - ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
@@ -103,7 +111,7 @@ Para sa makita ang lahat ng mga update, tingnan ang aming CHANGELOG.md na file s
 - ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
 - ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
 
-### 🛠️ Mga Pinahusay at Inayos
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
 - 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
@@ -116,7 +124,7 @@ Para sa makita ang lahat ng mga update, tingnan ang aming CHANGELOG.md na file s
 - 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
 - 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
 
-### 🛠️ Mga Pinahusay at Inayos
+### 🛠️ Improvements and Tweaks
 
 - 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
 - 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
@@ -124,19 +132,19 @@ Para sa makita ang lahat ng mga update, tingnan ang aming CHANGELOG.md na file s
 
 ## 25.4.3
 
-### 🛠️ Mga Pinahusay at Inayos
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Clean Up Media Mula sa v25.4.x**: Awtomatikong linisin ang mga maling nailagay na media mula v25.4.1 hanggang v25.4.2 upang matiyak na walang nawawalang media o nasa maling lugar sa media list.
 
 ## 25.4.2
 
-### 🛠️ Mga Pinahusay at Inayos
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Pigilan ang Dobleng Media**: Iwasang magdagdag ng ilang mga media item nang maraming ulit sa media list.
 
 ## 25.4.1
 
-### 🛠️ Mga Pinahusay at Inayos
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
 - 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
@@ -152,7 +160,7 @@ Para sa makita ang lahat ng mga update, tingnan ang aming CHANGELOG.md na file s
 - 🇵🇭 **Bagong Wika: Tagalog**: Idinagdag ang Tagalog, pinalawak ang paggamit ng app sa iba't ibang wika.
 - 🎞 **Tulong sa `.m4v` Video Format**: Ngayon ay mayroon nang playback para sa `.m4v` files upang palawakin ang media compatibility.
 
-### 🛠️ Mga Pinahusay at Inayos
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Multiple Start/End Times sa Iisang Video**: Isang video na lamang sa media list na lilitaw nang higit sa isang beses na may iba-ibang start/end times.
 - 📤 **Isama ang Grouped Media sa Auto Export**: Awtomatikong i-export ang mga item sa grouped media kasama ng iba pa.
@@ -164,7 +172,7 @@ Para sa makita ang lahat ng mga update, tingnan ang aming CHANGELOG.md na file s
 
 - 🌏 **Bagong Wika: Korean**: Idinagdag ang Korean, pinalawak ang paggamit ng app sa iba't ibang wika.
 
-### 🛠️ Mga Pinahusay at Inayos
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **Pinahusay na Kakayahan at Paggamit ng CPU**: Pinahusay na kakayahan ng CPU upang magamit nang mabuti.
 - 🔄 **Pag-ayos sa Pag-synchronize at mga Crash Issues**: Paglutas may kinalaman sa mga problemang ito.
@@ -179,7 +187,7 @@ Para sa makita ang lahat ng mga update, tingnan ang aming CHANGELOG.md na file s
 - 📅 **Awtomatikong Petsa ng Memoryal at Background**: Awtomatikong tukuyin at i-set ang petsa ng Memoryal at ihanda ang background image para rito.
 - 📜 **Ipakita ang Release Notes sa App**: Ipakita ang release notes sa mismong application upang makita ng mga gumagamit ang mga binago pagtapos ng update.
 
-### 🛠️ Mga Pinahusay at Inayos
+### 🛠️ Improvements and Tweaks
 
 - ⚡ \*\*Pag-optimize ng Smart Cache Clearing: Pinaganda ang awtomatikong clearing ng cache.
 - 📂 **Wastong Media para sa Circuit Overseer**: Tinitiyak na ang media para sa Circuit Overseer ay mailalagay sa tamang seksyon.
