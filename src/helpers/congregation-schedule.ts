@@ -30,19 +30,8 @@ export const syncMeetingSchedule = async (force = false) => {
         return;
       }
 
-      const jwStore = useJwStore();
-      const { urlVariables } = jwStore;
-
-      const response = await fetchJson<{ geoLocationList: GeoRecord[] }>(
-        `https://apps.${urlVariables.base || 'jw.org'}/api/public/meeting-search/weekly-meetings`,
-        new URLSearchParams({
-          includeSuggestions: 'true',
-          keywords: currentSettings.congregationName,
-          latitude: '0',
-          longitude: '0',
-          searchLanguageCode: '',
-        }),
-        online,
+      const response = await fetchMeetingLocations(
+        currentSettings.congregationName,
       );
 
       const congregation = response?.geoLocationList?.find(
@@ -131,4 +120,25 @@ export const syncMeetingSchedule = async (force = false) => {
   } catch (error) {
     console.error('❌ [syncMeetingSchedule] Error:', error);
   }
+};
+
+export const fetchMeetingLocations = async (
+  keywords: string,
+): Promise<null | { geoLocationList: GeoRecord[] }> => {
+  const jwStore = useJwStore();
+  const { urlVariables } = jwStore;
+
+  const response = await fetchJson<{ geoLocationList: GeoRecord[] }>(
+    `https://apps.${urlVariables.base || 'jw.org'}/api/public/meeting-search/weekly-meetings`,
+    new URLSearchParams({
+      includeSuggestions: 'true',
+      keywords,
+      latitude: '0',
+      longitude: '0',
+      searchLanguageCode: '',
+    }),
+    useCurrentStateStore().online,
+  );
+
+  return response;
 };

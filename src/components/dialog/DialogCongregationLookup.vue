@@ -137,6 +137,7 @@ import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
+import { fetchMeetingLocations } from 'src/helpers/congregation-schedule';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { fetchJson } from 'src/utils/api';
 import { formatDate } from 'src/utils/date';
@@ -179,29 +180,18 @@ const lookupCongregation = async () => {
     loading.value = true;
     results.value = [];
     if (congregationFilter.value?.length > 2) {
-      await fetchJson<{ geoLocationList: GeoRecord[] }>(
-        `https://apps.${urlVariables.value.base || 'jw.org'}/api/public/meeting-search/weekly-meetings`,
-        new URLSearchParams({
-          includeSuggestions: 'true',
-          keywords: congregationFilter.value,
-          latitude: '0',
-          longitude: '0',
-          searchLanguageCode: '',
-        }),
-        useCurrentStateStore().online,
-      ).then((response) => {
-        results.value = (response?.geoLocationList || []).map((location) => {
-          const languageIsAlreadyGood = !!jwLanguages.value?.list.find(
-            (l) => l.langcode === location.properties.languageCode,
-          );
-          if (!languageIsAlreadyGood) {
-            location.properties.languageCode =
-              congregationLookupLanguages.value.find(
-                (l) => l.languageCode === location.properties.languageCode,
-              )?.writtenLanguageCode[0] || location.properties.languageCode;
-          }
-          return location;
-        });
+      const response = await fetchMeetingLocations(congregationFilter.value);
+      results.value = (response?.geoLocationList || []).map((location) => {
+        const languageIsAlreadyGood = !!jwLanguages.value?.list.find(
+          (l) => l.langcode === location.properties.languageCode,
+        );
+        if (!languageIsAlreadyGood) {
+          location.properties.languageCode =
+            congregationLookupLanguages.value.find(
+              (l) => l.languageCode === location.properties.languageCode,
+            )?.writtenLanguageCode[0] || location.properties.languageCode;
+        }
+        return location;
       });
     } else {
       results.value = [];

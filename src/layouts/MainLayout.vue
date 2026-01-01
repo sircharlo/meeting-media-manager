@@ -276,11 +276,12 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     }
 
     downloadProgress.value = {};
+
+    await syncMeetingSchedule();
+
     updateLookupPeriod();
     downloadBackgroundMusic();
     delayedCacheClear();
-
-    syncMeetingSchedule();
 
     if (queues.meetings[newCongregation]) {
       queues.meetings[newCongregation].start();
