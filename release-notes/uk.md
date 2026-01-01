@@ -4,6 +4,14 @@
 
 Для повного списку змін між версіями перегляньте наш файл CHANGELOG.md на GitHub.
 
+## v26.1.0
+
+### ✨ Нові функції
+
+- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
+- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
+- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+
 ## v25.12.2
 
 ### ✨ Нові функції
@@ -89,7 +97,7 @@
 - ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
 - ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
 
-### 🛠️ Покращення та налаштування
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
 - ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
@@ -103,7 +111,7 @@
 - ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
 - ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
 
-### 🛠️ Покращення та налаштування
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
 - 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
@@ -116,7 +124,7 @@
 - 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
 - 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
 
-### 🛠️ Покращення та налаштування
+### 🛠️ Improvements and Tweaks
 
 - 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
 - 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
@@ -124,19 +132,19 @@
 
 ## 25.4.3
 
-### 🛠️ Покращення та налаштування
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
 
 ## 25.4.2
 
-### 🛠️ Покращення та налаштування
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
 
 ## 25.4.1
 
-### 🛠️ Покращення та налаштування
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Виправлення призначення власного часу початку/завершення**: Запобігає неправильному застосуванню заданого часу початку та завершення до іншого відео.
 - 📝 **Дозволити невідповідні субтитри**: Дозволяє використовувати субтитри, навіть якщо вони не повністю відповідають медіафайлу.
@@ -152,7 +160,7 @@
 - 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
 - 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
 
-### 🛠️ Покращення та налаштування
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Multiple Start/End Times for Single Video**: Allow a single video to appear in the media list multiple times with different custom start/end times.
 - 📤 **Include Grouped Media in Auto Export**: Automatically export grouped media items along with others.
@@ -164,7 +172,7 @@
 
 - 🌏 **Нова мова: корейська**: Додано підтримку корейської мови, що розширює доступність для більшої кількості користувачів.
 
-### 🛠️ Покращення та налаштування
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **Покращена продуктивність і використання процесора**: Оптимізовано роботу для зменшення навантаження на процесор і підвищення ефективності.
 - 🔄 **Виправлення проблем із синхронізацією та збоями**: Усунуто різні помилки, пов’язані із синхронізацією та стабільністю, для підвищення надійності.
@@ -179,7 +187,7 @@
 - 📅 **Автоматична дата та фон для Спомину**: Автоматично визначає дату Спомину та готує фонове зображення для нього.
 - 📜 **Показувати примітки до релізу в додатку**: Відображати примітки до релізу безпосередньо в додатку, щоб користувачі могли легко переглядати зміни після оновлення.
 
-### 🛠️ Покращення та налаштування
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **Оптимізація інтелектуального очищення кешу**: Покращення механізму інтелектуального очищення кешу для кращої продуктивності та ефективності.
 - 📂 **Коректне розміщення медіа для районного наглядача**: Забезпечити правильне розміщення медіа для районного наглядача в відповідному розділі.
