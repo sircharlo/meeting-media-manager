@@ -4,6 +4,40 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.1.0
+
+### ✨ New Features
+
+- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
+- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
+- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Bundled Google Fonts**: Needed Google fonts are now bundled with the app to ensure consistent rendering even when offline.
+- 🛠️ **Improved Lookup Period Updates**: The lookup period is now properly updated after a future schedule change is enacted, ensuring accurate media fetching.
+- 🛠️ **Enhanced Paragraph Number Detection**: Improved the `getParagraphNumbers` function for more accurate extraction of paragraph references from media captions.
+- 🛠️ **Better Screen Listener Initialization**: Improved initialization of screen listeners to prevent potential crashes and duplicate observer registrations.
+- 🛠️ **Smarter Media Window Positioning**: The media window is now only moved when necessary, reducing unnecessary synthetic repositions.
+- 🛠️ **Enhanced Renderer Crash Handling**: Improved handling of renderer crashes for better application stability.
+- 🛠️ **User-Friendly Playlist Error Messages**: Added clear error messages when JW playlist files are invalid or corrupted.
+- 🛠️ **Reduced Auto-Updater Noise**: Auto-updater timeouts and transient errors are now ignored to reduce unnecessary error notifications.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Yeartext Display**: Fixed yeartext font weight fallback and removed English yeartext fallback to show empty yeartext if no appropriate translation is found.
+- 🐞 **Migration Fixes**: Corrected migration order and logic to ensure smooth upgrades between versions.
+- 🐞 **Smart Cache Cleaning**: Prevented greedy deletions during smart cache clean, especially on system-wide installations, and improved cache path updates during migration.
+- 🐞 **Meeting Schedule Sync UI**: The automatic meeting schedule sync option is now hidden if the congregation name has been modified to avoid confusion.
+- 🐞 **Network Error Handling**: Reduced redundant errors for ip-api.com service failures.
+- 🐞 **Sign Language Video Seeking**: Fixed seeking issues for certain sign language publications.
+- 🐞 **Linux Cursor Stability**: Resolved potential cursor crashes in Linux while mirroring the display.
+- 🐞 **Documentation**: Fixed Chinese Simplified (cmn-hans) documentation.
+
+### 🔧 Chores
+
+- 🔧 **App Data Cleanup**: Set `deleteAppDataOnUninstall` to true for cleaner uninstallation on Windows.
+
 ## v25.12.2
 
 ### ✨ New Features
