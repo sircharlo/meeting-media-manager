@@ -1023,8 +1023,8 @@ watchImmediate(
 
 // Send yeartext to the media player page using useBroadcastChannel
 const { post: postYeartext } = useBroadcastChannel<
-  string | undefined,
-  string | undefined
+  null | string | undefined,
+  null | string | undefined
 >({
   name: 'yeartext',
 });

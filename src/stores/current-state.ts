@@ -398,19 +398,19 @@ export const useCurrentStateStore = defineStore('current-state', {
           ),
       );
     },
-    yeartext(): string | undefined {
+    yeartext(): null | string | undefined {
       const { yeartexts } = useJwStore();
 
+      if (this.currentLangObject?.isSignLanguage || !this.currentSettings)
+        return null;
+
       const year = new Date().getFullYear();
-      if (!yeartexts[year]) return;
-      if (this.currentLangObject?.isSignLanguage) return;
-      if (!this.currentSettings) return;
-      const primary = yeartexts[year][this.currentSettings.lang];
-      const fallback = this.currentSettings.langFallback
-        ? yeartexts[year][this.currentSettings.langFallback]
-        : '';
-      const english = yeartexts[year]['E'];
-      return primary || fallback || english;
+      const textsForYear = yeartexts[year];
+      if (!textsForYear) return;
+
+      const { lang, langFallback } = this.currentSettings;
+
+      return textsForYear[lang] || (langFallback && textsForYear[langFallback]);
     },
   },
   state: (): Store => {

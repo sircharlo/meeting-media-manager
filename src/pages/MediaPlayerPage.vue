@@ -21,7 +21,7 @@
       :class="{ 'blank-screen': isTransitioning }"
     >
       <!-- eslint-disable next-line vue/no-v-html -->
-      <div id="yeartext" class="q-pa-md center" v-html="yeartext" />
+      <div id="yeartext" class="q-pa-md center" v-html="yeartext || ''" />
       <div
         v-if="!hideMediaLogo && jwIconsFontLoaded"
         id="yeartextLogoContainer"
@@ -798,7 +798,10 @@ const { post: postMediaPlayingAction } = useBroadcastChannel<string, string>({
   name: 'media-window-media-action',
 });
 
-const { data: yeartext } = useBroadcastChannel<string, string>({
+const { data: yeartext } = useBroadcastChannel<
+  null | string | undefined,
+  null | string | undefined
+>({
   name: 'yeartext',
 });
 
