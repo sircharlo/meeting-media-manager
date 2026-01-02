@@ -14,12 +14,15 @@ export const moveCacheToMachineWide: MigrationFunction = async () => {
 
     // Check if we are in a machine-wide installation
     const sharedPath = await getSharedDataPath();
-    if (!sharedPath) return true; // Not machine-wide, nothing to do
+    if (!sharedPath) return true;
+    // Not machine-wide installation, or shared data path is not accessible, so nothing to do
 
     const userDataPath = await getUserDataPath();
     if (!userDataPath) return true;
+    // User data path is not accessible, so nothing to do
 
     if (userDataPath === sharedPath) return true;
+    // User data path is the same as shared data path, so nothing to do
 
     // Check if custom cache folder is set for any congregation
     const congStore = useCongregationSettingsStore();
@@ -27,7 +30,8 @@ export const moveCacheToMachineWide: MigrationFunction = async () => {
       (s) => !!s?.cacheFolder,
     );
 
-    if (hasCustomCache) return true; // Custom cache set, skip migration
+    if (hasCustomCache) return true;
+    // Custom cache folder is set, so nothing to do
 
     const foldersToMove = ['Publications', 'Additional Media', 'Fonts'];
 
