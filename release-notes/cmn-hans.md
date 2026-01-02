@@ -4,6 +4,14 @@
 
 关于不同版本之间更改的完整清单，请参阅我们在 GitHub 上的 CHANGELOG.md文件。
 
+## v26.1.0
+
+### ✨ 新功能
+
+- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
+- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
+- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+
 ## v25.12.2
 
 ### ✨ 新功能
@@ -89,7 +97,7 @@
 - ✨ **部分循环播放**: 启用针对无缝媒体循环的特定部分内连续播放。
 - ✨ **Zoom集成**: 自动分享屏幕开始/停止与媒体播放的协调。
 
-### 🛠️ 改进和调整
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **部分名称**: 新建三点菜单系统，带颜色选择器、向上/向下移动控制器、重复选项和删除功能。
 - ✨ **内嵌标题编辑**: 直接在接口中编辑媒体项目标题而不打开单独对话框。
@@ -103,7 +111,7 @@
 - ✨ **计量连接设置**：添加了新设置，以减少计量连接上的下载带宽使用量。
 - ✨ **改进了流媒体处理**：更好地支持流媒体，减少与延迟相关的问题。
 
-### 🛠️ 改进和调整
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **更好的 MIME 类型处理**：改进了对 MIME 类型的支持，以提高媒体兼容性。
 - 🛠️ **增强导航抽屉**: 改进微型状态处理和添加工具提示显示以改善用户导航。
@@ -116,7 +124,7 @@
 - 🖼️ **OBS 延迟选项用于图像**: 添加 OBS Studio 设置以在显示图像时延迟场景更改, 改进离子对。
 - 🔊 **支持 `.m4a` 音频格式**: 增加`.m4a`音频文件的兼容性以扩展支持的媒体类型。
 
-### 🛠️ 改进和调整
+### 🛠️ Improvements and Tweaks
 
 - 🔍 **恢复使用 `Ctrl` + `Scroll`**：重新启用以控制+滚动手势立即缩放以方便导航。
 - 👤 **隐藏未使用的CO媒体**: 分区监督探访期间，隐藏而不是跳过未使用的媒体来保持较清洁的演示。
@@ -124,19 +132,19 @@
 
 ## 25.4.3
 
-### 🛠️ 改进和调整
+### 🛠️ Improvements and Tweaks
 
 - ➕ **从 v25.4.x**清理媒体：从 v25 开始自动清理成为孤儿或置于错误位置的媒体。 第1至v25.4.2段，以确保媒体名单上没有媒体，或媒体处于错误的位置。
 
 ## 25.4.2
 
-### 🛠️ 改进和调整
+### 🛠️ Improvements and Tweaks
 
 - ➕ **防止重复媒体**: 避免多次向媒体列表添加一些媒体项目。
 
 ## 25.4.1
 
-### 🛠️ 改进和调整
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **修复自定义开始/结束时间分配**: 防止自定义开始和结束时间被错误地应用到错误的视频中。
 - 📝 **允许不匹配字幕**: 启用使用字幕，即使它们不完全匹配媒体文件。
@@ -152,7 +160,7 @@
 - 🇵🇭 **新语言: Tagalog** : 添加对 Tagalog的支持，扩展应用程序的多语言功能。
 - 🎞 **支持`.m4v`视频格式**：现在支持播放`.m4v`文件，以提高媒体兼容性。
 
-### 🛠️ 改进和调整
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **视频的多个开始/结束时间**: 允许单次视频多次出现在媒体列表中，有不同的自定义开始/结束时间。
 - 📤 **在自动导出中包含分组媒体**: 自动导出分组媒体项目和其他媒体。
@@ -164,10 +172,10 @@
 
 - 🌏 **支持新语言：韩语**: 添加对韩语的支持, 扩大更多用户的访问。
 
-### 🛠️ 改进和调整
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **提高性能和 CPU 使用率**: 优化性能以降低CPU 使用率并提高效率。
-- 🔄  **修复同步和崩溃问题**: 解决各种与同步和稳定相关的问题以提高可靠性。
+- 🔄 **修复同步和崩溃问题**: 解决各种与同步和稳定相关的问题以提高可靠性。
 - 📜 **显示现有会众的发布笔记**: 确保发布笔记只显示于已加载的会众中。
 
 ## 25.3.0
@@ -179,7 +187,7 @@
 - 📅 **自动纪念聚会的日期和背景**: 自动检测和设置纪念聚会的日期并准备纪念背景图像。
 - 📜 **在应用程序中显示发布笔记** : 在应用程序中直接显示发布笔记, 以便用户在更新后可以轻松地查看更改。
 
-### 🛠️ 改进和调整
+### 🛠️ Improvements and Tweaks
 
 - :hig_voltage: **优化智能缓存清理**: 改进智能缓存清理机制以提高性能和效率。
 - 📂 **正确的分区监督媒体位置**: 确保分区监督媒体放置在正确的部分。

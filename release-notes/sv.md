@@ -4,6 +4,14 @@
 
 För den fullständiga listan över ändringar mellan versioner, se vår CHANGELOG.md-fil på GitHub.
 
+## v26.1.0
+
+### ✨ Nya funktioner
+
+- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
+- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
+- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+
 ## v25.12.2
 
 ### ✨ Nya funktioner
@@ -89,7 +97,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 - ✨ **Avsnitt Upprepningsläge**: Aktivera kontinuerlig uppspelning inom specifika sektioner för sömlösa media-loopar.
 - ✨ **Zoomintegration**: Automatisk skärmdelning starta/stoppa koordination med medieuppspelning.
 
-### 🛠️ Förbättringar och justeringar
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Förbättrade sektionshuvuden**: Nytt menysystem med tre prickar med färgväljare, flytta upp/ner kontroller, upprepa alternativ och ta bort funktionalitet.
 - ✨ **Inline titelredigering**: Redigera medietitlar direkt i gränssnittet utan att öppna separata dialogrutor.
@@ -103,7 +111,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 - ✨ **Anslutning med datapriser**: Lagt till en ny inställning för att minska användningen av bandbredd för nedladdning anslutningar med datapriser.
 - ✨ **Förbättrad mediehantering för streaming**: Bättre stöd för strömmade medier, vilket minskar latensrelaterade problem.
 
-### 🛠️ Förbättringar och justeringar
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Bättre hantering av mime-typer**: Förbättrat stöd för MIME-typer för bättre mediekompatibilitet.
 - 🛠️ **Förbättrad navigation**: Förbättrad hantering av miniläge och tillsatt verktygstips för bättre användarnavigering.
@@ -116,7 +124,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 - 🖼️ **OBS fördröjningsalternativ för bilder**: Lägg till en OBS Studio-inställning för att fördröja scenändringar när bilder visas för att förbättra övergångar.
 - 🔊 **Stöd för .m4a Ljudformat**: Lagt till stöd för .m4a-ljudfiler för att utöka mediatyper.
 
-### 🛠️ Förbättringar och justeringar
+### 🛠️ Improvements and Tweaks
 
 - 🔍 **Återställ Zoomning med Ctrl + Scroll**: Nollställning av zoomning för enklare navigering.
 - 👤 **Dölj medieobjekt för kretsbesöket**: Dölj istället för att hoppa över mediefiler som inte används för kretsbesöket, för att hålla en renare visning.
@@ -124,19 +132,19 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 ## 25.4.3
 
-### 🛠️ Förbättringar och justeringar
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Rensa mediefiler från v25.4.x**: Rensa automatiskt övergivna eller felplacerade mediefiler från v25.4.1 till v25.4.2 för att säkerställa att inga mediefiler saknas eller är på fel plats i medielistan.
 
 ## 25.4.2
 
-### 🛠️ Förbättringar och justeringar
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Förhindra duplicerade mediefiler**: Undvik att lägga till vissa medieobjekt flera gånger i medielistan.
 
 ## 25.4.1
 
-### 🛠️ Förbättringar och justeringar
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Fixa anpassad start-/sluttidsuppgift**: Förhindra att anpassade start- och sluttider inte tillämpas felaktigt på fel video.
 - 📝 **Tillåt felaktiga undertexter**: Använd undertexter även om de inte matchar perfekt med videon.
@@ -152,7 +160,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 - 🇵🇭 **Nytt språk: Tagalog**: Lagt till stöd för Tagalog som utökar därmed appens flerspråkighet.
 - 🎞️ **Stöd för `.m4v` videoformat**: Stöder nu uppspelning av `.m4v`-filer för att förbättra mediekompatibiliteten.
 
-### 🛠️ Förbättringar och justeringar
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Flera start-/sluttider för en video**: Tillåt att en enda video visas i medielistan flera gånger med olika anpassade start-/sluttider.
 - 📤 **Inkludera grupperade media i Auto export**: Exportera automatiskt grupperade mediaobjekt tillsammans med andra.
@@ -164,7 +172,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 - 🌏 **Nytt språk: Koreanska**: Lägg till stöd för det Koreanska språket, utöka tillgängligheten för fler användare.
 
-### 🛠️ Förbättringar och justeringar
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **Förbättra prestanda och processoranvändning**: Optimera prestanda för att minska processoranvändningen och öka effektiviteten.
 - 🔄 **Fixa synkronisering och kraschproblem**: Lös olika synkroniserings- och stabilitetsproblem för att förbättra tillförlitligheten.
@@ -179,7 +187,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 - 📅 **Automatisk datum och bakgrund för minneshögtiden**: Ställ in automatiskt bakgrundsbild och datum för minneshögtiden.
 - 📜 **Visa versionsinfo i appen**: Visa versionsinformation direkt i programmet så att användarna enkelt kan se vad som är ändrats efter en uppdatering.
 
-### 🛠️ Förbättringar och justeringar
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **Optimera Smart Cache rensning**: Förbättra den smarta cache-mekanismen för bättre prestanda och effektivitet.
 - 📂 **Korrekt mediaplacering för kretsveckan**: Se till att kretsveckans media placeras i rätt avsnitt.

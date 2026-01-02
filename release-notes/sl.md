@@ -4,6 +4,14 @@
 
 Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.md na GitHubu.
 
+## v26.1.0
+
+### ✨ Nove funkcije
+
+- ✨ **Samodejna sinhronizacija urnika shodov**: Dodana je bila možnost samodejne sinhronizacije datumov in časov shodov z uradnim spletnim mestom. Ta funkcija je privzeto omogočena in jo je mogoče ročno sprožiti ali onemogočiti v naprednih nastavitvah.
+- ✨ **Prihodnje spremembe urnika**: Aplikacija zdaj vključuje prihodnje spremembe urnika pri ustvarjanju občine z iskanjem na spletnem mestu, če je ta na voljo.
+- ✨ **Skupni predpomnilnik za sistemsko namestitev**: Sistemska namestitev zdaj privzeto uporablja skupno podatkovno mapo, kar optimizira porabo prostora in pasovne širine med več uporabniki na istem računalniku.
+
 ## v25.12.2
 
 ### ✨ Nove funkcije

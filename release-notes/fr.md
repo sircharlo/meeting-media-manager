@@ -4,6 +4,14 @@
 
 Pour la liste complète des changements entre les versions, consultez notre fichier CHANGELOG.md sur GitHub.
 
+## v26.1.0
+
+### ✨ Nouvelles fonctionnalités
+
+- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
+- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
+- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+
 ## v25.12.2
 
 ### ✨ Nouvelles fonctionnalités
@@ -89,7 +97,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 - ✨ **Mode de répétition de section** : Activez la lecture en boucle dans des sections spécifiques pour des boucles de médias fluides.
 - ✨ **Intégration Zoom** : Coordination automatique du démarrage/arrêt du partage d'écran avec la lecture des médias.
 
-### 🛠️ Améliorations et ajustements
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **En-têtes de section améliorés** : Nouveau système de menu à trois points avec sélecteur de couleur, contrôles de déplacement haut/bas, options de répétition et fonctionnalité de suppression.
 - ✨ **Édition de titre en ligne** : Modifiez les titres des éléments multimédias directement dans l'interface sans ouvrir de boîtes de dialogue séparées.
@@ -103,7 +111,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 - ✨ **Paramètre de connexion limitée** : Ajout d'un nouveau paramètre pour réduire l'utilisation de la bande passante de téléchargement sur les connexions limitées.
 - ✨ **Gestion améliorée des médias diffusés** : Meilleur support pour les médias diffusés, réduisant les problèmes liés à la latence.
 
-### 🛠️ Améliorations et ajustements
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Meilleure gestion des types MIME** : Support amélioré des types MIME pour une meilleure compatibilité des médias.
 - 🛠️ **Tiroir de navigation amélioré** : Gestion améliorée de l'état mini et ajout de l'affichage des infobulles pour une meilleure navigation utilisateur.
@@ -116,7 +124,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 - 🖼️ **Option de délai OBS pour les images** : Ajout d'un paramètre OBS Studio pour retarder les changements de scène lors de l'affichage d'images, améliorant les transitions.
 - 🔊 **Support du format audio `.m4a`** : Ajout de la compatibilité pour les fichiers audio `.m4a` pour étendre les types de médias pris en charge.
 
-### 🛠️ Améliorations et ajustements
+### 🛠️ Improvements and Tweaks
 
 - 🔍 **Restaurer le zoom avec `Ctrl` + `Défilement`** : Réactiver le zoom immédiat avec le geste contrôle + défilement pour une navigation plus facile.
 - 👤 **Masquer les médias CO inutilisés** : Masquer plutôt que d'ignorer les médias inutilisés pour les visites du responsable de circonscription pour maintenir une présentation plus propre.
@@ -124,19 +132,19 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ## 25.4.3
 
-### 🛠️ Améliorations et ajustements
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Nettoyer les médias de v25.4.x** : Nettoyer automatiquement les médias orphelins ou mal placés de v25.4.1 à v25.4.2 pour s'assurer qu'aucun média ne manque ou n'est au mauvais endroit dans la liste des médias.
 
 ## 25.4.2
 
-### 🛠️ Améliorations et ajustements
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Prévenir les médias en double** : Éviter d'ajouter plusieurs fois certains éléments multimédias à la liste des médias.
 
 ## 25.4.1
 
-### 🛠️ Améliorations et ajustements
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Corriger l'assignation des temps de début/fin personnalisés** : Empêcher les temps de début et de fin personnalisés d'être incorrectement appliqués à la mauvaise vidéo.
 - 📝 **Permettre les sous-titres non assortis** : Permettre l'utilisation de sous-titres même lorsqu'ils ne correspondent pas parfaitement au fichier multimédia.
@@ -152,7 +160,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 - 🇵🇭 **Nouvelle langue : Tagalog** : Ajout du support pour le tagalog, étendant les capacités multilingues de l'application.
 - 🎞 **Support du format vidéo `.m4v`** : Support maintenant la lecture des fichiers `.m4v` pour améliorer la compatibilité des médias.
 
-### 🛠️ Améliorations et ajustements
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Temps de début/fin multiples pour une seule vidéo** : Permettre à une seule vidéo d'apparaître plusieurs fois dans la liste des médias avec différents temps de début/fin personnalisés.
 - 📤 **Inclure les médias groupés dans l'export automatique** : Exporter automatiquement les éléments multimédias groupés avec les autres.
@@ -164,7 +172,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 - 🌏 **Nouvelle langue : Coréen** : Ajout du support pour la langue coréenne, étendant l'accessibilité pour plus d'utilisateurs.
 
-### 🛠️ Améliorations et ajustements
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **Améliorer les performances et l'utilisation du CPU** : Optimiser les performances pour réduire l'utilisation du CPU et améliorer l'efficacité.
 - 🔄 **Corriger les problèmes de synchronisation et de plantage** : résoudre divers problèmes liés à la synchronisation et à la stabilité pour améliorer la fiabilité.
@@ -179,7 +187,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 - 📅 **Date et fond pour mémorial** : Détecte et définit automatiquement la date du mémorial et prépare l'image de fond pour le mémorial.
 - 📜 **Afficher les notes de version dans l'application** : afficher les notes de version directement dans l'application afin que les utilisateurs puissent facilement revoir les changements après une mise à jour.
 
-### 🛠️ Améliorations et ajustements
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **Optimiser le nettoyage intelligent du cache** : Améliore le mécanisme intelligent de nettoyage du cache pour une meilleure performance et efficacité.
 - 📂 **Visite du responsable** : S'assurer que les médias pour la visite du responsable de circonscription sont placés dans la bonne section.
