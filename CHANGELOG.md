@@ -4,6 +4,12 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.1.4
+
+### 🐞 Bug Fixes
+
+- 🐞 **Path Join**: Fixed a bug where path.join() was being fed non-strings erroneously.
+
 ## v26.1.3
 
 ### 🐞 Bug Fixes
