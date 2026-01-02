@@ -657,10 +657,7 @@ export const getDbFromJWPUB = async (
   try {
     const jwpub = await downloadJwpub(publication, meetingDate);
     if (jwpub.error) return null;
-    const publicationDirectory = await getPublicationDirectory(
-      publication,
-      useCurrentStateStore().currentSettings?.cacheFolder,
-    );
+    const publicationDirectory = await getPublicationDirectory(publication);
     if (jwpub.new || !(await findDb(publicationDirectory))) {
       await unzipJwpub(jwpub.path, publicationDirectory);
     }
@@ -687,10 +684,7 @@ export async function addFullFilePathToMultimediaItem(
       'CoverPictureFilePath',
     ] as const;
 
-    const baseDir = await getPublicationDirectory(
-      publication,
-      useCurrentStateStore().currentSettings?.cacheFolder,
-    );
+    const baseDir = await getPublicationDirectory(publication);
 
     for (const path of paths) {
       if (multimediaItem[path]) {
@@ -1201,7 +1195,6 @@ export const getStudyBibleMedia = async (
             //       item.MepsLanguageIndex === 0
             //         ? nwtStyPublication_E
             //         : (nwtStyPublication as PublicationFetcher),
-            //       useCurrentStateStore().currentSettings?.cacheFolder,
             //     );
             //     updatedItem.CoverPictureFilePath = join(baseDir, thumbPath);
             //   }
@@ -2591,10 +2584,7 @@ const downloadMissingMedia = async (
   meetingDate?: string,
 ) => {
   try {
-    const pubDir = await getPublicationDirectory(
-      publication,
-      useCurrentStateStore().currentSettings?.cacheFolder,
-    );
+    const pubDir = await getPublicationDirectory(publication);
     const responseObject = await getPubMediaLinks(publication, meetingDate);
     if (!responseObject?.files) {
       if (!(await pathExists(pubDir))) return { FilePath: '' };
@@ -2855,10 +2845,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
           !publication.maxTrack || mediaLink.track < publication.maxTrack,
       );
 
-    const dir = await getPublicationDirectory(
-      publication,
-      currentStateStore.currentSettings?.cacheFolder,
-    );
+    const dir = await getPublicationDirectory(publication);
     const filteredMediaItemLinks: MediaLink[] = [];
     for (const mediaItemLink of mediaLinks) {
       const currentTrack = mediaItemLink.track;
@@ -2971,10 +2958,7 @@ const downloadJwpub = async (
     }
 
     return await downloadFileIfNeeded({
-      dir: await getPublicationDirectory(
-        publication,
-        currentStateStore.currentSettings?.cacheFolder,
-      ),
+      dir: await getPublicationDirectory(publication),
       meetingDate,
       size: mediaLinks[0]?.filesize,
       url: mediaLinks[0]?.file.url ?? '',

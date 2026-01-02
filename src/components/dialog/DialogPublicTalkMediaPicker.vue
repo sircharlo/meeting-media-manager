@@ -226,10 +226,8 @@ const addPublicTalkMedia = async (publicTalkDocId: DocumentItem) => {
 
 const setS34mp = async () => {
   s34mpBasename.value = `S-34mp_${currentCongregation.value}`;
-  s34mpDir.value = join(
-    await getPublicationsPath(currentSettings.value?.cacheFolder),
-    s34mpBasename.value,
-  );
+  const publicationsPath = await getPublicationsPath();
+  s34mpDir.value = join(publicationsPath, s34mpBasename.value);
 };
 
 const s34mpDisplayName = computed((): string => {
