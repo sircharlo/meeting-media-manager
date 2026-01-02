@@ -277,9 +277,9 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
 
     downloadProgress.value = {};
 
-    await syncMeetingSchedule();
+    const scheduleChanged = !!(await syncMeetingSchedule());
 
-    updateLookupPeriod();
+    updateLookupPeriod({ reset: scheduleChanged });
     downloadBackgroundMusic();
     delayedCacheClear();
 
@@ -328,27 +328,39 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
 });
 
 watch(
-  () => currentSettings.value?.congregationName,
-  (newVal, oldVal) => {
+  () => [currentCongregation, currentSettings.value?.congregationName],
+  (
+    [newSelectedCong, newCongregationName],
+    [oldSelectedCong, oldCongregationName],
+  ) => {
     if (
-      !!oldVal &&
-      newVal !== oldVal &&
-      currentSettings.value &&
-      !currentState.lookupInProgress
-    ) {
-      currentSettings.value.congregationNameModified = true;
-    }
+      !currentSettings?.value ||
+      newSelectedCong !== oldSelectedCong ||
+      newCongregationName === oldCongregationName ||
+      !oldCongregationName ||
+      currentState.lookupInProgress
+    )
+      return;
+    currentSettings.value.congregationNameModified = true;
   },
 );
 
 watch(
-  () => currentSettings.value?.congregationNameModified,
-  (newVal, oldVal) => {
-    if (!currentSettings.value || oldVal === undefined || newVal === undefined)
+  () => [currentCongregation, currentSettings.value?.congregationNameModified],
+  (
+    [newSelectedCong, newCongregationNameModified],
+    [oldSelectedCong, oldCongregationNameModified],
+  ) => {
+    if (
+      !currentSettings.value ||
+      newSelectedCong !== oldSelectedCong ||
+      oldCongregationNameModified === undefined ||
+      newCongregationNameModified === undefined
+    )
       return;
 
-    if (newVal && !oldVal) {
-      // Automatic sync disabled
+    if (newCongregationNameModified && !oldCongregationNameModified) {
+      // Automatic sync is now disabled for this congregation
       createTemporaryNotification({
         caption: t('automatic-sync-disabled-explain'),
         icon: 'mmm-warning',
@@ -356,8 +368,8 @@ watch(
         timeout: 10000,
         type: 'warning',
       });
-    } else if (!newVal && oldVal) {
-      // Automatic sync enabled
+    } else if (!newCongregationNameModified && oldCongregationNameModified) {
+      // Automatic sync is now enabled for this congregation
       createTemporaryNotification({
         icon: 'mmm-check',
         message: t('automatic-sync-enabled'),

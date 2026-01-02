@@ -4,6 +4,12 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.1.1
+
+### 🐞 Bug Fixes
+
+- 🐞 **Automatic Meeting Schedule Sync**: Fixed some bugs in implementation to prevent repeated or mistimed schedule syncronizations.
+
 ## v26.1.0
 
 ### ✨ New Features

@@ -6,6 +6,7 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import type { MigrationFunction } from './types';
 
 export const autoEnrollMeetingSync: MigrationFunction = async () => {
+  const currentState = useCurrentStateStore();
   try {
     const { congregations } = useCongregationSettingsStore();
 
@@ -16,6 +17,8 @@ export const autoEnrollMeetingSync: MigrationFunction = async () => {
       return true;
     }
 
+    currentState.lookupInProgress = true;
+
     for (const [id, settings] of Object.entries(congregations)) {
       console.log(`ℹ️ [autoEnrollMeetingSync] Checking "${id}"...`);
 
@@ -25,7 +28,14 @@ export const autoEnrollMeetingSync: MigrationFunction = async () => {
         );
         continue;
       }
-      const { congregationName } = settings;
+      const { congregationName, congregationNameModified } = settings;
+
+      if (!congregationNameModified) {
+        console.log(
+          `ℹ️ [autoEnrollMeetingSync] "${id}" is not modified. Skipping.`,
+        );
+        continue;
+      }
 
       if (!congregationName) {
         console.log(
@@ -44,7 +54,14 @@ export const autoEnrollMeetingSync: MigrationFunction = async () => {
         console.log(
           '✅ [autoEnrollMeetingSync] Exact match found. Enabling sync.',
         );
-        settings.congregationNameModified = false;
+        const congSettingsStore = congregations[id];
+        if (!congSettingsStore) {
+          console.log(
+            `ℹ️ [autoEnrollMeetingSync] No settings for "${id}". Skipping.`,
+          );
+          continue;
+        }
+        congSettingsStore.congregationNameModified = false;
       } else {
         console.log(
           'ℹ️ [autoEnrollMeetingSync] No exact match. Keeping manual settings.',
@@ -56,6 +73,8 @@ export const autoEnrollMeetingSync: MigrationFunction = async () => {
   } catch (error) {
     console.error('❌ [autoEnrollMeetingSync] Migration failed:', error);
     errorCatcher(error);
-    return useCurrentStateStore().online; // Retry if offline, otherwise mark done
+    return currentState.online; // Retry if offline, otherwise mark done
+  } finally {
+    currentState.lookupInProgress = false;
   }
 };
