@@ -1,6 +1,10 @@
 import type { PublicationFetcher } from 'src/types';
 
 import { basePath } from 'app/test/vitest/mocks/electronApi';
+import { installPinia } from 'app/test/vitest/mocks/pinia';
+import { defaultSettings } from 'src/constants/settings';
+import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
+import { useCurrentStateStore } from 'src/stores/current-state';
 import { join } from 'upath';
 import { describe, expect, it } from 'vitest';
 
@@ -23,6 +27,8 @@ import {
 
 const { fs } = window.electronApi;
 const { emptyDir, ensureFile, exists, remove } = fs;
+
+installPinia();
 
 describe('isFileUrl', () => {
   it('should correctly recognize file urls', () => {
@@ -51,18 +57,24 @@ describe('Paths', () => {
   });
 
   it('should overwrite default cache location', async () => {
-    const cacheDir = join(basePath, 'CustomCacheDir');
+    const cacheFolder = join(basePath, 'CustomCacheDir');
+    const store = useCongregationSettingsStore();
+    store.congregations = {
+      'test-cong': {
+        ...defaultSettings,
+        cacheFolder,
+      },
+    };
+    useCurrentStateStore().currentCongregation = 'test-cong';
     const paths = await Promise.all([
-      getPublicationsPath(cacheDir),
-      getAdditionalMediaPath(cacheDir),
-      getPublicationDirectory({ langwritten: 'E', pub: 'w' }, cacheDir),
+      getPublicationsPath(),
+      getAdditionalMediaPath(),
+      getPublicationDirectory({ langwritten: 'E', pub: 'w' }),
     ]);
 
     paths.forEach((path) => {
-      expect(path).toContain(cacheDir);
+      expect(path).toContain(cacheFolder);
     });
-
-    await remove(cacheDir);
   });
 });
 
@@ -131,18 +143,7 @@ describe('getPublicationDirectoryContents', () => {
     const filtered = await getPublicationDirectoryContents(pub, 'jpg');
     expect(filtered.length).toBe(2);
 
-    const customRoot = await getPublicationDirectory(
-      pub,
-      join(basePath, 'customCacheDir'),
-    );
-    const withCustomRoot = await getPublicationDirectoryContents(
-      pub,
-      undefined,
-      customRoot,
-    );
-    expect(withCustomRoot.length).toBe(0);
-
-    await Promise.all([root, customRoot].map((filepath) => remove(filepath)));
+    await remove(root);
   });
 });
 

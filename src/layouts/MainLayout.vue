@@ -90,15 +90,15 @@ import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
 import { useAppSettingsStore } from 'src/stores/app-settings';
-import { fetchYeartext } from 'src/utils/api';
-import { formatDate, getSpecificWeekday, isInPast } from 'src/utils/date';
-import { kebabToCamelCase } from 'src/utils/general';
-import { useCongregationSettingsStore } from 'stores/congregation-settings';
+import { useCongregationSettingsStore } from 'src/stores/congregation-settings';
 import {
   type MediaPlayingStateAction,
   useCurrentStateStore,
-} from 'stores/current-state';
-import { useJwStore } from 'stores/jw';
+} from 'src/stores/current-state';
+import { useJwStore } from 'src/stores/jw';
+import { fetchYeartext } from 'src/utils/api';
+import { formatDate, getSpecificWeekday, isInPast } from 'src/utils/date';
+import { kebabToCamelCase } from 'src/utils/general';
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
