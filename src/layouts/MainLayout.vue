@@ -328,7 +328,7 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
 });
 
 watch(
-  () => [currentCongregation, currentSettings.value?.congregationName],
+  () => [currentCongregation.value, currentSettings.value?.congregationName],
   (
     [newSelectedCong, newCongregationName],
     [oldSelectedCong, oldCongregationName],
@@ -346,7 +346,10 @@ watch(
 );
 
 watch(
-  () => [currentCongregation, currentSettings.value?.congregationNameModified],
+  () => [
+    currentCongregation.value,
+    currentSettings.value?.congregationNameModified,
+  ],
   (
     [newSelectedCong, newCongregationNameModified],
     [oldSelectedCong, oldCongregationNameModified],

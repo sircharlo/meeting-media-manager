@@ -1,3 +1,4 @@
+import { storeToRefs } from 'pinia';
 import { fetchMeetingLocations } from 'src/helpers/congregation-schedule';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -7,61 +8,68 @@ import type { MigrationFunction } from './types';
 
 export const autoEnrollMeetingSync: MigrationFunction = async () => {
   const currentState = useCurrentStateStore();
-  try {
-    const { congregations } = useCongregationSettingsStore();
+  const { lookupInProgress, online } = storeToRefs(currentState);
 
-    if (!congregations) {
+  try {
+    const congregationSettingsStore = useCongregationSettingsStore();
+    const { congregations } = storeToRefs(congregationSettingsStore);
+
+    if (!congregations.value) {
       console.log(
-        'ℹ️ [autoEnrollMeetingSync] No congregation settings. Skipping.',
+        'ℹ️ [autoEnrollMeetingSync] No congregation settings. Skipping for now.',
       );
-      return true;
+      return false;
     }
 
-    currentState.lookupInProgress = true;
+    if (!online.value) {
+      console.log(
+        'ℹ️ [autoEnrollMeetingSync] No internet connection. Skipping for now.',
+      );
+      return false;
+    }
 
-    for (const [id, settings] of Object.entries(congregations)) {
+    lookupInProgress.value = true;
+
+    for (const id of Object.keys(congregations.value)) {
       console.log(`ℹ️ [autoEnrollMeetingSync] Checking "${id}"...`);
 
-      if (!settings) {
+      const congregationSettings = congregations.value?.[id];
+
+      if (!congregationSettings) {
         console.log(
           `ℹ️ [autoEnrollMeetingSync] No settings for "${id}". Skipping.`,
         );
         continue;
       }
-      const { congregationName, congregationNameModified } = settings;
 
-      if (!congregationNameModified) {
+      if (!congregationSettings.congregationNameModified) {
         console.log(
           `ℹ️ [autoEnrollMeetingSync] "${id}" is not modified. Skipping.`,
         );
         continue;
       }
 
-      if (!congregationName) {
+      if (!congregationSettings.congregationName) {
         console.log(
           `ℹ️ [autoEnrollMeetingSync] No name for "${id}". Skipping.`,
         );
         continue;
       }
 
-      const response = await fetchMeetingLocations(congregationName);
+      const response = await fetchMeetingLocations(
+        congregationSettings.congregationName,
+      );
 
       const exactMatch = response?.geoLocationList?.find(
-        (loc) => loc.properties.orgName === congregationName,
+        (loc) =>
+          loc.properties.orgName === congregationSettings.congregationName,
       );
 
       if (exactMatch) {
         console.log(
           '✅ [autoEnrollMeetingSync] Exact match found. Enabling sync.',
         );
-        const congSettingsStore = congregations[id];
-        if (!congSettingsStore) {
-          console.log(
-            `ℹ️ [autoEnrollMeetingSync] No settings for "${id}". Skipping.`,
-          );
-          continue;
-        }
-        congSettingsStore.congregationNameModified = false;
+        congregationSettings.congregationNameModified = false;
       } else {
         console.log(
           'ℹ️ [autoEnrollMeetingSync] No exact match. Keeping manual settings.',
@@ -73,8 +81,8 @@ export const autoEnrollMeetingSync: MigrationFunction = async () => {
   } catch (error) {
     console.error('❌ [autoEnrollMeetingSync] Migration failed:', error);
     errorCatcher(error);
-    return currentState.online; // Retry if offline, otherwise mark done
-  } finally {
-    currentState.lookupInProgress = false;
   }
+
+  lookupInProgress.value = false;
+  return online.value; // Retry later if offline, otherwise mark migration as done
 };

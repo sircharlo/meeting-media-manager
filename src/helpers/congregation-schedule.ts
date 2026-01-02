@@ -1,6 +1,7 @@
 import type { GeoRecord } from 'src/types';
 
 import { i18n } from 'boot/i18n';
+import { storeToRefs } from 'pinia';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { fetchJson } from 'src/utils/api';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -9,23 +10,23 @@ import { useJwStore } from 'stores/jw';
 export const syncMeetingSchedule = async (force = false) => {
   try {
     const currentState = useCurrentStateStore();
-    const { currentSettings, online } = currentState;
+    const { currentSettings, online } = storeToRefs(currentState);
 
-    if (!currentSettings || !online) return false;
+    if (!currentSettings.value || !online.value) return false;
 
     // Only sync if enabled or forced
-    if (!force && !currentSettings.enableAutomaticMeetingScheduleUpdates)
+    if (!force && !currentSettings.value.enableAutomaticMeetingScheduleUpdates)
       return false;
 
     // Only sync if name hasn't been modified
     if (
-      currentSettings.congregationNameModified ||
-      !currentSettings.congregationName
+      currentSettings.value.congregationNameModified ||
+      !currentSettings.value.congregationName
     )
       return false;
 
     // Skip if a future change is already scheduled
-    if (currentSettings.meetingScheduleChangeDate) {
+    if (currentSettings.value.meetingScheduleChangeDate) {
       console.log(
         '🔄 [syncMeetingSchedule] Skipping lookup as a future change is already scheduled.',
       );
@@ -33,15 +34,16 @@ export const syncMeetingSchedule = async (force = false) => {
     }
 
     const response = await fetchMeetingLocations(
-      currentSettings.congregationName,
+      currentSettings.value.congregationName,
     );
 
-    const congregation = response?.geoLocationList?.find(
-      (loc) => loc.properties.orgName === currentSettings.congregationName,
+    const congregationOnlineInfo = response?.geoLocationList?.find(
+      (loc) =>
+        loc.properties.orgName === currentSettings.value?.congregationName,
     );
 
-    if (congregation) {
-      const { schedule } = congregation.properties;
+    if (congregationOnlineInfo) {
+      const { schedule } = congregationOnlineInfo.properties;
       let currentChangesMade = false;
       let futureChangesMade = false;
 
@@ -55,15 +57,15 @@ export const syncMeetingSchedule = async (force = false) => {
       const newWeTime = schedule.current.weekend.time;
 
       if (
-        currentSettings.mwDay !== newMwDay ||
-        currentSettings.mwStartTime !== newMwTime ||
-        currentSettings.weDay !== newWeDay ||
-        currentSettings.weStartTime !== newWeTime
+        currentSettings.value.mwDay !== newMwDay ||
+        currentSettings.value.mwStartTime !== newMwTime ||
+        currentSettings.value.weDay !== newWeDay ||
+        currentSettings.value.weStartTime !== newWeTime
       ) {
-        currentSettings.mwDay = newMwDay as `${number}`;
-        currentSettings.mwStartTime = newMwTime;
-        currentSettings.weDay = newWeDay as `${number}`;
-        currentSettings.weStartTime = newWeTime;
+        currentSettings.value.mwDay = newMwDay as `${number}`;
+        currentSettings.value.mwStartTime = newMwTime;
+        currentSettings.value.weDay = newWeDay as `${number}`;
+        currentSettings.value.weStartTime = newWeTime;
         currentChangesMade = true;
       }
 
@@ -76,22 +78,25 @@ export const syncMeetingSchedule = async (force = false) => {
         const newFutureWeTime = schedule.future.weekend.time;
 
         if (
-          currentSettings.meetingScheduleChangeDate !== newFutureDate ||
-          currentSettings.meetingScheduleChangeMwDay !== newFutureMwDay ||
-          currentSettings.meetingScheduleChangeMwStartTime !==
+          currentSettings.value.meetingScheduleChangeDate !== newFutureDate ||
+          currentSettings.value.meetingScheduleChangeMwDay !== newFutureMwDay ||
+          currentSettings.value.meetingScheduleChangeMwStartTime !==
             newFutureMwTime ||
-          currentSettings.meetingScheduleChangeWeDay !== newFutureWeDay ||
-          currentSettings.meetingScheduleChangeWeStartTime !== newFutureWeTime
+          currentSettings.value.meetingScheduleChangeWeDay !== newFutureWeDay ||
+          currentSettings.value.meetingScheduleChangeWeStartTime !==
+            newFutureWeTime
         ) {
-          currentSettings.meetingScheduleChangeDate =
+          currentSettings.value.meetingScheduleChangeDate =
             newFutureDate as `${number}/${number}/${number}`;
-          currentSettings.meetingScheduleChangeMwDay =
+          currentSettings.value.meetingScheduleChangeMwDay =
             newFutureMwDay as `${number}`;
-          currentSettings.meetingScheduleChangeMwStartTime = newFutureMwTime;
-          currentSettings.meetingScheduleChangeWeDay =
+          currentSettings.value.meetingScheduleChangeMwStartTime =
+            newFutureMwTime;
+          currentSettings.value.meetingScheduleChangeWeDay =
             newFutureWeDay as `${number}`;
-          currentSettings.meetingScheduleChangeWeStartTime = newFutureWeTime;
-          currentSettings.meetingScheduleChangeOnce = false;
+          currentSettings.value.meetingScheduleChangeWeStartTime =
+            newFutureWeTime;
+          currentSettings.value.meetingScheduleChangeOnce = false;
           futureChangesMade = true;
         }
       }
