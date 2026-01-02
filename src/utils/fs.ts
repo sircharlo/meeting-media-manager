@@ -50,15 +50,14 @@ const GLOBAL_PREFERENCES_FOLDER = 'Global Preferences';
  * @param create Whether to create the directory if it doesn't exist.
  * @returns The full path of the directory.
  */
-const getCachePath = async (paths: string[], create = false) => {
-  const currentState = useCurrentStateStore();
-
+const getCachePath = async (paths: string | string[], create = false) => {
+  const pathArray = Array.isArray(paths) ? paths : [paths];
   const dir = join(
     cachedUserDataPath ||
-      currentState.currentSettings?.cacheFolder ||
+      useCurrentStateStore().currentSettings?.cacheFolder ||
       (await getSharedDataPath()) ||
       (await getUserDataPath()),
-    ...paths.filter((p) => !!p),
+    ...pathArray.filter((p) => !!p),
   );
   if (create) {
     try {
@@ -70,12 +69,12 @@ const getCachePath = async (paths: string[], create = false) => {
   return dir;
 };
 
-export const getFontsPath = () => getCachePath(['Fonts']);
-export const getTempPath = () => getCachePath(['Temp'], true);
+export const getFontsPath = () => getCachePath('Fonts');
+export const getTempPath = () => getCachePath('Temp', true);
 export const getPublicationsPath = () =>
-  getCachePath([PUBLICATION_FOLDER], false);
+  getCachePath(PUBLICATION_FOLDER, false);
 export const getAdditionalMediaPath = () =>
-  getCachePath(['Additional Media'], false);
+  getCachePath('Additional Media', false);
 
 // Directories
 
@@ -285,8 +284,7 @@ export const toggleBetaUpdates = async (enable: boolean) => {
   }
 };
 
-export const congPreferencesPath = () =>
-  getCachePath([CONG_PREFERENCES_FOLDER]);
+export const congPreferencesPath = () => getCachePath(CONG_PREFERENCES_FOLDER);
 
 const lastVersionPath = (congId: string) =>
   getCachePath([CONG_PREFERENCES_FOLDER, congId, 'last-version']);
