@@ -2,6 +2,7 @@ import type { PublicationFetcher } from 'src/types';
 
 import { Buffer } from 'buffer';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { useCurrentStateStore } from 'src/stores/current-state';
 import { getPubId } from 'src/utils/jw';
 
 const {
@@ -29,7 +30,9 @@ let cachedUserDataPath: null | string = null;
 export const setCachedUserDataPath = async () => {
   if (!cachedUserDataPath) {
     cachedUserDataPath =
-      (await getSharedDataPath()) || (await getUserDataPath());
+      useCurrentStateStore().currentSettings?.cacheFolder ||
+      (await getSharedDataPath()) ||
+      (await getUserDataPath());
   }
 };
 
@@ -45,20 +48,16 @@ const GLOBAL_PREFERENCES_FOLDER = 'Global Preferences';
  * Gets the full path of a directory in the cache folder.
  * @param paths The paths to the directory, relative to the cache folder.
  * @param create Whether to create the directory if it doesn't exist.
- * @param cacheDir The cache directory if it is not the default.
  * @returns The full path of the directory.
  */
-const getCachePath = async (
-  paths: string[],
-  create = false,
-  cacheDir?: null | string,
-) => {
+const getCachePath = async (paths: string | string[], create = false) => {
+  const pathArray = Array.isArray(paths) ? paths : [paths];
   const dir = join(
-    cacheDir ||
-      cachedUserDataPath ||
+    cachedUserDataPath ||
+      useCurrentStateStore().currentSettings?.cacheFolder ||
       (await getSharedDataPath()) ||
       (await getUserDataPath()),
-    ...paths.filter((p) => !!p),
+    ...pathArray.filter((p) => !!p),
   );
   if (create) {
     try {
@@ -70,12 +69,12 @@ const getCachePath = async (
   return dir;
 };
 
-export const getFontsPath = () => getCachePath(['Fonts']);
-export const getTempPath = () => getCachePath(['Temp'], true);
-export const getPublicationsPath = (cacheDir?: null | string) =>
-  getCachePath([PUBLICATION_FOLDER], false, cacheDir);
-export const getAdditionalMediaPath = (cacheDir?: null | string) =>
-  getCachePath(['Additional Media'], false, cacheDir);
+export const getFontsPath = () => getCachePath('Fonts');
+export const getTempPath = () => getCachePath('Temp', true);
+export const getPublicationsPath = () =>
+  getCachePath(PUBLICATION_FOLDER, false);
+export const getAdditionalMediaPath = () =>
+  getCachePath('Additional Media', false);
 
 // Directories
 
@@ -99,13 +98,8 @@ export const getParentDirectory = (filepath?: string) => {
  */
 export const getPublicationDirectory = async (
   publication: PublicationFetcher,
-  cacheDir?: null | string,
 ) => {
-  return getCachePath(
-    [PUBLICATION_FOLDER, getPubId(publication)],
-    true,
-    cacheDir,
-  );
+  return getCachePath([PUBLICATION_FOLDER, getPubId(publication)], true);
 };
 
 /**
@@ -179,16 +173,14 @@ export const findFile = async (dir: string | undefined, search: string) => {
  * Gets the files inside a publication directory.
  * @param publication The publication to get the files of.
  * @param ext The extension filter to apply to the files.
- * @param cacheFolder The cache folder if it is not the default.
  * @returns The files inside the publication directory.
  */
 export const getPublicationDirectoryContents = async (
   publication: PublicationFetcher,
   ext?: string,
-  cacheFolder?: null | string,
 ) => {
   try {
-    const dir = await getPublicationDirectory(publication, cacheFolder);
+    const dir = await getPublicationDirectory(publication);
     if (!(await pathExists(dir))) return [];
     const items = await readdir(dir);
     return items
@@ -292,8 +284,7 @@ export const toggleBetaUpdates = async (enable: boolean) => {
   }
 };
 
-export const congPreferencesPath = () =>
-  getCachePath([CONG_PREFERENCES_FOLDER]);
+export const congPreferencesPath = () => getCachePath(CONG_PREFERENCES_FOLDER);
 
 const lastVersionPath = (congId: string) =>
   getCachePath([CONG_PREFERENCES_FOLDER, congId, 'last-version']);

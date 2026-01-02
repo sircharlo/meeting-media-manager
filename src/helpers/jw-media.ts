@@ -318,62 +318,84 @@ export const downloadFileIfNeeded = async ({
     };
   }
 
-  const currentStateStore = useCurrentStateStore();
-  await ensureDir(dir);
-  if (!filename) filename = basename(url);
-  const { default: sanitize } = await import('sanitize-filename');
-  filename = sanitize(filename);
-  const destinationPath = join(dir, filename);
-  const remoteSize: number =
-    size ||
-    (await fetchRaw(url, { method: 'HEAD' })
-      .then((response) => {
-        return +(response?.headers?.get('content-length') || 0);
-      })
-      .catch(() => 0));
-  if (await exists(destinationPath)) {
-    const statistics = await stat(destinationPath);
-    const localSize = statistics.size;
-    if (localSize === remoteSize) {
-      return {
-        new: false,
-        path: destinationPath,
-      };
+  let destinationPath = '';
+
+  try {
+    const currentStateStore = useCurrentStateStore();
+    await ensureDir(dir);
+    if (!filename) filename = basename(url);
+    const { default: sanitize } = await import('sanitize-filename');
+    filename = sanitize(filename);
+    destinationPath = join(dir, filename);
+    const remoteSize: number =
+      size ||
+      (await fetchRaw(url, { method: 'HEAD' })
+        .then((response) => {
+          return +(response?.headers?.get('content-length') || 0);
+        })
+        .catch(() => 0));
+    if (await exists(destinationPath)) {
+      const statistics = await stat(destinationPath);
+      const localSize = statistics.size;
+      if (localSize === remoteSize) {
+        return {
+          new: false,
+          path: destinationPath,
+        };
+      }
     }
-  }
-  const downloadId = await downloadFile(url, dir, filename, lowPriority);
+    const downloadId = await downloadFile(url, dir, filename, lowPriority);
 
-  // Seed meeting date on progress right away so UI can group even before onDownloadStarted
-  if (downloadId) {
-    const seed = currentStateStore.downloadProgress[downloadId] || {};
-    currentStateStore.downloadProgress[downloadId] = {
-      ...(seed as Record<string, unknown>),
-      filename,
-      meetingDate:
-        (seed as { meetingDate?: string })?.meetingDate || meetingDate,
-    } as never;
-  }
+    // Seed meeting date on progress right away so UI can group even before onDownloadStarted
+    if (downloadId) {
+      const seed = currentStateStore.downloadProgress[downloadId] || {};
+      currentStateStore.downloadProgress[downloadId] = {
+        ...(seed as Record<string, unknown>),
+        filename,
+        meetingDate:
+          (seed as { meetingDate?: string })?.meetingDate || meetingDate,
+      } as never;
+    }
 
-  const result = await new Promise<DownloadedFile>((resolve) => {
-    const interval = setInterval(() => {
-      if (!downloadId) {
-        clearInterval(interval);
-        resolve({
-          error: true,
-          path: destinationPath,
-        });
-        return;
-      }
-      if (currentStateStore.downloadProgress[downloadId]?.complete) {
-        clearInterval(interval);
-        resolve({
-          new: true,
-          path: destinationPath,
-        });
-      }
-    }, 500); // Check every 500ms
-  });
-  return result;
+    const result = await new Promise<DownloadedFile>((resolve) => {
+      const interval = setInterval(() => {
+        if (!downloadId) {
+          clearInterval(interval);
+          resolve({
+            error: true,
+            path: destinationPath,
+          });
+          return;
+        }
+        if (currentStateStore.downloadProgress[downloadId]?.complete) {
+          clearInterval(interval);
+          resolve({
+            new: true,
+            path: destinationPath,
+          });
+        }
+      }, 500); // Check every 500ms
+    });
+    return result;
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          dir,
+          filename,
+          lowPriority,
+          meetingDate,
+          name: 'downloadFileIfNeeded',
+          size,
+          url,
+        },
+      },
+    });
+    return {
+      error: true,
+      path: destinationPath,
+    };
+  }
 };
 
 export const fetchMedia = async () => {
@@ -637,10 +659,7 @@ export const getDbFromJWPUB = async (
   try {
     const jwpub = await downloadJwpub(publication, meetingDate);
     if (jwpub.error) return null;
-    const publicationDirectory = await getPublicationDirectory(
-      publication,
-      useCurrentStateStore().currentSettings?.cacheFolder,
-    );
+    const publicationDirectory = await getPublicationDirectory(publication);
     if (jwpub.new || !(await findDb(publicationDirectory))) {
       await unzipJwpub(jwpub.path, publicationDirectory);
     }
@@ -667,10 +686,7 @@ export async function addFullFilePathToMultimediaItem(
       'CoverPictureFilePath',
     ] as const;
 
-    const baseDir = await getPublicationDirectory(
-      publication,
-      useCurrentStateStore().currentSettings?.cacheFolder,
-    );
+    const baseDir = await getPublicationDirectory(publication);
 
     for (const path of paths) {
       if (multimediaItem[path]) {
@@ -1181,7 +1197,6 @@ export const getStudyBibleMedia = async (
             //       item.MepsLanguageIndex === 0
             //         ? nwtStyPublication_E
             //         : (nwtStyPublication as PublicationFetcher),
-            //       useCurrentStateStore().currentSettings?.cacheFolder,
             //     );
             //     updatedItem.CoverPictureFilePath = join(baseDir, thumbPath);
             //   }
@@ -2571,10 +2586,7 @@ const downloadMissingMedia = async (
   meetingDate?: string,
 ) => {
   try {
-    const pubDir = await getPublicationDirectory(
-      publication,
-      useCurrentStateStore().currentSettings?.cacheFolder,
-    );
+    const pubDir = await getPublicationDirectory(publication);
     const responseObject = await getPubMediaLinks(publication, meetingDate);
     if (!responseObject?.files) {
       if (!(await pathExists(pubDir))) return { FilePath: '' };
@@ -2835,10 +2847,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
           !publication.maxTrack || mediaLink.track < publication.maxTrack,
       );
 
-    const dir = await getPublicationDirectory(
-      publication,
-      currentStateStore.currentSettings?.cacheFolder,
-    );
+    const dir = await getPublicationDirectory(publication);
     const filteredMediaItemLinks: MediaLink[] = [];
     for (const mediaItemLink of mediaLinks) {
       const currentTrack = mediaItemLink.track;
@@ -2951,10 +2960,7 @@ const downloadJwpub = async (
     }
 
     return await downloadFileIfNeeded({
-      dir: await getPublicationDirectory(
-        publication,
-        currentStateStore.currentSettings?.cacheFolder,
-      ),
+      dir: await getPublicationDirectory(publication),
       meetingDate,
       size: mediaLinks[0]?.filesize,
       url: mediaLinks[0]?.file.url ?? '',

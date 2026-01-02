@@ -197,10 +197,6 @@ export function isIgnoredUpdateError(
   message?: string,
 ): boolean {
   const ignoreErrors = [
-    'ENOENT',
-    'EPERM',
-    'rename',
-    'Command failed: mv -f',
     '504 Gateway Time-out',
     'Code signature at URL',
     'HttpError: 503',
