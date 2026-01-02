@@ -4,6 +4,14 @@
 
 Para obter a lista completa das mudanças entre versões, consulte nosso arquivo CHANGELOG.md no GitHub.
 
+## v26.1.0
+
+### ✨ Novos Recursos
+
+- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
+- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
+- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+
 ## v25.12.2
 
 ### ✨ Novos Recursos
@@ -89,7 +97,7 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 - ✨ **Modo repita a seção**: Ativar reprodução contínua em seções específicas para loops de mídia perfeitos.
 - ✨ **Zoom Integração**: Iniciar/Parar automaticamente o compartilhamento de tela com a reprodução de mídia.
 
-### 🛠️ Melhorias e Ajustes
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Cabeçalhos de Seção Aprimoradas**: Novo sistema de menu de três pontos com a barra de cores, mover controles para cima/para baixo, repetir opções e excluir funcionalidade.
 - ✨ **Edição de Título Inline**: Editar títulos de itens de mídia diretamente na interface sem abrir diálogos separados.
@@ -103,7 +111,7 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 - ✨ **Configuração de conexão limitada**: Adicionada uma nova configuração para reduzir o uso de largura de banda em conexões limitadas.
 - ✨ **Melhoria no Manuseio de Mídia em Stream**: Melhor suporte para mídia transmitida, reduzindo problemas relacionados à latência.
 
-### 🛠️ Melhorias e Ajustes
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Melhor Manuseio de Tipos MIME**: Suporte aprimorado para tipos MIME, garantindo melhor compatibilidade de mídia.
 - 🛠️ **Aprimoramento do Menu de Navegação**: Melhor gerenciamento de estado e adição de exibição de dicas de ferramenta para facilitar a navegação do usuário.
@@ -116,7 +124,7 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 - **Opção de Atraso no OBS para Imagens**: Adiciona uma configuração no OBS Studio para atrasar a mudança de cena ao exibir imagens, melhorando as transições.
 - **Compatibilidade com Áudio .m4a**: Adiciona compatibilidade com arquivos .m4a, ampliando os tipos de mídia aceitos.
 
-### 🛠️ Melhorias e Ajustes
+### 🛠️ Improvements and Tweaks
 
 - **Restaurar Zoom com Ctrl + Rolagem**: Reabilita o zoom imediato com o gesto de Ctrl + rolagem, facilitando a navegação.
 - 👤 **Ocultar Mídia do SC Não Utilizada**: Oculta, em vez de ignorar, a mídia não utilizada nas visitas do superintendente de circuito, mantendo a apresentação mais limpa.
@@ -124,19 +132,19 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 
 ## 25.4.3
 
-### 🛠️ Melhorias e Ajustes
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Limpar Mídias da Versão 25.4.x**: Limpa automaticamente mídias órfãs ou deslocadas da versão 25.4.1 à 25.4.2 para garantir que nenhum item esteja faltando ou no lugar errado da lista de mídias.
 
 ## 25.4.2
 
-### 🛠️ Melhorias e Ajustes
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Prevenção a Mídias Duplicadas**: Evita que sejam adicionados itens repetidos à lista de mídias.
 
 ## 25.4.1
 
-### 🛠️ Melhorias e Ajustes
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Correção na Atribuição de Horários de Início/Fim Personalizados**: Impede que horários de início e fim personalizados sejam aplicados incorretamente a vídeos errados.
 - 📝 **Permitir Legendas Desajustadas**: Habilita o uso de legendas, mesmo que não correspondam perfeitamente ao arquivo de mídia.
@@ -152,7 +160,7 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 - 🇵🇭 **Novo idioma: Tagalo**: Suporte adicionado para Tagalo, expandindo as capacidades multilíngues do aplicativo.
 - 🎞️ **Suporte para o Formato de Vídeo `.m4v`**: Agora suporta a reprodução de arquivos `.m4v` para melhorar a compatibilidade de mídia.
 
-### 🛠️ Melhorias e Ajustes
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Múltiplos Pontos de Início/Fim para um Único Vídeo**: Permite que um único vídeo apareça na lista de mídia várias vezes com diferentes pontos de início/fim personalizados.
 - 📤 **Inclusão de Mídia Agrupada na Exportação Automática**: Exporta automaticamente itens de mídia agrupados junto com outros.
@@ -164,7 +172,7 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 
 - 🌏 **Novo Idioma: Coreano**: Adiciona suporte para o idioma coreano, expandindo a acessibilidade para mais usuários.
 
-### 🛠️ Melhorias e Ajustes
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **Melhora no Desempenho e Uso da CPU**: Otimiza o desempenho para reduzir o uso da CPU e melhorar a eficiência.
 - 🔄 **Correção de Problemas de Sincronização e Travamento**: Resolve vários problemas de estabilidade e relacionados à sincronização para melhorar a confiabilidade.
@@ -179,7 +187,7 @@ Para obter a lista completa das mudanças entre versões, consulte nosso arquivo
 - 📅 **Data da Celebração e Fundo de Tela Automáticos**: Detecta e configura automaticamente a data da Celebração e prepara a imagem de fundo da Celebração.
 - 📜 **Exibição de Notas de Versão no Aplicativo**: Mostra notas de lançamento diretamente no aplicativo para que os usuários possam facilmente revisar as alterações após uma atualização.
 
-### 🛠️ Melhorias e Ajustes
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **Otimização da Limpeza Inteligente de Cache**: Melhora o mecanismo de limpeza inteligente de cache para melhor desempenho e eficiência.
 - 📂 **Correção no Posicionamento das Mídias do Superintendente de Circuito**: Garante que a mídia do Superintendente de Circuito esteja na seção correta.

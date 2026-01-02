@@ -4,6 +4,14 @@
 
 Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in unserer CHANGELOG.md Datei auf GitHub.
 
+## v26.1.0
+
+### ✨ Neue Funktionen
+
+- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
+- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
+- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+
 ## v25.12.2
 
 ### ✨ Neue Funktionen
@@ -89,7 +97,7 @@ Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in uns
 - ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
 - ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
 
-### 🛠️ Verbesserungen und Optimierungen
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
 - ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
@@ -103,7 +111,7 @@ Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in uns
 - ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
 - ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
 
-### 🛠️ Verbesserungen und Optimierungen
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
 - 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
@@ -116,7 +124,7 @@ Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in uns
 - 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
 - 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
 
-### 🛠️ Verbesserungen und Optimierungen
+### 🛠️ Improvements and Tweaks
 
 - 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
 - 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
@@ -124,19 +132,19 @@ Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in uns
 
 ## 25.4.3
 
-### 🛠️ Verbesserungen und Optimierungen
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
 
 ## 25.4.2
 
-### 🛠️ Verbesserungen und Optimierungen
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
 
 ## 25.4.1
 
-### 🛠️ Verbesserungen und Optimierungen
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
 - 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
@@ -152,7 +160,7 @@ Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in uns
 - 🇵🇭 **Neue Sprache: Tagalog**: Unterstützung für Taglog hinzugefügt, um die Mehrsprachigkeit der App zu erweitern.
 - 🎞️ **Unterstützung des `.m4v` Video Format**: Unterstützt nun die Wiedergabe von `.m4v` Dateien, um die Medienkompatibilität zu verbessern.
 
-### 🛠️ Verbesserungen und Optimierungen
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Mehrere Start/End-Zeiten für Einzelvideo**: Lasse ein einzelnes Video mehrfach in der Medienliste mit verschiedenen benutzerdefinierten Start-/Endzeiten erscheinen.
 - 📤 **Gruppierte Medien in den Auto-Export einbeziehen**: Gruppierte Medienelemente automatisch zusammen mit anderen exportieren.
@@ -164,7 +172,7 @@ Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in uns
 
 - 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
 
-### 🛠️ Verbesserungen und Optimierungen
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **Leistungssteigerung und CPU-Auslastung**: Optimierte Performance um die CPU-Auslastung zu reduzieren und die Effizienz zu steigern.
 - 🔄 **Synchronisation- & Absturzprobleme behoben**: Es wurden verschiedene Synchronisation- und Stabilitätsprobleme behoben, um die Zuverlässigkeit zu verbessern.
@@ -179,7 +187,7 @@ Die vollständige Liste der Änderungen zwischen den Versionen finden Sie in uns
 - 📅 **Automatic Memorial Date & Background**: Automatically detect and set the Memorial date and prepare the Memorial background image.
 - 📜 **Show Release Notes In-App**: Display release notes directly in the application so users can easily review changes after an update.
 
-### 🛠️ Verbesserungen und Optimierungen
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **Optimize Smart Cache Clearing**: Improve the smart cache-clearing mechanism for better performance and efficiency.
 - 📂 **Correct Circuit Overseer Media Placement**: Ensure Circuit Overseer media is placed in the correct section.

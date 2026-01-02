@@ -4,6 +4,14 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## v26.1.0
+
+### ✨ Nieuwe functies
+
+- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
+- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
+- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+
 ## v25.12.2
 
 ### ✨ Nieuwe functies
@@ -89,7 +97,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 - ✨ **Sectie Herhaal Modus**: Schakel continue afspelen in binnen specifieke secties voor naadloze media loops.
 - ✨ **Zoom Integratie**: Automatische scherm delen start/stop coördinatie met media afspelen.
 
-### 🛠️ Verbeteringen en tweaks
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Verbeterde Sectie Koppen**: Nieuw drie-punten menu systeem met kleur kiezer, omhoog/omlaag verplaatsingscontroles, herhaal opties, en verwijder functionaliteit.
 - ✨ **Inline Titel Bewerken**: Bewerk media item titels direct in de interface zonder aparte dialogen te openen.
@@ -103,7 +111,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 - ✨ **Betaalde verbindingsinstelling**: Een nieuwe instelling toegevoegd om het gebruik van de downloadbandbreedte voor datalimiet te verminderen.
 - ✨ **Verbeterde streaming van media**: Betere ondersteuning voor het streamen van media, minder problemen in verband met vertraging.
 
-### 🛠️ Verbeteringen en tweaks
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Betere mime type verwerking**: Verbeterde ondersteuning voor MIME-types voor betere compatibiliteit van de media.
 - 🛠️ **Verbeterde navigatie drawer**: Verbeterde mini state behandeling en toegevoegde tooltip voor betere user navigatie.
@@ -116,7 +124,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 - 🖼️ **OBS Vertraging optie voor Afbeeldingen**: Voeg een OBS Studio instelling toe om scène wijzigingen te vertragen bij het weergeven van afbeeldingen, waardoor overgangen worden verbeterd.
 - 🔊 **Ondersteuning voor `.m4a` Audio Formaat**: Voeg compatibiliteit toe voor `.m4a` audio bestanden om ondersteunde media types uit te breiden.
 
-### 🛠️ Verbeteringen en tweaks
+### 🛠️ Improvements and Tweaks
 
 - 🔍 **Herstel Zoom via `Ctrl` + `Scroll`**: Herstel onmiddellijke zooming met ctrl + scroll voor makkelijkere navigatie.
 - 👤 **Verberg ongebruikte KO Media**: Verberg in plaats van ongebruikte media over te slaan voor kringopziener bezoeken om een schonere presentatie te onderhouden.
@@ -124,19 +132,19 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 ## 25.4.3
 
-### 🛠️ Verbeteringen en tweaks
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Maak media schoon van v25.4.x**: haal automatisch losgekoppelde of misplaatste media weg van v25. .1 tot en met v25.4.2 om ervoor te zorgen dat er geen media ontbreekt of op de verkeerde plaats in de medialijst staat.
 
 ## 25.4.2
 
-### 🛠️ Verbeteringen en tweaks
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Voorkom dat sommige media dupliceren**: voorkom dat sommige media-items meerdere keren toegevoegd worden aan de medialijst.
 
 ## 25.4.1
 
-### 🛠️ Verbeteringen en tweaks
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Fix aangepaste begin- en eindtijden**: Voorkom dat aangepaste begin- en eindtijden verkeerd worden toegepast op de verkeerde video.
 - 📝 **Niet overeenkomende ondertitels toestaan**: Gebruik van ondertitels inschakelen, zelfs als ze niet perfect overeenkomen met het mediabestand.
@@ -152,7 +160,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 - 🇵🇭 **Nieuwe taal: Tagalog**: Ondersteuning toegevoegd voor Tagalog, waardoor de meertalige mogelijkheden van de app worden uitgebreid.
 - 🎞️ **Ondersteuning voor `.m4v` Video Formaat**: Ondersteuning voor het afspelen van `.m4v` bestanden om de compatibiliteit met de media te verbeteren.
 
-### 🛠️ Verbeteringen en tweaks
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Meerdere start/stop tijden voor een video**: Laat een enkele video meerdere keren in de medialijst verschijnen met verschillende aangepaste start- en eindtijden.
 - 📤 **Voeg gegroepeerde media in Auto-export toe**: Automatisch gegroepeerde media exporteren samen met anderen.
@@ -164,7 +172,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 - 🌏 **Nieuwe Taal: Koreaans**: Ondersteun de Koreaanse taal, waardoor de toegankelijkheid voor meer gebruikers toeneemt.
 
-### 🛠️ Verbeteringen en tweaks
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **Prestaties & CPU-gebruik verbeteren**: Optimaliseer prestaties om CPU-gebruik te verminderen en efficiëntie te verbeteren.
 - 🔄 **Problemen met synchroniseren en crashen oplossen**: los verschillende sync-gerelateerde en stabiliteitsproblemen op om de betrouwbaarheid te verbeteren.
@@ -179,7 +187,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 - 📅 **Automatische Avondmaal datum & achtergrond**: Automatisch detecteren en instellen van de datum en klaarzetten van de achtergrondafbeelding voor het Avondmaal.
 - 📜 **Laat release-notities in de app zien**: Laat release-notities direct in de app zien, zodat gebruikers wijzigingen gemakkelijk kunnen inzien na een update.
 
-### 🛠️ Verbeteringen en tweaks
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **Optimaliseer slim cache verwijderen**: Verbeter het slim cache verwijderen voor betere prestaties en efficiëntie.
 - 📂 **Correcte kringopziener media positie**: Zorg ervoor dat kringopziener media in de juiste sectie wordt geplaatst.

@@ -4,6 +4,14 @@
 
 Kwa ajili ya orodha kamili ya mabadiliko baina ya toleo tofauti tofauti, ona CHANGELOG.md file kwenye GitHub.
 
+## v26.1.0
+
+### ✨ Vipengele Vipya
+
+- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
+- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
+- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+
 ## v25.12.2
 
 ### ✨ Vipengele Vipya
@@ -89,7 +97,7 @@ Kwa ajili ya orodha kamili ya mabadiliko baina ya toleo tofauti tofauti, ona CHA
 - ✨ **Section Repeat Mode**: Enable continuous playback within specific sections for seamless media loops.
 - ✨ **Zoom Integration**: Automatic screen sharing start/stop coordination with media playback.
 
-### 🛠️ Maboresho na Marekebisho
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Enhanced Section Headers**: New three-dots menu system with color picker, move up/down controls, repeat options, and delete functionality.
 - ✨ **Inline Title Editing**: Edit media item titles directly in the interface without opening separate dialogs.
@@ -103,7 +111,7 @@ Kwa ajili ya orodha kamili ya mabadiliko baina ya toleo tofauti tofauti, ona CHA
 - ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
 - ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
 
-### 🛠️ Maboresho na Marekebisho
+### 🛠️ Improvements and Tweaks
 
 - 🛠️ **Better mime type handling**: Improved support for MIME types for better media compatibility.
 - 🛠️ **Enhanced navigation drawer**: Improved mini state handling and added tooltip display for better user navigation.
@@ -116,7 +124,7 @@ Kwa ajili ya orodha kamili ya mabadiliko baina ya toleo tofauti tofauti, ona CHA
 - 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
 - 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
 
-### 🛠️ Maboresho na Marekebisho
+### 🛠️ Improvements and Tweaks
 
 - 🔍 **Restore Zoom with `Ctrl` + `Scroll`**: Re-enable immediate zooming with the control + scroll gesture for easier navigation.
 - 👤 **Hide Unused CO Media**: Hide rather than skip unused media for Circuit Overseer visits to maintain a cleaner presentation.
@@ -124,19 +132,19 @@ Kwa ajili ya orodha kamili ya mabadiliko baina ya toleo tofauti tofauti, ona CHA
 
 ## 25.4.3
 
-### 🛠️ Maboresho na Marekebisho
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Clean Up Media From v25.4.x**: Automatically clean up orphaned or misplaced media from v25.4.1 to v25.4.2 to ensure no media is missing or in the wrong place in the media list.
 
 ## 25.4.2
 
-### 🛠️ Maboresho na Marekebisho
+### 🛠️ Improvements and Tweaks
 
 - ➕ **Prevent Duplicate Media**: Avoid adding some media items multiple times to the media list.
 
 ## 25.4.1
 
-### 🛠️ Maboresho na Marekebisho
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Fix Custom Start/End Time Assignment**: Prevent custom start and end times from being incorrectly applied to the wrong video.
 - 📝 **Allow Mismatched Subtitles**: Enable use of subtitles even when they do not perfectly match the media file.
@@ -152,7 +160,7 @@ Kwa ajili ya orodha kamili ya mabadiliko baina ya toleo tofauti tofauti, ona CHA
 - 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
 - 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
 
-### 🛠️ Maboresho na Marekebisho
+### 🛠️ Improvements and Tweaks
 
 - 🎬 **Multiple Start/End Times for Single Video**: Allow a single video to appear in the media list multiple times with different custom start/end times.
 - 📤 **Include Grouped Media in Auto Export**: Automatically export grouped media items along with others.
@@ -164,7 +172,7 @@ Kwa ajili ya orodha kamili ya mabadiliko baina ya toleo tofauti tofauti, ona CHA
 
 - 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
 
-### 🛠️ Maboresho na Marekebisho
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **Improve Performance & CPU Usage**: Optimize performance to reduce CPU usage and enhance efficiency.
 - 🔄 **Fix Synchronization & Crash Issues**: Resolve various sync-related and stability issues to improve reliability.
@@ -179,7 +187,7 @@ Kwa ajili ya orodha kamili ya mabadiliko baina ya toleo tofauti tofauti, ona CHA
 - 📅 **Ongeza kiotomatiki tarehe ya Ukumbusho na Picha ya Usuli**: Tambua kiotomatiki na kuweka tarehe ya Ukumbusho na kutayarisha picha ya usuli ya Ukumbusho.
 - 📜 **Onyesha habari ya visasisho kwenye programu**: Onyesha habari kuhusu visasisho kwenye programu ili watumiaji waweze kuona mabadiliko baada ya kusasisha programu.
 
-### 🛠️ Maboresho na Marekebisho
+### 🛠️ Improvements and Tweaks
 
 - ⚡ **Boresha Usafishaji wa Cache**: Boresha utaratibu mahiri wa kufuta cache kwa utendakazi bora.
 - **Uwekaji Sahihi wa Midia ya Msimamizi wa Mzunguko**: Hakikisha media ya Mwangalizi wa Mzunguko imewekwa katika sehemu sahihi.
