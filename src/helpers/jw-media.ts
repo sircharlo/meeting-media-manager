@@ -317,7 +317,8 @@ export const downloadFileIfNeeded = async ({
       path: '',
     };
   }
-  const destinationPath = join(dir, filename);
+
+  let destinationPath = '';
 
   try {
     const currentStateStore = useCurrentStateStore();
@@ -325,6 +326,7 @@ export const downloadFileIfNeeded = async ({
     if (!filename) filename = basename(url);
     const { default: sanitize } = await import('sanitize-filename');
     filename = sanitize(filename);
+    destinationPath = join(dir, filename);
     const remoteSize: number =
       size ||
       (await fetchRaw(url, { method: 'HEAD' })
