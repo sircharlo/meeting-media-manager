@@ -90,7 +90,14 @@ const exportDayToFolder = async (targetDate?: Date) => {
   try {
     await ensureDir(destFolder);
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          destFolder,
+          name: 'exportDayToFolder ensureDir',
+        },
+      },
+    });
     return; // Exit early if we can't create the folder
   }
 

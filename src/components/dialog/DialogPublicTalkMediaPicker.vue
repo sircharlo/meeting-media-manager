@@ -99,6 +99,7 @@ import type {
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { unzipJwpub } from 'src/helpers/mediaPlayback';
 import { getPublicationsPath } from 'src/utils/fs';
@@ -176,10 +177,21 @@ const browse = async () => {
   if (!s34mpDir.value) {
     await setS34mp();
   }
-  if (s34mpDir.value) await ensureDir(s34mpDir.value);
-  if (s34mpFile.value) {
-    await unzipJwpub(s34mpFile.value, s34mpDir.value, true);
-    populatePublicTalks();
+  if (s34mpDir.value && s34mpFile.value) {
+    try {
+      await ensureDir(s34mpDir.value);
+      await unzipJwpub(s34mpFile.value, s34mpDir.value, true);
+      populatePublicTalks();
+    } catch (error) {
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            name: 'DialogPublicTalkMediaPicker browse ensureDir',
+            s34mpDir: s34mpDir.value,
+          },
+        },
+      });
+    }
   }
 };
 

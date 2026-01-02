@@ -71,24 +71,46 @@ const getLocalFontPath = async (fontName: FontName) => {
   } catch (error) {
     errorCatcher(error, {
       contexts: {
-        fn: { fontName, name: 'getLocalFontPath', url: fontUrls[fontName] },
+        fn: {
+          fontFileName,
+          fontName,
+          fontPath,
+          fontsDir,
+          name: 'getLocalFontPath',
+          url: fontUrls[fontName],
+        },
       },
     });
     mustDownload = true;
   }
   if (mustDownload) {
-    await ensureDir(fontsDir);
-    const response = await fetchRaw(fontUrls[fontName], {
-      method: 'GET',
-    });
-    if (!response.ok) {
-      throw new Error(
-        `Failed to download font: ${response.statusText || response.status}`,
-      );
+    try {
+      await ensureDir(fontsDir);
+      const response = await fetchRaw(fontUrls[fontName], {
+        method: 'GET',
+      });
+      if (!response.ok) {
+        throw new Error(
+          `Failed to download font: ${response.statusText || response.status}`,
+        );
+      }
+      const blob = await response.blob();
+      const buffer = await blob.arrayBuffer();
+      await writeFile(fontPath, Buffer.from(buffer));
+    } catch (error) {
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            fontFileName,
+            fontName,
+            fontPath,
+            fontsDir,
+            name: 'getLocalFontPath download',
+            url: fontUrls[fontName],
+          },
+        },
+      });
     }
-    const blob = await response.blob();
-    const buffer = await blob.arrayBuffer();
-    await writeFile(fontPath, Buffer.from(buffer));
   }
   return fontPath;
 };

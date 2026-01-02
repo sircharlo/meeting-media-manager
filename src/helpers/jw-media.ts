@@ -317,63 +317,83 @@ export const downloadFileIfNeeded = async ({
       path: '',
     };
   }
-
-  const currentStateStore = useCurrentStateStore();
-  await ensureDir(dir);
-  if (!filename) filename = basename(url);
-  const { default: sanitize } = await import('sanitize-filename');
-  filename = sanitize(filename);
   const destinationPath = join(dir, filename);
-  const remoteSize: number =
-    size ||
-    (await fetchRaw(url, { method: 'HEAD' })
-      .then((response) => {
-        return +(response?.headers?.get('content-length') || 0);
-      })
-      .catch(() => 0));
-  if (await exists(destinationPath)) {
-    const statistics = await stat(destinationPath);
-    const localSize = statistics.size;
-    if (localSize === remoteSize) {
-      return {
-        new: false,
-        path: destinationPath,
-      };
+
+  try {
+    const currentStateStore = useCurrentStateStore();
+    await ensureDir(dir);
+    if (!filename) filename = basename(url);
+    const { default: sanitize } = await import('sanitize-filename');
+    filename = sanitize(filename);
+    const remoteSize: number =
+      size ||
+      (await fetchRaw(url, { method: 'HEAD' })
+        .then((response) => {
+          return +(response?.headers?.get('content-length') || 0);
+        })
+        .catch(() => 0));
+    if (await exists(destinationPath)) {
+      const statistics = await stat(destinationPath);
+      const localSize = statistics.size;
+      if (localSize === remoteSize) {
+        return {
+          new: false,
+          path: destinationPath,
+        };
+      }
     }
-  }
-  const downloadId = await downloadFile(url, dir, filename, lowPriority);
+    const downloadId = await downloadFile(url, dir, filename, lowPriority);
 
-  // Seed meeting date on progress right away so UI can group even before onDownloadStarted
-  if (downloadId) {
-    const seed = currentStateStore.downloadProgress[downloadId] || {};
-    currentStateStore.downloadProgress[downloadId] = {
-      ...(seed as Record<string, unknown>),
-      filename,
-      meetingDate:
-        (seed as { meetingDate?: string })?.meetingDate || meetingDate,
-    } as never;
-  }
+    // Seed meeting date on progress right away so UI can group even before onDownloadStarted
+    if (downloadId) {
+      const seed = currentStateStore.downloadProgress[downloadId] || {};
+      currentStateStore.downloadProgress[downloadId] = {
+        ...(seed as Record<string, unknown>),
+        filename,
+        meetingDate:
+          (seed as { meetingDate?: string })?.meetingDate || meetingDate,
+      } as never;
+    }
 
-  const result = await new Promise<DownloadedFile>((resolve) => {
-    const interval = setInterval(() => {
-      if (!downloadId) {
-        clearInterval(interval);
-        resolve({
-          error: true,
-          path: destinationPath,
-        });
-        return;
-      }
-      if (currentStateStore.downloadProgress[downloadId]?.complete) {
-        clearInterval(interval);
-        resolve({
-          new: true,
-          path: destinationPath,
-        });
-      }
-    }, 500); // Check every 500ms
-  });
-  return result;
+    const result = await new Promise<DownloadedFile>((resolve) => {
+      const interval = setInterval(() => {
+        if (!downloadId) {
+          clearInterval(interval);
+          resolve({
+            error: true,
+            path: destinationPath,
+          });
+          return;
+        }
+        if (currentStateStore.downloadProgress[downloadId]?.complete) {
+          clearInterval(interval);
+          resolve({
+            new: true,
+            path: destinationPath,
+          });
+        }
+      }, 500); // Check every 500ms
+    });
+    return result;
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          dir,
+          filename,
+          lowPriority,
+          meetingDate,
+          name: 'downloadFileIfNeeded',
+          size,
+          url,
+        },
+      },
+    });
+    return {
+      error: true,
+      path: destinationPath,
+    };
+  }
 };
 
 export const fetchMedia = async () => {
