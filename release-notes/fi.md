@@ -8,9 +8,9 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 
 ### ✨ Mitä uutta
 
-- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
-- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
-- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+- ✨ **Automaattinen kokousaikataulun synkronointi**: Lisätty mahdollisuus synkronoida kokousten päivämäärät ja ajat automaattisesti virallisen verkkosivuston kanssa. Tämä toiminto on oletuksena käytössä, ja se voidaan käynnistää manuaalisesti tai poistaa käytöstä lisäasetuksissa.
+- ✨ **Tulevat aikataulumuutokset**: Sovellus ottaa nyt huomioon tulevat aikataulumuutokset luotaessa seurakuntaa verkkosivustohakua käyttäen, jos niitä on saatavilla.
+- ✨ **Jaettu välimuisti koko koneen laajuisille asennuksille**: Koko koneen laajuiset asennukset käyttävät nyt oletuksena yhteistä datakansiota, mikä optimoi tallennus- ja kaistanleveyden käytön useiden samalla tietokoneella olevien käyttäjien välillä.
 
 ## v25.12.2
 
@@ -97,7 +97,7 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 - ✨ **Osion toistotila**: Mahdollistaa jatkuvan toiston tietyissä osioissa, jotta toistosta tulee saumaton.
 - ✨ **Zoom-integraatio**: Automaattinen näytönjaon käynnistys ja pysäytys median toiston yhteydessä.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parannukset ja hienosäädöt
 
 - 🛠️ **Parannetut osioiden otsikot**: Uusi kolmen pisteen valikko, jossa on värivalitsin, siirrä ylös/alas -komennot, toistovaihtoehdot ja poisto-toiminto.
 - ✨ **Otsikoiden muokkaus suoraan**: Mahdollisuus muokata median otsikoita suoraan käyttöliittymässä ilman erillisiä valintaikkunoita.
@@ -111,7 +111,7 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 - ✨ **Rajoitetun yhteyden asetus**: Lisätty uusi asetus, joka vähentää latauskaistan käyttöä rajoitetuilla yhteyksillä.
 - ✨ **Parannettu suoratoistetun median käsittely**: Parempi tuki suoratoistetulle medialle viiveongelmien vähentämiseksi.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parannukset ja hienosäädöt
 
 - 🛠️ **Parempi MIME-tyyppien käsittely**: Parannettu MIME-tyyppien tuki median parempaa yhteensopivuutta varten.
 - 🛠️ **Parannettu navigointipaneeli**: Parannettu pienennetyn tilan hallinta ja lisätty työkaluvihjeet käyttäjäkokemuksen parantamiseksi.
@@ -124,7 +124,7 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 - 🖼️ **OBS-viivekuvien asetus**: Lisätty OBS Studio -asetus, jolla voidaan viivästyttää näyttämön vaihtoa kuvien näyttämisen yhteydessä, mikä tekee siirtymistä sulavampaa.
 - 🔊 **Tuki `.m4a`-äänitiedostoille**: Lisätty yhteensopivuus `.m4a`-äänitiedostomuodon kanssa tuettujen mediatyyppien laajentamiseksi.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parannukset ja hienosäädöt
 
 - 🔍 **Zoomin palautus `Ctrl` + `Scroll` -yhdistelmällä**: Palautettu välitön zoomaus ohjausnäppäin + vieritys -eleellä helpompaa navigointia varten.
 - 👤 **Piilota käyttämätön Kierrosvalvojan media**: Piilota käyttämätön media Kierrosvalvojan vierailuissa siistimmän esityksen takaamiseksi.
@@ -132,19 +132,19 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 
 ## 25.4.3
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parannukset ja hienosäädöt
 
 - ➕ **Siivoa media v25.4.x-versioista**: Poistaa automaattisesti orvot tai väärin sijoitetut mediat versioista v25.4.1–v25.4.2 varmistaen, ettei media puutu tai ole väärässä paikassa medialistassa.
 
 ## 25.4.2
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parannukset ja hienosäädöt
 
 - ➕ **Estä päällekkäinen media**: Estää joidenkin mediaelementtien lisäämisen useaan kertaan medialuetteloon.
 
 ## 25.4.1
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parannukset ja hienosäädöt
 
 - 🎬 **Korjaa mukautettujen alku-/loppuaikojen määritys**: Estää mukautettujen alku- ja loppuaikojen väärän kohdistamisen videoihin.
 - 📝 **Salli yhteensopimattomat tekstitykset**: Mahdollistaa tekstitysten käytön, vaikka ne eivät täysin vastaisi mediatiedostoa.
@@ -160,7 +160,7 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 - 🇵🇭 **Uusi kieli: Tagalog**: Lisätty tuki Tagalogin kielelle, mikä laajentaa sovelluksen monikielisiä ominaisuuksia.
 - 🎞 **Tuki `.m4v`-videomuodolle**: Nyt tuetaan `.m4v`-tiedostojen toistoa median yhteensopivuuden parantamiseksi.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parannukset ja hienosäädöt
 
 - 🎬 **Useita alku-/loppuaikoja yhdelle videolle**: Mahdollistaa yhden videon esiintymisen medialuettelossa useita kertoja eri mukautetuilla alku- ja loppuajoilla.
 - 📤 **Sisällytä ryhmitelty media automaattiseen vientiin**: Vie automaattisesti myös ryhmitetyt mediaelementit muiden mukana.
@@ -172,7 +172,7 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 
 - 🌏 **Uusi kieli: korea**: Lisätty tuki korean kielelle, jotta sovellus olisi käytettävissä laajemmalle käyttäjäkunnalle.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parannukset ja hienosäädöt
 
 - ⚡ **Parempi suorituskyky ja pienempi prosessorin käyttö**: Optimoitu suorituskykyä CPU:n kuormituksen vähentämiseksi ja tehokkuuden parantamiseksi.
 - 🔄 **Korjattu synkronointi- ja kaatumisongelmat**: Ratkaistu useita synkronointiin ja vakauteen liittyviä ongelmia luotettavuuden parantamiseksi.
@@ -187,7 +187,7 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 - 📅 **Automaattinen muistojuhlan päivämäärä ja tausta**: Havaitsee automaattisesti muistojuhlan päivämäärän ja asettaa taustakuvan valmiiksi.
 - 📜 **Näytä julkaisutiedot sovelluksessa**: Näyttää julkaisutiedot suoraan sovelluksessa, jotta käyttäjät voivat helposti tarkastella muutoksia päivityksen jälkeen.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parannukset ja hienosäädöt
 
 - ⚡ **Optimoitu älykäs välimuistin tyhjennys**: Parannettu älykkään välimuistin tyhjennysmekanismia suorituskyvyn parantamiseksi.
 - 📂 **Korjattu Kierrosvalvojan median sijoittelu**: Varmistaa, että Kierrosvalvojan media sijoittuu oikeaan osioon.
