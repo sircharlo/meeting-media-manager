@@ -118,7 +118,7 @@
     "eslint": "^9.39.2",
     "eslint-plugin-perfectionist": "^5.2.0",
     "eslint-plugin-vue": "^10.6.2",
-    "globals": "^16.5.0",
+    "globals": "^17.0.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "lodash-es": "^4.17.22",
