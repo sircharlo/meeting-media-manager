@@ -8,9 +8,9 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
-- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
-- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+- ✨ **Synchronisation automatique de l'horaire des réunions** : Ajout de la possibilité de synchroniser automatiquement les dates et heures des réunions avec le site web officiel. Cette fonctionnalité est activée par défaut et peut être déclenchée manuellement ou désactivée dans les paramètres avancés.
+- ✨ **Modifications futures à l'horaire** : L'application prend désormais en charge automatiquement les modifications futures d'horaire des réunions lors de la création d'une assemblée locale à partir de la recherche sur le site web.
+- ✨ **Cache partagé pour les installations multi-utilisateurs** : Les installations multi-utilisateurs partagent désormais un dossier de données commun par défaut lorsque possible, ce qui optimise l'utilisation du stockage et de la bande passante pour les utilisateurs d'un même ordinateur.
 
 ## v25.12.2
 
