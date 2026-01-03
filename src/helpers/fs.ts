@@ -262,10 +262,7 @@ export const getSubtitlesUrl = async (
         }
 
         const subtitlesFilename = basename(subtitles);
-        const subDirectory = await getPublicationDirectory(
-          subtitleFetcher,
-          currentState.currentSettings?.cacheFolder,
-        );
+        const subDirectory = await getPublicationDirectory(subtitleFetcher);
         await downloadFileIfNeeded({
           dir: subDirectory,
           filename: subtitlesFilename,

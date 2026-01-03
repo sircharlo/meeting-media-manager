@@ -1212,10 +1212,8 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
           const publication = getPublicationInfoFromDb(tempDbFilePath);
           console.log('🎯 [addToFiles] Publication info:', publication);
           console.log('🎯 [addToFiles] Getting publication directory');
-          const publicationDirectory = await getPublicationDirectory(
-            publication,
-            currentSettings.value?.cacheFolder,
-          );
+          const publicationDirectory =
+            await getPublicationDirectory(publication);
           console.log(
             '🎯 [addToFiles] Publication directory:',
             publicationDirectory,

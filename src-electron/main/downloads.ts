@@ -2,7 +2,7 @@ import type { ElectronDownloadManager as EDMType } from 'electron-dl-manager';
 
 import { getCountriesForTimezone } from 'countries-and-timezones';
 import { app } from 'electron';
-import { ensureDir, pathExists } from 'fs-extra/esm';
+import { ensureDir } from 'fs-extra/esm';
 import { isAppQuitting } from 'src-electron/main/session';
 import { captureElectronError, fetchJson } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
@@ -73,9 +73,7 @@ export async function downloadFile(
 ) {
   if (!mainWindow || mainWindow.isDestroyed() || !url || !saveDir) return null;
   try {
-    if (!(await pathExists(saveDir))) {
-      await ensureDir(saveDir);
-    }
+    await ensureDir(saveDir);
 
     if (!destFilename) destFilename = basename(url);
 

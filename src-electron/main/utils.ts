@@ -1,6 +1,8 @@
 import { captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
+import { W_OK } from 'node:constants';
+import { access, mkdir } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import {
   IS_DEV,
@@ -13,9 +15,6 @@ import { urlVariables } from 'src-electron/main/session';
 import upath from 'upath';
 
 const { join, resolve } = upath;
-import { pathExists } from 'fs-extra/esm';
-import { W_OK } from 'node:constants';
-import { access } from 'node:fs/promises';
 
 type CaptureCtx = Parameters<typeof captureException>[1];
 
@@ -50,9 +49,10 @@ export function getIconPath(icon: 'beta' | 'icon' | 'media-player') {
  */
 export async function getSharedDataPath(): Promise<null | string> {
   const isMachineWide = isMachineWideInstallation();
-  if (!isMachineWide && !IS_DEV) return null;
+  if (!isMachineWide) return null;
 
   let sharedPath = '';
+
   if (PLATFORM === 'win32') {
     sharedPath = join(
       process.env.ProgramData || 'C:\\ProgramData',
@@ -73,16 +73,18 @@ export async function getSharedDataPath(): Promise<null | string> {
     );
   }
 
-  // Verify write access to the shared path
   try {
-    if (await pathExists(sharedPath)) {
-      await access(sharedPath, W_OK);
-      return sharedPath;
-    }
-  } catch {
+    // Ensure directory exists (does NOT change permissions)
+    await mkdir(sharedPath, { recursive: true });
+
+    // Verify write access
+    await access(sharedPath, W_OK);
+
     return sharedPath;
+  } catch {
+    // Not writable or not allowed → explicit fallback
+    return null;
   }
-  return sharedPath;
 }
 
 /**
@@ -109,7 +111,6 @@ export function isJwDomain(url: string): boolean {
  * @returns Whether the installation is machine-wide
  */
 export function isMachineWideInstallation(): boolean {
-  if (process.env.MMM_FORCE_MACHINE_WIDE === 'true') return true;
   const exe = app.getPath('exe');
   if (PLATFORM === 'win32') {
     return (
@@ -196,10 +197,6 @@ export function isIgnoredUpdateError(
   message?: string,
 ): boolean {
   const ignoreErrors = [
-    'ENOENT',
-    'EPERM',
-    'rename',
-    'Command failed: mv -f',
     '504 Gateway Time-out',
     'Code signature at URL',
     'HttpError: 503',

@@ -1,3 +1,4 @@
+import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { join } from 'upath';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -5,11 +6,12 @@ import {
   getParentDirectory,
   getPublicationDirectory,
   getPublicationDirectoryContents,
-  getPublicationsPath,
   isFileUrl,
   removeEmptyDirs,
   trimFilepathAsNeeded,
 } from '../fs';
+
+installPinia();
 
 const { fs } = window.electronApi;
 const { emptyDir, ensureDir, ensureFile, exists, remove } = fs;
@@ -43,7 +45,6 @@ describe('fs edge cases', () => {
 
   describe('getPublicationDirectoryContents - ignores directories and filters correctly', () => {
     it('filters by extension and excludes directories', async () => {
-      const root = await getPublicationsPath();
       const pubDir = await getPublicationDirectory({
         issue: '0',
         langwritten: 'E',
@@ -63,7 +64,6 @@ describe('fs edge cases', () => {
           langwritten: 'E',
           pub: 'bt',
         });
-        console.log(root, all);
         expect(all.some((p) => p.path.endsWith('subdir'))).toBe(false);
         expect(all.length).toBe(3);
 
@@ -71,7 +71,6 @@ describe('fs edge cases', () => {
           { issue: '0', langwritten: 'E', pub: 'bt' },
           'JPG',
         );
-        console.log(jpgsUpper);
         expect(jpgsUpper.length).toBe(2);
       } finally {
         await remove(pubDir);

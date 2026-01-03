@@ -129,13 +129,7 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
         if (issue === 'any') {
           const baseId = getPubId({ langwritten, pub } as PublicationFetcher);
           const pubsRootDefault = await getPublicationsPath();
-          const pubsRootCache = await getPublicationsPath(
-            currentState.currentSettings?.cacheFolder,
-          );
-          directories.push(
-            join(pubsRootDefault, baseId),
-            join(pubsRootCache, baseId),
-          );
+          directories.push(join(pubsRootDefault, baseId));
         } else {
           const directoryParams: PublicationFetcher = {
             issue,
@@ -143,15 +137,7 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
             pub,
           };
 
-          if (currentState.currentSettings) {
-            directories.push(
-              await getPublicationDirectory(directoryParams),
-              await getPublicationDirectory(
-                directoryParams,
-                currentState.currentSettings?.cacheFolder,
-              ),
-            );
-          }
+          directories.push(await getPublicationDirectory(directoryParams));
         }
       }
 
@@ -184,19 +170,13 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
     // Add S-34mp directories
     try {
       const pubsRootDefault = await getPublicationsPath();
-      const pubsRootCache = await getPublicationsPath(
-        currentState.currentSettings?.cacheFolder,
-      );
-      const roots = [pubsRootDefault, pubsRootCache];
-      for (const root of roots) {
-        try {
-          const items = await readdir(root);
-          items
-            .filter((i) => i.isDirectory && i.name.startsWith('S-34mp_'))
-            .forEach((i) => directories.push(join(root, i.name)));
-        } catch (error) {
-          errorCatcher(error);
-        }
+      try {
+        const items = await readdir(pubsRootDefault);
+        items
+          .filter((i) => i.isDirectory && i.name.startsWith('S-34mp_'))
+          .forEach((i) => directories.push(join(pubsRootDefault, i.name)));
+      } catch (error) {
+        errorCatcher(error);
       }
     } catch (error) {
       errorCatcher(error);
@@ -211,12 +191,9 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
 
 const fetchUntouchableDirectories = async (): Promise<Set<string>> => {
   try {
-    const currentState = useCurrentStateStore();
     return new Set([
       await getAdditionalMediaPath(),
-      await getAdditionalMediaPath(currentState.currentSettings?.cacheFolder),
       await getPublicationsPath(),
-      await getPublicationsPath(currentState.currentSettings?.cacheFolder),
       await getTempPath(),
     ]);
   } catch (error) {
@@ -362,18 +339,11 @@ export const analyzeCacheFiles = async (): Promise<CacheAnalysis> => {
     const dirs = [
       ...new Set([
         await getPublicationsPath(),
-        await getPublicationsPath(currentState.currentSettings?.cacheFolder),
         await getTempPath(),
         ...(currentState.currentCongregation
           ? [
               join(
                 await getAdditionalMediaPath(),
-                currentState.currentCongregation,
-              ),
-              join(
-                await getAdditionalMediaPath(
-                  currentState.currentSettings?.cacheFolder,
-                ),
                 currentState.currentCongregation,
               ),
             ]
@@ -577,24 +547,33 @@ export const deleteCacheFiles = async (
 };
 
 export const cleanCache = async () => {
-  const congregationStore = useCongregationSettingsStore();
-  const congIds = new Set(Object.keys(congregationStore.congregations));
+  try {
+    const congregationStore = useCongregationSettingsStore();
+    const congIds = new Set(Object.keys(congregationStore.congregations));
 
-  const settings = useCurrentStateStore().currentSettings;
+    const settings = useCurrentStateStore().currentSettings;
 
-  const additionalMediaPath = await getAdditionalMediaPath(
-    settings?.cacheFolder,
-  );
+    const additionalMediaPath = await getAdditionalMediaPath();
 
-  cleanPublicTalkPubs(additionalMediaPath, congIds);
-  cleanCongregationFolders(additionalMediaPath, congIds);
-  cleanCongregationFolders(await congPreferencesPath(), congIds);
+    cleanPublicTalkPubs(additionalMediaPath, congIds);
+    cleanCongregationFolders(additionalMediaPath, congIds);
+    cleanCongregationFolders(await congPreferencesPath(), congIds);
 
-  congIds.forEach((congId) => {
-    cleanDateFolders(join(additionalMediaPath, congId));
-  });
+    congIds.forEach((congId) => {
+      cleanDateFolders(join(additionalMediaPath, congId));
+    });
 
-  if (settings?.enableMediaAutoExport && settings?.mediaAutoExportFolder) {
-    cleanDateFolders(settings.mediaAutoExportFolder);
+    if (settings?.enableMediaAutoExport && settings?.mediaAutoExportFolder) {
+      cleanDateFolders(settings.mediaAutoExportFolder);
+    }
+
+    return true;
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: { name: 'cleanCache' },
+      },
+    });
+    return false;
   }
 };

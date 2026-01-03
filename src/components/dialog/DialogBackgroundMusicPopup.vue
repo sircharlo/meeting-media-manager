@@ -479,7 +479,6 @@ const getNextSong = async () => {
           await getPublicationDirectoryContents(
             { langwritten: currentSettings.value?.lang || 'E', pub: 'sjjm' },
             'mp3',
-            currentSettings.value?.cacheFolder,
           )
         ).sort(() => Math.random() - 0.5);
 

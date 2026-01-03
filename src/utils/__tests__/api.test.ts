@@ -1,6 +1,9 @@
 import { validAnnouncements } from 'app/test/vitest/mocks/github';
 import { jwLangs, jwYeartext } from 'app/test/vitest/mocks/jw';
+import { installPinia } from 'app/test/vitest/mocks/pinia';
 import { describe, expect, it } from 'vitest';
+
+installPinia();
 
 import {
   fetchAnnouncements,
