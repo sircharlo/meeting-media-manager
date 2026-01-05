@@ -19,7 +19,7 @@
       <div class="col-shrink">
         <div
           class="q-pr-none rounded-borders overflow-hidden relative-position bg-black"
-          :style="{ opacity: isFileUrl(media.fileUrl) ? undefined : 0.64 }"
+          :style="{ opacity: fileIsAvailable ? 0.64 : undefined }"
         >
           <template v-if="media.isImage">
             <VueZoomable
@@ -355,7 +355,7 @@
             v-if="
               (media.source !== 'dynamic' &&
                 !currentSettings?.disableMediaFetching &&
-                isFileUrl(media.fileUrl)) ||
+                fileIsAvailable) ||
               media.tag?.type
             "
             :class="mediaTagClasses"
@@ -381,7 +381,7 @@
                     ? 'mmm-watched-media'
                     : media.source === 'additional' &&
                         !currentSettings?.disableMediaFetching &&
-                        isFileUrl(media.fileUrl)
+                        fileIsAvailable
                       ? 'mmm-add-media'
                       : media.tag?.type === 'paragraph'
                         ? media.tag.value !== FOOTNOTE_TARGET_PARAGRAPH
@@ -407,7 +407,7 @@
             :class="{
               'q-px-md': true,
               col: true,
-              'text-grey': !isFileUrl(media.fileUrl),
+              'text-grey': !fileIsAvailable,
             }"
           >
             <q-input
@@ -434,7 +434,7 @@
                 {{ displayMediaTitle }}
               </q-tooltip>
             </div>
-            <div v-if="!isFileUrl(media.fileUrl)" class="text-caption">
+            <div v-if="!fileIsAvailable" class="text-caption">
               {{ t('media-item-missing-explain') }}
             </div>
           </div>
@@ -576,18 +576,18 @@
 
             <q-btn
               ref="playButton"
-              :color="isFileUrl(media.fileUrl) ? 'primary' : 'grey'"
+              :color="fileIsAvailable ? 'primary' : 'grey'"
               :disable="
                 (mediaPlaying.url !== '' &&
                   (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))) ||
-                !isFileUrl(media.fileUrl)
+                !fileIsAvailable
               "
               :icon="localFile ? 'mmm-play' : 'mmm-stream-play'"
               rounded
-              :unelevated="!isFileUrl(media.fileUrl)"
+              :unelevated="!fileIsAvailable"
               @click="setMediaPlaying(media)"
             >
-              <q-tooltip v-if="!localFile" :delay="1000">
+              <q-tooltip v-if="!localFile && fileIsAvailable" :delay="1000">
                 {{ t('play-while-downloading') }}
               </q-tooltip>
             </q-btn>
@@ -1916,6 +1916,10 @@ const currentSongIsDuplicated = computed(() => {
   return songNumbers.length > 1;
 });
 
+const fileIsAvailable = computed(() => {
+  return isFileUrl(props.media.fileUrl);
+});
+
 const tagTooltipText = computed(() => {
   if (currentSongIsDuplicated.value) {
     return t('this-song-is-duplicated');
@@ -1928,7 +1932,7 @@ const tagTooltipText = computed(() => {
   if (
     props.media.source === 'additional' &&
     !currentSettings.value?.disableMediaFetching &&
-    isFileUrl(props.media.fileUrl)
+    fileIsAvailable.value
   ) {
     return t('extra-media-item-explain');
   }
