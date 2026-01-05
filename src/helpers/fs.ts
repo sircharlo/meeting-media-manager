@@ -12,7 +12,7 @@ import { FULL_HD } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadFileIfNeeded, getJwMediaInfo } from 'src/helpers/jw-media';
 import { fetchJson } from 'src/utils/api';
-import { getApplicableDataPath, getPublicationDirectory } from 'src/utils/fs';
+import { getCachedUserDataPath, getPublicationDirectory } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -386,7 +386,7 @@ async function fetchLatestRelease(): Promise<Release> {
 
 // Get the FFmpeg directory path
 async function getFFmpegDirectory(): Promise<string> {
-  const dataPath = await getApplicableDataPath();
+  const dataPath = await getCachedUserDataPath();
   const ffmpegDir = join(dataPath, 'ffmpeg');
   return ffmpegDir;
 }

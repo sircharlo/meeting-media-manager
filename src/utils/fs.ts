@@ -1,6 +1,7 @@
 import type { PublicationFetcher } from 'src/types';
 
 import { Buffer } from 'buffer';
+import { mkdir, rm } from 'fs-extra';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { getPubId } from 'src/utils/jw';
@@ -27,13 +28,38 @@ const { dirname, extname, join } = path;
 
 let cachedUserDataPath: null | string = null;
 
-export const setCachedUserDataPath = async () => {
-  if (!cachedUserDataPath) {
-    cachedUserDataPath =
-      useCurrentStateStore().currentSettings?.cacheFolder ||
-      (await getSharedDataPath()) ||
-      (await getUserDataPath());
+async function isUsablePath(basePath?: string): Promise<boolean> {
+  if (!basePath) return false;
+
+  try {
+    const testDir = join(basePath, '.cache-test');
+    await mkdir(testDir, { recursive: true });
+    await writeFile(join(testDir, 'test.txt'), 'ok');
+    await rm(testDir, { force: true, recursive: true });
+    return true;
+  } catch {
+    return false;
   }
+}
+
+export const getCachedUserDataPath = async () => {
+  if (!cachedUserDataPath) {
+    const candidates = [
+      useCurrentStateStore().currentSettings?.cacheFolder,
+      await getSharedDataPath(),
+      await getUserDataPath(),
+    ];
+
+    for (const path of candidates) {
+      if (!path) continue;
+      if (await isUsablePath(path)) {
+        cachedUserDataPath = path;
+        break;
+      }
+    }
+  }
+
+  return cachedUserDataPath as string;
 };
 
 export const isFileUrl = (path?: string) => path?.startsWith('file://');
@@ -44,11 +70,6 @@ const PUBLICATION_FOLDER = 'Publications';
 const CONG_PREFERENCES_FOLDER = 'Cong Preferences';
 const GLOBAL_PREFERENCES_FOLDER = 'Global Preferences';
 
-export const getApplicableDataPath = async () => {
-  if (!cachedUserDataPath) await setCachedUserDataPath();
-  return cachedUserDataPath;
-};
-
 /**
  * Gets the full path of a directory in the cache folder.
  * @param paths The paths to the directory, relative to the cache folder.
@@ -57,18 +78,26 @@ export const getApplicableDataPath = async () => {
  */
 const getCachePath = async (paths: string | string[], create = false) => {
   const pathArray = Array.isArray(paths) ? paths : [paths];
-  const dir = join(
-    await getApplicableDataPath(),
-    ...pathArray.filter((p) => !!p),
-  );
-  if (create) {
-    try {
-      await ensureDir(dir);
-    } catch (e) {
-      errorCatcher(e);
+  const parts = pathArray.filter(Boolean);
+
+  const buildPath = async (base: string) => {
+    const dir = join(base, ...parts);
+    if (create) {
+      try {
+        await ensureDir(dir);
+      } catch (e) {
+        errorCatcher(e);
+      }
     }
+    return dir;
+  };
+
+  try {
+    return await buildPath(await getCachedUserDataPath());
+  } catch (error) {
+    errorCatcher(error);
+    return await buildPath(await getUserDataPath());
   }
-  return dir;
 };
 
 export const getFontsPath = () => getCachePath('Fonts');
