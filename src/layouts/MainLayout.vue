@@ -261,18 +261,16 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
 
     setElectronUrlVariables(JSON.stringify(jwStore.urlVariables));
 
-    let year = new Date().getFullYear();
-    const memorialDate = jwStore.memorials[year];
-    if (memorialDate && isInPast(getSpecificWeekday(memorialDate, 6))) {
-      year++;
-    }
+    const year = new Date().getFullYear();
 
-    if (
-      currentSettings.value &&
-      memorialDate &&
-      currentSettings.value.memorialDate !== memorialDate
-    ) {
-      currentSettings.value.memorialDate = memorialDate ?? null;
+    const memorialDate =
+      jwStore.memorials[year] &&
+      !isInPast(getSpecificWeekday(jwStore.memorials[year], 6))
+        ? jwStore.memorials[year]
+        : jwStore.memorials[year + 1];
+
+    if (currentSettings.value && memorialDate) {
+      currentSettings.value.memorialDate = memorialDate;
     }
 
     downloadProgress.value = {};
