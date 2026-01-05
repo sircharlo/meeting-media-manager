@@ -17,8 +17,8 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { datesAreSame, formatDate } from 'src/utils/date';
 import {
   getAdditionalMediaPath,
+  getCachedUserDataPath,
   isFileUrl,
-  setCachedUserDataPath,
 } from 'src/utils/fs';
 import { isEmpty, isUUID } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
@@ -184,7 +184,8 @@ export const useCurrentStateStore = defineStore('current-state', {
       dismissAllTemporaryNotifications();
 
       this.currentCongregation = value.toString();
-      await setCachedUserDataPath();
+      const currentDataPath = await getCachedUserDataPath();
+      console.log('Currently using data path:', currentDataPath);
       return this.getInvalidSettings(this.currentCongregation).length > 0;
     },
   },

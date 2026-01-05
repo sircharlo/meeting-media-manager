@@ -1,7 +1,6 @@
 import type { PublicationFetcher } from 'src/types';
 
 import { Buffer } from 'buffer';
-import { mkdir, rm } from 'fs-extra';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { getPubId } from 'src/utils/jw';
@@ -19,9 +18,11 @@ const {
   ensureDir,
   ensureFile,
   exists,
+  mkdir,
   pathExists,
   readFile,
   remove,
+  rm,
   writeFile,
 } = fs;
 const { dirname, extname, join } = path;

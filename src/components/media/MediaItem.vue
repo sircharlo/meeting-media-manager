@@ -547,138 +547,140 @@
           </div>
         </transition>
       </div>
-      <div
-        v-if="!isCurrentlyPlaying"
-        class="col-shrink"
-        style="align-content: center"
-      >
-        <template v-if="!media.markers || media.markers.length <= 1">
-          <div class="row items-center q-gutter-xs">
-            <!-- Duration dropdown for images in repeated sections -->
-            <q-select
-              v-if="media.isImage && isInRepeatedSection"
-              v-model="imageDuration"
-              dense
-              :display-value="
-                imageDuration < 60
-                  ? imageDuration + 's'
-                  : imageDuration / 60 + 'm'
-              "
-              :options="imageDurationOptions"
-              outlined
-              style="min-width: 80px"
-              @update:model-value="updateImageDuration"
-            >
-              <q-tooltip :delay="1000">
-                {{ t('image-duration-explain') }}
-              </q-tooltip>
-            </q-select>
+      <template v-if="shouldShowPlayButton">
+        <div
+          v-if="!isCurrentlyPlaying"
+          class="col-shrink"
+          style="align-content: center"
+        >
+          <template v-if="!media.markers || media.markers.length <= 1">
+            <div class="row items-center q-gutter-xs">
+              <!-- Duration dropdown for images in repeated sections -->
+              <q-select
+                v-if="media.isImage && isInRepeatedSection"
+                v-model="imageDuration"
+                dense
+                :display-value="
+                  imageDuration < 60
+                    ? imageDuration + 's'
+                    : imageDuration / 60 + 'm'
+                "
+                :options="imageDurationOptions"
+                outlined
+                style="min-width: 80px"
+                @update:model-value="updateImageDuration"
+              >
+                <q-tooltip :delay="1000">
+                  {{ t('image-duration-explain') }}
+                </q-tooltip>
+              </q-select>
 
+              <q-btn
+                ref="playButton"
+                :color="fileIsAvailable ? 'primary' : 'grey'"
+                :disable="
+                  (mediaPlaying.url !== '' &&
+                    (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))) ||
+                  !fileIsAvailable
+                "
+                :icon="localFile ? 'mmm-play' : 'mmm-stream-play'"
+                rounded
+                :unelevated="!fileIsAvailable"
+                @click="setMediaPlaying(media)"
+              >
+                <q-tooltip v-if="!localFile && fileIsAvailable" :delay="1000">
+                  {{ t('play-while-downloading') }}
+                </q-tooltip>
+              </q-btn>
+            </div>
+          </template>
+          <template v-else>
             <q-btn
               ref="playButton"
-              :color="fileIsAvailable ? 'primary' : 'grey'"
+              color="primary"
               :disable="
-                (mediaPlaying.url !== '' &&
-                  (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))) ||
-                !fileIsAvailable
+                mediaPlaying.url !== '' &&
+                (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))
               "
-              :icon="localFile ? 'mmm-play' : 'mmm-stream-play'"
+              icon="mmm-play-sign-language"
+              :outline="markersPanelOpen"
+              push
               rounded
-              :unelevated="!fileIsAvailable"
-              @click="setMediaPlaying(media)"
+              @click="markersPanelOpen = !markersPanelOpen"
+            />
+          </template>
+        </div>
+        <template v-else>
+          <div class="col-shrink items-center justify-center flex">
+            <q-btn
+              v-if="
+                isImage(mediaPlaying.url) && obsConnectionState === 'connected'
+              "
+              :color="currentSceneType === 'media' ? 'negative' : 'primary'"
+              icon="mmm-picture-for-zoom-participants"
+              rounded
+              @click="
+                sendObsSceneEvent(
+                  currentSceneType === 'media' ? 'camera' : 'media',
+                )
+              "
             >
-              <q-tooltip v-if="!localFile && fileIsAvailable" :delay="1000">
-                {{ t('play-while-downloading') }}
+              <q-tooltip :delay="1000">
+                {{
+                  t(
+                    currentSceneType === 'media'
+                      ? 'hide-image-for-zoom-participants'
+                      : 'show-image-for-zoom-participants',
+                  )
+                }}
               </q-tooltip>
+            </q-btn>
+            <q-btn
+              v-if="mediaPlaying.action === 'pause'"
+              ref="pauseResumeButton"
+              color="primary"
+              icon="mmm-play"
+              outline
+              rounded
+              @click="mediaPlaying.action = 'play'"
+            />
+            <q-btn
+              v-else-if="
+                localFile &&
+                media.duration &&
+                (mediaPlaying.action === 'play' || !mediaPlaying.action)
+              "
+              ref="pauseResumeButton"
+              color="negative"
+              icon="mmm-pause"
+              outline
+              rounded
+              @click="mediaPlaying.action = 'pause'"
+            />
+            <q-btn
+              v-if="mediaPlaying.action !== '' || mediaPlaying.action === ''"
+              ref="stopButton"
+              class="q-ml-sm"
+              color="negative"
+              :icon="
+                !localFile && mediaPlaying.currentPosition === 0
+                  ? undefined
+                  : 'mmm-stop'
+              "
+              rounded
+              @click="
+                media.isVideo || media.isAudio
+                  ? (mediaToStop = media.uniqueId)
+                  : stopMedia()
+              "
+            >
+              <q-spinner
+                v-if="!localFile && mediaPlaying.currentPosition === 0"
+                size="xs"
+              />
             </q-btn>
           </div>
         </template>
-        <template v-else>
-          <q-btn
-            ref="playButton"
-            color="primary"
-            :disable="
-              mediaPlaying.url !== '' &&
-              (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))
-            "
-            icon="mmm-play-sign-language"
-            :outline="markersPanelOpen"
-            push
-            rounded
-            @click="markersPanelOpen = !markersPanelOpen"
-          />
-        </template>
-      </div>
-      <template v-else>
-        <div class="col-shrink items-center justify-center flex">
-          <q-btn
-            v-if="
-              isImage(mediaPlaying.url) && obsConnectionState === 'connected'
-            "
-            :color="currentSceneType === 'media' ? 'negative' : 'primary'"
-            icon="mmm-picture-for-zoom-participants"
-            rounded
-            @click="
-              sendObsSceneEvent(
-                currentSceneType === 'media' ? 'camera' : 'media',
-              )
-            "
-          >
-            <q-tooltip :delay="1000">
-              {{
-                t(
-                  currentSceneType === 'media'
-                    ? 'hide-image-for-zoom-participants'
-                    : 'show-image-for-zoom-participants',
-                )
-              }}
-            </q-tooltip>
-          </q-btn>
-          <q-btn
-            v-if="mediaPlaying.action === 'pause'"
-            ref="pauseResumeButton"
-            color="primary"
-            icon="mmm-play"
-            outline
-            rounded
-            @click="mediaPlaying.action = 'play'"
-          />
-          <q-btn
-            v-else-if="
-              localFile &&
-              media.duration &&
-              (mediaPlaying.action === 'play' || !mediaPlaying.action)
-            "
-            ref="pauseResumeButton"
-            color="negative"
-            icon="mmm-pause"
-            outline
-            rounded
-            @click="mediaPlaying.action = 'pause'"
-          />
-          <q-btn
-            v-if="mediaPlaying.action !== '' || mediaPlaying.action === ''"
-            ref="stopButton"
-            class="q-ml-sm"
-            color="negative"
-            :icon="
-              !localFile && mediaPlaying.currentPosition === 0
-                ? undefined
-                : 'mmm-stop'
-            "
-            rounded
-            @click="
-              media.isVideo || media.isAudio
-                ? (mediaToStop = media.uniqueId)
-                : stopMedia()
-            "
-          >
-            <q-spinner
-              v-if="!localFile && mediaPlaying.currentPosition === 0"
-              size="xs"
-            />
-          </q-btn>
-        </div>
       </template>
       <q-menu
         v-model="contextMenu"
@@ -1890,6 +1892,10 @@ window.addEventListener('scrollToSelectedMedia', () => {
       block: 'center',
     });
   }
+});
+
+const shouldShowPlayButton = computed(() => {
+  return !!currentSettings.value?.enableMediaDisplayButton;
 });
 
 const currentSongIsDuplicated = computed(() => {
