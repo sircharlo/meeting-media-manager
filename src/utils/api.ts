@@ -10,6 +10,7 @@ import type {
 } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { isInPast } from 'src/utils/date';
 import { betaUpdatesDisabled } from 'src/utils/fs';
 
 /**
@@ -148,19 +149,47 @@ export const fetchMemorials = async (): Promise<null | Record<
   number,
   `${number}/${number}/${number}`
 >> => {
-  if (!process.env.repository) return null;
-  const result = await fetchJson<
-    Record<string, `${number}/${number}/${number}`>
-  >(
-    `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/memorials.json`,
-  );
-  if (!result) return null;
-  const memorials: Record<number, `${number}/${number}/${number}`> = {};
-  for (const [key, value] of Object.entries(result)) {
-    const year = parseInt(key);
-    if (year && !isNaN(year)) memorials[year] = value;
+  try {
+    if (!process.env.repository) return null;
+    const result = await fetchJson<
+      Record<string, `${number}/${number}/${number}`>
+    >(
+      `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/memorials.json`,
+    );
+    if (!result) return null;
+    const memorials: Record<number, `${number}/${number}/${number}`> = {};
+    for (const [key, value] of Object.entries(result)) {
+      try {
+        if (!key || !value) continue;
+
+        const valueIsInPast = isInPast(value);
+        if (valueIsInPast) continue;
+
+        const year = parseInt(key);
+        if (!year || isNaN(year)) continue;
+
+        memorials[year] = value;
+      } catch (error) {
+        errorCatcher(error, {
+          contexts: {
+            fn: {
+              name: 'fetchMemorials loop',
+            },
+          },
+        });
+      }
+    }
+    return memorials;
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          name: 'fetchMemorials',
+        },
+      },
+    });
+    return null;
   }
-  return memorials;
 };
 
 /**

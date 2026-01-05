@@ -507,12 +507,9 @@ export const useJwStore = defineStore('jw-store', {
     async updateMemorials(online: boolean) {
       if (!online) return;
       try {
-        let year = new Date().getFullYear();
-        const memorialDate = this.memorials[year];
-        if (memorialDate && isInPast(memorialDate)) {
-          year++;
-        }
-        if (!memorialDate) {
+        const currentYear = new Date().getFullYear();
+        const currentMemorialDate = this.memorials[currentYear];
+        if (!currentMemorialDate || isInPast(currentMemorialDate)) {
           const result = await fetchMemorials();
           if (result) this.memorials = result;
         }
