@@ -44,6 +44,11 @@ const PUBLICATION_FOLDER = 'Publications';
 const CONG_PREFERENCES_FOLDER = 'Cong Preferences';
 const GLOBAL_PREFERENCES_FOLDER = 'Global Preferences';
 
+export const getApplicableDataPath = async () => {
+  if (!cachedUserDataPath) await setCachedUserDataPath();
+  return cachedUserDataPath;
+};
+
 /**
  * Gets the full path of a directory in the cache folder.
  * @param paths The paths to the directory, relative to the cache folder.
@@ -53,10 +58,7 @@ const GLOBAL_PREFERENCES_FOLDER = 'Global Preferences';
 const getCachePath = async (paths: string | string[], create = false) => {
   const pathArray = Array.isArray(paths) ? paths : [paths];
   const dir = join(
-    cachedUserDataPath ||
-      useCurrentStateStore().currentSettings?.cacheFolder ||
-      (await getSharedDataPath()) ||
-      (await getUserDataPath()),
+    await getApplicableDataPath(),
     ...pathArray.filter((p) => !!p),
   );
   if (create) {
