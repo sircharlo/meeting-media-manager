@@ -64,6 +64,7 @@ import {
   getMediaVideoMarkers,
   getMultimediaMepsLangs,
   getPublicationInfoFromDb,
+  tableExists,
 } from 'src/utils/sqlite';
 import { timeToSeconds } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -1312,7 +1313,7 @@ export const getBibleMedia = async (
   }
 };
 
-export const getMemorialBackground = async () => {
+export const getMemorialMedia = async () => {
   try {
     const currentStateStore = useCurrentStateStore();
     const year = new Date().getFullYear().toString().substring(2);
@@ -1336,19 +1337,73 @@ export const getMemorialBackground = async () => {
 
       if (!db) continue;
 
-      const mediaItem = executeQuery<MultimediaItem>(
+      const mediaItems = executeQuery<MultimediaItem>(
         db,
-        `SELECT FilePath FROM Multimedia WHERE CategoryType = 26 LIMIT 1`,
-      )?.[0];
+        'SELECT * FROM Multimedia ' +
+          (tableExists(db, 'DocumentMultimedia')
+            ? 'INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId '
+            : '') +
+          'WHERE Multimedia.CategoryType = 26 ' +
+          (tableExists(db, 'DocumentMultimedia')
+            ? 'OR (Multimedia.CategoryType = -1 AND DocumentMultimedia.BeginParagraphOrdinal IS NULL)'
+            : 'OR Multimedia.CategoryType = -1'),
+      );
 
-      if (!mediaItem) continue;
+      if (!mediaItems.length) continue;
 
-      const parsedItem = await addFullFilePathToMultimediaItem(mediaItem, pub);
-      return parsedItem.FilePath;
+      const results: {
+        bg: string;
+        introVideos: MultimediaItem[];
+        pub: PublicationFetcher;
+      } = {
+        bg: '',
+        introVideos: [],
+        pub,
+      };
+
+      const memorialMedia: MultimediaItem[] = [];
+      for (const item of mediaItems) {
+        if (
+          item.CategoryType === 26 ||
+          isImage(item.FilePath) ||
+          ((item.CategoryType === -1 || isVideo(item.FilePath)) &&
+            !item.BeginParagraphOrdinal)
+        ) {
+          const parsedItem = await addFullFilePathToMultimediaItem(item, pub);
+          memorialMedia.push(parsedItem);
+        }
+      }
+
+      for (const item of memorialMedia) {
+        if (item.CategoryType === 26 && !results.bg) {
+          results.bg = item.FilePath;
+        } else if (
+          (item.CategoryType === -1 || isVideo(item.FilePath)) &&
+          !item.BeginParagraphOrdinal
+        ) {
+          results.introVideos.push(item);
+        }
+      }
+
+      if (results.introVideos.length) {
+        await processMissingMediaInfo(
+          results.introVideos,
+          currentStateStore.currentSettings?.memorialDate || undefined,
+        );
+      }
+
+      if (results.bg || results.introVideos.length) {
+        return results;
+      }
     }
   } catch (e) {
     errorCatcher(e);
   }
+};
+
+export const getMemorialBackground = async () => {
+  const result = await getMemorialMedia();
+  return result?.bg;
 };
 
 const getWtIssue = async (

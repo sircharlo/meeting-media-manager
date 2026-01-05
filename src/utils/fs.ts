@@ -79,7 +79,7 @@ const GLOBAL_PREFERENCES_FOLDER = 'Global Preferences';
  */
 const getCachePath = async (paths: string | string[], create = false) => {
   const pathArray = Array.isArray(paths) ? paths : [paths];
-  const parts = pathArray.filter(Boolean);
+  const parts = pathArray.filter((p) => !!p);
 
   const buildPath = async (base: string) => {
     const dir = join(base, ...parts);

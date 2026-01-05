@@ -134,8 +134,10 @@ import { addDayToExportQueue } from 'src/helpers/export-media';
 import {
   copyToDatedAdditionalMedia,
   downloadFileIfNeeded,
+  dynamicMediaMapper,
   fetchMedia,
   getMemorialBackground,
+  getMemorialMedia,
 } from 'src/helpers/jw-media';
 import { sendKeyboardShortcut } from 'src/helpers/keyboard-shortcuts';
 import { executeLocalShortcut } from 'src/helpers/keyboardShortcuts';
@@ -939,14 +941,76 @@ useEventListener<
 );
 
 const checkMemorialDate = async () => {
-  let bg: string | undefined = mediaWindowCustomBackground.value;
   if (
-    selectedDate.value &&
-    selectedDate.value === currentSettings.value?.memorialDate
+    !selectedDate.value ||
+    selectedDate.value !== currentSettings.value?.memorialDate ||
+    !selectedDateObject.value?.mediaSections
   ) {
-    bg = await getMemorialBackground();
+    postCustomBackground(mediaWindowCustomBackground.value ?? '');
+    return;
   }
-  postCustomBackground(bg ?? '');
+
+  const introSection = findMediaSection(
+    selectedDateObject.value.mediaSections,
+    'intro',
+  );
+  const memorialSection = findMediaSection(
+    selectedDateObject.value.mediaSections,
+    'memorial-talk',
+  );
+
+  if (!introSection && !memorialSection) {
+    createTemporaryNotification({
+      group: 'memorial-fetch',
+      message: t('attemptingToFetchMemorialBannerAndIntroVideo'),
+      type: 'ongoing',
+    });
+    getOrCreateMediaSection(selectedDateObject.value.mediaSections, 'intro', {
+      label: t('intro'),
+    });
+    getOrCreateMediaSection(
+      selectedDateObject.value.mediaSections,
+      'memorial-talk',
+      { label: t('memorial-talk') },
+    );
+  }
+
+  const introSect = findMediaSection(
+    selectedDateObject.value.mediaSections,
+    'intro',
+  );
+
+  if (introSect && (!introSect.items || introSect.items.length === 0)) {
+    const memorialMedia = await getMemorialMedia();
+    if (memorialMedia) {
+      if (memorialMedia.bg) {
+        postCustomBackground(memorialMedia.bg);
+      }
+      if (memorialMedia.introVideos?.length) {
+        const mappedVideos = await dynamicMediaMapper(
+          memorialMedia.introVideos,
+          dateFromString(selectedDate.value),
+          'dynamic',
+        );
+        introSect.items = mappedVideos;
+      }
+      createTemporaryNotification({
+        group: 'memorial-fetch',
+        message: t('memorialFetchSuccess'),
+        type: 'positive',
+      });
+    } else {
+      createTemporaryNotification({
+        group: 'memorial-fetch',
+        message: t('memorialFetchError'),
+        type: 'negative',
+      });
+    }
+  } else {
+    // If intro section already has items, we still need to set the background
+    const bg = await getMemorialBackground();
+    postCustomBackground(bg ?? '');
+  }
 };
 
 onMounted(() => {
