@@ -16,6 +16,22 @@ export interface GeoRecord {
   type: string;
 }
 
+export interface NormalizedSchedule {
+  current: null | {
+    mwDay: `${number}`;
+    mwStartTime: `${number}:${number}`;
+    weDay: `${number}`;
+    weStartTime: `${number}:${number}`;
+  };
+  future: null | {
+    date: `${number}/${number}/${number}`;
+    mwDay: `${number}`;
+    mwStartTime: `${number}:${number}`;
+    weDay: `${number}`;
+    weStartTime: `${number}:${number}`;
+  };
+}
+
 interface DaySchedule {
   time: `${number}:${number}`;
   weekday: number;

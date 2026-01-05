@@ -1,11 +1,111 @@
-import type { GeoRecord } from 'src/types';
+import type {
+  GeoRecord,
+  NormalizedSchedule,
+  ScheduleDetails,
+  SettingsValues,
+} from 'src/types';
 
 import { i18n } from 'boot/i18n';
 import { storeToRefs } from 'pinia';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { fetchJson } from 'src/utils/api';
+import { isInPast } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
+
+export const normalizeSchedule = (
+  schedule: ScheduleDetails,
+): NormalizedSchedule => {
+  const normalized: NormalizedSchedule = {
+    current: null,
+    future: null,
+  };
+
+  if (schedule.current) {
+    normalized.current = {
+      mwDay: `${schedule.current.midweek.weekday - 1}` as `${number}`,
+      mwStartTime: schedule.current.midweek.time,
+      weDay: `${schedule.current.weekend.weekday - 1}` as `${number}`,
+      weStartTime: schedule.current.weekend.time,
+    };
+  }
+
+  if (schedule.future && schedule.futureDate) {
+    if (isInPast(schedule.futureDate, true)) {
+      normalized.current = {
+        mwDay: `${schedule.future.midweek.weekday - 1}` as `${number}`,
+        mwStartTime: schedule.future.midweek.time,
+        weDay: `${schedule.future.weekend.weekday - 1}` as `${number}`,
+        weStartTime: schedule.future.weekend.time,
+      };
+    } else {
+      normalized.future = {
+        date: schedule.futureDate.replace(
+          /-/g,
+          '/',
+        ) as `${number}/${number}/${number}`,
+        mwDay: `${schedule.future.midweek.weekday - 1}` as `${number}`,
+        mwStartTime: schedule.future.midweek.time,
+        weDay: `${schedule.future.weekend.weekday - 1}` as `${number}`,
+        weStartTime: schedule.future.weekend.time,
+      };
+    }
+  }
+
+  return normalized;
+};
+
+export const applyScheduleToSettings = (
+  currentSettings: SettingsValues,
+  normalized: NormalizedSchedule,
+): { currentChanged: boolean; futureChanged: boolean } => {
+  let currentChanged = false;
+  let futureChanged = false;
+
+  if (normalized.current) {
+    const { mwDay, mwStartTime, weDay, weStartTime } = normalized.current;
+    if (
+      currentSettings.mwDay !== mwDay ||
+      currentSettings.mwStartTime !== mwStartTime ||
+      currentSettings.weDay !== weDay ||
+      currentSettings.weStartTime !== weStartTime
+    ) {
+      currentSettings.mwDay = mwDay;
+      currentSettings.mwStartTime = mwStartTime;
+      currentSettings.weDay = weDay;
+      currentSettings.weStartTime = weStartTime;
+      currentChanged = true;
+    }
+  }
+
+  if (normalized.future) {
+    const {
+      date,
+      mwDay: fMwDay,
+      mwStartTime: fMwStartTime,
+      weDay: fWeDay,
+      weStartTime: fWeStartTime,
+    } = normalized.future;
+
+    if (
+      currentSettings.meetingScheduleChangeDate !== date ||
+      currentSettings.meetingScheduleChangeMwDay !== fMwDay ||
+      currentSettings.meetingScheduleChangeMwStartTime !== fMwStartTime ||
+      currentSettings.meetingScheduleChangeWeDay !== fWeDay ||
+      currentSettings.meetingScheduleChangeWeStartTime !== fWeStartTime
+    ) {
+      currentSettings.meetingScheduleChangeDate = date;
+      currentSettings.meetingScheduleChangeMwDay = fMwDay;
+      currentSettings.meetingScheduleChangeMwStartTime = fMwStartTime;
+      currentSettings.meetingScheduleChangeWeDay = fWeDay;
+      currentSettings.meetingScheduleChangeWeStartTime = fWeStartTime;
+      currentSettings.meetingScheduleChangeOnce = false;
+      futureChanged = true;
+    }
+  }
+
+  return { currentChanged, futureChanged };
+};
 
 export const syncMeetingSchedule = async (force = false) => {
   try {
@@ -43,65 +143,16 @@ export const syncMeetingSchedule = async (force = false) => {
     );
 
     if (congregationOnlineInfo) {
-      const { schedule } = congregationOnlineInfo.properties;
-      let currentChangesMade = false;
-      let futureChangesMade = false;
+      const normalized = normalizeSchedule(
+        congregationOnlineInfo.properties.schedule,
+      );
 
-      // Ensure current schedule exists
-      if (!schedule.current) return false;
+      const { currentChanged, futureChanged } = applyScheduleToSettings(
+        currentSettings.value,
+        normalized,
+      );
 
-      // Check current schedule
-      const newMwDay = `${schedule.current.midweek.weekday - 1}`;
-      const newMwTime = schedule.current.midweek.time;
-      const newWeDay = `${schedule.current.weekend.weekday - 1}`;
-      const newWeTime = schedule.current.weekend.time;
-
-      if (
-        currentSettings.value.mwDay !== newMwDay ||
-        currentSettings.value.mwStartTime !== newMwTime ||
-        currentSettings.value.weDay !== newWeDay ||
-        currentSettings.value.weStartTime !== newWeTime
-      ) {
-        currentSettings.value.mwDay = newMwDay as `${number}`;
-        currentSettings.value.mwStartTime = newMwTime;
-        currentSettings.value.weDay = newWeDay as `${number}`;
-        currentSettings.value.weStartTime = newWeTime;
-        currentChangesMade = true;
-      }
-
-      // Check future schedule
-      if (schedule.future && schedule.futureDate) {
-        const newFutureDate = schedule.futureDate.replace(/-/g, '/');
-        const newFutureMwDay = `${schedule.future.midweek.weekday - 1}`;
-        const newFutureMwTime = schedule.future.midweek.time;
-        const newFutureWeDay = `${schedule.future.weekend.weekday - 1}`;
-        const newFutureWeTime = schedule.future.weekend.time;
-
-        if (
-          currentSettings.value.meetingScheduleChangeDate !== newFutureDate ||
-          currentSettings.value.meetingScheduleChangeMwDay !== newFutureMwDay ||
-          currentSettings.value.meetingScheduleChangeMwStartTime !==
-            newFutureMwTime ||
-          currentSettings.value.meetingScheduleChangeWeDay !== newFutureWeDay ||
-          currentSettings.value.meetingScheduleChangeWeStartTime !==
-            newFutureWeTime
-        ) {
-          currentSettings.value.meetingScheduleChangeDate =
-            newFutureDate as `${number}/${number}/${number}`;
-          currentSettings.value.meetingScheduleChangeMwDay =
-            newFutureMwDay as `${number}`;
-          currentSettings.value.meetingScheduleChangeMwStartTime =
-            newFutureMwTime;
-          currentSettings.value.meetingScheduleChangeWeDay =
-            newFutureWeDay as `${number}`;
-          currentSettings.value.meetingScheduleChangeWeStartTime =
-            newFutureWeTime;
-          currentSettings.value.meetingScheduleChangeOnce = false;
-          futureChangesMade = true;
-        }
-      }
-
-      if (currentChangesMade) {
+      if (currentChanged) {
         createTemporaryNotification({
           icon: 'mmm-info',
           message: (i18n.global.t as (key: string) => string)(
@@ -112,7 +163,7 @@ export const syncMeetingSchedule = async (force = false) => {
         });
       }
 
-      if (futureChangesMade) {
+      if (futureChanged) {
         createTemporaryNotification({
           icon: 'mmm-info',
           message: (i18n.global.t as (key: string) => string)(
@@ -123,7 +174,7 @@ export const syncMeetingSchedule = async (force = false) => {
         });
       }
 
-      return currentChangesMade || futureChangesMade;
+      return currentChanged || futureChanged;
     }
   } catch (error) {
     console.error('❌ [syncMeetingSchedule] Error:', error);

@@ -137,10 +137,13 @@ import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
-import { fetchMeetingLocations } from 'src/helpers/congregation-schedule';
+import {
+  applyScheduleToSettings,
+  fetchMeetingLocations,
+  normalizeSchedule,
+} from 'src/helpers/congregation-schedule';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { fetchJson } from 'src/utils/api';
-import { formatDate } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { computed, ref } from 'vue';
@@ -235,67 +238,9 @@ const selectCongregation = (congregation: GeoRecord) => {
       currentSettings.value.langSubtitles = resolvedLangCode || null;
     }
 
-    // Midweek day & time
-    const { current, future, futureDate } = properties.schedule;
-    if (!current) return;
-
-    const { midweek, weekend } = current;
-
-    // Midweek meeting day & time
-    if (Number.isInteger(midweek?.weekday)) {
-      currentSettings.value.mwDay = `${midweek.weekday - 1}`;
-    }
-    if (midweek?.time) {
-      currentSettings.value.mwStartTime = midweek.time;
-    }
-
-    // Weekend meeting day & time
-    if (Number.isInteger(weekend?.weekday)) {
-      currentSettings.value.weDay = `${weekend.weekday - 1}`;
-    }
-    if (weekend?.time) {
-      currentSettings.value.weStartTime = weekend.time;
-    }
-
-    // Future schedule (if available)
-    if (futureDate && future) {
-      try {
-        const { midweek: futureMidweek, weekend: futureWeekend } = future;
-
-        // Future schedule change date
-        currentSettings.value.meetingScheduleChangeDate = formatDate(
-          futureDate,
-          'YYYY/MM/DD',
-        ) as `${number}/${number}/${number}`;
-
-        // Future midweek meeting day & time
-        if (Number.isInteger(futureMidweek?.weekday)) {
-          currentSettings.value.meetingScheduleChangeMwDay = `${futureMidweek.weekday - 1}`;
-        }
-        if (futureMidweek?.time) {
-          currentSettings.value.meetingScheduleChangeMwStartTime =
-            futureMidweek.time;
-        }
-
-        // Future weekend meeting day & time
-        if (Number.isInteger(futureWeekend?.weekday)) {
-          currentSettings.value.meetingScheduleChangeWeDay = `${futureWeekend.weekday - 1}`;
-        }
-        if (futureWeekend?.time) {
-          currentSettings.value.meetingScheduleChangeWeStartTime =
-            futureWeekend.time;
-        }
-      } catch (error) {
-        errorCatcher(error, {
-          contexts: {
-            fn: {
-              name: 'DialogCongregationLookup.vue',
-              subroutine: 'selectCongregation (futureDate)',
-            },
-          },
-        });
-      }
-    }
+    // Schedule
+    const normalized = normalizeSchedule(properties.schedule);
+    applyScheduleToSettings(currentSettings.value, normalized);
 
     // Congregation name
     if (properties.orgName) {
