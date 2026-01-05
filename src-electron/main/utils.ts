@@ -1,8 +1,7 @@
 import { captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
-import { W_OK } from 'node:constants';
-import { access, mkdir } from 'node:fs/promises';
+import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import {
   IS_DEV,
@@ -77,9 +76,17 @@ export async function getSharedDataPath(): Promise<null | string> {
     // Ensure directory exists (does NOT change permissions)
     await mkdir(sharedPath, { recursive: true });
 
-    // Verify write access
-    await access(sharedPath, W_OK);
+    // Verify write access by creating a temporary sub-directory
+    const tempDir = join(sharedPath, 'temp-write-test');
+    await mkdir(tempDir);
 
+    // Ensure write access by writing a file to tempDir
+    await writeFile(join(tempDir, 'test.txt'), 'test');
+
+    // Clean-up afterwards
+    await rm(tempDir, { recursive: true });
+
+    // Return sharedPath, since it's writable
     return sharedPath;
   } catch {
     // Not writable or not allowed → explicit fallback

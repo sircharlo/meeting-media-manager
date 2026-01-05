@@ -156,6 +156,7 @@ export default defineConfig((ctx) => {
         },
         nsis: {
           deleteAppDataOnUninstall: true,
+          include: 'build/installer.nsh',
           oneClick: false,
         },
         portable: {
