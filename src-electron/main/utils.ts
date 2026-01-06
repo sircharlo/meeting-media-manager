@@ -11,7 +11,6 @@ import {
   TRUSTED_DOMAINS,
 } from 'src-electron/constants';
 import { urlVariables } from 'src-electron/main/session';
-import { uuid } from 'src/utils/general';
 import upath from 'upath';
 
 const { join, resolve } = upath;
@@ -42,6 +41,14 @@ export function getIconPath(icon: 'beta' | 'icon' | 'media-player') {
     ),
   );
 }
+
+const electronUuid = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0,
+      v = c == 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+};
 
 /**
  * Gets the shared data path for machine-wide installations
@@ -77,7 +84,7 @@ export async function getSharedDataPath(): Promise<null | string> {
     // Ensure directory exists (does NOT change permissions)
     await mkdir(sharedPath, { recursive: true });
 
-    const testDir = join(sharedPath, '.cache-test-' + uuid());
+    const testDir = join(sharedPath, '.cache-test-' + electronUuid());
     await mkdir(testDir, { recursive: true });
     await writeFile(join(testDir, 'test.txt'), 'ok');
     await rm(testDir, { recursive: true });
