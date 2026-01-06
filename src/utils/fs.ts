@@ -27,7 +27,7 @@ const {
 } = fs;
 const { dirname, extname, join } = path;
 
-let cachedUserDataPath: null | string = null;
+let defaultDataPath: null | string = null;
 
 async function isUsablePath(basePath?: string): Promise<boolean> {
   if (!basePath) return false;
@@ -44,23 +44,24 @@ async function isUsablePath(basePath?: string): Promise<boolean> {
 }
 
 export const getCachedUserDataPath = async () => {
-  if (!cachedUserDataPath) {
-    const candidates = [
-      useCurrentStateStore().currentSettings?.cacheFolder,
-      await getSharedDataPath(),
-      await getUserDataPath(),
-    ];
+  const customPath = useCurrentStateStore().currentSettings?.cacheFolder;
+  if (customPath && (await isUsablePath(customPath))) {
+    return customPath;
+  }
+
+  if (!defaultDataPath) {
+    const candidates = [await getSharedDataPath(), await getUserDataPath()];
 
     for (const path of candidates) {
       if (!path) continue;
       if (await isUsablePath(path)) {
-        cachedUserDataPath = path;
+        defaultDataPath = path;
         break;
       }
     }
   }
 
-  return cachedUserDataPath as string;
+  return defaultDataPath as string;
 };
 
 export const isFileUrl = (path?: string) => path?.startsWith('file://');

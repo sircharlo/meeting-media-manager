@@ -19,7 +19,7 @@
       <div class="col-shrink">
         <div
           class="q-pr-none rounded-borders overflow-hidden relative-position bg-black"
-          :style="{ opacity: fileIsAvailable ? 0.64 : undefined }"
+          :style="{ opacity: !fileIsAvailable ? 0.64 : undefined }"
         >
           <template v-if="media.isImage">
             <VueZoomable
