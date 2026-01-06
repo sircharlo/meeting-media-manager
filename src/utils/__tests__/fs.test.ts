@@ -66,11 +66,11 @@ describe('Paths', () => {
       },
     };
     useCurrentStateStore().currentCongregation = 'test-cong';
-    const paths = await Promise.all([
-      getPublicationsPath(),
-      getAdditionalMediaPath(),
-      getPublicationDirectory({ langwritten: 'E', pub: 'w' }),
-    ]);
+    const paths = [
+      await getPublicationsPath(),
+      await getAdditionalMediaPath(),
+      await getPublicationDirectory({ langwritten: 'E', pub: 'w' }),
+    ];
 
     paths.forEach((path) => {
       expect(path).toContain(cacheFolder);
