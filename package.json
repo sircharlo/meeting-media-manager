@@ -37,7 +37,7 @@
     "@fontsource-variable/inter": "^5.2.8",
     "@fontsource-variable/noto-serif": "^5.2.9",
     "@formkit/drag-and-drop": "^0.5.3",
-    "@jitsi/robotjs": "^0.6.20",
+    "@jitsi/robotjs": "^0.6.21",
     "@numairawan/video-duration": "^1.0.0",
     "@opentelemetry/api-logs": "^0.208.0",
     "@quasar/extras": "^1.17.0",
