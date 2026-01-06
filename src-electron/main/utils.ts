@@ -11,6 +11,7 @@ import {
   TRUSTED_DOMAINS,
 } from 'src-electron/constants';
 import { urlVariables } from 'src-electron/main/session';
+import { uuid } from 'src/utils/general';
 import upath from 'upath';
 
 const { join, resolve } = upath;
@@ -76,20 +77,12 @@ export async function getSharedDataPath(): Promise<null | string> {
     // Ensure directory exists (does NOT change permissions)
     await mkdir(sharedPath, { recursive: true });
 
-    // Verify write access by creating a temporary sub-directory
-    const tempDir = join(sharedPath, 'temp-write-test');
-    await mkdir(tempDir);
-
-    // Ensure write access by writing a file to tempDir
-    await writeFile(join(tempDir, 'test.txt'), 'test');
-
-    // Clean-up afterwards
-    await rm(tempDir, { recursive: true });
-
-    // Return sharedPath, since it's writable
+    const testDir = join(sharedPath, '.cache-test-' + uuid());
+    await mkdir(testDir, { recursive: true });
+    await writeFile(join(testDir, 'test.txt'), 'ok');
+    await rm(testDir, { recursive: true });
     return sharedPath;
   } catch {
-    // Not writable or not allowed → explicit fallback
     return null;
   }
 }

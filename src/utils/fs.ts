@@ -3,6 +3,7 @@ import type { PublicationFetcher } from 'src/types';
 import { Buffer } from 'buffer';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
+import { uuid } from 'src/utils/general';
 import { getPubId } from 'src/utils/jw';
 
 const {
@@ -33,10 +34,10 @@ async function isUsablePath(basePath?: string): Promise<boolean> {
   if (!basePath) return false;
 
   try {
-    const testDir = join(basePath, '.cache-test');
+    const testDir = join(basePath, '.cache-test-' + uuid());
     await mkdir(testDir, { recursive: true });
     await writeFile(join(testDir, 'test.txt'), 'ok');
-    await rm(testDir, { force: true, recursive: true });
+    await rm(testDir, { recursive: true });
     return true;
   } catch {
     return false;
