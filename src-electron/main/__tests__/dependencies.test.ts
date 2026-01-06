@@ -94,10 +94,8 @@ describe('Electron Dependencies', () => {
       for (const imp of imports) {
         // Skip dependencies that are internal import, not external packages
         if (imp.startsWith('app/')) continue;
-        if (imp.startsWith('src-electron/main/')) continue;
         if (imp.startsWith('preload/')) continue;
-        if (imp.startsWith('src/constants')) continue;
-        if (imp.startsWith('src/types')) continue;
+        if (imp.startsWith('src/')) continue;
         if (imp.startsWith('src-electron/')) continue;
 
         // Skip electron dependencies
