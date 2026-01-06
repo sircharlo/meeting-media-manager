@@ -1,8 +1,8 @@
 !macro customInstall
   SetShellVarContext all
 
-  CreateDirectory "$PROGRAMDATA\Meeting Media Manager"
+  CreateDirectory "$APPDATA\Meeting Media Manager"
 
-  ExecWait 'icacls "$PROGRAMDATA\Meeting Media Manager" /inheritance:e'
-  ExecWait 'icacls "$PROGRAMDATA\Meeting Media Manager" /grant Users:(OI)(CI)M'
+  ExecWait 'icacls "$APPDATA\Meeting Media Manager" /inheritance:e'
+  ExecWait 'icacls "$APPDATA\Meeting Media Manager" /grant Users:(OI)(CI)M'
 !macroend
