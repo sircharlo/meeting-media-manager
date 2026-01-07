@@ -4667,9 +4667,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/eslint-plugin@npm:^1.6.5":
-  version: 1.6.5
-  resolution: "@vitest/eslint-plugin@npm:1.6.5"
+"@vitest/eslint-plugin@npm:^1.6.6":
+  version: 1.6.6
+  resolution: "@vitest/eslint-plugin@npm:1.6.6"
   dependencies:
     "@typescript-eslint/scope-manager": "npm:^8.51.0"
     "@typescript-eslint/utils": "npm:^8.51.0"
@@ -4682,7 +4682,7 @@ __metadata:
       optional: true
     vitest:
       optional: true
-  checksum: 10c0/e77ec9e674949e50a304f3ffad38e511c455c075d9be128388e704fac2830646a92eccb5fab053a5c7271ce2ba5ecffbd86c1482990927b7f6f6e436594c47de
+  checksum: 10c0/4b3a5ff3b27d6aab17f43a737f1f03bab0739b9d95c75e9c19d44003c605bdd0ce067f14f064def7fab7ab3251a2d23155849ea061a1a9d16569b3e990b11a62
   languageName: node
   linkType: hard
 
@@ -8016,15 +8016,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-perfectionist@npm:^5.2.0":
-  version: 5.2.0
-  resolution: "eslint-plugin-perfectionist@npm:5.2.0"
+"eslint-plugin-perfectionist@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "eslint-plugin-perfectionist@npm:5.3.0"
   dependencies:
-    "@typescript-eslint/utils": "npm:^8.51.0"
+    "@typescript-eslint/utils": "npm:^8.52.0"
     natural-orderby: "npm:^5.0.0"
   peerDependencies:
     eslint: ">=8.45.0"
-  checksum: 10c0/500d84247fa2e356bca4d352c4b359041a993a31e2f92880372f6aa22a7895de8fa4e25c1ba194b16a505fc86055e2ddc51c1915db5b2938143dcbcee0c3885a
+  checksum: 10c0/54aaa668b8dd421e3491a17806a952c6557aa8cce597695e8e13afb6665b9a90933195b1f15be6a7fd93d594bebf41cbae373e849a1d3055ae8a26b3074a8ccc
   languageName: node
   linkType: hard
 
@@ -10989,7 +10989,7 @@ __metadata:
     "@types/yauzl": "npm:^2.10.3"
     "@typescript-eslint/utils": "npm:^8.52.0"
     "@vitejs/plugin-vue": "npm:^6.0.3"
-    "@vitest/eslint-plugin": "npm:^1.6.5"
+    "@vitest/eslint-plugin": "npm:^1.6.6"
     "@vue/eslint-config-prettier": "npm:^10.2.0"
     "@vue/eslint-config-typescript": "npm:^14.6.0"
     "@vue/test-utils": "npm:^2.4.6"
@@ -11007,7 +11007,7 @@ __metadata:
     electron-dl-manager: "npm:^4.2.3"
     electron-updater: "npm:^6.7.3"
     eslint: "npm:^9.39.2"
-    eslint-plugin-perfectionist: "npm:^5.2.0"
+    eslint-plugin-perfectionist: "npm:^5.3.0"
     eslint-plugin-vue: "npm:^10.6.2"
     fluent-ffmpeg: "npm:^2.1.3"
     fs-extra: "npm:^11.3.3"
@@ -11039,7 +11039,7 @@ __metadata:
     sanitize-filename: "npm:^1.6.3"
     typescript: "npm:~5.9.3"
     upath: "npm:^2.0.1"
-    vite: "npm:^7.3.0"
+    vite: "npm:^7.3.1"
     vitepress: "npm:^2.0.0-alpha.15"
     vitest: "npm:^4.0.16"
     vue: "npm:^3.5.26"
@@ -15725,9 +15725,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:7.3.0":
-  version: 7.3.0
-  resolution: "vite@npm:7.3.0"
+"vite@npm:7.3.1":
+  version: 7.3.1
+  resolution: "vite@npm:7.3.1"
   dependencies:
     esbuild: "npm:^0.27.0"
     fdir: "npm:^6.5.0"
@@ -15776,7 +15776,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10c0/0457c196cdd5761ec351c0f353945430fbad330e615b9eeab729c8ae163334f18acdc1d9cd7d9d673dbf111f07f6e4f0b25d4ac32360e65b4a6df9991046f3ff
+  checksum: 10c0/5c7548f5f43a23533e53324304db4ad85f1896b1bfd3ee32ae9b866bac2933782c77b350eb2b52a02c625c8ad1ddd4c000df077419410650c982cd97fde8d014
   languageName: node
   linkType: hard
 
