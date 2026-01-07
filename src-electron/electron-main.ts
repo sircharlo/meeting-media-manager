@@ -73,7 +73,10 @@ initSentry({
       }
 
       const error = event.exception?.values?.[0];
-      if (error?.value && isIgnoredUpdateError(error.value)) {
+      if (
+        error?.value &&
+        (isIgnoredUpdateError(error.value) || error.value.includes('EPIPE'))
+      ) {
         return null;
       }
     } catch (err) {
@@ -280,6 +283,16 @@ if (!gotTheLock) {
 
   createWindowAndCaptureErrors();
 }
+
+// Silence EPIPE errors on stdout/stderr (common on Linux when quitting)
+process.stdout.on('error', (err) => {
+  if (err.code === 'EPIPE') return;
+  console.error('Terminal stdout error:', err);
+});
+process.stderr.on('error', (err) => {
+  if (err.code === 'EPIPE') return;
+  console.error('Terminal stderr error:', err);
+});
 
 function createWindowAndCaptureErrors() {
   app.whenReady().then(createMainWindow).catch(captureElectronError);

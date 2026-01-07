@@ -218,6 +218,7 @@ export function isIgnoredUpdateError(
     'OSStatus error -60006',
     'read-only volume',
     'ERR_CONNECTION_TIMED_OUT',
+    'EPIPE',
   ];
 
   const errorMsg =
