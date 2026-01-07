@@ -84,24 +84,14 @@ interface Store {
   yeartexts: Partial<Record<number, Partial<Record<JwLangCode, string>>>>;
 }
 
-export function addUniqueById<T extends { uniqueId: string }>(
-  targetArray: (T | undefined)[],
-  sourceArray: (T | undefined)[],
-): void {
-  sourceArray.forEach((item) => {
-    if (!targetArray.some((obj) => obj?.uniqueId === item?.uniqueId)) {
-      targetArray.push(item);
-    }
-  });
-}
-
 export function addUniqueByIdToTop<T extends { uniqueId: string }>(
   targetArray: (T | undefined)[],
   sourceArray: (T | undefined)[],
 ): void {
-  sourceArray.forEach((item) => {
+  // Add to the beginning of the array (reverse source to maintain original order)
+  [...sourceArray].reverse().forEach((item) => {
     if (!targetArray.some((obj) => obj?.uniqueId === item?.uniqueId)) {
-      targetArray.push(item);
+      targetArray.unshift(item);
     }
   });
 }

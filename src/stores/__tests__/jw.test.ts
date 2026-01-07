@@ -1,7 +1,7 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { addUniqueById, deduplicateById, shouldUpdateList } from '../jw';
+import { addUniqueByIdToTop, deduplicateById, shouldUpdateList } from '../jw';
 
 // Mock the electron API
 vi.mock('src/helpers/error-catcher', () => ({
@@ -65,7 +65,7 @@ describe('JW Store', () => {
     });
   });
 
-  describe('addUniqueById', () => {
+  describe('addUniqueByIdToTop', () => {
     it('should add unique items to target array', () => {
       const target = [{ name: 'Item 1', uniqueId: '1' }];
       const source = [
@@ -73,7 +73,7 @@ describe('JW Store', () => {
         { name: 'Item 3', uniqueId: '3' },
       ];
 
-      addUniqueById(target, source);
+      addUniqueByIdToTop(target, source);
 
       expect(target).toHaveLength(3);
       expect(target.map((item) => item.uniqueId)).toEqual(['1', '2', '3']);
@@ -86,7 +86,7 @@ describe('JW Store', () => {
         { name: 'Item 2', uniqueId: '2' },
       ];
 
-      addUniqueById(target, source);
+      addUniqueByIdToTop(target, source);
 
       expect(target).toHaveLength(2);
       expect(target.map((item) => item.uniqueId)).toEqual(['1', '2']);

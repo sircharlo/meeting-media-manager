@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { addUniqueById, deduplicateById, shouldUpdateList } from '../jw';
+import { addUniqueByIdToTop, deduplicateById, shouldUpdateList } from '../jw';
 
 describe('JW Store edge cases', () => {
   describe('shouldUpdateList invalid/missing dates', () => {
@@ -32,12 +32,12 @@ describe('JW Store edge cases', () => {
     });
   });
 
-  describe('addUniqueById/deduplicateById missing uniqueId', () => {
+  describe('addUniqueByIdToTop/deduplicateById missing uniqueId', () => {
     it('keeps items without uniqueId as-is at end', () => {
       const target: { name: string; uniqueId: string }[] = [
         { name: 'A', uniqueId: '1' },
       ];
-      addUniqueById(target, [
+      addUniqueByIdToTop(target, [
         { name: 'B' } as unknown as { name: string; uniqueId: string },
         { name: 'C', uniqueId: '2' } as { name: string; uniqueId: string },
       ]);
