@@ -221,7 +221,10 @@ if (!gotTheLock) {
       'reason' in details &&
       details.reason === 'crashed';
 
-    const isGpuCrash = type === 'GPU';
+    const isGpuCrash =
+      type === 'GPU' &&
+      details.reason !== 'killed' &&
+      details.reason !== 'clean-exit';
 
     if (isGpuCrash || isFatalRendererCrash) {
       // Send to telemetry
@@ -235,7 +238,7 @@ if (!gotTheLock) {
 
       if (!isHwAccelDisabled()) {
         console.log(
-          `Detected ${type} crash. Disabling hardware acceleration for next run.`,
+          `Detected ${type} crash (${details.reason}). Disabling hardware acceleration for next run.`,
         );
         // Persist to user prefs for next run and notify user
         setHwAccelDisabled(true, true);
