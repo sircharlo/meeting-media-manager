@@ -627,6 +627,11 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
   }
 };
 
+export const moveMediaWindowThrottled = throttleWithTrailing(
+  () => moveMediaWindow(),
+  100,
+);
+
 function loadMediaWindowPrefs(): null | Rectangle {
   let filePath: string | undefined;
   try {

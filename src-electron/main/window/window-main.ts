@@ -3,7 +3,6 @@ import type { BrowserWindow } from 'electron';
 import { PLATFORM } from 'src-electron/constants';
 import { cancelAllDownloads } from 'src-electron/main/downloads';
 import { setAppQuitting, setShouldQuit } from 'src-electron/main/session';
-import { throttleWithTrailing } from 'src-electron/main/utils';
 import {
   closeOtherWindows,
   createWindow,
@@ -11,7 +10,7 @@ import {
 } from 'src-electron/main/window/window-base';
 import {
   createMediaWindow,
-  moveMediaWindow,
+  moveMediaWindowThrottled,
 } from 'src-electron/main/window/window-media';
 
 export let mainWindow: BrowserWindow | null = null;
@@ -34,10 +33,6 @@ export function createMainWindow() {
   // Create the browser window
   mainWindow = createWindow('main');
 
-  const moveMediaWindowThrottled = throttleWithTrailing(
-    () => moveMediaWindow(),
-    100,
-  );
   mainWindow.on('move', moveMediaWindowThrottled);
   if (PLATFORM !== 'darwin') mainWindow.on('moved', moveMediaWindowThrottled); // On macOS, the 'moved' event is just an alias for 'move'
 

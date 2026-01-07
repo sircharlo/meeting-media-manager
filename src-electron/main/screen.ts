@@ -5,7 +5,7 @@ import { captureElectronError } from 'src-electron/main/utils';
 import { mainWindow } from 'src-electron/main/window/window-main';
 import {
   mediaWindow,
-  moveMediaWindow,
+  moveMediaWindowThrottled,
 } from 'src-electron/main/window/window-media';
 
 let isScreenListenerInitialized = false;
@@ -15,7 +15,7 @@ let isScreenListenerInitialized = false;
  */
 const onDisplayChanged = () => {
   try {
-    moveMediaWindow();
+    moveMediaWindowThrottled();
   } catch (e) {
     captureElectronError(e, {
       contexts: { fn: { name: 'onDisplayChanged' } },
