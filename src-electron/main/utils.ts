@@ -220,6 +220,7 @@ export function isIgnoredUpdateError(
     'ERR_CONNECTION_TIMED_OUT',
     'EPIPE',
     'HttpError: 404',
+    'ERR_NETWORK_CHANGED',
   ];
 
   const errorMsg =
