@@ -75,95 +75,117 @@ export async function unzipFile(
   output: string,
   opts?: UnzipOptions,
 ): Promise<UnzipResult[]> {
-  const existing = ongoingDecompressions.get(output);
+  const cacheKey = `${input}->${output}`;
+  const existing = ongoingDecompressions.get(cacheKey);
   if (existing) return existing;
 
-  const decompressionPromise = new Promise<UnzipResult[]>((resolve, reject) => {
-    const extractedFiles: UnzipResult[] = [];
-    yauzl.open(input, { lazyEntries: true }, (err, zipfile) => {
-      if (err) {
-        captureElectronError(err, {
-          contexts: {
-            fn: { args: { input, output }, name: 'unzipFile yauzl.open' },
-          },
-        });
-        return reject(err);
-      }
-      if (!zipfile) return reject(new Error('Zipfile not found'));
+  const decompress = (isRetry = false): Promise<UnzipResult[]> => {
+    return new Promise<UnzipResult[]>((resolve, reject) => {
+      const extractedFiles: UnzipResult[] = [];
+      yauzl.open(input, { lazyEntries: true }, (err, zipfile) => {
+        if (err) {
+          if (
+            !isRetry &&
+            err.message.includes('End of central directory record signature')
+          ) {
+            console.warn(`Unzip failed, retrying once for: ${input}`);
+            setTimeout(() => {
+              decompress(true).then(resolve).catch(reject);
+            }, 500);
+            return;
+          }
 
-      zipfile.readEntry();
-      zipfile.on('entry', async (entry: yauzl.Entry) => {
-        const fullPath = join(output, entry.fileName);
-
-        // Apply filter if provided
-        if (opts?.includes?.length && !opts.includes.includes(entry.fileName)) {
-          zipfile.readEntry();
-          return;
+          captureElectronError(err, {
+            contexts: {
+              fn: { args: { input, output }, name: 'unzipFile yauzl.open' },
+            },
+          });
+          return reject(err);
         }
+        if (!zipfile) return reject(new Error('Zipfile not found'));
 
-        if (/\/$/.test(entry.fileName)) {
-          // Directory
-          try {
-            await ensureDir(fullPath);
+        zipfile.readEntry();
+        zipfile.on('entry', async (entry: yauzl.Entry) => {
+          const fullPath = join(output, entry.fileName);
+
+          // Apply filter if provided
+          if (
+            opts?.includes?.length &&
+            !opts.includes.includes(entry.fileName)
+          ) {
             zipfile.readEntry();
-          } catch (e) {
-            zipfile.close();
-            reject(e);
+            return;
           }
-        } else {
-          // File
-          try {
-            await ensureDir(dirname(fullPath));
-            zipfile.openReadStream(entry, async (err, readStream) => {
-              if (err) {
-                zipfile.close();
-                return reject(err);
-              }
-              if (!readStream) {
-                zipfile.close();
-                return reject(new Error('Read stream not found'));
-              }
 
-              const writeStream = createWriteStream(fullPath);
-              try {
-                await pipeline(readStream, writeStream);
-                extractedFiles.push({ path: entry.fileName });
-                zipfile.readEntry();
-              } catch (e) {
-                captureElectronError(e, {
-                  contexts: {
-                    fn: { args: { input, output }, name: 'unzipFile pipeline' },
-                  },
-                });
-                zipfile.close();
-                reject(e);
-              }
-            });
-          } catch (e) {
-            zipfile.close();
-            reject(e);
+          if (/\/$/.test(entry.fileName)) {
+            // Directory
+            try {
+              await ensureDir(fullPath);
+              zipfile.readEntry();
+            } catch (e) {
+              zipfile.close();
+              reject(e);
+            }
+          } else {
+            // File
+            try {
+              await ensureDir(dirname(fullPath));
+              zipfile.openReadStream(entry, async (err, readStream) => {
+                if (err) {
+                  zipfile.close();
+                  return reject(err);
+                }
+                if (!readStream) {
+                  zipfile.close();
+                  return reject(new Error('Read stream not found'));
+                }
+
+                const writeStream = createWriteStream(fullPath);
+                try {
+                  await pipeline(readStream, writeStream);
+                  extractedFiles.push({ path: entry.fileName });
+                  zipfile.readEntry();
+                } catch (e) {
+                  captureElectronError(e, {
+                    contexts: {
+                      fn: {
+                        args: { input, output },
+                        name: 'unzipFile pipeline',
+                      },
+                    },
+                  });
+                  zipfile.close();
+                  reject(e);
+                }
+              });
+            } catch (e) {
+              zipfile.close();
+              reject(e);
+            }
           }
-        }
-      });
-
-      zipfile.on('end', () => {
-        resolve(extractedFiles);
-      });
-
-      zipfile.on('error', (err) => {
-        captureElectronError(err, {
-          contexts: {
-            fn: { args: { input, output }, name: 'unzipFile zipfile error' },
-          },
         });
-        reject(err);
+
+        zipfile.on('end', () => {
+          resolve(extractedFiles);
+        });
+
+        zipfile.on('error', (err) => {
+          captureElectronError(err, {
+            contexts: {
+              fn: { args: { input, output }, name: 'unzipFile zipfile error' },
+            },
+          });
+          reject(err);
+        });
       });
     });
-  }).finally(() => {
-    ongoingDecompressions.delete(output);
+  };
+
+  const decompressionPromise = decompress().finally(() => {
+    ongoingDecompressions.delete(cacheKey);
   });
 
-  ongoingDecompressions.set(output, decompressionPromise);
+  ongoingDecompressions.set(cacheKey, decompressionPromise);
   return decompressionPromise;
 }
 

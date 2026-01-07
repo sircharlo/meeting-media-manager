@@ -20,6 +20,8 @@ const { executeQuery, fs, path, toggleMediaWindow, unzip } = window.electronApi;
 const { pathExists, remove, rename } = fs;
 const { basename, extname, join } = path;
 
+const ongoingUnzips = new Map<string, Promise<string | undefined>>();
+
 const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
   try {
     const contentsPath = join(outputPath, 'contents');
@@ -34,10 +36,19 @@ const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
     // We check if the database exists to determine if we need to unzip
     const dbFile = await findDb(outputPath);
     if (!dbFile) {
-      await unzip(contentsPath, outputPath);
+      try {
+        await unzip(contentsPath, outputPath);
+      } catch (error) {
+        // If unzipping contents fails, it might be corrupted.
+        // Remove it so it can be re-extracted next time.
+        await remove(contentsPath).catch(() => null);
+        throw error;
+      }
     }
     return outputPath;
   } catch (error) {
+    // If anything fails, clean up the output directory to avoid partial extractions
+    await remove(outputPath).catch(() => null);
     errorCatcher(error);
     return jwpubPath;
   }
@@ -55,6 +66,10 @@ export const unzipJwpub = async (
       outputPath = join(await getTempPath(), basename(jwpubPath));
     }
 
+    const cacheKey = `${jwpubPath}->${outputPath}`;
+    const existing = ongoingUnzips.get(cacheKey);
+    if (existing && !force) return existing;
+
     // If force, clear the output directory before filling it
     if (force) {
       try {
@@ -63,13 +78,23 @@ export const unzipJwpub = async (
         errorCatcher(e);
       }
     }
-    if (!currentState.extractedFiles[outputPath] || force) {
-      currentState.extractedFiles[outputPath] = await jwpubExtractor(
-        jwpubPath,
-        outputPath,
-      );
+
+    const unzipPromise = (async () => {
+      if (!currentState.extractedFiles[outputPath] || force) {
+        currentState.extractedFiles[outputPath] = await jwpubExtractor(
+          jwpubPath,
+          outputPath,
+        );
+      }
+      return currentState.extractedFiles[outputPath];
+    })();
+
+    ongoingUnzips.set(cacheKey, unzipPromise);
+    try {
+      return await unzipPromise;
+    } finally {
+      ongoingUnzips.delete(cacheKey);
     }
-    return currentState.extractedFiles[outputPath];
   } catch (error) {
     errorCatcher(error);
     return jwpubPath;

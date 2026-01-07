@@ -370,10 +370,23 @@ export const downloadFileIfNeeded = async ({
         }
         if (currentStateStore.downloadProgress[downloadId]?.complete) {
           clearInterval(interval);
-          resolve({
-            new: true,
-            path: destinationPath,
-          });
+          // Small delay to ensure disk flush
+          setTimeout(async () => {
+            if (await exists(destinationPath)) {
+              const statistics = await stat(destinationPath);
+              if (statistics.size > 0) {
+                resolve({
+                  new: true,
+                  path: destinationPath,
+                });
+                return;
+              }
+            }
+            resolve({
+              error: true,
+              path: destinationPath,
+            });
+          }, 200);
         }
       }, 500); // Check every 500ms
     });
