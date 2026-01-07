@@ -35,21 +35,20 @@ export async function initUpdater() {
 
     if (await isDownloadErrorExpected()) return;
 
-    if (isIgnoredUpdateError(error, message)) {
-      if (
-        message?.includes('read-only volume') ||
-        error?.message?.includes('read-only volume')
-      ) {
-        sendToWindow(mainWindow, 'update-error');
-      }
-      return;
+    if (
+      message?.includes('read-only volume') ||
+      error?.message?.includes('read-only volume')
+    ) {
+      sendToWindow(mainWindow, 'update-error');
     }
 
-    captureElectronError(error, {
-      contexts: {
-        fn: { errorMessage: error.message, message, name: 'initUpdater' },
-      },
-    });
+    if (!isIgnoredUpdateError(error, message)) {
+      captureElectronError(error, {
+        contexts: {
+          fn: { errorMessage: error.message, message, name: 'initUpdater' },
+        },
+      });
+    }
   });
 
   autoUpdater.on('update-available', (info) => {

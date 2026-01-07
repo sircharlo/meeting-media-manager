@@ -219,6 +219,7 @@ export function isIgnoredUpdateError(
     'read-only volume',
     'ERR_CONNECTION_TIMED_OUT',
     'EPIPE',
+    'HttpError: 404',
   ];
 
   const errorMsg =
