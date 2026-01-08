@@ -4,6 +4,12 @@
 
 Para sa makita ang lahat ng mga update, tingnan ang aming CHANGELOG.md na file sa GitHub.
 
+## v26.1.5
+
+### ✨ Mga Bagong Feature
+
+- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+
 ## v26.1.0
 
 ### ✨ Mga Bagong Feature
