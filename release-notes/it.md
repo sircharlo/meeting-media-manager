@@ -8,7 +8,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ### ✨ Nuove Funzionalità
 
-- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+- ✨ **Media Commemorazione**: Recupera automaticamente banner Commemorazione e video introduttivo nelle lingue supportate quando la data della Commemorazione è selezionata.
 
 ## v26.1.0
 
