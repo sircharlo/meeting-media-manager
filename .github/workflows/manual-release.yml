@@ -45,7 +45,22 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v6
-      - name: Create draft release
+
+      - name: Clear existing draft release assets
+        run: |
+          if gh release view "v${{ needs.bump-version.outputs.new_version }}" > /dev/null 2>&1; then
+            echo "Release exists, clearing assets..."
+            gh release view "v${{ needs.bump-version.outputs.new_version }}" --json assets --jq '.assets[].name' | while read -r asset; do
+              echo "Deleting asset: $asset"
+              gh release delete-asset "v${{ needs.bump-version.outputs.new_version }}" "$asset" --yes
+            done
+          else
+            echo "Release does not exist, skipping asset clearing."
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create or update draft release
         id: create_release
         uses: ncipollo/release-action@v1.18.0
         with:
@@ -55,6 +70,8 @@ jobs:
           draft: true
           prerelease: false
           generateReleaseNotes: true
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
     outputs:
       id: ${{ steps.create_release.outputs.id }}
 
