@@ -33,7 +33,7 @@ describe('JW Store edge cases', () => {
   });
 
   describe('addUniqueByIdToTop/deduplicateById missing uniqueId', () => {
-    it('keeps items without uniqueId as-is at end', () => {
+    it('keeps items without uniqueId as-is', () => {
       const target: { name: string; uniqueId: string }[] = [
         { name: 'A', uniqueId: '1' },
       ];
@@ -41,7 +41,7 @@ describe('JW Store edge cases', () => {
         { name: 'B' } as unknown as { name: string; uniqueId: string },
         { name: 'C', uniqueId: '2' } as { name: string; uniqueId: string },
       ]);
-      expect(target.map((x) => x.uniqueId ?? x.name)).toEqual(['1', 'B', '2']);
+      expect(target.map((x) => x.uniqueId ?? x.name)).toEqual(['B', '2', '1']);
     });
 
     it('deduplicateById keeps first occurrence and keeps items without uniqueId', () => {
