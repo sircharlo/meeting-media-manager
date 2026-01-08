@@ -275,6 +275,7 @@ const notifyMainWindowAboutScreenOrWindowChange = throttleWithTrailing(() => {
 
 let lastAlwaysOnTop: boolean | undefined;
 let lastMaximizable: boolean | undefined;
+let lastScreensConfig = '';
 
 export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
   console.log('🔍 [moveMediaWindow] START - Called with:', {
@@ -289,9 +290,21 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
       );
       return;
     }
-    notifyMainWindowAboutScreenOrWindowChange();
-
     const screens = getAllScreens();
+    const screensConfig = JSON.stringify(screens.map((s) => s.bounds));
+
+    if (screensConfig !== lastScreensConfig) {
+      console.log(
+        '🔍 [moveMediaWindow] Screen configuration changed, notifying renderer',
+      );
+      notifyMainWindowAboutScreenOrWindowChange();
+      lastScreensConfig = screensConfig;
+    } else {
+      console.log(
+        '🔍 [moveMediaWindow] Screen configuration unchanged, skipping notification',
+      );
+    }
+
     console.log('🔍 [moveMediaWindow] Available screens:', screens.length);
 
     const currentBounds = mediaWindow.getBounds();
