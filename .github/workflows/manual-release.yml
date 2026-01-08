@@ -1,0 +1,92 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+
+jobs:
+  bump-version:
+    name: Bump version
+    runs-on: ubuntu-latest
+    if: github.repository == 'sircharlo/meeting-media-manager'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Calculate and bump version
+        id: bump
+        run: python build/bump-version.py
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore: bump version to ${{ steps.bump.outputs.new_version }} [skip ci]"
+          git push origin master
+    outputs:
+      new_version: ${{ steps.bump.outputs.new_version }}
+
+  draft-release:
+    name: Draft release
+    runs-on: ubuntu-latest
+    needs: bump-version
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - name: Create draft release
+        id: create_release
+        uses: ncipollo/release-action@v1.18.0
+        with:
+          name: v${{ needs.bump-version.outputs.new_version }}
+          tag: v${{ needs.bump-version.outputs.new_version }}
+          commit: 'master'
+          draft: true
+          prerelease: false
+          generateReleaseNotes: true
+    outputs:
+      id: ${{ steps.create_release.outputs.id }}
+
+  build:
+    needs: [bump-version, draft-release]
+    uses: ./.github/workflows/build.yml
+    with:
+      checkout-latest: true
+    secrets:
+      APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      MAC_CERTIFICATE_BASE64: ${{ secrets.MAC_CERTIFICATE_BASE64 }}
+      MAC_CERTIFICATE_PASSWORD: ${{ secrets.MAC_CERTIFICATE_PASSWORD }}
+      SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+      TEST_VERSION: 'false'
+
+  # publish-release:
+  #   name: 'Publish release'
+  #   runs-on: ubuntu-latest
+  #   needs: [bump-version, build]
+  #   permissions:
+  #     contents: write
+  #   steps:
+  #     - uses: ncipollo/release-action@v1
+  #       with:
+  #         name: v${{ needs.bump-version.outputs.new_version }}
+  #         tag: v${{ needs.bump-version.outputs.new_version }}
+  #         draft: false
+  #         prerelease: false
+  #         allowUpdates: true
+  #         omitBodyDuringUpdate: true
+  #         updateOnlyUnreleased: true
+  #         token: ${{ secrets.GITHUB_TOKEN }}

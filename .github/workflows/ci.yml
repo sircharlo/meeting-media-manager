@@ -33,7 +33,14 @@ jobs:
     if: >
       github.actor != 'dependabot[bot]' &&
       github.actor != 'github-actions[bot]' &&
-      !(startsWith(github.event.pull_request.title, 'feat: new translations'))
+      !(startsWith(github.event.pull_request.title, 'feat: new translations')) &&
+      !contains(github.event.head_commit.message, '[skip ci]') &&
+      !contains(github.event.head_commit.message, '[ci skip]') &&
+      !contains(github.event.head_commit.message, '[no ci]') &&
+      !contains(github.event.head_commit.message, '[skip actions]') &&
+      !contains(github.event.head_commit.message, '[actions skip]') &&
+      !contains(github.event.pull_request.title, '[skip ci]') &&
+      !contains(github.event.pull_request.title, '[ci skip]')
 
     uses: ./.github/workflows/build.yml
     secrets:
