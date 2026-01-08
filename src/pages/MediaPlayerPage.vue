@@ -21,7 +21,7 @@
       :class="{ 'blank-screen': isTransitioning }"
     >
       <!-- eslint-disable next-line vue/no-v-html -->
-      <div id="yeartext" class="q-pa-md center" v-html="yeartext || ''" />
+      <div id="yeartext" class="center" v-html="yeartext || ''" />
       <div
         v-if="!hideMediaLogo && jwIconsFontLoaded"
         id="yeartextLogoContainer"
