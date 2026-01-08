@@ -4,6 +4,12 @@
 
 Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bestand op GitHub.
 
+## v26.1.5
+
+### ✨ Nieuwe functies
+
+- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+
 ## v26.1.0
 
 ### ✨ Nieuwe functies
