@@ -226,11 +226,13 @@ export function isIgnoredUpdateError(
   const errorMsg =
     typeof error === 'string' ? error : (error as Error)?.message;
   const errorCode = (error as { code?: string })?.code;
+  const errorName = (error as Error)?.name;
 
   return ignoreErrors.some((ignoreError) => {
     return (
       message?.includes(ignoreError) ||
       errorMsg?.includes(ignoreError) ||
+      errorName?.includes(ignoreError) ||
       (typeof errorCode === 'string' && errorCode.includes(ignoreError))
     );
   });

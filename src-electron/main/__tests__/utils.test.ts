@@ -55,4 +55,13 @@ describe('isIgnoredUpdateError', () => {
     error.code = 'ECONNRESET';
     expect(isIgnoredUpdateError(error)).toBe(true);
   });
+
+  it('should return true for YAMLException based on error name', () => {
+    // Simulate the actual YAMLException from the Sentry report
+    const error = new Error(
+      'null byte is not allowed in input (1:1)\n\n 1 | \n-----^\n 2 | \n 3 | ',
+    );
+    error.name = 'YAMLException';
+    expect(isIgnoredUpdateError(error)).toBe(true);
+  });
 });
