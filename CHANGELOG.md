@@ -4,6 +4,34 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.1.5
+
+### ✨ New Features
+
+- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Memorial Date Logic**: Improved Memorial date calculation and logic.
+- 🛠️ **Meeting Schedule Sync**: Simplified congregation meeting date and time synchronization logic.
+- 🛠️ **Yeartext**: Removed unnecessary padding around the yeartext display.
+- 🔧 **Performance**: Refactored `moveMediaWindow` to further reduce IPC chattiness and improve performance.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Zoom Screen Share**: Added a small delay before triggering Zoom screen share to ensure the media window is fully visible and selectable in the Zoom window picker.
+- 🐞 **Media Playback Settings**: Prevented the play button from showing when media playback is disabled in settings.
+- 🐞 **Unavailable Media Tooltips**: Prevented playback tooltips from appearing on unavailable media items.
+- 🐞 **Cache Folder Management**: Fixed creation of machine-wide cache folders on Windows and added graceful failure handling for non-writable folders.
+- 🐞 **Item Ordering**: Fixed `addUniqueByIdToTop` to correctly add items to the top of media lists.
+- 🐞 **Race Conditions**: Resolved potential race conditions during file download and extraction.
+- 🐞 **Error Handling**: Prevented various auto-updater errors from being logged.
+- 🐞 **Cache Cleanup**: Improved cache path cleanup logic.
+
+### 🧪 Testing
+
+- 🧪 **Test Reliability**: Fixed and improved various tests.
+
 ## v26.1.4
 
 ### 🐞 Bug Fixes
