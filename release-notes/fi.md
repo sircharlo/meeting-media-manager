@@ -8,7 +8,7 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 
 ### ✨ Mitä uutta
 
-- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+- ✨ **Muistojuhlamedia**: Hakee automaattisesti muistojuhlan bannerin ja intro-videon tuetuilla kielillä, kun muistojuhlan päivämäärä valitaan.
 
 ## v26.1.0
 

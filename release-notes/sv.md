@@ -8,7 +8,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 ### ✨ Nya funktioner
 
-- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+- ✨ **Minneshögtidsmedia**: Hämtar automatiskt banner och introduktionsvideo för minneshögtiden på språk som stöds när datum för minneshögtiden väljs.
 
 ## v26.1.0
 
