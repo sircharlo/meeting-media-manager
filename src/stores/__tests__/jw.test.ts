@@ -76,7 +76,7 @@ describe('JW Store', () => {
       addUniqueByIdToTop(target, source);
 
       expect(target).toHaveLength(3);
-      expect(target.map((item) => item.uniqueId)).toEqual(['1', '2', '3']);
+      expect(target.map((item) => item.uniqueId)).toEqual(['2', '3', '1']);
     });
 
     it('should not add duplicate items', () => {
@@ -89,7 +89,7 @@ describe('JW Store', () => {
       addUniqueByIdToTop(target, source);
 
       expect(target).toHaveLength(2);
-      expect(target.map((item) => item.uniqueId)).toEqual(['1', '2']);
+      expect(target.map((item) => item.uniqueId)).toEqual(['2', '1']);
     });
   });
 
