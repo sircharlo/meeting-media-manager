@@ -4,6 +4,12 @@
 
 Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGELOG.md GitHubis.
 
+## v26.1.5
+
+### ✨ Uued funktsioonid
+
+- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+
 ## v26.1.0
 
 ### ✨ Uued funktsioonid
