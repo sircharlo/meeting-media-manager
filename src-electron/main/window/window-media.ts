@@ -273,6 +273,9 @@ const notifyMainWindowAboutScreenOrWindowChange = throttleWithTrailing(() => {
   sendToWindow(mainWindow, 'screenChange');
 }, 250);
 
+let lastAlwaysOnTop: boolean | undefined;
+let lastMaximizable: boolean | undefined;
+
 export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
   console.log('🔍 [moveMediaWindow] START - Called with:', {
     displayNr,
@@ -298,7 +301,15 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
     const screenBounds = currentScreen?.bounds;
 
     // Set maximizable based on screen count
-    mediaWindow.setMaximizable(screens.length > 1);
+    const shouldBeMaximizable = screens.length > 1;
+    if (lastMaximizable !== shouldBeMaximizable) {
+      console.log(
+        '🔍 [moveMediaWindow] Setting maximizable:',
+        shouldBeMaximizable,
+      );
+      mediaWindow.setMaximizable(shouldBeMaximizable);
+      lastMaximizable = shouldBeMaximizable;
+    }
 
     // Set always on top based on fullscreen parameter and current fullscreen state
     const isEffectivelyFullscreen =
@@ -309,11 +320,14 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
     const alwaysOnTop =
       PLATFORM !== 'darwin' && !!(isEffectivelyFullscreen || fullscreen);
 
-    console.log('🔍 [moveMediaWindow] Setting always on top:', alwaysOnTop);
-    mediaWindow.setAlwaysOnTop(
-      alwaysOnTop,
-      alwaysOnTop ? 'screen-saver' : undefined,
-    );
+    if (lastAlwaysOnTop !== alwaysOnTop) {
+      console.log('🔍 [moveMediaWindow] Setting always on top:', alwaysOnTop);
+      mediaWindow.setAlwaysOnTop(
+        alwaysOnTop,
+        alwaysOnTop ? 'screen-saver' : undefined,
+      );
+      lastAlwaysOnTop = alwaysOnTop;
+    }
 
     // Get current window state
     const isCurrentlyFullscreen = mediaWindow.isFullScreen();
@@ -778,7 +792,17 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
         newFullscreen,
       });
 
-      notifyMainWindowAboutScreenOrWindowChange();
+      if (
+        boundsChanged ||
+        wasFullscreen !== fullScreen ||
+        currentBounds.height === 0 // Force update if window was just created/shown
+      ) {
+        notifyMainWindowAboutScreenOrWindowChange();
+      } else {
+        console.log(
+          '🔍 [setWindowBounds] No meaningful change, skipping renderer notification',
+        );
+      }
 
       // Bring media window to front if it's visible
       if (mediaWindow.isVisible()) {
