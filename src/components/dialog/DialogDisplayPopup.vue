@@ -678,9 +678,33 @@ watch(
   },
 );
 
-useEventListener(window, 'screen-trigger-update', fetchScreens, {
-  passive: true,
-});
+const stopListeningToScreens = ref<(() => void) | null>(null);
+
+watch(
+  () => open.value,
+  (isOpen) => {
+    if (isOpen) {
+      if (!stopListeningToScreens.value) {
+        console.log('🔍 [DialogDisplayPopup] Starting screen update listener');
+        stopListeningToScreens.value = useEventListener(
+          window,
+          'screen-trigger-update',
+          fetchScreens,
+          {
+            passive: true,
+          },
+        );
+      }
+    } else {
+      if (stopListeningToScreens.value) {
+        console.log('🔍 [DialogDisplayPopup] Stopping screen update listener');
+        stopListeningToScreens.value();
+        stopListeningToScreens.value = null;
+      }
+    }
+  },
+  { immediate: true },
+);
 
 const { data: mediaWindowSize } = useBroadcastChannel<
   Record<string, number>,
