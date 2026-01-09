@@ -184,8 +184,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       dismissAllTemporaryNotifications();
 
       this.currentCongregation = value.toString();
-      const currentDataPath = await getCachedUserDataPath();
-      console.log('Currently using data path:', currentDataPath);
+      await getCachedUserDataPath();
       return this.getInvalidSettings(this.currentCongregation).length > 0;
     },
   },

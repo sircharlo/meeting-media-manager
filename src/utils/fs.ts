@@ -44,25 +44,42 @@ export async function isUsablePath(basePath?: string): Promise<boolean> {
   }
 }
 
-export const getCachedUserDataPath = async () => {
-  const customPath = useCurrentStateStore().currentSettings?.cacheFolder;
-  if (customPath && (await isUsablePath(customPath))) {
-    return customPath;
+export const getCachedUserDataPath = async (): Promise<string> => {
+  // Fast path: already resolved
+  if (defaultDataPath) {
+    return defaultDataPath;
   }
 
-  if (!defaultDataPath) {
-    const candidates = [await getSharedDataPath(), await getUserDataPath()];
+  const { currentSettings } = useCurrentStateStore();
+  const customPath = currentSettings?.cacheFolder;
 
-    for (const path of candidates) {
-      if (!path) continue;
-      if (await isUsablePath(path)) {
-        defaultDataPath = path;
-        break;
-      }
+  // Try custom path first
+  if (
+    customPath &&
+    defaultDataPath !== customPath &&
+    (await isUsablePath(customPath))
+  ) {
+    defaultDataPath = customPath;
+    console.log('📁 Using custom cache path:', customPath);
+    return defaultDataPath;
+  }
+
+  // Fallback candidates (in priority order)
+  const candidates = await Promise.all([
+    getSharedDataPath(),
+    getUserDataPath(),
+  ]);
+
+  for (const path of candidates) {
+    if (path && (await isUsablePath(path))) {
+      defaultDataPath = path;
+      console.log('📁 Using cache path:', path);
+      return defaultDataPath;
     }
   }
 
-  return defaultDataPath as string;
+  // This should not happen, but keeps typing safe
+  throw new Error('No usable data path found');
 };
 
 export const isFileUrl = (path?: string) => path?.startsWith('file://');
@@ -99,7 +116,6 @@ const getCachePath = async (paths: string | string[], create = false) => {
     errorCatcher(error, {
       contexts: {
         fn: {
-          cachedUserDataPath: await getCachedUserDataPath(),
           create,
           fallbackPath,
           name: 'getCachePath',
