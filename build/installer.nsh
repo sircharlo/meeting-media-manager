@@ -1,6 +1,6 @@
 !macro customInstall
   CreateDirectory "$APPDATA\Meeting Media Manager"
-  StrCmp "$APPDATA" "$PROGRAMDATA" 0 done
+  StrCmp "$APPDATA" "$COMMONAPPDATA" 0 done
     nsExec::ExecToLog 'cmd /C icacls "$APPDATA\Meeting Media Manager" /grant *S-1-5-32-545:(OI)(CI)M /T'
     Pop $0
     ${If} $0 != 0
