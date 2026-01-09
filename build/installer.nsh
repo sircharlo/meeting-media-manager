@@ -1,8 +1,10 @@
 !macro customInstall
-  SetShellVarContext all
-
   CreateDirectory "$APPDATA\Meeting Media Manager"
-
-  ExecWait 'icacls "$APPDATA\Meeting Media Manager" /inheritance:e'
-  ExecWait 'icacls "$APPDATA\Meeting Media Manager" /grant Users:(OI)(CI)M'
+  StrCmp "$APPDATA" "$PROGRAMDATA" 0 done
+    nsExec::ExecToLog 'cmd /C icacls "$APPDATA\Meeting Media Manager" /grant *S-1-5-32-545:(OI)(CI)M /T'
+    Pop $0
+    ${If} $0 != 0
+      DetailPrint "Warning: Could not set permissions (error code: $0)"
+    ${EndIf}
+  done:
 !macroend
