@@ -1,15 +1,18 @@
 !macro customInstall
-  ReadEnvStr $0 "PROGRAMDATA"
-  CreateDirectory "$0\Meeting Media Manager"
-  DetailPrint "Current PROGRAMDATA: $0"
-  DetailPrint "APPDATA variable: $APPDATA"
-  StrCmp "$APPDATA" "$0" 0 done
-    DetailPrint "PROGRAMDATA and APPDATA differ; setting correct permissions for all users..."
-    nsExec::ExecToLog 'cmd /C icacls "$APPDATA\Meeting Media Manager" /grant *S-1-5-32-545:(OI)(CI)M /T'
+  UserInfo::GetAccountType
+  Pop $0
+  ${If} $0 == "Admin"
+    DetailPrint "Installer is running as Admin. Configuring shared permissions for all users..."
+    
+    # Use $1 to explicitly target C:\ProgramData
+    ReadEnvStr $1 "PROGRAMDATA"
+    CreateDirectory "$1\Meeting Media Manager"
+    nsExec::ExecToLog 'cmd /C icacls "$1\Meeting Media Manager" /grant *S-1-5-32-545:(OI)(CI)M /T'
+    
     Pop $0
     ${If} $0 != 0
       DetailPrint "Warning: Could not set permissions (error code: $0)"
     ${EndIf}
-  done:
+  ${EndIf}
   DetailPrint "Complete."
 !macroend
