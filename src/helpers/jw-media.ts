@@ -44,6 +44,7 @@ import {
 import {
   findFile,
   getPublicationDirectory,
+  isUsablePath,
   trimFilepathAsNeeded,
 } from 'src/utils/fs';
 import { sanitizeId } from 'src/utils/general';
@@ -87,7 +88,7 @@ const {
   setElectronUrlVariables,
   unzip,
 } = window.electronApi;
-const { copy, ensureDir, exists, pathExists, remove, stat } = fs;
+const { copy, exists, pathExists, remove, stat } = fs;
 const { basename, changeExt, dirname, extname, join } = path;
 
 export const getJwLangCode = (mepsId?: number): JwLangCode | null => {
@@ -323,7 +324,8 @@ export const downloadFileIfNeeded = async ({
 
   try {
     const currentStateStore = useCurrentStateStore();
-    await ensureDir(dir);
+    const dirIsUsable = await isUsablePath(dir);
+    if (!dirIsUsable) throw new Error('Unusable path');
     if (!filename) filename = basename(url);
     const { default: sanitize } = await import('sanitize-filename');
     filename = sanitize(filename);

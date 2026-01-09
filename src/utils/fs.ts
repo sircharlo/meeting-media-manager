@@ -30,7 +30,7 @@ const { dirname, extname, join } = path;
 
 let defaultDataPath: null | string = null;
 
-async function isUsablePath(basePath?: string): Promise<boolean> {
+export async function isUsablePath(basePath?: string): Promise<boolean> {
   if (!basePath) return false;
 
   try {
@@ -86,11 +86,7 @@ const getCachePath = async (paths: string | string[], create = false) => {
   const buildPath = async (base: string) => {
     const dir = join(base, ...parts);
     if (create) {
-      try {
-        await ensureDir(dir);
-      } catch (e) {
-        errorCatcher(e);
-      }
+      await ensureDir(dir);
     }
     return dir;
   };
@@ -98,8 +94,21 @@ const getCachePath = async (paths: string | string[], create = false) => {
   try {
     return await buildPath(await getCachedUserDataPath());
   } catch (error) {
-    errorCatcher(error);
-    return await buildPath(await getUserDataPath());
+    defaultDataPath = await getUserDataPath();
+    const fallbackPath = await buildPath(defaultDataPath);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          cachedUserDataPath: await getCachedUserDataPath(),
+          create,
+          fallbackPath,
+          name: 'getCachePath',
+          newDefaultDataPath: defaultDataPath,
+          paths,
+        },
+      },
+    });
+    return fallbackPath;
   }
 };
 

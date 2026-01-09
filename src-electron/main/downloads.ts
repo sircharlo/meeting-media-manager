@@ -100,7 +100,7 @@ export async function downloadFile(
         fn: {
           directory: saveDir,
           lowPriority,
-          name: 'downloadFile',
+          name: 'downloads.ts downloadFile',
           saveAsFilename: destFilename,
           url,
         },
