@@ -45,13 +45,15 @@ export async function isUsablePath(basePath?: string): Promise<boolean> {
 }
 
 export const getCachedUserDataPath = async (): Promise<string> => {
-  // Fast path: already resolved
-  if (defaultDataPath) {
-    return defaultDataPath;
-  }
-
   const { currentSettings } = useCurrentStateStore();
   const customPath = currentSettings?.cacheFolder;
+
+  // Fast path: already resolved
+  if (defaultDataPath) {
+    if (!customPath || defaultDataPath === customPath) {
+      return defaultDataPath;
+    }
+  }
 
   // Try custom path first
   if (
