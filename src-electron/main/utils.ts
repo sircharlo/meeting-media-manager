@@ -56,10 +56,14 @@ const electronUuid = () => {
  */
 export async function getSharedDataPath(): Promise<null | string> {
   const isMachineWide = isMachineWideInstallation();
+  console.log(
+    `[getSharedDataPath] This app is ${isMachineWide ? '' : 'not '}installed machine-wide.`,
+  );
   if (!isMachineWide) return null;
 
   let sharedPath = '';
 
+  console.log(`[getSharedDataPath] Platform is ${PLATFORM}`);
   if (PLATFORM === 'win32') {
     sharedPath = join(
       process.env.ProgramData || 'C:\\ProgramData',
@@ -79,17 +83,24 @@ export async function getSharedDataPath(): Promise<null | string> {
         .replace(/ /g, '-'),
     );
   }
+  console.log(`[getSharedDataPath] Shared path is configured as ${sharedPath}`);
 
   try {
     // Ensure directory exists (does NOT change permissions)
     await mkdir(sharedPath, { recursive: true });
+    console.log('[getSharedDataPath] Shared data path created successfully.');
 
     const testDir = join(sharedPath, '.cache-test-' + electronUuid());
     await mkdir(testDir, { recursive: true });
+    console.log('[getSharedDataPath] Test directory created successfully.');
     await writeFile(join(testDir, 'test.txt'), 'ok');
+    console.log('[getSharedDataPath] Test file created successfully.');
     await rm(testDir, { recursive: true });
+    console.log('[getSharedDataPath] Test directory removed successfully.');
+    console.log('[getSharedDataPath] Shared data path is available.');
     return sharedPath;
   } catch {
+    console.log('[getSharedDataPath] Failed to create shared data path.');
     return null;
   }
 }
@@ -121,8 +132,9 @@ export function isMachineWideInstallation(): boolean {
   const exe = app.getPath('exe');
   if (PLATFORM === 'win32') {
     return (
-      exe.toLowerCase().includes('program files') &&
-      !exe.toLowerCase().includes('users')
+      !!process.env.DEBUGGING || // Always show as machine-wide when debugging
+      (exe.toLowerCase().includes('program files') &&
+        !exe.toLowerCase().includes('users'))
     );
   } else if (PLATFORM === 'darwin') {
     return exe.startsWith('/Applications') && !exe.startsWith('/Users');

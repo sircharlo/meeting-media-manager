@@ -41,15 +41,49 @@ const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
       } catch (error) {
         // If unzipping contents fails, it might be corrupted.
         // Remove it so it can be re-extracted next time.
-        await remove(contentsPath).catch(() => null);
+        await remove(contentsPath).catch((removeError) =>
+          errorCatcher(removeError, {
+            contexts: {
+              fn: {
+                args: {
+                  jwpubPath,
+                  outputPath,
+                },
+                name: 'jwpubExtractor remove contents',
+              },
+            },
+          }),
+        );
         throw error;
       }
     }
     return outputPath;
   } catch (error) {
     // If anything fails, clean up the output directory to avoid partial extractions
-    await remove(outputPath).catch(() => null);
-    errorCatcher(error);
+    await remove(outputPath).catch((removeError) =>
+      errorCatcher(removeError, {
+        contexts: {
+          fn: {
+            args: {
+              jwpubPath,
+              outputPath,
+            },
+            name: 'jwpubExtractor remove output',
+          },
+        },
+      }),
+    );
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          args: {
+            jwpubPath,
+            outputPath,
+          },
+          name: 'jwpubExtractor',
+        },
+      },
+    });
     return jwpubPath;
   }
 };
@@ -75,7 +109,17 @@ export const unzipJwpub = async (
       try {
         await remove(outputPath);
       } catch (e) {
-        errorCatcher(e);
+        errorCatcher(e, {
+          contexts: {
+            fn: {
+              args: {
+                jwpubPath,
+                outputPath,
+              },
+              name: 'unzipJwpub remove',
+            },
+          },
+        });
       }
     }
 
@@ -96,7 +140,17 @@ export const unzipJwpub = async (
       ongoingUnzips.delete(cacheKey);
     }
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          args: {
+            jwpubPath,
+            outputPath,
+          },
+          name: 'unzipJwpub',
+        },
+      },
+    });
     return jwpubPath;
   }
 };
@@ -122,7 +176,18 @@ export const getMediaFromJwPlaylist = async (
         playlistName = playlistNameQuery[0].Name + ' - ';
       }
     } catch (error) {
-      errorCatcher(error);
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            args: {
+              destPath,
+              jwPlaylistPath,
+              selectedDateValue,
+            },
+            name: 'getMediaFromJwPlaylist playlistNameQuery',
+          },
+        },
+      });
     }
     const playlistItems = executeQuery<JwPlaylistItem>(
       dbFile,
@@ -180,7 +245,17 @@ export const getMediaFromJwPlaylist = async (
             );
             item.ThumbnailFilePath += '.jpg';
           } catch (error) {
-            errorCatcher(error);
+            errorCatcher(error, {
+              contexts: {
+                fn: {
+                  args: {
+                    item,
+                    outputPath,
+                  },
+                  name: 'getMediaFromJwPlaylist rename thumbnail',
+                },
+              },
+            });
           }
         }
         const durationTicks =
@@ -261,7 +336,18 @@ export const getMediaFromJwPlaylist = async (
     );
     return mappedPlaylistMediaItems;
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          args: {
+            destPath,
+            jwPlaylistPath,
+            selectedDateValue,
+          },
+          name: 'getMediaFromJwPlaylist',
+        },
+      },
+    });
     return [];
   }
 };
@@ -278,6 +364,15 @@ export const showMediaWindow = (state?: boolean) => {
       currentState.currentSettings?.enableMediaWindowFadeTransitions,
     );
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          args: {
+            state,
+          },
+          name: 'showMediaWindow',
+        },
+      },
+    });
   }
 };
