@@ -8,15 +8,15 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+- ✨ **Mälestusõhtu meedia**: Vali mälestusõhtu päev ja rakendus laadib alla automaatselt taustapildi ja sissejuhatava video toetatud keeltes.
 
 ## v26.1.0
 
 ### ✨ Uued funktsioonid
 
-- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
-- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
-- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+- ✨ **Koosolekute ajakava automaatne sünkroniseerimine**: Lisatud on võimalus sünkroniseerida koosolekute kuupäevad ja kellaajad automaatselt ametliku veebisaidiga. See funktsioon on vaikimisi sisse lülitatud ja seda saab käsitsi käivitada või välja lülitada täpsemates seadetes.
+- ✨ **Tulevased muudatused ajakavas**: Rakendus sisaldab nüüd tulevasi muudatusi ajakavas, kui loote koguduse veebisaidi otsingut kasutades, kui see on saadaval.
+- ✨ **Masinaüleste installatsioonide jagatud vahemälu**: Masinaüleste installatsioonide puhul kasutatakse nüüd vaikimisi ühist andmekaustu, mis optimeerib salvestusruumi ja ribalaiuse kasutamist sama arvuti mitme kasutaja vahel.
 
 ## v25.12.2
 
@@ -103,7 +103,7 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 - ✨ **Jaotise kordusrežiim**: võimaldab pidevat taasesitust kindlate jaotiste piires, et saavutada sujuv meedia esitus.
 - ✨ **Zoom-koostöö**: ekraani jagamise automaatne käivitamine/peatamine kooskõlas meedia taasesitusega.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parandused ja täiustused
 
 - 🛠️ **Täiustatud jaotise pealkirjad**: uus kolmepunktiline menüüsüsteem värvivalijaga, üles/alla liigutamise nuppude, kordamisvalikute ja kustutamise funktsiooniga.
 - ✨ **Pealkirjade redigeerimine**: redigeerige meediaelementide pealkirju otse kasutajaliideses, ilma eraldi dialoogaknaid avamata.
@@ -117,7 +117,7 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 - ✨ **Mobiilse ühenduse seaded**: Lisatud uus säte, mis vähendab allalaadimisribalaiuse kasutust mobiilsetel internetiühendustel.
 - ✨ **Parandatud voogesituse meediahaldus**: Parem tugi voogesituse meediale, vähendades viivitustega seotud probleeme.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parandused ja täiustused
 
 - 🛠️ **Parandatud mime-tüübi käsitlemine**: Parem meedia ühilduvus tänu täiustatud MIME-tüüpide toele.
 - 🛠️ **Täiustatud navigeerimismenüü**: parandatud mini-oleku käsitlemine ja lisatud abiteate kuvamine, et parandada kasutaja navigeerimist.
@@ -130,7 +130,7 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 - 🖼️ **OBS viivitusvalik piltide jaoks**: Lisa OBS Studio seadistus, et viivitada stseeni muutusi piltide kuvamisel, parandades üleminekuid.
 - 🔊 **.m4a audioformaadi toetus**: Lisatud ühilduvus `.m4a` audiofailidele, et laiendada toetatud meediatüüpe.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parandused ja täiustused
 
 - 🔍 **Suurenduse taastamine klahvikombinatsiooniga `Ctrl` + `Scroll`**: Võimaldab uuesti koheselt suumi juhtimist + kerimist, et navigeerimine oleks lihtsam.
 - 👤 **Peida kasutamata RÜ-meedia**: Peida kasutamata meedia ringkonaülevaataja külastuste ajal, et säilitada puhtam esitus.
@@ -138,19 +138,19 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 
 ## 25.4.3
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parandused ja täiustused
 
 - ➕ **Media puhastamine alates v25.4.x**: Puhastab automaatselt orvuks jäänud või valesti paigutatud meediafailid alates v25.4.1 kuni v25.4.2, et tagada, et meediafailid ei puuduks või ei oleks meediafailide nimekirjas vales kohas.
 
 ## 25.4.2
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parandused ja täiustused
 
 - ➕ \*_Topelt meediafailide vältimine_: Välista mõnede meediaelementide korduvat lisamist meedia nimekirja.
 
 ## 25.4.1
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parandused ja täiustused
 
 - **Parandatud algus/lõpuaja määramine**: Väldi olukorda, kus kohandatud algus/lõpu aeg saab määratud valele meediafailile.
 - 📝 **Luba kohandatud subtiitreid**: Võimaldab subtiitrite kasutamise isegi siis, kui need ei vasta täielikult meediafailile.
@@ -166,7 +166,7 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 - 🇵🇭 **Uus keel: Tagalog**: Lisati tugi tagalogi keelele, mis laiendab rakenduse mitmekeelsuse võimekust.
 - 🎞 **.m4v-videoformaadi toetus**: Programm toetab meedia ühilduvuse parandamiseks `.m4v` failide taasesitamist.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parandused ja täiustused
 
 - 🎬 **Mitmed algus-/lõpuajad video jaoks**: Võimaldab ühe video ilmumist meediakanalite loetelus mitu korda erinevate kohandatud algus-/lõppaegadega.
 - 📤 **Rühmitatud meedia lisamine automaatsesse eksportimisse**: Ekspordib automaatselt rühmitatud meediaelemendid koos teistega.
@@ -178,7 +178,7 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 
 - 🌏 **Uus keel: Korea**: Lisatud toetus korea keelele, laiendades ligipääsetavust rohkematele kasutajatele.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parandused ja täiustused
 
 - ⚡ **Parandatud jõudlust ja protsessori kasutust**: Optimeeritud jõudlust, et vähendada protsessori kasutamist ja suurendada tõhusust.
 - 🔄**Sünkroniseerimise ja tõrgete lahendamine**: Lahendatud on mitmesugused sünkroonimise ja stabiilsusega seotud probleemid, et parandada usaldusväärsust.
@@ -193,7 +193,7 @@ Täielik nimekiri versioonide vahelistest muudatustest on esitatud failis CHANGE
 - 📅 **Automaatne mälestusõhtu kuupäev ja taust**: Automaatselt tuvastab ja seab mälestusõhtupäeva ning valmistab ette mälestusõhtu koosoleku taustapildi.
 - 📜 **Ekraaniväljaande märkuste kuvamine rakenduses**: Näidake väljaande märkusi otse rakenduses, et kasutajad saaksid pärast uuendust hõlpsasti muudatusi üle vaadata.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Parandused ja täiustused
 
 - ⚡ **Optimeeritud nutikas vahemälu puhastamine**: Parandatud nutika vahemälu puhastamise loogikat, et saavutada parem jõudlus ja tõhusus.
 - 📂 **Korrektne ringkonnaülevaataja meediafailide paigutus**: Veenduge, et ringkonnaülevaataja külastuse meediafailid on paigutatud õigesse sektsiooni.
