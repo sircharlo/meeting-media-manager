@@ -4181,7 +4181,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.19.3, @types/node@npm:^22.7.7":
+"@types/node@npm:^22.19.5":
+  version: 22.19.5
+  resolution: "@types/node@npm:22.19.5"
+  dependencies:
+    undici-types: "npm:~6.21.0"
+  checksum: 10c0/753c86850d2e3d9a7ccaa2569d565ab20d9a69389871e45283f71035c62fed649511aee7e05da8209b41e15438085c43b533d01e9ed3bb2e9dbd570aef732354
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^22.7.7":
   version: 22.19.3
   resolution: "@types/node@npm:22.19.3"
   dependencies:
@@ -11083,7 +11092,7 @@ __metadata:
     "@types/lodash-es": "npm:^4.17.12"
     "@types/mousetrap": "npm:^1.6.15"
     "@types/ms": "npm:^2"
-    "@types/node": "npm:^22.19.3"
+    "@types/node": "npm:^22.19.5"
     "@types/pretty-bytes": "npm:^5.2.0"
     "@types/yauzl": "npm:^2.10.3"
     "@typescript-eslint/utils": "npm:^8.53.0"
