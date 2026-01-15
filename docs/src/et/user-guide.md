@@ -52,25 +52,25 @@ Download speed depends on your internet connection and the size of media files. 
 
 ::: -->
 
-### Organizing Media {#organizing-media}
+### Meedia organiseerimine {#organizing-media}
 
-M³ automatically organizes media by meeting type and section:
+M³ korraldab meedia automaatselt koosoleku tüübi ja sektsiooni järgi:
 
-- **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
-- **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
+- **Koosoleku osad** – Meedia on rühmitatud koosoleku osade järgi (avalik kõne, Aarded Jumala sõnast jne)
+- **Kohandatud osad** – võid luua kohandatud osad täiendavate meediumite jaoks, kui sellel konkreetsel päeval ei ole ühtegi koosolekut kavandatud
 
-## Media Presentation {#media-presentation}
+## Meedia esitlemine {#media-presentation}
 
-### Opening the Media Player {#opening-media-player}
+### Meedia esitaja avamine {#opening-media-player}
 
-To present media during a meeting:
+Meedia esitamine koosoleku ajal:
 
-1. Select the date and media item you want to present
-2. Click the play button or use the keyboard shortcut
-3. The media will start playing on the media display
-4. Use the controls to play, pause, or navigate through media
+1. Vali kuupäev ja meedia, mida soovid esitada
+2. Klõpsa nuppu „Esita” või kasuta klaviatuuril kiirklahvi
+3. Meedia hakkab mängima meediaekraanil
+4. Kasuta juhtnuppe meedia esitamiseks, peatamiseks või navigeerimiseks
 
-### Media Player Controls {#media-player-controls}
+### Meediamängija juhtimispaneel {#media-player-controls}
 
 The media player provides comprehensive controls:
 
