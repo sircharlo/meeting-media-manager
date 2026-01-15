@@ -126,20 +126,20 @@ Taustamuusika funktsioon hõlmab:
 
 ### :video_camera: Kuidas seadistada Zoom-iga koostöö? {#zoom-setup}
 
-To integrate with Zoom:
+Zoom-iga koostöö:
 
-1. Enable Zoom integration in M³ settings
-2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
-3. M³ will automatically start and stop Zoom screen sharing during media presentations
+1. Luba Zoom-iga koostöö M³ seadetes
+2. Seadista Zoomis ekraani jagamise otsetee. Veendu, et kiirklahv on Zoom-i seadetes „globaalne“.
+3. M³ käivitab ja peatab automaatselt Zoom ekraani jagamise meedia esitluste ajal
 
-## OBS Studio Integration {#faq-obs-integration}
+## Koostöö OBS Studioga {#faq-obs-integration}
 
-### :video_camera: How do I set up the OBS Studio integration? {#faq-obs-setup}
+### :video_camera: Kuidas seadistada OBS Studio-ga koostöö? {#faq-obs-setup}
 
-To integrate with OBS Studio:
+Et teha koostööd OBS Studio-ga:
 
-1. Install OBS Studio and the WebSocket plugin
-2. Enable OBS integration in M³ settings
+1. Installi OBS Studio ja WebSocket plugin (kui see on vajalik)
+2. Luba OBS Studio-ga koostöö M³ seadetes
 3. Enter the OBS port and password
 4. Configure scenes for camera, media, and images
 5. Test playback
