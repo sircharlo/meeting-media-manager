@@ -211,7 +211,7 @@
   "go-home": "Ugrás a kezdőlapra",
   "go-to-settings": "Ugrás a @:settings",
   "gpu-crash-detected": "Grafikus kártya összeomlása észlelve",
-  "gpu-crash-detected-explain": "A hardveres gyorsítás egy nemrégiben bekövetkezett összeomlás miatt ideiglenesen letiltásra került. A következő induláskor automatikusan újra engedélyezésre kerül, hacsak nem tiltja le manuálisan a beállításokban.",
+  "gpu-crash-detected-explain": "Hardware acceleration was temporarily disabled due to a recent crash. If this persists, please update your graphics drivers or disable hardware acceleration in settings.",
   "gpu-crash-detected-restarting": "GPU-meghibásodás észlelve. Átváltás szoftveres módra. Kérjük, indítsa újra az alkalmazást a módosítások érvénybe léptetéséhez.",
   "greek-scriptures": "Keresztény görög iratok",
   "hardwareAccelerationDisabled": "Hardveres gyorsítás letiltva",

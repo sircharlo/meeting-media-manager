@@ -211,7 +211,7 @@
   "go-home": "Avalehele",
   "go-to-settings": "Liigu @:settings",
   "gpu-crash-detected": "GPU tõrge tuvastatud",
-  "gpu-crash-detected-explain": "Riistvarakiirendus on hiljutise tõrke tõttu ajutiselt välja lülitatud. See lülitatakse järgmisel M³ käivitamisel automaatselt uuesti sisse, kui te seda seadetes käsitsi välja ei lülita.",
+  "gpu-crash-detected-explain": "Hardware acceleration was temporarily disabled due to a recent crash. If this persists, please update your graphics drivers or disable hardware acceleration in settings.",
   "gpu-crash-detected-restarting": "GPU tõrge tuvastatud. Lülitun tarkvararežiimile. Palun taaskäivita rakendus, et muudatused jõustuksid.",
   "greek-scriptures": "Kreekakeelne osa",
   "hardwareAccelerationDisabled": "Riistvarakiirendus on keelatud",
