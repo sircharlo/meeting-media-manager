@@ -523,7 +523,11 @@ async function processNonVideoItem(
     VerseNumbers: item.VerseNumbers,
   };
 
-  await processMissingMediaInfo([multimediaItem], selectedDate.value, true);
+  await processMissingMediaInfo({
+    allMedia: [multimediaItem],
+    keepMediaLabels: true,
+    meetingDate: selectedDate.value,
+  });
 
   // nwt is excluded from mapping
   if (multimediaItem.KeySymbol === 'nwt') {

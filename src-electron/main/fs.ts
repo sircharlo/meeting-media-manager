@@ -2,8 +2,9 @@ import type { FileDialogFilter, UnzipOptions, UnzipResult } from 'src/types';
 
 import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
 import { dialog } from 'electron';
-import { ensureDir, stat, type Stats } from 'fs-extra';
+import { ensureDir, type Stats } from 'fs-extra';
 import { createWriteStream } from 'node:fs';
+import { stat } from 'node:fs/promises';
 import { pipeline } from 'node:stream/promises';
 import { captureElectronError } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';

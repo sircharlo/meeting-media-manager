@@ -305,26 +305,38 @@ export const fetchMediaItems = async (
   try {
     const url = `${base}/v1/media-items/${publication.langwritten}`;
 
-    const id = [
-      publication.pub ? `pub-${publication.pub}` : `docid-${publication.docid}`,
-      publication.pub
-        ? publication.issue?.toString().replace(/(\d{6})00$/gm, '$1')
-        : null,
-      publication.track,
-      publication.fileformat?.toLowerCase().includes('mp4')
-        ? 'VIDEO'
-        : publication.fileformat?.toLowerCase().includes('mp3')
-          ? 'AUDIO'
+    const getId = (track?: null | number | string) =>
+      [
+        publication.pub
+          ? `pub-${publication.pub}`
+          : `docid-${publication.docid}`,
+        publication.pub
+          ? publication.issue?.toString().replace(/(\d{6})00$/gm, '$1')
           : null,
-    ]
-      .filter((v) => !!v && v !== '0')
-      .join('_');
+        track,
+        publication.fileformat?.toLowerCase().includes('mp4')
+          ? 'VIDEO'
+          : publication.fileformat?.toLowerCase().includes('mp3')
+            ? 'AUDIO'
+            : null,
+      ]
+        .filter((v) => !!v && v !== '0')
+        .join('_');
 
-    const response = await fetchJson<MediaItemsMediator>(
-      `${url}/${id}`,
+    let response = await fetchJson<MediaItemsMediator>(
+      `${url}/${getId(publication.track)}`,
       undefined,
       online,
     );
+
+    if (!response?.media?.length && !publication.track) {
+      response = await fetchJson<MediaItemsMediator>(
+        `${url}/${getId('x')}`,
+        undefined,
+        online,
+      );
+    }
+
     return response;
   } catch (e) {
     errorCatcher(e);

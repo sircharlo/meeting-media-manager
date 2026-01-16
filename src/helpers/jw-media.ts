@@ -282,10 +282,10 @@ export const addJwpubDocumentMediaToFiles = async (
         );
       }
     }
-    await processMissingMediaInfo(
-      filteredMultimediaItems,
-      meetingDate || currentStateStore.selectedDate,
-    );
+    await processMissingMediaInfo({
+      allMedia: filteredMultimediaItems,
+      meetingDate: meetingDate || currentStateStore.selectedDate,
+    });
     const mediaItems = currentStateStore.selectedDateObject
       ? await dynamicMediaMapper(
           filteredMultimediaItems,
@@ -1401,10 +1401,11 @@ export const getMemorialMedia = async () => {
       }
 
       if (results.introVideos.length) {
-        await processMissingMediaInfo(
-          results.introVideos,
-          currentStateStore.currentSettings?.memorialDate || undefined,
-        );
+        await processMissingMediaInfo({
+          allMedia: results.introVideos,
+          isDynamicMedia: true,
+          meetingDate: currentStateStore.currentSettings?.memorialDate,
+        });
       }
 
       if (results.bg || results.introVideos.length) {
@@ -1608,8 +1609,10 @@ export const dynamicMediaMapper = async (
           ? pathToFileURL(m.FilePath)
           : pubMediaId;
 
-        const isVideoFile = isVideo(m.FilePath);
-        const isAudioFile = isAudio(m.FilePath);
+        const isVideoFile =
+          m.MimeType?.includes('video') || isVideo(m.FilePath);
+        const isAudioFile =
+          m.MimeType?.includes('audio') || isAudio(m.FilePath);
 
         const duration = await resolveDuration(m, isVideoFile, isAudioFile);
 
@@ -2251,7 +2254,11 @@ export const getWeMedia = async (lookupDate: Date) => {
       );
       if (videoMarkers) media.VideoMarkers = videoMarkers;
     }
-    await processMissingMediaInfo(allMedia, formatDate(lookupDate, 'YYYYMMDD'));
+    await processMissingMediaInfo({
+      allMedia,
+      isDynamicMedia: true,
+      meetingDate: formatDate(lookupDate, 'YYYYMMDD'),
+    });
     const mediaForDay = await dynamicMediaMapper(
       allMedia,
       lookupDate,
@@ -2375,10 +2382,11 @@ export const getMwMedia = async (lookupDate: Date) => {
       }
     }
     const errors =
-      (await processMissingMediaInfo(
+      (await processMissingMediaInfo({
         allMedia,
-        formatDate(lookupDate, 'YYYYMMDD'),
-      )) || [];
+        isDynamicMedia: true,
+        meetingDate: formatDate(lookupDate, 'YYYYMMDD'),
+      })) || [];
     const mediaForDay = await dynamicMediaMapper(
       allMedia,
       lookupDate,
@@ -2405,11 +2413,17 @@ export const getMwMedia = async (lookupDate: Date) => {
   }
 };
 
-export async function processMissingMediaInfo(
-  allMedia: MultimediaItem[],
-  meetingDate?: string,
+export async function processMissingMediaInfo({
+  allMedia,
+  isDynamicMedia = false,
   keepMediaLabels = false,
-) {
+  meetingDate,
+}: {
+  allMedia: MultimediaItem[];
+  isDynamicMedia?: boolean;
+  keepMediaLabels?: boolean;
+  meetingDate?: `${number}/${number}/${number}` | null | string;
+}) {
   try {
     const currentStateStore = useCurrentStateStore();
     const errors = [];
@@ -2510,7 +2524,7 @@ export async function processMissingMediaInfo(
 
           const uniqueId = await downloadAdditionalRemoteVideo(
             chapterMedia,
-            meetingDate,
+            meetingDate || undefined,
             media.ThumbnailFilePath,
             false,
             media.Label,
@@ -2534,6 +2548,7 @@ export async function processMissingMediaInfo(
               } = await downloadMissingMedia(
                 publicationFetcher,
                 meetingDate || currentStateStore.selectedDate,
+                isDynamicMedia,
               );
               media.FilePath = FilePath ?? media.FilePath;
               media.Label = keepMediaLabels
@@ -2654,6 +2669,7 @@ export const getJwMepsInfo = async () => {
 const downloadMissingMedia = async (
   publication: PublicationFetcher,
   meetingDate?: string,
+  isDynamicMedia = false,
 ) => {
   try {
     const pubDir = await getPublicationDirectory(publication);
@@ -2717,6 +2733,17 @@ const downloadMissingMedia = async (
       return { FilePath: '' };
     }
     const jwMediaInfo = await getJwMediaInfo(publication);
+
+    if (isDynamicMedia && (bestItem.duration || 0) > 2100) {
+      return {
+        FilePath: '',
+        Label: bestItem.title,
+        StreamDuration: bestItem.duration,
+        StreamThumbnailUrl: jwMediaInfo.thumbnail,
+        StreamUrl: bestItem.file.url,
+      };
+    }
+
     const downloadedFile = await downloadFileIfNeeded({
       dir: pubDir,
       meetingDate,

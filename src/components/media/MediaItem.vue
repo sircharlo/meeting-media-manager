@@ -19,7 +19,9 @@
       <div class="col-shrink">
         <div
           class="q-pr-none rounded-borders overflow-hidden relative-position bg-black"
-          :style="{ opacity: !fileIsAvailable ? 0.64 : undefined }"
+          :style="{
+            opacity: !fileIsAvailable && !streamIsAvailable ? 0.64 : undefined,
+          }"
         >
           <template v-if="media.isImage">
             <VueZoomable
@@ -407,7 +409,7 @@
             :class="{
               'q-px-md': true,
               col: true,
-              'text-grey': !fileIsAvailable,
+              'text-grey': !fileIsAvailable && !streamIsAvailable,
             }"
           >
             <q-input
@@ -434,7 +436,10 @@
                 {{ displayMediaTitle }}
               </q-tooltip>
             </div>
-            <div v-if="!fileIsAvailable" class="text-caption">
+            <div
+              v-if="!fileIsAvailable && !streamIsAvailable"
+              class="text-caption"
+            >
               {{ t('media-item-missing-explain') }}
             </div>
           </div>
@@ -577,18 +582,23 @@
 
               <q-btn
                 ref="playButton"
-                :color="fileIsAvailable ? 'primary' : 'grey'"
+                :color="
+                  fileIsAvailable || streamIsAvailable ? 'primary' : 'grey'
+                "
                 :disable="
                   (mediaPlaying.url !== '' &&
                     (isVideo(mediaPlaying.url) || isAudio(mediaPlaying.url))) ||
-                  !fileIsAvailable
+                  (!fileIsAvailable && !streamIsAvailable)
                 "
                 :icon="localFile ? 'mmm-play' : 'mmm-stream-play'"
                 rounded
-                :unelevated="!fileIsAvailable"
+                :unelevated="!fileIsAvailable && !streamIsAvailable"
                 @click="setMediaPlaying(media)"
               >
-                <q-tooltip v-if="!localFile && fileIsAvailable" :delay="1000">
+                <q-tooltip
+                  v-if="!fileIsAvailable && streamIsAvailable"
+                  :delay="1000"
+                >
                   {{ t('play-while-downloading') }}
                 </q-tooltip>
               </q-btn>
@@ -1924,6 +1934,10 @@ const currentSongIsDuplicated = computed(() => {
 
 const fileIsAvailable = computed(() => {
   return isFileUrl(props.media.fileUrl);
+});
+
+const streamIsAvailable = computed(() => {
+  return !!props.media.streamUrl;
 });
 
 const tagTooltipText = computed(() => {
