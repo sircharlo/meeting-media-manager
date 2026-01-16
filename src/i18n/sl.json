@@ -211,7 +211,7 @@
   "go-home": "Pojdi domov",
   "go-to-settings": "Pojdi na @:settings",
   "gpu-crash-detected": "Zaznana je bila napaka grafične kartice (GPU)",
-  "gpu-crash-detected-explain": "Hardware acceleration was temporarily disabled due to a recent crash. If this persists, please update your graphics drivers or disable hardware acceleration in settings.",
+  "gpu-crash-detected-explain": "Strojno pospeševanje je bilo začasno onemogočeno zaradi nedavne napake. Če se to nadaljuje, posodobi grafične gonilnike ali onemogoči strojno pospeševanje v nastavitvah.",
   "gpu-crash-detected-restarting": "Zaznana je bila napaka grafične kartice (GPU). Preklapljam na programski način delovanja. Za uveljavitev sprememb ponovno zaženi aplikacijo.",
   "greek-scriptures": "Grški spisi",
   "hardwareAccelerationDisabled": "Strojno pospeševanje onemogočeno",
