@@ -57,19 +57,15 @@ protocol.registerSchemesAsPrivileged([
 initSentry({
   beforeSend(event) {
     try {
+      if (isAppQuitting) {
+        return null;
+      }
+
       const crashpad = event.contexts?.crashpad ?? event.contexts?.electron;
       const dumpFile = crashpad?.['DumpWithoutCrashing-file'];
       // Ignore known non-fatal native crash reports
       if (typeof dumpFile === 'string' && dumpFile.includes('site_info.cc')) {
         return null;
-      }
-
-      if (isAppQuitting) {
-        const error = event.exception?.values?.[0];
-        if (error?.value?.includes('Object has been destroyed')) {
-          // Ignore electron-dl-manager errors that occur after app quit
-          return null;
-        }
       }
 
       const error = event.exception?.values?.[0];
@@ -269,6 +265,7 @@ if (!gotTheLock) {
   });
 
   app.on('before-quit', (e) => {
+    setAppQuitting(true);
     if (PLATFORM !== 'darwin') return;
     if (!mainWindow || mainWindow.isDestroyed()) return;
     if (authorizedClose) {
