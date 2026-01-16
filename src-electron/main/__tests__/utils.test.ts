@@ -43,6 +43,12 @@ describe('isIgnoredUpdateError', () => {
     expect(isIgnoredUpdateError('ECONNRESET')).toBe(true);
     expect(isIgnoredUpdateError('HttpError: 404')).toBe(true);
     expect(isIgnoredUpdateError('504 Gateway Time-out')).toBe(true);
+    expect(isIgnoredUpdateError('net::ERR_CONNECTION_CLOSED')).toBe(true);
+    expect(
+      isIgnoredUpdateError(
+        "Error: ENOENT: no such file or directory, unlink '/home/test/dir/meeting-media-manager-30.1.4-x86_64.AppImage'",
+      ),
+    ).toBe(true);
   });
 
   it('should return false for non-ignored errors', () => {

@@ -233,6 +233,8 @@ export function isIgnoredUpdateError(
     'EPIPE',
     'HttpError: 404',
     'ERR_NETWORK_CHANGED',
+    'ERR_CONNECTION_CLOSED',
+    'ENOENT: no such file or directory, unlink',
   ];
 
   const errorMsg =
