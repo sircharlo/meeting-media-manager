@@ -1,4 +1,4 @@
-import { captureException } from '@sentry/electron/renderer';
+import { captureException } from '@sentry/vue';
 
 type CaptureCtx = Parameters<typeof captureException>[1];
 

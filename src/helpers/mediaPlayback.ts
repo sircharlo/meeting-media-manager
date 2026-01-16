@@ -73,7 +73,7 @@ const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
         },
       }),
     );
-    errorCatcher(error, {
+    await errorCatcher(error, {
       contexts: {
         fn: {
           args: {
@@ -109,7 +109,7 @@ export const unzipJwpub = async (
       try {
         await remove(outputPath);
       } catch (e) {
-        errorCatcher(e, {
+        await errorCatcher(e, {
           contexts: {
             fn: {
               args: {
@@ -140,7 +140,7 @@ export const unzipJwpub = async (
       ongoingUnzips.delete(cacheKey);
     }
   } catch (error) {
-    errorCatcher(error, {
+    await errorCatcher(error, {
       contexts: {
         fn: {
           args: {
@@ -176,7 +176,7 @@ export const getMediaFromJwPlaylist = async (
         playlistName = playlistNameQuery[0].Name + ' - ';
       }
     } catch (error) {
-      errorCatcher(error, {
+      await errorCatcher(error, {
         contexts: {
           fn: {
             args: {
@@ -245,7 +245,7 @@ export const getMediaFromJwPlaylist = async (
             );
             item.ThumbnailFilePath += '.jpg';
           } catch (error) {
-            errorCatcher(error, {
+            await errorCatcher(error, {
               contexts: {
                 fn: {
                   args: {
@@ -336,7 +336,7 @@ export const getMediaFromJwPlaylist = async (
     );
     return mappedPlaylistMediaItems;
   } catch (error) {
-    errorCatcher(error, {
+    await errorCatcher(error, {
       contexts: {
         fn: {
           args: {
@@ -352,7 +352,7 @@ export const getMediaFromJwPlaylist = async (
   }
 };
 
-export const showMediaWindow = (state?: boolean) => {
+export const showMediaWindow = async (state?: boolean) => {
   try {
     const currentState = useCurrentStateStore();
     if (typeof state === 'undefined') {
@@ -364,7 +364,7 @@ export const showMediaWindow = (state?: boolean) => {
       currentState.currentSettings?.enableMediaWindowFadeTransitions,
     );
   } catch (error) {
-    errorCatcher(error, {
+    await errorCatcher(error, {
       contexts: {
         fn: {
           args: {

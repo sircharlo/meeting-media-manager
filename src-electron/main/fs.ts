@@ -2,7 +2,7 @@ import type { FileDialogFilter, UnzipOptions, UnzipResult } from 'src/types';
 
 import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
 import { dialog } from 'electron';
-import { ensureDir, type Stats } from 'fs-extra';
+import { ensureDir, stat, type Stats } from 'fs-extra';
 import { createWriteStream } from 'node:fs';
 import { pipeline } from 'node:stream/promises';
 import { captureElectronError } from 'src-electron/main/utils';
@@ -79,7 +79,9 @@ export async function unzipFile(
   const existing = ongoingDecompressions.get(cacheKey);
   if (existing) return existing;
 
-  const decompress = (isRetry = false): Promise<UnzipResult[]> => {
+  const decompress = async (isRetry = false): Promise<UnzipResult[]> => {
+    const stats = await stat(input).catch(() => undefined);
+
     return new Promise<UnzipResult[]>((resolve, reject) => {
       const extractedFiles: UnzipResult[] = [];
       yauzl.open(input, { lazyEntries: true }, (err, zipfile) => {
@@ -87,9 +89,12 @@ export async function unzipFile(
           captureElectronError(err, {
             contexts: {
               fn: {
-                args: { input, output },
+                args: { input, output, stats },
                 name: `unzipFile yauzl.open${isRetry ? ' (retry)' : ''}`,
               },
+            },
+            tags: {
+              isRetry: isRetry.toString(),
             },
           });
 
