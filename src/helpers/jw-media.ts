@@ -1514,7 +1514,8 @@ const getParagraphNumbers = (
 
     // Check if it's a simple range (no numbers between first and last that break the sequence)
     const between = numbers.slice(1, -1);
-    if (last && between.some((n) => n > last)) return last;
+    if (first && last && between.some((n) => n > last || n < first))
+      return last;
 
     // Try to extract the range string
     const rangeMatch = caption.match(new RegExp(`${first}.*?${last}`));
