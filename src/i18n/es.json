@@ -211,7 +211,7 @@
   "go-home": "Ir a inicio.",
   "go-to-settings": "Ir a @:settings",
   "gpu-crash-detected": "Se ha detectado un error de GPU",
-  "gpu-crash-detected-explain": "La aceleración de hardware se ha desactivado temporalmente debido a un error reciente. Se volverá a activar automáticamente la próxima vez que se ejecute M³, a menos que lo desactive manualmente en la configuración.",
+  "gpu-crash-detected-explain": "Hardware acceleration was temporarily disabled due to a recent crash. If this persists, please update your graphics drivers or disable hardware acceleration in settings.",
   "gpu-crash-detected-restarting": "Se ha detectado un error de GPU. Cambiando al modo de software. Reinicie la aplicación para que los cambios surtan efecto.",
   "greek-scriptures": "Escrituras griegas cristianas",
   "hardwareAccelerationDisabled": "Aceleración de hardware desactivada",
