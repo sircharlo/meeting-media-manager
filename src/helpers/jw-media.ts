@@ -24,6 +24,7 @@ import {
   FEB_2023,
   FOOTNOTE_TARGET_PARAGRAPH,
   LAST_SONG_ORDINAL,
+  LONG_MEDIA_DURATION,
   MAX_SONGS,
 } from 'src/constants/jw';
 import mepslangs from 'src/constants/mepslangs';
@@ -2735,7 +2736,7 @@ const downloadMissingMedia = async (
     }
     const jwMediaInfo = await getJwMediaInfo(publication);
 
-    if (isDynamicMedia && (bestItem.duration || 0) > 2100) {
+    if (isDynamicMedia && (bestItem.duration || 0) > LONG_MEDIA_DURATION) {
       return {
         FilePath: '',
         Label: bestItem.title,

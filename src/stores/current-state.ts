@@ -11,6 +11,7 @@ import type {
 } from 'src/types';
 
 import { defineStore } from 'pinia';
+import { LONG_MEDIA_DURATION } from 'src/constants/jw';
 import { settingsDefinitions } from 'src/constants/settings';
 import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -351,7 +352,10 @@ export const useCurrentStateStore = defineStore('current-state', {
       );
 
       return allMedia.filter(
-        (media) => !media.children?.length && !isFileUrl(media.fileUrl),
+        (media) =>
+          (media.duration ?? 0) < LONG_MEDIA_DURATION && // Filter out long media
+          !media.children?.length && // Filter out media with children
+          !isFileUrl(media.fileUrl), // Filter out media with valid file URLs
       );
     },
     selectedDateObject: (state): DateInfo | null => {
