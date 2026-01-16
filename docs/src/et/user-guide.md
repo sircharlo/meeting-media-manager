@@ -1,48 +1,48 @@
-# User Guide {#user-guide}
+# Kasutusjuhend {#user-guide}
 
-This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
+See põhjalik kasutusjuhend aitab sul omandada kõik M³ funktsioonid, alates põhilistest seadistustest kuni keerukate meedia esitamise tehnikateni.
 
-## Getting Started {#getting-started}
+## Alustamine {#getting-started}
 
-### Download and Install {#download-and-install}
+### Lae alla ja installi {#download-and-install}
 
-Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
+Laadi alla viimane versioon [Allalaadimine] lehelt (download). See soovitab teie seadmele parima versiooni ja näitab viimast versiooni.
 
-### First Launch {#first-launch}
+### Esimene käivitus {#first-launch}
 
-When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
+Kui käivitad M³ esimest korda, juhendab sind seadistusviisard, mis konfigureerib sinu koguduse jaoks olulised seaded:
 
-1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
-2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
-3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
-4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
-5. **Optional features** - Configure OBS integration, background music, and other advanced features
+1. **Vali oma kasutajaliidese keel** – see määrab, millises keeles kuvatakse M³ menüüd ja nupud
+2. **Vali profiili tüüp** – vali „Tavaline” tavapäraseks koguduse kasutamiseks või „Muu” erakorraliste sündmuste jaoks
+3. **Koguduse andmete konfigureerimine** – Sisesta oma koguduse andmed või kasuta automaatset otsingufunktsiooni
+4. **Koosolekute ajakava seadistamine** – seadista oma nädala keskel ja nädalavahetusel toimuvate koosolekute ajad
+5. **Valikulised funktsioonid** – OBS-i koostöö, taustamuusika ja muude täiustatud funktsioonide konfigureerimine
 
 :::tip Nõuanne
 
-Take your time during setup - but you can always change these settings later in the Settings menu.
+Võta seadistamiseks aega - kuid saad seadeid alati hiljem menüüs „Seaded” muuta.
 
 :::
 
-### Main Interface Overview {#main-interface}
+### Kasutajaliidese ülevaade {#main-interface}
 
-The main M³ interface consists of several key areas:
+M³ kasutajaliides koosneb mitmest põhivaldkonnast:
 
-- **Navigation Drawer** - Access different sections and settings
-- **Calendar View** - Browse media by date
-- **Media List** - View and manage media for selected dates
-- **Toolbar** - Quick access to common functions
-- **Status Bar** - Shows download progress, and background music and OBS Studio connection status
+- **Navigatsioonimenüü** – juurdepääs erinevatele osadele ja seadistustele
+- **Kalendri vaade** – sirvi meediat kuupäeva järgi
+- **Meedialoend** – valitud kuupäevade meedia vaatamine ja haldamine
+- **Tööriistariba** – kiire juurdepääs tavalistele funktsioonidele
+- **Staatusriba** - Näitab allalaadimise edenemist, taustamuusika ja OBS Studio ühenduse staatust
 
-## Media Management {#user-guide-media-management}
+## Põhimeedia haldus {#user-guide-media-management}
 
-### Understanding the Calendar View {#calendar-view}
+### Kalendri vaate mõistmine {#calendar-view}
 
-The calendar view shows your meeting schedule and available media:
+Kalendri vaade näitab koosolekute ajakava ja kättesaadavaid meediakanaleid:
 
-- **Meeting Days** - Highlighted days show when meetings are scheduled
-- **Media Indicators** - Icons show what types of media are available
-- **Date Navigation** - Use arrow keys to navigate between months
+- **Koosolekute päevad** – esiletõstetud päevad näitavad, millal koosolekud on kavandatud
+- **Meediaindikaatorid** – ikoonid näitavad, millised meediatüübid on saadaval
+- **Kuupäeva navigeerimine** - Kasuta nooleklahve kuude vahel navigeerimiseks
 
 <!-- ### Downloading Media {#downloading-media}
 
@@ -52,25 +52,25 @@ Download speed depends on your internet connection and the size of media files. 
 
 ::: -->
 
-### Organizing Media {#organizing-media}
+### Meedia organiseerimine {#organizing-media}
 
-M³ automatically organizes media by meeting type and section:
+M³ korraldab meedia automaatselt koosoleku tüübi ja sektsiooni järgi:
 
-- **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
-- **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
+- **Koosoleku osad** – Meedia on rühmitatud koosoleku osade järgi (avalik kõne, Aarded Jumala sõnast jne)
+- **Kohandatud osad** – võid luua kohandatud osad täiendavate meediumite jaoks, kui sellel konkreetsel päeval ei ole ühtegi koosolekut kavandatud
 
-## Media Presentation {#media-presentation}
+## Meedia esitlemine {#media-presentation}
 
-### Opening the Media Player {#opening-media-player}
+### Meedia esitaja avamine {#opening-media-player}
 
-To present media during a meeting:
+Meedia esitamine koosoleku ajal:
 
-1. Select the date and media item you want to present
-2. Click the play button or use the keyboard shortcut
-3. The media will start playing on the media display
-4. Use the controls to play, pause, or navigate through media
+1. Vali kuupäev ja meedia, mida soovid esitada
+2. Klõpsa nuppu „Esita” või kasuta klaviatuuril kiirklahvi
+3. Meedia hakkab mängima meediaekraanil
+4. Kasuta juhtnuppe meedia esitamiseks, peatamiseks või navigeerimiseks
 
-### Media Player Controls {#media-player-controls}
+### Meediamängija juhtimispaneel {#media-player-controls}
 
 The media player provides comprehensive controls:
 

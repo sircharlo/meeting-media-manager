@@ -8,7 +8,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+- ✨ **Multimedija za spominsko slovesnost**: Samodejno prikaže sliko in uvodni videoposnetek za spominsko slovesnost v podprtih jezikih, ko je izbran datum spominske slovesnosti.
 
 ## v26.1.0
 

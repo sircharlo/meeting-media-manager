@@ -126,210 +126,210 @@ Taustamuusika funktsioon hõlmab:
 
 ### :video_camera: Kuidas seadistada Zoom-iga koostöö? {#zoom-setup}
 
-To integrate with Zoom:
+Zoom-iga koostöö:
 
-1. Enable Zoom integration in M³ settings
-2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
-3. M³ will automatically start and stop Zoom screen sharing during media presentations
+1. Luba Zoom-iga koostöö M³ seadetes
+2. Seadista Zoomis ekraani jagamise otsetee. Veendu, et kiirklahv on Zoom-i seadetes „globaalne“.
+3. M³ käivitab ja peatab automaatselt Zoom ekraani jagamise meedia esitluste ajal
 
-## OBS Studio Integration {#faq-obs-integration}
+## Koostöö OBS Studioga {#faq-obs-integration}
 
-### :video_camera: How do I set up the OBS Studio integration? {#faq-obs-setup}
+### :video_camera: Kuidas seadistada OBS Studio-ga koostöö? {#faq-obs-setup}
 
-To integrate with OBS Studio:
+Et teha koostööd OBS Studio-ga:
 
-1. Install OBS Studio and the WebSocket plugin
-2. Enable OBS integration in M³ settings
-3. Enter the OBS port and password
-4. Configure scenes for camera, media, and images
-5. Test playback
+1. Installi OBS Studio ja WebSocket plugin (kui see on vajalik)
+2. Luba OBS Studio-ga koostöö M³ seadetes
+3. Sisesta OBS Studio port ja salasõna
+4. Seadista stseenid kaamera, meedia ja piltide jaoks
+5. Testi meedia esitlust
 
-### :arrows_counterclockwise: How does automatic scene switching work? {#faq-scene-switching}
+### :arrows_counterclockwise: Kuidas töötab automaatne stseeni vahetamine? {#faq-scene-switching}
 
-M³ automatically switches OBS scenes based on:
+M³ lülitab OBS Studio-stseene automaatselt ümber järgmiste kriteeriumide alusel:
 
-- Media type (video, image, etc.)
-- Your scene configuration
-- Settings like "Postpone Images"
-- Whether to return to previous scene after media
+- Meedia tüüp (video, pilt jne)
+- Sinu stseeni seadistus
+- Säte nagu "Lükka pildi esitamine edasi"
+- Kas pärast meedia esitamist naasta eelmisele stseenile või mitte
 
-### :pause_button: What is the "Postpone Images" feature? {#faq-postpone-images}
+### :pause_button: Mida tähendab "Lükka pildi esitamine edasi" funktsioon? {#faq-postpone-images}
 
-This feature delays sharing images to OBS until you manually trigger them. This is useful for:
+See funktsioon lükkab piltide jagamise OBS Studio-iga edasi, kuni sa need käsitsi käivitad. See on kasulik kui:
 
-- Showing images to in-person audience first
-- Having more control over timing
-- Avoiding premature scene changes
+- Pilte näidatakse esmalt kohapeal viibivale kuulajaskonnale
+- On vaja suuremat kontrolli ajastuse üle
+- Enneaegsete stseenivahetuste vältimiseks
 
-## Advanced Features {#faq-advanced-features}
+## Lisasätted {#faq-advanced-features}
 
-### :cloud: How does folder monitoring work? {#faq-folder-monitoring}
+### :cloud: Kuidas töötab kausta jälgimine? {#faq-folder-monitoring}
 
-Folder monitoring allows you to:
+Kausta jälgimine lubab sul:
 
-1. Select a folder to watch for new files
-2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
+1. Valida kaust, kus soovid uusi faile jälgida
+2. Importida automaatselt uued meediafailid, mis on sünkroniseeritud pilvesalvestusega, nagu Dropbox või OneDrive
 
-### :file_folder: What is media auto-export? {#faq-media-export}
+### :file_folder: Mis on meedia automaatne eksport? {#faq-media-export}
 
-Media auto-export automatically:
+Meedia automaatne eksport:
 
-1. Exports media files to a specified folder
-2. Organizes files by date and section
-3. Converts files to MP4 format (optional)
-4. Maintains an organized backup of meeting media files
+1. Ekspordib meediafailid kindlasse ettemääratud kausta
+2. Organiseerib failid kuupäeva ja koosoleku osa järgi
+3. Muudab failid MP4 formaati (valikuline)
+4. Säilitab organiseeritud tagavarakoopia koosoleku meediafailidest
 
-### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
+### :family: Kas ma saan kasutada rakenduses mitut kogudust? {#faq-multiple-congregations}
 
-Jah! M³ supports multiple profiles for:
+Jah! M³-s saab kasutada erinevaid profiile:
 
-- Different congregations
-- Special events
-- Different groups
-- Separate settings and media for each
+- Erinevate koguduste tarvis
+- Eriüritusteks
+- Erinevate keelegruppide jaoks
+- Et kasutada iga kasutaja jaoks vajaminevaid sätteid ja meediat
 
-## Troubleshooting {#faq-troubleshooting}
+## Probleemide lahendamine {#faq-troubleshooting}
 
-### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
+### :warning: Meedia ei lae alla. Mida peaksin kontrollima? {#faq-media-not-downloading}
 
-Check these common issues:
+Kontrolli järgmisi põhjuseid:
 
-1. **Meeting Schedule**: Verify your meeting days and times are correct
-2. **Language Settings**: Ensure your media language is set correctly
-3. **Internet Connection**: Check your internet connection
-4. **Language Availability**: Verify media is available in your selected language
+1. **Koosolekute ajakava**: Kontrolli, kas koosolekute päevad ja kellaajad on õiged
+2. **Keelesätted**: Veendu, et meedia keel on õigesti seadistatud
+3. **Internetiühendus**: Kontroll internetiühendust
+4. **Keelte kättesaadavus**: Kontrolli, kas meedia on saadaval sinu valitud keeles
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: The OBS integration isn't working. What should I verify? {#faq-obs-not-working}
+### :video_camera: OBS Studio koostöö ei toimi. Mida peaksin kontrollima? {#faq-obs-not-working}
 
-Check these OBS-related issues:
+Kontrolli järgmisi OBS Studio põhjuseid:
 
-1. **OBS Installation**: Ensure OBS Studio is installed and running
-2. **WebSocket Plugin**: Verify the WebSocket plugin is installed
-3. **Port and Password**: Check your OBS port and password settings
-4. **Firewall**: Ensure the firewall isn't blocking the connection
+1. **OBSi installimine**: Veendu, et OBS Studio on installitud ja töötab
+2. **WebSocket plugin**: kontrolli, kas WebSocket-pistikprogramm on installitud
+3. **Port ja parool**: Kontrolli OBS Studio porti ja parooli seadeid
+4. **Tulemüür**: Veendu, et tulemüür ei blokeeri ühendust
 
-### :speaker: Does Meeting Media Manager automatically send the media audio to Zoom when using OBS Studio? {#audio-to-zoom}
+### :speaker: Kas Meeting Media Manager saadab OBS Studio kasutamisel meediaheli automaatselt Zoomile? {#audio-to-zoom}
 
-**No.** M³ does not automatically send media audio to Zoom or OBS Studio. The video stream works like a virtual camera with no sound, just like a webcam. To have the music/video sound available in Zoom automatically, you need to ensure that Zoom 'hears' the audio feed coming from the computer, and then you should enable the **Original Audio** setting in Zoom.
+**Ei.** M³ ei saada meediaheli automaatselt Zoomile ega OBS Studiole. Videovoog töötab nagu virtuaalne kaamera ilma helita, täpselt nagu veebikaamera. Et muusika/video heli oleks Zoomis automaatselt kättesaadav, pead tagama, et Zoom „kuuleb” arvutist tulevat helisignaali, ning seejärel peaksid Zoomis aktiveerima **Original Audio** (originaalheli) sätte.
 
-**Important Notes:**
+**Olulised märkused:**
 
-- You must enable Original Audio **every time** before starting a Zoom meeting
-- This setting is not related to M³ - you would face the same audio issue when using any other media player and not using Zoom's screen and audio sharing features
-- The Original Audio setting has three sub-options - typically the first two should be enabled and the third disabled for optimal audio quality
-- If you're still experiencing audio issues, you may need to use Zoom's "Share Computer Sound" option instead
-- Alternatively, look into using the Zoom integration instead, as it uses Zoom's native screen sharing.
+- Enne Zoom-koosoleku alustamist pead **iga kord** lubama originaalheli
+- See seade ei ole seotud M³-ga – sama heliprobleem tekib ka siis, kui kasutad mõnda muud meediamängijat ja ei kasuta Zoom-i ekraani ja heli jagamise funktsioone
+- Originaalhelil on kolm alavalikut - tavaliselt peaksid kaks esimest olema sisse lülitatud ja kolmas välja lülitatud, et saavutada optimaalne helikvaliteet
+- Kui heliprobleemid püsivad, võib olla vaja kasutada Zoom'i valikut „Jaga arvuti heli”
+- Alternatiivina võid kaaluda Zoom-iga koostöö kasutamist, kuna see kasutab Zoom-i enda ekraani jagamise funktsiooni.
 
-**Why is this necessary?**
-M³ plays media with sound on your computer, but this audio is not automatically transmitted through the video stream to Zoom when using OBS Studio. The Original Audio setting allows Zoom to capture the audio playing on your computer during screen sharing, if your computer is configured properly (for example: the computer has a second sound card that is used for media playback which Zoom listens to as a microphone.)
+**Miks on see vajalik?**
+M³ mängib sinu arvutis heli sisaldavat meediat, kuid OBS Studio kasutamisel ei edastata seda heli automaatselt videovoogude kaudu Zoomile. Originaalheli võimaldab Zoomil salvestada ekraani jagamise ajal sinu arvutis mängivat heli, kui sinu arvuti on õigesti seadistatud (näiteks: arvutil on teine helikaart, mida kasutatakse meedia taasesituseks ja mida Zoom kuulab mikrofoni rollis)
 
-### :snail: M³ is running slowly. How can I improve performance? {#performance-issues}
+### :snail: M³ töötab aeglaselt. Kuidas saan parandada jõudlust? {#performance-issues}
 
-Try these performance optimizations:
+Proovi järgmisi jõudluse optimeerimisi:
 
-1. **Enable Extra Cache**: Turn on additional caching in settings
-2. **Close Other Apps**: Close unnecessary applications
-3. **Check Disk Space**: Ensure you have sufficient free disk space
-4. **Reduce Resolution**: Lower the maximum resolution setting
+1. **Luba lisamälu**: lülita sisse täiendav vahemälu seadetes
+2. **Sulge muud rakendused**: Sulge mittevajalikud rakendused
+3. **Kontrolli kettaruumi**: veendu, et sul on piisavalt vaba kettaruumi
+4. **Vähenda resolutsiooni**: vähenda maksimaalset resolutsiooni seadet
 
-### :speech_balloon: I'm having language issues. What should I check? {#faq-language-issues}
+### :speech_balloon: Mul on keelega probleeme. Mida peaksin kontrollima? {#faq-language-issues}
 
-Verify these language settings:
+Kontrolli neid keelesätteid:
 
-1. **Interface Language**: Check your display language setting
-2. **Media Language**: Verify your media download language
-3. **Language Availability**: Ensure the media language is available on the official website of Jehovah's Witnesses
-4. **Fallback Language**: Try setting a fallback language
+1. Kasutajaliidese keel: Kontrolli oma ekraani keele seadeid
+2. **Meedia keel**: Kontrolli meedia allalaadimise keelt
+3. **Keelte kättesaadavus**: Veendu, et meedia keel on kättesaadav Jehoova tunnistajate ametlikul veebisaidil
+4. **Varukeel**: proovi määrata varukeel
 
-## Support and Community {#support-community}
+## Tugi ja kogukond {#support-community}
 
-### :radioactive: How do I report an issue? {#how-do-i-report-an-issue}
+### :radioactive: Kuidas ma saan probleemist teada anda? {#how-do-i-report-an-issue}
 
-Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository. Include:
+Palun [esita probleem](https://github.com/sircharlo/meeting-media-manager/issues) ametlikus GitHubi andmebaasis. Kirjuta:
 
-- Detailed description of the problem
-- Steps to reproduce the issue
-- Your operating system and M³ version
-- Any error messages, logs and screenshots
+- Probleemi üksikasjalik kirjeldus
+- Probleemi kordamise sammud
+- Sinu arvuti operatsioonisüsteem ja M³ versioon
+- Kõik veateated, logid ja ekraanipildid
 
-### :new: How can I request a new feature or enhancement? {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: Kuidas saan taotleda uut funktsiooni või täiustust? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository. Describe:
+Palun [ava arutelu](https://github.com/sircharlo/meeting-media-manager/discussions) ametlikus GitHubi repositooriumis. Kirjelda:
 
-- The feature you'd like to see
-- How it would benefit users
-- Any specific requirements or preferences
+- Funktsioon, mida soovid näha
+- Kuidas see kasutajatele kasuks tuleks
+- Mis tahes konkreetsed nõuded või eelistused
 
-### :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
+### :handshake: Kuidas saan ma panustada koodi arendamisse? {#how-can-i-contribute-some-code}
 
-Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository. We welcome code contributions and Pull Requests!
+Palun [vaata koostöö juhendit](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) ametlikus GitHubi repositooriumis. Ootame koodipanuseid ja Pull Requests-e!
 
-### :globe_with_meridians: How can I help with translations? {#translations}
+### :globe_with_meridians: Kuidas saan ma tõlkimisega aidata? {#translations}
 
-M³ uses Crowdin for translation management. You can contribute translations by:
+M³ kasutab tõlkehalduseks Crowdin keskkonda. Saad tõlkeid lisada järgmiselt:
 
-1. Visiting the [Crowdin project](https://crowdin.com/project/meeting-media-manager)
-2. Selecting your language
-3. Translating strings that need work
-4. Reviewing existing translations
+1. Külastades [Crowdin projekti](https://crowdin.com/project/meeting-media-manager)
+2. Valides keele
+3. Tõlkides fraasid, mis vajavad tõlkimist
+4. Vaadates üle olemasolevad tõlked
 
-### :x: Can I make a donation to the project? {#can-i-make-a-donation-to-the-project}
+### :x: Kas ma saan teha projektile annetuse? {#can-i-make-a-donation-to-the-project}
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+Täname sind sinu huvi eest projekti toetamise vastu! Matteuse 10:8 vaimus **ei võeta vastu** annetusi ning ei võeta ka edaspidi. See rakendus on loodud armastusest ja vabast ajast. Palun naudi! :tada:
 
-:::tip :book: Matthew 10:8
+:::tip :book: Matteuse 10:8
 
-"You received free, give free."
+„Tasuta olete saanud, tasuta andke“.
 
 :::
 
-## Technical Questions {#technical-questions}
+## Tehnilised küsimused {#technical-questions}
 
-### :computer: What hardware and software requirements does M³ have? {#hardware-and-software-requirements}
+### :computer: Millised on M³ riist- ja tarkvaranõuded? {#hardware-and-software-requirements}
 
-M³ is designed to work on a wide range of operating systems:
+M³ on loodud töötama paljude erinevate operatsioonisüsteemidega:
 
 - **Windows**: Windows 10 ja uuemad versioonid (saadaval 64-bitine ja 32-bitine versioon)
 - **macOS**: macOS 10.15 (Catalina) ja uuemad versioonid (toetab Intel ja Apple Silicon protsessoreid)
 - **Linux**: enamik kaasaegseid Linuxi distributsioone (AppImage-vorming)
 
-M³ has the following hardware requirements:
+M³-l on järgmised riistvaranõuded:
 
-- **Minimum**: 4GB RAM, 6GB free disk space
-- **Recommended**: 8GB RAM, 15GB free disk space for media caching
-- **Network**: Internet connection for media downloads
+- **Minimaalselt**: 4 GB RAM, 6 GB vaba kettaruumi
+- **Soovitatav**: 8 GB RAM, 15 GB vaba kettaruumi meedia puhverdamiseks
+- **Internetiühendus**: Internetiühendus meedia allalaadimiseks
 
-Depending on the features you use, M³ also requires the following additional software:
+Sõltuvalt kasutatavatest funktsioonidest vajab M³ ka järgmist lisatarkvara:
 
-- **Zoom**: Required only if using Zoom integration features
-- **OBS Studio**: Required only if using OBS integration features
+- **Zoom**: vajalik ainult Zoom-i koostöö kasutamisel
+- **OBS Studio**: vajalik ainult OBS Studio koostöö kasutamisel
 
-### :floppy_disk: How much disk space does M³ use? {#disk-space}
+### :floppy_disk: Kui palju kettaruumi kasutab M³? {#disk-space}
 
-Disk space usage depends on:
+Kettaruumi kasutamine sõltub järgmistest teguritest:
 
-- **Media Resolution**: Higher resolutions use more space
-- **Cached Content**: Media files are cached locally
-- **Extra Cache**: Additional caching can increase usage
-- **Exported Media**: Auto-export features use additional space
+- **Meedia resolutsioon**: Kõrgem resolutsioon võtab rohkem ruumi
+- **Vahemällu salvestatud sisu**: Meediafailid salvestatakse kohalikku vahemällu
+- **Lisa vahemälu**: Lisavõimalus kasutada vahemälu võib suurendada kasutamist
+- **Eksporditud meedia**: automaatse ekspordi funktsioonid kasutavad lisaruumi
 
-Typical usage ranges from 2-10GB depending on settings and usage.
+Tüüpiline kasutus ulatub 2–10Gb-ni, sõltuvalt seadistustest ja kasutusest.
 
-### :shield: Is M³ secure and private? {#security-privacy}
+### :shield: Kas M³ on turvaline ja privaatne? {#security-privacy}
 
-Jah! M³ is designed with security and privacy in mind:
+Jah! M³ on loodud turvalisust ja privaatsust silmas pidades:
 
-- **Local Storage**: All meeting data is stored locally on your computer
-- **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
-- **Open Source**: The code is open for review and verification
-- **Bug Reports**: Limited data may be collected for bug reporting purposes
+- **Kohalik salvestus**: Kõik koosoleku andmed salvestatakse kohalikult sinu arvutisse
+- **Otsene allalaadimine**: Meedia allalaadimine toimub otse Jehoova tunnistajate ametlikult veebilehelt
+- **Avatud lähtekood**: Kood on avatud läbivaatamiseks ja kontrollimiseks
+- **Veateated**: Veateadete esitamiseks võidakse koguda piiratud hulgal andmeid
 
-### :arrows_clockwise: How often does M³ check for updates? {#update-frequency}
+### :arrows_clockwise: Kui tihti kontrollib M³ uuendusi? {#update-frequency}
 
-M³ checks for updates:
+M³ kontrollib uuendusi:
 
-- **Application Updates**: Automatically checks for new versions every time the app is opened
-- **Media Updates**: Automatically checks for new meeting media every time the app is opened
-- **Language Updates**: Dynamic detection of new languages as needed
+- **Rakenduse värskendused**: kontrollib automaatselt uute versioonide olemasolu iga kord, kui rakendus avatakse
+- **Meedia uuendused**: kontrollib automaatselt iga kord, kui rakendus avatakse, kas on olemas uusi koosoleku meediafaile
+- **Keele uuendused**: uute keelte dünaamiline tuvastamine vastavalt vajadusele
