@@ -44,6 +44,10 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
     try {
       websiteWindow?.webContents.insertCSS(
         `
+        html, body {
+          cursor: none !important;
+        }
+
         .cursor {
           position: fixed;
           border-radius: 50%;
