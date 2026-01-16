@@ -658,55 +658,57 @@ watch(
       mediaSceneTimeout = null;
     }
 
-    if (
-      currentSettings.value?.obsPostponeImages &&
-      newMediaPlaying &&
-      !newMediaPaused &&
-      typeof newMediaPlayingUrl === 'string' &&
-      isImage(newMediaPlayingUrl)
-    ) {
-      console.log(
-        '🔄 [MediaCalendarPage] OBS image postponement active, skipping scene change',
-      );
-      return;
-    }
-
-    const targetScene = newMediaPaused
-      ? 'camera'
-      : newMediaPlaying
-        ? 'media'
-        : 'camera';
-    const wasPlayingBefore = !!oldMediaPlayingUrl;
-
-    console.log('🔄 [MediaCalendarPage] OBS scene decision:', {
-      newMediaPaused,
-      newMediaPlaying,
-      oldMediaPlayingUrl,
-      targetScene,
-      wasPlayingBefore,
-    });
-
-    if (targetScene === 'media') {
-      if (wasPlayingBefore) {
-        // If something was playing before, we change the scene immediately
+    if (currentSettings.value?.obsEnable) {
+      if (
+        currentSettings.value?.obsPostponeImages &&
+        newMediaPlaying &&
+        !newMediaPaused &&
+        typeof newMediaPlayingUrl === 'string' &&
+        isImage(newMediaPlayingUrl)
+      ) {
         console.log(
-          '🔄 [MediaCalendarPage] Switching to media scene immediately',
+          '🔄 [MediaCalendarPage] OBS image postponement active, skipping scene change',
         );
-        sendObsSceneEvent('media');
-      } else {
-        // If nothing was already playing, we wait a bit before changing the scene to prevent seeing the fade effect in OBS
-        console.log('🔄 [MediaCalendarPage] Waiting for scene change delay');
-        mediaSceneTimeout = setTimeout(() => {
+        return;
+      }
+
+      const targetScene = newMediaPaused
+        ? 'camera'
+        : newMediaPlaying
+          ? 'media'
+          : 'camera';
+      const wasPlayingBefore = !!oldMediaPlayingUrl;
+
+      console.log('🔄 [MediaCalendarPage] OBS scene decision:', {
+        newMediaPaused,
+        newMediaPlaying,
+        oldMediaPlayingUrl,
+        targetScene,
+        wasPlayingBefore,
+      });
+
+      if (targetScene === 'media') {
+        if (wasPlayingBefore) {
+          // If something was playing before, we change the scene immediately
           console.log(
-            '🔄 [MediaCalendarPage] Executing delayed media scene change',
+            '🔄 [MediaCalendarPage] Switching to media scene immediately',
           );
           sendObsSceneEvent('media');
-          mediaSceneTimeout = null;
-        }, changeDelay);
+        } else {
+          // If nothing was already playing, we wait a bit before changing the scene to prevent seeing the fade effect in OBS
+          console.log('🔄 [MediaCalendarPage] Waiting for scene change delay');
+          mediaSceneTimeout = setTimeout(() => {
+            console.log(
+              '🔄 [MediaCalendarPage] Executing delayed media scene change',
+            );
+            sendObsSceneEvent('media');
+            mediaSceneTimeout = null;
+          }, changeDelay);
+        }
+      } else {
+        console.log('🔄 [MediaCalendarPage] Switching to camera scene');
+        sendObsSceneEvent('camera');
       }
-    } else {
-      console.log('🔄 [MediaCalendarPage] Switching to camera scene');
-      sendObsSceneEvent('camera');
     }
   },
 );
