@@ -216,26 +216,25 @@ export function isIgnoredUpdateError(
   message?: string,
 ): boolean {
   const ignoreErrors = [
-    '504 Gateway Time-out',
-    'Code signature at URL',
-    'HttpError: 503',
-    'HttpError: 504',
-    'YAMLException',
-    'ECONNRESET',
-    'ERR_CONNECTION_RESET',
-    'ECONNREFUSED',
-    'ENOTFOUND',
     'EAI_AGAIN',
-    'SELF_SIGNED_CERT_IN_CHAIN',
-    'OSStatus error -60006',
-    'read-only volume',
-    'ERR_CONNECTION_TIMED_OUT',
+    'ECONNREFUSED',
+    'ECONNRESET',
+    'ENOTFOUND',
     'EPIPE',
-    'HttpError: 404',
-    'ERR_NETWORK_CHANGED',
     'ERR_CONNECTION_CLOSED',
-    'ENOENT: no such file or directory, unlink',
-    'EPERM: operation not permitted, rename',
+    'ERR_CONNECTION_RESET',
+    'ERR_CONNECTION_TIMED_OUT',
+    'ERR_NETWORK_CHANGED',
+    'SELF_SIGNED_CERT_IN_CHAIN',
+    'YAMLException',
+    ['404', 'HttpError'],
+    ['503', 'HttpError'],
+    ['504', 'Gateway'],
+    ['504', 'HttpError'],
+    ['60006', 'OSStatus'],
+    ['ENOENT', 'unlink'],
+    ['EPERM', 'rename'],
+    ['read-only', 'volume'],
   ];
 
   const errorMsg =
@@ -244,11 +243,16 @@ export function isIgnoredUpdateError(
   const errorName = (error as Error)?.name;
 
   return ignoreErrors.some((ignoreError) => {
-    return (
-      message?.includes(ignoreError) ||
-      errorMsg?.includes(ignoreError) ||
-      errorName?.includes(ignoreError) ||
-      (typeof errorCode === 'string' && errorCode.includes(ignoreError))
+    const ignoreErrorArray = Array.isArray(ignoreError)
+      ? ignoreError
+      : [ignoreError];
+
+    return ignoreErrorArray.every(
+      (ignoreStr) =>
+        message?.includes(ignoreStr) ||
+        errorMsg?.includes(ignoreStr) ||
+        errorName?.includes(ignoreStr) ||
+        (typeof errorCode === 'string' && errorCode.includes(ignoreStr)),
     );
   });
 }
