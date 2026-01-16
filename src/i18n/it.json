@@ -211,7 +211,7 @@
   "go-home": "Vai alla home",
   "go-to-settings": "Go to @:settings",
   "gpu-crash-detected": "Rilevato crash della GPU",
-  "gpu-crash-detected-explain": "Hardware acceleration was temporarily disabled due to a recent crash. If this persists, please update your graphics drivers or disable hardware acceleration in settings.",
+  "gpu-crash-detected-explain": "L'accelerazione hardware è stata temporaneamente disabilitata a causa di un crash recente. Se persiste, aggiorna i driver grafici o disabilita l'accelerazione hardware nelle impostazioni.",
   "gpu-crash-detected-restarting": "Rilevato crash della GPU. Passaggio alla modalità software. Riavvia l'app affinché le modifiche abbiano effetto.",
   "greek-scriptures": "Scritture Greche",
   "hardwareAccelerationDisabled": "Accelerazione hardware disabilitata",
