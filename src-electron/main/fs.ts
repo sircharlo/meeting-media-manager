@@ -142,7 +142,6 @@ export async function unzipFile(
           } else {
             // File
             try {
-              await ensureDir(dirname(fullPath));
               zipfile.openReadStream(entry, async (err, readStream) => {
                 if (err) {
                   zipfile.close();
@@ -153,8 +152,9 @@ export async function unzipFile(
                   return reject(new Error('Read stream not found'));
                 }
 
-                const writeStream = createWriteStream(fullPath);
                 try {
+                  await ensureDir(dirname(fullPath));
+                  const writeStream = createWriteStream(fullPath);
                   await pipeline(readStream, writeStream);
                   extractedFiles.push({ path: entry.fileName });
                   zipfile.readEntry();
