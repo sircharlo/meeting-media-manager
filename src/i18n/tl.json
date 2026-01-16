@@ -211,7 +211,7 @@
   "go-home": "Go home",
   "go-to-settings": "Go to @:settings",
   "gpu-crash-detected": "GPU crash detected",
-  "gpu-crash-detected-explain": "Hardware acceleration was temporarily disabled due to a recent crash. It will be re-enabled automatically the next time M³ is launched, unless you disable it manually in settings.",
+  "gpu-crash-detected-explain": "Hardware acceleration was temporarily disabled due to a recent crash. If this persists, please update your graphics drivers or disable hardware acceleration in settings.",
   "gpu-crash-detected-restarting": "GPU crash detected. Switching to software mode. Please restart the app for changes to take effect.",
   "greek-scriptures": "Griegong Kasulatan",
   "hardwareAccelerationDisabled": "Hardware acceleration disabled",
