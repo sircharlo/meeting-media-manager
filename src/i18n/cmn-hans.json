@@ -211,7 +211,7 @@
   "go-home": "回到主页",
   "go-to-settings": "前往 @:settings",
   "gpu-crash-detected": "检测到 GPU 崩溃问题",
-  "gpu-crash-detected-explain": "由于最近的崩溃，已暂时禁用硬件加速。除非您在设置中手动禁用，否则下次启动 M³ 时会自动重新启用。",
+  "gpu-crash-detected-explain": "Hardware acceleration was temporarily disabled due to a recent crash. If this persists, please update your graphics drivers or disable hardware acceleration in settings.",
   "gpu-crash-detected-restarting": "检测到 GPU 崩溃。切换到软件模式。请重新启动应用程序以使更改生效。",
   "greek-scriptures": "希腊语经卷",
   "hardwareAccelerationDisabled": "已禁用硬件加速",
