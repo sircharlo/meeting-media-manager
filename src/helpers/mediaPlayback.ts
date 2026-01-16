@@ -324,11 +324,11 @@ export const getMediaFromJwPlaylist = async (
       }),
     );
 
-    await processMissingMediaInfo(
-      playlistMediaItems,
-      formatDate(selectedDateValue, 'YYYYMMDD'),
-      true,
-    );
+    await processMissingMediaInfo({
+      allMedia: playlistMediaItems,
+      keepMediaLabels: true,
+      meetingDate: formatDate(selectedDateValue, 'YYYYMMDD'),
+    });
     const mappedPlaylistMediaItems = await dynamicMediaMapper(
       playlistMediaItems.filter((m) => m.KeySymbol !== 'nwt'),
       selectedDateValue,
