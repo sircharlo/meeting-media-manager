@@ -23,7 +23,7 @@
   "app-updates": "Atualizações da aplicação",
   "applicationConfiguration": "Definições do aplicativo",
   "applicationConfigurationDescription": "Personalizar o comportamento e a aparência do aplicativo",
-  "architecture-mismatch": "Architecture mismatch",
+  "architecture-mismatch": "Incompatibilidade de arquitetura",
   "architecture-mismatch-explain": "You seem to be running a 32-bit version of M³ on a 64-bit operating system. For better performance and stability, we recommend downloading and installing the 64-bit version of M³.",
   "archive-file-found": "Os ficheiros de arquivo devem ser processados separadamente.",
   "are-you-sure-delete": "Tem certeza que deseja eliminar o ficheiro \"{mediaToDelete}\"?",
