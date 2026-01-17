@@ -580,7 +580,7 @@ export const useJwStore = defineStore('jw-store', {
       return {
         'JW-Icons': getFontUrl(
           'base',
-          '/assets/fonts/jw-icons-external-1970474.woff',
+          '/assets/fonts/jw-icons-external-d876da3.woff',
         ),
         'Wt-ClearText-Bold': getFontUrl(
           'mediator',
