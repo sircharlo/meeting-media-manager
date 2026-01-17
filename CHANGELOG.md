@@ -4,6 +4,32 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.1.7
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Memorial Dates**: Added the 2028 Memorial date.
+- 🛠️ **Video Downloads**: Prevented very long videos from being automatically downloaded during meeting programs.
+- 🛠️ **OBS Integration**: Prevented scene change events from being sent when OBS integration is disabled.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Fonts**: Updated font URL to ensure reliable loading of icon fonts.
+- 🐞 **Media Notifications**: Prevented "missing media" notifications for long-duration streamed items.
+- 🐞 **Media Processing**: Fixed a missing call to process media info.
+- 🐞 **Paragraph Numbers**: Resolved a minor glitch in paragraph number detection.
+- 🐞 **Stability**: Resolved a potential race condition during file decompression.
+- 🐞 **Auto-Updater**: Improved error handling by ignoring `EPERM` and other noisy update-related errors.
+- 🐞 **Website Presentation**: Fixed hidden native cursor behavior in the website window.
+- 🐞 **JWPUB Extractor**: Enhanced the reliability of processing `.jwpub` files.
+
+## v26.1.6
+
+### 🐞 Bug Fixes
+
+- 🐞 **Cache Folder Management**: Improved creation of machine-wide cache folders on Windows and failure handling for non-writable folders.
+- 🐞 **Error Handling**: Improved debug logging.
+
 ## v26.1.5
 
 ### ✨ New Features

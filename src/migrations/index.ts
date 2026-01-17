@@ -24,6 +24,7 @@ export const MIGRATION_REGISTRY: Record<string, MigrationFunction> = {
   '25.12.2 (2) refreshDynamicMedia': refreshDynamicMedia,
   '25.12.2 (3) backfillLastUsed': backfillLastUsed,
   '26.1.1 autoEnrollMeetingSync': autoEnrollMeetingSync,
+  '26.1.6 refreshDynamicMedia': refreshDynamicMedia,
   addBaseUrlToAllCongregations,
   firstRun,
   localStorageToPiniaPersist,
