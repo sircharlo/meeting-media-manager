@@ -4,19 +4,19 @@
 
 ## Mi ez az alkalmazás? {#what-is-this-app}
 
-**Meeting Media Manager**, or **M³** for short, is a comprehensive cross-platform application for Windows, macOS and Linux that automatically downloads, organizes, and presents pictures and videos for congregation meetings of Jehovah's Witnesses. It supports any language available on the official website of Jehovah's Witnesses and provides powerful tools for managing media during both hybrid and in-person meetings.
+A **Meeting Media Manager**, vagy röviden **M³**, egy átfogó, több platformon futó alkalmazás Windows, macOS és Linux rendszerekhez, amely automatikusan letölti, rendszerezi és megjeleníti a képeket és videókat Jehova tanúi gyülekezeti összejöveteleihez. Támogatja a Jehova Tanúi hivatalos weboldalán elérhető összes nyelvet, és hatékony eszközöket biztosít a média kezeléséhez mind hibrid, mind személyes összejöveteleken.
 
-M³ features support for managing regular and custom meeting media, multiple congregations and/or groups using the same computer account, and advanced presentation capabilities that make media sharing effortless.
+Az M³ támogatja a szokásos és egyedileg szervezett összejöveteli média kezelését, több gyülekezet és/vagy csoport kezelését ugyanazon számítógépes fiók használatával, valamint fejlett prezentációs funkciókat, amelyek megkönnyítik a média megosztását.
 
 :::info Megjegyzés
 
-This app used to be known as JWMMF (JW Meeting Media Fetcher), but was renamed to Meeting Media Manager in May 2022.
+Ez az alkalmazás korábban JWMMF (JW Meeting Media Fetcher) néven volt ismert, de 2022 májusában Meeting Media Managerre lett átnevezve.
 
 :::
 
 ## Miért válassza az M³ programot? {#why-choose-m3}
 
-Az M³ a tökéletes eszköz az összejöveteli média kezeléséhez, amely zökkenőmentes, megbízható és funkciógazdag élményt nyújt minden platformon. It's designed specifically for the needs of congregation meetings and provides everything needed for effective media presentation.
+Az M³ a tökéletes eszköz az összejöveteli média kezeléséhez, amely zökkenőmentes, megbízható és funkciógazdag élményt nyújt minden platformon. Kifejezetten gyülekezeti összejövetelek igényeire lett tervezve, és minden szükséges eszközt biztosít a hatékony médiaprezentációhoz.
 
 ### Legfontosabb előnyök {#key-benefits}
 
@@ -24,24 +24,24 @@ Az M³ a tökéletes eszköz az összejöveteli média kezeléséhez, amely zök
 
 - **Több gyülekezet támogatása**: Kezelje több gyülekezet vagy csoport beállításait egyetlen alkalmazáson belül.
 
-- **Advanced features**: Easily add extra media, import custom content, and automatically share what goes on at the Kingdom Hall with participants on Zoom.
+- **Speciális funkciók**: Könnyedén hozzáadhat további médiát, importálhat egyedi tartalmakat, és automatikusan megoszthatja a Zoom résztvevőivel a Királyságteremben zajló eseményeket.
 
 - **Optimalizált keresztplatformos teljesítmény**: Élvezze a zökkenőmentes és gyors reagálást Windows, macOS és Linux rendszereken, még régebbi rendszereken vagy korlátozott erőforrásokkal rendelkező számítógépeken is.
 
 - **Megbízható és stabil**: Úgy tervezték, hogy akkor is megállja a helyét, amikor a legnagyobb szükség van rá. Találkozott egy hibával? Jelentse, és azonnal foglalkozunk vele.
 
-- **Advanced presentation tools**: Advanced media controls, zoom/pan capabilities, custom timing, and seamless Zoom and OBS Studio integration.
+- **Fejlett prezentációs eszközök**: Fejlett médiavezérlők, nagyítás/eltolás funkciók, egyéni időzítés, valamint zökkenőmentes Zoom és OBS Studio integráció.
 
 ## Mit tud az M³? {#what-can-m3-do}
 
-M³ is a comprehensive media management solution that allows you to easily and automatically download, synchronize, share, and present all meeting media. Here's what makes M³ powerful:
+Az M³ egy átfogó médiakezelő megoldás, amely lehetővé teszi az összes összejövetelhez kapcsolódó média egyszerű és automatikus letöltését, szinkronizálását, megosztását és bemutatását. Az M³ erejét az alábbiak adják:
 
-### Core Media Management {#core-media-management}
+### Alapvető médiakezelés {#core-media-management}
 
-- **Automatic media downloads**: Automatically fetches and downloads all media needed for upcoming meetings
-- **Multi-language support**: Download media in any of hundreds of available languages
-- **Smart caching**: Intelligent caching system that keeps media organized and up-to-date
-- **Media organization**: Automatically organizes media by date and meeting section
+- **Automatikus médialetöltés**: automatikusan letölti a következő összejövetelekhez tartozó összes médiaanyagot
+- **Többnyelvű támogatás**: Több száz nyelven letölthető médiafájlok
+- **Intelligens gyorsítótár**: Intelligens gyorsítótár-rendszer, amely a médiát rendezett és naprakész állapotban tartja
+- **Média szervezés**: A médiát automatikusan dátum és összejöveteli rész szerint rendezi
 
 ### Media Presentation Features {#about-presentation-features}
 
