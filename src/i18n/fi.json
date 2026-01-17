@@ -211,7 +211,7 @@
   "go-home": "Palaa kotinäkymään",
   "go-to-settings": "Siirry @:settings",
   "gpu-crash-detected": "GPU:n kaatuminen havaittu",
-  "gpu-crash-detected-explain": "Hardware acceleration was temporarily disabled due to a recent crash. If this persists, please update your graphics drivers or disable hardware acceleration in settings.",
+  "gpu-crash-detected-explain": "Laitteistokiihdytys on poistettu tilapäisesti käytöstä äskettäisen kaatumisen vuoksi. Jos ongelma jatkuu, päivitä näytönohjaimen ajurit tai poista laitteistokiihdytys käytöstä asetuksista.",
   "gpu-crash-detected-restarting": "GPU kaatuminen havaittu. Vaihdetaan ohjelmistotilaan. Käynnistä sovellus uudelleen, jotta muutokset tulevat voimaan.",
   "greek-scriptures": "Kreikkalaiset kirjoitukset",
   "hardwareAccelerationDisabled": "Laitteiston kiihtyvyys poistettu käytöstä",

@@ -211,7 +211,7 @@
   "go-home": "Retour à l'accueil",
   "go-to-settings": "Accéder aux réglages",
   "gpu-crash-detected": "Panne du processeur graphique détectée",
-  "gpu-crash-detected-explain": "Hardware acceleration was temporarily disabled due to a recent crash. If this persists, please update your graphics drivers or disable hardware acceleration in settings.",
+  "gpu-crash-detected-explain": "L'accélération matérielle a été temporairement désactivée en raison d'un plantage récent. Si le problème persiste, veuillez mettre à jour vos pilotes graphiques ou désactiver l'accélération matérielle dans les paramètres de cette application.",
   "gpu-crash-detected-restarting": "Une panne du processeur graphique a été détectée. Passage en mode logiciel. Veuillez redémarrer l'application pour que les modifications prennent effet.",
   "greek-scriptures": "Écritures grecques",
   "hardwareAccelerationDisabled": "Accélération matérielle désactivée",
