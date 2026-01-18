@@ -43,62 +43,62 @@ Az M³ egy átfogó médiakezelő megoldás, amely lehetővé teszi az összes �
 - **Intelligens gyorsítótár**: Intelligens gyorsítótár-rendszer, amely a médiát rendezett és naprakész állapotban tartja
 - **Média szervezés**: A médiát automatikusan dátum és összejöveteli rész szerint rendezi
 
-### Media Presentation Features {#about-presentation-features}
+### Médiaprezentációs funkciók {#about-presentation-features}
 
-For **hybrid** or **in-person** congregation meetings, the integrated media presentation mode includes:
+**Hibrid** vagy **személyes** gyülekezeti összejövetelek esetére az integrált médiaprezentációs mód a következőket tartalmazza:
 
-- **Advanced media controls**: Media thumbnails with zoom and pan capabilities
-- **Custom timing**: Set custom start and end times for media playback
-- **Playback controls**: Easy-to-use pause/play/stop buttons with keyboard shortcuts
-- **Multi-monitor support**: Automatic external monitor detection and management
-- **Clean presentation**: Distraction-free media presentation interface
+- **Fejlett médiavezérlés**: Média miniatűrök nagyítási és mozgatási funkciókkal
+- **Egyéni időzítés**: Állítsa be a média lejátszásának egyéni kezdési és befejezési idejét
+- **Lejátszásvezérlők**: Könnyen használható szünet/lejátszás/leállítás gombok billentyűparancsokkal
+- **Több monitor támogatása**: Automatikus külső monitor felismerés és kezelés
+- **Tiszta megjelenítés**: Figyelemelterelő tényezőktől mentes média-megjelenítő felület
 
-### Background Music {#about-background-music}
+### Háttérzene {#about-background-music}
 
-- **Intelligent playback**: Background music that automatically stops before meetings start
-- **One-click restart**: Resume background music with a single click after meetings
-- **Volume control**: Adjustable background music volume with fade-out capabilities
+- **Intelligens lejátszás**: A háttérzene automatikusan leáll az összejövetelek kezdete előtt
+- **Egygombos újraindítás**: Egyetlen kattintással folytathatja a háttérzenét az összejövetelek vége után
+- **Hangerőszabályozás**: Állítható háttérzene hangerő, fokozatos lehalkítással
 
-### Zoom Integration {#about-zoom-integration}
+### Zoom integráció {#about-zoom-integration}
 
-- **Automatic screen sharing**: Start and stop Zoom screen sharing automatically when you play or stop media
+- **Automatikus képernyőmegosztás**: A Zoom képernyőmegosztásának automatikus elindítása és leállítása média lejátszásakor vagy leállításakor
 
-### OBS Studio Integration {#about-obs-integration}
+### OBS Studio integráció {#about-obs-integration}
 
-- **Automatic scene switching**: Seamless integration with OBS Studio for hybrid meetings
-- **Scene management**: Automatic switching between camera, media, and other scenes
+- **Automatikus jelenetváltás**: Zökkenőmentes integráció az OBS Studio programmal hibrid összejövetelekhez
+- **Jelenetkezelés**: Automatikus váltás kamera, média és egyéb jelenetek között
 
-### Media Import and Management {#about-media-import}
+### Média importálása és kezelése {#about-media-import}
 
-- **JWPUB files**: Import and manage JWPUB files with ease
-- **JWLPLAYLIST files**: Support for JW Library playlist files
-- **Custom media**: Import custom videos, pictures, audio files, and PDF files
-- **Audio Bible**: Import Study Bible media and audio recordings of the New World Translation
-- **Public talks**: Always have public talk media overview ready to use with the S-34 importer
+- **JWPUB fájlok**: JWPUB fájlok egyszerű importálása és kezelése
+- **JWLPLAYLIST fájlok**: JW Library lejátszási lista fájlok támogatása
+- **Egyéni média**: Egyéni videók, képek, hangfájlok és PDF-fájlok importálása
+- **Hangos Biblia**: Importálja a Magyarázatos Biblia médiafájljait és az Új Világ Fordítás hangfelvételeit
+- **Nyilvános előadások**: Legyen mindig kéznél a nyilvános előadásokhoz szükséges médiaáttekintés, amelyet az S-34 importálóval használhat
 
-### Advanced Features {#about-advanced-features}
+### Fejlett funkciók {#about-advanced-features}
 
-- **Folder monitoring**: Automatically sync media from watched folders (Dropbox, OneDrive, etc.)
-- **Media export**: Automatically export media to folders, organized by date
-- **Website presentation**: Present the official website on external monitors
-- **Keyboard shortcuts**: Customizable keyboard shortcuts for many functions
-- **Multiple profiles**: Manage different congregations or groups with separate profiles
+- **Mappafigyelés**: A megfigyelt mappákból (Dropbox, OneDrive stb.) automatikusan szinkronizálja a médiát
+- **Média export**: A média automatikus exportálása mappákba, dátum szerint rendezve
+- **Weboldal bemutatása**: A hivatalos weboldal bemutatása külső monitorokon
+- **Billentyűparancsok**: Számos funkcióhoz testreszabható billentyűparancsok
+- **Több profil**: Különálló profilokkal kezelhet különböző gyülekezeteket vagy csoportokat
 
 ## Működik az M³ az én nyelvemen? {#does-m3-work-in-my-language}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Igen!** Az M³ átfogó többnyelvű támogatást nyújt:
 
-Media for meetings of Jehovah's Witnesses can be automatically downloaded in any of the hundreds of languages available on the official website of Jehovah's Witnesses. The list of available languages is dynamically updated; all you need to do is select which one you need during setup.
+Jehova tanúi összejöveteleinek médiatartalmai automatikusan letölthetők a Jehova tanúi hivatalos honlapján elérhető több száz nyelv bármelyikén. A rendelkezésre álló nyelvek listája dinamikusan frissül; csak annyit kell tennie, hogy a beállítás során kiválasztja a kívánt nyelvet.
 
-### Interface Languages {#interface-languages}
+### Felület nyelvek {#interface-languages}
 
-M³ itself has been translated into many languages by volunteers. You can configure the language you would like to be displayed in M³'s interface, independent of the language used for media downloads. This means you can use M³ in your preferred language while downloading media in any other supported language.
+Az M³ programot már több nyelvre is lefordították önkéntesek. Beállíthatja, hogy milyen nyelven szeretné megjeleníteni az M³ felületét, függetlenül a média letöltéséhez használt nyelvtől. Ez azt jelenti, hogy az M³-et a kívánt nyelven használhatja, miközben bármely más támogatott nyelven tölt le médiát.
 
-For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
+A tartaléknyelvekkel és feliratokkal kapcsolatos részleteket itt találja: [GYIK](faq#language-support).
 
-## System Requirements {#system-requirements}
+## Rendszerkövetelmények {#system-requirements}
 
-For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
+A támogatott operációs rendszerek és követelmények tekintetében olvassa el a [GYIK-ban](faq#technical-questions) található válaszokat.
 
 **Adjon egy esélyt az M³-nak még ma, és győződjön meg róla, hogy mire képes! A média bemutatása a gyülekezeti összejöveteleken még soha nem volt ilyen egyszerű.**
 
