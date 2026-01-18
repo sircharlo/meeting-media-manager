@@ -201,107 +201,107 @@ Ellenőrizze ezeket a gyakori problémákat:
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: The OBS integration isn't working. What should I verify? {#faq-obs-not-working}
+### :video_camera: Az OBS integráció nem működik. Mit kell ellenőriznem? {#faq-obs-not-working}
 
-Check these OBS-related issues:
+Ellenőrizze ezeket az OBS-hez kapcsolódó problémákat:
 
-1. **OBS Installation**: Ensure OBS Studio is installed and running
-2. **WebSocket Plugin**: Verify the WebSocket plugin is installed
-3. **Port and Password**: Check your OBS port and password settings
-4. **Firewall**: Ensure the firewall isn't blocking the connection
+1. **OBS telepítése**: Győződjön meg arról, hogy az OBS Studio telepítve van és fut
+2. **WebSocket plugin**: Ellenőrizze, hogy a WebSocket plugin telepítve van-e
+3. **Port és jelszó**: Ellenőrizze az OBS port és jelszó beállításait
+4. **Tűzfal**: Győződjön meg arról, hogy a tűzfal nem blokkolja a kapcsolatot
 
-### :speaker: Does Meeting Media Manager automatically send the media audio to Zoom when using OBS Studio? {#audio-to-zoom}
+### :speaker: Az OBS Studio használata esetén a Meeting Media Manager automatikusan továbbítja a média hangját a Zoomnak? {#audio-to-zoom}
 
-**No.** M³ does not automatically send media audio to Zoom or OBS Studio. The video stream works like a virtual camera with no sound, just like a webcam. To have the music/video sound available in Zoom automatically, you need to ensure that Zoom 'hears' the audio feed coming from the computer, and then you should enable the **Original Audio** setting in Zoom.
+**Nem.** Az M³ nem továbbítja automatikusan a média hangját a Zoom vagy az OBS Studio programnak. A videó stream úgy működik, mint egy hang nélküli virtuális kamera, akárcsak egy webkamera. Ahhoz, hogy a zene/videó hangja automatikusan elérhető legyen a Zoomban, meg kell győződnie arról, hogy a Zoom „hallja” a számítógépről érkező audiojelet, majd engedélyeznie kell az **Original Audio** (Eredeti hang) beállítást a Zoomban.
 
-**Important Notes:**
+**Fontos megjegyzések:**
 
-- You must enable Original Audio **every time** before starting a Zoom meeting
-- This setting is not related to M³ - you would face the same audio issue when using any other media player and not using Zoom's screen and audio sharing features
-- The Original Audio setting has three sub-options - typically the first two should be enabled and the third disabled for optimal audio quality
-- If you're still experiencing audio issues, you may need to use Zoom's "Share Computer Sound" option instead
-- Alternatively, look into using the Zoom integration instead, as it uses Zoom's native screen sharing.
+- A videokonferencia megkezdése előtt **minden alkalommal** engedélyeznie kell az eredeti hangot
+- Ez a beállítás nem kapcsolódik az M³-hoz – ugyanez a hangprobléma merülne fel bármely más médialejátszó használata esetén is, ha nem használná a Zoom képernyő- és hangmegosztási funkcióit
+- Az Eredeti hang beállításnak három albeállítása van – általában az első kettőt érdemes engedélyezni, a harmadikat pedig letiltani az optimális hangminőség érdekében
+- Ha továbbra is hangproblémák merülnek fel, akkor lehet, hogy a Zoom „Számítógép hangjának megosztása” opcióját kell használnia
+- Alternatív megoldásként fontolja meg a Zoom integráció használatát, mivel ez a Zoom natív képernyőmegosztását használja.
 
-**Why is this necessary?**
-M³ plays media with sound on your computer, but this audio is not automatically transmitted through the video stream to Zoom when using OBS Studio. The Original Audio setting allows Zoom to capture the audio playing on your computer during screen sharing, if your computer is configured properly (for example: the computer has a second sound card that is used for media playback which Zoom listens to as a microphone.)
+**Miért van erre szükség?**
+Az M³ hanggal ellátott médiát játszik le a számítógépen, de ez az audio nem kerül automatikusan továbbításra a videó streamen keresztül a Zoomba, ha OBS Studio-t használ. Az Eredeti Hang beállítás lehetővé teszi a Zoom számára, hogy a képernyő megosztása közben rögzítse a számítógépen lejátszott hangot, ha a számítógép megfelelően van konfigurálva (például: a számítógép rendelkezik egy második hangkártyával, amelyet média lejátszáshoz használnak, és amelyet a Zoom mikrofonként érzékel).
 
-### :snail: M³ is running slowly. How can I improve performance? {#performance-issues}
+### :snail: Az M³ lassan fut. Hogyan javíthatom a teljesítményt? {#performance-issues}
 
-Try these performance optimizations:
+Próbálja ki ezeket a megoldásokat:
 
-1. **Enable Extra Cache**: Turn on additional caching in settings
-2. **Close Other Apps**: Close unnecessary applications
-3. **Check Disk Space**: Ensure you have sufficient free disk space
-4. **Reduce Resolution**: Lower the maximum resolution setting
+1. **Extra gyorsítótár engedélyezése**: Kapcsolja be a beállításokban a további gyorsítótárazást
+2. **Más alkalmazások bezárása**: Zárjon be minden felesleges alkalmazást
+3. **Ellenőrizze a lemezterületet**: Győződjön meg arról, hogy elegendő szabad lemezterület áll rendelkezésre
+4. **Felbontás csökkentése**: Csökkentse a maximális felbontás értékét
 
-### :speech_balloon: I'm having language issues. Mit kell ellenőriznem? {#faq-language-issues}
+### :speech_balloon: Nyelvi problémáim vannak. Mit kell ellenőriznem? {#faq-language-issues}
 
-Verify these language settings:
+Ellenőrizze a következő nyelvi beállításokat:
 
-1. **Interface Language**: Check your display language setting
-2. **Media Language**: Verify your media download language
-3. **Language Availability**: Ensure the media language is available on the official website of Jehovah's Witnesses
-4. **Fallback Language**: Try setting a fallback language
+1. **Felület nyelve**: Ellenőrizze a megjelenítési nyelv beállításait
+2. **Média nyelv**: Ellenőrizze a média letöltésének nyelvét
+3. **Nyelvi elérhetőség**: Győződjön meg arról, hogy a média nyelve elérhető-e Jehova Tanúi hivatalos weboldalán
+4. **Tartalék nyelv**: Próbáljon meg beállítani egy tartalék nyelvet
 
-## Support and Community {#support-community}
+## Támogatás és közösség {#support-community}
 
-### :radioactive: How do I report an issue? {#how-do-i-report-an-issue}
+### :radioactive: Hogyan tudok problémát jelenteni? {#how-do-i-report-an-issue}
 
-Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository. Include:
+Kérjük, [jelentse a problémát](https://github.com/sircharlo/meeting-media-manager/issues) a hivatalos GitHub-tárolóban. Az alábbiakat írja bele:
 
-- Detailed description of the problem
-- Steps to reproduce the issue
-- Your operating system and M³ version
-- Any error messages, logs and screenshots
+- A probléma részletes leírása
+- A probléma reprodukálásának lépései
+- Az operációs rendszer és az M³ verziója
+- Bármilyen hibaüzenet, naplófájl és képernyőkép
 
-### :new: How can I request a new feature or enhancement? {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: Hogyan kérhetek új funkciót vagy fejlesztést? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository. Describe:
+Kérjük, [nyisson egy beszélgetést] (https://github.com/sircharlo/meeting-media-manager/discussions) a hivatalos GitHub-tárolóban. Írja le:
 
-- The feature you'd like to see
-- How it would benefit users
-- Any specific requirements or preferences
+- A funkció, amelyet szívesen látna
+- Milyen előnyökkel járna ez a felhasználók számára
+- Bármilyen speciális igény vagy elképzelés
 
-### :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
+### :handshake: Hogyan tudok programkódot hozzáadni? {#how-can-i-contribute-some-code}
 
-Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository. We welcome code contributions and Pull Requests!
+Kérjük, olvassa el a hivatalos GitHub-tárolóban található [hozzájárulási útmutatót](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md). Örömmel fogadjuk a kódhoz való hozzájárulásokat és a Pull Requesteket!
 
-### :globe_with_meridians: How can I help with translations? {#translations}
+### :globe_with_meridians: Hogyan segíthetek a fordítási munkákban? {#translations}
 
-M³ uses Crowdin for translation management. You can contribute translations by:
+Az M³ a Crowdin szolgáltatást használja a fordítások kezelésére. A fordításokhoz a következőképpen járulhat hozzá:
 
-1. Visiting the [Crowdin project](https://crowdin.com/project/meeting-media-manager)
-2. Selecting your language
-3. Translating strings that need work
-4. Reviewing existing translations
+1. A [Crowdin projekt](https://crowdin.com/project/meeting-media-manager) megtekintése
+2. A nyelv kiválasztása
+3. Fordításra szoruló szövegek
+4. A meglévő fordítások felülvizsgálata
 
-### :x: Can I make a donation to the project? {#can-i-make-a-donation-to-the-project}
+### :x: Adományozhatok a projektnek? {#can-i-make-a-donation-to-the-project}
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+Köszönjük, hogy támogatni szeretné a projektet! Azonban Máté 10:8 szellemében adományokat **nem** fogadunk el, és soha nem is fogunk. Ez az alkalmazás szeretettel és egy kis szabadidővel készült. Kérjük élvezze! :tada:
 
-:::tip :book: Matthew 10:8
+:::tip :book: Máté 10:8
 
-"You received free, give free."
+"Ingyen kaptátok, ingyen adjátok!"
 
 :::
 
-## Technical Questions {#technical-questions}
+## Műszaki kérdések {#technical-questions}
 
-### :computer: What hardware and software requirements does M³ have? {#hardware-and-software-requirements}
+### :computer: Milyen hardver- és szoftverkövetelményei vannak az M³-nak? {#hardware-and-software-requirements}
 
-M³ is designed to work on a wide range of operating systems:
+Az M³ úgy lett kialakítva, hogy számos operációs rendszeren működjön:
 
 - **Windows**: Windows 10 és újabb verziók (64 bites és 32 bites változatok elérhetők)
 - **macOS**: macOS 10.15 (Catalina) és újabb verziók (Intel és Apple Silicon támogatás)
 - **Linux**: A legtöbb modern Linux-disztribúció (AppImage formátum)
 
-M³ has the following hardware requirements:
+Az M³ hardverkövetelményei a következők:
 
-- **Minimum**: 4GB RAM, 6GB free disk space
-- **Recommended**: 8GB RAM, 15GB free disk space for media caching
-- **Network**: Internet connection for media downloads
+- **Minimum**: 4 GB RAM, 6 GB szabad lemezterület
+- **Ajánlott**: 8 GB RAM, 15 GB szabad lemezterület a média gyorsítótárhoz
+- **Hálózat**: Internetkapcsolat a médiafájlok letöltéséhez
 
-Depending on the features you use, M³ also requires the following additional software:
+A használt funkcióktól függően az M³ mellé további szoftverekre is szükség lehet:
 
 - **Zoom**: Required only if using Zoom integration features
 - **OBS Studio**: Required only if using OBS integration features
