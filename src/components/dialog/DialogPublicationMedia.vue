@@ -464,8 +464,8 @@ import type { MediaLink } from 'src/types/jw/publications';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
-import { jwIcons } from 'src/constants/jw-icons';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import { jwIcons } from 'src/helpers/fonts';
 import {
   addJwpubDocumentMediaToFiles,
   downloadAdditionalRemoteVideo,

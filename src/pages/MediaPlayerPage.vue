@@ -26,7 +26,9 @@
         v-if="!hideMediaLogo && jwIconsFontLoaded"
         id="yeartextLogoContainer"
       >
-        <p id="yeartextLogo">{{ jwIcons['tv-logo'] }}</p>
+        <p id="yeartextLogo">
+          {{ tvLogoGlyph }}
+        </p>
       </div>
     </div>
 
@@ -150,9 +152,9 @@ import {
   whenever,
 } from '@vueuse/core';
 import { useQuasar } from 'quasar';
-import { jwIcons } from 'src/constants/jw-icons';
+import { keywordToJwIconMapping } from 'src/constants/jw-icons';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { setElementFont } from 'src/helpers/fonts';
+import { jwIcons, setElementFont } from 'src/helpers/fonts';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
 import {
@@ -1050,6 +1052,10 @@ watchImmediate(
       loadFonts();
     }
   },
+);
+
+const tvLogoGlyph = computed(
+  () => jwIcons[keywordToJwIconMapping['tv-logo'] || ''],
 );
 
 onMounted(() => {
