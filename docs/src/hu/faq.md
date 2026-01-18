@@ -49,155 +49,155 @@ Töltse le a megfelelő verziót a [Letöltési oldalról](download), és köves
 Az M³ tartalmaz egy telepítő varázslót, amely végigvezeti Önt a legfontosabb beállításokon:
 
 1. Válassza ki a felület nyelvét
-2. Select profile type (Regular or Other)
-3. Configure congregation information
-4. Set up meeting schedule
-5. Configure optional features like OBS integration
+2. Válassza ki a profil típusát (Általános vagy Egyéb)
+3. Gyülekezeti információk konfigurálása
+4. Összejövetel ütemezésének beállítása
+5. Konfigurálja az opcionális funkciókat, például az OBS integrációt
 
-## Media Management {#faq-media-management}
+## Médiakezelés {#faq-media-management}
 
-### :desktop_computer: How does M³ download media? {#media-download}
+### :desktop_computer: Hogyan tölti le az M³ a médiafájlokat? {#media-download}
 
-M³ automatically downloads media for upcoming meetings by:
+Az M³ automatikusan letölti a közelgő összejövetelekhez tartozó médiát az alábbiak szerint:
 
-1. Checking your meeting schedule
-2. Determining what media is needed
-3. Downloading from the official website of Jehovah's Witnesses in your selected language
-4. Organizing media by date and meeting type
-5. Caching files for offline use
+1. Ellenőrzi az összejövetelek ütemezését
+2. Meghatározza, hogy milyen médiaanyagokra van szükség
+3. Letölti Jehova Tanúi hivatalos weboldaláról a kiválasztott nyelven
+4. A média rendezése a dátum és az összejövetel típusa szerint
+5. Fájlok gyorsítótárazása offline használatra
 
-### :calendar: Can I download media for specific dates? {#specific-dates}
+### :calendar: Letölthetek médiafájlokat konkrét dátumokra? {#specific-dates}
 
-Yes! M³ allows you to:
+Igen! Az M³ lehetővé teszi, hogy:
 
-- Download media for upcoming meetings automatically
-- Import custom media for any date
+- Letöltse a következő összejövetelek médiáját automatikusan
+- Saját fájlokat importáljon bármely időponthoz
 
-### :open_file_folder: How do I import my own media files? {#import-media}
+### :open_file_folder: Hogyan importálhatom a saját médiafájljaimat? {#import-media}
 
-You can import custom media in several ways:
+Az egyéni médiát többféle módon importálhatja:
 
-- **File Import**: Use the import button to add videos, images, or audio files
-- **Drag and Drop**: Drag files directly into M³
-- **Folder Monitoring**: Set up a watched folder for automatic imports
-- **JWPUB Files and Playlists**: Import publications and playlists
+- **Fájl importálása**: Az importálás gombbal videókat, képeket vagy hangfájlokat adhat hozzá
+- **Fogd és vidd**: Húzza a fájlokat közvetlenül az M³-ba
+- **Mappafigyelés**: Állítson be egy figyelt mappát az automatikus importáláshoz
+- **JWPUB fájlok és lejátszási listák**: Kiadványok és lejátszási listák importálása
 
-### :speaker: Can I import audio Bible recordings? {#audio-bible}
+### :speaker: Importálhatok hangfelvételeket a Bibliából? {#audio-bible}
 
-Yes! M³ includes an Audio Bible feature that allows you to:
+Igen! Az M³ tartalmaz egy Hangos Biblia funkciót, amely lehetővé teszi, hogy:
 
-1. Select Bible books and chapters
-2. Choose specific verses or verse ranges
-3. Download audio recordings
-4. Use them at the meetings
+1. Kiválasszon bibliai könyveket és fejezeteket
+2. Kiválasszon konkrét verseket vagy szakaszokat
+3. Hangfelvételeket tölthet le
+4. Használhatja őket az összejöveteleken
 
-## Presentation Features {#faq-presentation-features}
+## Prezentációs funkciók {#faq-presentation-features}
 
-### :tv: How do I present media during meetings? {#present-media}
+### :tv: Hogyan mutassam be a médiaanyagokat az összejöveteleken? {#present-media}
 
-To present media:
+A média bemutatásához:
 
-1. Select the date
-2. Click the play button on the media item you want to present or use keyboard shortcuts
-3. Use the media player controls to pause, navigate, or stop playback
-4. Use zoom/pan features for images
-5. Set custom timing if needed
+1. Válassza ki a dátumot
+2. Kattintson a lejátszás gombra a bemutatni kívánt médiaelemnél, vagy használja a billentyűparancsokat
+3. A médialejátszó vezérlőivel szüneteltetheti a lejátszást, navigálhat vagy leállíthatja a lejátszást
+4. Használhatja a képek nagyítás/eltolás funkcióit
+5. Ha szükséges, beállíthat egyedi időzítést
 
-### :keyboard: What keyboard shortcuts are available? {#faq-keyboard-shortcuts}
+### :keyboard: Milyen billentyűparancsok állnak rendelkezésre? {#faq-keyboard-shortcuts}
 
-M³ supports customizable keyboard shortcuts for:
+Az M³ testreszabható billentyűparancsokat támogat a következő funkciókhoz:
 
-- Opening/closing media window
-- Previous/next media navigation
-- Play/pause/stop controls
-- Background music toggle
+- Médiaablak megnyitása/bezárása
+- Előző/következő média navigáció
+- Lejátszás/szünet/leállítás vezérlők
+- Háttérzene be-/kikapcsolása
 
 <!-- - Fullscreen mode -->
 
-### :notes: How does background music work? {#faq-background-music}
+### :notes: Hogyan működik a háttérzene? {#faq-background-music}
 
-Background music features include:
+A háttérzene funkciók a következők:
 
-- Automatic playback when M³ starts, before the meeting begins
-- Automatic stop before meetings begin
-- One-click restart after meetings
-- Independent volume control
-- Configurable stop buffer time
+- Automatikus lejátszás az M³ indításakor, az összejövetel kezdete előtt
+- Automatikus leállítás az összejövetel kezdete előtt
+- Egy kattintással újraindítható az összejövetel után
+- Független hangerő-szabályozás
+- Konfigurálható stop puffer idő
 
-### :video_camera: How do I set up the Zoom integration? {#zoom-setup}
+### :video_camera: Hogyan állíthatom be a Zoom integrációt? {#zoom-setup}
 
-To integrate with Zoom:
+A Zoom integrációhoz:
 
-1. Enable Zoom integration in M³ settings
-2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
-3. M³ will automatically start and stop Zoom screen sharing during media presentations
+1. Engedélyezze a Zoom integrációt az M³ beállításaiban
+2. Konfigurálja a Zoomban beállított képernyőmegosztási gyorsbillentyűt. Győződjön meg arról, hogy a gyorsbillentyű a Zoom beállításaiban „global” beállítású.
+3. Az M³ automatikusan elindítja és leállítja a Zoom képernyőmegosztását a tartalom bemutatása során
 
-## OBS Studio Integration {#faq-obs-integration}
+## OBS Studio integráció {#faq-obs-integration}
 
-### :video_camera: How do I set up the OBS Studio integration? {#faq-obs-setup}
+### :video_camera: Hogyan állíthatom be az OBS Studio integrációt? {#faq-obs-setup}
 
-To integrate with OBS Studio:
+Az OBS Studio-val történő integrációhoz:
 
-1. Install OBS Studio and the WebSocket plugin
-2. Enable OBS integration in M³ settings
-3. Enter the OBS port and password
-4. Configure scenes for camera, media, and images
-5. Test playback
+1. Telepítse az OBS Studiot és a WebSocket bővítményt
+2. Engedélyezze az OBS integrációt az M³ beállításaiban
+3. Írja be az OBS portot és a jelszót
+4. Konfigurálja a kamera, a média és a képek jeleneteit
+5. Tesztelje a lejátszást
 
-### :arrows_counterclockwise: How does automatic scene switching work? {#faq-scene-switching}
+### :arrows_counterclockwise: Hogyan működik az automatikus jelenetváltás? {#faq-scene-switching}
 
-M³ automatically switches OBS scenes based on:
+Az M³ automatikusan vált OBS jelenetek között a következő alapon:
 
-- Media type (video, image, etc.)
-- Your scene configuration
-- Settings like "Postpone Images"
-- Whether to return to previous scene after media
+- Médiatípus (videó, kép stb.)
+- A jelenetek konfigurációja
+- Beállítások, mint például „Képek elhalasztása”
+- Egy média lejátszása után vissza kell-e térni az előző jelenethez
 
-### :pause_button: What is the "Postpone Images" feature? {#faq-postpone-images}
+### :pause_button: Mi az a „Képek elhalasztása” funkció? {#faq-postpone-images}
 
-This feature delays sharing images to OBS until you manually trigger them. This is useful for:
+Ez a funkció késlelteti a képek továbbítását az OBS programba, amíg azokat manuálisan el nem indítja. Ez hasznos a következő esetekben:
 
-- Showing images to in-person audience first
-- Having more control over timing
-- Avoiding premature scene changes
+- Először a személyesen jelen lévő közönségnek kell megmutatni a képeket
+- Az időzítés jobb kontrollja
+- A korai jelenetváltások elkerülése
 
-## Advanced Features {#faq-advanced-features}
+## Fejlett funkciók {#faq-advanced-features}
 
-### :cloud: How does folder monitoring work? {#faq-folder-monitoring}
+### :cloud: Hogyan működik a mappák figyelése? {#faq-folder-monitoring}
 
-Folder monitoring allows you to:
+A mappák figyelése lehetővé teszi a következőket:
 
-1. Select a folder to watch for new files
-2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
+1. Válasszon ki egy mappát, amelyet figyelni szeretne
+2. Automatikusan importálja az új médiafájlokat, amelyek szinkronizálva vannak a Dropbox vagy OneDrive felhőtárhellyel
 
-### :file_folder: What is media auto-export? {#faq-media-export}
+### :file_folder: Mi az automatikus médiaexportálás? {#faq-media-export}
 
-Media auto-export automatically:
+A média automatikus exportálása:
 
-1. Exports media files to a specified folder
-2. Organizes files by date and section
-3. Converts files to MP4 format (optional)
-4. Maintains an organized backup of meeting media files
+1. A médiafájlokat egy megadott mappába exportálja
+2. A fájlokat dátum és szakasz szerint rendezi
+3. MP4 formátumba konvertálja a fájlokat (opcionális)
+4. Rendezett biztonsági másolatot készít az összejövetel médiafájljairól
 
-### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
+### :family: Több gyülekezetet is lehet kezelni? {#faq-multiple-congregations}
 
-Yes! M³ supports multiple profiles for:
+Igen! Az M³ több profilt támogat a következők számára:
 
-- Different congregations
-- Special events
-- Different groups
-- Separate settings and media for each
+- Különböző gyülekezetek
+- Különleges események
+- Különböző csoportok
+- Külön beállítások és média mindegyikhez
 
-## Troubleshooting {#faq-troubleshooting}
+## Hibaelhárítás {#faq-troubleshooting}
 
-### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
+### :warning: A média nem töltődik le. Mit kell ellenőriznem? {#faq-media-not-downloading}
 
-Check these common issues:
+Ellenőrizze ezeket a gyakori problémákat:
 
-1. **Meeting Schedule**: Verify your meeting days and times are correct
-2. **Language Settings**: Ensure your media language is set correctly
-3. **Internet Connection**: Check your internet connection
-4. **Language Availability**: Verify media is available in your selected language
+1. **Összejövetelek ütemezése**: Ellenőrizze, hogy az összejövetelek napjai és időpontjai helyesek-e
+2. **Nyelvi beállítások**: Győződjön meg arról, hogy a média nyelve helyesen van beállítva
+3. **Internetkapcsolat**: Ellenőrizze az internetkapcsolatát
+4. **Nyelvi elérhetőség**: Ellenőrizze, hogy a média elérhető-e a kiválasztott nyelven
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
@@ -234,7 +234,7 @@ Try these performance optimizations:
 3. **Check Disk Space**: Ensure you have sufficient free disk space
 4. **Reduce Resolution**: Lower the maximum resolution setting
 
-### :speech_balloon: I'm having language issues. What should I check? {#faq-language-issues}
+### :speech_balloon: I'm having language issues. Mit kell ellenőriznem? {#faq-language-issues}
 
 Verify these language settings:
 
@@ -319,7 +319,7 @@ Typical usage ranges from 2-10GB depending on settings and usage.
 
 ### :shield: Is M³ secure and private? {#security-privacy}
 
-Yes! M³ is designed with security and privacy in mind:
+Igen! M³ is designed with security and privacy in mind:
 
 - **Local Storage**: All meeting data is stored locally on your computer
 - **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
