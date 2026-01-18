@@ -1,6 +1,6 @@
 # Gyakran Ismételt Kérdések {#frequently-asked-questions}
 
-## General Questions {#general-questions}
+## Általános kérdések {#general-questions}
 
 ### :earth_americas: Függ-e ez az alkalmazás külső webhelyektől, forrásoktól vagy "kurátoroktól" a kiadványok, összejöveteli média vagy más tartalmak letöltéséhez? {#external-dependencies}
 
@@ -14,41 +14,41 @@ Az alkalmazás forráskódja mindenki számára elérhető, hogy megvizsgálja �
 
 ### :thinking: Ez az alkalmazás sérti Jehova Tanúi hivatalos honlapjának felhasználási feltételeit? {#terms-of-use}
 
-**No.** The [Terms of Use](https://www.jw.org/finder?docid=1011511&prefer=content) of the official website of Jehovah's Witnesses explicitly allow the kind of usage that we are making. Íme a vonatkozó részlet az említett feltételekből (kiemelés hozzáadva):
+**Nem.** Jehova Tanúi hivatalos weboldalának [felhasználási feltételei](https://www.jw.org/finder?docid=1011511&prefer=content) kifejezetten engedélyezik az általunk alkalmazott felhasználási módot. Íme a vonatkozó részlet az említett feltételekből (kiemelés hozzáadva):
 
 > Tilos:
 >
 > Terjesztési céllal olyan szoftveralkalmazást készíteni, eszközt vagy módszert alkalmazni, amelynek célja kifejezetten a honlapon található adatok, HTML-állományok, képek vagy szövegek gyűjtése, másolása, kinyerése, lehalászása vagy letapogatása. (Ez a tilalom **nem** vonatkozik azon ingyenes, nem kereskedelmi célú alkalmazások terjesztésére, melyek célja elektronikus fájlok [pl. EPUB, PDF, MP3 és MP4 fájlok] letöltése a honlap nyilvánosan elérhető részéről.)
 
-### :question: What operating systems does M³ support? {#operating-systems}
+### :question: Mely operációs rendszereket támogatja az M³? {#operating-systems}
 
-M³ supports Windows, macOS, and Linux:
+Az M³ támogatja a Windows, macOS és Linux operációs rendszereket:
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 és újabb verziók (64 bites és 32 bites változatok elérhetők)
+- **macOS**: macOS 10.15 (Catalina) és újabb verziók (Intel és Apple Silicon támogatás)
+- **Linux**: A legtöbb modern Linux-disztribúció (AppImage formátum)
 
-### :globe_with_meridians: Does M³ work in my language? {#language-support}
+### :globe_with_meridians: Az M³ az én nyelvemen is működik? {#language-support}
 
 **Igen!** Az M³ átfogó többnyelvű támogatást nyújt:
 
-- **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
-- **App Interface**: Use M³'s interface in many different languages
-- **Independent Settings**: You can use the interface in one language while downloading media in another
-- **Fallback languages**: Configure fallback languages for when media isn't available in the primary language
-- **Subtitle support**: Download and display subtitles in various languages
+- **Média**: Több száz nyelven elérhető médiaanyagok letöltése Jehova tanúi hivatalos honlapjáról
+- **Alkalmazás felület**: Használja az M³ felületét számos különböző nyelven
+- **Független beállítások**: Az interfészt egy nyelven használhatja, miközben a médiát egy másik nyelven tölti le
+- **Tartalék nyelvek**: Konfigurálja a tartalék nyelveket arra az esetre, ha a média nem érhető el az elsődleges nyelven
+- **Felirat támogatás**: Feliratok letöltése és megjelenítése különböző nyelveken
 
-## Installation and Setup {#installation-setup}
+## Telepítés és beállítás {#installation-setup}
 
-### :computer: How do I download and install M³? {#installation}
+### :computer: Hogyan tölthetem le és telepíthetem az az M³ programot? {#installation}
 
-Download the appropriate version from the [Download page](download) and follow the steps in the [User Guide](user-guide).
+Töltse le a megfelelő verziót a [Letöltési oldalról](download), és kövesse a [Felhasználói útmutatóban](user-guide) leírt lépéseket.
 
-### :gear: How do I set up M³ for the first time? {#first-time-setup}
+### :gear: Hogyan állítsam be az M³-at az első alkalommal? {#first-time-setup}
 
-M³ includes a setup wizard that guides you through the essential configuration:
+Az M³ tartalmaz egy telepítő varázslót, amely végigvezeti Önt a legfontosabb beállításokon:
 
-1. Choose your interface language
+1. Válassza ki a felület nyelvét
 2. Select profile type (Regular or Other)
 3. Configure congregation information
 4. Set up meeting schedule
@@ -291,9 +291,9 @@ Thank you for your interest in supporting the project! However, in the spirit of
 
 M³ is designed to work on a wide range of operating systems:
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 és újabb verziók (64 bites és 32 bites változatok elérhetők)
+- **macOS**: macOS 10.15 (Catalina) és újabb verziók (Intel és Apple Silicon támogatás)
+- **Linux**: A legtöbb modern Linux-disztribúció (AppImage formátum)
 
 M³ has the following hardware requirements:
 
