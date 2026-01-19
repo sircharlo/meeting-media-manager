@@ -29,10 +29,11 @@ const { exists, pathExists, remove } = fs;
 const { join, normalize } = path;
 
 const cleanCongregationRecord = (
-  record: Partial<Record<string, unknown>>,
+  record: Partial<Record<string, unknown>> | undefined,
   congIds: Set<string>,
 ) => {
-  if (!record || !congIds) return;
+  if (!record) return;
+
   Object.keys(record).forEach((congId) => {
     if (!congIds.has(congId)) {
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
@@ -42,15 +43,10 @@ const cleanCongregationRecord = (
 };
 
 export const cleanPersistedStores = () => {
-  const congregationStore = useCongregationSettingsStore();
-  const congIds = new Set(Object.keys(congregationStore.congregations));
+  const { congregations } = useCongregationSettingsStore();
+  const congIds = new Set(Object.keys(congregations));
 
-  // Cleanup old congregation records
-  const jwStore = useJwStore();
-  const congregationRecords: (keyof typeof jwStore.$state)[] = ['lookupPeriod'];
-  congregationRecords.forEach((r) =>
-    cleanCongregationRecord(jwStore[r], congIds),
-  );
+  cleanCongregationRecord(useJwStore().lookupPeriod, congIds);
 };
 
 const cleanCongregationFolders = async (root: string, congIds: Set<string>) => {
