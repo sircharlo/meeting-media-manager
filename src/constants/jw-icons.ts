@@ -2,21 +2,37 @@
  * Centralized map of JW Icons Unicode strings
  * Keys are the identifiers used in the app, values are the Unicode escape sequences
  */
-export const jwIcons: Record<string, string> = {
-  ayfm: '\ue6d4', // updated 2026-01-17
-  'brochures-and-booklets': '\ue62b', // updated 2026-01-17
-  'circuit-overseer': '\ue6ab', // updated 2026-01-17
-  g: '\ue619', // updated 2026-01-17
-  lac: '\ue6a4', // updated 2026-01-17
-  magazines: '\ue675', // updated 2026-01-17
-  'meeting-workbooks': '\ue679', // updated 2026-01-17
-  programs: '\ue601',
-  pt: '\ue6ab', // updated 2026-01-17
-  tgw: '\ue658', // updated 2026-01-17
-  'tracts-and-invitations': '\ue6c4', // updated 2026-01-17
-  'tv-logo': '\ue666', // updated 2026-01-17
-  w: '\ue6d2', // updated 2026-01-17
-  wp: '\ue6d2', // updated 2026-01-17
-  ws: '\ue6d3', // updated 2026-01-17
-  wt: '\ue6d2', // updated 2026-01-17
+export const fallbackJwIconsGlyphMap: Record<string, string> = {
+  arena: '\ue601',
+  'awake-exclamation-mark': '\ue619',
+  'brochure-stack': '\ue62b',
+  gem: '\ue658',
+  'jw-square': '\ue666',
+  'magazine-stack': '\ue675',
+  'meeting-workbook-stack': '\ue679',
+  sheep: '\ue6a4',
+  speaker: '\ue6ab',
+  'tract-stack': '\ue6c4',
+  watchtower: '\ue6d2',
+  'watchtower-square': '\ue6d3',
+  wheat: '\ue6d4',
+};
+
+export const keywordToJwIconMapping: Record<string, string | undefined> = {
+  ayfm: 'wheat',
+  'brochures-and-booklets': 'brochure-stack',
+  'circuit-overseer': 'speaker',
+  g: 'awake-exclamation-mark',
+  lac: 'sheep',
+  magazines: 'magazine-stack',
+  'meeting-workbooks': 'meeting-workbook-stack',
+  programs: 'arena',
+  pt: 'speaker',
+  tgw: 'gem',
+  'tracts-and-invitations': 'tract-stack',
+  'tv-logo': 'jw-square',
+  w: 'watchtower',
+  wp: 'watchtower',
+  ws: 'watchtower-square',
+  wt: 'watchtower',
 };

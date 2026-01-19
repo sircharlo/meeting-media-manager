@@ -7,7 +7,7 @@ import type {
 } from 'src/types';
 
 import { defaultAdditionalSection } from 'src/composables/useMediaSection';
-import { jwIcons } from 'src/constants/jw-icons';
+import { keywordToJwIconMapping } from 'src/constants/jw-icons';
 import { getMeetingSections, standardSections } from 'src/constants/media';
 import { isCoWeek } from 'src/helpers/date';
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -139,7 +139,9 @@ export const isStandardSection = (section: string) => {
   return standardSections.includes(section);
 };
 
-function getMeetingSectionConfigs(section?: MediaSectionIdentifier) {
+function getMeetingSectionConfigs(
+  section?: MediaSectionIdentifier,
+): MediaSection {
   if (!section) {
     return { bgColor: getRandomColor(), uniqueId: '' };
   }
@@ -156,7 +158,7 @@ function getMeetingSectionConfigs(section?: MediaSectionIdentifier) {
 
   if ((iconSections as readonly string[]).includes(section)) {
     return {
-      jwIcon: jwIcons[section],
+      jwIconGlyph: keywordToJwIconMapping[section],
       uniqueId: section,
     };
   }
