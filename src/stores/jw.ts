@@ -28,6 +28,7 @@ import {
   fetchJwLanguages,
   fetchMemorials,
   fetchPubMediaLinks,
+  fetchRaw,
   fetchYeartext,
 } from 'src/utils/api';
 import {
@@ -68,13 +69,21 @@ export const shouldUpdateList = (
       getDateDiff(new Date(), cacheList.updated, 'months') > months
     ); // True if list is empty or old enough, false otherwise
   } catch (error) {
-    console.log('Error checking cache list', error);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          args: { cacheList, months },
+          name: 'shouldUpdateList',
+        },
+      },
+    });
     return true; // Error checking, update
   }
 };
 
 interface Store {
   jwBibleFiles: Partial<Record<JwLangCode, CacheList<Partial<Publication>>>>;
+  jwIconsUrl: string;
   jwLanguages: CacheList<JwLanguage>;
   jwMepsLanguages: CacheList<JwMepsLanguage>;
   jwSongs: Partial<Record<JwLangCode, CacheList<MediaLink>>>;
@@ -399,6 +408,63 @@ export const useJwStore = defineStore('jw-store', {
         });
       });
     },
+    async updateJwIconsUrl() {
+      try {
+        const wolUrl = `https://wol.${this.urlVariables.base}/en/wol/h/r1/lp-e`;
+        const response = await fetchRaw(wolUrl);
+        if (!response.ok) return;
+
+        const html = await response.text();
+        const cssRegex = /href=["']([^"']+\.css)["']/g;
+        let match;
+        const cssUrls: string[] = [];
+        while ((match = cssRegex.exec(html)) !== null) {
+          let url = match[1];
+          if (!url) continue;
+          if (url.startsWith('/')) {
+            url = `https://wol.${this.urlVariables.base}${url}`;
+          }
+          cssUrls.push(url);
+        }
+
+        for (const cssUrl of cssUrls) {
+          try {
+            const cssResponse = await fetchRaw(cssUrl);
+            if (!cssResponse.ok) continue;
+            const cssText = await cssResponse.text();
+            if (cssText.includes('jw-icons-external')) {
+              const fontMatch = cssText.match(
+                /url\(["']?([^"']+\.(woff2?|ttf|otf)[^"']*)["']?\)/,
+              );
+              if (fontMatch) {
+                const fontUrl = fontMatch[1];
+                if (!fontUrl) continue;
+                this.jwIconsUrl = new URL(fontUrl, cssUrl).href;
+                break;
+              }
+            }
+          } catch (e) {
+            errorCatcher(e, {
+              contexts: {
+                fn: {
+                  args: { cssUrl },
+                  name: 'updateJwIconsUrl - cssUrl',
+                },
+              },
+            });
+          }
+        }
+      } catch (e) {
+        errorCatcher(e, {
+          contexts: {
+            fn: {
+              args: {},
+              name: 'updateJwIconsUrl - main',
+            },
+          },
+        });
+      }
+    },
     async updateJwLanguages(online: boolean) {
       if (!online) return;
       try {
@@ -578,10 +644,9 @@ export const useJwStore = defineStore('jw-store', {
       };
 
       return {
-        'JW-Icons': getFontUrl(
-          'base',
-          '/assets/fonts/jw-icons-external-d876da3.woff',
-        ),
+        'JW-Icons':
+          state.jwIconsUrl ||
+          getFontUrl('base', '/assets/fonts/jw-icons-external-d876da3.woff'),
         'Wt-ClearText-Bold': getFontUrl(
           'mediator',
           '/fonts/wt-clear-text/1.029/Wt-ClearText-Bold.woff2',
@@ -616,6 +681,7 @@ export const useJwStore = defineStore('jw-store', {
   state: (): Store => {
     return {
       jwBibleFiles: {},
+      jwIconsUrl: '',
       jwLanguages: { list: [], updated: oldDate },
       jwMepsLanguages: { list: [], updated: oldDate },
       jwSongs: {},

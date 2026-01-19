@@ -111,38 +111,86 @@ const setFallbackFont = async (
   }
 };
 
-const getLocalFontPath = async (fontName: FontName) => {
+const withTimeout = async <T>(
+  ms: number,
+  fn: (signal: AbortSignal) => Promise<T>,
+): Promise<T> => {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), ms);
+  try {
+    return await fn(controller.signal);
+  } finally {
+    clearTimeout(id);
+  }
+};
+
+const needsDownload = async (
+  fontPath: string,
+  fontName: FontName,
+): Promise<boolean> => {
+  if (!(await exists(fontPath))) return true;
+
+  const store = useJwStore();
+  const url = store.fontUrls[fontName];
+
+  try {
+    const head = await withTimeout(5000, (signal) =>
+      fetchRaw(url, { method: 'HEAD', signal }),
+    );
+
+    if (!head.ok) {
+      if (fontName === 'JW-Icons') {
+        await store.updateJwIconsUrl();
+        return needsDownload(fontPath, fontName);
+      }
+      return false;
+    }
+
+    const remoteSize = head.headers.get('content-length');
+    if (!remoteSize) return true;
+
+    const localSize = (await stat(fontPath)).size;
+    return parseInt(remoteSize, 10) !== localSize;
+  } catch {
+    return false;
+  }
+};
+
+const downloadFont = async (fontPath: string, fontName: FontName) => {
+  const store = useJwStore();
+
+  const fetchFont = async () =>
+    withTimeout(30000, (signal) =>
+      fetchRaw(store.fontUrls[fontName], { method: 'GET', signal }),
+    );
+
+  let response = await fetchFont();
+  console.log('response', response);
+
+  if (!response.ok && fontName === 'JW-Icons') {
+    await store.updateJwIconsUrl();
+    response = await fetchFont();
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to download font: ${response.statusText || response.status}`,
+    );
+  }
+
+  const buffer = Buffer.from(await (await response.blob()).arrayBuffer());
+  await writeFile(fontPath, buffer);
+};
+
+export const getLocalFontPath = async (fontName: FontName) => {
   const fontsDir = await getFontsPath();
   const fontFileName = `${fontName}.woff2`;
   const fontPath = join(fontsDir, fontFileName);
-  let mustDownload = false;
-  const fontUrls = useJwStore().fontUrls;
 
   try {
-    if (await exists(fontPath)) {
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-        const headReq = await fetchRaw(fontUrls[fontName], {
-          method: 'HEAD',
-          signal: controller.signal,
-        });
-
-        clearTimeout(timeoutId);
-
-        if (headReq.ok) {
-          const remoteSize = headReq.headers.get('content-length');
-          const localSize = (await stat(fontPath)).size;
-          mustDownload = remoteSize ? parseInt(remoteSize) !== localSize : true;
-        } else {
-          mustDownload = false;
-        }
-      } catch {
-        mustDownload = false;
-      }
-    } else {
-      mustDownload = true;
+    if (await needsDownload(fontPath, fontName)) {
+      await ensureDir(fontsDir);
+      await downloadFont(fontPath, fontName);
     }
   } catch (error) {
     errorCatcher(error, {
@@ -153,57 +201,15 @@ const getLocalFontPath = async (fontName: FontName) => {
           fontPath,
           fontsDir,
           name: 'getLocalFontPath',
-          url: fontUrls[fontName],
+          url: useJwStore().fontUrls[fontName],
         },
       },
     });
-    mustDownload = true;
-  }
 
-  if (mustDownload) {
-    try {
-      await ensureDir(fontsDir);
-
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000);
-
-      const response = await fetchRaw(fontUrls[fontName], {
-        method: 'GET',
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to download font: ${response.statusText || response.status}`,
-        );
-      }
-
-      const blob = await response.blob();
-      const buffer = await blob.arrayBuffer();
-      await writeFile(fontPath, Buffer.from(buffer));
-    } catch (error) {
-      errorCatcher(error, {
-        contexts: {
-          fn: {
-            fontFileName,
-            fontName,
-            fontPath,
-            fontsDir,
-            name: 'getLocalFontPath download',
-            url: fontUrls[fontName],
-          },
-        },
-      });
-
-      // If download failed and local file doesn't exist, throw error
-      if (!(await exists(fontPath))) {
-        throw new Error(
-          `Failed to download font ${fontName} and no local copy exists`,
-        );
-      }
-      // If local file exists, continue with it despite download failure
+    if (!(await exists(fontPath))) {
+      throw new Error(
+        `Failed to download font ${fontName} and no local copy exists`,
+      );
     }
   }
 
