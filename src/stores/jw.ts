@@ -432,15 +432,20 @@ export const useJwStore = defineStore('jw-store', {
             const cssResponse = await fetchRaw(cssUrl);
             if (!cssResponse.ok) continue;
             const cssText = await cssResponse.text();
-            if (cssText.includes('jw-icons-external')) {
-              const fontMatch = cssText.match(
-                /url\(["']?([^"']+\.(woff2?|ttf|otf)[^"']*)["']?\)/,
-              );
-              if (fontMatch) {
-                const fontUrl = fontMatch[1];
-                if (!fontUrl) continue;
-                this.jwIconsUrl = new URL(fontUrl, cssUrl).href;
-                break;
+            const fontFaceBlocks = cssText.match(/@font-face\s*\{[^}]*\}/gi);
+            if (fontFaceBlocks) {
+              for (const block of fontFaceBlocks) {
+                if (block.includes('jw-icons-external')) {
+                  const fontMatch = block.match(
+                    /url\(["']?([^"']+\.(woff2?|ttf|otf)[^"']*)["']?\)/i,
+                  );
+                  if (fontMatch) {
+                    const fontUrl = fontMatch[1];
+                    if (!fontUrl) continue;
+                    this.jwIconsUrl = new URL(fontUrl, cssUrl).href;
+                    return; // Found it, we can stop everything
+                  }
+                }
               }
             }
           } catch (e) {
