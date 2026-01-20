@@ -108,5 +108,29 @@ export default defineConfigWithVueTs([
     rules: { ...vitest.configs.recommended.rules },
   },
 
+  {
+    files: ['src-electron/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                'src/**',
+                '!src/types',
+                '!src/types/**',
+                '!src/constants',
+                '!src/constants/**',
+              ],
+              message:
+                'Electron main process should not import from "src/" as it may include renderer-specific dependencies. Use "src/types", "src/constants", or move shared logic to a common directory.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
   skipFormattingConfig,
 ]);
