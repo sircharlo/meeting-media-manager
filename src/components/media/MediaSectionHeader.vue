@@ -13,11 +13,11 @@
         isCustom && selectedDayMeetingType !== 'we'
           ? 'custom-bg-color'
           : 'text-white bg-' + mediaList.config?.uniqueId,
-        { 'jw-icon': mediaList.config?.jwIconGlyph },
+        { 'jw-icon': mediaList.config?.jwIconKeyword },
       ]"
     >
-      <template v-if="mediaList.config?.jwIconGlyph">
-        {{ jwIcons[mediaList.config?.jwIconGlyph] }}
+      <template v-if="mediaList.config?.jwIconKeyword">
+        {{ getJwIconFromKeyword(mediaList.config?.jwIconKeyword) }}
       </template>
       <template v-else>
         <q-icon name="mmm-additional-media" size="md" />
@@ -235,7 +235,7 @@ import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { useMediaSection } from 'src/composables/useMediaSection';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
-import { jwIcons } from 'src/helpers/fonts';
+import { getJwIconFromKeyword } from 'src/helpers/fonts';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, nextTick, ref } from 'vue';
 import { useI18n } from 'vue-i18n';

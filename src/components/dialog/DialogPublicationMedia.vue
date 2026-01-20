@@ -171,7 +171,7 @@
                 @click="selectCategory(category)"
               >
                 <q-item-section avatar class="jw-icon">
-                  <q-avatar>{{ jwIcons[category] }}</q-avatar>
+                  <q-avatar>{{ getJwIconFromKeyword(category) }}</q-avatar>
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>{{ t(category) }}</q-item-label>
@@ -192,7 +192,7 @@
               >
                 <q-item-section avatar class="jw-icon">
                   <q-avatar>
-                    {{ jwIcons[choice.optionValue.toString()] }}
+                    {{ getJwIconFromKeyword(choice.optionValue) }}
                   </q-avatar>
                 </q-item-section>
                 <q-item-section>
@@ -465,7 +465,7 @@ import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { jwIcons } from 'src/helpers/fonts';
+import { getJwIconFromKeyword } from 'src/helpers/fonts';
 import {
   addJwpubDocumentMediaToFiles,
   downloadAdditionalRemoteVideo,

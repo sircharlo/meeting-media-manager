@@ -160,7 +160,7 @@ export const fetchMemorials = async (): Promise<null | Record<
     const memorials: Record<number, `${number}/${number}/${number}`> = {};
     for (const [key, value] of Object.entries(result)) {
       try {
-        if (!key || !value) continue;
+        if (!key || !value || /[a-zA-Z]/.test(value)) continue;
 
         const valueIsInPast = isInPast(value);
         if (valueIsInPast) continue;

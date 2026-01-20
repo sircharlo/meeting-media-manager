@@ -14,7 +14,6 @@ import {
   JWPUB_EXTENSIONS,
   PDF_EXTENSIONS,
 } from 'src/constants/media';
-import { errorCatcher } from 'src/helpers/error-catcher';
 import upath from 'upath';
 import yauzl from 'yauzl';
 
@@ -189,7 +188,7 @@ export async function unzipFile(
                   // Handle write stream errors
                   writeStream.on('error', (e) => {
                     // This is handled by pipeline, but good to have a backup
-                    errorCatcher(e, {
+                    captureElectronError(e, {
                       contexts: {
                         fn: {
                           args: { attempt, fullPath, input, output },

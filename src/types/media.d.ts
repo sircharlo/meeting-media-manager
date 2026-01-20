@@ -86,7 +86,7 @@ export interface MediaItem {
 
 export interface MediaSection {
   bgColor?: string;
-  jwIconGlyph?: string;
+  jwIconKeyword?: string;
   label?: string;
   repeat?: boolean; // Whether the section should repeat
   repeatInterval?: number; // Interval in seconds for images (default 10)
@@ -110,7 +110,7 @@ export interface SongItem {
 }
 export interface SortableMediaList {
   items: Ref<MediaItem[]>;
-  jwIconGlyph?: string | undefined;
+  jwIconKeyword?: string | undefined;
   label: string;
   type: MediaSectionIdentifier;
 }

@@ -32,7 +32,7 @@ export const keywordToJwIconMapping: Record<string, string | undefined> = {
   'tracts-and-invitations': 'tract-stack',
   'tv-logo': 'jw-square',
   w: 'watchtower',
-  wp: 'watchtower',
+  wp: 'persons-doorstep',
   ws: 'watchtower-square',
   wt: 'watchtower',
 };

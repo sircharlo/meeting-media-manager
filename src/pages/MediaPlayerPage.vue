@@ -9,9 +9,6 @@
       background-color: black;
     "
   >
-    <!-- <pre style="position: absolute; top: 0; left: 0; z-index: 1000">
-      jwIconsFontLoaded: {{ jwIconsFontLoaded }}
-    </pre> -->
     <q-resize-observer debounce="50" @resize="postMediaWindowSize" />
 
     <!-- Base yeartext layer - always visible with black background -->
@@ -27,7 +24,7 @@
         id="yeartextLogoContainer"
       >
         <p id="yeartextLogo">
-          {{ tvLogoGlyph }}
+          {{ getJwIconFromKeyword('tv-logo') }}
         </p>
       </div>
     </div>
@@ -152,9 +149,8 @@ import {
   whenever,
 } from '@vueuse/core';
 import { useQuasar } from 'quasar';
-import { keywordToJwIconMapping } from 'src/constants/jw-icons';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { jwIcons, setElementFont } from 'src/helpers/fonts';
+import { getJwIconFromKeyword, setElementFont } from 'src/helpers/fonts';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
 import {
@@ -1052,10 +1048,6 @@ watchImmediate(
       loadFonts();
     }
   },
-);
-
-const tvLogoGlyph = computed(
-  () => jwIcons[keywordToJwIconMapping['tv-logo'] || ''],
 );
 
 onMounted(() => {

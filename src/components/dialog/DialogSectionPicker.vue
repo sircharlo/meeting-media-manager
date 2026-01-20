@@ -16,7 +16,9 @@
               :class="`bg-${section.config?.uniqueId} full-width`"
               flat
               :icon="
-                section.config?.jwIconGlyph ? undefined : 'mmm-additional-media'
+                section.config?.jwIconKeyword
+                  ? undefined
+                  : 'mmm-additional-media'
               "
               size="md"
               :style="`background-color: ${section.config?.bgColor}; color: ${
@@ -26,10 +28,10 @@
             >
               <template #default>
                 <span
-                  v-if="section.config?.jwIconGlyph"
+                  v-if="section.config?.jwIconKeyword"
                   class="jw-icon q-mr-sm"
                 >
-                  {{ jwIcons[section.config.jwIconGlyph] }}
+                  {{ getJwIconFromKeyword(section.config.jwIconKeyword) }}
                 </span>
                 {{ getSectionLabel(section) }}
               </template>
@@ -47,7 +49,7 @@ import type { MediaSectionIdentifier, MediaSectionWithConfig } from 'src/types';
 import { storeToRefs } from 'pinia';
 import { getMeetingSections } from 'src/constants/media';
 import { isCoWeek, isMeetingDay, isWeMeetingDay } from 'src/helpers/date';
-import { jwIcons } from 'src/helpers/fonts';
+import { getJwIconFromKeyword } from 'src/helpers/fonts';
 import { getTextColor } from 'src/helpers/media-sections';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed } from 'vue';

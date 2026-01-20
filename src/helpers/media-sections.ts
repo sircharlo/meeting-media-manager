@@ -7,7 +7,6 @@ import type {
 } from 'src/types';
 
 import { defaultAdditionalSection } from 'src/composables/useMediaSection';
-import { keywordToJwIconMapping } from 'src/constants/jw-icons';
 import { getMeetingSections, standardSections } from 'src/constants/media';
 import { isCoWeek } from 'src/helpers/date';
 import { useCurrentStateStore } from 'src/stores/current-state';
@@ -158,7 +157,7 @@ function getMeetingSectionConfigs(
 
   if ((iconSections as readonly string[]).includes(section)) {
     return {
-      jwIconGlyph: keywordToJwIconMapping[section],
+      jwIconKeyword: section,
       uniqueId: section,
     };
   }

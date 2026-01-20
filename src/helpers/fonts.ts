@@ -2,7 +2,10 @@ import type { FontName } from 'src/types';
 
 import { Buffer } from 'buffer';
 import { create, type Font } from 'fontkit';
-import { fallbackJwIconsGlyphMap } from 'src/constants/jw-icons';
+import {
+  fallbackJwIconsGlyphMap,
+  keywordToJwIconMapping,
+} from 'src/constants/jw-icons';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { fetchRaw } from 'src/utils/api';
 import { getFontsPath } from 'src/utils/fs';
@@ -48,21 +51,12 @@ const buildJwIconsMap = async (fontPath: string) => {
   return jwIconsGlyphMapPromise;
 };
 
-export const jwIcons = new Proxy({} as Record<string, string>, {
-  get: (_target, prop: string) => {
-    // Ignore Vue internals and non-string properties
-    if (
-      typeof prop !== 'string' ||
-      prop.startsWith('__v_') ||
-      prop === 'constructor' ||
-      !prop
-    ) {
-      return undefined;
-    }
-
-    return jwIconsGlyphMap?.[prop] || fallbackJwIconsGlyphMap[prop] || '';
-  },
-});
+export const getJwIconFromKeyword = (keyword: number | string | undefined) => {
+  if (!keyword) return '';
+  const icon = keywordToJwIconMapping[keyword.toString()];
+  if (!icon) return '';
+  return jwIconsGlyphMap?.[icon] || fallbackJwIconsGlyphMap[icon] || '';
+};
 
 export const setElementFont = async (fontName: FontName) => {
   if (!fontName) return;
@@ -165,7 +159,6 @@ const downloadFont = async (fontPath: string, fontName: FontName) => {
     );
 
   let response = await fetchFont();
-  console.log('response', response);
 
   if (!response.ok && fontName === 'JW-Icons') {
     await store.updateJwIconsUrl();
