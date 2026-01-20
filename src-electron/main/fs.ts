@@ -14,6 +14,7 @@ import {
   JWPUB_EXTENSIONS,
   PDF_EXTENSIONS,
 } from 'src/constants/media';
+import { errorCatcher } from 'src/helpers/error-catcher';
 import upath from 'upath';
 import yauzl from 'yauzl';
 
@@ -133,37 +134,93 @@ export async function unzipFile(
 
           if (/\/$/.test(entry.fileName)) {
             // Directory
-            try {
-              await ensureDir(fullPath);
-              zipfile.readEntry();
-            } catch (e) {
-              zipfile.close();
-              reject(e);
-            }
+            const createDir = async (attempt = 1): Promise<void> => {
+              try {
+                await ensureDir(fullPath);
+                zipfile.readEntry();
+              } catch (e) {
+                if (attempt < 3) {
+                  console.warn(
+                    `[unzipFile] Failed to create directory, retrying (${attempt}/3): ${fullPath}`,
+                  );
+                  await new Promise((r) => {
+                    setTimeout(r, 100 * attempt);
+                  });
+                  return createDir(attempt + 1);
+                }
+                captureElectronError(e, {
+                  contexts: {
+                    fn: {
+                      args: { attempt, fullPath, input, output },
+                      name: 'unzipFile ensureDir (dir entry)',
+                    },
+                  },
+                });
+                zipfile.close();
+                reject(e);
+              }
+            };
+            await createDir();
           } else {
             // File
-            try {
-              zipfile.openReadStream(entry, async (err, readStream) => {
-                if (err) {
-                  zipfile.close();
-                  return reject(err);
-                }
-                if (!readStream) {
-                  zipfile.close();
-                  return reject(new Error('Read stream not found'));
-                }
+            zipfile.openReadStream(entry, async (err, readStream) => {
+              if (err) {
+                captureElectronError(err, {
+                  contexts: {
+                    fn: {
+                      args: { entry: entry.fileName, input, output },
+                      name: 'unzipFile openReadStream',
+                    },
+                  },
+                });
+                zipfile.close();
+                return reject(err);
+              }
+              if (!readStream) {
+                zipfile.close();
+                return reject(new Error('Read stream not found'));
+              }
 
+              const processFile = async (attempt = 1): Promise<void> => {
                 try {
                   await ensureDir(dirname(fullPath));
                   const writeStream = createWriteStream(fullPath);
+
+                  // Handle write stream errors
+                  writeStream.on('error', (e) => {
+                    // This is handled by pipeline, but good to have a backup
+                    errorCatcher(e, {
+                      contexts: {
+                        fn: {
+                          args: { attempt, fullPath, input, output },
+                          name: 'unzipFile ensureDir (dir entry)',
+                        },
+                      },
+                    });
+                  });
+
                   await pipeline(readStream, writeStream);
                   extractedFiles.push({ path: entry.fileName });
                   zipfile.readEntry();
                 } catch (e) {
+                  if (
+                    attempt < 3 &&
+                    e instanceof Error &&
+                    (e as { code?: string }).code === 'ENOENT'
+                  ) {
+                    console.warn(
+                      `[unzipFile] ENOENT during pipeline, retrying (${attempt}/3): ${fullPath}`,
+                    );
+                    await new Promise((r) => {
+                      setTimeout(r, 100 * attempt);
+                    });
+                    return processFile(attempt + 1);
+                  }
+
                   captureElectronError(e, {
                     contexts: {
                       fn: {
-                        args: { input, output },
+                        args: { attempt, fullPath, input, output },
                         name: 'unzipFile pipeline',
                       },
                     },
@@ -171,11 +228,10 @@ export async function unzipFile(
                   zipfile.close();
                   reject(e);
                 }
-              });
-            } catch (e) {
-              zipfile.close();
-              reject(e);
-            }
+              };
+
+              await processFile();
+            });
           }
         });
 
