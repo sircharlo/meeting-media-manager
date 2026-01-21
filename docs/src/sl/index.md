@@ -9,19 +9,20 @@ hero:
   actions:
     - theme: brand
       text: Prenesi
-      link: /sl/download
+      link: /download
     - theme: brand
       text: O programu
       link: /sl/about
     - theme: brand
       text: User Guide
-      link: /sl/user-guide
+      link: /user-guide
     - theme: brand
       text: Settings Guide
-      link: /sl/settings-guide
+      link: /settings-guide
     - theme: brand
       text: Pogosto zastavljena vprašanja
-      link: /sl/faq
+      link: /faq
+
 features:
   - icon: 🚀
     title: Automatic Media Management
