@@ -82,7 +82,7 @@ const {
   executeQuery,
   fileUrlToPath,
   fs,
-  isUsablePath,
+  isUsablePath: isUsablePathRaw,
   path,
   pathToFileURL,
   readdir,
@@ -91,6 +91,13 @@ const {
 } = window.electronApi;
 const { copy, exists, pathExists, remove, stat } = fs;
 const { basename, changeExt, dirname, extname, join } = path;
+
+const isUsablePathPromises: Record<string, Promise<boolean>> = {};
+const isUsablePath = (path: string) => {
+  if (isUsablePathPromises[path]) return isUsablePathPromises[path];
+  isUsablePathPromises[path] = isUsablePathRaw(path);
+  return isUsablePathPromises[path];
+};
 
 export const getJwLangCode = (mepsId?: number): JwLangCode | null => {
   if (mepsId === undefined) return null;

@@ -12,10 +12,17 @@ const {
   getAppDataPath,
   getBetaUpdatesPath,
   getUpdatesDisabledPath,
-  isUsablePath,
+  isUsablePath: isUsablePathRaw,
   path,
   readdir,
 } = window.electronApi;
+
+const isUsablePathPromises: Record<string, Promise<boolean>> = {};
+const isUsablePath = (path: string) => {
+  if (isUsablePathPromises[path]) return isUsablePathPromises[path];
+  isUsablePathPromises[path] = isUsablePathRaw(path);
+  return isUsablePathPromises[path];
+};
 const {
   ensureDir,
   ensureFile,

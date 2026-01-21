@@ -3,10 +3,23 @@ import type { QueryResponseItem } from 'src/types';
 import BetterSqlite3 from 'better-sqlite3';
 import { capturePreloadError } from 'src-electron/preload/log';
 
+const queryCache = new Map();
+
 export const executeQuery = <T extends object = QueryResponseItem>(
   dbPath: string,
   query: string,
 ): T[] => {
+  const cacheKey = `${dbPath}:${query}`;
+  if (queryCache.has(cacheKey)) {
+    const cachedResult = queryCache.get(cacheKey) as T[];
+    console.debug('executeQuery (cached)', {
+      count: cachedResult.length,
+      db: dbPath.split('/').pop(),
+      query,
+    });
+    return cachedResult;
+  }
+
   try {
     const db = new BetterSqlite3(dbPath, {
       fileMustExist: true,
@@ -27,6 +40,8 @@ export const executeQuery = <T extends object = QueryResponseItem>(
     });
 
     db.close(); // Explicitly close DB to free file handles
+
+    queryCache.set(cacheKey, result);
     return result;
   } catch (e) {
     capturePreloadError(e, {
