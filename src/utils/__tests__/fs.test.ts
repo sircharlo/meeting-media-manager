@@ -185,6 +185,7 @@ describe('trimFilepathAsNeeded', () => {
 
 describe('auto updates', () => {
   it('should be toggleable', async () => {
+    await toggleAutoUpdates(true);
     expect(await updatesDisabled()).toBe(false); // default value
     await toggleAutoUpdates(false);
     expect(await updatesDisabled()).toBe(true);
@@ -195,6 +196,7 @@ describe('auto updates', () => {
 
 describe('beta updates', () => {
   it('should be toggleable', async () => {
+    await toggleBetaUpdates(false);
     expect(await betaUpdatesDisabled()).toBe(true); // default value
     await toggleBetaUpdates(true);
     expect(await betaUpdatesDisabled()).toBe(false);
