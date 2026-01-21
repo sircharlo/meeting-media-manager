@@ -9,20 +9,19 @@ hero:
   actions:
     - theme: brand
       text: Download
-      link: /download
+      link: /hu/download
     - theme: brand
       text: A honlapról
       link: /hu/about
     - theme: brand
       text: Felhasználói útmutató
-      link: /user-guide
+      link: /hu/user-guide
     - theme: brand
       text: Beállítási útmutató
-      link: /settings-guide
+      link: /hu/settings-guide
     - theme: brand
       text: GYIK
-      link: /faq
-
+      link: /hu/faq
 features:
   - icon: 🚀
     title: Automatic Media Management
