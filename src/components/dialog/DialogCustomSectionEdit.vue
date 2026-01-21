@@ -140,13 +140,13 @@ const dialogValue = computed({
 const hexValues = ref<Record<string, string | undefined>>({});
 const labels = ref<Record<string, string | undefined>>({});
 
-const updateLabel = (uuid: string | undefined) => {
-  if (!uuid) return;
-  const newLabel = labels.value[uuid];
+const updateLabel = (uniqueId: string | undefined) => {
+  if (!uniqueId) return;
+  const newLabel = labels.value[uniqueId];
   if (!selectedDateObject.value?.mediaSections || !newLabel) return;
 
   const sectionData = selectedDateObject.value.mediaSections.find(
-    (section) => section.config.uniqueId === uuid,
+    (section) => section.config.uniqueId === uniqueId,
   );
   if (!sectionData?.config) return;
 

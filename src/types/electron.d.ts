@@ -69,11 +69,13 @@ export interface ElectronApi {
   fs: typeof FsExtra;
   getAllScreens: () => Promise<Display[]>;
   getAppDataPath: () => Promise<string>;
+  getBetaUpdatesPath: () => Promise<string>;
   getLocales: () => Promise<string[]>;
   getLocalPathFromFileObject: (fileObject: File | string | undefined) => string;
   getNrOfPdfPages: (pdfPath: string) => Promise<number>;
   getScreenAccessStatus: () => Promise<MediaAccessStatus>;
   getSharedDataPath: () => Promise<null | string>;
+  getUpdatesDisabledPath: () => Promise<string>;
   getUserDataPath: () => Promise<string>;
   /**
    * Parses metadata from a media file.
@@ -86,6 +88,7 @@ export interface ElectronApi {
   inferExtension: (filename: string, filetype?: string) => Promise<string>;
   isArchitectureMismatch: () => Promise<boolean>;
   isDownloadErrorExpected: () => Promise<boolean>;
+  isUsablePath: (path: string) => Promise<boolean>;
   moveMediaWindow: (
     targetScreenNumber?: number,
     windowedMode?: boolean,
@@ -203,12 +206,15 @@ export type ElectronIpcInvokeKey =
   | 'downloadFile'
   | 'getAllScreens'
   | 'getAppDataPath'
+  | 'getBetaUpdatesPath'
   | 'getLocales'
   | 'getScreenAccessStatus'
   | 'getSharedDataPath'
+  | 'getUpdatesDisabledPath'
   | 'getUserDataPath'
   | 'isArchitectureMismatch'
   | 'isDownloadErrorExpected'
+  | 'isUsablePath'
   | 'openFileDialog'
   | 'openFolder'
   | 'openFolderDialog'

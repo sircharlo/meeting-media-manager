@@ -1,12 +1,15 @@
 import type { FileDialogFilter, UnzipOptions, UnzipResult } from 'src/types';
 
 import { watch as filesystemWatch, type FSWatcher } from 'chokidar';
-import { dialog } from 'electron';
+import { app, dialog } from 'electron';
 import { ensureDir, type Stats } from 'fs-extra';
 import { createWriteStream } from 'node:fs';
-import { stat } from 'node:fs/promises';
+import { mkdir, rm, stat, writeFile } from 'node:fs/promises';
 import { pipeline } from 'node:stream/promises';
-import { captureElectronError } from 'src-electron/main/utils';
+import {
+  captureElectronError,
+  getSharedDataPath,
+} from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindow } from 'src-electron/main/window/window-main';
 import {
@@ -14,12 +17,68 @@ import {
   JWPUB_EXTENSIONS,
   PDF_EXTENSIONS,
 } from 'src/constants/media';
+import { uuid } from 'src/shared/vanilla';
 import upath from 'upath';
 import yauzl from 'yauzl';
 
 const { basename, dirname, join, toUnix } = upath;
 
 const ongoingDecompressions = new Map<string, Promise<UnzipResult[]>>();
+
+let defaultAppDataPath: null | string = null;
+
+/**
+ * Gets the app data path (shared or user data)
+ * @returns The app data path
+ */
+export async function getAppDataPath(): Promise<string> {
+  if (defaultAppDataPath) {
+    console.log('📁 Using cached app data path:', defaultAppDataPath);
+    return defaultAppDataPath;
+  }
+
+  try {
+    // Fallback candidates (in priority order)
+    const candidates = [await getSharedDataPath(), app.getPath('userData')];
+
+    for (const path of candidates) {
+      if (path && (await isUsablePath(path))) {
+        console.log('📁 Using new app data path:', path);
+        defaultAppDataPath = path;
+        return defaultAppDataPath;
+      }
+    }
+
+    // This should not happen, but keeps typing safe
+    throw new Error('No usable data path found');
+  } catch (e) {
+    captureElectronError(e, {
+      contexts: {
+        fn: {
+          args: {},
+          name: 'getAppDataPath',
+        },
+      },
+    });
+    defaultAppDataPath = app.getPath('userData');
+    console.log('📁 Using fallback app data path:', defaultAppDataPath);
+    return defaultAppDataPath;
+  }
+}
+
+export async function isUsablePath(basePath?: string): Promise<boolean> {
+  if (!basePath) return false;
+
+  try {
+    const testDir = join(basePath, '.cache-test-' + uuid());
+    await mkdir(testDir, { recursive: true });
+    await writeFile(join(testDir, 'test.txt'), 'ok');
+    await rm(testDir, { recursive: true });
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 export async function openFileDialog(
   single: boolean,

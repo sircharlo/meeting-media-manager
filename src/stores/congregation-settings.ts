@@ -3,8 +3,8 @@ import type { SettingsValues } from 'src/types';
 
 import { defineStore } from 'pinia';
 import { defaultSettings } from 'src/constants/settings';
+import { uuid } from 'src/shared/vanilla';
 import { wasUpdateInstalled } from 'src/utils/fs';
-import { uuid } from 'src/utils/general';
 
 interface Store {
   announcements: Partial<Record<string, string[]>>;

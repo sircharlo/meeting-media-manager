@@ -31,6 +31,8 @@ import {
 } from 'src-electron/main/downloads';
 import { createVideoFromNonVideo } from 'src-electron/main/ffmpeg';
 import {
+  getAppDataPath,
+  isUsablePath,
   openFileDialog,
   openFolderDialog,
   unwatchFolders,
@@ -44,7 +46,11 @@ import {
   unregisterAllShortcuts,
   unregisterShortcut,
 } from 'src-electron/main/shortcuts';
-import { triggerUpdateCheck } from 'src-electron/main/updater';
+import {
+  getBetaUpdatesPath,
+  getUpdatesDisabledPath,
+  triggerUpdateCheck,
+} from 'src-electron/main/updater';
 import {
   captureElectronError,
   getSharedDataPath,
@@ -266,10 +272,13 @@ function isOS64Bit() {
   }
 }
 
-handleIpcInvoke('getAppDataPath', async () => app.getPath('appData'));
+handleIpcInvoke('getAppDataPath', async () => getAppDataPath());
+handleIpcInvoke('getBetaUpdatesPath', async () => getBetaUpdatesPath());
+handleIpcInvoke('getUpdatesDisabledPath', async () => getUpdatesDisabledPath());
 handleIpcInvoke('getSharedDataPath', async () => getSharedDataPath());
 handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
 handleIpcInvoke('getLocales', async () => app.getPreferredSystemLanguages());
+handleIpcInvoke('isUsablePath', async (_e, p: string) => isUsablePath(p));
 
 handleIpcInvoke(
   'isArchitectureMismatch',

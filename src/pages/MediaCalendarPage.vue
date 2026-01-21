@@ -149,6 +149,7 @@ import { showMediaWindow, unzipJwpub } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { updateLastUsedDate } from 'src/helpers/usage';
 import { triggerZoomScreenShare } from 'src/helpers/zoom';
+import { uuid } from 'src/shared/vanilla';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
   dateFromString,
@@ -163,7 +164,6 @@ import {
   getTempPath,
   isFileUrl,
 } from 'src/utils/fs';
-import { uuid } from 'src/utils/general';
 import {
   getMetadataFromMediaPath,
   isArchive,

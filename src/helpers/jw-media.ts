@@ -45,7 +45,6 @@ import {
 import {
   findFile,
   getPublicationDirectory,
-  isUsablePath,
   trimFilepathAsNeeded,
 } from 'src/utils/fs';
 import { sanitizeId } from 'src/utils/general';
@@ -83,6 +82,7 @@ const {
   executeQuery,
   fileUrlToPath,
   fs,
+  isUsablePath,
   path,
   pathToFileURL,
   readdir,

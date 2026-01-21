@@ -1,7 +1,7 @@
 import type { OldAppConfig } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { uuid } from 'src/utils/general';
+import { uuid } from 'src/shared/vanilla';
 import {
   buildNewPrefsObject,
   getOldPrefsPaths,

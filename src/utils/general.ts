@@ -184,20 +184,6 @@ export const sortByVersion = (a: string, b: string) => {
   return 0;
 };
 
-/**
- * Generates a UUID.
- * @returns The generated UUID.
- * @example
- * uuid() // '8e8679e3-02b1-410b-9399-2c1e5606a971'
- */
-export const uuid = () => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = (Math.random() * 16) | 0,
-      v = c == 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
-};
-
 export const isUUID = (str: string) =>
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
 

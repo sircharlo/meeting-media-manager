@@ -122,6 +122,8 @@ export default defineConfigWithVueTs([
                 '!src/types/**',
                 '!src/constants',
                 '!src/constants/**',
+                '!src/shared',
+                '!src/shared/**',
               ],
               message:
                 'Electron main process should not import from "src/" as it may include renderer-specific dependencies. Use "src/types", "src/constants", or move shared logic to a common directory.',

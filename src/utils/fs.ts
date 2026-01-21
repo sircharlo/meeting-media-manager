@@ -3,15 +3,16 @@ import type { PublicationFetcher } from 'src/types';
 import { Buffer } from 'buffer';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
-import { uuid } from 'src/utils/general';
 import { getPubId } from 'src/utils/jw';
 
 const {
   checkForUpdates,
   fileUrlToPath,
   fs,
-  getSharedDataPath,
-  getUserDataPath,
+  getAppDataPath,
+  getBetaUpdatesPath,
+  getUpdatesDisabledPath,
+  isUsablePath,
   path,
   readdir,
 } = window.electronApi;
@@ -19,30 +20,14 @@ const {
   ensureDir,
   ensureFile,
   exists,
-  mkdir,
   pathExists,
   readFile,
   remove,
-  rm,
   writeFile,
 } = fs;
 const { dirname, extname, join } = path;
 
 let defaultDataPath: null | string = null;
-
-export async function isUsablePath(basePath?: string): Promise<boolean> {
-  if (!basePath) return false;
-
-  try {
-    const testDir = join(basePath, '.cache-test-' + uuid());
-    await mkdir(testDir, { recursive: true });
-    await writeFile(join(testDir, 'test.txt'), 'ok');
-    await rm(testDir, { recursive: true });
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 export const getCachedUserDataPath = async (): Promise<string> => {
   const { currentSettings } = useCurrentStateStore();
@@ -66,22 +51,10 @@ export const getCachedUserDataPath = async (): Promise<string> => {
     return defaultDataPath;
   }
 
-  // Fallback candidates (in priority order)
-  const candidates = await Promise.all([
-    getSharedDataPath(),
-    getUserDataPath(),
-  ]);
-
-  for (const path of candidates) {
-    if (path && (await isUsablePath(path))) {
-      defaultDataPath = path;
-      console.log('📁 Using cache path:', path);
-      return defaultDataPath;
-    }
-  }
-
-  // This should not happen, but keeps typing safe
-  throw new Error('No usable data path found');
+  // Fallback to resolved app data path
+  defaultDataPath = await getAppDataPath();
+  console.log('📁 Using default app data path as cache path:', defaultDataPath);
+  return defaultDataPath;
 };
 
 export const isFileUrl = (path?: string) => path?.startsWith('file://');
@@ -112,7 +85,7 @@ const getCachePath = async (paths: string | string[], create = false) => {
   try {
     return await buildPath(await getCachedUserDataPath());
   } catch (error) {
-    defaultDataPath = await getUserDataPath();
+    defaultDataPath = await getAppDataPath();
     const fallbackPath = await buildPath(defaultDataPath);
     errorCatcher(error, {
       contexts: {
@@ -289,16 +262,12 @@ export const trimFilepathAsNeeded = (filepath: string, maxBytes = 230) => {
   return filepath;
 };
 
-// Global Preferences
-
-const disableUpdatesPath = async () =>
-  join(await getUserDataPath(), 'Global Preferences', 'disable-updates');
-
 /**
  * Checks if auto updates are disabled.
  * @returns Whether auto updates are disabled.
  */
-export const updatesDisabled = async () => exists(await disableUpdatesPath());
+export const updatesDisabled = async () =>
+  exists(await getUpdatesDisabledPath());
 
 /**
  * Toggles auto updates.
@@ -307,25 +276,22 @@ export const updatesDisabled = async () => exists(await disableUpdatesPath());
 export const toggleAutoUpdates = async (enable: boolean) => {
   try {
     if (enable) {
-      await remove(await disableUpdatesPath());
+      await remove(await getUpdatesDisabledPath());
       checkForUpdates();
     } else {
-      await ensureFile(await disableUpdatesPath());
+      await ensureFile(await getUpdatesDisabledPath());
     }
   } catch (error) {
     errorCatcher(error, { contexts: { fn: { name: 'enableUpdates' } } });
   }
 };
 
-const betaUpdatesPath = async () =>
-  join(await getUserDataPath(), 'Global Preferences', 'beta-updates');
-
 /**
  * Checks if beta updates are disabled.
  * @returns Wether beta updates are disabled.
  */
 export const betaUpdatesDisabled = async () =>
-  !(await exists(await betaUpdatesPath()));
+  !(await exists(await getBetaUpdatesPath()));
 
 /**
  * Toggles beta updates
@@ -334,9 +300,9 @@ export const betaUpdatesDisabled = async () =>
 export const toggleBetaUpdates = async (enable: boolean) => {
   try {
     if (enable) {
-      await ensureFile(await betaUpdatesPath());
+      await ensureFile(await getBetaUpdatesPath());
     } else {
-      await remove(await betaUpdatesPath());
+      await remove(await getBetaUpdatesPath());
     }
     checkForUpdates();
   } catch (error) {

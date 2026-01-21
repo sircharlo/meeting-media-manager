@@ -1,9 +1,9 @@
-import { app } from 'electron';
 import electronUpdater from 'electron-updater';
 const { autoUpdater } = electronUpdater;
 import { pathExists } from 'fs-extra/esm';
 import { IS_TEST } from 'src-electron/constants';
 import { isDownloadErrorExpected } from 'src-electron/main/downloads';
+import { getAppDataPath } from 'src-electron/main/fs';
 import {
   captureElectronError,
   isIgnoredUpdateError,
@@ -14,16 +14,16 @@ import upath from 'upath';
 
 const { join } = upath;
 
-const getUpdatesDisabledPath = () =>
-  join(app.getPath('userData'), 'Global Preferences', 'disable-updates');
+export const getUpdatesDisabledPath = async () =>
+  join(await getAppDataPath(), 'Global Preferences', 'disable-updates');
 
-const getBetaUpdatesPath = () =>
-  join(app.getPath('userData'), 'Global Preferences', 'beta-updates');
+export const getBetaUpdatesPath = async () =>
+  join(await getAppDataPath(), 'Global Preferences', 'beta-updates');
 
 const isPortable = () => !!process.env.PORTABLE_EXECUTABLE_DIR;
 
 export async function initUpdater() {
-  if (await pathExists(getUpdatesDisabledPath())) return; // Skip updater if updates are disabled by user
+  if (await pathExists(await getUpdatesDisabledPath())) return; // Skip updater if updates are disabled by user
   if (isPortable()) return; // Skip updater for portable version
 
   autoUpdater.allowDowngrade = true;
@@ -70,12 +70,12 @@ export async function initUpdater() {
 }
 
 export const triggerUpdateCheck = async (attempt = 1) => {
-  if (await pathExists(getUpdatesDisabledPath())) {
+  if (await pathExists(await getUpdatesDisabledPath())) {
     return;
   }
 
   if (attempt === 1) {
-    autoUpdater.allowPrerelease = await pathExists(getBetaUpdatesPath());
+    autoUpdater.allowPrerelease = await pathExists(await getBetaUpdatesPath());
   }
 
   try {

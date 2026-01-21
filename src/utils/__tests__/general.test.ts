@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { uuid } from '../../shared/vanilla';
 import {
   camelToKebabCase,
   capitalize,
@@ -14,7 +15,6 @@ import {
   sanitizeId,
   sortByVersion,
   toTitleCase,
-  uuid,
 } from '../general';
 
 describe('camelToKebabCase', () => {

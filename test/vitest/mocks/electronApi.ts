@@ -72,6 +72,9 @@ export const electronApi: ElectronApi = {
   },
   isArchitectureMismatch: async () => false,
   isDownloadErrorExpected: async () => false,
+  isUsablePath: async function (path) {
+    return true;
+  },
   moveMediaWindow: function (targetScreenNumber, windowedMode) {
     throw new Error('Function not implemented.');
   },
