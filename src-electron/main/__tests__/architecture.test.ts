@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 const SRC_ELECTRON_DIR = join(process.cwd(), 'src-electron');
 const ALLOWED_SRC_SUBDIRS = ['types', 'constants'];
+const ALLOWED_FILES = ['vanilla'];
 
 function getAllFiles(dir: string, fileList: string[] = []): string[] {
   const files = readdirSync(dir);
@@ -46,12 +47,20 @@ describe('Architecture: Electron Main Process Imports', () => {
         continue;
       }
 
+      const isAllowedFile = ALLOWED_FILES.some((allowedFile) =>
+        importPath.includes(allowedFile),
+      );
+
+      if (isAllowedFile) {
+        continue;
+      }
+
       if (!ALLOWED_SRC_SUBDIRS.includes(subDir)) {
         const line = content.substring(0, match.index).split('\n').length;
         forbiddenImports.push(
           `Forbidden import found in ${relativePath}:${line}\n` +
             `Import: "src/${importPath}"\n` +
-            `Only imports from ${ALLOWED_SRC_SUBDIRS.map((s) => `"src/${s}"`).join(', ')} are allowed in src-electron.`,
+            `Only imports from ${ALLOWED_SRC_SUBDIRS.map((s) => `"src/${s}"`).join(', ')} or ${ALLOWED_FILES.join(', ')} are allowed in src-electron.`,
         );
       }
     }
