@@ -14,9 +14,11 @@ import upath from 'upath';
 const { join } = upath;
 
 export const basePath = join(__dirname, '..', 'fs');
-const fakePath = async (path: string) => {
+const fakePath = async (path: string, create = true) => {
   const dir = join(basePath, path);
-  await ensureDir(dir);
+  if (create) {
+    await ensureDir(dir);
+  }
   return dir;
 };
 
@@ -52,7 +54,7 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   getAppDataPath: async () => fakePath('app'),
-  getBetaUpdatesPath: async () => fakePath('app/beta-updates'),
+  getBetaUpdatesPath: async () => fakePath('app/beta-updates', false),
   getLocales: async () => [],
   getLocalPathFromFileObject: function (fileObject) {
     throw new Error('Function not implemented.');
@@ -64,7 +66,7 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   getSharedDataPath: async () => fakePath('/app/shared'),
-  getUpdatesDisabledPath: async () => fakePath('app/updates-disabled'),
+  getUpdatesDisabledPath: async () => fakePath('app/updates-disabled', false),
   getUserDataPath: async () => fakePath('app/meeting-media-manager'),
   getVideoDuration: function (filePath) {
     throw new Error('Function not implemented.');
