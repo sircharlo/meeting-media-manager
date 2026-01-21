@@ -52,6 +52,7 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   getAppDataPath: async () => fakePath('app'),
+  getBetaUpdatesPath: async () => fakePath('app/beta-updates'),
   getLocales: async () => [],
   getLocalPathFromFileObject: function (fileObject) {
     throw new Error('Function not implemented.');
@@ -63,6 +64,7 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   getSharedDataPath: async () => fakePath('/app/shared'),
+  getUpdatesDisabledPath: async () => fakePath('app/updates-disabled'),
   getUserDataPath: async () => fakePath('app/meeting-media-manager'),
   getVideoDuration: function (filePath) {
     throw new Error('Function not implemented.');
