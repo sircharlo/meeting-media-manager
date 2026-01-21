@@ -90,7 +90,6 @@ export const isFileUrl = (path?: string) => path?.startsWith('file://');
 
 const PUBLICATION_FOLDER = 'Publications';
 const CONG_PREFERENCES_FOLDER = 'Cong Preferences';
-const GLOBAL_PREFERENCES_FOLDER = 'Global Preferences';
 
 /**
  * Gets the full path of a directory in the cache folder.
@@ -292,8 +291,8 @@ export const trimFilepathAsNeeded = (filepath: string, maxBytes = 230) => {
 
 // Global Preferences
 
-const disableUpdatesPath = () =>
-  getCachePath([GLOBAL_PREFERENCES_FOLDER, 'disable-updates']);
+const disableUpdatesPath = async () =>
+  join(await getUserDataPath(), 'Global Preferences', 'disable-updates');
 
 /**
  * Checks if auto updates are disabled.
@@ -318,8 +317,8 @@ export const toggleAutoUpdates = async (enable: boolean) => {
   }
 };
 
-const betaUpdatesPath = () =>
-  getCachePath([GLOBAL_PREFERENCES_FOLDER, 'beta-updates']);
+const betaUpdatesPath = async () =>
+  join(await getUserDataPath(), 'Global Preferences', 'beta-updates');
 
 /**
  * Checks if beta updates are disabled.
