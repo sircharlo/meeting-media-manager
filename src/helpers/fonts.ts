@@ -18,6 +18,9 @@ const { join } = path;
 let jwIconsGlyphMapPromise: null | Promise<void> = null;
 let jwIconsGlyphMap: null | Record<string, string> = null;
 
+const fontFacePromises: Partial<Record<FontName, Promise<void>>> = {};
+const localFontPathPromises: Partial<Record<FontName, Promise<string>>> = {};
+
 const buildJwIconsMap = async (fontPath: string) => {
   if (jwIconsGlyphMap) return;
   if (jwIconsGlyphMapPromise) return jwIconsGlyphMapPromise;
@@ -61,31 +64,37 @@ export const getJwIconFromKeyword = (keyword: number | string | undefined) => {
 export const setElementFont = async (fontName: FontName) => {
   if (!fontName) return;
 
-  try {
-    const fontPath = await getLocalFontPath(fontName);
-    const fontFace = new FontFace(fontName, 'url("' + fontPath + '")');
-    await fontFace.load();
-    document.fonts.add(fontFace);
+  if (fontFacePromises[fontName]) return fontFacePromises[fontName];
 
-    if (fontName === 'JW-Icons') {
-      await buildJwIconsMap(fontPath);
-    }
-  } catch (error) {
-    const url = useJwStore().fontUrls[fontName];
-    const fallbackLoaded = await setFallbackFont(fontName, url);
+  fontFacePromises[fontName] = (async () => {
+    try {
+      const fontPath = await getLocalFontPath(fontName);
+      const fontFace = new FontFace(fontName, 'url("' + fontPath + '")');
+      await fontFace.load();
+      document.fonts.add(fontFace);
 
-    if (!fallbackLoaded) {
+      if (fontName === 'JW-Icons') {
+        await buildJwIconsMap(fontPath);
+      }
+    } catch (error) {
+      const url = useJwStore().fontUrls[fontName];
+      const fallbackLoaded = await setFallbackFont(fontName, url);
+
+      if (!fallbackLoaded) {
+        errorCatcher(error, {
+          contexts: { fn: { fontName, name: 'setElementFont fallback', url } },
+        });
+      }
+
+      if (useJwStore().urlVariables.base !== 'jw.org') return;
+      if (await window.electronApi?.isDownloadErrorExpected()) return;
       errorCatcher(error, {
-        contexts: { fn: { fontName, name: 'setElementFont fallback', url } },
+        contexts: { fn: { fontName, name: 'setElementFont', url } },
       });
     }
+  })();
 
-    if (useJwStore().urlVariables.base !== 'jw.org') return;
-    if (await window.electronApi?.isDownloadErrorExpected()) return;
-    errorCatcher(error, {
-      contexts: { fn: { fontName, name: 'setElementFont', url } },
-    });
-  }
+  return fontFacePromises[fontName];
 };
 
 const setFallbackFont = async (
@@ -176,35 +185,41 @@ const downloadFont = async (fontPath: string, fontName: FontName) => {
 };
 
 export const getLocalFontPath = async (fontName: FontName) => {
-  const fontsDir = await getFontsPath();
-  const fontFileName = `${fontName}.woff2`;
-  const fontPath = join(fontsDir, fontFileName);
+  if (localFontPathPromises[fontName]) return localFontPathPromises[fontName];
 
-  try {
-    if (await needsDownload(fontPath, fontName)) {
-      await ensureDir(fontsDir);
-      await downloadFont(fontPath, fontName);
-    }
-  } catch (error) {
-    errorCatcher(error, {
-      contexts: {
-        fn: {
-          fontFileName,
-          fontName,
-          fontPath,
-          fontsDir,
-          name: 'getLocalFontPath',
-          url: useJwStore().fontUrls[fontName],
+  localFontPathPromises[fontName] = (async () => {
+    const fontsDir = await getFontsPath();
+    const fontFileName = `${fontName}.woff2`;
+    const fontPath = join(fontsDir, fontFileName);
+
+    try {
+      if (await needsDownload(fontPath, fontName)) {
+        await ensureDir(fontsDir);
+        await downloadFont(fontPath, fontName);
+      }
+    } catch (error) {
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            fontFileName,
+            fontName,
+            fontPath,
+            fontsDir,
+            name: 'getLocalFontPath',
+            url: useJwStore().fontUrls[fontName],
+          },
         },
-      },
-    });
+      });
 
-    if (!(await exists(fontPath))) {
-      throw new Error(
-        `Failed to download font ${fontName} and no local copy exists`,
-      );
+      if (!(await exists(fontPath))) {
+        throw new Error(
+          `Failed to download font ${fontName} and no local copy exists`,
+        );
+      }
     }
-  }
 
-  return fontPath;
+    return fontPath;
+  })();
+
+  return localFontPathPromises[fontName] as Promise<string>;
 };
