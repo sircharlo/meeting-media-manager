@@ -291,17 +291,6 @@ export function isNetworkError(error: unknown): boolean {
 }
 
 /**
- * Fetches a raw response from a given url
- * @param url The url to fetch
- * @param init The fetch init options
- * @returns The fetch response
- */
-export const fetchRaw = async (url: string, init?: RequestInit) => {
-  console.debug('fetchRaw', { init, url });
-  return fetch(url, init);
-};
-
-/**
  * Fetches a json response from a given url
  * @param url The url to fetch
  * @param params The url parameters
@@ -321,7 +310,7 @@ export const fetchJson = async <T>(
     }, options.timeout ?? 30000);
 
     try {
-      const response = await fetchRaw(
+      const response = await fetch(
         `${url}${params ? '?' + params.toString() : ''}`,
         { signal: controller.signal },
       );

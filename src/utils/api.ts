@@ -13,15 +13,49 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { isInPast } from 'src/utils/date';
 import { betaUpdatesDisabled } from 'src/utils/fs';
 
+const fetchCache = new Map<string, Response>();
+
+/**
+ * Clears the fetch cache.
+ * @internal For testing purposes only.
+ */
+export const clearFetchCache = () => fetchCache.clear();
+
 /**
  * Fetches data from the given url.
  * @param url The url to fetch data from.
  * @param init Initialization options for the fetch.
+ * @param cache Whether to cache the response.
  * @returns The fetch response.
  */
-export const fetchRaw = async (url: string, init?: RequestInit) => {
-  if (!process.env.VITEST) console.debug('fetchRaw', { init, url });
-  return fetch(url, init);
+export const fetchRaw = async (
+  url: string,
+  init?: RequestInit,
+  cache = false,
+) => {
+  const method = init?.method?.toUpperCase() || 'GET';
+  const isCacheable = cache && (method === 'GET' || method === 'HEAD');
+  const cacheKey = `${method}:${url}:${JSON.stringify(init?.headers || {})}`;
+
+  if (isCacheable) {
+    const cachedResponse = fetchCache.get(cacheKey);
+    if (cachedResponse) {
+      if (!process.env.VITEST) {
+        console.debug('fetchRaw (cached)', { cache, init, url });
+      }
+      return cachedResponse.clone();
+    }
+  }
+
+  if (!process.env.VITEST) console.debug('fetchRaw', { cache, init, url });
+
+  const response = await fetch(url, init);
+
+  if (isCacheable && response.ok) {
+    fetchCache.set(cacheKey, response.clone());
+  }
+
+  return response;
 };
 
 /**
@@ -40,6 +74,8 @@ export const fetchJson = async <T>(
     if (!url) return null;
     const response = await fetchRaw(
       `${url}${params ? '?' + params.toString() : ''}`,
+      undefined,
+      true,
     );
     if (response.ok || response.status === 304) {
       return await response.json();
@@ -203,6 +239,8 @@ export const fetchReleaseNotes = async (
     if (!process.env.repository) return null;
     const res = await fetchRaw(
       `${process.env.repository?.replace('github', 'raw.githubusercontent')}/refs/heads/master/release-notes/${lang}.md`,
+      undefined,
+      true,
     );
     if (!res.ok) return null;
     return await res.text();

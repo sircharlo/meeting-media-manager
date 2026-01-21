@@ -62,7 +62,6 @@ export function getMeetingSections(
   meeting: 'mw' | 'we' | null,
   isCoWeek = false,
 ): MediaSectionIdentifier[] {
-  console.log('🔍 [getMeetingSections] meeting', meeting);
   if (!meeting) return [];
 
   const baseSections =
@@ -71,6 +70,6 @@ export function getMeetingSections(
   if (isCoWeek) {
     return [...baseSections, CO_WEEK_ADDITIONAL_SECTION];
   }
-  console.log('🔍 [getMeetingSections] baseSections', baseSections);
+
   return baseSections;
 }

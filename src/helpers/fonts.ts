@@ -138,7 +138,7 @@ const needsDownload = async (
 
   try {
     const head = await withTimeout(5000, (signal) =>
-      fetchRaw(url, { method: 'HEAD', signal }),
+      fetchRaw(url, { method: 'HEAD', signal }, true),
     );
 
     if (!head.ok) {

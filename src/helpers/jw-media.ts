@@ -340,7 +340,7 @@ export const downloadFileIfNeeded = async ({
     destinationPath = join(dir, filename);
     const remoteSize: number =
       size ||
-      (await fetchRaw(url, { method: 'HEAD' })
+      (await fetchRaw(url, { method: 'HEAD' }, true)
         .then((response) => {
           return +(response?.headers?.get('content-length') || 0);
         })
@@ -3126,9 +3126,13 @@ export const setUrlVariables = async (baseUrl: string | undefined) => {
     // delete all items in the array
     requestControllers.splice(0);
     requestControllers.push(controller);
-    const homePage = await fetchRaw(homePageUrl, {
-      signal: controller.signal,
-    })
+    const homePage = await fetchRaw(
+      homePageUrl,
+      {
+        signal: controller.signal,
+      },
+      true,
+    )
       .then((response) => {
         if (!response.ok) return null;
         return response.text();

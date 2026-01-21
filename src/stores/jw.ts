@@ -411,7 +411,7 @@ export const useJwStore = defineStore('jw-store', {
     async updateJwIconsUrl() {
       try {
         const wolUrl = `https://wol.${this.urlVariables.base}/en/wol/h/r1/lp-e`;
-        const response = await fetchRaw(wolUrl);
+        const response = await fetchRaw(wolUrl, undefined, true);
         if (!response.ok) return;
 
         const html = await response.text();
@@ -429,7 +429,7 @@ export const useJwStore = defineStore('jw-store', {
 
         for (const cssUrl of cssUrls) {
           try {
-            const cssResponse = await fetchRaw(cssUrl);
+            const cssResponse = await fetchRaw(cssUrl, undefined, true);
             if (!cssResponse.ok) continue;
             const cssText = await cssResponse.text();
             const fontFaceBlocks = cssText.match(/@font-face\s*\{[^}]*\}/gi);
