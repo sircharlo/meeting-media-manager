@@ -153,8 +153,13 @@ if (!gotTheLock) {
 
   if (crashCount >= 3) {
     if (!isHwAccelDisabled()) {
-      console.error(
-        'Detected crash loop (3+ crashes). Disabling hardware acceleration.',
+      captureElectronError(
+        new Error(
+          'Detected crash loop (3+ crashes). Disabling hardware acceleration.',
+        ),
+        {
+          contexts: { fn: { name: 'initCrashListeners' } },
+        },
       );
       setHwAccelDisabled(true, true);
     }
@@ -259,7 +264,9 @@ if (!gotTheLock) {
     try {
       cancelAllDownloads();
     } catch (error) {
-      console.error('Failed to cancel downloads:', error);
+      captureElectronError(error, {
+        contexts: { fn: { name: 'app.on(window-all-closed)' } },
+      });
     }
     if (PLATFORM !== 'darwin') app.quit();
   });
@@ -287,11 +294,15 @@ if (!gotTheLock) {
 // Silence EPIPE errors on stdout/stderr (common on Linux when quitting)
 process.stdout.on('error', (err) => {
   if (err.code === 'EPIPE') return;
-  console.error('Terminal stdout error:', err);
+  captureElectronError(err, {
+    contexts: { fn: { name: 'process.stdout.on(error)' } },
+  });
 });
 process.stderr.on('error', (err) => {
   if (err.code === 'EPIPE') return;
-  console.error('Terminal stderr error:', err);
+  captureElectronError(err, {
+    contexts: { fn: { name: 'process.stderr.on(error)' } },
+  });
 });
 
 function createWindowAndCaptureErrors() {

@@ -647,7 +647,6 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
 
     console.log('🔍 [moveMediaWindow] END - Changes applied');
   } catch (e) {
-    console.error('❌ [moveMediaWindow] Error:', e);
     captureElectronError(e, {
       contexts: { fn: { name: 'moveMediaWindow' } },
     });
@@ -670,13 +669,11 @@ function loadMediaWindowPrefs(): null | Rectangle {
     console.log('🔍 [loadMediaWindowPrefs] Loading prefs from:', filePath);
     return readJsonSync(filePath);
   } catch (e) {
-    console.error('❌ [loadMediaWindowPrefs] Error:', e);
     let fileContent: null | string = null;
     if (filePath) {
       try {
         fileContent = readFileSync(filePath, 'utf-8');
       } catch (e) {
-        console.error('❌ [loadMediaWindowPrefs] Error reading file:', e);
         captureElectronError(e, {
           contexts: {
             fn: { fileContent, name: 'loadMediaWindowPrefs (fallback)' },
@@ -697,7 +694,6 @@ function saveMediaWindowPrefs(prefs: Rectangle) {
     console.log('🔍 [saveMediaWindowPrefs] Saving prefs to:', file);
     writeJsonSync(file, prefs);
   } catch (e) {
-    console.error('❌ [saveMediaWindowPrefs] Error:', e);
     captureElectronError(e, {
       contexts: { fn: { name: 'saveMediaWindowPrefs' } },
     });
@@ -859,10 +855,6 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
             targetDisplay.bounds,
           );
         } catch (e) {
-          console.error(
-            '❌ [setWindowPosition] Error saving preferred display geometry:',
-            e,
-          );
           captureElectronError(e, {
             contexts: { fn: { name: 'setWindowPosition.savePrefs' } },
           });
@@ -920,7 +912,6 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
 
     console.log('🔍 [setWindowPosition] END - All changes queued');
   } catch (err) {
-    console.error('❌ [setWindowPosition] Error:', err);
     isMovingWindow = false;
     captureElectronError(err, {
       contexts: { fn: { name: 'setWindowPosition' } },
@@ -943,7 +934,6 @@ export function focusMediaWindow() {
       );
     }
   } catch (err) {
-    console.error('❌ [focusMediaWindow] Error:', err);
     captureElectronError(err, {
       contexts: { fn: { name: 'focusMediaWindow' } },
     });

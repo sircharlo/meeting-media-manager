@@ -1846,7 +1846,16 @@ export const watchedItemMapper: (
         }
       }
     } catch (error) {
-      console.warn(`⚠️ Could not read section order file: ${error}`);
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            filename,
+            name: 'watchedItemMapper',
+            parentDate,
+            watchedItemPath,
+          },
+        },
+      });
     }
 
     // Fallback: Check if filename already has section information (legacy support)
@@ -2279,8 +2288,9 @@ export const getWeMedia = async (lookupDate: Date) => {
       media: { wt: mediaForDay },
     };
   } catch (e) {
-    errorCatcher(e);
-    console.error(e);
+    errorCatcher(e, {
+      contexts: { fn: { name: 'getWeMedia' } },
+    });
     return {
       error: true,
       media: {} as Record<string, MediaItem[]>,

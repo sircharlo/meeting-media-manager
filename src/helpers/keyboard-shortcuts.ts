@@ -54,9 +54,15 @@ export const sendKeyboardShortcut = (
     ) {
       robot.keyTap(robotKeys[3], [robotKeys[0], robotKeys[1], robotKeys[2]]);
     } else {
-      console.warn(
-        `${context ? `[${context}] ` : ''}Unsupported keyboard shortcut format: ${shortcut}`,
-      );
+      errorCatcher(new Error('Unsupported keyboard shortcut format'), {
+        contexts: {
+          fn: {
+            context,
+            name: 'sendKeyboardShortcut',
+            shortcut,
+          },
+        },
+      });
     }
   } catch (error) {
     errorCatcher(error, {

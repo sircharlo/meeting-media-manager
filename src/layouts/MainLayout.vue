@@ -701,7 +701,14 @@ async function handleUnlinkCleanup(changedPath: string) {
       await removeWatchedMediaSectionInfo(watchedDayFolder, filename);
     }
   } catch (error) {
-    console.warn(`⚠️ Could not remove section order info: ${error}`);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          changedPath,
+          name: 'handleUnlinkCleanup',
+        },
+      },
+    });
   }
 }
 

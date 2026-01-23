@@ -1,3 +1,4 @@
+import { captureElectronError } from 'app/src-electron/main/utils';
 import { listen, send } from 'src-electron/preload/ipc';
 
 export const initCloseListeners = () => {
@@ -6,7 +7,13 @@ export const initCloseListeners = () => {
     try {
       bcClose.postMessage({ attemptedClose: true });
     } catch (error) {
-      console.error('Error posting message to closeAttempts channel:', error);
+      captureElectronError(error, {
+        contexts: {
+          fn: {
+            name: 'initCloseListeners',
+          },
+        },
+      });
     }
   });
 
@@ -14,7 +21,13 @@ export const initCloseListeners = () => {
     try {
       if (event.data.authorizedClose) send('authorizedClose');
     } catch (error) {
-      console.error('Error handling authorizedClose message:', error);
+      captureElectronError(error, {
+        contexts: {
+          fn: {
+            name: 'initCloseListeners',
+          },
+        },
+      });
     }
   };
 };

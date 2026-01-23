@@ -24,11 +24,16 @@ export const dateFromString = (
       typeof lookupDate === 'object' &&
       !(lookupDate instanceof Date)
     ) {
-      console.warn('🔍 [dateFromString] Received non-Date object:', {
-        constructor: lookupDate.constructor?.name,
-        keys: Object.keys(lookupDate),
-        type: typeof lookupDate,
-        value: lookupDate,
+      errorCatcher(new Error('Received non-Date object'), {
+        contexts: {
+          fn: {
+            constructor: lookupDate.constructor?.name,
+            keys: Object.keys(lookupDate),
+            name: 'dateFromString',
+            type: typeof lookupDate,
+            value: lookupDate,
+          },
+        },
       });
     }
 

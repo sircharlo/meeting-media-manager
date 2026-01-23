@@ -38,7 +38,14 @@ export const triggerZoomScreenShare = (startSharing: boolean) => {
             focusMediaWindow();
             console.log(` [Zoom] Media window focus requested${context}`);
           } catch (focusError) {
-            console.warn(` [Zoom] Failed to focus media window:`, focusError);
+            errorCatcher(focusError, {
+              contexts: {
+                fn: {
+                  context,
+                  name: 'triggerFocusMediaWindow',
+                },
+              },
+            });
           }
         }
 

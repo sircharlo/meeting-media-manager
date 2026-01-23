@@ -1346,10 +1346,24 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
           // Clean up temp directories
           console.log('🎯 [addToFiles] Cleaning up temp directories');
           remove(tempExtractionDir).catch((err) =>
-            console.error('Failed to remove temp extraction dir:', err),
+            errorCatcher(err, {
+              contexts: {
+                fn: {
+                  name: 'addToFiles removing temp extraction dir',
+                  tempExtractionDir,
+                },
+              },
+            }),
           );
           remove(tempContentsDir).catch((err) =>
-            console.error('Failed to remove temp contents dir:', err),
+            errorCatcher(err, {
+              contexts: {
+                fn: {
+                  name: 'addToFiles removing temp contents dir',
+                  tempContentsDir,
+                },
+              },
+            }),
           );
         }
       } else if (isJwPlaylist(filepath) && selectedDateObject.value) {

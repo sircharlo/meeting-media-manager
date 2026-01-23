@@ -188,6 +188,7 @@ const {
 import { useEventListener } from '@vueuse/core';
 // Use the media dividers composable
 import { useMediaDividers } from 'src/composables/useMediaDividers';
+import { errorCatcher } from 'src/helpers/error-catcher';
 const { addDivider, deleteDivider, updateDividerColors, updateDividerTitle } =
   useMediaDividers(props.mediaList.config?.uniqueId);
 
@@ -237,7 +238,17 @@ watch(
         }
       } catch (error) {
         // Fail gracefully - if we can't save the order file, it's not a big deal
-        console.warn(`⚠️ Could not save section order: ${error}`);
+        errorCatcher(error, {
+          contexts: {
+            fn: {
+              isDragging,
+              mediaList: props.mediaList,
+              name: 'updateMediaListItems',
+              selectedDateObject: selectedDateObject.value,
+              sortableItems: sortableItems.value,
+            },
+          },
+        });
       }
     }
 

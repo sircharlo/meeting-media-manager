@@ -195,7 +195,6 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     });
 
     if (!sectionData.value?.config || !isCustomSection.value) {
-      // Use sectionData.value?.config
       console.warn('⚠️ No custom sections found for label update');
       return;
     }
@@ -217,7 +216,6 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     });
 
     if (!sectionData.value?.config || !isCustomSection.value) {
-      // Use sectionData.value?.config
       console.warn('⚠️ No custom sections found for color update');
       return;
     }
@@ -240,7 +238,6 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
     });
 
     if (!sectionData.value?.config || !isCustomSection.value) {
-      // Use sectionData.value?.config
       console.warn(
         '⚠️ No custom sections found for repeat update',
         selectedDateObject.value?.mediaSections,

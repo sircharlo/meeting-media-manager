@@ -218,7 +218,14 @@ const addPublicTalkMedia = async (publicTalkDocId: DocumentItem) => {
     );
     dismissPopup();
   } catch (error) {
-    console.error(error);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          name: 'DialogPublicTalkMediaPicker addPublicTalkMedia',
+          publicTalkDocId,
+        },
+      },
+    });
   } finally {
     isProcessing.value = false;
   }
@@ -235,7 +242,14 @@ const s34mpDisplayName = computed((): string => {
     if (s34mpDb.value) return basename(s34mpDb.value, extname(s34mpDb.value));
     return t('select-s34mp');
   } catch (e) {
-    console.error('Error getting S-34mp display name:', e);
+    errorCatcher(e, {
+      contexts: {
+        fn: {
+          name: 'DialogPublicTalkMediaPicker s34mpDisplayName',
+          s34mpDb: s34mpDb.value,
+        },
+      },
+    });
     return t('select-s34mp');
   }
 });

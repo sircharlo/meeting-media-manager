@@ -566,7 +566,14 @@ const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
         props.section,
       );
     } else {
-      console.error('Failed to fetch media for all languages.');
+      errorCatcher(new Error('Failed to fetch media for all languages.'), {
+        contexts: {
+          fn: {
+            mediaItem,
+            name: 'addStudyBibleMedia',
+          },
+        },
+      });
     }
   }
 };

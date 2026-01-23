@@ -26,9 +26,17 @@ export const firstRun: MigrationFunction = async () => {
       typeof congregationStore.congregations !== 'object' ||
       Array.isArray(congregationStore.congregations)
     ) {
-      console.warn(
-        '🔍 [migration] Invalid congregationStore.congregations structure in firstRun:',
-        congregationStore.congregations,
+      errorCatcher(
+        new Error(
+          'Invalid congregationStore.congregations structure in firstRun',
+        ),
+        {
+          contexts: {
+            fn: {
+              name: 'firstRun',
+            },
+          },
+        },
       );
       congregationStore.congregations = {};
     }

@@ -92,10 +92,18 @@ export const localStorageToPiniaPersist: MigrationFunction = async (
     if (parsedLookupPeriod) {
       for (const [congId, dateInfo] of Object.entries(parsedLookupPeriod)) {
         if (!dateInfo || !Array.isArray(dateInfo)) {
-          console.warn(
-            '🔍 [migration] Invalid dateInfo structure in localStorageToPiniaPersist for congregation:',
-            congId,
-            dateInfo,
+          errorCatcher(
+            new Error(
+              'Invalid dateInfo structure in localStorageToPiniaPersist for congregation',
+            ),
+            {
+              contexts: {
+                fn: {
+                  congId,
+                  name: 'localStorageToPiniaPersist lookupPeriod',
+                },
+              },
+            },
           );
           continue;
         }
@@ -103,19 +111,38 @@ export const localStorageToPiniaPersist: MigrationFunction = async (
         dateInfo.forEach((day, dayIndex) => {
           // Validate day object structure
           if (!day || typeof day !== 'object') {
-            console.warn(
-              '🔍 [migration] Skipping invalid day object in localStorageToPiniaPersist at index:',
-              dayIndex,
-              day,
+            errorCatcher(
+              new Error(
+                'Invalid day object structure in localStorageToPiniaPersist',
+              ),
+              {
+                contexts: {
+                  fn: {
+                    congId,
+                    dayIndex,
+                    name: 'localStorageToPiniaPersist lookupPeriod',
+                  },
+                },
+              },
             );
             return;
           }
 
           if (day.date && !(day.date instanceof Date)) {
             try {
-              console.warn(
-                '🔍 [migration] Converting corrupted date object in localStorageToPiniaPersist:',
-                day.date,
+              errorCatcher(
+                new Error(
+                  'Invalid date object structure in localStorageToPiniaPersist',
+                ),
+                {
+                  contexts: {
+                    fn: {
+                      congId,
+                      dayIndex,
+                      name: 'localStorageToPiniaPersist lookupPeriod',
+                    },
+                  },
+                },
               );
               day.date = dateFromString(day.date);
             } catch (error) {

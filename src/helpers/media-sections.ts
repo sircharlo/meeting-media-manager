@@ -11,6 +11,8 @@ import { getMeetingSections, standardSections } from 'src/constants/media';
 import { isCoWeek } from 'src/helpers/date';
 import { useCurrentStateStore } from 'src/stores/current-state';
 
+import { errorCatcher } from './error-catcher';
+
 // Helper functions for array-based mediaSections
 export const findMediaSection = (
   mediaSections: MediaSectionWithConfig[],
@@ -176,12 +178,15 @@ export const createMeetingSections = (day: DateInfo) => {
 
   // Debug logging to help identify the issue
   if (day.date && typeof day.date === 'object' && !(day.date instanceof Date)) {
-    console.warn('🔍 [createMeetingSections] day.date is not a Date object:', {
-      constructor: (day.date as unknown as { constructor: { name: string } })
-        .constructor?.name,
-      keys: Object.keys(day.date),
-      type: typeof day.date,
-      value: day.date,
+    errorCatcher(new Error('createMeetingSections: Received non-Date object'), {
+      contexts: {
+        fn: {
+          dayDate: day.date,
+          name: 'createMeetingSections',
+          type: typeof day.date,
+          value: day.date,
+        },
+      },
     });
   }
 
@@ -220,7 +225,14 @@ export const getTextColor = (section?: MediaSectionWithConfig) => {
       .split(',')
       .map(Number);
   } else {
-    console.warn('Invalid color format');
+    errorCatcher(new Error('Invalid color format'), {
+      contexts: {
+        fn: {
+          bgColor,
+          name: 'getTextColor',
+        },
+      },
+    });
     return '#ffffff'; // Default to white if invalid input
   }
 
@@ -266,7 +278,15 @@ export const saveWatchedMediaSectionOrder = async (
         existingData = JSON.parse(fileContent);
       }
     } catch (error) {
-      console.warn('⚠️ Could not read existing section order file:', error);
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            datedFolderPath,
+            name: 'saveWatchedMediaSectionOrder',
+            sectionId,
+          },
+        },
+      });
     }
 
     // Update section order data for watched items
@@ -301,7 +321,15 @@ export const saveWatchedMediaSectionOrder = async (
     );
   } catch (error) {
     // Fail gracefully - if we can't save the order file, it's not a big deal
-    console.warn(`⚠️ Could not save section order file: ${error}`);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          datedFolderPath,
+          name: 'saveWatchedMediaSectionOrder',
+          sectionId,
+        },
+      },
+    });
   }
 };
 
@@ -332,7 +360,15 @@ export const getWatchedMediaSectionInfo = async (
 
     return sectionOrderData[filename] || null;
   } catch (error) {
-    console.warn(`⚠️ Could not read section order file: ${error}`);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          datedFolderPath,
+          filename,
+          name: 'getWatchedMediaSectionInfo',
+        },
+      },
+    });
     return null;
   }
 };
@@ -373,6 +409,14 @@ export const removeWatchedMediaSectionInfo = async (
       console.log(`✅ Removed section info for ${filename}`);
     }
   } catch (error) {
-    console.warn(`⚠️ Could not update section order file: ${error}`);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          datedFolderPath,
+          filename,
+          name: 'removeWatchedMediaSectionInfo',
+        },
+      },
+    });
   }
 };

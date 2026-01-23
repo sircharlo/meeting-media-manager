@@ -79,8 +79,9 @@ export const autoEnrollMeetingSync: MigrationFunction = async () => {
 
     return true;
   } catch (error) {
-    console.error('❌ [autoEnrollMeetingSync] Migration failed:', error);
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: { fn: { name: 'autoEnrollMeetingSync' } },
+    });
   }
 
   lookupInProgress.value = false;

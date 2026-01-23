@@ -13,6 +13,8 @@ import { isInPast } from 'src/utils/date';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
+import { errorCatcher } from './error-catcher';
+
 export const normalizeSchedule = (
   schedule: ScheduleDetails,
 ): NormalizedSchedule => {
@@ -177,7 +179,9 @@ export const syncMeetingSchedule = async (force = false) => {
       return currentChanged || futureChanged;
     }
   } catch (error) {
-    console.error('❌ [syncMeetingSchedule] Error:', error);
+    errorCatcher(error, {
+      contexts: { fn: { name: 'syncMeetingSchedule' } },
+    });
     return false;
   }
 };

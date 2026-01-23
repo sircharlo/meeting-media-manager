@@ -48,13 +48,18 @@ export function isCoWeek(
       typeof lookupDate === 'object' &&
       !(lookupDate instanceof Date)
     ) {
-      console.warn('🔍 [isCoWeek] Received non-Date object:', {
-        constructor: (
-          lookupDate as unknown as { constructor: { name: string } }
-        ).constructor?.name,
-        keys: Object.keys(lookupDate),
-        type: typeof lookupDate,
-        value: lookupDate,
+      errorCatcher(new Error('isCoWeek: Received non-Date object'), {
+        contexts: {
+          fn: {
+            constructor: (
+              lookupDate as unknown as { constructor: { name: string } }
+            ).constructor?.name,
+            keys: Object.keys(lookupDate),
+            name: 'isCoWeek',
+            type: typeof lookupDate,
+            value: lookupDate,
+          },
+        },
       });
     }
 
@@ -236,11 +241,14 @@ export function updateLookupPeriod({
 
           lookupPeriod[congId] = days.filter(Boolean);
         } catch (error) {
-          console.error(
-            `🔄 [updateLookupPeriod] Failed to reset dynamic media for congregation ${congId}:`,
-            error,
-          );
-          errorCatcher(error);
+          errorCatcher(error, {
+            contexts: {
+              fn: {
+                congId,
+                name: 'updateLookupPeriod',
+              },
+            },
+          });
         }
       }
 

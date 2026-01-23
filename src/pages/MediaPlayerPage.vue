@@ -224,7 +224,9 @@ const cleanupMediaElement = (element: HTMLMediaElement | null | undefined) => {
     // Force a load to finalize clearing the previous source
     element.load();
   } catch (error) {
-    console.error('❌ [cleanupMediaElement] Error during cleanup:', error);
+    errorCatcher(error, {
+      contexts: { fn: { name: 'cleanupMediaElement' } },
+    });
   }
 };
 
@@ -465,8 +467,9 @@ const triggerPlay = (force = false) => {
     );
 
     if (!shouldIgnore) {
-      console.error('❌ [triggerPlay] Video play error:', error);
-      errorCatcher(error);
+      errorCatcher(error, {
+        contexts: { fn: { name: 'triggerPlay' } },
+      });
     }
   });
 };
@@ -830,10 +833,6 @@ watch(
             video: PLATFORM === 'linux' ? { cursor: 'never' } : true,
           });
         } catch (e) {
-          console.error(
-            '[MediaPlayerPage] First screen access request failed:',
-            e,
-          );
           errorCatcher(e, {
             contexts: { fn: { name: 'requestDisplayAccess' } },
           });
@@ -843,7 +842,7 @@ watch(
           !screenAccessStatusSecondTry ||
           screenAccessStatusSecondTry !== 'granted'
         ) {
-          console.error(
+          console.warn(
             '[MediaPlayerPage] Screen access not granted - cannot stream',
           );
           createTemporaryNotification({
@@ -868,14 +867,14 @@ watch(
             setTimeout(resolve, 100);
           });
           if (++timeouts > 50) {
-            console.error(
-              '[MediaPlayerPage] Timed out waiting for media element',
-            );
+            errorCatcher(new Error('Timed out waiting for media element'), {
+              contexts: { fn: { name: 'streamDisplay' } },
+            });
             break;
           }
         }
         if (!currentMediaElement.value || !stream) {
-          console.error(
+          console.warn(
             '[MediaPlayerPage] No media element or stream available',
           );
           videoStreaming.value = false;

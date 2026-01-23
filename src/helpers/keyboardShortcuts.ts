@@ -54,7 +54,15 @@ export const executeShortcut = (shortcutName: keyof SettingsValues) => {
 
   const callback = shortcutCallbacks[shortcutName];
   if (callback) callback();
-  else console.warn('Unknown shortcut', shortcutName);
+  else
+    errorCatcher(new Error('Unknown shortcut'), {
+      contexts: {
+        fn: {
+          name: 'executeShortcut',
+          shortcutName,
+        },
+      },
+    });
 };
 
 export const executeLocalShortcut = (shortcutName: keyof SettingsValues) => {
@@ -66,7 +74,15 @@ export const executeLocalShortcut = (shortcutName: keyof SettingsValues) => {
 
   const callback = shortcutCallbacks[shortcutName];
   if (callback) callback();
-  else console.warn('Unknown shortcut', shortcutName);
+  else
+    errorCatcher(new Error('Unknown shortcut'), {
+      contexts: {
+        fn: {
+          name: 'executeLocalShortcut',
+          shortcutName,
+        },
+      },
+    });
 };
 
 export const getCurrentShortcuts = () => {

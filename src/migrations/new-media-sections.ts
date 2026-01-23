@@ -16,9 +16,17 @@ export const newMediaSections: MigrationFunction = async () => {
       typeof jwStore.lookupPeriod !== 'object' ||
       Array.isArray(jwStore.lookupPeriod)
     ) {
-      console.warn(
-        '🔍 [migration] Invalid jwStore.lookupPeriod structure in 25.8.4-newMediaSections:',
-        jwStore.lookupPeriod,
+      errorCatcher(
+        new Error(
+          'Invalid jwStore.lookupPeriod structure in 25.8.4-newMediaSections',
+        ),
+        {
+          contexts: {
+            fn: {
+              name: 'new-media-sections',
+            },
+          },
+        },
       );
       jwStore.lookupPeriod = {};
     }

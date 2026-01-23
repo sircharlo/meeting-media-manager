@@ -1,3 +1,4 @@
+import { captureElectronError } from 'app/src-electron/main/utils';
 import { errorCatcher } from 'src/helpers/error-catcher';
 class ElectronApiManager {
   private initPromise: null | Promise<void> = null;
@@ -56,6 +57,15 @@ export async function initializeElectronApi(pageName: string) {
     console.debug(`[${pageName}] About to wait for Electron API...`);
     await apiManager.ensureReady();
   } catch (error) {
-    console.error(`[${pageName}] Error waiting for Electron API:`, error);
+    captureElectronError(error, {
+      contexts: {
+        fn: {
+          args: {
+            pageName,
+          },
+          name: 'initializeElectronApi',
+        },
+      },
+    });
   }
 }

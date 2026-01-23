@@ -1051,8 +1051,14 @@ async function performSearch() {
     // Sort results by rank
     searchResults.value.sort((a, b) => a.insight.rank - b.insight.rank);
   } catch (error) {
-    console.error('Search error:', error);
-    // Handle search error - could show a notification
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          name: 'performSearch',
+          query: searchQuery.value,
+        },
+      },
+    });
   } finally {
     loading.value = false;
   }
