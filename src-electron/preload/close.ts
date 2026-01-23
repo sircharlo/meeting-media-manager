@@ -10,7 +10,7 @@ export const initCloseListeners = () => {
       captureElectronError(error, {
         contexts: {
           fn: {
-            name: 'initCloseListeners',
+            name: 'initCloseListeners attemptedClose',
           },
         },
       });
@@ -24,7 +24,7 @@ export const initCloseListeners = () => {
       captureElectronError(error, {
         contexts: {
           fn: {
-            name: 'initCloseListeners',
+            name: 'initCloseListeners authorizedClose',
           },
         },
       });
