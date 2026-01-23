@@ -142,9 +142,9 @@ jobs:
           echo "Fetching beta prereleases..."
 
           mapfile -t BETAS < <(
-            gh release list --limit 200 --json tagName,prerelease,createdAt \
-              --jq '.[] 
-                | select(.prerelease == true and (.tagName | test("beta"))) 
+            gh release list --limit 200 --json tagName,isPrerelease,createdAt \
+              --jq '.[]
+                | select(.isPrerelease == true and (.tagName | test("beta")))
                 | "\(.createdAt) \(.tagName)"' \
               | sort -r
           )
@@ -192,7 +192,7 @@ jobs:
             TAG=$(awk '{print $2}' <<< "$entry")
             if [[ -z "${KEEP_TAGS[$TAG]}" ]]; then
               echo "Deleting beta: $TAG"
-              # gh release delete "$TAG" --yes --cleanup-tag
+              gh release delete "$TAG" --yes --cleanup-tag
             fi
           done
 
