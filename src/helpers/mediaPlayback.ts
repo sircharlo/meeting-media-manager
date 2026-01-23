@@ -27,9 +27,28 @@ const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
     const contentsPath = join(outputPath, 'contents');
     // First, only extract 'contents' from the JWPUB zip if it doesn't exist
     if (!(await pathExists(contentsPath))) {
-      await unzip(jwpubPath, outputPath, {
-        includes: ['contents'],
-      });
+      try {
+        await unzip(jwpubPath, outputPath, {
+          includes: ['contents'],
+        });
+      } catch (error) {
+        // If unzipping the JWPUB fails, it's likely corrupted.
+        // Remove it to force a re-download on next attempt.
+        await remove(jwpubPath).catch((removeError) =>
+          errorCatcher(removeError, {
+            contexts: {
+              fn: {
+                args: {
+                  jwpubPath,
+                  outputPath,
+                },
+                name: 'jwpubExtractor remove corrupt jwpub',
+              },
+            },
+          }),
+        );
+        throw error;
+      }
     }
 
     // Then, extract 'contents' into the output directory if needed
@@ -54,6 +73,8 @@ const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
             },
           }),
         );
+        // Also remove the source JWPUB as it's the progenitor of the corrupt contents
+        await remove(jwpubPath);
         throw error;
       }
     }

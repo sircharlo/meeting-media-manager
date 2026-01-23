@@ -8,7 +8,7 @@ import type {
 
 import { updateLookupPeriod } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { getLastUsedDate } from 'src/helpers/usage';
+import { getLastUsedDate, LAST_USED_FILENAME } from 'src/helpers/usage';
 import { getSpecificWeekday, isInPast } from 'src/utils/date';
 import {
   congPreferencesPath,
@@ -272,7 +272,7 @@ const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
             const parentFolder = item.parentPath.split('/').pop() || '';
             // Exclude files inside any S-34mp_* folder from deletion consideration
             const isProtectedS34mp = parentFolder.startsWith('S-34mp_');
-            if (item.name === '.last-used') {
+            if (item.name === LAST_USED_FILENAME) {
               // Never delete .last-used files directly
               // They will be deleted if the parent folder is deleted
             } else if (!isProtectedS34mp) {

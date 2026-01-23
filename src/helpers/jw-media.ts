@@ -348,7 +348,7 @@ export const downloadFileIfNeeded = async ({
     if (await exists(destinationPath)) {
       const statistics = await stat(destinationPath);
       const localSize = statistics.size;
-      if (localSize === remoteSize) {
+      if (remoteSize > 0 && localSize === remoteSize) {
         return {
           new: false,
           path: destinationPath,

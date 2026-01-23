@@ -1032,18 +1032,25 @@ watchImmediate(
     yeartext.value,
   ],
   (oldValues, newValues) => {
-    const urlVariablesChanged =
-      oldValues?.[0] !== newValues?.[0] || oldValues?.[1] !== newValues?.[1];
-    const onlineChanged = oldValues?.[2] !== newValues?.[2];
-    const yeartextChanged = oldValues?.[3] !== newValues?.[3];
-    const newYeartextIsEmpty = !newValues?.[3] && oldValues?.[3];
+    const somethingChanged = {
+      onlineStatusChanged: oldValues?.[2] !== newValues?.[2],
+      urlVariablesChanged:
+        oldValues?.[0] !== newValues?.[0] || oldValues?.[1] !== newValues?.[1],
+      yeartextChanged: oldValues?.[3] !== newValues?.[3],
+      yeartextIsNowEmpty: !newValues?.[3] && !!oldValues?.[3],
+    };
     if (
-      urlVariablesChanged ||
-      onlineChanged ||
-      yeartextChanged ||
-      newYeartextIsEmpty
+      somethingChanged.yeartextIsNowEmpty ||
+      somethingChanged.onlineStatusChanged ||
+      somethingChanged.urlVariablesChanged ||
+      somethingChanged.yeartextChanged
     ) {
-      console.log('🔄 [MediaPlayerPage] Setting initial values');
+      console.log(
+        '🔄 [MediaPlayerPage] Setting initial values',
+        somethingChanged,
+        oldValues,
+        newValues,
+      );
       postGetCurrentState(new Date().getTime().toString());
       loadFonts();
     }

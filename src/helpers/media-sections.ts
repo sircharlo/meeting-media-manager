@@ -173,7 +173,6 @@ export const createMeetingSections = (day: DateInfo) => {
   const currentState = useCurrentStateStore();
   const { getMeetingType } = currentState;
   const meetingType = getMeetingType(day.date);
-  console.log('🔍 [createMeetingSections] meetingType', meetingType, day);
 
   // Debug logging to help identify the issue
   if (day.date && typeof day.date === 'object' && !(day.date instanceof Date)) {
@@ -187,17 +186,11 @@ export const createMeetingSections = (day: DateInfo) => {
   }
 
   const sections = getMeetingSections(meetingType, isCoWeek(day.date));
-  console.log('🔍 [createMeetingSections] sections', sections);
   sections.forEach((section) => {
-    console.log('🔍 [createMeetingSections] section', section);
     const calculatedConfig = getMeetingSectionConfigs(section);
     const mediaSection = getOrCreateMediaSection(day.mediaSections, section);
     mediaSection.config = calculatedConfig;
   });
-  console.log(
-    '🔍 [createMeetingSections] day.mediaSections',
-    day.mediaSections,
-  );
 };
 
 export const getSectionBgColor = (section: MediaSection | undefined) => {

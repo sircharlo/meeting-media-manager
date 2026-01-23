@@ -5,7 +5,7 @@ const { fs, path } = window.electronApi;
 const { ensureFile, readFile, writeFile } = fs;
 const { join } = path;
 
-const LAST_USED_FILENAME = '.last-used';
+export const LAST_USED_FILENAME = '.last-used';
 
 export const updateLastUsedDate = async (
   folderPath: string,
