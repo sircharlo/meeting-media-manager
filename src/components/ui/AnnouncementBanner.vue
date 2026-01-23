@@ -3,7 +3,6 @@
     <q-banner
       v-if="showAutoUpdateAvailableBanner"
       class="bg-info q-ma-md"
-      inline-actions
       rounded
     >
       <div>
@@ -35,7 +34,6 @@
     <q-banner
       v-else-if="showAutoUpdateDownloadedBanner"
       class="bg-positive q-ma-md"
-      inline-actions
       rounded
     >
       {{ t('update-downloaded') }}
@@ -57,7 +55,6 @@
       v-for="announcement in activeAnnouncements"
       :key="announcement.id"
       :class="`q-ma-md ${bgColor(announcement.type)}`"
-      inline-actions
       rounded
     >
       {{ t(announcement.message) }}

@@ -8,7 +8,7 @@
     <div v-if="bannerColumnVisible" class="col">
       <q-slide-transition v-for="b in pageBanners" :key="b.key">
         <div class="row">
-          <q-banner :class="b.className" inline-actions rounded>
+          <q-banner :class="b.className" rounded>
             {{ t(b.textKey) }}
             <template #avatar>
               <q-avatar v-if="b.avatarClass" :class="b.avatarClass" size="lg">
