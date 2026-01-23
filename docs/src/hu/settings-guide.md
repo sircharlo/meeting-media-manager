@@ -1,42 +1,42 @@
-# Settings Guide {#settings-guide}
+# Útmutató a beállításokhoz {#settings-guide}
 
-This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+Ez az átfogó útmutató kategóriák szerint csoportosítva ismerteti az M³-ban elérhető összes beállítást. Ezen beállítások megértése segít abban, hogy az M³-at úgy konfigurálja, hogy az tökéletesen megfeleljen a gyülekezet szükségleteinek.
 
-## Application Configuration {#application-configuration}
+## Alkalmazáskonfiguráció {#application-configuration}
 
-### Display Language {#display-language}
+### Alkalmazás megjelenítési nyelve {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Choose the language for M³'s interface. This is independent of the language used for media downloads.
+Válassza ki az M³ felületének nyelvét. Ez független a média letöltéséhez használt nyelvtől.
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+**Opciók**: Minden elérhető felületnyelv (angol, spanyol, francia stb.)
 
-**Default**: English
+**Alapértelmezett**: angol
 
-### Dark Mode {#dark-mode}
+### Sötét mód {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-Control the appearance theme of M³.
+Az M³ külső megjelenésének vezérlése.
 
-**Options**:
+**Opciók**:
 
-- Automatically switch based on system preference
-- Always use dark mode
-- Always use light mode
+- Automatikus váltás a rendszerbeállítások alapján
+- Mindig használjon sötét módot
+- Mindig használjon világos módot
 
-**Default**: Auto
+**Alapértelmezett**: Automatikus
 
-### First Day of Week {#first-day-of-week}
+### A hét első napja {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the calendar view.
+Állítsa be, hogy melyik napot kell a naptárban a hét első napjának tekinteni.
 
-**Options**: Sunday through Saturday
+**Lehetőségek**: vasárnaptól szombatig
 
-**Default**: Sunday
+**Alapértelmezett**: vasárnap
 
 ### Date Format {#date-format}
 
@@ -92,7 +92,7 @@ A secondary language to use when media isn't available in the primary language.
 
 The day of the week when your midweek meeting is held.
 
-**Options**: Sunday through Saturday
+**Lehetőségek**: vasárnaptól szombatig
 
 **Default**: None (must be set during setup)
 
@@ -112,7 +112,7 @@ The start time of your midweek meeting.
 
 The day of the week when your weekend meeting is held.
 
-**Options**: Sunday through Saturday
+**Lehetőségek**: vasárnaptól szombatig
 
 **Default**: None (must be set during setup)
 
