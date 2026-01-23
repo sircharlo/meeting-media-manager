@@ -43,15 +43,21 @@ export function getIconPath(icon: 'beta' | 'icon' | 'media-player') {
   );
 }
 
+let isMachineWideAlreadyLogged = false;
+
 /**
  * Gets the shared data path for machine-wide installations
  * @returns The shared data path or null if not available/writable
  */
 export async function getSharedDataPath(): Promise<null | string> {
   const isMachineWide = isMachineWideInstallation();
-  console.log(
-    `[getSharedDataPath] This app is ${isMachineWide ? '' : 'not '}installed machine-wide.`,
-  );
+
+  if (!isMachineWideAlreadyLogged) {
+    console.log(
+      `[getSharedDataPath] This app is ${isMachineWide ? '' : 'not '}installed machine-wide.`,
+    );
+    isMachineWideAlreadyLogged = true;
+  }
   if (!isMachineWide) return null;
 
   let sharedPath = '';
