@@ -999,23 +999,23 @@ const { post: postGetCurrentState } = useBroadcastChannel<string, string>({
 });
 
 const fontsSet = ref(false);
-const clearTextFontLoaded = ref(false);
 const jwIconsFontLoaded = ref(false);
 
 const loadFonts = async () => {
   try {
     await setElementFont('Wt-ClearText-Bold');
-    clearTextFontLoaded.value = true;
-  } catch {
-    // Fallback to Noto or system font will be used
-    clearTextFontLoaded.value = true;
+  } catch (e) {
+    errorCatcher(e, {
+      contexts: { fn: { fontName: 'Wt-ClearText-Bold', name: 'loadFonts' } },
+    });
   }
 
   try {
-    await setElementFont('JW-Icons');
-    jwIconsFontLoaded.value = true;
-  } catch {
-    // No fallback for JW-Icons - logo won't show
+    jwIconsFontLoaded.value = await setElementFont('JW-Icons');
+  } catch (e) {
+    errorCatcher(e, {
+      contexts: { fn: { fontName: 'JW-Icons', name: 'loadFonts' } },
+    });
     jwIconsFontLoaded.value = false;
   }
 

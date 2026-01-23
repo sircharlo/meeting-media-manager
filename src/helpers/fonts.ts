@@ -18,7 +18,7 @@ const { join } = path;
 let jwIconsGlyphMapPromise: null | Promise<void> = null;
 let jwIconsGlyphMap: null | Record<string, string> = null;
 
-const fontFacePromises: Partial<Record<FontName, Promise<void>>> = {};
+const fontFacePromises: Partial<Record<FontName, Promise<boolean>>> = {};
 const localFontPathPromises: Partial<Record<FontName, Promise<string>>> = {};
 
 const buildJwIconsMap = async (fontPath: string) => {
@@ -62,7 +62,7 @@ export const getJwIconFromKeyword = (keyword: number | string | undefined) => {
 };
 
 export const setElementFont = async (fontName: FontName) => {
-  if (!fontName) return;
+  if (!fontName) return false;
 
   if (fontFacePromises[fontName]) return fontFacePromises[fontName];
 
@@ -76,7 +76,11 @@ export const setElementFont = async (fontName: FontName) => {
       if (fontName === 'JW-Icons') {
         await buildJwIconsMap(fontPath);
       }
+      return true;
     } catch (error) {
+      errorCatcher(error, {
+        contexts: { fn: { fontName, name: 'setElementFont first try' } },
+      });
       const url = useJwStore().fontUrls[fontName];
       const fallbackLoaded = await setFallbackFont(fontName, url);
 
@@ -86,11 +90,9 @@ export const setElementFont = async (fontName: FontName) => {
         });
       }
 
-      if (useJwStore().urlVariables.base !== 'jw.org') return;
-      if (await window.electronApi?.isDownloadErrorExpected()) return;
-      errorCatcher(error, {
-        contexts: { fn: { fontName, name: 'setElementFont', url } },
-      });
+      // if (useJwStore().urlVariables.base !== 'jw.org') return false;
+      // if (await window.electronApi?.isDownloadErrorExpected()) return false;
+      return false;
     }
   })();
 
