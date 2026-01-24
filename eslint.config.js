@@ -132,7 +132,50 @@ export default defineConfigWithVueTs([
         },
       ],
     },
+    {
+      files: ['src/**/*.ts', 'src/**/*.vue'],
+      // excludedFiles: ['src/shared/**', 'src/types/**', 'src/constants/**'],
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          {
+            patterns: [{
+              group: ['src-electron/**'],
+              message: 'Renderer process should not import from "src-electron/"',
+            }, ],
+          },
+        ],
+      },
+    },
+    {
+      files: ['src-electron/main/**/*.ts'],
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          {
+            patterns: [{
+              group: ['src-electron/preload/**'],
+              message: 'Main process should not import from preload scripts. Preload runs in a separate context.',
+            }, ],
+          },
+        ],
+      },
+    },
+    {
+      files: ['src-electron/preload/**/*.ts'],
+      rules: {
+        'no-restricted-imports': [
+          'error',
+          {
+            patterns: [{
+              group: ['src-electron/main/**'],
+              message: 'Preload scripts should not import from main process. Preload runs in a separate context with limited Node.js access.',
+            }, ],
+          },
+        ],
+      },
+    },
   },
-
   skipFormattingConfig,
 ]);
+
