@@ -139,10 +139,12 @@ export default defineConfigWithVueTs([
         'no-restricted-imports': [
           'error',
           {
-            patterns: [{
+            patterns: [
+              {
               group: ['src-electron/**'],
               message: 'Renderer process should not import from "src-electron/"',
-            }, ],
+            }, 
+            ],
           },
         ],
       },
@@ -153,10 +155,12 @@ export default defineConfigWithVueTs([
         'no-restricted-imports': [
           'error',
           {
-            patterns: [{
+            patterns: [
+              {
               group: ['src-electron/preload/**'],
               message: 'Main process should not import from preload scripts. Preload runs in a separate context.',
-            }, ],
+            }, 
+            ],
           },
         ],
       },
@@ -167,10 +171,12 @@ export default defineConfigWithVueTs([
         'no-restricted-imports': [
           'error',
           {
-            patterns: [{
+            patterns: [
+              {
               group: ['src-electron/main/**'],
               message: 'Preload scripts should not import from main process. Preload runs in a separate context with limited Node.js access.',
-            }, ],
+            }, 
+            ],
           },
         ],
       },
