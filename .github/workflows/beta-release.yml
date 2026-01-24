@@ -43,7 +43,7 @@ jobs:
           persist-credentials: false
       - name: Automated Version Bump
         id: version-bump
-        uses: phips28/gh-action-bump-version@v11.1.1
+        uses: phips28/gh-action-bump-version@71473b25295fe3907df2ff87cce295a0dce1b20b # v11.1.1
         with:
           version-type: prerelease
           preid: 'beta'
@@ -70,7 +70,7 @@ jobs:
       - uses: actions/checkout@v6
       - name: Create draft release
         id: create_release
-        uses: ncipollo/release-action@v1.18.0
+        uses: ncipollo/release-action@bcfe5470707e8832e12347755757cec0eb3c22af # v1.18.0
         with:
           name: ${{ needs.bump-version.outputs.newTag }}
           tag: ${{ needs.bump-version.outputs.newTag }}
@@ -114,7 +114,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: ncipollo/release-action@v1
+      - uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1.20.0
         with:
           name: ${{ needs.bump-version.outputs.newTag }}
           tag: ${{ needs.bump-version.outputs.newTag }}
