@@ -1,7 +1,6 @@
 import type { default as FsExtra } from 'fs-extra';
 import type { IAudioMetadata, IOptions } from 'music-metadata';
 import type robot from 'robotjs';
-import type { ConversionOptions } from 'src-electron/preload/converters';
 import type {
   FileItem,
   JwSiteParams,
@@ -10,6 +9,22 @@ import type {
   VideoDuration,
 } from 'src/types/electron';
 import type Path from 'upath';
+
+export interface ConversionOptions {
+  /**
+   * the HEIC file buffer
+   */
+  buffer: ArrayBufferLike;
+  /**
+   * output format
+   */
+  format: 'JPEG' | 'PNG';
+  /**
+   * the JPEG compression quality, between 0 and 1
+   * @default 0.92
+   */
+  quality?: number;
+}
 
 export type DiscussionCategory =
   | 'general'
