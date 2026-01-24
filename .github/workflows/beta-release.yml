@@ -135,7 +135,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          KEEP_DAYS: 2   # number of calendar days to keep (incl today)
+          KEEP_DAYS: 2 # number of calendar days to keep (incl today)
         run: |
           set -e
 
@@ -143,10 +143,10 @@ jobs:
 
           mapfile -t BETAS < <(
             gh release list --limit 200 --json tagName,isPrerelease,createdAt \
-              --jq '.[]
-                | select(.isPrerelease == true and (.tagName | test("beta")))
-                | "\(.createdAt) \(.tagName)"' \
-              | sort -r
+            --jq '.[]
+              | select(.isPrerelease == true and (.tagName | test("beta")))
+              | "\(.createdAt) \(.tagName)"' \
+            | sort -r
           )
 
           if [ "${#BETAS[@]}" -eq 0 ]; then
@@ -154,6 +154,37 @@ jobs:
             exit 0
           fi
 
+          # Step 1: Delete all prerelease releases with no artifacts
+          echo "Checking for prereleases with no artifacts..."
+
+          for entry in "${BETAS[@]}"; do
+            TAG=$(awk '{print $2}' <<< "$entry")
+
+            # Get asset count for this release
+            ASSET_COUNT=$(gh release view "$TAG" --json assets --jq '.assets | length')
+
+            if [ "$ASSET_COUNT" -eq 0 ]; then
+              echo "Deleting prerelease with no artifacts: $TAG"
+              gh release delete "$TAG" --yes --cleanup-tag
+            fi
+          done
+
+          # Refresh the list after deletions
+          echo "Refreshing beta prerelease list..."
+          mapfile -t BETAS < <(
+            gh release list --limit 200 --json tagName,isPrerelease,createdAt \
+            --jq '.[]
+              | select(.isPrerelease == true and (.tagName | test("beta")))
+              | "\(.createdAt) \(.tagName)"' \
+            | sort -r
+          )
+
+          if [ "${#BETAS[@]}" -eq 0 ]; then
+            echo "No beta releases remaining after artifact cleanup"
+            exit 0
+          fi
+
+          # Step 2: Calendar-day deduplication logic
           declare -A DAY_TO_KEEP_TAG
 
           # Map each calendar day → latest beta for that day
