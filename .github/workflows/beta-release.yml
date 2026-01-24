@@ -140,7 +140,6 @@ jobs:
           set -e
 
           echo "Fetching beta prereleases..."
-
           mapfile -t BETAS < <(
             gh release list --limit 200 --json tagName,isPrerelease,createdAt \
             --jq '.[]
@@ -148,27 +147,21 @@ jobs:
               | "\(.createdAt) \(.tagName)"' \
             | sort -r
           )
-
           if [ "${#BETAS[@]}" -eq 0 ]; then
             echo "No beta releases found"
             exit 0
           fi
-
           # Step 1: Delete all prerelease releases with no artifacts
           echo "Checking for prereleases with no artifacts..."
-
           for entry in "${BETAS[@]}"; do
             TAG=$(awk '{print $2}' <<< "$entry")
-
             # Get asset count for this release
-            ASSET_COUNT=$(gh release view "$TAG" --json assets --jq '.assets | length')
-
+            ASSET_COUNT=$(gh release view "$TAG" --json assets --jq '.assets | length' 2>/dev/null || echo "0")
             if [ "$ASSET_COUNT" -eq 0 ]; then
               echo "Deleting prerelease with no artifacts: $TAG"
-              gh release delete "$TAG" --yes --cleanup-tag
+              gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || echo "⚠ Release $TAG already deleted, skipping..."
             fi
           done
-
           # Refresh the list after deletions
           echo "Refreshing beta prerelease list..."
           mapfile -t BETAS < <(
@@ -178,53 +171,43 @@ jobs:
               | "\(.createdAt) \(.tagName)"' \
             | sort -r
           )
-
           if [ "${#BETAS[@]}" -eq 0 ]; then
             echo "No beta releases remaining after artifact cleanup"
             exit 0
           fi
-
           # Step 2: Calendar-day deduplication logic
           declare -A DAY_TO_KEEP_TAG
-
           # Map each calendar day → latest beta for that day
           for entry in "${BETAS[@]}"; do
             CREATED_AT=$(awk '{print $1}' <<< "$entry")
             TAG=$(awk '{print $2}' <<< "$entry")
             DAY=$(date -u -d "$CREATED_AT" +"%Y-%m-%d")
-
             if [[ -z "${DAY_TO_KEEP_TAG[$DAY]}" ]]; then
               DAY_TO_KEEP_TAG["$DAY"]="$TAG"
             fi
           done
-
           echo "Latest beta per day:"
           for DAY in "${!DAY_TO_KEEP_TAG[@]}"; do
             echo "  $DAY → ${DAY_TO_KEEP_TAG[$DAY]}"
           done
-
           # Determine which days to keep (most recent calendar days)
           mapfile -t DAYS_TO_KEEP < <(
             printf '%s\n' "${!DAY_TO_KEEP_TAG[@]}" | sort -r | head -n "$KEEP_DAYS"
           )
-
           declare -A KEEP_TAGS
           for DAY in "${DAYS_TO_KEEP[@]}"; do
             KEEP_TAGS["${DAY_TO_KEEP_TAG[$DAY]}"]=1
           done
-
           echo "Keeping beta tags:"
           for tag in "${!KEEP_TAGS[@]}"; do
             echo "  ✔ $tag"
           done
-
           # Delete everything else
           for entry in "${BETAS[@]}"; do
             TAG=$(awk '{print $2}' <<< "$entry")
             if [[ -z "${KEEP_TAGS[$TAG]}" ]]; then
               echo "Deleting beta: $TAG"
-              gh release delete "$TAG" --yes --cleanup-tag
+              gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || echo "⚠ Release/tag $TAG already deleted, skipping..."
             fi
           done
-
           echo "Beta cleanup complete ✅"
