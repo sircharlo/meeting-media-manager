@@ -38,232 +38,232 @@ Az M³ külső megjelenésének vezérlése.
 
 **Alapértelmezett**: vasárnap
 
-### Date Format {#date-format}
+### Dátumformátum {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
-Format used to display dates in the app.
+Az alkalmazásban a dátumok megjelenítéséhez használt formátum.
 
-**Example**: D MMMM YYYY
+**Példa**: N HHHH ÉÉÉÉ
 
-**Default**: D MMMM YYYY
+**Alapértelmezett**: N HHHH ÉÉÉÉ
 
-### Auto-Start at Login {#auto-start-at-login}
+### Automatikus indítás bejelentkezéskor {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-Automatically start M³ when the computer boots up.
+Automatikusan indítsa el az M³ programot a számítógép indításakor.
 
-**Default**: `false`
+**Alapértelmezett**: `hamis`
 
-## Congregation Meetings {#congregation-meetings}
+## Gyülekezeti összejövetelek {#congregation-meetings}
 
-### Congregation Name {#congregation-name}
+### Gyülekezet neve {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
-The name of your congregation. This is used for organization and display purposes.
+A gyülekezet neve. Ez szervezési és megjelenítési célt szolgál.
 
-**Default**: Empty (must be set during setup)
+**Alapértelmezett**: Üres (a konfiguráció során kell beállítani)
 
-### Meeting Language {#meeting-language}
+### Összejövetel nyelve {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
-The primary language for media downloads. This should match the language used in your congregation's meetings.
+A tartalom letöltéséhez használt elsődleges nyelv. Ennek meg kell felelnie a gyülekezet összejövetelein használt nyelvnek.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Opciók**: Az összes elérhető nyelv Jehova Tanúi hivatalos weboldaláról
 
-**Default**: English (E)
+**Alapértelmezett**: angol (E)
 
-### Fallback Language {#fallback-language}
+### Tartalék nyelv {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
-A secondary language to use when media isn't available in the primary language.
+Egy másodlagos nyelv, amelyet akkor kell használni, ha az elsődleges nyelven nem áll rendelkezésre média.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Opciók**: Az összes elérhető nyelv Jehova Tanúi hivatalos weboldaláról
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
-### Midweek Meeting Day {#midweek-meeting-day}
+### Hét közbeni összejövetel napja {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-The day of the week when your midweek meeting is held.
+A nap, amikor a hét közbeni összejövetel megtartására kerül sor.
 
 **Lehetőségek**: vasárnaptól szombatig
 
-**Default**: None (must be set during setup)
+**Alapértelmezett**: Nincs (a beállítás során kell megadni)
 
-### Midweek Meeting Time {#midweek-meeting-time}
+### Hét közbeni összejövetel időpontja {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
-The start time of your midweek meeting.
+A hét közbeni összejövetel kezdési időpontja.
 
-**Format**: HH:MM (24-hour format)
+**Formátum**: HH:MM (24 órás formátum)
 
-**Default**: None (must be set during setup)
+**Alapértelmezett**: Nincs (a beállítás során kell megadni)
 
-### Weekend Meeting Day {#weekend-meeting-day}
+### Hétvégi összejövetel napja {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-The day of the week when your weekend meeting is held.
+A hét azon napja, amikor a hétvégi összejövetel megtartásra kerül.
 
 **Lehetőségek**: vasárnaptól szombatig
 
-**Default**: None (must be set during setup)
+**Alapértelmezett**: Nincs (a beállítás során kell megadni)
 
-### Weekend Meeting Time {#weekend-meeting-time}
+### Hétvégi összejövetel időpontja {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
-The start time of your weekend meeting.
+A hétvégi összejövetel kezdési időpontja.
 
-**Format**: HH:MM (24-hour format)
+**Formátum**: HH:MM (24 órás formátum)
 
-**Default**: None (must be set during setup)
+**Alapértelmezett**: Nincs (a beállítás során kell megadni)
 
-### Circuit Overseer Week {#circuit-overseer-week}
+### A körzetfelvigyázó látogatásának hete {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
-The week of the next circuit overseer's visit.
+A hét, amikor a körzetfelvigyázó meglátogatja a gyülekezetet.
 
-**Format**: MM/DD/YYYY
+**Formátum**: HH/NN/ÉÉÉÉ
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
-### Memorial Date {#memorial-date}
+### Emlékünnep dátuma {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
-The date of the next Memorial celebration (beta feature).
+A következő Emlékünnep időpontja (béta funkció).
 
-**Format**: MM/DD/YYYY
+**Formátum**: HH/NN/ÉÉÉÉ
 
-**Default**: Automatically retrieved periodically
+**Alapértelmezett**: Automatikus, időszakos lekérés
 
-### Meeting Schedule Changes {#meeting-schedule-changes}
+### Összejövetel ütemezésének változásai {#meeting-schedule-changes}
 
-These settings allow you to configure temporary changes to your meeting schedule:
+Ezekkel a beállításokkal ideiglenes módosításokat végezhet az összejövetelek ütemezésében:
 
-- **Change Date**: When the change takes effect
-- **One-time Change**: Whether this is a permanent or temporary change
-- **New Midweek Day**: New day for midweek meeting
-- **New Midweek Time**: New time for midweek meeting
-- **New Weekend Day**: New day for weekend meeting
-- **New Weekend Time**: New time for weekend meeting
+- **Változás dátuma**: Amikor a változás hatályba lép
+- **Egyszeri változás**: Ez állandó vagy ideiglenes módosítás
+- **Új hét közbeni nap**: Új nap a hét közbeni összejövetelekhez
+- **Új hét közbeni időpont**: Új időpont a hét közbeni összejövetelhez
+- **Új hétvégi nap**: Új nap a hétvégi összejövetelhez
+- **Új hétvégi időpont**: Új időpont a hétvégi összejövetelhez
 
-## Media Retrieval and Playback {#media-retrieval-and-playback}
+## Média lekérdezés és lejátszás {#media-retrieval-and-playback}
 
-### Metered Connection {#metered-connection}
+### Adatkorlátos kapcsolat {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
-Enable this if you're on a limited data connection to reduce bandwidth usage.
+Ha korlátozott adatkapcsolattal rendelkezik, engedélyezze ezt a funkciót a sávszélesség-használat csökkentése érdekében.
 
-**Default**: `false`
+**Alapértelmezett**: `hamis`
 
-### Media Display {#media-display-button}
+### Média megjelenítése {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-Enable the media display functionality. This is required to present media on a second monitor.
+Aktiválja a média megjelenítési funkciót. Ez szükséges a média második kijelzőn való megjelenítéséhez.
 
-**Default**: `false`
+**Alapértelmezett**: `hamis`
 
-#### Begin Playback Paused {#begin-playback-paused}
+#### Lejátszás megkezdése szüneteltetve {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
-Start videos in a paused state when playback begins.
+A lejátszás megkezdésekor a videókat szüneteltetett állapotba állítja.
 
-**Default**: `false`
+**Alapértelmezett**: `hamis`
 
-### Background Music {#settings-guide-background-music}
+### Háttérzene {#settings-guide-background-music}
 
-#### Enable Music {#enable-music-button}
+#### Zene engedélyezése {#enable-music-button}
 
 <!-- **Setting**: `enableMusicButton` -->
 
-Enable background music functionality.
+Engedélyezi a háttérzenét.
 
-**Default**: `true`
+**Alapértelmezett**: `igaz`
 
-#### Auto-Start Music {#auto-start-music}
+#### Zene automatikus indítása {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-Automatically start background music when M³ launches if appropriate.
+A háttérzene automatikus elindítása az M³ indításakor, ha szükséges.
 
-**Default**: `true`
+**Alapértelmezett**: `igaz`
 
-#### Meeting Stop Buffer {#meeting-stop-buffer}
+#### Összejövetel-megállítási puffer {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
-How many seconds before meeting start time to stop background music.
+Hány másodperccel az összejövetel kezdete előtt kell leállítani a háttérzenét.
 
-**Range**: 0-300 seconds
+**Tartomány**: 0–300 másodperc
 
-**Default**: 60 seconds
+**Alapértelmezett**: 60 másodperc
 
-#### Music Volume {#music-volume}
+#### Zene hangerő {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
-Volume level for background music (1-100%).
+A háttérzene hangereje (1-100%).
 
-**Default**: 100%
+**Alapértelmezett**: 100%
 
-### Cache Management {#cache-management}
+### Gyorsítótár-kezelés {#cache-management}
 
-#### Enable Extra Cache {#enable-extra-cache}
+#### Extra gyorsítótár engedélyezése {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Enable additional caching for better performance.
+Engedélyezze a további gyorsítótárazást a jobb teljesítmény érdekében.
 
-**Default**: `false`
+**Alapértelmezett**: `hamis`
 
-#### Cache Folder {#cache-folder}
+#### Gyorsítótár mappa {#cache-folder}
 
 <!-- **Setting**: `cacheFolder` -->
 
-Custom location for storing cached media files.
+Egyedi hely a gyorsítótárban tárolt médiafájlok tárolásához.
 
-**Default**: System default location
+**Alapértelmezett**: A rendszer alapértelmezett helye
 
-#### Enable Cache Auto-Clear {#enable-cache-auto-clear}
+#### Gyorsítótár automatikus törlésének engedélyezése {#enable-cache-auto-clear}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
-Automatically clear old cached files to save disk space.
+A régi gyorsítótárfájlok automatikus törlése a lemezterület megtakarítása érdekében.
 
-**Default**: `true`
+**Alapértelmezett**: `igaz`
 
-### Folder Monitoring {#settings-guide-folder-monitoring}
+### Mappafigyelés {#settings-guide-folder-monitoring}
 
-#### Enable Folder Watcher {#enable-folder-watcher}
+#### Mappafigyelő engedélyezése {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Monitor a folder for new media files and automatically add them to M³.
+Figyeljen egy mappát új médiafájlokra, és automatikusan adja hozzá őket az M³-hoz.
 
-**Default**: `false`
+**Alapértelmezett**: `hamis`
 
-#### Folder to Watch {#folder-to-watch}
+#### Figyelendő mappa {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder path to monitor for new media files.
+Az új médiafájlok figyelésére szolgáló mappa elérési útja.
 
-**Default**: Empty
+**Alapértelmezett**: Üres
 
-## Integrations {#integrations}
+## Integrációk {#integrations}
 
 ### Zoom Integration {#settings-guide-zoom-integration}
 
@@ -273,7 +273,7 @@ The folder path to monitor for new media files.
 
 Enable Zoom meeting integration features.
 
-**Default**: `false`
+**Alapértelmezett**: `hamis`
 
 #### Screen Share Shortcut {#screen-share-shortcut}
 
@@ -281,7 +281,7 @@ Enable Zoom meeting integration features.
 
 Keyboard shortcut to trigger Zoom screen sharing.
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
 ### OBS Studio Integration {#settings-guide-obs-integration}
 
@@ -291,7 +291,7 @@ Keyboard shortcut to trigger Zoom screen sharing.
 
 Enable OBS Studio integration for automatic scene switching.
 
-**Default**: `false`
+**Alapértelmezett**: `hamis`
 
 :::warning Important Note
 
@@ -307,7 +307,7 @@ Enable OBS Studio integration for automatic scene switching.
 
 The port number for connecting to OBS Studio WebSocket.
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
 #### OBS Password {#obs-password}
 
@@ -315,7 +315,7 @@ The port number for connecting to OBS Studio WebSocket.
 
 The password for OBS Studio WebSocket connection.
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
 #### OBS Scenes {#obs-scenes}
 
@@ -349,7 +349,7 @@ Configure which OBS scenes to use for different purposes:
 
 Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
 
-**Default**: `false`
+**Alapértelmezett**: `hamis`
 
 #### Custom Event Shortcuts {#custom-event-shortcuts}
 
@@ -359,7 +359,7 @@ Enable custom shortcuts that will be triggered when a specific event is detected
 
 Shortcut that is triggered when media is played.
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
 ##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
 
@@ -367,7 +367,7 @@ Shortcut that is triggered when media is played.
 
 Shortcut that is triggered when media is paused.
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
 ##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
 
@@ -375,7 +375,7 @@ Shortcut that is triggered when media is paused.
 
 Shortcut that is triggered when media is stopped.
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
 ##### Last Song Shortcut {#custom-event-last-song-shortcut}
 
@@ -383,7 +383,7 @@ Shortcut that is triggered when media is stopped.
 
 Shortcut that is triggered when the last song is played during a meeting.
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
 ## Advanced Settings {#advanced-settings}
 
@@ -395,7 +395,7 @@ Shortcut that is triggered when the last song is played during a meeting.
 
 Enable customizable keyboard shortcuts for media control.
 
-**Default**: `false`
+**Alapértelmezett**: `hamis`
 
 #### Media Control Shortcuts {#media-control-shortcuts}
 
@@ -416,7 +416,7 @@ Configure shortcuts for media playback:
 
 Enable fade-in/out transitions when showing or hiding the media window.
 
-**Default**: `true`
+**Alapértelmezett**: `igaz`
 
 #### Hide Media Logo {#hide-media-logo}
 
@@ -424,7 +424,7 @@ Enable fade-in/out transitions when showing or hiding the media window.
 
 Hide the logo in the media window.
 
-**Default**: `false`
+**Alapértelmezett**: `hamis`
 
 #### Maximum Resolution {#maximum-resolution}
 
@@ -442,7 +442,7 @@ Maximum resolution for downloaded media files.
 
 Include media from the printed publications in media downloads.
 
-**Default**: `true`
+**Alapértelmezett**: `igaz`
 
 #### Exclude Footnotes {#exclude-footnotes}
 
@@ -450,7 +450,7 @@ Include media from the printed publications in media downloads.
 
 Exclude footnote images from media downloads when possible.
 
-**Default**: `false`
+**Alapértelmezett**: `hamis`
 
 #### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
 
@@ -458,7 +458,7 @@ Exclude footnote images from media downloads when possible.
 
 Exclude media from the Teaching (th) brochure from media downloads.
 
-**Default**: `true`
+**Alapértelmezett**: `igaz`
 
 ### Subtitles {#subtitles}
 
@@ -468,7 +468,7 @@ Exclude media from the Teaching (th) brochure from media downloads.
 
 Enable subtitle support for media playback.
 
-**Default**: `false`
+**Alapértelmezett**: `hamis`
 
 #### Subtitle Language {#subtitle-language}
 
@@ -476,9 +476,9 @@ Enable subtitle support for media playback.
 
 Language for subtitles (can be different from media language).
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Opciók**: Az összes elérhető nyelv Jehova Tanúi hivatalos weboldaláról
 
-**Default**: None
+**Alapértelmezett**: Nincs
 
 ### Media Export {#settings-guide-media-export}
 
@@ -488,7 +488,7 @@ Language for subtitles (can be different from media language).
 
 Automatically export media files to a specified folder.
 
-**Default**: `false`
+**Alapértelmezett**: `hamis`
 
 #### Media Export Folder {#media-export-folder}
 
@@ -496,7 +496,7 @@ Automatically export media files to a specified folder.
 
 Folder path where media files will be automatically exported.
 
-**Default**: Empty
+**Alapértelmezett**: Üres
 
 #### Convert Files to MP4 {#convert-files-to-mp4}
 
@@ -504,7 +504,7 @@ Folder path where media files will be automatically exported.
 
 Convert exported media files to MP4 format for better compatibility.
 
-**Default**: `false`
+**Alapértelmezett**: `hamis`
 
 ### Danger Zone {#danger-zone}
 
@@ -528,7 +528,7 @@ Base domain used to download publications and media.
 
 Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
 
-**Default**: `false`
+**Alapértelmezett**: `hamis`
 
 ## Tips for Optimal Configuration {#configuration-tips}
 
