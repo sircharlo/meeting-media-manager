@@ -47,7 +47,7 @@
     "@vueuse/core": "^14.1.0",
     "@vueuse/router": "^14.1.0",
     "better-sqlite3": "^12.6.2",
-    "cheerio": "^1.1.2",
+    "cheerio": "^1.2.0",
     "chokidar": "^5.0.0",
     "core-util-is": "^1.0.3",
     "countries-and-timezones": "^3.8.0",
