@@ -47,7 +47,7 @@
     "@vueuse/core": "^14.1.0",
     "@vueuse/router": "^14.1.0",
     "better-sqlite3": "^12.6.2",
-    "cheerio": "^1.1.2",
+    "cheerio": "^1.2.0",
     "chokidar": "^5.0.0",
     "core-util-is": "^1.0.3",
     "countries-and-timezones": "^3.8.0",
@@ -94,8 +94,8 @@
     "@quasar/quasar-app-extension-testing-unit-vitest": "1.2.3",
     "@quasar/vite-plugin": "^1.10.0",
     "@rollup/plugin-inject": "^5.0.5",
-    "@sentry/esbuild-plugin": "^4.7.0",
-    "@sentry/vite-plugin": "^4.7.0",
+    "@sentry/esbuild-plugin": "^4.8.0",
+    "@sentry/vite-plugin": "^4.8.0",
     "@types/better-sqlite3": "^7.6.13",
     "@types/dompurify": "^3.2.0",
     "@types/fluent-ffmpeg": "^2.1.28",
@@ -133,7 +133,7 @@
     "vitepress": "^2.0.0-alpha.15",
     "vitest": "^4.0.18",
     "vue-eslint-parser": "^10.2.0",
-    "vue-tsc": "^3.2.3",
+    "vue-tsc": "^3.2.4",
     "webpack-iconfont-plugin-nodejs": "^1.0.36"
   },
   "resolutions": {
