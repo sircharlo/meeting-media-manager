@@ -26,6 +26,14 @@ export const pendingDays = new Set<string>();
 // Track days that requested another export while one was already running
 const dirtyDays = new Set<string>();
 
+const getQueue = async () => {
+  if (!folderExportQueue) {
+    const { default: PQueue } = await import('p-queue');
+    folderExportQueue = new PQueue({ concurrency: 2 });
+  }
+  return folderExportQueue;
+};
+
 export const addDayToExportQueue = async (targetDate?: Date) => {
   if (!targetDate) return;
   const dateStr = formatDate(targetDate, 'YYYY-MM-DD');
@@ -37,12 +45,9 @@ export const addDayToExportQueue = async (targetDate?: Date) => {
   }
   pendingDays.add(dateStr);
 
-  if (!folderExportQueue) {
-    const { default: PQueue } = await import('p-queue');
-    folderExportQueue = new PQueue({ concurrency: 2 });
-  }
+  const queue = await getQueue();
 
-  folderExportQueue.add(async () => {
+  queue.add(async () => {
     try {
       // Run the export
       await exportDayToFolder(targetDate);
@@ -52,6 +57,8 @@ export const addDayToExportQueue = async (targetDate?: Date) => {
         dirtyDays.delete(dateStr);
         await exportDayToFolder(targetDate);
       }
+    } catch (error) {
+      errorCatcher(error);
     } finally {
       pendingDays.delete(dateStr);
       dirtyDays.delete(dateStr); // Just in case
@@ -329,29 +336,8 @@ export const exportAllDays = async () => {
       })
       .filter((d): d is Date => !!d);
 
-    if (!folderExportQueue) {
-      const { default: PQueue } = await import('p-queue');
-      folderExportQueue = new PQueue({ concurrency: 2 });
-    }
-
-    // Only add days that are not already pending
-    const newDays = daysToExport.filter((date) => {
-      const dateStr = formatDate(date, 'YYYY-MM-DD');
-      if (pendingDays.has(dateStr)) return false;
-      pendingDays.add(dateStr);
-      return true;
-    });
-
-    folderExportQueue.addAll(
-      newDays.map((date) => async () => {
-        try {
-          await exportDayToFolder(date);
-        } finally {
-          const dateStr = formatDate(date, 'YYYY-MM-DD');
-          pendingDays.delete(dateStr);
-        }
-      }),
-    );
+    // Call addDayToExportQueue for each day to ensure consolidated queuing logic
+    await Promise.all(daysToExport.map((date) => addDayToExportQueue(date)));
   } catch (error) {
     errorCatcher(error);
   }

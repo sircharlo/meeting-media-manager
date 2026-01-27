@@ -65,7 +65,7 @@ const cleanPublicTalkPubs = async (folder: string, congIds: Set<string>) => {
 
   await Promise.allSettled(
     files
-      .filter((f) => f.name.startsWith('S-34mp_'))
+      .filter((f) => /^S-34(?:mp_|_)/.test(f.name))
       .map((f) => {
         const congIdOrLang = f.name.split('_')[1];
         if (!congIdOrLang?.includes('-') || congIds.has(congIdOrLang))
@@ -153,7 +153,8 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
       await getDirectory('lmdv', 0), // Love People Videos
       await getDirectory('ip-1', 0), // Isaiah Book (1)
       await getDirectory('ip-2', 0), // Isaiah Book (2)
-      // Public Talk Media Playlist
+      // Public Talk media
+      await getDirectory('S-34', 'any'),
       await getDirectory('S-34mp', 'any'),
       // Magazines, low disk usage
       await getDirectory('wp', 'any'), // Public Watchtower
@@ -163,13 +164,13 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
       await getDirectory('jwlb', undefined, true),
     ].flat();
 
-    // Add S-34mp directories
+    // Add S-34 and S-34mp directories
     try {
       const pubsRootDefault = await getPublicationsPath();
       try {
         const items = await readdir(pubsRootDefault);
         items
-          .filter((i) => i.isDirectory && i.name.startsWith('S-34mp_'))
+          .filter((i) => i.isDirectory && /^S-34(?:mp_|_)/.test(i.name))
           .forEach((i) => directories.push(join(pubsRootDefault, i.name)));
       } catch (error) {
         errorCatcher(error);
@@ -270,12 +271,12 @@ const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
           const filePath = join(item.parentPath, item.name);
           if (item.isFile) {
             const parentFolder = item.parentPath.split('/').pop() || '';
-            // Exclude files inside any S-34mp_* folder from deletion consideration
-            const isProtectedS34mp = parentFolder.startsWith('S-34mp_');
+            // Exclude files inside any S-34mp_* or S-34_* folder from deletion consideration
+            const isProtectedS34Folder = /^S-34(?:mp_|_)/.test(parentFolder);
             if (item.name === LAST_USED_FILENAME) {
               // Never delete .last-used files directly
               // They will be deleted if the parent folder is deleted
-            } else if (!isProtectedS34mp) {
+            } else if (!isProtectedS34Folder) {
               // Use normalized paths for comparison
               const normalizedParentPath = normalize(item.parentPath)
                 .replace(/[\\/]+/g, '\\')

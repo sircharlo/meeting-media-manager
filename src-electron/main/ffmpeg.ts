@@ -1,72 +1,40 @@
 import { pathExists } from 'fs-extra/esm';
+import { stat } from 'node:fs/promises';
 import { FULL_HD } from 'src/constants/media';
 import upath from 'upath';
 
 const { changeExt } = upath;
 
+const conversionQueue = new Map<string, Promise<string>>();
+
 export const createVideoFromNonVideo = async (
   originalFile: string,
   ffmpegPath: string,
 ) => {
-  const convertedFilePath = changeExt(originalFile, '.mp4');
+  const existingPromise = conversionQueue.get(originalFile);
+  if (existingPromise) return existingPromise;
 
-  if (await pathExists(convertedFilePath)) {
-    return convertedFilePath;
-  }
+  const conversionPromise = (async () => {
+    const convertedFilePath = changeExt(originalFile, '.mp4');
 
-  const { default: ffmpeg } = await import('fluent-ffmpeg');
+    if (await pathExists(convertedFilePath)) {
+      const sourceStats = await stat(originalFile);
+      const destStats = await stat(convertedFilePath);
 
-  ffmpeg.setFfmpegPath(ffmpegPath);
-
-  if (originalFile.toLowerCase().endsWith('.mp3')) {
-    await new Promise<void>((resolve, reject) => {
-      ffmpeg(originalFile)
-        .noVideo()
-        .save(convertedFilePath)
-        .on('end', () => {
-          resolve();
-        })
-        .on('error', (err) => {
-          reject(err);
-        });
-    });
-  } else {
-    const { imageSizeFromFile } = await import('image-size/fromFile');
-    const { height, orientation, width } =
-      await imageSizeFromFile(originalFile);
-
-    let adjustedWidth = width;
-    let adjustedHeight = height;
-
-    if (orientation && orientation >= 5) {
-      [adjustedWidth, adjustedHeight] = [height, width];
+      // If output exists and is newer than source, return it
+      if (destStats.mtimeMs > sourceStats.mtimeMs && destStats.size > 0) {
+        return convertedFilePath;
+      }
     }
 
-    if (adjustedWidth && adjustedHeight) {
-      let max = [undefined, Math.min(FULL_HD.height, adjustedHeight)];
-      if (FULL_HD.height / FULL_HD.width > adjustedHeight / adjustedWidth) {
-        max = [Math.min(FULL_HD.width, adjustedWidth), undefined];
-      }
-      const convertedDimensions = resize(
-        adjustedWidth,
-        adjustedHeight,
-        max[0],
-        max[1],
-      );
+    const { default: ffmpeg } = await import('fluent-ffmpeg');
 
-      if (!convertedDimensions) {
-        throw new Error('Could not determine dimensions of image.');
-      }
+    ffmpeg.setFfmpegPath(ffmpegPath);
 
+    if (originalFile.toLowerCase().endsWith('.mp3')) {
       await new Promise<void>((resolve, reject) => {
         ffmpeg(originalFile)
-          .inputOptions('-loop 1')
-          .inputFormat('image2')
-          .videoCodec('libx264')
-          .size(`${convertedDimensions.width}x${convertedDimensions.height}`)
-          .loop(5) // Loop the input for 5 seconds
-          .outputOptions('-pix_fmt', 'yuv420p') // Pixel format
-          .outputOptions('-r', '30') // Frame rate: 30fps
+          .noVideo()
           .save(convertedFilePath)
           .on('end', () => {
             resolve();
@@ -76,11 +44,65 @@ export const createVideoFromNonVideo = async (
           });
       });
     } else {
-      throw new Error('Could not determine dimensions of image.');
-    }
-  }
+      const { imageSizeFromFile } = await import('image-size/fromFile');
+      const { height, orientation, width } =
+        await imageSizeFromFile(originalFile);
 
-  return convertedFilePath;
+      let adjustedWidth = width;
+      let adjustedHeight = height;
+
+      if (orientation && orientation >= 5) {
+        [adjustedWidth, adjustedHeight] = [height, width];
+      }
+
+      if (adjustedWidth && adjustedHeight) {
+        let max = [undefined, Math.min(FULL_HD.height, adjustedHeight)];
+        if (FULL_HD.height / FULL_HD.width > adjustedHeight / adjustedWidth) {
+          max = [Math.min(FULL_HD.width, adjustedWidth), undefined];
+        }
+        const convertedDimensions = resize(
+          adjustedWidth,
+          adjustedHeight,
+          max[0],
+          max[1],
+        );
+
+        if (!convertedDimensions) {
+          throw new Error('Could not determine dimensions of image.');
+        }
+
+        await new Promise<void>((resolve, reject) => {
+          ffmpeg(originalFile)
+            .inputOptions('-loop 1')
+            .inputFormat('image2')
+            .videoCodec('libx264')
+            .size(`${convertedDimensions.width}x${convertedDimensions.height}`)
+            .loop(5) // Loop the input for 5 seconds
+            .outputOptions('-pix_fmt', 'yuv420p') // Pixel format
+            .outputOptions('-r', '30') // Frame rate: 30fps
+            .save(convertedFilePath)
+            .on('end', () => {
+              resolve();
+            })
+            .on('error', (err) => {
+              reject(err);
+            });
+        });
+      } else {
+        throw new Error('Could not determine dimensions of image.');
+      }
+    }
+
+    return convertedFilePath;
+  })();
+
+  conversionQueue.set(originalFile, conversionPromise);
+
+  try {
+    return await conversionPromise;
+  } finally {
+    conversionQueue.delete(originalFile);
+  }
 };
 
 const resize = (
