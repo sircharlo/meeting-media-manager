@@ -303,33 +303,33 @@ Az M³ hardverkövetelményei a következők:
 
 A használt funkcióktól függően az M³ mellé további szoftverekre is szükség lehet:
 
-- **Zoom**: Required only if using Zoom integration features
-- **OBS Studio**: Required only if using OBS integration features
+- **Zoom**: Csak akkor szükséges, ha a Zoom integrációs funkciókat használja
+- **OBS Studio**: Csak akkor szükséges, ha az OBS integrációs funkciókat használja
 
-### :floppy_disk: How much disk space does M³ use? {#disk-space}
+### :floppy_disk: Mennyi lemezterületet használ az M³? {#disk-space}
 
-Disk space usage depends on:
+A lemezterület használata a következőktől függ:
 
-- **Media Resolution**: Higher resolutions use more space
-- **Cached Content**: Media files are cached locally
-- **Extra Cache**: Additional caching can increase usage
-- **Exported Media**: Auto-export features use additional space
+- **Médiafelbontás**: A magasabb felbontás több helyet igényel
+- **Gyorsítótárban tárolt tartalom**: A médiafájlok helyileg gyorsítótárban vannak tárolva
+- **Extra gyorsítótár**: A további gyorsítótár használat növelheti a felhasználást
+- **Exportált média**: Az automatikus export funkciók további helyet igényelnek
 
-Typical usage ranges from 2-10GB depending on settings and usage.
+A tipikus felhasználás a beállításoktól és a használattól függően 2-10 Gb között mozog.
 
-### :shield: Is M³ secure and private? {#security-privacy}
+### :shield: Az M³ biztonságos és megbízható? {#security-privacy}
 
-Igen! M³ is designed with security and privacy in mind:
+Igen! Az M³ a biztonság és az adatvédelem jegyében lett kialakítva:
 
-- **Local Storage**: All meeting data is stored locally on your computer
-- **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
-- **Open Source**: The code is open for review and verification
-- **Bug Reports**: Limited data may be collected for bug reporting purposes
+- **Helyi tárolás**: Az összes összejöveteli adatot a számítógépén tárolja
+- **Közvetlen letöltések**: A média közvetlenül Jehova Tanúi hivatalos weboldaláról tölthető le
+- **Nyílt forráskód**: A kód nyílt, így ellenőrizhető és megtekinthető
+- **Hibabejelentések**: A hibabejelentések céljából korlátozott mennyiségű adat gyűjthető
 
-### :arrows_clockwise: How often does M³ check for updates? {#update-frequency}
+### :arrows_clockwise: Milyen gyakran ellenőrzi az M³ a frissítéseket? {#update-frequency}
 
-M³ checks for updates:
+Az M³ a következő frissítéseket keresi:
 
-- **Application Updates**: Automatically checks for new versions every time the app is opened
-- **Media Updates**: Automatically checks for new meeting media every time the app is opened
-- **Language Updates**: Dynamic detection of new languages as needed
+- **Alkalmazásfrissítések**: Az alkalmazás megnyitásakor automatikusan ellenőrzi az új verziók elérhetőségét
+- **Médiafrissítések**: Az alkalmazás megnyitásakor automatikusan ellenőrzi, hogy vannak-e új összejöveteli médiafájlok
+- **Nyelvi frissítések**: Új nyelvek dinamikus felismerése szükség szerint
