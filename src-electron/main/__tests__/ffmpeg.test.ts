@@ -6,6 +6,15 @@ vi.mock('fs-extra/esm', () => ({
   pathExists: vi.fn(async () => false),
 }));
 
+vi.mock('node:fs/promises', () => ({
+  stat: vi.fn(async (p: string) => {
+    if (p.endsWith('.mp4')) {
+      return { mtimeMs: 200, size: 100 };
+    }
+    return { mtimeMs: 100, size: 100 };
+  }),
+}));
+
 const ffmpegOnMap: Record<string, (...args: unknown[]) => void> = {};
 const ffmpegChain = {
   noVideo: vi.fn().mockReturnThis(),
