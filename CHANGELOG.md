@@ -4,6 +4,34 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.1.8
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Camera Feed**: Only initialize camera feeds for sign language congregations or when a camera has already been selected.
+- 🛠️ **Stability**: Added detection and warning for video capture crashes and integrated additional error catchers.
+- 🛠️ **Icons**: Improved reliability with dynamic icon font URL loading and glyph mapping, which should resolve some icon display issues.
+- 🛠️ **Performance**: Implemented caching for database queries, font setters, and path lookups to improve responsiveness.
+- 🛠️ **S-34 Forms**: Clarified support for both S-34 and S-34mp JWPUB files.
+- 🛠️ **Logging**: Reduced log verbosity when appropriate.
+- 🛠️ **UI**: Improved banner display by removing "inline-actions" parameter for action buttons.
+- 🛠️ **Cleanup**: Improved logic for cleaning persisted stores and congregation records.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Security**: Hardened GitHub Actions by pinning third-party actions and preventing template injection in workflows.
+- 🐞 **Updates**: Fixed path checks for beta and disabled updates and resolved beta release fetching logic.
+- 🐞 **Stability**: Resolved zip file processing issues and improved decompression logging.
+
+### 🧪 Testing
+
+- 🧪 **Test Reliability**: Fixed and improved various tests, including updater and flaky forbidden imports tests.
+
+### 🔧 Chores
+
+- 🔧 **Refactoring**: Improved Electron process separation and refactored ESLint configurations for restricted imports.
+- 🔧 **CI/CD**: Enhanced beta release cleanup scripts and dependency management.
+
 ## v26.1.7
 
 ### 🛠️ Improvements and Tweaks
