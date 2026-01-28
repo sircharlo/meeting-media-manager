@@ -33,7 +33,6 @@ let defaultAppDataPath: null | string = null;
  */
 export async function getAppDataPath(): Promise<string> {
   if (defaultAppDataPath) {
-    console.log('📁 Using cached app data path:', defaultAppDataPath);
     return defaultAppDataPath;
   }
 
