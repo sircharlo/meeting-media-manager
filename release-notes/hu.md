@@ -1,35 +1,35 @@
 <!-- markdownlint-disable no-duplicate-heading -->
 
-# What's New
+# Újdonságok
 
-For the full list of changes between versions, see our CHANGELOG.md file on GitHub.
+A verziók közötti változások teljes listáját megtalálja a GitHubon található CHANGELOG.md fájlban.
 
 ## v26.1.5
 
-### ✨ New Features
+### ✨ Új funkciók
 
-- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+- ✨ **Emlékünnepi média**: Az emlékünnep dátumának kiválasztásakor automatikusan letölti az emlékünnepi borítóképet és a bemutató videót a támogatott nyelveken.
 
 ## v26.1.0
 
-### ✨ New Features
+### ✨ Új funkciók
 
-- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
-- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
-- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+- ✨ **Automatikus összejövetel-időpont szinkronizálás**: Hozzáadtuk azt a funkciót, hogy az összejövetelek dátumát és időpontját automatikusan szinkronizáljuk a hivatalos weboldallal. Ez a funkció alapértelmezés szerint engedélyezett, és a beállításokban manuálisan is be- vagy kikapcsolható.
+- ✨ **Jövőbeli időpontváltozások**: Az alkalmazás mostantól figyelembe veszi a jövőbeli időpontváltozásokat is, ha a gyülekezet létrehozásakor a weboldalon található keresőt használja, amennyiben az elérhető.
+- ✨ **Megosztott gyorsítótár az egész gépre kiterjedő telepítésekhez**: Az egész gépre kiterjedő telepítések mostantól alapértelmezés szerint egy közös mappát használnak, így optimalizálva a tárhely és a sávszélesség használatát ugyanazon a számítógépen több felhasználó számára.
 
 ## v25.12.2
 
-### ✨ New Features
+### ✨ Új funkciók
 
-- ✨ **Zoom/Pan buttons**: Added the ability to press and hold zoom and pan buttons for continuous adjustment.
+- ✨ **Nagyítás/Pásztázás gombok**: Hozzáadott funkció: a nagyítás és a pásztázás gombok lenyomva tartásával folyamatosan állítható a kép.
 
 ## v25.12.0
 
-### ✨ New Features
+### ✨ Új funkciók
 
-- ✨ **Multi-Select Context Menu**: Added support for right-click menu actions when multiple media items are selected.
-- ✨ **Keyboard Shortcuts**: Added `Ctrl/Cmd+A` to select all media, `H` to hide selected media, and `Shift+Up/Down` for keyboard selection navigation.
+- ✨ **Többszörös kiválasztás környezeti menü**: Több médiaelem kiválasztása esetén a jobb egérgombbal elérhető menü műveletek támogatása hozzáadva.
+- ✨ **Billentyűparancsok**: Hozzáadva a `Ctrl/Cmd+A` billentyűkombináció az összes média kijelöléséhez, a `H` billentyű a kijelölt média elrejtéséhez, valamint a `Shift+Fel/Le` billentyűkombináció a billentyűzetes navigációhoz.
 - ✨ **Watchtower Study Video Settings**: Added a setting to exclude extra Watchtower study videos.
 - ✨ **Collapsible Sections**: Added ability to collapse sections on non-meeting days for a cleaner view.
 - ✨ **JW Events Website**: Added the ability to present the JW Events website in addition to the main official website.
@@ -42,7 +42,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ## v25.11.0
 
-### ✨ New Features
+### ✨ Új funkciók
 
 - ✨ **JWPUB Media Selection**: Added a way to select individual media from JWPUB files.
 - ✨ **Auto-Focus Media Window**: Added an optional setting to automatically focus the media window after Zoom screen sharing.
@@ -56,7 +56,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ## v25.10.1
 
-### ✨ New Features
+### ✨ Új funkciók
 
 - ✨ **Setup Wizard – Zoom Step**: Added a Zoom integration step to the setup wizard for easier initial configuration.
 - ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. This makes it easier to choose the correct screen on which the media window should be displayed.
@@ -64,7 +64,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ## v25.10.0
 
-### ✨ New Features
+### ✨ Új funkciók
 
 - ✨ **Begin Playback Paused**: Added a new setting to allow playback to begin paused, which can be useful for AV operators to prepare their setup (such as starting Zoom sharing) before the media starts playing in the media window.
 - ✨ **Update Notifications**: Users will now be notified of updates through an in-app banner, which will also allow the user to install updates immediately, instead of waiting for the next app restart.
@@ -72,7 +72,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ## v25.9.1
 
-### ✨ New Features
+### ✨ Új funkciók
 
 - ✨ **Media Window Always on Top & Fullscreen Behavior**: Fixed and improved always-on-top behavior for the media window, adjusting dynamically based on fullscreen state.
 - ✨ **Date Display Format Setting**: Added a user setting to configure a date display format.
@@ -82,21 +82,21 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ## v25.9.0
 
-### ✨ New Features
+### ✨ Új funkciók
 
 - ✨ **Download Popup Enhancements**: Added refresh button and download grouping by date in the download popup.
 - ✨ **Watched Media Order Memory**: Added section order memory for watched media items.
 
 ## v25.8.3
 
-### ✨ New Features
+### ✨ Új funkciók
 
 - ✨ **Media Window Fade Transitions**: Added a new advanced setting to make the media window fade in and out, providing smoother visual transitions.
 - ✨ **Image Duration Control and Progress Tracking**: Added image duration control and progress tracking capabilities for repeated sections.
 
 ## v25.8.1
 
-### ✨ New Features
+### ✨ Új funkciók
 
 - ✨ **Custom Media Sections**: Complete system for creating, editing, and managing custom media sections with color customization and drag-and-drop reordering.
 - ✨ **Media Dividers**: Add titled dividers within media lists for better organization with top/bottom positioning options.
@@ -112,7 +112,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ## 25.6.0
 
-### ✨ New Features
+### ✨ Új funkciók
 
 - ✨ **Metered connection setting**: Added a new setting to reduce download bandwidth usage on metered connections.
 - ✨ **Improved streamed media handling**: Better support for streamed media, reducing latency-related issues.
@@ -125,7 +125,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ## 25.5.0
 
-### ✨ New Features
+### ✨ Új funkciók
 
 - 🖼️ **OBS Delay Option for Images**: Add an OBS Studio setting to delay scene changes when displaying images, improving transitions.
 - 🔊 **Support for `.m4a` Audio Format**: Add compatibility for `.m4a` audio files to expand supported media types.
@@ -161,7 +161,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ## 25.4.0
 
-### ✨ New Features
+### ✨ Új funkciók
 
 - 🇵🇭 **New Language: Tagalog**: Added support for Tagalog, expanding the app's multilingual capabilities.
 - 🎞 **Support for `.m4v` Video Format**: Now supports playback of `.m4v` files to improve media compatibility.
@@ -174,7 +174,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ## 25.3.1
 
-### ✨ New Features
+### ✨ Új funkciók
 
 - 🌏 **New Language: Korean**: Add support for the Korean language, expanding accessibility for more users.
 
@@ -186,7 +186,7 @@ For the full list of changes between versions, see our CHANGELOG.md file on GitH
 
 ## 25.3.0
 
-### ✨ New Features
+### ✨ Új funkciók
 
 - 🎵 **Play Background Music with Videos**: Allow background music to continue playing while videos are being viewed.
 - 🎥 **Camera Feed for Sign Language Media**: Add the ability to display a camera feed on the media window specifically for sign language users.
