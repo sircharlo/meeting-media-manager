@@ -331,110 +331,110 @@ Az OBS Studio WebSocket-kapcsolat jelszava.
 - **Gyors kapcsoló**: Az OBS integráció gyors be-/kikapcsolásának engedélyezése
 - **Jelenetváltás a média után**: A média lejátszása után automatikusan visszatér az előző jelenethez
 - **Előző jelenet megjegyzése**: Megjegyzi az előző jelenetet és visszaállítja azt
-- **Hide Icons**: Hide OBS-related icons in the interface
+- **Ikonok elrejtése**: Az OBS-hez kapcsolódó ikonok elrejtése a felületen
 
 :::warning Fontos Megjegyzés
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. Be kell állítania a Zoom Original Audio beállításait, vagy használnia kell a „Share Computer Sound” (Számítógép hangjának megosztása) funkciót, hogy az összejövetel résztvevői hallhassák a médiát. Az audio beállítások részletes leírását a [Felhasználói kézikönyvben](/user-guide#audio-configuration) találja.
+**Audio konfiguráció szükséges**: Az OBS Studio integráció csak a videó/jelenet váltást kezeli. Az M³ média hangja **nem kerül automatikusan továbbításra** a Zoom vagy az OBS alkalmazásba. A videó stream úgy működik, mint egy hang nélküli virtuális kamera, akárcsak egy webkamera. Be kell állítania a Zoom Original Audio beállításait, vagy használnia kell a „Share Computer Sound” (Számítógép hangjának megosztása) funkciót, hogy az összejövetel résztvevői hallhassák a médiát. Az audio beállítások részletes leírását a [Felhasználói kézikönyvben](/user-guide#audio-configuration) találja.
 
-**Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
+**Alternatíva**: Fontolja meg a Zoom integráció használatát, mivel ez a Zoom natív képernyőmegosztását használja, amely zökkenőmentesebben kezeli az audiót.
 
 :::
 
-### Custom Events {#custom-events}
+### Egyéni események {#custom-events}
 
-#### Enable Custom Events {#enable-custom-events}
+#### Egyéni események engedélyezése {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+Engedélyezze az egyéni parancsokat, amelyek egy adott esemény észlelésekor aktiválódnak (pl. média lejátszása, szüneteltetése vagy leállítása).
 
 **Alapértelmezett**: `hamis`
 
-#### Custom Event Shortcuts {#custom-event-shortcuts}
+#### Egyéni esemény gyorsgombok {#custom-event-shortcuts}
 
-##### Play Media Shortcut {#custom-event-media-play-shortcut}
+##### Média lejátszása gyorsgomb {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
-Shortcut that is triggered when media is played.
+A média lejátszásakor aktiválódó billentyűparancs.
 
 **Alapértelmezett**: Nincs
 
-##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+##### Média szüneteltetése gyorsbillentyű {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
-Shortcut that is triggered when media is paused.
+A média szüneteltetésekor aktiválódó gyorsbillentyű.
 
 **Alapértelmezett**: Nincs
 
-##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+##### Média leállítása gyorsbillentyű {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
-Shortcut that is triggered when media is stopped.
+A média leállításakor aktiválódó gyorsbillentyű.
 
 **Alapértelmezett**: Nincs
 
-##### Last Song Shortcut {#custom-event-last-song-shortcut}
+##### Utolsó dal gyorsbillentyű {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-Shortcut that is triggered when the last song is played during a meeting.
+Gyorsbillentyű, amely akkor aktiválódik, amikor az utolsó ének lejátszásra kerül egy összejövetel alatt.
 
 **Alapértelmezett**: Nincs
 
-## Advanced Settings {#advanced-settings}
+## Haladó beállítások {#advanced-settings}
 
-### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
+### Billentyűparancsok {#settings-guide-keyboard-shortcuts}
 
-#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
+#### Billentyűparancsok engedélyezése {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-Enable customizable keyboard shortcuts for media control.
+Engedélyezze a testreszabható billentyűparancsokat a média vezérléséhez.
 
 **Alapértelmezett**: `hamis`
 
-#### Media Control Shortcuts {#media-control-shortcuts}
+#### Médiavezérlő gyorsbillentyűk {#media-control-shortcuts}
 
-Configure shortcuts for media playback:
+A média lejátszásához szükséges gyorsbillentyűk beállítása:
 
-- **Media Window**: Open/close media window
-- **Previous Media**: Go to previous media item
-- **Next Media**: Go to next media item
-- **Pause/Resume**: Pause or resume media playback
-- **Stop Media**: Stop media playback
-- **Music Toggle**: Toggle background music
+- **Médiaablak**: Médiaablak megnyitása/bezárása
+- **Előző média**: Ugrás az előző médiaelemre
+- **Következő média**: Ugrás a következő médiaelemre
+- **Szünet/Folytatás**: A média lejátszásának szüneteltetése vagy folytatása
+- **Média leállítása**: A média lejátszásának leállítása
+- **Zene be-/kikapcsolása**: Háttérzene be-/kikapcsolása
 
-### Media Display {#media-display}
+### Média megjelenítés {#media-display}
 
-#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+#### Médiaablak átmenetek engedélyezése {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-Enable fade-in/out transitions when showing or hiding the media window.
+Engedélyezze az elsötétülést/kivilágosodást a médiaablak megjelenítésekor vagy elrejtésekor.
 
 **Alapértelmezett**: `igaz`
 
-#### Hide Media Logo {#hide-media-logo}
+#### Média logó elrejtése {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
-Hide the logo in the media window.
+Rejtse el a logót a médiaablakban.
 
 **Alapértelmezett**: `hamis`
 
-#### Maximum Resolution {#maximum-resolution}
+#### Maximális felbontás {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
-Maximum resolution for downloaded media files.
+A letöltött médiafájlok maximális felbontása.
 
-**Options**: 240p, 360p, 480p, 720p
+**Opciók**: 240p, 360p, 480p, 720p
 
-**Default**: 720p
+**Alapértelmezett**: 720p
 
 #### Include Printed Media {#include-printed-media}
 
