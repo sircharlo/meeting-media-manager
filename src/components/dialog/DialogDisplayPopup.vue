@@ -567,7 +567,17 @@ whenever(
 const cameras = ref<{ label: string; value: string }[]>([]);
 
 const getCameras = async () => {
+  // Only enumerate devices if it's a sign language congregation or a camera is already selected
+  // This avoids triggering the Video Capture service for the vast majority of users
+  if (!currentLangObject.value?.isSignLanguage && !displayCameraId.value) {
+    console.log(
+      '🎬 [getCameras] Skipping camera enumeration (not a sign language congregation and no camera selected)',
+    );
+    return;
+  }
+
   try {
+    console.log('🎬 [getCameras] Enumerating video input devices');
     cameras.value = (await navigator.mediaDevices.enumerateDevices())
       .filter((d) => d.kind === 'videoinput')
       .map((d) => ({ label: d.label, value: d.deviceId }));
