@@ -358,7 +358,7 @@ export const fetchMediaItems = async (
             ? 'AUDIO'
             : null,
       ]
-        .filter((v) => !!v && v !== '0')
+        .filter((v, i) => v != null && (v.toString() !== '0' || i === 2))
         .join('_');
 
     let response = await fetchJson<MediaItemsMediator>(
@@ -368,11 +368,19 @@ export const fetchMediaItems = async (
     );
 
     if (!response?.media?.length && !publication.track) {
-      response = await fetchJson<MediaItemsMediator>(
-        `${url}/${getId('x')}`,
-        undefined,
-        online,
-      );
+      for (const track of ['x', 0, 1]) {
+        if (track.toString() === publication.track?.toString()) continue;
+
+        const fallbackResponse = await fetchJson<MediaItemsMediator>(
+          `${url}/${getId(track)}`,
+          undefined,
+          online,
+        );
+        if (fallbackResponse?.media?.length) {
+          response = fallbackResponse;
+          break;
+        }
+      }
     }
 
     return response;
