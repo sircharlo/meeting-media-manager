@@ -331,233 +331,233 @@ Az OBS Studio WebSocket-kapcsolat jelszava.
 - **Gyors kapcsoló**: Az OBS integráció gyors be-/kikapcsolásának engedélyezése
 - **Jelenetváltás a média után**: A média lejátszása után automatikusan visszatér az előző jelenethez
 - **Előző jelenet megjegyzése**: Megjegyzi az előző jelenetet és visszaállítja azt
-- **Hide Icons**: Hide OBS-related icons in the interface
+- **Ikonok elrejtése**: Az OBS-hez kapcsolódó ikonok elrejtése a felületen
 
 :::warning Fontos Megjegyzés
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. Be kell állítania a Zoom Original Audio beállításait, vagy használnia kell a „Share Computer Sound” (Számítógép hangjának megosztása) funkciót, hogy az összejövetel résztvevői hallhassák a médiát. Az audio beállítások részletes leírását a [Felhasználói kézikönyvben](/user-guide#audio-configuration) találja.
+**Audio konfiguráció szükséges**: Az OBS Studio integráció csak a videó/jelenet váltást kezeli. Az M³ média hangja **nem kerül automatikusan továbbításra** a Zoom vagy az OBS alkalmazásba. A videó stream úgy működik, mint egy hang nélküli virtuális kamera, akárcsak egy webkamera. Be kell állítania a Zoom Original Audio beállításait, vagy használnia kell a „Share Computer Sound” (Számítógép hangjának megosztása) funkciót, hogy az összejövetel résztvevői hallhassák a médiát. Az audio beállítások részletes leírását a [Felhasználói kézikönyvben](/user-guide#audio-configuration) találja.
 
-**Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
+**Alternatíva**: Fontolja meg a Zoom integráció használatát, mivel ez a Zoom natív képernyőmegosztását használja, amely zökkenőmentesebben kezeli az audiót.
 
 :::
 
-### Custom Events {#custom-events}
+### Egyéni események {#custom-events}
 
-#### Enable Custom Events {#enable-custom-events}
+#### Egyéni események engedélyezése {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+Engedélyezze az egyéni parancsokat, amelyek egy adott esemény észlelésekor aktiválódnak (pl. média lejátszása, szüneteltetése vagy leállítása).
 
 **Alapértelmezett**: `hamis`
 
-#### Custom Event Shortcuts {#custom-event-shortcuts}
+#### Egyéni esemény gyorsgombok {#custom-event-shortcuts}
 
-##### Play Media Shortcut {#custom-event-media-play-shortcut}
+##### Média lejátszása gyorsgomb {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
-Shortcut that is triggered when media is played.
+A média lejátszásakor aktiválódó billentyűparancs.
 
 **Alapértelmezett**: Nincs
 
-##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+##### Média szüneteltetése gyorsbillentyű {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
-Shortcut that is triggered when media is paused.
+A média szüneteltetésekor aktiválódó gyorsbillentyű.
 
 **Alapértelmezett**: Nincs
 
-##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+##### Média leállítása gyorsbillentyű {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
-Shortcut that is triggered when media is stopped.
+A média leállításakor aktiválódó gyorsbillentyű.
 
 **Alapértelmezett**: Nincs
 
-##### Last Song Shortcut {#custom-event-last-song-shortcut}
+##### Utolsó dal gyorsbillentyű {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-Shortcut that is triggered when the last song is played during a meeting.
+Gyorsbillentyű, amely akkor aktiválódik, amikor az utolsó ének lejátszásra kerül egy összejövetel alatt.
 
 **Alapértelmezett**: Nincs
 
-## Advanced Settings {#advanced-settings}
+## Haladó beállítások {#advanced-settings}
 
-### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
+### Billentyűparancsok {#settings-guide-keyboard-shortcuts}
 
-#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
+#### Billentyűparancsok engedélyezése {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-Enable customizable keyboard shortcuts for media control.
+Engedélyezze a testreszabható billentyűparancsokat a média vezérléséhez.
 
 **Alapértelmezett**: `hamis`
 
-#### Media Control Shortcuts {#media-control-shortcuts}
+#### Médiavezérlő gyorsbillentyűk {#media-control-shortcuts}
 
-Configure shortcuts for media playback:
+A média lejátszásához szükséges gyorsbillentyűk beállítása:
 
-- **Media Window**: Open/close media window
-- **Previous Media**: Go to previous media item
-- **Next Media**: Go to next media item
-- **Pause/Resume**: Pause or resume media playback
-- **Stop Media**: Stop media playback
-- **Music Toggle**: Toggle background music
+- **Médiaablak**: Médiaablak megnyitása/bezárása
+- **Előző média**: Ugrás az előző médiaelemre
+- **Következő média**: Ugrás a következő médiaelemre
+- **Szünet/Folytatás**: A média lejátszásának szüneteltetése vagy folytatása
+- **Média leállítása**: A média lejátszásának leállítása
+- **Zene be-/kikapcsolása**: Háttérzene be-/kikapcsolása
 
-### Media Display {#media-display}
+### Média megjelenítés {#media-display}
 
-#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+#### Médiaablak átmenetek engedélyezése {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-Enable fade-in/out transitions when showing or hiding the media window.
+Engedélyezze az elsötétülést/kivilágosodást a médiaablak megjelenítésekor vagy elrejtésekor.
 
 **Alapértelmezett**: `igaz`
 
-#### Hide Media Logo {#hide-media-logo}
+#### Média logó elrejtése {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
-Hide the logo in the media window.
+Rejtse el a logót a médiaablakban.
 
 **Alapértelmezett**: `hamis`
 
-#### Maximum Resolution {#maximum-resolution}
+#### Maximális felbontás {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
-Maximum resolution for downloaded media files.
+A letöltött médiafájlok maximális felbontása.
 
-**Options**: 240p, 360p, 480p, 720p
+**Opciók**: 240p, 360p, 480p, 720p
 
-**Default**: 720p
+**Alapértelmezett**: 720p
 
-#### Include Printed Media {#include-printed-media}
+#### A nyomtatott média szerepeltetése {#include-printed-media}
 
 <!-- **Setting**: `includePrinted` -->
 
-Include media from the printed publications in media downloads.
+A nyomtatott kiadványokból származó médiát is vegye fel a média letöltések közé.
 
 **Alapértelmezett**: `igaz`
 
-#### Exclude Footnotes {#exclude-footnotes}
+#### Lábjegyzetek kizárása {#exclude-footnotes}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
-Exclude footnote images from media downloads when possible.
+Zárja ki a lábjegyzetben szereplő képeket a média letöltésekből, ha lehetséges.
 
 **Alapértelmezett**: `hamis`
 
-#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
+#### Zárja ki a médiát a Tanítás füzetből {#exclude-theocratic-ministry-school}
 
 <!-- **Setting**: `excludeTh` -->
 
-Exclude media from the Teaching (th) brochure from media downloads.
+Kihagyja azokat a médiatartalmakat amelyek a Tanítás (th) füzetben szerepelnek.
 
 **Alapértelmezett**: `igaz`
 
-### Subtitles {#subtitles}
+### Feliratok {#subtitles}
 
-#### Enable Subtitles {#enable-subtitles}
+#### Feliratok engedélyezése {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
-Enable subtitle support for media playback.
+Engedélyezi a feliratok megjelenítését a média lejátszásakor.
 
 **Alapértelmezett**: `hamis`
 
-#### Subtitle Language {#subtitle-language}
+#### Felirat nyelve {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
-Language for subtitles (can be different from media language).
+Feliratok nyelve (eltérhet a média nyelvétől).
 
 **Opciók**: Az összes elérhető nyelv Jehova Tanúi hivatalos weboldaláról
 
 **Alapértelmezett**: Nincs
 
-### Media Export {#settings-guide-media-export}
+### Média Export {#settings-guide-media-export}
 
-#### Enable Media Auto-Export {#enable-media-auto-export}
+#### Média automatikus exportálásának engedélyezése {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-Automatically export media files to a specified folder.
+A médiafájlok automatikus exportálása egy megadott mappába.
 
 **Alapértelmezett**: `hamis`
 
-#### Media Export Folder {#media-export-folder}
+#### Média export mappa {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
-Folder path where media files will be automatically exported.
+A mappa útvonala, ahová a médiafájlok automatikusan exportálásra kerülnek.
 
 **Alapértelmezett**: Üres
 
-#### Convert Files to MP4 {#convert-files-to-mp4}
+#### Fájlok konvertálása MP4 formátumba {#convert-files-to-mp4}
 
-**Setting**: `convertFilesToMp4`
+**Beállítás**: `convertFilesToMp4`
 
-Convert exported media files to MP4 format for better compatibility.
+Konvertálja az exportált médiafájlokat MP4 formátumba a jobb kompatibilitás érdekében.
 
 **Alapértelmezett**: `hamis`
 
-### Danger Zone {#danger-zone}
+### Veszélyes zóna {#danger-zone}
 
 :::warning Figyelmeztetés
 
-These settings should only be changed if you understand their implications.
+Ezeket a beállításokat csak akkor módosítsa, ha tisztában van azok következményeivel.
 
 :::
 
-#### Base URL {#base-url}
+#### Alap URL {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
-Base domain used to download publications and media.
+A kiadványok és média letöltésére használt fő domain.
 
-**Default**: `jw.org`
+**Alapértelmezett**: `jw.org`
 
-#### Disable Media Fetching {#disable-media-fetching}
+#### Média lekérésének letiltása {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
+Teljesen letiltja az automatikus média letöltéseket. Ezt csak olyan profilokhoz használja, amelyeket különleges eseményekhez vagy egyéb egyedi célokra használ.
 
 **Alapértelmezett**: `hamis`
 
-## Tips for Optimal Configuration {#configuration-tips}
+## Tippek az optimális konfigurációhoz {#configuration-tips}
 
-### For New Users {#new-users}
+### Új felhasználók számára {#new-users}
 
-1. Start with the setup wizard to configure basic settings
-2. Enable "Media Display Button" to access presentation features
-3. Configure your meeting schedule accurately
-4. Set up OBS integration if you use hybrid meetings
+1. Kezdje a telepítő varázslóval az alapbeállítások konfigurálását
+2. Engedélyezze a „Média megjelenítése gomb” funkciót a prezentációs funkciók eléréséhez
+3. Állítsa be pontosan az összejövetelek ütemezését
+4. Állítsa be az OBS integrációt, ha hibrid összejöveteleket tart
 
-### For Advanced Users {#advanced-users}
+### Haladó felhasználók számára {#advanced-users}
 
-1. Use folder monitoring to sync media from cloud storage
-2. Enable media auto-export for backup purposes
-3. Configure keyboard shortcuts for efficient operation
-4. Configure Zoom integration for automatic screen sharing
+1. Használja a mappafigyelést a felhőalapú tárolóból származó média szinkronizálásához
+2. Engedélyezze a média automatikus exportálását biztonsági mentés céljából
+3. A hatékony működéshez konfigurálja a billentyűparancsokat
+4. Konfigurálja a Zoom integrációt az automatikus képernyőmegosztáshoz
 
-### Performance Optimization {#performance-optimization}
+### Teljesítményoptimalizálás {#performance-optimization}
 
-1. Enable extra cache for better performance
-2. Use appropriate maximum resolution for your needs
-3. Configure cache auto-clear to manage disk space
-4. Consider metered connection setting if on limited bandwidth
+1. Engedélyezze az extra gyorsítótárat a jobb teljesítmény érdekében
+2. Használja az igényeinek megfelelő maximális felbontást
+3. Konfigurálja a gyorsítótár automatikus törlését, hogy tárhelyet takarítson meg
+4. Korlátozott adatforgalom esetén fontolja meg a korlátozott adatkapcsolat beállítását
 
-### Troubleshooting {#settings-guide-troubleshooting}
+### Hibaelhárítás {#settings-guide-troubleshooting}
 
-- If media isn't downloading, check your meeting schedule settings
-- If OBS integration isn't working, verify port and password settings
-- If performance is slow, try enabling extra cache or reducing resolution
-- If you're having language issues, check both interface and media language settings
-- If Zoom participants can't hear media audio, configure Zoom's Original Audio settings or use "Share Computer Sound"
-- **Tip**: Consider using Zoom integration instead of OBS Studio for simpler audio handling
+- Ha a média nem töltődik le, ellenőrizze az összejövetel ütemezésének beállításait
+- Ha az OBS integráció nem működik, ellenőrizze a port és a jelszó beállításait
+- Ha gyenge a teljesítmény, próbálja meg engedélyezni az extra gyorsítótárat vagy csökkenteni a felbontást
+- Ha nyelvi problémák merülnek fel, ellenőrizze mind a kezelőfelület, mind a média nyelvi beállításait
+- Ha a Zoom résztvevői nem hallják a média hangját, konfigurálja a Zoom eredeti hangbeállításait, vagy használja a „Számítógép hangjának megosztása” ("Share Computer Sound") funkciót
+- **Tipp**: Az egyszerűbb hangkezelés érdekében fontolja meg a Zoom integráció használatát az OBS Studio helyett
