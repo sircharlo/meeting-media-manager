@@ -183,6 +183,7 @@ const {
   onGpuCrashDetected,
   onLog,
   onShortcut,
+  onVideoCaptureCrashDetected,
   onWatchFolderUpdate,
   path,
   pathToFileURL,
@@ -929,6 +930,16 @@ const initListeners = () => {
     });
   });
 
+  onVideoCaptureCrashDetected(() => {
+    createTemporaryNotification({
+      caption: t('camera-access-required-explain'),
+      icon: 'mmm-error',
+      message: t('camera-access-required'),
+      timeout: 10000,
+      type: 'negative',
+    });
+  });
+
   window.electronApi.onHardwareAccelerationTemporaryDisabled(() => {
     createTemporaryNotification({
       caption: t('gpu-crash-detected-explain'),
@@ -951,6 +962,7 @@ const removeListenersLocal = () => {
     'downloadError',
     'downloadProgress',
     'gpu-crash-detected',
+    'video-capture-crash-detected',
   ];
 
   listeners.forEach((listener) => {

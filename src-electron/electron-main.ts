@@ -222,6 +222,8 @@ if (!gotTheLock) {
   createApplicationMenu();
   initSessionListeners();
 
+  let videoCaptureCrashCount = 0;
+
   function handleProcessCrash(
     type: string,
     details: Electron.Details | Electron.RenderProcessGoneDetails,
@@ -252,6 +254,30 @@ if (!gotTheLock) {
         );
         // Persist to user prefs for next run and notify user
         setHwAccelDisabled(true, true);
+      }
+    }
+
+    if (type === 'Video Capture' && details.reason === 'crashed') {
+      videoCaptureCrashCount++;
+      console.log(`Video Capture crash count: ${videoCaptureCrashCount}`);
+
+      if (videoCaptureCrashCount >= 2) {
+        captureElectronError(
+          new Error('Video Capture process crashed multiple times.'),
+          {
+            contexts: {
+              fn: {
+                crashCount: videoCaptureCrashCount,
+                details,
+                name: 'handleProcessCrash',
+              },
+            },
+          },
+        );
+
+        if (mainWindow && !mainWindow.isDestroyed()) {
+          mainWindow.webContents.send('video-capture-crash-detected');
+        }
       }
     }
   }

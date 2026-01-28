@@ -152,6 +152,7 @@ export interface ElectronApi {
     }) => void,
   ) => void;
   onUpdateError: (callback: () => void) => void;
+  onVideoCaptureCrashDetected: (callback: () => void) => void;
   onWatchFolderUpdate: (
     callback: (args: {
       changedPath: string;
@@ -255,6 +256,7 @@ export type ElectronIpcListenKey =
   | 'update-download-progress'
   | 'update-downloaded'
   | 'update-error'
+  | 'video-capture-crash-detected'
   | 'watchFolderUpdate'
   | 'websiteWindowClosed';
 

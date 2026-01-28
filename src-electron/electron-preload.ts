@@ -83,6 +83,8 @@ const electronApi: ElectronApi = {
   onUpdateDownloaded: (cb) => listen('update-downloaded', cb),
   onUpdateDownloadProgress: (cb) => listen('update-download-progress', cb),
   onUpdateError: (cb) => listen('update-error', cb),
+  onVideoCaptureCrashDetected: (cb) =>
+    listen('video-capture-crash-detected', cb),
   onWatchFolderUpdate: (cb) => listen('watchFolderUpdate', cb),
   onWebsiteWindowClosed: (cb) => listen('websiteWindowClosed', cb),
   openDiscussion: (c, t, p) => send('openDiscussion', c, t, p),
