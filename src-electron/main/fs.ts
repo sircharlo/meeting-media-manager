@@ -154,7 +154,7 @@ export async function unzipFile(
             },
           });
 
-          return reject(err);
+          return reject(new Error(String(err)));
         }
         if (!zipfile) return reject(new Error('Zipfile not found'));
 
@@ -213,7 +213,7 @@ export async function unzipFile(
                   },
                 });
                 zipfile.close();
-                return reject(err);
+                return reject(new Error(String(err)));
               }
               if (!readStream) {
                 zipfile.close();
@@ -265,7 +265,7 @@ export async function unzipFile(
                     },
                   });
                   zipfile.close();
-                  reject(e);
+                  reject(new Error(String(e)));
                 }
               };
 
@@ -284,7 +284,7 @@ export async function unzipFile(
               fn: { args: { input, output }, name: 'unzipFile zipfile error' },
             },
           });
-          reject(err);
+          reject(new Error(String(err)));
         });
       });
     });

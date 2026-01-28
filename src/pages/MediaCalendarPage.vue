@@ -1342,6 +1342,15 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
               jwpubImportDocuments.value.length,
             );
           }
+        } catch (error) {
+          errorCatcher(error, {
+            contexts: {
+              fn: {
+                args: { filepath },
+                name: 'addToFiles isJwpub',
+              },
+            },
+          });
         } finally {
           // Clean up temp directories
           console.log('🎯 [addToFiles] Cleaning up temp directories');
@@ -1418,7 +1427,14 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         message: t('fileProcessError'),
         type: 'negative',
       });
-      errorCatcher(error);
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            args: { filepath },
+            name: 'addToFiles',
+          },
+        },
+      });
     }
     currentFile.value++;
   }

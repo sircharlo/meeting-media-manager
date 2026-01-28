@@ -81,19 +81,22 @@ const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
     return outputPath;
   } catch (error) {
     // If anything fails, clean up the output directory to avoid partial extractions
-    await remove(outputPath).catch((removeError) =>
-      errorCatcher(removeError, {
+    try {
+      await remove(outputPath);
+    } catch (removeError) {
+      await errorCatcher(removeError, {
         contexts: {
           fn: {
             args: {
               jwpubPath,
               outputPath,
             },
-            name: 'jwpubExtractor remove output',
+            name: 'jwpubExtractor cleanup output error',
           },
         },
-      }),
-    );
+      });
+    }
+
     await errorCatcher(error, {
       contexts: {
         fn: {
@@ -105,7 +108,9 @@ const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
         },
       },
     });
-    return jwpubPath;
+
+    // We MUST throw the error so the caller knows extraction failed.
+    throw error;
   }
 };
 
@@ -122,8 +127,6 @@ export const unzipJwpub = async (
     }
 
     const cacheKey = `${jwpubPath}->${outputPath}`;
-    const existing = ongoingUnzips.get(cacheKey);
-    if (existing && !force) return existing;
 
     // If force, clear the output directory before filling it
     if (force) {
@@ -144,17 +147,22 @@ export const unzipJwpub = async (
       }
     }
 
-    const unzipPromise = (async () => {
-      if (!currentState.extractedFiles[outputPath] || force) {
-        currentState.extractedFiles[outputPath] = await jwpubExtractor(
-          jwpubPath,
-          outputPath,
-        );
-      }
-      return currentState.extractedFiles[outputPath];
-    })();
+    let unzipPromise = ongoingUnzips.get(cacheKey);
 
-    ongoingUnzips.set(cacheKey, unzipPromise);
+    if (!unzipPromise || force) {
+      unzipPromise = (async () => {
+        if (!currentState.extractedFiles[outputPath] || force) {
+          // jwpubExtractor now throws on failure
+          currentState.extractedFiles[outputPath] = await jwpubExtractor(
+            jwpubPath,
+            outputPath,
+          );
+        }
+        return currentState.extractedFiles[outputPath];
+      })();
+      ongoingUnzips.set(cacheKey, unzipPromise);
+    }
+
     try {
       return await unzipPromise;
     } finally {
@@ -172,7 +180,8 @@ export const unzipJwpub = async (
         },
       },
     });
-    return jwpubPath;
+    // Re-throw so consumers (like UI) can handle the failure
+    throw error;
   }
 };
 

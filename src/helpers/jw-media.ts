@@ -694,7 +694,14 @@ export const getDbFromJWPUB = async (
       return dbFile;
     }
   } catch (error) {
-    errorCatcher(error);
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          args: { meetingDate, publication },
+          name: 'getDbFromJWPUB',
+        },
+      },
+    });
     return null;
   }
 };

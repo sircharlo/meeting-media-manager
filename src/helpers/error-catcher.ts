@@ -8,8 +8,11 @@ export const errorCatcher = async (
 ) => {
   if (!error) return;
 
-  if (error instanceof Error && error.cause) {
-    errorCatcher(error.cause, context);
+  if (
+    (error instanceof Error && error.cause) ||
+    (typeof error === 'object' && error !== null && 'cause' in error)
+  ) {
+    errorCatcher((error as { cause: unknown }).cause, context);
   }
 
   if (!process.env.IS_DEV) {

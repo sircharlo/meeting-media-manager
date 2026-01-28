@@ -535,10 +535,21 @@ const chooseCustomBackground = async (reset?: boolean) => {
         }
       } catch (error) {
         if (
-          error instanceof Error &&
+          !(error instanceof Error) ||
           !error.message.includes('Invalid file type')
         ) {
-          errorCatcher(error);
+          errorCatcher(error, {
+            contexts: {
+              fn: {
+                args: {
+                  mediaWindowCustomBackground:
+                    mediaWindowCustomBackground.value,
+                  reset,
+                },
+                name: 'chooseCustomBackground',
+              },
+            },
+          });
         }
         notifyInvalidBackgroundFile();
       }
