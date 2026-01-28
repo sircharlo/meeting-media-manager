@@ -124,6 +124,9 @@ export const electronApi: ElectronApi = {
   onUpdateError: function (callback) {
     console.log('onUpdateError called but not implemented');
   },
+  onVideoCaptureCrashDetected: function () {
+    throw new Error('Function not implemented.');
+  },
   onWatchFolderUpdate: function (callback) {
     throw new Error('Function not implemented.');
   },

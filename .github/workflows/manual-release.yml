@@ -28,6 +28,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Commit and push changes
+        if: steps.bump.outputs.draft_exists != 'true'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -40,6 +41,7 @@ jobs:
           fi
     outputs:
       new_version: ${{ steps.bump.outputs.new_version }}
+      draft_exists: ${{ steps.bump.outputs.draft_exists }}
 
   draft-release:
     name: Draft release
@@ -65,6 +67,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create or update draft release
+        if: needs.bump-version.outputs.draft_exists != 'true'
         id: create_release
         uses: ncipollo/release-action@v1.20.0
         with:
@@ -77,7 +80,7 @@ jobs:
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
     outputs:
-      id: ${{ steps.create_release.outputs.id }}
+      id: ${{ steps.create_release.outputs.id || '' }}
 
   build:
     needs: [bump-version, draft-release]
