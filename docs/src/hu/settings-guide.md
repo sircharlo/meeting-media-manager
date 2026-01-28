@@ -265,39 +265,39 @@ Az új médiafájlok figyelésére szolgáló mappa elérési útja.
 
 ## Integrációk {#integrations}
 
-### Zoom Integration {#settings-guide-zoom-integration}
+### Zoom integráció {#settings-guide-zoom-integration}
 
-#### Enable Zoom {#enable-zoom}
+#### Zoom engedélyezése {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
-Enable Zoom meeting integration features.
+Engedélyezze a Zoom meeting integrációs funkciókat.
 
 **Alapértelmezett**: `hamis`
 
-#### Screen Share Shortcut {#screen-share-shortcut}
+#### Képernyő Megosztás gyorsbillentyű {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
-Keyboard shortcut to trigger Zoom screen sharing.
+A Zoom képernyőmegosztás elindításához használt billentyűparancs.
 
 **Alapértelmezett**: Nincs
 
-### OBS Studio Integration {#settings-guide-obs-integration}
+### OBS Studio integráció {#settings-guide-obs-integration}
 
-#### Enable OBS {#enable-obs}
+#### OBS engedélyezése {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
-Enable OBS Studio integration for automatic scene switching.
+Engedélyezze az OBS Studio integrációt az automatikus jelenetváltáshoz.
 
 **Alapértelmezett**: `hamis`
 
-:::warning Important Note
+:::warning Fontos Megjegyzés
 
-**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Audio konfiguráció szükséges**: Az OBS Studio integráció csak a képernyő megosztását kezeli. Az OBS Studio használata esetén az audió **nem kerül automatikusan továbbításra** a Zoom résztvevői számára. Be kell állítania a Zoom Original Audio beállításait, vagy használnia kell a „Share Computer Sound” (Számítógép hangjának megosztása) funkciót, hogy az összejövetel résztvevői hallhassák a médiát. Az audio beállítások részletes leírását a [Felhasználói kézikönyvben](/user-guide#audio-configuration) találja.
 
-**Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
+**Megjegyzés**: A Zoom integráció a Zoom natív képernyőmegosztását használja, amely az OBS Studio integrációnál zökkenőmentesebben kezeli az audiót.
 
 :::
 
@@ -305,37 +305,37 @@ Enable OBS Studio integration for automatic scene switching.
 
 <!-- **Setting**: `obsPort` -->
 
-The port number for connecting to OBS Studio WebSocket.
+Az OBS Studio WebSockethez való csatlakozás portszáma.
 
 **Alapértelmezett**: Nincs
 
-#### OBS Password {#obs-password}
+#### OBS jelszó {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
-The password for OBS Studio WebSocket connection.
+Az OBS Studio WebSocket-kapcsolat jelszava.
 
 **Alapértelmezett**: Nincs
 
-#### OBS Scenes {#obs-scenes}
+#### OBS Jelenetek {#obs-scenes}
 
-Configure which OBS scenes to use for different purposes:
+Állítsa be, hogy mely OBS jeleneteket szeretné különböző célokra használni:
 
-- **Camera Scene**: Scene showing the camera/lectern
-- **Media Scene**: Scene for displaying media
-- **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
+- **Kamera jelenet**: Jelenet, amelyben a kamera/pódium látható
+- **Média jelenet**: Média megjelenítésére szolgáló jelenet
+- **Képjelenet**: Képek megjelenítésére szolgáló jelenet (például egy PIP (kép a képben) jelenet, amely egyszerre mutatja a médiát és az előadót)
 
-#### OBS Advanced Options {#obs-advanced-options}
+#### OBS haladó beállítások {#obs-advanced-options}
 
-- **Postpone Images**: Delay sharing images to OBS until manually triggered
-- **Quick Toggle**: Enable quick on/off toggle for OBS integration
-- **Switch Scene After Media**: Automatically return to previous scene after media
-- **Remember Previous Scene**: Remember and restore the previous scene
+- **Képek késleltetése**: Késleltesse a képek OBS-be való megosztását, amíg manuálisan el nem indítja
+- **Gyors kapcsoló**: Az OBS integráció gyors be-/kikapcsolásának engedélyezése
+- **Jelenetváltás a média után**: A média lejátszása után automatikusan visszatér az előző jelenethez
+- **Előző jelenet megjegyzése**: Megjegyzi az előző jelenetet és visszaállítja azt
 - **Hide Icons**: Hide OBS-related icons in the interface
 
-:::warning Important Note
+:::warning Fontos Megjegyzés
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. Be kell állítania a Zoom Original Audio beállításait, vagy használnia kell a „Share Computer Sound” (Számítógép hangjának megosztása) funkciót, hogy az összejövetel résztvevői hallhassák a médiát. Az audio beállítások részletes leírását a [Felhasználói kézikönyvben](/user-guide#audio-configuration) találja.
 
 **Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
 
