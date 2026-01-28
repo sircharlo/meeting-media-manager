@@ -63,9 +63,18 @@ initSentry({
 
       const crashpad = event.contexts?.crashpad ?? event.contexts?.electron;
       const dumpFile = crashpad?.['DumpWithoutCrashing-file'];
+
       // Ignore known non-fatal native crash reports
-      if (typeof dumpFile === 'string' && dumpFile.includes('site_info.cc')) {
-        return null;
+      if (typeof dumpFile === 'string') {
+        // Filter site_info.cc crashes
+        if (dumpFile.includes('site_info.cc')) {
+          return null;
+        }
+
+        // Filter GPU/graphics diagnostic crashes
+        if (dumpFile.includes('dcomp_presenter.cc')) {
+          return null;
+        }
       }
 
       const error = event.exception?.values?.[0];
