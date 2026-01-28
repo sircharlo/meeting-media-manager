@@ -1,18 +1,18 @@
-# User Guide {#user-guide}
+# Felhasználói útmutató {#user-guide}
 
-This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
+Ez az átfogó felhasználói útmutató segít elsajátítani az M³ összes funkcióját, az alapvető beállításoktól a fejlett médiaprezentációs módszerekig.
 
-## Getting Started {#getting-started}
+## Első lépések {#getting-started}
 
-### Download and Install {#download-and-install}
+### Letöltés és telepítés {#download-and-install}
 
-Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
+A legújabb verziót a [Letöltési oldalról](download) szerezheti be. A legjobb verziót javasolja az adott eszközhöz, és mutatja a legújabb verziót.
 
-### First Launch {#first-launch}
+### Első indítás {#first-launch}
 
-When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
+Amikor először indítja el az M³ programot, egy beállítási varázsló végigvezeti Önt a gyülekezetéhez szükséges alapvető beállítások konfigurálásán:
 
-1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
+1. **Válassza ki a felület nyelvét** - Ez határozza meg, hogy az M³ menüi és gombjai milyen nyelven jelennek meg
 2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
 3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
 4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
