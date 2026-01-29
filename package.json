@@ -63,7 +63,7 @@
     "mime": "^4.1.0",
     "mousetrap": "^1.6.5",
     "ms": "^2.1.3",
-    "music-metadata": "^11.11.0",
+    "music-metadata": "^11.11.1",
     "obs-websocket-js": "^5.0.7",
     "p-queue": "^9.1.0",
     "pdfjs-dist": "^5.4.449",
