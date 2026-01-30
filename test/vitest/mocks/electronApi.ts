@@ -59,6 +59,9 @@ export const electronApi: ElectronApi = {
   getLocalPathFromFileObject: function (fileObject) {
     throw new Error('Function not implemented.');
   },
+  getLowDiskSpaceStatus: function () {
+    throw new Error('Function not implemented.');
+  },
   getNrOfPdfPages: function (pdfPath) {
     throw new Error('Function not implemented.');
   },
