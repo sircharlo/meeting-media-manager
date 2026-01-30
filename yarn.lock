@@ -3617,9 +3617,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/electron@npm:^7.7.0":
-  version: 7.7.0
-  resolution: "@sentry/electron@npm:7.7.0"
+"@sentry/electron@npm:^7.7.1":
+  version: 7.7.1
+  resolution: "@sentry/electron@npm:7.7.1"
   dependencies:
     "@sentry/browser": "npm:10.36.0"
     "@sentry/core": "npm:10.36.0"
@@ -3629,7 +3629,7 @@ __metadata:
   peerDependenciesMeta:
     "@sentry/node-native":
       optional: true
-  checksum: 10c0/5c192dd874dbed2eb8e72421736b55df5d32f5ac0b664fd58b8f61442aeb524dd26f70bee007b96ac2ac0332a243d4fd547519887c36ad24027212695d2058e4
+  checksum: 10c0/09bb4f0f66ee63b33b6911be7c1cde8d1b429d63dfc0f919538922ca2b8d6a5279a5e00f15b2093468345d3367b37d2b2cfb6be5c8c007ae2b69cca39e913fc8
   languageName: node
   linkType: hard
 
@@ -11427,7 +11427,7 @@ __metadata:
     "@quasar/vite-plugin": "npm:^1.10.0"
     "@rollup/plugin-inject": "npm:^5.0.5"
     "@sentry/core": "npm:^10.38.0"
-    "@sentry/electron": "npm:^7.7.0"
+    "@sentry/electron": "npm:^7.7.1"
     "@sentry/esbuild-plugin": "npm:^4.8.0"
     "@sentry/vite-plugin": "npm:^4.8.0"
     "@sentry/vue": "npm:^10.27.0"
