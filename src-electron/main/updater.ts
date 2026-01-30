@@ -83,10 +83,8 @@ export const triggerUpdateCheck = async (attempt = 1) => {
     const online = await isOnline();
     if (online) {
       await autoUpdater.checkForUpdatesAndNotify();
-    } else {
-      if (attempt < 5) {
-        setTimeout(() => triggerUpdateCheck(attempt + 1), 5000);
-      }
+    } else if (attempt < 5) {
+      setTimeout(() => triggerUpdateCheck(attempt + 1), 5000);
     }
   } catch (error) {
     if (!isIgnoredUpdateError(error as Error | string)) {

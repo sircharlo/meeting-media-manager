@@ -494,8 +494,6 @@ export const fetchMedia = async () => {
       await Promise.all(
         jwStore.lookupPeriod[currentStateStore.currentCongregation]?.map(
           async (day, index) => {
-            // console.log(`\nChecking day at index ${index}:`, day);
-
             // Skip non-meeting days entirely
             if (!getMeetingType(day.date)) {
               return null;
@@ -616,8 +614,18 @@ export const fetchMedia = async () => {
         queue
           ?.add(async () => {
             const meetingType = getMeetingType(day.date);
+            const meetingTypeDescription = (meetingType: null | string) => {
+              switch (meetingType) {
+                case 'mw':
+                  return 'Midweek';
+                case 'we':
+                  return 'Weekend';
+                default:
+                  return 'Unknown';
+              }
+            };
             console.group(
-              `📅 Processing ${meetingType === 'we' ? 'Weekend' : meetingType === 'mw' ? 'Midweek' : 'Unknown'} Meeting - ${day.date.toISOString().split('T')[0]}`,
+              `📅 Processing ${meetingTypeDescription(meetingType)} Meeting - ${day.date.toISOString().split('T')[0]}`,
             );
             if (!day) {
               console.log('⚠️ No day data');
@@ -974,7 +982,7 @@ export const getStudyBibleBooks: () => Promise<
       }>(nwtDb, chapterCountsQuery);
 
       chapterCountsNwt.forEach((nwtCount) => {
-        if (!chapterCounts.find((c) => c.BookNumber === nwtCount.BookNumber)) {
+        if (!chapterCounts.some((c) => c.BookNumber === nwtCount.BookNumber)) {
           chapterCounts.push(nwtCount);
         }
       });
@@ -1133,15 +1141,18 @@ export const getStudyBibleMedia = async (
         bibleBookRelatedMediaItemsQuery,
       );
 
-      const englishItems =
-        chapterNumber === 0
-          ? englishBibleBookRelatedMediaItems
-          : chapterNumber && chapterNumber > 0
-            ? englishBibleBookMediaItems
-            : [
-                ...englishBibleBookMediaItems,
-                ...englishBibleBookRelatedMediaItems,
-              ];
+      let englishItems;
+
+      if (chapterNumber === 0) {
+        englishItems = englishBibleBookRelatedMediaItems;
+      } else if (chapterNumber && chapterNumber > 0) {
+        englishItems = englishBibleBookMediaItems;
+      } else {
+        englishItems = [
+          ...englishBibleBookMediaItems,
+          ...englishBibleBookRelatedMediaItems,
+        ];
+      }
 
       englishItems.forEach((englishItem) => {
         const styItem = filteredMediaItems.find(
@@ -1160,41 +1171,6 @@ export const getStudyBibleMedia = async (
       });
     }
 
-    // // Get all linked multimedia (thumbnails) for the current items
-    // const multimediaIds = filteredMediaItems.map((item) => item.MultimediaId);
-    // const linkedMultimediaQuery = `
-    //   SELECT MultimediaId, FilePath, LinkMultimediaId
-    //   FROM Multimedia
-    //   WHERE LinkMultimediaId IN (${multimediaIds.join(',')})
-    // `;
-
-    // const linkedMultimedia = multimediaIds.length
-    //   ? executeQuery<MultimediaItem>(nwtStyDb, linkedMultimediaQuery)
-    //   : [];
-
-    // // Create a map of video MultimediaId -> thumbnail FilePath
-    // const thumbnailMap = new Map<number, string>();
-    // linkedMultimedia.forEach((thumb) => {
-    //   if (thumb.LinkMultimediaId && thumb.FilePath) {
-    //     thumbnailMap.set(thumb.LinkMultimediaId, thumb.FilePath);
-    //   }
-    // });
-
-    // // Also get English thumbnails if needed
-    // if (nwtStyDb_E && nwtStyDb_E !== nwtStyDb && multimediaIds.length) {
-    //   const linkedMultimediaE = executeQuery<MultimediaItem>(
-    //     nwtStyDb_E,
-    //     linkedMultimediaQuery,
-    //   );
-    //   linkedMultimediaE.forEach((thumb) => {
-    //     if (thumb.LinkMultimediaId && thumb.FilePath) {
-    //       // Only add if not already in map (target language takes priority)
-    //       if (!thumbnailMap.has(thumb.LinkMultimediaId)) {
-    //         thumbnailMap.set(thumb.LinkMultimediaId, thumb.FilePath);
-    //       }
-    //     }
-    //   });
-    // }
     return {
       bibleBookDocumentsEndAtId: 0, // Not really needed anymore with new logic
       bibleBookDocumentsStartAtId: 0,
@@ -1209,28 +1185,17 @@ export const getStudyBibleMedia = async (
               item,
               item.MepsLanguageIndex === 0
                 ? nwtStyPublication_E
-                : (nwtStyPublication as PublicationFetcher),
+                : nwtStyPublication,
             );
 
             // For videos, don't cache FilePath - we'll download on demand
             // For images, resolve the file path
             const updatedItem = isVideo ? { ...item, FilePath: '' } : item;
-
-            // // If this item has a linked thumbnail, resolve its path
-            // if (item.MultimediaId && thumbnailMap.has(item.MultimediaId)) {
-            //   const thumbPath = thumbnailMap.get(item.MultimediaId);
-            //   if (thumbPath) {
-            //     const baseDir = await getPublicationDirectory(
-            //       item.MepsLanguageIndex === 0
-            //         ? nwtStyPublication_E
-            //         : (nwtStyPublication as PublicationFetcher),
-            //     );
-            //     updatedItem.CoverPictureFilePath = join(baseDir, thumbPath);
-            //   }
-            // }
-
             updatedItem.VerseNumber = item.VerseLabel
-              ? parseInt(item.VerseLabel?.match(/>(\d+)</)?.[1] || '', 10)
+              ? Number.parseInt(
+                  new RegExp(/>(\d+)</).exec(item.VerseLabel)?.[1] || '',
+                  10,
+                )
               : null;
             return updatedItem;
           }),
@@ -1484,7 +1449,9 @@ const getWtIssue = async (
     );
     const weekNr = datedTexts
       ? datedTexts.findIndex((weekItem) => {
-          const mondayAsNumber = parseInt(formatDate(monday, 'YYYYMMDD'));
+          const mondayAsNumber = Number.parseInt(
+            formatDate(monday, 'YYYYMMDD'),
+          );
           return weekItem.FirstDateOffset === mondayAsNumber;
         })
       : -1;
@@ -1510,7 +1477,9 @@ const getParagraphNumbers = (
   try {
     if (!caption) return paragraphLabel || '';
 
-    const numbers = [...caption.matchAll(/\d+/g)].map((m) => parseInt(m[0]));
+    const numbers = [...caption.matchAll(/\d+/g)].map((m) =>
+      Number.parseInt(m[0]),
+    );
 
     if (numbers.length === 0) return paragraphLabel || '';
     if (numbers.length === 1) return numbers[0];
@@ -1521,7 +1490,7 @@ const getParagraphNumbers = (
     }
 
     const first = numbers[0];
-    const last = numbers[numbers.length - 1];
+    const last = numbers.at(-1);
 
     // Check if it's a simple range (no numbers between first and last that break the sequence)
     const between = numbers.slice(1, -1);
@@ -1529,7 +1498,7 @@ const getParagraphNumbers = (
       return last;
 
     // Try to extract the range string
-    const rangeMatch = caption.match(new RegExp(`${first}.*?${last}`));
+    const rangeMatch = new RegExp(`${first}.*?${last}`).exec(caption);
     if (rangeMatch && rangeMatch[0]?.length <= 15) return rangeMatch[0];
 
     return paragraphLabel || '';
@@ -1537,6 +1506,24 @@ const getParagraphNumbers = (
     errorCatcher(e);
     return paragraphLabel || '';
   }
+};
+
+const getTagType = (
+  isSongItem: boolean | string,
+  paragraphNumbers: number | string | undefined,
+) => {
+  if (isSongItem) return 'song';
+  if (paragraphNumbers) return 'paragraph';
+  return undefined;
+};
+
+const getTagValue = (
+  isSongItem: boolean | string,
+  paragraphNumbers: number | string | undefined,
+) => {
+  if (isSongItem) return isSongItem;
+  if (paragraphNumbers) return paragraphNumbers;
+  return undefined;
 };
 
 export const dynamicMediaMapper = async (
@@ -1555,7 +1542,7 @@ export const dynamicMediaMapper = async (
     const lastParagraph = allMedia.at(-1)?.BeginParagraphOrdinal || 0;
 
     // --- Determine middle song paragraph ----------------------------------
-    const songs = allMedia.filter(isSong);
+    const songs = allMedia.filter((element) => isSong(element));
     const middleSongParagraph =
       !isAdditional && isMeetingMw && songs.length >= 2
         ? songs[1]?.BeginParagraphOrdinal || 0
@@ -1642,18 +1629,9 @@ export const dynamicMediaMapper = async (
           m.Caption,
         );
 
-        const tagType = isSongItem
-          ? 'song'
-          : paragraphNumbers
-            ? 'paragraph'
-            : undefined;
+        const tagType = getTagType(isSongItem, paragraphNumbers);
 
-        const tagValue =
-          tagType === 'song'
-            ? isSongItem
-            : tagType === 'paragraph'
-              ? paragraphNumbers
-              : undefined;
+        const tagValue = getTagValue(isSongItem, paragraphNumbers);
 
         const tag = tagType ? { type: tagType, value: tagValue } : undefined;
 
@@ -1667,11 +1645,15 @@ export const dynamicMediaMapper = async (
         const uniqueId = sanitizeId(`${datePart}-${durationPart}${fileUrl}`);
 
         // --- Section determination -----------------------------------------
-        let section: MediaSectionIdentifier = isAdditional
-          ? isMeetingWe
-            ? 'pt'
-            : 'imported-media'
-          : 'wt';
+        let section: MediaSectionIdentifier;
+
+        if (!isAdditional) {
+          section = 'wt';
+        } else if (isMeetingWe) {
+          section = 'pt';
+        } else {
+          section = 'imported-media';
+        }
 
         if (isMeetingMw && middleSongParagraph > 0) {
           if (m.BeginParagraphOrdinal >= middleSongParagraph) {
@@ -1728,18 +1710,16 @@ export const dynamicMediaMapper = async (
           return acc;
         }
 
-        if (!acc[item.extractCaption]) {
-          acc[item.extractCaption] = {
-            cbs: item.cbs,
-            children: [],
-            extractCaption: item.extractCaption,
-            sortOrderOriginal: item.sortOrderOriginal,
-            source: item.source,
-            title: item.extractCaption,
-            type: 'media',
-            uniqueId: `group-${item.extractCaption}`,
-          };
-        }
+        acc[item.extractCaption] ??= {
+          cbs: item.cbs,
+          children: [],
+          extractCaption: item.extractCaption,
+          sortOrderOriginal: item.sortOrderOriginal,
+          source: item.source,
+          title: item.extractCaption,
+          type: 'media',
+          uniqueId: `group-${item.extractCaption}`,
+        };
 
         acc[item.extractCaption]?.children?.push(item);
         return acc;
@@ -1804,10 +1784,6 @@ export const watchedItemMapper: (
             ),
           )
         ).map((m) => ({ ...m, source: 'watched' }));
-        additionalMedia.filter(
-          (m) =>
-            m.customDuration && (m.customDuration.max || m.customDuration.min),
-        );
         return additionalMedia;
       }
       return undefined;
@@ -2069,9 +2045,11 @@ export const getWeMedia = async (lookupDate: Date) => {
       final.push(...withoutBegin);
     } else {
       const lastIndex = withBegin.length - 1;
-      final.push(...withBegin.slice(0, lastIndex));
-      final.push(...withoutBegin);
-      final.push(withBegin[lastIndex]);
+      final.push(
+        ...withBegin.slice(0, lastIndex),
+        ...withoutBegin,
+        withBegin[lastIndex],
+      );
     }
 
     final = final
@@ -2157,28 +2135,26 @@ export const getWeMedia = async (lookupDate: Date) => {
           ORDER BY BeginParagraphOrdinal
           LIMIT 2`,
       );
-    } else {
-      if (videosNotInParagraphs?.length) {
-        const sortedVideos = videosNotInParagraphs.sort(
-          (a, b) => (a.MultimediaId || 0) - (b.MultimediaId || 0),
-        );
-        if (sortedVideos.length <= 2) {
-          songs = sortedVideos;
-        } else {
-          // There are more than 2 videos for this WE meeting
-          // First, try to remove non-songs
-          songs = sortedVideos.filter(
-            (v) => !!v.Track && v.Track > 0 && v.KeySymbol?.includes('sjj'),
-          );
-
-          // If still more than 2, just take the first two
-          if (songs.length > 2) {
-            songs = sortedVideos.slice(0, 2).filter(Boolean);
-          }
-        }
+    } else if (videosNotInParagraphs?.length) {
+      const sortedVideos = videosNotInParagraphs.sort(
+        (a, b) => (a.MultimediaId || 0) - (b.MultimediaId || 0),
+      );
+      if (sortedVideos.length <= 2) {
+        songs = sortedVideos;
       } else {
-        songs = [];
+        // There are more than 2 videos for this WE meeting
+        // First, try to remove non-songs
+        songs = sortedVideos.filter(
+          (v) => !!v.Track && v.Track > 0 && v.KeySymbol?.includes('sjj'),
+        );
+
+        // If still more than 2, just take the first two
+        if (songs.length > 2) {
+          songs = sortedVideos.slice(0, 2).filter(Boolean);
+        }
       }
+    } else {
+      songs = [];
     }
 
     let songLangs: ('' | JwLangCode)[] = [];
@@ -2419,9 +2395,7 @@ export const getMwMedia = async (lookupDate: Date) => {
     const groupedMedia: Record<string, MediaItem[]> = {};
     mediaForDay.forEach((mediaItem) => {
       const section = mediaItem.originalSection || 'tgw'; // Default to 'tgw' if no section assigned
-      if (!groupedMedia[section]) {
-        groupedMedia[section] = [];
-      }
+      groupedMedia[section] ??= [];
       groupedMedia[section].push(mediaItem);
     });
 
@@ -2444,7 +2418,7 @@ export async function processMissingMediaInfo({
   allMedia: MultimediaItem[];
   isDynamicMedia?: boolean;
   keepMediaLabels?: boolean;
-  meetingDate?: `${number}/${number}/${number}` | null | string;
+  meetingDate?: null | string;
 }) {
   try {
     const currentStateStore = useCurrentStateStore();
@@ -2455,8 +2429,8 @@ export async function processMissingMediaInfo({
       if (
         m.KeySymbol === 'w' &&
         m.IssueTagNumber &&
-        parseInt(m.IssueTagNumber.toString()) >= 20080101 &&
-        m.IssueTagNumber.toString().slice(-2) === '01'
+        Number.parseInt(m.IssueTagNumber.toString()) >= 20080101 &&
+        m.IssueTagNumber.toString().endsWith('01')
       ) {
         m.KeySymbol = 'wp';
         console.log('Updated magazine symbol to wp', m);
@@ -2534,7 +2508,7 @@ export async function processMissingMediaInfo({
 
             const endVerse = chapterMedia.map((item) =>
               item.markers.markers.find(
-                (marker) => marker.verseNumber === verses[verses.length - 1],
+                (marker) => marker.verseNumber === verses.at(-1),
               ),
             )?.[0];
 
@@ -2891,9 +2865,9 @@ export function getBestImageUrl(
         // If none of the preferred sizes are found, return any other size
         const otherSizes = (
           Object.keys(images[key]) as (keyof ImageSizes)[]
-        ).filter((size) => !sizesToConsider.includes(size));
-        if (otherSizes[0]) {
-          return images[key][otherSizes[0]];
+        ).find((size) => !sizesToConsider.includes(size));
+        if (otherSizes) {
+          return images[key][otherSizes];
         }
       }
     }
@@ -2960,7 +2934,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
           ] || []
         : []
     )
-      .filter(isMediaLink)
+      .filter((element) => isMediaLink(element))
       .filter(
         (mediaLink) =>
           !publication.maxTrack || mediaLink.track < publication.maxTrack,
@@ -3069,7 +3043,7 @@ const downloadJwpub = async (
           ] || []
         : []
       )
-        .filter(isMediaLink)
+        .filter((element) => isMediaLink(element))
         .filter(
           (mediaLink) =>
             !publication.maxTrack || mediaLink.track < publication.maxTrack,
@@ -3164,7 +3138,7 @@ export const setUrlVariables = async (baseUrl: string | undefined) => {
       return;
     }
 
-    const attributes = { ...(div?.[0]?.attribs || {}) };
+    const attributes = { ...div?.[0]?.attribs };
 
     if (attributes['data-mediator_url']) {
       jwStore.urlVariables.mediator = attributes['data-mediator_url'];

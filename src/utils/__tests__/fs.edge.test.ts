@@ -26,7 +26,7 @@ describe('fs edge cases', () => {
     it('rejects non-file URLs and paths', () => {
       expect(isFileUrl('https://example.com/file.txt')).toBe(false);
       expect(isFileUrl('C:/Users/test/file.txt')).toBe(false);
-      expect(isFileUrl('\\\\server\\share\\file.txt')).toBe(false);
+      expect(isFileUrl(String.raw`\\server\share\file.txt`)).toBe(false);
     });
   });
 

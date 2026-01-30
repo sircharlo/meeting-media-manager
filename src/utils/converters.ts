@@ -1,4 +1,4 @@
-import { Buffer } from 'buffer';
+import { Buffer } from 'node:buffer';
 import { FULL_HD } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getTempPath } from 'src/utils/fs';
@@ -81,8 +81,13 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
       };
 
       img.onerror = function (error) {
+        const rejectionError =
+          error instanceof Error ? error : new Error(String(error));
         canvas.remove();
-        reject(error);
+        errorCatcher(rejectionError, {
+          contexts: { fn: { filepath, name: 'convertSvgToJpg' } },
+        });
+        reject(rejectionError);
       };
     });
   } catch (error) {

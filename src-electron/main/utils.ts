@@ -244,8 +244,7 @@ export function isIgnoredUpdateError(
     ['read-only', 'volume'],
   ];
 
-  const errorMsg =
-    typeof error === 'string' ? error : (error as Error)?.message;
+  const errorMsg = typeof error === 'string' ? error : error?.message;
   const errorCode = (error as { code?: string })?.code;
   const errorName = (error as Error)?.name;
 
@@ -402,7 +401,7 @@ export function captureElectronError(error: unknown, context?: CaptureCtx) {
 export const throttle = <T>(func: (...args: T[]) => void, delay: number) => {
   let prev = 0;
   return (...args: T[]) => {
-    const now = new Date().getTime();
+    const now = Date.now();
     if (now - prev > delay) {
       prev = now;
       return func(...args);

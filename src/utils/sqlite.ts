@@ -486,7 +486,7 @@ export const getDocumentExtractItems = async (
       if (
         symbol === 'w' &&
         extract.IssueTagNumber &&
-        parseInt(extract.IssueTagNumber.toString()) >= 20080101 &&
+        Number.parseInt(extract.IssueTagNumber.toString()) >= 20080101 &&
         extract.IssueTagNumber.toString().slice(-2) === '01'
       ) {
         symbol = 'wp';

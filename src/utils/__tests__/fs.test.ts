@@ -35,7 +35,7 @@ describe('isFileUrl', () => {
     expect(isFileUrl('file:///path/to/file')).toBe(true);
     expect(isFileUrl('https://example.com')).toBe(false);
     expect(isFileUrl('/root/some-path')).toBe(false);
-    expect(isFileUrl('C:\\Users/User/some-path')).toBe(false);
+    expect(isFileUrl(String.raw`C:\Users/User/some-path`)).toBe(false);
   });
 });
 

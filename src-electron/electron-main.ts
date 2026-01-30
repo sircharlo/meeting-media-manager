@@ -99,7 +99,6 @@ const gotTheLock = app.requestSingleInstanceLock();
 
 function createApplicationMenu() {
   const appMenu: MenuItem | MenuItemConstructorOptions = { role: 'appMenu' };
-
   const template: (MenuItem | MenuItemConstructorOptions)[] = [
     ...(PLATFORM === 'darwin' ? [appMenu] : []),
     { role: 'fileMenu' },
@@ -121,35 +120,35 @@ function createApplicationMenu() {
       role: 'help',
       submenu: [
         {
-          click: async () => {
-            await shell.openExternal(repository.url.replace('.git', ''));
+          click: () => {
+            void shell.openExternal(repository.url.replace('.git', ''));
           },
           label: 'Learn More',
         },
         {
-          click: async () => {
-            await shell.openExternal(homepage);
+          click: () => {
+            void shell.openExternal(homepage);
           },
           label: 'Documentation',
         },
         {
-          click: async () => {
-            await shell.openExternal(
+          click: () => {
+            void shell.openExternal(
               repository.url.replace('.git', '/discussions'),
             );
           },
           label: 'Community Discussions',
         },
         {
-          click: async () => {
-            await shell.openExternal(bugs);
+          click: () => {
+            void shell.openExternal(bugs);
           },
           label: 'Search Issues',
         },
       ],
     },
   ];
-  template.find((item) => item.role === 'viewMenu');
+
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 

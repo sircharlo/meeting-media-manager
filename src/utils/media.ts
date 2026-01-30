@@ -248,12 +248,16 @@ export const getMetadataFromMediaPath = async (
           video.remove();
           resolve();
         };
-        video.onerror = (error) => {
-          if (typeof error === 'string') {
-            errorCatcher(new Error(error));
-          }
+        video.onerror = (eventInfo) => {
           video.remove();
-          reject(error);
+          const rejectionError =
+            eventInfo instanceof Error
+              ? eventInfo
+              : new Error(String(eventInfo));
+          errorCatcher(rejectionError, {
+            contexts: { fn: { mediaPath, name: 'getMetadataFromMediaPath' } },
+          });
+          reject(rejectionError);
         };
         video.load();
       });

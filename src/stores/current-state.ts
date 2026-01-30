@@ -161,11 +161,9 @@ export const useCurrentStateStore = defineStore('current-state', {
           datesAreSame(day.date, lookupDate),
         );
         if (!dateInfo?.date || !(dateInfo.date instanceof Date)) return null;
-        return isMwMeetingDay(dateInfo.date)
-          ? 'mw'
-          : isWeMeetingDay(dateInfo.date)
-            ? 'we'
-            : null;
+        if (isMwMeetingDay(dateInfo.date)) return 'mw';
+        if (isWeMeetingDay(dateInfo.date)) return 'we';
+        return null;
       } catch (error) {
         errorCatcher(error);
         return null;
@@ -198,7 +196,9 @@ export const useCurrentStateStore = defineStore('current-state', {
         this.currentSettings?.obsImageScene,
       ].filter((s): s is string => !!s);
 
-      const scenesAreUUIDS = configuredScenes.every(isUUID);
+      const scenesAreUUIDS = configuredScenes.every((element) =>
+        isUUID(element),
+      );
       return scenes
         .filter(
           (scene) =>
@@ -313,7 +313,7 @@ export const useCurrentStateStore = defineStore('current-state', {
     },
     isSelectedDayToday(): boolean {
       try {
-        const selectedDateObj = this.selectedDateObject as DateInfo | null;
+        const selectedDateObj = this.selectedDateObject;
         if (!selectedDateObj?.date) return false;
         return datesAreSame(selectedDateObj.date, new Date());
       } catch (error) {
@@ -376,13 +376,11 @@ export const useCurrentStateStore = defineStore('current-state', {
     },
     selectedDayMeetingType(): 'mw' | 'we' | null {
       try {
-        const selectedDateObj = this.selectedDateObject as DateInfo | null;
+        const selectedDateObj = this.selectedDateObject;
         if (!selectedDateObj?.date) return null;
-        return isMwMeetingDay(selectedDateObj.date)
-          ? 'mw'
-          : isWeMeetingDay(selectedDateObj.date)
-            ? 'we'
-            : null;
+        if (isMwMeetingDay(selectedDateObj.date)) return 'mw';
+        if (isWeMeetingDay(selectedDateObj.date)) return 'we';
+        return null;
       } catch (error) {
         errorCatcher(error);
         return null;

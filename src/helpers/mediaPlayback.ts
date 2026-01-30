@@ -316,7 +316,7 @@ export const getMediaFromJwPlaylist = async (
             PlaylistItemId = ${item.PlaylistItemId}`,
           )
           .map((v) =>
-            parseInt(
+            Number.parseInt(
               Array.from(
                 v.Label.matchAll(/\w+ (?:\d+:)?(\d+)/g),
                 (m) => m[1],
@@ -386,9 +386,7 @@ export const getMediaFromJwPlaylist = async (
 export const showMediaWindow = async (state?: boolean) => {
   try {
     const currentState = useCurrentStateStore();
-    if (typeof state === 'undefined') {
-      state = !currentState.mediaWindowVisible;
-    }
+    state ??= !currentState.mediaWindowVisible;
     currentState.mediaWindowVisible = state;
     toggleMediaWindow(
       state,

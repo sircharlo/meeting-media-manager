@@ -201,8 +201,8 @@ export const fetchMemorials = async (): Promise<null | Record<
         const valueIsInPast = isInPast(value);
         if (valueIsInPast) continue;
 
-        const year = parseInt(key);
-        if (!year || isNaN(year)) continue;
+        const year = Number.parseInt(key);
+        if (!year || Number.isNaN(year)) continue;
 
         memorials[year] = value;
       } catch (error) {
@@ -343,6 +343,12 @@ export const fetchMediaItems = async (
   try {
     const url = `${base}/v1/media-items/${publication.langwritten}`;
 
+    const getPublicationType = (fileformat?: string) => {
+      if (fileformat?.toLowerCase().includes('mp4')) return 'VIDEO';
+      if (fileformat?.toLowerCase().includes('mp3')) return 'AUDIO';
+      return null;
+    };
+
     const getId = (track?: null | number | string) =>
       [
         publication.pub
@@ -352,11 +358,7 @@ export const fetchMediaItems = async (
           ? publication.issue?.toString().replaceAll(/(\d{6})00$/gm, '$1')
           : null,
         track,
-        publication.fileformat?.toLowerCase().includes('mp4')
-          ? 'VIDEO'
-          : publication.fileformat?.toLowerCase().includes('mp3')
-            ? 'AUDIO'
-            : null,
+        getPublicationType(publication.fileformat),
       ]
         .filter((v, i) => v != null && (v.toString() !== '0' || i === 2))
         .join('_');

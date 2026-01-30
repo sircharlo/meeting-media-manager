@@ -1,7 +1,7 @@
 import type { FontName } from 'src/types';
 
-import { Buffer } from 'buffer';
 import { create, type Font } from 'fontkit';
+import { Buffer } from 'node:buffer';
 import {
   fallbackJwIconsGlyphMap,
   keywordToJwIconMapping,

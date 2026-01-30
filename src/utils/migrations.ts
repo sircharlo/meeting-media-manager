@@ -64,14 +64,12 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
       disableMediaFetching: oldPrefs.meeting?.specialCong || false,
       enableExtraCache: false,
       enableFolderWatcher: false,
-      enableKeyboardShortcuts:
+      enableKeyboardShortcuts: !!(
         oldPrefs.media?.mediaWinShortcut ||
         oldPrefs.media?.ppBackward ||
         oldPrefs.media?.ppForward ||
-        // oldPrefs.media?.presentShortcut ||
         oldPrefs.meeting?.shuffleShortcut
-          ? true
-          : false,
+      ),
       enableMediaAutoExport: oldPrefs.media?.enableMp4Conversion || false,
       enableMediaDisplayButton:
         oldPrefs.media?.enableMediaDisplayButton || true,
@@ -127,6 +125,6 @@ export const buildNewPrefsObject = (oldPrefs: OldAppConfig) => {
     return newPrefsObject;
   } catch (error) {
     errorCatcher(error);
-    return Object.assign({}, defaultSettings);
+    return { ...defaultSettings };
   }
 };

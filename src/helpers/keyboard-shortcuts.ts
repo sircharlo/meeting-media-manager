@@ -12,9 +12,8 @@ export const sendKeyboardShortcut = (
   if (!shortcut) return;
 
   try {
-    console.log(
-      `${context ? `[${context}] ` : ''}Sending keyboard shortcut: ${shortcut}`,
-    );
+    const contextString = context ? `[${context}] ` : '';
+    console.log(`${contextString}Sending keyboard shortcut: ${shortcut}`);
 
     const { robot } = globalThis.electronApi;
 

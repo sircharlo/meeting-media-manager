@@ -23,8 +23,8 @@ export const getPubId = (
   if (
     pub === 'w' &&
     issue &&
-    parseInt(issue.toString()) >= 20080101 &&
-    issue.toString().slice(-2) === '01'
+    Number.parseInt(issue.toString()) >= 20080101 &&
+    issue.toString().endsWith('01')
   ) {
     pub = 'wp';
   }
@@ -46,7 +46,7 @@ export const getPubId = (
  */
 const getMediaResolution = (m: MediaItemsMediatorFile | MediaLink) => {
   if (/\d+p/.test(m.label)) {
-    return parseInt(m.label.replace(/\D/g, ''));
+    return Number.parseInt(m.label.replaceAll(/\D/g, ''));
   } else {
     return m.frameHeight;
   }
@@ -80,7 +80,9 @@ export function findBestResolution(
     });
 
     let bestItem = mediaLinks[0];
-    const parsedMaxRes = parseInt(maxRes?.replace(/\D/g, '') || '720');
+    const parsedMaxRes = Number.parseInt(
+      maxRes?.replaceAll(/\D/g, '') || '720',
+    );
     mediaLinks.forEach((m) => {
       if (parsedMaxRes && getMediaResolution(m) <= parsedMaxRes) {
         bestItem = m;
@@ -89,7 +91,7 @@ export function findBestResolution(
     return bestItem;
   } catch (e) {
     errorCatcher(e);
-    return mediaLinks?.length ? mediaLinks[mediaLinks.length - 1] : null;
+    return mediaLinks?.length ? mediaLinks.at(-1) : null;
   }
 }
 
@@ -108,7 +110,7 @@ export function findBestResolutions(
     if (mediaLinks.length === 1 && mediaLinks[0]) return mediaLinks;
 
     if (mediaLinks.some((m) => !m.subtitled)) {
-      mediaLinks = mediaLinks.filter((m) => !m.subtitled) as MediaLink[];
+      mediaLinks = mediaLinks.filter((m) => !m.subtitled);
     }
 
     // Group items by track number
@@ -141,7 +143,9 @@ export function findBestResolutions(
 
           if (!singleTrackItems[0]) return [];
           let bestItem: MediaLink = singleTrackItems[0];
-          const parsedMaxRes = parseInt(maxRes?.replace(/\D/g, '') || '720');
+          const parsedMaxRes = Number.parseInt(
+            maxRes?.replaceAll(/\D/g, '') || '720',
+          );
           singleTrackItems.forEach((m) => {
             if (parsedMaxRes && getMediaResolution(m) <= parsedMaxRes) {
               bestItem = m;
@@ -167,18 +171,20 @@ export function findBestResolutions(
         });
 
         if (!trackItems[0]) return null;
-        let bestItem = trackItems[0] as MediaLink;
-        const parsedMaxRes = parseInt(maxRes?.replace(/\D/g, '') || '720');
+        let bestItem = trackItems[0];
+        const parsedMaxRes = Number.parseInt(
+          maxRes?.replaceAll(/\D/g, '') || '720',
+        );
         trackItems.forEach((m) => {
           if (parsedMaxRes && getMediaResolution(m) <= parsedMaxRes) {
-            bestItem = m as MediaLink;
+            bestItem = m;
           }
         });
         bestItems.push(bestItem);
       }
     });
 
-    return bestItems.length > 0 ? (bestItems as MediaLink[]) : [];
+    return bestItems.length > 0 ? bestItems : [];
   } catch (e) {
     errorCatcher(e);
     if (!mediaLinks) return [];

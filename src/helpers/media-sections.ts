@@ -212,7 +212,7 @@ export const getTextColor = (section?: MediaSectionWithConfig) => {
   if (bgColor.startsWith('#')) {
     const hex = bgColor.replace('#', '');
     [r, g, b] = [0, 1, 2].map((i) =>
-      parseInt(
+      Number.parseInt(
         hex.length === 3
           ? hex.charAt(i) + hex.charAt(i)
           : hex.slice(i * 2, i * 2 + 2),
