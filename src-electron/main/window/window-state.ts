@@ -37,18 +37,16 @@ interface State {
   y?: number;
 }
 
-//const eventHandlingDelay = 100;
-
 export class StatefulBrowserWindow {
   public win: BrowserWindow;
 
-  private fullStoreFileName: string;
+  private readonly fullStoreFileName: string;
 
   /*private enterFullScreenHandler = () => {
     this.state.isFullScreen = true;
   };*/
 
-  private state: State;
+  private readonly state: State;
 
   /*private leaveFullScreenHandler = () => {
     this.state.isFullScreen = false;
@@ -81,37 +79,25 @@ export class StatefulBrowserWindow {
   }
 
   // Unregister listeners and save state
-  private closedHandler = () => {
+  private readonly closedHandler = () => {
     this.unmanage();
     this.saveState();
   };
 
-  private closeHandler = () => {
+  private readonly closeHandler = () => {
     this.updateState();
   };
 
-  // Handles both 'resize' and 'move' events
-  /*private stateChangeHandler = () => {
-    clearTimeout(this.stateChangeTimer);
-    this.stateChangeTimer = setTimeout(this.updateState, eventHandlingDelay);
-  };
-
-  private stateChangeTimer?: ReturnType<typeof setTimeout>;*/
-
-  private manage = (supportMaximize?: boolean) => {
+  private readonly manage = (supportMaximize?: boolean) => {
     if (supportMaximize && this.state.isMaximized) {
       this.win.maximize();
     }
 
-    //this.win.on('resize', this.stateChangeHandler);
-    //this.win.on('move', this.stateChangeHandler);
     this.win.on('close', this.closeHandler);
     this.win.on('closed', this.closedHandler);
-    //this.win.on('enter-full-screen', this.enterFullScreenHandler);
-    //this.win.on('leave-full-screen', this.leaveFullScreenHandler);
   };
 
-  private saveState = () => {
+  private readonly saveState = () => {
     try {
       ensureDirSync(dirname(this.fullStoreFileName));
       writeJsonSync(this.fullStoreFileName, this.state);
@@ -122,17 +108,12 @@ export class StatefulBrowserWindow {
     }
   };
 
-  private unmanage = () => {
-    //this.win.removeListener('resize', this.stateChangeHandler);
-    //this.win.removeListener('move', this.stateChangeHandler);
-    //clearTimeout(this.stateChangeTimer);
+  private readonly unmanage = () => {
     this.win.removeListener('close', this.closeHandler);
     this.win.removeListener('closed', this.closedHandler);
-    //this.win.removeListener('enter-full-screen', this.enterFullScreenHandler);
-    //this.win.removeListener('leave-full-screen', this.leaveFullScreenHandler);
   };
 
-  private updateState = () => {
+  private readonly updateState = () => {
     try {
       const winBounds = this.win.getBounds();
       if (this.win.isNormal()) {

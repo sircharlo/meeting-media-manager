@@ -89,7 +89,9 @@ function handleIpcSend(
   listener: (event: IpcMainEvent, ...args: any[]) => void,
 ) {
   ipcMain.on(channel, (e, ...args) => {
-    if (!isSelf(e.senderFrame?.url)) {
+    if (isSelf(e.senderFrame?.url)) {
+      logToWindow(mainWindow, 'on', { args, channel }, 'debug');
+    } else {
       logToWindow(
         mainWindow,
         `Blocked IPC send from ${e.senderFrame?.url}`,
@@ -97,8 +99,6 @@ function handleIpcSend(
         'warn',
       );
       return;
-    } else {
-      logToWindow(mainWindow, 'on', { args, channel }, 'debug');
     }
     listener(e, ...args);
   });
@@ -117,12 +117,10 @@ handleIpcSend(
           mediaWindow.show();
         }
       }
+    } else if (enableFadeTransitions) {
+      await fadeOutMediaWindow(300);
     } else {
-      if (enableFadeTransitions) {
-        await fadeOutMediaWindow(300);
-      } else {
-        mediaWindow.hide();
-      }
+      mediaWindow.hide();
     }
   },
 );
@@ -228,7 +226,9 @@ function handleIpcInvoke<T = unknown>(
   ) => Promise<T>,
 ) {
   ipcMain.handle(channel, (e, ...args) => {
-    if (!isSelf(e.senderFrame?.url)) {
+    if (isSelf(e.senderFrame?.url)) {
+      logToWindow(mainWindow, 'handle', { args, channel }, 'debug');
+    } else {
       logToWindow(
         mainWindow,
         `Blocked IPC invoke from ${e.senderFrame?.url}`,
@@ -236,8 +236,6 @@ function handleIpcInvoke<T = unknown>(
         'warn',
       );
       return null;
-    } else {
-      logToWindow(mainWindow, 'handle', { args, channel }, 'debug');
     }
     return listener(e, ...args);
   });

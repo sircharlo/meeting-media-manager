@@ -226,7 +226,7 @@ watch(
 
 // Listen for JW Playlist mode activation
 useEventListener(
-  window,
+  globalThis,
   'openJwPlaylistDialog',
   () => {
     console.log('🎯 JW Playlist mode activated, closing file import dialog');

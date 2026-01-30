@@ -620,11 +620,9 @@ const fadeToVolumeLevel = (targetVolume: number, fadeSeconds: number) => {
 
         if (progress < 1) {
           requestAnimationFrame(updateVolume);
-        } else {
-          if (musicPlayer.value.volume === 0) {
-            musicPlayer.value.pause();
-            musicState.value = '';
-          }
+        } else if (musicPlayer.value.volume === 0) {
+          musicPlayer.value.pause();
+          musicState.value = '';
         }
       } catch (error) {
         errorCatcher(error);
@@ -668,7 +666,9 @@ const toggleMusicListener = () => {
   }
 };
 
-useEventListener(window, 'toggleMusic', toggleMusicListener, { passive: true });
+useEventListener(globalThis, 'toggleMusic', toggleMusicListener, {
+  passive: true,
+});
 
 const { data: volumeData } = useBroadcastChannel<number, number>({
   name: 'volume-setter',

@@ -110,7 +110,6 @@
                     />
                   </div>
                 </div>
-                <!-- style="width: 3em; height: 3em" -->
               </div>
               <q-separator class="q-mx-sm" vertical />
               <div class="col q-px-md q-pb-md">

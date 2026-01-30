@@ -122,9 +122,9 @@ const calculateLuminance = (hexColor: string): number => {
   if (hex.length !== 6) return 0.5; // Default to middle luminance for invalid colors
 
   // Convert to RGB
-  const r = parseInt(hex.substr(0, 2), 16);
-  const g = parseInt(hex.substr(2, 2), 16);
-  const b = parseInt(hex.substr(4, 2), 16);
+  const r = Number.parseInt(hex.substr(0, 2), 16);
+  const g = Number.parseInt(hex.substr(2, 2), 16);
+  const b = Number.parseInt(hex.substr(4, 2), 16);
 
   // Calculate relative luminance using sRGB coefficients
   const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
@@ -197,7 +197,6 @@ const deleteDivider = () => {
 
 .media-divider {
   margin: 4px 0 4px -1px;
-  border-radius: 8px;
   transition: all 0.2s ease;
   border-radius: 0px;
 

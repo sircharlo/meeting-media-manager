@@ -81,7 +81,7 @@ export default defineConfig((ctx) => {
           viteConf.build = mergeConfig(viteConf.build ?? {}, {
             sourcemap: true,
           });
-          if (!viteConf.plugins) viteConf.plugins = [];
+          viteConf.plugins ??= [];
           viteConf.plugins.push(
             sentryVitePlugin({
               authToken: SENTRY_AUTH_TOKEN,
@@ -179,7 +179,7 @@ export default defineConfig((ctx) => {
       extendElectronMainConf: (esbuildConf) => {
         if (ctx.prod && !ctx.debug && ENABLE_SOURCE_MAPS) {
           esbuildConf.sourcemap = true;
-          if (!esbuildConf.plugins) esbuildConf.plugins = [];
+          esbuildConf.plugins ??= [];
           esbuildConf.plugins.push(
             sentryEsbuildPlugin({
               authToken: SENTRY_AUTH_TOKEN,
@@ -194,7 +194,7 @@ export default defineConfig((ctx) => {
       extendElectronPreloadConf: (esbuildConf) => {
         if (ctx.prod && !ctx.debug && ENABLE_SOURCE_MAPS) {
           esbuildConf.sourcemap = true;
-          if (!esbuildConf.plugins) esbuildConf.plugins = [];
+          esbuildConf.plugins ??= [];
           esbuildConf.plugins.push(
             sentryEsbuildPlugin({
               authToken: SENTRY_AUTH_TOKEN,

@@ -15,7 +15,7 @@ export type MessageSchema = typeof enBase;
 
 const withDefaults = (
   msg: Partial<MessageSchema> | undefined,
-): MessageSchema => ({ ...enBase, ...(msg ?? {}) });
+): MessageSchema => ({ ...enBase, ...msg });
 
 const latestVersion = await fetchLatestVersion();
 
@@ -129,8 +129,12 @@ export const mapSearch = (): {
   };
 };
 
-const link = (locale: string, url: string) =>
-  `${locale === 'en' ? '' : `/${locale}`}/${url}`;
+const link = (locale: string, url: string) => {
+  if (locale === 'en') {
+    return `/${url}`;
+  }
+  return `/${locale}/${url}`;
+};
 
 export const mapThemeConfig = (
   locale: string,

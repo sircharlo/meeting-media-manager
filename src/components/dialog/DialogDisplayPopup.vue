@@ -496,9 +496,7 @@ const chooseCustomBackground = async (reset?: boolean) => {
       try {
         const backgroundPicker = await openFileDialog(true, 'jwpub+image+pdf');
         if (backgroundPicker?.canceled) return;
-        if (!backgroundPicker?.filePaths.length) {
-          notifyInvalidBackgroundFile();
-        } else {
+        if (backgroundPicker?.filePaths.length) {
           const filepath = backgroundPicker.filePaths[0];
           if (filepath && isJwpub(filepath)) {
             jwpubImportFilePath.value = filepath;
@@ -531,6 +529,8 @@ const chooseCustomBackground = async (reset?: boolean) => {
               );
             }
           }
+        } else {
+          notifyInvalidBackgroundFile();
         }
       } catch (error) {
         if (
@@ -649,11 +649,11 @@ const notifyCustomBackgroundRemoved = () => {
 };
 const setMediaBackground = (filepath: string) => {
   try {
-    if (!filepath) {
-      throw new Error('Problem with image file');
-    } else {
+    if (filepath) {
       mediaWindowCustomBackground.value = pathToFileURL(filepath);
       notifyCustomBackgroundSet();
+    } else {
+      throw new Error('Problem with image file');
     }
   } catch (error) {
     errorCatcher(error);
@@ -707,7 +707,7 @@ watch(
       if (!stopListeningToScreens.value) {
         console.log('🔍 [DialogDisplayPopup] Starting screen update listener');
         stopListeningToScreens.value = useEventListener(
-          window,
+          globalThis,
           'screen-trigger-update',
           fetchScreens,
           {
@@ -715,12 +715,10 @@ watch(
           },
         );
       }
-    } else {
-      if (stopListeningToScreens.value) {
-        console.log('🔍 [DialogDisplayPopup] Stopping screen update listener');
-        stopListeningToScreens.value();
-        stopListeningToScreens.value = null;
-      }
+    } else if (stopListeningToScreens.value) {
+      console.log('🔍 [DialogDisplayPopup] Stopping screen update listener');
+      stopListeningToScreens.value();
+      stopListeningToScreens.value = null;
     }
   },
   { immediate: true },
