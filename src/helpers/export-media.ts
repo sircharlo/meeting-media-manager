@@ -14,7 +14,7 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
 const { createVideoFromNonVideo, fileUrlToPath, fs, path, readdir } =
-  window.electronApi;
+  globalThis.electronApi;
 const { copy, ensureDir, exists, remove, stat } = fs;
 const { basename, extname, join } = path;
 
@@ -229,12 +229,10 @@ const exportDayToFolder = async (targetDate?: Date) => {
               expectedFiles.add(fileBaseName);
               continue;
             }
-          } else {
+          } else if (sourceStats.size === destStats.size) {
             // For direct copies, check size match
-            if (sourceStats.size === destStats.size) {
-              expectedFiles.add(fileBaseName);
-              continue;
-            }
+            expectedFiles.add(fileBaseName);
+            continue;
           }
         }
 

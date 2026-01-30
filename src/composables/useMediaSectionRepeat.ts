@@ -66,11 +66,11 @@ export function useMediaSectionRepeat() {
       const aOrder =
         typeof a.sortOrderOriginal === 'number'
           ? a.sortOrderOriginal
-          : parseInt(String(a.sortOrderOriginal)) || 0;
+          : Number.parseInt(String(a.sortOrderOriginal)) || 0;
       const bOrder =
         typeof b.sortOrderOriginal === 'number'
           ? b.sortOrderOriginal
-          : parseInt(String(b.sortOrderOriginal)) || 0;
+          : Number.parseInt(String(b.sortOrderOriginal)) || 0;
       return aOrder - bOrder;
     });
   };
@@ -186,14 +186,6 @@ export function useMediaSectionRepeat() {
       imageDisplayTimer.value = null;
     }
 
-    // mediaPlaying.value.url = nextItem.fileUrl || nextItem.streamUrl || '';
-    // mediaPlaying.value.uniqueId = nextItem.uniqueId;
-    // mediaPlaying.value.subtitlesUrl = nextItem.subtitlesUrl || '';
-    // // Set the media to play
-    // mediaPlaying.value.action = '';
-    // nextTick(() => {
-    //   mediaPlaying.value.action = 'play';
-    // });
     mediaPlaying.value = {
       action: 'play',
       currentPosition: 0,
@@ -207,20 +199,6 @@ export function useMediaSectionRepeat() {
       url: nextItem.fileUrl || nextItem.streamUrl || '',
       zoom: 1,
     };
-
-    // // If this is an image, set up a timer to move to the next item
-    // if (nextItem.isImage) {
-    //   const sectionSettings = getSectionRepeatSettings(
-    //     currentRepeatingSection.value,
-    //   );
-    //   const interval = sectionSettings?.repeatInterval || 10;
-
-    //   imageDisplayTimer.value = window.setTimeout(() => {
-    //     // Post the last end timestamp to trigger handleMediaEnded for images
-    //     postLastEndTimestamp(Date.now());
-    //     playNextItem();
-    //   }, interval * 1000);
-    // }
   };
 
   // Handle media ended event - called when a media item finishes playing
@@ -253,14 +231,8 @@ export function useMediaSectionRepeat() {
       currentItem.isImage,
     );
 
-    // For videos/audio, move to next item immediately
-    // For images, the timer should handle the transition
-    // if (!currentItem.isImage) {
     playNextItem();
     return true;
-    // }
-
-    // return true;
   };
 
   // Check if a section is currently being repeated

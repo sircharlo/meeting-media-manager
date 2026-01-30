@@ -419,7 +419,7 @@ const showSectionPicker = ref(false);
 const pendingFiles = ref<(File | string)[]>([]);
 
 const openFileImportDialog = () => {
-  window.dispatchEvent(
+  globalThis.dispatchEvent(
     new CustomEvent<{ section: MediaSectionIdentifier | undefined }>(
       'openFileImportDialog',
       {
@@ -776,7 +776,7 @@ const resetSort = () => {
       ),
     );
   });
-  window.dispatchEvent(new CustomEvent('reset-sort-order'));
+  globalThis.dispatchEvent(new CustomEvent('reset-sort-order'));
 };
 
 const openCustomSectionEdit = () => {

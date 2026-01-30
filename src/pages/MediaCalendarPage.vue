@@ -272,7 +272,7 @@ const {
   pathToFileURL,
   readdir,
   unzip,
-} = window.electronApi;
+} = globalThis.electronApi;
 const { ensureDir, exists, remove, writeFile } = fs;
 const { basename, join } = path;
 
@@ -505,7 +505,7 @@ watch(
       postCustomDuration(undefined);
 
       nextTick(() => {
-        window.dispatchEvent(
+        globalThis.dispatchEvent(
           new CustomEvent<{ scrollToSelectedMedia: boolean }>(
             'shortcutMediaNext',
             {
@@ -910,7 +910,7 @@ useEventListener<
   'openJwPlaylistDialog',
   (e) => {
     console.log('🎯 openJwPlaylistDialog event received:', e.detail);
-    window.dispatchEvent(
+    globalThis.dispatchEvent(
       new CustomEvent<{
         jwPlaylistPath: string;
         section: MediaSectionIdentifier | undefined;
@@ -1386,7 +1386,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         totalFiles.value = 0;
         currentFile.value = 0;
 
-        window.dispatchEvent(
+        globalThis.dispatchEvent(
           new CustomEvent<{
             jwPlaylistPath: string;
             section: MediaSectionIdentifier | undefined;
@@ -1446,7 +1446,7 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
 };
 
 const openImportMenu = (section: MediaSectionIdentifier | undefined) => {
-  window.dispatchEvent(
+  globalThis.dispatchEvent(
     new CustomEvent<{ section: MediaSectionIdentifier | undefined }>(
       'openImportMenu',
       {
@@ -1681,7 +1681,7 @@ useEventListener(
     if (!nextSelectableId) return;
     selectedMediaItems.value = [nextSelectableId];
     if (event.detail?.scrollToSelectedMedia)
-      window.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
+      globalThis.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
     anchorId.value = nextSelectableId;
   },
   { passive: true },
@@ -1736,7 +1736,7 @@ useEventListener(
     if (!previousSelectableId) return;
     selectedMediaItems.value = [previousSelectableId];
     if (event.detail?.scrollToSelectedMedia)
-      window.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
+      globalThis.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
     anchorId.value = previousSelectableId;
   },
   { passive: true },

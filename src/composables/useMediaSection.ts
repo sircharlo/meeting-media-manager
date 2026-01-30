@@ -384,7 +384,7 @@ export function useMediaSection(mediaList: MediaSectionWithConfig) {
 
     // Dispatch a custom event to open the song picker dialog
     // This will be handled by HeaderCalendar.vue which has the DialogSongPicker component
-    window.dispatchEvent(
+    globalThis.dispatchEvent(
       new CustomEvent('openSongPicker', {
         detail: { section },
       }),

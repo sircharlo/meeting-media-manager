@@ -26,7 +26,7 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useJwStore } from 'stores/jw';
 import { useObsStateStore } from 'stores/obs-state';
 
-const { fs, path } = window.electronApi;
+const { fs, path } = globalThis.electronApi;
 const { ensureDir } = fs;
 const { join } = path;
 

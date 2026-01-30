@@ -512,7 +512,7 @@ const currentState = useCurrentStateStore();
 const { currentLangObject, currentSettings, selectedDate } =
   storeToRefs(currentState);
 
-const { executeQuery, path, pathToFileURL } = window.electronApi;
+const { executeQuery, path, pathToFileURL } = globalThis.electronApi;
 
 const { t } = useI18n();
 const { dateLocale } = useLocale();

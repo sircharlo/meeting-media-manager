@@ -188,7 +188,7 @@ const { t } = useI18n();
 // Explicitly declare mepslangs for template use
 const mepslangs = mepslangsImport;
 
-const { pathToFileURL } = window.electronApi;
+const { pathToFileURL } = globalThis.electronApi;
 const props = defineProps<{
   dbPath: string;
   dialogId: string;

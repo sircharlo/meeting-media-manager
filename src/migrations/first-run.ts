@@ -11,7 +11,7 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 
 import type { MigrationFunction } from './types';
 
-const { fs, getAppDataPath, path } = window.electronApi;
+const { fs, getAppDataPath, path } = globalThis.electronApi;
 const { exists } = fs;
 const { join } = path;
 

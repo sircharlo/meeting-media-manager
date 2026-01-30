@@ -15,7 +15,7 @@ const {
   isUsablePath: isUsablePathRaw,
   path,
   readdir,
-} = window.electronApi;
+} = globalThis.electronApi;
 
 const isUsablePathPromises: Record<string, Promise<boolean>> = {};
 const isUsablePath = (path: string) => {

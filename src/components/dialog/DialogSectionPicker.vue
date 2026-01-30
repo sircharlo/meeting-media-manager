@@ -83,7 +83,7 @@ const dialogValue = computed({
 //   (isOpen) => {
 //     if (isOpen) {
 //       // Start auto-close timer
-//       autoCloseTimer.value = window.setTimeout(() => {
+//       autoCloseTimer.value = globalThis.setTimeout(() => {
 //         dialogValue.value = false;
 //       }, 5000);
 //     } else {

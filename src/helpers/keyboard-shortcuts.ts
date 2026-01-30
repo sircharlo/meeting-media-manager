@@ -16,7 +16,7 @@ export const sendKeyboardShortcut = (
       `${context ? `[${context}] ` : ''}Sending keyboard shortcut: ${shortcut}`,
     );
 
-    const { robot } = window.electronApi;
+    const { robot } = globalThis.electronApi;
 
     // Parse the shortcut string (e.g., "ctrl+shift+s" or "cmd+shift+s")
     const keys = shortcut.toLowerCase().split('+');

@@ -217,7 +217,7 @@ import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-const { openExternal } = window.electronApi;
+const { openExternal } = globalThis.electronApi;
 
 interface Props {
   dialogId: string;

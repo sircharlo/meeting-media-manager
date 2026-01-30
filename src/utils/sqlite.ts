@@ -8,7 +8,7 @@ import type {
   VideoMarker,
 } from 'src/types';
 
-const { executeQuery } = window.electronApi;
+const { executeQuery } = globalThis.electronApi;
 
 import mepslangs from 'src/constants/mepslangs';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -189,7 +189,7 @@ export const getDocumentMultimediaItems = (
 ) => {
   try {
     if (!source.db) return [];
-    const DocumentMultimediaTable = window.electronApi
+    const DocumentMultimediaTable = globalThis.electronApi
       .executeQuery<{
         name: string;
       }>(
@@ -211,7 +211,7 @@ export const getDocumentMultimediaItems = (
     );
 
     const targetParNrExists =
-      window.electronApi
+      globalThis.electronApi
         .executeQuery<{
           name: string;
         }>(source.db, "PRAGMA table_info('Question')")
@@ -221,13 +221,13 @@ export const getDocumentMultimediaItems = (
         'SELECT COUNT(*) FROM Question',
       )[0]?.count;
 
-    const LinkMultimediaIdExists = window.electronApi
+    const LinkMultimediaIdExists = globalThis.electronApi
       .executeQuery<{
         name: string;
       }>(source.db, "PRAGMA table_info('Multimedia')")
       .some((item) => item.name === 'LinkMultimediaId');
 
-    const suppressZoomExists = window.electronApi
+    const suppressZoomExists = globalThis.electronApi
       .executeQuery<{ name: string }>(
         source.db,
         "PRAGMA table_info('Multimedia')",
@@ -310,9 +310,7 @@ export const getDocumentMultimediaItems = (
 
     // Hack: Fix unreliable BeginParagraphOrdinal and EndParagraphOrdinal for sjjm items
     // by mapping them from DocumentExtract (sjj) ordinals sequentially
-    const sjjmItems = items.filter(
-      (item) => item.KeySymbol && item.KeySymbol.includes('sjj'),
-    );
+    const sjjmItems = items.filter((item) => item?.KeySymbol?.includes('sjj'));
 
     if (sjjmItems.length > 0 && source.docId !== undefined) {
       const sjjOrdinals = getSjjExtractOrdinals(source.db, source.docId);
@@ -481,7 +479,7 @@ export const getDocumentExtractItems = async (
       // Get the symbol from the unique English symbol; if it contains any non-alphanumeric symbol, use it as-is; otherwise remove digits
       let symbol = /[^a-zA-Z0-9]/.test(extract.UniqueEnglishSymbol)
         ? extract.UniqueEnglishSymbol
-        : extract.UniqueEnglishSymbol.replace(/\d/g, '');
+        : extract.UniqueEnglishSymbol.replaceAll(/\d/g, '');
       if (['it', 'snnw'].includes(symbol)) continue; // Exclude Insight and the "old new songs" songbook; we don't need images from that
 
       // Special handling for wp

@@ -221,7 +221,7 @@ export const getTextColor = (section?: MediaSectionWithConfig) => {
     );
   } else if (bgColor.startsWith('rgb')) {
     [r, g, b] = bgColor
-      .replace(/rgba?|\(|\)|\s/g, '')
+      .replaceAll(/rgba?|\(|\)|\s/g, '')
       .split(',')
       .map(Number);
   } else {
@@ -261,7 +261,7 @@ export const saveWatchedMediaSectionOrder = async (
 ): Promise<void> => {
   try {
     // Access electron API functions
-    const { fileUrlToPath, fs, path } = window.electronApi;
+    const { fileUrlToPath, fs, path } = globalThis.electronApi;
     const { join } = path;
     const { exists, readFile, writeFile } = fs;
 
@@ -342,7 +342,7 @@ export const getWatchedMediaSectionInfo = async (
 ): Promise<null | { order: number; section: MediaSectionIdentifier }> => {
   try {
     // Access electron API functions
-    const { fs, path } = window.electronApi;
+    const { fs, path } = globalThis.electronApi;
     const { join } = path;
     const { exists, readFile } = fs;
 
@@ -382,7 +382,7 @@ export const removeWatchedMediaSectionInfo = async (
 ): Promise<void> => {
   try {
     // Access electron API functions
-    const { fs, path } = window.electronApi;
+    const { fs, path } = globalThis.electronApi;
     const { join } = path;
     const { exists, readFile, writeFile } = fs;
 

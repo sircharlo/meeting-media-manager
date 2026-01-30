@@ -1,7 +1,7 @@
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { formatDate } from 'src/utils/date';
 
-const { fs, path } = window.electronApi;
+const { fs, path } = globalThis.electronApi;
 const { ensureFile, readFile, writeFile } = fs;
 const { join } = path;
 

@@ -3,7 +3,7 @@ import type { ElectronDownloadManager as EDMType } from 'electron-dl-manager';
 import { getCountriesForTimezone } from 'countries-and-timezones';
 import { app } from 'electron';
 import { ensureDir } from 'fs-extra/esm';
-import { isAppQuitting } from 'src-electron/main/session';
+import { quitStatus } from 'src-electron/main/session';
 import { captureElectronError, fetchJson } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindow } from 'src-electron/main/window/window-main';
@@ -172,7 +172,7 @@ export async function isDownloadErrorExpected(): Promise<boolean> {
       }
 
       const derive = (...xs: number[]) =>
-        xs.map((x) => String.fromCharCode(x)).join('');
+        xs.map((x) => String.fromCodePoint(x)).join('');
 
       const regionCategories = [derive(0x43, 0x4e), derive(0x52, 0x55)];
 
@@ -271,7 +271,7 @@ async function processQueue() {
           });
         },
         onError: async (err, downloadData) => {
-          if (isAppQuitting) return;
+          if (quitStatus.isAppQuitting) return;
           captureElectronError(err, {
             contexts: {
               fn: {
@@ -302,7 +302,7 @@ async function processQueue() {
     });
     return downloadId;
   } catch (error) {
-    if (isAppQuitting) return null;
+    if (quitStatus.isAppQuitting) return null;
     captureElectronError(error, {
       contexts: {
         fn: {

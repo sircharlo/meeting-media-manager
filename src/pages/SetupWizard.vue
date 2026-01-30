@@ -661,7 +661,7 @@ const jwStore = useJwStore();
 const { updateYeartext } = jwStore;
 const router = useRouter();
 
-const { getLocales } = window.electronApi;
+const { getLocales } = globalThis.electronApi;
 
 if (currentSettings.value) {
   currentSettings.value.autoStartMusic = true;

@@ -24,7 +24,7 @@ import { useCongregationSettingsStore } from 'stores/congregation-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 
-const { fs, path, readdir } = window.electronApi;
+const { fs, path, readdir } = globalThis.electronApi;
 const { exists, pathExists, remove } = fs;
 const { join, normalize } = path;
 
@@ -111,7 +111,7 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
 
     const getDirectory = async (
       pub: string,
-      issue?: 'any' | number | string,
+      issue?: number | string,
       includeEnglish?: boolean,
     ) => {
       const directories: string[] = [];
@@ -258,7 +258,7 @@ const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
     const referencedParentDirectories = new Set<string>();
     referencedFileUrls.forEach((fileUrl) => {
       const parentDir = normalize(getParentDirectory(fileUrl))
-        .replace(/[\\/]+/g, '\\')
+        .replaceAll(/[\\/]+/g, '\\')
         .toLowerCase();
       referencedParentDirectories.add(parentDir);
     });
@@ -279,13 +279,13 @@ const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
             } else if (!isProtectedS34Folder) {
               // Use normalized paths for comparison
               const normalizedParentPath = normalize(item.parentPath)
-                .replace(/[\\/]+/g, '\\')
+                .replaceAll(/[\\/]+/g, '\\')
                 .toLowerCase();
 
               // Check if this parent path matches any referenced parent directory
-              let isReferenced = Array.from(referencedParentDirectories).some(
-                (refDir) => normalizedParentPath === refDir,
-              );
+              let isReferenced = Array.from(
+                referencedParentDirectories,
+              ).includes(normalizedParentPath);
 
               // If not proactively referenced, check the "last used" date
               if (!isReferenced) {
@@ -374,12 +374,12 @@ export const analyzeCacheFiles = async (): Promise<CacheAnalysis> => {
       (acc, file) => {
         // Normalize paths for robust, cross-platform, case-insensitive comparisons
         const nf = normalize(file.parentPath)
-          .replace(/[\\/]+/g, '\\')
+          .replaceAll(/[\\/]+/g, '\\')
           .toLowerCase();
 
         const isInUsed = Object.keys(usedParentDirectories).some((dir) => {
           const nu = normalize(dir)
-            .replace(/[\\/]+/g, '\\')
+            .replaceAll(/[\\/]+/g, '\\')
             .toLowerCase();
           // Consider used if the file's parent is inside a used dir OR contains a used dir
           return nf.startsWith(nu) || nu.startsWith(nf);
@@ -388,7 +388,7 @@ export const analyzeCacheFiles = async (): Promise<CacheAnalysis> => {
         const isInFrequentlyUsed = [...frequentlyUsedDirectories].some(
           (dir) => {
             const nd = normalize(dir)
-              .replace(/[\\/]+/g, '\\')
+              .replaceAll(/[\\/]+/g, '\\')
               .toLowerCase();
             // Also bi-directional: inside or contains a frequently used dir
             return nf.startsWith(nd) || nd.startsWith(nf);
@@ -397,7 +397,7 @@ export const analyzeCacheFiles = async (): Promise<CacheAnalysis> => {
 
         const isInUntouchable = [...untouchableDirectories].some((dir) => {
           const nd = normalize(dir)
-            .replace(/[\\/]+/g, '\\')
+            .replaceAll(/[\\/]+/g, '\\')
             .toLowerCase();
           return nf === nd;
         });

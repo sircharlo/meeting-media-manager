@@ -102,7 +102,7 @@ export const fetchJson = async <T>(
       });
     }
   } catch (e) {
-    if (online && !(await window.electronApi?.isDownloadErrorExpected())) {
+    if (online && !(await globalThis.electronApi?.isDownloadErrorExpected())) {
       errorCatcher(e, {
         contexts: {
           fn: {
@@ -281,7 +281,7 @@ export const fetchPubMediaLinks = async (
       ...(publication.booknum
         ? { booknum: publication.booknum.toString() }
         : {}),
-      docid: !publication.pub ? publication.docid?.toString() || '' : '',
+      docid: publication.pub ? '' : publication.docid?.toString() || '',
       fileformat:
         publication.fileformat &&
         videoExtensions.includes(publication.fileformat)
@@ -349,7 +349,7 @@ export const fetchMediaItems = async (
           ? `pub-${publication.pub}`
           : `docid-${publication.docid}`,
         publication.pub
-          ? publication.issue?.toString().replace(/(\d{6})00$/gm, '$1')
+          ? publication.issue?.toString().replaceAll(/(\d{6})00$/gm, '$1')
           : null,
         track,
         publication.fileformat?.toLowerCase().includes('mp4')

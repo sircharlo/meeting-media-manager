@@ -79,7 +79,7 @@ const {
   onWebsiteWindowClosed,
   openWebsiteWindow,
   zoomWebsiteWindow,
-} = window.electronApi;
+} = globalThis.electronApi;
 
 const { t } = useI18n();
 const currentState = useCurrentStateStore();

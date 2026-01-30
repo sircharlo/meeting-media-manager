@@ -59,7 +59,7 @@ export function createWindow(
     show: false,
     title: PRODUCT_NAME,
     width: defaultSize.width,
-    ...(options ?? {}),
+    ...options,
     webPreferences: {
       backgroundThrottling: false,
       contextIsolation: true,
@@ -76,7 +76,7 @@ export function createWindow(
             ),
       sandbox: name === 'website',
       webSecurity: !IS_DEV,
-      ...(options?.webPreferences ?? {}),
+      ...options?.webPreferences,
     },
   };
   const win =

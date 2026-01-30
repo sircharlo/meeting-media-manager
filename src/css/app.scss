@@ -149,7 +149,6 @@ body.body--light {
 
   .media-section {
     background: white;
-    border-color: $accent-300;
     border: 1px solid $accent-300;
 
     & .q-item.selected-to-drag {
@@ -573,7 +572,7 @@ body.body--dark {
 }
 
 .q-dialog .q-dialog__inner > div,
-.q-menu .q-menu__inner >  div {
+.q-menu .q-menu__inner > div {
   max-height: 75vh;
 }
 

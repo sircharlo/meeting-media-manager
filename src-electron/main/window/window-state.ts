@@ -248,10 +248,10 @@ function validateState(state: null | State) {
 
     const maxBounds = getMaxBounds(state, display.bounds);
 
-    state.width = ~~(maxBounds.width * scaleFactorRatio);
-    state.height = ~~(maxBounds.height * scaleFactorRatio);
-    state.x = ~~(maxBounds.x * scaleFactorRatio);
-    state.y = ~~(maxBounds.y * scaleFactorRatio);
+    state.width = Math.trunc(maxBounds.width * scaleFactorRatio);
+    state.height = Math.trunc(maxBounds.height * scaleFactorRatio);
+    state.x = Math.trunc(maxBounds.x * scaleFactorRatio);
+    state.y = Math.trunc(maxBounds.y * scaleFactorRatio);
 
     return ensureWindowVisibleOnSomeDisplay(state);
   }

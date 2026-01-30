@@ -7,7 +7,5 @@ declare global {
     cursor?: 'always' | 'motion' | 'never';
   }
 
-  interface Window {
-    electronApi: ElectronApi;
-  }
+  var electronApi: ElectronApi;
 }

@@ -28,7 +28,7 @@ const {
   unwatchFolders,
   unzip,
   watchFolder,
-} = window.electronApi;
+} = globalThis.electronApi;
 const { exists, pathExists, stat, writeFile } = fs;
 const { basename, dirname, extname, join, resolve } = path;
 
@@ -269,11 +269,7 @@ export const getSubtitlesUrl = async (
         subtitlesPath = join(subDirectory, subtitlesFilename);
         if (await exists(subtitlesPath)) {
           subtitlesUrl = pathToFileURL(subtitlesPath);
-        } else {
-          subtitlesUrl = '';
         }
-      } else {
-        subtitlesUrl = '';
       }
     }
     return subtitlesUrl;
@@ -356,15 +352,15 @@ async function downloadFfmpeg(
 
   await new Promise<void>((resolve, reject) => {
     const interval = setInterval(() => {
-      if (!downloadId) {
-        clearInterval(interval);
-        reject(new Error('Download failed'));
-      } else {
+      if (downloadId) {
         const progress = useCurrentStateStore().downloadProgress[downloadId];
         if (progress?.complete) {
           clearInterval(interval);
           resolve();
         }
+      } else {
+        clearInterval(interval);
+        reject(new Error('Download failed'));
       }
     }, 500);
   });

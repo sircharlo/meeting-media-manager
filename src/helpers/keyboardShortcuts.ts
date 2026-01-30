@@ -5,11 +5,11 @@ import { showMediaWindow } from 'src/helpers/mediaPlayback';
 import { isAnyDialogOpen } from 'src/utils/dialog-plugin';
 import { useCurrentStateStore } from 'stores/current-state';
 
-const { registerShortcut, unregisterAllShortcuts } = window.electronApi;
+const { registerShortcut, unregisterAllShortcuts } = globalThis.electronApi;
 
 const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
   shortcutMediaNext: () => {
-    window.dispatchEvent(
+    globalThis.dispatchEvent(
       new CustomEvent<{ scrollToSelectedMedia: boolean }>('shortcutMediaNext', {
         detail: {
           scrollToSelectedMedia: true,
@@ -18,12 +18,12 @@ const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
     );
   },
   shortcutMediaPauseResume: () => {
-    window.dispatchEvent(
+    globalThis.dispatchEvent(
       new CustomEvent<undefined>('shortcutMediaPauseResume'),
     );
   },
   shortcutMediaPrevious: () => {
-    window.dispatchEvent(
+    globalThis.dispatchEvent(
       new CustomEvent<{ scrollToSelectedMedia: boolean }>(
         'shortcutMediaPrevious',
         {
@@ -35,13 +35,13 @@ const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
     );
   },
   shortcutMediaStop: () => {
-    window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaStop'));
+    globalThis.dispatchEvent(new CustomEvent<undefined>('shortcutMediaStop'));
   },
   shortcutMediaWindow: () => {
     showMediaWindow();
   },
   shortcutMusic: () => {
-    window.dispatchEvent(new CustomEvent<undefined>('toggleMusic'));
+    globalThis.dispatchEvent(new CustomEvent<undefined>('toggleMusic'));
   },
 };
 

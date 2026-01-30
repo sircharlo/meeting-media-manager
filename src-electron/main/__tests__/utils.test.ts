@@ -57,8 +57,8 @@ describe('isIgnoredUpdateError', () => {
   });
 
   it('should handle error objects with codes', () => {
-    const error = new Error('Some error') as { code?: string };
-    error.code = 'ECONNRESET';
+    const error = new Error('Some error');
+    (error as { code?: string }).code = 'ECONNRESET';
     expect(isIgnoredUpdateError(error)).toBe(true);
   });
 

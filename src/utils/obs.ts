@@ -12,7 +12,7 @@ export const initObsWebSocket = async () => {
 
 export const sendObsSceneEvent = (scene: ObsSceneType) => {
   if (!scene) return;
-  window.dispatchEvent(
+  globalThis.dispatchEvent(
     new CustomEvent<{ scene: ObsSceneType }>('obsSceneEvent', {
       detail: { scene },
     }),

@@ -262,7 +262,7 @@ const { currentCongregation, selectedDate, selectedDateObject } =
   storeToRefs(currentState);
 const jwStore = useJwStore();
 
-const { executeQuery, fs, path, unzip } = window.electronApi;
+const { executeQuery, fs, path, unzip } = globalThis.electronApi;
 const { pathExists, rename } = fs;
 const { basename, extname, join } = path;
 

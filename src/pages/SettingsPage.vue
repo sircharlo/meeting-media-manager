@@ -143,11 +143,14 @@ const openCongregationLookup = () => {
 };
 
 onMounted(() => {
-  window.addEventListener('openCongregationLookup', openCongregationLookup);
+  globalThis.addEventListener('openCongregationLookup', openCongregationLookup);
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener('openCongregationLookup', openCongregationLookup);
+  globalThis.removeEventListener(
+    'openCongregationLookup',
+    openCongregationLookup,
+  );
 });
 
 // Store initializations

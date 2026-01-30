@@ -100,7 +100,7 @@ const emit = defineEmits(['update:modelValue']);
 // Setup component
 const localValue = ref(props.modelValue);
 
-const { unregisterShortcut } = window.electronApi;
+const { unregisterShortcut } = globalThis.electronApi;
 
 watch(localValue, (newValue, oldValue) => {
   if (!newValue || !getCurrentShortcuts().includes(newValue)) {
@@ -165,7 +165,7 @@ const handleKeyPress = (event: KeyboardEvent) => {
 
 const startListening = () => {
   console.log('🎹 Starting keyboard listener for shortcut input');
-  window.addEventListener('keydown', handleKeyPress, { passive: false });
+  globalThis.addEventListener('keydown', handleKeyPress, { passive: false });
   // Focus the dialog to ensure it receives key events
   setTimeout(() => {
     const dialog = document.querySelector(
@@ -179,7 +179,7 @@ const startListening = () => {
 
 const stopListening = () => {
   console.log('🎹 Stopping keyboard listener for shortcut input');
-  window.removeEventListener('keydown', handleKeyPress);
+  globalThis.removeEventListener('keydown', handleKeyPress);
 };
 const shortcutPicker = ref(false);
 </script>

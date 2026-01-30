@@ -21,7 +21,7 @@ const {
   parseMediaFile,
   path,
   pathToFileURL,
-} = window.electronApi;
+} = globalThis.electronApi;
 const { exists } = fs;
 const { parse } = path;
 
@@ -176,7 +176,7 @@ export const isRemoteFile = (file: File | string): boolean => {
   if (typeof file === 'string') {
     filePath = file;
   } else if (file instanceof File) {
-    const path = window.electronApi?.getLocalPathFromFileObject?.(file);
+    const path = globalThis.electronApi?.getLocalPathFromFileObject?.(file);
     if (typeof path !== 'string') return false;
     filePath = path;
   } else {

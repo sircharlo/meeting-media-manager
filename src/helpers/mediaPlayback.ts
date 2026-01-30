@@ -16,7 +16,8 @@ import { isJwpub } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
 
-const { executeQuery, fs, path, toggleMediaWindow, unzip } = window.electronApi;
+const { executeQuery, fs, path, toggleMediaWindow, unzip } =
+  globalThis.electronApi;
 const { pathExists, remove, rename } = fs;
 const { basename, extname, join } = path;
 
@@ -302,7 +303,7 @@ export const getMediaFromJwPlaylist = async (
             ? item.StartTrimOffsetTicks / 10000 / 1000
             : null;
 
-        const VerseNumbers = window.electronApi
+        const VerseNumbers = globalThis.electronApi
           .executeQuery<{
             Label: string;
           }>(

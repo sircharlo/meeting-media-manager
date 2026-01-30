@@ -2,10 +2,7 @@ import { captureException } from '@sentry/vue';
 
 type CaptureCtx = Parameters<typeof captureException>[1];
 
-export const errorCatcher = async (
-  error: Error | string | unknown,
-  context?: CaptureCtx,
-) => {
+export const errorCatcher = async (error: unknown, context?: CaptureCtx) => {
   if (!error) return;
 
   if (
@@ -15,10 +12,10 @@ export const errorCatcher = async (
     errorCatcher((error as { cause: unknown }).cause, context);
   }
 
-  if (!process.env.IS_DEV) {
-    captureException(error, context);
-  } else {
+  if (process.env.IS_DEV) {
     console.error(error);
     console.warn('context', context);
+  } else {
+    captureException(error, context);
   }
 };

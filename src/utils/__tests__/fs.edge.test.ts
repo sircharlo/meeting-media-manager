@@ -13,7 +13,7 @@ import {
 
 installPinia();
 
-const { fs } = window.electronApi;
+const { fs } = globalThis.electronApi;
 const { emptyDir, ensureDir, ensureFile, exists, remove } = fs;
 
 describe('fs edge cases', () => {
@@ -39,7 +39,7 @@ describe('fs edge cases', () => {
 
     it('handles file URL Windows path', () => {
       const parent = getParentDirectory('file:///C:/Users/Test/file.txt');
-      expect(parent.replace(/\\/g, '/')).toMatch(/^\/?C:\/Users\/Test$/);
+      expect(parent.replaceAll('\\', '/')).toMatch(/^\/?C:\/Users\/Test$/);
     });
   });
 

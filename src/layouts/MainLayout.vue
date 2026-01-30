@@ -190,7 +190,7 @@ const {
   removeListeners,
   setAutoStartAtLogin,
   setElectronUrlVariables,
-} = window.electronApi;
+} = globalThis.electronApi;
 const { basename, dirname } = path;
 updateMemorials(online.value);
 updateJwLanguages(online.value);
@@ -619,7 +619,7 @@ watchImmediate(
   () => currentSettings.value?.disableHardwareAcceleration,
   (newDisableHardwareAcceleration) => {
     if (newDisableHardwareAcceleration !== undefined) {
-      window.electronApi.setHardwareAcceleration(
+      globalThis.electronApi.setHardwareAcceleration(
         newDisableHardwareAcceleration,
       );
       // Check if hardware acceleration is disabled via settings on startup
@@ -940,7 +940,7 @@ const initListeners = () => {
     });
   });
 
-  window.electronApi.onHardwareAccelerationTemporaryDisabled(() => {
+  globalThis.electronApi.onHardwareAccelerationTemporaryDisabled(() => {
     createTemporaryNotification({
       caption: t('gpu-crash-detected-explain'),
       icon: 'mmm-warning',

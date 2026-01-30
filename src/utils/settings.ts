@@ -85,13 +85,13 @@ export const performActions = (actions: SettingsItemAction[] | undefined) => {
   actions?.forEach((action) => {
     try {
       if (action === 'obsConnect') {
-        window.dispatchEvent(
+        globalThis.dispatchEvent(
           new CustomEvent<undefined>('obsConnectFromSettings'),
         );
       } else if (action === 'syncMeetingSchedule') {
         syncMeetingSchedule(true);
       } else if (action === 'openCongregationLookup') {
-        window.dispatchEvent(
+        globalThis.dispatchEvent(
           new CustomEvent<undefined>('openCongregationLookup'),
         );
       }

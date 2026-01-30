@@ -105,7 +105,7 @@ const {
   openDiscussion,
   openExternal,
   quitAndInstall,
-} = window.electronApi;
+} = globalThis.electronApi;
 
 const version = process.env.version;
 const latestVersion = ref('');

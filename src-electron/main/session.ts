@@ -10,7 +10,11 @@ import {
   isValidUrl,
 } from 'src-electron/main/utils';
 
-export let urlVariables: undefined | UrlVariables;
+export const urlVariables: UrlVariables = {
+  base: '',
+  mediator: '',
+  pubMedia: '',
+};
 
 const updateSessionHeadersListener = () => {
   const trustedDomains = TRUSTED_DOMAINS.concat(
@@ -43,19 +47,23 @@ const updateSessionHeadersListener = () => {
 };
 
 export const setElectronUrlVariables = (variables: UrlVariables) => {
-  urlVariables = variables;
+  urlVariables.base = variables.base;
+  urlVariables.mediator = variables.mediator;
+  urlVariables.pubMedia = variables.pubMedia;
   updateSessionHeadersListener();
 };
 
-export let shouldQuit = false;
-export let isAppQuitting = false;
-
-export const setShouldQuit = (quit: boolean) => {
-  shouldQuit = quit;
+export const quitStatus = {
+  isAppQuitting: false,
+  shouldQuit: false,
 };
 
 export const setAppQuitting = (quitting: boolean) => {
-  isAppQuitting = quitting;
+  quitStatus.isAppQuitting = quitting;
+};
+
+export const setShouldQuit = (quit: boolean) => {
+  quitStatus.shouldQuit = quit;
 };
 
 export const initSessionListeners = () => {
@@ -121,7 +129,7 @@ export const initSessionListeners = () => {
           referrer.hostname === url.hostname ||
           (url.hostname !==
             new URL(
-              urlVariables && isValidUrl(urlVariables.mediator)
+              isValidUrl(urlVariables.mediator)
                 ? urlVariables.mediator
                 : 'https://www.b.jw-cdn.org/',
             ).hostname &&

@@ -141,7 +141,7 @@ const { t } = useI18n();
 const isRecording = ref(false);
 const obsRecordingFolder = ref<null | string>(null);
 
-const { openFolder } = window.electronApi;
+const { openFolder } = globalThis.electronApi;
 
 const notifySceneNotFound = () =>
   createTemporaryNotification({

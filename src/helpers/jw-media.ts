@@ -88,7 +88,7 @@ const {
   readdir,
   setElectronUrlVariables,
   unzip,
-} = window.electronApi;
+} = globalThis.electronApi;
 const { copy, exists, pathExists, remove, stat } = fs;
 const { basename, changeExt, dirname, extname, join } = path;
 
@@ -453,9 +453,7 @@ export const fetchMedia = async () => {
           const dateKey = new Date(day.date).toISOString().split('T')[0]; // Use yyyy-mm-dd format as key
           if (!dateKey) continue;
 
-          if (!dayMap.has(dateKey)) {
-            dayMap.set(dateKey, day);
-          } else {
+          if (dayMap.has(dateKey)) {
             const existing = dayMap.get(dateKey);
             if (!existing) continue;
 
@@ -466,6 +464,8 @@ export const fetchMedia = async () => {
             if (preferCurrent) {
               dayMap.set(dateKey, day);
             }
+          } else {
+            dayMap.set(dateKey, day);
           }
         }
 
@@ -595,13 +595,13 @@ export const fetchMedia = async () => {
     meetingsToFetch.forEach((day) => {
       day.status = null;
     });
-    if (!queues.meetings[currentStateStore.currentCongregation]) {
+    if (queues.meetings[currentStateStore.currentCongregation]) {
+      queues.meetings[currentStateStore.currentCongregation]?.start();
+    } else {
       const { default: PQueue } = await import('p-queue');
       queues.meetings[currentStateStore.currentCongregation] = new PQueue({
         concurrency: 2,
       });
-    } else {
-      queues.meetings[currentStateStore.currentCongregation]?.start();
     }
     const queue = queues.meetings[currentStateStore.currentCongregation];
     if (meetingsToFetch.length) {
@@ -688,11 +688,7 @@ export const getDbFromJWPUB = async (
       await unzipJwpub(jwpub.path, publicationDirectory);
     }
     const dbFile = await findDb(publicationDirectory);
-    if (!dbFile) {
-      return null;
-    } else {
-      return dbFile;
-    }
+    return dbFile ?? null;
   } catch (error) {
     errorCatcher(error, {
       contexts: {
@@ -1604,9 +1600,9 @@ export const dynamicMediaMapper = async (
           : [m.MepsDocumentId];
 
       const extra = [
-        m.MepsLanguageIndex !== undefined
-          ? getJwLangCode(m.MepsLanguageIndex)
-          : '',
+        m.MepsLanguageIndex === undefined
+          ? ''
+          : getJwLangCode(m.MepsLanguageIndex),
         m.Track,
       ];
 
@@ -1789,7 +1785,7 @@ export const watchedItemMapper: (
     const currentStateStore = useCurrentStateStore();
     if (!parentDate || !watchedItemPath) return undefined;
 
-    const dateString = parentDate.replace(/-/g, '');
+    const dateString = parentDate.replaceAll('-', '');
 
     const fileUrl = pathToFileURL(watchedItemPath);
 
@@ -1893,7 +1889,7 @@ export const watchedItemMapper: (
         isImage: image,
         isVideo: video,
         originalSection: section,
-        sortOrderOriginal: order !== undefined ? order : 'watched',
+        sortOrderOriginal: order ?? 'watched',
         source: 'watched',
         thumbnailUrl,
         title,
@@ -2129,7 +2125,7 @@ export const getWeMedia = async (lookupDate: Date) => {
         const linkedItem = final.find(
           (i) => i.MultimediaId === item.LinkMultimediaId,
         );
-        if (linkedItem && linkedItem.FilePath) {
+        if (linkedItem?.FilePath) {
           item.FilePath = linkedItem.FilePath;
           item.LinkMultimediaId = null;
           linkedItem.LinkMultimediaId = linkedItem.MultimediaId;
@@ -2162,9 +2158,7 @@ export const getWeMedia = async (lookupDate: Date) => {
           LIMIT 2`,
       );
     } else {
-      if (!videosNotInParagraphs?.length) {
-        songs = [];
-      } else {
+      if (videosNotInParagraphs?.length) {
         const sortedVideos = videosNotInParagraphs.sort(
           (a, b) => (a.MultimediaId || 0) - (b.MultimediaId || 0),
         );
@@ -2182,12 +2176,14 @@ export const getWeMedia = async (lookupDate: Date) => {
             songs = sortedVideos.slice(0, 2).filter(Boolean);
           }
         }
+      } else {
+        songs = [];
       }
     }
 
     let songLangs: ('' | JwLangCode)[] = [];
     try {
-      songLangs = window.electronApi
+      songLangs = globalThis.electronApi
         .executeQuery<MultimediaExtractItem>(
           db,
           `SELECT Extract.ExtractId, Extract.Link, DocumentExtract.BeginParagraphOrdinal
@@ -2231,10 +2227,10 @@ export const getWeMedia = async (lookupDate: Date) => {
           item.KeySymbol === mergedSongs[0]?.KeySymbol,
       );
 
-      if (index0 !== -1) {
-        allMedia[index0] = mergedSongs[0];
-      } else {
+      if (index0 === -1) {
         allMedia.unshift(mergedSongs[0]);
+      } else {
+        allMedia[index0] = mergedSongs[0];
       }
 
       if (mergedSongs[1]) {
@@ -2245,10 +2241,10 @@ export const getWeMedia = async (lookupDate: Date) => {
             item.KeySymbol === mergedSongs[1]?.KeySymbol,
         );
 
-        if (index1 !== -1) {
-          allMedia[index1] = mergedSongs[1];
-        } else {
+        if (index1 === -1) {
           allMedia.push(mergedSongs[1]);
+        } else {
+          allMedia[index1] = mergedSongs[1];
         }
       }
     }
@@ -2673,7 +2669,7 @@ export const getJwMepsInfo = async () => {
     await unzip(msix, dir);
     const mepsunit = await findFile(join(dir, 'Data'), '.db');
     if (!mepsunit) return;
-    const mepsLangs = window.electronApi
+    const mepsLangs = globalThis.electronApi
       .executeQuery<JwMepsLanguage>(
         mepsunit,
         'SELECT LanguageId, PrimaryIetfCode, Symbol FROM Language',

@@ -32,13 +32,20 @@ export function getAppVersion() {
  * @returns The icon path
  */
 export function getIconPath(icon: 'beta' | 'icon' | 'media-player') {
+  const extByPlatform: Record<string, string> = {
+    darwin: 'icns',
+    win32: 'ico',
+  };
+
+  const ext = extByPlatform[PLATFORM] ?? 'png';
+
   return resolve(
     join(
       fileURLToPath(
         new URL(IS_DEV ? './../../src-electron' : '.', import.meta.url),
       ),
       'icons',
-      `${icon}.${PLATFORM === 'win32' ? 'ico' : PLATFORM === 'darwin' ? 'icns' : 'png'}`,
+      `${icon}.${ext}`,
     ),
   );
 }
@@ -65,7 +72,7 @@ export async function getSharedDataPath(): Promise<null | string> {
   console.log(`[getSharedDataPath] Platform is ${PLATFORM}`);
   if (PLATFORM === 'win32') {
     sharedPath = join(
-      process.env.ProgramData || 'C:\\ProgramData',
+      process.env.ProgramData || String.raw`C:\ProgramData`,
       PRODUCT_NAME || 'Meeting Media Manager',
     );
   } else if (PLATFORM === 'darwin') {
@@ -79,7 +86,7 @@ export async function getSharedDataPath(): Promise<null | string> {
       '/var/cache',
       (PRODUCT_NAME || 'meeting-media-manager')
         .toLowerCase()
-        .replace(/ /g, '-'),
+        .replaceAll(' ', '-'),
     );
   }
   console.log(`[getSharedDataPath] Shared path is configured as ${sharedPath}`);
@@ -211,7 +218,7 @@ export const isValidUrl = (url: string): boolean => {
  * @returns Whether the error should be ignored
  */
 export function isIgnoredUpdateError(
-  error: Error | string | unknown,
+  error: Error | string,
   message?: string,
 ): boolean {
   const ignoreErrors = [
@@ -377,10 +384,7 @@ export const fetchJson = async <T>(
  * @param error The error to log
  * @param context The context to log with the error
  */
-export function captureElectronError(
-  error: Error | string | unknown,
-  context?: CaptureCtx,
-) {
+export function captureElectronError(error: unknown, context?: CaptureCtx) {
   if (IS_DEV) {
     console.error(error);
     console.warn('context', context);
@@ -436,19 +440,17 @@ export const throttleWithTrailing = <T>(
       }
     } else {
       // Schedule trailing execution if not already scheduled
-      if (!timeoutId) {
-        timeoutId = setTimeout(
-          () => {
-            if (lastArgs) {
-              lastExecTime = Date.now();
-              func(...lastArgs);
-              timeoutId = null;
-              lastArgs = null;
-            }
-          },
-          delay - (now - lastExecTime),
-        );
-      }
+      timeoutId ??= setTimeout(
+        () => {
+          if (lastArgs) {
+            lastExecTime = Date.now();
+            func(...lastArgs);
+            timeoutId = null;
+            lastArgs = null;
+          }
+        },
+        delay - (now - lastExecTime),
+      );
     }
   };
 };

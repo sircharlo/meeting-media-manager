@@ -11,7 +11,7 @@ const {
   getNrOfPdfPages,
   path,
   pathToFileURL,
-} = window.electronApi;
+} = globalThis.electronApi;
 const { readFile, writeFile } = fs;
 const { parse } = path;
 

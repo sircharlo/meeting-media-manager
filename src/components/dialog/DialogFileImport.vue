@@ -250,11 +250,11 @@ onUnmounted(() => {
 });
 
 const getLocalFiles = async () => {
-  window.electronApi
+  globalThis.electronApi
     .openFileDialog()
     .then((result) => {
       if (result && result.filePaths.length > 0) {
-        window.dispatchEvent(
+        globalThis.dispatchEvent(
           new CustomEvent<{
             files: (File | string)[];
             section: MediaSectionIdentifier | undefined;
@@ -309,7 +309,7 @@ const handleJwpubImport = (jwpubImportDocument: DocumentItem) => {
     '🎯 Emitting openJwpubMediaPicker event for document:',
     jwpubImportDocument,
   );
-  window.dispatchEvent(
+  globalThis.dispatchEvent(
     new CustomEvent<{
       dbPath: string;
       document: DocumentItem;

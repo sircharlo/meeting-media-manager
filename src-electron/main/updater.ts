@@ -89,7 +89,7 @@ export const triggerUpdateCheck = async (attempt = 1) => {
       }
     }
   } catch (error) {
-    if (!isIgnoredUpdateError(error)) {
+    if (!isIgnoredUpdateError(error as Error | string)) {
       captureElectronError(error, {
         contexts: { fn: { name: 'triggerUpdateCheck' } },
       });

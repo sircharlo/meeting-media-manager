@@ -1196,7 +1196,7 @@ const isEditingTitle = ref(false);
 const titleInput = ref<HTMLInputElement>();
 const mediaTitle = ref(props.media.title);
 
-const { fileUrlToPath, fs, path } = window.electronApi;
+const { fileUrlToPath, fs, path } = globalThis.electronApi;
 const { basename } = path;
 
 const { pathExists, pathExistsSync, statSync } = fs;
@@ -1393,7 +1393,7 @@ const setMediaPlaying = async (
   };
 
   nextTick(() => {
-    window.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
+    globalThis.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
   });
 };
 
@@ -1671,7 +1671,7 @@ function stopMedia(forOtherMediaItem = false) {
     triggerZoomScreenShare(false);
     // zoomReset(true);
     nextTick(() => {
-      window.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
+      globalThis.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
     });
   }
 }
@@ -1892,7 +1892,7 @@ useEventListener(
   { passive: true },
 );
 
-window.addEventListener('scrollToSelectedMedia', () => {
+globalThis.addEventListener('scrollToSelectedMedia', () => {
   if (
     props.selected &&
     mediaItem.value?.$el &&

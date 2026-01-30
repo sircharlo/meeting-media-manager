@@ -20,7 +20,7 @@ import { cancelAllDownloads } from 'src-electron/main/downloads';
 import { initScreenListeners } from 'src-electron/main/screen';
 import {
   initSessionListeners,
-  isAppQuitting,
+  quitStatus,
   setAppQuitting,
   setShouldQuit,
 } from 'src-electron/main/session';
@@ -57,7 +57,7 @@ protocol.registerSchemesAsPrivileged([
 initSentry({
   beforeSend(event) {
     try {
-      if (isAppQuitting) {
+      if (quitStatus.isAppQuitting) {
         return null;
       }
 
@@ -92,7 +92,7 @@ initSentry({
   dsn: 'https://40b7d92d692d42814570d217655198db@o1401005.ingest.us.sentry.io/4507449197920256',
   environment: IS_TEST ? 'test' : process.env.NODE_ENV,
   release: `${name}@${version}`,
-  tracesSampleRate: 1.0,
+  tracesSampleRate: 1,
 });
 
 const gotTheLock = app.requestSingleInstanceLock();
@@ -153,9 +153,7 @@ function createApplicationMenu() {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
-if (!gotTheLock) {
-  app.exit(2);
-} else {
+if (gotTheLock) {
   // Check for crash loop on startup
   const crashCount = incrementCrashCount();
   console.log(`Startup crash count: ${crashCount}`);
@@ -188,7 +186,7 @@ if (!gotTheLock) {
   }
 
   app.on('second-instance', () => {
-    // Someone tried to run a second instance, we should focus our window.
+    // Someone tried to run a second instance, we should focus our globalThis.
     if (mainWindow && !mainWindow.isDestroyed()) {
       if (mainWindow.isMinimized()) mainWindow.restore();
       mainWindow.show();
@@ -293,11 +291,11 @@ if (!gotTheLock) {
   });
 
   // macOS default behavior is to keep the app running even after all windows are closed
-  app.on('window-all-closed', () => {
+  app.on('window-all-closed', async () => {
     // Set app quitting state
     setAppQuitting(true);
     try {
-      cancelAllDownloads();
+      await cancelAllDownloads();
     } catch (error) {
       captureElectronError(error, {
         contexts: { fn: { name: 'app.on(window-all-closed)' } },
@@ -324,6 +322,9 @@ if (!gotTheLock) {
   });
 
   createWindowAndCaptureErrors();
+} else {
+  console.log('Another instance is running. Exiting...');
+  app.exit(2);
 }
 
 // Silence EPIPE errors on stdout/stderr (common on Linux when quitting)

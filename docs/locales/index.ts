@@ -1,10 +1,10 @@
 import {
   enabled as baseEnabled,
   type LanguageValue,
-  locales,
 } from '../../src/constants/locales';
 
-export const localeOptions = locales;
+export { locales as localeOptions } from '../../src/constants/locales';
+
 export const enabled: LanguageValue[] = baseEnabled.filter((l) => l !== 'en');
 
 // ! This file should import the JSON files for all languages configured in Crowdin.

@@ -19,7 +19,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-const { path } = window.electronApi;
+const { path } = globalThis.electronApi;
 const { basename } = path;
 
 const displayFolderName = computed(() => {
@@ -31,7 +31,7 @@ const model = defineModel<null | string>({ required: true });
 
 const showFolderPicker = async () => {
   try {
-    const result = await window.electronApi
+    const result = await globalThis.electronApi
       .openFolderDialog()
       .catch((error) => {
         errorCatcher(error);

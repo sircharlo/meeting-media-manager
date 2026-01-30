@@ -215,7 +215,7 @@ watch(
         // Get the first watched item's file path to determine the watched day folder
         const watchedItem = watchedItems[0];
         if (watchedItem) {
-          const { fileUrlToPath, path } = window.electronApi;
+          const { fileUrlToPath, path } = globalThis.electronApi;
           const { dirname } = path;
 
           const firstWatchedItemPath = fileUrlToPath(watchedItem.fileUrl);

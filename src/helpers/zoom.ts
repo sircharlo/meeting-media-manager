@@ -32,7 +32,7 @@ export const triggerZoomScreenShare = (startSharing: boolean) => {
       // Only attempt to focus media window if the setting is enabled
       if (zoomAutoFocusMediaWindow) {
         // Helper function to focus the media window with error handling
-        const { focusMediaWindow } = window.electronApi;
+        const { focusMediaWindow } = globalThis.electronApi;
         function triggerFocusMediaWindow(context = '') {
           try {
             focusMediaWindow();

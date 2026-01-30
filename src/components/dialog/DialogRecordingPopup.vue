@@ -64,7 +64,7 @@ import { useI18n } from 'vue-i18n';
 const currentState = useCurrentStateStore();
 const { currentSettings } = storeToRefs(currentState);
 
-const { openFolder } = window.electronApi;
+const { openFolder } = globalThis.electronApi;
 
 const open = defineModel<boolean>({ default: false });
 const props = defineProps<{

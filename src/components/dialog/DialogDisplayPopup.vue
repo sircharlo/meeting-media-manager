@@ -393,7 +393,7 @@ const {
   openFileDialog,
   path,
   pathToFileURL,
-} = window.electronApi;
+} = globalThis.electronApi;
 const { basename, join } = path;
 
 const { copyFile } = fs;
@@ -475,8 +475,7 @@ const scaledMainWindowRect = (index: number) => {
 };
 
 // Selected when media window is on this screen and it's not the app's main window
-const isScreenSelected = (index: number, screen: Display) => {
-  void index; // index kept for potential future preference logic
+const isScreenSelected = (_index: number, screen: Display) => {
   return !!screen.mediaWindow && !screen.mainWindow;
 };
 
@@ -506,7 +505,7 @@ const chooseCustomBackground = async (reset?: boolean) => {
             const unzipDir = await unzipJwpub(filepath);
             const db = await findDb(unzipDir);
             if (!db) throw new Error('No db file found: ' + filepath);
-            jwpubImages.value = window.electronApi
+            jwpubImages.value = globalThis.electronApi
               .executeQuery<
                 Partial<MultimediaItem>
               >(db, "SELECT FilePath FROM Multimedia WHERE CategoryType >= 0 AND CategoryType <> 9 AND FilePath <> '';")

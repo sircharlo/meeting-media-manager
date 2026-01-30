@@ -60,44 +60,41 @@ export const getAllScreens = (): Display[] => {
     .getAllDisplays()
     .sort((a, b) => a.bounds.x + a.bounds.y - (b.bounds.x + b.bounds.y));
 
-  if (mainWindow) {
-    try {
-      const mainWindowScreen = displays.find(
-        (display) =>
-          mainWindow &&
-          display.id === screen.getDisplayMatching(mainWindow.getBounds()).id,
-      );
-      if (mainWindowScreen) {
-        mainWindowScreen.mainWindow = true;
-        try {
-          mainWindowScreen.mainWindowBounds = mainWindow.getBounds();
-        } catch (e) {
-          captureElectronError(e, {
-            contexts: {
-              fn: { name: 'getAllScreens', window: 'mainWindowBounds' },
-            },
-          });
-        }
+  try {
+    const mainWindowScreen = displays.find(
+      (display) =>
+        mainWindow &&
+        display.id === screen.getDisplayMatching(mainWindow.getBounds()).id,
+    );
+    if (mainWindowScreen) {
+      mainWindowScreen.mainWindow = true;
+      try {
+        mainWindowScreen.mainWindowBounds = mainWindow?.getBounds();
+      } catch (e) {
+        captureElectronError(e, {
+          contexts: {
+            fn: { name: 'getAllScreens', window: 'mainWindowBounds' },
+          },
+        });
       }
-    } catch (e) {
-      captureElectronError(e, {
-        contexts: { fn: { name: 'getAllScreens', window: 'mainWindow' } },
-      });
     }
+  } catch (e) {
+    captureElectronError(e, {
+      contexts: { fn: { name: 'getAllScreens', window: 'mainWindow' } },
+    });
   }
-  if (mediaWindow) {
-    try {
-      const mediaWindowScreen = displays.find(
-        (display) =>
-          mediaWindow &&
-          display.id === screen.getDisplayMatching(mediaWindow.getBounds()).id,
-      );
-      if (mediaWindowScreen) mediaWindowScreen.mediaWindow = true;
-    } catch (e) {
-      captureElectronError(e, {
-        contexts: { fn: { name: 'getAllScreens', window: 'mediaWindow' } },
-      });
-    }
+
+  try {
+    const mediaWindowScreen = displays.find(
+      (display) =>
+        mediaWindow &&
+        display.id === screen.getDisplayMatching(mediaWindow.getBounds()).id,
+    );
+    if (mediaWindowScreen) mediaWindowScreen.mediaWindow = true;
+  } catch (e) {
+    captureElectronError(e, {
+      contexts: { fn: { name: 'getAllScreens', window: 'mediaWindow' } },
+    });
   }
 
   return displays;

@@ -13,21 +13,15 @@ import { useJwStore } from 'stores/jw';
 
 import type { MigrationFunction } from './types';
 
-const { fileUrlToPath, fs, path, readdir } = window.electronApi;
+const { fileUrlToPath, fs, path, readdir } = globalThis.electronApi;
 const { join } = path;
 
 export const backfillLastUsed: MigrationFunction = async () => {
   try {
     const today = formatDate(new Date(), 'YYYY-MM-DD');
 
-    // 1. Initialize all existing folders with TODAY
+    // 1. Initialize all existing publication folders with TODAY
     // This ensures they are not immediately deleted, but will be candidates for deletion tomorrow if not used.
-    const roots = [
-      await getPublicationsPath(),
-      // Check for custom cache folder if needed, but getPublicationsPath follows logic
-    ];
-    // Add additional media path
-    roots.push(await getAdditionalMediaPath());
 
     const pubsPath = await getPublicationsPath();
     if (await fs.exists(pubsPath)) {

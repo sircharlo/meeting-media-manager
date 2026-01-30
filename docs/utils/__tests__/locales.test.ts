@@ -8,23 +8,29 @@ import { camelToKebabCase } from '../general';
 
 describe('Locales', () => {
   it('should be defined and equal', async () => {
-    const locales = localeOptions.map((l) => l.value).sort();
-    const localesKebab = locales.map(camelToKebabCase).sort();
+    const locales = localeOptions
+      .map((l) => l.value)
+      .sort((a, b) => a.localeCompare(b));
+    const localesKebab = locales
+      .map((element) => camelToKebabCase(element))
+      .sort((a, b) => a.localeCompare(b));
 
-    const messages = Object.keys(docsMessages).sort();
+    const messages = Object.keys(docsMessages).sort((a, b) =>
+      a.localeCompare(b),
+    );
 
     expect(locales).toEqual(messages);
 
     const localeFiles = (await readdir(resolve(__dirname, '../../locales')))
       .filter((f) => f.endsWith('.json'))
       .map((f) => f.replace('.json', ''))
-      .sort();
+      .sort((a, b) => a.localeCompare(b));
 
     expect(localesKebab).toEqual(localeFiles);
 
     const srcFolders = (await readdir(resolve(__dirname, '../../src')))
       .filter((f) => f !== 'assets' && f !== 'public')
-      .sort();
+      .sort((a, b) => a.localeCompare(b));
 
     expect(localesKebab).toEqual(srcFolders);
   });

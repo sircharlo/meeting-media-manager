@@ -169,7 +169,7 @@ const { sanitize } = DOMPurify;
 
 const { t } = useI18n();
 
-const { getScreenAccessStatus, PLATFORM } = window.electronApi;
+const { getScreenAccessStatus, PLATFORM } = globalThis.electronApi;
 
 const $q = useQuasar();
 

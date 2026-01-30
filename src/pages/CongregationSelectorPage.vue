@@ -164,17 +164,19 @@ async function chooseCongregation(
     const invalidSettingsConfigured = await setCongregation(congregation);
     if (congregation) {
       if (window?.electronApi) {
-        window.electronApi.getLowDiskSpaceStatus().then((isLowDiskSpace) => {
-          if (isLowDiskSpace) {
-            createTemporaryNotification({
-              caption: t('low-disk-space-warning'),
-              icon: 'mmm-warning',
-              message: t('disk-space-is-running-low'),
-              timeout: 10000,
-              type: 'warning',
-            });
-          }
-        });
+        globalThis.electronApi
+          .getLowDiskSpaceStatus()
+          .then((isLowDiskSpace) => {
+            if (isLowDiskSpace) {
+              createTemporaryNotification({
+                caption: t('low-disk-space-warning'),
+                icon: 'mmm-warning',
+                message: t('disk-space-is-running-low'),
+                timeout: 10000,
+                type: 'warning',
+              });
+            }
+          });
       }
 
       updateYeartext({

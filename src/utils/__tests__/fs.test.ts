@@ -25,7 +25,7 @@ import {
   updatesDisabled,
 } from '../fs';
 
-const { fs } = window.electronApi;
+const { fs } = globalThis.electronApi;
 const { emptyDir, ensureFile, exists, remove } = fs;
 
 installPinia();

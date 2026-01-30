@@ -41,7 +41,7 @@ import {
   watchFolder,
 } from 'src-electron/main/fs';
 import { getAllScreens } from 'src-electron/main/screen';
-import { setElectronUrlVariables, shouldQuit } from 'src-electron/main/session';
+import { quitStatus, setElectronUrlVariables } from 'src-electron/main/session';
 import {
   registerShortcut,
   unregisterAllShortcuts,
@@ -141,7 +141,7 @@ handleIpcSend('setElectronUrlVariables', (_e, variables: string) => {
 
 handleIpcSend('authorizedClose', () => {
   toggleAuthorizedClose(true);
-  if (shouldQuit) app.quit();
+  if (quitStatus.shouldQuit) app.quit();
   else if (mainWindow && !mainWindow.isDestroyed()) mainWindow.close();
 });
 

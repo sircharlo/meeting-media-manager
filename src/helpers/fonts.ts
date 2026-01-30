@@ -11,7 +11,7 @@ import { fetchRaw } from 'src/utils/api';
 import { getFontsPath } from 'src/utils/fs';
 import { useJwStore } from 'stores/jw';
 
-const { fs, path } = window.electronApi;
+const { fs, path } = globalThis.electronApi;
 const { ensureDir, exists, readFile, stat, writeFile } = fs;
 const { join } = path;
 
@@ -90,8 +90,6 @@ export const setElementFont = async (fontName: FontName) => {
         });
       }
 
-      // if (useJwStore().urlVariables.base !== 'jw.org') return false;
-      // if (await window.electronApi?.isDownloadErrorExpected()) return false;
       return false;
     }
   })();
@@ -155,7 +153,7 @@ const needsDownload = async (
     if (!remoteSize) return true;
 
     const localSize = (await stat(fontPath)).size;
-    return parseInt(remoteSize, 10) !== localSize;
+    return Number.parseInt(remoteSize, 10) !== localSize;
   } catch {
     return false;
   }
@@ -223,5 +221,5 @@ export const getLocalFontPath = async (fontName: FontName) => {
     return fontPath;
   })();
 
-  return localFontPathPromises[fontName] as Promise<string>;
+  return localFontPathPromises[fontName];
 };

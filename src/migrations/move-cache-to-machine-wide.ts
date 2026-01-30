@@ -8,7 +8,8 @@ import type { MigrationFunction } from './types';
 
 export const moveCacheToMachineWide: MigrationFunction = async () => {
   try {
-    const { fs, getSharedDataPath, getUserDataPath, path } = window.electronApi;
+    const { fs, getSharedDataPath, getUserDataPath, path } =
+      globalThis.electronApi;
     const { exists, move } = fs;
     const { join } = path;
 
@@ -58,7 +59,7 @@ export const moveCacheToMachineWide: MigrationFunction = async () => {
               const updateItemPath = (item: MediaItem) => {
                 if (item?.source === 'additional') {
                   const replacePath = (url: string | undefined) => {
-                    if (url && url.startsWith(userDataPath)) {
+                    if (url?.startsWith(userDataPath)) {
                       return url.replace(userDataPath, sharedPath);
                     }
                     return url;
@@ -70,11 +71,15 @@ export const moveCacheToMachineWide: MigrationFunction = async () => {
                 }
 
                 if (item?.children) {
-                  item.children.forEach(updateItemPath);
+                  item.children.forEach((element) => {
+                    updateItemPath(element);
+                  });
                 }
               };
 
-              section?.items?.forEach(updateItemPath);
+              section?.items?.forEach((element) => {
+                updateItemPath(element);
+              });
             });
           });
         });
