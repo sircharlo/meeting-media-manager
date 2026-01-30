@@ -88,6 +88,7 @@ export interface ElectronApi {
   getBetaUpdatesPath: () => Promise<string>;
   getLocales: () => Promise<string[]>;
   getLocalPathFromFileObject: (fileObject: File | string | undefined) => string;
+  getLowDiskSpaceStatus: () => Promise<boolean>;
   getNrOfPdfPages: (pdfPath: string) => Promise<number>;
   getScreenAccessStatus: () => Promise<MediaAccessStatus>;
   getSharedDataPath: () => Promise<null | string>;
@@ -225,6 +226,7 @@ export type ElectronIpcInvokeKey =
   | 'getAppDataPath'
   | 'getBetaUpdatesPath'
   | 'getLocales'
+  | 'getLowDiskSpaceStatus'
   | 'getScreenAccessStatus'
   | 'getSharedDataPath'
   | 'getUpdatesDisabledPath'

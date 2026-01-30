@@ -25,6 +25,7 @@ const { autoUpdater } = electronUpdater;
 import { pathExistsSync } from 'fs-extra/esm';
 import { arch, platform } from 'node:os';
 import { PLATFORM } from 'src-electron/constants';
+import { getLowDiskSpaceStatus } from 'src-electron/main/disk-space';
 import {
   downloadFile,
   isDownloadErrorExpected,
@@ -274,6 +275,7 @@ function isOS64Bit() {
 
 handleIpcInvoke('getAppDataPath', async () => getAppDataPath());
 handleIpcInvoke('getBetaUpdatesPath', async () => getBetaUpdatesPath());
+handleIpcInvoke('getLowDiskSpaceStatus', async () => getLowDiskSpaceStatus());
 handleIpcInvoke('getUpdatesDisabledPath', async () => getUpdatesDisabledPath());
 handleIpcInvoke('getSharedDataPath', async () => getSharedDataPath());
 handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
