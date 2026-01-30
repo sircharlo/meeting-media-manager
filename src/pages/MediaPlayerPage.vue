@@ -518,17 +518,17 @@ const playMediaElement = (wasPaused = false, websiteStream = false) => {
 
 const endOrLoop = () => {
   console.log('🎬 [endOrLoop] Video ended, repeat:', mediaRepeat.value);
-  if (!mediaRepeat.value) {
-    console.log('🎬 [endOrLoop] Posting ended state');
-    postLastEndTimestamp(Date.now());
-    // Don't clear mediaCustomDuration immediately to avoid race condition
-    // It will be cleared when the media state is handled by the main window
-  } else {
+  if (mediaRepeat.value) {
     console.log('🎬 [endOrLoop] Looping video');
     if (currentMediaElement.value) {
       currentMediaElement.value.currentTime = customMin.value;
       playMediaElement();
     }
+  } else {
+    console.log('🎬 [endOrLoop] Posting ended state');
+    postLastEndTimestamp(Date.now());
+    // Don't clear mediaCustomDuration immediately to avoid race condition
+    // It will be cleared when the media state is handled by the main window
   }
 };
 
@@ -1053,14 +1053,14 @@ watchImmediate(
         oldValues,
         newValues,
       );
-      postGetCurrentState(new Date().getTime().toString());
+      postGetCurrentState(Date.now().toString());
       loadFonts();
     }
   },
 );
 
 onMounted(() => {
-  postGetCurrentState(new Date().getTime().toString());
+  postGetCurrentState(Date.now().toString());
 });
 
 onBeforeUnmount(() => {

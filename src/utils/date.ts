@@ -58,7 +58,7 @@ export const dateFromString = (
         date = new Date(lookupDate.getTime());
         // Check if the result is valid
         if (Number.isNaN(date.getTime())) {
-          throw new Error('Invalid date object');
+          throw new TypeError('Invalid date object');
         }
       } catch {
         throw new Error(`Cannot convert object to date: ${typeof lookupDate}`);
@@ -75,7 +75,7 @@ export const dateFromString = (
         date = new Date(lookupDate as unknown as Date);
         // Check if the result is valid
         if (Number.isNaN(date.getTime())) {
-          throw new Error('Invalid date object');
+          throw new TypeError('Invalid date object');
         }
       } catch {
         throw new Error(
@@ -116,12 +116,12 @@ export const dateFromString = (
         throw new Error(`Unsupported date string format: ${parsedDate}`);
       }
     } else {
-      throw new Error(`Unsupported input type: ${typeof lookupDate}`);
+      throw new TypeError(`Unsupported input type: ${typeof lookupDate}`);
     }
 
     // Check if the date is valid
     if (Number.isNaN(date.getTime())) {
-      throw new Error(`Unsupported date format: ${lookupDate}`);
+      throw new TypeError(`Unsupported date format: ${lookupDate}`);
     }
 
     // Return the date with time set to midnight in local timezone
@@ -166,7 +166,7 @@ export const isInPast = (lookupDate: Date | string, includeToday = false) => {
  */
 export const friendlyDayToJsDay = (day?: number) => {
   try {
-    if (day === undefined || day === null) day = -1;
+    day ??= -1;
     const firstDay = day === 6 ? 0 : Number.parseInt(day.toString()) + 1;
     const correctedFirstDay = firstDay > 7 ? firstDay - 7 : firstDay;
     return correctedFirstDay;
@@ -335,7 +335,6 @@ export function formatDate(
 
   const date = new Date(val);
 
-  // @ts-expect-error: Date constructor can return NaN
   if (Number.isNaN(date)) {
     return '';
   }
