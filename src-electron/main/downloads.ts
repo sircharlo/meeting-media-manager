@@ -11,6 +11,11 @@ import upath from 'upath';
 
 const { basename } = upath;
 
+enum DownloadState {
+  ACTIVE = 'ACTIVE',
+  PAUSED = 'PAUSED',
+}
+
 interface DownloadQueueItem {
   destFilename: string;
   saveDir: string;
@@ -21,13 +26,55 @@ interface GeoInfo {
   countryCode: string;
 }
 
+interface OngoingDownload {
+  item: DownloadQueueItem;
+  lowPriority: boolean;
+  state: DownloadState;
+  uuid: string;
+}
+
 const downloadQueue: DownloadQueueItem[] = [];
 const lowPriorityQueue: DownloadQueueItem[] = [];
-const activeDownloadIds: string[] = [];
-const maxActiveDownloads = 5;
+const ongoingDownloads = new Map<string, OngoingDownload>();
+const maxActiveDownloads = 3;
 let cancelAll = false;
 
 let manager: EDMType | null = null;
+
+// Helper getters for filtered views
+const getActiveDownloads = () => {
+  const active = new Map<string, OngoingDownload>();
+  ongoingDownloads.forEach((download, key) => {
+    if (download.state === DownloadState.ACTIVE) {
+      active.set(key, download);
+    }
+  });
+  return active;
+};
+
+const getPausedDownloads = () => {
+  const paused = new Map<string, OngoingDownload>();
+  ongoingDownloads.forEach((download, key) => {
+    if (download.state === DownloadState.PAUSED) {
+      paused.set(key, download);
+    }
+  });
+  return paused;
+};
+
+const getActiveLowPriorityDownloads = () => {
+  const activeLowPriority = new Map<string, OngoingDownload>();
+  ongoingDownloads.forEach((download, key) => {
+    if (download.state === DownloadState.ACTIVE && download.lowPriority) {
+      activeLowPriority.set(key, download);
+    }
+  });
+  return activeLowPriority;
+};
+
+const getActiveDownloadCount = () => {
+  return getActiveDownloads().size;
+};
 
 const loadElectronDownloadManager: () => Promise<EDMType | null> = async () => {
   if (!mainWindow || mainWindow.isDestroyed()) return null; // window is closed
@@ -52,9 +99,26 @@ export async function cancelAllDownloads() {
   downloadQueue.length = 0;
   lowPriorityQueue.length = 0;
 
-  activeDownloadIds.forEach((id) => {
-    manager.cancelDownload(id);
+  ongoingDownloads.forEach((download) => {
+    if (download.uuid) {
+      try {
+        manager?.cancelDownload(download.uuid);
+      } catch (error) {
+        captureElectronError(error, {
+          contexts: {
+            fn: {
+              name: 'downloads.ts cancelAllDownloads',
+              params: {
+                download,
+              },
+            },
+          },
+        });
+      }
+    }
   });
+
+  ongoingDownloads.clear();
 }
 
 /**
@@ -78,22 +142,42 @@ export async function downloadFile(
     if (!destFilename) destFilename = basename(url);
 
     const fileToDownload = { destFilename, saveDir, url };
+    const key = url + saveDir;
 
-    if (!activeDownloadIds.includes(url + saveDir)) {
-      if (lowPriority) {
-        lowPriorityQueue.push(fileToDownload);
-      } else {
-        downloadQueue.push(fileToDownload);
+    // Check if already in progress
+    const existing = ongoingDownloads.get(key);
+    if (existing) {
+      // If active and we want normal priority but it's low, promote it
+      if (!lowPriority && existing.lowPriority) {
+        existing.lowPriority = false;
       }
 
-      if (
-        downloadQueue.length + activeDownloadIds.length <
-        maxActiveDownloads
-      ) {
+      // If paused and we want normal priority, promote it and trigger resume
+      if (existing.state === DownloadState.PAUSED && !lowPriority) {
+        existing.lowPriority = false;
+        // Stop other low priority downloads to free up slots
+        stopLowPriorityDownloads();
         processQueue();
       }
+
+      return key;
     }
-    return url + saveDir;
+
+    // New Download
+    if (lowPriority) {
+      lowPriorityQueue.push(fileToDownload);
+    } else {
+      // Stop low priority downloads to make room for high priority
+      stopLowPriorityDownloads();
+      downloadQueue.push(fileToDownload);
+    }
+
+    console.log('fileToDownload', fileToDownload, 'lowPriority', lowPriority);
+
+    // Trigger queue processing
+    processQueue();
+
+    return key;
   } catch (error) {
     captureElectronError(error, {
       contexts: {
@@ -108,6 +192,42 @@ export async function downloadFile(
     });
     return null;
   }
+}
+
+/**
+ * Stop low priority downloads (Pause them).
+ */
+function stopLowPriorityDownloads() {
+  const activeLowPriority = getActiveLowPriorityDownloads();
+  activeLowPriority.forEach((download, key) => {
+    console.log(
+      'Pausing download to free slot:',
+      download.uuid || 'no-uuid',
+      key,
+    );
+    if (!manager) return;
+
+    // Always mark as PAUSED so if the download ID comes in later, it catches it
+    download.state = DownloadState.PAUSED;
+
+    if (download.uuid) {
+      try {
+        manager.pauseDownload(download.uuid);
+      } catch (error) {
+        captureElectronError(error, {
+          contexts: {
+            fn: {
+              name: 'downloads.ts stopLowPriorityDownloads',
+              params: {
+                download,
+                key,
+              },
+            },
+          },
+        });
+      }
+    }
+  });
 }
 
 // Cache for the download error check result
@@ -212,61 +332,164 @@ export function resetDownloadErrorCache() {
  * Processes the download queue.
  * This function is called when a new download is added to the queue.
  * It will start downloading as many files as possible, up to the maximum limit.
- * @returns The ID of the download that was started, or null if no downloads were started.
  */
 async function processQueue() {
-  const manager = await loadElectronDownloadManager();
-  if (!mainWindow || cancelAll || !manager) return null;
-  // If max active downloads reached, wait for a slot
-  while (activeDownloadIds.length >= maxActiveDownloads) {
-    if (cancelAll) return;
-    await new Promise((resolve) => {
-      setTimeout(resolve, 1000);
-    });
+  const loadedManager = await loadElectronDownloadManager();
+  if (!mainWindow || cancelAll || !loadedManager) return;
+
+  const activeCount = getActiveDownloadCount();
+
+  // If max active downloads reached, exit and wait for completion callback to trigger next processing
+  if (activeCount >= maxActiveDownloads) {
+    console.log('Queue full. Active:', activeCount, 'Max:', maxActiveDownloads);
+    return;
   }
 
-  let download: DownloadQueueItem | undefined;
+  // Priority:
+  // 1. Normal Queue (New)
+  // 2. Paused Downloads (Resume) - Prefer Normal paused, then Low paused
+  // 3. Low Priority Queue (New)
 
   if (downloadQueue.length > 0) {
-    download = downloadQueue.shift();
-  } else if (lowPriorityQueue.length > 0) {
-    download = lowPriorityQueue.shift();
-  } else {
-    return; // No downloads to process
+    const download = downloadQueue.shift();
+    if (!download) return;
+    await startDownload(download, false);
+    // Process next in queue if slots available
+    if (getActiveDownloadCount() < maxActiveDownloads) {
+      processQueue(); // Don't await - let it run async
+    }
+    return;
   }
 
-  if (!download || !mainWindow || mainWindow.isDestroyed() || cancelAll) return;
-  const { destFilename, saveDir, url } = download;
-  activeDownloadIds.push(url + saveDir);
+  // Check if active high priority download exists
+  const activeDownloads = getActiveDownloads();
+  const highPriorityActive = Array.from(activeDownloads.values()).some(
+    (d) => !d.lowPriority,
+  );
 
-  // Start the download
+  // Check for paused items to resume
+  const pausedDownloads = getPausedDownloads();
+  if (pausedDownloads.size > 0) {
+    let resumeKey: null | string = null;
+    let resumeDownload: null | OngoingDownload = null;
+
+    // Look for normal priority in paused
+    for (const [key, download] of pausedDownloads.entries()) {
+      if (!download.lowPriority && download.uuid) {
+        resumeKey = key;
+        resumeDownload = download;
+        break;
+      }
+    }
+
+    // If no normal, take any (Low) BUT ONLY IF NO HIGH PRIORITY ACTIVE
+    if (!resumeKey) {
+      if (highPriorityActive) {
+        console.log(
+          'High priority active. Not resuming low priority paused downloads.',
+        );
+      } else {
+        for (const [key, download] of pausedDownloads.entries()) {
+          if (download.uuid) {
+            resumeKey = key;
+            resumeDownload = download;
+            break;
+          }
+        }
+      }
+    }
+
+    if (resumeKey && resumeDownload) {
+      try {
+        resumeDownload.state = DownloadState.ACTIVE;
+        loadedManager.resumeDownload(resumeDownload.uuid);
+        // Process next in queue if slots available
+        if (getActiveDownloadCount() < maxActiveDownloads) {
+          processQueue(); // Don't await - let it run async
+        }
+      } catch (e) {
+        // failed to resume, remove from ongoing
+        ongoingDownloads.delete(resumeKey);
+        captureElectronError(e, {
+          contexts: {
+            fn: {
+              name: 'downloads.ts processQueue resume',
+              params: {
+                resumeDownload,
+                resumeKey,
+              },
+            },
+          },
+        });
+        // Try processing queue again
+        processQueue();
+      }
+      return;
+    }
+  }
+
+  if (lowPriorityQueue.length > 0) {
+    if (highPriorityActive) {
+      console.log(
+        'High priority active. Not starting new low priority downloads.',
+      );
+      return;
+    }
+    // Only start low priority if we didn't start anything else
+    const download = lowPriorityQueue.shift();
+    if (!download) return;
+    await startDownload(download, true);
+    // Process next in queue if slots available
+    if (getActiveDownloadCount() < maxActiveDownloads) {
+      processQueue(); // Don't await - let it run async
+    }
+  }
+}
+
+async function startDownload(
+  download: DownloadQueueItem,
+  isLowPriority: boolean,
+) {
+  const { destFilename, saveDir, url } = download;
+  const key = url + saveDir;
+
+  if (!mainWindow || !manager) return;
+
+  ongoingDownloads.set(key, {
+    item: download,
+    lowPriority: isLowPriority,
+    state: DownloadState.ACTIVE,
+    uuid: '',
+  });
+
   try {
+    console.log('Starting download via manager:', url);
     const downloadId = await manager.download({
       callbacks: {
-        onDownloadCancelled: async ({ id }) => {
-          sendToWindow(mainWindow, 'downloadCancelled', { id });
-          activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
-          processQueue(); // Process next download
+        onDownloadCancelled: async () => {
+          sendToWindow(mainWindow, 'downloadCancelled', { id: key });
+          ongoingDownloads.delete(key);
+          processQueue();
         },
         onDownloadCompleted: async ({ item }) => {
           sendToWindow(mainWindow, 'downloadCompleted', {
             filePath: item.getSavePath(),
-            id: url + saveDir,
+            id: key,
           });
-          activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
-          processQueue(); // Process next download
+          ongoingDownloads.delete(key);
+          processQueue();
         },
         onDownloadProgress: async ({ item, percentCompleted }) => {
           sendToWindow(mainWindow, 'downloadProgress', {
             bytesReceived: item.getReceivedBytes(),
-            id: url + saveDir,
+            id: key,
             percentCompleted,
           });
         },
         onDownloadStarted: async ({ item, resolvedFilename }) => {
           sendToWindow(mainWindow, 'downloadStarted', {
             filename: resolvedFilename,
-            id: url + saveDir,
+            id: key,
             totalBytes: item.getTotalBytes(),
           });
         },
@@ -275,7 +498,7 @@ async function processQueue() {
           captureElectronError(err, {
             contexts: {
               fn: {
-                name: 'src-electron/downloads processQueue onError',
+                name: 'src-electron/downloads startDownload onError',
                 params: {
                   directory: saveDir,
                   isDownloadErrorExpected: await isDownloadErrorExpected(),
@@ -288,11 +511,11 @@ async function processQueue() {
           });
           if (downloadData) {
             sendToWindow(mainWindow, 'downloadError', {
-              id: downloadData.id,
+              id: key,
             });
           }
-          activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
-          processQueue(); // Process next download
+          ongoingDownloads.delete(key);
+          processQueue();
         },
       },
       directory: saveDir,
@@ -300,13 +523,22 @@ async function processQueue() {
       url,
       window: mainWindow,
     });
-    return downloadId;
+
+    const current = ongoingDownloads.get(key);
+    if (current) {
+      current.uuid = downloadId;
+
+      // If it was paused while initializing (race condition), pause it now
+      if (current.state === DownloadState.PAUSED) {
+        manager.pauseDownload(downloadId);
+      }
+    }
   } catch (error) {
-    if (quitStatus.isAppQuitting) return null;
+    if (quitStatus.isAppQuitting) return;
     captureElectronError(error, {
       contexts: {
         fn: {
-          name: 'src-electron/downloads processQueue catch',
+          name: 'src-electron/downloads startDownload catch',
           params: {
             directory: saveDir,
             saveAsFilename: destFilename,
@@ -316,8 +548,7 @@ async function processQueue() {
         },
       },
     });
-    activeDownloadIds.splice(activeDownloadIds.indexOf(url + saveDir), 1);
-    processQueue(); // Process next download
-    return null;
+    ongoingDownloads.delete(key);
+    processQueue();
   }
 }

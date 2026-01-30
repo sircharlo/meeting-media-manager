@@ -193,7 +193,7 @@ export const getLocalDate = (
       : dateObj;
   // Fallback safely if mask is invalid or produces empty
   const desired = formatDate(parsedDate, mask || 'D MMMM YYYY', locale);
-  if (desired && desired.trim()) return desired;
+  if (desired?.trim()) return desired;
   return formatDate(parsedDate, 'D MMMM YYYY', locale);
 };
 
@@ -355,6 +355,17 @@ export function formatDate(
   );
 }
 
+/**
+ * Calculates the difference between two dates (`date` - `subtract`).
+ *
+ * The result equals the number of `units` to add to `subtract` to get `date`.
+ * - If `date` is in the future relative to `subtract`, the result is **positive**.
+ * - If `date` is in the past relative to `subtract`, the result is **negative**.
+ *
+ * @param date The target date.
+ * @param subtract The date to subtract involved in the operation.
+ * @param unit The unit of measurement (default: 'days').
+ */
 export function getDateDiff(
   date: Date | number | string,
   subtract: Date | number | string,

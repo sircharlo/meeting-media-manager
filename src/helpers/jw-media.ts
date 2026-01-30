@@ -316,7 +316,7 @@ export const addJwpubDocumentMediaToFiles = async (
 export const downloadFileIfNeeded = async ({
   dir,
   filename,
-  lowPriority = false,
+  lowPriority,
   meetingDate,
   size,
   url,
@@ -796,10 +796,7 @@ const getStudyBible = async () => {
       pub: 'nwtsty',
     };
     const currentStateStore = useCurrentStateStore();
-    const nwtStyDb_E_Promise = getDbFromJWPUB(
-      nwtStyPublication_E,
-      currentStateStore.selectedDate,
-    );
+    const nwtStyDb_E_Promise = getDbFromJWPUB(nwtStyPublication_E);
 
     const languages = [
       ...new Set([
@@ -824,10 +821,7 @@ const getStudyBible = async () => {
         langwritten,
         pub: 'nwtsty',
       };
-      nwtStyDb = await getDbFromJWPUB(
-        nwtStyPublication,
-        currentStateStore.selectedDate,
-      );
+      nwtStyDb = await getDbFromJWPUB(nwtStyPublication);
       if (nwtStyDb) break;
     }
 
@@ -847,10 +841,7 @@ const getStudyBible = async () => {
         langwritten,
         pub: 'nwt',
       };
-      nwtDb = await getDbFromJWPUB(
-        nwtPublication,
-        currentStateStore.selectedDate,
-      );
+      nwtDb = await getDbFromJWPUB(nwtPublication);
       if (nwtDb) break;
     }
 
@@ -1321,10 +1312,7 @@ export const getMemorialMedia = async () => {
         langwritten,
         pub: `mi${year}`,
       };
-      const db = await getDbFromJWPUB(
-        pub,
-        currentStateStore.currentSettings?.memorialDate || undefined,
-      );
+      const db = await getDbFromJWPUB(pub);
 
       if (!db) continue;
 
@@ -2742,6 +2730,7 @@ const downloadMissingMedia = async (
 
     const downloadedFile = await downloadFileIfNeeded({
       dir: pubDir,
+      lowPriority: true,
       meetingDate,
       size: bestItem.filesize,
       url: bestItem.file.url,
@@ -2764,6 +2753,11 @@ const downloadMissingMedia = async (
         await downloadFileIfNeeded({
           dir: pubDir,
           filename: itemFilename,
+          // High Priority (false) if meeting is Today or Tomorrow (diff <= 1)
+          // Low Priority (true) if meeting is in the future (diff > 1)
+          lowPriority: meetingDate
+            ? getDateDiff(meetingDate, new Date(), 'days') > 1
+            : false,
           meetingDate,
           url: itemUrl,
         });
@@ -2823,6 +2817,8 @@ export const downloadAdditionalRemoteVideo = async (
 
     downloadFileIfNeeded({
       dir: await currentStateStore.getDatedAdditionalMediaDirectory(),
+      // Additional media added by user should be a high priority download
+      lowPriority: false,
       meetingDate,
       size: bestItem.filesize,
       url: bestItemUrl,
@@ -2963,6 +2959,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
       }
       downloadFileIfNeeded({
         dir,
+        // Background music should not be a high priority download
         lowPriority: true,
         size: mediaLink.filesize,
         url: mediaLink.file.url,
@@ -3054,6 +3051,11 @@ const downloadJwpub = async (
 
     return await downloadFileIfNeeded({
       dir: await getPublicationDirectory(publication),
+      // High Priority (false) if meeting is Today or Tomorrow (diff <= 1)
+      // Low Priority (true) if meeting is in the future (diff > 1)
+      lowPriority: meetingDate
+        ? getDateDiff(meetingDate, new Date(), 'days') > 1
+        : false,
       meetingDate,
       size: mediaLinks[0]?.filesize,
       url: mediaLinks[0]?.file.url ?? '',

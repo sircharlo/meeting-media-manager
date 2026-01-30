@@ -363,10 +363,6 @@ const groupedMediaItems = computed(() => {
     const bNum = parseInt(bLabel);
     if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
 
-    // Put "General" or other text at the end (or beginning depending on preference, usually text < numbers in ASCII but we want Verse numbers sorted)
-    // Actually, if we have "General" and "1:1", parseInt("General") is NaN.
-    // Let's put defined numbers before NaNs? Or NaNs (General) first?
-    // Usually "General" (Introduction) comes before verses.
     if (isNaN(aNum) && !isNaN(bNum)) return -1;
     if (!isNaN(aNum) && isNaN(bNum)) return 1;
 
@@ -409,20 +405,14 @@ const fetchChapterMediaAvailability = async (bookNr: number) => {
     const result = await getStudyBibleMedia(bookNr);
 
     result.mediaItems.forEach((item) => {
-      // Check for explicit ChapterNumber (if available on item)
-      // The query returns it, but we need to make sure it's on the object.
-      // If not, we can try to parse it from VerseLabel or other fields.
-      // Based on logs, item has ChapterNumber.
       if (item.ChapterNumber !== undefined && item.ChapterNumber !== null) {
         chaptersSet.add(item.ChapterNumber);
       } else if (item.VerseLabel) {
-        // Try to parse from VerseLabel "Chapter:Verse"
         const match = item.VerseLabel.match(/>(\d+):/);
         if (match && match[1]) {
           chaptersSet.add(parseInt(match[1]));
         }
       }
-      // Also check for Introduction (Chapter 0)
       // Usually intro items have ChapterNumber 0 or are in related items
       if (item.ChapterNumber === 0) {
         chaptersSet.add(0);

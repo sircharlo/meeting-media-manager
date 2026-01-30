@@ -1159,6 +1159,8 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
               baseFileName,
               file instanceof File ? file.type : undefined,
             ),
+            // Additional media added by user should be a high priority download
+            lowPriority: false,
             url: filepath,
           })
         ).path;

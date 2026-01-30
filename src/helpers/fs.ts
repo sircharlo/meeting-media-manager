@@ -264,6 +264,8 @@ export const getSubtitlesUrl = async (
         await downloadFileIfNeeded({
           dir: subDirectory,
           filename: subtitlesFilename,
+          // Subtitles should not be a high priority download due to their small size
+          lowPriority: true,
           url: subtitles,
         });
         subtitlesPath = join(subDirectory, subtitlesFilename);
@@ -327,11 +329,7 @@ export const setupFFmpeg = async (): Promise<string> => {
       return currentState.ffmpegPath;
     }
 
-    await downloadFfmpeg(
-      version.browser_download_url,
-      ffmpegZipPath,
-      ffmpegDir,
-    );
+    await downloadFfmpeg(version.browser_download_url, ffmpegDir);
     const ffmpegPath = await unzipAndFindFFmpeg(ffmpegZipPath, ffmpegDir);
 
     currentState.ffmpegPath = ffmpegPath;
@@ -343,12 +341,9 @@ export const setupFFmpeg = async (): Promise<string> => {
 };
 
 // Download FFmpeg
-async function downloadFfmpeg(
-  url: string,
-  zipPath: string,
-  dir: string,
-): Promise<void> {
-  const downloadId = await downloadFile(url, dir);
+async function downloadFfmpeg(url: string, dir: string): Promise<void> {
+  // FFmpeg is a large file, so we don't want to download it as a high priority
+  const downloadId = await downloadFile(url, dir, undefined, true);
 
   await new Promise<void>((resolve, reject) => {
     const interval = setInterval(() => {
