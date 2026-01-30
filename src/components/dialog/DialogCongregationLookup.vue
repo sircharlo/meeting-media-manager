@@ -208,18 +208,29 @@ const lookupCongregation = async () => {
 };
 
 const congregationLookupLanguages = ref<CongregationLanguage[]>([]);
-fetchJson<CongregationLanguage[]>(
-  `https://apps.${urlVariables.value.base || 'jw.org'}/api/public/meeting-search/languages`,
-  undefined,
-  useCurrentStateStore().online,
-)
-  .then((response) => {
-    congregationLookupLanguages.value = response || [];
-  })
-  .catch((error) => {
+
+const loadLanguages = async () => {
+  try {
+    congregationLookupLanguages.value =
+      (await fetchJson<CongregationLanguage[]>(
+        `https://apps.${urlVariables.value.base || 'jw.org'}/api/public/meeting-search/languages`,
+        undefined,
+        useCurrentStateStore().online,
+      )) || [];
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          name: 'DialogCongregationLookup.vue',
+          subroutine: 'loadLanguages',
+        },
+      },
+    });
     congregationLookupLanguages.value = [];
-    errorCatcher(error);
-  });
+  }
+};
+
+loadLanguages();
 
 const selectCongregation = (congregation: GeoRecord) => {
   try {

@@ -308,7 +308,7 @@ const chaptersWithMedia = ref<Set<number>>(new Set());
 const bibleBooksHebrew = computed(() => {
   return Object.fromEntries(
     Object.entries(bibleBooks.value).filter(
-      ([bookNr]) => parseInt(bookNr) < 40,
+      ([bookNr]) => Number.parseInt(bookNr) < 40,
     ),
   );
 });
@@ -316,7 +316,7 @@ const bibleBooksHebrew = computed(() => {
 const bibleBooksGreek = computed(() => {
   return Object.fromEntries(
     Object.entries(bibleBooks.value).filter(
-      ([bookNr]) => parseInt(bookNr) >= 40,
+      ([bookNr]) => Number.parseInt(bookNr) >= 40,
     ),
   );
 });
@@ -343,28 +343,28 @@ const groupedMediaItems = computed(() => {
 
     // Handle "Chapter:Verse" format
     if (aLabel.includes(':') && bLabel.includes(':')) {
-      const aParts = aLabel.split(':').map((p) => parseInt(p));
-      const bParts = bLabel.split(':').map((p) => parseInt(p));
+      const aParts = aLabel.split(':').map((p) => Number.parseInt(p));
+      const bParts = bLabel.split(':').map((p) => Number.parseInt(p));
       const aVerse = aParts[1];
       const bVerse = bParts[1];
 
       if (
         aVerse !== undefined &&
         bVerse !== undefined &&
-        !isNaN(aVerse) &&
-        !isNaN(bVerse)
+        !Number.isNaN(aVerse) &&
+        !Number.isNaN(bVerse)
       ) {
         return aVerse - bVerse;
       }
     }
 
     // Fallback to simple integer parse (e.g. for Chapter numbers if used elsewhere)
-    const aNum = parseInt(aLabel);
-    const bNum = parseInt(bLabel);
-    if (!isNaN(aNum) && !isNaN(bNum)) return aNum - bNum;
+    const aNum = Number.parseInt(aLabel);
+    const bNum = Number.parseInt(bLabel);
+    if (!Number.isNaN(aNum) && !Number.isNaN(bNum)) return aNum - bNum;
 
-    if (isNaN(aNum) && !isNaN(bNum)) return -1;
-    if (!isNaN(aNum) && isNaN(bNum)) return 1;
+    if (Number.isNaN(aNum) && !Number.isNaN(bNum)) return -1;
+    if (!Number.isNaN(aNum) && Number.isNaN(bNum)) return 1;
 
     return aLabel.localeCompare(bLabel);
   });
@@ -410,7 +410,7 @@ const fetchChapterMediaAvailability = async (bookNr: number) => {
       } else if (item.VerseLabel) {
         const match = item.VerseLabel.match(/>(\d+):/);
         if (match && match[1]) {
-          chaptersSet.add(parseInt(match[1]));
+          chaptersSet.add(Number.parseInt(match[1]));
         }
       }
       // Usually intro items have ChapterNumber 0 or are in related items

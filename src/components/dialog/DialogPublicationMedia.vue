@@ -8,7 +8,6 @@
         <div class="col">{{ t('publication-media') }}</div>
         <div class="col-shrink">
           <q-spinner v-if="loading" color="primary" />
-          <!-- <q-icon v-else color="accent-400" name="mmm-cloud-done" /> -->
         </div>
       </div>
       <div class="text-subtitle2 q-pb-sm q-px-md">
@@ -35,16 +34,7 @@
           :placeholder="t('search-placeholder')"
           @clear="clearSearch"
           @keyup="onSearchInput"
-        >
-          <!-- <template #append>
-            <q-btn
-              :disable="!searchQuery.trim() || loading"
-              flat
-              icon="search"
-              @click="performSearch"
-            />
-          </template> -->
-        </q-input>
+        />
       </div>
 
       <div class="q-px-md overflow-auto row" style="flex: 1 1 auto">
@@ -345,7 +335,7 @@
                     class="rounded-borders"
                     square
                   >
-                    <img :src="docPreviews[doc.DocumentId]" />
+                    <img :alt="doc.Title" :src="docPreviews[doc.DocumentId]" />
                   </q-avatar>
                 </q-item-section>
                 <q-item-section>
@@ -727,6 +717,17 @@ const categoryItems = [
   'programs',
 ];
 
+const buildIssue = (year: number | string, month: number, pub: string) => {
+  const issueBase = `${year}${month.toString().padStart(2, '0')}`;
+  if (pub === 'w') {
+    return Number(year) <= 2015 ? `${issueBase}15` : `${issueBase}00`;
+  }
+  if (pub === 'wp') {
+    return Number(year) <= 2015 ? `${issueBase}01` : `${issueBase}00`;
+  }
+  return `${issueBase}00`;
+};
+
 async function buildMonthChoices() {
   try {
     loading.value = true;
@@ -735,13 +736,7 @@ async function buildMonthChoices() {
     const year = selection.year;
     const promises = Array.from({ length: 12 }, async (_, idx) => {
       const m = idx + 1;
-      const issueBase = `${year}${m.toString().padStart(2, '0')}`;
-      const issue =
-        Number(year) <= 2015 && pub === 'w'
-          ? `${issueBase}15`
-          : Number(year) <= 2015 && pub === 'wp'
-            ? `${issueBase}01`
-            : `${issueBase}00`;
+      const issue = buildIssue(year, m, pub);
       const pubFetcher: PublicationFetcher = {
         fileformat: 'JWPUB',
         issue,
@@ -874,71 +869,73 @@ async function fetchJwtToken(): Promise<boolean> {
 }
 
 function goBack() {
-  if (step.value === 'article') {
-    documents.value = [];
-    docPreviews.value = {};
-    docHasMedia.value = new Set();
-    selection.dbPath = '';
-    if (searchQuery.value) {
-      step.value = 'search';
-    } else if (
-      selection.category === 'brochures-and-booklets' ||
-      selection.category === 'tracts-and-invitations' ||
-      selection.category === 'programs'
-    ) {
-      step.value = 'publicationListing';
-      selection.brochureLabel = '';
-    } else {
-      step.value = 'month';
-      selection.month = 0;
-    }
-    return;
-  } else if (step.value === 'search') {
-    searchQuery.value = '';
-    searchResults.value = [];
-    step.value = 'category';
-    return;
-  } else if (step.value === 'media') {
-    // Go back to search results
-    mediaItems.value = [];
-    step.value = 'search';
-    return;
-  } else if (step.value === 'month') {
-    documents.value = [];
-    docPreviews.value = {};
-    docHasMedia.value = new Set();
-    selection.dbPath = '';
-    selection.month = 0;
-    selection.year = '';
-    step.value = 'year';
-    return;
-  } else if (step.value === 'year') {
-    documents.value = [];
-    docPreviews.value = {};
-    docHasMedia.value = new Set();
-    selection.dbPath = '';
-    selection.year = '';
-    selection.publication = '';
-    selection.category = '';
+  switch (step.value) {
+    case 'article': {
+      resetDocuments();
 
-    selection.month = 0;
-    step.value =
-      selection.category === 'magazines' ? 'magazineType' : 'category';
-    return;
-  } else if (
-    step.value === 'magazineType' ||
-    step.value === 'publicationListing'
-  ) {
-    documents.value = [];
-    docPreviews.value = {};
-    docHasMedia.value = new Set();
-    selection.dbPath = '';
-    selection.publication = '';
-    selection.brochureLabel = '';
-    selection.year = '';
-    selection.month = 0;
-    selection.category = '';
-    step.value = 'category';
+      if (searchQuery.value) {
+        step.value = 'search';
+      } else if (
+        selection.category === 'brochures-and-booklets' ||
+        selection.category === 'tracts-and-invitations' ||
+        selection.category === 'programs'
+      ) {
+        step.value = 'publicationListing';
+        selection.brochureLabel = '';
+      } else {
+        step.value = 'month';
+        selection.month = 0;
+      }
+      break;
+    }
+
+    case 'magazineType':
+    // falls through
+
+    case 'publicationListing': {
+      resetDocuments();
+      selection.publication = '';
+      selection.brochureLabel = '';
+      selection.year = '';
+      selection.month = 0;
+      selection.category = '';
+      step.value = 'category';
+      break;
+    }
+
+    case 'media': {
+      mediaItems.value = [];
+      step.value = 'search';
+      break;
+    }
+
+    case 'month': {
+      resetDocuments();
+      selection.month = 0;
+      selection.year = '';
+      step.value = 'year';
+      break;
+    }
+
+    case 'search': {
+      searchQuery.value = '';
+      searchResults.value = [];
+      step.value = 'category';
+      break;
+    }
+    case 'year': {
+      resetDocuments();
+      selection.year = '';
+      selection.publication = '';
+      selection.month = 0;
+
+      const previousCategory = selection.category;
+      selection.category = '';
+
+      step.value =
+        previousCategory === 'magazines' ? 'magazineType' : 'category';
+      break;
+    }
   }
 }
 
@@ -1062,6 +1059,13 @@ async function performSearch() {
   } finally {
     loading.value = false;
   }
+}
+
+function resetDocuments() {
+  documents.value = [];
+  docPreviews.value = {};
+  docHasMedia.value = new Set();
+  selection.dbPath = '';
 }
 
 function resetState() {
@@ -1218,13 +1222,7 @@ async function selectMonth(m: number) {
     // Download jwpub and open DB
     const lang = currentSettings.value?.lang || 'E';
     const pub = selection.publication;
-    const baseIssue = `${selection.year}${m.toString().padStart(2, '0')}`;
-    const issue =
-      Number(selection.year) <= 2015 && pub === 'w'
-        ? `${baseIssue}15`
-        : Number(selection.year) <= 2015 && pub === 'wp'
-          ? `${baseIssue}01`
-          : `${baseIssue}00`;
+    const issue = buildIssue(selection.year, m, pub);
 
     const db = await getDbFromJWPUB({
       fileformat: 'JWPUB',
@@ -1321,7 +1319,7 @@ async function selectSearchResult(result: SearchResultItem) {
     if (
       publication === 'w' &&
       issue &&
-      parseInt(issue.toString()) >= 20080101 &&
+      Number.parseInt(issue.toString()) >= 20080101 &&
       issue.toString().slice(-2) === '01'
     ) {
       publication = 'wp';
@@ -1330,7 +1328,7 @@ async function selectSearchResult(result: SearchResultItem) {
     // Special issue handling for w, wp and ws
     if (['w', 'wp', 'ws'].includes(publication)) {
       if (issue?.length < 8) {
-        if (parseInt(issue?.slice(0, 4) || '0') <= 2015) {
+        if (Number.parseInt(issue?.slice(0, 4) || '0') <= 2015) {
           if (['w', 'ws'].includes(publication)) {
             issue = `${issue}15`;
           } else {
@@ -1356,7 +1354,27 @@ async function selectSearchResult(result: SearchResultItem) {
 
     const jwpubFileArray = pubMediaLinks?.files?.[lang]?.JWPUB;
     const jwpubFileIsPresent = jwpubFileArray?.length;
-    if (!jwpubFileIsPresent) {
+    if (jwpubFileIsPresent) {
+      const dbPath = await getDbFromJWPUB({
+        fileformat: 'JWPUB',
+        issue,
+        langwritten: lang,
+        pub: selection.publication,
+      });
+      if (!dbPath) {
+        loading.value = false;
+        return;
+      }
+      selection.dbPath = dbPath;
+      const docs = executeQuery<DocumentItem>(
+        dbPath,
+        `SELECT DocumentId, Title FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
+      );
+      documents.value = docs;
+      await buildDocumentHasMedia(dbPath);
+      await buildDocumentPreviews(dbPath);
+      step.value = 'article';
+    } else {
       // Find the best media format (prefer MP4, then others)
       let mediaFiles: MediaLink[] = [];
       const formatPriority: (keyof PublicationFiles)[] = ['MP4', 'M4V', 'MP3'];
@@ -1403,26 +1421,6 @@ async function selectSearchResult(result: SearchResultItem) {
         loading.value = false;
         return;
       }
-    } else {
-      const dbPath = await getDbFromJWPUB({
-        fileformat: 'JWPUB',
-        issue,
-        langwritten: lang,
-        pub: selection.publication,
-      });
-      if (!dbPath) {
-        loading.value = false;
-        return;
-      }
-      selection.dbPath = dbPath;
-      const docs = executeQuery<DocumentItem>(
-        dbPath,
-        `SELECT DocumentId, Title FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
-      );
-      documents.value = docs;
-      await buildDocumentHasMedia(dbPath);
-      await buildDocumentPreviews(dbPath);
-      step.value = 'article';
     }
   } catch (e) {
     errorCatcher(e);

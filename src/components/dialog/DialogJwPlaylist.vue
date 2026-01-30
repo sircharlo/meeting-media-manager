@@ -383,7 +383,7 @@ const loadPlaylistItems = async () => {
 
         const VerseNumbers = verseRows.map((v) => {
           const match = v.Label.match(/\w+ (?:\d+:)?(\d+)/);
-          return match?.[1] ? parseInt(match[1]) : 0;
+          return match?.[1] ? Number.parseInt(match[1]) : 0;
         });
 
         // Determine best preview path

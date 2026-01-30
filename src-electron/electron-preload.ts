@@ -39,6 +39,16 @@ initCloseListeners();
 initScreenListeners();
 initWebsiteListeners();
 
+const getPathFromFileObject = (fo?: File | string) => {
+  if (!fo) {
+    return '';
+  }
+  if (typeof fo === 'string') {
+    return fo;
+  }
+  return webUtils.getPathForFile(fo);
+};
+
 const electronApi: ElectronApi = {
   askForMediaAccess: () => send('askForMediaAccess'),
   checkForUpdates: () => send('checkForUpdates'),
@@ -55,8 +65,7 @@ const electronApi: ElectronApi = {
   getAppDataPath: () => invoke('getAppDataPath'),
   getBetaUpdatesPath: () => invoke('getBetaUpdatesPath'),
   getLocales: () => invoke('getLocales'),
-  getLocalPathFromFileObject: (fo) =>
-    fo ? (typeof fo === 'string' ? fo : webUtils.getPathForFile(fo)) : '',
+  getLocalPathFromFileObject: (fo) => getPathFromFileObject(fo),
   getLowDiskSpaceStatus: () => invoke('getLowDiskSpaceStatus'),
   getNrOfPdfPages,
   getScreenAccessStatus: () => invoke('getScreenAccessStatus'),

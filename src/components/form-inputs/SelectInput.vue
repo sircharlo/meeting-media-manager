@@ -41,12 +41,12 @@
 </template>
 
 <script setup lang="ts">
-import type { JsonObject } from 'app/node_modules/obs-websocket-js/node_modules/type-fest';
 import type {
   SettingsItemListKey,
   SettingsItemRule,
   SettingsValues,
 } from 'src/types';
+import type { JsonObject } from 'type-fest';
 
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
@@ -135,9 +135,7 @@ const filterFn = (
   };
 
   try {
-    if (!val) {
-      noFilter();
-    } else {
+    if (val) {
       update(() => {
         const needle = val.toLowerCase();
 
@@ -173,6 +171,8 @@ const filterFn = (
             scene.sceneName?.toString().toLowerCase().includes(needle),
           ) ?? [];
       });
+    } else {
+      noFilter();
     }
   } catch (error) {
     noFilter();

@@ -293,16 +293,16 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
     const screens = getAllScreens();
     const screensConfig = JSON.stringify(screens.map((s) => s.bounds));
 
-    if (screensConfig !== lastScreensConfig) {
+    if (screensConfig === lastScreensConfig) {
+      console.log(
+        '🔍 [moveMediaWindow] Screen configuration unchanged, skipping notification',
+      );
+    } else {
       console.log(
         '🔍 [moveMediaWindow] Screen configuration changed, notifying renderer',
       );
       notifyMainWindowAboutScreenOrWindowChange();
       lastScreensConfig = screensConfig;
-    } else {
-      console.log(
-        '🔍 [moveMediaWindow] Screen configuration unchanged, skipping notification',
-      );
     }
 
     console.log('🔍 [moveMediaWindow] Available screens:', screens.length);
@@ -376,13 +376,13 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
           b.height === mediaWindowPrefs.height
         );
       });
-      if (preferredIndex !== -1) {
+      if (preferredIndex === -1) {
+        console.log('🔍 [moveMediaWindow] Preferred display index not found');
+      } else {
         console.log(
           '🔍 [moveMediaWindow] Preferred display index:',
           preferredIndex,
         );
-      } else {
-        console.log('🔍 [moveMediaWindow] Preferred display index not found');
       }
     } else {
       console.log('🔍 [moveMediaWindow] No preferred display geometry found');
@@ -424,31 +424,31 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
             (s, index) => !s.mainWindow && index !== currentDisplayNr,
           );
 
-          if (alternativeScreen !== -1) {
-            targetDisplayNr = alternativeScreen;
-            targetFullscreen = true;
-            console.log(
-              '🔍 [moveMediaWindow] Moving windowed media window to alternative screen and going fullscreen:',
-              targetDisplayNr,
-            );
-          } else {
+          if (alternativeScreen === -1) {
             // If no alternative found, try any non-main window screen
             const anyAlternativeScreen = screens.findIndex(
               (s) => !s.mainWindow,
             );
-            if (anyAlternativeScreen !== -1) {
+            if (anyAlternativeScreen === -1) {
+              console.log(
+                '🔍 [moveMediaWindow] No alternative screens available, keeping current position',
+              );
+              return;
+            } else {
               targetDisplayNr = anyAlternativeScreen;
               targetFullscreen = true;
               console.log(
                 '🔍 [moveMediaWindow] Moving windowed media window to any alternative screen and going fullscreen:',
                 targetDisplayNr,
               );
-            } else {
-              console.log(
-                '🔍 [moveMediaWindow] No alternative screens available, keeping current position',
-              );
-              return;
             }
+          } else {
+            targetDisplayNr = alternativeScreen;
+            targetFullscreen = true;
+            console.log(
+              '🔍 [moveMediaWindow] Moving windowed media window to alternative screen and going fullscreen:',
+              targetDisplayNr,
+            );
           }
         } else {
           console.log(
@@ -502,24 +502,10 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
           (s, index) => !s.mainWindow && index !== currentDisplayNr,
         );
 
-        if (alternativeScreen !== -1) {
-          targetDisplayNr = alternativeScreen;
-          targetFullscreen = true;
-          console.log(
-            '🔍 [moveMediaWindow] Moving fullscreen media window to alternative screen:',
-            targetDisplayNr,
-          );
-        } else {
+        if (alternativeScreen === -1) {
           // If no alternative found, try any non-main window screen
           const anyAlternativeScreen = screens.findIndex((s) => !s.mainWindow);
-          if (anyAlternativeScreen !== -1) {
-            targetDisplayNr = anyAlternativeScreen;
-            targetFullscreen = true;
-            console.log(
-              '🔍 [moveMediaWindow] Moving fullscreen media window to any alternative screen:',
-              targetDisplayNr,
-            );
-          } else {
+          if (anyAlternativeScreen === -1) {
             console.log(
               '🔍 [moveMediaWindow] No alternative screens available, checking if we need to resize for single screen',
             );
@@ -565,7 +551,21 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
             } else {
               return;
             }
+          } else {
+            targetDisplayNr = anyAlternativeScreen;
+            targetFullscreen = true;
+            console.log(
+              '🔍 [moveMediaWindow] Moving fullscreen media window to any alternative screen:',
+              targetDisplayNr,
+            );
           }
+        } else {
+          targetDisplayNr = alternativeScreen;
+          targetFullscreen = true;
+          console.log(
+            '🔍 [moveMediaWindow] Moving fullscreen media window to alternative screen:',
+            targetDisplayNr,
+          );
         }
       } else {
         console.log(
@@ -621,17 +621,17 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
         '🔍 [moveMediaWindow] Preventing fullscreen on main window screen, switching to alternative',
       );
       const alternativeScreen = screens.findIndex((s) => !s.mainWindow);
-      if (alternativeScreen !== -1) {
+      if (alternativeScreen === -1) {
+        targetFullscreen = false;
+        console.log(
+          '🔍 [moveMediaWindow] No alternative screen, going windowed',
+        );
+      } else {
         targetDisplayNr = alternativeScreen;
         targetScreen = screens[targetDisplayNr];
         console.log(
           '🔍 [moveMediaWindow] Switched to screen:',
           targetDisplayNr,
-        );
-      } else {
-        targetFullscreen = false;
-        console.log(
-          '🔍 [moveMediaWindow] No alternative screen, going windowed',
         );
       }
     }
@@ -762,7 +762,12 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
       });
 
       // Set fullscreen state first if needed
-      if (wasFullscreen !== fullScreen) {
+      if (wasFullscreen === fullScreen) {
+        console.log(
+          '🔍 [setWindowBounds] Fullscreen state unchanged:',
+          fullScreen,
+        );
+      } else {
         console.log(
           '🔍 [setWindowBounds] Changing fullscreen state:',
           wasFullscreen,
@@ -770,11 +775,6 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
           fullScreen,
         );
         mediaWindow.setFullScreen(fullScreen);
-      } else {
-        console.log(
-          '🔍 [setWindowBounds] Fullscreen state unchanged:',
-          fullScreen,
-        );
       }
 
       // Set bounds if changed

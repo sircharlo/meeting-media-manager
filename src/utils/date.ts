@@ -57,7 +57,7 @@ export const dateFromString = (
       try {
         date = new Date(lookupDate.getTime());
         // Check if the result is valid
-        if (isNaN(date.getTime())) {
+        if (Number.isNaN(date.getTime())) {
           throw new Error('Invalid date object');
         }
       } catch {
@@ -74,7 +74,7 @@ export const dateFromString = (
       try {
         date = new Date(lookupDate as unknown as Date);
         // Check if the result is valid
-        if (isNaN(date.getTime())) {
+        if (Number.isNaN(date.getTime())) {
           throw new Error('Invalid date object');
         }
       } catch {
@@ -89,9 +89,9 @@ export const dateFromString = (
 
       // Convert yyyymmdd to yyyy-mm-dd and create date in local timezone
       if (/^\d{8}$/.test(parsedDate)) {
-        const year = parseInt(lookupDate.slice(0, 4));
-        const month = parseInt(lookupDate.slice(4, 6)) - 1; // Month is 0-indexed
-        const day = parseInt(lookupDate.slice(6, 8));
+        const year = Number.parseInt(lookupDate.slice(0, 4));
+        const month = Number.parseInt(lookupDate.slice(4, 6)) - 1; // Month is 0-indexed
+        const day = Number.parseInt(lookupDate.slice(6, 8));
         date = new Date(year, month, day);
       } else {
         // For other string formats, try to parse normally first
@@ -109,7 +109,7 @@ export const dateFromString = (
 
       // Additional validation for string dates that don't match expected formats
       if (
-        isNaN(date.getTime()) &&
+        Number.isNaN(date.getTime()) &&
         !/^\d{8}$/.test(parsedDate) &&
         !/^\d{4}-\d{2}-\d{2}$/.test(parsedDate)
       ) {
@@ -120,7 +120,7 @@ export const dateFromString = (
     }
 
     // Check if the date is valid
-    if (isNaN(date.getTime())) {
+    if (Number.isNaN(date.getTime())) {
       throw new Error(`Unsupported date format: ${lookupDate}`);
     }
 
@@ -167,7 +167,7 @@ export const isInPast = (lookupDate: Date | string, includeToday = false) => {
 export const friendlyDayToJsDay = (day?: number) => {
   try {
     if (day === undefined || day === null) day = -1;
-    const firstDay = day === 6 ? 0 : parseInt(day.toString()) + 1;
+    const firstDay = day === 6 ? 0 : Number.parseInt(day.toString()) + 1;
     const correctedFirstDay = firstDay > 7 ? firstDay - 7 : firstDay;
     return correctedFirstDay;
   } catch (error) {
@@ -336,7 +336,7 @@ export function formatDate(
   const date = new Date(val);
 
   // @ts-expect-error: Date constructor can return NaN
-  if (isNaN(date)) {
+  if (Number.isNaN(date)) {
     return '';
   }
 

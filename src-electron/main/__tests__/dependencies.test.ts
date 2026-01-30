@@ -19,7 +19,7 @@ function getAllFiles(
   for (const file of list) {
     const filePath = join(dir, file);
     const stat = statSync(filePath);
-    if (stat && stat.isDirectory()) {
+    if (stat?.isDirectory()) {
       results = results.concat(getAllFiles(filePath, extensions));
     } else {
       if (filePath.includes('__tests__')) continue;
@@ -35,10 +35,10 @@ function getAllFiles(
 
 function getElectronDepsFromConfig() {
   const configContent = readFileSync(quasarConfigPath, 'utf-8');
-  const match = configContent.match(
+  const match = new RegExp(
     /const electronDeps = new Set\(\[([\s\S]*?)\]\);/,
-  );
-  if (!match || !match[1]) {
+  ).exec(configContent);
+  if (!match?.[1]) {
     throw new Error('Could not find electronDeps Set in quasar.config.ts');
   }
   const depsContent = match[1];
@@ -46,7 +46,7 @@ function getElectronDepsFromConfig() {
     .split('\n')
     .map((line) => line.trim())
     .filter((line) => line.startsWith("'") || line.startsWith('"'))
-    .map((line) => line.replace(/['",]/g, ''));
+    .map((line) => line.replaceAll(/['",]/g, ''));
   return new Set(deps);
 }
 
@@ -125,7 +125,7 @@ describe('Electron Dependencies', () => {
         missingDeps.push(dep);
       }
     });
-    missingDeps.sort();
+    missingDeps.sort((a, b) => a.localeCompare(b));
 
     if (missingDeps.length > 0) {
       console.error(
@@ -140,7 +140,7 @@ describe('Electron Dependencies', () => {
         undeclaredDeps.push(dep);
       }
     });
-    undeclaredDeps.sort();
+    undeclaredDeps.sort((a, b) => a.localeCompare(b));
 
     if (undeclaredDeps.length > 0) {
       console.error(

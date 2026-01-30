@@ -55,7 +55,7 @@ export const shouldUpdateList = (
     if (!cacheList) return true; // No cache list, update
     if (!cacheList.updated) return true; // No update date, update
     try {
-      if (isNaN(new Date(cacheList.updated).getTime())) return true; // Invalid date, update
+      if (Number.isNaN(new Date(cacheList.updated).getTime())) return true; // Invalid date, update
     } catch (error) {
       console.log(
         'cacheList.updated is not a valid date',

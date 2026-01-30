@@ -51,7 +51,6 @@
     :setting-id="settingId"
     use-input
   />
-  <!-- :use-input="settingId.toLowerCase().includes('lang')" -->
   <ShortcutInput
     v-else-if="item.type === 'shortcut'"
     v-model="model"

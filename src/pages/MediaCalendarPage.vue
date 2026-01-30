@@ -93,8 +93,8 @@
       :document="selectedDocument"
       :model-value="showMediaPicker"
       :section="sectionToAddTo"
-      @cancel="onMediaPickerCancel"
-      @ok="onMediaPickerOk"
+      @cancel="onMediaPickerDismiss"
+      @ok="onMediaPickerDismiss"
       @update:model-value="showMediaPicker = $event"
     />
   </q-page>
@@ -112,7 +112,7 @@ import {
   useEventListener,
   watchImmediate,
 } from '@vueuse/core';
-import { Buffer } from 'buffer';
+import { Buffer } from 'buffer/';
 import DialogFileImport from 'components/dialog/DialogFileImport.vue';
 import DialogJwpubMediaPicker from 'components/dialog/DialogJwpubMediaPicker.vue';
 import DialogSectionPicker from 'components/dialog/DialogSectionPicker.vue';
@@ -593,11 +593,7 @@ watch(
 
         if (currentSettings.value?.customEventLastSongShortcut) {
           // Since the shortcut is set, check if this was the last song in the meeting
-          if (
-            selectedDateObject.value &&
-            selectedDayMeetingType.value &&
-            oldMediaPlayingUrl
-          ) {
+          if (selectedDateObject.value && selectedDayMeetingType.value) {
             // This is a meeting day and something was playing before
             console.log(
               '🔄 [CustomEvents Verbose] Checking if the last played media item was the last song in the meeting',
@@ -659,6 +655,16 @@ watch(
       mediaSceneTimeout = null;
     }
 
+    const getTargetScene = () => {
+      if (newMediaPaused) {
+        return 'camera';
+      } else if (newMediaPlaying) {
+        return 'media';
+      } else {
+        return 'camera';
+      }
+    };
+
     if (currentSettings.value?.obsEnable) {
       if (
         currentSettings.value?.obsPostponeImages &&
@@ -673,11 +679,7 @@ watch(
         return;
       }
 
-      const targetScene = newMediaPaused
-        ? 'camera'
-        : newMediaPlaying
-          ? 'media'
-          : 'camera';
+      const targetScene = getTargetScene();
       const wasPlayingBefore = !!oldMediaPlayingUrl;
 
       console.log('🔄 [MediaCalendarPage] OBS scene decision:', {
@@ -863,7 +865,7 @@ const checkCoDate = () => {
 const sectionToAddTo = ref<MediaSectionIdentifier | undefined>();
 
 useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
-  window,
+  globalThis,
   'openFileImportDialog',
   async (e) => {
     sectionToAddTo.value = e.detail.section;
@@ -880,7 +882,7 @@ useEventListener<
     section: MediaSectionIdentifier | undefined;
   }>
 >(
-  window,
+  globalThis,
   'localFiles-browsed',
   (event) => {
     // Show section picker if more than one section exists
@@ -906,7 +908,7 @@ useEventListener<
     section: MediaSectionIdentifier | undefined;
   }>
 >(
-  window,
+  globalThis,
   'openJwPlaylistDialog',
   (e) => {
     console.log('🎯 openJwPlaylistDialog event received:', e.detail);
@@ -932,7 +934,7 @@ useEventListener<
     document: DocumentItem;
   }>
 >(
-  window,
+  globalThis,
   'openJwpubMediaPicker',
   (e) => {
     console.log('🎯 openJwpubMediaPicker event received:', e.detail);
@@ -1017,7 +1019,6 @@ const checkMemorialDate = async () => {
 };
 
 onMounted(() => {
-  // generateMediaList();
   goToNextDayWithMedia();
 
   // If no date with media is found, go to todays date
@@ -1183,7 +1184,8 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         const normalizeArray = (arr: (number | string)[]) =>
           arr.map((item) => {
             if (Number.isFinite(item)) return item;
-            if (typeof item === 'string') return parseInt(item, 10).toString();
+            if (typeof item === 'string')
+              return Number.parseInt(item, 10).toString();
             return item;
           });
         const matchingMissingItem = missingMedia.value.find((media) => {
@@ -1211,7 +1213,6 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
           filepath,
           await getTempPath(),
         );
-        // await addToFiles(convertedImages);
         files.push(...convertedImages);
       } else if (isJwpub(filepath)) {
         console.log('🎯 [addToFiles] Processing JWPUB file:', filepath);
@@ -1466,14 +1467,7 @@ const handleSectionSelected = (section: MediaSectionIdentifier) => {
   pendingFiles.value = [];
 };
 
-const onMediaPickerOk = () => {
-  showMediaPicker.value = false;
-  selectedDocument.value = undefined;
-  jwpubImportDb.value = '';
-  showFileImport.value = false;
-};
-
-const onMediaPickerCancel = () => {
+const onMediaPickerDismiss = () => {
   showMediaPicker.value = false;
   selectedDocument.value = undefined;
   jwpubImportDb.value = '';
@@ -1648,7 +1642,7 @@ watch(
 );
 
 useEventListener(
-  window,
+  globalThis,
   'shortcutMediaNext',
   (event: CustomEvent<{ scrollToSelectedMedia: boolean }>) => {
     // Early return if no date selected
@@ -1690,7 +1684,7 @@ useEventListener(
 );
 
 useEventListener(
-  window,
+  globalThis,
   'shortcutMediaPrevious',
   (event: CustomEvent<{ scrollToSelectedMedia: boolean }>) => {
     // Early return if no date selected
@@ -2051,7 +2045,7 @@ const handleMediaItemClick = (payload: {
     // Find all media items across all sections to determine the range
     const allMediaItems = mediaLists.value
       .flatMap((section) => (section.items || []).map((item) => item.uniqueId))
-      .filter((id) => id) as string[];
+      .filter(Boolean) as string[];
 
     const lastSelectedId =
       selectedMediaItems.value[selectedMediaItems.value.length - 1];

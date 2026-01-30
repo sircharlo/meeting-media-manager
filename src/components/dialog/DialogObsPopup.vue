@@ -214,11 +214,13 @@ watchImmediate(
 
 const resolvedScene = computed(() => {
   if (!currentSettings.value) return currentScene.value;
-  return currentSettings.value.obsSwitchSceneAfterMedia
-    ? currentSettings.value.obsRememberPreviouslyUsedScene
-      ? previousScene.value
-      : currentSettings.value.obsCameraScene
-    : currentSettings.value.obsCameraScene;
+  if (currentSettings.value.obsSwitchSceneAfterMedia) {
+    if (currentSettings.value.obsRememberPreviouslyUsedScene) {
+      return previousScene.value;
+    }
+    return currentSettings.value.obsCameraScene;
+  }
+  return currentSettings.value.obsCameraScene;
 });
 
 const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
@@ -261,7 +263,6 @@ const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
             sceneName: newProgramScene,
           }),
         });
-        // open.value = false;
       } else {
         notifySceneNotFound();
       }
@@ -321,7 +322,7 @@ const getSceneIcon = (scene: null | string | undefined) => {
     return 'mmm-pip-scene';
   }
   const sceneIndex =
-    sceneList.value.findIndex((s) => s === scene) + 1 - baseScenesLength.value;
+    sceneList.value.indexOf(scene) + 1 - baseScenesLength.value;
   if (sceneIndex <= 10) {
     return `mmm-numeric-${sceneIndex}-box-outline`;
   }
@@ -340,10 +341,10 @@ const sceneColumnClass = computed(() => {
   return sceneCount >= 4 ? 'col-3' : 'col-4';
 });
 
-useEventListener(window, 'obsConnectFromSettings', obsSettingsConnect, {
+useEventListener(globalThis, 'obsConnectFromSettings', obsSettingsConnect, {
   passive: true,
 });
-useEventListener(window, 'obsSceneEvent', setObsSceneListener, {
+useEventListener(globalThis, 'obsSceneEvent', setObsSceneListener, {
   passive: true,
 });
 </script>

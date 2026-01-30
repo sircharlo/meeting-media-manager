@@ -158,17 +158,17 @@ const handleOrderChange = () => {
   if (!selectedDateObject.value?.mediaSections) return;
 
   // Get standard sections (meeting sections) that should remain in their positions
-  const standardSections = [
+  const standardSections = new Set([
     'ayfm',
+    'circuit-overseer',
     'lac',
+    'pt',
     'tgw',
     'wt',
-    'pt',
-    'circuit-overseer',
-  ];
+  ]);
   const existingStandardSections =
     selectedDateObject.value.mediaSections.filter((section) =>
-      standardSections.includes(section.config.uniqueId),
+      standardSections.has(section.config.uniqueId),
     );
 
   // Reorder the sections: standard sections first, then reordered custom sections
@@ -249,12 +249,16 @@ const initializeValues = () => {
     }),
     {},
   );
-  const meetingSections =
-    WE_MEETING_SECTIONS.concat(MW_MEETING_SECTIONS).concat('circuit-overseer');
+  const meetingSections = new Set([
+    'circuit-overseer',
+    ...MW_MEETING_SECTIONS,
+    ...WE_MEETING_SECTIONS,
+  ]);
+
   sortableItems.value = daySections
     .filter(
       (section) =>
-        !meetingSections.includes(section.config.uniqueId) && !!section?.config,
+        !!section?.config && !meetingSections.has(section.config.uniqueId),
     )
     .map((section) => ({
       config: section.config,

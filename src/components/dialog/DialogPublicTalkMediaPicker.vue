@@ -131,10 +131,7 @@ const filter = ref('');
 const publicTalks = ref<DocumentItem[]>([]);
 const filteredPublicTalks = computed((): DocumentItem[] => {
   if (filter.value) {
-    const searchTerms = filter.value
-      .toLowerCase()
-      .split(/\s+/)
-      .filter((term) => term);
+    const searchTerms = filter.value.toLowerCase().split(/\s+/).filter(Boolean);
     return publicTalks.value.filter((s) =>
       searchTerms.every((term) => s.Title.toLowerCase().includes(term)),
     );
@@ -262,23 +259,24 @@ const resetDialogState = () => {
   s34Info.value = null;
 };
 
+const initialize = async () => {
+  if (currentSettings.value?.lang) {
+    await setS34Info();
+    await populatePublicTalks();
+  }
+};
+
 // Watch for dialog closing to reset state
 watch(
   () => dialogValue.value,
   (isOpen) => {
-    if (!isOpen) {
+    if (isOpen) {
+      // Initialize when dialog opens
+      initialize();
+    } else {
       // Reset state when dialog closes
       resetDialogState();
-    } else {
-      setS34Info().then(() => populatePublicTalks());
     }
   },
 );
-
-// Initialize when component mounts
-if (currentSettings.value?.lang) {
-  setS34Info().then(() => {
-    populatePublicTalks();
-  });
-}
 </script>

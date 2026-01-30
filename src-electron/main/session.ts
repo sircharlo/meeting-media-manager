@@ -70,7 +70,7 @@ export const initSessionListeners = () => {
   app.on('ready', () => {
     const currentUserAgent = session.defaultSession.getUserAgent();
     session.defaultSession.setUserAgent(
-      currentUserAgent.replace(/Electron[/\d.\s]*/g, ''),
+      currentUserAgent.replaceAll(/Electron[/\d.\s]*/g, ''),
     );
 
     updateSessionHeadersListener();
@@ -105,7 +105,7 @@ export const initSessionListeners = () => {
           'worker-src': "'self' file: blob:",
         };
 
-        if (!details.responseHeaders) details.responseHeaders = {};
+        details.responseHeaders ??= {};
         details.responseHeaders['Content-Security-Policy'] = [
           Object.entries(csp)
             .map(([key, value]) => `${key} ${value}`)
@@ -144,8 +144,7 @@ export const initSessionListeners = () => {
 
       if (alterResponseHeaders) {
         if (
-          !details.responseHeaders['access-control-allow-origin'] ||
-          !details.responseHeaders['access-control-allow-origin'].includes('*')
+          !details.responseHeaders['access-control-allow-origin']?.includes('*')
         ) {
           details.responseHeaders['access-control-allow-headers'] = [
             'Content-Type,Authorization,X-Client-ID,clientreferrer,x-client-version,x-requested-with',
