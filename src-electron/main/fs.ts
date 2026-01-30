@@ -21,7 +21,7 @@ import { uuid } from 'src/shared/vanilla';
 import upath from 'upath';
 import yauzl from 'yauzl';
 
-const { basename, dirname, join, toUnix } = upath;
+const { basename, dirname, join, resolve, toUnix } = upath;
 
 const ongoingDecompressions = new Map<string, Promise<UnzipResult[]>>();
 
@@ -69,7 +69,8 @@ export async function isUsablePath(basePath?: string): Promise<boolean> {
   if (!basePath) return false;
 
   try {
-    const testDir = join(basePath, '.cache-test-' + uuid());
+    const resolvedBase = resolve(basePath);
+    const testDir = join(resolvedBase, '.cache-test-' + uuid());
     await mkdir(testDir, { recursive: true });
     await writeFile(join(testDir, 'test.txt'), 'ok');
     await rm(testDir, { recursive: true });

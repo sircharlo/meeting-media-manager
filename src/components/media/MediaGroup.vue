@@ -39,7 +39,7 @@
         <q-item-section>
           <div>
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <span v-html="element.extractCaption"></span>
+            <span v-html="sanitize(element.extractCaption || '')"></span>
             <q-badge
               class="q-ml-sm text-primary"
               :color="$q.dark.isActive ? 'accent-400' : 'accent-200'"
@@ -89,6 +89,7 @@
 <script setup lang="ts">
 import type { MediaItem as MediaItemType } from 'src/types';
 
+import DOMPurify from 'dompurify';
 import { storeToRefs } from 'pinia';
 import { useQuasar } from 'quasar';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -96,6 +97,8 @@ import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 import MediaItem from './MediaItem.vue';
+
+const { sanitize } = DOMPurify;
 
 const currentState = useCurrentStateStore();
 const { mediaPlaying } = storeToRefs(currentState);

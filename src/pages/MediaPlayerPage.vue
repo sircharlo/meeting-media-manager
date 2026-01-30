@@ -18,7 +18,7 @@
       :class="{ 'blank-screen': isTransitioning }"
     >
       <!-- eslint-disable next-line vue/no-v-html -->
-      <div id="yeartext" class="center" v-html="yeartext || ''" />
+      <div id="yeartext" class="center" v-html="sanitize(yeartext || '')" />
       <div
         v-if="!hideMediaLogo && jwIconsFontLoaded"
         id="yeartextLogoContainer"
@@ -148,6 +148,7 @@ import {
   watchImmediate,
   whenever,
 } from '@vueuse/core';
+import DOMPurify from 'dompurify';
 import { useQuasar } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getJwIconFromKeyword, setElementFont } from 'src/helpers/fonts';
@@ -163,6 +164,8 @@ import {
   watch,
 } from 'vue';
 import { useI18n } from 'vue-i18n';
+
+const { sanitize } = DOMPurify;
 
 const { t } = useI18n();
 

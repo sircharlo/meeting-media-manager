@@ -189,6 +189,8 @@ import { useObsStateStore } from 'stores/obs-state';
 import { computed, nextTick, onMounted, ref, type Ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
+const { sanitize } = DOMPurify;
+
 const $q = useQuasar();
 
 const jwpubImportDb = ref('');
@@ -1507,7 +1509,7 @@ const handleDrop = (event: DragEvent) => {
           .length === 0;
       if (noLocalDroppedFiles && droppedStuff.length > 0) {
         const html = event.dataTransfer.getData('text/html');
-        const sanitizedHtml = DOMPurify.sanitize(html);
+        const sanitizedHtml = sanitize(html);
         const src = new DOMParser()
           .parseFromString(sanitizedHtml, 'text/html')
           .querySelector('img')?.src;
