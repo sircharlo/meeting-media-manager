@@ -1,6 +1,6 @@
 import type { PublicationFetcher } from 'src/types';
 
-import { Buffer } from 'node:buffer';
+import { Buffer } from 'buffer/';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { getPubId } from 'src/utils/jw';

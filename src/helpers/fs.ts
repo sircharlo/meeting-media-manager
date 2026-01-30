@@ -6,7 +6,7 @@ import type {
   Release,
 } from 'src/types';
 
-import { Buffer } from 'node:buffer';
+import { Buffer } from 'buffer/';
 import { Platform } from 'quasar';
 import { FULL_HD } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';

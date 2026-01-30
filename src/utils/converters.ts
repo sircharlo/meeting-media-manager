@@ -1,4 +1,4 @@
-import { Buffer } from 'node:buffer';
+import { Buffer } from 'buffer/';
 import { FULL_HD } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getTempPath } from 'src/utils/fs';
