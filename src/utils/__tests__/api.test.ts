@@ -56,7 +56,7 @@ describe('fetchRaw caching', () => {
   });
 
   it('should fetch from network when cache is false', async () => {
-    const fetchSpy = vi.spyOn(global, 'fetch');
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
 
     const res1 = await fetchRaw(handledUrl, undefined, false);
     const res2 = await fetchRaw(handledUrl, undefined, false);
@@ -67,7 +67,7 @@ describe('fetchRaw caching', () => {
   });
 
   it('should cache GET requests when cache is true', async () => {
-    const fetchSpy = vi.spyOn(global, 'fetch');
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
 
     const res1 = await fetchRaw(handledUrl, { method: 'GET' }, true);
     const res2 = await fetchRaw(handledUrl, { method: 'GET' }, true);
@@ -83,7 +83,7 @@ describe('fetchRaw caching', () => {
   });
 
   it('should cache HEAD requests when cache is true', async () => {
-    const fetchSpy = vi.spyOn(global, 'fetch');
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
     try {
       await fetchRaw(handledUrl, { method: 'HEAD' }, true);
       await fetchRaw(handledUrl, { method: 'HEAD' }, true);
@@ -94,7 +94,7 @@ describe('fetchRaw caching', () => {
   });
 
   it('should not cache POST requests even if cache is true', async () => {
-    const fetchSpy = vi.spyOn(global, 'fetch');
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
     try {
       await fetchRaw(handledUrl, { method: 'POST' }, true);
       await fetchRaw(handledUrl, { method: 'POST' }, true);
@@ -114,7 +114,7 @@ describe('fetchRaw caching', () => {
 
   it('should not cache failed requests (non-2xx)', async () => {
     const url = 'https://example.com/fail';
-    const fetchSpy = vi.spyOn(global, 'fetch');
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
 
     await fetchRaw(url, undefined, true);
     await fetchRaw(url, undefined, true);
@@ -123,7 +123,7 @@ describe('fetchRaw caching', () => {
   });
 
   it('should use headers in cache key', async () => {
-    const fetchSpy = vi.spyOn(global, 'fetch');
+    const fetchSpy = vi.spyOn(globalThis, 'fetch');
 
     await fetchRaw(handledUrl, { headers: { 'X-Test': '1' } }, true);
     await fetchRaw(handledUrl, { headers: { 'X-Test': '2' } }, true);

@@ -39,10 +39,7 @@ export const newMediaSections: MigrationFunction = async () => {
         if (Array.isArray(dateInfo)) {
           currentLookupPeriods[congId] = dateInfo.map((day) => ({
             ...day,
-            date:
-              day.date instanceof Date
-                ? new Date(day.date.getTime())
-                : day.date,
+            date: day.date instanceof Date ? new Date(day.date) : day.date,
           }));
         }
       }
@@ -60,7 +57,7 @@ export const newMediaSections: MigrationFunction = async () => {
       if (!congId || !dateInfo) continue;
 
       dateInfo.forEach((day) => {
-        if (day && day.mediaSections) {
+        if (day?.mediaSections) {
           createMeetingSections(day);
         }
       });

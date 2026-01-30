@@ -18,7 +18,7 @@ export const useCongregationSettingsStore = defineStore(
       createCongregation() {
         const newId = uuid();
         wasUpdateInstalled(newId, true);
-        this.congregations[newId] = Object.assign({}, defaultSettings);
+        this.congregations[newId] = { ...defaultSettings };
         return newId;
       },
       deleteCongregation(id: number | string) {
@@ -28,9 +28,7 @@ export const useCongregationSettingsStore = defineStore(
       },
       dismissAnnouncement(congId: string, id: string) {
         if (!id || !congId) return;
-        if (!this.announcements[congId]) {
-          this.announcements[congId] = [];
-        }
+        this.announcements[congId] ??= [];
         if (!this.announcements[congId].includes(id)) {
           this.announcements[congId].push(id);
         }
@@ -65,11 +63,10 @@ export const useCongregationSettingsStore = defineStore(
                 return;
               }
 
-              const updatedCongregation = Object.assign(
-                {},
-                defaultSettings,
-                congregation,
-              );
+              const updatedCongregation = {
+                ...defaultSettings,
+                ...congregation,
+              };
 
               // Find which keys were missing and thus updated
               const updatedKeys = Object.keys(defaultSettings).filter(

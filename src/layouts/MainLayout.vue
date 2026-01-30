@@ -143,9 +143,6 @@ const { locale, t } = useI18n({ useScope: 'global' });
 
 // Store initializations
 const congregationSettings = useCongregationSettingsStore();
-// congregationSettings.$subscribe((_, state) => {
-//   saveSettingsStoreToFile('congregations', state);
-// });
 
 const appSettings = useAppSettingsStore();
 const { displayCameraId } = storeToRefs(appSettings);
@@ -166,9 +163,6 @@ const {
 } = storeToRefs(currentState);
 
 const jwStore = useJwStore();
-// jwStore.$subscribe((_, state) => {
-//   saveSettingsStoreToFile('jw', state);
-// });
 
 const { updateJwLanguages, updateMemorials } = jwStore;
 const { lookupPeriod } = storeToRefs(jwStore);
@@ -227,10 +221,10 @@ const delayedCacheClear = () => {
     console.log('✅ No active downloads, proceeding with cache clear...');
     deleteCacheFiles('smart')
       .then(({ itemsDeleted }) => {
-        if (!itemsDeleted) {
-          console.log('ℹ️ No cache items needed clearing');
-        } else {
+        if (itemsDeleted) {
           console.log(`✅ Cleared ${itemsDeleted} cache item(s)`);
+        } else {
+          console.log('ℹ️ No cache items needed clearing');
         }
         console.groupEnd();
       })
@@ -387,12 +381,10 @@ watch(online, (isNowOnline) => {
     const congregation = currentCongregation.value;
     if (!congregation) return;
 
-    const { /*downloads,*/ meetings } = queues;
-    // const downloadQueue = downloads[congregation];
+    const { meetings } = queues;
     const meetingQueue = meetings[congregation];
 
     if (isNowOnline) {
-      // downloadQueue?.start();
       meetingQueue?.start();
       jwStore.updateYeartext({
         isSignLanguage: currentLangObject.value?.isSignLanguage,
@@ -402,7 +394,6 @@ watch(online, (isNowOnline) => {
       });
       jwStore.updateJwLanguages(online.value);
     } else {
-      // downloadQueue?.pause();
       meetingQueue?.pause();
     }
   } catch (error) {
@@ -724,13 +715,24 @@ function removeWatchedItems(
   }
 }
 
+const getTargetSectionId = (
+  originalSection?: string,
+  weMeeting?: boolean,
+  mwMeeting?: boolean,
+) => {
+  if (originalSection) return originalSection;
+  if (weMeeting) return 'pt';
+  if (mwMeeting) return 'lac';
+  return 'imported-media';
+};
+
 const updateWatchFolderRef = async ({
   changedPath,
   day,
   event,
 }: Record<string, string>) => {
   try {
-    day = day?.replace(/-/g, '/');
+    day = day?.replaceAll('-', '/');
     if (!day) return;
 
     const dayObj = lookupPeriod.value[currentCongregation.value]?.find(
@@ -755,9 +757,12 @@ const updateWatchFolderRef = async ({
 
             const weMeeting = isWeMeetingDay(dayObj.date);
             const mwMeeting = isMwMeetingDay(dayObj.date);
-            const targetSectionId =
-              watchedItem.originalSection ||
-              (weMeeting ? 'pt' : mwMeeting ? 'lac' : 'imported-media');
+
+            const targetSectionId = getTargetSectionId(
+              watchedItem.originalSection,
+              weMeeting,
+              mwMeeting,
+            );
 
             dayObj.mediaSections ??= [];
             const targetSection = getOrCreateMediaSection(
@@ -887,7 +892,7 @@ const initListeners = () => {
   onDownloadStarted((args) => {
     const existing = downloadProgress.value[args.id];
     downloadProgress.value[args.id] = {
-      ...(existing || {}),
+      ...existing,
       complete: existing?.complete,
       error: existing?.error,
       filename: args.filename,

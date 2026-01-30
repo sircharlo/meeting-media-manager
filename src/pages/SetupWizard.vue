@@ -14,7 +14,6 @@
             v-model="currentSettings.localAppLang"
             list="appLanguages"
           />
-          <!-- :label="t('localAppLang')" -->
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn
               color="negative"
@@ -26,10 +25,6 @@
                 goToPage('/congregation-selector');
               "
             />
-            <!-- <q-btn :label="t('continue')" color="primary" @click="step++" />
-        </q-stepper-navigation>
-        <q-stepper-navigation class="q-gutter-sm">
-          <q-btn :label="t('back')" color="negative" flat @click="step--" /> -->
             <q-btn
               color="primary"
               :disable="!currentSettings.localAppLang"
@@ -186,22 +181,18 @@
           <p class="text-subtitle2">{{ t('midweek-meeting') }}</p>
           <p class="q-gutter-sm row">
             <SelectInput v-model="currentSettings.mwDay" list="days" />
-            <!-- :label="t('mwDay')" -->
             <TimeInput
               v-model="currentSettings.mwStartTime"
               :options="['meetingTime']"
             />
-            <!-- :label="t('mwStartTime')" -->
           </p>
           <p class="text-subtitle2">{{ t('weekend-meeting') }}</p>
           <p class="q-gutter-sm row">
             <SelectInput v-model="currentSettings.weDay" list="days" />
-            <!-- :label="t('weDay')" -->
             <TimeInput
               v-model="currentSettings.weStartTime"
               :options="['meetingTime']"
             />
-            <!-- :label="t('weStartTime')" -->
           </p>
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn color="negative" flat :label="t('back')" @click="step--" />
@@ -529,7 +520,6 @@
             v-model="currentSettings.obsCameraScene"
             list="obsScenes"
           />
-          <!-- :label="t('obsCameraScene')" -->
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn flat :label="t('back')" @click="step--" />
             <q-btn
@@ -558,7 +548,6 @@
             v-model="currentSettings.obsMediaScene"
             list="obsAllScenes"
           />
-          <!-- :label="t('obsMediaScene')" -->
           <q-stepper-navigation class="q-gutter-sm">
             <q-btn flat :label="t('back')" @click="step--" />
             <q-btn
@@ -653,7 +642,6 @@ const { deleteCongregation } = congregationSettings;
 
 const regularProfile = ref(false);
 
-// const usingAtKh = ref(false);
 const obsUsed = ref(false);
 const obsIntegrate = ref(false);
 
@@ -701,20 +689,23 @@ watchImmediate(
 const loadSystemLocale = async () => {
   try {
     const systemLocales = await getLocales();
-    const availableLocales = localeOptions.map((l) =>
-      camelToKebabCase(l.value),
+    const availableLocales = new Set(
+      localeOptions.map((l) => camelToKebabCase(l.value).toLowerCase()),
     );
     let match: LanguageValue | undefined;
-    systemLocales.forEach((l) => {
-      if (match || !currentSettings.value) return;
-      if (availableLocales.includes(l.toLowerCase())) {
-        match = l.toLowerCase() as LanguageValue;
-      } else if (
-        availableLocales.includes(l.split('-')[0]?.toLowerCase() ?? '')
-      ) {
-        match = l.split('-')[0]?.toLowerCase() as LanguageValue;
+
+    for (const locale of systemLocales) {
+      if (match || !currentSettings.value) break;
+
+      const normalized = locale.toLowerCase();
+      const base = normalized.split('-')[0];
+
+      if (availableLocales.has(normalized)) {
+        match = normalized as LanguageValue;
+      } else if (base && availableLocales.has(base)) {
+        match = base as LanguageValue;
       }
-    });
+    }
 
     if (match && currentSettings.value) {
       currentSettings.value.localAppLang = match;
