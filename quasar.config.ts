@@ -214,6 +214,7 @@ export default defineConfig((ctx) => {
           '@sentry/core',
           '@sentry/electron',
           'better-sqlite3',
+          'check-disk-space',
           'chokidar',
           'countries-and-timezones',
           'electron-dl-manager',
