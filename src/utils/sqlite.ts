@@ -29,7 +29,8 @@ export const tableExists = (db: string, tableName: string) => {
     return (
       executeQuery<{ name: string }>(
         db,
-        `SELECT name FROM sqlite_master WHERE type='table' AND name='${tableName}'`,
+        "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
+        [tableName],
       ).length > 0
     );
   } catch (error) {
@@ -48,7 +49,8 @@ export const getMediaVideoMarkers = (
     if (!videoMarkerTableExists) return [];
     const mediaVideoMarkers = executeQuery<VideoMarker>(
       source.db,
-      `SELECT VideoMarkerId, Label, StartTimeTicks, DurationTicks, EndTransitionDurationTicks from VideoMarker WHERE MultimediaId = ${mediaId} ORDER by StartTimeTicks`,
+      'SELECT VideoMarkerId, Label, StartTimeTicks, DurationTicks, EndTransitionDurationTicks from VideoMarker WHERE MultimediaId = ? ORDER by StartTimeTicks',
+      [mediaId],
     );
     return mediaVideoMarkers;
   } catch (error) {
@@ -168,9 +170,10 @@ export const getSjjExtractOrdinals = (db: string, docId: number) => {
        FROM DocumentExtract
        INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId
        INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId
-       WHERE DocumentExtract.DocumentId = ${docId}
+       WHERE DocumentExtract.DocumentId = ?
        AND RefPublication.UndatedSymbol = 'sjj'
        ORDER BY DocumentExtract.SortPosition`,
+      [docId],
     );
 
     return ordinals;
@@ -254,11 +257,15 @@ export const getDocumentMultimediaItems = (
     if (LinkMultimediaIdExists)
       from +=
         ' LEFT JOIN Multimedia AS LinkedMultimedia ON Multimedia.LinkMultimediaId = LinkedMultimedia.MultimediaId';
-    let where = `WHERE ${
-      source.docId || source.docId === 0
-        ? `Document.DocumentId = ${source.docId}`
-        : `Document.MepsDocumentId = ${source.mepsId}`
-    }`;
+    const params: (number | string)[] = [];
+    let where = 'WHERE ';
+    if (source.docId || source.docId === 0) {
+      where += 'Document.DocumentId = ?';
+      params.push(source.docId);
+    } else {
+      where += 'Document.MepsDocumentId = ?';
+      params.push(source.mepsId as number);
+    }
 
     const videoString =
       "(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')";
@@ -275,7 +282,9 @@ export const getDocumentMultimediaItems = (
       'EndParagraphOrdinal' in source &&
       ParagraphColumnsExist
     ) {
-      where += ` AND ${mmTable}.BeginParagraphOrdinal >= ${source.BeginParagraphOrdinal} AND ${mmTable}.EndParagraphOrdinal <= ${source.EndParagraphOrdinal}`;
+      where += ` AND ${mmTable}.BeginParagraphOrdinal >= ? AND ${mmTable}.EndParagraphOrdinal <= ?`;
+      params.push(source.BeginParagraphOrdinal as number);
+      params.push(source.EndParagraphOrdinal as number);
     }
 
     const groupAndSort = ParagraphColumnsExist
@@ -289,7 +298,7 @@ export const getDocumentMultimediaItems = (
       where += ' AND Multimedia.SuppressZoom <> 1';
     }
     const finalQuery = `${select} ${from} ${where} ${groupAndSort}`;
-    const items = executeQuery<MultimediaItem>(source.db, finalQuery);
+    const items = executeQuery<MultimediaItem>(source.db, finalQuery, params);
     for (const item of items) {
       if (!item) continue;
       const videoMarkers = getMediaVideoMarkers(
@@ -432,10 +441,6 @@ export const getDocumentExtractItems = async (
   try {
     const currentStateStore = useCurrentStateStore();
     const extracts = executeQuery<MultimediaExtractItem>(
-      // ${currentStateStore.currentSongbook?.pub === 'sjjm'
-      //   ? "AND NOT UniqueEnglishSymbol = 'sjj' "
-      //   : ''
-      // }
       db,
       `SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,
       Extract.RefMepsDocumentId,Extract.RefPublicationId,Extract.RefMepsDocumentId,UniqueEnglishSymbol,IssueTagNumber,
@@ -444,7 +449,7 @@ export const getDocumentExtractItems = async (
       INNER JOIN Extract ON DocumentExtract.ExtractId = Extract.ExtractId
       INNER JOIN RefPublication ON Extract.RefPublicationId = RefPublication.RefPublicationId
       INNER JOIN Document ON DocumentExtract.DocumentId = Document.DocumentId
-    WHERE DocumentExtract.DocumentId = ${docId}
+    WHERE DocumentExtract.DocumentId = ?
     AND NOT UniqueEnglishSymbol LIKE 'mwbr%'
     AND NOT UniqueEnglishSymbol = 'sjj'
     ${
@@ -453,6 +458,7 @@ export const getDocumentExtractItems = async (
         : ''
     }
       ORDER BY DocumentExtract.BeginParagraphOrdinal`,
+      [docId],
     );
 
     // AND NOT RefPublication.PublicationCategorySymbol = 'web'

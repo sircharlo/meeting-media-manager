@@ -8,8 +8,9 @@ const queryCache = new Map();
 export const executeQuery = <T extends object = QueryResponseItem>(
   dbPath: string,
   query: string,
+  params: (null | number | string)[] = [],
 ): T[] => {
-  const cacheKey = `${dbPath}:${query}`;
+  const cacheKey = `${dbPath}:${query}:${JSON.stringify(params)}`;
   if (queryCache.has(cacheKey)) {
     const cachedResult = queryCache.get(cacheKey) as T[];
     console.debug('executeQuery (cached)', {
@@ -26,7 +27,7 @@ export const executeQuery = <T extends object = QueryResponseItem>(
       readonly: true,
     });
 
-    const result = db.prepare<[], T>(query).all();
+    const result = db.prepare<unknown[], T>(query).all(...params);
 
     // Remove unused and heavy Content property only if it exists in any row
     for (const item of result) {
@@ -36,6 +37,7 @@ export const executeQuery = <T extends object = QueryResponseItem>(
     console.debug('executeQuery', {
       count: result.length,
       db: dbPath.split('/').pop(),
+      params,
       query,
     });
 

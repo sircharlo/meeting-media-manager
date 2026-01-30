@@ -68,6 +68,7 @@ export interface ElectronApi {
   executeQuery: <T extends object = QueryResponseItem>(
     dbPath: string,
     query: string,
+    params?: (null | number | string)[],
   ) => T[];
   /**
    * Converts a file URL to a file path.
