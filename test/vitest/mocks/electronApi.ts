@@ -61,7 +61,7 @@ export const electronApi: ElectronApi = {
   },
   getLowDiskSpaceStatus: function () {
     throw new Error('Function not implemented.');
-  }
+  },
   getNrOfPdfPages: function (pdfPath) {
     throw new Error('Function not implemented.');
   },
