@@ -218,6 +218,7 @@ export function isIgnoredUpdateError(
     'EAI_AGAIN',
     'ECONNREFUSED',
     'ECONNRESET',
+    'ENOSPC',
     'ENOTFOUND',
     'EPIPE',
     'ERR_CONNECTION_CLOSED',
