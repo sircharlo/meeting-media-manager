@@ -40,50 +40,52 @@ function fixLink(locale, link) {
 }
 
 async function main() {
-  if (!(await pathExists(DOCS_SRC_DIR))) {
-    console.error(`Docs src directory not found at: ${DOCS_SRC_DIR}`);
+  try {
+    if (!(await pathExists(DOCS_SRC_DIR))) {
+      console.error(`Docs src directory not found at: ${DOCS_SRC_DIR}`);
+      process.exit(1);
+    }
+
+    const localeDirs = (await readdir(DOCS_SRC_DIR, { withFileTypes: true }))
+      .filter(
+        (d) => d.isDirectory() && d.name !== 'assets' && d.name !== 'public',
+      )
+      .map((d) => d.name)
+      .sort();
+
+    let totalChanges = 0;
+
+    for (const locale of localeDirs) {
+      const indexPath = resolve(DOCS_SRC_DIR, locale, 'index.md');
+      if (!(await pathExists(indexPath))) continue;
+
+      const original = await readFile(indexPath, 'utf-8');
+
+      const updated = original.replaceAll(
+        /(^|\n)(\s*)link:\s*(.+?)\s*(?=\n|$)/g,
+        (m, lead, indent, linkValue) => {
+          const fixed = fixLink(locale, linkValue);
+          if (fixed !== linkValue.trim()) {
+            totalChanges += 1;
+            return `${lead}${indent}link: ${fixed}`;
+          }
+          return m;
+        },
+      );
+
+      if (updated !== original) {
+        await writeFile(indexPath, updated, 'utf-8');
+        console.log(`Updated links in ${indexPath}`);
+      }
+    }
+
+    console.log(
+      `Done. Fixed ${totalChanges} link${totalChanges === 1 ? '' : 's'}.`,
+    );
+  } catch (error) {
+    console.error(error);
     process.exit(1);
   }
-
-  const localeDirs = (await readdir(DOCS_SRC_DIR, { withFileTypes: true }))
-    .filter(
-      (d) => d.isDirectory() && d.name !== 'assets' && d.name !== 'public',
-    )
-    .map((d) => d.name)
-    .sort();
-
-  let totalChanges = 0;
-
-  for (const locale of localeDirs) {
-    const indexPath = resolve(DOCS_SRC_DIR, locale, 'index.md');
-    if (!(await pathExists(indexPath))) continue;
-
-    const original = await readFile(indexPath, 'utf-8');
-
-    const updated = original.replace(
-      /(^|\n)(\s*)link:\s*(.+?)\s*(?=\n|$)/g,
-      (m, lead, indent, linkValue) => {
-        const fixed = fixLink(locale, linkValue);
-        if (fixed !== linkValue.trim()) {
-          totalChanges += 1;
-          return `${lead}${indent}link: ${fixed}`;
-        }
-        return m;
-      },
-    );
-
-    if (updated !== original) {
-      await writeFile(indexPath, updated, 'utf-8');
-      console.log(`Updated links in ${indexPath}`);
-    }
-  }
-
-  console.log(
-    `Done. Fixed ${totalChanges} link${totalChanges === 1 ? '' : 's'}.`,
-  );
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+await main();

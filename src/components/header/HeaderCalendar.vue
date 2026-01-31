@@ -543,7 +543,7 @@ const openImportMenuWithSectionCheck = (
 
 const dateOptions = (lookupDate: string) => {
   try {
-    if (!lookupPeriod.value || !lookupPeriod.value) return true;
+    if (!lookupPeriod.value || !currentCongregation.value) return true;
     const dateArray: Date[] =
       lookupPeriod.value[currentCongregation.value]?.map((day) => day.date) ||
       [];
@@ -581,13 +581,13 @@ const getEventDayColor = (eventDate: string) => {
 };
 
 useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
-  window,
+  globalThis,
   'openSongPicker',
   (e) => openSongPickerWithSectionCheck(e.detail?.section),
   { passive: true },
 );
 useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
-  window,
+  globalThis,
   'openImportMenu',
   (e) => openImportMenuWithSectionCheck(e.detail?.section),
   { passive: true },
@@ -597,7 +597,7 @@ useEventListener<
     jwPlaylistPath: string;
     section: MediaSectionIdentifier | undefined;
   }>
->(window, 'openJwPlaylistPicker', (e) => {
+>(globalThis, 'openJwPlaylistPicker', (e) => {
   console.log('🎯 openJwPlaylistPicker event received:', e.detail);
   openJwPlaylistPickerWithSectionCheck(
     e.detail?.section,

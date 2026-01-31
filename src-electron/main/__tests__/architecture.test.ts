@@ -57,11 +57,19 @@ describe('Architecture: Electron Main Process Imports', () => {
 
       if (!ALLOWED_SRC_SUBDIRS.includes(subDir)) {
         const line = content.substring(0, match.index).split('\n').length;
-        forbiddenImports.push(
-          `Forbidden import found in ${relativePath}:${line}\n` +
-            `Import: "src/${importPath}"\n` +
-            `Only imports from ${ALLOWED_SRC_SUBDIRS.map((s) => `"src/${s}"`).join(', ')} or ${ALLOWED_FILES.join(', ')} are allowed in src-electron.`,
+
+        const allowedDirs = ALLOWED_SRC_SUBDIRS.map((s) => `"src/${s}"`).join(
+          ', ',
         );
+
+        const allowedFiles = ALLOWED_FILES.join(', ');
+
+        const message =
+          `Forbidden import found in ${relativePath}:${line}\n` +
+          `Import: "src/${importPath}"\n` +
+          `Only imports from ${allowedDirs} or ${allowedFiles} are allowed in src-electron.`;
+
+        forbiddenImports.push(message);
       }
     }
 

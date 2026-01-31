@@ -197,7 +197,7 @@ const remoteVideosFiltered = computed(() => {
     const searchTerms = remoteVideoFilter.value
       .toLowerCase()
       .split(/\s+/)
-      .filter((term) => term); // Remove empty terms
+      .filter(Boolean); // Remove empty terms
 
     // Check if all search terms are present
     useableVideos.value = useableVideos.value.filter((video) =>
@@ -276,7 +276,7 @@ const getJwVideos = async () => {
         online.value,
       );
       const newVideos = (request?.category?.media || []).filter(
-        (video) => !remoteVideos.value.find((v) => v.guid === video.guid),
+        (video) => !remoteVideos.value.some((v) => v.guid === video.guid),
       );
       remoteVideos.value.push(...newVideos);
       remoteVideos.value.sort((a, b) =>
@@ -313,11 +313,11 @@ const addVideo = async (video: MediaItemsMediatorItem) => {
 watch(
   () => dialogValue.value,
   (isOpen) => {
-    if (!isOpen) {
+    if (isOpen) {
+      getJwVideos();
+    } else {
       // Reset state when dialog closes
       resetDialogState();
-    } else {
-      getJwVideos();
     }
   },
 );

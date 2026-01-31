@@ -345,13 +345,20 @@ export function formatDate(
 
   const locale = getDateLocale(dateLocale);
 
-  return mask.replace(token, (match, text) =>
-    match in formatter
-      ? formatter[match as keyof typeof formatter](date, locale)
-      : text === void 0
-        ? match
-        : text.split('\\]').join(']'),
-  );
+  return mask.replaceAll(token, (match, text) => {
+    let replacement: string;
+
+    if (match in formatter) {
+      const value = formatter[match as keyof typeof formatter](date, locale);
+      replacement = value === null || value === undefined ? '' : String(value);
+    } else if (text === void 0) {
+      replacement = match;
+    } else {
+      replacement = text.split(String.raw`\]`).join(']');
+    }
+
+    return replacement;
+  });
 }
 
 /**

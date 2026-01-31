@@ -121,27 +121,25 @@ function createApplicationMenu() {
       submenu: [
         {
           click: () => {
-            void shell.openExternal(repository.url.replace('.git', ''));
+            shell.openExternal(repository.url.replace('.git', ''));
           },
           label: 'Learn More',
         },
         {
           click: () => {
-            void shell.openExternal(homepage);
+            shell.openExternal(homepage);
           },
           label: 'Documentation',
         },
         {
           click: () => {
-            void shell.openExternal(
-              repository.url.replace('.git', '/discussions'),
-            );
+            shell.openExternal(repository.url.replace('.git', '/discussions'));
           },
           label: 'Community Discussions',
         },
         {
           click: () => {
-            void shell.openExternal(bugs);
+            shell.openExternal(bugs);
           },
           label: 'Search Issues',
         },
