@@ -1367,10 +1367,8 @@ const setMediaPlaying = async (
           1000,
         min: marker.StartTimeTicks / 10000 / 1000,
       });
-    } else {
-      if (!skipCustomDurationUpdateOnce.value) {
-        updateMediaCustomDuration();
-      }
+    } else if (!skipCustomDurationUpdateOnce.value) {
+      updateMediaCustomDuration();
     }
   }
   skipCustomDurationUpdateOnce.value = false;
@@ -1513,7 +1511,7 @@ onClickOutside(markersPanel, () => {
 
 // Cancel selection on Escape
 useEventListener(
-  window,
+  globalThis,
   'keydown',
   (e: KeyboardEvent) => {
     if (
@@ -1596,8 +1594,6 @@ async function findThumbnailUrl() {
   await runThumbnailCheck();
 }
 
-if (props.media.duration && !props.media.thumbnailUrl) findThumbnailUrl();
-
 const showMediaDurationPopup = () => {
   try {
     mediaCustomDuration.value = props.media.customDuration || {
@@ -1669,7 +1665,6 @@ function stopMedia(forOtherMediaItem = false) {
   if (!forOtherMediaItem) {
     // Stop Zoom screen sharing when media is stopped (unless it's a media switch instead of a stop)
     triggerZoomScreenShare(false);
-    // zoomReset(true);
     nextTick(() => {
       globalThis.dispatchEvent(new CustomEvent<undefined>('shortcutMediaNext'));
     });
@@ -1861,8 +1856,10 @@ const confirmDeleteSelectedMedia = () => {
   });
 };
 
-onMounted(() => {
+onMounted(async () => {
   initializeImageDuration();
+  if (props.media.duration && !props.media.thumbnailUrl)
+    await findThumbnailUrl();
 });
 
 const playButton = useTemplateRef<QBtn>('playButton');
@@ -1870,7 +1867,7 @@ const pauseResumeButton = useTemplateRef<QBtn>('pauseResumeButton');
 const stopButton = useTemplateRef<QBtn>('stopButton');
 
 useEventListener(
-  window,
+  globalThis,
   'shortcutMediaPauseResume',
   () => {
     if (pauseResumeButton.value) {
@@ -1884,7 +1881,7 @@ useEventListener(
   { passive: true },
 );
 useEventListener(
-  window,
+  globalThis,
   'shortcutMediaStop',
   () => {
     if (stopButton.value && currentlySpotlit.value) stopButton.value.click();

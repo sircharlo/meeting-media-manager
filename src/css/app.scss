@@ -286,7 +286,6 @@ body.body--dark {
 
 .media-section {
   padding-left: 1.25em;
-  border-radius: 0.5em;
   padding-top: 1em;
   padding-bottom: 1em;
   position: relative;
@@ -309,6 +308,9 @@ body.body--dark {
   & .q-avatar {
     border-radius: 4px;
     padding-left: 0.5px;
+    height: 32px;
+    width: 32px;
+    margin-right: 12px;
   }
 
   &.tgw:before {
@@ -343,12 +345,6 @@ body.body--dark {
   &.active:before {
     background: $primary;
   }
-}
-
-.media-section .q-avatar {
-  height: 32px;
-  width: 32px;
-  margin-right: 12px;
 }
 
 .jw-icon {
@@ -401,7 +397,6 @@ body.body--dark {
 .q-btn {
   letter-spacing: 0.02em;
   font-weight: 400;
-  // font-size: 14px;
 }
 
 .q-menu,
@@ -470,32 +465,16 @@ body.body--dark {
   background: $treasures;
 }
 
-.text-tgw {
-  color: $treasures;
-}
-
 .bg-ayfm {
   background: $apply;
-}
-
-.text-ayfm {
-  color: $apply;
 }
 
 .bg-lac {
   background: $living;
 }
 
-.text-lac {
-  color: $living;
-}
-
 .bg-wt {
   background: $apply;
-}
-
-.text-wt {
-  color: $apply;
 }
 
 .bg-circuit-overseer,
@@ -515,24 +494,6 @@ body.body--dark {
 .text-bigger {
   font-size: 135%;
 }
-
-// .q-expansion-item .q-focus-helper,
-// .q-expansion-item .q-focus-helper::after,
-// .q-expansion-item .q-focus-helper::before {
-//   // border-radius: 0.75em !important;
-// }
-
-// .q-expansion-item__content > label:first-child::before,
-// .q-expansion-item__content > div:first-child::before {
-//   content: '';
-//   height: 1px;
-//   width: 100%;
-//   display: block;
-//   position: absolute;
-//   background: $accent-200;
-//   top: 0;
-//   left: 0;
-// }
 
 .q-field {
   border-radius: $generic-border-radius;
@@ -614,7 +575,6 @@ a {
 }
 
 .modal-confirm {
-  // font-size: 1.1em;
   & .text-bigger {
     font-size: 1.4em;
   }

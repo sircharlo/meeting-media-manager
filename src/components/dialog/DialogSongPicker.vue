@@ -169,10 +169,7 @@ watch(
 );
 const filteredSongs = computed((): MediaLink[] => {
   if (filter.value) {
-    const searchTerms = filter.value
-      .toLowerCase()
-      .split(/\s+/)
-      .filter((term) => term);
+    const searchTerms = filter.value.toLowerCase().split(/\s+/).filter(Boolean);
     return currentSongs.value?.filter((s) =>
       searchTerms.every((term) => s.title.toLowerCase().includes(term)),
     );

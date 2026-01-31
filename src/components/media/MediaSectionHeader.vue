@@ -292,7 +292,7 @@ const buttonLabel = computed(() => {
       : t('add-a-closing-song');
   }
 
-  return !props.isCustom ? t('add-extra-media') : undefined;
+  return props.isCustom ? undefined : t('add-extra-media');
 });
 
 const tooltipText = computed(() => {
@@ -382,14 +382,12 @@ const updateSectionRepeatState = (newState: boolean) => {
     ) {
       toggleSectionRepeat(props.mediaList.config?.uniqueId);
     }
-  } else {
+  } else if (
     // Stop repeating if currently repeating
-    if (
-      props.mediaList.config?.uniqueId &&
-      isSectionRepeating(props.mediaList.config?.uniqueId)
-    ) {
-      toggleSectionRepeat(props.mediaList.config?.uniqueId);
-    }
+    props.mediaList.config?.uniqueId &&
+    isSectionRepeating(props.mediaList.config?.uniqueId)
+  ) {
+    toggleSectionRepeat(props.mediaList.config?.uniqueId);
   }
 };
 

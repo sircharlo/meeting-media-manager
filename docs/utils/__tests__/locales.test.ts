@@ -60,7 +60,13 @@ describe('Locales', () => {
     localeUrls.flat().forEach((localeUrl) => {
       const { link, linkPage, locale } = localeUrl;
       if (link?.startsWith('https://')) return;
-      expect(link).toBe(`${locale === 'en' ? '' : `/${locale}`}/${linkPage}`);
+      const expectedLink = (locale: string, linkPage: string) => {
+        if (locale === 'en') {
+          return `/${linkPage}`;
+        }
+        return `/${locale}/${linkPage}`;
+      };
+      expect(link).toBe(expectedLink(locale, linkPage));
     });
   });
 

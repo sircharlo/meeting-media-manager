@@ -435,7 +435,7 @@ export const moveAdditionalMediaMaps: MigrationFunction = async () => {
 
           const newAdditionalItems = validItems.filter(
             (item) =>
-              !existingItems.find(
+              !existingItems.some(
                 (m: MediaItem) => m.uniqueId === item.uniqueId,
               ),
           );

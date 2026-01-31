@@ -80,7 +80,7 @@ export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
       source: 'additional',
       title: title ?? '',
       type: 'divider',
-      uniqueId: `divider_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      uniqueId: `divider_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`,
     };
 
     // Add divider to the section
@@ -187,28 +187,9 @@ export function useMediaDividers(sectionId?: MediaSectionIdentifier) {
     console.log('✅ Divider moved:', { dividerId, newPosition });
   };
 
-  // // Get combined list of media items and dividers in order
-  // const getOrderedItems = computed(() => {
-  //   const mediaItems = sectionMediaItems.value;
-  //   const dividers = sectionDividers.value;
-
-  //   // Create a combined array and sort by sortOrder
-  //   const allItems = [
-  //     ...mediaItems.map(item => ({ ...item, itemType: 'media' as const })),
-  //     ...dividers.map(divider => ({ ...divider, itemType: 'divider' as const }))
-  //   ];
-
-  //   return allItems.sort((a, b) => {
-  //     const aOrder = typeof a.sortOrderOriginal === 'number' ? a.sortOrderOriginal : 0;
-  //     const bOrder = typeof b.sortOrderOriginal === 'number' ? b.sortOrderOriginal : 0;
-  //     return aOrder - bOrder;
-  //   });
-  // });
-
   return {
     addDivider,
     deleteDivider,
-    // getOrderedItems,
     moveDivider,
     sectionDividers,
     sectionMediaItems,

@@ -75,27 +75,6 @@ const dialogValue = computed({
   set: (value) => emit('update:modelValue', value),
 });
 
-// // Auto-close after 5 seconds
-// const autoCloseTimer = ref<null | number>(null);
-
-// watch(
-//   () => dialogValue.value,
-//   (isOpen) => {
-//     if (isOpen) {
-//       // Start auto-close timer
-//       autoCloseTimer.value = globalThis.setTimeout(() => {
-//         dialogValue.value = false;
-//       }, 5000);
-//     } else {
-//       // Clear timer when dialog closes
-//       if (autoCloseTimer.value) {
-//         clearTimeout(autoCloseTimer.value);
-//         autoCloseTimer.value = null;
-//       }
-//     }
-//   },
-// );
-
 const availableSections = computed(() => {
   const sections = Object.values(selectedDateObject.value?.mediaSections || {})
     .filter((section) => section.config)
@@ -157,12 +136,6 @@ const getSectionLabel = (section: MediaSectionWithConfig) => {
 };
 
 const selectSection = (section: MediaSectionIdentifier) => {
-  // // Clear auto-close timer
-  // if (autoCloseTimer.value) {
-  //   clearTimeout(autoCloseTimer.value);
-  //   autoCloseTimer.value = null;
-  // }
-
   emit('section-selected', section);
   dialogValue.value = false;
 };

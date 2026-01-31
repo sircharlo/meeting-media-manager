@@ -25,9 +25,9 @@ export const normalizeSchedule = (
 
   if (schedule.current) {
     normalized.current = {
-      mwDay: `${schedule.current.midweek.weekday - 1}` as `${number}`,
+      mwDay: `${schedule.current.midweek.weekday - 1}`,
       mwStartTime: schedule.current.midweek.time,
-      weDay: `${schedule.current.weekend.weekday - 1}` as `${number}`,
+      weDay: `${schedule.current.weekend.weekday - 1}`,
       weStartTime: schedule.current.weekend.time,
     };
   }
@@ -35,20 +35,20 @@ export const normalizeSchedule = (
   if (schedule.future && schedule.futureDate) {
     if (isInPast(schedule.futureDate, true)) {
       normalized.current = {
-        mwDay: `${schedule.future.midweek.weekday - 1}` as `${number}`,
+        mwDay: `${schedule.future.midweek.weekday - 1}`,
         mwStartTime: schedule.future.midweek.time,
-        weDay: `${schedule.future.weekend.weekday - 1}` as `${number}`,
+        weDay: `${schedule.future.weekend.weekday - 1}`,
         weStartTime: schedule.future.weekend.time,
       };
     } else {
       normalized.future = {
-        date: schedule.futureDate.replace(
-          /-/g,
+        date: schedule.futureDate.replaceAll(
+          '-',
           '/',
         ) as `${number}/${number}/${number}`,
-        mwDay: `${schedule.future.midweek.weekday - 1}` as `${number}`,
+        mwDay: `${schedule.future.midweek.weekday - 1}`,
         mwStartTime: schedule.future.midweek.time,
-        weDay: `${schedule.future.weekend.weekday - 1}` as `${number}`,
+        weDay: `${schedule.future.weekend.weekday - 1}`,
         weStartTime: schedule.future.weekend.time,
       };
     }

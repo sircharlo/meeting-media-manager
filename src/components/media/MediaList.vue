@@ -271,7 +271,7 @@ watch(
 );
 
 // Listen for sort order reset events
-useEventListener(window, 'reset-sort-order', () => {
+useEventListener(globalThis, 'reset-sort-order', () => {
   // Reset the sortable items to the original order from mediaList.items
   if (!sortableItems.value?.length || !props.mediaList.items?.length) return;
   sortableItems.value = props.mediaList.items;
@@ -357,11 +357,6 @@ defineExpose({
 
 .sortable-media {
   transition: background-color 0.2s ease;
-
-  // &.drop-here {
-  //   background-color: rgba(var(--q-primary), 0.1);
-  //   border: 2px dashed var(--q-primary);
-  // }
 }
 
 [data-dragging='true'] {

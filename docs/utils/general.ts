@@ -6,7 +6,7 @@
  * camelToKebabCase('camelCase') // 'camel-case'
  */
 export const camelToKebabCase = (str: string) =>
-  str.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+  str.replaceAll(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
 
 /**
  * Converts a kebab-case string to camelCase.
@@ -16,4 +16,4 @@ export const camelToKebabCase = (str: string) =>
  * kebabToCamelCase('kebab-case') // 'kebabCase'
  */
 export const kebabToCamelCase = (str: string) =>
-  str.replace(/-./g, (x) => x[1].toUpperCase());
+  str.replaceAll(/-./g, (x) => x[1].toUpperCase());

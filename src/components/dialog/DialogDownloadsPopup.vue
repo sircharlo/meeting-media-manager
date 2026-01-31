@@ -21,9 +21,6 @@
             <div class="col ellipsis text-weight-medium text-dark-grey">
               {{ t('noDownloadsInProgress') }}
             </div>
-            <!-- <div class="col-shrink">
-              <q-icon color="positive" name="mmm-cloud-done" size="sm" />
-            </div> -->
           </div>
         </template>
         <template v-else>
