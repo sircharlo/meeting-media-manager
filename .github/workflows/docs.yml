@@ -13,11 +13,6 @@ on:
       - yarn.lock
   workflow_dispatch:
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -25,6 +20,8 @@ concurrency:
 jobs:
   lint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v6
@@ -35,12 +32,15 @@ jobs:
           cache: 'yarn'
       - name: Install dependencies
         run: yarn install
-      - name: Prepare Quasar (generate .quasar/tsconfig.json)
+      - name: Prepare Quasar
         run: yarn quasar prepare
       - name: Lint files
         run: yarn docs:lint
+
   fix-links:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v6
@@ -54,11 +54,8 @@ jobs:
           node-version: 22
           cache: 'yarn'
 
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Fix documentation links
-        run: yarn docs:fix-links
+      - run: yarn install
+      - run: yarn docs:fix-links
 
       - name: Commit and push fixes
         run: |
@@ -66,58 +63,54 @@ jobs:
           git config --local user.name "GitHub Action"
           git add docs/src/
           if git diff --staged --quiet; then
-          echo "No link fixes needed"
+            echo "No link fixes needed"
           else
             git commit -m "fix: automatically fix documentation links [skip ci]"
             git push origin HEAD:${{ github.head_ref || github.ref_name }}
           fi
+
   test:
     runs-on: ubuntu-latest
     needs: fix-links
+    permissions:
+      contents: read
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v6
-      - name: Setup Node
-        uses: actions/setup-node@v6
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: 'yarn'
-      - name: Install dependencies
-        run: yarn install
-      - name: Run tests
-        run: |
+      - run: yarn install
+      - run: |
           yarn quasar prepare
           yarn docs:test
+
   build:
     runs-on: ubuntu-latest
     needs: [lint, test]
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Setup Node
-        uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: 'yarn'
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Install dependencies
-        run: yarn install
-      - name: Prepare Quasar (generate .quasar/tsconfig.json)
-        run: yarn quasar prepare
-      - name: Build with VitePress
-        run: |
+      - uses: actions/configure-pages@v5
+      - run: yarn install
+      - run: yarn quasar prepare
+      - run: |
           yarn generate:logos
           yarn docs:build
-      - name: Upload dist artifacts
-        uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6
         with:
           name: dist
           path: docs/.vitepress/dist
-      - name: Upload page artifact
-        uses: actions/upload-pages-artifact@v4
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: docs/.vitepress/dist
 
@@ -127,7 +120,9 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     needs: build
     runs-on: ubuntu-latest
-    name: Deploy
+    permissions:
+      pages: write
+      id-token: write
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

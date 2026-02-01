@@ -103,10 +103,40 @@ export const getCurrentShortcuts = () => {
 };
 
 // See: https://www.electronjs.org/docs/latest/api/accelerator#available-key-codes
+const SINGLE_KEY = /^[0-9A-Z)!@#%^&*(:+<_>?~{|}";=,\-./`[\]\\']$/;
+const F_KEY = /^F([1-9]|1\d|2[0-4])$/;
+
+const NAMED_KEYS = new Set([
+  'Backspace',
+  'Delete',
+  'Down',
+  'End',
+  'Enter',
+  'Esc',
+  'Escape',
+  'Home',
+  'Insert',
+  'Left',
+  'MediaNextTrack',
+  'MediaPlayPause',
+  'MediaPreviousTrack',
+  'MediaStop',
+  'PageDown',
+  'PageUp',
+  'Plus',
+  'PrintScreen',
+  'Return',
+  'Right',
+  'Space',
+  'Tab',
+  'Up',
+  'VolumeDown',
+  'VolumeMute',
+  'VolumeUp',
+]);
+
 export const isKeyCode = (key: string) =>
-  /^([0-9A-Z)!@#%^&*(:+<_>?~{|}";=,\-./`[\\\]']|F1*[1-9]|F10|F2[0-4]|Plus|Space|Tab|Backspace|Delete|Insert|Return|Enter|Up|Down|Left|Right|Home|End|PageUp|PageDown|Escape|Esc|VolumeUp|VolumeDown|VolumeMute|MediaNextTrack|MediaPreviousTrack|MediaStop|MediaPlayPause|PrintScreen)$/.test(
-    key,
-  );
+  SINGLE_KEY.test(key) || F_KEY.test(key) || NAMED_KEYS.has(key);
 
 export const registerCustomShortcut = (
   shortcutName: Partial<keyof SettingsValues>,

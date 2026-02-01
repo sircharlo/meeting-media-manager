@@ -1827,7 +1827,7 @@ export const watchedItemMapper: (
 
     // Fallback: Check if filename already has section information (legacy support)
     if (!section) {
-      const sectionMatch = filename.match(/^Section-([^-]+) - /);
+      const sectionMatch = new RegExp(/^Section-([^-]+) - /).exec(filename);
       if (sectionMatch) {
         section = sectionMatch[1] as MediaSectionIdentifier;
       }
@@ -2124,7 +2124,7 @@ export const getWeMedia = async (lookupDate: Date) => {
           LIMIT 2`,
       );
     } else if (videosNotInParagraphs?.length) {
-      const sortedVideos = videosNotInParagraphs.sort(
+      const sortedVideos = videosNotInParagraphs.toSorted(
         (a, b) => (a.MultimediaId || 0) - (b.MultimediaId || 0),
       );
       if (sortedVideos.length <= 2) {
@@ -2160,7 +2160,7 @@ export const getWeMedia = async (lookupDate: Date) => {
         )
         .sort((a, b) => a.BeginParagraphOrdinal - b.BeginParagraphOrdinal)
         .map((item) => {
-          const match = item.Link.match(/\/(.*)\//);
+          const match = new RegExp(/\/(.*)\//).exec(item.Link);
           const langOverride = match
             ? (match[1]?.split(':')[0] as JwLangCode)
             : '';
