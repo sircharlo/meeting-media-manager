@@ -1465,9 +1465,9 @@ const getParagraphNumbers = (
   try {
     if (!caption) return paragraphLabel || '';
 
-    const numbers = [...caption.matchAll(/\d+/g)].map((m) =>
-      Number.parseInt(m[0]),
-    );
+    const numbers = [...caption.matchAll(/\d+/g)]
+      .map((m) => Number.parseInt(m[0]))
+      .filter((n) => n > 0 && n < 100);
 
     if (numbers.length === 0) return paragraphLabel || '';
     if (numbers.length === 1) return numbers[0];
