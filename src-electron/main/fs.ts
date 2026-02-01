@@ -127,8 +127,204 @@ export async function openFolderDialog() {
   });
 }
 
+const decompress = async (
+  input: string,
+  output: string,
+  opts?: UnzipOptions,
+): Promise<UnzipResult[]> => {
+  const stats = await stat(input).catch(() => undefined);
+
+  return new Promise<UnzipResult[]>((resolve, reject) => {
+    const extractedFiles: UnzipResult[] = [];
+
+    // Track all ongoing file operations
+    const pendingOperations: Promise<void>[] = [];
+    let zipfileEnded = false;
+
+    yauzl.open(input, { lazyEntries: true }, (err, zipfile) => {
+      if (err) {
+        captureElectronError(err, {
+          contexts: {
+            fn: {
+              args: { input, output, stats },
+              name: 'unzipFile yauzl.open',
+            },
+          },
+        });
+
+        return reject(new Error(String(err)));
+      }
+      if (!zipfile) return reject(new Error('Zipfile not found'));
+
+      zipfile.readEntry();
+      zipfile.on('entry', async (entry: yauzl.Entry) => {
+        const fullPath = join(output, entry.fileName);
+
+        // Apply filter if provided
+        if (opts?.includes?.length && !opts.includes.includes(entry.fileName)) {
+          zipfile.readEntry();
+          return;
+        }
+
+        if (entry.fileName.endsWith('/')) {
+          // Directory
+          const createDir = async (attempt = 1): Promise<void> => {
+            try {
+              await ensureDir(fullPath);
+              zipfile.readEntry();
+            } catch (e) {
+              if (attempt < 3) {
+                console.warn(
+                  `[unzipFile] Failed to create directory, retrying (${attempt}/3): ${fullPath}`,
+                );
+                await new Promise((r) => {
+                  setTimeout(r, 100 * attempt);
+                });
+                return createDir(attempt + 1);
+              }
+              captureElectronError(e, {
+                contexts: {
+                  fn: {
+                    args: { attempt, fullPath, input, output },
+                    name: 'unzipFile ensureDir (dir entry)',
+                  },
+                },
+              });
+              zipfile.close();
+              reject(e);
+            }
+          };
+          await createDir();
+        } else {
+          // File
+          zipfile.openReadStream(entry, async (err, readStream) => {
+            if (err) {
+              captureElectronError(err, {
+                contexts: {
+                  fn: {
+                    args: { entry: entry.fileName, input, output },
+                    name: 'unzipFile openReadStream',
+                  },
+                },
+              });
+              zipfile.close();
+              return reject(new Error(String(err)));
+            }
+            if (!readStream) {
+              zipfile.close();
+              return reject(new Error('Read stream not found'));
+            }
+
+            const processFile = async (attempt = 1): Promise<void> => {
+              try {
+                await ensureDir(dirname(fullPath));
+                const writeStream = createWriteStream(fullPath);
+
+                // Handle write stream errors
+                writeStream.on('error', (e) => {
+                  captureElectronError(e, {
+                    contexts: {
+                      fn: {
+                        args: { attempt, fullPath, input, output },
+                        name: 'unzipFile writeStream error',
+                      },
+                    },
+                  });
+                });
+
+                // Pipeline automatically handles stream completion
+                // It only resolves when the write stream has finished AND flushed
+                await pipeline(readStream, writeStream);
+
+                // Add extracted file to results
+                extractedFiles.push({ path: entry.fileName });
+
+                // Continue to next entry
+                zipfile.readEntry();
+              } catch (e) {
+                if (
+                  attempt < 3 &&
+                  e instanceof Error &&
+                  (e as { code?: string }).code === 'ENOENT'
+                ) {
+                  console.warn(
+                    `[unzipFile] ENOENT during pipeline, retrying (${attempt}/3): ${fullPath}`,
+                  );
+                  await new Promise((r) => {
+                    setTimeout(r, 100 * attempt);
+                  });
+                  return processFile(attempt + 1);
+                }
+
+                captureElectronError(e, {
+                  contexts: {
+                    fn: {
+                      args: { attempt, fullPath, input, output },
+                      name: 'unzipFile pipeline',
+                    },
+                  },
+                });
+                zipfile.close();
+                reject(new Error(String(e)));
+              }
+            };
+
+            // Track this operation and wait for it to complete
+            const operationPromise = processFile();
+            pendingOperations.push(operationPromise);
+
+            // Clean up completed operations to prevent memory leaks
+            operationPromise.finally(() => {
+              const index = pendingOperations.indexOf(operationPromise);
+              if (index > -1) {
+                pendingOperations.splice(index, 1);
+              }
+
+              // Check if we can resolve now
+              checkIfComplete();
+            });
+          });
+        }
+      });
+
+      // Don't resolve immediately on 'end'
+      // The 'end' event only means we've read all entries from the zip,
+      // NOT that all files have been written to disk
+      zipfile.on('end', () => {
+        zipfileEnded = true;
+        checkIfComplete();
+      });
+
+      zipfile.on('error', (err) => {
+        captureElectronError(err, {
+          contexts: {
+            fn: { args: { input, output }, name: 'unzipFile zipfile error' },
+          },
+        });
+        reject(new Error(String(err)));
+      });
+
+      // Helper function to check if we can resolve
+      const checkIfComplete = async () => {
+        // We can only resolve when:
+        // 1. The zipfile has finished reading all entries (zipfileEnded = true)
+        // 2. All file write operations have completed (pendingOperations.length = 0)
+        if (zipfileEnded && pendingOperations.length === 0) {
+          // ADDITIONAL SAFETY: Small delay to ensure OS has flushed buffers
+          // This is especially important on Windows and network drives
+          setTimeout(() => {
+            resolve(extractedFiles);
+          }, 50); // 50ms should be enough for OS buffer flush
+        }
+      };
+    });
+  });
+};
+
 /**
- * Decompresses a file using yauzl for memory efficiency (avoids buffering entire zip)
+ * Decompresses a file using yauzl for memory efficiency
+ * Properly waits for all write streams to finish and flush to disk
+ * before resolving the promise.
  */
 export async function unzipFile(
   input: string,
@@ -139,159 +335,7 @@ export async function unzipFile(
   const existing = ongoingDecompressions.get(cacheKey);
   if (existing) return existing;
 
-  const decompress = async (): Promise<UnzipResult[]> => {
-    const stats = await stat(input).catch(() => undefined);
-
-    return new Promise<UnzipResult[]>((resolve, reject) => {
-      const extractedFiles: UnzipResult[] = [];
-      yauzl.open(input, { lazyEntries: true }, (err, zipfile) => {
-        if (err) {
-          captureElectronError(err, {
-            contexts: {
-              fn: {
-                args: { input, output, stats },
-                name: 'unzipFile yauzl.open',
-              },
-            },
-          });
-
-          return reject(new Error(String(err)));
-        }
-        if (!zipfile) return reject(new Error('Zipfile not found'));
-
-        zipfile.readEntry();
-        zipfile.on('entry', async (entry: yauzl.Entry) => {
-          const fullPath = join(output, entry.fileName);
-
-          // Apply filter if provided
-          if (
-            opts?.includes?.length &&
-            !opts.includes.includes(entry.fileName)
-          ) {
-            zipfile.readEntry();
-            return;
-          }
-
-          if (/\/$/.test(entry.fileName)) {
-            // Directory
-            const createDir = async (attempt = 1): Promise<void> => {
-              try {
-                await ensureDir(fullPath);
-                zipfile.readEntry();
-              } catch (e) {
-                if (attempt < 3) {
-                  console.warn(
-                    `[unzipFile] Failed to create directory, retrying (${attempt}/3): ${fullPath}`,
-                  );
-                  await new Promise((r) => {
-                    setTimeout(r, 100 * attempt);
-                  });
-                  return createDir(attempt + 1);
-                }
-                captureElectronError(e, {
-                  contexts: {
-                    fn: {
-                      args: { attempt, fullPath, input, output },
-                      name: 'unzipFile ensureDir (dir entry)',
-                    },
-                  },
-                });
-                zipfile.close();
-                reject(e);
-              }
-            };
-            await createDir();
-          } else {
-            // File
-            zipfile.openReadStream(entry, async (err, readStream) => {
-              if (err) {
-                captureElectronError(err, {
-                  contexts: {
-                    fn: {
-                      args: { entry: entry.fileName, input, output },
-                      name: 'unzipFile openReadStream',
-                    },
-                  },
-                });
-                zipfile.close();
-                return reject(new Error(String(err)));
-              }
-              if (!readStream) {
-                zipfile.close();
-                return reject(new Error('Read stream not found'));
-              }
-
-              const processFile = async (attempt = 1): Promise<void> => {
-                try {
-                  await ensureDir(dirname(fullPath));
-                  const writeStream = createWriteStream(fullPath);
-
-                  // Handle write stream errors
-                  writeStream.on('error', (e) => {
-                    // This is handled by pipeline, but good to have a backup
-                    captureElectronError(e, {
-                      contexts: {
-                        fn: {
-                          args: { attempt, fullPath, input, output },
-                          name: 'unzipFile ensureDir (dir entry)',
-                        },
-                      },
-                    });
-                  });
-
-                  await pipeline(readStream, writeStream);
-                  extractedFiles.push({ path: entry.fileName });
-                  zipfile.readEntry();
-                } catch (e) {
-                  if (
-                    attempt < 3 &&
-                    e instanceof Error &&
-                    (e as { code?: string }).code === 'ENOENT'
-                  ) {
-                    console.warn(
-                      `[unzipFile] ENOENT during pipeline, retrying (${attempt}/3): ${fullPath}`,
-                    );
-                    await new Promise((r) => {
-                      setTimeout(r, 100 * attempt);
-                    });
-                    return processFile(attempt + 1);
-                  }
-
-                  captureElectronError(e, {
-                    contexts: {
-                      fn: {
-                        args: { attempt, fullPath, input, output },
-                        name: 'unzipFile pipeline',
-                      },
-                    },
-                  });
-                  zipfile.close();
-                  reject(new Error(String(e)));
-                }
-              };
-
-              await processFile();
-            });
-          }
-        });
-
-        zipfile.on('end', () => {
-          resolve(extractedFiles);
-        });
-
-        zipfile.on('error', (err) => {
-          captureElectronError(err, {
-            contexts: {
-              fn: { args: { input, output }, name: 'unzipFile zipfile error' },
-            },
-          });
-          reject(new Error(String(err)));
-        });
-      });
-    });
-  };
-
-  const decompressionPromise = decompress().finally(() => {
+  const decompressionPromise = decompress(input, output, opts).finally(() => {
     ongoingDecompressions.delete(cacheKey);
   });
 
