@@ -1,6 +1,6 @@
-import type { JsonObject } from 'app/node_modules/obs-websocket-js/node_modules/type-fest';
 import type { OBSWebSocketError } from 'obs-websocket-js';
 import type { ObsConnectionState, ObsSceneType } from 'src/types';
+import type { JsonObject } from 'type-fest';
 
 import { defineStore } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
@@ -31,7 +31,7 @@ export const useObsStateStore = defineStore('obs-state', {
       const matchScene = isUUID(sceneToCheck)
         ? (scene: JsonObject) => scene.sceneUuid === sceneToCheck
         : (scene: JsonObject) => scene.sceneName === sceneToCheck;
-      return this.scenes.some(matchScene);
+      return this.scenes.some((element) => matchScene(element));
     },
   },
   getters: {},

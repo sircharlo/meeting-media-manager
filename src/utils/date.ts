@@ -55,7 +55,8 @@ export const dateFromString = (
       typeof lookupDate.getTime === 'function'
     ) {
       try {
-        date = new Date(lookupDate.getTime());
+        const dateLikeObjTime = lookupDate.getTime();
+        date = new Date(dateLikeObjTime);
         // Check if the result is valid
         if (Number.isNaN(date.getTime())) {
           throw new TypeError('Invalid date object');

@@ -140,9 +140,7 @@ export const moveAdditionalMediaMaps: MigrationFunction = async () => {
 
     for (const [congId, dates] of Object.entries(currentAdditionalMediaMaps)) {
       if (!congId || !currentLookupPeriods) continue;
-      if (!currentLookupPeriods[congId]) {
-        currentLookupPeriods[congId] = [];
-      }
+      currentLookupPeriods[congId] ??= [];
       const lookupPeriodForCongregation = currentLookupPeriods[congId];
       if (!lookupPeriodForCongregation) continue;
 

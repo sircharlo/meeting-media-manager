@@ -9,7 +9,7 @@ import { toRaw } from 'vue';
  * camelToKebabCase('camelCase') // 'camel-case'
  */
 export const camelToKebabCase = (str: string) =>
-  str.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+  str.replaceAll(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
 
 /**
  * Converts a kebab-case string to camelCase.
@@ -19,7 +19,7 @@ export const camelToKebabCase = (str: string) =>
  * kebabToCamelCase('kebab-case') // 'kebabCase'
  */
 export const kebabToCamelCase = (str: string) =>
-  str.replace(/-./g, (x) => x[1]?.toUpperCase() ?? '');
+  str.replaceAll(/-./g, (x) => x[1]?.toUpperCase() ?? '');
 
 /**
  * Converts a kebab-case or snake_case string to title case.
@@ -32,7 +32,7 @@ export const kebabToCamelCase = (str: string) =>
 export const toTitleCase = (str: string) =>
   str
     .replace(/^[-_]*(.)/, (_, c) => c.toUpperCase())
-    .replace(/[-_]+(.)/g, (_, c) => ' ' + c.toUpperCase());
+    .replaceAll(/[-_]+(.)/g, (_, c) => ' ' + c.toUpperCase());
 
 /**
  * Sleeps for a given amount of time.
@@ -69,7 +69,8 @@ export const isEmpty = (val: unknown) =>
  * @example
  * sanitizeId('Figure_: "2-persons!".') // 'Figure_:__2-persons__.'
  */
-export const sanitizeId = (id: string) => id.replace(/[^a-zA-Z0-9\-_:.]/g, '_');
+export const sanitizeId = (id: string) =>
+  id.replaceAll(/[^a-zA-Z0-9\-_:.]/g, '_');
 
 /**
  * Parses a version string into an object.
@@ -247,7 +248,7 @@ export function toRawDeep<T>(observed: T): T {
   const val = toRaw(observed);
 
   if (Array.isArray(val)) {
-    return val.map(toRawDeep) as T;
+    return val.map((element) => toRawDeep(element)) as T;
   }
 
   if (val === null) return null as T;
@@ -294,19 +295,17 @@ export const throttleWithTrailing = <A extends unknown[]>(
       }
     } else {
       // Schedule trailing execution if not already scheduled
-      if (!timeoutId) {
-        timeoutId = setTimeout(
-          () => {
-            if (lastArgs) {
-              lastExecTime = Date.now();
-              func(...lastArgs);
-              timeoutId = null;
-              lastArgs = null;
-            }
-          },
-          delay - (now - lastExecTime),
-        );
-      }
+      timeoutId ??= setTimeout(
+        () => {
+          if (lastArgs) {
+            lastExecTime = Date.now();
+            func(...lastArgs);
+            timeoutId = null;
+            lastArgs = null;
+          }
+        },
+        delay - (now - lastExecTime),
+      );
     }
   };
 };
