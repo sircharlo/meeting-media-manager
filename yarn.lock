@@ -11504,7 +11504,7 @@ __metadata:
     vue: "npm:^3.5.27"
     vue-eslint-parser: "npm:^10.2.0"
     vue-i18n: "npm:^11.2.8"
-    vue-router: "npm:^5.0.1"
+    vue-router: "npm:^5.0.2"
     vue-tsc: "npm:^3.2.4"
     vue-zoomable: "npm:^1.2.8"
     webpack-iconfont-plugin-nodejs: "npm:^1.0.36"
@@ -16036,7 +16036,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unplugin@npm:^2.3.11, unplugin@npm:^2.3.4":
+"unplugin@npm:^2.3.4":
   version: 2.3.11
   resolution: "unplugin@npm:2.3.11"
   dependencies:
@@ -16045,6 +16045,17 @@ __metadata:
     picomatch: "npm:^4.0.3"
     webpack-virtual-modules: "npm:^0.6.2"
   checksum: 10c0/273c1eab0eca4470c7317428689295c31dbe8ab0b306504de9f03cd20c156debb4131bef24b27ac615862958c5dd950a3951d26c0723ea774652ab3624149cff
+  languageName: node
+  linkType: hard
+
+"unplugin@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "unplugin@npm:3.0.0"
+  dependencies:
+    "@jridgewell/remapping": "npm:^2.3.5"
+    picomatch: "npm:^4.0.3"
+    webpack-virtual-modules: "npm:^0.6.2"
+  checksum: 10c0/9b3a9eb7c1cfaab677160b9659b008b4562e08360b6c715f31bdd7692738a75de91f217931032ec247979f71e83d4c9b908245cf47d984b26fb318b60b1d2d36
   languageName: node
   linkType: hard
 
@@ -16481,9 +16492,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue-router@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "vue-router@npm:5.0.1"
+"vue-router@npm:^5.0.2":
+  version: 5.0.2
+  resolution: "vue-router@npm:5.0.2"
   dependencies:
     "@babel/generator": "npm:^7.28.6"
     "@vue-macros/common": "npm:^3.1.1"
@@ -16499,11 +16510,11 @@ __metadata:
     picomatch: "npm:^4.0.3"
     scule: "npm:^1.3.0"
     tinyglobby: "npm:^0.2.15"
-    unplugin: "npm:^2.3.11"
+    unplugin: "npm:^3.0.0"
     unplugin-utils: "npm:^0.3.1"
     yaml: "npm:^2.8.2"
   peerDependencies:
-    "@pinia/colada": ^0.18.1
+    "@pinia/colada": ">=0.21.2"
     "@vue/compiler-sfc": ^3.5.17
     pinia: ^3.0.4
     vue: ^3.5.0
@@ -16514,7 +16525,7 @@ __metadata:
       optional: true
     pinia:
       optional: true
-  checksum: 10c0/019f5e5353dfb79b04a276464215a3aef8c28b0736ffd3ebd4e34f20175d572a9d49cd08cf418985a35afb85f8514b0c04543d83d568b917310bc46941f6d04e
+  checksum: 10c0/b87246f75ee8ef76c541cea0f77dd2c0e81f92833f204db7bf48e828123f49bac0eaab75b6fdc9abb858017cd425383f0b065898fbed7e453075c8d996ebb10c
   languageName: node
   linkType: hard
 
