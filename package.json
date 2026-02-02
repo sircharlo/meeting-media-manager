@@ -76,7 +76,7 @@
     "readable-stream": "^4.7.0",
     "require-in-the-middle": "^8.0.1",
     "sanitize-filename": "^1.6.3",
-    "type-fest": "^5.4.2",
+    "type-fest": "^5.4.3",
     "upath": "^2.0.1",
     "vue": "^3.5.27",
     "vue-i18n": "^11.2.8",
