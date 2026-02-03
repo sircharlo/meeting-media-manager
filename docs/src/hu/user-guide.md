@@ -13,26 +13,26 @@ A legújabb verziót a [Letöltési oldalról](download) szerezheti be. A legjob
 Amikor először indítja el az M³ programot, egy beállítási varázsló végigvezeti Önt a gyülekezetéhez szükséges alapvető beállítások konfigurálásán:
 
 1. **Válassza ki a felület nyelvét** - Ez határozza meg, hogy az M³ menüi és gombjai milyen nyelven jelennek meg
-2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
-3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
-4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
-5. **Optional features** - Configure OBS integration, background music, and other advanced features
+2. **Profil típus kiválasztása** - Normál gyülekezeti használatra válassza a „Rendszeres” lehetőséget, különleges eseményekre pedig az „Egyéb” lehetőséget
+3. **Gyülekezeti adatok beállítása** - Adja meg a gyülekezeti adatokat, vagy használja az automatikus keresési funkciót
+4. **Összejövetelek ütemezésének beállítása** - Állítsa be a hétközbeni és hétvégi összejövetelek időpontjait
+5. **Opcionális funkciók** - Az OBS integráció, a háttérzene és egyéb fejlett funkciók konfigurálása
 
 :::tip Tipp
 
-Take your time during setup - but you can always change these settings later in the Settings menu.
+A beállítás során ne spóroljon az idővel – később ezeket a beállításokat bármikor megváltoztathatja a Beállítások menüben.
 
 :::
 
-### Main Interface Overview {#main-interface}
+### Fő Felület Áttekintése {#main-interface}
 
-The main M³ interface consists of several key areas:
+A fő M³ felület több kulcsfontosságú területből áll:
 
-- **Navigation Drawer** - Access different sections and settings
-- **Calendar View** - Browse media by date
-- **Media List** - View and manage media for selected dates
-- **Toolbar** - Quick access to common functions
-- **Status Bar** - Shows download progress, and background music and OBS Studio connection status
+- **Navigációs menü** - Hozzáférés a különböző menüpontokhoz és beállításokhoz
+- **Naptár nézet** - Média böngészése dátum szerint
+- **Médialista** – A kiválasztott dátumokhoz tartozó média megtekintése és kezelése
+- **Eszköztár** - Gyors hozzáférés a gyakori funkciókhoz
+- **Állapotjelző sáv** – Megjeleníti a letöltés előrehaladását, a háttérzenét és az OBS Studio kapcsolat állapotát
 
 ## Media Management {#user-guide-media-management}
 
