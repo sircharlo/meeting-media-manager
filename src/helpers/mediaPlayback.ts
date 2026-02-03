@@ -313,7 +313,8 @@ export const getMediaFromJwPlaylist = async (
           FROM
             PlaylistItemMarker
           WHERE
-            PlaylistItemId = ${item.PlaylistItemId}`,
+            PlaylistItemId = ?`,
+            [item.PlaylistItemId],
           )
           .map((v) =>
             Number.parseInt(
