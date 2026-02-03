@@ -5,16 +5,13 @@ import { pathExistsSync, readJsonSync } from 'fs-extra/esm';
 import { readFileSync } from 'node:fs';
 import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
 import { getAllScreens, getWindowScreen } from 'src-electron/main/screen';
-import {
-  captureElectronError,
-  getIconPath,
-  throttleWithTrailing,
-} from 'src-electron/main/utils';
+import { captureElectronError, getIconPath } from 'src-electron/main/utils';
 import {
   createWindow,
   sendToWindow,
 } from 'src-electron/main/window/window-base';
 import { mainWindow } from 'src-electron/main/window/window-main';
+import { throttleWithTrailing } from 'src/shared/vanilla';
 import upath from 'upath';
 
 const { join } = upath;

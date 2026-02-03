@@ -7,8 +7,8 @@ import {
   screen,
 } from 'electron';
 import { ensureDirSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
-import { debounce } from 'quasar';
 import { captureElectronError } from 'src-electron/main/utils';
+import { debounce } from 'src/shared/vanilla';
 import upath from 'upath';
 
 const { dirname, join } = upath;
