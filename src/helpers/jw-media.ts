@@ -1067,14 +1067,16 @@ export const getStudyBibleMedia = async (
             Multimedia AS CoverMultimedia ON CoverMultimedia.MultimediaId = m.LinkMultimediaId
         WHERE 
             m.CategoryType NOT IN (9, 10, 17)
-      ${bookNumber ? `AND bc.BookNumber = ${bookNumber}` : ''}
-      ${chapterNumber ? `AND bc.ChapterNumber = ${chapterNumber}` : ''}
+      ${bookNumber ? `AND bc.BookNumber = ?` : ''}
+      ${chapterNumber ? `AND bc.ChapterNumber = ?` : ''}
       ORDER BY bc.ChapterNumber, bv.BibleVerseId
     `;
 
+    const bibleBookMediaItemsParams = [bookNumber, chapterNumber].filter(v => v !== undefined);
     const bibleBookMediaItems = executeQuery<MultimediaItem>(
       nwtStyDb,
       bibleBookMediaItemsQuery,
+      bibleBookMediaItemsParams,
     );
 
     // Fetch "Related" items (Introduction, etc.)
@@ -1099,13 +1101,15 @@ export const getStudyBibleMedia = async (
           Multimedia AS CoverMultimedia ON CoverMultimedia.MultimediaId = m.LinkMultimediaId
       WHERE 
           m.CategoryType NOT IN (9, 10, 17)
-    ${bookNumber ? `AND d.ChapterNumber = ${bookNumber}` : ''}
+    ${bookNumber ? `AND d.ChapterNumber = ?` : ''}
     ORDER BY m.MultimediaId
     `;
 
+    const bibleBookRelatedMediaItemsParams = bookNumber !== undefined ? [bookNumber] : [];
     const bibleBookRelatedMediaItems = executeQuery<MultimediaItem>(
       nwtStyDb,
       bibleBookRelatedMediaItemsQuery,
+      bibleBookRelatedMediaItemsParams,
     );
 
     let filteredMediaItems: MultimediaItem[] = [];
@@ -1948,14 +1952,14 @@ export const getWeMedia = async (lookupDate: Date) => {
            WHEN dp.BeginPosition < (
              SELECT MIN(BeginPosition)
              FROM DocumentParagraph
-             WHERE DocumentId = ${docId}
+             WHERE DocumentId = ?
                AND ParagraphNumberLabel IS NOT NULL
                AND ParagraphNumberLabel != ''
            ) THEN 0
            WHEN dp.BeginPosition > (
              SELECT MAX(EndPosition)
              FROM DocumentParagraph
-             WHERE DocumentId = ${docId}
+             WHERE DocumentId = ?
                AND ParagraphNumberLabel IS NOT NULL
                AND ParagraphNumberLabel != ''
            ) THEN 0
@@ -1970,9 +1974,10 @@ export const getWeMedia = async (lookupDate: Date) => {
     		 LEFT JOIN Question q
            ON q.DocumentId = dm.DocumentId
            AND q.TargetParagraphOrdinal = dm.BeginParagraphOrdinal
-         WHERE dm.DocumentId = ${docId}
+         WHERE dm.DocumentId = ?
            AND m.CategoryType = -1
          ORDER BY dp.BeginPosition;`,
+      [docId, docId, docId],
     );
     const videosInParagraphs = videos.filter(
       (video) => !!video.TargetParagraphNumberLabel,
@@ -2119,9 +2124,10 @@ export const getWeMedia = async (lookupDate: Date) => {
           INNER JOIN DocumentMultimedia
             ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId
           WHERE DataType = 2
-          AND DocumentId = ${docId}
+          AND DocumentId = ?
           ORDER BY BeginParagraphOrdinal
           LIMIT 2`,
+        [docId],
       );
     } else if (videosNotInParagraphs?.length) {
       const sortedVideos = videosNotInParagraphs.toSorted(
