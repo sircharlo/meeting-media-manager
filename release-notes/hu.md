@@ -30,11 +30,11 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 
 - ✨ **Többszörös kiválasztás környezeti menü**: Több médiaelem kiválasztása esetén a jobb egérgombbal elérhető menü műveletek támogatása hozzáadva.
 - ✨ **Billentyűparancsok**: Hozzáadva a `Ctrl/Cmd+A` billentyűkombináció az összes média kijelöléséhez, a `H` billentyű a kijelölt média elrejtéséhez, valamint a `Shift+Fel/Le` billentyűkombináció a billentyűzetes navigációhoz.
-- ✨ **Watchtower Study Video Settings**: Added a setting to exclude extra Watchtower study videos.
-- ✨ **Collapsible Sections**: Added ability to collapse sections on non-meeting days for a cleaner view.
-- ✨ **JW Events Website**: Added the ability to present the JW Events website in addition to the main official website.
-- ✨ **Playlist Import Customization**: Allowed ability to customize the prefix that is added to media items when importing JW playlists.
-- ✨ **Website Mirroring Navigation**: Added a toggle to automatically navigate to the media list after website mirroring is stopped.
+- ✨ **Őrtorony Tanulmányozás Videó Beállítások**: Hozzáadtunk egy beállítást, amelynek segítségével kizárhatók a felesleges Őrtorony tanulmányozási videók.
+- ✨ **Összecsukható szakaszok**: Hozzáadtuk a lehetőséget, hogy összecsukhassuk a szakaszokat a nem összejöveteli napokon, így a nézet áttekinthetőbb lesz.
+- ✨ **JW Events weboldal**: Hozzáadottuk azt a lehetőséget, hogy a fő hivatalos weboldal mellett a JW Events weboldalt is meg lehessen jeleníteni.
+- ✨ **Lejátszási lista importálásának testreszabása**: Lehetővé vált a JW lejátszási listák importálásakor a médiaelemekhez hozzáadott előtag testreszabása.
+- ✨ **Weboldal tükrözés navigáció**: Hozzáadtunk egy kapcsolót, amely automatikusan a médiakönyvtárhoz navigál, miután a weboldal tükrözése leállt.
 - ✨ **OBS Recording Controls**: Added the ability to control OBS recordings.
 - ✨ **Yeartext Preview**: Added the ability to preview next year's yeartext as of December of every year.
 - ✨ **Update Notifications**: Added warning notifications if running a beta version or if updates are disabled, and improved update download progress display.
