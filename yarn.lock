@@ -5076,7 +5076,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/core@npm:14.2.0":
+"@vueuse/core@npm:14.2.0, @vueuse/core@npm:^14.2.0":
   version: 14.2.0
   resolution: "@vueuse/core@npm:14.2.0"
   dependencies:
@@ -5165,15 +5165,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/router@npm:^14.1.0":
-  version: 14.1.0
-  resolution: "@vueuse/router@npm:14.1.0"
+"@vueuse/router@npm:^14.2.0":
+  version: 14.2.0
+  resolution: "@vueuse/router@npm:14.2.0"
   dependencies:
-    "@vueuse/shared": "npm:14.1.0"
+    "@vueuse/shared": "npm:14.2.0"
   peerDependencies:
     vue: ^3.5.0
-    vue-router: ^4.0.0
-  checksum: 10c0/f44d42f01e360a8acb90689aa2322fe5d24dd0ec73262d0030db4dcebbddca338aad3c62e925dca09d739250b1bbe97509bcf1983d973c8726030fbc96d29f7c
+    vue-router: ^4.0.0 || ^5.0.0
+  checksum: 10c0/f34e0a86283cc2bae25c235c075d3f617fd9ebb7f5ba5c23fc0356c8108d2fe7601eb3cf192face6a60563d53e6c18b5a1df391bb6c8cc44c6e83e05bc45a7e6
   languageName: node
   linkType: hard
 
@@ -11130,8 +11130,8 @@ __metadata:
     "@vue/eslint-config-prettier": "npm:^10.2.0"
     "@vue/eslint-config-typescript": "npm:^14.6.0"
     "@vue/test-utils": "npm:^2.4.6"
-    "@vueuse/core": "npm:^14.1.0"
-    "@vueuse/router": "npm:^14.1.0"
+    "@vueuse/core": "npm:^14.2.0"
+    "@vueuse/router": "npm:^14.2.0"
     autoprefixer: "npm:^10.4.24"
     better-sqlite3: "npm:^12.6.2"
     check-disk-space: "npm:^3.4.0"
