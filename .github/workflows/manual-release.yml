@@ -69,7 +69,7 @@ jobs:
       - name: Create or update draft release
         if: needs.bump-version.outputs.draft_exists != 'true'
         id: create_release
-        uses: ncipollo/release-action@v1.20.0
+        uses: ncipollo/release-action@b7eabc95ff50cbeeedec83973935c8f306dfcd0b # v1.20.0
         with:
           name: v${{ needs.bump-version.outputs.new_version }}
           tag: v${{ needs.bump-version.outputs.new_version }}
