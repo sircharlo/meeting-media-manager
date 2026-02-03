@@ -1,6 +1,8 @@
-import { app, type BrowserWindow, type Rectangle } from 'electron';
-import fse from 'fs-extra';
-import { pathExistsSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
+import type { WindowState } from 'src-electron/main/window/window-state';
+
+import { app, type BrowserWindow, screen } from 'electron';
+import { pathExistsSync, readJsonSync } from 'fs-extra/esm';
+import { readFileSync } from 'node:fs';
 import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
 import { getAllScreens, getWindowScreen } from 'src-electron/main/screen';
 import {
@@ -16,7 +18,6 @@ import { mainWindow } from 'src-electron/main/window/window-main';
 import upath from 'upath';
 
 const { join } = upath;
-const { readFileSync } = fse;
 
 export let mediaWindow: BrowserWindow | null = null;
 
@@ -366,16 +367,29 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
 
     let preferredIndex = -1;
     const mediaWindowPrefs = loadMediaWindowPrefs();
-    if (mediaWindowPrefs) {
-      preferredIndex = screens.findIndex((s) => {
-        const b = s.bounds;
-        return (
-          b.x === mediaWindowPrefs.x &&
-          b.y === mediaWindowPrefs.y &&
-          b.width === mediaWindowPrefs.width &&
-          b.height === mediaWindowPrefs.height
-        );
+    if (
+      (targetDisplayNr === undefined || targetFullscreen === undefined) &&
+      mediaWindowPrefs
+    ) {
+      console.log(
+        '🔍 [moveMediaWindow] Using saved media window prefs',
+        mediaWindowPrefs,
+      );
+      const preferredScreen = screen.getDisplayMatching({
+        height: mediaWindowPrefs.height,
+        width: mediaWindowPrefs.width,
+        x: mediaWindowPrefs.x || 0,
+        y: mediaWindowPrefs.y || 0,
       });
+      console.log(
+        '🔍 [moveMediaWindow] Preferred screen ID:',
+        preferredScreen?.id,
+      );
+      preferredIndex = screens.findIndex((s) => s.id === preferredScreen?.id);
+      console.log(
+        '🔍 [moveMediaWindow] Preferred screen index:',
+        preferredIndex,
+      );
       if (preferredIndex === -1) {
         console.log('🔍 [moveMediaWindow] Preferred display index not found');
       } else {
@@ -383,9 +397,15 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
           '🔍 [moveMediaWindow] Preferred display index:',
           preferredIndex,
         );
+        targetDisplayNr = preferredIndex;
       }
+      console.log(
+        '🔍 [moveMediaWindow] Setting fullscreen based on prefs:',
+        mediaWindowPrefs.isFullScreen,
+      );
+      targetFullscreen = !!mediaWindowPrefs.isFullScreen;
     } else {
-      console.log('🔍 [moveMediaWindow] No preferred display geometry found');
+      console.log('🔍 [moveMediaWindow] No saved media window prefs found');
     }
 
     if (targetDisplayNr === undefined || targetFullscreen === undefined) {
@@ -658,21 +678,31 @@ export const moveMediaWindowThrottled = throttleWithTrailing(
   100,
 );
 
-function loadMediaWindowPrefs(): null | Rectangle {
-  let filePath: string | undefined;
+function loadMediaWindowPrefs(): null | WindowState {
+  let mediaWindowStateFile: string | undefined = undefined;
   try {
-    filePath = join(app.getPath('userData'), 'media-window-prefs.json');
-    if (!pathExistsSync(filePath)) {
-      console.log('🔍 [loadMediaWindowPrefs] File does not exist:', filePath);
+    mediaWindowStateFile = join(
+      app.getPath('userData'),
+      'media-window-state.json',
+    );
+    if (!pathExistsSync(mediaWindowStateFile)) {
+      console.log(
+        '🔍 [loadMediaWindowPrefs] File does not exist:',
+        mediaWindowStateFile,
+      );
       return null;
     }
-    console.log('🔍 [loadMediaWindowPrefs] Loading prefs from:', filePath);
-    return readJsonSync(filePath);
+    console.log(
+      '🔍 [loadMediaWindowPrefs] Loading prefs from:',
+      mediaWindowStateFile,
+    );
+    return readJsonSync(mediaWindowStateFile);
   } catch (e) {
     let fileContent: null | string = null;
-    if (filePath) {
+    if (mediaWindowStateFile) {
       try {
-        fileContent = readFileSync(filePath, 'utf-8');
+        fileContent = readFileSync(mediaWindowStateFile, 'utf-8');
+        return JSON.parse(fileContent);
       } catch (e) {
         captureElectronError(e, {
           contexts: {
@@ -685,18 +715,6 @@ function loadMediaWindowPrefs(): null | Rectangle {
       contexts: { fn: { fileContent, name: 'loadMediaWindowPrefs' } },
     });
     return null;
-  }
-}
-
-function saveMediaWindowPrefs(prefs: Rectangle) {
-  try {
-    const file = join(app.getPath('userData'), 'media-window-prefs.json');
-    console.log('🔍 [saveMediaWindowPrefs] Saving prefs to:', file);
-    writeJsonSync(file, prefs);
-  } catch (e) {
-    captureElectronError(e, {
-      contexts: { fn: { name: 'saveMediaWindowPrefs' } },
-    });
   }
 }
 
@@ -849,9 +867,8 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
       handleMacFullScreenTransition(() => {
         setWindowBounds(targetScreenBounds, true);
         try {
-          saveMediaWindowPrefs(targetDisplay.bounds);
           console.log(
-            '🔍 [setWindowPosition] Saved preferred display geometry:',
+            '🔍 [setWindowPosition] Preferred display geometry will be saved shortly',
             targetDisplay.bounds,
           );
         } catch (e) {

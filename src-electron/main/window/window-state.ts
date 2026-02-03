@@ -1,3 +1,4 @@
+import { PLATFORM } from 'app/src-electron/constants';
 import {
   app,
   BrowserWindow,
@@ -6,21 +7,13 @@ import {
   screen,
 } from 'electron';
 import { ensureDirSync, readJsonSync, writeJsonSync } from 'fs-extra/esm';
+import { debounce } from 'quasar';
 import { captureElectronError } from 'src-electron/main/utils';
 import upath from 'upath';
 
 const { dirname, join } = upath;
 
-interface ExtraOptions {
-  /** The name of file. Defaults to `window-state.json`. */
-  configFileName?: string;
-  /** The path where the state file should be written to. Defaults to `app.getPath('userData')`. */
-  configFilePath?: string;
-  /** Should we automatically maximize the window, if it was last closed maximized. Defaults to `true`. */
-  supportMaximize?: boolean;
-}
-
-interface State {
+export interface WindowState {
   displayBounds?: Rectangle;
   displayScaleFactor?: number;
   /** The saved height of loaded state. `defaultHeight` if the state has not been saved yet. */
@@ -37,33 +30,85 @@ interface State {
   y?: number;
 }
 
+interface ExtraOptions {
+  /** The name of file. Defaults to `window-state.json`. */
+  configFileName?: string;
+  /** The path where the state file should be written to. Defaults to `app.getPath('userData')`. */
+  configFilePath?: string;
+}
+
 export class StatefulBrowserWindow {
   public win: BrowserWindow;
 
   private readonly fullStoreFileName: string;
 
-  /*private enterFullScreenHandler = () => {
-    this.state.isFullScreen = true;
-  };*/
+  private readonly saveState = () => {
+    try {
+      ensureDirSync(dirname(this.fullStoreFileName));
+      writeJsonSync(this.fullStoreFileName, this.state, { spaces: 2 });
+    } catch (e) {
+      captureElectronError(e, {
+        contexts: { fn: { name: 'StatefulBrowserWindow.saveState' } },
+      });
+    }
+  };
 
-  private readonly state: State;
+  private readonly updateState = () => {
+    try {
+      const winBounds = this.win.getBounds();
 
-  /*private leaveFullScreenHandler = () => {
-    this.state.isFullScreen = false;
-  };*/
+      // Save the window bounds if the window is not minimized
+      if (!this.win.isMinimized()) {
+        this.state.x = winBounds.x;
+        this.state.y = winBounds.y;
+        this.state.width = winBounds.width;
+        this.state.height = winBounds.height;
+      }
+
+      // Save the maximized state if the window is maximized or in full screen
+      this.state.isMaximized = this.win.isMaximized();
+      this.state.isFullScreen = this.isEffectivelyFullScreen(
+        this.win.isFullScreen(),
+        winBounds,
+        screen.getDisplayMatching(winBounds).bounds,
+      );
+
+      const display = screen.getDisplayMatching(winBounds);
+      this.state.displayBounds = display.bounds;
+      this.state.displayScaleFactor = display.scaleFactor;
+    } catch (e) {
+      captureElectronError(e, {
+        contexts: { fn: { name: 'StatefulBrowserWindow.updateState' } },
+      });
+    }
+  };
+
+  // Save state after a period of 500ms of no changes
+  private readonly saveStateDebounced = debounce(() => {
+    this.updateState();
+    this.saveState();
+  }, 500);
+
+  private readonly state: WindowState;
 
   constructor(options: BrowserWindowConstructorOptions & ExtraOptions) {
     const {
       configFileName = 'window-state.json',
       configFilePath = app.getPath('userData'),
-      supportMaximize,
     } = options;
 
     const newOptions = refineOptionsAndState(options);
 
     this.win = new BrowserWindow(newOptions);
 
-    const { height = 600, isMaximized, width = 800, x, y } = newOptions;
+    const {
+      height = 600,
+      isFullScreen,
+      isMaximized,
+      width = 800,
+      x,
+      y,
+    } = newOptions;
 
     try {
       this.win.setBounds({ height, width, x, y });
@@ -71,12 +116,24 @@ export class StatefulBrowserWindow {
       // This fails when opening the website window for some reason
     }
 
-    this.state = { height, isMaximized, width, x, y };
+    this.state = { height, isFullScreen, isMaximized, width, x, y };
 
     this.fullStoreFileName = join(configFilePath, configFileName);
 
-    this.manage(supportMaximize);
+    this.manage();
   }
+
+  isEffectivelyFullScreen = (
+    windowIsFullScreen: boolean,
+    windowBounds: Rectangle,
+    screenBounds: Rectangle,
+  ) => {
+    const isEffectivelyFullscreen =
+      screenBounds &&
+      windowBounds.width >= screenBounds.width - 10 &&
+      windowBounds.height >= screenBounds.height - 10;
+    return windowIsFullScreen || isEffectivelyFullscreen;
+  };
 
   // Unregister listeners and save state
   private readonly closedHandler = () => {
@@ -88,55 +145,29 @@ export class StatefulBrowserWindow {
     this.updateState();
   };
 
-  private readonly manage = (supportMaximize?: boolean) => {
-    if (supportMaximize && this.state.isMaximized) {
+  private readonly manage = () => {
+    if (this.state.isMaximized) {
       this.win.maximize();
     }
+
+    if (this.state.isFullScreen) {
+      this.win.setFullScreen(true);
+    }
+
+    this.win.on('resize', this.saveStateDebounced);
+    this.win.on('move', this.saveStateDebounced);
+    if (PLATFORM !== 'darwin') this.win.on('moved', this.saveStateDebounced); // On macOS, the 'moved' event is just an alias for 'move'
 
     this.win.on('close', this.closeHandler);
     this.win.on('closed', this.closedHandler);
   };
-
-  private readonly saveState = () => {
-    try {
-      ensureDirSync(dirname(this.fullStoreFileName));
-      writeJsonSync(this.fullStoreFileName, this.state);
-    } catch (e) {
-      captureElectronError(e, {
-        contexts: { fn: { name: 'StatefulBrowserWindow.saveState' } },
-      });
-    }
-  };
-
   private readonly unmanage = () => {
     this.win.removeListener('close', this.closeHandler);
     this.win.removeListener('closed', this.closedHandler);
   };
-
-  private readonly updateState = () => {
-    try {
-      const winBounds = this.win.getBounds();
-      if (this.win.isNormal()) {
-        this.state.x = winBounds.x;
-        this.state.y = winBounds.y;
-        this.state.width = winBounds.width;
-        this.state.height = winBounds.height;
-      }
-
-      this.state.isMaximized = this.win.isMaximized();
-
-      const display = screen.getDisplayMatching(winBounds);
-      this.state.displayBounds = display.bounds;
-      this.state.displayScaleFactor = display.scaleFactor;
-    } catch (e) {
-      captureElectronError(e, {
-        contexts: { fn: { name: 'StatefulBrowserWindow.updateState' } },
-      });
-    }
-  };
 }
 
-function ensureWindowVisibleOnSomeDisplay(state: State) {
+function ensureWindowVisibleOnSomeDisplay(state: WindowState) {
   const visible = screen.getAllDisplays().some((display) => {
     return windowWithinBounds(state, display.bounds);
   });
@@ -144,7 +175,7 @@ function ensureWindowVisibleOnSomeDisplay(state: State) {
   return visible ? state : null;
 }
 
-function getMaxBounds(bounds: State, boundsToCheck: Rectangle) {
+function getMaxBounds(bounds: WindowState, boundsToCheck: Rectangle) {
   if (!bounds.x) bounds.x = 0;
   if (!bounds.y) bounds.y = 0;
 
@@ -170,7 +201,7 @@ function getMaxBounds(bounds: State, boundsToCheck: Rectangle) {
   };
 }
 
-function hasBounds(state: State) {
+function hasBounds(state: WindowState) {
   return (
     state &&
     Number.isInteger(state.x) &&
@@ -184,16 +215,17 @@ function hasBounds(state: State) {
 
 function refineOptionsAndState(
   options: BrowserWindowConstructorOptions & ExtraOptions,
-): BrowserWindowConstructorOptions & { isMaximized?: boolean } {
+): BrowserWindowConstructorOptions & {
+  isFullScreen?: boolean;
+  isMaximized?: boolean;
+} {
   const {
     configFileName = 'window-state.json',
     configFilePath = app.getPath('userData'),
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    supportMaximize,
     ...restOriginalOptions
   } = options;
 
-  let savedState: null | State = null;
+  let savedState: null | WindowState = null;
 
   try {
     savedState = readJsonSync(join(configFilePath, configFileName));
@@ -205,13 +237,22 @@ function refineOptionsAndState(
 
   if (!savedState) return restOriginalOptions;
 
-  const { height, isMaximized, width, x, y } = savedState;
+  const { height, isFullScreen, isMaximized, width, x, y } = savedState;
 
-  return { ...restOriginalOptions, height, isMaximized, width, x, y };
+  return {
+    ...restOriginalOptions,
+    height,
+    isFullScreen,
+    isMaximized,
+    width,
+    x,
+    y,
+  };
 }
 
-function validateState(state: null | State) {
-  const isValid = state && (hasBounds(state) || state.isMaximized);
+function validateState(state: null | WindowState) {
+  const isValid =
+    state && (hasBounds(state) || state.isMaximized || state.isFullScreen);
   if (!isValid) return null;
 
   if (hasBounds(state) && state.displayBounds) {
@@ -240,13 +281,47 @@ function validateState(state: null | State) {
   return state;
 }
 
-function windowWithinBounds(state: State, bounds: Rectangle) {
-  return (
-    state.x !== undefined &&
-    state.y !== undefined &&
-    state.x >= bounds.x &&
-    state.y >= bounds.y &&
-    state.x + state.width <= bounds.x + bounds.width &&
-    state.y + state.height <= bounds.y + bounds.height
-  );
+function windowWithinBounds(state: WindowState, bounds: Rectangle) {
+  if (
+    state?.x === undefined ||
+    state?.y === undefined ||
+    state?.width === undefined ||
+    state?.height === undefined
+  ) {
+    captureElectronError(new Error('Invalid window state'), {
+      contexts: { fn: { bounds, name: 'windowWithinBounds', state } },
+    });
+    return false;
+  }
+
+  const notFullyRightOfBounds = state.x < bounds.x + bounds.width;
+  const notFullyLeftOfBounds = state.x + state.width > bounds.x;
+  const notFullyBelowBounds = state.y < bounds.y + bounds.height;
+  const notFullyAboveBounds = state.y + state.height > bounds.y;
+
+  if (
+    notFullyRightOfBounds &&
+    notFullyLeftOfBounds &&
+    notFullyBelowBounds &&
+    notFullyAboveBounds
+  ) {
+    console.log('Window is visible on the display');
+    return true;
+  } else {
+    console.log('Window is not visible on the display');
+    captureElectronError(new Error('Window is not visible on the display'), {
+      contexts: {
+        fn: {
+          bounds,
+          name: 'windowWithinBounds',
+          notFullyAboveBounds,
+          notFullyBelowBounds,
+          notFullyLeftOfBounds,
+          notFullyRightOfBounds,
+          state,
+        },
+      },
+    });
+    return false;
+  }
 }
