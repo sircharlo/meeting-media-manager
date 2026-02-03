@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Respond to translation request
         if: github.event.discussion.category.name == 'Translations' && startsWith(github.event.discussion.title, 'New translation in')
-        uses: wesleyscholl/discussion-auto-responder@v1.0.8
+        uses: wesleyscholl/discussion-auto-responder@98a492ec928dfbf573ca4c8886a955b64a3176c5 # v1.0.8
         with:
           delay_milliseconds: 0
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
