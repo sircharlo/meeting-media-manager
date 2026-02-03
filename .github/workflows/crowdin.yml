@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Generate Crowdin translations progress markdown
-        uses: benjaminjonard/crowdin-translations-progress-action@1.0.7
+        uses: benjaminjonard/crowdin-translations-progress-action@1ca1fb41b99569036f826709a53052143324381f # 1.0.7
         with:
           languages_per_row: 5
           minimum_completion_percent: 50
@@ -34,7 +34,7 @@ jobs:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v8
+        uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0 # v8.1.0
         with:
           title: 'chore: update translations progress'
           body: Update Crowdin translations progress by [Crowdin translations progress](https://github.com/benjaminjonard/crowdin-translations-progress-action) GitHub action
