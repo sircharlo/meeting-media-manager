@@ -8,7 +8,7 @@ För den fullständiga listan över ändringar mellan versioner, se vår CHANGEL
 
 ### ✨ Nya funktioner
 
-- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+- ✨ Diskutrymmeskontroll: Lagt till funktionalitet för att övervaka och meddela när diskutrymmet är lågt.
 
 ## v26.1.5
 
