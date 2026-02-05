@@ -66,7 +66,7 @@ import {
   fadeInMediaWindow,
   fadeOutMediaWindow,
   focusMediaWindow,
-  mediaWindow,
+  mediaWindowInfo,
   moveMediaWindow,
 } from 'src-electron/main/window/window-media';
 import {
@@ -79,6 +79,7 @@ import {
 import upath from 'upath';
 
 const { mainWindow } = mainWindowInfo;
+const { mediaWindow } = mediaWindowInfo;
 const { openExternal, openPath } = shell;
 const { join } = upath;
 

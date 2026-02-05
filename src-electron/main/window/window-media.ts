@@ -17,7 +17,11 @@ import upath from 'upath';
 const { mainWindow } = mainWindowInfo;
 const { join } = upath;
 
-export let mediaWindow: BrowserWindow | null = null;
+export const mediaWindowInfo = {
+  mediaWindow: null as BrowserWindow | null,
+};
+
+let { mediaWindow } = mediaWindowInfo;
 
 /**
  * Creates the media window

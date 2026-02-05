@@ -4,11 +4,12 @@ import { app, type BrowserWindow, screen } from 'electron';
 import { captureElectronError } from 'src-electron/main/utils';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import {
-  mediaWindow,
+  mediaWindowInfo,
   moveMediaWindowThrottled,
 } from 'src-electron/main/window/window-media';
 
 const { mainWindow } = mainWindowInfo;
+const { mediaWindow } = mediaWindowInfo;
 let isScreenListenerInitialized = false;
 
 /**
