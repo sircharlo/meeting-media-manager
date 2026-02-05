@@ -4,6 +4,12 @@
 
 Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGELOG.md su GitHub.
 
+## v26.2.0
+
+### ✨ Nuove Funzionalità
+
+- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+
 ## v26.1.5
 
 ### ✨ Nuove Funzionalità
