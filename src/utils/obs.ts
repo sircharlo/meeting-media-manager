@@ -5,12 +5,10 @@ export const obsWebSocketInfo = {
   obsWebSocket: undefined as OBSWebSocket | undefined,
 };
 
-let { obsWebSocket } = obsWebSocketInfo;
-
 export const initObsWebSocket = async () => {
-  if (!obsWebSocket) {
+  if (!obsWebSocketInfo.obsWebSocket) {
     const { default: OBSWebSocket } = await import('obs-websocket-js');
-    obsWebSocket = new OBSWebSocket();
+    obsWebSocketInfo.obsWebSocket = new OBSWebSocket();
   }
 };
 

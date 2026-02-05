@@ -12,7 +12,6 @@ import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import upath from 'upath';
 
-const { mainWindow } = mainWindowInfo;
 const { join } = upath;
 
 export const getUpdatesDisabledPath = async () =>
@@ -40,7 +39,7 @@ export async function initUpdater() {
       message?.includes('read-only volume') ||
       error?.message?.includes('read-only volume')
     ) {
-      sendToWindow(mainWindow, 'update-error');
+      sendToWindow(mainWindowInfo.mainWindow, 'update-error');
     }
 
     if (!isIgnoredUpdateError(error, message)) {
@@ -54,17 +53,17 @@ export async function initUpdater() {
 
   autoUpdater.on('update-available', (info) => {
     console.log('Update available:', info);
-    sendToWindow(mainWindow, 'update-available');
+    sendToWindow(mainWindowInfo.mainWindow, 'update-available');
   });
 
   autoUpdater.on('download-progress', (info) => {
     console.log('Update download progress:', info);
-    sendToWindow(mainWindow, 'update-download-progress', info);
+    sendToWindow(mainWindowInfo.mainWindow, 'update-download-progress', info);
   });
 
   autoUpdater.on('update-downloaded', (info) => {
     console.log('Update downloaded:', info);
-    sendToWindow(mainWindow, 'update-downloaded');
+    sendToWindow(mainWindowInfo.mainWindow, 'update-downloaded');
   });
 
   triggerUpdateCheck();

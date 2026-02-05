@@ -9,7 +9,6 @@ import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import upath from 'upath';
 
-const { mainWindow } = mainWindowInfo;
 const { basename } = upath;
 
 enum DownloadState {
@@ -78,7 +77,8 @@ const getActiveDownloadCount = () => {
 };
 
 const loadElectronDownloadManager: () => Promise<EDMType | null> = async () => {
-  if (!mainWindow || mainWindow.isDestroyed()) return null; // window is closed
+  if (!mainWindowInfo.mainWindow || mainWindowInfo.mainWindow.isDestroyed())
+    return null; // window is closed
 
   if (manager) return manager; // already initialized
 
@@ -136,7 +136,13 @@ export async function downloadFile(
   destFilename?: string,
   lowPriority = false,
 ) {
-  if (!mainWindow || mainWindow.isDestroyed() || !url || !saveDir) return null;
+  if (
+    !mainWindowInfo.mainWindow ||
+    mainWindowInfo.mainWindow.isDestroyed() ||
+    !url ||
+    !saveDir
+  )
+    return null;
   try {
     await ensureDir(saveDir);
 
@@ -336,7 +342,7 @@ export function resetDownloadErrorCache() {
  */
 async function processQueue() {
   const loadedManager = await loadElectronDownloadManager();
-  if (!mainWindow || cancelAll || !loadedManager) return;
+  if (!mainWindowInfo.mainWindow || cancelAll || !loadedManager) return;
 
   const activeCount = getActiveDownloadCount();
 
@@ -454,7 +460,7 @@ async function startDownload(
   const { destFilename, saveDir, url } = download;
   const key = url + saveDir;
 
-  if (!mainWindow || !manager) return;
+  if (!mainWindowInfo.mainWindow || !manager) return;
 
   ongoingDownloads.set(key, {
     item: download,
@@ -468,12 +474,14 @@ async function startDownload(
     const downloadId = await manager.download({
       callbacks: {
         onDownloadCancelled: async () => {
-          sendToWindow(mainWindow, 'downloadCancelled', { id: key });
+          sendToWindow(mainWindowInfo.mainWindow, 'downloadCancelled', {
+            id: key,
+          });
           ongoingDownloads.delete(key);
           processQueue();
         },
         onDownloadCompleted: async ({ item }) => {
-          sendToWindow(mainWindow, 'downloadCompleted', {
+          sendToWindow(mainWindowInfo.mainWindow, 'downloadCompleted', {
             filePath: item.getSavePath(),
             id: key,
           });
@@ -481,14 +489,14 @@ async function startDownload(
           processQueue();
         },
         onDownloadProgress: async ({ item, percentCompleted }) => {
-          sendToWindow(mainWindow, 'downloadProgress', {
+          sendToWindow(mainWindowInfo.mainWindow, 'downloadProgress', {
             bytesReceived: item.getReceivedBytes(),
             id: key,
             percentCompleted,
           });
         },
         onDownloadStarted: async ({ item, resolvedFilename }) => {
-          sendToWindow(mainWindow, 'downloadStarted', {
+          sendToWindow(mainWindowInfo.mainWindow, 'downloadStarted', {
             filename: resolvedFilename,
             id: key,
             totalBytes: item.getTotalBytes(),
@@ -504,14 +512,14 @@ async function startDownload(
                   directory: saveDir,
                   isDownloadErrorExpected: await isDownloadErrorExpected(),
                   saveAsFilename: destFilename,
-                  window: mainWindow?.id,
+                  window: mainWindowInfo.mainWindow?.id,
                 },
                 url,
               },
             },
           });
           if (downloadData) {
-            sendToWindow(mainWindow, 'downloadError', {
+            sendToWindow(mainWindowInfo.mainWindow, 'downloadError', {
               id: key,
             });
           }
@@ -522,7 +530,7 @@ async function startDownload(
       directory: saveDir,
       saveAsFilename: destFilename,
       url,
-      window: mainWindow,
+      window: mainWindowInfo.mainWindow,
     });
 
     const current = ongoingDownloads.get(key);
@@ -543,7 +551,7 @@ async function startDownload(
           params: {
             directory: saveDir,
             saveAsFilename: destFilename,
-            window: mainWindow?.id,
+            window: mainWindowInfo.mainWindow?.id,
           },
           url,
         },

@@ -132,7 +132,6 @@ const {
   scenes,
 } = storeToRefs(obsState);
 const { sceneExists } = obsState;
-const { obsWebSocket } = obsWebSocketInfo;
 const obsSettingsConnect = () => obsConnect(true);
 
 const { t } = useI18n();
@@ -183,7 +182,7 @@ watchImmediate(
   }),
   async ({ enabled, recordingControls }, _, onCleanup) => {
     // If OBS not enabled or no websocket → stop everything
-    if (!enabled || !obsWebSocket) return;
+    if (!enabled || !obsWebSocketInfo.obsWebSocket) return;
 
     // If recording controls disabled → stop everything
     if (!recordingControls) return;
@@ -193,11 +192,17 @@ watchImmediate(
       console.log('RecordStateChanged', data);
       isRecording.value = data.outputActive;
     };
-    obsWebSocket.on('RecordStateChanged', handleRecordStateChanged);
+    obsWebSocketInfo.obsWebSocket.on(
+      'RecordStateChanged',
+      handleRecordStateChanged,
+    );
 
     // Cleanup when settings change or component unmounts
     onCleanup(() => {
-      obsWebSocket?.off('RecordStateChanged', handleRecordStateChanged);
+      obsWebSocketInfo.obsWebSocket?.off(
+        'RecordStateChanged',
+        handleRecordStateChanged,
+      );
     });
 
     // --- 2. Initial recording state ---
@@ -254,7 +259,7 @@ const setObsScene = async (sceneType?: ObsSceneType, desiredScene?: string) => {
       const hasSceneUuid = scenes.value?.every((scene) => 'sceneUuid' in scene);
 
       if (sceneExists(newProgramScene)) {
-        obsWebSocket?.call('SetCurrentProgramScene', {
+        obsWebSocketInfo.obsWebSocket?.call('SetCurrentProgramScene', {
           ...(hasSceneUuid &&
             configuredScenesAreAllUUIDs.value && {
               sceneUuid: newProgramScene,

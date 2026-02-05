@@ -39,7 +39,6 @@ import {
 } from 'src-electron/main/window/window-main';
 import upath from 'upath';
 
-const { mainWindow } = mainWindowInfo;
 const { join, resolve } = upath;
 
 protocol.registerSchemesAsPrivileged([
@@ -185,9 +184,10 @@ if (gotTheLock) {
 
   app.on('second-instance', () => {
     // Someone tried to run a second instance, we should focus our globalThis.
-    if (mainWindow && !mainWindow.isDestroyed()) {
-      if (mainWindow.isMinimized()) mainWindow.restore();
-      mainWindow.show();
+    if (mainWindowInfo.mainWindow && !mainWindowInfo.mainWindow.isDestroyed()) {
+      if (mainWindowInfo.mainWindow.isMinimized())
+        mainWindowInfo.mainWindow.restore();
+      mainWindowInfo.mainWindow.show();
     }
   });
 
@@ -271,8 +271,13 @@ if (gotTheLock) {
           },
         );
 
-        if (mainWindow && !mainWindow.isDestroyed()) {
-          mainWindow.webContents.send('video-capture-crash-detected');
+        if (
+          mainWindowInfo.mainWindow &&
+          !mainWindowInfo.mainWindow.isDestroyed()
+        ) {
+          mainWindowInfo.mainWindow.webContents.send(
+            'video-capture-crash-detected',
+          );
         }
       }
     }
@@ -305,13 +310,14 @@ if (gotTheLock) {
   app.on('before-quit', (e) => {
     setAppQuitting(true);
     if (PLATFORM !== 'darwin') return;
-    if (!mainWindow || mainWindow.isDestroyed()) return;
+    if (!mainWindowInfo.mainWindow || mainWindowInfo.mainWindow.isDestroyed())
+      return;
     if (authorizedClose.authorized) {
-      mainWindow.close();
+      mainWindowInfo.mainWindow.close();
     } else {
       e.preventDefault();
       setShouldQuit(true);
-      sendToWindow(mainWindow, 'attemptedClose');
+      sendToWindow(mainWindowInfo.mainWindow, 'attemptedClose');
     }
   });
 
@@ -403,8 +409,11 @@ function setHwAccelDisabled(disabled: boolean, temporary = false) {
     writeJsonSync(filePath, { disabled, temporary });
     if (disabled) {
       // Notify user that a restart is recommended
-      if (mainWindow && !mainWindow.isDestroyed()) {
-        mainWindow.webContents.send('gpu-crash-detected');
+      if (
+        mainWindowInfo.mainWindow &&
+        !mainWindowInfo.mainWindow.isDestroyed()
+      ) {
+        mainWindowInfo.mainWindow.webContents.send('gpu-crash-detected');
       }
     }
   } catch (error) {

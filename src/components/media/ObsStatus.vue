@@ -60,8 +60,6 @@ const { currentScene, obsConnectionState, obsMessage, previousScene, scenes } =
   storeToRefs(obsState);
 const { obsCloseHandler, obsErrorHandler, sceneExists } = obsState;
 
-const { obsWebSocket } = obsWebSocketInfo;
-
 const obsPopup = defineModel<boolean>({ required: true });
 
 const onClick = () => {
@@ -76,7 +74,8 @@ const fetchSceneList = async (retryInterval = 2000, maxRetries = 5) => {
   let attempts = 0;
   while (attempts < maxRetries) {
     try {
-      const sceneList = await obsWebSocket?.call('GetSceneList');
+      const sceneList =
+        await obsWebSocketInfo.obsWebSocket?.call('GetSceneList');
       if (sceneList) {
         scenes.value = sceneList.scenes.reverse();
         const current =
@@ -132,15 +131,15 @@ const initObsListeners = async () => {
   try {
     if (!currentSettings.value?.obsEnable) return;
     await initObsWebSocket();
-    if (!obsWebSocket) return;
+    if (!obsWebSocketInfo.obsWebSocket) return;
     removeObsListeners();
 
-    obsWebSocket.on('ConnectionOpened', () => {
+    obsWebSocketInfo.obsWebSocket.on('ConnectionOpened', () => {
       obsConnectionState.value = 'connecting';
     });
-    obsWebSocket.on('ConnectionClosed', obsCloseHandler);
-    obsWebSocket.on('ConnectionError', obsErrorHandler);
-    obsWebSocket.on(
+    obsWebSocketInfo.obsWebSocket.on('ConnectionClosed', obsCloseHandler);
+    obsWebSocketInfo.obsWebSocket.on('ConnectionError', obsErrorHandler);
+    obsWebSocketInfo.obsWebSocket.on(
       'CurrentProgramSceneChanged',
       (data: { sceneName: string; sceneUuid: string }) => {
         const newScene =
@@ -158,12 +157,12 @@ const initObsListeners = async () => {
         }
       },
     );
-    obsWebSocket.on('Identified', async () => {
+    obsWebSocketInfo.obsWebSocket.on('Identified', async () => {
       obsConnectionState.value = 'connected';
       obsMessage.value = 'obs.connected';
       fetchSceneList();
     });
-    obsWebSocket.on('SceneListChanged', (data) => {
+    obsWebSocketInfo.obsWebSocket.on('SceneListChanged', (data) => {
       scenes.value = data.scenes;
     });
     obsConnect();
@@ -182,9 +181,9 @@ const removeObsListeners = () => {
     'SceneListChanged',
   ] as const;
   try {
-    if (!obsWebSocket) return;
+    if (!obsWebSocketInfo.obsWebSocket) return;
     events.forEach((event) => {
-      obsWebSocket?.removeAllListeners(event);
+      obsWebSocketInfo.obsWebSocket?.removeAllListeners(event);
     });
   } catch (error) {
     errorCatcher(error);

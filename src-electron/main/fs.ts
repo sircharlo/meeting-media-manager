@@ -21,7 +21,6 @@ import { uuid } from 'src/shared/vanilla';
 import upath from 'upath';
 import yauzl from 'yauzl';
 
-const { mainWindow } = mainWindowInfo;
 const { basename, dirname, join, resolve, toUnix } = upath;
 
 const ongoingDecompressions = new Map<string, Promise<UnzipResult[]>>();
@@ -85,7 +84,7 @@ export async function openFileDialog(
   single: boolean,
   filter: FileDialogFilter,
 ) {
-  if (!mainWindow) return;
+  if (!mainWindowInfo.mainWindow) return;
 
   const filters: Electron.FileFilter[] = [];
 
@@ -115,15 +114,15 @@ export async function openFileDialog(
     filters.push({ extensions: IMG_EXTENSIONS, name: 'Images' });
   }
 
-  return dialog.showOpenDialog(mainWindow, {
+  return dialog.showOpenDialog(mainWindowInfo.mainWindow, {
     filters,
     properties: single ? ['openFile'] : ['openFile', 'multiSelections'],
   });
 }
 
 export async function openFolderDialog() {
-  if (!mainWindow) return;
-  return dialog.showOpenDialog(mainWindow, {
+  if (!mainWindowInfo.mainWindow) return;
+  return dialog.showOpenDialog(mainWindowInfo.mainWindow, {
     properties: ['openDirectory'],
   });
 }
@@ -413,7 +412,7 @@ export async function watchFolder(folderPath: string) {
               : dirname(changedPath),
           ); // If this isn't a directory, get the parent directory
           const dirOfNote = basename(dirPath); // Get the name of the directory
-          sendToWindow(mainWindow, 'watchFolderUpdate', {
+          sendToWindow(mainWindowInfo.mainWindow, 'watchFolderUpdate', {
             changedPath,
             day: dirOfNote,
             event,

@@ -5,14 +5,12 @@ import { portNumberValidator } from 'src/utils/settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
 
-const { obsWebSocket } = obsWebSocketInfo;
-
 export const obsConnect = async (setup?: boolean) => {
   const currentState = useCurrentStateStore();
   const obsState = useObsStateStore();
   try {
     if (!currentState.currentSettings?.obsEnable) {
-      await obsWebSocket?.disconnect();
+      await obsWebSocketInfo.obsWebSocket?.disconnect();
       return;
     }
 
@@ -35,7 +33,7 @@ export const obsConnect = async (setup?: boolean) => {
     ) {
       try {
         await initObsWebSocket();
-        const connection = await obsWebSocket?.connect(
+        const connection = await obsWebSocketInfo.obsWebSocket?.connect(
           'ws://127.0.0.1:' + obsPort,
           obsPassword,
         );
@@ -63,12 +61,12 @@ export const obsConnect = async (setup?: boolean) => {
 
 export const obsStartRecording = async (): Promise<boolean> => {
   try {
-    if (!obsWebSocket) {
+    if (!obsWebSocketInfo.obsWebSocket) {
       console.warn('OBS WebSocket not connected');
       return false;
     }
 
-    await obsWebSocket.call('StartRecord');
+    await obsWebSocketInfo.obsWebSocket.call('StartRecord');
     return true;
   } catch (error) {
     errorCatcher(error);
@@ -78,12 +76,12 @@ export const obsStartRecording = async (): Promise<boolean> => {
 
 export const obsStopRecording = async (): Promise<boolean> => {
   try {
-    if (!obsWebSocket) {
+    if (!obsWebSocketInfo.obsWebSocket) {
       console.warn('OBS WebSocket not connected');
       return false;
     }
 
-    await obsWebSocket.call('StopRecord');
+    await obsWebSocketInfo.obsWebSocket.call('StopRecord');
     return true;
   } catch (error) {
     errorCatcher(error);
@@ -93,12 +91,13 @@ export const obsStopRecording = async (): Promise<boolean> => {
 
 export const obsGetRecordingDirectory = async (): Promise<null | string> => {
   try {
-    if (!obsWebSocket) {
+    if (!obsWebSocketInfo.obsWebSocket) {
       console.warn('OBS WebSocket not connected');
       return null;
     }
 
-    const response = await obsWebSocket.call('GetRecordDirectory');
+    const response =
+      await obsWebSocketInfo.obsWebSocket.call('GetRecordDirectory');
     return response.recordDirectory || null;
   } catch (error) {
     errorCatcher(error);
@@ -108,12 +107,13 @@ export const obsGetRecordingDirectory = async (): Promise<null | string> => {
 
 export const obsGetRecordingState = async (): Promise<boolean> => {
   try {
-    if (!obsWebSocket) {
+    if (!obsWebSocketInfo.obsWebSocket) {
       console.warn('OBS WebSocket not connected');
       return false;
     }
 
-    const response = await obsWebSocket.call('GetRecordStatus');
+    const response =
+      await obsWebSocketInfo.obsWebSocket.call('GetRecordStatus');
     return response?.outputActive || false;
   } catch (error) {
     errorCatcher(error);

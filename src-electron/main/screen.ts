@@ -8,8 +8,6 @@ import {
   moveMediaWindowThrottled,
 } from 'src-electron/main/window/window-media';
 
-const { mainWindow } = mainWindowInfo;
-const { mediaWindow } = mediaWindowInfo;
 let isScreenListenerInitialized = false;
 
 /**
@@ -65,13 +63,15 @@ export const getAllScreens = (): Display[] => {
   try {
     const mainWindowScreen = displays.find(
       (display) =>
-        mainWindow &&
-        display.id === screen.getDisplayMatching(mainWindow.getBounds()).id,
+        mainWindowInfo.mainWindow &&
+        display.id ===
+          screen.getDisplayMatching(mainWindowInfo.mainWindow.getBounds()).id,
     );
     if (mainWindowScreen) {
       mainWindowScreen.mainWindow = true;
       try {
-        mainWindowScreen.mainWindowBounds = mainWindow?.getBounds();
+        mainWindowScreen.mainWindowBounds =
+          mainWindowInfo.mainWindow?.getBounds();
       } catch (e) {
         captureElectronError(e, {
           contexts: {
@@ -89,8 +89,9 @@ export const getAllScreens = (): Display[] => {
   try {
     const mediaWindowScreen = displays.find(
       (display) =>
-        mediaWindow &&
-        display.id === screen.getDisplayMatching(mediaWindow.getBounds()).id,
+        mediaWindowInfo.mediaWindow &&
+        display.id ===
+          screen.getDisplayMatching(mediaWindowInfo.mediaWindow.getBounds()).id,
     );
     if (mediaWindowScreen) mediaWindowScreen.mediaWindow = true;
   } catch (e) {

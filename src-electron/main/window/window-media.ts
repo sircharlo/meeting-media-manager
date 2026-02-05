@@ -14,27 +14,27 @@ import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import { throttleWithTrailing } from 'src/shared/vanilla';
 import upath from 'upath';
 
-const { mainWindow } = mainWindowInfo;
 const { join } = upath;
 
 export const mediaWindowInfo = {
   mediaWindow: null as BrowserWindow | null,
 };
 
-let { mediaWindow } = mediaWindowInfo;
-
 /**
  * Creates the media window
  */
 export function createMediaWindow() {
   // If the window is already open, just focus it
-  if (mediaWindow && !mediaWindow.isDestroyed()) {
-    mediaWindow.show();
+  if (
+    mediaWindowInfo.mediaWindow &&
+    !mediaWindowInfo.mediaWindow.isDestroyed()
+  ) {
+    mediaWindowInfo.mediaWindow.show();
     return;
   }
 
   // Create the browser window
-  mediaWindow = createWindow('media', {
+  mediaWindowInfo.mediaWindow = createWindow('media', {
     alwaysOnTop: true, // Always on top by default
     backgroundColor: 'black',
     frame: false,
@@ -50,7 +50,7 @@ export function createMediaWindow() {
   });
 
   // Force aspect ratio
-  mediaWindow.setAspectRatio(16 / 9);
+  mediaWindowInfo.mediaWindow.setAspectRatio(16 / 9);
 
   // Check if only one screen is available and set to windowed mode with HD resolution
   const screens = getAllScreens();
@@ -60,7 +60,7 @@ export function createMediaWindow() {
     );
 
     // Get current window bounds
-    const currentBounds = mediaWindow.getBounds();
+    const currentBounds = mediaWindowInfo.mediaWindow.getBounds();
     const screenBounds = screens[0].bounds;
 
     // Check if current window is already within screen bounds and smaller than screen
@@ -107,9 +107,9 @@ export function createMediaWindow() {
       const y =
         screenBounds.y + Math.floor((screenBounds.height - windowedHeight) / 2);
 
-      mediaWindow.setFullScreen(false);
+      mediaWindowInfo.mediaWindow.setFullScreen(false);
 
-      mediaWindow.setBounds({
+      mediaWindowInfo.mediaWindow.setBounds({
         height: windowedHeight,
         width: windowedWidth,
         x,
@@ -130,8 +130,8 @@ export function createMediaWindow() {
     }
   }
 
-  mediaWindow.on('closed', () => {
-    mediaWindow = null;
+  mediaWindowInfo.mediaWindow.on('closed', () => {
+    mediaWindowInfo.mediaWindow = null;
   });
 }
 
@@ -141,18 +141,21 @@ export function createMediaWindow() {
  */
 export function fadeInMediaWindow(duration = 300): Promise<void> {
   return new Promise((resolve) => {
-    if (!mediaWindow || mediaWindow.isDestroyed()) {
+    if (
+      !mediaWindowInfo.mediaWindow ||
+      mediaWindowInfo.mediaWindow.isDestroyed()
+    ) {
       resolve();
       return;
     }
 
     try {
       // Set initial opacity to 0
-      mediaWindow.setOpacity(0);
+      mediaWindowInfo.mediaWindow.setOpacity(0);
 
       // Show the window first if it's not visible
-      if (!mediaWindow.isVisible()) {
-        mediaWindow.show();
+      if (!mediaWindowInfo.mediaWindow.isVisible()) {
+        mediaWindowInfo.mediaWindow.show();
       }
 
       // Gradually increase opacity
@@ -166,11 +169,14 @@ export function fadeInMediaWindow(duration = 300): Promise<void> {
         const newOpacity = Math.min(currentStep * opacityStep, 1);
 
         try {
-          mediaWindow?.setOpacity(newOpacity);
+          mediaWindowInfo.mediaWindow?.setOpacity(newOpacity);
         } catch {
           // Fallback: just show the window normally
-          if (mediaWindow && !mediaWindow.isDestroyed()) {
-            mediaWindow.setOpacity(1);
+          if (
+            mediaWindowInfo.mediaWindow &&
+            !mediaWindowInfo.mediaWindow.isDestroyed()
+          ) {
+            mediaWindowInfo.mediaWindow.setOpacity(1);
           }
           clearInterval(fadeInterval);
           resolve();
@@ -179,8 +185,11 @@ export function fadeInMediaWindow(duration = 300): Promise<void> {
 
         if (currentStep >= steps) {
           clearInterval(fadeInterval);
-          if (mediaWindow && !mediaWindow.isDestroyed()) {
-            mediaWindow.setOpacity(1);
+          if (
+            mediaWindowInfo.mediaWindow &&
+            !mediaWindowInfo.mediaWindow.isDestroyed()
+          ) {
+            mediaWindowInfo.mediaWindow.setOpacity(1);
           }
           resolve();
         }
@@ -189,16 +198,22 @@ export function fadeInMediaWindow(duration = 300): Promise<void> {
       // Fallback timeout
       setTimeout(() => {
         clearInterval(fadeInterval);
-        if (mediaWindow && !mediaWindow.isDestroyed()) {
-          mediaWindow.setOpacity(1);
+        if (
+          mediaWindowInfo.mediaWindow &&
+          !mediaWindowInfo.mediaWindow.isDestroyed()
+        ) {
+          mediaWindowInfo.mediaWindow.setOpacity(1);
         }
         resolve();
       }, duration + 100);
     } catch {
       // Fallback: just show the window normally
-      if (mediaWindow && !mediaWindow.isDestroyed()) {
-        mediaWindow.show();
-        mediaWindow.setOpacity(1);
+      if (
+        mediaWindowInfo.mediaWindow &&
+        !mediaWindowInfo.mediaWindow.isDestroyed()
+      ) {
+        mediaWindowInfo.mediaWindow.show();
+        mediaWindowInfo.mediaWindow.setOpacity(1);
       }
       resolve();
     }
@@ -211,7 +226,10 @@ export function fadeInMediaWindow(duration = 300): Promise<void> {
  */
 export function fadeOutMediaWindow(duration = 300): Promise<void> {
   return new Promise((resolve) => {
-    if (!mediaWindow || mediaWindow.isDestroyed()) {
+    if (
+      !mediaWindowInfo.mediaWindow ||
+      mediaWindowInfo.mediaWindow.isDestroyed()
+    ) {
       resolve();
       return;
     }
@@ -228,11 +246,14 @@ export function fadeOutMediaWindow(duration = 300): Promise<void> {
         const newOpacity = Math.max(1 - currentStep * opacityStep, 0);
 
         try {
-          mediaWindow?.setOpacity(newOpacity);
+          mediaWindowInfo.mediaWindow?.setOpacity(newOpacity);
         } catch {
           // Fallback: just hide the window normally
-          if (mediaWindow && !mediaWindow.isDestroyed()) {
-            mediaWindow.hide();
+          if (
+            mediaWindowInfo.mediaWindow &&
+            !mediaWindowInfo.mediaWindow.isDestroyed()
+          ) {
+            mediaWindowInfo.mediaWindow.hide();
           }
           clearInterval(fadeInterval);
           resolve();
@@ -241,9 +262,12 @@ export function fadeOutMediaWindow(duration = 300): Promise<void> {
 
         if (currentStep >= steps) {
           clearInterval(fadeInterval);
-          if (mediaWindow && !mediaWindow.isDestroyed()) {
-            mediaWindow.hide();
-            mediaWindow.setOpacity(1);
+          if (
+            mediaWindowInfo.mediaWindow &&
+            !mediaWindowInfo.mediaWindow.isDestroyed()
+          ) {
+            mediaWindowInfo.mediaWindow.hide();
+            mediaWindowInfo.mediaWindow.setOpacity(1);
           }
           resolve();
         }
@@ -252,17 +276,23 @@ export function fadeOutMediaWindow(duration = 300): Promise<void> {
       // Fallback timeout
       setTimeout(() => {
         clearInterval(fadeInterval);
-        if (mediaWindow && !mediaWindow.isDestroyed()) {
-          mediaWindow.hide();
-          mediaWindow.setOpacity(1);
+        if (
+          mediaWindowInfo.mediaWindow &&
+          !mediaWindowInfo.mediaWindow.isDestroyed()
+        ) {
+          mediaWindowInfo.mediaWindow.hide();
+          mediaWindowInfo.mediaWindow.setOpacity(1);
         }
         resolve();
       }, duration + 100);
     } catch {
       // Fallback: just hide the window normally
-      if (mediaWindow && !mediaWindow.isDestroyed()) {
-        mediaWindow.hide();
-        mediaWindow.setOpacity(1);
+      if (
+        mediaWindowInfo.mediaWindow &&
+        !mediaWindowInfo.mediaWindow.isDestroyed()
+      ) {
+        mediaWindowInfo.mediaWindow.hide();
+        mediaWindowInfo.mediaWindow.setOpacity(1);
       }
       resolve();
     }
@@ -273,7 +303,7 @@ const notifyMainWindowAboutScreenOrWindowChange = throttleWithTrailing(() => {
   console.log(
     '🔍 [notifyMainWindowAboutScreenOrWindowChange] Sending screenChange event',
   );
-  sendToWindow(mainWindow, 'screenChange');
+  sendToWindow(mainWindowInfo.mainWindow, 'screenChange');
 }, 250);
 
 let lastAlwaysOnTop: boolean | undefined;
@@ -287,7 +317,7 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
   });
 
   try {
-    if (!mediaWindow || !mainWindow) {
+    if (!mediaWindowInfo.mediaWindow || !mainWindowInfo.mainWindow) {
       console.log(
         '❌ [moveMediaWindow] No mediaWindow or mainWindow, returning',
       );
@@ -310,8 +340,8 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
 
     console.log('🔍 [moveMediaWindow] Available screens:', screens.length);
 
-    const currentBounds = mediaWindow.getBounds();
-    const currentDisplayNr = getWindowScreen(mediaWindow);
+    const currentBounds = mediaWindowInfo.mediaWindow.getBounds();
+    const currentDisplayNr = getWindowScreen(mediaWindowInfo.mediaWindow);
 
     const currentScreen = screens[currentDisplayNr];
     const screenBounds = currentScreen?.bounds;
@@ -323,7 +353,7 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
         '🔍 [moveMediaWindow] Setting maximizable:',
         shouldBeMaximizable,
       );
-      mediaWindow.setMaximizable(shouldBeMaximizable);
+      mediaWindowInfo.mediaWindow.setMaximizable(shouldBeMaximizable);
       lastMaximizable = shouldBeMaximizable;
     }
 
@@ -338,7 +368,7 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
 
     if (lastAlwaysOnTop !== alwaysOnTop) {
       console.log('🔍 [moveMediaWindow] Setting always on top:', alwaysOnTop);
-      mediaWindow.setAlwaysOnTop(
+      mediaWindowInfo.mediaWindow.setAlwaysOnTop(
         alwaysOnTop,
         alwaysOnTop ? 'screen-saver' : undefined,
       );
@@ -346,14 +376,14 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
     }
 
     // Get current window state
-    const isCurrentlyFullscreen = mediaWindow.isFullScreen();
+    const isCurrentlyFullscreen = mediaWindowInfo.mediaWindow.isFullScreen();
 
     console.log('🔍 [moveMediaWindow] Window state details:', {
       bounds: currentBounds,
-      isFullScreen: mediaWindow.isFullScreen(),
-      isMaximized: mediaWindow.isMaximized(),
-      isMinimized: mediaWindow.isMinimized(),
-      isVisible: mediaWindow.isVisible(),
+      isFullScreen: mediaWindowInfo.mediaWindow.isFullScreen(),
+      isMaximized: mediaWindowInfo.mediaWindow.isMaximized(),
+      isMinimized: mediaWindowInfo.mediaWindow.isMinimized(),
+      isVisible: mediaWindowInfo.mediaWindow.isVisible(),
     });
 
     console.log('🔍 [moveMediaWindow] Current state:', {
@@ -418,7 +448,7 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
       // Check if media window is fullscreen, maximized, or effectively fullscreen
       const isFullscreenOrMaximized =
         isCurrentlyFullscreen ||
-        mediaWindow.isMaximized() ||
+        mediaWindowInfo.mediaWindow.isMaximized() ||
         isEffectivelyFullscreen;
 
       console.log('🔍 [moveMediaWindow] Fullscreen detection:', {
@@ -427,7 +457,7 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
           : false,
         isCurrentlyFullscreen,
         isEffectivelyFullscreen,
-        isMaximized: mediaWindow.isMaximized(),
+        isMaximized: mediaWindowInfo.mediaWindow.isMaximized(),
         screenBounds,
         widthMatch: screenBounds
           ? currentBounds.width >= screenBounds.width - 10
@@ -569,7 +599,7 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
               });
 
               // Apply the calculated bounds immediately since we are about to call setWindowPosition
-              mediaWindow.setBounds({ height, width, x, y });
+              mediaWindowInfo.mediaWindow.setBounds({ height, width, x, y });
             } else {
               return;
             }
@@ -734,7 +764,7 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
   }
 
   try {
-    if (!mediaWindow) {
+    if (!mediaWindowInfo.mediaWindow) {
       console.log('❌ [setWindowPosition] No mediaWindow, returning');
       isMovingWindow = false;
       return;
@@ -767,15 +797,15 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
         fullScreen,
       });
 
-      if (!mediaWindow) {
+      if (!mediaWindowInfo.mediaWindow) {
         console.log('❌ [setWindowBounds] No mediaWindow, returning');
         isMovingWindow = false;
         return;
       }
 
       // Get current state
-      const currentBounds = mediaWindow.getBounds();
-      const wasFullscreen = mediaWindow.isFullScreen();
+      const currentBounds = mediaWindowInfo.mediaWindow.getBounds();
+      const wasFullscreen = mediaWindowInfo.mediaWindow.isFullScreen();
       console.log('🔍 [setWindowBounds] Current state:', {
         currentBounds,
         wasFullscreen,
@@ -794,7 +824,7 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
           '->',
           fullScreen,
         );
-        mediaWindow.setFullScreen(fullScreen);
+        mediaWindowInfo.mediaWindow.setFullScreen(fullScreen);
       }
 
       // Set bounds if changed
@@ -806,7 +836,7 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
 
       if (boundsChanged) {
         console.log('🔍 [setWindowBounds] Setting bounds:', bounds);
-        mediaWindow.setBounds(bounds);
+        mediaWindowInfo.mediaWindow.setBounds(bounds);
       } else {
         console.log(
           '🔍 [setWindowBounds] Bounds already correct, skipping setBounds',
@@ -814,8 +844,8 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
       }
 
       // Verify the changes
-      const newBounds = mediaWindow.getBounds();
-      const newFullscreen = mediaWindow.isFullScreen();
+      const newBounds = mediaWindowInfo.mediaWindow.getBounds();
+      const newFullscreen = mediaWindowInfo.mediaWindow.isFullScreen();
       console.log('🔍 [setWindowBounds] New state:', {
         newBounds,
         newFullscreen,
@@ -834,10 +864,10 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
       }
 
       // Bring media window to front if it's visible
-      if (mediaWindow.isVisible()) {
+      if (mediaWindowInfo.mediaWindow.isVisible()) {
         console.log('🔍 [setWindowBounds] Bringing media window to front');
-        mediaWindow.focus();
-        mediaWindow.show();
+        mediaWindowInfo.mediaWindow.focus();
+        mediaWindowInfo.mediaWindow.show();
       }
 
       console.log('🔍 [setWindowBounds] END - Changes applied');
@@ -845,17 +875,20 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
     };
 
     const handleMacFullScreenTransition = (callback: () => void) => {
-      if (PLATFORM === 'darwin' && mediaWindow?.isFullScreen()) {
+      if (
+        PLATFORM === 'darwin' &&
+        mediaWindowInfo.mediaWindow?.isFullScreen()
+      ) {
         console.log(
           '🔍 [handleMacFullScreenTransition] macOS fullscreen transition needed',
         );
-        mediaWindow?.once('leave-full-screen', () => {
+        mediaWindowInfo.mediaWindow?.once('leave-full-screen', () => {
           console.log(
             '🔍 [handleMacFullScreenTransition] Left fullscreen, executing callback',
           );
           callback();
         });
-        mediaWindow?.setFullScreen(false);
+        mediaWindowInfo.mediaWindow?.setFullScreen(false);
       } else {
         console.log(
           '🔍 [handleMacFullScreenTransition] No transition needed, executing callback immediately',
@@ -943,10 +976,14 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
  */
 export function focusMediaWindow() {
   try {
-    if (mediaWindow && !mediaWindow.isDestroyed() && mediaWindow.isVisible()) {
+    if (
+      mediaWindowInfo.mediaWindow &&
+      !mediaWindowInfo.mediaWindow.isDestroyed() &&
+      mediaWindowInfo.mediaWindow.isVisible()
+    ) {
       console.log('🔍 [focusMediaWindow] Focusing media window');
-      mediaWindow.focus();
-      mediaWindow.show();
+      mediaWindowInfo.mediaWindow.focus();
+      mediaWindowInfo.mediaWindow.show();
     } else {
       console.log(
         '🔍 [focusMediaWindow] Media window not available for focusing',

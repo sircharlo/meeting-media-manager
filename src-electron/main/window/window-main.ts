@@ -16,7 +16,9 @@ import {
 export const mainWindowInfo = {
   mainWindow: null as BrowserWindow | null,
 };
+
 let closeAttempts = 0;
+
 export const authorizedClose = {
   authorized: false,
 };
@@ -25,30 +27,33 @@ export const authorizedClose = {
  * Creates the main window
  */
 export function createMainWindow() {
-  let { mainWindow } = mainWindowInfo;
   // Reset app quitting state
   setAppQuitting(false);
 
   // If the window is already open, just focus it
-  if (mainWindow && !mainWindow.isDestroyed()) {
-    mainWindow.show();
+  if (mainWindowInfo.mainWindow && !mainWindowInfo.mainWindow.isDestroyed()) {
+    mainWindowInfo.mainWindow.show();
     return;
   }
 
   // Create the browser window
-  mainWindow = createWindow('main');
+  mainWindowInfo.mainWindow = createWindow('main');
 
-  mainWindow.on('move', moveMediaWindowThrottled);
-  if (PLATFORM !== 'darwin') mainWindow.on('moved', moveMediaWindowThrottled); // On macOS, the 'moved' event is just an alias for 'move'
+  mainWindowInfo.mainWindow.on('move', moveMediaWindowThrottled);
+  if (PLATFORM !== 'darwin')
+    mainWindowInfo.mainWindow.on('moved', moveMediaWindowThrottled); // On macOS, the 'moved' event is just an alias for 'move'
 
-  mainWindow.on('close', (e) => {
-    if (mainWindow && (authorizedClose.authorized || closeAttempts > 2)) {
+  mainWindowInfo.mainWindow.on('close', (e) => {
+    if (
+      mainWindowInfo.mainWindow &&
+      (authorizedClose.authorized || closeAttempts > 2)
+    ) {
       cancelAllDownloads();
-      closeOtherWindows(mainWindow);
+      closeOtherWindows(mainWindowInfo.mainWindow);
     } else {
       setShouldQuit(false);
       e.preventDefault();
-      sendToWindow(mainWindow, 'attemptedClose');
+      sendToWindow(mainWindowInfo.mainWindow, 'attemptedClose');
       closeAttempts++;
       setTimeout(() => {
         closeAttempts = 0;
@@ -56,8 +61,8 @@ export function createMainWindow() {
     }
   });
 
-  mainWindow.on('closed', () => {
-    mainWindow = null;
+  mainWindowInfo.mainWindow.on('closed', () => {
+    mainWindowInfo.mainWindow = null;
   });
 
   createMediaWindow();

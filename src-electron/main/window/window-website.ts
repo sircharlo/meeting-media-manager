@@ -10,27 +10,27 @@ import {
 } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 
-const { mainWindow } = mainWindowInfo;
 export const websiteWindowInfo = {
   websiteWindow: null as BrowserWindow | null,
 };
-
-let { websiteWindow } = websiteWindowInfo;
 
 /**
  * Creates the website window
  */
 export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
   // If the window is already open, just focus it
-  if (websiteWindow && !websiteWindow.isDestroyed()) {
-    websiteWindow.show();
+  if (
+    websiteWindowInfo.websiteWindow &&
+    !websiteWindowInfo.websiteWindow.isDestroyed()
+  ) {
+    websiteWindowInfo.websiteWindow.show();
     return;
   }
 
   askForMediaAccess();
 
   // Create the browser window
-  websiteWindow = createWindow(
+  websiteWindowInfo.websiteWindow = createWindow(
     'website',
     {
       alwaysOnTop: true,
@@ -43,11 +43,11 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
     websiteParams,
   );
 
-  websiteWindow.center();
+  websiteWindowInfo.websiteWindow?.center();
 
-  websiteWindow.webContents.on('did-finish-load', () => {
+  websiteWindowInfo.websiteWindow?.webContents.on('did-finish-load', () => {
     try {
-      websiteWindow?.webContents.insertCSS(
+      websiteWindowInfo.websiteWindow?.webContents.insertCSS(
         `
         html, body {
           cursor: none !important;
@@ -99,7 +99,7 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
         }`,
       );
 
-      websiteWindow?.webContents.executeJavaScript(
+      websiteWindowInfo.websiteWindow?.webContents.executeJavaScript(
         `
         const cursor = document.createElement('div');
         cursor.className = 'cursor cursor-pulse';
@@ -152,49 +152,55 @@ export async function createWebsiteWindow(websiteParams?: JwSiteParams) {
     }
   });
 
-  websiteWindow.webContents.setVisualZoomLevelLimits(1, 5);
-  websiteWindow.webContents.on('zoom-changed', (_, direction) => {
-    zoomWebsiteWindow(direction);
-  });
+  websiteWindowInfo.websiteWindow?.webContents.setVisualZoomLevelLimits(1, 5);
+  websiteWindowInfo.websiteWindow?.webContents.on(
+    'zoom-changed',
+    (_, direction) => {
+      zoomWebsiteWindow(direction);
+    },
+  );
 
   // Prevent popups from opening new windows
-  websiteWindow.webContents.setWindowOpenHandler((details) => {
-    websiteWindow?.loadURL(details.url);
-    return { action: 'deny' };
-  });
+  websiteWindowInfo.websiteWindow?.webContents.setWindowOpenHandler(
+    (details) => {
+      websiteWindowInfo.websiteWindow?.loadURL(details.url);
+      return { action: 'deny' };
+    },
+  );
 
   if (PLATFORM === 'darwin') {
-    const websiteWindowSize = websiteWindow?.getSize();
-    const websiteWindowContentSize = websiteWindow?.getContentSize();
+    const websiteWindowSize = websiteWindowInfo.websiteWindow?.getSize();
+    const websiteWindowContentSize =
+      websiteWindowInfo.websiteWindow?.getContentSize();
     if (!websiteWindowSize || !websiteWindowContentSize) return;
     const websiteWindowHeight = websiteWindowSize[1] ?? 0;
     const websiteWindowContentHeight = websiteWindowContentSize[1] ?? 0;
-    websiteWindow?.setAspectRatio(16 / 9, {
+    websiteWindowInfo.websiteWindow?.setAspectRatio(16 / 9, {
       height: websiteWindowHeight - websiteWindowContentHeight,
       width: 0,
     });
   } else {
     setAspectRatio();
-    websiteWindow.on('resize', setAspectRatio);
+    websiteWindowInfo.websiteWindow?.on('resize', setAspectRatio);
   }
 
   const video: Video = {
-    id: websiteWindow.getMediaSourceId(),
-    name: websiteWindow.getTitle(),
+    id: websiteWindowInfo.websiteWindow?.getMediaSourceId(),
+    name: websiteWindowInfo.websiteWindow?.getTitle(),
   };
 
-  mainWindow?.webContents.session.setDisplayMediaRequestHandler(
+  mainWindowInfo.mainWindow?.webContents.session.setDisplayMediaRequestHandler(
     (_, callback) => {
       callback({ video });
     },
   );
 
-  websiteWindow.on('close', () => {
-    websiteWindow?.webContents.setZoomFactor(1);
-    sendToWindow(mainWindow, 'websiteWindowClosed');
+  websiteWindowInfo.websiteWindow?.on('close', () => {
+    websiteWindowInfo.websiteWindow?.webContents.setZoomFactor(1);
+    sendToWindow(mainWindowInfo.mainWindow, 'websiteWindowClosed');
   });
-  websiteWindow.on('closed', () => {
-    websiteWindow = null;
+  websiteWindowInfo.websiteWindow?.on('closed', () => {
+    websiteWindowInfo.websiteWindow = null;
   });
 }
 
@@ -209,9 +215,19 @@ export const askForMediaAccess = async () => {
     try {
       const access = systemPreferences.getMediaAccessStatus(type);
       if (access !== 'granted') {
-        logToWindow(mainWindow, `No ${type} access`, access, 'error');
+        logToWindow(
+          mainWindowInfo.mainWindow,
+          `No ${type} access`,
+          access,
+          'error',
+        );
         const result = await systemPreferences.askForMediaAccess(type);
-        logToWindow(mainWindow, `${type} result:`, result, 'debug');
+        logToWindow(
+          mainWindowInfo.mainWindow,
+          `${type} result:`,
+          result,
+          'debug',
+        );
       }
     } catch (e) {
       captureElectronError(e, {
@@ -222,13 +238,19 @@ export const askForMediaAccess = async () => {
 };
 
 export const zoomWebsiteWindow = (direction: 'in' | 'out') => {
-  if (!websiteWindow) return;
+  if (!websiteWindowInfo.websiteWindow) return;
   try {
-    const currentZoom = websiteWindow.webContents.getZoomFactor();
+    const currentZoom =
+      websiteWindowInfo.websiteWindow.webContents.getZoomFactor();
     if (direction === 'in') {
-      websiteWindow.webContents.setZoomFactor(Math.min(currentZoom + 0.2, 5));
+      websiteWindowInfo.websiteWindow.webContents.setZoomFactor(
+        Math.min(currentZoom + 0.2, 5),
+      );
     } else if (direction === 'out') {
-      websiteWindow.webContents.zoomFactor = Math.max(0.1, currentZoom - 0.2);
+      websiteWindowInfo.websiteWindow.webContents.zoomFactor = Math.max(
+        0.1,
+        currentZoom - 0.2,
+      );
     }
   } catch (e) {
     captureElectronError(e, {
@@ -238,25 +260,25 @@ export const zoomWebsiteWindow = (direction: 'in' | 'out') => {
 };
 
 export const navigateWebsiteWindow = (action: NavigateWebsiteAction) => {
-  if (!websiteWindow) return;
+  if (!websiteWindowInfo.websiteWindow) return;
   if (action === 'back') {
-    websiteWindow.webContents.navigationHistory.goBack();
+    websiteWindowInfo.websiteWindow.webContents.navigationHistory.goBack();
   } else if (action === 'forward') {
-    websiteWindow.webContents.navigationHistory.goForward();
+    websiteWindowInfo.websiteWindow.webContents.navigationHistory.goForward();
   } else if (action === 'refresh') {
-    websiteWindow.webContents.reload();
+    websiteWindowInfo.websiteWindow.webContents.reload();
   }
 };
 
 const setAspectRatio = () => {
-  if (!websiteWindow) return;
+  if (!websiteWindowInfo.websiteWindow) return;
 
   // Compute the new aspect ratio that, when the frame is removed, results in a 16:9 aspect ratio for the content
-  const size = websiteWindow.getSize();
+  const size = websiteWindowInfo.websiteWindow.getSize();
   const sizeWidth = size[0] ?? 0;
   const sizeHeight = size[1] ?? 0;
   if (!sizeWidth || !sizeHeight) return;
-  const contentSize = websiteWindow.getContentSize();
+  const contentSize = websiteWindowInfo.websiteWindow.getContentSize();
   const contentSizeWidth = contentSize[0] ?? 0;
   const contentSizeHeight = contentSize[1] ?? 0;
   if (!contentSizeWidth) return;
@@ -271,5 +293,5 @@ const setAspectRatio = () => {
   const newAspectRatio =
     (contentSizeWidth + frameSizeWidth) /
     (contentSizeWidth / aspectRatio + frameSizeHeight);
-  websiteWindow.setAspectRatio(newAspectRatio);
+  websiteWindowInfo.websiteWindow?.setAspectRatio(newAspectRatio);
 };

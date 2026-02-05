@@ -78,9 +78,6 @@ import {
 } from 'src-electron/main/window/window-website';
 import upath from 'upath';
 
-const { mainWindow } = mainWindowInfo;
-const { mediaWindow } = mediaWindowInfo;
-const { websiteWindow } = websiteWindowInfo;
 const { openExternal, openPath } = shell;
 const { join } = upath;
 
@@ -93,10 +90,10 @@ function handleIpcSend(
 ) {
   ipcMain.on(channel, (e, ...args) => {
     if (isSelf(e.senderFrame?.url)) {
-      logToWindow(mainWindow, 'on', { args, channel }, 'debug');
+      logToWindow(mainWindowInfo.mainWindow, 'on', { args, channel }, 'debug');
     } else {
       logToWindow(
-        mainWindow,
+        mainWindowInfo.mainWindow,
         `Blocked IPC send from ${e.senderFrame?.url}`,
         {},
         'warn',
@@ -110,20 +107,18 @@ function handleIpcSend(
 handleIpcSend(
   'toggleMediaWindow',
   async (_e, show: boolean, enableFadeTransitions = false) => {
-    if (!mediaWindow) return;
+    if (!mediaWindowInfo.mediaWindow) return;
     if (show) {
       moveMediaWindow();
-      if (!mediaWindow.isVisible()) {
-        if (enableFadeTransitions) {
-          await fadeInMediaWindow(300);
-        } else {
-          mediaWindow.show();
-        }
+      if (enableFadeTransitions) {
+        await fadeInMediaWindow(300);
+      } else {
+        mediaWindowInfo.mediaWindow.show();
       }
     } else if (enableFadeTransitions) {
       await fadeOutMediaWindow(300);
     } else {
-      mediaWindow.hide();
+      mediaWindowInfo.mediaWindow.hide();
     }
   },
 );
@@ -143,7 +138,11 @@ handleIpcSend('setElectronUrlVariables', (_e, variables: string) => {
 handleIpcSend('authorizedClose', () => {
   toggleAuthorizedClose(true);
   if (quitStatus.shouldQuit) app.quit();
-  else if (mainWindow && !mainWindow.isDestroyed()) mainWindow.close();
+  else if (
+    mainWindowInfo.mainWindow &&
+    !mainWindowInfo.mainWindow.isDestroyed()
+  )
+    mainWindowInfo.mainWindow.close();
 });
 
 handleIpcSend('toggleOpenAtLogin', (_e, openAtLogin: boolean) => {
@@ -156,7 +155,7 @@ handleIpcSend(
     if (show) {
       createWebsiteWindow(websiteParams);
     } else {
-      websiteWindow?.close();
+      websiteWindowInfo.websiteWindow?.close();
     }
   },
 );
@@ -230,10 +229,15 @@ function handleIpcInvoke<T = unknown>(
 ) {
   ipcMain.handle(channel, (e, ...args) => {
     if (isSelf(e.senderFrame?.url)) {
-      logToWindow(mainWindow, 'handle', { args, channel }, 'debug');
+      logToWindow(
+        mainWindowInfo.mainWindow,
+        'handle',
+        { args, channel },
+        'debug',
+      );
     } else {
       logToWindow(
-        mainWindow,
+        mainWindowInfo.mainWindow,
         `Blocked IPC invoke from ${e.senderFrame?.url}`,
         {},
         'warn',
