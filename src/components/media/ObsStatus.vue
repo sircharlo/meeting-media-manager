@@ -45,7 +45,7 @@ import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { obsConnect } from 'src/helpers/obs';
-import { initObsWebSocket, obsWebSocket } from 'src/utils/obs';
+import { initObsWebSocket, obsWebSocketInfo } from 'src/utils/obs';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
 import { onMounted, onUnmounted, watch } from 'vue';
@@ -59,6 +59,8 @@ const obsState = useObsStateStore();
 const { currentScene, obsConnectionState, obsMessage, previousScene, scenes } =
   storeToRefs(obsState);
 const { obsCloseHandler, obsErrorHandler, sceneExists } = obsState;
+
+const { obsWebSocket } = obsWebSocketInfo;
 
 const obsPopup = defineModel<boolean>({ required: true });
 

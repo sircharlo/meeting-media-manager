@@ -1,9 +1,11 @@
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { sleep } from 'src/utils/general';
-import { initObsWebSocket, obsWebSocket } from 'src/utils/obs';
+import { initObsWebSocket, obsWebSocketInfo } from 'src/utils/obs';
 import { portNumberValidator } from 'src/utils/settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
+
+const { obsWebSocket } = obsWebSocketInfo;
 
 export const obsConnect = async (setup?: boolean) => {
   const currentState = useCurrentStateStore();

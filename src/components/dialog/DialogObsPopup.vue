@@ -108,7 +108,7 @@ import {
 } from 'src/helpers/obs';
 import { isUUID } from 'src/utils/general';
 import { isImage } from 'src/utils/media';
-import { obsWebSocket } from 'src/utils/obs';
+import { obsWebSocketInfo } from 'src/utils/obs';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
 import { computed, ref } from 'vue';
@@ -123,7 +123,6 @@ const {
   currentSettings,
   mediaPlaying,
 } = storeToRefs(currentState);
-
 const obsState = useObsStateStore();
 const {
   currentScene,
@@ -133,6 +132,7 @@ const {
   scenes,
 } = storeToRefs(obsState);
 const { sceneExists } = obsState;
+const { obsWebSocket } = obsWebSocketInfo;
 const obsSettingsConnect = () => obsConnect(true);
 
 const { t } = useI18n();
