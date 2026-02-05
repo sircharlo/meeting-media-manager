@@ -4,6 +4,32 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.2.0
+
+### ✨ New Features
+
+- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+
+### 🛡️ Security Fixes
+
+- 🛡️ **SQL Injection**: Hardened the application against potential SQL injection vulnerabilities by using parameterized queries.
+- 🛡️ **Exploit Prevention**: Addressed various identified potential security vulnerabilities.
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Download Priority**: Implemented a better download priority system. Manual downloads and media for upcoming meetings are now prioritized over other background downloads.
+- 🛠️ **Window Management**: Greatly improved window position memory and behavior.
+- 🛠️ **Media Processing**: Improved unzip reliability by ensuring all files are flushed before completion and refined the error flow during decompression.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Media Logic**: Prevented capturing out-of-range paragraph numbers and added a fallback for tracks with unusual naming conventions.
+
+### 🔧 Chores
+
+- 🔧 **Code Quality**: Performed extensive improvements based on SonarQube analysis to enhance maintainability and reliability.
+- 🔧 **Refactoring**: Moved utility functions like `throttle` and `debounce` to vanilla JavaScript and reduced unnecessary log chattiness.
+
 ## v26.1.8
 
 ### 🛠️ Improvements and Tweaks
