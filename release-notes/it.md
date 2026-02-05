@@ -8,7 +8,7 @@ Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGE
 
 ### ✨ Nuove Funzionalità
 
-- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+- ✨ **Controllo spazio su disco**: Aggiunta funzionalità per monitorare e notificare quando lo spazio su disco è basso.
 
 ## v26.1.5
 
