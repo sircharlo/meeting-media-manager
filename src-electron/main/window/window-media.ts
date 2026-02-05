@@ -401,7 +401,8 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
     const mediaWindowPrefs = loadMediaWindowPrefs();
     if (
       (targetDisplayNr === undefined || targetFullscreen === undefined) &&
-      mediaWindowPrefs
+      mediaWindowPrefs &&
+      screens.length > 1
     ) {
       console.log(
         '🔍 [moveMediaWindow] Using saved media window prefs',
