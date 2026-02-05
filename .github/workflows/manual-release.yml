@@ -66,6 +66,36 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Extract Release Notes
+        id: extract_notes
+        run: |
+          VERSION="v${{ needs.bump-version.outputs.new_version }}"
+          CHANGELOG="CHANGELOG.md"
+          OUTPUT="release-notes.md"
+
+          # Initialize with a fallback message
+          echo "Release $VERSION" > $OUTPUT
+
+          if [ -f "$CHANGELOG" ]; then
+            # Find the line number of the version header
+            START_LINE=$(grep -n "^## $VERSION" "$CHANGELOG" | head -n 1 | cut -d: -f1)
+            
+            if [ -n "$START_LINE" ]; then
+              # Find the next version header line number relative to START_LINE
+              RELATIVE_NEXT_LINE=$(tail -n +$((START_LINE + 1)) "$CHANGELOG" | grep -n "^## v" | head -n 1 | cut -d: -f1)
+              
+              if [ -z "$RELATIVE_NEXT_LINE" ]; then
+                # No next version found, take from START_LINE to end of file
+                sed -n "${START_LINE},\$p" "$CHANGELOG" > $OUTPUT
+              else
+                # Calculate the absolute end line number and extract the range
+                END_LINE=$((START_LINE + RELATIVE_NEXT_LINE - 1))
+                sed -n "${START_LINE},${END_LINE}p" "$CHANGELOG" > $OUTPUT
+              fi
+            fi
+          fi
+        continue-on-error: true
+
       - name: Create or update draft release
         if: needs.bump-version.outputs.draft_exists != 'true'
         id: create_release
@@ -76,7 +106,7 @@ jobs:
           commit: 'master'
           draft: true
           prerelease: false
-          generateReleaseNotes: true
+          bodyFile: release-notes.md
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
     outputs:
