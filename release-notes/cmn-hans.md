@@ -4,6 +4,12 @@
 
 关于不同版本之间更改的完整清单，请参阅我们在 GitHub 上的 CHANGELOG.md文件。
 
+## v26.2.0
+
+### ✨ 新功能
+
+- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+
 ## v26.1.5
 
 ### ✨ 新功能
@@ -181,7 +187,7 @@
 ### 🛠️ Improvements and Tweaks
 
 - ⚡ **提高性能和 CPU 使用率**: 优化性能以降低CPU 使用率并提高效率。
-- 🔄 **修复同步和崩溃问题**: 解决各种与同步和稳定相关的问题以提高可靠性。
+- 🔄  **修复同步和崩溃问题**: 解决各种与同步和稳定相关的问题以提高可靠性。
 - 📜 **显示现有会众的发布笔记**: 确保发布笔记只显示于已加载的会众中。
 
 ## 25.3.0
