@@ -148,18 +148,19 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
       await getDirectory('nwt'),
       await getDirectory('nwtsty', undefined, true),
       // Frequently used during MW meetings
-      await getDirectory('it', 0), // Insight
-      await getDirectory('lmd', 0), // Love People
-      await getDirectory('lmdv', 0), // Love People Videos
       await getDirectory('ip-1', 0), // Isaiah Book (1)
       await getDirectory('ip-2', 0), // Isaiah Book (2)
+      await getDirectory('it', 0), // Insight
+      await getDirectory('lff', 0), // Enjoy Life Forever!
+      await getDirectory('lmd', 0), // Love People
+      await getDirectory('lmdv', 0), // Love People Videos
       // Public Talk media
       await getDirectory('S-34', 'any'),
       await getDirectory('S-34mp', 'any'),
       // Magazines, low disk usage
-      await getDirectory('wp', 'any'), // Public Watchtower
-      await getDirectory('w', 'any'), // Study Watchtower
       await getDirectory('g', 'any'), // Awake
+      await getDirectory('w', 'any'), // Study Watchtower
+      await getDirectory('wp', 'any'), // Public Watchtower
       // Various publication info, shouldn't be refreshed often
       await getDirectory('jwlb', undefined, true),
     ].flat();
