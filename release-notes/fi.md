@@ -4,6 +4,12 @@
 
 Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELOG.md tiedosto GitHubissa.
 
+## v26.2.0
+
+### ✨ Mitä uutta
+
+- ✨ Levytilan tarkistus: Lisätty toiminnallisuus, joka valvoo ja ilmoittaa, kun levytila on vähissä.
+
 ## v26.1.5
 
 ### ✨ Mitä uutta
