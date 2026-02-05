@@ -73,13 +73,14 @@ import {
   askForMediaAccess,
   createWebsiteWindow,
   navigateWebsiteWindow,
-  websiteWindow,
+  websiteWindowInfo,
   zoomWebsiteWindow,
 } from 'src-electron/main/window/window-website';
 import upath from 'upath';
 
 const { mainWindow } = mainWindowInfo;
 const { mediaWindow } = mediaWindowInfo;
+const { websiteWindow } = websiteWindowInfo;
 const { openExternal, openPath } = shell;
 const { join } = upath;
 

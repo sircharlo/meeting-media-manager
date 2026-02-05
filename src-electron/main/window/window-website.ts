@@ -11,7 +11,11 @@ import {
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 
 const { mainWindow } = mainWindowInfo;
-export let websiteWindow: BrowserWindow | null = null;
+export const websiteWindowInfo = {
+  websiteWindow: null as BrowserWindow | null,
+};
+
+let { websiteWindow } = websiteWindowInfo;
 
 /**
  * Creates the website window
