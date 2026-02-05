@@ -1,6 +1,6 @@
 <template>
   <q-dialog v-model="dialogValue" :persistent="false" transition-duration="200">
-    <q-card class="section-picker-card" flat square>
+    <q-card class="section-picker-card" flat>
       <q-card-section class="q-pa-sm">
         <div class="text-subtitle2 q-mb-sm">
           {{ t('choose-section-for-files') }}
@@ -160,6 +160,7 @@ const selectSection = (section: MediaSectionIdentifier) => {
 .section-btn {
   flex: 1;
   min-width: 80px;
+  border-radius: 8px;
   transition: all 0.2s ease;
 
   &:hover {
