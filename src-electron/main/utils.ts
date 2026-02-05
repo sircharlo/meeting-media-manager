@@ -101,8 +101,12 @@ export async function getSharedDataPath(): Promise<null | string> {
     console.log('[getSharedDataPath] Test directory created successfully.');
     await writeFile(join(testDir, 'test.txt'), 'ok');
     console.log('[getSharedDataPath] Test file created successfully.');
-    await rm(testDir, { recursive: true });
-    console.log('[getSharedDataPath] Test directory removed successfully.');
+    try {
+      await rm(testDir, { recursive: true });
+      console.log('[getSharedDataPath] Test directory removed successfully.');
+    } catch (e) {
+      console.warn('[getSharedDataPath] Failed to remove test directory:', e);
+    }
     console.log('[getSharedDataPath] Shared data path is available.');
     return sharedPath;
   } catch {

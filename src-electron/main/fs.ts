@@ -73,7 +73,11 @@ export async function isUsablePath(basePath?: string): Promise<boolean> {
     const testDir = join(resolvedBase, '.cache-test-' + uuid());
     await mkdir(testDir, { recursive: true });
     await writeFile(join(testDir, 'test.txt'), 'ok');
-    await rm(testDir, { recursive: true });
+    try {
+      await rm(testDir, { recursive: true });
+    } catch (e) {
+      console.warn('[isUsablePath] Failed to remove test directory:', e);
+    }
     return true;
   } catch {
     return false;
