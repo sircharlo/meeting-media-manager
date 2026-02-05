@@ -86,7 +86,7 @@ import {
   unregisterAllCustomShortcuts,
 } from 'src/helpers/keyboardShortcuts';
 import { getOrCreateMediaSection } from 'src/helpers/media-sections';
-import { showMediaWindow } from 'src/helpers/mediaPlayback';
+import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { localeOptions } from 'src/i18n';
 import { useAppSettingsStore } from 'src/stores/app-settings';
@@ -249,7 +249,7 @@ watch(currentCongregation, async (newCongregation, oldCongregation) => {
     }
 
     if (!newCongregation) {
-      showMediaWindow(false);
+      toggleMediaWindowVisibility(false);
       navigateToCongregationSelector();
       return; // exit early — no need to run notifications
     }

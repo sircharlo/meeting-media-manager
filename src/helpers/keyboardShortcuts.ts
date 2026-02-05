@@ -1,7 +1,7 @@
 import type { SettingsValues } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { showMediaWindow } from 'src/helpers/mediaPlayback';
+import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { isAnyDialogOpen } from 'src/utils/dialog-plugin';
 import { useCurrentStateStore } from 'stores/current-state';
 
@@ -38,7 +38,7 @@ const shortcutCallbacks: Partial<Record<keyof SettingsValues, () => void>> = {
     globalThis.dispatchEvent(new CustomEvent<undefined>('shortcutMediaStop'));
   },
   shortcutMediaWindow: () => {
-    showMediaWindow();
+    toggleMediaWindowVisibility();
   },
   shortcutMusic: () => {
     globalThis.dispatchEvent(new CustomEvent<undefined>('toggleMusic'));

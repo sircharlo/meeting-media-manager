@@ -384,23 +384,27 @@ export const getMediaFromJwPlaylist = async (
   }
 };
 
-export const showMediaWindow = async (state?: boolean) => {
+export const toggleMediaWindowVisibility = (state?: boolean) => {
   try {
     const currentState = useCurrentStateStore();
-    state ??= !currentState.mediaWindowVisible;
-    currentState.mediaWindowVisible = state;
+
+    // Use provided state, or toggle current state if not provided
+    const newState = state ?? !currentState.mediaWindowVisible;
+
+    currentState.mediaWindowVisible = newState;
+
     toggleMediaWindow(
-      state,
+      newState,
       currentState.currentSettings?.enableMediaWindowFadeTransitions,
     );
   } catch (error) {
-    await errorCatcher(error, {
+    errorCatcher(error, {
       contexts: {
         fn: {
           args: {
             state,
           },
-          name: 'showMediaWindow',
+          name: 'toggleMediaWindowVisibility',
         },
       },
     });

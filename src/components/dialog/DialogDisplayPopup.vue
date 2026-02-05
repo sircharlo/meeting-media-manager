@@ -263,7 +263,7 @@
             class="full-width"
             color="primary"
             unelevated
-            @click="showMediaWindow(false)"
+            @click="toggleMediaWindowVisibility(false)"
           >
             {{ t('hide-media-display') }}
           </q-btn>
@@ -272,7 +272,7 @@
             class="full-width"
             color="primary"
             unelevated
-            @click="showMediaWindow(true)"
+            @click="toggleMediaWindowVisibility(true)"
           >
             {{ t('show-media-display') }}
           </q-btn>
@@ -350,7 +350,10 @@ import { storeToRefs } from 'pinia';
 import { QMenu } from 'quasar';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getMemorialBackground } from 'src/helpers/jw-media';
-import { showMediaWindow, unzipJwpub } from 'src/helpers/mediaPlayback';
+import {
+  toggleMediaWindowVisibility,
+  unzipJwpub,
+} from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import { getTempPath } from 'src/utils/fs';
@@ -671,7 +674,7 @@ watchImmediate(
     currentCongregation.value,
   ],
   ([newMediaDisplayEnabled, newCongregation]) => {
-    showMediaWindow(!!newCongregation && !!newMediaDisplayEnabled);
+    toggleMediaWindowVisibility(!!newCongregation && !!newMediaDisplayEnabled);
   },
 );
 

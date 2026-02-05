@@ -1052,7 +1052,7 @@ import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { FOOTNOTE_TARGET_PARAGRAPH } from 'src/constants/jw';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getThumbnailUrl } from 'src/helpers/fs';
-import { showMediaWindow } from 'src/helpers/mediaPlayback';
+import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { triggerZoomScreenShare } from 'src/helpers/zoom';
 import { throttleWithTrailing, uuid } from 'src/shared/vanilla';
 import { isFileUrl } from 'src/utils/fs';
@@ -1372,6 +1372,7 @@ const setMediaPlaying = async (
   }
   skipCustomDurationUpdateOnce.value = false;
   localFile.value = fileIsLocal();
+
   mediaPlaying.value = {
     action:
       isImage(props.media.fileUrl) ||
@@ -1388,6 +1389,8 @@ const setMediaPlaying = async (
       : (media.streamUrl ?? media.fileUrl ?? ''),
     zoom: mediaZoom.value,
   };
+
+  toggleMediaWindowVisibility(true);
 
   nextTick(() => {
     globalThis.dispatchEvent(new CustomEvent('scrollToSelectedMedia'));
@@ -1634,7 +1637,7 @@ const seekTo = (newSeekTo: null | number) => {
   if (newSeekTo !== null) {
     post(newSeekTo);
     if (!mediaWindowVisible.value) {
-      showMediaWindow(true);
+      toggleMediaWindowVisibility(true);
     }
   }
 };

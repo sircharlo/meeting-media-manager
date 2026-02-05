@@ -29,7 +29,7 @@ export function createMediaWindow() {
     mediaWindowInfo.mediaWindow &&
     !mediaWindowInfo.mediaWindow.isDestroyed()
   ) {
-    mediaWindowInfo.mediaWindow.show();
+    focusMediaWindow();
     return;
   }
 
@@ -139,87 +139,97 @@ export function createMediaWindow() {
  * Fade in the media window with opacity transition
  * @param duration Transition duration in milliseconds (default: 300ms)
  */
-export function fadeInMediaWindow(duration = 300): Promise<void> {
-  return new Promise((resolve) => {
-    if (
-      !mediaWindowInfo.mediaWindow ||
-      mediaWindowInfo.mediaWindow.isDestroyed()
-    ) {
-      resolve();
+export function fadeInMediaWindow(duration = 300): void {
+  if (
+    !mediaWindowInfo.mediaWindow ||
+    mediaWindowInfo.mediaWindow.isDestroyed()
+  ) {
+    return;
+  }
+
+  try {
+    // Check current opacity - only fade in if needed
+    const currentOpacity = mediaWindowInfo.mediaWindow.getOpacity();
+
+    // If already visible/opaque, just focus
+    if (mediaWindowInfo.mediaWindow.isVisible() && currentOpacity >= 0.99) {
+      console.log(
+        '🔍 [fadeInMediaWindow] Window already visible/opaque, just focusing',
+      );
+      focusMediaWindow();
       return;
     }
 
-    try {
-      // Set initial opacity to 0
-      mediaWindowInfo.mediaWindow.setOpacity(0);
+    // Set initial opacity to current or 0 (whichever is higher)
+    const startOpacity = Math.max(0, currentOpacity);
+    mediaWindowInfo.mediaWindow.setOpacity(startOpacity);
 
-      // Show the window first if it's not visible
-      if (!mediaWindowInfo.mediaWindow.isVisible()) {
-        mediaWindowInfo.mediaWindow.show();
-      }
+    // Focus the window first
+    focusMediaWindow();
 
-      // Gradually increase opacity
-      const steps = Math.max(10, Math.floor(duration / 30));
-      const stepDuration = duration / steps;
-      const opacityStep = 1 / steps;
-      let currentStep = 0;
+    // Gradually increase opacity from current to 1
+    const steps = Math.max(10, Math.floor(duration / 30));
+    const stepDuration = duration / steps;
+    const opacityRange = 1 - startOpacity;
+    const opacityStep = opacityRange / steps;
+    let currentStep = 0;
 
-      const fadeInterval = setInterval(() => {
-        currentStep++;
-        const newOpacity = Math.min(currentStep * opacityStep, 1);
+    const fadeInterval = setInterval(() => {
+      currentStep++;
+      const newOpacity = Math.min(startOpacity + currentStep * opacityStep, 1);
 
-        try {
-          mediaWindowInfo.mediaWindow?.setOpacity(newOpacity);
-        } catch {
-          // Fallback: just show the window normally
-          if (
-            mediaWindowInfo.mediaWindow &&
-            !mediaWindowInfo.mediaWindow.isDestroyed()
-          ) {
-            mediaWindowInfo.mediaWindow.setOpacity(1);
-          }
+      try {
+        if (
+          !mediaWindowInfo.mediaWindow ||
+          mediaWindowInfo.mediaWindow.isDestroyed()
+        ) {
           clearInterval(fadeInterval);
-          resolve();
+          clearTimeout(fallbackTimeout);
           return;
         }
 
+        mediaWindowInfo.mediaWindow.setOpacity(newOpacity);
+
         if (currentStep >= steps) {
           clearInterval(fadeInterval);
-          if (
-            mediaWindowInfo.mediaWindow &&
-            !mediaWindowInfo.mediaWindow.isDestroyed()
-          ) {
-            mediaWindowInfo.mediaWindow.setOpacity(1);
-          }
-          resolve();
+          clearTimeout(fallbackTimeout);
+          mediaWindowInfo.mediaWindow.setOpacity(1);
         }
-      }, stepDuration);
-
-      // Fallback timeout
-      setTimeout(() => {
+      } catch {
         clearInterval(fadeInterval);
+        clearTimeout(fallbackTimeout);
         if (
           mediaWindowInfo.mediaWindow &&
           !mediaWindowInfo.mediaWindow.isDestroyed()
         ) {
+          focusMediaWindow();
           mediaWindowInfo.mediaWindow.setOpacity(1);
         }
-        resolve();
-      }, duration + 100);
-    } catch {
-      // Fallback: just show the window normally
+      }
+    }, stepDuration);
+
+    // Fallback timeout
+    const fallbackTimeout = setTimeout(() => {
+      clearInterval(fadeInterval);
       if (
         mediaWindowInfo.mediaWindow &&
         !mediaWindowInfo.mediaWindow.isDestroyed()
       ) {
-        mediaWindowInfo.mediaWindow.show();
+        focusMediaWindow();
         mediaWindowInfo.mediaWindow.setOpacity(1);
       }
-      resolve();
+    }, duration + 100);
+  } catch {
+    console.log('🔍 [fadeInMediaWindow] Error in fade in, focusing window');
+    if (
+      mediaWindowInfo.mediaWindow &&
+      !mediaWindowInfo.mediaWindow.isDestroyed()
+    ) {
+      focusMediaWindow();
+      mediaWindowInfo.mediaWindow.setOpacity(1);
     }
-  });
+  }
 }
-
 /**
  * Fade out the media window with opacity transition
  * @param duration Transition duration in milliseconds (default: 300ms)
@@ -267,7 +277,7 @@ export function fadeOutMediaWindow(duration = 300): Promise<void> {
             !mediaWindowInfo.mediaWindow.isDestroyed()
           ) {
             mediaWindowInfo.mediaWindow.hide();
-            mediaWindowInfo.mediaWindow.setOpacity(1);
+            mediaWindowInfo.mediaWindow.setOpacity(0);
           }
           resolve();
         }
@@ -281,7 +291,7 @@ export function fadeOutMediaWindow(duration = 300): Promise<void> {
           !mediaWindowInfo.mediaWindow.isDestroyed()
         ) {
           mediaWindowInfo.mediaWindow.hide();
-          mediaWindowInfo.mediaWindow.setOpacity(1);
+          mediaWindowInfo.mediaWindow.setOpacity(0);
         }
         resolve();
       }, duration + 100);
@@ -292,7 +302,7 @@ export function fadeOutMediaWindow(duration = 300): Promise<void> {
         !mediaWindowInfo.mediaWindow.isDestroyed()
       ) {
         mediaWindowInfo.mediaWindow.hide();
-        mediaWindowInfo.mediaWindow.setOpacity(1);
+        mediaWindowInfo.mediaWindow.setOpacity(0);
       }
       resolve();
     }
@@ -864,12 +874,8 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
         );
       }
 
-      // Bring media window to front if it's visible
-      if (mediaWindowInfo.mediaWindow.isVisible()) {
-        console.log('🔍 [setWindowBounds] Bringing media window to front');
-        mediaWindowInfo.mediaWindow.focus();
-        mediaWindowInfo.mediaWindow.show();
-      }
+      // Focus media window
+      focusMediaWindow();
 
       console.log('🔍 [setWindowBounds] END - Changes applied');
       isMovingWindow = false;
@@ -979,12 +985,11 @@ export function focusMediaWindow() {
   try {
     if (
       mediaWindowInfo.mediaWindow &&
-      !mediaWindowInfo.mediaWindow.isDestroyed() &&
-      mediaWindowInfo.mediaWindow.isVisible()
+      !mediaWindowInfo.mediaWindow.isDestroyed()
     ) {
       console.log('🔍 [focusMediaWindow] Focusing media window');
-      mediaWindowInfo.mediaWindow.focus();
       mediaWindowInfo.mediaWindow.show();
+      mediaWindowInfo.mediaWindow.focus();
     } else {
       console.log(
         '🔍 [focusMediaWindow] Media window not available for focusing',

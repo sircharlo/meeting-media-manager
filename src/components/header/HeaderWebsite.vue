@@ -66,7 +66,7 @@
 <script setup lang="ts">
 import { useBroadcastChannel, watchImmediate } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
-import { showMediaWindow } from 'src/helpers/mediaPlayback';
+import { toggleMediaWindowVisibility } from 'src/helpers/mediaPlayback';
 import { sendObsSceneEvent } from 'src/utils/obs';
 import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
@@ -97,7 +97,7 @@ const startStreaming = () => {
   mediaPlaying.value.action = 'mirroringWebsite';
   postWebStream(mediaPlaying.value.action);
   if (!mediaWindowVisible.value) {
-    showMediaWindow();
+    toggleMediaWindowVisibility(true);
   }
   sendObsSceneEvent('media');
 };
@@ -112,7 +112,7 @@ const stopStreaming = () => {
     if (cameraId) {
       postCameraStream(cameraId);
     } else {
-      showMediaWindow(false);
+      toggleMediaWindowVisibility(false);
     }
   }
   if (autoReturnFromWebsite.value) {

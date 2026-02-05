@@ -145,7 +145,10 @@ import {
   findMediaSection,
   getOrCreateMediaSection,
 } from 'src/helpers/media-sections';
-import { showMediaWindow, unzipJwpub } from 'src/helpers/mediaPlayback';
+import {
+  toggleMediaWindowVisibility,
+  unzipJwpub,
+} from 'src/helpers/mediaPlayback';
 import { createTemporaryNotification } from 'src/helpers/notifications';
 import { updateLastUsedDate } from 'src/helpers/usage';
 import { triggerZoomScreenShare } from 'src/helpers/zoom';
@@ -292,20 +295,24 @@ const appSettingsStore = useAppSettingsStore();
 watch(
   () => mediaPlaying.value.action,
   (newAction, oldAction) => {
+    console.log('mediaPlaying.value.action:', oldAction, '->', newAction);
+
     if (newAction !== oldAction) postMediaAction(newAction);
 
     const isPlay = newAction === 'play';
     const isSignLang = currentLangObject.value?.isSignLanguage;
 
     // Always show media window when playing
-    if (isPlay) showMediaWindow(true);
+    if (isPlay) toggleMediaWindowVisibility(true);
 
     // Handle sign language special cases
     if (isSignLang) {
-      if (isPlay) return showMediaWindow(true);
+      if (isPlay) return toggleMediaWindowVisibility(true);
 
       const cameraId = appSettingsStore.displayCameraId;
-      return cameraId ? postCameraStream(cameraId) : showMediaWindow(false);
+      return cameraId
+        ? postCameraStream(cameraId)
+        : toggleMediaWindowVisibility(false);
     }
   },
 );
