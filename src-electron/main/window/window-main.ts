@@ -15,7 +15,9 @@ import {
 
 export let mainWindow: BrowserWindow | null = null;
 let closeAttempts = 0;
-export let authorizedClose = false;
+export const authorizedClose = {
+  authorized: false,
+};
 
 /**
  * Creates the main window
@@ -37,7 +39,7 @@ export function createMainWindow() {
   if (PLATFORM !== 'darwin') mainWindow.on('moved', moveMediaWindowThrottled); // On macOS, the 'moved' event is just an alias for 'move'
 
   mainWindow.on('close', (e) => {
-    if (mainWindow && (authorizedClose || closeAttempts > 2)) {
+    if (mainWindow && (authorizedClose.authorized || closeAttempts > 2)) {
       cancelAllDownloads();
       closeOtherWindows(mainWindow);
     } else {
@@ -63,5 +65,5 @@ export function createMainWindow() {
  * @param authorized Whether the window is authorized to close
  */
 export function toggleAuthorizedClose(authorized: boolean) {
-  authorizedClose = authorized;
+  authorizedClose.authorized = authorized;
 }

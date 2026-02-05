@@ -305,7 +305,7 @@ if (gotTheLock) {
     setAppQuitting(true);
     if (PLATFORM !== 'darwin') return;
     if (!mainWindow || mainWindow.isDestroyed()) return;
-    if (authorizedClose) {
+    if (authorizedClose.authorized) {
       mainWindow.close();
     } else {
       e.preventDefault();
