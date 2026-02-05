@@ -22,6 +22,7 @@
       <div
         v-if="!hideMediaLogo && jwIconsFontLoaded"
         id="yeartextLogoContainer"
+        class="jw-icon"
       >
         <p id="yeartextLogo">
           {{ getJwIconFromKeyword('tv-logo') }}
