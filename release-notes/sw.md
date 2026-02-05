@@ -4,6 +4,12 @@
 
 Kwa ajili ya orodha kamili ya mabadiliko baina ya toleo tofauti tofauti, ona CHANGELOG.md file kwenye GitHub.
 
+## v26.2.0
+
+### ✨ Vipengele Vipya
+
+- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+
 ## v26.1.5
 
 ### ✨ Vipengele Vipya
