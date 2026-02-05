@@ -4,6 +4,12 @@
 
 För den fullständiga listan över ändringar mellan versioner, se vår CHANGELOG.md-fil på GitHub.
 
+## v26.2.0
+
+### ✨ Nya funktioner
+
+- ✨ Diskutrymmeskontroll: Lagt till funktionalitet för att övervaka och meddela när diskutrymmet är lågt.
+
 ## v26.1.5
 
 ### ✨ Nya funktioner

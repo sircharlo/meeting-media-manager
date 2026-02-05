@@ -4,6 +4,12 @@
 
 Per l'elenco completo delle modifiche tra le versioni, consultare il file CHANGELOG.md su GitHub.
 
+## v26.2.0
+
+### ✨ Nuove Funzionalità
+
+- ✨ **Controllo spazio su disco**: Aggiunta funzionalità per monitorare e notificare quando lo spazio su disco è basso.
+
 ## v26.1.5
 
 ### ✨ Nuove Funzionalità
