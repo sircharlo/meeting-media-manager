@@ -283,8 +283,10 @@ export const getDocumentMultimediaItems = (
       ParagraphColumnsExist
     ) {
       where += ` AND ${mmTable}.BeginParagraphOrdinal >= ? AND ${mmTable}.EndParagraphOrdinal <= ?`;
-      params.push(source.BeginParagraphOrdinal as number);
-      params.push(source.EndParagraphOrdinal as number);
+      params.push(
+        source.BeginParagraphOrdinal as number,
+        source.EndParagraphOrdinal as number,
+      );
     }
 
     const groupAndSort = ParagraphColumnsExist

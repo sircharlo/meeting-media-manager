@@ -1072,7 +1072,9 @@ export const getStudyBibleMedia = async (
       ORDER BY bc.ChapterNumber, bv.BibleVerseId
     `;
 
-    const bibleBookMediaItemsParams = [bookNumber, chapterNumber].filter(v => v !== undefined);
+    const bibleBookMediaItemsParams = [bookNumber, chapterNumber].filter(
+      (v) => v !== undefined,
+    );
     const bibleBookMediaItems = executeQuery<MultimediaItem>(
       nwtStyDb,
       bibleBookMediaItemsQuery,
@@ -1105,7 +1107,8 @@ export const getStudyBibleMedia = async (
     ORDER BY m.MultimediaId
     `;
 
-    const bibleBookRelatedMediaItemsParams = bookNumber !== undefined ? [bookNumber] : [];
+    const bibleBookRelatedMediaItemsParams =
+      bookNumber === undefined ? [] : [bookNumber];
     const bibleBookRelatedMediaItems = executeQuery<MultimediaItem>(
       nwtStyDb,
       bibleBookRelatedMediaItemsQuery,

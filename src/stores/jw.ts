@@ -179,7 +179,10 @@ export function replaceMissingMediaByPubMediaId(
         (obj) => obj?.pubMediaId === item?.pubMediaId,
       );
 
-      if (index !== -1) {
+      if (index === -1) {
+        // Add new item to the correct section if no match found
+        targetSection.items.push(item);
+      } else {
         const existing = targetSection.items[index];
         // Replace only if it's a placeholder (fileUrl is the same as pubMediaId) and has no children
         if (
@@ -188,9 +191,6 @@ export function replaceMissingMediaByPubMediaId(
         ) {
           targetSection.items[index] = item;
         }
-      } else {
-        // Add new item to the correct section if no match found
-        targetSection.items.push(item);
       }
     });
   }
