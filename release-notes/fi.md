@@ -8,7 +8,7 @@ Täydellinen luettelo versioiden välisistä muutoksista, katso meidän CHANGELO
 
 ### ✨ Mitä uutta
 
-- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+- ✨ Levytilan tarkistus: Lisätty toiminnallisuus, joka valvoo ja ilmoittaa, kun levytila on vähissä.
 
 ## v26.1.5
 
