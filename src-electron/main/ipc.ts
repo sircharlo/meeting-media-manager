@@ -59,7 +59,7 @@ import {
 } from 'src-electron/main/utils';
 import { logToWindow } from 'src-electron/main/window/window-base';
 import {
-  mainWindow,
+  mainWindowInfo,
   toggleAuthorizedClose,
 } from 'src-electron/main/window/window-main';
 import {
@@ -78,6 +78,7 @@ import {
 } from 'src-electron/main/window/window-website';
 import upath from 'upath';
 
+const { mainWindow } = mainWindowInfo;
 const { openExternal, openPath } = shell;
 const { join } = upath;
 

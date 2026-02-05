@@ -8,8 +8,9 @@ import {
   logToWindow,
   sendToWindow,
 } from 'src-electron/main/window/window-base';
-import { mainWindow } from 'src-electron/main/window/window-main';
+import { mainWindowInfo } from 'src-electron/main/window/window-main';
 
+const { mainWindow } = mainWindowInfo;
 export let websiteWindow: BrowserWindow | null = null;
 
 /**

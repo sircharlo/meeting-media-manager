@@ -11,7 +11,7 @@ import {
   getSharedDataPath,
 } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
-import { mainWindow } from 'src-electron/main/window/window-main';
+import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import {
   IMG_EXTENSIONS,
   JWPUB_EXTENSIONS,
@@ -21,6 +21,7 @@ import { uuid } from 'src/shared/vanilla';
 import upath from 'upath';
 import yauzl from 'yauzl';
 
+const { mainWindow } = mainWindowInfo;
 const { basename, dirname, join, resolve, toUnix } = upath;
 
 const ongoingDecompressions = new Map<string, Promise<UnzipResult[]>>();

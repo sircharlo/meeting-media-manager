@@ -9,9 +9,10 @@ import {
   isIgnoredUpdateError,
 } from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
-import { mainWindow } from 'src-electron/main/window/window-main';
+import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import upath from 'upath';
 
+const { mainWindow } = mainWindowInfo;
 const { join } = upath;
 
 export const getUpdatesDisabledPath = async () =>

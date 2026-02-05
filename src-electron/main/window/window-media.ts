@@ -10,10 +10,11 @@ import {
   createWindow,
   sendToWindow,
 } from 'src-electron/main/window/window-base';
-import { mainWindow } from 'src-electron/main/window/window-main';
+import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import { throttleWithTrailing } from 'src/shared/vanilla';
 import upath from 'upath';
 
+const { mainWindow } = mainWindowInfo;
 const { join } = upath;
 
 export let mediaWindow: BrowserWindow | null = null;

@@ -13,7 +13,9 @@ import {
   moveMediaWindowThrottled,
 } from 'src-electron/main/window/window-media';
 
-export let mainWindow: BrowserWindow | null = null;
+export const mainWindowInfo = {
+  mainWindow: null as BrowserWindow | null,
+};
 let closeAttempts = 0;
 export const authorizedClose = {
   authorized: false,
@@ -23,6 +25,7 @@ export const authorizedClose = {
  * Creates the main window
  */
 export function createMainWindow() {
+  let { mainWindow } = mainWindowInfo;
   // Reset app quitting state
   setAppQuitting(false);
 

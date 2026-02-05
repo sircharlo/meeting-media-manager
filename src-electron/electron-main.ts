@@ -35,10 +35,11 @@ import 'src-electron/main/security';
 import {
   authorizedClose,
   createMainWindow,
-  mainWindow,
+  mainWindowInfo,
 } from 'src-electron/main/window/window-main';
 import upath from 'upath';
 
+const { mainWindow } = mainWindowInfo;
 const { join, resolve } = upath;
 
 protocol.registerSchemesAsPrivileged([
