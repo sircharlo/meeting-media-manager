@@ -167,12 +167,60 @@ export class StatefulBrowserWindow {
   };
 }
 
-function ensureWindowVisibleOnSomeDisplay(state: WindowState) {
-  const visible = screen.getAllDisplays().some((display) => {
-    return windowWithinBounds(state, display.bounds);
-  });
+function ensureWindowVisibleOnSomeDisplay(
+  state: WindowState,
+): null | WindowState {
+  try {
+    if (
+      state?.x === undefined ||
+      state?.y === undefined ||
+      state?.width === undefined ||
+      state?.height === undefined
+    ) {
+      captureElectronError(new Error('Invalid window state'), {
+        contexts: { fn: { name: 'ensureWindowVisibleOnSomeDisplay', state } },
+      });
+      return null;
+    }
 
-  return visible ? state : null;
+    const visible = screen.getAllDisplays().some((display) => {
+      if (
+        !display.bounds ||
+        state.x === undefined ||
+        state.y === undefined ||
+        state.width === undefined ||
+        state.height === undefined
+      ) {
+        return false;
+      }
+
+      const { bounds } = display;
+
+      const notFullyRightOfBounds = state.x < bounds.x + bounds.width;
+      const notFullyLeftOfBounds = state.x + state.width > bounds.x;
+      const notFullyBelowBounds = state.y < bounds.y + bounds.height;
+      const notFullyAboveBounds = state.y + state.height > bounds.y;
+
+      const isVisible =
+        notFullyRightOfBounds &&
+        notFullyLeftOfBounds &&
+        notFullyBelowBounds &&
+        notFullyAboveBounds;
+
+      console.log(
+        `Window is ${isVisible ? '' : 'not '}visible on display ${display.id}`,
+      );
+
+      return isVisible;
+    });
+
+    return visible ? state : null;
+  } catch (err) {
+    captureElectronError(err, {
+      contexts: { fn: { name: 'ensureWindowVisibleOnSomeDisplay', state } },
+    });
+    return null;
+  }
 }
 
 function getMaxBounds(bounds: WindowState, boundsToCheck: Rectangle) {
@@ -279,49 +327,4 @@ function validateState(state: null | WindowState) {
   }
 
   return state;
-}
-
-function windowWithinBounds(state: WindowState, bounds: Rectangle) {
-  if (
-    state?.x === undefined ||
-    state?.y === undefined ||
-    state?.width === undefined ||
-    state?.height === undefined
-  ) {
-    captureElectronError(new Error('Invalid window state'), {
-      contexts: { fn: { bounds, name: 'windowWithinBounds', state } },
-    });
-    return false;
-  }
-
-  const notFullyRightOfBounds = state.x < bounds.x + bounds.width;
-  const notFullyLeftOfBounds = state.x + state.width > bounds.x;
-  const notFullyBelowBounds = state.y < bounds.y + bounds.height;
-  const notFullyAboveBounds = state.y + state.height > bounds.y;
-
-  if (
-    notFullyRightOfBounds &&
-    notFullyLeftOfBounds &&
-    notFullyBelowBounds &&
-    notFullyAboveBounds
-  ) {
-    console.log('Window is visible on the display');
-    return true;
-  } else {
-    console.log('Window is not visible on the display');
-    captureElectronError(new Error('Window is not visible on the display'), {
-      contexts: {
-        fn: {
-          bounds,
-          name: 'windowWithinBounds',
-          notFullyAboveBounds,
-          notFullyBelowBounds,
-          notFullyLeftOfBounds,
-          notFullyRightOfBounds,
-          state,
-        },
-      },
-    });
-    return false;
-  }
 }
