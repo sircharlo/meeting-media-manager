@@ -8,7 +8,7 @@ Za celoten seznam sprememb med različicami si oglejte našo datoteko CHANGELOG.
 
 ### ✨ Nove funkcije
 
-- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+- ✨ **Preverjanje prostora na disku**: Dodana funkcionalnost za spremljanje in obveščanje, ko je prostora na disku malo.
 
 ## v26.1.5
 
