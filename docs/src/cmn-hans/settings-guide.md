@@ -24,9 +24,9 @@
 
 - **自动**：根据系统偏好自动切换
 - **深色**：始终使用暗色模式
-- Always use light mode
+- 始终使用浅色模式
 
-**默认**：自动 (Automatic)
+**默认**：自动
 
 ### 一周的第一天
 
@@ -36,7 +36,7 @@
 
 **选项**：星期日至星期六
 
-**默认**：星期日 (Sunday)
+**默认**：星期日
 
 ### 日期格式
 
@@ -54,7 +54,7 @@
 
 计算机启动时自动启动 M³。
 
-**Default**: `false`
+**默认**: `false`
 
 ## 会众聚会 {#congregation-meetings}
 
@@ -62,7 +62,7 @@
 
 <!-- **Setting**: `congregationName` -->
 
-The name of your congregation. This is used for organization and display purposes.
+你的会众名称。 用来安排和显示。
 
 **默认**：空（必须在设置期间设置）
 
@@ -70,13 +70,13 @@ The name of your congregation. This is used for organization and display purpose
 
 <!-- **Setting**: `lang` -->
 
-媒体下载的主要语言。这应与您的会众聚会所使用的语言相匹配。 媒体下载的主要语言。这应与您的会众聚会所使用的语言相匹配。 This should match the language used in your congregation's meetings.
+媒体下载的主要语言。 这应与您的会众聚会所使用的语言相匹配。
 
 **选项**：耶和华见证人官方网站上提供的所有语言
 
-**默认**：英语 (English) (E)
+**默认**：英语
 
-### 后备语言
+### 后备语言 {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
@@ -86,7 +86,7 @@ The name of your congregation. This is used for organization and display purpose
 
 **默认**：无
 
-### 周中聚会（星期几）{#midweek-meeting-day}
+### 周中聚会 {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
@@ -96,7 +96,7 @@ The name of your congregation. This is used for organization and display purpose
 
 **默认**：无（需在设置向导中设置）
 
-### 周中聚会开始时间 {#midweek-meeting-time}
+### 周中聚会时间 {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
