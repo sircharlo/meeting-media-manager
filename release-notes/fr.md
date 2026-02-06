@@ -8,7 +8,7 @@ Pour la liste complète des changements entre les versions, consultez notre fich
 
 ### ✨ Nouvelles fonctionnalités
 
-- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+- ✨ **Vérification de l'espace disque** : Ajout d'une fonctionnalité permettant de surveiller et de signaler lorsque l'espace disque est insuffisant.
 
 ## v26.1.5
 
