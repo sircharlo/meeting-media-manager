@@ -155,7 +155,7 @@ M³ 根据以下因素自动切换 OBS 场景：
 
 ### :pause_button: 什么是“延迟显示图像（Postpone Images）”功能？ {#faq-postpone-images}
 
-该功能会在您手动触发前，延迟把图片共享到 OBS。这对于以下情况很有用： This is useful for:
+该功能会在您手动触发前，延迟把图片共享到 OBS。这对于以下情况很有用： 好处:
 
 - 先向现场观众展示图片
 - 更灵活地控制演示时机
@@ -201,7 +201,7 @@ M³ 根据以下因素自动切换 OBS 场景：
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: OBS 集成无法工作，我该核对什么？ What should I verify? {#faq-obs-not-working}
+### :video_camera: OBS 集成无法工作，我该核对什么？ 我应该进行什么验证？ {#faq-obs-not-working}
 
 检查这些 OBS 相关问题：
 
