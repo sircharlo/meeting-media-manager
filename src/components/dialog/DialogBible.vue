@@ -226,10 +226,7 @@ import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import {
-  downloadAdditionalRemoteVideo,
-  getBibleMedia,
-} from 'src/helpers/jw-media';
+import { getBibleMedia } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { decodeEntities } from 'src/utils/general';
 import { timeToSeconds } from 'src/utils/time';
@@ -237,7 +234,7 @@ import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const currentState = useCurrentStateStore();
-const { currentLangObject, selectedDate } = storeToRefs(currentState);
+const { currentLangObject } = storeToRefs(currentState);
 
 const { t } = useI18n();
 
@@ -424,23 +421,12 @@ const addSelectedVerses = async () => {
         .filter((verse, index, self) => self.indexOf(verse) === index)
         .join('-');
 
-    if (!props.section) {
-      emit('import', {
-        customDuration: { max, min },
-        files: selectedChapterMedia.value,
-        title,
-      });
-    } else {
-      await downloadAdditionalRemoteVideo(
-        selectedChapterMedia.value,
-        selectedDate.value,
-        undefined,
-        false,
-        title,
-        props.section,
-        { max, min },
-      );
-    }
+    // ✅ Always emit - parent handles section assignment
+    emit('import', {
+      customDuration: { max, min },
+      files: selectedChapterMedia.value,
+      title,
+    });
 
     resetBibleBook(true, true);
     emit('ok');

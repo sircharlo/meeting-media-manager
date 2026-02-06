@@ -457,8 +457,6 @@ import { useLocale } from 'src/composables/useLocale';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getJwIconFromKeyword } from 'src/helpers/fonts';
 import {
-  addJwpubDocumentMediaToFiles,
-  downloadAdditionalRemoteVideo,
   getDbFromJWPUB,
   getJwMediaInfo,
   getPubMediaLinks,
@@ -504,8 +502,7 @@ const jwStore = useJwStore();
 const { urlVariables } = storeToRefs(jwStore);
 
 const currentState = useCurrentStateStore();
-const { currentLangObject, currentSettings, selectedDate } =
-  storeToRefs(currentState);
+const { currentLangObject, currentSettings } = storeToRefs(currentState);
 
 const { executeQuery, path, pathToFileURL } = globalThis.electronApi;
 
@@ -817,31 +814,10 @@ function clearSearch() {
 }
 
 async function downloadMediaItem(media: MediaLink) {
-  if (!props.section) {
-    emit('import', { media, type: 'media' });
-    resetState();
-    dialogValue.value = false;
-    return;
-  }
-
-  try {
-    isProcessing.value = true;
-
-    // Use downloadAdditionalRemoteVideo to download the media
-    await downloadAdditionalRemoteVideo(
-      [media],
-      selectedDate.value,
-      media.trackImage.url,
-      false,
-      media.title || selection.brochureLabel,
-      props.section,
-    );
-  } catch (error) {
-    errorCatcher(error);
-  } finally {
-    isProcessing.value = false;
-    dialogValue.value = false;
-  }
+  // ✅ Always emit - parent handles section assignment
+  emit('import', { media, type: 'media' });
+  resetState();
+  dialogValue.value = false;
 }
 
 async function fetchJwtToken(): Promise<boolean> {
@@ -954,22 +930,10 @@ function goBack() {
 async function importDocument(doc: DocumentItem) {
   if (!selection.dbPath) return;
 
-  if (!props.section) {
-    emit('import', { dbPath: selection.dbPath, doc, type: 'jwpub' });
-    resetState();
-    dialogValue.value = false;
-    return;
-  }
-
-  try {
-    isProcessing.value = true;
-    await addJwpubDocumentMediaToFiles(selection.dbPath, doc, props.section);
-  } catch (e) {
-    errorCatcher(e);
-  } finally {
-    isProcessing.value = false;
-    dialogValue.value = false;
-  }
+  // ✅ Always emit - parent handles section assignment
+  emit('import', { dbPath: selection.dbPath, doc, type: 'jwpub' });
+  resetState();
+  dialogValue.value = false;
 }
 
 function onSearchInput() {

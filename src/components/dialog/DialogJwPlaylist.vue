@@ -192,6 +192,7 @@
 
 <script setup lang="ts">
 import type {
+  DialogImportPayload,
   JwPlaylistItem,
   MediaSectionIdentifier,
   MultimediaItem,
@@ -201,7 +202,6 @@ import type {
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { JPG_EXTENSIONS } from 'src/constants/media';
-import { isCoWeek } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   downloadAdditionalRemoteVideo,
@@ -216,7 +216,6 @@ import { getTempPath } from 'src/utils/fs';
 import { isImage } from 'src/utils/media';
 import { findDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
-import { useJwStore } from 'stores/jw';
 import { computed, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
@@ -232,19 +231,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   cancel: [];
-  import: [
-    data: {
-      customPrefix: string;
-      includeNumbering: boolean;
-      includePrefix: boolean;
-      outputPath: string;
-      selectedPlaylistItems: (JwPlaylistItem & {
-        ResolvedPreviewPath?: string;
-        ThumbnailFilePath: string;
-        VerseNumbers: number[];
-      })[];
-    },
-  ];
+  import: [data: DialogImportPayload];
   ok: [];
   'update:modelValue': [value: boolean];
 }>();
@@ -271,9 +258,7 @@ const customPrefix = ref('');
 const includeNumbering = ref(true);
 
 const currentState = useCurrentStateStore();
-const { currentCongregation, selectedDate, selectedDateObject } =
-  storeToRefs(currentState);
-const jwStore = useJwStore();
+const { selectedDate, selectedDateObject } = storeToRefs(currentState);
 
 const { executeQuery, fs, path, unzip } = globalThis.electronApi;
 const { pathExists, rename } = fs;
@@ -656,18 +641,6 @@ const addSelectedItems = async () => {
       basename(props.jwPlaylistPath),
     );
 
-    if (!props.section) {
-      emit('import', {
-        customPrefix: customPrefix.value,
-        includeNumbering: includeNumbering.value,
-        includePrefix: includePrefix.value,
-        outputPath,
-        selectedPlaylistItems,
-      });
-      dialogValue.value = false;
-      return;
-    }
-
     isProcessing.value = true;
 
     // 🔥 Process all items *in parallel*
@@ -677,18 +650,13 @@ const addSelectedItems = async () => {
         .map((item, idx) => processSingleItem(item, idx, outputPath)),
     );
 
-    // 🔥 Apply mappings SEQUENTIALLY (preserves order)
-    for (const result of results.sort((a, b) => a.order - b.order)) {
-      if (!result?.mappedItems?.length) continue;
+    // 🔥 Build MediaItems from results (preserves order)
+    const processedMediaItems = results
+      .sort((a, b) => a.order - b.order)
+      .flatMap((result) => result?.mappedItems || []);
 
-      jwStore.addToAdditionMediaMap(
-        result.mappedItems,
-        props.section,
-        currentCongregation.value,
-        selectedDateObject.value,
-        isCoWeek(selectedDateObject.value.date),
-      );
-    }
+    // ✅ Always emit processed items - parent handles section assignment
+    emit('import', { items: processedMediaItems });
 
     emit('ok');
     console.log('✅ All items processed (parallel) and applied (ordered).');

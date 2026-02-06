@@ -246,35 +246,16 @@
 </template>
 
 <script setup lang="ts">
-import type {
-  JwLangCode,
-  MediaSectionIdentifier,
-  MultimediaItem,
-  PublicationFetcher,
-} from 'src/types';
+import type { MediaSectionIdentifier, MultimediaItem } from 'src/types';
 
 import { whenever } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
-import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import {
-  addToAdditionMediaMapFromPath,
-  downloadAdditionalRemoteVideo,
-  getJwMediaInfo,
-  getPubMediaLinks,
-  getStudyBibleBooks,
-  getStudyBibleMedia,
-} from 'src/helpers/jw-media';
-import { convertImageIfNeeded } from 'src/utils/converters';
-import { useCurrentStateStore } from 'stores/current-state';
+import { getStudyBibleBooks, getStudyBibleMedia } from 'src/helpers/jw-media';
 import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-
-// Stores
-const currentState = useCurrentStateStore();
-const { currentSettings, selectedDate } = storeToRefs(currentState);
 
 // Props
 const props = defineProps<{
@@ -284,7 +265,9 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+  cancel: [];
   import: [data: { items: MultimediaItem[] }];
+  ok: [];
   'update:modelValue': [value: boolean];
 }>();
 
@@ -489,94 +472,10 @@ const isSelected = (item: MultimediaItem) => {
 };
 
 const addSelectedMediaItems = async () => {
-  if (!props.section) {
-    emit('import', { items: [...selectedMediaItems.value] });
-    resetState();
-    dialogValue.value = false;
-    return;
-  }
-
-  isProcessing.value = true;
-  try {
-    for (const mediaItem of selectedMediaItems.value) {
-      await addStudyBibleMedia(mediaItem, props.section);
-    }
-  } catch (error) {
-    errorCatcher(error);
-  } finally {
-    isProcessing.value = false;
-    resetState();
-    dialogValue.value = false;
-  }
-};
-
-const addStudyBibleMedia = async (
-  mediaItem: MultimediaItem,
-  sectionToUse?: MediaSectionIdentifier,
-) => {
-  if (mediaItem.MimeType.includes('image')) {
-    mediaItem.FilePath = await convertImageIfNeeded(mediaItem.FilePath);
-    await addToAdditionMediaMapFromPath(
-      mediaItem.FilePath,
-      sectionToUse || props.section,
-      undefined,
-      {
-        title: mediaItem.Label,
-      },
-    );
-  } else {
-    const mediaLookup: PublicationFetcher = {
-      docid: mediaItem.MepsDocumentId,
-      fileformat: 'MP4',
-      issue: mediaItem.IssueTagNumber || undefined,
-      langwritten: '',
-      pub: mediaItem.KeySymbol,
-      track: mediaItem.Track || undefined,
-    };
-
-    const langsToTry = [
-      ...new Set([
-        currentSettings.value?.lang,
-        currentSettings.value?.langFallback,
-        'E',
-      ]),
-    ].filter((l) => l !== undefined && l !== null);
-    let mediaInfo, mediaItemFiles;
-    for (const lang of langsToTry) {
-      if (!lang) continue;
-      mediaLookup.langwritten = lang as JwLangCode;
-      try {
-        [mediaItemFiles, mediaInfo] = await Promise.all([
-          getPubMediaLinks(mediaLookup),
-          getJwMediaInfo(mediaLookup),
-        ]);
-        if (mediaItemFiles && mediaInfo) break; // Exit loop if successful
-      } catch {
-        // Continue to the next language on failure
-      }
-    }
-
-    if (mediaItemFiles && mediaInfo && mediaLookup.langwritten) {
-      const { thumbnail, title } = mediaInfo;
-      downloadAdditionalRemoteVideo(
-        mediaItemFiles?.files?.[mediaLookup.langwritten]?.['MP4'] || [],
-        selectedDate.value,
-        thumbnail,
-        false,
-        title.replace(/^\d+\.\s*/, ''),
-        sectionToUse || props.section,
-      );
-    } else {
-      errorCatcher(new Error('Failed to fetch media for all languages.'), {
-        contexts: {
-          fn: {
-            mediaItem,
-            name: 'addStudyBibleMedia',
-          },
-        },
-      });
-    }
-  }
+  // ✅ Emit raw MultimediaItems - parent handles image conversion and video downloads
+  emit('import', { items: [...selectedMediaItems.value] });
+  resetState();
+  dialogValue.value = false;
 };
 </script>
 

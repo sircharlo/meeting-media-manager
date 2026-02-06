@@ -17,6 +17,21 @@ export interface CacheFile {
   size: number;
 }
 
+/**
+ * Standardized payload that all media import dialogs emit.
+ * Dialogs process all data and emit fully-formed MediaItems with final titles.
+ * Parent component (HeaderCalendar) only handles section assignment.
+ */
+export interface DialogImportPayload {
+  items: MediaItem[]; // Fully processed MediaItems with final titles
+  metadata?: {
+    // Optional metadata for special handling
+    customPrefix?: string;
+    includeNumbering?: boolean;
+    // Add other dialog-specific metadata as needed
+  };
+}
+
 export interface DownloadedFile {
   error?: boolean;
   new?: boolean;

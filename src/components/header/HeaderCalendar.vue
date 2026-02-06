@@ -394,8 +394,8 @@
 <script setup lang="ts">
 import type { QMenu } from 'quasar';
 import type {
+  DialogImportPayload,
   DocumentItem,
-  JwPlaylistItem,
   MediaItem,
   MediaItemsMediatorFile,
   MediaLink,
@@ -424,11 +424,8 @@ import {
   addJwpubDocumentMediaToFiles,
   addToAdditionMediaMapFromPath,
   downloadAdditionalRemoteVideo,
-  dynamicMediaMapper,
-  getJwLangCode,
   getJwMediaInfo,
   getPubMediaLinks,
-  processMissingMediaInfo,
 } from 'src/helpers/jw-media';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
@@ -484,6 +481,7 @@ const jwPlaylistPath = ref('');
 const showSectionPicker = ref(false);
 const pendingFiles = ref<(File | string)[]>([]);
 type PendingImport =
+  | { data: DialogImportPayload; type: 'jw-playlist' }
   | {
       data: {
         customDuration: { max: number; min: number };
@@ -491,20 +489,6 @@ type PendingImport =
         title: string;
       };
       type: 'bible';
-    }
-  | {
-      data: {
-        customPrefix: string;
-        includeNumbering: boolean;
-        includePrefix: boolean;
-        outputPath: string;
-        selectedPlaylistItems: (JwPlaylistItem & {
-          ResolvedPreviewPath?: string;
-          ThumbnailFilePath: string;
-          VerseNumbers: number[];
-        })[];
-      };
-      type: 'jw-playlist';
     }
   | { data: { dbPath: string; doc: DocumentItem }; type: 'pt-media' }
   | {
@@ -1003,137 +987,15 @@ const processPendingImport = async (targetSection: MediaSectionIdentifier) => {
         );
         break;
       case 'jw-playlist': {
-        const results = await Promise.all(
-          importItem.data.selectedPlaylistItems.map(
-            (
-              item: JwPlaylistItem & {
-                ResolvedPreviewPath?: string;
-                ThumbnailFilePath: string;
-                VerseNumbers: number[];
-              },
-              idx: number,
-            ) => {
-              const durationTicks =
-                item.BaseDurationTicks ?? item.DurationTicks ?? 0;
-              const StartTime =
-                item.StartTrimOffsetTicks && item.StartTrimOffsetTicks >= 0
-                  ? item.StartTrimOffsetTicks / 10000 / 1000
-                  : null;
-              const EndTime =
-                item.EndTrimOffsetTicks &&
-                durationTicks >= item.EndTrimOffsetTicks
-                  ? (durationTicks - item.EndTrimOffsetTicks) / 10000 / 1000
-                  : null;
-
-              // Simplified mirroring of DialogJwPlaylist logic
-              let prefix = '';
-              if (
-                importItem.data.includePrefix &&
-                importItem.data.customPrefix
-              ) {
-                prefix += `${importItem.data.customPrefix} - `;
-              }
-              if (importItem.data.includeNumbering) {
-                prefix += `${idx + 1} - `;
-              }
-              const itemLabel = prefix + item.Label;
-
-              if (item.OriginalFilename) {
-                // Independent Media (Image/Audio)
-                const { join } = globalThis.electronApi.path;
-                const filePath = item.IndependentMediaFilePath
-                  ? join(
-                      importItem.data.outputPath,
-                      item.IndependentMediaFilePath,
-                    )
-                  : '';
-
-                const multimediaItem: MultimediaItem = {
-                  BeginParagraphOrdinal: 0,
-                  BookNumber: item.BookNumber,
-                  Caption: '',
-                  CategoryType: 0,
-                  ChapterNumber: item.ChapterNumber,
-                  DocumentId: 0,
-                  EndTime: EndTime ?? undefined,
-                  FilePath: filePath,
-                  IssueTagNumber: item.IssueTagNumber,
-                  KeySymbol: item.KeySymbol,
-                  Label: itemLabel,
-                  MajorType: 0,
-                  MepsLanguageIndex: item.MepsLanguage,
-                  MimeType: item.MimeType,
-                  MultimediaId: 0,
-                  Repeat: item.EndAction === 3,
-                  StartTime: StartTime ?? undefined,
-                  TargetParagraphNumberLabel: 0,
-                  ThumbnailFilePath: item.ThumbnailFilePath || '',
-                  Track: item.Track,
-                  VerseNumbers: item.VerseNumbers,
-                };
-
-                return (async () => {
-                  await processMissingMediaInfo({
-                    allMedia: [multimediaItem],
-                    keepMediaLabels: true,
-                    meetingDate: selectedDate.value,
-                  });
-
-                  const mappedItems = await dynamicMediaMapper(
-                    [multimediaItem],
-                    selectedDateObject.value
-                      ? selectedDateObject.value.date
-                      : new Date(selectedDate.value),
-                    'playlist',
-                  );
-
-                  return { mappedItems, order: idx };
-                })();
-              } else {
-                // Video
-                const lang = getJwLangCode(item.MepsLanguage) || 'E';
-                return (async () => {
-                  const pubDownload = await getPubMediaLinks({
-                    booknum: item.BookNumber,
-                    docid: item.DocumentId,
-                    issue: item.IssueTagNumber,
-                    langwritten: lang,
-                    pub: item.KeySymbol,
-                    track: item.Track,
-                  });
-                  const videoLinks = pubDownload?.files?.[lang]?.['MP4'];
-                  if (videoLinks) {
-                    await downloadAdditionalRemoteVideo(
-                      videoLinks,
-                      selectedDate.value,
-                      item.ThumbnailFilePath || undefined,
-                      false,
-                      itemLabel,
-                      targetSection,
-                      StartTime !== null || EndTime !== null
-                        ? {
-                            max: EndTime ?? durationTicks / 10000 / 1000,
-                            min: StartTime ?? 0,
-                          }
-                        : undefined,
-                    );
-                  }
-                  return { mappedItems: [], order: idx };
-                })();
-              }
-            },
-          ),
-        );
-        for (const result of results.sort((a, b) => a.order - b.order)) {
-          if (result.mappedItems?.length) {
-            jwStore.addToAdditionMediaMap(
-              result.mappedItems,
-              targetSection,
-              currentCongregation.value,
-              selectedDateObject.value,
-              isCoWeek(selectedDateObject.value?.date),
-            );
-          }
+        // ✅ Dialog handles all processing - just add processed items to store
+        if (importItem.data.items.length) {
+          jwStore.addToAdditionMediaMap(
+            importItem.data.items,
+            targetSection,
+            currentCongregation.value,
+            selectedDateObject.value,
+            isCoWeek(selectedDateObject.value?.date),
+          );
         }
         break;
       }
@@ -1188,6 +1050,7 @@ const processPendingImport = async (targetSection: MediaSectionIdentifier) => {
         );
         break;
       case 'study-bible':
+        // Process MultimediaItems: images need conversion, videos need download
         for (const mediaItem of importItem.data.items) {
           if (mediaItem.MimeType.includes('image')) {
             const filePath = await convertImageIfNeeded(mediaItem.FilePath);
@@ -1198,11 +1061,11 @@ const processPendingImport = async (targetSection: MediaSectionIdentifier) => {
               { title: mediaItem.Label },
             );
           } else {
-            // Study Bible video logic mirrored from DialogStudyBible.vue
+            // Study Bible video
             const lang = currentSettings.value?.lang || 'E';
             const mediaLookup: PublicationFetcher = {
               booknum: mediaItem.BookNumber,
-              docid: mediaItem.DocumentId,
+              docid: mediaItem.DocumentId || mediaItem.MepsDocumentId,
               fileformat: 'MP4',
               issue: mediaItem.IssueTagNumber,
               langwritten: lang,

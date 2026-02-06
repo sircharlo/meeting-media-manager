@@ -98,7 +98,6 @@ import type {
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { addJwpubDocumentMediaToFiles } from 'src/helpers/jw-media';
 import { unzipJwpub } from 'src/helpers/mediaPlayback';
 import { getPublicationsPath } from 'src/utils/fs';
 import { findDb } from 'src/utils/sqlite';
@@ -201,37 +200,9 @@ const dismissPopup = () => {
 const addPublicTalkMedia = async (publicTalkDocId: DocumentItem) => {
   if (!s34Db.value || !publicTalkDocId) return;
 
-  if (!props.section) {
-    emit('import', { dbPath: s34Db.value, doc: publicTalkDocId });
-    dismissPopup();
-    return;
-  }
-
-  isProcessing.value = true;
-  try {
-    await addJwpubDocumentMediaToFiles(
-      s34Db.value,
-      publicTalkDocId,
-      props.section,
-      {
-        issue: currentCongregation.value,
-        langwritten: '',
-        pub: 'S-34',
-      },
-    );
-    dismissPopup();
-  } catch (error) {
-    errorCatcher(error, {
-      contexts: {
-        fn: {
-          name: 'DialogPublicTalkMediaPicker addPublicTalkMedia',
-          publicTalkDocId,
-        },
-      },
-    });
-  } finally {
-    isProcessing.value = false;
-  }
+  // ✅ Always emit - parent handles section assignment
+  emit('import', { dbPath: s34Db.value, doc: publicTalkDocId });
+  dismissPopup();
 };
 
 const setS34Info = async () => {

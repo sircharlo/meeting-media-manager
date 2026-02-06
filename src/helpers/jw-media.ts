@@ -1067,8 +1067,8 @@ export const getStudyBibleMedia = async (
             Multimedia AS CoverMultimedia ON CoverMultimedia.MultimediaId = m.LinkMultimediaId
         WHERE 
             m.CategoryType NOT IN (9, 10, 17)
-      ${bookNumber ? `AND bc.BookNumber = ?` : ''}
-      ${chapterNumber ? `AND bc.ChapterNumber = ?` : ''}
+      ${bookNumber === undefined ? '' : `AND bc.BookNumber = ?`}
+      ${chapterNumber === undefined ? '' : `AND bc.ChapterNumber = ?`}
       ORDER BY bc.ChapterNumber, bv.BibleVerseId
     `;
 
@@ -1103,7 +1103,7 @@ export const getStudyBibleMedia = async (
           Multimedia AS CoverMultimedia ON CoverMultimedia.MultimediaId = m.LinkMultimediaId
       WHERE 
           m.CategoryType NOT IN (9, 10, 17)
-    ${bookNumber ? `AND d.ChapterNumber = ?` : ''}
+    ${bookNumber === undefined ? '' : `AND d.ChapterNumber = ?`}
     ORDER BY m.MultimediaId
     `;
 
@@ -1132,11 +1132,13 @@ export const getStudyBibleMedia = async (
       const englishBibleBookMediaItems = executeQuery<MultimediaItem>(
         nwtStyDb_E,
         bibleBookMediaItemsQuery,
+        bibleBookMediaItemsParams,
       );
 
       const englishBibleBookRelatedMediaItems = executeQuery<MultimediaItem>(
         nwtStyDb_E,
         bibleBookRelatedMediaItemsQuery,
+        bibleBookRelatedMediaItemsParams,
       );
 
       let englishItems;
@@ -1176,15 +1178,19 @@ export const getStudyBibleMedia = async (
         filteredMediaItems
           // .filter((item) => !item.LinkMultimediaId) // Exclude images that are thumbnails
           .map(async (item) => {
+            const publication =
+              item.MepsLanguageIndex === 0
+                ? nwtStyPublication_E
+                : nwtStyPublication;
+
+            if (!item.KeySymbol && publication?.pub) {
+              item.KeySymbol = publication.pub;
+            }
+
             const isVideo =
               item.CategoryType === -1 || item.MimeType?.includes('video');
 
-            item = await addFullFilePathToMultimediaItem(
-              item,
-              item.MepsLanguageIndex === 0
-                ? nwtStyPublication_E
-                : nwtStyPublication,
-            );
+            item = await addFullFilePathToMultimediaItem(item, publication);
 
             // For videos, don't cache FilePath - we'll download on demand
             // For images, resolve the file path

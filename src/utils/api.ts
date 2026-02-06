@@ -276,12 +276,18 @@ export const fetchPubMediaLinks = async (
 ): Promise<null | Publication> => {
   try {
     const videoExtensions: (keyof PublicationFiles)[] = ['MP4', 'M4V'];
+    const shouldUsePub = publication.pub && publication.pub !== 'nwtsty';
+
+    const pubToUse = shouldUsePub ? publication.pub || '' : '';
+    const docidToUse = shouldUsePub
+      ? ''
+      : (publication.docid?.toString() ?? '');
     const params = {
       alllangs: '0',
       ...(publication.booknum
         ? { booknum: publication.booknum.toString() }
         : {}),
-      docid: publication.pub ? '' : publication.docid?.toString() || '',
+      docid: docidToUse,
       fileformat:
         publication.fileformat &&
         videoExtensions.includes(publication.fileformat)
@@ -290,7 +296,7 @@ export const fetchPubMediaLinks = async (
       issue: publication.issue?.toString() || '',
       langwritten: publication.langwritten || '',
       output: 'json',
-      pub: publication.pub || '',
+      pub: pubToUse,
       track: publication.track?.toString() || '',
       txtCMSLang: 'E',
     };

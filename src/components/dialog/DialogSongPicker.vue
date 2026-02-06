@@ -107,11 +107,7 @@ import { watchOnce } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import {
-  downloadAdditionalRemoteVideo,
-  getJwMediaInfo,
-  getPubMediaLinks,
-} from 'src/helpers/jw-media';
+import { getJwMediaInfo, getPubMediaLinks } from 'src/helpers/jw-media';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
 import { computed, ref, watch } from 'vue';
@@ -146,7 +142,7 @@ const dialogValue = computed({
 
 // Setup logic
 const currentState = useCurrentStateStore();
-const { currentSettings, currentSongbook, currentSongs, online, selectedDate } =
+const { currentSettings, currentSongbook, currentSongs, online } =
   storeToRefs(currentState);
 
 const jwStore = useJwStore();
@@ -213,26 +209,16 @@ const addSong = async (songTrack: number) => {
         songTrackFiles?.files?.[currentSettings.value?.lang || 'E']?.['MP4'] ||
         [];
 
-      if (!props.section) {
-        emit('import', {
-          files,
-          songTrack,
-          thumbnail,
-          title: title.replace(/^\d+\.\s*/, ''),
-        });
-        resetDialogState();
-        dialogValue.value = false;
-        return;
-      }
-
-      await downloadAdditionalRemoteVideo(
+      // ✅ Always emit - parent handles section assignment
+      emit('import', {
         files,
-        selectedDate.value,
-        thumbnail,
         songTrack,
-        title.replace(/^\d+\.\s*/, ''),
-        props.section,
-      );
+        thumbnail,
+        title: title.replace(/^\d+\.\s*/, ''),
+      });
+      resetDialogState();
+      dialogValue.value = false;
+      emit('ok');
     }
   } catch (error) {
     errorCatcher(error);
