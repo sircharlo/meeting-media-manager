@@ -288,106 +288,106 @@ A média automatikus exportálása szervezett mappákba:
 
 Ossza meg a hivatalos weboldalt külső kijelzőkön:
 
-1. **Open Website Mode** - Click the website presentation button
-2. **External Display** - The website opens in a new window
-3. **Navigation** - Use the browser controls to navigate
+1. **Weboldal mód** - Kattintson a weboldal megjelenítése gombra
+2. **Külső kijelző** - A weboldal új ablakban nyílik meg
+3. **Navigáció** - A böngésző vezérlőivel navigálhat
 
-### Website Controls {#website-controls}
+### Webhelyvezérlők {#website-controls}
 
-- **Navigation** - Standard browser navigation controls
-- **Refresh** - Reload the current page
-- **Close** - Exit website presentation mode
+- **Navigáció** - Szabványos böngésző navigációs vezérlők
+- **Frissítés** - Az aktuális oldal újratöltése
+- **Bezárás** - Kilépés a weboldal prezentációs módjából
 
-## Advanced Features {#user-guide-advanced-features}
+## Haladó funkciók {#user-guide-advanced-features}
 
-### Multiple Congregations {#user-guide-multiple-congregations}
+### Több Gyülekezet {#user-guide-multiple-congregations}
 
-Manage multiple congregations or groups:
+Kezeljen több gyülekezetet vagy csoportot:
 
-1. **Create Profiles** - Set up separate profiles for different congregations
-2. **Switch Profiles** - Use the congregation selector to switch between profiles
-3. **Separate Settings** - Each profile has its own settings and media
-4. **Shared Resources** - Media files are shared between profiles whenever possible
+1. **Profilok létrehozása** - Külön profilok beállítása a különböző gyülekezetek számára
+2. **Profilok váltása** - A gyülekezetválasztóval válthat a profilok között
+3. **Külön beállítások** – Minden profilnak saját beállításai és médiatartalmai vannak
+4. **Megosztott erőforrások** – A médiafájlok lehetőség szerint megosztásra kerülnek a profilok között
 
-### Keyboard Shortcuts {#keyboard-shortcuts-guide}
+### Billentyűparancsok {#keyboard-shortcuts-guide}
 
-Configure custom keyboard shortcuts for efficient operation:
+Konfiguráljon egyéni billentyűparancsokat a hatékony működés érdekében:
 
-1. **Enable Shortcuts** - Turn on keyboard shortcuts in settings
-2. **Configure Shortcuts** - Set up shortcuts for common actions
-3. **Practice** - Learn your shortcuts for faster operation
-4. **Customize** - Adjust shortcuts to match your preferences
+1. **Gyorsbillentyűk engedélyezése** - Kapcsolja be a billentyűparancsokat a beállításokban
+2. **Gyorsbillentyűk beállítása** - Gyakori műveletekhez gyorsbillentyűk beállítása
+3. **Gyakorlás** - Tanulja meg a gyorsbillentyűket a hatékonyabb használathoz
+4. **Testreszabás** - A gyorsbillentyűket az Ön igényeihez igazíthatja
 
-## Troubleshooting {#troubleshooting-guide}
+## Hibaelhárítás {#troubleshooting-guide}
 
-### Common Issues {#common-issues}
+### Gyakori problémák {#common-issues}
 
-#### Media Not Downloading {#user-guide-media-not-downloading}
+#### A média nem töltődik le {#user-guide-media-not-downloading}
 
-- Check your meeting schedule settings
-- Verify internet connection
-- Check if media is available in your selected language
+- Ellenőrizze az összejövetelek ütemezésének beállításait
+- Ellenőrizze az internetkapcsolatot
+- Ellenőrizze, hogy a média elérhető-e a kiválasztott nyelven
 
-#### OBS Integration Not Working {#user-guide-obs-not-working}
+#### Az OBS integráció nem működik {#user-guide-obs-not-working}
 
-- Verify OBS WebSocket plugin is installed
-- Check port and password settings
-- Ensure OBS is running
+- Ellenőrizze, hogy az OBS WebSocket plugin telepítve van-e
+- Ellenőrizze a port és a jelszó beállításait
+- Győződjön meg arról, hogy az OBS fut
 
-#### Audio Issues in Zoom/OBS {#audio-issues}
+#### Hangproblémák a Zoom/OBS alkalmazásban {#audio-issues}
 
-- **No audio in Zoom**: Enable Original Audio in Zoom settings and before each meeting
-- **Poor audio quality**: Check the three Original Audio checkboxes (first two enabled, third disabled)
-- **Audio not working after restart**: Original Audio must be re-enabled for each new Zoom session
-- **Alternative solution**: Use "Share Computer Sound" option in Zoom screen sharing
+- **Nincs hang a Zoomban**: Engedélyezze az Original Audio (Eredeti hang) opciót a Zoom beállításaiban és minden összejövetel előtti
+- **Rossz hangminőség**: Jelölje be a három Original Audio jelölőnégyzetet (az első kettő engedélyezve, a harmadik letiltva)
+- **Az audio nem működik újraindítás után**: Az Original Audio-t minden új Zoom-munkamenetnél vissza kell kapcsolni
+- **Alternatív megoldás**: Használja a Zoom képernyőmegosztásában a „Share Computer Sound” (Számítógép hangjának megosztása) opciót
 
-#### Performance Issues {#user-guide-performance-issues}
+#### Teljesítményproblémák {#user-guide-performance-issues}
 
-- Enable extra cache
-- Reduce maximum resolution
-- Clear old cached files
-- Check available disk space
+- Engedélyezze az extra gyorsítótárat
+- Csökkentse a maximális felbontást
+- Törölje a régi gyorsítótár-fájlokat
+- Ellenőrizze a rendelkezésre álló lemezterületet
 
-#### Language Issues {#user-guide-language-issues}
+#### Nyelvi problémák {#user-guide-language-issues}
 
-- Check media language setting
-- Ensure language is available on JW.org
-- Try a fallback language
-- Verify interface language setting
+- Ellenőrizze a média nyelvi beállításai
+- Győződjön meg arról, hogy a nyelv elérhető a JW.org oldalon
+- Próbáljon ki egy tartalék nyelvet
+- Ellenőrizze a kezelőfelület nyelvi beállítását
 
-### Getting Help {#getting-help}
+### Segítségkérés {#getting-help}
 
-If you encounter issues:
+Ha problémákba ütközik:
 
-1. **Check Documentation** - Review this guide and other available documentation
-2. **Search Issues** - Look for similar issues on GitHub
-3. **Report Problems** - Create a new issue with detailed information
+1. **Ellenőrizze a dokumentációt** - Olvassa el ezt az útmutatót és az egyéb rendelkezésre álló dokumentációt
+2. **Keressen problémákat** - Keressen hasonló problémákat a GitHubon
+3. **Problémák jelentése** - Hozzon létre egy új problémát (New Issue) részletes leírással
 
-## Best Practices {#best-practices}
+## Bevált Gyakorlatok {#best-practices}
 
-### Before Meetings {#before-meetings}
+### Összejövetelek Előtt {#before-meetings}
 
-1. **Check Downloads** - Ensure all media is downloaded
-2. **Test Equipment** - Verify displays and audio work
-3. **Prepare Media** - Review and organize media for the meeting; make sure no media files are missing
-4. **Configure Audio** - For hybrid meetings, enable Original Audio in Zoom or set up "Share Computer Sound"
+1. **Letöltések ellenőrzése** - Győződjön meg arról, hogy minden média letöltésre került
+2. **Berendezések tesztelése** - Ellenőrizze a kijelzők és a hang működését
+3. **Média előkészítése** - Ellenőrizze és rendszerezze az összejövetelhez szükséges médiát; győződjön meg arról, hogy egyetlen médiafájl sem hiányzik
+4. **Audio beállítása** – Hibrid összejövetelek eseténél engedélyezze az Original Audio funkciót a Zoomban, vagy állítsa be a „Share Computer Sound” (Számítógép hangjának megosztása) funkciót
 
-### During Meetings {#during-meetings}
+### Összejövetelek alatt {#during-meetings}
 
-1. **Stay Focused** - Use the clean and distraction-free interface
-2. **Use Shortcuts** - Master keyboard shortcuts for smooth operation
-3. **Monitor Audio** - Keep an eye on volume levels, if that's part of your responsibilities
-4. **Be Prepared** - Have the next media item ready
-5. **Verify Audio** - For hybrid meetings, ensure Zoom participants can hear the media
+1. **Koncentráljon a feladatra** - Használja a letisztult, zavaró tényezőktől mentes felületet
+2. **Használjon gyorsbillentyűket** - Tanulja meg a billentyűparancsokat a hatékony munkához
+3. **Audio Figyelése** - Figyeljen a hangerő szintjére, ha ez a feladatkörébe tartozik
+4. **Álljon készen** - Készítse elő a következő médiaelemet
+5. **Hang ellenőrzése** – Hibrid értekezletek esetén győződjön meg arról, hogy a Zoom résztvevői hallják a médiát
 
-### After Meetings {#after-meetings}
+### Összejövetelek után {#after-meetings}
 
-1. **Start Background Music** - Start the playback of background music
-2. **Plan Ahead** - Prepare for the next meeting by making sure everything is in place
-3. **Clean Up** - Close media player when you're ready to leave
+1. **Háttérzene indítása** - Indítsa el a háttérzene lejátszását
+2. **Tervezzen előre** - Készüljön fel a következő összejövetelre úgy, hogy minden készen álljon
+3. **Takarítás** - Zárja be a médialejátszót, amikor végzett
 
-### Regular Maintenance {#regular-maintenance}
+### Rendszeres Karbantartás {#regular-maintenance}
 
-1. **Update M³** - Keep the application updated
-2. **Clear Cache** - Periodically clear old cached files
-3. **Check Settings** - Review and update settings as needed
+1. **M³ frissítése** - Tartsa naprakészen az alkalmazást
+2. **Gyorsítótár törlése** - Rendszeresen törölje a régi gyorsítótár fájlokat
+3. **Beállítások ellenőrzése** - A beállítások áttekintése és szükség szerinti frissítése
