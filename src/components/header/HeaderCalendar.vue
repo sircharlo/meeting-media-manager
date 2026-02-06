@@ -59,7 +59,12 @@
           v-close-popup
           clickable
           :disable="!online"
-          @click="openSongPickerWithSectionCheck(section)"
+          @click="
+            () => {
+              clearSection();
+              openSongPicker(section);
+            }
+          "
         >
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-music-note" />
@@ -73,7 +78,12 @@
           v-close-popup
           clickable
           :disable="!online"
-          @click="openRemoteVideoWithSectionCheck"
+          @click="
+            () => {
+              clearSection();
+              openRemoteVideo();
+            }
+          "
         >
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-movie" />
@@ -89,7 +99,12 @@
           v-close-popup
           clickable
           :disable="!online"
-          @click="openPublicationMediaWithSectionCheck"
+          @click="
+            () => {
+              clearSection();
+              openPublicationMedia();
+            }
+          "
         >
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-bookshelf" />
@@ -105,7 +120,12 @@
           v-close-popup
           clickable
           :disable="!online"
-          @click="openStudyBibleWithSectionCheck"
+          @click="
+            () => {
+              clearSection();
+              openStudyBible();
+            }
+          "
         >
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-bible" />
@@ -119,7 +139,12 @@
           v-close-popup
           clickable
           :disable="!online"
-          @click="openBibleWithSectionCheck"
+          @click="
+            () => {
+              clearSection();
+              openBible();
+            }
+          "
         >
           <q-item-section avatar>
             <q-icon
@@ -148,7 +173,12 @@
         <q-item
           v-close-popup
           clickable
-          @click="openPublicTalkMediaPickerWithSectionCheck"
+          @click="
+            () => {
+              clearSection();
+              openPublicTalkMediaPicker();
+            }
+          "
         >
           <q-item-section avatar>
             <q-icon color="primary" name="mmm-lectern" />
@@ -166,7 +196,16 @@
           ]"
           :key="name"
         >
-          <q-item v-close-popup clickable @click="openFileImportDialog">
+          <q-item
+            v-close-popup
+            clickable
+            @click="
+              () => {
+                clearSection();
+                openFileImportDialog();
+              }
+            "
+          >
             <q-item-section avatar>
               <q-icon color="primary" :name="icon" />
             </q-item-section>
@@ -312,42 +351,58 @@
     v-model="showRemoteVideo"
     :dialog-id="'header-calendar-remote-video'"
     :section="section"
+    @import="(data) => handleImport('remote-video', data)"
   />
   <DialogStudyBible
     v-model="showStudyBible"
     :dialog-id="'header-calendar-study-bible'"
     :section="section"
+    @import="(data) => handleImport('study-bible', data)"
   />
   <DialogBible
     v-model="showBible"
     :dialog-id="'header-calendar-bible'"
     :section="section"
+    @import="(data) => handleImport('bible', data)"
   />
   <DialogSongPicker
     v-model="showSongPicker"
     :dialog-id="'header-calendar-song-picker'"
     :section="section"
+    @import="(data) => handleImport('song', data)"
   />
   <DialogPublicTalkMediaPicker
     v-model="showPublicTalkMediaPicker"
     :dialog-id="'header-calendar-pt-media-picker'"
     :section="section"
+    @import="(data) => handleImport('pt-media', data)"
   />
   <DialogPublicationMedia
     v-model="showPublicationMedia"
     :dialog-id="'header-calendar-publication-media'"
     :section="section"
+    @import="(data) => handleImport('publication-media', data)"
   />
   <DialogJwPlaylist
     v-model="showJwPlaylist"
     :dialog-id="'header-calendar-jw-playlist'"
     :jw-playlist-path="jwPlaylistPath"
     :section="section"
+    @import="(data) => handleImport('jw-playlist', data)"
   />
 </template>
 <script setup lang="ts">
 import type { QMenu } from 'quasar';
-import type { MediaItem, MediaSectionIdentifier } from 'src/types';
+import type {
+  DocumentItem,
+  JwPlaylistItem,
+  MediaItem,
+  MediaItemsMediatorFile,
+  MediaLink,
+  MediaSectionIdentifier,
+  MultimediaItem,
+  PublicationFetcher,
+} from 'src/types';
 
 import { useEventListener, watchImmediate } from '@vueuse/core';
 import BaseDialog from 'components/dialog/BaseDialog.vue';
@@ -365,6 +420,17 @@ import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
 import { isCoWeek, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
+import {
+  addJwpubDocumentMediaToFiles,
+  addToAdditionMediaMapFromPath,
+  downloadAdditionalRemoteVideo,
+  dynamicMediaMapper,
+  getJwLangCode,
+  getJwMediaInfo,
+  getPubMediaLinks,
+  processMissingMediaInfo,
+} from 'src/helpers/jw-media';
+import { convertImageIfNeeded } from 'src/utils/converters';
 import {
   datesAreSame,
   formatDate,
@@ -417,6 +483,56 @@ const showJwPlaylist = ref(false);
 const jwPlaylistPath = ref('');
 const showSectionPicker = ref(false);
 const pendingFiles = ref<(File | string)[]>([]);
+type PendingImport =
+  | {
+      data: {
+        customDuration: { max: number; min: number };
+        files: MediaItemsMediatorFile[] | MediaLink[];
+        title: string;
+      };
+      type: 'bible';
+    }
+  | {
+      data: {
+        customPrefix: string;
+        includeNumbering: boolean;
+        includePrefix: boolean;
+        outputPath: string;
+        selectedPlaylistItems: (JwPlaylistItem & {
+          ResolvedPreviewPath?: string;
+          ThumbnailFilePath: string;
+          VerseNumbers: number[];
+        })[];
+      };
+      type: 'jw-playlist';
+    }
+  | { data: { dbPath: string; doc: DocumentItem }; type: 'pt-media' }
+  | {
+      data: {
+        files: MediaItemsMediatorFile[] | MediaLink[];
+        songTrack: number;
+        thumbnail?: string;
+        title: string;
+      };
+      type: 'song';
+    }
+  | { data: { items: MultimediaItem[] }; type: 'study-bible' }
+  | {
+      data: {
+        mediaItemLinks: MediaItemsMediatorFile[] | MediaLink[];
+        thumbnailUrl?: string;
+        title?: string;
+      };
+      type: 'remote-video';
+    }
+  | {
+      data:
+        | { dbPath: string; doc: DocumentItem; type: 'jwpub' }
+        | { media: MediaLink; type: 'media' };
+      type: 'publication-media';
+    };
+
+const pendingImport = ref<null | PendingImport>(null);
 
 const openFileImportDialog = () => {
   globalThis.dispatchEvent(
@@ -524,21 +640,11 @@ const maxDate = () => {
 };
 
 const importMenu = useTemplateRef<QMenu>('importMenu');
-const openImportMenuWithSectionCheck = (
-  newSection?: MediaSectionIdentifier,
-) => {
+const openImportMenu = (newSection?: MediaSectionIdentifier) => {
   if (newSection) {
     section.value = newSection;
-    importMenu.value?.show();
-  } else if (hasMultipleSections.value) {
-    pendingDialogAction.value = () => {
-      importMenu.value?.show();
-    };
-    showSectionPicker.value = true;
-  } else {
-    // If only one section exists, show the import menu directly
-    importMenu.value?.show();
   }
+  importMenu.value?.show();
 };
 
 const dateOptions = (lookupDate: string) => {
@@ -583,13 +689,15 @@ const getEventDayColor = (eventDate: string) => {
 useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
   globalThis,
   'openSongPicker',
-  (e) => openSongPickerWithSectionCheck(e.detail?.section),
+  (e) => {
+    openSongPicker(e.detail?.section);
+  },
   { passive: true },
 );
 useEventListener<CustomEvent<{ section: MediaSectionIdentifier | undefined }>>(
   globalThis,
   'openImportMenu',
-  (e) => openImportMenuWithSectionCheck(e.detail?.section),
+  (e) => openImportMenu(e.detail?.section),
   { passive: true },
 );
 useEventListener<
@@ -597,13 +705,14 @@ useEventListener<
     jwPlaylistPath: string;
     section: MediaSectionIdentifier | undefined;
   }>
->(globalThis, 'openJwPlaylistPicker', (e) => {
-  console.log('🎯 openJwPlaylistPicker event received:', e.detail);
-  openJwPlaylistPickerWithSectionCheck(
-    e.detail?.section,
-    e.detail?.jwPlaylistPath,
-  );
-});
+>(
+  globalThis,
+  'openJwPlaylistPicker',
+  (e) => {
+    openJwPlaylistPicker(e.detail?.section, e.detail?.jwPlaylistPath);
+  },
+  { passive: true },
+);
 
 const mediaSortCanBeReset = computed<boolean>(() => {
   if (
@@ -783,127 +892,55 @@ const openCustomSectionEdit = () => {
   showCustomSectionEdit.value = true;
 };
 
-const handleSectionSelected = (selectedSection: MediaSectionIdentifier) => {
+const handleSectionSelected = async (
+  selectedSection: MediaSectionIdentifier,
+) => {
   section.value = selectedSection;
   showSectionPicker.value = false;
 
-  // Now open the pending dialog with the selected section
-  if (pendingDialogAction.value) {
-    pendingDialogAction.value();
-    pendingDialogAction.value = null;
+  if (pendingImport.value) {
+    await processPendingImport(selectedSection);
+    pendingImport.value = null;
   }
 };
 
-// Store the pending dialog action
-const pendingDialogAction = ref<(() => void) | null>(null);
+const clearSection = () => {
+  section.value = undefined;
+};
 
 // Wrapper functions that check for section specification
-const openRemoteVideoWithSectionCheck = () => {
-  if (section.value) {
-    showRemoteVideo.value = true;
-  } else if (hasMultipleSections.value) {
-    pendingDialogAction.value = () => {
-      showRemoteVideo.value = true;
-    };
-    showSectionPicker.value = true;
-  } else {
-    // If only one section exists, use it directly
-    showRemoteVideo.value = true;
-  }
+const openRemoteVideo = () => {
+  showRemoteVideo.value = true;
 };
 
-const openStudyBibleWithSectionCheck = () => {
-  if (section.value) {
-    showStudyBible.value = true;
-  } else if (hasMultipleSections.value) {
-    pendingDialogAction.value = () => {
-      showStudyBible.value = true;
-    };
-    showSectionPicker.value = true;
-  } else {
-    // If only one section exists, use it directly
-    showStudyBible.value = true;
-  }
+const openStudyBible = () => {
+  showStudyBible.value = true;
 };
 
-const openBibleWithSectionCheck = () => {
-  if (section.value) {
-    showBible.value = true;
-  } else if (hasMultipleSections.value) {
-    pendingDialogAction.value = () => {
-      showBible.value = true;
-    };
-    showSectionPicker.value = true;
-  } else {
-    // If only one section exists, use it directly
-    showBible.value = true;
-  }
+const openBible = () => {
+  showBible.value = true;
 };
 
-const openSongPickerWithSectionCheck = (
-  newSection?: MediaSectionIdentifier,
-) => {
-  if (newSection || section.value) {
-    section.value = newSection || section.value;
-    showSongPicker.value = true;
-  } else if (hasMultipleSections.value) {
-    pendingDialogAction.value = () => {
-      showSongPicker.value = true;
-    };
-    showSectionPicker.value = true;
-  } else {
-    // If only one section exists, use it directly
-    showSongPicker.value = true;
-  }
+const openSongPicker = (newSection?: MediaSectionIdentifier) => {
+  if (newSection) section.value = newSection;
+  showSongPicker.value = true;
 };
 
-const openPublicTalkMediaPickerWithSectionCheck = () => {
-  if (section.value) {
-    showPublicTalkMediaPicker.value = true;
-  } else if (hasMultipleSections.value) {
-    pendingDialogAction.value = () => {
-      showPublicTalkMediaPicker.value = true;
-    };
-    showSectionPicker.value = true;
-  } else {
-    // If only one section exists, use it directly
-    showPublicTalkMediaPicker.value = true;
-  }
+const openPublicTalkMediaPicker = () => {
+  showPublicTalkMediaPicker.value = true;
 };
 
-const openPublicationMediaWithSectionCheck = () => {
-  if (section.value) {
-    showPublicationMedia.value = true;
-  } else if (hasMultipleSections.value) {
-    pendingDialogAction.value = () => {
-      showPublicationMedia.value = true;
-    };
-    showSectionPicker.value = true;
-  } else {
-    // If only one section exists, use it directly
-    showPublicationMedia.value = true;
-  }
+const openPublicationMedia = () => {
+  showPublicationMedia.value = true;
 };
 
-const openJwPlaylistPickerWithSectionCheck = (
+const openJwPlaylistPicker = (
   newSection?: MediaSectionIdentifier,
   playlistPath?: string,
 ) => {
-  if (newSection || section.value) {
-    section.value = newSection || section.value;
-    jwPlaylistPath.value = playlistPath || '';
-    showJwPlaylist.value = true;
-  } else if (hasMultipleSections.value) {
-    pendingDialogAction.value = () => {
-      jwPlaylistPath.value = playlistPath || '';
-      showJwPlaylist.value = true;
-    };
-    showSectionPicker.value = true;
-  } else {
-    // If only one section exists, use it directly
-    jwPlaylistPath.value = playlistPath || '';
-    showJwPlaylist.value = true;
-  }
+  if (newSection) section.value = newSection;
+  jwPlaylistPath.value = playlistPath || '';
+  showJwPlaylist.value = true;
 };
 
 const canEditCustomSections = computed(() => {
@@ -916,10 +953,280 @@ const canEditCustomSections = computed(() => {
   );
 });
 
-// Check if there are multiple sections for the selected date
-const hasMultipleSections = computed(() => {
-  return (selectedDateObject.value?.mediaSections?.length || 0) > 1;
-});
+const handleImport = async (
+  type: PendingImport['type'],
+  data: PendingImport['data'],
+) => {
+  pendingImport.value = { data, type } as PendingImport;
+  if (
+    !section.value &&
+    (selectedDateObject.value?.mediaSections?.length || 0) > 1 &&
+    (!isWeMeetingDay(selectedDateObject.value?.date) ||
+      isCoWeek(selectedDateObject.value?.date))
+  ) {
+    showSectionPicker.value = true;
+  } else {
+    let targetSection = section.value;
+    if (
+      !targetSection &&
+      selectedDateObject.value &&
+      isWeMeetingDay(selectedDateObject.value.date) &&
+      !isCoWeek(selectedDateObject.value.date)
+    ) {
+      targetSection = 'pt';
+    }
+    if (!targetSection) {
+      targetSection =
+        selectedDateObject.value?.mediaSections?.[0]?.config.uniqueId ||
+        'imported-media';
+    }
+    await processPendingImport(targetSection);
+    pendingImport.value = null;
+  }
+};
+
+const processPendingImport = async (targetSection: MediaSectionIdentifier) => {
+  if (!pendingImport.value) return;
+  const importItem = pendingImport.value;
+
+  try {
+    switch (importItem.type) {
+      case 'bible':
+        await downloadAdditionalRemoteVideo(
+          importItem.data.files,
+          selectedDate.value,
+          undefined,
+          false,
+          importItem.data.title,
+          targetSection,
+          importItem.data.customDuration,
+        );
+        break;
+      case 'jw-playlist': {
+        const results = await Promise.all(
+          importItem.data.selectedPlaylistItems.map(
+            (
+              item: JwPlaylistItem & {
+                ResolvedPreviewPath?: string;
+                ThumbnailFilePath: string;
+                VerseNumbers: number[];
+              },
+              idx: number,
+            ) => {
+              const durationTicks =
+                item.BaseDurationTicks ?? item.DurationTicks ?? 0;
+              const StartTime =
+                item.StartTrimOffsetTicks && item.StartTrimOffsetTicks >= 0
+                  ? item.StartTrimOffsetTicks / 10000 / 1000
+                  : null;
+              const EndTime =
+                item.EndTrimOffsetTicks &&
+                durationTicks >= item.EndTrimOffsetTicks
+                  ? (durationTicks - item.EndTrimOffsetTicks) / 10000 / 1000
+                  : null;
+
+              // Simplified mirroring of DialogJwPlaylist logic
+              let prefix = '';
+              if (
+                importItem.data.includePrefix &&
+                importItem.data.customPrefix
+              ) {
+                prefix += `${importItem.data.customPrefix} - `;
+              }
+              if (importItem.data.includeNumbering) {
+                prefix += `${idx + 1} - `;
+              }
+              const itemLabel = prefix + item.Label;
+
+              if (item.OriginalFilename) {
+                // Independent Media (Image/Audio)
+                const { join } = globalThis.electronApi.path;
+                const filePath = item.IndependentMediaFilePath
+                  ? join(
+                      importItem.data.outputPath,
+                      item.IndependentMediaFilePath,
+                    )
+                  : '';
+
+                const multimediaItem: MultimediaItem = {
+                  BeginParagraphOrdinal: 0,
+                  BookNumber: item.BookNumber,
+                  Caption: '',
+                  CategoryType: 0,
+                  ChapterNumber: item.ChapterNumber,
+                  DocumentId: 0,
+                  EndTime: EndTime ?? undefined,
+                  FilePath: filePath,
+                  IssueTagNumber: item.IssueTagNumber,
+                  KeySymbol: item.KeySymbol,
+                  Label: itemLabel,
+                  MajorType: 0,
+                  MepsLanguageIndex: item.MepsLanguage,
+                  MimeType: item.MimeType,
+                  MultimediaId: 0,
+                  Repeat: item.EndAction === 3,
+                  StartTime: StartTime ?? undefined,
+                  TargetParagraphNumberLabel: 0,
+                  ThumbnailFilePath: item.ThumbnailFilePath || '',
+                  Track: item.Track,
+                  VerseNumbers: item.VerseNumbers,
+                };
+
+                return (async () => {
+                  await processMissingMediaInfo({
+                    allMedia: [multimediaItem],
+                    keepMediaLabels: true,
+                    meetingDate: selectedDate.value,
+                  });
+
+                  const mappedItems = await dynamicMediaMapper(
+                    [multimediaItem],
+                    selectedDateObject.value
+                      ? selectedDateObject.value.date
+                      : new Date(selectedDate.value),
+                    'playlist',
+                  );
+
+                  return { mappedItems, order: idx };
+                })();
+              } else {
+                // Video
+                const lang = getJwLangCode(item.MepsLanguage) || 'E';
+                return (async () => {
+                  const pubDownload = await getPubMediaLinks({
+                    booknum: item.BookNumber,
+                    docid: item.DocumentId,
+                    issue: item.IssueTagNumber,
+                    langwritten: lang,
+                    pub: item.KeySymbol,
+                    track: item.Track,
+                  });
+                  const videoLinks = pubDownload?.files?.[lang]?.['MP4'];
+                  if (videoLinks) {
+                    await downloadAdditionalRemoteVideo(
+                      videoLinks,
+                      selectedDate.value,
+                      item.ThumbnailFilePath || undefined,
+                      false,
+                      itemLabel,
+                      targetSection,
+                      StartTime !== null || EndTime !== null
+                        ? {
+                            max: EndTime ?? durationTicks / 10000 / 1000,
+                            min: StartTime ?? 0,
+                          }
+                        : undefined,
+                    );
+                  }
+                  return { mappedItems: [], order: idx };
+                })();
+              }
+            },
+          ),
+        );
+        for (const result of results.sort((a, b) => a.order - b.order)) {
+          if (result.mappedItems?.length) {
+            jwStore.addToAdditionMediaMap(
+              result.mappedItems,
+              targetSection,
+              currentCongregation.value,
+              selectedDateObject.value,
+              isCoWeek(selectedDateObject.value?.date),
+            );
+          }
+        }
+        break;
+      }
+      case 'pt-media':
+        await addJwpubDocumentMediaToFiles(
+          importItem.data.dbPath,
+          importItem.data.doc,
+          targetSection,
+          {
+            issue: currentCongregation.value,
+            langwritten: '',
+            pub: 'S-34',
+          },
+        );
+        break;
+      case 'publication-media':
+        if (importItem.data.type === 'jwpub') {
+          await addJwpubDocumentMediaToFiles(
+            importItem.data.dbPath,
+            importItem.data.doc,
+            targetSection,
+          );
+        } else {
+          await downloadAdditionalRemoteVideo(
+            [importItem.data.media],
+            selectedDate.value,
+            importItem.data.media.trackImage.url,
+            false,
+            importItem.data.media.title,
+            targetSection,
+          );
+        }
+        break;
+      case 'remote-video':
+        await downloadAdditionalRemoteVideo(
+          importItem.data.mediaItemLinks,
+          selectedDate.value,
+          importItem.data.thumbnailUrl,
+          false,
+          importItem.data.title,
+          targetSection,
+        );
+        break;
+      case 'song':
+        await downloadAdditionalRemoteVideo(
+          importItem.data.files,
+          selectedDate.value,
+          importItem.data.thumbnail,
+          importItem.data.songTrack,
+          importItem.data.title,
+          targetSection,
+        );
+        break;
+      case 'study-bible':
+        for (const mediaItem of importItem.data.items) {
+          if (mediaItem.MimeType.includes('image')) {
+            const filePath = await convertImageIfNeeded(mediaItem.FilePath);
+            await addToAdditionMediaMapFromPath(
+              filePath,
+              targetSection,
+              undefined,
+              { title: mediaItem.Label },
+            );
+          } else {
+            // Study Bible video logic mirrored from DialogStudyBible.vue
+            const lang = currentSettings.value?.lang || 'E';
+            const mediaLookup: PublicationFetcher = {
+              booknum: mediaItem.BookNumber,
+              docid: mediaItem.DocumentId,
+              fileformat: 'MP4',
+              issue: mediaItem.IssueTagNumber,
+              langwritten: lang,
+              pub: mediaItem.KeySymbol,
+              track: mediaItem.Track || undefined,
+            };
+            const mediaItemFiles = await getPubMediaLinks(mediaLookup);
+            const { thumbnail, title } = await getJwMediaInfo(mediaLookup);
+            await downloadAdditionalRemoteVideo(
+              mediaItemFiles?.files?.[lang]?.MP4 || [],
+              selectedDate.value,
+              thumbnail,
+              false,
+              title.replace(/^\d+\.\s*/, ''),
+              targetSection,
+            );
+          }
+        }
+        break;
+    }
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
 
 watchImmediate(
   () => selectedDateObject.value?.date,

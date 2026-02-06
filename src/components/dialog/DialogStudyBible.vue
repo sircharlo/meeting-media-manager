@@ -284,6 +284,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+  import: [data: { items: MultimediaItem[] }];
   'update:modelValue': [value: boolean];
 }>();
 
@@ -488,10 +489,17 @@ const isSelected = (item: MultimediaItem) => {
 };
 
 const addSelectedMediaItems = async () => {
+  if (!props.section) {
+    emit('import', { items: [...selectedMediaItems.value] });
+    resetState();
+    dialogValue.value = false;
+    return;
+  }
+
   isProcessing.value = true;
   try {
     for (const mediaItem of selectedMediaItems.value) {
-      await addStudyBibleMedia(mediaItem);
+      await addStudyBibleMedia(mediaItem, props.section);
     }
   } catch (error) {
     errorCatcher(error);
@@ -502,12 +510,15 @@ const addSelectedMediaItems = async () => {
   }
 };
 
-const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
+const addStudyBibleMedia = async (
+  mediaItem: MultimediaItem,
+  sectionToUse?: MediaSectionIdentifier,
+) => {
   if (mediaItem.MimeType.includes('image')) {
     mediaItem.FilePath = await convertImageIfNeeded(mediaItem.FilePath);
     await addToAdditionMediaMapFromPath(
       mediaItem.FilePath,
-      props.section,
+      sectionToUse || props.section,
       undefined,
       {
         title: mediaItem.Label,
@@ -553,7 +564,7 @@ const addStudyBibleMedia = async (mediaItem: MultimediaItem) => {
         thumbnail,
         false,
         title.replace(/^\d+\.\s*/, ''),
-        props.section,
+        sectionToUse || props.section,
       );
     } else {
       errorCatcher(new Error('Failed to fetch media for all languages.'), {

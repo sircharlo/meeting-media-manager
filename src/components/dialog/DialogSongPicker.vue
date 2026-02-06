@@ -97,6 +97,7 @@
 
 <script setup lang="ts">
 import type {
+  MediaItemsMediatorFile,
   MediaLink,
   MediaSectionIdentifier,
   PublicationFetcher,
@@ -126,6 +127,14 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   cancel: [];
+  import: [
+    data: {
+      files: MediaItemsMediatorFile[] | MediaLink[];
+      songTrack: number;
+      thumbnail?: string;
+      title: string;
+    },
+  ];
   ok: [];
   'update:modelValue': [value: boolean];
 }>();
@@ -199,9 +208,25 @@ const addSong = async (songTrack: number) => {
         getPubMediaLinks(songTrackItem),
         getJwMediaInfo(songTrackItem),
       ]);
-      downloadAdditionalRemoteVideo(
+
+      const files =
         songTrackFiles?.files?.[currentSettings.value?.lang || 'E']?.['MP4'] ||
-          [],
+        [];
+
+      if (!props.section) {
+        emit('import', {
+          files,
+          songTrack,
+          thumbnail,
+          title: title.replace(/^\d+\.\s*/, ''),
+        });
+        resetDialogState();
+        dialogValue.value = false;
+        return;
+      }
+
+      await downloadAdditionalRemoteVideo(
+        files,
         selectedDate.value,
         thumbnail,
         songTrack,

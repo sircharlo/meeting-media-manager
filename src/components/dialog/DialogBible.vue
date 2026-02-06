@@ -250,6 +250,13 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   cancel: [];
+  import: [
+    data: {
+      customDuration: { max: number; min: number };
+      files: MediaLink[];
+      title: string;
+    },
+  ];
   ok: [];
   'update:modelValue': [value: boolean];
 }>();
@@ -408,21 +415,32 @@ const addSelectedVerses = async () => {
       ? timeToSeconds(endVerse.startTime) + timeToSeconds(endVerse.duration)
       : 0;
 
-    await downloadAdditionalRemoteVideo(
-      selectedChapterMedia.value,
-      selectedDate.value,
-      undefined,
-      false,
+    const title =
       decodeEntities(bibleMedia.value?.[selectedBibleBook.value - 1]?.pubName) +
-        ' ' +
-        selectedChapter.value +
-        ':' +
-        chosenVerses.value
-          .filter((verse, index, self) => self.indexOf(verse) === index)
-          .join('-'),
-      props.section,
-      { max, min },
-    );
+      ' ' +
+      selectedChapter.value +
+      ':' +
+      chosenVerses.value
+        .filter((verse, index, self) => self.indexOf(verse) === index)
+        .join('-');
+
+    if (!props.section) {
+      emit('import', {
+        customDuration: { max, min },
+        files: selectedChapterMedia.value,
+        title,
+      });
+    } else {
+      await downloadAdditionalRemoteVideo(
+        selectedChapterMedia.value,
+        selectedDate.value,
+        undefined,
+        false,
+        title,
+        props.section,
+        { max, min },
+      );
+    }
 
     resetBibleBook(true, true);
     emit('ok');

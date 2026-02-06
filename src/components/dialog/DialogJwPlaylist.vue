@@ -232,6 +232,19 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   cancel: [];
+  import: [
+    data: {
+      customPrefix: string;
+      includeNumbering: boolean;
+      includePrefix: boolean;
+      outputPath: string;
+      selectedPlaylistItems: (JwPlaylistItem & {
+        ResolvedPreviewPath?: string;
+        ThumbnailFilePath: string;
+        VerseNumbers: number[];
+      })[];
+    },
+  ];
   ok: [];
   'update:modelValue': [value: boolean];
 }>();
@@ -581,7 +594,7 @@ async function processSingleItem(
     StartTime,
     EndTime,
   );
-  return { mappedItems: result.mapped, order: index };
+  return { item, itemLabel, mappedItems: result.mapped, order: index };
 }
 async function processVideoItem(
   item: JwPlaylistItem,
@@ -590,6 +603,7 @@ async function processVideoItem(
   StartTime: null | number,
   EndTime: null | number,
   durationTicks: number,
+  sectionToUse?: MediaSectionIdentifier,
 ) {
   const lang = getJwLangCode(item.MepsLanguage) || 'E';
 
@@ -619,7 +633,7 @@ async function processVideoItem(
     item.ThumbnailFilePath || undefined,
     false,
     itemLabel,
-    props.section,
+    sectionToUse || props.section,
     customDuration,
   );
 
@@ -628,19 +642,32 @@ async function processVideoItem(
 
 const addSelectedItems = async () => {
   console.group('📋 JW Playlist Processing');
-  isProcessing.value = true;
 
   try {
     if (!selectedItems.value.length || !selectedDateObject.value) return;
 
     const selectedPlaylistItems = selectedItems.value
       .map((i) => playlistItems.value[i])
-      .filter(Boolean);
+      .filter((item): item is NonNullable<typeof item> => !!item);
 
     const outputPath = join(
       await getTempPath(),
       basename(props.jwPlaylistPath),
     );
+
+    if (!props.section) {
+      emit('import', {
+        customPrefix: customPrefix.value,
+        includeNumbering: includeNumbering.value,
+        includePrefix: includePrefix.value,
+        outputPath,
+        selectedPlaylistItems,
+      });
+      dialogValue.value = false;
+      return;
+    }
+
+    isProcessing.value = true;
 
     // 🔥 Process all items *in parallel*
     const results = await Promise.all(

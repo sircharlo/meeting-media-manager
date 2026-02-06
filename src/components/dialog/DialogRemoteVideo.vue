@@ -169,6 +169,13 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   cancel: [];
+  import: [
+    data: {
+      mediaItemLinks: MediaItemsMediatorItem['files'];
+      thumbnailUrl?: string;
+      title?: string;
+    },
+  ];
   ok: [];
   'update:modelValue': [value: boolean];
 }>();
@@ -290,6 +297,16 @@ const getJwVideos = async () => {
 };
 
 const addVideo = async (video: MediaItemsMediatorItem) => {
+  if (!props.section) {
+    emit('import', {
+      mediaItemLinks: video.files,
+      thumbnailUrl: video.images?.lsr?.md,
+      title: video.title,
+    });
+    dialogValue.value = false;
+    return;
+  }
+
   isProcessing.value = true;
   try {
     await downloadAdditionalRemoteVideo(
