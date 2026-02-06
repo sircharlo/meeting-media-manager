@@ -648,7 +648,8 @@ const addSelectedItems = async () => {
 
     const selectedPlaylistItems = selectedItems.value
       .map((i) => playlistItems.value[i])
-      .filter((item): item is NonNullable<typeof item> => !!item);
+      .filter((item): item is NonNullable<typeof item> => !!item)
+      .reverse();
 
     const outputPath = join(
       await getTempPath(),
