@@ -1,4 +1,4 @@
-import { captureException } from '@sentry/electron/main';
+import { addBreadcrumb, captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
 import { mkdir, rm, writeFile } from 'node:fs/promises';
@@ -412,3 +412,20 @@ export const throttle = <T>(func: (...args: T[]) => void, delay: number) => {
     }
   };
 };
+
+/**
+ * Adds a breadcrumb to Sentry
+ * @param breadcrumb The breadcrumb to add
+ */
+export function addElectronBreadcrumb(
+  breadcrumb: Parameters<typeof addBreadcrumb>[0],
+) {
+  if (IS_DEV) {
+    console.info(
+      `[Breadcrumb] ${breadcrumb.category}: ${breadcrumb.message}`,
+      breadcrumb.data,
+    );
+  } else {
+    addBreadcrumb(breadcrumb);
+  }
+}

@@ -7,6 +7,7 @@ import { createWriteStream } from 'node:fs';
 import { mkdir, rm, stat, writeFile } from 'node:fs/promises';
 import { pipeline } from 'node:stream/promises';
 import {
+  addElectronBreadcrumb,
   captureElectronError,
   getSharedDataPath,
 } from 'src-electron/main/utils';
@@ -137,6 +138,13 @@ const decompress = async (
   opts?: UnzipOptions,
 ): Promise<UnzipResult[]> => {
   const stats = await stat(input).catch(() => undefined);
+  const fileSize = stats?.size ?? 0;
+
+  addElectronBreadcrumb({
+    category: 'unzip',
+    data: { fileSize, input, output },
+    message: 'Starting unzip',
+  });
 
   return new Promise<UnzipResult[]>((resolve, reject) => {
     const extractedFiles: UnzipResult[] = [];
@@ -150,7 +158,7 @@ const decompress = async (
         captureElectronError(err, {
           contexts: {
             fn: {
-              args: { input, output, stats },
+              args: { fileSize, input, output },
               name: 'unzipFile yauzl.open',
             },
           },
@@ -160,9 +168,27 @@ const decompress = async (
       }
       if (!zipfile) return reject(new Error('Zipfile not found'));
 
+      addElectronBreadcrumb({
+        category: 'unzip',
+        data: { entryCount: zipfile.entryCount },
+        message: 'Zip opened',
+      });
+
       zipfile.readEntry();
       zipfile.on('entry', async (entry: yauzl.Entry) => {
         const fullPath = join(output, entry.fileName);
+
+        addElectronBreadcrumb({
+          category: 'unzip',
+          data: {
+            compressedSize: entry.compressedSize,
+            fileName: entry.fileName,
+            isDirectory: entry.fileName.endsWith('/'),
+            uncompressedSize: entry.uncompressedSize,
+          },
+          level: 'debug',
+          message: 'Processing entry',
+        });
 
         // Apply filter if provided
         if (opts?.includes?.length && !opts.includes.includes(entry.fileName)) {
@@ -314,6 +340,12 @@ const decompress = async (
         // 1. The zipfile has finished reading all entries (zipfileEnded = true)
         // 2. All file write operations have completed (pendingOperations.length = 0)
         if (zipfileEnded && pendingOperations.length === 0) {
+          addElectronBreadcrumb({
+            category: 'unzip',
+            data: { extractedFilesCount: extractedFiles.length },
+            message: 'Unzip complete',
+          });
+
           // ADDITIONAL SAFETY: Small delay to ensure OS has flushed buffers
           // This is especially important on Windows and network drives
           setTimeout(() => {
@@ -324,7 +356,6 @@ const decompress = async (
     });
   });
 };
-
 /**
  * Decompresses a file using yauzl for memory efficiency
  * Properly waits for all write streams to finish and flush to disk
