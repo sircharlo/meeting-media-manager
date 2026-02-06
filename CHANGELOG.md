@@ -4,6 +4,26 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.2.1
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **Media Import**: Changed the flow to allow section selection after choosing media.
+- 🛠️ **Cache Management**: Added the _lff_ brochure to the frequently used publications list to prevent it from being removed when automatically clearing the cache.
+- 🛠️ **UI**: Added rounded corners to the section selection modal.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Playlist Import**: Fixed an issue where the order of files in imported JW Playlists was sometimes reversed.
+- 🐞 **Window Visibility**: Resolved an issue where toggling media window visibility was inconsistent and where the window sometimes faded out when it shouldn't.
+- 🐞 **Stability**: Prevented test file deletion failures from being fatal errors.
+- 🐞 **Logging**: Reduced unnecessary log verbosity when ensuring window visibility.
+
+### 🔧 Chores
+
+- 🔧 **Refactoring**: Simplified the logic for adding media from dialogs.
+- 🔧 **Debugging**: Added breadcrumbs to the unzip process to improve debugging capabilities.
+
 ## v26.2.0
 
 ### ✨ New Features
