@@ -487,6 +487,11 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+  import: [
+    data:
+      | { dbPath: string; doc: DocumentItem; type: 'jwpub' }
+      | { media: MediaLink; type: 'media' },
+  ];
   'update:modelValue': [value: boolean];
 }>();
 
@@ -812,6 +817,13 @@ function clearSearch() {
 }
 
 async function downloadMediaItem(media: MediaLink) {
+  if (!props.section) {
+    emit('import', { media, type: 'media' });
+    resetState();
+    dialogValue.value = false;
+    return;
+  }
+
   try {
     isProcessing.value = true;
 
@@ -940,8 +952,16 @@ function goBack() {
 }
 
 async function importDocument(doc: DocumentItem) {
+  if (!selection.dbPath) return;
+
+  if (!props.section) {
+    emit('import', { dbPath: selection.dbPath, doc, type: 'jwpub' });
+    resetState();
+    dialogValue.value = false;
+    return;
+  }
+
   try {
-    if (!selection.dbPath) return;
     isProcessing.value = true;
     await addJwpubDocumentMediaToFiles(selection.dbPath, doc, props.section);
   } catch (e) {

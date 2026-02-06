@@ -116,6 +116,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   cancel: [];
+  import: [data: { dbPath: string; doc: DocumentItem }];
   'update:modelValue': [value: boolean];
 }>();
 
@@ -199,6 +200,13 @@ const dismissPopup = () => {
 
 const addPublicTalkMedia = async (publicTalkDocId: DocumentItem) => {
   if (!s34Db.value || !publicTalkDocId) return;
+
+  if (!props.section) {
+    emit('import', { dbPath: s34Db.value, doc: publicTalkDocId });
+    dismissPopup();
+    return;
+  }
+
   isProcessing.value = true;
   try {
     await addJwpubDocumentMediaToFiles(
