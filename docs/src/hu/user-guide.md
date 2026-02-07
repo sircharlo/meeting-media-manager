@@ -13,7 +13,7 @@ A legújabb verziót a [Letöltési oldalról](download) szerezheti be. A legjob
 Amikor először indítja el az M³ programot, egy beállítási varázsló végigvezeti Önt a gyülekezetéhez szükséges alapvető beállítások konfigurálásán:
 
 1. **Válassza ki a felület nyelvét** - Ez határozza meg, hogy az M³ menüi és gombjai milyen nyelven jelennek meg
-2. **Profil típus kiválasztása** - Normál gyülekezeti használatra válassza a „Rendszeres” lehetőséget, különleges eseményekre pedig az „Egyéb” lehetőséget
+2. **Profil típus kiválasztása** - Normál gyülekezeti használatra válassza a „Normál” lehetőséget, különleges eseményekre pedig az „Egyéb” lehetőséget
 3. **Gyülekezeti adatok beállítása** - Adja meg a gyülekezeti adatokat, vagy használja az automatikus keresési funkciót
 4. **Összejövetelek ütemezésének beállítása** - Állítsa be a hétközbeni és hétvégi összejövetelek időpontjait
 5. **Opcionális funkciók** - Az OBS integráció, a háttérzene és egyéb fejlett funkciók konfigurálása
