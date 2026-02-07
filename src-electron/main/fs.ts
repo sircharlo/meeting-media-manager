@@ -73,14 +73,18 @@ export async function isUsablePath(basePath?: string): Promise<boolean> {
     const resolvedBase = resolve(basePath);
     const testDir = join(resolvedBase, '.cache-test-' + uuid());
     await mkdir(testDir, { recursive: true });
-    await writeFile(join(testDir, 'test.txt'), 'ok');
-    try {
-      await rm(testDir, { recursive: true });
-    } catch (e) {
-      console.warn('[isUsablePath] Failed to remove test directory:', e);
-    }
+    console.log('[isUsablePath] Test directory created successfully:', testDir);
+    const testFile = join(testDir, 'test.txt');
+    await writeFile(testFile, 'ok');
+    console.log('[isUsablePath] Test file created successfully:', testFile);
+    await rm(testFile);
+    console.log('[isUsablePath] Test file removed successfully:', testFile);
+    await rm(testDir, { recursive: true });
+    console.log('[isUsablePath] Test directory removed successfully:', testDir);
+    console.log('[isUsablePath] Specified path is available:', basePath);
     return true;
-  } catch {
+  } catch (e) {
+    console.log('[isUsablePath] Specified path is not available:', basePath, e);
     return false;
   }
 }

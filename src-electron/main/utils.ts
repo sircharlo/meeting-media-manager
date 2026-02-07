@@ -94,23 +94,40 @@ export async function getSharedDataPath(): Promise<null | string> {
   try {
     // Ensure directory exists (does NOT change permissions)
     await mkdir(sharedPath, { recursive: true });
-    console.log('[getSharedDataPath] Shared data path created successfully.');
+    console.log(
+      '[getSharedDataPath] Shared data path created successfully:',
+      sharedPath,
+    );
 
     const testDir = join(sharedPath, '.cache-test-' + uuid());
     await mkdir(testDir, { recursive: true });
-    console.log('[getSharedDataPath] Test directory created successfully.');
-    await writeFile(join(testDir, 'test.txt'), 'ok');
-    console.log('[getSharedDataPath] Test file created successfully.');
-    try {
-      await rm(testDir, { recursive: true });
-      console.log('[getSharedDataPath] Test directory removed successfully.');
-    } catch (e) {
-      console.warn('[getSharedDataPath] Failed to remove test directory:', e);
-    }
-    console.log('[getSharedDataPath] Shared data path is available.');
+    console.log(
+      '[getSharedDataPath] Test directory created successfully:',
+      testDir,
+    );
+    const testFile = join(testDir, 'test.txt');
+    await writeFile(testFile, 'ok');
+    console.log(
+      '[getSharedDataPath] Test file created successfully:',
+      testFile,
+    );
+    await rm(testFile);
+    console.log(
+      '[getSharedDataPath] Test file removed successfully:',
+      testFile,
+    );
+    await rm(testDir, { recursive: true });
+    console.log(
+      '[getSharedDataPath] Test directory removed successfully:',
+      testDir,
+    );
+    console.log(
+      '[getSharedDataPath] Shared data path is available:',
+      sharedPath,
+    );
     return sharedPath;
-  } catch {
-    console.log('[getSharedDataPath] Failed to create shared data path.');
+  } catch (e) {
+    console.log('[getSharedDataPath] Failed to create shared data path:', e);
     return null;
   }
 }
