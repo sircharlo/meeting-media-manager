@@ -4,6 +4,18 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.2.2
+
+### 🐞 Bug Fixes
+
+- 🐞 **Media Window**: Fixed media window fullscreen logic.
+- 🐞 **Permissions**: Resolved various disk permission issues.
+- 🐞 **Updates**: Ignored 502 errors during update checks.
+
+### 🔧 Chores
+
+- 🔧 **Security**: Pinned third-party GitHub Actions for improved security.
+
 ## v26.2.1
 
 ### 🛠️ Improvements and Tweaks
