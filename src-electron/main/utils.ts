@@ -256,6 +256,7 @@ export function isIgnoredUpdateError(
     'SELF_SIGNED_CERT_IN_CHAIN',
     'YAMLException',
     ['404', 'HttpError'],
+    ['502', 'HttpError'],
     ['503', 'HttpError'],
     ['504', 'Gateway'],
     ['504', 'HttpError'],
