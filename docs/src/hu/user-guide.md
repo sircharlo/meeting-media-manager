@@ -147,7 +147,7 @@ Az M³ integrálható a Zoommal az automatikus képernyőmegosztáshoz:
 3. **Automatikus vezérlés** – Az M³ szükség szerint automatikusan be- és kikapcsolja a képernyő megosztását a Zoom alkalmazásban
 4. **Kézi felülírás** – Szükség esetén továbbra is kézzel vezérelheti a képernyő megosztását a Zoom segítségével
 
-## OBS Studio Integration {#user-guide-obs-integration}
+## OBS Studio integráció {#user-guide-obs-integration}
 
 ### Setting Up OBS Integration {#user-guide-obs-setup}
 
