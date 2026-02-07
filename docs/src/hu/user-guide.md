@@ -149,30 +149,30 @@ Az M³ integrálható a Zoommal az automatikus képernyőmegosztáshoz:
 
 ## OBS Studio integráció {#user-guide-obs-integration}
 
-### Setting Up OBS Integration {#user-guide-obs-setup}
+### OBS integráció beállítása {#user-guide-obs-setup}
 
-To use M³ with OBS Studio for hybrid meetings:
+Az M³ használata az OBS Studio programmal hibrid összejövetelekhez:
 
-1. **Install OBS Studio** - Download and install OBS Studio
-2. **Enable WebSocket** - Install the WebSocket plugin in OBS
-3. **Configure M³** - Enter OBS port and password in M³ settings
-4. **Set Up Scenes** - Create scenes for camera, media, and other content
-5. **Test** - Verify playback works properly
+1. **OBS Studio telepítése** - Töltse le és telepítse az OBS Studio programot
+2. **WebSocket engedélyezése** - Telepítse a WebSocket bővítményt az OBS programban
+3. **M³ konfigurálása** - Adja meg az OBS portot és jelszót az M³ beállításaiban
+4. **Jelenetek beállítása** – Jelenetek létrehozása kamerához, médiához és egyéb tartalmakhoz
+5. **Teszt** - Ellenőrizze, hogy a lejátszás megfelelően működik-e
 
-### OBS Scene Management {#obs-scene-management}
+### OBS jelenetkezelés {#obs-scene-management}
 
-M³ automatically switches OBS scenes during presentations:
+Az M³ automatikusan vált az OBS jelenetek között a prezentációk során:
 
-- **Camera Scene** - Shows the lectern/camera view
-- **Media Scene** - Displays media content
-- **Image Scene** - Shows images (can be postponed if enabled)
-- **Automatic Switching** - Scenes change based on media type and settings
+- **Kamerafelvétel** – A pódium/kamera képét mutatja
+- **Médiajelenet** - A média tartalom megjelenítése
+- **Képjelenet** - Képek megjelenítése (késleltethető, ha engedélyezve van)
+- **Automatikus váltás** – A jelenetek a médiatípus és a beállítások alapján cserélődnek
 
-### Advanced OBS Features {#advanced-obs}
+### Haladó OBS funkciók {#advanced-obs}
 
-#### Postpone Images {#user-guide-postpone-images}
+#### Képek késleltetése {#user-guide-postpone-images}
 
-Enable this option to delay sharing images to OBS until manually triggered:
+Engedélyezze ezt az opciót, ha késleltetni szeretné a képek OBS-hez való továbbítását, amíg azt manuálisan el nem indítja:
 
 1. Enable "Postpone Images" in OBS settings
 2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
