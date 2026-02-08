@@ -86,7 +86,7 @@
       </div>
     </div>
   </q-menu>
-  <audio ref="musicPlayer" style="display: none" @ended="musicEnded" />
+  <audio ref="musicPlayer" style="display: none" @ended="handleMusicEnded" />
 </template>
 
 <script setup lang="ts">
@@ -101,21 +101,22 @@ import {
   whenever,
 } from '@vueuse/core';
 import { storeToRefs } from 'pinia';
+import {
+  enrichSongsWithMetadata,
+  fetchSongLibrary,
+  formatRemainingTime,
+  getNextSongFromQueue,
+  prepareMeetingDaySongQueue,
+} from 'src/helpers/background-music';
 import { remainingTimeBeforeMeetingStart } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadBackgroundMusic } from 'src/helpers/jw-media';
-import { getPublicationDirectoryContents } from 'src/utils/fs';
-import { getMetadataFromMediaPath } from 'src/utils/media';
 import { formatTime } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, useTemplateRef, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
-
-const { fileUrlToPath, parseMediaFile, path, pathToFileURL } =
-  globalThis.electronApi;
-const { basename } = path;
 
 const open = defineModel<boolean>({ default: false });
 
@@ -133,8 +134,8 @@ const {
 // Constants
 const MEETING_STOP_BUFFER_SECONDS = computed(
   () => currentSettings.value?.meetingStopBufferSeconds ?? 60,
-); // Stop music a user-defined number of seconds before meeting; default to 60 seconds
-const AUTO_START_WINDOW_HOURS = 1.25; // Auto-start within 1 hour 15 minutes of meeting
+);
+const AUTO_START_WINDOW_HOURS = 1.25;
 
 // Music player setup
 const musicPlayerSource = ref<HTMLSourceElement>(
@@ -152,9 +153,18 @@ const {
 });
 
 const timeUntilMeeting = ref(remainingTimeBeforeMeetingStart());
-
 const musicAlreadyStoppedManually = ref(false);
 
+// Music state management
+const musicState = ref<
+  '' | 'music.error' | 'music.playing' | 'music.starting' | 'music.stopping'
+>('');
+
+const musicPlayingTitle = ref('');
+const songList = ref<SongItem[]>([]);
+const initialStartOffset = ref(0); // Stores the calculated start offset for first song
+
+// Watch for time changes
 watch(
   () => [currentTime.value, selectedDateObject.value?.date],
   (values, oldValues) => {
@@ -171,14 +181,7 @@ watch(
   { immediate: true },
 );
 
-// Music state management
-const musicState = ref<
-  '' | 'music.error' | 'music.playing' | 'music.starting' | 'music.stopping'
->('');
-
-const musicPlayingTitle = ref('');
-const songList = ref<SongItem[]>([]);
-
+// Meeting day checks
 const isMeetingToday = computed(() => {
   return isSelectedDayToday.value && !!selectedDayMeetingType.value;
 });
@@ -187,32 +190,20 @@ const isMeetingStartTimeInPast = computed(() => {
   return timeUntilMeeting.value <= 0;
 });
 
+// Auto-start logic
 const shouldAutoStart = computed(() => {
-  console.log('[shouldAutoStart] Checking auto start conditions...');
   if (
     !currentSettings.value?.enableMusicButton ||
     !currentSettings.value?.autoStartMusic
   ) {
-    console.log('[shouldAutoStart] Auto start disabled by settings:', {
-      autoStartMusic: currentSettings.value?.autoStartMusic,
-      enableMusicButton: currentSettings.value?.enableMusicButton,
-    });
     return false;
   }
 
   if (!isMeetingToday.value || musicPlaying.value) {
-    console.log(
-      '[shouldAutoStart] Not meeting today or music already playing:',
-      {
-        isMeetingToday: isMeetingToday.value,
-        musicPlaying: musicPlaying.value,
-      },
-    );
     return false;
   }
 
   if (musicAlreadyStoppedManually.value) {
-    console.log('[shouldAutoStart] Music already stopped manually');
     return false;
   }
 
@@ -221,20 +212,10 @@ const shouldAutoStart = computed(() => {
     timeUntil > MEETING_STOP_BUFFER_SECONDS.value * 1.5 &&
     timeUntil <= AUTO_START_WINDOW_HOURS * 3600;
 
-  console.log(
-    '[shouldAutoStart] timeUntil:',
-    timeUntil,
-    'MEETING_STOP_BUFFER_SECONDS:',
-    MEETING_STOP_BUFFER_SECONDS.value,
-    'AUTO_START_WINDOW_HOURS:',
-    AUTO_START_WINDOW_HOURS,
-    'withinAutoStartWindow:',
-    withinAutoStartWindow,
-  );
-
   return withinAutoStartWindow;
 });
 
+// Auto-stop logic
 const shouldAutoStop = computed(() => {
   if (!musicPlaying.value) {
     return false;
@@ -262,7 +243,7 @@ const timeUntilMusicStops = computed(() => {
 
   const timeUntilStop =
     timeUntilMeeting.value - MEETING_STOP_BUFFER_SECONDS.value;
-  return timeUntilStop > 0 ? formatTime(timeUntilStop) : formatTime(0);
+  return formatRemainingTime(timeUntilStop);
 });
 
 const shouldShowMeetingCountdown = computed(() => {
@@ -343,7 +324,9 @@ watch(
 
 const musicPopup = useTemplateRef<QMenu>('musicPopup');
 
-// Music player functions
+/**
+ * Initializes and plays background music
+ */
 async function playMusic() {
   console.group('🎵 Background Music Playback');
   try {
@@ -364,21 +347,67 @@ async function playMusic() {
     musicPlayer.value.appendChild(musicPlayerSource.value);
     volume.value = 0;
 
-    const { nextSongDuration, nextSongUrl, secsFromEnd } = await getNextSong();
+    // Fetch and prepare song library
+    const rawSongLibrary = await fetchSongLibrary(
+      currentSettings.value?.lang || 'E',
+    );
+    const enrichedSongs = await enrichSongsWithMetadata(rawSongLibrary);
+
+    // Prepare queue based on meeting day or not
+    const timeBeforeMeetingStart =
+      timeUntilMeeting.value - MEETING_STOP_BUFFER_SECONDS.value;
+
+    if (isMeetingToday.value && timeBeforeMeetingStart > 0) {
+      // Meeting day: optimize queue to end precisely at fadeout time
+      const selectedDayMedia = Object.values(
+        selectedDateObject.value?.mediaSections ?? {},
+      ).flatMap((section) => section.items || []);
+
+      const { queue, startOffsetSeconds } = await prepareMeetingDaySongQueue(
+        enrichedSongs,
+        {
+          currentSettings: currentSettings.value,
+          selectedDayMedia,
+          timeBeforeMeetingStart,
+        },
+      );
+
+      songList.value = queue;
+      initialStartOffset.value = startOffsetSeconds;
+    } else {
+      // Not a meeting day: just shuffle and play
+      songList.value = enrichedSongs;
+      initialStartOffset.value = 0;
+    }
+
+    // Get and play the first song
+    const { nextSongUrl } = await getNextSongFromQueue(
+      songList.value,
+      (title) => {
+        musicPlayingTitle.value = title;
+      },
+    );
+
     if (!nextSongUrl) throw new Error('No next song found');
 
     musicPlayerSource.value.src = nextSongUrl;
-    console.log(
-      `🎵 Playing music from ${nextSongUrl} with duration ${nextSongDuration} seconds`,
-    );
+    console.log(`🎵 Playing music from ${nextSongUrl}`);
 
     musicPlayer.value?.load();
-    const startTime = nextSongDuration ? nextSongDuration - secsFromEnd : 0;
+
+    // Apply start offset if we calculated one (for meeting day timing)
+    const startTime = initialStartOffset.value;
+    if (startTime > 0) {
+      console.log(
+        `⏩ Starting ${startTime.toFixed(1)}s into first song to align with meeting time`,
+      );
+    }
     currentTime.value = startTime;
 
     musicPlayer.value?.play();
     console.log(`🎵 Music started at ${startTime} seconds`);
 
+    // Fade in volume
     const targetVolume = (currentSettings.value?.musicVolume ?? 100) / 100;
     console.log(`🔊 Fading to volume level ${targetVolume}`);
     fadeToVolumeLevel(targetVolume, 1);
@@ -391,6 +420,9 @@ async function playMusic() {
   }
 }
 
+/**
+ * Stops background music with fadeout
+ */
 function stopMusic(manualStop = false) {
   console.group('⏹️ Background Music Stop');
   try {
@@ -415,39 +447,10 @@ function stopMusic(manualStop = false) {
   }
 }
 
-// Music player event handlers
-musicPlayer.value?.addEventListener('error', (event) => {
-  if (event.target instanceof HTMLAudioElement) {
-    musicState.value = 'music.error';
-    if (event.target.error?.message) {
-      const ignoredErrors = [
-        'removed from the document',
-        'new load request',
-        'interrupted by a call to pause',
-      ];
-
-      if (
-        !ignoredErrors.some((msg) =>
-          (event.target as HTMLAudioElement)?.error?.message?.includes(msg),
-        )
-      ) {
-        errorCatcher(event.target.error);
-      }
-    }
-  }
-});
-
-watch(
-  () => musicPlayerSource.value?.src,
-  (newSrc) => {
-    if (newSrc) {
-      musicPlayer.value?.load();
-      console.log(`🎵 Music player source set to ${newSrc}`);
-    }
-  },
-);
-
-const musicEnded = async () => {
+/**
+ * Handles when a song ends - plays next song
+ */
+const handleMusicEnded = async () => {
   if (
     !musicPlayer.value ||
     !musicPlayerSource.value ||
@@ -456,7 +459,13 @@ const musicEnded = async () => {
     return;
   }
 
-  const { nextSongUrl } = await getNextSong();
+  const { nextSongUrl } = await getNextSongFromQueue(
+    songList.value,
+    (title) => {
+      musicPlayingTitle.value = title;
+    },
+  );
+
   if (!nextSongUrl) return;
 
   musicPlayerSource.value.src = nextSongUrl;
@@ -464,135 +473,9 @@ const musicEnded = async () => {
   musicPlayer.value?.play();
 };
 
-// Song management functions
-const getNextSong = async () => {
-  try {
-    let musicDurationSoFar = 0;
-    const timeBeforeMeetingStart =
-      timeUntilMeeting.value - MEETING_STOP_BUFFER_SECONDS.value;
-    let secsFromEnd = 0;
-
-    if (!songList.value.length) {
-      let attempts = 0;
-      while (songList.value.length < 10 && attempts < 10) {
-        songList.value = (
-          await getPublicationDirectoryContents(
-            { langwritten: currentSettings.value?.lang || 'E', pub: 'sjjm' },
-            'mp3',
-          )
-        ).sort(() => Math.random() - 0.5);
-
-        if (songList.value.length >= 10) break;
-
-        attempts++;
-        await new Promise((resolve) => {
-          setTimeout(resolve, 5000);
-        });
-      }
-
-      // Get metadata for songs
-      for (const queuedSong of songList.value) {
-        const metadata = await getMetadataFromMediaPath(queuedSong.path);
-        queuedSong.duration = metadata?.format?.duration ?? 0;
-        queuedSong.title = metadata?.common.title ?? basename(queuedSong.path);
-      }
-
-      // Handle meeting day song selection
-      try {
-        // Get all media from all sections
-        const selectedDayMedia = Object.values(
-          selectedDateObject.value?.mediaSections ?? {},
-        ).flatMap((section) => section.items || []);
-
-        const regex = /(_r\d{3,4}P)?\.\w+$/;
-
-        const selectedDaySongs: SongItem[] = selectedDayMedia
-          .map((d) => basename(fileUrlToPath(d.fileUrl?.replace(regex, ''))))
-          .map((fileBasename) => {
-            const index = songList.value.findIndex(
-              (s) => basename(s.path.replace(regex, '') || '') === fileBasename,
-            );
-            if (index !== -1) {
-              return songList.value.splice(index, 1)[0];
-            }
-            return null;
-          })
-          .filter((song) => !!song);
-
-        if (timeBeforeMeetingStart > 0) {
-          let customSongList: SongItem[] = [];
-          if (selectedDaySongs.length) {
-            songList.value.push(...selectedDaySongs);
-            songList.value.reverse();
-          }
-
-          if (songList.value.length) {
-            while (musicDurationSoFar < timeBeforeMeetingStart) {
-              const queuedSong = songList.value.shift();
-              if (!queuedSong) {
-                customSongList = songList.value;
-                break;
-              }
-              songList.value.push(queuedSong);
-              customSongList.unshift(queuedSong);
-              secsFromEnd = timeBeforeMeetingStart - musicDurationSoFar;
-              musicDurationSoFar += queuedSong.duration ?? 0;
-            }
-            songList.value = customSongList;
-          }
-        }
-      } catch (error) {
-        errorCatcher(error);
-      }
-    }
-
-    if (!songList.value.length) {
-      return { nextSongUrl: '', secsFromEnd: 0 };
-    }
-
-    const nextSong = songList.value.shift();
-    if (!nextSong) {
-      return { nextSongUrl: '', secsFromEnd: 0 };
-    }
-
-    songList.value.push(nextSong);
-
-    try {
-      const metadata = await parseMediaFile(nextSong.path);
-      musicPlayingTitle.value =
-        metadata.common.title ?? basename(nextSong.path);
-    } catch (error) {
-      errorCatcher(error);
-      musicPlayingTitle.value = basename(nextSong.path) ?? '';
-    }
-
-    return {
-      nextSongDuration: nextSong.duration,
-      nextSongUrl: pathToFileURL(nextSong.path),
-      secsFromEnd,
-    };
-  } catch (error) {
-    errorCatcher(error);
-    return { nextSongUrl: '', secsFromEnd: 0 };
-  }
-};
-
-// Volume control functions
-const setBackgroundMusicVolume = (desiredVolume: number) => {
-  try {
-    if (
-      !musicPlayer.value ||
-      !Number.isInteger(desiredVolume) ||
-      desiredVolume < 0
-    ) {
-      return;
-    }
-    volume.value = Math.min(Math.max(desiredVolume / 100, 0), 1);
-  } catch (error) {
-    errorCatcher(error);
-  }
-};
-
+/**
+ * Fades volume to a target level over specified seconds
+ */
 const fadeToVolumeLevel = (targetVolume: number, fadeSeconds: number) => {
   console.log(
     `🔊 Fading to volume level ${targetVolume} over ${fadeSeconds} seconds`,
@@ -637,6 +520,57 @@ const fadeToVolumeLevel = (targetVolume: number, fadeSeconds: number) => {
     errorCatcher(error);
   }
 };
+
+/**
+ * Sets background music volume directly
+ */
+const setBackgroundMusicVolume = (desiredVolume: number) => {
+  try {
+    if (
+      !musicPlayer.value ||
+      !Number.isInteger(desiredVolume) ||
+      desiredVolume < 0
+    ) {
+      return;
+    }
+    volume.value = Math.min(Math.max(desiredVolume / 100, 0), 1);
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
+// Music player error handling
+musicPlayer.value?.addEventListener('error', (event) => {
+  if (event.target instanceof HTMLAudioElement) {
+    musicState.value = 'music.error';
+    if (event.target.error?.message) {
+      const ignoredErrors = [
+        'removed from the document',
+        'new load request',
+        'interrupted by a call to pause',
+      ];
+
+      if (
+        !ignoredErrors.some((msg) =>
+          (event.target as HTMLAudioElement)?.error?.message?.includes(msg),
+        )
+      ) {
+        errorCatcher(event.target.error);
+      }
+    }
+  }
+});
+
+// Watch for source changes
+watch(
+  () => musicPlayerSource.value?.src,
+  (newSrc) => {
+    if (newSrc) {
+      musicPlayer.value?.load();
+      console.log(`🎵 Music player source set to ${newSrc}`);
+    }
+  },
+);
 
 // UI update handler
 watch(
