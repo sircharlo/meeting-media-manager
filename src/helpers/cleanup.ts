@@ -28,6 +28,267 @@ const { fs, path, readdir } = globalThis.electronApi;
 const { exists, pathExists, remove } = fs;
 const { join, normalize } = path;
 
+/**
+ * Builds a map of file sizes by path
+ */
+function buildFileSizeMap(cacheFiles: CacheFile[]): Map<string, number> {
+  const sizeByPath = new Map<string, number>();
+  for (const file of cacheFiles) {
+    sizeByPath.set(file.path, file.size || 0);
+  }
+  return sizeByPath;
+}
+
+/**
+ * Creates a set of normalized parent directories from file URLs
+ */
+function buildReferencedParentDirectories(fileUrls: Set<string>): Set<string> {
+  const parentDirectories = new Set<string>();
+
+  fileUrls.forEach((fileUrl) => {
+    const parentDir = normalizePath(getParentDirectory(fileUrl));
+    parentDirectories.add(parentDir);
+  });
+
+  return parentDirectories;
+}
+
+/**
+ * Calculates bytes freed from deletion results
+ */
+function calculateBytesFreed(
+  results: PromiseSettledResult<void>[],
+  filepaths: string[],
+  sizeSource: Map<string, number> | Record<string, number>,
+): number {
+  let bytesFreed = 0;
+
+  for (let i = 0; i < results.length; i++) {
+    if (results[i]?.status !== 'fulfilled') continue;
+
+    const path = filepaths[i];
+    if (typeof path !== 'string') continue;
+
+    const size =
+      sizeSource instanceof Map ? sizeSource.get(path) : sizeSource[path];
+
+    bytesFreed += size || 0;
+  }
+
+  return bytesFreed;
+}
+
+/**
+ * Collects all file URLs referenced in media items
+ */
+function collectReferencedFileUrls(media: MediaItem): Set<string> {
+  const urls = new Set<string>();
+  const urlKeys = [
+    'fileUrl',
+    'streamUrl',
+    'thumbnailUrl',
+    'subtitlesUrl',
+  ] as const;
+
+  const addUrls = (item?: Partial<MediaItem>) => {
+    if (!item) return;
+    for (const key of urlKeys) {
+      const value = item[key];
+      if (value) urls.add(value);
+    }
+  };
+
+  addUrls(media);
+
+  if (Array.isArray(media?.children)) {
+    for (const child of media.children) {
+      addUrls(child);
+    }
+  }
+
+  return urls;
+}
+
+/**
+ * Counts successful deletions from results
+ */
+function countSuccessfulDeletions(
+  results: PromiseSettledResult<void>[],
+): number {
+  return results.filter((r) => r.status === 'fulfilled').length;
+}
+
+/**
+ * Checks if a directory should be considered unused
+ */
+function isDirectoryUnused(
+  filePath: string,
+  parentPath: string,
+  usedParentDirectories: Record<string, number>,
+  frequentlyUsedDirectories: Set<string>,
+  untouchableDirectories: Set<string>,
+): boolean {
+  const normalizedPath = normalizePath(parentPath);
+
+  // Check if in used directories
+  const isInUsed = Object.keys(usedParentDirectories).some((dir) =>
+    pathsOverlap(parentPath, dir),
+  );
+
+  if (isInUsed) return false;
+
+  // Check if in frequently used directories
+  const isInFrequentlyUsed = [...frequentlyUsedDirectories].some((dir) =>
+    pathsOverlap(parentPath, dir),
+  );
+
+  if (isInFrequentlyUsed) return false;
+
+  // Check if in untouchable directories
+  const isInUntouchable = [...untouchableDirectories].some((dir) => {
+    const normalizedDir = normalizePath(dir);
+    return normalizedPath === normalizedDir;
+  });
+
+  if (isInUntouchable) return false;
+
+  // Log debugging information
+  console.log('🗑️ File marked as unused:', {
+    filePath,
+    frequentlyUsedDirs: [...frequentlyUsedDirectories],
+    isInFrequentlyUsed,
+    isInUntouchable,
+    isInUsed,
+    parentPath,
+    untouchableDirs: [...untouchableDirectories],
+    usedParentDirs: Object.keys(usedParentDirectories),
+  });
+
+  return true;
+}
+
+/**
+ * Checks if a file is referenced by checking parent directories
+ */
+function isFileReferenced(
+  normalizedParentPath: string,
+  referencedParentDirectories: Set<string>,
+): boolean {
+  return Array.from(referencedParentDirectories).includes(normalizedParentPath);
+}
+
+/**
+ * Checks if a file should be protected from deletion
+ */
+function isProtectedFile(fileName: string, parentFolder: string): boolean {
+  // Never delete .last-used files directly
+  if (fileName === LAST_USED_FILENAME) {
+    return true;
+  }
+
+  // Protect files inside S-34mp_* or S-34_* folders
+  const isProtectedS34Folder = /^S-34(?:mp_|_)/.test(parentFolder);
+  return isProtectedS34Folder;
+}
+
+/**
+ * Normalizes a path for cross-platform, case-insensitive comparison
+ */
+function normalizePath(path: string): string {
+  return normalize(path)
+    .replaceAll(/[\\/]+/g, '\\')
+    .toLowerCase();
+}
+
+/**
+ * Checks if a path is inside or contains another path (bidirectional)
+ */
+function pathsOverlap(path1: string, path2: string): boolean {
+  const normalized1 = normalizePath(path1);
+  const normalized2 = normalizePath(path2);
+  return (
+    normalized1.startsWith(normalized2) || normalized2.startsWith(normalized1)
+  );
+}
+
+/**
+ * Processes a single cache directory and returns its files
+ */
+async function processCacheDirectory(
+  cacheDir: string,
+  referencedParentDirectories: Set<string>,
+): Promise<CacheFile[]> {
+  const files: CacheFile[] = [];
+
+  try {
+    const items = await readdir(cacheDir, true, true);
+
+    for (const item of items) {
+      if (!item.isFile) continue;
+
+      const filePath = join(item.parentPath, item.name);
+      const parentFolder = item.parentPath.split('/').pop() || '';
+
+      // Skip protected files
+      if (isProtectedFile(item.name, parentFolder)) {
+        continue;
+      }
+
+      // Check if file is referenced
+      const normalizedParentPath = normalizePath(item.parentPath);
+      let isReferenced = isFileReferenced(
+        normalizedParentPath,
+        referencedParentDirectories,
+      );
+
+      // If not proactively referenced, check the "last used" date
+      if (!isReferenced) {
+        isReferenced = await wasFileUsedRecently(item.parentPath);
+      }
+
+      files.push({
+        orphaned: !isReferenced,
+        parentPath: item.parentPath,
+        path: filePath,
+        size: item.size || 0,
+      });
+    }
+  } catch (error) {
+    errorCatcher(error);
+  }
+
+  return files;
+}
+
+/**
+ * Calculates the sum of values in a record
+ */
+function sumRecordValues(record: Record<string, number>): number {
+  return Object.values(record).reduce((sum, value) => sum + value, 0);
+}
+
+/**
+ * Checks if a file was used recently based on last-used date
+ */
+async function wasFileUsedRecently(parentPath: string): Promise<boolean> {
+  try {
+    // Check current directory and parent directory (for subfolders)
+    const lastUsedDateStr =
+      (await getLastUsedDate(parentPath)) ||
+      (await getLastUsedDate(getParentDirectory(parentPath)));
+
+    if (lastUsedDateStr) {
+      const lastUsedDate = new Date(lastUsedDateStr);
+      return !isInPast(lastUsedDate);
+    }
+
+    return false;
+  } catch (error) {
+    errorCatcher(error);
+    return false;
+  }
+}
+
 const cleanCongregationRecord = (
   record: Partial<Record<string, unknown>> | undefined,
   congIds: Set<string>,
@@ -88,97 +349,123 @@ const cleanDateFolders = async (root?: string) => {
   );
 };
 
+/**
+ * Collects all languages used by any congregation
+ */
+const collectAllCongregationLanguages = (): Set<JwLangCode> => {
+  const congregationStore = useCongregationSettingsStore();
+  const currentState = useCurrentStateStore();
+  const languages = new Set<JwLangCode>();
+
+  Object.values(congregationStore.congregations).forEach((congSettings) => {
+    if (congSettings?.lang) {
+      languages.add(congSettings.lang);
+    }
+    if (congSettings?.langFallback) {
+      languages.add(congSettings.langFallback);
+    }
+  });
+
+  // Fallback if no congregations exist
+  if (languages.size === 0) {
+    languages.add(currentState.currentSettings?.lang ?? 'E');
+  }
+
+  return languages;
+};
+
+/**
+ * Gets publication directories for given languages
+ */
+const getPublicationDirectories = async (
+  pub: string,
+  languages: Set<JwLangCode>,
+  issue?: number | string,
+  includeEnglish?: boolean,
+): Promise<string[]> => {
+  const directories: string[] = [];
+  const languagesToUse = new Set<JwLangCode>(languages);
+
+  if (includeEnglish) {
+    languagesToUse.add('E' as JwLangCode);
+  }
+
+  for (const langwritten of languagesToUse) {
+    // Special handling for "any" issue: protect all issue-tagged folders
+    if (issue === 'any') {
+      const baseId = getPubId({ langwritten, pub } as PublicationFetcher);
+      const pubsRootDefault = await getPublicationsPath();
+      directories.push(join(pubsRootDefault, baseId));
+    } else {
+      const directoryParams: PublicationFetcher = {
+        issue,
+        langwritten,
+        pub,
+      };
+      directories.push(await getPublicationDirectory(directoryParams));
+    }
+  }
+
+  return directories;
+};
+
+/**
+ * Adds S-34 directories to the list
+ */
+const addS34Directories = async (directories: string[]): Promise<void> => {
+  try {
+    const pubsRootDefault = await getPublicationsPath();
+    const items = await readdir(pubsRootDefault);
+
+    items
+      .filter((i) => i.isDirectory && /^S-34(?:mp_|_)/.test(i.name))
+      .forEach((i) => directories.push(join(pubsRootDefault, i.name)));
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
 const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
   try {
     const currentState = useCurrentStateStore();
-    const congregationStore = useCongregationSettingsStore();
+    const allLanguages = collectAllCongregationLanguages();
 
-    // Get all languages used by any congregation
-    const allLanguages = new Set<JwLangCode>();
-    Object.values(congregationStore.congregations).forEach((congSettings) => {
-      if (congSettings?.lang) {
-        allLanguages.add(congSettings.lang);
-      }
-      if (congSettings?.langFallback) {
-        allLanguages.add(congSettings.langFallback);
-      }
-    });
-
-    // If no congregations exist, fall back to current language or English
-    if (allLanguages.size === 0) {
-      allLanguages.add(currentState.currentSettings?.lang ?? 'E');
-    }
-
-    const getDirectory = async (
+    // Helper function to get directories for a publication
+    const getDir = (
       pub: string,
       issue?: number | string,
       includeEnglish?: boolean,
-    ) => {
-      const directories: string[] = [];
+    ) => getPublicationDirectories(pub, allLanguages, issue, includeEnglish);
 
-      // Always start with all congregation languages; optionally add English
-      const languagesToUse = new Set<JwLangCode>(allLanguages);
-      if (includeEnglish) languagesToUse.add('E' as JwLangCode);
+    const directories = (
+      await Promise.all([
+        // Meeting music and videos
+        getDir(currentState.currentSongbook.pub, undefined, true),
+        getDir(currentState.currentSongbook.pub, 0, true),
+        // Bibles
+        getDir('nwt'),
+        getDir('nwtsty', undefined, true),
+        // Frequently used during MW meetings
+        getDir('ip-1', 0),
+        getDir('ip-2', 0),
+        getDir('it', 0),
+        getDir('lff', 0),
+        getDir('lmd', 0),
+        getDir('lmdv', 0),
+        // Public Talk media
+        getDir('S-34', 'any'),
+        getDir('S-34mp', 'any'),
+        // Magazines
+        getDir('g', 'any'),
+        getDir('w', 'any'),
+        getDir('wp', 'any'),
+        // Various publication info
+        getDir('jwlb', undefined, true),
+      ])
+    ).flat();
 
-      for (const langwritten of languagesToUse) {
-        // Special handling for "any" issue: protect all issue-tagged folders for this pub symbol
-        if (issue === 'any') {
-          const baseId = getPubId({ langwritten, pub } as PublicationFetcher);
-          const pubsRootDefault = await getPublicationsPath();
-          directories.push(join(pubsRootDefault, baseId));
-        } else {
-          const directoryParams: PublicationFetcher = {
-            issue,
-            langwritten,
-            pub,
-          };
-
-          directories.push(await getPublicationDirectory(directoryParams));
-        }
-      }
-
-      return directories;
-    };
-
-    const directories = [
-      // Meeting music and videos
-      await getDirectory(currentState.currentSongbook.pub, undefined, true), // Background music
-      await getDirectory(currentState.currentSongbook.pub, 0, true), // Songbook videos
-      // Bibles
-      await getDirectory('nwt'),
-      await getDirectory('nwtsty', undefined, true),
-      // Frequently used during MW meetings
-      await getDirectory('ip-1', 0), // Isaiah Book (1)
-      await getDirectory('ip-2', 0), // Isaiah Book (2)
-      await getDirectory('it', 0), // Insight
-      await getDirectory('lff', 0), // Enjoy Life Forever!
-      await getDirectory('lmd', 0), // Love People
-      await getDirectory('lmdv', 0), // Love People Videos
-      // Public Talk media
-      await getDirectory('S-34', 'any'),
-      await getDirectory('S-34mp', 'any'),
-      // Magazines, low disk usage
-      await getDirectory('g', 'any'), // Awake
-      await getDirectory('w', 'any'), // Study Watchtower
-      await getDirectory('wp', 'any'), // Public Watchtower
-      // Various publication info, shouldn't be refreshed often
-      await getDirectory('jwlb', undefined, true),
-    ].flat();
-
-    // Add S-34 and S-34mp directories
-    try {
-      const pubsRootDefault = await getPublicationsPath();
-      try {
-        const items = await readdir(pubsRootDefault);
-        items
-          .filter((i) => i.isDirectory && /^S-34(?:mp_|_)/.test(i.name))
-          .forEach((i) => directories.push(join(pubsRootDefault, i.name)));
-      } catch (error) {
-        errorCatcher(error);
-      }
-    } catch (error) {
-      errorCatcher(error);
-    }
+    // Add S-34 directories
+    await addS34Directories(directories);
 
     return new Set<string>(directories.filter(Boolean));
   } catch (error) {
@@ -200,137 +487,113 @@ const fetchUntouchableDirectories = async (): Promise<Set<string>> => {
   }
 };
 
-const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
-  try {
-    const jwStore = useJwStore();
+/**
+ * Collects all media items from all congregations and dates
+ */
+const collectAllMediaItems = (): MediaItem[] => {
+  const jwStore = useJwStore();
 
-    // Get all media items from all congregations and all dates in the lookup period
-    const lookupPeriodsCollections = Object.values(
-      jwStore.lookupPeriod,
-    ).flatMap((congregationLookupPeriods) =>
-      congregationLookupPeriods?.flatMap((lookupPeriods) => {
-        if (!lookupPeriods?.mediaSections) return [];
+  return Object.values(jwStore.lookupPeriod).flatMap(
+    (congregationLookupPeriods) =>
+      congregationLookupPeriods?.flatMap((lookupPeriod) => {
+        if (!lookupPeriod?.mediaSections) return [];
+
         const allMedia: MediaItem[] = [];
-        Object.values(lookupPeriods.mediaSections).forEach((sectionMedia) => {
+        Object.values(lookupPeriod.mediaSections).forEach((sectionMedia) => {
           allMedia.push(...(sectionMedia.items || []));
         });
+
         return allMedia;
-      }),
+      }) || [],
+  );
+};
+
+/**
+ * Builds the set of all referenced file URLs from media items
+ */
+const buildReferencedFileUrls = (mediaItems: MediaItem[]): Set<string> => {
+  const referencedFileUrls = new Set<string>();
+
+  mediaItems.forEach((media) => {
+    const urls = collectReferencedFileUrls(media);
+    urls.forEach((url) => referencedFileUrls.add(url));
+  });
+
+  return referencedFileUrls;
+};
+
+const getCacheFiles = async (cacheDirs: string[]): Promise<CacheFile[]> => {
+  try {
+    // Collect all media items
+    const allMediaItems = collectAllMediaItems();
+
+    // Build set of referenced file URLs
+    const referencedFileUrls = buildReferencedFileUrls(allMediaItems);
+
+    // Build set of referenced parent directories (normalized)
+    const referencedParentDirectories =
+      buildReferencedParentDirectories(referencedFileUrls);
+
+    // Process each cache directory
+    const fileArrays = await Promise.all(
+      cacheDirs.map((cacheDir) =>
+        processCacheDirectory(cacheDir, referencedParentDirectories),
+      ),
     );
 
-    // Create a set of all file URLs that are explicitly referenced in the lookup period
-    const referencedFileUrls = new Set<string>();
-
-    lookupPeriodsCollections.forEach((media) => {
-      // Add all explicitly referenced file URLs (hidden or not)
-      if (media?.fileUrl) {
-        referencedFileUrls.add(media.fileUrl);
-      }
-      if (media?.streamUrl) {
-        referencedFileUrls.add(media.streamUrl);
-      }
-      if (media?.thumbnailUrl) {
-        referencedFileUrls.add(media.thumbnailUrl);
-      }
-      if (media?.subtitlesUrl) {
-        referencedFileUrls.add(media.subtitlesUrl);
-      }
-
-      // Add child media file URLs
-      if (Array.isArray(media?.children)) {
-        for (const child of media.children) {
-          if (child?.fileUrl) {
-            referencedFileUrls.add(child.fileUrl);
-          }
-          if (child?.streamUrl) {
-            referencedFileUrls.add(child.streamUrl);
-          }
-          if (child?.thumbnailUrl) {
-            referencedFileUrls.add(child.thumbnailUrl);
-          }
-          if (child?.subtitlesUrl) {
-            referencedFileUrls.add(child.subtitlesUrl);
-          }
-        }
-      }
-    });
-
-    // Get parent directories of all referenced files (using normalized paths for consistency)
-    const referencedParentDirectories = new Set<string>();
-    referencedFileUrls.forEach((fileUrl) => {
-      const parentDir = normalize(getParentDirectory(fileUrl))
-        .replaceAll(/[\\/]+/g, '\\')
-        .toLowerCase();
-      referencedParentDirectories.add(parentDir);
-    });
-
-    const files: CacheFile[] = [];
-    for (const cacheDir of cacheDirs) {
-      try {
-        const items = await readdir(cacheDir, true, true);
-        for (const item of items) {
-          const filePath = join(item.parentPath, item.name);
-          if (item.isFile) {
-            const parentFolder = item.parentPath.split('/').pop() || '';
-            // Exclude files inside any S-34mp_* or S-34_* folder from deletion consideration
-            const isProtectedS34Folder = /^S-34(?:mp_|_)/.test(parentFolder);
-            if (item.name === LAST_USED_FILENAME) {
-              // Never delete .last-used files directly
-              // They will be deleted if the parent folder is deleted
-            } else if (!isProtectedS34Folder) {
-              // Use normalized paths for comparison
-              const normalizedParentPath = normalize(item.parentPath)
-                .replaceAll(/[\\/]+/g, '\\')
-                .toLowerCase();
-
-              // Check if this parent path matches any referenced parent directory
-              let isReferenced = Array.from(
-                referencedParentDirectories,
-              ).includes(normalizedParentPath);
-
-              // If not proactively referenced, check the "last used" date
-              if (!isReferenced) {
-                // Check current directory and parent directory (for subfolders)
-                const lastUsedDateStr =
-                  (await getLastUsedDate(item.parentPath)) ||
-                  (await getLastUsedDate(getParentDirectory(item.parentPath)));
-
-                if (lastUsedDateStr) {
-                  const lastUsedDate = new Date(lastUsedDateStr);
-                  if (!isInPast(lastUsedDate)) {
-                    isReferenced = true;
-                  }
-                }
-              }
-
-              files.push({
-                orphaned: !isReferenced,
-                parentPath: item.parentPath,
-                path: filePath,
-                size: item.size || 0,
-              });
-            }
-          }
-        }
-      } catch (error) {
-        errorCatcher(error);
-      }
-    }
-    return files;
+    // Flatten the results
+    return fileArrays.flat();
   } catch (error) {
     errorCatcher(error);
     return [];
   }
 };
 
+/**
+ * Calculates used parent directories from cache files
+ */
+const calculateUsedParentDirectories = (
+  cacheFiles: CacheFile[],
+): Record<string, number> => {
+  const usedCacheFiles = cacheFiles.filter((f) => !f.orphaned);
+
+  return usedCacheFiles.reduce<Record<string, number>>((acc, file) => {
+    acc[file.parentPath] = file.size + (acc[file.parentPath] ?? 0);
+    return acc;
+  }, {});
+};
+
+/**
+ * Calculates unused parent directories from cache files
+ */
+const calculateUnusedParentDirectories = (
+  cacheFiles: CacheFile[],
+  usedParentDirectories: Record<string, number>,
+  frequentlyUsedDirectories: Set<string>,
+  untouchableDirectories: Set<string>,
+): Record<string, number> => {
+  return cacheFiles.reduce<Record<string, number>>((acc, file) => {
+    if (
+      isDirectoryUnused(
+        file.path,
+        file.parentPath,
+        usedParentDirectories,
+        frequentlyUsedDirectories,
+        untouchableDirectories,
+      )
+    ) {
+      acc[file.parentPath] = file.size + (acc[file.parentPath] ?? 0);
+    }
+    return acc;
+  }, {});
+};
+
 export const analyzeCacheFiles = async (): Promise<CacheAnalysis> => {
   try {
     const currentState = useCurrentStateStore();
 
-    // Fetch untouchable directories
+    // Fetch configuration directories
     const untouchableDirectories = await fetchUntouchableDirectories();
-
-    // Load frequently used directories
     const frequentlyUsedDirectories = await loadFrequentlyUsedDirectories();
 
     // Get cache directories
@@ -358,69 +621,14 @@ export const analyzeCacheFiles = async (): Promise<CacheAnalysis> => {
     // Get all cache files
     const cacheFiles = await getCacheFiles(cacheDirs);
 
-    // Calculate used cache files
-    const usedCacheFiles = cacheFiles.filter((f) => !f.orphaned);
+    // Calculate used and unused directories
+    const usedParentDirectories = calculateUsedParentDirectories(cacheFiles);
 
-    // Calculate used parent directories
-    const usedParentDirectories = usedCacheFiles.reduce<Record<string, number>>(
-      (acc, file) => {
-        acc[file.parentPath] = file.size + (acc[file.parentPath] ?? 0);
-        return acc;
-      },
-      {},
-    );
-
-    // Calculate unused parent directories
-    const unusedParentDirectories = cacheFiles.reduce<Record<string, number>>(
-      (acc, file) => {
-        // Normalize paths for robust, cross-platform, case-insensitive comparisons
-        const nf = normalize(file.parentPath)
-          .replaceAll(/[\\/]+/g, '\\')
-          .toLowerCase();
-
-        const isInUsed = Object.keys(usedParentDirectories).some((dir) => {
-          const nu = normalize(dir)
-            .replaceAll(/[\\/]+/g, '\\')
-            .toLowerCase();
-          // Consider used if the file's parent is inside a used dir OR contains a used dir
-          return nf.startsWith(nu) || nu.startsWith(nf);
-        });
-
-        const isInFrequentlyUsed = [...frequentlyUsedDirectories].some(
-          (dir) => {
-            const nd = normalize(dir)
-              .replaceAll(/[\\/]+/g, '\\')
-              .toLowerCase();
-            // Also bi-directional: inside or contains a frequently used dir
-            return nf.startsWith(nd) || nd.startsWith(nf);
-          },
-        );
-
-        const isInUntouchable = [...untouchableDirectories].some((dir) => {
-          const nd = normalize(dir)
-            .replaceAll(/[\\/]+/g, '\\')
-            .toLowerCase();
-          return nf === nd;
-        });
-
-        if (!isInUsed && !isInFrequentlyUsed && !isInUntouchable) {
-          // Add debugging for files that are being marked as unused
-          console.log('🗑️ File marked as unused:', {
-            filePath: file.path,
-            frequentlyUsedDirs: [...frequentlyUsedDirectories],
-            isInFrequentlyUsed,
-            isInUntouchable,
-            isInUsed,
-            parentPath: file.parentPath,
-            size: file.size,
-            untouchableDirs: [...untouchableDirectories],
-            usedParentDirs: Object.keys(usedParentDirectories),
-          });
-          acc[file.parentPath] = file.size + (acc[file.parentPath] ?? 0);
-        }
-        return acc;
-      },
-      {},
+    const unusedParentDirectories = calculateUnusedParentDirectories(
+      cacheFiles,
+      usedParentDirectories,
+      frequentlyUsedDirectories,
+      untouchableDirectories,
     );
 
     // Calculate sizes
@@ -428,9 +636,7 @@ export const analyzeCacheFiles = async (): Promise<CacheAnalysis> => {
       (size, cacheFile) => size + cacheFile.size,
       0,
     );
-    const unusedCacheFoldersSize = Object.values(
-      unusedParentDirectories,
-    ).reduce((a, b) => a + b, 0);
+    const unusedCacheFoldersSize = sumRecordValues(unusedParentDirectories);
 
     return {
       allCacheFilesSize,
@@ -455,6 +661,56 @@ export const analyzeCacheFiles = async (): Promise<CacheAnalysis> => {
   }
 };
 
+/**
+ * Performs smart cache deletion (only unused directories)
+ */
+const performSmartDeletion = async (
+  filepaths: string[],
+  unusedParentDirectories: Record<string, number>,
+): Promise<{ bytesFreed: number; itemsDeleted: number }> => {
+  const results = await Promise.allSettled(filepaths.map((f) => remove(f)));
+
+  const itemsDeleted = countSuccessfulDeletions(results);
+  const bytesFreed = calculateBytesFreed(
+    results,
+    filepaths,
+    unusedParentDirectories,
+  );
+
+  return { bytesFreed, itemsDeleted };
+};
+
+/**
+ * Performs full cache deletion (all files)
+ */
+const performFullDeletion = async (
+  filepaths: string[],
+  cacheFiles: CacheFile[],
+): Promise<{ bytesFreed: number; itemsDeleted: number }> => {
+  const results = await Promise.allSettled(filepaths.map((f) => remove(f)));
+
+  const itemsDeleted = countSuccessfulDeletions(results);
+  const sizeByPath = buildFileSizeMap(cacheFiles);
+  const bytesFreed = calculateBytesFreed(results, filepaths, sizeByPath);
+
+  return { bytesFreed, itemsDeleted };
+};
+
+/**
+ * Cleans up empty directories after deletion
+ */
+const cleanupEmptyDirectories = async (
+  untouchableDirectories: Set<string>,
+): Promise<void> => {
+  try {
+    await Promise.allSettled(
+      [...untouchableDirectories].map((d) => removeEmptyDirs(d)),
+    );
+  } catch (error) {
+    errorCatcher(error);
+  }
+};
+
 export const deleteCacheFiles = async (
   type: 'all' | 'smart' = 'smart',
 ): Promise<{
@@ -475,69 +731,29 @@ export const deleteCacheFiles = async (
     console.log('[Cache] Filepaths to delete:', filepathsToDelete);
 
     // Delete cache files/directories
-    try {
-      const results = await Promise.allSettled(
-        filepathsToDelete.map((f) => remove(f)),
-      );
+    const deletionResult =
+      type === 'smart'
+        ? await performSmartDeletion(
+            filepathsToDelete,
+            analysis.unusedParentDirectories,
+          )
+        : await performFullDeletion(filepathsToDelete, analysis.cacheFiles);
 
-      // Calculate deleted count and bytes freed
-      const itemsDeleted = results.filter(
-        (r) => r.status === 'fulfilled',
-      ).length;
+    // Remove empty directories
+    await cleanupEmptyDirectories(analysis.untouchableDirectories);
 
-      let bytesFreed = 0;
-      if (type === 'smart') {
-        // Sum sizes for successfully deleted directories based on the analysis map
-        for (let i = 0; i < results.length; i++) {
-          if (results[i]?.status === 'fulfilled') {
-            const p = filepathsToDelete[i] as string;
-            if (typeof p === 'string') {
-              const sizeForDir = analysis.unusedParentDirectories[p] || 0;
-              bytesFreed += sizeForDir;
-            }
-          }
-        }
-      } else {
-        // Build a quick lookup for file sizes
-        const sizeByPath = new Map<string, number>();
-        for (const f of analysis.cacheFiles) {
-          sizeByPath.set(f.path, f.size || 0);
-        }
-        for (let i = 0; i < results.length; i++) {
-          if (results[i]?.status === 'fulfilled') {
-            const p = filepathsToDelete[i] as string;
-            if (typeof p === 'string') {
-              bytesFreed += sizeByPath.get(p) || 0;
-            }
-          }
-        }
-      }
-
-      // Remove empty directories
-      try {
-        await Promise.allSettled(
-          [...analysis.untouchableDirectories].map((d) => removeEmptyDirs(d)),
-        );
-      } catch (e) {
-        errorCatcher(e);
-      }
-
-      // Update lookup period if deleting all cache
-      if (type === 'all') {
-        console.log('[Cache] Updating lookup period (all cache cleared)');
-        updateLookupPeriod({ reset: true });
-      }
-      console.log('[Cache] Cleared successfully', {
-        bytesFreed,
-        itemsDeleted,
-        mode: type,
-      });
-
-      return { bytesFreed, itemsDeleted, mode: type };
-    } catch (e) {
-      errorCatcher(e);
-      throw e;
+    // Update lookup period if deleting all cache
+    if (type === 'all') {
+      console.log('[Cache] Updating lookup period (all cache cleared)');
+      updateLookupPeriod({ reset: true });
     }
+
+    console.log('[Cache] Cleared successfully', {
+      ...deletionResult,
+      mode: type,
+    });
+
+    return { ...deletionResult, mode: type };
   } catch (error) {
     errorCatcher(error);
     throw error;
