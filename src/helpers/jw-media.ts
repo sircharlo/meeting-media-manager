@@ -33,6 +33,7 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { exportAllDays } from 'src/helpers/export-media';
 import { getSubtitlesUrl, getThumbnailUrl } from 'src/helpers/fs';
 import { getMediaFromJwPlaylist, unzipJwpub } from 'src/helpers/mediaPlayback';
+import { updateLastUsedDate } from 'src/helpers/usage';
 import { fetchMediaItems, fetchPubMediaLinks, fetchRaw } from 'src/utils/api';
 import { convertImageIfNeeded } from 'src/utils/converters';
 import {
@@ -118,6 +119,11 @@ export const copyToDatedAdditionalMedia = async (
   const jwStore = useJwStore();
   const datedAdditionalMediaDir =
     await currentStateStore.getDatedAdditionalMediaDirectory();
+
+  await updateLastUsedDate(
+    datedAdditionalMediaDir,
+    currentStateStore.selectedDate,
+  );
 
   try {
     if (!filepathToCopy || !(await exists(filepathToCopy))) return '';
@@ -2672,6 +2678,10 @@ const downloadMissingMedia = async (
 ) => {
   try {
     const pubDir = await getPublicationDirectory(publication);
+    await updateLastUsedDate(
+      pubDir,
+      meetingDate || useCurrentStateStore().selectedDate,
+    );
     const responseObject = await getPubMediaLinks(publication, meetingDate);
     if (!responseObject?.files) {
       if (!(await pathExists(pubDir))) return { FilePath: '' };
@@ -2812,11 +2822,16 @@ export const downloadAdditionalRemoteVideo = async (
         ? bestItem.progressiveDownloadURL
         : bestItem.file.url;
 
+    const datedAdditionalMediaDir =
+      await currentStateStore.getDatedAdditionalMediaDirectory();
+
+    await updateLastUsedDate(
+      datedAdditionalMediaDir,
+      meetingDate || currentStateStore.selectedDate,
+    );
+
     const uniqueId = await addToAdditionMediaMapFromPath(
-      join(
-        await currentStateStore.getDatedAdditionalMediaDirectory(),
-        basename(bestItemUrl),
-      ),
+      join(datedAdditionalMediaDir, basename(bestItemUrl)),
       section,
       undefined,
       {
@@ -2831,7 +2846,7 @@ export const downloadAdditionalRemoteVideo = async (
     );
 
     downloadFileIfNeeded({
-      dir: await currentStateStore.getDatedAdditionalMediaDirectory(),
+      dir: datedAdditionalMediaDir,
       // Additional media added by user should be a high priority download
       lowPriority: false,
       meetingDate,
@@ -2952,6 +2967,7 @@ const downloadPubMediaFiles = async (publication: PublicationFetcher) => {
       );
 
     const dir = await getPublicationDirectory(publication);
+    await updateLastUsedDate(dir, new Date());
     const filteredMediaItemLinks: MediaLink[] = [];
     for (const mediaItemLink of mediaLinks) {
       const currentTrack = mediaItemLink.track;
@@ -3064,8 +3080,11 @@ const downloadJwpub = async (
       return handleDownloadError();
     }
 
+    const dir = await getPublicationDirectory(publication);
+    await updateLastUsedDate(dir, meetingDate || new Date());
+
     return await downloadFileIfNeeded({
-      dir: await getPublicationDirectory(publication),
+      dir,
       // High Priority (false) if meeting is Today or Tomorrow (diff <= 1)
       // Low Priority (true) if meeting is in the future (diff > 1)
       lowPriority: meetingDate

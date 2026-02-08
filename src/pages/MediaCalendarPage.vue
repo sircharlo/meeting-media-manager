@@ -1300,6 +1300,14 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             return;
           }
           console.log(
+            '🎯 [addToFiles] Updating last used date for publication',
+          );
+          await updateLastUsedDate(
+            publicationDirectory,
+            selectedDateObject.value?.date || new Date(),
+          );
+
+          console.log(
             '🎯 [addToFiles] Unzipping JWPUB to publication directory',
           );
           const unzipDir = await unzipJwpub(filepath, publicationDirectory);
