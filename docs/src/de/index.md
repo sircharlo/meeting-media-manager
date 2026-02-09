@@ -9,20 +9,19 @@ hero:
   actions:
     - theme: brand
       text: Herunterladen
-      link: /download
+      link: /de/download
     - theme: brand
       text: Über
       link: /de/about
     - theme: brand
       text: Benutzerhandbuch
-      link: /user-guide
+      link: /de/user-guide
     - theme: brand
       text: Einstellungs-Handbuch
-      link: /settings-guide
+      link: /de/settings-guide
     - theme: brand
       text: FAQ
-      link: /faq
-
+      link: /de/faq
 features:
   - icon: 🚀
     title: Automatische Medienverwaltung
