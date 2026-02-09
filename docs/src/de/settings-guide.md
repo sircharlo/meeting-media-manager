@@ -1,563 +1,563 @@
-# Settings Guide {#settings-guide}
+# Einstellungs-Handbuch {#settings-guide}
 
-This comprehensive guide explains all the settings available in M³, organized by category. Understanding these settings will help you configure M³ to work perfectly for your congregation's needs.
+Dieses umfassende Handbuch erklärt alle in M³ verfügbaren Einstellungen, organisiert nach Kategorien. Das Verständnis dieser Einstellungen hilft Ihnen, M³ so zu konfigurieren, dass es perfekt für die Bedürfnisse Ihrer Versammlung funktioniert.
 
-## Application Configuration {#application-configuration}
+## Anwendungskonfiguration {#application-configuration}
 
-### Display Language {#display-language}
+### Anzeigesprache {#display-language}
 
 <!-- **Setting**: `localAppLang` -->
 
-Choose the language for M³'s interface. This is independent of the language used for media downloads.
+Wählen Sie die Sprache für die M³-Oberfläche. Dies ist unabhängig von der für Medien-Downloads verwendeten Sprache.
 
-**Options**: All available interface languages (English, Spanish, French, etc.)
+**Optionen**: Alle verfügbaren Oberflächensprachen (Englisch, Spanisch, Französisch usw.)
 
-**Default**: English
+**Standard**: Englisch
 
-### Dark Mode {#dark-mode}
+### Dunkelmodus {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-Control the appearance theme of M³.
+Steuern Sie das Erscheinungsbild von M³.
 
-**Options**:
+**Optionen**:
 
-- Automatically switch based on system preference
-- Always use dark mode
-- Always use light mode
+- Automatisch basierend auf Systemeinstellungen wechseln
+- Immer Dunkelmodus verwenden
+- Immer Hellmodus verwenden
 
-**Default**: Auto
+**Standard**: Auto
 
-### First Day of Week {#first-day-of-week}
+### Erster Tag der Woche {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the calendar view.
+Legen Sie fest, welcher Tag in der Kalenderansicht als erster Tag der Woche betrachtet werden soll.
 
-**Options**: Sunday through Saturday
+**Optionen**: Sonntag bis Samstag
 
-**Default**: Sunday
+**Standard**: Sonntag
 
-### Date Format {#date-format}
+### Datumsformat {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
-Format used to display dates in the app.
+Format, das zum Anzeigen von Daten in der App verwendet wird.
 
-**Example**: D MMMM YYYY
+**Beispiel**: T MMMM JJJJ
 
-**Default**: D MMMM YYYY
+**Standard**: T MMMM JJJJ
 
-### Auto-Start at Login {#auto-start-at-login}
+### Automatischer Start bei Anmeldung {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-Automatically start M³ when the computer boots up.
+Starten Sie M³ automatisch, wenn der Computer hochfährt.
 
-**Default**: `false`
+**Standard**: `false`
 
-## Congregation Meetings {#congregation-meetings}
+## Zusammenkünfte {#congregation-meetings}
 
-### Congregation Name {#congregation-name}
+### Versammlungsname {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
-The name of your congregation. This is used for organization and display purposes.
+Der Name Ihrer Versammlung. Dieser wird zu Organisations- und Anzeigezwecken verwendet.
 
-**Default**: Empty (must be set during setup)
+**Standard**: Leer (muss während der Einrichtung festgelegt werden)
 
-### Meeting Language {#meeting-language}
+### Sprache der Zusammenkunft {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
-The primary language for media downloads. This should match the language used in your congregation's meetings.
+Die primäre Sprache für Medien-Downloads. Dies sollte der Sprache entsprechen, die in den Zusammenkünften Ihrer Versammlung verwendet wird.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Optionen**: Alle verfügbaren Sprachen von der offiziellen Website der Zeugen Jehovas
 
-**Default**: English (E)
+**Standard**: Englisch
 
-### Fallback Language {#fallback-language}
+### Ausweichsprache {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
-A secondary language to use when media isn't available in the primary language.
+Eine sekundäre Sprache, die verwendet wird, wenn Medien in der primären Sprache nicht verfügbar sind.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Optionen**: Alle verfügbaren Sprachen von der offiziellen Website der Zeugen Jehovas
 
-**Default**: None
+**Standard**: Keine
 
-### Midweek Meeting Day {#midweek-meeting-day}
+### Tag der Zusammenkunft unter der Woche {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-The day of the week when your midweek meeting is held.
+Der Wochentag, an dem Ihre Zusammenkunft unter der Woche stattfindet.
 
-**Options**: Sunday through Saturday
+**Optionen**: Sonntag bis Samstag
 
-**Default**: None (must be set during setup)
+**Standard**: Keine (muss während der Einrichtung festgelegt werden)
 
-### Midweek Meeting Time {#midweek-meeting-time}
+### Zeit der Zusammenkunft unter der Woche {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
-The start time of your midweek meeting.
+Die Startzeit Ihrer Zusammenkunft unter der Woche.
 
-**Format**: HH:MM (24-hour format)
+**Format**: HH:MM (24-Stunden-Format)
 
-**Default**: None (must be set during setup)
+**Standard**: Keine (muss während der Einrichtung festgelegt werden)
 
-### Weekend Meeting Day {#weekend-meeting-day}
+### Tag der Zusammenkunft am Wochenende {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-The day of the week when your weekend meeting is held.
+Der Wochentag, an dem Ihre Zusammenkunft am Wochenende stattfindet.
 
-**Options**: Sunday through Saturday
+**Optionen**: Sonntag bis Samstag
 
-**Default**: None (must be set during setup)
+**Standard**: Keine (muss während der Einrichtung festgelegt werden)
 
-### Weekend Meeting Time {#weekend-meeting-time}
+### Zeit der Zusammenkunft am Wochenende {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
-The start time of your weekend meeting.
+Die Startzeit Ihrer Zusammenkunft am Wochenende.
 
-**Format**: HH:MM (24-hour format)
+**Format**: HH:MM (24-Stunden-Format)
 
-**Default**: None (must be set during setup)
+**Standard**: Keine (muss während der Einrichtung festgelegt werden)
 
-### Circuit Overseer Week {#circuit-overseer-week}
+### Woche des Kreisaufsehers {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
-The week of the next circuit overseer's visit.
+Die Woche des nächsten Besuchs des Kreisaufsehers.
 
-**Format**: MM/DD/YYYY
+**Format**: MM/TT/JJJJ
 
-**Default**: None
+**Standard**: Keine
 
-### Memorial Date {#memorial-date}
+### Gedächtnismahl-Datum {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
-The date of the next Memorial celebration (beta feature).
+Das Datum der nächsten Gedächtnismahlfeier (Beta-Funktion).
 
-**Format**: MM/DD/YYYY
+**Format**: MM/TT/JJJJ
 
-**Default**: Automatically retrieved periodically
+**Standard**: Wird periodisch automatisch abgerufen
 
-### Meeting Schedule Changes {#meeting-schedule-changes}
+### Änderungen im Zusammenkunftsplan {#meeting-schedule-changes}
 
-These settings allow you to configure temporary changes to your meeting schedule:
+Diese Einstellungen ermöglichen es Ihnen, vorübergehende Änderungen an Ihrem Zusammenkunftsplan zu konfigurieren:
 
-- **Change Date**: When the change takes effect
-- **One-time Change**: Whether this is a permanent or temporary change
-- **New Midweek Day**: New day for midweek meeting
-- **New Midweek Time**: New time for midweek meeting
-- **New Weekend Day**: New day for weekend meeting
-- **New Weekend Time**: New time for weekend meeting
+- **Änderungsdatum**: Wann die Änderung in Kraft tritt
+- **Einmalige Änderung**: Ob dies eine dauerhafte oder vorübergehende Änderung ist
+- **Neuer Tag (unter der Woche)**: Neuer Tag für die Zusammenkunft unter der Woche
+- **Neue Zeit (unter der Woche)**: Neue Zeit für die Zusammenkunft unter der Woche
+- **Neuer Tag (Wochenende)**: Neuer Tag für die Zusammenkunft am Wochenende
+- **Neue Zeit (Wochenende)**: Neue Zeit für die Zusammenkunft am Wochenende
 
-## Media Retrieval and Playback {#media-retrieval-and-playback}
+## Medienabruf und -wiedergabe {#media-retrieval-and-playback}
 
-### Metered Connection {#metered-connection}
+### Getaktete Verbindung {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
-Enable this if you're on a limited data connection to reduce bandwidth usage.
+Aktivieren Sie dies, wenn Sie eine begrenzte Datenverbindung haben, um die Bandbreitennutzung zu reduzieren.
 
-**Default**: `false`
+**Standard**: `false`
 
-### Media Display {#media-display-button}
+### Medienanzeige {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-Enable the media display functionality. This is required to present media on a second monitor.
+Aktivieren Sie die Medienanzeigefunktionalität. Dies ist erforderlich, um Medien auf einem zweiten Monitor zu präsentieren.
 
-**Default**: `false`
+**Standard**: `false`
 
-#### Begin Playback Paused {#begin-playback-paused}
+#### Wiedergabe pausiert beginnen {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
-Start videos in a paused state when playback begins.
+Starten Sie Videos in einem pausierten Zustand, wenn die Wiedergabe beginnt.
 
-**Default**: `false`
+**Standard**: `false`
 
-### Background Music {#settings-guide-background-music}
+### Hintergrundmusik {#settings-guide-background-music}
 
-#### Enable Music {#enable-music-button}
+#### Musik aktivieren {#enable-music-button}
 
 <!-- **Setting**: `enableMusicButton` -->
 
-Enable background music functionality.
+Aktivieren Sie die Hintergrundmusikfunktionalität.
 
-**Default**: `true`
+**Standard**: `true`
 
-#### Auto-Start Music {#auto-start-music}
+#### Musik automatisch starten {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-Automatically start background music when M³ launches if appropriate.
+Starten Sie die Hintergrundmusik automatisch, wenn M³ gestartet wird, falls angemessen.
 
-**Default**: `true`
+**Standard**: `true`
 
-#### Meeting Stop Buffer {#meeting-stop-buffer}
+#### Stopp-Puffer für Zusammenkünfte {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
-How many seconds before meeting start time to stop background music.
+Wie viele Sekunden vor Beginn der Zusammenkunft die Hintergrundmusik gestoppt werden soll.
 
-**Range**: 0-300 seconds
+**Bereich**: 0-300 Sekunden
 
-**Default**: 60 seconds
+**Standard**: 60 Sekunden
 
-#### Music Volume {#music-volume}
+#### Musik-Lautstärke {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
-Volume level for background music (1-100%).
+Lautstärkepegel für Hintergrundmusik (1-100%).
 
-**Default**: 100%
+**Standard**: 100%
 
-### Cache Management {#cache-management}
+### Cache-Verwaltung {#cache-management}
 
-#### Enable Extra Cache {#enable-extra-cache}
+#### Extra-Cache aktivieren {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Enable additional caching for better performance.
+Aktivieren Sie zusätzliches Caching für eine bessere Leistung.
 
-**Default**: `false`
+**Standard**: `false`
 
-#### Cache Folder {#cache-folder}
+#### Cache-Ordner {#cache-folder}
 
 <!-- **Setting**: `cacheFolder` -->
 
-Custom location for storing cached media files.
+Benutzerdefinierter Speicherort zum Speichern zwischengespeicherter Mediendateien.
 
-**Default**: System default location
+**Standard**: Systemstandard
 
-#### Enable Cache Auto-Clear {#enable-cache-auto-clear}
+#### Automatisches Löschen des Caches aktivieren {#enable-cache-auto-clear}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
-Automatically clear old cached files to save disk space.
+Löschen Sie alte zwischengespeicherte Dateien automatisch, um Speicherplatz zu sparen.
 
-**Default**: `true`
+**Standard**: `true`
 
-### Folder Monitoring {#settings-guide-folder-monitoring}
+### Ordnerüberwachung {#settings-guide-folder-monitoring}
 
-#### Enable Folder Watcher {#enable-folder-watcher}
+#### Ordnerüberwachung aktivieren {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Monitor a folder for new media files and automatically add them to M³.
+Überwachen Sie einen Ordner auf neue Mediendateien und fügen Sie sie automatisch zu M³ hinzu.
 
-**Default**: `false`
+**Standard**: `false`
 
-#### Folder to Watch {#folder-to-watch}
+#### Zu überwachender Ordner {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder path to monitor for new media files.
+Der Ordnerpfad, der auf neue Mediendateien überwacht werden soll.
 
-**Default**: Empty
+**Standard**: Leer
 
-## Integrations {#integrations}
+## Integrationen {#integrations}
 
-### Zoom Integration {#settings-guide-zoom-integration}
+### Zoom-Integration {#settings-guide-zoom-integration}
 
-#### Enable Zoom {#enable-zoom}
+#### Zoom aktivieren {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
-Enable Zoom meeting integration features.
+Aktivieren Sie die Integrationsfunktionen für Zoom-Meetings.
 
-**Default**: `false`
+**Standard**: `false`
 
-#### Screen Share Shortcut {#screen-share-shortcut}
+#### Tastenkürzel für Bildschirmfreigabe {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
-Keyboard shortcut to trigger Zoom screen sharing.
+Tastenkürzel zum Auslösen der Zoom-Bildschirmfreigabe.
 
-**Default**: None
+**Standard**: Keine
 
-### OBS Studio Integration {#settings-guide-obs-integration}
+### OBS Studio-Integration {#settings-guide-obs-integration}
 
-#### Enable OBS {#enable-obs}
+#### OBS aktivieren {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
-Enable OBS Studio integration for automatic scene switching.
+Aktivieren Sie die OBS Studio-Integration für automatischen Szenenwechsel.
 
-**Default**: `false`
+**Standard**: `false`
 
-:::warning Important Note
+:::warning Wichtiger Hinweis
 
-**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Audiokonfiguration erforderlich**: Die OBS Studio-Integration verarbeitet nur die Bildschirmfreigabe. Audio von M³-Medien wird bei Verwendung von OBS Studio **nicht automatisch** an Zoom-Teilnehmer übertragen. Sie müssen die "Originalton"-Einstellungen von Zoom konfigurieren oder "Computerton teilen" verwenden, um sicherzustellen, dass die Teilnehmer der Zusammenkunft die Medien hören können. Siehe das [Benutzerhandbuch](/user-guide#audio-configuration) für detaillierte Anweisungen zur Audioeinrichtung.
 
-**Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
+**Hinweis**: Die Zoom-Integration verwendet die native Bildschirmfreigabe von Zoom, die Audio nahtloser verarbeitet als die OBS Studio-Integration.
 
 :::
 
-#### OBS Port {#obs-port}
+#### OBS-Port {#obs-port}
 
 <!-- **Setting**: `obsPort` -->
 
-The port number for connecting to OBS Studio WebSocket.
+Die Portnummer für die Verbindung zum OBS Studio WebSocket.
 
-**Default**: None
+**Standard**: Keine
 
-#### OBS Password {#obs-password}
+#### OBS-Passwort {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
-The password for OBS Studio WebSocket connection.
+Das Passwort für die OBS Studio WebSocket-Verbindung.
 
-**Default**: None
+**Standard**: Keine
 
-#### OBS Scenes {#obs-scenes}
+#### OBS-Szenen {#obs-scenes}
 
-Configure which OBS scenes to use for different purposes:
+Konfigurieren Sie, welche OBS-Szenen für verschiedene Zwecke verwendet werden sollen:
 
-- **Camera Scene**: Scene showing the camera/lectern
-- **Media Scene**: Scene for displaying media
-- **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
+- **Kamera-Szene**: Szene, die die Kamera/das Rednerpult zeigt
+- **Medien-Szene**: Szene zum Anzeigen von Medien
+- **Bilder-Szene**: Szene zum Anzeigen von Bildern (zum Beispiel eine Bild-in-Bild-Szene, die sowohl Medien als auch den Redner zeigt)
 
-#### OBS Advanced Options {#obs-advanced-options}
+#### Erweiterte OBS-Optionen {#obs-advanced-options}
 
-- **Postpone Images**: Delay sharing images to OBS until manually triggered
-- **Quick Toggle**: Enable quick on/off toggle for OBS integration
-- **Switch Scene After Media**: Automatically return to previous scene after media
-- **Remember Previous Scene**: Remember and restore the previous scene
-- **Hide Icons**: Hide OBS-related icons in the interface
+- **Bilder aufschieben**: Verzögern Sie das Teilen von Bildern mit OBS, bis es manuell ausgelöst wird
+- **Schnellumschalter**: Aktivieren Sie den schnellen Ein-/Ausschalter für die OBS-Integration
+- **Szene nach Medien wechseln**: Kehren Sie nach Medien automatisch zur vorherigen Szene zurück
+- **Vorherige Szene merken**: Merken Sie sich die vorherige Szene und stellen Sie sie wieder her
+- **Symbole ausblenden**: Blenden Sie OBS-bezogene Symbole in der Benutzeroberfläche aus
 
-:::warning Important Note
+:::warning Wichtiger Hinweis
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Audiokonfiguration erforderlich**: Die OBS Studio-Integration verarbeitet nur Video-/Szenenwechsel. Audio von M³-Medien wird **nicht automatisch** an Zoom oder OBS übertragen. Der Videostream funktioniert wie eine virtuelle Kamera ohne Ton, genau wie eine Webcam. Sie müssen die "Originalton"-Einstellungen von Zoom konfigurieren oder "Computerton teilen" verwenden, um sicherzustellen, dass die Teilnehmer der Zusammenkunft die Medien hören können. Siehe das [Benutzerhandbuch](/user-guide#audio-configuration) für detaillierte Anweisungen zur Audioeinrichtung.
 
-**Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
+**Alternative**: Ziehen Sie in Betracht, stattdessen die Zoom-Integration zu verwenden, da diese die native Bildschirmfreigabe von Zoom verwendet, die Audio nahtloser verarbeitet.
 
 :::
 
-### Custom Events {#custom-events}
+### Benutzerdefinierte Ereignisse {#custom-events}
 
-#### Enable Custom Events {#enable-custom-events}
+#### Benutzerdefinierte Ereignisse aktivieren {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+Aktivieren Sie benutzerdefinierte Kürzel, die ausgelöst werden, wenn ein bestimmtes Ereignis erkannt wird (z. B. Medien werden abgespielt, pausiert oder gestoppt).
 
-**Default**: `false`
+**Standard**: `false`
 
-#### Custom Event Shortcuts {#custom-event-shortcuts}
+#### Tastenkürzel für benutzerdefinierte Ereignisse {#custom-event-shortcuts}
 
-##### Play Media Shortcut {#custom-event-media-play-shortcut}
+##### Medienwiedergabe-Kürzel {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
-Shortcut that is triggered when media is played.
+Kürzel, das ausgelöst wird, wenn Medien abgespielt werden.
 
-**Default**: None
+**Standard**: Keine
 
-##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+##### Medienpause-Kürzel {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
-Shortcut that is triggered when media is paused.
+Kürzel, das ausgelöst wird, wenn Medien pausiert werden.
 
-**Default**: None
+**Standard**: Keine
 
-##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+##### Medienstopp-Kürzel {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
-Shortcut that is triggered when media is stopped.
+Kürzel, das ausgelöst wird, wenn Medien gestoppt werden.
 
-**Default**: None
+**Standard**: Keine
 
-##### Last Song Shortcut {#custom-event-last-song-shortcut}
+##### Letztes Lied-Kürzel {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-Shortcut that is triggered when the last song is played during a meeting.
+Kürzel, das ausgelöst wird, wenn das letzte Lied während einer Zusammenkunft gespielt wird.
 
-**Default**: None
+**Standard**: Keine
 
-## Advanced Settings {#advanced-settings}
+## Erweiterte Einstellungen {#advanced-settings}
 
-### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
+### Tastenkürzel {#settings-guide-keyboard-shortcuts}
 
-#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
+#### Tastenkürzel aktivieren {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-Enable customizable keyboard shortcuts for media control.
+Aktivieren Sie anpassbare Tastenkürzel für die Mediensteuerung.
 
-**Default**: `false`
+**Standard**: `false`
 
-#### Media Control Shortcuts {#media-control-shortcuts}
+#### Mediensteuerungs-Tastenkürzel {#media-control-shortcuts}
 
-Configure shortcuts for media playback:
+Konfigurieren Sie Kürzel für die Medienwiedergabe:
 
-- **Media Window**: Open/close media window
-- **Previous Media**: Go to previous media item
-- **Next Media**: Go to next media item
-- **Pause/Resume**: Pause or resume media playback
-- **Stop Media**: Stop media playback
-- **Music Toggle**: Toggle background music
+- **Medienfenster**: Medienfenster öffnen/schließen
+- **Vorheriges Medium**: Zum vorherigen Medienelement gehen
+- **Nächstes Medium**: Zum nächsten Medienelement gehen
+- **Pause/Fortsetzen**: Medienwiedergabe pausieren oder fortsetzen
+- **Medien stoppen**: Medienwiedergabe stoppen
+- **Musik umschalten**: Hintergrundmusik umschalten
 
-### Media Display {#media-display}
+### Medienanzeige {#media-display}
 
-#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+#### Überblendungen für Medienfenster aktivieren {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-Enable fade-in/out transitions when showing or hiding the media window.
+Aktivieren Sie Ein-/Ausblendübergänge beim Anzeigen oder Ausblenden des Medienfensters.
 
-**Default**: `true`
+**Standard**: `true`
 
-#### Hide Media Logo {#hide-media-logo}
+#### Medienlogo ausblenden {#hide-media-logo}
 
 <!-- **Setting**: `hideMediaLogo` -->
 
-Hide the logo in the media window.
+Blenden Sie das Logo im Medienfenster aus.
 
-**Default**: `false`
+**Standard**: `false`
 
-#### Maximum Resolution {#maximum-resolution}
+#### Maximale Auflösung {#maximum-resolution}
 
 <!-- **Setting**: `maxRes` -->
 
-Maximum resolution for downloaded media files.
+Maximale Auflösung für heruntergeladene Mediendateien.
 
-**Options**: 240p, 360p, 480p, 720p
+**Optionen**: 240p, 360p, 480p, 720p
 
-**Default**: 720p
+**Standard**: 720p
 
-#### Include Printed Media {#include-printed-media}
+#### Gedruckte Medien einbeziehen {#include-printed-media}
 
 <!-- **Setting**: `includePrinted` -->
 
-Include media from the printed publications in media downloads.
+Schließen Sie Medien aus den gedruckten Publikationen in Medien-Downloads ein.
 
-**Default**: `true`
+**Standard**: `true`
 
-#### Exclude Footnotes {#exclude-footnotes}
+#### Fußnoten ausschließen {#exclude-footnotes}
 
 <!-- **Setting**: `excludeFootnotes` -->
 
-Exclude footnote images from media downloads when possible.
+Schließen Sie Fußnotenbilder nach Möglichkeit aus Medien-Downloads aus.
 
-**Default**: `false`
+**Standard**: `false`
 
-#### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
+#### Medien aus der Lehren-Broschüre ausschließen {#exclude-theocratic-ministry-school}
 
 <!-- **Setting**: `excludeTh` -->
 
-Exclude media from the Teaching (th) brochure from media downloads.
+Schließen Sie Medien aus der Lehren-Broschüre (th) aus Medien-Downloads aus.
 
-**Default**: `true`
+**Standard**: `true`
 
-### Subtitles {#subtitles}
+### Untertitel {#subtitles}
 
-#### Enable Subtitles {#enable-subtitles}
+#### Untertitel aktivieren {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
-Enable subtitle support for media playback.
+Aktivieren Sie die Untertitelunterstützung für die Medienwiedergabe.
 
-**Default**: `false`
+**Standard**: `false`
 
-#### Subtitle Language {#subtitle-language}
+#### Untertitelsprache {#subtitle-language}
 
 <!-- **Setting**: `langSubtitles` -->
 
-Language for subtitles (can be different from media language).
+Sprache für Untertitel (kann von der Mediensprache abweichen).
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Optionen**: Alle verfügbaren Sprachen von der offiziellen Website der Zeugen Jehovas
 
-**Default**: None
+**Standard**: Keine
 
-### Media Export {#settings-guide-media-export}
+### Medienexport {#settings-guide-media-export}
 
-#### Enable Media Auto-Export {#enable-media-auto-export}
+#### Automatischen Medienexport aktivieren {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-Automatically export media files to a specified folder.
+Exportieren Sie Mediendateien automatisch in einen angegebenen Ordner.
 
-**Default**: `false`
+**Standard**: `false`
 
-#### Media Export Folder {#media-export-folder}
+#### Medienexport-Ordner {#media-export-folder}
 
 <!-- **Setting**: `mediaAutoExportFolder` -->
 
-Folder path where media files will be automatically exported.
+Ordnerpfad, in dem Mediendateien automatisch exportiert werden.
 
-**Default**: Empty
+**Standard**: Leer
 
-#### Convert Files to MP4 {#convert-files-to-mp4}
+#### Dateien in MP4 konvertieren {#convert-files-to-mp4}
 
-**Setting**: `convertFilesToMp4`
+**Einstellung**: `convertFilesToMp4`
 
-Convert exported media files to MP4 format for better compatibility.
+Konvertieren Sie exportierte Mediendateien in das MP4-Format für eine bessere Kompatibilität.
 
-**Default**: `false`
+**Standard**: `false`
 
-### Danger Zone {#danger-zone}
+### Gefahrenzone {#danger-zone}
 
 :::warning Warnung
 
-These settings should only be changed if you understand their implications.
+Diese Einstellungen sollten nur geändert werden, wenn Sie ihre Auswirkungen verstehen.
 
 :::
 
-#### Base URL {#base-url}
+#### Basis-URL {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
-Base domain used to download publications and media.
+Basisdomäne, die zum Herunterladen von Publikationen und Medien verwendet wird.
 
-**Default**: `jw.org`
+**Standard**: `jw.org`
 
-#### Disable Media Fetching {#disable-media-fetching}
+#### Medienabruf deaktivieren {#disable-media-fetching}
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
+Deaktivieren Sie automatische Medien-Downloads vollständig. Verwenden Sie dies nur für Profile, die für Sonderveranstaltungen oder andere benutzerdefinierte Setups verwendet werden.
 
-**Default**: `false`
+**Standard**: `false`
 
-## Tips for Optimal Configuration {#configuration-tips}
+## Tipps für eine optimale Konfiguration {#configuration-tips}
 
-### For New Users {#new-users}
+### Für neue Benutzer {#new-users}
 
-1. Start with the setup wizard to configure basic settings
-2. Enable "Media Display Button" to access presentation features
-3. Configure your meeting schedule accurately
-4. Set up OBS integration if you use hybrid meetings
+1. Beginnen Sie mit dem Einrichtungsassistenten, um grundlegende Einstellungen zu konfigurieren
+2. Aktivieren Sie die "Medienanzeige-Taste", um auf Präsentationsfunktionen zuzugreifen
+3. Konfigurieren Sie Ihren Zusammenkunftsplan genau
+4. Richten Sie die OBS-Integration ein, wenn Sie hybride Zusammenkünfte nutzen
 
-### For Advanced Users {#advanced-users}
+### Für fortgeschrittene Benutzer {#advanced-users}
 
-1. Use folder monitoring to sync media from cloud storage
-2. Enable media auto-export for backup purposes
-3. Configure keyboard shortcuts for efficient operation
-4. Configure Zoom integration for automatic screen sharing
+1. Verwenden Sie die Ordnerüberwachung, um Medien aus dem Cloud-Speicher zu synchronisieren
+2. Aktivieren Sie den automatischen Medienexport für Sicherungszwecke
+3. Konfigurieren Sie Tastenkürzel für einen effizienten Betrieb
+4. Konfigurieren Sie die Zoom-Integration für automatische Bildschirmfreigabe
 
-### Performance Optimization {#performance-optimization}
+### Leistungsoptimierung {#performance-optimization}
 
-1. Enable extra cache for better performance
-2. Use appropriate maximum resolution for your needs
-3. Configure cache auto-clear to manage disk space
-4. Consider metered connection setting if on limited bandwidth
+1. Aktivieren Sie Extra-Cache für eine bessere Leistung
+2. Verwenden Sie die für Ihre Bedürfnisse geeignete maximale Auflösung
+3. Konfigurieren Sie das automatische Löschen des Caches, um Speicherplatz zu verwalten
+4. Ziehen Sie die Einstellung für getaktete Verbindungen in Betracht, wenn die Bandbreite begrenzt ist
 
-### Troubleshooting {#settings-guide-troubleshooting}
+### Fehlerbehebung {#settings-guide-troubleshooting}
 
-- If media isn't downloading, check your meeting schedule settings
-- If OBS integration isn't working, verify port and password settings
-- If performance is slow, try enabling extra cache or reducing resolution
-- If you're having language issues, check both interface and media language settings
-- If Zoom participants can't hear media audio, configure Zoom's Original Audio settings or use "Share Computer Sound"
-- **Tip**: Consider using Zoom integration instead of OBS Studio for simpler audio handling
+- Wenn Medien nicht heruntergeladen werden, überprüfen Sie Ihre Zusammenkunftsplan-Einstellungen
+- Wenn die OBS-Integration nicht funktioniert, überprüfen Sie die Port- und Passworteinstellungen
+- Wenn die Leistung langsam ist, versuchen Sie, Extra-Cache zu aktivieren oder die Auflösung zu reduzieren
+- Wenn Sie Sprachprobleme haben, überprüfen Sie sowohl die Oberflächen- als auch die Medienspracheinstellungen
+- Wenn Zoom-Teilnehmer das Medien-Audio nicht hören können, konfigurieren Sie die "Originalton"-Einstellungen von Zoom oder verwenden Sie "Computerton teilen"
+- **Tipp**: Ziehen Sie in Betracht, die Zoom-Integration anstelle von OBS Studio für eine einfachere Audiohandhabung zu verwenden
