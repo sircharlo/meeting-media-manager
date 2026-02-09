@@ -53,7 +53,7 @@ export const triggerZoomScreenShare = (startSharing: boolean) => {
         triggerFocusMediaWindow(' (immediate)');
 
         // Schedule additional focus attempts to handle unpredictable timing
-        const focusDelays = [50, 250, 500, 1000];
+        const focusDelays = [500, 1000];
         focusDelays.forEach((delay) => {
           setTimeout(() => {
             triggerFocusMediaWindow(
