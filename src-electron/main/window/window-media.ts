@@ -377,7 +377,7 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
       mediaWindowInfo.mediaWindow,
       screens,
     );
-    const isCurrentlyFullscreen = mediaWindowInfo.mediaWindow.isFullScreen();
+    const isCurrentlyFullscreen = boundsInfo.isEffectivelyFullscreen;
 
     // Update window properties
     const windowState = getMediaWindowState(
@@ -399,10 +399,7 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
       return; // Already positioned on single screen
     }
 
-    console.log('🔍 [moveMediaWindow] START - Called with:', {
-      displayNr,
-      fullscreen,
-    });
+    console.log('🔍 [moveMediaWindow] Called');
 
     lastAlwaysOnTop = lastStateRef.alwaysOnTop;
     lastMaximizable = lastStateRef.maximizable;
@@ -445,16 +442,14 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
     // Validate and adjust target to prevent conflicts
     targetInfo = validateAndAdjustTarget(targetInfo, screens);
 
-    console.log('🔍 [moveMediaWindow] Final target:', targetInfo);
-
     // Apply the changes
     setWindowPosition(targetInfo.targetDisplayNr, targetInfo.targetFullscreen);
-
-    console.log('🔍 [moveMediaWindow] END - Changes applied');
   } catch (e) {
     captureElectronError(e, {
       contexts: { fn: { name: 'moveMediaWindow' } },
     });
+  } finally {
+    notifyMainWindowAboutScreenOrWindowChange();
   }
 };
 
@@ -524,13 +519,6 @@ export function createMediaWindow() {
       currentBounds.y + currentBounds.height <=
         screenBounds.y + screenBounds.height;
 
-    console.log('🔍 [createMediaWindow] Window position check:', {
-      currentBounds,
-      isSmallerThanScreen,
-      isWithinScreenBounds,
-      screenBounds,
-    });
-
     // Only reposition if window is not already properly positioned
     if (!isWithinScreenBounds || !isSmallerThanScreen) {
       console.log(
@@ -559,14 +547,6 @@ export function createMediaWindow() {
 
       mediaWindowInfo.mediaWindow.setBounds({
         height: windowedHeight,
-        width: windowedWidth,
-        x,
-        y,
-      });
-
-      console.log('🔍 [createMediaWindow] Set windowed bounds:', {
-        height: windowedHeight,
-        scale,
         width: windowedWidth,
         x,
         y,
@@ -761,9 +741,6 @@ export function fadeOutMediaWindow(duration = 300): Promise<void> {
 }
 
 const notifyMainWindowAboutScreenOrWindowChange = throttleWithTrailing(() => {
-  console.log(
-    '🔍 [notifyMainWindowAboutScreenOrWindowChange] Sending screenChange event',
-  );
   sendToWindow(mainWindowInfo.mainWindow, 'screenChange');
 }, 250);
 
@@ -781,10 +758,6 @@ function loadMediaWindowPrefs(): null | WindowState {
       );
       return null;
     }
-    console.log(
-      '🔍 [loadMediaWindowPrefs] Loading prefs from:',
-      mediaWindowStateFile,
-    );
     return readJsonSync(mediaWindowStateFile);
   } catch (e) {
     let fileContent: null | string = null;
@@ -810,11 +783,6 @@ function loadMediaWindowPrefs(): null | WindowState {
 let isMovingWindow = false;
 
 const setWindowPosition = (displayNr?: number, fullscreen = true) => {
-  console.log('🔍 [setWindowPosition] START - Called with:', {
-    displayNr,
-    fullscreen,
-  });
-
   if (isMovingWindow) {
     console.log('🔍 [setWindowPosition] Already moving window, skipping');
     return;
@@ -840,41 +808,26 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
     }
 
     const targetScreenBounds = targetDisplay.bounds;
-    console.log(
-      '🔍 [setWindowPosition] Target screen bounds:',
-      targetScreenBounds,
-    );
 
     const setWindowBounds = (
       bounds: Partial<Electron.Rectangle>,
       fullScreen = false,
     ) => {
-      console.log('🔍 [setWindowBounds] START - Called with:', {
-        bounds,
-        fullScreen,
-      });
-
       if (!mediaWindowInfo.mediaWindow) {
         console.log('❌ [setWindowBounds] No mediaWindow, returning');
         isMovingWindow = false;
-        return;
+        return false;
       }
 
       // Get current state
       const currentBounds = mediaWindowInfo.mediaWindow.getBounds();
-      const wasFullscreen = mediaWindowInfo.mediaWindow.isFullScreen();
-      console.log('🔍 [setWindowBounds] Current state:', {
+      const wasFullscreen = isWindowEffectivelyFullscreen(
         currentBounds,
-        wasFullscreen,
-      });
+        targetScreenBounds,
+      );
 
       // Set fullscreen state first if needed
-      if (wasFullscreen === fullScreen) {
-        console.log(
-          '🔍 [setWindowBounds] Fullscreen state unchanged:',
-          fullScreen,
-        );
-      } else {
+      if (wasFullscreen !== fullScreen) {
         console.log(
           '🔍 [setWindowBounds] Changing fullscreen state:',
           wasFullscreen,
@@ -894,43 +847,31 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
       if (boundsChanged) {
         console.log('🔍 [setWindowBounds] Setting bounds:', bounds);
         mediaWindowInfo.mediaWindow.setBounds(bounds);
-      } else {
-        console.log(
-          '🔍 [setWindowBounds] Bounds already correct, skipping setBounds',
-        );
-      }
-
-      // Verify the changes
-      const newBounds = mediaWindowInfo.mediaWindow.getBounds();
-      const newFullscreen = mediaWindowInfo.mediaWindow.isFullScreen();
-      console.log('🔍 [setWindowBounds] New state:', {
-        newBounds,
-        newFullscreen,
-      });
-
-      if (
-        boundsChanged ||
-        wasFullscreen !== fullScreen ||
-        currentBounds.height === 0 // Force update if window was just created/shown
-      ) {
-        notifyMainWindowAboutScreenOrWindowChange();
-      } else {
-        console.log(
-          '🔍 [setWindowBounds] No meaningful change, skipping renderer notification',
-        );
       }
 
       // Focus media window
       focusMediaWindow();
 
-      console.log('🔍 [setWindowBounds] END - Changes applied');
       isMovingWindow = false;
     };
 
     const handleMacFullScreenTransition = (callback: () => void) => {
+      if (!mediaWindowInfo.mediaWindow) {
+        console.log(
+          '❌ [handleMacFullScreenTransition] No mediaWindow, returning',
+        );
+        return;
+      }
+      const boundsInfo = getWindowBoundsInfo(
+        mediaWindowInfo.mediaWindow,
+        screens,
+      );
       if (
         PLATFORM === 'darwin' &&
-        mediaWindowInfo.mediaWindow?.isFullScreen()
+        isWindowEffectivelyFullscreen(
+          boundsInfo.currentBounds,
+          boundsInfo.screenBounds,
+        )
       ) {
         console.log(
           '🔍 [handleMacFullScreenTransition] macOS fullscreen transition needed',
@@ -943,31 +884,15 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
         });
         mediaWindowInfo.mediaWindow?.setFullScreen(false);
       } else {
-        console.log(
-          '🔍 [handleMacFullScreenTransition] No transition needed, executing callback immediately',
-        );
         callback();
       }
     };
 
     if (fullscreen) {
-      console.log('🔍 [setWindowPosition] Going fullscreen');
       handleMacFullScreenTransition(() => {
         setWindowBounds(targetScreenBounds, true);
-        try {
-          console.log(
-            '🔍 [setWindowPosition] Preferred display geometry will be saved shortly',
-            targetDisplay.bounds,
-          );
-        } catch (e) {
-          captureElectronError(e, {
-            contexts: { fn: { name: 'setWindowPosition.savePrefs' } },
-          });
-        }
       });
     } else {
-      console.log('🔍 [setWindowPosition] Going windowed');
-
       // Calculate windowed bounds (HD_RESOLUTION)
       const newBounds = (() => {
         const maxWidth = Math.min(
@@ -998,15 +923,6 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
             Math.floor((targetScreenBounds.height - height) / 2),
         };
 
-        console.log('🔍 [setWindowPosition] Calculated windowed bounds:', {
-          bounds,
-          maxHeight,
-          maxWidth,
-          scale,
-          scaleX,
-          scaleY,
-        });
-
         return bounds;
       })();
 
@@ -1014,8 +930,6 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
         setWindowBounds(newBounds, false);
       });
     }
-
-    console.log('🔍 [setWindowPosition] END - All changes queued');
   } catch (err) {
     isMovingWindow = false;
     captureElectronError(err, {
