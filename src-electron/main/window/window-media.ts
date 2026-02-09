@@ -349,19 +349,15 @@ function validateAndAdjustTarget(
 }
 
 // =============================================================================
-// MAIN FUNCTION - Refactored
+// MAIN FUNCTION
 // =============================================================================
 
 let lastAlwaysOnTop: boolean | undefined;
 let lastMaximizable: boolean | undefined;
 let lastScreensConfig = '';
+let hasInitialPositioningHappened = false;
 
 export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
-  console.log('🔍 [moveMediaWindow] START - Called with:', {
-    displayNr,
-    fullscreen,
-  });
-
   try {
     // Early exit validation
     if (!mediaWindowInfo.mediaWindow || !mainWindowInfo.mainWindow) {
@@ -398,6 +394,16 @@ export const moveMediaWindow = (displayNr?: number, fullscreen?: boolean) => {
       windowState,
       lastStateRef,
     );
+
+    if (screens.length === 1 && hasInitialPositioningHappened) {
+      return; // Already positioned on single screen
+    }
+
+    console.log('🔍 [moveMediaWindow] START - Called with:', {
+      displayNr,
+      fullscreen,
+    });
+
     lastAlwaysOnTop = lastStateRef.alwaysOnTop;
     lastMaximizable = lastStateRef.maximizable;
 
@@ -476,11 +482,12 @@ export function createMediaWindow() {
 
   // Create the browser window
   mediaWindowInfo.mediaWindow = createWindow('media', {
-    alwaysOnTop: true, // Always on top by default
+    alwaysOnTop: false, // Not always on top by default
     backgroundColor: 'black',
     frame: false,
     height: HD_RESOLUTION[1],
     icon: getIconPath('media-player'),
+    maximizable: false, // Not maximizable by default
     minHeight: 110,
     minWidth: 195,
     opacity: 1,
@@ -574,6 +581,8 @@ export function createMediaWindow() {
   mediaWindowInfo.mediaWindow.on('closed', () => {
     mediaWindowInfo.mediaWindow = null;
   });
+
+  hasInitialPositioningHappened = true;
 }
 
 /**
@@ -1024,9 +1033,17 @@ export function focusMediaWindow() {
       mediaWindowInfo.mediaWindow &&
       !mediaWindowInfo.mediaWindow.isDestroyed()
     ) {
-      console.log('🔍 [focusMediaWindow] Focusing media window');
-      mediaWindowInfo.mediaWindow.show();
-      mediaWindowInfo.mediaWindow.focus();
+      const screens = getAllScreens();
+      if (screens.length > 1) {
+        console.log('🔍 [focusMediaWindow] Focusing media window');
+        mediaWindowInfo.mediaWindow.show();
+        mediaWindowInfo.mediaWindow.focus();
+      } else {
+        console.log(
+          '🔍 [focusMediaWindow] Single screen, showing inactive to prevent focus steal',
+        );
+        mediaWindowInfo.mediaWindow.showInactive();
+      }
     } else {
       console.log(
         '🔍 [focusMediaWindow] Media window not available for focusing',
