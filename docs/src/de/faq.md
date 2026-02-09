@@ -2,7 +2,7 @@
 
 ## General Questions {#general-questions}
 
-### :earth_americas: Hängt diese Anwendung von externen Seiten, Quellen oder "Kuratoren" ab, um Publikationen, Versammlungsmedien oder andere Inhalte herunterzuladen? {#external-dependencies}
+### :earth_americas: Hängt diese Anwendung von externen Seiten, Quellen oder "Kuratoren" ab, um Publikationen, Zusammenkunftsmedien oder andere Inhalte herunterzuladen? {#external-dependencies}
 
 **Nein.** Die Anwendung funktioniert ähnlich wie JW Library. Sie lädt Publikationen, Medien und andere Inhalte direkt von der offiziellen Website der Zeugen Jehovas und deren Content-Delivery-Netzwerk herunter. Die Anwendung bestimmt automatisch, was heruntergeladen werden muss und wann zuvor heruntergeladene Inhalte nicht mehr aktuell sind und erneut heruntergeladen werden sollten.
 
@@ -14,322 +14,322 @@ Der Quellcode dieser Anwendung ist für jedermann einsehbar, um zu überprüfen,
 
 ### :thinking: Verstößt diese Anwendung gegen die Nutzungsbedingungen der offiziellen Website der Zeugen Jehovas? {#terms-of-use}
 
-**Nein.** Die [Nutzungsbedingungen](https://www.jw.org/finder?docid=1011511\&prefer=content) der offiziellen Website der Zeugen Jehovas erlauben tatsächlich ausdrücklich die Art der Nutzung, die wir hier betreiben. Hier ist der relevante Auszug aus diesen Bedingungen (hervorgehoben):
+**Nein.** Die [Nutzungsbedingungen](https://www.jw.org/finder?docid=1011511&prefer=content) der offiziellen Website der Zeugen Jehovas erlauben tatsächlich ausdrücklich die Art der Nutzung, die wir hier betreiben. Hier ist der relevante Auszug aus diesen Bedingungen (hervorgehoben):
 
 > Sie dürfen nicht:
 >
 > Software-Anwendungen, Werkzeuge oder Techniken erstellen, die speziell dazu dienen, Daten, HTML, Bilder oder Texte von dieser Seite zu sammeln, zu kopieren, herunterzuladen, zu extrahieren, zu ernten oder zu scrapen. (Dazu zählt nicht die Verbreitung von kostenfreien, nicht kommerziellen Anwendungen, die entwickelt wurden, um elektronische Dateien vom öffentlichen Bereich dieser Website herunterzuladen — zum Beispiel EPUB-, PDF-, MP3- und MP4-Dateien.)
 
-### :question: What operating systems does M³ support? {#operating-systems}
+### :question: Welche Betriebssysteme unterstützt M³? {#operating-systems}
 
-M³ supports Windows, macOS, and Linux:
+M³ unterstützt Windows, macOS und Linux:
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 und neuer (64-Bit- und 32-Bit-Versionen verfügbar)
+- **macOS**: macOS 10.15 (Catalina) und neuer (Intel- und Apple Silicon-Unterstützung)
+- **Linux**: Die meisten modernen Linux-Distrubutionen (AppImage-Format)
 
-### :globe_with_meridians: Does M³ work in my language? {#language-support}
+### :globe_with_meridians: Funktioniert M³ in meiner Sprache? {#language-support}
 
-**Yes!** M³ provides comprehensive multi-language support:
+**Ja!** M³ bietet umfassende Mehrsprachenunterstützung:
 
-- **Media**: Download media in any of hundreds of languages available on the official website of Jehovah's Witnesses
-- **App Interface**: Use M³'s interface in many different languages
-- **Independent Settings**: You can use the interface in one language while downloading media in another
-- **Fallback languages**: Configure fallback languages for when media isn't available in the primary language
-- **Subtitle support**: Download and display subtitles in various languages
+- **Medien**: Laden Sie Medien in einer von Hunderten von Sprachen herunter, die auf der offiziellen Website der Zeugen Jehovas verfügbar sind
+- **App-Oberfläche**: Verwenden Sie die M³-Oberfläche in vielen verschiedenen Sprachen
+- **Unabhängige Einstellungen**: Sie können die Oberfläche in einer Sprache verwenden, während Sie Medien in einer anderen herunterladen
+- **Ausweichsprachen**: Konfigurieren Sie Ausweichsprachen für den Fall, dass Medien in der primären Sprache nicht verfügbar sind
+- **Untertitelunterstützung**: Laden Sie Untertitel in verschiedenen Sprachen herunter und zeigen Sie sie an
 
-## Installation and Setup {#installation-setup}
+## Installation und Einrichtung {#installation-setup}
 
-### :computer: How do I download and install M³? {#installation}
+### :computer: Wie lade ich M³ herunter und installiere es? {#installation}
 
-Download the appropriate version from the [Download page](download) and follow the steps in the [User Guide](user-guide).
+Laden Sie die entsprechende Version von der [Download-Seite](download) herunter und befolgen Sie die Schritte im [Benutzerhandbuch](user-guide).
 
-### :gear: How do I set up M³ for the first time? {#first-time-setup}
+### :gear: Wie richte ich M³ zum ersten Mal ein? {#first-time-setup}
 
-M³ includes a setup wizard that guides you through the essential configuration:
+M³ enthält einen Einrichtungsassistenten, der Sie durch die wesentliche Konfiguration führt:
 
-1. Choose your interface language
-2. Select profile type (Regular or Other)
-3. Configure congregation information
-4. Set up meeting schedule
-5. Configure optional features like OBS integration
+1. Wählen Sie Ihre Oberflächensprache
+2. Wählen Sie den Profiltyp (Regulär oder Sonstiges)
+3. Konfigurieren Sie die Versammlungsinformationen
+4. Richten Sie den Zusammenkunftsplan ein
+5. Konfigurieren Sie optionale Funktionen wie die OBS-Integration
 
-## Media Management {#faq-media-management}
+## Medienverwaltung {#faq-media-management}
 
-### :desktop_computer: How does M³ download media? {#media-download}
+### :desktop_computer: Wie lädt M³ Medien herunter? {#media-download}
 
-M³ automatically downloads media for upcoming meetings by:
+M³ lädt Medien für anstehende Zusammenkünfte automatisch herunter, indem es:
 
-1. Checking your meeting schedule
-2. Determining what media is needed
-3. Downloading from the official website of Jehovah's Witnesses in your selected language
-4. Organizing media by date and meeting type
-5. Caching files for offline use
+1. Ihren Zusammenkunftsplan überprüft
+2. Bestimmt, welche Medien benötigt werden
+3. Von der offiziellen Website der Zeugen Jehovas in Ihrer ausgewählten Sprache herunterlädt
+4. Medien nach Datum und Zusammenkunftstyp organisiert
+5. Dateien für die Offline-Nutzung zwischenspeichert
 
-### :calendar: Can I download media for specific dates? {#specific-dates}
+### :calendar: Kann ich Medien für bestimmte Daten herunterladen? {#specific-dates}
 
-Yes! M³ allows you to:
+Ja! M³ ermöglicht Ihnen:
 
-- Download media for upcoming meetings automatically
-- Import custom media for any date
+- Medien für anstehende Zusammenkünfte automatisch herunterzuladen
+- Benutzerdefinierte Medien für jedes Datum zu importieren
 
-### {#faq-media-export} :file_folder: What is media auto-export?
+### {#faq-media-export} :file_folder: Was ist der automatische Medienexport? :file_folder: What is media auto-export?
 
-You can import custom media in several ways:
+Sie können benutzerdefinierte Medien auf verschiedene Arten importieren:
 
-- **File Import**: Use the import button to add videos, images, or audio files
-- **Drag and Drop**: Drag files directly into M³
-- **Folder Monitoring**: Set up a watched folder for automatic imports
-- **JWPUB Files and Playlists**: Import publications and playlists
+- **Dateiimport**: Verwenden Sie die Import-Schaltfläche, um Videos, Bilder oder Audiodateien hinzuzufügen
+- **Drag & Drop**: Ziehen Sie Dateien direkt in M³
+- **Ordnerüberwachung**: Richten Sie einen überwachten Ordner für automatische Importe ein
+- **JWPUB-Dateien und Wiedergabelisten**: Importieren Sie Publikationen und Wiedergabelisten
 
-### :speaker: Can I import audio Bible recordings? {#audio-bible}
+### :speaker: Kann ich Audio-Bibelaufnahmen importieren? {#audio-bible}
 
-Yes! M³ includes an Audio Bible feature that allows you to:
+Ja! M³ enthält eine Audio-Bibel-Funktion, mit der Sie:
 
-1. Select Bible books and chapters
-2. Choose specific verses or verse ranges
-3. Download audio recordings
-4. Use them at the meetings
+1. Bibelbücher und -kapitel auswählen können
+2. Bestimmte Verse oder Versbereiche auswählen können
+3. Audioaufnahmen herunterladen können
+4. Sie bei den Zusammenkünften verwenden können
 
-## Presentation Features {#faq-presentation-features}
+## Präsentationsfunktionen {#faq-presentation-features}
 
-### :tv: How do I present media during meetings? {#present-media}
+### :tv: Wie präsentiere ich Medien während der Zusammenkünfte? {#present-media}
 
-To present media:
+Um Medien zu präsentieren:
 
-1. Select the date
-2. Click the play button on the media item you want to present or use keyboard shortcuts
-3. Use the media player controls to pause, navigate, or stop playback
-4. Use zoom/pan features for images
-5. Set custom timing if needed
+1. Wählen Sie das Datum aus
+2. Klicken Sie auf die Wiedergabetaste des Medienelements, das Sie präsentieren möchten, oder verwenden Sie Tastenkürzel
+3. Verwenden Sie die Medienplayer-Steuerelemente zum Pausieren, Navigieren oder Stoppen der Wiedergabe
+4. Verwenden Sie Zoom-/Schwenkfunktionen für Bilder
+5. Legen Sie bei Bedarf eine benutzerdefinierte Zeitsteuerung fest
 
-### :keyboard: What keyboard shortcuts are available? {#faq-keyboard-shortcuts}
+### :keyboard: Welche Tastenkürzel sind verfügbar? {#faq-keyboard-shortcuts}
 
-M³ supports customizable keyboard shortcuts for:
+M³ unterstützt anpassbare Tastenkürzel für:
 
-- Opening/closing media window
-- Previous/next media navigation
-- Play/pause/stop controls
-- Background music toggle
+- Öffnen/Schließen des Medienfensters
+- Vorherige/Nächste Mediennavigation
+- Wiedergabe/Pause/Stopp-Steuerung
+- Hintergrundmusik umschalten
 
 <!-- - Fullscreen mode -->
 
-### :notes: How does background music work? {#faq-background-music}
+### :notes: Wie funktioniert die Hintergrundmusik? {#faq-background-music}
 
-Background music features include:
+Die Hintergrundmusikfunktionen umfassen:
 
-- Automatic playback when M³ starts, before the meeting begins
-- Automatic stop before meetings begin
-- One-click restart after meetings
-- Independent volume control
-- Configurable stop buffer time
+- Automatische Wiedergabe, wenn M³ vor Beginn der Zusammenkunft startet
+- Automatischer Stopp vor Beginn der Zusammenkünfte
+- Neustart mit einem Klick nach den Zusammenkünften
+- Unabhängige Lautstärkeregelung
+- Konfigurierbare Stopp-Pufferzeit
 
-### :video_camera: How do I set up the Zoom integration? {#zoom-setup}
+### :video_camera: Wie richte ich die Zoom-Integration ein? {#zoom-setup}
 
-To integrate with Zoom:
+So integrieren Sie Zoom:
 
-1. Enable Zoom integration in M³ settings
-2. Configure the screen sharing shortcut that is set up in Zoom. Ensure that shortcut is "global" in Zoom's settings.
-3. M³ will automatically start and stop Zoom screen sharing during media presentations
+1. Aktivieren Sie die Zoom-Integration in den M³-Einstellungen
+2. Konfigurieren Sie das Tastenkürzel für die Bildschirmfreigabe, das in Zoom eingerichtet ist. Stellen Sie sicher, dass dieses Kürzel in den Zoom-Einstellungen "global" ist.
+3. M³ startet und stoppt die Zoom-Bildschirmfreigabe automatisch während Medienpräsentationen
 
-## OBS Studio Integration {#faq-obs-integration}
+## OBS Studio-Integration {#faq-obs-integration}
 
-### :video_camera: How do I set up the OBS Studio integration? {#faq-obs-setup}
+### :video_camera: Wie richte ich die OBS Studio-Integration ein? {#faq-obs-setup}
 
-To integrate with OBS Studio:
+So integrieren Sie OBS Studio:
 
-1. Install OBS Studio and the WebSocket plugin
-2. Enable OBS integration in M³ settings
-3. Enter the OBS port and password
-4. Configure scenes for camera, media, and images
-5. Test playback
+1. Installieren Sie OBS Studio und das WebSocket-Plugin
+2. Aktivieren Sie die OBS-Integration in den M³-Einstellungen
+3. Geben Sie den OBS-Port und das Passwort ein
+4. Konfigurieren Sie Szenen für Kamera, Medien und Bilder
+5. Testen Sie die Wiedergabe
 
-### :arrows_counterclockwise: How does automatic scene switching work? {#faq-scene-switching}
+### :arrows_counterclockwise: Wie funktioniert der automatische Szenenwechsel? {#faq-scene-switching}
 
-M³ automatically switches OBS scenes based on:
+M³ wechselt automatisch OBS-Szenen basierend auf:
 
-- Media type (video, image, etc.)
-- Your scene configuration
-- Settings like "Postpone Images"
-- Whether to return to previous scene after media
+- Medientyp (Video, Bild usw.)
+- Ihrer Szenenkonfiguration
+- Einstellungen wie "Bilder aufschieben"
+- Ob nach dem Medium zur vorherigen Szene zurückgekehrt werden soll
 
-### :pause_button: What is the "Postpone Images" feature? {#faq-postpone-images}
+### :pause_button: Was ist die Funktion "Bilder aufschieben"? {#faq-postpone-images}
 
-This feature delays sharing images to OBS until you manually trigger them. This is useful for:
+Diese Funktion verzögert das Teilen von Bildern mit OBS, bis Sie sie manuell auslösen. Dies ist nützlich für:
 
-- Showing images to in-person audience first
-- Having more control over timing
-- Avoiding premature scene changes
+- Das Zeigen von Bildern zuerst für das anwesende Publikum
+- Mehr Kontrolle über das Timing
+- Vermeidung vorzeitiger Szenenwechsel
 
-## Advanced Features {#faq-advanced-features}
+## Erweiterte Funktionen {#faq-advanced-features}
 
-### :cloud: How does folder monitoring work? {#faq-folder-monitoring}
+### :cloud: Wie funktioniert die Ordnerüberwachung? {#faq-folder-monitoring}
 
-Folder monitoring allows you to:
+Die Ordnerüberwachung ermöglicht Ihnen:
 
-1. Select a folder to watch for new files
-2. Automatically import new media files that are synced with cloud storage like Dropbox or OneDrive
+1. Einen Ordner auszuwählen, der auf neue Dateien überwacht werden soll
+2. Neue Mediendateien automatisch zu importieren, die mit Cloud-Speichern wie Dropbox oder OneDrive synchronisiert werden
 
-### :open_file_folder: How do I import my own media files? {#import-media}
+### :open_file_folder: Wie importiere ich meine eigenen Mediendateien? {#import-media}
 
-Media auto-export automatically:
+Der automatische Medienexport führt automatisch folgendes aus:
 
-1. Exports media files to a specified folder
-2. Organizes files by date and section
-3. Converts files to MP4 format (optional)
-4. Maintains an organized backup of meeting media files
+1. Exportiert Mediendateien in einen angegebenen Ordner
+2. Organisiert Dateien nach Datum und Abschnitt
+3. Konvertiert Dateien in das MP4-Format (optional)
+4. Pflegt eine organisierte Sicherung von Zusammenkunftsmediendateien
 
-### :family: Can I manage multiple congregations? {#faq-multiple-congregations}
+### :family: Kann ich mehrere Versammlungen verwalten? {#faq-multiple-congregations}
 
-Yes! M³ supports multiple profiles for:
+Ja! M³ unterstützt mehrere Profile für:
 
-- Different congregations
-- Special events
-- Different groups
-- Separate settings and media for each
+- Verschiedene Versammlungen
+- Sonderveranstaltungen
+- Verschiedene Gruppen
+- Separate Einstellungen und Medien für jede
 
-## Troubleshooting {#faq-troubleshooting}
+## Fehlerbehebung {#faq-troubleshooting}
 
-### :warning: Media isn't downloading. What should I check? {#faq-media-not-downloading}
+### :warning: Die Medien werden nicht heruntergeladen. Was soll ich überprüfen? {#faq-media-not-downloading}
 
-Check these common issues:
+Überprüfen Sie diese häufigen Probleme:
 
-1. **Meeting Schedule**: Verify your meeting days and times are correct
-2. **Language Settings**: Ensure your media language is set correctly
-3. **Internet Connection**: Check your internet connection
-4. **Language Availability**: Verify media is available in your selected language
+1. **Zusammenkunftsplan**: Überprüfen Sie, ob Ihre Zusammenkunftstage und -zeiten korrekt sind
+2. **Spracheinstellungen**: Stellen Sie sicher, dass Ihre Mediensprache korrekt eingestellt ist
+3. **Internetverbindung**: Überprüfen Sie Ihre Internetverbindung
+4. **Sprachverfügbarkeit**: Überprüfen Sie, ob Medien in Ihrer ausgewählten Sprache verfügbar sind
 
 <!-- 5. **Manual Refresh**: Try manually refreshing to check for new media -->
 
-### :video_camera: The OBS integration isn't working. What should I verify? {#faq-obs-not-working}
+### :video_camera: Die OBS-Integration funktioniert nicht. Was soll ich überprüfen? {#faq-obs-not-working}
 
-Check these OBS-related issues:
+Überprüfen Sie diese OBS-bezogenen Probleme:
 
-1. **OBS Installation**: Ensure OBS Studio is installed and running
-2. **WebSocket Plugin**: Verify the WebSocket plugin is installed
-3. **Port and Password**: Check your OBS port and password settings
-4. **Firewall**: Ensure the firewall isn't blocking the connection
+1. **OBS-Installation**: Stellen Sie sicher, dass OBS Studio installiert ist und läuft
+2. **WebSocket-Plugin**: Überprüfen Sie, ob das WebSocket-Plugin installiert ist
+3. **Port und Passwort**: Überprüfen Sie Ihre OBS-Port- und Passworteinstellungen
+4. **Firewall**: Stellen Sie sicher, dass die Firewall die Verbindung nicht blockiert
 
-### :speaker: Does Meeting Media Manager automatically send the media audio to Zoom when using OBS Studio? {#audio-to-zoom}
+### :speaker: Sendet der Meeting Media Manager das Medien-Audio automatisch an Zoom, wenn OBS Studio verwendet wird? {#audio-to-zoom}
 
-**No.** M³ does not automatically send media audio to Zoom or OBS Studio. The video stream works like a virtual camera with no sound, just like a webcam. To have the music/video sound available in Zoom automatically, you need to ensure that Zoom 'hears' the audio feed coming from the computer, and then you should enable the **Original Audio** setting in Zoom.
+**Nein.** M³ sendet kein Medien-Audio automatisch an Zoom oder OBS Studio. Der Videostream funktioniert wie eine virtuelle Kamera ohne Ton, genau wie eine Webcam. Damit der Musik-/Videoton in Zoom automatisch verfügbar ist, müssen Sie sicherstellen, dass Zoom den Audio-Feed vom Computer "hört", und dann sollten Sie die Einstellung **Originalton** in Zoom aktivieren.
 
-**Important Notes:**
+**Wichtige Hinweise:**
 
-- You must enable Original Audio **every time** before starting a Zoom meeting
-- This setting is not related to M³ - you would face the same audio issue when using any other media player and not using Zoom's screen and audio sharing features
-- The Original Audio setting has three sub-options - typically the first two should be enabled and the third disabled for optimal audio quality
-- If you're still experiencing audio issues, you may need to use Zoom's "Share Computer Sound" option instead
-- Alternatively, look into using the Zoom integration instead, as it uses Zoom's native screen sharing.
+- Sie müssen den Originalton **jedes Mal** aktivieren, bevor Sie ein Zoom-Meeting starten
+- Diese Einstellung hat nichts mit M³ zu tun - Sie hätten das gleiche Audioproblem, wenn Sie einen anderen Medienplayer verwenden und nicht die Bildschirm- und Audiofreigabefunktionen von Zoom nutzen würden
+- Die Einstellung "Originalton" hat drei Unteroptionen - typischerweise sollten die ersten beiden aktiviert und die dritte deaktiviert sein, um eine optimale Audioqualität zu gewährleisten
+- Wenn Sie immer noch Audioprobleme haben, müssen Sie möglicherweise stattdessen die Option "Computerton teilen" von Zoom verwenden
+- Alternativ können Sie die Zoom-Integration in Betracht ziehen, da diese die native Bildschirmfreigabe von Zoom verwendet.
 
-**Why is this necessary?**
-M³ plays media with sound on your computer, but this audio is not automatically transmitted through the video stream to Zoom when using OBS Studio. The Original Audio setting allows Zoom to capture the audio playing on your computer during screen sharing, if your computer is configured properly (for example: the computer has a second sound card that is used for media playback which Zoom listens to as a microphone.)
+**Warum ist das notwendig?**
+M³ spielt Medien mit Ton auf Ihrem Computer ab, aber dieser Ton wird nicht automatisch über den Videostream an Zoom übertragen, wenn OBS Studio verwendet wird. Die Einstellung "Originalton" ermöglicht es Zoom, das auf Ihrem Computer abgespielte Audio während der Bildschirmfreigabe aufzunehmen, wenn Ihr Computer richtig konfiguriert ist (zum Beispiel: der Computer hat eine zweite Soundkarte, die für die Medienwiedergabe verwendet wird und die Zoom als Mikrofon abhört).
 
-### :snail: M³ is running slowly. How can I improve performance? {#performance-issues}
+### :snail: M³ läuft langsam. Wie kann ich die Leistung verbessern? {#performance-issues}
 
-Try these performance optimizations:
+Versuchen Sie diese Leistungsoptimierungen:
 
-1. **Enable Extra Cache**: Turn on additional caching in settings
-2. **Close Other Apps**: Close unnecessary applications
-3. **Check Disk Space**: Ensure you have sufficient free disk space
-4. **Reduce Resolution**: Lower the maximum resolution setting
+1. **Extra-Cache aktivieren**: Schalten Sie zusätzliches Caching in den Einstellungen ein
+2. **Andere Apps schließen**: Schließen Sie unnötige Anwendungen
+3. **Speicherplatz prüfen**: Stellen Sie sicher, dass Sie genügend freien Speicherplatz haben
+4. **Auflösung reduzieren**: Verringern Sie die Einstellung für die maximale Auflösung
 
-### :speech_balloon: I'm having language issues. What should I check? {#faq-language-issues}
+### :speech_balloon: Ich habe Sprachprobleme. Was soll ich überprüfen? {#faq-language-issues}
 
-Verify these language settings:
+Überprüfen Sie diese Spracheinstellungen:
 
-1. **Interface Language**: Check your display language setting
-2. **Media Language**: Verify your media download language
-3. **Language Availability**: Ensure the media language is available on the official website of Jehovah's Witnesses
-4. **Fallback Language**: Try setting a fallback language
+1. **Oberflächensprache**: Überprüfen Sie Ihre Einstellung für die Anzeigesprache
+2. **Mediensprache**: Überprüfen Sie Ihre Download-Sprache für Medien
+3. **Sprachverfügbarkeit**: Stellen Sie sicher, dass die Mediensprache auf der offiziellen Website der Zeugen Jehovas verfügbar ist
+4. **Ausweichsprache**: Versuchen Sie, eine Ausweichsprache einzustellen
 
-## Support and Community {#support-community}
+## Support und Community {#support-community}
 
-### :radioactive: How do I report an issue? {#how-do-i-report-an-issue}
+### :radioactive: Wie melde ich ein Problem? {#how-do-i-report-an-issue}
 
-Please [file an issue](https://github.com/sircharlo/meeting-media-manager/issues) on the official GitHub repository. Include:
+Bitte [reichen Sie ein Problem ein](https://github.com/sircharlo/meeting-media-manager/issues) im offiziellen GitHub-Repository. Geben Sie an:
 
-- Detailed description of the problem
-- Steps to reproduce the issue
-- Your operating system and M³ version
-- Any error messages, logs and screenshots
+- Detaillierte Beschreibung des Problems
+- Schritte zum Reproduzieren des Problems
+- Ihr Betriebssystem und M³-Version
+- Alle Fehlermeldungen, Protokolle und Screenshots
 
-### :new: How can I request a new feature or enhancement? {#how-can-i-request-a-new-feature-or-enhancement}
+### :new: Wie kann ich eine neue Funktion oder Verbesserung anfordern? {#how-can-i-request-a-new-feature-or-enhancement}
 
-Please [open a discussion](https://github.com/sircharlo/meeting-media-manager/discussions) on the official GitHub repository. Describe:
+Bitte [eröffnen Sie eine Diskussion](https://github.com/sircharlo/meeting-media-manager/discussions) im offiziellen GitHub-Repository. Beschreiben Sie:
 
-- The feature you'd like to see
-- How it would benefit users
-- Any specific requirements or preferences
+- Die Funktion, die Sie sehen möchten
+- Wie sie den Benutzern zugute kommen würde
+- Alle spezifischen Anforderungen oder Präferenzen
 
-### :handshake: How can I contribute some code? {#how-can-i-contribute-some-code}
+### :handshake: Wie kann ich Code beisteuern? {#how-can-i-contribute-some-code}
 
-Please [see the contributing guide](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) on the official GitHub repository. We welcome code contributions and Pull Requests!
+Bitte [lesen Sie den Leitfaden für Mitwirkende](https://github.com/sircharlo/meeting-media-manager/blob/master/CONTRIBUTING.md) im offiziellen GitHub-Repository. Wir begrüßen Code-Beiträge und Pull Requests!
 
-### :globe_with_meridians: How can I help with translations? {#translations}
+### :globe_with_meridians: Wie kann ich bei den Übersetzungen helfen? {#translations}
 
-M³ uses Crowdin for translation management. You can contribute translations by:
+M³ verwendet Crowdin für das Übersetzungsmanagement. Sie können Übersetzungen beitragen, indem Sie:
 
-1. Visiting the [Crowdin project](https://crowdin.com/project/meeting-media-manager)
-2. Selecting your language
-3. Translating strings that need work
-4. Reviewing existing translations
+1. Das [Crowdin-Projekt](https://crowdin.com/project/meeting-media-manager) besuchen
+2. Ihre Sprache auswählen
+3. Zeichenfolgen übersetzen, die Arbeit erfordern
+4. Bestehende Übersetzungen überprüfen
 
-### :x: Can I make a donation to the project? {#can-i-make-a-donation-to-the-project}
+### :x: Kann ich für das Projekt spenden? {#can-i-make-a-donation-to-the-project}
 
-Thank you for your interest in supporting the project! However, in the spirit of Matthew 10:8, donations are **not** accepted and never will be. This app was made with love and a little spare time. Please enjoy! :tada:
+Vielen Dank für Ihr Interesse, das Projekt zu unterstützen! Im Geiste von Matthäus 10:8 werden Spenden jedoch **nicht** angenommen und werden es auch nie. Diese App wurde mit Liebe und ein wenig Freizeit erstellt. Bitte genießen Sie sie! :tada:
 
-:::tip :book: Matthew 10:8
+:::tip :book: Matthäus 10:8
 
-"You received free, give free."
+"Kostenfrei habt ihr bekommen, kostenfrei gebt."
 
 :::
 
-## Technical Questions {#technical-questions}
+## Technische Fragen {#technical-questions}
 
-### :computer: What hardware and software requirements does M³ have? {#hardware-and-software-requirements}
+### :computer: Welche Hardware- und Softwareanforderungen hat M³? {#hardware-and-software-requirements}
 
-M³ is designed to work on a wide range of operating systems:
+M³ ist so konzipiert, dass es auf einer Vielzahl von Betriebssystemen funktioniert:
 
-- **Windows**: Windows 10 and later (64-bit and 32-bit versions available)
-- **macOS**: macOS 10.15 (Catalina) and later (Intel and Apple Silicon support)
-- **Linux**: Most modern Linux distributions (AppImage format)
+- **Windows**: Windows 10 und neuer (64-Bit- und 32-Bit-Versionen verfügbar)
+- **macOS**: macOS 10.15 (Catalina) und neuer (Intel- und Apple Silicon-Unterstützung)
+- **Linux**: Die meisten modernen Linux-Distrubutionen (AppImage-Format)
 
-M³ has the following hardware requirements:
+M³ hat die folgenden Hardwareanforderungen:
 
-- **Minimum**: 4GB RAM, 6GB free disk space
-- **Recommended**: 8GB RAM, 15GB free disk space for media caching
-- **Network**: Internet connection for media downloads
+- **Minimum**: 4 GB RAM, 6 GB freier Speicherplatz
+- **Empfohlen**: 8 GB RAM, 15 GB freier Speicherplatz für Medien-Caching
+- **Netzwerk**: Internetverbindung für Medien-Downloads
 
-Depending on the features you use, M³ also requires the following additional software:
+Je nach den Funktionen, die Sie verwenden, benötigt M³ auch die folgende zusätzliche Software:
 
-- **Zoom**: Required only if using Zoom integration features
-- **OBS Studio**: Required only if using OBS integration features
+- **Zoom**: Nur erforderlich, wenn Zoom-Integrationsfunktionen verwendet werden
+- **OBS Studio**: Nur erforderlich, wenn OBS-Integrationsfunktionen verwendet werden
 
-### :floppy_disk: How much disk space does M³ use? {#disk-space}
+### :floppy_disk: Wie viel Speicherplatz benötigt M³? {#disk-space}
 
-Disk space usage depends on:
+Der Speicherplatzbedarf hängt ab von:
 
-- **Media Resolution**: Higher resolutions use more space
-- **Cached Content**: Media files are cached locally
-- **Extra Cache**: Additional caching can increase usage
-- **Exported Media**: Auto-export features use additional space
+- **Medienauflösung**: Höhere Auflösungen benötigen mehr Platz
+- **Zwischengespeichertem Inhalt**: Mediendateien werden lokal zwischengespeichert
+- **Extra-Cache**: Zusätzliches Caching kann die Nutzung erhöhen
+- **Exportierten Medien**: Auto-Export-Funktionen benötigen zusätzlichen Platz
 
-Typical usage ranges from 2-10GB depending on settings and usage.
+Die typische Nutzung liegt zwischen 2 und 10 GB, je nach Einstellungen und Nutzung.
 
-### :shield: Is M³ secure and private? {#security-privacy}
+### :shield: Ist M³ sicher und privat? {#security-privacy}
 
-Yes! M³ is designed with security and privacy in mind:
+Ja! M³ wurde mit Blick auf Sicherheit und Privatsphäre entwickelt:
 
-- **Local Storage**: All meeting data is stored locally on your computer
-- **Direct Downloads**: Media is downloaded directly from the official website of Jehovah's Witnesses
-- **Open Source**: The code is open for review and verification
-- **Bug Reports**: Limited data may be collected for bug reporting purposes
+- **Lokale Speicherung**: Alle Versammlungsdaten werden lokal auf Ihrem Computer gespeichert
+- **Direkte Downloads**: Medien werden direkt von der offiziellen Website der Zeugen Jehovas heruntergeladen
+- **Open Source**: Der Code ist offen für Überprüfung und Verifizierung
+- **Fehlerberichte**: Für Fehlerberichterstattungszwecke können begrenzte Daten gesammelt werden
 
-### :arrows_clockwise: How often does M³ check for updates? {#update-frequency}
+### :arrows_clockwise: Wie oft sucht M³ nach Updates? {#update-frequency}
 
-M³ checks for updates:
+M³ sucht nach Updates:
 
-- **Application Updates**: Automatically checks for new versions every time the app is opened
-- **Media Updates**: Automatically checks for new meeting media every time the app is opened
-- **Language Updates**: Dynamic detection of new languages as needed
+- **Anwendungs-Updates**: Sucht bei jedem Öffnen der App automatisch nach neuen Versionen
+- **Medien-Updates**: Sucht bei jedem Öffnen der App automatisch nach neuen Zusammenkunftsmedien
+- **Sprach-Updates**: Dynamische Erkennung neuer Sprachen nach Bedarf
