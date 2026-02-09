@@ -1030,25 +1030,27 @@ const setWindowPosition = (displayNr?: number, fullscreen = true) => {
 export function focusMediaWindow() {
   try {
     if (
-      mediaWindowInfo.mediaWindow &&
-      !mediaWindowInfo.mediaWindow.isDestroyed()
+      !mediaWindowInfo.mediaWindow ||
+      mediaWindowInfo.mediaWindow.isDestroyed()
     ) {
-      const screens = getAllScreens();
-      if (screens.length > 1) {
-        console.log('🔍 [focusMediaWindow] Focusing media window');
-        mediaWindowInfo.mediaWindow.show();
-        mediaWindowInfo.mediaWindow.focus();
-      } else {
-        console.log(
-          '🔍 [focusMediaWindow] Single screen, showing inactive to prevent focus steal',
-        );
-        mediaWindowInfo.mediaWindow.showInactive();
-      }
-    } else {
       console.log(
         '🔍 [focusMediaWindow] Media window not available for focusing',
       );
+      return;
     }
+
+    const screens = getAllScreens();
+    if (screens.length === 1) {
+      console.log(
+        '🔍 [focusMediaWindow] Single screen, showing inactive to prevent focus steal',
+      );
+      mediaWindowInfo.mediaWindow.showInactive();
+      return;
+    }
+
+    console.log('🔍 [focusMediaWindow] Focusing media window');
+    mediaWindowInfo.mediaWindow.show();
+    mediaWindowInfo.mediaWindow.focus();
   } catch (err) {
     captureElectronError(err, {
       contexts: { fn: { name: 'focusMediaWindow' } },
