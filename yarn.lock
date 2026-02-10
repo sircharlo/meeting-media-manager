@@ -11093,7 +11093,7 @@ __metadata:
     require-in-the-middle: "npm:^8.0.1"
     rollup-plugin-visualizer: "npm:^6.0.5"
     sanitize-filename: "npm:^1.6.3"
-    type-fest: "npm:^5.4.3"
+    type-fest: "npm:^5.4.4"
     typescript: "npm:~5.9.3"
     upath: "npm:^2.0.1"
     vite: "npm:^7.3.1"
@@ -15315,12 +15315,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^5.4.3":
-  version: 5.4.3
-  resolution: "type-fest@npm:5.4.3"
+"type-fest@npm:^5.4.4":
+  version: 5.4.4
+  resolution: "type-fest@npm:5.4.4"
   dependencies:
     tagged-tag: "npm:^1.0.0"
-  checksum: 10c0/daea168fbd24db08d0a616254d18b8b454f40be48fbe1c546693c367f65b2040a3507c5b0f8e19397633aa93f552dba38c39f8c730696a3eb07cd6fba8380b09
+  checksum: 10c0/bf9c6d7df5383fd720aac71da8ce8690ff1c554459d19cf3c72d61eac98255dba57abe20c628f91f4116f66211791462fdafa90b2be2d7405a5a4c295e4d849d
   languageName: node
   linkType: hard
 
