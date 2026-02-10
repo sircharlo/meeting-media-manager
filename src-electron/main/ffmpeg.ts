@@ -7,6 +7,116 @@ const { changeExt } = upath;
 
 const conversionQueue = new Map<string, Promise<string>>();
 
+const shouldUseExistingConversion = async (
+  originalFile: string,
+  convertedFilePath: string,
+): Promise<boolean> => {
+  if (!(await pathExists(convertedFilePath))) {
+    return false;
+  }
+
+  const sourceStats = await stat(originalFile);
+  const destStats = await stat(convertedFilePath);
+
+  return destStats.mtimeMs > sourceStats.mtimeMs && destStats.size > 0;
+};
+
+const convertAudioToVideo = async (
+  ffmpegPath: string,
+  originalFile: string,
+  convertedFilePath: string,
+): Promise<void> => {
+  const { default: ffmpeg } = await import('fluent-ffmpeg');
+  ffmpeg.setFfmpegPath(ffmpegPath);
+
+  await new Promise<void>((resolve, reject) => {
+    ffmpeg(originalFile)
+      .noVideo()
+      .save(convertedFilePath)
+      .on('end', () => resolve())
+      .on('error', (err) => reject(err));
+  });
+};
+
+const convertImageToVideo = async (
+  ffmpegPath: string,
+  originalFile: string,
+  convertedFilePath: string,
+): Promise<void> => {
+  const { default: ffmpeg } = await import('fluent-ffmpeg');
+  ffmpeg.setFfmpegPath(ffmpegPath);
+
+  const { imageSizeFromFile } = await import('image-size/fromFile');
+  const { height, orientation, width } = await imageSizeFromFile(originalFile);
+
+  const adjustedDimensions = getAdjustedDimensions(width, height, orientation);
+  const convertedDimensions = resize(
+    adjustedDimensions.width,
+    adjustedDimensions.height,
+    getMaxWidth(adjustedDimensions),
+    getMaxHeight(adjustedDimensions),
+  );
+
+  if (!convertedDimensions) {
+    throw new Error('Could not determine dimensions of image.');
+  }
+
+  await new Promise<void>((resolve, reject) => {
+    ffmpeg(originalFile)
+      .inputOptions('-loop 1')
+      .inputFormat('image2')
+      .videoCodec('libx264')
+      .size(`${convertedDimensions.width}x${convertedDimensions.height}`)
+      .loop(5)
+      .outputOptions('-pix_fmt', 'yuv420p')
+      .outputOptions('-r', '30')
+      .save(convertedFilePath)
+      .on('end', () => resolve())
+      .on('error', (err) => reject(err));
+  });
+};
+
+const getAdjustedDimensions = (
+  width: number | undefined,
+  height: number | undefined,
+  orientation: number | undefined,
+): { height: number; width: number } => {
+  if (!width || !height) {
+    throw new Error('Could not determine dimensions of image.');
+  }
+
+  const shouldSwapDimensions = orientation && orientation >= 5;
+  return shouldSwapDimensions
+    ? { height: width, width: height }
+    : { height, width };
+};
+
+const getMaxWidth = (dimensions: {
+  height: number;
+  width: number;
+}): number | undefined => {
+  const aspectRatio = FULL_HD.height / FULL_HD.width;
+  const imageAspectRatio = dimensions.height / dimensions.width;
+
+  if (aspectRatio <= imageAspectRatio) {
+    return Math.min(FULL_HD.width, dimensions.width);
+  }
+  return undefined;
+};
+
+const getMaxHeight = (dimensions: {
+  height: number;
+  width: number;
+}): number | undefined => {
+  const aspectRatio = FULL_HD.height / FULL_HD.width;
+  const imageAspectRatio = dimensions.height / dimensions.width;
+
+  if (aspectRatio > imageAspectRatio) {
+    return Math.min(FULL_HD.height, dimensions.height);
+  }
+  return undefined;
+};
+
 export const createVideoFromNonVideo = async (
   originalFile: string,
   ffmpegPath: string,
@@ -17,80 +127,14 @@ export const createVideoFromNonVideo = async (
   const conversionPromise = (async () => {
     const convertedFilePath = changeExt(originalFile, '.mp4');
 
-    if (await pathExists(convertedFilePath)) {
-      const sourceStats = await stat(originalFile);
-      const destStats = await stat(convertedFilePath);
-
-      // If output exists and is newer than source, return it
-      if (destStats.mtimeMs > sourceStats.mtimeMs && destStats.size > 0) {
-        return convertedFilePath;
-      }
+    if (await shouldUseExistingConversion(originalFile, convertedFilePath)) {
+      return convertedFilePath;
     }
 
-    const { default: ffmpeg } = await import('fluent-ffmpeg');
-
-    ffmpeg.setFfmpegPath(ffmpegPath);
-
     if (originalFile.toLowerCase().endsWith('.mp3')) {
-      await new Promise<void>((resolve, reject) => {
-        ffmpeg(originalFile)
-          .noVideo()
-          .save(convertedFilePath)
-          .on('end', () => {
-            resolve();
-          })
-          .on('error', (err) => {
-            reject(err);
-          });
-      });
+      await convertAudioToVideo(ffmpegPath, originalFile, convertedFilePath);
     } else {
-      const { imageSizeFromFile } = await import('image-size/fromFile');
-      const { height, orientation, width } =
-        await imageSizeFromFile(originalFile);
-
-      let adjustedWidth = width;
-      let adjustedHeight = height;
-
-      if (orientation && orientation >= 5) {
-        [adjustedWidth, adjustedHeight] = [height, width];
-      }
-
-      if (adjustedWidth && adjustedHeight) {
-        let max = [undefined, Math.min(FULL_HD.height, adjustedHeight)];
-        if (FULL_HD.height / FULL_HD.width > adjustedHeight / adjustedWidth) {
-          max = [Math.min(FULL_HD.width, adjustedWidth), undefined];
-        }
-        const convertedDimensions = resize(
-          adjustedWidth,
-          adjustedHeight,
-          max[0],
-          max[1],
-        );
-
-        if (!convertedDimensions) {
-          throw new Error('Could not determine dimensions of image.');
-        }
-
-        await new Promise<void>((resolve, reject) => {
-          ffmpeg(originalFile)
-            .inputOptions('-loop 1')
-            .inputFormat('image2')
-            .videoCodec('libx264')
-            .size(`${convertedDimensions.width}x${convertedDimensions.height}`)
-            .loop(5) // Loop the input for 5 seconds
-            .outputOptions('-pix_fmt', 'yuv420p') // Pixel format
-            .outputOptions('-r', '30') // Frame rate: 30fps
-            .save(convertedFilePath)
-            .on('end', () => {
-              resolve();
-            })
-            .on('error', (err) => {
-              reject(err);
-            });
-        });
-      } else {
-        throw new Error('Could not determine dimensions of image.');
-      }
+      await convertImageToVideo(ffmpegPath, originalFile, convertedFilePath);
     }
 
     return convertedFilePath;
