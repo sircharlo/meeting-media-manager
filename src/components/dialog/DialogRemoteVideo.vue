@@ -297,7 +297,7 @@ const addVideo = async (video: MediaItemsMediatorItem) => {
   // ✅ Always emit - parent handles section assignment
   emit('import', {
     mediaItemLinks: video.files,
-    thumbnailUrl: video.images?.lsr?.md,
+    thumbnailUrl: getBestImageUrl(video.images, 'md'),
     title: video.title,
   });
   dialogValue.value = false;
