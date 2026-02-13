@@ -461,6 +461,153 @@ export const getDocumentMultimediaItems = (
   }
 };
 
+const getExtractLanguage = (
+  extract: MultimediaExtractItem,
+  defaultLang: JwLangCode,
+): JwLangCode => {
+  if (extract.Link) {
+    try {
+      const matches = extract.Link.match(/\/(.*)\//);
+      if (matches && matches.length > 0) {
+        return (matches.pop()?.split(':')[0] || '') as JwLangCode;
+      }
+    } catch (e: unknown) {
+      errorCatcher(e);
+    }
+  }
+  return extract.Lang ?? defaultLang;
+};
+
+const getExtractSymbol = (
+  uniqueEnglishSymbol: string,
+  issueTagNumber?: number | string,
+): string => {
+  let symbol = /[^a-zA-Z0-9]/.test(uniqueEnglishSymbol)
+    ? uniqueEnglishSymbol
+    : uniqueEnglishSymbol.replaceAll(/\d/g, '');
+
+  if (
+    symbol === 'w' &&
+    issueTagNumber &&
+    Number.parseInt(issueTagNumber.toString()) >= 20080101 &&
+    issueTagNumber.toString().endsWith('01')
+  ) {
+    symbol = 'wp';
+  }
+  return symbol;
+};
+
+const getMultimediaRequestParams = (
+  symbol: string,
+  extract: MultimediaExtractItem,
+  db: string,
+  lang: JwLangCode,
+) => {
+  const params: MultimediaItemsFetcher = {
+    db,
+    lang,
+    mepsId: extract.RefMepsDocumentId,
+  };
+
+  if (extract.RefBeginParagraphOrdinal) {
+    params.BeginParagraphOrdinal =
+      ['bt', 'lff', 'lmd'].includes(symbol) &&
+      extract.RefBeginParagraphOrdinal < 8
+        ? 1
+        : extract.RefBeginParagraphOrdinal;
+  }
+
+  if (extract.RefEndParagraphOrdinal) {
+    params.EndParagraphOrdinal = extract.RefEndParagraphOrdinal;
+  }
+
+  return params;
+};
+
+const getExtractMultimedia = async (
+  extract: MultimediaExtractItem,
+  meetingDate: string,
+  defaultLang: JwLangCode,
+  settings: ReturnType<typeof useCurrentStateStore>['currentSettings'],
+  isSignLanguage: boolean | undefined,
+): Promise<MultimediaItem[]> => {
+  const extractLangOrig = getExtractLanguage(extract, defaultLang);
+  const symbol = getExtractSymbol(
+    extract.UniqueEnglishSymbol,
+    extract.IssueTagNumber,
+  );
+
+  if (['it', 'snnw'].includes(symbol)) return [];
+
+  let extractLang = extractLangOrig;
+  let extractDb = await getDbFromJWPUB(
+    {
+      issue: extract.IssueTagNumber,
+      langwritten: extractLang,
+      pub: symbol,
+    },
+    meetingDate,
+  );
+
+  if (!extractDb && settings?.langFallback) {
+    extractLang = settings.langFallback;
+    extractDb = await getDbFromJWPUB(
+      {
+        issue: extract.IssueTagNumber,
+        langwritten: extractLang,
+        pub: symbol,
+      },
+      meetingDate,
+    );
+  }
+
+  if (!extractDb) return [];
+
+  const requestParams = getMultimediaRequestParams(
+    symbol,
+    extract,
+    extractDb,
+    extractLang,
+  );
+
+  const extractItems = getDocumentMultimediaItems(
+    requestParams,
+    settings?.includePrinted,
+  )
+    .map(
+      (extractItem): MultimediaItem => ({
+        ...extractItem,
+        BeginParagraphOrdinal: extract.BeginParagraphOrdinal,
+        EndParagraphOrdinal: extract.EndParagraphOrdinal,
+        ExtractCaption: extract.ExtractCaption,
+      }),
+    )
+    .filter(
+      (extractItem) =>
+        isSignLanguage ||
+        !(symbol === 'lmd' && extractItem.MimeType.includes('video')),
+    );
+
+  for (let i = 0; i < extractItems.length; i++) {
+    const item = extractItems[i];
+    if (!item) continue;
+
+    const videoMarkers = getMediaVideoMarkers(
+      { db: extractDb },
+      item.MultimediaId,
+    );
+    if (videoMarkers) item.VideoMarkers = videoMarkers;
+
+    extractItems[i] = await addFullFilePathToMultimediaItem(item, {
+      issue: extract.IssueTagNumber,
+      langwritten: extractLang,
+      pub: symbol,
+    });
+  }
+
+  return extractItems;
+};
+
 export const getDocumentExtractItems = async (
   db: string,
   docId: number,
@@ -468,6 +615,9 @@ export const getDocumentExtractItems = async (
 ) => {
   try {
     const currentStateStore = useCurrentStateStore();
+    const settings = currentStateStore.currentSettings;
+    const defaultLang = settings?.lang || 'E';
+
     const extracts = executeQuery<MultimediaExtractItem>(
       db,
       `SELECT DocumentExtract.BeginParagraphOrdinal,DocumentExtract.EndParagraphOrdinal,DocumentExtract.DocumentId,
@@ -480,127 +630,21 @@ export const getDocumentExtractItems = async (
     WHERE DocumentExtract.DocumentId = ?
     AND NOT UniqueEnglishSymbol LIKE 'mwbr%'
     AND NOT UniqueEnglishSymbol = 'sjj'
-    ${
-      currentStateStore.currentSettings?.excludeTh
-        ? "AND NOT UniqueEnglishSymbol = 'th' "
-        : ''
-    }
-      ORDER BY DocumentExtract.BeginParagraphOrdinal`,
+    ${settings?.excludeTh ? "AND NOT UniqueEnglishSymbol = 'th' " : ''}
+    ORDER BY DocumentExtract.BeginParagraphOrdinal`,
       [docId],
     );
 
-    // AND NOT RefPublication.PublicationCategorySymbol = 'web'
-    // To think about: should we add a toggle to enable/disable web publication multimedia?
+    const allExtractItems: MultimediaItem[] = [];
 
-    const allExtractItems = [];
     for (const extract of extracts) {
-      extract.Lang = currentStateStore.currentSettings?.lang || 'E';
-      if (extract.Link) {
-        try {
-          const matches = extract.Link.match(/\/(.*)\//);
-          if (matches && matches.length > 0) {
-            extract.Lang = (matches.pop()?.split(':')[0] || '') as JwLangCode;
-          }
-        } catch (e: unknown) {
-          errorCatcher(e);
-        }
-      }
-
-      // Get the symbol from the unique English symbol; if it contains any non-alphanumeric symbol, use it as-is; otherwise remove digits
-      let symbol = /[^a-zA-Z0-9]/.test(extract.UniqueEnglishSymbol)
-        ? extract.UniqueEnglishSymbol
-        : extract.UniqueEnglishSymbol.replaceAll(/\d/g, '');
-      if (['it', 'snnw'].includes(symbol)) continue; // Exclude Insight and the "old new songs" songbook; we don't need images from that
-
-      // Special handling for wp
-      if (
-        symbol === 'w' &&
-        extract.IssueTagNumber &&
-        Number.parseInt(extract.IssueTagNumber.toString()) >= 20080101 &&
-        extract.IssueTagNumber.toString().slice(-2) === '01'
-      ) {
-        symbol = 'wp';
-      }
-
-      let extractLang = extract.Lang ?? currentStateStore.currentSettings?.lang;
-      let extractDb = await getDbFromJWPUB(
-        {
-          issue: extract.IssueTagNumber,
-          langwritten: extractLang,
-          pub: symbol,
-        },
+      const extractItems = await getExtractMultimedia(
+        extract,
         meetingDate,
+        defaultLang,
+        settings,
+        currentStateStore.currentLangObject?.isSignLanguage,
       );
-      const langFallback = currentStateStore.currentSettings?.langFallback;
-      if (!extractDb && langFallback) {
-        extractDb = await getDbFromJWPUB(
-          {
-            issue: extract.IssueTagNumber,
-            langwritten: langFallback,
-            pub: symbol,
-          },
-          meetingDate,
-        );
-        extractLang = langFallback;
-      }
-
-      if (!extractDb) continue;
-
-      const extractItems = getDocumentMultimediaItems(
-        {
-          db: extractDb,
-          lang: extractLang,
-          mepsId: extract.RefMepsDocumentId,
-          ...(extract.RefBeginParagraphOrdinal
-            ? {
-                // Hack to show intro picture when appropriate from:
-                // - the Love People brochure
-                // - the Enjoy Life Forever book
-                // - the Bearing Thorough Witness book
-                BeginParagraphOrdinal:
-                  ['bt', 'lff', 'lmd'].includes(symbol) &&
-                  extract.RefBeginParagraphOrdinal < 8
-                    ? 1
-                    : extract.RefBeginParagraphOrdinal,
-              }
-            : {}),
-          ...(extract.RefEndParagraphOrdinal
-            ? { EndParagraphOrdinal: extract.RefEndParagraphOrdinal }
-            : {}),
-        },
-        currentStateStore.currentSettings?.includePrinted,
-      )
-        .map((extractItem): MultimediaItem => {
-          return {
-            ...extractItem,
-            BeginParagraphOrdinal: extract.BeginParagraphOrdinal,
-            EndParagraphOrdinal: extract.EndParagraphOrdinal,
-            ExtractCaption: extract.ExtractCaption,
-          };
-        })
-        .filter(
-          (extractItem) =>
-            currentStateStore.currentLangObject?.isSignLanguage ||
-            !(symbol === 'lmd' && extractItem.MimeType.includes('video')),
-        );
-      for (let i = 0; i < extractItems.length; i++) {
-        const multimediaItem = extractItems[i];
-        if (!multimediaItem) continue;
-        const videoMarkers = getMediaVideoMarkers(
-          { db: extractDb },
-          multimediaItem.MultimediaId,
-        );
-        if (videoMarkers) multimediaItem.VideoMarkers = videoMarkers;
-
-        extractItems[i] = await addFullFilePathToMultimediaItem(
-          multimediaItem,
-          {
-            issue: extract.IssueTagNumber,
-            langwritten: extractLang,
-            pub: symbol,
-          },
-        );
-      }
       allExtractItems.push(...extractItems);
     }
     return allExtractItems;
