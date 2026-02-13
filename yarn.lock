@@ -2110,12 +2110,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/api-logs@npm:^0.211.0":
-  version: 0.211.0
-  resolution: "@opentelemetry/api-logs@npm:0.211.0"
+"@opentelemetry/api-logs@npm:^0.212.0":
+  version: 0.212.0
+  resolution: "@opentelemetry/api-logs@npm:0.212.0"
   dependencies:
     "@opentelemetry/api": "npm:^1.3.0"
-  checksum: 10c0/75d87828d9d6350a4a419c7d135782b00dbc6eda5ea04b222a8330e5aa868d5aec5380e95217446f89e4ef6493b4e5b8dd6e0e3af1b867cee09b912cc72dd04a
+  checksum: 10c0/ffcc5cea3565f0f73ffe7cd4ef1fd5ed93f78bcbb695508af733e32a200b65c6f10084df9c616eaad44eb62e64c09675465b4c6ebea10fb125eea89753a183b7
   languageName: node
   linkType: hard
 
@@ -3751,7 +3751,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/estree@npm:1.0.8, @types/estree@npm:^1.0.0, @types/estree@npm:^1.0.6":
+"@types/esrecurse@npm:^4.3.1":
+  version: 4.3.1
+  resolution: "@types/esrecurse@npm:4.3.1"
+  checksum: 10c0/90dad74d5da3ad27606d8e8e757322f33171cfeaa15ad558b615cf71bb2a516492d18f55f4816384685a3eb2412142e732bbae9a4a7cd2cf3deb7572aa4ebe03
+  languageName: node
+  linkType: hard
+
+"@types/estree@npm:1.0.8, @types/estree@npm:^1.0.0, @types/estree@npm:^1.0.6, @types/estree@npm:^1.0.8":
   version: 1.0.8
   resolution: "@types/estree@npm:1.0.8"
   checksum: 10c0/39d34d1afaa338ab9763f37ad6066e3f349444f9052b9676a7cc0252ef9485a41c6d81c9c4e0d26e9077993354edf25efc853f3224dd4b447175ef62bdcc86a5
@@ -8244,6 +8251,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"eslint-scope@npm:^8.2.0 || ^9.0.0":
+  version: 9.1.0
+  resolution: "eslint-scope@npm:9.1.0"
+  dependencies:
+    "@types/esrecurse": "npm:^4.3.1"
+    "@types/estree": "npm:^1.0.8"
+    esrecurse: "npm:^4.3.0"
+    estraverse: "npm:^5.2.0"
+  checksum: 10c0/b503f739bb1d8da2e94b56b7655aaaa3af35e3180b93310523b11d326b90c4caf00ec0138a601c56f672a4da17958cf28d0c76806e448e5d35429754d2691040
+  languageName: node
+  linkType: hard
+
 "eslint-scope@npm:^8.2.0, eslint-scope@npm:^8.4.0":
   version: 8.4.0
   resolution: "eslint-scope@npm:8.4.0"
@@ -8258,6 +8277,13 @@ __metadata:
   version: 3.4.3
   resolution: "eslint-visitor-keys@npm:3.4.3"
   checksum: 10c0/92708e882c0a5ffd88c23c0b404ac1628cf20104a108c745f240a13c332a11aac54f49a22d5762efbffc18ecbc9a580d1b7ad034bf5f3cc3307e5cbff2ec9820
+  languageName: node
+  linkType: hard
+
+"eslint-visitor-keys@npm:^4.2.0 || ^5.0.0, eslint-visitor-keys@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "eslint-visitor-keys@npm:5.0.0"
+  checksum: 10c0/5ec68b7ae350f6e7813a9ab469f8c64e01e5a954e6e6ee6dc441cc24d315eb342e5fb81ab5fc21f352cf0125096ab4ed93ca892f602a1576ad1eedce591fe64a
   languageName: node
   linkType: hard
 
@@ -8325,6 +8351,17 @@ __metadata:
     acorn-jsx: "npm:^5.3.2"
     eslint-visitor-keys: "npm:^4.2.1"
   checksum: 10c0/c63fe06131c26c8157b4083313cb02a9a54720a08e21543300e55288c40e06c3fc284bdecf108d3a1372c5934a0a88644c98714f38b6ae8ed272b40d9ea08d6b
+  languageName: node
+  linkType: hard
+
+"espree@npm:^10.3.0 || ^11.0.0":
+  version: 11.1.0
+  resolution: "espree@npm:11.1.0"
+  dependencies:
+    acorn: "npm:^8.15.0"
+    acorn-jsx: "npm:^5.3.2"
+    eslint-visitor-keys: "npm:^5.0.0"
+  checksum: 10c0/32228d12896f5aa09f59fad8bf5df228d73310e436c21389876cdd21513b620c087d24b40646cdcff848540d11b078653db0e37ea67ac9c7012a12595d86630c
   languageName: node
   linkType: hard
 
@@ -11158,7 +11195,7 @@ __metadata:
     "@intlify/unplugin-vue-i18n": "npm:^11.0.3"
     "@jitsi/robotjs": "npm:^0.6.21"
     "@numairawan/video-duration": "npm:^1.0.0"
-    "@opentelemetry/api-logs": "npm:^0.211.0"
+    "@opentelemetry/api-logs": "npm:^0.212.0"
     "@pinia/testing": "npm:^1.0.3"
     "@quasar/app-vite": "npm:^2.4.1"
     "@quasar/extras": "npm:^1.17.0"
@@ -11243,7 +11280,7 @@ __metadata:
     vitepress: "npm:^2.0.0-alpha.16"
     vitest: "npm:^4.0.18"
     vue: "npm:^3.5.28"
-    vue-eslint-parser: "npm:^10.2.0"
+    vue-eslint-parser: "npm:^10.3.0"
     vue-i18n: "npm:^11.2.8"
     vue-router: "npm:^5.0.2"
     vue-tsc: "npm:^3.2.4"
@@ -13218,11 +13255,11 @@ __metadata:
   linkType: hard
 
 "qs@npm:~6.14.0":
-  version: 6.14.1
-  resolution: "qs@npm:6.14.1"
+  version: 6.14.2
+  resolution: "qs@npm:6.14.2"
   dependencies:
     side-channel: "npm:^1.1.0"
-  checksum: 10c0/0e3b22dc451f48ce5940cbbc7c7d9068d895074f8c969c0801ac15c1313d1859c4d738e46dc4da2f498f41a9ffd8c201bd9fb12df67799b827db94cc373d2613
+  checksum: 10c0/646110124476fc9acf3c80994c8c3a0600cbad06a4ede1c9e93341006e8426d64e85e048baf8f0c4995f0f1bf0f37d1f3acc5ec1455850b81978792969a60ef6
   languageName: node
   linkType: hard
 
@@ -16138,6 +16175,22 @@ __metadata:
   peerDependencies:
     eslint: ^8.57.0 || ^9.0.0
   checksum: 10c0/44424733b9a75cde2c7c3ad03427264cc39eb0c1300f3157d4476b7faf9ff3d567b725b17a60bcfb03f42eb6c32a190473d27f4e1866081e019b3e1cd0e53799
+  languageName: node
+  linkType: hard
+
+"vue-eslint-parser@npm:^10.3.0":
+  version: 10.3.0
+  resolution: "vue-eslint-parser@npm:10.3.0"
+  dependencies:
+    debug: "npm:^4.4.0"
+    eslint-scope: "npm:^8.2.0 || ^9.0.0"
+    eslint-visitor-keys: "npm:^4.2.0 || ^5.0.0"
+    espree: "npm:^10.3.0 || ^11.0.0"
+    esquery: "npm:^1.6.0"
+    semver: "npm:^7.6.3"
+  peerDependencies:
+    eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
+  checksum: 10c0/139e52d8d6fbf2c686455b746ad3b3b111d4a2e0ed2a3a92db4daf31500ed86c77934aad27f114d1de46672d9a83ec5266dc3df59da8656ce0f877a5cc6ca155
   languageName: node
   linkType: hard
 
