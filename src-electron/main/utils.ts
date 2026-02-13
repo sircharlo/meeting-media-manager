@@ -101,33 +101,22 @@ export async function getSharedDataPath(): Promise<null | string> {
 
     const testDir = join(sharedPath, '.cache-test-' + uuid());
     await mkdir(testDir, { recursive: true });
-    console.log(
-      '[getSharedDataPath] Test directory created successfully:',
-      testDir,
-    );
     const testFile = join(testDir, 'test.txt');
     await writeFile(testFile, 'ok');
-    console.log(
-      '[getSharedDataPath] Test file created successfully:',
-      testFile,
-    );
     await rm(testFile);
-    console.log(
-      '[getSharedDataPath] Test file removed successfully:',
-      testFile,
-    );
     await rm(testDir, { recursive: true });
-    console.log(
-      '[getSharedDataPath] Test directory removed successfully:',
-      testDir,
-    );
-    console.log(
-      '[getSharedDataPath] Shared data path is available:',
-      sharedPath,
-    );
     return sharedPath;
   } catch (e) {
-    console.log('[getSharedDataPath] Failed to create shared data path:', e);
+    captureElectronError(e, {
+      contexts: {
+        fn: {
+          args: {
+            sharedPath,
+          },
+          name: 'getSharedDataPath',
+        },
+      },
+    });
     return null;
   }
 }

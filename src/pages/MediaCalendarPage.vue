@@ -146,6 +146,7 @@ import {
   getOrCreateMediaSection,
 } from 'src/helpers/media-sections';
 import {
+  identifyJwpub,
   toggleMediaWindowVisibility,
   unzipJwpub,
 } from 'src/helpers/mediaPlayback';
@@ -180,11 +181,7 @@ import {
   isVideo,
 } from 'src/utils/media';
 import { sendObsSceneEvent } from 'src/utils/obs';
-import {
-  findDb,
-  getPublicationInfoFromDb,
-  tableExists,
-} from 'src/utils/sqlite';
+import { findDb, tableExists } from 'src/utils/sqlite';
 import { useAppSettingsStore } from 'stores/app-settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
@@ -276,7 +273,7 @@ const {
   readdir,
   unzip,
 } = globalThis.electronApi;
-const { ensureDir, exists, remove, writeFile } = fs;
+const { remove, writeFile } = fs;
 const { basename, join } = path;
 
 const { post: postMediaAction } = useBroadcastChannel<string, string>({
@@ -1223,72 +1220,24 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
         files.push(...convertedImages);
       } else if (isJwpub(filepath)) {
         console.log('🎯 [addToFiles] Processing JWPUB file:', filepath);
-        console.log('🎯 [addToFiles] Getting temp directory');
-        const tempDir = await getTempPath();
-        console.log('🎯 [addToFiles] Temp dir:', tempDir);
-        if (!tempDir) {
-          console.log('🎯 [addToFiles] No temp dir, returning');
-          return;
-        }
-
-        // Create unique temp directories to avoid conflicts
-        const tempExtractionDir = join(tempDir, `jwpub-${uuid()}`);
-        const tempContentsDir = join(tempDir, `jwpub-contents-${uuid()}`);
-
-        let tempDbFilePath: string | undefined;
-
         try {
-          // Extract JWPUB to disk (not memory)
-          console.log(
-            '🎯 [addToFiles] Extracting JWPUB to:',
-            tempExtractionDir,
-          );
-          await ensureDir(tempExtractionDir);
-          await unzip(filepath, tempExtractionDir);
+          const publication = await identifyJwpub(filepath);
+          console.log('🎯 [addToFiles] Publication identified:', publication);
 
-          // Check for 'contents' file
-          const contentsPath = join(tempExtractionDir, 'contents');
-          console.log(
-            '🎯 [addToFiles] Looking for contents file at:',
-            contentsPath,
-          );
-          if (!(await exists(contentsPath))) {
-            console.log('🎯 [addToFiles] No contents file found, returning');
+          if (!publication) {
+            errorCatcher('Could not identify JWPUB file', {
+              contexts: {
+                fn: {
+                  args: {
+                    filepath,
+                  },
+                  name: 'addToFiles (JWPUB identifyJwpub)',
+                },
+              },
+            });
             return;
           }
 
-          // Extract the 'contents' archive to disk (not memory)
-          console.log(
-            '🎯 [addToFiles] Extracting contents to:',
-            tempContentsDir,
-          );
-          await ensureDir(tempContentsDir);
-          await unzip(contentsPath, tempContentsDir);
-
-          // Find the .db file
-          console.log(
-            '🎯 [addToFiles] Looking for .db file in:',
-            tempContentsDir,
-          );
-          const files = await readdir(tempContentsDir);
-          const dbFile = files.find((f) => f.name.endsWith('.db'));
-          console.log('🎯 [addToFiles] Found db file:', dbFile ? 'yes' : 'no');
-          if (!dbFile) {
-            console.log('🎯 [addToFiles] No db file found, returning');
-            return;
-          }
-
-          tempDbFilePath = join(tempContentsDir, dbFile.name);
-          console.log('🎯 [addToFiles] Using db at:', tempDbFilePath);
-          console.log('🎯 [addToFiles] Checking if db file exists');
-          if (!(await exists(tempDbFilePath))) {
-            console.log('🎯 [addToFiles] Db file does not exist, returning');
-            return;
-          }
-          console.log('🎯 [addToFiles] Getting publication info from db');
-          const publication = getPublicationInfoFromDb(tempDbFilePath);
-          console.log('🎯 [addToFiles] Publication info:', publication);
-          console.log('🎯 [addToFiles] Getting publication directory');
           const publicationDirectory =
             await getPublicationDirectory(publication);
           console.log(
@@ -1296,9 +1245,23 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             publicationDirectory,
           );
           if (!publicationDirectory) {
-            console.log('🎯 [addToFiles] No publication directory, returning');
+            errorCatcher(
+              '🎯 [addToFiles] Could not find publication directory',
+              {
+                contexts: {
+                  fn: {
+                    args: {
+                      filepath,
+                      publication,
+                    },
+                    name: 'addToFiles (JWPUB getPublicationDirectory)',
+                  },
+                },
+              },
+            );
             return;
           }
+
           console.log(
             '🎯 [addToFiles] Updating last used date for publication',
           );
@@ -1312,23 +1275,32 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
           );
           const unzipDir = await unzipJwpub(filepath, publicationDirectory);
           console.log('🎯 [addToFiles] Unzip dir:', unzipDir);
-          console.log('🎯 [addToFiles] Finding db in unzip dir');
+
           const db = await findDb(unzipDir);
           console.log('🎯 [addToFiles] Db found:', db ? 'yes' : 'no');
           if (!db) {
-            console.log('🎯 [addToFiles] No db found, returning');
+            errorCatcher('No db found after unzip', {
+              contexts: {
+                fn: {
+                  args: {
+                    filepath,
+                    unzipDir,
+                  },
+                  name: 'addToFiles (JWPUB findDb)',
+                },
+              },
+            });
             return;
           }
+
           jwpubImportDb.value = db;
-          console.log('🎯 [addToFiles] Set jwpubImportDb');
-          console.log('🎯 [addToFiles] Checking multimedia count');
-          if (
+          const multimediaCount =
             executeQuery<{ count: number }>(
               db,
               'SELECT COUNT(*) as count FROM Multimedia;',
-            )?.[0]?.count === 0
-          ) {
-            console.log('🎯 [addToFiles] No multimedia, showing notification');
+            )?.[0]?.count ?? 0;
+
+          if (multimediaCount === 0) {
             createTemporaryNotification({
               caption: basename(filepath),
               icon: 'mmm-jwpub',
@@ -1339,27 +1311,12 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
             jwpubImportDocuments.value = [];
             showFileImport.value = false;
           } else {
-            console.log('🎯 [addToFiles] Has multimedia, checking tables');
-            const documentMultimediaTableExists = tableExists(
-              db,
-              'DocumentMultimedia',
-            );
-            console.log(
-              '🎯 [addToFiles] DocumentMultimedia table exists:',
-              documentMultimediaTableExists,
-            );
-            const mmTable = documentMultimediaTableExists
+            const mmTable = tableExists(db, 'DocumentMultimedia')
               ? 'DocumentMultimedia'
               : 'Multimedia';
-            console.log('🎯 [addToFiles] Using mmTable:', mmTable);
-            console.log('🎯 [addToFiles] Executing query for documents');
             jwpubImportDocuments.value = executeQuery<DocumentItem>(
               db,
               `SELECT DISTINCT Document.DocumentId, Title FROM Document JOIN ${mmTable} ON Document.DocumentId = ${mmTable}.DocumentId;`,
-            );
-            console.log(
-              '🎯 [addToFiles] Documents found:',
-              jwpubImportDocuments.value.length,
             );
           }
         } catch (error) {
@@ -1371,29 +1328,6 @@ const addToFiles = async (files: (File | string)[] | FileList) => {
               },
             },
           });
-        } finally {
-          // Clean up temp directories
-          console.log('🎯 [addToFiles] Cleaning up temp directories');
-          remove(tempExtractionDir).catch((err) =>
-            errorCatcher(err, {
-              contexts: {
-                fn: {
-                  name: 'addToFiles removing temp extraction dir',
-                  tempExtractionDir,
-                },
-              },
-            }),
-          );
-          remove(tempContentsDir).catch((err) =>
-            errorCatcher(err, {
-              contexts: {
-                fn: {
-                  name: 'addToFiles removing temp contents dir',
-                  tempContentsDir,
-                },
-              },
-            }),
-          );
         }
       } else if (isJwPlaylist(filepath) && selectedDateObject.value) {
         // Show playlist selection dialog

@@ -10,28 +10,93 @@ import {
   dynamicMediaMapper,
   processMissingMediaInfo,
 } from 'src/helpers/jw-media';
+import { uuid } from 'src/shared/vanilla';
 import { formatDate } from 'src/utils/date';
 import { getTempPath } from 'src/utils/fs';
 import { isJwpub } from 'src/utils/media';
-import { findDb } from 'src/utils/sqlite';
+import { findDb, getPublicationInfoFromDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
 
-const { executeQuery, fs, path, toggleMediaWindow, unzip } =
+const { executeQuery, fs, getZipEntries, path, toggleMediaWindow, unzip } =
   globalThis.electronApi;
-const { pathExists, remove, rename } = fs;
+const { ensureDir, pathExists, remove, rename, stat } = fs;
 const { basename, extname, join } = path;
+
+/**
+ * Efficiently identifies a JWPUB file by peeking into its metadata
+ * without full extraction.
+ */
+export async function identifyJwpub(jwpubPath: string) {
+  const tempDir = await getTempPath();
+  if (!tempDir) return;
+
+  const extractionId = uuid();
+  const tempExplodePath = join(tempDir, `identify-${extractionId}`);
+
+  try {
+    // 1. Peek at JWPUB to find 'contents'
+    const jwpubEntries = await getZipEntries(jwpubPath);
+    if (!jwpubEntries['contents']) return;
+
+    // 2. Extract ONLY 'contents' to temp
+    await ensureDir(tempExplodePath);
+    await unzip(jwpubPath, tempExplodePath, { includes: ['contents'] });
+    const contentsPath = join(tempExplodePath, 'contents');
+
+    // 3. Peek at 'contents' to find the .db file
+    const contentsEntries = await getZipEntries(contentsPath);
+    const dbName = Object.keys(contentsEntries).find((n) => n.endsWith('.db'));
+    if (!dbName) return;
+
+    // 4. Extract ONLY the .db file to temp
+    await unzip(contentsPath, tempExplodePath, { includes: [dbName] });
+    const dbPath = join(tempExplodePath, dbName);
+
+    // 5. Get publication info
+    return getPublicationInfoFromDb(dbPath);
+  } catch (error) {
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          args: { jwpubPath },
+          name: 'identifyJwpub',
+        },
+      },
+    });
+    return undefined;
+  } finally {
+    // Cleanup
+    await remove(tempExplodePath).catch(() => undefined);
+  }
+}
 
 const ongoingUnzips = new Map<string, Promise<string | undefined>>();
 
 const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
   try {
     const contentsPath = join(outputPath, 'contents');
-    // First, only extract 'contents' from the JWPUB zip if it doesn't exist
-    if (!(await pathExists(contentsPath))) {
+    const jwpubEntries = await getZipEntries(jwpubPath);
+    const expectedContentsSize = jwpubEntries['contents'];
+
+    // First, only extract 'contents' from the JWPUB zip if it doesn't exist or is the wrong size
+    const contentsStats = await stat(contentsPath).catch(() => undefined);
+    console.log(
+      `[jwpubExtractor] contents size: path ${contentsPath}, expected ${expectedContentsSize}, got ${contentsStats?.size}.`,
+    );
+    if (!contentsStats || contentsStats.size !== expectedContentsSize) {
+      if (contentsStats) {
+        console.warn(
+          `[jwpubExtractor] contents size mismatch: path ${contentsPath}, expected ${expectedContentsSize}, got ${contentsStats.size}. Re-extracting.`,
+        );
+      }
       try {
         await unzip(jwpubPath, outputPath, {
           includes: ['contents'],
         });
+        const contentsStats = await stat(contentsPath).catch(() => undefined);
+        console.log(
+          `[jwpubExtractor] contents after unzip: path ${contentsPath}, expected ${expectedContentsSize}, got ${contentsStats?.size}.`,
+        );
       } catch (error) {
         // If unzipping the JWPUB fails, it's likely corrupted.
         // Remove it to force a re-download on next attempt.
@@ -53,11 +118,40 @@ const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
     }
 
     // Then, extract 'contents' into the output directory if needed
-    // We check if the database exists to determine if we need to unzip
+    // We check if the database exists and has the correct size to determine if we need to unzip
     const dbFile = await findDb(outputPath);
-    if (!dbFile) {
+    const contentsEntries = await getZipEntries(contentsPath);
+    let expectedDbSize = 0;
+    let expectedDbName = '';
+
+    for (const [name, size] of Object.entries(contentsEntries)) {
+      if (name.endsWith('.db')) {
+        expectedDbSize = size;
+        expectedDbName = name;
+        break;
+      }
+    }
+
+    const dbStats = dbFile
+      ? await stat(dbFile).catch(() => undefined)
+      : undefined;
+    console.log(
+      `[jwpubExtractor] DB size: path ${dbFile}, expected ${expectedDbSize} (${expectedDbName}), got ${dbStats?.size}.`,
+    );
+    if (dbStats?.size !== expectedDbSize) {
+      if (dbStats) {
+        console.warn(
+          `[jwpubExtractor] DB size mismatch: path ${dbFile}, expected ${expectedDbSize} (${expectedDbName}), got ${dbStats.size}. Re-extracting contents.`,
+        );
+      }
       try {
         await unzip(contentsPath, outputPath);
+        const dbFile = await findDb(outputPath);
+        if (!dbFile) throw new Error('DB still not found after unzip');
+        const dbStats = await stat(dbFile).catch(() => undefined);
+        console.log(
+          `[jwpubExtractor] DB size after unzip: path ${dbFile}, expected ${expectedDbSize} (${expectedDbName}), got ${dbStats?.size}.`,
+        );
       } catch (error) {
         // If unzipping contents fails, it might be corrupted.
         // Remove it so it can be re-extracted next time.
@@ -181,7 +275,6 @@ export const unzipJwpub = async (
         },
       },
     });
-    // Re-throw so consumers (like UI) can handle the failure
     throw error;
   }
 };
