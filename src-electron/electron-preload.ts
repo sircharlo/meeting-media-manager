@@ -73,6 +73,7 @@ const electronApi: ElectronApi = {
   getUpdatesDisabledPath: () => invoke('getUpdatesDisabledPath'),
   getUserDataPath: () => invoke('getUserDataPath'),
   getVideoDuration,
+  getZipEntries: (p) => invoke('getZipEntries', p),
   inferExtension,
   isArchitectureMismatch: () => invoke('isArchitectureMismatch'),
   isDownloadErrorExpected: () => invoke('isDownloadErrorExpected'),

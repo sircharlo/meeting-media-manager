@@ -102,6 +102,7 @@ export interface ElectronApi {
    * @returns A promise that resolves to the metadata of the media file.
    */
   getVideoDuration: (filePath: string) => Promise<VideoDuration>;
+  getZipEntries: (zipPath: string) => Promise<Record<string, number>>;
   inferExtension: (filename: string, filetype?: string) => Promise<string>;
   isArchitectureMismatch: () => Promise<boolean>;
   isDownloadErrorExpected: () => Promise<boolean>;
@@ -231,6 +232,7 @@ export type ElectronIpcInvokeKey =
   | 'getSharedDataPath'
   | 'getUpdatesDisabledPath'
   | 'getUserDataPath'
+  | 'getZipEntries'
   | 'isArchitectureMismatch'
   | 'isDownloadErrorExpected'
   | 'isUsablePath'

@@ -33,6 +33,7 @@ import {
 import { createVideoFromNonVideo } from 'src-electron/main/ffmpeg';
 import {
   getAppDataPath,
+  getZipEntries,
   isUsablePath,
   openFileDialog,
   openFolderDialog,
@@ -342,6 +343,10 @@ handleIpcInvoke(
   'unzip',
   async (_e, input: string, output: string, opts?: UnzipOptions) =>
     unzipFile(input, output, opts),
+);
+
+handleIpcInvoke('getZipEntries', async (_e, zipPath: string) =>
+  getZipEntries(zipPath),
 );
 
 handleIpcSend('quitAndInstall', () => {

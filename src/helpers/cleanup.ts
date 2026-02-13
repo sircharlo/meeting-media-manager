@@ -9,7 +9,7 @@ import type {
 import { updateLookupPeriod } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { getLastUsedDate, LAST_USED_FILENAME } from 'src/helpers/usage';
-import { getSpecificWeekday, isInPast } from 'src/utils/date';
+import { dateFromString, getSpecificWeekday, isInPast } from 'src/utils/date';
 import {
   congPreferencesPath,
   getAdditionalMediaPath,
@@ -278,7 +278,7 @@ async function wasFileUsedRecently(parentPath: string): Promise<boolean> {
       (await getLastUsedDate(getParentDirectory(parentPath)));
 
     if (lastUsedDateStr) {
-      const lastUsedDate = new Date(lastUsedDateStr);
+      const lastUsedDate = dateFromString(lastUsedDateStr);
       return !isInPast(lastUsedDate);
     }
 
@@ -750,6 +750,7 @@ export const deleteCacheFiles = async (
 
     console.log('[Cache] Cleared successfully', {
       ...deletionResult,
+      filepathsToDelete,
       mode: type,
     });
 

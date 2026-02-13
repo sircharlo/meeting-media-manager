@@ -4,6 +4,20 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.2.3
+
+### 🐞 Bug Fixes
+
+- 🐞 **Media Window**: Prevented the media window from being aggressively moved or resized on single-screen setups and improved focus logic.
+- 🐞 **Zoom Integration**: Resolved a potential conflict between Zoom focus events and window fade-in animations.
+- 🐞 **Downloads**: Fixed an issue where publications could sometimes be included in the cache cleanup process while still being downloaded.
+- 🐞 **Remote Video**: Corrected the thumbnail logic in the remote video dialog.
+
+### 🔧 Chores
+
+- 🔧 **Refactoring**: Simplified logic for media export, FFmpeg handling, unzip operations, downloads, cache cleanup, and background music.
+- 🔧 **Logging**: Reduced log verbosity when moving the media window.
+
 ## v26.2.2
 
 ### 🐞 Bug Fixes

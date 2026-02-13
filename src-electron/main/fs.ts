@@ -87,18 +87,22 @@ export async function isUsablePath(basePath?: string): Promise<boolean> {
     const resolvedBase = resolve(basePath);
     const testDir = join(resolvedBase, '.cache-test-' + uuid());
     await mkdir(testDir, { recursive: true });
-    console.log('[isUsablePath] Test directory created successfully:', testDir);
     const testFile = join(testDir, 'test.txt');
     await writeFile(testFile, 'ok');
-    console.log('[isUsablePath] Test file created successfully:', testFile);
     await rm(testFile);
-    console.log('[isUsablePath] Test file removed successfully:', testFile);
     await rm(testDir, { recursive: true });
-    console.log('[isUsablePath] Test directory removed successfully:', testDir);
-    console.log('[isUsablePath] Specified path is available:', basePath);
     return true;
   } catch (e) {
-    console.log('[isUsablePath] Specified path is not available:', basePath, e);
+    captureElectronError(e, {
+      contexts: {
+        fn: {
+          args: {
+            basePath,
+          },
+          name: 'isUsablePath',
+        },
+      },
+    });
     return false;
   }
 }
@@ -273,18 +277,6 @@ const handleZipEntry = async (
 ): Promise<void> => {
   const fullPath = join(context.output, entry.fileName);
 
-  addElectronBreadcrumb({
-    category: 'unzip',
-    data: {
-      compressedSize: entry.compressedSize,
-      fileName: entry.fileName,
-      isDirectory: entry.fileName.endsWith('/'),
-      uncompressedSize: entry.uncompressedSize,
-    },
-    level: 'debug',
-    message: 'Processing entry',
-  });
-
   // Apply filter if provided
   if (
     context.opts?.includes?.length &&
@@ -394,12 +386,6 @@ const decompress = async (
       }
       if (!zipfile) return reject(new Error('Zipfile not found'));
 
-      addElectronBreadcrumb({
-        category: 'unzip',
-        data: { entryCount: zipfile.entryCount },
-        message: 'Zip opened',
-      });
-
       const state: ZipfileState = {
         checkIfComplete,
         extractedFiles,
@@ -430,6 +416,54 @@ const decompress = async (
     });
   });
 };
+
+/**
+ * Lists entries in a zip file with their uncompressed sizes
+ */
+export async function getZipEntries(
+  zipPath: string,
+): Promise<Record<string, number>> {
+  return new Promise((resolve, reject) => {
+    const entries: Record<string, number> = {};
+
+    yauzl.open(zipPath, { lazyEntries: true }, (err, zipfile) => {
+      if (err) {
+        captureElectronError(err, {
+          contexts: {
+            fn: {
+              args: { zipPath },
+              name: 'getZipEntries yauzl.open',
+            },
+          },
+        });
+        return reject(err);
+      }
+      if (!zipfile) return reject(new Error('Zipfile not found'));
+
+      zipfile.readEntry();
+      zipfile.on('entry', (entry: yauzl.Entry) => {
+        entries[entry.fileName] = entry.uncompressedSize;
+        zipfile.readEntry();
+      });
+
+      zipfile.on('end', () => {
+        resolve(entries);
+      });
+
+      zipfile.on('error', (err) => {
+        captureElectronError(err, {
+          contexts: {
+            fn: {
+              args: { zipPath },
+              name: 'getZipEntries zipfile error',
+            },
+          },
+        });
+        reject(err);
+      });
+    });
+  });
+}
 
 /**
  * Decompresses a file using yauzl for memory efficiency
