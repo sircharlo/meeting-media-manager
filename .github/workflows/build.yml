@@ -21,6 +21,8 @@ on:
         required: true
       SENTRY_AUTH_TOKEN:
         required: true
+      SONAR_TOKEN:
+        required: true
       TEST_VERSION:
         required: true
 
