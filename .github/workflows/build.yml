@@ -21,6 +21,8 @@ on:
         required: true
       SENTRY_AUTH_TOKEN:
         required: true
+      SONAR_TOKEN:
+        required: true
       TEST_VERSION:
         required: true
 
@@ -30,8 +32,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-        with:
-          ref: master
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
