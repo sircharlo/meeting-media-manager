@@ -606,6 +606,19 @@ export const fetchMedia = async () => {
       queues.meetings[currentStateStore.currentCongregation] = new PQueue({
         concurrency: 2,
       });
+
+      const q = queues.meetings[currentStateStore.currentCongregation];
+      if (q) {
+        const updateCount = () => {
+          currentStateStore.fetchingMeetingsCount = q.size + q.pending;
+        };
+        q.on('add', updateCount);
+        q.on('active', updateCount);
+        q.on('completed', updateCount);
+        q.on('idle', () => {
+          currentStateStore.fetchingMeetingsCount = 0;
+        });
+      }
     }
     const queue = queues.meetings[currentStateStore.currentCongregation];
     if (meetingsToFetch.length) {

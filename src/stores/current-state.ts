@@ -59,6 +59,7 @@ interface Store {
   currentCongregation: string;
   downloadProgress: DownloadProgressItems;
   extractedFiles: Partial<Record<string, string>>;
+  fetchingMeetingsCount: number;
   ffmpegPath: string;
   lookupInProgress: boolean;
   mediaPlaying: MediaPlayingState;
@@ -419,6 +420,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       currentCongregation: '',
       downloadProgress: {},
       extractedFiles: {},
+      fetchingMeetingsCount: 0,
       ffmpegPath: '',
       lookupInProgress: false,
       mediaPlaying: {

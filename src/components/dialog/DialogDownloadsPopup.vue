@@ -122,13 +122,15 @@
         <q-space />
         <q-btn
           color="warning"
-          :disable="refreshing"
+          :disable="refreshDisabled"
           icon="mmm-reset"
           :label="t('refresh-all-meeting-media')"
-          :loading="refreshing"
+          :loading="fetchOrDownloadsAreRunning"
           @click="onRefreshMeetingMedia"
         >
-          <q-tooltip>{{ t('refresh-all-meeting-media') }}</q-tooltip>
+          <q-tooltip v-if="!fetchOrDownloadsAreRunning">{{
+            t('refresh-all-meeting-media')
+          }}</q-tooltip>
         </q-btn>
       </div>
     </div>
@@ -139,7 +141,6 @@
 import type { DownloadProgressItems } from 'src/types';
 
 import { watchImmediate } from '@vueuse/core';
-import { queues } from 'boot/globals';
 import { storeToRefs } from 'pinia';
 import { type QMenu, useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
@@ -160,13 +161,8 @@ const { basename } = path;
 const open = defineModel<boolean>({ default: false });
 
 const currentState = useCurrentStateStore();
-const {
-  currentCongregation,
-  currentSettings,
-  downloadProgress,
-  mediaIsPlaying,
-  selectedDate,
-} = storeToRefs(currentState);
+const { currentSettings, downloadProgress, mediaIsPlaying, selectedDate } =
+  storeToRefs(currentState);
 
 const getBasename = (filename: string) => {
   if (!filename) return '';
@@ -368,27 +364,20 @@ const getStatusCaption = (dateKey: string) => {
   return `${total} ${t('items')}`;
 };
 
-// Refresh button state and handler
-const refreshing = ref(false);
-
 const fetchIsRunning = computed(() => {
-  try {
-    const q = queues.meetings[currentCongregation.value];
-    const size = q?.size || 0;
-    return size > 0;
-  } catch {
-    return false;
-  }
+  return currentState.fetchingMeetingsCount > 0;
 });
 
 const hasActiveDownloads = computed(() =>
   hasStatus(downloadProgress.value, 'loaded'),
 );
 
+const fetchOrDownloadsAreRunning = computed(() => {
+  return fetchIsRunning.value || hasActiveDownloads.value;
+});
+
 const refreshDisabled = computed(() => {
-  return (
-    hasActiveDownloads.value || mediaIsPlaying.value || fetchIsRunning.value
-  );
+  return fetchOrDownloadsAreRunning.value || mediaIsPlaying.value;
 });
 
 const onRefreshMeetingMedia = () => {
@@ -400,15 +389,10 @@ const onRefreshMeetingMedia = () => {
     persistent: true,
     title: t('refresh-all-meeting-media'),
   }).onOk(async () => {
-    try {
-      refreshing.value = true;
-      // 1) Reset lookup period for current congregation
-      updateLookupPeriod({ reset: true });
-      // 2) Fetch media
-      await fetchMedia();
-    } finally {
-      refreshing.value = false;
-    }
+    // 1) Reset lookup period for current congregation
+    updateLookupPeriod({ reset: true });
+    // 2) Fetch media
+    await fetchMedia();
   });
 };
 </script>
