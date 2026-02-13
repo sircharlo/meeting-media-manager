@@ -449,7 +449,7 @@ import type {
   SearchResultItem,
   SearchResults,
 } from 'src/types';
-import type { MediaLink } from 'src/types/jw/publications';
+import type { MediaLink, Publication } from 'src/types/jw/publications';
 
 import BaseDialog from 'components/dialog/BaseDialog.vue';
 import { storeToRefs } from 'pinia';
@@ -927,6 +927,85 @@ function goBack() {
   }
 }
 
+async function handleJwpubResult(
+  publication: string,
+  issue: string,
+  lang: JwLangCode,
+): Promise<boolean> {
+  const dbPath = await getDbFromJWPUB({
+    fileformat: 'JWPUB',
+    issue,
+    langwritten: lang,
+    pub: publication,
+  });
+  if (!dbPath) return false;
+
+  selection.dbPath = dbPath;
+  const docs = executeQuery<DocumentItem>(
+    dbPath,
+    `SELECT DocumentId, Title FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
+  );
+  documents.value = docs;
+  await buildDocumentHasMedia(dbPath);
+  await buildDocumentPreviews(dbPath);
+  step.value = 'article';
+  return true;
+}
+
+async function handleMediaResult(
+  pubMediaLinks: null | Publication,
+  publication: string,
+  issue: string,
+  lang: JwLangCode,
+  resultTitle: string,
+): Promise<boolean> {
+  // Find the best media format (prefer MP4, then others)
+  let mediaFiles: MediaLink[] = [];
+  const formatPriority: (keyof PublicationFiles)[] = ['MP4', 'M4V', 'MP3'];
+
+  for (const format of formatPriority) {
+    const mediaFileLookup = pubMediaLinks?.files?.[lang]?.[
+      format as keyof PublicationFiles
+    ] as MediaLink[] | undefined;
+    if (mediaFileLookup) {
+      for (const mediaFile of mediaFileLookup) {
+        if (pubMediaLinks?.pubImage?.url) {
+          mediaFile.trackImage.url = pubMediaLinks.pubImage.url;
+        } else {
+          const mediaFetcherCopy: PublicationFetcher = {
+            fileformat: format,
+            issue,
+            langwritten: lang,
+            pub: publication,
+            track: mediaFile.track,
+          };
+          const mediaInfo = await getJwMediaInfo(mediaFetcherCopy);
+          mediaFile.trackImage.url = mediaInfo.thumbnail;
+        }
+      }
+      mediaFiles = mediaFileLookup;
+      break;
+    }
+  }
+
+  mediaFiles = findBestResolutions(mediaFiles, currentSettings.value?.maxRes);
+
+  if (mediaFiles.length > 0) {
+    // Set media items and switch to media step
+    mediaItems.value = mediaFiles.map((mediaLink, index) => ({
+      ...mediaLink,
+      downloaded: false, // TODO: Check if already downloaded
+      title: mediaLink.title || resultTitle || `Media ${index + 1}`,
+    }));
+    step.value = 'media';
+    return true;
+  }
+
+  // No media files available
+  console.log('❌ No media files available for:', publication);
+  return false;
+}
+
 async function importDocument(doc: DocumentItem) {
   if (!selection.dbPath) return;
 
@@ -934,6 +1013,49 @@ async function importDocument(doc: DocumentItem) {
   emit('import', { dbPath: selection.dbPath, doc, type: 'jwpub' });
   resetState();
   dialogValue.value = false;
+}
+
+function normalizeIssue(publication: string, issue: string): string {
+  if (!['w', 'wp', 'ws'].includes(publication) || issue.length >= 8) {
+    return issue;
+  }
+
+  const year = Number.parseInt(issue.slice(0, 4) || '0');
+  if (year <= 2015) {
+    return ['w', 'ws'].includes(publication) ? `${issue}15` : `${issue}01`;
+  }
+
+  return `${issue}00`;
+}
+
+function normalizePublicationAndIssue(
+  jwOrgLink: string,
+): null | { issue: string; publication: string } {
+  const url = new URL(jwOrgLink);
+  let publication = url.searchParams.get('pub');
+  let issue = url.searchParams.get('issue') || '0';
+
+  if (!publication) return null;
+
+  // Strip digits from specific publication prefixes
+  if (/^(g|ws|wp|w)\d+/.test(publication)) {
+    publication = publication.replace(/\d+/, '');
+  }
+
+  // Special handling for Watchtower Public (wp)
+  if (
+    publication === 'w' &&
+    issue.length >= 8 &&
+    issue.startsWith('20') &&
+    issue.endsWith('01') &&
+    Number.parseInt(issue) >= 20080101
+  ) {
+    publication = 'wp';
+  }
+
+  issue = normalizeIssue(publication, issue);
+
+  return { issue, publication };
 }
 
 function onSearchInput() {
@@ -1276,54 +1398,14 @@ async function selectSearchResult(result: SearchResultItem) {
       loading.value = false;
       return;
     }
-    const url = new URL(jwOrgLink);
-    let publication = url.searchParams.get('pub');
 
-    let issue = url.searchParams.get('issue');
-    if (!publication) {
+    const normalized = normalizePublicationAndIssue(jwOrgLink);
+    if (!normalized) {
       loading.value = false;
       return;
     }
 
-    // if pub format is g##, ws##, wp## or w##, strip the digits
-    if (
-      publication.startsWith('g') ||
-      publication.startsWith('ws') ||
-      publication.startsWith('wp') ||
-      publication.startsWith('w')
-    ) {
-      publication = publication.replace(/\d+/, '');
-    }
-
-    if (!issue) {
-      issue = '0';
-    }
-
-    // Special handling for wp
-    if (
-      publication === 'w' &&
-      issue &&
-      Number.parseInt(issue.toString()) >= 20080101 &&
-      issue.toString().slice(-2) === '01'
-    ) {
-      publication = 'wp';
-    }
-
-    // Special issue handling for w, wp and ws
-    if (['w', 'wp', 'ws'].includes(publication)) {
-      if (issue?.length < 8) {
-        if (Number.parseInt(issue?.slice(0, 4) || '0') <= 2015) {
-          if (['w', 'ws'].includes(publication)) {
-            issue = `${issue}15`;
-          } else {
-            issue = `${issue}01`;
-          }
-        } else {
-          issue = `${issue}00`;
-        }
-      }
-    }
-
+    const { issue, publication } = normalized;
     selection.publication = publication;
     selection.brochureLabel = result.title;
     const lang = (currentSettings.value?.lang || 'E') as JwLangCode;
@@ -1335,76 +1417,18 @@ async function selectSearchResult(result: SearchResultItem) {
     };
 
     const pubMediaLinks = await getPubMediaLinks(mediaFetcher);
-
     const jwpubFileArray = pubMediaLinks?.files?.[lang]?.JWPUB;
-    const jwpubFileIsPresent = jwpubFileArray?.length;
-    if (jwpubFileIsPresent) {
-      const dbPath = await getDbFromJWPUB({
-        fileformat: 'JWPUB',
-        issue,
-        langwritten: lang,
-        pub: selection.publication,
-      });
-      if (!dbPath) {
-        loading.value = false;
-        return;
-      }
-      selection.dbPath = dbPath;
-      const docs = executeQuery<DocumentItem>(
-        dbPath,
-        `SELECT DocumentId, Title FROM Document WHERE Type <> 1 ORDER BY DocumentId`,
-      );
-      documents.value = docs;
-      await buildDocumentHasMedia(dbPath);
-      await buildDocumentPreviews(dbPath);
-      step.value = 'article';
+
+    if (jwpubFileArray?.length) {
+      await handleJwpubResult(publication, issue, lang);
     } else {
-      // Find the best media format (prefer MP4, then others)
-      let mediaFiles: MediaLink[] = [];
-      const formatPriority: (keyof PublicationFiles)[] = ['MP4', 'M4V', 'MP3'];
-
-      for (const format of formatPriority) {
-        const mediaFileLookup = pubMediaLinks?.files?.[lang]?.[
-          format as keyof PublicationFiles
-        ] as MediaLink[] | undefined;
-        if (mediaFileLookup) {
-          for (const mediaFile of mediaFileLookup) {
-            if (pubMediaLinks?.pubImage?.url) {
-              mediaFile.trackImage.url = pubMediaLinks.pubImage.url;
-            } else {
-              const mediaFetcherCopy: PublicationFetcher = { ...mediaFetcher };
-              mediaFetcherCopy.fileformat = format;
-              mediaFetcherCopy.track = mediaFile.track;
-              const mediaInfo = await getJwMediaInfo(mediaFetcherCopy);
-              mediaFile.trackImage.url = mediaInfo.thumbnail;
-            }
-          }
-          mediaFiles = mediaFileLookup;
-          break;
-        }
-      }
-
-      mediaFiles = findBestResolutions(
-        mediaFiles,
-        currentSettings.value?.maxRes,
+      await handleMediaResult(
+        pubMediaLinks,
+        publication,
+        issue,
+        lang,
+        result.title,
       );
-
-      if (mediaFiles.length > 0) {
-        // Set media items and switch to media step
-        mediaItems.value = mediaFiles.map((mediaLink, index) => ({
-          ...mediaLink,
-          downloaded: false, // TODO: Check if already downloaded
-          title: mediaLink.title || result.title || `Media ${index + 1}`,
-        }));
-        step.value = 'media';
-        loading.value = false;
-        return;
-      } else {
-        // No media files available
-        console.log('❌ No media files available for:', publication);
-        loading.value = false;
-        return;
-      }
     }
   } catch (e) {
     errorCatcher(e);
