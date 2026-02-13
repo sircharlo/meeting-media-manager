@@ -74,6 +74,9 @@ export const electronApi: ElectronApi = {
   getVideoDuration: function (filePath) {
     throw new Error('Function not implemented.');
   },
+  getZipEntries: function () {
+    throw new Error('Function not implemented.');
+  },
   inferExtension: async function (filename, filetype) {
     throw new Error('Function not implemented.');
   },
