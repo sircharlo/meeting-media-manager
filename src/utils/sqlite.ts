@@ -183,124 +183,264 @@ export const getSjjExtractOrdinals = (db: string, docId: number) => {
   }
 };
 
+const getDbMetadata = (db: string) => {
+  const DocumentMultimediaTable = executeQuery<{ name: string }>(
+    db,
+    "SELECT name FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'",
+  ).map((item) => item.name);
+
+  const mmTable =
+    DocumentMultimediaTable.length === 0
+      ? 'Multimedia'
+      : DocumentMultimediaTable[0];
+
+  const columnQueryResult = executeQuery<{ name: string }>(
+    db,
+    `PRAGMA table_info(${mmTable})`,
+  );
+
+  const ParagraphColumnsExist = columnQueryResult.some(
+    (column) => column.name === 'BeginParagraphOrdinal',
+  );
+
+  const QuestionTableInfo = executeQuery<{ name: string }>(
+    db,
+    "PRAGMA table_info('Question')",
+  );
+
+  const targetParNrExists =
+    QuestionTableInfo.some(
+      (item) => item.name === 'TargetParagraphNumberLabel',
+    ) &&
+    !!executeQuery<TableItemCount>(db, 'SELECT COUNT(*) FROM Question')[0]
+      ?.count;
+
+  const MultimediaTableInfo = executeQuery<{ name: string }>(
+    db,
+    "PRAGMA table_info('Multimedia')",
+  );
+
+  const LinkMultimediaIdExists = MultimediaTableInfo.some(
+    (item) => item.name === 'LinkMultimediaId',
+  );
+
+  const suppressZoomExists = MultimediaTableInfo.some(
+    (item) => item.name === 'SuppressZoom',
+  );
+
+  return {
+    LinkMultimediaIdExists,
+    mmTable,
+    ParagraphColumnsExist,
+    suppressZoomExists,
+    targetParNrExists,
+  };
+};
+
+const buildDocumentMultimediaQuery = (
+  db: string,
+  source: MultimediaItemsFetcher,
+  includePrinted: boolean | undefined,
+) => {
+  const {
+    LinkMultimediaIdExists,
+    mmTable,
+    ParagraphColumnsExist,
+    suppressZoomExists,
+    targetParNrExists,
+  } = getDbMetadata(db);
+
+  let select = 'SELECT Document.*, Multimedia.*';
+  if (mmTable === 'DocumentMultimedia') select += ', DocumentMultimedia.*';
+  if (ParagraphColumnsExist) select += ', DocumentParagraph.*';
+  if (LinkMultimediaIdExists)
+    select += ', LinkedMultimedia.FilePath AS LinkedPreviewFilePath';
+
+  let from = ' FROM Multimedia';
+  if (mmTable === 'DocumentMultimedia') {
+    from +=
+      ' INNER JOIN DocumentMultimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId';
+    from += ` LEFT JOIN DocumentParagraph ON ${mmTable}.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex
+                AND DocumentParagraph.DocumentId = ${mmTable}.DocumentId`;
+  }
+  from += ` INNER JOIN Document ON ${mmTable}.DocumentId = Document.DocumentId`;
+  if (LinkMultimediaIdExists) {
+    from +=
+      ' LEFT JOIN Multimedia AS LinkedMultimedia ON Multimedia.LinkMultimediaId = LinkedMultimedia.MultimediaId';
+  }
+  if (targetParNrExists && ParagraphColumnsExist) {
+    from += ` LEFT JOIN Question ON Question.DocumentId = ${mmTable}.DocumentId AND Question.TargetParagraphOrdinal = ${mmTable}.BeginParagraphOrdinal`;
+  }
+
+  const params: (number | string)[] = [];
+  let where = 'WHERE ';
+  if (source.docId || source.docId === 0) {
+    where += 'Document.DocumentId = ?';
+    params.push(source.docId);
+  } else {
+    where += 'Document.MepsDocumentId = ?';
+    params.push(source.mepsId as number);
+  }
+
+  const videoString =
+    "(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')";
+  const imgString = `(Multimedia.MimeType LIKE '%image%'${
+    includePrinted
+      ? ''
+      : ' AND Multimedia.CategoryType <> 4 AND Multimedia.CategoryType <> 6'
+  } AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)`;
+
+  where += ` AND (${videoString} OR ${imgString})`;
+
+  if (
+    'BeginParagraphOrdinal' in source &&
+    'EndParagraphOrdinal' in source &&
+    ParagraphColumnsExist
+  ) {
+    where += ` AND ${mmTable}.BeginParagraphOrdinal >= ? AND ${mmTable}.EndParagraphOrdinal <= ?`;
+    params.push(
+      source.BeginParagraphOrdinal as number,
+      source.EndParagraphOrdinal as number,
+    );
+  }
+
+  if (suppressZoomExists) {
+    where += ' AND Multimedia.SuppressZoom <> 1';
+  }
+
+  const groupAndSort = ParagraphColumnsExist
+    ? 'GROUP BY Multimedia.MultimediaId ORDER BY DocumentMultimedia.BeginParagraphOrdinal'
+    : '';
+
+  return {
+    ParagraphColumnsExist,
+    params,
+    query: `${select} ${from} ${where} ${groupAndSort}`,
+  };
+};
+
+const fixSjjmItems = (
+  items: MultimediaItem[],
+  db: string,
+  docId: number | undefined,
+  ParagraphColumnsExist: boolean,
+) => {
+  const sjjmItems = items.filter((item) => item?.KeySymbol?.includes('sjj'));
+  if (sjjmItems.length === 0 || docId === undefined) return;
+
+  const sjjOrdinals = getSjjExtractOrdinals(db, docId);
+  if (sjjOrdinals.length === 0) return;
+
+  // Capture original ordinals to reliably identify "between" items
+  const originalOrdinals = new Map<number, number>();
+  items.forEach((item) => {
+    originalOrdinals.set(item.MultimediaId, item.BeginParagraphOrdinal || 0);
+  });
+
+  // 1. Map sjjm items sequentially: 1st sjjm item gets 1st sjj ordinal, etc.
+  sjjmItems.forEach((item, index) => {
+    const ordinal = sjjOrdinals[index];
+    if (ordinal) {
+      if (ordinal.BeginParagraphOrdinal !== item.BeginParagraphOrdinal) {
+        console.log(
+          '⚠️ BeginParagraphOrdinal mismatch for sjjm item; updating:',
+          item.MultimediaId,
+          'from',
+          item.BeginParagraphOrdinal,
+          'to',
+          ordinal.BeginParagraphOrdinal,
+        );
+        item.BeginParagraphOrdinal = ordinal.BeginParagraphOrdinal;
+      }
+      if (ordinal.EndParagraphOrdinal !== item.EndParagraphOrdinal) {
+        console.log(
+          '⚠️ EndParagraphOrdinal mismatch for sjjm item; updating:',
+          item.MultimediaId,
+          'from',
+          item.EndParagraphOrdinal,
+          'to',
+          ordinal.EndParagraphOrdinal,
+        );
+        item.EndParagraphOrdinal = ordinal.EndParagraphOrdinal;
+      }
+      if (ordinal.SortPosition !== item.BeginPosition) {
+        console.log(
+          '⚠️ SortPosition mismatch for sjjm item; updating:',
+          item.MultimediaId,
+          'from',
+          item.BeginPosition,
+          'to',
+          ordinal.SortPosition,
+        );
+        item.BeginPosition = ordinal.SortPosition;
+      }
+    }
+  });
+
+  // 2. Fix items between sjjm items by incrementing ordinals
+  for (let i = 0; i < sjjmItems.length - 1; i++) {
+    const current = sjjmItems[i];
+    const next = sjjmItems[i + 1];
+    if (!current || !next) continue;
+
+    const currentOrigP = originalOrdinals.get(current.MultimediaId) || 0;
+    const nextOrigP = originalOrdinals.get(next.MultimediaId) || 0;
+
+    const betweenItems = items.filter((item) => {
+      const origP = originalOrdinals.get(item.MultimediaId) || 0;
+      return (
+        origP > currentOrigP && origP < nextOrigP && !sjjmItems.includes(item)
+      );
+    });
+
+    if (betweenItems.length > 0) {
+      betweenItems.sort((a, b) => {
+        const aP = originalOrdinals.get(a.MultimediaId) || 0;
+        const bP = originalOrdinals.get(b.MultimediaId) || 0;
+        return aP - bP;
+      });
+
+      let lastP = current.BeginParagraphOrdinal || 0;
+      let lastS = current.BeginPosition || 0;
+
+      betweenItems.forEach((item) => {
+        lastP++;
+        lastS++;
+        console.log(
+          '⚠️ Incrementing ordinals for item between sjjm items:',
+          item.MultimediaId,
+          'to p:',
+          lastP,
+          's:',
+          lastS,
+        );
+        item.BeginParagraphOrdinal = lastP;
+        item.EndParagraphOrdinal = lastP;
+        item.BeginPosition = lastS;
+      });
+    }
+  }
+
+  // Re-sort all items by BeginParagraphOrdinal after mapping
+  if (ParagraphColumnsExist) {
+    items.sort(
+      (a, b) => (a.BeginParagraphOrdinal || 0) - (b.BeginParagraphOrdinal || 0),
+    );
+  }
+};
+
 export const getDocumentMultimediaItems = (
   source: MultimediaItemsFetcher,
   includePrinted: boolean | undefined,
 ) => {
   try {
     if (!source.db) return [];
-    const DocumentMultimediaTable = globalThis.electronApi
-      .executeQuery<{
-        name: string;
-      }>(
-        source.db,
-        "SELECT name FROM sqlite_master WHERE type='table' AND name='DocumentMultimedia'",
-      )
-      .map((item) => item.name);
-    const mmTable =
-      DocumentMultimediaTable.length === 0
-        ? 'Multimedia'
-        : DocumentMultimediaTable[0];
-    const columnQueryResult = executeQuery<{ name: string }>(
-      source.db,
-      `PRAGMA table_info(${mmTable})`,
-    );
 
-    const ParagraphColumnsExist = columnQueryResult.some(
-      (column) => column.name === 'BeginParagraphOrdinal',
-    );
+    const { ParagraphColumnsExist, params, query } =
+      buildDocumentMultimediaQuery(source.db, source, includePrinted);
 
-    const targetParNrExists =
-      globalThis.electronApi
-        .executeQuery<{
-          name: string;
-        }>(source.db, "PRAGMA table_info('Question')")
-        .some((item) => item.name === 'TargetParagraphNumberLabel') &&
-      !!executeQuery<TableItemCount>(
-        source.db,
-        'SELECT COUNT(*) FROM Question',
-      )[0]?.count;
+    const items = executeQuery<MultimediaItem>(source.db, query, params);
 
-    const LinkMultimediaIdExists = globalThis.electronApi
-      .executeQuery<{
-        name: string;
-      }>(source.db, "PRAGMA table_info('Multimedia')")
-      .some((item) => item.name === 'LinkMultimediaId');
-
-    const suppressZoomExists = globalThis.electronApi
-      .executeQuery<{ name: string }>(
-        source.db,
-        "PRAGMA table_info('Multimedia')",
-      )
-      .map((item) => item.name)
-      .includes('SuppressZoom');
-
-    // Complex query with multiple joins - using SELECT * because the returned MultimediaItem objects
-    // are used throughout the codebase and require all properties to be present.
-    // The objects are passed to functions like addFullFilePathToMultimediaItem, dynamicMediaMapper,
-    // processMissingMediaInfo, etc. which access various properties dynamically.
-    // Optimizing this would require extensive refactoring of function signatures across the codebase.
-    let select = 'SELECT Document.*, Multimedia.*';
-    select += mmTable === 'DocumentMultimedia' ? ', DocumentMultimedia.*' : '';
-    select += ParagraphColumnsExist ? ', DocumentParagraph.*' : '';
-    select += LinkMultimediaIdExists
-      ? ', LinkedMultimedia.FilePath AS LinkedPreviewFilePath'
-      : '';
-    let from = ' FROM Multimedia';
-    if (mmTable === 'DocumentMultimedia') {
-      from +=
-        ' INNER JOIN DocumentMultimedia ON DocumentMultimedia.MultimediaId = Multimedia.MultimediaId';
-      from += ` LEFT JOIN DocumentParagraph ON ${mmTable}.BeginParagraphOrdinal = DocumentParagraph.ParagraphIndex
-                  AND DocumentParagraph.DocumentId = ${mmTable}.DocumentId`;
-    }
-    from += ` INNER JOIN Document ON ${mmTable}.DocumentId = Document.DocumentId`;
-    if (LinkMultimediaIdExists)
-      from +=
-        ' LEFT JOIN Multimedia AS LinkedMultimedia ON Multimedia.LinkMultimediaId = LinkedMultimedia.MultimediaId';
-    const params: (number | string)[] = [];
-    let where = 'WHERE ';
-    if (source.docId || source.docId === 0) {
-      where += 'Document.DocumentId = ?';
-      params.push(source.docId);
-    } else {
-      where += 'Document.MepsDocumentId = ?';
-      params.push(source.mepsId as number);
-    }
-
-    const videoString =
-      "(Multimedia.MimeType LIKE '%video%' OR Multimedia.MimeType LIKE '%audio%')";
-    const imgString = `(Multimedia.MimeType LIKE '%image%'${
-      includePrinted
-        ? ''
-        : ' AND Multimedia.CategoryType <> 4 AND Multimedia.CategoryType <> 6'
-    } AND Multimedia.CategoryType <> 9 AND Multimedia.CategoryType <> 10 AND Multimedia.CategoryType <> 25)`;
-
-    where += ` AND (${videoString} OR ${imgString})`;
-
-    if (
-      'BeginParagraphOrdinal' in source &&
-      'EndParagraphOrdinal' in source &&
-      ParagraphColumnsExist
-    ) {
-      where += ` AND ${mmTable}.BeginParagraphOrdinal >= ? AND ${mmTable}.EndParagraphOrdinal <= ?`;
-      params.push(
-        source.BeginParagraphOrdinal as number,
-        source.EndParagraphOrdinal as number,
-      );
-    }
-
-    const groupAndSort = ParagraphColumnsExist
-      ? 'GROUP BY Multimedia.MultimediaId ORDER BY DocumentMultimedia.BeginParagraphOrdinal'
-      : '';
-
-    if (targetParNrExists && ParagraphColumnsExist) {
-      from += ` LEFT JOIN Question ON Question.DocumentId = ${mmTable}.DocumentId AND Question.TargetParagraphOrdinal = ${mmTable}.BeginParagraphOrdinal`;
-    }
-    if (suppressZoomExists) {
-      where += ' AND Multimedia.SuppressZoom <> 1';
-    }
-    const finalQuery = `${select} ${from} ${where} ${groupAndSort}`;
-    const items = executeQuery<MultimediaItem>(source.db, finalQuery, params);
     for (const item of items) {
       if (!item) continue;
       const videoMarkers = getMediaVideoMarkers(
@@ -312,119 +452,7 @@ export const getDocumentMultimediaItems = (
 
     // Hack: Fix unreliable BeginParagraphOrdinal and EndParagraphOrdinal for sjjm items
     // by mapping them from DocumentExtract (sjj) ordinals sequentially
-    const sjjmItems = items.filter((item) => item?.KeySymbol?.includes('sjj'));
-
-    if (sjjmItems.length > 0 && source.docId !== undefined) {
-      const sjjOrdinals = getSjjExtractOrdinals(source.db, source.docId);
-
-      if (sjjOrdinals.length > 0) {
-        // Capture original ordinals to reliably identify "between" items
-        const originalOrdinals = new Map<number, number>();
-        items.forEach((item) => {
-          originalOrdinals.set(
-            item.MultimediaId,
-            item.BeginParagraphOrdinal || 0,
-          );
-        });
-
-        // 1. Map sjjm items sequentially: 1st sjjm item gets 1st sjj ordinal, etc.
-        sjjmItems.forEach((item, index) => {
-          const ordinal = sjjOrdinals[index];
-          if (ordinal) {
-            if (ordinal.BeginParagraphOrdinal !== item.BeginParagraphOrdinal) {
-              console.log(
-                '⚠️ BeginParagraphOrdinal mismatch for sjjm item; updating:',
-                item.MultimediaId,
-                'from',
-                item.BeginParagraphOrdinal,
-                'to',
-                ordinal.BeginParagraphOrdinal,
-              );
-              item.BeginParagraphOrdinal = ordinal.BeginParagraphOrdinal;
-            }
-            if (ordinal.EndParagraphOrdinal !== item.EndParagraphOrdinal) {
-              console.log(
-                '⚠️ EndParagraphOrdinal mismatch for sjjm item; updating:',
-                item.MultimediaId,
-                'from',
-                item.EndParagraphOrdinal,
-                'to',
-                ordinal.EndParagraphOrdinal,
-              );
-              item.EndParagraphOrdinal = ordinal.EndParagraphOrdinal;
-            }
-            if (ordinal.SortPosition !== item.BeginPosition) {
-              console.log(
-                '⚠️ SortPosition mismatch for sjjm item; updating:',
-                item.MultimediaId,
-                'from',
-                item.BeginPosition,
-                'to',
-                ordinal.SortPosition,
-              );
-              item.BeginPosition = ordinal.SortPosition;
-            }
-          }
-        });
-
-        // 2. Fix items between sjjm items by incrementing ordinals
-        // "between" means they have original BeginParagraphOrdinal > current sjj and < next sjj
-        for (let i = 0; i < sjjmItems.length - 1; i++) {
-          const current = sjjmItems[i];
-          const next = sjjmItems[i + 1];
-
-          if (!current || !next) continue;
-
-          const currentOrigP = originalOrdinals.get(current.MultimediaId) || 0;
-          const nextOrigP = originalOrdinals.get(next.MultimediaId) || 0;
-
-          const betweenItems = items.filter((item) => {
-            const origP = originalOrdinals.get(item.MultimediaId) || 0;
-            return (
-              origP > currentOrigP &&
-              origP < nextOrigP &&
-              !sjjmItems.includes(item)
-            );
-          });
-
-          if (betweenItems.length > 0) {
-            // Sort by original ordinal to preserve intended sequence
-            betweenItems.sort((a, b) => {
-              const aP = originalOrdinals.get(a.MultimediaId) || 0;
-              const bP = originalOrdinals.get(b.MultimediaId) || 0;
-              return aP - bP;
-            });
-
-            let lastP = current.BeginParagraphOrdinal || 0;
-            let lastS = current.BeginPosition || 0;
-
-            betweenItems.forEach((item) => {
-              lastP++;
-              lastS++;
-              console.log(
-                '⚠️ Incrementing ordinals for item between sjjm items:',
-                item.MultimediaId,
-                'to p:',
-                lastP,
-                's:',
-                lastS,
-              );
-              item.BeginParagraphOrdinal = lastP;
-              item.EndParagraphOrdinal = lastP;
-              item.BeginPosition = lastS;
-            });
-          }
-        }
-
-        // Re-sort all items by BeginParagraphOrdinal after mapping
-        if (ParagraphColumnsExist) {
-          items.sort(
-            (a, b) =>
-              (a.BeginParagraphOrdinal || 0) - (b.BeginParagraphOrdinal || 0),
-          );
-        }
-      }
-    }
+    fixSjjmItems(items, source.db, source.docId, ParagraphColumnsExist);
 
     return items;
   } catch (error) {
