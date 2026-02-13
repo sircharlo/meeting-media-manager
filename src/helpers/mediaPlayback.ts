@@ -80,23 +80,17 @@ const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
 
     // First, only extract 'contents' from the JWPUB zip if it doesn't exist or is the wrong size
     const contentsStats = await stat(contentsPath).catch(() => undefined);
-    console.log(
-      `[jwpubExtractor] contents size: path ${contentsPath}, expected ${expectedContentsSize}, got ${contentsStats?.size}.`,
-    );
+
     if (!contentsStats || contentsStats.size !== expectedContentsSize) {
       if (contentsStats) {
         console.warn(
-          `[jwpubExtractor] contents size mismatch: path ${contentsPath}, expected ${expectedContentsSize}, got ${contentsStats.size}. Re-extracting.`,
+          `[jwpubExtractor] contents size mismatch: path ${contentsPath}, expected ${expectedContentsSize}, got ${contentsStats.size}. Re-extracting contents from ${jwpubPath}.`,
         );
       }
       try {
         await unzip(jwpubPath, outputPath, {
           includes: ['contents'],
         });
-        const contentsStats = await stat(contentsPath).catch(() => undefined);
-        console.log(
-          `[jwpubExtractor] contents after unzip: path ${contentsPath}, expected ${expectedContentsSize}, got ${contentsStats?.size}.`,
-        );
       } catch (error) {
         // If unzipping the JWPUB fails, it's likely corrupted.
         // Remove it to force a re-download on next attempt.
@@ -135,23 +129,16 @@ const jwpubExtractor = async (jwpubPath: string, outputPath: string) => {
     const dbStats = dbFile
       ? await stat(dbFile).catch(() => undefined)
       : undefined;
-    console.log(
-      `[jwpubExtractor] DB size: path ${dbFile}, expected ${expectedDbSize} (${expectedDbName}), got ${dbStats?.size}.`,
-    );
     if (dbStats?.size !== expectedDbSize) {
       if (dbStats) {
         console.warn(
-          `[jwpubExtractor] DB size mismatch: path ${dbFile}, expected ${expectedDbSize} (${expectedDbName}), got ${dbStats.size}. Re-extracting contents.`,
+          `[jwpubExtractor] DB size mismatch: path ${dbFile}, expected ${expectedDbSize} (${expectedDbName}), got ${dbStats.size}. Re-extracting the contents from ${contentsPath}.`,
         );
       }
       try {
         await unzip(contentsPath, outputPath);
         const dbFile = await findDb(outputPath);
         if (!dbFile) throw new Error('DB still not found after unzip');
-        const dbStats = await stat(dbFile).catch(() => undefined);
-        console.log(
-          `[jwpubExtractor] DB size after unzip: path ${dbFile}, expected ${expectedDbSize} (${expectedDbName}), got ${dbStats?.size}.`,
-        );
       } catch (error) {
         // If unzipping contents fails, it might be corrupted.
         // Remove it so it can be re-extracted next time.

@@ -336,7 +336,7 @@ export function formatDate(
 
   const date = new Date(val);
 
-  if (Number.isNaN(date)) {
+  if (Number.isNaN(date.getTime())) {
     return '';
   }
 

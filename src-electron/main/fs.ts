@@ -277,18 +277,6 @@ const handleZipEntry = async (
 ): Promise<void> => {
   const fullPath = join(context.output, entry.fileName);
 
-  addElectronBreadcrumb({
-    category: 'unzip',
-    data: {
-      compressedSize: entry.compressedSize,
-      fileName: entry.fileName,
-      isDirectory: entry.fileName.endsWith('/'),
-      uncompressedSize: entry.uncompressedSize,
-    },
-    level: 'debug',
-    message: 'Processing entry',
-  });
-
   // Apply filter if provided
   if (
     context.opts?.includes?.length &&
@@ -397,12 +385,6 @@ const decompress = async (
         return reject(new Error(String(err)));
       }
       if (!zipfile) return reject(new Error('Zipfile not found'));
-
-      addElectronBreadcrumb({
-        category: 'unzip',
-        data: { entryCount: zipfile.entryCount },
-        message: 'Zip opened',
-      });
 
       const state: ZipfileState = {
         checkIfComplete,
