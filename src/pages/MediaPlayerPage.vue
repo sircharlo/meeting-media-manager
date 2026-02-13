@@ -818,93 +818,126 @@ watchDeep(
   },
 );
 
+const ensureMediaElementReady = async (maxRetries = 50): Promise<boolean> => {
+  let timeouts = 0;
+  while (!currentMediaElement.value) {
+    await new Promise((resolve) => {
+      setTimeout(resolve, 100);
+    });
+    if (++timeouts > maxRetries) {
+      return false;
+    }
+  }
+  return true;
+};
+
+const notifyAccessDenied = (isCamera: boolean) => {
+  createTemporaryNotification({
+    caption: t(
+      isCamera
+        ? 'camera-access-required-explain'
+        : 'screen-access-required-explain',
+    ),
+    message: t(isCamera ? 'camera-access-required' : 'screen-access-required'),
+    noClose: true,
+    timeout: 10000,
+    type: 'negative',
+  });
+};
+
+const requestStream = async (isCamera: boolean, deviceId?: string) => {
+  const checkAccess = async () => {
+    const status = await getScreenAccessStatus();
+    return status === 'granted';
+  };
+
+  const getMedia = () => {
+    if (isCamera) {
+      return navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: { deviceId },
+      });
+    }
+    return navigator.mediaDevices.getDisplayMedia({
+      audio: false,
+      video: PLATFORM === 'linux' ? { cursor: 'never' } : true,
+    });
+  };
+
+  try {
+    if (!(await checkAccess())) {
+      try {
+        const temp = await getMedia();
+        temp.getTracks().forEach((track) => track.stop());
+      } catch (e) {
+        errorCatcher(e, {
+          contexts: {
+            fn: {
+              name: isCamera ? 'requestCameraAccess' : 'requestDisplayAccess',
+            },
+          },
+        });
+      }
+
+      if (!(await checkAccess())) {
+        notifyAccessDenied(isCamera);
+        return null;
+      }
+    }
+
+    return await getMedia();
+  } catch (e) {
+    errorCatcher(e, {
+      contexts: { fn: { name: isCamera ? 'streamCamera' : 'streamDisplay' } },
+    });
+    if (isCamera) notifyAccessDenied(isCamera);
+    return null;
+  }
+};
+
 watch(
   () => webStreamData.value,
   async (newWebStreamData) => {
     videoStreaming.value = newWebStreamData === 'mirroringWebsite';
-    if (newWebStreamData === 'mirroringWebsite') {
-      if (cameraStreamId.value) cameraStreamId.value = '';
-
-      // Activate a display layer for streaming
-      displayLayer1.value.isLive = true;
-      displayLayer1.value.url = ''; // No URL for streaming, just activate the layer
-
-      const screenAccessStatus = await getScreenAccessStatus();
-      if (!screenAccessStatus || screenAccessStatus !== 'granted') {
-        try {
-          await navigator.mediaDevices.getDisplayMedia({
-            audio: false,
-            video: PLATFORM === 'linux' ? { cursor: 'never' } : true,
-          });
-        } catch (e) {
-          errorCatcher(e, {
-            contexts: { fn: { name: 'requestDisplayAccess' } },
-          });
+    if (newWebStreamData !== 'mirroringWebsite') {
+      if (newWebStreamData !== 'previewingWebsite') {
+        if (currentMediaElement.value) {
+          currentMediaElement.value.pause();
+          currentMediaElement.value.srcObject = null;
         }
-        const screenAccessStatusSecondTry = await getScreenAccessStatus();
-        if (
-          !screenAccessStatusSecondTry ||
-          screenAccessStatusSecondTry !== 'granted'
-        ) {
-          console.warn(
-            '[MediaPlayerPage] Screen access not granted - cannot stream',
-          );
-          createTemporaryNotification({
-            caption: t('screen-access-required-explain'),
-            message: t('screen-access-required'),
-            noClose: true,
-            timeout: 10000,
-            type: 'negative',
-          });
-          videoStreaming.value = false;
-          return;
-        }
+        postMediaPlayingAction('');
+        displayLayer1.value.isLive = false;
+        displayLayer1.value.url = '';
       }
-      try {
-        const stream = await navigator.mediaDevices.getDisplayMedia({
-          audio: false,
-          video: PLATFORM === 'linux' ? { cursor: 'never' } : true,
+      return;
+    }
+
+    if (cameraStreamId.value) cameraStreamId.value = '';
+
+    // Activate a display layer for streaming
+    displayLayer1.value.isLive = true;
+    displayLayer1.value.url = ''; // No URL for streaming, just activate the layer
+
+    const stream = await requestStream(false);
+    const ready = stream && (await ensureMediaElementReady(50));
+
+    if (!stream || !ready || !currentMediaElement.value) {
+      if (!ready && stream) {
+        errorCatcher(new Error('Timed out waiting for media element'), {
+          contexts: { fn: { name: 'streamDisplay' } },
         });
-        let timeouts = 0;
-        while (!currentMediaElement.value) {
-          await new Promise((resolve) => {
-            setTimeout(resolve, 100);
-          });
-          if (++timeouts > 50) {
-            errorCatcher(new Error('Timed out waiting for media element'), {
-              contexts: { fn: { name: 'streamDisplay' } },
-            });
-            break;
-          }
-        }
-        if (!currentMediaElement.value || !stream) {
-          console.warn(
-            '[MediaPlayerPage] No media element or stream available',
-          );
-          videoStreaming.value = false;
-          postMediaPlayingAction('');
-          currentMediaElement.value?.pause();
-          if (currentMediaElement.value?.srcObject) {
-            currentMediaElement.value.srcObject = null;
-          }
-          return;
-        }
-        currentMediaElement.value.srcObject = stream;
-        playMediaElement(false, true);
-      } catch (e) {
-        errorCatcher(e, { contexts: { fn: { name: 'streamDisplay' } } });
       }
-    } else if (newWebStreamData !== 'previewingWebsite') {
-      if (currentMediaElement.value) {
-        currentMediaElement.value.pause();
+      videoStreaming.value = false;
+      postMediaPlayingAction('');
+      currentMediaElement.value?.pause();
+      if (currentMediaElement.value?.srcObject) {
         currentMediaElement.value.srcObject = null;
       }
-      postMediaPlayingAction('');
-
-      // Deactivate display layer
-      displayLayer1.value.isLive = false;
-      displayLayer1.value.url = '';
+      return;
     }
+
+    currentMediaElement.value.srcObject = stream;
+    playMediaElement(false, true);
   },
 );
 
@@ -912,88 +945,31 @@ watch(
   () => cameraStreamId.value,
   async (deviceId) => {
     videoStreaming.value = !!deviceId;
-    if (deviceId) {
-      const screenAccessStatus = await getScreenAccessStatus();
-      if (!screenAccessStatus || screenAccessStatus !== 'granted') {
-        try {
-          await navigator.mediaDevices.getUserMedia({
-            audio: false,
-            video: { deviceId },
-          });
-        } catch (e) {
-          errorCatcher(e, {
-            contexts: { fn: { name: 'requestCameraAccess' } },
-          });
-          if (cameraStreamId.value) cameraStreamId.value = '';
-          videoStreaming.value = false;
-          createTemporaryNotification({
-            caption: t('camera-access-required-explain'),
-            message: t('camera-access-required'),
-            noClose: true,
-            timeout: 10000,
-            type: 'negative',
-          });
-          return;
-        }
-        const screenAccessStatusSecondTry = await getScreenAccessStatus();
-        if (
-          !screenAccessStatusSecondTry ||
-          screenAccessStatusSecondTry !== 'granted'
-        ) {
-          createTemporaryNotification({
-            caption: t('screen-access-required-explain'),
-            message: t('screen-access-required'),
-            noClose: true,
-            timeout: 10000,
-            type: 'negative',
-          });
-          videoStreaming.value = false;
-          return;
-        }
-      }
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: false,
-          video: { deviceId },
-        });
-        let timeouts = 0;
-        while (!currentMediaElement.value) {
-          await new Promise((resolve) => {
-            setTimeout(resolve, 100);
-          });
-          if (++timeouts > 10) break;
-        }
-        if (!currentMediaElement.value || !stream) {
-          videoStreaming.value = false;
-          postMediaPlayingAction('');
-          currentMediaElement.value?.pause();
-          if (currentMediaElement.value?.srcObject) {
-            currentMediaElement.value.srcObject = null;
-          }
-          return;
-        }
-        currentMediaElement.value.srcObject = stream;
-        playMediaElement(false, true);
-      } catch (e) {
-        errorCatcher(e, { contexts: { fn: { name: 'streamCamera' } } });
-        if (cameraStreamId.value) cameraStreamId.value = '';
-        videoStreaming.value = false;
-        createTemporaryNotification({
-          caption: t('camera-access-required-explain'),
-          message: t('camera-access-required'),
-          noClose: true,
-          timeout: 10000,
-          type: 'negative',
-        });
-        return;
-      }
-    } else {
+    if (!deviceId) {
       if (currentMediaElement.value) {
         currentMediaElement.value.pause();
         currentMediaElement.value.srcObject = null;
       }
       postMediaPlayingAction('');
+      return;
     }
+
+    const stream = await requestStream(true, deviceId);
+    const ready = stream && (await ensureMediaElementReady(10));
+
+    if (!stream || !ready || !currentMediaElement.value) {
+      videoStreaming.value = false;
+      if (cameraStreamId.value) cameraStreamId.value = '';
+      postMediaPlayingAction('');
+      currentMediaElement.value?.pause();
+      if (currentMediaElement.value?.srcObject) {
+        currentMediaElement.value.srcObject = null;
+      }
+      return;
+    }
+
+    currentMediaElement.value.srcObject = stream;
+    playMediaElement(false, true);
   },
 );
 
