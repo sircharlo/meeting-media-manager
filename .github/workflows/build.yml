@@ -30,8 +30,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-        with:
-          ref: master
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:
