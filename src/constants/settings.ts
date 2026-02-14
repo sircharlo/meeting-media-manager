@@ -1,13 +1,7 @@
 import type { SettingsGroups, SettingsItems, SettingsValues } from 'src/types';
 
 // Enum Types
-export const RESOLUTIONS = [
-  '240p',
-  '360p',
-  '480p',
-  '720p',
-  //'1080p'
-] as const;
+export const RESOLUTIONS = ['240p', '360p', '480p', '720p', '1080p'] as const;
 
 /* eslint-disable perfectionist/sort-objects */
 export const settingsGroups: SettingsGroups = {
