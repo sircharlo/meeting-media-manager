@@ -174,28 +174,28 @@ Az M³ automatikusan vált az OBS jelenetek között a prezentációk során:
 
 Engedélyezze ezt az opciót, ha késleltetni szeretné a képek OBS-hez való továbbítását, amíg azt manuálisan el nem indítja:
 
-1. Enable "Postpone Images" in OBS settings
-2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
+1. Engedélyezze a „Képmegjelenítés késleltetése” opciót az OBS beállításaiban
+2. A képek csak akkor kerülnek megosztásra, ha rákattint a gombra, hogy bemutassa őket az OBS Studio segítségével. Ez akkor hasznos, ha a képeket először a személyesen jelen lévőknek szeretné megmutatni.
 
-#### Scene Switching Behavior {#user-guide-scene-switching}
+#### Jelenetváltási viselkedés {#user-guide-scene-switching}
 
-Configure how M³ handles scene changes:
+Állítsa be, hogy az M³ hogyan kezelje a jelenetváltásokat:
 
-- **Switch After Media** - Automatically return to previous scene
-- **Remember Previous Scene** - Restore the scene that was active before media
+- **Média Után Váltás** - Automatikusan visszatér az előző jelenethez
+- **Emlékezzen a korábbi jelenetre** - Állítsa vissza a média előtt aktív jelenetet
 
-### Audio Configuration for Hybrid Meetings {#audio-configuration}
+### Hibrid összejövetelek audio konfigurációja {#audio-configuration}
 
-When using M³ with OBS Studio for hybrid meetings (in-person + Zoom), you need to configure audio settings to ensure meeting participants can hear the media:
+Ha az M³-at az OBS Studio-val használja hibrid összejövetelekhez (személyes + Zoom), akkor konfigurálnia kell a hangbeállításokat, hogy az összejövetel résztvevői hallhassák a médiát:
 
-#### Zoom Audio Settings {#zoom-audio-settings}
+#### Zoom hangbeállítások {#zoom-audio-settings}
 
-**Before every meeting, you must enable Original Audio in Zoom:**
+**Minden összejövetel előtt engedélyeznie kell az Original Audio funkciót a Zoomban:**
 
-1. **Open Zoom** and go to Settings
-2. **Navigate to Audio** → **Advanced**
-3. **Enable "Show in-meeting option to 'Enable Original Sound'"**
-4. **Check "Disable echo cancellation"** (first checkbox)
+1. **Nyissa meg a Zoomot**, és lépjen a Beállítások (Settings) menübe
+2. **Navigáljon az Audio** → **Advanced** menüpontra
+3. **Engedélyezze a „Show in-meeting” opciót, hogy engedélyezze az „Original Sound” funkciót**
+4. **Jelölje be a zajszűrés letiltását (Disable echo cancellation)** (első jelölőnégyzet)
 5. **Check "Disable noise suppression"** (second checkbox)
 6. **Uncheck "Disable high-fidelity music mode"** (third checkbox)
 7. **Before starting each meeting**, click the "Original Audio" button in the meeting controls
