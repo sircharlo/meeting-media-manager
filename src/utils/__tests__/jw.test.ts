@@ -137,7 +137,7 @@ describe('jw utils', () => {
 
     it('should return false for null/undefined', () => {
       expect(isMediaLink(null)).toBe(false);
-      expect(isMediaLink(undefined)).toBe(false);
+      expect(isMediaLink()).toBe(false);
     });
   });
 });
