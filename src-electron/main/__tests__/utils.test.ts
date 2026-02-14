@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('electron', () => ({
   app: {
@@ -23,7 +23,7 @@ vi.mock('app/package.json', () => ({
   version: '1.0.0',
 }));
 
-import { isIgnoredUpdateError } from '../utils';
+import { fetchJson, isIgnoredUpdateError, utils } from '../utils';
 
 describe('isIgnoredUpdateError', () => {
   it('should return true for ERR_NETWORK_CHANGED', () => {
@@ -69,5 +69,83 @@ describe('isIgnoredUpdateError', () => {
     );
     error.name = 'YAMLException';
     expect(isIgnoredUpdateError(error)).toBe(true);
+  });
+});
+
+describe('fetchJson', () => {
+  const mockUrl = 'https://example.com/api';
+
+  beforeEach(() => {
+    vi.resetAllMocks();
+    vi.stubGlobal('fetch', vi.fn());
+    vi.stubGlobal('setTimeout', vi.fn());
+    vi.stubGlobal('clearTimeout', vi.fn());
+  });
+
+  it('should return null if url is empty', async () => {
+    const result = await fetchJson('');
+    expect(result).toBeNull();
+  });
+
+  it('should return json data on 200 OK', async () => {
+    const mockData = { foo: 'bar' };
+    vi.mocked(fetch).mockResolvedValue({
+      json: () => Promise.resolve(mockData),
+      ok: true,
+      status: 200,
+    } as Response);
+
+    const result = await fetchJson(mockUrl);
+    expect(result).toEqual(mockData);
+  });
+
+  it('should return json data on 304 Not Modified', async () => {
+    const mockData = { foo: 'bar' };
+    vi.mocked(fetch).mockResolvedValue({
+      json: () => Promise.resolve(mockData),
+      ok: false,
+      status: 304,
+    } as Response);
+
+    const result = await fetchJson(mockUrl);
+    expect(result).toEqual(mockData);
+  });
+
+  it('should return null and not report error for 404', async () => {
+    const spy = vi.spyOn(utils, 'captureElectronError');
+    vi.mocked(fetch).mockResolvedValue({
+      ok: false,
+      status: 404,
+    } as Response);
+
+    const result = await fetchJson(mockUrl);
+    expect(result).toBeNull();
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('should report error for 400 Bad Request if not silent', async () => {
+    const spy = vi.spyOn(utils, 'captureElectronError');
+    vi.mocked(fetch).mockResolvedValue({
+      headers: new Headers(),
+      ok: false,
+      status: 400,
+      statusText: 'Bad Request',
+      type: 'basic',
+      url: mockUrl,
+    } as Response);
+
+    await fetchJson(mockUrl);
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('should not report error if silent option is true', async () => {
+    const spy = vi.spyOn(utils, 'captureElectronError');
+    vi.mocked(fetch).mockResolvedValue({
+      ok: false,
+      status: 500,
+    } as Response);
+
+    await fetchJson(mockUrl, undefined, { silent: true });
+    expect(spy).not.toHaveBeenCalled();
   });
 });

@@ -244,6 +244,7 @@ export function isIgnoredUpdateError(
     'ERR_NETWORK_CHANGED',
     'SELF_SIGNED_CERT_IN_CHAIN',
     'YAMLException',
+    'releases feed',
     ['404', 'HttpError'],
     ['502', 'HttpError'],
     ['503', 'HttpError'],
@@ -275,43 +276,113 @@ export function isIgnoredUpdateError(
 }
 
 /**
+ * Handles exceptions during fetchJson
+ * @param e The exception
+ * @param url The url that was being fetched
+ * @param params The url parameters
+ * @param options The fetch options
+ */
+async function handleFetchException(
+  e: unknown,
+  url: string,
+  params: undefined | URLSearchParams,
+  options: { silent?: boolean },
+) {
+  if (options.silent || isNetworkError(e)) return;
+
+  const { default: isOnline } = await import('is-online');
+  const online = await isOnline();
+
+  if (online) {
+    utils.captureElectronError(e, {
+      contexts: {
+        fn: {
+          message: e instanceof Error ? e.message : '',
+          name: 'fetchJson',
+          params: Object.fromEntries(params || []),
+          responseUrl: `${url}?${params ? params.toString() : ''}`,
+          url,
+        },
+      },
+    });
+  }
+}
+
+/**
  * Checks if an error is a network-related error that should not be reported to Sentry
  * @param error The error to check
  * @returns Whether the error is a network error
  */
-export function isNetworkError(error: unknown): boolean {
+function isNetworkError(error: unknown): boolean {
   try {
-    if (error instanceof Error) {
-      if (error.name === 'AbortError' || error.name === 'ConnectTimeoutError') {
-        return true;
-      }
-      if (error.message.includes('fetch failed')) {
-        const cause = error.cause as Record<string, unknown> | undefined;
-        if (cause && typeof cause.code === 'string') {
-          const networkCodes = [
-            'ENOTFOUND',
-            'ETIMEDOUT',
-            'ECONNREFUSED',
-            'ECONNRESET',
-            'EAI_AGAIN',
-            'UND_ERR_CONNECT_TIMEOUT',
-          ];
-          if (networkCodes.includes(cause.code)) return true;
-        }
-        if (
-          cause &&
-          (cause.name === 'ConnectTimeoutError' ||
-            cause.name === 'TimeoutError')
-        ) {
-          return true;
-        }
-      }
+    if (!(error instanceof Error)) return false;
+
+    if (error.name === 'AbortError' || error.name === 'ConnectTimeoutError') {
+      return true;
     }
-    return false;
+
+    if (!error.message.includes('fetch failed')) return false;
+
+    const cause = error.cause as Record<string, unknown> | undefined;
+    if (!cause) return false;
+
+    const networkCodes = [
+      'ENOTFOUND',
+      'ETIMEDOUT',
+      'ECONNREFUSED',
+      'ECONNRESET',
+      'EAI_AGAIN',
+      'UND_ERR_CONNECT_TIMEOUT',
+    ];
+
+    const isNetworkCode =
+      typeof cause.code === 'string' && networkCodes.includes(cause.code);
+    const isTimeout =
+      cause.name === 'ConnectTimeoutError' || cause.name === 'TimeoutError';
+
+    return isNetworkCode || isTimeout;
   } catch (e) {
     captureElectronError(e);
     return false;
   }
+}
+
+/**
+ * Fetches a json response from a given url
+ * @param url The url to fetch
+ * @param params The url parameters
+ * @returns The json response or null if the fetch failed
+ */
+/**
+ * Checks if a fetch response is successful or cached
+ * @param response The response to check
+ * @returns Whether the response is ok or 304
+ */
+function isResponseSuccessful(response: Response): boolean {
+  return response.ok || response.status === 304;
+}
+
+/**
+ * Checks if a fetch error should be reported to Sentry
+ * @param response The response to check
+ * @param params The url parameters
+ * @param options The fetch options
+ * @returns Whether the error should be reported
+ */
+function shouldReportStatusError(
+  response: Response,
+  params: undefined | URLSearchParams,
+  options: { silent?: boolean },
+): boolean {
+  if (options.silent) return false;
+  if ([403, 404, 429, 502].includes(response.status)) return false;
+
+  const isPubRequest = ['S', 'CO'].some((p) =>
+    params?.get('pub')?.startsWith(`${p}-`),
+  );
+  if (response.status === 400 && isPubRequest) return false;
+
+  return true;
 }
 
 /**
@@ -325,67 +396,45 @@ export const fetchJson = async <T>(
   params?: URLSearchParams,
   options: { silent?: boolean; timeout?: number } = {},
 ): Promise<null | T> => {
+  if (!url) return null;
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => {
+    controller.abort();
+  }, options.timeout ?? 30000);
+
   try {
-    if (!url) return null;
+    const response = await fetch(
+      `${url}${params ? '?' + params.toString() : ''}`,
+      { signal: controller.signal },
+    );
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => {
-      controller.abort();
-    }, options.timeout ?? 30000);
-
-    try {
-      const response = await fetch(
-        `${url}${params ? '?' + params.toString() : ''}`,
-        { signal: controller.signal },
-      );
-      if (response.ok || response.status === 304) {
-        return (await response.json()) as T;
-      } else if (
-        !options.silent &&
-        ![403, 404, 429, 502].includes(response.status) &&
-        !(
-          response.status === 400 &&
-          ['S', 'CO'].some((p) => params?.get('pub')?.startsWith(`${p}-`))
-        )
-      ) {
-        captureElectronError(new Error('Failed to fetch json!'), {
-          contexts: {
-            fn: {
-              headers: response.headers,
-              name: 'fetchJson',
-              params: Object.fromEntries(params || []),
-              responseUrl: response.url,
-              status: response.status,
-              statusText: response.statusText,
-              type: response.type,
-              url,
-            },
-          },
-        });
-      }
-    } finally {
-      clearTimeout(timeoutId);
+    if (isResponseSuccessful(response)) {
+      return (await response.json()) as T;
     }
-  } catch (e) {
-    if (options.silent || isNetworkError(e)) return null;
 
-    const { default: isOnline } = await import('is-online');
-    const online = await isOnline();
-
-    if (online) {
-      captureElectronError(e, {
+    if (shouldReportStatusError(response, params, options)) {
+      utils.captureElectronError(new Error('Failed to fetch json!'), {
         contexts: {
           fn: {
-            message: e instanceof Error ? e.message : '',
+            headers: response.headers,
             name: 'fetchJson',
             params: Object.fromEntries(params || []),
-            responseUrl: `${url}?${params ? params.toString() : ''}`,
+            responseUrl: response.url,
+            status: response.status,
+            statusText: response.statusText,
+            type: response.type,
             url,
           },
         },
       });
     }
+  } catch (e) {
+    await handleFetchException(e, url, params, options);
+  } finally {
+    clearTimeout(timeoutId);
   }
+
   return null;
 };
 
@@ -402,6 +451,13 @@ export function captureElectronError(error: unknown, context?: CaptureCtx) {
     captureException(error, context);
   }
 }
+
+/**
+ * Internal object to allow spying on exported functions called within this module
+ */
+export const utils = {
+  captureElectronError,
+};
 
 /**
  * Throttles a function to only run once every `delay` milliseconds
