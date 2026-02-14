@@ -209,6 +209,44 @@ export function replaceMissingMediaByPubMediaId(
   });
 }
 
+/**
+ * Extracts CSS URLs from HTML content
+ */
+function extractCssUrls(html: string, baseUrl: string): string[] {
+  const cssRegex = /href=["']([^"']+\.css)["']/g;
+  const cssUrls: string[] = [];
+  let match;
+  while ((match = cssRegex.exec(html)) !== null) {
+    let url = match[1];
+    if (!url) continue;
+    if (url.startsWith('/')) {
+      url = `https://wol.${baseUrl}${url}`;
+    }
+    cssUrls.push(url);
+  }
+  return cssUrls;
+}
+
+/**
+ * Finds the jw-icons-external font URL within CSS text
+ */
+function findIconUrlInCss(cssText: string, cssUrl: string): null | string {
+  const fontFaceBlocks = cssText.match(/@font-face\s*\{[^}]*\}/gi);
+  if (!fontFaceBlocks) return null;
+
+  for (const block of fontFaceBlocks) {
+    if (block.includes('jw-icons-external')) {
+      const fontMatch = new RegExp(
+        /url\(["']?([^"']+\.(woff2?|ttf|otf)[^"']*)["']?\)/i,
+      ).exec(block);
+      if (fontMatch?.[1]) {
+        return new URL(fontMatch[1], cssUrl).href;
+      }
+    }
+  }
+  return null;
+}
+
 export const useJwStore = defineStore('jw-store', {
   actions: {
     addToAdditionMediaMap(
@@ -223,9 +261,7 @@ export const useJwStore = defineStore('jw-store', {
         if (!mediaArray.length || !selectedDateObject) return;
 
         // Ensure lookupPeriod for current congregation exists
-        if (!this.lookupPeriod[currentCongregation]) {
-          this.lookupPeriod[currentCongregation] = [];
-        }
+        this.lookupPeriod[currentCongregation] ??= [];
 
         // Find or create the period object for the selected date
         let period = this.lookupPeriod[currentCongregation].find((d) =>
@@ -415,38 +451,17 @@ export const useJwStore = defineStore('jw-store', {
         if (!response.ok) return;
 
         const html = await response.text();
-        const cssRegex = /href=["']([^"']+\.css)["']/g;
-        let match;
-        const cssUrls: string[] = [];
-        while ((match = cssRegex.exec(html)) !== null) {
-          let url = match[1];
-          if (!url) continue;
-          if (url.startsWith('/')) {
-            url = `https://wol.${this.urlVariables.base}${url}`;
-          }
-          cssUrls.push(url);
-        }
+        const cssUrls = extractCssUrls(html, this.urlVariables.base);
 
         for (const cssUrl of cssUrls) {
           try {
             const cssResponse = await fetchRaw(cssUrl, undefined, true);
             if (!cssResponse.ok) continue;
             const cssText = await cssResponse.text();
-            const fontFaceBlocks = cssText.match(/@font-face\s*\{[^}]*\}/gi);
-            if (fontFaceBlocks) {
-              for (const block of fontFaceBlocks) {
-                if (block.includes('jw-icons-external')) {
-                  const fontMatch = block.match(
-                    /url\(["']?([^"']+\.(woff2?|ttf|otf)[^"']*)["']?\)/i,
-                  );
-                  if (fontMatch) {
-                    const fontUrl = fontMatch[1];
-                    if (!fontUrl) continue;
-                    this.jwIconsUrl = new URL(fontUrl, cssUrl).href;
-                    return; // Found it, we can stop everything
-                  }
-                }
-              }
+            const fontUrl = findIconUrlInCss(cssText, cssUrl);
+            if (fontUrl) {
+              this.jwIconsUrl = fontUrl;
+              return; // Found it, we can stop
             }
           } catch (e) {
             errorCatcher(e, {
@@ -527,7 +542,7 @@ export const useJwStore = defineStore('jw-store', {
                 this.urlVariables.pubMedia,
                 online,
               );
-              if (!pubMediaLinks || !pubMediaLinks.files) {
+              if (!pubMediaLinks?.files) {
                 continue;
               }
 
@@ -615,9 +630,7 @@ export const useJwStore = defineStore('jw-store', {
           if (result.status === 'fulfilled') {
             const { wtlocale, yeartext } = result.value;
             if (yeartext) {
-              if (!this.yeartexts[year]) {
-                this.yeartexts[year] = {};
-              }
+              this.yeartexts[year] ??= {};
 
               this.yeartexts[year][wtlocale] = DOMPurify.sanitize(yeartext, {
                 ALLOWED_ATTR: ['class'],
