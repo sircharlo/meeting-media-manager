@@ -206,87 +206,30 @@ export function updateLookupPeriod({
 
     if (!lookupPeriod || typeof lookupPeriod !== 'object') return;
 
-    // --- Handle "reset for all congregations" mode ---
     if (reset && allCongregations) {
-      const congregationIds = Object.keys(lookupPeriod).filter(
-        (id) => id && Array.isArray(lookupPeriod[id]),
-      );
-
-      console.log(
-        `🔄 [updateLookupPeriod] Resetting dynamic media for ${congregationIds.length} congregations`,
-      );
-
-      for (const congId of congregationIds) {
-        console.log(
-          `🔄 [updateLookupPeriod] Resetting dynamic media for congregation ${congId}`,
-        );
-        try {
-          const days = lookupPeriod[congId];
-          if (!Array.isArray(days)) {
-            console.log(
-              `🔄 [updateLookupPeriod] Invalid days for congregation ${congId}`,
-            );
-            continue;
-          }
-          console.log(
-            `🔄 [updateLookupPeriod] Found ${days.length} days for congregation ${congId}`,
-          );
-
-          for (const day of days) {
-            console.log(
-              `🔄 [updateLookupPeriod] Resetting dynamic media for day ${day.date}`,
-            );
-            resetDay(day);
-          }
-
-          lookupPeriod[congId] = days.filter(Boolean);
-        } catch (error) {
-          errorCatcher(error, {
-            contexts: {
-              fn: {
-                congId,
-                name: 'updateLookupPeriod',
-              },
-            },
-          });
-        }
-      }
-
-      console.log(
-        '✅ [updateLookupPeriod] Dynamic media reset completed for all congregations',
-      );
-      return; // Exit early — no need for single-congregation flow
+      resetAllCongregations(lookupPeriod);
+      return;
     }
 
-    // --- Single-congregation logic ---
     const { currentCongregation, currentSettings } = useCurrentStateStore();
     if (!currentCongregation || !currentSettings) return;
 
     updateMeetingScheduleIfNeeded(currentSettings);
 
-    if (!lookupPeriod[currentCongregation]) {
-      lookupPeriod[currentCongregation] = [];
-    }
+    lookupPeriod[currentCongregation] ??= [];
 
-    const currentDate = new Date();
     extendLookupPeriod(
       currentCongregation,
-      currentDate,
+      new Date(),
       currentSettings,
       lookupPeriod,
     );
 
     if (reset) {
-      const days = onlyForWeekIncluding
-        ? getDaysForWeek(
-            lookupPeriod[currentCongregation],
-            onlyForWeekIncluding,
-          )
-        : lookupPeriod[currentCongregation];
-
-      if (!days.length) return;
-
-      days.forEach(resetDay);
+      resetSingleCongregation(
+        lookupPeriod[currentCongregation],
+        onlyForWeekIncluding,
+      );
     }
   } catch (error) {
     errorCatcher(error);
@@ -341,6 +284,41 @@ function getDaysForWeek(days: DateInfo[], dateStr: string) {
   });
 }
 
+function resetAllCongregations(
+  lookupPeriod: Partial<Record<string, (DateInfo | undefined)[]>>,
+) {
+  const congregationIds = Object.keys(lookupPeriod).filter(
+    (id) => id && Array.isArray(lookupPeriod[id]),
+  );
+
+  console.log(
+    `🔄 [updateLookupPeriod] Resetting dynamic media for ${congregationIds.length} congregations`,
+  );
+
+  for (const congId of congregationIds) {
+    try {
+      const days = lookupPeriod[congId];
+      if (!Array.isArray(days)) continue;
+
+      days.forEach((day) => day && resetDay(day));
+      lookupPeriod[congId] = days.filter(Boolean);
+    } catch (error) {
+      errorCatcher(error, {
+        contexts: {
+          fn: {
+            congId,
+            name: 'resetAllCongregations',
+          },
+        },
+      });
+    }
+  }
+
+  console.log(
+    '✅ [updateLookupPeriod] Dynamic media reset completed for all congregations',
+  );
+}
+
 function resetDay(day: DateInfo) {
   try {
     const totalBefore = countMedia(day);
@@ -357,6 +335,19 @@ function resetDay(day: DateInfo) {
     if (removed > 0) console.log(`🗑️ Removed ${removed} dynamic items`);
   } catch (error) {
     errorCatcher(error);
+  }
+}
+
+function resetSingleCongregation(
+  days: DateInfo[],
+  onlyForWeekIncluding?: string,
+) {
+  const targetDays = onlyForWeekIncluding
+    ? getDaysForWeek(days, onlyForWeekIncluding)
+    : days;
+
+  if (targetDays.length) {
+    targetDays.forEach(resetDay);
   }
 }
 

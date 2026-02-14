@@ -79,6 +79,23 @@ const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
 
 export const useCurrentStateStore = defineStore('current-state', {
   actions: {
+    areDependenciesSatisfied(
+      settingsDefinition: SettingsItem,
+      congregation: string,
+    ): boolean {
+      const congregationSettingsStore = useCongregationSettingsStore();
+      if (!settingsDefinition.depends) return true;
+
+      if (Array.isArray(settingsDefinition.depends)) {
+        return settingsDefinition.depends.every(
+          (dep) => congregationSettingsStore.congregations[congregation]?.[dep],
+        );
+      }
+
+      return !!congregationSettingsStore.congregations[congregation]?.[
+        settingsDefinition.depends
+      ];
+    },
     async getDatedAdditionalMediaDirectory(destDate?: string) {
       try {
         if (!destDate) destDate = this.selectedDate;
@@ -104,44 +121,25 @@ export const useCurrentStateStore = defineStore('current-state', {
         if (!congregation) congregation = this.currentCongregation;
         if (!congregation) return [];
         const invalidSettings = new Set<keyof SettingsValues>();
-        const { urlVariables } = useJwStore();
-        const congregationSettingsStore = useCongregationSettingsStore();
+
         for (const [
           settingsDefinitionId,
           settingsDefinition,
         ] of settingDefinitionEntries) {
-          if (settingsDefinition.rules?.includes('notEmpty')) {
-            // Check if dependencies are satisfied before applying notEmpty validation
-            const dependenciesSatisfied =
-              !settingsDefinition.depends ||
-              (Array.isArray(settingsDefinition.depends)
-                ? settingsDefinition.depends.every(
-                    (dep) =>
-                      congregationSettingsStore.congregations[
-                        congregation as string
-                      ]?.[dep],
-                  )
-                : congregationSettingsStore.congregations[congregation]?.[
-                    settingsDefinition.depends
-                  ]);
+          if (!settingsDefinition.rules?.includes('notEmpty')) continue;
 
-            // Only apply notEmpty validation if dependencies are satisfied
-            if (dependenciesSatisfied) {
-              if (
-                (settingsDefinitionId === 'baseUrl' &&
-                  !(urlVariables?.base && urlVariables?.mediator)) ||
-                (isEmpty(
-                  congregationSettingsStore.congregations[congregation]?.[
-                    settingsDefinitionId
-                  ],
-                ) &&
-                  (!settingsDefinition.rules?.includes('regular') ||
-                    !congregationSettingsStore.congregations[congregation]
-                      ?.disableMediaFetching))
-              ) {
-                invalidSettings.add(settingsDefinitionId);
-              }
-            }
+          if (
+            this.areDependenciesSatisfied(
+              settingsDefinition,
+              congregation as string,
+            ) &&
+            this.isSettingInvalid(
+              settingsDefinitionId,
+              settingsDefinition,
+              congregation as string,
+            )
+          ) {
+            invalidSettings.add(settingsDefinitionId);
           }
         }
         return [...invalidSettings];
@@ -174,6 +172,39 @@ export const useCurrentStateStore = defineStore('current-state', {
       if (!congregation) congregation = this.currentCongregation;
       if (!congregation) return false;
       return this.getInvalidSettings(congregation).length > 0;
+    },
+    isSettingInvalid(
+      settingsDefinitionId: keyof SettingsItems,
+      settingsDefinition: SettingsItem,
+      congregation: string,
+    ): boolean {
+      const { urlVariables } = useJwStore();
+      const congregationSettingsStore = useCongregationSettingsStore();
+
+      if (
+        settingsDefinitionId === 'baseUrl' &&
+        !(urlVariables?.base && urlVariables?.mediator)
+      ) {
+        return true;
+      }
+
+      const settingValue =
+        congregationSettingsStore.congregations[congregation]?.[
+          settingsDefinitionId
+        ];
+
+      if (isEmpty(settingValue)) {
+        const isSkipRule =
+          settingsDefinition.rules?.includes('regular') &&
+          congregationSettingsStore.congregations[congregation]
+            ?.disableMediaFetching;
+
+        if (!isSkipRule) {
+          return true;
+        }
+      }
+
+      return false;
     },
     setCongregation: async function (value: number | string) {
       if (!value) return false;

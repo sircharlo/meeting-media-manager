@@ -126,7 +126,10 @@
 </template>
 
 <script setup lang="ts">
-import type { MediaSectionWithConfig } from 'src/types';
+import type {
+  MediaItem as MediaItemType,
+  MediaSectionWithConfig,
+} from 'src/types';
 
 import DialogAddDivider from 'components/dialog/DialogAddDivider.vue';
 import { storeToRefs } from 'pinia';
@@ -197,6 +200,73 @@ const { dragDropContainer, isDragging, sortableItems } = useMediaDragAndDrop(
   sectionData.value?.items || [],
 );
 
+/**
+ * Handles saving the order of watched media items to the filesystem.
+ * This is only applicable when some items in the section are from the 'watched' source.
+ */
+function handleWatchedMediaPersistence(items: MediaItemType[]) {
+  if (!items.some((item) => item.source === 'watched')) return;
+
+  try {
+    const watchedItems = items.filter(
+      (item) => item.source === 'watched' && item.fileUrl,
+    );
+    const watchedItem = watchedItems[0];
+    if (!watchedItem) return;
+
+    const { fileUrlToPath, path } = globalThis.electronApi;
+    const { dirname } = path;
+
+    const firstWatchedItemPath = fileUrlToPath(watchedItem.fileUrl);
+    if (!firstWatchedItemPath) return;
+
+    const watchedDayFolder = dirname(firstWatchedItemPath);
+    if (!watchedDayFolder) return;
+
+    console.log(
+      '🔍 [updateMediaListItems] Saving section order for watched media items:',
+      watchedDayFolder,
+      props.mediaList.config?.uniqueId,
+      watchedItems,
+    );
+    saveWatchedMediaSectionOrder(
+      watchedDayFolder,
+      props.mediaList.config?.uniqueId,
+      watchedItems,
+    );
+  } catch (error) {
+    // Fail gracefully - if we can't save the order file, it's not a big deal
+    errorCatcher(error, {
+      contexts: {
+        fn: {
+          mediaList: props.mediaList,
+          name: 'updateMediaListItems',
+          selectedDateObject: selectedDateObject.value,
+          sortableItems: items,
+        },
+      },
+    });
+  }
+}
+
+/**
+ * Updates the section data in the Pinia store to match the sorted order.
+ */
+function updateStoreMediaOrder(items: MediaItemType[]) {
+  if (!selectedDateObject.value || !props.mediaList.config) return;
+
+  const sectionIndex = selectedDateObject.value.mediaSections.findIndex(
+    (section) => section.config.uniqueId === props.mediaList.config.uniqueId,
+  );
+
+  if (
+    sectionIndex !== -1 &&
+    selectedDateObject.value.mediaSections[sectionIndex]
+  ) {
+    selectedDateObject.value.mediaSections[sectionIndex].items = items;
+  }
+}
+
 // Efficient watcher to ensure changes are persisted to the store
 // Only triggers when the actual array content changes, not on every re-render
 watch(
@@ -207,65 +277,10 @@ watch(
       return;
 
     // Save section order information for watched media items
-    if (sortableItems.value.some((item) => item.source === 'watched')) {
-      try {
-        const watchedItems = sortableItems.value.filter(
-          (item) => item.source === 'watched' && item.fileUrl,
-        );
-        // Get the first watched item's file path to determine the watched day folder
-        const watchedItem = watchedItems[0];
-        if (watchedItem) {
-          const { fileUrlToPath, path } = globalThis.electronApi;
-          const { dirname } = path;
-
-          const firstWatchedItemPath = fileUrlToPath(watchedItem.fileUrl);
-          if (firstWatchedItemPath) {
-            const watchedDayFolder = dirname(firstWatchedItemPath);
-            if (watchedDayFolder) {
-              console.log(
-                '🔍 [updateMediaListItems] Saving section order for watched media items:',
-                watchedDayFolder,
-                props.mediaList.config?.uniqueId,
-                watchedItems,
-              );
-              saveWatchedMediaSectionOrder(
-                watchedDayFolder,
-                props.mediaList.config?.uniqueId,
-                watchedItems,
-              );
-            }
-          }
-        }
-      } catch (error) {
-        // Fail gracefully - if we can't save the order file, it's not a big deal
-        errorCatcher(error, {
-          contexts: {
-            fn: {
-              isDragging,
-              mediaList: props.mediaList,
-              name: 'updateMediaListItems',
-              selectedDateObject: selectedDateObject.value,
-              sortableItems: sortableItems.value,
-            },
-          },
-        });
-      }
-    }
+    handleWatchedMediaPersistence(sortableItems.value);
 
     // Update the section data to match the sorted order
-    if (selectedDateObject.value && props.mediaList.config) {
-      const sectionIndex = selectedDateObject.value.mediaSections.findIndex(
-        (section) =>
-          section.config.uniqueId === props.mediaList.config.uniqueId,
-      );
-      if (
-        sectionIndex !== -1 &&
-        selectedDateObject.value.mediaSections[sectionIndex]
-      ) {
-        selectedDateObject.value.mediaSections[sectionIndex].items =
-          sortableItems.value;
-      }
-    }
+    updateStoreMediaOrder(sortableItems.value);
   },
   { flush: 'post' },
 );
