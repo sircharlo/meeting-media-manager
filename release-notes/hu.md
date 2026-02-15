@@ -8,7 +8,7 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 
 ### ✨ Új funkciók
 
-- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+- ✨ **Lemezterület ellenőrzése**: Hozzáadtuk a funkciót, amely figyelemmel kíséri és értesít, ha a lemezterület szűkössé válik.
 
 ## v26.1.5
 
@@ -41,16 +41,16 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 - ✨ **JW Events weboldal**: Hozzáadottuk azt a lehetőséget, hogy a fő hivatalos weboldal mellett a JW Events weboldalt is meg lehessen jeleníteni.
 - ✨ **Lejátszási lista importálásának testreszabása**: Lehetővé vált a JW lejátszási listák importálásakor a médiaelemekhez hozzáadott előtag testreszabása.
 - ✨ **Weboldal tükrözés navigáció**: Hozzáadtunk egy kapcsolót, amely automatikusan a médiakönyvtárhoz navigál, miután a weboldal tükrözése leállt.
-- ✨ **OBS Recording Controls**: Added the ability to control OBS recordings.
-- ✨ **Yeartext Preview**: Added the ability to preview next year's yeartext as of December of every year.
-- ✨ **Update Notifications**: Added warning notifications if running a beta version or if updates are disabled, and improved update download progress display.
-- ✨ **Hardware Acceleration Settings**: Added an option to permanently disable hardware acceleration if needed.
+- ✨ **OBS felvétel vezérlők**: Hozzáadva az OBS felvételek vezérlésének lehetősége.
+- ✨ **Éviszöveg előnézet**: Hozzáadottuk azt a lehetőséget, hogy minden év decemberétől előnézetben megtekinthető legyen a következő év éviszövege.
+- ✨ **Frissítési értesítések**: Hozzáadtunk figyelmeztető értesítéseket, ha béta verziót futtat, vagy ha a frissítések le vannak tiltva, és javítottuk a frissítések letöltési folyamatának megjelenítését.
+- ✨ **Hardveres gyorsítás beállítások**: Hozzáadtunk egy opciót, amellyel szükség esetén véglegesen letilthatja a hardveres gyorsítást.
 
 ## v25.11.0
 
 ### ✨ Új funkciók
 
-- ✨ **JWPUB Media Selection**: Added a way to select individual media from JWPUB files.
+- ✨ **JWPUB média kiválasztás**: Hozzáadtunk egy lehetőséget, amellyel kiválaszthatók az egyes médiák a JWPUB fájlokból.
 - ✨ **Auto-Focus Media Window**: Added an optional setting to automatically focus the media window after Zoom screen sharing.
 - ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
 - ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
