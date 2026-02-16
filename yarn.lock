@@ -3351,10 +3351,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:^10.38.0":
-  version: 10.38.0
-  resolution: "@sentry/core@npm:10.38.0"
-  checksum: 10c0/33719d9ee650c18fca759f4b3c6c839b9463e6fc487133aa3dee337bc1da30d6c0ccc118f009637cbed1358d373d431f179dc77c6e8772800acffd19f63a494e
+"@sentry/core@npm:^10.39.0":
+  version: 10.39.0
+  resolution: "@sentry/core@npm:10.39.0"
+  checksum: 10c0/262e36783734811104949048bf4fa768c3af7df03717f16bf84b77b84f329a7dadd8a5587fdc3637092fb95440d7c7d05e90e91645460db5a052840c5cea0f04
   languageName: node
   linkType: hard
 
@@ -11204,7 +11204,7 @@ __metadata:
     "@quasar/quasar-app-extension-testing-unit-vitest": "npm:1.2.3"
     "@quasar/vite-plugin": "npm:^1.10.0"
     "@rollup/plugin-inject": "npm:^5.0.5"
-    "@sentry/core": "npm:^10.38.0"
+    "@sentry/core": "npm:^10.39.0"
     "@sentry/electron": "npm:^7.7.1"
     "@sentry/esbuild-plugin": "npm:^4.9.1"
     "@sentry/vite-plugin": "npm:^4.9.1"
