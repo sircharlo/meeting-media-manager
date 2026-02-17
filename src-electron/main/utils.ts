@@ -276,7 +276,7 @@ export function isIgnoredUpdateError(
 }
 
 /**
- * Handles exceptions during fetchJson
+ * Handles exceptions during fetchJsonFromMainProcess
  * @param e The exception
  * @param url The url that was being fetched
  * @param params The url parameters
@@ -298,7 +298,7 @@ async function handleFetchException(
       contexts: {
         fn: {
           message: e instanceof Error ? e.message : '',
-          name: 'fetchJson',
+          name: 'fetchJsonFromMainProcess',
           params: Object.fromEntries(params || []),
           responseUrl: `${url}?${params ? params.toString() : ''}`,
           url,
@@ -391,7 +391,7 @@ function shouldReportStatusError(
  * @param params The url parameters
  * @returns The json response or null if the fetch failed
  */
-export const fetchJson = async <T>(
+export const fetchJsonFromMainProcess = async <T>(
   url: string,
   params?: URLSearchParams,
   options: { silent?: boolean; timeout?: number } = {},
@@ -418,7 +418,7 @@ export const fetchJson = async <T>(
         contexts: {
           fn: {
             headers: response.headers,
-            name: 'fetchJson',
+            name: 'fetchJsonFromMainProcess',
             params: Object.fromEntries(params || []),
             responseUrl: response.url,
             status: response.status,

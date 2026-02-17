@@ -4,7 +4,10 @@ import { getCountriesForTimezone } from 'countries-and-timezones';
 import { app } from 'electron';
 import { ensureDir } from 'fs-extra/esm';
 import { quitStatus } from 'src-electron/main/session';
-import { captureElectronError, fetchJson } from 'src-electron/main/utils';
+import {
+  captureElectronError,
+  fetchJsonFromMainProcess,
+} from 'src-electron/main/utils';
 import { sendToWindow } from 'src-electron/main/window/window-base';
 import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import upath from 'upath';
@@ -419,7 +422,7 @@ export async function isDownloadErrorExpected(): Promise<boolean> {
       }
 
       // 1. Retrieve general geo info
-      const payload = await fetchJson<GeoInfo>(
+      const payload = await fetchJsonFromMainProcess<GeoInfo>(
         'http://ip-api.com/json/',
         undefined,
         {

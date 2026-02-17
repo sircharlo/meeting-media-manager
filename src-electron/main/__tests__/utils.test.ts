@@ -23,7 +23,11 @@ vi.mock('app/package.json', () => ({
   version: '1.0.0',
 }));
 
-import { fetchJson, isIgnoredUpdateError, utils } from '../utils';
+import {
+  fetchJsonFromMainProcess,
+  isIgnoredUpdateError,
+  utils,
+} from '../utils';
 
 describe('isIgnoredUpdateError', () => {
   it('should return true for ERR_NETWORK_CHANGED', () => {
@@ -72,7 +76,7 @@ describe('isIgnoredUpdateError', () => {
   });
 });
 
-describe('fetchJson', () => {
+describe('fetchJsonFromMainProcess', () => {
   const mockUrl = 'https://example.com/api';
 
   beforeEach(() => {
@@ -83,7 +87,7 @@ describe('fetchJson', () => {
   });
 
   it('should return null if url is empty', async () => {
-    const result = await fetchJson('');
+    const result = await fetchJsonFromMainProcess('');
     expect(result).toBeNull();
   });
 
@@ -95,7 +99,7 @@ describe('fetchJson', () => {
       status: 200,
     } as Response);
 
-    const result = await fetchJson(mockUrl);
+    const result = await fetchJsonFromMainProcess(mockUrl);
     expect(result).toEqual(mockData);
   });
 
@@ -107,7 +111,7 @@ describe('fetchJson', () => {
       status: 304,
     } as Response);
 
-    const result = await fetchJson(mockUrl);
+    const result = await fetchJsonFromMainProcess(mockUrl);
     expect(result).toEqual(mockData);
   });
 
@@ -118,7 +122,7 @@ describe('fetchJson', () => {
       status: 404,
     } as Response);
 
-    const result = await fetchJson(mockUrl);
+    const result = await fetchJsonFromMainProcess(mockUrl);
     expect(result).toBeNull();
     expect(spy).not.toHaveBeenCalled();
   });
@@ -134,7 +138,7 @@ describe('fetchJson', () => {
       url: mockUrl,
     } as Response);
 
-    await fetchJson(mockUrl);
+    await fetchJsonFromMainProcess(mockUrl);
     expect(spy).toHaveBeenCalled();
   });
 
@@ -145,7 +149,7 @@ describe('fetchJson', () => {
       status: 500,
     } as Response);
 
-    await fetchJson(mockUrl, undefined, { silent: true });
+    await fetchJsonFromMainProcess(mockUrl, undefined, { silent: true });
     expect(spy).not.toHaveBeenCalled();
   });
 });

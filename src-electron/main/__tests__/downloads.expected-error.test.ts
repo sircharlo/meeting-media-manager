@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('src-electron/main/utils', () => ({
   captureElectronError: vi.fn(),
-  fetchJson: vi.fn(),
+  fetchJsonFromMainProcess: vi.fn(),
   throttleWithTrailing: vi.fn(),
 }));
 
@@ -20,7 +20,7 @@ vi.mock('is-online', () => ({
 
 import { getCountriesForTimezone } from 'countries-and-timezones';
 import { app } from 'electron';
-import { fetchJson } from 'src-electron/main/utils';
+import { fetchJsonFromMainProcess } from 'src-electron/main/utils';
 
 import { isDownloadErrorExpected, resetDownloadErrorCache } from '../downloads';
 
@@ -31,12 +31,12 @@ describe('downloads.isDownloadErrorExpected', () => {
   });
 
   it('true when IP service returns an expected value', async () => {
-    vi.mocked(fetchJson).mockResolvedValue({ country: 'RU' });
+    vi.mocked(fetchJsonFromMainProcess).mockResolvedValue({ country: 'RU' });
     await expect(isDownloadErrorExpected()).resolves.toBe(true);
   });
 
   it('falls back to timezone -> expected value => true', async () => {
-    vi.mocked(fetchJson).mockResolvedValue(null);
+    vi.mocked(fetchJsonFromMainProcess).mockResolvedValue(null);
     vi.mocked(getCountriesForTimezone).mockReturnValue([
       { id: 'CN', name: 'China', timezones: ['Asia/Shanghai'] },
     ]);
@@ -44,7 +44,7 @@ describe('downloads.isDownloadErrorExpected', () => {
   });
 
   it('falls back to app locale -> unexpected value => false', async () => {
-    vi.mocked(fetchJson).mockResolvedValue(null);
+    vi.mocked(fetchJsonFromMainProcess).mockResolvedValue(null);
     vi.mocked(getCountriesForTimezone).mockReturnValue([]);
     vi.mocked(app.getLocaleCountryCode).mockReturnValue('US');
     await expect(isDownloadErrorExpected()).resolves.toBe(false);
@@ -52,7 +52,7 @@ describe('downloads.isDownloadErrorExpected', () => {
 
   it('on failures returns false and captures error', async () => {
     const { captureElectronError } = await import('src-electron/main/utils');
-    vi.mocked(fetchJson).mockImplementation(() => {
+    vi.mocked(fetchJsonFromMainProcess).mockImplementation(() => {
       throw new Error('boom');
     });
     await expect(isDownloadErrorExpected()).resolves.toBe(false);
