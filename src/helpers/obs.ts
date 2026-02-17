@@ -5,53 +5,69 @@ import { portNumberValidator } from 'src/utils/settings';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useObsStateStore } from 'stores/obs-state';
 
-export const obsConnect = async (setup?: boolean) => {
+const getObsConnectionSettings = () => {
   const currentState = useCurrentStateStore();
+  if (!currentState.currentSettings?.obsEnable) return 'disabled';
+
+  const obsPort = currentState.currentSettings?.obsPort || '';
+  if (!portNumberValidator(obsPort)) return 'invalid';
+
+  const obsPassword = currentState.currentSettings?.obsPassword || '';
+  if (obsPassword?.length === 0) return 'invalid';
+
+  return { obsPassword, obsPort };
+};
+
+const performConnectionAttempt = async (
+  obsPort: string,
+  obsPassword: string,
+) => {
   const obsState = useObsStateStore();
   try {
-    if (!currentState.currentSettings?.obsEnable) {
+    await initObsWebSocket();
+    const connection = await obsWebSocketInfo.obsWebSocket?.connect(
+      'ws://127.0.0.1:' + obsPort,
+      obsPassword,
+    );
+    return !!(
+      connection?.negotiatedRpcVersion && connection?.obsWebSocketVersion
+    );
+  } catch (err) {
+    const { OBSWebSocketError } = await import('obs-websocket-js');
+    if (err instanceof OBSWebSocketError) obsState.obsErrorHandler(err);
+    else errorCatcher(err);
+    return false;
+  }
+};
+
+export const obsConnect = async (setup?: boolean) => {
+  const obsState = useObsStateStore();
+  try {
+    const settings = getObsConnectionSettings();
+    if (settings === 'disabled') {
       await obsWebSocketInfo.obsWebSocket?.disconnect();
       return;
     }
-
-    const obsPort = currentState.currentSettings?.obsPort || '';
-    if (!portNumberValidator(obsPort)) return;
-
-    const obsPassword = currentState.currentSettings?.obsPassword || '';
-    if (obsPassword?.length === 0) return;
+    if (settings === 'invalid') return;
 
     obsState.obsConnectionState = 'connecting';
     obsState.obsMessage = 'obs.connecting';
 
     let attempt = 0;
     const maxAttempts = setup ? 1 : 12;
-    const timeBetweenAttempts = 5000;
     while (
       attempt < maxAttempts &&
       // @ts-expect-error connecting and connected have no overlap
       obsState.obsConnectionState !== 'connected'
     ) {
-      try {
-        await initObsWebSocket();
-        const connection = await obsWebSocketInfo.obsWebSocket?.connect(
-          'ws://127.0.0.1:' + obsPort,
-          obsPassword,
-        );
-        if (
-          connection?.negotiatedRpcVersion &&
-          connection?.obsWebSocketVersion
-        ) {
-          break;
-        }
-      } catch (err) {
-        const { OBSWebSocketError } = await import('obs-websocket-js');
-        if (err instanceof OBSWebSocketError) obsState.obsErrorHandler(err);
-        else errorCatcher(err);
-      } finally {
-        attempt++;
-        if (attempt < maxAttempts) {
-          await sleep(timeBetweenAttempts);
-        }
+      if (
+        await performConnectionAttempt(settings.obsPort, settings.obsPassword)
+      )
+        break;
+
+      attempt++;
+      if (attempt < maxAttempts) {
+        await sleep(5000);
       }
     }
   } catch (error) {
