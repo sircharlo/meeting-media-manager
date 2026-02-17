@@ -1,4 +1,4 @@
-import type { MediaItem } from 'src/types';
+import type { DateInfo, MediaItem } from 'src/types';
 
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { updateLastUsedDate } from 'src/helpers/usage';
@@ -16,85 +16,74 @@ import type { MigrationFunction } from './types';
 const { fileUrlToPath, fs, path, readdir } = globalThis.electronApi;
 const { join } = path;
 
+async function backfillFromLookupPeriods() {
+  const jwStore = useJwStore();
+  const lookupPeriods = jwStore.lookupPeriod;
+  if (!lookupPeriods) return;
+
+  for (const periods of Object.values(lookupPeriods)) {
+    if (!periods) continue;
+
+    for (const day of periods) {
+      const meetingDate = formatDate(day.date, 'YYYY-MM-DD');
+      const mediaItems = collectMediaItems(day);
+
+      for (const item of mediaItems) {
+        await updateFromMediaItem(item, meetingDate);
+      }
+    }
+  }
+}
+
+function collectMediaItems(day: DateInfo): MediaItem[] {
+  if (!day?.mediaSections) return [];
+  return Object.values(day.mediaSections).flatMap((sec) => sec.items || []);
+}
+
+async function updateAllSubdirsWithDate(basePath: string, date: string) {
+  if (!(await fs.exists(basePath))) return;
+
+  const items = await readdir(basePath, false, false);
+  const dirs = items.filter((i) => i.isDirectory);
+
+  for (const dir of dirs) {
+    await updateLastUsedDate(join(basePath, dir.name), date);
+  }
+}
+
+async function updateFromMediaItem(item: MediaItem, date: string) {
+  if (!item.fileUrl || !isFileUrl(item.fileUrl)) return;
+
+  const filePath = fileUrlToPath(item.fileUrl);
+  const folderPath = getParentDirectory(filePath);
+  if (!folderPath) return;
+
+  await updateLastUsedDate(folderPath, date);
+}
+
+async function updateTwoLevelSubdirsWithDate(basePath: string, date: string) {
+  if (!(await fs.exists(basePath))) return;
+
+  const level1 = await readdir(basePath, false, false);
+  const level1Dirs = level1.filter((d) => d.isDirectory);
+
+  for (const dir1 of level1Dirs) {
+    const level1Path = join(basePath, dir1.name);
+    await updateAllSubdirsWithDate(level1Path, date);
+  }
+}
+
 export const backfillLastUsed: MigrationFunction = async () => {
   try {
     const today = formatDate(new Date(), 'YYYY-MM-DD');
 
-    // 1. Initialize all existing publication folders with TODAY
-    // This ensures they are not immediately deleted, but will be candidates for deletion tomorrow if not used.
-
     const pubsPath = await getPublicationsPath();
-    if (await fs.exists(pubsPath)) {
-      const items = await readdir(pubsPath, false, false);
-      for (const item of items) {
-        if (item.isDirectory) {
-          const fullPath = join(pubsPath, item.name);
-          await updateLastUsedDate(fullPath, today);
-        }
-      }
-    }
+    await updateAllSubdirsWithDate(pubsPath, today);
 
     const additionalMediaPath = await getAdditionalMediaPath();
-    if (await fs.exists(additionalMediaPath)) {
-      const congAdditionalMediaDirs = await readdir(
-        additionalMediaPath,
-        false,
-        false,
-      );
-      for (const congAdditionalMediaDir of congAdditionalMediaDirs) {
-        if (congAdditionalMediaDir.isDirectory) {
-          const fullCongPath = join(
-            additionalMediaPath,
-            congAdditionalMediaDir.name,
-          );
-          const datedAdditionalMediaDirs = await readdir(
-            fullCongPath,
-            false,
-            false,
-          );
-          for (const datedAdditionalMediaDir of datedAdditionalMediaDirs) {
-            if (datedAdditionalMediaDir.isDirectory) {
-              const fullDatedAdditionalMediaPath = join(
-                fullCongPath,
-                datedAdditionalMediaDir.name,
-              );
-              await updateLastUsedDate(fullDatedAdditionalMediaPath, today);
-            }
-          }
-        }
-      }
-    }
+    await updateTwoLevelSubdirsWithDate(additionalMediaPath, today);
 
-    const jwStore = useJwStore();
-    const lookupPeriods = jwStore.lookupPeriod;
-
-    if (lookupPeriods) {
-      for (const congId in lookupPeriods) {
-        const periods = lookupPeriods[congId];
-        if (!periods) continue;
-
-        for (const day of periods) {
-          if (!day.mediaSections) continue;
-          const meetingDate = formatDate(day.date, 'YYYY-MM-DD');
-
-          // Collect all media items
-          const items: MediaItem[] = [];
-          Object.values(day.mediaSections).forEach((sec) =>
-            items.push(...(sec.items || [])),
-          );
-
-          for (const item of items) {
-            if (item.fileUrl && isFileUrl(item.fileUrl)) {
-              const filePath = fileUrlToPath(item.fileUrl);
-              const folderPath = getParentDirectory(filePath);
-              if (folderPath) {
-                await updateLastUsedDate(folderPath, meetingDate);
-              }
-            }
-          }
-        }
-      }
-    }
+    await backfillFromLookupPeriods();
 
     return true;
   } catch (error) {
