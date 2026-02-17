@@ -195,43 +195,43 @@ Ha az M³-at az OBS Studio-val használja hibrid összejövetelekhez (személyes
 1. **Nyissa meg a Zoomot**, és lépjen a Beállítások (Settings) menübe
 2. **Navigáljon az Audio** → **Advanced** menüpontra
 3. **Engedélyezze a „Show in-meeting” opciót, hogy engedélyezze az „Original Sound” funkciót**
-4. **Jelölje be a zajszűrés letiltását (Disable echo cancellation)** (első jelölőnégyzet)
-5. **Check "Disable noise suppression"** (second checkbox)
-6. **Uncheck "Disable high-fidelity music mode"** (third checkbox)
-7. **Before starting each meeting**, click the "Original Audio" button in the meeting controls
+4. **Jelölje be a „Disable echo cancellation” (Visszhang-csökkentés letiltása) opciót** (első jelölőnégyzet)
+5. **Jelölje be a „Disable noise suppression”** (zajszűrés letiltása) opciót (második jelölőnégyzet)
+6. **Törölje a jelölést a „Disable high-fidelity music mode” (magas minőségű zenei mód letiltása) mezőből** (harmadik jelölőnégyzet)
+7. **Minden összejövetel megkezdése előtt** kattintson a meeting controls-ban található „Original Audio” (Eredeti hang) gombra
 
-**Alternative: Share Computer Sound**
-If Original Audio doesn't work well in your setup:
+**Alternatíva: Számítógép hangjának megosztása**
+Ha az Original Audio beállítás nem működik jól a rendszerben:
 
-1. **Before playing media**, go to **Advanced** tab in Zoom screen sharing options
-2. **Check "Share computer sound"**
-3. **Note**: This option must be enabled every time you start a new Zoom session
+1. **A média lejátszása előtt** lépjen a Zoom screen sharing options (Zoom képernyőmegosztási beállítások) **Advanced** (Speciális) fülére
+2. **Jelölje be a „Share computer sound” (Számítógép hangjának megosztása) jelölőnégyzetet**
+3. **Megjegyzés**: Ezt az opciót minden új Zoom-munkamenet indításakor engedélyezni kell
 
-**Best Alternative**: Consider using M³'s Zoom integration instead of OBS Studio, as it uses Zoom's native screen sharing which handles audio more seamlessly and doesn't require complex audio configuration.
+**Legjobb alternatíva**: Fontolja meg az OBS Studio helyett az M³ Zoom integrációjának használatát, mivel ez a Zoom natív képernyőmegosztását használja, amely zökkenőmentesebben kezeli az audiót, és nem igényel bonyolult audio konfigurációt.
 
-#### Why Audio Configuration is Necessary {#why-audio-config}
+#### Miért szükséges az audio konfiguráció {#why-audio-config}
 
-M³ plays media with sound on your computer, but this audio is **not automatically transmitted** through the video stream to OBS Studio. This is the same behavior you would experience with any other media player.
+Az M³ lejátsza a hanggal ellátott médiát a számítógépén, de ez az audio **nem kerül automatikusan továbbításra** a videó streamen keresztül az OBS Studio-ba. Hasonló viselkedést tapasztalhat bármely más médialejátszóval is.
 
-**The audio issue is not related to M³** - it's a limitation of how OBS Studio video streaming works with Zoom. The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
+**Az audio probléma nem az M³-hoz kapcsolódik** – ez az OBS Studio videó streaming és a Zoom együttműködésének korlátozottságából adódik. A videó stream úgy működik, mint egy virtuális kamera hang nélkül, akárcsak egy webkamera, ezért külön be kell állítani a Zoomot, hogy rögzítse a számítógép hangját. Ebből következik, hogy a számítógépben két hangkártya van, ellenkező esetben valószínűleg nem fogja tudni sikeresen használni az OBS Studio integrációt.
 
-**Alternative Solution**: Consider using the Zoom integration instead, as it uses Zoom's native screen and audio sharing, which handles audio more seamlessly.
+**Alternatív megoldás**: Fontolja meg a Zoom integráció használatát, mivel ez a Zoom natív képernyő- és hangmegosztását használja, amely zökkenőmentesebben kezeli az audiót.
 
-#### Troubleshooting Audio Issues {#audio-troubleshooting}
+#### Hangproblémák elhárítása {#audio-troubleshooting}
 
-**Common Problems:**
+**Gyakori problémák:**
 
-- **No audio in Zoom**: Check if Original Audio is enabled and properly configured
-- **Poor audio quality**: Verify the three Original Audio checkboxes are set correctly
-- **Audio not working after Zoom restart**: Original Audio settings must be re-enabled for each new Zoom session
+- **Nincs hang a Zoomban**: Ellenőrizze, hogy az Original Audio (Eredeti hang) funkció engedélyezve van, és megfelelően be van állítva
+- **Rossz hangminőség**: Ellenőrizze, hogy a három Original Audio (Eredeti hang) jelölőnégyzet megfelelően van-e beállítva
+- **A hang nem működik a Zoom újraindítása után**: Az Original Audio (Eredeti hang) funkciót minden új Zoom-munkamenetnél újra engedélyezni kell
 
-**Best Practices:**
+**Bevált gyakorlatok:**
 
-- Test audio configuration and sharing before meetings
-- Create a checklist for audio setup
-- Consider using "Share Computer Sound" as a backup option
-- **Consider using Zoom integration instead of OBS Studio** for simpler audio handling
-- Ensure all AV operators are familiar with these settings
+- Tesztelje az audio konfigurációt és megosztást az összejövetelek előtt
+- Készítsen ellenőrző listát az audio beállításához
+- FonFontolja meg a „Share Computer Sound” (Számítógép hangjának megosztása) funkció használatát tartalék opcióként
+- **Fontolja meg a Zoom integráció használatát az OBS Studio helyett** az egyszerűbb hangkezelés érdekében
+- Győződjön meg arról, hogy minden technikus ismeri ezeket a beállításokat
 
 ## Média importálása és kezelése {#media-import}
 

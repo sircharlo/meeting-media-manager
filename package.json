@@ -1,6 +1,6 @@
 {
   "name": "meeting-media-manager",
-  "version": "26.2.4-beta.0",
+  "version": "26.2.4-beta.2",
   "description": "A cross platform app to download and present media for congregation meetings of Jehovah’s Witnesses.",
   "keywords": [
     "M³",
@@ -41,7 +41,7 @@
     "@numairawan/video-duration": "^1.0.0",
     "@opentelemetry/api-logs": "^0.212.0",
     "@quasar/extras": "^1.17.0",
-    "@sentry/core": "^10.38.0",
+    "@sentry/core": "^10.39.0",
     "@sentry/electron": "^7.7.1",
     "@sentry/vue": "^10.27.0",
     "@vueuse/core": "^14.2.1",
@@ -112,7 +112,7 @@
     "@types/yauzl": "^2.10.3",
     "@typescript-eslint/utils": "^8.55.0",
     "@vitejs/plugin-vue": "^6.0.4",
-    "@vitest/eslint-plugin": "^1.6.7",
+    "@vitest/eslint-plugin": "^1.6.9",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/eslint-config-typescript": "^14.6.0",
     "@vue/test-utils": "^2.4.6",
@@ -121,7 +121,7 @@
     "electron-builder": "26.7.0",
     "eslint": "^9.39.2",
     "eslint-plugin-perfectionist": "^5.5.0",
-    "eslint-plugin-vue": "^10.7.0",
+    "eslint-plugin-vue": "^10.8.0",
     "globals": "^17.3.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
@@ -134,7 +134,7 @@
     "vite": "^7.3.1",
     "vitepress": "^2.0.0-alpha.16",
     "vitest": "^4.0.18",
-    "vue-eslint-parser": "^10.3.0",
+    "vue-eslint-parser": "^10.4.0",
     "vue-tsc": "^3.2.4",
     "webpack-iconfont-plugin-nodejs": "^1.0.36"
   },
