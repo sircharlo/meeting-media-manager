@@ -26,6 +26,10 @@ const { basename, dirname, join, resolve, toUnix } = upath;
 
 const ongoingDecompressions = new Map<string, Promise<UnzipResult[]>>();
 
+const MAX_FILES = 10000;
+const MAX_SIZE = 2000000000; // 2 GB
+const THRESHOLD_RATIO = 100;
+
 let defaultAppDataPath: null | string = null;
 
 interface UnzipContext {
@@ -37,8 +41,10 @@ interface UnzipContext {
 interface ZipfileState {
   checkIfComplete: () => Promise<void>;
   extractedFiles: UnzipResult[];
+  fileCount: number;
   pendingOperations: Promise<void>[];
   reject: (reason?: unknown) => void;
+  totalUncompressedSize: number;
   zipfile: yauzl.ZipFile;
 }
 
@@ -286,6 +292,29 @@ const handleZipEntry = async (
     return;
   }
 
+  // Failsafe checks
+  state.fileCount++;
+  if (state.fileCount > MAX_FILES) {
+    state.zipfile.close();
+    return state.reject(new Error('Reached max. number of files (failsafe)'));
+  }
+
+  state.totalUncompressedSize += entry.uncompressedSize;
+  if (state.totalUncompressedSize > MAX_SIZE) {
+    state.zipfile.close();
+    return state.reject(new Error('Reached max. size (failsafe)'));
+  }
+
+  if (entry.compressedSize > 0) {
+    const compressionRatio = entry.uncompressedSize / entry.compressedSize;
+    if (compressionRatio > THRESHOLD_RATIO) {
+      state.zipfile.close();
+      return state.reject(
+        new Error('Reached max. compression ratio (failsafe)'),
+      );
+    }
+  }
+
   if (entry.fileName.endsWith('/')) {
     // Directory
     await createDirectory(fullPath, context, state);
@@ -389,8 +418,10 @@ const decompress = async (
       const state: ZipfileState = {
         checkIfComplete,
         extractedFiles,
+        fileCount: 0,
         pendingOperations,
         reject,
+        totalUncompressedSize: 0,
         zipfile,
       };
 
@@ -440,8 +471,34 @@ export async function getZipEntries(
       }
       if (!zipfile) return reject(new Error('Zipfile not found'));
 
+      let fileCount = 0;
+      let totalUncompressedSize = 0;
+
       zipfile.readEntry();
       zipfile.on('entry', (entry: yauzl.Entry) => {
+        fileCount++;
+        if (fileCount > MAX_FILES) {
+          zipfile.close();
+          return reject(new Error('Reached max. number of files (failsafe)'));
+        }
+
+        totalUncompressedSize += entry.uncompressedSize;
+        if (totalUncompressedSize > MAX_SIZE) {
+          zipfile.close();
+          return reject(new Error('Reached max. size (failsafe)'));
+        }
+
+        if (entry.compressedSize > 0) {
+          const compressionRatio =
+            entry.uncompressedSize / entry.compressedSize;
+          if (compressionRatio > THRESHOLD_RATIO) {
+            zipfile.close();
+            return reject(
+              new Error('Reached max. compression ratio (failsafe)'),
+            );
+          }
+        }
+
         entries[entry.fileName] = entry.uncompressedSize;
         zipfile.readEntry();
       });
