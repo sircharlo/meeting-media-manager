@@ -311,11 +311,10 @@ export const fetchPubMediaLinks = async (
       publication.fileformat &&
       videoExtensions.includes(publication.fileformat)
     ) {
-      const videoFiles = videoExtensions
-        .map(
-          (ext) => response.files[publication.langwritten || 'E']?.[ext] || [],
-        )
-        .flat();
+      const mappedVideoFiles = videoExtensions.map(
+        (ext) => response.files[publication.langwritten || 'E']?.[ext] || [],
+      );
+      const videoFiles = mappedVideoFiles.flat();
       return {
         ...response,
         files: {
