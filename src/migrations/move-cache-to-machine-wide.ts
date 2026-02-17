@@ -6,6 +6,90 @@ import { useJwStore } from 'stores/jw';
 
 import type { MigrationFunction } from './types';
 
+function hasCustomCacheFolder(): boolean {
+  const congStore = useCongregationSettingsStore();
+  return Object.values(congStore.congregations).some((s) => !!s?.cacheFolder);
+}
+
+async function moveStandardFolders(
+  folders: string[],
+  userDataPath: string,
+  sharedPath: string,
+  exists: (p: string) => Promise<boolean>,
+  move: (a: string, b: string) => Promise<void>,
+  join: (...p: string[]) => string,
+) {
+  for (const folder of folders) {
+    const src = join(userDataPath, folder);
+    const dest = join(sharedPath, folder);
+
+    const srcExists = await exists(src);
+    if (!srcExists) continue;
+
+    const destExists = await exists(dest);
+    if (destExists) continue;
+
+    await move(src, dest);
+  }
+}
+
+function replaceIfStartsWith(
+  url: string | undefined,
+  from: string,
+  to: string,
+) {
+  if (!url) return url;
+  if (!url.startsWith(from)) return url;
+  return url.replace(from, to);
+}
+
+function updateLookupPeriodPaths(userDataPath: string, sharedPath: string) {
+  const jwStore = useJwStore();
+  if (!jwStore.lookupPeriod) return;
+
+  for (const dates of Object.values(jwStore.lookupPeriod)) {
+    if (!dates) continue;
+
+    for (const dateInfo of dates) {
+      if (!dateInfo?.mediaSections) continue;
+
+      for (const section of Object.values(dateInfo.mediaSections)) {
+        if (!section?.items) continue;
+
+        for (const item of section.items) {
+          updateMediaItemPaths(item, userDataPath, sharedPath);
+        }
+      }
+    }
+  }
+}
+
+function updateMediaItemPaths(
+  item: MediaItem,
+  userDataPath: string,
+  sharedPath: string,
+) {
+  if (item.source === 'additional') {
+    item.fileUrl = replaceIfStartsWith(item.fileUrl, userDataPath, sharedPath);
+    item.thumbnailUrl = replaceIfStartsWith(
+      item.thumbnailUrl,
+      userDataPath,
+      sharedPath,
+    );
+    item.subtitlesUrl = replaceIfStartsWith(
+      item.subtitlesUrl,
+      userDataPath,
+      sharedPath,
+    );
+  }
+
+  if (!item.children?.length) return;
+
+  for (const child of item.children) {
+    updateMediaItemPaths(child, userDataPath, sharedPath);
+  }
+}
+
 export const moveCacheToMachineWide: MigrationFunction = async () => {
   try {
     const { fs, getSharedDataPath, getUserDataPath, path } =
@@ -13,77 +97,28 @@ export const moveCacheToMachineWide: MigrationFunction = async () => {
     const { exists, move } = fs;
     const { join } = path;
 
-    // Check if we are in a machine-wide installation
     const sharedPath = await getSharedDataPath();
     if (!sharedPath) return true;
-    // Not machine-wide installation, or shared data path is not accessible, so nothing to do
 
     const userDataPath = await getUserDataPath();
     if (!userDataPath) return true;
-    // User data path is not accessible, so nothing to do
 
     if (userDataPath === sharedPath) return true;
-    // User data path is the same as shared data path, so nothing to do
-
-    // Check if custom cache folder is set for any congregation
-    const congStore = useCongregationSettingsStore();
-    const hasCustomCache = Object.values(congStore.congregations).some(
-      (s) => !!s?.cacheFolder,
-    );
-
-    if (hasCustomCache) return true;
-    // Custom cache folder is set, so nothing to do
+    if (hasCustomCacheFolder()) return true;
 
     const foldersToMove = ['Publications', 'Additional Media', 'Fonts'];
 
-    for (const folder of foldersToMove) {
-      const src = join(userDataPath, folder);
-      const dest = join(sharedPath, folder);
-
-      if ((await exists(src)) && !(await exists(dest))) {
-        await move(src, dest);
-      }
-    }
+    await moveStandardFolders(
+      foldersToMove,
+      userDataPath,
+      sharedPath,
+      exists,
+      move,
+      join,
+    );
 
     try {
-      // Attempt to update paths for additional media in the lookup periods
-      const jwStore = useJwStore();
-      if (jwStore.lookupPeriod) {
-        Object.values(jwStore.lookupPeriod).forEach((dates) => {
-          if (!dates) return;
-          dates.forEach((dateInfo) => {
-            if (!dateInfo?.mediaSections) return;
-            Object.values(dateInfo.mediaSections).forEach((section) => {
-              if (!section?.items) return;
-
-              const updateItemPath = (item: MediaItem) => {
-                if (item?.source === 'additional') {
-                  const replacePath = (url: string | undefined) => {
-                    if (url?.startsWith(userDataPath)) {
-                      return url.replace(userDataPath, sharedPath);
-                    }
-                    return url;
-                  };
-
-                  item.fileUrl = replacePath(item.fileUrl);
-                  item.thumbnailUrl = replacePath(item.thumbnailUrl);
-                  item.subtitlesUrl = replacePath(item.subtitlesUrl);
-                }
-
-                if (item?.children) {
-                  item.children.forEach((element) => {
-                    updateItemPath(element);
-                  });
-                }
-              };
-
-              section?.items?.forEach((element) => {
-                updateItemPath(element);
-              });
-            });
-          });
-        });
-      }
+      updateLookupPeriodPaths(userDataPath, sharedPath);
     } catch (error) {
       errorCatcher(error, {
         contexts: {
