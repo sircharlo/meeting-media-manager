@@ -57,65 +57,101 @@ export const fetchRaw = async (
 
   return response;
 };
+function buildUrl(url: string, params?: URLSearchParams) {
+  if (!params?.toString()) return url;
+  return `${url}?${params.toString()}`;
+}
 
-/**
- * Fetches json data from the given url.
- * @param url The url to fetch json data from.
- * @param params The url search params.
- * @param online Whether to catch errors or not.
- * @returns The json data.
- */
+function isIgnored400ForPub(params?: URLSearchParams) {
+  const pub = params?.get('pub');
+  if (!pub) return false;
+  return ['S', 'CO'].some((p) => pub.startsWith(`${p}-`));
+}
+
+function isIgnoredStatus(status: number) {
+  return [403, 404, 429, 502].includes(status);
+}
+
+function isOkResponse(response: Response) {
+  return response.ok || response.status === 304;
+}
+
+function reportFetchJsonCatchError(
+  e: unknown,
+  url: string,
+  params?: URLSearchParams,
+) {
+  errorCatcher(e, {
+    contexts: {
+      fn: {
+        message: e instanceof Error ? e.message : '',
+        name: 'fetchJson',
+        params: Object.fromEntries(params || []),
+        responseUrl: buildUrl(url, params),
+        url,
+      },
+    },
+  });
+}
+
+function reportFetchJsonMainError(
+  response: Response,
+  url: string,
+  params?: URLSearchParams,
+) {
+  errorCatcher(new Error('Failed to fetch json!'), {
+    contexts: {
+      fn: {
+        headers: response.headers,
+        name: 'fetchJsonMain',
+        params: Object.fromEntries(params || []),
+        responseUrl: response.url,
+        status: response.status,
+        statusText: response.statusText,
+        type: response.type,
+        url,
+      },
+    },
+  });
+}
+
+async function shouldReportCaughtError(online: boolean) {
+  if (!online) return false;
+  return !(await globalThis.electronApi?.isDownloadErrorExpected());
+}
+
+function shouldReportStatus(response: Response, params?: URLSearchParams) {
+  if (isIgnoredStatus(response.status)) return false;
+  if (response.status === 400 && isIgnored400ForPub(params)) return false;
+  return true;
+}
+
+// ----------------------
+
 export const fetchJson = async <T>(
   url: string,
   params?: URLSearchParams,
   online = true,
 ): Promise<null | T> => {
+  if (!url) return null;
+
   try {
-    if (!url) return null;
-    const response = await fetchRaw(
-      `${url}${params ? '?' + params.toString() : ''}`,
-      undefined,
-      true,
-    );
-    if (response.ok || response.status === 304) {
+    const fullUrl = buildUrl(url, params);
+    const response = await fetchRaw(fullUrl, undefined, true);
+
+    if (isOkResponse(response)) {
       return await response.json();
-    } else if (
-      ![403, 404, 429, 502].includes(response.status) &&
-      !(
-        response.status === 400 &&
-        ['S', 'CO'].some((p) => params?.get('pub')?.startsWith(`${p}-`))
-      )
-    ) {
-      errorCatcher(new Error('Failed to fetch json!'), {
-        contexts: {
-          fn: {
-            headers: response.headers,
-            name: 'fetchJsonMain',
-            params: Object.fromEntries(params || []),
-            responseUrl: response.url,
-            status: response.status,
-            statusText: response.statusText,
-            type: response.type,
-            url,
-          },
-        },
-      });
+    }
+
+    if (shouldReportStatus(response, params)) {
+      reportFetchJsonMainError(response, url, params);
     }
   } catch (e) {
-    if (online && !(await globalThis.electronApi?.isDownloadErrorExpected())) {
-      errorCatcher(e, {
-        contexts: {
-          fn: {
-            message: e instanceof Error ? e.message : '',
-            name: 'fetchJson',
-            params: Object.fromEntries(params || []),
-            responseUrl: `${url}?${params ? params.toString() : ''}`,
-            url,
-          },
-        },
-      });
+    if (await shouldReportCaughtError(online)) {
+      reportFetchJsonCatchError(e, url, params);
     }
   }
+
   return null;
 };
 

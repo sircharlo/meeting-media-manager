@@ -120,21 +120,24 @@ const getMaxHeight = (dimensions: {
 export const createVideoFromNonVideo = async (
   originalFile: string,
   ffmpegPath: string,
-) => {
+): Promise<string> => {
   const existingPromise = conversionQueue.get(originalFile);
   if (existingPromise) return existingPromise;
 
-  const conversionPromise = (async () => {
+  const conversionPromise = (async (): Promise<string> => {
     const convertedFilePath = changeExt(originalFile, '.mp4');
 
-    if (await shouldUseExistingConversion(originalFile, convertedFilePath)) {
-      return convertedFilePath;
-    }
+    const canReuse = await shouldUseExistingConversion(
+      originalFile,
+      convertedFilePath,
+    );
 
-    if (originalFile.toLowerCase().endsWith('.mp3')) {
-      await convertAudioToVideo(ffmpegPath, originalFile, convertedFilePath);
-    } else {
-      await convertImageToVideo(ffmpegPath, originalFile, convertedFilePath);
+    if (!canReuse) {
+      if (originalFile.toLowerCase().endsWith('.mp3')) {
+        await convertAudioToVideo(ffmpegPath, originalFile, convertedFilePath);
+      } else {
+        await convertImageToVideo(ffmpegPath, originalFile, convertedFilePath);
+      }
     }
 
     return convertedFilePath;
