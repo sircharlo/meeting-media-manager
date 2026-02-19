@@ -51,11 +51,11 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 ### ✨ Új funkciók
 
 - ✨ **JWPUB média kiválasztás**: Hozzáadtunk egy lehetőséget, amellyel kiválaszthatók az egyes médiák a JWPUB fájlokból.
-- ✨ **Auto-Focus Media Window**: Added an optional setting to automatically focus the media window after Zoom screen sharing.
-- ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
-- ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
-- ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from JW.org, such as magazine, books, programs and invitations.
+- ✨ **Automatikus fókuszálás a médiaablakra**: Hozzáadtunk egy opcionális beállítást, amellyel a Zoom képernyőmegosztás után automatikusan a médiaablakra állítja a fókuszt.
+- ✨ **Képernyőn megjelenő kurzor**: Továbbfejlesztett weboldal-ablak kurzor, amely jobb láthatóságot biztosít az egérmutató számára a TV-képernyőn.
+- ✨ **Összejövetel rögzítése**: Új összejövetel rögzítési funkciót adtunk hozzá, amellyel külső rögzítő alkalmazások vezérelhetők.
+- ✨ **Webhelykeresés**: Hozzáadtunk egy intelligens keresőfunkciót, amellyel a webhelyen található médiatartalmakat és kiadványokat lehet keresni.
+- ✨ **Egyszerű kézi folyóirat importálás**: Hozzáadtunk egy funkciót, amellyel könnyedén importálhatók a JW.org webhelyről származó folyóiratok, például folyóiratok, könyvek, programfüzetek és meghívók.
 - ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
 - ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
 - 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
