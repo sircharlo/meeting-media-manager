@@ -9,20 +9,19 @@ hero:
   actions:
     - theme: brand
       text: Download
-      link: /download
+      link: /pl/download
     - theme: brand
       text: About
-      link: /about
+      link: /pl/about
     - theme: brand
       text: User Guide
-      link: /user-guide
+      link: /pl/user-guide
     - theme: brand
       text: Settings Guide
-      link: /settings-guide
+      link: /pl/settings-guide
     - theme: brand
       text: FAQ
-      link: /faq
-
+      link: /pl/faq
 features:
   - icon: 🚀
     title: Automatic Media Management
