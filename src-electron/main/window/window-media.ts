@@ -2,7 +2,6 @@ import type { WindowState } from 'src-electron/main/window/window-state';
 
 import { app, type BrowserWindow, screen } from 'electron';
 import { pathExistsSync, readJsonSync } from 'fs-extra/esm';
-import { readFileSync } from 'node:fs';
 import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
 import { getAllScreens, getWindowScreen } from 'src-electron/main/screen';
 import { captureElectronError, getIconPath } from 'src-electron/main/utils';
@@ -758,23 +757,10 @@ function loadMediaWindowPrefs(): null | WindowState {
       );
       return null;
     }
-    return readJsonSync(mediaWindowStateFile);
+    return readJsonSync(mediaWindowStateFile, { throws: false });
   } catch (e) {
-    let fileContent: null | string = null;
-    if (mediaWindowStateFile) {
-      try {
-        fileContent = readFileSync(mediaWindowStateFile, 'utf-8');
-        return JSON.parse(fileContent);
-      } catch (e) {
-        captureElectronError(e, {
-          contexts: {
-            fn: { fileContent, name: 'loadMediaWindowPrefs (fallback)' },
-          },
-        });
-      }
-    }
     captureElectronError(e, {
-      contexts: { fn: { fileContent, name: 'loadMediaWindowPrefs' } },
+      contexts: { fn: { name: 'loadMediaWindowPrefs' } },
     });
     return null;
   }

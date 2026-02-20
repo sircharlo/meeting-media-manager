@@ -275,11 +275,9 @@ function refineOptionsAndState(
 
   let savedState: null | WindowState = null;
 
-  try {
-    savedState = readJsonSync(join(configFilePath, configFileName));
-  } catch {
-    // Don't care, use defaults
-  }
+  savedState = readJsonSync(join(configFilePath, configFileName), {
+    throws: false,
+  });
 
   savedState = validateState(savedState);
 
