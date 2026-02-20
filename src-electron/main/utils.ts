@@ -107,15 +107,13 @@ export async function getSharedDataPath(): Promise<null | string> {
     await rm(testDir, { recursive: true });
     return sharedPath;
   } catch (e) {
-    captureElectronError(e, {
-      contexts: {
-        fn: {
-          args: {
-            sharedPath,
-          },
-          name: 'getSharedDataPath',
-        },
+    addElectronBreadcrumb({
+      category: 'getSharedDataPath',
+      data: {
+        error: e,
       },
+      level: 'error',
+      message: 'Failed to get shared data path',
     });
     return null;
   }
