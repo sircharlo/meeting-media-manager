@@ -64,8 +64,7 @@ import {
   toggleAuthorizedClose,
 } from 'src-electron/main/window/window-main';
 import {
-  fadeInMediaWindow,
-  fadeOutMediaWindow,
+  fadeMediaWindow,
   focusMediaWindow,
   mediaWindowInfo,
   moveMediaWindow,
@@ -108,19 +107,16 @@ function handleIpcSend(
 handleIpcSend(
   'toggleMediaWindow',
   async (_e, show: boolean, enableFadeTransitions = false) => {
-    if (!mediaWindowInfo.mediaWindow) return;
+    const win = mediaWindowInfo.mediaWindow;
+    if (!win) return;
+
     if (show) {
       moveMediaWindow();
-      if (enableFadeTransitions) {
-        await fadeInMediaWindow(300);
-      } else {
-        mediaWindowInfo.mediaWindow.show();
-      }
-    } else if (enableFadeTransitions) {
-      await fadeOutMediaWindow(300);
-    } else {
-      mediaWindowInfo.mediaWindow.hide();
+
+      return enableFadeTransitions ? fadeMediaWindow('in') : win.show();
     }
+
+    return enableFadeTransitions ? fadeMediaWindow('out') : win.hide();
   },
 );
 
