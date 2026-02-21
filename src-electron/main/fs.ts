@@ -57,33 +57,20 @@ export async function getAppDataPath(): Promise<string> {
     return defaultAppDataPath;
   }
 
-  try {
-    // Fallback candidates (in priority order)
-    const candidates = [await getSharedDataPath(), app.getPath('userData')];
+  const usableSharedPath = await getSharedDataPath();
 
-    for (const path of candidates) {
-      if (path && (await isUsablePath(path))) {
-        console.log('📁 Using new app data path:', path);
-        defaultAppDataPath = path;
-        return defaultAppDataPath;
-      }
-    }
-
-    // This should not happen, but keeps typing safe
-    throw new Error('No usable data path found');
-  } catch (e) {
-    captureElectronError(e, {
-      contexts: {
-        fn: {
-          args: {},
-          name: 'getAppDataPath',
-        },
-      },
-    });
-    defaultAppDataPath = app.getPath('userData');
-    console.log('📁 Using fallback app data path:', defaultAppDataPath);
+  if (usableSharedPath) {
+    console.log('📁 Using shared data path:', usableSharedPath);
+    defaultAppDataPath = usableSharedPath;
     return defaultAppDataPath;
   }
+
+  defaultAppDataPath = app.getPath('userData');
+  console.log(
+    '📁 Shared data path not available, fallback to user data path:',
+    defaultAppDataPath,
+  );
+  return defaultAppDataPath;
 }
 
 export async function isUsablePath(basePath?: string): Promise<boolean> {
@@ -95,8 +82,8 @@ export async function isUsablePath(basePath?: string): Promise<boolean> {
     await mkdir(testDir, { recursive: true });
     const testFile = join(testDir, 'test.txt');
     await writeFile(testFile, 'ok');
-    await rm(testFile);
-    await rm(testDir, { recursive: true });
+    await rm(testFile, { force: true });
+    await rm(testDir, { force: true, recursive: true });
     return true;
   } catch (e) {
     captureElectronError(e, {
