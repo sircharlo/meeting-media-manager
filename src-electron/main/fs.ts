@@ -390,13 +390,10 @@ const decompress = async (
 
     yauzl.open(input, { lazyEntries: true }, (err, zipfile) => {
       if (err) {
-        captureElectronError(err, {
-          contexts: {
-            fn: {
-              args: { fileSize, input, output },
-              name: 'unzipFile yauzl.open',
-            },
-          },
+        addElectronBreadcrumb({
+          category: 'unzip',
+          data: { fileSize, input, output },
+          message: 'Error opening zipfile',
         });
         return reject(new Error(String(err)));
       }
