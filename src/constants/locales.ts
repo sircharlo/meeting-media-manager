@@ -18,6 +18,7 @@ export type LanguageValue =
   | 'ko'
   | 'mg'
   | 'nl'
+  | 'pl'
   | 'pt'
   | 'ptPt'
   | 'ro'
@@ -44,6 +45,7 @@ export const enabled: LanguageValue[] = [
   'it',
   'ko',
   'nl',
+  'pl',
   'pt',
   'ptPt',
   'ru',
@@ -211,6 +213,13 @@ export const locales: {
     langcode: 'O',
     signLangCodes: ['NGT', 'SSU', 'VGT'],
     value: 'nl',
+  },
+  {
+    englishName: 'Polish',
+    label: 'Polski',
+    langcode: 'P',
+    signLangCodes: ['PDF'],
+    value: 'pl',
   },
   {
     englishName: 'Portuguese (Portugal)',

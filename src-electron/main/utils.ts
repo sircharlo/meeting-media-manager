@@ -1,7 +1,6 @@
 import { addBreadcrumb, captureException } from '@sentry/electron/main';
 import { version } from 'app/package.json';
 import { app } from 'electron';
-import { mkdir, rm, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import {
   IS_DEV,
@@ -10,8 +9,8 @@ import {
   PRODUCT_NAME,
   TRUSTED_DOMAINS,
 } from 'src-electron/constants';
+import { isUsablePath } from 'src-electron/main/fs';
 import { urlVariables } from 'src-electron/main/session';
-import { uuid } from 'src/shared/vanilla';
 import upath from 'upath';
 
 const { join, resolve } = upath;
@@ -91,34 +90,13 @@ export async function getSharedDataPath(): Promise<null | string> {
   }
   console.log(`[getSharedDataPath] Shared path is configured as ${sharedPath}`);
 
-  try {
-    // Ensure directory exists (does NOT change permissions)
-    await mkdir(sharedPath, { recursive: true });
-    console.log(
-      '[getSharedDataPath] Shared data path created successfully:',
-      sharedPath,
-    );
-
-    const testDir = join(sharedPath, '.cache-test-' + uuid());
-    await mkdir(testDir, { recursive: true });
-    const testFile = join(testDir, 'test.txt');
-    await writeFile(testFile, 'ok');
-    await rm(testFile);
-    await rm(testDir, { recursive: true });
+  if (await isUsablePath(sharedPath)) {
+    console.log(`[getSharedDataPath] Shared path is usable`);
     return sharedPath;
-  } catch (e) {
-    captureElectronError(e, {
-      contexts: {
-        fn: {
-          args: {
-            sharedPath,
-          },
-          name: 'getSharedDataPath',
-        },
-      },
-    });
-    return null;
   }
+
+  console.log(`[getSharedDataPath] Shared path is not usable`);
+  return null;
 }
 
 /**

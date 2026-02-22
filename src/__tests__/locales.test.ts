@@ -7,17 +7,23 @@ import { describe, expect, it } from 'vitest';
 
 describe('Locales', () => {
   it('should be defined and equal', async () => {
-    const locales = localeOptions.map((l) => l.value).sort();
-    const localesKebab = locales.map(camelToKebabCase).sort();
+    const locales = localeOptions
+      .map((l) => l.value)
+      .sort((a, b) => a.localeCompare(b));
+    const localesKebab = locales
+      .map(camelToKebabCase)
+      .sort((a, b) => a.localeCompare(b));
 
-    const messages = Object.keys(appMessages).sort();
+    const messages = Object.keys(appMessages).sort((a, b) =>
+      a.localeCompare(b),
+    );
 
     expect(enabled).toEqual(messages);
 
     const localeFiles = (await readdir(resolve(__dirname, '../i18n')))
       .filter((f) => f.endsWith('.json'))
       .map((f) => f.replace('.json', ''))
-      .sort();
+      .sort((a, b) => a.localeCompare(b));
 
     expect(localesKebab).toEqual(localeFiles);
   });
