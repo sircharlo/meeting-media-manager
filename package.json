@@ -129,7 +129,7 @@
     "msw": "^2.12.10",
     "postcss": "^8.5.6",
     "prettier": "^3.7.3",
-    "rollup-plugin-visualizer": "^6.0.5",
+    "rollup-plugin-visualizer": "^7.0.0",
     "typescript": "~5.9.3",
     "vite": "^7.3.1",
     "vitepress": "^2.0.0-alpha.16",
