@@ -158,7 +158,7 @@ export default defineConfig((ctx) => {
               "universal",
             ],
           },
-          x64ArchFiles: ["**/@napi-rs/**"],
+          x64ArchFiles: "**/@napi-rs/**",
         },
         nsis: {
           deleteAppDataOnUninstall: true,
