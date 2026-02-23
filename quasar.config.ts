@@ -152,7 +152,12 @@ export default defineConfig((ctx) => {
           hardenedRuntime: true,
           icon: getIconPath('icns'),
           minimumSystemVersion: '10.15',
-          target: { target: 'default' },
+          target: { 
+            target: 'default',
+            arch: [
+              "universal",
+            ],
+          },
         },
         nsis: {
           deleteAppDataOnUninstall: true,
