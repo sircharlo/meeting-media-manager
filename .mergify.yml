@@ -32,7 +32,6 @@ queue_rules:
       - check-success = "build / test"
       - check-success = "build / build (ubuntu-latest)"
       - check-success = "build / build (macos-latest)"
-      - check-success = "build / build (macos-15-intel)"
       - check-success = "build / build (windows-latest)"
 
   # Default queue (for Crowdin PRs or others you might add)
@@ -43,5 +42,4 @@ queue_rules:
       - check-success = "build / test"
       - check-success = "build / build (ubuntu-latest)"
       - check-success = "build / build (macos-latest)"
-      - check-success = "build / build (macos-15-intel)"
       - check-success = "build / build (windows-latest)"
