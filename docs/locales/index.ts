@@ -25,6 +25,7 @@ import it from './it.json';
 import ko from './ko.json';
 import mg from './mg.json';
 import nl from './nl.json';
+import pl from './pl.json';
 import ptPt from './pt-pt.json';
 import pt from './pt.json';
 import ro from './ro.json';
@@ -54,6 +55,7 @@ const messages: Record<LanguageValue, Partial<typeof en>> = {
   ko,
   mg,
   nl,
+  pl,
   pt,
   ptPt,
   ro,
