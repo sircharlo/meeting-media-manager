@@ -135,7 +135,7 @@
     "vitepress": "^2.0.0-alpha.16",
     "vitest": "^4.0.18",
     "vue-eslint-parser": "^10.4.0",
-    "vue-tsc": "^3.2.4",
+    "vue-tsc": "^3.2.5",
     "webpack-iconfont-plugin-nodejs": "^1.0.36"
   },
   "resolutions": {
