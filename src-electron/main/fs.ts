@@ -73,31 +73,47 @@ export async function getAppDataPath(): Promise<string> {
   return defaultAppDataPath;
 }
 
-export async function isUsablePath(basePath?: string): Promise<boolean> {
-  if (!basePath) return false;
+const isUsablePathPromises = new Map<string, Promise<boolean>>();
 
-  try {
-    const resolvedBase = resolve(basePath);
-    const testDir = join(resolvedBase, '.cache-test-' + uuid());
-    await mkdir(testDir, { recursive: true });
-    const testFile = join(testDir, 'test.txt');
-    await writeFile(testFile, 'ok');
-    await rm(testFile, { force: true });
-    await rm(testDir, { force: true, recursive: true });
-    return true;
-  } catch (e) {
-    captureElectronError(e, {
-      contexts: {
-        fn: {
-          args: {
-            basePath,
+export function isUsablePath(basePath?: string): Promise<boolean> {
+  if (!basePath) return Promise.resolve(false);
+
+  if (!isUsablePathPromises.has(basePath)) {
+    const promise = (async () => {
+      try {
+        const resolvedBase = resolve(basePath);
+        const testDir = join(resolvedBase, '.cache-test-' + uuid());
+
+        await mkdir(testDir, { recursive: true });
+
+        const testFile = join(testDir, 'test.txt');
+        await writeFile(testFile, 'ok');
+
+        await rm(testFile, { force: true });
+        await rm(testDir, { force: true, recursive: true });
+
+        return true;
+      } catch (e) {
+        captureElectronError(e, {
+          contexts: {
+            fn: {
+              args: { basePath },
+              name: 'isUsablePath',
+            },
           },
-          name: 'isUsablePath',
-        },
-      },
+        });
+        return false;
+      }
+    })().finally(() => {
+      // Remove from cache after it resolves
+      // so failures OR success can be retried later
+      isUsablePathPromises.delete(basePath);
     });
-    return false;
+
+    isUsablePathPromises.set(basePath, promise);
   }
+
+  return isUsablePathPromises.get(basePath) || Promise.resolve(false);
 }
 
 export async function openFileDialog(
