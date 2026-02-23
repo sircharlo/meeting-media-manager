@@ -93,11 +93,30 @@ const {
 const { copy, exists, pathExists, remove, stat } = fs;
 const { basename, changeExt, dirname, extname, join } = path;
 
-const isUsablePathPromises: Record<string, Promise<boolean>> = {};
-const isUsablePath = (path: string) => {
-  if (isUsablePathPromises[path]) return isUsablePathPromises[path];
-  isUsablePathPromises[path] = isUsablePathRaw(path);
-  return isUsablePathPromises[path];
+const isUsablePathCache = new Map<string, boolean>();
+const inFlight = new Map<string, Promise<boolean>>();
+
+const isUsablePath = async (path: string) => {
+  if (isUsablePathCache.has(path)) {
+    return isUsablePathCache.get(path);
+  }
+
+  if (!inFlight.has(path)) {
+    const promise = isUsablePathRaw(path)
+      .then((result) => {
+        isUsablePathCache.set(path, result);
+        inFlight.delete(path);
+        return result;
+      })
+      .catch((err) => {
+        inFlight.delete(path);
+        throw err;
+      });
+
+    inFlight.set(path, promise);
+  }
+
+  return inFlight.get(path);
 };
 
 export const getJwLangCode = (mepsId?: number): JwLangCode | null => {
