@@ -4,6 +4,29 @@
 
 For translations of the most important changes, see the [`./release-notes/`](./release-notes/) directory.
 
+## v26.2.4
+
+### 🛠️ Improvements and Tweaks
+
+- 🛠️ **JWPUB Extractor**: Improved robustness of the JWPUB extractor and added a new JWPUB identification helper.
+- 🛠️ **Date Parsing**: Enhanced reliability of last-used date parsing.
+- 🛠️ **UI**: Improved reactivity of the download refresh button.
+- 🛠️ **Media Window**: Unified and improved fade-in/out logic for the media window.
+
+### 🐞 Bug Fixes
+
+- 🐞 **Security**: Implemented protection against potential zip bomb attacks.
+- 🐞 **Path Validation**: Tightened logic for shared data and application data path validation to prevent unnecessary errors.
+- 🐞 **Stability**: Prevented crashes when the shared data path is unavailable.
+- 🐞 **OBS Studio Integration**: Simplified and stabilized OBS Studio helper logic.
+- 🐞 **Error Handling**: Replaced noisy error captures with breadcrumbs in zip operations for better debugging.
+- 🐞 **Build Configuration**: Improved architecture support for macOS builds.
+
+### 🔧 Chores
+
+- 🔧 **Refactoring**: Performed extensive simplification of logic across various modules, including media playback, filesystem helpers, SQLite operations, and Electron session management.
+- 🔧 **CI/CD**: Added SonarQube analysis to GitHub Actions and updated build workflows for better security and reliability.
+
 ## v26.2.3
 
 ### 🐞 Bug Fixes
