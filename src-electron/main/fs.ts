@@ -94,14 +94,18 @@ export function isUsablePath(basePath?: string): Promise<boolean> {
 
         return true;
       } catch (e) {
-        captureElectronError(e, {
-          contexts: {
-            fn: {
-              args: { basePath },
-              name: 'isUsablePath',
+        const PERMISSION_ERRORS = new Set(['EACCES', 'EPERM']);
+        const code = (e as { code?: string }).code;
+        if (!PERMISSION_ERRORS.has(code ?? '')) {
+          captureElectronError(e, {
+            contexts: {
+              fn: {
+                args: { basePath },
+                name: 'isUsablePath',
+              },
             },
-          },
-        });
+          });
+        }
         return false;
       }
     })().finally(() => {
