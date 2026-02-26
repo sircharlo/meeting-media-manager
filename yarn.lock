@@ -1795,7 +1795,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jridgewell/sourcemap-codec@npm:^1.4.14, @jridgewell/sourcemap-codec@npm:^1.4.15, @jridgewell/sourcemap-codec@npm:^1.5.0, @jridgewell/sourcemap-codec@npm:^1.5.5":
+"@jridgewell/sourcemap-codec@npm:^1.4.14, @jridgewell/sourcemap-codec@npm:^1.5.0, @jridgewell/sourcemap-codec@npm:^1.5.5":
   version: 1.5.5
   resolution: "@jridgewell/sourcemap-codec@npm:1.5.5"
   checksum: 10c0/f9e538f302b63c0ebc06eecb1dd9918dd4289ed36147a0ddce35d6ea4d7ebbda243cda7b2213b6a5e1d8087a298d5cf630fb2bd39329cdecb82017023f6081a0
@@ -3199,10 +3199,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/babel-plugin-component-annotate@npm:5.1.0":
-  version: 5.1.0
-  resolution: "@sentry/babel-plugin-component-annotate@npm:5.1.0"
-  checksum: 10c0/f4a8421ec2486a6b01671f78825f9c4deaffe5a4dbec1479d01f95951a276d55642530d0264f43a9baf6bb9aa2a65027a8ecd19ab504e458b25b169fb6f71f0e
+"@sentry/babel-plugin-component-annotate@npm:5.1.1":
+  version: 5.1.1
+  resolution: "@sentry/babel-plugin-component-annotate@npm:5.1.1"
+  checksum: 10c0/c2f872b9065e6fcf07e24b7ccbd3328949a13c77b15ce903367318430f98706bae8128478aa525c8d7ba256a52e4bdf78ea9f4cd01060f83bc698f5a8fd179c3
   languageName: node
   linkType: hard
 
@@ -3232,18 +3232,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/bundler-plugin-core@npm:5.1.0":
-  version: 5.1.0
-  resolution: "@sentry/bundler-plugin-core@npm:5.1.0"
+"@sentry/bundler-plugin-core@npm:5.1.1":
+  version: 5.1.1
+  resolution: "@sentry/bundler-plugin-core@npm:5.1.1"
   dependencies:
     "@babel/core": "npm:^7.18.5"
-    "@sentry/babel-plugin-component-annotate": "npm:5.1.0"
+    "@sentry/babel-plugin-component-annotate": "npm:5.1.1"
     "@sentry/cli": "npm:^2.58.5"
     dotenv: "npm:^16.3.1"
     find-up: "npm:^5.0.0"
     glob: "npm:^13.0.6"
-    magic-string: "npm:0.30.8"
-  checksum: 10c0/6a7dd88903a39162320c081cfe29968651feb65371c1c8eda5c7565a96a37ad8e891af4c49b855e38062a56a631f3be6fbe2db8305da38e04ab3a0bfeec21c20
+    magic-string: "npm:~0.30.8"
+  checksum: 10c0/d6739bcc92517de21538edf77233a4af5770d7b43f313d89ed4c8f4f2af06c05264c0ef6c548d9370e5f283ef3f0a1fba015795081dd27087ff01a2283935042
   languageName: node
   linkType: hard
 
@@ -3380,13 +3380,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/esbuild-plugin@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "@sentry/esbuild-plugin@npm:5.1.0"
+"@sentry/esbuild-plugin@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "@sentry/esbuild-plugin@npm:5.1.1"
   dependencies:
-    "@sentry/bundler-plugin-core": "npm:5.1.0"
+    "@sentry/bundler-plugin-core": "npm:5.1.1"
     uuid: "npm:^9.0.0"
-  checksum: 10c0/34d8a797c92e4aa622288b7f67fbf6dd0f75e198cbb9529b6ea02c1139b4a43a54cf388c01028ec4acc115d22a221f1e994b7fb1abddf6570098dfd015ae12fb
+  checksum: 10c0/b9e472bcb560dd31d70e65538fa259f924e2b138f3b98bb920ead19e1ed7a88395398b5badc6b689ae45665dcfbce7367fee2d9045ca74162c3bf9c78898f7e9
   languageName: node
   linkType: hard
 
@@ -3483,25 +3483,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/rollup-plugin@npm:5.1.0":
-  version: 5.1.0
-  resolution: "@sentry/rollup-plugin@npm:5.1.0"
+"@sentry/rollup-plugin@npm:5.1.1":
+  version: 5.1.1
+  resolution: "@sentry/rollup-plugin@npm:5.1.1"
   dependencies:
-    "@sentry/bundler-plugin-core": "npm:5.1.0"
-    magic-string: "npm:0.30.8"
+    "@sentry/bundler-plugin-core": "npm:5.1.1"
+    magic-string: "npm:~0.30.8"
   peerDependencies:
     rollup: ">=3.2.0"
-  checksum: 10c0/8aee4313937612c0daaa4c7d1fd2a83cbc0e10f0043e0814d2f05481802d79ded4f3a4581894a6b0063e5867725ed3ffebe31204906e5f18d44997fd2de66ec3
+  checksum: 10c0/51493e51d4c5272aa98c27e5c94f4a47d34ca93d8b4bd057b206acace792093a0a0d9dda60c063c3cdcb9ad274e9657e20f56be833f0e4df93f8fcdb97b5f815
   languageName: node
   linkType: hard
 
-"@sentry/vite-plugin@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "@sentry/vite-plugin@npm:5.1.0"
+"@sentry/vite-plugin@npm:^5.1.1":
+  version: 5.1.1
+  resolution: "@sentry/vite-plugin@npm:5.1.1"
   dependencies:
-    "@sentry/bundler-plugin-core": "npm:5.1.0"
-    "@sentry/rollup-plugin": "npm:5.1.0"
-  checksum: 10c0/05af2a732498f5caf189a35a985d934bee5c7a35806efa4747158e9c6b45757019a0989dd5af45624b0539932b9d759475c65542713499337d4290a4e9d13ce0
+    "@sentry/bundler-plugin-core": "npm:5.1.1"
+    "@sentry/rollup-plugin": "npm:5.1.1"
+  checksum: 10c0/9318430b95592921290a64b134b634a429af9673acccc14d252a1683a937ea7cc56c69662c9f876c5cde1df242ea1e28323d14bba63d7ee76a0778ec8a2a2af1
   languageName: node
   linkType: hard
 
@@ -4063,12 +4063,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.19.11":
-  version: 22.19.11
-  resolution: "@types/node@npm:22.19.11"
+"@types/node@npm:^22.19.12":
+  version: 22.19.12
+  resolution: "@types/node@npm:22.19.12"
   dependencies:
     undici-types: "npm:~6.21.0"
-  checksum: 10c0/4b274acf27ec31aa83b50ef22088f83c783e6bcd7dcb40b4834f64f44868b6bf68725214220f15a0c776928f7c0f7f26f03c05cd5868f0526340af3f4af4b58b
+  checksum: 10c0/562cd3da33ddbe36b753e02e5e7158d44878edf78cc5389d16ff626b5afb5e5d8c0baeec56a08650d8c0581696a209271ca9920ab510c510e315aa6e5cad6c06
   languageName: node
   linkType: hard
 
@@ -5869,12 +5869,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"autoprefixer@npm:^10.4.24":
-  version: 10.4.24
-  resolution: "autoprefixer@npm:10.4.24"
+"autoprefixer@npm:^10.4.27":
+  version: 10.4.27
+  resolution: "autoprefixer@npm:10.4.27"
   dependencies:
     browserslist: "npm:^4.28.1"
-    caniuse-lite: "npm:^1.0.30001766"
+    caniuse-lite: "npm:^1.0.30001774"
     fraction.js: "npm:^5.3.4"
     picocolors: "npm:^1.1.1"
     postcss-value-parser: "npm:^4.2.0"
@@ -5882,7 +5882,7 @@ __metadata:
     postcss: ^8.1.0
   bin:
     autoprefixer: bin/autoprefixer
-  checksum: 10c0/16737dfc865afed338f3166718ece0f77539e53c1ba9f064f2e6369b9dec9ea0542f3fb98bcb7ab37e64897dc3304bae6b2004fbf79ada8b2aeaa3db336e4b77
+  checksum: 10c0/698ad9e23436635af1806d4a8b80393020135174d1d4a97eb81887cdddac2f297f198d1d717932db8503b325f9f2dc3accb6e290b2d3ce1a7ddeb947100e5b25
   languageName: node
   linkType: hard
 
@@ -6550,10 +6550,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.30001766":
-  version: 1.0.30001767
-  resolution: "caniuse-lite@npm:1.0.30001767"
-  checksum: 10c0/37067c6d2b26623f81494a1f206adbff2b80baed3318ba430684e428bd7d81be889f39db8ef081501d1db5f7dd5d15972892f173eb59c9f3bb780e0b38e6610a
+"caniuse-lite@npm:^1.0.30001774":
+  version: 1.0.30001774
+  resolution: "caniuse-lite@npm:1.0.30001774"
+  checksum: 10c0/cc6a340a5421b9a67d8fa80889065ee27b2839ad62993571dded5296e18f02bbf685ce7094e93fe908cddc9fefdfad35d6c010b724cc3d22a6479b0d0b679f8c
   languageName: node
   linkType: hard
 
@@ -11129,16 +11129,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"magic-string@npm:0.30.8":
-  version: 0.30.8
-  resolution: "magic-string@npm:0.30.8"
-  dependencies:
-    "@jridgewell/sourcemap-codec": "npm:^1.4.15"
-  checksum: 10c0/51a1f06f678c082aceddfb5943de9b6bdb88f2ea1385a1c2adf116deb73dfcfa50df6c222901d691b529455222d4d68d0b28be5689ac6f69b3baa3462861f922
-  languageName: node
-  linkType: hard
-
-"magic-string@npm:^0.30.19, magic-string@npm:^0.30.21, magic-string@npm:^0.30.3":
+"magic-string@npm:^0.30.19, magic-string@npm:^0.30.21, magic-string@npm:^0.30.3, magic-string@npm:~0.30.8":
   version: 0.30.21
   resolution: "magic-string@npm:0.30.21"
   dependencies:
@@ -11394,8 +11385,8 @@ __metadata:
     "@rollup/plugin-inject": "npm:^5.0.5"
     "@sentry/core": "npm:^10.40.0"
     "@sentry/electron": "npm:^7.8.0"
-    "@sentry/esbuild-plugin": "npm:^5.1.0"
-    "@sentry/vite-plugin": "npm:^5.1.0"
+    "@sentry/esbuild-plugin": "npm:^5.1.1"
+    "@sentry/vite-plugin": "npm:^5.1.1"
     "@sentry/vue": "npm:^10.27.0"
     "@types/better-sqlite3": "npm:^7.6.13"
     "@types/dompurify": "npm:^3.2.0"
@@ -11406,7 +11397,7 @@ __metadata:
     "@types/lodash-es": "npm:^4.17.12"
     "@types/mousetrap": "npm:^1.6.15"
     "@types/ms": "npm:^2"
-    "@types/node": "npm:^22.19.11"
+    "@types/node": "npm:^22.19.12"
     "@types/pretty-bytes": "npm:^5.2.0"
     "@types/yauzl": "npm:^2.10.3"
     "@typescript-eslint/utils": "npm:^8.56.1"
@@ -11417,7 +11408,7 @@ __metadata:
     "@vue/test-utils": "npm:^2.4.6"
     "@vueuse/core": "npm:^14.2.1"
     "@vueuse/router": "npm:^14.2.1"
-    autoprefixer: "npm:^10.4.24"
+    autoprefixer: "npm:^10.4.27"
     better-sqlite3: "npm:^12.6.2"
     check-disk-space: "npm:^3.4.0"
     cheerio: "npm:^1.2.0"
