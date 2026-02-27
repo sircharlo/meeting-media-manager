@@ -353,6 +353,35 @@ export async function downloadFile(
   }
 }
 
+export async function isDownloadComplete(downloadId: string) {
+  const manager = await loadElectronDownloadManager();
+  if (!manager) return null;
+
+  // Check if it's in progress
+  const ongoing = ongoingDownloads.get(downloadId);
+  if (ongoing) {
+    if (ongoing.uuid) {
+      return (
+        manager.getDownloadData(ongoing.uuid)?.isDownloadCompleted() || false
+      );
+    }
+    // If it's in ongoing but has no uuid yet, it's still initializing/queued
+    return false;
+  }
+
+  // Check if it's still in one of the queues
+  const isInQueue =
+    downloadQueue.some((d) => d.url + d.saveDir === downloadId) ||
+    lowPriorityQueue.some((d) => d.url + d.saveDir === downloadId);
+
+  if (isInQueue) {
+    return false;
+  }
+
+  // If it's not ongoing and not in queue, it must have finished (or failed and been removed)
+  return true;
+}
+
 /**
  * Stop low priority downloads (Pause them).
  */
