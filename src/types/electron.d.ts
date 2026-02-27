@@ -105,6 +105,7 @@ export interface ElectronApi {
   getZipEntries: (zipPath: string) => Promise<Record<string, number>>;
   inferExtension: (filename: string, filetype?: string) => Promise<string>;
   isArchitectureMismatch: () => Promise<boolean>;
+  isDownloadComplete: (downloadId: string) => Promise<boolean | null>;
   isDownloadErrorExpected: () => Promise<boolean>;
   isUsablePath: (path: string) => Promise<boolean>;
   moveMediaWindow: (
@@ -234,6 +235,7 @@ export type ElectronIpcInvokeKey =
   | 'getUserDataPath'
   | 'getZipEntries'
   | 'isArchitectureMismatch'
+  | 'isDownloadComplete'
   | 'isDownloadErrorExpected'
   | 'isUsablePath'
   | 'openFileDialog'

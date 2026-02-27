@@ -76,6 +76,8 @@ const electronApi: ElectronApi = {
   getZipEntries: (p) => invoke('getZipEntries', p),
   inferExtension,
   isArchitectureMismatch: () => invoke('isArchitectureMismatch'),
+  isDownloadComplete: (downloadId: string) =>
+    invoke('isDownloadComplete', downloadId),
   isDownloadErrorExpected: () => invoke('isDownloadErrorExpected'),
   isUsablePath: (p) => invoke('isUsablePath', p),
   moveMediaWindow: (t, w) => send('moveMediaWindow', t, w),
