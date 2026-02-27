@@ -214,6 +214,7 @@ export const getLocalFontPath = async (fontName: FontName) => {
       if (!(await exists(fontPath))) {
         throw new Error(
           `Failed to download font ${fontName} and no local copy exists`,
+          { cause: error },
         );
       }
     }
