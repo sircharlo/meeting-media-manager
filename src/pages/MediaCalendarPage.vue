@@ -105,6 +105,7 @@ import type {
   DocumentItem,
   MediaItem,
   MediaSectionIdentifier,
+  PublicationFetcher,
 } from 'src/types';
 
 import {
@@ -132,11 +133,14 @@ import { errorCatcher } from 'src/helpers/error-catcher';
 import { addDayToExportQueue } from 'src/helpers/export-media';
 import {
   copyToDatedAdditionalMedia,
+  downloadAdditionalRemoteVideo,
   downloadFileIfNeeded,
   dynamicMediaMapper,
   fetchMedia,
+  getJwMediaInfo,
   getMemorialBackground,
   getMemorialMedia,
+  getPubMediaLinks,
 } from 'src/helpers/jw-media';
 import { sendKeyboardShortcut } from 'src/helpers/keyboard-shortcuts';
 import { executeLocalShortcut } from 'src/helpers/keyboardShortcuts';
@@ -223,6 +227,7 @@ const {
   currentCongregation,
   currentLangObject,
   currentSettings,
+  currentSongbook,
   downloadProgress,
   isSelectedDayToday,
   mediaIsPlaying,
@@ -989,7 +994,60 @@ const checkMemorialDate = async () => {
     'intro',
   );
 
-  if (introSect && (!introSect.items || introSect.items.length === 0)) {
+  const memorialSect = findMediaSection(
+    selectedDateObject.value.mediaSections,
+    'memorial-talk',
+  );
+
+  // Add the usual songs for memorial
+  if (memorialSect && !memorialSect.items?.length) {
+    const songsToAdd = [18, 25];
+    for (const songTrack of songsToAdd) {
+      const songTrackItem: PublicationFetcher = {
+        fileformat: 'MP4',
+        langwritten: currentSettings.value?.lang || 'E',
+        pub: currentSongbook.value?.pub,
+        track: songTrack,
+      };
+      try {
+        const [songTrackFiles, { thumbnail, title }] = await Promise.all([
+          getPubMediaLinks(songTrackItem),
+          getJwMediaInfo(songTrackItem),
+        ]);
+
+        const files =
+          songTrackFiles?.files?.[currentSettings.value?.lang || 'E']?.[
+            'MP4'
+          ] || [];
+
+        if (files.length > 0) {
+          const downloadId = await downloadAdditionalRemoteVideo(
+            files,
+            selectedDate.value,
+            thumbnail,
+            songTrack,
+            title.replace(/^\d+\.\s*/, ''),
+            'memorial-talk',
+          );
+          let downloadCompleted: boolean | null = null;
+          if (downloadId) {
+            while (downloadCompleted !== true) {
+              downloadCompleted =
+                await globalThis.electronApi?.isDownloadComplete(downloadId);
+              await new Promise((resolve) => {
+                setTimeout(resolve, 1000);
+              });
+            }
+          }
+        }
+      } catch (error) {
+        errorCatcher(error);
+      }
+    }
+  }
+
+  // If intro section is empty, attempt to fetch memorial media
+  if (introSect && !introSect.items?.length) {
     const memorialMedia = await getMemorialMedia();
     if (memorialMedia) {
       if (memorialMedia.bg) {

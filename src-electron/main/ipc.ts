@@ -28,6 +28,7 @@ import { PLATFORM } from 'src-electron/constants';
 import { getLowDiskSpaceStatus } from 'src-electron/main/disk-space';
 import {
   downloadFile,
+  isDownloadComplete,
   isDownloadErrorExpected,
 } from 'src-electron/main/downloads';
 import { createVideoFromNonVideo } from 'src-electron/main/ffmpeg';
@@ -298,6 +299,9 @@ handleIpcInvoke(
 );
 
 handleIpcInvoke('getAllScreens', async () => getAllScreens());
+handleIpcInvoke('isDownloadComplete', async (_e, downloadId: string) =>
+  isDownloadComplete(downloadId),
+);
 handleIpcInvoke('isDownloadErrorExpected', async () =>
   isDownloadErrorExpected(),
 );
