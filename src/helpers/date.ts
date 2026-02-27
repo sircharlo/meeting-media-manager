@@ -125,6 +125,29 @@ export const isReplacedByMemorial = (lookupDate?: Date) => {
   }
 };
 
+export const isMemorialDay = (lookupDate?: Date | string) => {
+  try {
+    const currentState = useCurrentStateStore();
+    if (
+      !lookupDate ||
+      currentState.currentSettings?.disableMediaFetching ||
+      !currentState.currentSettings?.memorialDate
+    ) {
+      return false;
+    }
+
+    lookupDate = dateFromString(lookupDate);
+    const memorialDate = dateFromString(
+      currentState.currentSettings.memorialDate,
+    );
+
+    return datesAreSame(lookupDate, memorialDate);
+  } catch (error) {
+    errorCatcher(error);
+    return false;
+  }
+};
+
 export const isMwMeetingDay = (lookupDate?: Date) => {
   try {
     const currentState = useCurrentStateStore();
