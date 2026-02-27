@@ -2862,7 +2862,7 @@ export const downloadAdditionalRemoteVideo = async (
       meetingDate || currentStateStore.selectedDate,
     );
 
-    const uniqueId = await addToAdditionMediaMapFromPath(
+    await addToAdditionMediaMapFromPath(
       join(datedAdditionalMediaDir, basename(bestItemUrl)),
       section,
       undefined,
@@ -2886,7 +2886,8 @@ export const downloadAdditionalRemoteVideo = async (
       url: bestItemUrl,
     });
 
-    return uniqueId;
+    const key = bestItemUrl + datedAdditionalMediaDir;
+    return key;
   } catch (e) {
     errorCatcher(e);
     return undefined;

@@ -418,7 +418,7 @@ import DialogStudyBible from 'components/dialog/DialogStudyBible.vue';
 import { storeToRefs } from 'pinia';
 import { useLocale } from 'src/composables/useLocale';
 import { SORTER } from 'src/constants/general';
-import { isCoWeek, isWeMeetingDay } from 'src/helpers/date';
+import { isCoWeek, isMemorialDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
   addJwpubDocumentMediaToFiles,
@@ -659,7 +659,7 @@ const getEventDayColor = (eventDate: string) => {
     );
     if (lookupDate?.status === 'error') {
       return 'negative';
-    } else if (lookupDate?.status === 'complete') {
+    } else if (lookupDate?.status === 'complete' || isMemorialDay(eventDate)) {
       return 'primary';
     }
     if (additionalMediaForDayExists(eventDate)) return 'imported-media';
