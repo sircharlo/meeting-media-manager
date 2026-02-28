@@ -25,7 +25,7 @@
 M³ 支持 Windows、macOS 和 Linux：
 
 - **Windows**：Windows 10 及更高版本（提供 64 位和 32 位版本）
-- **macOS**：macOS 10.15 (Catalina) 及更高版本（支持 Intel 和 Apple Silicon）
+- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
 - **Linux**：大多数现代 Linux 发行版（AppImage 格式）
 
 ### :globe_with_meridians: M³ 支持我的语言吗？ {#language-support}
@@ -292,7 +292,7 @@ Thank you for your interest in supporting the project! However, in the spirit of
 M³ 设计用于在多种操作系统上运行：
 
 - **Windows**：Windows 10及更高版本（提供64位和32位版本）
-- **macOS**：macOS 10.15 (Catalina)及更高版本（支持Intel和Apple Silicon）
+- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
 - **Linux**：大多数现代Linux发行版（AppImage格式）
 
 M³ 的硬件要求如下：
