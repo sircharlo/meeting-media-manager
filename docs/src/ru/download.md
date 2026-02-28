@@ -51,7 +51,6 @@ onMounted(() => {
   const isMac = /Mac OS X|Macintosh|MacIntel/i.test(ua) || /Mac/i.test(platform)
   const isLinux = /Linux/i.test(ua) && !isAndroid(ua)
 
-  const isArm = /arm64|aarch64|Apple\s*Silicon/i.test(ua)
   const isIa32 = /\b(ia32|x86)\b/i.test(ua)
 
   function isAndroid(s: string) { return /Android/i.test(s) }
