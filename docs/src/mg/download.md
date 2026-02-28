@@ -63,8 +63,7 @@ onMounted(() => {
   }
 
   if (isMac) {
-    const href = isArm ? downloads.macArm : downloads.macIntel
-    recommended.value = { href, label: isArm ? msg.value.macArm : msg.value.macIntel }
+    recommended.value = { href: downloads.macUniversal, label: msg.value.macUniversal }
     return
   }
 
