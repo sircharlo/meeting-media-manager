@@ -51,7 +51,6 @@ onMounted(() => {
   const isMac = /Mac OS X|Macintosh|MacIntel/i.test(ua) || /Mac/i.test(platform)
   const isLinux = /Linux/i.test(ua) && !isAndroid(ua)
 
-  const isArm = /arm64|aarch64|Apple\s*Silicon/i.test(ua)
   const isIa32 = /\b(ia32|x86)\b/i.test(ua)
 
   function isAndroid(s: string) { return /Android/i.test(s) }
@@ -94,8 +93,7 @@ onMounted(() => {
 
 ## macOS
 
-- **Apple Silicon (arm64) (.dmg)**：<a :href="downloads.macArm">下载</a>
-- **Intel (x64) (.dmg)**：<a :href="downloads.macIntel">下载</a>
+- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Download</a>
 
 ## Linux
 

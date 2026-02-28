@@ -25,7 +25,7 @@ Selle rakenduse lähtekood on kõigile kättesaadav, et uurida ja kontrollida, m
 M³ toetab Windowsit, macOS-i ja Linuxit:
 
 - **Windows**: Windows 10 ja uuemad versioonid (saadaval 64-bitine ja 32-bitine versioon)
-- **macOS**: macOS 10.15 (Catalina) ja uuemad versioonid (toetab Intel ja Apple Silicon protsessoreid)
+- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
 - **Linux**: enamik kaasaegseid Linuxi distributsioone (AppImage-vorming)
 
 ### :globe_with_meridians: Kas M³ töötab minu keeles? {#language-support}
@@ -292,7 +292,7 @@ Täname sind sinu huvi eest projekti toetamise vastu! Matteuse 10:8 vaimus **ei 
 M³ on loodud töötama paljude erinevate operatsioonisüsteemidega:
 
 - **Windows**: Windows 10 ja uuemad versioonid (saadaval 64-bitine ja 32-bitine versioon)
-- **macOS**: macOS 10.15 (Catalina) ja uuemad versioonid (toetab Intel ja Apple Silicon protsessoreid)
+- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
 - **Linux**: enamik kaasaegseid Linuxi distributsioone (AppImage-vorming)
 
 M³-l on järgmised riistvaranõuded:
