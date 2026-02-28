@@ -25,7 +25,7 @@ De broncode voor deze app is voor iedereen beschikbaar om te onderzoeken en cont
 M³ ondersteunt Windows, macOS en Linux:
 
 - **Windows**: Windows 10 en later (64-bits- en 32-bitsversies beschikbaar)
-- **macOS**: macOS 10.15 (Catalina) en later (ondersteuning voor Intel en Apple Silicon)
+- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
 - **Linux**: De meeste moderne Linux-distributies (AppImage-formaat)
 
 ### :globe_with_meridians: Werkt M³ in mijn taal? {#language-support}
@@ -292,7 +292,7 @@ Thank you for your interest in supporting the project! However, in the spirit of
 M³ is designed to work on a wide range of operating systems:
 
 - **Windows**: Windows 10 en later (64-bits- en 32-bitsversies beschikbaar)
-- **macOS**: macOS 10.15 (Catalina) en later (ondersteuning voor Intel en Apple Silicon)
+- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
 - **Linux**: De meeste moderne Linux-distributies (AppImage-formaat)
 
 M³ has the following hardware requirements:
