@@ -93,8 +93,7 @@ onMounted(() => {
 
 ## macOS
 
-- **Apple Silicon (arm64) (.dmg)** : <a :href="downloads.macArm">Télécharger</a>
-- **Intel (x64) (.dmg)**: <a :href="downloads.macIntel">Télécharger</a>
+- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Download</a>
 
 ## Linux
 
