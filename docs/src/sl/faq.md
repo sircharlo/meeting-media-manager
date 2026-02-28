@@ -25,7 +25,7 @@ Izvorna koda tega programa je na voljo vsem, da jo lahko preučijo in preverijo,
 M³ deluje na Windows, macOS in Linux:
 
 - **Windows**: Windows 10 in novejši (na voljo 64-bitna in 32-bitna različica)
-- **macOS**: macOS 10.15 (Catalina) in novejši (podpira Intel in Apple Silicon)
+- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
 - **Linux**: Večina sodobnih distribucij Linuxa (v formatu AppImage)
 
 ### :globe_with_meridians: Ali M³ deluje v mojem jeziku? {#language-support}
@@ -292,7 +292,7 @@ Thank you for your interest in supporting the project! However, in the spirit of
 M³ is designed to work on a wide range of operating systems:
 
 - **Windows**: Windows 10 in novejši (na voljo 64-bitna in 32-bitna različica)
-- **macOS**: macOS 10.15 (Catalina) in novejši (podpira Intel in Apple Silicon)
+- **macOS**: macOS 10.15 (Catalina) and later (Universal build)
 - **Linux**: Večina sodobnih distribucij Linuxa (v formatu AppImage)
 
 M³ has the following hardware requirements:

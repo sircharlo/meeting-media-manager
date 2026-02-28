@@ -25,7 +25,7 @@ Tämän sovelluksen lähdekoodi on kaikkien tarkasteltavissa ja sen avulla voi v
 M³ tukee Windowsia, macOS:ää ja Linuxia:
 
 - **Windows**: Windows 10 ja uudemmat (saatavana 64- ja 32-bittiset versiot)
-- **macOS**: macOS 10.15 (Catalina) ja uudemmat (tuki Intel- ja Apple Silicon -prosessoreille)
+- **macOS**: macOS 10.15 (Catalina) ja uudemmat versiot (universaali versio)
 - **Linux**: Useimmat nykyaikaiset Linux-jakelut (AppImage-muodossa)
 
 ### :globe_with_meridians: Toimiiko M³ omalla kielelläni? {#language-support}
@@ -292,7 +292,7 @@ Kiitos kiinnostuksestasi tukea projektia! Kuitenkin Matteuksen 10:8 hengen mukai
 M³ on suunniteltu toimimaan laajalla käyttöjärjestelmävalikoimalla:
 
 - **Windows**: Windows 10 ja uudemmat (saatavana 64- ja 32-bittiset versiot)
-- **macOS**: macOS 10.15 (Catalina) ja uudemmat (tuki Intel- ja Apple Silicon -prosessoreille)
+- **macOS**: macOS 10.15 (Catalina) ja uudemmat versiot (universaali versio)
 - **Linux**: Useimmat nykyaikaiset Linux-jakelut (AppImage-muodossa)
 
 M³:n laitteistovaatimukset ovat seuraavat:
