@@ -1,4 +1,4 @@
-import { exec } from 'child_process';
+import { exec } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import path from 'upath';
@@ -173,7 +173,7 @@ export default defineConfig({
     const messageLocale = kebabToCamelCase(pageLang) as LanguageValue;
     const isEnglish = pageData.relativePath.split('/').length === 1;
 
-    let createdDate = '';
+    let createdDate: string | undefined;
     try {
       const { stdout } = await execPromise(
         `git log --follow --format=%ad --date iso-strict ${fileURLToPath(
@@ -182,12 +182,19 @@ export default defineConfig({
       );
       createdDate = stdout.trim();
     } catch {
-      createdDate = '';
+      createdDate = undefined;
     }
 
     const lastUpdated = (
       pageData.lastUpdated ? new Date(pageData.lastUpdated) : new Date()
     ).toISOString();
+
+    let title = `${pageData.title} | M³ docs`;
+
+    if (pageData.frontmatter.layout === 'home') {
+      title =
+        (isEnglish ? messages.en.title : messages[messageLocale].title) || '';
+    }
 
     pageData.frontmatter.head ??= [];
     pageData.frontmatter.head.push(
@@ -236,24 +243,14 @@ export default defineConfig({
       [
         'meta',
         {
-          content:
-            pageData.frontmatter.layout === 'home'
-              ? isEnglish
-                ? messages['en'].title
-                : messages[messageLocale].title
-              : `${pageData.title} | M³ docs`,
+          content: title,
           name: 'twitter:title',
         },
       ],
       [
         'meta',
         {
-          content:
-            pageData.frontmatter.layout === 'home'
-              ? isEnglish
-                ? messages['en'].title
-                : messages[messageLocale].title
-              : `${pageData.title} | M³ docs`,
+          content: title,
           property: 'og:title',
         },
       ],
@@ -278,9 +275,9 @@ export default defineConfig({
           return [
             'link',
             {
-              href: (!isEnglish
-                ? canonicalUrl.replace(`/${pageLang}/`, `/${lang}/`)
-                : `${CANONICAL_URL}${lang}/${pageData.relativePath.replace('index.md', '').replace('.md', '')}`
+              href: (isEnglish
+                ? `${CANONICAL_URL}${lang}/${pageData.relativePath.replace('index.md', '').replace('.md', '')}`
+                : canonicalUrl.replace(`/${pageLang}/`, `/${lang}/`)
               ).replace('/en/', '/'),
               hreflang: lang,
               rel: 'alternate',
