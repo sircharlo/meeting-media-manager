@@ -9,20 +9,19 @@ hero:
   actions:
     - theme: brand
       text: Download
-      link: /download
+      link: /sw/download
     - theme: brand
       text: Kuhusu
       link: /sw/about
     - theme: brand
       text: User Guide
-      link: /user-guide
+      link: /sw/user-guide
     - theme: brand
       text: Settings Guide
-      link: /settings-guide
+      link: /sw/settings-guide
     - theme: brand
       text: Maswali Yanayoulizwa Sana
-      link: /faq
-
+      link: /sw/faq
 features:
   - icon: 🚀
     title: Automatic Media Management
