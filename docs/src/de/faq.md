@@ -73,7 +73,7 @@ Ja! M³ ermöglicht Ihnen:
 - Medien für anstehende Zusammenkünfte automatisch herunterzuladen
 - Benutzerdefinierte Medien für jedes Datum zu importieren
 
-### {#faq-media-export} :file_folder: Was ist der automatische Medienexport? :file_folder: What is media auto-export?
+### {#faq-media-export} :file_folder: Was ist der automatische Medienexport? {#faq-media-export} :file_folder: Was ist der automatische Medienexport?
 
 Sie können benutzerdefinierte Medien auf verschiedene Arten importieren:
 
