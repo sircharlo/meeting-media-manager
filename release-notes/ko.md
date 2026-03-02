@@ -14,15 +14,15 @@
 
 ### ✨ 새로운 기능
 
-- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+- ✨ **기념식 미디어**: 기념식 날짜를 선택하면 지원되는 언어의 기념식 배너와 소개 영상을 자동으로 가져옵니다.
 
 ## v26.1.0
 
 ### ✨ 새로운 기능
 
-- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
-- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
-- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+- ✨ **집회 일정 자동 동기화**: 공식 웹사이트의 정보와 집회 날짜 및 시간을 자동 동기화하는 기능을 추가했습니다. 이 기능은 기본적으로 활성화되며, 고급 설정에서 수동 실행하거나 비활성화할 수 있습니다.
+- ✨ **향후 일정 변경 반영**: 웹사이트 조회로 회중을 생성할 때 가능한 경우 향후 일정 변경사항도 포함됩니다.
+- ✨ **시스템 전체 설치용 공유 캐시**: 시스템 전체 설치에서는 기본적으로 공통 데이터 폴더를 공유하여 같은 컴퓨터의 여러 사용자 간 저장공간과 대역폭 사용을 최적화합니다.
 
 ## v25.12.2
 
@@ -36,28 +36,28 @@
 
 - ✨ **Multi-Select Context Menu**: Added support for right-click menu actions when multiple media items are selected.
 - ✨ **Keyboard Shortcuts**: Added `Ctrl/Cmd+A` to select all media, `H` to hide selected media, and `Shift+Up/Down` for keyboard selection navigation.
-- ✨ **Watchtower Study Video Settings**: Added a setting to exclude extra Watchtower study videos.
-- ✨ **Collapsible Sections**: Added ability to collapse sections on non-meeting days for a cleaner view.
-- ✨ **JW Events Website**: Added the ability to present the JW Events website in addition to the main official website.
+- ✨ **워치타워 연구 비디오 설정**: 추가 워치타워 연구 비디오를 제외하는 설정을 추가했습니다.
+- ✨ **섹션 접기 기능**: 집회가 없는 날에는 섹션을 접어 더 깔끔하게 볼 수 있습니다.
+- ✨ **JW Events 웹사이트**: 기본 공식 웹사이트 외에 JW Events 웹사이트도 표시할 수 있습니다.
 - ✨ **Playlist Import Customization**: Allowed ability to customize the prefix that is added to media items when importing JW playlists.
-- ✨ **Website Mirroring Navigation**: Added a toggle to automatically navigate to the media list after website mirroring is stopped.
-- ✨ **OBS Recording Controls**: Added the ability to control OBS recordings.
-- ✨ **Yeartext Preview**: Added the ability to preview next year's yeartext as of December of every year.
-- ✨ **Update Notifications**: Added warning notifications if running a beta version or if updates are disabled, and improved update download progress display.
-- ✨ **Hardware Acceleration Settings**: Added an option to permanently disable hardware acceleration if needed.
+- ✨ **웹사이트 미러링 탐색**: 웹사이트 미러링을 중지한 뒤 자동으로 미디어 목록으로 이동하는 토글을 추가했습니다.
+- ✨ **OBS 녹화 제어**: OBS 녹화를 제어하는 기능을 추가했습니다.
+- ✨ **연표어 미리보기**: 매년 12월부터 다음 해 연표어를 미리 볼 수 있는 기능을 추가했습니다.
+- ✨ **업데이트 알림**: 베타 버전 사용 중이거나 업데이트가 비활성화된 경우 경고 알림을 추가하고, 업데이트 다운로드 진행 표시를 개선했습니다.
+- ✨ **하드웨어 가속 설정**: 필요할 때 하드웨어 가속을 영구적으로 비활성화하는 옵션을 추가했습니다.
 
 ## v25.11.0
 
 ### ✨ 새로운 기능
 
-- ✨ **JWPUB Media Selection**: Added a way to select individual media from JWPUB files.
-- ✨ **Auto-Focus Media Window**: Added an optional setting to automatically focus the media window after Zoom screen sharing.
+- ✨ **JWPUB 미디어 선택**: JWPUB 파일에서 개별 미디어를 선택할 수 있는 방법을 추가했습니다.
+- ✨ **미디어 창 자동 포커스**: Zoom 화면 공유 후 미디어 창에 자동으로 포커스를 맞추는 선택 설정을 추가했습니다.
 - ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
-- ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
-- ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from JW.org, such as magazine, books, programs and invitations.
-- ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
-- ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
+- ✨ **집회 녹화**: 외부 녹화 앱을 제어하는 새로운 집회 녹화 기능을 추가했습니다.
+- ✨ **사이트 검색**: 스마트 검색으로 사이트에서 미디어나 출판물을 찾는 기능을 추가했습니다.
+- ✨ **간편 수동 출판물 가져오기**: 잡지, 서적, 프로그램, 초대장 등 JW.org 출판물을 쉽게 가져오는 기능을 추가했습니다.
+- ✨ **수어 개선**: 수어 파일 전체 재생 전에 확인을 추가하고, 여러 문단을 연속으로 읽을 때처럼 여러 클립을 선택하는 기능을 지원합니다.
+- ✨ **클립 탐색**: 클립 목록 항목에 재생 시간을 표시하고 클립 탐색을 개선했습니다.
 - 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
 
 ## v25.10.1
