@@ -56,9 +56,9 @@ A verziók közötti változások teljes listáját megtalálja a GitHubon talá
 - ✨ **Összejövetel rögzítése**: Új összejövetel rögzítési funkciót adtunk hozzá, amellyel külső rögzítő alkalmazások vezérelhetők.
 - ✨ **Webhelykeresés**: Hozzáadtunk egy intelligens keresőfunkciót, amellyel a webhelyen található médiatartalmakat és kiadványokat lehet keresni.
 - ✨ **Egyszerű kézi folyóirat importálás**: Hozzáadtunk egy funkciót, amellyel könnyedén importálhatók a JW.org webhelyről származó folyóiratok, például folyóiratok, könyvek, programfüzetek és meghívók.
-- ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
-- ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
-- 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
+- ✨ **Jelnyelvi fejlesztések**: Hozzáadottuk a teljes fájlok lejátszása előtti megerősítést a jelnyelvek esetében, valamint megkönnyítettük az egynél több klip kiválasztását, például amikor több bekezdést kell egymás után felolvasni.
+- ✨ **Klip navigáció**: Hozzáadtuk a klipek listájához az időtartam megjelenítést és javítottuk a klip navigációt.
+- 🛠️ **Média megjelenítése**: Ha elindul a lejátszás, a média megjelenítése láthatóvá válik, még akkor is, ha korábban el volt rejtve.
 
 ## v25.10.1
 
