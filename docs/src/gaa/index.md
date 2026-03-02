@@ -9,20 +9,19 @@ hero:
   actions:
     - theme: brand
       text: Download
-      link: /download
+      link: /gaa/download
     - theme: brand
       text: About
       link: /gaa/about
     - theme: brand
       text: User Guide
-      link: /user-guide
+      link: /gaa/user-guide
     - theme: brand
       text: Settings Guide
-      link: /settings-guide
+      link: /gaa/settings-guide
     - theme: brand
       text: FAQ
-      link: /faq
-
+      link: /gaa/faq
 features:
   - icon: 🚀
     title: Automatic Media Management
