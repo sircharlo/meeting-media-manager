@@ -10,314 +10,314 @@ Deze uitgebreide gids legt alle instellingen uit die beschikbaar zijn in M³, ge
 
 Kies de taal voor de interface van M³. Dit is onafhankelijk van de taal die wordt gebruikt voor media downloads.
 
-**Opties**: Alle beschikbare interface talen (English, Spanish, French, etc.)
+**Opties**: Alle beschikbare interfacetalen (Engels, Spaans, Frans, enz.)
 
 **Standaard**: Engels
 
-### Dark Mode {#dark-mode}
+### Donkere modus {#dark-mode}
 
 <!-- **Setting**: `darkMode` -->
 
-Control the appearance theme of M³.
+Bepaal het weergavethema van M³.
 
-**Options**:
+**Opties**:
 
-- Automatically switch based on system preference
-- Always use dark mode
-- Always use light mode
+- Automatisch wisselen op basis van systeemvoorkeur
+- Altijd donkere modus gebruiken
+- Altijd lichte modus gebruiken
 
-**Default**: Auto
+**Standaard**: Auto
 
-### First Day of Week {#first-day-of-week}
+### Eerste dag van de week {#first-day-of-week}
 
 <!-- **Setting**: `firstDayOfWeek` -->
 
-Set which day should be considered the first day of the week in the calendar view.
+Stel in welke dag in de kalenderweergave als eerste dag van de week geldt.
 
-**Options**: Sunday through Saturday
+**Opties**: Sunday through Saturday
 
-**Default**: Sunday
+**Standaard**: Zondag
 
-### Date Format {#date-format}
+### Datumnotatie {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
-Format used to display dates in the app.
+Notatie die wordt gebruikt om datums in de app weer te geven.
 
 **Example**: D MMMM YYYY
 
-**Default**: D MMMM YYYY
+**Standaard**: D MMMM YYYY
 
-### Auto-Start at Login {#auto-start-at-login}
+### Automatisch starten bij aanmelden {#auto-start-at-login}
 
 <!-- **Setting**: `autoStartAtLogin` -->
 
-Automatically start M³ when the computer boots up.
+Start M³ automatisch wanneer de computer opstart.
 
-**Default**: `false`
+**Standaard**: `false`
 
 ## Congregation Meetings {#congregation-meetings}
 
-### Congregation Name {#congregation-name}
+### Gemeentenaam {#congregation-name}
 
 <!-- **Setting**: `congregationName` -->
 
-The name of your congregation. This is used for organization and display purposes.
+De naam van je gemeente. Dit wordt gebruikt voor organisatie en weergave.
 
-**Default**: Empty (must be set during setup)
+**Standaard**: Leeg (moet tijdens de installatie worden ingesteld)
 
-### Meeting Language {#meeting-language}
+### Vergadertaal {#meeting-language}
 
 <!-- **Setting**: `lang` -->
 
-The primary language for media downloads. This should match the language used in your congregation's meetings.
+De primaire taal voor mediadownloads. Dit moet overeenkomen met de taal die in je gemeentevergaderingen wordt gebruikt.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Opties**: All available languages from the official website of Jehovah's Witnesses
 
-**Default**: English (E)
+**Standaard**: Engels (E)
 
-### Fallback Language {#fallback-language}
+### Reservetaal {#fallback-language}
 
 <!-- **Setting**: `langFallback` -->
 
-A secondary language to use when media isn't available in the primary language.
+Een secundaire taal die wordt gebruikt wanneer media niet beschikbaar is in de primaire taal.
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Opties**: All available languages from the official website of Jehovah's Witnesses
 
-**Default**: None
+**Standaard**: Geen
 
 ### Midweek Meeting Day {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
-The day of the week when your midweek meeting is held.
+De dag van de week waarop je doordeweekse vergadering wordt gehouden.
 
-**Options**: Sunday through Saturday
+**Opties**: Sunday through Saturday
 
-**Default**: None (must be set during setup)
+**Standaard**: Geen (must be set during setup)
 
 ### Midweek Meeting Time {#midweek-meeting-time}
 
 <!-- **Setting**: `mwStartTime` -->
 
-The start time of your midweek meeting.
+De begintijd van je doordeweekse vergadering.
 
 **Format**: HH:MM (24-hour format)
 
-**Default**: None (must be set during setup)
+**Standaard**: Geen (must be set during setup)
 
 ### Weekend Meeting Day {#weekend-meeting-day}
 
 <!-- **Setting**: `weDay` -->
 
-The day of the week when your weekend meeting is held.
+De dag van de week waarop je weekendvergadering wordt gehouden.
 
-**Options**: Sunday through Saturday
+**Opties**: Sunday through Saturday
 
-**Default**: None (must be set during setup)
+**Standaard**: Geen (must be set during setup)
 
 ### Weekend Meeting Time {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
-The start time of your weekend meeting.
+De begintijd van je weekendvergadering.
 
 **Format**: HH:MM (24-hour format)
 
-**Default**: None (must be set during setup)
+**Standaard**: Geen (must be set during setup)
 
 ### Circuit Overseer Week {#circuit-overseer-week}
 
 <!-- **Setting**: `coWeek` -->
 
-The week of the next circuit overseer's visit.
+De week van het volgende bezoek van de kringopziener.
 
 **Format**: MM/DD/YYYY
 
-**Default**: None
+**Standaard**: Geen
 
 ### Memorial Date {#memorial-date}
 
 <!-- **Setting**: `memorialDate` -->
 
-The date of the next Memorial celebration (beta feature).
+De datum van de volgende Avondmaalsviering (bètafunctie).
 
 **Format**: MM/DD/YYYY
 
-**Default**: Automatically retrieved periodically
+**Standaard**: Automatically retrieved periodically
 
 ### Meeting Schedule Changes {#meeting-schedule-changes}
 
-These settings allow you to configure temporary changes to your meeting schedule:
+Met deze instellingen kun je tijdelijke wijzigingen in je vergaderschema configureren:
 
-- **Change Date**: When the change takes effect
-- **One-time Change**: Whether this is a permanent or temporary change
+- **Wijzigingsdatum**: Wanneer de wijziging ingaat
+- **Eenmalige wijziging**: Of dit een permanente of tijdelijke wijziging is
 - **New Midweek Day**: New day for midweek meeting
 - **New Midweek Time**: New time for midweek meeting
 - **New Weekend Day**: New day for weekend meeting
 - **New Weekend Time**: New time for weekend meeting
 
-## Media Retrieval and Playback {#media-retrieval-and-playback}
+## Media ophalen en afspelen {#media-retrieval-and-playback}
 
 ### Metered Connection {#metered-connection}
 
 <!-- **Setting**: `meteredConnection` -->
 
-Enable this if you're on a limited data connection to reduce bandwidth usage.
+Schakel dit in als je een beperkte dataverbinding gebruikt om bandbreedte te besparen.
 
-**Default**: `false`
+**Standaard**: `false`
 
 ### Media Display {#media-display-button}
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-Enable the media display functionality. This is required to present media on a second monitor.
+Schakel de functie voor mediaweergave in. Dit is nodig om media op een tweede scherm te presenteren.
 
-**Default**: `false`
+**Standaard**: `false`
 
 #### Begin Playback Paused {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
-Start videos in a paused state when playback begins.
+Start video's gepauzeerd wanneer het afspelen begint.
 
-**Default**: `false`
+**Standaard**: `false`
 
 ### Background Music {#settings-guide-background-music}
 
-#### Enable Music {#enable-music-button}
+#### Muziek inschakelen {#enable-music-button}
 
 <!-- **Setting**: `enableMusicButton` -->
 
-Enable background music functionality.
+Schakel de achtergrondmuziekfunctie in.
 
-**Default**: `true`
+**Standaard**: `true`
 
-#### Auto-Start Music {#auto-start-music}
+#### Muziek automatisch starten {#auto-start-music}
 
 <!-- **Setting**: `autoStartMusic` -->
 
-Automatically start background music when M³ launches if appropriate.
+Start achtergrondmuziek automatisch wanneer M³ wordt gestart, indien van toepassing.
 
-**Default**: `true`
+**Standaard**: `true`
 
-#### Meeting Stop Buffer {#meeting-stop-buffer}
+#### Vergadering-stopbuffer {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
-How many seconds before meeting start time to stop background music.
+Hoeveel seconden vóór de begintijd van de vergadering de achtergrondmuziek moet stoppen.
 
-**Range**: 0-300 seconds
+**Bereik**: 0-300 seconden
 
-**Default**: 60 seconds
+**Standaard**: 60 seconden
 
 #### Music Volume {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 
-Volume level for background music (1-100%).
+Volumeniveau voor achtergrondmuziek (1-100%).
 
-**Default**: 100%
+**Standaard**: 100%
 
-### Cache Management {#cache-management}
+### Cachebeheer {#cache-management}
 
-#### Enable Extra Cache {#enable-extra-cache}
+#### Extra cache inschakelen {#enable-extra-cache}
 
 <!-- **Setting**: `enableExtraCache` -->
 
-Enable additional caching for better performance.
+Schakel extra caching in voor betere prestaties.
 
-**Default**: `false`
+**Standaard**: `false`
 
 #### Cache Folder {#cache-folder}
 
 <!-- **Setting**: `cacheFolder` -->
 
-Custom location for storing cached media files.
+Aangepaste locatie voor het opslaan van gecachte mediabestanden.
 
-**Default**: System default location
+**Standaard**: Systeemstandaardlocatie
 
-#### Enable Cache Auto-Clear {#enable-cache-auto-clear}
+#### Cache automatisch legen inschakelen {#enable-cache-auto-clear}
 
 <!-- **Setting**: `enableCacheAutoClear` -->
 
-Automatically clear old cached files to save disk space.
+Verwijder oude cachebestanden automatisch om schijfruimte te besparen.
 
-**Default**: `true`
+**Standaard**: `true`
 
-### Folder Monitoring {#settings-guide-folder-monitoring}
+### Mapbewaking {#settings-guide-folder-monitoring}
 
-#### Enable Folder Watcher {#enable-folder-watcher}
+#### Mapbewaking inschakelen {#enable-folder-watcher}
 
 <!-- **Setting**: `enableFolderWatcher` -->
 
-Monitor a folder for new media files and automatically add them to M³.
+Controleer een map op nieuwe mediabestanden en voeg ze automatisch toe aan M³.
 
-**Default**: `false`
+**Standaard**: `false`
 
-#### Folder to Watch {#folder-to-watch}
+#### Te bewaken map {#folder-to-watch}
 
 <!-- **Setting**: `folderToWatch` -->
 
-The folder path to monitor for new media files.
+Het mappad dat wordt bewaakt op nieuwe mediabestanden.
 
-**Default**: Empty
+**Standaard**: Empty
 
-## Integrations {#integrations}
+## Integraties {#integrations}
 
 ### Zoom Integration {#settings-guide-zoom-integration}
 
-#### Enable Zoom {#enable-zoom}
+#### Zoom inschakelen {#enable-zoom}
 
 <!-- **Setting**: `zoomEnable` -->
 
-Enable Zoom meeting integration features.
+Schakel Zoom-vergaderintegratiefuncties in.
 
-**Default**: `false`
+**Standaard**: `false`
 
-#### Screen Share Shortcut {#screen-share-shortcut}
+#### Sneltoets voor schermdelen {#screen-share-shortcut}
 
 <!-- **Setting**: `zoomScreenShareShortcut` -->
 
-Keyboard shortcut to trigger Zoom screen sharing.
+Sneltoets om Zoom-schermdeling te starten.
 
-**Default**: None
+**Standaard**: Geen
 
 ### OBS Studio Integration {#settings-guide-obs-integration}
 
-#### Enable OBS {#enable-obs}
+#### OBS inschakelen {#enable-obs}
 
 <!-- **Setting**: `obsEnable` -->
 
-Enable OBS Studio integration for automatic scene switching.
+Schakel OBS Studio-integratie in voor automatisch scènewisselen.
 
-**Default**: `false`
+**Standaard**: `false`
 
-:::warning Important Note
+:::warning Belangrijke opmerking
 
-**Audio Configuration Required**: The OBS Studio integration only handles screen sharing. Audio from M³ media is **not automatically transmitted** to Zoom participants when using OBS Studio. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Audioconfiguratie vereist**: De OBS Studio-integratie regelt alleen schermdeling. Audio van M³-media wordt **niet automatisch doorgestuurd** naar Zoom-deelnemers wanneer je OBS Studio gebruikt. Je moet daarom Zooms instellingen voor Originele audio configureren of "Computergeluid delen" gebruiken, zodat deelnemers de media kunnen horen. Zie de [Gebruikershandleiding](/user-guide#audio-configuration) voor gedetailleerde audio-instructies.
 
-**Note**: The Zoom integration uses Zoom's native screen sharing which handles audio more seamlessly than OBS Studio integration.
+**Opmerking**: De Zoom-integratie gebruikt de ingebouwde schermdeling van Zoom, die audio doorgaans soepeler verwerkt dan de OBS Studio-integratie.
 
 :::
 
-#### OBS Port {#obs-port}
+#### OBS-poort {#obs-port}
 
 <!-- **Setting**: `obsPort` -->
 
-The port number for connecting to OBS Studio WebSocket.
+Het poortnummer voor verbinding met OBS Studio WebSocket.
 
-**Default**: None
+**Standaard**: Geen
 
-#### OBS Password {#obs-password}
+#### OBS-wachtwoord {#obs-password}
 
 <!-- **Setting**: `obsPassword` -->
 
-The password for OBS Studio WebSocket connection.
+Het wachtwoord voor de OBS Studio WebSocket-verbinding.
 
-**Default**: None
+**Standaard**: Geen
 
-#### OBS Scenes {#obs-scenes}
+#### OBS-scènes {#obs-scenes}
 
 Configure which OBS scenes to use for different purposes:
 
@@ -325,31 +325,31 @@ Configure which OBS scenes to use for different purposes:
 - **Media Scene**: Scene for displaying media
 - **Image Scene**: Scene for displaying images (for example, a PIP scene showing both media and the speaker)
 
-#### OBS Advanced Options {#obs-advanced-options}
+#### Geavanceerde OBS-opties {#obs-advanced-options}
 
 - **Postpone Images**: Delay sharing images to OBS until manually triggered
-- **Quick Toggle**: Enable quick on/off toggle for OBS integration
-- **Switch Scene After Media**: Automatically return to previous scene after media
+- **Snelschakelaar**: Schakel snel in/uit voor OBS-integratie
+- **Scène wisselen na media**: Keer na media automatisch terug naar de vorige scène
 - **Remember Previous Scene**: Remember and restore the previous scene
 - **Hide Icons**: Hide OBS-related icons in the interface
 
-:::warning Important Note
+:::warning Belangrijke opmerking
 
-**Audio Configuration Required**: OBS Studio integration only handles video/scene switching. Audio from M³ media is **not automatically transmitted** to Zoom or OBS. The video stream works like a virtual camera without sound, just like a webcam. You must configure Zoom's Original Audio settings or use "Share Computer Sound" to ensure meeting participants can hear the media. See the [User Guide](/user-guide#audio-configuration) for detailed audio setup instructions.
+**Audioconfiguratie vereist**: OBS Studio-integratie regelt alleen video-/scènewisselingen. Audio van M³-media wordt **niet automatisch doorgestuurd** naar Zoom of OBS. De videostream werkt als een virtuele camera zonder geluid, net als een webcam. Je moet Zooms instellingen voor Originele audio configureren of "Computergeluid delen" gebruiken, zodat deelnemers de media kunnen horen. Zie de [Gebruikershandleiding](/user-guide#audio-configuration) voor gedetailleerde audio-instructies.
 
 **Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
 
 :::
 
-### Custom Events {#custom-events}
+### Aangepaste gebeurtenissen {#custom-events}
 
-#### Enable Custom Events {#enable-custom-events}
+#### Aangepaste gebeurtenissen inschakelen {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+Schakel aangepaste sneltoetsen in die worden geactiveerd wanneer een specifieke gebeurtenis wordt gedetecteerd (bijv. media wordt afgespeeld, gepauzeerd of gestopt).
 
-**Default**: `false`
+**Standaard**: `false`
 
 #### Custom Event Shortcuts {#custom-event-shortcuts}
 
@@ -359,7 +359,7 @@ Enable custom shortcuts that will be triggered when a specific event is detected
 
 Shortcut that is triggered when media is played.
 
-**Default**: None
+**Standaard**: Geen
 
 ##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
 
@@ -367,7 +367,7 @@ Shortcut that is triggered when media is played.
 
 Shortcut that is triggered when media is paused.
 
-**Default**: None
+**Standaard**: Geen
 
 ##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
 
@@ -375,7 +375,7 @@ Shortcut that is triggered when media is paused.
 
 Shortcut that is triggered when media is stopped.
 
-**Default**: None
+**Standaard**: Geen
 
 ##### Last Song Shortcut {#custom-event-last-song-shortcut}
 
@@ -383,19 +383,19 @@ Shortcut that is triggered when media is stopped.
 
 Shortcut that is triggered when the last song is played during a meeting.
 
-**Default**: None
+**Standaard**: Geen
 
-## Advanced Settings {#advanced-settings}
+## Geavanceerde instellingen {#advanced-settings}
 
 ### Keyboard Shortcuts {#settings-guide-keyboard-shortcuts}
 
-#### Enable Keyboard Shortcuts {#enable-keyboard-shortcuts}
+#### Sneltoetsen inschakelen {#enable-keyboard-shortcuts}
 
 <!-- **Setting**: `enableKeyboardShortcuts` -->
 
-Enable customizable keyboard shortcuts for media control.
+Schakel aanpasbare sneltoetsen in voor mediabediening.
 
-**Default**: `false`
+**Standaard**: `false`
 
 #### Media Control Shortcuts {#media-control-shortcuts}
 
@@ -410,13 +410,13 @@ Configure shortcuts for media playback:
 
 ### Media Display {#media-display}
 
-#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+#### Fade-overgangen voor mediavenster inschakelen {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-Enable fade-in/out transitions when showing or hiding the media window.
+Schakel fade-in/out-overgangen in bij het tonen of verbergen van het mediavenster.
 
-**Default**: `true`
+**Standaard**: `true`
 
 #### Hide Media Logo {#hide-media-logo}
 
@@ -424,7 +424,7 @@ Enable fade-in/out transitions when showing or hiding the media window.
 
 Hide the logo in the media window.
 
-**Default**: `false`
+**Standaard**: `false`
 
 #### Maximum Resolution {#maximum-resolution}
 
@@ -432,9 +432,9 @@ Hide the logo in the media window.
 
 Maximum resolution for downloaded media files.
 
-**Options**: 240p, 360p, 480p, 720p
+**Opties**: 240p, 360p, 480p, 720p
 
-**Default**: 720p
+**Standaard**: 720p
 
 #### Include Printed Media {#include-printed-media}
 
@@ -442,7 +442,7 @@ Maximum resolution for downloaded media files.
 
 Include media from the printed publications in media downloads.
 
-**Default**: `true`
+**Standaard**: `true`
 
 #### Exclude Footnotes {#exclude-footnotes}
 
@@ -450,7 +450,7 @@ Include media from the printed publications in media downloads.
 
 Exclude footnote images from media downloads when possible.
 
-**Default**: `false`
+**Standaard**: `false`
 
 #### Exclude media from the Teaching brochure {#exclude-theocratic-ministry-school}
 
@@ -458,17 +458,17 @@ Exclude footnote images from media downloads when possible.
 
 Exclude media from the Teaching (th) brochure from media downloads.
 
-**Default**: `true`
+**Standaard**: `true`
 
 ### Subtitles {#subtitles}
 
-#### Enable Subtitles {#enable-subtitles}
+#### Ondertiteling inschakelen {#enable-subtitles}
 
 <!-- **Setting**: `enableSubtitles` -->
 
-Enable subtitle support for media playback.
+Schakel ondersteuning voor ondertiteling in bij het afspelen van media.
 
-**Default**: `false`
+**Standaard**: `false`
 
 #### Subtitle Language {#subtitle-language}
 
@@ -476,19 +476,19 @@ Enable subtitle support for media playback.
 
 Language for subtitles (can be different from media language).
 
-**Options**: All available languages from the official website of Jehovah's Witnesses
+**Opties**: All available languages from the official website of Jehovah's Witnesses
 
-**Default**: None
+**Standaard**: Geen
 
 ### Media Export {#settings-guide-media-export}
 
-#### Enable Media Auto-Export {#enable-media-auto-export}
+#### Automatische media-export inschakelen {#enable-media-auto-export}
 
 <!-- **Setting**: `enableMediaAutoExport` -->
 
-Automatically export media files to a specified folder.
+Exporteer mediabestanden automatisch naar een opgegeven map.
 
-**Default**: `false`
+**Standaard**: `false`
 
 #### Media Export Folder {#media-export-folder}
 
@@ -496,7 +496,7 @@ Automatically export media files to a specified folder.
 
 Folder path where media files will be automatically exported.
 
-**Default**: Empty
+**Standaard**: Empty
 
 #### Convert Files to MP4 {#convert-files-to-mp4}
 
@@ -504,13 +504,13 @@ Folder path where media files will be automatically exported.
 
 Convert exported media files to MP4 format for better compatibility.
 
-**Default**: `false`
+**Standaard**: `false`
 
 ### Danger Zone {#danger-zone}
 
 :::warning Waarschuwing
 
-These settings should only be changed if you understand their implications.
+Wijzig deze instellingen alleen als je de gevolgen ervan begrijpt.
 
 :::
 
@@ -520,7 +520,7 @@ These settings should only be changed if you understand their implications.
 
 Base domain used to download publications and media.
 
-**Default**: `jw.org`
+**Standaard**: `jw.org`
 
 #### Disable Media Fetching {#disable-media-fetching}
 
@@ -528,32 +528,32 @@ Base domain used to download publications and media.
 
 Completely disable automatic media downloads. Use this only for profiles that will be used for special events or other custom setups.
 
-**Default**: `false`
+**Standaard**: `false`
 
 ## Tips for Optimal Configuration {#configuration-tips}
 
-### For New Users {#new-users}
+### Voor nieuwe gebruikers {#new-users}
 
 1. Start with the setup wizard to configure basic settings
-2. Enable "Media Display Button" to access presentation features
+2. Schakel "Mediaweergaveknop" in om presentatieopties te gebruiken
 3. Configure your meeting schedule accurately
 4. Set up OBS integration if you use hybrid meetings
 
-### For Advanced Users {#advanced-users}
+### Voor gevorderde gebruikers {#advanced-users}
 
 1. Use folder monitoring to sync media from cloud storage
-2. Enable media auto-export for backup purposes
+2. Schakel automatische media-export in voor back-updoeleinden
 3. Configure keyboard shortcuts for efficient operation
 4. Configure Zoom integration for automatic screen sharing
 
-### Performance Optimization {#performance-optimization}
+### Prestatie-optimalisatie {#performance-optimization}
 
-1. Enable extra cache for better performance
+1. Schakel extra cache in voor betere prestaties
 2. Use appropriate maximum resolution for your needs
 3. Configure cache auto-clear to manage disk space
 4. Consider metered connection setting if on limited bandwidth
 
-### Troubleshooting {#settings-guide-troubleshooting}
+### Problemen oplossen {#settings-guide-troubleshooting}
 
 - If media isn't downloading, check your meeting schedule settings
 - If OBS integration isn't working, verify port and password settings
