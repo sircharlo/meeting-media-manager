@@ -8,65 +8,65 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 ### ✨ Nieuwe functies
 
-- ✨ **Disk Space Check**: Added functionality to monitor and notify when disk space is low.
+- ✨ **Controle op schijfruimte**: Functionaliteit toegevoegd om te controleren op weinig schijfruimte en een melding te geven.
 
 ## v26.1.5
 
 ### ✨ Nieuwe functies
 
-- ✨ **Memorial Media**: Automatically fetch Memorial banner and intro video in supported languages when the Memorial date is selected.
+- ✨ **Avondmaalsmedia**: Haalt automatisch de Avondmaalsbanner en introductievideo op in ondersteunde talen wanneer de Avondmaalsdatum is geselecteerd.
 
 ## v26.1.0
 
 ### ✨ Nieuwe functies
 
-- ✨ **Automatic Meeting Schedule Sync**: Added the ability to automatically synchronize meeting dates and times with the official website. This feature is enabled by default and can be manually triggered or disabled in advanced settings.
-- ✨ **Future Schedule Changes**: The app now includes future schedule changes when creating a congregation using the website lookup, if available.
-- ✨ **Shared Cache for Machine-Wide Installations**: Machine-wide installations now share a common data folder by default, optimizing storage and bandwidth usage across multiple users on the same computer.
+- ✨ **Automatische synchronisatie van vergaderschema**: Mogelijkheid toegevoegd om vergaderdata en -tijden automatisch te synchroniseren met de officiële website. Deze functie staat standaard aan en kan handmatig worden uitgevoerd of uitgeschakeld in de geavanceerde instellingen.
+- ✨ **Toekomstige schemawijzigingen**: De app neemt nu ook toekomstige schemawijzigingen mee bij het aanmaken van een gemeente via de website-zoekfunctie, indien beschikbaar.
+- ✨ **Gedeelde cache voor systeembrede installaties**: Systeembrede installaties delen nu standaard één gemeenschappelijke gegevensmap, wat opslag- en bandbreedtegebruik optimaliseert voor meerdere gebruikers op dezelfde computer.
 
 ## v25.12.2
 
 ### ✨ Nieuwe functies
 
-- ✨ **Zoom/Pan buttons**: Added the ability to press and hold zoom and pan buttons for continuous adjustment.
+- ✨ **Zoom-/pan-knoppen**: Mogelijkheid toegevoegd om zoom- en pan-knoppen ingedrukt te houden voor continue aanpassing.
 
 ## v25.12.0
 
 ### ✨ Nieuwe functies
 
-- ✨ **Multi-Select Context Menu**: Added support for right-click menu actions when multiple media items are selected.
-- ✨ **Keyboard Shortcuts**: Added `Ctrl/Cmd+A` to select all media, `H` to hide selected media, and `Shift+Up/Down` for keyboard selection navigation.
-- ✨ **Watchtower Study Video Settings**: Added a setting to exclude extra Watchtower study videos.
-- ✨ **Collapsible Sections**: Added ability to collapse sections on non-meeting days for a cleaner view.
-- ✨ **JW Events Website**: Added the ability to present the JW Events website in addition to the main official website.
-- ✨ **Playlist Import Customization**: Allowed ability to customize the prefix that is added to media items when importing JW playlists.
-- ✨ **Website Mirroring Navigation**: Added a toggle to automatically navigate to the media list after website mirroring is stopped.
-- ✨ **OBS Recording Controls**: Added the ability to control OBS recordings.
-- ✨ **Yeartext Preview**: Added the ability to preview next year's yeartext as of December of every year.
-- ✨ **Update Notifications**: Added warning notifications if running a beta version or if updates are disabled, and improved update download progress display.
-- ✨ **Hardware Acceleration Settings**: Added an option to permanently disable hardware acceleration if needed.
+- ✨ **Contextmenu met meervoudige selectie**: Ondersteuning toegevoegd voor rechtermuisknopacties wanneer meerdere media-items zijn geselecteerd.
+- ✨ **Sneltoetsen**: `Ctrl/Cmd+A` toegevoegd om alle media te selecteren, `H` om geselecteerde media te verbergen en `Shift+Omhoog/Omlaag` voor toetsenbordnavigatie in selecties.
+- ✨ **Instelling voor video's van Wachttoren-studie**: Instelling toegevoegd om extra video's van de Wachttoren-studie uit te sluiten.
+- ✨ **Inklapbare secties**: Mogelijkheid toegevoegd om secties in te klappen op dagen zonder vergadering voor een overzichtelijkere weergave.
+- ✨ **JW Events-website**: Mogelijkheid toegevoegd om naast de hoofdwebsite ook de JW Events-website te presenteren.
+- ✨ **Aanpasbare afspeellijstimport**: Mogelijkheid toegevoegd om het voorvoegsel aan te passen dat wordt toegevoegd aan media-items bij het importeren van JW-afspeellijsten.
+- ✨ **Navigatie na websiteweergave**: Schakelaar toegevoegd om automatisch naar de medialijst te gaan nadat websiteweergave is gestopt.
+- ✨ **OBS-opnamebediening**: Mogelijkheid toegevoegd om OBS-opnames te bedienen.
+- ✨ **Jaartekstvoorvertoning**: Mogelijkheid toegevoegd om vanaf december alvast de jaartekst van het volgende jaar te bekijken.
+- ✨ **Updatemeldingen**: Waarschuwingsmeldingen toegevoegd voor bètaversies of uitgeschakelde updates, en de voortgangsweergave van updates is verbeterd.
+- ✨ **Instellingen voor hardwareversnelling**: Optie toegevoegd om hardwareversnelling permanent uit te schakelen indien nodig.
 
 ## v25.11.0
 
 ### ✨ Nieuwe functies
 
-- ✨ **JWPUB Media Selection**: Added a way to select individual media from JWPUB files.
-- ✨ **Auto-Focus Media Window**: Added an optional setting to automatically focus the media window after Zoom screen sharing.
+- ✨ **JWPUB-mediaselectie**: Mogelijkheid toegevoegd om individuele media uit JWPUB-bestanden te selecteren.
+- ✨ **Automatische focus op mediavenster**: Optionele instelling toegevoegd om het mediavenster automatisch te focussen na Zoom-schermdeling.
 - ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
-- ✨ **Meeting Recording**: Added a new meeting recording feature, to control an external recording app.
-- ✨ **Site Search**: Added ability to search for media or publications on the site using smart search.
-- ✨ **Easy Manual Publication Import**: Added functionality to easily import publications from JW.org, such as magazine, books, programs and invitations.
-- ✨ **Sign Language Improvements**: Added confirmation before playing entire files for sign languages and support for selecting multiple clips, such as for when multiple paragraphs are to be read consecutively.
-- ✨ **Clip Navigation**: Added duration display to clip list items and improved clip navigation.
+- ✨ **Vergaderopname**: Nieuwe functie toegevoegd om een externe opname-app te bedienen.
+- ✨ **Zoeken op website**: Mogelijkheid toegevoegd om met slim zoeken media of publicaties op de website te vinden.
+- ✨ **Eenvoudige handmatige publicatie-import**: Functionaliteit toegevoegd om publicaties van JW.org eenvoudig te importeren, zoals tijdschriften, boeken, programma's en uitnodigingen.
+- ✨ **Verbeteringen voor gebarentaal**: Bevestiging toegevoegd vóór het afspelen van volledige bestanden in gebarentaal en ondersteuning voor het selecteren van meerdere clips, bijvoorbeeld wanneer meerdere alinea's achter elkaar gelezen moeten worden.
+- ✨ **Clipnavigatie**: Weergave van duur toegevoegd aan clips in de lijst en de clipnavigatie verbeterd.
 - 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
 
 ## v25.10.1
 
 ### ✨ Nieuwe functies
 
-- ✨ **Setup Wizard – Zoom Step**: Added a Zoom integration step to the setup wizard for easier initial configuration.
-- ✨ **Screen Picker Enhancements**: Show an accurate visual representation of all screens, as well as the main window’s current size and location, in the display popup. This makes it easier to choose the correct screen on which the media window should be displayed.
-- ✨ **Media Window Preference**: The app will now remember the preferred screen on which the media window should be displayed, if specified by the user.
+- ✨ **Installatiewizard – Zoom-stap**: Een Zoom-integratiestap toegevoegd aan de installatiewizard voor eenvoudiger eerste configuratie.
+- ✨ **Verbeterde schermkiezer**: Toont in de weergavepopup een nauwkeurige visuele weergave van alle schermen, inclusief de huidige grootte en locatie van het hoofdvenster. Hierdoor kun je gemakkelijker het juiste scherm kiezen voor het mediavenster.
+- ✨ **Voorkeurscherm voor mediavenster**: De app onthoudt nu het voorkeurscherm waarop het mediavenster moet worden weergegeven, als de gebruiker dit heeft ingesteld.
 
 ## v25.10.0
 
@@ -109,7 +109,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 - ✨ **Sectie Herhaal Modus**: Schakel continue afspelen in binnen specifieke secties voor naadloze media loops.
 - ✨ **Zoom Integratie**: Automatische scherm delen start/stop coördinatie met media afspelen.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Verbeteringen en aanpassingen
 
 - 🛠️ **Verbeterde Sectie Koppen**: Nieuw drie-punten menu systeem met kleur kiezer, omhoog/omlaag verplaatsingscontroles, herhaal opties, en verwijder functionaliteit.
 - ✨ **Inline Titel Bewerken**: Bewerk media item titels direct in de interface zonder aparte dialogen te openen.
@@ -123,7 +123,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 - ✨ **Betaalde verbindingsinstelling**: Een nieuwe instelling toegevoegd om het gebruik van de downloadbandbreedte voor datalimiet te verminderen.
 - ✨ **Verbeterde streaming van media**: Betere ondersteuning voor het streamen van media, minder problemen in verband met vertraging.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Verbeteringen en aanpassingen
 
 - 🛠️ **Betere mime type verwerking**: Verbeterde ondersteuning voor MIME-types voor betere compatibiliteit van de media.
 - 🛠️ **Verbeterde navigatie drawer**: Verbeterde mini state behandeling en toegevoegde tooltip voor betere user navigatie.
@@ -136,7 +136,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 - 🖼️ **OBS Vertraging optie voor Afbeeldingen**: Voeg een OBS Studio instelling toe om scène wijzigingen te vertragen bij het weergeven van afbeeldingen, waardoor overgangen worden verbeterd.
 - 🔊 **Ondersteuning voor `.m4a` Audio Formaat**: Voeg compatibiliteit toe voor `.m4a` audio bestanden om ondersteunde media types uit te breiden.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Verbeteringen en aanpassingen
 
 - 🔍 **Herstel Zoom via `Ctrl` + `Scroll`**: Herstel onmiddellijke zooming met ctrl + scroll voor makkelijkere navigatie.
 - 👤 **Verberg ongebruikte KO Media**: Verberg in plaats van ongebruikte media over te slaan voor kringopziener bezoeken om een schonere presentatie te onderhouden.
@@ -144,19 +144,19 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 ## 25.4.3
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Verbeteringen en aanpassingen
 
 - ➕ **Maak media schoon van v25.4.x**: haal automatisch losgekoppelde of misplaatste media weg van v25. .1 tot en met v25.4.2 om ervoor te zorgen dat er geen media ontbreekt of op de verkeerde plaats in de medialijst staat.
 
 ## 25.4.2
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Verbeteringen en aanpassingen
 
 - ➕ **Voorkom dat sommige media dupliceren**: voorkom dat sommige media-items meerdere keren toegevoegd worden aan de medialijst.
 
 ## 25.4.1
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Verbeteringen en aanpassingen
 
 - 🎬 **Fix aangepaste begin- en eindtijden**: Voorkom dat aangepaste begin- en eindtijden verkeerd worden toegepast op de verkeerde video.
 - 📝 **Niet overeenkomende ondertitels toestaan**: Gebruik van ondertitels inschakelen, zelfs als ze niet perfect overeenkomen met het mediabestand.
@@ -172,7 +172,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 - 🇵🇭 **Nieuwe taal: Tagalog**: Ondersteuning toegevoegd voor Tagalog, waardoor de meertalige mogelijkheden van de app worden uitgebreid.
 - 🎞️ **Ondersteuning voor `.m4v` Video Formaat**: Ondersteuning voor het afspelen van `.m4v` bestanden om de compatibiliteit met de media te verbeteren.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Verbeteringen en aanpassingen
 
 - 🎬 **Meerdere start/stop tijden voor een video**: Laat een enkele video meerdere keren in de medialijst verschijnen met verschillende aangepaste start- en eindtijden.
 - 📤 **Voeg gegroepeerde media in Auto-export toe**: Automatisch gegroepeerde media exporteren samen met anderen.
@@ -184,7 +184,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 - 🌏 **Nieuwe Taal: Koreaans**: Ondersteun de Koreaanse taal, waardoor de toegankelijkheid voor meer gebruikers toeneemt.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Verbeteringen en aanpassingen
 
 - ⚡ **Prestaties & CPU-gebruik verbeteren**: Optimaliseer prestaties om CPU-gebruik te verminderen en efficiëntie te verbeteren.
 - 🔄 **Problemen met synchroniseren en crashen oplossen**: los verschillende sync-gerelateerde en stabiliteitsproblemen op om de betrouwbaarheid te verbeteren.
@@ -199,7 +199,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 - 📅 **Automatische Avondmaal datum & achtergrond**: Automatisch detecteren en instellen van de datum en klaarzetten van de achtergrondafbeelding voor het Avondmaal.
 - 📜 **Laat release-notities in de app zien**: Laat release-notities direct in de app zien, zodat gebruikers wijzigingen gemakkelijk kunnen inzien na een update.
 
-### 🛠️ Improvements and Tweaks
+### 🛠️ Verbeteringen en aanpassingen
 
 - ⚡ **Optimaliseer slim cache verwijderen**: Verbeter het slim cache verwijderen voor betere prestaties en efficiëntie.
 - 📂 **Correcte kringopziener media positie**: Zorg ervoor dat kringopziener media in de juiste sectie wordt geplaatst.
