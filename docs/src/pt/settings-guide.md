@@ -8,7 +8,7 @@ Este guia abrangente explica todas as configurações disponíveis em M³, organ
 
 <!-- **Setting**: `localAppLang` -->
 
-Escolha o idioma para a interface do M³'s Isso é independente do idioma usado para downloads de mídia. Isso é independente do idioma usado para downloads de mídia. Isso é independente do idioma usado para downloads de mídia. Isso é independente do idioma usado para downloads de mídia.
+Escolha o idioma para a interface do M³'s Isso é independente do idioma usado para downloads de mídia.
 
 **Opções**: Todos os idiomas da interface disponíveis (Inglês, Espanhol, Francês, etc.)
 
@@ -62,7 +62,7 @@ Automaticamente inicia o M³ quando o computador for iniciado.
 
 <!-- **Setting**: `congregationName` -->
 
-O nome da sua congregação. O nome da sua congregação. Isto é usado para fins de organização e exibição.
+O nome da sua congregação. Isto é usado para fins de organização e exibição.
 
 **Padrão**: Vazio (deve ser definido durante a configuração)
 
@@ -70,7 +70,7 @@ O nome da sua congregação. O nome da sua congregação. Isto é usado para fin
 
 <!-- **Setting**: `lang` -->
 
-O idioma principal para downloads de mídia. O idioma principal para downloads de mídia. Isto deve corresponder ao idioma usado nas reuniões da sua congregação.
+O idioma principal para downloads de mídia. Isto deve corresponder ao idioma usado nas reuniões da sua congregação.
 
 **Opções**: Todas as línguas disponíveis no site oficial das Testemunhas de Jeová
 
@@ -171,7 +171,7 @@ Ative isto se você estiver em uma conexão de dados limitada para reduzir o uso
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
-Habilita a funcionalidade de exibição de mídia. Habilita a funcionalidade de exibição de mídia. Isto é necessário para apresentar mídia num segundo monitor.
+Habilita a funcionalidade de exibição de mídia. Isto é necessário para apresentar mídia num segundo monitor.
 
 **Padrão**: `false`
 
