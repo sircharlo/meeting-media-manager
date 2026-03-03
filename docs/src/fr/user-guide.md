@@ -44,14 +44,6 @@ La vue calendrier affiche votre horaire de réunions et les médias disponibles 
 - **Indicateurs de médias** - Les icônes montrent quels types de médias sont disponibles
 - **Navigation par date** - Utilisez les touches fléchées pour naviguer entre les mois
 
-<!-- ### Downloading Media {#downloading-media}
-
-::: info Note
-
-Download speed depends on your internet connection and the size of media files. Videos typically take longer to download than images.
-
-::: -->
-
 ### Organiser les médias {#organizing-media}
 
 M³ organise automatiquement les médias par type de réunion et section :
@@ -207,7 +199,7 @@ Si l'Audio original ne fonctionne pas bien dans votre configuration :
 2. **Cochez « Partager le son de l'ordinateur »**
 3. **Note** : Cette option doit être activée chaque fois que vous démarrez une nouvelle session Zoom
 
-**Meilleure alternative** : Envisagez d'utiliser l'intégration Zoom de M³ au lieu d'OBS Studio, car elle utilise le partage d'écran natif de Zoom qui gère l'audio plus facilement et ne nécessite pas de configuration audio complexe.
+**Solution alternative** : Envisagez d'utiliser l'intégration Zoom à la place, car elle utilise le partage d'écran et audio natif de Zoom, qui gère l'audio plus facilement.
 
 #### Pourquoi la configuration audio est nécessaire {#why-audio-config}
 
@@ -215,7 +207,7 @@ M³ joue les médias avec du son sur votre ordinateur, mais cet audio **n'est pa
 
 **Le problème audio n'est pas lié à M³** - c'est une limitation de la façon dont le streaming vidéo d'OBS Studio fonctionne avec Zoom. Le flux vidéo agit comme une caméra virtuelle sans son, tout comme une webcam, vous devez donc configurer explicitement Zoom pour capturer l'audio de l'ordinateur. Cela implique que votre ordinateur a deux cartes son, et si ce n'est pas le cas, vous ne pourrez probablement pas utiliser l'intégration OBS Studio avec succès.
 
-**Solution alternative** : Envisagez d'utiliser l'intégration Zoom à la place, car elle utilise le partage d'écran et audio natif de Zoom, qui gère l'audio plus facilement.
+**Meilleure alternative** : Envisagez d'utiliser l'intégration Zoom de M³ au lieu d'OBS Studio, car elle utilise le partage d'écran natif de Zoom qui gère l'audio plus facilement et ne nécessite pas de configuration audio complexe.
 
 #### Résolution des problèmes audio {#audio-troubleshooting}
 
@@ -233,7 +225,7 @@ M³ joue les médias avec du son sur votre ordinateur, mais cet audio **n'est pa
 - **Envisagez d'utiliser l'intégration Zoom au lieu d'OBS Studio** pour une gestion audio plus simple
 - Assurez-vous que tous les opérateurs audiovisuels connaissent ces paramètres
 
-## Import et gestion des médias {#media-import}
+## Gérer les médias importés {#managing-imported-media}
 
 ### Importer des médias personnalisés {#importing-custom-media}
 
@@ -245,7 +237,7 @@ Ajoutez vos propres fichiers multimédias à M³ :
 4. **Fichiers JWPUB et listes de lecture** - Importez des publications et des listes de lecture
 5. **Médias pour discours publics (S-34 / S-34mp)** - Importez des médias pour discours publics à l'aide de fichiers JWPUB S‑34 ou S‑34mp
 
-### Gérer les médias importés {#managing-imported-media}
+### Import et gestion des médias {#media-import}
 
 - **Organiser par date** - Assignez les médias importés à des dates spécifiques
 - **Sections personnalisées** - Créez des sections personnalisées pour l'organisation
@@ -365,7 +357,7 @@ Si vous rencontrez des problèmes :
 
 ## Meilleures pratiques {#best-practices}
 
-### Avant les réunions {#before-meetings}
+### Après les réunions {#after-meetings}
 
 1. **Vérifiez les téléchargements** - Assurez-vous que tous les médias sont téléchargés
 2. **Testez l'équipement** - Vérifiez que les écrans et l'audio fonctionnent
@@ -380,7 +372,7 @@ Si vous rencontrez des problèmes :
 4. **Soyez préparé** - Ayez le prochain élément multimédia prêt
 5. **Vérifiez l'audio** - Pour les réunions hybrides, assurez-vous que les participants Zoom peuvent entendre les médias
 
-### Après les réunions {#after-meetings}
+### Avant les réunions {#before-meetings}
 
 1. **Démarrer la musique de fond** - Démarrez la lecture de la musique de fond
 2. **Planifier à l'avance** - Préparez la prochaine réunion en vous assurant que tout est en place
