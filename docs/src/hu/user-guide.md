@@ -44,14 +44,6 @@ A naptárnézetben látható az összejövetelek ütemezése és a rendelkezésr
 - **Médiajelzők** – Az ikonok jelzik, hogy milyen típusú média áll rendelkezésre
 - **Dátum navigáció** - A nyílgombokkal lehet a hónapok között lapozni
 
-<!-- ### Downloading Media {#downloading-media}
-
-::: info Note
-
-Download speed depends on your internet connection and the size of media files. Videos typically take longer to download than images.
-
-::: -->
-
 ### Média szervezése {#organizing-media}
 
 Az M³ automatikusan rendezi a médiát az összejövetel típusa és részei szerint:
@@ -86,9 +78,9 @@ A médialejátszó többféle vezérlést biztosít:
 
 ### Haladó Prezentációs Funkciók {#advanced-presentation}
 
-#### Egyéni időzítés {#custom-timing}
+#### Nagyítás és pásztázás {#zoom-pan}
 
-Állítson be egyéni kezdési és befejezési időpontokat a médiákhoz:
+Képek és videók:
 
 <!-- 1. Right-click on a media item
 2. Select "Edit Timing" -->
@@ -99,17 +91,17 @@ A médialejátszó többféle vezérlést biztosít:
 
 #### Nagyítás és pásztázás {#zoom-pan}
 
-Képek és videók:
+**Beépített Média Vezérlők** (amikor a főablak aktív és a médialista látható):
 
-- **Nagyítás/kicsinyítés** - Használja az egérgörgőt vagy a miniatűr képen található nagyító gombokat
-- **Pásztázás** - Kattintson és húzza a miniatűrt a kép mozgatásához
-- **Zoom visszaállítás** - Kattintson ide, hogy visszatérjen az eredeti nagyításhoz
+- **Tab/Shift+Tab** - Navigálás a médiaelemek között
+- **Fel/le nyíl** - Navigálás a médiaelemek között
+- **Szóköz** - Média lejátszása/szüneteltetése
 
 #### Billentyűparancsok {#user-guide-keyboard-shortcuts}
 
 Konfiguráljon egyéni billentyűparancsokat a gyors hozzáféréshez. Ne feledje, hogy alapértelmezés szerint nincsenek beállítva billentyűparancsok.
 
-**Beépített Média Vezérlők** (amikor a főablak aktív és a médialista látható):
+**_Megjegyzés (_):** Globális gyorsbillentyű – akkor is elérhető, ha az alkalmazás nincs fókuszban
 
 - **Tab/Shift+Tab** - Navigálás a médiaelemek között
 - **Fel/le nyíl** - Navigálás a médiaelemek között
@@ -126,7 +118,7 @@ Konfiguráljon egyéni billentyűparancsokat a gyors hozzáféréshez. Ne feledj
 
 **_Megjegyzés (_):** Globális gyorsbillentyű – akkor is elérhető, ha az alkalmazás nincs fókuszban
 
-## Háttérzene {#user-guide-background-music}
+## Zoom integráció {#user-guide-zoom-integration}
 
 ### Háttérzene beállítása {#background-music-setup}
 
@@ -138,16 +130,16 @@ A háttérzene automatikusan elindul az összejövetel előtt és a megfelelő i
 4. **Kézi vezérlés** – Az állapotjelző sávon található zene gombbal indíthatja el/állíthatja le kézzel a lejátszást
 5. **Újraindítás** – Egy kattintással folytathatja a zene lejátszását az összejövetel után
 
-## Zoom integráció {#user-guide-zoom-integration}
+## OBS integráció beállítása {#user-guide-obs-setup}
 
-Az M³ integrálható a Zoommal az automatikus képernyőmegosztáshoz:
+Az M³ használata az OBS Studio programmal hibrid összejövetelekhez:
 
-1. **Integráció engedélyezése** - Kapcsolja be a Zoom integrációt a beállításokban
+1. **OBS Studio telepítése** - Töltse le és telepítse az OBS Studio programot
 2. **Gyorsbillentyű beállítása** – Állítsa be a Zoomban konfigurált képernyőmegosztási gyorsbillentyűt. Győződjön meg arról, hogy a Zoom alkalmazásban be van jelölve a „global” jelölőnégyzet.
-3. **Automatikus vezérlés** – Az M³ szükség szerint automatikusan be- és kikapcsolja a képernyő megosztását a Zoom alkalmazásban
-4. **Kézi felülírás** – Szükség esetén továbbra is kézzel vezérelheti a képernyő megosztását a Zoom segítségével
+3. **M³ konfigurálása** - Adja meg az OBS portot és jelszót az M³ beállításaiban
+4. **Jelenetek beállítása** – Jelenetek létrehozása kamerához, médiához és egyéb tartalmakhoz
 
-## OBS Studio integráció {#user-guide-obs-integration}
+## OBS jelenetkezelés {#obs-scene-management}
 
 ### OBS integráció beállítása {#user-guide-obs-setup}
 
@@ -159,16 +151,16 @@ Az M³ használata az OBS Studio programmal hibrid összejövetelekhez:
 4. **Jelenetek beállítása** – Jelenetek létrehozása kamerához, médiához és egyéb tartalmakhoz
 5. **Teszt** - Ellenőrizze, hogy a lejátszás megfelelően működik-e
 
-### OBS jelenetkezelés {#obs-scene-management}
+### Képek késleltetése {#user-guide-postpone-images}
 
-Az M³ automatikusan vált az OBS jelenetek között a prezentációk során:
+Engedélyezze ezt az opciót, ha késleltetni szeretné a képek OBS-hez való továbbítását, amíg azt manuálisan el nem indítja:
 
-- **Kamerafelvétel** – A pódium/kamera képét mutatja
+- Engedélyezze a „Képmegjelenítés késleltetése” opciót az OBS beállításaiban
 - **Médiajelenet** - A média tartalom megjelenítése
 - **Képjelenet** - Képek megjelenítése (késleltethető, ha engedélyezve van)
 - **Automatikus váltás** – A jelenetek a médiatípus és a beállítások alapján cserélődnek
 
-### Haladó OBS funkciók {#advanced-obs}
+### Jelenetváltási viselkedés {#user-guide-scene-switching}
 
 #### Képek késleltetése {#user-guide-postpone-images}
 
@@ -186,11 +178,12 @@ Engedélyezze ezt az opciót, ha késleltetni szeretné a képek OBS-hez való t
 
 ### Hibrid összejövetelek audio konfigurációja {#audio-configuration}
 
-Ha az M³-at az OBS Studio-val használja hibrid összejövetelekhez (személyes + Zoom), akkor konfigurálnia kell a hangbeállításokat, hogy az összejövetel résztvevői hallhassák a médiát:
+**Alternatíva: Számítógép hangjának megosztása**
+Ha az Original Audio beállítás nem működik jól a rendszerben:
 
 #### Zoom hangbeállítások {#zoom-audio-settings}
 
-**Minden összejövetel előtt engedélyeznie kell az Original Audio funkciót a Zoomban:**
+**Legjobb alternatíva**: Fontolja meg az OBS Studio helyett az M³ Zoom integrációjának használatát, mivel ez a Zoom natív képernyőmegosztását használja, amely zökkenőmentesebben kezeli az audiót, és nem igényel bonyolult audio konfigurációt.
 
 1. **Nyissa meg a Zoomot**, és lépjen a Beállítások (Settings) menübe
 2. **Navigáljon az Audio** → **Advanced** menüpontra
@@ -207,15 +200,15 @@ Ha az Original Audio beállítás nem működik jól a rendszerben:
 2. **Jelölje be a „Share computer sound” (Számítógép hangjának megosztása) jelölőnégyzetet**
 3. **Megjegyzés**: Ezt az opciót minden új Zoom-munkamenet indításakor engedélyezni kell
 
-**Legjobb alternatíva**: Fontolja meg az OBS Studio helyett az M³ Zoom integrációjának használatát, mivel ez a Zoom natív képernyőmegosztását használja, amely zökkenőmentesebben kezeli az audiót, és nem igényel bonyolult audio konfigurációt.
+**Alternatív megoldás**: Fontolja meg a Zoom integráció használatát, mivel ez a Zoom natív képernyő- és hangmegosztását használja, amely zökkenőmentesebben kezeli az audiót.
 
-#### Miért szükséges az audio konfiguráció {#why-audio-config}
+#### Hangproblémák elhárítása {#audio-troubleshooting}
 
 Az M³ lejátsza a hanggal ellátott médiát a számítógépén, de ez az audio **nem kerül automatikusan továbbításra** a videó streamen keresztül az OBS Studio-ba. Hasonló viselkedést tapasztalhat bármely más médialejátszóval is.
 
 **Az audio probléma nem az M³-hoz kapcsolódik** – ez az OBS Studio videó streaming és a Zoom együttműködésének korlátozottságából adódik. A videó stream úgy működik, mint egy virtuális kamera hang nélkül, akárcsak egy webkamera, ezért külön be kell állítani a Zoomot, hogy rögzítse a számítógép hangját. Ebből következik, hogy a számítógépben két hangkártya van, ellenkező esetben valószínűleg nem fogja tudni sikeresen használni az OBS Studio integrációt.
 
-**Alternatív megoldás**: Fontolja meg a Zoom integráció használatát, mivel ez a Zoom natív képernyő- és hangmegosztását használja, amely zökkenőmentesebben kezeli az audiót.
+**Bevált gyakorlatok:**
 
 #### Hangproblémák elhárítása {#audio-troubleshooting}
 
@@ -225,15 +218,15 @@ Az M³ lejátsza a hanggal ellátott médiát a számítógépén, de ez az audi
 - **Rossz hangminőség**: Ellenőrizze, hogy a három Original Audio (Eredeti hang) jelölőnégyzet megfelelően van-e beállítva
 - **A hang nem működik a Zoom újraindítása után**: Az Original Audio (Eredeti hang) funkciót minden új Zoom-munkamenetnél újra engedélyezni kell
 
-**Bevált gyakorlatok:**
+Adja hozzá saját médiafájljait az M³-hoz:
 
-- Tesztelje az audio konfigurációt és megosztást az összejövetelek előtt
-- Készítsen ellenőrző listát az audio beállításához
-- FonFontolja meg a „Share Computer Sound” (Számítógép hangjának megosztása) funkció használatát tartalék opcióként
-- **Fontolja meg a Zoom integráció használatát az OBS Studio helyett** az egyszerűbb hangkezelés érdekében
-- Győződjön meg arról, hogy minden technikus ismeri ezeket a beállításokat
+- **Fájl importálása** - Az importálás gombbal videókat, képeket vagy hangfájlokat adhat hozzá
+- **Húzás és elhelyezés** - Húzza a fájlokat közvetlenül az M³-ba
+- **Mappafigyelés** – Állítson be egy figyelt mappát az automatikus importáláshoz
+- **JWPUB fájlok és lejátszási listák** - Kiadványok és lejátszási listák importálása
+- **Nyilvános előadások médiafájlja (S-34 / S-34mp)** – Nyilvános előadások médiafájljainak importálása S‑34 vagy S‑34mp JWPUB fájlok segítségével
 
-## Média importálása és kezelése {#media-import}
+## Importált média kezelése {#managing-imported-media}
 
 ### Egyéni média importálása {#importing-custom-media}
 
@@ -252,17 +245,17 @@ Adja hozzá saját médiafájljait az M³-hoz:
 - **Tulajdonságok szerkesztése** – Címek, leírások és időzítés módosítása
 - **Média eltávolítása** - A nem kívánt médiaelemek törlése
 
-### Hangos Biblia importálása {#audio-bible-import}
+### Mappafigyelés beállítása {#folder-monitoring-setup}
 
-Bibliaversek hangfelvételeinek importálása:
+Figyelje a mappát az új médiafájlokért:
 
-1. Kattintson a „Hangfelvétel a Bibliából” gombra
-2. Válassza ki a Bibliai könyvet és fejezetet
+1. **Mappafigyelő engedélyezése** - Kapcsolja be a mappafigyelést a beállításokban
+2. **Mappa kiválasztása** - Válassza ki a figyelni kívánt mappát
 3. Kiválasszon konkrét verseket vagy szakaszokat
-4. Töltse le az audio fájlokat
+4. **Szervezés** - A fájlok dátum szerint vannak rendezve, a mappaszerkezet alapján
 5. Használja őket
 
-## Mappafigyelés és exportálás {#user-guide-folder-monitoring}
+## Médiaexport {#user-guide-media-export}
 
 ### Mappafigyelés beállítása {#folder-monitoring-setup}
 
@@ -273,16 +266,16 @@ Figyelje a mappát az új médiafájlokért:
 3. **Automatikus importálás** – Az új fájlok automatikusan hozzáadódnak az M³-hoz
 4. **Szervezés** - A fájlok dátum szerint vannak rendezve, a mappaszerkezet alapján
 
-### Médiaexport {#user-guide-media-export}
+### A hivatalos weboldal bemutatása {#presenting-the-website}
 
-A média automatikus exportálása szervezett mappákba:
+Ossza meg a hivatalos weboldalt külső kijelzőkön:
 
-1. **Automatikus exportálás engedélyezése** - Kapcsolja be a médiaexportálást a beállításokban
-2. **Export mappa kiválasztása** - Válassza ki, hová szeretné menteni az exportált fájlokat
-3. **Automatikus rendezés** – A fájlok dátum és szakasz szerint vannak rendezve
+1. **Weboldal mód** - Kattintson a weboldal megjelenítése gombra
+2. **Külső kijelző** - A weboldal új ablakban nyílik meg
+3. **Navigáció** - A böngésző vezérlőivel navigálhat
 4. **Formátumbeállítások** - Konvertálja a fájlokat MP4 formátumba a jobb kompatibilitás érdekében
 
-## Weboldal Prezentációja {#website-presentation}
+## Webhelyvezérlők {#website-controls}
 
 ### A hivatalos weboldal bemutatása {#presenting-the-website}
 
@@ -294,11 +287,11 @@ Ossza meg a hivatalos weboldalt külső kijelzőkön:
 
 ### Webhelyvezérlők {#website-controls}
 
-- **Navigáció** - Szabványos böngésző navigációs vezérlők
-- **Frissítés** - Az aktuális oldal újratöltése
-- **Bezárás** - Kilépés a weboldal prezentációs módjából
+- **Profilok létrehozása** - Külön profilok beállítása a különböző gyülekezetek számára
+- **Profilok váltása** - A gyülekezetválasztóval válthat a profilok között
+- **Külön beállítások** – Minden profilnak saját beállításai és médiatartalmai vannak
 
-## Haladó funkciók {#user-guide-advanced-features}
+## Billentyűparancsok {#keyboard-shortcuts-guide}
 
 ### Több Gyülekezet {#user-guide-multiple-congregations}
 
@@ -309,39 +302,39 @@ Kezeljen több gyülekezetet vagy csoportot:
 3. **Külön beállítások** – Minden profilnak saját beállításai és médiatartalmai vannak
 4. **Megosztott erőforrások** – A médiafájlok lehetőség szerint megosztásra kerülnek a profilok között
 
-### Billentyűparancsok {#keyboard-shortcuts-guide}
+### Gyakori problémák {#common-issues}
 
 Konfiguráljon egyéni billentyűparancsokat a hatékony működés érdekében:
 
-1. **Gyorsbillentyűk engedélyezése** - Kapcsolja be a billentyűparancsokat a beállításokban
-2. **Gyorsbillentyűk beállítása** - Gyakori műveletekhez gyorsbillentyűk beállítása
-3. **Gyakorlás** - Tanulja meg a gyorsbillentyűket a hatékonyabb használathoz
+1. Ellenőrizze az összejövetelek ütemezésének beállításait
+2. Ellenőrizze az internetkapcsolatot
+3. Ellenőrizze, hogy a média elérhető-e a kiválasztott nyelven
 4. **Testreszabás** - A gyorsbillentyűket az Ön igényeihez igazíthatja
 
-## Hibaelhárítás {#troubleshooting-guide}
+## Az OBS integráció nem működik {#user-guide-obs-not-working}
 
 ### Gyakori problémák {#common-issues}
-
-#### A média nem töltődik le {#user-guide-media-not-downloading}
-
-- Ellenőrizze az összejövetelek ütemezésének beállításait
-- Ellenőrizze az internetkapcsolatot
-- Ellenőrizze, hogy a média elérhető-e a kiválasztott nyelven
-
-#### Az OBS integráció nem működik {#user-guide-obs-not-working}
-
-- Ellenőrizze, hogy az OBS WebSocket plugin telepítve van-e
-- Ellenőrizze a port és a jelszó beállításait
-- Győződjön meg arról, hogy az OBS fut
 
 #### Hangproblémák a Zoom/OBS alkalmazásban {#audio-issues}
 
 - **Nincs hang a Zoomban**: Engedélyezze az Original Audio (Eredeti hang) opciót a Zoom beállításaiban és minden összejövetel előtti
 - **Rossz hangminőség**: Jelölje be a három Original Audio jelölőnégyzetet (az első kettő engedélyezve, a harmadik letiltva)
 - **Az audio nem működik újraindítás után**: Az Original Audio-t minden új Zoom-munkamenetnél vissza kell kapcsolni
-- **Alternatív megoldás**: Használja a Zoom képernyőmegosztásában a „Share Computer Sound” (Számítógép hangjának megosztása) opciót
 
 #### Teljesítményproblémák {#user-guide-performance-issues}
+
+- Engedélyezze az extra gyorsítótárat
+- Csökkentse a maximális felbontást
+- Törölje a régi gyorsítótár-fájlokat
+
+#### Nyelvi problémák {#user-guide-language-issues}
+
+- Ellenőrizze a média nyelvi beállításai
+- Győződjön meg arról, hogy a nyelv elérhető a JW.org oldalon
+- Próbáljon ki egy tartalék nyelvet
+- Ellenőrizze a kezelőfelület nyelvi beállítását
+
+#### Segítségkérés {#getting-help}
 
 - Engedélyezze az extra gyorsítótárat
 - Csökkentse a maximális felbontást
@@ -355,7 +348,7 @@ Konfiguráljon egyéni billentyűparancsokat a hatékony működés érdekében:
 - Próbáljon ki egy tartalék nyelvet
 - Ellenőrizze a kezelőfelület nyelvi beállítását
 
-### Segítségkérés {#getting-help}
+### Összejövetelek Előtt {#before-meetings}
 
 Ha problémákba ütközik:
 
@@ -365,18 +358,18 @@ Ha problémákba ütközik:
 
 ## Bevált Gyakorlatok {#best-practices}
 
-### Összejövetelek Előtt {#before-meetings}
+### Összejövetelek után {#after-meetings}
 
-1. **Letöltések ellenőrzése** - Győződjön meg arról, hogy minden média letöltésre került
-2. **Berendezések tesztelése** - Ellenőrizze a kijelzők és a hang működését
-3. **Média előkészítése** - Ellenőrizze és rendszerezze az összejövetelhez szükséges médiát; győződjön meg arról, hogy egyetlen médiafájl sem hiányzik
+1. **Háttérzene indítása** - Indítsa el a háttérzene lejátszását
+2. **Tervezzen előre** - Készüljön fel a következő összejövetelre úgy, hogy minden készen álljon
+3. **Takarítás** - Zárja be a médialejátszót, amikor végzett
 4. **Audio beállítása** – Hibrid összejövetelek eseténél engedélyezze az Original Audio funkciót a Zoomban, vagy állítsa be a „Share Computer Sound” (Számítógép hangjának megosztása) funkciót
 
-### Összejövetelek alatt {#during-meetings}
+### Rendszeres Karbantartás {#regular-maintenance}
 
-1. **Koncentráljon a feladatra** - Használja a letisztult, zavaró tényezőktől mentes felületet
-2. **Használjon gyorsbillentyűket** - Tanulja meg a billentyűparancsokat a hatékony munkához
-3. **Audio Figyelése** - Figyeljen a hangerő szintjére, ha ez a feladatkörébe tartozik
+1. **M³ frissítése** - Tartsa naprakészen az alkalmazást
+2. **Gyorsítótár törlése** - Rendszeresen törölje a régi gyorsítótár fájlokat
+3. **Beállítások ellenőrzése** - A beállítások áttekintése és szükség szerinti frissítése
 4. **Álljon készen** - Készítse elő a következő médiaelemet
 5. **Hang ellenőrzése** – Hibrid értekezletek esetén győződjön meg arról, hogy a Zoom résztvevői hallják a médiát
 
