@@ -44,14 +44,6 @@ Kalendervyn visar ditt mötesschema och tillgänglig media:
 - **Mediaindikatorer** - Ikoner visar vilka typer av media som är tillgängliga
 - **Datumnavigering** - Använd piltangenterna för att navigera mellan månader
 
-<!-- ### Downloading Media {#downloading-media}
-
-::: info Note
-
-Download speed depends on your internet connection and the size of media files. Videos typically take longer to download than images.
-
-::: -->
-
 ### Organisera media {#organizing-media}
 
 M³ organiserar automatiskt media efter typ och mötesdel:
@@ -77,11 +69,6 @@ Mediaspelaren erbjuder omfattande inställningsmöjligheter:
 - **Spela/Pausa** - Startar eller pausar medieuppspelning
 - **Stopp** - Stoppa uppspelning
 
-<!-- - **Previous/Next** - Navigate between media items
-- **Volume** - Adjust playback volume -->
-
-<!-- - **Fullscreen** - Toggle fullscreen mode -->
-
 - **Zoom/Pan** - Använd mushjulet för att zooma, dra för att panorera (bilder)
 
 ### Avancerade visningsfunktioner{#advanced-presentation}
@@ -89,9 +76,6 @@ Mediaspelaren erbjuder omfattande inställningsmöjligheter:
 #### Anpassad tidsinställning {#custom-timing}
 
 Ställ in anpassade start- och sluttider för media:
-
-<!-- 1. Right-click on a media item
-2. Select "Edit Timing" -->
 
 1. Klicka på varaktigheten av en video längst upp till vänster i miniatyrbilden
 2. Ange start- och sluttider

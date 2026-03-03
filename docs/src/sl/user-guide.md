@@ -44,14 +44,6 @@ V pogledu koledarja so prikazani urnik shodov in razpoložljiva multimedijska vs
 - **Indikatorji multimedijske vsebine** - ikone prikazujejo, katera vrsta multimedijske vsebine je na voljo.
 - **Navigacija po datumu** - za premikanje med meseci uporabi smerne tipke.
 
-<!-- ### Downloading Media {#downloading-media}
-
-::: info Note
-
-Download speed depends on your internet connection and the size of media files. Videos typically take longer to download than images.
-
-::: -->
-
 ### Organiziranje multimedijske vsebine {#organizing-media}
 
 M³ samodejno organizira multimedijsko vsebino glede na vrsto shoda in razdelek:
@@ -77,11 +69,6 @@ Multimedijski predvajalnik omogoča celovito upravljanje:
 - **Predvajanje/premor** - začetek ali začasna prekinitev predvajanja multimedijske datoteke
 - **Stop** - zaustavitev predvajanja
 
-<!-- - **Previous/Next** - Navigate between media items
-- **Volume** - Adjust playback volume -->
-
-<!-- - **Fullscreen** - Toggle fullscreen mode -->
-
 - **Povečanje/premikanje slike** – za povečanje slike uporabi kolesce miške, za premikanje slike pa povleci z miško
 
 ### Napredne možnosti predstavitve multimedijske vsebine {#advanced-presentation}
@@ -89,9 +76,6 @@ Multimedijski predvajalnik omogoča celovito upravljanje:
 #### Časovni razpored po meri {#custom-timing}
 
 Za multimedijsko vsebino nastavi začetni in končni čas po meri:
-
-<!-- 1. Right-click on a media item
-2. Select "Edit Timing" -->
 
 1. Klikni na trajanje videa v zgornjem levem kotu njegove sličice
 2. Nastavi začetni in končni čas

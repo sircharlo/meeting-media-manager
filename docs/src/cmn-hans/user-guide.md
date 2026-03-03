@@ -44,14 +44,6 @@ M³ 主界面包含以下关键区域：
 - **媒体指示** —— 以图标提示可用媒体类型
 - **日期导航** —— 使用方向键在不同月份间切换
 
-<!-- ### Downloading Media {#downloading-media}
-
-::: info Note
-
-Download speed depends on your internet connection and the size of media files. Videos typically take longer to download than images.
-
-::: -->
-
 ### 整理媒体 {#organizing-media}
 
 M³ 会按聚会类型与分区自动整理媒体：
@@ -77,11 +69,6 @@ M³ 会按聚会类型与分区自动整理媒体：
 - **播放/暂停** —— 开始或暂停播放
 - **停止** —— 停止播放
 
-<!-- - **Previous/Next** - Navigate between media items
-- **Volume** - Adjust playback volume -->
-
-<!-- - **Fullscreen** - Toggle fullscreen mode -->
-
 - **缩放/平移** —— 鼠标滚轮缩放、拖拽平移（用于图片）
 
 ### 高级演示功能 {#advanced-presentation}
@@ -89,9 +76,6 @@ M³ 会按聚会类型与分区自动整理媒体：
 #### 自定义时段 {#custom-timing}
 
 可为媒体设置自定义起止时间：
-
-<!-- 1. Right-click on a media item
-2. Select "Edit Timing" -->
 
 1. 点击缩略图左上角显示的“时长”区域
 2. 设置开始时间与结束时间

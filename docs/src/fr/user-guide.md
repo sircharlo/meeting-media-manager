@@ -44,14 +44,6 @@ La vue calendrier affiche votre horaire de réunions et les médias disponibles 
 - **Indicateurs de médias** - Les icônes montrent quels types de médias sont disponibles
 - **Navigation par date** - Utilisez les touches fléchées pour naviguer entre les mois
 
-<!-- ### Downloading Media {#downloading-media}
-
-::: info Note
-
-Download speed depends on your internet connection and the size of media files. Videos typically take longer to download than images.
-
-::: -->
-
 ### Organiser les médias {#organizing-media}
 
 M³ organise automatiquement les médias par type de réunion et section :
@@ -77,11 +69,6 @@ Le lecteur multimédia fournit des contrôles complets :
 - **Lecture/Pause** - Démarrer ou mettre en pause la lecture des médias
 - **Arrêt** - Arrêter la lecture
 
-<!-- - **Previous/Next** - Navigate between media items
-- **Volume** - Adjust playback volume -->
-
-<!-- - **Fullscreen** - Toggle fullscreen mode -->
-
 - **Zoom/Pan** - Utilisez la molette de la souris pour zoomer, faites glisser pour faire un panoramique (pour les images)
 
 ### Fonctionnalités de présentation avancées {#advanced-presentation}
@@ -89,9 +76,6 @@ Le lecteur multimédia fournit des contrôles complets :
 #### Timing personnalisé {#custom-timing}
 
 Définissez des temps de début et de fin personnalisés pour les médias :
-
-<!-- 1. Right-click on a media item
-2. Select "Edit Timing" -->
 
 1. Cliquez sur la durée d'une vidéo en haut à gauche de sa miniature
 2. Définissez les temps de début et de fin

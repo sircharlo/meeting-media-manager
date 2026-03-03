@@ -1,188 +1,170 @@
 # User Guide {#user-guide}
 
-This comprehensive user guide will help you master all the features of M³, from basic setup to advanced media presentation techniques.
+Deze uitgebreide gebruikershandleiding helpt je om alle functies van M³ onder de knie te krijgen, van de basisinstallatie tot geavanceerde technieken voor mediapresentatie.
 
 ## Getting Started {#getting-started}
 
-### Download and Install {#download-and-install}
+### Downloaden en installeren {#download-and-install}
 
-Get the latest version from the [Download page](download). It recommends the best build for your device and shows the latest version.
+Download de nieuwste versie van de [downloadpagina](download). Deze beveelt de beste build aan voor jouw apparaat en toont de laatste versie.
 
-### First Launch {#first-launch}
+### De eerste keer opstarten {#first-launch}
 
-When you first launch M³, you'll be guided through a setup wizard that will configure the essential settings for your congregation:
+Wanneer je M³ voor de eerste keer opstart, word je door een installatiewizard geleid die de essentiële instellingen voor je gemeente configureert:
 
-1. **Choose your interface language** - This determines what language M³'s menus and buttons will be displayed in
-2. **Select profile type** - Choose "Regular" for normal congregation use or "Other" for special events
-3. **Configure congregation information** - Enter your congregation details or use the automatic lookup feature
-4. **Set up meeting schedule** - Configure your midweek and weekend meeting times
-5. **Optional features** - Configure OBS integration, background music, and other advanced features
+1. **Kies de taal van de interface** — Dit bepaalt in welke taal de menu's en knoppen van M³ worden weergegeven
+2. **Selecteer het profieltype** — Kies "Regulier" voor normaal gemeentegebruik of "Overig" voor speciale evenementen
+3. **Configureer de gemeentegegevens** — Voer je gemeentegegevens in of gebruik de automatische zoekfunctie
+4. **Stel het vergaderschema in** — Configureer de tijden van je doordeweekse en weekendvergaderingen
+5. **Optionele functies** — Configureer de OBS-integratie, achtergrondmuziek en andere geavanceerde functies
 
 :::tip Tip
 
-Take your time during setup - but you can always change these settings later in the Settings menu.
+Neem de tijd tijdens de installatie — je kunt deze instellingen later altijd wijzigen in het menu Instellingen.
 
 :::
 
-### Main Interface Overview {#main-interface}
+### Overzicht van de hoofdinterface {#main-interface}
 
-The main M³ interface consists of several key areas:
+De hoofdinterface van M³ bestaat uit een aantal belangrijke onderdelen:
 
-- **Navigation Drawer** - Access different sections and settings
-- **Calendar View** - Browse media by date
-- **Media List** - View and manage media for selected dates
-- **Toolbar** - Quick access to common functions
-- **Status Bar** - Shows download progress, and background music and OBS Studio connection status
+- **Navigatiemenu** — Toegang tot verschillende secties en instellingen
+- **Kalenderweergave** — Doorzoek media op datum
+- **Medialijst** — Bekijk en beheer media voor geselecteerde datums
+- **Werkbalk** — Sneltoegang tot veelgebruikte functies
+- **Statusbalk** — Toont de voortgang van downloads, en de status van achtergrondmuziek en de verbinding met OBS Studio
 
 ## Media Management {#user-guide-media-management}
 
-### Understanding the Calendar View {#calendar-view}
+### De kalenderweergave begrijpen {#calendar-view}
 
-The calendar view shows your meeting schedule and available media:
+De kalenderweergave toont je vergaderschema en de beschikbare media:
 
-- **Meeting Days** - Highlighted days show when meetings are scheduled
-- **Media Indicators** - Icons show what types of media are available
-- **Date Navigation** - Use arrow keys to navigate between months
+- **Vergaderdagen** — Gemarkeerde dagen laten zien wanneer er vergaderingen gepland zijn
+- **Media-indicatoren** — Pictogrammen laten zien welke soorten media beschikbaar zijn
+- **Datumnavigatie** — Gebruik de pijltjestoetsen om tussen maanden te navigeren
 
-<!-- ### Downloading Media {#downloading-media}
+### Media organiseren {#organizing-media}
 
-::: info Note
+M³ organiseert media automatisch per vergadertype en sectie:
 
-Download speed depends on your internet connection and the size of media files. Videos typically take longer to download than images.
-
-::: -->
-
-### Organizing Media {#organizing-media}
-
-M³ automatically organizes media by meeting type and section:
-
-- **Meeting Sections** - Media is grouped by meeting parts (Public Talk, Treasures from God's Word, etc.)
-- **Custom Sections** - You can create custom sections for additional media if no meeting is scheduled on that particular day
+- **Vergadersecties** — Media is gegroepeerd per vergaderonderdeel (Openbare toespraak, Schatten uit Gods Woord, enz.)
+- **Aangepaste secties** — Je kunt aangepaste secties maken voor extra media als er op die specifieke dag geen vergadering gepland is
 
 ## Media Presentation {#media-presentation}
 
-### Opening the Media Player {#opening-media-player}
+### De mediaspeler openen {#opening-media-player}
 
-To present media during a meeting:
+Om media te presenteren tijdens een vergadering:
 
-1. Select the date and media item you want to present
-2. Click the play button or use the keyboard shortcut
-3. The media will start playing on the media display
-4. Use the controls to play, pause, or navigate through media
+1. Selecteer de datum en het media-item dat je wilt presenteren
+2. Klik op de afspeelknop of gebruik de sneltoets
+3. De media wordt afgespeeld in het mediavenster
+4. Gebruik de knoppen om media af te spelen, te pauzeren of te navigeren door de media
 
-### Media Player Controls {#media-player-controls}
+### Bedieningselementen van de mediaspeler {#media-player-controls}
 
-The media player provides comprehensive controls:
+De mediaspeler biedt uitgebreide bedieningselementen:
 
-- **Play/Pause** - Start or pause media playback
-- **Stop** - Stop playback
+- **Afspelen/Pauzeren** - Start of pauzeer het afspelen van media
+- **Stop** - Stop het afspelen
 
-<!-- - **Previous/Next** - Navigate between media items
-- **Volume** - Adjust playback volume -->
+- **Zoomen/Verschuiven** - Gebruik het muiswiel om te zoomen, sleep om te verschuiven (voor afbeeldingen)
 
-<!-- - **Fullscreen** - Toggle fullscreen mode -->
+#### Aangepaste timing {#custom-timing}
 
-- **Zoom/Pan** - Use mouse wheel to zoom, drag to pan (for images)
+Stel aangepaste start- en eindtijden in voor media:
 
-### Advanced Presentation Features {#advanced-presentation}
+1. Klik op de tijdsduur van een video linksboven op de miniatuur
+2. Stel start- en eindtijden in
+3. Sla je wijzigingen op
 
-#### Custom Timing {#custom-timing}
+#### Zoomen en verschuiven {#zoom-pan}
 
-Set custom start and end times for media:
+Voor afbeeldingen en video's:
 
-<!-- 1. Right-click on a media item
-2. Select "Edit Timing" -->
+- **In-/uitzoomen** — Gebruik het muiswiel of de zoomknoppen op de miniatuur
+- **Verschuiven (Pan)** — Klik op de miniatuur en sleep om de afbeelding te verplaatsen
+- **Zoom herstellen** — Klik om terug te keren naar de oorspronkelijke grootte
 
-1. Click on the duration of a video on the top left of its thumbnail
-2. Set start and end times
-3. Save your changes
+#### Sneltoetsen {#user-guide-keyboard-shortcuts}
 
-#### Zoom and Pan {#zoom-pan}
+Configureer aangepaste sneltoetsen voor snelle toegang. Merk op dat er standaard geen sneltoetsen zijn ingesteld.
 
-For images and videos:
+**Ingebouwde mediabediening** (wanneer het hoofdvenster actief is en de medialijst getoond wordt):
 
-- **Zoom In/Out** - Use mouse wheel or zoom controls on the thumbnail
-- **Pan** - Click and drag the thumbnail to move the image around
-- **Reset Zoom** - Click to return to original zoom
+- **Tab/Shift+Tab** — Navigeren tussen media-items
+- **Pijl omhoog/omlaag** — Navigeren tussen media-items
+- **Spatiebalk** — Media afspelen/pauzeren
+- **Escape** — Media stoppen
 
-#### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
+**Aanpasbare sneltoetsen** (indien ingeschakeld in de instellingen):
 
-Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
+- **Mediavenster** — Mediavenster openen/sluiten
+- **Vorige/Volgende media** — Navigeren tussen media-items
+- **Pauzeren/Hervatten** — Het afspelen van media regelen
+- **Media stoppen** — Het afspelen van media stoppen
+- **Muziek in-/uitschakelen** — Achtergrondmuziek regelen
 
-**Built-in Media Controls** (when main window is focused and showing the media list):
-
-- **Tab/Shift+Tab** - Navigate between media items
-- **Up/Down Arrow** - Navigate between media items
-- **Space** - Play/Pause media
-- **Escape** - Stop media
-
-**Customizable Shortcuts** (when enabled in settings):
-
-- **Media Window** - Open/close media window
-- **Previous/Next Media** - Navigate between media items
-- **Pause/Resume** - Control media playback
-- **Stop Media** - Stop media playback
-- **Music Toggle** - Control background music
-
-**Note (\*):** Global shortcut - available even when the app is not focused
+**Opmerking (\*):** Globale sneltoets - beschikbaar zelfs als de app niet gefocust is
 
 ## Background Music {#user-guide-background-music}
 
-### Setting Up Background Music {#background-music-setup}
+### Achtergrondmuziek instellen {#background-music-setup}
 
-Background music automatically plays before meetings and stops at the appropriate time:
+Achtergrondmuziek wordt automatisch afgespeeld vóór vergaderingen en stopt op het juiste moment:
 
-1. **Enable Music** - Turn on background music in settings
-2. **Auto-Start** - Music will start automatically when M³ launches, if appropriate
-3. **Meeting Stop** - Music stops automatically before meeting start time
-4. **Manual Control** - Use the music button in the status bar to start/stop manually
-5. **Restart** - Resume music after meetings with one click
+1. **Muziek inschakelen** — Zet achtergrondmuziek aan in de instellingen
+2. **Automatisch starten** — Muziek start automatisch wanneer M³ wordt opgestart, indien van toepassing
+3. **Stoppen voor vergadering** — Muziek stopt automatisch vóór de begintijd van de vergadering
+4. **Handmatige bediening** — Gebruik de muziekknop in de statusbalk om handmatig te starten/stoppen
+5. **Herstarten** — Hervat de muziek na de vergadering met één klik
 
 ## Zoom Integration {#user-guide-zoom-integration}
 
-M³ can integrate with Zoom for automatic screen sharing:
+M³ kan worden geïntegreerd met Zoom voor automatisch schermdelen:
 
-1. **Enable Integration** - Turn on Zoom integration in settings
-2. **Configure Shortcut** - Set up the screen sharing keyboard shortcut that is configured in Zoom. Make sure that the "global" checkbox is checked in Zoom.
-3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
-4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
+1. **Integratie inschakelen** — Zet Zoom-integratie aan in de instellingen
+2. **Sneltoets configureren** — Stel de sneltoets voor schermdelen in die in Zoom is geconfigureerd. Zorg ervoor dat het selectievakje "globaal" is aangevinkt in Zoom.
+3. **Automatische bediening** — M³ zal Zoom-schermdelen automatisch aan- of uitzetten wanneer dat nodig is
+4. **Handmatig overrulen** — Je kunt schermdelen nog steeds handmatig bedienen in Zoom indien nodig
 
 ## OBS Studio Integration {#user-guide-obs-integration}
 
-### Setting Up OBS Integration {#user-guide-obs-setup}
+### OBS-integratie instellen {#user-guide-obs-setup}
 
-To use M³ with OBS Studio for hybrid meetings:
+Om M³ met OBS Studio te gebruiken voor hybride vergaderingen:
 
-1. **Install OBS Studio** - Download and install OBS Studio
-2. **Enable WebSocket** - Install the WebSocket plugin in OBS
-3. **Configure M³** - Enter OBS port and password in M³ settings
-4. **Set Up Scenes** - Create scenes for camera, media, and other content
-5. **Test** - Verify playback works properly
+1. **Installeer OBS Studio** - Download en installeer OBS Studio
+2. **WebSocket inschakelen** - Installeer de WebSocket-plugin in OBS
+3. **Configureer M³** - Voer de OBS-poort en het wachtwoord in de instellingen van M³ in
+4. **Scènes instellen** - Maak scènes voor camera, media en andere inhoud
+5. **Testen** - Controleer of het afspelen goed werkt
 
-### OBS Scene Management {#obs-scene-management}
+### Beheer van OBS-scènes {#obs-scene-management}
 
-M³ automatically switches OBS scenes during presentations:
+M³ schakelt automatisch tussen OBS-scènes tijdens presentaties:
 
-- **Camera Scene** - Shows the lectern/camera view
-- **Media Scene** - Displays media content
-- **Image Scene** - Shows images (can be postponed if enabled)
-- **Automatic Switching** - Scenes change based on media type and settings
+- **Camerascène** - Toont het spreekgestoelte/camera-aanzicht
+- **Mediascène** - Toont media-inhoud
+- **Afbeeldingsscène** - Toont afbeeldingen (kan worden uitgesteld indien ingeschakeld)
+- **Automatisch schakelen** - Scènes veranderen op basis van mediatype en instellingen
 
 ### Advanced OBS Features {#advanced-obs}
 
-#### Postpone Images {#user-guide-postpone-images}
+#### Afbeeldingen uitstellen {#user-guide-postpone-images}
 
-Enable this option to delay sharing images to OBS until manually triggered:
+Schakel deze optie in om het delen van afbeeldingen naar OBS uit te stellen tot het handmatig wordt geactiveerd:
 
-1. Enable "Postpone Images" in OBS settings
-2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
+1. Schakel "Afbeeldingen uitstellen" in bij de OBS-instellingen
+2. Afbeeldingen worden pas gedeeld wanneer je op de knop klikt om ze te tonen met OBS Studio. Dit is handig om afbeeldingen eerst aan het aanwezige publiek te tonen.
 
-#### Scene Switching Behavior {#user-guide-scene-switching}
+#### Gedrag bij scènewisselingen {#user-guide-scene-switching}
 
-Configure how M³ handles scene changes:
+Configureer hoe M³ scènewisselingen afhandelt:
 
-- **Switch After Media** - Automatically return to previous scene
-- **Remember Previous Scene** - Restore the scene that was active before media
+- **Omschakelen na media** - Keer automatisch terug naar de vorige scène
+- **Vorige scène onthouden** - Herstel de scène die actief was voor de media
 
 ### Audio Configuration for Hybrid Meetings {#audio-configuration}
 

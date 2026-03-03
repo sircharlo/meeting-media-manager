@@ -44,14 +44,6 @@ Get the latest version from the [Download page](download). It recommends the bes
 - **Индикаторы медиа** — иконки показывают какие типы мультимедиа доступны
 - **Date Navigation** - используйте клавиши со стрелками для перемещения между месяцами
 
-<!-- ### Downloading Media {#downloading-media}
-
-::: info Note
-
-Download speed depends on your internet connection and the size of media files. Videos typically take longer to download than images.
-
-::: -->
-
 ### Организовать медиа {#organizing-media}
 
 M3 автоматически организует средства массовой информации по типу встреч и разделам:
@@ -77,11 +69,6 @@ M3 автоматически организует средства массов
 - **Воспроизведение/Пауза** — запуск или приостановка воспроизведения медиа
 - **Стоп** — остановить воспроизведение
 
-<!-- - **Previous/Next** - Navigate between media items
-- **Volume** - Adjust playback volume -->
-
-<!-- - **Fullscreen** - Toggle fullscreen mode -->
-
 - **Увеличить/панель** — с помощью колеса мыши можно увеличить, перетащить для закрепления (для изображений)
 
 ### Расширенные возможности представления {#advanced-presentation}
@@ -89,9 +76,6 @@ M3 автоматически организует средства массов
 #### Пользовательское время {#custom-timing}
 
 Настроить время начала и окончания медиа:
-
-<!-- 1. Right-click on a media item
-2. Select "Edit Timing" -->
 
 1. Нажмите на длительность видео в верхнем левом углу миниатюры
 2. Установить время начала и окончания

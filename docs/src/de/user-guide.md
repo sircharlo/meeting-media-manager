@@ -44,14 +44,6 @@ Die Kalenderansicht zeigt Ihren Zusammenkunftsplan und verfügbare Medien:
 - **Medienindikatoren** - Symbole zeigen an, welche Arten von Medien verfügbar sind
 - **Datumsnavigation** - Verwenden Sie die Pfeiltasten, um zwischen Monaten zu navigieren
 
-<!-- ### Downloading Media {#downloading-media}
-
-::: info Note
-
-Download speed depends on your internet connection and the size of media files. Videos typically take longer to download than images.
-
-::: -->
-
 ### Medien organisieren {#organizing-media}
 
 M³ organisiert Medien automatisch nach Zusammenkunftstyp und Abschnitt:
@@ -77,11 +69,6 @@ Der Medienplayer bietet umfassende Steuerelemente:
 - **Wiedergabe/Pause** - Starten oder pausieren der Medienwiedergabe
 - **Stopp** - Wiedergabe stoppen
 
-<!-- - **Previous/Next** - Navigate between media items
-- **Volume** - Adjust playback volume -->
-
-<!-- - **Fullscreen** - Toggle fullscreen mode -->
-
 - **Zoom/Schwenken** - Mausrad zum Zoomen, Ziehen zum Schwenken (für Bilder)
 
 ### Erweiterte Präsentationsfunktionen {#advanced-presentation}
@@ -89,9 +76,6 @@ Der Medienplayer bietet umfassende Steuerelemente:
 #### Benutzerdefiniertes Timing {#custom-timing}
 
 Legen Sie benutzerdefinierte Start- und Endzeiten für Medien fest:
-
-<!-- 1. Right-click on a media item
-2. Select "Edit Timing" -->
 
 1. Klicken Sie auf die Dauer eines Videos oben links auf dessen Miniaturansicht
 2. Legen Sie Start- und Endzeiten fest
