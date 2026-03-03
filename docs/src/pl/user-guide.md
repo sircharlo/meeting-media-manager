@@ -68,12 +68,6 @@ Odtwarzacz multimediów zapewnia wszechstronne sterowanie:
 
 - **Odtwórz/Wstrzymaj** - Rozpocznij lub wstrzymaj odtwarzanie multimediów
 - **Stop** - Zatrzymaj odtwarzanie
-
-<!-- - **Previous/Next** - Navigate between media items
-- **Volume** - Adjust playback volume -->
-
-<!-- - **Fullscreen** - Toggle fullscreen mode -->
-
 - **Zoom/Pan** - Użyj kółka myszy, aby powiększyć, przeciągnij do panewki (dla zdjęć)
 
 ### Zaawansowane funkcje prezentacji {#advanced-presentation}
@@ -81,9 +75,6 @@ Odtwarzacz multimediów zapewnia wszechstronne sterowanie:
 #### Niestandardowy czas {#custom-timing}
 
 Ustaw niestandardowe godziny rozpoczęcia i zakończenia dla mediów:
-
-<!-- 1. Right-click on a media item
-2. Select "Edit Timing" -->
 
 1. Kliknij na czas trwania filmu w lewym górnym rogu miniatury
 2. Ustaw godziny rozpoczęcia i zakończenia

@@ -69,11 +69,6 @@ A médialejátszó többféle vezérlést biztosít:
 - **Lejátszás/Szünet** - A média lejátszásának elindítása vagy szüneteltetése
 - **Stop** - Leállítja a lejátszást
 
-<!-- - **Previous/Next** - Navigate between media items
-- **Volume** - Adjust playback volume -->
-
-<!-- - **Fullscreen** - Toggle fullscreen mode -->
-
 - **Nagyítás/Pásztázás** - Az egérgörgővel nagyíthat, húzással pásztázhat (képek esetén)
 
 ### Haladó Prezentációs Funkciók {#advanced-presentation}
@@ -81,9 +76,6 @@ A médialejátszó többféle vezérlést biztosít:
 #### Nagyítás és pásztázás {#zoom-pan}
 
 Képek és videók:
-
-<!-- 1. Right-click on a media item
-2. Select "Edit Timing" -->
 
 1. Kattintson a videó időtartamára a miniatűr bal felső sarkában
 2. Állítsa be a kezdési és befejezési időpontokat

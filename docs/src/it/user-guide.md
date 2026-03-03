@@ -69,11 +69,6 @@ The media player provides comprehensive controls:
 - **Play/Pause** - Start or pause media playback
 - **Stop** - Stop playback
 
-<!-- - **Previous/Next** - Navigate between media items
-- **Volume** - Adjust playback volume -->
-
-<!-- - **Fullscreen** - Toggle fullscreen mode -->
-
 - **Zoom/Pan** - Use mouse wheel to zoom, drag to pan (for images)
 
 ### Advanced Presentation Features {#advanced-presentation}
@@ -81,9 +76,6 @@ The media player provides comprehensive controls:
 #### Custom Timing {#custom-timing}
 
 Set custom start and end times for media:
-
-<!-- 1. Right-click on a media item
-2. Select "Edit Timing" -->
 
 1. Click on the duration of a video on the top left of its thumbnail
 2. Set start and end times

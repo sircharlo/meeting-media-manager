@@ -69,21 +69,11 @@ De mediaspeler biedt uitgebreide bedieningselementen:
 - **Afspelen/Pauzeren** - Start of pauzeer het afspelen van media
 - **Stop** - Stop het afspelen
 
-<!-- - **Previous/Next** - Navigate between media items
-- **Volume** - Adjust playback volume -->
-
-<!-- - **Fullscreen** - Toggle fullscreen mode -->
-
 - **Zoomen/Verschuiven** - Gebruik het muiswiel om te zoomen, sleep om te verschuiven (voor afbeeldingen)
-
-### Probeer een reservetaal
 
 #### Aangepaste timing {#custom-timing}
 
 Stel aangepaste start- en eindtijden in voor media:
-
-<!-- 1. Right-click on a media item
-2. Select "Edit Timing" -->
 
 1. Klik op de tijdsduur van een video linksboven op de miniatuur
 2. Stel start- en eindtijden in
@@ -187,8 +177,8 @@ Wanneer je M³ met OBS Studio gebruikt voor hybride vergaderingen (fysiek + Zoom
 1. **Open Zoom** en ga naar Instellingen
 2. **Navigeer naar Audio** → **Geavanceerd**
 3. **Schakel "Optie in vergadering weergeven om 'Origineel geluid' in te schakelen" in**
-4. **Vink "Ruispanonderdrukking uitschakelen" aan** (tweede selectievakje)
-5. **Vink "Echonderdrukking uitschakelen" aan** (eerste selectievakje)
+4. **Vink "Echonderdrukking uitschakelen" aan** (eerste selectievakje)
+5. **Vink "Ruispanonderdrukking uitschakelen" aan** (tweede selectievakje)
 6. **Vink "Muziekmodus met hoge getrouwheid uitschakelen" uit** (derde selectievakje)
 7. **Voordat je elke vergadering begint**, klik op de knop "Origineel geluid" in de bedieningselementen van de vergadering
 
@@ -250,7 +240,7 @@ Importeer audio-opnames van Bijbelverzen:
 
 1. Klik op de knop "Audiobijbel"
 2. Selecteer het Bijbelboek en hoofdstuk
-3. Specifieke verzen of versreeksen kunt kiezen
+3. Kies specifieke verzen of versreeksen
 4. Download de audiobestanden
 5. Gebruik ze
 
@@ -344,7 +334,7 @@ Configureer aangepaste sneltoetsen voor een efficiënte werking:
 
 - Controleer de instelling voor de mediataal
 - Zorg ervoor dat de taal beschikbaar is op JW.org
-- Try a fallback language
+- Probeer een reservetaal
 - Controleer de instelling voor de interfacetaal
 
 ### Hulp krijgen {#getting-help}

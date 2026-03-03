@@ -69,11 +69,6 @@ Mediaspelaren erbjuder omfattande inställningsmöjligheter:
 - **Spela/Pausa** - Startar eller pausar medieuppspelning
 - **Stopp** - Stoppa uppspelning
 
-<!-- - **Previous/Next** - Navigate between media items
-- **Volume** - Adjust playback volume -->
-
-<!-- - **Fullscreen** - Toggle fullscreen mode -->
-
 - **Zoom/Pan** - Använd mushjulet för att zooma, dra för att panorera (bilder)
 
 ### Avancerade visningsfunktioner{#advanced-presentation}
@@ -81,9 +76,6 @@ Mediaspelaren erbjuder omfattande inställningsmöjligheter:
 #### Zooma och panorera {#zoom-pan}
 
 För bilder och videor:
-
-<!-- 1. Right-click on a media item
-2. Select "Edit Timing" -->
 
 1. Klicka på varaktigheten av en video längst upp till vänster i miniatyrbilden
 2. Ange start- och sluttider

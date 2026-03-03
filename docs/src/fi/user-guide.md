@@ -69,11 +69,6 @@ Mediatoistin tarjoaa kattavat ohjaimet:
 - **Toista/Tauko** – Käynnistä tai keskeytä toisto
 - **Pysäytä** – Lopeta toisto
 
-<!-- - **Previous/Next** - Navigate between media items
-- **Volume** - Adjust playback volume -->
-
-<!-- - **Fullscreen** - Toggle fullscreen mode -->
-
 - **Zoom/Pan** – Käytä hiiren rullaa zoomaukseen, vedä hiirellä panorointiin (kuvia varten)
 
 ### Edistyneet esitysominaisuudet {#advanced-presentation}
@@ -81,9 +76,6 @@ Mediatoistin tarjoaa kattavat ohjaimet:
 #### Zoomaus ja panorointi {#zoom-pan}
 
 Kuvia ja videoita varten:
-
-<!-- 1. Right-click on a media item
-2. Select "Edit Timing" -->
 
 1. Napsauta videon keston kohdalla sen pikkukuvan vasemmassa yläkulmassa
 2. Aseta aloitus- ja lopetusajat

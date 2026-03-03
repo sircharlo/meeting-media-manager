@@ -73,7 +73,7 @@ Ja! Met M³ kun je:
 - Automatisch media downloaden voor aankomende vergaderingen
 - Eigen media importeren voor elke gewenste datum
 
-### :file_folder: What is media auto-export? :file_folder: Wat is de automatische media-export?
+### :open_file_folder: Hoe importeer ik mijn eigen mediabestanden? {#import-media}
 
 Je kunt op verschillende manieren eigen media importeren:
 
@@ -170,7 +170,7 @@ Mapbewaking stelt je in staat om:
 1. Een map te selecteren om te controleren op nieuwe bestanden
 2. Automatisch nieuwe mediabestanden te importeren die worden gesynchroniseerd met cloudopslag zoals Dropbox of OneDrive
 
-### :open_file_folder: Hoe importeer ik mijn eigen mediabestanden? {#import-media}
+### :file_folder: Wat is de automatische media-export? {#faq-media-export}
 
 De automatische media-export doet het volgende:
 
@@ -241,7 +241,7 @@ Controleer deze taalinstellingen:
 1. **Interfacetaal**: Controleer de taalinstelling voor de weergave
 2. **Mediataal**: Controleer de taal voor het downloaden van media
 3. **Taalbeschikbaarheid**: Zorg ervoor dat de mediataal beschikbaar is op de officiële website van Jehovah's Getuigen
-4. **Fallback Language**: Try setting a fallback language
+4. **Reservetaal**: Probeer een reservetaal in te stellen
 
 ## Support and Community {#support-community}
 
@@ -281,7 +281,7 @@ Bedankt voor je interesse om het project te ondersteunen! Echter, in de geest va
 
 :::tip :book: Matthew 10:8
 
-"You received free, give free."
+"Je hebt voor niets gekregen, geef voor niets."
 
 :::
 

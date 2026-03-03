@@ -69,11 +69,6 @@ Le lecteur multimédia fournit des contrôles complets :
 - **Lecture/Pause** - Démarrer ou mettre en pause la lecture des médias
 - **Arrêt** - Arrêter la lecture
 
-<!-- - **Previous/Next** - Navigate between media items
-- **Volume** - Adjust playback volume -->
-
-<!-- - **Fullscreen** - Toggle fullscreen mode -->
-
 - **Zoom/Pan** - Utilisez la molette de la souris pour zoomer, faites glisser pour faire un panoramique (pour les images)
 
 ### Fonctionnalités de présentation avancées {#advanced-presentation}
@@ -81,9 +76,6 @@ Le lecteur multimédia fournit des contrôles complets :
 #### Timing personnalisé {#custom-timing}
 
 Définissez des temps de début et de fin personnalisés pour les médias :
-
-<!-- 1. Right-click on a media item
-2. Select "Edit Timing" -->
 
 1. Cliquez sur la durée d'une vidéo en haut à gauche de sa miniature
 2. Définissez les temps de début et de fin
