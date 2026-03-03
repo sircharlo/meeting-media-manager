@@ -69,13 +69,21 @@ Multimedijski predvajalnik omogoča celovito upravljanje:
 - **Predvajanje/premor** - začetek ali začasna prekinitev predvajanja multimedijske datoteke
 - **Stop** - zaustavitev predvajanja
 
+<!-- - **Previous/Next** - Navigate between media items
+- **Volume** - Adjust playback volume -->
+
+<!-- - **Fullscreen** - Toggle fullscreen mode -->
+
 - **Povečanje/premikanje slike** – za povečanje slike uporabi kolesce miške, za premikanje slike pa povleci z miško
 
 ### Napredne možnosti predstavitve multimedijske vsebine {#advanced-presentation}
 
 #### Povečevanje in premikanje {#zoom-pan}
 
-Za slike in videoposnetke:
+**Vgrajeni upravljalniki multimedijske vsebine** (ko je glavno okno v ospredju in prikazuje seznam multimedijske vsebine):
+
+<!-- 1. Right-click on a media item
+2. Select "Edit Timing" -->
 
 1. Klikni na trajanje videa v zgornjem levem kotu njegove sličice
 2. Nastavi začetni in končni čas
@@ -83,7 +91,7 @@ Za slike in videoposnetke:
 
 #### Povečevanje in premikanje {#zoom-pan}
 
-**Vgrajeni upravljalniki multimedijske vsebine** (ko je glavno okno v ospredju in prikazuje seznam multimedijske vsebine):
+**Opomba (\*):** Globalna bližnjica – na voljo tudi, ko aplikacija ni v ospredju.
 
 - **Tab/Shift+Tab** - Premikanje med multimedijskimi elementi
 - **Puščica navzgor/navzdol** - Premikanje med multimedijskimi elementi

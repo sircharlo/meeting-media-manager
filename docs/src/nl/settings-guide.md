@@ -34,7 +34,7 @@ Bepaal het weergavethema van M³.
 
 Stel in welke dag in de kalenderweergave als eerste dag van de week geldt.
 
-**Opties**: Zondag tot en met zaterdag
+**Opties**: Sunday through Saturday
 
 **Standaard**: Zondag
 
@@ -72,7 +72,7 @@ De naam van je gemeente. Dit wordt gebruikt voor organisatie en weergave.
 
 De primaire taal voor mediadownloads. Dit moet overeenkomen met de taal die in je gemeentevergaderingen wordt gebruikt.
 
-**Opties**: Alle beschikbare talen van de officiële website van Jehovah's Getuigen
+**Opties**: All available languages from the official website of Jehovah's Witnesses
 
 **Standaard**: Engels (E)
 
@@ -82,7 +82,7 @@ De primaire taal voor mediadownloads. Dit moet overeenkomen met de taal die in j
 
 Een secundaire taal die wordt gebruikt wanneer media niet beschikbaar is in de primaire taal.
 
-**Opties**: Alle beschikbare talen van de officiële website van Jehovah's Getuigen
+**Opties**: All available languages from the official website of Jehovah's Witnesses
 
 **Standaard**: Geen
 
@@ -92,9 +92,9 @@ Een secundaire taal die wordt gebruikt wanneer media niet beschikbaar is in de p
 
 De dag van de week waarop je doordeweekse vergadering wordt gehouden.
 
-**Opties**: Zondag tot en met zaterdag
+**Opties**: Sunday through Saturday
 
-**Standaard**: Geen (moet tijdens de installatie worden ingesteld)
+**Standaard**: Geen (must be set during setup)
 
 ### Tijd van de doordeweekse vergadering {#midweek-meeting-time}
 
@@ -104,7 +104,7 @@ De begintijd van je doordeweekse vergadering.
 
 **Formaat**: UU:MM (24-uursnotatie)
 
-**Standaard**: Geen (moet tijdens de installatie worden ingesteld)
+**Standaard**: Geen (must be set during setup)
 
 ### Dag van de weekendvergadering {#weekend-meeting-day}
 
@@ -112,9 +112,9 @@ De begintijd van je doordeweekse vergadering.
 
 De dag van de week waarop je weekendvergadering wordt gehouden.
 
-**Opties**: Zondag tot en met zaterdag
+**Opties**: Sunday through Saturday
 
-**Standaard**: Geen (moet tijdens de installatie worden ingesteld)
+**Standaard**: Geen (must be set during setup)
 
 ### Tijd van de weekendvergadering {#weekend-meeting-time}
 
@@ -124,7 +124,7 @@ De begintijd van je weekendvergadering.
 
 **Formaat**: UU:MM (24-uursnotatie)
 
-**Standaard**: Geen (moet tijdens de installatie worden ingesteld)
+**Standaard**: Geen (must be set during setup)
 
 ### Circuit Overseer Week {#circuit-overseer-week}
 
@@ -144,7 +144,7 @@ De datum van de volgende Avondmaalsviering (bètafunctie).
 
 **Formaat**: MM/DD/JJJJ
 
-**Standaard**: Wordt periodiek automatisch opgehaeld
+**Standaard**: Automatically retrieved periodically
 
 ### Meeting Schedule Changes {#meeting-schedule-changes}
 
@@ -201,7 +201,7 @@ Start achtergrondmuziek automatisch wanneer M³ wordt gestart, indien van toepas
 
 **Standaard**: `true`
 
-#### Stopbuffer voor vergadering {#meeting-stop-buffer}
+#### Vergadering-stopbuffer {#meeting-stop-buffer}
 
 <!-- **Setting**: `meetingStopBufferSeconds` -->
 
@@ -235,7 +235,7 @@ Schakel extra caching in voor betere prestaties.
 
 Aangepaste locatie voor het opslaan van gecachte mediabestanden.
 
-**Standaard**: Standaardlocatie van het systeem
+**Standaard**: Systeemstandaardlocatie
 
 #### Cache automatisch legen inschakelen {#enable-cache-auto-clear}
 
@@ -261,7 +261,7 @@ Controleer een map op nieuwe mediabestanden en voeg ze automatisch toe aan M³.
 
 Het mappad dat wordt bewaakt op nieuwe mediabestanden.
 
-**Standaard**: Leeg
+**Standaard**: Empty
 
 ## Integraties {#integrations}
 
@@ -328,8 +328,8 @@ Configureer welke OBS-scènes voor verschillende doeleinden worden gebruikt:
 #### Geavanceerde OBS-opties {#obs-advanced-options}
 
 - **Afbeeldingen uitstellen**: Stel het delen van afbeeldingen naar OBS uit tot dit handmatig wordt geactiveerd
-- **Snelschakelaar**: Schakel de OBS-integratie snel in of uit
-- **Scène wisselen na media**: Keer na de media automatisch terug naar de vorige scène
+- **Snelschakelaar**: Schakel snel in/uit voor OBS-integratie
+- **Scène wisselen na media**: Keer na media automatisch terug naar de vorige scène
 - **Vorige scène onthouden**: De vorige scène onthouden en herstellen
 - **Pictogrammen verbergen**: Verberg OBS-gerelateerde pictogrammen in de interface
 
@@ -337,7 +337,7 @@ Configureer welke OBS-scènes voor verschillende doeleinden worden gebruikt:
 
 **Audioconfiguratie vereist**: OBS Studio-integratie regelt alleen video-/scènewisselingen. Audio van M³-media wordt **niet automatisch doorgestuurd** naar Zoom of OBS. De videostream werkt als een virtuele camera zonder geluid, net als een webcam. Je moet daarom Zooms instellingen voor Originele audio configureren of "Computergeluid delen" gebruiken, zodat deelnemers de media kunnen horen. Zie de [Gebruikershandleiding](/user-guide#audio-configuration) voor gedetailleerde audio-instructies.
 
-#### Alternatief: Overweeg om in plaats hiervan de Zoom-integratie te gebruiken, aangezien deze gebruikmaakt van de systeemeigen schermdeling van Zoom, die audio soepeler verwerkt
+Alternatief: Overweeg om in plaats hiervan de Zoom-integratie te gebruiken, aangezien deze gebruikmaakt van de systeemeigen schermdeling van Zoom, die audio soepeler verwerkt
 
 :::
 
@@ -476,7 +476,7 @@ Schakel ondersteuning voor ondertiteling in bij het afspelen van media.
 
 Taal voor ondertiteling (kan verschillen van de mediataal).
 
-**Opties**: Alle beschikbare talen van de officiële website van Jehovah's Getuigen
+**Opties**: All available languages from the official website of Jehovah's Witnesses
 
 **Standaard**: Geen
 
@@ -496,7 +496,7 @@ Exporteer mediabestanden automatisch naar een opgegeven map.
 
 Mappad waarnaar mediabestanden automatisch worden geëxporteerd.
 
-**Standaard**: Leeg
+**Standaard**: Empty
 
 #### Bestanden converteren naar MP4 {#convert-files-to-mp4}
 
@@ -535,14 +535,14 @@ Schakel het automatisch downloaden van media volledig uit. Gebruik dit alleen vo
 ### Voor nieuwe gebruikers {#new-users}
 
 1. Gebruik de installatiewizard om de basisinstellingen te configureren
-2. Schakel de "Mediaweergaveknop" in om presentatiefuncties te gebruiken
+2. Schakel "Mediaweergaveknop" in om presentatieopties te gebruiken
 3. Configureer je vergaderschema nauwkeurig
 4. Stel de OBS-integratie in als je hybride vergaderingen houdt
 
 ### Voor gevorderde gebruikers {#advanced-users}
 
 1. Gebruik mapbewaking om media te synchroniseren vanuit een cloudopslag
-2. Schakel de automatische media-export in om back-ups te maken
+2. Schakel automatische media-export in voor back-updoeleinden
 3. Configureer sneltoetsen voor een efficiënte bediening
 4. Configureer de Zoom-integratie voor automatisch schermdelen
 

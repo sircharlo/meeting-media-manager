@@ -69,13 +69,21 @@ A médialejátszó többféle vezérlést biztosít:
 - **Lejátszás/Szünet** - A média lejátszásának elindítása vagy szüneteltetése
 - **Stop** - Leállítja a lejátszást
 
+<!-- - **Previous/Next** - Navigate between media items
+- **Volume** - Adjust playback volume -->
+
+<!-- - **Fullscreen** - Toggle fullscreen mode -->
+
 - **Nagyítás/Pásztázás** - Az egérgörgővel nagyíthat, húzással pásztázhat (képek esetén)
 
 ### Haladó Prezentációs Funkciók {#advanced-presentation}
 
 #### Nagyítás és pásztázás {#zoom-pan}
 
-Képek és videók:
+**Beépített Média Vezérlők** (amikor a főablak aktív és a médialista látható):
+
+<!-- 1. Right-click on a media item
+2. Select "Edit Timing" -->
 
 1. Kattintson a videó időtartamára a miniatűr bal felső sarkában
 2. Állítsa be a kezdési és befejezési időpontokat
@@ -83,7 +91,7 @@ Képek és videók:
 
 #### Nagyítás és pásztázás {#zoom-pan}
 
-**Beépített Média Vezérlők** (amikor a főablak aktív és a médialista látható):
+**_Megjegyzés (_):** Globális gyorsbillentyű – akkor is elérhető, ha az alkalmazás nincs fókuszban
 
 - **Tab/Shift+Tab** - Navigálás a médiaelemek között
 - **Fel/le nyíl** - Navigálás a médiaelemek között
@@ -110,7 +118,7 @@ Konfiguráljon egyéni billentyűparancsokat a gyors hozzáféréshez. Ne feledj
 
 **_Megjegyzés (_):** Globális gyorsbillentyű – akkor is elérhető, ha az alkalmazás nincs fókuszban
 
-## Zoom integráció {#user-guide-zoom-integration}
+## OBS integráció beállítása {#user-guide-obs-setup}
 
 ### Háttérzene beállítása {#background-music-setup}
 
@@ -131,7 +139,7 @@ Az M³ használata az OBS Studio programmal hibrid összejövetelekhez:
 3. **M³ konfigurálása** - Adja meg az OBS portot és jelszót az M³ beállításaiban
 4. **Jelenetek beállítása** – Jelenetek létrehozása kamerához, médiához és egyéb tartalmakhoz
 
-## OBS jelenetkezelés {#obs-scene-management}
+## Képek késleltetése {#user-guide-postpone-images}
 
 ### OBS integráció beállítása {#user-guide-obs-setup}
 
@@ -175,7 +183,7 @@ Ha az Original Audio beállítás nem működik jól a rendszerben:
 
 #### Zoom hangbeállítások {#zoom-audio-settings}
 
-**Legjobb alternatíva**: Fontolja meg az OBS Studio helyett az M³ Zoom integrációjának használatát, mivel ez a Zoom natív képernyőmegosztását használja, amely zökkenőmentesebben kezeli az audiót, és nem igényel bonyolult audio konfigurációt.
+**Alternatív megoldás**: Fontolja meg a Zoom integráció használatát, mivel ez a Zoom natív képernyő- és hangmegosztását használja, amely zökkenőmentesebben kezeli az audiót.
 
 1. **Nyissa meg a Zoomot**, és lépjen a Beállítások (Settings) menübe
 2. **Navigáljon az Audio** → **Advanced** menüpontra
@@ -192,7 +200,7 @@ Ha az Original Audio beállítás nem működik jól a rendszerben:
 2. **Jelölje be a „Share computer sound” (Számítógép hangjának megosztása) jelölőnégyzetet**
 3. **Megjegyzés**: Ezt az opciót minden új Zoom-munkamenet indításakor engedélyezni kell
 
-**Alternatív megoldás**: Fontolja meg a Zoom integráció használatát, mivel ez a Zoom natív képernyő- és hangmegosztását használja, amely zökkenőmentesebben kezeli az audiót.
+**Bevált gyakorlatok:**
 
 #### Hangproblémák elhárítása {#audio-troubleshooting}
 
@@ -200,7 +208,7 @@ Az M³ lejátsza a hanggal ellátott médiát a számítógépén, de ez az audi
 
 **Az audio probléma nem az M³-hoz kapcsolódik** – ez az OBS Studio videó streaming és a Zoom együttműködésének korlátozottságából adódik. A videó stream úgy működik, mint egy virtuális kamera hang nélkül, akárcsak egy webkamera, ezért külön be kell állítani a Zoomot, hogy rögzítse a számítógép hangját. Ebből következik, hogy a számítógépben két hangkártya van, ellenkező esetben valószínűleg nem fogja tudni sikeresen használni az OBS Studio integrációt.
 
-**Bevált gyakorlatok:**
+Adja hozzá saját médiafájljait az M³-hoz:
 
 #### Hangproblémák elhárítása {#audio-troubleshooting}
 
@@ -247,7 +255,7 @@ Figyelje a mappát az új médiafájlokért:
 4. **Szervezés** - A fájlok dátum szerint vannak rendezve, a mappaszerkezet alapján
 5. Használja őket
 
-## Médiaexport {#user-guide-media-export}
+## A hivatalos weboldal bemutatása {#presenting-the-website}
 
 ### Mappafigyelés beállítása {#folder-monitoring-setup}
 
@@ -283,7 +291,7 @@ Ossza meg a hivatalos weboldalt külső kijelzőkön:
 - **Profilok váltása** - A gyülekezetválasztóval válthat a profilok között
 - **Külön beállítások** – Minden profilnak saját beállításai és médiatartalmai vannak
 
-## Billentyűparancsok {#keyboard-shortcuts-guide}
+## Gyakori problémák {#common-issues}
 
 ### Több Gyülekezet {#user-guide-multiple-congregations}
 
@@ -298,22 +306,22 @@ Kezeljen több gyülekezetet vagy csoportot:
 
 Konfiguráljon egyéni billentyűparancsokat a hatékony működés érdekében:
 
-1. Ellenőrizze az összejövetelek ütemezésének beállításait
-2. Ellenőrizze az internetkapcsolatot
-3. Ellenőrizze, hogy a média elérhető-e a kiválasztott nyelven
+1. **Nincs hang a Zoomban**: Engedélyezze az Original Audio (Eredeti hang) opciót a Zoom beállításaiban és minden összejövetel előtti
+2. **Rossz hangminőség**: Jelölje be a három Original Audio jelölőnégyzetet (az első kettő engedélyezve, a harmadik letiltva)
+3. **Az audio nem működik újraindítás után**: Az Original Audio-t minden új Zoom-munkamenetnél vissza kell kapcsolni
 4. **Testreszabás** - A gyorsbillentyűket az Ön igényeihez igazíthatja
 
-## Az OBS integráció nem működik {#user-guide-obs-not-working}
+## Teljesítményproblémák {#user-guide-performance-issues}
 
 ### Gyakori problémák {#common-issues}
 
-#### Hangproblémák a Zoom/OBS alkalmazásban {#audio-issues}
+#### Nyelvi problémák {#user-guide-language-issues}
 
-- **Nincs hang a Zoomban**: Engedélyezze az Original Audio (Eredeti hang) opciót a Zoom beállításaiban és minden összejövetel előtti
-- **Rossz hangminőség**: Jelölje be a három Original Audio jelölőnégyzetet (az első kettő engedélyezve, a harmadik letiltva)
-- **Az audio nem működik újraindítás után**: Az Original Audio-t minden új Zoom-munkamenetnél vissza kell kapcsolni
+- Ellenőrizze a média nyelvi beállításai
+- Győződjön meg arról, hogy a nyelv elérhető a JW.org oldalon
+- Próbáljon ki egy tartalék nyelvet
 
-#### Teljesítményproblémák {#user-guide-performance-issues}
+#### Segítségkérés {#getting-help}
 
 - Engedélyezze az extra gyorsítótárat
 - Csökkentse a maximális felbontást
@@ -326,7 +334,7 @@ Konfiguráljon egyéni billentyűparancsokat a hatékony működés érdekében:
 - Próbáljon ki egy tartalék nyelvet
 - Ellenőrizze a kezelőfelület nyelvi beállítását
 
-#### Segítségkérés {#getting-help}
+#### Összejövetelek Előtt {#before-meetings}
 
 - Engedélyezze az extra gyorsítótárat
 - Csökkentse a maximális felbontást
@@ -340,7 +348,7 @@ Konfiguráljon egyéni billentyűparancsokat a hatékony működés érdekében:
 - Próbáljon ki egy tartalék nyelvet
 - Ellenőrizze a kezelőfelület nyelvi beállítását
 
-### Összejövetelek Előtt {#before-meetings}
+### Összejövetelek után {#after-meetings}
 
 Ha problémákba ütközik:
 

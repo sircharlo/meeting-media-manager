@@ -69,13 +69,21 @@ Mediaspelaren erbjuder omfattande inställningsmöjligheter:
 - **Spela/Pausa** - Startar eller pausar medieuppspelning
 - **Stopp** - Stoppa uppspelning
 
+<!-- - **Previous/Next** - Navigate between media items
+- **Volume** - Adjust playback volume -->
+
+<!-- - **Fullscreen** - Toggle fullscreen mode -->
+
 - **Zoom/Pan** - Använd mushjulet för att zooma, dra för att panorera (bilder)
 
 ### Avancerade visningsfunktioner{#advanced-presentation}
 
 #### Zooma och panorera {#zoom-pan}
 
-För bilder och videor:
+\*\*Inbyggda mediekontroller \*\* (när huvudfönstret är fokuserat och visar medielistan):
+
+<!-- 1. Right-click on a media item
+2. Select "Edit Timing" -->
 
 1. Klicka på varaktigheten av en video längst upp till vänster i miniatyrbilden
 2. Ange start- och sluttider
@@ -83,7 +91,7 @@ För bilder och videor:
 
 #### Zooma och panorera {#zoom-pan}
 
-\*\*Inbyggda mediekontroller \*\* (när huvudfönstret är fokuserat och visar medielistan):
+**Note (\*):** Global shortcut - available even when the app is not focused
 
 - **Tab/Shift+Tab** - Navigera mellan medieobjekt
 - **Upp/Ner pil** - Navigera mellan medieobjekt
@@ -110,7 +118,7 @@ Ställ in anpassade kortkommandon för snabbare åtkomst. Observera att inga kor
 
 **Note (\*):** Global shortcut - available even when the app is not focused
 
-## Zoomintegration {#user-guide-zoom-integration}
+## Ställa in OBS Integration {#user-guide-obs-setup}
 
 ### Ställa in bakgrundsmusik {#background-music-setup}
 
@@ -131,7 +139,7 @@ Att använda M³ med OBS Studio för hybridmöten:
 3. **Ställ in M³** - Ange OBS-port och lösenord i M³-inställningarna
 4. **Ställ in scener** - Skapa scener för kamera, media och annat innehåll
 
-## OBS Scenhantering {#obs-scene-management}
+## Skjut upp bildvisning {#user-guide-postpone-images}
 
 ### Ställa in OBS Integration {#user-guide-obs-setup}
 
@@ -175,7 +183,7 @@ Om Original Audio inte fungerar bra i din inställning:
 
 #### Zoom ljudinställningar {#zoom-audio-settings}
 
-**Bästa alternativ**: Överväg att använda M³:s Zoom-integration istället för OBS Studio, eftersom den använder Zooms inbyggda skärmdelning som hanterar ljud mer sömlöst och inte kräver en komplex ljudkonfiguration.
+**Alternativ lösning**: Överväg att använda Zoomintegrationen istället, eftersom den använder Zooms inbyggda skärm och ljuddelning, som hanterar ljudet mer sömlöst.
 
 1. **Öppna Zoom** och gå till Inställningar
 2. **Navigera till Audio** → **Avancerat**For
@@ -192,7 +200,7 @@ Om Original Audio inte fungerar bra i din inställning:
 2. **Bocka i "Datorljud"**
 3. **Observera**: Det här alternativet måste aktiveras varje gång du startar en ny Zoom-session
 
-**Alternativ lösning**: Överväg att använda Zoomintegrationen istället, eftersom den använder Zooms inbyggda skärm och ljuddelning, som hanterar ljudet mer sömlöst.
+**Bästa praxis:**
 
 #### Felsökning av ljudproblem {#audio-troubleshooting}
 
@@ -200,7 +208,7 @@ M³ spelar upp media med ljud på din dator, men detta ljud överförs **inte au
 
 **Ljudfrågan är inte relaterad till M³** - det är en begränsning av hur OBS Studio-videoströmning fungerar med Zoom. Videoströmmen fungerar som en virtuell kamera utan ljud, precis som en webbkamera, så du måste uttryckligen ställa in Zoom för att fånga datorns ljud. Detta innebär att din dator har två ljudkort, och om inte kommer du förmodligen inte att kunna använda OBS Studio-integrationen framgångsrikt.
 
-**Bästa praxis:**
+Lägg till dina egna mediefiler till M³:
 
 #### Felsökning av ljudproblem {#audio-troubleshooting}
 
@@ -247,7 +255,7 @@ Bevaka en mapp för nya mediefiler:
 4. **Organiserat** - Filerna organiseras efter datum baserat på mappstrukturen
 5. Använd dem
 
-## Mediaexport {#user-guide-media-export}
+## Visa den officiella websidan {#presenting-the-website}
 
 ### Ställa in mappbevakning {#folder-monitoring-setup}
 
@@ -283,7 +291,7 @@ Dela den officiella websidan på externa skärmar:
 - **Växla profiler** - Använd församlingsväljaren för att växla mellan profiler
 - **Separata inställningar** - Varje profil har sina egna inställningar och media
 
-## Kortkommandon {#keyboard-shortcuts-guide}
+## Vanliga problem {#common-issues}
 
 ### Flera församlingar {#user-guide-multiple-congregations}
 
@@ -298,22 +306,22 @@ Hantera flera församlingar eller grupper:
 
 Ställ in anpassade kortkommandon för snabbare åtkomst:
 
-1. Kontrollera dina inställningar för mötesschemat
-2. Verifiera internetanslutning
-3. Kontrollera om media är tillgängligt på ditt valda språk
+1. **Inget ljud i Zoom**: Aktivera Original Audio i Zoom-inställningarna och före varje möte
+2. **Dålig ljudkvalitet**: Kontrollera de tre ursprungliga ljudrutorna (första två aktiverade, tredje inaktiverade)
+3. **Ljud fungerar inte efter omstart av zoom**: Ursprungliga ljudinställningar måste vara aktiverade igen för varje ny Zoom-session
 4. **Anpassa** - Justera genvägar för att passa dina behov
 
-## OBS Integrationen fungerar inte {#user-guide-obs-not-working}
+## Prestandaproblem {#user-guide-performance-issues}
 
 ### Vanliga problem {#common-issues}
 
-#### Ljudproblem i Zoom/OBS {#audio-issues}
+#### Språkproblem {#user-guide-language-issues}
 
-- **Inget ljud i Zoom**: Aktivera Original Audio i Zoom-inställningarna och före varje möte
-- **Dålig ljudkvalitet**: Kontrollera de tre ursprungliga ljudrutorna (första två aktiverade, tredje inaktiverade)
-- **Ljud fungerar inte efter omstart av zoom**: Ursprungliga ljudinställningar måste vara aktiverade igen för varje ny Zoom-session
+- Kontrollera inställningar för mediaspråk
+- Se till att språket är tillgängligt på JW.org
+- Prova ett reservspråk
 
-#### Prestandaproblem {#user-guide-performance-issues}
+#### Få hjälp {#getting-help}
 
 - Aktivera extra cache
 - Minska maximal upplösning
@@ -326,7 +334,7 @@ Ställ in anpassade kortkommandon för snabbare åtkomst:
 - Prova ett reservspråk
 - Verifiera dessa språkinställningar
 
-#### Få hjälp {#getting-help}
+#### Före möten {#before-meetings}
 
 - Aktivera extra cache
 - Minska maximal upplösning
@@ -340,7 +348,7 @@ Ställ in anpassade kortkommandon för snabbare åtkomst:
 - Prova ett reservspråk
 - Verifiera dessa språkinställningar
 
-### Före möten {#before-meetings}
+### Efter möten {#after-meetings}
 
 Om du stöter på problem:
 

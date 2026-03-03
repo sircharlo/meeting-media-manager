@@ -69,13 +69,21 @@ Mediatoistin tarjoaa kattavat ohjaimet:
 - **Toista/Tauko** – Käynnistä tai keskeytä toisto
 - **Pysäytä** – Lopeta toisto
 
+<!-- - **Previous/Next** - Navigate between media items
+- **Volume** - Adjust playback volume -->
+
+<!-- - **Fullscreen** - Toggle fullscreen mode -->
+
 - **Zoom/Pan** – Käytä hiiren rullaa zoomaukseen, vedä hiirellä panorointiin (kuvia varten)
 
 ### Edistyneet esitysominaisuudet {#advanced-presentation}
 
 #### Zoomaus ja panorointi {#zoom-pan}
 
-Kuvia ja videoita varten:
+**Sisäänrakennetut mediaohjaimet** (kun pääikkuna on aktiivinen ja näyttää medialistan):
+
+<!-- 1. Right-click on a media item
+2. Select "Edit Timing" -->
 
 1. Napsauta videon keston kohdalla sen pikkukuvan vasemmassa yläkulmassa
 2. Aseta aloitus- ja lopetusajat
@@ -83,7 +91,7 @@ Kuvia ja videoita varten:
 
 #### Zoomaus ja panorointi {#zoom-pan}
 
-**Sisäänrakennetut mediaohjaimet** (kun pääikkuna on aktiivinen ja näyttää medialistan):
+**Huomautus (\*):** Globaali pikanäppäin – käytettävissä myös silloin, kun sovellus ei ole aktiivinen
 
 - **Tab/Shift+Tab** – Siirry median välillä
 - **Ylös/Alas-nuoli** – Siirry median välillä
@@ -110,7 +118,7 @@ Määritä mukautettuja pikanäppäimiä nopeaa käyttöä varten. Huomaa, että
 
 **Huomautus (\*):** Globaali pikanäppäin – käytettävissä myös silloin, kun sovellus ei ole aktiivinen
 
-## Zoom-integraatio {#user-guide-zoom-integration}
+## OBS-integraation määrittäminen {#user-guide-obs-setup}
 
 ### Taustamusiikin asettaminen {#background-music-setup}
 
@@ -131,7 +139,7 @@ Käyttääksesi M³:ta yhdessä OBS Studion kanssa hybridikokouksissa:
 3. **Määritä M³** – Syötä OBS:n portti ja salasana M³:n asetuksissa
 4. **Luo näyttämöt** – Luo näyttämöä kameralle, medialle ja muulle sisällölle
 
-## OBS näyttämön hallinta {#obs-scene-management}
+## Viivytä kuvia {#user-guide-postpone-images}
 
 ### OBS-integraation määrittäminen {#user-guide-obs-setup}
 
@@ -175,7 +183,7 @@ Jos Original Audio ei toimi kunnolla kokoonpanossasi:
 
 #### Zoomin ääniasetukset {#zoom-audio-settings}
 
-**Paras vaihtoehto**: Harkitse M³:n Zoom-integraation käyttöä OBS Studion sijaan, sillä se käyttää Zoomin omaa näytönjakoa, joka käsittelee äänen sujuvammin eikä vaadi monimutkaisia ääniasetuksia.
+**Vaihtoehtoinen ratkaisu**: Harkitse Zoom-integraation käyttöä sen sijaan, sillä se hyödyntää Zoomin omaa näytön- ja äänijakoa, joka käsittelee äänen huomattavasti sujuvammin.
 
 1. **Avaa Zoom** ja siirry Asetuksiin
 2. **Siirry kohtaan Ääni** → **Lisäasetukset (Advanced)**
@@ -192,7 +200,7 @@ Jos Original Audio ei toimi kunnolla kokoonpanossasi:
 2. **Valitse "Share computer sound"**
 3. **Huomio**: Tämä vaihtoehto on otettava käyttöön joka kerta, kun aloitat uuden Zoom-istunnon
 
-**Vaihtoehtoinen ratkaisu**: Harkitse Zoom-integraation käyttöä sen sijaan, sillä se hyödyntää Zoomin omaa näytön- ja äänijakoa, joka käsittelee äänen huomattavasti sujuvammin.
+**Parhaat käytännöt:**
 
 #### Ääniongelmien vianmääritys {#audio-troubleshooting}
 
@@ -200,7 +208,7 @@ M³ toistaa ääntä tietokoneellasi, mutta tämä ääni **ei siirry automaatti
 
 **Ääniongelma ei liity M³:een** – se on rajoitus, joka johtuu siitä, miten OBS Studion videolähetys toimii Zoomin kanssa. Videovirta toimii kuten virtuaalikamera ilman ääntä, aivan kuten verkkokamera, joten sinun on erikseen määritettävä Zoom kuulemaan tietokoneen ääni. Tämä edellyttää, että tietokoneessasi on kaksi äänikorttia, ja jos näin ei ole, OBS Studio -integraatio ei todennäköisesti toimi oikein.
 
-**Parhaat käytännöt:**
+Lisää omat mediatiedostosi M³:een:
 
 #### Ääniongelmien vianmääritys {#audio-troubleshooting}
 
@@ -247,7 +255,7 @@ Seuraa kansiota uusien mediatiedostojen varalta:
 4. **Järjestäminen** – Tiedostot järjestetään päivämäärän mukaan kansion rakenteen perusteella
 5. Käytä niitä
 
-## Median vienti {#user-guide-media-export}
+## Virallisen verkkosivuston esittäminen {#presenting-the-website}
 
 ### Kansion valvonnan määrittäminen {#folder-monitoring-setup}
 
@@ -283,7 +291,7 @@ Jaa virallinen verkkosivusto ulkoisilla näytöillä:
 - **Vaihda profiilia** – Käytä seurakuntavalitsinta profiilien välillä siirtymiseen
 - **Erilliset asetukset** – Jokaisella profiililla on omat asetukset ja mediat
 
-## Pikanäppäimet {#keyboard-shortcuts-guide}
+## Yleiset ongelmat {#common-issues}
 
 ### Useat seurakunnat {#user-guide-multiple-congregations}
 
@@ -298,22 +306,22 @@ Hallitse useita seurakuntia tai ryhmiä:
 
 Määritä mukautettuja pikanäppäimiä tehokkaaseen käyttöön:
 
-1. Tarkista kokousaikataulun asetukset
-2. Varmista internet-yhteys
-3. Tarkista, onko media saatavilla valitsemallasi kielellä
+1. **Ei ääntä Zoomissa**: Ota Original Audio käyttöön Zoomin asetuksissa ja ennen jokaista kokousta
+2. **Huono äänenlaatu**: Tarkista kolme Original Audio -valintaruutua (kaksi ensimmäistä päällä, kolmas pois)
+3. **Ääni ei toimi uudelleenkäynnistyksen jälkeen**: Original Audio on aktivoitava uudelleen jokaisessa Zoom-istunnossa
 4. **Mukauta** – Säädä pikanäppäimet mieltymystesi mukaan
 
-## OBS-integraatio ei toimi {#user-guide-obs-not-working}
+## Suorituskykyongelmat {#user-guide-performance-issues}
 
 ### Yleiset ongelmat {#common-issues}
 
-#### Ääniongelmat Zoomissa/OBS:ssa {#audio-issues}
+#### Kieliongelmat {#user-guide-language-issues}
 
-- **Ei ääntä Zoomissa**: Ota Original Audio käyttöön Zoomin asetuksissa ja ennen jokaista kokousta
-- **Huono äänenlaatu**: Tarkista kolme Original Audio -valintaruutua (kaksi ensimmäistä päällä, kolmas pois)
-- **Ääni ei toimi uudelleenkäynnistyksen jälkeen**: Original Audio on aktivoitava uudelleen jokaisessa Zoom-istunnossa
+- Tarkista median kieliasetus
+- Varmista, että kieli on saatavilla JW.org-sivustolla
+- Kokeile varakieltä
 
-#### Suorituskykyongelmat {#user-guide-performance-issues}
+#### Apua ongelmatilanteissa {#getting-help}
 
 - Ota lisävälimuisti käyttöön
 - Pienennä suurinta resoluutiota
@@ -326,7 +334,7 @@ Määritä mukautettuja pikanäppäimiä tehokkaaseen käyttöön:
 - Kokeile varakieltä
 - Varmista käyttöliittymän kieliasetus
 
-#### Apua ongelmatilanteissa {#getting-help}
+#### Ennen kokouksia {#before-meetings}
 
 - Ota lisävälimuisti käyttöön
 - Pienennä suurinta resoluutiota
@@ -340,7 +348,7 @@ Määritä mukautettuja pikanäppäimiä tehokkaaseen käyttöön:
 - Kokeile varakieltä
 - Varmista käyttöliittymän kieliasetus
 
-### Ennen kokouksia {#before-meetings}
+### Kokousten jälkeen {#after-meetings}
 
 Jos kohtaat ongelmia:
 
