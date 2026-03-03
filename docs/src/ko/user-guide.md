@@ -44,14 +44,6 @@ The calendar view shows your meeting schedule and available media:
 - **Media Indicators** - Icons show what types of media are available
 - **Date Navigation** - Use arrow keys to navigate between months
 
-<!-- ### Downloading Media {#downloading-media}
-
-::: info Note
-
-Download speed depends on your internet connection and the size of media files. Videos typically take longer to download than images.
-
-::: -->
-
 ### Organizing Media {#organizing-media}
 
 M³ automatically organizes media by meeting type and section:
