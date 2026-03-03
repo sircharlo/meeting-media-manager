@@ -48,7 +48,7 @@ La vue calendrier affiche votre horaire de réunions et les médias disponibles 
 
 M³ organise automatiquement les médias par type de réunion et section :
 
-- **Sections de réunion** - Les médias sont regroupés par parties de réunion (Causerie publique, Joyaux de la Parole de Dieu, etc.)
+- **Sections de réunion** - Les médias sont regroupés par parties de réunion (discours public, joyaux, etc.)
 - **Sections personnalisées** - Vous pouvez créer des sections personnalisées pour des médias supplémentaires si aucune réunion n'est programmée ce jour-là
 
 ## Présentation des médias {#media-presentation}
@@ -186,7 +186,7 @@ Lorsque vous utilisez M³ avec OBS Studio pour des réunions hybrides (en person
 
 1. **Ouvrez Zoom** et allez dans Paramètres
 2. **Naviguez vers Audio** → **Avancé**
-3. **Activez « Afficher l'option de réunion pour 'Activer le son original'"**
+3. **Activez "Afficher l'option de réunion pour 'Activer le son d'origine"**
 4. **Cochez « Désactiver l'annulation d'écho »** (première case à cocher)
 5. **Cochez « Désactiver la suppression de bruit »** (deuxième case à cocher)
 6. **Décochez « Désactiver le mode musique haute fidélité »** (troisième case à cocher)
@@ -225,7 +225,7 @@ M³ joue les médias avec du son sur votre ordinateur, mais cet audio **n'est pa
 - **Envisagez d'utiliser l'intégration Zoom au lieu d'OBS Studio** pour une gestion audio plus simple
 - Assurez-vous que tous les opérateurs audiovisuels connaissent ces paramètres
 
-## Gérer les médias importés {#managing-imported-media}
+## Gérer les médias importés {#media-import}
 
 ### Importer des médias personnalisés {#importing-custom-media}
 
@@ -237,7 +237,7 @@ Ajoutez vos propres fichiers multimédias à M³ :
 4. **Fichiers JWPUB et listes de lecture** - Importez des publications et des listes de lecture
 5. **Médias pour discours publics (S-34 / S-34mp)** - Importez des médias pour discours publics à l'aide de fichiers JWPUB S‑34 ou S‑34mp
 
-### Import et gestion des médias {#media-import}
+### Import et gestion des médias {#managing-imported-media}
 
 - **Organiser par date** - Assignez les médias importés à des dates spécifiques
 - **Sections personnalisées** - Créez des sections personnalisées pour l'organisation
@@ -357,7 +357,7 @@ Si vous rencontrez des problèmes :
 
 ## Meilleures pratiques {#best-practices}
 
-### Après les réunions {#after-meetings}
+### Avant les réunions {#before-meetings}
 
 1. **Vérifiez les téléchargements** - Assurez-vous que tous les médias sont téléchargés
 2. **Testez l'équipement** - Vérifiez que les écrans et l'audio fonctionnent
@@ -372,7 +372,7 @@ Si vous rencontrez des problèmes :
 4. **Soyez préparé** - Ayez le prochain élément multimédia prêt
 5. **Vérifiez l'audio** - Pour les réunions hybrides, assurez-vous que les participants Zoom peuvent entendre les médias
 
-### Avant les réunions {#before-meetings}
+### Après les réunions {#after-meetings}
 
 1. **Démarrer la musique de fond** - Démarrez la lecture de la musique de fond
 2. **Planifier à l'avance** - Préparez la prochaine réunion en vous assurant que tout est en place
