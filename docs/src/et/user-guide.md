@@ -44,14 +44,6 @@ Kalendri vaade näitab koosolekute ajakava ja kättesaadavaid meediakanaleid:
 - **Meediaindikaatorid** – ikoonid näitavad, millised meediatüübid on saadaval
 - **Kuupäeva navigeerimine** - Kasuta nooleklahve kuude vahel navigeerimiseks
 
-<!-- ### Downloading Media {#downloading-media}
-
-::: info Note
-
-Download speed depends on your internet connection and the size of media files. Videos typically take longer to download than images.
-
-::: -->
-
 ### Meedia organiseerimine {#organizing-media}
 
 M³ korraldab meedia automaatselt koosoleku tüübi ja sektsiooni järgi:
@@ -105,7 +97,7 @@ For images and videos:
 - **Pan** - Click and drag the thumbnail to move the image around
 - **Reset Zoom** - Click to return to original zoom
 
-#### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
+#### Kiirklahvid {#user-guide-keyboard-shortcuts}
 
 Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
 
@@ -126,7 +118,7 @@ Configure custom keyboard shortcuts for quick access. Note that no keyboard shor
 
 **Note (\*):** Global shortcut - available even when the app is not focused
 
-## Background Music {#user-guide-background-music}
+## Taustamuusika {#user-guide-background-music}
 
 ### Setting Up Background Music {#background-music-setup}
 
@@ -138,7 +130,7 @@ Background music automatically plays before meetings and stops at the appropriat
 4. **Manual Control** - Use the music button in the status bar to start/stop manually
 5. **Restart** - Resume music after meetings with one click
 
-## Zoom Integration {#user-guide-zoom-integration}
+## Koostöö Zoomiga {#user-guide-zoom-integration}
 
 M³ can integrate with Zoom for automatic screen sharing:
 
@@ -147,7 +139,7 @@ M³ can integrate with Zoom for automatic screen sharing:
 3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
 4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
 
-## OBS Studio Integration {#user-guide-obs-integration}
+## Koostöö OBS Studioga {#user-guide-obs-integration}
 
 ### Setting Up OBS Integration {#user-guide-obs-setup}
 
@@ -298,7 +290,7 @@ Share the official website on external displays:
 - **Refresh** - Reload the current page
 - **Close** - Exit website presentation mode
 
-## Advanced Features {#user-guide-advanced-features}
+## Lisasätted {#user-guide-advanced-features}
 
 ### Multiple Congregations {#user-guide-multiple-congregations}
 
