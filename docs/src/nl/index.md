@@ -9,19 +9,20 @@ hero:
   actions:
     - theme: brand
       text: Downloaden
-      link: /nl/download
+      link: /download
     - theme: brand
       text: Over M³
-      link: /nl/about
+      link: /about
     - theme: brand
       text: Gebruikershandleiding
-      link: /nl/user-guide
+      link: /user-guide
     - theme: brand
       text: Handleiding Instellingen
-      link: /nl/settings-guide
+      link: /settings-guide
     - theme: brand
       text: Veelgestelde vragen
-      link: /nl/faq
+      link: /faq
+
 features:
   - icon: 🚀
     title: Automatisch mediabeheer
@@ -37,7 +38,7 @@ features:
     details: Detecteert en beheert automatisch externe monitoren voor naadloze mediapresentaties en schermdeling.
   - icon: 🌐
     title: Meertalige ondersteuning
-    details: Download vergadermedia in honderden talen en gebruik de interface van M³ in elk van de vele beschikbare talen.
+    details: Download vergadering media in honderden talen en gebruik de interface van M³ in een van de vele beschikbare talen.
   - icon: 🧩
     title: Integraties
     details: Integreert naadloos met Zoom of OBS Studio voor een geavanceerd mediabeheer tijdens vergaderingen.
