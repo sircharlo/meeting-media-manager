@@ -87,8 +87,8 @@ onMounted(() => {
 
 ## Windows
 
-- **Windows 64-bit (.exe)**: <a :href="downloads.win64">Downloaden</a>
-- **Windows 32-bit (.exe)**: <a :href="downloads.win32">Downloaden</a>
+- **Windows 64-bits (.exe)**: <a :href="downloads.win64">Downloaden</a>
+- **Windows 32-bits (.exe)**: <a :href="downloads.win32">Downloaden</a>
 - **Windows Portable (.exe)**: <a :href="downloads.winPortable">Downloaden</a>
 
 ## macOS
