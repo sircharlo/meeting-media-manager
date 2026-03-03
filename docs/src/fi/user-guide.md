@@ -101,7 +101,7 @@ Kuvia ja videoita varten:
 
 Määritä mukautettuja pikanäppäimiä nopeaa käyttöä varten. Huomaa, että oletuksena pikanäppäimiä ei ole asetettu.
 
-**Huomautus (\*):** Globaali pikanäppäin – käytettävissä myös silloin, kun sovellus ei ole aktiivinen
+**Sisäänrakennetut mediaohjaimet** (kun pääikkuna on aktiivinen ja näyttää medialistan):
 
 - **Tab/Shift+Tab** – Siirry median välillä
 - **Ylös/Alas-nuoli** – Siirry median välillä
@@ -118,7 +118,7 @@ Määritä mukautettuja pikanäppäimiä nopeaa käyttöä varten. Huomaa, että
 
 **Huomautus (\*):** Globaali pikanäppäin – käytettävissä myös silloin, kun sovellus ei ole aktiivinen
 
-## OBS-integraation määrittäminen {#user-guide-obs-setup}
+## Taustamusiikki {#user-guide-background-music}
 
 ### Taustamusiikin asettaminen {#background-music-setup}
 
@@ -208,7 +208,7 @@ M³ toistaa ääntä tietokoneellasi, mutta tämä ääni **ei siirry automaatti
 
 **Ääniongelma ei liity M³:een** – se on rajoitus, joka johtuu siitä, miten OBS Studion videolähetys toimii Zoomin kanssa. Videovirta toimii kuten virtuaalikamera ilman ääntä, aivan kuten verkkokamera, joten sinun on erikseen määritettävä Zoom kuulemaan tietokoneen ääni. Tämä edellyttää, että tietokoneessasi on kaksi äänikorttia, ja jos näin ei ole, OBS Studio -integraatio ei todennäköisesti toimi oikein.
 
-Lisää omat mediatiedostosi M³:een:
+**Vaihtoehtoinen ratkaisu**: Harkitse Zoom-integraation käyttöä sen sijaan, sillä se hyödyntää Zoomin omaa näytön- ja äänijakoa, joka käsittelee äänen huomattavasti sujuvammin.
 
 #### Ääniongelmien vianmääritys {#audio-troubleshooting}
 
@@ -218,15 +218,15 @@ Lisää omat mediatiedostosi M³:een:
 - **Huono äänenlaatu**: Varmista, että kolme Original Audio -valintaruutua on asetettu oikein
 - **Ääni ei toimi Zoomin uudelleenkäynnistyksen jälkeen**: Original Audio -asetukset on aktivoitava uudelleen jokaisessa uudessa Zoom-istunnossa
 
-Lisää omat mediatiedostosi M³:een:
+**Parhaat käytännöt:**
 
-- **Tiedostotuonti** – Käytä tuontipainiketta videoiden, kuvien tai äänitiedostojen lisäämiseen
-- **Raahaa ja pudota** – Vedä tiedostot suoraan M³:een
-- **Kansion valvonta** – Aseta valvottu kansio automaattista tuontia varten
-- **JWPUB-tiedostot ja soittolistat** – Tuo julkaisuja ja soittolistoja
-- **Julkisen puheen media (S-34 / S-34mp)** – Tuo julkisten puheiden mediaa S-34- tai S-34mp-JWPUB-tiedostojen avulla
+- Testaa ääniasetukset ja jakaminen ennen kokouksia
+- Luo tarkistuslista ääniasennusta varten
+- Harkitse "Jaa tietokoneen ääni"-vaihtoehdon käyttöä vararatkaisuna
+- **Harkitse Zoom-integraation käyttöä OBS Studion sijaan**, jotta äänenhallinta on helpompaa
+- Varmista, että kaikki AV-operaattorit tuntevat nämä asetukset
 
-## Tuodun median hallinta {#managing-imported-media}
+## Median tuonti ja hallinta {#media-import}
 
 ### Oman median tuominen {#importing-custom-media}
 
@@ -245,17 +245,17 @@ Lisää omat mediatiedostosi M³:een:
 - **Muokkaa ominaisuuksia** – Muuta otsikoita, kuvauksia ja ajoituksia
 - **Poista media** – Poista tarpeettomat mediatiedostot
 
-### Kansion valvonnan määrittäminen {#folder-monitoring-setup}
+### Ääniraamatun tuonti {#audio-bible-import}
 
-Seuraa kansiota uusien mediatiedostojen varalta:
+Tuo raamatunjakeiden äänitallenteita:
 
-1. **Ota kansiovalvonta käyttöön** – Aktivoi kansion valvonta asetuksissa
-2. **Valitse kansio** – Valitse kansio, jota valvotaan
+1. Napsauta ääniraamattu-painiketta
+2. Valitse Raamatun kirja ja luku
 3. Valita tietyt jakeet tai jaealueet
-4. **Järjestäminen** – Tiedostot järjestetään päivämäärän mukaan kansion rakenteen perusteella
+4. Lataa äänitiedostot
 5. Käytä niitä
 
-## Virallisen verkkosivuston esittäminen {#presenting-the-website}
+## Kansion valvonta ja vienti {#user-guide-folder-monitoring}
 
 ### Kansion valvonnan määrittäminen {#folder-monitoring-setup}
 
@@ -266,16 +266,16 @@ Seuraa kansiota uusien mediatiedostojen varalta:
 3. **Automaattinen tuonti** – Uudet tiedostot lisätään automaattisesti M³:een
 4. **Järjestäminen** – Tiedostot järjestetään päivämäärän mukaan kansion rakenteen perusteella
 
-### Virallisen verkkosivuston esittäminen {#presenting-the-website}
+### Median vienti {#user-guide-media-export}
 
-Jaa virallinen verkkosivusto ulkoisilla näytöillä:
+Vie mediat automaattisesti järjestettyihin kansioihin:
 
-1. **Avaa verkkosivutila** – Napsauta verkkosivun esityspainiketta
-2. **Ulkoinen näyttö** – Verkkosivusto avautuu uuteen ikkunaan
-3. **Navigointi** – Käytä selaimen ohjaimia siirtymiseen
+1. **Ota automaattinen vienti käyttöön** - Ota median vienti käyttöön asetuksissa
+2. **Valitse vientikansio** – Valitse, minne viedyt tiedostot tallennetaan
+3. **Automaattinen järjestäminen** – Tiedostot järjestetään päivämäärän ja osion mukaan
 4. **Muotoiluasetukset** – Muunna tiedostot MP4-muotoon paremman yhteensopivuuden takaamiseksi
 
-## Verkkosivun ohjaimet {#website-controls}
+## Verkkosivun esitys {#website-presentation}
 
 ### Virallisen verkkosivuston esittäminen {#presenting-the-website}
 
@@ -358,18 +358,18 @@ Jos kohtaat ongelmia:
 
 ## Parhaat käytännöt {#best-practices}
 
-### Kokousten jälkeen {#after-meetings}
+### Ennen kokouksia {#before-meetings}
 
-1. **Käynnistä taustamusiikki** – Aloita taustamusiikin toisto
-2. **Suunnittele eteenpäin** – Valmistaudu seuraavaan kokoukseen varmistamalla, että kaikki on kunnossa
-3. **Siivoa** – Sulje mediatoistin, kun olet valmis lähtemään
+1. **Tarkista lataukset** – Varmista, että kaikki mediat on ladattu
+2. **Testaa laitteet** – Varmista, että näytöt ja äänet toimivat
+3. **Valmistele media** – Tarkista ja järjestä kokouksen media; varmista, ettei mitään puutu
 4. **Määritä ääni** – Hybridikokouksissa ota käyttöön Original Audio Zoomissa tai määritä "Jaa tietokoneen ääni"
 
-### Säännöllinen ylläpito {#regular-maintenance}
+### Kokousten aikana {#during-meetings}
 
-1. **Päivitä M³** – Pidä sovellus ajan tasalla
-2. **Tyhjennä välimuisti** – Poista säännöllisesti vanhat välimuistitiedostot
-3. **Tarkista asetukset** – Tarkista ja päivitä asetuksia tarvittaessa
+1. **Pysy keskittyneenä** – Käytä selkeää ja häiriötöntä käyttöliittymää
+2. **Käytä pikanäppäimiä** – Hallitse esitystä sujuvasti pikanäppäimillä
+3. **Tarkkaile ääntä** – Seuraa äänenvoimakkuutta, jos se kuuluu tehtäviisi
 4. **Ole valmistautunut** – Pidä seuraava media valmiina
 5. **Varmista ääni** – Hybridikokouksissa varmista, että Zoom-osallistujat kuulevat median
 
