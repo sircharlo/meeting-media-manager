@@ -77,7 +77,7 @@ onMounted(() => {
 
 ## Nieuwste release
 
-- **Version**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
+- **Versie**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
 
 <div v-if="recommended" style="margin: 1rem 0; padding: 1rem; border: 1px solid var(--vp-c-brand-1); border-radius: 8px; background: var(--vp-c-brand-soft);"><strong>{{ msg.recommendedFor }} {{ recommended.label }}</strong>
   <div style="margin-top: .5rem;"><a :href="recommended.href" style="display:inline-block; padding:.5rem 1rem; border-radius:6px; background: var(--vp-c-brand-1); color: white; text-decoration:none;">{{ msg.download }}</a>
@@ -93,7 +93,7 @@ onMounted(() => {
 
 ## macOS
 
-- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Downloaden</a>
+- **macOS (Universeel) (.dmg)**: <a :href="downloads.macUniversal">Downloaden</a>
 
 ## Linux
 
