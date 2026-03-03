@@ -335,7 +335,7 @@ Configure which OBS scenes to use for different purposes:
 
 :::warning 중요한 참고 사항
 
-**오디오 구성 필요**: OBS Studio 통합은 비디오/장면 전환만 처리합니다. M³ 미디어 오디오는 Zoom 또는 OBS로 **자동 전송되지 않습니다**. 비디오 스트림은 웹캠처럼 소리 없는 가상 카메라로 동작합니다. 참가자가 미디어 오디오를 들을 수 있도록 Zoom의 원본 오디오 설정을 구성하거나 "컴퓨터 소리 공유"를 사용하세요. 자세한 내용은 [사용자 가이드](/user-guide#audio-configuration)를 참조하세요.
+**오디오 구성 필요**: OBS Studio 통합은 비디오/장면 전환만 처리합니다. M³ 미디어 오디오는 Zoom 또는 OBS로 **자동 전송되지 않습니다**. 비디오 스트림은 웹캠처럼 소리 없는 가상 카메라로 동작합니다. 집회 참석자가 오디오를 들을 수 있도록 Zoom의 원본 오디오 설정을 구성하거나 "컴퓨터 소리 공유"를 사용해야 합니다. 자세한 오디오 설정 지침은 [사용자 가이드](/user-guide#audio-configuration)를 참조하세요.
 
 **Alternative**: Consider using the Zoom integration instead, as it uses Zoom's native screen sharing which handles audio more seamlessly.
 

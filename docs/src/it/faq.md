@@ -73,7 +73,7 @@ Sì! M³ allows you to:
 - Download media for upcoming meetings automatically
 - Import custom media for any date
 
-### {#faq-media-export} :file_folder: What is media auto-export?
+### {#faq-media-export} :file_folder: What is media auto-export? :file_folder: What is media auto-export?
 
 You can import custom media in several ways:
 
