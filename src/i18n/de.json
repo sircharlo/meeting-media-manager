@@ -210,7 +210,7 @@
   "general": "Allgemein",
   "github-repo": "GitHub-Repository",
   "go-home": "Zur Startseite",
-  "go-to-settings": "Go to @:settings",
+  "go-to-settings": "Gehe zu @:settings",
   "gpu-crash-detected": "GPU-Absturz erkannt",
   "gpu-crash-detected-explain": "Die Hardwarebeschleunigung wurde aufgrund eines kürzlichen Absturzes vorübergehend deaktiviert. Wenn dies weiterhin besteht, aktualisieren Sie bitte Ihre Grafiktreiber oder deaktivieren Sie die Hardwarebeschleunigung in den Einstellungen.",
   "gpu-crash-detected-restarting": "GPU-Absturz erkannt. Wechsle in den Software-Modus. Bitte starte die App neu, damit die Änderungen wirksam werden.",

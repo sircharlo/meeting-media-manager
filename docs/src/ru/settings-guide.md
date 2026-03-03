@@ -38,15 +38,15 @@
 
 **По умолчанию**: Воскресенье
 
-### Date Format {#date-format}
+### Формат даты {#date-format}
 
 <!-- **Setting**: `localDateFormat` -->
 
-Format used to display dates in the app.
+Формат, используемый для отображения дат в приложении.
 
-**Example**: D MMMM YYYY
+**Пример**: D MMMM YYYY
 
-**Default**: D MMMM YYYY
+**По умолчанию**: D MMMM YYYY
 
 ### Автозапуск при входе {#auto-start-at-login}
 
@@ -86,7 +86,7 @@ Format used to display dates in the app.
 
 **По умолчанию**: нет
 
-### Midweek Meeting Day {#midweek-meeting-day}
+### День встречи в середине недели {#midweek-meeting-day}
 
 <!-- **Setting**: `mwDay` -->
 
@@ -116,7 +116,7 @@ Format used to display dates in the app.
 
 **По умолчанию**: нет (необходимо установить во время установки)
 
-### Weekend Meeting Time {#weekend-meeting-time}
+### Время встречи в выходные {#weekend-meeting-time}
 
 <!-- **Setting**: `weStartTime` -->
 
@@ -175,11 +175,11 @@ Format used to display dates in the app.
 
 **По умолчанию**: `false`
 
-#### Begin Playback Paused {#begin-playback-paused}
+#### Начинать воспроизведение на паузе {#begin-playback-paused}
 
 <!-- **Setting**: `beginPlaybackPaused` -->
 
-Start videos in a paused state when playback begins.
+Запускать видео в состоянии паузы при начале воспроизведения.
 
 **По умолчанию**: `false`
 
@@ -341,47 +341,47 @@ Start videos in a paused state when playback begins.
 
 :::
 
-### Custom Events {#custom-events}
+### Пользовательские события {#custom-events}
 
-#### Enable Custom Events {#enable-custom-events}
+#### Включить пользовательские события {#enable-custom-events}
 
 <!-- **Setting**: `enableCustomEvents` -->
 
-Enable custom shortcuts that will be triggered when a specific event is detected (e.g., media is played, paused, or stopped).
+Включите настраиваемые сочетания клавиш, которые будут срабатывать при обнаружении определенного события (например, медиа воспроизводится, приостановлено или остановлено).
 
 **По умолчанию**: `false`
 
-#### Custom Event Shortcuts {#custom-event-shortcuts}
+#### Ярлыки пользовательских событий {#custom-event-shortcuts}
 
-##### Play Media Shortcut {#custom-event-media-play-shortcut}
+##### Сочетание для начала воспроизведения {#custom-event-media-play-shortcut}
 
 <!-- **Setting**: `customEventMediaPlayShortcut` -->
 
-Shortcut that is triggered when media is played.
+Ярлык, который срабатывает при воспроизведении медиа.
 
 **По умолчанию**: нет
 
-##### Pause Media Shortcut {#custom-event-media-pause-shortcut}
+##### Сочетание для паузы {#custom-event-media-pause-shortcut}
 
 <!-- **Setting**: `customEventMediaPauseShortcut` -->
 
-Shortcut that is triggered when media is paused.
+Ярлык, который срабатывает при приостановке медиа.
 
 **По умолчанию**: нет
 
-##### Stop Media Shortcut {#custom-event-media-stop-shortcut}
+##### Сочетание для остановки {#custom-event-media-stop-shortcut}
 
 <!-- **Setting**: `customEventMediaStopShortcut` -->
 
-Shortcut that is triggered when media is stopped.
+Ярлык, который срабатывает при остановке медиа.
 
 **По умолчанию**: нет
 
-##### Last Song Shortcut {#custom-event-last-song-shortcut}
+##### Сочетание для последней песни {#custom-event-last-song-shortcut}
 
 <!-- **Setting**: `customEventLastSongShortcut` -->
 
-Shortcut that is triggered when the last song is played during a meeting.
+Ярлык, который срабатывает при воспроизведении последней песни во время встречи.
 
 **По умолчанию**: нет
 
@@ -410,11 +410,11 @@ Shortcut that is triggered when the last song is played during a meeting.
 
 ### Медиа-дисплей {#media-display}
 
-#### Enable Media Window Fade Transitions {#enable-media-window-fade-transitions}
+#### Включить переходы с затуханием в окне медиа {#enable-media-window-fade-transitions}
 
 <!-- **Setting**: `enableMediaWindowFadeTransitions` -->
 
-Enable fade-in/out transitions when showing or hiding the media window.
+Включите переходы появления/исчезновения при отображении или скрытии окна медиа.
 
 **По умолчанию**: `true`
 
@@ -514,13 +514,13 @@ Enable fade-in/out transitions when showing or hiding the media window.
 
 :::
 
-#### Base URL {#base-url}
+#### Базовый URL {#base-url}
 
 <!-- **Setting**: `baseUrl` -->
 
-Base domain used to download publications and media.
+Базовый домен, используемый для загрузки публикаций и мультимедиа.
 
-**Default**: `jw.org`
+**По умолчанию**: `jw.org`
 
 #### Отключить выборку медиа {#disable-media-fetching}
 
