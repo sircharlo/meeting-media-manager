@@ -52,13 +52,13 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 - ✨ **JWPUB-mediaselectie**: Mogelijkheid toegevoegd om individuele media uit JWPUB-bestanden te selecteren.
 - ✨ **Automatische focus op mediavenster**: Optionele instelling toegevoegd om het mediavenster automatisch te focussen na Zoom-schermdeling.
-- ✨ **Cursor Overlay for TV Display**: Enhanced website window cursor overlay for better visibility of the mouse cursor on TV displays.
+- ✨ **Cursorweergave voor TV-schermen**: Cursorweergave in het websitevenster verbeterd voor een betere zichtbaarheid van de muisaanwijzer op TV-schermen.
 - ✨ **Vergaderopname**: Nieuwe functie toegevoegd om een externe opname-app te bedienen.
 - ✨ **Zoeken op website**: Mogelijkheid toegevoegd om met slim zoeken media of publicaties op de website te vinden.
 - ✨ **Eenvoudige handmatige publicatie-import**: Functionaliteit toegevoegd om publicaties van JW.org eenvoudig te importeren, zoals tijdschriften, boeken, programma's en uitnodigingen.
 - ✨ **Verbeteringen voor gebarentaal**: Bevestiging toegevoegd vóór het afspelen van volledige bestanden in gebarentaal en ondersteuning voor het selecteren van meerdere clips, bijvoorbeeld wanneer meerdere alinea's achter elkaar gelezen moeten worden.
 - ✨ **Clipnavigatie**: Weergave van duur toegevoegd aan clips in de lijst en de clipnavigatie verbeterd.
-- 🛠️ **Media Display**: Ensured media display becomes visible when playback starts, even if it was hidden before.
+- 🛠️ **Mediaweergave**: Zorgt ervoor dat het mediavenster zichtbaar wordt zodra het afspelen begint, zelfs als het eerder verborgen was.
 
 ## v25.10.1
 
@@ -73,8 +73,8 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 ### ✨ Nieuwe functies
 
 - ✨ **Afspelen begint gepauzeerd**: Er is een nieuwe instelling toegevoegd om afspelen te laten beginnen in gepauzeerde toestand, wat nuttig kan zijn voor AV-operators om hun setup voor te bereiden (zoals het starten van Zoom delen) voordat de media begint te spelen in het mediavenster.
-- ✨ **Update Meldingen**: Gebruikers worden nu op de hoogte gebracht van updates via een banner in de app, die ook de gebruiker toelaat om updates onmiddellijk te installeren, in plaats van te wachten op de volgende app herstart.
-- ✨ **Aangepaste Gebeurtenissen**: Er zijn optionele gebeurtenishaken toegevoegd die sneltoetsen kunnen activeren wanneer bepaalde gebeurtenissen worden gedetecteerd. Dit kan nuttig zijn voor AV-operators om acties automatisch buiten de app uit te voeren. Bijvoorbeeld, slimme lichten kunnen worden aangezet en uitgezet voor en na het afspelen van media in auditoria waar projectors worden gebruikt; of een script kan worden aangeroepen nadat het laatste lied van een vergadering is afgespeeld om verschillende acties in een Zoom-vergadering te automatiseren.
+- ✨ **Updatemeldingen**: Gebruikers worden nu op de hoogte gebracht van updates via een banner in de app, die de gebruiker bovendien in staat stelt om updates onmiddellijk te installeren, in plaats van te wachten tot de app opnieuw wordt opgestart.
+- ✨ **Aangepaste gebeurtenissen**: Er zijn optionele gebeurtenishaken toegevoegd die sneltoetsen kunnen activeren wanneer bepaalde gebeurtenissen worden gedetecteerd. Dit kan nuttig zijn voor AV-operators om acties automatisch buiten de app uit te voeren. Bijvoorbeeld: slimme verlichting kan worden aan- en uitgezet voor en na het afspelen van media in zalen waar projectoren worden gebruikt; of een script kan worden aangeroepen nadat het laatste lied van een vergadering is afgespeeld om verschillende acties in een Zoom-vergadering te automatiseren.
 
 ## v25.9.1
 
@@ -146,7 +146,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 ### 🛠️ Verbeteringen en aanpassingen
 
-- ➕ **Maak media schoon van v25.4.x**: haal automatisch losgekoppelde of misplaatste media weg van v25. .1 tot en met v25.4.2 om ervoor te zorgen dat er geen media ontbreekt of op de verkeerde plaats in de medialijst staat.
+- ➕ **Media van v25.4.x opgeschoond**: Haalt automatisch verweesde of verkeerd geplaatste media van v25.4.1 en v25.4.2 weg om ervoor te zorgen dat er geen media ontbreekt of op de verkeerde plaats in de medialijst staat.
 
 ## 25.4.2
 
@@ -158,7 +158,7 @@ Voor de volledige lijst van wijzigingen tussen versies, zie ons CHANGELOG.md bes
 
 ### 🛠️ Verbeteringen en aanpassingen
 
-- 🎬 **Fix aangepaste begin- en eindtijden**: Voorkom dat aangepaste begin- en eindtijden verkeerd worden toegepast op de verkeerde video.
+- 🎬 **Fouten in aangepaste begin- en eindtijden opgelost**: Voorkomt dat aangepaste begin- en eindtijden verkeerd worden toegepast op de verkeerde video.
 - 📝 **Niet overeenkomende ondertitels toestaan**: Gebruik van ondertitels inschakelen, zelfs als ze niet perfect overeenkomen met het mediabestand.
 - 🪟 **Schakel Ronde hoeken uit in Windows**: Verwijder afgeronde hoeken voor het media-venster in Windows.
 - 🖼️ **Voeg niet-gerefereerde afbeeldingen toe aan de medialijst**: Zorg ervoor dat alle afbeeldingen zonder verwijzing toegevoegd worden aan de medialijst voor volledigheid.

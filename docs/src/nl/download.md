@@ -6,7 +6,7 @@ title: Downloads
 
 # Downloads
 
-Use the links below to download the latest version of Meeting Media Manager for your operating system. These links always point to the newest stable release.
+Gebruik de onderstaande links om de nieuwste versie van Meeting Media Manager voor je besturingssysteem te downloaden. Deze links verwijzen altijd naar de nieuwste stabiele versie.
 
 <script setup lang="ts">
 import { data as downloads } from '../../data/version.data.mts'
@@ -75,26 +75,26 @@ onMounted(() => {
 })
 </script>
 
-## Latest release
+## Nieuwste release
 
 - **Version**: {{ downloads.version }} <span v-if="daysAgoText">({{ daysAgoText }})</span>
 
 <div v-if="recommended" style="margin: 1rem 0; padding: 1rem; border: 1px solid var(--vp-c-brand-1); border-radius: 8px; background: var(--vp-c-brand-soft);"><strong>{{ msg.recommendedFor }} {{ recommended.label }}</strong>
   <div style="margin-top: .5rem;"><a :href="recommended.href" style="display:inline-block; padding:.5rem 1rem; border-radius:6px; background: var(--vp-c-brand-1); color: white; text-decoration:none;">{{ msg.download }}</a>
   </div>
-  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">If this doesn’t match your system, pick from the options below.</div>
+  <div style="margin-top:.5rem; font-size: .9em; opacity:.8;">Als dit niet overeenkomt met je systeem, kies dan een van de onderstaande opties.</div>
 </div>
 
 ## Windows
 
-- **Windows 64-bit (.exe)**: <a :href="downloads.win64">Download</a>
-- **Windows 32-bit (.exe)**: <a :href="downloads.win32">Download</a>
-- **Windows Portable (.exe)**: <a :href="downloads.winPortable">Download</a>
+- **Windows 64-bit (.exe)**: <a :href="downloads.win64">Downloaden</a>
+- **Windows 32-bit (.exe)**: <a :href="downloads.win32">Downloaden</a>
+- **Windows Portable (.exe)**: <a :href="downloads.winPortable">Downloaden</a>
 
 ## macOS
 
-- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Download</a>
+- **macOS (Universal) (.dmg)**: <a :href="downloads.macUniversal">Downloaden</a>
 
 ## Linux
 
-- **x86_64 (AppImage)**: <a :href="downloads.linux">Download</a>
+- **x86_64 (AppImage)**: <a :href="downloads.linux">Downloaden</a>

@@ -16,11 +16,11 @@ Deze app stond vroeger bekend als JWMMF (JW Meeting Media Fetcher), maar werd in
 
 ## Waarom M³? {#why-choose-m3}
 
-M³ is de ultieme tool om vergadering media te beheren en biedt een naadloos, betrouwbaar en veelzijdige ervaring op verschillende platformen. Het is speciaal ontworpen voor de behoeften van gemeentevergaderingen en biedt alles wat nodig is voor een effectieve mediapresentatie.
+M³ is de ultieme tool om vergadermedia te beheren en biedt een naadloze, betrouwbare en veelzijdige ervaring op verschillende platformen. Het is speciaal ontworpen voor de behoeften van gemeentevergaderingen en biedt alles wat nodig is voor een effectieve mediapresentatie.
 
 ### Belangrijke voordelen {#key-benefits}
 
-- **Eenvoudige mediapresentatie**: Presentatie media op zijn toppunt - open M³ en alles werkt. Geen complexe set-up of extra stappen vereist.
+- **Moeiteloze mediapresentatie**: Mediapresentatie op zijn best — open M³ en alles werkt. Geen complexe set-up of extra stappen vereist.
 
 - **Ondersteuning voor meerdere gemeenten**: Beheer instellingen voor meerdere gemeenten of groepen binnen een enkele applicatie.
 
@@ -30,7 +30,7 @@ M³ is de ultieme tool om vergadering media te beheren en biedt een naadloos, be
 
 - **Betrouwbaar en stabiel**: Gebouwd om te werken wanneer je het het hardst nodig hebt. Een fout gevonden? Rapporteer het en het zal snel worden aangepakt.
 
-- **Geavanceerde presentatietools**: Geavanceerde mediabediening, zoom- en panmogelijkheden, aangepaste timing en naadloze integratie met Zoom en OBS Studio.
+- **Geavanceerde presentatietools**: Geavanceerde mediabediening, zoom- en pan-mogelijkheden, aangepaste timing en naadloze integratie met Zoom en OBS Studio.
 
 ## Wat kan M³? {#what-can-m3-do}
 
@@ -41,13 +41,13 @@ M³ is een uitgebreide mediabeheeroplossing waarmee je eenvoudig en automatisch 
 - **Automatische mediadownloads**: Haalt automatisch alle benodigde media op en downloadt deze voor aankomende vergaderingen
 - **Ondersteuning voor meerdere talen**: Download media in een van de honderden beschikbare talen
 - **Slimme caching**: Intelligent cachesysteem dat media georganiseerd en up-to-date houdt
-- **Mediaorganisatie**: Organiseert media automatisch op datum en vergaderingsgedeelte
+- **Mediaorganisatie**: Organiseert media automatisch op datum en vergaderonderdeel
 
 ### Presentatiefuncties voor media {#about-presentation-features}
 
 Voor **hybride** of **fysieke** gemeentevergaderingen bevat de geïntegreerde mediapresentatiemodus:
 
-- **Geavanceerde mediabediening**: Media-miniaturen met zoom- en panmogelijkheden
+- **Geavanceerde mediabediening**: Media-miniaturen met zoom- en pan-mogelijkheden
 - **Aangepaste timing**: Stel aangepaste start- en eindtijden in voor het afspelen van media
 - **Afspeelbediening**: Gebruiksvriendelijke pauze-/afspelen-/stopknoppen met sneltoetsen
 - **Ondersteuning voor meerdere monitoren**: Automatische detectie en beheer van externe monitoren
@@ -74,7 +74,7 @@ Voor **hybride** of **fysieke** gemeentevergaderingen bevat de geïntegreerde me
 - **JWLPLAYLIST-bestanden**: Ondersteuning voor JW Library-afspeellijstbestanden
 - **Aangepaste media**: Importeer eigen video's, afbeeldingen, audiobestanden en PDF-bestanden
 - **Audiobijbel**: Importeer Studiebijbelmedia en geluidsopnamen van de Nieuwe-Wereldvertaling
-- **Openbare lezingen**: Altijd een overzicht van openbarelezingmedia klaar voor gebruik met de S-34-importeur
+- **Openbare lezingen**: Altijd de media voor openbare lezingen klaar voor gebruik met de S-34-importfunctie
 
 ### Geavanceerde functies {#about-advanced-features}
 
@@ -94,11 +94,11 @@ Media voor vergaderingen van Jehovah’s Getuigen kan automatisch worden gedownl
 
 M³ zelf is door vrijwilligers in veel talen vertaald. Je kunt de taal instellen die je wilt weergeven in de interface van M³, onafhankelijk van de taal die wordt gebruikt voor het downloaden van media. Dit betekent dat je M³ in je voorkeurstaal kunt gebruiken terwijl je media downloadt in elke andere ondersteunde taal.
 
-For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
+Voor informatie over reservetalen en ondertiteling, zie de [Veelgestelde vragen (FAQ)](faq#language-support).
 
 ## Systeemvereisten {#system-requirements}
 
-For supported operating systems and requirements, see the answers in the [FAQ](faq#technical-questions).
+Voor ondersteunde besturingssystemen en vereisten, zie de antwoorden in de [Veelgestelde vragen (FAQ)](faq#technical-questions).
 
 **Probeer M³ vandaag nog en kijk zelf wat het kan doen! Het is nog nooit zo eenvoudig geweest om media te presenteren bij vergaderingen.**
 
