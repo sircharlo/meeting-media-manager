@@ -73,9 +73,9 @@ Multimedijski predvajalnik omogoča celovito upravljanje:
 
 ### Napredne možnosti predstavitve multimedijske vsebine {#advanced-presentation}
 
-#### Časovni razpored po meri {#custom-timing}
+#### Povečevanje in premikanje {#zoom-pan}
 
-Za multimedijsko vsebino nastavi začetni in končni čas po meri:
+Za slike in videoposnetke:
 
 1. Klikni na trajanje videa v zgornjem levem kotu njegove sličice
 2. Nastavi začetni in končni čas
@@ -83,17 +83,17 @@ Za multimedijsko vsebino nastavi začetni in končni čas po meri:
 
 #### Povečevanje in premikanje {#zoom-pan}
 
-Za slike in videoposnetke:
+**Vgrajeni upravljalniki multimedijske vsebine** (ko je glavno okno v ospredju in prikazuje seznam multimedijske vsebine):
 
-- **Povečaj/Pomanjšaj** - Uporabi kolesce miške ali gumbe za povečavo na sličici
-- **Premikanje** - Klikni in povleci sličico, da jo premaknete
-- **Ponastavi povečavo** - Klikni, da se vrneš na prvotno povečavo
+- **Tab/Shift+Tab** - Premikanje med multimedijskimi elementi
+- **Puščica navzgor/navzdol** - Premikanje med multimedijskimi elementi
+- **Preslednica** - Predvajanje/zaustavitev predvajanja multimedijske vsebine
 
 #### Bližnjice na tipkovnici {#user-guide-keyboard-shortcuts}
 
 Nastavi prilagojene bližnjice na tipkovnici za hiter dostop. Privzeto niso nastavljene nobene bližnjice na tipkovnici.
 
-**Vgrajeni upravljalniki multimedijske vsebine** (ko je glavno okno v ospredju in prikazuje seznam multimedijske vsebine):
+**Opomba (\*):** Globalna bližnjica – na voljo tudi, ko aplikacija ni v ospredju.
 
 - **Tab/Shift+Tab** - Premikanje med multimedijskimi elementi
 - **Puščica navzgor/navzdol** - Premikanje med multimedijskimi elementi
@@ -110,7 +110,7 @@ Nastavi prilagojene bližnjice na tipkovnici za hiter dostop. Privzeto niso nast
 
 **Opomba (\*):** Globalna bližnjica – na voljo tudi, ko aplikacija ni v ospredju.
 
-## Glasba v ozadju {#user-guide-background-music}
+## Povezava z Zoomom {#user-guide-zoom-integration}
 
 ### Nastavitev glasbe v ozadju {#background-music-setup}
 
@@ -131,7 +131,7 @@ M³ se lahko poveže z Zoomom za samodejno deljenje zaslona:
 3. **Samodejni nadzor** – M³ bo samodejno vklapljal in izklapljal deljenje zaslona v Zoomu, ko bo to potrebno
 4. **Ročni nadzor** – Če je treba, lahko deljenje zaslona še vedno ročno upravljaš v Zoomu
 
-## OBS Studio Integration {#user-guide-obs-integration}
+## Združevanje z OBS Studiem {#user-guide-obs-integration}
 
 ### Setting Up OBS Integration {#user-guide-obs-setup}
 
@@ -257,7 +257,7 @@ Monitor a folder for new media files:
 3. **Automatic Import** - New files are automatically added to M³
 4. **Organization** - Files are organized by date based on folder structure
 
-### Media Export {#user-guide-media-export}
+### Izvoz multimedijske vsebine {#user-guide-media-export}
 
 Automatically export media to organized folders:
 
@@ -282,7 +282,7 @@ Share the official website on external displays:
 - **Refresh** - Reload the current page
 - **Close** - Exit website presentation mode
 
-## Advanced Features {#user-guide-advanced-features}
+## Napredne funkcije {#user-guide-advanced-features}
 
 ### Multiple Congregations {#user-guide-multiple-congregations}
 

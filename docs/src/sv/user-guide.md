@@ -73,9 +73,9 @@ Mediaspelaren erbjuder omfattande inställningsmöjligheter:
 
 ### Avancerade visningsfunktioner{#advanced-presentation}
 
-#### Anpassad tidsinställning {#custom-timing}
+#### Zooma och panorera {#zoom-pan}
 
-Ställ in anpassade start- och sluttider för media:
+För bilder och videor:
 
 1. Klicka på varaktigheten av en video längst upp till vänster i miniatyrbilden
 2. Ange start- och sluttider
@@ -83,17 +83,17 @@ Ställ in anpassade start- och sluttider för media:
 
 #### Zooma och panorera {#zoom-pan}
 
-För bilder och videor:
+\*\*Inbyggda mediekontroller \*\* (när huvudfönstret är fokuserat och visar medielistan):
 
-- \*\*Zooma in/ut \*\* - Använd mushjulet eller används kontrollerna på miniatyrbilden
-- **Pan** - Klicka och dra miniatyren för att flytta runt bilden
-- **Återställ Zoom** - Klicka för att återgå till original zoom
+- **Tab/Shift+Tab** - Navigera mellan medieobjekt
+- **Upp/Ner pil** - Navigera mellan medieobjekt
+- **Mellanslag** - Spela/Pausa media
 
 #### Kortkommandon {#user-guide-keyboard-shortcuts}
 
 Ställ in anpassade kortkommandon för snabbare åtkomst. Observera att inga kortkommandon är inställda som standard.
 
-\*\*Inbyggda mediekontroller \*\* (när huvudfönstret är fokuserat och visar medielistan):
+**Note (\*):** Global shortcut - available even when the app is not focused
 
 - **Tab/Shift+Tab** - Navigera mellan medieobjekt
 - **Upp/Ner pil** - Navigera mellan medieobjekt
@@ -110,7 +110,7 @@ Ställ in anpassade kortkommandon för snabbare åtkomst. Observera att inga kor
 
 **Note (\*):** Global shortcut - available even when the app is not focused
 
-## Bakgrundsmusik {#user-guide-background-music}
+## Zoomintegration {#user-guide-zoom-integration}
 
 ### Ställa in bakgrundsmusik {#background-music-setup}
 
@@ -122,16 +122,16 @@ Bakgrundsmusik spelas automatiskt före möten och stannar vid lämplig tidpunkt
 4. **Manuell kontroll** - Använd musikknappen i statusfältet för att starta/stoppa manuellt
 5. **Omstart** - Återuppta musik efter mötet med ett klick
 
-## Zoomintegration {#user-guide-zoom-integration}
+## Ställa in OBS Integration {#user-guide-obs-setup}
 
-M³ kan integreras med Zoom för automatisk skärmdelning:
+Att använda M³ med OBS Studio för hybridmöten:
 
-1. **Aktivera integration** - Slå på Zoom-integration i inställningar
+1. **Installera OBS Studio** - Ladda ner och installera OBS Studio
 2. **Ställ in genväg** - Ställ in kortkommandot för skärmdelning som du angett i Zoom. Se till att kryssrutan "global" är markerad i Zoom.
-3. **Automatisk kontroll** - M³ växlar automatiskt skärmdelning i Zoom efter behov
-4. **Manuell åsidosättning** - Du kan fortfarande manuellt styra skärmdelning med Zoom om det behövs
+3. **Ställ in M³** - Ange OBS-port och lösenord i M³-inställningarna
+4. **Ställ in scener** - Skapa scener för kamera, media och annat innehåll
 
-## OBS Studiointegration {#user-guide-obs-integration}
+## OBS Scenhantering {#obs-scene-management}
 
 ### Ställa in OBS Integration {#user-guide-obs-setup}
 
@@ -143,16 +143,16 @@ Att använda M³ med OBS Studio för hybridmöten:
 4. **Ställ in scener** - Skapa scener för kamera, media och annat innehåll
 5. **Testa** - Kontrollera att uppspelningen fungerar korrekt
 
-### OBS Scenhantering {#obs-scene-management}
+### Skjut upp bildvisning {#user-guide-postpone-images}
 
-M³ växlar automatiskt OBS scener under visning:
+Aktivera detta alternativ för att fördröja delning av bilder till OBS tills manuellt aktiveras:
 
-- **Kamerascen** - Visar podiet/kameravyn
+- Aktivera "Fördröjd bildvisning" i OBS-inställningar
 - **Mediescen** - Visar medieinnehåll
 - **Bildscen** - Visar bilder (kan fördröjas om aktiverat)
 - **Automatisk växling** - Scener ändras baserat på mediatyp och inställningar
 
-### Avancerade OBS-funktioner {#advanced-obs}
+### Scenväxlingsbeteende {#user-guide-scene-switching}
 
 #### Skjut upp bildvisning {#user-guide-postpone-images}
 
@@ -170,11 +170,12 @@ Ställ in hur M³ hanterar scenförändringar:
 
 ### Ljudkonfiguration för hybridmöten {#audio-configuration}
 
-När du använder M³ med OBS Studio för hybridmöten (På plats + Zoom), måste du ställa in ljudinställningarna för att säkerställa att mötesdeltagarna kan höra ljudet:
+**Alternativ: Dela datorljud**
+Om Original Audio inte fungerar bra i din inställning:
 
 #### Zoom ljudinställningar {#zoom-audio-settings}
 
-**Före varje möte måste du aktivera Original Audio i Zoom:**
+**Bästa alternativ**: Överväg att använda M³:s Zoom-integration istället för OBS Studio, eftersom den använder Zooms inbyggda skärmdelning som hanterar ljud mer sömlöst och inte kräver en komplex ljudkonfiguration.
 
 1. **Öppna Zoom** och gå till Inställningar
 2. **Navigera till Audio** → **Avancerat**For
@@ -191,15 +192,15 @@ Om Original Audio inte fungerar bra i din inställning:
 2. **Bocka i "Datorljud"**
 3. **Observera**: Det här alternativet måste aktiveras varje gång du startar en ny Zoom-session
 
-**Bästa alternativ**: Överväg att använda M³:s Zoom-integration istället för OBS Studio, eftersom den använder Zooms inbyggda skärmdelning som hanterar ljud mer sömlöst och inte kräver en komplex ljudkonfiguration.
+**Alternativ lösning**: Överväg att använda Zoomintegrationen istället, eftersom den använder Zooms inbyggda skärm och ljuddelning, som hanterar ljudet mer sömlöst.
 
-#### Varför ljudkonfiguration är nödvändig {#why-audio-config}
+#### Felsökning av ljudproblem {#audio-troubleshooting}
 
 M³ spelar upp media med ljud på din dator, men detta ljud överförs **inte automatiskt** via videoströmmen till OBS Studio. Detta är samma beteende du skulle uppleva med någon annan mediaspelare.
 
 **Ljudfrågan är inte relaterad till M³** - det är en begränsning av hur OBS Studio-videoströmning fungerar med Zoom. Videoströmmen fungerar som en virtuell kamera utan ljud, precis som en webbkamera, så du måste uttryckligen ställa in Zoom för att fånga datorns ljud. Detta innebär att din dator har två ljudkort, och om inte kommer du förmodligen inte att kunna använda OBS Studio-integrationen framgångsrikt.
 
-**Alternativ lösning**: Överväg att använda Zoomintegrationen istället, eftersom den använder Zooms inbyggda skärm och ljuddelning, som hanterar ljudet mer sömlöst.
+**Bästa praxis:**
 
 #### Felsökning av ljudproblem {#audio-troubleshooting}
 
@@ -209,15 +210,15 @@ M³ spelar upp media med ljud på din dator, men detta ljud överförs **inte au
 - **Dålig ljudkvalitet**: Verifiera de tre kryssrutorna för Original Audio är korrekt inställda
 - **Ljud fungerar inte efter omstart av zoom**: Ursprungliga ljudinställningar måste vara aktiverade igen för varje ny Zoom-session
 
-**Bästa praxis:**
+Lägg till dina egna mediefiler till M³:
 
-- Testa ljudkonfiguration och delning innan mötet
-- Skapa en checklista för ljudinställningar
-- Överväg att använda "Dela datorljud" som backup
-- **Överväg att använda Zoom-integration istället för OBS Studio** för enklare ljudhantering
-- Se till att alla som sköter ljud/media känner till dessa inställningar
+- **Filimport** - Använd importknappen för att lägga till videor, bilder eller ljudfiler
+- **Dra och släpp** - Dra filer direkt till M³
+- **Mappövervakning**: Ställ in en bevakad mapp för automatisk import
+- **JWPUB-filer och spellistor**: Importera publikationer och spellistor
+- **Spellistan för offentliga föredrag (S-34 / S-34mp)** - Importera media med S‐34 eller S‐34mp JWPUB-filer
 
-## Importera och hantera media {#media-import}
+## Hantera importerad media {#managing-imported-media}
 
 ### Importera anpassad media {#importing-custom-media}
 
@@ -236,17 +237,17 @@ Lägg till dina egna mediefiler till M³:
 - **Redigera egenskaper** - Ändra rubriker, beskrivningar och timing
 - **Ta bort mediefiler** - Ta bort oönskade medieobjekt
 
-### Importera ljudbibeln {#audio-bible-import}
+### Ställa in mappbevakning {#folder-monitoring-setup}
 
-Importera ljudinspelningar av Bibelverser:
+Bevaka en mapp för nya mediefiler:
 
-1. Klicka på knappen "Ljudbibel"
-2. Välja Bibelbok och kapitel
+1. **Aktivera mappbevakning** - Slå på mappbevakning i inställningar
+2. **Välj mapp** - Välj den mapp som ska bevakas
 3. Välj specifika verser eller versintervall
-4. Ladda ner ljudfilerna
+4. **Organiserat** - Filerna organiseras efter datum baserat på mappstrukturen
 5. Använd dem
 
-## Mappbevakning och export {#user-guide-folder-monitoring}
+## Mediaexport {#user-guide-media-export}
 
 ### Ställa in mappbevakning {#folder-monitoring-setup}
 
@@ -257,16 +258,16 @@ Bevaka en mapp för nya mediefiler:
 3. **Automatisk import** - Nya filer läggs automatiskt till i M³
 4. **Organiserat** - Filerna organiseras efter datum baserat på mappstrukturen
 
-### Mediaexport {#user-guide-media-export}
+### Visa den officiella websidan {#presenting-the-website}
 
-Exportera media automatiskt till organiserade mappar:
+Dela den officiella websidan på externa skärmar:
 
-1. **Aktivera automatisk export** - Slå på mediaexport i inställningar
-2. **Välj exportera mapp** - Välj var du vill spara exporterade filer
-3. **Automatisk organisering** - Filer organiseras efter datum och mötesdel
+1. **Öppna i webläget** - Klicka på visningsknappen för websidan
+2. **Extern skärm** - Websidan öppnas i ett nytt fönster
+3. **Navigering** - Använd webbläsarkontrollerna för att navigera
 4. **Formatalternativ** - Konvertera filer till MP4 för bättre kompatibilitet
 
-## Visning av websida {#website-presentation}
+## Webinställningar {#website-controls}
 
 ### Visa den officiella websidan {#presenting-the-website}
 
@@ -278,11 +279,11 @@ Dela den officiella websidan på externa skärmar:
 
 ### Webinställningar {#website-controls}
 
-- **Navigering** - Vanliga webbläsarkontroller
-- **Uppdatera** - Ladda om den aktuella sidan
-- **Stäng** - Avsluta websidan visningsläge
+- **Skapa profiler** - Ställ in separata profiler för olika församlingar
+- **Växla profiler** - Använd församlingsväljaren för att växla mellan profiler
+- **Separata inställningar** - Varje profil har sina egna inställningar och media
 
-## Avancerade funktioner {#user-guide-advanced-features}
+## Kortkommandon {#keyboard-shortcuts-guide}
 
 ### Flera församlingar {#user-guide-multiple-congregations}
 
@@ -293,39 +294,39 @@ Hantera flera församlingar eller grupper:
 3. **Separata inställningar** - Varje profil har sina egna inställningar och media
 4. **Delade resurser** - Mediefiler delas mellan profiler när det är möjligt
 
-### Kortkommandon {#keyboard-shortcuts-guide}
+### Vanliga problem {#common-issues}
 
 Ställ in anpassade kortkommandon för snabbare åtkomst:
 
-1. **Aktivera genvägar** - Aktivera kortkommandon i inställningarna
-2. **Ställ in genvägar** - Ställ in genvägar för vanliga åtgärder
-3. **Öva** - Lär dig dina genvägar för snabbare hantering
+1. Kontrollera dina inställningar för mötesschemat
+2. Verifiera internetanslutning
+3. Kontrollera om media är tillgängligt på ditt valda språk
 4. **Anpassa** - Justera genvägar för att passa dina behov
 
-## Felsökning {#troubleshooting-guide}
+## OBS Integrationen fungerar inte {#user-guide-obs-not-working}
 
 ### Vanliga problem {#common-issues}
-
-#### Media laddas inte ner {#user-guide-media-not-downloading}
-
-- Kontrollera dina inställningar för mötesschemat
-- Verifiera internetanslutning
-- Kontrollera om media är tillgängligt på ditt valda språk
-
-#### OBS Integrationen fungerar inte {#user-guide-obs-not-working}
-
-- Verifiera att OBS WebSocket plugin är installerad
-- Kontrollera port- och lösenordsinställningar
-- Kontrollera att OBS körs
 
 #### Ljudproblem i Zoom/OBS {#audio-issues}
 
 - **Inget ljud i Zoom**: Aktivera Original Audio i Zoom-inställningarna och före varje möte
 - **Dålig ljudkvalitet**: Kontrollera de tre ursprungliga ljudrutorna (första två aktiverade, tredje inaktiverade)
 - **Ljud fungerar inte efter omstart av zoom**: Ursprungliga ljudinställningar måste vara aktiverade igen för varje ny Zoom-session
-- **Alternativ lösning**: Använd alternativet "Dela datorljud" i Zoom skärmdelning
 
 #### Prestandaproblem {#user-guide-performance-issues}
+
+- Aktivera extra cache
+- Minska maximal upplösning
+- Rensa gamla cachade filer
+
+#### Språkproblem {#user-guide-language-issues}
+
+- Kontrollera inställningar för mediaspråk
+- Se till att språket är tillgängligt på JW.org
+- Prova ett reservspråk
+- Verifiera dessa språkinställningar
+
+#### Få hjälp {#getting-help}
 
 - Aktivera extra cache
 - Minska maximal upplösning
@@ -339,7 +340,7 @@ Ställ in anpassade kortkommandon för snabbare åtkomst:
 - Prova ett reservspråk
 - Verifiera dessa språkinställningar
 
-### Få hjälp {#getting-help}
+### Före möten {#before-meetings}
 
 Om du stöter på problem:
 
@@ -349,18 +350,18 @@ Om du stöter på problem:
 
 ## Bästa praxis {#best-practices}
 
-### Före möten {#before-meetings}
+### Efter möten {#after-meetings}
 
-1. **Kontrollera nerladdningar** - Se till att alla medier är hämtade
-2. **Testa utrustningen** - Verifiera bildskärmar och ljudarbeten
-3. **Förbered Mediavisning** - Granska och organisera mediet för mötet, se till att inga mediefiler saknas
+1. **Starta bakgrundsmusik** - Starta uppspelning av bakgrundsmusik
+2. **Planera framåt** - Förbered dig för nästa möte genom att se till att allt är på plats
+3. **Städa upp** - Stäng mediaspelaren när du är redo att lämna
 4. **Ställ in ljud** - För hybridmöten, aktivera Original Audio i Zoom eller ställ in "Dela datorljud"
 
-### Under möten {#during-meetings}
+### Regelbundet underhåll {#regular-maintenance}
 
-1. **Håll dig fokuserad** - Använd det rena och störningsfria gränssnittet
-2. **Använd genvägar** - Använd tangentbordsgenvägar för en smidig drift
-3. **Övervaka Audio** - Håll ett öga på volymnivåerna, om det är en del av ditt ansvar
+1. **Uppdatera M³** - Håll programmet uppdaterat
+2. **Rensa cache** - Rensa gamla cachade filer regelbundet
+3. **Kontrollera inställningar** - Granska och uppdatera inställningarna efter behov
 4. **Förbered dig** - Ha nästa medieobjekt redo
 5. **Verifiera ljud** - För hybridmöten, se till att zoomdeltagarna kan höra media
 

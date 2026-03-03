@@ -167,7 +167,7 @@ The date of the next Memorial celebration (beta feature).
 
 **Default**: `false`
 
-### 启用媒体显示功能。这是在第二个显示器上演示媒体所必需的
+### 启用媒体显示功能。这是在第二个显示器上演示媒体所必需的。
 
 <!-- **Setting**: `enableMediaDisplayButton` -->
 
@@ -526,7 +526,7 @@ Language for s字幕语言（可以与媒体语言不同）。
 
 <!-- **Setting**: `disableMediaFetching` -->
 
-完全禁用自动媒体下载。仅用于特殊活动或其他自定义设置的配置文件。 Use this only for profiles that will be used for special events or other custom setups.
+完全禁用自动媒体下载。仅用于特殊活动或其他自定义设置的配置文件。 完全禁用自动媒体下载。仅用于特殊活动或其他自定义设置的配置文件。 Use this only for profiles that will be used for special events or other custom setups.
 
 **Default**: `false`
 

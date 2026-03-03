@@ -89,7 +89,7 @@ For images and videos:
 - **Pan** - Click and drag the thumbnail to move the image around
 - **Reset Zoom** - Click to return to original zoom
 
-#### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
+#### Atalhos de teclado {#user-guide-keyboard-shortcuts}
 
 Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
 
@@ -110,7 +110,7 @@ Configure custom keyboard shortcuts for quick access. Note that no keyboard shor
 
 **Note (\*):** Global shortcut - available even when the app is not focused
 
-## Background Music {#user-guide-background-music}
+## Música de Fundo {#user-guide-background-music}
 
 ### Setting Up Background Music {#background-music-setup}
 
@@ -122,7 +122,7 @@ Background music automatically plays before meetings and stops at the appropriat
 4. **Manual Control** - Use the music button in the status bar to start/stop manually
 5. **Restart** - Resume music after meetings with one click
 
-## Zoom Integration {#user-guide-zoom-integration}
+## Integração com Zoom {#user-guide-zoom-integration}
 
 M³ can integrate with Zoom for automatic screen sharing:
 
@@ -131,7 +131,7 @@ M³ can integrate with Zoom for automatic screen sharing:
 3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
 4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
 
-## OBS Studio Integration {#user-guide-obs-integration}
+## Integração OBS Studio {#user-guide-obs-integration}
 
 ### Setting Up OBS Integration {#user-guide-obs-setup}
 
@@ -227,7 +227,7 @@ Add your own media files to M³:
 2. **Drag and Drop** - Drag files directly into M³
 3. **Folder Monitoring** - Set up a watched folder for automatic imports
 4. **JWPUB Files and Playlists** - Import publications and playlists
-5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
+5. **Mídia de Conversa Pública (S-34 / S-34mp)** - Importe a mídia de palestra pública usando arquivos S├34 ou S├34mp JWPUB
 
 ### Managing Imported Media {#managing-imported-media}
 
@@ -257,7 +257,7 @@ Monitor a folder for new media files:
 3. **Automatic Import** - New files are automatically added to M³
 4. **Organization** - Files are organized by date based on folder structure
 
-### Media Export {#user-guide-media-export}
+### Exportação de Mídia {#user-guide-media-export}
 
 Automatically export media to organized folders:
 
@@ -282,7 +282,7 @@ Share the official website on external displays:
 - **Refresh** - Reload the current page
 - **Close** - Exit website presentation mode
 
-## Advanced Features {#user-guide-advanced-features}
+## Recursos Avançados {#user-guide-advanced-features}
 
 ### Multiple Congregations {#user-guide-multiple-congregations}
 
