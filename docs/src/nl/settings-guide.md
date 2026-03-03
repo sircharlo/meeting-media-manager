@@ -211,7 +211,7 @@ Hoeveel seconden vóór de begintijd van de vergadering de achtergrondmuziek moe
 
 **Standaard**: 60 seconden
 
-#### Music Volume {#music-volume}
+#### Muziekvolume {#music-volume}
 
 <!-- **Setting**: `musicVolume` -->
 

@@ -54,7 +54,7 @@ M³ bevat een installatiewizard die je door de essentiële configuratie loodst:
 4. Stel het vergaderschema in
 5. Configureer optionele functies zoals OBS-integratie
 
-## Media Management {#faq-media-management}
+## Mediabeheer {#faq-media-management}
 
 ### :desktop_computer: Hoe downloadt M³ media? {#media-download}
 
@@ -91,7 +91,7 @@ Ja! M³ bevat een Audiobijbel-functie waarmee je:
 3. Audio-opnames kunt downloaden
 4. Deze kunt gebruiken tijdens de vergaderingen
 
-## Presentation Features {#faq-presentation-features}
+## Presentatiefuncties {#faq-presentation-features}
 
 ### :tv: Hoe presenteer ik media tijdens vergaderingen? {#present-media}
 
