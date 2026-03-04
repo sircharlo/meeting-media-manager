@@ -140,7 +140,7 @@ The week of the next circuit overseer's visit.
 
 <!-- **Setting**: `memorialDate` -->
 
-La data della prossima celebrazione commemorativa.
+La data della prossima Commemorazione.
 
 **Format**: MM/DD/YYYY
 
