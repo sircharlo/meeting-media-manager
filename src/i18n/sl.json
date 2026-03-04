@@ -329,6 +329,7 @@
   "memorialDate": "Datum spominske slovesnosti",
   "memorialDate-explain": "Če je datum vpisan, bo M³ samodejno poskusil prenesti in pripraviti sliko ozadja za spominsko slovesnost. Slika bo prikazana namesto letnega stavka. Upoštevaj, da je to poskusna funkcija in morda ne bo delovala, kot se pričakuje.",
   "memorialFetchError": "Pridobivanje napisa za spominsko slovesnost in predstavitvenega videoposnetka ni uspelo",
+  "memorialFetchErrorNoBg": "Failed to fetch the Memorial banner. Please ensure that the banner is downloaded and prepared before the Memorial.",
   "memorialFetchSuccess": "Pridobivanje napisa za spominsko slovesnost in predstavitvenega videoposnetka je uspelo",
   "meteredConnection": "Omejena podatkovna povezava",
   "meteredConnection-explain": "To možnost vključi, če imate omejen internet (npr. mobilni podatki). V tem primeru M³ ne bo samodejno prenašal videoposnetkov in datotek, razen če so potrebni za shode v tekočem ali naslednjem dnevu.",
