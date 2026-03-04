@@ -329,6 +329,7 @@
   "memorialDate": "Data da Celebração",
   "memorialDate-explain": "Ao selecionar uma data, o M³ tentará baixar a imagem de fundo para a Celebração que será exibida no lugar do texto do ano. Este é um recurso experimental.",
   "memorialFetchError": "Failed to fetch the Memorial banner and introduction video",
+  "memorialFetchErrorNoBg": "Falha ao buscar o banner Memorial. Certifique-se de que o banner seja baixado e preparado antes do Memorial.",
   "memorialFetchSuccess": "Successfully fetched the Memorial banner and introduction video",
   "meteredConnection": "Conexão de dados limitada",
   "meteredConnection-explain": "Ative esta opção se você tiver internet limitada (como dados móveis). Nesse caso, o M³ não baixará vídeos e arquivos automaticamente, a menos que sejam necessários para reuniões no mesmo dia ou no próximo.",
