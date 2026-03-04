@@ -71,8 +71,6 @@ A médialejátszó többféle vezérlést biztosít:
 
 - **Nagyítás/Pásztázás** - Az egérgörgővel nagyíthat, húzással pásztázhat (képek esetén)
 
-### Haladó Prezentációs Funkciók {#advanced-presentation}
-
 #### Nagyítás és pásztázás {#zoom-pan}
 
 Képek és videók:
@@ -81,7 +79,7 @@ Képek és videók:
 2. Állítsa be a kezdési és befejezési időpontokat
 3. Mentse el a változtatásokat
 
-#### Nagyítás és pásztázás {#zoom-pan}
+### Haladó Prezentációs Funkciók {#advanced-presentation}
 
 **Beépített Média Vezérlők** (amikor a főablak aktív és a médialista látható):
 
