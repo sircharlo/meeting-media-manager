@@ -8,7 +8,7 @@ Este guia abrangente explica todas as configurações disponíveis em M³, organ
 
 <!-- **Setting**: `localAppLang` -->
 
-Escolha o idioma para a interface do M³'s Isso é independente do idioma usado para downloads de mídia. Isso é independente do idioma usado para downloads de mídia. Isso é independente do idioma usado para downloads de mídia. Isso é independente do idioma usado para downloads de mídia. Isso é independente do idioma usado para downloads de mídia. Isso é independente do idioma usado para downloads de mídia. Isso é independente do idioma usado para downloads de mídia.
+Escolha o idioma para a interface do M³'s Isso é independente do idioma usado para downloads de mídia. Isso é independente do idioma usado para downloads de mídia.
 
 **Opções**: Todos os idiomas da interface disponíveis (Inglês, Espanhol, Francês, etc.)
 
