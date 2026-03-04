@@ -92,7 +92,7 @@ Mídias para as reuniões das Testemunhas de Jeová podem ser baixadas automatic
 
 ### Idiomas de interface {#interface-languages}
 
-O próprio M³ foi traduzido para vários idiomas por voluntários. Você pode configurar o idioma que gostaria de ser exibido na interface do M3, independente do idioma usado para downloads de mídia. Isso significa que você pode usar o M3 no seu idioma de preferência, enquanto baixa mídia em qualquer outro idioma suportado.
+O próprio M³ foi traduzido para vários idiomas por voluntários. Você pode configurar o idioma que gostaria de ser exibido na interface do M3, independente do idioma usado para downloads de mídia. Isso significa que você pode usar o M3 no seu idioma de preferência, enquanto baixa mídia em qualquer outro idioma suportado. Isso significa que você pode usar o M3 no seu idioma de preferência, enquanto baixa mídia em qualquer outro idioma suportado.
 
 For details about fallback languages and subtitles, see the [FAQ](faq#language-support).
 

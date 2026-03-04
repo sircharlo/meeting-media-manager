@@ -102,11 +102,11 @@ Configure custom keyboard shortcuts for quick access. Note that no keyboard shor
 
 **Customizable Shortcuts** (when enabled in settings):
 
-- **Media Window** - Open/close media window
-- **Previous/Next Media** - Navigate between media items
-- **Pause/Resume** - Control media playback
-- **Stop Media** - Stop media playback
-- **Music Toggle** - Control background music
+- **Media Window** - Apri/chiudi la finestra multimediale
+- **Media precedente/successivo** - Naviga tra gli elementi multimediali
+- **Pausa/Ripresa** - Controlla la riproduzione multimediale
+- **Stop Media** - Interrompi la riproduzione multimediale
+- **Music Toggle** - Controlla musica di sottofondo
 
 **Note (\*):** Global shortcut - available even when the app is not focused
 
@@ -227,7 +227,7 @@ Add your own media files to M³:
 2. **Drag and Drop** - Drag files directly into M³
 3. **Folder Monitoring** - Set up a watched folder for automatic imports
 4. **JWPUB Files and Playlists** - Import publications and playlists
-5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
+5. **Public Talk Media (S-34 / S-34mp)** - Importa i talk media pubblici utilizzando i file JWPUB S-34 o S-34mp
 
 ### Managing Imported Media {#managing-imported-media}
 

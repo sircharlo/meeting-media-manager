@@ -127,7 +127,7 @@ Background music automatically plays before meetings and stops at the appropriat
 M³ can integrate with Zoom for automatic screen sharing:
 
 1. **Enable Integration** - Turn on Zoom integration in settings
-2. **Configure Shortcut** - Set up the screen sharing keyboard shortcut that is configured in Zoom. Make sure that the "global" checkbox is checked in Zoom.
+2. **Configurați scurtătura** - Configurați scurtătura de partajare a ecranului care este configurată în Zoom. Asigurați-vă că caseta de selectare "global" este bifată în Zoom.
 3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
 4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
 
@@ -159,7 +159,7 @@ M³ automatically switches OBS scenes during presentations:
 Enable this option to delay sharing images to OBS until manually triggered:
 
 1. Enable "Postpone Images" in OBS settings
-2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
+2. Imaginile vor fi partajate doar atunci când faceți clic pe buton pentru a le afișa folosind OBS Studio. Acest lucru este util pentru a arăta imaginile publicului personal mai întâi.
 
 #### Scene Switching Behavior {#user-guide-scene-switching}
 
@@ -195,9 +195,9 @@ If Original Audio doesn't work well in your setup:
 
 #### Why Audio Configuration is Necessary {#why-audio-config}
 
-M³ plays media with sound on your computer, but this audio is **not automatically transmitted** through the video stream to OBS Studio. This is the same behavior you would experience with any other media player.
+M3 redă media cu sunet pe calculatorul tău, dar acest audio nu este **transmis automat** prin fluxul video către OBS Studio. Acesta este acelaşi comportament pe care l-aţi experimenta cu orice alt player media.
 
-**The audio issue is not related to M³** - it's a limitation of how OBS Studio video streaming works with Zoom. The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
+**Problema audio nu este legată de M3** - este o limitare a modului în care OBS Studio video streaming funcționează cu Zoom. Fluxul video se comportă ca o cameră virtuală fără sunet, exact ca o cameră web, deci trebuie să configurați în mod explicit Zoom pentru a captura sunetul calculatorului. Asta implică faptul că calculatorul tău are două carduri de sunet, și dacă nu este așa, probabil nu veţi putea utiliza cu succes integrarea OBS Studio.
 
 **Alternative Solution**: Consider using the Zoom integration instead, as it uses Zoom's native screen and audio sharing, which handles audio more seamlessly.
 
@@ -227,7 +227,7 @@ Add your own media files to M³:
 2. **Drag and Drop** - Drag files directly into M³
 3. **Folder Monitoring** - Set up a watched folder for automatic imports
 4. **JWPUB Files and Playlists** - Import publications and playlists
-5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
+5. **Discount-uri Publice Media (S-34 / S-34mp)** - Importă mass-media de discuții publice folosind fișiere S—34 sau S—34mp JWPUB
 
 ### Managing Imported Media {#managing-imported-media}
 

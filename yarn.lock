@@ -3382,10 +3382,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/core@npm:^10.41.0":
-  version: 10.41.0
-  resolution: "@sentry/core@npm:10.41.0"
-  checksum: 10c0/ec8c357463eeeb7d3afeb1f004ac996e34140b413f8af0aca83a0483a97530153d013e26ad92c3a2b4be36240708a2f315d0ece6b28fe443d11ce684f0a94308
+"@sentry/core@npm:^10.42.0":
+  version: 10.42.0
+  resolution: "@sentry/core@npm:10.42.0"
+  checksum: 10c0/cc51f91c77129a3a4a2d1c9390521617a803e487773a41e32545970a31abc8e7a3b01042caf60e48fd4f46f3114c26b5e176659d2c6283fcaa7b86ee837e72bb
   languageName: node
   linkType: hard
 
@@ -11411,7 +11411,7 @@ __metadata:
     "@quasar/quasar-app-extension-testing-unit-vitest": "npm:1.2.3"
     "@quasar/vite-plugin": "npm:^1.10.0"
     "@rollup/plugin-inject": "npm:^5.0.5"
-    "@sentry/core": "npm:^10.41.0"
+    "@sentry/core": "npm:^10.42.0"
     "@sentry/electron": "npm:^7.9.0"
     "@sentry/esbuild-plugin": "npm:^5.1.1"
     "@sentry/vite-plugin": "npm:^5.1.1"
@@ -11471,14 +11471,14 @@ __metadata:
     pdfjs-dist: "npm:^5.4.449"
     pinia: "npm:^3.0.4"
     pinia-plugin-persistedstate: "npm:^4.7.1"
-    postcss: "npm:^8.5.6"
+    postcss: "npm:^8.5.8"
     prettier: "npm:^3.7.3"
     pretty-bytes: "npm:^7.1.0"
     process-nextick-args: "npm:^2.0.1"
     quasar: "npm:^2.18.6"
     readable-stream: "npm:^4.7.0"
     require-in-the-middle: "npm:^8.0.1"
-    rollup-plugin-visualizer: "npm:^7.0.0"
+    rollup-plugin-visualizer: "npm:^7.0.1"
     sanitize-filename: "npm:^1.6.3"
     type-fest: "npm:^5.4.4"
     typescript: "npm:~5.9.3"
@@ -13231,6 +13231,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postcss@npm:^8.5.8":
+  version: 8.5.8
+  resolution: "postcss@npm:8.5.8"
+  dependencies:
+    nanoid: "npm:^3.3.11"
+    picocolors: "npm:^1.1.1"
+    source-map-js: "npm:^1.2.1"
+  checksum: 10c0/dd918f7127ee7c60a0295bae2e72b3787892296e1d1c3c564d7a2a00c68d8df83cadc3178491259daa19ccc54804fb71ed8c937c6787e08d8bd4bedf8d17044c
+  languageName: node
+  linkType: hard
+
 "postgres-array@npm:~2.0.0":
   version: 2.0.0
   resolution: "postgres-array@npm:2.0.0"
@@ -13900,9 +13911,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-visualizer@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "rollup-plugin-visualizer@npm:7.0.0"
+"rollup-plugin-visualizer@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "rollup-plugin-visualizer@npm:7.0.1"
   dependencies:
     open: "npm:^11.0.0"
     picomatch: "npm:^4.0.2"
@@ -13918,7 +13929,7 @@ __metadata:
       optional: true
   bin:
     rollup-plugin-visualizer: dist/bin/cli.js
-  checksum: 10c0/5fa6f0cdf9029dad7a5730583e7ebd387d62012185e45180aa2059b44990dec7e0be7620f374df5c4c350c45d94a7741897274cfff656e78ea3bcc3ca568ebd7
+  checksum: 10c0/8ca591a465554d7a4a348538b35acd8eb796156fe24fb7252457640fa49a5aa399962e2cabb542ae8590a391918ae2927ed492081e5598977f3a69b91d0042f4
   languageName: node
   linkType: hard
 

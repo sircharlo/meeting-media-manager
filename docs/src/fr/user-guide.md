@@ -48,7 +48,7 @@ La vue calendrier affiche votre horaire de réunions et les médias disponibles 
 
 M³ organise automatiquement les médias par type de réunion et section :
 
-- **Sections de réunion** - Les médias sont regroupés par parties de réunion (Causerie publique, Joyaux de la Parole de Dieu, etc.)
+- **Sections de réunion** - Les médias sont regroupés par parties de réunion (discours public, joyaux, etc.)
 - **Sections personnalisées** - Vous pouvez créer des sections personnalisées pour des médias supplémentaires si aucune réunion n'est programmée ce jour-là
 
 ## Présentation des médias {#media-presentation}
@@ -178,7 +178,7 @@ Lorsque vous utilisez M³ avec OBS Studio pour des réunions hybrides (en person
 
 1. **Ouvrez Zoom** et allez dans Paramètres
 2. **Naviguez vers Audio** → **Avancé**
-3. **Activez « Afficher l'option de réunion pour 'Activer le son original'"**
+3. **Activez "Afficher l'option de réunion pour 'Activer le son d'origine"**
 4. **Cochez « Désactiver l'annulation d'écho »** (première case à cocher)
 5. **Cochez « Désactiver la suppression de bruit »** (deuxième case à cocher)
 6. **Décochez « Désactiver le mode musique haute fidélité »** (troisième case à cocher)
@@ -191,7 +191,7 @@ Si l'Audio original ne fonctionne pas bien dans votre configuration :
 2. **Cochez « Partager le son de l'ordinateur »**
 3. **Note** : Cette option doit être activée chaque fois que vous démarrez une nouvelle session Zoom
 
-**Meilleure alternative** : Envisagez d'utiliser l'intégration Zoom de M³ au lieu d'OBS Studio, car elle utilise le partage d'écran natif de Zoom qui gère l'audio plus facilement et ne nécessite pas de configuration audio complexe.
+**Solution alternative** : Envisagez d'utiliser l'intégration Zoom à la place, car elle utilise le partage d'écran et audio natif de Zoom, qui gère l'audio plus facilement.
 
 #### Pourquoi la configuration audio est nécessaire {#why-audio-config}
 
@@ -199,7 +199,7 @@ M³ joue les médias avec du son sur votre ordinateur, mais cet audio **n'est pa
 
 **Le problème audio n'est pas lié à M³** - c'est une limitation de la façon dont le streaming vidéo d'OBS Studio fonctionne avec Zoom. Le flux vidéo agit comme une caméra virtuelle sans son, tout comme une webcam, vous devez donc configurer explicitement Zoom pour capturer l'audio de l'ordinateur. Cela implique que votre ordinateur a deux cartes son, et si ce n'est pas le cas, vous ne pourrez probablement pas utiliser l'intégration OBS Studio avec succès.
 
-**Solution alternative** : Envisagez d'utiliser l'intégration Zoom à la place, car elle utilise le partage d'écran et audio natif de Zoom, qui gère l'audio plus facilement.
+**Meilleure alternative** : Envisagez d'utiliser l'intégration Zoom de M³ au lieu d'OBS Studio, car elle utilise le partage d'écran natif de Zoom qui gère l'audio plus facilement et ne nécessite pas de configuration audio complexe.
 
 #### Résolution des problèmes audio {#audio-troubleshooting}
 
@@ -217,7 +217,7 @@ M³ joue les médias avec du son sur votre ordinateur, mais cet audio **n'est pa
 - **Envisagez d'utiliser l'intégration Zoom au lieu d'OBS Studio** pour une gestion audio plus simple
 - Assurez-vous que tous les opérateurs audiovisuels connaissent ces paramètres
 
-## Import et gestion des médias {#media-import}
+## Gérer les médias importés {#media-import}
 
 ### Importer des médias personnalisés {#importing-custom-media}
 
@@ -229,7 +229,7 @@ Ajoutez vos propres fichiers multimédias à M³ :
 4. **Fichiers JWPUB et listes de lecture** - Importez des publications et des listes de lecture
 5. **Médias pour discours publics (S-34 / S-34mp)** - Importez des médias pour discours publics à l'aide de fichiers JWPUB S‑34 ou S‑34mp
 
-### Gérer les médias importés {#managing-imported-media}
+### Import et gestion des médias {#managing-imported-media}
 
 - **Organiser par date** - Assignez les médias importés à des dates spécifiques
 - **Sections personnalisées** - Créez des sections personnalisées pour l'organisation

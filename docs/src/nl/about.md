@@ -16,11 +16,11 @@ Deze app stond vroeger bekend als JWMMF (JW Meeting Media Fetcher), maar werd in
 
 ## Waarom M³? {#why-choose-m3}
 
-M³ is de ultieme tool om vergadermedia te beheren en biedt een naadloze, betrouwbare en veelzijdige ervaring op verschillende platformen. Het is speciaal ontworpen voor de behoeften van gemeentevergaderingen en biedt alles wat nodig is voor een effectieve mediapresentatie.
+M³ is de ultieme tool om vergadering media te beheren en biedt een naadloos, betrouwbaar en veelzijdige ervaring op verschillende platformen. Het is speciaal ontworpen voor de behoeften van gemeentevergaderingen en biedt alles wat nodig is voor een effectieve mediapresentatie.
 
 ### Belangrijke voordelen {#key-benefits}
 
-- **Moeiteloze mediapresentatie**: Mediapresentatie op zijn best — open M³ en alles werkt. Geen complexe set-up of extra stappen vereist.
+- **Eenvoudige mediapresentatie**: Presentatie media op zijn toppunt - open M³ en alles werkt. Geen complexe set-up of extra stappen vereist.
 
 - **Ondersteuning voor meerdere gemeenten**: Beheer instellingen voor meerdere gemeenten of groepen binnen een enkele applicatie.
 

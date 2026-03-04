@@ -292,7 +292,7 @@ Bedankt voor je interesse om het project te ondersteunen! Echter, in de geest va
 M³ is ontworpen om te werken op een breed scala aan besturingssystemen:
 
 - **Windows**: Windows 10 en later (64-bits- en 32-bitsversies beschikbaar)
-- **macOS**: macOS 10.15 (Catalina) en later (Universal-build)
+- **macOS**: macOS 10.15 (Catalina) en later (Universele build)
 - **Linux**: De meeste moderne Linux-distributies (AppImage-formaat)
 
 M³ heeft de volgende hardwarevereisten:

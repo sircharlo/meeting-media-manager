@@ -191,7 +191,7 @@ Wenn der Originalton in Ihrem Setup nicht gut funktioniert:
 2. **Aktivieren Sie "Computerton teilen"**
 3. **Hinweis**: Diese Option muss jedes Mal aktiviert werden, wenn Sie eine neue Zoom-Sitzung starten
 
-**Beste Alternative**: Ziehen Sie in Betracht, die Zoom-Integration von M³ anstelle von OBS Studio zu verwenden, da diese die native Bildschirmfreigabe von Zoom verwendet, die Audio nahtloser verarbeitet und keine komplexe Audiokonfiguration erfordert.
+**Alternative Lösung**: Ziehen Sie in Betracht, stattdessen die Zoom-Integration zu verwenden, da diese die native Bildschirm- und Audiofreigabe von Zoom verwendet, die Audio nahtloser verarbeitet.
 
 #### Warum Audiokonfiguration notwendig ist {#why-audio-config}
 
@@ -199,7 +199,7 @@ M³ spielt Medien mit Ton auf Ihrem Computer ab, aber dieses Audio wird **nicht 
 
 **Das Audioproblem liegt nicht bei M³** - es ist eine Einschränkung, wie OBS Studio-Videostreaming mit Zoom funktioniert. Der Videostream fungiert wie eine virtuelle Kamera ohne Ton, genau wie eine Webcam, daher müssen Sie Zoom explizit so konfigurieren, dass es das Audio des Computers aufnimmt. Dies setzt voraus, dass Ihr Computer über zwei Soundkarten verfügt. Wenn dies nicht der Fall ist, können Sie die OBS Studio-Integration wahrscheinlich nicht erfolgreich verwenden.
 
-**Alternative Lösung**: Ziehen Sie in Betracht, stattdessen die Zoom-Integration zu verwenden, da diese die native Bildschirm- und Audiofreigabe von Zoom verwendet, die Audio nahtloser verarbeitet.
+**Beste Alternative**: Ziehen Sie in Betracht, die Zoom-Integration von M³ anstelle von OBS Studio zu verwenden, da diese die native Bildschirmfreigabe von Zoom verwendet, die Audio nahtloser verarbeitet und keine komplexe Audiokonfiguration erfordert.
 
 #### Fehlerbehebung bei Audioproblemen {#audio-troubleshooting}
 
@@ -217,7 +217,7 @@ M³ spielt Medien mit Ton auf Ihrem Computer ab, aber dieses Audio wird **nicht 
 - **Ziehen Sie in Betracht, die Zoom-Integration anstelle von OBS Studio zu verwenden** für eine einfachere Audiohandhabung
 - Stellen Sie sicher, dass alle AV-Operatoren mit diesen Einstellungen vertraut sind
 
-## Medienimport und -verwaltung {#media-import}
+## Verwalten importierter Medien {#managing-imported-media}
 
 ### Benutzerdefinierte Medien importieren {#importing-custom-media}
 
@@ -229,7 +229,7 @@ Fügen Sie Ihre eigenen Mediendateien zu M³ hinzu:
 4. **JWPUB-Dateien und Wiedergabelisten** - Importieren Sie Publikationen und Wiedergabelisten
 5. **Medien für öffentliche Vorträge (S-34 / S-34mp)** - Importieren Sie Medien für öffentliche Vorträge mithilfe von S‑34 oder S‑34mp JWPUB-Dateien
 
-### Verwalten importierter Medien {#managing-imported-media}
+### Medienimport und -verwaltung {#media-import}
 
 - **Nach Datum organisieren** - Weisen Sie importierte Medien bestimmten Daten zu
 - **Benutzerdefinierte Abschnitte** - Erstellen Sie benutzerdefinierte Abschnitte zur Organisation
@@ -242,7 +242,7 @@ Importieren Sie Audioaufnahmen von Bibelversen:
 
 1. Klicken Sie auf die Schaltfläche "Audio-Bibel"
 2. Wählen Sie das Bibelbuch und Kapitel aus
-3. Wählen Sie bestimmte Verse oder Versbereiche aus
+3. Bestimmte Verse oder Versbereiche auswählen können
 4. Laden Sie die Audiodateien herunter
 5. Verwenden Sie sie
 
@@ -349,7 +349,7 @@ Wenn Sie auf Probleme stoßen:
 
 ## Bewährte Methoden {#best-practices}
 
-### Vor Zusammenkünften {#before-meetings}
+### Nach Zusammenkünften {#after-meetings}
 
 1. **Downloads prüfen** - Stellen Sie sicher, dass alle Medien heruntergeladen sind
 2. **Ausrüstung testen** - Überprüfen Sie, ob Displays und Audio funktionieren
@@ -364,7 +364,7 @@ Wenn Sie auf Probleme stoßen:
 4. **Vorbereitet sein** - Halten Sie das nächste Medienelement bereit
 5. **Audio verifizieren** - Stellen Sie bei hybriden Zusammenkünften sicher, dass Zoom-Teilnehmer die Medien hören können
 
-### Nach Zusammenkünften {#after-meetings}
+### Vor Zusammenkünften {#before-meetings}
 
 1. **Hintergrundmusik starten** - Starten Sie die Wiedergabe der Hintergrundmusik
 2. **Vorausplanen** - Bereiten Sie sich auf die nächste Zusammenkunft vor, indem Sie sicherstellen, dass alles an seinem Platz ist

@@ -91,7 +91,7 @@ For images and videos:
 
 #### Keyboard Shortcuts {#user-guide-keyboard-shortcuts}
 
-Configure custom keyboard shortcuts for quick access. Note that no keyboard shortcuts are set by default.
+Ρύθμιση προσαρμοσμένων συντομεύσεων πληκτρολογίου για γρήγορη πρόσβαση. Σημειώστε ότι δεν έχουν οριστεί συντομεύσεις πληκτρολογίου.
 
 **Built-in Media Controls** (when main window is focused and showing the media list):
 
@@ -102,11 +102,11 @@ Configure custom keyboard shortcuts for quick access. Note that no keyboard shor
 
 **Customizable Shortcuts** (when enabled in settings):
 
-- **Media Window** - Open/close media window
-- **Previous/Next Media** - Navigate between media items
-- **Pause/Resume** - Control media playback
-- **Stop Media** - Stop media playback
-- **Music Toggle** - Control background music
+- **Παράθυρο Πολυμέσων** - Άνοιγμα/κλείσιμο παραθύρου πολυμέσων
+- **Προηγούμενο/Επόμενο Media** - Πλοήγηση μεταξύ στοιχείων πολυμέσων
+- **Παύση/Συνέχεια** - Έλεγχος αναπαραγωγής πολυμέσων
+- **Διακοπή Media** - Διακοπή της αναπαραγωγής πολυμέσων
+- **Εναλλαγή μουσικής** - Έλεγχος μουσικής υπόκρουσης
 
 **Note (\*):** Global shortcut - available even when the app is not focused
 
@@ -127,7 +127,7 @@ Background music automatically plays before meetings and stops at the appropriat
 M³ can integrate with Zoom for automatic screen sharing:
 
 1. **Enable Integration** - Turn on Zoom integration in settings
-2. **Configure Shortcut** - Set up the screen sharing keyboard shortcut that is configured in Zoom. Make sure that the "global" checkbox is checked in Zoom.
+2. **Ρύθμιση συντόμευσης** - Ρυθμίστε τη συντόμευση μοιράσματος πληκτρολογίου οθόνης που έχει ρυθμιστεί κατά τη μεγέθυνση. Βεβαιωθείτε ότι το "καθολικό" πλαίσιο ελέγχου είναι ενεργοποιημένο στο Zoom.
 3. **Automatic Control** - M³ will automatically toggle screen sharing in Zoom as needed
 4. **Manual Override** - You can still manually control screen sharing using Zoom if needed
 
@@ -159,7 +159,7 @@ M³ automatically switches OBS scenes during presentations:
 Enable this option to delay sharing images to OBS until manually triggered:
 
 1. Enable "Postpone Images" in OBS settings
-2. Images will only be shared when you click the button to show them using OBS Studio. This is useful for showing images to in-person audience first.
+2. Οι εικόνες θα κοινοποιηθούν μόνο όταν κάνετε κλικ στο κουμπί για να τις εμφανίσετε χρησιμοποιώντας το OBS Studio. Αυτό είναι χρήσιμο για την εμφάνιση εικόνων σε πρόσωπο ακροατήριο πρώτα.
 
 #### Scene Switching Behavior {#user-guide-scene-switching}
 
@@ -195,9 +195,9 @@ If Original Audio doesn't work well in your setup:
 
 #### Why Audio Configuration is Necessary {#why-audio-config}
 
-M³ plays media with sound on your computer, but this audio is **not automatically transmitted** through the video stream to OBS Studio. This is the same behavior you would experience with any other media player.
+Το M3 αναπαράγει πολυμέσα με ήχο στον υπολογιστή σας, αλλά αυτός ο ήχος **δεν μεταδίδεται αυτόματα** μέσω της ροής βίντεο στο OBS Studio. Αυτή είναι η ίδια συμπεριφορά που θα βιώσετε με οποιοδήποτε άλλο media player.
 
-**The audio issue is not related to M³** - it's a limitation of how OBS Studio video streaming works with Zoom. The video stream acts like a virtual camera without sound, just like a webcam, so you must explicitly configure Zoom to capture the computer's audio. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
+**Το πρόβλημα ήχου δεν σχετίζεται με το M3** - είναι ένας περιορισμός του πώς λειτουργεί η ροή βίντεο OBS Studio με Zoom. Η ροή βίντεο λειτουργεί σαν μια εικονική φωτογραφική μηχανή χωρίς ήχο, ακριβώς όπως μια κάμερα web, έτσι πρέπει να ρυθμίσετε ρητά το Zoom ώστε να καταγράφει τον ήχο του υπολογιστή. Αυτό σημαίνει ότι ο υπολογιστής σας έχει δύο κάρτες ήχου, και αν αυτό δεν συμβαίνει, πιθανότατα δεν θα είστε σε θέση να χρησιμοποιήσετε την ενσωμάτωση του OBS Studio με επιτυχία.
 
 **Alternative Solution**: Consider using the Zoom integration instead, as it uses Zoom's native screen and audio sharing, which handles audio more seamlessly.
 
@@ -227,7 +227,7 @@ Add your own media files to M³:
 2. **Drag and Drop** - Drag files directly into M³
 3. **Folder Monitoring** - Set up a watched folder for automatic imports
 4. **JWPUB Files and Playlists** - Import publications and playlists
-5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
+5. **Public Talk Media (S-34 / S-34mp)** - Εισαγωγή δημόσιων μέσων ενημέρωσης μέσω των αρχείων S‐34 ή S‐34mp JWPUB
 
 ### Managing Imported Media {#managing-imported-media}
 

@@ -456,7 +456,7 @@ Indien mogelijk afbeeldingen van voetnoten uitsluiten van mediadownloads.
 
 <!-- **Setting**: `excludeTh` -->
 
-Media uit de *Onderwijzen*-brochure (*th*) uitsluiten van mediadownloads.
+Media uit de _Onderwijzen_-brochure (_th_) uitsluiten van mediadownloads.
 
 **Standaard**: `true`
 

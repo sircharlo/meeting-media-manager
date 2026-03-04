@@ -108,7 +108,7 @@ Configureer aangepaste sneltoetsen voor snelle toegang. Merk op dat er standaard
 
 **Opmerking (\*):** Globale sneltoets - beschikbaar zelfs als de app niet gefocust is
 
-## Background Music {#user-guide-background-music}
+## Achtergrondmuziek {#user-guide-background-music}
 
 ### Achtergrondmuziek instellen {#background-music-setup}
 
@@ -120,7 +120,7 @@ Achtergrondmuziek wordt automatisch afgespeeld vóór vergaderingen en stopt op 
 4. **Handmatige bediening** — Gebruik de muziekknop in de statusbalk om handmatig te starten/stoppen
 5. **Herstarten** — Hervat de muziek na de vergadering met één klik
 
-## Zoom Integration {#user-guide-zoom-integration}
+## Zoom-integratie {#user-guide-zoom-integration}
 
 M³ kan worden geïntegreerd met Zoom voor automatisch schermdelen:
 
@@ -129,7 +129,7 @@ M³ kan worden geïntegreerd met Zoom voor automatisch schermdelen:
 3. **Automatische bediening** — M³ zal Zoom-schermdelen automatisch aan- of uitzetten wanneer dat nodig is
 4. **Handmatig overrulen** — Je kunt schermdelen nog steeds handmatig bedienen in Zoom indien nodig
 
-## OBS Studio Integration {#user-guide-obs-integration}
+## OBS Studio-integratie {#user-guide-obs-integration}
 
 ### OBS-integratie instellen {#user-guide-obs-setup}
 
