@@ -329,7 +329,7 @@
   "memorialDate": "Datum för minneshögtiden",
   "memorialDate-explain": "M³ kommer automatiskt att försöka ladda ner och förbereda bakgrundsbilden för minneshögtiden. Bilden visas istället för årstexten. Se upp för att detta är en experimentell funktion och kanske inte fungerar som förväntat.",
   "memorialFetchError": "Det gick inte att hämta banderollen och introduktionsvideon",
-  "memorialFetchErrorNoBg": "Det gick inte att hämta Memorial bannern. Se till att bannern laddas ner och förbereds innan Memorial.",
+  "memorialFetchErrorNoBg": "Det gick inte att hämta bannern för minneshögtiden. Se till att bannern laddas ner och förbereds innan minneshögtiden.",
   "memorialFetchSuccess": "Hämtningen av banderollen för minneshögtiden och introduktionsvideon lyckades",
   "meteredConnection": "Begränsad dataanslutning",
   "meteredConnection-explain": "Aktivera detta om du har begränsat internet (såsom mobildata). I det här fallet kommer M³ inte automatiskt att ladda ner videor och filer om de inte behövs för möten på den aktuella dagen eller den nästa.",
