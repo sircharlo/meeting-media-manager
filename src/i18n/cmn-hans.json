@@ -329,6 +329,7 @@
   "memorialDate": "纪念聚会的日期",
   "memorialDate-explain": "如果被输入，M3将自动尝试下载并准备该纪念聚会的背景图像。 图像将被显示而不是全年经文。请注意这是一个实验性功能，可能无法正常工作。",
   "memorialFetchError": "获取纪念聚会横幅和介绍视频失败",
+  "memorialFetchErrorNoBg": "获取纪念广告失败。请确保广告在Memorial之前下载和准备完成。",
   "memorialFetchSuccess": "已成功获取纪念聚会横幅和介绍视频",
   "meteredConnection": "有限的数据连接",
   "meteredConnection-explain": "如果您有有限的互联网(例如移动数据)，请启用此功能。 在这种情况下，M3不会自动下载视频和文件，除非在今天或下一个聚会需要这些视频和文件。",

@@ -329,6 +329,7 @@
   "memorialDate": "Petsa ng Memoryal",
   "memorialDate-explain": "Kung nilagay, awtomatikong susubukang i-download at ihanda ng M³ ang background image para sa Memoryal. Ang larawan ay ipapakita bilang kapalit ng yeartext. Mag-ingat dahil ito ay isang experimental feature at maaaring hindi gumana ayon sa inaasahan.\n",
   "memorialFetchError": "Failed to fetch the Memorial banner and introduction video",
+  "memorialFetchErrorNoBg": "Failed to fetch the Memorial banner. Please ensure that the banner is downloaded and prepared before the Memorial.",
   "memorialFetchSuccess": "Successfully fetched the Memorial banner and introduction video",
   "meteredConnection": "Limited data connection",
   "meteredConnection-explain": "Turn this on if you have limited internet (like mobile data). In this case, M³ won't automatically download videos and files unless they're needed for meetings on either the current day or the next one.",

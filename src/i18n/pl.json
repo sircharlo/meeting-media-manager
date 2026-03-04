@@ -329,6 +329,7 @@
   "memorialDate": "Date of the Memorial",
   "memorialDate-explain": "If entered, M³ will automatically try to download and prepare the background image for the Memorial. The image will be displayed instead of the yeartext. Beware that this is an experimental feature and may not work as expected.",
   "memorialFetchError": "Failed to fetch the Memorial banner and introduction video",
+  "memorialFetchErrorNoBg": "Nie udało się pobrać banera Pamięć. Upewnij się, że baner jest pobierany i przygotowywany przed Memoriałem.",
   "memorialFetchSuccess": "Successfully fetched the Memorial banner and introduction video",
   "meteredConnection": "Limited data connection",
   "meteredConnection-explain": "Turn this on if you have limited internet (like mobile data). In this case, M³ won't automatically download videos and files unless they're needed for meetings on either the current day or the next one.",

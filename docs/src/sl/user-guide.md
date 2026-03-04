@@ -205,7 +205,7 @@ If Original Audio doesn't work well in your setup:
 
 M³ predvaja multimedijsko vsebino z zvokom na vašem računalniku, vendar se ta zvok **ne prenaša samodejno** prek video prenosa v OBS Studio. To velja za vse predvajalnike multimedijskih datotek.
 
-**Težava z zvokom ni povezana z M³** – gre za omejitev delovanja video prenosa OBS Studio z Zoom. Video tok deluje kot virtualna kamera brez zvoka, podobno kot spletna kamera, zato morate Zoom izrecno nastaviti tako, da zajema zvok računalnika. This implies that your computer has two sound cards, and if this isn't the case, you probably won't be able to use the OBS Studio integration successfully.
+**Težava z zvokom ni povezana z M³** – gre za omejitev delovanja video prenosa OBS Studio z Zoom. Video tok deluje kot virtualna kamera brez zvoka, podobno kot spletna kamera, zato morate Zoom izrecno nastaviti tako, da zajema zvok računalnika. To kaže na to, da ima vaš računalnik dve zvočni kartici. Če jih nima, verjetno ne boste mogli uspešno uporabljati integracije z OBS Studio.
 
 **Alternative Solution**: Consider using the Zoom integration instead, as it uses Zoom's native screen and audio sharing, which handles audio more seamlessly.
 

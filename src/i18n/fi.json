@@ -329,6 +329,7 @@
   "memorialDate": "Muistonvieton päivämäärä",
   "memorialDate-explain": "Jos tämä on täytetty, M³ yrittää automaattisesti ladata ja valmistella taustakuvan muistonviettoa varten. Kuva näytetään vuositekstin sijasta. Huomaa, että tämä on kokeellinen ominaisuus, eikä se välttämättä toimi odotetulla tavalla.",
   "memorialFetchError": "Muistojuhlan bannerin ja esittelyvideon hakeminen epäonnistui",
+  "memorialFetchErrorNoBg": "Muistojuhlan bannerin noutaminen epäonnistui. Varmista, että banneri on ladattu ja valmis ennen Muistojuhlaa.",
   "memorialFetchSuccess": "Muistojuhlan bannerin ja esittelyvideon hakeminen onnistui",
   "meteredConnection": "Rajoitettu datayhteys",
   "meteredConnection-explain": "Ota tämä käyttöön, jos käytössäsi on rajoitettu internetyhteys (esim. mobiilidata). Tällöin M³ ei lataa videoita ja tiedostoja automaattisesti, ellei niitä tarvita tämän päivän tai seuraavan päivän kokouksiin.",

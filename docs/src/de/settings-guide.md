@@ -140,7 +140,7 @@ Die Woche des nächsten Besuchs des Kreisaufsehers.
 
 <!-- **Setting**: `memorialDate` -->
 
-Das Datum der nächsten Gedächtnismahlfeier (Beta-Funktion).
+Das Datum des nächsten Gedenkfestes.
 
 **Format**: MM/TT/JJJJ
 
