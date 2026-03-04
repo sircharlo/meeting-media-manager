@@ -140,7 +140,7 @@ La semaine de la prochaine visite du responsable de circonscription.
 
 <!-- **Setting**: `memorialDate` -->
 
-La date de la prochaine célébration du Mémorial (fonctionnalité bêta).
+La date de la prochaine fête commémorative.
 
 **Format** : MM/JJ/AAAA
 

@@ -69,6 +69,11 @@ Der Medienplayer bietet umfassende Steuerelemente:
 - **Wiedergabe/Pause** - Starten oder pausieren der Medienwiedergabe
 - **Stopp** - Wiedergabe stoppen
 
+<!-- - **Previous/Next** - Navigate between media items
+- **Volume** - Adjust playback volume -->
+
+<!-- - **Fullscreen** - Toggle fullscreen mode -->
+
 - **Zoom/Schwenken** - Mausrad zum Zoomen, Ziehen zum Schwenken (für Bilder)
 
 ### Erweiterte Präsentationsfunktionen {#advanced-presentation}
@@ -76,6 +81,9 @@ Der Medienplayer bietet umfassende Steuerelemente:
 #### Benutzerdefiniertes Timing {#custom-timing}
 
 Legen Sie benutzerdefinierte Start- und Endzeiten für Medien fest:
+
+<!-- 1. Right-click on a media item
+2. Select "Edit Timing" -->
 
 1. Klicken Sie auf die Dauer eines Videos oben links auf dessen Miniaturansicht
 2. Legen Sie Start- und Endzeiten fest
@@ -191,7 +199,7 @@ Wenn der Originalton in Ihrem Setup nicht gut funktioniert:
 2. **Aktivieren Sie "Computerton teilen"**
 3. **Hinweis**: Diese Option muss jedes Mal aktiviert werden, wenn Sie eine neue Zoom-Sitzung starten
 
-**Alternative Lösung**: Ziehen Sie in Betracht, stattdessen die Zoom-Integration zu verwenden, da diese die native Bildschirm- und Audiofreigabe von Zoom verwendet, die Audio nahtloser verarbeitet.
+**Beste Alternative**: Ziehen Sie in Betracht, die Zoom-Integration von M³ anstelle von OBS Studio zu verwenden, da diese die native Bildschirmfreigabe von Zoom verwendet, die Audio nahtloser verarbeitet und keine komplexe Audiokonfiguration erfordert.
 
 #### Warum Audiokonfiguration notwendig ist {#why-audio-config}
 
@@ -199,7 +207,7 @@ M³ spielt Medien mit Ton auf Ihrem Computer ab, aber dieses Audio wird **nicht 
 
 **Das Audioproblem liegt nicht bei M³** - es ist eine Einschränkung, wie OBS Studio-Videostreaming mit Zoom funktioniert. Der Videostream fungiert wie eine virtuelle Kamera ohne Ton, genau wie eine Webcam, daher müssen Sie Zoom explizit so konfigurieren, dass es das Audio des Computers aufnimmt. Dies setzt voraus, dass Ihr Computer über zwei Soundkarten verfügt. Wenn dies nicht der Fall ist, können Sie die OBS Studio-Integration wahrscheinlich nicht erfolgreich verwenden.
 
-**Beste Alternative**: Ziehen Sie in Betracht, die Zoom-Integration von M³ anstelle von OBS Studio zu verwenden, da diese die native Bildschirmfreigabe von Zoom verwendet, die Audio nahtloser verarbeitet und keine komplexe Audiokonfiguration erfordert.
+**Alternative Lösung**: Ziehen Sie in Betracht, stattdessen die Zoom-Integration zu verwenden, da diese die native Bildschirm- und Audiofreigabe von Zoom verwendet, die Audio nahtloser verarbeitet.
 
 #### Fehlerbehebung bei Audioproblemen {#audio-troubleshooting}
 
@@ -217,7 +225,7 @@ M³ spielt Medien mit Ton auf Ihrem Computer ab, aber dieses Audio wird **nicht 
 - **Ziehen Sie in Betracht, die Zoom-Integration anstelle von OBS Studio zu verwenden** für eine einfachere Audiohandhabung
 - Stellen Sie sicher, dass alle AV-Operatoren mit diesen Einstellungen vertraut sind
 
-## Verwalten importierter Medien {#managing-imported-media}
+## Medienimport und -verwaltung {#media-import}
 
 ### Benutzerdefinierte Medien importieren {#importing-custom-media}
 
@@ -229,7 +237,7 @@ Fügen Sie Ihre eigenen Mediendateien zu M³ hinzu:
 4. **JWPUB-Dateien und Wiedergabelisten** - Importieren Sie Publikationen und Wiedergabelisten
 5. **Medien für öffentliche Vorträge (S-34 / S-34mp)** - Importieren Sie Medien für öffentliche Vorträge mithilfe von S‑34 oder S‑34mp JWPUB-Dateien
 
-### Medienimport und -verwaltung {#media-import}
+### Verwalten importierter Medien {#managing-imported-media}
 
 - **Nach Datum organisieren** - Weisen Sie importierte Medien bestimmten Daten zu
 - **Benutzerdefinierte Abschnitte** - Erstellen Sie benutzerdefinierte Abschnitte zur Organisation
@@ -349,7 +357,7 @@ Wenn Sie auf Probleme stoßen:
 
 ## Bewährte Methoden {#best-practices}
 
-### Nach Zusammenkünften {#after-meetings}
+### Vor Zusammenkünften {#before-meetings}
 
 1. **Downloads prüfen** - Stellen Sie sicher, dass alle Medien heruntergeladen sind
 2. **Ausrüstung testen** - Überprüfen Sie, ob Displays und Audio funktionieren
@@ -364,7 +372,7 @@ Wenn Sie auf Probleme stoßen:
 4. **Vorbereitet sein** - Halten Sie das nächste Medienelement bereit
 5. **Audio verifizieren** - Stellen Sie bei hybriden Zusammenkünften sicher, dass Zoom-Teilnehmer die Medien hören können
 
-### Vor Zusammenkünften {#before-meetings}
+### Nach Zusammenkünften {#after-meetings}
 
 1. **Hintergrundmusik starten** - Starten Sie die Wiedergabe der Hintergrundmusik
 2. **Vorausplanen** - Bereiten Sie sich auf die nächste Zusammenkunft vor, indem Sie sicherstellen, dass alles an seinem Platz ist

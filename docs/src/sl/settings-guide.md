@@ -140,7 +140,7 @@ Teden naslednjega obiska okrajnega nadzornika.
 
 <!-- **Setting**: `memorialDate` -->
 
-Datum naslednje spominske slovesnosti (možnost v razvoju).
+The date of the next Memorial celebration.
 
 **Oblika**: DD.MM.LLLL
 
