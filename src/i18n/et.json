@@ -329,6 +329,7 @@
   "memorialDate": "Mälestusõhtu kuupäev",
   "memorialDate-explain": "Kui see sisestatakse, üritab M³ automaatselt alla laadida ja valmistada mälestusõhtu taustapilti ette. Pilt kuvatakse aastateksti asemel. Pane tähele, et see on eksperimentaalne funktsioon ja ei pruugi toimida ootuspäraselt.",
   "memorialFetchError": "Mälestusõhtu pilti ja tutvustus videot ei õnnestunud alla laadida",
+  "memorialFetchErrorNoBg": "Failed to fetch the Memorial banner. Please ensure that the banner is downloaded and prepared before the Memorial.",
   "memorialFetchSuccess": "Mälestusõhtu pilt ja tutvustus videot on edukalt alla laetud",
   "meteredConnection": "Mobiilse interneti ühendus",
   "meteredConnection-explain": "Lülita see sisse, kui kasutad mobiilset internetiühendust (nt mobiilne andmeside). Sel juhul ei lae M³ automaatselt alla videoid ja faile, välja arvatud juhul, kui need on vajalikud kas praeguse või järgmise päeva koosolekute jaoks.",
