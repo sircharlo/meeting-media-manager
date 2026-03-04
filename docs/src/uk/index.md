@@ -9,19 +9,20 @@ hero:
   actions:
     - theme: brand
       text: Download
-      link: /uk/download
+      link: /download
     - theme: brand
       text: Про програму
-      link: /uk/about
+      link: /about
     - theme: brand
       text: User Guide
-      link: /uk/user-guide
+      link: /user-guide
     - theme: brand
       text: Settings Guide
-      link: /uk/settings-guide
+      link: /settings-guide
     - theme: brand
       text: Часті питання
-      link: /uk/faq
+      link: /faq
+
 features:
   - icon: 🚀
     title: Automatic Media Management
