@@ -121,7 +121,7 @@ export type SettingsGroups = Record<SettingsGroupKey, SettingsGroup>;
 
 export interface SettingsItem {
   actions?: SettingsItemAction[];
-  beta?: true;
+  beta?: boolean;
   depends?: (keyof SettingsValues)[] | keyof SettingsValues;
   group: SettingsGroupKey;
   hidden?: boolean;

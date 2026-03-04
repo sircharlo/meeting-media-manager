@@ -1052,6 +1052,12 @@ const checkMemorialDate = async () => {
     if (memorialMedia) {
       if (memorialMedia.bg) {
         postCustomBackground(memorialMedia.bg);
+      } else {
+        createTemporaryNotification({
+          group: 'memorial-fetch-bg',
+          message: t('memorialFetchErrorNoBg'),
+          type: 'negative',
+        });
       }
       if (memorialMedia.introVideos?.length) {
         const mappedVideos = await dynamicMediaMapper(
@@ -1076,6 +1082,13 @@ const checkMemorialDate = async () => {
   } else {
     // If intro section already has items, we still need to set the background
     const bg = await getMemorialBackground();
+    if (!bg) {
+      createTemporaryNotification({
+        group: 'memorial-fetch-bg',
+        message: t('memorialFetchErrorNoBg'),
+        type: 'negative',
+      });
+    }
     postCustomBackground(bg ?? '');
   }
 };

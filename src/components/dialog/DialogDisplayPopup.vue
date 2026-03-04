@@ -690,6 +690,13 @@ const loadMemorialBackground = async (newMediaBackground?: string) => {
     selectedDate.value === currentSettings.value?.memorialDate
   ) {
     bg = await getMemorialBackground();
+    if (!bg) {
+      createTemporaryNotification({
+        group: 'memorial-fetch-bg',
+        message: t('memorialFetchErrorNoBg'),
+        type: 'negative',
+      });
+    }
   }
   postCustomBackground(bg ?? '');
 };

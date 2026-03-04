@@ -96,6 +96,16 @@ const { basename, changeExt, dirname, extname, join } = path;
 const isUsablePathCache = new Map<string, boolean>();
 const inFlight = new Map<string, Promise<boolean>>();
 
+const memorialMediaCache = new Map<
+  JwLangCode,
+  { bg: string; introVideos: MultimediaItem[] }
+>();
+
+const memorialMediaInFlight = new Map<
+  JwLangCode,
+  Promise<undefined | { bg: string; introVideos: MultimediaItem[] }>
+>();
+
 const isUsablePath = async (path: string) => {
   if (isUsablePathCache.has(path)) {
     return isUsablePathCache.get(path);
@@ -1346,7 +1356,9 @@ export const getBibleMedia = async (
   }
 };
 
-export const getMemorialMedia = async () => {
+export const getMemorialMedia = async (): Promise<
+  undefined | { bg: string; introVideos: MultimediaItem[] }
+> => {
   try {
     const currentStateStore = useCurrentStateStore();
     const year = new Date().getFullYear().toString().substring(2);
@@ -1358,74 +1370,86 @@ export const getMemorialMedia = async () => {
     ].filter((l): l is JwLangCode => !!l);
 
     for (const langwritten of languages) {
-      const pub: PublicationFetcher = {
-        fileformat: 'JWPUB',
-        langwritten,
-        pub: `mi${year}`,
-      };
-      const db = await getDbFromJWPUB(pub);
+      if (memorialMediaCache.has(langwritten)) {
+        return memorialMediaCache.get(langwritten);
+      }
 
-      if (!db) continue;
+      if (memorialMediaInFlight.has(langwritten)) {
+        return memorialMediaInFlight.get(langwritten);
+      }
 
-      const mediaItems = executeQuery<MultimediaItem>(
-        db,
-        'SELECT * FROM Multimedia ' +
-          (tableExists(db, 'DocumentMultimedia')
+      const fetchPromise = (async () => {
+        try {
+          const pub: PublicationFetcher = {
+            fileformat: 'JWPUB',
+            langwritten,
+            pub: `mi${year}`,
+          };
+          const db = await getDbFromJWPUB(pub);
+
+          if (!db) return undefined;
+
+          const hasDocMM = tableExists(db, 'DocumentMultimedia');
+          const joinDocMM = hasDocMM
             ? 'INNER JOIN DocumentMultimedia ON Multimedia.MultimediaId = DocumentMultimedia.MultimediaId '
-            : '') +
-          'WHERE Multimedia.CategoryType = 26 ' +
-          (tableExists(db, 'DocumentMultimedia')
-            ? 'OR (Multimedia.CategoryType = -1 AND DocumentMultimedia.BeginParagraphOrdinal IS NULL)'
-            : 'OR Multimedia.CategoryType = -1'),
-      );
+            : '';
 
-      if (!mediaItems.length) continue;
+          const bgItems = executeQuery<MultimediaItem>(
+            db,
+            `SELECT * FROM Multimedia ${joinDocMM} WHERE Multimedia.CategoryType = 26`,
+          );
 
-      const results: {
-        bg: string;
-        introVideos: MultimediaItem[];
-        pub: PublicationFetcher;
-      } = {
-        bg: '',
-        introVideos: [],
-        pub,
-      };
+          const videoItems = executeQuery<MultimediaItem>(
+            db,
+            `SELECT * FROM Multimedia ${joinDocMM} WHERE Multimedia.CategoryType = -1` +
+              (hasDocMM
+                ? ' AND DocumentMultimedia.BeginParagraphOrdinal IS NULL'
+                : ''),
+          );
 
-      const memorialMedia: MultimediaItem[] = [];
-      for (const item of mediaItems) {
-        if (
-          item.CategoryType === 26 ||
-          isImage(item.FilePath) ||
-          ((item.CategoryType === -1 || isVideo(item.FilePath)) &&
-            !item.BeginParagraphOrdinal)
-        ) {
-          const parsedItem = await addFullFilePathToMultimediaItem(item, pub);
-          memorialMedia.push(parsedItem);
+          if (!bgItems[0] && !videoItems.length) return undefined;
+
+          const results: {
+            bg: string;
+            introVideos: MultimediaItem[];
+          } = {
+            bg: '',
+            introVideos: [],
+          };
+
+          if (bgItems[0]) {
+            const item = await addFullFilePathToMultimediaItem(bgItems[0], pub);
+            results.bg = item.FilePath;
+          }
+
+          if (videoItems.length) {
+            for (const item of videoItems) {
+              const parsedItem = await addFullFilePathToMultimediaItem(
+                item,
+                pub,
+              );
+              results.introVideos.push(parsedItem);
+            }
+
+            await processMissingMediaInfo({
+              allMedia: results.introVideos,
+              isDynamicMedia: true,
+              meetingDate: currentStateStore.currentSettings?.memorialDate,
+            });
+          }
+
+          if (results.bg || results.introVideos.length) {
+            memorialMediaCache.set(langwritten, results);
+          }
+          return results;
+        } finally {
+          memorialMediaInFlight.delete(langwritten);
         }
-      }
+      })();
 
-      for (const item of memorialMedia) {
-        if (item.CategoryType === 26 && !results.bg) {
-          results.bg = item.FilePath;
-        } else if (
-          (item.CategoryType === -1 || isVideo(item.FilePath)) &&
-          !item.BeginParagraphOrdinal
-        ) {
-          results.introVideos.push(item);
-        }
-      }
-
-      if (results.introVideos.length) {
-        await processMissingMediaInfo({
-          allMedia: results.introVideos,
-          isDynamicMedia: true,
-          meetingDate: currentStateStore.currentSettings?.memorialDate,
-        });
-      }
-
-      if (results.bg || results.introVideos.length) {
-        return results;
-      }
+      memorialMediaInFlight.set(langwritten, fetchPromise);
+      const result = await fetchPromise;
+      if (result) return result;
     }
   } catch (e) {
     errorCatcher(e);

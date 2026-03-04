@@ -124,7 +124,7 @@ export const settingsDefinitions: SettingsItems = {
   memorialDate: {
     group: 'congregationMeetings',
     type: 'date',
-    beta: true,
+    beta: false,
     options: ['futureDate'],
     unless: 'disableMediaFetching',
   },

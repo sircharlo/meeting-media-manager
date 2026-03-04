@@ -452,6 +452,7 @@ const loadFrequentlyUsedDirectories = async (): Promise<Set<string>> => {
         getDir('lff', 0),
         getDir('lmd', 0),
         getDir('lmdv', 0),
+        getDir('ijwbv', 0),
         // Public Talk media
         getDir('S-34', 'any'),
         getDir('S-34mp', 'any'),
