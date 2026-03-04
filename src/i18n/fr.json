@@ -329,6 +329,7 @@
   "memorialDate": "Date du Mémorial",
   "memorialDate-explain": "Si celle-ci est saisie, M³ tentera de télécharger automatiquement l'image de fond pour le Mémorial et de la préparer. L'image sera affichée à la place du texte d'année. Attention, il s'agit d'une fonctionnalité expérimentale qui peut ne pas fonctionner comme prévu.",
   "memorialFetchError": "Échec de la récupération de la bannière et de la vidéo d'accueil pour le Mémorial",
+  "memorialFetchErrorNoBg": "Impossible de récupérer la bannière du Mémorial. Veuillez vous assurer que la bannière est téléchargée et préparée avant le Mémorial.",
   "memorialFetchSuccess": "La bannière et la vidéo d'accueil pour le Mémorial ont été téléchargées avec succès",
   "meteredConnection": "Connexion limitée",
   "meteredConnection-explain": "Activez cette option si vous avez un accès limité à Internet (par exemple, les données mobiles). Dans ce cas, M³ ne téléchargera pas automatiquement les vidéos et les fichiers à moins qu'ils ne soient nécessaires pour la réunion du jour actuel ou du lendemain.",
