@@ -140,7 +140,7 @@ Seuraava **kierrosvalvojan** vierailuviikko.
 
 <!-- **Setting**: `memorialDate` -->
 
-Seuraavan muistomerkin juhlan päivämäärä.
+Seuraavan muistojuhlan päivämäärä.
 
 **Muoto**: KK/PP/VVVV
 
