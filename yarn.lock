@@ -2094,12 +2094,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/api-logs@npm:^0.212.0":
-  version: 0.212.0
-  resolution: "@opentelemetry/api-logs@npm:0.212.0"
+"@opentelemetry/api-logs@npm:^0.213.0":
+  version: 0.213.0
+  resolution: "@opentelemetry/api-logs@npm:0.213.0"
   dependencies:
     "@opentelemetry/api": "npm:^1.3.0"
-  checksum: 10c0/ffcc5cea3565f0f73ffe7cd4ef1fd5ed93f78bcbb695508af733e32a200b65c6f10084df9c616eaad44eb62e64c09675465b4c6ebea10fb125eea89753a183b7
+  checksum: 10c0/74421639d518b6d060aae8b0693feb6e7bcf2674951dfadc5ad111fc7285b1ba403010fbf2c5cd82b84267c31faef0bb72e4d61c008c5ec572471a0100e5c493
   languageName: node
   linkType: hard
 
@@ -3695,13 +3695,6 @@ __metadata:
   version: 0.3.0
   resolution: "@tokenizer/token@npm:0.3.0"
   checksum: 10c0/7ab9a822d4b5ff3f5bca7f7d14d46bdd8432528e028db4a52be7fbf90c7f495cc1af1324691dda2813c6af8dc4b8eb29de3107d4508165f9aa5b53e7d501f155
-  languageName: node
-  linkType: hard
-
-"@trysound/sax@npm:0.2.0":
-  version: 0.2.0
-  resolution: "@trysound/sax@npm:0.2.0"
-  checksum: 10c0/44907308549ce775a41c38a815f747009ac45929a45d642b836aa6b0a536e4978d30b8d7d680bbd116e9dd73b7dbe2ef0d1369dcfc2d09e83ba381e485ecbe12
   languageName: node
   linkType: hard
 
@@ -7738,7 +7731,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dompurify@npm:*, dompurify@npm:^3.3.1":
+"dompurify@npm:*":
   version: 3.3.1
   resolution: "dompurify@npm:3.3.1"
   dependencies:
@@ -7747,6 +7740,18 @@ __metadata:
     "@types/trusted-types":
       optional: true
   checksum: 10c0/fa0a8c55a436ba0d54389195e3d2337e311f56de709a2fc9efc98dbbc7746fa53bb4b74b6ac043b77a279a8f2ebd8685f0ebaa6e58c9e32e92051d529bc0baf8
+  languageName: node
+  linkType: hard
+
+"dompurify@npm:^3.3.2":
+  version: 3.3.2
+  resolution: "dompurify@npm:3.3.2"
+  dependencies:
+    "@types/trusted-types": "npm:^2.0.7"
+  dependenciesMeta:
+    "@types/trusted-types":
+      optional: true
+  checksum: 10c0/8989525f003dd062e829137982b5412143421342991b2732bd621a1efd98b2c3cdc4f37547601d0727d3bc20f1d0eb2a0ecca287d3688f168cdb54ced867ca8f
   languageName: node
   linkType: hard
 
@@ -9278,7 +9283,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fs-extra@npm:^11.1.1, fs-extra@npm:^11.2.0, fs-extra@npm:^11.3.3":
+"fs-extra@npm:^11.1.1, fs-extra@npm:^11.2.0":
   version: 11.3.3
   resolution: "fs-extra@npm:11.3.3"
   dependencies:
@@ -9286,6 +9291,17 @@ __metadata:
     jsonfile: "npm:^6.0.1"
     universalify: "npm:^2.0.0"
   checksum: 10c0/984924ff4104e3e9f351b658a864bf3b354b2c90429f57aec0acd12d92c4e6b762cbacacdffb4e745b280adce882e1f980c485d9f02c453f769ab4e7fc646ce3
+  languageName: node
+  linkType: hard
+
+"fs-extra@npm:^11.3.4":
+  version: 11.3.4
+  resolution: "fs-extra@npm:11.3.4"
+  dependencies:
+    graceful-fs: "npm:^4.2.0"
+    jsonfile: "npm:^6.0.1"
+    universalify: "npm:^2.0.0"
+  checksum: 10c0/e08276f767a62496ae97d711aaa692c6a478177f24a85979b6a2881c9db9c68b8c2ad5da0bcf92c0b2a474cea6e935ec245656441527958fd8372cb647087df0
   languageName: node
   linkType: hard
 
@@ -10142,9 +10158,9 @@ __metadata:
   linkType: hard
 
 "immutable@npm:^5.0.2":
-  version: 5.1.4
-  resolution: "immutable@npm:5.1.4"
-  checksum: 10c0/f1c98382e4cde14a0b218be3b9b2f8441888da8df3b8c064aa756071da55fbed6ad696e5959982508456332419be9fdeaf29b2e58d0eadc45483cc16963c0446
+  version: 5.1.5
+  resolution: "immutable@npm:5.1.5"
+  checksum: 10c0/8017ece1578e3c5939ba3305176aee059def1b8a90c7fa2a347ef583ebbd38cbe77ce1bbd786a5fab57e2da00bbcb0493b92e4332cdc4e1fe5cfb09a4688df31
   languageName: node
   linkType: hard
 
@@ -10933,9 +10949,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:^16.3.1":
-  version: 16.3.1
-  resolution: "lint-staged@npm:16.3.1"
+"lint-staged@npm:^16.3.2":
+  version: 16.3.2
+  resolution: "lint-staged@npm:16.3.2"
   dependencies:
     commander: "npm:^14.0.3"
     listr2: "npm:^9.0.5"
@@ -10945,7 +10961,7 @@ __metadata:
     yaml: "npm:^2.8.2"
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: 10c0/9aed98ab759c7acdcfb969c3c09b24597bd6717771ab1f1eec571038713bd0d0ad80304d0a737e5b7b7c64141e4ff9489022448492353f5d1b476223c43f40bc
+  checksum: 10c0/4cbaa85904a912215660ac3c69400b71beabe3fe7e82969cd32c726dbfb04b0f651d0660906215f955c1446ac6b520319e1c7a03c707353a5f038c3d0441a8c3
   languageName: node
   linkType: hard
 
@@ -11402,7 +11418,7 @@ __metadata:
     "@intlify/unplugin-vue-i18n": "npm:^11.0.7"
     "@jitsi/robotjs": "npm:^0.6.21"
     "@numairawan/video-duration": "npm:^1.0.0"
-    "@opentelemetry/api-logs": "npm:^0.212.0"
+    "@opentelemetry/api-logs": "npm:^0.213.0"
     "@pinia/testing": "npm:^1.0.3"
     "@quasar/app-vite": "npm:^2.4.1"
     "@quasar/extras": "npm:^1.17.0"
@@ -11443,7 +11459,7 @@ __metadata:
     chokidar: "npm:^5.0.0"
     core-util-is: "npm:^1.0.3"
     countries-and-timezones: "npm:^3.8.0"
-    dompurify: "npm:^3.3.1"
+    dompurify: "npm:^3.3.2"
     electron: "npm:38.2.2"
     electron-builder: "npm:26.8.1"
     electron-dl-manager: "npm:^4.2.3"
@@ -11453,13 +11469,13 @@ __metadata:
     eslint-plugin-vue: "npm:^10.8.0"
     fluent-ffmpeg: "npm:^2.1.3"
     fontkit: "npm:^2.0.4"
-    fs-extra: "npm:^11.3.3"
+    fs-extra: "npm:^11.3.4"
     globals: "npm:^17.4.0"
     heic-convert: "npm:^2.1.0"
     husky: "npm:^9.1.7"
     image-size: "npm:^2.0.2"
     is-online: "npm:^12.0.2"
-    lint-staged: "npm:^16.3.1"
+    lint-staged: "npm:^16.3.2"
     lodash-es: "npm:^4.17.23"
     mime: "npm:^4.1.0"
     mousetrap: "npm:^1.6.5"
@@ -14318,6 +14334,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sax@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "sax@npm:1.5.0"
+  checksum: 10c0/bc3b60a7bfecd40b18256596e96b32df2488339ae1e00a77f842b568f0831228a16c3bd357ec500241ec0b9dc7a475a1286427795c4a8c50bb8e8878f3435dd8
+  languageName: node
+  linkType: hard
+
 "schema-utils@npm:^3.0.0":
   version: 3.3.0
   resolution: "schema-utils@npm:3.3.0"
@@ -15139,19 +15162,19 @@ __metadata:
   linkType: hard
 
 "svgo@npm:^3.2.0":
-  version: 3.3.2
-  resolution: "svgo@npm:3.3.2"
+  version: 3.3.3
+  resolution: "svgo@npm:3.3.3"
   dependencies:
-    "@trysound/sax": "npm:0.2.0"
     commander: "npm:^7.2.0"
     css-select: "npm:^5.1.0"
     css-tree: "npm:^2.3.1"
     css-what: "npm:^6.1.0"
     csso: "npm:^5.0.5"
     picocolors: "npm:^1.0.0"
+    sax: "npm:^1.5.0"
   bin:
     svgo: ./bin/svgo
-  checksum: 10c0/a6badbd3d1d6dbb177f872787699ab34320b990d12e20798ecae915f0008796a0f3c69164f1485c9def399e0ce0a5683eb4a8045e51a5e1c364bb13a0d9f79e1
+  checksum: 10c0/06568c6b0430f96748c557f0b17dc7de79b19fa16d13d7523527ede0ec727fc6d8e6a10e13ff106dc4372d2e6063a1dca7c455c495efb1b83857480425f9b965
   languageName: node
   linkType: hard
 
@@ -15270,15 +15293,15 @@ __metadata:
   linkType: hard
 
 "tar@npm:^7.4.3, tar@npm:^7.5.2, tar@npm:^7.5.6, tar@npm:^7.5.7":
-  version: 7.5.9
-  resolution: "tar@npm:7.5.9"
+  version: 7.5.10
+  resolution: "tar@npm:7.5.10"
   dependencies:
     "@isaacs/fs-minipass": "npm:^4.0.0"
     chownr: "npm:^3.0.0"
     minipass: "npm:^7.1.2"
     minizlib: "npm:^3.1.0"
     yallist: "npm:^5.0.0"
-  checksum: 10c0/e870beb1b2477135ca2abe86b2d18f7b35d0a4e3a37bbc523d3b8f7adca268dfab543f26528a431d569897f8c53a7cac745cdfbc4411c2f89aeeacc652b81b0a
+  checksum: 10c0/ed905e4b33886377df6e9206e5d1bd34458c21666e27943f946799416f86348c938590d573d6a69312cb29c583b122647a64ec92782f2b7e24e68d985dd72531
   languageName: node
   linkType: hard
 

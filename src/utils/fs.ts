@@ -19,7 +19,7 @@ const {
 
 const isUsablePathPromises: Record<string, Promise<boolean>> = {};
 const isUsablePath = (path: string) => {
-  if (isUsablePathPromises[path]) return isUsablePathPromises[path];
+  if (path in isUsablePathPromises) return isUsablePathPromises[path];
   isUsablePathPromises[path] = isUsablePathRaw(path);
   return isUsablePathPromises[path];
 };

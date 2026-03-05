@@ -68,6 +68,12 @@ Odtwarzacz multimediów zapewnia wszechstronne sterowanie:
 
 - **Odtwórz/Wstrzymaj** - Rozpocznij lub wstrzymaj odtwarzanie multimediów
 - **Stop** - Zatrzymaj odtwarzanie
+
+<!-- - **Previous/Next** - Navigate between media items
+- **Volume** - Adjust playback volume -->
+
+<!-- - **Fullscreen** - Toggle fullscreen mode -->
+
 - **Zoom/Pan** - Użyj kółka myszy, aby powiększyć, przeciągnij do panewki (dla zdjęć)
 
 ### Zaawansowane funkcje prezentacji {#advanced-presentation}
@@ -75,6 +81,9 @@ Odtwarzacz multimediów zapewnia wszechstronne sterowanie:
 #### Niestandardowy czas {#custom-timing}
 
 Ustaw niestandardowe godziny rozpoczęcia i zakończenia dla mediów:
+
+<!-- 1. Right-click on a media item
+2. Select "Edit Timing" -->
 
 1. Kliknij na czas trwania filmu w lewym górnym rogu miniatury
 2. Ustaw godziny rozpoczęcia i zakończenia
@@ -190,7 +199,7 @@ Jeśli oryginalny dźwięk nie działa prawidłowo w Twojej konfiguracji:
 2. **Sprawdź "Udostępnij dźwięk komputera"**
 3. **Uwaga**: Ta opcja musi być włączona za każdym razem, gdy rozpoczniesz nową sesję powiększenia
 
-**Najlepsza alternatywa**: Rozważ użycie integracji powiększenia M3 zamiast OBS Studio, ponieważ używa natywnego udostępniania ekranu Zoom, który obsługuje dźwięk bardziej płynnie i nie wymaga skomplikowanej konfiguracji dźwięku.
+**Alternatywne rozwiązanie**: Rozważ skorzystanie z integracji z Zoom, ponieważ używa wbudowanego ekranu i współdzielenia dźwięków w Zoom, które obsługuje dźwięk w sposób bardziej płynny.
 
 #### Dlaczego konfiguracja audio jest niezbędna {#why-audio-config}
 
@@ -198,7 +207,7 @@ M3 odtwarza multimedia z dźwiękiem na komputerze, ale to audio \*\*nie jest au
 
 **Problem z dźwiękiem nie jest związany z M3** - to ograniczenie działania strumieniowania wideo OBS Studio z Zoom. Strumień wideo działa jak wirtualna kamera bez dźwięku, podobnie jak kamera internetowa, więc musisz wyraźnie skonfigurować Zoom aby przechwycić dźwięk komputera. Oznacza to, że Twój komputer ma dwie karty dźwiękowe, a jeśli tak nie jest, prawdopodobnie nie będziesz w stanie pomyślnie użyć integracji z OBS Studio.
 
-**Alternatywne rozwiązanie**: Rozważ skorzystanie z integracji z Zoom, ponieważ używa wbudowanego ekranu i współdzielenia dźwięków w Zoom, które obsługuje dźwięk w sposób bardziej płynny.
+**Najlepsza alternatywa**: Rozważ użycie integracji powiększenia M3 zamiast OBS Studio, ponieważ używa natywnego udostępniania ekranu Zoom, który obsługuje dźwięk bardziej płynnie i nie wymaga skomplikowanej konfiguracji dźwięku.
 
 #### Rozwiązywanie problemów z dźwiękiem {#audio-troubleshooting}
 
@@ -216,7 +225,7 @@ M3 odtwarza multimedia z dźwiękiem na komputerze, ale to audio \*\*nie jest au
 - **Rozważ użycie integracji powiększenia zamiast OBS Studio** dla prostszej obsługi dźwięku
 - Upewnij się, że wszyscy operatorzy AV są znani z tymi ustawieniami
 
-## Import i zarządzanie multimediami {#media-import}
+## Zarządzanie importowanymi mediami {#managing-imported-media}
 
 ### Importowanie niestandardowych mediów {#importing-custom-media}
 
@@ -228,7 +237,7 @@ Dodaj własne pliki multimedialne do M3:
 4. **Pliki JWPUB i playlisty** - Importuj publikacje i playlisty
 5. **Public Talk Media (S-34 / S-34mp)** - Importuj publiczne media do rozmów za pomocą plików S-34 lub S-34mp JWPUB
 
-### Zarządzanie importowanymi mediami {#managing-imported-media}
+### Import i zarządzanie multimediami {#media-import}
 
 - **Organizuj według daty** - Przypisz zaimportowane media do określonych dat
 - **Niestandardowe sekcje** - Utwórz własne sekcje dla organizacji
@@ -348,7 +357,7 @@ Jeśli napotkasz problemy:
 
 ## Najlepsze praktyki {#best-practices}
 
-### Przed spotkaniami {#before-meetings}
+### Po spotkaniach {#after-meetings}
 
 1. **Sprawdź pobierania** - Upewnij się, że wszystkie media są pobierane
 2. **Wyposażenie testowe** - Sprawdzanie wyświetlaczy i pracy audio
@@ -363,7 +372,7 @@ Jeśli napotkasz problemy:
 4. **Bądź gotowy** - Przygotuj następny element multimedialny
 5. **Zweryfikuj audio** - Na spotkaniach hybrydowych upewnij się, że uczestnicy powiększenia mogą usłyszeć media
 
-### Po spotkaniach {#after-meetings}
+### Przed spotkaniami {#before-meetings}
 
 1. **Uruchom muzykę w tle** - Rozpocznij odtwarzanie muzyki w tle
 2. **Zaplanuj Ahead** - Przygotuj się na następne spotkanie upewniając się, że wszystko jest gotowe

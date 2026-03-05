@@ -140,7 +140,7 @@ A hét, amikor a körzetfelvigyázó meglátogatja a gyülekezetet.
 
 <!-- **Setting**: `memorialDate` -->
 
-A következő Emlékünnep időpontja (béta funkció).
+The date of the next Memorial celebration.
 
 **Formátum**: HH/NN/ÉÉÉÉ
 

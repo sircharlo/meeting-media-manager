@@ -329,6 +329,7 @@
   "memorialDate": "기념식 날짜",
   "memorialDate-explain": "이 값이 지정된 경우 M³는 기념식 일자에 자동으로 기념식 배경 화면을 다운로드하여 표시합니다. 기념식 배경 화면이 연표어 대신 표시됩니다. 이 기능은 실험적 기능이며 예상대로 동작하지 않을 수 있습니다.",
   "memorialFetchError": "기념식 배너와 소개 영상을 가져오지 못했습니다",
+  "memorialFetchErrorNoBg": "Failed to fetch the image to de displayed during the Memorial. Please ensure that the image is downloaded and prepared before the Memorial.",
   "memorialFetchSuccess": "기념식 배너와 소개 영상을 성공적으로 가져왔습니다",
   "meteredConnection": "데이터 사용 제한",
   "meteredConnection-explain": "인터넷 사용량이 제한적일 때(예: 모바일 데이터) 켜세요. 이 경우 M³는 당일 또는 다음 날 집회에 필요한 경우가 아니면 동영상과 파일을 자동으로 다운로드하지 않습니다.",
