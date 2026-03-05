@@ -8,14 +8,6 @@ import {
 import { useCurrentStateStore } from 'src/stores/current-state';
 import { computed, ref, watch } from 'vue';
 
-export const defaultAdditionalSection = {
-  config: {
-    bgColor: 'rgb(148, 94, 181)',
-    uniqueId: 'imported-media',
-  },
-  items: [],
-};
-
 export function useMediaSection(mediaList: MediaSectionWithConfig) {
   const currentStateStore = useCurrentStateStore();
   const selectedDateObject = computed(

@@ -124,7 +124,6 @@ import Mousetrap from 'mousetrap';
 import { storeToRefs } from 'pinia';
 import { useMeta, useQuasar } from 'quasar';
 import { useLocale } from 'src/composables/useLocale';
-import { defaultAdditionalSection } from 'src/composables/useMediaSection';
 import { useMediaSectionRepeat } from 'src/composables/useMediaSectionRepeat';
 import { SORTER } from 'src/constants/general';
 import { getMeetingSections } from 'src/constants/media';
@@ -146,6 +145,7 @@ import { sendKeyboardShortcut } from 'src/helpers/keyboard-shortcuts';
 import { executeLocalShortcut } from 'src/helpers/keyboardShortcuts';
 import {
   addSection,
+  defaultAdditionalSection,
   findMediaSection,
   getOrCreateMediaSection,
 } from 'src/helpers/media-sections';

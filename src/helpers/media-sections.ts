@@ -6,12 +6,19 @@ import type {
   MediaSectionWithConfig,
 } from 'src/types';
 
-import { defaultAdditionalSection } from 'src/composables/useMediaSection';
 import { getMeetingSections, standardSections } from 'src/constants/media';
 import { isCoWeek } from 'src/helpers/date';
 import { useCurrentStateStore } from 'src/stores/current-state';
 
 import { errorCatcher } from './error-catcher';
+
+export const defaultAdditionalSection = {
+  config: {
+    bgColor: 'rgb(148, 94, 181)',
+    uniqueId: 'imported-media',
+  },
+  items: [],
+};
 
 // Helper functions for array-based mediaSections
 export const findMediaSection = (
