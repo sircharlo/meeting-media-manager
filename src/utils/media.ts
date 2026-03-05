@@ -256,7 +256,7 @@ export const getMetadataFromMediaPath = async (
           errorCatcher(rejectionError, {
             contexts: {
               fn: {
-                event: String(event),
+                event: JSON.stringify(event, Object.getOwnPropertyNames(event)),
                 mediaPath,
                 name: 'getMetadataFromMediaPath',
               },

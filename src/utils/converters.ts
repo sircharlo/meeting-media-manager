@@ -85,7 +85,11 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
         canvas.remove();
         errorCatcher(rejectionError, {
           contexts: {
-            fn: { event: String(event), filepath, name: 'convertSvgToJpg' },
+            fn: {
+              event: JSON.stringify(event, Object.getOwnPropertyNames(event)),
+              filepath,
+              name: 'convertSvgToJpg',
+            },
           },
         });
         reject(rejectionError);
