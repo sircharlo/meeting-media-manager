@@ -329,7 +329,7 @@
   "memorialDate": "Emlékünnep dátuma",
   "memorialDate-explain": "Ha megadod, az M³ automatikusan megpróbálja letölteni és előkészíteni a háttérképet az emlékünnephez. A kép az éviszöveg helyett jelenik majd meg. Vedd figyelembe, hogy ez egy kísérleti funkció, és előfordulhat, hogy nem a várt módon működik.",
   "memorialFetchError": "Nem sikerült lekérni az Emlékünnepi borítót és bemutató videót",
-  "memorialFetchErrorNoBg": "Failed to fetch the Memorial banner. Please ensure that the banner is downloaded and prepared before the Memorial.",
+  "memorialFetchErrorNoBg": "Failed to fetch the image to de displayed during the Memorial. Please ensure that the image is downloaded and prepared before the Memorial.",
   "memorialFetchSuccess": "Az Emlékünnepi borító és bemutató videó sikeresen lekérve",
   "meteredConnection": "Korlátozott adatkapcsolat",
   "meteredConnection-explain": "Kapcsold ezt be, ha korlátozott internet-hozzáféréssel rendelkezel (pl. mobil adatforgalom). Ebben az esetben az M³ nem tölti le automatikusan a videókat és fájlokat, kivéve, ha azok az aktuális vagy a következő napon tartandó összejövetelekhez szükségesek.",
