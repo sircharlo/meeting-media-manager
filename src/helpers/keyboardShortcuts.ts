@@ -146,8 +146,7 @@ export const registerCustomShortcut = (
     const currentState = useCurrentStateStore();
     if (
       !shortcutCallbacks[shortcutName] ||
-      !currentState.currentSettings ||
-      !currentState.currentSettings[shortcutName] ||
+      !currentState.currentSettings?.[shortcutName] ||
       !currentState.currentSettings?.enableKeyboardShortcuts
     ) {
       return;

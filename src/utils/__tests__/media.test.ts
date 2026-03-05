@@ -58,7 +58,7 @@ describe('Media Utilities', () => {
     });
 
     it('should return false for undefined or empty values', () => {
-      expect(isImage(undefined)).toBe(false);
+      expect(isImage()).toBe(false);
       expect(isImage('')).toBe(false);
     });
   });

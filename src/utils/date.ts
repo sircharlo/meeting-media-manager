@@ -117,7 +117,9 @@ export const dateFromString = (
 
     // Final validation and normalization
     if (Number.isNaN(date.getTime())) {
-      throw new TypeError(`Invalid date produced from: ${lookupDate}`);
+      throw new TypeError(
+        `Invalid date produced from: ${JSON.stringify(lookupDate)}`,
+      );
     }
 
     date.setHours(0, 0, 0, 0);

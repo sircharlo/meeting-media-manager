@@ -1904,7 +1904,7 @@ export const watchedItemMapper: (
     if (!section) {
       const sectionMatch = new RegExp(/^Section-([^-]+) - /).exec(filename);
       if (sectionMatch) {
-        section = sectionMatch[1] as MediaSectionIdentifier;
+        section = sectionMatch[1];
       }
     }
 

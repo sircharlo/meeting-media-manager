@@ -478,8 +478,7 @@ export const moveAdditionalMediaMaps: MigrationFunction = async () => {
       }
     }
     if ('additionalMediaMaps' in jwStore) {
-      delete (jwStore as typeof jwStore & { additionalMediaMaps?: unknown })
-        .additionalMediaMaps;
+      delete (jwStore as Record<string, unknown>)['additionalMediaMaps'];
     }
     jwStore.lookupPeriod = currentLookupPeriods;
     return true;

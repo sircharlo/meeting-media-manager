@@ -248,14 +248,19 @@ export const getMetadataFromMediaPath = async (
           video.remove();
           resolve();
         };
-        video.onerror = (eventInfo) => {
+        video.onerror = (event) => {
           video.remove();
-          const rejectionError =
-            eventInfo instanceof Error
-              ? eventInfo
-              : new Error(String(eventInfo));
+          const rejectionError = new Error(
+            `Failed to load video: ${mediaPath}`,
+          );
           errorCatcher(rejectionError, {
-            contexts: { fn: { mediaPath, name: 'getMetadataFromMediaPath' } },
+            contexts: {
+              fn: {
+                event: String(event),
+                mediaPath,
+                name: 'getMetadataFromMediaPath',
+              },
+            },
           });
           reject(rejectionError);
         };

@@ -80,12 +80,13 @@ const convertSvgToJpg = async (filepath: string): Promise<string> => {
         }
       };
 
-      img.onerror = function (error) {
-        const rejectionError =
-          error instanceof Error ? error : new Error(String(error));
+      img.onerror = function (event) {
+        const rejectionError = new Error(`Failed to load SVG: ${filepath}`);
         canvas.remove();
         errorCatcher(rejectionError, {
-          contexts: { fn: { filepath, name: 'convertSvgToJpg' } },
+          contexts: {
+            fn: { event: String(event), filepath, name: 'convertSvgToJpg' },
+          },
         });
         reject(rejectionError);
       };

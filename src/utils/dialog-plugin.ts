@@ -59,7 +59,7 @@ interface DialogOptions {
 
 export class DialogPlugin {
   private static instance: DialogPlugin;
-  private dialogStore = useDialogStateStore();
+  private readonly dialogStore = useDialogStateStore();
 
   static getInstance(): DialogPlugin {
     if (!DialogPlugin.instance) {
@@ -101,8 +101,7 @@ export class DialogPlugin {
    */
   open<T = unknown>(options: DialogOptions): Promise<T> {
     const { component, dialogOptions = {}, props = {} } = options;
-    const dialogId = `${component}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
+    const dialogId = `${component}_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
     // Register the dialog as open in our store
     this.dialogStore.openDialog(dialogId, component, props);
 
