@@ -2,7 +2,6 @@ import type { PublicationFetcher } from 'src/types';
 
 import { Buffer } from 'buffer/';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { useCurrentStateStore } from 'src/stores/current-state';
 import { getPubId } from 'src/utils/jw';
 
 const {
@@ -36,9 +35,21 @@ const { dirname, extname, join } = path;
 
 let defaultDataPath: null | string = null;
 
+let getCacheFolderProvider: (() => string | undefined) | null = null;
+
+/**
+ * Registers a provider to retrieve the cache folder path.
+ * This helps avoid circular dependencies with stores.
+ * @param provider A function that returns the cache folder path.
+ */
+export const registerCachePathProvider = (
+  provider: () => string | undefined,
+) => {
+  getCacheFolderProvider = provider;
+};
+
 export const getCachedUserDataPath = async (): Promise<string> => {
-  const { currentSettings } = useCurrentStateStore();
-  const customPath = currentSettings?.cacheFolder;
+  const customPath = getCacheFolderProvider?.();
 
   // Fast path: already resolved
   if (defaultDataPath) {

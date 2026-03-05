@@ -18,6 +18,7 @@ import {
   getPublicationsPath,
   getTempPath,
   isFileUrl,
+  registerCachePathProvider,
   removeEmptyDirs,
   toggleAutoUpdates,
   toggleBetaUpdates,
@@ -29,6 +30,10 @@ const { fs } = globalThis.electronApi;
 const { emptyDir, ensureFile, exists, remove } = fs;
 
 installPinia();
+
+registerCachePathProvider(
+  () => useCurrentStateStore().currentSettings?.cacheFolder ?? undefined,
+);
 
 describe('isFileUrl', () => {
   it('should correctly recognize file urls', () => {

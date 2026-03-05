@@ -20,6 +20,7 @@ import {
   getAdditionalMediaPath,
   getCachedUserDataPath,
   isFileUrl,
+  registerCachePathProvider,
 } from 'src/utils/fs';
 import { isEmpty, isUUID } from 'src/utils/general';
 import { useCongregationSettingsStore } from 'stores/congregation-settings';
@@ -474,3 +475,7 @@ export const useCurrentStateStore = defineStore('current-state', {
     };
   },
 });
+
+registerCachePathProvider(
+  () => useCurrentStateStore().currentSettings?.cacheFolder ?? undefined,
+);
