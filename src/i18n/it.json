@@ -31,7 +31,7 @@
   "are-you-sure-delete-cache": "Sei sicuro di voler eliminare tutti i file nella cache?",
   "are-you-sure-delete-unused-cache": "Sei sicuro di voler eliminare i file inutilizzati dalla cache?",
   "are-you-sure-you-want-to-delete-this-profile": "Sei sicuro di voler eliminare il profilo {profileName}?",
-  "attemptingToFetchMemorialBannerAndIntroVideo": "Fetching the Memorial Welcome Video and image to be displayed during the Memorial",
+  "attemptingToFetchMemorialBannerAndIntroVideo": "Recupero del Memorial Welcome Video e dell'immagine da visualizzare durante il Memorial",
   "audio-bible": "Registrazione Bibbia audio",
   "audio-bible-media": "Registrazioni audio dalla Traduzione del Nuovo Mondo",
   "audio:": "Audio:",
@@ -247,7 +247,6 @@
   "incomplete-configuration": "Configurazione incompleta",
   "integrations": "Integrazioni",
   "integrationsDescription": "Configura l'integrazione con altre applicazioni e servizi",
-  "intro": "Introduction",
   "introduction": "Introduction and other media",
   "invalid-settings": "Impostazioni non valide",
   "item-names": "Item names",
@@ -328,9 +327,10 @@
   "memorial-talk": "Memorial talk",
   "memorialDate": "Data della Commemorazione",
   "memorialDate-explain": "Se inserito, M³ proverà automaticamente a scaricare e preparare l'immagine di sfondo per la Commemorazione. L'immagine verrà visualizzata al posto della scrittura dell'anno. Attenzione che questa è una funzione sperimentale e potrebbe non funzionare come previsto.",
-  "memorialFetchError": "Failed to fetch the Memorial Welcome Video and image to be displayed during the Memorial",
+  "memorialFetchError": "Impossibile recuperare il Memorial Welcome Video e l'immagine da visualizzare durante il Memorial",
   "memorialFetchErrorNoBg": "Impossibile recuperare il banner della Commemorazione. Assicurati che il banner sia scaricato e preparato prima della Commemorazione.",
-  "memorialFetchSuccess": "Successfully fetched the Memorial Welcome Video and image to be displayed during the Memorial",
+  "memorialFetchBgSuccess": "Configurato con successo l'immagine da visualizzare durante il Memorial",
+  "memorialFetchVideoSuccess": "Configurato con successo il Memorial Welcome Video",
   "meteredConnection": "Connessione dati limitata",
   "meteredConnection-explain": "Attivare questa opzione se si dispone di una connessione internet limitata (come dati mobile). In questo caso, M³ non scaricherà automaticamente video e file a meno che non siano necessari per le riunioni il giorno corrente o quello successivo.",
   "midweek-meeting": "Adunanza infrasettimanale",
@@ -625,5 +625,6 @@
   "zoomEnable-explain": "Avvia e ferma automaticamente la condivisione dello schermo di Zoom quando i media iniziano e smettono di riprodurre.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Scorciatoia condivisione schermo di Zoom",
-  "zoomScreenShareShortcut-explain": "Inserisci la scorciatoia da tastiera configurata nell'impostazione \"Avvia/ferma condivisione schermo\" di Zoom. M³ invierà questa scorciatoia quando il media inizia a riprodurre (per iniziare la condivisione dello schermo) e quando si ferma (per interrompere la condivisione dello schermo). Per poter utilizzare questa funzione, è necessario abilitare l'impostazione \"Scorciatoie globali\" per quella particolare scorciatoia nelle impostazioni di Zoom."
+  "zoomScreenShareShortcut-explain": "Inserisci la scorciatoia da tastiera configurata nell'impostazione \"Avvia/ferma condivisione schermo\" di Zoom. M³ invierà questa scorciatoia quando il media inizia a riprodurre (per iniziare la condivisione dello schermo) e quando si ferma (per interrompere la condivisione dello schermo). Per poter utilizzare questa funzione, è necessario abilitare l'impostazione \"Scorciatoie globali\" per quella particolare scorciatoia nelle impostazioni di Zoom.",
+  "welcome-video": "Memorial Welcome Video"
 }
