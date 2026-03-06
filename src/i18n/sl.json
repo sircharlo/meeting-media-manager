@@ -31,7 +31,7 @@
   "are-you-sure-delete-cache": "Ali si prepričan, da želiš izbrisati vse datoteke v predpomnilniku?",
   "are-you-sure-delete-unused-cache": "Ali si prepričan, da želiš izbrisati neuporabljene datoteke iz predpomnilnika?",
   "are-you-sure-you-want-to-delete-this-profile": "Ali si prepričan, da želiš izbrisati profil {profileName}?",
-  "attemptingToFetchMemorialBannerAndIntroVideo": "Pridobivanje napisa za spominsko slovesnost in predstavitvenega videoposnetka",
+  "attemptingToFetchMemorialBannerAndIntroVideo": "Fetching the Memorial Welcome Video and the image to be displayed during the Memorial",
   "audio-bible": "Zvočni posnetek Svetega pisma",
   "audio-bible-media": "Zvočni posnetki iz Prevoda novi svet",
   "audio:": "Avdio:",
@@ -247,7 +247,6 @@
   "incomplete-configuration": "Nepopolna nastavitev",
   "integrations": "Združevanje",
   "integrationsDescription": "Nastavi združevanje z drugimi aplikacijami in storitvami",
-  "intro": "Uvod",
   "introduction": "Uvod in druga multimedijska vsebina",
   "invalid-settings": "Neveljavne nastavitve",
   "item-names": "Imena elementov",
@@ -328,9 +327,10 @@
   "memorial-talk": "Govor za spominsko slovesnost",
   "memorialDate": "Datum spominske slovesnosti",
   "memorialDate-explain": "Če je datum vpisan, bo M³ samodejno poskusil prenesti in pripraviti sliko ozadja za spominsko slovesnost. Slika bo prikazana namesto letnega stavka. Upoštevaj, da je to poskusna funkcija in morda ne bo delovala, kot se pričakuje.",
-  "memorialFetchError": "Pridobivanje napisa za spominsko slovesnost in predstavitvenega videoposnetka ni uspelo",
+  "memorialFetchError": "Failed to fetch the Memorial Welcome Video and the image to be displayed during the Memorial",
   "memorialFetchErrorNoBg": "Prenos slike za spominsko slovesnost ni uspel. Prepričajte se, da je slika prenesena in pripravljena pred spominsko slovesnostjo.",
-  "memorialFetchSuccess": "Pridobivanje napisa za spominsko slovesnost in predstavitvenega videoposnetka je uspelo",
+  "memorialFetchBgSuccess": "Successfully configured the image to be displayed during the Memorial",
+  "memorialFetchVideoSuccess": "Successfully configured the Memorial Welcome Video",
   "meteredConnection": "Omejena podatkovna povezava",
   "meteredConnection-explain": "To možnost vključi, če imate omejen internet (npr. mobilni podatki). V tem primeru M³ ne bo samodejno prenašal videoposnetkov in datotek, razen če so potrebni za shode v tekočem ali naslednjem dnevu.",
   "midweek-meeting": "Shod med tednom",
@@ -625,5 +625,6 @@
   "zoomEnable-explain": "Samodejno zaženi in ustavi deljenje zaslona v Zoomu, ko se predvajanje multimedijske vsebine začne in ustavi.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Bližnjica za deljenje zaslona v Zoomu",
-  "zoomScreenShareShortcut-explain": "Vnesi bližnjico na tipkovnici, ki je nastavljena v Zoomovi nastavitvi »Start/stop screen sharing«. M³ bo to bližnjico poslal, ko se bo začelo predvajanje multimedijske vsebine (za začetek deljenja zaslona) in ko se bo ustavilo (za ustavitev deljenja zaslona). Da bi lahko uporabljal to funkcijo, moraš v Zoomovih nastavitvah omogočiti nastavitev »Global shortcut« za to bližnjico."
+  "zoomScreenShareShortcut-explain": "Vnesi bližnjico na tipkovnici, ki je nastavljena v Zoomovi nastavitvi »Start/stop screen sharing«. M³ bo to bližnjico poslal, ko se bo začelo predvajanje multimedijske vsebine (za začetek deljenja zaslona) in ko se bo ustavilo (za ustavitev deljenja zaslona). Da bi lahko uporabljal to funkcijo, moraš v Zoomovih nastavitvah omogočiti nastavitev »Global shortcut« za to bližnjico.",
+  "welcome-video": "Memorial Welcome Video"
 }
