@@ -59,6 +59,13 @@ export interface FileDownloader {
   url: string;
 }
 
+export interface JwMediaInfo {
+  duration: number;
+  subtitles: string;
+  thumbnail: string;
+  title: string;
+}
+
 export interface MediaDivider {
   bgColor?: string;
   section: MediaSectionIdentifier;

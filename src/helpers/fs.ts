@@ -1,6 +1,9 @@
 import type {
   Asset,
+  DownloadedFile,
+  FileDownloader,
   FileItem,
+  JwMediaInfo,
   MultimediaItem,
   PublicationFetcher,
   Release,
@@ -10,12 +13,43 @@ import { Buffer } from 'buffer/';
 import { Platform } from 'quasar';
 import { FULL_HD } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import { downloadFileIfNeeded, getJwMediaInfo } from 'src/helpers/jw-media';
 import { fetchJson } from 'src/utils/api';
 import { getCachedUserDataPath, getPublicationDirectory } from 'src/utils/fs';
 import { isAudio, isImage, isVideo } from 'src/utils/media';
 import { useCurrentStateStore } from 'stores/current-state';
 import { useJwStore } from 'stores/jw';
+
+let downloadFileIfNeededProvider:
+  | ((options: FileDownloader) => Promise<DownloadedFile>)
+  | null = null;
+let getJwMediaInfoProvider:
+  | ((publication: PublicationFetcher) => Promise<JwMediaInfo>)
+  | null = null;
+
+/**
+ * Registers media providers to avoid circular dependencies.
+ */
+export const registerMediaProviders = (providers: {
+  downloadFileIfNeeded: (options: FileDownloader) => Promise<DownloadedFile>;
+  getJwMediaInfo: (publication: PublicationFetcher) => Promise<JwMediaInfo>;
+}) => {
+  downloadFileIfNeededProvider = providers.downloadFileIfNeeded;
+  getJwMediaInfoProvider = providers.getJwMediaInfo;
+};
+
+const downloadFileIfNeeded = (options: FileDownloader) => {
+  if (!downloadFileIfNeededProvider) {
+    throw new Error('downloadFileIfNeededProvider not registered');
+  }
+  return downloadFileIfNeededProvider(options);
+};
+
+const getJwMediaInfo = (publication: PublicationFetcher) => {
+  if (!getJwMediaInfoProvider) {
+    throw new Error('getJwMediaInfoProvider not registered');
+  }
+  return getJwMediaInfoProvider(publication);
+};
 
 const {
   downloadFile,

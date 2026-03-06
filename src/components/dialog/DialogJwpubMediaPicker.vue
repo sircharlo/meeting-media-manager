@@ -172,11 +172,11 @@ import BaseDialog from 'components/dialog/BaseDialog.vue';
 import mepslangsImport from 'src/constants/mepslangs';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import {
-  addFullFilePathToMultimediaItem,
   addJwpubDocumentMediaToFiles,
   resolveMultimediaPreviewPath,
 } from 'src/helpers/jw-media';
 import {
+  addFullFilePathToMultimediaItem,
   getDocumentMultimediaItems,
   getPublicationInfoFromDb,
 } from 'src/utils/sqlite';
