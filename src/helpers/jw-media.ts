@@ -31,8 +31,16 @@ import mepslangs from 'src/constants/mepslangs';
 import { isCoWeek, isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { exportAllDays } from 'src/helpers/export-media';
-import { getSubtitlesUrl, getThumbnailUrl } from 'src/helpers/fs';
-import { getMediaFromJwPlaylist, unzipJwpub } from 'src/helpers/mediaPlayback';
+import {
+  getSubtitlesUrl,
+  getThumbnailUrl,
+  registerMediaProviders,
+} from 'src/helpers/fs';
+import {
+  getMediaFromJwPlaylist,
+  registerMediaPlaybackProviders,
+  unzipJwpub,
+} from 'src/helpers/mediaPlayback';
 import { updateLastUsedDate } from 'src/helpers/usage';
 import { fetchMediaItems, fetchPubMediaLinks, fetchRaw } from 'src/utils/api';
 import { convertImageIfNeeded } from 'src/utils/converters';
@@ -60,12 +68,14 @@ import {
   isVideo,
 } from 'src/utils/media';
 import {
+  addFullFilePathToMultimediaItem,
   findDb,
   getDocumentExtractItems,
   getDocumentMultimediaItems,
   getMediaVideoMarkers,
   getMultimediaMepsLangs,
   getPublicationInfoFromDb,
+  registerSqliteProviders,
   tableExists,
 } from 'src/utils/sqlite';
 import { timeToSeconds } from 'src/utils/time';
@@ -757,31 +767,6 @@ export const getDbFromJWPUB = async (
     return null;
   }
 };
-
-export async function addFullFilePathToMultimediaItem(
-  multimediaItem: MultimediaItem,
-  publication: PublicationFetcher,
-): Promise<MultimediaItem> {
-  try {
-    const paths = [
-      'FilePath',
-      'LinkedPreviewFilePath',
-      'CoverPictureFilePath',
-    ] as const;
-
-    const baseDir = await getPublicationDirectory(publication);
-
-    for (const path of paths) {
-      if (multimediaItem[path]) {
-        multimediaItem[path] = join(baseDir, multimediaItem[path]);
-      }
-    }
-    return multimediaItem;
-  } catch (error) {
-    errorCatcher(error);
-    return multimediaItem;
-  }
-}
 
 export const resolveFilePath = async (
   targetPath: string,
@@ -1846,7 +1831,7 @@ export const watchedItemMapper: (
               dateString,
             ),
           )
-        ).map((m) => ({ ...m, source: 'watched' }));
+        ).map((m: MediaItem) => ({ ...m, source: 'watched' }));
         return additionalMedia;
       }
       return undefined;
@@ -3255,3 +3240,18 @@ export const setUrlVariables = async (baseUrl: string | undefined) => {
     setElectronUrlVariables(JSON.stringify(jwStore.urlVariables));
   }
 };
+
+// Breaking circular dependencies by registering providers
+registerMediaProviders({
+  downloadFileIfNeeded,
+  getJwMediaInfo,
+});
+
+registerMediaPlaybackProviders({
+  dynamicMediaMapper,
+  processMissingMediaInfo,
+});
+
+registerSqliteProviders({
+  getDbFromJWPUB,
+});

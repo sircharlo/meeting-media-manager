@@ -8,16 +8,67 @@ import type {
   VideoMarker,
 } from 'src/types';
 
-const { executeQuery } = globalThis.electronApi;
+const { executeQuery, path } = globalThis.electronApi;
+const { join } = path;
 
 import mepslangs from 'src/constants/mepslangs';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import {
-  addFullFilePathToMultimediaItem,
-  getDbFromJWPUB,
-} from 'src/helpers/jw-media';
-import { findFile } from 'src/utils/fs';
+import { findFile, getPublicationDirectory } from 'src/utils/fs';
 import { useCurrentStateStore } from 'stores/current-state';
+
+let getDbFromJWPUBProvider:
+  | ((
+      publication: PublicationFetcher,
+      meetingDate?: string,
+    ) => Promise<null | string>)
+  | null = null;
+
+/**
+ * Registers providers for sqlite utilities to avoid circular dependencies.
+ */
+export const registerSqliteProviders = (providers: {
+  getDbFromJWPUB: (
+    publication: PublicationFetcher,
+    meetingDate?: string,
+  ) => Promise<null | string>;
+}) => {
+  getDbFromJWPUBProvider = providers.getDbFromJWPUB;
+};
+
+const getDbFromJWPUB = async (
+  publication: PublicationFetcher,
+  meetingDate?: string,
+) => {
+  if (!getDbFromJWPUBProvider) {
+    throw new Error('getDbFromJWPUBProvider not registered');
+  }
+  return getDbFromJWPUBProvider(publication, meetingDate);
+};
+
+export async function addFullFilePathToMultimediaItem(
+  multimediaItem: MultimediaItem,
+  publication: PublicationFetcher,
+): Promise<MultimediaItem> {
+  try {
+    const paths = [
+      'FilePath',
+      'LinkedPreviewFilePath',
+      'CoverPictureFilePath',
+    ] as const;
+
+    const baseDir = await getPublicationDirectory(publication);
+
+    for (const pathKey of paths) {
+      if (multimediaItem[pathKey]) {
+        multimediaItem[pathKey] = join(baseDir, multimediaItem[pathKey]);
+      }
+    }
+    return multimediaItem;
+  } catch (error) {
+    errorCatcher(error);
+    return multimediaItem;
+  }
+}
 
 export const findDb = async (publicationDirectory: string | undefined) => {
   return findFile(publicationDirectory, '.db');
