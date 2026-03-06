@@ -301,6 +301,21 @@ const { data: mediaRepeat } = useBroadcastChannel<string, boolean>({
   name: 'repeat',
 });
 
+const { data: mediaRepeatNow } = useBroadcastChannel<number, number>({
+  name: 'media-repeat-now',
+});
+
+whenever(
+  () => mediaRepeatNow.value,
+  () => {
+    if (currentMediaElement.value) {
+      console.log('🎬 [mediaRepeatNow] Forcing replay of current item');
+      currentMediaElement.value.currentTime = customMin.value;
+      playMediaElement();
+    }
+  },
+);
+
 const { data: mediaPlayingUrl } = useBroadcastChannel<string, string>({
   name: 'media-url',
 });

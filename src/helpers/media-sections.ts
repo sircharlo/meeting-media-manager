@@ -21,7 +21,10 @@ export const defaultAdditionalSection = {
 };
 
 // Helper functions for array-based mediaSections
-export const findMediaSection = (
+export const findMediaSection: (
+  mediaSections: MediaSectionWithConfig[],
+  sectionId: MediaSectionIdentifier,
+) => MediaSectionWithConfig | undefined = (
   mediaSections: MediaSectionWithConfig[],
   sectionId: MediaSectionIdentifier,
 ): MediaSectionWithConfig | undefined => {
@@ -42,19 +45,20 @@ export const getOrCreateMediaSection = (
   sectionId: MediaSectionIdentifier,
   defaultConfig?: Partial<MediaSection>,
 ): MediaSectionWithConfig => {
-  let section = findMediaSection(mediaSections, sectionId);
+  const section = findMediaSection(mediaSections, sectionId);
   if (sectionId === 'imported-media') {
     defaultConfig = defaultAdditionalSection.config;
   }
   if (!section) {
-    section = {
+    const newSection = {
       config: {
         uniqueId: sectionId,
         ...defaultConfig,
       },
       items: [],
     };
-    mediaSections.push(section);
+    mediaSections.push(newSection);
+    return findMediaSection(mediaSections, sectionId) || newSection;
   }
   return section;
 };
