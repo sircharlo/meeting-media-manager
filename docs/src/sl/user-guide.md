@@ -76,11 +76,11 @@ Multimedijski predvajalnik omogoča celovito upravljanje:
 
 - **Povečanje/premikanje slike** – za povečanje slike uporabi kolesce miške, za premikanje slike pa povleci z miško
 
-### Napredne možnosti predstavitve multimedijske vsebine {#advanced-presentation}
+### Napredne možnosti predvajanja multimedijske vsebine {#advanced-presentation}
 
-#### Povečevanje in premikanje {#zoom-pan}
+#### Povečevanje in premikanje {#custom-timing}
 
-**Vgrajeni upravljalniki multimedijske vsebine** (ko je glavno okno v ospredju in prikazuje seznam multimedijske vsebine):
+Nastavi začetni in končni čas predvajanja multimedijske vsebine:
 
 <!-- 1. Right-click on a media item
 2. Select "Edit Timing" -->
@@ -91,17 +91,17 @@ Multimedijski predvajalnik omogoča celovito upravljanje:
 
 #### Povečevanje in premikanje {#zoom-pan}
 
-**Opomba (\*):** Globalna bližnjica – na voljo tudi, ko aplikacija ni v ospredju.
+Za slike in videoposnetke:
 
-- **Tab/Shift+Tab** - Premikanje med multimedijskimi elementi
-- **Puščica navzgor/navzdol** - Premikanje med multimedijskimi elementi
-- **Preslednica** - Predvajanje/zaustavitev predvajanja multimedijske vsebine
+- **Povečaj/Pomanjšaj** - Uporabi kolesce miške ali gumbe za povečavo na sličici
+- **Premikanje** - Klikni in povleci sličico, da jo premakneš
+- **Ponastavi povečavo** - Klikni, da se vrneš na prvotno povečavo
 
 #### Bližnjice na tipkovnici {#user-guide-keyboard-shortcuts}
 
 Nastavi prilagojene bližnjice na tipkovnici za hiter dostop. Privzeto niso nastavljene nobene bližnjice na tipkovnici.
 
-**Opomba (\*):** Globalna bližnjica – na voljo tudi, ko aplikacija ni v ospredju.
+**Vgrajeni upravljalniki multimedijske vsebine** (ko je glavno okno v ospredju in prikazuje seznam multimedijske vsebine):
 
 - **Tab/Shift+Tab** - Premikanje med multimedijskimi elementi
 - **Puščica navzgor/navzdol** - Premikanje med multimedijskimi elementi
@@ -118,14 +118,14 @@ Nastavi prilagojene bližnjice na tipkovnici za hiter dostop. Privzeto niso nast
 
 **Opomba (\*):** Globalna bližnjica – na voljo tudi, ko aplikacija ni v ospredju.
 
-## Povezava z Zoomom {#user-guide-zoom-integration}
+## Glasba v ozadju {#user-guide-background-music}
 
 ### Nastavitev glasbe v ozadju {#background-music-setup}
 
 Glasba v ozadju se samodejno predvaja pred shodi in se ustavi ob pravem času:
 
 1. **Vklopi glasbo** – V nastavitvah vklopi glasbo v ozadju
-2. **Samodejni zagon** – Glasba se bo samodejno zagnala ob zagonu M³, če je to primerno
+2. **Samodejni zagon** – Glasba se bo samodejno zagnala ob zagonu M³
 3. **Ustavitev pred shodom** – Glasba se samodejno ustavi pred začetkom shoda
 4. **Ročni nadzor** – Uporabi gumb za glasbo v vrstici stanja za ročni zagon/ustavitev
 5. **Ponovni zagon** – Po shodu lahko glasbo znova zaženeš z enim klikom
@@ -213,17 +213,17 @@ M³ predvaja multimedijsko vsebino z zvokom na vašem računalniku, vendar se ta
 
 **Common Problems:**
 
-- **No audio in Zoom**: Check if Original Audio is enabled and properly configured
-- **Poor audio quality**: Verify the three Original Audio checkboxes are set correctly
-- **Audio not working after Zoom restart**: Original Audio settings must be re-enabled for each new Zoom session
+- **V Zoomu ni zvoka**: Preveri, ali je originalni zvok omogočen in pravilno nastavljen
+- **Slaba kakovost zvoka**: Preveri, ali so tri potrditvena polja Original Audio (Izvirni zvok) pravilno nastavljena
+- **Zvok ne deluje po ponovnem zagonu Zooma**: Za vsako novo sejo Zooma je treba ponovno omogočiti prvotne nastavitve zvoka
 
-**Best Practices:**
+**Najboljše navade:**
 
-- Test audio configuration and sharing before meetings
-- Create a checklist for audio setup
-- Consider using "Share Computer Sound" as a backup option
-- **Consider using Zoom integration instead of OBS Studio** for simpler audio handling
-- Ensure all AV operators are familiar with these settings
+- Preizkusi konfiguracijo zvoka in deljenje vsebine pred shodom
+- Ustvari kontrolni seznam za nastavitev zvoka
+- Razmisli o uporabi možnosti "Share Computer Sound" kot rezervni možnosti
+- Za enostavnejše upravljanje zvoka **razmisli o združevanju z Zoomom namesto z OBS Studio**
+- Poskrbi, da bodo vsi, ki sodelujejo pri ozvočenju, seznanjeni s temi nastavitvami
 
 ## Media Import and Management {#media-import}
 
@@ -235,7 +235,7 @@ Add your own media files to M³:
 2. **Drag and Drop** - Drag files directly into M³
 3. **Folder Monitoring** - Set up a watched folder for automatic imports
 4. **JWPUB Files and Playlists** - Import publications and playlists
-5. **Public Talk Media (S-34 / S-34mp)** - Import public talk media using S‑34 or S‑34mp JWPUB files
+5. **Seznam multimedijskih vsebin za javne govore (S-34 / S-34mp)** - Uvozi Seznam multimedijskih vsebin za javne govore z datotekami JWPUB S‑34 ali S‑34mp
 
 ### Managing Imported Media {#managing-imported-media}
 
