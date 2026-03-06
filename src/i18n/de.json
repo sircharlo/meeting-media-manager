@@ -31,7 +31,7 @@
   "are-you-sure-delete-cache": "Sollen wirklich alle Dateien im Zwischenspeicher gelöscht werden?",
   "are-you-sure-delete-unused-cache": "Sollen wirklich alle ungenutzten Dateien im Zwischenspeicher gelöscht werden?",
   "are-you-sure-you-want-to-delete-this-profile": "Soll das Profil {profileName} wirklich gelöscht werden?",
-  "attemptingToFetchMemorialBannerAndIntroVideo": "Abrufen des Memorial Welcome Video und des Bildes, das während der Gedenkstätte angezeigt werden soll",
+  "attemptingToFetchMemorialBannerAndIntroVideo": "Medien während des Gedenkens anzeigen lassen",
   "audio-bible": "Tonaufnahmen der Bibel",
   "audio-bible-media": "Audioaufnahmen aus der Übersetzung der Neuen-Welt-Übersetzung",
   "audio:": "Audio:",
@@ -327,10 +327,13 @@
   "memorial-talk": "Gedächtnismahlansprache",
   "memorialDate": "Datum des Gedächtnismahls",
   "memorialDate-explain": "Bei Eingabe wird M³ automatisch versuchen, das Hintergrundbild für das Gedächtnismahl herunterzuladen und vorzubereiten. Das Bild wird anstelle des Jahrestextes angezeigt. Achtung, da es sich um eine experimentelle Funktion handelt und möglicherweise nicht wie erwartet funktioniert.",
-  "memorialFetchError": "Fehler beim Abrufen des Memorial Welcome Video und des Bildes, das während der Gedenkstätte angezeigt werden soll",
-  "memorialFetchErrorNoBg": "Fehler beim Abrufen des Memorial-Banners. Bitte stellen Sie sicher, dass der Banner vor dem Memorial heruntergeladen und vorbereitet wird.",
+  "memorialFetchError": "Fehler beim Abrufen der Medien, die während der Gedenkstätte angezeigt werden sollen",
+  "memorialFetchErrorNoBg": "Fehler beim Abrufen des Bildes, das während des Speichers angezeigt werden soll. Bitte stellen Sie sicher, dass das Bild vor dem Memorial heruntergeladen und vorbereitet wird.",
   "memorialFetchBgSuccess": "Das während der Gedenkstätte anzuzeigende Bild wurde erfolgreich konfiguriert",
   "memorialFetchVideoSuccess": "Memorial Welcome Video erfolgreich konfiguriert",
+  "memorialFetchSongsSuccess": "Erfolgreich hinzugefügte Songs, die während der Gedenkstätte gesungen werden",
+  "memorialFetchSongsError": "Fehler beim Abrufen der Lieder die während des Memorials gesungen werden sollen",
+  "memorialFetchSuccess": "Medien erfolgreich abgeholt, die während der Gedenkzeit angezeigt werden sollen",
   "meteredConnection": "Begrenzte Datenverbindung",
   "meteredConnection-explain": "Aktivieren Sie dies, wenn Sie über begrenztes Internet verfügen (z. B. mobile Daten). In diesem Fall lädt M³ Videos und Dateien nicht automatisch herunter, es sei denn, sie werden für Zusammenkünfte am aktuellen oder nächsten Tag benötigt.",
   "midweek-meeting": "Zusammenkunft unter der Woche",
@@ -626,5 +629,6 @@
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom-Bildschirmfreigabe-Tastenkürzel",
   "zoomScreenShareShortcut-explain": "Geben Sie das Tastenkürzel ein, das in den Zoom-Einstellungen für \"Bildschirmfreigabe starten/stoppen\" konfiguriert ist. M³ sendet dieses Kürzel, wenn Medien gestartet werden (um die Bildschirmfreigabe zu starten) und wenn sie stoppen (um die Bildschirmfreigabe zu stoppen). Um diese Funktion nutzen zu können, müssen Sie die Einstellung \"Globales Tastenkürzel\" für dieses spezielle Kürzel in den Zoom-Einstellungen aktivieren.",
-  "welcome-video": "Memorial Welcome Video"
+  "welcome-video": "Memorial Welcome Video",
+  "memorialFetchSongs": "Hinzufügen von Songs, die während der Gedenkstätte gesungen werden"
 }

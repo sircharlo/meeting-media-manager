@@ -31,7 +31,7 @@
   "are-you-sure-delete-cache": "Are you sure you want to delete all cached files?",
   "are-you-sure-delete-unused-cache": "Are you sure you want to delete unused files from the cache?",
   "are-you-sure-you-want-to-delete-this-profile": "Are you sure you want to delete the {profileName} profile?",
-  "attemptingToFetchMemorialBannerAndIntroVideo": "Se preia filmul Memorial Welcome și imaginea care va fi afișată în timpul Memorial",
+  "attemptingToFetchMemorialBannerAndIntroVideo": "Se afișează media în timpul Memorial",
   "audio-bible": "Bible audio recording",
   "audio-bible-media": "Audio recordings from the New World Translation",
   "audio:": "Audio:",
@@ -327,10 +327,13 @@
   "memorial-talk": "Memorial talk",
   "memorialDate": "Date of the Memorial",
   "memorialDate-explain": "If entered, M³ will automatically try to download and prepare the background image for the Memorial. The image will be displayed instead of the yeartext. Beware that this is an experimental feature and may not work as expected.",
-  "memorialFetchError": "Nu s-a reușit preluarea filmului Memorial de bun venit și a imaginii care va fi afișată în timpul Memorial",
-  "memorialFetchErrorNoBg": "Nu s-a reușit preluarea banner-ului Memorial. Asigurați-vă că banner-ul este descărcat și pregătit înainte de Memorial.",
+  "memorialFetchError": "Eroare la preluarea fișierelor media pentru a fi afișate în timpul Memorial",
+  "memorialFetchErrorNoBg": "Eroare la preluarea imaginii afișate în timpul Memorial. Asigurați-vă că imaginea este descărcată și pregătită înainte de Memorial.",
   "memorialFetchBgSuccess": "A fost configurată cu succes imaginea care va fi afișată în timpul Memorial",
   "memorialFetchVideoSuccess": "A fost configurat cu succes videoclipul de bun venit Memorial",
+  "memorialFetchSongsSuccess": "Melodii adăugate cu succes în timpul Memorial",
+  "memorialFetchSongsError": "Eroare la preluarea melodiilor care vor fi cântate în timpul Memorial",
+  "memorialFetchSuccess": "Recuperarea cu succes a fișierelor media pentru a fi afișate în timpul Memorial",
   "meteredConnection": "Limited data connection",
   "meteredConnection-explain": "Turn this on if you have limited internet (like mobile data). In this case, M³ won't automatically download videos and files unless they're needed for meetings on either the current day or the next one.",
   "midweek-meeting": "Întrunirea din timpul săptămânii",
@@ -626,5 +629,6 @@
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom screen sharing shortcut",
   "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings.",
-  "welcome-video": "Videoclipul Memorial de bun venit"
+  "welcome-video": "Videoclipul Memorial de bun venit",
+  "memorialFetchSongs": "Adăugarea de melodii care vor fi sunate în timpul Memorial"
 }
