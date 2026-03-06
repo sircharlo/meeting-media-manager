@@ -1,21 +1,69 @@
 import type {
   JwPlaylistItem,
+  MediaItem,
   MultimediaItem,
   PlaylistTagItem,
+  PublicationFetcher,
 } from 'src/types';
 
 import { JPG_EXTENSIONS } from 'src/constants/media';
 import { errorCatcher } from 'src/helpers/error-catcher';
-import {
-  dynamicMediaMapper,
-  processMissingMediaInfo,
-} from 'src/helpers/jw-media';
 import { uuid } from 'src/shared/vanilla';
 import { formatDate } from 'src/utils/date';
 import { getTempPath } from 'src/utils/fs';
 import { isJwpub } from 'src/utils/media';
 import { findDb, getPublicationInfoFromDb } from 'src/utils/sqlite';
 import { useCurrentStateStore } from 'stores/current-state';
+
+export type DynamicMediaMapperProvider = (
+  allMedia: MultimediaItem[],
+  lookupDate: Date,
+  source: 'additional' | 'dynamic' | 'playlist' | 'watched',
+) => Promise<MediaItem[]>;
+
+export interface ProcessMissingMediaInfoOptions {
+  allMedia: MultimediaItem[];
+  isDynamicMedia?: boolean;
+  keepMediaLabels?: boolean;
+  meetingDate?: null | string;
+}
+
+export type ProcessMissingMediaInfoProvider = (
+  options: ProcessMissingMediaInfoOptions,
+) => Promise<PublicationFetcher[] | undefined>;
+
+let dynamicMediaMapperProvider: DynamicMediaMapperProvider | null = null;
+let processMissingMediaInfoProvider: null | ProcessMissingMediaInfoProvider =
+  null;
+
+/**
+ * Registers media playback providers to avoid circular dependencies.
+ */
+export const registerMediaPlaybackProviders = (providers: {
+  dynamicMediaMapper: DynamicMediaMapperProvider;
+  processMissingMediaInfo: ProcessMissingMediaInfoProvider;
+}) => {
+  dynamicMediaMapperProvider = providers.dynamicMediaMapper;
+  processMissingMediaInfoProvider = providers.processMissingMediaInfo;
+};
+
+const dynamicMediaMapper: DynamicMediaMapperProvider = (
+  allMedia,
+  lookupDate,
+  source,
+) => {
+  if (!dynamicMediaMapperProvider) {
+    throw new Error('dynamicMediaMapperProvider not registered');
+  }
+  return dynamicMediaMapperProvider(allMedia, lookupDate, source);
+};
+
+const processMissingMediaInfo: ProcessMissingMediaInfoProvider = (options) => {
+  if (!processMissingMediaInfoProvider) {
+    throw new Error('processMissingMediaInfoProvider not registered');
+  }
+  return processMissingMediaInfoProvider(options);
+};
 
 const { executeQuery, fs, getZipEntries, path, toggleMediaWindow, unzip } =
   globalThis.electronApi;
