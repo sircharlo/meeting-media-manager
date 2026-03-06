@@ -31,7 +31,7 @@
   "are-you-sure-delete-cache": "Êtes-vous sûr de vouloir supprimer tous les fichiers mis en cache ?",
   "are-you-sure-delete-unused-cache": "Êtes-vous sûr de vouloir supprimer les fichiers inutilisés du cache ?",
   "are-you-sure-you-want-to-delete-this-profile": "Êtes-vous sûr de vouloir supprimer le profil {profileName} ?",
-  "attemptingToFetchMemorialBannerAndIntroVideo": "Récupération de la vidéo de bienvenue pour le Mémorial et de l'image à afficher pendant le Mémorial",
+  "attemptingToFetchMemorialBannerAndIntroVideo": "Récupération de la vidéo de bienvenue du Mémorial et de l'image à afficher pendant le Mémorial",
   "audio-bible": "Enregistrement audio de la Bible",
   "audio-bible-media": "Enregistrements audio de la Traduction du monde nouveau",
   "audio:": "Audio :",
@@ -247,7 +247,6 @@
   "incomplete-configuration": "Configuration incomplète",
   "integrations": "Intégrations",
   "integrationsDescription": "Configurer l'intégration avec d'autres applications et services",
-  "intro": "Introduction",
   "introduction": "Introduction et autres médias",
   "invalid-settings": "Paramètres invalides",
   "item-names": "Noms des éléments",
@@ -328,9 +327,10 @@
   "memorial-talk": "Discours du Mémorial",
   "memorialDate": "Date du Mémorial",
   "memorialDate-explain": "Si celle-ci est saisie, M³ tentera de télécharger automatiquement l'image de fond pour le Mémorial et de la préparer. L'image sera affichée à la place du texte d'année. Attention, il s'agit d'une fonctionnalité expérimentale qui peut ne pas fonctionner comme prévu.",
-  "memorialFetchError": "Échec de la récupération de la vidéo de bienvenue pour le Mémorial et de l'image à afficher pendant le Mémorial",
+  "memorialFetchError": "Impossible de récupérer la vidéo de bienvenue du souvenir et l'image à afficher pendant le Mémorial",
   "memorialFetchErrorNoBg": "Impossible de récupérer l'image à afficher sur les écrans pendant le Mémorial. Veuillez vous assurer que l'image est téléchargée et préparée avant la célébration du Mémorial.",
-  "memorialFetchSuccess": "La vidéo de bienvenue pour le Mémorial et l'image à afficher pendant le Mémorial ont été téléchargées avec succès",
+  "memorialFetchBgSuccess": "Vous avez configuré avec succès l'image à afficher dans le Mémorial",
+  "memorialFetchVideoSuccess": "La vidéo de bienvenue du souvenir a été configurée avec succès",
   "meteredConnection": "Connexion limitée",
   "meteredConnection-explain": "Activez cette option si vous avez un accès limité à Internet (par exemple, les données mobiles). Dans ce cas, M³ ne téléchargera pas automatiquement les vidéos et les fichiers à moins qu'ils ne soient nécessaires pour la réunion du jour actuel ou du lendemain.",
   "midweek-meeting": "Réunion de semaine",
@@ -625,5 +625,6 @@
   "zoomEnable-explain": "Démarrer et arrêter automatiquement le partage d'écran dans Zoom lorsque les médias commencent et arrêtent de jouer dans M³.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Raccourci pour le partage d'écran de Zoom",
-  "zoomScreenShareShortcut-explain": "Entrez le raccourci clavier configuré dans le paramètre « Démarrer/arrêter le partage d'écran » de Zoom. M³ enverra ce raccourci lorsque les médias commencent à jouer (pour démarrer le partage d'écran) et lorsqu'ils s'arrêtent (pour arrêter le partage d'écran). Pour utiliser cette fonctionnalité, vous devez activer le paramètre « Raccourci global » pour ce raccourci particulier dans les paramètres de Zoom."
+  "zoomScreenShareShortcut-explain": "Entrez le raccourci clavier configuré dans le paramètre « Démarrer/arrêter le partage d'écran » de Zoom. M³ enverra ce raccourci lorsque les médias commencent à jouer (pour démarrer le partage d'écran) et lorsqu'ils s'arrêtent (pour arrêter le partage d'écran). Pour utiliser cette fonctionnalité, vous devez activer le paramètre « Raccourci global » pour ce raccourci particulier dans les paramètres de Zoom.",
+  "welcome-video": "Vidéo de bienvenue du souvenir"
 }
