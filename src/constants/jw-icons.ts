@@ -13,9 +13,11 @@ export const fallbackJwIconsGlyphMap: Record<string, string> = {
   sheep: '\ue6a4',
   speaker: '\ue6ab',
   'tract-stack': '\ue6c4',
+  video: '\ue6ce',
   watchtower: '\ue6d2',
   'watchtower-square': '\ue6d3',
   wheat: '\ue6d4',
+  'wine-bread': '\ue6d5',
 };
 
 export const keywordToJwIconMapping: Record<string, string | undefined> = {
@@ -26,12 +28,14 @@ export const keywordToJwIconMapping: Record<string, string | undefined> = {
   lac: 'sheep',
   magazines: 'magazine-stack',
   'meeting-workbooks': 'meeting-workbook-stack',
+  memorial: 'wine-bread',
   programs: 'arena',
   pt: 'speaker',
   tgw: 'gem',
   'tracts-and-invitations': 'tract-stack',
   'tv-logo': 'jw-square',
   w: 'watchtower',
+  'welcome-video': 'video',
   wp: 'persons-doorstep',
   ws: 'watchtower-square',
   wt: 'watchtower',
