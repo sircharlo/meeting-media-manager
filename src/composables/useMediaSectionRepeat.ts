@@ -178,7 +178,19 @@ export function useMediaSectionRepeat() {
       return;
     }
 
-    console.log('🔄 [playNextItem] Playing next item:', nextItem);
+    const { post: postMediaRepeatNow } = useBroadcastChannel<number, number>({
+      name: 'media-repeat-now',
+    });
+
+    const nextUrl = nextItem.fileUrl || nextItem.streamUrl || '';
+    const isSameItem = mediaPlaying.value.url === nextUrl;
+
+    console.log(
+      '🔄 [playNextItem] Playing next item:',
+      nextItem,
+      'isSameItem:',
+      isSameItem,
+    );
 
     // Clear any existing image timer
     if (imageDisplayTimer.value) {
@@ -196,9 +208,15 @@ export function useMediaSectionRepeat() {
       seekTo: 0,
       subtitlesUrl: nextItem.subtitlesUrl || '',
       uniqueId: nextItem.uniqueId,
-      url: nextItem.fileUrl || nextItem.streamUrl || '',
+      url: nextUrl,
       zoom: 1,
     };
+
+    if (isSameItem) {
+      // Direct broadcast to MediaPlayerPage to ensure it replays the same video
+      // without affecting OBS scenes or standard action flows
+      postMediaRepeatNow(Date.now());
+    }
   };
 
   // Handle media ended event - called when a media item finishes playing
