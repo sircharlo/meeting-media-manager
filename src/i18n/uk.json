@@ -31,7 +31,7 @@
   "are-you-sure-delete-cache": "Ви дійсно бажаєте видалити всі кешовані файли?",
   "are-you-sure-delete-unused-cache": "Ви впевнені, що хочете видалити невикористовувані файли з кешу?",
   "are-you-sure-you-want-to-delete-this-profile": "Ви впевнені, що хочете видалити профіль {profileName}?",
-  "attemptingToFetchMemorialBannerAndIntroVideo": "Fetching the Memorial Welcome Video and image to be displayed during the Memorial",
+  "attemptingToFetchMemorialBannerAndIntroVideo": "Отримання відео про Memorial Welcome та зображення, яке буде показано під час пам'яті",
   "audio-bible": "Аудіозаписи Біблії",
   "audio-bible-media": "Аудіозаписи Біблії з «Перекладу нового світу»",
   "audio:": "Аудіо:",
@@ -247,7 +247,6 @@
   "incomplete-configuration": "Незавершена конфігурація",
   "integrations": "Інтеграції",
   "integrationsDescription": "Налаштувати інтеграцію з іншими додатками та сервісами",
-  "intro": "Introduction",
   "introduction": "Introduction and other media",
   "invalid-settings": "Invalid settings",
   "item-names": "Item names",
@@ -328,9 +327,10 @@
   "memorial-talk": "Memorial talk",
   "memorialDate": "Дата Спомину",
   "memorialDate-explain": "Якщо вказано, M³ автоматично спробує завантажити і підготувати фонове зображення для Спомину. Це зображення буде відображатися замість тексту року. Зауважте, що це експериментальна функція і може працювати не так, як очікується.",
-  "memorialFetchError": "Failed to fetch the Memorial Welcome Video and image to be displayed during the Memorial",
+  "memorialFetchError": "Не вдалося отримати Меморіал вітання і зображення, яке буде відображатися під час Меморіалу",
   "memorialFetchErrorNoBg": "Не вдалося отримати банер Меморіалу. Будь ласка, переконайтеся, що банер завантажено та підготувався до Меморіалу.",
-  "memorialFetchSuccess": "Successfully fetched the Memorial Welcome Video and image to be displayed during the Memorial",
+  "memorialFetchBgSuccess": "Успішно налаштовано зображення для відображення під час Меморіалу",
+  "memorialFetchVideoSuccess": "Успішно налаштовано Меморіал Вітаємо Відео",
   "meteredConnection": "Обмеження з'єднання",
   "meteredConnection-explain": "Увімкніть цю опцію, якщо у вас обмежене підключення до інтернету (наприклад, мобільні дані). У такому разі M³ автоматично завантажуватиме відео та файли лише тоді, коли вони потрібні для зібрань сьогодні або наступного дня.",
   "midweek-meeting": "Зібрання серед тижня",
@@ -625,5 +625,6 @@
   "zoomEnable-explain": "Automatically start and stop Zoom screen sharing when media starts and stops playing.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom screen sharing shortcut",
-  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings."
+  "zoomScreenShareShortcut-explain": "Enter the keyboard shortcut configured in Zoom's \"Start/stop screen sharing\" setting. M³ will send this shortcut when media starts playing (to start screen sharing) and when it stops (to stop screen sharing). In order to use this feature, you need to enable the \"Global shortcut\" setting for that particular shortcut in Zoom's settings.",
+  "welcome-video": "Меморіал вітальне відео"
 }

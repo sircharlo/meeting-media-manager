@@ -31,7 +31,7 @@
   "are-you-sure-delete-cache": "Tem certeza que deseja eliminar todos os ficheiros em cache?",
   "are-you-sure-delete-unused-cache": "Tem certeza que deseja eliminar os ficheiros não utilizados do cache?",
   "are-you-sure-you-want-to-delete-this-profile": "Tem certeza de que deseja eliminar o perfil {profileName}?",
-  "attemptingToFetchMemorialBannerAndIntroVideo": "A obter o banner do Memorial e o vídeo de introdução",
+  "attemptingToFetchMemorialBannerAndIntroVideo": "Buscando o Vídeo de Boas Vindas Memoriais e a imagem a ser exibida durante o Memorial",
   "audio-bible": "Gravação de áudio da Bíblia",
   "audio-bible-media": "Gravações de áudio da Tradução do Novo Mundo",
   "audio:": "Áudio:",
@@ -247,7 +247,6 @@
   "incomplete-configuration": "Configuração incompleta",
   "integrations": "Integrações",
   "integrationsDescription": "Configurar a integração com outros aplicativos e serviços",
-  "intro": "Introdução",
   "introduction": "Introdução e outros ficheiros multimédia",
   "invalid-settings": "Definições inválidas",
   "item-names": "Nomes dos itens",
@@ -328,9 +327,10 @@
   "memorial-talk": "Discurso do Memorial",
   "memorialDate": "Data do Memorial",
   "memorialDate-explain": "Se preenchido, o M³ irá descarregar automaticamente a imagem de fundo para o Memorial, exibindo-a no lugar do texto do ano. Tenha em atenção que esta é uma funcionalidade experimental e pode não funcionar como esperado.",
-  "memorialFetchError": "Falha ao obter o banner do Memorial e o vídeo de introdução",
+  "memorialFetchError": "Falha ao buscar o Vídeo de Boas Vindas Memoriais e a imagem a ser exibida durante o Memorial",
   "memorialFetchErrorNoBg": "Falha ao buscar o banner Memorial. Certifique-se de que o banner seja baixado e preparado antes do Memorial.",
-  "memorialFetchSuccess": "Obteve com sucesso o banner do Memorial e o vídeo de introdução",
+  "memorialFetchBgSuccess": "A imagem a ser exibida com sucesso durante o Memorial",
+  "memorialFetchVideoSuccess": "Vídeo de boas-vindas Memorial configurado com sucesso",
   "meteredConnection": "Conexão de dados limitada",
   "meteredConnection-explain": "Ative esta opção se tiver uma internet limitada (como dados móveis). Neste caso, o M³ não descarregará automaticamente vídeos e ficheiros, a não ser os necessários para a reunião mais próxima ou a seguinte.",
   "midweek-meeting": "Reunião do meio de semana",
@@ -625,5 +625,6 @@
   "zoomEnable-explain": "Iniciar e parar automaticamente a partilha de ecrã do Zoom quando a reprodução de multimédia começar e terminar.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Atalho para partilha de ecrã do Zoom",
-  "zoomScreenShareShortcut-explain": "Introduza o atalho de teclado configurado na definição “Iniciar/parar partilha de ecrã” do Zoom. O M³ enviará este atalho quando a reprodução de multimédia começar (para iniciar a partilha de ecrã) e quando terminar (para parar a partilha de ecrã). Para utilizar esta funcionalidade, é necessário ativar a opção “Atalho global” para esse atalho específico nas definições do Zoom."
+  "zoomScreenShareShortcut-explain": "Introduza o atalho de teclado configurado na definição “Iniciar/parar partilha de ecrã” do Zoom. O M³ enviará este atalho quando a reprodução de multimédia começar (para iniciar a partilha de ecrã) e quando terminar (para parar a partilha de ecrã). Para utilizar esta funcionalidade, é necessário ativar a opção “Atalho global” para esse atalho específico nas definições do Zoom.",
+  "welcome-video": "Vídeo de boas-vindas Memorial"
 }

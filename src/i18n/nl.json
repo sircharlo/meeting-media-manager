@@ -31,7 +31,7 @@
   "are-you-sure-delete-cache": "Weet je zeker dat je alle gecachete bestanden wilt verwijderen?",
   "are-you-sure-delete-unused-cache": "Weet je zeker dat je alle ongebruikte bestanden uit de cache wilt verwijderen?",
   "are-you-sure-you-want-to-delete-this-profile": "Weet je zeker dat je het {profileName} profiel wilt verwijderen?",
-  "attemptingToFetchMemorialBannerAndIntroVideo": "Banner en introductievideo voor het Avondmaal worden opgehaald",
+  "attemptingToFetchMemorialBannerAndIntroVideo": "Ophalen van de video Memorial Welcome en de afbeelding die zal worden weergegeven tijdens het Memorial",
   "audio-bible": "Bijbel audio-opname",
   "audio-bible-media": "Audio-opnames uit de nieuwe wereldvertaling",
   "audio:": "Audio:",
@@ -247,7 +247,6 @@
   "incomplete-configuration": "Onvolledige configuratie",
   "integrations": "Integraties",
   "integrationsDescription": "Integraties met andere apps en services instellen",
-  "intro": "Inleiding",
   "introduction": "Inleiding en andere media",
   "invalid-settings": "Ongeldige instellingen",
   "item-names": "Itemnamen",
@@ -328,9 +327,10 @@
   "memorial-talk": "Lezing voor het Avondmaal",
   "memorialDate": "Datum van het Avondmaal",
   "memorialDate-explain": "Indien ingevuld, zal M³ proberen om automatisch het achtergrondplaatje voor het Avondmaal te downloaden en voorbereiden. Het plaatje zal getoond worden in plaats van de jaartekst. Let op, dit is een experimentele functie en werkt misschien niet zoals verwacht.",
-  "memorialFetchError": "Fout bij het ophalen van de banner en de introductievideo voor het Avondmaal",
+  "memorialFetchError": "Het ophalen van de Memorial Welcome Video en de afbeelding die moet worden weergegeven tijdens het Memorial zijn mislukt",
   "memorialFetchErrorNoBg": "Het ophalen van de Memorial banner is mislukt. Zorg ervoor dat de banner is gedownload en voorbereid voor Memorial.",
-  "memorialFetchSuccess": "Banner en introductievideo voor het Avondmaal succesvol opgehaald",
+  "memorialFetchBgSuccess": "De afbeelding die wordt weergegeven tijdens Memorial is succesvol geconfigureerd",
+  "memorialFetchVideoSuccess": "De video voor Memorial Welcome is succesvol geconfigureerd",
   "meteredConnection": "Beperkte gegevensverbinding",
   "meteredConnection-explain": "Schakel dit in als je beperkt internet hebt (zoals mobiele gegevens). In dit geval zal M³ niet automatisch video's en bestanden downloaden, tenzij ze nodig zijn voor vergaderingen op de huidige of de volgende dag.",
   "midweek-meeting": "Doordeweekse vergadering",
@@ -625,5 +625,6 @@
   "zoomEnable-explain": "Automatisch Zoom-schermdeling starten en stoppen wanneer media begint en stopt met afspelen.",
   "zoomIntegration": "Zoom",
   "zoomScreenShareShortcut": "Zoom-schermdelingsnelkoppeling",
-  "zoomScreenShareShortcut-explain": "Voer de sneltoets in die is ingesteld in Zoom onder \"Scherm delen starten/stoppen\". M³ zal deze sneltoets versturen wanneer media begint met afspelen (om scherm delen te starten) en wanneer het stopt (om scherm delen te stoppen). Om deze functie te gebruiken, moet je de optie \"Globale sneltoets\" inschakelen voor deze sneltoets in de Zoom-instellingen."
+  "zoomScreenShareShortcut-explain": "Voer de sneltoets in die is ingesteld in Zoom onder \"Scherm delen starten/stoppen\". M³ zal deze sneltoets versturen wanneer media begint met afspelen (om scherm delen te starten) en wanneer het stopt (om scherm delen te stoppen). Om deze functie te gebruiken, moet je de optie \"Globale sneltoets\" inschakelen voor deze sneltoets in de Zoom-instellingen.",
+  "welcome-video": "Memorial Welcome Video"
 }
