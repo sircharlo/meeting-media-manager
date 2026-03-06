@@ -130,16 +130,16 @@ Taustamusiikki soi automaattisesti ennen kokouksia ja pysähtyy oikeaan aikaan:
 4. **Manuaalinen ohjaus** – Käytä tilarivin musiikkipainiketta aloittaaksesi tai pysäyttääksesi musiikin
 5. **Uudelleenkäynnistys** – Käynnistä musiikki uudelleen kokouksen jälkeen yhdellä napsautuksella
 
-## OBS-integraation määrittäminen {#user-guide-obs-setup}
+## Zoom-integraatio {#user-guide-zoom-integration}
 
-Käyttääksesi M³:ta yhdessä OBS Studion kanssa hybridikokouksissa:
+M³ voidaan integroida Zoomin kanssa automaattista näytönjakoa varten:
 
-1. **Asenna OBS Studio** – Lataa ja asenna OBS Studio
+1. **Ota integraatio käyttöön** – Aktivoi Zoom-integraatio asetuksissa
 2. **Määritä pikanäppäin** – Aseta näytönjaon pikanäppäin, joka on määritetty Zoomissa. Varmista, että "global"-valintaruutu on valittuna Zoomissa.
-3. **Määritä M³** – Syötä OBS:n portti ja salasana M³:n asetuksissa
-4. **Luo näyttämöt** – Luo näyttämöä kameralle, medialle ja muulle sisällölle
+3. **Automaattinen ohjaus** – M³ kytkee Zoomin näytönjaon automaattisesti päälle ja pois tarpeen mukaan
+4. **Manuaalinen ohitus** – Voit silti hallita näytönjakoa manuaalisesti Zoomissa tarvittaessa
 
-## Viivytä kuvia {#user-guide-postpone-images}
+## OBS Studio -integraatio {#user-guide-obs-integration}
 
 ### OBS-integraation määrittäminen {#user-guide-obs-setup}
 
@@ -151,16 +151,16 @@ Käyttääksesi M³:ta yhdessä OBS Studion kanssa hybridikokouksissa:
 4. **Luo näyttämöt** – Luo näyttämöä kameralle, medialle ja muulle sisällölle
 5. **Testaa** – Varmista, että toisto toimii oikein
 
-### Viivytä kuvia {#user-guide-postpone-images}
+### OBS näyttämön hallinta {#obs-scene-management}
 
-Ota tämä vaihtoehto käyttöön viivästyttääksesi kuvien jakamista OBS:lle, kunnes aktivoit ne manuaalisesti:
+M³ vaihtaa OBS näyttämön automaattisesti esitysten aikana:
 
-- Ota käyttöön "Viivytä kuvien näyttöä" OBS-asetuksissa
+- **Kameranäyttämö** – Näyttää puhujan tai kameran näkymän
 - **Medianäyttämö** – Näyttää mediatoiston
 - **Kuvanäyttämö** – Näyttää kuvat (voi olla viivästetty, jos toiminto on käytössä)
 - **Automaattinen vaihto** – Näyttämöt vaihtuvat mediatyypin ja asetusten perusteella
 
-### Näyttämön vaihtoasetukset {#user-guide-scene-switching}
+### Edistyneet OBS-ominaisuudet {#advanced-obs}
 
 #### Viivytä kuvia {#user-guide-postpone-images}
 
@@ -178,12 +178,11 @@ Määritä, miten M³ käsittelee näyttämön vaihtamisen:
 
 ### Ääniasetukset hybridikokouksia varten {#audio-configuration}
 
-**Vaihtoehto: Jaa tietokoneen ääni**  
-Jos Original Audio ei toimi kunnolla kokoonpanossasi:
+Kun käytät M³:ta OBS Studion kanssa hybridikokouksissa (paikan päällä + Zoom), sinun on määritettävä ääniasetukset, jotta osallistujat kuulevat median äänen:
 
 #### Zoomin ääniasetukset {#zoom-audio-settings}
 
-**Vaihtoehtoinen ratkaisu**: Harkitse Zoom-integraation käyttöä sen sijaan, sillä se hyödyntää Zoomin omaa näytön- ja äänijakoa, joka käsittelee äänen huomattavasti sujuvammin.
+**Ennen jokaista kokousta sinun on otettava käyttöön Original Audio Zoomissa:**
 
 1. **Avaa Zoom** ja siirry Asetuksiin
 2. **Siirry kohtaan Ääni** → **Lisäasetukset (Advanced)**
@@ -200,9 +199,9 @@ Jos Original Audio ei toimi kunnolla kokoonpanossasi:
 2. **Valitse "Share computer sound"**
 3. **Huomio**: Tämä vaihtoehto on otettava käyttöön joka kerta, kun aloitat uuden Zoom-istunnon
 
-**Parhaat käytännöt:**
+**Paras vaihtoehto**: Harkitse M³:n Zoom-integraation käyttämistä OBS Studion sijaan, sillä se käyttää Zoomin omaa näytönjakoa, joka käsittelee äänen sujuvammin eikä vaadi monimutkaista ääniasettelua.
 
-#### Ääniongelmien vianmääritys {#audio-troubleshooting}
+#### Miksi ääniasetukset ovat tarpeellisia {#why-audio-config}
 
 M³ toistaa ääntä tietokoneellasi, mutta tämä ääni **ei siirry automaattisesti** videovirran mukana OBS Studioon. Sama tapahtuu, jos käytät mitä tahansa muuta mediasoitinta.
 
@@ -287,11 +286,11 @@ Jaa virallinen verkkosivusto ulkoisilla näytöillä:
 
 ### Verkkosivun ohjaimet {#website-controls}
 
-- **Luo profiilit** – Määritä erilliset profiilit eri seurakunnille
-- **Vaihda profiilia** – Käytä seurakuntavalitsinta profiilien välillä siirtymiseen
-- **Erilliset asetukset** – Jokaisella profiililla on omat asetukset ja mediat
+- **Navigointi** - Selaimen vakiot navigointitoiminnot
+- **Päivitä** - Lataa nykyinen sivu uudelleen
+- **Sulje** - Poistu verkkosivun esitystilasta
 
-## Yleiset ongelmat {#common-issues}
+## Edistyneet ominaisuudet {#user-guide-advanced-features}
 
 ### Useat seurakunnat {#user-guide-multiple-congregations}
 
@@ -302,39 +301,39 @@ Hallitse useita seurakuntia tai ryhmiä:
 3. **Erilliset asetukset** – Jokaisella profiililla on omat asetukset ja mediat
 4. **Jaetut resurssit** – Mediatiedostot jaetaan profiilien välillä aina kun mahdollista
 
-### Yleiset ongelmat {#common-issues}
+### Keyboard Shortcuts {#keyboard-shortcuts-guide}
 
 Määritä mukautettuja pikanäppäimiä tehokkaaseen käyttöön:
 
-1. **Ei ääntä Zoomissa**: Ota Original Audio käyttöön Zoomin asetuksissa ja ennen jokaista kokousta
-2. **Huono äänenlaatu**: Tarkista kolme Original Audio -valintaruutua (kaksi ensimmäistä päällä, kolmas pois)
-3. **Ääni ei toimi uudelleenkäynnistyksen jälkeen**: Original Audio on aktivoitava uudelleen jokaisessa Zoom-istunnossa
+1. **Ota pikanäppäimet käyttöön** – Aktivoi pikanäppäimet asetuksissa
+2. **Määritä pikanäppäimet** – Aseta pikanäppäimet yleisille toiminnoille
+3. **Harjoittele** – Opettele pikanäppäimet sujuvaa käyttöä varten
 4. **Mukauta** – Säädä pikanäppäimet mieltymystesi mukaan
 
-## Suorituskykyongelmat {#user-guide-performance-issues}
+## Vianmääritys {#troubleshooting-guide}
 
 ### Yleiset ongelmat {#common-issues}
 
-#### Kieliongelmat {#user-guide-language-issues}
+#### Media ei lataudu {#user-guide-media-not-downloading}
 
-- Tarkista median kieliasetus
-- Varmista, että kieli on saatavilla JW.org-sivustolla
-- Kokeile varakieltä
+- Tarkista kokousaikataulun asetukset
+- Varmista internet-yhteys
+- Tarkista, onko media saatavilla valitsemallasi kielellä
 
-#### Apua ongelmatilanteissa {#getting-help}
+#### OBS-integraatio ei toimi {#user-guide-obs-not-working}
 
-- Ota lisävälimuisti käyttöön
-- Pienennä suurinta resoluutiota
-- Tyhjennä vanhat välimuistitiedostot
+- Tarkista, että OBS WebSocket plugin on asennettu
+- Tarkista portti- ja salasana-asetukset
+- Varmista, että OBS on käynnissä
 
-#### Kieliongelmat {#user-guide-language-issues}
+#### Ääniongelmat Zoomissa/OBS:ssa {#audio-issues}
 
-- Tarkista median kieliasetus
-- Varmista, että kieli on saatavilla JW.org-sivustolla
-- Kokeile varakieltä
-- Varmista käyttöliittymän kieliasetus
+- **Ei ääntä Zoomissa**: Ota Original Audio käyttöön Zoomin asetuksissa ja ennen jokaista kokousta
+- **Huono äänenlaatu**: Tarkista kolme Original Audio -valintaruutua (kaksi ensimmäistä päällä, kolmas pois)
+- **Ääni ei toimi uudelleenkäynnistyksen jälkeen**: Original Audio on aktivoitava uudelleen jokaisessa Zoom-istunnossa
+- **Vaihtoehtoinen ratkaisu**: Käytä Zoomin näytönjaon "Share Computer Sound" -vaihtoehtoa
 
-#### Ennen kokouksia {#before-meetings}
+#### Suorituskykyongelmat {#user-guide-performance-issues}
 
 - Ota lisävälimuisti käyttöön
 - Pienennä suurinta resoluutiota
@@ -348,7 +347,7 @@ Määritä mukautettuja pikanäppäimiä tehokkaaseen käyttöön:
 - Kokeile varakieltä
 - Varmista käyttöliittymän kieliasetus
 
-### Kokousten jälkeen {#after-meetings}
+### Avun saaminen {#getting-help}
 
 Jos kohtaat ongelmia:
 
