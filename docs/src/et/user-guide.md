@@ -118,7 +118,7 @@ Configure custom keyboard shortcuts for quick access. Note that no keyboard shor
 
 **Note (\*):** Global shortcut - available even when the app is not focused
 
-## Koostöö Zoomiga {#user-guide-zoom-integration}
+## Taustamuusika {#user-guide-background-music}
 
 ### Setting Up Background Music {#background-music-setup}
 
