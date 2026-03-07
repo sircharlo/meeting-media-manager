@@ -4,6 +4,12 @@ Analyzes translation completeness for all i18n JSON files in src/i18n/,
 then updates src/i18n/index.ts and docs/locales/index.ts with imports
 sorted by % translated, each annotated with a completion comment.
 
+Also updates src/constants/locales.ts:
+  - LanguageValue type
+  - export const enabled: LanguageValue[]  (langs at or above threshold)
+  - export const locales: [...]            (adds placeholders for new langs,
+                                            removes langs no longer in LanguageValue)
+
 Usage:
     python scripts/update-langs.py
 """
@@ -169,20 +175,161 @@ def update_index(
     print(f"✅  Updated {path}")
 
 
-# ── Update LanguageValue type ─────────────────────────────────────────────────
+# ── Update LanguageValue type, enabled[], and locales[] ──────────────────────
+
+def parse_locales_array(content: str) -> list[dict]:
+    """
+    Parse the existing locales array from locales.ts into a list of dicts.
+    Each entry captures: value, englishName, label, langcode, signLangCodes (optional).
+    Uses a regex to find each object block inside the array.
+    """
+    # Extract the full locales array body
+    array_match = re.search(
+        r"export const locales(?::[^=]+)?=\s*\[([\s\S]*?)\];\s*$",
+        content,
+        re.MULTILINE,
+    )
+    if not array_match:
+        return []
+
+    array_body = array_match.group(1)
+
+    # Split into individual object blocks by top-level braces
+    entries = []
+    depth = 0
+    current = []
+    for char in array_body:
+        if char == '{':
+            depth += 1
+        if depth > 0:
+            current.append(char)
+        if char == '}':
+            depth -= 1
+            if depth == 0 and current:
+                entries.append("".join(current).strip())
+                current = []
+
+    parsed = []
+    for block in entries:
+        entry = {}
+
+        m = re.search(r"value:\s*'([^']+)'", block)
+        if m:
+            entry["value"] = m.group(1)
+
+        m = re.search(r"englishName:\s*'([^']+)'", block)
+        if m:
+            entry["englishName"] = m.group(1)
+
+        m = re.search(r"label:\s*'([^']+)'", block)
+        if m:
+            entry["label"] = m.group(1)
+
+        m = re.search(r"langcode:\s*'([^']+)'", block)
+        if m:
+            entry["langcode"] = m.group(1)
+
+        m = re.search(r"signLangCodes:\s*\[([^\]]*)\]", block)
+        if m:
+            codes = re.findall(r"'([^']+)'", m.group(1))
+            entry["signLangCodes"] = codes
+
+        if "value" in entry:
+            parsed.append(entry)
+
+    return parsed
+
+
+def build_locale_entry(entry: dict) -> str:
+    """Render a single locales[] object entry as a TypeScript string."""
+    lines = ["{"]
+    lines.append(f"    englishName: '{entry.get('englishName', 'PLACEHOLDER')}',")
+    lines.append(f"    label: '{entry.get('label', 'PLACEHOLDER')}',")
+    lines.append(f"    langcode: '{entry.get('langcode', 'PLACEHOLDER')}',")
+    if "signLangCodes" in entry and entry["signLangCodes"]:
+        codes = ", ".join(f"'{c}'" for c in entry["signLangCodes"])
+        lines.append(f"    signLangCodes: [{codes}],")
+    lines.append(f"    value: '{entry['value']}',")
+    lines.append("  }")
+    return "\n  ".join(lines)
+
 
 def update_locales_type(stats: dict[str, tuple[str, float]], path: Path) -> None:
     if not path.exists():
         print(f"⚠️   locales.ts not found at {path}, skipping.")
         return
-    content = path.read_text(encoding="utf-8")
 
+    content = path.read_text(encoding="utf-8")
+    # all_keys = sorted(stats.keys())
     active_keys = sorted(k for k, (_, p) in stats.items() if p >= PERCENTAGE_THRESHOLD)
+
+    # ── 1. Update LanguageValue type ─────────────────────────────────────────
     type_union = "\n  | ".join(f"'{k}'" for k in active_keys)
     new_type = f"export type LanguageValue =\n  | {type_union};"
-    
     updated = re.sub(r"export\s+type\s+LanguageValue\s*=[\s\S]*?;", new_type, content)
-    
+
+    # ── 2. Update enabled[] ──────────────────────────────────────────────────
+    enabled_items = "\n  ".join(f"'{k}'," for k in active_keys)
+    new_enabled = f"export const enabled: LanguageValue[] = [\n  {enabled_items}\n];"
+    updated = re.sub(
+        r"export\s+const\s+enabled\s*:\s*LanguageValue\[\]\s*=\s*\[[\s\S]*?\];",
+        new_enabled,
+        updated,
+    )
+
+    # ── 3. Update locales[] ──────────────────────────────────────────────────
+    existing_entries = parse_locales_array(updated)
+    existing_by_value = {e["value"]: e for e in existing_entries}
+
+    # Remove entries whose value is no longer in LanguageValue
+    # Add placeholder entries for brand-new values
+    new_entries = []
+    removed = []
+    added = []
+
+    for key in active_keys:
+        if key in existing_by_value:
+            new_entries.append(existing_by_value[key])
+        else:
+            # New lang detected — insert placeholder
+            placeholder = {
+                "value": key,
+                "englishName": "PLACEHOLDER_ENGLISH_NAME",
+                "label": "PLACEHOLDER_LABEL",
+                "langcode": "PLACEHOLDER_LANGCODE",
+            }
+            new_entries.append(placeholder)
+            added.append(key)
+
+    for existing_key in existing_by_value:
+        if existing_key not in active_keys:
+            removed.append(existing_key)
+
+    if removed:
+        print(f"  🗑️   Removed from locales[]: {', '.join(removed)}")
+    if added:
+        print(f"  ➕  Added placeholder(s) to locales[]: {', '.join(added)}")
+
+    # Render the new array
+    rendered_entries = ",\n  ".join(build_locale_entry(e) for e in new_entries)
+    new_locales = (
+        "export const locales: {\n"
+        "  englishName: string;\n"
+        "  label: string;\n"
+        "  langcode: JwLangCode;\n"
+        "  signLangCodes?: JwLangCode[];\n"
+        "  value: LanguageValue;\n"
+        "}[] = [\n"
+        f"  {rendered_entries},\n"
+        "];"
+    )
+
+    updated = re.sub(
+        r"export\s+const\s+locales\s*:\s*\{[\s\S]*?\}\[\]\s*=\s*\[[\s\S]*?\];",
+        new_locales,
+        updated,
+    )
+
     path.write_text(updated, encoding="utf-8")
     print(f"✅  Updated {path}")
 
