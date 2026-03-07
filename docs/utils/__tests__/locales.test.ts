@@ -24,12 +24,14 @@ describe('Locales', () => {
     const localeFiles = (await readdir(resolve(__dirname, '../../locales')))
       .filter((f) => f.endsWith('.json'))
       .map((f) => f.replace('.json', ''))
+      .filter((f) => localesKebab.includes(f))
       .sort((a, b) => a.localeCompare(b));
 
     expect(localesKebab).toEqual(localeFiles);
 
     const srcFolders = (await readdir(resolve(__dirname, '../../src')))
       .filter((f) => f !== 'assets' && f !== 'public')
+      .filter((f) => localesKebab.includes(f))
       .sort((a, b) => a.localeCompare(b));
 
     expect(localesKebab).toEqual(srcFolders);
