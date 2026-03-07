@@ -78,7 +78,7 @@ A médialejátszó többféle vezérlést biztosít:
 
 ### Haladó Prezentációs Funkciók {#advanced-presentation}
 
-#### Nagyítás és pásztázás {#zoom-pan}
+#### Egyéni időzítés {#custom-timing}
 
 **Beépített Média Vezérlők** (amikor a főablak aktív és a médialista látható):
 
