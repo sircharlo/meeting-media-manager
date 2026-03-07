@@ -684,6 +684,7 @@ async function startDownload(
     const downloadId = await manager.download({
       callbacks: {
         onDownloadCancelled: async () => {
+          console.log('Download cancelled:', url);
           sendToWindow(mainWindowInfo.mainWindow, 'downloadCancelled', {
             id: key,
           });
@@ -691,6 +692,7 @@ async function startDownload(
           processQueue();
         },
         onDownloadCompleted: async ({ item }) => {
+          console.log('Download completed:', url);
           sendToWindow(mainWindowInfo.mainWindow, 'downloadCompleted', {
             filePath: item.getSavePath(),
             id: key,
@@ -706,6 +708,7 @@ async function startDownload(
           });
         },
         onDownloadStarted: async ({ item, resolvedFilename }) => {
+          console.log('Download started:', url);
           sendToWindow(mainWindowInfo.mainWindow, 'downloadStarted', {
             filename: resolvedFilename,
             id: key,
@@ -714,6 +717,7 @@ async function startDownload(
         },
         onError: async (err, downloadData) => {
           if (quitStatus.isAppQuitting) return;
+          console.log('Download error:', url);
           captureElectronError(err, {
             contexts: {
               fn: {

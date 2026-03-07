@@ -83,7 +83,16 @@ export async function identifyJwpub(jwpubPath: string) {
 
   try {
     // 1. Peek at JWPUB to find 'contents'
-    const jwpubEntries = await getZipEntries(jwpubPath);
+    let jwpubEntries: Record<string, number>;
+    try {
+      jwpubEntries = await getZipEntries(jwpubPath);
+    } catch (error) {
+      console.error(
+        `[identifyJwpub] Error reading JWPUB entries for ${jwpubPath}:`,
+        error,
+      );
+      return;
+    }
     if (!jwpubEntries['contents']) return;
 
     // 2. Extract ONLY 'contents' to temp
@@ -125,7 +134,18 @@ const extractContentsFromJwpub = async (
   outputPath: string,
 ) => {
   const contentsPath = join(outputPath, 'contents');
-  const jwpubEntries = await getZipEntries(jwpubPath);
+  let jwpubEntries: Record<string, number>;
+  try {
+    jwpubEntries = await getZipEntries(jwpubPath);
+  } catch (error) {
+    console.error(
+      `[jwpubExtractor] Error reading JWPUB entries for ${jwpubPath}:`,
+      error,
+    );
+    // If we can't read the entries to even start extraction, the file might be locked or damaged.
+    await remove(jwpubPath).catch(() => undefined);
+    throw error;
+  }
   const expectedContentsSize = jwpubEntries['contents'];
 
   // First, only extract 'contents' from the JWPUB zip if it doesn't exist or is the wrong size
