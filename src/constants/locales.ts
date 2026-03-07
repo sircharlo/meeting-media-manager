@@ -1,30 +1,21 @@
 import type { JwLangCode } from 'src/types';
 
-// ! This type should include all languages that are configured in Crowdin.
+// ! This type will be updated by the update-langs script.
 export type LanguageValue =
-  | 'am'
   | 'cmnHans'
   | 'de'
-  | 'el'
   | 'en'
   | 'es'
   | 'et'
   | 'fi'
   | 'fr'
-  | 'gaa'
-  | 'ht'
   | 'hu'
   | 'it'
   | 'ko'
-  | 'mg'
   | 'nl'
-  | 'pl'
   | 'pt'
   | 'ptPt'
-  | 'ro'
   | 'ru'
-  | 'rw'
-  | 'sk'
   | 'sl'
   | 'sv'
   | 'sw'
@@ -166,12 +157,6 @@ export const locales: {
     langcode: 'F',
     signLangCodes: ['LSF', 'LSQ', 'SBF', 'CGS', 'LSI', 'BRS'],
     value: 'fr',
-  },
-  {
-    englishName: 'Ga',
-    label: 'Ga',
-    langcode: 'GA',
-    value: 'gaa',
   },
   {
     englishName: 'Haitian Creole',

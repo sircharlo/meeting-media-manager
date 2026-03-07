@@ -1089,7 +1089,7 @@ const checkMemorialDate = async () => {
               downloadCompleted =
                 await globalThis.electronApi?.isDownloadComplete(downloadId);
               await new Promise((resolve) => {
-                setTimeout(resolve, 1000);
+                setTimeout(resolve, 300);
               });
             }
           }
