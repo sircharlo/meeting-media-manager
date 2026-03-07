@@ -20,11 +20,18 @@ describe('Locales', () => {
 
     expect(enabled).toEqual(messages);
 
-    const localeFiles = (await readdir(resolve(__dirname, '../i18n')))
+    const allLocaleFiles = (await readdir(resolve(__dirname, '../i18n')))
       .filter((f) => f.endsWith('.json'))
       .map((f) => f.replace('.json', ''))
-      .filter((f) => localesKebab.includes(f))
       .sort((a, b) => a.localeCompare(b));
+
+    const inactiveLocaleFiles = allLocaleFiles.filter(
+      (f) => !localesKebab.includes(f),
+    );
+
+    expect(inactiveLocaleFiles).toHaveLength(0);
+
+    const localeFiles = allLocaleFiles.filter((f) => localesKebab.includes(f));
 
     expect(localesKebab).toEqual(localeFiles);
   });
