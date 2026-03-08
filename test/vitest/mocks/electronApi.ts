@@ -30,6 +30,9 @@ export const electronApi: ElectronApi = {
   closeWebsiteWindow: function () {
     throw new Error('Function not implemented.');
   },
+  closeZoomMeetingManagerWindow: function () {
+    throw new Error('Function not implemented.');
+  },
   convertHeic: function (image) {
     throw new Error('Function not implemented.');
   },
@@ -140,6 +143,9 @@ export const electronApi: ElectronApi = {
   onWebsiteWindowClosed: function (callback) {
     console.log('onWebsiteWindowClosed called but not implemented');
   },
+  onZoomMeetingManagerWindowClosed: function (callback) {
+    console.log('onZoomMeetingManagerWindowClosed called but not implemented');
+  },
   openDiscussion: function (category, title, params) {
     throw new Error('Function not implemented.');
   },
@@ -156,6 +162,9 @@ export const electronApi: ElectronApi = {
     throw new Error('Function not implemented.');
   },
   openWebsiteWindow: function (lang) {
+    throw new Error('Function not implemented.');
+  },
+  openZoomMeetingManagerWindow: function (params) {
     throw new Error('Function not implemented.');
   },
   parseMediaFile: function (filePath, options) {
