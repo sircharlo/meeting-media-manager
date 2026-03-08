@@ -9,20 +9,19 @@ hero:
   actions:
     - theme: brand
       text: Allalaadimine
-      link: /download
+      link: /et/download
     - theme: brand
       text: Info
-      link: /about
+      link: /et/about
     - theme: brand
       text: Kasutusjuhend
-      link: /user-guide
+      link: /et/user-guide
     - theme: brand
       text: Sättete juhend
-      link: /settings-guide
+      link: /et/settings-guide
     - theme: brand
       text: KKK
-      link: /faq
-
+      link: /et/faq
 features:
   - icon: 🚀
     title: Automaatne meediafailide haldus
