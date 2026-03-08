@@ -37,41 +37,41 @@ jobs:
       - name: Lint files
         run: yarn docs:lint
 
-  fix-links:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          ref: ${{ github.head_ref || github.ref_name }}
+  # fix-links:
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: write
+  #   steps:
+  #     - name: Check out Git repository
+  #       uses: actions/checkout@v6
+  #       with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #         ref: ${{ github.head_ref || github.ref_name }}
 
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: 'yarn'
+  #     - name: Setup Node
+  #       uses: actions/setup-node@v6
+  #       with:
+  #         node-version: 22
+  #         cache: 'yarn'
 
-      - run: yarn install
-      - run: yarn docs:fix-links
+  #     - run: yarn install
+  #     - run: yarn docs:fix-links
 
-      - name: Commit and push fixes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add docs/src/
-          if git diff --staged --quiet; then
-            echo "No link fixes needed"
-          else
-            git commit -m "fix: automatically fix documentation links [skip ci]"
-            git push origin HEAD:${{ github.head_ref || github.ref_name }}
-          fi
+  #     - name: Commit and push fixes
+  #       run: |
+  #         git config --local user.email "action@github.com"
+  #         git config --local user.name "GitHub Action"
+  #         git add docs/src/
+  #         if git diff --staged --quiet; then
+  #           echo "No link fixes needed"
+  #         else
+  #           git commit -m "fix: automatically fix documentation links [skip ci]"
+  #           git push origin HEAD:${{ github.head_ref || github.ref_name }}
+  #         fi
 
   test:
     runs-on: ubuntu-latest
-    needs: fix-links
+    # needs: fix-links
     permissions:
       contents: read
     steps:
