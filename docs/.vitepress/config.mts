@@ -194,6 +194,25 @@ export default defineConfig({
     if (pageData.frontmatter.layout === 'home') {
       title =
         (isEnglish ? messages.en.title : messages[messageLocale].title) || '';
+
+      const locale = isEnglish ? 'en' : pageLang;
+      const prefix = isEnglish ? '' : `/${locale}`;
+
+      // Re-stamp all hero action links based on their current (possibly corrupted) link value
+      const actions = pageData.frontmatter.hero?.actions;
+      if (Array.isArray(actions)) {
+        pageData.frontmatter.hero.actions = actions.map(
+          (action: { link: string; text: string; theme: string }) => {
+            // Extract just the page slug — last non-empty segment
+            const slug =
+              action.link
+                .replace(/^\/+/, '') // strip leading slashes
+                .split('/')
+                .findLast(Boolean) ?? action.link; // take last segment as the slug
+            return { ...action, link: `${prefix}/${slug}` };
+          },
+        );
+      }
     }
 
     pageData.frontmatter.head ??= [];
