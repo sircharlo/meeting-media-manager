@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: Télécharger
-      link: /fr/download
+      link: /download
     - theme: brand
       text: À propos
       link: /about
@@ -22,7 +22,6 @@ hero:
     - theme: brand
       text: Foire aux questions
       link: /faq
-
 features:
   - icon: 🚀
     title: Gestion automatique des médias
