@@ -31,6 +31,95 @@ const zoomDebugLog = (
 const buildMeetingUrl = (meetingId: string) =>
   `https://app.zoom.us/wc/${meetingId}/start?ref_from=launch&fromPWA=1`;
 
+const injectZoomDisplayMediaDebugPatch = async (win: BrowserWindow) => {
+  await win.webContents.executeJavaScript(
+    `(() => {
+      try {
+        const log = (...args) => console.log('[MMM:getDisplayMedia]', ...args);
+
+        if ((window).__mmmGetDisplayMediaPatched) {
+          log('patch already applied');
+          return;
+        }
+        (window).__mmmGetDisplayMediaPatched = true;
+
+        const nav = navigator;
+        if (!nav.mediaDevices) {
+          log('navigator.mediaDevices missing; creating shim object');
+          Object.defineProperty(nav, 'mediaDevices', {
+            configurable: true,
+            enumerable: true,
+            value: {},
+            writable: true,
+          });
+        }
+
+        const originalGetDisplayMedia = nav.mediaDevices.getDisplayMedia;
+        const supportBefore =
+          'getDisplayMedia' in nav.mediaDevices &&
+          typeof nav.mediaDevices.getDisplayMedia === 'function';
+
+        log('support before patch', {
+          hasMediaDevices: !!nav.mediaDevices,
+          supportBefore,
+          type: typeof nav.mediaDevices.getDisplayMedia,
+          url: location.href,
+        });
+
+        const wrappedGetDisplayMedia = async (...args) => {
+          log('getDisplayMedia called', {
+            argCount: args.length,
+            args,
+            url: location.href,
+          });
+
+          if (typeof originalGetDisplayMedia === 'function') {
+            try {
+              const stream = await originalGetDisplayMedia.apply(
+                nav.mediaDevices,
+                args,
+              );
+              log('getDisplayMedia resolved', {
+                audioTracks: stream?.getAudioTracks?.().length ?? 0,
+                videoTracks: stream?.getVideoTracks?.().length ?? 0,
+              });
+              return stream;
+            } catch (error) {
+              log('getDisplayMedia rejected', String(error));
+              throw error;
+            }
+          }
+
+          const err = new Error(
+            'getDisplayMedia is unavailable in this context (no native implementation found).',
+          );
+          log('getDisplayMedia missing native implementation', String(err));
+          throw err;
+        };
+
+        Object.defineProperty(nav.mediaDevices, 'getDisplayMedia', {
+          configurable: true,
+          value: wrappedGetDisplayMedia,
+          writable: true,
+        });
+
+        const supportAfter =
+          'getDisplayMedia' in nav.mediaDevices &&
+          typeof nav.mediaDevices.getDisplayMedia === 'function';
+
+        log('support after patch', {
+          supportAfter,
+          type: typeof nav.mediaDevices.getDisplayMedia,
+          url: location.href,
+        });
+      } catch (error) {
+        console.error('[MMM:getDisplayMedia] patch failed', error);
+      }
+    })();`,
+    true,
+  );
+};
+
 const injectZoomLoginAutomation = async (
   win: BrowserWindow,
   params: ZoomMeetingManagerParams,
@@ -232,6 +321,15 @@ export const createZoomMeetingManagerWindow = (
 
   win.webContents.on('did-finish-load', () => {
     zoomDebugLog('did-finish-load', { url: win.webContents.getURL() }, 'debug');
+    injectZoomDisplayMediaDebugPatch(win).catch((error) => {
+      zoomDebugLog(
+        'Display media patch failed on did-finish-load',
+        {
+          error: String(error),
+        },
+        'error',
+      );
+    });
     injectZoomLoginAutomation(win, params).catch((error) => {
       zoomDebugLog(
         'Auto-login injection failed on did-finish-load',
@@ -245,6 +343,15 @@ export const createZoomMeetingManagerWindow = (
 
   win.webContents.on('did-navigate-in-page', (_event, url) => {
     zoomDebugLog('did-navigate-in-page', { url }, 'debug');
+    injectZoomDisplayMediaDebugPatch(win).catch((error) => {
+      zoomDebugLog(
+        'Display media patch failed on did-navigate-in-page',
+        {
+          error: String(error),
+        },
+        'error',
+      );
+    });
     injectZoomLoginAutomation(win, params).catch((error) => {
       zoomDebugLog(
         'Auto-login injection failed on did-navigate-in-page',
@@ -258,6 +365,15 @@ export const createZoomMeetingManagerWindow = (
 
   win.webContents.on('did-navigate', (_event, url) => {
     zoomDebugLog('did-navigate', { url }, 'debug');
+    injectZoomDisplayMediaDebugPatch(win).catch((error) => {
+      zoomDebugLog(
+        'Display media patch failed on did-navigate',
+        {
+          error: String(error),
+        },
+        'error',
+      );
+    });
     injectZoomLoginAutomation(win, params).catch((error) => {
       zoomDebugLog(
         'Auto-login injection failed on did-navigate',
