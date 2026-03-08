@@ -41,7 +41,7 @@ export function closeOtherWindows(source: BrowserWindow) {
  * @returns The created window
  */
 export function createWindow(
-  name: 'main' | 'media' | 'website' | 'zoomMeetingManager' = 'main',
+  name: 'main' | 'media' | 'website' = 'main',
   options?: BrowserWindowConstructorOptions,
   websiteParams?: JwSiteParams,
 ) {
@@ -64,7 +64,7 @@ export function createWindow(
       backgroundThrottling: false,
       contextIsolation: true,
       preload:
-        name === 'website' || name === 'zoomMeetingManager'
+        name === 'website'
           ? undefined
           : resolve(
               fileURLToPath(new URL('.', import.meta.url)),
@@ -74,7 +74,7 @@ export function createWindow(
                   process.env.QUASAR_ELECTRON_PRELOAD_EXTENSION,
               ),
             ),
-      sandbox: name === 'website' || name === 'zoomMeetingManager',
+      sandbox: name === 'website',
       webSecurity: !IS_DEV,
       ...options?.webPreferences,
     },
@@ -110,9 +110,6 @@ export function createWindow(
       } else {
         page = `https://www.${urlVariables?.base || 'jw.org'}/${websiteParams?.langSymbol || ''}`;
       }
-      break;
-    case 'zoomMeetingManager':
-      page = 'about:blank';
       break;
   }
   if (page.startsWith('https://')) {
