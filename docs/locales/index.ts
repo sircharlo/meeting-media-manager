@@ -67,9 +67,6 @@ import sw from './sw.json';
 // 46.4% translated as of 2026-03-08
 import tl from './tl.json';
 
-// 17.6% translated as of 2026-03-08
-import sk from './sk.json';
-
 const messages: Record<LanguageValue, Partial<typeof en>> = {
   cmnHans,
   de,
@@ -85,7 +82,6 @@ const messages: Record<LanguageValue, Partial<typeof en>> = {
   pt,
   ptPt,
   ru,
-  sk,
   sl,
   sv,
   sw,

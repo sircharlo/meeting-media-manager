@@ -17,7 +17,6 @@ export type LanguageValue =
   | 'pt'
   | 'ptPt'
   | 'ru'
-  | 'sk'
   | 'sl'
   | 'sv'
   | 'sw'
