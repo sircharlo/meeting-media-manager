@@ -307,35 +307,37 @@ export default defineConfig({
         'script',
         {},
         `
-        const firstVisit = sessionStorage.getItem('firstVisit') !== 'false';
-        const parts = window.location.pathname.split('/');
-        const isEnglish = parts.length === 3;
+        {
+          const firstVisit = sessionStorage.getItem('firstVisit') !== 'false';
+          const parts = window.location.pathname.split('/');
+          const isEnglish = parts.length === 3;
 
-        if (firstVisit && isEnglish) {
-          const langs = [${localeOptions.filter((l) => enabled.includes(l.value)).map((l) => `"${camelToKebabCase(l.value)}"`)}]
+          if (firstVisit && isEnglish) {
+            const langs = [${localeOptions.filter((l) => enabled.includes(l.value)).map((l) => `"${camelToKebabCase(l.value)}"`)}]
 
-          function mapLang(lang) {
-            switch (lang) {
-              case 'zh':
-              case 'zh-CN':
-              case 'zh-TW':
-                return 'cmn-hans';
-              default:
-                return lang.toLowerCase();
+            function mapLang(lang) {
+              switch (lang) {
+                case 'zh':
+                case 'zh-CN':
+                case 'zh-TW':
+                  return 'cmn-hans';
+                default:
+                  return lang.toLowerCase();
+              }
             }
-          }
 
-          let match;
-          navigator.languages.forEach((lang) => {
-            const mapped = mapLang(lang);
-            if (!match) match = langs.find((l) => l === mapped);
-            if (!match) match = langs.find((l) => l === mapped.split('-')[0]);
-          })
+            let match;
+            navigator.languages.forEach((lang) => {
+              const mapped = mapLang(lang);
+              if (!match) match = langs.find((l) => l === mapped);
+              if (!match) match = langs.find((l) => l === mapped.split('-')[0]);
+            })
 
-          if (match) {
-            sessionStorage.setItem('firstVisit', false);
-            const page = isEnglish ? parts[2] : parts[3]
-            window.location.pathname = "${base}" + (match !== 'en' ? match + '/' : '') + page
+            if (match) {
+              sessionStorage.setItem('firstVisit', false);
+              const page = isEnglish ? parts[2] : parts[3]
+              window.location.pathname = "${base}" + (match !== 'en' ? match + '/' : '') + page
+            }
           }
         }
         `,
