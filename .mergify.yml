@@ -35,11 +35,11 @@ queue_rules:
       - check-success = "build / build (windows-latest)"
 
   # Default queue (for Crowdin PRs or others you might add)
-  - name: default
-    autoqueue: true
-    merge_conditions:
-      - check-success = "build / lint"
-      - check-success = "build / test"
-      - check-success = "build / build (ubuntu-latest)"
-      - check-success = "build / build (macos-latest)"
-      - check-success = "build / build (windows-latest)"
+# - name: default
+#   autoqueue: true
+#   merge_conditions:
+#     - check-success = "build / lint"
+#     - check-success = "build / test"
+#     - check-success = "build / build (ubuntu-latest)"
+#     - check-success = "build / build (macos-latest)"
+#     - check-success = "build / build (windows-latest)"
