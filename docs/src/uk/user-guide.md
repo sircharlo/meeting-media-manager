@@ -235,7 +235,7 @@ Add your own media files to M³:
 2. **Drag and Drop** - Drag files directly into M³
 3. **Folder Monitoring** - Set up a watched folder for automatic imports
 4. **JWPUB Files and Playlists** - Import publications and playlists
-5. **Публічні Talk Media (S-34 / S-34mp)** - Імпорт публічних розмов медіа з використанням S<unk> 34 або S<unk> 34mp JWPUB файлів
+5. **Публічні Talk Media (S-34 / S-34mp)** - Імпорт публічних розмов медіа з використанням S-34 або S-34mp JWPUB файлів
 
 ### Managing Imported Media {#managing-imported-media}
 
