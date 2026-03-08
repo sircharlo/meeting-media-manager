@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: Ladda ned
-      link: /sw/download
+      link: /download
     - theme: brand
       text: Om
       link: /about
@@ -22,7 +22,6 @@ hero:
     - theme: brand
       text: Vanliga frågor (FAQ)
       link: /faq
-
 features:
   - icon: 🚀
     title: Automatisk mediahantering
