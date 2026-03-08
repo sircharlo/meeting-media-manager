@@ -9,19 +9,20 @@ hero:
   actions:
     - theme: brand
       text: 下载
-      link: /cmn-hans/download
+      link: /download
     - theme: brand
       text: 关于
-      link: /cmn-hans/about
+      link: /about
     - theme: brand
       text: 用户指南
-      link: /cmn-hans/user-guide
+      link: /user-guide
     - theme: brand
       text: 设置指南
-      link: /cmn-hans/settings-guide
+      link: /settings-guide
     - theme: brand
       text: 常见问题 (FAQ)
-      link: /cmn-hans/faq
+      link: /faq
+
 features:
   - icon: 🚀
     title: 自动媒体管理

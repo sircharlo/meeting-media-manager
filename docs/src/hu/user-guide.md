@@ -118,7 +118,7 @@ A háttérzene automatikusan elindul az összejövetel előtt és a megfelelő i
 
 **_Megjegyzés (_):** Globális gyorsbillentyű – akkor is elérhető, ha az alkalmazás nincs fókuszban
 
-## OBS integráció beállítása {#user-guide-obs-setup}
+## Háttérzene {#user-guide-background-music}
 
 ### Háttérzene beállítása {#background-music-setup}
 
@@ -130,7 +130,7 @@ A háttérzene automatikusan elindul az összejövetel előtt és a megfelelő i
 4. **Kézi vezérlés** – Az állapotjelző sávon található zene gombbal indíthatja el/állíthatja le kézzel a lejátszást
 5. **Újraindítás** – Egy kattintással folytathatja a zene lejátszását az összejövetel után
 
-## OBS integráció beállítása {#user-guide-obs-setup}
+## Zoom integráció {#user-guide-zoom-integration}
 
 Az M³ használata az OBS Studio programmal hibrid összejövetelekhez:
 
