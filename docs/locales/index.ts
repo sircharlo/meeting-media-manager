@@ -10,86 +10,65 @@ export const enabled: LanguageValue[] = baseEnabled.filter((l) => l !== 'en');
 
 // ! This file will be updated by the update-langs script.
 
-// 100.0% translated as of 2026-03-07
+// 100.0% translated as of 2026-03-08
 import en from './en.json';
 
-// 99.7% translated as of 2026-03-07
+// 99.7% translated as of 2026-03-08
 import cmnHans from './cmn-hans.json';
 
-// 99.2% translated as of 2026-03-07
+// 99.2% translated as of 2026-03-08
 import fi from './fi.json';
 
-// 99.2% translated as of 2026-03-07
+// 99.2% translated as of 2026-03-08
 import fr from './fr.json';
 
-// 99.2% translated as of 2026-03-07
+// 99.2% translated as of 2026-03-08
 import sl from './sl.json';
 
-// 99.1% translated as of 2026-03-07
+// 99.1% translated as of 2026-03-08
 import ptPt from './pt-pt.json';
 
-// 98.4% translated as of 2026-03-07
+// 98.4% translated as of 2026-03-08
 import sv from './sv.json';
 
-// 98.1% translated as of 2026-03-07
+// 98.1% translated as of 2026-03-08
 import es from './es.json';
 
-// 97.9% translated as of 2026-03-07
+// 97.9% translated as of 2026-03-08
 import de from './de.json';
 
-// 97.6% translated as of 2026-03-07
+// 97.6% translated as of 2026-03-08
 import nl from './nl.json';
 
-// 97.3% translated as of 2026-03-07
+// 97.3% translated as of 2026-03-08
 import hu from './hu.json';
 
-// 97.0% translated as of 2026-03-07
+// 97.0% translated as of 2026-03-08
 import et from './et.json';
 
-// 96.8% translated as of 2026-03-07
+// 96.8% translated as of 2026-03-08
 import ru from './ru.json';
 
-// 86.9% translated as of 2026-03-07
+// 86.9% translated as of 2026-03-08
 import it from './it.json';
 
-// 79.6% translated as of 2026-03-07
+// 79.6% translated as of 2026-03-08
 import ko from './ko.json';
 
-// 74.1% translated as of 2026-03-07
+// 74.1% translated as of 2026-03-08
 import pt from './pt.json';
 
-// 57.0% translated as of 2026-03-07
+// 57.0% translated as of 2026-03-08
 import uk from './uk.json';
 
-// 49.8% translated as of 2026-03-07
+// 49.8% translated as of 2026-03-08
 import sw from './sw.json';
 
-// 46.4% translated as of 2026-03-07
+// 46.4% translated as of 2026-03-08
 import tl from './tl.json';
 
-// 17.6% translated as of 2026-03-07
-// import sk from './sk.json';
-
-// 5.9% translated as of 2026-03-07
-// import rw from './rw.json';
-
-// 5.2% translated as of 2026-03-07
-// import el from './el.json';
-
-// 4.9% translated as of 2026-03-07
-// import ro from './ro.json';
-
-// 4.1% translated as of 2026-03-07
-// import am from './am.json';
-
-// 4.0% translated as of 2026-03-07
-// import ht from './ht.json';
-
-// 4.0% translated as of 2026-03-07
-// import mg from './mg.json';
-
-// 1.6% translated as of 2026-03-07
-// import pl from './pl.json';
+// 17.6% translated as of 2026-03-08
+import sk from './sk.json';
 
 const messages: Record<LanguageValue, Partial<typeof en>> = {
   cmnHans,
@@ -106,6 +85,7 @@ const messages: Record<LanguageValue, Partial<typeof en>> = {
   pt,
   ptPt,
   ru,
+  sk,
   sl,
   sv,
   sw,

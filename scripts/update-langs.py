@@ -102,7 +102,7 @@ def build_translation_stats(i18n_dir: Path) -> dict[str, tuple[str, float]]:
 
 # ── Import-block builder ──────────────────────────────────────────────────────
 
-def build_import_block(stats: dict[str, tuple[str, float]]) -> str:
+def build_import_block(stats: dict[str, tuple[str, float]], inactive_too: bool = False) -> str:
     """
     Returns the new import block string.
     All locales found on disk are included as active imports,
@@ -114,7 +114,7 @@ def build_import_block(stats: dict[str, tuple[str, float]]) -> str:
     for key in sorted_keys:
         stem, pct = stats[key]
         comment   = f"// {pct}% translated as of {TODAY}"
-        lines.append(f"{comment}\n{"// " if pct < PERCENTAGE_THRESHOLD else ""}import {key} from './{stem}.json';")
+        lines.append(f"{comment}\n{"// " if pct < PERCENTAGE_THRESHOLD and not inactive_too else ""}import {key} from './{stem}.json';")
 
     return "\n\n".join(lines)
 
@@ -157,15 +157,17 @@ def update_index(
         print(f"⚠️   {label} not found at {path}, skipping.")
         return
     content = path.read_text(encoding="utf-8")
-    block   = build_import_block(stats)
+    inactive_too = "docs" in path.parts
+    block   = build_import_block(stats, inactive_too=inactive_too)
     updated = replace_locale_import_block(content, block)
     
     active_keys = sorted(k for k, (_, p) in stats.items() if p >= PERCENTAGE_THRESHOLD)
-    keys_str = ",\n  ".join(active_keys)
+    keys_str = ",\n  ".join(sorted(stats.keys()))
+    active_keys_str = ",\n  ".join(active_keys)
     
     # Also update the export object if this is an index file
     if label == "src/i18n/index.ts":
-        new_export = f"export default {{\n  {keys_str},\n}};"
+        new_export = f"export default {{\n  {active_keys_str},\n}};"
         updated = re.sub(r"export\s+default\s*\{[\s\S]*?\};", new_export, updated)
     elif label == "docs/locales/index.ts":
         new_export = f"const messages: Record<LanguageValue, Partial<typeof en>> = {{\n  {keys_str},\n}};"
@@ -260,16 +262,18 @@ def update_locales_type(stats: dict[str, tuple[str, float]], path: Path) -> None
         return
 
     content = path.read_text(encoding="utf-8")
-    # all_keys = sorted(stats.keys())
+    all_keys = sorted(stats.keys())
     active_keys = sorted(k for k, (_, p) in stats.items() if p >= PERCENTAGE_THRESHOLD)
 
     # ── 1. Update LanguageValue type ─────────────────────────────────────────
-    type_union = "\n  | ".join(f"'{k}'" for k in active_keys)
+    looper = all_keys
+    type_union = "\n  | ".join(f"'{k}'" for k in looper)
     new_type = f"export type LanguageValue =\n  | {type_union};"
     updated = re.sub(r"export\s+type\s+LanguageValue\s*=[\s\S]*?;", new_type, content)
 
     # ── 2. Update enabled[] ──────────────────────────────────────────────────
-    enabled_items = "\n  ".join(f"'{k}'," for k in active_keys)
+    looper = all_keys if 'docs' in path.parts else active_keys
+    enabled_items = "\n  ".join(f"'{k}'," for k in looper)
     new_enabled = f"export const enabled: LanguageValue[] = [\n  {enabled_items}\n];"
     updated = re.sub(
         r"export\s+const\s+enabled\s*:\s*LanguageValue\[\]\s*=\s*\[[\s\S]*?\];",
