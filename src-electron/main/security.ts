@@ -18,7 +18,11 @@ app.on('ready', () => {
         return callback(false);
       }
 
-      const allowed: (typeof permission)[] = ['media', 'notifications'];
+      const allowed: (typeof permission)[] = [
+        'display-capture',
+        'media',
+        'notifications',
+      ];
       if (allowed.includes(permission)) {
         callback(true);
       } else {
