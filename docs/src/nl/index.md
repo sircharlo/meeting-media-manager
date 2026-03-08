@@ -9,19 +9,20 @@ hero:
   actions:
     - theme: brand
       text: Downloaden
-      link: /nl/download
+      link: /download
     - theme: brand
       text: Over M³
-      link: /nl/about
+      link: /about
     - theme: brand
       text: Gebruikershandleiding
-      link: /nl/user-guide
+      link: /user-guide
     - theme: brand
       text: Handleiding Instellingen
-      link: /nl/settings-guide
+      link: /settings-guide
     - theme: brand
       text: Veelgestelde vragen
-      link: /nl/faq
+      link: /faq
+
 features:
   - icon: 🚀
     title: Automatisch mediabeheer
