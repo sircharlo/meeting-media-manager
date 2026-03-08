@@ -16,6 +16,7 @@ export const JW_DOMAINS: string[] = ['jw.org', 'jwevent.org'];
 export const TRUSTED_DOMAINS: string[] = JW_DOMAINS.concat([
   'jw-cdn.org',
   'akamaihd.net',
+  'cdn.optimizely.com',
   'cloudfront.net',
   'zoom.us',
 ]);

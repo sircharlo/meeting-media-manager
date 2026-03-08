@@ -4,13 +4,28 @@ import type { ZoomMeetingManagerParams } from 'src/types';
 import { HD_RESOLUTION, PLATFORM } from 'src-electron/constants';
 import {
   createWindow,
+  logToWindow,
   sendToWindow,
 } from 'src-electron/main/window/window-base';
+import { mainWindowInfo } from 'src-electron/main/window/window-main';
 import { mediaWindowInfo } from 'src-electron/main/window/window-media';
 import { askForMediaAccess } from 'src-electron/main/window/window-website';
 
 export const zoomMeetingManagerWindowInfo = {
   zoomMeetingManagerWindow: null as BrowserWindow | null,
+};
+
+const zoomDebugLog = (
+  msg: string,
+  ctx: Record<string, unknown> = {},
+  level: 'debug' | 'error' | 'info' | 'warn' = 'info',
+) => {
+  logToWindow(
+    mainWindowInfo.mainWindow,
+    `[Zoom Meeting Manager] ${msg}`,
+    ctx,
+    level,
+  );
 };
 
 const buildMeetingUrl = (meetingId: string) =>
@@ -20,7 +35,16 @@ const injectZoomLoginAutomation = async (
   win: BrowserWindow,
   params: ZoomMeetingManagerParams,
 ) => {
-  if (!params.username || !params.password) return;
+  if (!params.username || !params.password) {
+    zoomDebugLog(
+      'Skipping auto-login injection (missing username or password)',
+      {
+        hasPassword: !!params.password,
+        hasUsername: !!params.username,
+      },
+    );
+    return;
+  }
 
   await win.webContents.executeJavaScript(
     `(() => {
@@ -92,10 +116,17 @@ export const createZoomMeetingManagerWindow = (
 ) => {
   if (!params.meetingId) return;
 
+  zoomDebugLog('Requested window open', {
+    hasPassword: !!params.password,
+    hasUsername: !!params.username,
+    meetingId: params.meetingId,
+  });
+
   if (
     zoomMeetingManagerWindowInfo.zoomMeetingManagerWindow &&
     !zoomMeetingManagerWindowInfo.zoomMeetingManagerWindow.isDestroyed()
   ) {
+    zoomDebugLog('Reusing existing Zoom Meeting Manager window');
     zoomMeetingManagerWindowInfo.zoomMeetingManagerWindow.show();
     zoomMeetingManagerWindowInfo.zoomMeetingManagerWindow.loadURL(
       buildMeetingUrl(params.meetingId),
@@ -104,6 +135,7 @@ export const createZoomMeetingManagerWindow = (
   }
 
   askForMediaAccess();
+  zoomDebugLog('Requested microphone/camera permissions check');
 
   zoomMeetingManagerWindowInfo.zoomMeetingManagerWindow = createWindow(
     'zoomMeetingManager',
@@ -121,6 +153,7 @@ export const createZoomMeetingManagerWindow = (
   );
 
   const win = zoomMeetingManagerWindowInfo.zoomMeetingManagerWindow;
+  zoomDebugLog('Window created', { partition: 'persist:zoom-meeting-manager' });
   const zoomSession = win.webContents.session;
 
   const allowedPermissions = new Set([
@@ -132,7 +165,13 @@ export const createZoomMeetingManagerWindow = (
 
   zoomSession.setPermissionCheckHandler((webContents, permission) => {
     if (!webContents || webContents.id !== win.webContents.id) return false;
-    return allowedPermissions.has(permission as string);
+    const allowed = allowedPermissions.has(permission as string);
+    zoomDebugLog(
+      'Permission check',
+      { allowed, permission },
+      allowed ? 'debug' : 'warn',
+    );
+    return allowed;
   });
 
   zoomSession.setPermissionRequestHandler(
@@ -142,14 +181,30 @@ export const createZoomMeetingManagerWindow = (
         return;
       }
 
-      callback(allowedPermissions.has(permission as string));
+      const allowed = allowedPermissions.has(permission as string);
+      zoomDebugLog(
+        'Permission request',
+        { allowed, permission },
+        allowed ? 'info' : 'warn',
+      );
+      callback(allowed);
     },
   );
 
   zoomSession.setDisplayMediaRequestHandler(
-    (_request, callback) => {
+    (request, callback) => {
+      zoomDebugLog('Display media request received', {
+        frameUrl: request.frame?.url || null,
+        securityOrigin: request.securityOrigin || null,
+      });
+
       const mediaWindow = mediaWindowInfo.mediaWindow;
       if (!mediaWindow || mediaWindow.isDestroyed()) {
+        zoomDebugLog(
+          'No share source content: media window not available',
+          {},
+          'error',
+        );
         callback({});
         return;
       }
@@ -159,6 +214,10 @@ export const createZoomMeetingManagerWindow = (
         name: mediaWindow.getTitle(),
       };
 
+      zoomDebugLog('Providing media window as display capture source', {
+        mediaSourceId: video.id || null,
+        mediaWindowTitle: video.name || null,
+      });
       callback({
         audio: 'loopback',
         video,
@@ -167,19 +226,75 @@ export const createZoomMeetingManagerWindow = (
     { useSystemPicker: false },
   );
 
-  win.loadURL(buildMeetingUrl(params.meetingId));
+  const meetingUrl = buildMeetingUrl(params.meetingId);
+  zoomDebugLog('Loading meeting URL', { meetingUrl });
+  win.loadURL(meetingUrl);
 
   win.webContents.on('did-finish-load', () => {
-    injectZoomLoginAutomation(win, params).catch(console.error);
+    zoomDebugLog('did-finish-load', { url: win.webContents.getURL() }, 'debug');
+    injectZoomLoginAutomation(win, params).catch((error) => {
+      zoomDebugLog(
+        'Auto-login injection failed on did-finish-load',
+        {
+          error: String(error),
+        },
+        'error',
+      );
+    });
   });
 
-  win.webContents.on('did-navigate-in-page', () => {
-    injectZoomLoginAutomation(win, params).catch(console.error);
+  win.webContents.on('did-navigate-in-page', (_event, url) => {
+    zoomDebugLog('did-navigate-in-page', { url }, 'debug');
+    injectZoomLoginAutomation(win, params).catch((error) => {
+      zoomDebugLog(
+        'Auto-login injection failed on did-navigate-in-page',
+        {
+          error: String(error),
+        },
+        'error',
+      );
+    });
   });
 
-  win.webContents.on('did-navigate', () => {
-    injectZoomLoginAutomation(win, params).catch(console.error);
+  win.webContents.on('did-navigate', (_event, url) => {
+    zoomDebugLog('did-navigate', { url }, 'debug');
+    injectZoomLoginAutomation(win, params).catch((error) => {
+      zoomDebugLog(
+        'Auto-login injection failed on did-navigate',
+        {
+          error: String(error),
+        },
+        'error',
+      );
+    });
   });
+
+  win.webContents.on(
+    'did-fail-load',
+    (_event, errorCode, errorDescription, validatedURL, isMainFrame) => {
+      zoomDebugLog(
+        'did-fail-load',
+        {
+          errorCode,
+          errorDescription,
+          isMainFrame,
+          validatedURL,
+        },
+        isMainFrame ? 'error' : 'warn',
+      );
+    },
+  );
+
+  win.webContents.on(
+    'console-message',
+    (_event, level, message, line, sourceId) => {
+      zoomDebugLog(
+        'renderer console',
+        { level, line, message, sourceId },
+        'debug',
+      );
+    },
+  );
 
   win.webContents.setWindowOpenHandler((details) => {
     zoomMeetingManagerWindowInfo.zoomMeetingManagerWindow?.loadURL(details.url);
@@ -187,10 +302,12 @@ export const createZoomMeetingManagerWindow = (
   });
 
   win.on('close', () => {
+    zoomDebugLog('Window close requested');
     sendToWindow(win, 'zoomMeetingManagerWindowClosed');
   });
 
   win.on('closed', () => {
+    zoomDebugLog('Window closed');
     zoomMeetingManagerWindowInfo.zoomMeetingManagerWindow = null;
   });
 };
