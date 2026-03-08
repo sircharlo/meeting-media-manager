@@ -23,20 +23,14 @@ const DOCS_SRC_DIR = resolve(__dirname, '../src');
  */
 function fixLink(locale, link) {
   const trimmed = (link || '').trim();
-  if (trimmed.startsWith('https://')) return trimmed; // leave external links
+  if (trimmed.startsWith('https://')) return trimmed;
 
-  // Normalize leading slashes to make splitting predictable
-  const withoutLeading = trimmed.replace(/^\/+/, '');
-  const parts = withoutLeading.split('/');
-
-  // Recreate the test's linkPage logic robustly
-  let linkPage = parts[2] ?? parts[1] ?? parts[0] ?? '';
-
-  // Guard: if linkPage is still empty, keep original
-  if (!linkPage) return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+  // Extract just the slug — last non-empty segment
+  const slug = trimmed.replace(/^\/+/, '').split('/').findLast(Boolean);
+  if (!slug) return trimmed;
 
   const prefix = locale === 'en' ? '' : `/${locale}`;
-  return `${prefix}/${linkPage}`;
+  return `${prefix}/${slug}`;
 }
 
 async function main() {
