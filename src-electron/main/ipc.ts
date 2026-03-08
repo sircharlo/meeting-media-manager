@@ -9,6 +9,7 @@ import type {
   NavigateWebsiteAction,
   SettingsValues,
   UnzipOptions,
+  ZoomMeetingManagerParams,
 } from 'src/types';
 
 import { homepage, repository } from 'app/package.json';
@@ -77,6 +78,10 @@ import {
   websiteWindowInfo,
   zoomWebsiteWindow,
 } from 'src-electron/main/window/window-website';
+import {
+  createZoomMeetingManagerWindow,
+  zoomMeetingManagerWindowInfo,
+} from 'src-electron/main/window/window-zoom-meeting-manager';
 import upath from 'upath';
 
 const { openExternal, openPath } = shell;
@@ -161,6 +166,17 @@ handleIpcSend(
 handleIpcSend('zoomWebsiteWindow', (_e, direction: 'in' | 'out') => {
   zoomWebsiteWindow(direction);
 });
+
+handleIpcSend(
+  'toggleZoomMeetingManagerWindow',
+  (_e, show: boolean, params?: ZoomMeetingManagerParams) => {
+    if (show && params?.meetingId) {
+      createZoomMeetingManagerWindow(params);
+    } else {
+      zoomMeetingManagerWindowInfo.zoomMeetingManagerWindow?.close();
+    }
+  },
+);
 
 handleIpcSend('navigateWebsiteWindow', (_e, action: NavigateWebsiteAction) => {
   navigateWebsiteWindow(action);

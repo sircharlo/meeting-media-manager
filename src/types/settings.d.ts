@@ -173,7 +173,8 @@ export type SettingsItemSubgroup =
   | 'setupWizard'
   | 'setupWizard.backgroundMusic'
   | 'subtitles'
-  | 'zoomIntegration';
+  | 'zoomIntegration'
+  | 'zoomMeetingManager';
 
 export type SettingsItemType =
   | 'button'
@@ -269,5 +270,13 @@ export interface SettingsValues {
   weStartTime: `${number}:${number}` | null;
   zoomAutoFocusMediaWindow: boolean;
   zoomEnable: boolean;
+  zoomMeetingManagerAutomateMediaSharing: boolean;
+  zoomMeetingManagerAutomateMeetingAudioSettings: boolean;
+  zoomMeetingManagerAutomatePostMeetingAudioSettings: boolean;
+  zoomMeetingManagerEnable: boolean;
+  zoomMeetingManagerEnableWaitingRoom: boolean;
+  zoomMeetingManagerMeetingId: null | string;
+  zoomMeetingManagerPassword: null | string;
+  zoomMeetingManagerUsername: null | string;
   zoomScreenShareShortcut: null | string;
 }

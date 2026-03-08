@@ -1,4 +1,8 @@
-import type { JwSiteParams, NavigateWebsiteAction } from 'src/types';
+import type {
+  JwSiteParams,
+  NavigateWebsiteAction,
+  ZoomMeetingManagerParams,
+} from 'src/types';
 
 import { listen, send } from 'src-electron/preload/ipc';
 
@@ -20,3 +24,10 @@ export const zoomWebsiteWindow = (direction: 'in' | 'out') =>
   send('zoomWebsiteWindow', direction);
 
 export const closeWebsiteWindow = () => send('toggleWebsiteWindow', false);
+
+export const openZoomMeetingManagerWindow = (
+  params: ZoomMeetingManagerParams,
+) => send('toggleZoomMeetingManagerWindow', true, params);
+
+export const closeZoomMeetingManagerWindow = () =>
+  send('toggleZoomMeetingManagerWindow', false);

@@ -17,6 +17,7 @@ export const TRUSTED_DOMAINS: string[] = JW_DOMAINS.concat([
   'jw-cdn.org',
   'akamaihd.net',
   'cloudfront.net',
+  'zoom.us',
 ]);
 
 // General
