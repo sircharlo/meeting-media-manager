@@ -32,9 +32,9 @@ describe('Locales', () => {
 
     // expect(inactiveLocaleFiles).toHaveLength(0);
     if (inactiveLocaleFiles.length) {
-      console.warn("Unused locales:", inactiveLocaleFiles);
+      console.warn('Unused locales:', inactiveLocaleFiles);
     }
-    
+
     const allSrcFolders = (await readdir(resolve(__dirname, '../../src')))
       .filter((f) => f !== 'assets' && f !== 'public')
       .sort((a, b) => a.localeCompare(b));
@@ -45,7 +45,7 @@ describe('Locales', () => {
 
     // expect(inactiveSrcFolders).toHaveLength(0);
     if (inactiveSrcFolders.length) {
-      console.warn("Unused locale folders:", inactiveSrcFolders);
+      console.warn('Unused locale folders:', inactiveSrcFolders);
     }
 
     const localeFiles = allLocaleFiles.filter((f) => localesKebab.includes(f));
@@ -72,10 +72,11 @@ describe('Locales', () => {
         const links = [...page.matchAll(/link: (.+)/g)].map((m) => m[1]);
 
         return links.map((link) => {
-          const linkParts = link?.split('/') ?? [];
+          const slug =
+            link?.replace(/^\/+/, '').split('/').findLast(Boolean) ?? link;
           return {
             link,
-            linkPage: linkParts[2] ? linkParts[2] : linkParts[1],
+            linkPage: slug,
             locale,
           };
         });
