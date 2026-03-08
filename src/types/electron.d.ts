@@ -43,7 +43,6 @@ export interface ElectronApi {
   askForMediaAccess: () => void;
   checkForUpdates: () => void;
   closeWebsiteWindow: () => void;
-  closeZoomMeetingManagerWindow: () => void;
   convertHeic: (image: ConversionOptions) => Promise<ArrayBuffer>;
   convertPdfToImages: (
     pdfPath: string,
@@ -166,7 +165,6 @@ export interface ElectronApi {
     }) => void,
   ) => void;
   onWebsiteWindowClosed: (callback: () => void) => void;
-  onZoomMeetingManagerWindowClosed: (callback: () => void) => void;
   openDiscussion: (
     category: DiscussionCategory,
     title: string,
@@ -180,7 +178,6 @@ export interface ElectronApi {
   openFolder: (path: string) => Promise<string>;
   openFolderDialog: () => Promise<Electron.OpenDialogReturnValue | undefined>;
   openWebsiteWindow: (websiteParams?: JwSiteParams) => void;
-  openZoomMeetingManagerWindow: (meetingId: string) => void;
   parseMediaFile: (
     filePath: string,
     options?: IOptions,
@@ -268,8 +265,7 @@ export type ElectronIpcListenKey =
   | 'update-error'
   | 'video-capture-crash-detected'
   | 'watchFolderUpdate'
-  | 'websiteWindowClosed'
-  | 'zoomMeetingManagerWindowClosed';
+  | 'websiteWindowClosed';
 
 // ipcMain.on / ipcRenderer.send channels
 export type ElectronIpcSendKey =
@@ -286,7 +282,6 @@ export type ElectronIpcSendKey =
   | 'toggleMediaWindow'
   | 'toggleOpenAtLogin'
   | 'toggleWebsiteWindow'
-  | 'toggleZoomMeetingManagerWindow'
   | 'unregisterAllShortcuts'
   | 'unregisterShortcut'
   | 'unwatchFolders'

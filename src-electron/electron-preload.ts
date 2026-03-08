@@ -28,11 +28,9 @@ import { initScreenListeners } from 'src-electron/preload/screen';
 import { executeQuery } from 'src-electron/preload/sqlite';
 import {
   closeWebsiteWindow,
-  closeZoomMeetingManagerWindow,
   initWebsiteListeners,
   navigateWebsiteWindow,
   openWebsiteWindow,
-  openZoomMeetingManagerWindow,
   zoomWebsiteWindow,
 } from 'src-electron/preload/website';
 import path from 'upath';
@@ -55,7 +53,6 @@ const electronApi: ElectronApi = {
   askForMediaAccess: () => send('askForMediaAccess'),
   checkForUpdates: () => send('checkForUpdates'),
   closeWebsiteWindow,
-  closeZoomMeetingManagerWindow,
   convertHeic,
   convertPdfToImages,
   createVideoFromNonVideo: (f, fP) => invoke('createVideoFromNonVideo', f, fP),
@@ -103,15 +100,12 @@ const electronApi: ElectronApi = {
     listen('video-capture-crash-detected', cb),
   onWatchFolderUpdate: (cb) => listen('watchFolderUpdate', cb),
   onWebsiteWindowClosed: (cb) => listen('websiteWindowClosed', cb),
-  onZoomMeetingManagerWindowClosed: (cb) =>
-    listen('zoomMeetingManagerWindowClosed', cb),
   openDiscussion: (c, t, p) => send('openDiscussion', c, t, p),
   openExternal: (w) => send('openExternal', w),
   openFileDialog: (s, f) => invoke('openFileDialog', s, f),
   openFolder: (path) => invoke('openFolder', path),
   openFolderDialog: () => invoke('openFolderDialog'),
   openWebsiteWindow,
-  openZoomMeetingManagerWindow,
   parseMediaFile,
   path,
   pathToFileURL,
