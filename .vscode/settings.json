@@ -263,5 +263,8 @@
   "sonarlint.connectedMode.project": {
     "connectionId": "sircharlo",
     "projectKey": "sircharlo_meeting-media-manager"
+  },
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff"
   }
 }

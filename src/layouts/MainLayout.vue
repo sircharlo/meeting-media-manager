@@ -591,6 +591,16 @@ watch(
 );
 
 watch(
+  () => [
+    currentCongregation.value,
+    currentSettings.value?.zoomMeetingManagerEnable,
+  ],
+  () => {
+    currentState.syncZoomHelper();
+  },
+);
+
+watch(
   () => currentSettings.value?.enableExtraCache,
   (newEnableExtraCache, oldEnableExtraCache) => {
     try {
@@ -887,6 +897,9 @@ bcClose.onmessage = (event) => {
 const initListeners = () => {
   onLog(({ ctx, level, msg }) => {
     console[level](`[main] ${msg}`, ctx);
+    if (msg.startsWith('[Zoom Helper]')) {
+      currentState.addZoomHelperLog(msg);
+    }
   });
 
   onShortcut(({ shortcut }) => {

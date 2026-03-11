@@ -11,6 +11,7 @@ import type {
 } from 'src/types';
 
 import { defineStore } from 'pinia';
+import { Platform } from 'quasar';
 import { LONG_MEDIA_DURATION } from 'src/constants/jw';
 import { settingsDefinitions } from 'src/constants/settings';
 import { isMwMeetingDay, isWeMeetingDay } from 'src/helpers/date';
@@ -71,6 +72,7 @@ interface Store {
   onlyShowInvalidSettings: boolean;
   selectedDate: string;
   websiteSelection: JwSite;
+  zoomHelperLogs: string[];
 }
 
 const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
@@ -78,8 +80,20 @@ const settingDefinitionEntries = Object.entries(settingsDefinitions) as [
   SettingsItem,
 ][];
 
+let PLATFORM = 'darwin';
+if (Platform.is.win) PLATFORM = 'win32';
+else if (Platform.is.linux) PLATFORM = 'linux';
+
+let zoomHelperSyncInProgress = false;
+
 export const useCurrentStateStore = defineStore('current-state', {
   actions: {
+    addZoomHelperLog(log: string) {
+      this.zoomHelperLogs.push(log);
+      if (this.zoomHelperLogs.length > 100) {
+        this.zoomHelperLogs.shift();
+      }
+    },
     areDependenciesSatisfied(
       settingsDefinition: SettingsItem,
       congregation: string,
@@ -217,7 +231,58 @@ export const useCurrentStateStore = defineStore('current-state', {
 
       this.currentCongregation = value.toString();
       await getCachedUserDataPath();
+
+      await this.syncZoomHelper();
+
       return this.getInvalidSettings(this.currentCongregation).length > 0;
+    },
+    async syncZoomHelper() {
+      if (PLATFORM !== 'win32' || zoomHelperSyncInProgress) return;
+
+      const enabled = this.currentSettings?.zoomMeetingManagerEnable;
+
+      const {
+        ensureZoomRequirements,
+        isZoomPythonInstalled,
+        startZoomHelper,
+        stopZoomHelper,
+      } = globalThis.electronApi;
+
+      if (!enabled) {
+        stopZoomHelper();
+        return;
+      }
+
+      zoomHelperSyncInProgress = true;
+      try {
+        const pythonInstalled = await isZoomPythonInstalled();
+        if (!pythonInstalled) {
+          const { createTemporaryNotification } =
+            await import('src/helpers/notifications');
+          createTemporaryNotification({
+            caption: 'Please install Python and restart the app.',
+            message: 'Python is required for Zoom Meeting Manager.',
+            timeout: 0,
+            type: 'negative',
+          });
+
+          // Disable meeting manager
+          if (this.currentSettings) {
+            this.currentSettings.zoomMeetingManagerEnable = false;
+          }
+          stopZoomHelper();
+          return;
+        }
+
+        const requirementsInstalled = await ensureZoomRequirements();
+        if (!requirementsInstalled) {
+          console.error('[Zoom Helper] Failed to install requirements');
+        }
+
+        startZoomHelper();
+      } finally {
+        zoomHelperSyncInProgress = false;
+      }
     },
   },
   getters: {
@@ -472,6 +537,7 @@ export const useCurrentStateStore = defineStore('current-state', {
       onlyShowInvalidSettings: false,
       selectedDate: formatDate(new Date(), 'YYYY/MM/DD'),
       websiteSelection: undefined,
+      zoomHelperLogs: [],
     };
   },
 });

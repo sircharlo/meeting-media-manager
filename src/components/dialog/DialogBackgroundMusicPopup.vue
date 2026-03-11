@@ -111,6 +111,10 @@ import {
 import { remainingTimeBeforeMeetingStart } from 'src/helpers/date';
 import { errorCatcher } from 'src/helpers/error-catcher';
 import { downloadBackgroundMusic } from 'src/helpers/jw-media';
+import {
+  automateZoomMeetingSettings,
+  automateZoomPostMeetingSettings,
+} from 'src/helpers/zoom';
 import { formatTime } from 'src/utils/time';
 import { useCurrentStateStore } from 'stores/current-state';
 import { computed, ref, useTemplateRef, watch } from 'vue';
@@ -282,6 +286,7 @@ whenever(
   () => musicPlaying.value,
   () => {
     musicState.value = 'music.playing';
+    automateZoomPostMeetingSettings();
   },
 );
 
@@ -434,6 +439,7 @@ function stopMusic(manualStop = false) {
     }
 
     musicState.value = 'music.stopping';
+    automateZoomMeetingSettings();
     fadeToVolumeLevel(0, 5);
   } catch (error) {
     console.log('❌ Error stopping music:', error);

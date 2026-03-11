@@ -9,6 +9,7 @@ import type {
   NavigateWebsiteAction,
   SettingsValues,
   UnzipOptions,
+  ZoomUIElement,
 } from 'src/types';
 
 import { homepage, repository } from 'app/package.json';
@@ -77,6 +78,12 @@ import {
   websiteWindowInfo,
   zoomWebsiteWindow,
 } from 'src-electron/main/window/window-website';
+import {
+  ensureRequirementsInstalled,
+  isPythonInstalled,
+  startZoomHelper,
+  stopZoomHelper,
+} from 'src-electron/main/zoom-helper-manager';
 import upath from 'upath';
 
 const { openExternal, openPath } = shell;
@@ -160,6 +167,13 @@ handleIpcSend(
 
 handleIpcSend('zoomWebsiteWindow', (_e, direction: 'in' | 'out') => {
   zoomWebsiteWindow(direction);
+});
+
+handleIpcSend('launchZoomMeeting', (_e, meetingId: string) => {
+  if (!meetingId) return;
+  openExternal(
+    `zoommtg://zoom.us/join?confno=${encodeURIComponent(meetingId)}`,
+  );
 });
 
 handleIpcSend('navigateWebsiteWindow', (_e, action: NavigateWebsiteAction) => {
@@ -284,6 +298,12 @@ handleIpcInvoke('getSharedDataPath', async () => getSharedDataPath());
 handleIpcInvoke('getUserDataPath', async () => app.getPath('userData'));
 handleIpcInvoke('getLocales', async () => app.getPreferredSystemLanguages());
 handleIpcInvoke('isUsablePath', async (_e, p: string) => isUsablePath(p));
+handleIpcInvoke('isZoomPythonInstalled', async () => isPythonInstalled());
+handleIpcInvoke('ensureZoomRequirements', async () =>
+  ensureRequirementsInstalled(),
+);
+handleIpcSend('startZoomHelper', () => startZoomHelper());
+handleIpcSend('stopZoomHelper', () => stopZoomHelper());
 
 handleIpcInvoke(
   'isArchitectureMismatch',
@@ -345,6 +365,131 @@ handleIpcInvoke(
     unzipFile(input, output, opts),
 );
 
+handleIpcInvoke('listZoomWindows', async () => {
+  try {
+    const res = await fetch('http://127.0.0.1:5000/windows');
+    const data = (await res.json()) as {
+      result: ZoomUIElement[];
+      success: boolean;
+    };
+
+    return data.result || [];
+  } catch (error) {
+    logToWindow(
+      mainWindowInfo.mainWindow,
+      'Failed to list Zoom windows',
+      { error: String(error) },
+      'error',
+    );
+    return [];
+  }
+});
+
+async function sendZoomWindowKeysInternal(handle: number, keys: string) {
+  try {
+    const res = await fetch('http://127.0.0.1:5000/send_keys', {
+      body: JSON.stringify({ keys, window_handle: handle }),
+      headers: { 'Content-Type': 'application/json' },
+      method: 'POST',
+    });
+    const data = (await res.json()) as {
+      success: boolean;
+    };
+    return data.success;
+  } catch (error) {
+    logToWindow(
+      mainWindowInfo.mainWindow,
+      'Failed to send keys to Zoom window',
+      { error: String(error), handle, keys },
+      'error',
+    );
+    return false;
+  }
+}
+
+async function showControlsIfHidden(handle: number) {
+  try {
+    console.log('showControlsIfHidden', handle);
+    const url = new URL('http://127.0.0.1:5000/dialog_children');
+    url.searchParams.append('class_name', 'ZPControlPanelClass');
+    url.searchParams.append('parent_handle', String(handle));
+
+    const res = await fetch(url.toString());
+    const data = (await res.json()) as {
+      result: ZoomUIElement[];
+      success: boolean;
+    };
+    console.log(data);
+
+    if (!data.success || !data.result?.length) {
+      const success = await sendZoomWindowKeysInternal(handle, '%');
+      if (success) {
+        await new Promise((resolve) => {
+          setTimeout(resolve, 500);
+        });
+      }
+    }
+  } catch (error) {
+    logToWindow(
+      mainWindowInfo.mainWindow,
+      'Failed to check/show Zoom controls',
+      { error: String(error), handle },
+      'error',
+    );
+  }
+}
+
+// handleIpcInvoke('listZoomWindowChildren', async (_e, handle: number) => {
+//   try {
+//     const res = await fetch(
+//       `http://127.0.0.1:5000/window_children?window_handle=${handle}`,
+//     );
+//     const data = (await res.json()) as {
+//       result: ZoomUIElement[];
+//       success: boolean;
+//     };
+
+//     return data.result || [];
+//   } catch (error) {
+//     logToWindow(
+//       mainWindowInfo.mainWindow,
+//       'Failed to list Zoom window children',
+//       { error: String(error) },
+//       'error',
+//     );
+//     return [];
+//   }
+// });
+
+handleIpcInvoke(
+  'getZoomDialogChildren',
+  async (_e, className: string, parentHandle?: number) => {
+    try {
+      const url = new URL('http://127.0.0.1:5000/dialog_children');
+      url.searchParams.append('class_name', className);
+      if (parentHandle) {
+        url.searchParams.append('parent_handle', String(parentHandle));
+      }
+
+      const res = await fetch(url.toString());
+      const data = (await res.json()) as {
+        result: ZoomUIElement[];
+        success: boolean;
+      };
+
+      return data.result || [];
+    } catch (error) {
+      logToWindow(
+        mainWindowInfo.mainWindow,
+        'Failed to get Zoom dialog children',
+        { className, error: String(error), parentHandle },
+        'error',
+      );
+      return [];
+    }
+  },
+);
+
 handleIpcInvoke('getZipEntries', async (_e, zipPath: string) =>
   getZipEntries(zipPath),
 );
@@ -352,3 +497,68 @@ handleIpcInvoke('getZipEntries', async (_e, zipPath: string) =>
 handleIpcSend('quitAndInstall', () => {
   autoUpdater.quitAndInstall(false, true);
 });
+
+handleIpcInvoke(
+  'sendZoomWindowKeys',
+  async (_e, handle: number, keys: string) =>
+    sendZoomWindowKeysInternal(handle, keys),
+);
+
+handleIpcInvoke(
+  'clickZoomElement',
+  async (_e, handle: number, options: Partial<ZoomUIElement>) => {
+    try {
+      await showControlsIfHidden(handle);
+
+      const res = await fetch('http://127.0.0.1:5000/click_button', {
+        body: JSON.stringify({
+          button: options.title,
+          control_id: options.control_id,
+          handle: options.handle,
+          window_handle: handle,
+        }),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'POST',
+      });
+      const data = (await res.json()) as {
+        success: boolean;
+      };
+      return data.success;
+    } catch (error) {
+      logToWindow(
+        mainWindowInfo.mainWindow,
+        'Failed to click Zoom element',
+        { error: String(error), handle, options },
+        'error',
+      );
+      return false;
+    }
+  },
+);
+
+handleIpcInvoke(
+  'getZoomElementTitle',
+  async (_e, handle: number, controlId: string) => {
+    try {
+      await showControlsIfHidden(handle);
+      const url = new URL('http://127.0.0.1:5000/get_element_title');
+      url.searchParams.append('window_handle', String(handle));
+      url.searchParams.append('control_id', controlId);
+
+      const res = await fetch(url.toString());
+      const data = (await res.json()) as {
+        success: boolean;
+        title?: string;
+      };
+      return data.success ? data.title : null;
+    } catch (error) {
+      logToWindow(
+        mainWindowInfo.mainWindow,
+        'Failed to get Zoom element title',
+        { controlId, error: String(error), handle },
+        'error',
+      );
+      return null;
+    }
+  },
+);

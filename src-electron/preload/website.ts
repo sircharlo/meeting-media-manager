@@ -20,3 +20,6 @@ export const zoomWebsiteWindow = (direction: 'in' | 'out') =>
   send('zoomWebsiteWindow', direction);
 
 export const closeWebsiteWindow = () => send('toggleWebsiteWindow', false);
+
+export const launchZoomMeeting = (meetingId: string) =>
+  send('launchZoomMeeting', meetingId);

@@ -86,6 +86,18 @@ export const electronApi: ElectronApi = {
   isUsablePath: async function (path) {
     return true;
   },
+  launchZoomMeeting: function (meetingId) {
+    throw new Error('Function not implemented.');
+  },
+  // listZoomMeetingControls: async function (_handle?: number) {
+  //   return [];
+  // },
+  // listZoomWindowChildren: async function (_handle: number) {
+  //   return [];
+  // },
+  listZoomWindows: async function () {
+    return [];
+  },
   moveMediaWindow: function (targetScreenNumber, windowedMode) {
     throw new Error('Function not implemented.');
   },

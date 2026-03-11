@@ -61,7 +61,7 @@
   <q-btn
     v-else-if="item.type === 'button'"
     color="primary"
-    :label="t('update')"
+    :label="model || t('click-to-set')"
     outline
     @click="performActions(item.actions)"
   />

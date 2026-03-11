@@ -110,6 +110,7 @@ export interface SettingsGroup {
   icon: string;
   name: keyof MessageSchema;
   order?: number;
+  platforms?: string[];
 }
 export type SettingsGroupKey =
   | 'advanced'
@@ -131,6 +132,7 @@ export interface SettingsItem {
   min?: number;
   options?: SettingsItemOption[];
   order?: number;
+  platforms?: string[];
   rules?: SettingsItemRule[];
   step?: number;
   subgroup?: SettingsItemSubgroup;
@@ -142,7 +144,12 @@ export type SettingsItemAction =
   | 'obsConnect'
   | 'openCongregationLookup'
   | 'setBackgroundMusicVolume'
-  | 'syncMeetingSchedule';
+  | 'syncMeetingSchedule'
+  | 'zoomCaptureAudioMutedTitle'
+  | 'zoomCaptureAudioNotJoinedTitle'
+  | 'zoomCaptureAudioUnmutedTitle'
+  | 'zoomCaptureVideoOffTitle'
+  | 'zoomCaptureVideoOnTitle';
 
 export type SettingsItemListKey =
   | 'appLanguages'
@@ -173,7 +180,8 @@ export type SettingsItemSubgroup =
   | 'setupWizard'
   | 'setupWizard.backgroundMusic'
   | 'subtitles'
-  | 'zoomIntegration';
+  | 'zoomIntegration'
+  | 'zoomMeetingManager';
 
 export type SettingsItemType =
   | 'button'
@@ -269,7 +277,20 @@ export interface SettingsValues {
   suppressHardwareAccelerationReminder: boolean;
   weDay: `${number}` | null;
   weStartTime: `${number}:${number}` | null;
+  zoomAudioMutedTitle: null | string;
+  zoomAudioNotJoinedTitle: null | string;
+  zoomAudioUnmutedTitle: null | string;
   zoomAutoFocusMediaWindow: boolean;
   zoomEnable: boolean;
+  zoomMeetingManagerAutomateMediaSharing: boolean;
+  zoomMeetingManagerAutomateMeetingAudioSettings: boolean;
+  zoomMeetingManagerAutomatePostMeetingAudioSettings: boolean;
+  zoomMeetingManagerEnable: boolean;
+  zoomMeetingManagerEnableWaitingRoom: boolean;
+  zoomMeetingManagerMeetingId: null | string;
+  zoomMeetingManagerPassword: null | string;
+  zoomMeetingManagerUsername: null | string;
   zoomScreenShareShortcut: null | string;
+  zoomVideoOffTitle: null | string;
+  zoomVideoOnTitle: null | string;
 }
