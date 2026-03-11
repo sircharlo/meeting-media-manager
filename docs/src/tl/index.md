@@ -9,7 +9,7 @@ hero:
   actions:
     - theme: brand
       text: Download
-      link: /tl/download
+      link: /download
     - theme: brand
       text: About
       link: /about
@@ -22,7 +22,6 @@ hero:
     - theme: brand
       text: FAQ
       link: /faq
-
 features:
   - icon: 🚀
     title: Automatic Media Management

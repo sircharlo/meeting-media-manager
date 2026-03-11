@@ -22,7 +22,6 @@ hero:
     - theme: brand
       text: UKK
       link: /faq
-
 features:
   - icon: 🚀
     title: Automaattinen mediahallinta

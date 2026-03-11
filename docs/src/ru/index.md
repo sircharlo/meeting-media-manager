@@ -22,7 +22,6 @@ hero:
     - theme: brand
       text: ЧАВО
       link: /faq
-
 features:
   - icon: 🚀
     title: Автоматическое управление мультимедиа

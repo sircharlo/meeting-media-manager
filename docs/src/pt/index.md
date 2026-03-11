@@ -22,7 +22,6 @@ hero:
     - theme: brand
       text: Perguntas Frequentes
       link: /faq
-
 features:
   - icon: 🚀
     title: Gerenciamento Automático de Mídia

@@ -22,7 +22,6 @@ hero:
     - theme: brand
       text: GYIK
       link: /faq
-
 features:
   - icon: 🚀
     title: Automatikus médiakezelés
