@@ -22,7 +22,6 @@ hero:
     - theme: brand
       text: 常见问题 (FAQ)
       link: /faq
-
 features:
   - icon: 🚀
     title: 自动媒体管理

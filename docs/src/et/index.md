@@ -22,7 +22,6 @@ hero:
     - theme: brand
       text: KKK
       link: /faq
-
 features:
   - icon: 🚀
     title: Automaatne meediafailide haldus

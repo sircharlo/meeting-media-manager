@@ -22,7 +22,6 @@ hero:
     - theme: brand
       text: Pogosto zastavljena vprašanja
       link: /faq
-
 features:
   - icon: 🚀
     title: Automatic Media Management
