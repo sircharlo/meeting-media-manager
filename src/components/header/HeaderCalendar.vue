@@ -337,6 +337,26 @@
     </q-popup-proxy>
   </q-btn>
 
+  <!-- Pinyin songs toggle -->
+  <q-btn
+    v-if="currentSettings?.pinyinSongFolder"
+    :color="
+      currentSettings?.enablePinyinSongs ? 'white-transparent' : 'primary'
+    "
+    unelevated
+    @click="togglePinyinSongs"
+  >
+    <span
+      :class="{ 'q-mr-sm': $q.screen.gt.md }"
+      style="font-weight: bold; font-size: 14px"
+      >拼</span
+    >
+    {{ $q.screen.gt.md ? t('enablePinyinSongs') : '' }}
+    <q-tooltip :delay="1000">
+      {{ t('enablePinyinSongs') }}
+    </q-tooltip>
+  </q-btn>
+
   <!-- Dialog Components -->
   <DialogCustomSectionEdit
     v-model="showCustomSectionEdit"
@@ -464,6 +484,14 @@ const {
   selectedDayMeetingType,
   someItemsHiddenForSelectedDate,
 } = storeToRefs(currentState);
+
+const togglePinyinSongs = () => {
+  if (currentSettings.value) {
+    currentSettings.value.enablePinyinSongs =
+      !currentSettings.value.enablePinyinSongs;
+    globalThis.dispatchEvent(new CustomEvent('pinyin-songs-toggled'));
+  }
+};
 
 const section = ref<MediaSectionIdentifier | undefined>();
 const datePickerActive = ref(false);

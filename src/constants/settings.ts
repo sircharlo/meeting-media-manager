@@ -541,6 +541,16 @@ export const settingsDefinitions: SettingsItems = {
     subgroup: 'cache',
     type: 'path',
   },
+  enablePinyinSongs: {
+    group: 'advanced',
+    hidden: true,
+    type: 'toggle',
+  },
+  pinyinSongFolder: {
+    group: 'advanced',
+    subgroup: 'cache',
+    type: 'path',
+  },
   enableCacheAutoClear: {
     depends: 'enableMediaDisplayButton',
     group: 'advanced',
@@ -605,6 +615,7 @@ export const defaultSettings: SettingsValues = {
   enableMediaDisplayButton: false,
   enableMediaWindowFadeTransitions: true,
   enableMusicButton: true,
+  enablePinyinSongs: false,
   enableSubtitles: false,
   excludeFootnotes: false,
   excludeTh: true,
@@ -644,6 +655,7 @@ export const defaultSettings: SettingsValues = {
   obsQuickToggle: false,
   obsRememberPreviouslyUsedScene: true,
   obsSwitchSceneAfterMedia: false,
+  pinyinSongFolder: null,
   recordingEnable: false,
   recordingFolder: null,
   recordingStartShortcut: null,

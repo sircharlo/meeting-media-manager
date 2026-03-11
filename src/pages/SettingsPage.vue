@@ -233,6 +233,10 @@ const shouldShowSetting = (
 ): boolean => {
   if (item.hidden) return false;
 
+  // Pinyin song folder is only available when congregation language is CHS
+  if (settingId === 'pinyinSongFolder' && currentSettings.value?.lang !== 'CHS')
+    return false;
+
   // Check dependencies
   const dependenciesSatisfied =
     !item.depends ||
