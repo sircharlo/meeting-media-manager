@@ -213,6 +213,7 @@ export interface SettingsValues {
   enableMediaDisplayButton: boolean;
   enableMediaWindowFadeTransitions: boolean;
   enableMusicButton: boolean;
+  enablePinyinSongs: boolean;
   enableSubtitles: boolean;
   excludeFootnotes: boolean;
   excludeTh: boolean;
@@ -252,6 +253,7 @@ export interface SettingsValues {
   obsQuickToggle: boolean;
   obsRememberPreviouslyUsedScene: boolean;
   obsSwitchSceneAfterMedia: boolean;
+  pinyinSongFolder: null | string;
   recordingEnable: boolean;
   recordingFolder: null | string;
   recordingStartShortcut: null | string;
