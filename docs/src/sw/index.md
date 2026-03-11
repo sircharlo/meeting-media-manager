@@ -22,7 +22,6 @@ hero:
     - theme: brand
       text: Maswali Yanayoulizwa Sana
       link: /faq
-
 features:
   - icon: 🚀
     title: Automatic Media Management
