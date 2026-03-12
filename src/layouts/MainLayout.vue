@@ -1237,6 +1237,26 @@ watchImmediate(
   },
 );
 
+// Listen for public talk title display events
+const handlePublicTalkTitle = (e: Event) => {
+  const html = (e as CustomEvent).detail?.html;
+  if (html) {
+    yeartextWatcherPaused.value = true;
+    postYeartext(html);
+  } else {
+    yeartextWatcherPaused.value = false;
+    postYeartext(yeartext.value);
+  }
+};
+
+onMounted(() => {
+  globalThis.addEventListener('public-talk-title', handlePublicTalkTitle);
+});
+
+onBeforeUnmount(() => {
+  globalThis.removeEventListener('public-talk-title', handlePublicTalkTitle);
+});
+
 // Receive media playing action from the media player page using useBroadcastChannel
 const { data: mediaPlayingAction } = useBroadcastChannel<
   MediaPlayingStateAction,
