@@ -28,6 +28,12 @@
       @update-color="updateSectionColor"
       @update-label="updateSectionLabel"
     />
+    <!-- Public Talk Title Card -->
+    <PublicTalkTitleCard
+      v-if="mediaList.config?.uniqueId === 'pt'"
+      :media-list="mediaList"
+      @update-talk-title="updateTalkTitle"
+    />
     <!-- Empty State -->
     <SectionEmptyState
       v-if="(isEmpty || someItemsAreHidden) && !isDragging"
@@ -146,6 +152,7 @@ import MediaDivider from './MediaDivider.vue';
 import MediaGroup from './MediaGroup.vue';
 import MediaItem from './MediaItem.vue';
 import MediaSectionHeader from './MediaSectionHeader.vue';
+import PublicTalkTitleCard from './PublicTalkTitleCard.vue';
 import SectionEmptyState from './SectionEmptyState.vue';
 
 const props = defineProps<{
@@ -187,6 +194,12 @@ const {
   updateSectionColor,
   updateSectionLabel,
 } = useMediaSection(props.mediaList);
+
+const updateTalkTitle = (title: string) => {
+  if (sectionData.value.config) {
+    sectionData.value.config.publicTalkTitle = title;
+  }
+};
 
 import { useEventListener } from '@vueuse/core';
 // Use the media dividers composable

@@ -205,7 +205,12 @@ export const createMeetingSections = (day: DateInfo) => {
   sections.forEach((section) => {
     const calculatedConfig = getMeetingSectionConfigs(section);
     const mediaSection = getOrCreateMediaSection(day.mediaSections, section);
+    // Preserve user-set properties before overwriting config
+    const { publicTalkTitle } = mediaSection.config;
     mediaSection.config = calculatedConfig;
+    if (publicTalkTitle) {
+      mediaSection.config.publicTalkTitle = publicTalkTitle;
+    }
   });
 };
 
