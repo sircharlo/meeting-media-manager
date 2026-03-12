@@ -1144,16 +1144,6 @@ onMounted(() => {
       fetchMedia();
     },
   );
-
-  useEventListener(globalThis, 'pinyin-songs-toggled', () => {
-    // Clear mediaSections and reset status to force full re-fetch
-    const days = lookupPeriod.value?.[currentCongregation.value] ?? [];
-    days.forEach((day) => {
-      day.mediaSections = [];
-      day.status = null;
-    });
-    fetchMedia();
-  });
 });
 
 const { post: postCustomBackground } = useBroadcastChannel<string, string>({

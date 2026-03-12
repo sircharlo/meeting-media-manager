@@ -339,20 +339,18 @@
 
   <!-- Pinyin songs toggle -->
   <q-btn
-    v-if="currentSettings?.pinyinSongFolder"
+    v-if="currentSettings?.lang === 'CHS' && currentSettings?.pinyinSongFolder"
     :color="
       currentSettings?.enablePinyinSongs ? 'white-transparent' : 'primary'
     "
     unelevated
-    @click="togglePinyinSongs"
+    @click="
+      currentSettings.enablePinyinSongs = !currentSettings.enablePinyinSongs
+    "
   >
-    <span
-      :class="{ 'q-mr-sm': $q.screen.gt.md }"
-      style="font-weight: bold; font-size: 14px"
-      >拼</span
-    >
+    <q-icon :class="{ 'q-mr-sm': $q.screen.gt.md }" name="mmm-cjk" size="xs" />
     {{ $q.screen.gt.md ? t('enablePinyinSongs') : '' }}
-    <q-tooltip :delay="1000">
+    <q-tooltip v-if="!$q.screen.gt.md" :delay="1000">
       {{ t('enablePinyinSongs') }}
     </q-tooltip>
   </q-btn>
@@ -484,14 +482,6 @@ const {
   selectedDayMeetingType,
   someItemsHiddenForSelectedDate,
 } = storeToRefs(currentState);
-
-const togglePinyinSongs = () => {
-  if (currentSettings.value) {
-    currentSettings.value.enablePinyinSongs =
-      !currentSettings.value.enablePinyinSongs;
-    globalThis.dispatchEvent(new CustomEvent('pinyin-songs-toggled'));
-  }
-};
 
 const section = ref<MediaSectionIdentifier | undefined>();
 const datePickerActive = ref(false);
