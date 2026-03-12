@@ -117,10 +117,13 @@ watch(talkTitle, (val) => {
   emit('update-talk-title', val);
 });
 
-// Stop title display when video/audio starts playing
-watch(videoOrAudioPlaying, (newVal) => {
-  if (newVal) stopTitleDisplay();
-});
+// Stop title display when any media starts playing (image, video, audio)
+watch(
+  () => currentState.mediaPlaying.url,
+  (newUrl) => {
+    if (newUrl) stopTitleDisplay();
+  },
+);
 
 // Restore title when switching dates (mediaList prop changes)
 watch(
