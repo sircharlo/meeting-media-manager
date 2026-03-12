@@ -1,4 +1,3 @@
-# uia_helper.py
 import json
 import traceback
 
@@ -39,6 +38,48 @@ def get_element_data(element):
     return data
 
 
+def _find_element_by_handle(target_handle):
+    try:
+        return Desktop(backend="uia").window(handle=int(target_handle))
+    except Exception:
+        return None
+
+
+def _find_element_by_control_id(win, control_id):
+    for d in win.descendants():
+        if get_element_data(d).get("control_id") == control_id:
+            return d
+    return None
+
+
+def _find_element_by_text(win, button_text):
+    try:
+        btn = win.child_window(title_re=f".*{button_text}.*", control_type="Button")
+        if btn.exists():
+            return btn
+    except Exception:
+        pass
+
+    for d in win.descendants():
+        if d.window_text() == button_text:
+            return d
+    return None
+
+
+def _find_element_in_parent(window_handle, control_id, button_text):
+    win = Desktop(backend="uia").window(handle=int(window_handle))
+
+    if control_id:
+        btn = _find_element_by_control_id(win, control_id)
+        if btn:
+            return btn
+
+    if button_text:
+        return _find_element_by_text(win, button_text)
+
+    return None
+
+
 @app.route("/windows", methods=["GET"])
 def list_windows():
     try:
@@ -73,23 +114,6 @@ def list_windows():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
-# List all children of a window (buttons, text elements, panes, etc.)
-# @app.route("/window_children", methods=["GET"])
-# def window_children():
-#     window_handle = request.args.get("window_handle")
-#     if not window_handle:
-#         return jsonify({"success": False, "error": "window_handle is required"}), 400
-#     try:
-#         win = Desktop(backend="uia").window(handle=int(window_handle))
-#         descendants = win.descendants()
-#         result = [get_element_data(d) for d in descendants if d.window_text()]
-#         print(f"Found {len(result)} descendants with text")
-#         return jsonify({"success": True, "result": result})
-#     except Exception as e:
-#         print(f"Error in window_children: {traceback.format_exc()}")
-#         return jsonify({"success": False, "error": str(e)}), 500
-
-
 @app.route("/dialog_children", methods=["GET"])
 def dialog_children():
     class_name = request.args.get("class_name")
@@ -104,28 +128,18 @@ def dialog_children():
             "top_level_only": False,
         }
         if parent_handle:
-            # Find the parent element first
             parent_win = Desktop(backend="uia").window(handle=int(parent_handle))
             search_criteria["parent"] = parent_win.element_info
 
         elements = findwindows.find_elements(**search_criteria)
         if not elements:
-            raise Exception("Not found")
+            raise LookupError(f"No elements found for class '{class_name}'")
 
-        # Use first match
         win = Desktop(backend="uia").window(handle=elements[0].handle)
     except Exception as e:
         error_msg = f"Dialog with class {class_name} not found relative to parent {parent_handle}: {str(e)}\n{traceback.format_exc()}"
         print(f"Error in dialog_children: {error_msg}")
-        return (
-            jsonify(
-                {
-                    "success": False,
-                    "error": str(e),
-                }
-            ),
-            500,
-        )
+        return jsonify({"success": False, "error": str(e)}), 500
 
     descendants = win.descendants()
     result = [get_element_data(d) for d in descendants if d.window_text()]
@@ -133,7 +147,6 @@ def dialog_children():
     return jsonify({"success": True, "result": result})
 
 
-# Find button by text in a specified window handle and click it
 @app.route("/get_element_title", methods=["GET"])
 def get_element_title():
     try:
@@ -152,22 +165,19 @@ def get_element_title():
             )
 
         win = Desktop(backend="uia").window(handle=window_handle)
-        descendants = win.descendants()
 
-        for d in descendants:
+        for d in win.descendants():
             try:
-                # Check help text for controlID
-                help_text = ""
                 try:
                     legacy_properties = d.legacy_properties()
                     print(legacy_properties)
                     help_text = legacy_properties.get("Help", "")
-                except:
+                except Exception:
                     help_text = ""
 
                 if help_text and f'"{control_id}"' in help_text:
                     return jsonify({"success": True, "title": d.window_text()})
-            except:
+            except Exception:
                 continue
 
         return jsonify(
@@ -179,16 +189,7 @@ def get_element_title():
 
     except Exception as e:
         print(f"Error in get_element_title: {traceback.format_exc()}")
-        return (
-            jsonify(
-                {
-                    "error": str(e),
-                    "success": False,
-                    "traceback": traceback.format_exc(),
-                }
-            ),
-            500,
-        )
+        return jsonify({"error": str(e), "success": False}), 500
 
 
 @app.route("/click_button", methods=["POST"])
@@ -210,57 +211,19 @@ def click_button():
             400,
         )
 
-    # Find the target element
     try:
-        btn = None
-        
-        # 1. Try by handle if provided
-        if target_handle:
-            try:
-                btn = Desktop(backend="uia").window(handle=int(target_handle))
-            except:
-                btn = None
-        
-        # 2. Otherwise search within parent window
-        if not btn and window_handle:
-            win = Desktop(backend="uia").window(handle=int(window_handle))
-            
-            if control_id:
-                # Search by control_id in descendants
-                descendants = win.descendants()
-                for d in descendants:
-                    elem_data = get_element_data(d)
-                    if elem_data.get("control_id") == control_id:
-                        btn = d
-                        break
+        btn = _find_element_by_handle(target_handle) if target_handle else None
 
-            if not btn and button_text:
-                # Try smarter search for button_text in descendants if child_window fails or to be more generic
-                # First try child_window for speed
-                try:
-                    # Try it as a button first
-                    btn = win.child_window(title_re=f".*{button_text}.*", control_type="Button")
-                    if not btn.exists():
-                        btn = None
-                except:
-                    btn = None
-                
-                if not btn:
-                    # Fallback: search all descendants for matching title
-                    descendants = win.descendants()
-                    for d in descendants:
-                        if d.window_text() == button_text:
-                            btn = d
-                            break
+        if not btn and window_handle:
+            btn = _find_element_in_parent(window_handle, control_id, button_text)
 
         if not btn:
-            raise Exception("Element not found")
+            raise LookupError("Element not found")
 
         btn.click_input()
         return jsonify({"success": True})
     except Exception as e:
-        error_msg = f"{str(e)}\n{traceback.format_exc()}"
-        print(f"Error in click_button: {error_msg}")
+        print(f"Error in click_button: {traceback.format_exc()}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
@@ -282,8 +245,7 @@ def send_keys():
         win.type_keys(keys)
         return jsonify({"success": True})
     except Exception as e:
-        error_msg = f"{str(e)}\n{traceback.format_exc()}"
-        print(f"Error in send_keys: {error_msg}")
+        print(f"Error in send_keys: {traceback.format_exc()}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 
